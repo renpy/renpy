@@ -39,6 +39,15 @@ init -500:
 
 ##############################################################################
 
+init:
+
+    python:
+        # Called to make a screenshot happen.
+        def _screenshot():
+            renpy.screenshot("screenshot.bmp")
+
+
+
 # Installs the keymap that lets the user do things like invoke the
 # game menu.
 label _install_keymap:
@@ -52,6 +61,7 @@ label _install_keymap:
         km = renpy.Keymap(
             K_PAGEUP = renpy.rollback,
             mouse_4 = renpy.rollback,
+            s = _screenshot,
             f = renpy.toggle_fullscreen,
             m = renpy.toggle_music,
             K_ESCAPE = renpy.curried_call_in_new_context("_game_menu"),
@@ -270,7 +280,7 @@ label _save_screen:
 
     python hide:
         fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
-        renpy.save(fn, renpy.time.strftime("%04Y-%02m-%02d %H:%M:%S\n") + save_name)
+        renpy.save(fn, renpy.time.strftime("%Y-%m-%d %H:%M:%S\n") + save_name)
 
     jump _save_screen
 

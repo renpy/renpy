@@ -10,7 +10,10 @@
     the creation of visual-novel type games. It contains features
     that make it easy to display thoughts, dialogue, and menus; to
     display images to the user; to write game logic; and to support
-    the saving and loading of games.  
+    the saving and loading of games. Ren'Py tries to be like an
+    executable script, allowing you to get a working game without much
+    more effort than is required to type the game script into the
+    computer.
 
   </p><p> 
 
@@ -73,7 +76,7 @@ label start:
 
     We'll go into detail into what each of the statements here does
     over the course of this tutorial. For now, however let me just
-    point out that the first 6 statements inialize the game, while
+    point out that the first 6 statements initialize the game, while
     the last 7 (starting with "scene") show images and display
     dialogue. As such, the bulk of a game is more like the last 7
     then the first 6. 
@@ -772,7 +775,7 @@ with dissolve
     Finally, the "show", "hide", and "scene" statements all take a
     with clause. A statement with a with clause associated with it is
     actually converted into three statements: A "with None" statement,
-    the original statment sans the with clause, and the with clause as
+    the original statement sans the with clause, and the with clause as
     a with statement. For example:  
   </p>
     
@@ -1227,7 +1230,7 @@ $ state.love_love_points = a + 1
     block, while state is not updated. The variable a is assigned a
     different integer object, while b is assigned a new empty list.
     While a field in the Character object is changed by the last
-    statment, state still points to the same object, and therefore it
+    statement, state still points to the same object, and therefore it
     is not considered to have changed. (And therefore, the object
     isn't considered to be part of user state.)
   </p>
@@ -1237,7 +1240,7 @@ $ state.love_love_points = a + 1
     since the end of the init phase. We then find all objects
     reachable from one of those variables through some combination
     of field access, iteration, or iteration over items (as in a
-    dictonary). This combination of variable bindings and object
+    dictionary). This combination of variable bindings and object
     values comprises the user state.
   </p>
 
@@ -1366,11 +1369,21 @@ e "My name is shown in full, and in green."
 
   <!-- func renpy.pause -->
 
+  <!-- func renpy.input -->
+
+  <example>
+$ name = renpy.input("What is your name?", "Joe User", length=20)
+
+e "Pleased to meet you, %(name)s."
+  </example>
+
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
 
   <!-- func renpy.watch -->
+
+  <!-- func renpy.windows -->
 
   <h3>Music Functions</h3>
 
@@ -1603,6 +1616,15 @@ init:
     at least this many pixels long.
   </prop>
 
+  <prop name="line_height_fudge">
+    On some platforms (Windows), the height of a line of text isn't
+    reported correctly. This can lead to an overly-large spacing
+    between lines. This is a number that is added to the reported line
+    spacing. If negative, the lines will be pushed closer
+    together. This is very platform-dependent, so you may want to
+    condition it on the result of renpy.windows().
+  </prop>
+
   <h4>Window Properties</h4>
 
   <p>
@@ -1617,7 +1639,7 @@ init:
     requested of it, which usually means either a Solid or a
     renpy.Frame. This can also be None, which means that there is no
     background on this window. (All the other window properties that
-    refer to a background still work. Just think of them as if ther
+    refer to a background still work. Just think of them as if their
     background was transparent.) Example: Solid((0, 0, 128,
     128))
   </prop>
@@ -1681,14 +1703,14 @@ init:
     empty space. This is the case for say windows, and the menus that
     are displayed as part of the main menu. Position properties work
     on many updates, but the vagaries of how space is allocated by
-    widges may make some of the results counterintuitive.
+    widgets may make some of the results counterintuitive.
   </p>
 
   <p>
     Positioning is done by specifying the placement of an anchor that
     is part of a widget within the space allocated to that widget. The
     position is either specified as an absolute number of pixels or a
-    fraction of the avialable space, while the position of the anchor
+    fraction of the available space, while the position of the anchor
     within the widget is done by selecting one of three settings for
     each dimension.
   </p>
@@ -1753,7 +1775,7 @@ init:
   </p>
 
   <p>
-    The most common way to do this is to change the defintion of one
+    The most common way to do this is to change the definition of one
     of the standard styles. Widgets that use this style, or one of the
     styles that inherits from it, will pick up the change and change
     how they are displayed.
@@ -1806,7 +1828,7 @@ init:
     The final way of assigning properties is to list them as keyword
     arguments on a constructor that takes properties. (Indicated by
     having **properties in its argument list.) Properties that are
-    given in this way take precededce over all other properties. The
+    given in this way take precedence over all other properties. The
     Character argument also takes properties that are applied to the
     window and the label.
   </p>
@@ -1822,65 +1844,74 @@ init:
   </p>
 
   <dl>
-  <renpy_style name="default">The default style that all styles inherit from.</renpy_style>
 
-  <renpy_style name="window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.</renpy_style>
+    <renpy_style name="default">The default style that all styles inherit from.</renpy_style>
 
-  <renpy_style name="image_placement">This style is used to control the default placement of images on the screen.</renpy_style>
+    <renpy_style name="window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.</renpy_style>
 
-  <renpy_style name="say_label"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.</renpy_style>
+    <renpy_style name="image_placement">This style is used to control the default placement of images on the screen.</renpy_style>
 
-  <renpy_style name="say_dialogue"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the text of dialogue.</renpy_style>
+    <renpy_style name="say_label"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.</renpy_style>
 
-  <renpy_style name="say_thought"><renpy_style_inherits>default</renpy_style_inherits>(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.</renpy_style>
+    <renpy_style name="say_dialogue"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the text of dialogue.</renpy_style>
 
-  <renpy_style name="say_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing dialogue and thoughts.</renpy_style>
+    <renpy_style name="say_thought"><renpy_style_inherits>default</renpy_style_inherits>(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.</renpy_style>
 
-  <renpy_style name="menu_caption"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a menu caption.</renpy_style>
+    <renpy_style name="say_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing dialogue and thoughts.</renpy_style>
 
-  <renpy_style name="menu_selected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a selected menu choice.</renpy_style>
+    <renpy_style name="menu_caption"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a menu caption.</renpy_style>
 
-  <renpy_style name="menu_unselected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render an unselected menu choice.</renpy_style>
+    <renpy_style name="menu_selected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a selected menu choice.</renpy_style>
 
-  <renpy_style name="menu_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing a menu.</renpy_style>
+    <renpy_style name="menu_unselected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render an unselected menu choice.</renpy_style>
 
-  <renpy_style name="button"><renpy_style_inherits>default</renpy_style_inherits>(window, hover) The default style used for buttons in the main and game menus.</renpy_style>
+    <renpy_style name="menu_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing a menu.</renpy_style>
 
-  <renpy_style name="button_text"><renpy_style_inherits>default</renpy_style_inherits>(text, hover) The default style used for the label of a button.</renpy_style>
+    <renpy_style name="input_text"><renpy_style_inherits>default</renpy_style_inherits>(text) The style used for the text of an input box.</renpy_style>
 
-  <renpy_style name="selected_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).</renpy_style>
+    <renpy_style name="input_prompt"><renpy_style_inherits>default</renpy_style_inherits>(text) The style used for the prompt of an input box.</renpy_style>
 
-  <renpy_style name="selected_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a selected button.</renpy_style>
+    <renpy_style name="input_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The style used for the window of an input box.</renpy_style>
 
-  <renpy_style name="disabled_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a disabled button.</renpy_style>
+    <renpy_style name="button"><renpy_style_inherits>default</renpy_style_inherits>(window, hover) The default style used for buttons in the main and game menus.</renpy_style>
 
-  <renpy_style name="disabled_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a disabled button.</renpy_style>
+    <renpy_style name="button_text"><renpy_style_inherits>default</renpy_style_inherits>(text, hover) The default style used for the label of a button.</renpy_style>
 
-  <renpy_style name="mm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.</renpy_style>
+    <renpy_style name="selected_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).</renpy_style>
 
-  <renpy_style name="mm_menu_window"><renpy_style_inherits>default</renpy_style_inherits>(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.</renpy_style>
+    <renpy_style name="selected_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a selected button.</renpy_style>
 
-  <renpy_style name="mm_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used on buttons that are part of the main menu.</renpy_style>
+    <renpy_style name="disabled_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a disabled button.</renpy_style>
 
-  <renpy_style name="mm_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the labels of buttons that are part of the main menu.</renpy_style>
+    <renpy_style name="disabled_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a disabled button.</renpy_style>
 
-  <renpy_style name="gm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.</renpy_style>
+    <renpy_style name="mm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.</renpy_style>
 
-  <renpy_style name="gm_nav_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.</renpy_style>
+    <renpy_style name="mm_menu_window"><renpy_style_inherits>default</renpy_style_inherits>(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.</renpy_style>
 
-  <renpy_style name="file_picker_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) A window containing the file picker that is used to choose slots for loading and saving.</renpy_style>
+    <renpy_style name="mm_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used on buttons that are part of the main menu.</renpy_style>
 
-  <renpy_style name="file_picker_entry"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for each of the slots in the file picker.</renpy_style>
+    <renpy_style name="mm_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the labels of buttons that are part of the main menu.</renpy_style>
 
-  <renpy_style name="file_picker_text"><renpy_style_inherits>default</renpy_style_inherits>(text) A base style for all text that is displayed in the file picker.</renpy_style>
+    <renpy_style name="gm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.</renpy_style>
 
-  <renpy_style name="file_picker_new"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the new indicator in the file picker.</renpy_style>
+    <renpy_style name="gm_nav_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.</renpy_style>
 
-  <renpy_style name="file_picker_old"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the old indicator in the file pciker.</renpy_style>
+    <renpy_style name="file_picker_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) A window containing the file picker that is used to choose slots for loading and saving.</renpy_style>
 
-  <renpy_style name="file_picker_extra_info"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.</renpy_style>
+    <renpy_style name="file_picker_entry"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for each of the slots in the file picker.</renpy_style>
 
-  <renpy_style name="file_picker_new_slot"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is used for the new slot indicator in the file picker.</renpy_style>
+    <renpy_style name="file_picker_text"><renpy_style_inherits>default</renpy_style_inherits>(text) A base style for all text that is displayed in the file picker.</renpy_style>
+
+    <renpy_style name="file_picker_new"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the new indicator in the file picker.</renpy_style>
+
+    <renpy_style name="file_picker_old"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the old indicator in the file picker.</renpy_style>
+
+    <renpy_style name="file_picker_extra_info"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.</renpy_style>
+
+    <renpy_style name="file_picker_new_slot"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is used for the new slot indicator in the file picker.</renpy_style>
+
+
   </dl>
 
   <h3>Obfuscating your Game</h3>

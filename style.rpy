@@ -28,6 +28,12 @@ init -100:
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
 
+        # Change this if you're not using Vera 22.
+        if renpy.windows():
+            style.default.line_height_fudge = -4
+        else:
+            style.default.line_height_fudge = 0
+            
         # Window properties.
         style.default.background = None
         style.default.xpadding = 0
@@ -115,8 +121,17 @@ init -100:
         style.create('menu_window', 'window',
                      '(window, position) The default style for windows containing a menu.') 
 
-        # Styles that are used for windows that contain dialogue or
-        # menus.
+        # Styles that are used by input widgets.
+        style.create('input_text', 'default',
+                     '(text) The style used for the text of an input box.')
+
+        style.input_text.color = (255, 255, 0, 255)
+
+        style.create('input_prompt', 'default',
+                     '(text) The style used for the prompt of an input box.')
+
+        style.create('input_window', 'window',
+                     '(window, position) The style used for the window of an input box.')
 
 
         # Styles that are used by all Buttons.
@@ -229,4 +244,3 @@ init -100:
         style.create('file_picker_new_slot', 'file_picker_text',
                      '(text) The style that is used for the new slot indicator in the file picker.')
 
-        style._write_docs("/tmp/style_docs.xml")

@@ -7,6 +7,9 @@ def match_times(source, dest):
     stat = os.stat(source)
     os.utime(dest, (stat.st_atime, stat.st_mtime))
     
+def dosify(s):
+    return s.replace("\n", "\r\n")
+    return s
 
 def copy_file(source, dest, license=""):
 
@@ -16,7 +19,13 @@ def copy_file(source, dest, license=""):
     df = file(dest, "wb")
 
     df.write(license)
-    df.write(sf.read())
+
+    data = sf.read()
+    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy"):
+        print "DOSIFY", dest
+        data = dosify(data)
+
+    df.write(data)
 
     sf.close()
     df.close()
@@ -68,6 +77,8 @@ def main():
 
     lf.close()
 
+    license = dosify(license)
+
     if os.path.exists(target):
         raise Exception("Target exists!")
 
@@ -91,14 +102,15 @@ def main():
 
     # Copy the game
     copy_tree(gamedir, target + "/game",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~") and not fn.endswith('.rpyc'))
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
     def cp(x, license=""):
         copy_file(x, target + "/" + x)
 
     cp("LICENSE.txt")
+    cp("README_RENPY.txt")
     cp("run_game.py", license=license)
-    cp("archive.py", license=license)
+    cp("archiver.py", license=license)
 
     
        

@@ -89,3 +89,7 @@ class Character(object):
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
 
+_globals = globals().copy()
+
+def reload():
+    globals().update(_globals)

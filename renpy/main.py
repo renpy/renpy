@@ -12,7 +12,7 @@
 import renpy
 import renpy.game as game
 import os
-from cPickle import load, dump, HIGHEST_PROTOCOL
+from cPickle import load, dumps, HIGHEST_PROTOCOL
 
 def run():
     """
@@ -21,14 +21,14 @@ def run():
     """
 
     # Reload some things, in case this is a restart.
-    reload(renpy.store)
-    reload(renpy.config)
+    renpy.store.reload()
+    renpy.config.reload()
 
     renpy.config.savedir = game.basepath + "/saves"
 
     # Make the save directory.
     try:
-        os.path.mkdirs(renpy.config.savedir)
+        os.makedirs(renpy.config.savedir)
     except:
         pass
 
@@ -37,7 +37,7 @@ def run():
         game.seen_ever = load(file(renpy.config.savedir + "/seen"))
     except:
         print "Couldn't load seen statements."
-        pass
+        game.seen_ever = { }
                               
 
 
@@ -107,9 +107,10 @@ def run():
             except game.QuitException, e:
                 break
     finally:
-        dump(game.seen_ever,
-             file(renpy.config.savedir + "/seen", "wb"),
-             HIGHEST_PROTOCOL)
+        f = file(renpy.config.savedir + "/seen", "wb")
+        f.write(dumps(game.seen_ever))
+        f.close()
+
 
     # And, we're done.
     

@@ -124,6 +124,27 @@ def watch(expression):
 
     set_overlay([ pos ])
 
+def input(prompt, default='', length=None):
+    """
+    This pops up a window requesting that the user enter in some text.
+    It returns the entered text.
+
+    @param prompt: A prompt that is used to ask the user for the text.
+
+    @param default: A default for the text that this input can return.
+
+    @param length: If given, a limit to the amount of text that this
+    function will return.
+    """
+
+    vbox = renpy.display.layout.VBox()
+    win = renpy.display.layout.Window(vbox, style='input_window')
+
+    vbox.add(renpy.display.text.Text(prompt, style='input_prompt'))
+    vbox.add(renpy.display.behavior.Input(default, length=length, style='input_text'))
+
+    return interact(win)
+
 def menu(items, set_expr, window_style='menu_window'):
     """
     Displays a menu, and returns to the user the value of the selected
@@ -308,6 +329,23 @@ def jump(label):
     """
 
     raise renpy.game.JumpException(label)
+
+def screenshot(filename):
+    """
+    Saves a screenshot in the named filename.
+    """
+    
+    renpy.game.interface.display.save_screenshot(filename)
+    
+def windows():
+    """
+    Returns true if we're running on Windows. This is generally used as a
+    test when setting styles.
+    """
+
+    import sys
+    return hasattr(sys, 'winver')
+
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

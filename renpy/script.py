@@ -42,11 +42,21 @@ class Script(object):
         self.initcode = [ ]
 
         # Find the script files to load.
-        for fn in os.listdir(dir):
+        dirlist = list(os.listdir(dir))
+
+        # Files to ensure (because they are the alts of files that
+        # have been processed.)
+        ignore = [ ]
+
+        for fn in dirlist:
+
             if not (fn.endswith('.rpyc') or fn.endswith('.rpy')):
                 continue
 
             fn = dir + '/' +  fn
+
+            if fn in ignore:
+                continue
 
             if fn[-1] == 'c':
                 alt = fn[:-1]
@@ -59,6 +69,10 @@ class Script(object):
 
                 if alttime > fntime:
                     continue
+
+            ignore.append(alt)
+
+            # print "Loading", fn
 
             self.load_file(fn)
             
@@ -103,7 +117,7 @@ class Script(object):
             # report the error.
             name = node.name
             if name in self.namemap:
-                old = namemap[name]
+                old = self.namemap[name]
 
                 raise ScriptError("Name %s is defined twice: at %s:%d and %s:%d." %
                                   (repr(name),

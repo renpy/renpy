@@ -360,7 +360,10 @@ class Display(object):
 
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
-                                              fsflag | DOUBLEBUF)
+                                              fsflag)
+
+        pygame.event.set_grab(False)
+        pygame.mouse.set_visible(True)
 
         pygame.display.set_caption(renpy.config.window_title)
 
@@ -382,6 +385,13 @@ class Display(object):
 
         pygame.display.flip()
         return rv
+
+    def save_screenshot(self, filename):
+        """
+        Saves a full-size screenshot in the given filename.
+        """
+
+        pygame.image.save(self.window, filename)
 
     def screenshot(self, scale):
         """

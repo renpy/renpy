@@ -111,7 +111,7 @@ class Menu(renpy.display.layout.VBox):
         for i, (caption, result) in enumerate(menuitems):
             self.add(renpy.display.text.Text(caption))
 
-            if not self.selected and result is not None:
+            if self.selected is None and result is not None:
                 self.selected = i
 
             self.results.append(result)
@@ -158,7 +158,7 @@ class Menu(renpy.display.layout.VBox):
                 self.selected = target
 
         # Make selection based on mouse click position.
-        if ev.type == MOUSEBUTTONDOWN:
+        if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
             target = self.child_at_point(x, y)
             if target is None:
                 return None
@@ -270,5 +270,36 @@ class TextButton(Button):
             self.text_widget.style.set_prefix("idle_")
         
                 
-            
-            
+class Input(renpy.display.text.Text):
+    """
+    This is a Displayable that takes text as input.
+    """
+
+    def __init__(self, default, length=None,
+                 style='input_text', **properties):
+        super(Input, self).__init__(default + "_", style=style, **properties)
+        self.content = unicode(default)
+        self.length = length
+
+    def event(self, ev, x, y):
+
+        if ev.type == KEYDOWN:
+            if ev.key == K_BACKSPACE:
+                if self.content:
+                    self.content = self.content[:-1]
+
+            elif ev.key == K_RETURN:
+                return self.content
+
+            elif ev.unicode:
+                if ord(ev.unicode[0]) < 32:
+                    return None
+                
+                if self.length and len(self.content) >= self.length:
+                    return None
+
+                self.content += ev.unicode
+
+            self.set_text(self.content + "_")
+            renpy.game.interface.redraw(0)
+                

@@ -58,3 +58,8 @@ skip_delay = 100
 
 # Archive files that are searched for images.
 archives = [ ]
+
+_globals = globals().copy()
+
+def reload():
+    globals().update(_globals)

@@ -119,7 +119,11 @@ class ImageCache(object):
         fn = self.preloads[0]
 
         # Actually load the image.
-        self.load_image(fn)
+        try:
+            self.load_image(fn)
+        except:
+            if renpy.config.debug:
+                raise
 
 cache = ImageCache()
 

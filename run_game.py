@@ -14,8 +14,7 @@ import renpy
 
 
 # The version of Ren'Py in use.
-version = 'Renpy 4 Preview Release 1'
-
+version = 'Renpy 4.0'
 
 if __name__ == "__main__":
 
@@ -36,7 +35,7 @@ if __name__ == "__main__":
         print >>f, "script."
         print >>f
 
-        traceback.print_exc()
+        traceback.print_exc(None, sys.stdout)
         traceback.print_exc(None, f)
 
         print
@@ -55,7 +54,7 @@ if __name__ == "__main__":
         except:
             pass
         
-
+    sys.exit(0)
         
 
     

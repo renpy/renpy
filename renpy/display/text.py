@@ -126,7 +126,7 @@ class Text(renpy.display.core.Displayable):
 
 
         self.laidout = "\n".join(lines)
-        self.height = len(lines) * font.get_linesize()
+        self.height = len(lines) * (font.get_linesize() + self.style.line_height_fudge)
         self.width = max(maxwidth, self.style.minwidth)
 
         
@@ -150,7 +150,7 @@ class Text(renpy.display.core.Displayable):
             for l in lines:
                 ls = font.render(l, True, color)
                 surf.blit(ls, (x, y + font.get_descent()))
-                y += font.get_linesize()
+                y += font.get_linesize() + self.style.line_height_fudge
 
         fudge = 1
 
