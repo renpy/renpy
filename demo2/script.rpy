@@ -124,6 +124,9 @@ label features:
     e "The game menu also lets you restart or quit the game. But you
        wouldn't want to do that, would you?"
 
+    e "Finally, the game menu lets you set up the game
+       preferences. These preferences are saved between games."
+
     show eileen vhappy
 
     e "The next feature is really neat."
