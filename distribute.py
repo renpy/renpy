@@ -97,7 +97,7 @@ def main():
 
     doc_files = [
         'example.html',
-        'tutorial.html',
+        'reference.html',
         'style.css',
         ]
 
