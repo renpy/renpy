@@ -359,7 +359,8 @@ e "Starting today, I'll be living here."
   <p>
     Finally, the string in a dialogue is subject to interpolation of
     variables. A string variable can be interpolated with %(name)s,
-    while a number requires %(name)d. For example:
+    while a number requires %(name)d. The interpolated value is quoted
+    so that a text tag cannot be interpolated in by mistake. For example:
   </p>
   
   <example>
@@ -540,12 +541,20 @@ menu what_to_do:
   <p>
     Without the ability to display images to the user, a visual
     novel would be a text adventure.  Ren'Py controls image display
-    by using a <def>scene list</def>, a list of things to be
-    displayed to the user. Every time an interaction starts (that
-    is, a line of dialogue or a menu is displayed), the things in
-    the scene list are drawn to the screen, with the first being in
+    by using a <def>layers</def>, each comprising a list of things to be
+    displayed to the user. By default, there are three layers. The
+    master layer is manipulated using the various image display
+statement defined in this section. The transient layer is used to
+display ui widgets, like windows containing dialogue and
+menus. Finally, an overlay layer exists to allow things to be 
+overlaid on top of the screen.
+   </p>
+
+   <p>
+    Every time an interaction starts (for example, a line of dialogue or a menu is displayed), the things in
+    the each of the layers is drawn to the screen, with the first being in
     the back and the last being in the front. A number of statements
-    manipulate the scene list. Before we can explain them, however,
+    manipulate the contents of the master layer. Before we can explain them, however,
     we should first define a few terms.
   </p>
 
@@ -607,16 +616,16 @@ init:
   <p>
 
     The next display statement is the show statement, which takes an
-    image specifier and displays it on the screen. If an image with
-    the same tag as the image given in the spec already exists on
-    the scene list, it is replaced with the newly displayed
+    image specifier and displays it on the master layer. If an image with
+    the same tag as the image given in the spec already exists in 
+    the master layer, it is replaced with the newly displayed
     Displayable. Otherwise, the new one is added to the end of the
-    scene list (that is, closest to the user). 
+    master layer (that is, closest to the user). 
 
   </p><p>
 
     If an at list is present, the image is transformed with the at
-    list before being added to the display list.
+    list before being added to the master layer.
 
   </p><p>
 
@@ -630,7 +639,7 @@ init:
   <rule>scene_statement -> "scene" ( image_spec )?</rule>
 
   <p>
-    The scene statement first clears the scene_list. If the optional
+    The scene statement first clears the master layer. If the optional
     image_spec is present, it is shown as if it was shown with the
     show statement. The best use for the image_spec on a scene
     command is show a background for the scene. 
@@ -665,8 +674,8 @@ e "But sometimes, I can get upset for no good reason."
   <rule>hide_statement -> "hide" image_spec</rule>
   
   <p>
-    The hide statement is used to remove an image from the scene
-    list. The image spec is parsed for a tag, and any image matching
+    The hide statement is used to remove an image from the master
+    layer. The image spec is parsed for a tag, and any image matching
     that tag is remove from the scene. The at list is ignored (but
     should be valid or omitted), and transitions associated with the
     image spec are run.
@@ -814,8 +823,8 @@ show eileen happy at left
   <!-- func renpy.ParameterizedText -->
 
   <p>
-    This is used to impelement the text image. The user may also want
-    to instatiate their own ParameterizedText object (in an init
+    This is used to implement the text image. The user may also want
+    to instantiate their own ParameterizedText object (in an init
     block) if they want to have more than one bit of text on the
     screen at once, or if they want to change the style (and therefore
     the position) of that text.
@@ -914,22 +923,22 @@ show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
   <h3>Transitions</h3>
 
   <p>
-    By default, Ren'Py displays each scene list by replacing the old
-    scene list with a new one. This is appropriate in general (such as
-    for emotion changes), but it may be boring for large scene
-    changes, such as a change in scene or a character entering or
+    By default, Ren'Py displays each scene by replacing the old
+    scene with a new one. This is appropriate in general (such as
+    for emotion changes), but it may be boring for large 
+    changes, such as a change in location or a character entering or
     leaving the scene. Ren'Py supports transitions that control how
     changes to the scene lists are exposed to the user.
   </p>
 
   <p>
-    Transitions occur between the last scene list that was shown to
-    the user, and the current scene list that has been updated using
+    Transitions occur between the last scene that was shown to
+    the user, and the current scene that has been updated using
     the scene, show, or hide statements. A transition takes both lists
     as input, and is responsible for displaying the transition between
     them to the user. Each transition runs for a given amount of time,
     but may be dismissed early by the user. Once a transition is
-    shown, the scene list is considered shown for the purposes of
+    shown, the scene is considered shown for the purposes of
     future transitions.
   </p>
 
@@ -1068,57 +1077,23 @@ e "How are you doing?" with dissolve
   </dl>
   
   <p>
-    Functions that return things that are useful as arguments to with
-    statements or clauses are:
+The following are functions that return things useful as
+transitions. The user should not supply the new_widget or old_widget 
+parameters, as these are supplied by Ren'Py when a transition 
+begins.
   </p>
 
-  <function name="Fade" sig="(in_time, hold_time, out_time, color=(0, 0, 0))">
-    
-    <p>
-      This returns an object that can be used as an argument to a with
-      statement to fade the old scene into a solid color, waits for a
-      given amount of time, and then fades from the solid color into
-      the new scene.
-    </p>
+  <!-- func Fade -->
 
-    <p>
-      <param>in_time</param> - The amount of time that will be spent
-      fading from the old scene to the solid color. A float, given as
-      seconds.
-    </p>
+  <!-- func Dissolve -->
 
-    <p>
-      <param>hold_time</param> - The amount of time that will be spent
-      displaying the solid color. A float, given as seconds.
-    </p>
+  <!-- func CropMove -->
 
-    <p>
-      <param>out_time</param> - The amount of time that will be spent
-      fading from the solid color to the new scene. A float, given as
-      seconds. 
-    </p>
-
-    <p>
-      <param>color</param> - The solid color that will be faded
-      to. This is an RGB triple, where each element is in the range 0
-      to 255. This defaults to black.
-    </p>
-
-  </function>
-
-  <function name="Dissolve" sig="(delay)">
-    <p>
-      This dissolves from the old scene to the new scene, by
-      overlaying the new scene on top of the old scene and varying its
-      alpha from 0 to 255.
-    </p>
-
-    <p>
-      <param>delay</param> - The amount of time the dissolve will
-      take.
-    </p>
-
-  </function>
+  <p>
+Some transitions can also be applied to specific layers, using the 
+renpy.transition function (documented below). Only transitions that 
+are not completely opaque can be used in this way.
+  </p>
 
   <h3>Control Statements</h3>
 
@@ -1740,6 +1715,8 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.transition -->
 
+  <!-- func renpy.restart_interaction -->
+
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
@@ -1747,6 +1724,8 @@ e "Pleased to meet you, %(name)s."
   <!-- func renpy.watch -->
 
   <!-- func renpy.windows -->
+
+  <!-- func renpy.exists -->
 
   <!-- func renpy.clear_game_runtime -->
 
@@ -1778,10 +1757,14 @@ e "Pleased to meet you, %(name)s."
 
   <p>
     Overlays are set up by adding to the config.overlay_functions list
-    a python function which, when called, returns a list of
-    Displayables that are added to the overlay. These functions are
+    a python function which, when called, uses the ui functions to add
+    widgets to the screen. By default, such widgets are added to the 
+    'overlay' layer, but a call to ui.layer() can change the layer 
+    to any of the layers listed in library.overlay_layers. These functions are
     called for each interaction, which allows the overlay to change to
-    reflect the status of game variables.
+    reflect the status of game variables. If a variable affecting the
+    overlay changes during an interaction, renpy.restart_interaction()
+    should be called to regenerate the overlay.
   </p>
 
   <p>
@@ -1799,11 +1782,9 @@ init:
     python hide:
         def date_overlay():
             if date:
-                return [ Image(date + ".png", 
-                               xpos=1.0, xanchor="right",
-                               ypos=0.0, yanchor="top") ]
-            else:
-                return [ ]
+                ui.image(date + ".png", 
+                         xpos=1.0, xanchor="right",
+                         ypos=0.0, yanchor="top") ]
 
         config.overlay_functions.append(date_overlay)
   </example>
@@ -1817,7 +1798,7 @@ init:
   </p>
 
 
-  <h3>Sound and Music Functions</h3>
+  <h3>Multimedia: Sound, Music, and Movies</h3>
 
   <h4>Sound</h4>
 
@@ -1894,6 +1875,79 @@ e "Just kidding."
     The config.fade_music variable is used to control the fading out
     of old music when a new track is started.  
   </p>
+
+<h4>Movies</h4>
+
+<p>
+As of version 4.5, Ren'Py is capable of playing MPEG-1 movies. This
+allows you to include video as part of your game. There are two ways
+that this can be done. Displaying video in fullscreen mode allows
+video to be scaled up to very large sizes, while displaying video in a
+displayable allows it to be blended with images and text.
+</p>
+
+<p>
+Displaying a video fullscreen allows it to take advantage of hardware
+decode and scaling support. The downside of fullscreen mode is that
+nothing else can be displayed while the movie is being displayed.
+</p>
+
+<p>
+The easiest way to display a movie fullscreen is to display it using
+the renpy.cutscene function. This function displays a movie for a
+specified length of time. When that time has elapsed, or when the user
+clicks to dismiss the movie, the movie ends and the function returns.
+</p>
+
+<!-- func renpy.movie_cutscene -->
+
+<p>
+Displaying a movie in a displayable is more difficult, but it allows
+the movie to be mixed with rendered text and graphics. A downside of
+this method is that the screen needs to be re-rendered with each
+frame, a process that may be unacceptibly slow when the screen is
+large. We don't recommend this when the game window is larger that
+640x480.
+</p>
+
+<p>
+To display a movie in a displayable, we must start the movie and show
+a Movie displayable on the screen. The movie is then displayed on the
+screen along with any other widget. When we no longer want to show it,
+we need to stop the decoding of the movie and hide the displayable.
+</p>
+
+<!-- func Movie -->
+
+<!-- func renpy.movie_start_displayable -->
+
+<!-- func renpy.movie_stop -->
+
+<example>
+init:
+    image movie = Movie
+
+$ renpy.movie_start_displayable("bg.mpg", (640, 480), -1)
+scene movie
+show eileen happy
+
+e "I'm standing in front of a movie."
+
+e "Isn't that keen?"
+
+hide movie
+$ renpy.movie_stop()
+</example>
+
+<p>
+Whenever a movie is playing, it is expected to provide all sound that
+the user hears. Ren'Py disables sound hardware for the duration of the
+movie.
+</p>
+
+<example>
+$ renpy.cutscene("On_Your_Mark.mpg", 394)
+</example>
 
   <h3>Configuration Variables</h3>
   
@@ -2072,6 +2126,31 @@ load scripts, as scripts will be loaded before it can be set.
       screen.
     </var>
 
+    <var name="config.layers" value="[ 'master', 'transient', 'overlay' ]">
+This variable gives a list of all of the layers that Ren'Py knows
+about, in the order that they will be displayed to the screen. (The
+lowest layer is the first entry in the list.) Ren'Py uses the layers
+"master", "transient", and "overlay" internally, so they should 
+always be in this list.
+</var>
+
+    <var name="config.transient_layers" value="[ 'transient' ]" >
+This variable gives a list of all of the transient layers. Transient
+layers are layers that are cleared after each interaction. "transient"
+should always be in this list.
+</var>
+
+<var name="config.overlay_layers" value="[ 'overlay' ]" >
+This is a list of all of the overlay layers. Overlay layers are
+cleared before the overlay functions are called. "overlay" should
+always be in this list.
+</var>
+
+<var name="config.overlay_during_wait" value="True" >
+True if we want overlays to be shown during wait statements, or False 
+if we'd prefer that they be hidden during the wait statements.
+</var>
+
     <var name="library.file_page_length" value="10">
       This is the number of save slots that are shown in the picker
       that's used by the load and save portions of the game menu. This
@@ -2100,14 +2179,14 @@ the file picker.
       thumbnail is shown to the user.
     </var>
       
-    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Quit Game", "_quit") ]'>
+    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Preferences", "_preferences"), ("Quit Game", "_quit") ]'>
       This is used to give the main menu that is shown to the user
       when the game first starts. It is a list of tuples, where the
       first element of each tuple is the title of the menu button, and
       the second element is a label that we jump to when that button
-      is selected. Two useful labels to use here are "_continue",
-      which brings up the game menu in load mode, and "_quit", which
-      terminates Ren'Py.
+      is selected. Some useful labels to use here are "_continue",
+      which brings up the game menu in load mode, "_preferences", which brings up the preferences screen, 
+      and "_quit", which terminates Ren'Py.
     </var>
     
     <var name="library.has_music" value="True">
@@ -2145,6 +2224,16 @@ the file picker.
       If True, the library will display a skip indicator when skipping
       through the script.
     </var>
+
+    <var name="library.enter_transition" value="None">
+If not None, this variable should give a transition that will be 
+used when entering the game menu.
+</var>
+
+<var name="library.exit_transition" value="None">
+If not None, this variable should give a transition that will be 
+performed when exiting the game menu.
+</var>
  
 
   </dl>
@@ -2214,12 +2303,25 @@ init:
 
   <prop name="color">
     The color in which the text will be displayed on the screen, as an
-    RGBA tuple. Example: (255, 255, 255, 255)
+    RGBA tuple. Due to a limitation of pygame, currently the alpha is
+    ignored. Example: (255, 255, 255, 255)
   </prop>
+
+<prop name="bold">
+If True, then this text will be rendered in bold.
+</prop>
+
+<prop name="italic">
+If True, then this text will be rendered in italics.
+</prop>
+
+<prop name="underline">
+If true, then this text will be rendered with an underline.
+</prop>
 
   <prop name="antialias">
     If True, the text will be antialiased. Otherwise, it will be left
-    jagged. Example: True
+    jagged.
   </prop>
 
   <prop name="drop_shadow">
@@ -2298,15 +2400,68 @@ indent to quoted dialogue.
     128))
   </prop>
 
+  <prop name="left_margin">
+The amount of transparent space left to the left of this window. If a
+floating point number, it is scaled to the available width.
+  </prop>
+
+  <prop name="right_margin">
+The amount of transparent space left to the right of this window. If a
+floating point number, it is scaled to the available width.
+  </prop>
+
+  <prop name="top_margin">
+The amount of transparent space left to the top of this window. If a
+floating point number, it is scaled to the available height.
+  </prop>
+
+  <prop name="bottom_margin">
+The amount of transparent space left to the bottom of this window. If a
+floating point number, it is scaled to the available height.
+  </prop>
+
   <prop name="xmargin">
-    The amount of transparent space that is left around this window in
-    the x direction, in pixels. 
+This is a convenient (and backwards compatible) way of setting 
+left_margin and right_margin to the same value.
+  </prop>
+
+  <prop name="ymargin">
+This is a convenient (and backwards compatible) way of setting 
+top_margin and bottom_margin to the same value.
+  </prop>
+ 
+  <prop name="left_padding">
+The amount of space left between the edge of the border and the 
+left side of the contents of the window. If a float, it is scaled to the 
+width of the window.
+  </prop>
+
+  <prop name="right_padding">
+The amount of space left between the edge of the border and the 
+right side of the contents of the window. If a float, it is scaled to the 
+width of the window.
+  </prop>
+
+  <prop name="top_padding">
+The amount of space left between the edge of the border and the 
+top side of the contents of the window. If a float, it is scaled to the 
+height of the window.
+  </prop>
+
+  <prop name="bottom_padding">
+The amount of space left between the edge of the border and the 
+bottom side of the contents of the window. If a float, it is scaled to the 
+height of the window.
   </prop>
 
   <prop name="xpadding">
-    The amount of space left between the edge of the background of the
-    window, and the edge of the content contained within this window,
-    in the x direction, in pixels.
+A convenient (and backwards compatible) way of setting
+left_padding and right_padding to the same value.
+  </prop>
+
+  <prop name="ypadding">
+A convenient (and backwards compatible) way of setting
+top_padding and bottom_padding to the same value.
   </prop>
 
   <prop name="xfill">
@@ -2314,32 +2469,23 @@ indent to quoted dialogue.
     x direction. If False, it will shrink to fit its contents.
   </prop>
 
-  <prop name="xminimum">
-    The minimum size of this window in the x direction, including
-    margins and padding. If the window would be smaller than this, it
-    is grown to be at least this size.
-  </prop>
-
-  <prop name="ymargin">
-    The amount of transparent space that is left around this window in
-    the y direction, in pixels. 
-  </prop>
-
-  <prop name="ypadding">
-    The amount of space left between the edge of the background of the
-    window, and the edge of the content contained within this window,
-    in the y direction, in pixels.
-  </prop>
-
   <prop name="yfill">
     If True, the window will expand to fill all available space in the
     y direction. If False, it will shrink to fit its contents.
   </prop>
 
+  <prop name="xminimum">
+    The minimum size of this window in the x direction, including
+    margins and padding. If the window would be smaller than this, it
+    is grown to be at least this size. If a floating point number, it is
+    scaled to the available width.
+  </prop>
+
   <prop name="yminimum">
     The minimum size of this window in the y direction, including
     margins and padding. If the window would be smaller than this, it
-    is grown to be at least this size.
+    is grown to be at least this size. If a floating point number, it is
+    scaled to the available height.
   </prop>
 
 
@@ -2452,15 +2598,21 @@ The size of the left gutter of a clickable bar, in pixels.
   
   <p>
     In Ren'Py, buttons and their contents support the idea of hovering:
-    using different sets of properties when the mouse is over or not
-    over the widget. If the mouse is over the widget, then that widget
+    using different sets of properties for different states of the
+    widget. If the widget has been selected, it is considered to be
+    activated. Otherwise, if the mouse is over the widget, then that widget
     is hovered, else it is idle. On these widgets, Ren'Py will look up
-    a property prefixed with "hover_" or "idle_" (as appropriate) in a
+    a property prefixed with "activate_", "hover_", "idle_", (as appropriate) in a
     style, before looking up an unprefixed property. If neither form
     is found on a style, the process is repeated again on the parent
     style. (The search pattern for background on a hovered button
     goes: button.hover_background, button.background,
     default.hover_background, default.background.)
+  </p>
+
+  <p>
+  The only time an activated widget will be seen by the user is if a 
+  transition occurs immediately after the widget has been activated.
   </p>
 
   <p>
@@ -2563,6 +2715,95 @@ init:
     <!-- include styles.xml -->
 
   </dl>
+
+<h3>Text Tags</h3>
+
+<p>
+Styles are useful if you want to change the look of entire blocks
+of text in the game. But what if you only want to change the look of a
+small amount of text, or if you want to only change the look of entire
+blocks of text. Text tags let you change the look of text within a
+single text widget.
+</p>
+
+<p>
+Text tags work wherever text can be placed. This means that they can
+be used inside text widgets, text buttons, and menu and say
+statements. But please note that say statement protect from
+subsituting in a text tag, as that would most likely be an
+error. Generally, though, if Ren'Py shows text to the user, that text
+can be formatted through the use of text tags.
+</p>
+
+<p>
+As an aside, let me point out that if you're using a text tag on every
+line of a script, or even many lines, you're probably doing something
+wrong. That's what styles are for.
+</p>
+
+<p>
+Text tags start with a left brace, and continue to the matching right
+brace. We chose to use braces because they do not require quoting in
+HTML or BBCode. An open text tag may take a parameter, and then continues until
+a closing tag, which is a tag that has a slash immediately after the
+opening brace. Please note that text tags are sensitive to both case
+and whitespace.
+</p>
+
+<p>
+Some example tags are {b}, {i}, {color=#f88}, {size=+16}. The matching
+closing tags are {/b}, {i}, {/color}, and {/size}. Tags must be
+properly nested: "{b}{i}bold + italic{/i}{/b}" is okay,
+but "{b}{i}this is wrong{/b}{/i}". Right now, improper nesting won't
+cause an error but it probably won't do what you want. All open tags
+must be closed by the end of the string.
+</p>
+
+<p>
+If you, for some reason, want to include a left brace, just write two
+left braces ({{) instead.
+</p>
+
+<h4>Supported Text Tags</h4>
+
+<p>The following are supported text tags:</p>
+
+<ul>
+
+<li>{b}text{/b} makes the enclosed text bold.</li>
+
+<li>{i}text{/i} makes the enclosed text italic.</li>
+
+<li>{u}text{/u} makes the enclosed text underlined.</li>
+
+<li>{plain}text{/plain} makes the enclosed text plain, which means that
+it is not bold, italic, or underlined.</li>
+
+<li>{size=<i>spec</i>}text{/size} changes the size of the text. The
+supplied spec may be a number, in which case it is the number of
+pixels high that the text will be. If it is a number preceded by a
+plus (like "+10"), it means to increase the size by that number of
+pixels, while if it is preceded by a minus it means to decrease.
+</li>
+
+<li>{color=<i>spec</i>}text{/color} changes the color of the text. The
+color may be a hex triple or a hex sextuple, optionally preceded by a
+hash mark. (This is the same format that color() accepts.)</li>
+
+</ul>
+
+<p>
+Here's an example of a say statement that uses many of the text
+tags. If you actually use this many text tags in a real game, you'll
+probably drive your users mad.
+</p>
+
+<example>
+"Using text tags, we can make text {size=+12}bigger{/size} or
+ {size=-8}smaller{/size}. We can make it {b}bold{/b}, {i}italic{/i},
+ or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
+</example>
+
 
   <h3>Obfuscating your Game</h3>
 
@@ -2677,10 +2918,10 @@ unilaterally making something different from everyone else.
 
 <p>
 Anyway, in Ren'Py keysyms are strings. The first kind of keysym is of
-the form 'mouse_#', for a number between 1 and 5. These keysyms are
-generated by mouse button presses or turns of the mouse wheel. For
-example, "mouse_1" is generally the left mouse button, while "mouse_4"
-is a turn of the the mouse wheel to the top.
+the form 'mouseup_#' or 'mousedown_#', for a number between 1 and 5. These keysyms are
+generated by mouse button presses, releases, or turns of the mouse wheel. For
+example, "mousedown_1" is generally a press of the left mouse button, 
+"mouseup_1" is a release of that button, and "mousedown_4" is a turn of the the mouse wheel to the top.
 </p>
 
 <p>
@@ -2700,34 +2941,35 @@ This type of keysym looks like "K_BACKSPACE", "K_RETURN", and "K_TAB".
 <p>
 To change a binding, update the appropriate list in
 config.keymap. The following code adds the 't' key to the list of
-keys that dismiss a say statement.
+keys that dismiss a say statement, and removes the space key from
+that list.
 </p>
 
 <example>
 init:
     $ config.keymap['dismiss'].append('t')
+    $ config.keymap['dismiss'].remove('K_SPACE')
 </example>
 
 <p>
 The default keymap is contained inside the python code implementing 
-Ren'Py, and as of version 4.3 is as follows:
+Ren'Py, and as of version 4.5 is as follows:
 </p>
 
 <example>
 keymap = dict(
-    
     # Bindings present almost everywhere, unless explicitly
     # disabled.
-    rollback = [ 'K_PAGEUP', 'mouse_4' ],
+    rollback = [ 'K_PAGEUP', 'mousedown_4' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouse_3' ],
-    hide_windows = [ 'mouse_2' ],
+    game_menu = [ 'K_ESCAPE', 'mousedown_3' ],
+    hide_windows = [ 'mouseup_2' ],
 
     # Say.
-    rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
     # Keymouse.
     keymouse_left = [ 'K_LEFT' ],
@@ -2736,23 +2978,23 @@ keymap = dict(
     keymouse_down = [ 'K_DOWN' ],
     
     # Menu.
-    menu_mouseselect = [ 'mouse_1' ],
+    menu_mouseselect = [ 'mouseup_1' ],
     menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
     menu_keyup = [ 'K_UP' ],
     menu_keydown = [ 'K_DOWN' ],
     
     # Button.
-    button_select = [ 'mouse_1', 'K_RETURN', 'K_KP_ENTER' ],
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
     # Imagemap.
-    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
+    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
 
     # Bar.
-    bar_click = [ 'mouse_1' ],
+    bar_click = [ 'mouseup_1' ],
 
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
@@ -2790,7 +3032,7 @@ $ ui.textbutton("B", clicked=ui.returns("B"))
 $ ui.textbutton("C", clicked=ui.returns("C"))
 
 $ ui.close()
-$ choice = renpy.interact(suppress_overlay=True)
+$ choice = ui.interact(suppress_overlay=True)
 </example>
 
 <p>
@@ -2836,6 +3078,12 @@ to lambda.
 </p>
 
 <p>
+By default, widgets are added to the 'transient' layer. This can be
+changed by a call to ui.layer(), followed by a matching call to
+ui.close() when done adding widgets to the new layer.
+</p>
+
+<p>
 The following are the functions available in the ui module, which is
 automatically present in the game namespace.
 </p>
@@ -2853,6 +3101,8 @@ automatically present in the game namespace.
 <!-- func ui.vbox -->
 
 <!-- func ui.hbox -->
+
+<!-- func ui.grid -->
 
 <!-- func ui.fixed -->
 
@@ -2874,11 +3124,15 @@ automatically present in the game namespace.
 
 <!-- func ui.saybehavior -->
 
+<!-- func ui.pausebehavior -->
+
 <!-- func ui.keymousebehavior -->
 
 <h4>Functions</h4>
 
 <!-- func ui.interact -->
+
+<!-- func ui.layer -->
 
 <!-- func ui.close -->
 

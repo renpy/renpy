@@ -4,8 +4,8 @@ class Curry(object):
     callable with the stored arguments and the additional arguments
     supplied to the call.
     """
-
-    __doc__ = property(fget=lambda self : self.callable.__doc__)
+    
+    # __doc__ = property(fget=lambda self : self.callable.__doc__)
 
     def __init__(self, callable, *args, **kwargs):
         self.callable = callable

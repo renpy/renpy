@@ -16,11 +16,10 @@
 
 import renpy
 
-# The current widget (None to add widgets directly to the
-# transient display list.)
-current = None
+# The current widget. (Should never become None.)
+current = 'transient'
 
-# A stack of current widgets.
+# A stack of current widgets and/or layers.
 current_stack = [ ]
 
 # True if the current widget should be used at most once.
@@ -36,12 +35,12 @@ def interact(**kwargs):
     @param show_mouse: Should the mouse be shown during this
     interaction? Only advisory, as this doesn't work reliably.
 
-    @param suppress_overlay: This suppresses the display of the overlay during
-    this interaction.
+    @param suppress_overlay: This suppresses the display of the overlay
+    during this interaction.
     """
 
     if current_stack:
-        raise Exception("ui.interact called with non-empty widget stack. Did you forget a ui.close()?")
+        raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
 
     return renpy.game.interface.interact(**kwargs)
 
@@ -56,8 +55,8 @@ def add(w, make_current=False, once=False):
     global current
     global current_once
 
-    if current is None:
-        renpy.game.context(-1).scene_lists.add('transient', w)
+    if isinstance(current, str):
+        renpy.game.context(-1).scene_lists.add(current, w)
     else:
         current.add(w)
 
@@ -73,19 +72,38 @@ def add(w, make_current=False, once=False):
 
     return w
 
+
+def layer(name):
+    """
+    This causes widgets to be added to the named layer, until a 
+    matching call to ui.close().
+    """
+
+    global current_once
+    global current
+
+    if not isinstance(current, str):
+        raise Exception("Opening a layer while a widget is open is not allowed.")
+
+    if name not in renpy.config.layers:
+        raise Exception("'%s' is not a known layer." % name)
+
+    current_stack.append(current)
+    current_once = False
+    current = name
+
 def close():
     """
-    Closes the current widget. This means that we will no longer add
-    things to the current widget, but will instead start adding things
-    to the parent of that widget, or the screen if the widget has no
-    parent. Calling this when there is no current widget will lead to
-    an exception being thrown.
+    This closes the currently open widget or layer. If a widget is
+    closed, then we start adding to its parent, or the layer if no
+    parent is open. If a layer is closed, we return to the previously
+    open layer. An error is thrown if we close the last open layer.
     """
 
     global current
 
-    if current is None:
-        raise Exception("ui.close() called when there is no open widget.")
+    if not current_stack:
+        raise Exception("ui.close() called to close the last open layer or widget.")
 
     if current_once:
         raise Exception("ui.close() called when expecting a widget.")
@@ -148,6 +166,36 @@ def vbox(padding=0, **properties):
 
     return add(renpy.display.layout.VBox(padding, **properties), True)
 
+def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
+    """
+    This creates a layout that places widgets in an evenly spaced
+    grid. New widges are added to this vbox unil ui.close() is called.
+    Widgets are added by going from left to right within a single row,
+    and down to the start of the next row when a row is full. All cells
+    must be filled (that is, exactly col * rows widgets must be added to
+    the grid.)
+
+    The children of this widget should have a fixed size that does not
+    vary based on the space allocated to them. Failure to observe this
+    restriction could lead to really odd layouts, or things being
+    rendered off screen.
+
+    Each cell of the grid is exactly the same size. By default, the
+    grid is the smallest size that can accommodate all of its
+    children, but it can be expanded to consume all available space in
+    a given dimension by setting xfill or yfill to True, as appropriate.
+
+    @param cols: The number of columns in this grid.
+    @param rows: The number of rows in this grid.
+    @param padding: The amount of space to leave between rows and columns.
+    @param xfill: True if the grid should consume all available width.
+    @param yfill: True if the grid should consume all available height.
+    """
+
+    return add(renpy.display.layout.Grid(cols, rows, padding, xfill=xfill, yfill=yfill, **properties), True)
+
+    
+
 def fixed(**properties):
     """
     This creates a layout that places widgets at fixed locations
@@ -204,13 +252,33 @@ def saybehavior():
     """
     This is a psuedo-widget that adds the say behavior to the
     screen. The say behavior is to return True if the left mouse is
-    clicked or enter is pressed. It also returns true in various other
-    cases if the current statement has already been seen. This widget
+    clicked or enter is pressed. It also returns True in various other
+    cases, such as if the current statement has already been seen. This widget
     should not be added to any other widget, but should instead be
     only added to the screen itself.
     """
 
     return add(renpy.display.behavior.SayBehavior())
+
+def pausebehavior(delay, result=False):
+    """
+    This is a psuedo-widget that adds the pause behavior to the
+    screen.  The pause behavior is to return the supplied result when
+    the given number of seconds elapses. This widget should not be
+    added to any other widget, but should instead be only added to the
+    screen itself.
+
+    Please note that this widget will always pause for the given
+    amount of time. If you want a pause that can be interrupted by
+    the user, add in a saybehavior.
+
+    @param delay: The amount of time to pause, in seconds.
+
+    @param result: The result that will be retuned after the delay time
+    elapses.
+    """
+
+    return add(renpy.display.behavior.PauseBehavior(delay, result))
 
 def menu(menuitems, **properties):
     """
@@ -221,12 +289,30 @@ def menu(menuitems, **properties):
     @param menuitems: A list of tuples that are the items to be added
     to this menu. The first element of a tuple is a string that is
     used for this menuitem. The second element is the value to be
-    returned from renpy.interact() if this item is selected, or None
+    returned from ui.interact() if this item is selected, or None
     if this item is a non-selectable caption.
     """
 
     return add(renpy.display.behavior.Menu(menuitems, **properties))
 
+def input(default, length=None, allow=None, exclude='{}', **properties):
+    """
+    This creats a new input widget. This widget accepts textual input
+    until the user hits enter, and then returns that text.
+
+    @param default: The default text that fills the input.
+
+    @param length: If set, the maximum number of characters that will be
+    returned by this input.
+
+    @param allow: If not None, then if an input character is not in this
+    string, it is ignored.
+
+    @param exclude: If not None, then if an input character is in this
+    set, it is ignored.
+    """
+
+    return add(renpy.display.behavior.Input(default, length=length, allow=allow, exclude=exclude, **properties))
 
 def image(filename, **properties):
     """
@@ -241,7 +327,7 @@ def imagemap(ground, selected, hotspots, unselected=None,
     """
     This is the widget that implements imagemaps. Parameters are
     roughtly the same as renpy.imagemap. The value of the hotspot is
-    returned when renpy.interact() returns.
+    returned when ui.interact() returns.
     """
 
     return add(renpy.display.image.ImageMap(ground, selected,
@@ -254,7 +340,7 @@ def button(clicked=None, **properties):
     This creates a button that can be clicked by the user. When this
     button is clicked or otherwise selected, the function supplied as
     the clicked argument is called. If it returns a value, that value
-    is returned from renpy.interact().
+    is returned from ui.interact().
 
     Buttons created with this function contain another widget,
     specifically the next widget to be added. As a convenience, one
@@ -272,7 +358,7 @@ def textbutton(text, clicked=None, text_style='button_text', **properties):
     This creates a button that is labelled with some text. When the
     button is clicked or otherwise selected, the function supplied as
     the clicked argument is called. If it returns a value, that value
-    is returned from renpy.interact().
+    is returned from ui.interact().
 
     @param text: The text of this button.
 
@@ -295,7 +381,7 @@ def imagebutton(idle_image, hover_image, clicked=None,
     while the second is the hover image, which is used when the mouse
     is over the image. If the button is clicked or otherwise selected,
     then the clicked argument is called. If it returns a value, that
-    value is returned from renpy.interact().
+    value is returned from ui.interact().
 
     @param idle_image: The file name of the image used when this
     button is idle.
@@ -337,7 +423,7 @@ def bar(width, height, range, value, clicked=None, **properties):
     widget. It is called with a single argument, which is the value
     corresponding to the location at which the mouse button was clicked.
     If this function returns a value, that value is returned from
-    renpy.interact().
+    ui.interact().
 
     For best results, if clicked is set then width should be at least
     twice as big as range.

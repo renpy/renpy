@@ -5,6 +5,19 @@ import pygame
 from pygame.constants import *
 
 import renpy
+from renpy.display.render import render
+import time
+
+def scale(num, base):
+    """
+    If num is a float, multiplies it by base and returns that. Otherwise,
+    returns num unchanged.
+    """
+
+    if isinstance(num, float):
+        return num * base
+    else:
+        return num
 
 class Null(renpy.display.core.Displayable):
     """
@@ -20,8 +33,11 @@ class Null(renpy.display.core.Displayable):
         self.width = width
         self.height = height
 
+    def get_placement(self):
+        return self.style
+
     def render(self, width, height, st):
-        return renpy.display.surface.Surface(self.width, self.height)
+        return renpy.display.render.Render(self.width, self.height)
 
 
 class Container(renpy.display.core.Displayable):
@@ -73,7 +89,7 @@ class Container(renpy.display.core.Displayable):
 
     def render(self, width, height, st):
 
-        rv = self.child.render(width, height, st)
+        rv = render(self.child, width, height, st)
         self.offsets = [ (0, 0) ]
         self.sizes = [ rv.get_size() ]
 
@@ -83,7 +99,10 @@ class Container(renpy.display.core.Displayable):
         return self.child.get_placement()
     
     def event(self, ev, x, y):
-        for i, (xo, yo)  in zip(self.children, self.offsets):
+        children_offsets = zip(self.children, self.offsets)
+        children_offsets.reverse()
+
+        for i, (xo, yo) in children_offsets: 
             rv = i.event(ev, x - xo, y - yo)    
             if rv is not None:
                 return rv
@@ -116,6 +135,67 @@ class Container(renpy.display.core.Displayable):
         for i in self.children:
             i.predict(callback)
 
+class Fixed(Container):
+    """
+    A container that lays out each of its children at fixed
+    coordinates determined by the position style of the child. Each
+    widget is given the whole area of this widget, and then placed
+    within that area based on its position style.
+
+    The result of this layout is the size of the entire area allocated
+    to it. So it's probably only viable for laying out a root window.
+
+    Fixed is used by the display core to render scene lists, and to
+    pass them off to transitions.
+    """
+
+    def __init__(self, style='default', **properties):
+        super(Fixed, self).__init__()
+        self.style = renpy.style.Style(style, properties)
+        self.times = [ ]
+
+    def add(self, widget, time=None):
+        super(Fixed, self).add(widget)
+        self.times.append(time)
+
+    def append_scene_list(self, l):
+        for tag, time, d in l:
+            self.add(d, time)
+
+    def get_widget_time_list(self):
+        return zip(self.children, self.times)
+            
+    def get_placement(self):
+        return self.style
+
+    def render(self, width, height, st):
+
+        self.offsets = [ ]
+        self.sizes = [ ]
+
+        rv = renpy.display.render.Render(width, height)
+
+        t = time.time()
+
+        for child, start in zip(self.children, self.times):
+
+            if start:
+                newst = t - start
+            else:
+                newst = st
+
+            surf = render(child, width, height, newst)
+
+            if surf:
+                self.sizes.append(surf.get_size())
+                offset = child.place(rv, 0, 0, width, height, surf)
+                self.offsets.append(offset)
+            else:
+                self.sizes.append((0, 0))
+                self.offsets.append((0, 0))
+
+        return rv
+
 class Position(Container):
     """
     Controls the placement of a displayable on the screen, using
@@ -141,7 +221,7 @@ class Position(Container):
 
     def render(self, width, height, st):
 
-        surf = self.child.render(width, height, st)
+        surf = render(self.child, width, height, st)
         cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
@@ -152,7 +232,76 @@ class Position(Container):
     def get_placement(self):
         return self.style
 
+class Grid(Container):
+    """
+    A grid is a widget that evenly allocates space to its children.
+    The child widgets should not be greedy, but should instead be
+    widgets that only use part of the space available to them.
+    """
+
+    def __init__(self, cols, rows, padding=0,
+                 style='default', **properties):
+        """
+        @param cols: The number of columns in this widget.
+
+        @params rows: The number of rows in this widget.
+        """
+
+        super(Grid, self).__init__()
+
+        self.style = renpy.style.Style(style, properties)
+
+        self.cols = cols
+        self.rows = rows
+
+        self.padding = padding
+
+    def render(self, width, height, st):
+
+        # For convenience and speed.
+        padding = self.padding
+        cols = self.cols
+        rows = self.rows
+
+        if len(self.children) != cols * rows:
+            raise Exception("Grid not completely full.")
+
+        renders = [ render(i, width, height, st) for i in self.children ]
+        self.sizes = [ i.get_size() for i in renders ]
+
+        cwidth = 0
+        cheight = 0
+
+        for w, h in self.sizes:
+            cwidth = max(cwidth, w)
+            cheight = max(cheight, h)
+
+        if self.style.xfill:
+            cwidth = (width - (cols - 1) * padding) / cols
+
+        if self.style.yfill:
+            cheight = (height - (rows - 1) * padding) / rows
+
+        width = cwidth * cols + padding * (cols - 1)
+        height = cheight * rows + padding * (rows - 1)
+
+        rv = renpy.display.render.Render(width, height)
+
+        self.offsets = [ ]
             
+        for y in range(0, rows):
+            for x in range(0, cols):
+
+                child = self.children[ x + y * cols ]
+                surf = renders[x + y * cols]
+
+                xpos = x * (cwidth + padding)
+                ypos = y * (cheight + padding)
+
+                offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
+                self.offsets.append(offset)
+
+        return rv
 
 class HBox(Container):
     """
@@ -192,7 +341,7 @@ class HBox(Container):
         for i in self.children:
 
             xoffsets.append(xo)
-            surf = i.render(remwidth, height, st)
+            surf = render(i, remwidth, height, st)
 
             sw, sh = surf.get_size()
 
@@ -209,7 +358,7 @@ class HBox(Container):
 
         width = xo - self.padding
         
-        rv = renpy.display.surface.Surface(width, myheight)
+        rv = renpy.display.render.Render(width, myheight)
 
         for surf, child, xo in zip(surfaces, self.children, xoffsets):
             sw, sh = surf.get_size()
@@ -259,7 +408,7 @@ class VBox(Container):
 
             yoffsets.append(yo)
 
-            surf = i.render(width, remheight, st)
+            surf = render(i, width, remheight, st)
 
             sw, sh = surf.get_size()
 
@@ -276,7 +425,7 @@ class VBox(Container):
 
         height = yo - self.padding
         
-        rv = renpy.display.surface.Surface(mywidth, height)
+        rv = renpy.display.render.Render(mywidth, height)
 
         for surf, child, yo in zip(surfaces, self.children, yoffsets):
 
@@ -288,39 +437,6 @@ class VBox(Container):
 
         return rv
     
-class Fixed(Container):
-    """
-    A container that lays out each of its children at fixed
-    coordinates determined by the position style of the child. Each
-    widget is given the whole area of this widget, and then placed
-    within that area based on its position style.
-
-    The result of this layout is the size of the entire area allocated
-    to it. So it's probably only viable for laying out a root window.
-    """
-
-    def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__()
-        self.style = renpy.style.Style(style, properties)
-
-    def get_placement(self):
-        return self.style
-
-    def render(self, width, height, st):
-
-        self.offsets = [ ]
-        self.sizes = [ ]
-
-        rv = renpy.display.surface.Surface(width, height)
-
-        for child in self.children:
-            surf = child.render(width, height, st)
-            self.sizes.append(surf.get_size())
-
-            offset = child.place(rv, 0, 0, width, height, surf)
-            self.offsets.append(offset)
-
-        return rv
 
 class Window(Container):
     """
@@ -353,43 +469,64 @@ class Window(Container):
         # save typing and screen space.
         style = self.style
 
+        xminimum = scale(style.xminimum, width)
+        yminimum = scale(style.yminimum, height)
+
+        left_margin = scale(style.left_margin, width)
+        left_padding = scale(style.left_padding, width)
+
+        right_margin = scale(style.right_margin, width)
+        right_padding = scale(style.right_padding, width)
+
+        top_margin = scale(style.top_margin, height)
+        top_padding = scale(style.top_padding, height)
+
+        bottom_margin = scale(style.bottom_margin, height)
+        bottom_padding = scale(style.bottom_padding, height)
+
+        # c for combined.
+        cxmargin = left_margin + right_margin
+        cymargin = top_margin + bottom_margin
+
+        cxpadding = left_padding + right_padding
+        cypadding = top_padding + bottom_padding
 
         # Render the child.
-        surf = self.child.render(width  - 2 * style.xmargin - 2 * style.xpadding,
-                                 height - 2 * style.ymargin - 2 * style.ypadding,
-                                 st)
+        surf = render(self.child,
+                      width  - cxmargin - cxpadding,
+                      height - cymargin - cypadding,
+                      st)
 
         sw, sh = surf.get_size()
 
         # If we don't fill, shrink our size to fit.
 
         if not style.xfill:
-            width = max(2 * style.xmargin + 2 * style.xpadding + sw, style.xminimum)
+            width = max(cxmargin + cxpadding + sw, xminimum)
 
         if not style.yfill:
-            height = max(2 * style.ymargin + 2 * style.ypadding + sh, style.yminimum)
+            height = max(cymargin + cypadding + sh, yminimum)
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.background:
-            bw = width  - 2 * style.xmargin
-            bh = height - 2 * style.ymargin
+            bw = width  - cxmargin
+            bh = height - cymargin
 
-            back = style.background.render(bw, bh, st)
+            back = render(style.background, bw, bh, st)
 
             rv.blit(back,
-                    (style.xmargin, style.ymargin))
+                    (left_margin, top_margin))
                     # (0, 0, bw, bh))
 
         offsets = self.child.place(rv,
-                                   style.xmargin + style.xpadding,
-                                   style.ymargin + style.ypadding,
-                                   width  - 2 * (style.xmargin + style.xpadding),
-                                   height - 2 * (style.ymargin + style.ypadding),
+                                   left_margin + left_padding, 
+                                   top_margin + top_padding,
+                                   width  - cxmargin - cxpadding,
+                                   height - cymargin - cypadding,
                                    surf)
-                         
 
         self.offsets = [ offsets ]
         self.sizes = [ (sw, sh) ]
@@ -435,7 +572,7 @@ class Pan(Container):
 
     def render(self, width, height, st):
 
-        surf = self.child.render(width, height, st)
+        surf = render(self.child, width, height, st)
         self.sizes = [ surf.get_size() ]
 
         x0, y0 = self.startpos
@@ -455,7 +592,7 @@ class Pan(Container):
 
         self.offsets = [ (-xo, -yo) ]
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         # print surf
 
@@ -465,7 +602,7 @@ class Pan(Container):
         # rv.blit(surf, (-xo, -yo))
 
         if st < self.time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return rv
 
@@ -520,13 +657,13 @@ class Move(Container):
 
     def render(self, width, height, st):
         self.st = st
-        rv = self.child.render(width, height, st)
+        rv = render(self.child, width, height, st)
 
         self.sizes = [ rv.get_size() ]
         self.offsets = [ (0, 0) ]
 
         if st < self.time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return rv
 

@@ -15,8 +15,12 @@ savegame_suffix = renpy.savegame_suffix
 
 def debug_dump(prefix, o, seen):
 
+    if isinstance(o, (int, str, float, bool)):
+        print prefix, o
+        return
+
     if id(o) in seen:
-        print prefix, id(o)
+        print prefix, "@%x" % id(o)
         return
 
     seen[id(o)] = True

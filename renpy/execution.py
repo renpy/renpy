@@ -36,8 +36,7 @@ class Context(object):
             oldsl = context.scene_lists
             self.runtime = context.runtime
 
-        import renpy.display.core as dcore
-        self.scene_lists = dcore.SceneLists(oldsl)
+        self.scene_lists = renpy.display.core.SceneLists(oldsl)
         
     def goto_label(self, node_name):
         """
