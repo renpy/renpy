@@ -3,6 +3,14 @@ import renpy
 # A list of style prefixes we care about, including no prefix.
 prefixes = [ 'hover_', 'idle_', 'activate_', '' ]
 
+substitutes = dict(
+    xmargin = [ 'left_margin', 'right_margin' ],
+    ymargin = [ 'top_margin', 'bottom_margin' ],
+
+    xpadding = [ 'left_padding', 'right_padding' ],
+    ypadding = [ 'top_padding', 'bottom_padding' ],
+    )
+
 class StyleManager(object):
     """
     This is the singleton object that is exported into the store as
@@ -76,6 +84,13 @@ class Style(object):
         self.build_cache()
 
     def __setattr__(self, key, value):
+
+        if key in substitutes:
+            for i in substitutes[key]:
+                self.__setattr__(i, value)
+                
+
+            return
 
         for prefix in prefixes:
             prefkey = prefix + key

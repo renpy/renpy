@@ -2382,18 +2382,68 @@ indent to quoted dialogue.
     128))
   </prop>
 
-  <prop name="xmargin">
-    The amount of transparent space that is left around this window in
-    the x direction, in pixels. If a floating point number, it is
-    scaled to the available width.
+  <prop name="left_margin">
+The amount of transparent space left to the left of this window. If a
+floating point number, it is scaled to the available width.
+  </prop>
 
+  <prop name="right_margin">
+The amount of transparent space left to the right of this window. If a
+floating point number, it is scaled to the available width.
+  </prop>
+
+  <prop name="top_margin">
+The amount of transparent space left to the top of this window. If a
+floating point number, it is scaled to the available height.
+  </prop>
+
+  <prop name="bottom_margin">
+The amount of transparent space left to the bottom of this window. If a
+floating point number, it is scaled to the available height.
+  </prop>
+
+  <prop name="xmargin">
+This is a convenient (and backwards compatible) way of setting 
+left_margin and right_margin to the same value.
+  </prop>
+
+  <prop name="ymargin">
+This is a convenient (and backwards compatible) way of setting 
+top_margin and bottom_margin to the same value.
+  </prop>
+ 
+  <prop name="left_padding">
+The amount of space left between the edge of the border and the 
+left side of the contents of the window. If a float, it is scaled to the 
+width of the window.
+  </prop>
+
+  <prop name="right_padding">
+The amount of space left between the edge of the border and the 
+right side of the contents of the window. If a float, it is scaled to the 
+width of the window.
+  </prop>
+
+  <prop name="top_padding">
+The amount of space left between the edge of the border and the 
+top side of the contents of the window. If a float, it is scaled to the 
+height of the window.
+  </prop>
+
+  <prop name="bottom_padding">
+The amount of space left between the edge of the border and the 
+bottom side of the contents of the window. If a float, it is scaled to the 
+height of the window.
   </prop>
 
   <prop name="xpadding">
-    The amount of space left between the edge of the background of the
-    window, and the edge of the content contained within this window,
-    in the x direction, in pixels. If a floating point number, it is
-    scaled to the available width.
+A convenient (and backwards compatible) way of setting
+left_padding and right_padding to the same value.
+  </prop>
+
+  <prop name="ypadding">
+A convenient (and backwards compatible) way of setting
+top_padding and bottom_padding to the same value.
   </prop>
 
   <prop name="xfill">
@@ -2401,29 +2451,16 @@ indent to quoted dialogue.
     x direction. If False, it will shrink to fit its contents.
   </prop>
 
+  <prop name="yfill">
+    If True, the window will expand to fill all available space in the
+    y direction. If False, it will shrink to fit its contents.
+  </prop>
+
   <prop name="xminimum">
     The minimum size of this window in the x direction, including
     margins and padding. If the window would be smaller than this, it
     is grown to be at least this size. If a floating point number, it is
     scaled to the available width.
-  </prop>
-
-  <prop name="ymargin">
-    The amount of transparent space that is left around this window in
-    the y direction, in pixels. If a floating point number, it is
-    scaled to the available height.
-  </prop>
-
-  <prop name="ypadding">
-    The amount of space left between the edge of the background of the
-    window, and the edge of the content contained within this window,
-    in the y direction, in pixels. If a floating point number, it is
-    scaled to the available height.
-  </prop>
-
-  <prop name="yfill">
-    If True, the window will expand to fill all available space in the
-    y direction. If False, it will shrink to fit its contents.
   </prop>
 
   <prop name="yminimum">

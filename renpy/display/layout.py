@@ -469,19 +469,32 @@ class Window(Container):
         # save typing and screen space.
         style = self.style
 
-        xmargin = scale(style.xmargin, width)
-        xpadding = scale(style.xpadding, width)
         xminimum = scale(style.xminimum, width)
-
-        ymargin = scale(style.ymargin, height)
-        ypadding = scale(style.ypadding, height)
         yminimum = scale(style.yminimum, height)
 
+        left_margin = scale(style.left_margin, width)
+        left_padding = scale(style.left_padding, width)
+
+        right_margin = scale(style.right_margin, width)
+        right_padding = scale(style.right_padding, width)
+
+        top_margin = scale(style.top_margin, height)
+        top_padding = scale(style.top_padding, height)
+
+        bottom_margin = scale(style.bottom_margin, height)
+        bottom_padding = scale(style.bottom_padding, height)
+
+        # c for combined.
+        cxmargin = left_margin + right_margin
+        cymargin = top_margin + bottom_margin
+
+        cxpadding = left_padding + right_padding
+        cypadding = top_padding + bottom_padding
 
         # Render the child.
         surf = render(self.child,
-                      width  - 2 * xmargin - 2 * xpadding,
-                      height - 2 * ymargin - 2 * ypadding,
+                      width  - cxmargin - cxpadding,
+                      height - cymargin - cypadding,
                       st)
 
         sw, sh = surf.get_size()
@@ -489,30 +502,30 @@ class Window(Container):
         # If we don't fill, shrink our size to fit.
 
         if not style.xfill:
-            width = max(2 * xmargin + 2 * xpadding + sw, xminimum)
+            width = max(cxmargin + cxpadding + sw, xminimum)
 
         if not style.yfill:
-            height = max(2 * ymargin + 2 * ypadding + sh, yminimum)
+            height = max(cymargin + cypadding + sh, yminimum)
 
         rv = renpy.display.render.Render(width, height)
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.background:
-            bw = width  - 2 * xmargin
-            bh = height - 2 * ymargin
+            bw = width  - cxmargin
+            bh = height - cymargin
 
             back = render(style.background, bw, bh, st)
 
             rv.blit(back,
-                    (style.xmargin, style.ymargin))
+                    (left_margin, top_margin))
                     # (0, 0, bw, bh))
 
         offsets = self.child.place(rv,
-                                   xmargin + xpadding,
-                                   ymargin + ypadding,
-                                   width  - 2 * (xmargin + xpadding),
-                                   height - 2 * (ymargin + ypadding),
+                                   left_margin + left_padding, 
+                                   top_margin + top_padding,
+                                   width  - cxmargin - cxpadding,
+                                   height - cymargin - cypadding,
                                    surf)
 
         self.offsets = [ offsets ]

@@ -234,7 +234,7 @@ def display_say(who, what, who_style='say_label',
     """
 
     # If we're going to do an interaction, then saybehavior needs
-    # to be here, right before ui.text.
+    # to be here.
     if interact:
         renpy.ui.saybehavior()
     
@@ -373,8 +373,7 @@ def with(trans):
         if renpy.game.preferences.transitions:
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
-                                                 trans_pause=True,
-                                                 suppress_overlay=True)
+                                                 trans_pause=True)
         else:
             return False
 
