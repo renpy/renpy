@@ -11,9 +11,12 @@
 
 import renpy
 
-# The basepath. Everything that is loaded is relative to this, at least
-# until we get around to implementing archive files.
+# The basepath.
 basepath = None
+
+# A list of paths that we search to load things. This is searched for
+# everything that can be loaded, before archives are used.
+searchpath = [ ]
 
 # A Script object, giving the script of the currently executing game.
 script = None

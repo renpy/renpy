@@ -1,4 +1,28 @@
 
+New in 4.2
+----------
+
+Ren'Py now ships with a common directory that is used to store the
+library files, as well as the files needed by a minimal game. (Such as
+a default font.) The idea here is to allow one to copy a game
+directory from one version of Ren'Py to another, and have it just
+work.
+
+One can upgrade from 4.1 to 4.2 by deleting script.rpy, script.rpyc,
+library.rpy, and library.rpyc, and then copying in the game
+directory. 
+
+We've also eliminated the default background images. To go back to the
+images used with Ren'Py 4.1, add the following lines to your script:
+
+[code]
+init:
+    $ style.mm_root_windows.background = Image("mainmenu.jpg")
+    $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("frame.png", 125, 25)
+[/code]
+
+
 New in 4.1
 ----------
 

@@ -52,7 +52,7 @@ label start:
     scene washington with fade
     show eileen vhappy with dissolve
 
-    "Girl" "Hi, and welcome to the Ren'Py 4.0 demo program."
+    "Girl" "Hi, and welcome to the Ren'Py 4 demo program."
 
     show eileen happy
 

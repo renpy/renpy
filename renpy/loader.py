@@ -27,9 +27,11 @@ def load(name):
     """
 
     # Look for the file directly.
-    fn = transfn(name)
-    if os.path.exists(fn):
+    try:
+        fn = transfn(name)
         return file(fn, "rb")
+    except:
+        pass
 
     # Look for it in archive files.
     for prefix, index in archives:
@@ -48,4 +50,13 @@ def load(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 def transfn(name):
-    return renpy.game.basepath + "/" + name
+    """
+    Tries to translate the name to a file that exists in one of the
+    searched directories.
+    """
+
+    for d in renpy.game.searchpath:
+        if os.path.exists(d + "/" + name):
+            return d + "/" + name
+
+    raise Exception("Couldn't find file '%s'." % name)

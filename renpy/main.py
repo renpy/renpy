@@ -126,9 +126,10 @@ def run():
 
     # And, we're done.
     
-def main(basepath_):
+def main(basepath):
 
-    game.basepath = basepath_
+    game.basepath = basepath
+    game.searchpath = [ "common", basepath ]
 
     # Load the script.
     game.script = renpy.script.load_script(game.basepath)

@@ -44,8 +44,13 @@ class Script(object):
         self.namemap = { }
         self.initcode = [ ]
 
-        # Find the script files to load.
-        dirlist = list(os.listdir(dir))
+        
+        # A list of all files in the search directories.
+        dirlist = [ ]
+
+        for dirname in renpy.game.searchpath:
+            for fn in os.listdir(dirname):
+                dirlist.append(dirname + "/" + fn)
 
         # Files to ensure (because they are the alts of files that
         # have been processed.)
@@ -55,8 +60,6 @@ class Script(object):
 
             if not (fn.endswith('.rpyc') or fn.endswith('.rpy')):
                 continue
-
-            fn = dir + '/' +  fn
 
             if fn in ignore:
                 continue
