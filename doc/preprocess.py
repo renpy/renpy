@@ -126,11 +126,11 @@ def main():
     s = f.read()
     f.close()
 
-    s = re.sub(r"(?s)<example>(.*?)</example>", example, s)
 
     s = re.sub(r"<!-- func (\S+) -->", function, s)
     s = re.sub(r"<!-- include (\S+) -->", include, s)
     s = re.sub(r"<!-- date -->", time.strftime("%04Y-%02m-%02d %02H:%02M"), s)
+    s = re.sub(r"(?s)<example>(.*?)</example>", example, s)
 
     print s
 

@@ -377,8 +377,11 @@ class With(Node):
         super(With, self).__init__(loc)
         self.expr = expr
 
+    
     def execute(self):
         trans = renpy.python.py_eval(self.expr)
+
+        # Code copied into exports.with
 
         if not trans:
             renpy.game.interface.with_none()

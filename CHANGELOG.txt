@@ -93,8 +93,45 @@ files. To make this easier, we now ship a batch file (called
 archive_images.bat) that automatically archives the images found in
 the game directory.
 
-Improved the comments in the default script, to make it a better
-example. 
+Added a new function renpy.wait that is equivalent to the wait
+statement, and made it and renpy.pause return True if they are
+interrupted, or False if the run to their natural completions. This
+now makes it possible to jump somewhere else when the user click,
+rather than blindly going to the next label. For example:
+
+[code]
+# Actually, this runs before the library main menu.
+label main_menu:
+    scene black
+
+    show text "American Bishoujo\nPresents" \
+         at Move((0.5, 0.0), (0.5, 0.5), 3.0,
+                 xanchor='center', yanchor='bottom')
+
+    if renpy.pause(6):
+        jump _library_main_menu
+
+    show text "A PyTom Game" at Position(xpos=0.5, ypos=0.5,
+                                         xanchor="center", yanchor="bottom")
+
+    if renpy.with(fade) or renpy.pause(4):
+        jump _library_main_menu
+
+    $ renpy.transition(fade)
+    jump _library_main_menu
+[code]
+
+
+
+Updated renpy-mode.el to add imenu support, so (X)Emacs users can use
+the speedbar to jump around in a script. If you don't know what this
+means, you probably don't care.
+
+Improved the comments in the demo script, to make it a better
+example. Added a syntax-highlighted version of the demo script to the
+tutorial, to make it easier on peoples eyes.
+
+
 
 New in 4.1
 ----------

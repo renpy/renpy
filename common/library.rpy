@@ -148,7 +148,7 @@ label _library_main_menu:
 label _continue:
     $ renpy.call_in_new_context("_load_menu")
 
-    jump _main_menu
+    jump _library_main_menu
     
 
 ##############################################################################

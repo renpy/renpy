@@ -91,7 +91,7 @@ class SayBehavior(renpy.display.layout.Null):
         if ev.type == renpy.display.core.DISPLAYTIME and \
            self.delay and \
            ev.duration > self.delay:
-            return True
+            return False
 
         if ev.type == MOUSEBUTTONDOWN:
             if ev.button == 1:

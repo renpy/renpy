@@ -1375,7 +1375,10 @@ python:
     that label is jumped to as the main menu. Otherwise, the library
     main menu is displayed. While library.main_menu allows this menu
     to be customized, the default main menu calles the label "start"
-    when the user chooses "Start Game".
+    when the user chooses "Start Game". The library main menu can
+    also be manually accessed by jumping to _library_main_menu, this
+    is useful if you want to display an intro before the menu is
+    shown.
 
   </p>
 
@@ -1653,6 +1656,8 @@ e "My name is shown in full, and in green."
   <!-- func Character -->
 
   <!-- func renpy.pause -->
+
+  <!-- func renpy.input -->
 
   <!-- func renpy.input -->
 
@@ -2446,6 +2451,15 @@ init:
   <h3>Style Index</h3>
   
   <styleindex/>
+
+  <h3>Example Script</h3>
+
+  <p>
+    For your browsing pleasure, we present a syntax-highlighted
+    version of the <a href="example.html">demo that ships with
+      Ren'Py</a>. The start of this script has been commented to make
+    it easier to understand.
+  </p>
 
 </doc>
 

@@ -280,6 +280,10 @@ def pause(delay=None, music=None):
     the background music that we will delay until. If music is
     playing, this takes precedence, otherwise the delay parameter
     take precedence.
+
+    Returns True if the pause was interrupted by the user hitting a key
+    or clicking a mouse, or False if the pause was ended by the appointed
+    time being reached.
     """
 
     if music is not None:
@@ -291,8 +295,27 @@ def pause(delay=None, music=None):
     sayb = renpy.display.behavior.SayBehavior(delay=delay)
     scene_list_add('transient', sayb)
     
-    interact()
-    
+    return interact()
+
+def with(trans):
+    """
+    Behaves identically to a with statement. The only reason to use this
+    over a Ren'Py with statement is to get at the return code, which is
+    True if the transition was interrupted, or False otherwise.
+    """
+
+    # Code basically copied from ast.With.execute.
+    if not trans:
+        renpy.game.interface.with_none()
+        return False
+    else:
+        if renpy.game.preferences.transitions:
+            renpy.game.interface.set_transition(trans)
+            return renpy.game.interface.interact(show_mouse=False,
+                                                 trans_pause=True,
+                                                 suppress_overlay=True)
+        else:
+            return False
 
 def rollback():
     """

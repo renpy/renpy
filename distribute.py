@@ -91,6 +91,7 @@ def main():
               license=license)
 
     doc_files = [
+        'example.html',
         'tutorial.html',
         'style.css',
         ]
