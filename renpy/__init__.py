@@ -18,6 +18,7 @@ import renpy.parser
 import renpy.python # object
 import renpy.script
 import renpy.style
+import renpy.sound
 
 import renpy.display 
 import renpy.display.core # object

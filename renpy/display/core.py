@@ -337,6 +337,7 @@ class Display(object):
 
         # It shouldn't matter if pygame is already initialized.
         pygame.init()
+        renpy.sound.init()
 
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0

@@ -103,6 +103,9 @@ def main():
     copy_tree(gamedir, target + "/game",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
+    copy_tree("common", target + "/common",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
     def cp(x, license=""):
         copy_file(x, target + "/" + x)
 
@@ -112,6 +115,7 @@ def main():
     cp("run_game.py", license=license)
     cp("archiver.py", license=license)
     cp("build_exe.py", license=license)
+    cp("add_from.py", license=license)
     cp("renpy-mode.el")
     
        

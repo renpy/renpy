@@ -416,7 +416,7 @@ class ImageMap(renpy.display.core.Displayable):
 
 
     def __init__(self, ground, selected, hotspots,
-                 style='image_placement', **properties):
+                 style='imagemap', **properties):
 
         self.ground = ground
         self.selected = selected
@@ -465,11 +465,17 @@ class ImageMap(renpy.display.core.Displayable):
             self.active = active
             renpy.game.interface.redraw(0)
 
+            if active is not None:
+                renpy.sound.play(self.style.hover_sound)
+
+
         if active is None:
             return None
 
         if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
            (ev.type == KEYDOWN and ev.key == K_RETURN):
+
+            renpy.sound.play(self.style.activate_sound)
 
             return result
 

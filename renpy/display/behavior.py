@@ -137,6 +137,13 @@ class Menu(renpy.display.layout.VBox):
         self.selected = None
         self.results = [ ]
 
+        self.caption_style = renpy.style.Style('menu_caption', { })
+        self.selected_style = renpy.style.Style('menu_choice', { })
+        self.unselected_style = renpy.style.Style('menu_choice', { })
+
+        self.selected_style.set_prefix('hover_')
+        self.unselected_style.set_prefix('idle_')
+
         for i, (caption, result) in enumerate(menuitems):
             self.add(renpy.display.text.Text(caption))
 
@@ -157,14 +164,14 @@ class Menu(renpy.display.layout.VBox):
 
             # Captions should stay the default text color.
             if result is None:
-                child.set_style('menu_caption')
+                child.set_style(self.caption_style)
                 continue
 
             # Actual choices change color if they are selected or not.
             if i == self.selected:
-                child.set_style('menu_selected')
+                child.set_style(self.selected_style)
             else:
-                child.set_style('menu_unselected')
+                child.set_style(self.unselected_style)
 
 
     def event(self, ev, x, y):
@@ -193,6 +200,7 @@ class Menu(renpy.display.layout.VBox):
                 return None
 
             if self.results[target] is not None:
+                renpy.sound.play(self.selected_style.activate_sound)
                 return self.results[target]
 
         # Change selection based on keypress.
@@ -219,13 +227,16 @@ class Menu(renpy.display.layout.VBox):
 
         # Make selection based on keypress.
         if ev.type == KEYDOWN and ev.key == K_RETURN:
+            renpy.sound.play(self.selected_style.activate_sound)
             return self.results[self.selected]
             
         # If the selected item changed, update the display.
         if self.selected != old_selected:
 
-            self.children[self.selected].set_style('menu_selected')
-            self.children[old_selected].set_style('menu_unselected')
+            self.children[self.selected].set_style(self.selected_style)
+            self.children[old_selected].set_style(self.unselected_style)
+
+            renpy.sound.play(self.selected_style.hover_sound)
 
             renpy.game.interface.redraw(0)
 
@@ -270,12 +281,15 @@ class Button(renpy.display.layout.Window):
                 self.old_hover = inside
                 self.set_hover(inside)
 
+                if inside:
+                    renpy.sound.play(self.style.hover_sound)
+
+
         if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
                (ev.type == KEYDOWN and ev.key == K_RETURN):
             if inside:
+                renpy.sound.play(self.style.activate_sound)
                 return self.clicked()
-
-        
 
         return None
 

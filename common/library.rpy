@@ -363,6 +363,8 @@ label _prefs_screen:
               [ ('Window', False), ('Fullscreen', True) ] ),
             ( 'Music', 'music',
               [ ('Enabled', True), ('Disabled', False) ] ),
+            ( 'Sound Effects', 'sound',
+              [ ('Enabled', True), ('Disabled', False) ] ),
             ]
 
         prefs_right = [
@@ -371,6 +373,9 @@ label _prefs_screen:
             ('Transitions', 'transitions',
              [ ('All', 2), ('Some', 1), ('None', 0) ]),
             ]
+
+        if config.annoying_text_cps:
+            prefs_right.append(('Text Display', 'fast_text', [ ('Slow', False), ('Fast', True) ]))
 
         vbox_left = renpy.VBox(padding=library.padding * 3, style='prefs_left')
 

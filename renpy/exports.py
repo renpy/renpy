@@ -12,6 +12,7 @@ from renpy.display.image import *
 
 from renpy.curry import curry
 from renpy.music import music_start, music_stop
+from renpy.sound import play
 from renpy.loadsave import *
 
 import time
@@ -176,9 +177,7 @@ def display_menu(items, window_style='menu_window'):
     menu = Menu(items)
     win = Window(menu, style=window_style)
 
-    scene_list_add('transient', win)
-
-    rv = interact()
+    rv = interact(win)
     checkpoint()
 
     return rv
@@ -226,19 +225,17 @@ def display_say(who, what, who_style='say_label',
         label = text.Text(who, style=who_style, **properties)
         vbox.add(label)
 
-    line = text.Text(what, style=what_style)
+    line = text.Text(what, style=what_style, slow=True)
     vbox.add(line)
 
     window = layout.Window(vbox, style=window_style)
     saybehavior = behavior.SayBehavior()
 
-    scene_list_add('transient', window)
-    scene_list_add('transient', saybehavior)
-
-    interact()
+    interact(saybehavior, window)
     checkpoint()
 
-def imagemap(ground, selected, hotspots, overlays=False):
+def imagemap(ground, selected, hotspots, overlays=False,
+             style='imagemap', **properties):
     """
     Displays an imagemap. An image map consists of two images and a
     list of hotspots that are defined on that image. When the user
@@ -264,7 +261,7 @@ def imagemap(ground, selected, hotspots, overlays=False):
     is active. If False, the overlays are suppressed.
     """
 
-    imagemap = ImageMap(ground, selected, hotspots)
+    imagemap = ImageMap(ground, selected, hotspots, style=style, **properties)
     keymouse = KeymouseBehavior()
 
     rv = interact(keymouse, imagemap)

@@ -52,6 +52,10 @@ init -250:
         style.default.xanchor = 'left'
         style.default.yanchor = 'top'
 
+        # Sound properties.
+        style.default.hover_sound = None
+        style.default.activate_sound = None
+
         # The base style for the large windows.
         style.create('window', 'default',
                      '(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.')
@@ -107,17 +111,11 @@ init -250:
                      """(text) The style that is used to render a menu
                      caption.""")
 
-        style.create('menu_selected', 'default',
-                     """(text) The style that is used to render a
-                     selected menu choice.""")
+        style.create('menu_choice', 'default',
+                     """(text, hover, sound) The style that is used to render a menu choice.""")
 
-        style.menu_selected.color = (255, 255, 0, 255) # yellow
-
-        style.create('menu_unselected', 'default',
-                     """(text) The style that is used to render an
-                     unselected menu choice.""")
-
-        style.menu_unselected.color = (0, 255, 255, 255) # cyan
+        style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
+        style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
         style.create('menu_window', 'window',
                      '(window, position) The default style for windows containing a menu.') 
@@ -154,10 +152,14 @@ init -250:
         style.centered_text.textalign = 0.5
                       
            
+        # Styles that are used by imagemaps
+        style.create('imagemap', 'image_placement',
+                     '(sound, position) The style that is used for imagemaps.')
+
 
         # Styles that are used by all Buttons.
         style.create('button', 'default',
-                     '(window, hover) The default style used for buttons in the main and game menus.')
+                     '(window, sound, hover) The default style used for buttons in the main and game menus.')
 
         style.button.xpos = 0.5
         style.button.xanchor = 'center'
@@ -169,6 +171,7 @@ init -250:
         style.button_text.xanchor = 'center'
         style.button_text.size = 24
         style.button_text.color = (0, 255, 255, 255)
+        style.button_text.hover_color = (128, 255, 255, 255)
         
         # Selected button.
         style.create('selected_button', 'button',
@@ -184,12 +187,13 @@ init -250:
         style.create('disabled_button', 'button',
                      '(window, hover) The style that is used for a disabled button.')
 
+        style.disabled_button.hover_sound = None
+        style.disabled_button.activate_sound = None
+
         style.create('disabled_button_text', 'button_text',
                      '(text, hover) The style that is used for the label of a disabled button.')
                      
         style.disabled_button_text.color = (128, 128, 128, 255)
-        
-
 
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',

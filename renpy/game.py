@@ -79,8 +79,10 @@ class Preferences(object):
     """
     def reinit(self):
         self.fullscreen = False
+        self.sound = True
         self.music = True
         self.skip_unseen = False
+        self.fast_text = False
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.

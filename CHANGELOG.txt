@@ -50,7 +50,26 @@ main menu with something of your own devising. Changed the
 documentation to reflect this, as well as the changes in startup that
 happened in 4.1.
 
+Added a program called "add_from", which adds from clauses to all bare
+call statements found in the program. 
 
+Replaced the menu_selected and menu_unselected styles with a single
+menu_choice style which participates in the hover protocol. This may
+change user code, if you change the menu colors. To fix this, replace
+style.menu_selected.color with style.menu_choice.hover_color, and 
+style.menu_unselected.color with style.menu_choice.idle_color.
+
+Added the ability to play sound effects, by calling the renpy.play
+function. Added a preference that allows the user to control if 
+sound effects are played or not.
+
+Added sound styles, which are used to define the sounds that are
+played when buttons, imagemaps, and menu choices are hovered and
+activated. (By default, no such sounds are played.)
+
+Implemented that annoying thing where text is typed on the screen one
+character at a time. Also added a preference that allows the user to
+disable it.
 
 
 New in 4.1

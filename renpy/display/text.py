@@ -1,4 +1,6 @@
 import pygame
+from pygame.constants import *
+
 import renpy
 
 _font_cache = { }
@@ -37,9 +39,11 @@ class Text(renpy.display.core.Displayable):
     
     """
 
-    def __init__(self, text, style='default', **properties):
+    def __init__(self, text, slow=False, style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
+
+        @param slow: If True, the text will be slowly typed onto the screen.
 
         @param style: A style that will be applied to the text.
 
@@ -49,6 +53,7 @@ class Text(renpy.display.core.Displayable):
 
         self.text = text
         self.style = renpy.style.Style(style, properties)
+        self.slow = slow
 
     def get_placement(self):
         return self.style
@@ -61,12 +66,12 @@ class Text(renpy.display.core.Displayable):
         self.text = new_text
         self._update()
 
-    def set_style(self, style, **properties):
+    def set_style(self, style):
         """
         Changes the style assocated with this object.
         """
 
-        self.style = renpy.style.Style(style, properties)
+        self.style = style
         self._update()
 
     def _update(self):
@@ -143,7 +148,21 @@ class Text(renpy.display.core.Displayable):
         surf = renpy.display.surface.Surface(self.width + dsxo, self.height + dsyo)
         font = get_font(self.style.font, self.style.size)
 
-        lines = self.laidout.split('\n')
+        laidout = self.laidout
+
+        # Annoying text hack.
+        if self.slow and renpy.config.annoying_text_cps and not renpy.game.preferences.fast_text:
+            chars = int(st * renpy.config.annoying_text_cps)
+            if chars < len(laidout):
+                laidout = laidout[:chars]
+                renpy.game.interface.redraw(0)
+            else:
+                self.slow = False
+        else:
+            self.slow = False
+
+
+        lines = laidout.split('\n')
 
         # Common rendering code.
         def render_lines(x, y, color):
@@ -164,6 +183,20 @@ class Text(renpy.display.core.Displayable):
         render_lines(0, 0 + fudge, self.style.color)
 
         return surf
+
+    def event(self, ev, x, y):
+        """
+        Space, Enter, or Click ends slow, if it's enabled.
+        """
+
+        if not self.slow:
+            return None
+
+        if ( ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
+           ( ev.type == KEYDOWN and (ev.key == K_RETURN or ev.key == K_SPACE)):
+
+            self.slow = False
+            raise renpy.display.core.IgnoreEvent()
 
 ## Not needed any more.
     

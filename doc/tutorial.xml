@@ -1640,7 +1640,30 @@ init:
   </p>
 
 
-  <h3>Music Functions</h3>
+  <h3>Sound and Music Functions</h3>
+
+  <h4>Sound</h4>
+
+  <p>
+    Ren'py supports playing sounds in the background, using the
+    renpy.play function. These sounds must be in wav files, but 
+    may live in an archive file.
+  </p>
+  
+  <!-- func renpy.play -->
+
+  <example>
+$ renpy.play("quindar.wav")
+e "Ground control to Major Tom."
+  </example>
+  
+  <p>
+    Sounds can also be associated with buttons, menu choices, and
+    imagemaps becoming hovered and activated. See the section on 
+    sound properties in styles for how to used this.
+  </p>
+
+  <h4>Music</h4>
 
   <p>
     Ren'Py supports playing music in the background of your
@@ -1804,10 +1827,24 @@ init:
       1/20th of a second when the keymouse is being used.
     </var>
 
+    <var name="config.sound_sample_rate" value="44100">
+      The sample rate that the sound card will be run at. If all of
+      your wav files are of a lower rate, changing this to that rate
+      may make things more efficent.
+    </var>
+
     <var name="config.overlay_functions" value="[ ]">
       A list of functions. When called, each function is expected to
       return a list of displayables, which are added to the overlay 
       list. See the section on overlays for more.
+    </var>
+
+    <var name="config.annoying_text_cps" value="None">
+      If not None, dialogue and thoughts will be "typed" onto the
+      screen a few characters at a time. The value of this is the
+      number of characters that will be typed onto the screen in a
+      second. I strongly reccomend keeping this None. Not only does
+      this interact poorly with the rest of Ren'Py, it's annoying. 
     </var>
 
     <var name="library.file_page_length" value="4">
@@ -2060,6 +2097,27 @@ init:
     dimension. This can be one of 'top', 'center', or 'bottom'.
   </prop>
 
+  <h4>Sound Properties</h4>
+
+  <p>
+    Some widgets can take sound style properties. These widgets can cause
+    a sound to play when they become hovered (see below), and also
+    when they are selected. Currently, the styles that can take sound
+    properties belong to buttons, imagemaps, and menu choices. Sound
+    style properties are either the name of a wav file which is played
+    with renpy.play when appropriate event occurs, or None to disable
+    sound playback.
+  </p>
+
+  <prop name="hover_sound">
+    The sound to play when this widget becomes hovered.
+  </prop>
+  
+  <prop name="activate_sound">
+    The sound to play when the widget is activated, by clicking on or
+    otherwise selecting it.
+  </prop>
+
   <h4>Hovering</h4>
   
   <p>
@@ -2083,7 +2141,7 @@ init:
   <example>
 init:
     style.button.hover_background = Solid((255, 255, 255, 255))
-    style.button.idle_background = Solid(0, 0, 0, 255))
+    style.button.idle_background = Solid((0, 0, 0, 255))
   </example>
 
   
