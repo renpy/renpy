@@ -12,20 +12,13 @@ class Transition(renpy.display.core.Displayable):
     def __init__(self, delay):
         self.delay = delay
         self.offsets = [ ]
+        self.events = True
         
     def event(self, ev, x, y):
-        event_list = self.new_scene_list[:]
-        event_list.reverse()
-
-        offsets = self.offsets[:]
-        offsets.reverse()
-
-        for (key, st, disp), (xo, yo) in zip(event_list, offsets):
-            rv = disp.event(ev, x - xo, y - yo)
-            if rv is not None:
-                return rv
-
-        return None
+        if self.events:
+            return self.new_widget.event(ev, x, y)
+        else:
+            return None
 
 class Fade(Transition):
     """
@@ -35,15 +28,15 @@ class Fade(Transition):
     """
 
     def __init__(self, out_time, hold_time, in_time,
-                 old_scene_list, new_scene_list, color=(0, 0, 0)):
+                 old_widget, new_widget, color=(0, 0, 0)):
 
         super(Fade, self).__init__(out_time + hold_time + in_time)
 
         self.out_time = out_time
         self.hold_time = hold_time
         self.in_time = in_time
-        self.old_scene_list = old_scene_list
-        self.new_scene_list = new_scene_list
+        self.old_widget = old_widget
+        self.new_widget = new_widget
         self.color = color
 
         # self.frames = 0
@@ -60,26 +53,24 @@ class Fade(Transition):
         events = False
 
         if st < self.out_time:
-            scene_list = self.old_scene_list
+            widget = self.old_widget
             alpha = int(255 * (st / self.out_time))
 
         elif st < self.out_time + self.hold_time:
-            scene_list = None
+            widget = None
             alpha = 255
 
         else:
-            scene_list = self.new_scene_list
+            widget = self.new_widget
             alpha = 255 - int(255 * ((st - self.out_time - self.hold_time) / self.in_time))
             events = True
 
-        if scene_list:
-            surf, offsets = renpy.display.core.render_scene_list(scene_list,
-                                                                 width,
-                                                                 height)
+        if widget:
+            surf = widget.render(width, height, st)
+            
             rv.blit(surf, (0, 0))
 
-            if events:
-                self.offsets = offsets
+        self.events = events 
 
         # Just to be sure.
         if alpha < 0:
@@ -97,19 +88,17 @@ class Fade(Transition):
 
 class Dissolve(Transition):
 
-    def __init__(self, time, old_scene_list, new_scene_list):
+    def __init__(self, time, old_widget, new_widget):
         super(Dissolve, self).__init__(time)
 
         self.time = time
-        self.old_scene_list = old_scene_list
-        self.new_scene_list = new_scene_list
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = True
 
     def render(self, width, height, st):
-
-        rsl = renpy.display.core.render_scene_list
-
-        rv, offsets = rsl(self.old_scene_list, width, height)
-        surftree, self.offsets = rsl(self.new_scene_list, width, height)
+        rv = self.old_widget.render(width, height, st)
+        surftree = self.new_widget.render(width, height, st)
         surf = surftree.pygame_surface(False)
 
         alpha = min(255, int(255 * st / self.time))

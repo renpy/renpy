@@ -1,6 +1,8 @@
 New in 4.5
 ----------
 
+Explicit layout phase!
+
 Changeable mouse pointer?
 
 Cache text?

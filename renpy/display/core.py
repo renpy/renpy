@@ -171,8 +171,7 @@ class Displayable(renpy.object.Object):
         dest.blit(surf, (xoff, yoff))
 
         return xoff, yoff
-        
-        
+
 
 class SceneLists(object):
     """
@@ -304,38 +303,37 @@ class SceneLists(object):
 
         setattr(self, listname, nl)
     
-def render_scene_list(sl, width, height):
-    """
-    This renders the scene list sl, and returns a rendered
-    renpy Surface containing the rendered scene list.
+# def render_scene_list(sl, width, height):
+#     """
+#     This renders the scene list sl, and returns a rendered
+#     renpy Surface containing the rendered scene list.
 
-    @returns: The surface, and the offset of each member of the
-    list relative to the surface.
-    """
+#     @returns: The surface, and the offset of each member of the
+#     list relative to the surface.
+#     """
 
-    t = time.time()
+#     t = time.time()
 
-    surftree = renpy.display.surface.Surface(width, height)
-    offsets = [ ]
+#     surftree = renpy.display.surface.Surface(width, height)
+#     offsets = [ ]
 
-    if renpy.config.background:
-        surftree.fill(renpy.config.background)
+#     if renpy.config.background:
+#         surftree.fill(renpy.config.background)
 
-    for key, base_start_time, d in sl:
+#     for key, base_start_time, d in sl:
 
-        surf = d.render(width, height, t - base_start_time)
+#         surf = d.render(width, height, t - base_start_time)
 
-        if not surf:
-            offsets.append((0, 0))
-            continue
+#         if not surf:
+#             offsets.append((0, 0))
+#             continue
 
-        # Place the surface.
-        offset = d.place(surftree, 0, 0, width, height, surf)
+#         # Place the surface.
+#         offset = d.place(surftree, 0, 0, width, height, surf)
 
-        offsets.append(offset)
+#         offsets.append(offset)
 
-    return surftree, offsets
-    
+#     return surftree, offsets
 
 class Display(object):
     """
@@ -442,7 +440,7 @@ class Display(object):
         pygame.display.update(updates)
             
         
-    def show(self, transient, suppress_blit):
+    def show(self, root_widget, suppress_blit):
         """
         Draws the current transient screen list to the screen.
         
@@ -450,9 +448,9 @@ class Display(object):
         relative to the screen.
         """
 
-        surftree, rv = render_scene_list(transient,
-                                         renpy.config.screen_width,
-                                         renpy.config.screen_height)
+        surftree = root_widget.render(renpy.config.screen_width,
+                                      renpy.config.screen_height,
+                                      0)
 
 
         # self.window.set_clip((0, 0, 800, 100))
@@ -465,12 +463,11 @@ class Display(object):
                 # We don't need to undraw the mouse.
                 self.mouse_location = None
 
+            pygame.display.update()
+
         self.suppress_mouse = suppress_blit
 
-        pygame.display.update()
         
-        return rv
-
     def save_screenshot(self, filename):
         """
         Saves a full-size screenshot in the given filename.
@@ -509,7 +506,7 @@ class Interface(object):
     taken.
 
     @ivar old_scene: The last thing that was displayed to the screen, not
-    counting overlays and things like that.
+    counting underlays and things like that.
 
     @ivar transition: If not None, the transition to be applied for the
     next interaction.
@@ -529,7 +526,7 @@ class Interface(object):
         self.profile_time = time.time()
         self.screenshot = None
         self.redraw_time = 0.0
-        self.old_scene = [ ]
+        self.old_scene = None
         self.transition = None
         self.supress_transition = False
         self.quick_quit = False
@@ -581,7 +578,8 @@ class Interface(object):
         """
 
         scene_lists = renpy.game.context().scene_lists
-        self.old_scene = scene_lists.master[:]
+        self.old_scene = renpy.display.layout.Fixed()
+        self.old_scene.append_scene_list(scene_lists.master)
 
     def set_transition(self, transition):
         """
@@ -598,6 +596,7 @@ class Interface(object):
         """
 
         return pygame.event.wait()
+
 
     def interact(self, transient=None, show_mouse=True,
                  trans_pause=False,
@@ -678,43 +677,33 @@ class Interface(object):
             transient = scene_lists.transient 
 
 
-        # Figure out the display list.
-        current_scene = scene_lists.master + transient + overlay
-        
-        if self.transition and not self.supress_transition:
-            trans = self.transition(self.old_scene, current_scene)
+        # The root widget of everything that is displayed on the screen.
+        root_widget = renpy.display.layout.Fixed() 
+        root_widget.append_scene_list(underlay)
 
-            transition_scene = [ (None, start_time, trans) ]
+        # The root widget of the normal stuff.
+        current_scene = renpy.display.layout.Fixed()
+        current_scene.append_scene_list(scene_lists.master + transient + overlay)
+        
+        if self.transition and self.old_scene and not self.supress_transition:
+            trans = self.transition(self.old_scene, current_scene)
+            root_widget.add(trans, start_time)
 
             if trans_pause:
                 sb = renpy.display.behavior.SayBehavior()
-                transition_scene.append((None, start_time, sb))
+                root_widget.add(sb, start_time)
 
                 pb = renpy.display.behavior.PauseBehavior(trans.delay)
-                transition_scene.append((None, start_time, pb))
+                root_widget.add(pb, start_time)
         else:
-            transition_scene = current_scene
+            root_widget.add(current_scene, start_time)
 
+        # Reset this for next time.
         self.transition = None
         self.supress_transition = False
 
-        # The list of things to be displayed.
-        display_list = underlay + transition_scene
-
-        # This list of things recieving events.
-        event_list = display_list[:]
-
-        # Compute the reversed list, which is in the right order
-        # for handling events on.
-        event_list.reverse()
-
         # Redraw the screen during every interaction.
         self.needs_redraw = True
-
-        # This list of offsets will be filled in before we need
-        # it. It's kept in reverse order of the transient list
-        # (The same order as rev_transient.)
-        offsets = [ ]
 
         # Post an event that moves us to the current mouse position.
         pygame.event.post(pygame.event.Event(MOUSEMOTION,
@@ -744,9 +733,8 @@ class Interface(object):
                     draw_start = time.time()
                     self.redraw_time = draw_start + 365.25 * 86400.0
 
-                    offsets = self.display.show(display_list, suppress_blit)
-                    offsets.reverse()
-
+                    self.display.show(root_widget, suppress_blit)
+                    
                     # frames = frames + 1
 
                     # If profiling is enabled, report the profile time.
@@ -813,11 +801,10 @@ class Interface(object):
 
                     x, y = pygame.mouse.get_pos()
 
-                    for (k, t, d), (xo, yo) in zip(event_list, offsets):
-                        rv = d.event(ev, x - xo, y - yo)
+                    rv = root_widget.event(ev, x, y)
 
-                        if rv is not None:
-                            break
+                    if rv is not None:
+                        break
 
                 except IgnoreEvent:
                     pass

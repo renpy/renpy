@@ -5,6 +5,7 @@ import pygame
 from pygame.constants import *
 
 import renpy
+import time
 
 class Null(renpy.display.core.Displayable):
     """
@@ -86,7 +87,10 @@ class Container(renpy.display.core.Displayable):
         return self.child.get_placement()
     
     def event(self, ev, x, y):
-        for i, (xo, yo)  in zip(self.children, self.offsets):
+        children_offsets = zip(self.children, self.offsets)
+        children_offsets.reverse()
+
+        for i, (xo, yo) in children_offsets: 
             rv = i.event(ev, x - xo, y - yo)    
             if rv is not None:
                 return rv
@@ -305,7 +309,17 @@ class Fixed(Container):
     def __init__(self, style='default', **properties):
         super(Fixed, self).__init__()
         self.style = renpy.style.Style(style, properties)
+        self.times = [ ]
 
+    def add(self, widget, time=None):
+        super(Fixed, self).add(widget)
+        self.times.append(time)
+
+    def append_scene_list(self, l):
+        for tag, time, d in l:
+            self.add(d, time)
+            
+        
     def get_placement(self):
         return self.style
 
@@ -316,12 +330,24 @@ class Fixed(Container):
 
         rv = renpy.display.surface.Surface(width, height)
 
-        for child in self.children:
-            surf = child.render(width, height, st)
-            self.sizes.append(surf.get_size())
+        t = time.time()
 
-            offset = child.place(rv, 0, 0, width, height, surf)
-            self.offsets.append(offset)
+        for child, start in zip(self.children, self.times):
+
+            if start:
+                newst = t - start
+            else:
+                newst = st
+
+            surf = child.render(width, height, newst)
+
+            if surf:
+                self.sizes.append(surf.get_size())
+                offset = child.place(rv, 0, 0, width, height, surf)
+                self.offsets.append(offset)
+            else:
+                self.sizes.append((0, 0))
+                self.offsets.append((0, 0))
 
         return rv
 
