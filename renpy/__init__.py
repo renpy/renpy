@@ -2,7 +2,7 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 4.7"
+version = "Ren'Py 4.7.2"
 script_version = 7
 savegame_suffix = "-7.save"
 
