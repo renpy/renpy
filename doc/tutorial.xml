@@ -2174,14 +2174,14 @@ the file picker.
       thumbnail is shown to the user.
     </var>
       
-    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Quit Game", "_quit") ]'>
+    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Preferences", "_preferences"), ("Quit Game", "_quit") ]'>
       This is used to give the main menu that is shown to the user
       when the game first starts. It is a list of tuples, where the
       first element of each tuple is the title of the menu button, and
       the second element is a label that we jump to when that button
-      is selected. Two useful labels to use here are "_continue",
-      which brings up the game menu in load mode, and "_quit", which
-      terminates Ren'Py.
+      is selected. Some useful labels to use here are "_continue",
+      which brings up the game menu in load mode, "_preferences", which brings up the preferences screen, 
+      and "_quit", which terminates Ren'Py.
     </var>
     
     <var name="library.has_music" value="True">

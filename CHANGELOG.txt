@@ -1,32 +1,40 @@
-Test that loading and saving still works.
+New in 4.6
 
-Init code now runs in order.
+The demo was updated to show some of the new features listed below.
 
-Test renpy.input()
+There's now a third state that hovered widgets can go into. The
+activate state is enabled when a button is clicked or a menu choice is
+selected. The activate state can only be seen when a transition occurs
+immediately after a button is clicked or a menu choice is selected.
 
-Suppress transitions when skipping.
+The margin and padding properties have been broken up, so it's now
+possible to specify margin and padding for the left, right, top, and
+bottom of a windows. 
 
-library.enter_transition
-library.exit_transition
+The biggest internal change in this version is the introduction of a
+layer system in Ren'Py. Transitions can now work on an individual
+layer (as well as the previous behavior of the whole screen), so it's
+possible to do things like sliding in and out the dialogue box. 
 
-Renpy.transition needs to take a layer. Renpy.restart_interaction
-needs to exist, and to be documented to end any current transitions.
- 
-TODO: Set overlay layer in core.py.
+It's now possible to use transitions when entering and leaving the
+game menu, by assigning a transition object to
+library.enter_transition and library.exit_transition, respectively.
 
-Document config.layers et al.
+The preferences screen can now be entered from user code, and is 
+now part of the main menu.
 
-Eliminated renpy.interact. Check it doesn't exist. Excise it from the
-docs.
+The overlay code was overhauled. It's now not possible for an overlay
+function to return a list of widgets. Instead, the overlay functions
+are expected to add widgets to the screen using the ui
+functions. Calling the new function renpy.restart_interaction will,
+among other things, cause the overlay functions to be called again, if
+one wants to replace the overlay on the screen.
 
-Multiple transitions? Layers?
+Init blocks of the same priority are now assured to run in the order
+that they appear in a script file.
 
-----
-
-Activate state. Hide as a property for windows.
-
-Assymetric margin/padding support [not done] tmargin, bmargin,
-lmargin, rmargin, *padding, etc. Compat with xmargin and ymargin. 
+The renpy.interact function has been eliminated. Use ui.interact
+instead, as it performs more error checking.
 
 4.5's demo script had a bug that cause it to crash, after playing the
 MPEG-1 movie. It was a bug in the demo script, and not in Ren'Py

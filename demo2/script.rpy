@@ -59,6 +59,11 @@ init:
     $ irisout = CropMove(1.0, "irisout")
     $ irisin = CropMove(1.0, "irisin")
 
+    # Select the transitions that are used when entering and exiting
+    # the game menu.
+    $ library.enter_transition = dissolve
+    $ library.exit_transition = dissolve
+
     # Now, we declare the images that are used in the program.
 
     # Backgrounds.
@@ -763,7 +768,31 @@ init:
 init:
     image movie = Movie()
 
+    python:
+        style.create('odd_window', 'say_window')
+        style.odd_window.left_margin = 50
+        style.odd_window.right_margin = 150
+        style.odd_window.bottom_margin = 25
+
+        eodd = Character('Eileen', color=(200, 255, 200, 255), window_style='odd_window')
+    
+
 label whatsnew:
+
+    show washington
+    show eileen happy
+
+    e "I can give you a demonstration of some of the new features in
+       Ren'Py, but you'll have to tell me what version you want to
+       start with."
+
+    menu:
+        "I'd like to start with 4.5.":
+            jump whatsnew45
+
+        "I'd like to start with 4.6.":
+            jump whatsnew46
+
 label whatsnew45:
 
     show washington
@@ -864,67 +893,43 @@ label ike:
 
     else:
 
-        e "You haven't download the Eisenhower commericial, so we
+        e "You haven't download the Eisenhower commercial, so we
            can't demonstrate it."
+
+label whatsnew46:
+
+    eodd "As of 4.6, we now support separate padding and margin for the
+          left, right, top, and bottom sides of a window."
+
+    eodd "This means that a game can have oddly shaped windows without
+          having to go beyond the style system."
+
+    e "We also introduced a new layer system, and the ability to have
+       transitions affect only one layer."
+
+    e "Because of this we can do things like slide away a window..."
+
+    $ renpy.transition(slideawayup, 'transient')
+    $ renpy.pause(1.5)
+    $ renpy.transition(slidedown, 'transient')
+    
+    e "... and slide it back in again."
+
+    e "Also new in this release is the ability to specify transitions
+       that occur when you enter and exit the game menu."
+
+    e "Right click to see them, if you want."
+
+    e "A few more obscure features involving things like overlays and
+       activated widgets round out the 4.6 release."
+
+label whatsnewend:
 
     e "Anyway, now that you've heard about some of the new features, is there anything
        else I can help you with?"
 
     return
 
-
-init:
-    # $ config.profile = True
-
-    $ library.enter_transition = dissolve
-    $ library.exit_transition = dissolve
-
-    python hide:
-        def overlay():
-            ui.text("This is the overlay!")
-
-        config.overlay_functions.append(overlay)
-
-    pass
-
-label splashscreen:
-
-    scene washington
-
-    menu:
-        "What do you think of activate colors?"
-
-        "I like it":
-            pass
-
-        "I hate it":
-            pass
-
-    with dissolve
-
-
-    $ name = renpy.input("What is your name?", length=34)
-
-    "Let's try applying transitions to layers!"
-
-    $ renpy.transition(slideawayup, 'transient')
-    $ renpy.pause(1.0)
-
-    $ renpy.transition(slidedown, 'transient')
-
-    "How was that?"
-
-
-    "Now, we will try screwing with overlays. The overlay will
-     disappear for the first transition, but not the second."
-
-    with fade
-
-    $ renpy.transition(fade, 'master')
-
-    "Did it work?"
-
-    return
     
 
     

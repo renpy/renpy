@@ -39,6 +39,7 @@ init -500:
         library.main_menu = [
             ( "Start Game", "start" ),
             ( "Continue Game", "_continue" ),
+            ( "Preferences", "_preferences" ),
             ( "Quit Game", "_quit" ),
             ]
 
@@ -258,7 +259,19 @@ label _continue:
     $ _can_save = False
     $ _at_main_menu = True
     
-    $ renpy.call_in_new_context("_load_menu")
+    $ renpy.call_in_new_context("_game_menu_load")
+
+    $ _can_save = True
+    $ _at_main_menu = False
+
+    jump _library_main_menu
+
+# Used to call the game menu. 
+label _preferences:
+    $ _can_save = False
+    $ _at_main_menu = True
+    
+    $ renpy.call_in_new_context("_game_menu_preferences")
 
     $ _can_save = True
     $ _at_main_menu = False
@@ -504,13 +517,13 @@ label _enter_game_menu:
     return
 
 # Entry points from the game into menu-space.
-label _load_menu:
-    call _enter_game_menu
-    jump _load_screen
-
 label _game_menu:
     call _enter_game_menu
     jump _save_screen
+
+label _game_menu_load:
+    call _enter_game_menu
+    jump _load_screen
 
 label _game_menu_preferences:
     call _enter_game_menu
