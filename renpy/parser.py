@@ -3,8 +3,9 @@
 
 import codecs
 import re
-import renpy.ast as ast
 import os
+
+import renpy.ast as ast
 
 class ParseError(Exception):
 
@@ -386,6 +387,16 @@ class Lexer(object):
         s = re.sub(r'\\(.)', unescape, s)
 
         return s
+
+    def integer(self):
+        """
+        Tries to parse an integer. Returns a string containing the
+        integer, or None.
+        """
+
+        self.skip_whitespace()
+
+        return self.match(r'(\+|\-)?\d+')
 
     def name(self):
         """
@@ -994,14 +1005,22 @@ def parse_statement(l):
     ### Init Statement
     if l.keyword('init'):
 
+        p = l.integer()
+
+        if p:
+            priority = int(p)
+        else:
+            priority = 0
+            
         l.require(':')
+
         l.expect_eol()
         l.expect_block('init statement')
 
         block = parse_block(l.subblock_lexer())
 
         l.advance()
-        return ast.Init(loc, block)
+        return ast.Init(loc, block, priority)
 
 
     # The one and two arguement say statements are ambiguous in terms

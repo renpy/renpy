@@ -9,10 +9,7 @@
 # These modules will then be able to access the various globals defined
 # in this module as fields on game.
 
-import renpy.script
-import renpy.execution
-import renpy.python
-import renpy.config
+import renpy
 
 # The basepath. Everything that is loaded is relative to this, at least
 # until we get around to implementing archive files.
@@ -25,6 +22,11 @@ script = None
 # to import in the module, and then we use the module's dictionary
 # directly.
 store = None
+
+# A shallow copy of the store made at the end of the init phase. If
+# a key in here points to the same value here as it does in the store,
+# it is not saved.
+clean_store = None
 
 # A stack of execution contexts.
 contexts = [ ]
@@ -43,13 +45,8 @@ log = None
 # can be added to the exception.
 exception_info = ''
 
-def context(index=-1):
-    """
-    Return the current execution context, or the context at the
-    given index if one is specified.
-    """
-
-    return contexts[index]
+# Used to store style information.
+style = None
 
 class RestartException(Exception):
     """
@@ -62,6 +59,14 @@ class QuitException(Exception):
     An exception of this class will let us force a safe quit, from
     anywhere in the program. Do not pass go, do not collect $200.
     """
+
+def context(index=-1):
+    """
+    Return the current execution context, or the context at the
+    given index if one is specified.
+    """
+
+    return contexts[index]
 
 def call_in_new_context(label):
     """
@@ -79,72 +84,3 @@ def call_in_new_context(label):
 
     contexts.pop()
     interface.redraw(0)
-
-    
-    
-    
-def main(basepath_):
-    global script
-    global contexts
-    global interface
-    global basepath
-    global store
-    global init_phase
-    global log
-
-    basepath = basepath_
-
-    # Finish loading the config.
-    renpy.config.finish()
-
-    # Load the script.
-    script = renpy.script.load_script(basepath)
-
-    # Initialize the store.
-    import renpy.store as store
-    store.store = store
-    store = vars(renpy.store)
-
-    # Initialize the log.
-    log = renpy.python.RollbackLog()
-
-    # Run init code in its own context. (Don't log.)
-    contexts = [ renpy.execution.Context(False) ]
-
-    # Run the init code.
-    for i in script.initcode:
-        context().run(i)
-
-    # We're done running the initialization code.
-    init_phase = False
-
-    # Switch contexts, begin logging.
-    contexts = [ renpy.execution.Context(True) ]
-
-    # Initialize graphics.
-    import renpy.display.core as dcore
-    interface = dcore.Interface()
-
-    # TODO: Make a clean copy of the store, for saving.
-
-    if script.has_label("_start"):
-        context().goto_label('_start')
-    else:
-        context().goto_label('start')
-
-    while True:
-
-        # We first try running the script.
-        try:
-            context().run()
-            break
-
-        # We get this when the context has changed, and so we go and
-        # start running from the new context.
-        except RestartException, e:
-            pass
-
-        except QuitException, e:
-            break
-
-    # And, we're done.

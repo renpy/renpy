@@ -1,16 +1,18 @@
 # This contains various Displayables that handle events.
 
 
-import renpy.display.core as core
-import renpy.display.layout as layout
-import renpy.display.text as text
-import renpy.config as config
-import renpy.game as game
+import renpy
+
+# import renpy.display.core as core
+# import renpy.display.layout as layout
+# import renpy.display.text as text
+# import renpy.config as config
+# import renpy.game as game
 
 import pygame
 from pygame.constants import *
 
-class Keymap(layout.Container):
+class Keymap(renpy.display.layout.Container):
     """
     This is a behavior that maps keys to functions that are called when
     the key is pressed. The keys are specified by giving the appropriate
@@ -28,12 +30,12 @@ class Keymap(layout.Container):
         for key, action in self.keymap.iteritems():
             if key == ev.unicode or ev.key == getattr(pygame.constants, key, None):
                 action()
-                raise core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
     def render(self, width, height, st, tt):
         return None
 
-class SayBehavior(layout.Container):
+class SayBehavior(renpy.display.layout.Container):
     """
     This is a class that implements the say behavior,
     which is to return True (ending the interaction) if
@@ -55,7 +57,7 @@ class SayBehavior(layout.Container):
 
         return None
 
-class Menu(layout.VBox):
+class Menu(renpy.display.layout.VBox):
 
     def __init__(self, menuitems):
         """
@@ -72,16 +74,16 @@ class Menu(layout.VBox):
         self.results = [ ]
 
         for i, (caption, result) in enumerate(menuitems):
-            self.add(text.Text(caption))
+            self.add(renpy.display.text.Text(caption))
 
             if not self.selected and result is not None:
                 self.selected = i
 
             self.results.append(result)
 
-        self.update_colors()
+        self.update_styles()
 
-    def update_colors(self):
+    def update_styles(self):
         """
         This updates the colors of our children to reflect the
         one that has been selected by the user.
@@ -91,13 +93,14 @@ class Menu(layout.VBox):
 
             # Captions should stay the default text color.
             if result is None:
+                child.set_style('menu_caption')
                 continue
 
             # Actual choices change color if they are selected or not.
             if i == self.selected:
-                child.color = config.menu_selected_color
+                child.set_style('menu_choice_selected')
             else:
-                child.color = config.menu_unselected_color
+                child.set_style('menu_choice_unselected')
 
 
     def event(self, ev, x, y):
@@ -157,10 +160,10 @@ class Menu(layout.VBox):
         # If the selected item changed, update the display.
         if self.selected != old_selected:
 
-            self.children[self.selected].color = config.menu_selected_color
-            self.children[old_selected].color = config.menu_unselected_color
+            self.children[self.selected].set_style('menu_choice_selected')
+            self.children[old_selected].set_style('menu_choice_unselected')
 
-            game.interface.redraw(0)
+            renpy.game.interface.redraw(0)
 
         return None
         

@@ -1,12 +1,10 @@
 # This file contains code for initializing and managing the display
 # window.
 
+import renpy
+
 import pygame
 from pygame.constants import *
-import renpy.config as config
-import renpy.game as game
-import renpy.object
-
 import time
 
 class IgnoreEvent(Exception):
@@ -63,8 +61,7 @@ class Displayable(renpy.object.Object):
 class SceneLists(object):
     """
     This stores the current scene lists that are being used to display
-    things to the user. It also stores a stack giving the master scene
-    list for different return locations.
+    things to the user. 
 
     Scene lists are lists of triples. The elements of the triple are
     (key, time, displayable), where key is a key that can be used to
@@ -74,8 +71,10 @@ class SceneLists(object):
 
     @ivar master: The current master display list.
     @ivar transient: The current transient display list.
+    @ivar overlay: The current overlay display list.
 
-    @ivar stack: A stack of master display lists.
+    @ivar music: Opaque information about the music that is being played.
+
     """
 
     def __init__(self, oldsl=None):
@@ -84,11 +83,15 @@ class SceneLists(object):
             self.master = oldsl.master[:]
             self.replace_transient()
 
+            self.overlay = oldsl.overlay[:]
+
+            self.music = oldsl.music
+            
         else:
             self.master = [ ]            
             self.transient = [ ]
-
-        self.stack = [ ]
+            self.overlay = [ ]
+            self.music = None
 
     def rollback_copy(self):
         """
@@ -99,8 +102,9 @@ class SceneLists(object):
         rv = SceneLists()
         rv.master = self.master[:]
         rv.transient = self.transient[:]
+        rv.overlay = self.overlay[:]
 
-        rv.stack = [ i[:] for i in self.stack ]
+        rv.music = self.music
 
         return rv
          
@@ -195,6 +199,14 @@ class SceneLists(object):
             self.add('master', i, key=None)
             self.add('transient', i, key=None)
 
+    def set_overlay(self, new_overlay):
+        """
+        This replaces the overlay scene list with the provided overlay
+        scene list.
+        """
+
+        self.overlay = [ (None, time.time(), i) for i in new_overlay ]
+
 
 class Display(object):
     """
@@ -214,16 +226,18 @@ class Display(object):
         # It shouldn't matter if pygame is already initialized.
         pygame.init()
 
-        self.fullscreen = config.fullscreen
+        self.fullscreen = renpy.config.fullscreen
         fsflag = 0
 
-        if config.fullscreen:
+        if renpy.config.fullscreen:
             fsflag = FULLSCREEN
 
 
-        self.window = pygame.display.set_mode((config.screen_width,
-                                               config.screen_height),
+        self.window = pygame.display.set_mode((renpy.config.screen_width,
+                                               renpy.config.screen_height),
                                               fsflag | DOUBLEBUF)
+
+        pygame.display.set_caption(renpy.config.window_title)
 
         self.sample_surface = self.window.convert_alpha()
 
@@ -249,8 +263,8 @@ class Display(object):
 
         for key, base_start_time, d in transient:
 
-            surf = d.render(config.screen_width,
-                            config.screen_height,
+            surf = d.render(renpy.config.screen_width,
+                            renpy.config.screen_height,
                             t - base_start_time,
                             t - start_time)
 
@@ -265,11 +279,11 @@ class Display(object):
 
             width, height = surf.get_size()
 
-            xo = (config.screen_width - width) / 2
+            xo = (renpy.config.screen_width - width) / 2
             if xo < 0:
                 xo = 0
 
-            yo = (config.screen_height - height)
+            yo = (renpy.config.screen_height - height)
             if yo < 0:
                 yo = 0
 
@@ -321,13 +335,12 @@ class Interface(object):
         and then responding to user input.
         """
 
+        scene_lists = renpy.game.context().scene_lists
 
-        scene_lists = game.context().scene_lists
+        underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
+        overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
 
-        underlay = [ ( None, 0, i) for i in config.underlay ]
-        overlay = [ ( None, 0, i ) for i in config.overlay ] 
-
-        transient = underlay + scene_lists.transient + overlay
+        transient = underlay + scene_lists.transient + scene_lists.overlay + overlay
 
         # Compute the reversed list, which is in the right order
         # for handling events on.
@@ -348,7 +361,7 @@ class Interface(object):
         
         while rv is None:
 
-            if self.display.fullscreen != config.fullscreen:
+            if self.display.fullscreen != renpy.config.fullscreen:
                 self.display = Display()
                 self.needs_redraw = True
 
@@ -361,10 +374,13 @@ class Interface(object):
                 offsets.reverse()
 
                 # If profiling is enabled, report the profile time.
-                if config.profile:
+                if renpy.config.profile:
                     new_time = time.time()
                     print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                     print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
+
+            # Update the playing music, if necessary.
+            renpy.music.restore()
 
             try:
                 ev = pygame.event.wait()
@@ -372,7 +388,7 @@ class Interface(object):
 
                 # Handle quit specially for now.
                 if ev.type == QUIT:
-                    raise game.QuitException()
+                    raise renpy.game.QuitException()
 
                 # Merge mousemotion events.
                 if ev.type == MOUSEMOTION:

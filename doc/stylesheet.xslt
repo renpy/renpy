@@ -43,4 +43,21 @@
     <div class="rule"><xsl:apply-templates /></div>
   </xsl:template>
 
+  <xsl:template match="function">
+     <table>
+        <tr>
+        <td valign="top" class="funcname"><xsl:value-of select="@name" /></td>
+        <td class="funcsig"><xsl:value-of select="@sig" />:</td>
+        </tr>
+     </table>
+     <div class="funcbody">
+        <xsl:apply-templates />
+     </div>
+  </xsl:template>
+
+  <xsl:template match="param">
+    <span class="param"><xsl:apply-templates /></span>
+  </xsl:template>
+
+
 </xsl:stylesheet>

@@ -1,8 +1,8 @@
 # This file contains code that is responsible for storing and executing a
 # Ren'Py script. 
 
-import renpy.parser
-import renpy.ast
+import renpy
+
 import os
 import cPickle
 
@@ -25,9 +25,8 @@ class Script(object):
     integers, strings being explicit names provided by the user, and
     integers being names synthesised by renpy.    
 
-    @ivar initcode: A list of ASTs that should be run as the script
-    is being initialized. (This is really a list of the first statements
-    in init: blocks)
+    @ivar initcode: A list of priority, Node tuples that should be
+    executed in ascending priority order at init time.
 
     """
 
@@ -42,6 +41,8 @@ class Script(object):
 
         for fn in files:
             self.load_file(fn)
+
+        self.initcode.sort()
 
         # Do some generic init here.
 
@@ -111,11 +112,11 @@ def load_script(dir):
 
     if files:
         rv = Script(files)
-        pscript = cPickle.dumps(rv, cPickle.HIGHEST_PROTOCOL).encode("zlib")
+        # pscript = cPickle.dumps(rv, cPickle.HIGHEST_PROTOCOL).encode("zlib")
 
-        f = file(dir + "/script", "w")
-        f.write(pscript)
-        f.close()
+        # f = file(dir + "/script", "w")
+        # f.write(pscript)
+        # f.close()
 
         return rv
     

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <doc> 
-    <title>Writing Visual Novels with Ren'Py</title>
-    <subtitle>The Ren'Py Tutorial</subtitle>
+  <title>Writing Visual Novels with Ren'Py</title>
+  <subtitle>The Ren'Py Tutorial</subtitle>
     
     
-    <p>
-      Ren'Py is a programming language and runtime, intended to ease
-      the creation of visual-novel type games. It contains features
-      that make it easy to display thoughts, dialogue, and menus; to
-      display images to the user; to write game logic; and to support
-      the saving and loading of games.  
+  <p>
+    Ren'Py is a programming language and runtime, intended to ease
+    the creation of visual-novel type games. It contains features
+    that make it easy to display thoughts, dialogue, and menus; to
+    display images to the user; to write game logic; and to support
+    the saving and loading of games.  
 
-    </p><p> 
+  </p><p> 
 
-      Ren'Py is implemented on top of python, and that python heritage
-      shows through in many places. Many Ren'Py statements allow
-      python expressions to be used, and there are also Ren'Py
-      statements that allow for the execution of arbitrary python
-      code. Many of the less-used features of Ren'Py are exposed to
-      the user by way of python. By only requiring use of the simplest
-      features of python, it's hoped that Ren'Py will be usable by
-      all game authors.
-      
-    </p>
+    Ren'Py is implemented on top of python, and that python heritage
+    shows through in many places. Many Ren'Py statements allow
+    python expressions to be used, and there are also Ren'Py
+    statements that allow for the execution of arbitrary python
+    code. Many of the less-used features of Ren'Py are exposed to
+    the user by way of python. By only requiring use of the simplest
+    features of python, it's hoped that Ren'Py will be usable by
+    all game authors.
+    
+  </p>
 
-    <h3>A Simple Ren'Py Script</h3>
+  <h3>A Simple Ren'Py Script</h3>
 
-    <p>
+  <p>
 
-      The following is a simple but complete Ren'Py script. The colors
-      are added to make it easier to read, and aren't part of the 
-      script proper.
-      
-    </p>
+    The following is a simple but complete Ren'Py script. The colors
+    are added to make it easier to read, and aren't part of the 
+    script proper.
+    
+  </p>
 
-    <example>
+  <example>
 init:
     image whitehouse = Image("whitehouse.jpg")
     image eileen happy = Image("eileen_happy.png")
@@ -56,241 +56,241 @@ label start:
     "For some reason, she really seems upset about this."      
 
     e "I considered sneaking in, but that probably isn't a good idea."
-    </example>
-      
-    <p>
-      This example, shows many aspects of a Ren'Py script. The first
-      four lines of the script serve to load in three images. After
-      the label indicating the start of the game, a character is
-      declared. The script then proceeds to display a picture of a
-      character on top of a background image, and to have the
-      character say two lines of dialogue, changing her picture in
-      between. The POV character then thinks a line of dialogue,
-      before the character says her final line.
+  </example>
+  
+  <p>
+    This example, shows many aspects of a Ren'Py script. The first
+    four lines of the script serve to load in three images. After
+    the label indicating the start of the game, a character is
+    declared. The script then proceeds to display a picture of a
+    character on top of a background image, and to have the
+    character say two lines of dialogue, changing her picture in
+    between. The POV character then thinks a line of dialogue,
+    before the character says her final line.
 
-    </p><p>
+  </p><p>
 
-      We'll go into detail into what each of the statements here does
-      over the course of this tutorial. For now, however let me just
-      point out that the first 6 statements inialize the game, while
-      the last 7 (starting with "scene") show images and display
-      dialogue. As such, the bulk of a game is more like the last 7
-      then the first 6. 
+    We'll go into detail into what each of the statements here does
+    over the course of this tutorial. For now, however let me just
+    point out that the first 6 statements inialize the game, while
+    the last 7 (starting with "scene") show images and display
+    dialogue. As such, the bulk of a game is more like the last 7
+    then the first 6. 
 
-    </p><p>
+  </p><p>
 
-      Of particular note is that a keyword isn't required to introduce
-      dialogue. This allows visual novels consisting mostly of
-      dialogue to be expressed in a concise form.
+    Of particular note is that a keyword isn't required to introduce
+    dialogue. This allows visual novels consisting mostly of
+    dialogue to be expressed in a concise form.
 
-    </p>
+  </p>
 
-    <h3>The Structure of a Ren'Py Script</h3>
+  <h3>The Structure of a Ren'Py Script</h3>
 
-    <p>
-      
-      The largest division of a Ren'Py script is into files. By
-      default, Ren'Py reads the script from all files ending in .rpy
-      found in the game underneath the directory in which Ren'Py is
-      installed. These script files may be read in any order, and all
-      of them together make up a Ren'Py script.
+  <p>
+    
+    The largest division of a Ren'Py script is into files. By
+    default, Ren'Py reads the script from all files ending in .rpy
+    found in the game underneath the directory in which Ren'Py is
+    installed. These script files may be read in any order, and all
+    of them together make up a Ren'Py script.
 
-    </p><p>
+  </p><p>
 
-      Each of these files is divided into a series of <def>logical
+    Each of these files is divided into a series of <def>logical
       line</def>s. The first logical line of a file begins at the start of a
-      file, and another logical line begins after each logical line
-      ends, until the end of the file is reached. By default, a
-      logical line is terminated by the first newline
-      encountered. However, a line will not terminate if any of the
-      following are true:
-      
-    </p>
-
-    <ul>
-      <li>
-        The newline is immediately preceded by a backslash. In this
-        case, the backslash is removed, and the newline is
-        ignored.
-      </li>
-
-      <li> 
-        An opening parenthesis, bracket, or brace has been encountered
-        without encountering the corresponding closing character.
-      </li>
-
-      <li>
-        The newline occurs within a string.
-      </li>
-    </ul>
+    file, and another logical line begins after each logical line
+    ends, until the end of the file is reached. By default, a
+    logical line is terminated by the first newline
+    encountered. However, a line will not terminate if any of the
+    following are true:
     
-    <p>
+  </p>
 
-      These rules should be the same as for Python.
+  <ul>
+    <li>
+      The newline is immediately preceded by a backslash. In this
+      case, the backslash is removed, and the newline is
+      ignored.
+    </li>
 
-    </p><p>
+    <li> 
+      An opening parenthesis, bracket, or brace has been encountered
+      without encountering the corresponding closing character.
+    </li>
 
-      Ren'Py also supports <def>comment</def>s. A comment begins with a hash mark
-      that is not contained within a string, and continues to, but
-      does not include, the next newline character. Some examples are:
-
-    </p>
+    <li>
+      The newline occurs within a string.
+    </li>
+  </ul>
     
-    <example>
+  <p>
+
+    These rules should be the same as for Python.
+
+  </p><p>
+
+    Ren'Py also supports <def>comment</def>s. A comment begins with a hash mark
+    that is not contained within a string, and continues to, but
+    does not include, the next newline character. Some examples are:
+
+  </p>
+  
+  <example>
 # This line contains only a comment.
 scene whitehouse  # This line contains a statement as well.
-    </example>
-      
+  </example>
+  
 
-    <p>
+  <p>
 
-      If, after eliminating comments, a logical line is empty, that 
-      logical line is ignored.
-      
-    </p><p>
-      
-      Logical lines are then combined into <def>block</def>s. Two
-      logical lines are in the same block if the lines have the same
-      indentation preceding them, and no logical line with a lesser
-      amount of indentation occurs between the two lines. In the
-      following example:
-    </p>
+    If, after eliminating comments, a logical line is empty, that 
+    logical line is ignored.
+    
+  </p><p>
+    
+    Logical lines are then combined into <def>block</def>s. Two
+    logical lines are in the same block if the lines have the same
+    indentation preceding them, and no logical line with a lesser
+    amount of indentation occurs between the two lines. In the
+    following example:
+  </p>
 
-    <example>
+  <example>
 line 1
     line a
     line b
 line 2
     line c
     line d
-    </example>
+  </example>
 
-    <p>
-      
-      There are three blocks. One block contains lines 1 and 2,
-      another lines a and b, and the third contains lines c and
-      d. This example can also serve to illustrate the concept of a
-      <def>block associated with a line</def>. A block is associated
-      with a line if the block starts on the next logical line
-      following the line. For example, the block containing lines a
-      and b is associated with line 1.
-
-
-    </p><p>
-
-      There are three kinds of blocks in an Ren'Py program. The most
-      common is a block containing Ren'Py statements. Other blocks may
-      contain menu entries or python code. The top-level block (the
-      one that contains the first line of a file) is always a block of
-      Ren'Py statements.
-
-    </p>
+  <p>
     
-    <h3>Lexical Structure of Statements</h3>
+    There are three blocks. One block contains lines 1 and 2,
+    another lines a and b, and the third contains lines c and
+    d. This example can also serve to illustrate the concept of a
+    <def>block associated with a line</def>. A block is associated
+    with a line if the block starts on the next logical line
+    following the line. For example, the block containing lines a
+    and b is associated with line 1.
 
-    <p>
-      Before we can discuss statements, however, we must first discuss
-      the tokens statements are built up out of. So here's a short
-      list of all the tokens we use.
 
-    </p><p>
+  </p><p>
 
-      <def>Keyword</def>s are words that appear in the source
-      code. They're used to introduce a statement, or to delimit parts
-      of a statement. You'll see keywords throughout the descriptions
-      of statements. In grammar rules, keywords are in quotes.
+    There are three kinds of blocks in an Ren'Py program. The most
+    common is a block containing Ren'Py statements. Other blocks may
+    contain menu entries or python code. The top-level block (the
+    one that contains the first line of a file) is always a block of
+    Ren'Py statements.
 
-    </p><p>
+  </p>
+  
+  <h3>Lexical Structure of Statements</h3>
 
-      A <def>name</def>s consist of an alphabetic character or number,
-      followed by zero or more alphabetic characters or underscores,
-      so long as the string isn't a keyword.
+  <p>
+    Before we can discuss statements, however, we must first discuss
+    the tokens statements are built up out of. So here's a short
+    list of all the tokens we use.
 
-    </p><p>
+  </p><p>
 
-      An <def>image_name</def> is a list of one or more names,
-      separated by a space.
+    <def>Keyword</def>s are words that appear in the source
+    code. They're used to introduce a statement, or to delimit parts
+    of a statement. You'll see keywords throughout the descriptions
+    of statements. In grammar rules, keywords are in quotes.
 
-    </p><p>
+  </p><p>
 
-      A <def>string</def> begins with a " or a ', and continues until
-      a matching unescaped " or ' is reached. Runs of whitespace
-      inside a string are collapsed into a single space character,
-      allowing strings to span multiple lines. The \ character is used
-      inside the string to escape special characters, such as
-      whitespace, quotes, and (as \n) to include a newline.
+    A <def>name</def>s consist of an alphabetic character or number,
+    followed by zero or more alphabetic characters or underscores,
+    so long as the string isn't a keyword.
 
-    </p><p>
+  </p><p>
 
-      A <def>simple_expression</def> is a python expression that
-      starts with a name, a string, or any python expression in
-      parenthesis. This may be followed by any number of the
-      following:
-      
-    </p>
+    An <def>image_name</def> is a list of one or more names,
+    separated by a space.
+
+  </p><p>
+
+    A <def>string</def> begins with a " or a ', and continues until
+    a matching unescaped " or ' is reached. Runs of whitespace
+    inside a string are collapsed into a single space character,
+    allowing strings to span multiple lines. The \ character is used
+    inside the string to escape special characters, such as
+    whitespace, quotes, and (as \n) to include a newline.
+
+  </p><p>
+
+    A <def>simple_expression</def> is a python expression that
+    starts with a name, a string, or any python expression in
+    parenthesis. This may be followed by any number of the
+    following:
     
-    <ul>
-      <li>A dot followed by a name.</li>
-      <li>A parenthesized python expression.</li>
-    </ul>
+  </p>
+  
+  <ul>
+    <li>A dot followed by a name.</li>
+    <li>A parenthesized python expression.</li>
+  </ul>
 
-    <p>
-      
-      In general, simple expressions are strings, names, or method
-      calls. They are not expected to contain operators. 
-
-    </p><p>
-
-      A <def>python_expression</def> is an arbitrary python
-      expression that may not include a colon. These expressions are
-      generally used to express the conditions in the if and while
-      statements. 
-
-    </p>
-
-    <h3>Grammar Rules</h3>
+  <p>
     
-    <p>
-      We will be giving grammar rules for some of the statements. In
-      these rules, a word in quotes means that that word is literally
-      expected. Parenthesis are used to group things together, but
-      they don't correspond to anything in the source code. Star,
-      question mark, and plus are used to indicate that the token or
-      group they are to the right of can occur zero or more, zero or
-      one, or one or more times, respectively.
+    In general, simple expressions are strings, names, or method
+    calls. They are not expected to contain operators. 
 
-    </p><p>
+  </p><p>
 
-      If we give a name for the rule, it will be separated from the
-      body of the rule with a crude ascii-art arrow (->).
+    A <def>python_expression</def> is an arbitrary python
+    expression that may not include a colon. These expressions are
+    generally used to express the conditions in the if and while
+    statements. 
 
-    </p>      
+  </p>
+
+  <h3>Grammar Rules</h3>
+  
+  <p>
+    We will be giving grammar rules for some of the statements. In
+    these rules, a word in quotes means that that word is literally
+    expected. Parenthesis are used to group things together, but
+    they don't correspond to anything in the source code. Star,
+    question mark, and plus are used to indicate that the token or
+    group they are to the right of can occur zero or more, zero or
+    one, or one or more times, respectively.
+
+  </p><p>
+
+    If we give a name for the rule, it will be separated from the
+    body of the rule with a crude ascii-art arrow (->).
+
+  </p>      
 
 
-    <h3>Dialogue: The Say Statement</h3>
-    
-    <p>
-      As the bulk of the content of a visual novel is presented to the
-      user in the form of dialogue or thoughts, it's important that
-      the ability to display text to the user be as convenient as
-      possible. In Ren'Py, both actions are done through the say
-      statement. The say statement doesn't require a keyword to
-      introduce it. Instead, it consists of either a single string, or
-      a simple_expression followed by a string.
-    </p>
+  <h3>Dialogue: The Say Statement</h3>
+  
+  <p>
+    As the bulk of the content of a visual novel is presented to the
+    user in the form of dialogue or thoughts, it's important that
+    the ability to display text to the user be as convenient as
+    possible. In Ren'Py, both actions are done through the say
+    statement. The say statement doesn't require a keyword to
+    introduce it. Instead, it consists of either a single string, or
+    a simple_expression followed by a string.
+  </p>
 
-    <rule>say_statement -> ( simple_expression )? string</rule>
-    
-    <p>
-      We can distinguish two forms of the say statement, depending on
-      if the simple_expression is provided. The single-argument form
-      of say consists only of a single string. This form causes the
-      string to be displayed to the user without any label as to who
-      is saying it. Conventionally, this is used to indicate to the
-      user thoughts or narration.
-    </p>
-    
-    <example>
+  <rule>say_statement -> ( simple_expression )? string</rule>
+  
+  <p>
+    We can distinguish two forms of the say statement, depending on
+    if the simple_expression is provided. The single-argument form
+    of say consists only of a single string. This form causes the
+    string to be displayed to the user without any label as to who
+    is saying it. Conventionally, this is used to indicate to the
+    user thoughts or narration.
+  </p>
+  
+  <example>
 "I moved to my left, and she moved to her right."
       
 "So we were still blocking each other's path."
@@ -299,135 +299,135 @@ line 2
  left."
 
 "We could be at this all day."
-    </example>
+  </example>
 
-    <p>
-      The two-argument form of the say statement first evaluates the
-      expression to see what its value is. If the expression returns a
-      string, that string is used as a character name to indicate who
-      is saying the dialogue. If it returns an object, that object is
-      responsible for displaying the dialogue to the user.
+  <p>
+    The two-argument form of the say statement first evaluates the
+    expression to see what its value is. If the expression returns a
+    string, that string is used as a character name to indicate who
+    is saying the dialogue. If it returns an object, that object is
+    responsible for displaying the dialogue to the user.
 
-    </p><p>
+  </p><p>
 
-      The most common type of object used in a dialogue statement is a
-      Character object. Character objects have associated with them a
-      name and a color. When a character object is asked to display a
-      line of dialogue, it labels it with the character name in the
-      character's signature color. In general, strings are used to
-      indicate the names of lesser characters or ones who we have not
-      discovered the name of yet, while character objects are used to
-      indicate important characters.
+    The most common type of object used in a dialogue statement is a
+    Character object. Character objects have associated with them a
+    name and a color. When a character object is asked to display a
+    line of dialogue, it labels it with the character name in the
+    character's signature color. In general, strings are used to
+    indicate the names of lesser characters or ones who we have not
+    discovered the name of yet, while character objects are used to
+    indicate important characters.
 
-    </p>
+  </p>
 
-    <example>
+  <example>
 "Girl" "Hi, my name is Eileen."
 
 e "Starting today, I'll be living here."
-    </example>
+  </example>
 
-    <p>
-      Finally, the string in a dialogue is subject to interpolation of
-      variables. A string variable can be interpolated with %(name)s,
-      while a number requires %(name)d. For example:
-    </p>
-      
-    <example>
+  <p>
+    Finally, the string in a dialogue is subject to interpolation of
+    variables. A string variable can be interpolated with %(name)s,
+    while a number requires %(name)d. For example:
+  </p>
+  
+  <example>
 e "I know all about you."
 
 e "I know that you're %(player_age)d years old, and your zodiac 
    sign is %(player_sign)s."
-    </example>
+  </example>
 
-    <h3>Menus</h3>
+  <h3>Menus</h3>
 
-    <p>
-      Menus present a user with a list of choices that can be made. In a
-      visual novel game, menus are the primary means by which the user
-      can influence the game's story. 
-    </p>
+  <p>
+    Menus present a user with a list of choices that can be made. In a
+    visual novel game, menus are the primary means by which the user
+    can influence the game's story. 
+  </p>
+  
+  <rule>menu_statement -> "menu" ( name )? ":"</rule>
+
+  <p>
+    A menu statement consists simply of the word menu, an optional
+    name, and a colon. If the name is supplied it's treated as a
+    label for this menu statement, as if the menu statement was
+    preceded by a label statement. (See the section on control flow
+    for details about the label statement.)
+
+  </p><p>
+
+    The menu statement must have a block associated with it. This
+    block must contain one or more menuitems in it. There are three
+    kinds of menuitems that can be contained in a menu block.
+
+  </p>
+
+  <rule>caption_menuitem -> string</rule>
+
+  <p>
     
-    <rule>menu_statement -> "menu" ( name )? ":"</rule>
+    The first kind of menuitem is simply a string. This string is
+    placed into a menu as a caption that cannot be selected. In
+    general, captions are used to indicate what the menu is for,
+    especially when it is not clear from the choices.
 
-    <p>
-      A menu statement consists simply of the word menu, an optional
-      name, and a colon. If the name is supplied it's treated as a
-      label for this menu statement, as if the menu statement was
-      preceded by a label statement. (See the section on control flow
-      for details about the label statement.)
+  </p>
 
-    </p><p>
+  <rule>choice_menuitem -> string ( "if" python_expression )? ":"</rule>
+  
+  <p>
+    The second kind of menuitem gives a choice the user can
+    make. Each choice must have a block of Ren'Py statements
+    associated with the choice. If the choice is selected by the
+    user, then block of statements associated with the choice
+    is executed. A choice may also have an optional if clause that
+    includes a python expression. This clause gives a condition that
+    must be satisfied for the choice to be presented to the
+    user. The terminating colon is what indicates that this menuitem
+    is a choice.
+  </p>
 
-      The menu statement must have a block associated with it. This
-      block must contain one or more menuitems in it. There are three
-      kinds of menuitems that can be contained in a menu block.
+  <rule>set_menuitem -> "set" simple_expression</rule>
 
-    </p>
+  <p>
+    The third kind of menuitem gives an expression that yields a
+    set. There may only be one of this kind of menuitem per menu. If
+    present, it's used to filter the list of choices shown to the
+    user.
 
-    <rule>caption_menuitem -> string</rule>
+  </p><p>
 
-    <p>
-      
-      The first kind of menuitem is simply a string. This string is
-      placed into a menu as a caption that cannot be selected. In
-      general, captions are used to indicate what the menu is for,
-      especially when it is not clear from the choices.
+    When a menu is to be shown to the user, the first thing that
+    happens is that a list of captions and choices is built up from
+    the menuitems associated with the menu. Each of the choices that
+    has an expression associated with it has that expression
+    evaluated, and if it evaluates to false, that choice is removed
+    from the list. Finally, if a set is present, it is checked to
+    see if the text of a choice is in the set. If the text is found,
+    the choice is removed from the list.
 
-    </p>
+  </p><p>
 
-    <rule>choice_menuitem -> string ( "if" python_expression )? ":"</rule>
-    
-    <p>
-      The second kind of menuitem gives a choice the user can
-      make. Each choice must have a block of Ren'Py statements
-      associated with the choice. If the choice is selected by the
-      user, then block of statements associated with the choice
-      is executed. A choice may also have an optional if clause that
-      includes a python expression. This clause gives a condition that
-      must be satisfied for the choice to be presented to the
-      user. The terminating colon is what indicates that this menuitem
-      is a choice.
-    </p>
+    If no choices survive this process, the menu is not displayed
+    and execution continues with the next statement. Otherwise, the
+    menu is presented to the user. When the user makes a choice, the
+    text of that choice is added to the set (if one is present), and
+    execution continues with the block associated with the
+    choice. When that block finishes, execution continues with the
+    statement after the menu.
 
-    <rule>set_menuitem -> "set" simple_expression</rule>
+  </p><p>
 
-    <p>
-      The third kind of menuitem gives an expression that yields a
-      set. There may only be one of this kind of menuitem per menu. If
-      present, it's used to filter the list of choices shown to the
-      user.
+    Here's a fairly complicated menu that uses all three kinds of
+    menuitems. Most menus in actual games will not be this
+    complicated. 
 
-    </p><p>
+  </p>
 
-      When a menu is to be shown to the user, the first thing that
-      happens is that a list of captions and choices is built up from
-      the menuitems associated with the menu. Each of the choices that
-      has an expression associated with it has that expression
-      evaluated, and if it evaluates to false, that choice is removed
-      from the list. Finally, if a set is present, it is checked to
-      see if the text of a choice is in the set. If the text is found,
-      the choice is removed from the list.
-
-    </p><p>
-
-      If no choices survive this process, the menu is not displayed
-      and execution continues with the next statement. Otherwise, the
-      menu is presented to the user. When the user makes a choice, the
-      text of that choice is added to the set (if one is present), and
-      execution continues with the block associated with the
-      choice. When that block finishes, execution continues with the
-      statement after the menu.
-
-    </p><p>
-
-      Here's a fairly complicated menu that uses all three kinds of
-      menuitems. Most menus in actual games will not be this
-      complicated. 
-
-    </p>
-
-    <example>
+  <example>
 menu what_to_do:
 
     # Ensure that we can only do a given thing once.
@@ -445,125 +445,125 @@ menu what_to_do:
     "Go to the beach." if have_swimsuits:
         "We went to the beach together. I got to see the girls in their
          new swimsuits."
-    </example>
+  </example>
 
-    <p>
-      This menu will only allow a given activity to be chosen once,
-      and will allow the user to chose to go to the beach only if
-      the user has chosen to go shopping. 
-    </p>
+  <p>
+    This menu will only allow a given activity to be chosen once,
+    and will allow the user to chose to go to the beach only if
+    the user has chosen to go shopping. 
+  </p>
 
-    <h3>Displaying Images</h3>
+  <h3>Displaying Images</h3>
 
-    <p>
-      Without the ability to display images to the user, a visual
-      novel would be a text adventure.  Ren'Py controls image display
-      by using a <def>scene list</def>, a list of things to be
-      displayed to the user. Every time an interaction starts (that
-      is, a line of dialogue or a menu is displayed), the things in
-      the scene list are drawn to the screen, with the first being in
-      the back and the last being in the front. A number of statements
-      manipulate the scene list. Before we can explain them, however,
-      we should first define a few terms.
-    </p>
+  <p>
+    Without the ability to display images to the user, a visual
+    novel would be a text adventure.  Ren'Py controls image display
+    by using a <def>scene list</def>, a list of things to be
+    displayed to the user. Every time an interaction starts (that
+    is, a line of dialogue or a menu is displayed), the things in
+    the scene list are drawn to the screen, with the first being in
+    the back and the last being in the front. A number of statements
+    manipulate the scene list. Before we can explain them, however,
+    we should first define a few terms.
+  </p>
 
-    <p> 
-      An <def>image_name</def> is a space-separated list of names
-      that's used to refer to an image. This list of names may not
-      include keywords in it. The first element of the image name is
-      known as the <def>image tag</def>, and is treated specially.
-    </p>
+  <p> 
+    An <def>image_name</def> is a space-separated list of names
+    that's used to refer to an image. This list of names may not
+    include keywords in it. The first element of the image name is
+    known as the <def>image tag</def>, and is treated specially.
+  </p>
 
-    <p>
-      A <def>Displayable</def> is a python object implementing an
-      interface that allows it to be displayed to the screen. A
-      <def>transform</def> is a function that, when applied to a
-      Displayable, returns a new Displayable. Transforms are used to
-      change the way an image is displayed to the user. A
-      <def>transform_list</def> is a comma-separated list of
-      transforms. Display lists are applied from left to right. 
-    </p>
+  <p>
+    A <def>Displayable</def> is a python object implementing an
+    interface that allows it to be displayed to the screen. A
+    <def>transform</def> is a function that, when applied to a
+    Displayable, returns a new Displayable. Transforms are used to
+    change the way an image is displayed to the user. A
+    <def>transform_list</def> is a comma-separated list of
+    transforms. Display lists are applied from left to right. 
+  </p>
 
-    <rule>image_spec -> image_name ( "at" transform_list )? ( "with" transform_list )?</rule>
+  <rule>image_spec -> image_name ( "at" transform_list )? ( "with" transform_list )?</rule>
 
-    <p>
-      An <def>image_spec</def> is an image name, an optional at list of
-      transformers, and an optional with list of transformers. The
-      at list is used to contain transforms that apply for the life of
-      the image, such as transforms that change the placement of the
-      image on the screen. The with list, on the other hand, contains
-      transforms that should only be applied the first time the image
-      is displayed, such as transitions. When the user finishes the
-      next interaction, the with clause is removed from the image.
-    </p>
+  <p>
+    An <def>image_spec</def> is an image name, an optional at list of
+    transformers, and an optional with list of transformers. The
+    at list is used to contain transforms that apply for the life of
+    the image, such as transforms that change the placement of the
+    image on the screen. The with list, on the other hand, contains
+    transforms that should only be applied the first time the image
+    is displayed, such as transitions. When the user finishes the
+    next interaction, the with clause is removed from the image.
+  </p>
 
-    <rule>image_statement -> "image" image_name "=" python_expression</rule>
+  <rule>image_statement -> "image" image_name "=" python_expression</rule>
 
-    <p>
-      The first display statement is the image statement, which does
-      binds an image name with a displayable defining that
-      image. As the list of name bindings, is never saved, the image
-      statement can only appear inside of an init block. The most
-      popular python expression to use here is Image, which takes as
-      an argument an image filename to load. Another popular choice is
-      Animation, which is defined elsewhere in this document.
+  <p>
+    The first display statement is the image statement, which does
+    binds an image name with a displayable defining that
+    image. As the list of name bindings, is never saved, the image
+    statement can only appear inside of an init block. The most
+    popular python expression to use here is Image, which takes as
+    an argument an image filename to load. Another popular choice is
+    Animation, which is defined elsewhere in this document.
 
-    </p><p>
+  </p><p>
 
-      An example of image in use is:
+    An example of image in use is:
 
-    </p>
+  </p>
 
-    <example>
+  <example>
 init:
     image eileen happy = Image("eileen/happy.png")
     image eileen upset = Image("eileen/upset.png")
-    </example>
+  </example>
 
-    <rule>show_statement -> "show" image_spec</rule>
+  <rule>show_statement -> "show" image_spec</rule>
 
-    <p>
+  <p>
 
-      The next display statement is the show statement, which takes an
-      image specifier and displays it on the screen. If an image with
-      the same tag as the image given in the spec already exists on
-      the scene list, it is replaced with the newly displayed
-      Displayable. Otherwise, the new one is added to the end of the
-      scene list (that is, closest to the user). 
+    The next display statement is the show statement, which takes an
+    image specifier and displays it on the screen. If an image with
+    the same tag as the image given in the spec already exists on
+    the scene list, it is replaced with the newly displayed
+    Displayable. Otherwise, the new one is added to the end of the
+    scene list (that is, closest to the user). 
 
-    </p><p>
+  </p><p>
 
-      If a with list is present, the image, transformed by the at
-      and with lists is displayed to the user for the next
-      interaction. At the end of that interaction, it is replaced by
-      the image transformed with only the with clause. If no with
-      list exists, the image transformed with the at list is
-      immediately displayed.
+    If a with list is present, the image, transformed by the at
+    and with lists is displayed to the user for the next
+    interaction. At the end of that interaction, it is replaced by
+    the image transformed with only the with clause. If no with
+    list exists, the image transformed with the at list is
+    immediately displayed.
 
-    </p><p>
+  </p><p>
 
-      Automatically replacing an image with the same tag is a useful
-      feature that allows characters to change expression without
-      having to explicitly hide the old image.
+    Automatically replacing an image with the same tag is a useful
+    feature that allows characters to change expression without
+    having to explicitly hide the old image.
 
-    </p>
+  </p>
 
 
-    <rule>scene_statement -> "scene" ( image_spec )?</rule>
+  <rule>scene_statement -> "scene" ( image_spec )?</rule>
 
-    <p>
-      The scene statement first clears the scene_list. If the optional
-      image_spec is present, it is shown as if it was shown with the
-      show statement. The best use for the image_spec on a scene
-      command is show a background for the scene. 
-    </p>
+  <p>
+    The scene statement first clears the scene_list. If the optional
+    image_spec is present, it is shown as if it was shown with the
+    show statement. The best use for the image_spec on a scene
+    command is show a background for the scene. 
+  </p>
 
-    <p>
-      We can put together the scene and show statements to get the
-      following example:
-    </p>      
+  <p>
+    We can put together the scene and show statements to get the
+    following example:
+  </p>      
 
-    <example>
+  <example>
 scene living_room
 show eileen happy at left
 
@@ -572,115 +572,115 @@ e "I'm feeling happy right now."
 show eileen upset at left 
 
 e "But sometimes, I can get upset for no good reason."
-    </example>
-   
-    <rule>hide_statement -> "hide" image_spec</rule>
-      
-    <p>
-      The hide statement is used to remove an image from the scene
-      list. If the image_spec does not contain a with list, an image
-      matching the tag of the image_spec is removed from the scene
-      list immediately. (In this form, the image name doesn't need to
-      actually exist, so long as the tag is recognizable.) If the
-      image_spec does have a with clause, the image_spec is shown
-      until the end of the next interaction, and only then removed
-      from the scene_list. This allows the hiding of an image to
-      include a transition effect.
+  </example>
+  
+  <rule>hide_statement -> "hide" image_spec</rule>
+  
+  <p>
+    The hide statement is used to remove an image from the scene
+    list. If the image_spec does not contain a with list, an image
+    matching the tag of the image_spec is removed from the scene
+    list immediately. (In this form, the image name doesn't need to
+    actually exist, so long as the tag is recognizable.) If the
+    image_spec does have a with clause, the image_spec is shown
+    until the end of the next interaction, and only then removed
+    from the scene_list. This allows the hiding of an image to
+    include a transition effect.
 
-    </p><p>
+  </p><p>
 
-      Hide is a rarely used display statement. The show statement
-      automatically replaces an old image when a character changes
-      emotion, and the scene image removes all images when the scene
-      changes. Hide is generally only used for when a character leaves
-      in the middle of a scene.
+    Hide is a rarely used display statement. The show statement
+    automatically replaces an old image when a character changes
+    emotion, and the scene image removes all images when the scene
+    changes. Hide is generally only used for when a character leaves
+    in the middle of a scene.
 
-    </p>
+  </p>
 
-    <example>
+  <example>
 e "Well, I'll be going now."
       
 hide eileen
 
 "And with that, she left."
-    </example>
+  </example>
 
-    
-    <p>
-      These four statements, along with the library of Displayables
-      and transforms provided with Ren'Py, should be enough to render
-      most scenes needed in a visual novel type game.
-    </p>
+  
+  <p>
+    These four statements, along with the library of Displayables
+    and transforms provided with Ren'Py, should be enough to render
+    most scenes needed in a visual novel type game.
+  </p>
 
 
-    <h3>Control Statements</h3>
+  <h3>Control Statements</h3>
 
-    <p>
-      Control statements change the order in which statements in a
-      Ren'Py script execute. These statements allow for control
-      transfers, conditional execution, and procedure calls.
-    </p>
-    
-    <rule>label_statement -> "label" name ":"</rule>
+  <p>
+    Control statements change the order in which statements in a
+    Ren'Py script execute. These statements allow for control
+    transfers, conditional execution, and procedure calls.
+  </p>
+  
+  <rule>label_statement -> "label" name ":"</rule>
 
-    <p>
-      The label statements assigns a name to a point in the program,
-      allowing control to be transfered to this point by the jump or
-      call statements. The label statement may have a block associated
-      with it. If it does, the statement executed after the label is
-      the first statement in the block. Otherwise, the next statement
-      to be executed is the first statement after the label.
-    </p>
+  <p>
+    The label statements assigns a name to a point in the program,
+    allowing control to be transfered to this point by the jump or
+    call statements. The label statement may have a block associated
+    with it. If it does, the statement executed after the label is
+    the first statement in the block. Otherwise, the next statement
+    to be executed is the first statement after the label.
+  </p>
 
-    <rule>jump statement -> "jump" name</rule>
+  <rule>jump statement -> "jump" name</rule>
 
-    <p>
-      The jump statement unconditionally transfers control to the
-      statement with the given name. If the name does not exist, an
-      error is raised. 
-    </p>
-    
-    <example>
+  <p>
+    The jump statement unconditionally transfers control to the
+    statement with the given name. If the name does not exist, an
+    error is raised. 
+  </p>
+  
+  <example>
 label loop_start:
 
 e "Oh no! It looks like we're trapped in an infinite loop."
 
 jump loop_start
-    </example>
+  </example>
 
-    <rule>call_statement -> "call" name ( "from" name )?</rule>
+  <rule>call_statement -> "call" name ( "from" name )?</rule>
 
-    <p>
-      The call statement transfers control to the location given. It
-      also pushes the name of the return site onto the return stack,
-      allowing the return statement to return to the statement after
-      the call site.
+  <p>
+    The call statement transfers control to the location given. It
+    also pushes the name of the return site onto the return stack,
+    allowing the return statement to return to the statement after
+    the call site.
 
-    </p><p>
+  </p><p>
 
-      If the optional from clause is present, it has the effect of
-      including a label statement with the given name as the statement
-      immediately following the call statement. An explicit label is
-      required here to ensure that saved games with return stacks can
-      return to the proper place when loaded on a changed script. On
-      the other hand, from clauses may be distracting when a game is
-      still under development. A script will be provided to add from
-      clauses to call statements right before a game is released.
+    If the optional from clause is present, it has the effect of
+    including a label statement with the given name as the statement
+    immediately following the call statement. An explicit label is
+    required here to ensure that saved games with return stacks can
+    return to the proper place when loaded on a changed script. On
+    the other hand, from clauses may be distracting when a game is
+    still under development. A script will be provided to add from
+    clauses to call statements right before a game is released.
 
-    </p>
+  </p>
 
-    <rule>return_statement -> "return"</rule>
+  <rule>return_statement -> "return"</rule>
 
-    <p>
+  <p>
 
-      If the return stack is not empty, the return statement pops the
-      top return site off of it and transfers control
-      there. Otherwise, it terminates execution without raising an
-      error.
+    If the return stack is not empty, the return statement pops the
+    top return site off of it and transfers control
+    there. Otherwise, it terminates execution without raising an
+    error.
 
-    </p>
+  </p>
 
-    <example>
+  <example>
 e "First, we will call a subroutine."
 
 call subroutine from _call_site_1
@@ -694,28 +694,28 @@ label subroutine:
     e "Next, we will return from the subroutine."
  
     return
-    </example>
+  </example>
 
-    <rule>if_statement -> "if" python_expression ":"</rule>
-    <rule>elif_clause -> "elif" python_expression ":"</rule>
-    <rule>else_clause -> "else" ":"</rule>
+  <rule>if_statement -> "if" python_expression ":"</rule>
+  <rule>elif_clause -> "elif" python_expression ":"</rule>
+  <rule>else_clause -> "else" ":"</rule>
 
-    <p>
-      The if statement is used to conditionally execute a block of
-      statements. It is the only statement that consists of more than
-      one logical line in the same block. The initial if statement may
-      be followed by zero or more elif clauses, concluded with an
-      optional else clause. The expression is evaluated for each
-      clause in turn, and if it evaluates to a true value, then the
-      block associated with that clause is executed. If no expression
-      evaluates to true, then the block associated with the else
-      clause is executed. (If else clause exists, execution
-      immediately continues with the next statement.)  In any case, at
-      the end of the block, control is transferred to the statement
-      following the if statement.
-    </p>
-    
-    <example>
+  <p>
+    The if statement is used to conditionally execute a block of
+    statements. It is the only statement that consists of more than
+    one logical line in the same block. The initial if statement may
+    be followed by zero or more elif clauses, concluded with an
+    optional else clause. The expression is evaluated for each
+    clause in turn, and if it evaluates to a true value, then the
+    block associated with that clause is executed. If no expression
+    evaluates to true, then the block associated with the else
+    clause is executed. (If else clause exists, execution
+    immediately continues with the next statement.)  In any case, at
+    the end of the block, control is transferred to the statement
+    following the if statement.
+  </p>
+  
+  <example>
 if points >= 10:
 
    e "Congratulations! You're getting the best ending!"
@@ -727,34 +727,34 @@ elif points >= 5:
 else:
 
    e "Sorry, you're about to get the bad ending."
-    </example>
+  </example>
 
-    <rule>while_statement -> "while" python_expression ":"</rule>
+  <rule>while_statement -> "while" python_expression ":"</rule>
 
-    <p>
+  <p>
 
-      The while statement executes its block while the expression is
-      true. Specifically, each time the while statement executes, it
-      evaluates the expression. If the expression is true, control is
-      transferred to the first statement of the block associated with
-      the while loop. If it is false, then control is transferred to
-      the next statement. The while statement is the statement that
-      normally executes after the last statement in the block, causing
-      the condition to be evaluated again and the loop to repeat.
+    The while statement executes its block while the expression is
+    true. Specifically, each time the while statement executes, it
+    evaluates the expression. If the expression is true, control is
+    transferred to the first statement of the block associated with
+    the while loop. If it is false, then control is transferred to
+    the next statement. The while statement is the statement that
+    normally executes after the last statement in the block, causing
+    the condition to be evaluated again and the loop to repeat.
 
-    </p><p>
+  </p><p>
 
-      This definition of a while loop means that it would be hard to
-      implement statements like python's "continue" or "break". These
-      statements can be easily faked with labels in the right places
-      and jumps to those labels. This definition also means that it's
-      possible to jump into the middle of the block associated with
-      a while loop and, if at the end of the block the condition
-      is true, have the while loop repeat the block.
+    This definition of a while loop means that it would be hard to
+    implement statements like python's "continue" or "break". These
+    statements can be easily faked with labels in the right places
+    and jumps to those labels. This definition also means that it's
+    possible to jump into the middle of the block associated with
+    a while loop and, if at the end of the block the condition
+    is true, have the while loop repeat the block.
 
-    </p>      
+  </p>      
 
-    <example>
+  <example>
 while not endgame:
 
    "It's now morning. Time to get up and seize the day."
@@ -766,25 +766,25 @@ while not endgame:
     "Well, time to call it a night."
 
 "Now it's time to wake up and face the endgame."
-    </example>
+  </example>
 
-    
-    <rule>pass_statement -> "pass"</rule>
-        
-    <p>
+  
+  <rule>pass_statement -> "pass"</rule>
+  
+  <p>
 
-      The pass statement can be used where a block is required, but
-      there's no statement that can be placed in that block. When
-      executed, pass has no effect.
+    The pass statement can be used where a block is required, but
+    there's no statement that can be placed in that block. When
+    executed, pass has no effect.
 
-    </p><p>
+  </p><p>
 
-      For example, pass can be used in a menu if we don't want to take
-      any action when a choice is selected.
+    For example, pass can be used in a menu if we don't want to take
+    any action when a choice is selected.
 
-    </p>
+  </p>
 
-    <example>
+  <example>
 menu:
     "Should I go to the movies?"
 
@@ -795,53 +795,53 @@ menu:
         pass
 
 "Now it's getting close to dinner time, and I'm starving."
-    </example>
+  </example>
 
-    <rule>init_statement -> "init" ":"</rule>
+  <rule>init_statement -> "init" ":"</rule>
 
-    <p>
+  <p>
 
-      The init statement is used to introduce a block of code that
-      should be run when the game first starts. When the game is first
-      loaded, the script is scanned for init blocks, and code in init
-      blocks is run in an arbitrary order. An init statement
-      encountered during execution, however, is treated as a pass
-      statement, and the block is not executed.
+    The init statement is used to introduce a block of code that
+    should be run when the game first starts. When the game is first
+    loaded, the script is scanned for init blocks, and code in init
+    blocks is run in an arbitrary order. An init statement
+    encountered during execution, however, is treated as a pass
+    statement, and the block is not executed.
 
-    </p>
+  </p>
 
-    <h3>Python Statements</h3>
+  <h3>Python Statements</h3>
 
-    <rule>python_statement -> "$" python_code</rule>
+  <rule>python_statement -> "$" python_code</rule>
 
-    <p>
-      There are two Ren'Py statements that allow python statements to be
-      mixed with Ren'Py code. Any statement beginning with a
-      dollar-sign ('$') will be interpreted as python code extending
-      to the end of the logical line. This form can only include a
-      python statement containing a single logical line. (So python
-      control constructs cannot be used.)
-      </p>
+  <p>
+    There are two Ren'Py statements that allow python statements to be
+    mixed with Ren'Py code. Any statement beginning with a
+    dollar-sign ('$') will be interpreted as python code extending
+    to the end of the logical line. This form can only include a
+    python statement containing a single logical line. (So python
+    control constructs cannot be used.)
+  </p>
 
-    <rule>python_block_statement -> "python" ( "hide" )? ":"</rule>
+  <rule>python_block_statement -> "python" ( "hide" )? ":"</rule>
 
-    <p>
-      The other way to introduce python statements is with a python
-      block statement. The block associated with this statement, along
-      with any block inside those blocks, is interpreted as python
-      code that is passed to the python interpreter. The block nesting
-      structure is reflected in the python code that is interpreted,
-      so that python control structures will work as advertised.
+  <p>
+    The other way to introduce python statements is with a python
+    block statement. The block associated with this statement, along
+    with any block inside those blocks, is interpreted as python
+    code that is passed to the python interpreter. The block nesting
+    structure is reflected in the python code that is interpreted,
+    so that python control structures will work as advertised.
 
-    </p><p>
+  </p><p>
 
-      If the optional hide keyword is added to a python block
-      statements, local variables created in the block will not 
-      be added to the store. The variables in the store can be 
-      accessed as attributes of the store, however.
-    </p>
+    If the optional hide keyword is added to a python block
+    statements, local variables created in the block will not 
+    be added to the store. The variables in the store can be 
+    accessed as attributes of the store, however.
+  </p>
 
-    <example>
+  <example>
 # Toggle fullscreen mode.
 $ config.fullscreen = not config.fullscreen
 
@@ -849,46 +849,433 @@ $ config.fullscreen = not config.fullscreen
 python:
     for i in ('e', 'l'):
         globals()[i].points = 0
-    </example>
+  </example>
 
-    <p>
-      In general, if a Ren'Py construct exists that does what you want
-      (like while or if), it should be used in preference to a python
-      block, unless a large amount of code is to be executed with
-      no user interaction.
-    </p>
+  <p>
+    In general, if a Ren'Py construct exists that does what you want
+    (like while or if), it should be used in preference to a python
+    block, unless a large amount of code is to be executed with
+    no user interaction.
+  </p>
 
-       
-    <h3>Starting a Game</h3>
+  
+  <h3>Starting a Game</h3>
 
-    <p>
-      When Ren'Py is first invoked, it first tries to parse all the 
-      .rpy files in the game directory. If at least one .rpy file
-      exists, it is loaded, and the script is then written out in a
-      serialized form. If no .rpy files exist, but the serialized
-      script does exist, the serialized script is read back in from
-      disk.
+  <p>
+    When Ren'Py is first invoked, it first tries to parse all the 
+    .rpy files in the game directory. If at least one .rpy file
+    exists, it is loaded, and the script is then written out in a
+    serialized form. If no .rpy files exist, but the serialized
+    script does exist, the serialized script is read back in from
+    disk.
 
-    </p><p>
+  </p><p>
 
-      Once the script is loaded, the first thing that occurs is that
-      it is scanned for init blocks. These init blocks are then run
-      immediately, in no particular order. The init blocks should do
-      things like loading images and changing Ren'Py configuration. On
-      no account should an init block try to display an image or
-      interact with the user, as the display system is not yet
-      initialized, and so such interaction will not work.
+    Once the script is loaded, the first thing that occurs is that
+    it is scanned for init blocks. These init blocks are then run
+    immediately, in no particular order. The init blocks should do
+    things like loading images and changing Ren'Py configuration. On
+    no account should an init block try to display an image or
+    interact with the user, as the display system is not yet
+    initialized, and so such interaction will not work.
 
-    </p><p>
+  </p><p>
 
-      After the last init block has finished running, the display is
-      initialized, and the actual game can begin. It's expected that
-      each game will have a label named "start". The game is begun by
-      jumping to this start label. Execution proceeds from there,
-      terminating when the end of a file or a return statement is
-      reached. 
+    After the last init block has finished running, the display is
+    initialized, and the actual game can begin. It's expected that
+    each game will have a label named "start". The game is begun by
+    jumping to this start label. Execution proceeds from there,
+    terminating when the end of a file or a return statement is
+    reached. 
+  </p>
 
-    </p>
+  <h3>Saving, Loading, and Rollback</h3>
+
+  <p>
+    In Ren'Py, saving, loading, and rollback are three actions that
+    share quite a bit of infrastructure. So, we'll discuss them
+    together in this section. We will pay special attention as to what
+    it takes to support loading of a saved game when the script
+    changes between saving in loading, while running on the same
+    Ren'Py version. Apart from designated bug-fix releases of Ren'Py,
+    we do not plan to support loading a save created on an older
+    version of Ren'Py in a newer release of Ren'Py. Once a game has
+    been released once, it's expected that future releases of that
+    game will use the same release of Ren'Py.
+
+  </p><p>
+    
+    The state of the game in Ren'Py consists of two basic
+    parts. The interpreter state consists of state that the user never
+    manipulates directly, while the user state consists of variables
+    that have been changed by the user, and objects reachable from
+    those variables. Currently, the interpreter state that is
+    saved consists of:
+  </p>
+
+  <ul>
+    <li>The currently-executing statements.</li>
+    <li>The return stack.</li>
+    <li>The scene list.</li>
+    <li>What music is currently playing.</li>
+  </ul>
+
+  <p>
+    These items are automatically saved, restored, or rolled-back when
+    the appropriate commands are invoked by the user. You do not need
+    do anything for this state to be handled, and there is no way to
+    prevent these things from being saved.
+  </p>
+
+  <p>
+    There are some important portions of interpreter state that are not
+    saved, and therefore should only be changed in init: blocks. These
+    are:
+  </p>
+
+  <ul>
+    <li>The mappings of image names to Displayable created by the image
+      statement.</li>
+    <li>Configuration variables (config.varname).</li>
+    <li>Styles (style.stylename).</li>
+  </ul>
+
+  <p>
+    To deal with this, one should ensure that all images and config
+    variables are set up in init blocks, and then left alone for the
+    life of the game. In addition, as a scene list in a saved game may
+    contain references to image names, once an image name is defined
+    in a released version of the game, the image name should remain
+    defined in all future release of the game.
+  </p>
+
+  <p>
+    The other kind of state that Ren'Py can save and restore is user
+    state. User state consists of the values of all variables that are
+    changed after the end of the init phase, as well as all data
+    reachable from those variables.
+
+  </p><p>
+
+    It's important to clarify what it means for a variable to be
+    changed. In Python and Ren'Py, variable names are bound to
+    objects. The variable changes when a new object is assigned to
+    it. It does not change when the object that is assigned to it
+    changes.
+
+  </p><p>
+
+    As an example, in the following code:
+  </p>
+
+  <example>
+init:
+      $ a = 0
+      $ e = Character("Eileen")
+
+$ a = 1
+$ b = [ ]
+$ e.love_love_points = a + b
+  </example>
+
+  <p>
+    The variables a and l are updated after the end of the init:
+    block, while e is not updated. The variable a is assigned a
+    different integer object, while b is assigned a new empty list.
+    While a field in the Character object is changed by the last
+    statment, e still points to the same character object, and
+    therefore it is not considered to have changed. (And therefore,
+    the Character object isn't considered to be part of user state.)
+  </p>
+
+  <p>
+    User state is gathered by first finding all variables changed
+    since the end of the init phase. We then find all objects
+    reachable from one of those variables through some combination
+    of field access, iteration, or iteration over items (as in a
+    dictonary). This combination of variable bindings and object
+    values comprises the user state.
+  </p>
+
+  <p>
+    It's important that everything that's kept in the user state can
+    be pickled (serialized). Thankfully, most python constructs can
+    be, including booleans, integers, floating-point numbers, strings,
+    lists, tuples, dictionaries, and most objects. You can also refer
+    to your own classes and functions, provided that they are defined
+    in a python block (not a python hide block) inside an init block,
+    and always exist with the same name in later versions of the
+    script. Things that can't be pickled include strange objects
+    like iterators and files. Usually, you don't have to worry much
+    about this.
+  </p>
+    
+  <p>
+    As the game is played, Ren'Py logs all changes to user and
+    interpreter state. When the game is saved, it writes this log out
+    to disk, alongside the current state.
+  </p>
+
+  <p>
+    When the game is loaded back in, the variables are reset to what
+    the were when the init code in the current version of the script
+    finished running. The saved user state is then merged with this,
+    with saved user state overriding any variable that was also
+    assigned in the init code. Finally, a rollback is triggered.
+  </p>
+
+  <p>
+    The rollback that is triggered on load ends when it can find a
+    statement that has the same name as it had when it was encountered
+    in the log. When the script hasn't changed, all statement have the
+    same name, so the effect of the rollback is to bring control back
+    to the start of the statement that was executing when the user
+    saved. When the script has changed, however, the only statements
+    that retain their names are statements that have an explicit
+    name specified. (Such as a label, a menu with a name, or a call
+    with a from clause.) The game will rollback to the start of one of
+    these statements.
+  </p>
+
+  <p>
+    When a rollback occurs, both user and interpreter state are
+    restored to what they were when the statement that is being
+    rolled-back to began executing. The statement is then executed
+    again, and play continues normally.
+  </p>
+
+  <p>
+    Please note that we can only roll back the currently-executing
+    statement, and not the return sites listed on the return
+    stack. If the name of a return site changes, we will not be able
+    to return from a procedure call, and the script will crash. If a
+    return site has an explicit name, however, that name is returned
+    to even if the script change. Because of this, it's important that
+    every call site in a released game have a from clause associated
+    with it.
+  </p>
+
+  <p>
+    Finally, if allowed, rollback can be invoked explicitly by user
+    input. When such a rollback occurs, we first look for a previous
+    statement that is a checkpoint (checkpoints are say and menu
+    statements, as well as python blocks that called
+    renpy.checkpoint()). Once a checkpoint is found, we look for a
+    statement which has a name that exists in the current script (this
+    is normally the same statement). We then rollback to that
+    statement and begin executing again.
+  </p>
+
+  <p>
+    The upshot of this is that when a user rollback occurs, the game
+    is reverted to the start of the say or menu statement that
+    executed before the currently executing one.
+  </p>
+
+  <p>
+    While these rules may seem to be complex, it's hoped that in
+    practice they can be reduced to a simple heuristic: Any variable
+    changed outside of an init block, and any object reachable from
+    such a variable, will be saved, loaded, and rolled-back properly.
+  </p>
+
+  <h3>Music</h3>
+
+  <p>
+    Ren'Py supports playing music in the background of your
+    game. Theoretically, Ren'Py should support any format SDL_mixer
+    supports (mp3, ogg, midi, mod, and more), but we've only tested
+    mp3 and ogg support. The music that is currently playing is kept
+    as part of the interpreter state, and is restored when a player
+    loads a game or rolls back the game state, automatically.
+  </p>
+
+  <p>
+    Music must exist in real files (not archive files), named with
+    paths starting at the game directory. The filename that the music
+    is stored in is saved with the game state. If the filename changes
+    between game releases, the game will still proceed, but music that
+    was playing when the game was saved may be absent when the game is
+    loaded.
+  </p>
+
+  <p>
+    The playing of music is controlled by a pair of Python function
+    calls:
+  </p>
+
+  <!-- func renpy.music_start -->
+  <!-- func renpy.music_stop -->
+
+  <p>
+    Here's an example of a script fragment that comes with musical
+    accompaniment.
+  </p>
+
+  <example>
+e "Lemma kept asking for support for playing music."
+
+# Loads game/music/taps.mp3
+$ renpy.music_start("music/taps.mp3")
+
+show eileen flaming mad
+
+e "Well, we'll show him."
+
+$ renpy.music_stop()
+
+show eileen wink
+
+e "Just kidding."
+  </example>
+
+  <h3>Properties and Styles</h3>
+
+  <p>
+    Ren'Py includes a style system that allows the user to control the
+    styles of text and windows (including things that inherit from
+    window, like buttons). A style inheritance mechanism allows a
+    single change to (for example) font size to affect the entire
+    game, while at the same time allowing fine-grained control when it
+    is desired.
+  </p>
+  
+  <p>
+    There are two families of style properties. Text properties are
+    used to control the font, size, and color of text, while window
+    properties are used to control the layout, background, and padding
+    of windows. If a widget displays text inside a window (as a
+    renpy.TextButton does), then it respects both text and window
+    properties. A widget is a Displayable that can accept properties.
+  </p>
+
+  <p>
+    Many style properties take as an argument RGBA tuples. These are
+    python tuples containing four values, representing the red, green,
+    blue, and alpha components of a color. Each of these values is a
+    number between 0 and 255. Alpha is used to control how opaque the
+    thing should be, with 0 being transparent, and 255 being fully
+    opaque. It's probably easiest to show an example of RGBA tuples
+    being used as part of styles.
+  </p>
+  
+  <example>
+init:
+
+    # Selected menu choices should be yellow and solid.
+    $ style.menu_choice_selected.color = (255, 255, 0, 255)
+    
+    # Unselected menu choices should be cyan and translucent.
+    $ style.menu_choice_unselected = (0, 255, 255, 128)
+  </example>
+
+
+  <h4>Text Properties</h4>
+  
+  <p>
+    The following are properties that can be applied to Displayables
+    that take text styles.
+  </p>
+
+  <prop name="font">
+    A filename that contains a truetype font that is used to display
+    the text on the screen. Example: "Vera.ttf"
+  </prop>
+
+  <prop name="size">
+    The size of the font that is used to display the text on the
+    screen. Please note that the meaning of this can vary from font to
+    font, and bears only a weak relationship with the number of pixels
+    high that the font will be on the screen. Example: 22
+  </prop>
+
+  <prop name="color">
+    The color in which the text will be displayed on the screen, as an
+    RGBA tuple. Example: (255, 255, 255, 255)
+  </prop>
+
+  <prop name="drop_shadow">
+    This is used to control the generation of a drop shadow on
+    text. It's either a 2-element tuple, or None. If it's a tuple,
+    then the 2 elements control the drop shadow offsets in X and Y,
+    respectively. (Both numbers should be positive for best results.)
+    If None, then no drop shadow is created for the text. 
+    Example: (2, 3)
+  </prop>
+
+  <prop name="drop_shadow_color">
+    An RGBA tuple that's used to give the color of the drop shadow.
+    Example: (0, 0, 0, 128)
+  </prop>
+
+  
+  <h4>Using Properties and Styles</h4>
+  
+  <p>
+    For properties to be useful, there needs to be a way to change the
+    properties associated with a given widget. Ren'Py provides several
+    ways to do this.
+  </p>
+
+  <p>
+    The most common way to do this is to change the defintion of one
+    of the standard styles. Widgets that use this style, or one of the
+    styles that inherits from it, will pick up the change and change
+    how they are displayed.
+  </p>
+
+  <p>
+    The following example code ensures that the label of a button is
+    colored light green and aligned to the left. It also changes the 
+    background images that are used when the button is idled and
+    hovered.
+  </p>
+
+  <example>
+init:
+    $ style.button.color = (128, 255, 128, 255)
+    $ style.button.xpos = 0
+    $ style.button_idled.background = \
+          renpy.Frame(renpy.Image("button_idled.png"), 
+                      xborder=10, yborder=10)
+    $ style.button_hover.background = \
+          renpy.Frame(renpy.Image("button_hover.png"), 
+                      xborder=10, yborder=10)
+  </example>
+
+  <p>
+    This is the only way to change the look of widgets that are
+    automatically generated, such as those used to implement the
+    interface of the say and menu statements, except for say
+    statements that are routed through an object, like a character
+    object. 
+  </p>
+
+  <p>
+    The second way to change the look of a widget is to change the
+    name of the style associated with that widgets. All widgets have
+    one or more parameters that take styles that the widget 
+    take on. One can define a new style using style.new_style, and
+    modify that style, and tell widgets to use that style when
+    appropriate. 
+  </p>
+
+  <p>
+    While normally new styles can only be assigned to widgets
+    constructed by the user, there are some exceptions to this
+    rule. The Character object takes as optional arguments styles that
+    are given to the say window, character name, and dialogue text.
+  </p>
+
+  <p>
+    The final way of assigning properties is to list them as keyword
+    arguments on a constructor that takes properties. (Indicated by
+    having **properties in its argument list.) Properties that are
+    given in this way take precededce over all other properties.
+  </p>
+
+    
+
 
 </doc>
 

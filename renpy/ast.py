@@ -1,8 +1,7 @@
 # This file contains the AST for the Ren'Py script language. Each class
 # here corresponds to a statement in the script language.
 
-import renpy.python as python
-import renpy.game
+import renpy
 
 def chain_block(block, next):
     """
@@ -100,7 +99,7 @@ class Say(Node):
         import renpy.exports as exports
 
         if self.who is not None:
-            who = python.py_eval(self.who)
+            who = renpy.python.py_eval(self.who)
         else:
             who = None
 
@@ -110,17 +109,18 @@ class Say(Node):
 
 class Init(Node):
 
-    def __init__(self, loc, block):
+    def __init__(self, loc, block, priority):
         super(Init, self).__init__(loc)
 
         self.block = block
+        self.priority = priority
 
 
     def get_children(self):
         return self.block
 
     def get_init(self):
-        return self.block[0]
+        return self.priority, self.block[0]
 
     # We handle chaining specially. We want to chain together the nodes in
     # the block, but we want that chain to end in None, and we also want
@@ -181,7 +181,7 @@ class Python(Node):
         
 
     def execute(self):
-        python.py_exec(self.python_code, self.hide)
+        renpy.python.py_exec(self.python_code, self.hide)
 
         return self.next
 
@@ -206,7 +206,7 @@ class Image(Node):
         if not renpy.game.init_phase:
             raise Exception("image statement should only be inside an init: block.")
 
-        img = python.py_eval(self.expr)
+        img = renpy.python.py_eval(self.expr)
         exports.images[self.name] = img
 
         return self.next
@@ -233,13 +233,13 @@ def imspec_common(imspec, hide=False):
 
     # Now, apply the at_list, from left to right.
     for i in at_list:
-        img = python.py_eval(i)(img)
+        img = renpy.python.py_eval(i)(img)
 
     # Now, apply the with list to get the with_image.
     with_img = img
 
     for i in with_list:
-        with_img = python.py_eval(i)(with_img)
+        with_img = renpy.python.py_eval(i)(with_img)
 
     if hide and not with_list:
         with_img = None
@@ -346,6 +346,10 @@ class Return(Node):
 
     # No __init__ needed.
 
+    # We don't care what the next node is.
+    def chain(self, next):
+        return
+
     def execute(self):
         return renpy.game.context().lookup_return()
 
@@ -395,6 +399,10 @@ class Jump(Node):
 
         self.target = target
 
+    # We don't care what our next node is.
+    def chain(self, next):
+        return
+
     def execute(self):
         return renpy.game.script.lookup(self.target)
 
@@ -418,7 +426,7 @@ class While(Node):
 
     def execute(self):
 
-        if python.py_eval(self.condition):
+        if renpy.python.py_eval(self.condition):
             return self.block[0]
         else:
             return self.next
@@ -429,7 +437,6 @@ class If(Node):
         """
         @param entries: A list of (condition, block) tuples.
         """
-
 
         super(If, self).__init__(loc)
 
@@ -445,7 +452,7 @@ class If(Node):
     def execute(self):
 
         for condition, block in self.entries:
-            if python.py_eval(condition):
+            if renpy.python.py_eval(condition):
                 return block[0]
 
         return self.next

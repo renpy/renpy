@@ -7,6 +7,9 @@ import renpy.display
 # Setting that may only be changed in init blocks are marked with an
 # (init) tag.
 
+# The title of the game window.
+window_title = "A Ren'Py Game"
+
 # The width and height of the drawable area of the screen. (init)
 screen_width = 800
 screen_height = 600
@@ -14,9 +17,12 @@ screen_height = 600
 # Should the display be forced to be fullscreen?
 fullscreen = None
 
+# Turns recoverable errors into fatal ones, so that the user can know
+# about and fix them.
+debug = False
 
 # The default font for text.
-text_font = "FreeSans.ttf"
+text_font = "Vera.ttf"
 
 # The defaut size for text.
 text_size = 22
@@ -38,13 +44,6 @@ menu_selected_color = (255, 255, 128, 255)
 
 
 
-
-# The maximum number of statements of rollback that will be kept before
-# the log is pruned.
-rollback_maximum = 110
-
-# The amount that the rollback log is pruned by.
-rollback_prune = 10
 
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
@@ -72,7 +71,7 @@ def finish():
 
     global say_window_properties
 
-    # A set of window properties that will be use for the background of
+    # A set of window properties that will be used for the background of
     # the say window.
     say_window_properties = dict(
         background = renpy.display.image.Solid((0, 0, 128, 128)),
@@ -87,7 +86,7 @@ def finish():
 
     global menu_window_properties
 
-    # A set of window properties that will be use for the background of
+    # A set of window properties that will be used for the background of
     # the menu window.
     menu_window_properties = dict(
         background = renpy.display.image.Solid((0, 0, 128, 128)),

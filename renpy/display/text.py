@@ -1,12 +1,9 @@
 import pygame
-from pygame.constants import *
-
-import renpy.display.surface
-import renpy.config as config
-import renpy.display.core as core
+import renpy
 
 _font_cache = { }
 
+# TODO: Something sane if the font file can't be found.
 def get_font(fn, size):
     from renpy.loader import transfn
 
@@ -19,13 +16,9 @@ def get_font(fn, size):
     return rv
     
 
-class Text(core.Displayable):
-    """
-    @ivar color: The base color of the text.
-    @ivar font: The filename of the text font.
-    @ivar size: The size of the text.
-    @ivar ds_offset: The offset of the dropshadow.
-    @ivar ds_color: The color of the dropshadow.
+class Text(renpy.display.core.Displayable):
+    """ 
+    @ivar style: The style that is used to display the text.
     @ivar text: The text that is being displayed.
 
     The following aren't serialized, but are reconstructed the first
@@ -39,31 +32,49 @@ class Text(core.Displayable):
     
     """
 
-    def __init__(self, text, color=None, font=None, size=None,
-                 ds_offset=None, ds_color=None):
+    def __init__(self, text, style='default', **properties):
 
-        self.color = color or config.text_color
-        self.font = font or config.text_font
-        self.size = size or config.text_size
-        self.ds_offset = ds_offset or config.text_dropshadow_offset
-        self.ds_color = ds_color or config.text_dropshadow_color
         self.text = text
+        self.style = renpy.style.Style(style, properties)
 
-    def update(self):
+
+    def set_text(self, new_text):
         """
-        This needs to be called after this object is updated, to be
-        sure that the changes take effect on the next redraw.
+        Changes the text display by this object to new_text.
+        """
+
+        self.text = new_text
+        self._update()
+
+    def set_style(self, style, **properties):
+        """
+        Changes the style assocated with this object.
+        """
+
+        self.style = renpy.style.Style(style, properties)
+        self._update()
+
+    def _update(self):
+        """
+        This is called after this widget has been updated by
+        set_text or set_style.
         """
 
         try:
             del self.laidout
+            del self.width
             del self.height
         except AttributeError:
             pass
 
     def layout(self, width):
+        """
+        Called to split the text into a string with newline characters
+        at line endings where wrapping has occured.
+        """
 
-        font = get_font(self.font, self.size)
+
+        font = get_font(self.style.font, self.style.size)
 
         lines = [ ]
         pars = self.text.split('\n')
@@ -106,13 +117,16 @@ class Text(core.Displayable):
         
     def render(self, width, height, st, wt):
 
-        dsxo, dsyo = self.ds_offset
+        if self.style.drop_shadow:
+            dsxo, dsyo = self.style.drop_shadow
+        else:
+            dsxo, dsyo = 0, 0
 
         if not hasattr(self, "laidout"):
             self.layout(width - dsxo)
 
         surf = renpy.display.surface.Surface(self.width + dsxo, self.height + dsyo)
-        font = get_font(self.font, self.size)
+        font = get_font(self.style.font, self.style.size)
 
         lines = self.laidout.split('\n')
 
@@ -126,13 +140,34 @@ class Text(core.Displayable):
         fudge = 1
 
         # Render drop-shadow.
-        if self.ds_color:
-            render_lines(dsxo, dsyo + fudge, self.ds_color)
+        if self.style.drop_shadow:
+            render_lines(dsxo, dsyo + fudge, self.style.drop_shadow_color)
 
         # Render foreground.
-        render_lines(0, 0 + fudge, self.color)
+        render_lines(0, 0 + fudge, self.style.color)
 
         return surf
     
-    
-            
+class ExpressionText(Text):
+    """
+    Text that evaluates an expression each time it is displayed, and
+    displays the result of that expression.
+    """
+
+    def __init__(self, expression, **kwargs):
+        super(ExpressionText, self).__init__('', **kwargs)
+
+        self.old_value = ''
+        self.expression = expression
+
+    def render(self, width, height, st, tt):
+
+        value = renpy.python.py_eval(self.expression)
+        value = str(value)
+
+        if value != self.old_value:
+            self.old_value = value
+            self.set_text(value)
+
+        return super(ExpressionText, self).render(width, height, st, tt)
+        

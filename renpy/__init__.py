@@ -1,1 +1,33 @@
-# Nothing goes here, it just exists to let us know that renpy is a package.
+# This file ensures that renpy packages will be imported in the right
+# order.
+
+# Can be first, because has no dependencies, and may be imported
+# directly.
+import renpy.game
+
+# Should probably be early, as we will add it as a base to serialized things.
+import renpy.object # ?
+
+import renpy.ast
+import renpy.curry
+import renpy.execution
+import renpy.loader
+import renpy.loadsave
+import renpy.music
+import renpy.parser
+import renpy.python # object
+import renpy.script
+import renpy.style
+
+import renpy.display 
+import renpy.display.core # object
+import renpy.display.surface
+import renpy.display.image # core
+import renpy.display.text # core
+import renpy.display.layout # core
+import renpy.display.behavior # layout
+
+import renpy.exports
+import renpy.config # depends on lots.
+import renpy.store  # depends on everything.
+import renpy.main

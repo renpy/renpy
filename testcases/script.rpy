@@ -37,6 +37,9 @@ label start:
 
     ("Other" + " " + "Neighbor") "Complicated two-argument say."
 
+    e "UTF-8 Support: Это на русском.\n
+       (Should look like: 3to ha pycckom.)"
+    
 
     # menu
 
@@ -145,7 +148,7 @@ label after_sub:
                     self.val = val
 
                 def __repr__(self):
-                    return "<myclass " + self.val + ">"
+                    return "<myclass " + str(self.val) + ">"
 
     python:
         a = 0

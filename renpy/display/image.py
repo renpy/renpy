@@ -1,13 +1,5 @@
-import renpy.display.core
-import renpy.game as game
-import renpy.loader as loader
-import renpy.exports as exports
-import renpy.display.text as text
-import renpy.display.surface
-
+import renpy
 import pygame
-from pygame.constants import *
-import pygame.image
 
 _image_cache = { }
 
@@ -15,7 +7,7 @@ def load_image(filename):
     if filename in _image_cache:
         return _image_cache[filename]
 
-    im = pygame.image.load(loader.load(filename), filename)
+    im = pygame.image.load(renpy.loader.load(filename), filename)
     im = im.convert_alpha()
 
     _image_cache[filename] = im
@@ -54,10 +46,12 @@ class ImageReference(renpy.display.core.Displayable):
         self.name = name
 
     def find_target(self):
+        import renpy.exports as exports
+
         if self.name in exports.images:
             self.target = exports.images[self.name]
         else:
-            self.target = text.Text("Image %s not found." % repr(self.name), color=(255, 0, 0, 255))
+            self.target = renpy.display.text.Text("Image %s not found." % repr(self.name), color=(255, 0, 0, 255))
         
         
     def render(self, width, height, st, tt):

@@ -4,10 +4,9 @@
 import pygame
 from pygame.constants import *
 
-import renpy.display.surface
+import renpy
 
-
-class Container(object):
+class Container(renpy.display.core.Displayable):
     """
     This is the base class for containers that can have one or more
     children.
@@ -364,62 +363,64 @@ class Window(Container):
     2*padding shrink below the minimum.    
     """
 
-    def __init__(self, child, background=None,
-                 xfill=False, yfill=False,
-                 xpadding=0, ypadding=0,
-                 xmargin=0, ymargin=0,
-                 xminimum=0, yminimum=0,
-                 **kwargs):
+    def __init__(self, child, style='window', **properties):
 
         super(Window, self).__init__()
 
         self.add(child)
-
-        self.background = background
-
-        self.xpadding = xpadding
-        self.xmargin = ypadding
-        
-        self.ypadding = ypadding
-        self.ymargin = ymargin
-
-        self.xfill = xfill
-        self.yfill = yfill
-
-        self.xminimum = xminimum
-        self.yminimum = yminimum
+        self.style = renpy.style.Style(style, properties)
 
 
     def render(self, width, height, st, tt):
 
-        import time
+        # save typing and screen space.
+        style = self.style
 
-        surf = self.child.render(width  - 2 * self.xmargin - 2 * self.xpadding,
-                                 height - 2 * self.ymargin - 2 * self.ypadding,
+
+        # Render the child.
+        surf = self.child.render(width  - 2 * style.xmargin - 2 * style.xpadding,
+                                 height - 2 * style.ymargin - 2 * style.ypadding,
                                  st, tt)
 
         sw, sh = surf.get_size()
 
-        if not self.xfill:
-            width = max(2 * self.xmargin + 2 * self.xpadding + sw, self.xminimum)
+        # If we don't fill, shrink our size to fit.
 
-        if not self.yfill:
-            height = max(2 * self.ymargin + 2 * self.ypadding + sh, self.yminimum)
+        if not style.xfill:
+            width = max(2 * style.xmargin + 2 * style.xpadding + sw, style.xminimum)
+
+        if not style.yfill:
+            height = max(2 * style.ymargin + 2 * style.ypadding + sh, style.yminimum)
 
         rv = renpy.display.surface.Surface(width, height)
 
-        if self.background:
-            bw = width  - 2 * self.ymargin
-            bh = height - 2 * self.xmargin
+        # Draw the background. The background should render at exactly the
+        # requested size. (That is, be a Frame or a Solid).
+        if style.background:
+            bw = width  - 2 * style.xmargin
+            bh = height - 2 * style.ymargin
 
-            back = self.background.render(bw, bh, st, tt)
+            print bw, bh
+
+            back = style.background.render(bw, bh, st, tt)
 
             rv.blit(back,
-                    (self.xmargin, self.ymargin))
+                    (style.xmargin, style.ymargin))
                     # (0, 0, bw, bh))
 
-        xo = self.xmargin + self.xpadding
-        yo = self.ymargin + self.ypadding
+
+        xpos = style.xpos
+        ypos = style.ypos
+
+        if isinstance(xpos, float):
+            xpos = int(xpos * (width - sw - 2 * (style.xmargin + style.xpadding)))
+
+        if isinstance(ypos, float):
+            ypos = int(ypos * (height - sh - 2 * (style.ymargin + style.ypadding)))
+    
+
+        xo = style.xmargin + style.xpadding + xpos
+        yo = style.ymargin + style.ypadding + ypos
 
         rv.blit(surf, (xo, yo))
 

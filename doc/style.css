@@ -44,3 +44,21 @@ SPAN.string {
 SPAN.keyword {
         color: #804000;
 }
+
+TD.funcname { 
+        font-family: monospace;
+        font-weight: bold;
+}
+
+TD.funcsig {
+        font-family: monospace;
+}
+
+DIV.funcbody {
+        margin-left: 5%;
+        margin-bottom: 1em;
+}
+
+SPAN.param {
+        font-style: italic;
+}

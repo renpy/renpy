@@ -1,7 +1,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-import renpy.game
+import renpy
 import copy
 
 class Context(object):
@@ -19,7 +19,7 @@ class Context(object):
     @ivar scene_lists: The scene lists associated with the current
     context.
 
-    @ivar rollback: True if this context particpates in rollbacks.
+    @ivar rollback: True if this context participates in rollbacks.
     """
 
     def __init__(self, rollback, context=None):
@@ -103,3 +103,4 @@ class Context(object):
         rv.scene_lists = self.scene_lists.rollback_copy()
 
         return rv
+
