@@ -17,10 +17,14 @@ from renpy.python import RevertableObject as object
 
 config = renpy.config
 Image = renpy.display.image.Image
+Solid = renpy.display.image.Solid
+Frame = renpy.display.image.Frame
+Animation = renpy.display.image.Animation
 Position = renpy.curry.curry(renpy.display.layout.Position)
 # Resize = renpy.curry.curry(renpy.display.layout.Resize)
 
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
+Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 
 def _return(v):
     """

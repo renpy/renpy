@@ -74,6 +74,10 @@ class SayBehavior(renpy.display.layout.Null):
 
 
         if ev.type == KEYDOWN:
+            if ev.key == K_PAGEDOWN:
+                if renpy.game.context().seen_current(False):
+                    return True
+                        
             if ev.key == K_RETURN:
                 return True
 

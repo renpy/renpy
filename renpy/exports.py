@@ -108,6 +108,21 @@ def set_overlay(overlay_list):
 
     scene_lists().set_overlay(overlay_list)
     
+def watch(expression):
+    """
+    This watches the given python expression, by displaying it in the
+    upper-right corner of the screen. The expression should always be
+    defined, never throwing an exception.
+
+    This will replace any overlay defined by the program.
+    """
+
+    text = renpy.display.text.ExpressionText(expression)
+    pos = renpy.display.layout.Position(text,
+                                        xpos=1.0, xanchor='right',
+                                        ypos=0.0, yanchor='top')
+
+    set_overlay([ pos ])
 
 def menu(items, set_expr, window_style='menu_window'):
     """
@@ -149,6 +164,9 @@ def menu(items, set_expr, window_style='menu_window'):
     return rv
 
 def display_menu(items, window_style='menu_window'):
+    """
+    Displays a menu containing the given items.
+    """
 
     menu = Menu(items)
     win = Window(menu, style=window_style)

@@ -485,17 +485,17 @@ menu what_to_do:
     transforms. Display lists are applied from left to right. 
   </p>
 
-  <rule>image_spec -> image_name ( "at" transform_list )? ( "with" transform_list )?</rule>
+  <rule>image_spec -> image_name ( "at" transform_list )? ( "with" simple_expression )?</rule>
 
   <p>
     An <def>image_spec</def> is an image name, an optional at list of
-    transformers, and an optional with list of transformers. The
-    at list is used to contain transforms that apply for the life of
-    the image, such as transforms that change the placement of the
-    image on the screen. The with list, on the other hand, contains
-    transforms that should only be applied the first time the image
-    is displayed, such as transitions. When the user finishes the
-    next interaction, the with clause is removed from the image.
+    transformers, and an optional with clause giving a
+    transition. The image name is used to specify an image that will
+    be shown. The at clause is a list of transformations that are
+    applied to that image, which can control things like the placement
+    of the image on the screen. The with clause is used to specify the
+    transition that the image is being shown or hidden with. It will
+    be discussed more in the section on transitions.
   </p>
 
   <rule>image_statement -> "image" image_name "=" python_expression</rule>
@@ -534,12 +534,8 @@ init:
 
   </p><p>
 
-    If a with list is present, the image, transformed by the at
-    and with lists is displayed to the user for the next
-    interaction. At the end of that interaction, it is replaced by
-    the image transformed with only the with clause. If no with
-    list exists, the image transformed with the at list is
-    immediately displayed.
+    If an at list is present, the image is transformed with the at
+    list before being added to the display list.
 
   </p><p>
 
@@ -557,6 +553,16 @@ init:
     image_spec is present, it is shown as if it was shown with the
     show statement. The best use for the image_spec on a scene
     command is show a background for the scene. 
+  </p>
+
+  <p>
+    By default, no background is added to the screen. (See
+    config.background to change this.) Without such a background,
+    Ren'Py will produce odd results if there is not at least one image
+    in the scene list that is the full size of the screen. So we
+    strongly advise that the scene statement always be used with an
+    image, and that image be one that takes up the full width and
+    height of the screen.
   </p>
 
   <p>
@@ -579,14 +585,10 @@ e "But sometimes, I can get upset for no good reason."
   
   <p>
     The hide statement is used to remove an image from the scene
-    list. If the image_spec does not contain a with list, an image
-    matching the tag of the image_spec is removed from the scene
-    list immediately. (In this form, the image name doesn't need to
-    actually exist, so long as the tag is recognizable.) If the
-    image_spec does have a with clause, the image_spec is shown
-    until the end of the next interaction, and only then removed
-    from the scene_list. This allows the hiding of an image to
-    include a transition effect.
+    list. The image spec is parsed for a tag, and any image matching
+    that tag is remove from the scene. The at list is ignored (but
+    should be valid or omitted), and transitions associated with the
+    image spec are run.
 
   </p><p>
 
@@ -613,6 +615,247 @@ hide eileen
     most scenes needed in a visual novel type game.
   </p>
 
+
+  <h3>Image and Scene Functions</h3>
+  
+  <p>
+    This section includes functions that are useful when defining
+    images or composing scenes. 
+  </p>
+
+  <!-- func Image -->
+
+  <p>
+    The Image function is generally used in conjunction with the image
+    statement. For example:
+  </p>
+
+  <example>
+init:
+    image eileen happy = Image("9a_happy.png")
+    image eileen vhappy = Image("9a_vhappy.png")
+    image eileen concerned = Image("9a_concerned.png")
+  </example>
+
+  <!-- func Solid -->
+
+  <!-- func Frame -->
+
+  <example>
+init:
+    style.window.background = Frame("frame.png", 125, 25)
+  </example>
+
+  <!-- func Animation -->
+
+  <example>
+init:
+    image animation = Animation("frame_1.png", 0.25,
+                                "frame_2.png", 0.25,
+                                "frame_3.png", 0.25)
+  </example>
+  
+  <p>
+    Frames are normally used in conjunction with styles, to provide
+    the displayable that is the background for a window containing a
+    menu or dialogue.
+  </p>
+
+  <function name="Position" sig="(**properties)">
+    
+    <p>
+      Position, when given position properties as arguments, returns a
+      callable that can be passed to the "at" clause of a show, hide,
+      or scene statement to display the image at the given
+      location. See the section below on position properties to get
+      a full explanation of how they are used to lay things out, but
+      hopefully this example will show how Position can be used:
+    </p>
+  </function>
+
+  <example>
+init:
+    left = Position(xpos=0.0, xanchor='left')
+    center = Position(xpos=0.5, xanchor='center')
+    right = Position(xpos=1.0, xanchor='right')
+    
+    top = Position(xpos=0.5, xanchor='center', ypos=0.0,
+                   yanchor='top')
+
+show eileen happy at left
+  </example>
+
+
+  <h3>Transitions</h3>
+
+  <p>
+    By default, Ren'Py displays each scene list by replacing the old
+    scene list with a new one. This is appropriate in general (such as
+    for emotion changes), but it may be boring for large scene
+    changes, such as a change in scene or a character entering or
+    leaving the scene. Ren'Py supports transitions that control how
+    changes to the scene lists are exposed to the user.
+  </p>
+
+  <p>
+    Transitions occur between the last scene list that was shown to
+    the user, and the current scene list that has been updated using
+    the scene, show, or hide statements. A transition takes both lists
+    as input, and is responsible for displaying the transition between
+    them to the user. Each transition runs for a given amount of time,
+    but may be dismissed early by the user. Once a transition is
+    shown, the scene list is considered shown for the purposes of
+    future transitions.
+  </p>
+
+  <rule>with_statement -> "with" simple_expression</rule>
+
+  <p>
+    Transitions are introduced with the with statement. The with
+    statement takes an expression that is suitable for use with the
+    with statement (that is, a callable that takes as input two scene
+    lists), and runs that transition. Alternatively, if the expression
+    is None, then the with statement has the effect of showing the
+    scene to the user, and returning instantly. This is useful in
+    conjunction with a future with statement, so that only some
+    changes to the scene list will be transitioned in.
+  </p>
+
+  <p>
+    An example is in order. First, let us define a few objects that
+    can be passed in as the argument to a with statement:
+  </p>
+
+  <example>
+init:
+    # Fades to black, then to the new scene.
+    fade = Fade(0.5, 0, 0.5)
+
+    # Dissolves between old and new scenes.
+    dissolve = Dissolve(0.5)
+  </example>
+
+  <p>
+    A simple use of with would be to place it after a series of show
+    and hide statements of the program. As an example:
+  </p>
+  
+  <example>
+scene whitehouse
+show eileen happy
+with fade
+  </example>
+
+  <p>
+    This series of statements will cause the old scene (displayed
+    before these statements started) to fade to black, and be replaced
+    with the new scene all at once. This is a useful behavior, for
+    example, when we are replacing a scene with a new one, such as
+    when the story changes locations.
+  </p>
+
+  <example>
+scene whitehouse
+with None
+show eileen happy
+with dissolve
+  </example>
+
+  <p>
+    The "with None" statement is useful to break changes to the scene
+    list into parts, as in the example above. When run, the background
+    will be instantly shown, and then the character image will be
+    dissolved in over the background.
+  </p>
+  
+  <p>
+    Finally, the "show", "hide", and "scene" statements all take a
+    with clause. A statement with a with clause associated with it is
+    actually converted into three statements: A "with None" statement,
+    the original statment sans the with clause, and the with clause as
+    a with statement. For example:  
+  </p>
+    
+  <example>
+scene whitehouse with fade
+show eileen happy at left with dissolve
+show lucy happy at right with dissolve
+  </example>
+
+  <p>
+    becomes
+  </p>
+
+  <example>
+with None
+scene whitehouse
+with fade
+with None
+show eileen happy at left
+with dissolve
+with None
+show lucy happy at right
+with dissolve
+  </example>
+
+  <p>
+    This has the effect of fading out the old scene and fading in the
+    new background, then dissolving in the characters one after the
+    other.
+  </p>
+
+  <p>
+    Functions that return things that are useful as arguments to with
+    statements or clauses are:
+  </p>
+
+  <function name="Fade" sig="(in_time, hold_time, out_time, color=(0, 0, 0))">
+    
+    <p>
+      This returns an object that can be used as an argument to a with
+      statement to fade the old scene into a solid color, waits for a
+      given amount of time, and then fades from the solid color into
+      the new scene.
+    </p>
+
+    <p>
+      <param>in_time</param> - The amount of time that will be spent
+      fading from the old scene to the solid color. A float, given as
+      seconds.
+    </p>
+
+    <p>
+      <param>hold_time</param> - The amount of time that will be spent
+      displaying the solid color. A float, given as seconds.
+    </p>
+
+    <p>
+      <param>out_time</param> - The amount of time that will be spent
+      fading from the solid color to the new scene. A float, given as
+      seconds. 
+    </p>
+
+    <p>
+      <param>color</param> - The solid color that will be faded
+      to. This is an RGB triple, where each element is in the range 0
+      to 255. This defaults to black.
+    </p>
+
+  </function>
+
+  <function name="Dissolve" sig="(delay)">
+    <p>
+      This dissolves from the old scene to the new scene, by
+      overlaying the new scene on top of the old scene and varying its
+      alpha from 0 to 255.
+    </p>
+
+    <p>
+      <param>delay</param> - The amount of time the dissolve will
+      take.
+    </p>
+
+  </function>
 
   <h3>Control Statements</h3>
 
@@ -972,21 +1215,21 @@ python:
   <example>
 init:
       $ a = 0
-      $ e = Character("Eileen")
+      $ state = object()
 
 $ a = 1
 $ b = [ ]
-$ e.love_love_points = a + b
+$ state.love_love_points = a + 1
   </example>
 
   <p>
     The variables a and l are updated after the end of the init:
-    block, while e is not updated. The variable a is assigned a
+    block, while state is not updated. The variable a is assigned a
     different integer object, while b is assigned a new empty list.
     While a field in the Character object is changed by the last
-    statment, e still points to the same character object, and
-    therefore it is not considered to have changed. (And therefore,
-    the Character object isn't considered to be part of user state.)
+    statment, state still points to the same object, and therefore it
+    is not considered to have changed. (And therefore, the object
+    isn't considered to be part of user state.)
   </p>
 
   <p>
@@ -1076,58 +1319,27 @@ $ e.love_love_points = a + b
   </p>
 
   <p>
+    There is one variable that controls the behavior of loading and
+    saving:
+  </p>
+  
+  <dl>
+    <var name="save_name" value="''">
+      This is a name that will be associated with save files. It's
+      expected that the game will update this on a regular basis with
+      the name of the section of the script that is currently
+      executing. When a save file is shown to the user, this name will
+      be shown with it. Alternatively, never change this an no name
+      will be shown.
+    </var>
+  </dl>
+
+  <p>
     While these rules may seem to be complex, it's hoped that in
     practice they can be reduced to a simple heuristic: Any variable
     changed outside of an init block, and any object reachable from
     such a variable, will be saved, loaded, and rolled-back properly.
   </p>
-
-  <h3>Image and Scene Functions</h3>
-  
-  <p>
-    This section includes functions that are useful when defining
-    images or composing scenes. 
-  </p>
-
-  <!-- func Image -->
-
-  <p>
-    The Image function is generally used in conjunction with the image
-    statement. For example:
-  </p>
-
-  <example>
-init:
-    image eileen happy = Image("9a_happy.png")
-    image eileen vhappy = Image("9a_vhappy.png")
-    image eileen concerned = Image("9a_concerned.png")
-  </example>
-
-  <!-- func renpy.Solid -->
-
-  <function name="Position" sig="(**properties)">
-    
-    <p>
-      Position, when given position properties as arguments, returns a
-      callable that can be passed to the "at" clause of a show, hide,
-      or scene statement to display the image at the given
-      location. See the section below on position properties to get
-      a full explanation of how they are used to lay things out, but
-      hopefully this example will show how Position can be used:
-    </p>
-  </function>
-
-  <example>
-init:
-    left = Position(xpos=0.0, xanchor='left')
-    center = Position(xpos=0.5, xanchor='center')
-    right = Position(xpos=1.0, xanchor='right')
-    
-    top = Position(xpos=0.5, xanchor='center', ypos=0.0,
-                   yanchor='top')
-
-show eileen happy at left
-    </example>
 
   <h3>Interaction Functions</h3>
 
@@ -1157,6 +1369,8 @@ e "My name is shown in full, and in green."
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
+
+  <!-- func renpy.watch -->
 
   <h3>Music Functions</h3>
 
@@ -1235,11 +1449,13 @@ init:
       This sets the height of the screen.
     </var>
 
-    <var name="config.background" value="(0, 0, 0, 255)">
+    <var name="config.background" value="None">
       This sets the default background that is shown in areas of the
       screen where there are no images. If the screen will always be
       filled with an image, it makes sense to set this to None, which
-      will improve performance by not drawing a default background.
+      will improve performance by not drawing a default
+      background. Otherwise, this is interpreted as an RGBA tuple,
+      which will be drawn before any image is.
     </var>
 
     <var name="config.debug" value="False">
@@ -1290,8 +1506,16 @@ init:
       standard output (wherever that goes) whenever the contents of
       the image cache change.
     </var>
-      
 
+    <var name="config.skip_delay" value="100">
+      The amount of time that dialogue will be shown for, when
+      skipping statements using ctrl, in milliseconds.
+    </var>
+
+    <var name="config.archives" value="[ ]">
+      A list of archive files that will be searched for images.
+    </var>
+      
   </dl>
 
   <h3>Properties and Styles</h3>
@@ -1390,11 +1614,11 @@ init:
   <prop name="background">
     A Displayable that is used as the background for the window. This
     needs to be a Displayable that always draws exactly the size
-    requested of it, which usually means either a renpy.Solid or a
+    requested of it, which usually means either a Solid or a
     renpy.Frame. This can also be None, which means that there is no
     background on this window. (All the other window properties that
     refer to a background still work. Just think of them as if ther
-    background was transparent.) Example: renpy.Solid((0, 0, 128,
+    background was transparent.) Example: Solid((0, 0, 128,
     128))
   </prop>
 
@@ -1515,8 +1739,8 @@ init:
 
   <example>
 init:
-    style.button.hover_background = renpy.Solid((255, 255, 255, 255))
-    style.button.idle_background = renpy.Solid(0, 0, 0, 255))
+    style.button.hover_background = Solid((255, 255, 255, 255))
+    style.button.idle_background = Solid(0, 0, 0, 255))
   </example>
 
   
@@ -1659,6 +1883,72 @@ init:
   <renpy_style name="file_picker_new_slot"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is used for the new slot indicator in the file picker.</renpy_style>
   </dl>
 
+  <h3>Obfuscating your Game</h3>
+
+  <p>
+    For some reason, many people seem to want to distribute their
+    games in an obfuscated form, making it difficult to read the
+    script, or to view the images associated with a game. Ren'Py
+    supports this, to a point, by compiling scripts and allowing
+    images to be archived. While a moderately skilled programmer could
+    easily crack this obfuscation, it should be enough to protect a
+    game from casual browsing.
+  </p>
+
+  <p>
+    Obfuscating the script is practically automatic. Every time the
+    game runs, any .rpy file in the game directory is written out as an
+    .rpyc file. These .rpyc files are enough to run the game, so simply
+    running the game once (to create the .rpyc files) and then
+    deleting (or more appropriately, moving away) the .rpy files will
+    leave you with a runnable game with an obfuscated script. As a
+    bonus, the .rpyc files are already parsed, improving game load
+    time. (If a directory contains .rpy and .rpyc files with the same
+    stem, the newer one of them is chosen, meaning all games get this
+    performance improvement.)
+  </p>
+
+  <p>
+    Images can be archived using the archive.py or archive.exe
+    programs that ship as part of Ren'Py. To use this, one can change
+    into the game directory and run a command like:
+  </p>
+  
+  <p>
+    <kbd>../archive.exe images *.png *.jpg</kbd> 
+  </p>
+
+  <p>
+    This will create the files images.rpa and images.rpi in the game
+    directory. One can then add to the script a line like:
+  </p>
+
+  <example>
+init:
+    $ config.archives = [ 'images' ]
+  </example>
+    
+  <p>
+    Then, delete the .jpg and .png files from the game
+    directory. Ren'Py will look in the images archive to find images
+    that need to be loaded.
+  </p>
+
+  <h3>Function Index</h3>
+  
+  <funcindex/>
+
+  <h3>Variable Index</h3>
+  
+  <varindex/>
+
+  <h3>Property Index</h3>
+
+  <propindex/>
+
+  <h3>Style Index</h3>
+  
+  <styleindex/>
 
 </doc>
 

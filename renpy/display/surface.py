@@ -13,6 +13,16 @@ import renpy
 #     return pygame.Surface((width, height), 0,
 #                           renpy.game.interface.display.sample_surface)
 
+# class FilledSurface(object):
+
+#     def __init__(self, width, height, color):
+#         self.width = width
+#         self.height = height
+#         self.color = color
+
+#     def blit_to(self, dest, x, y):
+#         dest.fill(self.color, [ x, y, self.width, self.height ])
+
 class Surface(object):
     """
     This is our own surface object, which is a node in a tree in which
@@ -62,6 +72,8 @@ class Surface(object):
 
         surf.fill(color)
 
+        # surf = FilledSurface(self.width, self.height, color)
+
         self.blittables.append((0, 0, surf))
 
     def get_size(self):
@@ -73,13 +85,17 @@ class Surface(object):
 
         return self.width, self.height
                 
-    def pygame_surface(self):
+    def pygame_surface(self, alpha=True):
         """
         Returns a pygame surface constructed from self.
         """
+
+        if alpha:
+            sample = renpy.game.interface.display.sample_surface
+        else:
+            sample = renpy.game.interface.display.window
         
-        rv = pygame.Surface((self.width, self.height), 0,
-                            renpy.game.interface.display.sample_surface)
+        rv = pygame.Surface((self.width, self.height), 0, sample)
 
         self.blit_to(rv, 0, 0)
 

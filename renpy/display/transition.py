@@ -35,11 +35,14 @@ class Fade(Transition):
         self.new_scene_list = new_scene_list
         self.color = color
 
-        self.frames = 0
+        # self.frames = 0
+
+    # def __del__(self):
+    #     print "Faded using", self.frames, "frames."
 
     def render(self, width, height, st):
 
-        self.frames += 1
+        # self.frames += 1
 
         rv = renpy.display.surface.Surface(width, height)
 
@@ -73,6 +76,31 @@ class Fade(Transition):
         renpy.game.interface.redraw(0)
 
         return rv
-            
-    def __del__(self):
-        print "Showed", self.frames, "frames."
+
+class Dissolve(Transition):
+
+    def __init__(self, time, old_scene_list, new_scene_list):
+        super(Dissolve, self).__init__(time)
+
+        self.time = time
+        self.old_scene_list = old_scene_list
+        self.new_scene_list = new_scene_list
+
+    def render(self, width, height, st):
+
+        rsl = renpy.display.core.render_scene_list
+
+        rv, offsets = rsl(self.old_scene_list, width, height)
+        surftree, offsets = rsl(self.new_scene_list, width, height)
+        surf = surftree.pygame_surface(False)
+
+        alpha = min(255, int(255 * st / self.time))
+
+        surf.set_alpha(alpha)
+        rv.blit(surf, (0, 0))
+
+        renpy.game.interface.redraw(0)
+        
+        return rv
+    
+        

@@ -1,0 +1,130 @@
+# This module is intended to be used as a singleton object.
+# It's purpose is to store in one global all of the data that would
+# be to annoying to lug around otherwise. 
+#
+# Many modules will probablt want to import this using a command like:
+#
+# import renpy.game as game
+#
+# These modules will then be able to access the various globals defined
+# in this module as fields on game.
+
+import renpy
+import renpy.game as game
+import os
+from cPickle import load, dump, HIGHEST_PROTOCOL
+
+def run():
+    """
+    This is called during a single run of the script. Restarting the script
+    will cause this to change.
+    """
+
+    # Reload some things, in case this is a restart.
+    reload(renpy.store)
+    reload(renpy.config)
+
+    renpy.config.savedir = game.basepath + "/saves"
+
+    # Make the save directory.
+    try:
+        os.path.mkdirs(renpy.config.savedir)
+    except:
+        pass
+
+    # Unserialize the set of seen statements.
+    try:
+        game.seen_ever = load(file(renpy.config.savedir + "/seen"))
+    except:
+        print "Couldn't load seen statements."
+        pass
+                              
+
+
+    # Clear the list of seen statements in this game.
+    game.seen_session = { }
+
+    # Initialize the store.
+    renpy.store.store = renpy.store
+    game.store = vars(renpy.store)
+
+    renpy.store.preferences = game.preferences
+
+    # Set up styles.
+    game.style = renpy.style.StyleManager()
+    renpy.store.style = game.style
+
+    # Initialize the log.
+    game.log = renpy.python.RollbackLog()
+
+    # Run init code in its own context. (Don't log.)
+    game.contexts = [ renpy.execution.Context(False) ]
+
+    # Run the init code.
+    game.init_phase = True
+
+    for prio, node in game.script.initcode:
+        game.context().run(node)
+
+    game.init_phase = False
+
+    # Index the archive files. We should not have loaded an image
+    # before this point. (As pygame will not have been initialized.)
+    renpy.loader.index_archives()
+
+    # Make a clean copy of the store.
+    game.clean_store = game.store.copy()
+
+    # Re-Initialize the log.
+    game.log = renpy.python.RollbackLog()
+
+    # Switch contexts, begin logging.
+    game.contexts = [ renpy.execution.Context(True) ]
+
+    # (Perhaps) Initialize graphics.
+    if not game.interface:
+        game.interface = renpy.display.core.Interface()
+
+    # Jump to an appropriate start label.
+    if game.script.has_label("_start"):
+        game.context().goto_label('_start')
+    else:
+        game.context().goto_label('start')
+
+    try:
+        while True:
+
+            # We first try running the script.
+            try:
+                game.context().run()
+                break
+
+            # We get this when the context has changed, and so we go and
+            # start running from the new context.
+            except game.RestartException, e:
+                pass
+
+            except game.QuitException, e:
+                break
+    finally:
+        dump(game.seen_ever,
+             file(renpy.config.savedir + "/seen", "wb"),
+             HIGHEST_PROTOCOL)
+
+    # And, we're done.
+    
+def main(basepath_):
+
+    game.basepath = basepath_
+
+    # Load the script.
+    game.script = renpy.script.load_script(game.basepath)
+
+    # Start things running.
+
+    while True:
+        try:
+            run()
+            break
+        except game.FullRestartException, e:
+            pass

@@ -36,6 +36,62 @@
     </ol>
   </xsl:template>
 
+  <xsl:template match="funcindex">
+    <ul>
+      <xsl:for-each select="//function">
+        <xsl:sort select="@name" />
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute>
+            <xsl:value-of select="@name"/>
+          </a>
+        </li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="varindex">
+    <ul>
+      <xsl:for-each select="//var">
+        <xsl:sort select="@name" />
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute>
+            <xsl:value-of select="@name"/>
+          </a>
+        </li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="styleindex">
+    <ul>
+      <xsl:for-each select="//renpy_style">
+        <xsl:sort select="@name" />
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute>
+            <xsl:value-of select="@name"/>
+          </a>
+        </li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="propindex">
+    <ul>
+      <xsl:for-each select="//prop">
+        <xsl:sort select="@name" />
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute>
+            <xsl:value-of select="@name"/>
+          </a>
+        </li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+
   <xsl:template match="h3">
     <a>
       <xsl:attribute name="name"><xsl:value-of select="." /></xsl:attribute>
@@ -64,15 +120,16 @@
   </xsl:template>
 
   <xsl:template match="function">
-     <table>
-        <tr>
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
+    <table>
+      <tr>
         <td valign="top" class="funcname"><xsl:value-of select="@name" /></td>
         <td class="funcsig"><xsl:value-of select="@sig" />:</td>
-        </tr>
-     </table>
-     <div class="funcbody">
-        <xsl:apply-templates />
-     </div>
+      </tr>
+    </table>
+    <div class="funcbody">
+      <xsl:apply-templates />
+    </div>
   </xsl:template>
 
   <xsl:template match="param">
@@ -80,6 +137,7 @@
   </xsl:template>
 
   <xsl:template match="prop">
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
     <p class="prop">
       <span class="propname"><xsl:value-of select="@name" /></span>
       --- <xsl:apply-templates />
@@ -87,6 +145,7 @@
   </xsl:template>
 
   <xsl:template match="renpy_style">
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
     <dt><b><xsl:value-of select="@name" /></b>:</dt>
     <dd><xsl:apply-templates /></dd>
   </xsl:template>
@@ -96,6 +155,7 @@
   </xsl:template>
 
   <xsl:template match="var">
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
     <dt class="var"><b><xsl:value-of select="@name" /></b> = <xsl:value-of select="@value" /></dt>
     <dd>
       <xsl:apply-templates />

@@ -51,7 +51,10 @@ predict_statements = 10
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
-debug_image_cache = True
+debug_image_cache = False
 
 # The delay while we are skipping say statements.
 skip_delay = 100
+
+# Archive files that are searched for images.
+archives = [ ]

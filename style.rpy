@@ -49,7 +49,7 @@ init -100:
         style.create('window', 'default',
                      '(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.')
                      
-        style.window.background = renpy.Solid((0, 0, 128, 128))
+        style.window.background = Frame("frame.png", 125, 25)
         style.window.xpadding = 10
         style.window.ypadding = 5
         style.window.xmargin = 10
@@ -177,7 +177,7 @@ init -100:
         style.create('gm_root_window', 'default',
                      '(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.')
 
-        style.gm_root_window.background = renpy.Image("escapemenu.jpg")
+        style.gm_root_window.background = renpy.Image("gamemenu.jpg")
     
         style.create('gm_nav_window', 'default',
                      '(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')
@@ -204,8 +204,8 @@ init -100:
         style.file_picker_entry.xminimum = 780
         style.file_picker_entry.ymargin = 5
         
-        style.file_picker_entry.idle_background = renpy.Solid((255, 255, 255, 255))
-        style.file_picker_entry.hover_background = renpy.Solid((255, 255, 192, 255))
+        style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
+        style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
 
         style.create('file_picker_text', 'default',
                      '(text) A base style for all text that is displayed in the file picker.')

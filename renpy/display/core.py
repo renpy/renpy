@@ -419,6 +419,7 @@ class Interface(object):
         self.needs_redraw = False
         self.profile_time = time.time()
         self.screenshot = None
+        self.redraw_time = 0.0
 
     def take_screenshot(self, scale):
         """
@@ -455,10 +456,10 @@ class Interface(object):
         be performed, in fractional seconds.
         """
 
-        self.needs_redraw = True
-
-        # TODO: Queue up a redraw, when needed. Do this by either
-        # (re)scheduling a timer, or posting an event.
+        if delay == 0.0:
+            self.needs_redraw = True
+        else:
+            self.redraw_time = min(self.redraw_time, time.time() + delay)
     
     def interact(self, transition=None):
         """
@@ -521,6 +522,7 @@ class Interface(object):
                 self.needs_redraw = False
 
                 draw_start = time.time()
+                self.redraw_time = draw_start + 365.25 * 86400.0
 
                 offsets = self.display.show(transient)
                 offsets.reverse()
@@ -582,6 +584,9 @@ class Interface(object):
 
             except IgnoreEvent:
                 pass
+
+            if time.time() > self.redraw_time:
+                self.needs_redraw = True
 
         pygame.event.clear()
                 

@@ -728,6 +728,27 @@ def parse_image_specifier(l):
         at_list = [ ]
 
     return image_name, at_list
+
+def parse_with(l, node):
+    """
+    Tries to parse the with clause associated with this statement. If
+    one exists, then the node is wrapped in a list with the
+    appropriate pair of With nodes. Otherwise, just returns the
+    statement by itself.
+    """
+
+    loc = l.get_location()
+
+    if not l.keyword('with'):
+        return node
+
+    expr = l.require(l.simple_expression)
+
+    return [ ast.With(loc, "None"),
+             node,
+             ast.With(loc, expr) ]
+
+    
     
 def parse_menu(l, loc):
 
@@ -778,8 +799,6 @@ def parse_menu(l, loc):
         l.advance()
 
     return ast.Menu(loc, items, set)
-            
-
 
 def parse_statement(l):
     """
@@ -891,7 +910,6 @@ def parse_statement(l):
 
         return rv
         
-
     ### Return statement.
     if l.keyword('return'):
         l.expect_noblock('return statement')
@@ -928,38 +946,44 @@ def parse_statement(l):
             return ast.Scene(loc, None)
 
         imspec = parse_image_specifier(l)
+        rv = parse_with(l, ast.Scene(loc, imspec))
+
         l.expect_eol()
         l.advance()
 
-        return ast.Scene(loc, imspec)
+        return rv
 
+    ### Show statement.
+    if l.keyword('show'):
+        imspec = parse_image_specifier(l)
+        rv = parse_with(l, ast.Show(loc, imspec))
+
+        l.expect_eol()
+        l.expect_noblock('show statement')
+        l.advance()
+
+        return rv
+        
+    ### Hide statement.
+    if l.keyword('hide'):
+        imspec = parse_image_specifier(l)
+        rv = parse_with(l, ast.Hide(loc, imspec))
+
+        l.expect_eol()
+        l.expect_noblock('hide statement')
+        l.advance()
+
+        return rv
+        
     ### With statement.
     if l.keyword('with'):
-        expr = l.simple_expression()
+        expr = l.require(l.simple_expression)
         l.expect_eol()
         l.expect_noblock('with statement')
         l.advance()
 
         return ast.With(loc, expr)
     
-    ### Show statement.
-    if l.keyword('show'):
-        imspec = parse_image_specifier(l)
-        l.expect_eol()
-        l.expect_noblock('show statement')
-        l.advance()
-
-        return ast.Show(loc, imspec)
-        
-    ### Hide statement.
-    if l.keyword('hide'):
-        imspec = parse_image_specifier(l)
-        l.expect_eol()
-        l.expect_noblock('hide statement')
-        l.advance()
-
-        return ast.Hide(loc, imspec)
-        
     ### Image statement.
     if l.keyword('image'):
         name = parse_image_name(l)

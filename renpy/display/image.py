@@ -37,15 +37,15 @@ class ImageCache(object):
 
         iw, ih = im.get_size()
 
-        surf = renpy.display.surface.Surface(iw, ih)
-        surf.blit(im, (0, 0))
+        # surf = renpy.display.surface.Surface(iw, ih)
+        # surf.blit(im, (0, 0))
 
-        self.surface_map[fn] = surf
+        self.surface_map[fn] = im
 
         if renpy.config.debug_image_cache:
             print "Image cache:", self.surface_map.keys()
 
-        return surf
+        return im
         
     # Queues an image to be preloaded if not already loaded and there's
     # room in the cache for it.
@@ -227,3 +227,175 @@ class Solid(renpy.display.core.Displayable):
 
         return rv
         
+class Frame(renpy.display.core.Displayable):
+    """
+    Returns a Displayable that is a frame, based on the supplied image
+    filename. A frame is an image that is automatically rescaled to
+    the size allocated to it. The image has borders that are only
+    scaled in one axis. The region within xborder pixels of the left
+    and right borders is only scaled in the y direction, while the
+    region within yborder pixels of the top and bottom axis is scaled
+    only in the x direction. The corners are not scaled at all, while
+    the center of the image is scaled in both x and y directions.
+    """
+
+    nosave = [ 'cache' ]
+
+    def __init__(self, filename, xborder, yborder):
+        """
+        @param filename: The file that the original image will be read from.
+
+        @param xborder: The number of pixels in the x direction to use as
+        a border.
+
+        @param yborder: The number of pixels in the y direction to use as
+        a border.
+
+        For better performance, have the image file share a dimension
+        length in common with the size the frame will be rendered
+        at. We detect this and avoid scaling if possible.
+        """
+
+        self.filename = filename
+        self.xborder = xborder
+        self.yborder = yborder
+
+
+    def render(self, width, height, st):
+
+
+        if hasattr(self, 'cache'):
+            if self.cache.get_size() == (width, height):
+                return self.cache
+            
+        dest = renpy.display.surface.Surface(width, height)
+        dw, dh = width, height
+
+        source = cache.load_image(self.filename)
+        sw, sh = source.get_size()
+
+        def draw(x0, x1, y0, y1):
+
+            # Quick exit.
+            if x0 == x1 or y0 == y1:
+                return
+
+            # Compute the coordinates of the left, right, top, and
+            # bottom sides of the region, for both the source and
+            # destination surfaces.
+
+            # left side.
+            if x0 >= 0:
+                dx0 = x0
+                sx0 = x0
+            else:
+                dx0 = dw + x0
+                sx0 = sw + x0
+        
+            # right side.
+            if x1 > 0:
+                dx1 = x1
+                sx1 = x1
+            else:
+                dx1 = dw + x1
+                sx1 = sw + x1
+
+            # top side.
+            if y0 >= 0:
+                dy0 = y0
+                sy0 = y0
+            else:
+                dy0 = dh + y0
+                sy0 = sh + y0
+        
+            # bottom side
+            if y1 > 0:
+                dy1 = y1
+                sy1 = y1
+            else:
+                dy1 = dh + y1
+                sy1 = sh + y1
+
+            # Compute sizes.
+            srcsize = (sx1 - sx0, sy1 - sy0)
+            dstsize = (dx1 - dx0, dy1 - dy0)
+
+            # Get a subsurface.
+            surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
+
+            # Scale if we have to.
+            if dstsize != srcsize:
+                surf = pygame.transform.scale(surf, dstsize)
+
+            # Blit.
+            dest.blit(surf, (dx0, dy0))
+
+        xb = self.xborder
+        yb = self.yborder
+
+        # Top row.
+        draw(0, xb, 0, yb)
+        draw(xb, -xb, 0, yb)
+        draw(-xb, 0, 0, yb)
+
+        # Middle row.
+        draw(0, xb, yb, -yb)
+        draw(xb, -xb, yb, -yb)
+        draw(-xb, 0, yb, -yb)
+
+        # Bottom row.
+        draw(0, xb, -yb, 0)
+        draw(xb, -xb, -yb, 0)
+        draw(-xb, 0, -yb, 0)
+        
+        # And, finish up.
+        self.cache = dest
+        return dest
+        
+class Animation(renpy.display.core.Displayable):
+    """
+    A Displayable that draws an animation, which is a series of images
+    that are displayed with time delays between them.
+    """
+
+    def __init__(self, *args):
+        """
+        Odd (first, third, fifth, etc.) arguments to Animation are
+        interpreted as image filenames, while even arguments are the
+        time to delay between each image. If the number of arguments
+        is odd, the animation will stop with the last image (well,
+        actually delay for a year before looping). Otherwise, the
+        animation will restart after the final delay time.
+        """
+
+        self.images = [ ]
+        self.delays = [ ]
+
+        for i, arg in enumerate(args):
+
+            if i % 2 == 0:
+                self.images.append(arg)
+            else:
+                self.delays.append(arg)
+
+        if len(self.images) > len(self.delays):
+            self.delays.append(365.25 * 86400.0) # One year, give or take.
+                
+    def render(self, width, height, st):
+
+        t = st % sum(self.delays)
+
+        for image, delay in zip(self.images, self.delays):
+            if t < delay:
+                renpy.game.interface.redraw(delay - t)
+                return cache.load_image(image)
+            else:
+                t = t - delay
+
+    def predict(self, callback):
+        for i in self.images:
+            callback(i)
+
+    def get_placement(self):
+        return renpy.game.style.image_placement
+

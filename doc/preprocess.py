@@ -29,6 +29,8 @@ keywords = [
     r'\belif\b',
     r'\belse\b',
     r'\bpass\b',
+    r'\bwith\b',
+    r'\bat\b',
     ]
 
 kwre = '|'.join(keywords)
