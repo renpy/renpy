@@ -61,6 +61,7 @@ class Style(object):
     """
 
     def __getstate__(self):
+
         return dict(properties=self.properties,
                     prefix=self.prefix,
                     parent=self.parent)

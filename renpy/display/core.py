@@ -201,14 +201,14 @@ class SceneLists(object):
             self.overlay = oldsl.overlay[:]
             self.music = oldsl.music
             self.sticky_positions = oldsl.sticky_positions.copy()
+            self.movie = oldsl.movie
             
-            print self.transient 
-
         else:
             self.master = [ ]            
             self.transient = [ ]
             self.overlay = [ ]
             self.music = None
+            self.movie = None
             self.sticky_positions = { }
 
     def rollback_copy(self):
@@ -222,6 +222,7 @@ class SceneLists(object):
         rv.transient = self.transient[:]
 
         rv.music = self.music
+        rv.movie = self.movie
 
         return rv
          
@@ -362,7 +363,7 @@ class Display(object):
 
 
         # Ensure that we kill off the movie when changing screen res.
-        renpy.display.video.abort()
+        renpy.display.video.movie_stop(clear=False)
 
         renpy.display.audio.pre_init()
         pygame.init()
@@ -442,7 +443,7 @@ class Display(object):
 
             
         
-    def show(self, transient):
+    def show(self, transient, suppress_blit):
         """
         Draws the current transient screen list to the screen.
         
@@ -455,13 +456,14 @@ class Display(object):
                                          renpy.config.screen_height)
 
         # self.window.set_clip((0, 0, 800, 300))
-        
-        surftree.blit_to(self.window, 0, 0)
 
-        if self.mouse:
-            self.buffer.blit(self.window, (0, 0))
-            # We don't need to undraw the mouse.
-            self.mouse_location = None
+        if not suppress_blit:        
+            surftree.blit_to(self.window, 0, 0)
+
+            if self.mouse:
+                self.buffer.blit(self.window, (0, 0))
+                # We don't need to undraw the mouse.
+                self.mouse_location = None
 
         pygame.display.flip()
         
@@ -629,9 +631,6 @@ class Interface(object):
 
         ## Expensive things we want to do before we pick the start_time.
 
-        # Prepare to show a movie.
-        renpy.display.video.prepare()
-
         # Tick time forward.
         renpy.display.image.cache.tick()
 
@@ -727,17 +726,23 @@ class Interface(object):
 
             while rv is None:
 
+                # Check for a change in fullscreen preference.
                 if self.display.fullscreen != renpy.game.preferences.fullscreen:
                     self.display = Display()
                     self.needs_redraw = True
 
+                # Redraw the screen.
                 if self.needs_redraw:
                     self.needs_redraw = False
 
+                    # If we have a movie, start showing it.
+                    suppress_blit = renpy.display.video.interact()
+
+                    # Draw the screen.
                     draw_start = time.time()
                     self.redraw_time = draw_start + 365.25 * 86400.0
 
-                    offsets = self.display.show(display_list)
+                    offsets = self.display.show(display_list, suppress_blit)
                     offsets.reverse()
 
                     # frames = frames + 1
@@ -747,9 +752,6 @@ class Interface(object):
                         new_time = time.time()
                         print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                         print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
-
-                    # Perhaps, start the movie.
-                    renpy.display.video.start()
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:

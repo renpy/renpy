@@ -1899,47 +1899,70 @@ e "Just kidding."
 
 <p>
 As of version 4.5, Ren'Py is capable of playing MPEG-1 movies. This
-allows you to include video cutscenes as part of your game, provided
-you observe a number of precautions.
+allows you to include video as part of your game. There are two ways
+that this can be done. Displaying video in fullscreen mode allows
+video to be scaled up to very large sizes, while displaying video in a
+displayable allows it to be blended with images and text.
 </p>
 
 <p>
-One of the most important things to know about movies in Ren'Py is
-that they only last until the start of the next
-interaction. There are several things that can start a new
-interaction. The most obvious is the user clicking to dismiss the
-move, but there are others, such as the user clicking the close button
-on the window, or right-clicking (in some cases) to call up the game
-menu.
+Displaying a video fullscreen allows it to take advantage of hardware
+decode and scaling support. The downside of fullscreen mode is that
+nothing else can be displayed while the movie is being displayed.
 </p>
 
 <p>
-Another important thing is to ensure that the screen is never redrawn
-when a movie is playing. This basically means that animations or ui
-widgets should never be on the screen at the same time as a
-movie. Some platforms seem to use chroma-keying to show the movie, and
-drawing to the screen after the movie starts can ruin that and disrupt
-the movie.
+The easiest way to display a movie fullscreen is to display it using
+the renpy.cutscene function. This function displays a movie for a
+specified length of time. When that time has elapsed, or when the user
+clicks to dismiss the movie, the movie ends and the function returns.
+</p>
+
+<!-- func renpy.movie_cutscene -->
+
+<p>
+Displaying a movie in a displayable is more difficult, but it allows
+the movie to be mixed with rendered text and graphics. A downside of
+this method is that the screen needs to be re-rendered with each
+frame, a process that may be unacceptibly slow when the screen is
+large. We don't recommend this when the game window is larger that
+640x480.
 </p>
 
 <p>
-While it's possible (using the rect argument) to have movies that are
-not full-screen, it's probably best to display only full-screen
-movies, as there are problems redrawing the screen when a movie is
-playing. 
+To display a movie in a displayable, we must start the movie and show
+a Movie displayable on the screen. The movie is then displayed on the
+screen along with any other widget. When we no longer want to show it,
+we need to stop the decoding of the movie and hide the displayable.
 </p>
+
+<!-- func Movie -->
+
+<!-- func renpy.movie_start_displayable -->
+
+<!-- func renpy.movie_stop -->
+
+<example>
+init:
+    image movie = Movie
+
+$ renpy.movie_start_displayable("bg.mpg", (640, 480), -1)
+scene movie
+show eileen happy
+
+e "I'm standing in front of a movie."
+
+e "Isn't that keen?"
+
+hide movie
+$ renpy.movie_stop()
+</example>
 
 <p>
-There are two functions that can display movies. renpy.movie_start
-queues a movie to start during the next interaction, while
-renpy.cutscene starts the movie and pauses for its duration, also
-allowing the user to click to interrupt the movie. In general, use
-renpy.cutscene unless there's a pressing need not to.
+Whenever a movie is playing, it is expected to provide all sound that
+the user hears. Ren'Py disables sound hardware for the duration of the
+movie.
 </p>
-
-<!-- func renpy.movie_start -->
-
-<!-- func renpy.cutscene -->
 
 <example>
 $ renpy.cutscene("On_Your_Mark.mpg", 394)

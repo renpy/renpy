@@ -292,7 +292,11 @@ def disable_mixer():
     global mixer_enabled
     
     if mixer_enabled:
-        pygame.mixer.quit()
+        try:
+            pygame.mixer.quit()
+        except:
+            if renpy.config.debug_sound:
+                raise
         
     mixer_enabled = False
 
@@ -305,7 +309,11 @@ def enable_mixer():
     global mixer_enabled
 
     if not mixer_enabled:
-        pygame.mixer.init()
-    
+        try:
+            pygame.mixer.init()
+        except:
+            if renpy.config.debug_sound:
+                raise
+            
     mixer_enabled = True
 

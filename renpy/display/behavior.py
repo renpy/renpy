@@ -481,7 +481,7 @@ class Bar(renpy.display.core.Displayable):
         if not (0 <= x < self.width and 0 <= y <= self.height):
             return
 
-        print x, y
+        # print x, y
 
         lgutter = self.style.left_gutter
         rgutter = self.style.right_gutter

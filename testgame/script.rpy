@@ -2,6 +2,8 @@ init:
     $ config.window_title = "Test Game"
     # $ config.profile = True
 
+    $ config.debug_sound = True
+
     # Set up the size of the screen.
     $ config.screen_width = 800
     $ config.screen_height = 600
@@ -20,14 +22,14 @@ init:
     # Styles.
     $ style.window.background = Frame("frame.png", 120, 25)
 
-    $ style.menu_choice.hover_sound = "chev1.wav"
-    $ style.menu_choice.activate_sound = "chev2.wav"
+#     $ style.menu_choice.hover_sound = "chev1.wav"
+#     $ style.menu_choice.activate_sound = "chev2.wav"
 
-    $ style.imagemap.hover_sound = "chev3.wav"
-    $ style.imagemap.activate_sound = "chev4.wav"
+#     $ style.imagemap.hover_sound = "chev3.wav"
+#     $ style.imagemap.activate_sound = "chev4.wav"
 
-    $ style.button.hover_sound = "chev6.wav"
-    $ style.button.activate_sound = "chev7.wav"
+#     $ style.button.hover_sound = "chev6.wav"
+#     $ style.button.activate_sound = "chev7.wav"
 
     $ style.mm_root_window.background = renpy.Solid((128, 128, 128, 255))
 
@@ -44,6 +46,8 @@ init:
     image eileen anim = Animation("9a_happy.png", 0.25,
                                   "9a_vhappy.png", 0.25,
                                   "9a_concerned.png")
+
+    image movie = Movie()
 
     # Character objects.
     $ e = Character('Eileen', color=(200, 255, 200, 255))
@@ -121,8 +125,7 @@ label start:
 
     $ ui.textbutton("Foo.")
 
-    $ renpy.cutscene("/home/tom/anime/On_Your_Mark.mpg", 394.0,
-                     rect=(100, 100, 400, 300))
+    $ renpy.movie_cutscene("On_Your_Mark.mpg", 450.0)
 
         
     python hide:
@@ -144,6 +147,21 @@ label start:
             
 
         
+
+    $ renpy.movie_start_displayable('On_Your_Mark.mpg', (400, 300))
+    show movie
+
+    p "I'm now showing a movie."
+
+    p "It's using alpha blending and all that."
+
+    p "Bully!"
+
+    $ renpy.movie_stop()
+    hide movie
+    
+                                    
+    
 
     p "This is a test."
 

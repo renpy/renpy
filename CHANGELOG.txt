@@ -1,6 +1,15 @@
 New in 4.5
 ----------
 
+Figure out some way to indicate what rectangles on the screen are
+dirty versus clean, and use that to speed up redraw when
+possible. (Perhaps build this into blit_to somehow.)
+
+Speedup config.mouse using display.update. Also, suppress blitting
+the mouse when we're playing a video. (Or at least suppress the flips)
+
+Save data loc on windows.
+
 Added support for playing MPEG-1 movies. Rather than explain it all
 here, we'l just mention that you can read the new "Movies" subsection
 of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py

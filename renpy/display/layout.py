@@ -20,6 +20,9 @@ class Null(renpy.display.core.Displayable):
         self.width = width
         self.height = height
 
+    def get_placement(self):
+        return self.style
+
     def render(self, width, height, st):
         return renpy.display.surface.Surface(self.width, self.height)
 

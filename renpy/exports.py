@@ -14,7 +14,7 @@ from renpy.display.image import *
 from renpy.curry import curry
 from renpy.display.audio import music_start, music_stop
 from renpy.display.audio import play
-from renpy.display.video import movie_start
+from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import *
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
@@ -328,30 +328,32 @@ def pause(delay=None, music=None):
 
     return renpy.ui.interact()
 
-def cutscene(filename, delay, rect=None, loops=0):
+def movie_cutscene(filename, delay, loops=0):
     """
     This displays an MPEG-1 cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.
 
-    @param filename: As in movie_start.
+    @param filename: The name of a file containing an MPEG-1 movie.
 
     @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds.
 
-    @param rect: As in movie_start.
-    
-    @param loops: As in movie_start.
+    @param loops: The number of extra loops to show, -1 to loop forever.
 
     Returns True if the movie was terminated by the user, or False if the
     given delay elapsed uninterrupted.
     """
 
-    movie_start(filename, rect=rect, loops=loops)
+    movie_start_fullscreen(filename, loops=loops)
 
     renpy.ui.saybehavior()
     renpy.ui.pausebehavior(delay, False)
 
-    return renpy.ui.interact(suppress_overlay=True, suppress_underlay=True, show_mouse=False)
+    rv = renpy.ui.interact(suppress_overlay=True, suppress_underlay=True, show_mouse=False)
+
+    movie_stop()
+
+    return rv
         
 
 def with(trans):

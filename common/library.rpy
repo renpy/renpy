@@ -428,21 +428,23 @@ init -500:
 
 
 # Factored this all into one place, to make our lives a bit easier.
-label _take_screenshot:
+label _enter_game_menu:
+    scene
+    $ renpy.movie_stop()
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
     return
 
 # Entry points from the game into menu-space.
 label _load_menu:
-    call _take_screenshot
+    call _enter_game_menu
     jump _load_screen
 
 label _game_menu:
-    call _take_screenshot
+    call _enter_game_menu
     jump _save_screen
 
 label _confirm_quit:
-    call _take_screenshot
+    call _enter_game_menu
     jump _quit_screen
 
 # Menu screens.

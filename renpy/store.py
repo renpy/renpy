@@ -22,10 +22,11 @@ Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Animation = renpy.display.image.Animation
+Movie = renpy.display.video.Movie
+
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
-
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 
