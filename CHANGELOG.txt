@@ -13,14 +13,44 @@ library.rpy, and library.rpyc, and then copying in the game
 directory. 
 
 We've also eliminated the default background images. To go back to the
-images used with Ren'Py 4.1, add the following lines to your script:
+images used with Ren'Py 4.1, add the following lines to your script,
+and copy the images out of the 4.1 distribution, or your 4.1 based
+game. 
 
 [code]
 init:
-    $ style.mm_root_windows.background = Image("mainmenu.jpg")
+    $ style.mm_root_window.background = Image("mainmenu.jpg")
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 125, 25)
 [/code]
+
+Added a new variable, config.hard_rollback_limit, which limits the
+number of steps the user can rollback the game, interactively. This
+limit now defaults to 10 steps. (suggested by Grey) 
+
+Added a second parameter to renpy.pause, that allows us to pause until
+a particular offset in the background music is reached. (suggested by
+Alessio)
+
+Added keyboard mouse controls that can be used to move the mouse
+around on the game and main menus. This allows us to manipulate the 
+game and main menus without having to touch the mouse. This is mostly
+for completeness. (suggested by Alessio)
+
+Changed the way in which overlays work. We now have the variable
+config.overlay_functions, which contains a list of functions, each of
+which returns a list of displayables that will be added to the
+screen. (sorta-kinda suggested by Alessio)
+
+Removed renpy.set_overlay, since config.overlay_functions is a more 
+flexible way of doing the same thing.
+
+Now, defining the label main_menu allows you to totally replace the
+main menu with something of your own devising. Changed the
+documentation to reflect this, as well as the changes in startup that
+happened in 4.1.
+
+
 
 
 New in 4.1

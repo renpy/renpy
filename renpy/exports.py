@@ -29,8 +29,8 @@ def checkpoint():
 
     renpy.game.log.checkpoint()
 
-def interact(*widgets):
-    return renpy.game.interface.interact(transient=widgets)
+def interact(*widgets, **kwargs):
+    return renpy.game.interface.interact(transient=widgets, **kwargs)
 
 def scene_lists(index=-1):
     """
@@ -92,33 +92,21 @@ def scene():
     sls.clear('master')
     sls.clear('transient')
         
-def set_overlay(overlay_list):
-    """
-    Sets the overlay list that will be used to display things at the
-    top of the screen. Clearing out the scene lists will not change
-    what's displayed in the overlay.
-
-    @param overlay_list: A list of displayables that will be displayed
-    above the current scene.
-    """
-
-    scene_lists().set_overlay(overlay_list)
-    
-def watch(expression):
+def watch(expression, style='default', **properties):
     """
     This watches the given python expression, by displaying it in the
-    upper-right corner of the screen. The expression should always be
+    upper-right corner of the screen (although position properties
+    can change that). The expression should always be
     defined, never throwing an exception.
 
-    This will replace any overlay defined by the program.
+    A watch will not persist through a save or restart.
     """
 
-    text = renpy.display.text.ExpressionText(expression)
-    pos = renpy.display.layout.Position(text,
-                                        xpos=1.0, xanchor='right',
-                                        ypos=0.0, yanchor='top')
+    def overlay_func():
+        return [ renpy.display.text.Text(renpy.python.py_eval(expression),
+                                         style=style, **properties) ]
 
-    set_overlay([ pos ])
+    renpy.config.overlay_functions.append(overlay_func)
 
 def input(prompt, default='', length=None):
     """
@@ -250,11 +238,58 @@ def display_say(who, what, who_style='say_label',
     interact()
     checkpoint()
 
-def pause(delay=None):
+def imagemap(ground, selected, hotspots, overlays=False):
+    """
+    Displays an imagemap. An image map consists of two images and a
+    list of hotspots that are defined on that image. When the user
+    clicks on a hotspot, the value associated with that hotspot is
+    returned.
+
+    @param ground: The name of the file containing the ground
+    image. The ground image is displayed in hotspots that the mouse is
+    not over, and for areas that are not part of any hotspots.
+
+    @param selected: The name of the file containing the selected
+    image. This image is displayed in hotspots when the mouse is over
+    them.
+
+    @param hotspots: A list of tuples defining the hotspots in this
+    image map. Each tuple has the format (x0, y0, x1, y1, result).
+    (x0, y0) gives the coordinates of the upper-left corner of the
+    hotspot, (x1, y1) gives the lower-right corner, and result gives
+    the value returned from this function if the mouse is clicked in
+    the hotspot.
+
+    @param overlay: If True, overlays are displayed when this imagemap
+    is active. If False, the overlays are suppressed.
+    """
+
+    imagemap = ImageMap(ground, selected, hotspots)
+    keymouse = KeymouseBehavior()
+
+    rv = interact(keymouse, imagemap)
+    checkpoint()
+    return rv
+    
+
+def pause(delay=None, music=None):
     """
     When called, this pauses and waits for the user to click before
     advancing the script.
+
+    @param delay: The number of seconds to delay.
+
+    @param music: If supplied, this gives the number of seconds into
+    the background music that we will delay until. If music is
+    playing, this takes precedence, otherwise the delay parameter
+    take precedence.
     """
+
+    if music is not None:
+        newdelay = renpy.music.music_delay(music)
+
+        if newdelay is not None:
+            delay = newdelay
 
     sayb = renpy.display.behavior.SayBehavior(delay=delay)
     scene_list_add('transient', sayb)
@@ -342,6 +377,17 @@ def windows():
     import sys
     return hasattr(sys, 'winver')
 
+def transition(trans):
+    """
+    Sets the transition that will be used for the next
+    interaction. This is useful when the next interaction doesn't take
+    a with clause, as is the case with pause, input, and imagemap.
+    """
+
+    if trans is None:
+        renpy.game.interface.with_none()
+    else:
+        renpy.game.interface.set_transition(trans)
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

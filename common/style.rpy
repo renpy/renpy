@@ -56,7 +56,7 @@ init -250:
         style.create('window', 'default',
                      '(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.')
                      
-        style.window.background = Frame("frame.png", 125, 25)
+        style.window.background = Solid((0, 0, 128, 128))
         style.window.xpadding = 10
         style.window.ypadding = 5
         style.window.xmargin = 10
@@ -195,7 +195,7 @@ init -250:
         style.create('mm_root_window', 'default',
                      '(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.')
 
-        style.mm_root_window.background = renpy.Image("mainmenu.jpg")
+        style.mm_root_window.background = Solid((0, 0, 0, 255))
 
         style.create('mm_menu_window', 'default',
                      '(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.')
@@ -216,7 +216,7 @@ init -250:
         style.create('gm_root_window', 'default',
                      '(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.')
 
-        style.gm_root_window.background = renpy.Image("gamemenu.jpg")
+        style.gm_root_window.background = Solid((0, 0, 0, 255))
     
         style.create('gm_nav_window', 'default',
                      '(window, position) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')

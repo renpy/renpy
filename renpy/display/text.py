@@ -164,37 +164,39 @@ class Text(renpy.display.core.Displayable):
         render_lines(0, 0 + fudge, self.style.color)
 
         return surf
+
+## Not needed any more.
     
-class ExpressionText(Text):
-    """
-    This is a Displayable that displays the result of an expression on
-    the screen, as text.
-    """
+# class ExpressionText(Text):
+#     """
+#     This is a Displayable that displays the result of an expression on
+#     the screen, as text.
+#     """
 
-    def __init__(self, expression, style='default', **properties):
-        """
-        @param expression: An expression that is evaluated to get the
-        text that will be shown on the screen.
+#     def __init__(self, expression, style='default', **properties):
+#         """
+#         @param expression: An expression that is evaluated to get the
+#         text that will be shown on the screen.
 
-        @param style: A style that will be applied to the text.
+#         @param style: A style that will be applied to the text.
 
-        @param properties: Additional properties that are applied to
-        the text.
-        """
+#         @param properties: Additional properties that are applied to
+#         the text.
+#         """
 
-        super(ExpressionText, self).__init__('', **properties)
+#         super(ExpressionText, self).__init__('', **properties)
 
-        self.old_value = ''
-        self.expression = expression
+#         self.old_value = ''
+#         self.expression = expression
 
-    def render(self, width, height, st):
+#     def render(self, width, height, st):
 
-        value = renpy.python.py_eval(self.expression)
-        value = str(value)
+#         value = renpy.python.py_eval(self.expression)
+#         value = str(value)
 
-        if value != self.old_value:
-            self.old_value = value
-            self.set_text(value)
+#         if value != self.old_value:
+#             self.old_value = value
+#             self.set_text(value)
 
-        return super(ExpressionText, self).render(width, height, st)
+#         return super(ExpressionText, self).render(width, height, st)
         

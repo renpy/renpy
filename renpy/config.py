@@ -23,11 +23,15 @@ debug = False
 rollback_enabled = True
 
 # If the rollback is longer than this, we may trim it.
-rollback_length = 512
+rollback_length = 128
 
-# A list of Displayables that should always be added to the end
-# of the scene list.
-overlay = [ ]
+# The maximum number of steps the user can rollback the game,
+# interactively.
+hard_rollback_limit = 10
+
+# A list of functions returning lists of displayables that will be
+# added to the end of the display list.
+overlay_functions = [ ]
 
 # A list of Displayables that should always be added to the start
 # of the scene list. (Mostly used for keymaps and the like.)
@@ -61,6 +65,9 @@ archives = [ ]
 
 # An image file containing the mouse cursor, if one is defined.
 mouse = None
+
+# The distance the keyboard moves the mouse, per 50 ms tick, in pixels.
+keymouse_distance = 5
 
 _globals = globals().copy()
 

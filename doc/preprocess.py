@@ -31,6 +31,7 @@ keywords = [
     r'\bpass\b',
     r'\bwith\b',
     r'\bat\b',
+    r'\bpython\b',
     ]
 
 kwre = '|'.join(keywords)

@@ -6,6 +6,23 @@ import renpy
 # Information about the currently playing track.
 current_music = None
 
+def music_delay(offset):
+    """
+    Returns the time left until the current music has been playing for
+    offset seconds. If music is not playing, return None. May return
+    a negative time.
+    """
+
+    mo = pygame.mixer.music.get_pos()
+    if mo < 0:
+        return None
+
+    mo /= 1000.0
+
+    return offset - mo
+
+    
+
 def music_start(filename, loops=-1, startpos=0.0):
     """
     This starts music playing. If a music track is already playing,

@@ -318,14 +318,6 @@ class RollbackLog(renpy.object.Object):
     @ivar current: The current rollback object. (Equivalent to
     log[-1])
 
-    Not serialized:
-    
-    @ivar old_store: A copy of the store as it was when begin was
-    last called.
-
-    @ivar mutated: A dictionary that maps object ids to a tuple of
-    (weakref to object, information needed to rollback that object)
-
     @ivar ever_been_changed: A dictionary containing a key for each
     variable in the store that has ever been changed. (These variables
     become the roots of what is changed or rolled-back.)
@@ -333,6 +325,16 @@ class RollbackLog(renpy.object.Object):
     @ivar frozen_roots: A frozen copy of the roots. When freeze is called,
     this holds a copy of roots. It's None at other times.
 
+    @ivar rollback_limit: The number of steps left that we can
+    interactively rollback.
+
+    Not serialized:
+    
+    @ivar old_store: A copy of the store as it was when begin was
+    last called.
+
+    @ivar mutated: A dictionary that maps object ids to a tuple of
+    (weakref to object, information needed to rollback that object)
     """
 
     nosave = [ 'old_store', 'mutated' ]
@@ -343,6 +345,7 @@ class RollbackLog(renpy.object.Object):
         self.mutated = { }
         self.ever_been_changed = { }
         self.frozen_roots = None
+        self.rollback_limit = 0
 
     def after_setstate(self):
         self.mutated = { }
@@ -453,6 +456,9 @@ class RollbackLog(renpy.object.Object):
         that the user may want to rollback to just before this
         node.
         """
+
+        if self.rollback_limit < renpy.config.hard_rollback_limit: 
+            self.rollback_limit += 1
         
         self.current.checkpoint = True
 
@@ -468,6 +474,13 @@ class RollbackLog(renpy.object.Object):
         rolling back, otherwise if we run out of log this call has no
         effect.
         """
+
+        # If we have exceeded the rollback limit, and don't have force,
+        # give up.
+        if not self.rollback_limit > 0 and not force:
+            return
+
+        self.rollback_limit -= 1
 
         self.purge_unreachable(self.get_roots())
 

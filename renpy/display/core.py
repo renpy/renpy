@@ -195,7 +195,6 @@ class SceneLists(object):
         rv = SceneLists()
         rv.master = self.master[:]
         rv.transient = self.transient[:]
-        rv.overlay = self.overlay[:]
 
         rv.music = self.music
 
@@ -279,14 +278,6 @@ class SceneLists(object):
 
         setattr(self, listname, nl)
     
-    def set_overlay(self, new_overlay):
-        """
-        This replaces the overlay scene list with the provided overlay
-        scene list.
-        """
-
-        self.overlay = [ (None, time.time(), i) for i in new_overlay ]
-
 def render_scene_list(sl, width, height):
     """
     This renders the scene list sl, and returns a rendered
@@ -563,7 +554,11 @@ class Interface(object):
 
         self.transition = transition
 
-    def interact(self, transient=None, show_mouse=True, trans_pause=False):
+    def interact(self, transient=None, show_mouse=True,
+                 trans_pause=False,
+                 suppress_overlay=False,
+                 suppress_underlay=False,
+                 ):
         """
         This handles one cycle of displaying an image to the user,
         and then responding to user input.
@@ -577,6 +572,8 @@ class Interface(object):
         @param trans_pause: If given, we must have a transition. Should we
         add a pause behavior during the transition?
 
+        @param suppress_overlay: This suppresses the display of the overlay.
+        @param suppress_underlay: This suppresses the display of the underlay.
         """
 
         ## Safety condition, prevents deadlocks.
@@ -605,9 +602,20 @@ class Interface(object):
         start_time = time.time()
         scene_lists = renpy.game.context().scene_lists
 
-        underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
-        overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
+        # Compute the overlay, by calling the overlay functions.
+        overlay = [ ]
+        
+        if not suppress_overlay:
+            for i in renpy.config.overlay_functions:
+                for j in i():
+                    overlay.append((None, 0, j))
 
+        if not suppress_underlay:
+            underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
+        else:
+            underlay = [ ]
+
+        # Set up the transient scene list.
         if transient:
             transient = [ (None, start_time, i) for i in transient ] 
         else:
@@ -615,7 +623,7 @@ class Interface(object):
 
 
         # Figure out the display list.
-        current_scene = scene_lists.master + transient
+        current_scene = scene_lists.master + transient + overlay
         
         if self.transition and not self.supress_transition:
             trans = self.transition(self.old_scene, current_scene)
@@ -625,7 +633,6 @@ class Interface(object):
             if trans_pause:
                 sb = renpy.display.behavior.SayBehavior(delay=trans.delay)
                 transition_scene.append((None, start_time, sb))
-                
         else:
             transition_scene = current_scene
 
@@ -633,7 +640,7 @@ class Interface(object):
         self.supress_transition = False
 
         # The list of things to be displayed.
-        display_list = underlay + transition_scene + scene_lists.overlay + overlay
+        display_list = underlay + transition_scene
 
         # This list of things recieving events.
         event_list = display_list[:]
@@ -650,6 +657,10 @@ class Interface(object):
         # (The same order as rev_transient.)
         offsets = [ ]
 
+        # Post an event that moves us to the current mouse position.
+        pygame.event.post(pygame.event.Event(MOUSEMOTION,
+                                             pos=pygame.mouse.get_pos()))
+        
         rv = None
 
         while rv is None:
@@ -723,7 +734,9 @@ class Interface(object):
                     if len(evs):
                         ev = evs[-1]
 
-                x, y = getattr(ev, 'pos', (0, 0))
+                # x, y = getattr(ev, 'pos', (0, 0))
+
+                x, y = pygame.mouse.get_pos()
 
                 for (k, t, d), (xo, yo) in zip(event_list, offsets):
                     rv = d.event(ev, x - xo, y - yo)

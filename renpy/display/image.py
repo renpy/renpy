@@ -1,5 +1,6 @@
 import renpy
 import pygame
+from pygame.constants import *
 
 class ImageCache(object):
 
@@ -133,18 +134,19 @@ class Image(renpy.display.core.Displayable):
     on disk.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, style='image_placement', **properties):
         """
         @param filename: The filename that the image is loaded from. Many common file formats are supported.
         """
         
         self.filename = filename
+        self.style = renpy.style.Style(style, properties)
 
     def render(self, w, h, st):
         return cache.load_image(self.filename)  
 
     def get_placement(self):
-        return renpy.game.style.image_placement
+        return self.style
 
     def predict(self, callback):
         callback(self.filename)
@@ -154,14 +156,17 @@ class UncachedImage(renpy.display.core.Displayable):
     An image that is loaded immediately and not cached.
     """
 
-    def __init__(self, file, hint=None, scale=None):
+    def __init__(self, file, hint=None, scale=None, style='image_placement',
+                 **properties):
         self.surf = pygame.image.load(file, hint)
 
         if scale:
             self.surf = pygame.transform.scale(self.surf, scale)
 
+        self.style = renpy.style.Style(style, properties)
+
     def get_placement(self):
-        return renpy.game.style.image_placement
+        return self.style
 
     def render(self, w, h, st):
         sw, sh = self.surf.get_size()
@@ -188,8 +193,9 @@ class ImageReference(renpy.display.core.Displayable):
 
     nosave = [ 'target' ]
 
-    def __init__(self, name):
+    def __init__(self, name, style='image_placement', **properties):
         self.name = name
+        self.style = renpy.style.Style(style, properties)
 
     def find_target(self):
         import renpy.exports as exports
@@ -208,7 +214,7 @@ class ImageReference(renpy.display.core.Displayable):
         return self.target.render(width, height, st)
 
     def get_placement(self):
-        return self.target.get_placement()
+        return self.style
     
 class Solid(renpy.display.core.Displayable):
     """
@@ -403,3 +409,71 @@ class Animation(renpy.display.core.Displayable):
     def get_placement(self):
         return renpy.game.style.image_placement
 
+class ImageMap(renpy.display.core.Displayable):
+    """
+    The displayable that implements renpy.imagemap.
+    """
+
+
+    def __init__(self, ground, selected, hotspots,
+                 style='image_placement', **properties):
+
+        self.ground = ground
+        self.selected = selected
+        self.hotspots = hotspots
+        self.active = None
+
+        self.style = renpy.style.Style(style, properties)
+
+    def get_placement(self):
+        return self.style
+
+    def predict(self, callback):
+        callback(i.ground)
+        callback(i.selected)
+
+    def render(self, width, height, st):
+
+        ground = cache.load_image(self.ground)
+        selected = cache.load_image(self.selected)
+
+        width, height = ground.get_size()
+        rv = renpy.display.surface.Surface(width, height)
+        rv.blit(ground, (0, 0))
+
+        if self.active is not None:
+            x0, y0, x1, y1, result = self.hotspots[self.active]
+
+            subsurface = selected.subsurface((x0, y0, x1-x0, y1-y0))
+            rv.blit(subsurface, (x0, y0))
+
+        return rv
+        
+    def event(self, ev, x, y):
+
+        old_active = self.active
+        active = None
+
+        for i, (x0, y0, x1, y1, result) in enumerate(self.hotspots):
+            if x >= x0 and x <= x1 and y >= y0 and y <= y1:
+                active = i
+                break
+
+        # result stays set.
+
+        if old_active != active:
+            self.active = active
+            renpy.game.interface.redraw(0)
+
+        if active is None:
+            return None
+
+        if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
+           (ev.type == KEYDOWN and ev.key == K_RETURN):
+
+            return result
+
+        return None
+                
+            
+        

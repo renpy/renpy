@@ -30,7 +30,7 @@ def main():
     for fn in sys.argv[2:]:
         print "Adding %s..." % fn
 
-        data = file(fn, "rd").read()
+        data = file(fn, "rb").read()
         dlen = len(data)
 
         archivef.write(data)

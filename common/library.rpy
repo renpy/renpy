@@ -84,16 +84,12 @@ init:
             finally:
                 _windows_hidden = False
 
-
-# Installs the keymap that lets the user do things like invoke the
-# game menu.
-label _install_keymap:
-    
+        # A keymouse object that we use on the mainmenu and gamemenu
+        # screens.
+        _keymouse = renpy.KeymouseBehavior()
+                
     # Set up the default keymap.    
     python hide:
-        config.underlay = [ ]
-        config.overlay = [ ]
-
         # The default keymap.
         km = renpy.Keymap(
             K_PAGEUP = renpy.rollback,
@@ -106,7 +102,7 @@ label _install_keymap:
             mouse_2 = _hide_windows,
             )
 
-        config.underlay.append(km)
+        config.underlay = [ km ]
 
     return
         
@@ -116,16 +112,13 @@ label _start:
     jump _main_menu
 
 # This shows the main menu to the user. 
-label _main_menu:
+label _main_menu:    
 
-    # The game isn't started yet.
-    $ _started = True
+    # Let the user completely override the main menu.
+    if renpy.has_label("main_menu"):
+        jump main_menu
 
     python hide:
-
-        # Disable the keymap.
-        config.underlay = [ ]
-        config.overlay = [ ]
 
         # Show the main menu screen.
         vbox = renpy.VBox()
@@ -140,12 +133,9 @@ label _main_menu:
 
         root_window = renpy.Window(fixed, style='mm_root_window')
 
-        store._result = renpy.interact(root_window)
-
-    # The game might be starting.
-    $ _started = True
-
-    call _install_keymap
+        store._result = renpy.interact(_keymouse, root_window,
+                                       suppress_overlay=True,
+                                       suppress_underlay=True)
 
     # Computed jump to the appropriate label.
     $ renpy.jump(_result)
@@ -154,8 +144,7 @@ label _main_menu:
 
 # Used to call the game menu. 
 label _continue:
-    $ _started = False
-    $ renpy.call_in_new_context("_game_menu")
+    $ renpy.call_in_new_context("_load_menu")
 
     jump _main_menu
     
@@ -211,7 +200,10 @@ init -500:
             for w in widgets:
                 fixed.add(w)
 
-            return renpy.interact(win)
+            return renpy.interact(_keymouse, win,
+                                  suppress_underlay=True,
+                                  suppress_overlay=True
+                                  )
 
         _file_picker_index = 0
 
@@ -334,30 +326,25 @@ init -500:
             
                                         
 
-label _game_menu:
-
-    # disable keystrokes.
-    $ config.underlay = [ ]    
-    $ config.overlay = [ ]
+label _load_menu:
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
-    $ renpy.set_overlay([])
 
-    if _started:
-        jump _save_screen
-    else:
-        jump _load_screen
+    jump _load_screen
+
+label _game_menu:
+    $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+
+    jump _save_screen
 
 label _load_screen:
 
     python:
         _fn = _file_picker("load", renpy.saved_game_filenames() )
 
-    call _install_keymap
-
     python:
         renpy.load(_fn)
 
-    jump _game_menu
+    jump _load_screen
 
 label _save_screen:
     $ _fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
@@ -418,7 +405,6 @@ label _full_restart:
 # Return to the game, after restoring the keymap.
 label _return:
 
-    call _install_keymap
     return
 
 # The centered object.

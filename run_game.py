@@ -14,7 +14,7 @@ import renpy
 
 
 # The version of Ren'Py in use.
-version = 'Renpy 4.1'
+version = 'Renpy 4.2'
 
 if __name__ == "__main__":
 

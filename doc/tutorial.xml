@@ -1049,8 +1049,11 @@ jump loop_start
     required here to ensure that saved games with return stacks can
     return to the proper place when loaded on a changed script. On
     the other hand, from clauses may be distracting when a game is
-    still under development. A script will be provided to add from
-    clauses to call statements right before a game is released.
+    still under development. We provide with Ren'Py a program, called
+    "add_from", that adds from clauses to all bare calls in the game
+    directory. This program should be run before a final release of
+    your game is made. <b>Be sure to make a backup of your game
+      directory before running add_from.</b>
 
   </p>
 
@@ -1267,11 +1270,13 @@ python:
   </p><p>
 
     After the last init block has finished running, the display is
-    initialized, and the actual game can begin. It's expected that
-    each game will have a label named "start". The game is begun by
-    jumping to this start label. Execution proceeds from there,
-    terminating when the end of a file or a return statement is
-    reached. 
+    initialized, and the actual game can begin. If the library is
+    present it looks for a label named "main_menu". If it exists, then
+    that label is jumped to as the main menu. Otherwise, the library
+    main menu is displayed. While library.main_menu allows this menu
+    to be customized, the default main menu calles the label "start"
+    when the user chooses "Start Game".
+
   </p>
 
   <h3>Saving, Loading, and Rollback</h3>
@@ -1557,6 +1562,24 @@ $ name = renpy.input("What is your name?", "Joe User", length=20)
 e "Pleased to meet you, %(name)s."
   </example>
 
+  <!-- func renpy.imagemap -->
+
+  <example>
+    $ result = renpy.imagemap("ground.png", "selected.png", [
+        (100, 100, 300, 400, "eileen"),
+        (500, 100, 700, 400, "lucy")
+        ])
+
+
+    if result == "eileen":
+        e "You picked me!"
+
+    elif result == "lucy":
+        e "It looks like you picked Lucy."   
+  </example>
+
+  <!-- func renpy.transition -->
+
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
@@ -1564,6 +1587,58 @@ e "Pleased to meet you, %(name)s."
   <!-- func renpy.watch -->
 
   <!-- func renpy.windows -->
+
+  <h3>Overlays</h3>
+
+  <p>
+    Overlays are used to display information above the scene currently
+    displayed. The overlay is regenerated each time an interaction
+    with the user begins, making it suitable for displaying to the
+    user things like statistics or dates. The overlay is generally
+    displayed whenever transient things (like dialogue, thoughts and
+    menus) are.
+  </p>
+
+  <p>
+    Overlays are set up by adding to the config.overlay_functions list
+    a python function which, when called, returns a list of
+    Displayables that are added to the overlay. These functions are
+    called for each interaction, which allows the overlay to change to
+    reflect the status of game variables.
+  </p>
+
+  <p>
+    As an example, take the following code fragement. When added to a
+    program, this displays a date image in the upper-right corner of
+    the screen (as is done in Kanon). The image shown is based on the
+    variable date. If date is None, then no date is shown. Otherwise,
+    a png file beginning with the value of date is shown.
+  </p>
+
+  <example>
+init:
+    $ date = "mar25"
+
+    python hide:
+        def date_overlay():
+            if date:
+                return [ Image(date + ".png", 
+                               xpos=1.0, xanchor="right",
+                               ypos=0.0, yanchor="top") ]
+            else:
+                return [ ]
+
+        config.overlay_functions.append(date_overlay)
+  </example>
+
+  <p>
+    Like all config variables, config.overlay_functions should only be
+    changed in an init block. If you need to toggle an overlay on and
+    off, then the overlay function should be conditioned on some
+    normal variable, returning an empty list if it is false. This is
+    done in the example above when date is None.
+  </p>
+
 
   <h3>Music Functions</h3>
 
@@ -1662,9 +1737,16 @@ init:
       for loading savegames when the script changes.)
     </var>
 
-    <var name="config.rollback_length" value="512">
+    <var name="config.rollback_length" value="128">
       When there are more than this many statements in the rollback log,
       Ren'Py will consider trimming the log. 
+    </var>
+
+    <var name="config.hard_rollback_limit" value="10">
+      This is the number of steps that Ren'Py will let the user
+      interactively rollback. Set this to 0 to disable rollback
+      entirely, although we don't recommend that, as rollback is
+      useful to let the user see text he skipped by mistake. 
     </var>
 
     <var name="config.profile" value="False">
@@ -1715,6 +1797,17 @@ init:
       have transparency and translucency. If this is None, a
       black-and-white hardware mouse is used, and the speed of Ren'Py
       is slightly increased.
+    </var>
+
+    <var name="config.keymouse_distance" value="5">
+      This gives the number of pixels that the mouse is moved every
+      1/20th of a second when the keymouse is being used.
+    </var>
+
+    <var name="config.overlay_functions" value="[ ]">
+      A list of functions. When called, each function is expected to
+      return a list of displayables, which are added to the overlay 
+      list. See the section on overlays for more.
     </var>
 
     <var name="library.file_page_length" value="4">

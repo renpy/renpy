@@ -43,6 +43,35 @@ class Keymap(renpy.display.layout.Container):
     def render(self, width, height, st):
         return None
 
+class KeymouseBehavior(renpy.display.layout.Null):
+    """
+    This is a class that causes the keyboard to move the mouse. It's
+    useful on the game and key menus, as well as in imagemaps and the
+    like.
+    """
+
+    def event(self, ev, x, y):
+        if ev.type == renpy.display.core.DISPLAYTIME:
+
+            pressed = pygame.key.get_pressed()
+
+            x, y = pygame.mouse.get_pos()
+            ox, oy = x, y
+
+            if pressed[K_LEFT]:
+                x -= renpy.config.keymouse_distance
+            if pressed[K_RIGHT]:
+                x += renpy.config.keymouse_distance
+            if pressed[K_UP]:
+                y -= renpy.config.keymouse_distance
+            if pressed[K_DOWN]:
+                y += renpy.config.keymouse_distance
+
+            if (x, y) != (ox, oy):
+                pygame.mouse.set_pos((x, y))
+
+            return None
+
 class SayBehavior(renpy.display.layout.Null):
     """
     This is a class that implements the say behavior,
@@ -241,9 +270,12 @@ class Button(renpy.display.layout.Window):
                 self.old_hover = inside
                 self.set_hover(inside)
 
-        if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+        if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
+               (ev.type == KEYDOWN and ev.key == K_RETURN):
             if inside:
                 return self.clicked()
+
+        
 
         return None
 

@@ -84,19 +84,19 @@ label start:
         set seen_set
 
         "What are some features of Ren'Py games?":
-            call features
+            call features from _call_features_1
             jump choices
 
         "How do I write my own games with it?":
-            call writing
+            call writing from _call_writing_1
             jump choices
 
         "Where can I find out more?" if seen_set:
-            call find_out_more
+            call find_out_more from _call_find_out_more_1
             jump choices
 
         "Why are we in Washington, DC?":
-            call washington
+            call washington from _call_washington_1
             jump choices
 
         "I think I've heard enough." if seen_set:
@@ -440,7 +440,6 @@ label post_netherlands:
     e "Anyway, is there anything else you want to know about Ren'Py?"
 
     return
-
 
 label ending:
 

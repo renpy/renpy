@@ -385,7 +385,9 @@ class With(Node):
         else:
             if renpy.game.preferences.transitions:
                 renpy.game.interface.set_transition(trans)
-                renpy.game.interface.interact(show_mouse=False, trans_pause=True)
+                renpy.game.interface.interact(show_mouse=False,
+                                              trans_pause=True,
+                                              suppress_overlay=True)
 
         return self.next
         
