@@ -13,8 +13,15 @@ class Null(renpy.display.core.Displayable):
     but don't want to actually have anything there.
     """
 
+    def __init__(self, width=1, height=1, style='default', **properties):
+        super(Null, self).__init__()
+
+        self.style = renpy.style.Style(style, properties)
+        self.width = width
+        self.height = height
+
     def render(self, width, height, st):
-        return renpy.display.surface.Surface(1, 1)
+        return renpy.display.surface.Surface(self.width, self.height)
 
 
 class Container(renpy.display.core.Displayable):

@@ -13,49 +13,49 @@ import renpy
 # files.
 savegame_suffix = renpy.savegame_suffix
 
-# def debug_dump(prefix, o, seen):
+def debug_dump(prefix, o, seen):
 
-#     if id(o) in seen:
-#         print prefix, id(o)
-#         return
+    if id(o) in seen:
+        print prefix, id(o)
+        return
 
-#     seen[id(o)] = True
+    seen[id(o)] = True
 
-#     if isinstance(o, tuple):
-#         print prefix, "("
-#         for i in o:
-#             debug_dump(prefix + "  ", i, seen)
-#         print prefix, ")"
+    if isinstance(o, tuple):
+        print prefix, "("
+        for i in o:
+            debug_dump(prefix + "  ", i, seen)
+        print prefix, ")"
 
-#     elif isinstance(o, list):
-#         print prefix, "["
-#         for i in o:
-#             debug_dump(prefix + "  ", i, seen)
-#         print prefix, "]"
+    elif isinstance(o, list):
+        print prefix, "["
+        for i in o:
+            debug_dump(prefix + "  ", i, seen)
+        print prefix, "]"
 
-#     elif isinstance(o, dict):
-#         print prefix, "{"
-#         for k, v in o.iteritems():
-#             print prefix, repr(k), "="
-#             debug_dump(prefix + "    ", v, seen)
-#         print prefix, "}"
+    elif isinstance(o, dict):
+        print prefix, "{"
+        for k, v in o.iteritems():
+            print prefix, repr(k), "="
+            debug_dump(prefix + "    ", v, seen)
+        print prefix, "}"
 
     
-#     elif hasattr(o, "__dict__"):
+    elif hasattr(o, "__dict__"):
 
-#         ignored = getattr(o, "nosave", [ ])
+        ignored = getattr(o, "nosave", [ ])
 
-#         print prefix, repr(o), "{{"
-#         for k, v in vars(o).iteritems():
-#             if k in ignored:
-#                 continue
+        print prefix, repr(o), "{{"
+        for k, v in vars(o).iteritems():
+            if k in ignored:
+                continue
 
-#             print prefix, repr(k), "="
-#             debug_dump(prefix + "    ", v, seen)
-#         print prefix, "}}"
+            print prefix, repr(k), "="
+            debug_dump(prefix + "    ", v, seen)
+        print prefix, "}}"
 
-#     else:
-#         print prefix, repr(o)
+    else:
+        print prefix, repr(o)
 
     
 
@@ -67,35 +67,41 @@ def save(filename, extra_info=''):
 
     It's expected that a screenshot will be taken (with
     renpy.take_screenshot) before this is called.
-
-    If the filename is None, one is automatically generated based
-    on the current time.
     """
 
-    if filename == None:
-        filename = str(time.time()) + savegame_suffix
+    filename = filename + savegame_suffix
 
     try:
         os.unlink(renpy.config.savedir + "/" + filename)
     except:
         pass
 
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename,
-                         "w", zipfile.ZIP_DEFLATED)
-    
-    # Screenshot.
-    zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
 
-    # Extra info.
-    zf.writestr("extra_info", extra_info)
-    
-    # The actual game.
     renpy.game.log.freeze()
 
-    zf.writestr("log", dumps(renpy.game.log, HIGHEST_PROTOCOL))
-    renpy.game.log.discard_freeze()
 
-    zf.close()
+    try:
+        zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename,
+                             "w", zipfile.ZIP_DEFLATED)
+
+        # Screenshot.
+        zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
+
+        # Extra info.
+        zf.writestr("extra_info", extra_info)
+
+        # print
+        # print "Debug Dump!"
+        # debug_dump("", renpy.game.log, { })
+
+        # The actual game.
+        zf.writestr("log", dumps(renpy.game.log, HIGHEST_PROTOCOL))
+
+        zf.close()
+    finally:              
+        renpy.game.log.discard_freeze()
+
+
 
 def saved_games():
     """
@@ -119,8 +125,9 @@ def saved_games():
         datefiles = [ (os.stat(renpy.config.savedir + "/" + i).st_mtime, i) for i in files ]
         datefiles.sort()
         newest = datefiles[-1][1]
+        newest = newest[:-len(savegame_suffix)]
 
-    savelist = [ ]
+    saveinfo = { }
 
     for f in files:
 
@@ -131,16 +138,18 @@ def saved_games():
     
         screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
 
-        savelist.append((f, screenshot, extra_info))
+        f = f[:-len(savegame_suffix)]
 
-    return savelist, newest
+        saveinfo[f] = screenshot, extra_info
+
+    return saveinfo, newest
     
 def load(filename):
     """
     Loads the game from the given file. This function never returns.
     """
     
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename, "r")
+    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
     log = loads(zf.read("log"))
     zf.close()
     log.unfreeze()

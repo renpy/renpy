@@ -1118,6 +1118,7 @@ e "How are you doing?" with dissolve
   </p>
 
   <rule>jump statement -> "jump" name</rule>
+  <rule>jump statement -> "jump" "expression" simple_expression</rule>
 
   <p>
     The jump statement unconditionally transfers control to the
@@ -1133,7 +1134,15 @@ e "Oh no! It looks like we're trapped in an infinite loop."
 jump loop_start
   </example>
 
+<p>
+A second form of the jump statement is invoked if the expression
+keyword is in the statement. In this form, the supplied simple
+expression is evaluated to get a string, and control is transferred to
+the label given by that string.
+</p>
+
   <rule>call_statement -> "call" name ( "from" name )?</rule>
+  <rule>call_statement -> "call" "expression" simple_expression ( "from" name )?</rule>
 
   <p>
     The call statement transfers control to the location given. It
@@ -1156,6 +1165,14 @@ jump loop_start
       directories before running add_from.</b>
 
   </p>
+
+<p>
+A second form of the call statement is invoked if the expression
+keyword is in the statement. In this form, the supplied simple
+expression is evaluated to get a string, and control is transferred to
+the label given by that string, in a manner similar to a normal call.
+</p>
+
 
   <rule>return_statement -> "return"</rule>
 
@@ -2023,7 +2040,14 @@ load scripts, as scripts will be loaded before it can be set.
 
     <var name="library.file_page_length" value="10">
       This is the number of save slots that are shown in the picker
-      that's used by the load and save portions of the game menu.
+      that's used by the load and save portions of the game menu. This
+      should probably be an even number.
+    </var>
+
+    <var name="library.file_quick_access_pages" value="5">
+The number of pages of the file picker to provide quick access
+to. Quick access is provided by number buttons which are at the top of
+the file picker.
     </var>
 
     <var name="library.thumbnail_width" value="100">
@@ -2324,10 +2348,44 @@ init:
     otherwise selecting it.
   </prop>
 
+  <h4>Bar Properties</h4>
+ 
+  <p>
+The ui.bar() widget has a few properties that are specific to
+it. These properties control the look of the bars, and the size of
+the gutters on either side of a clickable widget. The gutters are
+empty space on the left and right of a clickable bar, and serve to
+make it easy to set the maximum and minimum value of the bar
+widget. Clicking on the left gutter sets the minimum value, while the
+right gutter sets the maximum value.
+</p>
+
+<prop name="left_bar">
+A Displayable that is used to draw the left side of the bar. This
+Displayable needs to be one that can change its size, such as a Solid
+or a Frame.
+</prop>
+
+<prop name="right_bar">
+A Displayable that is used to draw the right side of the bar. This
+Displayable needs to be one that can change its size, such as a Solid
+or a Frame.
+</prop>
+
+<prop name="left_gutter">
+The size of the left gutter of a clickable bar, in pixels.
+</prop>
+
+<prop name="right_gutter">
+The size of the left gutter of a clickable bar, in pixels.
+</prop>
+
+
+
   <h4>Hovering</h4>
   
   <p>
-    In Ren'Py, buttons and their labels support the idea of hovering:
+    In Ren'Py, buttons and their contents support the idea of hovering:
     using different sets of properties when the mouse is over or not
     over the widget. If the mouse is over the widget, then that widget
     is hovered, else it is idle. On these widgets, Ren'Py will look up
@@ -2356,7 +2414,7 @@ init:
     enabled. Setting it to False speeds up Ren'Py, at the cost of
     making the widget not respond to hovering.
   </prop>
-  
+
   <h4>Using Properties and Styles</h4>
   
   <p>
@@ -2628,6 +2686,9 @@ keymap = dict(
     # Imagemap.
     imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
 
+    # Bar.
+    bar_click = [ 'mouse_1' ],
+
     # This isn't a binding, but instead a list of keys that should
     # repeat when held down.
     repeating = [ 'K_LCTRL', 'K_RCTRL' ],
@@ -2701,6 +2762,15 @@ the same user interface to the user again.
 </p>
 
 <p>
+It's important to ensure that, if a lambda or nested function is used
+as an argument to one of these ui functions, ui.interact() is called
+in the same python block. Failure to do this will prevent your game
+from saving, and that's probably a bad thing. ui.returns doesn't
+suffer from this problem, and so should probably be used in preference
+to lambda.
+</p>
+
+<p>
 The following are the functions available in the ui module, which is
 automatically present in the game namespace.
 </p>
@@ -2732,6 +2802,8 @@ automatically present in the game namespace.
 <!-- func ui.imagemap -->
 
 <!-- func ui.menu -->
+
+<!-- func ui.bar -->
 
 <!-- func ui.saybehavior -->
 

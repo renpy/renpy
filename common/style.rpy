@@ -20,7 +20,7 @@ init -250:
         style.create('default', None,
                      'The default style that all styles inherit from.')
 
-        dark_cyan = (0, 128, 255, 255)
+        dark_cyan = (0, 192, 255, 255)
         bright_cyan = (0, 255, 255, 255)
 
         dark_red = (255, 128, 128, 255)
@@ -293,7 +293,13 @@ init -250:
         style.file_picker_window.yanchor = 'top'
 
 
-        style.create('file_picker_image', 'default')
+        style.create('file_picker_navbox', 'default',
+                     '(position) The position of the naviation (next/previous) buttons in the file picker.')
+
+        style.file_picker_navbox.xmargin = 10
+        
+        style.create('file_picker_image', 'default',
+                     '(position) The position of the image in each file picker entry.')
 
         style.file_picker_image.xminimum = 280
 
@@ -330,8 +336,8 @@ init -250:
         style.create('file_picker_extra_info', 'file_picker_text',
                      '(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.')
 
-        style.create('file_picker_new_slot', 'file_picker_text',
-                     '(text) The style that is used for the new slot indicator in the file picker.')
+        style.create('file_picker_empty_slot', 'file_picker_text',
+                     '(text) The style that is used for the empty slot indicator in the file picker.')
 
         style.create('yesno_prompt', 'default',
                      '(text, position) The style used for the prompt in a yes/no dialog.')

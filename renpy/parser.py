@@ -227,6 +227,7 @@ class Lexer(object):
     keywords = [
         'at',
         'call',
+        'expression'
         'hide',
         'if',
         'image',
@@ -933,15 +934,6 @@ def parse_statement(l):
 
         return ast.Pass(loc)
 
-    ### Jump statement
-    if l.keyword('jump'):
-        l.expect_noblock('jump statement')
-        target = l.require(l.name)
-        l.expect_eol()
-        l.advance()
-
-        return ast.Jump(loc, target)
-        
     
     ### Menu statement.
     if l.keyword('menu'):
@@ -971,12 +963,35 @@ def parse_statement(l):
 
         return ast.Return(loc)
 
+    ### Jump statement
+    if l.keyword('jump'):
+        l.expect_noblock('jump statement')
+
+        if l.keyword('expression'):
+            expression = True
+            target = l.require(l.simple_expression)
+        else:
+            expression = False            
+            target = l.require(l.name)
+
+        l.expect_eol()
+        l.advance()
+
+        return ast.Jump(loc, target, expression)
+    
+
     ### Call/From statement.
     if l.keyword('call'):
         l.expect_noblock('call statment')
-        target = l.require(l.name)
 
-        rv = [ ast.Call(loc, target) ]
+        if l.keyword('expression'):
+            expression = True
+            target = l.require(l.simple_expression)
+        else:
+            expression = False            
+            target = l.require(l.name)
+
+        rv = [ ast.Call(loc, target, expression) ]
 
         if l.keyword('from'):
             name = l.require(l.name)

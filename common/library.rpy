@@ -23,6 +23,9 @@ init -500:
         # The number of files to show at once.
         library.file_page_length = 10
 
+        # The number of pages to add quick access buttons for.
+        library.file_quick_access_pages = 5
+
         # A small amount of padding.
         library.padding = 2
 
@@ -41,12 +44,12 @@ init -500:
 
         # The contents of the game menu choices.
         library.game_menu = [
-                ( "return", "Return to Game", "_return", 'True'),
-                ( "load", "Load Game", "_load_screen", 'True'),
-                ( "save", "Save Game", "_save_screen", '_can_save' ),
+                ( "return", "Return", "_return", 'True'),
                 ( "prefs", "Preferences", "_prefs_screen", 'True' ),
+                ( "save", "Save Game", "_save_screen", '_can_save' ),
+                ( "load", "Load Game", "_load_screen", 'True'),
                 ( "mainmenu", "Main Menu", "_full_restart", 'not _at_main_menu' ),
-                ( "quit", "Quit Game", "_quit_screen", 'True' ),
+                ( "quit", "Quit", "_quit_screen", 'True' ),
                 ]
 
         # Used to translate strings in the library.
@@ -183,6 +186,8 @@ init -500:
 
             ui.keymousebehavior()
 
+            ui.add(renpy.Keymap(game_menu=ui.jumps("_return")))
+
             ui.window(style='gm_root_window')
             ui.fixed()
 
@@ -218,29 +223,41 @@ init -500:
                                   suppress_overlay=True)
 
 
-        def _render_new_slot():
-            ui.button(style='file_picker_entry',
-                      clicked=ui.returns(("return", None)))
-                      
-            ui.text(_("Save in new slot."), style='file_picker_new_slot')
-                      
+        def _render_new_slot(name, save):
             
-        def _render_savefile(index, info, newest):
-
-            filename, image, extra = info
+            if save:
+                clicked=ui.returns(("return", (name, False)))
+                enable_hover = True
+            else:
+                clicked=None
+                enable_hover = False
 
             ui.button(style='file_picker_entry',
-                      clicked=ui.returns(("return", filename)))
+                      clicked=clicked,
+                      enable_hover=enable_hover)
             
-            ui.hbox()
+            ui.hbox(padding=library.padding)
+            ui.null(width=library.thumbnail_width,
+                    height=library.thumbnail_height)
+            ui.text(name + ". ", style='file_picker_old')
+            ui.text(_("Empty Slot."), style='file_picker_empty_slot')
+            ui.close()
+                      
+            
+        def _render_savefile(name, info, newest):
+
+            image, extra = info
+
+            ui.button(style='file_picker_entry',
+                      clicked=ui.returns(("return", (name, True))))
+            
+            ui.hbox(padding=library.padding)
             ui.add(image)
             
-            num = "% 2d." % index
-            
-            if filename == newest:
-                ui.text(num, style='file_picker_new')
+            if name == newest:
+                ui.text(name + ". ", style='file_picker_new')
             else:
-                ui.text(num, style='file_picker_old')
+                ui.text(name + ". ", style='file_picker_old')
 
             
             ui.text(extra, style='file_picker_extra_info')
@@ -263,21 +280,13 @@ init -500:
                 fpi = 0
 
                 if newest:
-                    for i, (filename, image, extra) in enumerate(saves):
-                        if filename == newest:
-                            # Go to start of page.
-                            fpi = i // library.file_page_length * library.file_page_length
+                    fpi = int(newest) // library.file_page_length * library.file_page_length
 
-            if save:
-                saves.append(None)
                 
             # The length of a half-page of files.
             hfpl = library.file_page_length // 2
 
             while True:
-
-                if fpi >= len(saves):
-                    fpi -= library.file_page_length
 
                 if fpi < 0:
                     fpi = 0
@@ -291,7 +300,7 @@ init -500:
 
                 ui.vbox() # whole thing.
                 
-                ui.hbox(padding=library.padding * 10) # nav buttons.
+                ui.hbox(padding=library.padding * 10, style='file_picker_navbox') # nav buttons.
 
                 def tb(cond, label, clicked):
                     if cond:
@@ -304,22 +313,25 @@ init -500:
                     ui.textbutton(label, style=style, text_style=text_style, clicked=clicked)
 
 
-                tb(fpi > 0, _('Previous Page'), ui.returns(("fpidelta", -1)))
-                tb(fpi + library.file_page_length < len(saves),
-                   _('Next Page'), ui.returns(("fpidelta", +1)))
+                tb(fpi > 0, _('Previous'), ui.returns(("fpidelta", -1)))
+
+                for i in range(0, library.file_quick_access_pages):
+                    target = i * library.file_page_length
+                    tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
+
+                tb(True, _('Next'), ui.returns(("fpidelta", +1)))
 
                 ui.close() # nav buttons.
 
                 def entry(offset):
                     i = fpi + offset
 
-                    if i >= len(saves):
-                        return None
+                    name = str(i + 1)
 
-                    if saves[i] is None:
-                        _render_new_slot()
+                    if name not in saves:
+                        _render_new_slot(name, save)
                     else:
-                        _render_savefile(i + 1, saves[i], newest)
+                        _render_savefile(name, saves[name], newest)
                     
 
                 ui.hbox() # slots
@@ -346,6 +358,10 @@ init -500:
 
                 if type == "fpidelta":
                     fpi += value * library.file_page_length
+
+                if type == "fpiset":
+                    fpi = value
+
                 
         def _yesno_prompt(screen, message):
 
@@ -357,6 +373,22 @@ init -500:
 
             return _game_interact()
 
+        def _show_exception(title, message):
+            ui.add(Solid((0, 0, 0, 255)))
+            ui.vbox()
+
+            ui.text(title, color=(255, 128, 128, 255))
+            ui.text("")
+            ui.text(message)
+            ui.text("")
+            ui.text("Please click to continue.")
+
+            ui.close()
+
+            ui.saybehavior()
+
+            ui.interact()
+                     
 
 
 # Factored this all into one place, to make our lives a bit easier.
@@ -381,7 +413,7 @@ label _confirm_quit:
 label _load_screen:
 
     python:
-        _fn = _file_picker("load", False )
+        _fn, _exists = _file_picker("load", False )
 
     python:
         renpy.load(_fn)
@@ -389,9 +421,9 @@ label _load_screen:
     jump _load_screen
 
 label _save_screen:
-    $ _fn = _file_picker("save", True)
+    $ _fn, _exists = _file_picker("save", True)
 
-    if not _fn or _yesno_prompt("save", _("Are you sure you want to overwrite your save?")):
+    if not _exists or _yesno_prompt("save", _("Are you sure you want to overwrite your save?")):
         python hide:
 
             if save_name:
@@ -399,9 +431,22 @@ label _save_screen:
             else:
                 full_save_name = ""
 
-            renpy.save(_fn, renpy.time.strftime("%b %d, %H:%M") +
-                       full_save_name)
-            
+            try:
+                renpy.save(_fn, renpy.time.strftime("%b %d, %H:%M") +
+                           full_save_name)
+
+            except Exception, e:
+
+                if config.debug:
+                    raise
+                
+                message = ( "The error message was:\n\n" +
+                            e.__class__.__name__  + ": " + unicode(e) + "\n\n" +
+                            "You may want to try saving in a different slot, or playing for a while and trying again later.")
+
+                _show_exception(_("Save Failed."), message)
+                
+                
     jump _save_screen
 
 # Asks the user if he wants to quit.

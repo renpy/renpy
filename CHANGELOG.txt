@@ -1,24 +1,33 @@
 New in 4.4
 ----------
 
-Document bar properties (left_bar, right_bar, left_gutter, and right_gutter)
+Added a number of features to allow Ren'Py to support statistics-based
+dating simulations. The first is a new ui.bar() widget, which allows
+the display of a bar graph. The demo has been enhanced to include a
+stats and schedule screen, to show how this could be used. You can get
+to it by asking how to write your own games in the demo, or you can
+follow the below link to get a screenshot.
 
-Add input, bar, frame, and solid to ui.
+[url]http://www.bishoujo.us/hosted/screenshot.jpg[/url]
+
+Another feature that has been added were 'jump expression' and 'call
+expression' statements, allowing computed jumps and calls. Together
+with an imporoved scheduler and yet-to-be written event dispatcher,
+this provides the foundation for SBDSes. 
 
 Now, setting a property on a style also sets the hover_ and idle_
 variants of that property. This makes changing a property of an
 inherited style a bit saner. In addition, hover now propagates to all
 children of a button. This means that hover will now work with the
 styles in the file chooser.
-[ Not documented. ]
 
 Added support for layering images. This support (invoked by passing a
 tuple as an image filename) allows a single image to be constructed
 from multiple image files, saving disk space while still keeping
 performance.
 
-(The following were also in 4.3.2, which was a private release, to
-test the bugs in UTF-8 support.)
+(The following were also in 4.3.2, which was a private release to
+test the fixes for UTF-8 support.)
 
 There were two bugs with UTF-8 support. The first was that we didn't
 understand the byte-order mark, and choked on the syntax error. The
@@ -44,10 +53,12 @@ searched for image files and other media (but not scripts, since all
 scripts are loaded before the variable can be set). This allows
 multiple game directories to share images, music, and other data files.
 
-Once again, I redid the file chooser and default styles. The new file 
+Once again, I redid the file chooser and default styles. The new file
 chooser displays 10 entries in two columns, with each entry being
-shown with an image. There were also some changes to the
-non-user-visible parts of loading and saving.
+shown with an image. The files are now orginized into numbered slots,
+and it's possible to save in a slot without saving in all previous
+slots. There were also some changes to the non-user-visible parts of
+loading and saving.
 
 Speed Enhancements:
 

@@ -24,33 +24,6 @@ init:
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 125, 25)
 
-    # Set this to False to see the default button styles.
-    if False:
-
-        # Change button styles.
-        $ style.button.background = Frame("button.png", 25, 10)
-        $ style.selected_button.background = Frame("button_checked.png", 25, 10)
-        $ del style.selected_button_text.color
-        $ style.button_text.drop_shadow = None
-        $ style.button_text.xpos = 28
-        $ style.button_text.xanchor = 'left'
-        $ style.button_text.ypos = 0.6
-        $ style.button_text.yanchor = 'center'
-        $ style.button_text.color = (255, 255, 255, 255)
-        $ style.button_text.hover_color = (255, 255, 0, 255)
-        $ style.disabled_button_text.hover_color = (128, 128, 128, 255)
-        $ style.button.xminimum = 250
-
-        # Change other styles.
-        $ style.prefs_label.color = (64, 64, 255, 255)
-        $ style.yesno_prompt.color = (64, 64, 255, 255)
-        $ style.file_picker_text.drop_shadow = None
-        $ style.file_picker_entry.idle_background = Solid((0, 0, 192, 255))
-        $ style.file_picker_entry.hover_background = Solid((64, 64, 255, 255))
-        $ style.file_picker_text.color = (255, 255, 255, 255)
-        $ style.file_picker_new.color = (255, 128, 128, 255)
-
-
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
     $ left = Position(xpos=0.0, xanchor='left')
@@ -108,6 +81,7 @@ label start:
     # This variable is only used by our game. If it's true, it means
     # that we won the date.
     $ date = False
+
 
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
@@ -325,6 +299,14 @@ label writing:
     $ renpy.play("18005551212.wav")
     
     e "... and sound effects, like the one that just played."
+
+    e "We now provide a series of user-interface functions, that allow
+       the programmer to create fairly complex interfaces."
+
+    e "For example, try the following scheduling and stats screen,
+       which could be used by a stat-based dating simulation."
+
+    $ day_planner()
     
     e "Ren'Py also includes a number of control statements, and even
        lets you include python code."
@@ -606,3 +588,140 @@ label ending:
        
     $ renpy.full_restart()
 
+init:
+
+    # This is just some example code to show the ui functions in
+    # action. You probably want to delete this (and the call to
+    # day_planner above) from your game. This code isn't really all
+    # that useful except as an example.
+    
+    python:
+        def day_planner():
+
+            periods = [ 'Morning', 'Afternoon', 'Evening' ]
+            choices = [ 'Study', 'Exercise',
+                        'Eat', 'Drink', 'Be Merry' ]
+
+            plan = { 'Morning' : 'Eat',
+                     'Afternoon' : 'Drink',
+                     'Evening' : 'Be Merry' }
+
+            day = 'March 25th'
+
+            stats = [
+                ('Strength', 100, 10),
+                ('Intelligence', 100, 25),
+                ('Moxie', 100, 100),
+                ('Chutzpah', 100, 75),
+                ]
+
+            editing = None
+
+            def button(text, selected, returns, **properties):
+                style = 'button'
+                style_text = 'button_text'
+
+                if selected:
+                    style='selected_button'
+                    style_text='selected_button_text'
+
+                ui.button(clicked=ui.returns(returns),
+                          style=style, **properties)
+                ui.text(text, style=style_text)
+
+
+            while True:
+
+                # Stats Window
+                ui.window(xpos=0,
+                          ypos=0,
+                          xanchor='left',
+                          yanchor='top',
+                          xfill=True,
+                          yminimum=200,
+                          )
+
+                ui.vbox()
+
+                ui.text('Statistics')
+                ui.null(height=20)
+
+
+                for name, range, value in stats:
+
+                    ui.hbox()
+                    ui.text(name, minwidth=150)
+                    ui.bar(600, 20, range, value, ypos=0.5, yanchor=center)
+                    ui.close()
+
+                ui.close()
+                
+                
+
+            
+                # Period Selection Window.
+                ui.window(xpos=0,
+                          ypos=200,
+                          xanchor='left',
+                          yanchor='top',
+                          xfill=False,
+                          xminimum=300
+                          )
+                
+                ui.vbox(xpos=0.5, xanchor='center')
+                ui.text(day, xpos=0.5, xanchor='center', textalign=0.5)
+                ui.null(height=20)
+                
+                for i in periods:
+                    face = i + ": " + plan[i]
+                    button(face, editing == i, ("edit", i))
+
+                ui.null(height=20)
+                ui.textbutton("Continue", clicked=ui.returns(("done", True)))
+                ui.null(height=20)
+                ui.close()
+
+
+                if editing:
+                    ui.window(xpos=300,
+                              ypos=200,
+                              xanchor='left',
+                              yanchor='top',
+                              xfill=False,
+                              xminimum=500
+                              )
+                
+                    ui.vbox()
+                    ui.text("What will you do in the %s?" % editing.lower())
+                    ui.null(height=20)
+
+                    for i in choices:
+                        button(i, plan[editing] == i, ("set", i),
+                               xpos=0, xanchor='left')
+
+                    ui.close()
+
+                ui.window()
+                ui.vbox()
+                ui.text("To get to the next screen, click the 'Continue' button.")
+                ui.close()
+                
+                type, value = ui.interact()
+
+                if type == "done":
+                    break
+
+                if type == "edit":
+                    editing = value
+
+                if type == "set":
+                    plan[editing] = value
+                    editing = None
+
+
+
+            return plan
+            
+            
+                   
+                        

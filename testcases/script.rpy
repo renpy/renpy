@@ -37,6 +37,23 @@ label start:
 
     e "Welcome to the Ren'Py testcases."
 
+
+    call expression "sub1"
+    
+    jump expression ("jump" + "1")
+
+    e "You shouldn't see this."
+
+label sub1:
+
+    e "1"
+
+    return
+
+label jump1:
+
+    e "2"
+
     # say
 
     "Single-argument say. (Expect no label)"

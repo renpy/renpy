@@ -209,8 +209,13 @@ class Python(Node):
         
         super(Python, self).__init__(loc)
 
-        self.hide = hide        
+        self.hide = hide
+
+        old_ei = renpy.game.exception_info
+
+        renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
         self.bytecode = renpy.python.py_compile_exec_bytecode(python_code)
+        renpy.game.exception_info = old_ei
 
 
     def execute(self):
@@ -414,16 +419,25 @@ class With(Node):
         
 class Call(Node):
 
-    def __init__(self, loc, label):
+    def __init__(self, loc, label, expression):
 
         super(Call, self).__init__(loc)
         self.label = label
+        self.expression = expression
 
     def execute(self):
-        return renpy.game.context().call(self.label, return_site=self.next.name)
+
+        label = self.label
+        if self.expression:
+            label = renpy.python.py_eval(label)
+
+        return renpy.game.context().call(label, return_site=self.next.name)
 
     def predict(self, callback):
-        return [ renpy.game.script.lookup(self.label) ]
+        if self.expression:
+            return [ ]
+        else:
+            return [ renpy.game.script.lookup(self.label) ]
 
 class Return(Node):
 
@@ -503,20 +517,30 @@ class Menu(Node):
 # instead. 
 class Jump(Node):
 
-    def  __init__(self, loc, target):
+    def  __init__(self, loc, target, expression):
         super(Jump, self).__init__(loc)
 
         self.target = target
+        self.expression = expression
 
     # We don't care what our next node is.
     def chain(self, next):
         return
 
     def execute(self):
-        return renpy.game.script.lookup(self.target)
+
+        target = self.target
+        if self.expression:
+            target = renpy.python.py_eval(target)
+
+        return renpy.game.script.lookup(target)
 
     def predict(self, callback):
-        return [ renpy.game.script.lookup(self.target) ]
+
+        if self.expression:
+            return [ ]
+        else:
+            return [ renpy.game.script.lookup(self.target) ]
 
 # GNDN
 class Pass(Node):

@@ -603,8 +603,8 @@ class RollbackLog(renpy.object.Object):
 
         self.frozen_roots = None
 
-        # We need to do this to counteract the effects of the self.complete().
-        self.begin()
+        # We need to do this to counteract the effects of self.purge_unreachable
+        self.current.purged = False
 
     def unfreeze(self):
         """

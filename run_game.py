@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+import os.path
+
 # Go psyco! (Compile where we can.)
 try:
-    import psyco
-    psyco.full()
+    if not os.path.exists("nopsyco"):
+        import psyco
+        psyco.full()
 except ImportError:
     pass
 
@@ -11,7 +14,6 @@ import codecs
 import optparse
 import traceback
 import os
-import os.path
 import re
 import sys
 
