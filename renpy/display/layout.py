@@ -124,6 +124,67 @@ class Container(renpy.display.core.Displayable):
         for i in self.children:
             i.predict(callback)
 
+class Fixed(Container):
+    """
+    A container that lays out each of its children at fixed
+    coordinates determined by the position style of the child. Each
+    widget is given the whole area of this widget, and then placed
+    within that area based on its position style.
+
+    The result of this layout is the size of the entire area allocated
+    to it. So it's probably only viable for laying out a root window.
+
+    Fixed is used by the display core to render scene lists, and to
+    pass them off to transitions.
+    """
+
+    def __init__(self, style='default', **properties):
+        super(Fixed, self).__init__()
+        self.style = renpy.style.Style(style, properties)
+        self.times = [ ]
+
+    def add(self, widget, time=None):
+        super(Fixed, self).add(widget)
+        self.times.append(time)
+
+    def append_scene_list(self, l):
+        for tag, time, d in l:
+            self.add(d, time)
+
+    def get_widget_time_list(self):
+        return zip(self.children, self.times)
+            
+    def get_placement(self):
+        return self.style
+
+    def render(self, width, height, st):
+
+        self.offsets = [ ]
+        self.sizes = [ ]
+
+        rv = renpy.display.render.Render(width, height)
+
+        t = time.time()
+
+        for child, start in zip(self.children, self.times):
+
+            if start:
+                newst = t - start
+            else:
+                newst = st
+
+            surf = render(child, width, height, newst)
+
+            if surf:
+                self.sizes.append(surf.get_size())
+                offset = child.place(rv, 0, 0, width, height, surf)
+                self.offsets.append(offset)
+            else:
+                self.sizes.append((0, 0))
+                self.offsets.append((0, 0))
+
+        return rv
+
 class Position(Container):
     """
     Controls the placement of a displayable on the screen, using
@@ -296,61 +357,6 @@ class VBox(Container):
 
         return rv
     
-class Fixed(Container):
-    """
-    A container that lays out each of its children at fixed
-    coordinates determined by the position style of the child. Each
-    widget is given the whole area of this widget, and then placed
-    within that area based on its position style.
-
-    The result of this layout is the size of the entire area allocated
-    to it. So it's probably only viable for laying out a root window.
-    """
-
-    def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__()
-        self.style = renpy.style.Style(style, properties)
-        self.times = [ ]
-
-    def add(self, widget, time=None):
-        super(Fixed, self).add(widget)
-        self.times.append(time)
-
-    def append_scene_list(self, l):
-        for tag, time, d in l:
-            self.add(d, time)
-            
-        
-    def get_placement(self):
-        return self.style
-
-    def render(self, width, height, st):
-
-        self.offsets = [ ]
-        self.sizes = [ ]
-
-        rv = renpy.display.render.Render(width, height)
-
-        t = time.time()
-
-        for child, start in zip(self.children, self.times):
-
-            if start:
-                newst = t - start
-            else:
-                newst = st
-
-            surf = render(child, width, height, newst)
-
-            if surf:
-                self.sizes.append(surf.get_size())
-                offset = child.place(rv, 0, 0, width, height, surf)
-                self.offsets.append(offset)
-            else:
-                self.sizes.append((0, 0))
-                self.offsets.append((0, 0))
-
-        return rv
 
 class Window(Container):
     """

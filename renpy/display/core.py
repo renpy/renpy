@@ -650,7 +650,10 @@ class Interface(object):
         current_scene.append_scene_list(scene_lists.master + transient + overlay)
         
         if self.transition and self.old_scene and not self.supress_transition:
-            trans = self.transition(self.old_scene, current_scene)
+
+            trans = self.transition(old_widget=self.old_scene,
+                                    new_widget=current_scene)
+
             root_widget.add(trans, start_time)
 
             if trans_pause:

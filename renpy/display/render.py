@@ -22,8 +22,11 @@ class SolidCache(object):
         self.size = size
         self.color = color
 
-        surf = pygame.Surface(size, 0,
-                              renpy.game.interface.display.sample_surface)
+        if color[3] == 255:
+            surf = pygame.Surface(size, 0, renpy.game.interface.display.window)
+        else:
+            surf = pygame.Surface(size, 0,
+                                  renpy.game.interface.display.sample_surface)
 
         surf.fill(color)
         
@@ -444,3 +447,12 @@ class Render(object):
 
         self.subsurfaces[pos] = rv
         return rv
+
+    def depends_on(self, render):
+        """
+        Used to indicate that this render depends on another
+        render. Useful, for example, if we use pygame_surface to make
+        a surface, and then blit that surface into another render.
+        """
+        
+        render.parents.append(self)

@@ -171,6 +171,7 @@ label _library_main_menu:
 
     python hide:
 
+        ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
         ui.keymousebehavior()
 
         ui.window(style='mm_root_window')

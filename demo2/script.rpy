@@ -40,6 +40,24 @@ init:
     # clauses and statements.
     $ fade = Fade(.5, 0, .5) # Fade to black and back.
     $ dissolve = Dissolve(0.5)
+    
+    $ wiperight = CropMove(1.0, "wiperight")
+    $ wipeleft = CropMove(1.0, "wipeleft")
+    $ wipeup = CropMove(1.0, "wipeup")
+    $ wipedown = CropMove(1.0, "wipedown")
+
+    $ slideright = CropMove(1.0, "slideright")
+    $ slideleft = CropMove(1.0, "slideleft")
+    $ slideup = CropMove(1.0, "slideup")
+    $ slidedown = CropMove(1.0, "slidedown")
+
+    $ slideawayright = CropMove(1.0, "slideawayright")
+    $ slideawayleft = CropMove(1.0, "slideawayleft")
+    $ slideawayup = CropMove(1.0, "slideawayup")
+    $ slideawaydown = CropMove(1.0, "slideawaydown")
+
+    $ irisout = CropMove(1.0, "irisout")
+    $ irisin = CropMove(1.0, "irisin")
 
     # Now, we declare the images that are used in the program.
 
@@ -160,6 +178,10 @@ label choices:
         # Another choice. 
         "How do I write my own games with it?":
             call writing from _call_writing_1
+            jump choices
+
+        "What's new with Ren'Py?":
+            call whatsnew from _call_whatsnew_1
             jump choices
 
         # This choice has a condition associated with it. It is only
@@ -736,10 +758,86 @@ init:
                     plan[editing] = value
                     editing = None
 
-
-
             return plan
-            
-            
-                   
-                        
+
+label whatsnew:
+label whatsnew45:
+
+    show washington
+    show eileen happy
+
+    e "While most of the improvements in Ren'Py 4.5 were behind the scenes,
+       we can give you a demonstration of one of the new features."
+
+    e "There is now a new transition, CropMove, that can be used to
+       provide a whole range of transition effects."
+
+    hide eileen with dissolve
+
+    e "I'll stand offscreen, so you can see some of its modes. I'll read
+       out the mode name after each transiton."
+
+    scene whitehouse with wiperight
+
+    e "We first have wiperight..."
+
+    scene washington with wipeleft
+
+    e "...followed by wipeleft... "    
+
+    scene whitehouse with wipeup
+
+    e "...wipeup..."
+
+    scene washington with wipedown
+
+    e "...and wipedown."
+
+    e "Next, the slides."
+
+    scene whitehouse with slideright
+
+    e "Slideright..."
+
+    scene washington with slideleft
+
+    e "...slideleft..."
+
+    scene whitehouse with slideup
+
+    e "...slideup..."
+
+    scene washington with slidedown
+
+    e "and slidedown."
+
+    e "We also have a couple of transitions that use a rectangular iris."
+
+    scene whitehouse with irisout
+
+    e "There's irisout..."
+
+    with None
+    scene washington
+    show eileen happy
+    with irisin
+
+    e "... and irisin."
+
+    e "There are other transitions, such as various forms of
+       slideaway. And if you can't find the transition for you, you
+       can write a custom one."
+    
+    e "It's enough to make you feel a bit dizzy."
+
+    e "Ren'Py 4.5 also includes the ability to show MPEG-1 movies as
+       cutscenes or even backgrounds."
+
+    e "We didn't include any of those here, as we wanted to keep the
+       download small."
+
+    e "Anyway, you've now seen all of the new features. Is there anything
+       else I can help you with?"
+
+    return
+

@@ -29,6 +29,7 @@ Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
+CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 
 def _return(v):
     """

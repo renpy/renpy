@@ -1,16 +1,14 @@
 New in 4.5
 ----------
 
-examples directory.
+Need to force a total redraw when changing screen modes.
 
-RectangleWipe
+library: windows behind prefs, yesno. Replace buttons with images? Add
+things to game menu?
 
-Dissolve transition refactoring.
+extras directory. auto_full, kana, 640x480
 
-Changeable mouse pointer?
-
-Save data loc on windows.
-
+RectangleWipe [done]
 
 Added support for playing MPEG-1 movies. Rather than explain it all
 here, we'l just mention that you can read the new "Movies" subsection

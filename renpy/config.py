@@ -42,7 +42,7 @@ overlay_functions = [ ]
 underlay = [ ]
 
 # True to enable profiling.
-profile = True
+profile = False
 
 # The directory save files will be saved to.
 savedir = None
