@@ -131,6 +131,9 @@ keymap = dict(
     # Imagemap.
     imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
 
+    # Bar.
+    bar_click = [ 'mouse_1' ],
+
     # This isn't a binding, but instead a list of keys that should
     # repeat when held down.
     repeating = [ 'K_LCTRL', 'K_RCTRL' ],

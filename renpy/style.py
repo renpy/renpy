@@ -1,5 +1,8 @@
 import renpy
 
+# A list of style prefixes we care about, including no prefix.
+prefixes = [ 'hover_', 'idle_', '' ]
+
 class StyleManager(object):
     """
     This is the singleton object that is exported into the store as
@@ -72,15 +75,19 @@ class Style(object):
         self.build_cache()
 
     def __setattr__(self, key, value):
-        self.properties[key] = value
-        self.cache[key] = value
+
+        for prefix in prefixes:
+            prefkey = prefix + key
+
+            self.properties[prefkey] = value
+            self.cache[prefkey] = value
 
     def __getattr__(self, key):
 
         cache = self.cache
         
         try:
-            return cache.get(self.prefix + key, cache[key])
+            return cache[self.prefix + key]
         except KeyError:
             raise AttributeError("Style property '%s' not found." % key)
 
@@ -120,6 +127,11 @@ class Style(object):
 
         if not properties:
             properties = { }
+
+        for k in properties.keys():
+            for p in prefixes:
+                if p + k not in properties:
+                    properties[p + k] = properties[k]
 
         vars(self)["parent"] = parent
         vars(self)["prefix"] = ''

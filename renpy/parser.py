@@ -23,7 +23,7 @@ class ParseError(Exception):
         Exception.__init__(self, message.encode('unicode_escape'))
 
     def __unicode__(self):
-        return u'ParseError: ' + self.message
+        return self.message
 
 
 def list_logical_lines(filename):

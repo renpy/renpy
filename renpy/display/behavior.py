@@ -273,16 +273,26 @@ class Button(renpy.display.layout.Window):
         self.clicked = clicked
         self.hovered = hovered
 
+    def render(self, width, height, st):
+
+        if self.old_hover:
+            self.set_style_prefix('hover_')
+        else:
+            self.set_style_prefix('idle_')
+
+
+        return super(Button, self).render(width, height, st)
+
     def set_hover(self, hover):
         """
         Called when we change from hovered to un-hovered, or
         vice-versa.
         """
 
-        if hover:
-            self.style.set_prefix('hover_')
-        else:
-            self.style.set_prefix('idle_')
+#         if hover:
+#             self.style.set_prefix('hover_')
+#         else:
+#             self.style.set_prefix('idle_')
         
         renpy.game.interface.redraw(0)
 
@@ -309,33 +319,42 @@ class Button(renpy.display.layout.Window):
 
 
         if map_event(ev, "button_select"):
-            if inside:
+            if inside and self.clicked:
                 renpy.sound.play(self.style.activate_sound)
                 return self.clicked()
 
-        return None
+        return super(Button, self).event(ev, x, y)
+
+# Reimplementation of the TextButton widget as a Button and a Text
+# widget.
+def TextButton(text, style='button', text_style='button_text',
+               clicked=None):
+
+    text = renpy.display.text.Text(text, style=text_style)
+    return Button(text, style=style, clicked=clicked)
 
 
-class TextButton(Button):
 
-    def __init__(self, text, style='button', text_style='button_text',
-                 clicked=None):
+# class TextButton(Button):
 
-        self.text_widget = renpy.display.text.Text(text, style=text_style)
+#     def __init__(self, text, style='button', text_style='button_text',
+#                  clicked=None):
 
-        super(TextButton, self).__init__(self.text_widget,
-                                         style=style,
-                                         clicked=clicked)
+#         self.text_widget = renpy.display.text.Text(text, style=text_style)
 
-        self.text_widget.style.set_prefix('idle_')
+#         super(TextButton, self).__init__(self.text_widget,
+#                                          style=style,
+#                                          clicked=clicked)
+
+#         self.text_widget.style.set_prefix('idle_')
                                                   
-    def set_hover(self, hover):
-        super(TextButton, self).set_hover(hover)
+#     def set_hover(self, hover):
+#         super(TextButton, self).set_hover(hover)
 
-        if hover:
-            self.text_widget.style.set_prefix("hover_")
-        else:
-            self.text_widget.style.set_prefix("idle_")
+#         if hover:
+#             self.text_widget.style.set_prefix("hover_")
+#         else:
+#             self.text_widget.style.set_prefix("idle_")
         
                 
 class Input(renpy.display.text.Text):
@@ -374,3 +393,89 @@ class Input(renpy.display.text.Text):
             self.set_text(self.content + "_")
             renpy.game.interface.redraw(0)
                 
+
+class Bar(renpy.display.core.Displayable):
+    """
+    Implements a bar that can display an integer value, and respond
+    to clicks on that value.
+    """
+    
+    def __init__(self, width, height, range, value, clicked=None,
+                 style='bar', **properties):
+
+        super(Bar, self).__init__()
+
+        self.style = renpy.style.Style(style, properties)
+
+        self.width = width
+        self.height = height
+        self.range = range
+        self.value = value
+
+        self.clicked = clicked
+
+
+    def event(self, ev, x, y):
+
+        if not self.clicked:
+            return
+
+        if not map_event(ev, 'bar_click'):
+            return
+
+        if not (0 <= x < self.width and 0 <= y <= self.height):
+            return
+
+        print x, y
+
+        lgutter = self.style.left_gutter
+        rgutter = self.style.right_gutter
+
+        if x < lgutter:
+            value = 0
+        elif x > self.width - rgutter:
+            value = self.range
+        else:
+            barwidth = self.width - lgutter - rgutter
+
+            # This makes it easier to select 100%.
+            x = x - lgutter
+            x = x + (barwidth / self.range // 2)
+
+            value = x * self.range / barwidth
+
+            value = max(value, 0)
+
+
+        return self.clicked(value)
+
+    def render(self, width, height, st):
+
+        width = self.width
+        height = self.height
+
+        # The amount of space taken up by the bars.
+
+        if self.clicked:
+            lgutter = self.style.left_gutter
+            rgutter = self.style.right_gutter 
+        else:
+            lgutter = 0
+            rgutter = 0
+
+        barwidth = width - lgutter - rgutter
+
+        left_width = barwidth * self.value // self.range
+        right_width = barwidth - left_width
+
+        rv = renpy.display.surface.Surface(width, height)
+
+        lsurf = self.style.left_bar.render(left_width, height, st)
+        rsurf = self.style.right_bar.render(right_width, height, st)
+
+        rv.blit(lsurf, (lgutter, 0))
+        rv.blit(rsurf, (lgutter + left_width, 0))
+
+        return rv
+        
+     

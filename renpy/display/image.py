@@ -22,6 +22,38 @@ class ImageCache(object):
     def tick(self):
         self.time += 1
         self.preloads = [ ]
+
+    def really_load_image(self, fn):
+        """
+        This is called by load_image, and does the actual loading of
+        images. This may be a load of an image, or perhaps the
+        compositing of images if fn is a tuple.
+        """
+
+        # If fn is not a single filename but a tuple, we composite the
+        # elements of the tuple.
+        if isinstance(fn, tuple):
+            if not tuple:
+                raise Exception("Trying to create a composite image from an empty tuple.")
+
+            base = self.load_image(fn[0])
+
+            rv = pygame.Surface(base.get_size(), 0,
+                                renpy.game.interface.display.sample_surface)
+
+            rv.blit(base, (0, 0))
+
+            for i in fn[1:]:
+                layer = self.load_image(i)
+                rv.blit(layer, (0, 0))
+
+            return rv
+
+        im = pygame.image.load(renpy.loader.load(fn), fn)
+        im = im.convert_alpha()
+
+        return im
+            
         
     # Forces an image load, regardless of if the cache is full or not.
     def load_image(self, fn):
@@ -33,13 +65,12 @@ class ImageCache(object):
         if fn in self.preloads:
             self.preloads.remove(fn)
 
-        im = pygame.image.load(renpy.loader.load(fn), fn)
-        im = im.convert_alpha()
-
         # iw, ih = im.get_size()
 
         # surf = renpy.display.surface.Surface(iw, ih)
         # surf.blit(im, (0, 0))
+
+        im = self.really_load_image(fn)
 
         self.surface_map[fn] = im
 
@@ -136,7 +167,14 @@ class Image(renpy.display.core.Displayable):
 
     def __init__(self, filename, style='image_placement', **properties):
         """
-        @param filename: The filename that the image is loaded from. Many common file formats are supported.
+        @param filename: The filename that the image is loaded
+        from. Many common file formats are supported.
+
+        If the filename is not a single string but instead a tuple of
+        strings, the image is considered to be"layered". In this case,
+        the image will be the size of the first image in the tuple, and
+        other images will be aligned with the upper-left corner of the
+        image.
         """
         
         self.filename = filename

@@ -33,6 +33,18 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
+    def __init__(self):
+        self.style = None
+
+    def set_style_prefix(self, prefix):
+        """
+        Called to set the style prefix of this widget and its child
+        widgets, if any.
+        """
+
+        if self.style:
+            self.style.set_prefix(prefix)
+
     def parameterize(self, name, parameters):
         """
         Called to parameterize this. By default, we don't take any

@@ -1,5 +1,24 @@
-New in 4.3.2
-------------
+New in 4.4
+----------
+
+Document bar properties (left_bar, right_bar, left_gutter, and right_gutter)
+
+Add input, bar, frame, and solid to ui.
+
+Now, setting a property on a style also sets the hover_ and idle_
+variants of that property. This makes changing a property of an
+inherited style a bit saner. In addition, hover now propagates to all
+children of a button. This means that hover will now work with the
+styles in the file chooser.
+[ Not documented. ]
+
+Added support for layering images. This support (invoked by passing a
+tuple as an image filename) allows a single image to be constructed
+from multiple image files, saving disk space while still keeping
+performance.
+
+(The following were also in 4.3.2, which was a private release, to
+test the bugs in UTF-8 support.)
 
 There were two bugs with UTF-8 support. The first was that we didn't
 understand the byte-order mark, and choked on the syntax error. The

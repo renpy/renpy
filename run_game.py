@@ -73,6 +73,9 @@ if __name__ == "__main__":
         traceback.print_tb(tb, None, sys.stdout)
         traceback.print_tb(tb, None, f)
 
+        print >>f, type.__name__ + ":", 
+        print type.__name__ + ":", 
+
         print >>f, unicode(e).encode('utf-8')
         print unicode(e).encode('utf-8')
 

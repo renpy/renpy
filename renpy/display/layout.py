@@ -38,12 +38,20 @@ class Container(renpy.display.core.Displayable):
     """
 
     def __init__(self, *args):
+
+        super(Container, self).__init__()
         
         self.children = []
         self.child = None
 
         for i in args:
             self.add(i)
+
+    def set_style_prefix(self, prefix):
+        super(Container, self).set_style_prefix(prefix)
+
+        for i in self.children:
+            i.set_style_prefix(prefix)
 
     def add(self, child):
         """

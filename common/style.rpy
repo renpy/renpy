@@ -219,6 +219,16 @@ init -250:
         style.disabled_button_text.color = (128, 128, 128, 255)
         style.disabled_button_text.hover_color = (128, 128, 128, 255)
 
+
+        # Bar.
+        style.create('bar', 'default',
+                     '(bar) The style that is used by default for bars.')
+
+        style.bar.left_bar = Solid(bright_cyan)
+        style.bar.right_bar = Solid((0, 0, 0, 128))
+        style.bar.left_gutter = 0
+        style.bar.right_gutter = 0
+
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',
                      '(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.')
@@ -303,7 +313,8 @@ init -250:
                      '(text) A base style for all text that is displayed in the file picker.')
         
         style.file_picker_text.size = 18
-        style.file_picker_text.color = dark_cyan
+        style.file_picker_text.idle_color = dark_cyan
+        style.file_picker_text.hover_color = bright_cyan
 
         style.create('file_picker_new', 'file_picker_text',
                      '(text) The style that is applied to the new indicator in the file picker.')
@@ -311,7 +322,8 @@ init -250:
         style.create('file_picker_old', 'file_picker_text',
                      '(text) The style that is applied to the old indicator in the file pciker.')
 
-        style.file_picker_new.color = dark_red
+        style.file_picker_new.hover_color = bright_red
+        style.file_picker_new.idle_color = dark_red
         style.file_picker_new.minwidth = 30
         style.file_picker_old.minwidth = 30
 

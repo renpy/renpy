@@ -25,7 +25,7 @@ init:
     $ style.window.background = Frame("frame.png", 125, 25)
 
     # Set this to False to see the default button styles.
-    if True:
+    if False:
 
         # Change button styles.
         $ style.button.background = Frame("button.png", 25, 10)
@@ -47,9 +47,8 @@ init:
         $ style.file_picker_text.drop_shadow = None
         $ style.file_picker_entry.idle_background = Solid((0, 0, 192, 255))
         $ style.file_picker_entry.hover_background = Solid((64, 64, 255, 255))
-        $ style.file_picker_old.color = (255, 255, 255, 255)
-        $ style.file_picker_extra_info.color = (255, 255, 255, 255)
-        $ style.file_picker_new_slot.color = (255, 255, 255, 255)
+        $ style.file_picker_text.color = (255, 255, 255, 255)
+        $ style.file_picker_new.color = (255, 128, 128, 255)
 
 
     # These are positions that can be used inside at clauses. We set
