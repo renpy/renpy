@@ -132,7 +132,9 @@ def run(restart=False):
 def main(basepath):
 
     game.basepath = basepath
-    game.searchpath = [ "common", basepath ]
+    renpy.config.searchpath = [ "common", basepath ]
+
+    renpy.config.backup()
 
     # Load the script.
     game.script = renpy.script.load_script(game.basepath)

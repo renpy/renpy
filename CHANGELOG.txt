@@ -1,3 +1,18 @@
+Ren'Py now uses the name of the executable to choose the directory to
+read the script from. It does this by looking at the name of the
+executable that was used to run Ren'Py. It strips off the extension,
+and anything preceding the first underscore in the name, if such a
+thing exists. It then looks to see if that directory exists, and if it
+does, uses it. For example, if the program is named "run_en.exe", the
+"en" is used, while if the program is named "homestay.exe", the
+directory "homestay" is used. 
+
+The config variable config.searchpath is a list of directory that are
+searched for image files and other media (but not scripts, since all
+scripts are loaded before the variable can be set). This allows
+multiple game directories to share images, music, and other data files.
+
+
 New in 4.3.1
 ------------
 

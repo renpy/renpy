@@ -63,7 +63,7 @@ def transfn(name):
     searched directories.
     """
 
-    for d in renpy.game.searchpath:
+    for d in renpy.config.searchpath:
         if os.path.exists(d + "/" + name):
             return d + "/" + name
 

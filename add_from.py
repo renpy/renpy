@@ -6,6 +6,7 @@
 import sys
 import os
 import re
+import glob
 
 def find_labels(fn, labels):
 
@@ -59,15 +60,13 @@ def replace_labels(fn, labels):
 
 def main():
 
-    gamedir = "game"
+    pattern = "*/*.rpy"
 
     if len(sys.argv) >= 2:
-        gamedir = sys.argv[1]
+        pattern = sys.argv[1]
 
-    print "Processing files in", gamedir
-
-    files = [ gamedir + "/" + i for i in os.listdir(gamedir)
-              if i.endswith(".rpy") ]
+    files = glob.glob(pattern)
+    files = [ i for i in files if not i.startswith("common/") ]
 
     labels = { }
     

@@ -2,8 +2,6 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
-import renpy.display
-
 # The title of the game window.
 window_title = "A Ren'Py Game"
 
@@ -68,6 +66,9 @@ skip_delay = 100
 
 # Archive files that are searched for images.
 archives = [ ]
+
+# Searchpath.
+searchpath = [ ]
 
 # If True, we will only try loading from archives.
 # Only useful for debugging Ren'Py, don't document.
@@ -135,7 +136,20 @@ keymap = dict(
     repeating = [ 'K_LCTRL', 'K_RCTRL' ],
     )
 
-_globals = globals().copy()
+
+
+def backup():
+
+    import copy
+
+    global _globals
+    _globals = globals().copy()
+
+    del _globals["backup"]
+    del _globals["reload"]
+    del _globals["__builtins__"]
+
+    _globals = copy.deepcopy(_globals)
 
 def reload():
     globals().update(_globals)

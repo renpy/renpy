@@ -48,7 +48,7 @@ class Script(object):
         # A list of all files in the search directories.
         dirlist = [ ]
 
-        for dirname in renpy.game.searchpath:
+        for dirname in renpy.config.searchpath:
             for fn in os.listdir(dirname):
                 dirlist.append(dirname + "/" + fn)
 

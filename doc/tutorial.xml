@@ -1150,10 +1150,10 @@ jump loop_start
     return to the proper place when loaded on a changed script. On
     the other hand, from clauses may be distracting when a game is
     still under development. We provide with Ren'Py a program, called
-    "add_from", that adds from clauses to all bare calls in the game
+    "add_from", that adds from clauses to all bare calls in any game
     directory. This program should be run before a final release of
     your game is made. <b>Be sure to make a backup of your game
-      directory before running add_from.</b>
+      directories before running add_from.</b>
 
   </p>
 
@@ -1350,12 +1350,23 @@ python:
   <h3>Starting a Game</h3>
 
   <p>
-    When Ren'Py is first invoked, it first tries to parse all the 
-    .rpy files in the game directory. If at least one .rpy file
-    exists, it is loaded, and the script is then written out in a
-    serialized form. If no .rpy files exist, but the serialized
-    script does exist, the serialized script is read back in from
-    disk.
+    When Ren'Py is first invoked, it first determines the name of the
+    game directory. It does this by looking at the name of the
+    executable file that is being run. It strips off the extension and
+    any prefix up to and including the first underscore. It looks to
+    see if what's left corresponds to a directory, and if so, that is
+    the game directory. Otherwise, the default game directory "game"
+    is used.
+
+  </p><p> 
+
+    It then tries tries to parse all the .rpy files in the game
+    directory and common directory. If a .rpy file exists and is newer
+    than the corresponding .rpyc file, it is loaded, and the script is
+    then written out in a serialized form. If no .rpy files exist, but
+    the serialized script (.rpyc file) does exist, or if the
+    serialized script is newere than the corresponding .rpy file, the
+    serialized script is read back in from disk.
 
   </p><p>
 
@@ -1946,6 +1957,14 @@ init:
     <var name="config.archives" value="[ ]">
       A list of archive files that will be searched for images.
     </var>
+
+<var name="config.searchpath" value="[ 'common', 'game' ]">
+A list of directories that are searched for images, music, archives,
+and other media, but not scripts. This is initialized to a list
+containing "common" and the name of the game directory, which changes
+depending on the name of the exe file. This variable is not used to
+load scripts, as scripts will be loaded before it can be set.
+</var>
 
     <var name="config.mouse" value="None">
       If this variable contains a string, that string is taken as an
