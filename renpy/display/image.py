@@ -361,11 +361,6 @@ class Frame(renpy.display.core.Displayable):
 
 
     def render(self, width, height, st):
-
-
-        if hasattr(self, 'cache'):
-            if self.cache.get_size() == (width, height):
-                return self.cache
             
         dest = renpy.display.render.Render(width, height)
         dw, dh = width, height
@@ -448,7 +443,6 @@ class Frame(renpy.display.core.Displayable):
         draw(-xb, 0, -yb, 0)
         
         # And, finish up.
-        self.cache = dest
         return dest
         
 class Animation(renpy.display.core.Displayable):

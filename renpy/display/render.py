@@ -1,6 +1,7 @@
 # Rules for renders: Every widget creates its own Render, even if all
 # it does is blit that render somewhere else.
 
+import sets
 import time
 import renpy
 import pygame
@@ -23,7 +24,8 @@ class SolidCache(object):
         self.color = color
 
         if color[3] == 255:
-            surf = pygame.Surface(size, 0, renpy.game.interface.display.window)
+            surf = pygame.Surface(size, 0,
+                                  renpy.game.interface.display.window)
         else:
             surf = pygame.Surface(size, 0,
                                   renpy.game.interface.display.sample_surface)
@@ -38,9 +40,6 @@ solid_cache = SolidCache()
 ## One thing to realize when considering the safety of this is that
 ## if any widget producing a render is redrawn, all instances of that
 ## render are killed, and so the entire thing is redrawn.
-
-# Renders of a given widget.
-widget_renders = { }
 
 # Renders that have been used during the current rendering pass.
 new_renders = { }
@@ -60,20 +59,20 @@ def render(widget, width, height, st):
     if (widget, width, height) in old_renders:
         rv = old_renders[widget, width, height]
 
-        assert widget in rv.widgets
+        assert (widget, width, height) in rv.render_of
+        assert not rv.dead
 
-        rv.add_to_new_renders()
+        rv.keep_alive()
 
         return rv
 
+
     rv = widget.render(width, height, st)
 
-    rv.req_width = width
-    rv.req_height = height
+    rv.render_of.append((widget, width, height))
 
-    rv.widgets.append(widget)
+    old_renders[widget, width, height] = rv
     new_renders[widget, width, height] = rv
-    widget_renders.setdefault(widget, []).append(rv)
 
     return rv
 
@@ -89,6 +88,7 @@ def process_redraws():
     redraw_queue.sort()
 
     i = 0
+    dead_widgets = sets.Set()
     now = time.time()
 
     for when, widget in redraw_queue:
@@ -98,14 +98,17 @@ def process_redraws():
 
         i += 1
 
-        if widget in widget_renders:
-            for r in widget_renders[widget]:
-                r.remove_from_old_renders()
+        dead_widgets.add(widget)
 
-    if i == 0:
+    if not dead_widgets:
         return False
 
     redraw_queue = redraw_queue[i:]
+
+    for (widget, width, height), render in old_renders.items():
+        if widget in dead_widgets:
+            render.kill()
+    
     return True
 
 def redraw(widget, when):
@@ -118,20 +121,27 @@ def redraw(widget, when):
     
 def render_screen(widget, width, height, st):
 
-    global widget_renders
     global redraw_queue
     global old_renders
     global new_renders
     global mutable_surfaces
 
-    new_renders = { }
-    widget_renders = { }
     redraw_queue = [ ]
     mutable_surfaces = { }
 
     rv = render(widget, width, height, st)
 
-    old_renders = new_renders
+    # Renders that are in the old set but not the new one die here.
+    old_render_set = sets.Set(old_renders.itervalues())
+    new_render_set = sets.Set(new_renders.itervalues())
+
+    dead_render_set = old_render_set - new_render_set
+
+    for r in dead_render_set:
+        r.kill()
+
+    old_renders.update(new_renders)
+    new_renders.clear()
 
     return rv
 
@@ -252,6 +262,7 @@ def mutable_surface(surf):
 
     mutable_surfaces[id(surf)] = True
 
+
 class Render(object):
     """
     A render represents a static picture of a single widget (perhaps
@@ -270,18 +281,21 @@ class Render(object):
         widget, then this is the widget it corresponds to.
         """
 
-        self.widgets = [ ]
+        # Just for safety's sake.
+        self.dead = False
+
+        # A list of widget, width, height, corresponding to the
+        # entries in old_renders that this render is in.
+        self.render_of = [ ]
 
         self.width = width
         self.height = height
-
-        self.req_width = width
-        self.req_height = height
 
         self.parents = [ ]
 
         self.blittables = [ ]
         self.children = [ ]
+        self.depends = [ ]
 
         # A pygame surface holding this Render, if one exists.
         self.surface = None
@@ -289,28 +303,67 @@ class Render(object):
 
         self.subsurfaces = { }
 
-    def add_to_new_renders(self):
+    # def __del__(self):
+    #     Render.renders -= 1
+    #     print "Render del", Render.renders, Render.liverenders, self
 
-        for w in self.widgets:
-            widget_renders.setdefault(w, []).append(self)
-            new_renders[w, self.req_width, self.req_height] = self
+    def keep_alive(self):
+
+        assert not self.dead
+
+        for widget, width, height in self.render_of:
+            new_renders[widget, width, height] = self
 
         for i in self.children:
-            i.add_to_new_renders()
 
-    def remove_from_old_renders(self):
+            assert self in i.parents
 
-        for w in self.widgets:
-            # We need to check, since the same widget can appear twice.
-            if (w, self.req_width, self.req_height) in old_renders:
-                del old_renders[w, self.req_width, self.req_height]
+            assert not i.dead
 
-        self.widgets = [ ]
+            i.keep_alive()
 
-        for p in self.parents:
-            p.remove_from_old_renders()
+    def kill(self):
+        """
+        Calling this marks the render and all of its parents dead. It also
+        unlinks it from the tree, readying it for reclamation.
+        """
 
-        self.parents = [ ]
+        if self.dead:
+            return 
+
+        self.dead = True
+
+        for widget, width, height in self.render_of:
+            del old_renders[widget, width, height]
+
+            if (widget, width, height) in new_renders:
+                del new_renders[widget, width, height]
+
+        parents = self.parents[:]
+        children = self.children[:]
+        depends = self.depends[:]
+
+        for p in parents:
+            p.kill()
+
+        for c in children:
+            while self in c.parents:
+                c.parents.remove(self)
+
+        for c in depends:
+            while self in c.parents:
+                c.parents.remove(self)
+
+        assert not self.parents
+
+        # for p in parents:
+        #     assert p.dead
+
+        self.children = [ ]
+        self.depends = [ ]
+
+        # Removes cycles.
+        self.render_of = [ ]
 
     def blit(self, source, (x, y)):
         """
@@ -319,7 +372,10 @@ class Render(object):
         or a Render.
         """
 
+
         if isinstance(source, Render):
+            assert not source.dead
+
             source.parents.append(self)
             self.children.append(source)
                       
@@ -454,11 +510,16 @@ class Render(object):
         
         return rv
 
-    def depends_on(self, render):
+    def depends_on(self, child):
         """
         Used to indicate that this render depends on another
         render. Useful, for example, if we use pygame_surface to make
         a surface, and then blit that surface into another render.
         """
-        
-        render.parents.append(self)
+
+        assert not child.dead
+
+        self.depends.append(child)
+        child.parents.append(self)
+
+    
