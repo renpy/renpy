@@ -15,6 +15,8 @@ init:
 
             narration = None
 
+            ui.keymousebehavior()
+
             ui.window(style='menu_window')
             ui.vbox(xanchor='center', xpos=0.5)
 

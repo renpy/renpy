@@ -137,7 +137,7 @@ label start:
         ui.textbutton("Continue", clicked = lambda : False)
         ui.close()
 
-        rv = renpy.interact()
+        rv = ui.interact()
 
         if rv is not False:
             store.the_value = rv

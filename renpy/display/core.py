@@ -864,6 +864,9 @@ class Interface(object):
                 except IgnoreEvent:
                     pass
 
+                # Check again after handling the event.
+                needs_redraw |= renpy.display.render.process_redraws()
+
                 if self.restart_interaction:
                     return True, None
                     

@@ -50,6 +50,11 @@ that they appear in a script file.
 The renpy.interact() function has been eliminated. Use ui.interact()
 instead, as it performs more error checking.
 
+Fixed a bug in which some redraws were ignored, and another in which
+the input widget failed to eat characters. (So typing 'f' in an input
+widget would be passed through, and eventually cause the game to go to
+fullscreen mode. No longer.)
+
 4.5's demo script had a bug that cause it to crash, after playing the
 MPEG-1 movie. It was a bug in the demo script, and not in Ren'Py
 proper. It's fixed.

@@ -107,7 +107,7 @@ def main():
 
     # Copy the game 
     copy_tree(gamedir, target + "/game",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~") and not fn.endswith(".mpg"))
 
     copy_tree("common", target + "/common",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))

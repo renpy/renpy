@@ -460,6 +460,8 @@ class Input(renpy.display.text.Text):
 
             self.set_text(self.content + "_")
             renpy.display.render.redraw(self, 0)
+
+            raise renpy.display.core.IgnoreEvent()
                 
 
 class Bar(renpy.display.core.Displayable):

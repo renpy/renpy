@@ -86,7 +86,6 @@ c = {}
 # objects.
 
 def t(f, w, a):
-    #print w, f.f_code.co_filename, f.f_lineno
     if w == 'line':
         c[(f.f_code.co_filename, f.f_lineno)] = 1
     return t
