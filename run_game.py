@@ -22,6 +22,9 @@ import sys
 import encodings.utf_8
 import encodings.zlib_codec
 import encodings.unicode_escape
+import encodings.string_escape
+import encodings.raw_unicode_escape
+
 
 # Load up all of Ren'Py, in the right order.
 import renpy
