@@ -43,6 +43,9 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
         if "/CVS" in dirpath:
             continue
 
+        if "/.svn" in dirpath:
+            continue
+
         reldir = dirpath[len(source):]
         dstrel = dest + "/" + reldir
 
@@ -99,13 +102,17 @@ def main():
     copy_tree("doc", target + "/doc",
               should_copy = lambda fn : fn in doc_files)
 
-    # Copy the game
+    # Copy the game 
     copy_tree(gamedir, target + "/game",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
     copy_tree("common", target + "/common",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
+    copy_tree("extra", target + "/extra",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
+f
     def cp(x, license=""):
         copy_file(x, target + "/" + x)
 

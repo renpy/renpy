@@ -5,7 +5,6 @@ We now ship an extras directory, with interesting sample code. It
 includes: 
 
 [list]
-
 [*] fullscreen.rpy, containing code to automatically switch the game
 into fullscreen on the first run, while preserving the user's
 preference on later runs.
@@ -17,20 +16,20 @@ runs at 640x480.
 various Digital Object games, which display text one line at a 
 time, but keep a page of text on the screen at once. 
 ([url=http://www.bishoujo.us/hosted/kanamode.jpg]screenshot[/url])
-
 [/list]
-
-Added support for playing MPEG-1 movies. Rather than explain it all
-here, we'l just mention that you can read the new "Movies" subsection
-of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
-manual. We support both hardware-accelerated full-window movies and
-using a movie as a widget.
 
 Added a new CropMove transition. This single class is the root of not
 one, not two, but fourteen transitions, in the forms of wipes, slides,
 slideaways, and rectangular irises. You can see some of these
 transitions in action in the demo, which now has a new section, 
 "What's new with Ren'Py?"
+
+Added support for playing MPEG-1 movies. Rather than explain it all
+here, we'l just mention that you can read the new "Movies" subsection
+of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
+manual. We support both hardware-accelerated full-window movies and
+using a movie as a widget. This is also shown in the what's new
+section of Ren'Py.
 
 Added ui.grid(). This is a widget that places its children in a grid.
 The children must have sizes that do not consider the amount of space
@@ -40,10 +39,10 @@ Added ui.pausebehavior(). This separates pausing from the saybehavior
 paving the way for uninterruptable pauses (a bad idea, IMO) and menus
 that dismiss themseleves after a certain amount of time.
 
-A new function, ui.exists, can check to see if a given file exists 
-on disk. This could be used, for example, to make a game that only 
-tries to play music if an add-on music package is downloaded, and the
-files placed in the appropriate place.
+A new function, renpy.exists(), can check to see if a given file can
+be found in the searchpath. This could be used, for example, to make a
+game that only tries to play music if an add-on music package is
+downloaded, and the files placed in the appropriate place.
 
 Added the ability to bind mouse events to mouseup as well as
 mousedown, and changed some of the default bindings to be on mouseup
