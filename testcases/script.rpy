@@ -186,6 +186,10 @@ label after_sub:
 
     e "Wait for it to stop, and make sure it does."
 
+    scene marspan at Pan((0,0), (1600,0), 0)
+    show eileen happy at center
+    e "This should be a static pan."
+
     init:
         python:
             class MyClass(object):

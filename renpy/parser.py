@@ -450,6 +450,15 @@ class Lexer(object):
 
         c = self.text[self.pos]
 
+        # Allow unicode strings.
+        if c == 'u':
+            self.pos += 1
+
+            if self.eol():
+                return False
+
+            c = self.text[self.pos]
+
         if c not in ('"', "'"):
             return False
 
@@ -576,16 +585,20 @@ class Lexer(object):
 
     def simple_expression(self):
         """
-        Tries to parse a simple_expression. Returns true if it can, or
-        false if it cannot.
+        Tries to parse a simple_expression. Returns the text if it can, or
+        None if it cannot.
         """
+
+        self.skip_whitespace()
+        if self.eol():
+            return None
 
         start = self.pos
 
         # We start with either a name, a python_string, or parenthesized
         # python
-        if (not self.name() and
-            not self.python_string() and
+        if (not self.python_string() and
+            not self.name() and
             not self.parenthesised_python()):
 
             return None
@@ -698,11 +711,11 @@ def parse_image_name(l):
     rv = [ l.require(l.name) ]
 
     while True:
-        n = l.name()
+        n = l.simple_expression()
         if not n:
             break
 
-        rv.append(n)
+        rv.append(n.strip())
 
     return tuple(rv)
 

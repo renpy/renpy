@@ -70,17 +70,17 @@ def restore():
     if current_music == new_music:
         return
 
-
-    current_music = new_music
-
     # Usually, ignore errors.
-    try:        
-        if not new_music:
-            pygame.mixer.music.stop()
+    try:
+        if current_music != new_music and current_music:
+            current_music = None
+            pygame.mixer.music.fadeout(int(renpy.config.fade_music * 1000))
         else:
-            fn, loops, startpos = new_music
-            pygame.mixer.music.load(renpy.game.basepath + "/" + fn)
-            pygame.mixer.music.play(loops, startpos)
+            if not pygame.mixer.music.get_busy():
+                fn, loops, startpos = new_music
+                pygame.mixer.music.load(renpy.game.basepath + "/" + fn)
+                pygame.mixer.music.play(loops, startpos)
+                current_music = new_music
 
     except pygame.error, e:
         if renpy.config.debug:

@@ -100,3 +100,57 @@ class Surface(object):
         self.blit_to(rv, 0, 0)
 
         return rv
+
+    def subsurface(self, (x, y, width, height)):
+        """
+        Returns the subsurface of this surface, similar to
+        pygame.Surface.subsurface
+        """
+
+        if x > self.width or y > self.height:
+            return Surface(0, 0)
+
+        width = min(self.width - x, width)
+        height = min(self.height - y, height)
+
+        rv = Surface(width, height)
+
+        for xo, yo, source in self.blittables:
+
+            # ulx, uly -- the coordinates of the upper-left hand corner of
+            # the image, relative to the subsurface.
+
+            ulx = xo - x
+            uly = yo - y
+
+            # ox, oy -- the offsets that the source will be blitted at.
+            # sx, sy -- the offset within the subsurface at which we begin.
+
+            if ulx < 0:
+                ox = 0
+                sx = -ulx
+            else:
+                ox = ulx
+                sx = 0
+
+            if uly < 0:
+                oy = 0
+                sy = -uly
+            else:
+                oy = uly
+                sy = 0
+            
+            sw, sh = source.get_size()
+
+            if sw - ox <= 0:
+                continue
+            if sh - oy <= 0:
+                continue
+
+            sw = min(sw - sx - ox, width)
+            sh = min(sh - sy - oy, height)
+
+            rv.blit(source.subsurface((sx, sy, sw, sh)),
+                    (ox, oy))
+
+        return rv

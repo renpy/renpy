@@ -33,6 +33,18 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
+    def parameterize(self, name, parameters):
+        """
+        Called to parameterize this. By default, we don't take any
+        parameters.
+        """
+
+        if parameters:
+            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
+                            (' '.join(name), ' '.join(parameters)))
+
+        return self
+
     def render(self, width, height, shown_time):
         """
         Called to display this displayable. This is called with width

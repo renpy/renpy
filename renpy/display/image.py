@@ -143,7 +143,11 @@ class Image(renpy.display.core.Displayable):
         self.style = renpy.style.Style(style, properties)
 
     def render(self, w, h, st):
-        return cache.load_image(self.filename)  
+        im = cache.load_image(self.filename)
+        w, h = im.get_size()
+        rv = renpy.display.surface.Surface(w, h)
+        rv.blit(im, (0, 0))
+        return rv
 
     def get_placement(self):
         return self.style
@@ -193,17 +197,44 @@ class ImageReference(renpy.display.core.Displayable):
 
     nosave = [ 'target' ]
 
-    def __init__(self, name, style='image_placement', **properties):
+    def __init__(self, name):
         self.name = name
-        self.style = renpy.style.Style(style, properties)
 
     def find_target(self):
         import renpy.exports as exports
 
-        if self.name in exports.images:
-            self.target = exports.images[self.name]
-        else:
-            self.target = renpy.display.text.Text("Image %s not found." % repr(self.name), color=(255, 0, 0, 255))
+        name = self.name
+        parameters = [ ]
+
+        def error(msg):
+            self.target = renpy.display.text.Text(msg,
+                                                  color=(255, 0, 0, 255))
+
+            if renpy.config.debug:
+                raise Exception(msg)
+
+            
+        # Scan through, searching for an image (defined with an
+        # input statement) that is a prefix of the given name.
+        while name:
+            if name in exports.images:
+                target = exports.images[name]
+
+                try:
+                    self.target = target.parameterize(name, parameters)
+                except Exception, e:
+                    if renpy.config.debug:
+                        raise
+
+                    error(str(e))
+
+                return
+
+            else:
+                parameters.insert(0, name[-1])
+                name = name[:-1]
+
+        error("Image '%s' not found." % ' '.join(self.name))
         
         
     def render(self, width, height, st):
@@ -214,7 +245,11 @@ class ImageReference(renpy.display.core.Displayable):
         return self.target.render(width, height, st)
 
     def get_placement(self):
-        return self.style
+        if not hasattr(self, 'target'):
+            self.find_target()
+
+        return self.target.get_placement()
+    
     
 class Solid(renpy.display.core.Displayable):
     """

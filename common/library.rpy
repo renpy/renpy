@@ -118,6 +118,8 @@ label _main_menu:
     if renpy.has_label("main_menu"):
         jump main_menu
 
+label _library_main_menu:
+    
     python hide:
 
         # Show the main menu screen.

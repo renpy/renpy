@@ -71,6 +71,10 @@ Implemented that annoying thing where text is typed on the screen one
 character at a time. Also added a preference that allows the user to
 disable it.
 
+Added the ability to fade out music when changing music
+tracks. (suggested by Alessio) 
+[not documented]
+
 
 New in 4.1
 ----------
@@ -122,3 +126,4 @@ controls which transitions are performed.
 
 Added a Pan function which can be used in an at clause. This allows us
 to pan over a background image.
+

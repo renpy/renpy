@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-import sys
 import re
+import sys
+import time
 
 import inspect
 
@@ -129,6 +130,7 @@ def main():
 
     s = re.sub(r"<!-- func (\S+) -->", function, s)
     s = re.sub(r"<!-- include (\S+) -->", include, s)
+    s = re.sub(r"<!-- date -->", time.strftime("%04Y-%02m-%02d %02H:%02M"), s)
 
     print s
 

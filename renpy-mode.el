@@ -2,6 +2,7 @@
 ; 
 ; To use, M-x load-file renpy-mode.el RET M-x renpy-mode RET
 
+(require 'speedbar)
 (require 'python-mode)
 
 ; How we highlight a single keyword.
@@ -63,8 +64,15 @@
        '("\\$" (0 font-lock-keyword-face) )
 
        '("\\b\\(label\\|menu\\)\\s-+\\(\\w+\\):" (1 font-lock-keyword-face) (2 font-lock-function-name-face))
+       '("\\b\\(from\\)\\s-+\\(\\w+\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))
        '("\\b\\(def\\|class\\)\\s-+\\(\\w+\\)" (1 font-lock-keyword-face) (2 font-lock-function-name-face))
        ))
+
+(setq renpy-generic-imenu 
+      '( ( "labels" "\\b\\(label\\|menu\\)\\s-+\\(\\w+\\):" 2)
+         ( "labels" "\\bcall\\s-+\\w+\\s-+from\\s-+\\(\\w+\\)" 1)
+         ( "python" "\\b\\(def\\|class\\)\\s-+\\(\\w+\\)" 2)
+         ))
 
 (defun renpy-mode () 
   (interactive)
@@ -75,8 +83,13 @@
   ;                 ("\\b\\(label\\|menu\\)\\s-+\\(\\w+\\):" (1 font-lock-keyword-face) (2 font-lock-function-name-face))
   ;                ) python-font-lock-keywords)) 
   
+  (setq mode-name "RenPy")
+  (setq major-mode 'renpy-mode)
 
+  (setq imenu-create-index-function 'imenu-default-create-index-function)
+  (setq imenu-generic-expression renpy-generic-imenu)
   (setq font-lock-keywords renpy-font-lock-keywords)
+  (setq semantic-toplevel-bovine-table nil)
 
   (font-lock-mode 1) 
   (font-lock-fontify-buffer)
@@ -84,6 +97,10 @@
   (setq indent-line-function 'renpy-indent-line)
   (setq fill-paragraph-function 'renpy-fill-paragraph)
   )
+
+(speedbar-add-supported-extension ".rpy")
+
+(setq auto-mode-alist (cons '("\\.rpy\\'" . renpy-mode) auto-mode-alist))
 
 ; Computes the start of the current string.
 (defun renpy-string-start ()

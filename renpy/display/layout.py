@@ -420,7 +420,10 @@ class Pan(Container):
         x0, y0 = self.startpos
         x1, y1 = self.endpos
 
-        tfrac = (st / self.time)
+        if self.time > 0:
+            tfrac = (st / self.time)
+        else:
+            tfrac = 1.0
 
         if tfrac > 1.0:
             tfrac = 1.0
@@ -432,7 +435,13 @@ class Pan(Container):
         self.offsets = [ (-xo, -yo) ]
 
         rv = renpy.display.surface.Surface(width, height)
-        rv.blit(surf, (-xo, -yo))
+
+        # print surf
+
+        subsurf = surf.subsurface((xo, yo, width, height))
+        rv.blit(subsurf, (0, 0))
+
+        # rv.blit(surf, (-xo, -yo))
 
         if st < self.time:
             renpy.game.interface.redraw(0)

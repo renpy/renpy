@@ -288,6 +288,13 @@ label writing:
             $ date = False
 
     show eileen happy
+
+    e "Ren'Py supports music, such as what's playing in the
+       background..."
+
+    $ renpy.play("18005551212.wav")
+    
+    e "... and sound effects, like the one that just played."
     
     e "Ren'Py also includes a number of control statements, and even
        lets you include python code."
@@ -472,3 +479,4 @@ label ending:
     "We can't wait to see what you do with this. Good luck!"
        
     $ renpy.full_restart()
+
