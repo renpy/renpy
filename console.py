@@ -108,7 +108,7 @@ def main():
 
     if options.leak:
         memory_profile()
-        
+
     sys.exit(0)
 
 def memory_profile():
