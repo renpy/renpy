@@ -587,7 +587,7 @@ class Conditional(renpy.display.layout.Container):
         self.condition = condition
         self.null = renpy.display.layout.Null()
 
-        self.state = eval(self.condition, renpy.game.store)
+        self.state = eval(self.condition, vars(renpy.store))
 
     def render(self, width, height, st):
         if self.state:
@@ -597,7 +597,7 @@ class Conditional(renpy.display.layout.Container):
 
     def event(self, ev, x, y):
 
-        state = eval(self.condition, renpy.game.store)
+        state = eval(self.condition, vars(renpy.store))
 
         if state != self.state:
             renpy.display.render.redraw(self, 0)

@@ -202,8 +202,11 @@ def display_menu(items, window_style='menu_window'):
 
 class TagQuotingDict(object):
     def __getitem__(self, key):
-        if key in renpy.game.store:
-            rv = renpy.game.store[key]
+
+        store = vars(renpy.store)
+        
+        if key in store:
+            rv = store[key]
 
             if isinstance(rv, (str, unicode)):
                 rv = rv.replace("{", "{{")

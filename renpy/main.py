@@ -66,7 +66,6 @@ def run(restart=False):
 
     # Initialize the store.
     renpy.store.store = renpy.store
-    game.store = vars(renpy.store)
     renpy.store.persistent = game.persistent
     renpy.store._preferences = game.preferences
 
@@ -95,7 +94,7 @@ def run(restart=False):
     renpy.loader.index_archives()
 
     # Make a clean copy of the store.
-    game.clean_store = game.store.copy()
+    game.clean_store = vars(renpy.store).copy()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
