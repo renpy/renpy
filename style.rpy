@@ -14,7 +14,7 @@
 # to your script. No need to mess around here, it will just make your
 # life harder when a new version of Ren'Py is released.
 
-init -100:
+init -250:
     python hide:
 
         style.create('default', None,
@@ -27,6 +27,7 @@ init -100:
         style.default.drop_shadow = (2, 2)
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
+        style.default.textalign = 0
 
         # Change this if you're not using Vera 22.
         if renpy.windows():
@@ -133,16 +134,39 @@ init -100:
         style.create('input_window', 'window',
                      '(window, position) The style used for the window of an input box.')
 
+        # Styles used by centered.
+        style.create('centered_window', 'default',
+                     '(window) The style that is used for a "window" containing centered text.')
+
+        style.create('centered_text', 'default',
+                     '(text) The style used for centered text.')
+
+        style.centered_window.xpos = 0.5
+        style.centered_window.xanchor = 'center'
+        style.centered_window.xfill = False
+                      
+        style.centered_window.ypos = 0.5
+        style.centered_window.yanchor = 'center'
+        style.centered_window.yfill = False
+
+        style.centered_window.xpadding = 10
+
+        style.centered_text.textalign = 0.5
+                      
+           
 
         # Styles that are used by all Buttons.
         style.create('button', 'default',
                      '(window, hover) The default style used for buttons in the main and game menus.')
 
+        style.button.xpos = 0.5
+        style.button.xanchor = 'center'
+
         style.create('button_text', 'default',
                      '(text, hover) The default style used for the label of a button.')
 
-        style.button_text.xpos = 0.0
-        style.button_text.xanchor = 'left'
+        style.button_text.xpos = 0.5
+        style.button_text.xanchor = 'center'
         style.button_text.size = 24
         style.button_text.color = (0, 255, 255, 255)
         
@@ -195,16 +219,16 @@ init -100:
         style.gm_root_window.background = renpy.Image("gamemenu.jpg")
     
         style.create('gm_nav_window', 'default',
-                     '(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')
+                     '(window, position) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')
 
-        style.gm_nav_window.xpos = 0.95
+        style.gm_nav_window.xpos = 0.9
         style.gm_nav_window.xanchor = 'right'
         style.gm_nav_window.ypos = 0.95
         style.gm_nav_window.yanchor = 'bottom'
 
 
         style.create('file_picker_window', 'default',
-                     '(window, placement) A window containing the file picker that is used to choose slots for loading and saving.')
+                     '(window, position) A window containing the file picker that is used to choose slots for loading and saving.')
 
         style.file_picker_window.xpos = 10
         style.file_picker_window.xanchor = 'left'
@@ -244,3 +268,59 @@ init -100:
         style.create('file_picker_new_slot', 'file_picker_text',
                      '(text) The style that is used for the new slot indicator in the file picker.')
 
+
+        style.create('yesno_prompt', 'default',
+                     '(text, position) The style used for the prompt in a yes/no dialog.')
+
+        style.yesno_prompt.xpos = 0.5
+        style.yesno_prompt.xanchor = 'center'
+
+        style.yesno_prompt.ypos = 0.25
+        style.yesno_prompt.yanchor = 'center'
+
+        style.create('yesno_yes', 'button',
+                     '(position) The position of the yes button on the screen.')
+
+        style.yesno_yes.xpos = 0.33
+        style.yesno_yes.xanchor = 'center'
+        style.yesno_yes.ypos = 0.33
+        style.yesno_yes.yanchor = 'center'
+
+        style.create('yesno_no', 'button',
+                     '(position) The position of the no button on the screen.')
+
+        style.yesno_no.xpos = 0.66
+        style.yesno_no.xanchor = 'center'
+        style.yesno_no.ypos = 0.33
+        style.yesno_no.yanchor = 'center'
+        
+
+        # Preferences
+        style.create('prefs_label', 'default',
+                     '(text, position) The style that is applied to the label of a block of preferences.')
+
+        style.prefs_label.xpos = 0.5
+        style.prefs_label.xanchor = "center"
+
+        style.create('prefs_pref', 'default',
+                     '(position) The position of the box containing an individual preference.')
+
+        style.prefs_pref.xpos = 0.5
+        style.prefs_pref.xanchor = 'center'
+
+        style.create('prefs_left', 'default',
+                     '(position) The position of the left column of preferences.')
+
+        style.prefs_left.xpos = 0.25
+        style.prefs_left.xanchor = "center"
+        style.prefs_left.ypos = 0.05
+        style.prefs_left.yalign = "top"
+
+        style.create('prefs_right', 'default',
+                     '(position) The position of the right column of preferences.')
+
+        style.prefs_right.xpos = 0.75
+        style.prefs_right.xanchor = "center"
+        style.prefs_right.ypos = 0.05
+        style.prefs_right.yalign = "top"
+        

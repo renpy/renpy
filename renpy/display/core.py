@@ -163,7 +163,6 @@ class SceneLists(object):
     drawn.
 
     @ivar master: The current master display list.
-    @ivar old_master: The MDL that was last shown to the user.
     @ivar transient: The current transient display list.
     @ivar overlay: The current overlay display list.
 
@@ -174,7 +173,6 @@ class SceneLists(object):
     def __init__(self, oldsl=None):
         
         if oldsl:
-            self.old_master = oldsl.old_master[:]
             self.master = oldsl.master[:]
             self.replace_transient()
 
@@ -183,7 +181,6 @@ class SceneLists(object):
             self.music = oldsl.music
             
         else:
-            self.old_master = [ ]
             self.master = [ ]            
             self.transient = [ ]
             self.overlay = [ ]
@@ -196,7 +193,6 @@ class SceneLists(object):
         """
 
         rv = SceneLists()
-        rv.old_master = self.old_master[:]
         rv.master = self.master[:]
         rv.transient = self.transient[:]
         rv.overlay = self.overlay[:]
@@ -215,14 +211,6 @@ class SceneLists(object):
         """
 
         self.transient = [ ]
-
-    def replace_old_master(self):
-        """
-        Replaces the contents of the old master display list with
-        a copy of the current master display list.
-        """
-
-        self.old_master = self.master[:]
 
     def add(self, listname, thing, key=None):
         """
@@ -338,11 +326,19 @@ class Display(object):
 
     @ivar window: The window that is being presented to the user.
 
-    @ivar sample_surface: A sample surface that is optimized for
-    fast blitting to thew window. Used to create other surfaces from.
+    @ivar buffer: A surface that buffers the window.
+
+    @ivar sample_surface: A sample surface that is optimized for fast
+    blitting to the window, with alpha. Used to create other surfaces
+    from.
 
     @ivar fullscreen: Is the window in fullscreen mode?
 
+    @ivar mouse: The mouse image, if we have one, or None if
+    we do not have one.    
+
+    @ivar mouse_location: The mouse location the last time it was
+    drawn, or None if it wasn't drawn the last time around.
     """
 
 
@@ -357,18 +353,71 @@ class Display(object):
         if self.fullscreen:
             fsflag = FULLSCREEN
 
-
+        # The window we display things in.
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
                                               fsflag)
 
-        pygame.event.set_grab(False)
-        pygame.mouse.set_visible(True)
+        # The mouse buffer.
+        if renpy.config.mouse:
+            self.buffer = pygame.Surface((renpy.config.screen_width,
+                                          renpy.config.screen_height))
 
-        pygame.display.set_caption(renpy.config.window_title)
-
+        # Sample surface that all surfaces are created based on.
         self.sample_surface = self.window.convert_alpha()
 
+        pygame.event.set_grab(False)
+
+        # Window title.
+        pygame.display.set_caption(renpy.config.window_title)
+
+        # Load the mouse image, if any.
+        if renpy.config.mouse:
+            self.mouse = renpy.display.image.cache.load_image(renpy.config.mouse)
+            pygame.mouse.set_visible(False)
+        else:
+            self.mouse = None
+            pygame.mouse.set_visible(True)
+
+        self.mouse_location = None
+
+    def draw_mouse(self):
+        """
+        This draws the mouse to the screen, if necessary. It uses the
+        buffer to minimize the amount of the screen that needs to be
+        drawn, and only redraws if the mouse has actually been moved.
+        """
+        
+        if not self.mouse:
+            return
+
+        mw, mh = self.mouse.get_size()
+        pos = pygame.mouse.get_pos()
+
+        if not pygame.mouse.get_focused():
+            pos = None
+
+        flip = False
+
+
+        if self.mouse_location and self.mouse_location != pos:
+            ox, oy = self.mouse_location
+            self.window.blit(self.buffer, (ox, oy), (ox, oy, mw, mh))
+            flip = True
+
+        if pos and (pos != self.mouse_location):
+            self.window.blit(self.mouse, pos)
+            flip = True
+
+        self.mouse_location = pos
+
+
+        if flip:
+            pygame.display.flip()
+
+
+            
+        
     def show(self, transient):
         """
         Draws the current transient screen list to the screen.
@@ -383,7 +432,15 @@ class Display(object):
 
         surftree.blit_to(self.window, 0, 0)
 
+        if self.mouse:
+            self.buffer.blit(self.window, (0, 0))
+            # We don't need to undraw the mouse.
+            self.mouse_location = None
+
         pygame.display.flip()
+
+
+        
         return rv
 
     def save_screenshot(self, filename):
@@ -416,12 +473,26 @@ class Interface(object):
 
     @ivar display: The display that we used to display the screen.
 
-    @ivar needs_reraw: True if we need a redraw now.
+    @ivar needs_redraw: True if we need a redraw now.
     
     @ivar profile_time: The time of the last profiling.
 
     @ivar screenshot: A screenshot, or None if no screenshot has been
     taken.
+
+    @ivar old_scene: The last thing that was displayed to the screen, not
+    counting overlays and things like that.
+
+    @ivar transition: If not None, the transition to be applied for the
+    next interaction.
+
+    @ivar supress_transition: If True, then the next transition will not
+    happen.
+
+    @ivar quick_quit: If true, a click on the delete button will
+    cause an immediate quit.
+
+
     """
 
     def __init__(self):
@@ -430,6 +501,10 @@ class Interface(object):
         self.profile_time = time.time()
         self.screenshot = None
         self.redraw_time = 0.0
+        self.old_scene = [ ]
+        self.transition = None
+        self.supress_transition = False
+        self.quick_quit = False
 
     def take_screenshot(self, scale):
         """
@@ -470,12 +545,47 @@ class Interface(object):
             self.needs_redraw = True
         else:
             self.redraw_time = min(self.redraw_time, time.time() + delay)
-    
-    def interact(self, transition=None):
+
+    def with_none(self):
+        """
+        Implements the with None command, which sets the scene we will
+        be transitioning from.
+        """
+
+        scene_lists = renpy.game.context().scene_lists
+        self.old_scene = scene_lists.master[:]
+
+    def set_transition(self, transition):
+        """
+        Sets the transition that will be performed as part of the next
+        interaction.
+        """
+
+        self.transition = transition
+
+    def interact(self, transient=None, show_mouse=True, trans_pause=False):
         """
         This handles one cycle of displaying an image to the user,
         and then responding to user input.
+
+        @param transient: If given, a replacement list of transient
+        things to show.
+
+        @param show_mouse: Should the mouse be shown during this
+        interaction? Only advisory.
+
+        @param trans_pause: If given, we must have a transition. Should we
+        add a pause behavior during the transition?
+
         """
+
+        ## Safety condition, prevents deadlocks.
+        if trans_pause:
+            if not self.transition:
+                return None
+            if self.supress_transition:
+                return None
+
 
         ## Expensive things we want to do before we pick the start_time.
 
@@ -498,19 +608,39 @@ class Interface(object):
         underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
         overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
 
-        # Perhaps apply transition.
-        master = scene_lists.master
-        if transition:
-            master = [ ( None, start_time,
-                         transition(scene_lists.old_master,
-                                    scene_lists.master) ) ]
+        if transient:
+            transient = [ (None, start_time, i) for i in transient ] 
+        else:
+            transient = scene_lists.transient 
 
-        transient = underlay + master + scene_lists.transient + scene_lists.overlay + overlay
+
+        # Figure out the display list.
+        current_scene = scene_lists.master + transient
+        
+        if self.transition and not self.supress_transition:
+            trans = self.transition(self.old_scene, current_scene)
+
+            transition_scene = [ (None, start_time, trans) ]
+
+            if trans_pause:
+                sb = renpy.display.behavior.SayBehavior(delay=trans.delay)
+                transition_scene.append((None, start_time, sb))
+                
+        else:
+            transition_scene = current_scene
+
+        self.transition = None
+        self.supress_transition = False
+
+        # The list of things to be displayed.
+        display_list = underlay + transition_scene + scene_lists.overlay + overlay
+
+        # This list of things recieving events.
+        event_list = display_list[:]
 
         # Compute the reversed list, which is in the right order
         # for handling events on.
-        rev_transient = transient[:]
-        rev_transient.reverse()
+        event_list.reverse()
 
         # Redraw the screen during every interaction.
         self.needs_redraw = True
@@ -534,7 +664,7 @@ class Interface(object):
                 draw_start = time.time()
                 self.redraw_time = draw_start + 365.25 * 86400.0
 
-                offsets = self.display.show(transient)
+                offsets = self.display.show(display_list)
                 offsets.reverse()
 
                 # If profiling is enabled, report the profile time.
@@ -542,6 +672,10 @@ class Interface(object):
                     new_time = time.time()
                     print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                     print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
+
+            # Draw the mouse, if it needs drawing.
+            if show_mouse:
+                self.display.draw_mouse()
 
             # Update the playing music, if necessary.
             renpy.music.restore()
@@ -575,7 +709,12 @@ class Interface(object):
 
                 # Handle quit specially for now.
                 if ev.type == QUIT:
-                    raise renpy.game.QuitException()
+                    if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
+                        self.quick_quit = True
+                        renpy.game.call_in_new_context("_confirm_quit")
+                        self.quick_quit = False
+                    else:                
+                        raise renpy.game.QuitException()
 
                 # Merge mousemotion events.
                 if ev.type == MOUSEMOTION:
@@ -586,7 +725,7 @@ class Interface(object):
 
                 x, y = getattr(ev, 'pos', (0, 0))
 
-                for (k, t, d), (xo, yo) in zip(rev_transient, offsets):
+                for (k, t, d), (xo, yo) in zip(event_list, offsets):
                     rv = d.event(ev, x - xo, y - yo)
 
                     if rv is not None:
@@ -598,9 +737,17 @@ class Interface(object):
             if time.time() > self.redraw_time:
                 self.needs_redraw = True
 
-        pygame.event.clear()
                 
         pygame.time.set_timer(KEYREPEATEVENT, 0)
+        pygame.event.clear()
         scene_lists.replace_transient()
-        scene_lists.replace_old_master()
+
+        # Clear up the transitions. 
+        self.old_scene = current_scene
+        self.transition = None
+        self.supress_transition = False
+
+        # Redraw the old scene, if any.
+        self.redraw(0)
+
         return rv

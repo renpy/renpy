@@ -2,14 +2,24 @@ init:
     # Set up the size of the screen.
     $ config.screen_width = 800
     $ config.screen_height = 600
+    $ config.mouse = "mouse.png"
+    $ config.background = (0, 0, 0, 255)
 
     # Positions of things on the screen.
     $ left = Position(xpos=0.0, xanchor='left')
     $ right = Position(xpos=1.0, xanchor='right')
     $ center = Position()
 
+    # Styles
+    $ style.window.background = Solid((0, 0, 128, 128))
+
+    # Transition
+    $ fade = Fade(0.5, 0, 0.5)
+    $ dissolve = Dissolve(0.5)
+
     # Backgrounds.
     image whitehouse = Image("whitehouse.jpg")
+    image marspan = Image("marspan.jpg")
 
     # Character pictures.
     image eileen happy = Image("9a_happy.png")
@@ -140,6 +150,41 @@ label after_sub:
 
     show eileen happy at center
 
+    e "Testing transitions. If transitions are None, then nothing will
+       happen."
+
+    e "First, normal with statements. This box will fade out, and the
+       next will pop in."
+
+    with fade
+
+    e "This will pop out, a fade will happen, and the next will pop
+       in."
+
+    with None
+    with fade
+
+    e "Testing default transitions. The next three things will
+       dissolve in. If transitions is Some, nothing will
+       happen."
+
+    $ default_transition = dissolve
+
+    e "One"
+    e "Two"
+    e "Three"
+
+    $ default_transition = None
+       
+    
+    scene marspan at Pan((0,0), (1600,0), 15.0)
+    show eileen happy at center
+
+    e "Testing pan."
+
+    e "Still testing pan."
+
+    e "Wait for it to stop, and make sure it does."
 
     init:
         python:

@@ -96,25 +96,44 @@ class Node(object):
         return [ self.next ]
 
 
+def say_menu_with(expression):
+    """
+    This handles the with clause of a say or menu statement.
+    """
+
+    if expression is not None:
+        what = renpy.python.py_eval(expression)
+    elif renpy.store.default_transition and renpy.game.preferences.transitions == 2:
+        what = renpy.store.default_transition
+    else:
+        return
+
+    if not what:
+        return
+
+    if renpy.game.preferences.transitions:
+        renpy.game.interface.set_transition(what)
+        
+
 class Say(Node):
 
-    def __init__(self, loc, who, what):
+    def __init__(self, loc, who, what, with):
 
         super(Say, self).__init__(loc)
         
         self.who = who
         self.what = what
+        self.with = with
 
     def execute(self):
-
-        import renpy.exports as exports
 
         if self.who is not None:
             who = renpy.python.py_eval(self.who)
         else:
             who = None
 
-        exports.say(who, self.what % renpy.game.store)
+        say_menu_with(self.with)
+        renpy.exports.say(who, self.what % renpy.game.store)
 
         return self.next
 
@@ -362,10 +381,11 @@ class With(Node):
         trans = renpy.python.py_eval(self.expr)
 
         if not trans:
-            sls = renpy.game.context().scene_lists
-            sls.replace_old_master()
+            renpy.game.interface.with_none()
         else:
-            renpy.game.interface.interact(trans)
+            if renpy.game.preferences.transitions:
+                renpy.game.interface.set_transition(trans)
+                renpy.game.interface.interact(show_mouse=False, trans_pause=True)
 
         return self.next
         
@@ -403,11 +423,12 @@ class Return(Node):
 
 class Menu(Node):
 
-    def __init__(self, loc, items, set):
+    def __init__(self, loc, items, set, with):
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
+        self.with = with
 
     def get_children(self):
         rv = [ ]
@@ -429,8 +450,6 @@ class Menu(Node):
 
     def execute(self):
 
-        import renpy.exports as exports
-
         choices = [ ]
             
         for i, (label, condition, block) in enumerate(self.items):
@@ -439,7 +458,8 @@ class Menu(Node):
             else:
                 choices.append((label, condition, i))
 
-        choice = exports.menu(choices, self.set)
+        say_menu_with(self.with)
+        choice = renpy.exports.menu(choices, self.set)
 
         if choice is None:
             return self.next

@@ -202,13 +202,34 @@ line 2
     <def>Keyword</def>s are words that appear in the source
     code. They're used to introduce a statement, or to delimit parts
     of a statement. You'll see keywords throughout the descriptions
-    of statements. In grammar rules, keywords are in quotes.
+    of statements. In grammar rules, keywords are in quotes. The
+    keywords are:
 
-  </p><p>
+  </p>
+
+  <pre>
+  at
+  call
+  hide
+  if
+  image
+  init
+  jump
+  menu
+  python
+  return
+  scene
+  set
+  show
+  with
+  while
+  </pre>
+  
+  <p>
 
     A <def>name</def>s consist of an alphabetic character or number,
     followed by zero or more alphabetic characters or underscores,
-    so long as the string isn't a keyword.
+    so long as the string isn't a keyword. 
 
   </p><p>
 
@@ -283,7 +304,7 @@ line 2
     a simple_expression followed by a string.
   </p>
 
-  <rule>say_statement -> ( simple_expression )? string</rule>
+  <rule>say_statement -> ( simple_expression )? string ( "with" simple_expression )?</rule>
   
   <p>
     We can distinguish two forms of the say statement, depending on
@@ -344,6 +365,27 @@ e "I know that you're %(player_age)d years old, and your zodiac
    sign is %(player_sign)s."
   </example>
 
+  
+  <p>
+    When the first object is a character object, that character object
+    is given given complete control over how text is displated. As an
+    example of this, the standard library includes a character object
+    called "centered", which displays the text centered on the screen,
+    without any background window.
+  </p>
+
+  <example>
+centered "American Bishoujo presents..."
+centered "The Ren'Py Demo Game"
+  </example>
+
+  <p>
+    The say statement also takes a with clause that is used to control
+    the transition that is used to introduce the dialogue or
+    thought. Please see the section on transitions for details on how
+    to use the with clause.
+  </p>
+
   <h3>Menus</h3>
 
   <p>
@@ -364,7 +406,7 @@ e "I know that you're %(player_age)d years old, and your zodiac
   </p><p>
 
     The menu statement must have a block associated with it. This
-    block must contain one or more menuitems in it. There are three
+    block must contain one or more menuitems in it. There are four
     kinds of menuitems that can be contained in a menu block.
 
   </p>
@@ -401,6 +443,16 @@ e "I know that you're %(player_age)d years old, and your zodiac
     set. There may only be one of this kind of menuitem per menu. If
     present, it's used to filter the list of choices shown to the
     user.
+
+  </p>
+
+  <rule>with_menuitem -> "with" simple_expression</rule>
+
+  <p>
+
+    The final kind of menuitem is a with clause. This is used to
+    specify the transition that introduces this menu. Please see the
+    section on transitions for a discussion of this.
 
   </p><p>
 
@@ -770,13 +822,21 @@ with dissolve
     will be instantly shown, and then the character image will be
     dissolved in over the background.
   </p>
+
+  <p>
+    Another use of the "with None" statement is to remove transient
+    elements before a transition begins. By default, the scene list
+    includes transient elements like dialogue, thoughts, and
+    menus. "with None" always executes without these elements, and so
+    gets rid of them.
+  </p>
   
   <p>
-    Finally, the "show", "hide", and "scene" statements all take a
-    with clause. A statement with a with clause associated with it is
-    actually converted into three statements: A "with None" statement,
-    the original statement sans the with clause, and the with clause as
-    a with statement. For example:  
+    The "show", "hide", and "scene" statements all take a with
+    clause. One of these statement with a with clause associated with
+    it is actually converted into three statements: A "with None"
+    statement, the original statement sans the with clause, and the
+    with clause as a with statement. For example:
   </p>
     
   <example>
@@ -807,6 +867,36 @@ with dissolve
     other.
   </p>
 
+  <p>
+    We also allow with clauses to be supplied for say and menu
+    statements. When a with clause is supplied on one of these
+    statements, the transition is used to introduce the say or menu
+    element. For example, 
+  </p>
+  
+  <example>
+e "How are you doing?" with dissolve
+  </example>
+
+  <p>
+    Will dissolve in a line of dialogue. The line of dialogue will be
+    dismissed immediately, unless it is followed by a with statement
+    or clause that causes it to transition to something else.
+  </p>
+
+  <p>
+    There is one variable that controls transitions:
+  </p>
+
+  <dl>
+    <var name="default_transition" value="None">
+      If not none, specifies a default transition that is applied to
+      all say and menu statements that are not provided a with
+      clause. This is only considered if the transitions preference is
+      set to "All".
+    </var>
+  </dl>
+  
   <p>
     Functions that return things that are useful as arguments to with
     statements or clauses are:
@@ -1184,6 +1274,7 @@ python:
     <li>The mappings of image names to Displayable created by the image
       statement.</li>
     <li>Configuration variables (config.varname).</li>
+    <li>Library variables (library.varname).</li>
     <li>Styles (style.stylename).</li>
   </ul>
 
@@ -1344,6 +1435,47 @@ $ state.love_love_points = a + 1
     such a variable, will be saved, loaded, and rolled-back properly.
   </p>
 
+  <h3>Persistent Data</h3>
+
+  <p>
+    Persistent data is data that is saved that is not associated with a
+    single game. One possible use of it is to store information about
+    things that have been unlocked, such as an image gallery that is
+    only unlocked when an ending has been reached.
+  </p>
+
+  <p>
+    Persistent data is stored as fields on the "persistent"
+    object. This object is special, as uninitialized fields are forced
+    to take the value None. A change to this object is visible in
+    every game that the player undertakes.
+  </p>
+
+  <p>
+    Take as an example an unlockable image gallery. The code to
+    display the gallery look like:
+  </p>
+
+  <example>
+label gallery:
+
+    if not persistent.gallery_unlocked:
+        show background
+        centered "You haven't unlocked this gallery yet."
+        $ renpy.full_restart()
+
+    # Actually show the gallery here.
+  </example>
+
+  <p>
+    Then, to unlock the gallery, run the following code somewhere in
+    your program.
+  </p>
+
+  <example>
+$ persistent.gallery_unlocked = True
+  </example>
+
   <h3>Interaction Functions</h3>
 
   <p>
@@ -1452,7 +1584,6 @@ init:
     $ config.screen_width = 480
   </example>
 
-
   <dl>
     <var name="config.screen_width" value="800">
       This sets the width of the screen.
@@ -1528,7 +1659,47 @@ init:
     <var name="config.archives" value="[ ]">
       A list of archive files that will be searched for images.
     </var>
+
+    <var name="config.mouse" value="None">
+      If this variable contains a string, that string is taken as an
+      image file that a color mouse cursor is loaded from. It's
+      probably best given as a PNG file, in which case the mouse can
+      have transparency and translucency. If this is None, a
+      black-and-white hardware mouse is used, and the speed of Ren'Py
+      is slightly increased.
+    </var>
+
+    <var name="library.file_page_length" value="4">
+      This is the number of save slots that are shown in the picker
+      that's used by the load and save portions of the game menu.
+    </var>
+
+    <var name="library.thumbnail_width" value="100">
+      The width of the thumbnails that are taken when the game is
+      saved. These thumbnails are shown when the game is
+      loaded. Please note that the thumbnail is shown at the size it
+      was taken at, rather than the value of this setting when the
+      thumbnail is shown to the user.
+    </var>
+
+    <var name="library.thumbnail_height" value="75">
+      The width of the thumbnails that are taken when the game is
+      saved. These thumbnails are shown when the game is
+      loaded. Please note that the thumbnail is shown at the size it
+      was taken at, rather than the value of this setting when the
+      thumbnail is shown to the user.
+    </var>
       
+    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Quit Game", "_quit") ]'>
+      This is used to give the main menu that is shown to the user
+      when the game first starts. It is a list of tuples, where the
+      first element of each tuple is the title of the menu button, and
+      the second element is a label that we jump to when that button
+      is selected. Two useful labels to use here are "_continue",
+      which brings up the game menu in load mode, and "_quit", which
+      terminates Ren'Py.
+    </var>
+
   </dl>
 
   <h3>Properties and Styles</h3>
@@ -1623,6 +1794,15 @@ init:
     spacing. If negative, the lines will be pushed closer
     together. This is very platform-dependent, so you may want to
     condition it on the result of renpy.windows().
+  </prop>
+
+  <prop name="textalign">
+    This is used to control the horizontal alignment of the lines of
+    text in the area allocated to the Text widget containing that
+    text. It only really has any effect if the text is more than one
+    line long. It's a number between 0 and 1, which gives the fraction
+    of empty space that should be to the left of each line of
+    text. (To center text, it should be 0.5.)
   </prop>
 
   <h4>Window Properties</h4>
@@ -1845,72 +2025,7 @@ init:
 
   <dl>
 
-    <renpy_style name="default">The default style that all styles inherit from.</renpy_style>
-
-    <renpy_style name="window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.</renpy_style>
-
-    <renpy_style name="image_placement">This style is used to control the default placement of images on the screen.</renpy_style>
-
-    <renpy_style name="say_label"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.</renpy_style>
-
-    <renpy_style name="say_dialogue"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the text of dialogue.</renpy_style>
-
-    <renpy_style name="say_thought"><renpy_style_inherits>default</renpy_style_inherits>(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.</renpy_style>
-
-    <renpy_style name="say_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing dialogue and thoughts.</renpy_style>
-
-    <renpy_style name="menu_caption"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a menu caption.</renpy_style>
-
-    <renpy_style name="menu_selected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a selected menu choice.</renpy_style>
-
-    <renpy_style name="menu_unselected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render an unselected menu choice.</renpy_style>
-
-    <renpy_style name="menu_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing a menu.</renpy_style>
-
-    <renpy_style name="input_text"><renpy_style_inherits>default</renpy_style_inherits>(text) The style used for the text of an input box.</renpy_style>
-
-    <renpy_style name="input_prompt"><renpy_style_inherits>default</renpy_style_inherits>(text) The style used for the prompt of an input box.</renpy_style>
-
-    <renpy_style name="input_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The style used for the window of an input box.</renpy_style>
-
-    <renpy_style name="button"><renpy_style_inherits>default</renpy_style_inherits>(window, hover) The default style used for buttons in the main and game menus.</renpy_style>
-
-    <renpy_style name="button_text"><renpy_style_inherits>default</renpy_style_inherits>(text, hover) The default style used for the label of a button.</renpy_style>
-
-    <renpy_style name="selected_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).</renpy_style>
-
-    <renpy_style name="selected_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a selected button.</renpy_style>
-
-    <renpy_style name="disabled_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a disabled button.</renpy_style>
-
-    <renpy_style name="disabled_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a disabled button.</renpy_style>
-
-    <renpy_style name="mm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.</renpy_style>
-
-    <renpy_style name="mm_menu_window"><renpy_style_inherits>default</renpy_style_inherits>(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.</renpy_style>
-
-    <renpy_style name="mm_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used on buttons that are part of the main menu.</renpy_style>
-
-    <renpy_style name="mm_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the labels of buttons that are part of the main menu.</renpy_style>
-
-    <renpy_style name="gm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.</renpy_style>
-
-    <renpy_style name="gm_nav_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.</renpy_style>
-
-    <renpy_style name="file_picker_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) A window containing the file picker that is used to choose slots for loading and saving.</renpy_style>
-
-    <renpy_style name="file_picker_entry"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for each of the slots in the file picker.</renpy_style>
-
-    <renpy_style name="file_picker_text"><renpy_style_inherits>default</renpy_style_inherits>(text) A base style for all text that is displayed in the file picker.</renpy_style>
-
-    <renpy_style name="file_picker_new"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the new indicator in the file picker.</renpy_style>
-
-    <renpy_style name="file_picker_old"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the old indicator in the file picker.</renpy_style>
-
-    <renpy_style name="file_picker_extra_info"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.</renpy_style>
-
-    <renpy_style name="file_picker_new_slot"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is used for the new slot indicator in the file picker.</renpy_style>
-
+    <!-- include styles.xml -->
 
   </dl>
 
@@ -1963,6 +2078,47 @@ init:
     Then, delete the .jpg and .png files from the game
     directory. Ren'Py will look in the images archive to find images
     that need to be loaded.
+  </p>
+
+  <h3>Localization</h3>
+  
+  <p>
+    While Ren'Py is by default set up to operate in an English
+    speaking environment, it is not limited to such settings. Assuming
+    a proper font is loaded, Ren'Py scripts can contain any language
+    expressible in Unicode.
+  </p>
+
+  <p>
+    There are two things in the Ren'Py library that may need to be
+    translated into a user's language. The first is the main
+    menu. There is no explicit support for doing this, but as the
+    library.main_menu variable supports changing the text of the main
+    menu, it also supports translating said text.
+  </p>
+
+  <p>
+    The second thing that needs to be translated is the game menu. The
+    library.translations dictionary is used to translate text in the
+    game menu into your language. If a key in this map corresponds to
+    the English text that would be displayed, the value corresponding
+    to that key is displayed again. For example:
+  </p>
+
+  <example>
+init:
+    $ library.translations = {
+        "Yes" : u"HIja'",
+        "No" : u"ghobe'",
+        # etc.
+        }
+  </example>
+
+  <p>
+    The u characters prefixed to the strings on the right, while not
+    strictly necessary in this case, are used to tell Python that the
+    string is in Unicode rather than ASCII. This is useful if your
+    language uses non-ascii characters.
   </p>
 
   <h3>Function Index</h3>

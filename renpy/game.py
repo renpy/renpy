@@ -54,17 +54,45 @@ seen_session = { }
 # The set of statements we've ever seen.
 seen_ever = { }
 
+# The class that's used to hold the persistent data.
+class Persistent(object):
+
+    def __setstate__(self, data):
+        vars(self).update(data)
+
+    def __getstate__(self):
+        return vars(self)
+
+    # Undefined attributes return None.
+    def __getattr__(self, attr):
+        return None
+        
+# The persistent data that's kept from session to session
+persistent = None
+
 class Preferences(object):
     """
     Stores preferences that will one day be persisted.
     """
-    
-    def __init__(self):
+    def reinit(self):
         self.fullscreen = False
         self.music = True
         self.skip_unseen = False
 
-preferences = Preferences()
+        # 2 - All transitions.
+        # 1 - Only non-default transitions.
+        # 0 - No transitions.
+        self.transitions = 2
+
+    def __setstate__(self, state):
+        self.reinit()
+        vars(self).update(state)
+
+    def __init__(self):
+        self.reinit()
+
+# The current preferences.
+preferences = None
 
 class RestartException(Exception):
     """

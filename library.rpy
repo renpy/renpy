@@ -32,10 +32,32 @@ init -500:
         # The height of a thumbnail.
         library.thumbnail_height = 75
 
+        # The contents of the main menu.
+        library.main_menu = [
+            ( "Start Game", "start" ),
+            ( "Continue Game", "_continue" ),
+            ( "Quit Game", "_quit" ),
+            ]
+
+        # Used to translate strings in the library.
+        library.translations = { }
+
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
-        
+
+# The function that's used to translate strings in the game menu.
+init:
+    python:
+        def _(s):
+            """
+            Translates s into another language or something.
+            """
+            
+            if s in library.translations:
+                return library.translations[s]
+            else:
+                return s
 
 ##############################################################################
 
@@ -46,6 +68,21 @@ init:
         def _screenshot():
             renpy.screenshot("screenshot.bmp")
 
+        # Are the windows currently hidden?
+        _windows_hidden = False
+
+        # Hides the windows.
+        def _hide_windows():
+            global _windows_hidden
+
+            if _windows_hidden:
+                return
+
+            try:
+                _windows_hidden = True
+                renpy.interact(renpy.SayBehavior())
+            finally:
+                _windows_hidden = False
 
 
 # Installs the keymap that lets the user do things like invoke the
@@ -66,6 +103,7 @@ label _install_keymap:
             m = renpy.toggle_music,
             K_ESCAPE = renpy.curried_call_in_new_context("_game_menu"),
             mouse_3 = renpy.curried_call_in_new_context("_game_menu"),
+            mouse_2 = _hide_windows,
             )
 
         config.underlay.append(km)
@@ -75,28 +113,25 @@ label _install_keymap:
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
-
-    $ _started = False
-
-    call _main_menu
-
-    $ _started = True
-    call _install_keymap
-    
-    jump start
+    jump _main_menu
 
 # This shows the main menu to the user. 
 label _main_menu:
 
-    # jump start
+    # The game isn't started yet.
+    $ _started = True
 
     python hide:
 
+        # Disable the keymap.
+        config.underlay = [ ]
+        config.overlay = [ ]
+
+        # Show the main menu screen.
         vbox = renpy.VBox()
 
-        vbox.add(renpy.TextButton('New Game', clicked=_return("start")))
-        vbox.add(renpy.TextButton('Continue Game', clicked=_return("continue")))
-        vbox.add(renpy.TextButton('Quit', clicked=_return("quit")))
+        for text, label in library.main_menu:
+            vbox.add(renpy.TextButton(text, clicked=_return(label)))
 
         menu_window = renpy.Window(vbox, style='mm_menu_window')
         
@@ -107,14 +142,23 @@ label _main_menu:
 
         store._result = renpy.interact(root_window)
 
-    if _result == "start":
-        pass
-    elif _result == "continue":
-        $ renpy.call_in_new_context("_game_menu")
-    elif _result == "quit":
-        $ renpy.quit()
+    # The game might be starting.
+    $ _started = True
+
+    call _install_keymap
+
+    # Computed jump to the appropriate label.
+    $ renpy.jump(_result)
 
     return
+
+# Used to call the game menu. 
+label _continue:
+    $ _started = False
+    $ renpy.call_in_new_context("_game_menu")
+
+    jump _main_menu
+    
 
 ##############################################################################
 # 
@@ -128,12 +172,12 @@ init -500:
         def _game_nav(selected):
 
             buttons = [
-                ( "return", "Return to Game", "_return"),
-                ( "load", "Load Game", "_load_screen" ),
-                ( "save", "Save Game", "_save_screen" ),
-                # ( "prefs", "Preferences", "_prefs_screen" ),
-                ( "mainmenu", "Main Menu", "_full_restart" ),
-                ( "quit", "Quit Game", "_quit" ),
+                ( "return", _("Return to Game"), "_return"),
+                ( "load", _("Load Game"), "_load_screen" ),
+                ( "save", _("Save Game"), "_save_screen" ),
+                ( "prefs", _("Preferences"), "_prefs_screen" ),
+                ( "mainmenu", _("Main Menu"), "_full_restart" ),
+                ( "quit", _("Quit Game"), "_confirm_quit" ),
                 ]
 
             vbox = renpy.VBox()
@@ -174,14 +218,14 @@ init -500:
         def _render_filename(filename, newest_filename):
 
             if filename is None:
-                return renpy.Text("Save in new slot.", style='file_picker_new_slot')
+                return renpy.Text(_("Save in new slot."), style='file_picker_new_slot')
 
             hbox = renpy.HBox(padding=library.padding)
 
             if filename == newest_filename:
-                hbox.add(renpy.Text("New", style='file_picker_new'))
+                hbox.add(renpy.Text(_("New"), style='file_picker_new'))
             else:
-                hbox.add(renpy.Text("Old", style='file_picker_old'))
+                hbox.add(renpy.Text(_("Old"), style='file_picker_old'))
 
             hbox.add(renpy.load_screenshot(filename))
 
@@ -223,9 +267,9 @@ init -500:
 
 
                 hbox.add(tb(fpi > 0,
-                            'Previous Page', _return(("fpidelta", -1))))
+                            _('Previous Page'), _return(("fpidelta", -1))))
                 hbox.add(tb(fpi + library.file_page_length < len(files),
-                            'Next Page', _return(("fpidelta", +1))))
+                            _('Next Page'), _return(("fpidelta", +1))))
                 vbox.add(hbox)
 
                 for i in cur_files:
@@ -249,6 +293,45 @@ init -500:
                 if type == "fpidelta":
                     store._file_picker_index += value * library.file_page_length
                 
+        def _yesno_prompt(screen, message):
+
+            prompt = renpy.Text(message, style='yesno_prompt')
+            yes = renpy.TextButton(_("Yes"), style='yesno_yes',
+                               clicked=_return(True))
+            no =  renpy.TextButton(_("No"), style='yesno_no',
+                               clicked=_return(False))
+
+            return _game_interact(screen, prompt, yes, no) 
+            
+        # Returns a button for a single preference and value.
+        def _prefbutton(label, var, value):
+
+            def clicked():
+                setattr(_preferences, var, value)
+                return True
+
+            style = 'button'
+            text_style = 'button_text'
+
+            if getattr(_preferences, var) == value:
+                style = 'selected_button'
+                text_style = 'selected_button_text'
+
+            return renpy.TextButton(_(label), style=style,
+                                    text_style=text_style, clicked=clicked)
+
+        # Returns a vbox for a single preference.
+        def _prefvbox(label, var, entries):
+
+            rv = renpy.VBox(style='prefs_pref')
+            rv.add(renpy.Text(_(label), style='prefs_label'))
+
+            for blabel, value in entries:
+                rv.add(_prefbutton(blabel, var, value))
+
+            return rv
+
+            
                                         
 
 label _game_menu:
@@ -277,12 +360,54 @@ label _load_screen:
     jump _game_menu
 
 label _save_screen:
+    $ _fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
 
-    python hide:
-        fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
-        renpy.save(fn, renpy.time.strftime("%Y-%m-%d %H:%M:%S\n") + save_name)
+    if not _fn or _yesno_prompt("save", _("Are you sure you want to overwrite your save?")):
+        $ renpy.save(_fn, renpy.time.strftime("%Y-%m-%d %H:%M:%S\n") + save_name)
 
     jump _save_screen
+
+# The preferences screen.
+label _prefs_screen:
+
+    python hide:
+        prefs_left = [
+            ( 'Display', 'fullscreen',
+              [ ('Window', False), ('Fullscreen', True) ] ),
+            ( 'Music', 'music',
+              [ ('Enabled', True), ('Disabled', False) ] ),
+            ]
+
+        prefs_right = [
+            ('CTRL Skips', 'skip_unseen',
+             [ ('Seen Messages', False), ('All Messages', True) ] ),
+            ('Transitions', 'transitions',
+             [ ('All', 2), ('Some', 1), ('None', 0) ]),
+            ]
+
+        vbox_left = renpy.VBox(padding=library.padding * 3, style='prefs_left')
+
+        for label, var, entries in prefs_left:
+            vbox_left.add(_prefvbox(label, var, entries))
+
+        vbox_right = renpy.VBox(padding=library.padding * 3, style='prefs_right')
+
+        for label, var, entries in prefs_right:
+            vbox_right.add(_prefvbox(label, var, entries))
+
+        _game_interact("prefs", vbox_left, vbox_right)
+
+    jump _prefs_screen
+        
+        
+
+
+# Asks the user if he wants to quit.
+label _confirm_quit:
+    if _yesno_prompt("quit", _("Are you sure you want to end the game?")):
+        jump _quit
+    else:
+        jump _return
 
 label _quit:
     $ renpy.quit()
@@ -296,3 +421,9 @@ label _return:
     call _install_keymap
     return
 
+# The centered object.
+init:
+    $ centered = Character(None, what_style="centered_text", window_style="centered_window")
+    
+    
+        

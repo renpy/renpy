@@ -59,6 +59,9 @@ skip_delay = 100
 # Archive files that are searched for images.
 archives = [ ]
 
+# An image file containing the mouse cursor, if one is defined.
+mouse = None
+
 _globals = globals().copy()
 
 def reload():

@@ -35,7 +35,7 @@ class ImageCache(object):
         im = pygame.image.load(renpy.loader.load(fn), fn)
         im = im.convert_alpha()
 
-        iw, ih = im.get_size()
+        # iw, ih = im.get_size()
 
         # surf = renpy.display.surface.Surface(iw, ih)
         # surf.blit(im, (0, 0))

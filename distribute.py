@@ -22,7 +22,6 @@ def copy_file(source, dest, license=""):
 
     data = sf.read()
     if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy"):
-        print "DOSIFY", dest
         data = dosify(data)
 
     df.write(data)
@@ -107,11 +106,13 @@ def main():
     def cp(x, license=""):
         copy_file(x, target + "/" + x)
 
+    cp("CHANGELOG.txt")
     cp("LICENSE.txt")
     cp("README_RENPY.txt")
     cp("run_game.py", license=license)
     cp("archiver.py", license=license)
-
+    cp("build_exe.py", license=license)
+    cp("renpy-mode.el")
     
        
 

@@ -10,11 +10,22 @@ class Transition(renpy.display.core.Displayable):
     """
 
     def __init__(self, delay):
-        self.saybehavior = renpy.display.behavior.SayBehavior(delay=delay)
-
-
+        self.delay = delay
+        self.offsets = [ ]
+        
     def event(self, ev, x, y):
-        return self.saybehavior.event(ev, x, y)
+        event_list = self.new_scene_list[:]
+        event_list.reverse()
+
+        offsets = self.offsets[:]
+        offsets.reverse()
+
+        for (key, st, disp), (xo, yo) in zip(event_list, offsets):
+            rv = disp.event(ev, x - xo, y - yo)
+            if rv is not None:
+                return rv
+
+        return None
 
 class Fade(Transition):
     """
@@ -46,6 +57,8 @@ class Fade(Transition):
 
         rv = renpy.display.surface.Surface(width, height)
 
+        events = False
+
         if st < self.out_time:
             scene_list = self.old_scene_list
             alpha = int(255 * (st / self.out_time))
@@ -57,12 +70,16 @@ class Fade(Transition):
         else:
             scene_list = self.new_scene_list
             alpha = 255 - int(255 * ((st - self.out_time - self.hold_time) / self.in_time))
+            events = True
 
         if scene_list:
             surf, offsets = renpy.display.core.render_scene_list(scene_list,
                                                                  width,
                                                                  height)
             rv.blit(surf, (0, 0))
+
+            if events:
+                self.offsets = offsets
 
         # Just to be sure.
         if alpha < 0:
@@ -73,7 +90,8 @@ class Fade(Transition):
 
         rv.fill(self.color[:3] + (alpha,))
 
-        renpy.game.interface.redraw(0)
+        if st < self.in_time + self.hold_time + self.out_time:
+            renpy.game.interface.redraw(0)
 
         return rv
 
@@ -91,7 +109,7 @@ class Dissolve(Transition):
         rsl = renpy.display.core.render_scene_list
 
         rv, offsets = rsl(self.old_scene_list, width, height)
-        surftree, offsets = rsl(self.new_scene_list, width, height)
+        surftree, self.offsets = rsl(self.new_scene_list, width, height)
         surf = surftree.pygame_surface(False)
 
         alpha = min(255, int(255 * st / self.time))
@@ -99,7 +117,8 @@ class Dissolve(Transition):
         surf.set_alpha(alpha)
         rv.blit(surf, (0, 0))
 
-        renpy.game.interface.redraw(0)
+        if st < self.time:
+            renpy.game.interface.redraw(0)
         
         return rv
     

@@ -1,0 +1,52 @@
+
+New in 4.1
+----------
+
+Added the ability to customize the main menu by giving a list of
+buttons on the main menu and the labels that they jump the user to.
+
+Added the ability to center-click to hide any displayed text or menus.
+
+Added the ability to have a color mouse that we can move around the
+screen. 
+
+Added a persistent object, which has fields that are persistent across
+games. Made the preferences part of this object, so that they are
+persisted across sessions. For simplicity's sake, made seen_ever part
+of that persistent object.
+
+Added a special character called "centered", which causes the text it
+displays to be centered in the screen without any window. Added two
+new styles (centered_window and centered_text), which are used for
+this, and a new property, textalign, which controls the horizontal
+alignment of text within the Text object itself.
+
+Keywords are now special in all contexts. So you can no longer include
+keywords in image names. Sorry.
+
+Improved parse error messages. They now include the text of the
+line and a caret indication the location in the line where the parse
+error occurred.
+
+Added a with clause to say statements and menus. This lets one display
+dialogue, thoughts, or menus using a transition. In conjunction with
+this, changed a bit the semantics of with statements, and with clauses
+on show, hide, and scene statements. Rewrote the section on
+transitions in the documentation to reflect the new reality.
+
+Added the ability to translate the text of the game menu. Together
+with the ability to change the main menu, this makes Ren'Py fully
+localizable, except for error messages. Check out the Localization
+section in the tutorial for more details.
+
+Added confirmations for quitting and overwriting a save game. This
+also includes quitting by trying to close the window.
+
+Added a preferences screen, which lets users change the Ren'Py
+preferences. Right now, this includes Windowed/Fullscreen, Music
+Enabled/Disabled, CTRL Skips Unread/All messages, and Transitions
+controls which transitions are performed.
+
+Added a Pan function which can be used with at. This allows us to pan
+over a background image.
+[not documented]

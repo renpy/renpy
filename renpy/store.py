@@ -21,7 +21,7 @@ Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Animation = renpy.display.image.Animation
 Position = renpy.curry.curry(renpy.display.layout.Position)
-# Resize = renpy.curry.curry(renpy.display.layout.Resize)
+Pan = renpy.curry.curry(renpy.display.layout.Pan)
 
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
@@ -54,7 +54,7 @@ class Character(object):
     def __init__(self, name,
                  who_style='say_label',
                  what_style='say_dialogue',
-                 window_style='window_say',
+                 window_style='say_window',
                  **properties):
         """
         @param name: The name of the character, as shown to the user.
@@ -83,11 +83,14 @@ class Character(object):
         renpy.display_say(self.name, what,
                           who_style=self.who_style,
                           what_style=self.what_style,
+                          window_style=self.window_style,
                           **self.properties)
-        
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
+
+# The default transition.
+default_transition = None
 
 _globals = globals().copy()
 

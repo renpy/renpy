@@ -109,6 +109,15 @@ def function(m):
     
     return '<function name="%(name)s" sig="%(args)s">%(doc)s</function>' % locals()
 
+def include(m):
+
+    f = file(m.group(1))
+    rv = f.read()
+    f.close()
+    return rv
+        
+    
+
 def main():
 
     f = file(sys.argv[1])
@@ -118,6 +127,7 @@ def main():
     s = re.sub(r"(?s)<example>(.*?)</example>", example, s)
 
     s = re.sub(r"<!-- func (\S+) -->", function, s)
+    s = re.sub(r"<!-- include (\S+) -->", include, s)
 
     print s
 

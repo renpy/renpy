@@ -12,13 +12,16 @@
 import renpy
 import renpy.game as game
 import os
-from cPickle import load, dumps, HIGHEST_PROTOCOL
+from cPickle import loads, dumps, HIGHEST_PROTOCOL
 
 def run():
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
     """
+
+    # Initialize the log.
+    game.log = renpy.python.RollbackLog()
 
     # Reload some things, in case this is a restart.
     renpy.store.reload()
@@ -32,30 +35,39 @@ def run():
     except:
         pass
 
-    # Unserialize the set of seen statements.
+    # Unserialize the persistent data.
     try:
-        game.seen_ever = load(file(renpy.config.savedir + "/seen"))
+        f = file(renpy.config.savedir + "/persistent", "r")
+        s = f.read().decode("zlib")
+        f.close()
+        game.persistent = loads(s)
     except:
-        print "Couldn't load seen statements."
-        game.seen_ever = { }
-                              
+        game.persistent = game.Persistent()
 
+    # Initialize the set of statements seen ever.
+    if not game.persistent._seen_ever:
+        game.persistent._seen_ever = { }
 
+    game.seen_ever = game.persistent._seen_ever
+    
     # Clear the list of seen statements in this game.
     game.seen_session = { }
+
+    # Initialize the preferences.
+    if not game.persistent._preferences:
+        game.persistent._preferences = game.Preferences()
+
+    game.preferences = game.persistent._preferences
 
     # Initialize the store.
     renpy.store.store = renpy.store
     game.store = vars(renpy.store)
-
-    renpy.store.preferences = game.preferences
+    renpy.store.persistent = game.persistent
+    renpy.store._preferences = game.preferences
 
     # Set up styles.
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
-
-    # Initialize the log.
-    game.log = renpy.python.RollbackLog()
 
     # Run init code in its own context. (Don't log.)
     game.contexts = [ renpy.execution.Context(False) ]
@@ -107,8 +119,8 @@ def run():
             except game.QuitException, e:
                 break
     finally:
-        f = file(renpy.config.savedir + "/seen", "wb")
-        f.write(dumps(game.seen_ever))
+        f = file(renpy.config.savedir + "/persistent", "wb")
+        f.write(dumps(game.persistent).encode("zlib"))
         f.close()
 
 

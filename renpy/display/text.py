@@ -149,7 +149,9 @@ class Text(renpy.display.core.Displayable):
         def render_lines(x, y, color):
             for l in lines:
                 ls = font.render(l, True, color)
-                surf.blit(ls, (x, y + font.get_descent()))
+                lw, lh = ls.get_size()
+                xo = int((self.width - lw) * self.style.textalign)
+                surf.blit(ls, (x + xo, y + font.get_descent()))
                 y += font.get_linesize() + self.style.line_height_fudge
 
         fudge = 1

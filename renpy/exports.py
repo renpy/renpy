@@ -30,11 +30,7 @@ def checkpoint():
     renpy.game.log.checkpoint()
 
 def interact(*widgets):
-
-    for i in widgets:
-        scene_list_add('transient', i)
-
-    return renpy.game.interface.interact()
+    return renpy.game.interface.interact(transient=widgets)
 
 def scene_lists(index=-1):
     """
@@ -232,15 +228,15 @@ def display_say(who, what, who_style='say_label',
     import renpy.display.text as text
     import renpy.display.behavior as behavior
 
-    if who is None:
-        who = ""
-    else:
+
+    if who is not None:
         who = who + ": "
 
     vbox = layout.VBox(padding=10)
 
-    label = text.Text(who, style=who_style, **properties)
-    vbox.add(label)
+    if who is not None:
+        label = text.Text(who, style=who_style, **properties)
+        vbox.add(label)
 
     line = text.Text(what, style=what_style)
     vbox.add(line)

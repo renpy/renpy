@@ -43,8 +43,12 @@ label start:
     # Did we win the date?
     $ date = False
 
-    $ renpy.music_start('sun-flower-slow-drag.mid')
+    # scene black
+    # centered "American Bishoujo\npresents..." with fade
+    # centered "The Ren'Py Demo Game" with fade
     
+    $ renpy.music_start('sun-flower-slow-drag.mid')
+
     scene washington with fade
     show eileen vhappy with dissolve
 
@@ -247,6 +251,7 @@ label writing:
 
     e "... or dissolve ..."
 
+    with None
     scene washington
     show eileen happy
     with dissolve

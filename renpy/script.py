@@ -8,6 +8,9 @@ import os
 
 from cPickle import loads, dumps
 
+# The version of the dumped script.
+script_version = 2
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -74,7 +77,15 @@ class Script(object):
 
             # print "Loading", fn
 
-            self.load_file(fn)
+            if self.load_file(fn):
+                continue
+
+            print "Couldn't load %s, trying %s instead." % (fn, alt)
+
+            if self.load_file(alt):
+                continue
+
+            raise Exception("Could not load %s or %s." % (fn, alt))
             
 
         self.initcode.sort()
@@ -86,14 +97,22 @@ class Script(object):
         if fn.endswith(".rpy"):
             stmts = renpy.parser.parse(fn)
             f = file(fn + "c", "wb")
-            f.write(dumps(stmts).encode('zlib'))
+            f.write(dumps((script_version, stmts)).encode('zlib'))
             f.close()
         elif fn.endswith(".rpyc"):
             f = file(fn, "rb")
-            stmts = loads(f.read().decode('zlib'))
+
+            try:
+                version, stmts = loads(f.read().decode('zlib'))
+            except ValueError:
+                return False
+
+            if version != script_version:
+                return False
+            
             f.close()
         else:
-            assert False            
+            return False
 
         # All of the statements found in file, regardless of nesting
         # depth.
@@ -131,6 +150,8 @@ class Script(object):
             init = node.get_init()
             if init:
                 self.initcode.append(init)
+
+        return True
 
     def lookup(self, label):
         """

@@ -379,3 +379,62 @@ class Window(Container):
         self.window_size = width, height
 
         return rv
+
+
+class Pan(Container):
+    """
+    This is used to pan over a child displayable, which is almost
+    always an image. It works by interpolating the placement of the
+    upper-left corner of the image, over time. It's only really
+    suitable for use with images that are larger than the screen, as
+    we don't do any cropping on the image.
+    """
+
+    def __init__(self, startpos, endpos, time, child,
+                 style='image_placement', **properties):
+        """
+        @param child: The child displayable.
+
+        @param startpos: The initial coordinates of the upper-left corner of the screen, relative to the image.
+
+        @param endpos: The coordinates of the upper-left corner of the screen, relative to the image, after time has elapsed.
+
+        @param time: The time it takes to pan from startpos to endpos.
+        """
+
+        super(Pan, self).__init__()
+        self.add(child)
+
+        self.startpos = startpos
+        self.endpos = endpos
+        self.time = time
+        self.style = renpy.style.Style(style, properties)
+
+    def get_position(self):
+        return self.style
+
+    def render(self, width, height, st):
+
+        surf = self.child.render(width, height, st)
+
+        x0, y0 = self.startpos
+        x1, y1 = self.endpos
+
+        tfrac = (st / self.time)
+
+        if tfrac > 1.0:
+            tfrac = 1.0
+
+        xo = int(x0 * (1.0 - tfrac) + x1 * tfrac)
+        yo = int(y0 * (1.0 - tfrac) + y1 * tfrac)
+        
+
+        self.offsets = [ (-xo, -yo) ]
+
+        rv = renpy.display.surface.Surface(width, height)
+        rv.blit(surf, (-xo, -yo))
+
+        if st < self.time:
+            renpy.game.interface.redraw(0)
+
+        return rv

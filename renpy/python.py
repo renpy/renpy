@@ -499,6 +499,9 @@ class RollbackLog(renpy.object.Object):
         for rb in revlog:
             rb.rollback()
 
+        # Disable the next transition, as it's pointless.
+        renpy.game.interface.supress_transition = True
+
         # Restart the game with the new state.
         raise renpy.game.RestartException()
 

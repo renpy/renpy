@@ -9,8 +9,16 @@ import renpy.ast as ast
 
 class ParseError(Exception):
 
-    def __init__(self, filename, number, msg):
-        Exception.__init__(self, "On line %d of %s: %s" % (number, filename, msg))
+    def __init__(self, filename, number, msg, line=None, pos=None):
+        message = "On line %d of %s: %s" % (number, filename, msg)
+
+        if line is not None:
+            message += "\n\n" + line
+
+        if pos is not None:
+            message += "\n" + " " * pos + "^"
+
+        Exception.__init__(self, message)
 
 
 def list_logical_lines(filename):
@@ -209,7 +217,20 @@ class Lexer(object):
     # there is a huge chance of confusion.
     keywords = [
         'at',
+        'call',
+        'hide',
+        'if',
+        'image',
+        'init',
+        'jump',
+        'menu',
+        'python',
+        'return',
+        'scene',
+        'set',
+        'show',
         'with',
+        'while',
         ]
         
 
@@ -302,7 +323,7 @@ class Lexer(object):
         location.
         """
 
-        raise ParseError(self.filename, self.number, msg)
+        raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
     def eol(self):
         """
@@ -752,6 +773,7 @@ def parse_with(l, node):
     
 def parse_menu(l, loc):
 
+    with = None
     set = None
 
     # Tuples of (label, condition, block)
@@ -760,6 +782,12 @@ def parse_menu(l, loc):
     l.advance()
 
     while not l.eob:
+
+        if l.keyword('with'):
+            with = l.require(l.simple_expression)
+            l.expect_eol()
+            l.expect_noblock('with clause')
+            l.advance()
 
         if l.keyword('set'):
             set = l.require(l.simple_expression)
@@ -798,7 +826,8 @@ def parse_menu(l, loc):
         items.append((label, condition, block))
         l.advance()
 
-    return ast.Menu(loc, items, set)
+    return ast.Menu(loc, items, set, with)
+
 
 def parse_statement(l):
     """
@@ -1059,11 +1088,16 @@ def parse_statement(l):
     state = l.checkpoint()
     what = l.string()
 
+    if l.keyword('with'):
+        with = l.require(l.simple_expression)
+    else:
+        with = None
+
     if what and l.eol():
         # We have a one-argument say statement.
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, None, what)
+        return ast.Say(loc, None, what, with)
 
     l.revert(state)
 
@@ -1071,11 +1105,16 @@ def parse_statement(l):
     who = l.simple_expression()
     what = l.string()
 
+    if l.keyword('with'):
+        with = l.require(l.simple_expression)
+    else:
+        with = None
+        
     if who and what is not None:
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what)
+        return ast.Say(loc, who, what, with)
 
     l.error('expected statement.')
 
