@@ -2831,13 +2831,13 @@ probably drive your users mad.
   </p>
 
   <p>
-    Images can be archived using the archive.py or archive.exe
+    Images can be archived using the archiver.py or archiver.exe
     programs that ship as part of Ren'Py. To use this, one can change
     into the game directory and run a command like:
   </p>
   
   <p>
-    <kbd>../archive.exe images *.png *.jpg</kbd> 
+    <kbd>../archiver.exe images *.png *.jpg</kbd> 
   </p>
 
   <p>
