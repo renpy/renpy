@@ -146,7 +146,7 @@ def main(basepath):
     renpy.config.backup()
 
     # Load the script.
-    game.script = renpy.script.load_script(game.basepath)
+    game.script = renpy.script.load_script()
 
     # Start things running.
 

@@ -107,8 +107,12 @@ class Text(renpy.display.core.Displayable):
 
         maxwidth = 0
 
+        # The indent of the current line.
+        indent = self.style.first_indent
+        
+
         for p in pars:
-            words = p.split()
+            words = p.split(' ')
             
             line = ""
 
@@ -124,12 +128,13 @@ class Text(renpy.display.core.Displayable):
 
                 lw, lh = font.size(line + " " + w)
 
-                if lw < width:
+                if lw + indent < width:
                     line += " " + w
                     maxwidth = max(maxwidth, lw)
                 else:
                     lines.append(line)
                     line = w
+                    indent = self.style.rest_indent
 
             lines.append(line)
 
@@ -168,26 +173,38 @@ class Text(renpy.display.core.Displayable):
 
         lines = laidout.split('\n')
 
+        first_indent = self.style.first_indent
+        rest_indent = self.style.rest_indent
+
+
         # Common rendering code.
         def render_lines(x, y, color):
 
             y += self.style.text_y_fudge
 
+            indent = first_indent
+
             for l in lines:
                 ls = font.render(l, self.style.antialias, color)
-                lw, lh = ls.get_size()
-                xo = int((self.width - lw) * self.style.textalign)
-                surf.blit(ls, (x + xo, y + font.get_descent()))
-                y += font.get_linesize() + self.style.line_height_fudge
 
-        fudge = 1
+                lw, lh = ls.get_size()
+                lw += indent
+
+                xo = int((self.width - lw) * self.style.textalign)
+                surf.blit(ls, (x + xo + indent, y + font.get_descent()))
+
+                y += font.get_linesize() + self.style.line_height_fudge
+                indent = rest_indent
+                
+
+
 
         # Render drop-shadow.
         if self.style.drop_shadow:
-            render_lines(dsxo, dsyo + fudge, self.style.drop_shadow_color)
+            render_lines(dsxo, dsyo, self.style.drop_shadow_color)
 
         # Render foreground.
-        render_lines(0, 0 + fudge, self.style.color)
+        render_lines(0, 0, self.style.color)
 
         return surf
 
@@ -199,8 +216,7 @@ class Text(renpy.display.core.Displayable):
         if not self.slow:
             return None
 
-        if ( ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
-           ( ev.type == KEYDOWN and (ev.key == K_RETURN or ev.key == K_SPACE)):
+        if renpy.display.behavior.map_event(ev, "dismiss"):
 
             self.slow = False
             raise renpy.display.core.IgnoreEvent()

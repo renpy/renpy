@@ -132,7 +132,7 @@ def input(prompt, default='', length=None):
 
     return interact(win)
 
-def menu(items, set_expr, window_style='menu_window'):
+def menu(items, set_expr):
     """
     Displays a menu, and returns to the user the value of the selected
     choice. Also handles conditions and the menuset.
@@ -161,7 +161,7 @@ def menu(items, set_expr, window_style='menu_window'):
         return None
 
     # Show the menu.
-    rv = display_menu(items, window_style=window_style)
+    rv = renpy.store.menu(items)
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:
@@ -203,11 +203,12 @@ def say(who, what):
     what = what % renpy.game.store
 
     if who is None:
-        display_say(who, what, what_style='say_thought')
-    elif isinstance(who, (str, unicode)):
+        who = renpy.store.narrator
+
+    if isinstance(who, (str, unicode)):
         display_say(who, what, what_style='say_dialogue')
     else:
-        who.say(what)
+        who(what)
         
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -216,6 +217,8 @@ def display_say(who, what, who_style='say_label',
                 who_suffix=': ',
                 what_prefix='',
                 what_suffix='',
+                interact=True,
+                slow=True,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -226,6 +229,11 @@ def display_say(who, what, who_style='say_label',
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
+
+    # If we're going to do an interaction, then saybehavior needs
+    # to be here, right before ui.text.
+    if interact:
+        renpy.ui.saybehavior()
     
     if who is not None:
         who = who_prefix + who + who_suffix
@@ -238,13 +246,12 @@ def display_say(who, what, who_style='say_label',
     if who is not None:
         renpy.ui.text(who, style=who_style, **properties)
 
-    renpy.ui.text(what, style=what_style, slow=True)
+    renpy.ui.text(what, style=what_style, slow=slow)
     renpy.ui.close()
 
-    renpy.ui.saybehavior()
-
-    interact()
-    checkpoint()
+    if interact:
+        renpy.ui.interact()
+        checkpoint()
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', **properties):
@@ -427,6 +434,29 @@ def transition(trans):
         renpy.game.interface.with_none()
     else:
         renpy.game.interface.set_transition(trans)
+
+def clear_game_runtime():
+    """
+    Resets the game runtime timer down to 0.
+
+    The game runtime counter counts the number of seconds that have
+    elapsed while waiting for user input in the current context. (So
+    it doesn't count time spent in the game menu.)
+    """
+    
+    renpy.game.context().runtime = 0
+
+def get_game_runtime():
+    """
+    Returns the number of seconds that have elapsed in gameplay since
+    the last call to clear_game_timer, as a float.
+
+    The game runtime counter counts the number of seconds that have
+    elapsed while waiting for user input in the current context. (So
+    it doesn't count time spent in the game menu.)
+    """
+
+    return renpy.game.context().runtime / 1000.0
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

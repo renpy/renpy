@@ -1,3 +1,60 @@
+New in 4.4.2
+------------
+
+Improved the configurability of the say and menu statements, also
+changing the way they work. Say statements without a speaker specified
+are routed through the narrator character, while all menu statements
+are routed through the menu function. Customizing these functions can
+customize how Ren'Py interacts with the user, making it a much more
+flexible engine.
+
+As part of this, we changed the way character objects work. They are
+now called directly to display dialogue, rather than having the say
+method called on them.
+
+If your game uses variables named "narrator" or "menu", you will need
+to rename them.
+
+Changed the way spaces are handled by the text widget. Specifically,
+they are no longer merged, so it's possible to include spaces in
+dialogue and thoughts. Please note that the parser still merges
+adjacent spaces, unless you escape them with a backslash.
+
+Added a new widget, ui.sizer, that can shrink the amount of space
+allocated to its child.
+
+Added two new text properties, first_indent and rest_indent. These
+properties control how many pixels of indentation to put before each
+line of text. 
+
+Added a function, color, that can translate a hex triple or quadruple
+into a Ren'Py color.
+
+New in 4.4.1
+------------
+
+4.4.1 is being released to test some sound fixes, and so it isn't
+really isn't that complete or well-tested.
+
+Fixed some longstanding bugs with midi music on Windows. First of all,
+we now ship with the 1.2.6 version of SDL_mixer, which fixes a bug in
+1.2.5. That bug caused panning to go to the hard left. We also try to
+read the windows midi device volumes, and set our volume to match the
+first one we can read. This should prevent really loud midi music from
+happening.
+
+Also, increased the size of the sound buffer to 4096 samples, to
+prevent skipping.
+
+Some new features:
+
+Now, adding interact=False to a Character object will prevent an
+interaction from occuring.
+
+Implemented functions to get the amount of time elapsed during the
+game, renpy.clear_game_runtime() and renpy.get_game_runtime(). 
+
+
 New in 4.4
 ----------
 

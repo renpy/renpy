@@ -35,7 +35,7 @@ class Script(object):
 
     """
 
-    def __init__(self, dir):
+    def __init__(self, node_callback=None):
         """
         Loads the script by parsing all of the given files, and then
         walking the various ASTs to initialize this Script object.
@@ -80,12 +80,12 @@ class Script(object):
 
             # print "Loading", fn
 
-            if self.load_file(fn):
+            if self.load_file(fn, node_callback):
                 continue
 
             print "Couldn't load %s, trying %s instead." % (fn, alt)
 
-            if self.load_file(alt):
+            if self.load_file(alt, node_callback):
                 continue
 
             raise Exception("Could not load %s or %s." % (fn, alt))
@@ -95,7 +95,7 @@ class Script(object):
 
         # Do some generic init here.
 
-    def load_file(self, fn):
+    def load_file(self, fn, node_callback):
 
         if fn.endswith(".rpy"):
             stmts = renpy.parser.parse(fn)
@@ -134,6 +134,9 @@ class Script(object):
 
         # Check each node individually.
         for node in all_stmts:
+
+            if node_callback:
+                node_callback(node)
 
             # Check to see if the name is defined twice. If it is,
             # report the error.
@@ -174,9 +177,8 @@ class Script(object):
 
         return label in self.namemap
 
-def load_script(dir):
-
-    rv = Script(dir)
+def load_script():
+    rv = Script()
     return rv
     
 

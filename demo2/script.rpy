@@ -88,6 +88,9 @@ label start:
     # that we won the date.
     $ date = False
 
+    # Clear the game runtime timer, so it doesn't reflect time spent
+    # sitting at the main menu.
+    $ renpy.clear_game_runtime()
 
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
@@ -594,6 +597,10 @@ label ending:
      who encouraged him.'
 
     "We can't wait to see what you do with this. Good luck!"
+
+    $ minutes, seconds = divmod(int(renpy.get_game_runtime()), 60)
+    "It took you %(minutes)d minutes and %(seconds)d seconds to
+     finish this demo."
        
     $ renpy.full_restart()
 

@@ -7,10 +7,20 @@ from pygame.constants import *
 
 def init():
     try:
-        pygame.mixer.init(renpy.config.sound_sample_rate)
+        bufsize = 4096
+
+        import os
+
+        if 'RENPY_SOUND_BUFSIZE' in os.environ:
+            bufsize = int(os.environ('RENPY_SOUND_BUFSIZE'))
+        
+        pygame.mixer.pre_init(renpy.config.sound_sample_rate, -16, 2, bufsize)
     except:
-        if renpy.config.debug_sound:
-            raise
+        try:
+            pygame.mixer.pre_init()
+        except:
+            if renpy.config.debug_sound:
+                raise
         
 def play(fn, loops=0):
     """

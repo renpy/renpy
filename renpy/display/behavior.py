@@ -349,7 +349,14 @@ class Button(renpy.display.layout.Window):
         if map_event(ev, "button_select"):
             if inside and self.clicked:
                 renpy.sound.play(self.style.activate_sound)
-                return self.clicked()
+
+                rv = self.clicked()
+
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
 
         return super(Button, self).event(ev, x, y)
 
@@ -475,7 +482,12 @@ class Bar(renpy.display.core.Displayable):
             value = max(value, 0)
 
 
-        return self.clicked(value)
+            rv = self.clicked(value)
+            
+            if rv is not None:
+                return rv
+            else:
+                raise renpy.display.core.IgnoreEvent()
 
     def render(self, width, height, st):
 

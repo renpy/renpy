@@ -20,6 +20,8 @@ class Context(object):
     context.
 
     @ivar rollback: True if this context participates in rollbacks.
+
+    @ivar runtime: The time spent in this context, in milliseconds.
     """
 
     def __init__(self, rollback, context=None):
@@ -27,10 +29,12 @@ class Context(object):
         self.current = None
         self.return_stack = [ ]
         self.rollback = rollback
+        self.runtime = 0
 
         oldsl = None
         if context:
             oldsl = context.scene_lists
+            self.runtime = context.runtime
 
         import renpy.display.core as dcore
         self.scene_lists = dcore.SceneLists(oldsl)
@@ -111,6 +115,7 @@ class Context(object):
         rv.return_stack = self.return_stack[:]
         rv.current = self.current
         rv.scene_lists = self.scene_lists.rollback_copy()
+        rv.runtime = self.runtime
 
         return rv
 

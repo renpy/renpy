@@ -11,6 +11,9 @@ import cStringIO
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
 
+# The number of msec 
+DISPLAYTIME_INTERVAL = 50
+
 class IgnoreEvent(Exception):
     """
     Exception that is raised when we want to ignore an event, but
@@ -355,10 +358,9 @@ class Display(object):
 
     def __init__(self):
 
-        # It shouldn't matter if pygame is already initialized.
-        pygame.init()
         renpy.sound.init()
-
+        pygame.init()
+        
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
@@ -629,7 +631,7 @@ class Interface(object):
         # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
 
         # Set up display time event.
-        pygame.time.set_timer(DISPLAYTIME, 50)
+        pygame.time.set_timer(DISPLAYTIME, DISPLAYTIME_INTERVAL)
 
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, DISPLAYTIME,
@@ -734,8 +736,6 @@ class Interface(object):
                 if show_mouse:
                     self.display.draw_mouse()
 
-                # Update the playing music, if necessary.
-                renpy.music.restore()
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
@@ -753,20 +753,16 @@ class Interface(object):
                     self.profile_time = time.time()
 
                     if ev.type == DISPLAYTIME:
-                        pygame.event.clear([DISPLAYTIME])
+
+                        events = 1 + len(pygame.event.get([DISPLAYTIME]))
+
+                        renpy.game.context().runtime += events * DISPLAYTIME_INTERVAL
+
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
 
-
-#                     if ev.type == KEYREPEATEVENT:
-#                         pygame.time.set_timer(KEYREPEATEVENT, 0)
-
-
-#                         i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
-#                                                               "repeating")
-
-#                         if i:
-#                             ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
+                        # Update the playing music, if necessary.
+                        renpy.music.restore()
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)

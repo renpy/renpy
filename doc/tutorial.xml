@@ -384,6 +384,20 @@ centered "The Ren'Py Demo Game"
   </example>
 
   <p>
+    The way this is done is that the character object is called with
+the string to display. The character object doesn't actually have to
+be a Character object, it can be any python callable. It's responsible
+for displaying the dialogue to the user. In the case of a thought,
+the contents of the narrator variable is used to display the text to
+the user.
+</p>
+
+<var name="narrator" value="...">
+A function that expects a single string as input, that is called to
+display narration to the user.
+</var>
+
+  <p>
     The say statement also takes a with clause that is used to control
     the transition that is used to introduce the dialogue or
     thought. Please see the section on transitions for details on how
@@ -512,6 +526,14 @@ menu what_to_do:
     and will allow the user to chose to go to the beach only if
     the user has chosen to go shopping. 
   </p>
+
+  <var name="menu" value="...">
+     The menu variable contains the function that is called to display
+     the menu to the user. By default, this variable contains a
+     function that passes its only argument to renpy.display_menu. You
+     can read the documentation of that function to find out what menu
+     expects as input.
+  </var>
 
   <h3>Displaying Images</h3>
 
@@ -1726,6 +1748,12 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.windows -->
 
+  <!-- func renpy.clear_game_runtime -->
+
+  <!-- func renpy.get_game_runtime -->
+
+  <!-- func color -->
+
   <p>
     Finally, there exists an object named renpy.random. This object is
     a random number generator that implements the <a
@@ -2236,6 +2264,20 @@ init:
     of empty space that should be to the left of each line of
     text. (To center text, it should be 0.5.)
   </prop>
+   
+  <prop name="first_indent">
+    This is used to give, in pixels, the indentation of the first line
+of text in the text widget. It can be used to indent the first line of
+a paragraph of text. (Not that that's a good idea on a computer
+monitor, better to leave a blank line between paragraphs.)
+  </prop>
+
+  <prop name="rest_indent">
+    This is used to give, in pixels, the indentation of the second
+and later lines of a text widget. It can be used to give a hanging
+indent to quoted dialogue.
+  </prop>
+
 
   <h4>Window Properties</h4>
 
@@ -2803,6 +2845,8 @@ automatically present in the game namespace.
 <!-- func ui.window -->
 
 <!-- func ui.button -->
+
+<!-- func ui.sizer -->
 
 <h4>Multiple-Child Widgets</h4>
 

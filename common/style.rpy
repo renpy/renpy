@@ -28,6 +28,9 @@ init -250:
 
         green = (0, 128, 0, 255)
 
+        # Magic.
+        style.default.enable_hover = True
+
         # Text properties.
         style.default.font = "Vera.ttf"
         style.default.antialias = True
@@ -38,7 +41,8 @@ init -250:
         style.default.minwidth = 0
         style.default.textalign = 0
         style.default.text_y_fudge = 0
-        style.default.enable_hover = True
+        style.default.first_indent = 0
+        style.default.rest_indent = 0
 
         # Change this if you're not using Vera 22.
         if renpy.windows():
