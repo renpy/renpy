@@ -2815,7 +2815,7 @@ keymap = dict(
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mousedown_3' ],
-    hide_windows = [ 'mousedown_2' ],
+    hide_windows = [ 'mouseup_2' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -2925,6 +2925,12 @@ in the same python block. Failure to do this will prevent your game
 from saving, and that's probably a bad thing. ui.returns doesn't
 suffer from this problem, and so should probably be used in preference
 to lambda.
+</p>
+
+<p>
+By default, widgets are added to the 'transient' layer. This can be
+changed by a call to ui.layer(), followed by a matching call to
+ui.close() when done adding widgets to the new layer.
 </p>
 
 <p>

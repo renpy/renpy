@@ -75,7 +75,7 @@ def add(w, make_current=False, once=False):
 
 def layer(name):
     """
-    This causes widgets to be added to the named layer, until the next
+    This causes widgets to be added to the named layer, until a 
     matching call to ui.close().
     """
 

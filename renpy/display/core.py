@@ -228,6 +228,9 @@ class SceneLists(object):
 
         rv = SceneLists(self)
 
+        for i in renpy.config.overlay_layers:
+            rv.layers[i] = [ ]
+
 #         rv.master = self.master[:]
 #         rv.transient = self.transient[:]
 

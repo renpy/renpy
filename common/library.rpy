@@ -298,7 +298,7 @@ init -500:
 
                 if not eval(enabled):
                     disabled = True
-                    clicked = lambda : None
+                    clicked = ui.returns(None)
                              
                 _button_factory(label, "gm_nav", selected=(key==selected),
                                 disabled=disabled, clicked=clicked)
@@ -511,6 +511,10 @@ label _load_menu:
 label _game_menu:
     call _enter_game_menu
     jump _save_screen
+
+label _game_menu_preferences:
+    call _enter_game_menu
+    jump _prefs_screen
 
 label _confirm_quit:
     call _enter_game_menu
