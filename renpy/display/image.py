@@ -16,13 +16,11 @@ def load_image(filename):
         return _image_cache[filename]
 
     im = pygame.image.load(loader.load(filename), filename)
-    hwim = renpy.display.surface.surface(im.get_size(), SRCALPHA, 32)
-    hwim.blit(im, (0, 0))
-    
+    im = im.convert_alpha()
 
-    _image_cache[filename] = hwim
+    _image_cache[filename] = im
 
-    return hwim
+    return im
 
 class Image(renpy.display.core.Displayable):
     """
@@ -80,7 +78,7 @@ class Solid(renpy.display.core.Displayable):
 
     def render(self, width, height, st, tt):
 
-        rv = renpy.display.surface.surface((width, height), SRCALPHA, 32)
+        rv = renpy.display.surface.Surface(width, height)
         rv.fill(self.color)
 
         return rv

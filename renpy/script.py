@@ -105,7 +105,8 @@ class Script(object):
         return label in self.namemap
 
 def load_script(dir):
-    files = os.listdir(dir)        
+    files = os.listdir(dir)
+    files = [ i for i in files if not i.startswith(".") ]    
     files = [ dir + '/' + f for f in files if f.endswith(".rpy") ]
 
     if files:

@@ -161,7 +161,7 @@ class Position(Container):
             elif self.yanchor == 'center':
                 yoff -= ch / 2
 
-        rv = renpy.display.surface.surface((width, height), SRCALPHA, 32)
+        rv = renpy.display.surface.Surface(width, height)
         rv.fill((0,0,0,0))
         rv.blit(surf, (xoff, yoff))
 
@@ -262,7 +262,7 @@ class HBox(Container):
         if not self.full:
             width = xo - self.padding
         
-        rv = renpy.display.surface.surface((width, myheight), SRCALPHA, 32)
+        rv = renpy.display.surface.Surface(width, myheight)
 
         for surf, xo in zip(surfaces, xoffsets):
             sw, sh = surf.get_size()
@@ -333,7 +333,7 @@ class VBox(Container):
             height = yo - self.padding
             
 
-        rv = renpy.display.surface.surface((mywidth, height), SRCALPHA, 32)
+        rv = renpy.display.surface.Surface(mywidth, height)
 
         for surf, yo in zip(surfaces, yoffsets):
 
@@ -406,7 +406,7 @@ class Window(Container):
         if not self.yfill:
             height = max(2 * self.ymargin + 2 * self.ypadding + sh, self.yminimum)
 
-        rv = renpy.display.surface.surface((width, height), SRCALPHA, 32)
+        rv = renpy.display.surface.Surface(width, height)
 
         if self.background:
             bw = width  - 2 * self.ymargin

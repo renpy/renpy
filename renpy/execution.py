@@ -56,6 +56,8 @@ class Context(object):
         while node:
             self.current = node.name
 
+            renpy.game.exception_info = 'The last script statement executed was on line %d of %s.' % (node.linenumber, node.filename)
+
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 

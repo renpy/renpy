@@ -39,6 +39,10 @@ init_phase = True
 # and to the store.
 log = None
 
+# Some useful additional information about program execution that
+# can be added to the exception.
+exception_info = ''
+
 def context(index=-1):
     """
     Return the current execution context, or the context at the

@@ -2,12 +2,15 @@
 import pygame
 from pygame.constants import *
 
-def surface(size, flags, depth):
+def Surface(width, height):
     """
     Allocate a surface. Flags and depth are ignored, for compatibility
     with pygame.Surface.
     """
 
-    return pygame.Surface(size, flags, 32)
+    import renpy.game as game
+
+    return pygame.Surface((width, height), 0,
+                          game.interface.display.sample_surface)
 
 # surface = pygame.Surface

@@ -788,6 +788,54 @@ def parse_statement(l):
     # Store the current location.
     loc = l.get_location()
 
+    ### If statement
+    if l.keyword('if'):
+        entries = [ ]
+
+        condition = l.require(l.python_expression)
+        l.require(':')
+        l.expect_eol()
+        l.expect_block('if statement')
+
+        block = parse_block(l.subblock_lexer())
+
+        entries.append((condition, block))
+
+        l.advance()
+
+        while l.keyword('elif'):
+
+            condition = l.require(l.python_expression)
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('elif clause')
+            
+            block = parse_block(l.subblock_lexer())
+            
+            entries.append((condition, block))
+            
+            l.advance()
+
+        if l.keyword('else'):
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('else clause')
+            
+            block = parse_block(l.subblock_lexer())
+            
+            entries.append(('True', block))
+            
+            l.advance()
+
+        return ast.If(loc, entries)
+
+    if l.keyword('elif'):
+        l.error('elif clause must be associated with an if statement.')
+
+    if l.keyword('else'):
+        l.error('else clause must be associated with an if statement.')
+        
+
     ### While statement
     if l.keyword('while'):
         condition = l.require(l.python_expression)

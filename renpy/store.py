@@ -26,7 +26,7 @@ Solid = renpy.display.image.Solid
 Position = curry(renpy.display.layout.Position)
 Resize = curry(renpy.display.layout.Resize)
 
-# TODO: Change the base class when we start implementing rollback.
+# Note that this is really a RevertableObject.
 class Character(object):
     import renpy.config as config
 

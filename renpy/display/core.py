@@ -202,6 +202,9 @@ class Display(object):
 
     @ivar window: The window that is being presented to the user.
 
+    @ivar sample_surface: A sample surface that is optimized for
+    fast blitting to thew window. Used to create other surfaces from.
+
     @ivar fullscreen: Is the window in fullscreen mode?
     """
 
@@ -221,6 +224,8 @@ class Display(object):
         self.window = pygame.display.set_mode((config.screen_width,
                                                config.screen_height),
                                               fsflag | DOUBLEBUF)
+
+        self.sample_surface = self.window.convert_alpha()
                 
     def show(self, transient, start_time):
         """

@@ -111,7 +111,7 @@ class Text(core.Displayable):
         if not hasattr(self, "laidout"):
             self.layout(width - dsxo)
 
-        surf = renpy.display.surface.surface((self.width + dsxo, self.height + dsyo), SRCALPHA, 32)
+        surf = renpy.display.surface.Surface(self.width + dsxo, self.height + dsyo)
         font = get_font(self.font, self.size)
 
         lines = self.laidout.split('\n')

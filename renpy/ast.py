@@ -423,5 +423,33 @@ class While(Node):
         else:
             return self.next
 
+class If(Node):
+
+    def __init__(self, loc, entries):
+        """
+        @param entries: A list of (condition, block) tuples.
+        """
+
+
+        super(If, self).__init__(loc)
+
+        self.entries = entries
+
+    def chain(self, next):
+        self.next = next
+
+        for condition, block in self.entries:
+            chain_block(block, next)
+
+
+    def execute(self):
+
+        for condition, block in self.entries:
+            if python.py_eval(condition):
+                return block[0]
+
+        return self.next
+        
+
         
         
