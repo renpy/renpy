@@ -372,8 +372,12 @@ class Display(object):
 
         pygame.event.set_grab(False)
 
-        # Window title.
+        # Window title and icon.
         pygame.display.set_caption(renpy.config.window_title)
+
+        if renpy.config.window_icon:
+            pygame.display.set_icon(renpy.display.image.cache.load_image(renpy.config.window_icon))
+            
 
         # Load the mouse image, if any.
         if renpy.config.mouse:
@@ -752,6 +756,7 @@ class Interface(object):
 
                     if len(evs):
                         ev = evs[-1]
+
 
                 # x, y = getattr(ev, 'pos', (0, 0))
 

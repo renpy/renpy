@@ -2331,6 +2331,12 @@ init:
     style.button.idle_background = Solid((0, 0, 0, 255))
   </example>
 
+  <prop name="enable_hover">
+    This property must be set to True (the default) on the style of a
+    hoverable widget (like a button) for hovering to be
+    enabled. Setting it to False speeds up Ren'Py, at the cost of
+    making the widget not respond to hovering.
+  </prop>
   
   <h4>Using Properties and Styles</h4>
   

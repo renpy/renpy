@@ -12,6 +12,13 @@ import encodings.zlib_codec
 # Load up all of Ren'Py, in the right order.
 import renpy
 
+# Go psyco! (Compile where we can.)
+try:
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 
 # The version of Ren'Py in use.
 version = 'Renpy 4.3 "Birthday Present"'

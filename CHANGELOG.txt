@@ -1,3 +1,26 @@
+New in 4.3.1
+------------
+
+There is now a new style property, enable_hover. This must be set to
+True for a widget to respond to hovering by changing its
+style. However, if it's set to False, no style change/redraw occurs,
+making Ren'Py snappier. It defaults to True.
+
+Ren'Py is now built with psyco, the python specializing compiler. This
+makes program startup a bit slower, but in return the running time
+once it's loaded should be faster.
+
+A new config variable, config.window_icon, allows the user to specify
+an image file to use for the window icon. Counterintuitively, this
+should probably be a PNG, as the ICO format is not supported by the
+SDL_image library.
+
+Game menu navigations and preference buttons now have their own
+styles, allowing their look to be customized.
+
+A bug that prevented the reloading of persistent data on windows has
+been fixed.
+
 New in 4.3
 ----------
 

@@ -295,7 +295,7 @@ class Button(renpy.display.layout.Window):
         if x >= 0 and x < width and y >= 0 and y < height:
             inside = True
 
-        if ev.type == MOUSEMOTION:
+        if self.style.enable_hover and ev.type == MOUSEMOTION:
 
             if self.old_hover != inside:
                 self.old_hover = inside

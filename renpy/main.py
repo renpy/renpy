@@ -40,7 +40,7 @@ def run(restart=False):
 
     # Unserialize the persistent data.
     try:
-        f = file(renpy.config.savedir + "/persistent", "r")
+        f = file(renpy.config.savedir + "/persistent", "rb")
         s = f.read().decode("zlib")
         f.close()
         game.persistent = loads(s)
