@@ -518,6 +518,7 @@ label _enter_game_menu:
 
 # Entry points from the game into menu-space.
 label _game_menu:
+label _game_menu_save:
     call _enter_game_menu
     jump _save_screen
 

@@ -2145,6 +2145,10 @@ cleared before the overlay functions are called. "overlay" should
 always be in this list.
 </var>
 
+<var name="config.overlay_during_wait" value="True" >
+True if we want overlays to be shown during wait statements, or False 
+if we'd prefer that they be hidden during the wait statements.
+</var>
 
     <var name="library.file_page_length" value="10">
       This is the number of save slots that are shown in the picker

@@ -109,6 +109,10 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
+# True if we want to show overlays during wait statements, or
+# false otherwise.
+overlay_during_wait = True
+
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     

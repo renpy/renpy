@@ -28,13 +28,17 @@ Character objects now support an interact argument when called
 directly. If it's False, then no interaction occurs. This lets a
 character window become part of a larger screen.
 
-A new extra had been added:
+Two new extras have been added:
 
 [list]
 [*] button_menu.rpy changes the way menus are displayed. Each menu
 choice is displayed in its own button, roughly centered on the
 screen. A single menu caption is displayed as narration, if such 
 a caption exists.
+
+[*] overlay_menu.rpy changes the behavior of right click from 
+showing the game menu to showing a bank of buttons that, when 
+clicked, bring the user to the game menu.
 [/list]
 
 The overlay code was overhauled. It's now not possible for an overlay
@@ -43,6 +47,9 @@ are expected to add widgets to the screen using the ui
 functions. Calling the new function renpy.restart_interaction will,
 among other things, cause the overlay functions to be called again, if
 one wants to replace the overlay on the screen.
+
+A new variable, config.overlay_during_wait, controls if overlays are
+shown during the execution of wait statements.
 
 Init blocks of the same priority are now assured to run in the order
 that they appear in a script file.

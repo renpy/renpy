@@ -373,7 +373,8 @@ def with(trans):
         if renpy.game.preferences.transitions:
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
-                                                 trans_pause=True)
+                                                 trans_pause=True,
+                                                 suppress_overlay=not renpy.config.overlay_during_wait)
         else:
             return False
 

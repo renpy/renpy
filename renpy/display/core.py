@@ -559,8 +559,11 @@ class Interface(object):
         
         scene_lists = renpy.game.context().scene_lists
 
-        for i in renpy.config.overlay_layers:
-            scene_lists.clear(i)
+        # We don't want the overlay to be clear here.
+
+        if not renpy.config.overlay_during_wait:
+            for i in renpy.config.overlay_layers:
+                scene_lists.clear(i)
 
         self.old_scene = self.compute_scene(scene_lists)
 
@@ -651,9 +654,9 @@ class Interface(object):
         ## Safety condition, prevents deadlocks.
         if trans_pause:
             if not self.transition:
-                return None
+                return False, None
             if self.suppress_transition:
-                return None
+                return False, None
 
         # We just restarted.
         self.restart_interaction = False
