@@ -84,6 +84,12 @@ def function(m):
     renpy.store.renpy = renpy.exports
 
     func = eval(name, store)
+
+    if isinstance(func, renpy.curry.Curry):
+        if func.callable == renpy.curry.Curry:
+            func = func.args[0]
+        else:
+            func = func.callable
     
     doc = func.__doc__
 

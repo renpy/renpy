@@ -72,6 +72,16 @@ if __name__ == "__main__":
 
         type, value, tb = sys.exc_info()
 
+
+        print >>f, type.__name__ + ":", 
+        print >>f, unicode(e).encode('utf-8')
+        print >>f
+        print >>f, renpy.game.exception_info
+
+        print >>f
+        print >>f, "-- Full Traceback ------------------------------------------------------------"
+        print >>f  
+
         traceback.print_tb(tb, None, sys.stdout)
         traceback.print_tb(tb, None, f)
 

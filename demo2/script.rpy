@@ -40,6 +40,29 @@ init:
     # clauses and statements.
     $ fade = Fade(.5, 0, .5) # Fade to black and back.
     $ dissolve = Dissolve(0.5)
+    
+    $ wiperight = CropMove(1.0, "wiperight")
+    $ wipeleft = CropMove(1.0, "wipeleft")
+    $ wipeup = CropMove(1.0, "wipeup")
+    $ wipedown = CropMove(1.0, "wipedown")
+
+    $ slideright = CropMove(1.0, "slideright")
+    $ slideleft = CropMove(1.0, "slideleft")
+    $ slideup = CropMove(1.0, "slideup")
+    $ slidedown = CropMove(1.0, "slidedown")
+
+    $ slideawayright = CropMove(1.0, "slideawayright")
+    $ slideawayleft = CropMove(1.0, "slideawayleft")
+    $ slideawayup = CropMove(1.0, "slideawayup")
+    $ slideawaydown = CropMove(1.0, "slideawaydown")
+
+    $ irisout = CropMove(1.0, "irisout")
+    $ irisin = CropMove(1.0, "irisin")
+
+    # Select the transitions that are used when entering and exiting
+    # the game menu.
+    $ library.enter_transition = dissolve
+    $ library.exit_transition = dissolve
 
     # Now, we declare the images that are used in the program.
 
@@ -160,6 +183,10 @@ label choices:
         # Another choice. 
         "How do I write my own games with it?":
             call writing from _call_writing_1
+            jump choices
+
+        "What's new with Ren'Py?":
+            call whatsnew from _call_whatsnew_1
             jump choices
 
         # This choice has a condition associated with it. It is only
@@ -448,7 +475,7 @@ label find_out_more:
     e "If you have questions, the best place to ask them is the Ren'Py
        forum of the Lemmasoft forums."
 
-    e "Just go to http://www.lemmasoft.net/forums/, and click on
+    e "Just go to http://lemmasoft.renai.us/forums/, and click on
        Ren'Py."
 
     e "We thank Blue Lemma for hosting our forum."
@@ -736,10 +763,173 @@ init:
                     plan[editing] = value
                     editing = None
 
-
-
             return plan
-            
-            
-                   
-                        
+
+init:
+    image movie = Movie()
+
+    python:
+        style.create('odd_window', 'say_window')
+        style.odd_window.left_margin = 50
+        style.odd_window.right_margin = 150
+        style.odd_window.bottom_margin = 25
+
+        eodd = Character('Eileen', color=(200, 255, 200, 255), window_style='odd_window')
+    
+
+label whatsnew:
+
+    show washington
+    show eileen happy
+
+    e "I can give you a demonstration of some of the new features in
+       Ren'Py, but you'll have to tell me what version you want to
+       start with."
+
+    menu:
+        "I'd like to start with 4.5.":
+            jump whatsnew45
+
+        "I'd like to start with 4.6.":
+            jump whatsnew46
+
+label whatsnew45:
+
+    show washington
+    show eileen happy
+
+    e "While most of the improvements in Ren'Py 4.5 were behind the scenes,
+       we can give you a demonstration of one of the new features."
+
+    e "There is now a new transition, CropMove, that can be used to
+       provide a whole range of transition effects."
+
+    hide eileen with dissolve
+
+    e "I'll stand offscreen, so you can see some of its modes. I'll read
+       out the mode name after each transiton."
+
+    scene whitehouse with wiperight
+
+    e "We first have wiperight..."
+
+    scene washington with wipeleft
+
+    e "...followed by wipeleft... "    
+
+    scene whitehouse with wipeup
+
+    e "...wipeup..."
+
+    scene washington with wipedown
+
+    e "...and wipedown."
+
+    e "Next, the slides."
+
+    scene whitehouse with slideright
+
+    e "Slideright..."
+
+    scene washington with slideleft
+
+    e "...slideleft..."
+
+    scene whitehouse with slideup
+
+    e "...slideup..."
+
+    scene washington with slidedown
+
+    e "and slidedown."
+
+    e "We also have a couple of transitions that use a rectangular iris."
+
+    scene whitehouse with irisout
+
+    e "There's irisout..."
+
+    with None
+    scene washington
+    show eileen happy
+    with irisin
+
+    e "... and irisin."
+
+    e "There are other transitions, such as various forms of
+       slideaway. And if you can't find the transition for you, you
+       can write a custom one."
+    
+    e "It's enough to make you feel a bit dizzy."
+
+    e "Ren'Py 4.5 also includes the ability to show MPEG-1 movies as
+       cutscenes or even backgrounds."
+
+label ike:
+
+    if renpy.exists('Eisenhow1952.mpg'):
+
+        e "Since you downloaded the Eisenhower commercial, I can show
+           it to you as a cutscene."
+
+        e "You can click to continue if it gets on your nerves too
+           much."
+
+        $ renpy.movie_cutscene('Eisenhow1952.mpg', 63.0)
+        
+        hide eileen
+        show movie at Position(xpos=420, ypos=25, xanchor='left', yanchor='top')
+        show eileen happy
+
+        $ renpy.movie_start_displayable('Eisenhow1952.mpg', (352, 240))
+
+        e "Ren'Py can even overlay rendered images on top of a movie,
+           although that's more taxing for your CPU."
+
+        e "It's like I'm some sort of newscaster or something."
+           
+        $ renpy.movie_stop()
+        hide movie
+
+    else:
+
+        e "You haven't downloaded the Eisenhower commercial, so we
+           can't demonstrate it."
+
+label whatsnew46:
+
+    eodd "As of 4.6, we now support separate padding and margin for the
+          left, right, top, and bottom sides of a window."
+
+    eodd "This means that a game can have oddly shaped windows without
+          having to go beyond the style system."
+
+    e "We also introduced a new layer system, and the ability to have
+       transitions affect only one layer."
+
+    e "Because of this we can do things like slide away a window..."
+
+    $ renpy.transition(slideawayup, 'transient')
+    $ renpy.pause(1.5)
+    $ renpy.transition(slidedown, 'transient')
+    
+    e "... and slide it back in again."
+
+    e "Also new in this release is the ability to specify transitions
+       that occur when you enter and exit the game menu."
+
+    e "Right click to see them, if you want."
+
+    e "A few more obscure features involving things like overlays and
+       activated widgets round out the 4.6 release."
+
+label whatsnewend:
+
+    e "Anyway, now that you've heard about some of the new features, is there anything
+       else I can help you with?"
+
+    return
+
+    
+
+    

@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 4.4.2"
+version = "Ren'Py 4.6"
 script_version = 5
-savegame_suffix = "-3.save"
+savegame_suffix = "-6.save"
 
 
 # Can be first, because has no dependencies, and may be imported
@@ -19,21 +19,21 @@ import renpy.curry
 import renpy.execution
 import renpy.loader
 import renpy.loadsave
-import renpy.music
 import renpy.parser
 import renpy.python # object
 import renpy.script
 import renpy.style
-import renpy.sound
 
-import renpy.display 
+import renpy.display
+import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object
-import renpy.display.surface
+import renpy.display.audio
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
 import renpy.display.transition # core
 import renpy.display.image # core, behavior
+import renpy.display.video
 
 import renpy.ui
 

@@ -12,8 +12,9 @@ from renpy.display.behavior import *
 from renpy.display.image import *
 
 from renpy.curry import curry
-from renpy.music import music_start, music_stop
-from renpy.sound import play
+from renpy.display.audio import music_start, music_stop
+from renpy.display.audio import play
+from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import *
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
@@ -32,8 +33,8 @@ def checkpoint():
 
     renpy.game.log.checkpoint()
 
-def interact(*widgets, **kwargs):
-    return renpy.game.interface.interact(transient=widgets, **kwargs)
+# def interact(**kwargs):
+#    return renpy.game.interface.interact(**kwargs)
 
 def scene_lists(index=-1):
     """
@@ -124,13 +125,15 @@ def input(prompt, default='', length=None):
     function will return.
     """
 
-    vbox = renpy.display.layout.VBox()
-    win = renpy.display.layout.Window(vbox, style='input_window')
+    renpy.ui.window(style='input_window')
+    renpy.ui.vbox()
 
-    vbox.add(renpy.display.text.Text(prompt, style='input_prompt'))
-    vbox.add(renpy.display.behavior.Input(default, length=length, style='input_text'))
+    renpy.ui.text(prompt, style='input_prompt')
+    renpy.ui.input(default, length=length, style='input_text')
 
-    return interact(win)
+    renpy.ui.close()
+
+    return renpy.ui.interact()
 
 def menu(items, set_expr):
     """
@@ -186,7 +189,7 @@ def display_menu(items, window_style='menu_window'):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
-    rv = interact()
+    rv = renpy.ui.interact()
     checkpoint()
 
     return rv
@@ -231,7 +234,7 @@ def display_say(who, what, who_style='say_label',
     """
 
     # If we're going to do an interaction, then saybehavior needs
-    # to be here, right before ui.text.
+    # to be here.
     if interact:
         renpy.ui.saybehavior()
     
@@ -290,7 +293,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
     renpy.ui.keymousebehavior()
 
-    rv = interact(suppress_overlay=(not overlays))
+    rv = renpy.ui.interact(suppress_overlay=(not overlays))
     checkpoint()
     return rv
     
@@ -298,7 +301,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None):
     """
     When called, this pauses and waits for the user to click before
-    advancing the script.
+    advancing the script. If given a delay parameter, the Ren'Py will
+    wait for that amount of time before continuing, unless a user clicks to
+    interrupt the delay.
 
     @param delay: The number of seconds to delay.
 
@@ -313,15 +318,45 @@ def pause(delay=None, music=None):
     """
 
     if music is not None:
-        newdelay = renpy.music.music_delay(music)
+        newdelay = renpy.display.audio.music_delay(music)
 
         if newdelay is not None:
             delay = newdelay
 
-    sayb = renpy.display.behavior.SayBehavior(delay=delay)
-    scene_list_add('transient', sayb)
-    
-    return interact()
+    renpy.ui.saybehavior()
+
+    if delay:
+        renpy.ui.pausebehavior(delay, False)
+
+    return renpy.ui.interact()
+
+def movie_cutscene(filename, delay, loops=0):
+    """
+    This displays an MPEG-1 cutscene for the specified number of
+    seconds. The user can click to interrupt the cutscene.
+    Overlays and Underlays are disabled for the duration of the cutscene.
+
+    @param filename: The name of a file containing an MPEG-1 movie.
+
+    @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds.
+
+    @param loops: The number of extra loops to show, -1 to loop forever.
+
+    Returns True if the movie was terminated by the user, or False if the
+    given delay elapsed uninterrupted.
+    """
+
+    movie_start_fullscreen(filename, loops=loops)
+
+    renpy.ui.saybehavior()
+    renpy.ui.pausebehavior(delay, False)
+
+    rv = renpy.ui.interact(suppress_overlay=True, suppress_underlay=True, show_mouse=False)
+
+    movie_stop()
+
+    return rv
+        
 
 def with(trans):
     """
@@ -339,7 +374,7 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=True)
+                                                 suppress_overlay=not renpy.config.overlay_during_wait)
         else:
             return False
 
@@ -423,17 +458,21 @@ def windows():
     import sys
     return hasattr(sys, 'winver')
 
-def transition(trans):
+def transition(trans, layer=None):
     """
     Sets the transition that will be used for the next
     interaction. This is useful when the next interaction doesn't take
     a with clause, as is the case with pause, input, and imagemap.
+
+    @param layer: If the layer setting is not None, then the transition
+    will be applied only to the layer named. Please note that only some
+    transitions can be applied to specific layers.
     """
 
     if trans is None:
         renpy.game.interface.with_none()
     else:
-        renpy.game.interface.set_transition(trans)
+        renpy.game.interface.set_transition(trans, layer)
 
 def clear_game_runtime():
     """
@@ -457,6 +496,32 @@ def get_game_runtime():
     """
 
     return renpy.game.context().runtime / 1000.0
+
+def exists(filename):
+    """
+    Returns true if the given filename can be found in the
+    searchpath. This only works if a physical file exists on disk. It
+    won't find the file if it's inside of an archive.
+    """
+
+    try:
+        renpy.loader.transfn(filename)
+        return True
+    except:
+        return False
+
+def restart_interaction():
+    """
+    Calling this restarts the current interaction. This will immediately end
+    any ongoing transition, and will call all of the overlay functions again.
+
+    This should be called whenever widgets are added or removed over the course
+    of an interaction, or when the information used to construct the overlay
+    changes.
+    """
+
+    renpy.game.interface.restart_interaction = True
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

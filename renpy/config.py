@@ -98,21 +98,36 @@ fade_music = 0.0
 # Should the at list be sticky?
 sticky_positions = False
 
+# A list of all of the layers that we know about.
+layers = [ 'master', 'transient', 'overlay' ]
+
+# A list of layers that should be cleared when we replace
+# transients.
+transient_layers = [ 'transient' ]
+
+# A list of layers that should be cleared when we recompute
+# overlays.
+overlay_layers = [ 'overlay' ]
+
+# True if we want to show overlays during wait statements, or
+# false otherwise.
+overlay_during_wait = True
+
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     
     # Bindings present almost everywhere, unless explicitly
     # disabled.
-    rollback = [ 'K_PAGEUP', 'mouse_4' ],
+    rollback = [ 'K_PAGEUP', 'mousedown_4' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouse_3' ],
-    hide_windows = [ 'mouse_2' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
+    hide_windows = [ 'mouseup_2' ],
 
     # Say.
-    rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
     # Keymouse.
     keymouse_left = [ 'K_LEFT' ],
@@ -121,23 +136,23 @@ keymap = dict(
     keymouse_down = [ 'K_DOWN' ],
     
     # Menu.
-    menu_mouseselect = [ 'mouse_1' ],
+    menu_mouseselect = [ 'mouseup_1' ],
     menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
     menu_keyup = [ 'K_UP' ],
     menu_keydown = [ 'K_DOWN' ],
     
     # Button.
-    button_select = [ 'mouse_1', 'K_RETURN', 'K_KP_ENTER' ],
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
     # Imagemap.
-    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
+    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
 
     # Bar.
-    bar_click = [ 'mouse_1' ],
+    bar_click = [ 'mouseup_1' ],
 
 
     # These keys control skipping.
