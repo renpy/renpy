@@ -20,6 +20,8 @@ def run(restart=False):
     will cause this to change.
     """
 
+    renpy.game.exception_info = 'While beginning to run the game.'
+
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
@@ -83,6 +85,8 @@ def run(restart=False):
 
     game.init_phase = False
 
+    renpy.game.exception_info = 'After initialization, but before game start.'
+
     # Rebuild the various style caches.
     game.style._build_style_caches()
 
@@ -133,6 +137,8 @@ def run(restart=False):
     # And, we're done.
     
 def main(basepath):
+
+    renpy.game.exception_info = 'While loading the script.'
 
     game.basepath = basepath
     renpy.config.searchpath = [ "common", basepath ]

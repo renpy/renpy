@@ -10,7 +10,7 @@ import renpy.ast as ast
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None):
-        message = "On line %d of %s: %s" % (number, filename, msg)
+        message = u"On line %d of %s: %s" % (number, filename, msg)
 
         if line is not None:
             message += "\n\n" + line
@@ -18,7 +18,12 @@ class ParseError(Exception):
         if pos is not None:
             message += "\n" + " " * pos + "^"
 
-        Exception.__init__(self, message)
+        self.message = message
+
+        Exception.__init__(self, message.encode('unicode_escape'))
+
+    def __unicode__(self):
+        return u'ParseError: ' + self.message
 
 
 def list_logical_lines(filename):
@@ -40,6 +45,10 @@ def list_logical_lines(filename):
 
     # The current position we're looking at in the buffer.
     pos = 0
+
+    # Skip the BOM, if any.
+    if len(data) and data[0] == u'\ufeff':
+        pos += 1
 
     # Looping over the lines in the file.
     while pos < len(data):
@@ -294,7 +303,9 @@ class Lexer(object):
         Advances the current position beyond any contiguous whitespace.
         """
 
-        self.match_regexp(r"\s+")
+        # print self.text[self.pos].encode('unicode_escape')
+
+        self.match_regexp(ur"\s+")
 
     def match(self, regexp):
         """
@@ -322,7 +333,7 @@ class Lexer(object):
         Convenience function for reporting a parse error at the current
         location.
         """
-
+        
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
     def eol(self):

@@ -12,6 +12,11 @@ searched for image files and other media (but not scripts, since all
 scripts are loaded before the variable can be set). This allows
 multiple game directories to share images, music, and other data files.
 
+Once again, I redid the file chooser and default styles. The new file 
+chooser displays 10 entries in two columns, with each entry being
+shown with an image. There were also some changes to the
+non-user-visible parts of loading and saving.
+
 Speed Enhancements:
 
 We now precompile python blocks in Ren'Py scripts, and store the

@@ -7,6 +7,7 @@ try:
 except ImportError:
     pass
 
+import codecs
 import optparse
 import traceback
 import os
@@ -23,8 +24,12 @@ import renpy
 
 if __name__ == "__main__":
 
-    name = os.path.basename(sys.argv[0])
 
+    # Stdout should be a utf-8 stream, so print works nicely.
+    # utf8writer = codecs.getwriter("utf-8")
+    # sys.stdout = utf8writer(sys.stdout)
+
+    name = os.path.basename(sys.argv[0])
 
     if name.find(".") != -1:
         name = name[:name.find(".")]
@@ -57,12 +62,19 @@ if __name__ == "__main__":
 
         f = file("traceback.txt", "wU")
 
+        f.write(codecs.BOM_UTF8)
+
         print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
         print >>f, "script."
         print >>f
 
-        traceback.print_exc(None, sys.stdout)
-        traceback.print_exc(None, f)
+        type, value, tb = sys.exc_info()
+
+        traceback.print_tb(tb, None, sys.stdout)
+        traceback.print_tb(tb, None, f)
+
+        print >>f, unicode(e).encode('utf-8')
+        print unicode(e).encode('utf-8')
 
         print
         print >>f
