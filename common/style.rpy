@@ -77,7 +77,7 @@ init -250:
 
         # This style controls the default placement of images on the screen.
 
-        style.create('image_placement', None,
+        style.create('image_placement', 'default',
                      'This style is used to control the default placement of images on the screen.')
 
         style.image_placement.xpos = 0.5
