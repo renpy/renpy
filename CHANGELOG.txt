@@ -1,14 +1,31 @@
-Added a new markup language to Text. [ Not done. ]
+New in 4.7
+----------
 
-- Quoting of subsitutions.
-- Set of allowed and disallowed characters for ui.input.
+The big new feature in this release is text tags. Text tags is a
+markup language that allows text properties to be changed inside a
+single unit of text. It lets you emphasise individual words by making
+them bold, bigger, or a different color. Rather than explaining it
+fully here, let me point you to the new "Text Tags" section of the
+documentation. 
 
-Even more defensive programming involving sound. [ Not done. ]
+There were two changes that were made to Ren'Py to support text
+tags. The first was that interpolation now quotes the interpolated
+text, making it impossible to introduce a text tag via interpolation. 
 
-Add searchpath to sys.path. [ Not done ]
+The second change is that renpy.input() and friends now take as
+arguments strings giving allowed and excluded characters. The default
+is to exclude the '{' and '}' characters, meaning that it's impossible
+for a user to input a text tag. 
+
+Finally, this release features even more defensive programming
+involving sound. Now, if the mixer does not initialize, no further
+sound operations will be performed.
 
 New in 4.6.2
 ------------
+
+4.6.2 was never officially released, as it didn't cure all of the
+sound woes, and didn't have much else in the way of new features.
 
 Added a speed test, which tests the speed of the dissolve transition
 on a user's system. This test can be accessed by typing 'S' during the
