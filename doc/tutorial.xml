@@ -359,7 +359,8 @@ e "Starting today, I'll be living here."
   <p>
     Finally, the string in a dialogue is subject to interpolation of
     variables. A string variable can be interpolated with %(name)s,
-    while a number requires %(name)d. For example:
+    while a number requires %(name)d. The interpolated value is quoted
+    so that a text tag cannot be interpolated in by mistake. For example:
   </p>
   
   <example>
@@ -2302,12 +2303,25 @@ init:
 
   <prop name="color">
     The color in which the text will be displayed on the screen, as an
-    RGBA tuple. Example: (255, 255, 255, 255)
+    RGBA tuple. Due to a limitation of pygame, currently the alpha is
+    ignored. Example: (255, 255, 255, 255)
   </prop>
+
+<prop name="bold">
+If True, then this text will be rendered in bold.
+</prop>
+
+<prop name="italic">
+If True, then this text will be rendered in italics.
+</prop>
+
+<prop name="underline">
+If true, then this text will be rendered with an underline.
+</prop>
 
   <prop name="antialias">
     If True, the text will be antialiased. Otherwise, it will be left
-    jagged. Example: True
+    jagged.
   </prop>
 
   <prop name="drop_shadow">
@@ -2701,6 +2715,95 @@ init:
     <!-- include styles.xml -->
 
   </dl>
+
+<h3>Text Tags</h3>
+
+<p>
+Styles are useful if you want to change the look of entire blocks
+of text in the game. But what if you only want to change the look of a
+small amount of text, or if you want to only change the look of entire
+blocks of text. Text tags let you change the look of text within a
+single text widget.
+</p>
+
+<p>
+Text tags work wherever text can be placed. This means that they can
+be used inside text widgets, text buttons, and menu and say
+statements. But please note that say statement protect from
+subsituting in a text tag, as that would most likely be an
+error. Generally, though, if Ren'Py shows text to the user, that text
+can be formatted through the use of text tags.
+</p>
+
+<p>
+As an aside, let me point out that if you're using a text tag on every
+line of a script, or even many lines, you're probably doing something
+wrong. That's what styles are for.
+</p>
+
+<p>
+Text tags start with a left brace, and continue to the matching right
+brace. We chose to use braces because they do not require quoting in
+HTML or BBCode. An open text tag may take a parameter, and then continues until
+a closing tag, which is a tag that has a slash immediately after the
+opening brace. Please note that text tags are sensitive to both case
+and whitespace.
+</p>
+
+<p>
+Some example tags are {b}, {i}, {color=#f88}, {size=+16}. The matching
+closing tags are {/b}, {i}, {/color}, and {/size}. Tags must be
+properly nested: "{b}{i}bold + italic{/i}{/b}" is okay,
+but "{b}{i}this is wrong{/b}{/i}". Right now, improper nesting won't
+cause an error but it probably won't do what you want. All open tags
+must be closed by the end of the string.
+</p>
+
+<p>
+If you, for some reason, want to include a left brace, just write two
+left braces ({{) instead.
+</p>
+
+<h4>Supported Text Tags</h4>
+
+<p>The following are supported text tags:</p>
+
+<ul>
+
+<li>{b}text{/b} makes the enclosed text bold.</li>
+
+<li>{i}text{/i} makes the enclosed text italic.</li>
+
+<li>{u}text{/u} makes the enclosed text underlined.</li>
+
+<li>{plain}text{/plain} makes the enclosed text plain, which means that
+it is not bold, italic, or underlined.</li>
+
+<li>{size=<i>spec</i>}text{/size} changes the size of the text. The
+supplied spec may be a number, in which case it is the number of
+pixels high that the text will be. If it is a number preceded by a
+plus (like "+10"), it means to increase the size by that number of
+pixels, while if it is preceded by a minus it means to decrease.
+</li>
+
+<li>{color=<i>spec</i>}text{/color} changes the color of the text. The
+color may be a hex triple or a hex sextuple, optionally preceded by a
+hash mark. (This is the same format that color() accepts.)</li>
+
+</ul>
+
+<p>
+Here's an example of a say statement that uses many of the text
+tags. If you actually use this many text tags in a real game, you'll
+probably drive your users mad.
+</p>
+
+<example>
+"Using text tags, we can make text {size=+12}bigger{/size} or
+ {size=-8}smaller{/size}. We can make it {b}bold{/b}, {i}italic{/i},
+ or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
+</example>
+
 
   <h3>Obfuscating your Game</h3>
 

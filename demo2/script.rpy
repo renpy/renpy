@@ -124,9 +124,14 @@ label start:
     scene washington with fade
     show eileen vhappy with dissolve
 
+    # Store the current version of Ren'Py into a variable, so we can
+    # interpolate it into the next line.
+    $ version = renpy.version()
+
     # Display a line of dialogue. In this case, we manually specify
-    # who's saying the line of dialoge.    
-    "Girl" "Hi, and welcome to the Ren'Py 4 demo program."
+    # who's saying the line of dialogue. We also interpolate in the
+    # version of Ren'Py we're using.
+    "Girl" "Hi, and welcome to the %(version)s demo program."
 
     # This instantly replaces the very happy picture of Eileen with
     # one showing her merely happy. It demonstrates how the show
@@ -834,6 +839,9 @@ label whatsnew:
         "I'd like to start with 4.6.":
             jump whatsnew46
 
+        "I'd like to start with 4.7.":
+            jump whatsnew47
+
 label whatsnew45:
 
     show washington
@@ -964,6 +972,38 @@ label whatsnew46:
     e "A few more obscure features involving things like overlays and
        activated widgets round out the 4.6 release."
 
+label whatsnew47:
+
+    e "Ren'Py 4.7 brought with it a total rewrite of the way text is
+       rendered to the screen."
+
+    e "It introduced text tags, which let a script writer control how
+       text is shown on the screen."
+
+    e "Text tags can make text {b}bold{/b}, {i}italic{/i}, or even
+       {u}underlined{/u}."
+
+    e "They can make the font size {size=+12}bigger{/size} or
+       {size=-8}smaller{/size}."
+
+    e "They can even change
+       {color=#f00}color{/color}
+       {color=#ff0}of{/color}
+       {color=#0f0}the{/color}
+       {color=#0ff}text{/color}."
+
+    e "We also added bold, italic, and underline style properties, which can
+       be styled onto any text."
+
+    e "Used with care, text tags can enhance {b}your{/b} game."
+
+    e "{u}Used{/u} with {i}abandon,{/i} they {b}can{/b} make {b}your{/b}
+       game {color=#333}hard{/color} {color=#888}to{/color} {color=#ccc}read{/color}."
+
+    e "With great power comes great responsibility, after all."
+
+    e "And we want to give you all the power you need."
+
 label whatsnewend:
 
     e "Anyway, now that you've heard about some of the new features, is there anything
@@ -972,31 +1012,3 @@ label whatsnewend:
     return
 
 
-init:
-    $ config.annoying_text_cps = 20
-
-
-label splashscreen:
-
-    scene black
-
-    "Using text tags, we can make text {size=+12}bigger{/size} or
-     {size=-8}smaller{/size}. We can make it {b}bold{/b}, {i}italic{/i},
-     or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
-  
-    "Let's check out {b}bold{/b} and {i}italic{/i} text."
-
-    "{b}This will let us know if the {plain}plain{/plain} tag works.{/b}"
-
-    "How about some {size=+22}bigger{/size}, some {size=-8}smaller{/size},
-     and some {size=36}fixed{/size} size text?"
-
-    "foo %% bar %% baz"
-
-    "{color=#f00}Red{/color}, {color=#f004}25%% alpha Red{/color},
-     {color=#00ff00}Green{/color}, {color=#00ff0040}25%% alpha green{/color}."
-
-    "And let's make sure we can quote '{{'s."
-
-
-    return

@@ -112,7 +112,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', length=None):
+def input(prompt, default='', allow=None, exclude='{}', length=None):
     """
     This pops up a window requesting that the user enter in some text.
     It returns the entered text.
@@ -123,13 +123,19 @@ def input(prompt, default='', length=None):
 
     @param length: If given, a limit to the amount of text that this
     function will return.
+
+    @param allow: If not None, then if an input character is not in this
+    string, it is ignored.
+
+    @param exclude: If not None, then if an input character is in this
+    set, it is ignored.
     """
 
     renpy.ui.window(style='input_window')
     renpy.ui.vbox()
 
     renpy.ui.text(prompt, style='input_prompt')
-    renpy.ui.input(default, length=length, style='input_text')
+    renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
 
     renpy.ui.close()
 
@@ -194,6 +200,19 @@ def display_menu(items, window_style='menu_window'):
 
     return rv
 
+class TagQuotingDict(object):
+    def __getitem__(self, key):
+        if key in renpy.game.store:
+            rv = renpy.game.store[key]
+
+            if isinstance(rv, (str, unicode)):
+                rv = rv.replace("{", "{{")
+
+            return rv
+        else:
+            raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+
+tag_quoting_dict = TagQuotingDict()
 
 def say(who, what):
     """
@@ -203,7 +222,7 @@ def say(who, what):
     """
 
     # Interpolate variables.
-    what = what % renpy.game.store
+    what = what % tag_quoting_dict
 
     if who is None:
         who = renpy.store.narrator
@@ -457,6 +476,14 @@ def windows():
 
     import sys
     return hasattr(sys, 'winver')
+
+def version():
+    """
+    Returns a string containing the current version of Ren'Py, prefixed with the
+    string "Ren\'Py ".
+    """
+
+    return renpy.version
 
 def transition(trans, layer=None):
     """

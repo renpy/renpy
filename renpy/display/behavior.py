@@ -431,10 +431,18 @@ class Input(renpy.display.text.Text):
     """
 
     def __init__(self, default, length=None,
-                 style='input_text', **properties):
-        super(Input, self).__init__(default + "_", style=style, **properties)
+                 style='input_text',
+                 allow=None,
+                 exclude=None,
+                 **properties):
+
+        super(Input, self).__init__(default.replace("{", "{{") + "_", style=style, **properties)
+
         self.content = unicode(default)
         self.length = length
+
+        self.allow = allow
+        self.exclude = exclude
 
     def event(self, ev, x, y):
 
@@ -442,7 +450,7 @@ class Input(renpy.display.text.Text):
             if self.content:
                 self.content = self.content[:-1]
 
-            self.set_text(self.content + "_")
+            self.set_text(self.content.replace("{", "{{") + "_")
             renpy.display.render.redraw(self, 0)
 
 
@@ -454,11 +462,17 @@ class Input(renpy.display.text.Text):
                     return None
                 
             if self.length and len(self.content) >= self.length:
-                return None
+                raise renpy.display.core.IgnoreEvent()
+
+            if self.allow and ev.unicode not in self.allow:
+                raise renpy.display.core.IgnoreEvent()
+
+            if self.exclude and ev.unicode in self.exclude:
+                raise renpy.display.core.IgnoreEvent()
 
             self.content += ev.unicode
 
-            self.set_text(self.content + "_")
+            self.set_text(self.content.replace("{", "{{") + "_")
             renpy.display.render.redraw(self, 0)
 
             raise renpy.display.core.IgnoreEvent()

@@ -295,7 +295,7 @@ def menu(menuitems, **properties):
 
     return add(renpy.display.behavior.Menu(menuitems, **properties))
 
-def input(default, length=None, **properties):
+def input(default, length=None, allow=None, exclude='{}', **properties):
     """
     This creats a new input widget. This widget accepts textual input
     until the user hits enter, and then returns that text.
@@ -304,9 +304,15 @@ def input(default, length=None, **properties):
 
     @param length: If set, the maximum number of characters that will be
     returned by this input.
+
+    @param allow: If not None, then if an input character is not in this
+    string, it is ignored.
+
+    @param exclude: If not None, then if an input character is in this
+    set, it is ignored.
     """
 
-    return add(renpy.display.behavior.Input(default, length=length, **properties))
+    return add(renpy.display.behavior.Input(default, length=length, allow=allow, exclude=exclude, **properties))
 
 def image(filename, **properties):
     """
