@@ -501,11 +501,15 @@ class Render(object):
             else:
                 oy = uly
                 sy = 0
-            
+
+                
+            if ox > width or oy > height:
+                continue
+
             sw, sh = source.get_size()
 
-            sw = min(sw - sx, width)
-            sh = min(sh - sy, height)
+            sw = min(sw - sx, width - ox)
+            sh = min(sh - sy, height - oy)
 
             if sw <= 0 or sh <= 0:
                 continue

@@ -1012,3 +1012,6 @@ label whatsnewend:
     return
 
 
+init:
+    $ library.enter_transition = irisin
+    $ library.exit_transition = irisout
