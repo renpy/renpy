@@ -11,6 +11,11 @@ init:
     # Set up the library.
     $ library.file_page_length = 3
 
+    # Styles.
+    $ style.mm_root_window.background = Image("mainmenu.jpg")
+    $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("frame.png", 125, 25)
+
     # Positions of things on the screen.
     $ left = Position(xpos=0.0, xanchor='left')
     $ right = Position(xpos=1.0, xanchor='right')
@@ -79,19 +84,19 @@ label start:
         set seen_set
 
         "What are some features of Ren'Py games?":
-            call features from call_features
+            call features
             jump choices
 
         "How do I write my own games with it?":
-            call writing from call_writing
+            call writing
             jump choices
 
         "Where can I find out more?" if seen_set:
-            call find_out_more from call_find_out_more
+            call find_out_more
             jump choices
 
         "Why are we in Washington, DC?":
-            call washington from call_washington
+            call washington
             jump choices
 
         "I think I've heard enough." if seen_set:
@@ -261,6 +266,29 @@ label writing:
 
     e "... are easily invoked."
 
+    e "As of version 4.2, Ren'Py supports image maps, which are like
+       another form of menu. Let's try one."
+
+    $ result = renpy.imagemap("ground.png", "selected.png", [
+        (100, 100, 300, 400, "eileen"),
+        (500, 100, 700, 400, "lucy")
+        ])
+
+
+    if result == "eileen":
+        show eileen vhappy
+        e "You picked me!"
+
+    elif result == "lucy":
+        show eileen concerned
+        e "It looks like you picked Lucy."
+
+        if date:
+            e "You can forget about Saturday."
+            $ date = False
+
+    show eileen happy
+    
     e "Ren'Py also includes a number of control statements, and even
        lets you include python code."
 
