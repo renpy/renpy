@@ -242,6 +242,19 @@ init -250:
         style.gm_nav_window.ypos = 0.95
         style.gm_nav_window.yanchor = 'bottom'
 
+        
+        style.create('gm_nav_button', 'button',
+                     '(window, hover) The style of an unselected game menu navigation button.')
+
+        style.create('gm_nav_button_text', 'button_text',
+                     '(text, hover) The style of the text of an unselected game menu navigation button.')
+
+        style.create('gm_nav_selected_button', 'selected_button',
+                     '(window, hover) The style of a selected game menu navigation button.')
+
+        style.create('gm_nav_selected_button_text', 'selected_button_text',
+                     '(text, hover) The style of the text of a selected game menu navigation button.')
+        
 
         style.create('file_picker_window', 'default',
                      '(window, position) A window containing the file picker that is used to choose slots for loading and saving.')
@@ -346,3 +359,15 @@ init -250:
         style.prefs_right.ypos = 0.05
         style.prefs_right.yalign = "top"
         
+        style.create('prefs_button', 'button',
+                     '(window, hover) The style of an unselected preferences button.')
+
+        style.create('prefs_button_text', 'button_text',
+                     '(text, hover) The style of the text of an unselected preferences button.')
+
+        style.create('prefs_selected_button', 'selected_button',
+                     '(window, hover) The style of a selected preferences button.')
+
+        style.create('prefs_selected_button_text', 'selected_button_text',
+                     '(text, hover) The style of the text of a selected preferences button.')
+

@@ -174,12 +174,12 @@ init -500:
             ui.vbox()
             
             for key, label, target in library.game_menu:
-                style="button"
-                text_style="button_text"
+                style="gm_nav_button"
+                text_style="gm_nav_button_text"
                 
                 if key == selected:
-                    style = 'selected_button'
-                    text_style = 'selected_button_text'
+                    style = 'gm_nav_selected_button'
+                    text_style = 'gm_nav_selected_button_text'
                     
                 ui.textbutton(_(label), style=style, text_style=text_style,
                               clicked=ui.jumps(target))

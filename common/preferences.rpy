@@ -53,12 +53,12 @@ init -450:
 
                 for name, value in values:
 
-                    style = 'button'
-                    text_style = 'button_text'
+                    style = 'prefs_button'
+                    text_style = 'prefs_button_text'
 
                     if cur == value:
-                        style = 'selected_button'
-                        text_style = 'selected_button_text'
+                        style = 'prefs_selected_button'
+                        text_style = 'prefs_selected_button_text'
 
                     def clicked(value=value):
                         setattr(_preferences, self.field, value)
