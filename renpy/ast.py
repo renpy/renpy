@@ -235,8 +235,8 @@ def imspec_common(imspec, hide=False):
     """
 
     import renpy.display.image
-        
-    name, at_list, with_list = imspec
+
+    name, at_list = imspec
     key = name[0]
 
     # Get a reference to the base image.
@@ -246,16 +246,7 @@ def imspec_common(imspec, hide=False):
     for i in at_list:
         img = renpy.python.py_eval(i)(img)
 
-    # Now, apply the with list to get the with_image.
-    with_img = img
-
-    for i in with_list:
-        with_img = renpy.python.py_eval(i)(with_img)
-
-    if hide and not with_list:
-        with_img = None
-
-    return key, img, with_img
+    return key, img
 
 def predict_imspec(imspec, callback):
     """
@@ -357,6 +348,27 @@ class Hide(Node):
         sls.remove('master', key)
 
         return self.next
+
+class With(Node):
+    def __init__(self, loc, expr):
+        """
+        @param expr: An expression giving a transition or None.
+        """
+
+        super(With, self).__init__(loc)
+        self.expr = expr
+
+    def execute(self):
+        trans = renpy.python.py_eval(self.expr)
+
+        if not trans:
+            sls = renpy.game.context().scene_lists
+            sls.replace_old_master()
+        else:
+            renpy.game.interface.interact(trans)
+
+        return self.next
+        
         
 class Call(Node):
 

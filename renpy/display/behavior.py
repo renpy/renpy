@@ -40,10 +40,10 @@ class Keymap(renpy.display.layout.Container):
                 action()
                 raise renpy.display.core.IgnoreEvent()
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
         return None
 
-class SayBehavior(renpy.display.layout.Container):
+class SayBehavior(renpy.display.layout.Null):
     """
     This is a class that implements the say behavior,
     which is to return True (ending the interaction) if
@@ -51,8 +51,8 @@ class SayBehavior(renpy.display.layout.Container):
     mouse button.
     """
 
-    def __init__(self, child, delay=None):
-        super(SayBehavior, self).__init__(child)
+    def __init__(self, delay=None):
+        super(SayBehavior, self).__init__()
 
         self.delay = delay
               
@@ -240,6 +240,8 @@ class Button(renpy.display.layout.Window):
         if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
             if inside:
                 return self.clicked()
+
+        return None
 
 
 class TextButton(Button):

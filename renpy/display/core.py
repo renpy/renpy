@@ -33,7 +33,7 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
-    def render(self, width, height, shown_time, transition_time):
+    def render(self, width, height, shown_time):
         """
         Called to display this displayable. This is called with width
         and height parameters, which give the largest width and height
@@ -46,9 +46,6 @@ class Displayable(renpy.object.Object):
 
         @param shown_time: The time since we first started showing this
         drawable, a float in seconds.
-
-        @param transition_time: The time elapsed since we started the
-        current round of showing things to the user, in float seconds.
         """
 
         assert False, "Draw not implemented."
@@ -166,6 +163,7 @@ class SceneLists(object):
     drawn.
 
     @ivar master: The current master display list.
+    @ivar old_master: The MDL that was last shown to the user.
     @ivar transient: The current transient display list.
     @ivar overlay: The current overlay display list.
 
@@ -176,6 +174,7 @@ class SceneLists(object):
     def __init__(self, oldsl=None):
         
         if oldsl:
+            self.old_master = oldsl.old_master[:]
             self.master = oldsl.master[:]
             self.replace_transient()
 
@@ -184,6 +183,7 @@ class SceneLists(object):
             self.music = oldsl.music
             
         else:
+            self.old_master = [ ]
             self.master = [ ]            
             self.transient = [ ]
             self.overlay = [ ]
@@ -196,6 +196,7 @@ class SceneLists(object):
         """
 
         rv = SceneLists()
+        rv.old_master = self.old_master[:]
         rv.master = self.master[:]
         rv.transient = self.transient[:]
         rv.overlay = self.overlay[:]
@@ -213,7 +214,15 @@ class SceneLists(object):
         elements.
         """
 
-        self.transient = self.master[:]
+        self.transient = [ ]
+
+    def replace_old_master(self):
+        """
+        Replaces the contents of the old master display list with
+        a copy of the current master display list.
+        """
+
+        self.old_master = self.master[:]
 
     def add(self, listname, thing, key=None):
         """
@@ -282,19 +291,6 @@ class SceneLists(object):
 
         setattr(self, listname, nl)
     
-    def replace_lists(self, list):
-        """
-        Clears the master and transient lists, and replaces their
-        contents with the contents of the provided list.
-        """
-        
-        self.clear('master')
-        self.clear('transient')
-
-        for i in list:
-            self.add('master', i, key=None)
-            self.add('transient', i, key=None)
-
     def set_overlay(self, new_overlay):
         """
         This replaces the overlay scene list with the provided overlay
@@ -303,6 +299,38 @@ class SceneLists(object):
 
         self.overlay = [ (None, time.time(), i) for i in new_overlay ]
 
+def render_scene_list(sl, width, height):
+    """
+    This renders the scene list sl, and returns a rendered
+    renpy Surface containing the rendered scene list.
+
+    @returns: The surface, and the offset of each member of the
+    list relative to the surface.
+    """
+
+    t = time.time()
+
+    surftree = renpy.display.surface.Surface(width, height)
+    offsets = [ ]
+
+    if renpy.config.background:
+        surftree.fill(renpy.config.background)
+
+    for key, base_start_time, d in sl:
+
+        surf = d.render(width, height, t - base_start_time)
+
+        if not surf:
+            offsets.append((0, 0))
+            continue
+
+        # Place the surface.
+        offset = d.place(surftree, 0, 0, width, height, surf)
+
+        offsets.append(offset)
+
+    return surftree, offsets
+    
 
 class Display(object):
     """
@@ -338,7 +366,7 @@ class Display(object):
 
         self.sample_surface = self.window.convert_alpha()
 
-    def show(self, transient, start_time):
+    def show(self, transient):
         """
         Draws the current transient screen list to the screen.
         
@@ -346,34 +374,9 @@ class Display(object):
         relative to the screen.
         """
 
-        rv = [ ]
-        t = time.time()
-
-        if renpy.config.background:
-            self.window.fill(renpy.config.background)
-
-        surftree = renpy.display.surface.Surface(renpy.config.screen_width,
-                                                 renpy.config.screen_height)
-
-        for key, base_start_time, d in transient:
-
-            surf = d.render(renpy.config.screen_width,
-                            renpy.config.screen_height,
-                            t - base_start_time,
-                            t - start_time)
-
-            if not surf:
-                rv.append((0, 0))
-                continue
-
-
-            # Place the surface.
-            offsets = d.place(surftree, 0, 0,
-                              renpy.config.screen_width,
-                              renpy.config.screen_height,
-                              surf)
-
-            rv.append(offsets)
+        surftree, rv = render_scene_list(transient,
+                                         renpy.config.screen_width,
+                                         renpy.config.screen_height)
 
         surftree.blit_to(self.window, 0, 0)
 
@@ -457,35 +460,13 @@ class Interface(object):
         # TODO: Queue up a redraw, when needed. Do this by either
         # (re)scheduling a timer, or posting an event.
     
-    def interact(self):
+    def interact(self, transition=None):
         """
         This handles one cycle of displaying an image to the user,
         and then responding to user input.
         """
 
-        scene_lists = renpy.game.context().scene_lists
-
-        underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
-        overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
-
-        transient = underlay + scene_lists.master + scene_lists.transient + scene_lists.overlay + overlay
-
-        # Compute the reversed list, which is in the right order
-        # for handling events on.
-        rev_transient = transient[:]
-        rev_transient.reverse()
-
-        start_time = time.time()
-
-        # Redraw the screen during every interaction.
-        self.needs_redraw = True
-
-        # This list of offsets will be filled in before we need
-        # it. It's kept in reverse order of the transient list
-        # (The same order as rev_transient.)
-        offsets = [ ]
-
-        rv = None
+        ## Expensive things we want to do before we pick the start_time.
 
         # Tick time forward.
         renpy.display.image.cache.tick()
@@ -499,6 +480,37 @@ class Interface(object):
         # Set up display time event.
         pygame.time.set_timer(DISPLAYTIME, 50)
         
+        # Figure out the scene list we want to show.
+        start_time = time.time()
+        scene_lists = renpy.game.context().scene_lists
+
+        underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
+        overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
+
+        # Perhaps apply transition.
+        master = scene_lists.master
+        if transition:
+            master = [ ( None, start_time,
+                         transition(scene_lists.old_master,
+                                    scene_lists.master) ) ]
+
+        transient = underlay + master + scene_lists.transient + scene_lists.overlay + overlay
+
+        # Compute the reversed list, which is in the right order
+        # for handling events on.
+        rev_transient = transient[:]
+        rev_transient.reverse()
+
+        # Redraw the screen during every interaction.
+        self.needs_redraw = True
+
+        # This list of offsets will be filled in before we need
+        # it. It's kept in reverse order of the transient list
+        # (The same order as rev_transient.)
+        offsets = [ ]
+
+        rv = None
+
         while rv is None:
 
             if self.display.fullscreen != renpy.game.preferences.fullscreen:
@@ -510,7 +522,7 @@ class Interface(object):
 
                 draw_start = time.time()
 
-                offsets = self.display.show(transient, start_time)
+                offsets = self.display.show(transient)
                 offsets.reverse()
 
                 # If profiling is enabled, report the profile time.
@@ -522,9 +534,12 @@ class Interface(object):
             # Update the playing music, if necessary.
             renpy.music.restore()
 
-            # TODO: Make sure that this doesn't happen when a reload is
-            # immediately needed.
-
+            # If we need to redraw again, do it if we don't have an
+            # event going on.
+            if self.needs_redraw and not pygame.event.peek():
+                continue
+                
+            # While we have nothing to do, preload images.
             while renpy.display.image.cache.needs_preload() and \
                       not pygame.event.peek():
                 renpy.display.image.cache.preload()
@@ -572,4 +587,5 @@ class Interface(object):
                 
         pygame.time.set_timer(KEYREPEATEVENT, 0)
         scene_lists.replace_transient()
+        scene_lists.replace_old_master()
         return rv

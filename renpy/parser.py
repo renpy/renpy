@@ -727,12 +727,7 @@ def parse_image_specifier(l):
     else:
         at_list = [ ]
 
-    if l.keyword('with'):
-        with_list = parse_simple_expression_list(l)
-    else:
-        with_list = [ ]
-
-    return image_name, at_list, with_list
+    return image_name, at_list
     
 def parse_menu(l, loc):
 
@@ -937,6 +932,15 @@ def parse_statement(l):
         l.advance()
 
         return ast.Scene(loc, imspec)
+
+    ### With statement.
+    if l.keyword('with'):
+        expr = l.simple_expression()
+        l.expect_eol()
+        l.expect_noblock('with statement')
+        l.advance()
+
+        return ast.With(loc, expr)
     
     ### Show statement.
     if l.keyword('show'):

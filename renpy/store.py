@@ -20,6 +20,8 @@ Image = renpy.display.image.Image
 Position = renpy.curry.curry(renpy.display.layout.Position)
 # Resize = renpy.curry.curry(renpy.display.layout.Resize)
 
+Fade = renpy.curry.curry(renpy.display.transition.Fade)
+
 def _return(v):
     """
     Returns its input. This is pretty useless, but comes in handy

@@ -44,15 +44,6 @@ def scene_lists(index=-1):
 
     return renpy.game.context(index).scene_lists
 
-def show_list(list):
-    """
-    Replaces the contents of the master and transient scene
-    lists with the Displayables found in the provided list.
-    """
-
-    scene_lists().replace_lists(list)
-    
-
 def scene_list_add(listname, displayable, key=None):
     """
     Adds the displayable to the named scene list, with the
@@ -216,8 +207,9 @@ def display_say(who, what, who_style='say_label',
     vbox.add(line)
 
     window = layout.Window(vbox, style=window_style)
-    saybehavior = behavior.SayBehavior(window)
+    saybehavior = behavior.SayBehavior()
 
+    scene_list_add('transient', window)
     scene_list_add('transient', saybehavior)
 
     interact()
@@ -229,9 +221,7 @@ def pause(delay=None):
     advancing the script.
     """
 
-    null = renpy.display.layout.Null()
-    sayb = renpy.display.behavior.SayBehavior(null, delay=delay)
-
+    sayb = renpy.display.behavior.SayBehavior(delay=delay)
     scene_list_add('transient', sayb)
     
     interact()

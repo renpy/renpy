@@ -136,7 +136,7 @@ class Image(renpy.display.core.Displayable):
         
         self.filename = filename
 
-    def render(self, w, h, st, tt):
+    def render(self, w, h, st):
         return cache.load_image(self.filename)  
 
     def get_placement(self):
@@ -159,7 +159,7 @@ class UncachedImage(renpy.display.core.Displayable):
     def get_placement(self):
         return renpy.game.style.image_placement
 
-    def render(self, w, h, st, tt):
+    def render(self, w, h, st):
         sw, sh = self.surf.get_size()
         rv = renpy.display.surface.Surface(sw, sh)
         rv.blit(self.surf, (0, 0))
@@ -196,12 +196,12 @@ class ImageReference(renpy.display.core.Displayable):
             self.target = renpy.display.text.Text("Image %s not found." % repr(self.name), color=(255, 0, 0, 255))
         
         
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         if not hasattr(self, 'target'):
             self.find_target()
 
-        return self.target.render(width, height, st, tt)
+        return self.target.render(width, height, st)
 
     def get_placement(self):
         return self.target.get_placement()
@@ -220,39 +220,10 @@ class Solid(renpy.display.core.Displayable):
         
         self.color = color
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         rv = renpy.display.surface.Surface(width, height)
         rv.fill(self.color)
 
         return rv
         
-
-# class Scale(renpy.display.core.Displayable):
-#     """
-#     Scales the child down to the specified size.
-#     """
-
-#     def __init__(self, child, width, height):
-#         self.child = child
-#         self.width = width
-#         self.height = height
-
-#     def get_placement(self):
-#         return self.child.get_placement()
-
-#     def render(self, w, h, st, tt):
-
-#         surf = self.child.render(w, h, st, tt)
-
-#         scaled = pygame.transform.scale(surf.pygame_surface(),
-#                                         (self.width, self.height))
-
-#         rv = renpy.display.surface.Surface(self.width, self.height)
-#         rv.blit(scaled, (0, 0))
-
-#         return rv
-        
-        
-        
-    

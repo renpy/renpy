@@ -13,7 +13,7 @@ class Null(renpy.display.core.Displayable):
     but don't want to actually have anything there.
     """
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
         return renpy.display.surface.Surface(1, 1)
 
 
@@ -53,9 +53,9 @@ class Container(renpy.display.core.Displayable):
         self.children.append(child)
         self.child = child
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
-        rv = self.child.render(width, height, st, tt)
+        rv = self.child.render(width, height, st)
         self.offsets = [ (0, 0) ]
         self.sizes = [ rv.get_size() ]
 
@@ -121,9 +121,9 @@ class Position(Container):
         self.style = renpy.style.Style(style, properties)
         self.add(child)
 
-    def render(self, width, height, tt, wt):
+    def render(self, width, height, st):
 
-        surf = self.child.render(width, height, tt, wt)
+        surf = self.child.render(width, height, st)
         cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
@@ -158,7 +158,7 @@ class HBox(Container):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         self.offsets = [ ]
         self.sizes = [ ]
@@ -174,7 +174,7 @@ class HBox(Container):
         for i in self.children:
 
             xoffsets.append(xo)
-            surf = i.render(remwidth, height, st, tt)
+            surf = i.render(remwidth, height, st)
 
             sw, sh = surf.get_size()
 
@@ -224,7 +224,7 @@ class VBox(Container):
     def get_placement(self):
         return self.style
         
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         self.offsets = [ ]
         self.sizes = [ ]
@@ -241,7 +241,7 @@ class VBox(Container):
 
             yoffsets.append(yo)
 
-            surf = i.render(width, remheight, st, tt)
+            surf = i.render(width, remheight, st)
 
             sw, sh = surf.get_size()
 
@@ -288,7 +288,7 @@ class Fixed(Container):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         self.offsets = [ ]
         self.sizes = [ ]
@@ -296,7 +296,7 @@ class Fixed(Container):
         rv = renpy.display.surface.Surface(width, height)
 
         for child in self.children:
-            surf = child.render(width, height, st, tt)
+            surf = child.render(width, height, st)
             self.sizes.append(surf.get_size())
 
             offset = child.place(rv, 0, 0, width, height, surf)
@@ -330,7 +330,7 @@ class Window(Container):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         # save typing and screen space.
         style = self.style
@@ -339,7 +339,7 @@ class Window(Container):
         # Render the child.
         surf = self.child.render(width  - 2 * style.xmargin - 2 * style.xpadding,
                                  height - 2 * style.ymargin - 2 * style.ypadding,
-                                 st, tt)
+                                 st)
 
         sw, sh = surf.get_size()
 
@@ -359,7 +359,7 @@ class Window(Container):
             bw = width  - 2 * style.xmargin
             bh = height - 2 * style.ymargin
 
-            back = style.background.render(bw, bh, st, tt)
+            back = style.background.render(bw, bh, st)
 
             rv.blit(back,
                     (style.xmargin, style.ymargin))
@@ -379,6 +379,3 @@ class Window(Container):
         self.window_size = width, height
 
         return rv
-                
-            
-        

@@ -130,7 +130,7 @@ class Text(renpy.display.core.Displayable):
         self.width = max(maxwidth, self.style.minwidth)
 
         
-    def render(self, width, height, st, wt):
+    def render(self, width, height, st):
 
         if self.style.drop_shadow:
             dsxo, dsyo = self.style.drop_shadow
@@ -185,7 +185,7 @@ class ExpressionText(Text):
         self.old_value = ''
         self.expression = expression
 
-    def render(self, width, height, st, tt):
+    def render(self, width, height, st):
 
         value = renpy.python.py_eval(self.expression)
         value = str(value)
@@ -194,5 +194,5 @@ class ExpressionText(Text):
             self.old_value = value
             self.set_text(value)
 
-        return super(ExpressionText, self).render(width, height, st, tt)
+        return super(ExpressionText, self).render(width, height, st)
         
