@@ -101,7 +101,11 @@ class Keymap(renpy.display.layout.Null):
 
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
-                action()
+                rv = action()
+                
+                if rv is not None:
+                    return rv
+                
                 raise renpy.display.core.IgnoreEvent()
         
     # def render(self, width, height, st):

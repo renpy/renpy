@@ -5,6 +5,7 @@ import codecs
 import re
 import os
 
+import renpy
 import renpy.ast as ast
 
 class ParseError(Exception):
@@ -1183,6 +1184,8 @@ def parse(fn):
     filename. Returns a list of AST objects representing the
     statements that were found at the top level of the file.
     """
+
+    renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     version = os.stat(fn).st_mtime
     lines = list_logical_lines(fn)

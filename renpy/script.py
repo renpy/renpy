@@ -6,7 +6,7 @@ import renpy
 import os.path
 import os
 
-from cPickle import loads, dumps
+from pickle import loads, dumps
 
 # The version of the dumped script.
 script_version = renpy.script_version

@@ -46,14 +46,13 @@ def init():
         return
 
     try:
-        pygame.mixer.get_volume()
+        pygame.mixer.music.get_volume()
+        mixer_works = True
     except:
         if renpy.config.debug_sound:
             raise
         else:
             mixer_works = False
-
-    mixer_works = True
 
     windows_magic = False
 

@@ -161,6 +161,10 @@ def narrator(what, interact=True):
 # The default menu function.
 menu = renpy.display_menu
 
+# The function that is called when anonymous text is said.
+def say(who, what):
+    renpy.display_say(who, what)
+
 # The default transition.
 default_transition = None
 

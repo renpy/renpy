@@ -382,7 +382,10 @@ init -500:
                 fpi = 0
 
                 if newest:
-                    fpi = int(newest) // library.file_page_length * library.file_page_length
+                    fpi = (int(newest) - 1) // library.file_page_length * library.file_page_length
+
+                if fpi < 0:
+                    fpi = 0
 
                 
             # The length of a half-page of files.

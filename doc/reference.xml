@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <doc> 
-  <title>Writing Visual Novels with Ren'Py</title>
-  <subtitle>The Ren'Py Tutorial</subtitle>
+  <title>The Ren'Py Reference Manual</title>
 
   <p>
     <b>Last Updated:</b> <!-- date -->
@@ -2272,10 +2271,10 @@ performed when exiting the game menu.
 init:
 
     # Selected menu choices should be yellow and solid.
-    $ style.menu_choice_selected.color = (255, 255, 0, 255)
+    $ style.menu_choice.hover_color = (255, 255, 0, 255)
     
     # Unselected menu choices should be cyan and translucent.
-    $ style.menu_choice_unselected = (0, 255, 255, 128)
+    $ style.menu_choice.idle_color = (0, 255, 255, 128)
   </example>
 
 
@@ -2344,13 +2343,10 @@ If true, then this text will be rendered with an underline.
     at least this many pixels long.
   </prop>
 
-  <prop name="line_height_fudge">
-    On some platforms (Windows), the height of a line of text isn't
-    reported correctly. This can lead to an overly-large spacing
-    between lines. This is a number that is added to the reported line
-    spacing. If negative, the lines will be pushed closer
-    together. This is very platform-dependent, so you may want to
-    condition it on the result of renpy.windows().
+  <prop name="line_spacing">
+This is used to increase or decrease the spacing between lines of
+text by a constant number of pixels. A positive value increases, while
+a negative value decreases the spacing.
   </prop>
 
   <prop name="text_y_fudge">

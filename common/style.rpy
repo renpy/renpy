@@ -46,13 +46,8 @@ init -1000:
         style.default.text_y_fudge = 0
         style.default.first_indent = 0
         style.default.rest_indent = 0
+        style.default.line_spacing = 0
 
-        # Change this if you're not using Vera 22.
-        if renpy.windows():
-            style.default.line_height_fudge = -4
-        else:
-            style.default.line_height_fudge = 0
-            
         # Window properties.
         style.default.background = None
         style.default.xpadding = 0

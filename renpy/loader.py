@@ -1,6 +1,6 @@
 import renpy
 import os.path
-from cPickle import loads
+from pickle import loads
 from cStringIO import StringIO
 
 archives = [ ]

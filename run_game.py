@@ -29,6 +29,10 @@ import renpy
 def main():
 
     name = os.path.basename(sys.argv[0])
+    dirname = os.path.dirname(sys.argv[0])
+
+    if dirname:
+        os.chdir(dirname)
 
     if name.find(".") != -1:
         name = name[:name.find(".")]

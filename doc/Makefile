@@ -1,9 +1,9 @@
-all:: tutorial.html example.html
+all:: reference.html example.html
 
-tutorial.html: tutorial.xml preprocess.py stylesheet.xslt style.css styles.xml
-	python preprocess.py tutorial.xml > tutorial.hi.xml
-	xsltproc stylesheet.xslt tutorial.hi.xml > tutorial.html
-	cp tutorial.html style.css ~/ab/website/renpy/devel/doc
+reference.html: reference.xml preprocess.py stylesheet.xslt style.css styles.xml
+	python preprocess.py reference.xml > reference.hi.xml
+	xsltproc stylesheet.xslt reference.hi.xml > reference.html
+	cp reference.html style.css ~/ab/website/renpy/devel/doc
 
 
 example.html: example.xml preprocess.py stylesheet.xslt style.css styles.xml ../demo2/script.rpy

@@ -1,6 +1,6 @@
 # This file contains functions that load and save the game state.
 
-from cPickle import dumps, loads, HIGHEST_PROTOCOL
+from pickle import dumps, loads, HIGHEST_PROTOCOL
 import cStringIO
 import zipfile
 import time
@@ -135,16 +135,25 @@ def saved_games():
 
     for f in files:
 
-        zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
-        extra_info = zf.read("extra_info")
-        sio = cStringIO.StringIO(zf.read("screenshot.tga"))
-        zf.close()
-    
-        screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
+        try:
 
-        f = f[:-len(savegame_suffix)]
+            zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
+            extra_info = zf.read("extra_info")
+            sio = cStringIO.StringIO(zf.read("screenshot.tga"))
+            zf.close()
 
-        saveinfo[f] = screenshot, extra_info
+            screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
+
+            f = f[:-len(savegame_suffix)]
+
+            saveinfo[f] = screenshot, extra_info
+
+        except:
+            if renpy.config.debug:
+                raise Exception
+
+    if newest not in saveinfo:
+        newest = None
 
     return saveinfo, newest
     

@@ -123,6 +123,7 @@ def main():
     cp("README_RENPY.txt")
     cp("archive_images.bat")
     cp("run_game.py", license=license)
+    cp("run_game.pyw", license=license)
     cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
     cp("add_from.py", license=license)

@@ -228,7 +228,7 @@ def say(who, what):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        display_say(who, what, what_style='say_dialogue')
+        renpy.store.say(who, what)
     else:
         who(what)
         

@@ -8,7 +8,7 @@
 # config.rollback_enabled to false.
 
 # init:
-#    $ config.hard_rollback_limit = 1
+#     $ config.hard_rollback_limit = 1
 
 # Readback works by replacing the default Character and Menu objects
 # with ones that record what is said in a readback buffer. The user
@@ -163,8 +163,20 @@ init -100:
                                   interact=False,
                                   **self.properties)
 
+    
+        class Sayer(object):
+            def __call__(self, who, what):
+                renpy.display_say(who, what)
+                readback_save(self, who, what)
 
+            def readback(self, who, what):
+                renpy.display_say(who, what,
+                                  what_style='readback_dialogue',
+                                  interact=False)
+                
+        
         narrator = Character(None, what_style='say_thought')
+        say = Sayer()
 
         def readback(what):
             readback_save(narrator, what)
@@ -179,33 +191,8 @@ init -100:
 
             return rv
 
-
-        # This stuff is involved in entering and navigating through
-        # the readback mode.
+        # This stuff is involved in entering the readback mode.
         
-        class RBKeymap(renpy.renpy.display.layout.Null):
-            """
-            This is a behavior that maps keys to functions that are called when
-            the key is pressed. The keys are specified by giving the appropriate
-            k_constant from pygame.constants, or the unicode for the key.
-            """
-
-            def __init__(self, **keymap):
-                super(RBKeymap, self).__init__(style='default')
-                self.keymap = keymap
-
-            def event(self, ev, x, y):
-
-                for name, action in self.keymap.iteritems():
-                    if renpy.renpy.display.behavior.map_event(ev, name):
-                        rv = action()
-
-                        if rv is not None:
-                            return rv
-                        
-                        raise renpy.renpy.display.core.IgnoreEvent()
-
-
         def readback_mode():
             # Try rollback, first.
             renpy.rollback()
@@ -216,7 +203,7 @@ init -100:
             renpy.call_in_new_context("readback")
 
         # Add in the readback function.
-        config.underlay.append(RBKeymap(rollback=readback_mode))
+        config.underlay.append(renpy.Keymap(rollback=readback_mode))
 
 
 # This label is called in a new context, when the user succesfully
@@ -235,10 +222,10 @@ label readback:
             
             rb.show()
 
-            ui.add(RBKeymap(rollback=lambda : "older",
-                            rollforward=lambda : "newer",
-                            dismiss=lambda : "dismiss",
-                            ))
+            ui.add(renpy.Keymap(rollback=lambda : "older",
+                                rollforward=lambda : "newer",
+                                dismiss=lambda : "dismiss",
+                                ))
 
             res = ui.interact()
 

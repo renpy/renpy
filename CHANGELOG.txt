@@ -1,10 +1,56 @@
-Make Keymap return result... change readback to use it.
+New in 4.7.2
+------------
 
-Add some way of intercepting string says.
+This release should be compatiable with the .rpyc and .save files
+produced by 4.7.1.
 
-Check with lack of sound card on Linux.
+The new readback extra caused save files to reach a size and/or
+complexity that caused errors in cPickle on Windows, which in turn
+lead to a repeatable crash of Ren'Py, and left a corrupt save file in
+the saves directory that prevented further saving and loading of
+games. This has been addressed in two ways. The first is the use of
+pickle (as opposed to cPickle) throught Ren'Py, a change that may slow
+down the engine a little but should ensure correctness. The second is
+that we now catch the errors produced by corrupt files, and (if
+config.debug is not set) proceed by ignoring that file.
 
-Keyed compiles.
+There is now a new extra, readback.rpy. This implements readback, in
+addition to, or instead of, rollback. Readback is limited in a number
+of ways, insofar as it only shows text without changing pictures or
+other things. As part of implementing readback, we added a new
+function, say, that is called when the user gives dialogue consisting
+of a pair of strings.
+
+There are a number of changes that improve support of the Mac OS X
+platform. The foremost among them is that we ship a new file,
+run_game.pyw. This is identical to run_game.py, but is necessary for
+the game to run in a graphical environment on the Mac. (It also will
+run the game without a console window on Windows, if you have the
+appropriate dependencies.)  Ren'Py still requires that PyObjC and
+pygame are installed on a OS X 10.3 box before it can run.
+
+The way font line spacing is computed was changed in this release, in
+the hope of making it consistent on all three platforms. We now ignore
+font linesize hints, which seem to be computed incorrectly on some
+platforms, and instead set the line spacing to be equal to the ascent
+and descent of the font. The user can increase or decrease the line
+spacing by setting the new line_spacing text property. The old
+line_height_fudge property is now ignored. The style.rpy common file
+was updated to take account of this change.
+
+To aid the user in finding the source of error messages, we now report
+the name of the file being parsed when an error occurs during the
+parse phase.
+
+The tutorial has now been renamed "The Ren'Py Reference Manual", as
+it's really more of a poorly-organized comprehensive reference then a
+tutorial. This is in the hope that the Ren'Py user community will one
+day write a more reasonable tutorial. A number of errors in the
+reference were corrected.
+
+Finally, the functions used in keymaps can return values, which are
+returned to the ui.interact() that called them. This was needed 
+to support readback.
 
 New in 4.7.1
 ------------
