@@ -87,6 +87,12 @@ Added a Move function, which can be used in at to allow an image to be
 moved on the screen. This is best used when the image is smaller than
 the screen. (suggested by Alessio)
 
+Changed the format of archive files, to make them somewhat harder to
+reverse-engineer. This requires the user to regenerate the archive
+files. To make this easier, we now ship a batch file (called
+archive_images.bat) that automatically archives the images found in
+the game directory.
+
 Improved the comments in the default script, to make it a better
 example. 
 

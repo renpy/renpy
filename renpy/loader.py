@@ -14,12 +14,14 @@ def index_archives():
     archives = [ ]
 
     for prefix in renpy.config.archives:
-        fn = transfn(prefix + ".rpi")
-        index = loads(file(fn, "rb").read().decode("zlib")) 
 
-        print index.keys()
-
-        archives.append((prefix, index))
+        try:
+            fn = transfn(prefix + ".rpi")
+            index = loads(file(fn, "rb").read().decode("zlib")) 
+            archives.append((prefix, index))
+        except:
+            if renpy.config.debug:
+                raise
 
 def load(name):
     """
@@ -27,22 +29,28 @@ def load(name):
     """
 
     # Look for the file directly.
-    try:
-        fn = transfn(name)
-        return file(fn, "rb")
-    except:
-        pass
+    if not renpy.config.force_archives:
+
+        try:
+            fn = transfn(name)
+            return file(fn, "rb")
+        except:
+            pass
 
     # Look for it in archive files.
     for prefix, index in archives:
         if not name in index:
             continue
 
-        offset, dlen = index[name]
-
         f = file(transfn(prefix + ".rpa"), "rb")
-        f.seek(offset)
-        rv = StringIO(f.read(dlen))
+
+        data = [ ]
+
+        for offset, dlen in index[name]:           
+            f.seek(offset)
+            data.append(f.read(dlen))
+
+        rv = StringIO(''.join(data))
         f.close()
 
         return rv

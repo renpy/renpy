@@ -7,8 +7,26 @@
 import sys
 import os
 import encodings.zlib_codec
+import random
 
 from cPickle import loads, dumps, HIGHEST_PROTOCOL
+
+# The most we will go without inserting some padding. 10k.
+padding_every = 10240
+
+# The amount of padding we will add.
+padding_max = 32
+
+def randpadding():
+
+    plen = random.randint(1, padding_max)
+
+    rv = ""
+
+    for i in range(0, plen):
+        rv += chr(random.randint(1, 255))
+
+    return rv
 
 def main():
     if len(sys.argv) < 3:
@@ -25,18 +43,40 @@ def main():
 
     index = { }
 
+    random.seed()
+
     offset = 0
 
     for fn in sys.argv[2:]:
+        index[fn] = [ ]
+
         print "Adding %s..." % fn
 
-        data = file(fn, "rb").read()
-        dlen = len(data)
+        datafile = file(fn, "rb")
 
-        archivef.write(data)
+        while True:
 
-        index[fn] = (offset, dlen)
-        offset += dlen
+            # Pad with junk.
+            padding = randpadding()
+            archivef.write(padding)
+            offset += len(padding)
+
+            # Pick a random block size.
+            block = random.randint(1, padding_every)
+
+            data = datafile.read(block)
+
+            if not data:
+                break
+
+            dlen = len(data)
+
+            archivef.write(data)
+
+            index[fn].append((offset, dlen))
+            offset += dlen
+                      
+        datafile.close()
 
     archivef.close()
 

@@ -21,7 +21,7 @@ def copy_file(source, dest, license=""):
     df.write(license)
 
     data = sf.read()
-    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy"):
+    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy") or dest.endswith(".bat"):
         data = dosify(data)
 
     df.write(data)
@@ -112,6 +112,7 @@ def main():
     cp("CHANGELOG.txt")
     cp("LICENSE.txt")
     cp("README_RENPY.txt")
+    cp("archive_images.bat")
     cp("run_game.py", license=license)
     cp("archiver.py", license=license)
     cp("build_exe.py", license=license)

@@ -63,6 +63,10 @@ skip_delay = 100
 # Archive files that are searched for images.
 archives = [ ]
 
+# If True, we will only try loading from archives.
+# Only useful for debugging Ren'Py, don't document.
+force_archives = False
+
 # An image file containing the mouse cursor, if one is defined.
 mouse = None
 
