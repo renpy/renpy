@@ -1,3 +1,15 @@
+New in 4.5
+----------
+
+Added the ability to bind mouse events to mouseup as well as
+mousedown, and changed some of the default bindings to be on mouseup
+rather than mousedown. If you make changes to config.keymaps, you'll
+need to change mouse_1 to mousedown_1, and so on for various other
+button numbers. 
+
+Fixed a bug in which hiding the UI was not working properly. (This 
+broke the center mouse button behavior.)
+
 New in 4.4.2
 ------------
 

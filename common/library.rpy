@@ -94,20 +94,6 @@ init -500:
         # Are the windows currently hidden?
         _windows_hidden = False
 
-        # Hides the windows.
-        def _hide_windows():
-            global _windows_hidden
-
-            if _windows_hidden:
-                return
-
-            try:
-                _windows_hidden = True
-                renpy.interact(renpy.SayBehavior())
-            finally:
-                _windows_hidden = False
-
-
     # Set up the default keymap.    
     python hide:
 
@@ -126,7 +112,7 @@ init -500:
             toggle_music = renpy.toggle_music,
             toggle_skip = toggle_skipping,
             game_menu = invoke_game_menu,
-            hide_windows = _hide_windows,
+            hide_windows = renpy.curried_call_in_new_context("_hide_windows")
             )
 
         config.underlay = [ km ]
@@ -147,6 +133,21 @@ init -500:
         config.overlay_functions.append(skip_indicator)
 
     return
+
+label _hide_windows:
+
+    if _windows_hidden:
+        return
+
+    python:
+        _windows_hidden = True
+        ui.saybehavior()
+        ui.interact(suppress_overlay=True)
+        _windows_hidden = False
+
+    return
+
+
         
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.

@@ -201,7 +201,9 @@ class SceneLists(object):
             self.overlay = oldsl.overlay[:]
             self.music = oldsl.music
             self.sticky_positions = oldsl.sticky_positions.copy()
-              
+            
+            print self.transient 
+
         else:
             self.master = [ ]            
             self.transient = [ ]
