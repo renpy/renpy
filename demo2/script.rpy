@@ -2,6 +2,9 @@
 # public domain. Feel free to use it as the basis for your own
 # game.
 
+# If you're trying to understand this script, I recommend skipping
+# down to the line beginning with 'label start:', at least on your
+# first read-through.
 
 # This init block runs first, and sets up all sorts of things that
 # are used by the rest of the game. Variables that are set in init
@@ -19,6 +22,35 @@ init:
     $ style.mm_root_window.background = Image("mainmenu.jpg")
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 125, 25)
+
+    # Change button styles.
+    $ style.button.background = Frame("button.png", 25, 10)
+    $ style.selected_button.background = Frame("button_checked.png", 25, 10)
+    $ del style.selected_button_text.color
+    $ style.button_text.drop_shadow = None
+    $ style.button_text.xpos = 28
+    $ style.button_text.xanchor = 'left'
+    $ style.button_text.ypos = 0.6
+    $ style.button_text.yanchor = 'center'
+    $ style.button_text.color = (255, 255, 255, 255)
+    $ style.button_text.hover_color = (255, 255, 0, 255)
+    $ style.button.xminimum = 250
+
+    # Change other styles.
+    $ style.prefs_label.color = (64, 64, 255, 255)
+    $ style.yesno_prompt.color = (64, 64, 255, 255)
+    $ style.file_picker_entry.xpos = 0
+    $ style.file_picker_entry.xanchor = 'left'
+    $ style.file_picker_entry.xminimum = 520
+    $ style.file_picker_text.xpos = 0
+    $ style.file_picker_text.ypos = 3
+    $ style.file_picker_text.drop_shadow = None
+    $ style.file_picker_entry.idle_background = Solid((0, 0, 192, 255))
+    $ style.file_picker_entry.hover_background = Solid((64, 64, 255, 255))
+    $ style.file_picker_old.color = (255, 255, 255, 255)
+    $ style.file_picker_extra_info.color = (255, 255, 255, 255)
+    $ style.file_picker_new_slot.color = (255, 255, 255, 255)
+
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.

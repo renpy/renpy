@@ -9,6 +9,7 @@ from compiler.pycodegen import ModuleCodeGenerator, ExpressionCodeGenerator
 from compiler.misc import set_filename
 import compiler.ast as ast
 
+import random
 import weakref
 
 import renpy
@@ -213,6 +214,43 @@ class RevertableObject(object):
         self.__dict__.clear()
         self.__dict__.update(old)
 
+##### An object that handles deterministic randomness, or something.
+
+class DetRandom(random.Random):
+
+    def __init__(self):
+        super(DetRandom, self).__init__()
+        self.stack = [ ]
+
+    def random(self):
+
+        if self.stack:
+            rv = self.stack.pop()
+        else:
+            rv = super(DetRandom, self).random()            
+
+        renpy.game.log.current.random.append(rv)
+        return rv
+
+    def pushback(self, l):
+        """
+        Pushes the random numbers in l onto the stack so they will be generated
+        in the order given.
+        """
+
+        ll = l[:]
+        ll.reverse()
+
+        self.stack.extend(ll)
+        
+    def reset(self):
+        """
+        Resets the RNG, removing all of the pushbacked numbers.
+        """
+
+        self.stack = [ ]
+
+rng = DetRandom()
 
 ##### This is the code that actually handles the logging and managing
 ##### of the rollbacks.
@@ -241,6 +279,10 @@ class Rollback(renpy.object.Object):
 
     @ivar purged: True if purge_unreachable has already been called on
     this Rollback, False otherwise.
+
+    @ivar random: A list of random numbers that were generated during the
+    execution of this element.
+
     """
 
     def __init__(self):
@@ -249,6 +291,7 @@ class Rollback(renpy.object.Object):
         self.store = [ ]
         self.checkpoint = False
         self.purged = False
+        self.random = [ ]
 
     def purge_unreachable(self, reachable):
         """
@@ -307,6 +350,7 @@ class Rollback(renpy.object.Object):
                 del renpy.game.store[k]
 
         renpy.game.contexts = [ self.context ]
+        rng.pushback(self.random)
         
 
 class RollbackLog(renpy.object.Object):
@@ -346,6 +390,9 @@ class RollbackLog(renpy.object.Object):
         self.ever_been_changed = { }
         self.frozen_roots = None
         self.rollback_limit = 0
+
+        # Reset the RNG on the creation of a new game.
+        rng.reset()
 
     def after_setstate(self):
         self.mutated = { }
@@ -514,6 +561,10 @@ class RollbackLog(renpy.object.Object):
 
         # Disable the next transition, as it's pointless.
         renpy.game.interface.supress_transition = True
+
+        # If necessary, reset the RNG.
+        if force:
+            rng.reset()
 
         # Restart the game with the new state.
         raise renpy.game.RestartException()

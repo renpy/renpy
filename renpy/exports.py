@@ -5,6 +5,7 @@
 
 import renpy
 
+# Many of these shouldn't be used directly.
 from renpy.display.layout import *
 from renpy.display.text import *
 from renpy.display.behavior import *
@@ -14,9 +15,10 @@ from renpy.curry import curry
 from renpy.music import music_start, music_stop
 from renpy.sound import play
 from renpy.loadsave import *
+from renpy.python import py_eval as eval
+from renpy.python import rng as random
 
 import time
-import random
 
 # This is a map from image name to a Displayable object corresponding
 # to that image name.
@@ -266,11 +268,11 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     """
 
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
-                      overlays=overlays, style=style, **properties)
+                      style=style, **properties)
 
     renpy.ui.keymousebehavior()
 
-    rv = interact()
+    rv = interact(suppress_overlay=(not overlays))
     checkpoint()
     return rv
     
@@ -417,3 +419,4 @@ def transition(trans):
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
+

@@ -187,16 +187,16 @@ class SceneLists(object):
         if oldsl:
             self.master = oldsl.master[:]
             self.replace_transient()
-
             self.overlay = oldsl.overlay[:]
-
             self.music = oldsl.music
-            
+            self.sticky_positions = oldsl.sticky_positions.copy()
+              
         else:
             self.master = [ ]            
             self.transient = [ ]
             self.overlay = [ ]
             self.music = None
+            self.sticky_positions = { }
 
     def rollback_copy(self):
         """
@@ -620,8 +620,12 @@ class Interface(object):
         
         if not suppress_overlay:
             for i in renpy.config.overlay_functions:
-                for j in i():
-                    overlay.append((None, 0, j))
+
+                overlaid = i()
+
+                if overlaid:
+                    for j in overlaid:
+                        overlay.append((None, 0, j))
 
         if not suppress_underlay:
             underlay = [ ( None, 0, i) for i in renpy.config.underlay ]

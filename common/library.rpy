@@ -52,13 +52,12 @@ init -500:
         # Used to translate strings in the library.
         library.translations = { }
 
+
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
 
-# The function that's used to translate strings in the game menu.
-init -500:
-    python:
+        # The function that's used to translate strings in the game menu.
         def _(s):
             """
             Translates s into another language or something.
@@ -88,6 +87,7 @@ init -500:
                 renpy.interact(renpy.SayBehavior())
             finally:
                 _windows_hidden = False
+
 
     # Set up the default keymap.    
     python hide:
@@ -237,11 +237,7 @@ init -500:
                 _game_nav(selected)
                 
                 ui.window(style='file_picker_window')
-
                 ui.hbox()
-
-                image_win = ui.window(style='file_picker_image')
-                ui.null()
 
                 ui.vbox()
                 
@@ -286,6 +282,9 @@ init -500:
 
                 ui.close() # vbox
 
+                image_win = ui.window(style='file_picker_image')
+                ui.null()
+
                 ui.close() # hbox
 
                 result = _game_interact()
@@ -309,52 +308,25 @@ init -500:
 
 
 
-            
-        # Adds a button for a single preference and value.
-        def _prefbutton(label, var, value):
-
-            def clicked():
-                setattr(_preferences, var, value)
-                return True
-
-            style = 'button'
-            text_style = 'button_text'
-
-            if getattr(_preferences, var) == value:
-                style = 'selected_button'
-                text_style = 'selected_button_text'
-
-            ui.textbutton(_(label), style=style,
-                          text_style=text_style,
-                          clicked=clicked)
-
-        # Returns a vbox for a single preference.
-        def _prefvbox(label, var, entries):
-
-            ui.vbox(style='prefs_pref')
-            ui.text(_(label), style='prefs_label')
-
-            for blabel, value in entries:
-                _prefbutton(blabel, var, value)
-
-            
-                                        
-
-label _load_menu:
+# Factored this all into one place, to make our lives a bit easier.
+label _take_screenshot:
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+    return
 
+# Entry points from the game into menu-space.
+label _load_menu:
+    call _take_screenshot
     jump _load_screen
 
 label _game_menu:
-    $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
-
+    call _take_screenshot
     jump _save_screen
 
 label _confirm_quit:
-    $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
-
+    call _take_screenshot
     jump _quit_screen
 
+# Menu screens.
 label _load_screen:
 
     python:
@@ -380,46 +352,6 @@ label _save_screen:
                        full_save_name)
 
     jump _save_screen
-
-# The preferences screen.
-label _prefs_screen:
-
-    python hide:
-        prefs_left = [
-            ( 'Display', 'fullscreen',
-              [ ('Window', False), ('Fullscreen', True) ] ),
-            ( 'Music', 'music',
-              [ ('Enabled', True), ('Disabled', False) ] ),
-            ( 'Sound Effects', 'sound',
-              [ ('Enabled', True), ('Disabled', False) ] ),
-            ]
-
-        prefs_right = [
-            ('CTRL Skips', 'skip_unseen',
-             [ ('Seen Messages', False), ('All Messages', True) ] ),
-            ('Transitions', 'transitions',
-             [ ('All', 2), ('Some', 1), ('None', 0) ]),
-            ]
-
-        if config.annoying_text_cps:
-            prefs_right.append(('Text Display', 'fast_text', [ ('Slow', False), ('Fast', True) ]))
-
-        vbox_left = renpy.VBox(padding=library.padding * 3, style='prefs_left')
-
-        for label, var, entries in prefs_left:
-            vbox_left.add(_prefvbox(label, var, entries))
-
-        vbox_right = renpy.VBox(padding=library.padding * 3, style='prefs_right')
-
-        for label, var, entries in prefs_right:
-            vbox_right.add(_prefvbox(label, var, entries))
-
-        _game_interact("prefs", vbox_left, vbox_right)
-
-    jump _prefs_screen
-        
-        
-
 
 # Asks the user if he wants to quit.
 label _quit_screen:

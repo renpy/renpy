@@ -159,8 +159,15 @@ init -250:
         style.create('imagemap', 'image_placement',
                      '(sound, position) The style that is used for imagemaps.')
 
+        # Style that is used by imagebutttons.
+        style.create('image_button', 'default',
+                     '(window, sound, hover) The default style used for image buttons.')
 
-        # Styles that are used by all Buttons.
+        style.create('image_button_image', 'default',
+                     'The default style used for images inside image buttons.')
+
+
+        # Styles that are used by all other Buttons.
         style.create('button', 'default',
                      '(window, sound, hover) The default style used for buttons in the main and game menus.')
 

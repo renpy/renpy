@@ -23,11 +23,11 @@ import renpy.sound
 import renpy.display 
 import renpy.display.core # object
 import renpy.display.surface
-import renpy.display.image # core
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
 import renpy.display.transition # core
+import renpy.display.image # core, behavior
 
 import renpy.ui
 

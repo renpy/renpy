@@ -528,5 +528,28 @@ class ImageMap(renpy.display.core.Displayable):
 
         return None
                 
-            
-        
+class ImageButton(renpy.display.behavior.Button):
+
+    def __init__(self, idle_image, hover_image, style='image_button',
+                 image_style='image_button_image',
+                 clicked=None, hovered=None):
+
+        self.idle_image = Image(idle_image, style=image_style)
+        self.idle_image.style.set_prefix("idle_")
+        self.hover_image = Image(hover_image, style=image_style)
+        self.hover_image.style.set_prefix("hover_")
+
+        super(ImageButton, self).__init__(self.idle_image,
+                                          style=style,
+                                          clicked=clicked,
+                                          hovered=hovered)
+
+
+    def set_hover(self, hover):
+        super(ImageButton, self).set_hover(hover)
+
+        if hover:
+            self.child = self.hover_image
+        else:
+            self.child = self.idle_image
+

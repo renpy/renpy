@@ -249,17 +249,30 @@ def imspec_common(imspec, hide=False):
     This is code that's common to the three statements that can
     take imspecs (scene, show, and hide).
 
-    It parses the imspec into a key, an image, and a with_image, and
-    returns all three to the user.
+    It parses the imspec into a key, and an image, perhaps applying
+    at clauses.
 
-    @param hide: Reduces error checking, and makes the with_image None
-    if the list of with expressions is empty.
+    @param hide: Reduces error checking, and changes the sticky position
+    logic.
     """
 
     import renpy.display.image
 
+    sls = renpy.game.context().scene_lists
+
     name, at_list = imspec
     key = name[0]
+
+    # Handle sticky positions.
+    if renpy.config.sticky_positions:
+        if hide:
+            if key in sls.sticky_positions:
+                del sls.sticky_positions[key]
+        else:
+            if not at_list and key in sls.sticky_positions:
+                at_list = sls.sticky_positions[key]
+
+            sls.sticky_positions[key] = at_list
 
     # Get a reference to the base image.
     img = renpy.display.image.ImageReference(name)
@@ -331,6 +344,7 @@ class Scene(Node):
         sls = renpy.game.context().scene_lists
         
         sls.clear('master')
+        sls.sticky_positions.clear()
 
         if self.imspec:
             key, img = imspec_common(self.imspec)

@@ -1,10 +1,27 @@
-UI!
+RNG.
 
+UI! Including ImageButton!
 
+Sticky positions.
+[not documented]
 
-Preferences [ not implemented ] [ not documented ]
+library.game_menu.
+library.has_music.
+library.has_sound.
+library.has_transitions.
 
-Imagemap/Unselected. [ not implemented ] [ not documented ]
+Rewrote the implementation of preferences, to clean up the code. Moved
+it into its own file, preferences.rpy. Also, made it possible for a
+user to add his own preferences into the system, although that isn't
+really recommended.
+
+The various imagemap functions now have a new parameter, unselected,
+which gives an image to use when a hotspot is present but not
+hovered. This lets us distinguish between between hotspots that are
+present and exist, and hotspots that are totally absent. This could be
+used to implement something like an image gallery that only displays
+unlocked images.
+ [ not documented ]
 
 Implemented config.keymap, which allows the changing of keys and mouse
 buttons that trigger various Ren'Py events. [ not documented. ]
