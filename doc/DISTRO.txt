@@ -1,0 +1,13 @@
+Steps one needs to take to make a Ren'Py distro.
+
+0) Update the documentation. (This involves dump_styles, and perhaps
+copying in a new config.keymap)
+
+1) Change the version in run_game.py
+
+2) In cygwin, run "release.sh <version>"
+
+3) Test run_game.exe
+4) Test console.exe
+
+8) Release.

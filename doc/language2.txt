@@ -1,0 +1,373 @@
+To write a game using Ren'Py, one must become familar with the Ren'Py
+script language. This file gives some basic concepts and a list of
+Ren'Py statements. A second file will give a list of python classes
+and functions that are intended to be used from Ren'Py code. 
+
+A Ren'Py script can first be seen as a long string of unicode
+characters. This string is first broken up into logical lines, then
+the lines are organized into blocks, and finally as a tree of
+statements. So we'll begin by defining some basic terms, and then
+we'll go on to give a list of statements Ren'Py understands.
+
+Logical Lines:
+
+Each file consists of one or more logical lines. The first logical
+line begins at the first character file, and subsequent logical lines
+begin immediately following the end of the previous line. Logical
+lines are normally ended by the first newline encountered. However,
+there are several cases that will cause a logical line to extend past
+a newline character:
+
+<ul>
+<li> 
+A logical line containing a string must extend at least until the
+end of that string.
+</li>
+
+<li> 
+A logical line parenthesis, brackets, or braces cannot end until
+each opening character ('(', ']', or '}') is matched with a closing
+character (')', ']', or '}'). The expression enclosed within is called
+a parenthetical expression.
+</li>
+
+<li> 
+A newline immediately preceded by a backslash will not end a logical
+line. Instead, both characters will be treated as whitespace, and
+ignored. 
+<li>
+</ul>
+
+Logical lines are numbered by giving the number of the physical line
+in the file on which the logical line begins. (At most one logical
+line can exist on each physical line.)
+
+If a logical line contains a hash mark in it ('#'), all characters
+from the hash mark to character before the next physical newline are
+considered to be part of a comment, and are ignored as if they were
+whitespace. If, after this step, a logical line consists entirely of
+whitespace, it is ignored.
+
+Each logical line has an indentaion level. This is computed by first
+converting tabs to spaces (using 8-space tab stops), and then looking
+at the number of spaces preceding the first non-whitespace character
+on the line.
+
+The following examples all consist of single logical lines with
+indentation level 0.
+
+<example>
+me "How are you doing?"
+</example>
+
+<example>
+"It's a question that I ask myself every day. Today, however, is 
+ the first time I've asked it of someone else.
+</example>
+
+<example>
+$ my_list = [ 1, 2, 3, 4,
+              5, 6, 7, 8 ]
+</example>
+
+<example>
+$ a = 1 \
+    + 2 \
+    + 3
+</example>
+
+Blocks:
+
+If a logical line is followed by a logical line with greater
+indentation, the second logical line is considered to be part of the
+block of the first logical line. This block contains all logical lines
+with an indentation level equal to that of the second logical line,
+provided there are no intervening lines with an indentaion level that
+is less than that of the second logical line. If a line is encountered
+with an indentation level that is greater than that of the first
+logical line, but less than that of the second, the indentation is
+mismatched and an error is reported.
+
+An example of a block (as part of an if statement) is:
+
+<example>
+if happy:
+    e "I'm feeling really happy today."
+    e "It's like I'm the happiest person in the world."
+</example>
+
+An example of an indentation mismatch is:
+
+<example>
+else:
+   e "I'm having a really bad day."
+ e "I can't even get the indentation right."
+</example>
+
+
+One of the things we can parse is a string literal. String literals
+begin with a quote character (' or "), and end with a matching
+unescaped quote character. Strings use backslash (\) as an escape
+character. The following are suppored escape sequences:
+
+<ul>
+<li>"\\" - Backslash</li>
+<li>"\"" - Double Quote</li>
+<li>"\'" - Single Quote</li>
+<li>"\n" - Newline</li>
+<li>"\ " - Space</li>
+</ul>
+
+As the string is being parsed, but before escape processing is done,
+contiguous sequences of whitespace are converted to single space
+characters. To include more than single spaces, explicitly escape the
+desired whitespace.
+
+<example>
+"I hate having to \"escape\" whitespace."
+</example>
+
+Names and Numbers:
+
+Names begin with a character in the set [a-zA-Z_], and may contain
+additional characters in the set [a-zA-Z0-9_]. A keyword in Ren'Py may
+not be used as a name.
+
+Some example names are:
+
+<example>
+eileen
+lucy
+molly
+crm_114
+_underscore_
+</example>
+
+A dotted_name consists of one or more names, separated by dots '.'.
+
+<example>
+eileen
+eileen.name
+eileen.address.street
+</example>
+
+A number matches the characters [0-9.].
+
+<example>
+1
+1234.
+3.14159
+.2
+</example>
+
+
+Python:
+
+Ren'Py scripts may contain embedded python. There are three kinds of
+python things that can be mixed into Ren'Py: simple_expressions,
+python_expressions, and python_statements.
+
+A simple_expression consists of either a dotted_name, string, or
+number optionally followed by a parenthetical expression, or just a
+single parenthetical expression. 
+
+Examples of simple_expressions are:
+
+<example>
+eileen
+sample.image("foo.jpg", size=(100,200))
+"test"
+(1 + 2 + 3)
+</example>
+
+Python_expressions occur in statements such as if and while, and
+extend from the current location on the logical line to just before
+the next ':' that is not contained within a parenthetical expression
+on the logical line.
+
+Examples of expressions that are python_expressions but not
+simple_expressions are:
+
+<example>
+1 + 2 + 3
+foo.bar().baz()
+</example>
+
+Finally, python_statements simply assume that all remaining
+information on the line should be interpreted as python code.
+
+
+
+Statements:
+
+The parsing of each logical line is syntax-directed. When parsing a
+block, all of the logical lines in that block are parsed as
+statements. The logical lines at the top level of a file are
+considered to form a block. Here, we give the rules for parsing each
+kind of statement, as well as an overview of what each statement
+does. We'll first give some insight as to what a statement does when
+used with the standard library, and then we'll write a little about
+how it goes about accomplishing that task.
+
+
+
+Say Statements:
+
+<rule name="statement">
+<alt>string</alt>
+<alt>simple_expression string</alt>
+</rule>
+
+Probably the most commonly used statement in a Ren'Py script is the
+say statement. It's so commonly used that we chose not to denote it
+with a keyword, but instead to simply make all bare strings or
+simple_expression string pairs into say statements. 
+
+Executing a say statement results in a line of dialogue or thought
+being displayed to the user. Ren'Py then waits for the user to click
+or otherwise dismiss the display before proceeding with execution of
+the program. 
+
+In the single string version of the statement, the string is taken as
+a thought or narration that should be displayed, unadorned, to the
+user. If the string is preceded by a simple_expression, the expression
+is first evaluated to yield a string, and that string is used to
+indicate to the user who is speaking the line of dialogue.
+
+Ren'Py executes say statements by first evaluating the
+simple_expression, if present, and then calling the say function with
+the values of the two strings, or None if the simple_expression is not
+defined. Take a look at the documentation for the say function to see
+what happens from there, as behind the scenes it's a little more
+complicated that what we describe here.
+
+Some example say statements are:
+
+<example>
+"I was walking down the street one day, when I came across the postman."
+
+me "Hey, any mail for me today?"
+
+"Postman" "Yeah, a package came for you. But there's no return address."
+</example>
+
+Here, we assume that 'me' is an expression that expands to the name of
+the main character.
+
+
+
+Menu Statement:
+
+<rule name="statement">
+<alt>"menu" name? ":" menu_block</alt>
+</rule>
+
+<rule name="menu_item">
+<alt>string</alt>
+<alt>string ( "if" python_expression )? ":" block</alt>
+<alt>"set" simple_expression</alt>
+</rule>
+
+The menu statement displays a menu to the user, waits for the user to
+provide a response, and then runs a block of code corresponding to the
+choice that the user made. In a visual novel game, menu statement are
+the main way in which the user can interact with the story. 
+
+Menu statements begin with the word "menu". This word can be followed
+by an optional name. If the name is provided, it's as if the menu
+statement was proceded by a label statement with that name. A menu
+statement must have a block associated with it, and each of the
+logical lines in this menu_block are parsed as menu_items.
+
+There are three kinds of menu_items. The first is a logical line
+containing only a string. These menu_items are used to provide blocks
+of text in the menu that are not selectable. For example, they can be
+use to provide a prompt to the user.
+
+The second kind of menu_item is a string, followed by an optional if
+clause, followed by a colon. This menu_item has a block of statements
+associated with it. It's used to indicate a choice on the menu. If the
+if clause is supplied, the choice is only presented to the user if the
+python_expression is true. If a choice is selected by the user, the
+statements in the block associated with the choice are executed before
+control continues after the menu statement.
+
+The final menu_item is the word "set" followed by a
+simple_expression. The expression is evaluated to get a set of menu
+items to supress. This set is used to filter the menu choices. If a
+choice string is in the set, then the corresponding menu choice is not
+displayed to the user. If a set is defined, then when a choice has
+been made, the corresponding choice string is added to the set. This
+provides an easy way of having a menu where the user can select each
+item at most once.
+
+Here's an example of a fairly complex menu, that demonstrates all
+these features.
+
+<example>
+menu what_to_do:
+    set what_to_do_set
+    "What should we do today?"
+
+    "Go to the movies.":
+        "We went to the movies."
+
+    "Go shopping.":
+        "We went shopping, and the girls both bought swimsuits."
+        $ have_swimsuits = True
+
+    "Go to the beach." if have_swimsuits:
+        "We went to the beach together."
+</example>
+
+The actual task of displaying a menu is implemented internally by a
+call to the menu python function.
+
+
+
+Graphics Statements:
+
+
+Before we can discuss the graphics statements, we must first discuss
+the graphics model that Ren'Py uses. This will be covered in greater
+detail in the library reference, but we want to cover the fundamentals
+here to allow the graphics statements to be put in proper context. 
+
+First, let me define what it means to display a scene. The execution
+of a Ren'Py script can be roughly divided into periods when the script
+is executing code, and periods when the script is blocked wating for
+user input (as is the case when a menu or say statement
+executes). When Ren'Py is waiting for input, it is displaying a
+scene. When it gets the input it's waiting for and execution
+continues, we say it's finished displaying the scene. 
+
+The display in Ren'Py is controlled by three scene lists. These scene
+lists are called the master scene list, the overlay scene list, and
+the transient scene list.
+
+The only scene list that is displayed to the user is the transient
+scene list. This list is ordered such that items that are at the end
+of the scene list are closest to the user. All of the items in the
+scene lists must be displayable--- capable of drawing themselves to
+the screen. See the library reference for the exact API displayable
+objects must implement.
+
+When a scene is displayed, the transient scene list is extended by
+appending the overlay scene list to it. When display finishes, the
+transient scene list is replaced with a copy of the master scene
+list. The scene, show, and hide statements work by modifying both the
+master and transient scene lists.
+
+Having three scene lists may seem like needless complexity, but it's
+useful in implementing transitions and other effects. When we want to
+fade in an image, we add that image to the master scene list, and that
+image wrapped in an object that handles the fade effect into the
+transient scene list. When the scene is then displayed, the image will
+fade it. The wrapped image on the transient list is then replaced
+with the image from master list, removing any overhead the fade effect
+can entail.
+
+The transient list also helps when displaying UI elements, like
+dialogue or menus. Finally, the overlay list is used to display things
+that should always be presented to the user, like load and save
+buttons. 

@@ -1,0 +1,419 @@
+New in 4.4.2
+------------
+
+Improved the configurability of the say and menu statements, also
+changing the way they work. Say statements without a speaker specified
+are routed through the narrator character, while all menu statements
+are routed through the menu function. Customizing these functions can
+customize how Ren'Py interacts with the user, making it a much more
+flexible engine.
+
+As part of this, we changed the way character objects work. They are
+now called directly to display dialogue, rather than having the say
+method called on them.
+
+If your game uses variables named "narrator" or "menu", you will need
+to rename them.
+
+Changed the way spaces are handled by the text widget. Specifically,
+they are no longer merged, so it's possible to include spaces in
+dialogue and thoughts. Please note that the parser still merges
+adjacent spaces, unless you escape them with a backslash.
+
+Added a new widget, ui.sizer, that can shrink the amount of space
+allocated to its child.
+
+Added two new text properties, first_indent and rest_indent. These
+properties control how many pixels of indentation to put before each
+line of text. 
+
+Added a function, color, that can translate a hex triple or quadruple
+into a Ren'Py color.
+
+New in 4.4.1
+------------
+
+4.4.1 is being released to test some sound fixes, and so it isn't
+really isn't that complete or well-tested.
+
+Fixed some longstanding bugs with midi music on Windows. First of all,
+we now ship with the 1.2.6 version of SDL_mixer, which fixes a bug in
+1.2.5. That bug caused panning to go to the hard left. We also try to
+read the windows midi device volumes, and set our volume to match the
+first one we can read. This should prevent really loud midi music from
+happening.
+
+Also, increased the size of the sound buffer to 4096 samples, to
+prevent skipping.
+
+Some new features:
+
+Now, adding interact=False to a Character object will prevent an
+interaction from occuring.
+
+Implemented functions to get the amount of time elapsed during the
+game, renpy.clear_game_runtime() and renpy.get_game_runtime(). 
+
+
+New in 4.4
+----------
+
+Added a number of features to allow Ren'Py to support statistics-based
+dating simulations. The first is a new ui.bar() widget, which allows
+the display of a bar graph. The demo has been enhanced to include a
+stats and schedule screen, to show how this could be used. You can get
+to it by asking how to write your own games in the demo, or you can
+follow the below link to get a screenshot.
+
+[url]http://www.bishoujo.us/hosted/screenshot.jpg[/url]
+
+Another feature that has been added were 'jump expression' and 'call
+expression' statements, allowing computed jumps and calls. Together
+with an imporoved scheduler and yet-to-be written event dispatcher,
+this provides the foundation for SBDSes. 
+
+Now, setting a property on a style also sets the hover_ and idle_
+variants of that property. This makes changing a property of an
+inherited style a bit saner. In addition, hover now propagates to all
+children of a button. This means that hover will now work with the
+styles in the file chooser.
+
+Added support for layering images. This support (invoked by passing a
+tuple as an image filename) allows a single image to be constructed
+from multiple image files, saving disk space while still keeping
+performance.
+
+Improved skipping. Now, along with control causing skipping of seen
+dialogue, TAB toggles skip mode. An indicator displays to let you know
+that skip mode is enabled. Finally, if a game author wants to disable
+skipping, he can set config.allow_skipping to false. 
+
+(The following were also in 4.3.2, which was a private release to
+test the fixes for UTF-8 support.)
+
+There were two bugs with UTF-8 support. The first was that we didn't
+understand the byte-order mark, and choked on the syntax error. The
+second was that the error-reporting code wasn't passing unicode errors
+through properly, so one couldn't even see the real error. Both are
+now fixed.
+
+Improved the reporting of errors that occur during script loading and
+interpreter initialization by no longer giving a line number when none
+is appropriate.
+
+Ren'Py now uses the name of the executable to choose the directory to
+read the script from. It does this by looking at the name of the
+executable that was used to run Ren'Py. It strips off the extension,
+and anything preceding the first underscore in the name, if such a
+thing exists. It then looks to see if that directory exists, and if it
+does, uses it. For example, if the program is named "run_en.exe", the
+"en" directory is used, while if the program is named "homestay.exe",
+the directory "homestay" is used.
+
+The config variable config.searchpath is a list of directory that are
+searched for image files and other media (but not scripts, since all
+scripts are loaded before the variable can be set). This allows
+multiple game directories to share images, music, and other data files.
+
+Once again, I redid the file chooser and default styles. The new file
+chooser displays 10 entries in two columns, with each entry being
+shown with an image. The files are now orginized into numbered slots,
+and it's possible to save in a slot without saving in all previous
+slots. There were also some changes to the non-user-visible parts of
+loading and saving.
+
+Speed Enhancements:
+
+We now precompile python blocks in Ren'Py scripts, and store the
+compiled code in the .rpyc files. This makes loading an unmodified
+script significantly faster. On my system, this more than halved the
+time it took for the demo script to load. On the dowside, when a
+script is changed, it now can take somewhat longer for it to begin
+running, as all the changed code needs to be recompiled. Overall,
+it's a win, provided you ship the .rpyc files to your users.
+
+Did another round of profiling, and found that styles were
+significanly slowing the system down. So I rewrote them to be much
+faster. This change shouldn't be user-visible, except that your game
+will feel a bit peppier.
+
+Added a 1-entry cache for solid fill surfaces. If your game uses them,
+this might make it go faster. 
+
+New in 4.3.1
+------------
+
+New, but undocumented, in 4.3 was the console.exe windows binary. This
+is a windows executable that opens a windows console. This could be
+useful if one wants to have a script that prints debugging information
+to standard output, as in:
+
+[code]
+$ a = 1
+$ print "a =", a
+[/code]
+
+There is now a new style property, enable_hover. This must be set to
+True for a widget to respond to hovering by changing its
+style. However, if it's set to False, no style change/redraw occurs,
+making Ren'Py snappier. It defaults to True.
+
+Ren'Py is now built with psyco, the python specializing compiler. This
+makes program startup a bit slower, but in return the running time
+once it's loaded should be faster.
+
+A new config variable, config.window_icon, allows the user to specify
+an image file to use for the window icon. Counterintuitively, this
+should probably be a PNG, as the ICO format is not supported by the
+SDL_image library.
+
+Game menu navigations and preference buttons now have their own
+styles, allowing their look to be customized.
+
+A bug that prevented the reloading of persistent data on windows has
+been fixed.
+
+New in 4.3
+----------
+
+Now, when the library first starts up, it tries calling the
+"splashscreen" label, if it exists. The splashscreen will not be
+called in the case of a full reset (known to the user as a return to
+the main menu).
+
+Added a new text property, antialias, that controls the antialiasing
+of text. Also made the font property optionally take a comma-separated
+list of font names, which are searched for in the 
+
+Added a new class, DynamicCharacter, which is now the preferred way of
+having a character with a changable and/or user-input name.
+
+A new random number generator has been implemented as
+renpy.random. This random number generator cooperates with rollback,
+always producing the same random numbers when a rollback occurs.
+
+Added a set of UI functions, that allow the user to build up a user
+interface themselves. These could be useful when implementing more
+complex games, such as those that require the user to schedule a day
+in advance. Also new is a new imagebutton, a button consisting of two
+images.
+
+Sticky postions have been implemented. Enabling this (using the
+variable config.sticky_positions) cause the at clause corresponding to
+a given character to be remembered, allowing the character to change
+emotion without changing places on the screen (or requiring a second
+at clause).
+
+Rewrote the implementation of preferences, to clean up the code. Moved
+it into its own file, preferences.rpy. Also, made it possible for a
+user to add his own preferences into the system, although that isn't
+really recommended.
+
+The various imagemap functions now have a new parameter, unselected,
+which gives an image to use when a hotspot is present but not
+hovered. This lets us distinguish between between hotspots that are
+present and exist, and hotspots that are totally absent. This could be
+used to implement something like an image gallery that only displays
+unlocked images.
+
+Implemented config.keymap, which allows the changing of keys and mouse
+buttons that trigger various Ren'Py events.
+
+There's now a new look for loading and saving games, that allows 10
+saves to be presented at once. I strongly recommend removing the 
+library.file_page_length line at the start of your game scripts, if
+it exists.
+
+Fixed a bug in sound.init that lead to crashes in some cases.
+
+Fixed a bug in ast.Node.predict that was causing an exception when
+config.debug was turned on.
+
+New in 4.2
+----------
+
+Ren'Py now ships with a common directory that is used to store the
+library files, as well as the files needed by a minimal game. (Such as
+a default font.) The idea here is to allow one to copy a game
+directory from one version of Ren'Py to another, and have it just
+work.
+
+One can upgrade from 4.1 to 4.2 by deleting script.rpy, script.rpyc,
+library.rpy, and library.rpyc, and then copying in the game
+directory. 
+
+We've also eliminated the default background images. To go back to the
+images used with Ren'Py 4.1, add the following lines to your script,
+and copy the images out of the 4.1 distribution, or your 4.1 based
+game. 
+
+[code]
+init:
+    $ style.mm_root_window.background = Image("mainmenu.jpg")
+    $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("frame.png", 125, 25)
+[/code]
+
+Fixed several bugs with the archiver. This version just might actually
+work on Windows. 
+
+Added a new variable, config.hard_rollback_limit, which limits the
+number of steps the user can rollback the game, interactively. This
+limit now defaults to 10 steps. (suggested by Grey) 
+
+Added a second parameter to renpy.pause, that allows us to pause until
+a particular offset in the background music is reached. (suggested by
+Alessio)
+
+Added keyboard mouse controls that can be used to move the mouse
+around on the game and main menus. This allows us to manipulate the 
+game and main menus without having to touch the mouse. This is mostly
+for completeness. (suggested by Alessio)
+
+Changed the way in which overlays work. We now have the variable
+config.overlay_functions, which contains a list of functions, each of
+which returns a list of displayables that will be added to the
+screen. (sorta-kinda suggested by Alessio)
+
+Removed renpy.set_overlay, since config.overlay_functions is a more 
+flexible way of doing the same thing.
+
+Now, defining the label main_menu allows you to totally replace the
+main menu with something of your own devising. Changed the
+documentation to reflect this, as well as the changes in startup that
+happened in 4.1.
+
+Added a program called "add_from", which adds from clauses to all bare
+call statements found in the program. 
+
+Replaced the menu_selected and menu_unselected styles with a single
+menu_choice style which participates in the hover protocol. This may
+change user code, if you change the menu colors. To fix this, replace
+style.menu_selected.color with style.menu_choice.hover_color, and 
+style.menu_unselected.color with style.menu_choice.idle_color.
+
+Added the ability to play sound effects, by calling the renpy.play
+function. Added a preference that allows the user to control if 
+sound effects are played or not.
+
+Added sound styles, which are used to define the sounds that are
+played when buttons, imagemaps, and menu choices are hovered and
+activated. (By default, no such sounds are played.)
+
+Implemented that annoying thing where text is typed on the screen one
+character at a time. Also added a preference that allows the user to
+disable it. Used all the restraint I could muster to avoid defaulting
+that preference to off.
+
+Added the ability to fade out music when changing music
+tracks. This is controlled by the config.fade_music variable.
+(suggested by Alessio) 
+
+Added parameterized images, and the ability to show text as image
+using a command like:
+
+[code]
+show text "American Bishoujo Presents..."
+[/code]
+
+Added a Move function, which can be used in at to allow an image to be
+moved on the screen. This is best used when the image is smaller than
+the screen. (suggested by Alessio)
+
+Changed the format of archive files, to make them somewhat harder to
+reverse-engineer. This requires the user to regenerate the archive
+files. To make this easier, we now ship a batch file (called
+archive_images.bat) that automatically archives the images found in
+the game directory.
+
+Added a new function renpy.wait that is equivalent to the wait
+statement, and made it and renpy.pause return True if they are
+interrupted, or False if the run to their natural completions. This
+now makes it possible to jump somewhere else when the user click,
+rather than blindly going to the next label. For example:
+
+[code]
+# Actually, this runs before the library main menu.
+label main_menu:
+    scene black
+
+    show text "American Bishoujo\nPresents" \
+         at Move((0.5, 0.0), (0.5, 0.5), 3.0,
+                 xanchor='center', yanchor='bottom')
+
+    if renpy.pause(6):
+        jump _library_main_menu
+
+    show text "A PyTom Game" at Position(xpos=0.5, ypos=0.5,
+                                         xanchor="center", yanchor="bottom")
+
+    if renpy.with(fade) or renpy.pause(4):
+        jump _library_main_menu
+
+    $ renpy.transition(fade)
+    jump _library_main_menu
+[code]
+
+
+
+Updated renpy-mode.el to add imenu support, so (X)Emacs users can use
+the speedbar to jump around in a script. If you don't know what this
+means, you probably don't care.
+
+Improved the comments in the demo script, to make it a better
+example. Added a syntax-highlighted version of the demo script to the
+tutorial, to make it easier on peoples eyes.
+
+
+
+New in 4.1
+----------
+
+Added the ability to customize the main menu by giving a list of
+buttons on the main menu and the labels that they jump the user to.
+
+Added the ability to center-click to hide any displayed text or menus.
+
+Added the ability to have a color mouse that we can move around the
+screen. 
+
+Added a persistent object, which has fields that are persistent across
+games. Made the preferences part of this object, so that they are
+persisted across sessions. For simplicity's sake, made seen_ever part
+of that persistent object.
+
+Added a special character called "centered", which causes the text it
+displays to be centered in the screen without any window. Added two
+new styles (centered_window and centered_text), which are used for
+this, and a new property, textalign, which controls the horizontal
+alignment of text within the Text object itself.
+
+Keywords are now special in all contexts. So you can no longer include
+keywords in image names. Sorry.
+
+Improved parse error messages. They now include the text of the
+line and a caret indication the location in the line where the parse
+error occurred.
+
+Added a with clause to say statements and menus. This lets one display
+dialogue, thoughts, or menus using a transition. In conjunction with
+this, changed a bit the semantics of with statements, and with clauses
+on show, hide, and scene statements. Rewrote the section on
+transitions in the documentation to reflect the new reality.
+
+Added the ability to translate the text of the game menu. Together
+with the ability to change the main menu, this makes Ren'Py fully
+localizable, except for error messages. Check out the Localization
+section in the tutorial for more details.
+
+Added confirmations for quitting and overwriting a save game. This
+also includes quitting by trying to close the window.
+
+Added a preferences screen, which lets users change the Ren'Py
+preferences. Right now, this includes Windowed/Fullscreen, Music
+Enabled/Disabled, CTRL Skips Unread/All messages, and Transitions
+controls which transitions are performed.
+
+Added a Pan function which can be used in an at clause. This allows us
+to pan over a background image.
+

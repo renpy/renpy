@@ -1,0 +1,1 @@
+Have a new form of imagemap that uses a color image to distinguish hotspots.

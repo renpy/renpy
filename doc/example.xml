@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doc> 
+  <title>Demo Script Example</title>
+
+  <p><a href="tutorial.html">Return to the tutorial.</a></p>
+
+  <example>
+<!-- include ../demo2/script.rpy -->
+  </example>
+
+  <p><a href="tutorial.html">Return to the tutorial.</a></p>
+
+</doc>

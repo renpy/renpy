@@ -1,0 +1,15 @@
+# With pygame surfaces and fill.
+
+Menu mousemove: .1336, .1244, .1437
+"Save when I tell you to": .055, .066, .0476
+
+
+# Without fill.
+
+Menu mousemove: .115, .129, .134
+"Save when I tell you to": .050, .057, .046
+
+# With new surface code.
+
+Menu mousemove: .02something
+"Save when I tell you to": .038, .040, .038

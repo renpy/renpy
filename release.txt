@@ -1,0 +1,112 @@
+Well, [url="http://www.noradsanta.org"]NORAD has locked its
+interceptors onto Santa[/url], so I guess that means it's
+Christmas. And what a better way to celebrate than a new release of
+Ren'Py. (Well, how about with your families or something like that?)
+
+Ren'Py 4.4 "Christmas Bonus" contains a number of feature
+enhancements, speed improvements, and bug fixes. Along with improved
+support for visual novels, this release lays the foundations for
+Stats-Based Dating Simulations. And it's my gift to you, downloadable
+from the Ren'Py website,
+
+[url]http://www.bishoujo.us/renpy/[/url]
+
+Upgrading a script from recent (4.2 or better) versions of Ren'Py
+should be as simple as copying over your old game directory, and
+perhaps deleting a line setting library.file_page_length.
+
+This is a fairly major release, containing a bunch of new features and
+bug fixes. This is what you should be using if you want to make a
+Ren'Py game, at least until a new version comes out.
+
+I'd like to thank Mikey for testing a pre-release of this to ensure
+that all the bugs with UTF-8 were well and truly squashed. Thanks to
+him, I now know what a LOWERCASE L WITH CARON is. 
+
+Anyway, as usual, feel free to post, email, or IM me if you have any
+questions, problems, comments, or suggestions. And have a great
+holiday, everyone.
+
+[b]New in 4.4[/b]
+
+Added a number of features to allow Ren'Py to support statistics-based
+dating simulations. The first is a new ui.bar() widget, which allows
+the display of a bar graph. The demo has been enhanced to include a
+stats and schedule screen, to show how this could be used. You can get
+to it by asking how to write your own games in the demo, or you can
+follow the below link to get a screenshot.
+
+[url]http://www.bishoujo.us/hosted/screenshot.jpg[/url]
+
+Another feature that has been added were 'jump expression' and 'call
+expression' statements, allowing computed jumps and calls. Together
+with an imporoved scheduler and yet-to-be written event dispatcher,
+this provides the foundation for SBDSes. 
+
+Now, setting a property on a style also sets the hover_ and idle_
+variants of that property. This makes changing a property of an
+inherited style a bit saner. In addition, hover now propagates to all
+children of a button. This means that hover will now work with the
+styles in the file chooser.
+
+Added support for layering images. This support (invoked by passing a
+tuple as an image filename) allows a single image to be constructed
+from multiple image files, saving disk space while still keeping
+performance.
+
+Improved skipping. Now, along with control causing skipping of seen
+dialogue, TAB toggles skip mode. An indicator displays to let you know
+that skip mode is enabled. Finally, if a game author wants to disable
+skipping, he can set config.allow_skipping to false. 
+
+(The following were also in 4.3.2, which was a private release to
+test the fixes for UTF-8 support.)
+
+There were two bugs with UTF-8 support. The first was that we didn't
+understand the byte-order mark, and choked on the syntax error. The
+second was that the error-reporting code wasn't passing unicode errors
+through properly, so one couldn't even see the real error. Both are
+now fixed.
+
+Improved the reporting of errors that occur during script loading and
+interpreter initialization by no longer giving a line number when none
+is appropriate.
+
+Ren'Py now uses the name of the executable to choose the directory to
+read the script from. It does this by looking at the name of the
+executable that was used to run Ren'Py. It strips off the extension,
+and anything preceding the first underscore in the name, if such a
+thing exists. It then looks to see if that directory exists, and if it
+does, uses it. For example, if the program is named "run_en.exe", the
+"en" directory is used, while if the program is named "homestay.exe",
+the directory "homestay" is used.
+
+The config variable config.searchpath is a list of directory that are
+searched for image files and other media (but not scripts, since all
+scripts are loaded before the variable can be set). This allows
+multiple game directories to share images, music, and other data files.
+
+Once again, I redid the file chooser and default styles. The new file
+chooser displays 10 entries in two columns, with each entry being
+shown with an image. The files are now orginized into numbered slots,
+and it's possible to save in a slot without saving in all previous
+slots. There were also some changes to the non-user-visible parts of
+loading and saving.
+
+[b]Speed Enhancements:[/b]
+
+We now precompile python blocks in Ren'Py scripts, and store the
+compiled code in the .rpyc files. This makes loading an unmodified
+script significantly faster. On my system, this more than halved the
+time it took for the demo script to load. On the dowside, when a
+script is changed, it now can take somewhat longer for it to begin
+running, as all the changed code needs to be recompiled. Overall,
+it's a win, provided you ship the .rpyc files to your users.
+
+Did another round of profiling, and found that styles were
+significanly slowing the system down. So I rewrote them to be much
+faster. This change shouldn't be user-visible, except that your game
+will feel a bit peppier.
+
+Added a 1-entry cache for solid fill surfaces. If your game uses them,
+this might make it go faster. 

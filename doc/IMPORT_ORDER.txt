@@ -1,0 +1,14 @@
+Some notes about making sure things are imported in the proper order:
+
+1) Every module should import 'renpy'.
+
+2) It's okay for modules to 'import renpy.game as game'.
+
+3) Those are all the imports that normal modules should do.
+
+4) renpy/__init__.py should list all the modules in the system, a
+   topologically sorted order, such that if a definition in a uses 
+   a definition in b, b comes before a. Please note that this only 
+   considers the top level of the file.
+
+

@@ -1,0 +1,81 @@
+BODY {
+        font-family: sans-serif;
+}
+
+H1 {
+        text-align: center;
+        margin-top: 2em;
+        margin-bottom: 2em;
+}
+
+H2 {
+        text-align: center;
+        margin-top: 1em;
+        margin-bottom: 1em;
+}
+
+PRE.example {
+        border: 2px black solid;
+        margin-left: 10%;
+        margin-right: 10%;
+        background: #f0f0f0;
+        padding: 1em;
+        padding-bottom: 0em;
+}
+
+DIV.rule {
+       border: 2px black solid;
+       margin-left: 10%;
+       margin-right: 10%;
+       margin-bottom: 1em;
+
+       background: #f0f0ff;
+       padding: 1em;        
+}
+
+SPAN.comment {
+        color: #800000;
+}
+
+SPAN.string {
+        color: #006000;
+}
+
+SPAN.keyword {
+        color: #804000;
+}
+
+TD.funcname { 
+        font-family: monospace;
+        font-weight: bold;
+}
+
+TD.funcsig {
+        font-family: monospace;
+}
+
+DIV.funcbody {
+        margin-left: 5%;
+        margin-bottom: 1em;
+}
+
+SPAN.param {
+        font-style: italic;
+}
+
+P.prop {
+        margin-left: 5%;
+}
+
+SPAN.propname {
+        font-family: monospace;
+        font-weight: bold;
+}
+
+DT {
+        margin-top: 1em;
+}
+
+DT.code { 
+        font-family: monospace;
+}

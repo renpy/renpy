@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   id="svg1"
+   sodipodi:version="0.32"
+   inkscape:version="0.39cvs"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   width="780.00000pt"
+   height="140.00000pt"
+   sodipodi:docbase="/home/tom/ab/renpy/testgame"
+   sodipodi:docname="frame.svg"
+   inkscape:export-filename="/home/tom/ab/renpy/testgame/frame.png"
+   inkscape:export-xdpi="72.000000"
+   inkscape:export-ydpi="72.000000">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.0000000"
+     inkscape:cx="439.34413"
+     inkscape:cy="10.909790"
+     inkscape:window-width="1017"
+     inkscape:window-height="940"
+     gridspacingy="5.0000000pt"
+     gridspacingx="5.0000000pt"
+     gridoriginy="0.0000000pt"
+     gridoriginx="0.0000000pt"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:grid-points="true"
+     inkscape:window-x="155"
+     inkscape:window-y="20"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="vertical"
+       position="661.00000"
+       id="guide1533" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="26.000000"
+       id="guide1534" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4">
+    <rdf:RDF
+       id="RDF5">
+      <cc:Work
+         rdf:about=""
+         id="Work6">
+        <dc:format
+           id="format7">image/svg+xml</dc:format>
+        <dc:type
+           id="type9"
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     style="fill:#0000ff;fill-opacity:0.50196081;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.5000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.0000000;stroke-opacity:1.0000000;stroke-dasharray:none;"
+     id="rect908"
+     width="973.43860"
+     height="173.39908"
+     x="0.93600553"
+     y="0.93319064"
+     rx="5.6336517"
+     ry="5.6336517" />
+  <text
+     xml:space="preserve"
+     style="font-size:18.000000;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#0000ff;fill-opacity:1.0000000;stroke:#ffffff;stroke-width:0.93750000;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:Bitstream Vera Sans;text-anchor:start;writing-mode:lr;stroke-miterlimit:4.0000000;stroke-dasharray:none;"
+     x="835.30566"
+     y="164.86523"
+     id="text1530"
+     sodipodi:linespacing="100%"><tspan
+       id="tspan1531"
+       style="stroke:#ffffff;stroke-opacity:1.0000000;fill:#0000ff;fill-opacity:1.0000000;stroke-width:0.93750000;stroke-miterlimit:4.0000000;stroke-dasharray:none;">Ren'Py Demo</tspan></text>
+</svg>
