@@ -893,7 +893,7 @@ label ike:
 
     else:
 
-        e "You haven't download the Eisenhower commercial, so we
+        e "You haven't downloaded the Eisenhower commercial, so we
            can't demonstrate it."
 
 label whatsnew46:
