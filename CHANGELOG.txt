@@ -1,3 +1,5 @@
+Fixed a bug in which imagemaps would not redraw properly.
+
 New in 4.6.1
 ------------
 

@@ -537,6 +537,7 @@ class ImageMap(renpy.display.core.Displayable):
             self.unselected = unselected
 
         self.active = None
+        self.last_active = None
 
         self.style = renpy.style.Style(style, properties)
 
@@ -569,6 +570,8 @@ class ImageMap(renpy.display.core.Displayable):
                 source = unselected
 
             subsurface = source.subsurface((x0, y0, x1-x0, y1-y0))
+            renpy.display.render.mutated_surface(subsurface)
+
             rv.blit(subsurface, (x0, y0))
 
         return rv

@@ -256,7 +256,7 @@ def screen_blit(source, full=False):
     source.blit_to(screen, 0, 0)
 
     screen.set_clip()
-    
+
     return cliprect
     
 
@@ -510,8 +510,12 @@ class Render(object):
             if sw <= 0 or sh <= 0:
                 continue
 
-            rv.blit(source.subsurface((sx, sy, sw, sh)),
-                    (ox, oy))
+            subsurf = source.subsurface((sx, sy, sw, sh))
+
+            if isinstance(subsurf, pygame.Surface):
+                mutated_surface(subsurf) 
+            
+            rv.blit(subsurf, (ox, oy))
 
 
         self.subsurfaces[pos] = rv
