@@ -2,7 +2,8 @@
 
 import os.path
 
-# Go psyco! (Compile where we can.)
+# Enable psyco. Warning: Check for memory leaks!
+
 try:
     if not os.path.exists("nopsyco"):
         import psyco
@@ -24,12 +25,7 @@ import encodings.zlib_codec
 # Load up all of Ren'Py, in the right order.
 import renpy
 
-if __name__ == "__main__":
-
-
-    # Stdout should be a utf-8 stream, so print works nicely.
-    # utf8writer = codecs.getwriter("utf-8")
-    # sys.stdout = utf8writer(sys.stdout)
+def main():
 
     name = os.path.basename(sys.argv[0])
 
@@ -50,6 +46,9 @@ if __name__ == "__main__":
 
     op.add_option('--python', dest='python', default=None,
                   help='Run the argument in the python interpreter.')
+
+    op.add_option('--leak', dest='leak', action='store_true', default=False,
+                  help='When the game exits, dumps a profile of memory usage.')
 
     options, args = op.parse_args()
 
@@ -106,8 +105,45 @@ if __name__ == "__main__":
             os.startfile('traceback.txt')
         except:
             pass
+
+    if options.leak:
+        memory_profile()
         
     sys.exit(0)
-        
 
+def memory_profile():
+
+    print "Memory Profile"
+    print
+    print "Showing all objects in memory at program termination."
+    print
+
+    import gc
+    gc.collect()
+
+    objs = gc.get_objects()
+
+    c = { } # count
+    dead_renders = 0
+
+    for i in objs:
+        t = type(i)
+        c[t] = c.get(t, 0) + 1
+
+        if isinstance(i, renpy.display.render.Render):
+            if i.dead:
+                dead_renders += 1
+            
+
+    results = [ (count, ty) for ty, count in c.iteritems() ]
+    results.sort()
+
+    for count, ty in results:
+        print count, str(ty)
+
+    if dead_renders:
+        print
+        print "*** found", dead_renders, "dead Renders. ***"
     
+if __name__ == "__main__":
+    main()
