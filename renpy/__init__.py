@@ -19,15 +19,14 @@ import renpy.curry
 import renpy.execution
 import renpy.loader
 import renpy.loadsave
-import renpy.music
 import renpy.parser
 import renpy.python # object
 import renpy.script
 import renpy.style
-import renpy.sound
 
 import renpy.display 
 import renpy.display.core # object
+import renpy.display.audio
 import renpy.display.surface
 import renpy.display.text # core
 import renpy.display.layout # core

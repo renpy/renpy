@@ -204,13 +204,33 @@ def saybehavior():
     """
     This is a psuedo-widget that adds the say behavior to the
     screen. The say behavior is to return True if the left mouse is
-    clicked or enter is pressed. It also returns true in various other
-    cases if the current statement has already been seen. This widget
+    clicked or enter is pressed. It also returns True in various other
+    cases, such as if the current statement has already been seen. This widget
     should not be added to any other widget, but should instead be
     only added to the screen itself.
     """
 
     return add(renpy.display.behavior.SayBehavior())
+
+def pausebehavior(delay, result=False):
+    """
+    This is a psuedo-widget that adds the pause behavior to the
+    screen.  The pause behavior is to return the supplied result when
+    the given number of seconds elapses. This widget should not be
+    added to any other widget, but should instead be only added to the
+    screen itself.
+
+    Please note that this widget will always pause for the given
+    amount of time. If you want a pause that can be interrupted by
+    the user, add in a saybehavior.
+
+    @param delay: The amount of time to pause, in seconds.
+
+    @param result: The result that will be retuned after the delay time
+    elapses.
+    """
+
+    return add(renpy.display.behavior.PauseBehavior(delay, result))
 
 def menu(menuitems, **properties):
     """

@@ -1817,7 +1817,7 @@ init:
   </p>
 
 
-  <h3>Sound and Music Functions</h3>
+  <h3>Multimedia: Sound, Music, and Movies</h3>
 
   <h4>Sound</h4>
 
@@ -1894,6 +1894,56 @@ e "Just kidding."
     The config.fade_music variable is used to control the fading out
     of old music when a new track is started.  
   </p>
+
+<h4>Movies</h4>
+
+<p>
+As of version 4.5, Ren'Py is capable of playing MPEG-1 movies. This
+allows you to include video cutscenes as part of your game, provided
+you observe a number of precautions.
+</p>
+
+<p>
+One of the most important things to know about movies in Ren'Py is
+that they only last until the start of the next
+interaction. There are several things that can start a new
+interaction. The most obvious is the user clicking to dismiss the
+move, but there are others, such as the user clicking the close button
+on the window, or right-clicking (in some cases) to call up the game
+menu.
+</p>
+
+<p>
+Another important thing is to ensure that the screen is never redrawn
+when a movie is playing. This basically means that animations or ui
+widgets should never be on the screen at the same time as a
+movie. Some platforms seem to use chroma-keying to show the movie, and
+drawing to the screen after the movie starts can ruin that and disrupt
+the movie.
+</p>
+
+<p>
+While it's possible (using the rect argument) to have movies that are
+not full-screen, it's probably best to display only full-screen
+movies, as there are problems redrawing the screen when a movie is
+playing. 
+</p>
+
+<p>
+There are two functions that can display movies. renpy.movie_start
+queues a movie to start during the next interaction, while
+renpy.cutscene starts the movie and pauses for its duration, also
+allowing the user to click to interrupt the movie. In general, use
+renpy.cutscene unless there's a pressing need not to.
+</p>
+
+<!-- func renpy.movie_start -->
+
+<!-- func renpy.cutscene -->
+
+<example>
+$ renpy.cutscene("On_Your_Mark.mpg", 394)
+</example>
 
   <h3>Configuration Variables</h3>
   

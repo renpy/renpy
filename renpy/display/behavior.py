@@ -134,6 +134,26 @@ class KeymouseBehavior(renpy.display.layout.Null):
 
             return None
 
+class PauseBehavior(renpy.display.layout.Null):
+    """
+    This is a class implementing the Pause behavior, which is to
+    return a value after a certain amount of time has elapsed.
+    """
+
+    def __init__(self, delay, result=False):
+        super(PauseBehavior, self).__init__()
+
+        self.delay = delay
+        self.result = result 
+
+
+    def event(self, ev, x, y):
+              
+        if ev.type == renpy.display.core.DISPLAYTIME and \
+           self.delay and ev.duration > self.delay:
+            return self.result
+    
+
 class SayBehavior(renpy.display.layout.Null):
     """
     This is a class that implements the say behavior,
@@ -142,17 +162,11 @@ class SayBehavior(renpy.display.layout.Null):
     mouse button.
     """
 
-    def __init__(self, delay=None):
+    def __init__(self):
         super(SayBehavior, self).__init__()
-
-        self.delay = delay
               
 
     def event(self, ev, x, y):
-
-        if ev.type == renpy.display.core.DISPLAYTIME and \
-           self.delay and ev.duration > self.delay:
-            return False
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
            renpy.config.allow_skipping and renpy.config.skipping and \
@@ -252,7 +266,7 @@ class Menu(renpy.display.layout.VBox):
                 return None
 
             if self.results[target] is not None:
-                renpy.sound.play(self.selected_style.activate_sound)
+                renpy.display.audio.play(self.selected_style.activate_sound)
                 return self.results[target]
 
         # Change selection based on keypress.
@@ -279,7 +293,7 @@ class Menu(renpy.display.layout.VBox):
 
         # Make selection based on keypress.
         if map_event(ev, "menu_keyselect"):
-            renpy.sound.play(self.selected_style.activate_sound)
+            renpy.display.audio.play(self.selected_style.activate_sound)
             return self.results[self.selected]
             
         # If the selected item changed, update the display.
@@ -288,7 +302,7 @@ class Menu(renpy.display.layout.VBox):
             self.children[self.selected].set_style(self.selected_style)
             self.children[old_selected].set_style(self.unselected_style)
 
-            renpy.sound.play(self.selected_style.hover_sound)
+            renpy.display.audio.play(self.selected_style.hover_sound)
 
             renpy.game.interface.redraw(0)
 
@@ -349,12 +363,12 @@ class Button(renpy.display.layout.Window):
                     if self.hovered:
                         self.hovered()
                         
-                    renpy.sound.play(self.style.hover_sound)
+                    renpy.display.audio.play(self.style.hover_sound)
 
 
         if map_event(ev, "button_select"):
             if inside and self.clicked:
-                renpy.sound.play(self.style.activate_sound)
+                renpy.display.audio.play(self.style.activate_sound)
 
                 rv = self.clicked()
 

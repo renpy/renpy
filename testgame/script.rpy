@@ -119,6 +119,12 @@ label start:
      multi-line text\ \ \ still
      works right."
 
+    $ ui.textbutton("Foo.")
+
+    $ renpy.cutscene("/home/tom/anime/On_Your_Mark.mpg", 394.0,
+                     rect=(100, 100, 400, 300))
+
+        
     python hide:
 
         def bar_clicked(value):

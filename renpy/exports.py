@@ -12,8 +12,9 @@ from renpy.display.behavior import *
 from renpy.display.image import *
 
 from renpy.curry import curry
-from renpy.music import music_start, music_stop
-from renpy.sound import play
+from renpy.display.audio import music_start, music_stop
+from renpy.display.audio import play
+from renpy.display.video import movie_start
 from renpy.loadsave import *
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
@@ -298,7 +299,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None):
     """
     When called, this pauses and waits for the user to click before
-    advancing the script.
+    advancing the script. If given a delay parameter, the Ren'Py will
+    wait for that amount of time before continuing, unless a user clicks to
+    interrupt the delay.
 
     @param delay: The number of seconds to delay.
 
@@ -313,15 +316,43 @@ def pause(delay=None, music=None):
     """
 
     if music is not None:
-        newdelay = renpy.music.music_delay(music)
+        newdelay = renpy.display.audio.music_delay(music)
 
         if newdelay is not None:
             delay = newdelay
 
-    sayb = renpy.display.behavior.SayBehavior(delay=delay)
-    scene_list_add('transient', sayb)
+    renpy.ui.saybehavior()
+
+    if delay:
+        renpy.ui.pausebehavior(delay, False)
+
+    return renpy.ui.interact()
+
+def cutscene(filename, delay, rect=None, loops=0):
+    """
+    This displays an MPEG-1 cutscene for the specified number of
+    seconds. The user can click to interrupt the cutscene.
+    Overlays and Underlays are disabled for the duration of the cutscene.
+
+    @param filename: As in movie_start.
+
+    @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds.
+
+    @param rect: As in movie_start.
     
-    return interact()
+    @param loops: As in movie_start.
+
+    Returns True if the movie was terminated by the user, or False if the
+    given delay elapsed uninterrupted.
+    """
+
+    movie_start(filename, rect=rect, loops=loops)
+
+    renpy.ui.saybehavior()
+    renpy.ui.pausebehavior(delay, False)
+
+    return renpy.ui.interact(suppress_overlay=True, suppress_underlay=True, show_mouse=False)
+        
 
 def with(trans):
     """

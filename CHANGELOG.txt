@@ -1,6 +1,15 @@
 New in 4.5
 ----------
 
+Added support for playing MPEG-1 movies. Rather than explain it all
+here, we'l just mention that you can read the new "Movies" subsection
+of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
+manual.
+
+Added ui.pausebehavior(). This separates pausing from the saybehavior
+paving the way for uninterruptable pauses (a bad idea, IMO) and menus
+that dismiss themseleves after a certain amount of time.
+
 Added the ability to bind mouse events to mouseup as well as
 mousedown, and changed some of the default bindings to be on mouseup
 rather than mousedown. If you make changes to config.keymaps, you'll

@@ -50,8 +50,12 @@ class ImageCache(object):
             return rv
 
         im = pygame.image.load(renpy.loader.load(fn), fn)
-        im = im.convert_alpha()
 
+        if im.get_flags() & SRCALPHA:
+            im = im.convert_alpha()
+        else:
+            im = im.convert()
+            
         return im
             
         
@@ -554,14 +558,14 @@ class ImageMap(renpy.display.core.Displayable):
             renpy.game.interface.redraw(0)
 
             if active is not None:
-                renpy.sound.play(self.style.hover_sound)
+                renpy.display.audio.play(self.style.hover_sound)
 
 
         if active is None:
             return None
 
         if renpy.display.behavior.map_event(ev, "imagemap_select"):
-            renpy.sound.play(self.style.activate_sound)
+            renpy.display.audio.play(self.style.activate_sound)
             return result
 
         return None

@@ -114,7 +114,7 @@ class Dissolve(Transition):
 
         alpha = min(255, int(255 * st / self.time))
 
-        surf.set_alpha(alpha)
+        surf.set_alpha(alpha, RLEACCEL)
         rv.blit(surf, (0, 0))
 
         if st < self.time:

@@ -1,4 +1,5 @@
-# This module contains code that handles the playing of music.
+# This module contains code that handles the playing of sound and
+# music files.
 
 import pygame
 import renpy
@@ -14,6 +15,8 @@ import sys # to detect windows.
 # read the same value from midiOutGetVolume() as we did before we tried
 # doing that.
 
+
+mixer_enabled = True
 
 playing_midi = True
 fading = False
@@ -170,7 +173,7 @@ def music_start(filename, loops=-1, startpos=0.0):
 
     music_stop()
     renpy.game.context().scene_lists.music = (filename, loops, startpos)
-    restore()
+    restore_music()
 
 
 def music_stop():
@@ -179,9 +182,9 @@ def music_stop():
     """
 
     renpy.game.context().scene_lists.music = None
-    restore()
+    restore_music()
 
-def restore():
+def restore_music():
     """
     This makes sure that the current music matches the music found in
     the context.
@@ -199,6 +202,9 @@ def restore():
         new_music = None
 
     if current_music == new_music:
+        return
+
+    if not mixer_enabled:
         return
 
     # Usually, ignore errors.
@@ -226,3 +232,80 @@ def restore():
             raise
         else:
             print "Error while trying to play music:", str(e)
+# Plays sounds.
+
+def play(fn, loops=0):
+    """
+    This plays the given sound. The sound must be in a wav file,
+    and expected to have a sample rate 44100hz (changable with
+    config.sound_sample_rate), 16 bit, stereo. These expectations may
+    be violated, but that may lead to conversion delays.
+
+    Once a sound has been started, there's no way to stop it.
+
+    @param fn: The name of the file that the sound is read from. This
+    file may be contained in a game directory or an archive.
+
+    @param loops: The number of extra times the sound will be
+    played. (The default, 0, will play the sound once.)
+    """
+
+    if not fn:
+        return
+
+    if not renpy.game.preferences.sound:
+        return
+
+    if not mixer_enabled:
+        return
+
+    try:
+        sound = pygame.mixer.Sound(renpy.loader.load(fn))
+        sound.play()
+    except:
+        if renpy.config.debug_sound:
+            raise
+        
+def pre_init():
+    try:
+        bufsize = 4096
+
+        import os
+
+        if 'RENPY_SOUND_BUFSIZE' in os.environ:
+            bufsize = int(os.environ('RENPY_SOUND_BUFSIZE'))
+        
+        pygame.mixer.pre_init(renpy.config.sound_sample_rate, -16, 2, bufsize)
+    except:
+        try:
+            pygame.mixer.pre_init()
+        except:
+            if renpy.config.debug_sound:
+                raise
+        
+def disable_mixer():
+    """
+    This function is called by the video code to disable the
+    pygame mixer.
+    """
+
+    global mixer_enabled
+    
+    if mixer_enabled:
+        pygame.mixer.quit()
+        
+    mixer_enabled = False
+
+def enable_mixer():
+    """
+    This function is called by the video code to enable the
+    pygame mixer.
+    """
+
+    global mixer_enabled
+
+    if not mixer_enabled:
+        pygame.mixer.init()
+    
+    mixer_enabled = True
+

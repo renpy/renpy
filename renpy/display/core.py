@@ -360,7 +360,11 @@ class Display(object):
 
     def __init__(self):
 
-        renpy.sound.init()
+
+        # Ensure that we kill off the movie when changing screen res.
+        renpy.display.video.abort()
+
+        renpy.display.audio.pre_init()
         pygame.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
@@ -621,7 +625,12 @@ class Interface(object):
                 return None
 
 
+        # frames = 0
+
         ## Expensive things we want to do before we pick the start_time.
+
+        # Prepare to show a movie.
+        renpy.display.video.prepare()
 
         # Tick time forward.
         renpy.display.image.cache.tick()
@@ -677,8 +686,11 @@ class Interface(object):
             transition_scene = [ (None, start_time, trans) ]
 
             if trans_pause:
-                sb = renpy.display.behavior.SayBehavior(delay=trans.delay)
+                sb = renpy.display.behavior.SayBehavior()
                 transition_scene.append((None, start_time, sb))
+
+                pb = renpy.display.behavior.PauseBehavior(trans.delay)
+                transition_scene.append((None, start_time, pb))
         else:
             transition_scene = current_scene
 
@@ -728,11 +740,16 @@ class Interface(object):
                     offsets = self.display.show(display_list)
                     offsets.reverse()
 
+                    # frames = frames + 1
+
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile:
                         new_time = time.time()
                         print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                         print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
+
+                    # Perhaps, start the movie.
+                    renpy.display.video.start()
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
@@ -764,7 +781,10 @@ class Interface(object):
                                                 duration=(time.time() - start_time))
 
                         # Update the playing music, if necessary.
-                        renpy.music.restore()
+
+                        # This needs to be here so that we eventually start a
+                        # new song at the end of a fadeout.
+                        renpy.display.audio.restore_music()
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
@@ -784,7 +804,6 @@ class Interface(object):
 
                         if len(evs):
                             ev = evs[-1]
-
 
                     # x, y = getattr(ev, 'pos', (0, 0))
 
@@ -819,5 +838,6 @@ class Interface(object):
 
             # Redraw the old scene, if any.
             self.redraw(0)
-            
+
+            # print "It took", frames, "frames."
 
