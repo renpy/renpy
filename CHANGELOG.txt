@@ -24,6 +24,9 @@ init:
     $ style.window.background = Frame("frame.png", 125, 25)
 [/code]
 
+Fixed several bugs with the archiver. This version just might actually
+work on Windows. 
+
 Added a new variable, config.hard_rollback_limit, which limits the
 number of steps the user can rollback the game, interactively. This
 limit now defaults to 10 steps. (suggested by Grey) 

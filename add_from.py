@@ -47,6 +47,12 @@ def replace_labels(fn, labels):
 
     f.close()
     of.close()
+
+
+    try:
+        os.unlink(fn + ".bak")
+    except:
+        pass
     
     os.rename(fn, fn + ".bak")
     os.rename(fn + ".new", fn)

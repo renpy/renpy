@@ -8,6 +8,7 @@ import sys
 import os
 import encodings.zlib_codec
 import random
+import glob
 
 from cPickle import loads, dumps, HIGHEST_PROTOCOL
 
@@ -47,7 +48,13 @@ def main():
 
     offset = 0
 
-    for fn in sys.argv[2:]:
+    # Needed because windows sucks. It doesn't do globbing on the
+    # command line.
+    files = [ ]
+    for i in sys.argv[2:]:
+        files.extend(glob.glob(i))
+
+    for fn in files:
         index[fn] = [ ]
 
         print "Adding %s..." % fn
