@@ -6,6 +6,17 @@ from pygame.constants import *
 
 import renpy
 
+class Null(renpy.display.core.Displayable):
+    """
+    This is a displayable that doesn't actually display anything. It's
+    useful, I guess, when you need to wrap something with a behavior,
+    but don't want to actually have anything there.
+    """
+
+    def render(self, width, height, st, tt):
+        return renpy.display.surface.Surface(1, 1)
+
+
 class Container(renpy.display.core.Displayable):
     """
     This is the base class for containers that can have one or more
@@ -82,20 +93,27 @@ class Container(renpy.display.core.Displayable):
 
         return None
 
+    def predict(self, callback):
+
+        for i in self.children:
+            i.predict(callback)
+
 class Position(Container):
     """
-    Controls how its child is placed inside the space allocated to it.
-
-    Position is used when you have a child that is smaller than the
-    space allocated to the child. (For example, an image that is
-    smaller than the entire screen.) The parameters that are given to
-    Position give the location of an anchor point, both relative to
-    the enclosing box and to the child.
+    Controls the placement of a displayable on the screen, using
+    supplied positon properties. This is the non-curried form of
+    Position, which should be used when the user has directly created
+    the displayable that will be shown on the screen.
     """
 
     def __init__(self, child, style='image_placement', **properties):
         """
         @param child: The child that is being laid out.
+
+        @param style: The base style of this position.
+
+        @param properties: Position properties that control where the
+        child of this widget is placed.
         """
 
         super(Position, self).__init__()
@@ -115,6 +133,7 @@ class Position(Container):
 
     def get_placement(self):
         return self.style
+
             
 
 class HBox(Container):

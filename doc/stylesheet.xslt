@@ -23,6 +23,26 @@
     </html>
   </xsl:template>
 
+  <xsl:template match="toc">
+    <ol>
+      <xsl:for-each select="../h3">
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="." /></xsl:attribute>
+            <xsl:value-of select="."/>
+          </a>
+        </li>
+      </xsl:for-each>
+    </ol>
+  </xsl:template>
+
+  <xsl:template match="h3">
+    <a>
+      <xsl:attribute name="name"><xsl:value-of select="." /></xsl:attribute>
+      <h3><xsl:apply-templates /></h3>
+    </a>
+  </xsl:template>
+
   <xsl:template match="title">
     <h1><xsl:apply-templates /></h1>
   </xsl:template>
@@ -64,6 +84,22 @@
       <span class="propname"><xsl:value-of select="@name" /></span>
       --- <xsl:apply-templates />
     </p>
+  </xsl:template>
+
+  <xsl:template match="renpy_style">
+    <dt><b><xsl:value-of select="@name" /></b>:</dt>
+    <dd><xsl:apply-templates /></dd>
+  </xsl:template>
+
+  <xsl:template match="renpy_style_inherits">
+    (inherits from <b><xsl:apply-templates /></b>) <br />
+  </xsl:template>
+
+  <xsl:template match="var">
+    <dt class="var"><b><xsl:value-of select="@name" /></b> = <xsl:value-of select="@value" /></dt>
+    <dd>
+      <xsl:apply-templates />
+    </dd>
   </xsl:template>
     
 </xsl:stylesheet>

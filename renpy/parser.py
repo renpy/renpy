@@ -711,14 +711,13 @@ def parse_image_specifier(l):
     """
     This parses an image specifier. An image specifier looks like:
 
-    <image name> [ "at" <at list> ] [ "with" <with list> ]
+    <image name> [ "at" <at list> ] 
 
     The general idea is that the image name tells us which image to show,
-    the at expression tells us where it should be shown, and the
-    with list gives us the transition to show it with.
+    and the at list tells us where it should be shown.
 
-    This returns a tuple containing a tuple of strings, and two lists
-    of expressions (which may be empty if their part is omitted).
+    This returns a tuple containing a tuple of strings, and a list
+    of expressions (which may be empty if the at part is omitted).
     """
 
     image_name = parse_image_name(l)
@@ -916,6 +915,8 @@ def parse_statement(l):
         if l.keyword('from'):
             name = l.require(l.name)
             rv.append(ast.Label(loc, name, []))
+        else:
+            rv.append(ast.Pass(loc))
 
         l.expect_eol()
         l.advance()

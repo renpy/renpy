@@ -6,6 +6,14 @@ import renpy
 import pygame
 from pygame.constants import *
 import time
+import cStringIO
+
+KEYREPEATEVENT = USEREVENT + 1
+DISPLAYTIME = USEREVENT + 2
+
+# A list of keys that we allow to repeat.
+repeating_keys = [ K_LCTRL, K_RCTRL ]
+
 
 class IgnoreEvent(Exception):
     """
@@ -66,6 +74,15 @@ class Displayable(renpy.object.Object):
         """
 
         return renpy.game.style.default
+
+    def predict(self, callback):
+        """
+        Called to ask this displayable to call the callback with all
+        the images it may want to load.
+        """
+
+        return
+
 
     def place(self, dest, x, y, width, height, surf):
         """
@@ -297,6 +314,7 @@ class Display(object):
     fast blitting to thew window. Used to create other surfaces from.
 
     @ivar fullscreen: Is the window in fullscreen mode?
+
     """
 
 
@@ -305,10 +323,10 @@ class Display(object):
         # It shouldn't matter if pygame is already initialized.
         pygame.init()
 
-        self.fullscreen = renpy.config.fullscreen
+        self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
-        if renpy.config.fullscreen:
+        if self.fullscreen:
             fsflag = FULLSCREEN
 
 
@@ -320,13 +338,6 @@ class Display(object):
 
         self.sample_surface = self.window.convert_alpha()
 
-    def screenshot(self, filename):
-        """
-        Saves a screenshot of the current window into the given filename.
-        """
-
-        pygame.image.save(self.window, filename)
-                
     def show(self, transient, start_time):
         """
         Draws the current transient screen list to the screen.
@@ -338,7 +349,11 @@ class Display(object):
         rv = [ ]
         t = time.time()
 
-        # self.window.fill((0, 0, 0, 255))
+        if renpy.config.background:
+            self.window.fill(renpy.config.background)
+
+        surftree = renpy.display.surface.Surface(renpy.config.screen_width,
+                                                 renpy.config.screen_height)
 
         for key, base_start_time, d in transient:
 
@@ -353,17 +368,33 @@ class Display(object):
 
 
             # Place the surface.
-            offsets = d.place(self.window, 0, 0,
+            offsets = d.place(surftree, 0, 0,
                               renpy.config.screen_width,
                               renpy.config.screen_height,
                               surf)
 
             rv.append(offsets)
 
+        surftree.blit_to(self.window, 0, 0)
+
         pygame.display.flip()
         return rv
 
+    def screenshot(self, scale):
+        """
+        Returns a pygame Surface that is a screenshot of the current
+        contents of the window.
+        """
 
+        surf = pygame.transform.scale(self.window, scale)
+
+        sio = cStringIO.StringIO()
+        pygame.image.save(surf, sio)
+        rv = sio.getvalue()
+        sio.close()
+        
+        return rv
+    
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -375,12 +406,42 @@ class Interface(object):
     @ivar needs_reraw: True if we need a redraw now.
     
     @ivar profile_time: The time of the last profiling.
+
+    @ivar screenshot: A screenshot, or None if no screenshot has been
+    taken.
     """
 
     def __init__(self):
         self.display = Display()
         self.needs_redraw = False
         self.profile_time = time.time()
+        self.screenshot = None
+
+    def take_screenshot(self, scale):
+        """
+        This takes a screenshot of the current screen, and stores it so
+        that it can gotten using get_screenshot()
+        """
+
+        self.screenshot = self.display.screenshot(scale)
+
+    def get_screenshot(self):
+        """
+        Gets the current screenshot, as a string containing a TGA file.
+        """
+
+        if not self.screenshot:
+            raise Exception("Trying to write a screenshot that hasn't been taken.")
+
+        return self.screenshot
+
+    def lose_screenshot(self):
+        """
+        This deallocates the saved screenshot.
+        """
+
+        self.screenshot = None
+        
 
     def redraw(self, delay=0.0):
         """
@@ -407,7 +468,7 @@ class Interface(object):
         underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
         overlay = [ ( None, 0, i ) for i in renpy.config.overlay ] 
 
-        transient = underlay + scene_lists.transient + scene_lists.overlay + overlay
+        transient = underlay + scene_lists.master + scene_lists.transient + scene_lists.overlay + overlay
 
         # Compute the reversed list, which is in the right order
         # for handling events on.
@@ -425,10 +486,22 @@ class Interface(object):
         offsets = [ ]
 
         rv = None
+
+        # Tick time forward.
+        renpy.display.image.cache.tick()
+
+        # Predict images.
+        renpy.game.context().predict(renpy.display.image.cache.preload_image)
+
+        # Set up key repeats.
+        pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
+
+        # Set up display time event.
+        pygame.time.set_timer(DISPLAYTIME, 50)
         
         while rv is None:
 
-            if self.display.fullscreen != renpy.config.fullscreen:
+            if self.display.fullscreen != renpy.game.preferences.fullscreen:
                 self.display = Display()
                 self.needs_redraw = True
 
@@ -449,9 +522,29 @@ class Interface(object):
             # Update the playing music, if necessary.
             renpy.music.restore()
 
+            # TODO: Make sure that this doesn't happen when a reload is
+            # immediately needed.
+
+            while renpy.display.image.cache.needs_preload() and \
+                      not pygame.event.peek():
+                renpy.display.image.cache.preload()
+
             try:
                 ev = pygame.event.wait()
                 self.profile_time = time.time()
+
+                if ev.type == DISPLAYTIME:
+                    pygame.event.clear([DISPLAYTIME])
+                    ev = pygame.event.Event(DISPLAYTIME, {},
+                                            duration=(time.time() - start_time))
+
+                if ev.type == KEYREPEATEVENT:
+                    pygame.time.set_timer(KEYREPEATEVENT, 0)
+                    
+                    for i in repeating_keys:
+                        if pygame.key.get_pressed()[i]:
+                            ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
+                            break                            
 
                 # Handle quit specially for now.
                 if ev.type == QUIT:
@@ -474,6 +567,9 @@ class Interface(object):
 
             except IgnoreEvent:
                 pass
+
+        pygame.event.clear()
                 
+        pygame.time.set_timer(KEYREPEATEVENT, 0)
         scene_lists.replace_transient()
         return rv

@@ -84,6 +84,17 @@ class Node(object):
 
         assert False, "AST subclass forgot to define execute."
 
+    def predict(self, callback):
+        """
+        This is called to predictively load images from this node. The
+        callback needs to be passed into the predict method of any
+        images this ast node will probably load, and the method should
+        return a list containing the nodes that this node will
+        probably execute next.
+        """
+
+        return [ self.next ]
+
 
 class Say(Node):
 
@@ -182,7 +193,7 @@ class Python(Node):
 
     def execute(self):
         renpy.python.py_exec(self.python_code, self.hide)
-
+        
         return self.next
 
 class Image(Node):
@@ -245,6 +256,18 @@ def imspec_common(imspec, hide=False):
         with_img = None
 
     return key, img, with_img
+
+def predict_imspec(imspec, callback):
+    """
+    Call this to use the given callback to predict the image named
+    in imspec.
+    """
+
+    if imspec[0] not in renpy.exports.images:
+        return
+    
+    im = renpy.exports.images[imspec[0]]
+    im.predict(callback)
             
         
 class Show(Node):
@@ -262,13 +285,17 @@ class Show(Node):
 
     def execute(self):
 
-        key, img, with_img = imspec_common(self.imspec)
+        key, img = imspec_common(self.imspec)
        
         sls = renpy.game.context().scene_lists
         sls.add('master', img, key)
-        sls.add('transient', with_img, key)
 
         return self.next
+
+    def predict(self, callback):
+        predict_imspec(self.imspec, callback)
+        return [ self.next ]
+        
 
 class Scene(Node):
 
@@ -291,16 +318,20 @@ class Scene(Node):
         sls = renpy.game.context().scene_lists
         
         sls.clear('master')
-        sls.clear('transient')
 
         if self.imspec:
-            key, img, with_img = imspec_common(self.imspec)
+            key, img = imspec_common(self.imspec)
        
             sls.add('master', img, key)
-            sls.add('transient', with_img, key)
 
         return self.next
         
+    def predict(self, callback):
+
+        if self.imspec:
+            predict_imspec(self.imspec, callback)
+
+        return [ self.next ]
 
 class Hide(Node):
 
@@ -321,15 +352,10 @@ class Hide(Node):
 
         sls = renpy.game.context().scene_lists
         
-        key, img, with_img = imspec_common(self.imspec, hide=True)
+        key, img = imspec_common(self.imspec, hide=True)
        
         sls.remove('master', key)
 
-        if with_img:
-            sls.add('transient', with_img, key)
-        else:
-            sls.remove('transient', key)
-            
         return self.next
         
 class Call(Node):
@@ -342,6 +368,9 @@ class Call(Node):
     def execute(self):
         return renpy.game.context().call(self.label, return_site=self.next.name)
 
+    def predict(self, callback):
+        return [ renpy.game.script.lookup(self.label) ]
+
 class Return(Node):
 
     # No __init__ needed.
@@ -351,7 +380,14 @@ class Return(Node):
         return
 
     def execute(self):
-        return renpy.game.context().lookup_return()
+        return renpy.game.context().lookup_return(pop=True)
+
+    def predict(self, callback):
+        site = renpy.game.context().lookup_return(pop=False)
+        if site:
+            return [ site ]
+        else:
+            return [ ]
 
 class Menu(Node):
 
@@ -360,6 +396,15 @@ class Menu(Node):
 
         self.items = items
         self.set = set
+
+    def get_children(self):
+        rv = [ ]
+
+        for label, condition, block in self.items:
+            if block:
+                rv.extend(block)
+
+        return rv
 
     # Blocks of statements in a choice continue after the menu.
     def chain(self, next):
@@ -390,6 +435,16 @@ class Menu(Node):
             return self.items[choice][2][0]
         
 
+    def predict(self, callback):
+        rv = [ ]
+
+        for label, condition, block in self.items:
+            if block:
+                rv.append(block[0])
+
+        return rv
+                
+
 # Goto is considered harmful. So we decided to name it "jump"
 # instead. 
 class Jump(Node):
@@ -406,6 +461,9 @@ class Jump(Node):
     def execute(self):
         return renpy.game.script.lookup(self.target)
 
+    def predict(self, callback):
+        return [ renpy.game.script.lookup(self.target) ]
+
 # GNDN
 class Pass(Node):
 
@@ -420,6 +478,9 @@ class While(Node):
         self.condition = condition
         self.block = block
 
+    def get_children(self):
+        return self.block
+
     def chain(self, next):
         self.next = next
         chain_block(self.block, self)
@@ -430,6 +491,10 @@ class While(Node):
             return self.block[0]
         else:
             return self.next
+
+    def predict(self, callback):
+        return [ self.block[0], self.next ]
+        
 
 class If(Node):
 
@@ -442,12 +507,19 @@ class If(Node):
 
         self.entries = entries
 
+    def get_children(self):
+        rv = [ ]
+
+        for condition, block in self.entries:
+            rv.extend(block)
+
+        return rv
+
     def chain(self, next):
         self.next = next
 
         for condition, block in self.entries:
             chain_block(block, next)
-
 
     def execute(self):
 
@@ -456,7 +528,8 @@ class If(Node):
                 return block[0]
 
         return self.next
-        
 
-        
-        
+    def predict(self, callback):
+
+        return [ block[0] for condition, block in self.entries ] + \
+               [ self.next ]

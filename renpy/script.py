@@ -3,8 +3,10 @@
 
 import renpy
 
+import os.path
 import os
-import cPickle
+
+from cPickle import loads, dumps
 
 class ScriptError(Exception):
     """
@@ -30,7 +32,7 @@ class Script(object):
 
     """
 
-    def __init__(self, files):
+    def __init__(self, dir):
         """
         Loads the script by parsing all of the given files, and then
         walking the various ASTs to initialize this Script object.
@@ -39,8 +41,27 @@ class Script(object):
         self.namemap = { }
         self.initcode = [ ]
 
-        for fn in files:
+        # Find the script files to load.
+        for fn in os.listdir(dir):
+            if not (fn.endswith('.rpyc') or fn.endswith('.rpy')):
+                continue
+
+            fn = dir + '/' +  fn
+
+            if fn[-1] == 'c':
+                alt = fn[:-1]
+            else:
+                alt = fn + 'c'
+
+            if os.path.exists(alt):
+                fntime = os.stat(fn).st_mtime
+                alttime = os.stat(alt).st_mtime
+
+                if alttime > fntime:
+                    continue
+
             self.load_file(fn)
+            
 
         self.initcode.sort()
 
@@ -48,7 +69,17 @@ class Script(object):
 
     def load_file(self, fn):
 
-        stmts = renpy.parser.parse(fn)
+        if fn.endswith(".rpy"):
+            stmts = renpy.parser.parse(fn)
+            f = file(fn + "c", "wb")
+            f.write(dumps(stmts).encode('zlib'))
+            f.close()
+        elif fn.endswith(".rpyc"):
+            f = file(fn, "rb")
+            stmts = loads(f.read().decode('zlib'))
+            f.close()
+        else:
+            assert False            
 
         # All of the statements found in file, regardless of nesting
         # depth.
@@ -94,7 +125,7 @@ class Script(object):
         """
 
         if label not in self.namemap:
-            raise ScriptError("could not find label '%s'." % label)
+            raise ScriptError("could not find label '%s'." % str(label))
 
         return self.namemap[label]
 
@@ -106,25 +137,8 @@ class Script(object):
         return label in self.namemap
 
 def load_script(dir):
-    files = os.listdir(dir)
-    files = [ i for i in files if not i.startswith(".") ]    
-    files = [ dir + '/' + f for f in files if f.endswith(".rpy") ]
 
-    if files:
-        rv = Script(files)
-        # pscript = cPickle.dumps(rv, cPickle.HIGHEST_PROTOCOL).encode("zlib")
-
-        # f = file(dir + "/script", "w")
-        # f.write(pscript)
-        # f.close()
-
-        return rv
+    rv = Script(dir)
+    return rv
     
-    else:
-
-        f = file(dir + "/script", "r")
-        rv = cPickle.loads(f.read().decode("zlib"))
-        f.close()
-
-        return rv
 

@@ -75,11 +75,24 @@ def example(m):
 def function(m):
 
     name = m.group(1)
-    func = eval(name, dict(renpy=renpy.exports))
 
-    args = inspect.formatargspec(*inspect.getargspec(func))
+    store = vars(renpy.store)
+    renpy.store.renpy = renpy.exports
 
+    func = eval(name, store)
+    
     doc = func.__doc__
+
+    if inspect.isclass(func):
+        func = func.__init__
+        if func.__doc__:
+            doc += "\n" + func.__doc__
+
+        a, b, c, d = inspect.getargspec(func)
+        args = inspect.formatargspec(a[1:], b, c, d)
+    else:
+        args = inspect.formatargspec(*inspect.getargspec(func))
+        
 
     docparas = []
 

@@ -24,6 +24,14 @@ class Keymap(renpy.display.layout.Container):
 
     def event(self, ev, x, y):
 
+        # Mouse events.
+        if ev.type == MOUSEBUTTONDOWN:
+            key = 'mouse_' + str(ev.button)
+            if key in self.keymap:
+                self.keymap[key]()
+                raise renpy.display.core.IgnoreEvent()
+
+        # Keyboard events.
         if ev.type != KEYDOWN:
             return
 
@@ -43,10 +51,27 @@ class SayBehavior(renpy.display.layout.Container):
     mouse button.
     """
 
+    def __init__(self, child, delay=None):
+        super(SayBehavior, self).__init__(child)
+
+        self.delay = delay
+              
+
     def event(self, ev, x, y):
+
+        if ev.type == renpy.display.core.DISPLAYTIME and \
+           self.delay and \
+           ev.duration > self.delay:
+            return True
+
         if ev.type == MOUSEBUTTONDOWN:
             if ev.button == 1:
                 return True
+
+            if ev.button == 5:
+                if renpy.game.context().seen_current(False):
+                    return True
+
 
         if ev.type == KEYDOWN:
             if ev.key == K_RETURN:
@@ -54,6 +79,12 @@ class SayBehavior(renpy.display.layout.Container):
 
             if ev.key == K_SPACE:
                 return True
+
+            if ev.key == K_LCTRL or ev.key == K_RCTRL:
+                if renpy.game.preferences.skip_unseen:
+                    return True
+                elif renpy.game.context().seen_current(True):
+                    return True
 
         return None
 
@@ -98,9 +129,9 @@ class Menu(renpy.display.layout.VBox):
 
             # Actual choices change color if they are selected or not.
             if i == self.selected:
-                child.set_style('menu_choice_selected')
+                child.set_style('menu_selected')
             else:
-                child.set_style('menu_choice_unselected')
+                child.set_style('menu_unselected')
 
 
     def event(self, ev, x, y):
@@ -160,8 +191,8 @@ class Menu(renpy.display.layout.VBox):
         # If the selected item changed, update the display.
         if self.selected != old_selected:
 
-            self.children[self.selected].set_style('menu_choice_selected')
-            self.children[old_selected].set_style('menu_choice_unselected')
+            self.children[self.selected].set_style('menu_selected')
+            self.children[old_selected].set_style('menu_unselected')
 
             renpy.game.interface.redraw(0)
 
@@ -170,17 +201,13 @@ class Menu(renpy.display.layout.VBox):
 class Button(renpy.display.layout.Window):
     
 
-    def __init__(self, child, idle_style='button_idle',
-                 hover_style='button_hover',
-                 clicked=None):
+    def __init__(self, child, style='button', clicked=None, **properties):
 
-        self.idle_style = idle_style
-        self.hover_style = hover_style
-        self.clicked = clicked
-
-        super(Button, self).__init__(child, style=idle_style)
+        super(Button, self).__init__(child, style=style, **properties)
+        self.style.set_prefix('idle_')
 
         self.old_hover = False
+        self.clicked = clicked
 
     def set_hover(self, hover):
         """
@@ -189,11 +216,10 @@ class Button(renpy.display.layout.Window):
         """
 
         if hover:
-            style_name = self.hover_style
+            self.style.set_prefix('hover_')
         else:
-            style_name = self.idle_style
-
-        self.style = renpy.style.Style(style_name, dict())
+            self.style.set_prefix('idle_')
+        
         renpy.game.interface.redraw(0)
 
     def event(self, ev, x, y):
@@ -213,37 +239,30 @@ class Button(renpy.display.layout.Window):
 
         if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
             if inside:
-                return self.clicked
+                return self.clicked()
 
 
 class TextButton(Button):
 
-    def __init__(self, text, idle_style='button_idle',
-                 hover_style='button_hover',
-                 idle_text_style='button_idle_text',
-                 hover_text_style='button_hover_text',
+    def __init__(self, text, style='button', text_style='button_text',
                  clicked=None):
 
-        self.text_widget = renpy.display.text.Text(text, style=idle_text_style)
+        self.text_widget = renpy.display.text.Text(text, style=text_style)
 
         super(TextButton, self).__init__(self.text_widget,
-                                         idle_style=idle_style,
-                                         hover_style=hover_style,
+                                         style=style,
                                          clicked=clicked)
 
-        self.idle_text_style = idle_text_style
-        self.hover_text_style = hover_text_style
-        
-
+        self.text_widget.style.set_prefix('idle_')
+                                                  
     def set_hover(self, hover):
         super(TextButton, self).set_hover(hover)
 
         if hover:
-            style_name = self.hover_text_style
+            self.text_widget.style.set_prefix("hover_")
         else:
-            style_name = self.idle_text_style
+            self.text_widget.style.set_prefix("idle_")
         
-        self.text_widget.style = renpy.style.Style(style_name, dict())
                 
             
             

@@ -71,3 +71,11 @@ SPAN.propname {
         font-family: monospace;
         font-weight: bold;
 }
+
+DT {
+        margin-top: 1em;
+}
+
+DT.code { 
+        font-family: monospace;
+}

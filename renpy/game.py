@@ -48,16 +48,47 @@ exception_info = ''
 # Used to store style information.
 style = None
 
+# The set of statements we've seen in this session.
+seen_session = { }
+
+# The set of statements we've ever seen.
+seen_ever = { }
+
+class Preferences(object):
+    """
+    Stores preferences that will one day be persisted.
+    """
+    
+    def __init__(self):
+        self.fullscreen = False
+        self.music = True
+        self.skip_unseen = False
+
+preferences = Preferences()
+
 class RestartException(Exception):
     """
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
 
+class FullRestartException(Exception):
+    """
+    An exception of this type forces a hard restart, completely
+    destroying the store and config and so on.
+    """
+
 class QuitException(Exception):
     """
     An exception of this class will let us force a safe quit, from
     anywhere in the program. Do not pass go, do not collect $200.
+    """
+
+class JumpException(Exception):
+    """
+    This should be raised with a label as the only argument. This causes
+    the current statement to terminate, and execution to be transferred
+    to the named label.
     """
 
 def context(index=-1):

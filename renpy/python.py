@@ -1,3 +1,4 @@
+
 # This file contains code that handles the execution of python code
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
@@ -279,7 +280,8 @@ class Rollback(renpy.object.Object):
             if id(o) in reachable:
                 new_objects.append((o, rb))
             else:
-                print "Removing unreachable:", o
+                if renpy.config.debug:
+                    print "Removing unreachable:", o
                 pass
                 
         self.objects = new_objects
@@ -351,9 +353,14 @@ class RollbackLog(renpy.object.Object):
         state needs to be saved for rollbacking.
         """
 
-        # Prune the log, if necessary.
-        # if len(self.log) > renpy.config.rollback_maximum:
-        #    self.log = self.log[renpy.config.rollback_prune:]
+        # If the log is too long, try pruning it to a label.
+        if len(self.log) > renpy.config.rollback_length:
+            rb = self.log[-renpy.config.rollback_length]
+
+            # Checks to see if this is a real name, rather than a
+            # tuple.
+            if isinstance(rb.context.current, basestring):
+                self.log = self.log[-renpy.config.rollback_length:]
 
         self.current = Rollback()
         self.log.append(self.current)
@@ -486,7 +493,7 @@ class RollbackLog(renpy.object.Object):
             print "Can't find a place to rollback to. Not rolling back."
 
             revlog.reverse()
-            self.log = revlog
+            self.log = self.log + revlog
             return
 
         for rb in revlog:

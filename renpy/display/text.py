@@ -17,6 +17,11 @@ def get_font(fn, size):
     
 
 class Text(renpy.display.core.Displayable):
+    """
+    A Displayable that can display text on the screen.
+    """
+    
+    
     """ 
     @ivar style: The style that is used to display the text.
     @ivar text: The text that is being displayed.
@@ -33,6 +38,14 @@ class Text(renpy.display.core.Displayable):
     """
 
     def __init__(self, text, style='default', **properties):
+        """
+        @param text: The text that will be displayed on the screen.
+
+        @param style: A style that will be applied to the text.
+
+        @param properties: Additional properties that are applied to the text.
+        """
+
 
         self.text = text
         self.style = renpy.style.Style(style, properties)
@@ -114,7 +127,7 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout = "\n".join(lines)
         self.height = len(lines) * font.get_linesize()
-        self.width = maxwidth
+        self.width = max(maxwidth, self.style.minwidth)
 
         
     def render(self, width, height, st, wt):
@@ -152,12 +165,22 @@ class Text(renpy.display.core.Displayable):
     
 class ExpressionText(Text):
     """
-    Text that evaluates an expression each time it is displayed, and
-    displays the result of that expression.
+    This is a Displayable that displays the result of an expression on
+    the screen, as text.
     """
 
-    def __init__(self, expression, **kwargs):
-        super(ExpressionText, self).__init__('', **kwargs)
+    def __init__(self, expression, style='default', **properties):
+        """
+        @param expression: An expression that is evaluated to get the
+        text that will be shown on the screen.
+
+        @param style: A style that will be applied to the text.
+
+        @param properties: Additional properties that are applied to
+        the text.
+        """
+
+        super(ExpressionText, self).__init__('', **properties)
 
         self.old_value = ''
         self.expression = expression

@@ -3,6 +3,7 @@
   <title>Writing Visual Novels with Ren'Py</title>
   <subtitle>The Ren'Py Tutorial</subtitle>
     
+  <toc/>
     
   <p>
     Ren'Py is a programming language and runtime, intended to ease
@@ -1034,7 +1035,9 @@ $ e.love_love_points = a + b
     that retain their names are statements that have an explicit
     name specified. (Such as a label, a menu with a name, or a call
     with a from clause.) The game will rollback to the start of one of
-    these statements.
+    these statements. To ensure that rollback works correctly when the
+    script changes, a label that exists in a released version of the
+    game should continue to exist in all future version of the game.
   </p>
 
   <p>
@@ -1079,7 +1082,83 @@ $ e.love_love_points = a + b
     such a variable, will be saved, loaded, and rolled-back properly.
   </p>
 
-  <h3>Music</h3>
+  <h3>Image and Scene Functions</h3>
+  
+  <p>
+    This section includes functions that are useful when defining
+    images or composing scenes. 
+  </p>
+
+  <!-- func Image -->
+
+  <p>
+    The Image function is generally used in conjunction with the image
+    statement. For example:
+  </p>
+
+  <example>
+init:
+    image eileen happy = Image("9a_happy.png")
+    image eileen vhappy = Image("9a_vhappy.png")
+    image eileen concerned = Image("9a_concerned.png")
+  </example>
+
+  <!-- func renpy.Solid -->
+
+  <function name="Position" sig="(**properties)">
+    
+    <p>
+      Position, when given position properties as arguments, returns a
+      callable that can be passed to the "at" clause of a show, hide,
+      or scene statement to display the image at the given
+      location. See the section below on position properties to get
+      a full explanation of how they are used to lay things out, but
+      hopefully this example will show how Position can be used:
+    </p>
+  </function>
+
+  <example>
+init:
+    left = Position(xpos=0.0, xanchor='left')
+    center = Position(xpos=0.5, xanchor='center')
+    right = Position(xpos=1.0, xanchor='right')
+    
+    top = Position(xpos=0.5, xanchor='center', ypos=0.0,
+                   yanchor='top')
+
+show eileen happy at left
+    </example>
+
+  <h3>Interaction Functions</h3>
+
+  <p>
+    The following functions either implement new game behavior that
+    didn't merit its own statement, or complement the behavior of
+    statements. 
+  </p>
+
+  <example>
+init:
+    e = Character("Eileen", color=(200, 255, 200, 255))
+
+e "My name is shown in full, and in green."
+  </example>
+
+  <p>
+    It's probably best to define Character objects in an init block,
+    and not attempt to set attributes on them.
+  </p>
+
+
+  <!-- func Character -->
+
+  <!-- func renpy.pause -->
+
+  <!-- func renpy.full_restart -->
+
+  <!-- func renpy.quit -->
+
+  <h3>Music Functions</h3>
 
   <p>
     Ren'Py supports playing music in the background of your
@@ -1128,6 +1207,92 @@ show eileen wink
 
 e "Just kidding."
   </example>
+
+  <h3>Configuration Variables</h3>
+  
+  <p>
+    Much of the the configuration of Ren'Py is done using
+    configuration variable. These variable, when assigned in a python
+    block, change the behavior of the interpreter. As configuration
+    variables aren't saved, and many need to be set before the GUI
+    initializes, it makes sense to set all configuration variable
+    inside init blocks. An example setting of variables is:
+  </p>
+
+  <example>
+init:
+    $ config.screen_width = 640
+    $ config.screen_width = 480
+  </example>
+
+
+  <dl>
+    <var name="config.screen_width" value="800">
+      This sets the width of the screen.
+    </var>
+    
+    <var name="config.screen_height" value="600">
+      This sets the height of the screen.
+    </var>
+
+    <var name="config.background" value="(0, 0, 0, 255)">
+      This sets the default background that is shown in areas of the
+      screen where there are no images. If the screen will always be
+      filled with an image, it makes sense to set this to None, which
+      will improve performance by not drawing a default background.
+    </var>
+
+    <var name="config.debug" value="False">
+      Enables some minor debugging functionality (mostly by turning some
+      missing files into errors.) This should always be turned off in a
+      release. 
+    </var>
+
+    <var name="config.rollback_enabled" value="True">
+      Should the user be allowed to rollback the game? If set to False,
+      the user cannot interactively rollback. (The feature still works
+      for loading savegames when the script changes.)
+    </var>
+
+    <var name="config.rollback_length" value="512">
+      When there are more than this many statements in the rollback log,
+      Ren'Py will consider trimming the log. 
+    </var>
+
+    <var name="config.profile" value="False">
+      If set to True, some profiling information will be output to
+      stdout (wherever that may go to).
+    </var>
+
+    <var name="config.image_cache_size" value="10">
+      This is the number of images that can be in the image cache at
+      once. This is mostly a suggestion, as if Ren'Py ever needs to
+      display more than this number of images at once, it will cache
+      them all. But it will stop predictively loading images when the
+      cache is filled beyond this, and it will try to drop images from
+      the cache until it shrinks below this size. If this is too
+      small, there will be more disk access as images are loaded and
+      re-loaded. If this is too large, memory usage will be increased
+      as images are kept in memory.
+    </var>
+
+    <var name="config.predict_statements" value="10">
+      This is the number of statements, including the current one, to
+      consider when doing predictive image loading. A breadth-first
+      search from the current statement is performed until this many
+      statements is considered, and any image referenced in those
+      statements is potentially predictively loaded. Setting this to 0
+      will disable predictive loading of images.
+    </var>
+
+    <var name="config.debug_image_cache" value="False">
+      If True, Ren'Py will print the contents of the image cache to
+      standard output (wherever that goes) whenever the contents of
+      the image cache change.
+    </var>
+      
+
+  </dl>
 
   <h3>Properties and Styles</h3>
 
@@ -1208,6 +1373,12 @@ init:
     Example: (0, 0, 0, 128)
   </prop>
 
+  <prop name="minwidth">
+    The minimum width in pixels of this text. If the rendered text is
+    smaller than this, it is right-padded with whitespace until it is
+    at least this many pixels long.
+  </prop>
+
   <h4>Window Properties</h4>
 
   <p>
@@ -1249,13 +1420,6 @@ init:
     is grown to be at least this size.
   </prop>
 
-  <prop name="xpos">
-    This controls the positioning of the content in the window, in the
-    x direction. If an integer, it's the number of pixels to leave to
-    the left of the content. If a float between 0.0 and 1.0, it's the
-    amount of the empty space to leave to the left of the content.
-  </prop>
-
   <prop name="ymargin">
     The amount of transparent space that is left around this window in
     the y direction, in pixels. 
@@ -1278,12 +1442,82 @@ init:
     is grown to be at least this size.
   </prop>
 
-  <prop name="ypos">
-    This controls the positioning of the content in the window, in the
-    x direction. If an integer, it's the number of pixels to the top of
-    the content. If a float between 0.0 and 1.0, it's the
-    amount of the empty space to leave above the content.
+
+  <h4>Position Properties</h4>
+
+  <p>
+    Position properties are applied to widgets that are smaller than
+    the space allocated to them. They control the placement of the
+    widget in the space. For example, position properties can be used
+    to control the placement of a dialogue window on the screen. 
+  </p>
+
+  <p>
+    Position properties work best when a small widget is placed into
+    empty space. This is the case for say windows, and the menus that
+    are displayed as part of the main menu. Position properties work
+    on many updates, but the vagaries of how space is allocated by
+    widges may make some of the results counterintuitive.
+  </p>
+
+  <p>
+    Positioning is done by specifying the placement of an anchor that
+    is part of a widget within the space allocated to that widget. The
+    position is either specified as an absolute number of pixels or a
+    fraction of the avialable space, while the position of the anchor
+    within the widget is done by selecting one of three settings for
+    each dimension.
+  </p>
+
+  <prop name="xpos">
+    Controls the positioning of the widget anchor in the x
+    dimension. If an integer, this is taken as the number of pixels to
+    the left of the anchor. If a float, this is taken as a fraction of
+    the available space in the x direction.
   </prop>
+
+  <prop name="xanchor">
+    Controls the placement of the anchor within the widget, in the x
+    dimension. This can be one of 'left', 'center', or 'right'.
+  </prop>
+
+  <prop name="ypos">
+    Controls the positioning of the widget anchor in the y
+    dimension. If an integer, this is taken as the number of pixels to
+    the left of the anchor. If a float, this is taken as a fraction of
+    the available space in the y direction.
+  </prop>
+
+  <prop name="yanchor">
+    Controls the placement of the anchor within the widget, in the y
+    dimension. This can be one of 'top', 'center', or 'bottom'.
+  </prop>
+
+  <h4>Hovering</h4>
+  
+  <p>
+    In Ren'Py, buttons and their labels support the idea of hovering:
+    using different sets of properties when the mouse is over or not
+    over the widget. If the mouse is over the widget, then that widget
+    is hovered, else it is idle. On these widgets, Ren'Py will look up
+    a property prefixed with "hover_" or "idle_" (as appropriate) in a
+    style, before looking up an unprefixed property. If neither form
+    is found on a style, the process is repeated again on the parent
+    style. (The search pattern for background on a hovered button
+    goes: button.hover_background, button.background,
+    default.hover_background, default.background.)
+  </p>
+
+  <p>
+    As an example, take assigning a background to buttons that changes
+    when the button is hovered over.
+  </p>
+
+  <example>
+init:
+    style.button.hover_background = renpy.Solid((255, 255, 255, 255))
+    style.button.idle_background = renpy.Solid(0, 0, 0, 255))
+  </example>
 
   
   <h4>Using Properties and Styles</h4>
@@ -1353,7 +1587,77 @@ init:
     window and the label.
   </p>
 
-    
+  <h4>Standard Styles</h4>
+
+  <p>
+    In this section find a list of the standard styles that come with
+    Ren'Py, either built-in or in the standard library. Before each in
+    parentheses, we list the types of properties that are used on the
+    style, and "hover" if the default use of the style supports
+    hovering.
+  </p>
+
+  <dl>
+  <renpy_style name="default">The default style that all styles inherit from.</renpy_style>
+
+  <renpy_style name="window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.</renpy_style>
+
+  <renpy_style name="image_placement">This style is used to control the default placement of images on the screen.</renpy_style>
+
+  <renpy_style name="say_label"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.</renpy_style>
+
+  <renpy_style name="say_dialogue"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used by default for the text of dialogue.</renpy_style>
+
+  <renpy_style name="say_thought"><renpy_style_inherits>default</renpy_style_inherits>(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.</renpy_style>
+
+  <renpy_style name="say_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing dialogue and thoughts.</renpy_style>
+
+  <renpy_style name="menu_caption"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a menu caption.</renpy_style>
+
+  <renpy_style name="menu_selected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render a selected menu choice.</renpy_style>
+
+  <renpy_style name="menu_unselected"><renpy_style_inherits>default</renpy_style_inherits>(text) The style that is used to render an unselected menu choice.</renpy_style>
+
+  <renpy_style name="menu_window"><renpy_style_inherits>window</renpy_style_inherits>(window, position) The default style for windows containing a menu.</renpy_style>
+
+  <renpy_style name="button"><renpy_style_inherits>default</renpy_style_inherits>(window, hover) The default style used for buttons in the main and game menus.</renpy_style>
+
+  <renpy_style name="button_text"><renpy_style_inherits>default</renpy_style_inherits>(text, hover) The default style used for the label of a button.</renpy_style>
+
+  <renpy_style name="selected_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).</renpy_style>
+
+  <renpy_style name="selected_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a selected button.</renpy_style>
+
+  <renpy_style name="disabled_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for a disabled button.</renpy_style>
+
+  <renpy_style name="disabled_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the label of a disabled button.</renpy_style>
+
+  <renpy_style name="mm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.</renpy_style>
+
+  <renpy_style name="mm_menu_window"><renpy_style_inherits>default</renpy_style_inherits>(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.</renpy_style>
+
+  <renpy_style name="mm_button"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used on buttons that are part of the main menu.</renpy_style>
+
+  <renpy_style name="mm_button_text"><renpy_style_inherits>button_text</renpy_style_inherits>(text, hover) The style that is used for the labels of buttons that are part of the main menu.</renpy_style>
+
+  <renpy_style name="gm_root_window"><renpy_style_inherits>default</renpy_style_inherits>(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.</renpy_style>
+
+  <renpy_style name="gm_nav_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.</renpy_style>
+
+  <renpy_style name="file_picker_window"><renpy_style_inherits>default</renpy_style_inherits>(window, placement) A window containing the file picker that is used to choose slots for loading and saving.</renpy_style>
+
+  <renpy_style name="file_picker_entry"><renpy_style_inherits>button</renpy_style_inherits>(window, hover) The style that is used for each of the slots in the file picker.</renpy_style>
+
+  <renpy_style name="file_picker_text"><renpy_style_inherits>default</renpy_style_inherits>(text) A base style for all text that is displayed in the file picker.</renpy_style>
+
+  <renpy_style name="file_picker_new"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the new indicator in the file picker.</renpy_style>
+
+  <renpy_style name="file_picker_old"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to the old indicator in the file pciker.</renpy_style>
+
+  <renpy_style name="file_picker_extra_info"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.</renpy_style>
+
+  <renpy_style name="file_picker_new_slot"><renpy_style_inherits>file_picker_text</renpy_style_inherits>(text) The style that is used for the new slot indicator in the file picker.</renpy_style>
+  </dl>
 
 
 </doc>

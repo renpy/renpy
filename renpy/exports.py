@@ -11,8 +11,15 @@ from renpy.display.behavior import *
 from renpy.display.image import *
 
 from renpy.curry import curry
-
 from renpy.music import music_start, music_stop
+from renpy.loadsave import *
+
+import time
+import random
+
+# This is a map from image name to a Displayable object corresponding
+# to that image name.
+images = { }
 
 def checkpoint():
     """
@@ -111,11 +118,7 @@ def set_overlay(overlay_list):
     scene_lists().set_overlay(overlay_list)
     
 
-# This is a map from image name to a Displayable object corresponding
-# to that image name.
-images = { }
-
-def menu(items, set_expr, window_style='window_menu'):
+def menu(items, set_expr, window_style='menu_window'):
     """
     Displays a menu, and returns to the user the value of the selected
     choice. Also handles conditions and the menuset.
@@ -154,7 +157,7 @@ def menu(items, set_expr, window_style='window_menu'):
 
     return rv
 
-def display_menu(items, window_style='window_menu'):
+def display_menu(items, window_style='menu_window'):
 
     menu = Menu(items)
     win = Window(menu, style=window_style)
@@ -186,7 +189,7 @@ def say(who, what):
         
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
-                window_style='window_say', **properties):
+                window_style='say_window', **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
     said by anyone.
@@ -220,6 +223,20 @@ def display_say(who, what, who_style='say_label',
     interact()
     checkpoint()
 
+def pause(delay=None):
+    """
+    When called, this pauses and waits for the user to click before
+    advancing the script.
+    """
+
+    null = renpy.display.layout.Null()
+    sayb = renpy.display.behavior.SayBehavior(null, delay=delay)
+
+    scene_list_add('transient', sayb)
+    
+    interact()
+    
+
 def rollback():
     """
     Rolls the state of the game back to the last checkpoint.
@@ -234,7 +251,14 @@ def toggle_fullscreen():
     Toggles the fullscreen mode.
     """
 
-    renpy.config.fullscreen = not renpy.config.fullscreen
+    renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen
+
+def toggle_music():
+    """
+    Toggles the playing of music.
+    """
+
+    renpy.game.preferences.music = not renpy.game.preferences.music
      
 def has_label(name):
     """
@@ -244,31 +268,38 @@ def has_label(name):
 
     return renpy.game.script.has_label(name)
 
-def screenshot(filename="screenshot.bmp"):
+def take_screenshot(scale):
     """
-    Takes a screenshot, and saves it in the given filename.
+    This causes a screenshot to be taken. This screenshot will be
+    saved with a savegame when the game is saved.
     """
 
-    renpy.game.interface.display.screenshot(filename)
+    renpy.game.interface.take_screenshot(scale)
 
+def full_restart():
+    """
+    This causes a full restart of Ren'Py. This clears the store and
+    configuration, and re-runs init before branching off to
+    start. It's very close to what happens when we quit out and re-run
+    the interpreter, save for some caches not being cleared.
+    """
+
+    raise renpy.game.FullRestartException()
+
+def quit():
+    """
+    This causes Ren'Py to exit entirely.
+    """
+
+    raise renpy.game.QuitException()
+
+def jump(label):
+    """
+    Causes the current statement to end, and control to jump to the given
+    label.
+    """
+
+    raise renpy.game.JumpException(label)
+
+call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
-    
-def save(filename):
-    """
-    Saves the current state of the game in the file with the given name.
-    """
-
-    f = file(filename, "w")
-    renpy.loadsave.save(f)
-    f.close()
-
-    print "Saved game."
-
-def load(filename):
-    """
-    Loads the game from the file with the given name. (Doesn't return.)
-    """
-
-    f = file(filename, "r")
-    renpy.loadsave.load(f)
-    # That's all, folks. GC closes the file.

@@ -61,7 +61,13 @@ class Context(object):
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 
-            node = node.execute()
+            try:
+                node = node.execute()
+            except renpy.game.JumpException, e:
+                node = renpy.game.script.lookup(e.args[0])
+
+            renpy.game.seen_ever[self.current] = True
+            renpy.game.seen_session[self.current] = True
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
@@ -80,7 +86,7 @@ class Context(object):
 
         return renpy.game.script.lookup(label)
 
-    def lookup_return(self):
+    def lookup_return(self, pop=True):
         """
         Returns the node to return to, or None if there is no
         such node.
@@ -89,7 +95,11 @@ class Context(object):
         if len(self.return_stack) == 0:
             return None
 
-        label = self.return_stack.pop()
+        if pop:
+            label = self.return_stack.pop()
+        else:
+            label = self.return_stack[-1]
+
         return renpy.game.script.lookup(label)
             
     def rollback_copy(self):
@@ -104,3 +114,45 @@ class Context(object):
 
         return rv
 
+    def predict(self, callback):
+        """
+        Performs image prediction, calling the given callback with each
+        images that we predict to be loaded, in the rough order that
+        they will be potentially loaded.
+        """
+
+        nodes = [ renpy.game.script.lookup(self.current) ]
+
+        for i in range(0, renpy.config.predict_statements):
+            if i >= len(nodes):
+                break
+
+            node = nodes[i]
+
+            # Ignore exceptions in prediction, so long as
+            # prediction is not needed.
+            try:
+                for n in node.predict(callback):
+                    if n not in nodes:
+                        nodes.append(n)
+            except:
+                if renpy.config.debug:
+                    raise
+                
+                
+    def seen_current(self, ever):
+        """
+        Returns a true value if we have finshed the current statement
+        at least once before.
+
+        @param ever: If True, we're checking to see if we've ever
+        finished this statement. If False, we're checking to see if
+        we've finished this statement in the current session.
+        """
+
+        if ever:
+            seen = renpy.game.seen_ever
+        else:
+            seen = renpy.game.seen_session
+
+        return self.current in seen

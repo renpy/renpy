@@ -22,20 +22,22 @@ init:
 
 # The actual game starts here.
 label start:
+
+    $ renpy.music_start('sun-flower-slow-drag.mid')
     
     scene whitehouse
     show eileen vhappy
 
-    "Girl" "Welcome to Ren'Py 4 Preview Release 1."
+    "Girl" "Welcome to Ren'Py 4!"
 
     show eileen happy
 
-    "Girl" "And welcome to American Bishoujo's southern base, just
-            outside of Washington, D.C."
+    "Girl" "And welcome to American Bishoujo's former southern base,
+            just outside of Washington, D.C."
 
     show eileen happy at left
 
-    "Girl" "This isn't the view from our home base, but it'll do for
+    "Girl" "This isn't the view from our former base, but it'll do for
             this demo."
 
     show eileen happy

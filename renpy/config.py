@@ -11,8 +11,8 @@ window_title = "A Ren'Py Game"
 screen_width = 800
 screen_height = 600
 
-# Should the display be forced to be fullscreen?
-fullscreen = None
+# The background color.
+background = (0, 0, 0, 255)
 
 # Turns recoverable errors into fatal ones, so that the user can know
 # about and fix them.
@@ -21,6 +21,9 @@ debug = False
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
 rollback_enabled = True
+
+# If the rollback is longer than this, we may trim it.
+rollback_length = 512
 
 # A list of Displayables that should always be added to the end
 # of the scene list.
@@ -32,3 +35,23 @@ underlay = [ ]
 
 # True to enable profiling.
 profile = False
+
+# The directory save files will be saved to.
+savedir = None
+
+# The number of images that are allowed to live in the image cache
+# at once.
+image_cache_size = 10
+
+# The number of statements we will analyze when doing predictive
+# loading. Please note that this is a total number of statements in a
+# BFS along all paths, rather than the depth along any particular
+# path. The current node is counted in this number.
+predict_statements = 10
+
+# Causes the contents of the image cache to be printed to stdout when
+# it changes.
+debug_image_cache = True
+
+# The delay while we are skipping say statements.
+skip_delay = 100
