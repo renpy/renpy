@@ -14,7 +14,7 @@ import renpy.game as game
 import os
 from cPickle import loads, dumps, HIGHEST_PROTOCOL
 
-def run():
+def run(restart=False):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
@@ -26,6 +26,9 @@ def run():
     # Reload some things, in case this is a restart.
     renpy.store.reload()
     renpy.config.reload()
+
+    # Note that this is a restart.
+    renpy.store._restart = restart
 
     renpy.config.savedir = game.basepath + "/saves"
 
@@ -136,9 +139,12 @@ def main(basepath):
 
     # Start things running.
 
+    restart = False
+
     while True:
         try:
-            run()
+            run(restart)
             break
         except game.FullRestartException, e:
+            restart = True
             pass

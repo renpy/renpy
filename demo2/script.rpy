@@ -84,6 +84,20 @@ init:
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
 
+# The splashscreen is called, if it exists, before the main menu is
+# shown the first time. It is not called if the game has restarted.
+
+# We'll comment it out for now.
+#
+# label splashscreen:
+#     scene black
+#     show text "American Bishoujo Presents..." with fade
+#     $ renpy.pause(1.0)
+#     hide text with fade
+#
+#     return
+
+
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 

@@ -22,12 +22,14 @@ init -250:
 
         # Text properties.
         style.default.font = "Vera.ttf"
+        style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
         style.default.drop_shadow = (2, 2)
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
         style.default.textalign = 0
+        style.default.text_y_fudge = 0
 
         # Change this if you're not using Vera 22.
         if renpy.windows():

@@ -91,7 +91,8 @@ sticky_positions = False
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     
-    # Default keymap.
+    # Bindings present almost everywhere, unless explicitly
+    # disabled.
     rollback = [ 'K_PAGEUP', 'mouse_4' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
@@ -126,7 +127,8 @@ keymap = dict(
     # Imagemap.
     imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
 
-    # Repeating.
+    # This isn't a binding, but instead a list of keys that should
+    # repeat when held down.
     repeating = [ 'K_LCTRL', 'K_RCTRL' ],
     )
 

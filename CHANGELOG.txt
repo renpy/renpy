@@ -1,14 +1,33 @@
-RNG.
+New in 4.3
+----------
 
-UI! Including ImageButton!
+Now, when the library first starts up, it tries calling the
+"splashscreen" label, if it exists. The splashscreen will not be
+called in the case of a full reset (known to the user as a return to
+the main menu).
 
-Sticky positions.
-[not documented]
+Added a new text property, antialias, that controls the antialiasing
+of text. Also made the font property optionally take a comma-separated
+list of font names, which are searched for in the 
 
-library.game_menu.
-library.has_music.
-library.has_sound.
-library.has_transitions.
+Added a new class, DynamicCharacter, which is now the preferred way of
+having a character with a changable and/or user-input name.
+
+A new random number generator has been implemented as
+renpy.random. This random number generator cooperates with rollback,
+always producing the same random numbers when a rollback occurs.
+
+Added a set of UI functions, that allow the user to build up a user
+interface themselves. These could be useful when implementing more
+complex games, such as those that require the user to schedule a day
+in advance. Also new is a new imagebutton, a button consisting of two
+images.
+
+Sticky postions have been implemented. Enabling this (using the
+variable config.sticky_positions) cause the at clause corresponding to
+a given character to be remembered, allowing the character to change
+emotion without changing places on the screen (or requiring a second
+at clause).
 
 Rewrote the implementation of preferences, to clean up the code. Moved
 it into its own file, preferences.rpy. Also, made it possible for a
@@ -21,18 +40,16 @@ hovered. This lets us distinguish between between hotspots that are
 present and exist, and hotspots that are totally absent. This could be
 used to implement something like an image gallery that only displays
 unlocked images.
- [ not documented ]
 
 Implemented config.keymap, which allows the changing of keys and mouse
-buttons that trigger various Ren'Py events. [ not documented. ]
+buttons that trigger various Ren'Py events.
 
 There's now a new look for loading and saving games, that allows 10
 saves to be presented at once. I strongly recommend removing the 
 library.file_page_length line at the start of your game scripts, if
 it exists.
 
-Fixed a bug in sound.init that lead to crashes in some cases. (Caught
-by Mikey)
+Fixed a bug in sound.init that lead to crashes in some cases.
 
 Fixed a bug in ast.Node.predict that was causing an exception when
 config.debug was turned on.

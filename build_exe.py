@@ -26,6 +26,6 @@ sys.argv[1:] = [ 'py2exe' ]
 
 setup(name="RenPy",
       windows=programs,
-      console=[ "archiver.py", "add_from.py" ],
+      console=[ "archiver.py", "add_from.py", "console.py" ],
       zipfile='lib/renpy.zip',
       )

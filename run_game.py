@@ -14,7 +14,7 @@ import renpy
 
 
 # The version of Ren'Py in use.
-version = 'Renpy 4.2'
+version = 'Renpy 4.3 "Birthday Present"'
 
 if __name__ == "__main__":
 
@@ -22,7 +22,14 @@ if __name__ == "__main__":
     op.add_option('--game', dest='game', default='game',
                   help='The directory the game is in.')
 
+    op.add_option('--python', dest='python', default=None,
+                  help='Run the argument in the python interpreter.')
+
     options, args = op.parse_args()
+
+    if options.python:
+        execfile(options.python)
+        sys.exit(0)
 
     try:
         renpy.main.main(options.game)

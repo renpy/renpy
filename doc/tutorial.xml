@@ -1371,14 +1371,15 @@ python:
 
     After the last init block has finished running, the display is
     initialized, and the actual game can begin. If the library is
-    present it looks for a label named "main_menu". If it exists, then
-    that label is jumped to as the main menu. Otherwise, the library
-    main menu is displayed. While library.main_menu allows this menu
-    to be customized, the default main menu calles the label "start"
-    when the user chooses "Start Game". The library main menu can
-    also be manually accessed by jumping to _library_main_menu, this
-    is useful if you want to display an intro before the menu is
-    shown.
+    present it looks for a label named "splashscreen", and calls it if
+    it exists and this is not a reset of Ren'Py. It then looks for the
+    label "main_menu". If it exists, then that label is jumped to as
+    the main menu. Otherwise, the library main menu is
+    displayed. While library.main_menu allows this menu to be
+    customized, the default main menu calles the label "start" when
+    the user chooses "Start Game". The library main menu can also be
+    manually accessed by jumping to _library_main_menu, which is useful
+    if you want to display an intro before the menu is shown.
 
   </p>
 
@@ -1655,9 +1656,13 @@ e "My name is shown in full, and in green."
 
   <!-- func Character -->
 
+  <!-- func DynamicCharacter -->
+
   <!-- func renpy.pause -->
 
-  <!-- func renpy.input -->
+  <!-- func renpy.display_say -->
+
+  <!-- func renpy.display_menu -->
 
   <!-- func renpy.input -->
 
@@ -1692,6 +1697,17 @@ e "Pleased to meet you, %(name)s."
   <!-- func renpy.watch -->
 
   <!-- func renpy.windows -->
+
+  <p>
+    Finally, there exists an object named renpy.random. This object is
+    a random number generator that implements the <a
+    href="http://www.python.org/doc/2.3.4/lib/module-random.html">Python
+    random number generation interface</a>. However, unlike the
+    standard random number generator, this object cooperates with
+    rollback, generating the same numbers regardless of how many times
+    we rollback. It should be used instead of the standard Python
+    random module.
+  </p>
 
   <h3>Overlays</h3>
 
@@ -1865,7 +1881,11 @@ init:
     </var>
 
     <var name="config.debug_sound" value="False">
-      
+      Enables debugging of sound functionality. This disables the
+      supression of errors when generating sound. However, if a sound
+      card is missing or flawed, then such errors are normal, and
+      enabling this may prevent Ren'Py from functioning normally. This
+      should always be False in a released game.
     </var>
 
     <var name="config.rollback_enabled" value="True">
@@ -1967,7 +1987,22 @@ init:
       short, so the wrong music doesn't play for too long.
     </var>
 
-    <var name="library.file_page_length" value="4">
+    <var name="config.keymap" value="dict(...)">
+      This variable contains a keymap giving the keys and mouse
+      buttons assigned to each possible operation. Please see the
+      section on keymaps for more information.
+    </var>
+
+    <var name="config.sticky_positions" value="False">
+      Sticky positions causes the at clause of a show or scene
+      statement to be remembered for as long as that character is on
+      the screen. Future show statements without at clauses will be
+      given the remembered at clause. This lets us easily change the
+      character's expression without changing their position on the
+      screen.
+    </var>
+
+    <var name="library.file_page_length" value="10">
       This is the number of save slots that are shown in the picker
       that's used by the load and save portions of the game menu.
     </var>
@@ -1997,6 +2032,25 @@ init:
       which brings up the game menu in load mode, and "_quit", which
       terminates Ren'Py.
     </var>
+    
+    <var name="library.has_music" value="True">
+      If True, the preference for enabling and disabling music will be
+      presented to the user. This should be set to False if the game
+      does not play any music.
+    </var>
+
+    <var name="library.has_sound" value="True">
+      If True, the preference for enabling and disabling sound effects
+      is presented to the user. This should be set to False if the
+      game does not have any sound effects.
+    </var>
+
+    <var name="library.has_transitions" value="True">
+      If True, the preference for enabling and disabling transitions
+      is presented to the user. This should be set to False if the
+      game does not have any transitions (that is, never uses the with
+      statement or clause).
+    </var>
 
   </dl>
 
@@ -2016,7 +2070,7 @@ init:
     used to control the font, size, and color of text, while window
     properties are used to control the layout, background, and padding
     of windows. If a widget displays text inside a window (as a
-    renpy.TextButton does), then it respects both text and window
+    textbutton does), then it respects both text and window
     properties. A widget is a Displayable that can accept properties.
   </p>
 
@@ -2049,8 +2103,11 @@ init:
   </p>
 
   <prop name="font">
-    A filename that contains a truetype font that is used to display
-    the text on the screen. Example: "Vera.ttf"
+    This can be either the name of file containing a truetype font
+    that is used to render the text, or a string containing font
+    names, the first found of which will be used to render the text.
+
+    Examples: "Vera.ttf" or "Arial,Helvetica,FreeSans"
   </prop>
 
   <prop name="size">
@@ -2063,6 +2120,11 @@ init:
   <prop name="color">
     The color in which the text will be displayed on the screen, as an
     RGBA tuple. Example: (255, 255, 255, 255)
+  </prop>
+
+  <prop name="antialias">
+    If True, the text will be antialiased. Otherwise, it will be left
+    jagged. Example: True
   </prop>
 
   <prop name="drop_shadow">
@@ -2092,6 +2154,11 @@ init:
     spacing. If negative, the lines will be pushed closer
     together. This is very platform-dependent, so you may want to
     condition it on the result of renpy.windows().
+  </prop>
+
+  <prop name="text_y_fudge">
+    This fudges the y position of a block of text by adding whitespace
+    above the first line. 
   </prop>
 
   <prop name="textalign">
@@ -2399,7 +2466,7 @@ init:
     that need to be loaded.
   </p>
 
-  <h3>Localization</h3>
+  <h3>Localizing Ren'Py</h3>
   
   <p>
     While Ren'Py is by default set up to operate in an English
@@ -2439,6 +2506,237 @@ init:
     string is in Unicode rather than ASCII. This is useful if your
     language uses non-ascii characters.
   </p>
+
+  <h3>Changing the Keymap</h3>
+
+  <p>
+The variable config.keymap contains a map from functions that can be
+performed by the various user-interface elements of Ren'Py to a list
+of keysyms that actually perform those functions. Modifying the
+contents of the keymap can change the keys and mouse buttons that
+cause things to happen.
+</p>
+
+<p>
+While this functionality has been added to Ren'Py at a user's request
+(and because it simplifies the Ren'Py code), it's not altogether clear
+that it should be used. Having a common set of keybindings makes games
+easier to play, by reducing the learning curve of users. It's probably
+better to build consensus around a change in keybindings, rather than
+unilaterally making something different from everyone else.
+</p>
+
+<p>
+Anyway, in Ren'Py keysyms are strings. The first kind of keysym is of
+the form 'mouse_#', for a number between 1 and 5. These keysyms are
+generated by mouse button presses or turns of the mouse wheel. For
+example, "mouse_1" is generally the left mouse button, while "mouse_4"
+is a turn of the the mouse wheel to the top.
+</p>
+
+<p>
+A second kind of keysym is a string containing a character that is
+generated when a key is pressed. This is useful for binding alphabetic
+keys and numbers. Examples of these keysyms include "a", "A", and
+"7". 
+</p>
+
+<p>
+The final kind of keysym is the symbolic name for the key. This can be
+any of the K_ constants taken from 
+<a href="http://www.pygame.org/docs/ref/pygame_constants.html">pygame.constants</a>
+This type of keysym looks like "K_BACKSPACE", "K_RETURN", and "K_TAB".
+</p>
+
+<p>
+To change a binding, update the appropriate list in
+config.keymap. The following code adds the 't' key to the list of
+keys that dismiss a say statement.
+</p>
+
+<example>
+init:
+    $ config.keymap['dismiss'].append('t')
+</example>
+
+<p>
+The default keymap is contained inside the python code implementing 
+Ren'Py, and as of version 4.3 is as follows:
+</p>
+
+<example>
+keymap = dict(
+    
+    # Bindings present almost everywhere, unless explicitly
+    # disabled.
+    rollback = [ 'K_PAGEUP', 'mouse_4' ],
+    screenshot = [ 's' ],
+    toggle_fullscreen = [ 'f' ],
+    toggle_music = [ 'm' ],
+    game_menu = [ 'K_ESCAPE', 'mouse_3' ],
+    hide_windows = [ 'mouse_2' ],
+
+    # Say.
+    rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
+    dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    skip = [ 'K_LCTRL', 'K_RCTRL' ],
+
+    # Keymouse.
+    keymouse_left = [ 'K_LEFT' ],
+    keymouse_right = [ 'K_RIGHT' ],
+    keymouse_up = [ 'K_UP' ],
+    keymouse_down = [ 'K_DOWN' ],
+    
+    # Menu.
+    menu_mouseselect = [ 'mouse_1' ],
+    menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
+    menu_keyup = [ 'K_UP' ],
+    menu_keydown = [ 'K_DOWN' ],
+    
+    # Button.
+    button_select = [ 'mouse_1', 'K_RETURN', 'K_KP_ENTER' ],
+
+    # Input.
+    input_backspace = [ 'K_BACKSPACE' ],
+    input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+
+    # Imagemap.
+    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
+
+    # This isn't a binding, but instead a list of keys that should
+    # repeat when held down.
+    repeating = [ 'K_LCTRL', 'K_RCTRL' ],
+    )
+</example>
+
+<h3>UI Functions</h3>
+
+<p>
+While it's hoped that Ren'Py say and menu statements will be
+appropriate for much of the user interaction that goes on in a visual
+novel, we recognize that not all games can be fit in such a mold. To
+allow other, similar, games to be built, we've exposed the functions
+that we use to build the Ren'Py user interface. These functions are
+used both for normal gameplay, and to build the main and game
+menus. While these functions won't be enough for all games (Ren'Py
+will never be a RPG engine), hopefully these will allow the creation
+of, for example, schedule-management dating-simulation games.
+</p>
+
+<p>
+To start, let's give a script snippet that uses the UI functions. 
+The following displays a window containing three buttons, arraigned
+horizontally. The string assigned to choice varies depending on which 
+of the three is picked.
+</p>
+
+<example>
+$ ui.window()
+$ ui.hbox()
+
+$ ui.textbutton("A", clicked=ui.returns("A"))
+$ ui.textbutton("B", clicked=ui.returns("B"))
+$ ui.textbutton("C", clicked=ui.returns("C"))
+
+$ ui.close()
+$ choice = renpy.interact(suppress_overlay=True)
+</example>
+
+<p>
+To understand the ui functions, you must first understand the three
+kinds of widgets that Ren'Py supports. The first kind of widget (of
+which window is one), takes a single child widget. When this kind of
+widget is open, the next widget to be created is added to it, and it
+then closes automatically.
+</p>
+
+<p>
+A second kind of widget can take an arbitrary number of child
+widgets. This kind of widget is exemplified by the layout widgets:
+vbox, hbox, and fixed. New widgets are added to this kind of widget
+until a matching call to ui.close() occurs, unless they are instead
+added to an open child of this widget.
+</p>
+
+<p>
+The final kind of widget cannot take any children. This kind of
+widget is exemplified by textbutton.
+</p>
+
+<p>
+Nothing is displayed on the screen until ui.interact() is called. Once
+it has been called, Ren'Py displays the screen to the user. It then
+waits for a widget to return a value. In the example given above, when
+a textbutton is clicked, the function returned by ui.returns is
+called, which in turn causes ui.interact to return the same
+value. When ui.interact returns, the screed is cleared of all
+transient ui elements, and control proceeds with the next
+statement. The ui functions must be called again if we want to show
+the same user interface to the user again.
+</p>
+
+<p>
+The following are the functions available in the ui module, which is
+automatically present in the game namespace.
+</p>
+
+<h4>Single-Child Widgets</h4>
+
+<!-- func ui.window -->
+
+<!-- func ui.button -->
+
+<h4>Multiple-Child Widgets</h4>
+
+<!-- func ui.vbox -->
+
+<!-- func ui.hbox -->
+
+<!-- func ui.fixed -->
+
+<h4>No-Child Widgets and Psuedo-Widgets</h4>
+
+<!-- func ui.text -->
+
+<!-- func ui.image -->
+
+<!-- func ui.textbutton -->
+
+<!-- func ui.imagebutton -->
+
+<!-- func ui.imagemap -->
+
+<!-- func ui.menu -->
+
+<!-- func ui.saybehavior -->
+
+<!-- func ui.keymousebehavior -->
+
+<h4>Functions</h4>
+
+<!-- func ui.interact -->
+
+<!-- func ui.close -->
+
+<function name="ui.returns" sig="(value)">
+<p>
+This function returns a function that, when called, returns the
+supplied value. It's best used to supply the clicked argument to the
+various button widgets.
+</p>
+</function>
+
+<function name="ui.jumps" sig="(label)">
+<p>
+This function returns a function that, when called, jumps the game to
+the given label, ending the current interaction in the process. It's
+best used to supply the clicked argument to the various button
+widgets. (Most of the time, you want to use ui.returns and a series of
+if statements to jump or call the appropriate label, rather than
+relying on this function.)
+</p>
+</function>
+
 
   <h3>Function Index</h3>
   

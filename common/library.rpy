@@ -108,6 +108,10 @@ init -500:
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
+
+    if renpy.has_label("splashscreen") and not _restart:
+        call splashscreen
+
     jump _main_menu
 
 # This shows the main menu to the user. 

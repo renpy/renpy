@@ -12,7 +12,11 @@ def get_font(fn, size):
     if (fn, size) in _font_cache:
         return _font_cache[(fn, size)]
 
-    rv = pygame.font.Font(transfn(fn), size)
+    try:
+        rv = pygame.font.Font(transfn(fn), size)
+    except:
+        rv = pygame.font.SysFont(fn, size)
+
     _font_cache[(fn, size)] = rv
 
     return rv
@@ -166,8 +170,11 @@ class Text(renpy.display.core.Displayable):
 
         # Common rendering code.
         def render_lines(x, y, color):
+
+            y += self.style.text_y_fudge
+
             for l in lines:
-                ls = font.render(l, True, color)
+                ls = font.render(l, self.style.antialias, color)
                 lw, lh = ls.get_size()
                 xo = int((self.width - lw) * self.style.textalign)
                 surf.blit(ls, (x + xo, y + font.get_descent()))

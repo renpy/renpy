@@ -173,7 +173,14 @@ def menu(items, set_expr, window_style='menu_window'):
 
 def display_menu(items, window_style='menu_window'):
     """
-    Displays a menu containing the given items.
+    Displays a menu containing the given items, returning the value of
+    the item the user selects.
+
+    @param items: A list of tuples that are the items to be added to
+    this menu. The first element of a tuple is a string that is used
+    for this menuitem. The second element is the value to be returned
+    if this item is selected, or None if this item is a non-selectable
+    caption.
     """
 
     renpy.ui.window(style=window_style)
@@ -204,22 +211,26 @@ def say(who, what):
         
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
-                window_style='say_window', **properties):
+                window_style='say_window',
+                who_prefix='',
+                who_suffix=': ',
+                what_prefix='',
+                what_suffix='',
+                **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
     said by anyone.
 
     @param what: What is being said.
+
+    For documentation of the various prefixes, suffixes, and styles,
+    please read the documentation for Character.
     """
     
-
-    import renpy.display.layout as layout
-    import renpy.display.text as text
-    import renpy.display.behavior as behavior
-
-
     if who is not None:
-        who = who + ": "
+        who = who_prefix + who + who_suffix
+
+    what = what_prefix + what + what_suffix
 
     renpy.ui.window(style=window_style)
     renpy.ui.vbox(padding=10)

@@ -74,6 +74,17 @@ class Character(object):
 
         @param properties: Additional style properties, that are
         applied to the label containing the character's name.
+
+        In addition to the parameters given above, there are also a
+        few other keyword parameters:
+
+        @param who_prefix: A prefix that is prepended to the name.
+        
+        @param who_suffix: A suffix that is appended to the name.
+
+        @param what_prefix: A prefix that is prepended to the text body.
+
+        @param what_suffix: A suffix that is appended to the text body.
         """
         
         self.name = name
@@ -109,18 +120,7 @@ class DynamicCharacter(object):
         @param name_expr: An expression that, when evaluated, should yield
         the name of the character, as a string. 
 
-        @param who_style: The name of the style that is applied to the
-        characters name when it is shown to the user.
-
-        @param what_style: The name of the style that is applied to
-        the body of the character's dialogue, when it is shown to the
-        user.
-
-        @param window_style: The name of the style of the window
-        containing all the dialogue.
-
-        @param properties: Additional style properties, that are
-        applied to the label containing the character's name.
+        All other parameters are as for Character.
         """
         
         self.name_expr = name_expr
