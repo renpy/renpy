@@ -540,12 +540,20 @@ menu what_to_do:
   <p>
     Without the ability to display images to the user, a visual
     novel would be a text adventure.  Ren'Py controls image display
-    by using a <def>scene list</def>, a list of things to be
-    displayed to the user. Every time an interaction starts (that
-    is, a line of dialogue or a menu is displayed), the things in
-    the scene list are drawn to the screen, with the first being in
+    by using a <def>layers</def>, each comprising a list of things to be
+    displayed to the user. By default, there are three layers. The
+    master layer is manipulated using the various image display
+statement defined in this section. The transient layer is used to
+display ui widgets, like windows containing dialogue and
+menus. Finally, an overlay layer exists to allow things to be 
+overlaid on top of the screen.
+   </p>
+
+   <p>
+    Every time an interaction starts (for example, a line of dialogue or a menu is displayed), the things in
+    the each of the layers is drawn to the screen, with the first being in
     the back and the last being in the front. A number of statements
-    manipulate the scene list. Before we can explain them, however,
+    manipulate the contents of the master layer. Before we can explain them, however,
     we should first define a few terms.
   </p>
 
@@ -607,16 +615,16 @@ init:
   <p>
 
     The next display statement is the show statement, which takes an
-    image specifier and displays it on the screen. If an image with
-    the same tag as the image given in the spec already exists on
-    the scene list, it is replaced with the newly displayed
+    image specifier and displays it on the master layer. If an image with
+    the same tag as the image given in the spec already exists in 
+    the master layer, it is replaced with the newly displayed
     Displayable. Otherwise, the new one is added to the end of the
-    scene list (that is, closest to the user). 
+    master layer (that is, closest to the user). 
 
   </p><p>
 
     If an at list is present, the image is transformed with the at
-    list before being added to the display list.
+    list before being added to the master layer.
 
   </p><p>
 
@@ -630,7 +638,7 @@ init:
   <rule>scene_statement -> "scene" ( image_spec )?</rule>
 
   <p>
-    The scene statement first clears the scene_list. If the optional
+    The scene statement first clears the master layer. If the optional
     image_spec is present, it is shown as if it was shown with the
     show statement. The best use for the image_spec on a scene
     command is show a background for the scene. 
@@ -665,8 +673,8 @@ e "But sometimes, I can get upset for no good reason."
   <rule>hide_statement -> "hide" image_spec</rule>
   
   <p>
-    The hide statement is used to remove an image from the scene
-    list. The image spec is parsed for a tag, and any image matching
+    The hide statement is used to remove an image from the master
+    layer. The image spec is parsed for a tag, and any image matching
     that tag is remove from the scene. The at list is ignored (but
     should be valid or omitted), and transitions associated with the
     image spec are run.
@@ -814,8 +822,8 @@ show eileen happy at left
   <!-- func renpy.ParameterizedText -->
 
   <p>
-    This is used to impelement the text image. The user may also want
-    to instatiate their own ParameterizedText object (in an init
+    This is used to implement the text image. The user may also want
+    to instantiate their own ParameterizedText object (in an init
     block) if they want to have more than one bit of text on the
     screen at once, or if they want to change the style (and therefore
     the position) of that text.
@@ -914,22 +922,22 @@ show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
   <h3>Transitions</h3>
 
   <p>
-    By default, Ren'Py displays each scene list by replacing the old
-    scene list with a new one. This is appropriate in general (such as
-    for emotion changes), but it may be boring for large scene
-    changes, such as a change in scene or a character entering or
+    By default, Ren'Py displays each scene by replacing the old
+    scene with a new one. This is appropriate in general (such as
+    for emotion changes), but it may be boring for large 
+    changes, such as a change in location or a character entering or
     leaving the scene. Ren'Py supports transitions that control how
     changes to the scene lists are exposed to the user.
   </p>
 
   <p>
-    Transitions occur between the last scene list that was shown to
-    the user, and the current scene list that has been updated using
+    Transitions occur between the last scene that was shown to
+    the user, and the current scene that has been updated using
     the scene, show, or hide statements. A transition takes both lists
     as input, and is responsible for displaying the transition between
     them to the user. Each transition runs for a given amount of time,
     but may be dismissed early by the user. Once a transition is
-    shown, the scene list is considered shown for the purposes of
+    shown, the scene is considered shown for the purposes of
     future transitions.
   </p>
 
@@ -1069,7 +1077,7 @@ e "How are you doing?" with dissolve
   
   <p>
 The following are functions that return things useful as
-transitons. The user should not supply the new_widget or old_widget 
+transitions. The user should not supply the new_widget or old_widget 
 parameters, as these are supplied by Ren'Py when a transition 
 begins.
   </p>
@@ -1079,6 +1087,12 @@ begins.
   <!-- func Dissolve -->
 
   <!-- func CropMove -->
+
+  <p>
+Some transitions can also be applied to specific layers, using the 
+renpy.transition function (documented below). Only transitions that 
+are not completely opaque can be used in this way.
+  </p>
 
   <h3>Control Statements</h3>
 
@@ -1700,6 +1714,8 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.transition -->
 
+  <!-- func renpy.restart_interaction -->
+
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
@@ -1740,10 +1756,14 @@ e "Pleased to meet you, %(name)s."
 
   <p>
     Overlays are set up by adding to the config.overlay_functions list
-    a python function which, when called, returns a list of
-    Displayables that are added to the overlay. These functions are
+    a python function which, when called, uses the ui functions to add
+    widgets to the screen. By default, such widgets are added to the 
+    'overlay' layer, but a call to ui.layer() can change the layer 
+    to any of the layers listed in library.overlay_layers. These functions are
     called for each interaction, which allows the overlay to change to
-    reflect the status of game variables.
+    reflect the status of game variables. If a variable affecting the
+    overlay changes during an interaction, renpy.restart_interaction()
+    should be called to regenerate the overlay.
   </p>
 
   <p>
@@ -1761,11 +1781,9 @@ init:
     python hide:
         def date_overlay():
             if date:
-                return [ Image(date + ".png", 
-                               xpos=1.0, xanchor="right",
-                               ypos=0.0, yanchor="top") ]
-            else:
-                return [ ]
+                ui.image(date + ".png", 
+                         xpos=1.0, xanchor="right",
+                         ypos=0.0, yanchor="top") ]
 
         config.overlay_functions.append(date_overlay)
   </example>
@@ -2107,6 +2125,27 @@ load scripts, as scripts will be loaded before it can be set.
       screen.
     </var>
 
+    <var name="config.layers" value="[ 'master', 'transient', 'overlay' ]">
+This variable gives a list of all of the layers that Ren'Py knows
+about, in the order that they will be displayed to the screen. (The
+lowest layer is the first entry in the list.) Ren'Py uses the layers
+"master", "transient", and "overlay" internally, so they should 
+always be in this list.
+</var>
+
+    <var name="config.transient_layers" value="[ 'transient' ]" >
+This variable gives a list of all of the transient layers. Transient
+layers are layers that are cleared after each interaction. "transient"
+should always be in this list.
+</var>
+
+<var name="config.overlay_layers" value="[ 'overlay' ]" >
+This is a list of all of the overlay layers. Overlay layers are
+cleared before the overlay functions are called. "overlay" should
+always be in this list.
+</var>
+
+
     <var name="library.file_page_length" value="10">
       This is the number of save slots that are shown in the picker
       that's used by the load and save portions of the game menu. This
@@ -2180,6 +2219,16 @@ the file picker.
       If True, the library will display a skip indicator when skipping
       through the script.
     </var>
+
+    <var name="library.enter_transition" value="None">
+If not None, this variable should give a transition that will be 
+used when entering the game menu.
+</var>
+
+<var name="library.exit_transition" value="None">
+If not None, this variable should give a transition that will be 
+performed when exiting the game menu.
+</var>
  
 
   </dl>
@@ -2833,7 +2882,7 @@ $ ui.textbutton("B", clicked=ui.returns("B"))
 $ ui.textbutton("C", clicked=ui.returns("C"))
 
 $ ui.close()
-$ choice = renpy.interact(suppress_overlay=True)
+$ choice = ui.interact(suppress_overlay=True)
 </example>
 
 <p>
@@ -2926,6 +2975,8 @@ automatically present in the game namespace.
 <h4>Functions</h4>
 
 <!-- func ui.interact -->
+
+<!-- func ui.layer -->
 
 <!-- func ui.close -->
 
