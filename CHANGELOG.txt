@@ -40,6 +40,11 @@ Added ui.pausebehavior(). This separates pausing from the saybehavior
 paving the way for uninterruptable pauses (a bad idea, IMO) and menus
 that dismiss themseleves after a certain amount of time.
 
+A new function, ui.exists, can check to see if a given file exists 
+on disk. This could be used, for example, to make a game that only 
+tries to play music if an add-on music package is downloaded, and the
+files placed in the appropriate place.
+
 Added the ability to bind mouse events to mouseup as well as
 mousedown, and changed some of the default bindings to be on mouseup
 rather than mousedown. If you make changes to config.keymaps, you'll

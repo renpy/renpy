@@ -1708,6 +1708,8 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.windows -->
 
+  <!-- func renpy.exists -->
+
   <!-- func renpy.clear_game_runtime -->
 
   <!-- func renpy.get_game_runtime -->

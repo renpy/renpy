@@ -1,12 +1,13 @@
 import renpy
 from renpy.display.render import render
 import pygame
+import sys # for maxint
 
 class MovieInfo(object):
 
     def __init__(self, filename, loops, fullscreen, size=None):
         self.filename = filename
-        self.loops = loops
+        self.loops = loops + 1
         self.fullscreen = fullscreen
         self.size = size
 
@@ -14,11 +15,14 @@ class MovieInfo(object):
 movie = None
 
 # If the movie is running in a widget, this is the surface corresponding
-# to that widger.
+# to that widget.
 surface = None
 
 # The current movie info.
 current_info = None
+
+# The number of loops the current movie has made.
+loops = 0
 
 def movie_stop(clear=True):
     """
@@ -26,11 +30,13 @@ def movie_stop(clear=True):
     """
 
     global movie
+    global loops
 
     if movie:
         movie.stop()
         movie = None
         surface = None
+        loops = 0
         
         renpy.display.audio.enable_mixer()        
 
@@ -81,6 +87,7 @@ def interact():
         global movie
         global surface
         global current_info
+        global loops
     
         info = renpy.game.context().scene_lists.movie
 
@@ -112,15 +119,24 @@ def interact():
                 s = pygame.Surface(info.size)
                 m.set_display(s, (0, 0) + info.size)
 
-            m.play()
-
             movie = m
             surface = s
+
+        if not movie.get_busy():
+            if not info.loops or loops < info.loops:
+                movie.rewind()
+                movie.play()
+                loops += 1
+            else:
+                movie_stop()
+    
 
         # Movie is playing (by now).
         return info.fullscreen
 
     except:
+        movie_stop()
+        
         if renpy.config.debug_sound:
             raise
         else:

@@ -760,6 +760,9 @@ init:
 
             return plan
 
+init:
+    image movie = Movie()
+
 label whatsnew:
 label whatsnew45:
 
@@ -833,10 +836,38 @@ label whatsnew45:
     e "Ren'Py 4.5 also includes the ability to show MPEG-1 movies as
        cutscenes or even backgrounds."
 
-    e "We didn't include any of those here, as we wanted to keep the
-       download small."
+label ike:
 
-    e "Anyway, you've now seen all of the new features. Is there anything
+    if renpy.exists('Eisenhow1952.mpg'):
+
+        e "Since you downloaded the Eisenhower commercial, I can show
+           it to you as a cutscene."
+
+        e "You can click to continue if it gets on your nerves too
+           much."
+
+        $ renpy.movie_cutscene('Eisenhow1952.mpg', 63.0)
+        
+        hide eileen
+        show movie at Position(xpos=420, ypos=25, xanchor='left', yanchor='top')
+        show eileen happy
+
+        $ renpy.movie_start_displayable('Eisenhow1952.mpg', (352, 240))
+
+        e "Ren'Py can even overlay rendered images on top of a movie,
+           although that's more taxing for your CPU."
+
+        e "It's like I'm some sort of newscaster or something."
+           
+        $ movie_stop()
+        hide movie
+
+    else:
+
+        e "You haven't download the Eisenhower commericial, so we
+           can't demonstrate it."
+
+    e "Anyway, now that you've heard about some of the new features, is there anything
        else I can help you with?"
 
     return

@@ -451,6 +451,9 @@ class Display(object):
             if damage:
                 pygame.display.update(damage)
 
+        else:
+            self.full_redraw = True
+            
         self.suppress_mouse = suppress_blit
 
         

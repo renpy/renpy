@@ -491,6 +491,19 @@ def get_game_runtime():
 
     return renpy.game.context().runtime / 1000.0
 
+def exists(filename):
+    """
+    Returns true if the given filename can be found in the
+    searchpath. This only works if a physical file exists on disk. It
+    won't find the file if it's inside of an archive.
+    """
+
+    try:
+        renpy.loader.transfn(filename)
+        return True
+    except:
+        return False
+
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 
