@@ -58,6 +58,79 @@ class Displayable(renpy.object.Object):
 
         return None
 
+    def get_placement(self):
+        """
+        Returns a style object containing placement information for
+        this Displayable. Children are expected to overload this
+        to return something more sensible.
+        """
+
+        return renpy.game.style.default
+
+    def place(self, dest, x, y, width, height, surf):
+        """
+        This draws this Displayable onto a destination surface, using
+        the placement style information returned by this object's
+        get_placement() method.
+
+        @param dest: The surface that this displayable will be drawn
+        on.
+
+        @param x: The minimum x coordinate on this surface that this
+        Displayable will be drawn to.
+
+        @param y: The minimum y coordinate on this surface that this
+        displayable will be drawn to.
+
+        @param width: The width of the area allocated to this
+        Displayable.
+
+        @param height: The height of the area allocated to this
+        Displayable.
+
+        @param surf: The surface returned by a previous call to
+        self.render().
+        """
+
+        style = self.get_placement()
+        sw, sh = surf.get_size()
+
+        # x
+        xoff = style.xpos
+
+        if isinstance(xoff, float):
+            xoff = int(xoff * width)
+
+        if style.xanchor == 'left':
+            xoff -= 0
+        elif style.xanchor == 'center':
+            xoff -= sw / 2
+        elif style.xanchor == 'right':
+            xoff -= sw
+
+        xoff += x
+
+        # y
+        yoff = style.ypos
+
+        if isinstance(yoff, float):
+            yoff = int(yoff * width)
+
+        if style.yanchor == 'left':
+            yoff -= 0
+        elif style.yanchor == 'center':
+            yoff -= sh / 2
+        elif style.yanchor == 'right':
+            yoff -= sh
+
+        yoff += y
+
+        dest.blit(surf, (xoff, yoff))
+
+        return xoff, yoff
+        
+        
+
 class SceneLists(object):
     """
     This stores the current scene lists that are being used to display

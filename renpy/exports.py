@@ -22,7 +22,11 @@ def checkpoint():
 
     renpy.game.log.checkpoint()
 
-def interact():
+def interact(*widgets):
+
+    for i in widgets:
+        scene_list_add('transient', i)
+
     return renpy.game.interface.interact()
 
 def scene_lists(index=-1):
@@ -50,13 +54,61 @@ def scene_list_add(listname, displayable, key=None):
     @param listname: One of 'master' or 'transient'.
     """
 
-    if listname not in ('master', 'transient', 'overlay', 'empty'):
+    if listname not in ('master', 'transient'):
         raise Exception("Scene list '%s' doesn't exist." % listname)
 
     scene_lists().add(listname, displayable, key)
 
-def set_overlay(new_overlay_list):
-    scene_lists().set_overlay(new_overlay_list)
+def show(at_disp, with_disp=None, key=None):
+    """
+    Shows the displayable, as if it was added to a scene list with the show command.
+
+    @param at_disp: The displayable that is added to the screen as if
+    it was the result of the at clause in the show statement.
+
+    @param with_displ: The displayable that is added to the screen as
+    if it was the result of the with clause in the show statement. If
+    None, then this is taken from the at command.
+
+    @param key: The key that is used to remove this displayable from
+    the scene list, or None if there is no key.
+    """
+
+    if not with_disp:
+        with_disp = at_disp
+
+    scene_list_add('master', at_disp, key)
+    scene_list_add('transient', at_disp, key)
+
+def hide(key):
+    """
+    Removes items named with the given key from the scene lists.
+    """
+
+    sls = scene_lists()
+    sls.remove('master', key)
+    sls.remove('transient', key)
+
+def scene():
+    """
+    This clears the scene lists, as if the scene statement executed.
+    """
+
+    sls = scene_lists()
+    sls.clear('master')
+    sls.clear('transient')
+        
+def set_overlay(overlay_list):
+    """
+    Sets the overlay list that will be used to display things at the
+    top of the screen. Clearing out the scene lists will not change
+    what's displayed in the overlay.
+
+    @param overlay_list: A list of displayables that will be displayed
+    above the current scene.
+    """
+
+    scene_lists().set_overlay(overlay_list)
     
 
 # This is a map from image name to a Displayable object corresponding
@@ -132,7 +184,8 @@ def say(who, what):
     else:
         who.say(what)
         
-def display_say(who, what, who_style='say_label', what_style='say_dialogue',
+def display_say(who, what, who_style='say_label',
+                what_style='say_dialogue',
                 window_style='window_say', **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being

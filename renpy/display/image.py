@@ -28,6 +28,9 @@ class Image(renpy.display.core.Displayable):
     def render(self, w, h, st, tt):
         return load_image(self.filename)  
 
+    def get_placement(self):
+        return renpy.game.style.image_placement
+
 class ImageReference(renpy.display.core.Displayable):
     """
     This is a reference to an image or animation that is kept
@@ -61,11 +64,14 @@ class ImageReference(renpy.display.core.Displayable):
 
         return self.target.render(width, height, st, tt)
 
+    def get_placement(self):
+        return self.target.get_placement()
+    
+
 class Solid(renpy.display.core.Displayable):
     """
     A class that fills the area allocated to it with a solid color.
     """
-
 
     def __init__(self, color):
         self.color = color

@@ -1208,6 +1208,83 @@ init:
     Example: (0, 0, 0, 128)
   </prop>
 
+  <h4>Window Properties</h4>
+
+  <p>
+    Window properties are used to control the display of windows, and
+    other widgets that involve a rectangular area with a background
+    being displayed on the screen.
+  </p>
+
+  <prop name="background">
+    A Displayable that is used as the background for the window. This
+    needs to be a Displayable that always draws exactly the size
+    requested of it, which usually means either a renpy.Solid or a
+    renpy.Frame. This can also be None, which means that there is no
+    background on this window. (All the other window properties that
+    refer to a background still work. Just think of them as if ther
+    background was transparent.) Example: renpy.Solid((0, 0, 128,
+    128))
+  </prop>
+
+  <prop name="xmargin">
+    The amount of transparent space that is left around this window in
+    the x direction, in pixels. 
+  </prop>
+
+  <prop name="xpadding">
+    The amount of space left between the edge of the background of the
+    window, and the edge of the content contained within this window,
+    in the x direction, in pixels.
+  </prop>
+
+  <prop name="xfill">
+    If True, the window will expand to fill all available space in the
+    x direction. If False, it will shrink to fit its contents.
+  </prop>
+
+  <prop name="xminimum">
+    The minimum size of this window in the x direction, including
+    margins and padding. If the window would be smaller than this, it
+    is grown to be at least this size.
+  </prop>
+
+  <prop name="xpos">
+    This controls the positioning of the content in the window, in the
+    x direction. If an integer, it's the number of pixels to leave to
+    the left of the content. If a float between 0.0 and 1.0, it's the
+    amount of the empty space to leave to the left of the content.
+  </prop>
+
+  <prop name="ymargin">
+    The amount of transparent space that is left around this window in
+    the y direction, in pixels. 
+  </prop>
+
+  <prop name="ypadding">
+    The amount of space left between the edge of the background of the
+    window, and the edge of the content contained within this window,
+    in the y direction, in pixels.
+  </prop>
+
+  <prop name="yfill">
+    If True, the window will expand to fill all available space in the
+    y direction. If False, it will shrink to fit its contents.
+  </prop>
+
+  <prop name="yminimum">
+    The minimum size of this window in the y direction, including
+    margins and padding. If the window would be smaller than this, it
+    is grown to be at least this size.
+  </prop>
+
+  <prop name="ypos">
+    This controls the positioning of the content in the window, in the
+    x direction. If an integer, it's the number of pixels to the top of
+    the content. If a float between 0.0 and 1.0, it's the
+    amount of the empty space to leave above the content.
+  </prop>
+
   
   <h4>Using Properties and Styles</h4>
   
@@ -1271,7 +1348,9 @@ init:
     The final way of assigning properties is to list them as keyword
     arguments on a constructor that takes properties. (Indicated by
     having **properties in its argument list.) Properties that are
-    given in this way take precededce over all other properties.
+    given in this way take precededce over all other properties. The
+    Character argument also takes properties that are applied to the
+    window and the label.
   </p>
 
     

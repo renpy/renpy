@@ -59,5 +59,11 @@
     <span class="param"><xsl:apply-templates /></span>
   </xsl:template>
 
-
+  <xsl:template match="prop">
+    <p class="prop">
+      <span class="propname"><xsl:value-of select="@name" /></span>
+      --- <xsl:apply-templates />
+    </p>
+  </xsl:template>
+    
 </xsl:stylesheet>

@@ -400,8 +400,6 @@ class Window(Container):
             bw = width  - 2 * style.xmargin
             bh = height - 2 * style.ymargin
 
-            print bw, bh
-
             back = style.background.render(bw, bh, st, tt)
 
             rv.blit(back,
@@ -426,6 +424,8 @@ class Window(Container):
 
         self.offsets = [ (xo, yo) ]
         self.sizes = [ (sw, sh) ]
+
+        self.window_size = width, height
 
         return rv
                 

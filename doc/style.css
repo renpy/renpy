@@ -62,3 +62,12 @@ DIV.funcbody {
 SPAN.param {
         font-style: italic;
 }
+
+P.prop {
+        margin-left: 5%;
+}
+
+SPAN.propname {
+        font-family: monospace;
+        font-weight: bold;
+}

@@ -1,6 +1,19 @@
 # This file is responsible for creating and defining the default styles
 # used by the system.
 
+# This file should be considered part of the Ren'Py library, and not
+# something that needs to be modified by the user. Instead, just update
+# the appropriate style property in an init: block in your script.
+#
+# For example, to change the default window backgrounds to a
+# transparent dark red, add:
+#
+# init:
+#     $ style.window.background = renpy.Solid((128, 0, 0, 128)
+#
+# to your script. No need to mess around here, it will just make your
+# life harder when a new version of Ren'Py is released.
+
 init -100:
     python hide:
 
@@ -13,6 +26,31 @@ init -100:
         style.default.color = (255, 255, 255, 255)
         style.default.drop_shadow = (2, 2)
         style.default.drop_shadow_color = (0, 0, 0, 128)
+
+        # Window properties.
+        style.default.background = renpy.Solid((0, 0, 128, 128))
+        style.default.xpadding = 0
+        style.default.ypadding = 0
+        style.default.xmargin = 0
+        style.default.ymargin = 0
+        style.default.xfill = False
+        style.default.yfill = False
+        style.default.xminimum = 0 # Includes margins and padding.
+        style.default.yminimum = 0 # Includes margins and padding.
+
+        # Placement properties.
+        style.default.xpos = 0
+        style.default.ypos = 0
+        style.default.xanchor = 'left'
+        style.default.yanchor = 'top'
+
+        style.create('image_placement', None,
+                     'This style is used to control the default placement of images on the screen.')
+
+        style.image_placement.xpos = 0.5
+        style.image_placement.ypos = 1.0
+        style.image_placement.xanchor = 'center'
+        style.image_placement.yanchor = 'bottom'
 
         style.create('say_label', 'default',
                      'The style that the label text of a two-argument say statement is in.')
@@ -45,17 +83,32 @@ init -100:
         style.window.ypadding = 5
         style.window.xmargin = 10
         style.window.ymargin = 5
-        style.window.xpos = 0
-        style.window.ypos = 0
         style.window.xfill = True
         style.window.yfill = False
         style.window.xminimum = 0 # Includes margins and padding.
         style.window.yminimum = 150 # Includes margins and padding.
+
+        style.window.xpos = 0.5
+        style.window.ypos = 1.0
+        style.window.xanchor = 'center'
+        style.window.yanchor = 'bottom'
 
         style.create('window_say', 'window',
                      'The default style for windows containing dialogue.')
 
         style.create('window_menu', 'window',
                      'The default style for windows containing a menu.') 
+
+        style.create('button', 'default',
+                     'The base style for all buttons.')
+
+        style.create('button_idle', 'button',
+                     'The style that is used by default by buttons when the mouse is not hovering over the button.')
+
+        style.button_idle.color = (0, 255, 255, 255)
+
+        style.create('button_hover', 'button',
+                     'The style that is used by default by buttons when the mouse is above the button.')
                    
-        print "Finished loading styles."
+        style.button_hover.color = (255, 255, 0, 255)
+        

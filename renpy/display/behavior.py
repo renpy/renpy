@@ -167,6 +167,72 @@ class Menu(renpy.display.layout.VBox):
 
         return None
         
-
-# class MenuBehavior(layout.Container):
+class Button(renpy.display.layout.Window):
     
+
+    def __init__(self, child, idle_style='button_idle',
+                 hover_style='button_hover',
+                 clicked=None):
+
+        self.idle_style = idle_style
+        self.hover_style = hover_style
+        self.clicked = clicked
+
+        super(Button, self).__init__(child, style=idle_style)
+
+        self.old_style = idle_style
+
+    def set_style(self, style_name):
+        """
+        Called when the style changes (due to the mouse being over
+        this widget).
+        """
+
+        self.style = renpy.style.Style(style_name, dict())
+        renpy.game.interface.redraw(0)
+
+    def event(self, ev, x, y):
+
+        inside = False
+
+        width, height = self.window_size
+
+        if x >= 0 and x < width and y >= 0 and y < height:
+            inside = True
+
+        if ev.type == MOUSEMOTION:
+
+            if inside:
+                style_name = self.hover_style
+            else:
+                style_name = self.idle_style
+
+            if self.old_style != style_name:
+                self.old_style = style_name
+                self.set_style(style_name)
+
+        if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+            if inside:
+                return self.clicked
+
+
+class TextButton(Button):
+
+    def __init__(self, text, idle_style='button_idle',
+                 hover_style='button_hover',
+                 clicked=None):
+
+        self.text_widget = renpy.display.text.Text(text, style=idle_style)
+
+        super(TextButton, self).__init__(self.text_widget,
+                                         idle_style=idle_style,
+                                         hover_style=hover_style,
+                                         clicked=clicked)
+
+    def set_style(self, style_name):
+        super(TextButton, self).set_style(style_name)
+        
+        self.text_widget.style = renpy.style.Style(style_name, dict())
+                
+            
+            
