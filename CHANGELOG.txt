@@ -1,9 +1,11 @@
 New in 4.7
 ----------
 
+The demo was updated to show the new features in 4.7.
+
 The big new feature in this release is text tags. Text tags is a
 markup language that allows text properties to be changed inside a
-single unit of text. It lets you emphasise individual words by making
+single unit of text. It lets you emphasize individual words by making
 them bold, bigger, or a different color. Rather than explaining it
 fully here, let me point you to the new "Text Tags" section of the
 documentation. 
