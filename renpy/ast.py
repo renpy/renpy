@@ -93,7 +93,10 @@ class Node(object):
         probably execute next.
         """
 
-        return [ self.next ]
+        if self.next:
+            return [ self.next ]
+        else:
+            return [ ]
 
 
 def say_menu_with(expression):
