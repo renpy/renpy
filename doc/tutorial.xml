@@ -2543,15 +2543,21 @@ The size of the left gutter of a clickable bar, in pixels.
   
   <p>
     In Ren'Py, buttons and their contents support the idea of hovering:
-    using different sets of properties when the mouse is over or not
-    over the widget. If the mouse is over the widget, then that widget
+    using different sets of properties for different states of the
+    widget. If the widget has been selected, it is considered to be
+    activated. Otherwise, if the mouse is over the widget, then that widget
     is hovered, else it is idle. On these widgets, Ren'Py will look up
-    a property prefixed with "hover_" or "idle_" (as appropriate) in a
+    a property prefixed with "activate_", "hover_", "idle_", (as appropriate) in a
     style, before looking up an unprefixed property. If neither form
     is found on a style, the process is repeated again on the parent
     style. (The search pattern for background on a hovered button
     goes: button.hover_background, button.background,
     default.hover_background, default.background.)
+  </p>
+
+  <p>
+  The only time an activated widget will be seen by the user is if a 
+  transition occurs immediately after the widget has been activated.
   </p>
 
   <p>

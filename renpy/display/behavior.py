@@ -256,25 +256,17 @@ class Menu(renpy.display.layout.VBox):
 #        print x, y
 
         old_selected = self.selected
+        mouse_select = False
 
         # Change selection based on mouse position.
-        if ev.type == MOUSEMOTION:
+        if ev.type == MOUSEMOTION or map_event(ev, "menu_mouseselect"):
             target = self.child_at_point(x, y)
             if target is None:
                 return None
 
             if self.results[target] is not None:
                 self.selected = target
-
-        # Make selection based on mouse click position.
-        if map_event(ev, "menu_mouseselect"):
-            target = self.child_at_point(x, y)
-            if target is None:
-                return None
-
-            if self.results[target] is not None:
-                renpy.display.audio.play(self.style.activate_sound)
-                return self.results[target]
+                mouse_select = True
 
         # Change selection based on keypress.
         if map_event(ev, "menu_keydown"):
@@ -298,11 +290,6 @@ class Menu(renpy.display.layout.VBox):
                     self.selected = selected
                     break
 
-        # Make selection based on keypress.
-        if map_event(ev, "menu_keyselect"):
-            renpy.display.audio.play(self.style.activate_sound)
-            return self.results[self.selected]
-            
         # If the selected item changed, update the display.
         if self.selected != old_selected:
 
@@ -310,8 +297,16 @@ class Menu(renpy.display.layout.VBox):
             self.children[old_selected].set_style_prefix("idle_")
 
             renpy.display.audio.play(self.style.hover_sound)
+            # renpy.display.render.redraw(self, 0)
 
-            renpy.display.render.redraw(self, 0)
+        # Make selection based on keypress or mouse click.
+        if map_event(ev, "menu_keyselect") or \
+           (mouse_select and map_event(ev, "menu_mouseselect")):
+
+            self.children[self.selected].set_style_prefix("activate_")
+            
+            renpy.display.audio.play(self.style.activate_sound)
+            return self.results[self.selected]
 
         return None
         
@@ -324,13 +319,17 @@ class Button(renpy.display.layout.Window):
         super(Button, self).__init__(child, style=style, **properties)
         self.style.set_prefix('idle_')
 
+        self.activated = False
+
         self.old_hover = False
         self.clicked = clicked
         self.hovered = hovered
 
     def render(self, width, height, st):
 
-        if self.old_hover:
+        if self.activated:
+            self.set_style_prefix('activate_')
+        elif self.old_hover:
             self.set_style_prefix('hover_')
         else:
             self.set_style_prefix('idle_')
@@ -352,6 +351,9 @@ class Button(renpy.display.layout.Window):
         renpy.display.render.redraw(self, 0)
 
     def event(self, ev, x, y):
+
+        # We deactivate on an event.
+        self.activated = False
 
         inside = False
 
@@ -377,12 +379,16 @@ class Button(renpy.display.layout.Window):
             if inside and self.clicked:
                 renpy.display.audio.play(self.style.activate_sound)
 
+                self.activated = True
+                renpy.display.render.redraw(self, 0)
+
                 rv = self.clicked()
 
                 if rv is not None:
                     return rv
                 else:
                     raise renpy.display.core.IgnoreEvent()
+                    
 
 
         return super(Button, self).event(ev, x, y)

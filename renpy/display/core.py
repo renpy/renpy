@@ -751,6 +751,7 @@ class Interface(object):
         # which we will try to show to the user.
 
         # Redraw the screen.
+        renpy.display.render.process_redraws()
         needs_redraw = True
 
         # Post an event that moves us to the current mouse position.

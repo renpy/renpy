@@ -132,6 +132,7 @@ init -1000:
                      """(text, hover, sound) The style that is used to render a menu choice.""")
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
+        style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
         style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
         style.create('menu_window', 'window',
@@ -199,6 +200,7 @@ init -1000:
         style.button_text.size = 24
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
+        style.button_text.activate_color = bright_cyan
         style.button_text.drop_shadow = (2, 2)
         
         # Selected button.
@@ -210,6 +212,7 @@ init -1000:
                      
         style.selected_button_text.color = dark_red
         style.selected_button_text.hover_color = bright_red
+        style.selected_button_text.activate_color = bright_red
         
         # Disabled button.
 
@@ -224,6 +227,7 @@ init -1000:
                      
         style.disabled_button_text.color = (128, 128, 128, 255)
         style.disabled_button_text.hover_color = (128, 128, 128, 255)
+        style.disabled_button_text.activate_color = (128, 128, 128, 255)
 
 
         # Bar.
@@ -325,6 +329,7 @@ init -1000:
         
         style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
+        style.file_picker_entry.activate_background = Solid((255, 255, 192, 255))
 
         style.create('file_picker_text', 'default',
                      '(text) A base style for all text that is displayed in the file picker.')
@@ -340,6 +345,7 @@ init -1000:
                      '(text) The style that is applied to the old indicator in the file pciker.')
 
         style.file_picker_new.hover_color = bright_red
+        style.file_picker_new.activate_color = bright_red
         style.file_picker_new.idle_color = dark_red
         style.file_picker_new.minwidth = 30
         style.file_picker_old.minwidth = 30

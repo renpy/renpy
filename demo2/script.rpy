@@ -891,6 +891,18 @@ label splashscreen:
 
     scene washington
 
+    menu:
+        "What do you think of activate colors?"
+
+        "I like it":
+            pass
+
+        "I hate it":
+            pass
+
+    with dissolve
+
+
     $ name = renpy.input("What is your name?", length=34)
 
     "Let's try applying transitions to layers!"

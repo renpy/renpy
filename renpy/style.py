@@ -1,7 +1,7 @@
 import renpy
 
 # A list of style prefixes we care about, including no prefix.
-prefixes = [ 'hover_', 'idle_', '' ]
+prefixes = [ 'hover_', 'idle_', 'activate_', '' ]
 
 class StyleManager(object):
     """
