@@ -63,6 +63,12 @@ init -500:
         # button.
         library.exit_sound = None
 
+        # Transition that occurs when entering the game menu.
+        library.enter_transition = None
+
+        # Transition that occurs when leaving the game menu.
+        library.exit_transition = None
+
         # True if the skip indicator should be shown.
         library.skip_indicator = True
 
@@ -183,8 +189,6 @@ init -500:
                 ui.conditional("config.skipping")
                 ui.text(_("Skip Mode"), style='skip_indicator')
 
-            return [ ]
-
         config.overlay_functions.append(skip_indicator)
 
     return
@@ -241,8 +245,8 @@ label _library_main_menu:
         ui.close()
         ui.close()
 
-        store._result = renpy.interact(suppress_overlay = True,
-                                       suppress_underlay = True)
+        store._result = ui.interact(suppress_overlay = True,
+                                    suppress_underlay = True)
 
     # Computed jump to the appropriate label.
     $ renpy.jump(_result)
@@ -493,6 +497,10 @@ label _enter_game_menu:
     scene
     $ renpy.movie_stop()
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+
+    if library.enter_transition:
+        $ renpy.transition(library.enter_transition)
+
     return
 
 # Entry points from the game into menu-space.
@@ -567,6 +575,10 @@ label _noisy_return:
 
 # Return to the game.
 label _return:
+
+    if library.exit_transition:
+        $ renpy.transition(library.exit_transition)
+
     return
 
 # Random nice things to have.

@@ -872,3 +872,47 @@ label ike:
 
     return
 
+
+init:
+    # $ config.profile = True
+
+    $ library.enter_transition = dissolve
+    $ library.exit_transition = dissolve
+
+    python hide:
+        def overlay():
+            ui.text("This is the overlay!")
+
+        config.overlay_functions.append(overlay)
+
+    pass
+
+label splashscreen:
+
+    scene washington
+
+    $ name = renpy.input("What is your name?", length=34)
+
+    "Let's try applying transitions to layers!"
+
+    $ renpy.transition(slideawayup, 'transient')
+    $ renpy.pause(1.0)
+
+    $ renpy.transition(slidedown, 'transient')
+
+    "How was that?"
+
+
+    "Now, we will try screwing with overlays. The overlay will
+     disappear for the first transition, but not the second."
+
+    with fade
+
+    $ renpy.transition(fade, 'master')
+
+    "Did it work?"
+
+    return
+    
+
+    

@@ -439,19 +439,19 @@ class Render(object):
             
             sw, sh = source.get_size()
 
-            if sw - ox <= 0:
-                continue
-            if sh - oy <= 0:
-                continue
+            sw = min(sw - sx, width)
+            sh = min(sh - sy, height)
 
-            sw = min(sw - sx - ox, width)
-            sh = min(sh - sy - oy, height)
+            if sw <= 0 or sh <= 0:
+                continue
 
             rv.blit(source.subsurface((sx, sy, sw, sh)),
                     (ox, oy))
 
 
         self.subsurfaces[pos] = rv
+        rv.depends_on(self)
+        
         return rv
 
     def depends_on(self, render):

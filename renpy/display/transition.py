@@ -466,7 +466,7 @@ class CropMove(Transition):
         scales = (width, height, width, height)
 
         def interpolate_tuple(t0, t1):
-            return tuple([ s * (a * (1.0 - time) + b * time)
+            return tuple([ int(s * (a * (1.0 - time) + b * time))
                            for a, b, s in zip(t0, t1, scales) ])
 
         crop = interpolate_tuple(self.startcrop, self.endcrop)
@@ -477,7 +477,8 @@ class CropMove(Transition):
         rv.blit(render(self.bottom, width, height, st), (0, 0))
 
         top = render(self.top, width, height, st)
-        rv.blit(top.subsurface(crop), pos)
+        ss = top.subsurface(crop)
+        rv.blit(ss, pos)
 
         renpy.display.render.redraw(self, 0)
         return rv

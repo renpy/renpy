@@ -33,8 +33,8 @@ def checkpoint():
 
     renpy.game.log.checkpoint()
 
-def interact(*widgets, **kwargs):
-    return renpy.game.interface.interact(transient=widgets, **kwargs)
+# def interact(**kwargs):
+#    return renpy.game.interface.interact(**kwargs)
 
 def scene_lists(index=-1):
     """
@@ -125,13 +125,15 @@ def input(prompt, default='', length=None):
     function will return.
     """
 
-    vbox = renpy.display.layout.VBox()
-    win = renpy.display.layout.Window(vbox, style='input_window')
+    renpy.ui.window(style='input_window')
+    renpy.ui.vbox()
 
-    vbox.add(renpy.display.text.Text(prompt, style='input_prompt'))
-    vbox.add(renpy.display.behavior.Input(default, length=length, style='input_text'))
+    renpy.ui.text(prompt, style='input_prompt')
+    renpy.ui.input(default, length=length, style='input_text')
 
-    return interact(win)
+    renpy.ui.close()
+
+    return renpy.ui.interact()
 
 def menu(items, set_expr):
     """
@@ -187,7 +189,7 @@ def display_menu(items, window_style='menu_window'):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
-    rv = interact()
+    rv = renpy.ui.interact()
     checkpoint()
 
     return rv
@@ -291,7 +293,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
     renpy.ui.keymousebehavior()
 
-    rv = interact(suppress_overlay=(not overlays))
+    rv = renpy.ui.interact(suppress_overlay=(not overlays))
     checkpoint()
     return rv
     
@@ -456,17 +458,21 @@ def windows():
     import sys
     return hasattr(sys, 'winver')
 
-def transition(trans):
+def transition(trans, layer=None):
     """
     Sets the transition that will be used for the next
     interaction. This is useful when the next interaction doesn't take
     a with clause, as is the case with pause, input, and imagemap.
+
+    @param layer: If the layer setting is not None, then the transition
+    will be applied only to the layer named. Please note that only some
+    transitions can be applied to specific layers.
     """
 
     if trans is None:
         renpy.game.interface.with_none()
     else:
-        renpy.game.interface.set_transition(trans)
+        renpy.game.interface.set_transition(trans, layer)
 
 def clear_game_runtime():
     """
@@ -503,6 +509,19 @@ def exists(filename):
         return True
     except:
         return False
+
+def restart_interaction():
+    """
+    Calling this restarts the current interaction. This will immediately end
+    any ongoing transition, and will call all of the overlay functions again.
+
+    This should be called whenever widgets are added or removed over the course
+    of an interaction, or when the information used to construct the overlay
+    changes.
+    """
+
+    renpy.game.interface.restart_interaction = True
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

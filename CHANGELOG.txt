@@ -1,8 +1,36 @@
+Test that loading and saving still works.
+
+Init code now runs in order.
+
+Test renpy.input()
+
+Suppress transitions when skipping.
+
+library.enter_transition
+library.exit_transition
+
+Renpy.transition needs to take a layer. Renpy.restart_interaction
+needs to exist, and to be documented to end any current transitions.
+ 
+TODO: Set overlay layer in core.py.
+
+Document config.layers et al.
+
+Eliminated renpy.interact. Check it doesn't exist. Excise it from the
+docs.
+
+Multiple transitions? Layers?
+
+----
+
+Activate state. Hide as a property for windows.
+
 Assymetric margin/padding support [not done] tmargin, bmargin,
 lmargin, rmargin, *padding, etc. Compat with xmargin and ymargin. 
 
-Transition individual widgets? (The idea here would be to allow text
-windows, menus, etc... to slide onto the screen.)
+4.5's demo script had a bug that cause it to crash, after playing the
+MPEG-1 movie. It was a bug in the demo script, and not in Ren'Py
+proper. It's fixed.
 
 New in 4.5
 ----------

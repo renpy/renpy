@@ -98,6 +98,17 @@ fade_music = 0.0
 # Should the at list be sticky?
 sticky_positions = False
 
+# A list of all of the layers that we know about.
+layers = [ 'master', 'transient', 'overlay' ]
+
+# A list of layers that should be cleared when we replace
+# transients.
+transient_layers = [ 'transient' ]
+
+# A list of layers that should be cleared when we recompute
+# overlays.
+overlay_layers = [ 'overlay' ]
+
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     
@@ -107,8 +118,8 @@ keymap = dict(
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mousedown_3' ],
-    hide_windows = [ 'mousedown_2' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
+    hide_windows = [ 'mouseup_2' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
