@@ -8,7 +8,7 @@ def got_node(n):
     if isinstance(n, renpy.ast.Say):
         print n.what
 
-renpy.config.searchpath = [ 'moonlight' ]
+renpy.config.searchpath = [ 'game' ]
 
 renpy.script.Script(got_node)
 
