@@ -1,6 +1,16 @@
 New in 4.3.1
 ------------
 
+New, but undocumented, in 4.3 was the console.exe windows binary. This
+is a windows executable that opens a windows console. This could be
+useful if one wants to have a script that prints debugging information
+to standard output, as in:
+
+[code]
+$ a = 1
+$ print "a =", a
+[/code]
+
 There is now a new style property, enable_hover. This must be set to
 True for a widget to respond to hovering by changing its
 style. However, if it's set to False, no style change/redraw occurs,

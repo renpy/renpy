@@ -21,7 +21,7 @@ except ImportError:
 
 
 # The version of Ren'Py in use.
-version = 'Renpy 4.3 "Birthday Present"'
+version = 'Renpy 4.3.1'
 
 if __name__ == "__main__":
 
