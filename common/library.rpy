@@ -55,6 +55,15 @@ init -500:
         # Used to translate strings in the library.
         library.translations = { }
 
+        # Sound played when entering the library without clicking a
+        # button.
+        library.enter_sound = None
+
+        # Sound played when leaving the library without clicking a
+        # button.
+        library.exit_sound = None
+
+
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
@@ -99,13 +108,18 @@ init -500:
 
     # Set up the default keymap.    
     python hide:
+
+        def invoke_game_menu():
+            renpy.play(library.enter_sound)
+            renpy.call_in_new_context('_game_menu')
+
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
             screenshot = _screenshot,
             toggle_fullscreen = renpy.toggle_fullscreen,
             toggle_music = renpy.toggle_music,
-            game_menu = renpy.curried_call_in_new_context("_game_menu"),
+            game_menu = invoke_game_menu,
             hide_windows = _hide_windows,
             )
 
@@ -186,7 +200,7 @@ init -500:
 
             ui.keymousebehavior()
 
-            ui.add(renpy.Keymap(game_menu=ui.jumps("_return")))
+            ui.add(renpy.Keymap(game_menu=ui.jumps("_noisy_return")))
 
             ui.window(style='gm_root_window')
             ui.fixed()
@@ -462,7 +476,11 @@ label _quit:
 label _full_restart:
     $ renpy.full_restart()
 
-# Return to the game, after restoring the keymap.
+# Make some noise, then return.
+label _noisy_return:
+    $ renpy.play(library.exit_sound)
+
+# Return to the game.
 label _return:
     return
 

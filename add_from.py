@@ -18,6 +18,10 @@ def find_labels(fn, labels):
         if m:
             labels[m.group(1)] = True
 
+        m = re.match(r'^\s*call\s+expression.*from\s+(\w+)\s*$', l)
+        if m:
+            labels[m.group(1)] = True
+
     f.close()
 
 def replace_labels(fn, labels):
@@ -44,6 +48,22 @@ def replace_labels(fn, labels):
 
     for l in f:
         l = re.sub(r'^(\s*)call\s+(\w+)(\s*$)', replaceit, l)
+
+        if re.search(r'call\s+expression', l) and not re.search('from', l):
+
+            num = 0
+
+            while True:
+                num += 1
+                label = "_call_expression_%d" % num
+
+                if label not in labels:
+                    break
+
+            labels[label] = label
+
+            l = l[:-1] + " from " + label + "\n"
+
         of.write(l)
 
     f.close()

@@ -2095,6 +2095,18 @@ the file picker.
       statement or clause).
     </var>
 
+    <var name="library.enter_sound" value="None">
+      If not None, this is a sound file that is played when entering
+      the game menu without clicking a button. (For example, when
+      right-clicking during the game.)
+    </var>
+
+    <var name="library.exit_sound" value="None">
+      If not None, this is a sound file that is played when exiting
+      the game menu without clicking a button. (For example, when
+      right-clicking inside the game menu.)
+    </var>
+
   </dl>
 
   <h3>Properties and Styles</h3>

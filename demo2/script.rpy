@@ -24,6 +24,12 @@ init:
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 125, 25)
 
+    # Interface sounds, just for the heck of it.
+    $ style.button.activate_sound = 'click.wav'
+    $ style.imagemap.activate_sound = 'click.wav'
+    $ library.enter_sound = 'click.wav'
+    $ library.exit_sound = 'click.wav'
+
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
     $ left = Position(xpos=0.0, xanchor='left')

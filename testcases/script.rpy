@@ -38,7 +38,7 @@ label start:
     e "Welcome to the Ren'Py testcases."
 
 
-    call expression "sub1"
+    call expression "sub1" from _call_expression_1
     
     jump expression ("jump" + "1")
 
@@ -104,7 +104,7 @@ label jump1:
 
     $ n = 0
 
-    call test_sub
+    call test_sub from _call_test_sub_1
 
     python:
         n += 1
