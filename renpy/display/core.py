@@ -328,6 +328,8 @@ class Display(object):
 
     @ivar mouse_location: The mouse location the last time it was
     drawn, or None if it wasn't drawn the last time around.
+
+    @ivar full_redraw: Force a full redraw.
     """
 
 
@@ -378,6 +380,8 @@ class Display(object):
 
         self.mouse_location = None
         self.suppress_mouse = False
+
+        self.full_redraw = True
 
     def draw_mouse(self, show_mouse=True):
         """
@@ -436,8 +440,9 @@ class Display(object):
             if self.mouse:
                 self.draw_mouse(False)
 
-            damage = renpy.display.render.screen_blit(surftree)
-
+            damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
+            self.full_redraw = False
+            
             if self.mouse:
                 if damage:
                     self.buffer.blit(self.window, damage, damage)

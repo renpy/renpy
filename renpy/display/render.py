@@ -217,11 +217,17 @@ def compute_clip(source):
     return x0, y0, x1 - x0, y1 - y0
     
 
-def screen_blit(source):
+def screen_blit(source, full=False):
     """
     Blits the given render to the screen. Computes the difference
     between the current blit list and old_blits.
     """
+
+    screen = pygame.display.get_surface()
+
+    if full:
+        source.blit_to(screen, 0, 0)
+        return (0, 0) + screen.get_size()
 
     cliprect = compute_clip(source)
 
