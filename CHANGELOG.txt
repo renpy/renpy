@@ -1,3 +1,16 @@
+New in 4.3.2
+------------
+
+There were two bugs with UTF-8 support. The first was that we didn't
+understand the byte-order mark, and choked on the syntax error. The
+second was that the error-reporting code wasn't passing unicode errors
+through properly, so one couldn't even see the real error. Both are
+now fixed.
+
+Improved the reporting of errors that occur during script loading and
+interpreter initialization by no longer giving a line number when none
+is appropriate.
+
 Ren'Py now uses the name of the executable to choose the directory to
 read the script from. It does this by looking at the name of the
 executable that was used to run Ren'Py. It strips off the extension,

@@ -9,7 +9,6 @@ def match_times(source, dest):
     
 def dosify(s):
     return s.replace("\n", "\r\n")
-    return s
 
 def copy_file(source, dest, license=""):
 
