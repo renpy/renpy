@@ -148,6 +148,36 @@ def vbox(padding=0, **properties):
 
     return add(renpy.display.layout.VBox(padding, **properties), True)
 
+def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
+    """
+    This creates a layout that places widgets in an evenly spaced
+    grid. New widges are added to this vbox unil ui.close() is called.
+    Widgets are added by going from left to right within a single row,
+    and down to the start of the next row when a row is full. All cells
+    must be filled (that is, exactly col * rows widgets must be added to
+    the grid.)
+
+    The children of this widget should have a fixed size that does not
+    vary based on the space allocated to them. Failure to observe this
+    restriction could lead to really odd layouts, or things being
+    rendered off screen.
+
+    Each cell of the grid is exactly the same size. By default, the
+    grid is the smallest size that can accommodate all of its
+    children, but it can be expanded to consume all available space in
+    a given dimension by setting xfill or yfill to True, as appropriate.
+
+    @param cols: The number of columns in this grid.
+    @param rows: The number of rows in this grid.
+    @param padding: The amount of space to leave between rows and columns.
+    @param xfill: True if the grid should consume all available width.
+    @param yfill: True if the grid should consume all available height.
+    """
+
+    return add(renpy.display.layout.Grid(cols, rows, padding, xfill=xfill, yfill=yfill, **properties), True)
+
+    
+
 def fixed(**properties):
     """
     This creates a layout that places widgets at fixed locations

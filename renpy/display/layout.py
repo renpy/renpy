@@ -8,6 +8,17 @@ import renpy
 from renpy.display.render import render
 import time
 
+def scale(num, base):
+    """
+    If num is a float, multiplies it by base and returns that. Otherwise,
+    returns num unchanged.
+    """
+
+    if isinstance(num, float):
+        return num * base
+    else:
+        return num
+
 class Null(renpy.display.core.Displayable):
     """
     This is a displayable that doesn't actually display anything. It's
@@ -221,7 +232,76 @@ class Position(Container):
     def get_placement(self):
         return self.style
 
+class Grid(Container):
+    """
+    A grid is a widget that evenly allocates space to its children.
+    The child widgets should not be greedy, but should instead be
+    widgets that only use part of the space available to them.
+    """
+
+    def __init__(self, cols, rows, padding=0,
+                 style='default', **properties):
+        """
+        @param cols: The number of columns in this widget.
+
+        @params rows: The number of rows in this widget.
+        """
+
+        super(Grid, self).__init__()
+
+        self.style = renpy.style.Style(style, properties)
+
+        self.cols = cols
+        self.rows = rows
+
+        self.padding = padding
+
+    def render(self, width, height, st):
+
+        # For convenience and speed.
+        padding = self.padding
+        cols = self.cols
+        rows = self.rows
+
+        if len(self.children) != cols * rows:
+            raise Exception("Grid not completely full.")
+
+        renders = [ render(i, width, height, st) for i in self.children ]
+        self.sizes = [ i.get_size() for i in renders ]
+
+        cwidth = 0
+        cheight = 0
+
+        for w, h in self.sizes:
+            cwidth = max(cwidth, w)
+            cheight = max(cheight, h)
+
+        if self.style.xfill:
+            cwidth = (width - (cols - 1) * padding) / cols
+
+        if self.style.yfill:
+            cheight = (height - (rows - 1) * padding) / rows
+
+        width = cwidth * cols + padding * (cols - 1)
+        height = cheight * rows + padding * (rows - 1)
+
+        rv = renpy.display.render.Render(width, height)
+
+        self.offsets = [ ]
             
+        for y in range(0, rows):
+            for x in range(0, cols):
+
+                child = self.children[ x + y * cols ]
+                surf = renders[x + y * cols]
+
+                xpos = x * (cwidth + padding)
+                ypos = y * (cheight + padding)
+
+                offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
+                self.offsets.append(offset)
+
+        return rv
 
 class HBox(Container):
     """
@@ -389,11 +469,19 @@ class Window(Container):
         # save typing and screen space.
         style = self.style
 
+        xmargin = scale(style.xmargin, width)
+        xpadding = scale(style.xpadding, width)
+        xminimum = scale(style.xminimum, width)
+
+        ymargin = scale(style.ymargin, height)
+        ypadding = scale(style.ypadding, height)
+        yminimum = scale(style.yminimum, height)
+
 
         # Render the child.
         surf = render(self.child,
-                      width  - 2 * style.xmargin - 2 * style.xpadding,
-                      height - 2 * style.ymargin - 2 * style.ypadding,
+                      width  - 2 * xmargin - 2 * xpadding,
+                      height - 2 * ymargin - 2 * ypadding,
                       st)
 
         sw, sh = surf.get_size()
@@ -401,18 +489,18 @@ class Window(Container):
         # If we don't fill, shrink our size to fit.
 
         if not style.xfill:
-            width = max(2 * style.xmargin + 2 * style.xpadding + sw, style.xminimum)
+            width = max(2 * xmargin + 2 * xpadding + sw, xminimum)
 
         if not style.yfill:
-            height = max(2 * style.ymargin + 2 * style.ypadding + sh, style.yminimum)
+            height = max(2 * ymargin + 2 * ypadding + sh, yminimum)
 
         rv = renpy.display.render.Render(width, height)
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.background:
-            bw = width  - 2 * style.xmargin
-            bh = height - 2 * style.ymargin
+            bw = width  - 2 * xmargin
+            bh = height - 2 * ymargin
 
             back = render(style.background, bw, bh, st)
 
@@ -421,12 +509,11 @@ class Window(Container):
                     # (0, 0, bw, bh))
 
         offsets = self.child.place(rv,
-                                   style.xmargin + style.xpadding,
-                                   style.ymargin + style.ypadding,
-                                   width  - 2 * (style.xmargin + style.xpadding),
-                                   height - 2 * (style.ymargin + style.ypadding),
+                                   xmargin + xpadding,
+                                   ymargin + ypadding,
+                                   width  - 2 * (xmargin + xpadding),
+                                   height - 2 * (ymargin + ypadding),
                                    surf)
-                         
 
         self.offsets = [ offsets ]
         self.sizes = [ (sw, sh) ]

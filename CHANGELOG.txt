@@ -1,7 +1,11 @@
 New in 4.5
 ----------
 
-Need to force a total redraw when changing screen modes.
+Grid widget.
+
+Styles changes.
+
+Document changes in padding, margin, and minimum.
 
 library: windows behind prefs, yesno. Replace buttons with images? Add
 things to game menu?
@@ -30,6 +34,9 @@ Moved the place we look for menu sounds from the style of the choices
 in the menu to the style of the menu itself, as that seems more
 rational. Also, gave menus their own style. (Can't believe I forgot
 that.)
+
+Added a few decorative windows with their own styles, to allow the
+user to further customize the Preferences and Quit screens.
 
 Improved rendering speed. Now, we aggressively cache things to
 minimize re-renders, and only draw to the screen the parts of the

@@ -303,12 +303,17 @@ init -1000:
                      '(position) The position of the naviation (next/previous) buttons in the file picker.')
 
         style.file_picker_navbox.xmargin = 10
-        
-        style.create('file_picker_image', 'default',
-                     '(position) The position of the image in each file picker entry.')
 
-        style.file_picker_image.xminimum = 280
+        style.create('file_picker_nav_button', 'button',
+                     '(window, hover) The style that is used for enabled file picker navigation buttons.')
+        style.create('file_picker_nav_button_text', 'button_text',
+                     '(text) The style that is used for the label of enabled file picker navigation buttons.')        
 
+        style.create('file_picker_nav_disabled_button', 'disabled_button',
+                     '(window, hover) The style that is used for disabled file picker navigation buttons.')
+        style.create('file_picker_nav_disabled_button_text', 'disabled_button_text',
+                     '(text) The style that is used for the label of disabled file picker navigation buttons.')
+                
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
@@ -345,66 +350,44 @@ init -1000:
         style.create('file_picker_empty_slot', 'file_picker_text',
                      '(text) The style that is used for the empty slot indicator in the file picker.')
 
-        style.create('yesno_prompt', 'default',
+        style.create('yesno_label', 'default',
                      '(text, position) The style used for the prompt in a yes/no dialog.')
 
-        style.yesno_prompt.xpos = 0.5
-        style.yesno_prompt.xanchor = 'center'
+        style.yesno_label.color = green
 
-        style.yesno_prompt.ypos = 0.25
-        style.yesno_prompt.yanchor = 'center'
+        style.create('yesno_button', 'button',
+                     '(window, hover) The style of yes/no buttons.')
 
-        style.yesno_prompt.color = green
-
-        style.create('yesno_yes', 'button',
-                     '(position) The position of the yes button on the screen.')
-
-        style.yesno_yes.xpos = 0.33
-        style.yesno_yes.xanchor = 'center'
-        style.yesno_yes.ypos = 0.33
-        style.yesno_yes.yanchor = 'center'
-
-        style.create('yesno_no', 'button',
-                     '(position) The position of the no button on the screen.')
-
-        style.yesno_no.xpos = 0.66
-        style.yesno_no.xanchor = 'center'
-        style.yesno_no.ypos = 0.33
-        style.yesno_no.yanchor = 'center'
+        style.create('yesno_button_text', 'button_text',
+                     '(window, hover) The style of yes/no button text.')
         
+        style.create('yesno_window', 'default',
+                     '(window) The style of a window containing a yes/no dialogue.')
+
+        style.yesno_window.xfill = True
+        style.yesno_window.yminimum = 0.5
 
         # Preferences
+
+
+        style.create('prefs_pref', 'default',
+                     '(window, position) The position of the box containing an individual preference.')
+
+        style.prefs_pref.xpos = 0.5
+        style.prefs_pref.xanchor = 'center'
+
         style.create('prefs_label', 'default',
                      '(text, position) The style that is applied to the label of a block of preferences.')
 
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
         style.prefs_label.color = green
-
-        style.create('prefs_pref', 'default',
-                     '(position) The position of the box containing an individual preference.')
-
-        style.prefs_pref.xpos = 0.5
-        style.prefs_pref.xanchor = 'center'
-
-        style.create('prefs_left', 'default',
-                     '(position) The position of the left column of preferences.')
-
-        style.prefs_left.xpos = 0.25
-        style.prefs_left.xanchor = "center"
-        style.prefs_left.ypos = 0.05
-        style.prefs_left.yalign = "top"
-
-        style.create('prefs_right', 'default',
-                     '(position) The position of the right column of preferences.')
-
-        style.prefs_right.xpos = 0.75
-        style.prefs_right.xanchor = "center"
-        style.prefs_right.ypos = 0.05
-        style.prefs_right.yalign = "top"
         
         style.create('prefs_button', 'button',
                      '(window, hover) The style of an unselected preferences button.')
+
+        style.prefs_button.xpos = 0.5
+        style.prefs_button.xanchor = 'center'
 
         style.create('prefs_button_text', 'button_text',
                      '(text, hover) The style of the text of an unselected preferences button.')
@@ -412,11 +395,21 @@ init -1000:
         style.create('prefs_selected_button', 'selected_button',
                      '(window, hover) The style of a selected preferences button.')
 
+        style.prefs_selected_button.xpos = 0.5
+        style.prefs_selected_button.xanchor = 'center'
+
         style.create('prefs_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected preferences button.')
 
+        style.create('prefs_window', 'default',
+                     '(window, position) A window containing all preferences.')
+
+        style.prefs_window.xfill=True
+        style.prefs_window.ypadding = 0.05
+        
         style.create('skip_indicator', 'default',
                      '(text, position) The style of the text that is used to indicate that skipping is in progress.')
 
         style.skip_indicator.xpos = 10
         style.skip_indicator.ypos = 10
+

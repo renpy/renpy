@@ -76,6 +76,61 @@ init -500:
         # True if we can save, false otherwise.
         _can_save = True
 
+        def _button_factory(label,
+                            type=None,
+                            selected=None,
+                            disabled=False,
+                            clicked=None,
+                            **properties):
+            """
+            This function is called to create the various buttons used
+            in the game menu. By overriding this function, one can
+            (for example) replace the default textbuttons with image buttons.
+            When it is called, it's expected to add a button to the screen.
+
+            @param label: The label of this button, before translation. 
+
+            @param type: The type of the button. One of "mm" (main menu),
+            "gm_nav" (game menu), "file_picker_nav", "yesno", or "prefs".
+
+            @param selected: True if the button is selected, False if not,
+            or None if it doesn't matter.
+
+            @param disabled: True if the button is disabled, False if not.
+
+            @param clicked: A function that should be executed when the
+            button is clicked.
+
+            @param properties: Addtional layout properties.
+            """
+
+            style = type
+
+            if selected:
+                style += "_selected"
+
+            if disabled:
+                style += "_disabled"
+
+            style = style + "_button"
+            text_style = style + "_text"
+
+            ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, **properties)
+
+        def _label_factory(label, type, **properties):
+            """
+            This function is called to create a new label. It can be
+            overridden by the user to change how these labels are created.
+
+            @param label: The label of the box.
+
+            @param type: "prefs" or "yesno". 
+
+            @param properties: This may contain position properties.
+            """
+
+            ui.text(_(label), style=type + "_label", **properties)
+
         # The function that's used to translate strings in the game menu.
         def _(s):
             """
@@ -87,15 +142,15 @@ init -500:
             else:
                 return s
 
-        # Called to make a screenshot happen.
-        def _screenshot():
-            renpy.screenshot("screenshot.bmp")
-
         # Are the windows currently hidden?
         _windows_hidden = False
 
     # Set up the default keymap.    
     python hide:
+
+        # Called to make a screenshot happen.
+        def screenshot():
+            renpy.screenshot("screenshot.bmp")
 
         def invoke_game_menu():
             renpy.play(library.enter_sound)
@@ -107,7 +162,7 @@ init -500:
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
-            screenshot = _screenshot,
+            screenshot = screenshot,
             toggle_fullscreen = renpy.toggle_fullscreen,
             toggle_music = renpy.toggle_music,
             toggle_skip = toggle_skipping,
@@ -181,7 +236,7 @@ label _library_main_menu:
         ui.vbox()
 
         for text, label in library.main_menu:
-            ui.textbutton(text, clicked=ui.returns(label))
+            _button_factory(text, "mm", clicked=ui.returns(label))
 
         ui.close()
         ui.close()
@@ -217,6 +272,8 @@ init -500:
         # This is used to store scratch data that's used by the
         # library, but shouldn't be saved out as part of the savegame.
         _scratch = object()
+            
+            
 
         
         # This returns a window containing the game menu navigation
@@ -234,24 +291,16 @@ init -500:
             ui.vbox()
             
             for key, label, target, enabled in library.game_menu:
-                style="gm_nav_button"
-                text_style="gm_nav_button_text"
-                
-                if key == selected:
-                    style = 'gm_nav_selected_button'
-                    text_style = 'gm_nav_selected_button_text'
 
                 clicked = ui.jumps(target)
+                disabled = False
 
                 if not eval(enabled):
-                    style = 'gm_nav_disabled_button'
-                    text_style = 'gm_nav_disabled_button_text'
-
+                    disabled = True
                     clicked = lambda : None
                              
-                    
-                ui.textbutton(_(label), style=style, text_style=text_style,
-                              clicked=clicked)
+                _button_factory(label, "gm_nav", selected=(key==selected),
+                                disabled=disabled, clicked=clicked)
 
             ui.close()
             ui.close()
@@ -336,32 +385,29 @@ init -500:
                 _game_nav(selected)
                 
                 ui.window(style='file_picker_window')
-
                 ui.vbox() # whole thing.
                 
+                # Draw the navigation.
                 ui.hbox(padding=library.padding * 10, style='file_picker_navbox') # nav buttons.
 
                 def tb(cond, label, clicked):
-                    if cond:
-                        style = 'button'
-                        text_style = 'button_text'
-                    else:
-                        style = 'disabled_button'
-                        text_style = 'disabled_button_text'
+                    _button_factory(label, "file_picker_nav", disabled=not cond, clicked=clicked)
 
-                    ui.textbutton(label, style=style, text_style=text_style, clicked=clicked)
-
-
+                # Previous
                 tb(fpi > 0, _('Previous'), ui.returns(("fpidelta", -1)))
 
+                # Quick Access
                 for i in range(0, library.file_quick_access_pages):
                     target = i * library.file_page_length
                     tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
 
+                # Next
                 tb(True, _('Next'), ui.returns(("fpidelta", +1)))
 
-                ui.close() # nav buttons.
+                # Done with nav buttons.
+                ui.close()
 
+                # This draws a single slot.
                 def entry(offset):
                     i = fpi + offset
 
@@ -373,6 +419,7 @@ init -500:
                         _render_savefile(name, saves[name], newest)
                     
 
+                # Actually draw a slot.
                 ui.hbox() # slots
 
                 ui.vbox()
@@ -406,9 +453,23 @@ init -500:
 
             _game_nav(screen)
 
-            ui.text(message, style='yesno_prompt')
-            ui.textbutton(_("Yes"), style='yesno_yes', clicked=ui.returns(True))
-            ui.textbutton(_("No"), style='yesno_no', clicked=ui.returns(False))
+            ui.window(style='yesno_window')
+            ui.vbox(library.padding * 10, xpos=0.5, xanchor='center', ypos=0.5, yanchor='center')
+
+            _label_factory(message, "yesno", xpos=0.5, xanchor='center')
+
+            ui.grid(5, 1, xfill=True)
+
+            # The extra nulls are because we want equal whitespace surrounding
+            # the two buttons. It should work as long as we have xfill=True
+            ui.null()
+            _button_factory("Yes", 'yesno', clicked=ui.returns(True), xpos=0.5, xanchor='center')
+            ui.null()
+            _button_factory("No", 'yesno', clicked=ui.returns(False), xpos=0.5, xanchor='center')
+            ui.null()
+
+            ui.close()
+            ui.close()
 
             return _game_interact()
 

@@ -98,6 +98,5 @@ init -10:
     image mary dawn vhappy = Image("mary_dawn_vhappy.png")
     image mary dawn wistful = Image("mary_dawn_wistful.png")
 
-
 label start:
     jump example

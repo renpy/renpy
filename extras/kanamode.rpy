@@ -121,6 +121,9 @@ init:
 # Now, the actual script of the example. (An excerpt from Moonlight
 # Walks.) Notice how we place calls to clear in places where the
 # we want the screen to be cleared.
+
+# This text is here to serve as an example, and shouldn't be used
+# in your game.
 label example:
 
     show beach2

@@ -46,28 +46,22 @@ init -450:
                 if not values:
                     return
 
+                ui.window(style='prefs_pref')
                 ui.vbox(style='prefs_pref')
-                ui.text(_(self.name), style='prefs_label')
+
+                _label_factory(self.name, "prefs")
 
                 cur = getattr(_preferences, self.field)
 
                 for name, value in values:
 
-                    style = 'prefs_button'
-                    text_style = 'prefs_button_text'
-
-                    if cur == value:
-                        style = 'prefs_selected_button'
-                        text_style = 'prefs_selected_button_text'
-
                     def clicked(value=value):
                         setattr(_preferences, self.field, value)
                         return True
 
-                    ui.textbutton(_(name),
-                                  style=style,
-                                  text_style=text_style,
-                                  clicked=clicked)
+                    _button_factory(name, "prefs",
+                                    selected=cur==value,
+                                    clicked=clicked)
                     
                 ui.close()
                     
@@ -123,12 +117,15 @@ label _prefs_screen:
 
         _game_nav("prefs")
 
-        ui.vbox(library.padding * 3, style='prefs_left')
+        ui.window(style='prefs_window')
+        ui.grid(2, 1, xfill=True)
+
+        ui.vbox(library.padding * 3, xpos=0.5, xanchor='center')
         for i in library.left_preferences:
             i.render_preference()
         ui.close()
                     
-        ui.vbox(library.padding * 3, style='prefs_right')
+        ui.vbox(library.padding * 3, xpos=0.5, xanchor='center')
         for i in library.right_preferences:
             i.render_preference()
         ui.close()

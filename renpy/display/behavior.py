@@ -390,10 +390,10 @@ class Button(renpy.display.layout.Window):
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
 def TextButton(text, style='button', text_style='button_text',
-               clicked=None):
+               clicked=None, **properties):
 
     text = renpy.display.text.Text(text, style=text_style)
-    return Button(text, style=style, clicked=clicked)
+    return Button(text, style=style, clicked=clicked, **properties)
 
 
 

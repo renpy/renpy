@@ -82,6 +82,7 @@ label main_menu:
     # Stuff that happens before the real main menu.
 
     scene black
+        
 
     show text "American Bishoujo\nPresents" \
          at Move((0.5, 0.0), (0.5, 0.5), 4.0,
