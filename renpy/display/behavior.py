@@ -12,6 +12,48 @@ import renpy
 import pygame
 from pygame.constants import *
 
+def map_event(ev, name):
+    """
+    This looks up the name in the keymap, and uses it to determine if
+    the given event was caused by one of the keys or mouse buttons
+    mapped to the given name in config.keymap. If so, it returns
+    True, otherwise it returns False.
+    """
+    
+    keys = renpy.config.keymap[name]
+
+    if ev.type == MOUSEBUTTONDOWN:
+        if ( "mouse_" + str(ev.button) ) in keys:
+            return True
+        else:
+            return False
+
+    if ev.type == KEYDOWN:
+        for key in keys:
+            if key == ev.unicode or ev.key == getattr(pygame.constants, key, None):
+                return True
+
+        return False
+
+    return False
+        
+def is_pressed(pressed, name):
+    """
+    This looks the given name up in the keymap. For each binding of the
+    form K_whatever, it checks to see if the given key is pressed, and if
+    so, returns the keycode of the pressed key. Otherwise, returns False.
+    """
+
+    keys = renpy.config.keymap[name]
+
+    for key in keys:
+        code = getattr(pygame.constants, key)
+        if pressed[code]:
+            return code
+
+    return False
+
+
 class Keymap(renpy.display.layout.Container):
     """
     This is a behavior that maps keys to functions that are called when
@@ -24,22 +66,11 @@ class Keymap(renpy.display.layout.Container):
 
     def event(self, ev, x, y):
 
-        # Mouse events.
-        if ev.type == MOUSEBUTTONDOWN:
-            key = 'mouse_' + str(ev.button)
-            if key in self.keymap:
-                self.keymap[key]()
-                raise renpy.display.core.IgnoreEvent()
-
-        # Keyboard events.
-        if ev.type != KEYDOWN:
-            return
-
-        for key, action in self.keymap.iteritems():
-            if key == ev.unicode or ev.key == getattr(pygame.constants, key, None):
+        for name, action in self.keymap.iteritems():
+            if map_event(ev, name):
                 action()
                 raise renpy.display.core.IgnoreEvent()
-
+        
     def render(self, width, height, st):
         return None
 
@@ -58,13 +89,13 @@ class KeymouseBehavior(renpy.display.layout.Null):
             x, y = pygame.mouse.get_pos()
             ox, oy = x, y
 
-            if pressed[K_LEFT]:
+            if is_pressed(pressed, "keymouse_left"):
                 x -= renpy.config.keymouse_distance
-            if pressed[K_RIGHT]:
+            if is_pressed(pressed, "keymouse_right"):
                 x += renpy.config.keymouse_distance
-            if pressed[K_UP]:
+            if is_pressed(pressed, "keymouse_up"):
                 y -= renpy.config.keymouse_distance
-            if pressed[K_DOWN]:
+            if is_pressed(pressed, "keymouse_down"):
                 y += renpy.config.keymouse_distance
 
             if (x, y) != (ox, oy):
@@ -93,37 +124,24 @@ class SayBehavior(renpy.display.layout.Null):
            ev.duration > self.delay:
             return False
 
-        if ev.type == MOUSEBUTTONDOWN:
-            if ev.button == 1:
+        if map_event(ev, "dismiss"):
+            return True
+
+        if map_event(ev, "rollforward"):
+            if renpy.game.context().seen_current(False):
                 return True
-
-            if ev.button == 5:
-                if renpy.game.context().seen_current(False):
-                    return True
-
-
-        if ev.type == KEYDOWN:
-            if ev.key == K_PAGEDOWN:
-                if renpy.game.context().seen_current(False):
-                    return True
-                        
-            if ev.key == K_RETURN:
+            
+        if map_event(ev, "skip"):
+            if renpy.game.preferences.skip_unseen:
                 return True
-
-            if ev.key == K_SPACE:
+            elif renpy.game.context().seen_current(True):
                 return True
-
-            if ev.key == K_LCTRL or ev.key == K_RCTRL:
-                if renpy.game.preferences.skip_unseen:
-                    return True
-                elif renpy.game.context().seen_current(True):
-                    return True
-
+            
         return None
 
 class Menu(renpy.display.layout.VBox):
 
-    def __init__(self, menuitems):
+    def __init__(self, menuitems, **properties):
         """
         @param menuitems: A list of menuitem tuples. The first element
         of each tuple is the string that should be displayed to the
@@ -132,7 +150,7 @@ class Menu(renpy.display.layout.VBox):
         caption.
         """
 
-        super(Menu, self).__init__(full=False)
+        super(Menu, self).__init__(**properties)
 
         self.selected = None
         self.results = [ ]
@@ -194,7 +212,7 @@ class Menu(renpy.display.layout.VBox):
                 self.selected = target
 
         # Make selection based on mouse click position.
-        if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+        if map_event(ev, "menu_mouseselect"):
             target = self.child_at_point(x, y)
             if target is None:
                 return None
@@ -204,7 +222,7 @@ class Menu(renpy.display.layout.VBox):
                 return self.results[target]
 
         # Change selection based on keypress.
-        if ev.type == KEYDOWN and ev.key == K_DOWN:
+        if map_event(ev, "menu_keydown"):
 
             selected = self.selected
 
@@ -215,7 +233,7 @@ class Menu(renpy.display.layout.VBox):
                     break
 
         # Change selection based on keypress.
-        if ev.type == KEYDOWN and ev.key == K_UP:
+        if map_event(ev, "menu_keyup"):
 
             selected = self.selected
 
@@ -226,7 +244,7 @@ class Menu(renpy.display.layout.VBox):
                     break
 
         # Make selection based on keypress.
-        if ev.type == KEYDOWN and ev.key == K_RETURN:
+        if map_event(ev, "menu_keyselect"):
             renpy.sound.play(self.selected_style.activate_sound)
             return self.results[self.selected]
             
@@ -245,13 +263,15 @@ class Menu(renpy.display.layout.VBox):
 class Button(renpy.display.layout.Window):
     
 
-    def __init__(self, child, style='button', clicked=None, **properties):
+    def __init__(self, child, style='button', clicked=None,
+                 hovered=None, **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
         self.style.set_prefix('idle_')
 
         self.old_hover = False
         self.clicked = clicked
+        self.hovered = hovered
 
     def set_hover(self, hover):
         """
@@ -282,11 +302,13 @@ class Button(renpy.display.layout.Window):
                 self.set_hover(inside)
 
                 if inside:
+                    if self.hovered:
+                        self.hovered()
+                        
                     renpy.sound.play(self.style.hover_sound)
 
 
-        if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
-               (ev.type == KEYDOWN and ev.key == K_RETURN):
+        if map_event(ev, "button_select"):
             if inside:
                 renpy.sound.play(self.style.activate_sound)
                 return self.clicked()
@@ -329,22 +351,25 @@ class Input(renpy.display.text.Text):
 
     def event(self, ev, x, y):
 
-        if ev.type == KEYDOWN:
-            if ev.key == K_BACKSPACE:
-                if self.content:
-                    self.content = self.content[:-1]
+        if map_event(ev, "input_backspace"):
+            if self.content:
+                self.content = self.content[:-1]
 
-            elif ev.key == K_RETURN:
-                return self.content
+            self.set_text(self.content + "_")
+            renpy.game.interface.redraw(0)
 
-            elif ev.unicode:
-                if ord(ev.unicode[0]) < 32:
+
+        elif map_event(ev, "input_enter"):
+            return self.content
+
+        elif ev.type == KEYDOWN and ev.unicode:
+            if ord(ev.unicode[0]) < 32:
                     return None
                 
-                if self.length and len(self.content) >= self.length:
-                    return None
+            if self.length and len(self.content) >= self.length:
+                return None
 
-                self.content += ev.unicode
+            self.content += ev.unicode
 
             self.set_text(self.content + "_")
             renpy.game.interface.redraw(0)

@@ -14,9 +14,6 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
-    # Set up the library.
-    $ library.file_page_length = 3
-
     # Change some styles, to add images in the background of
     # the menus and windows.
     $ style.mm_root_window.background = Image("mainmenu.jpg")

@@ -174,10 +174,10 @@ def display_menu(items, window_style='menu_window'):
     Displays a menu containing the given items.
     """
 
-    menu = Menu(items)
-    win = Window(menu, style=window_style)
+    renpy.ui.window(style=window_style)
+    renpy.ui.menu(items)
 
-    rv = interact(win)
+    rv = interact()
     checkpoint()
 
     return rv
@@ -185,9 +185,9 @@ def display_menu(items, window_style='menu_window'):
 
 def say(who, what):
     """
-    This is the core of the say command. If the who parameter is None or
-    a string, it is passed directly to do_say. Otherwise, the say method
-    is called on the who object with what as a parameter.
+    This is the core of the say command. If the who parameter is None
+    or a string, it is passed directly to display_say. Otherwise, the
+    say method is called on the who object with what as a parameter.
     """
 
     # Interpolate variables.
@@ -219,22 +219,21 @@ def display_say(who, what, who_style='say_label',
     if who is not None:
         who = who + ": "
 
-    vbox = layout.VBox(padding=10)
+    renpy.ui.window(style=window_style)
+    renpy.ui.vbox(padding=10)
 
     if who is not None:
-        label = text.Text(who, style=who_style, **properties)
-        vbox.add(label)
+        renpy.ui.text(who, style=who_style, **properties)
 
-    line = text.Text(what, style=what_style, slow=True)
-    vbox.add(line)
+    renpy.ui.text(what, style=what_style, slow=True)
+    renpy.ui.close()
 
-    window = layout.Window(vbox, style=window_style)
-    saybehavior = behavior.SayBehavior()
+    renpy.ui.saybehavior()
 
-    interact(saybehavior, window)
+    interact()
     checkpoint()
 
-def imagemap(ground, selected, hotspots, overlays=False,
+def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', **properties):
     """
     Displays an imagemap. An image map consists of two images and a
@@ -243,8 +242,8 @@ def imagemap(ground, selected, hotspots, overlays=False,
     returned.
 
     @param ground: The name of the file containing the ground
-    image. The ground image is displayed in hotspots that the mouse is
-    not over, and for areas that are not part of any hotspots.
+    image. The ground image is displayed for areas that are not part
+    of any hotspots.
 
     @param selected: The name of the file containing the selected
     image. This image is displayed in hotspots when the mouse is over
@@ -257,14 +256,21 @@ def imagemap(ground, selected, hotspots, overlays=False,
     the value returned from this function if the mouse is clicked in
     the hotspot.
 
-    @param overlay: If True, overlays are displayed when this imagemap
+    @param unselected: If provided, then it is the name of a file
+    containing the image that's used to fill in hotspots that are not
+    selected as part of any image. If not provided, the ground image
+    is used instead.
+ 
+    @param overlays: If True, overlays are displayed when this imagemap
     is active. If False, the overlays are suppressed.
     """
 
-    imagemap = ImageMap(ground, selected, hotspots, style=style, **properties)
-    keymouse = KeymouseBehavior()
+    renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
+                      overlays=overlays, style=style, **properties)
 
-    rv = interact(keymouse, imagemap)
+    renpy.ui.keymousebehavior()
+
+    rv = interact()
     checkpoint()
     return rv
     

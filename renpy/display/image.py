@@ -450,12 +450,18 @@ class ImageMap(renpy.display.core.Displayable):
     """
 
 
-    def __init__(self, ground, selected, hotspots,
+    def __init__(self, ground, selected, hotspots, unselected=None,
                  style='imagemap', **properties):
 
         self.ground = ground
         self.selected = selected
         self.hotspots = hotspots
+
+        if not unselected:
+            self.unselected = self.ground
+        else:
+            self.unselected = unselected
+
         self.active = None
 
         self.style = renpy.style.Style(style, properties)
@@ -463,23 +469,32 @@ class ImageMap(renpy.display.core.Displayable):
     def get_placement(self):
         return self.style
 
+    # This doesn't do anything quite yet.
     def predict(self, callback):
-        callback(i.ground)
-        callback(i.selected)
+        callback(self.ground)
+        callback(self.selected)
+        callback(self.unselected)
 
     def render(self, width, height, st):
 
         ground = cache.load_image(self.ground)
         selected = cache.load_image(self.selected)
+        unselected = cache.load_image(self.unselected)
 
         width, height = ground.get_size()
         rv = renpy.display.surface.Surface(width, height)
         rv.blit(ground, (0, 0))
 
-        if self.active is not None:
-            x0, y0, x1, y1, result = self.hotspots[self.active]
+        for i, hotspot in enumerate(self.hotspots):
 
-            subsurface = selected.subsurface((x0, y0, x1-x0, y1-y0))
+            x0, y0, x1, y1, result = hotspot
+
+            if i == self.active:
+                source = selected
+            else:
+                source = unselected
+
+            subsurface = source.subsurface((x0, y0, x1-x0, y1-y0))
             rv.blit(subsurface, (x0, y0))
 
         return rv
@@ -507,11 +522,8 @@ class ImageMap(renpy.display.core.Displayable):
         if active is None:
             return None
 
-        if (ev.type == MOUSEBUTTONDOWN and ev.button == 1) or \
-           (ev.type == KEYDOWN and ev.key == K_RETURN):
-
+        if renpy.display.behavior.map_event(ev, "imagemap_select"):
             renpy.sound.play(self.style.activate_sound)
-
             return result
 
         return None

@@ -50,6 +50,9 @@ class Container(renpy.display.core.Displayable):
         Adds a child to this container.
         """
 
+        if child is None:
+            return
+
         self.children.append(child)
         self.child = child
 

@@ -83,7 +83,7 @@ def restore():
                 current_music = new_music
 
     except pygame.error, e:
-        if renpy.config.debug:
+        if renpy.config.debug_sound:
             raise
         else:
             print "Error while trying to play music:", str(e)

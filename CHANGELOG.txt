@@ -1,3 +1,24 @@
+UI!
+
+
+
+Preferences [ not implemented ] [ not documented ]
+
+Imagemap/Unselected. [ not implemented ] [ not documented ]
+
+Implemented config.keymap, which allows the changing of keys and mouse
+buttons that trigger various Ren'Py events. [ not documented. ]
+
+There's now a new look for loading and saving games, that allows 10
+saves to be presented at once. I strongly recommend removing the 
+library.file_page_length line at the start of your game scripts, if
+it exists.
+
+Fixed a bug in sound.init that lead to crashes in some cases. (Caught
+by Mikey)
+
+Fixed a bug in ast.Node.predict that was causing an exception when
+config.debug was turned on.
 
 New in 4.2
 ----------

@@ -23,6 +23,11 @@ def save(filename, extra_info=''):
     if filename == None:
         filename = str(time.time()) + ".save"
 
+    try:
+        os.unlink(renpy.config.savedir + "/" + filename)
+    except:
+        pass
+
     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename,
                          "w", zipfile.ZIP_DEFLATED)
     

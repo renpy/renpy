@@ -18,6 +18,9 @@ background = None # (0, 0, 0, 255)
 # about and fix them.
 debug = False
 
+# Ditto, but for sound operations
+debug_sound = False
+
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
 rollback_enabled = True
@@ -81,6 +84,48 @@ annoying_text_cps = None
 
 # The amount of time music is faded out between tracks.
 fade_music = 0.0
+
+# The keymap that is used to change keypresses and mouse events.
+keymap = dict(
+    
+    # Default keymap.
+    rollback = [ 'K_PAGEUP', 'mouse_4' ],
+    screenshot = [ 's' ],
+    toggle_fullscreen = [ 'f' ],
+    toggle_music = [ 'm' ],
+    game_menu = [ 'K_ESCAPE', 'mouse_3' ],
+    hide_windows = [ 'mouse_2' ],
+
+    # Say.
+    rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
+    dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    skip = [ 'K_LCTRL', 'K_RCTRL' ],
+
+    # Keymouse.
+    keymouse_left = [ 'K_LEFT' ],
+    keymouse_right = [ 'K_RIGHT' ],
+    keymouse_up = [ 'K_UP' ],
+    keymouse_down = [ 'K_DOWN' ],
+    
+    # Menu.
+    menu_mouseselect = [ 'mouse_1' ],
+    menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
+    menu_keyup = [ 'K_UP' ],
+    menu_keydown = [ 'K_DOWN' ],
+    
+    # Button.
+    button_select = [ 'mouse_1', 'K_RETURN', 'K_KP_ENTER' ],
+
+    # Input.
+    input_backspace = [ 'K_BACKSPACE' ],
+    input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+
+    # Imagemap.
+    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouse_1' ],
+
+    # Repeating.
+    repeating = [ 'K_LCTRL', 'K_RCTRL' ],
+    )
 
 _globals = globals().copy()
 

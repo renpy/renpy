@@ -1864,6 +1864,10 @@ init:
       release. 
     </var>
 
+    <var name="config.debug_sound" value="False">
+      
+    </var>
+
     <var name="config.rollback_enabled" value="True">
       Should the user be allowed to rollback the game? If set to False,
       the user cannot interactively rollback. (The feature still works

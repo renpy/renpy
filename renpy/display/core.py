@@ -630,7 +630,7 @@ class Interface(object):
 
         # Set up the transient scene list.
         if transient:
-            transient = [ (None, start_time, i) for i in transient ] 
+            transient = scene_lists.transient + [ (None, start_time, i) for i in transient ] 
         else:
             transient = scene_lists.transient 
 
@@ -725,11 +725,13 @@ class Interface(object):
 
                 if ev.type == KEYREPEATEVENT:
                     pygame.time.set_timer(KEYREPEATEVENT, 0)
+
                     
-                    for i in repeating_keys:
-                        if pygame.key.get_pressed()[i]:
-                            ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
-                            break                            
+                    i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
+                                                          "repeating")
+
+                    if i:
+                        ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
 
                 # Handle quit specially for now.
                 if ev.type == QUIT:

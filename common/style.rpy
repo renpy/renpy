@@ -243,12 +243,16 @@ init -250:
         style.file_picker_window.yanchor = 'top'
 
 
+        style.create('file_picker_image', 'default')
+
+        style.file_picker_image.xminimum = 280
+
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
         style.file_picker_entry.xpadding = 3
-        style.file_picker_entry.xminimum = 780
-        style.file_picker_entry.ymargin = 5
+        style.file_picker_entry.xminimum = 500
+        style.file_picker_entry.ymargin = 2
         
         style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
@@ -256,6 +260,8 @@ init -250:
         style.create('file_picker_text', 'default',
                      '(text) A base style for all text that is displayed in the file picker.')
         
+        style.file_picker_text.size = 18
+
         style.create('file_picker_new', 'file_picker_text',
                      '(text) The style that is applied to the new indicator in the file picker.')
 
@@ -264,8 +270,8 @@ init -250:
 
         style.file_picker_new.color = (255, 192, 192, 255)
         style.file_picker_old.color = (192, 192, 255, 255)
-        style.file_picker_new.minwidth = 50
-        style.file_picker_old.minwidth = 50
+        style.file_picker_new.minwidth = 30
+        style.file_picker_old.minwidth = 30
 
         style.create('file_picker_extra_info', 'file_picker_text',
                      '(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.')

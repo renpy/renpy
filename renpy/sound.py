@@ -6,8 +6,12 @@ import pygame
 from pygame.constants import *
 
 def init():
-    pygame.mixer.init(renpy.config.sound_sample_rate)
-
+    try:
+        pygame.mixer.init(renpy.config.sound_sample_rate)
+    except:
+        if renpy.config.debug_sound:
+            raise
+        
 def play(fn, loops=0):
     """
     This plays the given sound. The sound must be in a wav file,
@@ -34,6 +38,6 @@ def play(fn, loops=0):
         sound = pygame.mixer.Sound(renpy.loader.load(fn))
         sound.play()
     except:
-        if renpy.config.debug:
+        if renpy.config.debug_sound:
             raise
         

@@ -5,6 +5,8 @@
 # of user code, unless we re-import it.
 import renpy
 
+import renpy.ui as ui
+
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
 

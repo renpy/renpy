@@ -29,6 +29,8 @@ import renpy.display.layout # core
 import renpy.display.behavior # layout
 import renpy.display.transition # core
 
+import renpy.ui
+
 import renpy.exports
 import renpy.config # depends on lots.
 import renpy.store  # depends on everything.

@@ -21,16 +21,16 @@ init -500:
         library = object()
 
         # The number of files to show at once.
-        library.file_page_length = 4
+        library.file_page_length = 10
 
         # A small amount of padding.
-        library.padding = 5
+        library.padding = 2
 
         # The width of a thumbnail.
-        library.thumbnail_width = 100
+        library.thumbnail_width = 250
 
         # The height of a thumbnail.
-        library.thumbnail_height = 75
+        library.thumbnail_height = 188
 
         # The contents of the main menu.
         library.main_menu = [
@@ -38,6 +38,16 @@ init -500:
             ( "Continue Game", "_continue" ),
             ( "Quit Game", "_quit" ),
             ]
+
+        # The contents of the game menu choices.
+        library.game_menu = [
+                ( "return", "Return to Game", "_return"),
+                ( "load", "Load Game", "_load_screen" ),
+                ( "save", "Save Game", "_save_screen" ),
+                ( "prefs", "Preferences", "_prefs_screen" ),
+                ( "mainmenu", "Main Menu", "_full_restart" ),
+                ( "quit", "Quit Game", "_quit_screen" ),
+                ]
 
         # Used to translate strings in the library.
         library.translations = { }
@@ -47,7 +57,7 @@ init -500:
         save_name = ''
 
 # The function that's used to translate strings in the game menu.
-init:
+init -500:
     python:
         def _(s):
             """
@@ -59,11 +69,6 @@ init:
             else:
                 return s
 
-##############################################################################
-
-init:
-
-    python:
         # Called to make a screenshot happen.
         def _screenshot():
             renpy.screenshot("screenshot.bmp")
@@ -84,22 +89,16 @@ init:
             finally:
                 _windows_hidden = False
 
-        # A keymouse object that we use on the mainmenu and gamemenu
-        # screens.
-        _keymouse = renpy.KeymouseBehavior()
-                
     # Set up the default keymap.    
     python hide:
         # The default keymap.
         km = renpy.Keymap(
-            K_PAGEUP = renpy.rollback,
-            mouse_4 = renpy.rollback,
-            s = _screenshot,
-            f = renpy.toggle_fullscreen,
-            m = renpy.toggle_music,
-            K_ESCAPE = renpy.curried_call_in_new_context("_game_menu"),
-            mouse_3 = renpy.curried_call_in_new_context("_game_menu"),
-            mouse_2 = _hide_windows,
+            rollback = renpy.rollback,
+            screenshot = _screenshot,
+            toggle_fullscreen = renpy.toggle_fullscreen,
+            toggle_music = renpy.toggle_music,
+            game_menu = renpy.curried_call_in_new_context("_game_menu"),
+            hide_windows = _hide_windows,
             )
 
         config.underlay = [ km ]
@@ -122,23 +121,23 @@ label _library_main_menu:
     
     python hide:
 
-        # Show the main menu screen.
-        vbox = renpy.VBox()
+        ui.keymousebehavior()
+
+        ui.window(style='mm_root_window')
+        ui.fixed()
+
+        ui.window(style='mm_menu_window')
+        ui.vbox()
 
         for text, label in library.main_menu:
-            vbox.add(renpy.TextButton(text, clicked=_return(label)))
+            ui.textbutton(text, clicked=ui.returns(label))
 
-        menu_window = renpy.Window(vbox, style='mm_menu_window')
-        
-        fixed = renpy.Fixed()
-        fixed.add(menu_window)
+        ui.close()
+        ui.close()
 
-        root_window = renpy.Window(fixed, style='mm_root_window')
-
-        store._result = renpy.interact(_keymouse, root_window,
-                                       suppress_overlay=True,
-                                       suppress_underlay=True)
-
+        store._result = renpy.interact(suppress_overlay = True,
+                                       suppress_underlay = True)
+    
     # Computed jump to the appropriate label.
     $ renpy.jump(_result)
 
@@ -158,78 +157,67 @@ label _continue:
 init -500:
     python:
         
-        # This returns a window containing the game menu navigation
+         # This returns a window containing the game menu navigation
         # buttons, set up to jump to the appropriate screen sections.
         def _game_nav(selected):
 
-            buttons = [
-                ( "return", _("Return to Game"), "_return"),
-                ( "load", _("Load Game"), "_load_screen" ),
-                ( "save", _("Save Game"), "_save_screen" ),
-                ( "prefs", _("Preferences"), "_prefs_screen" ),
-                ( "mainmenu", _("Main Menu"), "_full_restart" ),
-                ( "quit", _("Quit Game"), "_confirm_quit" ),
-                ]
+            ui.keymousebehavior()
 
-            vbox = renpy.VBox()
-            win = renpy.Window(vbox, style='gm_nav_window')
+            ui.window(style='gm_root_window')
+            ui.fixed()
 
-            for key, label, target in buttons:
+            ui.window(style='gm_nav_window')
+            ui.vbox()
+            
+            for key, label, target in library.game_menu:
                 style="button"
                 text_style="button_text"
                 
                 if key == selected:
                     style = 'selected_button'
                     text_style = 'selected_button_text'
-
-                def clicked(target=target):
-                    renpy.jump(target)
                     
-                tb = renpy.TextButton(label,
-                                      style=style,
-                                      text_style=text_style,
-                                      clicked=clicked)
-                vbox.add(tb)
+                ui.textbutton(_(label), style=style, text_style=text_style,
+                              clicked=ui.jumps(target))
 
-            return win
+            ui.close()
+            ui.close()
                 
-        def _game_interact(selected, *widgets):
-
-            fixed = renpy.Fixed()
-            win = renpy.Window(fixed, style='gm_root_window')
-            fixed.add(_game_nav(selected))
-
-            for w in widgets:
-                fixed.add(w)
-
-            return renpy.interact(_keymouse, win,
-                                  suppress_underlay=True,
-                                  suppress_overlay=True
-                                  )
+        def _game_interact():
+            
+            return renpy.interact(suppress_underlay=True,
+                                  suppress_overlay=True)
 
         _file_picker_index = 0
 
-        def _render_filename(filename, newest_filename):
+        # This is used to render a single filename to the screen.
+        def _render_filename(index, filename, newest_filename):
 
             if filename is None:
-                return renpy.Text(_("Save in new slot."), style='file_picker_new_slot')
+                ui.text(_("Save in new slot."), style='file_picker_new_slot')
+                return
 
-            hbox = renpy.HBox(padding=library.padding)
 
+            ui.hbox(padding=library.padding)
+
+            num = "% 2d." % index
+            
             if filename == newest_filename:
-                hbox.add(renpy.Text(_("New"), style='file_picker_new'))
+                ui.text(num, style='file_picker_new')
             else:
-                hbox.add(renpy.Text(_("Old"), style='file_picker_old'))
+                ui.text(num, style='file_picker_old')
 
-            hbox.add(renpy.load_screenshot(filename))
+            # Do something better about this.
+            # ui.add(renpy.load_screenshot(filename))
 
-            hbox.add(renpy.Text(renpy.load_extra_info(filename), style='file_picker_extra_info'  ))
+            ui.text(renpy.load_extra_info(filename), style='file_picker_extra_info')
 
-            return hbox
+            ui.close()
 
         # This displays a file picker that can chose a save file from
         # the list of save files.
         def _file_picker(selected, files):
+
 
             nsg = renpy.newest_save_game()
 
@@ -245,9 +233,19 @@ init -500:
 
                 cur_files = files[fpi:fpi + library.file_page_length]
 
-                vbox = renpy.VBox()
+                # Navigation
+                _game_nav(selected)
+                
+                ui.window(style='file_picker_window')
 
-                hbox = renpy.HBox(padding=library.padding * 3)
+                ui.hbox()
+
+                image_win = ui.window(style='file_picker_image')
+                ui.null()
+
+                ui.vbox()
+                
+                ui.hbox(padding=library.padding * 10)
 
                 def tb(cond, label, clicked):
                     if cond:
@@ -257,28 +255,40 @@ init -500:
                         style = 'disabled_button'
                         text_style = 'disabled_button_text'
 
-                    return renpy.TextButton(label, style=style, text_style=text_style, clicked=clicked)
+                    ui.textbutton(label, style=style, text_style=text_style, clicked=clicked)
 
 
-                hbox.add(tb(fpi > 0,
-                            _('Previous Page'), _return(("fpidelta", -1))))
-                hbox.add(tb(fpi + library.file_page_length < len(files),
-                            _('Next Page'), _return(("fpidelta", +1))))
-                vbox.add(hbox)
+                tb(fpi > 0, _('Previous Page'), ui.returns(("fpidelta", -1)))
+                tb(fpi + library.file_page_length < len(files),
+                   _('Next Page'), ui.returns(("fpidelta", +1)))
 
-                for i in cur_files:
-                    child = _render_filename(i, nsg)
+                ui.close() # hbox
+
+                for index, i in enumerate(cur_files):
+
+                    def hover(i=i):  
+                        ui.reopen(image_win, True)
+
+                        if i:
+                            ui.add(renpy.load_screenshot(i))
+                        else:
+                            ui.null()
+                            
+                        ui.close()
+
                     
-                    button = renpy.Button(child,
-                                          style='file_picker_entry',
-                                          clicked=_return(("return", i)))
+                    ui.button(style='file_picker_entry',
+                              clicked=ui.returns(("return", i)),
+                              hovered=hover)
 
-                    vbox.add(button)
+                    _render_filename(index + fpi + 1, i, nsg)
+                    
 
-                win = renpy.Window(vbox, style='file_picker_window')
+                ui.close() # vbox
 
-                result = _game_interact(selected, win)
+                ui.close() # hbox
 
+                result = _game_interact()
                 type, value = result
 
                 if type == "return":
@@ -289,15 +299,18 @@ init -500:
                 
         def _yesno_prompt(screen, message):
 
-            prompt = renpy.Text(message, style='yesno_prompt')
-            yes = renpy.TextButton(_("Yes"), style='yesno_yes',
-                               clicked=_return(True))
-            no =  renpy.TextButton(_("No"), style='yesno_no',
-                               clicked=_return(False))
+            _game_nav(screen)
 
-            return _game_interact(screen, prompt, yes, no) 
+            ui.text(message, style='yesno_prompt')
+            ui.textbutton(_("Yes"), style='yesno_yes', clicked=ui.returns(True))
+            ui.textbutton(_("No"), style='yesno_no', clicked=ui.returns(False))
+
+            return _game_interact()
+
+
+
             
-        # Returns a button for a single preference and value.
+        # Adds a button for a single preference and value.
         def _prefbutton(label, var, value):
 
             def clicked():
@@ -311,19 +324,18 @@ init -500:
                 style = 'selected_button'
                 text_style = 'selected_button_text'
 
-            return renpy.TextButton(_(label), style=style,
-                                    text_style=text_style, clicked=clicked)
+            ui.textbutton(_(label), style=style,
+                          text_style=text_style,
+                          clicked=clicked)
 
         # Returns a vbox for a single preference.
         def _prefvbox(label, var, entries):
 
-            rv = renpy.VBox(style='prefs_pref')
-            rv.add(renpy.Text(_(label), style='prefs_label'))
+            ui.vbox(style='prefs_pref')
+            ui.text(_(label), style='prefs_label')
 
             for blabel, value in entries:
-                rv.add(_prefbutton(blabel, var, value))
-
-            return rv
+                _prefbutton(blabel, var, value)
 
             
                                         
@@ -337,6 +349,11 @@ label _game_menu:
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
 
     jump _save_screen
+
+label _confirm_quit:
+    $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+
+    jump _quit_screen
 
 label _load_screen:
 
@@ -352,7 +369,15 @@ label _save_screen:
     $ _fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
 
     if not _fn or _yesno_prompt("save", _("Are you sure you want to overwrite your save?")):
-        $ renpy.save(_fn, renpy.time.strftime("%Y-%m-%d %H:%M:%S\n") + save_name)
+        python hide:
+
+            if save_name:
+                full_save_name = " - " + save_name
+            else:
+                full_save_name = ""
+            
+            renpy.save(_fn, renpy.time.strftime("%b %d, %H:%M") +
+                       full_save_name)
 
     jump _save_screen
 
@@ -397,7 +422,7 @@ label _prefs_screen:
 
 
 # Asks the user if he wants to quit.
-label _confirm_quit:
+label _quit_screen:
     if _yesno_prompt("quit", _("Are you sure you want to end the game?")):
         jump _quit
     else:
@@ -411,7 +436,6 @@ label _full_restart:
 
 # Return to the game, after restoring the keymap.
 label _return:
-
     return
 
 # Random nice things to have.
