@@ -720,10 +720,10 @@ init:
     
     <p>
       Position, when given position properties as arguments, returns a
-      callable that can be passed to the "at" clause of a show, hide,
-      or scene statement to display the image at the given
-      location. See the section below on position properties to get
-      a full explanation of how they are used to lay things out, but
+      callable that can be passed to the "at" clause of a show or
+      scene statement to display the image at the given location. See
+      the section below on position properties to get a full
+      explanation of how they are used to lay things out, but
       hopefully this example will show how Position can be used:
     </p>
   </function>
@@ -739,6 +739,54 @@ init:
 
 show eileen happy at left
   </example>
+
+  <function name="Pan" sig="(startpos, endpos, time)">
+
+    <p>
+
+      Pan, when given the appropriate arguments, gives an object that
+      can be passed to the at clause of that image to cause the image to
+      be panned on the screen. The parameters startpos and endpos are
+      tuples, containing the x and y coordinates of the upper-left hand
+      corner of the screen relative to the image. Time is the time it
+      will take this position to move from startpos to endpos.
+
+    </p><p>
+
+      As the current implementation of Ren'Py is quite limited, there
+      are quite a few restrictions that we put on pan. The big one is
+      that there always must be a screen's worth of pixels to the
+      right and below the start and end positions. Failure to ensure
+      this may lead to inconsistent rendering.
+
+    </p><p>
+
+      Hopefully, an example will demonstrate how Pan is used. For this
+      example, assume that the screen is 800 x 600, and that the
+      image marspan is 2400 x 600 pixels in size. We want to take 10
+      seconds to pan from left to right on the image.
+
+    </p>
+
+    <example>
+scene marspan at Pan((0, 0), (1600, 0), 10.0)
+    </example>
+
+    <p>
+      Please note that the pan will be immediately displayed, and that
+      Ren'Py will not wait for it to complete before moving on to
+      the next statement. This may lead to the pan being overlayed
+      with text or dialogue. You may want to use a call to renpy.pause
+      to delay for the time it will take to complete the pan.
+    </p>
+
+    <p>
+      Finally, also note that when a pan is completed, the image locks
+      into the ending position.
+    </p>
+
+  </function>
+    
 
 
   <h3>Transitions</h3>

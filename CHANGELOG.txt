@@ -47,6 +47,5 @@ preferences. Right now, this includes Windowed/Fullscreen, Music
 Enabled/Disabled, CTRL Skips Unread/All messages, and Transitions
 controls which transitions are performed.
 
-Added a Pan function which can be used with at. This allows us to pan
-over a background image.
-[not documented]
+Added a Pan function which can be used in an at clause. This allows us
+to pan over a background image.

@@ -4,7 +4,7 @@ from distutils.core import setup
 import py2exe
 import sys
 
-if len(sys.argv != 2):
+if len(sys.argv) != 2:
     print "Usage: build_exe.py <prefix>"
     print ""
     print "Builds <prefix>.exe."
@@ -14,7 +14,8 @@ if len(sys.argv != 2):
 
 def program(name):
     return dict(script="run_game.py",
-                icon_resources=[ (0, name + ".ico") ],
+                icon_resources=[ (0, name + ".ico"),
+                                 ],
                 dest_base=name)
 
 programs = [
