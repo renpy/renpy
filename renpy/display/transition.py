@@ -230,27 +230,56 @@ class Dissolve(Transition):
         self.new_widget = new_widget
         self.events = False
 
+        self.old_bottom = None
+        self.old_top = None
+        self.old_alpha = 0
+
     def render(self, width, height, st):
 
         if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st)
 
-        rv = render(self.old_widget, width, height, st)
+        if st < self.time:
+            renpy.display.render.redraw(self, 0)
 
+        alpha = min(255, int(255 * st / self.time))
+
+        rv = renpy.display.render.Render(width, height)
+
+        bottom = render(self.old_widget, width, height, st)
         top = render(self.new_widget, width, height, st)
 
         surf = top.pygame_surface(False)
         renpy.display.render.mutable_surface(surf)
 
-        alpha = min(255, int(255 * st / self.time))
+        if id(top) == self.old_top and id(bottom) == self.old_bottom:
+
+            # Fast rendering path.
+
+            alpha = alpha / 255.0
+            change = ( alpha - self.old_alpha) / ( 1.0 - self.old_alpha)
+            change = int(change * 255.0)
+
+            surf.set_alpha(change, RLEACCEL)
+            rv.blit(surf, (0, 0))
+
+            change /= 255.0
+            self.old_alpha = self.old_alpha * ( 1 - change ) + change
+            
+        else:
+
+            # Complete rendering path.
+
+            rv.blit(bottom, (0, 0))
+            surf.set_alpha(alpha, RLEACCEL)
+            rv.blit(surf, (0, 0))
+
+            self.old_alpha = alpha / 255.0
 
 
-        surf.set_alpha(alpha, RLEACCEL)
-        rv.blit(surf, (0, 0))
-
-        if st < self.time:
-            renpy.display.render.redraw(self, 0)
+        self.old_top = id(top)
+        self.old_bottom = id(bottom)
 
         return rv
 

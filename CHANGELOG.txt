@@ -1,3 +1,7 @@
+Changed Dissolve so that it tries to use compositing when it can. This
+means that it only draws to the screen once... which is a little bit
+of a speedup on a really expensive operation.
+
 New in 4.6
 ----------
 

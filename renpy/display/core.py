@@ -791,7 +791,7 @@ class Interface(object):
 
                     self.display.show(root_widget, suppress_blit)
                     
-                    # frames = frames + 1
+                    renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile:

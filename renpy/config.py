@@ -160,7 +160,8 @@ keymap = dict(
     toggle_skip = [ 'K_TAB' ],
     )
 
-
+# The number of frames that Ren'Py has shown.
+frames = 0
 
 def backup():
 
