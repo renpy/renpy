@@ -574,7 +574,7 @@ class RollbackLog(renpy.object.Object):
             rb.rollback()
 
         # Disable the next transition, as it's pointless.
-        renpy.game.interface.supress_transition = True
+        renpy.game.interface.suppress_transition = True
 
         # If necessary, reset the RNG.
         if force:

@@ -147,4 +147,4 @@ def call_in_new_context(label):
     context.run()
 
     contexts.pop()
-    interface.redraw(0)
+    interface.force_redraw = True

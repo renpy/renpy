@@ -12,7 +12,7 @@
 import renpy
 import renpy.game as game
 import os
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+from pickle import loads, dumps, HIGHEST_PROTOCOL
 
 def run(restart=False):
     """

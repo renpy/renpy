@@ -22,12 +22,14 @@ Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Animation = renpy.display.image.Animation
+Movie = renpy.display.video.Movie
+
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
-
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
+CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 
 def _return(v):
     """
@@ -98,11 +100,12 @@ class Character(object):
         self.window_style = window_style
         self.properties = properties
 
-    def __call__(self, what):
+    def __call__(self, what, interact=True):
         renpy.display_say(self.name, what,
                           who_style=self.who_style,
                           what_style=self.what_style,
                           window_style=self.window_style,
+                          interact=interact,
                           **self.properties)
 
 class DynamicCharacter(object):
@@ -134,7 +137,7 @@ class DynamicCharacter(object):
         self.window_style = window_style
         self.properties = properties
 
-    def __call__(self, what):
+    def __call__(self, what, interact=True):
         import renpy.python as python
 
         renpy.display_say(python.py_eval(self.name_expr),
@@ -142,55 +145,25 @@ class DynamicCharacter(object):
                           who_style=self.who_style,
                           what_style=self.what_style,
                           window_style=self.window_style,
+                          interact=interact,
                           **self.properties)
+
+# The color function. (Moved, since text needs it, too.)
+color = renpy.display.text.color
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
 
-def narrator(what):
-    renpy.display_say(None, what, what_style='say_thought')
+# The default narrator.
+def narrator(what, interact=True):
+    renpy.display_say(None, what, what_style='say_thought', interact=interact)
 
+# The default menu function.
 menu = renpy.display_menu
 
-def color(s):
-    """
-    This function converts a hexcode into a color/alpha tuple. Leading
-    # marks are ignored. Colors can be rgb or rgba, with each element having
-    either one or two digits. (So the strings can be 3, 4, 6, or 8 digits long,
-    not including the optional #.) A missing alpha is interpreted as 255,
-    fully opaque.
-
-    For example, color('#123a') returns (17, 34, 51, 170), while
-    color('c0c0c0') returns (192, 192, 192, 255).
-    """
-
-    if s[0] == '#':
-        s = s[1:]
-
-    if len(s) == 6:
-        r = int(s[0]+s[1], 16)
-        g = int(s[2]+s[3], 16)
-        b = int(s[4]+s[5], 16)
-        a = 255
-    elif len(s) == 8:
-        r = int(s[0]+s[1], 16)
-        g = int(s[2]+s[3], 16)
-        b = int(s[4]+s[5], 16)
-        a = int(s[6]+s[7], 16)
-    elif len(s) == 3:
-        r = int(s[0], 16) * 0x11
-        g = int(s[1], 16) * 0x11
-        b = int(s[2], 16) * 0x11
-        a = 255
-    elif len(s) == 4:
-        r = int(s[0], 16) * 0x11
-        g = int(s[1], 16) * 0x11
-        b = int(s[2], 16) * 0x11
-        a = int(s[3], 16) * 0x11
-    else:
-        raise Exception("Argument to color() must be 3, 4, 6, or 8 hex digits long.")
-
-    return (r, g, b, a)
+# The function that is called when anonymous text is said.
+def say(who, what):
+    renpy.display_say(who, what)
 
 # The default transition.
 default_transition = None

@@ -1,1 +1,4 @@
-Have a new form of imagemap that uses a color image to distinguish hotspots.
+Have a new form of imagemap that uses a color image to distinguish
+hotspots.
+
+Keyd compiles.
