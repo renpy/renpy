@@ -409,3 +409,8 @@ init -250:
         style.create('prefs_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected preferences button.')
 
+        style.create('skip_indicator', 'default',
+                     '(text, position) The style of the text that is used to indicate that skipping is in progress.')
+
+        style.skip_indicator.xpos = 10
+        style.skip_indicator.ypos = 10

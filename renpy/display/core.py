@@ -8,12 +8,8 @@ from pygame.constants import *
 import time
 import cStringIO
 
-KEYREPEATEVENT = USEREVENT + 1
+# KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
-
-# A list of keys that we allow to repeat.
-repeating_keys = [ K_LCTRL, K_RCTRL ]
-
 
 class IgnoreEvent(Exception):
     """
@@ -630,10 +626,15 @@ class Interface(object):
         renpy.game.context().predict(renpy.display.image.cache.preload_image)
 
         # Set up key repeats.
-        pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
+        # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
 
         # Set up display time event.
         pygame.time.set_timer(DISPLAYTIME, 50)
+
+        # Clear some events.
+        pygame.event.clear((MOUSEMOTION, DISPLAYTIME,
+                            MOUSEBUTTONUP, MOUSEBUTTONDOWN))
+
         
         # Figure out the scene list we want to show.
         start_time = time.time()
@@ -756,15 +757,19 @@ class Interface(object):
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
 
-                    if ev.type == KEYREPEATEVENT:
-                        pygame.time.set_timer(KEYREPEATEVENT, 0)
+
+#                     if ev.type == KEYREPEATEVENT:
+#                         pygame.time.set_timer(KEYREPEATEVENT, 0)
 
 
-                        i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
-                                                              "repeating")
+#                         i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
+#                                                               "repeating")
 
-                        if i:
-                            ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
+#                         if i:
+#                             ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
+
+                    # Handle skipping.
+                    renpy.display.behavior.skipping(ev)
 
                     # Handle quit specially for now.
                     if ev.type == QUIT:
@@ -805,8 +810,8 @@ class Interface(object):
 
         finally:
 
-            pygame.time.set_timer(KEYREPEATEVENT, 0)
-            pygame.event.clear()
+            # pygame.time.set_timer(KEYREPEATEVENT, 0)
+            pygame.time.set_timer(DISPLAYTIME, 0)
             scene_lists.replace_transient()
 
             # Clear up the transitions. 

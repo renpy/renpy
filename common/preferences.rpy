@@ -98,9 +98,9 @@ init -450:
 
         library.left_preferences = [ p1, p2, p3 ]
 
-        p4 = _Preference('CTRL Skips', 'skip_unseen', [
-            ('Seen Messages', False, None),
-            ('All Messages', True, None),
+        p4 = _Preference('TAB and CTRL Skip', 'skip_unseen', [
+            ('Seen Messages', False, 'config.allow_skipping'),
+            ('All Messages', True, 'config.allow_skipping'),
             ])
 
         p5 = _Preference('Transitions', 'transitions', [

@@ -36,6 +36,18 @@ def map_event(ev, name):
         return False
 
     return False
+
+def map_keyup(ev, name):
+
+    keys = renpy.config.keymap[name]
+    
+    if ev.type == KEYUP:
+        for key in keys:
+            if ev.key == getattr(pygame.constants, key, None):
+                return True
+
+    return False
+    
         
 def is_pressed(pressed, name):
     """
@@ -53,6 +65,19 @@ def is_pressed(pressed, name):
 
     return False
 
+def skipping(ev):
+    """
+    This handles setting skipping in response to the press of one of the
+    CONTROL keys. The library handles skipping in response to TAB.
+    """
+
+    if map_event(ev, "skip"):
+        renpy.config.skipping = True
+
+    if map_keyup(ev, "skip"):
+        renpy.config.skipping = False
+
+    return
 
 class Keymap(renpy.display.layout.Container):
     """
@@ -120,21 +145,24 @@ class SayBehavior(renpy.display.layout.Null):
     def event(self, ev, x, y):
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
-           self.delay and \
-           ev.duration > self.delay:
+           self.delay and ev.duration > self.delay:
             return False
+
+        if ev.type == renpy.display.core.DISPLAYTIME and \
+           renpy.config.allow_skipping and renpy.config.skipping and \
+           ev.duration > renpy.config.skip_delay / 1000.0:
+
+            if renpy.game.preferences.skip_unseen:
+                return True
+            elif renpy.game.context().seen_current(True):
+                return True
+
 
         if map_event(ev, "dismiss"):
             return True
 
         if map_event(ev, "rollforward"):
             if renpy.game.context().seen_current(False):
-                return True
-            
-        if map_event(ev, "skip"):
-            if renpy.game.preferences.skip_unseen:
-                return True
-            elif renpy.game.context().seen_current(True):
                 return True
             
         return None
@@ -479,3 +507,39 @@ class Bar(renpy.display.core.Displayable):
         return rv
         
      
+class Conditional(renpy.display.layout.Container):
+    """
+    This class renders its child if and only if the condition is
+    true. Otherwise, it renders nothing. (Well, a Null). 
+
+    Warning: the condition MUST NOT update the game state in any
+    way, as that would break rollback.
+    """
+
+    def __init__(self, condition, *args):
+        super(Conditional, self).__init__(*args)
+
+        self.condition = condition
+        self.null = renpy.display.layout.Null()
+
+        self.state = eval(self.condition, renpy.game.store)
+
+    def render(self, width, height, st):
+        if self.state:
+            return self.child.render(width, height, st)
+        else:
+            return self.null.render(width, height, st)
+
+    def event(self, ev, x, y):
+
+        state = eval(self.condition, renpy.game.store)
+
+        if state != self.state:
+            renpy.game.interface.redraw(0)
+
+        self.state = state
+
+        if state:
+            return self.child.event(ev, x, y)
+        
+            

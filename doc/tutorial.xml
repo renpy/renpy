@@ -1966,9 +1966,15 @@ init:
       the image cache change.
     </var>
 
-    <var name="config.skip_delay" value="100">
+    <var name="config.allow_skipping" value="True">
+      If set to False, the user is not able to skip over the text of the
+      game.
+    </var>
+
+    <var name="config.skip_delay" value="75">
       The amount of time that dialogue will be shown for, when
-      skipping statements using ctrl, in milliseconds.
+      skipping statements using ctrl, in milliseconds. (Although it's
+      nowhere near that precise in practice.)
     </var>
 
     <var name="config.archives" value="[ ]">
@@ -2106,6 +2112,12 @@ the file picker.
       the game menu without clicking a button. (For example, when
       right-clicking inside the game menu.)
     </var>
+
+    <var name="library.skip_indicator" value="True">
+      If True, the library will display a skip indicator when skipping
+      through the script.
+    </var>
+ 
 
   </dl>
 
@@ -2674,7 +2686,6 @@ keymap = dict(
     # Say.
     rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
-    skip = [ 'K_LCTRL', 'K_RCTRL' ],
 
     # Keymouse.
     keymouse_left = [ 'K_LEFT' ],
@@ -2701,9 +2712,9 @@ keymap = dict(
     # Bar.
     bar_click = [ 'mouse_1' ],
 
-    # This isn't a binding, but instead a list of keys that should
-    # repeat when held down.
-    repeating = [ 'K_LCTRL', 'K_RCTRL' ],
+    # These keys control skipping.
+    skip = [ 'K_LCTRL', 'K_RCTRL' ],
+    toggle_skip = [ 'K_TAB' ],
     )
 </example>
 

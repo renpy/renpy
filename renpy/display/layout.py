@@ -13,7 +13,7 @@ class Null(renpy.display.core.Displayable):
     but don't want to actually have anything there.
     """
 
-    def __init__(self, width=1, height=1, style='default', **properties):
+    def __init__(self, width=0, height=0, style='default', **properties):
         super(Null, self).__init__()
 
         self.style = renpy.style.Style(style, properties)

@@ -61,8 +61,14 @@ predict_statements = 10
 # it changes.
 debug_image_cache = False
 
+# Should we allow skipping at all?
+allow_skipping = True
+
+# Are we currently skipping?
+skipping = False
+
 # The delay while we are skipping say statements.
-skip_delay = 100
+skip_delay = 75
 
 # Archive files that are searched for images.
 archives = [ ]
@@ -107,7 +113,6 @@ keymap = dict(
     # Say.
     rollforward = [ 'mouse_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouse_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
-    skip = [ 'K_LCTRL', 'K_RCTRL' ],
 
     # Keymouse.
     keymouse_left = [ 'K_LEFT' ],
@@ -134,9 +139,10 @@ keymap = dict(
     # Bar.
     bar_click = [ 'mouse_1' ],
 
-    # This isn't a binding, but instead a list of keys that should
-    # repeat when held down.
-    repeating = [ 'K_LCTRL', 'K_RCTRL' ],
+
+    # These keys control skipping.
+    skip = [ 'K_LCTRL', 'K_RCTRL' ],
+    toggle_skip = [ 'K_TAB' ],
     )
 
 

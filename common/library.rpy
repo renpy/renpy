@@ -63,6 +63,8 @@ init -500:
         # button.
         library.exit_sound = None
 
+        # True if the skip indicator should be shown.
+        library.skip_indicator = True
 
         # This is updated to give the user an idea of where a save is
         # taking place.
@@ -113,17 +115,36 @@ init -500:
             renpy.play(library.enter_sound)
             renpy.call_in_new_context('_game_menu')
 
+        def toggle_skipping():
+            config.skipping = not config.skipping
+
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
             screenshot = _screenshot,
             toggle_fullscreen = renpy.toggle_fullscreen,
             toggle_music = renpy.toggle_music,
+            toggle_skip = toggle_skipping,
             game_menu = invoke_game_menu,
             hide_windows = _hide_windows,
             )
 
         config.underlay = [ km ]
+
+
+    # The skip indicator.
+    python hide:
+
+        def skip_indicator():
+
+            if config.allow_skipping and library.skip_indicator:
+
+                ui.conditional("config.skipping")
+                ui.text(_("Skip Mode"), style='skip_indicator')
+
+            return [ ]
+
+        config.overlay_functions.append(skip_indicator)
 
     return
         

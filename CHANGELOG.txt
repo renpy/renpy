@@ -26,6 +26,11 @@ tuple as an image filename) allows a single image to be constructed
 from multiple image files, saving disk space while still keeping
 performance.
 
+Improved skipping. Now, along with control causing skipping of seen
+dialogue, TAB toggles skip mode. An indicator displays to let you know
+that skip mode is enabled. Finally, if a game author wants to disable
+skipping, he can set config.allow_skipping to false. 
+
 (The following were also in 4.3.2, which was a private release to
 test the fixes for UTF-8 support.)
 

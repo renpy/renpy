@@ -406,7 +406,10 @@ label after_rollback:
     show eileen happy
     
     e "Ren'Py gives you a few ways of skipping dialogue. Pressing
-       control quickly skips dialogue you've seen at least once, ever."
+       control quickly skips dialogue you've seen at least once."
+
+    e "Pressing Tab toggles the skipping of dialogue you've seen at
+       least once."
 
     e "Pressing page down or scrolling the mouse wheel down will let
        you skip dialogue you've seen this session. This is useful
@@ -688,6 +691,7 @@ init:
                 ui.close()
 
 
+                # Choice window.
                 if editing:
                     ui.window(xpos=300,
                               ypos=200,
@@ -707,6 +711,7 @@ init:
 
                     ui.close()
 
+                # Window at the bottom.
                 ui.window()
                 ui.vbox()
                 ui.text("To get to the next screen, click the 'Continue' button.")
