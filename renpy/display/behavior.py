@@ -2,6 +2,7 @@
 
 
 import renpy
+from renpy.display.render import render
 
 # import renpy.display.core as core
 # import renpy.display.layout as layout
@@ -85,7 +86,7 @@ def skipping(ev):
 
     return
 
-class Keymap(renpy.display.layout.Container):
+class Keymap(renpy.display.layout.Null):
     """
     This is a behavior that maps keys to functions that are called when
     the key is pressed. The keys are specified by giving the appropriate
@@ -93,6 +94,7 @@ class Keymap(renpy.display.layout.Container):
     """
 
     def __init__(self, **keymap):
+        super(Keymap, self).__init__(style='default')
         self.keymap = keymap
 
     def event(self, ev, x, y):
@@ -102,8 +104,8 @@ class Keymap(renpy.display.layout.Container):
                 action()
                 raise renpy.display.core.IgnoreEvent()
         
-    def render(self, width, height, st):
-        return None
+    # def render(self, width, height, st):
+    #    return None
 
 class KeymouseBehavior(renpy.display.layout.Null):
     """
@@ -189,7 +191,7 @@ class SayBehavior(renpy.display.layout.Null):
 
 class Menu(renpy.display.layout.VBox):
 
-    def __init__(self, menuitems, **properties):
+    def __init__(self, menuitems, style='menu', **properties):
         """
         @param menuitems: A list of menuitem tuples. The first element
         of each tuple is the string that should be displayed to the
@@ -198,21 +200,27 @@ class Menu(renpy.display.layout.VBox):
         caption.
         """
 
-        super(Menu, self).__init__(**properties)
+        super(Menu, self).__init__(style=style, **properties)
 
         self.selected = None
         self.results = [ ]
 
-        self.caption_style = renpy.style.Style('menu_caption', { })
-        self.selected_style = renpy.style.Style('menu_choice', { })
-        self.unselected_style = renpy.style.Style('menu_choice', { })
+        # self.caption_style = renpy.style.Style('menu_caption', { })
+        # self.selected_style = renpy.style.Style('menu_choice', { })
+        # self.unselected_style = renpy.style.Style('menu_choice', { })
 
-        self.selected_style.set_prefix('hover_')
-        self.unselected_style.set_prefix('idle_')
+        # self.selected_style.set_prefix('hover_')
+        # self.unselected_style.set_prefix('idle_')
 
         for i, (caption, result) in enumerate(menuitems):
-            self.add(renpy.display.text.Text(caption))
 
+            if result is not None:
+                style = 'menu_choice'
+            else:
+                style = 'menu_caption'
+
+            self.add(renpy.display.text.Text(caption, style=style))
+            
             if self.selected is None and result is not None:
                 self.selected = i
 
@@ -230,14 +238,13 @@ class Menu(renpy.display.layout.VBox):
 
             # Captions should stay the default text color.
             if result is None:
-                child.set_style(self.caption_style)
                 continue
 
             # Actual choices change color if they are selected or not.
             if i == self.selected:
-                child.set_style(self.selected_style)
+                child.set_style_prefix('hover_')
             else:
-                child.set_style(self.unselected_style)
+                child.set_style_prefix('idle_')
 
 
     def event(self, ev, x, y):
@@ -266,7 +273,7 @@ class Menu(renpy.display.layout.VBox):
                 return None
 
             if self.results[target] is not None:
-                renpy.display.audio.play(self.selected_style.activate_sound)
+                renpy.display.audio.play(self.style.activate_sound)
                 return self.results[target]
 
         # Change selection based on keypress.
@@ -293,18 +300,18 @@ class Menu(renpy.display.layout.VBox):
 
         # Make selection based on keypress.
         if map_event(ev, "menu_keyselect"):
-            renpy.display.audio.play(self.selected_style.activate_sound)
+            renpy.display.audio.play(self.style.activate_sound)
             return self.results[self.selected]
             
         # If the selected item changed, update the display.
         if self.selected != old_selected:
 
-            self.children[self.selected].set_style(self.selected_style)
-            self.children[old_selected].set_style(self.unselected_style)
+            self.children[self.selected].set_style_prefix("hover_")
+            self.children[old_selected].set_style_prefix("idle_")
 
-            renpy.display.audio.play(self.selected_style.hover_sound)
+            renpy.display.audio.play(self.style.hover_sound)
 
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return None
         
@@ -342,7 +349,7 @@ class Button(renpy.display.layout.Window):
 #         else:
 #             self.style.set_prefix('idle_')
         
-        renpy.game.interface.redraw(0)
+        renpy.display.render.redraw(self, 0)
 
     def event(self, ev, x, y):
 
@@ -430,7 +437,7 @@ class Input(renpy.display.text.Text):
                 self.content = self.content[:-1]
 
             self.set_text(self.content + "_")
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
 
         elif map_event(ev, "input_enter"):
@@ -446,7 +453,7 @@ class Input(renpy.display.text.Text):
             self.content += ev.unicode
 
             self.set_text(self.content + "_")
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
                 
 
 class Bar(renpy.display.core.Displayable):
@@ -528,10 +535,10 @@ class Bar(renpy.display.core.Displayable):
         left_width = barwidth * self.value // self.range
         right_width = barwidth - left_width
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
-        lsurf = self.style.left_bar.render(left_width, height, st)
-        rsurf = self.style.right_bar.render(right_width, height, st)
+        lsurf = render(self.style.left_bar, left_width, height, st)
+        rsurf = render(self.style.right_bar, right_width, height, st)
 
         rv.blit(lsurf, (lgutter, 0))
         rv.blit(rsurf, (lgutter + left_width, 0))
@@ -558,16 +565,16 @@ class Conditional(renpy.display.layout.Container):
 
     def render(self, width, height, st):
         if self.state:
-            return self.child.render(width, height, st)
+            return render(self.child, width, height, st)
         else:
-            return self.null.render(width, height, st)
+            return render(self.null, width, height, st)
 
     def event(self, ev, x, y):
 
         state = eval(self.condition, renpy.game.store)
 
         if state != self.state:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         self.state = state
 

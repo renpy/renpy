@@ -1,15 +1,13 @@
 New in 4.5
 ----------
 
-Explicit layout phase!
+examples directory.
+
+RectangleWipe
+
+Dissolve transition refactoring.
 
 Changeable mouse pointer?
-
-Cache text?
-
-Figure out some way to indicate what rectangles on the screen are
-dirty versus clean, and use that to speed up redraw when
-possible. (Perhaps build this into blit_to somehow.)
 
 Save data loc on windows.
 
@@ -30,8 +28,17 @@ rather than mousedown. If you make changes to config.keymaps, you'll
 need to change mouse_1 to mousedown_1, and so on for various other
 button numbers. 
 
-Massively improved the speed of drawing a graphical mouse. (By about
-10 times on my computer.)
+Moved the place we look for menu sounds from the style of the choices
+in the menu to the style of the menu itself, as that seems more
+rational. Also, gave menus their own style. (Can't believe I forgot
+that.)
+
+Improved rendering speed. Now, we aggressively cache things to
+minimize re-renders, and only draw to the screen the parts of the
+screen that have changed. In common cases, such as the case where only
+some text has changed, this can greately improve performance. In other
+cases (transitions), we have to redraw the entire screen anyway, so
+there's little improvement.
 
 Fixed a bug in which hiding the UI was not working properly. (This 
 broke the center mouse button behavior.)

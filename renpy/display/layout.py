@@ -5,6 +5,7 @@ import pygame
 from pygame.constants import *
 
 import renpy
+from renpy.display.render import render
 import time
 
 class Null(renpy.display.core.Displayable):
@@ -25,7 +26,7 @@ class Null(renpy.display.core.Displayable):
         return self.style
 
     def render(self, width, height, st):
-        return renpy.display.surface.Surface(self.width, self.height)
+        return renpy.display.render.Render(self.width, self.height)
 
 
 class Container(renpy.display.core.Displayable):
@@ -77,7 +78,7 @@ class Container(renpy.display.core.Displayable):
 
     def render(self, width, height, st):
 
-        rv = self.child.render(width, height, st)
+        rv = render(self.child, width, height, st)
         self.offsets = [ (0, 0) ]
         self.sizes = [ rv.get_size() ]
 
@@ -148,7 +149,7 @@ class Position(Container):
 
     def render(self, width, height, st):
 
-        surf = self.child.render(width, height, st)
+        surf = render(self.child, width, height, st)
         cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
@@ -199,7 +200,7 @@ class HBox(Container):
         for i in self.children:
 
             xoffsets.append(xo)
-            surf = i.render(remwidth, height, st)
+            surf = render(i, remwidth, height, st)
 
             sw, sh = surf.get_size()
 
@@ -216,7 +217,7 @@ class HBox(Container):
 
         width = xo - self.padding
         
-        rv = renpy.display.surface.Surface(width, myheight)
+        rv = renpy.display.render.Render(width, myheight)
 
         for surf, child, xo in zip(surfaces, self.children, xoffsets):
             sw, sh = surf.get_size()
@@ -266,7 +267,7 @@ class VBox(Container):
 
             yoffsets.append(yo)
 
-            surf = i.render(width, remheight, st)
+            surf = render(i, width, remheight, st)
 
             sw, sh = surf.get_size()
 
@@ -283,7 +284,7 @@ class VBox(Container):
 
         height = yo - self.padding
         
-        rv = renpy.display.surface.Surface(mywidth, height)
+        rv = renpy.display.render.Render(mywidth, height)
 
         for surf, child, yo in zip(surfaces, self.children, yoffsets):
 
@@ -328,7 +329,7 @@ class Fixed(Container):
         self.offsets = [ ]
         self.sizes = [ ]
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         t = time.time()
 
@@ -339,7 +340,7 @@ class Fixed(Container):
             else:
                 newst = st
 
-            surf = child.render(width, height, newst)
+            surf = render(child, width, height, newst)
 
             if surf:
                 self.sizes.append(surf.get_size())
@@ -384,9 +385,10 @@ class Window(Container):
 
 
         # Render the child.
-        surf = self.child.render(width  - 2 * style.xmargin - 2 * style.xpadding,
-                                 height - 2 * style.ymargin - 2 * style.ypadding,
-                                 st)
+        surf = render(self.child,
+                      width  - 2 * style.xmargin - 2 * style.xpadding,
+                      height - 2 * style.ymargin - 2 * style.ypadding,
+                      st)
 
         sw, sh = surf.get_size()
 
@@ -398,7 +400,7 @@ class Window(Container):
         if not style.yfill:
             height = max(2 * style.ymargin + 2 * style.ypadding + sh, style.yminimum)
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
@@ -406,7 +408,7 @@ class Window(Container):
             bw = width  - 2 * style.xmargin
             bh = height - 2 * style.ymargin
 
-            back = style.background.render(bw, bh, st)
+            back = render(style.background, bw, bh, st)
 
             rv.blit(back,
                     (style.xmargin, style.ymargin))
@@ -464,7 +466,7 @@ class Pan(Container):
 
     def render(self, width, height, st):
 
-        surf = self.child.render(width, height, st)
+        surf = render(self.child, width, height, st)
         self.sizes = [ surf.get_size() ]
 
         x0, y0 = self.startpos
@@ -484,7 +486,7 @@ class Pan(Container):
 
         self.offsets = [ (-xo, -yo) ]
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         # print surf
 
@@ -494,7 +496,7 @@ class Pan(Container):
         # rv.blit(surf, (-xo, -yo))
 
         if st < self.time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return rv
 
@@ -549,13 +551,13 @@ class Move(Container):
 
     def render(self, width, height, st):
         self.st = st
-        rv = self.child.render(width, height, st)
+        rv = render(self.child, width, height, st)
 
         self.sizes = [ rv.get_size() ]
         self.offsets = [ (0, 0) ]
 
         if st < self.time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return rv
 

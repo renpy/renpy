@@ -1,4 +1,5 @@
 import renpy
+from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
@@ -48,7 +49,7 @@ class Fade(Transition):
 
         # self.frames += 1
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
 
         events = False
 
@@ -66,7 +67,7 @@ class Fade(Transition):
             events = True
 
         if widget:
-            surf = widget.render(width, height, st)
+            surf = render(widget, width, height, st)
             
             rv.blit(surf, (0, 0))
 
@@ -82,7 +83,7 @@ class Fade(Transition):
         rv.fill(self.color[:3] + (alpha,))
 
         if st < self.in_time + self.hold_time + self.out_time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
         return rv
 
@@ -97,17 +98,25 @@ class Dissolve(Transition):
         self.events = True
 
     def render(self, width, height, st):
-        rv = self.old_widget.render(width, height, st)
-        surftree = self.new_widget.render(width, height, st)
-        surf = surftree.pygame_surface(False)
+
+        if st > self.time:
+            return render(self.new_widget, width, height, st)
+        
+        rv = render(self.old_widget, width, height, st)
+
+        top = render(self.new_widget, width, height, st)
+
+        surf = top.pygame_surface(False)
+        renpy.display.render.mutable_surface(surf)
 
         alpha = min(255, int(255 * st / self.time))
+
 
         surf.set_alpha(alpha, RLEACCEL)
         rv.blit(surf, (0, 0))
 
         if st < self.time:
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
         
         return rv
     

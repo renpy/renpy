@@ -24,15 +24,16 @@ import renpy.python # object
 import renpy.script
 import renpy.style
 
-import renpy.display 
+import renpy.display
+import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object
 import renpy.display.audio
-import renpy.display.surface
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
 import renpy.display.transition # core
 import renpy.display.image # core, behavior
+import renpy.display.video
 
 import renpy.ui
 

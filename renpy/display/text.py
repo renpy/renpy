@@ -57,6 +57,8 @@ class Text(renpy.display.core.Displayable):
         """
 
 
+        super(Text, self).__init__()
+
         self.text = text
         self.style = renpy.style.Style(style, properties)
         self.slow = slow
@@ -98,8 +100,7 @@ class Text(renpy.display.core.Displayable):
         Called to split the text into a string with newline characters
         at line endings where wrapping has occured.
         """
-
-
+        
         font = get_font(self.style.font, self.style.size)
 
         lines = [ ]
@@ -156,7 +157,7 @@ class Text(renpy.display.core.Displayable):
         if not hasattr(self, "laidout"):
             self.layout(width - dsxo)
 
-        surf = renpy.display.surface.Surface(self.width + dsxo, self.height + dsyo)
+        surf = renpy.display.render.Render(self.width + dsxo, self.height + dsyo)
         font = get_font(self.style.font, self.style.size)
 
         laidout = self.laidout
@@ -166,7 +167,7 @@ class Text(renpy.display.core.Displayable):
             chars = int(st * renpy.config.annoying_text_cps)
             if chars < len(laidout):
                 laidout = laidout[:chars]
-                renpy.game.interface.redraw(0)
+                renpy.display.render.redraw(self, 0)
             else:
                 self.slow = False
         else:

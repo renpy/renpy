@@ -22,14 +22,14 @@ init:
     # Styles.
     $ style.window.background = Frame("frame.png", 120, 25)
 
-#     $ style.menu_choice.hover_sound = "chev1.wav"
-#     $ style.menu_choice.activate_sound = "chev2.wav"
+    $ style.menu.hover_sound = "chev1.wav"
+    $ style.menu.activate_sound = "chev2.wav"
 
-#     $ style.imagemap.hover_sound = "chev3.wav"
-#     $ style.imagemap.activate_sound = "chev4.wav"
+    $ style.imagemap.hover_sound = "chev3.wav"
+    $ style.imagemap.activate_sound = "chev4.wav"
 
-#     $ style.button.hover_sound = "chev6.wav"
-#     $ style.button.activate_sound = "chev7.wav"
+    $ style.button.hover_sound = "chev6.wav"
+    $ style.button.activate_sound = "chev7.wav"
 
     $ style.mm_root_window.background = renpy.Solid((128, 128, 128, 255))
 
@@ -115,18 +115,15 @@ label start:
         ui.interact()
 
 
-    $ the_value = 10
-    
-    label foo:
-
+        
     "Hey, let's make sure that the
      multi-line text\ \ \ still
      works right."
 
-    $ ui.textbutton("Foo.")
-
     $ renpy.movie_cutscene("On_Your_Mark.mpg", 450.0)
+    $ the_value = 10
 
+    label foo:
         
     python hide:
 

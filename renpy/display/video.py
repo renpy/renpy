@@ -1,4 +1,5 @@
 import renpy
+from renpy.display.render import render
 import pygame
 
 class MovieInfo(object):
@@ -141,10 +142,16 @@ class Movie(renpy.display.layout.Null):
         super(Movie, self).__init__(style=style, **properties)
 
     def render(self, width, height, st):
-        renpy.game.interface.redraw(0)
+        renpy.display.render.redraw(self, 0)
+
 
         if surface:
-            return surface
+            renpy.display.render.mutable_surface(surface)
+            
+            w, h = surface.get_size()
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surface, (0, 0))
+            return rv
         else:
             return super(Movie, self).render(width, height, st)
         

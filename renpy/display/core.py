@@ -2,6 +2,7 @@
 # window.
 
 import renpy
+from renpy.display.render import render
 
 import pygame
 from pygame.constants import *
@@ -34,6 +35,7 @@ class Displayable(renpy.object.Object):
 
     def __init__(self):
         self.style = None
+        self.style_prefix = None
 
     def set_style_prefix(self, prefix):
         """
@@ -41,8 +43,14 @@ class Displayable(renpy.object.Object):
         widgets, if any.
         """
 
+        if prefix == self.style_prefix:
+            return
+
         if self.style:
             self.style.set_prefix(prefix)
+
+        self.style_prefix = prefix
+        renpy.display.render.redraw(self, 0)
 
     def parameterize(self, name, parameters):
         """
@@ -62,10 +70,7 @@ class Displayable(renpy.object.Object):
         and height parameters, which give the largest width and height
         that this drawable can be drawn to without overflowing some
         bounding box. It's also given two times. It returns a Surface
-        that is the current image of this drawable. If the image will
-        be need to be redrawn at some time in the future, call
-        game.interface.redraw with the time with the delay until the
-        next redraw.
+        that is the current image of this drawable. 
 
         @param shown_time: The time since we first started showing this
         drawable, a float in seconds.
@@ -303,37 +308,6 @@ class SceneLists(object):
 
         setattr(self, listname, nl)
     
-# def render_scene_list(sl, width, height):
-#     """
-#     This renders the scene list sl, and returns a rendered
-#     renpy Surface containing the rendered scene list.
-
-#     @returns: The surface, and the offset of each member of the
-#     list relative to the surface.
-#     """
-
-#     t = time.time()
-
-#     surftree = renpy.display.surface.Surface(width, height)
-#     offsets = [ ]
-
-#     if renpy.config.background:
-#         surftree.fill(renpy.config.background)
-
-#     for key, base_start_time, d in sl:
-
-#         surf = d.render(width, height, t - base_start_time)
-
-#         if not surf:
-#             offsets.append((0, 0))
-#             continue
-
-#         # Place the surface.
-#         offset = d.place(surftree, 0, 0, width, height, surf)
-
-#         offsets.append(offset)
-
-#     return surftree, offsets
 
 class Display(object):
     """
@@ -405,7 +379,7 @@ class Display(object):
         self.mouse_location = None
         self.suppress_mouse = False
 
-    def draw_mouse(self):
+    def draw_mouse(self, show_mouse=True):
         """
         This draws the mouse to the screen, if necessary. It uses the
         buffer to minimize the amount of the screen that needs to be
@@ -422,6 +396,9 @@ class Display(object):
         pos = pygame.mouse.get_pos()
 
         if not pygame.mouse.get_focused():
+            pos = None
+
+        if not show_mouse:
             pos = None
 
         updates = [ ]
@@ -448,22 +425,26 @@ class Display(object):
         relative to the screen.
         """
 
-        surftree = root_widget.render(renpy.config.screen_width,
-                                      renpy.config.screen_height,
-                                      0)
-
-
-        # self.window.set_clip((0, 0, 800, 100))
+        surftree = renpy.display.render.render_screen(
+            root_widget,
+            renpy.config.screen_width,
+            renpy.config.screen_height,
+            0)
 
         if not suppress_blit:        
-            surftree.blit_to(self.window, 0, 0)
 
             if self.mouse:
-                self.buffer.blit(self.window, (0, 0))
-                # We don't need to undraw the mouse.
-                self.mouse_location = None
+                self.draw_mouse(False)
 
-            pygame.display.update()
+            damage = renpy.display.render.screen_blit(surftree)
+
+            if self.mouse:
+                if damage:
+                    self.buffer.blit(self.window, damage, damage)
+                self.draw_mouse(True)
+
+            if damage:
+                pygame.display.update(damage)
 
         self.suppress_mouse = suppress_blit
 
@@ -498,8 +479,6 @@ class Interface(object):
 
     @ivar display: The display that we used to display the screen.
 
-    @ivar needs_redraw: True if we need a redraw now.
-    
     @ivar profile_time: The time of the last profiling.
 
     @ivar screenshot: A screenshot, or None if no screenshot has been
@@ -511,25 +490,25 @@ class Interface(object):
     @ivar transition: If not None, the transition to be applied for the
     next interaction.
 
-    @ivar supress_transition: If True, then the next transition will not
+    @ivar suppress_transition: If True, then the next transition will not
     happen.
 
     @ivar quick_quit: If true, a click on the delete button will
     cause an immediate quit.
 
+    @ivar force_redraw: If True, a redraw is forced.
 
     """
 
     def __init__(self):
         self.display = Display()
-        self.needs_redraw = False
         self.profile_time = time.time()
         self.screenshot = None
-        self.redraw_time = 0.0
         self.old_scene = None
         self.transition = None
         self.supress_transition = False
         self.quick_quit = False
+        self.force_redraw = False
 
     def take_screenshot(self, scale):
         """
@@ -556,21 +535,6 @@ class Interface(object):
 
         self.screenshot = None
         
-
-    def redraw(self, delay=0.0):
-        """
-        Called to indicate that the screen has changed in some way, and
-        needs to be redrawn.
-
-        @param delay: The time from now at which the redraw needs to
-        be performed, in fractional seconds.
-        """
-
-        if delay == 0.0:
-            self.needs_redraw = True
-        else:
-            self.redraw_time = min(self.redraw_time, time.time() + delay)
-
     def with_none(self):
         """
         Implements the with None command, which sets the scene we will
@@ -703,7 +667,7 @@ class Interface(object):
         self.supress_transition = False
 
         # Redraw the screen during every interaction.
-        self.needs_redraw = True
+        needs_redraw = True
 
         # Post an event that moves us to the current mouse position.
         pygame.event.post(pygame.event.Event(MOUSEMOTION,
@@ -720,18 +684,22 @@ class Interface(object):
                 # Check for a change in fullscreen preference.
                 if self.display.fullscreen != renpy.game.preferences.fullscreen:
                     self.display = Display()
-                    self.needs_redraw = True
+                    needs_redraw = True
+
+                # Check for a forced redraw.
+                if self.force_redraw:
+                    needs_redraw = True
+                    self.force_redraw = False
 
                 # Redraw the screen.
-                if self.needs_redraw:
-                    self.needs_redraw = False
+                if needs_redraw:
+                    needs_redraw = False
 
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
 
                     # Draw the screen.
                     draw_start = time.time()
-                    self.redraw_time = draw_start + 365.25 * 86400.0
 
                     self.display.show(root_widget, suppress_blit)
                     
@@ -746,11 +714,13 @@ class Interface(object):
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
                     self.display.draw_mouse()
-
+                    
+                # Determine if we need a redraw.
+                needs_redraw = renpy.display.render.process_redraws()
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
-                if self.needs_redraw and not pygame.event.peek():
+                if needs_redraw and not pygame.event.peek():
                     continue
 
                 # While we have nothing to do, preload images.
@@ -809,9 +779,6 @@ class Interface(object):
                 except IgnoreEvent:
                     pass
 
-                if time.time() > self.redraw_time:
-                    self.needs_redraw = True
-
             # But wait, there's more! The finally block runs some cleanup
             # after this.
             return rv
@@ -828,7 +795,7 @@ class Interface(object):
             self.supress_transition = False
 
             # Redraw the old scene, if any.
-            self.redraw(0)
+            self.force_redraw = True
 
             # print "It took", frames, "frames."
 

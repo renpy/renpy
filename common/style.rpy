@@ -14,7 +14,7 @@
 # to your script. No need to mess around here, it will just make your
 # life harder when a new version of Ren'Py is released.
 
-init -250:
+init -1000:
     python hide:
 
         style.create('default', None,
@@ -122,9 +122,11 @@ init -250:
 
         # Styles that are used for menus.
 
+        style.create('menu', 'default',
+                     "(sound, position) The style that is used for menus themselves.")
+
         style.create('menu_caption', 'default',
-                     """(text) The style that is used to render a menu
-                     caption.""")
+                     "(text) The style that is used to render a menu caption.")
 
         style.create('menu_choice', 'default',
                      """(text, hover, sound) The style that is used to render a menu choice.""")
