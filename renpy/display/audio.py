@@ -20,87 +20,144 @@ import sys # to detect windows.
 # read the same value from midiOutGetVolume() as we did before we tried
 # doing that.
 
+# True if the mixer works, False if it doesn't, None if we have no
+# idea yet.
+mixer_works = None
 
+# Common stuff.
 mixer_enabled = True
-
 playing_midi = True
 fading = False
 master_music_volume = 1.0
 
+# Windows stuff.
+midi_msf = 0.0
+last_raw_volume = -1
 
-windows_magic = False
+def init():
 
-if hasattr(sys, 'winver'):
+    global mixer_works
+    global read_raw_volume
+    global compute_midi_msf
+    global set_music_volume
+    global playing_midi
 
-    midi_msf = 0.0
+    if mixer_works is not None:
+        return
 
-    last_raw_volume = -1
-    
-    def read_raw_volume():
-        res = c_uint()
-        
-        for i in range(0, winmm.midiOutGetNumDevs()):
-            rv = winmm.midiOutGetVolume(i, byref(res))
-
-            if not rv:
-                return res.value
+    try:
+        pygame.mixer.get_volume()
+    except:
+        if renpy.config.debug_sound:
+            raise
         else:
-            print "Couldn't read raw midi volume."
-            return -1
+            mixer_works = False
 
-        
+    mixer_works = True
 
-    try:        
-        from ctypes import windll, c_uint, byref
-        winmm = windll.winmm
-            
+    windows_magic = False
 
-        def compute_midi_msf():
-            """
-            Computes the Midi MSF. Returns True if successful, False if otherwise.
-            """
-            
-            # Don't update the MSF when fading is going on, or when not
-            # playing a midi. (Except before playing any music whatsoever.)
-            if fading or not playing_midi:
-                return False
+    if hasattr(sys, 'winver') and mixer_works:
 
-            global last_raw_volume
-            
-            raw_vol = read_raw_volume()
+        try:        
+            from ctypes import windll, c_uint, byref
+            winmm = windll.winmm
 
-            if raw_vol < 0:
-                return False
+            def _read_raw_volume():
+                res = c_uint()
 
-            # The case in which the volume hasn't changed recently.
-            if raw_vol == last_raw_volume:
+                for i in range(0, winmm.midiOutGetNumDevs()):
+                    rv = winmm.midiOutGetVolume(i, byref(res))
+
+                    if not rv:
+                        return res.value
+                else:
+                    print "Couldn't read raw midi volume."
+                    return -1
+
+            read_raw_volume = _read_raw_volume
+
+            def _compute_midi_msf():
+                """
+                Computes the Midi MSF. Returns True if successful, False if otherwise.
+                """
+
+                # Don't update the MSF when fading is going on, or when not
+                # playing a midi. (Except before playing any music whatsoever.)
+                if fading or not playing_midi:
+                    return False
+
+                global last_raw_volume
+
+                raw_vol = read_raw_volume()
+
+                if raw_vol < 0:
+                    return False
+
+                # The case in which the volume hasn't changed recently.
+                if raw_vol == last_raw_volume:
+                    return True
+
+                last_raw_volume = raw_vol
+
+                # print "raw_vol", raw_vol
+
+                # The fraction that the midi mixer is at.
+                mixfrac = 1.0 * ( raw_vol & 0xffff ) / 0xffff
+
+                global midi_msf
+                midi_msf = mixfrac / master_music_volume
+
+                # print "Midi msf is now:", midi_msf
+
                 return True
 
-            last_raw_volume = raw_vol
+            compute_midi_msf = _compute_midi_msf
 
-            # print "raw_vol", raw_vol
-            
-            # The fraction that the midi mixer is at.
-            mixfrac = 1.0 * ( raw_vol & 0xffff ) / 0xffff
+            # This should get called after the music starts playing.
+            def _set_music_volume(vol):
 
-            global midi_msf
-            midi_msf = mixfrac / master_music_volume
+                global master_music_volume
+                master_music_volume = vol
 
-            # print "Midi msf is now:", midi_msf
+                if playing_midi:
 
-            return True
+                    vol *= midi_msf
+                    if vol > 1.0:
+                        vol = 1.0
 
-        # This should get called after the music starts playing.
-        def set_music_volume(vol):
+                try:
+                    pygame.mixer.music.set_volume(vol)
+                except:
+                    if renpy.config.debug_sound:
+                        raise
+
+                global last_raw_volume
+                last_raw_volume = read_raw_volume()
+
+            set_music_volume = _set_music_volume
+
+            # Figure out the default msf, and set it up.
+            windows_magic = compute_midi_msf()
+            playing_midi = False
+
+        except Exception, e:
+            print "Exception when trying to init music:", str(e)
+            print "Falling back to Unix mode."
+
+    if not windows_magic:
+
+        def _compute_midi_msf():
+            return
+
+        compute_midi_msf = _compute_midi_msf
+
+        def _set_music_volume(vol):
+            if not mixer_works:
+                return
 
             global master_music_volume
             master_music_volume = vol
-
-            if playing_midi:
-                
-                vol *= midi_msf
-                if vol > 1.0:
-                    vol = 1.0
 
             try:
                 pygame.mixer.music.set_volume(vol)
@@ -108,33 +165,9 @@ if hasattr(sys, 'winver'):
                 if renpy.config.debug_sound:
                     raise
 
-            global last_raw_volume
-            last_raw_volume = read_raw_volume()
-
-        # Figure out the default msf, and set it up.
-        windows_magic = compute_midi_msf()
+        set_music_volume = _set_music_volume
+    
         playing_midi = False
-
-    except Exception, e:
-        print "Exception when trying to init music:", str(e)
-        print "Falling back to Unix mode."
-            
-if not windows_magic:
-
-    def compute_midi_msf():
-        return
-
-    def set_music_volume(vol):        
-        global master_music_volume
-        master_music_volume = vol
-
-        try:
-            pygame.mixer.music.set_volume(vol)
-        except:
-            if renpy.config.debug_sound:
-                raise
-
-    playing_midi = False
 
 # This detects if the filename is a midi, and sets playing_midi
 # appropriately.
@@ -155,6 +188,9 @@ def music_delay(offset):
     offset seconds. If music is not playing, return None. May return
     a negative time.
     """
+
+    if not mixer_works:
+        return None
 
     mo = pygame.mixer.music.get_pos()
     if mo < 0:
@@ -184,6 +220,9 @@ def music_start(filename, loops=-1, startpos=0.0):
     @param startpos: The number of seconds into the music to start playing.
     """
 
+    if not mixer_works:
+        return
+
     music_stop()
     renpy.game.context().scene_lists.music = (filename, loops, startpos)
     restore_music()
@@ -194,6 +233,9 @@ def music_stop():
     Stops the currently playing music track.
     """
 
+    if not mixer_works:
+        return
+
     renpy.game.context().scene_lists.music = None
     restore_music()
 
@@ -202,6 +244,9 @@ def restore_music():
     This makes sure that the current music matches the music found in
     the context.
     """
+
+    if not mixer_works:
+        return
 
     global current_music
     global fading
@@ -263,6 +308,9 @@ def play(fn, loops=0):
     played. (The default, 0, will play the sound once.)
     """
 
+    if not mixer_works:
+        return
+
     if not fn:
         return
 
@@ -302,6 +350,9 @@ def disable_mixer():
     pygame mixer.
     """
 
+    if not mixer_works:
+        return
+
     global mixer_enabled
     
     if mixer_enabled:
@@ -318,6 +369,9 @@ def enable_mixer():
     This function is called by the video code to enable the
     pygame mixer.
     """
+
+    if not mixer_works:
+        return
 
     global mixer_enabled
 

@@ -8,11 +8,11 @@ import sys
 _font_cache = { }
 
 # TODO: Something sane if the font file can't be found.
-def get_font(fn, size, bold=False, italics=False):
+def get_font(fn, size, bold=False, italics=False, underline=False):
     from renpy.loader import transfn
 
-    if (fn, size, bold, italics) in _font_cache:
-        return _font_cache[(fn, size, bold, italics)]
+    if (fn, size, bold, italics, underline) in _font_cache:
+        return _font_cache[(fn, size, bold, italics, underline)]
 
     try:
         rv = pygame.font.Font(transfn(fn), size)
@@ -21,7 +21,9 @@ def get_font(fn, size, bold=False, italics=False):
     except:
         rv = pygame.font.SysFont(fn, size, bold, italics)
 
-    _font_cache[(fn, size, bold, italics)] = rv
+    rv.set_underline(underline)
+
+    _font_cache[(fn, size, bold, italics, underline)] = rv
 
     return rv
     
@@ -77,7 +79,7 @@ class TextStyle(object):
             vars(self).update(vars(source))
 
     def get_font(self):
-        return get_font(self.font, self.size, self.bold, self.italic)
+        return get_font(self.font, self.size, self.bold, self.italic, self.underline)
 
     def get_ascent(self):
         return self.get_font().get_ascent()
@@ -93,7 +95,6 @@ class TextStyle(object):
             color = self.color
 
         font = self.get_font()
-        font.set_underline(self.underline)
 
         rv = font.render(text, antialias, color)
         renpy.display.render.mutated_surface(rv)

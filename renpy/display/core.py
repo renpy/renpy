@@ -345,6 +345,7 @@ class Display(object):
 
         renpy.display.audio.pre_init()
         pygame.init()
+        renpy.display.audio.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0

@@ -986,7 +986,7 @@ label whatsnew47:
     e "They can make the font size {size=+12}bigger{/size} or
        {size=-8}smaller{/size}."
 
-    e "They can even change
+    e "They can even change the
        {color=#f00}color{/color}
        {color=#ff0}of{/color}
        {color=#0f0}the{/color}
