@@ -2875,6 +2875,8 @@ automatically present in the game namespace.
 
 <!-- func ui.saybehavior -->
 
+<!-- func ui.pausebehavior -->
+
 <!-- func ui.keymousebehavior -->
 
 <h4>Functions</h4>
