@@ -49,6 +49,9 @@ class Container(renpy.display.core.Displayable):
         self.sizes = [ rv.get_size() ]
 
         return rv
+
+    def get_placement(self):
+        return self.child.get_placement()
     
     def event(self, ev, x, y):
         for i, (xo, yo)  in zip(self.children, self.offsets):
@@ -90,121 +93,29 @@ class Position(Container):
     the enclosing box and to the child.
     """
 
-    def __init__(self, child, xpos=None, ypos=None, xanchor="center", yanchor="bottom"):
+    def __init__(self, child, style='image_placement', **properties):
         """
         @param child: The child that is being laid out.
-
-        @param xpos: The position of the anchor point, expressed as a fraction of the width allocated to this displayable, or None to not pad in width.
-
-        @param ypos: The position of the anchor point, expressed as a fraction of the height allocated to this displayable, or None to not pad in height.
-
-        @param xanchor: One of 'left', 'center', or 'right', the position of the anchor relative to the child.
-
-        @param yanchor: One of 'top', 'center', or 'bottom', the position of the anchor relativer to the child.
         """
 
         super(Position, self).__init__()
 
+        self.style = renpy.style.Style(style, properties)
         self.add(child)
-        self.xpos = xpos
-        self.ypos = ypos
-        self.xanchor = xanchor
-        self.yanchor = yanchor
-
-        if xanchor not in ('left', 'right', 'center'):
-            raise Exception("xanchor '%s' is not known." % xanchor)
-
-        if yanchor not in ('top', 'bottom', 'center'):
-            raise Exception("yanchor '%s' is not known." % yanchor)
-                           
-
 
     def render(self, width, height, tt, wt):
 
         surf = self.child.render(width, height, tt, wt)
-
         cw, ch = surf.get_size()
 
-        xpos = self.xpos
-        ypos = self.ypos
-
-        if isinstance(xpos, float):
-            xpos = int(xpos * width)
-
-        if isinstance(ypos, float):
-            ypos = int(ypos * height)
-
-        if xpos is None:
-            width = cw
-            xoff = 0
-        else:
-            xoff = xpos
-
-            if self.xanchor == 'left':
-                xoff -= 0
-            elif self.xanchor == 'right':
-                xoff -= cw
-            elif self.xanchor == 'center':
-                xoff -= cw / 2
-
-        if ypos is None:
-            height = ch
-            yoff = 0
-        else:
-            yoff = ypos
-
-            if self.yanchor == 'top':
-                yoff -= 0
-            elif self.yanchor == 'bottom':
-                yoff -= ch
-            elif self.yanchor == 'center':
-                yoff -= ch / 2
-
-        rv = renpy.display.surface.Surface(width, height)
-        rv.fill((0,0,0,0))
-        rv.blit(surf, (xoff, yoff))
-
-        self.offsets = [ (xoff, yoff) ]
+        self.offsets = [ (0, 0) ]
         self.sizes = [ (cw, ch) ]
 
-        return rv
+        return surf
+
+    def get_placement(self):
+        return self.style
             
-class Resize(Container):
-    """
-    This changes the amount of space allocated to the given
-    container.
-    """
-
-    def __init__(self, child, width=1.0, height=1.0):
-
-        super(Resize, self).__init__()
-
-        self.add(child)
-        self.width = width
-        self.height = height
-
-    def render(self, width, height, st, wt):
-
-        if isinstance(self.width, float):
-            width = width * self.width
-        else:
-            width = self.width
-
-        if isinstance(self.height, float):
-            height = height * self.height
-        else:
-            height = self.height
-
-        width = int(width)
-        height = int(height)
-
-        self.offsets = [ (0, 0) ]
-
-        rv = self.child.render(width, height, st, wt)
-
-        self.sizes = [ rv.get_size() ]
-
-        return rv
 
 class HBox(Container):
     """
@@ -219,13 +130,14 @@ class HBox(Container):
     
     """
 
-    def __init__(self, padding=0, minheight=0, alignment=0.0, full=False):
+    def __init__(self, padding=0, style='default', **properties):
         super(HBox, self).__init__()
 
         self.padding = padding
-        self.minheight = minheight
-        self.alignment = alignment
-        self.full = full
+        self.style = renpy.style.Style(style, properties)
+
+    def get_placement(self):
+        return self.style
 
     def render(self, width, height, st, tt):
 
@@ -238,7 +150,7 @@ class HBox(Container):
         remwidth = width
         xo = 0
 
-        myheight = self.minheight
+        myheight = 0
 
         for i in self.children:
 
@@ -258,19 +170,15 @@ class HBox(Container):
             self.sizes.append((sw, sh))
 
 
-        if not self.full:
-            width = xo - self.padding
+        width = xo - self.padding
         
         rv = renpy.display.surface.Surface(width, myheight)
 
-        for surf, xo in zip(surfaces, xoffsets):
+        for surf, child, xo in zip(surfaces, self.children, xoffsets):
             sw, sh = surf.get_size()
 
-            yo = int((myheight - sh) * self.alignment)
-
-            rv.blit(surf, (xo, yo))
-
-            self.offsets.append((xo, yo))
+            offset = child.place(rv, xo, 0, sw, myheight, surf)
+            self.offsets.append(offset)
 
         return rv
     
@@ -288,14 +196,15 @@ class VBox(Container):
     full height allocated.
     """
 
-    def __init__(self, padding=0, minwidth=0, alignment=0.0, full=False):
+    def __init__(self, padding=0, style='default', **properties):
         super(VBox, self).__init__()
 
         self.padding = padding
-        self.minwidth = minwidth
-        self.alignment = alignment
-        self.full = full
+        self.style = renpy.style.Style(style, properties)
 
+    def get_placement(self):
+        return self.style
+        
     def render(self, width, height, st, tt):
 
         self.offsets = [ ]
@@ -307,7 +216,7 @@ class VBox(Container):
         remheight = height
         yo = 0
 
-        mywidth = self.minwidth
+        mywidth = 0
 
         for i in self.children:
 
@@ -328,24 +237,53 @@ class VBox(Container):
             self.sizes.append((sw, sh))
 
 
-        if not self.full:
-            height = yo - self.padding
-            
-
+        height = yo - self.padding
+        
         rv = renpy.display.surface.Surface(mywidth, height)
 
-        for surf, yo in zip(surfaces, yoffsets):
+        for surf, child, yo in zip(surfaces, self.children, yoffsets):
 
             sw, sh = surf.get_size()
 
-            xo = int((mywidth - sw) * self.alignment)
+            offset = child.place(rv, 0, yo, mywidth, sh, surf)
 
-            rv.blit(surf, (xo, yo))
-
-            self.offsets.append((xo, yo))
+            self.offsets.append(offset)
 
         return rv
     
+class Fixed(Container):
+    """
+    A container that lays out each of its children at fixed
+    coordinates determined by the position style of the child. Each
+    widget is given the whole area of this widget, and then placed
+    within that area based on its position style.
+
+    The result of this layout is the size of the entire area allocated
+    to it. So it's probably only viable for laying out a root window.
+    """
+
+    def __init__(self, style='default', **properties):
+        super(Fixed, self).__init__()
+        self.style = renpy.style.Style(style, properties)
+
+    def get_placement(self):
+        return self.style
+
+    def render(self, width, height, st, tt):
+
+        self.offsets = [ ]
+        self.sizes = [ ]
+
+        rv = renpy.display.surface.Surface(width, height)
+
+        for child in self.children:
+            surf = child.render(width, height, st, tt)
+            self.sizes.append(surf.get_size())
+
+            offset = child.place(rv, 0, 0, width, height, surf)
+            self.offsets.append(offset)
+
+        return rv
 
 class Window(Container):
     """
@@ -370,6 +308,8 @@ class Window(Container):
         self.add(child)
         self.style = renpy.style.Style(style, properties)
 
+    def get_placement(self):
+        return self.style
 
     def render(self, width, height, st, tt):
 
@@ -406,23 +346,15 @@ class Window(Container):
                     (style.xmargin, style.ymargin))
                     # (0, 0, bw, bh))
 
+        offsets = self.child.place(rv,
+                                   style.xmargin + style.xpadding,
+                                   style.ymargin + style.ypadding,
+                                   width  - 2 * (style.xmargin + style.xpadding),
+                                   height - 2 * (style.ymargin + style.ypadding),
+                                   surf)
+                         
 
-        xpos = style.xpos
-        ypos = style.ypos
-
-        if isinstance(xpos, float):
-            xpos = int(xpos * (width - sw - 2 * (style.xmargin + style.xpadding)))
-
-        if isinstance(ypos, float):
-            ypos = int(ypos * (height - sh - 2 * (style.ymargin + style.ypadding)))
-    
-
-        xo = style.xmargin + style.xpadding + xpos
-        yo = style.ymargin + style.ypadding + ypos
-
-        rv.blit(surf, (xo, yo))
-
-        self.offsets = [ (xo, yo) ]
+        self.offsets = [ offsets ]
         self.sizes = [ (sw, sh) ]
 
         self.window_size = width, height

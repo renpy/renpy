@@ -28,7 +28,7 @@ init -100:
         style.default.drop_shadow_color = (0, 0, 0, 128)
 
         # Window properties.
-        style.default.background = renpy.Solid((0, 0, 128, 128))
+        style.default.background = None
         style.default.xpadding = 0
         style.default.ypadding = 0
         style.default.xmargin = 0
@@ -44,6 +44,8 @@ init -100:
         style.default.xanchor = 'left'
         style.default.yanchor = 'top'
 
+        # This style controls the default placement of images on the screen.
+
         style.create('image_placement', None,
                      'This style is used to control the default placement of images on the screen.')
 
@@ -51,6 +53,8 @@ init -100:
         style.image_placement.ypos = 1.0
         style.image_placement.xanchor = 'center'
         style.image_placement.yanchor = 'bottom'
+
+        # Styles that are used for dialogue.
 
         style.create('say_label', 'default',
                      'The style that the label text of a two-argument say statement is in.')
@@ -61,6 +65,7 @@ init -100:
         style.create('say_thought', 'default',
                      'The style that that the text of a one-argument say statement is in.')
 
+        # Styles that are used for menus.
 
         style.create('menu_caption', 'default',
                      'The style that menu captions are styled in.')
@@ -74,6 +79,10 @@ init -100:
                      'The style that unselected menu choices are rendered in.')
 
         style.menu_choice_unselected.color = (0, 255, 255, 255) # cyan
+
+
+        # Styles that are used for windows that contain dialogue or
+        # menus.
 
         style.create('window', 'default',
                      'The base style for large windows that have content in them.')
@@ -99,16 +108,47 @@ init -100:
         style.create('window_menu', 'window',
                      'The default style for windows containing a menu.') 
 
+
+        # Styles that are used by all Buttons.
         style.create('button', 'default',
                      'The base style for all buttons.')
 
         style.create('button_idle', 'button',
                      'The style that is used by default by buttons when the mouse is not hovering over the button.')
 
-        style.button_idle.color = (0, 255, 255, 255)
-
         style.create('button_hover', 'button',
                      'The style that is used by default by buttons when the mouse is above the button.')
-                   
-        style.button_hover.color = (255, 255, 0, 255)
+
+        # Styles that are used for the label of TextButtons.
+        style.create('button_text', 'default',
+                     'The base style used for text that is a label of a button.')
+
+
+        style.create('button_idle_text', 'button_text',
+                     'The style that is used for text that is displayed as the label of a button that is idle.')
+
+        style.create('button_hover_text', 'button_text',
+                     'The style that is used for text that is displayed as the label of a button that is hovered.')
+        
+        style.button_text.xpos = 0.5
+        style.button_text.xanchor = 'center'
+        style.button_text.size = 32
+        style.button_idle_text.color = (0, 255, 255, 255)
+        style.button_hover_text.color = (255, 255, 0, 255)
+        
+
+        # Styles that are used when laying out the main menu.
+        style.create('mm_root', 'default',
+                     'The root window of the main menu.')
+
+        style.mm_root.background = renpy.Image("mainmenu.jpg")
+
+        style.create('mm_menu_window', 'default',
+                     'A window containing the actual menu choices in the main menu.')
+
+        style.mm_menu_window.xpos = 0.5
+        style.mm_menu_window.xanchor = 'center'
+        style.mm_menu_window.ypos = 0.6
+        style.mm_menu_window.yanchor = 'top'
+
         

@@ -37,6 +37,8 @@ class Text(renpy.display.core.Displayable):
         self.text = text
         self.style = renpy.style.Style(style, properties)
 
+    def get_placement(self):
+        return self.style
 
     def set_text(self, new_text):
         """

@@ -212,7 +212,7 @@ def display_say(who, what, who_style='say_label',
     line = text.Text(what, style=what_style)
     vbox.add(line)
 
-    window = layout.Window(vbox, style=window_style, **properties)
+    window = layout.Window(vbox, style=window_style)
     saybehavior = behavior.SayBehavior(window)
 
     scene_list_add('transient', saybehavior)

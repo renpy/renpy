@@ -107,23 +107,29 @@ class Displayable(renpy.object.Object):
             xoff -= sw / 2
         elif style.xanchor == 'right':
             xoff -= sw
-
+        else:
+            raise Exception("xanchor '%s' is not known." % style.xanchor)
+            
         xoff += x
 
         # y
         yoff = style.ypos
 
         if isinstance(yoff, float):
-            yoff = int(yoff * width)
+            yoff = int(yoff * height)
 
-        if style.yanchor == 'left':
+        if style.yanchor == 'top':
             yoff -= 0
         elif style.yanchor == 'center':
             yoff -= sh / 2
-        elif style.yanchor == 'right':
+        elif style.yanchor == 'bottom':
             yoff -= sh
+        else:
+            raise Exception("yanchor '%s' is not known." % style.yanchor)
 
         yoff += y
+
+        # print self, xoff, yoff
 
         dest.blit(surf, (xoff, yoff))
 
@@ -332,7 +338,7 @@ class Display(object):
         rv = [ ]
         t = time.time()
 
-        self.window.fill((0, 0, 0, 255))
+        # self.window.fill((0, 0, 0, 255))
 
         for key, base_start_time, d in transient:
 
@@ -344,27 +350,15 @@ class Display(object):
             if not surf:
                 rv.append((0, 0))
                 continue
-            
-            # Fix the location. If the width of the surface is less
-            # than the width of the window, center the surface. If the
-            # height is less, then align the surface to the bottom of
-            # the screen.
 
-            width, height = surf.get_size()
 
-            xo = (renpy.config.screen_width - width) / 2
-            if xo < 0:
-                xo = 0
+            # Place the surface.
+            offsets = d.place(self.window, 0, 0,
+                              renpy.config.screen_width,
+                              renpy.config.screen_height,
+                              surf)
 
-            yo = (renpy.config.screen_height - height)
-            if yo < 0:
-                yo = 0
-
-            # Draw the image to the screen.
-
-            self.window.blit(surf, (xo, yo))
-            rv.append((xo, yo))
-
+            rv.append(offsets)
 
         pygame.display.flip()
         return rv

@@ -180,13 +180,18 @@ class Button(renpy.display.layout.Window):
 
         super(Button, self).__init__(child, style=idle_style)
 
-        self.old_style = idle_style
+        self.old_hover = False
 
-    def set_style(self, style_name):
+    def set_hover(self, hover):
         """
-        Called when the style changes (due to the mouse being over
-        this widget).
+        Called when we change from hovered to un-hovered, or
+        vice-versa.
         """
+
+        if hover:
+            style_name = self.hover_style
+        else:
+            style_name = self.idle_style
 
         self.style = renpy.style.Style(style_name, dict())
         renpy.game.interface.redraw(0)
@@ -202,14 +207,9 @@ class Button(renpy.display.layout.Window):
 
         if ev.type == MOUSEMOTION:
 
-            if inside:
-                style_name = self.hover_style
-            else:
-                style_name = self.idle_style
-
-            if self.old_style != style_name:
-                self.old_style = style_name
-                self.set_style(style_name)
+            if self.old_hover != inside:
+                self.old_hover = inside
+                self.set_hover(inside)
 
         if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
             if inside:
@@ -220,17 +220,28 @@ class TextButton(Button):
 
     def __init__(self, text, idle_style='button_idle',
                  hover_style='button_hover',
+                 idle_text_style='button_idle_text',
+                 hover_text_style='button_hover_text',
                  clicked=None):
 
-        self.text_widget = renpy.display.text.Text(text, style=idle_style)
+        self.text_widget = renpy.display.text.Text(text, style=idle_text_style)
 
         super(TextButton, self).__init__(self.text_widget,
                                          idle_style=idle_style,
                                          hover_style=hover_style,
                                          clicked=clicked)
 
-    def set_style(self, style_name):
-        super(TextButton, self).set_style(style_name)
+        self.idle_text_style = idle_text_style
+        self.hover_text_style = hover_text_style
+        
+
+    def set_hover(self, hover):
+        super(TextButton, self).set_hover(hover)
+
+        if hover:
+            style_name = self.hover_text_style
+        else:
+            style_name = self.idle_text_style
         
         self.text_widget.style = renpy.style.Style(style_name, dict())
                 

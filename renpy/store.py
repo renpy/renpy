@@ -19,7 +19,7 @@ config = renpy.config
 Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Position = renpy.curry.curry(renpy.display.layout.Position)
-Resize = renpy.curry.curry(renpy.display.layout.Resize)
+# Resize = renpy.curry.curry(renpy.display.layout.Resize)
 
 # Note that this is really a RevertableObject.
 # TODO: Move this someplace saner. Like perhaps to .exports. But
