@@ -36,6 +36,9 @@ init -1000:
         style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
+        style.default.bold = False
+        style.default.italic = False
+        style.default.underline = False
         style.default.drop_shadow = (1, 1)
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
@@ -106,6 +109,8 @@ init -1000:
                      """(text) The style that is used by default for
                      the label of dialogue. The label is used to
                      indicate who is saying something.""")
+
+        style.say_label.bold = True
 
         style.create('say_dialogue', 'default',
                      """(text) The style that is used by default for

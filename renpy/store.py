@@ -148,53 +148,18 @@ class DynamicCharacter(object):
                           interact=interact,
                           **self.properties)
 
+# The color function. (Moved, since text needs it, too.)
+color = renpy.display.text.color
+
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
 
+# The default narrator.
 def narrator(what, interact=True):
     renpy.display_say(None, what, what_style='say_thought', interact=interact)
 
+# The default menu function.
 menu = renpy.display_menu
-
-def color(s):
-    """
-    This function converts a hexcode into a color/alpha tuple. Leading
-    # marks are ignored. Colors can be rgb or rgba, with each element having
-    either one or two digits. (So the strings can be 3, 4, 6, or 8 digits long,
-    not including the optional #.) A missing alpha is interpreted as 255,
-    fully opaque.
-
-    For example, color('#123a') returns (17, 34, 51, 170), while
-    color('c0c0c0') returns (192, 192, 192, 255).
-    """
-
-    if s[0] == '#':
-        s = s[1:]
-
-    if len(s) == 6:
-        r = int(s[0]+s[1], 16)
-        g = int(s[2]+s[3], 16)
-        b = int(s[4]+s[5], 16)
-        a = 255
-    elif len(s) == 8:
-        r = int(s[0]+s[1], 16)
-        g = int(s[2]+s[3], 16)
-        b = int(s[4]+s[5], 16)
-        a = int(s[6]+s[7], 16)
-    elif len(s) == 3:
-        r = int(s[0], 16) * 0x11
-        g = int(s[1], 16) * 0x11
-        b = int(s[2], 16) * 0x11
-        a = 255
-    elif len(s) == 4:
-        r = int(s[0], 16) * 0x11
-        g = int(s[1], 16) * 0x11
-        b = int(s[2], 16) * 0x11
-        a = int(s[3], 16) * 0x11
-    else:
-        raise Exception("Argument to color() must be 3, 4, 6, or 8 hex digits long.")
-
-    return (r, g, b, a)
 
 # The default transition.
 default_transition = None

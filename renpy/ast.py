@@ -118,7 +118,6 @@ def say_menu_with(expression):
     if renpy.game.preferences.transitions:
         renpy.game.interface.set_transition(what)
         
-
 class Say(Node):
 
     def __init__(self, loc, who, what, with):
@@ -137,7 +136,7 @@ class Say(Node):
             who = None
 
         say_menu_with(self.with)
-        renpy.exports.say(who, self.what % renpy.game.store)
+        renpy.exports.say(who, self.what)
 
         return self.next
 

@@ -1,3 +1,12 @@
+Added a new markup language to Text. [ Not done. ]
+
+- Quoting of subsitutions.
+- Set of allowed and disallowed characters for ui.input.
+
+Even more defensive programming involving sound. [ Not done. ]
+
+Add searchpath to sys.path. [ Not done ]
+
 New in 4.6.2
 ------------
 

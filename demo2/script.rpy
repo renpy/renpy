@@ -971,3 +971,32 @@ label whatsnewend:
 
     return
 
+
+init:
+    $ config.annoying_text_cps = 20
+
+
+label splashscreen:
+
+    scene black
+
+    "Using text tags, we can make text {size=+12}bigger{/size} or
+     {size=-8}smaller{/size}. We can make it {b}bold{/b}, {i}italic{/i},
+     or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
+  
+    "Let's check out {b}bold{/b} and {i}italic{/i} text."
+
+    "{b}This will let us know if the {plain}plain{/plain} tag works.{/b}"
+
+    "How about some {size=+22}bigger{/size}, some {size=-8}smaller{/size},
+     and some {size=36}fixed{/size} size text?"
+
+    "foo %% bar %% baz"
+
+    "{color=#f00}Red{/color}, {color=#f004}25%% alpha Red{/color},
+     {color=#00ff00}Green{/color}, {color=#00ff0040}25%% alpha green{/color}."
+
+    "And let's make sure we can quote '{{'s."
+
+
+    return
