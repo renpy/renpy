@@ -1,3 +1,13 @@
+New in 4.6.2
+------------
+
+Added a speed test, which tests the speed of the dissolve transition
+on a user's system. This test can be accessed by typing 'S' during the
+demo (that's shift+the 's' key). 
+
+Fixed a bug with sound on systems with no soundcard in them. (Also,
+put in a note to remind myself not to re-introduce that bug.)
+
 Fixed a bug in which imagemaps would not redraw properly.
 
 New in 4.6.1

@@ -1,6 +1,11 @@
 # This module contains code that handles the playing of sound and
 # music files.
 
+# NOTE TO SELF:
+#
+# Remember to code defensively against mikey's computer that
+# doesn't have the sound card in it.
+
 import pygame
 import renpy
 import sys # to detect windows.
@@ -97,7 +102,11 @@ if hasattr(sys, 'winver'):
                 if vol > 1.0:
                     vol = 1.0
 
-            pygame.mixer.music.set_volume(vol)
+            try:
+                pygame.mixer.music.set_volume(vol)
+            except:
+                if renpy.config.debug_sound:
+                    raise
 
             global last_raw_volume
             last_raw_volume = read_raw_volume()
@@ -118,8 +127,12 @@ if not windows_magic:
     def set_music_volume(vol):        
         global master_music_volume
         master_music_volume = vol
-            
-        pygame.mixer.music.set_volume(vol)
+
+        try:
+            pygame.mixer.music.set_volume(vol)
+        except:
+            if renpy.config.debug_sound:
+                raise
 
     playing_midi = False
 

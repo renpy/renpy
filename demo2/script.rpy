@@ -631,6 +631,47 @@ label ending:
        
     $ renpy.full_restart()
 
+
+label speedtest:
+
+    with None
+    scene whitehouse
+    show eileen happy
+    with dissolve
+
+    e "Okay, I'm going to run the speedtest on your system."
+
+    e "I'll only be testing the performance of the dissolve
+       transition. It taxes your system the most, as it needs to
+       redraw the entire screen each frame."
+
+    $ frames = config.frames
+
+    with None
+    scene washington
+    show eileen happy
+    with Dissolve(5.0)
+
+    $ frames = config.frames - frames
+    $ fps = frames / 5.0
+
+    e "Well, your system displayed %(frames)d frames in five
+       seconds. That's %(fps).1f fps."
+
+    e "Remember, this is the worst-case speed, as usually we can just
+       draw the parts of the screen that have changed."
+
+    e "Thanks for viewing the secret speed test."
+
+    return
+    
+# Setup the secret key for the speedtest.
+init:
+    python:
+        config.keymap['speedtest'] = [ 'S' ]
+        config.underlay.append(renpy.Keymap(speedtest=renpy.curried_call_in_new_context('speedtest')))
+
+
 init:
 
     # This is just some example code to show the ui functions in
