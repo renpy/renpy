@@ -251,7 +251,7 @@ class Dissolve(Transition):
         top = render(self.new_widget, width, height, st)
 
         surf = top.pygame_surface(False)
-        renpy.display.render.mutable_surface(surf)
+        renpy.display.render.mutated_surface(surf)
 
         if id(top) == self.old_top and id(bottom) == self.old_bottom:
 

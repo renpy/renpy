@@ -49,6 +49,8 @@ class ImageCache(object):
                 layer = self.load_image(i)
                 rv.blit(layer, (0, 0))
 
+            renpy.display.render.mutated_surface(rv)
+
             return rv
 
         im = pygame.image.load(renpy.loader.load(fn), fn)
@@ -57,6 +59,8 @@ class ImageCache(object):
             im = im.convert_alpha()
         else:
             im = im.convert()
+
+        renpy.display.render.mutated_surface(im)
             
         return im
             
@@ -88,6 +92,7 @@ class ImageCache(object):
     # Queues an image to be preloaded if not already loaded and there's
     # room in the cache for it.
     def preload_image(self, fn):
+
         self.time_map[fn] = self.time
 
         if fn in self.surface_map:
@@ -95,7 +100,6 @@ class ImageCache(object):
 
         if fn not in self.preloads:
             self.preloads.append(fn)
-
 
     # This tries to ensure that there are n empty spaces in the image
     # cache. Returns the number of empty spaces that are actually in
@@ -212,9 +216,12 @@ class UncachedImage(renpy.display.core.Displayable):
         super(UncachedImage, self).__init__()
 
         self.surf = pygame.image.load(file, hint)
+        self.surf = self.surf.convert_alpha()
 
         if scale:
             self.surf = pygame.transform.scale(self.surf, scale)
+
+        renpy.display.render.mutated_surface(self.surf)
 
         self.style = renpy.style.Style(style, properties)
 
@@ -230,7 +237,7 @@ class UncachedImage(renpy.display.core.Displayable):
 
     # Should never be called, but what the hey?
     def predict(self, callback):
-        callback(self.filename)
+        return None
 
 class ImageReference(renpy.display.core.Displayable):
     """
@@ -289,7 +296,6 @@ class ImageReference(renpy.display.core.Displayable):
         
         
     def render(self, width, height, st):
-
         if not hasattr(self, 'target'):
             self.find_target()
 
@@ -300,6 +306,12 @@ class ImageReference(renpy.display.core.Displayable):
             self.find_target()
 
         return self.target.get_placement()
+
+    def predict(self, callback):
+        if not hasattr(self, 'target'):
+            self.find_target()
+
+        self.target.predict(callback)
     
     
 class Solid(renpy.display.core.Displayable):
@@ -444,6 +456,9 @@ class Frame(renpy.display.core.Displayable):
         
         # And, finish up.
         return dest
+
+    def predict(self, callback):
+        callback(self.filename)
         
 class Animation(renpy.display.core.Displayable):
     """
@@ -603,6 +618,10 @@ class ImageButton(renpy.display.behavior.Button):
                                           clicked=clicked,
                                           hovered=hovered)
 
+
+    def predict(self, callback):
+        self.idle_image.predict(callback)
+        self.hover_image.predict(callback)
 
     def set_hover(self, hover):
         super(ImageButton, self).set_hover(hover)

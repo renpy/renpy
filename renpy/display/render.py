@@ -1,5 +1,9 @@
-# Rules for renders: Every widget creates its own Render, even if all
-# it does is blit that render somewhere else.
+# Render lifespan.
+
+# A render is alive when it is first created. It stays alive on subsequent
+# styles if it is not killed and it is used. It can be killed either
+# due to lack of use by the end of a cycle or because it was killed between
+# cycles due to a timeout.
 
 import sets
 import time
@@ -30,6 +34,8 @@ class SolidCache(object):
             surf = pygame.Surface(size, 0,
                                   renpy.game.interface.display.sample_surface)
 
+        mutated_surface(surf)
+
         surf.fill(color)
         
         self.cached = surf
@@ -47,9 +53,9 @@ new_renders = { }
 # Renders that were used on the old rendering pass.
 old_renders = { }
 
-# The set of surfaces that are mutable (that is, can change their
+# The set of surfaces that are mutated (that is, can change their
 # contents.)
-mutable_surfaces = { }
+mutated_surfaces = { }
 
 def render(widget, width, height, st):
     """
@@ -59,8 +65,8 @@ def render(widget, width, height, st):
     if (widget, width, height) in old_renders:
         rv = old_renders[widget, width, height]
 
-        assert (widget, width, height) in rv.render_of
-        assert not rv.dead
+        # assert (widget, width, height) in rv.render_of
+        # assert not rv.dead
 
         rv.keep_alive()
 
@@ -124,10 +130,10 @@ def render_screen(widget, width, height, st):
     global redraw_queue
     global old_renders
     global new_renders
-    global mutable_surfaces
+    global mutated_surfaces
 
     redraw_queue = [ ]
-    mutable_surfaces = { }
+    mutated_surfaces = { }
 
     rv = render(widget, width, height, st)
 
@@ -189,8 +195,8 @@ def compute_clip(source):
         # If the two are the same.
         if b0 == b1:
 
-            # Only add if the surface is mutable.
-            if b0[0] in mutable_surfaces:
+            # Only add if the surface is mutated.
+            if b0[0] in mutated_surfaces:
                 changes.append(b0)
 
             i0 += 1
@@ -255,12 +261,13 @@ def screen_blit(source, full=False):
     
 
 
-def mutable_surface(surf):
+def mutated_surface(surf):
     """
-    Called to indicate that a pygame surface is mutable.
+    Called to indicate that a pygame surface has been mutated. This also
+    should be called each time a new pygame surface is created.
     """
 
-    mutable_surfaces[id(surf)] = True
+    mutated_surfaces[id(surf)] = True
 
 
 class Render(object):
@@ -309,16 +316,16 @@ class Render(object):
 
     def keep_alive(self):
 
-        assert not self.dead
+        # assert not self.dead
 
         for widget, width, height in self.render_of:
             new_renders[widget, width, height] = self
 
         for i in self.children:
 
-            assert self in i.parents
+            # assert self in i.parents
 
-            assert not i.dead
+            # assert not i.dead
 
             i.keep_alive()
 
@@ -354,10 +361,10 @@ class Render(object):
             while self in c.parents:
                 c.parents.remove(self)
 
-        assert not self.parents
+        # assert not self.parents
 
         # for p in parents:
-        #     assert p.dead
+        #     # assert p.dead
 
         self.children = [ ]
         self.depends = [ ]
@@ -374,7 +381,7 @@ class Render(object):
 
 
         if isinstance(source, Render):
-            assert not source.dead
+            # assert not source.dead
 
             source.parents.append(self)
             self.children.append(source)
@@ -448,6 +455,8 @@ class Render(object):
         self.surface = rv
         self.surface_alpha = alpha
 
+        mutated_surface(rv)
+
         return rv
 
     def subsurface(self, pos):
@@ -517,7 +526,7 @@ class Render(object):
         a surface, and then blit that surface into another render.
         """
 
-        assert not child.dead
+        # assert not child.dead
 
         self.depends.append(child)
         child.parents.append(self)

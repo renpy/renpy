@@ -162,7 +162,7 @@ class Movie(renpy.display.layout.Null):
 
 
         if surface:
-            renpy.display.render.mutable_surface(surface)
+            renpy.display.render.mutated_surface(surface)
             
             w, h = surface.get_size()
             rv = renpy.display.render.Render(w, h)

@@ -1,6 +1,22 @@
+New in 4.6.1
+------------
+
+Fixed a major memory leak in the rendering code. This leak was
+rendering 4.6 and 4.5 unusable on smaller systems.
+
+Executed 250,000 statements (well, 5 statements in a loop, while
+skipping), and ensured that there was no memory leak during the 
+execution of these statements.
+
+Added a memory profiler. You can see it by supplying the --leak option
+to run_game.exe or .py, but don't expect to understand it.
+
 Changed Dissolve so that it tries to use compositing when it can. This
 means that it only draws to the screen once... which is a little bit
 of a speedup on a really expensive operation.
+
+Fixed a bug that was preventing predictive image loading from
+working. 
 
 New in 4.6
 ----------

@@ -1,3 +1,4 @@
+
 # This file contains the AST for the Ren'Py script language. Each class
 # here corresponds to a statement in the script language.
 
@@ -298,6 +299,7 @@ def predict_imspec(imspec, callback):
         return
     
     im = renpy.exports.images[imspec[0]]
+
     im.predict(callback)
             
         

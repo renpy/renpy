@@ -513,6 +513,9 @@ class Interface(object):
     @ivar restart_interaction: If True, the current interaction will
     be restarted.
 
+    @ivar pushed_event: If not None, an event that was pushed back
+    onto the stack.
+
     """
 
     def __init__(self):
@@ -525,6 +528,7 @@ class Interface(object):
         self.quick_quit = False
         self.force_redraw = False
         self.restart_interaction = False
+        self.pushed_event = None
 
     def take_screenshot(self, scale):
         """
@@ -578,11 +582,40 @@ class Interface(object):
 
         self.transition[layer] = transition
 
+    def event_peek(self):
+        """
+        This peeks the next event. It returns None if no event exists.
+        """
+
+        if self.pushed_event:
+            return self.pushed_event
+
+        ev = pygame.event.poll()
+
+        if ev.type == NOEVENT:
+            return None
+
+        self.pushed_event = ev
+        return ev
+
     def event_wait(self):
         """
         This is in its own function so that we can track in the
         profiler how much time is spent in interact.
         """
+
+        if self.pushed_event:
+            rv = self.pushed_event
+            self.pushed_event = None
+            return rv
+
+        # We load at most one image per wait.
+        if renpy.display.image.cache.needs_preload():
+           ev = pygame.event.poll()
+           if ev.type != NOEVENT:
+               return ev
+
+           renpy.display.image.cache.preload()
 
         return pygame.event.wait()
 
@@ -615,6 +648,8 @@ class Interface(object):
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
         """
+
+        # These things can be done once per interaction.
 
         repeat = True
 
@@ -663,13 +698,8 @@ class Interface(object):
 
         # frames = 0
 
-        ## Expensive things we want to do before we pick the start_time.
-
         # Tick time forward.
         renpy.display.image.cache.tick()
-
-        # Predict images.
-        renpy.game.context().predict(renpy.display.image.cache.preload_image)
 
         # Set up key repeats.
         # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
@@ -761,6 +791,10 @@ class Interface(object):
         pygame.event.post(pygame.event.Event(MOUSEMOTION,
                                              pos=pygame.mouse.get_pos()))
         
+        # We only want to do prediction once, but we will defer it as
+        # long as possible.
+        did_prediction = False
+        
         rv = None
 
         # This try block is used to force cleanup even on termination
@@ -797,7 +831,7 @@ class Interface(object):
                     if renpy.config.profile:
                         new_time = time.time()
                         print "Profile: Redraw took %f seconds." % (new_time - draw_start)
-                        print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
+                        print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
@@ -808,16 +842,16 @@ class Interface(object):
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
-                if needs_redraw and not pygame.event.peek():
+                if needs_redraw and not self.event_peek():
                     continue
 
-                # While we have nothing to do, preload images.
-                while renpy.display.image.cache.needs_preload() and \
-                          not pygame.event.peek():
-                    renpy.display.image.cache.preload()
+                # Predict images, if we haven't done so already.
+                if not did_prediction and not self.event_peek():
+                    renpy.game.context().predict(renpy.display.image.cache.preload_image)
+                    root_widget.predict(renpy.display.image.cache.preload_image)
+                    did_prediction = True
 
                 try:
-                    # ev = pygame.event.wait()
                     ev = self.event_wait()
                     self.profile_time = time.time()
 

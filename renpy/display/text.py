@@ -189,6 +189,7 @@ class Text(renpy.display.core.Displayable):
 
             for l in lines:
                 ls = font.render(l, self.style.antialias, color)
+                renpy.display.render.mutated_surface(ls)
 
                 lw, lh = ls.get_size()
                 lw += indent
@@ -245,3 +246,4 @@ class ParameterizedText(object):
 
         return Text(string, style=self.style, **self.properties)
         
+
