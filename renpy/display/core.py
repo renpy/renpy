@@ -226,6 +226,13 @@ class Display(object):
                                               fsflag | DOUBLEBUF)
 
         self.sample_surface = self.window.convert_alpha()
+
+    def screenshot(self, filename):
+        """
+        Saves a screenshot of the current window into the given filename.
+        """
+
+        pygame.image.save(self.window, filename)
                 
     def show(self, transient, start_time):
         """
@@ -362,6 +369,10 @@ class Interface(object):
             try:
                 ev = pygame.event.wait()
                 self.profile_time = time.time()
+
+                # Handle quit specially for now.
+                if ev.type == QUIT:
+                    raise game.QuitException()
 
                 # Merge mousemotion events.
                 if ev.type == MOUSEMOTION:

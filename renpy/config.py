@@ -7,10 +7,6 @@ import renpy.display
 # Setting that may only be changed in init blocks are marked with an
 # (init) tag.
 
-# The title of the window the game is displayed in. Game authors
-# will probably want to change this. (init)
-window_title = "A Ren'Py Game"
-
 # The width and height of the drawable area of the screen. (init)
 screen_width = 800
 screen_height = 600

@@ -30,7 +30,7 @@ class Context(object):
 
         oldsl = None
         if context:
-            oldsl = context.oldsl
+            oldsl = context.scene_lists
 
         import renpy.display.core as dcore
         self.scene_lists = dcore.SceneLists(oldsl)

@@ -56,6 +56,32 @@ class RestartException(Exception):
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
+
+class QuitException(Exception):
+    """
+    An exception of this class will let us force a safe quit, from
+    anywhere in the program. Do not pass go, do not collect $200.
+    """
+
+def call_in_new_context(label):
+    """
+    This code creates a new context, and starts executing code from
+    that label in the new context. Rollback is disabled in the
+    new context. (Actually, it will just bring you back to the
+    real context.)
+    """
+
+    context = renpy.execution.Context(False, contexts[-1])
+    contexts.append(context)
+
+    context.goto_label(label)
+    context.run()
+
+    contexts.pop()
+    interface.redraw(0)
+
+    
+    
     
 def main(basepath_):
     global script
@@ -100,8 +126,11 @@ def main(basepath_):
     interface = dcore.Interface()
 
     # TODO: Make a clean copy of the store, for saving.
-    
-    context().goto_label('start')
+
+    if script.has_label("_start"):
+        context().goto_label('_start')
+    else:
+        context().goto_label('start')
 
     while True:
 
@@ -115,5 +144,7 @@ def main(basepath_):
         except RestartException, e:
             pass
 
+        except QuitException, e:
+            break
 
     # And, we're done.

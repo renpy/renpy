@@ -6,6 +6,7 @@
 import renpy.game as game
 import renpy.config as config
 import renpy.python
+import renpy.curry
 
 from renpy.display.layout import *
 from renpy.display.text import *
@@ -167,3 +168,20 @@ def toggle_fullscreen():
 
     config.fullscreen = not config.fullscreen
      
+def has_label(name):
+    """
+    Returns true if name is a valid label in the program, or false
+    otherwise.
+    """
+
+    return game.script.has_label(name)
+
+def screenshot(filename="screenshot.bmp"):
+    """
+    Takes a screenshot, and saves it in the given filename.
+    """
+
+    game.interface.display.screenshot(filename)
+
+curried_call_in_new_context = renpy.curry.curry(game.call_in_new_context)
+    
