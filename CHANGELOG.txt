@@ -1,4 +1,5 @@
 New in 4.6
+----------
 
 The demo was updated to show some of the new features listed below.
 
@@ -23,6 +24,19 @@ library.enter_transition and library.exit_transition, respectively.
 The preferences screen can now be entered from user code, and is 
 now part of the main menu.
 
+Character objects now support an interact argument when called
+directly. If it's False, then no interaction occurs. This lets a
+character window become part of a larger screen.
+
+A new extra had been added:
+
+[list]
+[*] button_menu.rpy changes the way menus are displayed. Each menu
+choice is displayed in its own button, roughly centered on the
+screen. A single menu caption is displayed as narration, if such 
+a caption exists.
+[/list]
+
 The overlay code was overhauled. It's now not possible for an overlay
 function to return a list of widgets. Instead, the overlay functions
 are expected to add widgets to the screen using the ui
@@ -33,7 +47,7 @@ one wants to replace the overlay on the screen.
 Init blocks of the same priority are now assured to run in the order
 that they appear in a script file.
 
-The renpy.interact function has been eliminated. Use ui.interact
+The renpy.interact() function has been eliminated. Use ui.interact()
 instead, as it performs more error checking.
 
 4.5's demo script had a bug that cause it to crash, after playing the

@@ -475,7 +475,7 @@ label find_out_more:
     e "If you have questions, the best place to ask them is the Ren'Py
        forum of the Lemmasoft forums."
 
-    e "Just go to http://www.lemmasoft.net/forums/, and click on
+    e "Just go to http://lemmasoft.renai.us/forums/, and click on
        Ren'Py."
 
     e "We thank Blue Lemma for hosting our forum."
