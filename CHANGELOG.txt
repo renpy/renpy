@@ -1,19 +1,22 @@
 New in 4.5
 ----------
 
+Changeable mouse pointer?
+
+Cache text?
+
 Figure out some way to indicate what rectangles on the screen are
 dirty versus clean, and use that to speed up redraw when
 possible. (Perhaps build this into blit_to somehow.)
 
-Speedup config.mouse using display.update. Also, suppress blitting
-the mouse when we're playing a video. (Or at least suppress the flips)
-
 Save data loc on windows.
+
 
 Added support for playing MPEG-1 movies. Rather than explain it all
 here, we'l just mention that you can read the new "Movies" subsection
 of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
-manual.
+manual. We support both hardware-accelerated full-window movies and
+using a movie as a widget.
 
 Added ui.pausebehavior(). This separates pausing from the saybehavior
 paving the way for uninterruptable pauses (a bad idea, IMO) and menus
@@ -24,6 +27,9 @@ mousedown, and changed some of the default bindings to be on mouseup
 rather than mousedown. If you make changes to config.keymaps, you'll
 need to change mouse_1 to mousedown_1, and so on for various other
 button numbers. 
+
+Massively improved the speed of drawing a graphical mouse. (By about
+10 times on my computer.)
 
 Fixed a bug in which hiding the UI was not working properly. (This 
 broke the center mouse button behavior.)

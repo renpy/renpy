@@ -1,6 +1,6 @@
 init:
     $ config.window_title = "Test Game"
-    # $ config.profile = True
+    $ config.profile = True
 
     $ config.debug_sound = True
 

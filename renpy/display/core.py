@@ -405,6 +405,7 @@ class Display(object):
             pygame.mouse.set_visible(True)
 
         self.mouse_location = None
+        self.suppress_mouse = False
 
     def draw_mouse(self):
         """
@@ -416,31 +417,29 @@ class Display(object):
         if not self.mouse:
             return
 
+        if self.suppress_mouse:
+            return
+
         mw, mh = self.mouse.get_size()
         pos = pygame.mouse.get_pos()
 
         if not pygame.mouse.get_focused():
             pos = None
 
-        flip = False
-
+        updates = [ ]
 
         if self.mouse_location and self.mouse_location != pos:
             ox, oy = self.mouse_location
             self.window.blit(self.buffer, (ox, oy), (ox, oy, mw, mh))
-            flip = True
+            updates.append((ox, oy, mw, mh))
 
         if pos and (pos != self.mouse_location):
             self.window.blit(self.mouse, pos)
-            flip = True
+            updates.append(pos + (mw, mh))
 
         self.mouse_location = pos
 
-
-        if flip:
-            pygame.display.flip()
-
-
+        pygame.display.update(updates)
             
         
     def show(self, transient, suppress_blit):
@@ -455,7 +454,8 @@ class Display(object):
                                          renpy.config.screen_width,
                                          renpy.config.screen_height)
 
-        # self.window.set_clip((0, 0, 800, 300))
+
+        # self.window.set_clip((0, 0, 800, 100))
 
         if not suppress_blit:        
             surftree.blit_to(self.window, 0, 0)
@@ -465,7 +465,9 @@ class Display(object):
                 # We don't need to undraw the mouse.
                 self.mouse_location = None
 
-        pygame.display.flip()
+        self.suppress_mouse = suppress_blit
+
+        pygame.display.update()
         
         return rv
 

@@ -167,6 +167,8 @@ label _main_menu:
 
 label _library_main_menu:
 
+    scene
+
     python hide:
 
         ui.keymousebehavior()
