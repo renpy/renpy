@@ -209,12 +209,12 @@ class Python(Node):
         
         super(Python, self).__init__(loc)
 
-        self.python_code = python_code
-        self.hide = hide
-        
+        self.hide = hide        
+        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code)
+
 
     def execute(self):
-        renpy.python.py_exec(self.python_code, self.hide)
+        renpy.python.py_exec_bytecode(self.bytecode, self.hide)
         
         return self.next
 

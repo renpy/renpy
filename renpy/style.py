@@ -19,7 +19,7 @@ class StyleManager(object):
         if parent and not hasattr(self, parent):
             raise Exception("Style '%s' has non-existent parent '%s'." % (name, parent))
         
-        s = Style(parent)
+        s = Style(parent, defer=True)
         s.name = name
         s.parent = parent
         s.description = description
@@ -27,6 +27,11 @@ class StyleManager(object):
         setattr(self, name, s)
 
         self._style_list.append(s)
+
+    def _build_style_caches(self):
+
+        for i in self._style_list:
+            i.build_cache()
 
     def _write_docs(self, filename):
 
@@ -53,44 +58,73 @@ class Style(object):
     """
 
     def __getstate__(self):
-        return vars(self)
+        return dict(properties=self.properties,
+                    prefix=self.prefix,
+                    parent=self.parent)
+                    
 
-    # Not sure why this is necessary, but it seems to be. :-(
     def __setstate__(self, state):
         self.__dict__.update(state)
 
+        # This should always work, as only one layer of these styles will
+        # be serialized.
+
+        self.build_cache()
+
+    def __setattr__(self, key, value):
+        self.properties[key] = value
+        self.cache[key] = value
+
     def __getattr__(self, key):
-        return self.lookup(key, self.prefix)
+
+        cache = self.cache
+        
+        try:
+            return cache.get(self.prefix + key, cache[key])
+        except KeyError:
+            raise AttributeError("Style property '%s' not found." % key)
+
+    def __delattr__(self, key):
+        del self.properties[key]
+        del self.cache[key]
 
     def lookup(self, key, prefix):
 
-        if prefix + key in vars(self):
-            return vars(self)[prefix + key]
+        cache = self.cache
 
-        if key in vars(self):
-            return vars(self)[key]
+        try:
+            return cache.get(prefix + key, cache[key])
+        except KeyError:
+            raise AttributeError("Style property '%s' not found." % key)
 
-        if self.parent:
-
-            # This must always work, since we check for this in
-            # create_style.
-            ps = getattr(renpy.game.style, self.parent)
-            return ps.lookup(key, prefix)
-
-        else:
-            raise Exception("Style property '%s' not found." % key)
 
     def set_prefix(self, prefix):
+        vars(self)["prefix"] = prefix
         self.prefix = prefix
 
-    def __init__(self, parent, properties=None):
+
+    def build_cache(self):
+        vars(self)["cache"] = { }
+
+        self.cache = { }
+
+        if self.parent:
+            self.cache.update(getattr(renpy.game.style, self.parent).cache)
+
+        self.cache.update(self.properties)
+
+    def __init__(self, parent, properties=None, defer=False):
 
         if parent and not hasattr(renpy.game.style, parent):
             raise Exception("Style '%s' is not known." % parent)
+
+        if not properties:
+            properties = { }
+
+        vars(self)["parent"] = parent
+        vars(self)["prefix"] = ''
+        vars(self)["properties"] = properties
+        vars(self)["cache"] = { }
             
-        self.parent = parent
-        self.prefix = ''
-
-        if properties:
-            vars(self).update(properties)
-
+        if not defer:
+            self.build_cache()

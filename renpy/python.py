@@ -9,7 +9,9 @@ from compiler.pycodegen import ModuleCodeGenerator, ExpressionCodeGenerator
 from compiler.misc import set_filename
 import compiler.ast as ast
 
+import marshal
 import random
+import types
 import weakref
 
 import renpy
@@ -131,8 +133,18 @@ def py_compile(source, mode):
     else:
         set_filename("<none>", tree)
         cg = ExpressionCodeGenerator(tree)
-        
+
     return cg.getCode()
+
+def py_compile_exec_bytecode(source):
+    code = py_compile(source, 'exec')
+    return marshal.dumps(code)
+
+def py_compile_eval_bytecode(source):
+    source = source.strip()
+    code = py_compile(source, 'exec')
+    return marshal.dumps(code)
+
 
 
 ##### Classes that are exported in place of the normal list, dict, and
@@ -460,6 +472,8 @@ class RollbackLog(renpy.object.Object):
 
             self.current.objects.append((obj, roll))
 
+
+
     def get_roots(self):
         """
         Return a map giving the current roots of the store. This is a
@@ -589,6 +603,9 @@ class RollbackLog(renpy.object.Object):
 
         self.frozen_roots = None
 
+        # We need to do this to counteract the effects of the self.complete().
+        self.begin()
+
     def unfreeze(self):
         """
         Used to unfreeze the game state after a load of this log
@@ -614,12 +631,17 @@ class RollbackLog(renpy.object.Object):
         self.rollback(0, force=True)
 
         # We never make it this far.
-        
-        
-        
-        
-        
 
+def py_exec_bytecode(bytecode, hide=False):
+
+    if hide:
+        locals = { }
+    else:
+        locals = renpy.game.store
+
+    exec marshal.loads(bytecode) in renpy.game.store, locals
+
+        
 def py_exec(source, hide=False):
 
     if hide:
@@ -630,8 +652,13 @@ def py_exec(source, hide=False):
 
     exec py_compile(source, 'exec') in renpy.game.store, locals
 
+def py_eval_bytecode(bytecode):
+
+    return eval(marshal.loads(bytecode), renpy.game.store)
+
 def py_eval(source):
     source = source.strip()
-    
+
     return eval(py_compile(source, 'eval'),
                 renpy.game.store)
+

@@ -20,12 +20,20 @@ init -250:
         style.create('default', None,
                      'The default style that all styles inherit from.')
 
+        dark_cyan = (0, 128, 255, 255)
+        bright_cyan = (0, 255, 255, 255)
+
+        dark_red = (255, 128, 128, 255)
+        bright_red = (255, 64, 64, 255)
+
+        green = (0, 128, 0, 255)
+
         # Text properties.
         style.default.font = "Vera.ttf"
         style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
-        style.default.drop_shadow = (2, 2)
+        style.default.drop_shadow = (1, 1)
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
         style.default.textalign = 0
@@ -183,8 +191,9 @@ init -250:
         style.button_text.xpos = 0.5
         style.button_text.xanchor = 'center'
         style.button_text.size = 24
-        style.button_text.color = (0, 255, 255, 255)
-        style.button_text.hover_color = (128, 255, 255, 255)
+        style.button_text.color = dark_cyan
+        style.button_text.hover_color = bright_cyan
+        style.button_text.drop_shadow = (2, 2)
         
         # Selected button.
         style.create('selected_button', 'button',
@@ -193,7 +202,8 @@ init -250:
         style.create('selected_button_text', 'button_text',
                      '(text, hover) The style that is used for the label of a selected button.')
                      
-        style.selected_button_text.color = (255, 255, 0, 255)
+        style.selected_button_text.color = dark_red
+        style.selected_button_text.hover_color = bright_red
         
         # Disabled button.
 
@@ -207,6 +217,7 @@ init -250:
                      '(text, hover) The style that is used for the label of a disabled button.')
                      
         style.disabled_button_text.color = (128, 128, 128, 255)
+        style.disabled_button_text.hover_color = (128, 128, 128, 255)
 
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',
@@ -256,13 +267,19 @@ init -250:
         style.create('gm_nav_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected game menu navigation button.')
         
+        style.create('gm_nav_disabled_button', 'disabled_button',
+                     '(window, hover) The style of a disabled game menu navigation button.')
+
+        style.create('gm_nav_disabled_button_text', 'disabled_button_text',
+                     '(text, hover) The style of the text of a disabled game menu navigation button.')
+        
 
         style.create('file_picker_window', 'default',
                      '(window, position) A window containing the file picker that is used to choose slots for loading and saving.')
 
-        style.file_picker_window.xpos = 10
+        style.file_picker_window.xpos = 0
         style.file_picker_window.xanchor = 'left'
-        style.file_picker_window.ypos = 10
+        style.file_picker_window.ypos = 0
         style.file_picker_window.yanchor = 'top'
 
 
@@ -273,8 +290,10 @@ init -250:
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
-        style.file_picker_entry.xpadding = 3
-        style.file_picker_entry.xminimum = 500
+        style.file_picker_entry.xpadding = 5
+        style.file_picker_entry.ypadding = 2
+        style.file_picker_entry.xmargin = 10
+        style.file_picker_entry.xminimum = 400
         style.file_picker_entry.ymargin = 2
         
         style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
@@ -284,6 +303,7 @@ init -250:
                      '(text) A base style for all text that is displayed in the file picker.')
         
         style.file_picker_text.size = 18
+        style.file_picker_text.color = dark_cyan
 
         style.create('file_picker_new', 'file_picker_text',
                      '(text) The style that is applied to the new indicator in the file picker.')
@@ -291,19 +311,15 @@ init -250:
         style.create('file_picker_old', 'file_picker_text',
                      '(text) The style that is applied to the old indicator in the file pciker.')
 
-        style.file_picker_new.color = (255, 192, 192, 255)
-        style.file_picker_old.color = (192, 192, 255, 255)
+        style.file_picker_new.color = dark_red
         style.file_picker_new.minwidth = 30
         style.file_picker_old.minwidth = 30
 
         style.create('file_picker_extra_info', 'file_picker_text',
                      '(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.')
 
-        style.file_picker_extra_info.color = (192, 192, 255, 255)
-
         style.create('file_picker_new_slot', 'file_picker_text',
                      '(text) The style that is used for the new slot indicator in the file picker.')
-
 
         style.create('yesno_prompt', 'default',
                      '(text, position) The style used for the prompt in a yes/no dialog.')
@@ -313,6 +329,8 @@ init -250:
 
         style.yesno_prompt.ypos = 0.25
         style.yesno_prompt.yanchor = 'center'
+
+        style.yesno_prompt.color = green
 
         style.create('yesno_yes', 'button',
                      '(position) The position of the yes button on the screen.')
@@ -337,6 +355,7 @@ init -250:
 
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
+        style.prefs_label.color = green
 
         style.create('prefs_pref', 'default',
                      '(position) The position of the box containing an individual preference.')

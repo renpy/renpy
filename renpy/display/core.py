@@ -438,6 +438,8 @@ class Display(object):
                                          renpy.config.screen_width,
                                          renpy.config.screen_height)
 
+        # self.window.set_clip((0, 0, 800, 300))
+        
         surftree.blit_to(self.window, 0, 0)
 
         if self.mouse:
@@ -446,8 +448,6 @@ class Display(object):
             self.mouse_location = None
 
         pygame.display.flip()
-
-
         
         return rv
 
@@ -571,6 +571,14 @@ class Interface(object):
 
         self.transition = transition
 
+    def event_wait(self):
+        """
+        This is in its own function so that we can track in the
+        profiler how much time is spent in interact.
+        """
+
+        return pygame.event.wait()
+
     def interact(self, transient=None, show_mouse=True,
                  trans_pause=False,
                  suppress_overlay=False,
@@ -684,107 +692,117 @@ class Interface(object):
         
         rv = None
 
-        while rv is None:
+        # This try block is used to force cleanup even on termination
+        # caused by an exception propigating through this function.
+        try: 
 
-            if self.display.fullscreen != renpy.game.preferences.fullscreen:
-                self.display = Display()
-                self.needs_redraw = True
+            while rv is None:
 
-            if self.needs_redraw:
-                self.needs_redraw = False
+                if self.display.fullscreen != renpy.game.preferences.fullscreen:
+                    self.display = Display()
+                    self.needs_redraw = True
 
-                draw_start = time.time()
-                self.redraw_time = draw_start + 365.25 * 86400.0
+                if self.needs_redraw:
+                    self.needs_redraw = False
 
-                offsets = self.display.show(display_list)
-                offsets.reverse()
+                    draw_start = time.time()
+                    self.redraw_time = draw_start + 365.25 * 86400.0
 
-                # If profiling is enabled, report the profile time.
-                if renpy.config.profile:
-                    new_time = time.time()
-                    print "Profile: Redraw took %f seconds." % (new_time - draw_start)
-                    print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
+                    offsets = self.display.show(display_list)
+                    offsets.reverse()
 
-            # Draw the mouse, if it needs drawing.
-            if show_mouse:
-                self.display.draw_mouse()
+                    # If profiling is enabled, report the profile time.
+                    if renpy.config.profile:
+                        new_time = time.time()
+                        print "Profile: Redraw took %f seconds." % (new_time - draw_start)
+                        print "Profile: %f seconds between event and display." % (new_time - self.profile_time)
 
-            # Update the playing music, if necessary.
-            renpy.music.restore()
+                # Draw the mouse, if it needs drawing.
+                if show_mouse:
+                    self.display.draw_mouse()
 
-            # If we need to redraw again, do it if we don't have an
-            # event going on.
-            if self.needs_redraw and not pygame.event.peek():
-                continue
-                
-            # While we have nothing to do, preload images.
-            while renpy.display.image.cache.needs_preload() and \
-                      not pygame.event.peek():
-                renpy.display.image.cache.preload()
+                # Update the playing music, if necessary.
+                renpy.music.restore()
 
-            try:
-                ev = pygame.event.wait()
-                self.profile_time = time.time()
+                # If we need to redraw again, do it if we don't have an
+                # event going on.
+                if self.needs_redraw and not pygame.event.peek():
+                    continue
 
-                if ev.type == DISPLAYTIME:
-                    pygame.event.clear([DISPLAYTIME])
-                    ev = pygame.event.Event(DISPLAYTIME, {},
-                                            duration=(time.time() - start_time))
+                # While we have nothing to do, preload images.
+                while renpy.display.image.cache.needs_preload() and \
+                          not pygame.event.peek():
+                    renpy.display.image.cache.preload()
 
-                if ev.type == KEYREPEATEVENT:
-                    pygame.time.set_timer(KEYREPEATEVENT, 0)
+                try:
+                    # ev = pygame.event.wait()
+                    ev = self.event_wait()
+                    self.profile_time = time.time()
 
-                    
-                    i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
-                                                          "repeating")
+                    if ev.type == DISPLAYTIME:
+                        pygame.event.clear([DISPLAYTIME])
+                        ev = pygame.event.Event(DISPLAYTIME, {},
+                                                duration=(time.time() - start_time))
 
-                    if i:
-                        ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
-
-                # Handle quit specially for now.
-                if ev.type == QUIT:
-                    if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
-                        self.quick_quit = True
-                        renpy.game.call_in_new_context("_confirm_quit")
-                        self.quick_quit = False
-                    else:                
-                        raise renpy.game.QuitException()
-
-                # Merge mousemotion events.
-                if ev.type == MOUSEMOTION:
-                    evs = pygame.event.get([MOUSEMOTION])
-
-                    if len(evs):
-                        ev = evs[-1]
+                    if ev.type == KEYREPEATEVENT:
+                        pygame.time.set_timer(KEYREPEATEVENT, 0)
 
 
-                # x, y = getattr(ev, 'pos', (0, 0))
+                        i = renpy.display.behavior.is_pressed(pygame.key.get_pressed(),
+                                                              "repeating")
 
-                x, y = pygame.mouse.get_pos()
+                        if i:
+                            ev = pygame.event.Event(KEYDOWN, key=i, unicode=u'')
 
-                for (k, t, d), (xo, yo) in zip(event_list, offsets):
-                    rv = d.event(ev, x - xo, y - yo)
+                    # Handle quit specially for now.
+                    if ev.type == QUIT:
+                        if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
+                            self.quick_quit = True
+                            renpy.game.call_in_new_context("_confirm_quit")
+                            self.quick_quit = False
+                        else:                
+                            raise renpy.game.QuitException()
 
-                    if rv is not None:
-                        break
+                    # Merge mousemotion events.
+                    if ev.type == MOUSEMOTION:
+                        evs = pygame.event.get([MOUSEMOTION])
 
-            except IgnoreEvent:
-                pass
+                        if len(evs):
+                            ev = evs[-1]
 
-            if time.time() > self.redraw_time:
-                self.needs_redraw = True
 
-                
-        pygame.time.set_timer(KEYREPEATEVENT, 0)
-        pygame.event.clear()
-        scene_lists.replace_transient()
+                    # x, y = getattr(ev, 'pos', (0, 0))
 
-        # Clear up the transitions. 
-        self.old_scene = current_scene
-        self.transition = None
-        self.supress_transition = False
+                    x, y = pygame.mouse.get_pos()
 
-        # Redraw the old scene, if any.
-        self.redraw(0)
+                    for (k, t, d), (xo, yo) in zip(event_list, offsets):
+                        rv = d.event(ev, x - xo, y - yo)
 
-        return rv
+                        if rv is not None:
+                            break
+
+                except IgnoreEvent:
+                    pass
+
+                if time.time() > self.redraw_time:
+                    self.needs_redraw = True
+
+            # But wait, there's more! The finally block runs some cleanup
+            # after this.
+            return rv
+
+        finally:
+
+            pygame.time.set_timer(KEYREPEATEVENT, 0)
+            pygame.event.clear()
+            scene_lists.replace_transient()
+
+            # Clear up the transitions. 
+            self.old_scene = current_scene
+            self.transition = None
+            self.supress_transition = False
+
+            # Redraw the old scene, if any.
+            self.redraw(0)
+            
+

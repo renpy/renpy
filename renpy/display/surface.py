@@ -21,7 +21,35 @@ import renpy
 #         self.color = color
 
 #     def blit_to(self, dest, x, y):
+#         dest.set_alpha(0)
 #         dest.fill(self.color, [ x, y, self.width, self.height ])
+
+# We only cache a single solid... but that should be enough to handle
+# some important cases, like button and window backgrounds.
+class SolidCache(object):
+
+    def __init__(self):
+        self.size = None
+        self.color = None
+        self.cached = None
+    
+    def create(self, size, color):
+        if size == self.size and color == self.color:
+            return self.cached
+
+        self.size = size
+        self.color = color
+
+        surf = pygame.Surface(size, 0,
+                              renpy.game.interface.display.sample_surface)
+
+        surf.fill(color)
+        
+        self.cached = surf
+        return surf
+
+
+solid_cache = SolidCache()
 
 class Surface(object):
     """
@@ -66,11 +94,13 @@ class Surface(object):
         """
         Fake a pygame.Surface.fill()
         """
-        
-        surf = pygame.Surface((self.width, self.height), 0,
-                              renpy.game.interface.display.sample_surface)
 
-        surf.fill(color)
+        surf = solid_cache.create((self.width, self.height), color)
+        
+        # surf = pygame.Surface((self.width, self.height), 0,
+        #                       renpy.game.interface.display.sample_surface)
+
+        # surf.fill(color)
 
         # surf = FilledSurface(self.width, self.height, color)
 

@@ -27,10 +27,10 @@ init -500:
         library.padding = 2
 
         # The width of a thumbnail.
-        library.thumbnail_width = 250
+        library.thumbnail_width = 66
 
         # The height of a thumbnail.
-        library.thumbnail_height = 188
+        library.thumbnail_height = 50
 
         # The contents of the main menu.
         library.main_menu = [
@@ -41,21 +41,26 @@ init -500:
 
         # The contents of the game menu choices.
         library.game_menu = [
-                ( "return", "Return to Game", "_return"),
-                ( "load", "Load Game", "_load_screen" ),
-                ( "save", "Save Game", "_save_screen" ),
-                ( "prefs", "Preferences", "_prefs_screen" ),
-                ( "mainmenu", "Main Menu", "_full_restart" ),
-                ( "quit", "Quit Game", "_quit_screen" ),
+                ( "return", "Return to Game", "_return", 'True'),
+                ( "load", "Load Game", "_load_screen", 'True'),
+                ( "save", "Save Game", "_save_screen", '_can_save' ),
+                ( "prefs", "Preferences", "_prefs_screen", 'True' ),
+                ( "mainmenu", "Main Menu", "_full_restart", 'not _at_main_menu' ),
+                ( "quit", "Quit Game", "_quit_screen", 'True' ),
                 ]
 
         # Used to translate strings in the library.
         library.translations = { }
 
-
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
+
+        # True if we're at the main menu, false otherwise.
+        _at_main_menu = False
+
+        # True if we can save, false otherwise.
+        _can_save = True
 
         # The function that's used to translate strings in the game menu.
         def _(s):
@@ -122,7 +127,7 @@ label _main_menu:
         jump main_menu
 
 label _library_main_menu:
-    
+
     python hide:
 
         ui.keymousebehavior()
@@ -141,7 +146,7 @@ label _library_main_menu:
 
         store._result = renpy.interact(suppress_overlay = True,
                                        suppress_underlay = True)
-    
+
     # Computed jump to the appropriate label.
     $ renpy.jump(_result)
 
@@ -149,7 +154,13 @@ label _library_main_menu:
 
 # Used to call the game menu. 
 label _continue:
+    $ _can_save = False
+    $ _at_main_menu = True
+    
     $ renpy.call_in_new_context("_load_menu")
+
+    $ _can_save = True
+    $ _at_main_menu = False
 
     jump _library_main_menu
     
@@ -160,8 +171,13 @@ label _continue:
 
 init -500:
     python:
+
+        # This is used to store scratch data that's used by the
+        # library, but shouldn't be saved out as part of the savegame.
+        _scratch = object()
+
         
-         # This returns a window containing the game menu navigation
+        # This returns a window containing the game menu navigation
         # buttons, set up to jump to the appropriate screen sections.
         def _game_nav(selected):
 
@@ -173,16 +189,25 @@ init -500:
             ui.window(style='gm_nav_window')
             ui.vbox()
             
-            for key, label, target in library.game_menu:
+            for key, label, target, enabled in library.game_menu:
                 style="gm_nav_button"
                 text_style="gm_nav_button_text"
                 
                 if key == selected:
                     style = 'gm_nav_selected_button'
                     text_style = 'gm_nav_selected_button_text'
+
+                clicked = ui.jumps(target)
+
+                if not eval(enabled):
+                    style = 'gm_nav_disabled_button'
+                    text_style = 'gm_nav_disabled_button_text'
+
+                    clicked = lambda : None
+                             
                     
                 ui.textbutton(_(label), style=style, text_style=text_style,
-                              clicked=ui.jumps(target))
+                              clicked=clicked)
 
             ui.close()
             ui.close()
@@ -192,60 +217,81 @@ init -500:
             return renpy.interact(suppress_underlay=True,
                                   suppress_overlay=True)
 
-        _file_picker_index = 0
 
-        # This is used to render a single filename to the screen.
-        def _render_filename(index, filename, newest_filename):
+        def _render_new_slot():
+            ui.button(style='file_picker_entry',
+                      clicked=ui.returns(("return", None)))
+                      
+            ui.text(_("Save in new slot."), style='file_picker_new_slot')
+                      
+            
+        def _render_savefile(index, info, newest):
 
-            if filename is None:
-                ui.text(_("Save in new slot."), style='file_picker_new_slot')
-                return
+            filename, image, extra = info
 
-
-            ui.hbox(padding=library.padding)
-
+            ui.button(style='file_picker_entry',
+                      clicked=ui.returns(("return", filename)))
+            
+            ui.hbox()
+            ui.add(image)
+            
             num = "% 2d." % index
             
-            if filename == newest_filename:
+            if filename == newest:
                 ui.text(num, style='file_picker_new')
             else:
                 ui.text(num, style='file_picker_old')
 
-            # Do something better about this.
-            # ui.add(renpy.load_screenshot(filename))
-
-            ui.text(renpy.load_extra_info(filename), style='file_picker_extra_info')
+            
+            ui.text(extra, style='file_picker_extra_info')
 
             ui.close()
+            
+
+        _scratch.file_picker_index = None
 
         # This displays a file picker that can chose a save file from
         # the list of save files.
-        def _file_picker(selected, files):
+        def _file_picker(selected, save):
 
+            saves, newest = renpy.saved_games()
 
-            nsg = renpy.newest_save_game()
+            # The index of the first entry in the page.
+            fpi = _scratch.file_picker_index
+
+            if fpi is None:
+                fpi = 0
+
+                if newest:
+                    for i, (filename, image, extra) in enumerate(saves):
+                        if filename == newest:
+                            # Go to start of page.
+                            fpi = i // library.file_page_length * library.file_page_length
+
+            if save:
+                saves.append(None)
+                
+            # The length of a half-page of files.
+            hfpl = library.file_page_length // 2
 
             while True:
 
-                if _file_picker_index >= len(files):
-                    store._file_picker_index -= library.file_page_length
+                if fpi >= len(saves):
+                    fpi -= library.file_page_length
 
-                if _file_picker_index < 0:
-                    store._file_picker_index = 0
+                if fpi < 0:
+                    fpi = 0
 
-                fpi = _file_picker_index
+                _scratch.file_picker_index = fpi
 
-                cur_files = files[fpi:fpi + library.file_page_length]
-
-                # Navigation
+                # Show Navigation
                 _game_nav(selected)
                 
                 ui.window(style='file_picker_window')
-                ui.hbox()
 
-                ui.vbox()
+                ui.vbox() # whole thing.
                 
-                ui.hbox(padding=library.padding * 10)
+                ui.hbox(padding=library.padding * 10) # nav buttons.
 
                 def tb(cond, label, clicked):
                     if cond:
@@ -259,38 +305,38 @@ init -500:
 
 
                 tb(fpi > 0, _('Previous Page'), ui.returns(("fpidelta", -1)))
-                tb(fpi + library.file_page_length < len(files),
+                tb(fpi + library.file_page_length < len(saves),
                    _('Next Page'), ui.returns(("fpidelta", +1)))
 
-                ui.close() # hbox
+                ui.close() # nav buttons.
 
-                for index, i in enumerate(cur_files):
+                def entry(offset):
+                    i = fpi + offset
 
-                    def hover(i=i):  
-                        ui.reopen(image_win, True)
+                    if i >= len(saves):
+                        return None
 
-                        if i:
-                            ui.add(renpy.load_screenshot(i))
-                        else:
-                            ui.null()
-                            
-                        ui.close()
-
-                    
-                    ui.button(style='file_picker_entry',
-                              clicked=ui.returns(("return", i)),
-                              hovered=hover)
-
-
-                    _render_filename(index + fpi + 1, i, nsg)
+                    if saves[i] is None:
+                        _render_new_slot()
+                    else:
+                        _render_savefile(i + 1, saves[i], newest)
                     
 
-                ui.close() # vbox
+                ui.hbox() # slots
 
-                image_win = ui.window(style='file_picker_image')
-                ui.null()
+                ui.vbox()
+                for i in range(0, hfpl):
+                    entry(i)
+                ui.close()
 
-                ui.close() # hbox
+                ui.vbox()
+                for i in range(hfpl, hfpl * 2):
+                    entry(i)
+                ui.close()
+                    
+                ui.close() # slots
+
+                ui.close() # whole thing
 
                 result = _game_interact()
                 type, value = result
@@ -299,7 +345,7 @@ init -500:
                     return value
 
                 if type == "fpidelta":
-                    store._file_picker_index += value * library.file_page_length
+                    fpi += value * library.file_page_length
                 
         def _yesno_prompt(screen, message):
 
@@ -335,7 +381,7 @@ label _confirm_quit:
 label _load_screen:
 
     python:
-        _fn = _file_picker("load", renpy.saved_game_filenames() )
+        _fn = _file_picker("load", False )
 
     python:
         renpy.load(_fn)
@@ -343,19 +389,19 @@ label _load_screen:
     jump _load_screen
 
 label _save_screen:
-    $ _fn = _file_picker("save", renpy.saved_game_filenames() + [ None ] )
+    $ _fn = _file_picker("save", True)
 
     if not _fn or _yesno_prompt("save", _("Are you sure you want to overwrite your save?")):
         python hide:
 
             if save_name:
-                full_save_name = " - " + save_name
+                full_save_name = "\n" + save_name
             else:
                 full_save_name = ""
-            
+
             renpy.save(_fn, renpy.time.strftime("%b %d, %H:%M") +
                        full_save_name)
-
+            
     jump _save_screen
 
 # Asks the user if he wants to quit.

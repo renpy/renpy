@@ -83,6 +83,9 @@ def run(restart=False):
 
     game.init_phase = False
 
+    # Rebuild the various style caches.
+    game.style._build_style_caches()
+
     # Index the archive files. We should not have loaded an image
     # before this point. (As pygame will not have been initialized.)
     renpy.loader.index_archives()

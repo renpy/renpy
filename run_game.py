@@ -21,9 +21,6 @@ import encodings.zlib_codec
 # Load up all of Ren'Py, in the right order.
 import renpy
 
-# The version of Ren'Py in use.
-version = 'Renpy 4.3.2'
-
 if __name__ == "__main__":
 
     name = os.path.basename(sys.argv[0])
@@ -74,7 +71,7 @@ if __name__ == "__main__":
         print >>f, renpy.game.exception_info
 
         print >>f
-        print >>f, "Ren'Py Version:", version
+        print >>f, "Ren'Py Version:", renpy.version
 
         f.close()
 

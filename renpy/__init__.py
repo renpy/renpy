@@ -1,6 +1,12 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
+# Some version numbers and things.
+version = "Ren'Py 4.3.2"
+script_version = 4
+savegame_suffix = "-1.save"
+
+
 # Can be first, because has no dependencies, and may be imported
 # directly.
 import renpy.game

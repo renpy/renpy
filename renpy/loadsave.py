@@ -2,10 +2,62 @@
 
 from cPickle import dumps, loads, HIGHEST_PROTOCOL
 import cStringIO
-import renpy
 import zipfile
 import time
 import os
+
+import renpy
+
+
+# This is used as a quick and dirty way of versioning savegame
+# files.
+savegame_suffix = renpy.savegame_suffix
+
+# def debug_dump(prefix, o, seen):
+
+#     if id(o) in seen:
+#         print prefix, id(o)
+#         return
+
+#     seen[id(o)] = True
+
+#     if isinstance(o, tuple):
+#         print prefix, "("
+#         for i in o:
+#             debug_dump(prefix + "  ", i, seen)
+#         print prefix, ")"
+
+#     elif isinstance(o, list):
+#         print prefix, "["
+#         for i in o:
+#             debug_dump(prefix + "  ", i, seen)
+#         print prefix, "]"
+
+#     elif isinstance(o, dict):
+#         print prefix, "{"
+#         for k, v in o.iteritems():
+#             print prefix, repr(k), "="
+#             debug_dump(prefix + "    ", v, seen)
+#         print prefix, "}"
+
+    
+#     elif hasattr(o, "__dict__"):
+
+#         ignored = getattr(o, "nosave", [ ])
+
+#         print prefix, repr(o), "{{"
+#         for k, v in vars(o).iteritems():
+#             if k in ignored:
+#                 continue
+
+#             print prefix, repr(k), "="
+#             debug_dump(prefix + "    ", v, seen)
+#         print prefix, "}}"
+
+#     else:
+#         print prefix, repr(o)
+
+    
 
 def save(filename, extra_info=''):
     """
@@ -21,7 +73,7 @@ def save(filename, extra_info=''):
     """
 
     if filename == None:
-        filename = str(time.time()) + ".save"
+        filename = str(time.time()) + savegame_suffix
 
     try:
         os.unlink(renpy.config.savedir + "/" + filename)
@@ -39,53 +91,49 @@ def save(filename, extra_info=''):
     
     # The actual game.
     renpy.game.log.freeze()
+
     zf.writestr("log", dumps(renpy.game.log, HIGHEST_PROTOCOL))
     renpy.game.log.discard_freeze()
 
     zf.close()
 
-def saved_game_filenames():
+def saved_games():
     """
-    Returns a list of savegame files.
+    This scans the savegames that we know about and returns
+    information about them. Specifically, it returns tuple containing
+    a savelist and the filename of the newest save file (or None if no
+    save file exists).
+
+    The savelist, in turn, is a list of tuples, with each tuple containing
+    the filename of the saved game, a Displayable containing a screenshot,
+    and a string giving the extra data of that save.
     """
-    
+
     files = os.listdir(renpy.config.savedir)
     files.sort()
-    return [ i for i in files if i.endswith(".save") ]
-
-def newest_save_game():
-    """
-    Returns the name of the newest savegame file.
-    """
-    
-    files = os.listdir(renpy.config.savedir)
-    files = [ i for i in files if i.endswith(".save") ]
+    files = [ i for i in files if i.endswith(savegame_suffix) ]
 
     if not files:
-        return None
+        newest = None
+    else:
+        datefiles = [ (os.stat(renpy.config.savedir + "/" + i).st_mtime, i) for i in files ]
+        datefiles.sort()
+        newest = datefiles[-1][1]
 
-    datefiles = [ (os.stat(renpy.config.savedir + "/" + i).st_mtime, i) for i in files ]
-    datefiles.sort()
+    savelist = [ ]
 
-    return datefiles[-1][1]
+    for f in files:
+
+        zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
+        extra_info = zf.read("extra_info")
+        sio = cStringIO.StringIO(zf.read("screenshot.tga"))
+        zf.close()
     
-def load_extra_info(filename):
-    """
-    Returns the extra_info string that was saved in a savegame file.
-    """
+        screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
 
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename, "r")
-    rv = zf.read("extra_info")
-    zf.close()
+        savelist.append((f, screenshot, extra_info))
 
-    return rv
-
-def load_screenshot(filename, scale=None):
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename, "r")
-    sio = cStringIO.StringIO(zf.read("screenshot.tga"))
-    zf.close()
-    
-    return renpy.display.image.UncachedImage(sio, "screenshot.tga", scale)
+    return savelist, newest
     
 def load(filename):
     """

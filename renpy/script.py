@@ -9,7 +9,7 @@ import os
 from cPickle import loads, dumps
 
 # The version of the dumped script.
-script_version = 3
+script_version = renpy.script_version
 
 class ScriptError(Exception):
     """
