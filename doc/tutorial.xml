@@ -674,6 +674,51 @@ hide eileen
     most scenes needed in a visual novel type game.
   </p>
 
+  <h4>Parameterized Images</h4>
+
+  <p>
+    Show and scene statements may also take parameterized images. If a
+    name of an image is a prefix of the name given in a scene or show
+    statement, the rest of the name is considered to be
+    parameters. Parameters may be names, but they may also be
+    simple_expressions, which includes strings. Parameters are handed
+    off to the object that the prefix is defined to, and that object
+    is responsible for returning a displayable that can be shown to
+    the user.
+  </p>
+
+  <p>
+    An example of this is the pre-defined text displayable, which
+    displays text as if it was an image. For example, the following
+    code: 
+  </p>
+
+  <example>
+show text "American Bishoujo Presents..."
+  </example>
+
+  <p>
+    Will display the given text as if it was an image. The game will
+    not pause while the text is being displayed. Such an image can
+    also be processed through an at clause, as in the following code
+    which moves the text down from the top of the screen, while
+    waiting 10 seconds or until the user makes some input.
+  </p>
+  
+  <example>
+show text "A PyTom Game" \
+        at Move((0.5, 0.0), (0.5, 0.5), 4.0,
+                xanchor='center', yanchor='bottom')
+
+$ renpy.pause(10)
+  </example>
+  
+  <p>
+    Please note that parameterized images are replaced in the same way
+    that normal images are. (So you can only have one image created
+    with text on the screen at a time, without creating a second
+    ParameterizedText object.)
+  </p>
 
   <h3>Image and Scene Functions</h3>
   
@@ -744,6 +789,24 @@ init:
 show eileen happy at left
   </example>
 
+  <!-- func renpy.ParameterizedText -->
+
+  <p>
+    This is used to impelement the text image. The user may also want
+    to instatiate their own ParameterizedText object (in an init
+    block) if they want to have more than one bit of text on the
+    screen at once, or if they want to change the style (and therefore
+    the position) of that text.
+  </p>
+
+  <example>
+init:
+    image text1 = renpy.ParameterizedText(ypos=0.25)
+
+show text "centered."
+show text1 "1/4 of the way down the screen."
+  </example>
+
   <function name="Pan" sig="(startpos, endpos, time)">
 
     <p>
@@ -791,7 +854,40 @@ scene marspan at Pan((0, 0), (1600, 0), 10.0)
 
   </function>
     
+  <function name="Move" sig="(startpos, endpos, time, **properties)">
+    
+    <p>
+      Move is similar to Pan, insofar as it involves moving
+      things. But where Pan moves the screen through an image, Move
+      moves an image on the screen. Specifially, move changes the
+      position style of an image with time.
+    </p>
 
+    <p>
+      Move takes as parameters a starting position, an ending
+      position, the amount of time it takes to move from the starting
+      position to the ending position, and extra position
+      properties. The positions are given as tuples containing xpos
+      and ypos properties. The positions may be integer or floating
+      point, but it's not permissable to mix the two.
+    </p>
+    
+    <p>
+      The following example moves a ball from the upper-left to the
+      lower-right of the screen, taking 10 seconds to do so.
+    </p>
+    
+    <example>
+show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
+                  xanchor="center", yanchor="center")
+    </example>
+
+  </function>
+
+  <p>
+    In general, one wants to use Pan when an image is bigger than the
+    screen, and Move when it is smaller.
+  </p>
 
   <h3>Transitions</h3>
 
@@ -1717,6 +1813,11 @@ show eileen wink
 e "Just kidding."
   </example>
 
+  <p>
+    The config.fade_music variable is used to control the fading out
+    of old music when a new track is started.  
+  </p>
+
   <h3>Configuration Variables</h3>
   
   <p>
@@ -1849,6 +1950,12 @@ init:
       number of characters that will be typed onto the screen in a
       second. I strongly reccomend keeping this None. Not only does
       this interact poorly with the rest of Ren'Py, it's annoying. 
+    </var>
+
+    <var name="config.fade_music" value="0.0">
+      This is the amount of time in seconds to spend fading the old track out
+      before a new music track starts. This should probably be fairly
+      short, so the wrong music doesn't play for too long.
     </var>
 
     <var name="library.file_page_length" value="4">

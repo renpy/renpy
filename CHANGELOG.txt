@@ -69,12 +69,26 @@ activated. (By default, no such sounds are played.)
 
 Implemented that annoying thing where text is typed on the screen one
 character at a time. Also added a preference that allows the user to
-disable it.
+disable it. Used all the restraint I could muster to avoid defaulting
+that preference to off.
 
 Added the ability to fade out music when changing music
-tracks. (suggested by Alessio) 
-[not documented]
+tracks. This is controlled by the config.fade_music variable.
+(suggested by Alessio) 
 
+Added parameterized images, and the ability to show text as image
+using a command like:
+
+[code]
+show text "American Bishoujo Presents..."
+[/code]
+
+Added a Move function, which can be used in at to allow an image to be
+moved on the screen. This is best used when the image is smaller than
+the screen. (suggested by Alessio)
+
+Improved the comments in the default script, to make it a better
+example. 
 
 New in 4.1
 ----------

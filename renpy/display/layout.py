@@ -395,9 +395,11 @@ class Pan(Container):
         """
         @param child: The child displayable.
 
-        @param startpos: The initial coordinates of the upper-left corner of the screen, relative to the image.
+        @param startpos: The initial coordinates of the upper-left
+        corner of the screen, relative to the image.
 
-        @param endpos: The coordinates of the upper-left corner of the screen, relative to the image, after time has elapsed.
+        @param endpos: The coordinates of the upper-left corner of the
+        screen, relative to the image, after time has elapsed.
 
         @param time: The time it takes to pan from startpos to endpos.
         """
@@ -410,12 +412,13 @@ class Pan(Container):
         self.time = time
         self.style = renpy.style.Style(style, properties)
 
-    def get_position(self):
+    def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
 
         surf = self.child.render(width, height, st)
+        self.sizes = [ surf.get_size() ]
 
         x0, y0 = self.startpos
         x1, y1 = self.endpos
@@ -447,3 +450,66 @@ class Pan(Container):
             renpy.game.interface.redraw(0)
 
         return rv
+
+class Move(Container):
+    """
+    This moves a child relative to the thing containing it. This
+    motion is done by manipulating the xpos and ypos properties in a
+    placement style.
+    """
+
+    def __init__(self, startpos, endpos, time, child,
+                 style='default', **properties):
+
+        super(Move, self).__init__()
+        self.add(child)
+
+        self.startpos = startpos
+        self.endpos = endpos
+        self.time = time
+
+        self.st = 0.0
+
+        self.style = renpy.style.Style(style, properties)
+
+    def get_placement(self):
+        st = self.st
+
+        x0, y0 = self.startpos
+        x1, y1 = self.endpos
+
+        if self.time > 0:
+            tfrac = (st / self.time)
+        else:
+            tfrac = 1.0
+
+        if tfrac > 1.0:
+            tfrac = 1.0
+
+        xo = x0 * (1.0 - tfrac) + x1 * tfrac
+        yo = y0 * (1.0 - tfrac) + y1 * tfrac
+
+        if isinstance(x1, int):
+            xo = int(xo)
+
+        if isinstance(y1, int):
+            yo = int(yo)
+
+        self.style.xpos = xo
+        self.style.ypos = yo
+
+        return self.style
+
+    def render(self, width, height, st):
+        self.st = st
+        rv = self.child.render(width, height, st)
+
+        self.sizes = [ rv.get_size() ]
+        self.offsets = [ (0, 0) ]
+
+        if st < self.time:
+            renpy.game.interface.redraw(0)
+
+        return rv
+
+    

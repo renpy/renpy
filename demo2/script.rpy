@@ -2,8 +2,14 @@
 # public domain. Feel free to use it as the basis for your own
 # game.
 
+
+# This init block runs first, and sets up all sorts of things that
+# are used by the rest of the game. Variables that are set in init
+# blocks are _not_ saved, unless they are changed later on in the
+# program.
+
 init:
-    # Set up the size of the screen.
+    # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
@@ -11,19 +17,24 @@ init:
     # Set up the library.
     $ library.file_page_length = 3
 
-    # Styles.
+    # Change some styles, to add images in the background of
+    # the menus and windows.
     $ style.mm_root_window.background = Image("mainmenu.jpg")
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 125, 25)
 
-    # Positions of things on the screen.
+    # These are positions that can be used inside at clauses. We set
+    # them up here so that they can be used throughout the program.
     $ left = Position(xpos=0.0, xanchor='left')
     $ right = Position(xpos=1.0, xanchor='right')
     $ center = Position()
 
-    # Transitions between scenes.
+    # Likewise, we set up some transitions that we can use in with
+    # clauses and statements.
     $ fade = Fade(.5, 0, .5) # Fade to black and back.
-    $ dissolve = Dissolve(0.5)  # Dissolve.
+    $ dissolve = Dissolve(0.5)
+
+    # Now, we declare the images that are used in the program.
 
     # Backgrounds.
     image carillon = Image("carillon.jpg")
@@ -36,34 +47,53 @@ init:
     image eileen vhappy = Image("9a_vhappy.png")
     image eileen concerned = Image("9a_concerned.png")
 
+    # Finally, the character object. This object lets us have the
+    # character say dialogue without us having to repeatedly type
+    # her name. It also lets us change the color of her name.
+    
     # Character objects.
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
 
-# The actual game starts here.
+# The start label marks the place where the main menu jumps to to
+# begin the actual game.
+
 label start:
 
+    # The save_name variable sets the name of the save game. Like all
+    # variables declared outside of init blocks, this variable is
+    # saved and restored with a save file.
     $ save_name = "Introduction"
 
-    # Did we win the date?
+    # This variable is only used by our game. If it's true, it means
+    # that we won the date.
     $ date = False
 
-    # scene black
-    # centered "American Bishoujo\npresents..." with fade
-    # centered "The Ren'Py Demo Game" with fade
-    
+    # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
 
+    # Now, set up the first scene. We first fade in our washington
+    # background, and then we dissolve in the image of Eileen on top
+    # of it.
     scene washington with fade
     show eileen vhappy with dissolve
 
+    # Display a line of dialogue. In this case, we manually specify
+    # who's saying the line of dialoge.    
     "Girl" "Hi, and welcome to the Ren'Py 4 demo program."
 
+    # This instantly replaces the very happy picture of Eileen with
+    # one showing her merely happy. It demonstrates how the show
+    # statement lets characters change emotions.
     show eileen happy
 
+    # Another line of dialogue.
     "Girl" "My name is Eileen, and while I plan to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
 
+    # This line used the e character object, which displays Eileen's
+    # name in green. The use of a short name for a character object
+    # lets us save typing when writing the bulk of the dialogue.
     e "Ren'Py is a language and engine for writing and playing visual
        novel games."
 
@@ -74,23 +104,44 @@ label start:
     e "I can tell you about the features of Ren'Py games, or how to write
        your own game. What do you want to know about?"
 
+    # This variable is used to save the choices that have been made in
+    # the main menu.
     $ seen_set = [ ]
 
-    label choices:
+label choices:
 
+    # We change the save name here.
     $ save_name = "Question Menu"
 
+    # This is the main menu, that lets the user decide what he wants
+    # to hear about.
     menu:
+
+        # The set menu clause ensures that each menu choice can only
+        # be chosen once.
         set seen_set
 
+        # This is a menu choice. When chosen, the statements in its
+        # block are executed.
         "What are some features of Ren'Py games?":
+
+            # We call the features label. The from clause needs to be
+            # here to ensure that save games work, even after we
+            # change the script. It was added automatically.
             call features from _call_features_1
+
+            # When we're done talking about features, jump back up
+            # to choices.
             jump choices
 
+        # Another choice. 
         "How do I write my own games with it?":
             call writing from _call_writing_1
             jump choices
 
+        # This choice has a condition associated with it. It is only
+        # displayed if the condition is true (in this case, if we have
+        # selected at least one other choice has been chosen.) 
         "Where can I find out more?" if seen_set:
             call find_out_more from _call_find_out_more_1
             jump choices
@@ -101,6 +152,158 @@ label start:
 
         "I think I've heard enough." if seen_set:
             jump ending
+
+
+# This is the section on writing games.
+label writing:
+
+    # Change the title of the save games.
+    $ save_name = "Writing Games"
+
+    # We start off with a bunch of dialogue.
+    e "If you want to write a game, I recommend that you read the
+       Ren'Py tutorial, which you can get from our web page,
+       http://www.bishoujo.us/renpy/."
+
+    e "But here, we'll go over some of the basics of writing Ren'Py
+       scripts. It might make sense if you open the source for this
+       game."
+
+    e "The source for this game can be found in the file
+       game/script.rpy."
+
+    e "The goal of Ren'Py is to make writing the game similar to
+       typing up the script on the computer."
+
+    e "For example, a line of dialogue is expressed by putting the
+       character's name next to the dialogue string."
+
+    # A string by itself like this displays without a name associated
+    # with it. So it's useful for dialogue and narration.
+    "I somehow remember that strings by themselves are displayed as
+     thoughts or narration."
+    
+    e "The menu statement makes it easy to create menus."
+
+    e "A number of statements let you control what is shown on the
+       screen."
+
+    # This scene statement has a with clause associated with it. In
+    # this case (based on what is defined in the init clause at the
+    # top of this script), it causes a fade to black, and then back
+    # to the new scene.
+    scene whitehouse with fade
+
+    e "The scene statement clears the scene list, which is the list of
+       things that are shown on the screen."
+
+    # This shows an image, and dissolves it in.
+    show eileen happy with dissolve
+
+    e "The show statement shows another image on the screen."
+
+    # The at clause here, displays the character on the left side of
+    # the screen.
+    show eileen happy at left with dissolve
+
+    e "Images can take at clauses that specify where on the screen
+       they are shown."
+
+    show eileen vhappy at left
+
+    e "Showing a new image with the same first part of the name
+       replaces the image in the scene list."
+
+    hide eileen with dissolve
+
+    e "Finally, the hide statement hides an image, which is useful
+       when a character leaves the scene."
+
+    show eileen happy with dissolve
+
+    e "Don't worry, I'm not going anywhere."
+
+    e "The with statement is used to cause transitions to
+       happen. Transitions like fade..."
+
+    # This statement hides the transient stuff from being included
+    # in the next fade.
+    with None
+
+    # This with statement causes things to fade without changing the
+    # scene.
+    with fade
+
+    e "... or dissolve ..."
+
+    # In this block, the scene statement clears the scene list. So we
+    # have to reshow the eileen happy image, so that it appears that
+    # just the background is dissolving. Sneaky.
+    with None
+    scene washington
+    show eileen happy
+    with dissolve
+
+    e "... are easily invoked."
+
+    e "As of version 4.2, Ren'Py supports image maps, which are like
+       another form of menu. Let's try one."
+
+    # This is an imagemap. It consists of two images, and a list of
+    # hotspots. For each hotspot we give the coordinates of the left,
+    # top, right, and bottom sides, and the value to return if it is
+    # picked.
+
+    $ result = renpy.imagemap("ground.png", "selected.png", [
+        (100, 100, 300, 400, "eileen"),
+        (500, 100, 700, 400, "lucy")
+        ])
+
+    # We've assigned the chosen result from the imagemap to the
+    # result variable. We can use an if statement to vary what
+    # happens based on the user's choice.
+
+    if result == "eileen":
+        show eileen vhappy
+        e "You picked me!"
+
+    elif result == "lucy":
+        show eileen concerned
+        e "It looks like you picked Lucy."
+
+        # Eileen is being a bit possesive here. :-P
+        if date:
+            e "You can forget about Saturday."
+            $ date = False
+
+    show eileen happy
+
+    e "Ren'Py supports music, such as what's playing in the
+       background..."
+
+    # This plays a sound effect.
+    $ renpy.play("18005551212.wav")
+    
+    e "... and sound effects, like the one that just played."
+    
+    e "Ren'Py also includes a number of control statements, and even
+       lets you include python code."
+
+    e "Rather than go into this here, you can read all about it in the
+       tutorial."
+
+    e "If you want to make changes, you can edit the script for this
+       game by editing game/script.rpy"
+
+    e "When you've made a change, just re-run the game to see your
+       change in action."
+
+    e "Would you like to know about something else?"
+
+    # We return back up to the menu that lets the user pick a topic.
+    return
+
+# This ends the well-commented portion of this script.
 
 label features:
 
@@ -194,123 +397,6 @@ label after_rollback:
     
     return
 
-label writing:
-
-    $ save_name = "Writing Games"
-
-    e "If you want to write a game, I recommend that you read the
-       Ren'Py tutorial, which you can get from our web page,
-       http://www.bishoujo.us/renpy/."
-
-    e "But here, we'll go over some of the basics of writing Ren'Py
-       scripts. It might make sense if you open the source for this
-       game."
-
-    e "The source for this game can be found in the file
-       game/script.rpy."
-
-    e "The goal of Ren'Py is to make writing the game similar to
-       typing up the script on the computer."
-
-    e "For example, a line of dialogue is expressed by putting the
-       character's name next to the dialogue string."
-
-    "I somehow remember that strings by themselves are displayed as
-     thoughts or narration."
-    
-
-    e "The menu statement makes it easy to create menus."
-
-    e "A number of statements let you control what is shown on the
-       screen."
-
-    scene whitehouse with fade
-
-    e "The scene statement clears the scene list, which is the list of
-       things that are shown on the screen."
-
-    show eileen happy with dissolve
-
-    e "The show statement shows another image on the screen."
-
-    show eileen happy at left with dissolve
-
-    e "Images can take at clauses that specify where on the screen
-       they are shown."
-
-    show eileen vhappy at left
-
-    e "Showing a new image with the same first part of the name
-       replaces the image in the scene list."
-
-    hide eileen with dissolve
-
-    e "Finally, the hide statement hides an image, which is useful
-       when a character leaves the scene."
-
-    show eileen happy with dissolve
-
-    e "Don't worry, I'm not going anywhere."
-
-    e "The with statement is used to cause transitions to
-       happen. Transitions like fade..."
-
-    with fade
-
-    e "... or dissolve ..."
-
-    with None
-    scene washington
-    show eileen happy
-    with dissolve
-
-    e "... are easily invoked."
-
-    e "As of version 4.2, Ren'Py supports image maps, which are like
-       another form of menu. Let's try one."
-
-    $ result = renpy.imagemap("ground.png", "selected.png", [
-        (100, 100, 300, 400, "eileen"),
-        (500, 100, 700, 400, "lucy")
-        ])
-
-
-    if result == "eileen":
-        show eileen vhappy
-        e "You picked me!"
-
-    elif result == "lucy":
-        show eileen concerned
-        e "It looks like you picked Lucy."
-
-        if date:
-            e "You can forget about Saturday."
-            $ date = False
-
-    show eileen happy
-
-    e "Ren'Py supports music, such as what's playing in the
-       background..."
-
-    $ renpy.play("18005551212.wav")
-    
-    e "... and sound effects, like the one that just played."
-    
-    e "Ren'Py also includes a number of control statements, and even
-       lets you include python code."
-
-    e "Rather than go into this here, you can read all about it in the
-       tutorial."
-
-    e "If you want to make changes, you can edit the script for this
-       game by editing game/script.rpy"
-
-    e "When you've made a change, just re-run the game to see your
-       change in action."
-
-    e "Would you like to know about something else?"
-
-    return
 
 label find_out_more:
 

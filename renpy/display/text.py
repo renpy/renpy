@@ -198,38 +198,24 @@ class Text(renpy.display.core.Displayable):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
-## Not needed any more.
-    
-# class ExpressionText(Text):
-#     """
-#     This is a Displayable that displays the result of an expression on
-#     the screen, as text.
-#     """
+class ParameterizedText(object):
+    """
+    This can be used as an image. When used, this image is expected to
+    have a single parameter, a string which is rendered as the image.
+    """
 
-#     def __init__(self, expression, style='default', **properties):
-#         """
-#         @param expression: An expression that is evaluated to get the
-#         text that will be shown on the screen.
+    def __init__(self, style='default', **properties):
+        self.style = style
+        self.properties = properties
 
-#         @param style: A style that will be applied to the text.
+    def parameterize(self, name, parameters):
 
-#         @param properties: Additional properties that are applied to
-#         the text.
-#         """
+        if len(parameters) != 1:
+            raise Exception("'%s' takes a single string parameter." %
+                            ' '.join(name))
 
-#         super(ExpressionText, self).__init__('', **properties)
+        param = parameters[0]
+        string = renpy.python.py_eval(param)
 
-#         self.old_value = ''
-#         self.expression = expression
-
-#     def render(self, width, height, st):
-
-#         value = renpy.python.py_eval(self.expression)
-#         value = str(value)
-
-#         if value != self.old_value:
-#             self.old_value = value
-#             self.set_text(value)
-
-#         return super(ExpressionText, self).render(width, height, st)
+        return Text(string, style=self.style, **self.properties)
         

@@ -150,7 +150,10 @@ init -250:
         style.centered_window.xpadding = 10
 
         style.centered_text.textalign = 0.5
-                      
+        style.centered_text.xpos = 0.5
+        style.centered_text.ypos = 0.5
+        style.centered_text.xanchor = 'center'
+        style.centered_text.yanchor = 'center'
            
         # Styles that are used by imagemaps
         style.create('imagemap', 'image_placement',
