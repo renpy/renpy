@@ -126,6 +126,7 @@ def main():
     cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
     cp("add_from.py", license=license)
+    cp("dump_text.py", license=license)
     cp("renpy-mode.el")
     
        

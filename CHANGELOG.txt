@@ -1,4 +1,21 @@
-Bug:  http://lemmasoft.renai.us/forums/viewtopic.php?p=4612#4612
+New in 4.7.1
+------------
+
+Added a new tool, dump_text.py/.exe, that dumps all of the text from a
+Ren'Py script file. It uses a heuristic approach that is imperfect,
+but is hopefully accurate enough to be useful for purposes like
+spell-checking a script. The text is dumped into the file text.txt in
+the current directory, and on windows that file is then displayed to
+the user. By default all of the rpy files in the game directory are
+displayed, but supplying a filename parameter can change that.
+
+Fixed a bug that was preventing parser error messages from being
+reported on Windows.
+
+Fixed a bug in Render.subsurface that lead to weird effects when doing
+an irisin or irisout on a sufficently complicated scene. See
+http://lemmasoft.renai.us/forums/viewtopic.php?p=4612#4612 for the
+discussion. 
 
 New in 4.7
 ----------
