@@ -20,3 +20,28 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+
+Please note that the above license only applies to Ren'Py
+proper. A binary distribution of Ren'Py contains a number of other
+packages, each with their own licenses, which you may be bound to
+comply with when distributing a Ren'Py game. 
+
+These packages may include:
+
+Python (Python License)
+http://www.python.org
+
+Pygame (GNU LGPL)
+http://www.pygame.org
+
+SDL (GNU LGPL)
+http://www.libsdl.org
+
+SDL_mixer (GNU LGPL)
+http://www.libsdl.org/projects/SDL_mixer
+
+SDL_ttf (GNU LGPL)
+http://www.libsdl.org/projects/SDL_ttf
+
+ctypes (MIT)
+http://starship.python.net/crew/theller/ctypes/

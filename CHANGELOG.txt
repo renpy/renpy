@@ -48,9 +48,13 @@ tutorial. This is in the hope that the Ren'Py user community will one
 day write a more reasonable tutorial. A number of errors in the
 reference were corrected.
 
-Finally, the functions used in keymaps can return values, which are
+The functions used in keymaps can now return values, which are
 returned to the ui.interact() that called them. This was needed 
 to support readback.
+
+LICENSE.txt has been updated to include the names and URLs of software
+that a windows build of Ren'Py depends on, the licenses of which you
+will be required to comply with when releasing a Ren'Py game.
 
 New in 4.7.1
 ------------
