@@ -1,3 +1,9 @@
+Assymetric margin/padding support [not done] tmargin, bmargin,
+lmargin, rmargin, *padding, etc. Compat with xmargin and ymargin. 
+
+Transition individual widgets? (The idea here would be to allow text
+windows, menus, etc... to slide onto the screen.)
+
 New in 4.5
 ----------
 

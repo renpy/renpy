@@ -52,6 +52,9 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
         for i in dirnames:
             if i == "CVS":
                 continue
+
+            if i == ".svn":
+                continue
             
             os.mkdir(dstrel + "/" + i)
 
@@ -109,7 +112,7 @@ def main():
     copy_tree("common", target + "/common",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
-    copy_tree("extra", target + "/extra",
+    copy_tree("extras", target + "/extras",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
     def cp(x, license=""):

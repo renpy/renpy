@@ -859,7 +859,7 @@ label ike:
 
         e "It's like I'm some sort of newscaster or something."
            
-        $ movie_stop()
+        $ renpy.movie_stop()
         hide movie
 
     else:
