@@ -91,7 +91,15 @@ class Script(object):
             raise Exception("Could not load %s or %s." % (fn, alt))
             
 
-        self.initcode.sort()
+        # Make the sort stable.
+        initcode = [ (prio, index, code) for index, (prio, code) in
+                     enumerate(self.initcode) ]
+                     
+        initcode.sort()
+        
+        self.initcode = [ (prio, code) for prio, index, code in initcode ]
+
+
 
         # Do some generic init here.
 

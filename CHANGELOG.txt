@@ -1,3 +1,182 @@
+New in 4.6.2
+------------
+
+Added a speed test, which tests the speed of the dissolve transition
+on a user's system. This test can be accessed by typing 'S' during the
+demo (that's shift+the 's' key). 
+
+Fixed a bug with sound on systems with no soundcard in them. (Also,
+put in a note to remind myself not to re-introduce that bug.)
+
+Fixed a bug in which imagemaps would not redraw properly.
+
+New in 4.6.1
+------------
+
+Fixed a major memory leak in the rendering code. This leak was
+rendering 4.6 and 4.5 unusable on smaller systems.
+
+Executed 250,000 statements (well, 5 statements in a loop, while
+skipping), and ensured that there was no memory leak during the 
+execution of these statements.
+
+Added a memory profiler. You can see it by supplying the --leak option
+to run_game.exe or .py, but don't expect to understand it.
+
+Changed Dissolve so that it tries to use compositing when it can. This
+means that it only draws to the screen once... which is a little bit
+of a speedup on a really expensive operation.
+
+Fixed a bug that was preventing predictive image loading from
+working. 
+
+New in 4.6
+----------
+
+The demo was updated to show some of the new features listed below.
+
+There's now a third state that hovered widgets can go into. The
+activate state is enabled when a button is clicked or a menu choice is
+selected. The activate state can only be seen when a transition occurs
+immediately after a button is clicked or a menu choice is selected.
+
+The margin and padding properties have been broken up, so it's now
+possible to specify margin and padding for the left, right, top, and
+bottom of a windows. 
+
+The biggest internal change in this version is the introduction of a
+layer system in Ren'Py. Transitions can now work on an individual
+layer (as well as the previous behavior of the whole screen), so it's
+possible to do things like sliding in and out the dialogue box. 
+
+It's now possible to use transitions when entering and leaving the
+game menu, by assigning a transition object to
+library.enter_transition and library.exit_transition, respectively.
+
+The preferences screen can now be entered from user code, and is 
+now part of the main menu.
+
+Character objects now support an interact argument when called
+directly. If it's False, then no interaction occurs. This lets a
+character window become part of a larger screen.
+
+Two new extras have been added:
+
+[list]
+[*] button_menu.rpy changes the way menus are displayed. Each menu
+choice is displayed in its own button, roughly centered on the
+screen. A single menu caption is displayed as narration, if such 
+a caption exists.
+
+[*] overlay_menu.rpy changes the behavior of right click from 
+showing the game menu to showing a bank of buttons that, when 
+clicked, bring the user to the game menu.
+[/list]
+
+The overlay code was overhauled. It's now not possible for an overlay
+function to return a list of widgets. Instead, the overlay functions
+are expected to add widgets to the screen using the ui
+functions. Calling the new function renpy.restart_interaction will,
+among other things, cause the overlay functions to be called again, if
+one wants to replace the overlay on the screen.
+
+A new variable, config.overlay_during_wait, controls if overlays are
+shown during the execution of wait statements.
+
+Init blocks of the same priority are now assured to run in the order
+that they appear in a script file.
+
+The renpy.interact() function has been eliminated. Use ui.interact()
+instead, as it performs more error checking.
+
+Fixed a bug in which some redraws were ignored, and another in which
+the input widget failed to eat characters. (So typing 'f' in an input
+widget would be passed through, and eventually cause the game to go to
+fullscreen mode. No longer.)
+
+4.5's demo script had a bug that cause it to crash, after playing the
+MPEG-1 movie. It was a bug in the demo script, and not in Ren'Py
+proper. It's fixed.
+
+New in 4.5
+----------
+
+We now ship an extras directory, with interesting sample code. It
+includes: 
+
+[list]
+[*] fullscreen.rpy, containing code to automatically switch the game
+into fullscreen on the first run, while preserving the user's
+preference on later runs.
+
+[*] 640x480.rpy, which shows how to customize Ren'Py for a game that
+runs at 640x480.
+
+[*] kanamode.rpy, contains the code to emulate the interface of the 
+various Digital Object games, which display text one line at a 
+time, but keep a page of text on the screen at once. 
+([url=http://www.bishoujo.us/hosted/kanamode.jpg]screenshot[/url])
+[/list]
+
+Added a new CropMove transition. This single class is the root of not
+one, not two, but fourteen transitions, in the forms of wipes, slides,
+slideaways, and rectangular irises. You can see some of these
+transitions in action in the demo, which now has a new section, 
+"What's new with Ren'Py?"
+
+Added support for playing MPEG-1 movies. Rather than explain it all
+here, we'l just mention that you can read the new "Movies" subsection
+of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
+manual. We support both hardware-accelerated full-window movies and
+using a movie as a widget. This is also shown in the what's new
+section of Ren'Py.
+
+Added ui.grid(). This is a widget that places its children in a grid.
+The children must have sizes that do not consider the amount of space
+available for the grid to work.
+
+Added ui.pausebehavior(). This separates pausing from the saybehavior
+paving the way for uninterruptable pauses (a bad idea, IMO) and menus
+that dismiss themseleves after a certain amount of time.
+
+A new function, renpy.exists(), can check to see if a given file can
+be found in the searchpath. This could be used, for example, to make a
+game that only tries to play music if an add-on music package is
+downloaded, and the files placed in the appropriate place.
+
+Added the ability to bind mouse events to mouseup as well as
+mousedown, and changed some of the default bindings to be on mouseup
+rather than mousedown. If you make changes to config.keymaps, you'll
+need to change mouse_1 to mousedown_1, and so on for various other
+button numbers. 
+
+Moved the place we look for menu sounds from the style of the choices
+in the menu to the style of the menu itself, as that seems more
+rational. Also, gave menus their own style. (Can't believe I forgot
+that.)
+
+Made a few changes to the library screens. First of all, we
+rationalized (to some extent, it's still pretty ugly) the names of the
+styles for library widgets. So some of that may have changed. We
+placed preferences and the yes/no dialogue inside windows, which can
+be styled by the user. We then routed all button and label creation
+through two functions, _button_factory and _label_factory. By
+overriding these functions, the user can (for example) replace the
+default textbuttons with imagebuttons.
+
+Made 'f' toggle fullscreen at the main menu. This will help on virtual
+windows, where the mouse doesn't work right in fullscreen mode.
+
+Improved rendering speed. Now, we aggressively cache things to
+minimize re-renders, and only draw to the screen the parts of the
+screen that have changed. In common cases, such as the case where only
+some text has changed, this can greately improve performance. In other
+cases (transitions), we have to redraw the entire screen anyway, so
+there's little improvement.
+
+Fixed a bug in which hiding the UI was not working properly. (This 
+broke the center mouse button behavior.)
+
 New in 4.4.2
 ------------
 

@@ -1,3 +1,4 @@
+
 # This file contains the AST for the Ren'Py script language. Each class
 # here corresponds to a statement in the script language.
 
@@ -298,6 +299,7 @@ def predict_imspec(imspec, callback):
         return
     
     im = renpy.exports.images[imspec[0]]
+
     im.predict(callback)
             
         
@@ -403,16 +405,7 @@ class With(Node):
     def execute(self):
         trans = renpy.python.py_eval(self.expr)
 
-        # Code copied into exports.with
-
-        if not trans:
-            renpy.game.interface.with_none()
-        else:
-            if renpy.game.preferences.transitions:
-                renpy.game.interface.set_transition(trans)
-                renpy.game.interface.interact(show_mouse=False,
-                                              trans_pause=True,
-                                              suppress_overlay=True)
+        renpy.exports.with(trans)
 
         return self.next
         

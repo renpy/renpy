@@ -22,12 +22,14 @@ Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Animation = renpy.display.image.Animation
+Movie = renpy.display.video.Movie
+
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
-
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
+CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 
 def _return(v):
     """
@@ -98,11 +100,12 @@ class Character(object):
         self.window_style = window_style
         self.properties = properties
 
-    def __call__(self, what):
+    def __call__(self, what, interact=True):
         renpy.display_say(self.name, what,
                           who_style=self.who_style,
                           what_style=self.what_style,
                           window_style=self.window_style,
+                          interact=interact,
                           **self.properties)
 
 class DynamicCharacter(object):
@@ -134,7 +137,7 @@ class DynamicCharacter(object):
         self.window_style = window_style
         self.properties = properties
 
-    def __call__(self, what):
+    def __call__(self, what, interact=True):
         import renpy.python as python
 
         renpy.display_say(python.py_eval(self.name_expr),
@@ -142,13 +145,14 @@ class DynamicCharacter(object):
                           who_style=self.who_style,
                           what_style=self.what_style,
                           window_style=self.window_style,
+                          interact=interact,
                           **self.properties)
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
 
-def narrator(what):
-    renpy.display_say(None, what, what_style='say_thought')
+def narrator(what, interact=True):
+    renpy.display_say(None, what, what_style='say_thought', interact=interact)
 
 menu = renpy.display_menu
 

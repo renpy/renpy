@@ -1,4 +1,6 @@
 import renpy
+from renpy.display.render import render
+
 import pygame
 from pygame.constants import *
 
@@ -47,11 +49,19 @@ class ImageCache(object):
                 layer = self.load_image(i)
                 rv.blit(layer, (0, 0))
 
+            renpy.display.render.mutated_surface(rv)
+
             return rv
 
         im = pygame.image.load(renpy.loader.load(fn), fn)
-        im = im.convert_alpha()
 
+        if im.get_flags() & SRCALPHA:
+            im = im.convert_alpha()
+        else:
+            im = im.convert()
+
+        renpy.display.render.mutated_surface(im)
+            
         return im
             
         
@@ -67,7 +77,7 @@ class ImageCache(object):
 
         # iw, ih = im.get_size()
 
-        # surf = renpy.display.surface.Surface(iw, ih)
+        # surf = renpy.display.render.Render(iw, ih)
         # surf.blit(im, (0, 0))
 
         im = self.really_load_image(fn)
@@ -82,6 +92,7 @@ class ImageCache(object):
     # Queues an image to be preloaded if not already loaded and there's
     # room in the cache for it.
     def preload_image(self, fn):
+
         self.time_map[fn] = self.time
 
         if fn in self.surface_map:
@@ -89,7 +100,6 @@ class ImageCache(object):
 
         if fn not in self.preloads:
             self.preloads.append(fn)
-
 
     # This tries to ensure that there are n empty spaces in the image
     # cache. Returns the number of empty spaces that are actually in
@@ -176,6 +186,8 @@ class Image(renpy.display.core.Displayable):
         other images will be aligned with the upper-left corner of the
         image.
         """
+
+        super(Image, self).__init__()
         
         self.filename = filename
         self.style = renpy.style.Style(style, properties)
@@ -183,7 +195,7 @@ class Image(renpy.display.core.Displayable):
     def render(self, w, h, st):
         im = cache.load_image(self.filename)
         w, h = im.get_size()
-        rv = renpy.display.surface.Surface(w, h)
+        rv = renpy.display.render.Render(w, h)
         rv.blit(im, (0, 0))
         return rv
 
@@ -200,10 +212,16 @@ class UncachedImage(renpy.display.core.Displayable):
 
     def __init__(self, file, hint=None, scale=None, style='image_placement',
                  **properties):
+
+        super(UncachedImage, self).__init__()
+
         self.surf = pygame.image.load(file, hint)
+        self.surf = self.surf.convert_alpha()
 
         if scale:
             self.surf = pygame.transform.scale(self.surf, scale)
+
+        renpy.display.render.mutated_surface(self.surf)
 
         self.style = renpy.style.Style(style, properties)
 
@@ -212,14 +230,14 @@ class UncachedImage(renpy.display.core.Displayable):
 
     def render(self, w, h, st):
         sw, sh = self.surf.get_size()
-        rv = renpy.display.surface.Surface(sw, sh)
+        rv = renpy.display.render.Render(sw, sh)
         rv.blit(self.surf, (0, 0))
 
         return rv
 
     # Should never be called, but what the hey?
     def predict(self, callback):
-        callback(self.filename)
+        return None
 
 class ImageReference(renpy.display.core.Displayable):
     """
@@ -236,6 +254,8 @@ class ImageReference(renpy.display.core.Displayable):
     nosave = [ 'target' ]
 
     def __init__(self, name):
+        super(ImageReference, self).__init__()
+
         self.name = name
 
     def find_target(self):
@@ -276,17 +296,22 @@ class ImageReference(renpy.display.core.Displayable):
         
         
     def render(self, width, height, st):
-
         if not hasattr(self, 'target'):
             self.find_target()
 
-        return self.target.render(width, height, st)
+        return render(self.target, width, height, st)
 
     def get_placement(self):
         if not hasattr(self, 'target'):
             self.find_target()
 
         return self.target.get_placement()
+
+    def predict(self, callback):
+        if not hasattr(self, 'target'):
+            self.find_target()
+
+        self.target.predict(callback)
     
     
 class Solid(renpy.display.core.Displayable):
@@ -301,11 +326,12 @@ class Solid(renpy.display.core.Displayable):
         @param color: An RGBA tuple, giving the color that the display will be filled with.
         """
         
+        super(Solid, self).__init__()
         self.color = color
 
     def render(self, width, height, st):
 
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
         rv.fill(self.color)
 
         return rv
@@ -339,19 +365,16 @@ class Frame(renpy.display.core.Displayable):
         at. We detect this and avoid scaling if possible.
         """
 
+        super(Frame, self).__init__()
+
         self.filename = filename
         self.xborder = xborder
         self.yborder = yborder
 
 
     def render(self, width, height, st):
-
-
-        if hasattr(self, 'cache'):
-            if self.cache.get_size() == (width, height):
-                return self.cache
             
-        dest = renpy.display.surface.Surface(width, height)
+        dest = renpy.display.render.Render(width, height)
         dw, dh = width, height
 
         source = cache.load_image(self.filename)
@@ -432,8 +455,10 @@ class Frame(renpy.display.core.Displayable):
         draw(-xb, 0, -yb, 0)
         
         # And, finish up.
-        self.cache = dest
         return dest
+
+    def predict(self, callback):
+        callback(self.filename)
         
 class Animation(renpy.display.core.Displayable):
     """
@@ -450,6 +475,8 @@ class Animation(renpy.display.core.Displayable):
         actually delay for a year before looping). Otherwise, the
         animation will restart after the final delay time.
         """
+
+        super(Animation, self).__init__()
 
         self.images = [ ]
         self.delays = [ ]
@@ -470,8 +497,15 @@ class Animation(renpy.display.core.Displayable):
 
         for image, delay in zip(self.images, self.delays):
             if t < delay:
-                renpy.game.interface.redraw(delay - t)
-                return cache.load_image(image)
+                renpy.display.render.redraw(self, delay - t)
+
+                im = cache.load_image(image)
+                width, height = im.get_size()
+                rv = renpy.display.render.Render(width, height)
+                rv.blit(im, (0, 0))
+
+                return rv
+            
             else:
                 t = t - delay
 
@@ -491,6 +525,8 @@ class ImageMap(renpy.display.core.Displayable):
     def __init__(self, ground, selected, hotspots, unselected=None,
                  style='imagemap', **properties):
 
+        super(ImageMap, self).__init__()
+
         self.ground = ground
         self.selected = selected
         self.hotspots = hotspots
@@ -501,6 +537,7 @@ class ImageMap(renpy.display.core.Displayable):
             self.unselected = unselected
 
         self.active = None
+        self.last_active = None
 
         self.style = renpy.style.Style(style, properties)
 
@@ -520,7 +557,7 @@ class ImageMap(renpy.display.core.Displayable):
         unselected = cache.load_image(self.unselected)
 
         width, height = ground.get_size()
-        rv = renpy.display.surface.Surface(width, height)
+        rv = renpy.display.render.Render(width, height)
         rv.blit(ground, (0, 0))
 
         for i, hotspot in enumerate(self.hotspots):
@@ -533,6 +570,8 @@ class ImageMap(renpy.display.core.Displayable):
                 source = unselected
 
             subsurface = source.subsurface((x0, y0, x1-x0, y1-y0))
+            renpy.display.render.mutated_surface(subsurface)
+
             rv.blit(subsurface, (x0, y0))
 
         return rv
@@ -551,17 +590,17 @@ class ImageMap(renpy.display.core.Displayable):
 
         if old_active != active:
             self.active = active
-            renpy.game.interface.redraw(0)
+            renpy.display.render.redraw(self, 0)
 
             if active is not None:
-                renpy.sound.play(self.style.hover_sound)
+                renpy.display.audio.play(self.style.hover_sound)
 
 
         if active is None:
             return None
 
         if renpy.display.behavior.map_event(ev, "imagemap_select"):
-            renpy.sound.play(self.style.activate_sound)
+            renpy.display.audio.play(self.style.activate_sound)
             return result
 
         return None
@@ -582,6 +621,10 @@ class ImageButton(renpy.display.behavior.Button):
                                           clicked=clicked,
                                           hovered=hovered)
 
+
+    def predict(self, callback):
+        self.idle_image.predict(callback)
+        self.hover_image.predict(callback)
 
     def set_hover(self, hover):
         super(ImageButton, self).set_hover(hover)

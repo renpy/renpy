@@ -1,6 +1,8 @@
 init:
     $ config.window_title = "Test Game"
-    # $ config.profile = True
+    $ config.profile = True
+
+    $ config.debug_sound = True
 
     # Set up the size of the screen.
     $ config.screen_width = 800
@@ -20,8 +22,8 @@ init:
     # Styles.
     $ style.window.background = Frame("frame.png", 120, 25)
 
-    $ style.menu_choice.hover_sound = "chev1.wav"
-    $ style.menu_choice.activate_sound = "chev2.wav"
+    $ style.menu.hover_sound = "chev1.wav"
+    $ style.menu.activate_sound = "chev2.wav"
 
     $ style.imagemap.hover_sound = "chev3.wav"
     $ style.imagemap.activate_sound = "chev4.wav"
@@ -44,6 +46,8 @@ init:
     image eileen anim = Animation("9a_happy.png", 0.25,
                                   "9a_vhappy.png", 0.25,
                                   "9a_concerned.png")
+
+    image movie = Movie()
 
     # Character objects.
     $ e = Character('Eileen', color=(200, 255, 200, 255))
@@ -78,6 +82,7 @@ label main_menu:
     # Stuff that happens before the real main menu.
 
     scene black
+        
 
     show text "American Bishoujo\nPresents" \
          at Move((0.5, 0.0), (0.5, 0.5), 4.0,
@@ -111,14 +116,16 @@ label start:
         ui.interact()
 
 
-    $ the_value = 10
-    
-    label foo:
-
+        
     "Hey, let's make sure that the
      multi-line text\ \ \ still
      works right."
 
+    $ renpy.movie_cutscene("On_Your_Mark.mpg", 450.0)
+    $ the_value = 10
+
+    label foo:
+        
     python hide:
 
         def bar_clicked(value):
@@ -130,7 +137,7 @@ label start:
         ui.textbutton("Continue", clicked = lambda : False)
         ui.close()
 
-        rv = renpy.interact()
+        rv = ui.interact()
 
         if rv is not False:
             store.the_value = rv
@@ -138,6 +145,21 @@ label start:
             
 
         
+
+    $ renpy.movie_start_displayable('On_Your_Mark.mpg', (400, 300))
+    show movie
+
+    p "I'm now showing a movie."
+
+    p "It's using alpha blending and all that."
+
+    p "Bully!"
+
+    $ renpy.movie_stop()
+    hide movie
+    
+                                    
+    
 
     p "This is a test."
 
