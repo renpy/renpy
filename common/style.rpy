@@ -14,7 +14,7 @@
 # to your script. No need to mess around here, it will just make your
 # life harder when a new version of Ren'Py is released.
 
-init -250:
+init -1000:
     python hide:
 
         style.create('default', None,
@@ -36,6 +36,9 @@ init -250:
         style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
+        style.default.bold = False
+        style.default.italic = False
+        style.default.underline = False
         style.default.drop_shadow = (1, 1)
         style.default.drop_shadow_color = (0, 0, 0, 128)
         style.default.minwidth = 0
@@ -107,6 +110,8 @@ init -250:
                      the label of dialogue. The label is used to
                      indicate who is saying something.""")
 
+        style.say_label.bold = True
+
         style.create('say_dialogue', 'default',
                      """(text) The style that is used by default for
                      the text of dialogue.""")
@@ -122,14 +127,17 @@ init -250:
 
         # Styles that are used for menus.
 
+        style.create('menu', 'default',
+                     "(sound, position) The style that is used for menus themselves.")
+
         style.create('menu_caption', 'default',
-                     """(text) The style that is used to render a menu
-                     caption.""")
+                     "(text) The style that is used to render a menu caption.")
 
         style.create('menu_choice', 'default',
                      """(text, hover, sound) The style that is used to render a menu choice.""")
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
+        style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
         style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
         style.create('menu_window', 'window',
@@ -197,6 +205,7 @@ init -250:
         style.button_text.size = 24
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
+        style.button_text.activate_color = bright_cyan
         style.button_text.drop_shadow = (2, 2)
         
         # Selected button.
@@ -208,6 +217,7 @@ init -250:
                      
         style.selected_button_text.color = dark_red
         style.selected_button_text.hover_color = bright_red
+        style.selected_button_text.activate_color = bright_red
         
         # Disabled button.
 
@@ -222,6 +232,7 @@ init -250:
                      
         style.disabled_button_text.color = (128, 128, 128, 255)
         style.disabled_button_text.hover_color = (128, 128, 128, 255)
+        style.disabled_button_text.activate_color = (128, 128, 128, 255)
 
 
         # Bar.
@@ -301,12 +312,17 @@ init -250:
                      '(position) The position of the naviation (next/previous) buttons in the file picker.')
 
         style.file_picker_navbox.xmargin = 10
-        
-        style.create('file_picker_image', 'default',
-                     '(position) The position of the image in each file picker entry.')
 
-        style.file_picker_image.xminimum = 280
+        style.create('file_picker_nav_button', 'button',
+                     '(window, hover) The style that is used for enabled file picker navigation buttons.')
+        style.create('file_picker_nav_button_text', 'button_text',
+                     '(text) The style that is used for the label of enabled file picker navigation buttons.')        
 
+        style.create('file_picker_nav_disabled_button', 'disabled_button',
+                     '(window, hover) The style that is used for disabled file picker navigation buttons.')
+        style.create('file_picker_nav_disabled_button_text', 'disabled_button_text',
+                     '(text) The style that is used for the label of disabled file picker navigation buttons.')
+                
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
@@ -318,6 +334,7 @@ init -250:
         
         style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
+        style.file_picker_entry.activate_background = Solid((255, 255, 192, 255))
 
         style.create('file_picker_text', 'default',
                      '(text) A base style for all text that is displayed in the file picker.')
@@ -333,6 +350,7 @@ init -250:
                      '(text) The style that is applied to the old indicator in the file pciker.')
 
         style.file_picker_new.hover_color = bright_red
+        style.file_picker_new.activate_color = bright_red
         style.file_picker_new.idle_color = dark_red
         style.file_picker_new.minwidth = 30
         style.file_picker_old.minwidth = 30
@@ -343,66 +361,44 @@ init -250:
         style.create('file_picker_empty_slot', 'file_picker_text',
                      '(text) The style that is used for the empty slot indicator in the file picker.')
 
-        style.create('yesno_prompt', 'default',
+        style.create('yesno_label', 'default',
                      '(text, position) The style used for the prompt in a yes/no dialog.')
 
-        style.yesno_prompt.xpos = 0.5
-        style.yesno_prompt.xanchor = 'center'
+        style.yesno_label.color = green
 
-        style.yesno_prompt.ypos = 0.25
-        style.yesno_prompt.yanchor = 'center'
+        style.create('yesno_button', 'button',
+                     '(window, hover) The style of yes/no buttons.')
 
-        style.yesno_prompt.color = green
-
-        style.create('yesno_yes', 'button',
-                     '(position) The position of the yes button on the screen.')
-
-        style.yesno_yes.xpos = 0.33
-        style.yesno_yes.xanchor = 'center'
-        style.yesno_yes.ypos = 0.33
-        style.yesno_yes.yanchor = 'center'
-
-        style.create('yesno_no', 'button',
-                     '(position) The position of the no button on the screen.')
-
-        style.yesno_no.xpos = 0.66
-        style.yesno_no.xanchor = 'center'
-        style.yesno_no.ypos = 0.33
-        style.yesno_no.yanchor = 'center'
+        style.create('yesno_button_text', 'button_text',
+                     '(window, hover) The style of yes/no button text.')
         
+        style.create('yesno_window', 'default',
+                     '(window) The style of a window containing a yes/no dialogue.')
+
+        style.yesno_window.xfill = True
+        style.yesno_window.yminimum = 0.5
 
         # Preferences
+
+
+        style.create('prefs_pref', 'default',
+                     '(window, position) The position of the box containing an individual preference.')
+
+        style.prefs_pref.xpos = 0.5
+        style.prefs_pref.xanchor = 'center'
+
         style.create('prefs_label', 'default',
                      '(text, position) The style that is applied to the label of a block of preferences.')
 
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
         style.prefs_label.color = green
-
-        style.create('prefs_pref', 'default',
-                     '(position) The position of the box containing an individual preference.')
-
-        style.prefs_pref.xpos = 0.5
-        style.prefs_pref.xanchor = 'center'
-
-        style.create('prefs_left', 'default',
-                     '(position) The position of the left column of preferences.')
-
-        style.prefs_left.xpos = 0.25
-        style.prefs_left.xanchor = "center"
-        style.prefs_left.ypos = 0.05
-        style.prefs_left.yalign = "top"
-
-        style.create('prefs_right', 'default',
-                     '(position) The position of the right column of preferences.')
-
-        style.prefs_right.xpos = 0.75
-        style.prefs_right.xanchor = "center"
-        style.prefs_right.ypos = 0.05
-        style.prefs_right.yalign = "top"
         
         style.create('prefs_button', 'button',
                      '(window, hover) The style of an unselected preferences button.')
+
+        style.prefs_button.xpos = 0.5
+        style.prefs_button.xanchor = 'center'
 
         style.create('prefs_button_text', 'button_text',
                      '(text, hover) The style of the text of an unselected preferences button.')
@@ -410,11 +406,21 @@ init -250:
         style.create('prefs_selected_button', 'selected_button',
                      '(window, hover) The style of a selected preferences button.')
 
+        style.prefs_selected_button.xpos = 0.5
+        style.prefs_selected_button.xanchor = 'center'
+
         style.create('prefs_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected preferences button.')
 
+        style.create('prefs_window', 'default',
+                     '(window, position) A window containing all preferences.')
+
+        style.prefs_window.xfill=True
+        style.prefs_window.ypadding = 0.05
+        
         style.create('skip_indicator', 'default',
                      '(text, position) The style of the text that is used to indicate that skipping is in progress.')
 
         style.skip_indicator.xpos = 10
         style.skip_indicator.ypos = 10
+
