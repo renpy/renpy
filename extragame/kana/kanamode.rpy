@@ -1,0 +1,1 @@
+../../extras/kanamode.rpy

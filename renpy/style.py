@@ -1,7 +1,15 @@
 import renpy
 
 # A list of style prefixes we care about, including no prefix.
-prefixes = [ 'hover_', 'idle_', '' ]
+prefixes = [ 'hover_', 'idle_', 'activate_', '' ]
+
+substitutes = dict(
+    xmargin = [ 'left_margin', 'right_margin' ],
+    ymargin = [ 'top_margin', 'bottom_margin' ],
+
+    xpadding = [ 'left_padding', 'right_padding' ],
+    ypadding = [ 'top_padding', 'bottom_padding' ],
+    )
 
 class StyleManager(object):
     """
@@ -61,6 +69,7 @@ class Style(object):
     """
 
     def __getstate__(self):
+
         return dict(properties=self.properties,
                     prefix=self.prefix,
                     parent=self.parent)
@@ -75,6 +84,13 @@ class Style(object):
         self.build_cache()
 
     def __setattr__(self, key, value):
+
+        if key in substitutes:
+            for i in substitutes[key]:
+                self.__setattr__(i, value)
+                
+
+            return
 
         for prefix in prefixes:
             prefkey = prefix + key

@@ -39,6 +39,7 @@ init -500:
         library.main_menu = [
             ( "Start Game", "start" ),
             ( "Continue Game", "_continue" ),
+            ( "Preferences", "_preferences" ),
             ( "Quit Game", "_quit" ),
             ]
 
@@ -63,6 +64,12 @@ init -500:
         # button.
         library.exit_sound = None
 
+        # Transition that occurs when entering the game menu.
+        library.enter_transition = None
+
+        # Transition that occurs when leaving the game menu.
+        library.exit_transition = None
+
         # True if the skip indicator should be shown.
         library.skip_indicator = True
 
@@ -76,6 +83,61 @@ init -500:
         # True if we can save, false otherwise.
         _can_save = True
 
+        def _button_factory(label,
+                            type=None,
+                            selected=None,
+                            disabled=False,
+                            clicked=None,
+                            **properties):
+            """
+            This function is called to create the various buttons used
+            in the game menu. By overriding this function, one can
+            (for example) replace the default textbuttons with image buttons.
+            When it is called, it's expected to add a button to the screen.
+
+            @param label: The label of this button, before translation. 
+
+            @param type: The type of the button. One of "mm" (main menu),
+            "gm_nav" (game menu), "file_picker_nav", "yesno", or "prefs".
+
+            @param selected: True if the button is selected, False if not,
+            or None if it doesn't matter.
+
+            @param disabled: True if the button is disabled, False if not.
+
+            @param clicked: A function that should be executed when the
+            button is clicked.
+
+            @param properties: Addtional layout properties.
+            """
+
+            style = type
+
+            if selected:
+                style += "_selected"
+
+            if disabled:
+                style += "_disabled"
+
+            style = style + "_button"
+            text_style = style + "_text"
+
+            ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, **properties)
+
+        def _label_factory(label, type, **properties):
+            """
+            This function is called to create a new label. It can be
+            overridden by the user to change how these labels are created.
+
+            @param label: The label of the box.
+
+            @param type: "prefs" or "yesno". 
+
+            @param properties: This may contain position properties.
+            """
+
+            ui.text(_(label), style=type + "_label", **properties)
+
         # The function that's used to translate strings in the game menu.
         def _(s):
             """
@@ -87,29 +149,15 @@ init -500:
             else:
                 return s
 
-        # Called to make a screenshot happen.
-        def _screenshot():
-            renpy.screenshot("screenshot.bmp")
-
         # Are the windows currently hidden?
         _windows_hidden = False
 
-        # Hides the windows.
-        def _hide_windows():
-            global _windows_hidden
-
-            if _windows_hidden:
-                return
-
-            try:
-                _windows_hidden = True
-                renpy.interact(renpy.SayBehavior())
-            finally:
-                _windows_hidden = False
-
-
     # Set up the default keymap.    
     python hide:
+
+        # Called to make a screenshot happen.
+        def screenshot():
+            renpy.screenshot("screenshot.bmp")
 
         def invoke_game_menu():
             renpy.play(library.enter_sound)
@@ -121,12 +169,12 @@ init -500:
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
-            screenshot = _screenshot,
+            screenshot = screenshot,
             toggle_fullscreen = renpy.toggle_fullscreen,
             toggle_music = renpy.toggle_music,
             toggle_skip = toggle_skipping,
             game_menu = invoke_game_menu,
-            hide_windows = _hide_windows,
+            hide_windows = renpy.curried_call_in_new_context("_hide_windows")
             )
 
         config.underlay = [ km ]
@@ -142,11 +190,24 @@ init -500:
                 ui.conditional("config.skipping")
                 ui.text(_("Skip Mode"), style='skip_indicator')
 
-            return [ ]
-
         config.overlay_functions.append(skip_indicator)
 
     return
+
+label _hide_windows:
+
+    if _windows_hidden:
+        return
+
+    python:
+        _windows_hidden = True
+        ui.saybehavior()
+        ui.interact(suppress_overlay=True)
+        _windows_hidden = False
+
+    return
+
+
         
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
@@ -166,8 +227,11 @@ label _main_menu:
 
 label _library_main_menu:
 
+    scene
+
     python hide:
 
+        ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
         ui.keymousebehavior()
 
         ui.window(style='mm_root_window')
@@ -177,13 +241,13 @@ label _library_main_menu:
         ui.vbox()
 
         for text, label in library.main_menu:
-            ui.textbutton(text, clicked=ui.returns(label))
+            _button_factory(text, "mm", clicked=ui.returns(label))
 
         ui.close()
         ui.close()
 
-        store._result = renpy.interact(suppress_overlay = True,
-                                       suppress_underlay = True)
+        store._result = ui.interact(suppress_overlay = True,
+                                    suppress_underlay = True)
 
     # Computed jump to the appropriate label.
     $ renpy.jump(_result)
@@ -195,7 +259,19 @@ label _continue:
     $ _can_save = False
     $ _at_main_menu = True
     
-    $ renpy.call_in_new_context("_load_menu")
+    $ renpy.call_in_new_context("_game_menu_load")
+
+    $ _can_save = True
+    $ _at_main_menu = False
+
+    jump _library_main_menu
+
+# Used to call the game menu. 
+label _preferences:
+    $ _can_save = False
+    $ _at_main_menu = True
+    
+    $ renpy.call_in_new_context("_game_menu_preferences")
 
     $ _can_save = True
     $ _at_main_menu = False
@@ -213,8 +289,7 @@ init -500:
         # This is used to store scratch data that's used by the
         # library, but shouldn't be saved out as part of the savegame.
         _scratch = object()
-
-        
+            
         # This returns a window containing the game menu navigation
         # buttons, set up to jump to the appropriate screen sections.
         def _game_nav(selected):
@@ -230,32 +305,24 @@ init -500:
             ui.vbox()
             
             for key, label, target, enabled in library.game_menu:
-                style="gm_nav_button"
-                text_style="gm_nav_button_text"
-                
-                if key == selected:
-                    style = 'gm_nav_selected_button'
-                    text_style = 'gm_nav_selected_button_text'
 
                 clicked = ui.jumps(target)
+                disabled = False
 
                 if not eval(enabled):
-                    style = 'gm_nav_disabled_button'
-                    text_style = 'gm_nav_disabled_button_text'
-
-                    clicked = lambda : None
+                    disabled = True
+                    clicked = ui.returns(None)
                              
-                    
-                ui.textbutton(_(label), style=style, text_style=text_style,
-                              clicked=clicked)
+                _button_factory(label, "gm_nav", selected=(key==selected),
+                                disabled=disabled, clicked=clicked)
 
             ui.close()
             ui.close()
                 
         def _game_interact():
             
-            return renpy.interact(suppress_underlay=True,
-                                  suppress_overlay=True)
+            return ui.interact(suppress_underlay=True,
+                               suppress_overlay=True)
 
 
         def _render_new_slot(name, save):
@@ -332,32 +399,29 @@ init -500:
                 _game_nav(selected)
                 
                 ui.window(style='file_picker_window')
-
                 ui.vbox() # whole thing.
                 
+                # Draw the navigation.
                 ui.hbox(padding=library.padding * 10, style='file_picker_navbox') # nav buttons.
 
                 def tb(cond, label, clicked):
-                    if cond:
-                        style = 'button'
-                        text_style = 'button_text'
-                    else:
-                        style = 'disabled_button'
-                        text_style = 'disabled_button_text'
+                    _button_factory(label, "file_picker_nav", disabled=not cond, clicked=clicked)
 
-                    ui.textbutton(label, style=style, text_style=text_style, clicked=clicked)
-
-
+                # Previous
                 tb(fpi > 0, _('Previous'), ui.returns(("fpidelta", -1)))
 
+                # Quick Access
                 for i in range(0, library.file_quick_access_pages):
                     target = i * library.file_page_length
                     tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
 
+                # Next
                 tb(True, _('Next'), ui.returns(("fpidelta", +1)))
 
-                ui.close() # nav buttons.
+                # Done with nav buttons.
+                ui.close()
 
+                # This draws a single slot.
                 def entry(offset):
                     i = fpi + offset
 
@@ -369,6 +433,7 @@ init -500:
                         _render_savefile(name, saves[name], newest)
                     
 
+                # Actually draw a slot.
                 ui.hbox() # slots
 
                 ui.vbox()
@@ -402,9 +467,23 @@ init -500:
 
             _game_nav(screen)
 
-            ui.text(message, style='yesno_prompt')
-            ui.textbutton(_("Yes"), style='yesno_yes', clicked=ui.returns(True))
-            ui.textbutton(_("No"), style='yesno_no', clicked=ui.returns(False))
+            ui.window(style='yesno_window')
+            ui.vbox(library.padding * 10, xpos=0.5, xanchor='center', ypos=0.5, yanchor='center')
+
+            _label_factory(message, "yesno", xpos=0.5, xanchor='center')
+
+            ui.grid(5, 1, xfill=True)
+
+            # The extra nulls are because we want equal whitespace surrounding
+            # the two buttons. It should work as long as we have xfill=True
+            ui.null()
+            _button_factory("Yes", 'yesno', clicked=ui.returns(True), xpos=0.5, xanchor='center')
+            ui.null()
+            _button_factory("No", 'yesno', clicked=ui.returns(False), xpos=0.5, xanchor='center')
+            ui.null()
+
+            ui.close()
+            ui.close()
 
             return _game_interact()
 
@@ -427,21 +506,32 @@ init -500:
 
 
 # Factored this all into one place, to make our lives a bit easier.
-label _take_screenshot:
+label _enter_game_menu:
+    scene
+    $ renpy.movie_stop()
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+
+    if library.enter_transition:
+        $ renpy.transition(library.enter_transition)
+
     return
 
 # Entry points from the game into menu-space.
-label _load_menu:
-    call _take_screenshot
-    jump _load_screen
-
 label _game_menu:
-    call _take_screenshot
+label _game_menu_save:
+    call _enter_game_menu
     jump _save_screen
 
+label _game_menu_load:
+    call _enter_game_menu
+    jump _load_screen
+
+label _game_menu_preferences:
+    call _enter_game_menu
+    jump _prefs_screen
+
 label _confirm_quit:
-    call _take_screenshot
+    call _enter_game_menu
     jump _quit_screen
 
 # Menu screens.
@@ -503,6 +593,10 @@ label _noisy_return:
 
 # Return to the game.
 label _return:
+
+    if library.exit_transition:
+        $ renpy.transition(library.exit_transition)
+
     return
 
 # Random nice things to have.
