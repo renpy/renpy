@@ -1068,57 +1068,17 @@ e "How are you doing?" with dissolve
   </dl>
   
   <p>
-    Functions that return things that are useful as arguments to with
-    statements or clauses are:
+The following are functions that return things useful as
+transitons. The user should not supply the new_widget or old_widget 
+parameters, as these are supplied by Ren'Py when a transition 
+begins.
   </p>
 
-  <function name="Fade" sig="(in_time, hold_time, out_time, color=(0, 0, 0))">
-    
-    <p>
-      This returns an object that can be used as an argument to a with
-      statement to fade the old scene into a solid color, waits for a
-      given amount of time, and then fades from the solid color into
-      the new scene.
-    </p>
+  <!-- func Fade -->
 
-    <p>
-      <param>in_time</param> - The amount of time that will be spent
-      fading from the old scene to the solid color. A float, given as
-      seconds.
-    </p>
+  <!-- func Dissolve -->
 
-    <p>
-      <param>hold_time</param> - The amount of time that will be spent
-      displaying the solid color. A float, given as seconds.
-    </p>
-
-    <p>
-      <param>out_time</param> - The amount of time that will be spent
-      fading from the solid color to the new scene. A float, given as
-      seconds. 
-    </p>
-
-    <p>
-      <param>color</param> - The solid color that will be faded
-      to. This is an RGB triple, where each element is in the range 0
-      to 255. This defaults to black.
-    </p>
-
-  </function>
-
-  <function name="Dissolve" sig="(delay)">
-    <p>
-      This dissolves from the old scene to the new scene, by
-      overlaying the new scene on top of the old scene and varying its
-      alpha from 0 to 255.
-    </p>
-
-    <p>
-      <param>delay</param> - The amount of time the dissolve will
-      take.
-    </p>
-
-  </function>
+  <!-- func CropMove -->
 
   <h3>Control Statements</h3>
 
@@ -2373,13 +2333,16 @@ indent to quoted dialogue.
 
   <prop name="xmargin">
     The amount of transparent space that is left around this window in
-    the x direction, in pixels. 
+    the x direction, in pixels. If a floating point number, it is
+    scaled to the available width.
+
   </prop>
 
   <prop name="xpadding">
     The amount of space left between the edge of the background of the
     window, and the edge of the content contained within this window,
-    in the x direction, in pixels.
+    in the x direction, in pixels. If a floating point number, it is
+    scaled to the available width.
   </prop>
 
   <prop name="xfill">
@@ -2390,18 +2353,21 @@ indent to quoted dialogue.
   <prop name="xminimum">
     The minimum size of this window in the x direction, including
     margins and padding. If the window would be smaller than this, it
-    is grown to be at least this size.
+    is grown to be at least this size. If a floating point number, it is
+    scaled to the available width.
   </prop>
 
   <prop name="ymargin">
     The amount of transparent space that is left around this window in
-    the y direction, in pixels. 
+    the y direction, in pixels. If a floating point number, it is
+    scaled to the available height.
   </prop>
 
   <prop name="ypadding">
     The amount of space left between the edge of the background of the
     window, and the edge of the content contained within this window,
-    in the y direction, in pixels.
+    in the y direction, in pixels. If a floating point number, it is
+    scaled to the available height.
   </prop>
 
   <prop name="yfill">
@@ -2412,7 +2378,8 @@ indent to quoted dialogue.
   <prop name="yminimum">
     The minimum size of this window in the y direction, including
     margins and padding. If the window would be smaller than this, it
-    is grown to be at least this size.
+    is grown to be at least this size. If a floating point number, it is
+    scaled to the available height.
   </prop>
 
 
@@ -2927,6 +2894,8 @@ automatically present in the game namespace.
 <!-- func ui.vbox -->
 
 <!-- func ui.hbox -->
+
+<!-- func ui.grid -->
 
 <!-- func ui.fixed -->
 

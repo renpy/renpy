@@ -273,9 +273,6 @@ init -500:
         # library, but shouldn't be saved out as part of the savegame.
         _scratch = object()
             
-            
-
-        
         # This returns a window containing the game menu navigation
         # buttons, set up to jump to the appropriate screen sections.
         def _game_nav(selected):
@@ -307,8 +304,8 @@ init -500:
                 
         def _game_interact():
             
-            return renpy.interact(suppress_underlay=True,
-                                  suppress_overlay=True)
+            return ui.interact(suppress_underlay=True,
+                               suppress_overlay=True)
 
 
         def _render_new_slot(name, save):

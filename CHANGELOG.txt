@@ -1,24 +1,40 @@
 New in 4.5
 ----------
 
-Grid widget.
+We now ship an extras directory, with interesting sample code. It
+includes: 
 
-Styles changes.
+[list]
 
-Document changes in padding, margin, and minimum.
+[*] fullscreen.rpy, containing code to automatically switch the game
+into fullscreen on the first run, while preserving the user's
+preference on later runs.
 
-library: windows behind prefs, yesno. Replace buttons with images? Add
-things to game menu?
+[*] 640x480.rpy, which shows how to customize Ren'Py for a game that
+runs at 640x480.
 
-extras directory. auto_full, kana, 640x480
+[*] kanamode.rpy, contains the code to emulate the interface of the 
+various Digital Object games, which display text one line at a 
+time, but keep a page of text on the screen at once. 
+([url=http://www.bishoujo.us/hosted/kanamode.jpg]screenshot[/url])
 
-RectangleWipe [done]
+[/list]
 
 Added support for playing MPEG-1 movies. Rather than explain it all
 here, we'l just mention that you can read the new "Movies" subsection
 of the "Multimedia: Sound, Music, and Movies" section of the Ren'Py
 manual. We support both hardware-accelerated full-window movies and
 using a movie as a widget.
+
+Added a new CropMove transition. This single class is the root of not
+one, not two, but fourteen transitions, in the forms of wipes, slides,
+slideaways, and rectangular irises. You can see some of these
+transitions in action in the demo, which now has a new section, 
+"What's new with Ren'Py?"
+
+Added ui.grid(). This is a widget that places its children in a grid.
+The children must have sizes that do not consider the amount of space
+available for the grid to work.
 
 Added ui.pausebehavior(). This separates pausing from the saybehavior
 paving the way for uninterruptable pauses (a bad idea, IMO) and menus
@@ -35,8 +51,17 @@ in the menu to the style of the menu itself, as that seems more
 rational. Also, gave menus their own style. (Can't believe I forgot
 that.)
 
-Added a few decorative windows with their own styles, to allow the
-user to further customize the Preferences and Quit screens.
+Made a few changes to the library screens. First of all, we
+rationalized (to some extent, it's still pretty ugly) the names of the
+styles for library widgets. So some of that may have changed. We
+placed preferences and the yes/no dialogue inside windows, which can
+be styled by the user. We then routed all button and label creation
+through two functions, _button_factory and _label_factory. By
+overriding these functions, the user can (for example) replace the
+default textbuttons with imagebuttons.
+
+Made 'f' toggle fullscreen at the main menu. This will help on virtual
+windows, where the mouse doesn't work right in fullscreen mode.
 
 Improved rendering speed. Now, we aggressively cache things to
 minimize re-renders, and only draw to the screen the parts of the

@@ -72,9 +72,25 @@ class Transition(renpy.display.core.Displayable):
 
 class Fade(Transition):
     """
-    This is a transition that involves fading to a certain color, then
-    holding that color for a certain amount of time, then fading in the
-    new scene.
+    This returns an object that can be used as an argument to a with
+    statement to fade the old scene into a solid color, waits for a
+    given amount of time, and then fades from the solid color into
+    the new scene.
+    
+    @param in_time:  The amount of time that will be spent
+    fading from the old scene to the solid color. A float, given as
+    seconds.
+    
+    @param hold_time:  The amount of time that will be spent
+    displaying the solid color. A float, given as seconds.
+
+    @param out_time:  The amount of time that will be spent
+    fading from the solid color to the new scene. A float, given as
+    seconds.
+    
+    @param color:  The solid color that will be faded
+    to. This is an RGB triple, where each element is in the range 0
+    to 255. This defaults to black.
     """
 
     def __init__(self, out_time, hold_time, in_time,
@@ -198,6 +214,13 @@ class Fade(Transition):
 
         
 class Dissolve(Transition):
+    """
+    This dissolves from the old scene to the new scene, by
+    overlaying the new scene on top of the old scene and varying its
+    alpha from 0 to 255.
+
+    @param delay: The amount of time the dissolve will take.
+    """
 
     def __init__(self, time, old_widget=None, new_widget=None):
         super(Dissolve, self).__init__(time)
@@ -251,20 +274,21 @@ class CropMove(Transition):
     the transition progresses. For example, in "wiperight", a wipe from left to right, first the left edge of the image is
     revealed at the left edge of the screen, then the center of the image,
     and finally the right side of the image at the right of the screen.
-    Other supported wipes are "wiperight", "wipedown", and "wipeup".
+    Other supported wipes are "wipeleft", "wipedown", and "wipeup".
 
     In a slide, the image moves. So in a "slideright", the right edge of the
     image starts at the left edge of the screen, and moves to the right
-    as the transition progresses. Other slides are "slideright", "slidedown",
+    as the transition progresses. Other slides are "slideleft", "slidedown",
     and "slideup".
+
+    There are also slideaways, in which the old image moves on top of
+    the new image. Slideaways include "slideawayright", "slideawayleft",
+    "slideawayup", and "slideawaydown".
 
     We also support a rectangular iris in with "irisin" and a
     rectangular iris out with "irisout". Finally, "custom" lets the
     user define new transitions, if these ones are not enough.
     """
-
-    
-    
 
     def __init__(self, time,
                  mode="fromleft",

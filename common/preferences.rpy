@@ -130,6 +130,8 @@ label _prefs_screen:
             i.render_preference()
         ui.close()
 
+        ui.close()
+
         _game_interact()
 
     jump _prefs_screen
