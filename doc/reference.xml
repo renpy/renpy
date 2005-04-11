@@ -2560,12 +2560,7 @@ top_padding and bottom_padding to the same value.
  
   <p>
 The ui.bar() widget has a few properties that are specific to
-it. These properties control the look of the bars, and the size of
-the gutters on either side of a clickable widget. The gutters are
-empty space on the left and right of a clickable bar, and serve to
-make it easy to set the maximum and minimum value of the bar
-widget. Clicking on the left gutter sets the minimum value, while the
-right gutter sets the maximum value.
+it, that control the look of the bars.
 </p>
 
 <prop name="left_bar">
@@ -2579,15 +2574,6 @@ A Displayable that is used to draw the right side of the bar. This
 Displayable needs to be one that can change its size, such as a Solid
 or a Frame.
 </prop>
-
-<prop name="left_gutter">
-The size of the left gutter of a clickable bar, in pixels.
-</prop>
-
-<prop name="right_gutter">
-The size of the left gutter of a clickable bar, in pixels.
-</prop>
-
 
 
   <h4>Hovering</h4>
@@ -3121,8 +3107,6 @@ automatically present in the game namespace.
 <!-- func ui.saybehavior -->
 
 <!-- func ui.pausebehavior -->
-
-<!-- func ui.keymousebehavior -->
 
 <h4>Functions</h4>
 

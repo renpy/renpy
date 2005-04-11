@@ -70,6 +70,9 @@ class Transition(renpy.display.core.Displayable):
         else:
             return None
 
+    def find_focusable(self, callback, focus_name):
+        self.new_widget.find_focusable(callback, focus_name)
+
 class Fade(Transition):
     """
     This returns an object that can be used as an argument to a with
@@ -134,7 +137,7 @@ class Fade(Transition):
         if widget:
             surf = render(widget, width, height, st)
             
-            rv.blit(surf, (0, 0))
+            rv.blit(surf, (0, 0), focus=events)
 
         self.events = events 
 
@@ -253,6 +256,8 @@ class Dissolve(Transition):
         surf = top.pygame_surface(False)
         renpy.display.render.mutated_surface(surf)
 
+        rv.focuses.extend(top.focuses)
+
         if id(top) == self.old_top and id(bottom) == self.old_bottom:
 
             # Fast rendering path.
@@ -271,7 +276,7 @@ class Dissolve(Transition):
 
             # Complete rendering path.
 
-            rv.blit(bottom, (0, 0))
+            rv.blit(bottom, (0, 0), focus=False)
             surf.set_alpha(alpha, RLEACCEL)
             rv.blit(surf, (0, 0))
 
@@ -503,11 +508,11 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0))
+        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not topnew)
 
         top = render(self.top, width, height, st)
-        ss = top.subsurface(crop)
-        rv.blit(ss, pos)
+        ss = top.subsurface(crop, focus=topnew)
+        rv.blit(ss, pos, focus=topnew)
 
         renpy.display.render.redraw(self, 0)
         return rv

@@ -311,7 +311,7 @@ init -500:
 
                 if not eval(enabled):
                     disabled = True
-                    clicked = ui.returns(None)
+                    clicked = None
                              
                 _button_factory(label, "gm_nav", selected=(key==selected),
                                 disabled=disabled, clicked=clicked)
@@ -331,8 +331,8 @@ init -500:
                 clicked=ui.returns(("return", (name, False)))
                 enable_hover = True
             else:
-                clicked=None
-                enable_hover = False
+                clicked = None
+                enable_hover = True
 
             ui.button(style='file_picker_entry',
                       clicked=clicked,

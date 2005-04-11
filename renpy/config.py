@@ -113,6 +113,10 @@ overlay_layers = [ 'overlay' ]
 # false otherwise.
 overlay_during_wait = True
 
+# When using the keyboard to navigate, how much we penalize
+# distance out of the preferred direction.
+focus_crossrange_penalty = 1024
+
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     
@@ -129,11 +133,11 @@ keymap = dict(
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
-    # Keymouse.
-    keymouse_left = [ 'K_LEFT' ],
-    keymouse_right = [ 'K_RIGHT' ],
-    keymouse_up = [ 'K_UP' ],
-    keymouse_down = [ 'K_DOWN' ],
+    # Focus.
+    focus_left = [ 'K_LEFT' ],
+    focus_right = [ 'K_RIGHT' ],
+    focus_up = [ 'K_UP' ],
+    focus_down = [ 'K_DOWN' ],
     
     # Menu.
     menu_mouseselect = [ 'mouseup_1' ],
@@ -150,9 +154,6 @@ keymap = dict(
 
     # Imagemap.
     imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
-
-    # Bar.
-    bar_click = [ 'mouseup_1' ],
 
 
     # These keys control skipping.

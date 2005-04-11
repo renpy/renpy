@@ -1,3 +1,26 @@
+New focus system.
+
+Sound:
+- Callback
+- Ability to play sound during game menu.
+- Ability to pause sound.
+- Ability to cancel sfx.
+
+Image manipulation functions. Rewrite of imagemap in terms of 
+imagebuttons and image manipulation functions.
+
+
+Update style docs.
+Update config.keymap docs.
+
+focus_crossrange_penalty
+
+focus=""
+focusable=""
+
+Need to upgrade Bar, or perhaps make it not clickable.
+
+
 New in 4.7.2
 ------------
 

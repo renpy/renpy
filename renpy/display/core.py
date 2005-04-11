@@ -33,9 +33,38 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
-    def __init__(self):
-        self.style = None
+    focusable = False
+
+    def __init__(self, focus=None, style='default', **properties):
+        self.style = renpy.style.Style(style, properties)
         self.style_prefix = None
+        self.focus_name = focus
+
+    def find_focusable(self, callback, focus_name):
+        if self.focusable:
+            callback(self, self.focus_name or focus_name)
+            
+
+    def focus(self, default=False):
+        """
+        Called to indicate that this widget has the focus.
+        """
+
+        if self.style.enable_hover:
+            if not default:
+                renpy.display.audio.play(self.style.hover_sound)
+            self.set_style_prefix("hover_")
+
+    def unfocus(self):
+        """
+        Called to indicate that this widget has become unfocused.
+        """
+
+        if self.style.enable_hover:
+            self.set_style_prefix("idle_")
+
+    def is_focused(self):
+        return renpy.game.context().scene_lists.focused is self
 
     def set_style_prefix(self, prefix):
         """
@@ -46,9 +75,7 @@ class Displayable(renpy.object.Object):
         if prefix == self.style_prefix:
             return
 
-        if self.style:
-            self.style.set_prefix(prefix)
-
+        self.style.set_prefix(prefix)
         self.style_prefix = prefix
         renpy.display.render.redraw(self, 0)
 
@@ -195,6 +222,7 @@ class SceneLists(object):
 
     @ivar music: Opaque information about the music that is being played.
 
+    @ivar focused: The widget that is currently focused.
     """
 
     def __init__(self, oldsl=None):
@@ -211,6 +239,7 @@ class SceneLists(object):
             self.music = oldsl.music
             self.sticky_positions = oldsl.sticky_positions.copy()
             self.movie = oldsl.movie
+            self.focused = oldsl.focused
             
         else:
             for i in renpy.config.layers:
@@ -219,6 +248,7 @@ class SceneLists(object):
             self.music = None
             self.movie = None
             self.sticky_positions = { }
+            self.focused = None
 
     def rollback_copy(self):
         """
@@ -230,6 +260,8 @@ class SceneLists(object):
 
         for i in renpy.config.overlay_layers:
             rv.layers[i] = [ ]
+
+        rv.focused = None
 
 #         rv.master = self.master[:]
 #         rv.transient = self.transient[:]
@@ -461,6 +493,7 @@ class Display(object):
             
         self.suppress_mouse = suppress_blit
 
+        renpy.display.focus.take_focuses(surftree.focuses)
         
     def save_screenshot(self, filename):
         """
@@ -652,16 +685,21 @@ class Interface(object):
 
         # These things can be done once per interaction.
 
-        repeat = True
+        try:
 
-        while repeat:
-            repeat, rv = self.interact_core(**kwargs)
+            repeat = True
+
+            while repeat:
+                repeat, rv = self.interact_core(**kwargs)
             
-        # Clean out transient stuff at the end of an interaction.
-        scene_lists = renpy.game.context().scene_lists
-        scene_lists.replace_transient()
+            return rv
 
-        return rv
+        finally:
+
+            # Clean out transient stuff at the end of an interaction.
+            scene_lists = renpy.game.context().scene_lists
+            scene_lists.replace_transient()
+
         
 
     def interact_core(self,
@@ -784,13 +822,16 @@ class Interface(object):
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.
 
+        # Figure out what should be focused.
+        renpy.display.focus.before_interact(root_widget)
+
         # Redraw the screen.
         renpy.display.render.process_redraws()
         needs_redraw = True
 
         # Post an event that moves us to the current mouse position.
-        pygame.event.post(pygame.event.Event(MOUSEMOTION,
-                                             pos=pygame.mouse.get_pos()))
+        # pygame.event.post(pygame.event.Event(MOUSEMOTION,
+        #                                     pos=pygame.mouse.get_pos()))
         
         # We only want to do prediction once, but we will defer it as
         # long as possible.
@@ -890,8 +931,9 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                    # x, y = getattr(ev, 'pos', (0, 0))
+                    renpy.display.focus.event_handler(ev)
 
+                    # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
 
                     rv = root_widget.event(ev, x, y)

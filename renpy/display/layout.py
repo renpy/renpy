@@ -26,7 +26,7 @@ class Null(renpy.display.core.Displayable):
     but don't want to actually have anything there.
     """
 
-    def __init__(self, width=0, height=0, style='default', **properties):
+    def __init__(self, width=0, height=0, focusable=False, style='default', **properties):
         super(Null, self).__init__()
 
         self.style = renpy.style.Style(style, properties)
@@ -37,7 +37,12 @@ class Null(renpy.display.core.Displayable):
         return self.style
 
     def render(self, width, height, st):
-        return renpy.display.render.Render(self.width, self.height)
+        rv = renpy.display.render.Render(self.width, self.height)
+
+        if self.focusable:
+            rv.add_focus(self, None, None, None, None, None)
+
+        return rv
 
 
 class Container(renpy.display.core.Displayable):
@@ -60,15 +65,23 @@ class Container(renpy.display.core.Displayable):
 
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args, **properties):
 
-        super(Container, self).__init__()
-        
         self.children = []
         self.child = None
 
         for i in args:
             self.add(i)
+
+        super(Container, self).__init__(**properties)
+
+
+    def find_focusable(self, callback, focus_name):
+        super(Container, self).find_focusable(callback, focus_name)
+
+        for i in self.children:
+            i.find_focusable(callback, self.focus_name or focus_name)
+        
 
     def set_style_prefix(self, prefix):
         super(Container, self).set_style_prefix(prefix)
@@ -150,8 +163,7 @@ class Fixed(Container):
     """
 
     def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__()
-        self.style = renpy.style.Style(style, properties)
+        super(Fixed, self).__init__(style=style, **properties)
         self.times = [ ]
 
     def add(self, widget, time=None):
@@ -214,9 +226,7 @@ class Position(Container):
         child of this widget is placed.
         """
 
-        super(Position, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Position, self).__init__(style=style, **properties)
         self.add(child)
 
     def render(self, width, height, st):
@@ -456,17 +466,15 @@ class Window(Container):
 
     def __init__(self, child, style='window', **properties):
 
-        super(Window, self).__init__()
-
+        super(Window, self).__init__(style=style, **properties)
         self.add(child)
-        self.style = renpy.style.Style(style, properties)
 
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
 
-        # save typing and screen space.
+        # save some typing.
         style = self.style
 
         xminimum = scale(style.xminimum, width)

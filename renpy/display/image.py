@@ -607,7 +607,8 @@ class ImageMap(renpy.display.core.Displayable):
                 
 class ImageButton(renpy.display.behavior.Button):
 
-    def __init__(self, idle_image, hover_image, style='image_button',
+    def __init__(self, idle_image, hover_image,
+                 style='image_button',
                  image_style='image_button_image',
                  clicked=None, hovered=None):
 
@@ -620,17 +621,16 @@ class ImageButton(renpy.display.behavior.Button):
                                           style=style,
                                           clicked=clicked,
                                           hovered=hovered)
-
-
+        
     def predict(self, callback):
         self.idle_image.predict(callback)
         self.hover_image.predict(callback)
 
-    def set_hover(self, hover):
-        super(ImageButton, self).set_hover(hover)
+    def focus(default):
+        self.child = hover_image
+        super(ImageButton, self).focus(default)
 
-        if hover:
-            self.child = self.hover_image
-        else:
-            self.child = self.idle_image
+    def unfocus():
+        self.child = idle_image
+        super(ImageButton, self).unfocus()
 

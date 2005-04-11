@@ -143,7 +143,7 @@ def list_logical_lines(filename):
 
 
     if line != "":
-        raise ParseError(filename, number, "is not terminated with a newline.")
+        raise ParseError(filename, start_number, "is not terminated with a newline (check quotes and parenthesis).")
 
     return rv
 

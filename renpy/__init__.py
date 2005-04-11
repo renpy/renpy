@@ -34,6 +34,7 @@ import renpy.display.behavior # layout
 import renpy.display.transition # core
 import renpy.display.image # core, behavior
 import renpy.display.video
+import renpy.display.focus
 
 import renpy.ui
 

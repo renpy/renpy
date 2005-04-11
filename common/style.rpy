@@ -129,7 +129,12 @@ init -1000:
                      "(text) The style that is used to render a menu caption.")
 
         style.create('menu_choice', 'default',
-                     """(text, hover, sound) The style that is used to render a menu choice.""")
+                     """(text, hover) The style that is used to render
+                        the text of a menu choice.""")
+
+        style.create('menu_choice_button', 'default',
+                     """(window, hover, sound) The style that is used
+                        to render the button containing a menu choice.""")
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
         style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
@@ -236,8 +241,6 @@ init -1000:
 
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
-        style.bar.left_gutter = 0
-        style.bar.right_gutter = 0
 
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',
@@ -327,7 +330,7 @@ init -1000:
         style.file_picker_entry.xminimum = 400
         style.file_picker_entry.ymargin = 2
         
-        style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
+        style.file_picker_entry.background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
         style.file_picker_entry.activate_background = Solid((255, 255, 192, 255))
 
@@ -335,7 +338,7 @@ init -1000:
                      '(text) A base style for all text that is displayed in the file picker.')
         
         style.file_picker_text.size = 18
-        style.file_picker_text.idle_color = dark_cyan
+        style.file_picker_text.color = dark_cyan
         style.file_picker_text.hover_color = bright_cyan
 
         style.create('file_picker_new', 'file_picker_text',

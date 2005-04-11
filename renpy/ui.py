@@ -194,8 +194,6 @@ def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
 
     return add(renpy.display.layout.Grid(cols, rows, padding, xfill=xfill, yfill=yfill, **properties), True)
 
-    
-
 def fixed(**properties):
     """
     This creates a layout that places widgets at fixed locations
@@ -246,7 +244,9 @@ def keymousebehavior():
     widget, but should instead be only added to the screen itself.
     """
 
-    return add(renpy.display.behavior.KeymouseBehavior())
+    # return add(renpy.display.behavior.KeymouseBehavior())
+    pass
+
 
 def saybehavior():
     """
@@ -280,7 +280,11 @@ def pausebehavior(delay, result=False):
 
     return add(renpy.display.behavior.PauseBehavior(delay, result))
 
-def menu(menuitems, **properties):
+def menu(menuitems,
+         caption_style='menu_caption',
+         choice_style='menu_choice',
+         choice_button_style='menu_choice_button',
+         **properties):
     """
     This creates a new menu widget. Unlike the menu statement or
     renpy.menu function, this menu widget is not enclosed in any sort
@@ -293,7 +297,22 @@ def menu(menuitems, **properties):
     if this item is a non-selectable caption.
     """
 
-    return add(renpy.display.behavior.Menu(menuitems, **properties))
+    # menu is now a conglomeration of other widgets. And bully for it.
+
+    renpy.ui.vbox(**properties)
+
+    for label, val in menuitems:
+        if val is None:
+            renpy.ui.text(label, style=caption_style)
+        else:
+            renpy.ui.textbutton(label,
+                                style=choice_button_style,
+                                text_style=choice_style,
+                                clicked=renpy.ui.returns(val))
+
+    renpy.ui.close()
+
+    # return add(renpy.display.behavior.Menu(menuitems, **properties))
 
 def input(default, length=None, allow=None, exclude='{}', **properties):
     """
