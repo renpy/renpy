@@ -170,8 +170,8 @@ class SayBehavior(renpy.display.layout.Null):
 
     focusable = True
 
-    def __init__(self):
-        super(SayBehavior, self).__init__(focusable=True)
+    def __init__(self, default=True, **properties):
+        super(SayBehavior, self).__init__(focusable=True, default=default, **properties)
               
     def event(self, ev, x, y):
 

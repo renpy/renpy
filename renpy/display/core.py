@@ -35,10 +35,11 @@ class Displayable(renpy.object.Object):
 
     focusable = False
 
-    def __init__(self, focus=None, style='default', **properties):
+    def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties)
         self.style_prefix = None
         self.focus_name = focus
+        self.default = default
 
     def find_focusable(self, callback, focus_name):
         if self.focusable:
@@ -666,7 +667,7 @@ class Interface(object):
         root = renpy.display.layout.Fixed()
 
         for layer in renpy.config.layers:
-            f = renpy.display.layout.Fixed()
+            f = renpy.display.layout.Fixed(focus=layer)
             f.append_scene_list(scene_lists.layers[layer])
 
             rv[layer] = f
