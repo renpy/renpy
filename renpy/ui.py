@@ -344,14 +344,30 @@ def image(filename, **properties):
 def imagemap(ground, selected, hotspots, unselected=None,
              **properties):
     """
-    This is the widget that implements imagemaps. Parameters are
+    This is called to create imagemaps. Parameters are
     roughtly the same as renpy.imagemap. The value of the hotspot is
     returned when ui.interact() returns.
     """
 
-    return add(renpy.display.image.ImageMap(ground, selected,
-                                            hotspots, unselected,
-                                            **properties))
+    rv = fixed(style='imagemap')
+
+    if not unselected:
+        unselected = ground
+
+    image(ground)
+
+    for x0, y0, x1, y1, result in hotspots:
+        imagebutton(renpy.display.im.Crop(unselected, x0, y0, x1 - x0, y1 - y0),
+                    renpy.display.im.Crop(selected, x0, y0, x1 - x0, y1 - y0),
+                    clicked=returns(result),
+                    style='imagemap_button',
+                    xpos=x0, xanchor='left',
+                    ypos=y0, yanchor='top',
+                    )
+
+    close()
+
+    return rv
                                             
 
 def button(clicked=None, **properties):

@@ -143,6 +143,8 @@ class Container(renpy.display.core.Displayable):
 
     def predict(self, callback):
 
+        super(Container, self).predict(callback)
+
         for i in self.children:
             i.predict(callback)
 

@@ -134,8 +134,8 @@ class Displayable(renpy.object.Object):
         the images it may want to load.
         """
 
-        return
-
+        if self.style and self.style.background:
+            self.style.background.predict(callback)
 
     def place(self, dest, x, y, width, height, surf):
         """
@@ -405,12 +405,12 @@ class Display(object):
         pygame.display.set_caption(renpy.config.window_title)
 
         if renpy.config.window_icon:
-            pygame.display.set_icon(renpy.display.image.cache.load_image(renpy.config.window_icon))
+            pygame.display.set_icon(renpy.display.im.load_image(renpy.config.window_icon))
             
 
         # Load the mouse image, if any.
         if renpy.config.mouse:
-            self.mouse = renpy.display.image.cache.load_image(renpy.config.mouse)
+            self.mouse = renpy.display.im.load_image(renpy.config.mouse)
             pygame.mouse.set_visible(False)
         else:
             self.mouse = None
@@ -645,12 +645,12 @@ class Interface(object):
             return rv
 
         # We load at most one image per wait.
-        if renpy.display.image.cache.needs_preload():
+        if renpy.display.im.cache.needs_preload():
            ev = pygame.event.poll()
            if ev.type != NOEVENT:
                return ev
 
-           renpy.display.image.cache.preload()
+           renpy.display.im.cache.preload()
 
         return pygame.event.wait()
 
@@ -739,7 +739,7 @@ class Interface(object):
         # frames = 0
 
         # Tick time forward.
-        renpy.display.image.cache.tick()
+        renpy.display.im.cache.tick()
 
         # Set up key repeats.
         # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
@@ -753,9 +753,9 @@ class Interface(object):
 
         
         # Figure out the scene list we want to show.
-        start_time = time.time()
-        scene_lists = renpy.game.context().scene_lists
 
+        
+        scene_lists = renpy.game.context().scene_lists
         
         # Figure out what the overlay layer should look like.
         for i in renpy.config.overlay_layers:
@@ -781,7 +781,15 @@ class Interface(object):
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
-        
+
+        # If necessary, load all images here.
+        if renpy.config.load_before_transition:
+            for w in scene.itervalues():
+                w.predict(renpy.display.im.cache.get)
+
+        # The start time of transitions.
+        start_time = time.time()
+
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.Fixed()
 
@@ -890,8 +898,8 @@ class Interface(object):
 
                 # Predict images, if we haven't done so already.
                 if not did_prediction and not self.event_peek():
-                    renpy.game.context().predict(renpy.display.image.cache.preload_image)
-                    root_widget.predict(renpy.display.image.cache.preload_image)
+                    root_widget.predict(renpy.display.im.cache.preload_image)
+                    renpy.game.context().predict(renpy.display.im.cache.preload_image)
                     did_prediction = True
 
                 try:

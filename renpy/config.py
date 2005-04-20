@@ -47,9 +47,9 @@ profile = False
 # The directory save files will be saved to.
 savedir = None
 
-# The number of images that are allowed to live in the image cache
-# at once.
-image_cache_size = 10
+# The number of screens worth of images that are allowed to live in the image
+# cache at once.
+image_cache_size = 8
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -117,6 +117,10 @@ overlay_during_wait = True
 # distance out of the preferred direction.
 focus_crossrange_penalty = 1024
 
+# If True, then we force all loading to occur before transitions
+# start.
+load_before_transition = True
+
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
     
@@ -138,23 +142,13 @@ keymap = dict(
     focus_right = [ 'K_RIGHT' ],
     focus_up = [ 'K_UP' ],
     focus_down = [ 'K_DOWN' ],
-    
-    # Menu.
-    menu_mouseselect = [ 'mouseup_1' ],
-    menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
-    menu_keyup = [ 'K_UP' ],
-    menu_keydown = [ 'K_DOWN' ],
-    
+        
     # Button.
     button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-
-    # Imagemap.
-    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
-
 
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],

@@ -9,6 +9,8 @@ Sound:
 Image manipulation functions. Rewrite of imagemap in terms of 
 imagebuttons and image manipulation functions.
 
+config.image_cache_size changed meaning.
+config.load_before_transition is new.
 
 Update style docs.
 Update config.keymap docs.

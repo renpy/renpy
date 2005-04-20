@@ -118,6 +118,7 @@ init -500:
 
             if disabled:
                 style += "_disabled"
+                clicked = None
 
             style = style + "_button"
             text_style = style + "_text"
@@ -302,7 +303,7 @@ init -500:
             ui.fixed()
 
             ui.window(style='gm_nav_window')
-            ui.vbox()
+            ui.vbox(focus='gm_nav')
             
             for key, label, target, enabled in library.game_menu:
 

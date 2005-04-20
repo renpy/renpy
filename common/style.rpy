@@ -180,7 +180,10 @@ init -1000:
            
         # Styles that are used by imagemaps
         style.create('imagemap', 'image_placement',
-                     '(sound, position) The style that is used for imagemaps.')
+                     '(position) The style that is used for imagemaps.')
+
+        style.create('imagemap_button', 'default',
+                     '(window, sound, hover) The style that is used for buttons inside imagemaps.')
 
         # Style that is used by imagebutttons.
         style.create('image_button', 'default',

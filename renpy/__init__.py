@@ -32,7 +32,8 @@ import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
 import renpy.display.transition # core
-import renpy.display.image # core, behavior
+import renpy.display.im
+import renpy.display.image # core, behavior, im
 import renpy.display.video
 import renpy.display.focus
 

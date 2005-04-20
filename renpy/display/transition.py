@@ -60,6 +60,7 @@ class Transition(renpy.display.core.Displayable):
     """
 
     def __init__(self, delay):
+        super(Transition, self).__init__()
         self.delay = delay
         self.offsets = [ ]
         self.events = True

@@ -1,209 +1,14 @@
+# This file contains some miscellanious displayables that involve images.
+# Most of the guts of this file have been moved into im.py, with only some
+# of the stuff thar uses images remaining.
+
 import renpy
 from renpy.display.render import render
 
 import pygame
 from pygame.constants import *
 
-class ImageCache(object):
-
-    def __init__(self):
-
-        # A monotonically increasing time.
-        self.time = 0
-
-        # A map from image filename to surface.
-        self.surface_map = { }
-
-        # A map from image filename to last access time.
-        self.time_map = { }
-
-        # The list of things we want to preload.
-        self.preloads = [ ]
-        
-
-    def tick(self):
-        self.time += 1
-        self.preloads = [ ]
-
-    def really_load_image(self, fn):
-        """
-        This is called by load_image, and does the actual loading of
-        images. This may be a load of an image, or perhaps the
-        compositing of images if fn is a tuple.
-        """
-
-        # If fn is not a single filename but a tuple, we composite the
-        # elements of the tuple.
-        if isinstance(fn, tuple):
-            if not tuple:
-                raise Exception("Trying to create a composite image from an empty tuple.")
-
-            base = self.load_image(fn[0])
-
-            rv = pygame.Surface(base.get_size(), 0,
-                                renpy.game.interface.display.sample_surface)
-
-            rv.blit(base, (0, 0))
-
-            for i in fn[1:]:
-                layer = self.load_image(i)
-                rv.blit(layer, (0, 0))
-
-            renpy.display.render.mutated_surface(rv)
-
-            return rv
-
-        im = pygame.image.load(renpy.loader.load(fn), fn)
-
-        if im.get_flags() & SRCALPHA:
-            im = im.convert_alpha()
-        else:
-            im = im.convert()
-
-        renpy.display.render.mutated_surface(im)
-            
-        return im
-            
-        
-    # Forces an image load, regardless of if the cache is full or not.
-    def load_image(self, fn):
-        self.time_map[fn] = self.time
-
-        if fn in self.surface_map:
-            return self.surface_map[fn]
-
-        if fn in self.preloads:
-            self.preloads.remove(fn)
-
-        # iw, ih = im.get_size()
-
-        # surf = renpy.display.render.Render(iw, ih)
-        # surf.blit(im, (0, 0))
-
-        im = self.really_load_image(fn)
-
-        self.surface_map[fn] = im
-
-        if renpy.config.debug_image_cache:
-            print "Image cache:", self.surface_map.keys()
-
-        return im
-        
-    # Queues an image to be preloaded if not already loaded and there's
-    # room in the cache for it.
-    def preload_image(self, fn):
-
-        self.time_map[fn] = self.time
-
-        if fn in self.surface_map:
-            return
-
-        if fn not in self.preloads:
-            self.preloads.append(fn)
-
-    # This tries to ensure that there are n empty spaces in the image
-    # cache. Returns the number of empty spaces that are actually in
-    # the image cache. (A number that may be negative.)
-    def clear_image_cache(self, n):
-
-        rv = renpy.config.image_cache_size - len(self.surface_map)
-
-        if rv >= n:
-            return rv
-        
-        # The number of images to remove. (This is the amount we are over
-        # the cache limit + the number of images we have been requested to
-        # pull.)
-        num_to_remove = len(self.surface_map) - renpy.config.image_cache_size + n
-
-        time_files = [ (self.time_map[fn], fn) for fn in self.surface_map ]
-        time_files = [ (time, fn) for time, fn in time_files if time != self.time ]
-        time_files.sort()
-        time_files = time_files[:num_to_remove]
-
-        for time, fn in time_files:
-            del self.surface_map[fn]
-            del self.time_map[fn]
-
-        if renpy.config.debug_image_cache:
-            print "Image cache:", self.surface_map.keys()
-
-        rv = renpy.config.image_cache_size - len(self.surface_map)
-
-        return rv
-
-    def needs_preload(self):
-        """
-        Returns True if calling preload would do anything.
-        """
-
-        return self.preloads and True
-
-    def preload(self):
-
-        # If we have nothing to preload, bail early.
-        if not self.preloads:
-            return
-
-        # Try to clear up enough space for the preloads.
-        avail = self.clear_image_cache(len(self.preloads))
-
-        if avail < 0:
-            avail = 0
-    
-        self.preloads = self.preloads[:avail]
-
-        # If no space is available, bail here.
-        if not self.preloads:
-            return
-
-        # Get the first thing to preload.
-        fn = self.preloads[0]
-
-        # Actually load the image.
-        try:
-            self.load_image(fn)
-        except:
-            if renpy.config.debug:
-                raise
-
-cache = ImageCache()
-
-class Image(renpy.display.core.Displayable):
-    """
-    Returns a Displayable that is an image that is loaded from a file
-    on disk.
-    """
-
-    def __init__(self, filename, style='image_placement', **properties):
-        """
-        @param filename: The filename that the image is loaded
-        from. Many common file formats are supported.
-
-        If the filename is not a single string but instead a tuple of
-        strings, the image is considered to be"layered". In this case,
-        the image will be the size of the first image in the tuple, and
-        other images will be aligned with the upper-left corner of the
-        image.
-        """
-
-        super(Image, self).__init__()
-        
-        self.filename = filename
-        self.style = renpy.style.Style(style, properties)
-
-    def render(self, w, h, st):
-        im = cache.load_image(self.filename)
-        w, h = im.get_size()
-        rv = renpy.display.render.Render(w, h)
-        rv.blit(im, (0, 0))
-        return rv
-
-    def get_placement(self):
-        return self.style
-
-    def predict(self, callback):
-        callback(self.filename)
+Image = renpy.display.im.image
 
 class UncachedImage(renpy.display.core.Displayable):
     """
@@ -265,8 +70,7 @@ class ImageReference(renpy.display.core.Displayable):
         parameters = [ ]
 
         def error(msg):
-            self.target = renpy.display.text.Text(msg,
-                                                  color=(255, 0, 0, 255))
+            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255))
 
             if renpy.config.debug:
                 raise Exception(msg)
@@ -323,7 +127,8 @@ class Solid(renpy.display.core.Displayable):
 
     def __init__(self, color):
         """
-        @param color: An RGBA tuple, giving the color that the display will be filled with.
+        @param color: An RGBA tuple, giving the color that the display
+        will be filled with.
         """
         
         super(Solid, self).__init__()
@@ -331,10 +136,11 @@ class Solid(renpy.display.core.Displayable):
 
     def render(self, width, height, st):
 
-        rv = renpy.display.render.Render(width, height)
-        rv.fill(self.color)
+        si = renpy.display.im.SolidImage(self.color,
+                                         width,
+                                         height)
 
-        return rv
+        return render(si, width, height, st)
         
 class Frame(renpy.display.core.Displayable):
     """
@@ -348,11 +154,10 @@ class Frame(renpy.display.core.Displayable):
     the center of the image is scaled in both x and y directions.
     """
 
-    nosave = [ 'cache' ]
-
-    def __init__(self, filename, xborder, yborder):
+    def __init__(self, image, xborder, yborder):
         """
-        @param filename: The file that the original image will be read from.
+        @param image: The image (which may be a filename or image
+        object) that will be scaled.
 
         @param xborder: The number of pixels in the x direction to use as
         a border.
@@ -360,105 +165,29 @@ class Frame(renpy.display.core.Displayable):
         @param yborder: The number of pixels in the y direction to use as
         a border.
 
-        For better performance, have the image file share a dimension
+        For better performance, have the image share a dimension
         length in common with the size the frame will be rendered
         at. We detect this and avoid scaling if possible.
         """
 
         super(Frame, self).__init__()
 
-        self.filename = filename
+        self.image = Image(image)
         self.xborder = xborder
         self.yborder = yborder
 
-
     def render(self, width, height, st):
-            
-        dest = renpy.display.render.Render(width, height)
-        dw, dh = width, height
 
-        source = cache.load_image(self.filename)
-        sw, sh = source.get_size()
+        fi = renpy.display.im.FrameImage(self.image,
+                                         self.xborder,
+                                         self.yborder,
+                                         width,
+                                         height)
 
-        def draw(x0, x1, y0, y1):
-
-            # Quick exit.
-            if x0 == x1 or y0 == y1:
-                return
-
-            # Compute the coordinates of the left, right, top, and
-            # bottom sides of the region, for both the source and
-            # destination surfaces.
-
-            # left side.
-            if x0 >= 0:
-                dx0 = x0
-                sx0 = x0
-            else:
-                dx0 = dw + x0
-                sx0 = sw + x0
-        
-            # right side.
-            if x1 > 0:
-                dx1 = x1
-                sx1 = x1
-            else:
-                dx1 = dw + x1
-                sx1 = sw + x1
-
-            # top side.
-            if y0 >= 0:
-                dy0 = y0
-                sy0 = y0
-            else:
-                dy0 = dh + y0
-                sy0 = sh + y0
-        
-            # bottom side
-            if y1 > 0:
-                dy1 = y1
-                sy1 = y1
-            else:
-                dy1 = dh + y1
-                sy1 = sh + y1
-
-            # Compute sizes.
-            srcsize = (sx1 - sx0, sy1 - sy0)
-            dstsize = (dx1 - dx0, dy1 - dy0)
-
-            # Get a subsurface.
-            surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
-
-            # Scale if we have to.
-            if dstsize != srcsize:
-                surf = pygame.transform.scale(surf, dstsize)
-
-            # Blit.
-            dest.blit(surf, (dx0, dy0))
-
-        xb = self.xborder
-        yb = self.yborder
-
-        # Top row.
-        draw(0, xb, 0, yb)
-        draw(xb, -xb, 0, yb)
-        draw(-xb, 0, 0, yb)
-
-        # Middle row.
-        draw(0, xb, yb, -yb)
-        draw(xb, -xb, yb, -yb)
-        draw(-xb, 0, yb, -yb)
-
-        # Bottom row.
-        draw(0, xb, -yb, 0)
-        draw(xb, -xb, -yb, 0)
-        draw(-xb, 0, -yb, 0)
-        
-        # And, finish up.
-        return dest
+        return render(fi, width, height, st)
 
     def predict(self, callback):
-        callback(self.filename)
+        self.image.predict(callback)
         
 class Animation(renpy.display.core.Displayable):
     """
@@ -484,7 +213,7 @@ class Animation(renpy.display.core.Displayable):
         for i, arg in enumerate(args):
 
             if i % 2 == 0:
-                self.images.append(arg)
+                self.images.append(Image(arg))
             else:
                 self.delays.append(arg)
 
@@ -499,7 +228,7 @@ class Animation(renpy.display.core.Displayable):
             if t < delay:
                 renpy.display.render.redraw(self, delay - t)
 
-                im = cache.load_image(image)
+                im = render(image, width, height, st)
                 width, height = im.get_size()
                 rv = renpy.display.render.Render(width, height)
                 rv.blit(im, (0, 0))
@@ -511,106 +240,21 @@ class Animation(renpy.display.core.Displayable):
 
     def predict(self, callback):
         for i in self.images:
-            callback(i)
+            i.predict(callback)
 
     def get_placement(self):
         return renpy.game.style.image_placement
 
-class ImageMap(renpy.display.core.Displayable):
-    """
-    The displayable that implements renpy.imagemap.
-    """
-
-
-    def __init__(self, ground, selected, hotspots, unselected=None,
-                 style='imagemap', **properties):
-
-        super(ImageMap, self).__init__()
-
-        self.ground = ground
-        self.selected = selected
-        self.hotspots = hotspots
-
-        if not unselected:
-            self.unselected = self.ground
-        else:
-            self.unselected = unselected
-
-        self.active = None
-        self.last_active = None
-
-        self.style = renpy.style.Style(style, properties)
-
-    def get_placement(self):
-        return self.style
-
-    # This doesn't do anything quite yet.
-    def predict(self, callback):
-        callback(self.ground)
-        callback(self.selected)
-        callback(self.unselected)
-
-    def render(self, width, height, st):
-
-        ground = cache.load_image(self.ground)
-        selected = cache.load_image(self.selected)
-        unselected = cache.load_image(self.unselected)
-
-        width, height = ground.get_size()
-        rv = renpy.display.render.Render(width, height)
-        rv.blit(ground, (0, 0))
-
-        for i, hotspot in enumerate(self.hotspots):
-
-            x0, y0, x1, y1, result = hotspot
-
-            if i == self.active:
-                source = selected
-            else:
-                source = unselected
-
-            subsurface = source.subsurface((x0, y0, x1-x0, y1-y0))
-            renpy.display.render.mutated_surface(subsurface)
-
-            rv.blit(subsurface, (x0, y0))
-
-        return rv
-        
-    def event(self, ev, x, y):
-
-        old_active = self.active
-        active = None
-
-        for i, (x0, y0, x1, y1, result) in enumerate(self.hotspots):
-            if x >= x0 and x <= x1 and y >= y0 and y <= y1:
-                active = i
-                break
-
-        # result stays set.
-
-        if old_active != active:
-            self.active = active
-            renpy.display.render.redraw(self, 0)
-
-            if active is not None:
-                renpy.display.audio.play(self.style.hover_sound)
-
-
-        if active is None:
-            return None
-
-        if renpy.display.behavior.map_event(ev, "imagemap_select"):
-            renpy.display.audio.play(self.style.activate_sound)
-            return result
-
-        return None
                 
 class ImageButton(renpy.display.behavior.Button):
+    """
+    Used to implement the guts of an image button.
+    """
 
     def __init__(self, idle_image, hover_image,
                  style='image_button',
                  image_style='image_button_image',
-                 clicked=None, hovered=None):
+                 clicked=None, hovered=None, **properties):
 
         self.idle_image = Image(idle_image, style=image_style)
         self.idle_image.style.set_prefix("idle_")
@@ -620,17 +264,18 @@ class ImageButton(renpy.display.behavior.Button):
         super(ImageButton, self).__init__(self.idle_image,
                                           style=style,
                                           clicked=clicked,
-                                          hovered=hovered)
+                                          hovered=hovered,
+                                          **properties)
         
     def predict(self, callback):
         self.idle_image.predict(callback)
         self.hover_image.predict(callback)
 
-    def focus(default):
-        self.child = hover_image
-        super(ImageButton, self).focus(default)
+    def focus(self):
+        self.child = self.hover_image
+        super(ImageButton, self).focus()
 
-    def unfocus():
-        self.child = idle_image
+    def unfocus(self):
+        self.child = self.idle_image
         super(ImageButton, self).unfocus()
 
