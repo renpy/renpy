@@ -467,12 +467,17 @@ class Lexer(object):
         if c == 'u':
             self.pos += 1
 
-            if self.eol():
+            if self.pos == len(self.text):
+                self.pos -= 1
                 return False
 
             c = self.text[self.pos]
 
-        if c not in ('"', "'"):
+            if c not in ('"', "'"):
+                self.pos -= 1
+                return False
+
+        elif c not in ('"', "'"):
             return False
 
         delim = c
