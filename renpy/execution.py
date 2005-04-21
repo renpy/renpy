@@ -22,6 +22,8 @@ class Context(object):
     @ivar rollback: True if this context participates in rollbacks.
 
     @ivar runtime: The time spent in this context, in milliseconds.
+
+    @ivar info: A RevertableObject, which is made available to user code.
     """
 
     def __init__(self, rollback, context=None):
@@ -30,11 +32,14 @@ class Context(object):
         self.return_stack = [ ]
         self.rollback = rollback
         self.runtime = 0
-
+        self.info = renpy.python.RevertableObject()
+        
         oldsl = None
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
+
+            vars(self.info).update(vars(context.info))
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl)
         
@@ -115,6 +120,7 @@ class Context(object):
         rv.current = self.current
         rv.scene_lists = self.scene_lists.rollback_copy()
         rv.runtime = self.runtime
+        rv.info = self.info
 
         return rv
 

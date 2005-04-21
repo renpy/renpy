@@ -12,7 +12,7 @@ from renpy.display.behavior import *
 from renpy.display.image import *
 
 from renpy.curry import curry
-from renpy.display.audio import music_start, music_stop
+# from renpy.display.audio import music_start, music_stop
 from renpy.display.audio import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import *
@@ -551,6 +551,14 @@ def restart_interaction():
     """
 
     renpy.game.interface.restart_interaction = True
+    
+def context():
+    """
+    Returns an object that is unique to the current context, that
+    participates in rollback and the like.
+    """
+
+    return renpy.game.context().info
     
 
 call_in_new_context = renpy.game.call_in_new_context

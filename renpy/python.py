@@ -62,7 +62,7 @@ def reached(obj, path, reachable):
 def reached_vars(store, reachable):
     """
     Marks everything reachable from the variables in the store
-    as reachable.
+    or from the context info objects as reachable.
     
     @param store: A map from variable name to variable value.
     @param reachable: A dictionary mapping reached object ids to
@@ -72,7 +72,9 @@ def reached_vars(store, reachable):
     for k, v in store.iteritems():
         reached(v, k, reachable)    
     
-    
+    for c in renpy.game.contexts:
+        reached(c.info, "#context", reachable)
+
 
 ##### Code that replaces literals will calls to magic constructors.
 

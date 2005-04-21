@@ -155,6 +155,14 @@ keymap = dict(
     toggle_skip = [ 'K_TAB' ],
     )
 
+# A function that is called before each interaction, to update the
+# music that is currently playing.
+music_interact = None
+
+# A function that is called when a music track ends, perhaps to
+# play another track.
+music_end_event = None
+
 # The number of frames that Ren'Py has shown.
 frames = 0
 

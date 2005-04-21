@@ -11,6 +11,7 @@ import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
+MUSICEND = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -738,6 +739,12 @@ class Interface(object):
 
         # frames = 0
 
+        # Update the music, if necessary.
+        for i in pygame.event.get([ MUSICEND ]):
+            renpy.display.audio.music_end_event()
+
+        renpy.display.audio.music_interact()
+
         # Tick time forward.
         renpy.display.im.cache.tick()
 
@@ -750,11 +757,8 @@ class Interface(object):
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, DISPLAYTIME,
                             MOUSEBUTTONUP, MOUSEBUTTONDOWN))
-
         
-        # Figure out the scene list we want to show.
-
-        
+        # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
         
         # Figure out what the overlay layer should look like.
@@ -906,6 +910,10 @@ class Interface(object):
                     ev = self.event_wait()
                     self.profile_time = time.time()
 
+                    # A song just ended.
+                    if ev.type == MUSICEND:
+                        renpy.display.audio.music_end_event()
+
                     if ev.type == DISPLAYTIME:
 
                         events = 1 + len(pygame.event.get([DISPLAYTIME]))
@@ -914,12 +922,6 @@ class Interface(object):
 
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
-
-                        # Update the playing music, if necessary.
-
-                        # This needs to be here so that we eventually start a
-                        # new song at the end of a fadeout.
-                        renpy.display.audio.restore_music()
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
