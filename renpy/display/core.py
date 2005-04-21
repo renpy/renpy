@@ -6,6 +6,7 @@ from renpy.display.render import render
 
 import pygame
 from pygame.constants import *
+import os
 import time
 import cStringIO
 
@@ -38,7 +39,7 @@ class Displayable(renpy.object.Object):
 
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties)
-        self.style_prefix = None
+        self.style_prefix = 'insensitive_'
         self.focus_name = focus
         self.default = default
 
@@ -53,9 +54,10 @@ class Displayable(renpy.object.Object):
         """
 
         if self.style.enable_hover:
-            if not default:
-                renpy.display.audio.play(self.style.hover_sound)
             self.set_style_prefix("hover_")
+
+            if not default:
+                renpy.display.audio.play(self.style.sound)
 
     def unfocus(self):
         """
@@ -384,7 +386,9 @@ class Display(object):
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
-        if self.fullscreen:
+        fullscreen = self.fullscreen and not os.environ.get('RENPY_DISABLE_FULLSCREEN', False)
+
+        if fullscreen:
             fsflag = FULLSCREEN
 
         # The window we display things in.

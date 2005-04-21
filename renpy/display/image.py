@@ -271,9 +271,9 @@ class ImageButton(renpy.display.behavior.Button):
         self.idle_image.predict(callback)
         self.hover_image.predict(callback)
 
-    def focus(self):
+    def focus(self, default=False):
         self.child = self.hover_image
-        super(ImageButton, self).focus()
+        super(ImageButton, self).focus(default=default)
 
     def unfocus(self):
         self.child = self.idle_image

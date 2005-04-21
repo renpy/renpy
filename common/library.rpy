@@ -113,11 +113,10 @@ init -500:
 
             style = type
 
-            if selected:
+            if selected and not disabled:
                 style += "_selected"
 
             if disabled:
-                style += "_disabled"
                 clicked = None
 
             style = style + "_button"
@@ -517,6 +516,9 @@ label _enter_game_menu:
 
     if library.enter_transition:
         $ renpy.transition(library.enter_transition)
+
+    if renpy.has_label("enter_game_menu"):
+        call enter_game_menu
 
     return
 

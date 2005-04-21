@@ -66,8 +66,7 @@ init -1000:
         style.default.yanchor = 'top'
 
         # Sound properties.
-        style.default.hover_sound = None
-        style.default.activate_sound = None
+        style.default.sound = None
 
         # The base style for the large windows.
         style.create('window', 'default',
@@ -209,6 +208,7 @@ init -1000:
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
         style.button_text.activate_color = bright_cyan
+        style.button_text.insensitive_color = (192, 192, 192, 255)
         style.button_text.drop_shadow = (2, 2)
         
         # Selected button.
@@ -222,22 +222,6 @@ init -1000:
         style.selected_button_text.hover_color = bright_red
         style.selected_button_text.activate_color = bright_red
         
-        # Disabled button.
-
-        style.create('disabled_button', 'button',
-                     '(window, hover) The style that is used for a disabled button.')
-
-        style.disabled_button.hover_sound = None
-        style.disabled_button.activate_sound = None
-
-        style.create('disabled_button_text', 'button_text',
-                     '(text, hover) The style that is used for the label of a disabled button.')
-                     
-        style.disabled_button_text.color = (128, 128, 128, 255)
-        style.disabled_button_text.hover_color = (128, 128, 128, 255)
-        style.disabled_button_text.activate_color = (128, 128, 128, 255)
-
-
         # Bar.
         style.create('bar', 'default',
                      '(bar) The style that is used by default for bars.')
@@ -292,13 +276,6 @@ init -1000:
 
         style.create('gm_nav_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected game menu navigation button.')
-        
-        style.create('gm_nav_disabled_button', 'disabled_button',
-                     '(window, hover) The style of a disabled game menu navigation button.')
-
-        style.create('gm_nav_disabled_button_text', 'disabled_button_text',
-                     '(text, hover) The style of the text of a disabled game menu navigation button.')
-        
 
         style.create('file_picker_window', 'default',
                      '(window, position) A window containing the file picker that is used to choose slots for loading and saving.')
@@ -318,11 +295,6 @@ init -1000:
                      '(window, hover) The style that is used for enabled file picker navigation buttons.')
         style.create('file_picker_nav_button_text', 'button_text',
                      '(text) The style that is used for the label of enabled file picker navigation buttons.')        
-
-        style.create('file_picker_nav_disabled_button', 'disabled_button',
-                     '(window, hover) The style that is used for disabled file picker navigation buttons.')
-        style.create('file_picker_nav_disabled_button_text', 'disabled_button_text',
-                     '(text) The style that is used for the label of disabled file picker navigation buttons.')
                 
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')

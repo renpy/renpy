@@ -18,12 +18,28 @@ Update config.keymap docs.
 focus_crossrange_penalty
 
 focus=""
-focusable=""
+default=""
 
-Need to upgrade Bar, or perhaps make it not clickable.
+In prior versions of Ren'Py, the bar widget could respond to
+clicks. This was never used, and won't work well with the
+keyboard focus control system. So, it's been eliminated.
 
-Need to have a function that is called after a load but before the 
-game resumes.
+Now, if the label "enter_game_menu" exists, it is called when entering
+the game menu. It's expected that the main purpose of this label will 
+be to play music when in the game menu. Using the default music
+system, the code to do this would look like:
+
+[code]
+label enter_game_menu:
+    $ renpy.music_start("game_menu_music.mid")
+    return
+[/code]    
+
+renpy.loadable
+
+RENPY_DISABLE_FULLSCREEN=1
+
+Replace disabled_ with insensitive.
 
 New in 4.7.2
 ------------

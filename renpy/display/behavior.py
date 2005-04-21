@@ -171,7 +171,7 @@ class SayBehavior(renpy.display.layout.Null):
     focusable = True
 
     def __init__(self, default=True, **properties):
-        super(SayBehavior, self).__init__(focusable=True, default=default, **properties)
+        super(SayBehavior, self).__init__(default=default, **properties)
               
     def event(self, ev, x, y):
 
@@ -330,11 +330,7 @@ class Button(renpy.display.layout.Window):
 
     def render(self, width, height, st):
 
-        if self.activated:
-            self.set_style_prefix('activate_')
-
         rv = super(Button, self).render(width, height, st)
-
 
         if self.clicked:
             rv.add_focus(self,
@@ -353,13 +349,13 @@ class Button(renpy.display.layout.Window):
         if self.activated:
             self.activated = False
 
-            if self.style.enable_hover:
+            if self.focusable:
                 if self.is_focused():
                     self.set_style_prefix('hover_')
                 else:
                     self.set_style_prefix('idle_')
             else:
-                self.set_style_prefix('')
+                self.set_style_prefix('insensitive_')
 
         # If not focused, ignore all events.
         if not self.is_focused():
@@ -367,10 +363,11 @@ class Button(renpy.display.layout.Window):
 
         # If clicked, 
         if map_event(ev, "button_select") and self.clicked:
-            renpy.display.audio.play(self.style.activate_sound)
 
             self.activated = True
-            renpy.display.render.redraw(self, 0)
+
+            self.set_style_prefix('activate_')
+            renpy.display.audio.play(self.style.sound)
 
             rv = self.clicked()
 
@@ -380,6 +377,7 @@ class Button(renpy.display.layout.Window):
                 raise renpy.display.core.IgnoreEvent()
                     
         return None
+
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.

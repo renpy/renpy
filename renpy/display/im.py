@@ -458,6 +458,55 @@ class SolidImage(ImageBase):
         rv.fill(self.color)
 
         return rv
+
+class Scale(ImageBase):
+    """
+    This is an image that is constructed by scaling another image
+    to the specified width and height. This scalling is unfiltered,
+    so you can expect your image to look a bit jagged.
+    """
+
+    def __init__(self, im, width, height):
+
+        im = image(im)
+        super(Scale, self).__init__(im, width, height)
+
+        self.image = im
+        self.width = width
+        self.height = height
+
+    def load(self):
+        return pygame.transform.scale(cache.get(self.image),
+                                      (self.width, self.height))
+
+class Rotozoom(ImageBase):
+    """
+    This is an image that is a smooth rotation and zoom of another image.
+    """
+
+    def __init__(self, im, angle, zoom):
+        """
+        @param im: The image to be rotozoomed.
+
+        @param angle: The number of degrees counterclockwise the image is
+        to be rotated.
+
+        @param zoom: The zoom factor. Numbers that are greater than 1.0
+        lead to the image becoming larger.
+        """
+
+        im = image(im)
+        super(Rotozoom, self).__init__(im, angle, zoopm)
+
+        self.image = im
+        self.angle = angle
+        self.zoom = zoom
+
+    def load(self):
+
+        return pygame.transform.rotozoom(cache.get(self.image),
+                                         angle, zoom)
+        
         
 class Crop(ImageBase):
     """

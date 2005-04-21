@@ -288,7 +288,7 @@ def imspec_common(imspec, hide=False):
 
     # Update the set of images that have ever been seen.
     if not hide:
-        renpy.game.persistent._seen_images[tuple(key)] = True
+        renpy.game.persistent._seen_images[tuple(name)] = True
 
     return key, img
 

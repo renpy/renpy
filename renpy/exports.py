@@ -527,6 +527,19 @@ def get_game_runtime():
 
     return renpy.game.context().runtime / 1000.0
 
+def loadable(filename):
+    """
+    Returns True if the given filename is loadable, meaning that it
+    can be loaded from the disk or from inside an archive. Returns
+    False if this is not the case.
+    """
+
+    try:
+        renpy.loader.load(filename)
+        return True
+    except:
+        return False
+
 def exists(filename):
     """
     Returns true if the given filename can be found in the

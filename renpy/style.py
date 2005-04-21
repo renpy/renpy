@@ -1,7 +1,14 @@
 import renpy
 
 # A list of style prefixes we care about, including no prefix.
-prefixes = [ 'hover_', 'idle_', 'activate_', '' ]
+prefixes = [ 'hover_', 'idle_', 'activate_' , 'insensitive_' ]
+
+def startswith_prefix(s):
+    for i in prefixes:
+        if s.startswith(i):
+            return True
+    else:
+        return False
 
 substitutes = dict(
     xmargin = [ 'left_margin', 'right_margin' ],
@@ -88,15 +95,20 @@ class Style(object):
         if key in substitutes:
             for i in substitutes[key]:
                 self.__setattr__(i, value)
-                
 
             return
 
-        for prefix in prefixes:
-            prefkey = prefix + key
+        # If we start with a prefix, directly update the single key.
+        if startswith_prefix(key):
+            self.properties[key] = value
+            self.cache[key] = value
 
-            self.properties[prefkey] = value
-            self.cache[prefkey] = value
+        # Otherwise, update the key in all prefixes.
+        else:
+            for prefix in prefixes:
+                prefkey = prefix + key
+                self.properties[prefkey] = value
+                self.cache[prefkey] = value
 
     def __getattr__(self, key):
 
@@ -116,7 +128,7 @@ class Style(object):
         cache = self.cache
 
         try:
-            return cache.get(prefix + key, cache[key])
+            return cache.get(prefix + key)
         except KeyError:
             raise AttributeError("Style property '%s' not found." % key)
 
@@ -145,12 +157,18 @@ class Style(object):
             properties = { }
 
         for k in properties.keys():
+
+            # If we start with a prefix, continue.
+            if startswith_prefix(k):
+                continue
+
+            # Otherwise, expand out the prefix.
             for p in prefixes:
                 if p + k not in properties:
                     properties[p + k] = properties[k]
 
         vars(self)["parent"] = parent
-        vars(self)["prefix"] = ''
+        vars(self)["prefix"] = 'insensitive_'
         vars(self)["properties"] = properties
         vars(self)["cache"] = { }
             

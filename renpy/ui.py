@@ -169,7 +169,7 @@ def vbox(padding=0, **properties):
 def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
     """
     This creates a layout that places widgets in an evenly spaced
-    grid. New widges are added to this vbox unil ui.close() is called.
+    grid. New widgets are added to this grid unil ui.close() is called.
     Widgets are added by going from left to right within a single row,
     and down to the start of the next row when a row is full. All cells
     must be filled (that is, exactly col * rows widgets must be added to
