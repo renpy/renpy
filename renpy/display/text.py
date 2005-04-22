@@ -452,7 +452,7 @@ class Text(renpy.display.core.Displayable):
                 
         self.layout(width - absxo)
             
-        rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absxo)
+        rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
             self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length)

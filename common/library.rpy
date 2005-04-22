@@ -113,11 +113,11 @@ init -500:
 
             style = type
 
-            if selected:
+            if selected and not disabled:
                 style += "_selected"
 
             if disabled:
-                style += "_disabled"
+                clicked = None
 
             style = style + "_button"
             text_style = style + "_text"
@@ -302,7 +302,7 @@ init -500:
             ui.fixed()
 
             ui.window(style='gm_nav_window')
-            ui.vbox()
+            ui.vbox(focus='gm_nav')
             
             for key, label, target, enabled in library.game_menu:
 
@@ -311,7 +311,7 @@ init -500:
 
                 if not eval(enabled):
                     disabled = True
-                    clicked = ui.returns(None)
+                    clicked = None
                              
                 _button_factory(label, "gm_nav", selected=(key==selected),
                                 disabled=disabled, clicked=clicked)
@@ -331,8 +331,8 @@ init -500:
                 clicked=ui.returns(("return", (name, False)))
                 enable_hover = True
             else:
-                clicked=None
-                enable_hover = False
+                clicked = None
+                enable_hover = True
 
             ui.button(style='file_picker_entry',
                       clicked=clicked,
@@ -516,6 +516,9 @@ label _enter_game_menu:
 
     if library.enter_transition:
         $ renpy.transition(library.enter_transition)
+
+    if renpy.has_label("enter_game_menu"):
+        call enter_game_menu
 
     return
 

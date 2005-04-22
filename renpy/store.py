@@ -6,6 +6,8 @@
 import renpy
 
 import renpy.ui as ui
+import renpy.display.im as im
+import renpy.display.audio as audio
 
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__

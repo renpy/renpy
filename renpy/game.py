@@ -21,11 +21,6 @@ searchpath = [ ]
 # A Script object, giving the script of the currently executing game.
 script = None
 
-# The store is where Ren'Py python results are stored. We first need
-# to import in the module, and then we use the module's dictionary
-# directly.
-store = None
-
 # A shallow copy of the store made at the end of the init phase. If
 # a key in here points to the same value here as it does in the store,
 # it is not saved.

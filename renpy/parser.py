@@ -143,7 +143,7 @@ def list_logical_lines(filename):
 
 
     if line != "":
-        raise ParseError(filename, number, "is not terminated with a newline.")
+        raise ParseError(filename, start_number, "is not terminated with a newline (check quotes and parenthesis).")
 
     return rv
 
@@ -172,13 +172,11 @@ def group_logical_lines(lines):
 
             if l[index] == '\t':
                 index += 1
-                depth = depth + 8 - (16 % 8)
+                depth = depth + 8 - (depth % 8)
                 continue
                 
             break
 
-        # TODO: Fix to handle tabs properly. Or else update the docs to
-        # forbid tabs entirely.
         return depth, l[depth:]
 
     # i, min_depth -> block, new_i
@@ -467,12 +465,17 @@ class Lexer(object):
         if c == 'u':
             self.pos += 1
 
-            if self.eol():
+            if self.pos == len(self.text):
+                self.pos -= 1
                 return False
 
             c = self.text[self.pos]
 
-        if c not in ('"', "'"):
+            if c not in ('"', "'"):
+                self.pos -= 1
+                return False
+
+        elif c not in ('"', "'"):
             return False
 
         delim = c
@@ -514,7 +517,7 @@ class Lexer(object):
         while self.match(r'\.'):
             n = self.name()
             if not n:
-                self.parse_error('expecting name.')
+                self.error('expecting name.')
 
             rv += "." + n
 

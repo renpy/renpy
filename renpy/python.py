@@ -62,7 +62,7 @@ def reached(obj, path, reachable):
 def reached_vars(store, reachable):
     """
     Marks everything reachable from the variables in the store
-    as reachable.
+    or from the context info objects as reachable.
     
     @param store: A map from variable name to variable value.
     @param reachable: A dictionary mapping reached object ids to
@@ -72,7 +72,9 @@ def reached_vars(store, reachable):
     for k, v in store.iteritems():
         reached(v, k, reachable)    
     
-    
+    for c in renpy.game.contexts:
+        reached(c.info, "#context", reachable)
+
 
 ##### Code that replaces literals will calls to magic constructors.
 
@@ -356,10 +358,10 @@ class Rollback(renpy.object.Object):
         for t in self.store:
             if len(t) == 2:
                 k, v = t
-                renpy.game.store[k] = v
+                vars(renpy.store)[k] = v
             else:
                 k, = t
-                del renpy.game.store[k]
+                del vars(renpy.store)[k]
 
         renpy.game.contexts = [ self.context ]
         rng.pushback(self.random)
@@ -428,7 +430,7 @@ class RollbackLog(renpy.object.Object):
         self.log.append(self.current)
 
         self.mutated = { }
-        self.old_store = renpy.game.store.copy()
+        self.old_store = vars(renpy.store).copy()
 
     def complete(self):
         """
@@ -439,7 +441,7 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        new_store = renpy.game.store
+        new_store = vars(renpy.store)
         store = [ ]
 
 
@@ -484,9 +486,11 @@ class RollbackLog(renpy.object.Object):
 
         rv = { }
 
+        store = vars(renpy.store)
+
         for k in self.ever_been_changed.keys():
-            if k in renpy.game.store:
-                rv[k] = renpy.game.store[k]
+            if k in store:
+                rv[k] = store[k]
 
         return rv
 
@@ -617,14 +621,15 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
         
         # Restore the store.
-        renpy.game.store.clear()
-        renpy.game.store.update(renpy.game.clean_store)
+        store = vars(renpy.store)
+        store.clear()
+        store.update(renpy.game.clean_store)
 
         for k in self.ever_been_changed:
-            if k in renpy.game.store:
-                del renpy.game.store[k]
+            if k in store:
+                del store[k]
 
-        renpy.game.store.update(self.frozen_roots)
+        store.update(self.frozen_roots)
         self.frozen_roots = None
 
         # Now, rollback to an acceptable point.
@@ -634,31 +639,35 @@ class RollbackLog(renpy.object.Object):
 
 def py_exec_bytecode(bytecode, hide=False):
 
+    store = vars(renpy.store)
+
     if hide:
         locals = { }
     else:
-        locals = renpy.game.store
+        locals = store
 
-    exec marshal.loads(bytecode) in renpy.game.store, locals
+    exec marshal.loads(bytecode) in store, locals
 
         
 def py_exec(source, hide=False):
 
+    store = vars(renpy.store)
+
     if hide:
         locals = { }
     else:
-        locals = renpy.game.store
+        locals = store
 
 
-    exec py_compile(source, 'exec') in renpy.game.store, locals
+    exec py_compile(source, 'exec') in store, locals
 
 def py_eval_bytecode(bytecode):
 
-    return eval(marshal.loads(bytecode), renpy.game.store)
+    return eval(marshal.loads(bytecode), vars(renpy.store))
 
 def py_eval(source):
     source = source.strip()
 
     return eval(py_compile(source, 'eval'),
-                renpy.game.store)
+                vars(renpy.store))
 

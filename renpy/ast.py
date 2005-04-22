@@ -286,6 +286,10 @@ def imspec_common(imspec, hide=False):
     for i in at_list:
         img = renpy.python.py_eval(i)(img)
 
+    # Update the set of images that have ever been seen.
+    if not hide:
+        renpy.game.persistent._seen_images[tuple(name)] = True
+
     return key, img
 
 def predict_imspec(imspec, callback):
