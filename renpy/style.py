@@ -171,7 +171,7 @@ class Style(object):
 
     
         
-def write_docs(self, filename):
+def write_docs(filename):
 
     f = file(filename, "w")
 

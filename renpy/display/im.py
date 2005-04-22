@@ -69,7 +69,7 @@ class Cache(object):
 
     # Do we need to preload an image?
     def needs_preload(self):
-        return self.preloads and not self.first_preload_in_tick
+        return (self.preloads and True) or self.first_preload_in_tick
 
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -250,7 +250,7 @@ class ImageBase(renpy.display.core.Displayable):
 
 class Image(ImageBase):
     """
-    This class loads an image from a file.
+    This image manipulator loads an image from a file.
     """
 
     def __init__(self, filename, **properties):
@@ -273,7 +273,7 @@ class Image(ImageBase):
 
 class Composite(ImageBase):
     """
-    This composites one or more images together.
+    This image manipulator composites one or more images together.
     """
 
     def __init__(self, size, *args, **properties):
@@ -286,8 +286,9 @@ class Composite(ImageBase):
         (starting the count with 1) arguments are positions, which
         give the position of the image, in pixels, with the origin in
         the upper-left corner of the image. The even-numbered
-        arguments give the images that will be composited in those
-        positions. The images are composited in bottom-to-top order.
+        arguments give the images (image manipulators) that will be
+        composited in those positions. The images are composited in
+        bottom-to-top order.
 
         @param size: If given, this will be the size of the new
         image. Otherwise, the size will be the same as that of the
@@ -461,9 +462,9 @@ class SolidImage(ImageBase):
 
 class Scale(ImageBase):
     """
-    This is an image that is constructed by scaling another image
-    to the specified width and height. This scalling is unfiltered,
-    so you can expect your image to look a bit jagged.
+    This is an image manipulator that scales another image manipulator
+    to the specified width and height. This scalling is unfiltered, so
+    you can expect your image to look a bit jagged.
     """
 
     def __init__(self, im, width, height):
@@ -481,7 +482,7 @@ class Scale(ImageBase):
 
 class Rotozoom(ImageBase):
     """
-    This is an image that is a smooth rotation and zoom of another image.
+    This is an image manipulator that is a smooth rotation and zoom of another image manipulator.
     """
 
     def __init__(self, im, angle, zoom):

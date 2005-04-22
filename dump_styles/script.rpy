@@ -3,6 +3,6 @@ init:
 
 label main_menu:
 
-    $ style._write_docs("doc/styles.xml")
+    $ renpy.renpy.style.write_docs("doc/styles.xml")
     $ raise "foo"
     

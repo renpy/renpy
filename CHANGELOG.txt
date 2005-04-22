@@ -30,14 +30,10 @@ The image cache is now based on image size, rather than number of
 images. This prevents a large number of small images from filling up
 the cache.
 
-[ config.image_cache_size ]
-
 We now load images before starting the timer for a transition. This
 prevents us from popping into the middle of a transition because we
 spent some time loading images. This behavior can be controlled by 
 config.load_before_transition.
-
-[ config.load_before_transition ]
 
 The ui.imagemap widget has been rewritten in terms of ui.imagebuttons
 and im.Crops. Some styles have changed names as a result.
