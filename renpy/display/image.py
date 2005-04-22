@@ -205,7 +205,7 @@ class Animation(renpy.display.core.Displayable):
         animation will restart after the final delay time.
         """
 
-        super(Animation, self).__init__()
+        super(Animation, self).__init__(style='image_placement')
 
         self.images = [ ]
         self.delays = [ ]

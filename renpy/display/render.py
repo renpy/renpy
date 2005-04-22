@@ -132,7 +132,6 @@ def render_screen(widget, width, height, st):
     global new_renders
     global mutated_surfaces
 
-    redraw_queue = [ ]
     mutated_surfaces = { }
 
     rv = render(widget, width, height, st)
@@ -149,6 +148,15 @@ def render_screen(widget, width, height, st):
     old_renders.update(new_renders)
     new_renders.clear()
 
+    # Figure out which widgets are still alive.
+    live_widgets = sets.Set()
+    for widget, height, width in old_renders:
+        live_widgets.add(widget)
+
+    # Filter dead widgets from the redraw queue.
+    redraw_queue = [ (when, widget) for when, widget in redraw_queue if
+                     widget in live_widgets ]
+    
     return rv
 
 old_blits = [ ]

@@ -1,7 +1,8 @@
 init:
     image black = Solid((0, 0, 0, 255))
 
-label start:
+label main_menu:
 
     $ style._write_docs("doc/styles.xml")
-    "Dumped style."
+    $ raise "foo"
+    

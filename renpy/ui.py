@@ -242,10 +242,11 @@ def keymousebehavior():
     screen. The keymouse behavior allows the mouse to be controlled
     by the keyboard. This widget should not be added to any other
     widget, but should instead be only added to the screen itself.
+
+    As of 4.8, this does nothing, but is retained for compatability.
     """
 
-    # return add(renpy.display.behavior.KeymouseBehavior())
-    pass
+    return
 
 
 def saybehavior():
@@ -281,6 +282,7 @@ def pausebehavior(delay, result=False):
     return add(renpy.display.behavior.PauseBehavior(delay, result))
 
 def menu(menuitems,
+         style = 'menu',
          caption_style='menu_caption',
          choice_style='menu_choice',
          choice_button_style='menu_choice_button',
@@ -299,7 +301,7 @@ def menu(menuitems,
 
     # menu is now a conglomeration of other widgets. And bully for it.
 
-    renpy.ui.vbox(**properties)
+    renpy.ui.vbox(style=style, **properties)
 
     for label, val in menuitems:
         if val is None:

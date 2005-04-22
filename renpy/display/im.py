@@ -538,11 +538,9 @@ def image(arg, **properties):
 
     <ul>
     <li> An image object. In that case, it's returned unchanged.</li>
-
     <li> A string. If a string is given, then the string is interpreted
     as a filename, and what is returned is an im.Image object, which
     loads the image from disk.</li>
-
     <li> A tuple. If this is the case, then what is returned is an
     im.Composite object, which aligns the upper-left corner of all
     of the images supplied as arguments. </li>

@@ -313,8 +313,6 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
 
-    renpy.ui.keymousebehavior()
-
     rv = renpy.ui.interact(suppress_overlay=(not overlays))
     checkpoint()
     return rv

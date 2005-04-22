@@ -75,6 +75,7 @@ def run(restart=False):
     renpy.store._preferences = game.preferences
 
     # Set up styles.
+    renpy.style.reset()
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
@@ -92,7 +93,7 @@ def run(restart=False):
     renpy.game.exception_info = 'After initialization, but before game start.'
 
     # Rebuild the various style caches.
-    game.style._build_style_caches()
+    renpy.style.build_styles()
 
     # Index the archive files. We should not have loaded an image
     # before this point. (As pygame will not have been initialized.)

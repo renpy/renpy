@@ -1,24 +1,74 @@
-New focus system.
+New in 4.8
+----------
 
-Sound:
-- Callback
-- Ability to play sound during game menu.
-- Ability to pause sound.
-- Ability to cancel sfx.
+A new system was implemented to manage widget focus. This new system
+allows the focus to be moved from widget to widget using the keyboard,
+without requiring the keymouse behavior be used. Because of this new
+system, the keymouse behavior is now a no-op. 
 
-Image manipulation functions. Rewrite of imagemap in terms of 
-imagebuttons and image manipulation functions.
+[ Undocument keymouse_distance, keymousebehavior ]
 
-config.image_cache_size changed meaning.
-config.load_before_transition is new.
+To simplify the code and make every widget compatible with the new
+focus code, a number of widgets were reimplemented in terms of
+buttons. This includes the ui.menu widget, which is the widget that is
+used when presenting the user with choices. Menu buttons are of the
+new style style.menu_choice_button, while their labels remain of style
+style.menu_choice. Background images and padding can now be styled 
+onto these menu buttons.
 
-Update style docs.
-Update config.keymap docs.
+A number of new image manipulators have been made available in the
+new im package. These are objects that can load an image (im.Image), 
+crop an image (im.Crop), scale images (im.Scale), rotozoom images
+(im.Rotozoom) and composite images (im.Composite). The latter is much
+more flexible than the previous image composition system, as it now
+supports placing images at arbitrary locations on an arbitrarily big 
+canvas. Image (by itself) is now a function that creates the
+appropriate image manipulators, retaining compatibility with its
+behavior in previous releases.
 
-focus_crossrange_penalty
+The image cache is now based on image size, rather than number of
+images. This prevents a large number of small images from filling up
+the cache.
 
-focus=""
-default=""
+[ config.image_cache_size ]
+
+We now load images before starting the timer for a transition. This
+prevents us from popping into the middle of a transition because we
+spent some time loading images. This behavior can be controlled by 
+config.load_before_transition.
+
+[ config.load_before_transition ]
+
+The ui.imagemap widget has been rewritten in terms of ui.imagebuttons
+and im.Crops. Some styles have changed names as a result.
+
+Ren'Py now keeps track of the images that have been shown to the
+user. This is the basis of this release's new extra, gallery.rpy,
+which manages a gallery of unlockable CG.
+
+The audio system has been rewritten, and a number of low-level audio
+functions have been exposed in the new audio file. These functions
+control audio directly, but do not save the state of audio in a save
+file. The high-level music functions have been rewritten and placed in
+the music.rpy file, allowing a sufficently adventurous game author to
+change the way music is played. 
+
+Two changes have been made to the renpy.music_start() function in the
+high-level sound api. The startpos argument was removed (as it was a
+pain to support), and a new fadeout argument was added, which lets the
+fadeout time be controlled for each new song that is played.
+
+The low-level sound api now lets us do the following things:
+
+[list][*] Play up to eight sound effects at once.
+[*] Cancel a playing sound effect.
+[*] Pause and unpause the playing music.
+[/list]
+
+There is now a new, state that a widget can be in. Along with hover,
+idle, and activate, a widget can now be insensitive. This is the state
+that all non-focused widgets are in. Having the new insensitive state
+means that we can eliminate the various disabled_button styles.
 
 In prior versions of Ren'Py, the bar widget could respond to
 clicks. This was never used, and won't work well with the
@@ -35,7 +85,27 @@ label enter_game_menu:
     return
 [/code]    
 
+A number of bugs were fixed, including bugs with the style system, and
+with animation refresh.
+
+Finally, setting the environment variable RENPY_DISABLE_FULLSCREEN to
+a non-empty value will disable fullscreen support, for those people
+(that person?) who had it crash their systems.
+
 renpy.loadable
+
+
+[ Update style docs. ]
+[ Update config.keymap docs. ]7
+
+
+
+[ focus_crossrange_penalty ]
+
+focus=""
+default=""
+
+
 
 RENPY_DISABLE_FULLSCREEN=1
 

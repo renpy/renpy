@@ -122,7 +122,7 @@ init -1000:
         # Styles that are used for menus.
 
         style.create('menu', 'default',
-                     "(sound, position) The style that is used for menus themselves.")
+                     "(position) The style that is used for the vbox containing a menu.")
 
         style.create('menu_caption', 'default',
                      "(text) The style that is used to render a menu caption.")
@@ -184,7 +184,7 @@ init -1000:
         style.create('imagemap_button', 'default',
                      '(window, sound, hover) The style that is used for buttons inside imagemaps.')
 
-        # Style that is used by imagebutttons.
+        # Styles that are used by imagebutttons.
         style.create('image_button', 'default',
                      '(window, sound, hover) The default style used for image buttons.')
 

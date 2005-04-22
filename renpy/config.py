@@ -83,9 +83,6 @@ force_archives = False
 # An image file containing the mouse cursor, if one is defined.
 mouse = None
 
-# The distance the keyboard moves the mouse, per 50 ms tick, in pixels.
-keymouse_distance = 5
-
 # The default sound playback sample rate.
 sound_sample_rate = 44100
 
