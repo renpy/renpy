@@ -7,8 +7,8 @@ import renpy
 
 # Many of these shouldn't be used directly.
 # from renpy.display.layout import *
-# from renpy.display.text import *
-# from renpy.display.behavior import *
+from renpy.display.text import ParameterizedText
+from renpy.display.behavior import Keymap
 # from renpy.display.image import *
 
 from renpy.curry import curry

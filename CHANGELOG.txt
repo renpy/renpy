@@ -6,8 +6,6 @@ allows the focus to be moved from widget to widget using the keyboard,
 without requiring the keymouse behavior be used. Because of this new
 system, the keymouse behavior is now a no-op. 
 
-[ Undocument keymouse_distance, keymousebehavior ]
-
 To simplify the code and make every widget compatible with the new
 focus code, a number of widgets were reimplemented in terms of
 buttons. This includes the ui.menu widget, which is the widget that is
@@ -64,7 +62,10 @@ The low-level sound api now lets us do the following things:
 There is now a new, state that a widget can be in. Along with hover,
 idle, and activate, a widget can now be insensitive. This is the state
 that all non-focused widgets are in. Having the new insensitive state
-means that we can eliminate the various disabled_button styles.
+means that we can eliminate the various disabled_button styles, so we
+did.
+
+In general, in this release, many styles have changed names.
 
 In prior versions of Ren'Py, the bar widget could respond to
 clicks. This was never used, and won't work well with the
@@ -84,28 +85,18 @@ label enter_game_menu:
 A number of bugs were fixed, including bugs with the style system, and
 with animation refresh.
 
+Tab characters are now expanded to tab stop at eight spaces, rather
+than to a fixed spacing of eight spaces. Old code using tabs may need
+to be reformatted. 
+
+The 'h' key now hides the windows on the screen. This means that all
+Ren'Py functionality is now available through the keyboard, at least
+for people with a 1-button mouse. (cough ... Mac ... cough)
+
 Finally, setting the environment variable RENPY_DISABLE_FULLSCREEN to
 a non-empty value will disable fullscreen support, for those people
 (that person?) who had it crash their systems.
 
-renpy.loadable
-
-
-[ Update style docs. ]
-[ Update config.keymap docs. ]7
-
-
-
-[ focus_crossrange_penalty ]
-
-focus=""
-default=""
-
-
-
-RENPY_DISABLE_FULLSCREEN=1
-
-Replace disabled_ with insensitive.
 
 New in 4.7.2
 ------------

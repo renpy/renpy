@@ -145,6 +145,9 @@ init:
 
         # The style of the images that are being shown to the user.
         style.create('gallery_image', 'image_placement')
+
+        # The transition used when switching gallery pages.
+        store.gallery_transition = Dissolve(0.5)
               
     python:
 
@@ -226,20 +229,22 @@ init:
                 ui.close()
 
                 # Interact with the user.
-                cmd, arg = ui.interact(suppress_overlay=True)
+                renpy.transition(gallery_transition)
+                cmd, arg = ui.interact(suppress_overlay=True, suppress_underlay=True)
 
                 # Process the user's commands.
                 if cmd == "show":
-
                     ui.add(Solid((0, 0, 0, 255)))
                     ui.image(arg)
                     ui.saybehavior()
-                    ui.interact()
+                    renpy.transition(gallery_transition)
+                    ui.interact(suppress_overlay=True, suppress_underlay=True)
 
                 if cmd == "page":
                     page = arg
 
                 if cmd == "return":
+                    renpy.transition(gallery_transition)
                     return
 
 
