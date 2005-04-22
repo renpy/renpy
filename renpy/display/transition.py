@@ -358,7 +358,7 @@ class CropMove(Transition):
         image. Otherwise, the top layer contains the old image.
         """
         
-
+        super(CropMove, self).__init__(time)
         self.time = time
 
         if mode == "wiperight":
@@ -509,11 +509,11 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not topnew)
+        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not self.topnew)
 
         top = render(self.top, width, height, st)
-        ss = top.subsurface(crop, focus=topnew)
-        rv.blit(ss, pos, focus=topnew)
+        ss = top.subsurface(crop, focus=self.topnew)
+        rv.blit(ss, pos, focus=self.topnew)
 
         renpy.display.render.redraw(self, 0)
         return rv
