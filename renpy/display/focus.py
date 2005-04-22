@@ -243,7 +243,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
                   xmul, ymul, wmul, hmul):
 
     if not focus_list:
-           return
+        return
 
     # No widget focused.
     current = get_focused()

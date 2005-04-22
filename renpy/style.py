@@ -40,7 +40,7 @@ def reset():
     management.
     """
 
-    global styles_map
+    global style_map
     global styles_built
     global styles_pending
     global style_info 

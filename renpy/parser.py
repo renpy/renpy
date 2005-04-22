@@ -172,13 +172,11 @@ def group_logical_lines(lines):
 
             if l[index] == '\t':
                 index += 1
-                depth = depth + 8 - (16 % 8)
+                depth = depth + 8 - (depth % 8)
                 continue
                 
             break
 
-        # TODO: Fix to handle tabs properly. Or else update the docs to
-        # forbid tabs entirely.
         return depth, l[depth:]
 
     # i, min_depth -> block, new_i
@@ -519,7 +517,7 @@ class Lexer(object):
         while self.match(r'\.'):
             n = self.name()
             if not n:
-                self.parse_error('expecting name.')
+                self.error('expecting name.')
 
             rv += "." + n
 

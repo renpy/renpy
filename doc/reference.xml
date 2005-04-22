@@ -2958,7 +2958,7 @@ keymap = dict(
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
-    hide_windows = [ 'mouseup_2' ],
+    hide_windows = [ 'mouseup_2', 'h' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

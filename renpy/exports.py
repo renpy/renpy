@@ -6,16 +6,16 @@
 import renpy
 
 # Many of these shouldn't be used directly.
-from renpy.display.layout import *
-from renpy.display.text import *
-from renpy.display.behavior import *
-from renpy.display.image import *
+# from renpy.display.layout import *
+# from renpy.display.text import *
+# from renpy.display.behavior import *
+# from renpy.display.image import *
 
 from renpy.curry import curry
 # from renpy.display.audio import music_start, music_stop
 from renpy.display.audio import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
-from renpy.loadsave import *
+from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 

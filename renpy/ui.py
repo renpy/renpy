@@ -344,6 +344,7 @@ def image(filename, **properties):
     return add(renpy.display.image.Image(filename, **properties))
 
 def imagemap(ground, selected, hotspots, unselected=None,
+             style='imagemap', button_style='imagemap_button',
              **properties):
     """
     This is called to create imagemaps. Parameters are
@@ -351,7 +352,7 @@ def imagemap(ground, selected, hotspots, unselected=None,
     returned when ui.interact() returns.
     """
 
-    rv = fixed(style='imagemap')
+    rv = fixed(style=style, **properties)
 
     if not unselected:
         unselected = ground
@@ -362,7 +363,7 @@ def imagemap(ground, selected, hotspots, unselected=None,
         imagebutton(renpy.display.im.Crop(unselected, x0, y0, x1 - x0, y1 - y0),
                     renpy.display.im.Crop(selected, x0, y0, x1 - x0, y1 - y0),
                     clicked=returns(result),
-                    style='imagemap_button',
+                    style=button_style,
                     xpos=x0, xanchor='left',
                     ypos=y0, yanchor='top',
                     )

@@ -497,7 +497,7 @@ class Rotozoom(ImageBase):
         """
 
         im = image(im)
-        super(Rotozoom, self).__init__(im, angle, zoopm)
+        super(Rotozoom, self).__init__(im, angle, zoom)
 
         self.image = im
         self.angle = angle
@@ -506,7 +506,7 @@ class Rotozoom(ImageBase):
     def load(self):
 
         return pygame.transform.rotozoom(cache.get(self.image),
-                                         angle, zoom)
+                                         self.angle, self.zoom)
         
         
 class Crop(ImageBase):

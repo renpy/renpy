@@ -269,7 +269,7 @@ class Input(renpy.display.text.Text):
 
         elif ev.type == KEYDOWN and ev.unicode:
             if ord(ev.unicode[0]) < 32:
-                    return None
+                return None
                 
             if self.length and len(self.content) >= self.length:
                 raise renpy.display.core.IgnoreEvent()

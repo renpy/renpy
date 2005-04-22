@@ -2,7 +2,6 @@
 # window.
 
 import renpy
-from renpy.display.render import render
 
 import pygame
 from pygame.constants import *
@@ -651,11 +650,11 @@ class Interface(object):
 
         # We load at most one image per wait.
         if renpy.display.im.cache.needs_preload():
-           ev = pygame.event.poll()
-           if ev.type != NOEVENT:
-               return ev
+            ev = pygame.event.poll()
+            if ev.type != NOEVENT:
+                return ev
 
-           renpy.display.im.cache.preload()
+            renpy.display.im.cache.preload()
 
         return pygame.event.wait()
 
