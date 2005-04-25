@@ -284,6 +284,7 @@ init -1000:
         style.file_picker_window.xanchor = 'left'
         style.file_picker_window.ypos = 0
         style.file_picker_window.yanchor = 'top'
+        style.file_picker_window.xpadding = 5
 
 
         style.create('file_picker_navbox', 'default',
@@ -293,16 +294,23 @@ init -1000:
 
         style.create('file_picker_nav_button', 'button',
                      '(window, hover) The style that is used for enabled file picker navigation buttons.')
+
         style.create('file_picker_nav_button_text', 'button_text',
                      '(text) The style that is used for the label of enabled file picker navigation buttons.')        
+
+
+        style.create('file_picker_grid', 'default',
+                     '(position) The style of the grid containing the file picker entries.')
+
+        style.file_picker_grid.xfill = True
                 
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
         style.file_picker_entry.xpadding = 5
         style.file_picker_entry.ypadding = 2
-        style.file_picker_entry.xmargin = 10
-        style.file_picker_entry.xminimum = 400
+        style.file_picker_entry.xmargin = 5
+        style.file_picker_entry.xfill = True
         style.file_picker_entry.ymargin = 2
         
         style.file_picker_entry.background = Solid((255, 255, 255, 255))

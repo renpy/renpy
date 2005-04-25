@@ -6,7 +6,7 @@
 
 from compiler import parse
 from compiler.pycodegen import ModuleCodeGenerator, ExpressionCodeGenerator
-from compiler.misc import set_filename
+# from compiler.misc import set_filename
 import compiler.ast as ast
 
 import marshal
@@ -118,11 +118,33 @@ def recursively_replace(o, func):
 
     return o
 
-def py_compile(source, mode):
+def set_filename(filename, offset, tree):
+    """Set the filename attribute to filename on every node in tree"""
+    worklist = [tree]
+    while worklist:
+        node = worklist.pop(0)
+        node.filename = filename
+
+        lineno = getattr(node, 'lineno', None)
+        if lineno is not None:
+            node.lineno = lineno + offset
+
+        worklist.extend(node.getChildNodes())
+
+
+def py_compile(source, mode, filename='<none>', lineno=1):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
     appropriate.
+
+    @param source: The sourccode, as a string.
+
+    @param mode: 'exec' or 'eval'.
+
+    @param filename: The filename that the source code is taken from.
+
+    @param lineno: The line number of the first line of the source code.
     """
 
     tree = parse(source, mode)
@@ -130,21 +152,21 @@ def py_compile(source, mode):
     recursively_replace(tree, wrap_node)
 
     if mode == 'exec':
-        set_filename("<none>", tree)
+        set_filename(filename, lineno - 1, tree)
         cg = ModuleCodeGenerator(tree)
     else:
-        set_filename("<none>", tree)
+        set_filename(filename, lineno - 1, tree)
         cg = ExpressionCodeGenerator(tree)
 
     return cg.getCode()
 
-def py_compile_exec_bytecode(source):
-    code = py_compile(source, 'exec')
+def py_compile_exec_bytecode(source, **kwargs):
+    code = py_compile(source, 'exec', **kwargs)
     return marshal.dumps(code)
 
-def py_compile_eval_bytecode(source):
+def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()
-    code = py_compile(source, 'exec')
+    code = py_compile(source, 'exec', **kwargs)
     return marshal.dumps(code)
 
 

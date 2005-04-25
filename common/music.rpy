@@ -27,7 +27,7 @@ init -1000:
 
             @param fadeout: If this parameter is not None, it is
             interpreted as a time in seconds, which gives how long
-            the fade will take.
+            it will take to fade out the currently playing music.
             """
 
          if loops >= 0:
@@ -40,15 +40,22 @@ init -1000:
          if fadeout and audio.music_enabled() and not config.skipping:
              audio.music_fadeout(fadeout)
          
-     def music_stop():
+     def music_stop(fadeout=None):
          """
             This stops the currently playing music track.
+
+            @param fadeout: If this parameter is not None, it is
+            interpreted as a time in seconds, which gives how long
+            it will take to fade out the currently playing music.
             """
 
          ctx = renpy.context()
          ctx._music_name = None
          ctx._music_loops = None
 
+         if fadeout and audio.music_enabled() and not config.skipping:
+             audio.music_fadeout(fadeout)
+         
      renpy.music_start = music_start
      renpy.music_stop = music_stop
 

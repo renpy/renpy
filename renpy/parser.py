@@ -702,20 +702,37 @@ class Lexer(object):
     def python_block(self):
         """
         Returns the subblock of this code, and subblocks of that
-        subblock, as indented python code.
+        subblock, as indented python code. This tries to insert
+        whitespace to ensure line numbers match up.
         """
 
         rv = [ ]
 
+        # Something to hold the expected line number.
+        class Object(object):
+            pass
+        o = Object()
+        o.line = self.number
+
         def process(block, indent):
 
             for fn, ln, text, subblock in block:
-                rv.append(indent + text + '\n')
+
+                if o.line > ln:
+                    assert False
+
+                while o.line < ln:
+                    rv.append(indent + '\n')
+                    o.line += 1
+
+                linetext = indent + text + '\n'
+
+                rv.append(linetext)
+                o.line += linetext.count('\n')
 
                 process(subblock, indent + '    ')
 
         process(self.subblock, '')
-
         return ''.join(rv)
 
 def parse_image_name(l):

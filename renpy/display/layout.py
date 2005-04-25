@@ -250,11 +250,14 @@ class Grid(Container):
     """
 
     def __init__(self, cols, rows, padding=0,
+                 transpose=False,
                  style='default', **properties):
         """
         @param cols: The number of columns in this widget.
 
         @params rows: The number of rows in this widget.
+
+        @params transpose: True if the grid should be transposed.
         """
 
         super(Grid, self).__init__()
@@ -265,6 +268,7 @@ class Grid(Container):
         self.rows = rows
 
         self.padding = padding
+        self.transpose = transpose
 
     def render(self, width, height, st):
 
@@ -276,7 +280,28 @@ class Grid(Container):
         if len(self.children) != cols * rows:
             raise Exception("Grid not completely full.")
 
-        renders = [ render(i, width, height, st) for i in self.children ]
+        # If necessary, transpose the grid (kinda hacky, but it works here.)
+        if self.transpose:
+            self.transpose = False
+
+            old_children = self.children[:]
+            
+            for y in range(0, rows):
+                for x in range(0, cols):
+                    self.children[x + y * cols] = old_children[ y + x * rows ]
+
+            
+        # Now, start the actual rendering.
+
+        renwidth = width
+        renheight = height
+
+        if self.style.xfill:
+            renwidth = (width - (cols - 1) * padding) / cols
+        if self.style.yfill:
+            renheight = (height - (rows - 1) * padding) / rows
+        
+        renders = [ render(i, renwidth, renheight, st) for i in self.children ]
         self.sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
@@ -287,10 +312,10 @@ class Grid(Container):
             cheight = max(cheight, h)
 
         if self.style.xfill:
-            cwidth = (width - (cols - 1) * padding) / cols
+            cwidth = renwidth
 
         if self.style.yfill:
-            cheight = (height - (rows - 1) * padding) / rows
+            cheight = renheight
 
         width = cwidth * cols + padding * (cols - 1)
         height = cheight * rows + padding * (rows - 1)

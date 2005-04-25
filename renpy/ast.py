@@ -209,12 +209,15 @@ class Python(Node):
         
         super(Python, self).__init__(loc)
 
+        filename = loc[0]
+        lineno = loc[1]
+
         self.hide = hide
 
         old_ei = renpy.game.exception_info
 
         renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
-        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code)
+        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code, filename=filename, lineno=lineno)
         renpy.game.exception_info = old_ei
 
 

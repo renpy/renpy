@@ -1,3 +1,30 @@
+New in 4.8.1
+------------
+Character object now supports user-defined display functions.
+
+
+
+
+The ui.grid object now has a new argument, transpose, which allows 
+widgets to be added down the columns first. It also is smarter about
+allocating space to subwidgets when xfill or yfill are set.
+
+The file entries in the load and save screens are now arraigned in a
+grid, which has the style file_picker_grid. This means that we should
+now be smarter in the presence of games of varying size, and we should
+wrap text if it gets too long. As part of this,
+library.file_picker_length has now been broken out into two variables,
+library.file_picker_rows and library.file_picker_cols. [ document ]
+
+renpy.music_stop now supports a fadeout parameter, for orthagonality
+with the new renpy.music_start. 
+
+Now, python blocks have the correct filename and line numbers
+annotated onto them. This means that tracebacks generated in python
+blocks will show a .rpy file and the appropriate line, rather than
+showing "<none>" and a random line as they did before.
+
+
 New in 4.8
 ----------
 

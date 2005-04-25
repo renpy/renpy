@@ -31,7 +31,7 @@ init:
     $ style.button.hover_sound = "chev6.wav"
     $ style.button.activate_sound = "chev7.wav"
 
-    $ style.mm_root_window.background = renpy.Solid((128, 128, 128, 255))
+    $ style.mm_root_window.background = Solid((128, 128, 128, 255))
 
     # Backgrounds.
     image whitehouse = Image("whitehouse.jpg")
@@ -110,6 +110,36 @@ label start:
 
     scene whitehouse
     show eileen happy beret
+
+    $ a = 0
+
+    while a < 10:
+
+        $ ui.vbox()
+        $ ui.textbutton("Foo %d" % a, clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.close()
+
+        $ ui.pausebehavior(0.25)
+
+        $ ui.interact()
+
+        $ a += 1
+
+    return
+        
+
+
+
 
 
     python:
