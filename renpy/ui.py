@@ -224,8 +224,8 @@ def sizer(maxwidth=None, maxheight=None, **properties):
 
     @param maxheight: The maximum height of the child widget, or None ot not affect height.
     """
-
-    return add(renpy.display.layout.Sizer(maxwidth, maxheight, None, **properties),
+    
+    return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),
                True, True)
 
     

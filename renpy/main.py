@@ -129,7 +129,7 @@ def run(restart=False):
             # We get this when the context has changed, and so we go and
             # start running from the new context.
             except game.RestartException, e:
-                pass
+                continue
 
             except game.QuitException, e:
                 break

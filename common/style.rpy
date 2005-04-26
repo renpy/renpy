@@ -64,6 +64,8 @@ init -1000:
         style.default.ypos = 0
         style.default.xanchor = 'left'
         style.default.yanchor = 'top'
+        style.default.xmaximum = None
+        style.default.ymaximum = None
 
         # Sound properties.
         style.default.sound = None

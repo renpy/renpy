@@ -99,7 +99,7 @@ class RestartException(Exception):
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
-
+    
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely

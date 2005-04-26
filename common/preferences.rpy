@@ -47,7 +47,7 @@ init -450:
                     return
 
                 ui.window(style='prefs_pref')
-                ui.vbox(style='prefs_pref')
+                ui.vbox()
 
                 _label_factory(self.name, "prefs")
 

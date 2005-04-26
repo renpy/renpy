@@ -701,31 +701,31 @@ class Move(Container):
         return rv
 
     
-class Sizer(Container):
-    """
-    This is a widget that can change the size allocated to the widget that
-    it contains. Please note that it can only shrink the widget, and that
-    not all widgets respond well to having their areas shrunk. (For example,
-    this has no effect on an image.)
-    """
+# class Sizer(Container):
+#     """
+#     This is a widget that can change the size allocated to the widget that
+#     it contains. Please note that it can only shrink the widget, and that
+#     not all widgets respond well to having their areas shrunk. (For example,
+#     this has no effect on an image.)
+#     """
 
-    def __init__(self, maxwidth, maxheight, child,
-                 style='default', **properties):
+#     def __init__(self, maxwidth, maxheight, child,
+#                  style='default', **properties):
 
-        super(Sizer, self).__init__()
-        self.add(child)
+#         super(Sizer, self).__init__()
+#         self.add(child)
 
-        self.maxwidth = maxwidth
-        self.maxheight = maxheight
+#         self.maxwidth = maxwidth
+#         self.maxheight = maxheight
 
-        self.style = renpy.style.Style(style, properties)
+#         self.style = renpy.style.Style(style, properties)
 
-    def render(self, width, height, st):
+#     def render(self, width, height, st):
 
-        if self.maxwidth:
-            width = min(width, self.maxwidth)
+#         if self.maxwidth:
+#             width = min(width, self.maxwidth)
 
-        if self.maxheight:
-            height = min(height, self.maxheight)
+#         if self.maxheight:
+#             height = min(height, self.maxheight)
 
-        return super(Sizer, self).render(width, height, st)
+#         return super(Sizer, self).render(width, height, st)

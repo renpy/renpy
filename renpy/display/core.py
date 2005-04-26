@@ -223,8 +223,6 @@ class SceneLists(object):
     @ivar transient: The current transient display list.
     @ivar overlay: The current overlay display list.
 
-    @ivar music: Opaque information about the music that is being played.
-
     @ivar focused: The widget that is currently focused.
     """
 
@@ -237,12 +235,14 @@ class SceneLists(object):
             for i in renpy.config.layers:
                 self.layers[i] = oldsl.layers[i][:]
 
+            for i in renpy.config.overlay_layers:
+                self.clear(i)
+
             self.replace_transient()
 
-            self.music = oldsl.music
             self.sticky_positions = oldsl.sticky_positions.copy()
             self.movie = oldsl.movie
-            self.focused = oldsl.focused
+            self.focused = None
             
         else:
             for i in renpy.config.layers:
@@ -260,10 +260,6 @@ class SceneLists(object):
         """
 
         rv = SceneLists(self)
-
-        for i in renpy.config.overlay_layers:
-            rv.layers[i] = [ ]
-
         rv.focused = None
 
 #         rv.master = self.master[:]
@@ -285,6 +281,21 @@ class SceneLists(object):
 
         for i in renpy.config.transient_layers:
             self.layers[i] = [ ]
+
+    def transient_is_empty(self):
+        """
+        This returns True if all transient layers are empty. This is
+        used by the rollback code, as we can't start a new rollback
+        if there is something in a transient layer (as things in the
+        transient layer may contain objects that cannot be pickled,
+        like lambdas.)
+        """
+
+        for i in renpy.config.transient_layers:
+            if self.layers[i]:
+                return False
+
+        return True
 
     def add(self, layer, thing, key=None):
         """
@@ -602,14 +613,7 @@ class Interface(object):
         
         scene_lists = renpy.game.context().scene_lists
 
-        # We don't want the overlay to be clear here.
-
-        if not renpy.config.overlay_during_wait:
-            for i in renpy.config.overlay_layers:
-                scene_lists.clear(i)
-
         self.old_scene = self.compute_scene(scene_lists)
-
 
         # self.old_scene.append_scene_list(scene_lists.master)
 
@@ -698,13 +702,12 @@ class Interface(object):
                 repeat, rv = self.interact_core(**kwargs)
             
             return rv
-
+        
         finally:
 
             # Clean out transient stuff at the end of an interaction.
             scene_lists = renpy.game.context().scene_lists
             scene_lists.replace_transient()
-
         
 
     def interact_core(self,
@@ -765,9 +768,6 @@ class Interface(object):
         scene_lists = renpy.game.context().scene_lists
         
         # Figure out what the overlay layer should look like.
-        for i in renpy.config.overlay_layers:
-            scene_lists.clear(i)
-
         renpy.ui.layer("overlay")
 
         if not suppress_overlay:
@@ -969,6 +969,10 @@ class Interface(object):
             return False, rv
 
         finally:
+
+            # Clean out the overlay layers.
+            for i in renpy.config.overlay_layers:
+                scene_lists.clear(i)
 
             # pygame.time.set_timer(KEYREPEATEVENT, 0)
             pygame.time.set_timer(DISPLAYTIME, 0)

@@ -439,6 +439,12 @@ class RollbackLog(renpy.object.Object):
         state needs to be saved for rollbacking.
         """
 
+        # If the transient scene list is not empty, then we do
+        # not begin a new rollback, as the TSL will be purged
+        # after a rollback is complete.
+        if not renpy.game.contexts[0].scene_lists.transient_is_empty():
+            return
+
         # If the log is too long, try pruning it to a label.
         if len(self.log) > renpy.config.rollback_length:
             rb = self.log[-renpy.config.rollback_length]

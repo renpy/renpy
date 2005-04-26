@@ -62,6 +62,12 @@ def render(widget, width, height, st):
     Renders a widget on the screen.
     """
 
+    if widget.style.xmaximum is not None:
+        width = min(widget.style.xmaximum, width)
+
+    if widget.style.ymaximum is not None:
+        height = min(widget.style.ymaximum, height)
+
     if (widget, width, height) in old_renders:
         rv = old_renders[widget, width, height]
 
