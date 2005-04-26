@@ -44,8 +44,6 @@ def _return(v):
 _return = renpy.curry.curry(_return)
 
 # Note that this is really a RevertableObject.
-# TODO: Move this someplace saner. Like perhaps to .exports. But
-# be sure to change the base class after the move!
 
 class Character(object):
     """
