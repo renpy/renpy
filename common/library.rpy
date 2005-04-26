@@ -21,7 +21,7 @@ init -500:
         library = object()
 
         # The number of columns of files to show at once.
-        library.file_page_columns = 2
+        library.file_page_cols = 2
 
         # The number of rows of files to show at once.
         library.file_page_rows = 5
@@ -377,7 +377,7 @@ init -500:
         def _file_picker(selected, save):
 
             # The number of slots in a page.
-            file_page_length = library.file_page_columns * library.file_page_rows
+            file_page_length = library.file_page_cols * library.file_page_rows
 
             saves, newest = renpy.saved_games()
 
@@ -439,7 +439,7 @@ init -500:
                         _render_savefile(name, saves[name], newest)
                     
                 # Actually draw a slot.
-                ui.grid(library.file_page_columns,
+                ui.grid(library.file_page_cols,
                         library.file_page_rows,
                         style='file_picker_grid',
                         transpose=True) # slots

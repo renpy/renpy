@@ -369,6 +369,7 @@ init -1000:
 
         style.prefs_pref.xpos = 0.5
         style.prefs_pref.xanchor = 'center'
+        style.prefs_pref.bottom_margin = 10
 
         style.create('prefs_label', 'default',
                      '(text, position) The style that is applied to the label of a block of preferences.')
