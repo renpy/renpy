@@ -1,9 +1,10 @@
 New in 4.8.1
 ------------
-Character object now supports user-defined display functions.
 
-
-
+Character objects are no longer limited to displaying through
+renpy.display_say, but can now be supplied a function argument, which
+is a function that is called instead. This will make it easier to
+radically change how dialogue is displayed.
 
 The ui.grid object now has a new argument, transpose, which allows 
 widgets to be added down the columns first. It also is smarter about
@@ -16,7 +17,7 @@ wrap text if it gets too long. As part of this,
 library.file_picker_length has now been broken out into two variables,
 library.file_picker_rows and library.file_picker_cols. [ document ]
 
-renpy.music_stop now supports a fadeout parameter, for orthagonality
+renpy.music_stop now supports a fadeout parameter, for orthogonality
 with the new renpy.music_start. 
 
 Now, python blocks have the correct filename and line numbers

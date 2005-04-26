@@ -62,6 +62,7 @@ class Character(object):
                  who_style='say_label',
                  what_style='say_dialogue',
                  window_style='say_window',
+                 function = renpy.exports.display_say,
                  **properties):
         """
         @param name: The name of the character, as shown to the user.
@@ -90,6 +91,10 @@ class Character(object):
 
         @param what_suffix: A suffix that is appended to the text body.
 
+        @param function: The function that is called to actually display
+        this dialogue. This should either be renpy.display_say, or a function
+        with the same signature as it.
+
         @param interact: If True (the default), then each line said
         through this character causes an interaction. If False, then
         the window is added to the screen, but control immediately
@@ -101,14 +106,15 @@ class Character(object):
         self.what_style = what_style
         self.window_style = window_style
         self.properties = properties
+        self.function = function
 
     def __call__(self, what, interact=True):
-        renpy.display_say(self.name, what,
-                          who_style=self.who_style,
-                          what_style=self.what_style,
-                          window_style=self.window_style,
-                          interact=interact,
-                          **self.properties)
+        self.function(self.name, what,
+                      who_style=self.who_style,
+                      what_style=self.what_style,
+                      window_style=self.window_style,
+                      interact=interact,
+                      **self.properties)
 
 class DynamicCharacter(object):
     """
@@ -125,6 +131,7 @@ class DynamicCharacter(object):
                  who_style='say_label',
                  what_style='say_dialogue',
                  window_style='say_window',
+                 function = renpy.exports.display_say,
                  **properties):
         """
         @param name_expr: An expression that, when evaluated, should yield
@@ -138,17 +145,18 @@ class DynamicCharacter(object):
         self.what_style = what_style
         self.window_style = window_style
         self.properties = properties
+        self.function = function
 
     def __call__(self, what, interact=True):
         import renpy.python as python
 
-        renpy.display_say(python.py_eval(self.name_expr),
-                          what,
-                          who_style=self.who_style,
-                          what_style=self.what_style,
-                          window_style=self.window_style,
-                          interact=interact,
-                          **self.properties)
+        self.function(python.py_eval(self.name_expr),
+                      what,
+                      who_style=self.who_style,
+                      what_style=self.what_style,
+                      window_style=self.window_style,
+                      interact=interact,
+                      **self.properties)
 
 # The color function. (Moved, since text needs it, too.)
 color = renpy.display.text.color

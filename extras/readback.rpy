@@ -132,12 +132,12 @@ init -100:
                 readback_save(self, what)
 
             def readback(self, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
+                self.function(self.name, what,
+                              who_style=self.who_style,
+                              what_style=self.readback_style,
+                              window_style=self.window_style,
+                              interact=False,
+                              **self.properties)
 
 
 
@@ -156,12 +156,12 @@ init -100:
                 readback_save(self, name, what)
                 
             def readback(self, name, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
+                self.function(self.name, what,
+                              who_style=self.who_style,
+                              what_style=self.readback_style,
+                              window_style=self.window_style,
+                              interact=False,
+                              **self.properties)
 
     
         class Sayer(object):
