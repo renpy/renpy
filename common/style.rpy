@@ -365,7 +365,7 @@ init -1000:
 
 
         style.create('prefs_pref', 'default',
-                     '(window, position) The position of the box containing an individual preference.')
+                     '(window, position) A window containing an individual preference.')
 
         style.prefs_pref.xpos = 0.5
         style.prefs_pref.xanchor = 'center'
@@ -400,6 +400,21 @@ init -1000:
 
         style.prefs_window.xfill=True
         style.prefs_window.ypadding = 0.05
+
+        style.create('prefs_left', 'default',
+                     '(position) The position of the left column of preferences.')
+
+        style.prefs_left.xanchor = 'center'
+        style.prefs_left.xpos = 0.25
+
+        style.create('prefs_right', 'default',
+                     '(position) The position of the left column of preferences.')
+
+        style.prefs_right.xanchor = 'center'
+        style.prefs_right.xpos = 0.75
+
+
+# The skip indicator.
         
         style.create('skip_indicator', 'default',
                      '(text, position) The style of the text that is used to indicate that skipping is in progress.')

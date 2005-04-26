@@ -58,7 +58,6 @@ def run(restart=False):
     # Initialize the set of images seen ever.
     if not game.persistent._seen_images:
         game.persistent._seen_images = { }
-
     
     # Clear the list of seen statements in this game.
     game.seen_session = { }

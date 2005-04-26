@@ -33,6 +33,13 @@ Now, we only restore or rollback to places where all of the transient
 layers are empty. This prevents a bug in which additional dialogue
 will be lost when a restore or rollback occurs. 
 
+The way in which preferences are displayed has been made more
+configurable. Now, there is a new variable, library.preferences, which
+is a map from a style to a list of preferences to be displayed in a
+vbox with that style. There are now two new styles (prefs_left and
+prefs_right) which control the placement of the default preference 
+columns. [ document ]
+
 New in 4.8
 ----------
 
