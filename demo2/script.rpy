@@ -856,7 +856,7 @@ label whatsnew45:
     hide eileen with dissolve
 
     e "I'll stand offscreen, so you can see some of its modes. I'll read
-       out the mode name after each transiton."
+       out the mode name after each transition."
 
     scene whitehouse with wiperight
 

@@ -40,6 +40,15 @@ vbox with that style. There are now two new styles (prefs_left and
 prefs_right) which control the placement of the default preference 
 columns. [ document ]
 
+There is a new spinner preference type, which allows a value to be 
+incremented or decremented. This preference is now used to adjust the
+speed at which text is shown to the user. So now this is controlled by
+the user, rather than the config.annoying_text_cps parameter. If you
+don't want to give the user this control, you can set library.has_cps
+to False. A number of new styles define the spinner. [ document ]
+
+
+
 New in 4.8
 ----------
 

@@ -105,7 +105,8 @@ class Text(renpy.display.core.Displayable):
     A displayable that can format and display text on the screen.
     """
 
-    nosave = [ 'laidout', 'laidout_lineheights', 'laidout_width', 'laidout_height', 'width' ]
+    nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
+               'laidout_width', 'laidout_height', 'width' ]
 
     def after_setstate(self):
         self.laidout = None
@@ -211,6 +212,9 @@ class Text(renpy.display.core.Displayable):
         # The width of the current line.
         linewidth = 0
 
+        # A list of the same.
+        linewidths = [ ]
+
         # The maximum linewidth.
         maxwidth = 0
 
@@ -235,6 +239,7 @@ class Text(renpy.display.core.Displayable):
                 
                 lines.append(line)
                 lineheights.append(lineheight)
+                linewidths.append(curwidth)
                 
                 line = [ ]
                 linewidth = 0
@@ -350,6 +355,7 @@ class Text(renpy.display.core.Displayable):
                 
                 line = [ ]
                 lineheights.append(lineheight)
+                linewidths.append(curwidth)
                 
                 cur = i
                 curwidth, lineheight = tsl[-1].sizes(cur)                
@@ -371,10 +377,11 @@ class Text(renpy.display.core.Displayable):
         if line:
             lines.append(line)
             lineheights.append(lineheight)
-
+            linewidths.append(curwidth)
 
         self.laidout = lines
         self.laidout_lineheights = lineheights
+        self.laidout_linewidths = linewidths
         self.laidout_width = max(maxwidth, self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
 
@@ -393,8 +400,8 @@ class Text(renpy.display.core.Displayable):
         antialias = self.style.antialias
         line_spacing = self.style.line_spacing
         
-        for line, line_height in zip(self.laidout, self.laidout_lineheights):
-            x = xo + indent
+        for line, line_height, line_width in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths):
+            x = xo + indent + self.style.textalign * (self.laidout_width - line_width)
             indent = rest_indent
 
             max_ascent = 0
@@ -424,8 +431,8 @@ class Text(renpy.display.core.Displayable):
             
     def render(self, width, height, st):
 
-        if self.slow and renpy.config.annoying_text_cps and not renpy.game.preferences.fast_text:
-            length = int(st * renpy.config.annoying_text_cps)
+        if self.slow and renpy.game.preferences.text_cps:
+            length = int(st * renpy.game.preferences.text_cps)
         else:
             length = sys.maxint
             self.slow = False

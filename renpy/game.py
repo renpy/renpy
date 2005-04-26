@@ -77,7 +77,9 @@ class Preferences(object):
         self.sound = True
         self.music = True
         self.skip_unseen = False
-        self.fast_text = False
+
+        self.text_cps = 0
+
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.

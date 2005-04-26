@@ -86,9 +86,6 @@ mouse = None
 # The default sound playback sample rate.
 sound_sample_rate = 44100
 
-# How fast text is displayed on the screen, by default.
-annoying_text_cps = None
-
 # The amount of time music is faded out between tracks.
 fade_music = 0.0
 

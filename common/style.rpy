@@ -413,6 +413,26 @@ init -1000:
         style.prefs_right.xanchor = 'center'
         style.prefs_right.xpos = 0.75
 
+        style.create('prefs_spinner', 'default',
+                     '(position) The position of the prefs spinner.')
+
+        style.prefs_spinner.xpos = 0.5
+        style.prefs_spinner.xanchor = 'center'
+
+        style.create('prefs_spinner_label', 'prefs_label',
+                     '(text) This is the style that displays the value of a preference spinner.')
+
+        style.prefs_spinner_label.minwidth = 100
+        style.prefs_spinner_label.textalign = 0.5
+
+        style.create('prefs_spinner_button', 'prefs_button',
+                     '(window, hover) The style of the + or - buttons in a preference spinner.')
+
+        style.create('prefs_spinner_button_text', 'prefs_button_text',
+                     '(text, hover) The style of the text of the + and - buttons in a preference spinner.')
+                                              
+                     
+
 
 # The skip indicator.
         

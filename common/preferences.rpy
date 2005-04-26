@@ -69,6 +69,88 @@ init -450:
                                     clicked=clicked)
                     
                 ui.close()
+
+        class _PreferenceSpinner(object):
+            """
+            This is a class that's used to represent a preference
+            spinner, which is a preference that can be incremented
+            and decremented, when shown to the user.
+            """
+
+            def __init__(self, name, field, minimum, maximum, delta,
+                         cond = "True", render = lambda x : str(x),
+                         base=_preferences):
+                """
+                @param name: The name of this preference, that is presented
+                to the user.
+
+                @param field: The name of the field on the base object
+                that is updated by this spinner.
+
+                @param minimum: The minimum value that this spinner can set
+                the value to.
+
+                @param maximum: The maximum value that this spinner can set
+                the value to.
+
+                @param delta: The delta by which this spinner is
+                incremented or decremented.
+
+                @param cond: If this condition is not true, this spinner is
+                not shown.
+
+                @param render: This function is called with the value of
+                the field, and is expected to render that value to a
+                string.
+
+                @param base: The base object that this spinner updates
+                the field on. It defaults to _preferences, the preferences
+                object.
+                """
+
+                self.name = name
+                self.field = field
+                self.minimum = minimum
+                self.maximum = maximum
+                self.delta = delta
+                self.cond = cond
+                self.render = render
+                self.base = base
+
+            def render_preference(self):
+                
+                if not renpy.eval(self.cond):
+                    return
+
+                ui.window(style='prefs_pref')
+                ui.vbox()
+
+                _label_factory(self.name, "prefs")
+
+                cur = getattr(self.base, self.field)
+
+
+                def minus_clicked():
+                    value = cur - self.delta
+                    value = max(self.minimum, value)
+                    setattr(self.base, self.field, value)
+                    return True
+
+                def plus_clicked():
+                    value = cur + self.delta
+                    value = min(self.maximum, value)
+                    setattr(self.base, self.field, value)
+                    return True
+                    
+                ui.hbox(style='prefs_spinner')
+                _button_factory("-", "prefs_spinner", clicked=minus_clicked)
+                _label_factory(self.render(cur), "prefs_spinner")
+                _button_factory("+", "prefs_spinner", clicked=plus_clicked)
+                ui.close()
+                    
+                ui.close()
+                
+            
                     
 
     python hide:
@@ -77,6 +159,7 @@ init -450:
         library.has_music = True
         library.has_sound = True
         library.has_transitions = True
+        library.has_cps = True
 
 
         p1 = _Preference('Display', 'fullscreen', [
@@ -108,11 +191,21 @@ init -450:
             ('None', 0, 'library.has_transitions'),
             ])
 
-        p6 = _Preference('Text Display', 'fast_text', [
-            ('Fast', True, 'config.annoying_text_cps'),
-            ('Slow', False, 'config.annoying_text_cps'),
-            ])
+#         p6 = _Preference('Text Display', 'fast_text', [
+#             ('Fast', True, 'config.annoying_text_cps'),
+#             ('Slow', False, 'config.annoying_text_cps'),
+#             ])
+
+        def cps_render(n):
+            if n == 0:
+                return "Infinite"
+            else:
+                return str(n)
             
+        p6 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
+                                0, 500, 10, 'library.has_cps',
+                                render=cps_render)
+
 
         library.preferences['prefs_right'] = [ p4, p5, p6 ]
 
