@@ -20,8 +20,11 @@ init -500:
         # Used to store library settings.
         library = object()
 
-        # The number of files to show at once.
-        library.file_page_length = 10
+        # The number of columns of files to show at once.
+        library.file_page_cols = 2
+
+        # The number of rows of files to show at once.
+        library.file_page_rows = 5
 
         # The number of pages to add quick access buttons for.
         library.file_quick_access_pages = 5
@@ -113,11 +116,11 @@ init -500:
 
             style = type
 
-            if selected:
+            if selected and not disabled:
                 style += "_selected"
 
             if disabled:
-                style += "_disabled"
+                clicked = None
 
             style = style + "_button"
             text_style = style + "_text"
@@ -302,7 +305,7 @@ init -500:
             ui.fixed()
 
             ui.window(style='gm_nav_window')
-            ui.vbox()
+            ui.vbox(focus='gm_nav')
             
             for key, label, target, enabled in library.game_menu:
 
@@ -311,7 +314,7 @@ init -500:
 
                 if not eval(enabled):
                     disabled = True
-                    clicked = ui.returns(None)
+                    clicked = None
                              
                 _button_factory(label, "gm_nav", selected=(key==selected),
                                 disabled=disabled, clicked=clicked)
@@ -331,8 +334,8 @@ init -500:
                 clicked=ui.returns(("return", (name, False)))
                 enable_hover = True
             else:
-                clicked=None
-                enable_hover = False
+                clicked = None
+                enable_hover = True
 
             ui.button(style='file_picker_entry',
                       clicked=clicked,
@@ -373,6 +376,9 @@ init -500:
         # the list of save files.
         def _file_picker(selected, save):
 
+            # The number of slots in a page.
+            file_page_length = library.file_page_cols * library.file_page_rows
+
             saves, newest = renpy.saved_games()
 
             # The index of the first entry in the page.
@@ -382,15 +388,12 @@ init -500:
                 fpi = 0
 
                 if newest:
-                    fpi = (int(newest) - 1) // library.file_page_length * library.file_page_length
+                    fpi = (int(newest) - 1) // file_page_length * file_page_length
 
                 if fpi < 0:
                     fpi = 0
 
                 
-            # The length of a half-page of files.
-            hfpl = library.file_page_length // 2
-
             while True:
 
                 if fpi < 0:
@@ -415,7 +418,7 @@ init -500:
 
                 # Quick Access
                 for i in range(0, library.file_quick_access_pages):
-                    target = i * library.file_page_length
+                    target = i * file_page_length
                     tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
 
                 # Next
@@ -435,20 +438,15 @@ init -500:
                     else:
                         _render_savefile(name, saves[name], newest)
                     
-
                 # Actually draw a slot.
-                ui.hbox() # slots
+                ui.grid(library.file_page_cols,
+                        library.file_page_rows,
+                        style='file_picker_grid',
+                        transpose=True) # slots
 
-                ui.vbox()
-                for i in range(0, hfpl):
+                for i in range(0, file_page_length):
                     entry(i)
-                ui.close()
 
-                ui.vbox()
-                for i in range(hfpl, hfpl * 2):
-                    entry(i)
-                ui.close()
-                    
                 ui.close() # slots
 
                 ui.close() # whole thing
@@ -460,7 +458,7 @@ init -500:
                     return value
 
                 if type == "fpidelta":
-                    fpi += value * library.file_page_length
+                    fpi += value * file_page_length
 
                 if type == "fpiset":
                     fpi = value
@@ -516,6 +514,9 @@ label _enter_game_menu:
 
     if library.enter_transition:
         $ renpy.transition(library.enter_transition)
+
+    if renpy.has_label("enter_game_menu"):
+        call enter_game_menu
 
     return
 

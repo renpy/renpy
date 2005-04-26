@@ -166,10 +166,10 @@ def vbox(padding=0, **properties):
 
     return add(renpy.display.layout.VBox(padding, **properties), True)
 
-def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
+def grid(cols, rows, padding=0, transpose=False, **properties):
     """
     This creates a layout that places widgets in an evenly spaced
-    grid. New widges are added to this vbox unil ui.close() is called.
+    grid. New widgets are added to this grid unil ui.close() is called.
     Widgets are added by going from left to right within a single row,
     and down to the start of the next row when a row is full. All cells
     must be filled (that is, exactly col * rows widgets must be added to
@@ -178,23 +178,24 @@ def grid(cols, rows, padding=0, xfill=False, yfill=False, **properties):
     The children of this widget should have a fixed size that does not
     vary based on the space allocated to them. Failure to observe this
     restriction could lead to really odd layouts, or things being
-    rendered off screen.
+    rendered off screen. This condition is relaxed in the appropriate
+    dimension if xfill or yfill is set.
 
     Each cell of the grid is exactly the same size. By default, the
     grid is the smallest size that can accommodate all of its
     children, but it can be expanded to consume all available space in
     a given dimension by setting xfill or yfill to True, as appropriate.
+    (Otherwise, xfill and yfill are inherited from the style.)
 
     @param cols: The number of columns in this grid.
     @param rows: The number of rows in this grid.
     @param padding: The amount of space to leave between rows and columns.
     @param xfill: True if the grid should consume all available width.
     @param yfill: True if the grid should consume all available height.
+    @param transpose: If True, grid will fill down columns before filling across rows.    
     """
 
-    return add(renpy.display.layout.Grid(cols, rows, padding, xfill=xfill, yfill=yfill, **properties), True)
-
-    
+    return add(renpy.display.layout.Grid(cols, rows, padding, transpose=transpose, **properties), True)
 
 def fixed(**properties):
     """
@@ -223,8 +224,8 @@ def sizer(maxwidth=None, maxheight=None, **properties):
 
     @param maxheight: The maximum height of the child widget, or None ot not affect height.
     """
-
-    return add(renpy.display.layout.Sizer(maxwidth, maxheight, None, **properties),
+    
+    return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),
                True, True)
 
     
@@ -244,9 +245,12 @@ def keymousebehavior():
     screen. The keymouse behavior allows the mouse to be controlled
     by the keyboard. This widget should not be added to any other
     widget, but should instead be only added to the screen itself.
+
+    As of 4.8, this does nothing, but is retained for compatability.
     """
 
-    return add(renpy.display.behavior.KeymouseBehavior())
+    return
+
 
 def saybehavior():
     """
@@ -280,7 +284,12 @@ def pausebehavior(delay, result=False):
 
     return add(renpy.display.behavior.PauseBehavior(delay, result))
 
-def menu(menuitems, **properties):
+def menu(menuitems,
+         style = 'menu',
+         caption_style='menu_caption',
+         choice_style='menu_choice',
+         choice_button_style='menu_choice_button',
+         **properties):
     """
     This creates a new menu widget. Unlike the menu statement or
     renpy.menu function, this menu widget is not enclosed in any sort
@@ -293,7 +302,22 @@ def menu(menuitems, **properties):
     if this item is a non-selectable caption.
     """
 
-    return add(renpy.display.behavior.Menu(menuitems, **properties))
+    # menu is now a conglomeration of other widgets. And bully for it.
+
+    renpy.ui.vbox(style=style, **properties)
+
+    for label, val in menuitems:
+        if val is None:
+            renpy.ui.text(label, style=caption_style)
+        else:
+            renpy.ui.textbutton(label,
+                                style=choice_button_style,
+                                text_style=choice_style,
+                                clicked=renpy.ui.returns(val))
+
+    renpy.ui.close()
+
+    # return add(renpy.display.behavior.Menu(menuitems, **properties))
 
 def input(default, length=None, allow=None, exclude='{}', **properties):
     """
@@ -323,16 +347,33 @@ def image(filename, **properties):
     return add(renpy.display.image.Image(filename, **properties))
 
 def imagemap(ground, selected, hotspots, unselected=None,
+             style='imagemap', button_style='imagemap_button',
              **properties):
     """
-    This is the widget that implements imagemaps. Parameters are
+    This is called to create imagemaps. Parameters are
     roughtly the same as renpy.imagemap. The value of the hotspot is
     returned when ui.interact() returns.
     """
 
-    return add(renpy.display.image.ImageMap(ground, selected,
-                                            hotspots, unselected,
-                                            **properties))
+    rv = fixed(style=style, **properties)
+
+    if not unselected:
+        unselected = ground
+
+    image(ground)
+
+    for x0, y0, x1, y1, result in hotspots:
+        imagebutton(renpy.display.im.Crop(unselected, x0, y0, x1 - x0, y1 - y0),
+                    renpy.display.im.Crop(selected, x0, y0, x1 - x0, y1 - y0),
+                    clicked=returns(result),
+                    style=button_style,
+                    xpos=x0, xanchor='left',
+                    ypos=y0, yanchor='top',
+                    )
+
+    close()
+
+    return rv
                                             
 
 def button(clicked=None, **properties):

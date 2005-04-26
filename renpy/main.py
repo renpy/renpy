@@ -54,6 +54,10 @@ def run(restart=False):
         game.persistent._seen_ever = { }
 
     game.seen_ever = game.persistent._seen_ever
+
+    # Initialize the set of images seen ever.
+    if not game.persistent._seen_images:
+        game.persistent._seen_images = { }
     
     # Clear the list of seen statements in this game.
     game.seen_session = { }
@@ -66,11 +70,11 @@ def run(restart=False):
 
     # Initialize the store.
     renpy.store.store = renpy.store
-    game.store = vars(renpy.store)
     renpy.store.persistent = game.persistent
     renpy.store._preferences = game.preferences
 
     # Set up styles.
+    renpy.style.reset()
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
@@ -88,14 +92,14 @@ def run(restart=False):
     renpy.game.exception_info = 'After initialization, but before game start.'
 
     # Rebuild the various style caches.
-    game.style._build_style_caches()
+    renpy.style.build_styles()
 
     # Index the archive files. We should not have loaded an image
     # before this point. (As pygame will not have been initialized.)
     renpy.loader.index_archives()
 
     # Make a clean copy of the store.
-    game.clean_store = game.store.copy()
+    game.clean_store = vars(renpy.store).copy()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -124,7 +128,7 @@ def run(restart=False):
             # We get this when the context has changed, and so we go and
             # start running from the new context.
             except game.RestartException, e:
-                pass
+                continue
 
             except game.QuitException, e:
                 break

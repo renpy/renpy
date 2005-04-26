@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import re
 import sys
 import time
@@ -103,6 +104,7 @@ def function(m):
     else:
         args = inspect.formatargspec(*inspect.getargspec(func))
         
+    args = re.sub(r'<.*?>', '...', args)
 
     docparas = []
 
@@ -132,6 +134,14 @@ def main():
     s = f.read()
     f.close()
 
+    os.chdir("..")
+
+    try:
+        renpy.main.main("dump_styles")
+    except "foo":
+        pass
+
+    os.chdir("doc")
 
     s = re.sub(r"<!-- func (\S+) -->", function, s)
     s = re.sub(r"<!-- include (\S+) -->", include, s)

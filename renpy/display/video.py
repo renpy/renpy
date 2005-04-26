@@ -160,7 +160,6 @@ class Movie(renpy.display.layout.Null):
     def render(self, width, height, st):
         renpy.display.render.redraw(self, 0)
 
-
         if surface:
             renpy.display.render.mutated_surface(surface)
             

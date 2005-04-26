@@ -21,11 +21,6 @@ searchpath = [ ]
 # A Script object, giving the script of the currently executing game.
 script = None
 
-# The store is where Ren'Py python results are stored. We first need
-# to import in the module, and then we use the module's dictionary
-# directly.
-store = None
-
 # A shallow copy of the store made at the end of the init phase. If
 # a key in here points to the same value here as it does in the store,
 # it is not saved.
@@ -82,7 +77,9 @@ class Preferences(object):
         self.sound = True
         self.music = True
         self.skip_unseen = False
-        self.fast_text = False
+
+        self.text_cps = 0
+
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
@@ -104,7 +101,7 @@ class RestartException(Exception):
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
-
+    
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely

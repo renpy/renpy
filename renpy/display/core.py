@@ -2,15 +2,16 @@
 # window.
 
 import renpy
-from renpy.display.render import render
 
 import pygame
 from pygame.constants import *
+import os
 import time
 import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
+MUSICEND = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -33,9 +34,40 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
-    def __init__(self):
-        self.style = None
-        self.style_prefix = None
+    focusable = False
+
+    def __init__(self, focus=None, default=False, style='default', **properties):
+        self.style = renpy.style.Style(style, properties)
+        self.style_prefix = 'insensitive_'
+        self.focus_name = focus
+        self.default = default
+
+    def find_focusable(self, callback, focus_name):
+        if self.focusable:
+            callback(self, self.focus_name or focus_name)
+            
+
+    def focus(self, default=False):
+        """
+        Called to indicate that this widget has the focus.
+        """
+
+        if self.style.enable_hover:
+            self.set_style_prefix("hover_")
+
+            if not default:
+                renpy.display.audio.play(self.style.sound)
+
+    def unfocus(self):
+        """
+        Called to indicate that this widget has become unfocused.
+        """
+
+        if self.style.enable_hover:
+            self.set_style_prefix("idle_")
+
+    def is_focused(self):
+        return renpy.game.context().scene_lists.focused is self
 
     def set_style_prefix(self, prefix):
         """
@@ -46,9 +78,7 @@ class Displayable(renpy.object.Object):
         if prefix == self.style_prefix:
             return
 
-        if self.style:
-            self.style.set_prefix(prefix)
-
+        self.style.set_prefix(prefix)
         self.style_prefix = prefix
         renpy.display.render.redraw(self, 0)
 
@@ -106,8 +136,8 @@ class Displayable(renpy.object.Object):
         the images it may want to load.
         """
 
-        return
-
+        if self.style and self.style.background:
+            self.style.background.predict(callback)
 
     def place(self, dest, x, y, width, height, surf):
         """
@@ -193,8 +223,7 @@ class SceneLists(object):
     @ivar transient: The current transient display list.
     @ivar overlay: The current overlay display list.
 
-    @ivar music: Opaque information about the music that is being played.
-
+    @ivar focused: The widget that is currently focused.
     """
 
     def __init__(self, oldsl=None):
@@ -206,11 +235,14 @@ class SceneLists(object):
             for i in renpy.config.layers:
                 self.layers[i] = oldsl.layers[i][:]
 
+            for i in renpy.config.overlay_layers:
+                self.clear(i)
+
             self.replace_transient()
 
-            self.music = oldsl.music
             self.sticky_positions = oldsl.sticky_positions.copy()
             self.movie = oldsl.movie
+            self.focused = None
             
         else:
             for i in renpy.config.layers:
@@ -219,6 +251,7 @@ class SceneLists(object):
             self.music = None
             self.movie = None
             self.sticky_positions = { }
+            self.focused = None
 
     def rollback_copy(self):
         """
@@ -227,9 +260,7 @@ class SceneLists(object):
         """
 
         rv = SceneLists(self)
-
-        for i in renpy.config.overlay_layers:
-            rv.layers[i] = [ ]
+        rv.focused = None
 
 #         rv.master = self.master[:]
 #         rv.transient = self.transient[:]
@@ -250,6 +281,21 @@ class SceneLists(object):
 
         for i in renpy.config.transient_layers:
             self.layers[i] = [ ]
+
+    def transient_is_empty(self):
+        """
+        This returns True if all transient layers are empty. This is
+        used by the rollback code, as we can't start a new rollback
+        if there is something in a transient layer (as things in the
+        transient layer may contain objects that cannot be pickled,
+        like lambdas.)
+        """
+
+        for i in renpy.config.transient_layers:
+            if self.layers[i]:
+                return False
+
+        return True
 
     def add(self, layer, thing, key=None):
         """
@@ -350,7 +396,9 @@ class Display(object):
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
-        if self.fullscreen:
+        fullscreen = self.fullscreen and not os.environ.get('RENPY_DISABLE_FULLSCREEN', False)
+
+        if fullscreen:
             fsflag = FULLSCREEN
 
         # The window we display things in.
@@ -372,12 +420,12 @@ class Display(object):
         pygame.display.set_caption(renpy.config.window_title)
 
         if renpy.config.window_icon:
-            pygame.display.set_icon(renpy.display.image.cache.load_image(renpy.config.window_icon))
+            pygame.display.set_icon(renpy.display.im.load_image(renpy.config.window_icon))
             
 
         # Load the mouse image, if any.
         if renpy.config.mouse:
-            self.mouse = renpy.display.image.cache.load_image(renpy.config.mouse)
+            self.mouse = renpy.display.im.load_image(renpy.config.mouse)
             pygame.mouse.set_visible(False)
         else:
             self.mouse = None
@@ -461,6 +509,7 @@ class Display(object):
             
         self.suppress_mouse = suppress_blit
 
+        renpy.display.focus.take_focuses(surftree.focuses)
         
     def save_screenshot(self, filename):
         """
@@ -564,14 +613,7 @@ class Interface(object):
         
         scene_lists = renpy.game.context().scene_lists
 
-        # We don't want the overlay to be clear here.
-
-        if not renpy.config.overlay_during_wait:
-            for i in renpy.config.overlay_layers:
-                scene_lists.clear(i)
-
         self.old_scene = self.compute_scene(scene_lists)
-
 
         # self.old_scene.append_scene_list(scene_lists.master)
 
@@ -611,12 +653,12 @@ class Interface(object):
             return rv
 
         # We load at most one image per wait.
-        if renpy.display.image.cache.needs_preload():
-           ev = pygame.event.poll()
-           if ev.type != NOEVENT:
-               return ev
+        if renpy.display.im.cache.needs_preload():
+            ev = pygame.event.poll()
+            if ev.type != NOEVENT:
+                return ev
 
-           renpy.display.image.cache.preload()
+            renpy.display.im.cache.preload()
 
         return pygame.event.wait()
 
@@ -633,7 +675,7 @@ class Interface(object):
         root = renpy.display.layout.Fixed()
 
         for layer in renpy.config.layers:
-            f = renpy.display.layout.Fixed()
+            f = renpy.display.layout.Fixed(focus=layer)
             f.append_scene_list(scene_lists.layers[layer])
 
             rv[layer] = f
@@ -652,16 +694,20 @@ class Interface(object):
 
         # These things can be done once per interaction.
 
-        repeat = True
+        try:
 
-        while repeat:
-            repeat, rv = self.interact_core(**kwargs)
+            repeat = True
+
+            while repeat:
+                repeat, rv = self.interact_core(**kwargs)
             
-        # Clean out transient stuff at the end of an interaction.
-        scene_lists = renpy.game.context().scene_lists
-        scene_lists.replace_transient()
+            return rv
+        
+        finally:
 
-        return rv
+            # Clean out transient stuff at the end of an interaction.
+            scene_lists = renpy.game.context().scene_lists
+            scene_lists.replace_transient()
         
 
     def interact_core(self,
@@ -699,8 +745,14 @@ class Interface(object):
 
         # frames = 0
 
+        # Update the music, if necessary.
+        for i in pygame.event.get([ MUSICEND ]):
+            renpy.display.audio.music_end_event()
+
+        renpy.display.audio.music_interact()
+
         # Tick time forward.
-        renpy.display.image.cache.tick()
+        renpy.display.im.cache.tick()
 
         # Set up key repeats.
         # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
@@ -711,17 +763,11 @@ class Interface(object):
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, DISPLAYTIME,
                             MOUSEBUTTONUP, MOUSEBUTTONDOWN))
-
         
-        # Figure out the scene list we want to show.
-        start_time = time.time()
+        # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
-
         
         # Figure out what the overlay layer should look like.
-        for i in renpy.config.overlay_layers:
-            scene_lists.clear(i)
-
         renpy.ui.layer("overlay")
 
         if not suppress_overlay:
@@ -742,7 +788,15 @@ class Interface(object):
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
-        
+
+        # If necessary, load all images here.
+        if renpy.config.load_before_transition:
+            for w in scene.itervalues():
+                w.predict(renpy.display.im.cache.get)
+
+        # The start time of transitions.
+        start_time = time.time()
+
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.Fixed()
 
@@ -784,13 +838,16 @@ class Interface(object):
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.
 
+        # Figure out what should be focused.
+        renpy.display.focus.before_interact(root_widget)
+
         # Redraw the screen.
         renpy.display.render.process_redraws()
         needs_redraw = True
 
         # Post an event that moves us to the current mouse position.
-        pygame.event.post(pygame.event.Event(MOUSEMOTION,
-                                             pos=pygame.mouse.get_pos()))
+        # pygame.event.post(pygame.event.Event(MOUSEMOTION,
+        #                                     pos=pygame.mouse.get_pos()))
         
         # We only want to do prediction once, but we will defer it as
         # long as possible.
@@ -848,13 +905,17 @@ class Interface(object):
 
                 # Predict images, if we haven't done so already.
                 if not did_prediction and not self.event_peek():
-                    renpy.game.context().predict(renpy.display.image.cache.preload_image)
-                    root_widget.predict(renpy.display.image.cache.preload_image)
+                    root_widget.predict(renpy.display.im.cache.preload_image)
+                    renpy.game.context().predict(renpy.display.im.cache.preload_image)
                     did_prediction = True
 
                 try:
                     ev = self.event_wait()
                     self.profile_time = time.time()
+
+                    # A song just ended.
+                    if ev.type == MUSICEND:
+                        renpy.display.audio.music_end_event()
 
                     if ev.type == DISPLAYTIME:
 
@@ -864,12 +925,6 @@ class Interface(object):
 
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
-
-                        # Update the playing music, if necessary.
-
-                        # This needs to be here so that we eventually start a
-                        # new song at the end of a fadeout.
-                        renpy.display.audio.restore_music()
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
@@ -890,8 +945,9 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                    # x, y = getattr(ev, 'pos', (0, 0))
+                    renpy.display.focus.event_handler(ev)
 
+                    # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
 
                     rv = root_widget.event(ev, x, y)
@@ -913,6 +969,10 @@ class Interface(object):
             return False, rv
 
         finally:
+
+            # Clean out the overlay layers.
+            for i in renpy.config.overlay_layers:
+                scene_lists.clear(i)
 
             # pygame.time.set_timer(KEYREPEATEVENT, 0)
             pygame.time.set_timer(DISPLAYTIME, 0)

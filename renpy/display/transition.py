@@ -60,6 +60,7 @@ class Transition(renpy.display.core.Displayable):
     """
 
     def __init__(self, delay):
+        super(Transition, self).__init__()
         self.delay = delay
         self.offsets = [ ]
         self.events = True
@@ -69,6 +70,9 @@ class Transition(renpy.display.core.Displayable):
             return self.new_widget.event(ev, x, y)
         else:
             return None
+
+    def find_focusable(self, callback, focus_name):
+        self.new_widget.find_focusable(callback, focus_name)
 
 class Fade(Transition):
     """
@@ -134,7 +138,7 @@ class Fade(Transition):
         if widget:
             surf = render(widget, width, height, st)
             
-            rv.blit(surf, (0, 0))
+            rv.blit(surf, (0, 0), focus=events)
 
         self.events = events 
 
@@ -253,6 +257,8 @@ class Dissolve(Transition):
         surf = top.pygame_surface(False)
         renpy.display.render.mutated_surface(surf)
 
+        rv.focuses.extend(top.focuses)
+
         if id(top) == self.old_top and id(bottom) == self.old_bottom:
 
             # Fast rendering path.
@@ -271,7 +277,7 @@ class Dissolve(Transition):
 
             # Complete rendering path.
 
-            rv.blit(bottom, (0, 0))
+            rv.blit(bottom, (0, 0), focus=False)
             surf.set_alpha(alpha, RLEACCEL)
             rv.blit(surf, (0, 0))
 
@@ -352,7 +358,7 @@ class CropMove(Transition):
         image. Otherwise, the top layer contains the old image.
         """
         
-
+        super(CropMove, self).__init__(time)
         self.time = time
 
         if mode == "wiperight":
@@ -503,11 +509,11 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0))
+        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not self.topnew)
 
         top = render(self.top, width, height, st)
-        ss = top.subsurface(crop)
-        rv.blit(ss, pos)
+        ss = top.subsurface(crop, focus=self.topnew)
+        rv.blit(ss, pos, focus=self.topnew)
 
         renpy.display.render.redraw(self, 0)
         return rv
