@@ -228,7 +228,12 @@ class Text(renpy.display.core.Displayable):
         # cur.
         remwidth = width - indent()
 
-        for i in re.split(r'( |\{[^{]+\}|\{\{|\n)', self.text):
+        if not self.text:
+            text = " "
+        else:
+            text = self.text
+
+        for i in re.split(r'( |\{[^{]+\}|\{\{|\n)', text):
 
             # Newline.
             if i == "\n":

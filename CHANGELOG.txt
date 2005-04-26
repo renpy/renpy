@@ -48,7 +48,9 @@ the user, rather than the config.annoying_text_cps parameter. If you
 don't want to give the user this control, you can set library.has_cps
 to False. A number of new styles define the spinner.
 
-
+An empty string is now rendered as if it was a string consisting of a
+single space. This fixes a bug in which an empty string was rendered
+with zero width and height.
 
 New in 4.8
 ----------
