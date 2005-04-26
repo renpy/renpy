@@ -104,6 +104,7 @@ def function(m):
     else:
         args = inspect.formatargspec(*inspect.getargspec(func))
         
+    args = re.sub(r'<.*?>', '...', args)
 
     docparas = []
 

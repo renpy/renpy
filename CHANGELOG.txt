@@ -14,8 +14,8 @@ The file entries in the load and save screens are now arraigned in a
 grid, which has the style file_picker_grid. This means that we should
 now be smarter in the presence of games of varying size, and we should
 wrap text if it gets too long. As part of this,
-library.file_picker_length has now been broken out into two variables,
-library.file_picker_rows and library.file_picker_cols. [ document ]
+library.file_page_length has now been broken out into two variables,
+library.file_page_rows and library.file_page_cols.
 
 renpy.music_stop now supports a fadeout parameter, for orthogonality
 with the new renpy.music_start. 
@@ -28,7 +28,7 @@ showing "<none>" and a random line as they did before.
 There are two new style properties, xmaximum and ymaximum. These two
 properties limit the size of the widgets that they are applied to, as
 if that widget was placed inside a ui.sizer(). (In fact, ui.sizer() is
-now implemented in terms of these properties.) [ document ]
+now implemented in terms of these properties.) 
 
 Now, we only restore or rollback to places where all of the transient
 layers are empty. This prevents a bug in which additional dialogue
@@ -39,14 +39,14 @@ configurable. Now, there is a new variable, library.preferences, which
 is a map from a style to a list of preferences to be displayed in a
 vbox with that style. There are now two new styles (prefs_left and
 prefs_right) which control the placement of the default preference 
-columns. [ document ]
+columns.
 
 There is a new spinner preference type, which allows a value to be 
 incremented or decremented. This preference is now used to adjust the
 speed at which text is shown to the user. So now this is controlled by
 the user, rather than the config.annoying_text_cps parameter. If you
 don't want to give the user this control, you can set library.has_cps
-to False. A number of new styles define the spinner. [ document ]
+to False. A number of new styles define the spinner.
 
 
 

@@ -2104,14 +2104,6 @@ selected direction of motion, when moving focus with the keyboard.
       list. See the section on overlays for more.
     </var>
 
-    <var name="config.annoying_text_cps" value="None">
-      If not None, dialogue and thoughts will be "typed" onto the
-      screen a few characters at a time. The value of this is the
-      number of characters that will be typed onto the screen in a
-      second. I strongly reccomend keeping this None. Not only does
-      this interact poorly with the rest of Ren'Py, it's annoying. 
-    </var>
-
     <var name="config.fade_music" value="0.0">
       This is the amount of time in seconds to spend fading the old track out
       before a new music track starts. This should probably be fairly
@@ -2158,11 +2150,17 @@ True if we want overlays to be shown during wait statements, or False
 if we'd prefer that they be hidden during the wait statements.
 </var>
 
-    <var name="library.file_page_length" value="10">
-      This is the number of save slots that are shown in the picker
-      that's used by the load and save portions of the game menu. This
-      should probably be an even number.
-    </var>
+<var name="library.file_page_cols" value = "2" >
+This is the number of columns of save slots that are show in the
+picker that's used in the load and save screens of the game 
+menu.
+</var>
+
+<var name="library.file_page_rows" value = "5" >
+This is the number of rows of save slots that are show in the
+picker that's used in the load and save screens of the game 
+menu.
+</var>
 
     <var name="library.file_quick_access_pages" value="5">
 The number of pages of the file picker to provide quick access
@@ -2207,6 +2205,11 @@ the file picker.
       is presented to the user. This should be set to False if the
       game does not have any sound effects.
     </var>
+
+<var name="library.has_cps" value="True">
+If True, the preference for changing the text speed is shown to the
+user.
+</var>
 
     <var name="library.has_transitions" value="True">
       If True, the preference for enabling and disabling transitions
@@ -2542,6 +2545,18 @@ top_padding and bottom_padding to the same value.
     Controls the placement of the anchor within the widget, in the y
     dimension. This can be one of 'top', 'center', or 'bottom'.
   </prop>
+
+  <prop name="xmaximum">
+If not None, this property gives the maximum width of this widget.
+(Most widgets respect this, but some have a fixed size which this 
+does not change.)
+</prop>
+
+  <prop name="ymaximum">
+If not None, this property gives the maximum height of this widget.
+(Most widgets respect this, but some have a fixed size which this 
+does not change.)
+</prop>
 
   <h4>Sound Properties</h4>
 
