@@ -147,6 +147,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     @param lineno: The line number of the first line of the source code.
     """
 
+    source = source.encode('raw_unicode_escape')
     tree = parse(source, mode)
 
     recursively_replace(tree, wrap_node)

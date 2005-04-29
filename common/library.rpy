@@ -267,7 +267,7 @@ label _continue:
     $ _can_save = True
     $ _at_main_menu = False
 
-    jump _library_main_menu
+    jump _main_menu
 
 # Used to call the game menu. 
 label _preferences:
@@ -279,7 +279,7 @@ label _preferences:
     $ _can_save = True
     $ _at_main_menu = False
 
-    jump _library_main_menu
+    jump _main_menu
     
 
 ##############################################################################

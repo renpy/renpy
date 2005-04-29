@@ -1,3 +1,20 @@
+Unicode support in python blocks now works. This allows unicode
+strings to be used with Ren'Py. This is especially useful when naming
+characters and translating the various menus into your native
+language. Please note that the only unicode allowed is inside unicode
+strings, which begin with a u before the first quote. Unicode outside
+of unicode strings is an error.
+
+We apologize to the non-english-speaking world for not noticing this
+one sooner.
+
+The special labels intended for main menu use, _continue and
+_preferences, now call a user main menu after they finish executing,
+rather than the library main menu. This simplifies the implementation
+of user-defined main menus.
+
+
+
 New in 4.8.1
 ------------
 
