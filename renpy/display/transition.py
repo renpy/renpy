@@ -216,6 +216,73 @@ class Fade(Transition):
 #         return rv
 
 
+class Pixellate(Transition):
+    """
+    This pixellates out the old scene, and then pixellates in the new
+    scene, taking the given amount of time and the given number of pixellate
+    steps in each direction.
+    """
+
+    def __init__(self, time, steps, old_widget=None, new_widget=None):
+
+        if not renpy.display.module.can_pixellate:
+            time = 0
+
+        super(Pixellate, self).__init__(time)
+
+        self.time = time
+        self.steps = steps
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+
+        self.surface = None
+        self.surface_size = None
+
+        self.events = False
+
+        self.quantum = time / ( 2 * steps )
+
+    def render(self, width, height, st):
+
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st)
+
+        step = st // self.quantum + 1
+        visible = self.old_widget
+
+        if step > self.steps:
+            step = (self.steps * 2) - step + 1
+            visible = self.new_widget
+            self.events = True
+
+        rv = renpy.display.render.Render(width, height)
+        rdr = render(visible, width, height, st)
+
+        # No alpha support.
+        surf = rdr.pygame_surface(False)
+        
+        if surf.get_size() != self.surface_size:
+            self.surface_size = surf.get_size()
+            self.surface = pygame.Surface(self.surface_size, surf.get_flags(), surf)
+
+        px = 2 ** step
+
+        renpy.display.module.pixellate(surf, self.surface, px, px, px, px)
+        renpy.display.render.mutated_surface(self.surface)
+
+        rv.blit(self.surface, (0, 0))
+
+        if self.events:
+            rv.focuses.extend(rdr.focuses)
+
+        # renpy.display.render.redraw(self, self.quantum - st % self.quantum)
+
+        renpy.display.render.redraw(self, 0)
+
+        return rv
+
         
 class Dissolve(Transition):
     """

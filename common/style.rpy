@@ -443,3 +443,26 @@ init -1000:
         style.skip_indicator.xpos = 10
         style.skip_indicator.ypos = 10
 
+
+# Styles used by internal error messages.
+
+        style.create('error_window', 'default',
+                     '(window) The style of the window containing internal error messages.')
+
+        style.error_window.background = Solid((220, 220, 255, 255))
+        style.error_window.xfill = True
+        style.error_window.yfill = True
+        style.error_window.xpadding = 20
+        style.error_window.ypadding = 20
+        
+
+        style.create('error_title', 'default',
+                     '(text) The style of the text containing the title of an error message.')
+
+        style.error_title.color = (255, 128, 128, 255)
+
+        style.create('error_body', 'default',
+                     '(text) The style of the body of an error message.')
+                     
+        style.error_body.color = (128, 128, 255, 255)
+        

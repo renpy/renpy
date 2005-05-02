@@ -13,7 +13,7 @@ except:
     version = 0
 
 
-if version >= 40008002:
+if version >= 4008002:
 
     can_pixellate = True
 
@@ -95,10 +95,9 @@ else:
 
     can_pixellate = False
 
-    def scale(s, x_factor, y_factor):
+    def scale(s, size):
 
-        width, height = s.get_size()
-        return pygame.transform.scale(s, ( width / x_factor, height / y_factor ) )
+        return pygame.transform.scale(s, size)
 
     
 

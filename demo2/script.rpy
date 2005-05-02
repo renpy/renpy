@@ -59,10 +59,12 @@ init:
     $ irisout = CropMove(1.0, "irisout")
     $ irisin = CropMove(1.0, "irisin")
 
+    $ pixellate = Pixellate(1.0, 5)
+
     # Select the transitions that are used when entering and exiting
     # the game menu.
-    $ library.enter_transition = dissolve
-    $ library.exit_transition = dissolve
+    $ library.enter_transition = pixellate
+    $ library.exit_transition = pixellate
 
     # Now, we declare the images that are used in the program.
 

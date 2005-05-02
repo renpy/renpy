@@ -13,6 +13,10 @@ _preferences, now call a user main menu after they finish executing,
 rather than the library main menu. This simplifies the implementation
 of user-defined main menus.
 
+Extras:
+
+Commentary track.
+Name in own window.
 
 
 New in 4.8.1

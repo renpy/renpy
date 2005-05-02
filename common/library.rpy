@@ -20,6 +20,14 @@ init -500:
         # Used to store library settings.
         library = object()
 
+        # The minimum version of the module we work with. Don't change
+        # this unless you know what you're doing.
+        library.module_version = 4008002
+
+        # Should we warn the user if the module is missing or has a bad
+        # version?
+        library.module_warning = False
+
         # The number of columns of files to show at once.
         library.file_page_cols = 2
 
@@ -215,6 +223,8 @@ label _hide_windows:
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
+
+    call _check_module
 
     if renpy.has_label("splashscreen") and not _restart:
         call splashscreen
@@ -489,14 +499,14 @@ init -500:
             return _game_interact()
 
         def _show_exception(title, message):
-            ui.add(Solid((0, 0, 0, 255)))
+            ui.window(style='error_window')
             ui.vbox()
 
-            ui.text(title, color=(255, 128, 128, 255))
+            ui.text(title, style='error_title')
             ui.text("")
-            ui.text(message)
+            ui.text(message, style='error_body')
             ui.text("")
-            ui.text("Please click to continue.")
+            ui.text(_("Please click to continue."), style='error_body')
 
             ui.close()
 
@@ -569,9 +579,9 @@ label _save_screen:
                 if config.debug:
                     raise
                 
-                message = ( "The error message was:\n\n" +
+                message = ( _("The error message was:\n\n") +
                             e.__class__.__name__  + ": " + unicode(e) + "\n\n" +
-                            "You may want to try saving in a different slot, or playing for a while and trying again later.")
+                            _("You may want to try saving in a different slot, or playing for a while and trying again later."))
 
                 _show_exception(_("Save Failed."), message)
                 
@@ -602,6 +612,28 @@ label _return:
         $ renpy.transition(library.exit_transition)
 
     return
+
+
+# This code here handles check for the correct version of the Ren'Py module.
+
+label _check_module:
+
+    if not library.module_warning:
+        return
+
+    python hide:
+        module_info = _("While Ren'Py games are playable without the _renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/.")
+
+        if renpy.module_version() == 0:
+            _show_exception(_("_renpy module not found."),
+                            _("The _renpy module could not be loaded on your system.") + "\n\n" + module_info)
+        elif renpy.module_version() < library.module_version:
+            _show_exception(_("Old _renpy module found."),
+                            _("An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d.") % (renpy.module_version(), library.module_version) + "\n\n" + module_info)
+
+    return
+                         
+
 
 # Random nice things to have.
 init:
