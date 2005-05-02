@@ -486,6 +486,14 @@ def version():
 
     return renpy.version
 
+def module_version():
+    """
+    Returns a number corresponding to the current version of the Ren'Py module,
+    or 0 if the module wasn't loaded.
+    """
+
+    return renpy.display.module.version
+
 def transition(trans, layer=None):
     """
     Sets the transition that will be used for the next

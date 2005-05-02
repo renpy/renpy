@@ -41,6 +41,7 @@ if __name__ == "__main__":
             extra_link_args = os.popen("sdl-config --libs").read().split()
             include_dirs = [ ]
             libraries = [ ]
+
         except:
 
             print "I was unable to automatically configure the Ren'Py module."

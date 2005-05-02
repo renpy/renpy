@@ -524,8 +524,8 @@ class Display(object):
         contents of the window.
         """
 
-        surf = pygame.transform.scale(self.window, scale)
-
+        surf = renpy.display.module.scale(self.window, scale)
+        
         sio = cStringIO.StringIO()
         pygame.image.save(surf, sio)
         rv = sio.getvalue()
@@ -802,7 +802,7 @@ class Interface(object):
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:
-            if layer in self.transition and self.old_scene and not self.suppress_transition:
+            if self.transition.get(layer, None) and self.old_scene and not self.suppress_transition:
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene[layer])
