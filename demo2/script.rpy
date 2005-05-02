@@ -82,7 +82,7 @@ init:
     # Finally, the character object. This object lets us have the
     # character say dialogue without us having to repeatedly type
     # her name. It also lets us change the color of her name.
-    
+
     # Character objects.    
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
@@ -93,9 +93,9 @@ init:
 #
 # label splashscreen:
 #     scene black
-#     show text "American Bishoujo Presents..." with fade
+#     show text "American Bishoujo Presents..." with dissolve
 #     $ renpy.pause(1.0)
-#     hide text with fade
+#     hide text with dissolve
 #
 #     return
 

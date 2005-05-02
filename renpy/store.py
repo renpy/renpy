@@ -62,6 +62,7 @@ class Character(object):
                  what_style='say_dialogue',
                  window_style='say_window',
                  function = renpy.exports.display_say,
+                 condition=None,
                  **properties):
         """
         @param name: The name of the character, as shown to the user.
@@ -94,6 +95,11 @@ class Character(object):
         this dialogue. This should either be renpy.display_say, or a function
         with the same signature as it.
 
+        @param condition: A string containing a python expression, or
+        None. If not None, the condition is evaluated when each line
+        of dialogue is said. If it evaluates to False, the dialogue is
+        not shown to the user.
+
         @param interact: If True (the default), then each line said
         through this character causes an interaction. If False, then
         the window is added to the screen, but control immediately
@@ -106,8 +112,27 @@ class Character(object):
         self.window_style = window_style
         self.properties = properties
         self.function = function
+        self.condition = condition
+
+    def check_condition(self):
+        """
+        Returns true if we should show this line of dialogue.
+        """
+
+        if self.condition is None:
+            return True
+
+        import renpy.python as python
+
+        return python.py_eval(self.condition)
+        
+    
 
     def __call__(self, what, interact=True):
+
+        if not self.check_condition():
+            return
+        
         self.function(self.name, what,
                       who_style=self.who_style,
                       what_style=self.what_style,
@@ -131,6 +156,7 @@ class DynamicCharacter(object):
                  what_style='say_dialogue',
                  window_style='say_window',
                  function = renpy.exports.display_say,
+                 condition = None,
                  **properties):
         """
         @param name_expr: An expression that, when evaluated, should yield
@@ -145,8 +171,25 @@ class DynamicCharacter(object):
         self.window_style = window_style
         self.properties = properties
         self.function = function
+        self.condition = condition
 
+    def check_condition(self):
+        """
+        Returns true if we should show this line of dialogue.
+        """
+
+        if self.condition is None:
+            return True
+
+        import renpy.python as python
+
+        return python.py_eval(self.condition)
+        
     def __call__(self, what, interact=True):
+
+        if not self.check_condition():
+            return
+
         import renpy.python as python
 
         self.function(python.py_eval(self.name_expr),

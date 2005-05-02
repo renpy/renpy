@@ -128,6 +128,10 @@ init -100:
                 self.readback_style = readback_style
                 
             def __call__(self, what, **kwargs):
+
+                if not self.check_condition():
+                    return
+
                 readback_OldCharacter.__call__(self, what, **kwargs)
                 readback_save(self, what)
 
@@ -151,6 +155,9 @@ init -100:
                 
 
             def __call__(self, what, **kwargs):
+                if not self.check_condition():
+                    return
+
                 name = renpy.renpy.python.py_eval(self.name_expr)
                 readback_OldDynamicCharacter.__call__(self, what, **kwargs)
                 readback_save(self, name, what)
