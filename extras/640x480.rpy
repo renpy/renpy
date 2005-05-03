@@ -11,11 +11,6 @@ init 1:
     $ style.button_text.size = 20
     $ style.file_picker_text.size = 14
 
-    # Perhaps change the fudge factor on windows, if line spacing
-    # looks weird.
-    if renpy.windows():
-        $ style.default.line_height_fudge = -4
-
-    $ style.file_picker_entry.xminimum = 320
+    # Change the size of the thumbnails in the file picker.
     $ library.thumbnail_width = 60
     $ library.thumbnail_height = 45 

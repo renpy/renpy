@@ -1722,15 +1722,27 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.watch -->
 
-  <!-- func renpy.windows -->
+  <!-- func renpy.loadable -->
 
   <!-- func renpy.exists -->
-
+  
   <!-- func renpy.clear_game_runtime -->
 
   <!-- func renpy.get_game_runtime -->
-
+  
   <!-- func color -->
+
+  <p>
+Contexts store the current scene lists and execution location. Ren'Py
+supports a stack of contexts, but only the top-level context is saved 
+to the save file. 
+</p>
+
+  <!-- func renpy.context -->
+
+  <!-- func renpy.call_in_new_context -->
+
+  <!-- func renpy.invoke_in_new_context -->
 
   <p>
     Finally, there exists an object named renpy.random. This object is
@@ -2020,10 +2032,11 @@ init:
       stdout (wherever that may go to).
     </var>
 
-    <var name="config.image_cache_size" value="10">
-      This is the number of images that can be in the image cache at
-      once. This is mostly a suggestion, as if Ren'Py ever needs to
-      display more than this number of images at once, it will cache
+    <var name="config.image_cache_size" value="8">
+
+This is used to set the size of the image cache, as a multiple of the
+screen size.  This is mostly a suggestion, as if Ren'Py ever needs to
+      display more than this amount of images at once, it will cache
       them all. But it will stop predictively loading images when the
       cache is filled beyond this, and it will try to drop images from
       the cache until it shrinks below this size. If this is too
@@ -2046,6 +2059,11 @@ init:
       standard output (wherever that goes) whenever the contents of
       the image cache change.
     </var>
+
+    <var name="config.load_before_transitions" value="True">
+If True, the start of transitions will be delayed until the images
+used by said transitions have finished loading.
+</var>
 
     <var name="config.allow_skipping" value="True">
       If set to False, the user is not able to skip over the text of the
@@ -2079,9 +2097,9 @@ load scripts, as scripts will be loaded before it can be set.
       is slightly increased.
     </var>
 
-    <var name="config.keymouse_distance" value="5">
-      This gives the number of pixels that the mouse is moved every
-      1/20th of a second when the keymouse is being used.
+    <var name="config.focus_crossrange_penalty" value="1024">
+This is the amount of penalty to apply to moves perpendicular to the 
+selected direction of motion, when moving focus with the keyboard.
     </var>
 
     <var name="config.sound_sample_rate" value="44100">
@@ -2094,14 +2112,6 @@ load scripts, as scripts will be loaded before it can be set.
       A list of functions. When called, each function is expected to
       return a list of displayables, which are added to the overlay 
       list. See the section on overlays for more.
-    </var>
-
-    <var name="config.annoying_text_cps" value="None">
-      If not None, dialogue and thoughts will be "typed" onto the
-      screen a few characters at a time. The value of this is the
-      number of characters that will be typed onto the screen in a
-      second. I strongly reccomend keeping this None. Not only does
-      this interact poorly with the rest of Ren'Py, it's annoying. 
     </var>
 
     <var name="config.fade_music" value="0.0">
@@ -2150,11 +2160,17 @@ True if we want overlays to be shown during wait statements, or False
 if we'd prefer that they be hidden during the wait statements.
 </var>
 
-    <var name="library.file_page_length" value="10">
-      This is the number of save slots that are shown in the picker
-      that's used by the load and save portions of the game menu. This
-      should probably be an even number.
-    </var>
+<var name="library.file_page_cols" value = "2" >
+This is the number of columns of save slots that are show in the
+picker that's used in the load and save screens of the game 
+menu.
+</var>
+
+<var name="library.file_page_rows" value = "5" >
+This is the number of rows of save slots that are show in the
+picker that's used in the load and save screens of the game 
+menu.
+</var>
 
     <var name="library.file_quick_access_pages" value="5">
 The number of pages of the file picker to provide quick access
@@ -2178,14 +2194,14 @@ the file picker.
       thumbnail is shown to the user.
     </var>
       
-    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Preferences", "_preferences"), ("Quit Game", "_quit") ]'>
+    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", ... ), ("Preferences", ... ), ("Quit Game", ...) ]'>
       This is used to give the main menu that is shown to the user
       when the game first starts. It is a list of tuples, where the
       first element of each tuple is the title of the menu button, and
       the second element is a label that we jump to when that button
-      is selected. Some useful labels to use here are "_continue",
-      which brings up the game menu in load mode, "_preferences", which brings up the preferences screen, 
-      and "_quit", which terminates Ren'Py.
+      is selected. (This jump exits the context in which the start
+      menu executes.) The second element may also be a function, in
+      which case it is called when the item is selected.
     </var>
     
     <var name="library.has_music" value="True">
@@ -2199,6 +2215,11 @@ the file picker.
       is presented to the user. This should be set to False if the
       game does not have any sound effects.
     </var>
+
+<var name="library.has_cps" value="True">
+If True, the preference for changing the text speed is shown to the
+user.
+</var>
 
     <var name="library.has_transitions" value="True">
       If True, the preference for enabling and disabling transitions
@@ -2535,6 +2556,18 @@ top_padding and bottom_padding to the same value.
     dimension. This can be one of 'top', 'center', or 'bottom'.
   </prop>
 
+  <prop name="xmaximum">
+If not None, this property gives the maximum width of this widget.
+(Most widgets respect this, but some have a fixed size which this 
+does not change.)
+</prop>
+
+  <prop name="ymaximum">
+If not None, this property gives the maximum height of this widget.
+(Most widgets respect this, but some have a fixed size which this 
+does not change.)
+</prop>
+
   <h4>Sound Properties</h4>
 
   <p>
@@ -2560,12 +2593,7 @@ top_padding and bottom_padding to the same value.
  
   <p>
 The ui.bar() widget has a few properties that are specific to
-it. These properties control the look of the bars, and the size of
-the gutters on either side of a clickable widget. The gutters are
-empty space on the left and right of a clickable bar, and serve to
-make it easy to set the maximum and minimum value of the bar
-widget. Clicking on the left gutter sets the minimum value, while the
-right gutter sets the maximum value.
+it, that control the look of the bars.
 </p>
 
 <prop name="left_bar">
@@ -2580,29 +2608,22 @@ Displayable needs to be one that can change its size, such as a Solid
 or a Frame.
 </prop>
 
-<prop name="left_gutter">
-The size of the left gutter of a clickable bar, in pixels.
-</prop>
-
-<prop name="right_gutter">
-The size of the left gutter of a clickable bar, in pixels.
-</prop>
-
-
 
   <h4>Hovering</h4>
   
   <p>
-    In Ren'Py, buttons and their contents support the idea of hovering:
-    using different sets of properties for different states of the
-    widget. If the widget has been selected, it is considered to be
-    activated. Otherwise, if the mouse is over the widget, then that widget
-    is hovered, else it is idle. On these widgets, Ren'Py will look up
-    a property prefixed with "activate_", "hover_", "idle_", (as appropriate) in a
-    style, before looking up an unprefixed property. If neither form
-    is found on a style, the process is repeated again on the parent
-    style. (The search pattern for background on a hovered button
-    goes: button.hover_background, button.background,
+    In Ren'Py, buttons and their contents support the idea of
+    hovering: using different sets of properties for different states
+    of the widget. If the widget cannot be given focus, it is
+    considered to be insensitive. If the widget has been selected by
+    the user, it is considered to be activated. Otherwise, if the
+    widget has focus, then that widget is hovered, else it is idle. On
+    these widgets, Ren'Py will look up a property prefixed with
+    "insensitive_", "activate_", "hover_", or "idle_" (as appropriate)
+    in a style, before looking up an unprefixed property. If neither
+    form is found on a style, the process is repeated again on the
+    parent style. (The search pattern for background on a hovered
+    button goes: button.hover_background, button.background,
     default.hover_background, default.background.)
   </p>
 
@@ -2655,7 +2676,7 @@ init:
 init:
     $ style.button.color = (128, 255, 128, 255)
     $ style.button.xpos = 0
-    $ style.button_idled.background = \
+    $ style.button.idle_background = \
           renpy.Frame(renpy.Image("button_idled.png"), 
                       xborder=10, yborder=10)
     $ style.button_hover.background = \
@@ -2954,43 +2975,32 @@ Ren'Py, and as of version 4.5 is as follows:
 
 <example>
 keymap = dict(
+    
     # Bindings present almost everywhere, unless explicitly
     # disabled.
     rollback = [ 'K_PAGEUP', 'mousedown_4' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mousedown_3' ],
-    hide_windows = [ 'mouseup_2' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
+    hide_windows = [ 'mouseup_2', 'h' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
-    # Keymouse.
-    keymouse_left = [ 'K_LEFT' ],
-    keymouse_right = [ 'K_RIGHT' ],
-    keymouse_up = [ 'K_UP' ],
-    keymouse_down = [ 'K_DOWN' ],
-    
-    # Menu.
-    menu_mouseselect = [ 'mouseup_1' ],
-    menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
-    menu_keyup = [ 'K_UP' ],
-    menu_keydown = [ 'K_DOWN' ],
-    
+    # Focus.
+    focus_left = [ 'K_LEFT' ],
+    focus_right = [ 'K_RIGHT' ],
+    focus_up = [ 'K_UP' ],
+    focus_down = [ 'K_DOWN' ],
+        
     # Button.
     button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-
-    # Imagemap.
-    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
-
-    # Bar.
-    bar_click = [ 'mouseup_1' ],
 
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
@@ -3080,6 +3090,18 @@ ui.close() when done adding widgets to the new layer.
 </p>
 
 <p>
+Widgets can be added to a focus group by supplying the name of the
+focus group as the focus parameter to a ui widget. If the same focus
+group exists on two interactions, Ren'Py will ensure that if the nth
+widget is selected in the first interaction, the nth widget will be
+given focus at the start of the second interaction. If no widget is
+given focus in this way, then Ren'Py looks for one that has had the 
+default=True argument supplied to it. If it finds such a widget, then
+it focuses it. Otherwise, it uses fallback rules to determine if a
+widget should be given focus.
+</p>
+
+<p>
 The following are the functions available in the ui module, which is
 automatically present in the game namespace.
 </p>
@@ -3122,8 +3144,6 @@ automatically present in the game namespace.
 
 <!-- func ui.pausebehavior -->
 
-<!-- func ui.keymousebehavior -->
-
 <h4>Functions</h4>
 
 <!-- func ui.interact -->
@@ -3145,11 +3165,123 @@ various button widgets.
 This function returns a function that, when called, jumps the game to
 the given label, ending the current interaction in the process. It's
 best used to supply the clicked argument to the various button
-widgets. (Most of the time, you want to use ui.returns and a series of
-if statements to jump or call the appropriate label, rather than
-relying on this function.)
+widgets.
 </p>
 </function>
+
+<function name="ui.jumpsoutofcontext" sig="(label)">
+<p>
+This function returns a function that, when called, exits the current
+context, and in the parent context jumps to the named label. It's
+intended to be used as the clicked argument to a button.
+</p>
+</function>
+
+<h3>Image Manipulators</h3>
+
+<p>
+Image manipulators are objects that can return images. Every image
+manipulator can be used as a widget, but the opposite is not
+true. Image manipulators are used to implement the Image function, 
+but constructing them directly can give you finer control.
+</p>
+
+<p>
+When an image manipulator requires another as input, the second image
+manipulator can be specified in any of a number of ways. The first way
+is as a string, which is turned into an im.Image. The second is a
+tuple, which is turned into an im.Composite using the rules for tuples
+given in Image. The third is that an image manipulator can be
+specified directly, in which case it is passed through unchanged.
+</p>
+
+<p>
+Widgets may not be used as arguments to image manipulators. This is
+because image manipulators are very efficent, caching the computed
+images on their first load. 
+</p>
+
+<p>
+The image manipulators are:
+</p>
+
+<!-- func im.Image -->
+
+<!-- func im.Crop -->
+
+<!-- func im.Composite -->
+
+<!-- func im.Scale -->
+
+<!-- func im.Rotozoom -->
+
+<h3>Low-Level Audio Functions</h3>
+
+<p>
+These functions manipulate Ren'Py audio subsystem directly. Unlike the
+high-level music functions, these functions do not manipulate
+persistent state. As a result, calls to these functions will not
+persistent across sessions.
+</p>
+
+<p>
+Still, these functions are useful to allow access to behavior that 
+is not yet exposed through the high-level interface. They are also
+useful for a person who wants to change the high-level music or sound
+interfaces. So, we've documented them here. 
+</p>
+
+<h4>Sound Functions</h4>
+
+<!-- func audio.sound_enabled -->
+
+<!-- func audio.sound_play -->
+
+<!-- func audio.sound_stop -->
+
+<h4>Music Functions</h4>
+
+<p>
+The low-level music system deals with two music files at once, a
+playing file and a queued file. When the playing file finishes
+playing, the queued file is begun, and queued file becomes 
+empty.
+</p>
+
+<!-- func audio.music_enabled -->
+
+<!-- func audio.music_play -->
+
+<!-- func audio.music_queue -->
+
+<!-- func audio.music_stop -->
+
+<!-- func audio.music_fadeout -->
+
+<!-- func audio.music_fading -->
+
+<!-- func audio.music_filenames -->
+
+<!-- func audio.music_pause -->
+
+<!-- func audio.music_unpause -->
+
+<h4>Music Callbacks</h4>
+
+<var name="config.music_interact" value="...">
+This callback is called (without any arguments) at the start (or
+restart) of each interaction. It's intended to allow the system to 
+restore music after a context change, or to implement changes in 
+the music that occured before that interaction.
+</var>
+
+<var name="config.music_end_event" value="...">
+This callback is called (without any arguments) when a track has 
+finished playing. If a second track has been queued, it will have 
+started before this callback is called. Usually, this callback is 
+used to queue up another track when one ends. It can also be used 
+to start the music playing again after a fadeout.
+</var>
 
 
   <h3>Function Index</h3>
