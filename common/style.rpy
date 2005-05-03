@@ -348,6 +348,7 @@ init -1000:
                      '(text, position) The style used for the prompt in a yes/no dialog.')
 
         style.yesno_label.color = green
+        style.yesno_label.textalign = 0.5
 
         style.create('yesno_button', 'button',
                      '(window, hover) The style of yes/no buttons.')
@@ -360,6 +361,7 @@ init -1000:
 
         style.yesno_window.xfill = True
         style.yesno_window.yminimum = 0.5
+        style.yesno_window.xmargin = .1
 
         # Preferences
 

@@ -86,6 +86,9 @@ class Context(object):
         Calls the named label.
         """
 
+        if not self.current:
+            raise "Context not capable of executing Ren'Py code."
+
         if return_site is None:
             return_site is self.current
 
@@ -131,6 +134,9 @@ class Context(object):
         they will be potentially loaded.
         """
 
+        if not self.current:
+            return
+
         nodes = [ renpy.game.script.lookup(self.current) ]
 
         for i in range(0, renpy.config.predict_statements):
@@ -159,6 +165,9 @@ class Context(object):
         finished this statement. If False, we're checking to see if
         we've finished this statement in the current session.
         """
+
+        if not self.current:
+            return False
 
         if ever:
             seen = renpy.game.seen_ever

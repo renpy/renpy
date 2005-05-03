@@ -8,15 +8,30 @@ of unicode strings is an error.
 We apologize to the non-english-speaking world for not noticing this
 one sooner.
 
-The special labels intended for main menu use, _continue and
-_preferences, now call a user main menu after they finish executing,
-rather than the library main menu. This simplifies the implementation
-of user-defined main menus.
+The main menu was moved out of the context that the main body of the
+game code executes in, into its own context. The only effect this
+should have on user code is that some of the menu options changed from
+simple label names into more complicated jumps. But it does allow us
+to share the main menu with the game menu, which is something I've
+had requests for. 
+
+Mikey changes.
+library.disable_thumbnails
+library.disable_file_pager
 
 Extras:
 
 Commentary track.
 Name in own window.
+
+Condition on Character.
+
+Pixellate.
+
+ui.jumpoutfocontext
+renpy.invoke_in_new_context
+
+
 
 
 New in 4.8.1

@@ -121,6 +121,12 @@ class JumpException(Exception):
     to the named label.
     """
 
+class JumpOutException(Exception):
+    """
+    This should be raised with a label as the only argument. This exits
+    the current context, and then raises a JumpException.
+    """
+
 def context(index=-1):
     """
     Return the current execution context, or the context at the
@@ -129,19 +135,52 @@ def context(index=-1):
 
     return contexts[index]
 
+def invoke_in_new_context(callable):
+    """
+    This pushes the current context, and invokes the given python
+    function in a new context. When that function returns or raises an
+    exception, it removes the new context, and restores the current
+    context.
+
+    Please note that the context so created cannot execute renpy
+    code. So exceptions that change the flow of renpy code (like
+    the one created by renpy.jump) cause this context to terminate,
+    and are handled by the next higher context.
+
+    If you want to execute renpy code from the function, you can call
+    it with renpy.call_in_new_context.
+
+    Use this to begin a second interaction with the user while
+    inside an interaction.
+    """
+
+    context = renpy.execution.Context(False, contexts[-1])
+    contexts.append(context)
+
+    try:
+        return callable()
+    finally:
+        contexts.pop()
+
 def call_in_new_context(label):
     """
     This code creates a new context, and starts executing code from
     that label in the new context. Rollback is disabled in the
     new context. (Actually, it will just bring you back to the
     real context.)
+
+    Use this to begin a second interaction with the user while
+    inside an interaction.
     """
 
     context = renpy.execution.Context(False, contexts[-1])
     contexts.append(context)
 
-    context.goto_label(label)
-    context.run()
+    try:
+        context.goto_label(label)
+        context.run()
+        contexts.pop()
+    except renpy.game.JumpOutException, e:        
+        contexts.pop()
+        raise renpy.game.JumpException(e.args[0])
 
-    contexts.pop()
-    interface.force_redraw = True

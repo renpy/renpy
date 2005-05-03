@@ -614,7 +614,7 @@ class RollbackLog(renpy.object.Object):
             rng.reset()
 
         # Restart the game with the new state.
-        raise renpy.game.RestartException()
+        raise renpy.game.RestartException(renpy.game.contexts[:])
 
     def freeze(self):
         """

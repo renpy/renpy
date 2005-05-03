@@ -462,6 +462,15 @@ def jump(label):
 
     raise renpy.game.JumpException(label)
 
+def jumpoutofcontext(label):
+    """
+    Causes control to leave the current context, and then to be
+    transferred in the parent context to the given label.
+    """
+
+    raise renpy.game.JumpOutException(label)
+
+
 def screenshot(filename):
     """
     Saves a screenshot in the named filename.
@@ -583,3 +592,4 @@ def context():
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 
+invoke_in_new_context = renpy.game.invoke_in_new_context

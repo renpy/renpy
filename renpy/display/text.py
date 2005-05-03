@@ -350,17 +350,19 @@ class Text(renpy.display.core.Displayable):
                 continue
 
             # Should we wrap?
+            oldcurwidth = curwidth
             curwidth, lh = tsl[-1].sizes(cur + i)
 
             if curwidth > remwidth:
                 line.append((TextStyle(tsl[-1]), cur))
                 lines.append(line)
-
+                
                 maxwidth = max(maxwidth, linewidth)
                 
                 line = [ ]
                 lineheights.append(lineheight)
-                linewidths.append(curwidth)
+
+                linewidths.append(width + oldcurwidth - remwidth)
                 
                 cur = i
                 curwidth, lineheight = tsl[-1].sizes(cur)                
@@ -387,7 +389,7 @@ class Text(renpy.display.core.Displayable):
         self.laidout = lines
         self.laidout_lineheights = lineheights
         self.laidout_linewidths = linewidths
-        self.laidout_width = max(maxwidth, self.style.minwidth)
+        self.laidout_width = max(max(linewidths), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
 
     def render_pass(self, r, xo, yo, color, user_colors, length):

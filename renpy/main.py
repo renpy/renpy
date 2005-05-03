@@ -128,6 +128,7 @@ def run(restart=False):
             # We get this when the context has changed, and so we go and
             # start running from the new context.
             except game.RestartException, e:
+                renpy.game.contexts = e.args[0]
                 continue
 
             except game.QuitException, e:
