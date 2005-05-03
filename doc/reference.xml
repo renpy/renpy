@@ -1726,13 +1726,23 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.exists -->
   
-  <!-- func renpy.context -->
-
   <!-- func renpy.clear_game_runtime -->
 
   <!-- func renpy.get_game_runtime -->
   
   <!-- func color -->
+
+  <p>
+Contexts store the current scene lists and execution location. Ren'Py
+supports a stack of contexts, but only the top-level context is saved 
+to the save file. 
+</p>
+
+  <!-- func renpy.context -->
+
+  <!-- func renpy.call_in_new_context -->
+
+  <!-- func renpy.invoke_in_new_context -->
 
   <p>
     Finally, there exists an object named renpy.random. This object is
@@ -2184,14 +2194,14 @@ the file picker.
       thumbnail is shown to the user.
     </var>
       
-    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", "_continue"), ("Preferences", "_preferences"), ("Quit Game", "_quit") ]'>
+    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", ... ), ("Preferences", ... ), ("Quit Game", ...) ]'>
       This is used to give the main menu that is shown to the user
       when the game first starts. It is a list of tuples, where the
       first element of each tuple is the title of the menu button, and
       the second element is a label that we jump to when that button
-      is selected. Some useful labels to use here are "_continue",
-      which brings up the game menu in load mode, "_preferences", which brings up the preferences screen, 
-      and "_quit", which terminates Ren'Py.
+      is selected. (This jump exits the context in which the start
+      menu executes.) The second element may also be a function, in
+      which case it is called when the item is selected.
     </var>
     
     <var name="library.has_music" value="True">
@@ -3155,9 +3165,15 @@ various button widgets.
 This function returns a function that, when called, jumps the game to
 the given label, ending the current interaction in the process. It's
 best used to supply the clicked argument to the various button
-widgets. (Most of the time, you want to use ui.returns and a series of
-if statements to jump or call the appropriate label, rather than
-relying on this function.)
+widgets.
+</p>
+</function>
+
+<function name="ui.jumpsoutofcontext" sig="(label)">
+<p>
+This function returns a function that, when called, exits the current
+context, and in the parent context jumps to the named label. It's
+intended to be used as the clicked argument to a button.
 </p>
 </function>
 

@@ -26,9 +26,6 @@ import encodings.string_escape
 import encodings.raw_unicode_escape
 
 
-# Load up all of Ren'Py, in the right order.
-import renpy
-
 def main():
 
     name = os.path.basename(sys.argv[0])
@@ -36,6 +33,11 @@ def main():
 
     if dirname:
         os.chdir(dirname)
+
+    sys.path.append("module")
+
+    # Load up all of Ren'Py, in the right order.
+    import renpy
 
     if name.find(".") != -1:
         name = name[:name.find(".")]

@@ -15,23 +15,36 @@ simple label names into more complicated jumps. But it does allow us
 to share the main menu with the game menu, which is something I've
 had requests for. 
 
-Mikey changes.
-library.disable_thumbnails
-library.disable_file_pager
+A number of minor changes were made to the menu at this time.
 
-Extras:
+The README_RENPY.txt file was updated, to make it more current and
+useful.
 
-Commentary track.
-Name in own window.
+The Character and DynamicCharacter objects were updated to take a
+condition argument. If this argument does not evaluate to true when a
+line of dialogue is executed, the line is not displayed to the user.
 
-Condition on Character.
+A new extra was added (in two_window_say.rpy) that places the name of
+a speaking character, and what they are saying, in two windows
+that can be styled separately. 
 
-Pixellate.
+The biggest change in Ren'Py was the addition of the _renpy
+module. This is a C module that enhances the functionality of pygame,
+allowing us to provide transitions and apply effects that simply
+weren't possible before. A compiled version ships with the windows
+binaries, installers are available for windows and mac from the Ren'PY
+website, and source is included in the module/ directory to compile it
+under Linux and Unix.
 
-ui.jumpoutfocontext
-renpy.invoke_in_new_context
+The presence of the _renpy module allows for two new features. The
+first is that the thumbnails of save images are now smoothly scaled
+down, which improves their look quite a bit.
 
-
+The second new feature is the new pixellate transition, which
+pixellates the old screen, swaps pixellated screens, and then
+depixellates the new screen. One can see this feature in action by
+right clicking to access the game menu... for this release, we've set
+the game menu transition to be pixellate.
 
 
 New in 4.8.1

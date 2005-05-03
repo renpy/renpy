@@ -10,6 +10,10 @@ try:
 except:
     # If for any reason we can't import the module, we have a version
     # number of 0.
+
+    print "The _renpy module was not found. Please read module/README.txt for"
+    print "more information."
+
     version = 0
 
 

@@ -8,6 +8,7 @@ import time
 import inspect
 
 sys.path.append('..')
+sys.path.append('../module')
 import renpy
 
 
@@ -135,6 +136,7 @@ def main():
     f.close()
 
     os.chdir("..")
+
 
     try:
         renpy.main.main("dump_styles")

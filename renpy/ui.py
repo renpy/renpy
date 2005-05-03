@@ -513,7 +513,7 @@ def _jumpsoutofcontext(label):
     """
     This exits the current context, and in the parent context jumps to
     the named label. It's intended to be used as the clicked argument
-    to a button exception.
+    to a button.
     """
 
     raise renpy.game.JumpOutException(label)

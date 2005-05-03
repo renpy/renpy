@@ -10,7 +10,7 @@ def match_times(source, dest):
 def dosify(s):
     return s.replace("\n", "\r\n")
 
-def copy_file(source, dest, license=""):
+def copy_file(source, dest, license="", dos=True):
 
     print source, "->", dest
 
@@ -21,7 +21,8 @@ def copy_file(source, dest, license=""):
 
     data = sf.read()
     if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy") or dest.endswith(".bat"):
-        data = dosify(data)
+        if dos:
+            data = dosify(data)
 
     df.write(data)
 
@@ -115,8 +116,8 @@ def main():
     copy_tree("extras", target + "/extras",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
-    def cp(x, license=""):
-        copy_file(x, target + "/" + x)
+    def cp(x, license="", dos=True):
+        copy_file(x, target + "/" + x, dos=dos)
 
     cp("CHANGELOG.txt")
     cp("LICENSE.txt")
@@ -130,8 +131,18 @@ def main():
     cp("dump_text.py", license=license)
     cp("renpy-mode.el")
     
-       
+    os.mkdir(target + "/module")
 
+    cp("module/README.txt")
+    cp("module/_renpy.pyx")
+    cp("module/_renpy.c")
+    cp("module/core.c")
+    cp("module/renpy.h")
+    cp("module/setup.py")
+    cp("module/setup_mac.py")
+    cp("module/setup_win32.py")
+    
+    
 
 if __name__ == "__main__":
     main()
