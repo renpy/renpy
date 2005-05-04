@@ -27,9 +27,7 @@ class Null(renpy.display.core.Displayable):
     """
 
     def __init__(self, width=0, height=0, style='default', **properties):
-        super(Null, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Null, self).__init__(style=style, **properties)
         self.width = width
         self.height = height
 
@@ -37,7 +35,12 @@ class Null(renpy.display.core.Displayable):
         return self.style
 
     def render(self, width, height, st):
-        return renpy.display.render.Render(self.width, self.height)
+        rv = renpy.display.render.Render(self.width, self.height)
+
+        if self.focusable:
+            rv.add_focus(self, None, None, None, None, None)
+
+        return rv
 
 
 class Container(renpy.display.core.Displayable):
@@ -60,15 +63,23 @@ class Container(renpy.display.core.Displayable):
 
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args, **properties):
 
-        super(Container, self).__init__()
-        
         self.children = []
         self.child = None
 
         for i in args:
             self.add(i)
+
+        super(Container, self).__init__(**properties)
+
+
+    def find_focusable(self, callback, focus_name):
+        super(Container, self).find_focusable(callback, focus_name)
+
+        for i in self.children:
+            i.find_focusable(callback, self.focus_name or focus_name)
+        
 
     def set_style_prefix(self, prefix):
         super(Container, self).set_style_prefix(prefix)
@@ -132,6 +143,8 @@ class Container(renpy.display.core.Displayable):
 
     def predict(self, callback):
 
+        super(Container, self).predict(callback)
+
         for i in self.children:
             i.predict(callback)
 
@@ -150,8 +163,7 @@ class Fixed(Container):
     """
 
     def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__()
-        self.style = renpy.style.Style(style, properties)
+        super(Fixed, self).__init__(style=style, **properties)
         self.times = [ ]
 
     def add(self, widget, time=None):
@@ -214,9 +226,7 @@ class Position(Container):
         child of this widget is placed.
         """
 
-        super(Position, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Position, self).__init__(style=style, **properties)
         self.add(child)
 
     def render(self, width, height, st):
@@ -240,11 +250,14 @@ class Grid(Container):
     """
 
     def __init__(self, cols, rows, padding=0,
+                 transpose=False,
                  style='default', **properties):
         """
         @param cols: The number of columns in this widget.
 
         @params rows: The number of rows in this widget.
+
+        @params transpose: True if the grid should be transposed.
         """
 
         super(Grid, self).__init__()
@@ -255,6 +268,7 @@ class Grid(Container):
         self.rows = rows
 
         self.padding = padding
+        self.transpose = transpose
 
     def render(self, width, height, st):
 
@@ -266,7 +280,28 @@ class Grid(Container):
         if len(self.children) != cols * rows:
             raise Exception("Grid not completely full.")
 
-        renders = [ render(i, width, height, st) for i in self.children ]
+        # If necessary, transpose the grid (kinda hacky, but it works here.)
+        if self.transpose:
+            self.transpose = False
+
+            old_children = self.children[:]
+            
+            for y in range(0, rows):
+                for x in range(0, cols):
+                    self.children[x + y * cols] = old_children[ y + x * rows ]
+
+            
+        # Now, start the actual rendering.
+
+        renwidth = width
+        renheight = height
+
+        if self.style.xfill:
+            renwidth = (width - (cols - 1) * padding) / cols
+        if self.style.yfill:
+            renheight = (height - (rows - 1) * padding) / rows
+        
+        renders = [ render(i, renwidth, renheight, st) for i in self.children ]
         self.sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
@@ -277,10 +312,10 @@ class Grid(Container):
             cheight = max(cheight, h)
 
         if self.style.xfill:
-            cwidth = (width - (cols - 1) * padding) / cols
+            cwidth = renwidth
 
         if self.style.yfill:
-            cheight = (height - (rows - 1) * padding) / rows
+            cheight = renheight
 
         width = cwidth * cols + padding * (cols - 1)
         height = cheight * rows + padding * (rows - 1)
@@ -456,17 +491,15 @@ class Window(Container):
 
     def __init__(self, child, style='window', **properties):
 
-        super(Window, self).__init__()
-
+        super(Window, self).__init__(style=style, **properties)
         self.add(child)
-        self.style = renpy.style.Style(style, properties)
 
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
 
-        # save typing and screen space.
+        # save some typing.
         style = self.style
 
         xminimum = scale(style.xminimum, width)
@@ -668,31 +701,31 @@ class Move(Container):
         return rv
 
     
-class Sizer(Container):
-    """
-    This is a widget that can change the size allocated to the widget that
-    it contains. Please note that it can only shrink the widget, and that
-    not all widgets respond well to having their areas shrunk. (For example,
-    this has no effect on an image.)
-    """
+# class Sizer(Container):
+#     """
+#     This is a widget that can change the size allocated to the widget that
+#     it contains. Please note that it can only shrink the widget, and that
+#     not all widgets respond well to having their areas shrunk. (For example,
+#     this has no effect on an image.)
+#     """
 
-    def __init__(self, maxwidth, maxheight, child,
-                 style='default', **properties):
+#     def __init__(self, maxwidth, maxheight, child,
+#                  style='default', **properties):
 
-        super(Sizer, self).__init__()
-        self.add(child)
+#         super(Sizer, self).__init__()
+#         self.add(child)
 
-        self.maxwidth = maxwidth
-        self.maxheight = maxheight
+#         self.maxwidth = maxwidth
+#         self.maxheight = maxheight
 
-        self.style = renpy.style.Style(style, properties)
+#         self.style = renpy.style.Style(style, properties)
 
-    def render(self, width, height, st):
+#     def render(self, width, height, st):
 
-        if self.maxwidth:
-            width = min(width, self.maxwidth)
+#         if self.maxwidth:
+#             width = min(width, self.maxwidth)
 
-        if self.maxheight:
-            height = min(height, self.maxheight)
+#         if self.maxheight:
+#             height = min(height, self.maxheight)
 
-        return super(Sizer, self).render(width, height, st)
+#         return super(Sizer, self).render(width, height, st)

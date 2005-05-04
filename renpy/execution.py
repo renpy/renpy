@@ -22,6 +22,8 @@ class Context(object):
     @ivar rollback: True if this context participates in rollbacks.
 
     @ivar runtime: The time spent in this context, in milliseconds.
+
+    @ivar info: A RevertableObject, which is made available to user code.
     """
 
     def __init__(self, rollback, context=None):
@@ -30,11 +32,15 @@ class Context(object):
         self.return_stack = [ ]
         self.rollback = rollback
         self.runtime = 0
-
+        self.info = renpy.python.RevertableObject()
+        self.seen = False
+        
         oldsl = None
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
+
+            vars(self.info).update(vars(context.info))
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl)
         
@@ -64,22 +70,34 @@ class Context(object):
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 
+            self.seen = False
+
             try:
                 node = node.execute()
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
 
-            renpy.game.seen_ever[self.current] = True
-            renpy.game.seen_session[self.current] = True
-
+            if self.seen:
+                renpy.game.seen_ever[self.current] = True
+                renpy.game.seen_session[self.current] = True
+                
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
-        
+
+    def mark_seen(self):
+        """
+        Marks the current statement as one that has been seen by the user.
+        """
+
+        self.seen = True
 
     def call(self, label, return_site=None):
         """
         Calls the named label.
         """
+
+        if not self.current:
+            raise "Context not capable of executing Ren'Py code."
 
         if return_site is None:
             return_site is self.current
@@ -115,6 +133,7 @@ class Context(object):
         rv.current = self.current
         rv.scene_lists = self.scene_lists.rollback_copy()
         rv.runtime = self.runtime
+        rv.info = self.info
 
         return rv
 
@@ -124,6 +143,9 @@ class Context(object):
         images that we predict to be loaded, in the rough order that
         they will be potentially loaded.
         """
+
+        if not self.current:
+            return
 
         nodes = [ renpy.game.script.lookup(self.current) ]
 
@@ -153,6 +175,9 @@ class Context(object):
         finished this statement. If False, we're checking to see if
         we've finished this statement in the current session.
         """
+
+        if not self.current:
+            return False
 
         if ever:
             seen = renpy.game.seen_ever
