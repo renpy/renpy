@@ -1,3 +1,20 @@
+New in 4.8.2a
+-------------
+
+Clicking preferences on the main menu jumpled to an undefined
+label. This is now fixed.
+
+A new extra has been added. The commentary.rpy extra adds an optional
+commentary window, which is shown only when the commentary preference
+it adds is enabled.
+
+To support the above, statements are only marked as seen if they have
+actually been shown to the user (by ui.interact being called during
+the statement.)
+
+New in 4.8.2
+------------
+
 Unicode support in python blocks now works. This allows unicode
 strings to be used with Ren'Py. This is especially useful when naming
 characters and translating the various menus into your native

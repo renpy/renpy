@@ -8,7 +8,7 @@ init -498:
         library.main_menu = [
             ( "Start Game", "start" ),
             ( "Continue Game", ui.jumps("_load_screen") ),
-            ( "Preferences", ui.jumps("_preferences_screen") ),
+            ( "Preferences", ui.jumps("_prefs_screen") ),
             ( "Quit Game",  ui.jumps("_quit") ),
             ]
 

@@ -33,6 +33,7 @@ class Context(object):
         self.rollback = rollback
         self.runtime = 0
         self.info = renpy.python.RevertableObject()
+        self.seen = False
         
         oldsl = None
         if context:
@@ -69,17 +70,26 @@ class Context(object):
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 
+            self.seen = False
+
             try:
                 node = node.execute()
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
 
-            renpy.game.seen_ever[self.current] = True
-            renpy.game.seen_session[self.current] = True
-
+            if self.seen:
+                renpy.game.seen_ever[self.current] = True
+                renpy.game.seen_session[self.current] = True
+                
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
-        
+
+    def mark_seen(self):
+        """
+        Marks the current statement as one that has been seen by the user.
+        """
+
+        self.seen = True
 
     def call(self, label, return_site=None):
         """

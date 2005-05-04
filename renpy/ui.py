@@ -42,8 +42,10 @@ def interact(**kwargs):
     if current_stack:
         raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
 
-    return renpy.game.interface.interact(**kwargs)
 
+    rv = renpy.game.interface.interact(**kwargs)
+    renpy.game.context(-1).mark_seen()
+    return rv
 
 def add(w, make_current=False, once=False):
     """
