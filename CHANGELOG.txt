@@ -1,3 +1,5 @@
+Psyco is gone.
+
 New in 4.8.2a
 -------------
 
