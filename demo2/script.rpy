@@ -86,6 +86,7 @@ init:
     # Character objects.    
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
+
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.
 

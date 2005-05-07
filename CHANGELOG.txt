@@ -16,6 +16,16 @@ The config.music_interact variable is gone. It's been replaced by
 config.interact_callbacks, which is a list of functions to call before
 each interaction. (This will help us support voice.)
 
+A new Motion function allows the user to give a function that controls
+how a displayable moves on the screen, allowing for customizable
+motions. Pan and Move have been reimplemented in terms of Motion. All
+three functions now take repeat and bounce parameters. Repeat causes
+the motion to repeat after a single period is over, while bounce
+causes the motion to bounce from extreme to extreme.
+
+voice
+
+
 New in 4.8.2a
 -------------
 

@@ -93,6 +93,7 @@ def compute_properties(style, properties):
         for p in prefixes:
             props[p + k] = v
 
+
     style.properties.update(props)
     style.cache.update(props)
 

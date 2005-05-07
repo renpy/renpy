@@ -569,163 +569,165 @@ class Window(Container):
         return rv
 
 
-class Pan(Container):
+class Motion(Container):
     """
-    This is used to pan over a child displayable, which is almost
-    always an image. It works by interpolating the placement of the
-    upper-left corner of the image, over time. It's only really
-    suitable for use with images that are larger than the screen, as
-    we don't do any cropping on the image.
+    This is used to move a child displayable around the screen. It
+    works by supplying a time value to a user-supplied function,
+    which is in turn expected to return a tuple giving the x and y
+    location of the upper-left-hand corner of the child.
+
+    The time value is a floating point number that ranges from 0 to
+    1. If repeat is True, then the motion repeats every period
+    sections. (Otherwise, it stops.) If bounce is true, the
+    time value varies from 0 to 1 to 0 again.
+
+    The function supplied needs to be pickleable, which means it needs
+    to be defined as a name in an init block. It cannot be a lambda or
+    anonymous inner function. If you can get away with using Pan or
+    Move, use them instead.
+
+    Please note that floats and ints are interpreted as for xpos and
+    ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, startpos, endpos, time, child,
-                 style='image_placement', **properties):
+    def __init__(self, function, period, child, repeat=False, bounce=False, style='default', **properties):
         """
         @param child: The child displayable.
 
-        @param startpos: The initial coordinates of the upper-left
-        corner of the screen, relative to the image.
+        @param function: A function that takes a floating point value and returns
+        an xpos, ypos tuple.
 
-        @param endpos: The coordinates of the upper-left corner of the
-        screen, relative to the image, after time has elapsed.
+        @param period: The amount of time it takes to go through one cycle, in seconds.
 
-        @param time: The time it takes to pan from startpos to endpos.
+        @param repeat: Should we repeat after a period is up?
+
+        @param bounce: Should we bounce?
         """
 
-        super(Pan, self).__init__()
-        self.add(child)
+        super(Motion, self).__init__(style=style, **properties)
 
-        self.startpos = startpos
-        self.endpos = endpos
-        self.time = time
-        self.style = renpy.style.Style(style, properties)
+        self.child = child
+        self.function = function
+        self.period = period
+        self.repeat = repeat
+        self.bounce = bounce
 
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
-
-        surf = render(self.child, width, height, st)
-        self.sizes = [ surf.get_size() ]
-
-        x0, y0 = self.startpos
-        x1, y1 = self.endpos
-
-        if self.time > 0:
-            tfrac = (st / self.time)
-        else:
-            tfrac = 1.0
-
-        if tfrac > 1.0:
-            tfrac = 1.0
-
-        xo = int(x0 * (1.0 - tfrac) + x1 * tfrac)
-        yo = int(y0 * (1.0 - tfrac) + y1 * tfrac)
         
-
-        self.offsets = [ (-xo, -yo) ]
-
-        rv = renpy.display.render.Render(width, height)
-
-        # print surf
-
-        subsurf = surf.subsurface((xo, yo, width, height))
-        rv.blit(subsurf, (0, 0))
-
-        # rv.blit(surf, (-xo, -yo))
-
-        if st < self.time:
+        if self.repeat:
+            st = st % self.period
             renpy.display.render.redraw(self, 0)
 
-        return rv
-
-class Move(Container):
-    """
-    This moves a child relative to the thing containing it. This
-    motion is done by manipulating the xpos and ypos properties in a
-    placement style.
-    """
-
-    def __init__(self, startpos, endpos, time, child,
-                 style='default', **properties):
-
-        super(Move, self).__init__()
-        self.add(child)
-
-        self.startpos = startpos
-        self.endpos = endpos
-        self.time = time
-
-        self.st = 0.0
-
-        self.style = renpy.style.Style(style, properties)
-
-    def get_placement(self):
-        st = self.st
-
-        x0, y0 = self.startpos
-        x1, y1 = self.endpos
-
-        if self.time > 0:
-            tfrac = (st / self.time)
         else:
-            tfrac = 1.0
+            if st > self.period:
+                st = self.period
+            else:
+                renpy.display.render.redraw(self, 0)
+                
+        st /= self.period
 
-        if tfrac > 1.0:
-            tfrac = 1.0
+        if self.bounce:
+            st = st * 2
+            if st > 1.0:
+                st = 2.0 - st
 
-        xo = x0 * (1.0 - tfrac) + x1 * tfrac
-        yo = y0 * (1.0 - tfrac) + y1 * tfrac
+        self.style.xpos, self.style.ypos = self.function(st)
 
-        if isinstance(x1, int):
-            xo = int(xo)
+        print self.style.xpos, self.style.ypos
 
-        if isinstance(y1, int):
-            yo = int(yo)
+        child = render(self.child, width, height, st)
+        cw, ch = child.get_size()
 
-        self.style.xpos = xo
-        self.style.ypos = yo
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(child, (0, 0))
 
-        return self.style
-
-    def render(self, width, height, st):
-        self.st = st
-        rv = render(self.child, width, height, st)
-
-        self.sizes = [ rv.get_size() ]
+        self.sizes = [ child.get_size() ]
         self.offsets = [ (0, 0) ]
 
-        if st < self.time:
-            renpy.display.render.redraw(self, 0)
-
         return rv
 
+        
+class Interpolate(object):
+
+    def __init__(self, start, end):
+
+        self.x0, self.y0 = start
+        self.x1, self.y1 = end
+
+    def __call__(self, t):
+
+        return ( int((1.0 - t) * self.x0 + t * self.x1),
+                 int((1.0 - t) * self.y0 + t * self.y1) )
+
+
+def Pan(startpos, endpos, time, child, repeat=False, bounce=False,
+        style='default', **properties):
+    """
+    This is used to pan over a child displayable, which is almost
+    always an image. It works by interpolating the placement of the
+    upper-left corner of the screen, over time. It's only really
+    suitable for use with images that are larger than the screen,
+    and we don't do any cropping on the image.
+
+    @param startpos: The initial coordinates of the upper-left
+    corner of the screen, relative to the image.
+
+    @param endpos: The coordinates of the upper-left corner of the
+    screen, relative to the image, after time has elapsed.
     
-# class Sizer(Container):
-#     """
-#     This is a widget that can change the size allocated to the widget that
-#     it contains. Please note that it can only shrink the widget, and that
-#     not all widgets respond well to having their areas shrunk. (For example,
-#     this has no effect on an image.)
-#     """
+    @param time: The time it takes to pan from startpos to endpos.
 
-#     def __init__(self, maxwidth, maxheight, child,
-#                  style='default', **properties):
+    @param child: The child displayable.
 
-#         super(Sizer, self).__init__()
-#         self.add(child)
+    @param repeat: True if we should repeat this forever.
 
-#         self.maxwidth = maxwidth
-#         self.maxheight = maxheight
+    @param bounce: True if we should bounce from the start to the end
+    to the start.
+    """
 
-#         self.style = renpy.style.Style(style, properties)
+    x0, y0 = startpos
+    x1, y1 = endpos
+    
+    return Motion(Interpolate((-x0, -y0), (-x1, -y1)),
+                  time,
+                  child,
+                  repeat=repeat, 
+                  bounce=bounce,
+                  style=style,
+                  **properties)
 
-#     def render(self, width, height, st):
+def Move(startpos, endpos, time, child, repeat=False, bounce=False,
+        style='default', **properties):
+    """
+    This is used to pan over a child displayable relative to
+    the containing area. It works by interpolating the placement of the
+    the child, over time. 
 
-#         if self.maxwidth:
-#             width = min(width, self.maxwidth)
+    @param startpos: The initial coordinates of the child
+    relative to the containing area.
 
-#         if self.maxheight:
-#             height = min(height, self.maxheight)
+    @param endpos: The coordinates of the child at the end of the
+    move.
+    
+    @param time: The time it takes to move from startpos to endpos.
 
-#         return super(Sizer, self).render(width, height, st)
+    @param child: The child displayable.
+
+    @param repeat: True if we should repeat this forever.
+
+    @param bounce: True if we should bounce from the start to the end
+    to the start.
+    """
+
+    return Motion(Interpolate(startpos, endpos),
+                  time,
+                  child,
+                  repeat=repeat, 
+                  bounce=bounce,
+                  style=style,
+                  **properties)
+
+

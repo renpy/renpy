@@ -29,6 +29,7 @@ Movie = renpy.display.video.Movie
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
+Motion = renpy.curry.curry(renpy.display.layout.Motion)
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)

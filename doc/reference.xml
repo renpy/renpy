@@ -837,16 +837,47 @@ show text "centered."
 show text1 "1/4 of the way down the screen."
   </example>
 
-  <function name="Pan" sig="(startpos, endpos, time)">
+  <function name="Motion" sig="(function, period, repeat=False, bounce=False, **properties)">
+   
+<p>
+Motion, when given the appropriate arguments, returns an object that
+when given as the at clause of an image causes an image to be moved on
+the screen. Function is a function that, when given a number between 0
+and 1, returns two values, which are interpreted as the xpos and the
+ypos of the motion. (Please note that if these values are floating
+point numbers, they are interpreted as a fraction of the screen. If
+they are integers, they are interpreted as the absolute position of
+the anchor of the motion.
+</p>
+
+<p>
+Please note that the function may be pickeled, which means that it
+cannot be an inner function or a lambda, but must be a function
+defined in an init block of your script. In general, it's better to 
+use a Pan or a Move, rather than defining your own motion.
+</p>
+
+<p>
+Period is the time, in seconds, it takes to complete one cycle of 
+a motion. If repeat is True, then the cycle repeats when it finishes,
+if False, the motion stops after one period. If bounce is True, the
+argument to the function goes from 0 to 1 to 0 in a single period, if
+False, it goes from 0 to 1. 
+</p>
+
+</function>
+
+  <function name="Pan" sig="(startpos, endpos, time, repeat=False, bounce=False, **properties)">
 
     <p>
 
       Pan, when given the appropriate arguments, gives an object that
-      can be passed to the at clause of that image to cause the image to
+      can be passed to the at clause of an image to cause the image to
       be panned on the screen. The parameters startpos and endpos are
       tuples, containing the x and y coordinates of the upper-left hand
       corner of the screen relative to the image. Time is the time it
-      will take this position to move from startpos to endpos.
+      will take this position to move from startpos to endpos. Repeat
+      and bounce are as for Motion.
 
     </p><p>
 
@@ -884,7 +915,7 @@ scene marspan at Pan((0, 0), (1600, 0), 10.0)
 
   </function>
     
-  <function name="Move" sig="(startpos, endpos, time, **properties)">
+  <function name="Move" sig="(startpos, endpos, time, repeat=False, bounce=False, **properties)">
     
     <p>
       Move is similar to Pan, insofar as it involves moving
@@ -899,7 +930,9 @@ scene marspan at Pan((0, 0), (1600, 0), 10.0)
       position to the ending position, and extra position
       properties. The positions are given as tuples containing xpos
       and ypos properties. The positions may be integer or floating
-      point, but it's not permissable to mix the two.
+      point, but it's not permissable to mix the two. Repeat and
+      bounce are as for Motion.
+ 
     </p>
     
     <p>
@@ -916,7 +949,8 @@ show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
 
   <p>
     In general, one wants to use Pan when an image is bigger than the
-    screen, and Move when it is smaller.
+    screen, and Move when it is smaller. Both Pan and Move are special
+    cases of Motion.
   </p>
 
   <h3>Transitions</h3>
