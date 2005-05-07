@@ -2,15 +2,6 @@
 
 import os.path
 
-# Enable psyco. Warning: Check for memory leaks!
-
-try:
-    if not os.path.exists("nopsyco"):
-        import psyco
-        psyco.full()
-except ImportError:
-    pass
-
 import codecs
 import optparse
 import traceback
@@ -25,19 +16,20 @@ import encodings.unicode_escape
 import encodings.string_escape
 import encodings.raw_unicode_escape
 
+dirname = os.path.dirname(sys.argv[0])
+
+if dirname:
+    os.chdir(dirname)
+
+# Add the path to the module.
+sys.path.append("module")
+
+# Load up all of Ren'Py, in the right order.
+import renpy
 
 def main():
 
     name = os.path.basename(sys.argv[0])
-    dirname = os.path.dirname(sys.argv[0])
-
-    if dirname:
-        os.chdir(dirname)
-
-    sys.path.append("module")
-
-    # Load up all of Ren'Py, in the right order.
-    import renpy
 
     if name.find(".") != -1:
         name = name[:name.find(".")]
