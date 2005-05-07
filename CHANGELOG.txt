@@ -25,6 +25,7 @@ causes the motion to bounce from extreme to extreme.
 
 voice
 
+fast exists
 
 New in 4.8.2a
 -------------

@@ -549,11 +549,7 @@ def loadable(filename):
     False if this is not the case.
     """
 
-    try:
-        renpy.loader.load(filename)
-        return True
-    except:
-        return False
+    return renpy.loader.loadable(filename)
 
 def exists(filename):
     """
