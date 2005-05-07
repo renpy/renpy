@@ -23,9 +23,12 @@ three functions now take repeat and bounce parameters. Repeat causes
 the motion to repeat after a single period is over, while bounce
 causes the motion to bounce from extreme to extreme.
 
-voice
+Finally, a new voice extra has been added as extras/voice.rpy. This is
+a simplified version of what will eventually be Ren'Py's voice
+system. Right now, the only feature missing is that voices for
+characters cannot be enabled or disabled individually, but may
+instead only be manipulated in the aggregate.
 
-fast exists
 
 New in 4.8.2a
 -------------
