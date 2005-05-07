@@ -156,7 +156,7 @@ def saved_games():
         newest = None
 
     return saveinfo, newest
-    
+
 def load(filename):
     """
     Loads the game from the given file. This function never returns.
@@ -165,4 +165,5 @@ def load(filename):
     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
     log = loads(zf.read("log"))
     zf.close()
+
     log.unfreeze()

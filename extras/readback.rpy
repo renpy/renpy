@@ -128,16 +128,20 @@ init -100:
                 self.readback_style = readback_style
                 
             def __call__(self, what, **kwargs):
+
+                if not self.check_condition():
+                    return
+
                 readback_OldCharacter.__call__(self, what, **kwargs)
                 readback_save(self, what)
 
             def readback(self, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
+                self.function(self.name, what,
+                              who_style=self.who_style,
+                              what_style=self.readback_style,
+                              window_style=self.window_style,
+                              interact=False,
+                              **self.properties)
 
 
 
@@ -151,17 +155,20 @@ init -100:
                 
 
             def __call__(self, what, **kwargs):
+                if not self.check_condition():
+                    return
+
                 name = renpy.renpy.python.py_eval(self.name_expr)
                 readback_OldDynamicCharacter.__call__(self, what, **kwargs)
                 readback_save(self, name, what)
                 
             def readback(self, name, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
+                self.function(self.name, what,
+                              who_style=self.who_style,
+                              what_style=self.readback_style,
+                              window_style=self.window_style,
+                              interact=False,
+                              **self.properties)
 
     
         class Sayer(object):

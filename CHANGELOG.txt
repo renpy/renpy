@@ -1,3 +1,242 @@
+New in 4.8.3
+------------
+
+Ren'Py no longer uses the psyco specializing compiler. The relatively
+small (about 2%) speed increase it gave wasn't worth the hassle
+involved in dealing with memory leaks and other semantic changes. This
+change significantly lowers Ren'Py's memory usage, and fixes a major
+memory leak that was introduced in the 4.8 series.
+
+A number of race conditions were fixed in the windows native midi
+code. The upshot of this is that we can now play midi on windows
+without there being a small chance of crashing each time we start a
+new track.
+
+The config.music_interact variable is gone. It's been replaced by
+config.interact_callbacks, which is a list of functions to call before
+each interaction. (This will help us support voice.)
+
+New in 4.8.2a
+-------------
+
+Clicking preferences on the main menu jumpled to an undefined
+label. This is now fixed.
+
+A new extra has been added. The commentary.rpy extra adds an optional
+commentary window, which is shown only when the commentary preference
+it adds is enabled.
+
+To support the above, statements are only marked as seen if they have
+actually been shown to the user (by ui.interact being called during
+the statement.)
+
+
+New in 4.8.2
+------------
+
+Unicode support in python blocks now works. This allows unicode
+strings to be used with Ren'Py. This is especially useful when naming
+characters and translating the various menus into your native
+language. Please note that the only unicode allowed is inside unicode
+strings, which begin with a u before the first quote. Unicode outside
+of unicode strings is an error.
+
+We apologize to the non-english-speaking world for not noticing this
+one sooner.
+
+The main menu was moved out of the context that the main body of the
+game code executes in, into its own context. The only effect this
+should have on user code is that some of the menu options changed from
+simple label names into more complicated jumps. But it does allow us
+to share the main menu with the game menu, which is something I've
+had requests for. 
+
+A number of minor changes were made to the menu at this time.
+
+The README_RENPY.txt file was updated, to make it more current and
+useful.
+
+The Character and DynamicCharacter objects were updated to take a
+condition argument. If this argument does not evaluate to true when a
+line of dialogue is executed, the line is not displayed to the user.
+
+A new extra was added (in two_window_say.rpy) that places the name of
+a speaking character, and what they are saying, in two windows
+that can be styled separately. 
+
+The biggest change in Ren'Py was the addition of the _renpy
+module. This is a C module that enhances the functionality of pygame,
+allowing us to provide transitions and apply effects that simply
+weren't possible before. A compiled version ships with the windows
+binaries, installers are available for windows and mac from the Ren'PY
+website, and source is included in the module/ directory to compile it
+under Linux and Unix.
+
+The presence of the _renpy module allows for two new features. The
+first is that the thumbnails of save images are now smoothly scaled
+down, which improves their look quite a bit.
+
+The second new feature is the new pixellate transition, which
+pixellates the old screen, swaps pixellated screens, and then
+depixellates the new screen. One can see this feature in action by
+right clicking to access the game menu... for this release, we've set
+the game menu transition to be pixellate.
+
+
+New in 4.8.1
+------------
+
+Character objects are no longer limited to displaying through
+renpy.display_say, but can now be supplied a function argument, which
+is a function that is called instead. This will make it easier to
+radically change how dialogue is displayed.
+
+The ui.grid object now has a new argument, transpose, which allows 
+widgets to be added down the columns first. It also is smarter about
+allocating space to subwidgets when xfill or yfill are set.
+
+The file entries in the load and save screens are now arraigned in a
+grid, which has the style file_picker_grid. This means that we should
+now be smarter in the presence of games of varying size, and we should
+wrap text if it gets too long. As part of this,
+library.file_page_length has now been broken out into two variables,
+library.file_page_rows and library.file_page_cols.
+
+renpy.music_stop now supports a fadeout parameter, for orthogonality
+with the new renpy.music_start. 
+
+Now, python blocks have the correct filename and line numbers
+annotated onto them. This means that tracebacks generated in python
+blocks will show a .rpy file and the appropriate line, rather than
+showing "<none>" and a random line as they did before.
+
+There are two new style properties, xmaximum and ymaximum. These two
+properties limit the size of the widgets that they are applied to, as
+if that widget was placed inside a ui.sizer(). (In fact, ui.sizer() is
+now implemented in terms of these properties.) 
+
+Now, we only restore or rollback to places where all of the transient
+layers are empty. This prevents a bug in which additional dialogue
+will be lost when a restore or rollback occurs. 
+
+The way in which preferences are displayed has been made more
+configurable. Now, there is a new variable, library.preferences, which
+is a map from a style to a list of preferences to be displayed in a
+vbox with that style. There are now two new styles (prefs_left and
+prefs_right) which control the placement of the default preference 
+columns.
+
+There is a new spinner preference type, which allows a value to be 
+incremented or decremented. This preference is now used to adjust the
+speed at which text is shown to the user. So now this is controlled by
+the user, rather than the config.annoying_text_cps parameter. If you
+don't want to give the user this control, you can set library.has_cps
+to False. A number of new styles define the spinner.
+
+An empty string is now rendered as if it was a string consisting of a
+single space. This fixes a bug in which an empty string was rendered
+with zero width and height.
+
+New in 4.8
+----------
+
+A new system was implemented to manage widget focus. This new system
+allows the focus to be moved from widget to widget using the keyboard,
+without requiring the keymouse behavior be used. Because of this new
+system, the keymouse behavior is now a no-op. 
+
+To simplify the code and make every widget compatible with the new
+focus code, a number of widgets were reimplemented in terms of
+buttons. This includes the ui.menu widget, which is the widget that is
+used when presenting the user with choices. Menu buttons are of the
+new style style.menu_choice_button, while their labels remain of style
+style.menu_choice. Background images and padding can now be styled 
+onto these menu buttons.
+
+A number of new image manipulators have been made available in the
+new im package. These are objects that can load an image (im.Image), 
+crop an image (im.Crop), scale images (im.Scale), rotozoom images
+(im.Rotozoom) and composite images (im.Composite). The latter is much
+more flexible than the previous image composition system, as it now
+supports placing images at arbitrary locations on an arbitrarily big 
+canvas. Image (by itself) is now a function that creates the
+appropriate image manipulators, retaining compatibility with its
+behavior in previous releases.
+
+The image cache is now based on image size, rather than number of
+images. This prevents a large number of small images from filling up
+the cache.
+
+We now load images before starting the timer for a transition. This
+prevents us from popping into the middle of a transition because we
+spent some time loading images. This behavior can be controlled by 
+config.load_before_transition.
+
+The ui.imagemap widget has been rewritten in terms of ui.imagebuttons
+and im.Crops. Some styles have changed names as a result.
+
+Ren'Py now keeps track of the images that have been shown to the
+user. This is the basis of this release's new extra, gallery.rpy,
+which manages a gallery of unlockable CG.
+
+The audio system has been rewritten, and a number of low-level audio
+functions have been exposed in the new audio file. These functions
+control audio directly, but do not save the state of audio in a save
+file. The high-level music functions have been rewritten and placed in
+the music.rpy file, allowing a sufficently adventurous game author to
+change the way music is played. 
+
+Two changes have been made to the renpy.music_start() function in the
+high-level sound api. The startpos argument was removed (as it was a
+pain to support), and a new fadeout argument was added, which lets the
+fadeout time be controlled for each new song that is played.
+
+The low-level sound api now lets us do the following things:
+
+[list][*] Play up to eight sound effects at once.
+[*] Cancel a playing sound effect.
+[*] Pause and unpause the playing music.
+[/list]
+
+There is now a new, state that a widget can be in. Along with hover,
+idle, and activate, a widget can now be insensitive. This is the state
+that all non-focused widgets are in. Having the new insensitive state
+means that we can eliminate the various disabled_button styles, so we
+did.
+
+In general, in this release, many styles have changed names.
+
+In prior versions of Ren'Py, the bar widget could respond to
+clicks. This was never used, and won't work well with the
+keyboard focus control system. So, it's been eliminated.
+
+Now, if the label "enter_game_menu" exists, it is called when entering
+the game menu. It's expected that the main purpose of this label will 
+be to play music when in the game menu. Using the default music
+system, the code to do this would look like:
+
+[code]
+label enter_game_menu:
+    $ renpy.music_start("game_menu_music.mid")
+    return
+[/code]    
+
+A number of bugs were fixed, including bugs with the style system, and
+with animation refresh.
+
+Tab characters are now expanded to tab stop at eight spaces, rather
+than to a fixed spacing of eight spaces. Old code using tabs may need
+to be reformatted. 
+
+The 'h' key now hides the windows on the screen. This means that all
+Ren'Py functionality is now available through the keyboard, at least
+for people with a 1-button mouse. (cough ... Mac ... cough)
+
+Finally, setting the environment variable RENPY_DISABLE_FULLSCREEN to
+a non-empty value will disable fullscreen support, for those people
+(that person?) who had it crash their systems.
+
+
 New in 4.7.2
 ------------
 

@@ -1,6 +1,6 @@
 init:
     $ config.window_title = "Test Game"
-    $ config.profile = True
+    $ config.profile = False
 
     $ config.debug_sound = True
 
@@ -22,16 +22,16 @@ init:
     # Styles.
     $ style.window.background = Frame("frame.png", 120, 25)
 
-    $ style.menu.hover_sound = "chev1.wav"
-    $ style.menu.activate_sound = "chev2.wav"
+    $ style.menu_choice_button.hover_sound = "chev1.wav"
+    $ style.menu_choice_button.activate_sound = "chev2.wav"
 
-    $ style.imagemap.hover_sound = "chev3.wav"
-    $ style.imagemap.activate_sound = "chev4.wav"
+    $ style.imagemap_button.hover_sound = "chev3.wav"
+    $ style.imagemap_button.activate_sound = "chev4.wav"
 
     $ style.button.hover_sound = "chev6.wav"
     $ style.button.activate_sound = "chev7.wav"
 
-    $ style.mm_root_window.background = renpy.Solid((128, 128, 128, 255))
+    $ style.mm_root_window.background = Solid((128, 128, 128, 255))
 
     # Backgrounds.
     image whitehouse = Image("whitehouse.jpg")
@@ -45,7 +45,7 @@ init:
 
     image eileen anim = Animation("9a_happy.png", 0.25,
                                   "9a_vhappy.png", 0.25,
-                                  "9a_concerned.png")
+                                  "9a_concerned.png", 60.0)
 
     image movie = Movie()
 
@@ -82,6 +82,10 @@ label main_menu:
     # Stuff that happens before the real main menu.
 
     scene black
+
+    show eileen anim
+
+    $ renpy.pause()
         
 
     show text "American Bishoujo\nPresents" \
@@ -106,6 +110,36 @@ label start:
 
     scene whitehouse
     show eileen happy beret
+
+    $ a = 0
+
+    while a < 10:
+
+        $ ui.vbox()
+        $ ui.textbutton("Foo %d" % a, clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.textbutton("Foo", clicked = lambda : True)
+        $ ui.close()
+
+        $ ui.pausebehavior(0.25)
+
+        $ ui.interact()
+
+        $ a += 1
+
+    return
+        
+
+
+
 
 
     python:

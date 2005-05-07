@@ -1,0 +1,17 @@
+This file explains how to build the _renpy module for distribution on 
+the Mac and Windows.
+
+(This file is not for distribution, as it doesn't make sense to 
+ distribute it.)
+
+Windows: 
+
+Get into msys.
+
+cd /t/ab/renpy/module
+/c/python23/python setup_win32 build --compiler mingw32 bdist_wininst
+
+
+Macintosh:
+
+python setup_mac bdist_mpkg --zipdist 
