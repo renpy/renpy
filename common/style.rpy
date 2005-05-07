@@ -236,6 +236,8 @@ init -1000:
                      '(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.')
 
         style.mm_root_window.background = Solid((0, 0, 0, 255))
+        style.mm_root_window.xfill = True
+        style.mm_root_window.yfill = True
 
         style.create('mm_menu_window', 'default',
                      '(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.')
@@ -257,6 +259,8 @@ init -1000:
                      '(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.')
 
         style.gm_root_window.background = Solid((0, 0, 0, 255))
+        style.gm_root_window.xfill = True
+        style.gm_root_window.yfill = True
     
         style.create('gm_nav_window', 'default',
                      '(window, position) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')

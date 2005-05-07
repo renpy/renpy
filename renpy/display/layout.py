@@ -636,8 +636,6 @@ class Motion(Container):
 
         self.style.xpos, self.style.ypos = self.function(st)
 
-        print self.style.xpos, self.style.ypos
-
         child = render(self.child, width, height, st)
         cw, ch = child.get_size()
 
@@ -659,8 +657,16 @@ class Interpolate(object):
 
     def __call__(self, t):
 
-        return ( int((1.0 - t) * self.x0 + t * self.x1),
-                 int((1.0 - t) * self.y0 + t * self.y1) )
+        def interp(a, b):
+
+            rv = (1.0 - t) * a + t * b
+            
+            if isinstance(a, int) and isinstance(b, int):
+                return int(rv)
+            else:
+                return rv
+
+        return ( interp(self.x0, self.x1), interp(self.y0, self.y1) )
 
 
 def Pan(startpos, endpos, time, child, repeat=False, bounce=False,

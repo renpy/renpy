@@ -20,8 +20,8 @@ init -10:
 
 
         # Ensure that the commentary attribute exists.
-        print persistent.commentary
-        persistent.commentary = getattr(persistent, "commentary", False)
+        if persistent.commentary is None:
+            persistent.commentary = False
 
 
         commentary = Character(None, window_style='commentary_window',

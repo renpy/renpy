@@ -31,7 +31,8 @@ init:
     $ style.button.hover_sound = "chev6.wav"
     $ style.button.activate_sound = "chev7.wav"
 
-    $ style.mm_root_window.background = Solid((128, 128, 128, 255))
+    # $ style.mm_root_window.background = Solid((128, 128, 128, 255))
+    # $ style.gm_root_window.background = Solid((128, 128, 128, 255))
 
     # Backgrounds.
     image whitehouse = Image("whitehouse.jpg")
@@ -51,6 +52,7 @@ init:
 
     # Character objects.
     $ e = Character('Eileen', color=(200, 255, 200, 255))
+    $ w = Character('Walter')
     $ pov = DynamicCharacter('pov_name', color=(255, 0, 0, 255))
     $ pov_name = '????'
 
@@ -111,35 +113,31 @@ label start:
     scene whitehouse
     show eileen happy beret
 
-    $ a = 0
+    e "Okay, let's play stargate."
 
-    while a < 10:
+    voice "chev1.wav"
+    w "Chevron one encoded!"
 
-        $ ui.vbox()
-        $ ui.textbutton("Foo %d" % a, clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
+    voice "chev2.wav"
+    w "Chevron two encoded!"
 
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.textbutton("Foo", clicked = lambda : True)
-        $ ui.close()
+    voice "chev3.wav"
+    w "Chevron three encoded!"
 
-        $ ui.pausebehavior(0.25)
+    voice "chev4.wav"
+    w "Chevron four encoded!"
 
-        $ ui.interact()
+    voice "chev5.wav"
+    w "Chevron five encoded!"
 
-        $ a += 1
+    voice "chev6.wav"
+    w "Chevron six encoded!"
 
-    return
-        
+    voice "chev7.wav"
+    w "Chevron seven..."
 
-
-
+    voice_sustain ""
+    w "... locked!"
 
 
     python:
