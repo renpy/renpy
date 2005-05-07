@@ -1,4 +1,20 @@
-Psyco is gone.
+New in 4.8.3
+------------
+
+Ren'Py no longer uses the psyco specializing compiler. The relatively
+small (about 2%) speed increase it gave wasn't worth the hassle
+involved in dealing with memory leaks and other semantic changes. This
+change significantly lowers Ren'Py's memory usage, and fixes a major
+memory leak that was introduced in the 4.8 series.
+
+A number of race conditions were fixed in the windows native midi
+code. The upshot of this is that we can now play midi on windows
+without there being a small chance of crashing each time we start a
+new track.
+
+The config.music_interact variable is gone. It's been replaced by
+config.interact_callbacks, which is a list of functions to call before
+each interaction. (This will help us support voice.)
 
 New in 4.8.2a
 -------------
@@ -13,6 +29,7 @@ it adds is enabled.
 To support the above, statements are only marked as seen if they have
 actually been shown to the user (by ui.interact being called during
 the statement.)
+
 
 New in 4.8.2
 ------------

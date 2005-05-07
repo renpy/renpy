@@ -149,9 +149,8 @@ keymap = dict(
     toggle_skip = [ 'K_TAB' ],
     )
 
-# A function that is called before each interaction, to update the
-# music that is currently playing.
-music_interact = None
+# A list of functions that are called before each interaction.
+interact_callbacks = [ ]
 
 # A function that is called when a music track ends, perhaps to
 # play another track.

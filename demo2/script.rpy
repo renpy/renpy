@@ -115,7 +115,7 @@ label start:
 
     # Clear the game runtime timer, so it doesn't reflect time spent
     # sitting at the main menu.
-    $ renpy.clear_game_runtime()
+    $ renpy.clear_game_runtime()        
 
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')

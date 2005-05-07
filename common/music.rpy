@@ -6,7 +6,7 @@
 init -1000:
   python hide:
 
-     config.debug_sound = True
+     # config.debug_sound = True
 
      # This becomes renpy.music_start.
      def music_start(filename, loops=-1, fadeout=None):
@@ -121,7 +121,7 @@ init -1000:
              ctx._music_loops -= 1
              audio.music_queue(ctx._music_name)
 
-     config.music_interact = music_interact
+     config.interact_callbacks.append(music_interact)
      config.music_end_event = music_end_event
 
      

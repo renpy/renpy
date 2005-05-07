@@ -319,16 +319,6 @@ def music_update_volume():
     detect_midi(playing_filename)
     set_music_volume(master_music_volume)
 
-def music_interact():
-    """
-    This is called before each interaction, to update the playing music
-    (if necessary).
-    """
-
-    # Call the appropriate config function.
-    if renpy.config.music_interact:
-        renpy.config.music_interact()    
-
 def music_end_event():
     """
     This is called by renpy.display.core when a track of music has
@@ -402,7 +392,10 @@ def music_play(filename):
         queued_filename = None
         fading = False
 
-        pygame.mixer.music.load(renpy.loader.transfn(filename))
+        fn = renpy.loader.transfn(filename)
+        fn = str(fn)
+
+        pygame.mixer.music.load(fn)
 
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.play()
@@ -457,6 +450,7 @@ def music_stop():
         pygame.mixer.music.stop()
 
     except:
+
         if renpy.config.debug_sound:
             raise
 
@@ -465,6 +459,10 @@ def music_fadeout(seconds):
     This causes the music to be faded out over a period of
     time.
     """
+
+    # This works around a race condition in pygame/SDL_mixer.
+    if seconds <= 0.0:
+        music_stop()
 
     if not music_enabled():
         return

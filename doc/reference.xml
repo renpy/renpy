@@ -3268,11 +3268,12 @@ empty.
 
 <h4>Music Callbacks</h4>
 
-<var name="config.music_interact" value="...">
-This callback is called (without any arguments) at the start (or
+<var name="config.interact_callbacks" value="...">
+A list of callbacks that are called (without any arguments) at the start (or
 restart) of each interaction. It's intended to allow the system to 
 restore music after a context change, or to implement changes in 
-the music that occured before that interaction.
+the music that occured before that interaction. It will also help to 
+support voice.
 </var>
 
 <var name="config.music_end_event" value="...">

@@ -749,7 +749,8 @@ class Interface(object):
         for i in pygame.event.get([ MUSICEND ]):
             renpy.display.audio.music_end_event()
 
-        renpy.display.audio.music_interact()
+        for i in renpy.config.interact_callbacks:
+            i()
 
         # Tick time forward.
         renpy.display.im.cache.tick()
