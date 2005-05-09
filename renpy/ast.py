@@ -30,6 +30,13 @@ class Node(object):
     # a node from that file.
     serials = { }
 
+    __slots__ = [
+        'name',
+        'filename',
+        'linenumber',
+        'next',
+        ]
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -120,6 +127,12 @@ def say_menu_with(expression):
         
 class Say(Node):
 
+    __slots__ = [
+        'who',
+        'what',
+        'with',
+        ]
+
     def __init__(self, loc, who, what, with):
 
         super(Say, self).__init__(loc)
@@ -141,6 +154,11 @@ class Say(Node):
         return self.next
 
 class Init(Node):
+
+    __slots__ = [
+        'block',
+        'priority',
+        ]
 
     def __init__(self, loc, block, priority):
         super(Init, self).__init__(loc)
@@ -168,6 +186,11 @@ class Init(Node):
     
 
 class Label(Node):
+
+    __slots__ = [
+        'name',
+        'block',
+        ]
 
     def __init__(self, loc, name, block):
         """
@@ -199,6 +222,11 @@ class Label(Node):
 
 class Python(Node):
 
+    __slots__ = [
+        'hide',
+        'bytecode',
+        ]
+
     def __init__(self, loc, python_code, hide=False):
         """
         @param python_code: Properly-indented python code.
@@ -227,6 +255,11 @@ class Python(Node):
         return self.next
 
 class Image(Node):
+
+    __slots__ = [
+        'name',
+        'expr',
+        ]
 
     def __init__(self, loc, name, expr):
         """
@@ -311,6 +344,10 @@ def predict_imspec(imspec, callback):
         
 class Show(Node):
 
+    __slots__ = [
+        'imspec',
+        ]
+
     def __init__(self, loc, imspec):
         """
         @param imspec: A triple consisting of an image name (itself a
@@ -337,6 +374,10 @@ class Show(Node):
         
 
 class Scene(Node):
+
+    __slots__ = [
+        'imspec',
+        ]
 
     def __init__(self, loc, imgspec):
         """
@@ -375,6 +416,10 @@ class Scene(Node):
 
 class Hide(Node):
 
+    __slots__ = [
+        'imspec',
+        ]
+
     def __init__(self, loc, imgspec):
         """
         @param imspec: A triple consisting of an image name (itself a
@@ -399,6 +444,11 @@ class Hide(Node):
         return self.next
 
 class With(Node):
+
+    __slots__ = [
+        'expr',
+        ]
+
     def __init__(self, loc, expr):
         """
         @param expr: An expression giving a transition or None.
@@ -417,6 +467,11 @@ class With(Node):
         
         
 class Call(Node):
+
+    __slots__ = [
+        'label',
+        'expression',
+        ]
 
     def __init__(self, loc, label, expression):
 
@@ -440,6 +495,8 @@ class Call(Node):
 
 class Return(Node):
 
+    __slots__ = [ ]
+
     # No __init__ needed.
 
     # We don't care what the next node is.
@@ -457,6 +514,12 @@ class Return(Node):
             return [ ]
 
 class Menu(Node):
+
+    __slots__ = [
+        'items',
+        'set',
+        'with',
+        ]
 
     def __init__(self, loc, items, set, with):
         super(Menu, self).__init__(loc)
@@ -516,6 +579,11 @@ class Menu(Node):
 # instead. 
 class Jump(Node):
 
+    __slots__ = [
+        'target',
+        'expression',
+        ]
+
     def  __init__(self, loc, target, expression):
         super(Jump, self).__init__(loc)
 
@@ -544,10 +612,17 @@ class Jump(Node):
 # GNDN
 class Pass(Node):
 
+    __slots__ = [ ]
+
     def execute(self):
         return self.next
 
 class While(Node):
+
+    __slots__ = [
+        'condition',
+        'block',
+        ]
 
     def __init__(self, loc, condition, block):
         super(While, self).__init__(loc)
@@ -574,6 +649,8 @@ class While(Node):
         
 
 class If(Node):
+
+    __slots__ = [ 'entries' ]
 
     def __init__(self, loc, entries):
         """

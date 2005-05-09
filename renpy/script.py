@@ -108,7 +108,7 @@ class Script(object):
         if fn.endswith(".rpy"):
             stmts = renpy.parser.parse(fn)
             f = file(fn + "c", "wb")
-            f.write(dumps((script_version, stmts)).encode('zlib'))
+            f.write(dumps((script_version, stmts), -1).encode('zlib'))
             f.close()
         elif fn.endswith(".rpyc"):
             f = file(fn, "rb")

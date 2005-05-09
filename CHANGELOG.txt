@@ -1,3 +1,11 @@
+The format of the compiled script (.rpyc) files has changed. The new
+format is more efficent, both in terms of space and memory. 
+Unfortunately, the format change is not backwards compatible,
+and the automatic upgrade function probably won't work. So you'll need
+to delete the rpyc files from the game directory when you copy it
+over.
+
+
 New in 4.8.3
 ------------
 
