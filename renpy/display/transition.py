@@ -3,6 +3,9 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
+# We used time too many other times. :-(
+from time import time as now
+
 # This is a utility function that attempts to refactor an old and a new
 # Fixed into four Fixeds: below, old, new, and above. Since only the
 # old and new need transitions, this can be a significant win.
@@ -586,3 +589,97 @@ class CropMove(Transition):
         return rv
                 
             
+def MoveTransition(delay, old_widget=None, new_widget=None):
+    """
+    This tries to find widgets that have changed position.
+    """
+
+    def position(d):
+
+        placement = d.get_placement()
+        xpos = placement.xpos
+        ypos = placement.ypos
+
+        if isinstance(xpos, float):
+            xpos = int(renpy.config.screen_width * xpos)
+
+        if isinstance(ypos, float):
+            ypos = int(renpy.config.screen_height * ypos)
+
+        return xpos, ypos, placement.xanchor, placement.yanchor
+        
+
+    def merge_slide(old, new):
+
+        # If we're in the root widget, merge the child widgets for
+        # each layer.
+        if new.layers:
+            assert old.layers
+
+            rv = renpy.display.layout.Fixed()
+            rv.layers = { }
+
+            for layer in renpy.config.layers:
+
+                f = new.layers[layer]
+
+                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list:
+                    f = merge_slide(old.layers[layer], new.layers[layer])
+
+                rv.layers[layer] = f
+                rv.add(f)
+
+            return rv
+
+        # Otherwise, we recompute scene list for the two widgets, merging
+        # as appropriate.
+
+        tags = { }
+
+        for tag, time, d in old.scene_list:
+
+            if tag is None:
+                continue
+
+            tags[tag] = d
+
+        newsl = [ ]
+
+        for tag, time, d in new.scene_list:
+
+            if tag is None or tag not in tags:
+                newsl.append((tag, time, d))
+                continue
+
+            oldpos = position(tags[tag])
+            newpos = position(d)
+
+            if oldpos == newpos:
+                newsl.append((tag, time, d))
+                continue
+                
+            move = renpy.display.layout.Move(position(tags[tag]),
+                                             position(d),
+                                             delay,
+                                             d,
+                                             )
+
+            newsl.append((tag, now(), move))
+
+        rv = renpy.display.layout.Fixed()
+        rv.append_scene_list(newsl)
+
+        return rv
+
+
+    rv = merge_slide(old_widget, new_widget)
+    rv.delay = delay
+
+    return rv
+
+            
+            
+                   
+
+        
+                

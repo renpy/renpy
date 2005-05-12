@@ -160,11 +160,20 @@ class Fixed(Container):
 
     Fixed is used by the display core to render scene lists, and to
     pass them off to transitions.
+
     """
 
     def __init__(self, style='default', **properties):
         super(Fixed, self).__init__(style=style, **properties)
         self.times = [ ]
+
+        # A map from layer name to the widget corresponding to
+        # that layer.
+        self.layers = None
+
+        # The scene list for this widget.
+        self.scene_list = [ ]
+        
 
     def add(self, widget, time=None):
         super(Fixed, self).add(widget)
@@ -173,6 +182,8 @@ class Fixed(Container):
     def append_scene_list(self, l):
         for tag, time, d in l:
             self.add(d, time)
+
+        self.scene_list.extend(l)
 
     def get_widget_time_list(self):
         return zip(self.children, self.times)
@@ -573,8 +584,9 @@ class Motion(Container):
     """
     This is used to move a child displayable around the screen. It
     works by supplying a time value to a user-supplied function,
-    which is in turn expected to return a tuple giving the x and y
-    location of the upper-left-hand corner of the child.
+    which is in turn expected to return a pair giving the x and y
+    location of the upper-left-hand corner of the child, or a
+    4-tuple giving that and the xanchor and yanchor of the child.
 
     The time value is a floating point number that ranges from 0 to
     1. If repeat is True, then the motion repeats every period
@@ -634,7 +646,12 @@ class Motion(Container):
             if st > 1.0:
                 st = 2.0 - st
 
-        self.style.xpos, self.style.ypos = self.function(st)
+        res = self.function(st)
+
+        if len(res) == 2:
+            self.style.xpos, self.style.ypos = res
+        else:
+            self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor = res
 
         child = render(self.child, width, height, st)
         cw, ch = child.get_size()
@@ -650,10 +667,21 @@ class Motion(Container):
         
 class Interpolate(object):
 
+    anchors = {
+        'top' : 0.0,
+        'center' : 0.5,
+        'bottom' : 1.0,
+        'left' : 0.0,
+        'right' : 1.0,
+        }
+
     def __init__(self, start, end):
 
-        self.x0, self.y0 = start
-        self.x1, self.y1 = end
+        if len(start) != len(end):
+            raise Exception("The start and end must have the same number of arguments.")
+
+        self.start = [ self.anchors.get(i, i) for i in start ]
+        self.end = [ self.anchors.get(i, i) for i in end ]
 
     def __call__(self, t):
 
@@ -666,7 +694,7 @@ class Interpolate(object):
             else:
                 return rv
 
-        return ( interp(self.x0, self.x1), interp(self.y0, self.y1) )
+        return [ interp(a, b) for a, b in zip(self.start, self.end) ]
 
 
 def Pan(startpos, endpos, time, child, repeat=False, bounce=False,

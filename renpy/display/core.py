@@ -173,14 +173,21 @@ class Displayable(renpy.object.Object):
         if isinstance(xoff, float):
             xoff = int(xoff * width)
 
-        if style.xanchor == 'left':
-            xoff -= 0
-        elif style.xanchor == 'center':
-            xoff -= sw / 2
-        elif style.xanchor == 'right':
-            xoff -= sw
-        else:
-            raise Exception("xanchor '%s' is not known." % style.xanchor)
+
+        xanchor = style.xanchor
+
+        if xanchor == 'left':
+            xanchor = 0.0
+        elif xanchor == 'center':
+            xanchor = 0.5
+        elif xanchor == 'right':
+            xanchor = 1.0
+        elif not isinstance(xanchor, (float, int)):
+            raise Exception("xanchor %r is not known." % xanchor)
+
+        xoff -= int(sw * xanchor)
+
+            
             
         xoff += x
 
@@ -190,15 +197,18 @@ class Displayable(renpy.object.Object):
         if isinstance(yoff, float):
             yoff = int(yoff * height)
 
-        if style.yanchor == 'top':
-            yoff -= 0
-        elif style.yanchor == 'center':
-            yoff -= sh / 2
-        elif style.yanchor == 'bottom':
-            yoff -= sh
-        else:
-            raise Exception("yanchor '%s' is not known." % style.yanchor)
+        yanchor = style.yanchor
 
+        if yanchor == 'top':
+            yanchor = 0.0
+        elif yanchor == 'center':
+            yanchor = 0.5
+        elif style.yanchor == 'bottom':
+            yanchor = 1.0
+        elif not isinstance(yanchor, (float, int)):
+            raise Exception("yanchor %r is not known." % yanchor)
+
+        yoff -= int(sh * yanchor)
         yoff += y
 
         # print self, xoff, yoff
@@ -673,9 +683,12 @@ class Interface(object):
         rv = { }
 
         root = renpy.display.layout.Fixed()
+        root.layers = { }
 
         for layer in renpy.config.layers:
             f = renpy.display.layout.Fixed(focus=layer)
+            root.layers[layer] = f
+
             f.append_scene_list(scene_lists.layers[layer])
 
             rv[layer] = f
@@ -800,6 +813,7 @@ class Interface(object):
 
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.Fixed()
+        layers_root.layers = { }
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:
@@ -808,7 +822,10 @@ class Interface(object):
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene[layer])
                 layers_root.add(trans, start_time)
+                layers_root[layer] = trans
+                
             else:
+                layers_root.layers[layer] = scene[layer]
                 layers_root.add(scene[layer], start_time)
                 
         # Add layers_root to root_widget, perhaps through a transition.

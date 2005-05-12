@@ -34,6 +34,7 @@ Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
+MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
 
 def _return(v):
     """

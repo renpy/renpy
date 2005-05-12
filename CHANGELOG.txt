@@ -1,3 +1,6 @@
+New in 4.8.4
+------------
+
 The format of the compiled script (.rpyc) files has changed. The new
 format is more efficent, both in terms of space and memory. 
 Unfortunately, the format change is not backwards compatible,
@@ -8,6 +11,24 @@ over.
 Removed some unnecessary conversion from pixellate, improving its
 performance when running on a computer with 32 bits per pixel
 graphics. 
+
+The xanchor and yanchor arguments can now take numbers between 0 and 1
+as well as names. Functions returned by Motion now can either return
+an xpos, ypos tuple or a xpos, ypos, xanchor, yanchor tuple. Move has
+been upgraded so that it can take similar tuples as the start and
+end arguments, letting us interpolate the location of the anchors
+while moving an image around.
+
+The above modification allowed us to implement a new move
+transition. This transition attempts to find images that are present
+in both the old and new scenes, but have changed location between the
+two scenes. Such images are moved from the old location to the new
+location over the duration of the move transition. This makes it easy
+to smoothly move characters from one location to another on the
+screen.
+
+The demo script was updated and reorganized, to demonstrate more
+features.
 
 New in 4.8.3
 ------------
