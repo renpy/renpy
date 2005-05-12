@@ -283,3 +283,125 @@ void pixellate24_core(PyObject *pysrc,
         }
     }
 }
+
+/*
+ * This expects pysrc and pydst to be surfaces of the same size. It
+ * the source surface to the destination surface, using the r, g, b,
+ * and a maps. These maps are expected to be 256 bytes long, with each
+ * byte corresponding to a possible value of a channel in pysrc,
+ * giving what that value is mapped to in pydst.
+ */
+void map32_core(PyObject *pysrc,
+                PyObject *pydst,
+                char *rmap,
+                char *gmap,
+                char *bmap,
+                char *amap) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    char *srcpixels;
+    char *dstpixels;
+
+    char *srcrow;
+    char *dstrow;
+    char *srcp;
+    char *dstp;
+
+    int count;
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (char *) src->pixels;
+    dstpixels = (char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    srcrow = srcpixels;
+    dstrow = dstpixels;
+    
+    for (y = 0; y < srch; y++) {
+        srcp = srcrow;
+        dstp = dstrow;
+
+
+        for (x = 0; x < srch; x++) {
+            *dstp++ = rmap[(unsigned char) *srcp++];
+            *dstp++ = gmap[(unsigned char) *srcp++];
+            *dstp++ = bmap[(unsigned char) *srcp++];
+            *dstp++ = amap[(unsigned char) *srcp++];            
+        }
+
+        srcrow += srcpitch;
+        dstrow += dstpitch;
+    }
+
+}
+
+void map24_core(PyObject *pysrc,
+                PyObject *pydst,
+                char *rmap,
+                char *gmap,
+                char *bmap) {
+
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    char *srcpixels;
+    char *dstpixels;
+
+    char *srcrow;
+    char *dstrow;
+    char *srcp;
+    char *dstp;
+
+    int count;
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (char *) src->pixels;
+    dstpixels = (char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    srcrow = srcpixels;
+    dstrow = dstpixels;
+    
+    for (y = 0; y < srch; y++) {
+        srcp = srcrow;
+        dstp = dstrow;
+
+
+        for (x = 0; x < srch; x++) {
+            *dstp++ = rmap[(unsigned char) *srcp++];
+            *dstp++ = gmap[(unsigned char) *srcp++];
+            *dstp++ = bmap[(unsigned char) *srcp++];
+        }
+
+        srcrow += srcpitch;
+        dstrow += dstpitch;
+    }
+
+}

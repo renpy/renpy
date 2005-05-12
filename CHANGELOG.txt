@@ -5,6 +5,9 @@ and the automatic upgrade function probably won't work. So you'll need
 to delete the rpyc files from the game directory when you copy it
 over.
 
+Removed some unnecessary conversion from pixellate, improving its
+performance when running on a computer with 32 bits per pixel
+graphics. 
 
 New in 4.8.3
 ------------

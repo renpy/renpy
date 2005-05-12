@@ -17,6 +17,39 @@ except:
     version = 0
 
 
+def convert_and_call(function, src, dst, *args):
+    """
+    This calls the function with the source and destination
+    surface. The surfaces must have the same alpha.
+
+    If the surfaces are not 24 or 32 bits per pixel, or don't have the
+    same format, they are converted and then converted back.
+    """
+
+    if dst.get_flags() & SRCALPHA != src.get_flags() & SRCALPHA:
+        raise Exception("Surface alphas do not match.")
+
+    dstsize = dst.get_bitsize()
+
+    if dst.get_bitsize() in (24, 32):
+        target = dst
+    else:
+        if dst.get_flags() & SRCALPHA:
+            target = pygame.Surface(dst.get_size(), SRCALPHA, 32)
+        else:
+            target = pygame.Surface(dst.get_size(), 0, 24)
+
+    if src.get_bitsize() == target.get_bitsize():
+        source = src
+    else:
+        source = src.convert(target)
+    
+    function(source, target, *args)
+
+    if target is not dst:
+        dst.blit(target, (0, 0))
+
+
 if version >= 4008002:
 
     can_pixellate = True
@@ -36,42 +69,10 @@ if version >= 4008002:
         The two surfaces must either have the same alpha or no alpha.
         """
 
-        if dst.get_flags() & SRCALPHA != src.get_flags() & SRCALPHA:
-            raise Exception("Surface alphas do not match.")
-
-        if dst.get_flags() & SRCALPHA:
-            use_alpha = True
-        else:
-            use_alpha = False
-
-        if use_alpha:
-
-            if src.get_bitsize() != 32:
-                source = src.convert(32, SRCALPHA)
-            else:
-                source = src
-
-            if dst.get_bitsize() != 32:
-                target = pygame.Surface(dst.get_size(), SRCALPHA, 32)
-            else:
-                target = dst
-
-        else:
-
-            if src.get_bitsize() != 24:
-                source = src.convert(24)
-            else:
-                source = src
-
-            if dst.get_bitsize() != 24:
-                target = pygame.Surface(dst.get_size(), 0, 24)
-            else:
-                target = dst
-
-        _renpy.pixellate(source, target, avgwidth, avgheight, outwidth, outheight)
-
-        if target is not dst:
-            dst.blit(target, (0, 0))
+        convert_and_call(_renpy.pixellate,
+                         src, dst,
+                         avgwidth, avgheight,
+                         outwidth, outheight)
 
     
     def scale(s, size):

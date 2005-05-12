@@ -18,5 +18,18 @@ void pixellate24_core(PyObject *pysrc,
                       int avgheight,
                       int outwidth,
                       int outheight);
-    
+
+void map32_core(PyObject *pysrc,
+                PyObject *pydst,
+                char *rmap,
+                char *gmap,
+                char *bmap,
+                char *amap);
+
+void map24_core(PyObject *pysrc,
+                PyObject *pydst,
+                char *rmap,
+                char *gmap,
+                char *bmap);
+
 #endif 
