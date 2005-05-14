@@ -32,10 +32,14 @@ init:
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
-    $ offscreenleft = Position(xpos=0.0, xanchor='right')
     $ left = Position(xpos=0.0, xanchor='left')
     $ center = Position()
     $ right = Position(xpos=1.0, xanchor='right')
+
+    # Offscreen positions for use with the move transition. Images at
+    # these positions are still shown (and consume
+    # resources)... remember to hide the image after the transition.    
+    $ offscreenleft = Position(xpos=0.0, xanchor='right')
     $ offscreenright = Position(xpos=1.0, xanchor='left')
 
     # Likewise, we set up some transitions that we can use in with
@@ -585,7 +589,7 @@ label ending:
     if date:
         e "And I'll see you on Saturday."
     
-    scene black with fade
+    scene black with dissolve
 
     "Ren'Py and the Ren'Py demo were written by PyTom."
 
@@ -975,7 +979,7 @@ label demonstrate:
                screen, using the Pan function in an at clause."
 
             e "That's what we're doing now, panning up a picture of
-               the memorial to the big red one."
+               the memorial to the Big Red One."
 
             with None
             scene washington
@@ -999,8 +1003,11 @@ label demonstrate:
                {color=#0f0}the{/color}
                {color=#0ff}text{/color}."
 
-            e "We also added bold, italic, and underline style properties, which can
+            e "There are also bold, italic, and underline style properties, which can
                be styled onto any text."
+
+            e "If you find yourself using text tags on every line, you
+               should probably look at style properties instead."
 
             e "Used with care, text tags can enhance {b}your{/b} game."
 
@@ -1014,7 +1021,7 @@ label demonstrate:
 
         "Music, sound and movies, updated in 4.5.":
             
-            e "Ren'Py support a number of multimedia functions."
+            e "Ren'Py supports a number of multimedia functions."
 
             e "You're probably hearing music playing in the
                background."
@@ -1033,7 +1040,7 @@ label demonstrate:
             e "We can also play up to eight channels of sound effects
                on top of the music."
 
-            e "We ship in the extras/ directory code to support
+            e "We ship, in the extras/ directory, code to support
                characters having voice."
 
             e "Finally, we support playing mpeg movies."

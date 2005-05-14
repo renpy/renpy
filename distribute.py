@@ -116,6 +116,9 @@ def main():
     copy_tree("extras", target + "/extras",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
+    copy_tree("scripts", target + "/scripts",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
     def cp(x, license="", dos=True):
         copy_file(x, target + "/" + x, dos=dos)
 

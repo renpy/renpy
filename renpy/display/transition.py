@@ -591,7 +591,16 @@ class CropMove(Transition):
             
 def MoveTransition(delay, old_widget=None, new_widget=None):
     """
-    This tries to find widgets that have changed position.
+    This transition attempts to find images that have changed
+    position, and moves them from the old position to the new
+    transition, taking delay seconds to complete the move.
+
+    Images are considered to be the same if they have the same tag, in
+    the same way that the tag is used to determine which image to
+    replace or to hide.
+
+    If you use this transition to slide an image off the side of the
+    screen, remember to hide it when you are done.
     """
 
     def position(d):

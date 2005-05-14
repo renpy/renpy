@@ -28,7 +28,14 @@ to smoothly move characters from one location to another on the
 screen.
 
 The demo script was updated and reorganized, to demonstrate more
-features.
+features. Now, all transitions are demonstrated, as well as things
+like renpy.input, DynamicCharacter, Move, and Pan.
+
+A slightly updated version of the script for Moonlight Walks is now
+in the scripts/ directory. It's there as an example for people to
+learn from. This script has been updated to work with Ren'Py 4.8, and
+to fix a tense error.
+
 
 New in 4.8.3
 ------------

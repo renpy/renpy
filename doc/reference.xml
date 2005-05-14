@@ -843,11 +843,13 @@ show text1 "1/4 of the way down the screen."
 Motion, when given the appropriate arguments, returns an object that
 when given as the at clause of an image causes an image to be moved on
 the screen. Function is a function that, when given a number between 0
-and 1, returns two values, which are interpreted as the xpos and the
-ypos of the motion. (Please note that if these values are floating
-point numbers, they are interpreted as a fraction of the screen. If
-they are integers, they are interpreted as the absolute position of
-the anchor of the motion.
+and 1, returns two or four values. The first two values are
+interpreted as the xpos and the ypos of the motion. (Please note that
+if these values are floating point numbers, they are interpreted as a
+fraction of the screen. If they are integers, they are interpreted as
+the absolute position of the anchor of the motion.) If four values are
+returned, the third and fourth values are interpreted as an xanchor
+and yanchor.
 </p>
 
 <p>
@@ -1121,6 +1123,10 @@ begins.
   <!-- func Dissolve -->
 
   <!-- func CropMove -->
+
+  <!-- func Pixellate -->
+
+  <!-- func MoveTransition -->
 
   <p>
 Some transitions can also be applied to specific layers, using the 
@@ -2575,7 +2581,9 @@ top_padding and bottom_padding to the same value.
 
   <prop name="xanchor">
     Controls the placement of the anchor within the widget, in the x
-    dimension. This can be one of 'left', 'center', or 'right'.
+    dimension. This can be one of 'left', 'center', or 'right', or a
+    number between 0 and 1, where 0 is the left edge and 1 is the
+    right edge.
   </prop>
 
   <prop name="ypos">
@@ -2587,7 +2595,9 @@ top_padding and bottom_padding to the same value.
 
   <prop name="yanchor">
     Controls the placement of the anchor within the widget, in the y
-    dimension. This can be one of 'top', 'center', or 'bottom'.
+    dimension. This can be one of 'top', 'center', or 'bottom', or a
+    number between 0 and 1, where 0 is the top edge and 1 is the
+    bottom edge.
   </prop>
 
   <prop name="xmaximum">

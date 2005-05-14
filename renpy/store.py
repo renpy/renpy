@@ -79,12 +79,6 @@ class Character(object):
         @param window_style: The name of the style of the window
         containing all the dialogue.
 
-        @param properties: Additional style properties, that are
-        applied to the label containing the character's name.
-
-        In addition to the parameters given above, there are also a
-        few other keyword parameters:
-
         @param who_prefix: A prefix that is prepended to the name.
      
         @param who_suffix: A suffix that is appended to the name. (Defaults to ':')
@@ -106,6 +100,9 @@ class Character(object):
         through this character causes an interaction. If False, then
         the window is added to the screen, but control immediately
         proceeds. You'll need to call ui.interact yourself to show it.
+
+        @param properties: Additional style properties, that are
+        applied to the label containing the character's name.
         """
         
         self.name = name
