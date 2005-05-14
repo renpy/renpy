@@ -36,6 +36,8 @@ in the scripts/ directory. It's there as an example for people to
 learn from. This script has been updated to work with Ren'Py 4.8, and
 to fix a tense error.
 
+Fixed another segfault in windows native midi support.
+
 
 New in 4.8.3
 ------------

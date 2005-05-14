@@ -1027,8 +1027,8 @@ label demonstrate:
                background."
 
 
-            $ renpy.music_stop(fadeout=2.0)
-            e "We can fade it out..."
+            $ renpy.music_stop(fadeout=0.5)
+            e "We can stop it..."
 
 
             $ renpy.music_start('sun-flower-slow-drag.mid')
