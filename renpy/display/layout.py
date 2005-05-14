@@ -27,9 +27,7 @@ class Null(renpy.display.core.Displayable):
     """
 
     def __init__(self, width=0, height=0, style='default', **properties):
-        super(Null, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Null, self).__init__(style=style, **properties)
         self.width = width
         self.height = height
 
@@ -37,7 +35,12 @@ class Null(renpy.display.core.Displayable):
         return self.style
 
     def render(self, width, height, st):
-        return renpy.display.render.Render(self.width, self.height)
+        rv = renpy.display.render.Render(self.width, self.height)
+
+        if self.focusable:
+            rv.add_focus(self, None, None, None, None, None)
+
+        return rv
 
 
 class Container(renpy.display.core.Displayable):
@@ -60,15 +63,23 @@ class Container(renpy.display.core.Displayable):
 
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args, **properties):
 
-        super(Container, self).__init__()
-        
         self.children = []
         self.child = None
 
         for i in args:
             self.add(i)
+
+        super(Container, self).__init__(**properties)
+
+
+    def find_focusable(self, callback, focus_name):
+        super(Container, self).find_focusable(callback, focus_name)
+
+        for i in self.children:
+            i.find_focusable(callback, self.focus_name or focus_name)
+        
 
     def set_style_prefix(self, prefix):
         super(Container, self).set_style_prefix(prefix)
@@ -132,6 +143,8 @@ class Container(renpy.display.core.Displayable):
 
     def predict(self, callback):
 
+        super(Container, self).predict(callback)
+
         for i in self.children:
             i.predict(callback)
 
@@ -147,12 +160,20 @@ class Fixed(Container):
 
     Fixed is used by the display core to render scene lists, and to
     pass them off to transitions.
+
     """
 
     def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__()
-        self.style = renpy.style.Style(style, properties)
+        super(Fixed, self).__init__(style=style, **properties)
         self.times = [ ]
+
+        # A map from layer name to the widget corresponding to
+        # that layer.
+        self.layers = None
+
+        # The scene list for this widget.
+        self.scene_list = [ ]
+        
 
     def add(self, widget, time=None):
         super(Fixed, self).add(widget)
@@ -161,6 +182,8 @@ class Fixed(Container):
     def append_scene_list(self, l):
         for tag, time, d in l:
             self.add(d, time)
+
+        self.scene_list.extend(l)
 
     def get_widget_time_list(self):
         return zip(self.children, self.times)
@@ -214,9 +237,7 @@ class Position(Container):
         child of this widget is placed.
         """
 
-        super(Position, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Position, self).__init__(style=style, **properties)
         self.add(child)
 
     def render(self, width, height, st):
@@ -240,11 +261,14 @@ class Grid(Container):
     """
 
     def __init__(self, cols, rows, padding=0,
+                 transpose=False,
                  style='default', **properties):
         """
         @param cols: The number of columns in this widget.
 
         @params rows: The number of rows in this widget.
+
+        @params transpose: True if the grid should be transposed.
         """
 
         super(Grid, self).__init__()
@@ -255,6 +279,7 @@ class Grid(Container):
         self.rows = rows
 
         self.padding = padding
+        self.transpose = transpose
 
     def render(self, width, height, st):
 
@@ -266,7 +291,28 @@ class Grid(Container):
         if len(self.children) != cols * rows:
             raise Exception("Grid not completely full.")
 
-        renders = [ render(i, width, height, st) for i in self.children ]
+        # If necessary, transpose the grid (kinda hacky, but it works here.)
+        if self.transpose:
+            self.transpose = False
+
+            old_children = self.children[:]
+            
+            for y in range(0, rows):
+                for x in range(0, cols):
+                    self.children[x + y * cols] = old_children[ y + x * rows ]
+
+            
+        # Now, start the actual rendering.
+
+        renwidth = width
+        renheight = height
+
+        if self.style.xfill:
+            renwidth = (width - (cols - 1) * padding) / cols
+        if self.style.yfill:
+            renheight = (height - (rows - 1) * padding) / rows
+        
+        renders = [ render(i, renwidth, renheight, st) for i in self.children ]
         self.sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
@@ -277,10 +323,10 @@ class Grid(Container):
             cheight = max(cheight, h)
 
         if self.style.xfill:
-            cwidth = (width - (cols - 1) * padding) / cols
+            cwidth = renwidth
 
         if self.style.yfill:
-            cheight = (height - (rows - 1) * padding) / rows
+            cheight = renheight
 
         width = cwidth * cols + padding * (cols - 1)
         height = cheight * rows + padding * (rows - 1)
@@ -456,17 +502,15 @@ class Window(Container):
 
     def __init__(self, child, style='window', **properties):
 
-        super(Window, self).__init__()
-
+        super(Window, self).__init__(style=style, **properties)
         self.add(child)
-        self.style = renpy.style.Style(style, properties)
 
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
 
-        # save typing and screen space.
+        # save some typing.
         style = self.style
 
         xminimum = scale(style.xminimum, width)
@@ -536,163 +580,188 @@ class Window(Container):
         return rv
 
 
-class Pan(Container):
+class Motion(Container):
     """
-    This is used to pan over a child displayable, which is almost
-    always an image. It works by interpolating the placement of the
-    upper-left corner of the image, over time. It's only really
-    suitable for use with images that are larger than the screen, as
-    we don't do any cropping on the image.
+    This is used to move a child displayable around the screen. It
+    works by supplying a time value to a user-supplied function,
+    which is in turn expected to return a pair giving the x and y
+    location of the upper-left-hand corner of the child, or a
+    4-tuple giving that and the xanchor and yanchor of the child.
+
+    The time value is a floating point number that ranges from 0 to
+    1. If repeat is True, then the motion repeats every period
+    sections. (Otherwise, it stops.) If bounce is true, the
+    time value varies from 0 to 1 to 0 again.
+
+    The function supplied needs to be pickleable, which means it needs
+    to be defined as a name in an init block. It cannot be a lambda or
+    anonymous inner function. If you can get away with using Pan or
+    Move, use them instead.
+
+    Please note that floats and ints are interpreted as for xpos and
+    ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, startpos, endpos, time, child,
-                 style='image_placement', **properties):
+    def __init__(self, function, period, child, repeat=False, bounce=False, style='default', **properties):
         """
         @param child: The child displayable.
 
-        @param startpos: The initial coordinates of the upper-left
-        corner of the screen, relative to the image.
+        @param function: A function that takes a floating point value and returns
+        an xpos, ypos tuple.
 
-        @param endpos: The coordinates of the upper-left corner of the
-        screen, relative to the image, after time has elapsed.
+        @param period: The amount of time it takes to go through one cycle, in seconds.
 
-        @param time: The time it takes to pan from startpos to endpos.
+        @param repeat: Should we repeat after a period is up?
+
+        @param bounce: Should we bounce?
         """
 
-        super(Pan, self).__init__()
-        self.add(child)
+        super(Motion, self).__init__(style=style, **properties)
 
-        self.startpos = startpos
-        self.endpos = endpos
-        self.time = time
-        self.style = renpy.style.Style(style, properties)
+        self.child = child
+        self.function = function
+        self.period = period
+        self.repeat = repeat
+        self.bounce = bounce
 
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
-
-        surf = render(self.child, width, height, st)
-        self.sizes = [ surf.get_size() ]
-
-        x0, y0 = self.startpos
-        x1, y1 = self.endpos
-
-        if self.time > 0:
-            tfrac = (st / self.time)
-        else:
-            tfrac = 1.0
-
-        if tfrac > 1.0:
-            tfrac = 1.0
-
-        xo = int(x0 * (1.0 - tfrac) + x1 * tfrac)
-        yo = int(y0 * (1.0 - tfrac) + y1 * tfrac)
         
-
-        self.offsets = [ (-xo, -yo) ]
-
-        rv = renpy.display.render.Render(width, height)
-
-        # print surf
-
-        subsurf = surf.subsurface((xo, yo, width, height))
-        rv.blit(subsurf, (0, 0))
-
-        # rv.blit(surf, (-xo, -yo))
-
-        if st < self.time:
+        if self.repeat:
+            st = st % self.period
             renpy.display.render.redraw(self, 0)
 
-        return rv
-
-class Move(Container):
-    """
-    This moves a child relative to the thing containing it. This
-    motion is done by manipulating the xpos and ypos properties in a
-    placement style.
-    """
-
-    def __init__(self, startpos, endpos, time, child,
-                 style='default', **properties):
-
-        super(Move, self).__init__()
-        self.add(child)
-
-        self.startpos = startpos
-        self.endpos = endpos
-        self.time = time
-
-        self.st = 0.0
-
-        self.style = renpy.style.Style(style, properties)
-
-    def get_placement(self):
-        st = self.st
-
-        x0, y0 = self.startpos
-        x1, y1 = self.endpos
-
-        if self.time > 0:
-            tfrac = (st / self.time)
         else:
-            tfrac = 1.0
+            if st > self.period:
+                st = self.period
+            else:
+                renpy.display.render.redraw(self, 0)
+                
+        st /= self.period
 
-        if tfrac > 1.0:
-            tfrac = 1.0
+        if self.bounce:
+            st = st * 2
+            if st > 1.0:
+                st = 2.0 - st
 
-        xo = x0 * (1.0 - tfrac) + x1 * tfrac
-        yo = y0 * (1.0 - tfrac) + y1 * tfrac
+        res = self.function(st)
 
-        if isinstance(x1, int):
-            xo = int(xo)
+        if len(res) == 2:
+            self.style.xpos, self.style.ypos = res
+        else:
+            self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor = res
 
-        if isinstance(y1, int):
-            yo = int(yo)
+        child = render(self.child, width, height, st)
+        cw, ch = child.get_size()
 
-        self.style.xpos = xo
-        self.style.ypos = yo
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(child, (0, 0))
 
-        return self.style
-
-    def render(self, width, height, st):
-        self.st = st
-        rv = render(self.child, width, height, st)
-
-        self.sizes = [ rv.get_size() ]
+        self.sizes = [ child.get_size() ]
         self.offsets = [ (0, 0) ]
 
-        if st < self.time:
-            renpy.display.render.redraw(self, 0)
-
         return rv
 
+        
+class Interpolate(object):
+
+    anchors = {
+        'top' : 0.0,
+        'center' : 0.5,
+        'bottom' : 1.0,
+        'left' : 0.0,
+        'right' : 1.0,
+        }
+
+    def __init__(self, start, end):
+
+        if len(start) != len(end):
+            raise Exception("The start and end must have the same number of arguments.")
+
+        self.start = [ self.anchors.get(i, i) for i in start ]
+        self.end = [ self.anchors.get(i, i) for i in end ]
+
+    def __call__(self, t):
+
+        def interp(a, b):
+
+            rv = (1.0 - t) * a + t * b
+            
+            if isinstance(a, int) and isinstance(b, int):
+                return int(rv)
+            else:
+                return rv
+
+        return [ interp(a, b) for a, b in zip(self.start, self.end) ]
+
+
+def Pan(startpos, endpos, time, child, repeat=False, bounce=False,
+        style='default', **properties):
+    """
+    This is used to pan over a child displayable, which is almost
+    always an image. It works by interpolating the placement of the
+    upper-left corner of the screen, over time. It's only really
+    suitable for use with images that are larger than the screen,
+    and we don't do any cropping on the image.
+
+    @param startpos: The initial coordinates of the upper-left
+    corner of the screen, relative to the image.
+
+    @param endpos: The coordinates of the upper-left corner of the
+    screen, relative to the image, after time has elapsed.
     
-class Sizer(Container):
+    @param time: The time it takes to pan from startpos to endpos.
+
+    @param child: The child displayable.
+
+    @param repeat: True if we should repeat this forever.
+
+    @param bounce: True if we should bounce from the start to the end
+    to the start.
     """
-    This is a widget that can change the size allocated to the widget that
-    it contains. Please note that it can only shrink the widget, and that
-    not all widgets respond well to having their areas shrunk. (For example,
-    this has no effect on an image.)
+
+    x0, y0 = startpos
+    x1, y1 = endpos
+    
+    return Motion(Interpolate((-x0, -y0), (-x1, -y1)),
+                  time,
+                  child,
+                  repeat=repeat, 
+                  bounce=bounce,
+                  style=style,
+                  **properties)
+
+def Move(startpos, endpos, time, child, repeat=False, bounce=False,
+        style='default', **properties):
+    """
+    This is used to pan over a child displayable relative to
+    the containing area. It works by interpolating the placement of the
+    the child, over time. 
+
+    @param startpos: The initial coordinates of the child
+    relative to the containing area.
+
+    @param endpos: The coordinates of the child at the end of the
+    move.
+    
+    @param time: The time it takes to move from startpos to endpos.
+
+    @param child: The child displayable.
+
+    @param repeat: True if we should repeat this forever.
+
+    @param bounce: True if we should bounce from the start to the end
+    to the start.
     """
 
-    def __init__(self, maxwidth, maxheight, child,
-                 style='default', **properties):
+    return Motion(Interpolate(startpos, endpos),
+                  time,
+                  child,
+                  repeat=repeat, 
+                  bounce=bounce,
+                  style=style,
+                  **properties)
 
-        super(Sizer, self).__init__()
-        self.add(child)
 
-        self.maxwidth = maxwidth
-        self.maxheight = maxheight
-
-        self.style = renpy.style.Style(style, properties)
-
-    def render(self, width, height, st):
-
-        if self.maxwidth:
-            width = min(width, self.maxwidth)
-
-        if self.maxheight:
-            height = min(height, self.maxheight)
-
-        return super(Sizer, self).render(width, height, st)

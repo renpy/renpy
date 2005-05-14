@@ -6,6 +6,8 @@
 import renpy
 
 import renpy.ui as ui
+import renpy.display.im as im
+import renpy.display.audio as audio
 
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
@@ -27,9 +29,12 @@ Movie = renpy.display.video.Movie
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
+Motion = renpy.curry.curry(renpy.display.layout.Motion)
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
+Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
+MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
 
 def _return(v):
     """
@@ -42,8 +47,6 @@ def _return(v):
 _return = renpy.curry.curry(_return)
 
 # Note that this is really a RevertableObject.
-# TODO: Move this someplace saner. Like perhaps to .exports. But
-# be sure to change the base class after the move!
 
 class Character(object):
     """
@@ -60,6 +63,8 @@ class Character(object):
                  who_style='say_label',
                  what_style='say_dialogue',
                  window_style='say_window',
+                 function = renpy.exports.display_say,
+                 condition=None,
                  **properties):
         """
         @param name: The name of the character, as shown to the user.
@@ -74,12 +79,6 @@ class Character(object):
         @param window_style: The name of the style of the window
         containing all the dialogue.
 
-        @param properties: Additional style properties, that are
-        applied to the label containing the character's name.
-
-        In addition to the parameters given above, there are also a
-        few other keyword parameters:
-
         @param who_prefix: A prefix that is prepended to the name.
      
         @param who_suffix: A suffix that is appended to the name. (Defaults to ':')
@@ -88,10 +87,22 @@ class Character(object):
 
         @param what_suffix: A suffix that is appended to the text body.
 
+        @param function: The function that is called to actually display
+        this dialogue. This should either be renpy.display_say, or a function
+        with the same signature as it.
+
+        @param condition: A string containing a python expression, or
+        None. If not None, the condition is evaluated when each line
+        of dialogue is said. If it evaluates to False, the dialogue is
+        not shown to the user.
+
         @param interact: If True (the default), then each line said
         through this character causes an interaction. If False, then
         the window is added to the screen, but control immediately
         proceeds. You'll need to call ui.interact yourself to show it.
+
+        @param properties: Additional style properties, that are
+        applied to the label containing the character's name.
         """
         
         self.name = name
@@ -99,14 +110,34 @@ class Character(object):
         self.what_style = what_style
         self.window_style = window_style
         self.properties = properties
+        self.function = function
+        self.condition = condition
+
+    def check_condition(self):
+        """
+        Returns true if we should show this line of dialogue.
+        """
+
+        if self.condition is None:
+            return True
+
+        import renpy.python as python
+
+        return python.py_eval(self.condition)
+        
+    
 
     def __call__(self, what, interact=True):
-        renpy.display_say(self.name, what,
-                          who_style=self.who_style,
-                          what_style=self.what_style,
-                          window_style=self.window_style,
-                          interact=interact,
-                          **self.properties)
+
+        if not self.check_condition():
+            return
+        
+        self.function(self.name, what,
+                      who_style=self.who_style,
+                      what_style=self.what_style,
+                      window_style=self.window_style,
+                      interact=interact,
+                      **self.properties)
 
 class DynamicCharacter(object):
     """
@@ -123,6 +154,8 @@ class DynamicCharacter(object):
                  who_style='say_label',
                  what_style='say_dialogue',
                  window_style='say_window',
+                 function = renpy.exports.display_say,
+                 condition = None,
                  **properties):
         """
         @param name_expr: An expression that, when evaluated, should yield
@@ -136,17 +169,35 @@ class DynamicCharacter(object):
         self.what_style = what_style
         self.window_style = window_style
         self.properties = properties
+        self.function = function
+        self.condition = condition
 
-    def __call__(self, what, interact=True):
+    def check_condition(self):
+        """
+        Returns true if we should show this line of dialogue.
+        """
+
+        if self.condition is None:
+            return True
+
         import renpy.python as python
 
-        renpy.display_say(python.py_eval(self.name_expr),
-                          what,
-                          who_style=self.who_style,
-                          what_style=self.what_style,
-                          window_style=self.window_style,
-                          interact=interact,
-                          **self.properties)
+        return python.py_eval(self.condition)
+        
+    def __call__(self, what, interact=True):
+
+        if not self.check_condition():
+            return
+
+        import renpy.python as python
+
+        self.function(python.py_eval(self.name_expr),
+                      what,
+                      who_style=self.who_style,
+                      what_style=self.what_style,
+                      window_style=self.window_style,
+                      interact=interact,
+                      **self.properties)
 
 # The color function. (Moved, since text needs it, too.)
 color = renpy.display.text.color

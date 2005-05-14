@@ -3,6 +3,9 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
+# We used time too many other times. :-(
+from time import time as now
+
 # This is a utility function that attempts to refactor an old and a new
 # Fixed into four Fixeds: below, old, new, and above. Since only the
 # old and new need transitions, this can be a significant win.
@@ -60,6 +63,7 @@ class Transition(renpy.display.core.Displayable):
     """
 
     def __init__(self, delay):
+        super(Transition, self).__init__()
         self.delay = delay
         self.offsets = [ ]
         self.events = True
@@ -69,6 +73,9 @@ class Transition(renpy.display.core.Displayable):
             return self.new_widget.event(ev, x, y)
         else:
             return None
+
+    def find_focusable(self, callback, focus_name):
+        self.new_widget.find_focusable(callback, focus_name)
 
 class Fade(Transition):
     """
@@ -134,7 +141,7 @@ class Fade(Transition):
         if widget:
             surf = render(widget, width, height, st)
             
-            rv.blit(surf, (0, 0))
+            rv.blit(surf, (0, 0), focus=events)
 
         self.events = events 
 
@@ -212,6 +219,73 @@ class Fade(Transition):
 #         return rv
 
 
+class Pixellate(Transition):
+    """
+    This pixellates out the old scene, and then pixellates in the new
+    scene, taking the given amount of time and the given number of pixellate
+    steps in each direction.
+    """
+
+    def __init__(self, time, steps, old_widget=None, new_widget=None):
+
+        if not renpy.display.module.can_pixellate:
+            time = 0
+
+        super(Pixellate, self).__init__(time)
+
+        self.time = time
+        self.steps = steps
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+
+        self.surface = None
+        self.surface_size = None
+
+        self.events = False
+
+        self.quantum = time / ( 2 * steps )
+
+    def render(self, width, height, st):
+
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st)
+
+        step = st // self.quantum + 1
+        visible = self.old_widget
+
+        if step > self.steps:
+            step = (self.steps * 2) - step + 1
+            visible = self.new_widget
+            self.events = True
+
+        rv = renpy.display.render.Render(width, height)
+        rdr = render(visible, width, height, st)
+
+        # No alpha support.
+        surf = rdr.pygame_surface(False)
+        
+        if surf.get_size() != self.surface_size:
+            self.surface_size = surf.get_size()
+            self.surface = pygame.Surface(self.surface_size, surf.get_flags(), surf)
+
+        px = 2 ** step
+
+        renpy.display.module.pixellate(surf, self.surface, px, px, px, px)
+        renpy.display.render.mutated_surface(self.surface)
+
+        rv.blit(self.surface, (0, 0))
+
+        if self.events:
+            rv.focuses.extend(rdr.focuses)
+
+        # renpy.display.render.redraw(self, self.quantum - st % self.quantum)
+
+        renpy.display.render.redraw(self, 0)
+
+        return rv
+
         
 class Dissolve(Transition):
     """
@@ -253,6 +327,8 @@ class Dissolve(Transition):
         surf = top.pygame_surface(False)
         renpy.display.render.mutated_surface(surf)
 
+        rv.focuses.extend(top.focuses)
+
         if id(top) == self.old_top and id(bottom) == self.old_bottom:
 
             # Fast rendering path.
@@ -271,7 +347,7 @@ class Dissolve(Transition):
 
             # Complete rendering path.
 
-            rv.blit(bottom, (0, 0))
+            rv.blit(bottom, (0, 0), focus=False)
             surf.set_alpha(alpha, RLEACCEL)
             rv.blit(surf, (0, 0))
 
@@ -352,7 +428,7 @@ class CropMove(Transition):
         image. Otherwise, the top layer contains the old image.
         """
         
-
+        super(CropMove, self).__init__(time)
         self.time = time
 
         if mode == "wiperight":
@@ -503,13 +579,116 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0))
+        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not self.topnew)
 
         top = render(self.top, width, height, st)
-        ss = top.subsurface(crop)
-        rv.blit(ss, pos)
+        ss = top.subsurface(crop, focus=self.topnew)
+        rv.blit(ss, pos, focus=self.topnew)
 
         renpy.display.render.redraw(self, 0)
         return rv
                 
             
+def MoveTransition(delay, old_widget=None, new_widget=None):
+    """
+    This transition attempts to find images that have changed
+    position, and moves them from the old position to the new
+    transition, taking delay seconds to complete the move.
+
+    Images are considered to be the same if they have the same tag, in
+    the same way that the tag is used to determine which image to
+    replace or to hide.
+
+    If you use this transition to slide an image off the side of the
+    screen, remember to hide it when you are done.
+    """
+
+    def position(d):
+
+        placement = d.get_placement()
+        xpos = placement.xpos
+        ypos = placement.ypos
+
+        if isinstance(xpos, float):
+            xpos = int(renpy.config.screen_width * xpos)
+
+        if isinstance(ypos, float):
+            ypos = int(renpy.config.screen_height * ypos)
+
+        return xpos, ypos, placement.xanchor, placement.yanchor
+        
+
+    def merge_slide(old, new):
+
+        # If we're in the root widget, merge the child widgets for
+        # each layer.
+        if new.layers:
+            assert old.layers
+
+            rv = renpy.display.layout.Fixed()
+            rv.layers = { }
+
+            for layer in renpy.config.layers:
+
+                f = new.layers[layer]
+
+                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list:
+                    f = merge_slide(old.layers[layer], new.layers[layer])
+
+                rv.layers[layer] = f
+                rv.add(f)
+
+            return rv
+
+        # Otherwise, we recompute scene list for the two widgets, merging
+        # as appropriate.
+
+        tags = { }
+
+        for tag, time, d in old.scene_list:
+
+            if tag is None:
+                continue
+
+            tags[tag] = d
+
+        newsl = [ ]
+
+        for tag, time, d in new.scene_list:
+
+            if tag is None or tag not in tags:
+                newsl.append((tag, time, d))
+                continue
+
+            oldpos = position(tags[tag])
+            newpos = position(d)
+
+            if oldpos == newpos:
+                newsl.append((tag, time, d))
+                continue
+                
+            move = renpy.display.layout.Move(position(tags[tag]),
+                                             position(d),
+                                             delay,
+                                             d,
+                                             )
+
+            newsl.append((tag, now(), move))
+
+        rv = renpy.display.layout.Fixed()
+        rv.append_scene_list(newsl)
+
+        return rv
+
+
+    rv = merge_slide(old_widget, new_widget)
+    rv.delay = delay
+
+    return rv
+
+            
+            
+                   
+
+        
+                
