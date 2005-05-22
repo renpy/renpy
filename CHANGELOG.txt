@@ -1,3 +1,7 @@
+Fixed the gallery.rpy extra, so that it now works properly with the
+main menu being in a menu context. 
+
+
 New in 4.8.4
 ------------
 
