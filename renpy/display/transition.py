@@ -620,6 +620,17 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
     def merge_slide(old, new):
 
+            
+        # If new does not have .layers or .scene_list, then we simply
+        # insert a move from the old position to the new position.
+
+        if not hasattr(new, 'layers') and not hasattr(new, 'scene_list'):
+            return renpy.display.layout.Move(position(old),
+                                             position(new),
+                                             delay,
+                                             new,
+                                             )
+
         # If we're in the root widget, merge the child widgets for
         # each layer.
         if new.layers:
@@ -640,7 +651,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
             return rv
 
-        # Otherwise, we recompute scene list for the two widgets, merging
+        # Otherwise, we recompute the scene list for the two widgets, merging
         # as appropriate.
 
         tags = { }
