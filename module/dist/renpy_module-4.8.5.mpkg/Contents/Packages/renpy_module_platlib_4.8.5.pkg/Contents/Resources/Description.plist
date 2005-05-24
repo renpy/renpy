@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>(Required) Python modules, extensions, and packages
+Installed to: /Library/Python/2.3</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>renpy_module-platlib</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>4.8.5</string>
+</dict>
+</plist>

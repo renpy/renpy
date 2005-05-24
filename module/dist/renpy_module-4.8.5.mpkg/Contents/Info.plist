@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string>renpy_module 4.8.5</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.pythonmac.unspecified.renpy_module</string>
+	<key>CFBundleName</key>
+	<string>renpy_module</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.8.5</string>
+	<key>IFMajorVersion</key>
+	<integer>4</integer>
+	<key>IFMinorRevision</key>
+	<integer>8</integer>
+	<key>IFPkgFlagComponentDirectory</key>
+	<string>./Contents/Packages</string>
+	<key>IFPkgFlagPackageList</key>
+	<array>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>renpy_module_platlib_4.8.5.pkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+	</array>
+	<key>IFPkgFormatVersion</key>
+	<real>0.10000000149</real>
+	<key>IFRequirementDicts</key>
+	<array>
+		<dict>
+			<key>LabelKey</key>
+			<string>Apple Python 2.3</string>
+			<key>Level</key>
+			<string>requires</string>
+			<key>MessageKey</key>
+			<string>renpy_module requires Apple Python 2.3 to install.</string>
+			<key>SpecArgument</key>
+			<string>/System/Library/Frameworks/Python.framework/Versions/2.3</string>
+			<key>SpecProperty</key>
+			<string>NSFileType</string>
+			<key>SpecType</key>
+			<string>file</string>
+			<key>TestObject</key>
+			<string>NSFileTypeDirectory</string>
+			<key>TestOperator</key>
+			<string>eq</string>
+			<key>TitleKey</key>
+			<string>renpy_module requires Apple Python 2.3 to install.</string>
+		</dict>
+	</array>
+</dict>
+</plist>

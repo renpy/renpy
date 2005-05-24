@@ -176,7 +176,7 @@ label start:
             )
 
         image eileen alpha = im.Map("9a_happy.png",
-                                    im.ramp(0, 128),
+                                    im.ramp(0, 255),
                                     im.ramp(0, 128),
                                     im.ramp(0, 128),
                                     im.ramp(0, 255))
