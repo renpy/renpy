@@ -405,3 +405,132 @@ void map24_core(PyObject *pysrc,
     }
 
 }
+
+
+void xblur32_core(PyObject *pysrc,
+                  PyObject *pydst,
+                  int radius) {
+    
+    int i, x, y;
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    int count;
+
+    unsigned char *srcp;
+    unsigned char *dstp;
+
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    int divisor = radius * 2 + 1;
+    
+    for (y = 0; y < dsth; y++) {
+
+        // The values of the pixels on the left and right ends of the
+        // line. 
+        unsigned char lr, lg, lb, la;
+        unsigned char rr, rg, rb, ra;
+        
+        unsigned char *leader = srcpixels + y * srcpitch;
+        unsigned char *trailer = leader;
+        dstp = dstpixels + y * dstpitch;
+
+        lr = *leader;
+        lg = *(leader + 1);
+        lb = *(leader + 2);
+        la = *(leader + 3);
+        
+        int sumr = lr * radius;
+        int sumg = lg * radius;
+        int sumb = lb * radius;
+        int suma = la * radius;
+
+
+        for (x = 0; x < radius + 0; x++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            suma += *leader++;
+        }
+        
+        // left side of the kernel is off of the screen.
+        for (x = 0; x < radius; x++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            suma += *leader++;
+            
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            *dstp++ = suma / divisor;
+
+            sumr -= lr;
+            sumg -= lg;
+            sumb -= lb;
+            suma -= la;
+        }
+
+        int end = srcw - radius - 1;
+        
+        // The kernel is fully on the screen.
+        for (; x < end; x++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            suma += *leader++;
+            
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            *dstp++ = suma / divisor;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            suma -= *trailer++;
+        }
+
+        rr = *leader++;
+        rg = *leader++;
+        rb = *leader++;
+        ra = *leader++;
+               
+        // The kernel is off the right side of the screen.
+        for (; x < srcw; x++) {
+            sumr += rr;
+            sumg += rg;
+            sumb += rb;
+            suma += ra;
+            
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            *dstp++ = suma / divisor;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            suma -= *trailer++;
+        }    
+    }
+}
