@@ -32,8 +32,12 @@ void map24_core(PyObject *pysrc,
                 char *gmap,
                 char *bmap);
 
+#if 0
+
 void xblur32_core(PyObject *pysrc,
                   PyObject *pydst,
                   int radius);
+
+#endif
 
 #endif 

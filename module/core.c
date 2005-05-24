@@ -407,6 +407,8 @@ void map24_core(PyObject *pysrc,
 }
 
 
+#if 0
+
 void xblur32_core(PyObject *pysrc,
                   PyObject *pydst,
                   int radius) {
@@ -534,3 +536,5 @@ void xblur32_core(PyObject *pysrc,
         }    
     }
 }
+
+#endif
