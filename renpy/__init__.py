@@ -2,7 +2,7 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 4.8.4"
+version = "Ren'Py 4.8.5"
 script_version = 8004
 savegame_suffix = "-8.4.save"
 
@@ -37,6 +37,7 @@ import renpy.display.im
 import renpy.display.image # core, behavior, im
 import renpy.display.video
 import renpy.display.focus
+import renpy.display.anim
 
 import renpy.ui
 

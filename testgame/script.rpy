@@ -46,7 +46,7 @@ init:
 
     image eileen anim = Animation("9a_happy.png", 0.25,
                                   "9a_vhappy.png", 0.25,
-                                  "9a_concerned.png", 60.0)
+                                  "9a_concerned.png", 0.5)
 
     image movie = Movie()
 

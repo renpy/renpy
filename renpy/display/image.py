@@ -188,8 +188,9 @@ class Frame(renpy.display.core.Displayable):
 
     def predict(self, callback):
         self.image.predict(callback)
-        
-class Animation(renpy.display.core.Displayable):
+
+# This class has been replaced with a function in anim.
+class OldAnimation(renpy.display.core.Displayable):
     """
     A Displayable that draws an animation, which is a series of images
     that are displayed with time delays between them.

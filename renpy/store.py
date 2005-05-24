@@ -7,6 +7,7 @@ import renpy
 
 import renpy.ui as ui
 import renpy.display.im as im
+import renpy.display.anim as anim
 import renpy.display.audio as audio
 
 from renpy.python import RevertableList as __renpy__list__
@@ -23,7 +24,8 @@ config = renpy.config
 Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
-Animation = renpy.display.image.Animation
+# Animation = renpy.display.image.Animation
+Animation = anim.Animation
 Movie = renpy.display.video.Movie
 
 Position = renpy.curry.curry(renpy.display.layout.Position)

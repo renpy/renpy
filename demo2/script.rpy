@@ -791,6 +791,26 @@ init:
         povname = ""
         pov = DynamicCharacter("povname", color=(255, 0, 0, 255))
 
+    image eileen animated = Animation(
+        "9a_vhappy.png", 1.0,
+        "9a_happy.png", 1.0)
+
+    image smanim = anim.SMAnimation(
+        "r",
+        anim.State("r", Solid((255, 0, 0, 255))),
+        anim.State("g", Solid((0, 255, 0, 255))),
+        anim.State("b", Solid((0, 0, 255, 255))),
+
+        anim.Edge("r", .5, "g", dissolve),
+        anim.Edge("r", .5, "b", dissolve),
+
+        anim.Edge("g", .5, "r", dissolve),
+        anim.Edge("g", .5, "b", dissolve),
+
+        anim.Edge("b", .5, "r", dissolve),
+        anim.Edge("b", .5, "g", dissolve),         
+        )
+
 
 label demonstrate:
 
@@ -986,6 +1006,55 @@ label demonstrate:
             show eileen happy
             with dissolve
 
+        "Animation, updated in 4.8.":
+
+            e "Ren'Py supports a number of ways of creating
+               animations."
+
+            e "These animations let you vary images, independent of
+               the user's clicks."
+
+            show eileen animated
+
+            e "For example, I'm switching my expression back and
+               forth, once a second."
+
+            e "Even though you clicked, I'm still doing it."
+
+            e "This is an example of the Animation function at work."
+
+            show eileen happy
+
+            e "The Animation function is limited to simple lists of
+               images, with fixed delays between them."
+
+            e "The sequence can repeat, or can stop after one
+               go-through."
+
+            e "If you want more control, you can use the
+               anim.SMAnimation function."
+
+            e "It can randomly change images, and even apply
+               transitions to changes."
+
+            with None
+            scene smanim
+            show eileen happy
+            with dissolve
+
+            e "Here, we randomly dissolve the background between red,
+               green, and blue images."
+
+            e "Psychadelic."
+
+            with None
+            scene washington
+            show eileen happy
+            with dissolve
+
+            e "It's probably best if we stop here, before somebody's
+               brain explodes."
+
         "Text tags, added in 4.7.":
 
             e "Text tags let us control the appearance of text that is
@@ -1150,3 +1219,5 @@ label demonstrate:
     e "Is there anything else you want demonstrated?"
 
     jump demo_menu
+
+

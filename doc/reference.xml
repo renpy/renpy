@@ -780,6 +780,21 @@ init:
     style.window.background = Frame("frame.png", 125, 25)
   </example>
 
+  <p>
+    Frames are normally used in conjunction with styles, to provide
+    the displayable that is the background for a window containing a
+    menu or dialogue.
+  </p>
+
+<h4>Animation Functions</h4>
+
+<p>
+Ocassionally, one will want an image that changes while on the
+screen. Ren'Py provides two ways of doing this. The Animation function
+creates an animation from a simple list of images, while the
+anim.SMAnimation function creates a more complex, state-machine
+controlled animation.
+
   <!-- func Animation -->
 
   <example>
@@ -788,12 +803,54 @@ init:
                                 "frame_2.png", 0.25,
                                 "frame_3.png", 0.25)
   </example>
+
   
-  <p>
-    Frames are normally used in conjunction with styles, to provide
-    the displayable that is the background for a window containing a
-    menu or dialogue.
-  </p>
+<!-- func anim.SMAnimation -->
+
+<!-- func anim.State -->
+
+<!-- func anim.Edge -->
+
+<p>
+We present two examples of this in action. The first shows how one can
+create a character that ocassionally, randomly, performs a 3-frame
+blink about once a minute.
+</p>
+
+<example>
+init:
+    image blinking = anim.SMAnimation("a",
+        anim.State("a", "eyes_open.png"),
+
+        # This edge keeps us showing the eyes open for a second.
+        anim.Edge("a", 1.0, "a", prob=60),  
+
+        # This edge causes the eyes to start closing...
+        anim.Edge("a", 0.25, "b"),
+
+        # ..because it brings us here.
+        anim.State("b", "eyes_half.png"),
+
+        # And so on...
+        anim.Edge("b", 0.25, "c"),
+        anim.State("c", "eyes_closed.png"),
+        anim.Edge("c", 0.25, "d"),
+        anim.State("d", "eyes_half.png"),
+       
+        # And back to a.
+        anim.Edge("d", 0.5, "a")
+        )
+</example>
+
+<p>
+Remember, State can take a Position, and Edge can take a
+transition. This lets you move things around the screen, dissolve
+images into others, and do all sorts of complicated, unexpected,
+things. (But be careful... not all transitions do what you'd expect
+when used with SMAnimation.)
+</p>
+
+<h4>Position and Motion Functions</h4>
 
   <function name="Position" sig="(**properties)">
     

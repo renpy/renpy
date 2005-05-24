@@ -329,9 +329,8 @@ class Dissolve(Transition):
 
         rv.focuses.extend(top.focuses)
 
-        if id(top) == self.old_top and id(bottom) == self.old_bottom:
-
-            # Fast rendering path.
+        if id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+            # Fast rendering path. Only used for full-screen, top-level, renders.
 
             alpha = alpha / 255.0
             change = ( alpha - self.old_alpha) / ( 1.0 - self.old_alpha)
