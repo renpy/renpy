@@ -4,14 +4,26 @@ New in 4.8.5
 Added a new, state-machine based animation function,
 anim.SMAnimation. This function creates animations by applying images
 and transitions specified by the states and edges of a nondeterminstic
-state machine. The result is that it's possible to specify
-complicated random patterns of behavior. This can allow a character to
-blink randomly, allow random backgrounds to be shown, and even allow
-things to randomly move around the screen. 
+state machine. The result is that it's possible to specify complicated
+random patterns of behavior. This can allow a character to blink
+randomly, allow random backgrounds to be shown, and even allow things
+to randomly move around the screen.
+
+The SMAnimation framework can also be used to describe very
+complicated, even nondeterministic, motions. This is done by declaring
+a SMAnimation with None for the images, and then passing it in to the
+at clause.
 
 I should point out that despite the complexity of the interface, the S
 and M in SMAnimation stand for state machine, and not anything
 else. Honest.
+
+All motions (Motion, Pan, Move, and anim.SMAnimation when used as a
+motion) can now be used as transitions, in which case the motion is
+applied to the screen (or layer, as appropriate). This let us put
+together two new transitions, hpunch and vpunch, which shake the
+screen horizontally and vertically, as appropriate. Useful for when
+the POV character gets punched by a particularly feisty girl.
 
 Fixed the gallery.rpy extra, so that it now works properly with the
 main menu being in a menu context. 

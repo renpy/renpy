@@ -17,12 +17,16 @@ class State(object):
         we are in (entering) this state. For convenience, this can
         also be a string or tuple, which is interpreted with Image.
 
+        image should be None when this State is used with motion,
+        to indicate that the image will be replaced with the child of
+        the motion.
+
         @param atlist: A list of functions to call on the image. (In
         general, if something can be used in an at clause, it can be
         used here as well.)
         """
 
-        if not isinstance(image, renpy.display.core.Displayable):
+        if image and not isinstance(image, renpy.display.core.Displayable):
             image = renpy.display.image.Image(image)
             
         self.name = name
@@ -41,6 +45,13 @@ class State(object):
 
         return rv
 
+    def motion_copy(self, child):
+
+        if self.image is not None:
+            child = self.mage
+
+        return State(self.name, child, *self.atlist)
+    
 
 class Edge(object):
     """
@@ -58,6 +69,9 @@ class Edge(object):
         @param trans: The transition that will be used to show the
         image found in the new state. If None, the image is show
         immediately.
+
+        When used with an SMMotion, the transition should probably be
+        move.
 
         @param prob: The number of times this edge is added. This can
         be used to make a transition more probable then others. For
@@ -101,8 +115,15 @@ class SMAnimation(renpy.display.core.Displayable):
         machine.
         """
 
+        if 'delay' in properties:
+            self.delay = properties['delay']
+            del properties['delay']
+        else:
+            self.delay = None
 
         super(SMAnimation, self).__init__(**properties)
+
+        self.properties = properties
 
         # The initial state.
         self.initial = initial
@@ -215,6 +236,25 @@ class SMAnimation(renpy.display.core.Displayable):
 
         return rv
     
+    def __call__(self, child=None, new_widget=None, old_widget=None):
+        """
+        Used when this SMAnimation is used as a SMMotion. This creates
+        a duplicate of the animation, with all states containing None
+        as the image having that None replaced with the image that is provided here.
+        """
+
+        if child is None:
+            child = new_widget
+
+        args = [ ]
+
+        for state in self.states.itervalues():
+            args.append(state.motion_copy(child))
+
+        for edges in self.edges.itervalues():
+            args.extend(edges)
+
+        return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
 def Animation(*args):
     """

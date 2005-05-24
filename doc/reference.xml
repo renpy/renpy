@@ -786,6 +786,25 @@ init:
     menu or dialogue.
   </p>
 
+  <!-- func renpy.ParameterizedText -->
+
+  <p>
+    This is used to implement the text image. The user may also want
+    to instantiate their own ParameterizedText object (in an init
+    block) if they want to have more than one bit of text on the
+    screen at once, or if they want to change the style (and therefore
+    the position) of that text.
+  </p>
+
+  <example>
+init:
+    image text1 = renpy.ParameterizedText(ypos=0.25)
+
+show text "centered."
+show text1 "1/4 of the way down the screen."
+  </example>
+
+
 <h4>Animation Functions</h4>
 
 <p>
@@ -875,24 +894,6 @@ init:
                    yanchor='top')
 
 show eileen happy at left
-  </example>
-
-  <!-- func renpy.ParameterizedText -->
-
-  <p>
-    This is used to implement the text image. The user may also want
-    to instantiate their own ParameterizedText object (in an init
-    block) if they want to have more than one bit of text on the
-    screen at once, or if they want to change the style (and therefore
-    the position) of that text.
-  </p>
-
-  <example>
-init:
-    image text1 = renpy.ParameterizedText(ypos=0.25)
-
-show text "centered."
-show text1 "1/4 of the way down the screen."
   </example>
 
   <function name="Motion" sig="(function, period, repeat=False, bounce=False, **properties)">
@@ -1012,6 +1013,20 @@ show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
     screen, and Move when it is smaller. Both Pan and Move are special
     cases of Motion.
   </p>
+
+<p>
+anim.SMAnimation can also be used to declare complicated motions. Use
+None instead of an image in States, and supply a move transition
+when moving between states. A SMAnimation so created can be passed in
+to the at clause of an image, allowing it to move things around the
+screen.
+</p>
+
+<p>
+These movement clauses can also be used as transitions, in which case
+they affect the position of a single layer or the entire screen, as
+appropriate. 
+</p>
 
   <h3>Transitions</h3>
 

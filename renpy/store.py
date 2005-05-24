@@ -24,6 +24,7 @@ config = renpy.config
 Image = renpy.display.image.Image
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
+Null = renpy.display.layout.Null
 # Animation = renpy.display.image.Animation
 Animation = anim.Animation
 Movie = renpy.display.video.Movie

@@ -602,9 +602,14 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child, repeat=False, bounce=False, style='default', **properties):
+    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, style='default', **properties):
         """
         @param child: The child displayable.
+
+        @param new_widget: If child is None, it is set to new_widget,
+        so that we can speak the transition protocol.
+
+        @param old_widget: Ignored, for compatibility with the transition protocol.
 
         @param function: A function that takes a floating point value and returns
         an xpos, ypos tuple.
@@ -614,7 +619,19 @@ class Motion(Container):
         @param repeat: Should we repeat after a period is up?
 
         @param bounce: Should we bounce?
+
+        @param delay: If we are used as a transition, how long we should take. If None, defaults to period.
+
+        This can also be used as a transition. When used as a
+        transition, the motion is applied to the new_widget for delay
+        seconds.
         """
+
+        if child is None:
+            child = new_widget
+
+        if delay is None:
+            delay = period
 
         super(Motion, self).__init__(style=style, **properties)
 
@@ -623,6 +640,7 @@ class Motion(Container):
         self.period = period
         self.repeat = repeat
         self.bounce = bounce
+        self.delay = delay
 
     def get_placement(self):
         return self.style
@@ -697,7 +715,7 @@ class Interpolate(object):
         return [ interp(a, b) for a, b in zip(self.start, self.end) ]
 
 
-def Pan(startpos, endpos, time, child, repeat=False, bounce=False,
+def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
         style='default', **properties):
     """
     This is used to pan over a child displayable, which is almost
@@ -720,6 +738,8 @@ def Pan(startpos, endpos, time, child, repeat=False, bounce=False,
 
     @param bounce: True if we should bounce from the start to the end
     to the start.
+
+    This can be used as a transition. See Motion for details.
     """
 
     x0, y0 = startpos
@@ -733,7 +753,7 @@ def Pan(startpos, endpos, time, child, repeat=False, bounce=False,
                   style=style,
                   **properties)
 
-def Move(startpos, endpos, time, child, repeat=False, bounce=False,
+def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
         style='default', **properties):
     """
     This is used to pan over a child displayable relative to
@@ -754,6 +774,8 @@ def Move(startpos, endpos, time, child, repeat=False, bounce=False,
 
     @param bounce: True if we should bounce from the start to the end
     to the start.
+
+    This can be used as a transition. See Motion for details.
     """
 
     return Motion(Interpolate(startpos, endpos),

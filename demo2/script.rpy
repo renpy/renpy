@@ -150,6 +150,37 @@ label start:
     # statement lets characters change emotions.
     show eileen happy
 
+    init:
+
+        $ vpunch = Move((0, 10),
+                        (0, -10),
+                        .10,
+                        bounce=True,
+                        repeat=True, delay=.25)
+
+        $ movearound = anim.SMMotion(
+            "0",
+            anim.State("0", None, center),
+
+            anim.Edge("0", 0.5, "a", move),
+            anim.Edge("0", 0.5, "b", move),
+            
+            anim.State("a", None, left),
+            anim.State("b", None, right),
+
+            anim.Edge("a", 1.0, "a"),
+            anim.Edge("b", 1.0, "b"),
+
+            anim.Edge("a", 0.5, "b", move),
+            anim.Edge("b", 0.5, "a", move),
+            )
+            
+
+    $ renpy.play('punch.wav')
+    with vpunch
+
+    show eileen happy at movearound
+  
     # Another line of dialogue.
     "Girl" "My name is Eileen, and while I plan to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
