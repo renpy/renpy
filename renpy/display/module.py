@@ -106,3 +106,25 @@ else:
 
     
 
+if version >= 4008005:
+
+    can_map = True
+
+    def map(src, dst, rmap, gmap, bmap, amap):
+        """
+        This maps the colors between two surfaces. The various map
+        parameters must be 256 character long strings, with the value
+        of a character at a given offset being what a particular pixel
+        component value is mapped to.
+        """
+
+        convert_and_call(_renpy.map,
+                         src, dst,
+                         rmap, gmap, bmap, amap)
+
+else:
+
+    can_map = False
+    
+
+        

@@ -158,7 +158,7 @@ label start:
                         bounce=True,
                         repeat=True, delay=.25)
 
-        $ movearound = anim.SMMotion(
+        $ movearound = anim.SMAnimation(
             "0",
             anim.State("0", None, center),
 
@@ -174,12 +174,19 @@ label start:
             anim.Edge("a", 0.5, "b", move),
             anim.Edge("b", 0.5, "a", move),
             )
+
+        image eileen alpha = im.Map("9a_happy.png",
+                                    im.ramp(0, 128),
+                                    im.ramp(0, 128),
+                                    im.ramp(0, 128),
+                                    im.ramp(0, 255))
+
             
 
     $ renpy.play('punch.wav')
     with vpunch
 
-    show eileen happy at movearound
+    show eileen alpha at movearound
   
     # Another line of dialogue.
     "Girl" "My name is Eileen, and while I plan to one day star in a

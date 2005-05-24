@@ -3332,6 +3332,12 @@ The image manipulators are:
 
 <!-- func im.Rotozoom -->
 
+<!-- func im.Alpha -->
+
+<!-- func im.Map -->
+
+<!-- func im.ramp -->
+
 <h3>Low-Level Audio Functions</h3>
 
 <p>

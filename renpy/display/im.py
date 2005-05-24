@@ -529,8 +529,81 @@ class Crop(ImageBase):
     def load(self):
         return cache.get(self.image).subsurface((self.x, self.y,
                                                  self.w, self.h))
+
+class Map(ImageBase):
+    """
+    This adjusts the colors of the image that is its child. It takes
+    as arguments 4 256 character strings. If a pixel channel has a
+    value of 192, then the value of the 192nd character in the string
+    is used for the mapped pixel component.
+    """
+
+    def __init__(self, im, rmap, gmap, bmap, amap, force_alpha=False):
+
+        im = image(im)
+
+        super(Map, self).__init__(im, rmap, gmap, bmap, amap, force_alpha)
         
-        
+        self.image = im
+        self.rmap = rmap
+        self.gmap = gmap
+        self.bmap = bmap
+        self.amap = amap
+
+        self.force_alpha = force_alpha
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        if not renpy.display.module.can_map:
+            return surf
+
+        if self.force_alpha and not (surf.get_flags() & SRCALPHA):
+            surf = surf.convert_alpha()
+
+        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+
+        renpy.display.module.map(surf, rv,
+                                 self.rmap, self.gmap, self.bmap, self.amap)
+
+        return rv
+
+def ramp(start, end):
+    """
+    Returns a 256 character linear ramp, where the first character has
+    the value start and the last character has the value end. Such a
+    ramp can be used as a map argument of im.Map.
+    """
+
+    chars = [ ]
+
+    for i in range(0, 256):
+        i = i / 255.0
+        chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
+
+    return "".join(chars)
+
+
+identity = ramp(0, 255)
+
+def Alpha(image, alpha):
+    """
+    Returns an alpha-mapped version of the image. Alpha is the maximum
+    alpha that this image can have, a number between 0.0 (fully
+    transparent) and 1.0 (opaque).
+
+    If an image already has an alpha channel, values in that alpha
+    channel are reduced as appropriate.
+    """
+
+    amap = ramp(0, int(255 * alpha))
+
+    print repr(amap)
+    
+    return Map(image, identity, identity, identity, amap, force_alpha=True)
+
+
 def image(arg, **properties):
     """
     This takes as input one of a number of ways of specifying an

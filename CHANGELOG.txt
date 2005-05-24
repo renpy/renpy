@@ -25,6 +25,12 @@ together two new transitions, hpunch and vpunch, which shake the
 screen horizontally and vertically, as appropriate. Useful for when
 the POV character gets punched by a particularly feisty girl.
 
+There are now two new image operators. im.Map can map the pixels
+values in an image to different values. Using this, one can adjust the
+colors of an image. The im.Alpha function is built on top of this, and
+allows one to alter the alpha of an image. (It even adjusts a
+pre-existing alpha channel.)
+
 Fixed the gallery.rpy extra, so that it now works properly with the
 main menu being in a menu context. 
 
