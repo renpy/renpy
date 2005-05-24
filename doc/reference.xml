@@ -789,11 +789,12 @@ init:
 <h4>Animation Functions</h4>
 
 <p>
-Ocassionally, one will want an image that changes while on the
+Occasionally, one will want an image that changes while on the
 screen. Ren'Py provides two ways of doing this. The Animation function
 creates an animation from a simple list of images, while the
 anim.SMAnimation function creates a more complex, state-machine
 controlled animation.
+</p>
 
   <!-- func Animation -->
 
