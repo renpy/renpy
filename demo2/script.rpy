@@ -30,49 +30,21 @@ init:
     $ library.enter_sound = 'click.wav'
     $ library.exit_sound = 'click.wav'
 
-    # These are positions that can be used inside at clauses. We set
-    # them up here so that they can be used throughout the program.
-    $ left = Position(xpos=0.0, xanchor='left')
-    $ center = Position()
-    $ right = Position(xpos=1.0, xanchor='right')
-
-    # Offscreen positions for use with the move transition. Images at
-    # these positions are still shown (and consume
-    # resources)... remember to hide the image after the transition.    
-    $ offscreenleft = Position(xpos=0.0, xanchor='right')
-    $ offscreenright = Position(xpos=1.0, xanchor='left')
-
-    # Likewise, we set up some transitions that we can use in with
-    # clauses and statements.
-    $ fade = Fade(.5, 0, .5) # Fade to black and back.
-    $ dissolve = Dissolve(0.5)
-    
-    $ wiperight = CropMove(1.0, "wiperight")
-    $ wipeleft = CropMove(1.0, "wipeleft")
-    $ wipeup = CropMove(1.0, "wipeup")
-    $ wipedown = CropMove(1.0, "wipedown")
-
-    $ slideright = CropMove(1.0, "slideright")
-    $ slideleft = CropMove(1.0, "slideleft")
-    $ slideup = CropMove(1.0, "slideup")
-    $ slidedown = CropMove(1.0, "slidedown")
-
-    $ slideawayright = CropMove(1.0, "slideawayright")
-    $ slideawayleft = CropMove(1.0, "slideawayleft")
-    $ slideawayup = CropMove(1.0, "slideawayup")
-    $ slideawaydown = CropMove(1.0, "slideawaydown")
-
-    $ irisout = CropMove(1.0, "irisout")
-    $ irisin = CropMove(1.0, "irisin")
-
-    $ pixellate = Pixellate(1.0, 5)
-
-    $ move = MoveTransition(0.5)
-
     # Select the transitions that are used when entering and exiting
     # the game menu.
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
+
+
+    # There used to be a large list of definitions of placements and
+    # transitions here. They've been moved into
+    # common/definitions.rpy, to save space and allow them to be
+    # upgraded more easily. You can still define your own transitions
+    # and placements here, however.
+
+    # $ slowdissove = Dissolve(1.0)
+    # $ whitefade = Fade(.5, 0, .5, color=(255, 255, 255, 255))
+
 
     # Now, we declare the images that are used in the program.
 
@@ -149,44 +121,6 @@ label start:
     # one showing her merely happy. It demonstrates how the show
     # statement lets characters change emotions.
     show eileen happy
-
-    init:
-
-        $ vpunch = Move((0, 10),
-                        (0, -10),
-                        .10,
-                        bounce=True,
-                        repeat=True, delay=.25)
-
-        $ movearound = anim.SMAnimation(
-            "0",
-            anim.State("0", None, center),
-
-            anim.Edge("0", 0.5, "a", move),
-            anim.Edge("0", 0.5, "b", move),
-            
-            anim.State("a", None, left),
-            anim.State("b", None, right),
-
-            anim.Edge("a", 1.0, "a"),
-            anim.Edge("b", 1.0, "b"),
-
-            anim.Edge("a", 0.5, "b", move),
-            anim.Edge("b", 0.5, "a", move),
-            )
-
-        image eileen alpha = im.Map("9a_happy.png",
-                                    im.ramp(0, 255),
-                                    im.ramp(0, 128),
-                                    im.ramp(0, 128),
-                                    im.ramp(0, 255))
-
-            
-
-    $ renpy.play('punch.wav')
-    with vpunch
-
-    show eileen alpha at movearound
   
     # Another line of dialogue.
     "Girl" "My name is Eileen, and while I plan to one day star in a
@@ -849,6 +783,21 @@ init:
         anim.Edge("b", .5, "g", dissolve),         
         )
 
+    image cyan base = Image("cyan.png")
+
+    image cyan crop = im.Crop("cyan.png", 100, 0, 100, 200)
+    
+    image cyan composite = im.Composite((200, 300),
+                                        (0, 0), "cyan.png",
+                                        (0, 50), "cyan.png",
+                                        (0, 100), "cyan.png")
+
+    image cyan green = im.Map("cyan.png", bmap=im.ramp(0, 0))
+
+    image cyan alpha = im.Alpha("cyan.png", 0.5)
+    image eileen alpha = im.Alpha("9a_happy.png", 0.5)
+
+    $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
 label demonstrate:
 
@@ -861,7 +810,7 @@ label demonstrate:
 
     menu demo_menu:
 
-        "Simple transitions, updated in 4.8.":
+        "Simple transitions, updated in 4.8.5":
 
             e "Okay, I can tell you about simple transitions. We call
                them simple because they aren't that flexible."
@@ -896,6 +845,26 @@ label demonstrate:
 
             e "It's probably not appropriate for most games, but we
                think it's kind of neat."
+
+            e "Finally, we can point out that motions can be used as
+               transitions."
+
+            "..."
+
+            "......"
+
+            $ renpy.play('punch.wav')
+            with vpunch
+
+            e "Hey! Pay attention."
+
+            e "I was about to demonstrate vpunch... well, I guess I just
+               did."
+
+            $ renpy.play('punch.wav')
+            with hpunch
+
+            e "We can also shake the screen horizontally, with hpunch."
 
         "CropMove transitions, added in 4.5.":
 
@@ -1034,7 +1003,8 @@ label demonstrate:
             scene onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
 
             e "Finally, we can pan around an image larger than the
-               screen, using the Pan function in an at clause."
+               screen, using the Pan function in an at
+               clause."
 
             e "That's what we're doing now, panning up a picture of
                the memorial to the Big Red One."
@@ -1044,7 +1014,7 @@ label demonstrate:
             show eileen happy
             with dissolve
 
-        "Animation, updated in 4.8.":
+        "Animation, updated in 4.8.5":
 
             e "Ren'Py supports a number of ways of creating
                animations."
@@ -1183,6 +1153,65 @@ label demonstrate:
 
             e "That's it for multimedia."
 
+        "Image Operations, added in 4.8.5":
+
+            e "Image operations allow one to manipulate images as they
+               are loaded in."
+
+            e "These are efficent, as they are only evaluated when an
+               image is first loaded."
+
+            e "This way, there's no extra work that needs to be done
+               when each frame is drawn to the screen."
+
+            show eileen happy at left with move
+            show cyan base at cyanpos with dissolve
+
+            e "Let me show you a test image, a simple cyan circle."
+
+            e "We'll be applying some image operations to it, to see
+               how they can be used."
+
+            show cyan crop at cyanpos with dissolve
+            
+            e "The im.Crop operation can take the image, and chop it
+               up into a smaller image."
+
+            show cyan composite at cyanpos with dissolve
+
+            e "The im.Composite operation lets us take multiple images,
+               and draw them into a single image."
+
+            e "While you can do this by showing multiple images, this
+               is more efficent, if more complex."
+
+            show cyan green at cyanpos with dissolve
+
+            e "The im.Map operation lets us mess with the red, green,
+               blue, and alpha channels of an image."
+
+            e "In this case, we removed all the blue from the image,
+               leaving only the green component of cyan."
+
+            show cyan alpha at cyanpos with dissolve
+
+            e "The im.Alpha operation can adjust the alpha channel on
+               an image, making things partially transparent."
+
+            show eileen alpha at left with dissolve
+
+            e "It's useful if a character just happens to be ghost."
+
+            with None
+            hide cyan
+            show eileen happy at left
+            with dissolve
+
+            e "But that's not the case with me."
+
+            show eileen happy with move
+
+            
         "User interaction.":
 
             e "Ren'Py gives a number of ways of interacting with the

@@ -529,6 +529,23 @@ class Crop(ImageBase):
     def load(self):
         return cache.get(self.image).subsurface((self.x, self.y,
                                                  self.w, self.h))
+def ramp(start, end):
+    """
+    Returns a 256 character linear ramp, where the first character has
+    the value start and the last character has the value end. Such a
+    ramp can be used as a map argument of im.Map.
+    """
+
+    chars = [ ]
+
+    for i in range(0, 256):
+        i = i / 255.0
+        chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
+
+    return "".join(chars)
+
+
+identity = ramp(0, 255)
 
 class Map(ImageBase):
     """
@@ -538,7 +555,8 @@ class Map(ImageBase):
     is used for the mapped pixel component.
     """
 
-    def __init__(self, im, rmap, gmap, bmap, amap, force_alpha=False):
+    def __init__(self, im, rmap=identity, gmap=identity, bmap=identity,
+                 amap=identity, force_alpha=False):
 
         im = image(im)
 
@@ -569,23 +587,6 @@ class Map(ImageBase):
 
         return rv
 
-def ramp(start, end):
-    """
-    Returns a 256 character linear ramp, where the first character has
-    the value start and the last character has the value end. Such a
-    ramp can be used as a map argument of im.Map.
-    """
-
-    chars = [ ]
-
-    for i in range(0, 256):
-        i = i / 255.0
-        chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
-
-    return "".join(chars)
-
-
-identity = ramp(0, 255)
 
 def Alpha(image, alpha):
     """
@@ -599,8 +600,6 @@ def Alpha(image, alpha):
 
     amap = ramp(0, int(255 * alpha))
 
-    print repr(amap)
-    
     return Map(image, identity, identity, identity, amap, force_alpha=True)
 
 

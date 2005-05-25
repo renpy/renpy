@@ -4,6 +4,8 @@
 import pygame
 from pygame.constants import *
 
+import sys
+
 try:
     import _renpy
     version = _renpy.version()
@@ -104,6 +106,54 @@ else:
 
         return pygame.transform.scale(s, size)
 
+
+
+
+def slow_endian_order(shifts, masks, r, g, b, a):
+
+    has_alpha = masks[3]
+
+    if not has_alpha:
+
+        l = zip(shifts, (r, g, b))
+        l.sort()
+
+        if sys.byteorder == 'big':
+            l.reverse()
+
+        return [ j for i, j in l] + [ a ]
+
+    
+    l = zip(shifts, (r, g, b, a))
+    l.sort()
+
+    if sys.byteorder == 'big':
+        l.reverse()
+
+    return [ j for i, j in l]
+
+    
+endian_order_cache = { }
+
+
+def endian_order(src, r, g, b, a):
+    """
+    Returns the four arguments, in endian-order.
+    """
+
+    shifts = src.get_shifts()
+
+    try:
+        func = endian_order_cache[shifts]
+
+    except KeyError:
+        masks = src.get_masks()
+        order = slow_endian_order(shifts, masks, 'r', 'g', 'b', 'a')
+        func = eval( "lambda r, g, b, a : (" + ", ".join(order) + ")")
+        endian_order_cache[shifts] = func
+
+    return func(r, g, b, a)
+        
     
 
 if version >= 4008005:
@@ -120,7 +170,8 @@ if version >= 4008005:
 
         convert_and_call(_renpy.map,
                          src, dst,
-                         rmap, gmap, bmap, amap)
+                         *endian_order(dst, rmap, gmap, bmap, amap))
+
 
 else:
 

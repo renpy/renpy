@@ -21,6 +21,9 @@ label _start:
     if renpy.has_label("splashscreen") and not _restart:
         call splashscreen
 
+    # Clean out any residual scene from the splashscreen.
+    scene
+
     $ renpy.call_in_new_context("_enter_main_menu")
 
     # Should never happen... but might as well do something 

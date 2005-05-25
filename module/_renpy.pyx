@@ -54,6 +54,11 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
     pydst.unlock()
     pysrc.unlock()
 
+
+# Please note that r, g, b, and a are not necessarily red, green, blue
+# and alpha. Instead, they are the first through fourth byte of data.
+# The mapping between byte and color/alpha varies from system to
+# system, and needs to be determined at a higher level.
 def map(pysrc, pydst, r, g, b, a):
 
     if not isinstance(pysrc, pygame.Surface):

@@ -1,10 +1,10 @@
 New in 4.8.5
 ------------
 
-Added a new, state-machine based animation function,
-anim.SMAnimation. This function creates animations by applying images
-and transitions specified by the states and edges of a nondeterminstic
-state machine. The result is that it's possible to specify complicated
+Added a new state-machine based animation function, anim.SMAnimation. 
+This function creates animations by applying images and transitions
+specified by the states and edges of a nondeterminstic state
+machine. The result is that it's possible to specify complicated
 random patterns of behavior. This can allow a character to blink
 randomly, allow random backgrounds to be shown, and even allow things
 to randomly move around the screen.
@@ -30,6 +30,9 @@ values in an image to different values. Using this, one can adjust the
 colors of an image. The im.Alpha function is built on top of this, and
 allows one to alter the alpha of an image. (It even adjusts a
 pre-existing alpha channel.)
+
+The definitions of transitions and placements, which were once in
+script.rpy, have been moved into common/definitions.rpy. 
 
 Fixed the gallery.rpy extra, so that it now works properly with the
 main menu being in a menu context. 
