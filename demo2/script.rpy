@@ -22,7 +22,16 @@ init:
     # the menus and windows.
     $ style.mm_root_window.background = Image("mainmenu.jpg")
     $ style.gm_root_window.background = Image("gamemenu.jpg")
-    $ style.window.background = Frame("frame.png", 125, 25)
+    $ style.window.background = Frame("frame.png", 25, 25)
+
+    # Change some styles involving the margins and padding of the
+    # default window. (We need this, as we use a frame image that
+    # includes a drop-shadow.)
+    $ style.window.xmargin = 0
+    $ style.window.ymargin = 0
+    $ style.window.xpadding = 20
+    $ style.window.top_padding = 5
+    $ style.window.bottom_padding = 15
 
     # Interface sounds, just for the heck of it.
     $ style.button.activate_sound = 'click.wav'
