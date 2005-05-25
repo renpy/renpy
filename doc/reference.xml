@@ -1456,8 +1456,7 @@ menu:
   </p>
 
   <example>
-# Toggle fullscreen mode.
-$ config.fullscreen = not config.fullscreen
+$ score += 1
 
 # Pointless python that uses a loop.
 python:
@@ -2271,6 +2270,33 @@ always be in this list.
 <var name="config.overlay_during_wait" value="True" >
 True if we want overlays to be shown during wait statements, or False 
 if we'd prefer that they be hidden during the wait statements.
+</var>
+
+<var name="config.text_tokenizer" value="..." >
+
+<p>
+    This functions is used to tokenize text. It's called when laying
+    out a Text widget, and is given the string that is the text of the
+    widget, and the style associated with the widget.
+</p><p>
+    It's expected to yield some number of pairs. In each pair, the
+    first element is the kind of token found, and the second element
+    is the text corresponding to that token. The following token
+    types are defined:
+</p>
+<ul>
+
+    <li>"newline" -- A newline, which when encountered starts a new line.</li>
+
+    <li>"word" -- A word of text. A line will never be broken inside of
+    a word.</li>
+
+    <li>"space" -- A space. Spaces are always placed on the current line,
+    and will never be placed as the start of a line.</li>
+    
+    <li>"tag" -- A text tag. If encountered, the second element should be
+    the name of the tag, without any enclosing braces.</li>
+</ul>
 </var>
 
 <var name="library.file_page_cols" value = "2" >

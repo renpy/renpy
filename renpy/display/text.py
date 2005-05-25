@@ -99,6 +99,51 @@ class TextStyle(object):
         rv = font.render(text, antialias, color)
         renpy.display.render.mutated_surface(rv)
         return rv
+    
+def text_tokenizer(s, style):
+    """
+    This functions is used to tokenize text. It's called when laying
+    out a Text widget, and is given the string that is the text of the
+    widget, and the style associated with the widget.
+
+    It's expected to yield some number of pairs. In each pair, the
+    first element is the kind of token found, and the second element
+    is the text corresponding to that token. The following token
+    types are defined:
+
+    "newline" -- A newline, which when encountered starts a new line.
+
+    "word" -- A word of text. A line will never be broken inside of
+    a word.
+
+    "space" -- A space. Spaces are always placed on the current line,
+    and will never be placed as the start of a line.
+    
+    "tag" -- A text tag. If encountered, the second element should be
+    the name of the tag, without any enclosing braces.
+    """
+
+    regexp = r"""(?x)
+      (?P<space>\ )
+    | \{(?P<tag>[^{}]+)\}
+    | (?P<untag>\{\{)
+    | (?P<newline>\n)
+    | (?P<word>[^ \n\{]+)
+    """
+
+    for m in re.finditer(regexp, s):
+
+        if m.group('space'):
+            yield 'space', m.group('space')
+        elif m.group('word'):
+            yield 'word', m.group('word')
+        elif m.group('tag'):
+            yield 'tag', m.group('tag')
+        elif m.group('untag'):
+            yield 'word', '{'
+        elif m.group('space'):
+            yield 'space', m.group('space')
+    
 
 class Text(renpy.display.core.Displayable):
     """
@@ -233,10 +278,11 @@ class Text(renpy.display.core.Displayable):
         else:
             text = self.text
 
-        for i in re.split(r'( |\{[^{]+\}|\{\{|\n)', text):
+        # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
+        for kind, i in renpy.config.text_tokenizer(text, self.style):
 
             # Newline.
-            if i == "\n":
+            if kind == "newline":
                 if cur:
                     line.append((TextStyle(tsl[-1]), cur))                    
                     maxwidth = max(maxwidth, linewidth + curwidth)
@@ -253,14 +299,10 @@ class Text(renpy.display.core.Displayable):
 
                 continue
 
-            elif i == "{{":
-                i = "{"
-                # We want to render this like a word, so no continue.
-
-            elif i.startswith("{"):
+            elif kind == "tag":
 
                 # Are we closing a tag?
-                if i.startswith("{/"):
+                if i.startswith("/"):
                     if cur:
                         line.append((TextStyle(tsl[-1]), cur))
                         cur = ""
@@ -287,23 +329,23 @@ class Text(renpy.display.core.Displayable):
 
                 tsl.append(TextStyle(tsl[-1]))
 
-                if i == "{b}":
+                if i == "b":
                     tsl[-1].bold = True
 
-                elif i == "{i}":
+                elif i == "i":
                     tsl[-1].italic = True
 
-                elif i == "{u}":
+                elif i == "u":
                     tsl[-1].underline = True
 
-                elif i == "{plain}":
+                elif i == "plain":
                     tsl[-1].bold = False
                     tsl[-1].italic = False
                     tsl[-1].underline = False
 
-                elif i.startswith("{size"):
+                elif i.startswith("size"):
 
-                    m = re.match(r'\{size=(\+|-|)(\d+)\}', i)
+                    m = re.match(r'size=(\+|-|)(\d+)', i)
 
                     if not m:
                         raise Exception('Size tag %s could not be parsed.' % i)
@@ -315,9 +357,9 @@ class Text(renpy.display.core.Displayable):
                     else:
                         tsl[-1].size = int(m.group(2))                    
 
-                elif i.startswith("{color"):
+                elif i.startswith("color"):
 
-                    m = re.match(r'\{color=(\#?[a-fA-F0-9]+)\}', i)
+                    m = re.match(r'color=(\#?[a-fA-F0-9]+)', i)
 
                     if not m:
                         raise Exception('Color tag %s could not be parsed.' % i)
@@ -329,7 +371,7 @@ class Text(renpy.display.core.Displayable):
 
                 continue
 
-            elif i == ' ':
+            elif kind == "space":
                 # Spaces always get appended to the end of a line. So they
                 # will never show up at the start of a line, unless they're
                 # after a newline or at the start of a string.
@@ -340,37 +382,42 @@ class Text(renpy.display.core.Displayable):
                 
                 continue
 
-            # If we made it here, then we have normal text.
+            elif kind == "word":
 
-            # We must have at least one word or something else in the
-            # line before we care about wrapping.
-            if not cur and not line:
-                cur = i                
-                curwidth, lineheight = tsl[-1].sizes(cur)
-                continue
+                # If we made it here, then we have normal text.
 
-            # Should we wrap?
-            oldcurwidth = curwidth
-            curwidth, lh = tsl[-1].sizes(cur + i)
+                # We must have at least one word or something else in the
+                # line before we care about wrapping.
+                if not cur and not line:
+                    cur = i                
+                    curwidth, lineheight = tsl[-1].sizes(cur)
+                    continue
 
-            if curwidth > remwidth:
-                line.append((TextStyle(tsl[-1]), cur))
-                lines.append(line)
-                
-                maxwidth = max(maxwidth, linewidth)
-                
-                line = [ ]
-                lineheights.append(lineheight)
+                # Should we wrap?
+                oldcurwidth = curwidth
+                curwidth, lh = tsl[-1].sizes(cur + i)
 
-                linewidths.append(width + oldcurwidth - remwidth)
-                
-                cur = i
-                curwidth, lineheight = tsl[-1].sizes(cur)                
-                remwidth = width - indent()
-                linewidth = 0
+                if curwidth > remwidth:
+                    line.append((TextStyle(tsl[-1]), cur))
+                    lines.append(line)
+
+                    maxwidth = max(maxwidth, linewidth)
+
+                    line = [ ]
+                    lineheights.append(lineheight)
+
+                    linewidths.append(width + oldcurwidth - remwidth)
+
+                    cur = i
+                    curwidth, lineheight = tsl[-1].sizes(cur)                
+                    remwidth = width - indent()
+                    linewidth = 0
+                else:
+                    cur = cur + i
+                    lineheight = max(lh, lineheight)
+
             else:
-                cur = cur + i
-                lineheight = max(lh, lineheight)
+                raise Exception("Unknown text token kind %s." % kind)
 
         # We're done. Let's close up.
 

@@ -34,6 +34,12 @@ pre-existing alpha channel.)
 The definitions of transitions and placements, which were once in
 script.rpy, have been moved into common/definitions.rpy. 
 
+There is now a new config variable, config.text_tokenizer. This
+variable is used to give a function that breaks a line of text up into
+words, spaces, and other things. Providing a custom function here
+allows for control of where line breaking is allowed, useful for
+languages that have different rules about that.
+
 Fixed the gallery.rpy extra, so that it now works properly with the
 main menu being in a menu context. 
 

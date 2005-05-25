@@ -2,6 +2,9 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
+# This will be deleted by the end of this file.
+import renpy
+
 # The title of the game window.
 window_title = "A Ren'Py Game"
 
@@ -156,12 +159,18 @@ interact_callbacks = [ ]
 # play another track.
 music_end_event = None
 
+# A function that is called to tokenize text.
+text_tokenizer = renpy.display.text.text_tokenizer
+
 # The number of frames that Ren'Py has shown.
 frames = 0
+
+del renpy
 
 def backup():
 
     import copy
+    import types
 
     global _globals
     _globals = globals().copy()
@@ -170,7 +179,13 @@ def backup():
     del _globals["reload"]
     del _globals["__builtins__"]
 
-    _globals = copy.deepcopy(_globals)
+    for k, v in _globals.items():
+
+        if k == "text_tokenizer":
+            continue
+
+        _globals[k] = copy.deepcopy(v)
+
 
 def reload():
     globals().update(_globals)
