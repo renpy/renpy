@@ -43,6 +43,9 @@ languages that have different rules about that.
 Fixed the gallery.rpy extra, so that it now works properly with the
 main menu being in a menu context. 
 
+The demo game was updated to demonstrate the new feature, as well as
+to have a new, drop-shadowed window frame.
+
 New in 4.8.4
 ------------
 
