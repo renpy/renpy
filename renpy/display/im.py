@@ -149,8 +149,8 @@ class Cache(object):
         if renpy.config.debug_image_cache:
             print "IC is:", self.cache.keys()
             print "IC size:", self.total_cache_size, "/", cache_limit
-        
-     
+
+
     # This actually performs preloading.
     def preload(self):
 
