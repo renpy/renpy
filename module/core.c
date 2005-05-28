@@ -336,7 +336,7 @@ void map32_core(PyObject *pysrc,
         dstp = dstrow;
 
 
-        for (x = 0; x < srch; x++) {
+        for (x = 0; x < srcw; x++) {
             *dstp++ = rmap[(unsigned char) *srcp++];
             *dstp++ = gmap[(unsigned char) *srcp++];
             *dstp++ = bmap[(unsigned char) *srcp++];
@@ -394,7 +394,7 @@ void map24_core(PyObject *pysrc,
         dstp = dstrow;
 
 
-        for (x = 0; x < srch; x++) {
+        for (x = 0; x < srcw; x++) {
             *dstp++ = rmap[(unsigned char) *srcp++];
             *dstp++ = gmap[(unsigned char) *srcp++];
             *dstp++ = bmap[(unsigned char) *srcp++];

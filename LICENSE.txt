@@ -45,3 +45,8 @@ http://www.libsdl.org/projects/SDL_ttf
 
 ctypes (MIT)
 http://starship.python.net/crew/theller/ctypes/
+
+
+The character images in the demo game (game/9a_*.png) are under their
+own copyright. I allow them to be used as part of the demo game, but
+not as part of other games. 

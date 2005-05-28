@@ -1,3 +1,10 @@
+New in 4.8.6
+------------
+
+Fixed a bug in the _renpy module, in which we accidentally used the
+height, rather than the width, of an image.
+
+
 New in 4.8.5
 ------------
 
