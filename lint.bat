@@ -1,2 +1,2 @@
-run_game.py --lint > lint.txt
+console.exe --lint > lint.txt
 start lint.txt

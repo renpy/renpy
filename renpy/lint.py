@@ -182,7 +182,7 @@ def lint():
     """
 
     print codecs.BOM_UTF8
-    print unicode("Ren'Py lint report, generated at: " + time.ctime()).encode("utf-8")
+    print unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8")
 
 
     # This is used to support the check_image.

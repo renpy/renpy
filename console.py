@@ -49,6 +49,9 @@ def main():
     op.add_option('--python', dest='python', default=None,
                   help='Run the argument in the python interpreter.')
 
+    op.add_option('--lint', dest='lint', default=False, action='store_true',
+                  help='Run a number of expensive tests, to try to detect errors in the script.')
+
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
 
@@ -59,7 +62,7 @@ def main():
         sys.exit(0)
 
     try:
-        renpy.main.main(options.game)
+        renpy.main.main(options.game, lint=options.lint)
             
     except Exception, e:
 
