@@ -6,7 +6,7 @@
 
 from compiler import parse
 from compiler.pycodegen import ModuleCodeGenerator, ExpressionCodeGenerator
-from compiler.misc import set_filename
+# from compiler.misc import set_filename
 import compiler.ast as ast
 
 import marshal
@@ -62,7 +62,7 @@ def reached(obj, path, reachable):
 def reached_vars(store, reachable):
     """
     Marks everything reachable from the variables in the store
-    as reachable.
+    or from the context info objects as reachable.
     
     @param store: A map from variable name to variable value.
     @param reachable: A dictionary mapping reached object ids to
@@ -72,7 +72,9 @@ def reached_vars(store, reachable):
     for k, v in store.iteritems():
         reached(v, k, reachable)    
     
-    
+    for c in renpy.game.contexts:
+        reached(c.info, "#context", reachable)
+
 
 ##### Code that replaces literals will calls to magic constructors.
 
@@ -116,33 +118,56 @@ def recursively_replace(o, func):
 
     return o
 
-def py_compile(source, mode):
+def set_filename(filename, offset, tree):
+    """Set the filename attribute to filename on every node in tree"""
+    worklist = [tree]
+    while worklist:
+        node = worklist.pop(0)
+        node.filename = filename
+
+        lineno = getattr(node, 'lineno', None)
+        if lineno is not None:
+            node.lineno = lineno + offset
+
+        worklist.extend(node.getChildNodes())
+
+
+def py_compile(source, mode, filename='<none>', lineno=1):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
     appropriate.
+
+    @param source: The sourccode, as a string.
+
+    @param mode: 'exec' or 'eval'.
+
+    @param filename: The filename that the source code is taken from.
+
+    @param lineno: The line number of the first line of the source code.
     """
 
+    source = source.encode('raw_unicode_escape')
     tree = parse(source, mode)
 
     recursively_replace(tree, wrap_node)
 
     if mode == 'exec':
-        set_filename("<none>", tree)
+        set_filename(filename, lineno - 1, tree)
         cg = ModuleCodeGenerator(tree)
     else:
-        set_filename("<none>", tree)
+        set_filename(filename, lineno - 1, tree)
         cg = ExpressionCodeGenerator(tree)
 
     return cg.getCode()
 
-def py_compile_exec_bytecode(source):
-    code = py_compile(source, 'exec')
+def py_compile_exec_bytecode(source, **kwargs):
+    code = py_compile(source, 'exec', **kwargs)
     return marshal.dumps(code)
 
-def py_compile_eval_bytecode(source):
+def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()
-    code = py_compile(source, 'exec')
+    code = py_compile(source, 'exec', **kwargs)
     return marshal.dumps(code)
 
 
@@ -356,10 +381,10 @@ class Rollback(renpy.object.Object):
         for t in self.store:
             if len(t) == 2:
                 k, v = t
-                renpy.game.store[k] = v
+                vars(renpy.store)[k] = v
             else:
                 k, = t
-                del renpy.game.store[k]
+                del vars(renpy.store)[k]
 
         renpy.game.contexts = [ self.context ]
         rng.pushback(self.random)
@@ -415,6 +440,12 @@ class RollbackLog(renpy.object.Object):
         state needs to be saved for rollbacking.
         """
 
+        # If the transient scene list is not empty, then we do
+        # not begin a new rollback, as the TSL will be purged
+        # after a rollback is complete.
+        if not renpy.game.contexts[0].scene_lists.transient_is_empty():
+            return
+
         # If the log is too long, try pruning it to a label.
         if len(self.log) > renpy.config.rollback_length:
             rb = self.log[-renpy.config.rollback_length]
@@ -428,7 +459,7 @@ class RollbackLog(renpy.object.Object):
         self.log.append(self.current)
 
         self.mutated = { }
-        self.old_store = renpy.game.store.copy()
+        self.old_store = vars(renpy.store).copy()
 
     def complete(self):
         """
@@ -439,7 +470,7 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        new_store = renpy.game.store
+        new_store = vars(renpy.store)
         store = [ ]
 
 
@@ -484,9 +515,11 @@ class RollbackLog(renpy.object.Object):
 
         rv = { }
 
+        store = vars(renpy.store)
+
         for k in self.ever_been_changed.keys():
-            if k in renpy.game.store:
-                rv[k] = renpy.game.store[k]
+            if k in store:
+                rv[k] = store[k]
 
         return rv
 
@@ -581,7 +614,7 @@ class RollbackLog(renpy.object.Object):
             rng.reset()
 
         # Restart the game with the new state.
-        raise renpy.game.RestartException()
+        raise renpy.game.RestartException(renpy.game.contexts[:])
 
     def freeze(self):
         """
@@ -617,14 +650,15 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
         
         # Restore the store.
-        renpy.game.store.clear()
-        renpy.game.store.update(renpy.game.clean_store)
+        store = vars(renpy.store)
+        store.clear()
+        store.update(renpy.game.clean_store)
 
         for k in self.ever_been_changed:
-            if k in renpy.game.store:
-                del renpy.game.store[k]
+            if k in store:
+                del store[k]
 
-        renpy.game.store.update(self.frozen_roots)
+        store.update(self.frozen_roots)
         self.frozen_roots = None
 
         # Now, rollback to an acceptable point.
@@ -634,31 +668,35 @@ class RollbackLog(renpy.object.Object):
 
 def py_exec_bytecode(bytecode, hide=False):
 
+    store = vars(renpy.store)
+
     if hide:
         locals = { }
     else:
-        locals = renpy.game.store
+        locals = store
 
-    exec marshal.loads(bytecode) in renpy.game.store, locals
+    exec marshal.loads(bytecode) in store, locals
 
         
 def py_exec(source, hide=False):
 
+    store = vars(renpy.store)
+
     if hide:
         locals = { }
     else:
-        locals = renpy.game.store
+        locals = store
 
 
-    exec py_compile(source, 'exec') in renpy.game.store, locals
+    exec py_compile(source, 'exec') in store, locals
 
 def py_eval_bytecode(bytecode):
 
-    return eval(marshal.loads(bytecode), renpy.game.store)
+    return eval(marshal.loads(bytecode), vars(renpy.store))
 
 def py_eval(source):
     source = source.strip()
 
     return eval(py_compile(source, 'eval'),
-                renpy.game.store)
+                vars(renpy.store))
 

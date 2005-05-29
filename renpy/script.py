@@ -33,6 +33,10 @@ class Script(object):
     @ivar initcode: A list of priority, Node tuples that should be
     executed in ascending priority order at init time.
 
+    @ivar all_stmts: A list of all statements, that have been found
+    in every file. Useful for lint, but tossed if lint is not performed
+    to save memory.
+
     """
 
     def __init__(self, node_callback=None):
@@ -43,7 +47,7 @@ class Script(object):
 
         self.namemap = { }
         self.initcode = [ ]
-
+        self.all_stmts = [ ]
         
         # A list of all files in the search directories.
         dirlist = [ ]
@@ -108,7 +112,7 @@ class Script(object):
         if fn.endswith(".rpy"):
             stmts = renpy.parser.parse(fn)
             f = file(fn + "c", "wb")
-            f.write(dumps((script_version, stmts)).encode('zlib'))
+            f.write(dumps((script_version, stmts), -1).encode('zlib'))
             f.close()
         elif fn.endswith(".rpyc"):
             f = file(fn, "rb")
@@ -164,6 +168,8 @@ class Script(object):
             init = node.get_init()
             if init:
                 self.initcode.append(init)
+
+        self.all_stmts.extend(all_stmts)
 
         return True
 

@@ -21,11 +21,6 @@ searchpath = [ ]
 # A Script object, giving the script of the currently executing game.
 script = None
 
-# The store is where Ren'Py python results are stored. We first need
-# to import in the module, and then we use the module's dictionary
-# directly.
-store = None
-
 # A shallow copy of the store made at the end of the init phase. If
 # a key in here points to the same value here as it does in the store,
 # it is not saved.
@@ -82,7 +77,9 @@ class Preferences(object):
         self.sound = True
         self.music = True
         self.skip_unseen = False
-        self.fast_text = False
+
+        self.text_cps = 0
+
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
@@ -104,7 +101,7 @@ class RestartException(Exception):
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
-
+    
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
@@ -124,6 +121,12 @@ class JumpException(Exception):
     to the named label.
     """
 
+class JumpOutException(Exception):
+    """
+    This should be raised with a label as the only argument. This exits
+    the current context, and then raises a JumpException.
+    """
+
 def context(index=-1):
     """
     Return the current execution context, or the context at the
@@ -132,19 +135,52 @@ def context(index=-1):
 
     return contexts[index]
 
+def invoke_in_new_context(callable):
+    """
+    This pushes the current context, and invokes the given python
+    function in a new context. When that function returns or raises an
+    exception, it removes the new context, and restores the current
+    context.
+
+    Please note that the context so created cannot execute renpy
+    code. So exceptions that change the flow of renpy code (like
+    the one created by renpy.jump) cause this context to terminate,
+    and are handled by the next higher context.
+
+    If you want to execute renpy code from the function, you can call
+    it with renpy.call_in_new_context.
+
+    Use this to begin a second interaction with the user while
+    inside an interaction.
+    """
+
+    context = renpy.execution.Context(False, contexts[-1])
+    contexts.append(context)
+
+    try:
+        return callable()
+    finally:
+        contexts.pop()
+
 def call_in_new_context(label):
     """
     This code creates a new context, and starts executing code from
     that label in the new context. Rollback is disabled in the
     new context. (Actually, it will just bring you back to the
     real context.)
+
+    Use this to begin a second interaction with the user while
+    inside an interaction.
     """
 
     context = renpy.execution.Context(False, contexts[-1])
     contexts.append(context)
 
-    context.goto_label(label)
-    context.run()
+    try:
+        context.goto_label(label)
+        context.run()
+        contexts.pop()
+    except renpy.game.JumpOutException, e:        
+        contexts.pop()
+        raise renpy.game.JumpException(e.args[0])
 
-    contexts.pop()
-    interface.force_redraw = True

@@ -64,10 +64,11 @@ init -1000:
         style.default.ypos = 0
         style.default.xanchor = 'left'
         style.default.yanchor = 'top'
+        style.default.xmaximum = None
+        style.default.ymaximum = None
 
         # Sound properties.
-        style.default.hover_sound = None
-        style.default.activate_sound = None
+        style.default.sound = None
 
         # The base style for the large windows.
         style.create('window', 'default',
@@ -123,13 +124,18 @@ init -1000:
         # Styles that are used for menus.
 
         style.create('menu', 'default',
-                     "(sound, position) The style that is used for menus themselves.")
+                     "(position) The style that is used for the vbox containing a menu.")
 
         style.create('menu_caption', 'default',
                      "(text) The style that is used to render a menu caption.")
 
         style.create('menu_choice', 'default',
-                     """(text, hover, sound) The style that is used to render a menu choice.""")
+                     """(text, hover) The style that is used to render
+                        the text of a menu choice.""")
+
+        style.create('menu_choice_button', 'default',
+                     """(window, hover, sound) The style that is used
+                        to render the button containing a menu choice.""")
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
         style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
@@ -175,9 +181,12 @@ init -1000:
            
         # Styles that are used by imagemaps
         style.create('imagemap', 'image_placement',
-                     '(sound, position) The style that is used for imagemaps.')
+                     '(position) The style that is used for imagemaps.')
 
-        # Style that is used by imagebutttons.
+        style.create('imagemap_button', 'default',
+                     '(window, sound, hover) The style that is used for buttons inside imagemaps.')
+
+        # Styles that are used by imagebutttons.
         style.create('image_button', 'default',
                      '(window, sound, hover) The default style used for image buttons.')
 
@@ -201,6 +210,7 @@ init -1000:
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
         style.button_text.activate_color = bright_cyan
+        style.button_text.insensitive_color = (192, 192, 192, 255)
         style.button_text.drop_shadow = (2, 2)
         
         # Selected button.
@@ -214,36 +224,20 @@ init -1000:
         style.selected_button_text.hover_color = bright_red
         style.selected_button_text.activate_color = bright_red
         
-        # Disabled button.
-
-        style.create('disabled_button', 'button',
-                     '(window, hover) The style that is used for a disabled button.')
-
-        style.disabled_button.hover_sound = None
-        style.disabled_button.activate_sound = None
-
-        style.create('disabled_button_text', 'button_text',
-                     '(text, hover) The style that is used for the label of a disabled button.')
-                     
-        style.disabled_button_text.color = (128, 128, 128, 255)
-        style.disabled_button_text.hover_color = (128, 128, 128, 255)
-        style.disabled_button_text.activate_color = (128, 128, 128, 255)
-
-
         # Bar.
         style.create('bar', 'default',
                      '(bar) The style that is used by default for bars.')
 
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
-        style.bar.left_gutter = 0
-        style.bar.right_gutter = 0
 
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',
                      '(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.')
 
         style.mm_root_window.background = Solid((0, 0, 0, 255))
+        style.mm_root_window.xfill = True
+        style.mm_root_window.yfill = True
 
         style.create('mm_menu_window', 'default',
                      '(window, position) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.')
@@ -265,6 +259,8 @@ init -1000:
                      '(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.')
 
         style.gm_root_window.background = Solid((0, 0, 0, 255))
+        style.gm_root_window.xfill = True
+        style.gm_root_window.yfill = True
     
         style.create('gm_nav_window', 'default',
                      '(window, position) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.')
@@ -286,13 +282,6 @@ init -1000:
 
         style.create('gm_nav_selected_button_text', 'selected_button_text',
                      '(text, hover) The style of the text of a selected game menu navigation button.')
-        
-        style.create('gm_nav_disabled_button', 'disabled_button',
-                     '(window, hover) The style of a disabled game menu navigation button.')
-
-        style.create('gm_nav_disabled_button_text', 'disabled_button_text',
-                     '(text, hover) The style of the text of a disabled game menu navigation button.')
-        
 
         style.create('file_picker_window', 'default',
                      '(window, position) A window containing the file picker that is used to choose slots for loading and saving.')
@@ -301,6 +290,7 @@ init -1000:
         style.file_picker_window.xanchor = 'left'
         style.file_picker_window.ypos = 0
         style.file_picker_window.yanchor = 'top'
+        style.file_picker_window.xpadding = 5
 
 
         style.create('file_picker_navbox', 'default',
@@ -310,24 +300,26 @@ init -1000:
 
         style.create('file_picker_nav_button', 'button',
                      '(window, hover) The style that is used for enabled file picker navigation buttons.')
+
         style.create('file_picker_nav_button_text', 'button_text',
                      '(text) The style that is used for the label of enabled file picker navigation buttons.')        
 
-        style.create('file_picker_nav_disabled_button', 'disabled_button',
-                     '(window, hover) The style that is used for disabled file picker navigation buttons.')
-        style.create('file_picker_nav_disabled_button_text', 'disabled_button_text',
-                     '(text) The style that is used for the label of disabled file picker navigation buttons.')
+
+        style.create('file_picker_grid', 'default',
+                     '(position) The style of the grid containing the file picker entries.')
+
+        style.file_picker_grid.xfill = True
                 
         style.create('file_picker_entry', 'button',
                      '(window, hover) The style that is used for each of the slots in the file picker.')
 
         style.file_picker_entry.xpadding = 5
         style.file_picker_entry.ypadding = 2
-        style.file_picker_entry.xmargin = 10
-        style.file_picker_entry.xminimum = 400
+        style.file_picker_entry.xmargin = 5
+        style.file_picker_entry.xfill = True
         style.file_picker_entry.ymargin = 2
         
-        style.file_picker_entry.idle_background = Solid((255, 255, 255, 255))
+        style.file_picker_entry.background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
         style.file_picker_entry.activate_background = Solid((255, 255, 192, 255))
 
@@ -335,7 +327,7 @@ init -1000:
                      '(text) A base style for all text that is displayed in the file picker.')
         
         style.file_picker_text.size = 18
-        style.file_picker_text.idle_color = dark_cyan
+        style.file_picker_text.color = dark_cyan
         style.file_picker_text.hover_color = bright_cyan
 
         style.create('file_picker_new', 'file_picker_text',
@@ -360,6 +352,7 @@ init -1000:
                      '(text, position) The style used for the prompt in a yes/no dialog.')
 
         style.yesno_label.color = green
+        style.yesno_label.textalign = 0.5
 
         style.create('yesno_button', 'button',
                      '(window, hover) The style of yes/no buttons.')
@@ -372,15 +365,17 @@ init -1000:
 
         style.yesno_window.xfill = True
         style.yesno_window.yminimum = 0.5
+        style.yesno_window.xmargin = .1
 
         # Preferences
 
 
         style.create('prefs_pref', 'default',
-                     '(window, position) The position of the box containing an individual preference.')
+                     '(window, position) A window containing an individual preference.')
 
         style.prefs_pref.xpos = 0.5
         style.prefs_pref.xanchor = 'center'
+        style.prefs_pref.bottom_margin = 10
 
         style.create('prefs_label', 'default',
                      '(text, position) The style that is applied to the label of a block of preferences.')
@@ -412,6 +407,41 @@ init -1000:
 
         style.prefs_window.xfill=True
         style.prefs_window.ypadding = 0.05
+
+        style.create('prefs_left', 'default',
+                     '(position) The position of the left column of preferences.')
+
+        style.prefs_left.xanchor = 'center'
+        style.prefs_left.xpos = 0.25
+
+        style.create('prefs_right', 'default',
+                     '(position) The position of the left column of preferences.')
+
+        style.prefs_right.xanchor = 'center'
+        style.prefs_right.xpos = 0.75
+
+        style.create('prefs_spinner', 'default',
+                     '(position) The position of the prefs spinner.')
+
+        style.prefs_spinner.xpos = 0.5
+        style.prefs_spinner.xanchor = 'center'
+
+        style.create('prefs_spinner_label', 'prefs_label',
+                     '(text) This is the style that displays the value of a preference spinner.')
+
+        style.prefs_spinner_label.minwidth = 100
+        style.prefs_spinner_label.textalign = 0.5
+
+        style.create('prefs_spinner_button', 'prefs_button',
+                     '(window, hover) The style of the + or - buttons in a preference spinner.')
+
+        style.create('prefs_spinner_button_text', 'prefs_button_text',
+                     '(text, hover) The style of the text of the + and - buttons in a preference spinner.')
+                                              
+                     
+
+
+# The skip indicator.
         
         style.create('skip_indicator', 'default',
                      '(text, position) The style of the text that is used to indicate that skipping is in progress.')
@@ -419,3 +449,26 @@ init -1000:
         style.skip_indicator.xpos = 10
         style.skip_indicator.ypos = 10
 
+
+# Styles used by internal error messages.
+
+        style.create('error_window', 'default',
+                     '(window) The style of the window containing internal error messages.')
+
+        style.error_window.background = Solid((220, 220, 255, 255))
+        style.error_window.xfill = True
+        style.error_window.yfill = True
+        style.error_window.xpadding = 20
+        style.error_window.ypadding = 20
+        
+
+        style.create('error_title', 'default',
+                     '(text) The style of the text containing the title of an error message.')
+
+        style.error_title.color = (255, 128, 128, 255)
+
+        style.create('error_body', 'default',
+                     '(text) The style of the body of an error message.')
+                     
+        style.error_body.color = (128, 128, 255, 255)
+        

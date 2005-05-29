@@ -57,6 +57,24 @@ def load(name):
 
     raise Exception("Couldn't find file '%s'." % name)
 
+def loadable(name):
+    """
+    Returns True if the name is loadable with load, False if it is not.
+    """
+
+    try:
+        transfn(name)
+        return True
+    except:
+        pass
+
+    for prefix, index in archives:
+        if name in index:
+            return True
+
+    return False
+    
+
 def transfn(name):
     """
     Tries to translate the name to a file that exists in one of the

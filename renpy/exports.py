@@ -6,16 +6,16 @@
 import renpy
 
 # Many of these shouldn't be used directly.
-from renpy.display.layout import *
-from renpy.display.text import *
-from renpy.display.behavior import *
-from renpy.display.image import *
+# from renpy.display.layout import *
+from renpy.display.text import ParameterizedText
+from renpy.display.behavior import Keymap
+# from renpy.display.image import *
 
 from renpy.curry import curry
-from renpy.display.audio import music_start, music_stop
+# from renpy.display.audio import music_start, music_stop
 from renpy.display.audio import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
-from renpy.loadsave import *
+from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
@@ -202,8 +202,11 @@ def display_menu(items, window_style='menu_window'):
 
 class TagQuotingDict(object):
     def __getitem__(self, key):
-        if key in renpy.game.store:
-            rv = renpy.game.store[key]
+
+        store = vars(renpy.store)
+        
+        if key in store:
+            rv = store[key]
 
             if isinstance(rv, (str, unicode)):
                 rv = rv.replace("{", "{{")
@@ -241,6 +244,7 @@ def display_say(who, what, who_style='say_label',
                 what_suffix='',
                 interact=True,
                 slow=True,
+                image=False,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -257,16 +261,16 @@ def display_say(who, what, who_style='say_label',
     if interact:
         renpy.ui.saybehavior()
     
-    if who is not None:
-        who = who_prefix + who + who_suffix
-
     what = what_prefix + what + what_suffix
 
     renpy.ui.window(style=window_style)
     renpy.ui.vbox(padding=10)
 
-    if who is not None:
+    if who is not None and not image:
+        who = who_prefix + who + who_suffix
         renpy.ui.text(who, style=who_style, **properties)
+    elif who is not None and image:
+        renpy.ui.image(who, style=who_style, **properties)
 
     renpy.ui.text(what, style=what_style, slow=slow)
     renpy.ui.close()
@@ -309,8 +313,6 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
-
-    renpy.ui.keymousebehavior()
 
     rv = renpy.ui.interact(suppress_overlay=(not overlays))
     checkpoint()
@@ -461,6 +463,15 @@ def jump(label):
 
     raise renpy.game.JumpException(label)
 
+def jumpoutofcontext(label):
+    """
+    Causes control to leave the current context, and then to be
+    transferred in the parent context to the given label.
+    """
+
+    raise renpy.game.JumpOutException(label)
+
+
 def screenshot(filename):
     """
     Saves a screenshot in the named filename.
@@ -484,6 +495,14 @@ def version():
     """
 
     return renpy.version
+
+def module_version():
+    """
+    Returns a number corresponding to the current version of the Ren'Py module,
+    or 0 if the module wasn't loaded.
+    """
+
+    return renpy.display.module.version
 
 def transition(trans, layer=None):
     """
@@ -524,6 +543,15 @@ def get_game_runtime():
 
     return renpy.game.context().runtime / 1000.0
 
+def loadable(filename):
+    """
+    Returns True if the given filename is loadable, meaning that it
+    can be loaded from the disk or from inside an archive. Returns
+    False if this is not the case.
+    """
+
+    return renpy.loader.loadable(filename)
+
 def exists(filename):
     """
     Returns true if the given filename can be found in the
@@ -549,7 +577,16 @@ def restart_interaction():
 
     renpy.game.interface.restart_interaction = True
     
+def context():
+    """
+    Returns an object that is unique to the current context, that
+    participates in rollback and the like.
+    """
+
+    return renpy.game.context().info
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 
+invoke_in_new_context = renpy.game.invoke_in_new_context

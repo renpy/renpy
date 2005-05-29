@@ -1,42 +1,55 @@
-Greetings!
+This file contains boilerplate information about running Ren'Py that
+can be included into the README for your game. It may be necessary to
+change some of the filenames in this document, to make it specific to
+your game.
 
-You've downloaded a game that was written using Ren'Py, a python based
-engine for visual novel style games. If you're interested in making
-your own games, you may want to consider downloading Ren'Py from:
+Feel free to use this in your projects.
 
-     http://www.bishoujo.us/renpy/
 
-Ren'Py games can be played using the keyboard or the mouse.
 
-When dialogue or transitions are displayed, they can be dismissed
-by clicking the left mouse button, or pressing space or enter on the
-keyboard. When the control key is held down, dialogue and transitions
-are rapidly dismissed, provided that the user has seen them
-already. Tab toggles skipping mode.
+Running the Game
+================
 
-Choices on menus can be made by clicking on the appopriate choice with
-the mouse, or by picking the choice using the up and down arrow and
-hitting enter.
+(Windows)
 
-Hitting escape or clicking the right mouse button brings up the game
-menu. This game menu lets you save and load games, quit the game, or
-return to the main menu. It also lets you set preferences that control
-the behavior of the game. These preferences are:
+If this game was installed on Windows using an installer, then you can
+run it by choosing the shortcut left by the installer. If this game
+was installed on Windows using the cross-platform zip file, then it
+can be run by executing the run_game.exe file.
 
-Display            --- Controls if the game displays in a window or 
-                       fullscreen.
-Music              --- Controls if music is played or silenced.
-TAB and CTRL Skip  --- Chooses if CTRL skips all messages or only messages
-                       that have ever been seen on this computer.
-Transitions        --- Controls the amount of transitions that are shown.
+(Macintosh)
 
-Finally, Ren'Py supports a rollback feature, which lets you, with some
-limits, play the game backwards. For example, you can rollback to a
-menu, and save or make a different choice. It also lets you see
-dialogue that you missed. You can rollback by pressing the 'page up'
-key, or by scrolling your mouse wheel up. Pressing 'page down' or
-scrolling your mouse wheel down lets you skip dialogue that's been
-seen in this session, which is almost the opposite of rollback.
+For information about running Ren'Py games on Mac OS 10.3 or higher,
+please go to http://www.bishoujo.us/renpy/mac.html .
 
-Thank you for choosing to play a Ren'Py powered game.
+(Linux/Unix)
+
+For information about running Ren'Py games under Linux and Unix,
+please go to http://www.bishoujo.us/renpy/linux.html . At the very
+least, you will need to compile the _renpy module. Read
+module/README.txt for details.
+
+
+Playing the Game
+================
+
+By default, the game starts running in full screen mode. On some
+computers, especially some virtual machines, this can lead to mouse
+problems. To fix this, press 'f'.
+
+Some of the more interesting game actions can be performed as follows:
+
+- The left mouse button is used to advance to the next line of
+  dialogue, or to pick menu options.
+
+- The right mouse button brings you into a menu screen where you can
+  save the game, load the game, change preferences, return to the main
+  menu, or quit entirely.
+
+- Scrolling the mouse wheel up or pushing page up returns you to the
+  previous screen.
+
+- Holding down the CTRL key skips dialogue. By default, it only
+  skips read dialogue, but this can be changed by a preference. Tab
+  toggles skip mode.
 

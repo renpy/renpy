@@ -22,7 +22,16 @@ init:
     # the menus and windows.
     $ style.mm_root_window.background = Image("mainmenu.jpg")
     $ style.gm_root_window.background = Image("gamemenu.jpg")
-    $ style.window.background = Frame("frame.png", 125, 25)
+    $ style.window.background = Frame("frame.png", 25, 25)
+
+    # Change some styles involving the margins and padding of the
+    # default window. (We need this, as we use a frame image that
+    # includes a drop-shadow.)
+    $ style.window.xmargin = 0
+    $ style.window.ymargin = 0
+    $ style.window.xpadding = 20
+    $ style.window.top_padding = 5
+    $ style.window.bottom_padding = 15
 
     # Interface sounds, just for the heck of it.
     $ style.button.activate_sound = 'click.wav'
@@ -30,39 +39,21 @@ init:
     $ library.enter_sound = 'click.wav'
     $ library.exit_sound = 'click.wav'
 
-    # These are positions that can be used inside at clauses. We set
-    # them up here so that they can be used throughout the program.
-    $ left = Position(xpos=0.0, xanchor='left')
-    $ right = Position(xpos=1.0, xanchor='right')
-    $ center = Position()
-
-    # Likewise, we set up some transitions that we can use in with
-    # clauses and statements.
-    $ fade = Fade(.5, 0, .5) # Fade to black and back.
-    $ dissolve = Dissolve(0.5)
-    
-    $ wiperight = CropMove(1.0, "wiperight")
-    $ wipeleft = CropMove(1.0, "wipeleft")
-    $ wipeup = CropMove(1.0, "wipeup")
-    $ wipedown = CropMove(1.0, "wipedown")
-
-    $ slideright = CropMove(1.0, "slideright")
-    $ slideleft = CropMove(1.0, "slideleft")
-    $ slideup = CropMove(1.0, "slideup")
-    $ slidedown = CropMove(1.0, "slidedown")
-
-    $ slideawayright = CropMove(1.0, "slideawayright")
-    $ slideawayleft = CropMove(1.0, "slideawayleft")
-    $ slideawayup = CropMove(1.0, "slideawayup")
-    $ slideawaydown = CropMove(1.0, "slideawaydown")
-
-    $ irisout = CropMove(1.0, "irisout")
-    $ irisin = CropMove(1.0, "irisin")
-
     # Select the transitions that are used when entering and exiting
     # the game menu.
-    $ library.enter_transition = dissolve
-    $ library.exit_transition = dissolve
+    $ library.enter_transition = pixellate
+    $ library.exit_transition = pixellate
+
+
+    # There used to be a large list of definitions of placements and
+    # transitions here. They've been moved into
+    # common/definitions.rpy, to save space and allow them to be
+    # upgraded more easily. You can still define your own transitions
+    # and placements here, however.
+
+    # $ slowdissove = Dissolve(1.0)
+    # $ whitefade = Fade(.5, 0, .5, color=(255, 255, 255, 255))
+
 
     # Now, we declare the images that are used in the program.
 
@@ -70,6 +61,7 @@ init:
     image carillon = Image("carillon.jpg")
     image whitehouse = Image("whitehouse.jpg")
     image washington = Image("washington.jpg")
+    image onememorial = Image("1memorial.jpg")
     image black = Solid((0, 0, 0, 255))
 
     # Character pictures.
@@ -80,9 +72,10 @@ init:
     # Finally, the character object. This object lets us have the
     # character say dialogue without us having to repeatedly type
     # her name. It also lets us change the color of her name.
-    
-    # Character objects.
+
+    # Character objects.    
     $ e = Character('Eileen', color=(200, 255, 200, 255))
+
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.
@@ -91,9 +84,9 @@ init:
 #
 # label splashscreen:
 #     scene black
-#     show text "American Bishoujo Presents..." with fade
+#     show text "American Bishoujo Presents..." with dissolve
 #     $ renpy.pause(1.0)
-#     hide text with fade
+#     hide text with dissolve
 #
 #     return
 
@@ -113,7 +106,7 @@ label start:
 
     # Clear the game runtime timer, so it doesn't reflect time spent
     # sitting at the main menu.
-    $ renpy.clear_game_runtime()
+    $ renpy.clear_game_runtime()        
 
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
@@ -137,7 +130,7 @@ label start:
     # one showing her merely happy. It demonstrates how the show
     # statement lets characters change emotions.
     show eileen happy
-
+  
     # Another line of dialogue.
     "Girl" "My name is Eileen, and while I plan to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
@@ -174,7 +167,7 @@ label choices:
 
         # This is a menu choice. When chosen, the statements in its
         # block are executed.
-        "What are some features of Ren'Py games?":
+        "What are some user-visible features of Ren'Py games?":
 
             # We call the features label. The from clause needs to be
             # here to ensure that save games work, even after we
@@ -190,8 +183,8 @@ label choices:
             call writing from _call_writing_1
             jump choices
 
-        "What's new with Ren'Py?":
-            call whatsnew from _call_whatsnew_1
+        "Can you demonstrate more features to me?":
+            call demonstrate from _call_demonstrate_1
             jump choices
 
         # This choice has a condition associated with it. It is only
@@ -258,8 +251,9 @@ label writing:
     e "The show statement shows another image on the screen."
 
     # The at clause here, displays the character on the left side of
-    # the screen.
-    show eileen happy at left with dissolve
+    # the screen. The with clause causes us to slide from the old
+    # position to the new position.
+    show eileen happy at left with move
 
     e "Images can take at clauses that specify where on the screen
        they are shown."
@@ -301,59 +295,17 @@ label writing:
 
     e "... are easily invoked."
 
-    e "As of version 4.2, Ren'Py supports image maps, which are like
-       another form of menu. Let's try one."
-
-    # This is an imagemap. It consists of two images, and a list of
-    # hotspots. For each hotspot we give the coordinates of the left,
-    # top, right, and bottom sides, and the value to return if it is
-    # picked.
-
-    $ result = renpy.imagemap("ground.png", "selected.png", [
-        (100, 100, 300, 400, "eileen"),
-        (500, 100, 700, 400, "lucy")
-        ])
-
-    # We've assigned the chosen result from the imagemap to the
-    # result variable. We can use an if statement to vary what
-    # happens based on the user's choice.
-
-    if result == "eileen":
-        show eileen vhappy
-        e "You picked me!"
-
-    elif result == "lucy":
-        show eileen concerned
-        e "It looks like you picked Lucy."
-
-        # Eileen is being a bit possesive here. :-P
-        if date:
-            e "You can forget about Saturday."
-            $ date = False
-
-    show eileen happy
-
-    e "Ren'Py supports music, such as what's playing in the
-       background..."
-
-    # This plays a sound effect.
-    $ renpy.play("18005551212.wav")
-    
-    e "... and sound effects, like the one that just played."
-
     e "We now provide a series of user-interface functions, that allow
        the programmer to create fairly complex interfaces."
 
-    e "For example, try the following scheduling and stats screen,
-       which could be used by a stat-based dating simulation."
-
-    $ day_planner()
-    
     e "Ren'Py also includes a number of control statements, and even
        lets you include python code."
 
     e "Rather than go into this here, you can read all about it in the
-       tutorial."
+       reference."
+
+    e "You can see a number of features in action by asking me to
+       demonstrate them at the next menu."
 
     e "If you want to make changes, you can edit the script for this
        game by editing game/script.rpy"
@@ -372,8 +324,9 @@ label features:
 
     $ save_name = "Features"
 
-    e "By providing a range of useful features, we let game authors
-       focus on writing their games."
+    e "Ren'Py provides a number of gameplay features, giving the user
+       a good experience while freeing up the game author to write his
+       game."
 
     e "What are some of these features? Well, first of all, we take
        care of displaying the screen, as well as dialogue and menus."
@@ -382,15 +335,16 @@ label features:
        mouse. If you've gotten this far, you've probably figured that
        out already."
 
-    e "If you press 'f', you can toggle fullscreen mode. Pressing 'm'
-       will toggle music on and off."
-
     e "Right-clicking or pressing escape will bring you to the game
        menu."
 
     e "The game menu lets you save or load the game. Ren'Py doesn't
        limit the number of save slots available. You can create as
        many slots as you can stand."
+
+    e "A preferences screen on the game menu lets you change the
+       fullscreen mode, control skipping, text speed, and
+       transitions, and turn sound and music on and off."
 
     e "The game menu also lets you restart or quit the game. But you
        wouldn't want to do that, would you?"
@@ -616,7 +570,7 @@ label ending:
     if date:
         e "And I'll see you on Saturday."
     
-    scene black with fade
+    scene black with dissolve
 
     "Ren'Py and the Ren'Py demo were written by PyTom."
 
@@ -815,200 +769,531 @@ init:
     image movie = Movie()
 
     python:
-        style.create('odd_window', 'say_window')
-        style.odd_window.left_margin = 50
-        style.odd_window.right_margin = 150
-        style.odd_window.bottom_margin = 25
+        povname = ""
+        pov = DynamicCharacter("povname", color=(255, 0, 0, 255))
 
-        eodd = Character('Eileen', color=(200, 255, 200, 255), window_style='odd_window')
+    image eileen animated = Animation(
+        "9a_vhappy.png", 1.0,
+        "9a_happy.png", 1.0)
+
+    image smanim = anim.SMAnimation(
+        "r",
+        anim.State("r", Solid((255, 0, 0, 255))),
+        anim.State("g", Solid((0, 255, 0, 255))),
+        anim.State("b", Solid((0, 0, 255, 255))),
+
+        anim.Edge("r", .5, "g", dissolve),
+        anim.Edge("r", .5, "b", dissolve),
+
+        anim.Edge("g", .5, "r", dissolve),
+        anim.Edge("g", .5, "b", dissolve),
+
+        anim.Edge("b", .5, "r", dissolve),
+        anim.Edge("b", .5, "g", dissolve),         
+        )
+
+    image cyan base = Image("cyan.png")
+
+    image cyan crop = im.Crop("cyan.png", 100, 0, 100, 200)
     
+    image cyan composite = im.Composite((200, 300),
+                                        (0, 0), "cyan.png",
+                                        (0, 50), "cyan.png",
+                                        (0, 100), "cyan.png")
 
-label whatsnew:
+    image cyan green = im.Map("cyan.png", bmap=im.ramp(0, 0))
 
-    show washington
-    show eileen happy
+    image cyan alpha = im.Alpha("cyan.png", 0.5)
+    image eileen alpha = im.Alpha("9a_happy.png", 0.5)
 
-    e "I can give you a demonstration of some of the new features in
-       Ren'Py, but you'll have to tell me what version you want to
-       start with."
+    $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
-    menu:
-        "I'd like to start with 4.5.":
-            jump whatsnew45
+label demonstrate:
 
-        "I'd like to start with 4.6.":
-            jump whatsnew46
-
-        "I'd like to start with 4.7.":
-            jump whatsnew47
-
-label whatsnew45:
-
-    show washington
-    show eileen happy
-
-    e "While most of the improvements in Ren'Py 4.5 were behind the scenes,
-       we can give you a demonstration of one of the new features."
-
-    e "There is now a new transition, CropMove, that can be used to
-       provide a whole range of transition effects."
-
-    hide eileen with dissolve
-
-    e "I'll stand offscreen, so you can see some of its modes. I'll read
-       out the mode name after each transiton."
-
-    scene whitehouse with wiperight
-
-    e "We first have wiperight..."
-
-    scene washington with wipeleft
-
-    e "...followed by wipeleft... "    
-
-    scene whitehouse with wipeup
-
-    e "...wipeup..."
-
-    scene washington with wipedown
-
-    e "...and wipedown."
-
-    e "Next, the slides."
-
-    scene whitehouse with slideright
-
-    e "Slideright..."
-
-    scene washington with slideleft
-
-    e "...slideleft..."
-
-    scene whitehouse with slideup
-
-    e "...slideup..."
-
-    scene washington with slidedown
-
-    e "and slidedown."
-
-    e "We also have a couple of transitions that use a rectangular iris."
-
-    scene whitehouse with irisout
-
-    e "There's irisout..."
-
-    with None
     scene washington
     show eileen happy
-    with irisin
 
-    e "... and irisin."
+    e "I can give you a demonstration of some of the features in
+       Ren'Py, but you'll have to tell me what it is you'd like to
+       have demonstrated."
 
-    e "There are other transitions, such as various forms of
-       slideaway. And if you can't find the transition for you, you
-       can write a custom one."
+    menu demo_menu:
+
+        "Simple transitions, updated in 4.8.5":
+
+            e "Okay, I can tell you about simple transitions. We call
+               them simple because they aren't that flexible."
+
+            e "But don't let that get you down, since they're the
+               transitions you'll probably use the most."
+
+            with None
+            scene whitehouse
+            show eileen happy
+            with dissolve
+
+            e "The dissolve transition is probably the most useful,
+               blending one scene into another."
+
+            with None
+            with fade
+
+            e "The fade transition fades to black, and then fades back
+               in to the new scene."
+
+            e "If you're going to stay at a black screen, you'll
+               probably want to use dissolve rather than fade."
+
+            with None
+            scene washington
+            show eileen happy
+            with pixellate
+
+            e "The pixellate transition pixellates out the old scene,
+               switches to the new scene, and then unpixellates that."
+
+            e "It's probably not appropriate for most games, but we
+               think it's kind of neat."
+
+            e "Finally, we can point out that motions can be used as
+               transitions."
+
+            "..."
+
+            "......"
+
+            $ renpy.play('punch.wav')
+            with vpunch
+
+            e "Hey! Pay attention."
+
+            e "I was about to demonstrate vpunch... well, I guess I just
+               did."
+
+            $ renpy.play('punch.wav')
+            with hpunch
+
+            e "We can also shake the screen horizontally, with hpunch."
+
+        "CropMove transitions, added in 4.5.":
+
+            e "The CropMove transition class lets us provide a wide
+               range of transition effects."
+
+            hide eileen with dissolve
+
+            e "I'll stand offscreen, so you can see some of its modes. I'll read
+               out the mode name after each transition."
+
+            scene whitehouse with wiperight
+
+            e "We first have wiperight..."
+
+            scene washington with wipeleft
+
+            e "...followed by wipeleft... "    
+
+            scene whitehouse with wipeup
+
+            e "...wipeup..."
+
+            scene washington with wipedown
+
+            e "...and wipedown."
+
+            e "Next, the slides."
+
+            scene whitehouse with slideright
+
+            e "Slideright..."
+
+            scene washington with slideleft
+
+            e "...slideleft..."
+
+            scene whitehouse with slideup
+
+            e "...slideup..."
+
+            scene washington with slidedown
+
+            e "and slidedown."
+
+            e "While the slide transitions slide in the new scene, the
+               slideaways slide out the old scene."
+
+            scene whitehouse with slideawayright
+
+            e "Slideawayright..."
+
+            scene washington with slideawayleft
+
+            e "...slideawayleft..."
+
+            scene whitehouse with slideawayup
+
+            e "...slideawayup..."
+
+            scene washington with slideawaydown
+
+            e "and slideawaydown."
+
+            e "We also have a couple of transitions that use a
+               rectangular iris."
+
+            scene whitehouse with irisout
+
+            e "There's irisout..."
+
+            with None
+            scene washington
+            show eileen happy
+            with irisin
+
+            e "... and irisin."
+
+            e "It's enough to make you feel a bit dizzy."
+            
+        "Positions and movement, updated in 4.8.":
+
+            e "I'm not stuck standing in the middle of the screen,
+               even though I like being the center of attention."
+
+            e "Positions, given with an at clause, specify where I'm
+               standing."
+
+            e "The move transition moves around images that have
+               changed position."
+
+            e "For example..."
+
+            show eileen happy at offscreenleft with move
+
+            e "I can move over to the offscreenleft position, just off
+               the left side of the screen."
+
+            show eileen happy at left with move
+
+            e "The left position has my left side border the left
+               margin of the screen."
+
+            show eileen happy at center with move
+
+            e "I can also move to the center..."
+
+            show eileen happy at right with move
+
+            e "... the right ..."
+
+            show eileen happy at offscreenright with move
+
+            e "... or even to offscreenright, off the right-hand side
+               of the screen."
+
+            show eileen happy at right with move
+
+            e "We don't limit you to these five positions either. You
+               can always create your own Position objects."
+
+            # This is necessary to restart the time at which we are
+            # shown. 
+            hide eileen happy
+
+            show eileen happy at Move((1.0, 1.0, 'right', 'bottom'),
+                                      (0.0, 1.0, 'left', 'bottom'),
+                                      4.0, repeat=True, bounce=True)
+
+            e "It's also possible to have a movement happen while
+               showing dialogue on the screen, using the Move function."
+
+            e "Move can repeat a movement, and even have it bounce
+               back and forth, like I'm doing now."
+
+            scene onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
+
+            e "Finally, we can pan around an image larger than the
+               screen, using the Pan function in an at
+               clause."
+
+            e "That's what we're doing now, panning up a picture of
+               the memorial to the Big Red One."
+
+            with None
+            scene washington
+            show eileen happy
+            with dissolve
+
+        "Animation, updated in 4.8.5":
+
+            e "Ren'Py supports a number of ways of creating
+               animations."
+
+            e "These animations let you vary images, independent of
+               the user's clicks."
+
+            show eileen animated
+
+            e "For example, I'm switching my expression back and
+               forth, once a second."
+
+            e "Even though you clicked, I'm still doing it."
+
+            e "This is an example of the Animation function at work."
+
+            show eileen happy
+
+            e "The Animation function is limited to simple lists of
+               images, with fixed delays between them."
+
+            e "The sequence can repeat, or can stop after one
+               go-through."
+
+            e "If you want more control, you can use the
+               anim.SMAnimation function."
+
+            e "It can randomly change images, and even apply
+               transitions to changes."
+
+            with None
+            scene smanim
+            show eileen happy
+            with dissolve
+
+            e "Here, we randomly dissolve the background between red,
+               green, and blue images."
+
+            e "Psychadelic."
+
+            with None
+            scene washington
+            show eileen happy
+            with dissolve
+
+            e "It's probably best if we stop here, before somebody's
+               brain explodes."
+
+        "Text tags, added in 4.7.":
+
+            e "Text tags let us control the appearance of text that is
+               shown to the user."
+
+            e "Text tags can make text {b}bold{/b}, {i}italic{/i}, or
+               {u}underlined{/u}."
+
+            e "They can make the font size {size=+12}bigger{/size} or
+               {size=-8}smaller{/size}."
+
+            e "They can even change the
+               {color=#f00}color{/color}
+               {color=#ff0}of{/color}
+               {color=#0f0}the{/color}
+               {color=#0ff}text{/color}."
+
+            e "There are also bold, italic, and underline style properties, which can
+               be styled onto any text."
+
+            e "If you find yourself using text tags on every line, you
+               should probably look at style properties instead."
+
+            e "Used with care, text tags can enhance {b}your{/b} game."
+
+            e "{u}Used{/u} with {i}abandon,{/i} they {b}can{/b} make {b}your{/b}
+               game {color=#333}hard{/color} {color=#888}to{/color} {color=#ccc}read{/color}."
+
+            e "With great power comes great responsibility, after all."
+
+            e "And we want to give you all the power you need."
+
+
+        "Music, sound and movies, updated in 4.5.":
+            
+            e "Ren'Py supports a number of multimedia functions."
+
+            e "You're probably hearing music playing in the
+               background."
+
+
+            $ renpy.music_stop(fadeout=0.5)
+            e "We can stop it..."
+
+
+            $ renpy.music_start('sun-flower-slow-drag.mid')
+            e "... and start it playing again."
+            
+            # This plays a sound effect.
+            $ renpy.play("18005551212.wav")
+
+            e "We can also play up to eight channels of sound effects
+               on top of the music."
+
+            e "We ship, in the extras/ directory, code to support
+               characters having voice."
+
+            e "Finally, we support playing mpeg movies."
     
-    e "It's enough to make you feel a bit dizzy."
+            if renpy.exists('Eisenhow1952.mpg'):
 
-    e "Ren'Py 4.5 also includes the ability to show MPEG-1 movies as
-       cutscenes or even backgrounds."
+                e "Since you downloaded the Eisenhower commercial, I can show
+                   it to you as a cutscene."
 
-label ike:
+                e "You can click to continue if it gets on your nerves too
+                   much."
 
-    if renpy.exists('Eisenhow1952.mpg'):
+                $ renpy.movie_cutscene('Eisenhow1952.mpg', 63.0)
 
-        e "Since you downloaded the Eisenhower commercial, I can show
-           it to you as a cutscene."
+                hide eileen
+                show movie at Position(xpos=420, ypos=25, xanchor='left', yanchor='top')
+                show eileen happy
 
-        e "You can click to continue if it gets on your nerves too
-           much."
+                $ renpy.movie_start_displayable('Eisenhow1952.mpg', (352, 240))
 
-        $ renpy.movie_cutscene('Eisenhow1952.mpg', 63.0)
-        
-        hide eileen
-        show movie at Position(xpos=420, ypos=25, xanchor='left', yanchor='top')
-        show eileen happy
+                e "Ren'Py can even overlay rendered images on top of a movie,
+                   although that's more taxing for your CPU."
 
-        $ renpy.movie_start_displayable('Eisenhow1952.mpg', (352, 240))
+                e "It's like I'm some sort of newscaster or something."
 
-        e "Ren'Py can even overlay rendered images on top of a movie,
-           although that's more taxing for your CPU."
+                $ renpy.movie_stop()
+                hide movie
 
-        e "It's like I'm some sort of newscaster or something."
-           
-        $ renpy.movie_stop()
-        hide movie
+            else:
 
-    else:
+                e "You haven't downloaded the Eisenhower commercial, so we
+                   can't demonstrate it."
 
-        e "You haven't downloaded the Eisenhower commercial, so we
-           can't demonstrate it."
+            e "That's it for multimedia."
 
-label whatsnew46:
+        "Image Operations, added in 4.8.5":
 
-    eodd "As of 4.6, we now support separate padding and margin for the
-          left, right, top, and bottom sides of a window."
+            e "Image operations allow one to manipulate images as they
+               are loaded in."
 
-    eodd "This means that a game can have oddly shaped windows without
-          having to go beyond the style system."
+            e "These are efficent, as they are only evaluated when an
+               image is first loaded."
 
-    e "We also introduced a new layer system, and the ability to have
-       transitions affect only one layer."
+            e "This way, there's no extra work that needs to be done
+               when each frame is drawn to the screen."
 
-    e "Because of this we can do things like slide away a window..."
+            show eileen happy at left with move
+            show cyan base at cyanpos with dissolve
 
-    $ renpy.transition(slideawayup, 'transient')
-    $ renpy.pause(1.5)
-    $ renpy.transition(slidedown, 'transient')
+            e "Let me show you a test image, a simple cyan circle."
+
+            e "We'll be applying some image operations to it, to see
+               how they can be used."
+
+            show cyan crop at cyanpos with dissolve
+            
+            e "The im.Crop operation can take the image, and chop it
+               up into a smaller image."
+
+            show cyan composite at cyanpos with dissolve
+
+            e "The im.Composite operation lets us take multiple images,
+               and draw them into a single image."
+
+            e "While you can do this by showing multiple images, this
+               is more efficent, if more complex."
+
+            show cyan green at cyanpos with dissolve
+
+            e "The im.Map operation lets us mess with the red, green,
+               blue, and alpha channels of an image."
+
+            e "In this case, we removed all the blue from the image,
+               leaving only the green component of cyan."
+
+            show cyan alpha at cyanpos with dissolve
+
+            e "The im.Alpha operation can adjust the alpha channel on
+               an image, making things partially transparent."
+
+            show eileen alpha at left with dissolve
+
+            e "It's useful if a character just happens to be ghost."
+
+            with None
+            hide cyan
+            show eileen happy at left
+            with dissolve
+
+            e "But that's not the case with me."
+
+            show eileen happy with move
+
+            
+        "User interaction.":
+
+            e "Ren'Py gives a number of ways of interacting with the
+               user."
+
+            e "You've already seen say statements and menus."
+
+            e "We can also prompt the user to enter some text."
+
+            $ povname = renpy.input("What is your name?")
+
+            pov "My name is %(povname)s."
+
+            
+            e "Imagemaps let the user click on an image to make a
+               choice."
+
+            # This is an imagemap. It consists of two images, and a list of
+            # hotspots. For each hotspot we give the coordinates of the left,
+            # top, right, and bottom sides, and the value to return if it is
+            # picked.
+
+            $ result = renpy.imagemap("ground.png", "selected.png", [
+                (100, 100, 300, 400, "eileen"),
+                (500, 100, 700, 400, "lucy")
+                ])
+
+            # We've assigned the chosen result from the imagemap to the
+            # result variable. We can use an if statement to vary what
+            # happens based on the user's choice.
+
+            if result == "eileen":
+                show eileen vhappy
+                e "You picked me!"
+
+            elif result == "lucy":
+                show eileen concerned
+                e "It looks like you picked Lucy."
+
+                # Eileen is being a bit possesive here. :-P
+                if date:
+                    e "You can forget about Saturday."
+                    $ date = False
+
+            show eileen happy
+
+            e "While these constructs are probably enough for most
+               visual novels, dating simulations may be more
+               complicated."
+
+            e "The ui functions allow you to create quite complicated
+               interfaces."
+            
+            e "For example, try the following scheduling and stats screen,
+               which could be used by a stat-based dating simulation."
+
+            $ day_planner()
+
+            e "The ui functions can be used to rewrite many parts of
+               the interface."
+
+            e "Hopefully, this gives you enough power to write any
+               visual novel you want."
     
-    e "... and slide it back in again."
 
-    e "Also new in this release is the ability to specify transitions
-       that occur when you enter and exit the game menu."
+        " " # Empty, so we have a blank line.
 
-    e "Right click to see them, if you want."
+        "That's enough for me.":
 
-    e "A few more obscure features involving things like overlays and
-       activated widgets round out the 4.6 release."
+            return
 
-label whatsnew47:
+    e "Is there anything else you want demonstrated?"
 
-    e "Ren'Py 4.7 brought with it a total rewrite of the way text is
-       rendered to the screen."
-
-    e "It introduced text tags, which let a script writer control how
-       text is shown on the screen."
-
-    e "Text tags can make text {b}bold{/b}, {i}italic{/i}, or even
-       {u}underlined{/u}."
-
-    e "They can make the font size {size=+12}bigger{/size} or
-       {size=-8}smaller{/size}."
-
-    e "They can even change the
-       {color=#f00}color{/color}
-       {color=#ff0}of{/color}
-       {color=#0f0}the{/color}
-       {color=#0ff}text{/color}."
-
-    e "We also added bold, italic, and underline style properties, which can
-       be styled onto any text."
-
-    e "Used with care, text tags can enhance {b}your{/b} game."
-
-    e "{u}Used{/u} with {i}abandon,{/i} they {b}can{/b} make {b}your{/b}
-       game {color=#333}hard{/color} {color=#888}to{/color} {color=#ccc}read{/color}."
-
-    e "With great power comes great responsibility, after all."
-
-    e "And we want to give you all the power you need."
-
-label whatsnewend:
-
-    e "Anyway, now that you've heard about some of the new features, is there anything
-       else I can help you with?"
-
-    return
+    jump demo_menu
 
 
