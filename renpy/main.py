@@ -14,7 +14,7 @@ import renpy.game as game
 import os
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-def run(restart=False):
+def run(restart=False, lint=False):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
@@ -101,6 +101,13 @@ def run(restart=False):
     # Make a clean copy of the store.
     game.clean_store = vars(renpy.store).copy()
 
+    if lint:
+        renpy.lint.lint()
+        return
+
+    # Remove the list of all statements from the script.
+    game.script.all_stmts = None
+
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
 
@@ -141,7 +148,7 @@ def run(restart=False):
 
     # And, we're done.
     
-def main(basepath):
+def main(basepath, lint=False):
 
     renpy.game.exception_info = 'While loading the script.'
 
@@ -159,7 +166,7 @@ def main(basepath):
 
     while True:
         try:
-            run(restart)
+            run(restart, lint=lint)
             break
         except game.FullRestartException, e:
             restart = True

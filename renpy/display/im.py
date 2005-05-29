@@ -248,6 +248,14 @@ class ImageBase(renpy.display.core.Displayable):
     def predict(self, callback):
         callback(self)
 
+    def predict_files(self):
+        """
+        Returns a list of files that will be accessed when this image
+        operation is performed.
+        """
+
+        return [ ]
+
 class Image(ImageBase):
     """
     This image manipulator loads an image from a file.
@@ -270,6 +278,9 @@ class Image(ImageBase):
             im = im.convert()   
 
         return im
+
+    def predict_files(self):
+        return [ self.filename ]
 
 class Composite(ImageBase):
     """
@@ -316,6 +327,15 @@ class Composite(ImageBase):
 
         for pos, im in zip(self.positions, self.images):
             rv.blit(cache.get(im), pos)
+
+        return rv
+
+    def predict_files(self):
+
+        rv = [ ]
+
+        for i in self.images:
+            rv.extend(i.predict_files())
 
         return rv
 
@@ -480,6 +500,9 @@ class Scale(ImageBase):
         return pygame.transform.scale(cache.get(self.image),
                                       (self.width, self.height))
 
+    def predict_files(self):
+        return self.image.predict_files()
+
 class Rotozoom(ImageBase):
     """
     This is an image manipulator that is a smooth rotation and zoom of another image manipulator.
@@ -507,6 +530,9 @@ class Rotozoom(ImageBase):
 
         return pygame.transform.rotozoom(cache.get(self.image),
                                          self.angle, self.zoom)
+    def predict_files(self):
+        return self.image.predict_files()
+
         
         
 class Crop(ImageBase):
@@ -529,6 +555,12 @@ class Crop(ImageBase):
     def load(self):
         return cache.get(self.image).subsurface((self.x, self.y,
                                                  self.w, self.h))
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+
+
 def ramp(start, end):
     """
     Returns a 256 character linear ramp, where the first character has
@@ -586,6 +618,9 @@ class Map(ImageBase):
                                  self.rmap, self.gmap, self.bmap, self.amap)
 
         return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
 
 
 def Alpha(image, alpha):

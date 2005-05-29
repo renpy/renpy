@@ -835,6 +835,8 @@ def parse_menu(l, loc):
             l.expect_noblock('with clause')
             l.advance()
 
+            continue
+
         if l.keyword('set'):
             set = l.require(l.simple_expression)
             l.expect_eol()

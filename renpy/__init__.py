@@ -40,6 +40,7 @@ import renpy.display.focus
 import renpy.display.anim
 
 import renpy.ui
+import renpy.lint
 
 import renpy.exports
 import renpy.config # depends on lots.

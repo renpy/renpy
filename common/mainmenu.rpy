@@ -16,10 +16,10 @@ init -498:
 # tell anyone.
 label _start:
 
-    call _check_module
+    call _check_module from _call__check_module_1
 
     if renpy.has_label("splashscreen") and not _restart:
-        call splashscreen
+        call expression "splashscreen" from _call_splashscreen_1
 
     # Clean out any residual scene from the splashscreen.
     scene
@@ -33,7 +33,7 @@ label _start:
 # initialize it.
 label _enter_main_menu:
 
-    call _enter_menu
+    call _enter_menu from _call__enter_menu_1
 
     $ renpy.context().main_menu = True
     
@@ -43,7 +43,7 @@ label _main_menu:
     # Let the user completely override the main menu. (But please note
     # it still lives in the menu context, rather than the game context.)
     if renpy.has_label("main_menu"):
-        jump main_menu
+        jump expression "main_menu"
 
 # This is the default main menu, which we get if the user hasn't
 # defined his own, or if that function calls this explicitly.        

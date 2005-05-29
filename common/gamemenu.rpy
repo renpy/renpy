@@ -339,13 +339,13 @@ label _enter_menu:
     
 # Factored this all into one place, to make our lives a bit easier.
 label _enter_game_menu:
-    call _enter_menu
+    call _enter_menu from _call__enter_menu_2
 
     if library.enter_transition:
         $ renpy.transition(library.enter_transition)
 
     if renpy.has_label("enter_game_menu"):
-        call enter_game_menu
+        call expression "enter_game_menu" from _call_enter_game_menu_1
 
     return
 
@@ -355,19 +355,19 @@ label _enter_game_menu:
 # Entry points from the game into menu-space.
 label _game_menu:
 label _game_menu_save:
-    call _enter_game_menu
+    call _enter_game_menu from _call__enter_game_menu_1
     jump _save_screen
 
 label _game_menu_load:
-    call _enter_game_menu
+    call _enter_game_menu from _call__enter_game_menu_2
     jump _load_screen
 
 label _game_menu_preferences:
-    call _enter_game_menu
+    call _enter_game_menu from _call__enter_game_menu_3
     jump _prefs_screen
 
 label _confirm_quit:
-    call _enter_menu
+    call _enter_menu from _call__enter_menu_3
     $ _quit_prompt(None)
     return
     
