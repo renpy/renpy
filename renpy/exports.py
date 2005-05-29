@@ -244,6 +244,7 @@ def display_say(who, what, who_style='say_label',
                 what_suffix='',
                 interact=True,
                 slow=True,
+                image=False,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -260,16 +261,16 @@ def display_say(who, what, who_style='say_label',
     if interact:
         renpy.ui.saybehavior()
     
-    if who is not None:
-        who = who_prefix + who + who_suffix
-
     what = what_prefix + what + what_suffix
 
     renpy.ui.window(style=window_style)
     renpy.ui.vbox(padding=10)
 
-    if who is not None:
+    if who is not None and not image:
+        who = who_prefix + who + who_suffix
         renpy.ui.text(who, style=who_style, **properties)
+    elif who is not None and image:
+        renpy.ui.image(who, style=who_style, **properties)
 
     renpy.ui.text(what, style=what_style, slow=slow)
     renpy.ui.close()

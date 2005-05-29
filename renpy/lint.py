@@ -206,6 +206,7 @@ def lint():
     all_stmts = [ (i.filename, i.linenumber, i) for i in renpy.game.script.all_stmts ]
     all_stmts.sort()
 
+    say_words = 0
     say_count = 0
     menu_count = 0
  
@@ -229,6 +230,8 @@ def lint():
         elif isinstance(node, renpy.ast.Say):
             check_say(node)
             say_count += 1
+            say_words += len(node.what.split())
+
     
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -248,4 +251,4 @@ def lint():
             
     print
     print
-    print "The game contains", say_count, "lines of dialogue, and", menu_count, "menus."
+    print "The game contains", say_count, "lines of dialogue containing a total of", say_words, "words, and", menu_count, "menus."

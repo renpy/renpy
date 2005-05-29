@@ -68,6 +68,7 @@ class Character(object):
                  window_style='say_window',
                  function = renpy.exports.display_say,
                  condition=None,
+                 dynamic=False,
                  **properties):
         """
         @param name: The name of the character, as shown to the user.
@@ -106,6 +107,13 @@ class Character(object):
 
         @param properties: Additional style properties, that are
         applied to the label containing the character's name.
+
+        @param dynamic: If true, the name is interpreted as a python
+        expression, which is evaluated to get the name that will be
+        used by the rest of the code.
+
+        @param image: If true, the name is considered to be the name
+        of an image, which is rendered in place of the who label.
         """
         
         self.name = name
@@ -115,6 +123,7 @@ class Character(object):
         self.properties = properties
         self.function = function
         self.condition = condition
+        self.dynamic = dynamic
 
     def check_condition(self):
         """
@@ -128,79 +137,48 @@ class Character(object):
 
         return python.py_eval(self.condition)
         
-    
+
+    def store_readback(self, who, what):
+        """
+        This is called when a say occurs, to store the information
+        about what is said into the readback buffers.
+        """
+
+        return
 
     def __call__(self, what, interact=True):
 
         if not self.check_condition():
             return
+
+        name = self.name
+
+        if self.dynamic:
+            import renpy.python as python            
+            name = python.py_eval(name)
+
+        self.store_readback(name, what)
         
-        self.function(self.name, what,
+        self.function(name, what,
                       who_style=self.who_style,
                       what_style=self.what_style,
                       window_style=self.window_style,
                       interact=interact,
                       **self.properties)
 
-class DynamicCharacter(object):
+def DynamicCharacter(name_expr, **properties):
     """
     A DynamicCharacter is similar to a Character, except that instead
     of having a fixed name, it has an expression that is evaluated to
     produce a name before each line of dialogue is displayed. This allows
     one to have a character with a name that is read from the user, as
     may be the case for the POV character.
+
+    This is now exactly the same as constructing a character with
+    dynamic=True.
     """
 
-    import renpy.config as config
-
-    def __init__(self, name_expr,
-                 who_style='say_label',
-                 what_style='say_dialogue',
-                 window_style='say_window',
-                 function = renpy.exports.display_say,
-                 condition = None,
-                 **properties):
-        """
-        @param name_expr: An expression that, when evaluated, should yield
-        the name of the character, as a string. 
-
-        All other parameters are as for Character.
-        """
-        
-        self.name_expr = name_expr
-        self.who_style = who_style
-        self.what_style = what_style
-        self.window_style = window_style
-        self.properties = properties
-        self.function = function
-        self.condition = condition
-
-    def check_condition(self):
-        """
-        Returns true if we should show this line of dialogue.
-        """
-
-        if self.condition is None:
-            return True
-
-        import renpy.python as python
-
-        return python.py_eval(self.condition)
-        
-    def __call__(self, what, interact=True):
-
-        if not self.check_condition():
-            return
-
-        import renpy.python as python
-
-        self.function(python.py_eval(self.name_expr),
-                      what,
-                      who_style=self.who_style,
-                      what_style=self.what_style,
-                      window_style=self.window_style,
-                      interact=interact,
-                      **self.properties)
+    return Character(name_expr, dynamic=True, **properties)
 
 # The color function. (Moved, since text needs it, too.)
 color = renpy.display.text.color

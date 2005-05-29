@@ -141,8 +141,8 @@ def text_tokenizer(s, style):
             yield 'tag', m.group('tag')
         elif m.group('untag'):
             yield 'word', '{'
-        elif m.group('space'):
-            yield 'space', m.group('space')
+        elif m.group('newline'):
+            yield 'newline', m.group('newline')
     
 
 class Text(renpy.display.core.Displayable):
