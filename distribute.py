@@ -100,6 +100,7 @@ def main():
         'example.html',
         'reference.html',
         'style.css',
+        'RELEASING.txt',
         ]
 
     # Copy doc
