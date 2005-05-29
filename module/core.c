@@ -314,8 +314,6 @@ void map32_core(PyObject *pysrc,
     char *srcp;
     char *dstp;
 
-    int count;
-    
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
@@ -372,8 +370,6 @@ void map24_core(PyObject *pysrc,
     char *srcp;
     char *dstp;
 
-    int count;
-    
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
