@@ -1,3 +1,9 @@
+Added a RENPY_DISABLE_SOUND environment variable, which if set
+disables support for sound in Ren'Py. (For use on platforms where
+sound doesn't quite work.)
+
+Fixed a bug in lint.
+
 New in 4.8.6
 ------------
 

@@ -622,7 +622,6 @@ class Map(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
-
 def Alpha(image, alpha):
     """
     Returns an alpha-mapped version of the image. Alpha is the maximum
@@ -636,7 +635,6 @@ def Alpha(image, alpha):
     amap = ramp(0, int(255 * alpha))
 
     return Map(image, identity, identity, identity, amap, force_alpha=True)
-
 
 def image(arg, **properties):
     """

@@ -87,7 +87,9 @@ def check_image(node):
             report(node, "Image '%s' uses file '%s', which is not loadable.", name, fn)
             continue
 
-        if renpy.loader.transfn(fn) and fn != filenames[fn.lower()]:
+        if renpy.loader.transfn(fn) and \
+               fn.lower() in filenames and \
+               fn != filenames[fn.lower()]:
             report(node, "Filename case mismatch for image '%s'. '%s' was used in the script, but '%s' was found on disk.", name, fn, filenames[fn.lower()])
 
             add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")

@@ -9,6 +9,7 @@
 import pygame
 import renpy
 import sys # to detect windows.
+import os
 
 # The Windows Volume Management Strategy (tm).
 
@@ -43,6 +44,10 @@ def init():
     global playing_midi
 
     if mixer_works is not None:
+        return
+
+    if 'RENPY_DISABLE_SOUND' in os.environ:
+        mixer_works = None
         return
 
     try:
@@ -175,10 +180,8 @@ def pre_init():
     try:
         bufsize = 4096
 
-        import os
-
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
-            bufsize = int(os.environ('RENPY_SOUND_BUFSIZE'))
+            bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
         
         pygame.mixer.pre_init(renpy.config.sound_sample_rate, -16, 2, bufsize)
     except:
