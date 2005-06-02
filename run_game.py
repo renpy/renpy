@@ -24,9 +24,6 @@ if dirname:
 # Add the path to the module.
 sys.path.append("module")
 
-# Load up all of Ren'Py, in the right order.
-import renpy
-
 def main():
 
     name = os.path.basename(sys.argv[0])
@@ -60,6 +57,13 @@ def main():
     if options.python:
         execfile(options.python)
         sys.exit(0)
+
+    if not options.lint:
+        import renpy.display.presplash
+        renpy.display.presplash.start(options.game)
+
+    # Load up all of Ren'Py, in the right order.
+    import renpy
 
     try:
         renpy.main.main(options.game, lint=options.lint)
@@ -117,6 +121,8 @@ def main():
     sys.exit(0)
 
 def memory_profile():
+
+    import renpy
 
     print "Memory Profile"
     print

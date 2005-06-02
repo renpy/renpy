@@ -395,6 +395,8 @@ class Display(object):
 
     def __init__(self):
 
+        # Ensure that we kill off the presplash.
+        renpy.display.presplash.end()
 
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)

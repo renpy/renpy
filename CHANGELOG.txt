@@ -1,3 +1,9 @@
+Ren'Py now supports a presplash screen. If the file presplash.png is
+present in the game directory, it is shown to the user on
+startup. This occurs before any loading or initialization occurs, so
+the size of the window it is shown in is determined by the size of the
+presplash.png image itself. 
+
 Added a RENPY_DISABLE_SOUND environment variable, which if set
 disables support for sound in Ren'Py. (For use on platforms where
 sound doesn't quite work.)
