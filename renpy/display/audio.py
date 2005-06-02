@@ -47,10 +47,16 @@ def init():
         return
 
     if 'RENPY_DISABLE_SOUND' in os.environ:
-        mixer_works = None
+        mixer_works = False
         return
 
     try:
+        bufsize = 4096
+
+        if 'RENPY_SOUND_BUFSIZE' in os.environ:
+            bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
+        
+        pygame.mixer.init(renpy.config.sound_sample_rate, -16, 2, bufsize)
         pygame.mixer.music.get_volume()
         mixer_works = True
     except:
@@ -176,20 +182,6 @@ def init():
     if mixer_works:
         pygame.mixer.music.set_endevent(renpy.display.core.MUSICEND)
 
-def pre_init():
-    try:
-        bufsize = 4096
-
-        if 'RENPY_SOUND_BUFSIZE' in os.environ:
-            bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
-        
-        pygame.mixer.pre_init(renpy.config.sound_sample_rate, -16, 2, bufsize)
-    except:
-        try:
-            pygame.mixer.pre_init()
-        except:
-            if renpy.config.debug_sound:
-                raise
         
 def disable_mixer():
     """

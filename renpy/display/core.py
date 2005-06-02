@@ -399,8 +399,8 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
-        renpy.display.audio.pre_init()
-        pygame.init()
+        pygame.display.init()
+        pygame.font.init()
         renpy.display.audio.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
