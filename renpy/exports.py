@@ -107,8 +107,8 @@ def watch(expression, style='default', **properties):
     """
 
     def overlay_func():
-        return [ renpy.display.text.Text(renpy.python.py_eval(expression),
-                                         style=style, **properties) ]
+        renpy.ui.text(renpy.python.py_eval(expression),
+                      style=style, **properties)
 
     renpy.config.overlay_functions.append(overlay_func)
 

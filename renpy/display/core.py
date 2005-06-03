@@ -625,9 +625,13 @@ class Interface(object):
         
         scene_lists = renpy.game.context().scene_lists
 
+        old_old_scene = self.old_scene
+
         self.old_scene = self.compute_scene(scene_lists)
 
-        # self.old_scene.append_scene_list(scene_lists.master)
+        if renpy.config.overlay_during_wait:
+            for i in renpy.config.overlay_layers:
+                self.old_scene[i] = old_old_scene[i]
 
     def set_transition(self, transition, layer=None):
         """
@@ -678,25 +682,18 @@ class Interface(object):
     def compute_scene(self, scene_lists):
         """
         This converts scene lists into a dictionary mapping layer
-        name to a Fixed containing that layer. None is mapped
-        to a fixed containing all of the layers.
+        name to a Fixed containing that layer.
         """
 
         rv = { }
 
-        root = renpy.display.layout.Fixed()
-        root.layers = { }
-
         for layer in renpy.config.layers:
+
             f = renpy.display.layout.Fixed(focus=layer)
-            root.layers[layer] = f
 
             f.append_scene_list(scene_lists.layers[layer])
 
             rv[layer] = f
-            root.add(f)
-
-        rv[None] = root
 
         return rv
             
@@ -832,7 +829,16 @@ class Interface(object):
                 
         # Add layers_root to root_widget, perhaps through a transition.
         if None in self.transition and self.old_scene and not self.suppress_transition:
-            trans = self.transition[None](old_widget=self.old_scene[None],
+
+            # Compute what the old root should be.
+            old_root = renpy.display.layout.Fixed()
+            old_root.layers = { }
+
+            for layer in renpy.config.layers:
+                old_root.layers[layer] = self.old_scene[layer]
+                old_root.add(self.old_scene[layer], start_time)
+            
+            trans = self.transition[None](old_widget=old_root,
                                           new_widget=layers_root)
             
             root_widget.add(trans, start_time)

@@ -95,6 +95,8 @@ init:
 
 label start:
 
+    $ renpy.watch('"Testing!"')
+    
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
     # saved and restored with a save file.

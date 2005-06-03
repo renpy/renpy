@@ -10,6 +10,8 @@ sound doesn't quite work.)
 
 Fixed a bug in lint.
 
+Fixed bugs that caused blinking in overlay.
+
 New in 4.8.6
 ------------
 
