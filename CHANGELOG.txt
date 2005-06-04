@@ -1,22 +1,19 @@
-Todo: 
+Auto-forwarding mode.
 
-renpy.scene
-renpy.show
-renpy.hide
-renpy.image
+Checkbox preferences.
 
-SequenceTransition and Fade Rewrite
-top_layers
-
-config.enable_fast_dissolve
-
-Document ImageReference
+Document library definitions in reference manual.
 
 Ren'Py now supports a presplash screen. If the file presplash.png is
 present in the game directory, it is shown to the user on
 startup. This occurs before any loading or initialization occurs, so
 the size of the window it is shown in is determined by the size of the
 presplash.png image itself. 
+
+As per user request, we have made programmatic equivalents of the
+image, scene, show, and hide statements available. These functions are
+named renpy.image, renpy.scene, renpy.show, and renpy.hide,
+respectively.
 
 Ren'Py now supports a new classification of layer, top layers. Top
 layers are layers that are displayed above any transition. This is
@@ -31,6 +28,13 @@ dissolve transition when used with an overlay layer that has an alpha
 channel that is not fully transparent or opaque, at the cost of 25% of
 the performance of dissolve. It usually can be kept at True with no
 ill effects.
+
+Fade has been reimplemented in terms of Dissolve. This means that
+fades will be as fast as dissolves. Fade now also can take a widget,
+instead of a color, as an argument. If this widget is an Image, it
+means that we will dissolve from the old screen to the image, hold at
+the image for a given amount of time, and then dissolve from the image
+to the new screen.
 
 The ImageReference class is now documented and present in the game's
 namespace. This lets us refer to an image by name from user code.

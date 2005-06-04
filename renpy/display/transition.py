@@ -58,14 +58,13 @@ def refactor_fixed(in_old, in_new):
 
 class Transition(renpy.display.core.Displayable):
     """
-    This is the base class of all transitions. It takes care of event
-    dispatching (primarily by passing all events off to a SayBehavior.)
+    This is the base class of most transitions. It takes care of event
+    dispatching.
     """
 
     def __init__(self, delay):
         super(Transition, self).__init__()
         self.delay = delay
-        self.offsets = [ ]
         self.events = True
         
     def event(self, ev, x, y):
@@ -77,7 +76,112 @@ class Transition(renpy.display.core.Displayable):
     def find_focusable(self, callback, focus_name):
         self.new_widget.find_focusable(callback, focus_name)
 
-class Fade(Transition):
+class NoTransition(Transition):
+    """
+    This is a transition that doesn't do anything, and simply displays
+    the new_widget for a specified amount of time. It's almost
+    certainly not interesting by itself, but it may come in quite
+    handy as part of a MultipleTransition.
+    """
+
+    def __init__(self, delay, old_widget=None, new_widget=None):
+        super(NoTransition, self).__init__(delay)
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = True
+
+    def render(self, width, height, st):
+
+        rv = renpy.display.render.Render(width, height)
+
+        rv.blit(renpy.display.render.render(self.new_widget,
+                                            width,
+                                            height,
+                                            st), (0, 0))
+
+        return rv
+
+
+class MultipleTransition(Transition):
+    """
+    This is a transition that can sequence between multiple screens,
+    showing a different transition between each.
+
+    This must be supplied with a tuple containing an odd number of
+    components. The first, third, and so on components are interpreted
+    as screens that can be shown to the user, while the even components
+    are transitions between those screens.
+
+    A screen can be any displayable, but normally an Image or Solid is
+    most appropriate. An screen can also be False to represent the screen
+    we are transitioning from, or True to represent the screen we are
+    transitioning to. Almost always, the first argument will be False
+    and the last will be True.
+    """
+    
+    def __init__(self, args, old_widget=None, new_widget=None):
+
+        if len(args) % 2 != 1 or len(args) < 3:
+            raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
+
+        self.transitions = [ ]
+
+        def oldnew(w):
+            if w is False:
+                return old_widget
+            if w is True:
+                return new_widget
+            return w
+
+        for old, trans, new in zip(args[0::2], args[1::2], args[2::2]):
+            old = oldnew(old)
+            new = oldnew(new)
+
+            self.transitions.append(trans(old_widget=old, new_widget=new))
+
+        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
+
+        self.event_target = None
+        self.time_offset = 0
+        self.new_widget = self.transitions[-1]
+        self.events = False
+
+    def render(self, width, height, st):
+
+        while True:
+            trans = self.transitions[0]
+            stoff = st - self.time_offset
+
+            if stoff < trans.delay:
+                break
+
+            if len(self.transitions) == 1:
+                break
+
+            self.time_offset += trans.delay
+            self.transitions.pop(0)
+
+        if len(self.transitions) == 1:
+            self.events = True
+
+        self.event_target = trans
+
+        rv = renpy.display.render.Render(width, height)
+        rv.blit(renpy.display.render.render(trans, width, height, stoff), (0,0))
+        
+        if stoff > 0:
+            renpy.display.render.redraw(self, stoff)
+
+        return rv
+            
+
+def Fade(out_time, hold_time, in_time,
+         old_widget=None, new_widget=None,
+         color=None,
+         widget=None,
+         ):
+
     """
     This returns an object that can be used as an argument to a with
     statement to fade the old scene into a solid color, waits for a
@@ -95,69 +199,34 @@ class Fade(Transition):
     fading from the solid color to the new scene. A float, given as
     seconds.
     
-    @param color:  The solid color that will be faded
-    to. This is an RGB triple, where each element is in the range 0
-    to 255. This defaults to black.
+    @param color:  The solid color that will be fade to. A tuple containing
+    three components, each between 0 or 255. This can also be None.
+
+    @param widget: This is a widget that will be faded to, if color
+    is None. This allows a fade to be to an image rather than just
+    a solid color.
+
+    If both color and widget are None, then the fade is to black.
     """
 
-    def __init__(self, out_time, hold_time, in_time,
-                 old_widget=None, new_widget=None, color=(0, 0, 0)):
+    dissolve = renpy.curry.curry(Dissolve)
+    notrans = renpy.curry.curry(NoTransition)
+    
+    if color:
+        widget = renpy.display.image.Solid(color)
 
-        super(Fade, self).__init__(out_time + hold_time + in_time)
+    if not widget:
+        widget = renpy.display.image.Solid((0, 0, 0, 255))
 
-        self.out_time = out_time
-        self.hold_time = hold_time
-        self.in_time = in_time
-        self.old_widget = old_widget
-        self.new_widget = new_widget
-        self.color = color
+    args = [ False, dissolve(out_time), widget ]
 
-        # self.frames = 0
+    if hold_time:
+        args.extend([ notrans(hold_time), widget, ])
 
-    # def __del__(self):
-    #     print "Faded using", self.frames, "frames."
+    args.extend([dissolve(in_time), True ])
 
-    def render(self, width, height, st):
+    return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
-        # self.frames += 1
-
-        rv = renpy.display.render.Render(width, height)
-
-        events = False
-
-        if st < self.out_time:
-            widget = self.old_widget
-            alpha = int(255 * (st / self.out_time))
-
-        elif st < self.out_time + self.hold_time:
-            widget = None
-            alpha = 255
-
-        else:
-            widget = self.new_widget
-            alpha = 255 - int(255 * ((st - self.out_time - self.hold_time) / self.in_time))
-            events = True
-
-        if widget:
-            surf = render(widget, width, height, st)
-            
-            rv.blit(surf, (0, 0), focus=events)
-
-        self.events = events 
-
-        # Just to be sure.
-        if alpha < 0:
-            alpha = 0
-
-        if alpha > 255:
-            alpha = 255
-
-        rv.fill(self.color[:3] + (alpha,))
-
-        if st < self.in_time + self.hold_time + self.out_time:
-            renpy.display.render.redraw(self, 0)
-
-        return rv
 
 # This was a nifty idea that just didn't work out, since we can't vary
 # the alpha on an image with an alpha channel. Too bad.
@@ -697,8 +766,3 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
     return rv
 
             
-            
-                   
-
-        
-                
