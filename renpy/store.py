@@ -22,6 +22,7 @@ from renpy.python import RevertableObject as object
 
 config = renpy.config
 Image = renpy.display.image.Image
+ImageReference = renpy.display.image.ImageReference
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Null = renpy.display.layout.Null

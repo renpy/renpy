@@ -12,6 +12,12 @@ config.enable_fast_dissolve
 
 Document ImageReference
 
+Ren'Py now supports a presplash screen. If the file presplash.png is
+present in the game directory, it is shown to the user on
+startup. This occurs before any loading or initialization occurs, so
+the size of the window it is shown in is determined by the size of the
+presplash.png image itself. 
+
 Ren'Py now supports a new classification of layer, top layers. Top
 layers are layers that are displayed above any transition. This is
 useful if you want to have an overlay that is shown even when a
@@ -26,11 +32,8 @@ channel that is not fully transparent or opaque, at the cost of 25% of
 the performance of dissolve. It usually can be kept at True with no
 ill effects.
 
-Ren'Py now supports a presplash screen. If the file presplash.png is
-present in the game directory, it is shown to the user on
-startup. This occurs before any loading or initialization occurs, so
-the size of the window it is shown in is determined by the size of the
-presplash.png image itself. 
+The ImageReference class is now documented and present in the game's
+namespace. This lets us refer to an image by name from user code.
 
 Added a RENPY_DISABLE_SOUND environment variable, which if set
 disables support for sound in Ren'Py. (For use on platforms where

@@ -275,58 +275,11 @@ class Image(Node):
         self.expr = expr
 
     def execute(self):
-        import renpy.exports as exports
-
-        if not renpy.game.init_phase:
-            raise Exception("image statement should only be inside an init: block.")
-
+        
         img = renpy.python.py_eval(self.expr)
-        exports.images[self.name] = img
+        renpy.exports.image(self.name, img)
 
         return self.next
-
-def imspec_common(imspec, hide=False):
-    """
-    This is code that's common to the three statements that can
-    take imspecs (scene, show, and hide).
-
-    It parses the imspec into a key, and an image, perhaps applying
-    at clauses.
-
-    @param hide: Reduces error checking, and changes the sticky position
-    logic.
-    """
-
-    import renpy.display.image
-
-    sls = renpy.game.context().scene_lists
-
-    name, at_list = imspec
-    key = name[0]
-
-    # Handle sticky positions.
-    if renpy.config.sticky_positions:
-        if hide:
-            if key in sls.sticky_positions:
-                del sls.sticky_positions[key]
-        else:
-            if not at_list and key in sls.sticky_positions:
-                at_list = sls.sticky_positions[key]
-
-            sls.sticky_positions[key] = at_list
-
-    # Get a reference to the base image.
-    img = renpy.display.image.ImageReference(name)
-
-    # Now, apply the at_list, from left to right.
-    for i in at_list:
-        img = renpy.python.py_eval(i)(img)
-
-    # Update the set of images that have ever been seen.
-    if not hide:
-        renpy.game.persistent._seen_images[tuple(name)] = True
-
-    return key, img
 
 def predict_imspec(imspec, callback):
     """
@@ -361,10 +314,10 @@ class Show(Node):
 
     def execute(self):
 
-        key, img = imspec_common(self.imspec)
-       
-        sls = renpy.game.context().scene_lists
-        sls.add('master', img, key)
+        name, at_list = self.imspec
+        at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+        renpy.exports.show(name, *at_list)
 
         return self.next
 
@@ -393,17 +346,14 @@ class Scene(Node):
 
     def execute(self):
 
-        import renpy.exports as exports
-
-        sls = renpy.game.context().scene_lists
-        
-        sls.clear('master')
-        sls.sticky_positions.clear()
+        renpy.exports.scene()
 
         if self.imspec:
-            key, img = imspec_common(self.imspec)
-       
-            sls.add('master', img, key)
+            
+            name, at_list = self.imspec
+            at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+            renpy.exports.show(name, *at_list)
 
         return self.next
         
@@ -433,14 +383,7 @@ class Hide(Node):
 
     def execute(self):
 
-        import renpy.exports as exports
-
-        sls = renpy.game.context().scene_lists
-        
-        key, img = imspec_common(self.imspec, hide=True)
-       
-        sls.remove('master', key)
-
+        renpy.exports.hide(self.imspec[0])
         return self.next
 
 class With(Node):

@@ -704,6 +704,18 @@ hide eileen
     most scenes needed in a visual novel type game.
   </p>
 
+  <h4>Programmatic Equivalents</h4>
+
+<p>
+Each of the four statements given above has an equivalent python
+function, documented below.
+</p>
+
+<!-- func renpy.image -->
+<!-- func renpy.scene -->
+<!-- func renpy.show -->
+<!-- func renpy.hide -->
+
   <h4>Parameterized Images</h4>
 
   <p>
@@ -770,6 +782,8 @@ init:
     image eileen vhappy = Image("9a_vhappy.png")
     image eileen concerned = Image("9a_concerned.png")
   </example>
+
+  <!-- func ImageReference -->
 
   <!-- func Solid -->
 

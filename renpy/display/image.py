@@ -46,19 +46,18 @@ class UncachedImage(renpy.display.core.Displayable):
 
 class ImageReference(renpy.display.core.Displayable):
     """
-    This is a reference to an image or animation that is kept
-    in exports.images.
-
-    @ivar name: The name of the image.
-
-    Not serialized:
-
-    @ivar target: If defined, a pointer to the thing that name resolves to.
+    ImageReference objects are used to reference images by their name,
+    which is a tuple of strings corresponding to the name used to define
+    the image in an image statment.
     """
 
     nosave = [ 'target' ]
 
     def __init__(self, name):
+        """
+        @param name: A tuple of strings, the name of the image.
+        """
+        
         super(ImageReference, self).__init__()
 
         self.name = name

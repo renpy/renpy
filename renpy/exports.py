@@ -44,57 +44,88 @@ def scene_lists(index=-1):
 
     return renpy.game.context(index).scene_lists
 
-def scene_list_add(listname, displayable, key=None):
+def image(name, img):
     """
-    Adds the displayable to the named scene list, with the
-    given key if one is provided.
+    This is used to execute the image statment. It takes as arguments
+    an image name and an image object, and associates the image name
+    with the image object.
 
-    @param listname: One of 'master' or 'transient'.
-    """
+    Like the image statment, this function should only be executed
+    in init blocks.
 
-    if listname not in ('master', 'transient'):
-        raise Exception("Scene list '%s' doesn't exist." % listname)
-
-    scene_lists().add(listname, displayable, key)
-
-def show(at_disp, with_disp=None, key=None):
-    """
-    Shows the displayable, as if it was added to a scene list with the show command.
-
-    @param at_disp: The displayable that is added to the screen as if
-    it was the result of the at clause in the show statement.
-
-    @param with_displ: The displayable that is added to the screen as
-    if it was the result of the with clause in the show statement. If
-    None, then this is taken from the at command.
-
-    @param key: The key that is used to remove this displayable from
-    the scene list, or None if there is no key.
+    @param name: The image name, a tuple of strings.
+    @param img: The displayable that is associated with that name.
     """
 
-    if not with_disp:
-        with_disp = at_disp
+    if not renpy.game.init_phase:
+        raise Exception("Images may only be declared inside init blocks.")
 
-    scene_list_add('master', at_disp, key)
-    scene_list_add('transient', at_disp, key)
+    images[name] = img
+    
 
-def hide(key):
+def show(name, *at_list):
     """
-    Removes items named with the given key from the scene lists.
+    This is used to execute the show statement, adding the named image
+    to the screen as part of the master layer.
+
+    @param name: The name of the image to add to the screen. This is a tuple
+    of strings, one string for each component of the image name.
+
+    @param at_list: The at list, a list of functions that are applied
+    to the image when shown. The members of the at list need to
+    be pickleable if sticky_positions is True.
     """
 
     sls = scene_lists()
+    key = name[0]
+
+    if renpy.config.sticky_positions:        
+        if not at_list and key in sls.sticky_positions:
+            at_list = sls.sticky_positions[key]
+
+        sls.sticky_positions[key] = at_list
+
+    img = renpy.display.image.ImageReference(name)
+    for i in at_list:
+        img = i(img)
+
+    # Update the list of images we have ever seen.
+    renpy.game.persistent._seen_images[tuple(name)] = True
+
+    sls.add('master', img, key)
+    
+
+def hide(name):
+    """
+    This finds items in the master layer that have the same name
+    as the first component of the given name, and removes them
+    from the master layer. This is used to execute the hide
+    statement.
+    
+    @param name: The name of an image. A tuple of strings, but only
+    the first component of this tuple is ever accessed.
+    """
+
+    sls = scene_lists()
+    key = name[0]
     sls.remove('master', key)
-    sls.remove('transient', key)
+
+    if key in sls.sticky_positions:
+        del sls.sticky_positions[key]
+
+    
 
 def scene():
     """
-    This clears the scene lists, as if the scene statement executed.
+    This clears out the master layer. This is used in the execution of
+    the scene statment, but only to clear out the layer. If you want
+    to then add something new, call renpy.show after this.
     """
 
     sls = scene_lists()
     sls.clear('master')
-    sls.clear('transient')
+    sls.sticky_positions.clear()
+    
         
 def watch(expression, style='default', **properties):
     """
