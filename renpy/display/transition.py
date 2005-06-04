@@ -329,7 +329,7 @@ class Dissolve(Transition):
 
         rv.focuses.extend(top.focuses)
 
-        if id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
             # Fast rendering path. Only used for full-screen, top-level, renders.
 
             alpha = alpha / 255.0

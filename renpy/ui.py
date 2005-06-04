@@ -87,7 +87,7 @@ def layer(name):
     if not isinstance(current, str):
         raise Exception("Opening a layer while a widget is open is not allowed.")
 
-    if name not in renpy.config.layers:
+    if name not in renpy.config.layers and name not in renpy.config.top_layers:
         raise Exception("'%s' is not a known layer." % name)
 
     current_stack.append(current)

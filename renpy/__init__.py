@@ -25,6 +25,7 @@ import renpy.script
 import renpy.style
 
 import renpy.display
+import renpy.display.presplash
 import renpy.display.module
 import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object

@@ -242,7 +242,7 @@ class SceneLists(object):
          
         if oldsl:
 
-            for i in renpy.config.layers:
+            for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = oldsl.layers[i][:]
 
             for i in renpy.config.overlay_layers:
@@ -255,7 +255,7 @@ class SceneLists(object):
             self.focused = None
             
         else:
-            for i in renpy.config.layers:
+            for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = [ ]
 
             self.music = None
@@ -687,7 +687,7 @@ class Interface(object):
 
         rv = { }
 
-        for layer in renpy.config.layers:
+        for layer in renpy.config.layers + renpy.config.top_layers:
 
             f = renpy.display.layout.Fixed(focus=layer)
 
@@ -798,6 +798,7 @@ class Interface(object):
         # The root widget of everything that is displayed on the screen.
         root_widget = renpy.display.layout.Fixed() 
         root_widget.append_scene_list(underlay)
+        root_widget.layers = { }
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
@@ -814,18 +815,24 @@ class Interface(object):
         layers_root = renpy.display.layout.Fixed()
         layers_root.layers = { }
 
-        # Add layers (perhaps with transitions) to the layers root.
-        for layer in renpy.config.layers:
+
+        def add_layer(where, layer):
             if self.transition.get(layer, None) and self.old_scene and not self.suppress_transition:
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene[layer])
-                layers_root.add(trans, start_time)
-                layers_root[layer] = trans
+                where.add(trans, start_time)
+                where.layers[layer] = trans
                 
             else:
-                layers_root.layers[layer] = scene[layer]
-                layers_root.add(scene[layer], start_time)
+                where.layers[layer] = scene[layer]
+                where.add(scene[layer], start_time)
+            
+
+
+        # Add layers (perhaps with transitions) to the layers root.
+        for layer in renpy.config.layers:
+            add_layer(layers_root, layer)
                 
         # Add layers_root to root_widget, perhaps through a transition.
         if None in self.transition and self.old_scene and not self.suppress_transition:
@@ -852,6 +859,11 @@ class Interface(object):
                 
         else:
             root_widget.add(layers_root, start_time)
+
+
+        # Add top_layers to the root_widget.
+        for layer in renpy.config.top_layers:
+            add_layer(root_widget, layer)
 
 
         # Now, update various things regarding scenes and transitions,

@@ -2275,9 +2275,24 @@ cleared before the overlay functions are called. "overlay" should
 always be in this list.
 </var>
 
+<var name="config.top_layers" value="[ ]" >
+This is a list of names of layers that are displayed above all other
+layers, and do not participate in a transition that is applied to all
+layers. If a layer name is listed here, it should not be listed in
+config.layers.
+</var>
+
 <var name="config.overlay_during_wait" value="True" >
 True if we want overlays to be shown during wait statements, or False 
 if we'd prefer that they be hidden during the wait statements.
+</var>
+
+<var name="config.enable_fast_dissolve" value="True" >
+Setting this to False can fix a potential bug in the
+dissolve transition when used with an overlay layer that has an alpha
+channel that is not fully transparent or opaque, at the cost of 25% of
+the performance of dissolve. It usually can be kept at True with no
+ill effects.
 </var>
 
 <var name="config.text_tokenizer" value="..." >

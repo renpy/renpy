@@ -106,9 +106,15 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
+# A list of layers that are displayed above all other layers.
+top_layers = [ ]
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_wait = True
+
+# True if we want to allow the fast dissolve.
+enable_fast_dissolve = True
 
 # When using the keyboard to navigate, how much we penalize
 # distance out of the preferred direction.
