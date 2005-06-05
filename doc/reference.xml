@@ -590,13 +590,15 @@ overlaid on top of the screen.
   <rule>image_statement -> "image" image_name "=" python_expression</rule>
 
   <p>
-    The first display statement is the image statement, which does
-    binds an image name with a displayable defining that
-    image. As the list of name bindings, is never saved, the image
-    statement can only appear inside of an init block. The most
-    popular python expression to use here is Image, which takes as
-    an argument an image filename to load. Another popular choice is
-    Animation, which is defined elsewhere in this document.
+    
+The first display statement is the image statement, which does binds
+an image name with a displayable defining that image. As the list of
+image to name bindings is never saved, the image statement can only
+appear inside of an init block. The argument given here is passed to
+<a href="#">Image</a> in loose mode. Among other things, this means that if the
+argument is a single string, it is interpreted as the filename of an 
+image. If another displayable (such as Animation) is given, it is
+passed through unchanged.
 
   </p><p>
 
@@ -606,8 +608,8 @@ overlaid on top of the screen.
 
   <example>
 init:
-    image eileen happy = Image("eileen/happy.png")
-    image eileen upset = Image("eileen/upset.png")
+    image eileen happy = "eileen/happy.png"
+    image eileen upset = "eileen/upset.png"
   </example>
 
   <rule>show_statement -> "show" image_spec</rule>
@@ -3471,6 +3473,159 @@ to start the music playing again after a fadeout.
 </var>
 
 
+<h3>Default Definitions</h3>
+
+<p>
+This section documents a number of definitions that are found in the 
+Ren'Py standard library. These include default instatiations of the 
+various transitions and placements, and even one image. 
+</p>
+
+<p>
+These definitions are found in common/definitions.rpy. You 
+shouldn't change them there, but should instead copy the corresponding
+line into your script file, and change that instead.
+</p>
+
+<h4>Positions</h4>
+
+<dl>
+
+<defn name="left" type="position">
+A Position in which the left side of the image is aligned with the 
+left side of the screen. 
+</defn>
+
+<defn name="right" type="position">
+A position in which the right side of the image is aligned with the 
+right side of the screen.
+</defn>
+
+<defn name="center" type="position">
+A position in which the image is centered horizontally on the screen.
+</defn>
+
+<defn name="offscreenleft" type="position">
+A position in which the image is placed just off the left side of the
+screen. Please note that an image placed in this position, while not
+visible to the user, still consumes resources, and so images should be
+hidden when not visible. This position is
+intended to be used with the move transition. 
+</defn>
+
+<defn name="offscreenright" type="position">
+A position in which the image is placed just off the right side of the
+screen. Please note that an image placed in this position, while not
+visible to the user, still consumes resources, and so images should be
+hidden when not visible. This position is
+intended to be used with the move transition. 
+</defn>
+
+</dl>
+
+<h4>Transitions</h4>
+
+<dl>
+
+<defn name="fade" type="transition">
+An instance of the Fade transition that takes 0.5 seconds to fade 
+to black, and then 0.5 seconds to fade to the new screen.
+</defn>
+
+<defn name="dissolve" type="transition">
+An instance of the Dissolve transition that takes 0.5 seconds to complete.
+</defn>
+
+<defn name="pixellate" type="transition">
+An instance of the Pixellate transition, which takes 1 second to
+complete, and creates pixels as big as 32x32 over the course of 5
+steps in either direction.
+</defn>
+
+<defn name="move" type="transition">
+An instance of the MoveTransition transition, this takes 0.5 seconds
+to move images that changed position to their new locations.
+</defn>
+
+<defn name="vpunch" type="transition">
+When invoked, this transition shakes the screen vertically for a 
+quarter second.
+</defn>
+
+<defn name="hpunch" type="transition">
+When invoked, this transition shakes the screen horizontally for a 
+quarter second.
+</defn>
+
+<defn name="wiperight" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen right.
+</defn>
+
+<defn name="wipeleft" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen left.
+</defn>
+
+<defn name="wipeup" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen up.
+</defn>
+
+<defn name="wipedown" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen down.
+</defn>
+
+<defn name="slideright" type="transition">
+An instance of CropMove that takes 1 second to slide the screen right.
+</defn>
+
+<defn name="slideleft" type="transition">
+An instance of CropMove that takes 1 second to slide the screen left.
+</defn>
+
+<defn name="slideup" type="transition">
+An instance of CropMove that takes 1 second to slide the screen up.
+</defn>
+
+<defn name="slidedown" type="transition">
+An instance of CropMove that takes 1 second to slide the screen down.
+</defn>
+
+<defn name="slideawayright" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  right.
+</defn>
+
+<defn name="slideawayleft" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  left.
+</defn>
+
+<defn name="slideawayup" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  up.
+</defn>
+
+<defn name="slideawaydown" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  down.
+</defn>
+
+<defn name="irisout" type="transition">
+An instance of CropMove that irises the screen out for 1 second.
+</defn> 
+
+<defn name="irisin" type="transition">
+An instance of CropMove that irises the screen in for 1 second.
+</defn> 
+
+</dl>
+
+<h4>Images</h4>
+
+<dl>
+
+<defn name="black" type="image">
+This is a predefinition of a Solid black image. It's here to serve
+as a reasonable default image, for use in tutorials and incomplete games.
+</defn>
+
+</dl>
+
   <h3>Function Index</h3>
   
   <funcindex/>
@@ -3487,6 +3642,10 @@ to start the music playing again after a fadeout.
   
   <styleindex/>
 
+  <h3>Definition Index</h3>
+
+  <defnindex />
+
   <h3>Example Script</h3>
 
   <p>
@@ -3499,3 +3658,5 @@ to start the music playing again after a fadeout.
 </doc>
 
 <!-- (define-key xml-mode-map [(control return)] 'tompy-xml-ctrlret) -->
+<!-- -->
+
