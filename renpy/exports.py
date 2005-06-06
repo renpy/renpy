@@ -54,11 +54,15 @@ def image(name, img):
     in init blocks.
 
     @param name: The image name, a tuple of strings.
-    @param img: The displayable that is associated with that name.
+    
+    @param img: The displayable that is associated with that name. If this
+    is a string or tuple, it is interpreted as an argument to Image.
     """
 
     if not renpy.game.init_phase:
         raise Exception("Images may only be declared inside init blocks.")
+
+    img = renpy.display.im.image(img, loose=True)
 
     images[name] = img
     

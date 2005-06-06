@@ -58,16 +58,16 @@ init:
     # Now, we declare the images that are used in the program.
 
     # Backgrounds.
-    image carillon = Image("carillon.jpg")
-    image whitehouse = Image("whitehouse.jpg")
-    image washington = Image("washington.jpg")
-    image onememorial = Image("1memorial.jpg")
+    image carillon = "carillon.jpg"
+    image whitehouse = "whitehouse.jpg"
+    image washington = "washington.jpg"
+    image onememorial = "1memorial.jpg"
     image black = Solid((0, 0, 0, 255))
 
     # Character pictures.
-    image eileen happy = Image("9a_happy.png")
-    image eileen vhappy = Image("9a_vhappy.png")
-    image eileen concerned = Image("9a_concerned.png")
+    image eileen happy = "9a_happy.png"
+    image eileen vhappy = "9a_vhappy.png"
+    image eileen concerned = "9a_concerned.png"
 
     # Finally, the character object. This object lets us have the
     # character say dialogue without us having to repeatedly type

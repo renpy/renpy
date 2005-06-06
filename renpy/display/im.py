@@ -636,7 +636,7 @@ def Alpha(image, alpha):
 
     return Map(image, identity, identity, identity, amap, force_alpha=True)
 
-def image(arg, **properties):
+def image(arg, loose=False, **properties):
     """
     This takes as input one of a number of ways of specifying an
     image, and returns the Displayable image object that has been so
@@ -651,6 +651,10 @@ def image(arg, **properties):
     im.Composite object, which aligns the upper-left corner of all
     of the images supplied as arguments. </li>
     </ul>
+
+    If the loose argument is False, then this will report an error if an
+    arbitrary argument is given. If it's True, then the argument is passed
+    through unchanged.
     """
 
     if isinstance(arg, ImageBase):
@@ -668,7 +672,10 @@ def image(arg, **properties):
 
         return Composite(None, *params)
 
-    elif isinstance(arg, renpy.display.core.Displayable):
+    if loose:
+        return arg
+
+    if isinstance(arg, renpy.display.core.Displayable):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")

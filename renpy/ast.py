@@ -257,7 +257,7 @@ class Python(Node):
 class Image(Node):
 
     __slots__ = [
-        'name',
+        'imgname',
         'expr',
         ]
 
@@ -271,13 +271,13 @@ class Image(Node):
 
         super(Image, self).__init__(loc)
         
-        self.name = name
+        self.imgname = name
         self.expr = expr
 
     def execute(self):
         
         img = renpy.python.py_eval(self.expr)
-        renpy.exports.image(self.name, img)
+        renpy.exports.image(self.imgname, img)
 
         return self.next
 

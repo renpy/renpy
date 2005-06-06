@@ -19,7 +19,6 @@ init -1:
     $ offscreenleft = Position(xpos=0.0, xanchor='right')
     $ offscreenright = Position(xpos=1.0, xanchor='left')
 
-
     # Transitions ############################################################
 
     # Simple transitions.
@@ -52,3 +51,6 @@ init -1:
     # These shake the screen up and down for a quarter second.
     $ vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.25)
     $ hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.25)
+
+    image black = Solid((0, 0, 0, 255))
+    

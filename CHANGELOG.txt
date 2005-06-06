@@ -1,8 +1,17 @@
-Auto-forwarding mode.
+The image statement now passes its argument to the Image function,
+in loose mode. This means that strings and tuples are turned into
+single and composited images, respectively. So it's now possible to 
+write:
 
-Checkbox preferences.
+init:
+    image control room = "control_room.jpg"
 
-Document library definitions in reference manual.
+instead of having to write:
+
+init: 
+    image control room = Image("control_room.jpg")
+
+Of course, the old way still works.
 
 Ren'Py now supports a presplash screen. If the file presplash.png is
 present in the game directory, it is shown to the user on
@@ -47,6 +56,11 @@ Fixed a bug in lint.
 
 Fixed bugs that caused overlays to jump in and out during transitions,
 restoring the pre-4.8 behavior.
+
+The definitions found in common/definitions.rpy are now documented in
+the reference. This gives a default set of transitions and positions,
+as well as an image (black).
+
 
 New in 4.8.6
 ------------
