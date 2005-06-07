@@ -40,4 +40,14 @@ void xblur32_core(PyObject *pysrc,
 
 #endif
 
+void alphamunge_core(PyObject *pysrc,
+                     PyObject *pydst,
+                     int src_bypp, // bytes per pixel.
+                     int src_aoff, // alpha offset.
+                     int dst_aoff, // alpha offset.
+                     char *amap);
+    
+
+
+
 #endif 

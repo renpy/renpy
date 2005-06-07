@@ -534,3 +534,75 @@ void xblur32_core(PyObject *pysrc,
 }
 
 #endif
+
+
+// Alpha Munge takes a channel from the source pixel, maps it, and
+// sticks it into the alpha channel of the destination, overwriting
+// the destination's alpha channel.
+//
+// It's used to implement SmartDissolve.
+
+void alphamunge_core(PyObject *pysrc,
+                     PyObject *pydst,
+                     int src_bypp, // bytes per pixel.
+                     int src_aoff, // alpha offset.
+                     int dst_aoff, // alpha offset.
+                     char *amap) {
+    
+    int x, y;
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    unsigned char *srcline;
+    unsigned char *dstline;
+    
+    unsigned char *srcp;
+    unsigned char *dstp;
+
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+
+    // We assume that src is bigger than dst, and so use dst
+    // to handle everything.
+
+    srcline = srcpixels;
+    dstline = dstpixels;
+
+    for (y = 0; y < dsth; y++) {
+
+        srcp = srcline + src_aoff;
+        dstp = dstline + dst_aoff;
+
+        for (x = 0; x < dstw; x++) {
+
+            *dstp = amap[*srcp];
+            srcp += src_bypp;
+            dstp += 4; // Need an alpha channel.                
+        }
+
+        srcline += srcpitch;
+        dstline += dstpitch;
+
+    }
+}
+        
+        

@@ -627,9 +627,9 @@ class Interface(object):
 
         old_old_scene = self.old_scene
 
-        self.old_scene = self.compute_scene(scene_lists)
+        self.old_scene = self.compute_scene(scene_lists)        
 
-        if renpy.config.overlay_during_wait:
+        if renpy.config.overlay_during_wait and old_old_scene:
             for i in renpy.config.overlay_layers:
                 self.old_scene[i] = old_old_scene[i]
 

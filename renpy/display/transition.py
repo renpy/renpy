@@ -362,7 +362,7 @@ class Dissolve(Transition):
     overlaying the new scene on top of the old scene and varying its
     alpha from 0 to 255.
 
-    @param delay: The amount of time the dissolve will take.
+    @param time: The amount of time the dissolve will take.
     """
 
     def __init__(self, time, old_widget=None, new_widget=None):
@@ -766,3 +766,107 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
     return rv
 
             
+class ImageDissolve(Transition):
+    """
+    This dissolves from the old scene to the new scene, by
+    overlaying the new scene on top of the old scene and varying its
+    alpha from 0 to 255.
+
+    @param image: The image that will be used to control this transition. 
+
+    @param time: The amount of time the dissolve will take.
+
+    @param ramplen: The number of pixels of ramp to use. 
+    
+    """
+
+    def __init__(self, image, time, ramplen=0,
+                 old_widget=None, new_widget=None):
+
+        super(ImageDissolve, self).__init__(time)
+
+        self.time = time
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+
+        self.old_bottom = None
+        self.old_top = None
+        self.old_ramp = '\x00' * 256
+
+        self.image = renpy.display.im.load_image(image)
+
+        # Precompute the ramp.
+
+        ramp = '\x00' * 256
+
+        for i in range(ramplen):
+            ramp += chr(255 * i / ramplen)
+
+        ramp += '\xff' * 256
+
+        self.ramp = ramp
+        self.steps = ramplen + 256
+
+
+    def render(self, width, height, st):
+
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st)
+
+        if st < self.time:
+            renpy.display.render.redraw(self, 0)
+
+        step = int(self.steps * st / self.time)
+        ramp = self.ramp[step:step+256]
+
+        rv = renpy.display.render.Render(width, height)
+
+        bottom = render(self.old_widget, width, height, st)
+        top = render(self.new_widget, width, height, st)
+
+        surf = top.pygame_surface(True)
+        renpy.display.render.mutated_surface(surf)
+
+        rv.focuses.extend(top.focuses)
+
+        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+            # Fast rendering path. Only used for full-screen, top-level, renders.
+
+            fast_ramp = [ ]
+
+            for new, old in zip(ramp, self.old_ramp):
+
+                new = ord(new)
+                old = ord(old)
+
+                if new >= 255:
+                    fast_ramp.append('\xff')
+                    continue
+
+                change = 255 * ( new - old ) / ( 255 - old )
+                fast_ramp.append(chr(int(change)))
+
+            renpy.display.module.alpha_munge(self.image, surf,
+                                             ''.join(fast_ramp))
+            
+            rv.blit(surf, (0, 0))
+                        
+        else:
+
+            # Complete rendering path.
+
+            rv.blit(bottom, (0, 0), focus=False)
+
+            renpy.display.module.alpha_munge(self.image, surf, ramp)
+            rv.blit(surf, (0, 0))
+
+        self.old_ramp = ramp
+
+        
+        self.old_top = id(top)
+        self.old_bottom = id(bottom)
+
+        return rv
+

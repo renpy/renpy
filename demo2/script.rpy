@@ -1297,3 +1297,20 @@ label demonstrate:
     jump demo_menu
 
 
+init:
+
+    $ smoothwipe = ImageDissolve("smoothwipe.png", 1.0, 16)
+
+label splashscreen:
+
+    scene black
+
+    $ foo = config.frames
+    
+    scene whitehouse with smoothwipe
+
+    $ print config.frames - foo, "frames."
+
+    scene black with smoothwipe
+
+    return

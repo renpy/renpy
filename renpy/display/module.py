@@ -176,6 +176,29 @@ if version >= 4008005:
 else:
 
     can_map = False
-    
 
-        
+
+if version >= 4008007:
+
+    can_munge = True
+
+    def alpha_munge(src, dst, amap):
+        """
+        This samples the red channel from src, maps it through amap, and
+        place it into the alpha channel of amap.
+        """
+
+        if src.get_size() != dst.get_size():
+            return
+
+        red = list(endian_order(src, 1, 2, 3, 4)).index(1)
+        alpha = list(endian_order(dst, 1, 2, 3, 4)).index(4)
+
+        _renpy.alpha_munge(src, dst, red, alpha, amap)        
+
+else:
+
+    can_munge = True
+
+    def alpha_munge(src, dst, amap):
+        return
