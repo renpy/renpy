@@ -636,6 +636,46 @@ def Alpha(image, alpha):
 
     return Map(image, identity, identity, identity, amap, force_alpha=True)
 
+class Tile(ImageBase):
+    """
+    This tiles the image, repeating it vertically and horizontally
+    until it is as large as the specified size. If no size is given,
+    then the size defaults to the size of the screen.
+    """
+
+    def __init__(self, im, size=None):
+
+        im = image(im)
+
+        if size is None:
+            size = (renpy.config.screen_width, renpy.config.screen_height)
+
+        super(Tile, self).__init__(im, size)
+        self.image = im
+        self.size = size
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        width, height = self.size
+        sw, sh = surf.get_size()
+
+
+        rv = pygame.Surface(self.size, 0,
+                            renpy.game.interface.display.sample_surface)
+
+        for y in range(0, height, sh):
+            for x in range(0, width, sw):
+                rv.blit(surf, (x, y))
+
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+    
+    
+
 def image(arg, loose=False, **properties):
     """
     This takes as input one of a number of ways of specifying an

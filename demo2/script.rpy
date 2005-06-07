@@ -808,6 +808,15 @@ init:
 
     $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
+init:
+
+    $ slowcirciris = ImageDissolve("circiris.png", 5.0, 8)
+    $ circirisout = ImageDissolve("circiris.png", 1.0, 8)
+    $ circirisin = ImageDissolve("circiris.png", 1.0, 8, reverse=True)
+    $ demotrans = ImageDissolve("demotrans.png", 3.0, 128)
+
+    image circiris = "circiris.png"
+
 label demonstrate:
 
     scene washington
@@ -874,6 +883,83 @@ label demonstrate:
             with hpunch
 
             e "We can also shake the screen horizontally, with hpunch."
+
+        "ImageDissolve transitions, added in 4.8.7.":
+
+            e "ImageDissolve allows us to have dissolve transitions that are
+               controlled by images."
+
+            e "This lets us specify very complex transitions, fairly
+               simply."
+
+            e "Let's try some, and then I'll show how they work."
+
+            e "There are two ImageDissolve transitions present by
+               default in the standard library."
+            
+            scene black with blinds
+            scene washington
+            show eileen happy
+            with blinds
+
+            e "The blinds transition opens and closes what looks like
+               vertical blinds."
+
+            scene black with squares
+            scene washington
+            show eileen happy
+            with squares
+
+            e "The squares transition uses these squares to show
+               things."
+
+            e "I'm not sure why anyone would want to use it, but it
+               was used in some translated games, so we added it."
+
+            e "There are also a few transitions that aren't in the
+               standard library."
+
+            e "These ones require images the size of the screen, and
+               so we couldn't include them as the size of the screen
+               can change from game to game."
+
+            e "You can find them defined in the source of the demo
+               script."
+
+            scene black with circirisin
+
+            e "We can hide things with a circirisin..."
+
+            with None
+            scene washington
+            show eileen happy
+            with circirisout
+
+            e "... and show them again with a circirisout."
+
+            e "It's even possible to have weird custom transitions."
+
+            scene circiris with demotrans
+
+            e "What we're showing here is the picture that's used in
+               the circiris transitions."
+
+            e "If you take a look, the center of it is white, while
+               the edges are darker."
+
+            e "When we use an ImageDissolve, the white will dissolve
+               in first, followed by progressively darker colors."
+
+            e "Let's try it."
+
+            with None
+            scene washington
+            show eileen happy
+            with slowcirciris
+
+            
+            e "It's also possible to reverse the transition, so that
+               the black pixels are dissolved in first."
 
         "CropMove transitions, added in 4.5.":
 
@@ -1296,21 +1382,3 @@ label demonstrate:
 
     jump demo_menu
 
-
-init:
-
-    $ smoothwipe = ImageDissolve("smoothwipe.png", 1.0, 16)
-
-label splashscreen:
-
-    scene black
-
-    $ foo = config.frames
-    
-    scene whitehouse with smoothwipe
-
-    $ print config.frames - foo, "frames."
-
-    scene black with smoothwipe
-
-    return

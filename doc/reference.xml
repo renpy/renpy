@@ -1211,6 +1211,8 @@ begins.
 
   <!-- func Dissolve -->
 
+  <!-- func ImageDissolve -->
+
   <!-- func CropMove -->
 
   <!-- func Pixellate -->
@@ -3403,6 +3405,8 @@ The image manipulators are:
 
 <!-- func im.ramp -->
 
+<!-- func im.Tile -->
+
 <h3>Low-Level Audio Functions</h3>
 
 <p>
@@ -3555,6 +3559,14 @@ quarter second.
 <defn name="hpunch" type="transition">
 When invoked, this transition shakes the screen horizontally for a 
 quarter second.
+</defn>
+
+<defn name="blinds" type="transition">
+Transitions the screen in a vertical blinds effect lasting 1 second.
+</defn>
+
+<defn name="squares" type="transition">
+Transitions the screen in a vertical blinds effect lasting 1 second.
 </defn>
 
 <defn name="wiperight" type="transition">

@@ -768,19 +768,34 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
             
 class ImageDissolve(Transition):
     """
-    This dissolves from the old scene to the new scene, by
-    overlaying the new scene on top of the old scene and varying its
-    alpha from 0 to 255.
+    This dissolves the old scene into the new scene, using an image
+    to control the dissolve process.
 
-    @param image: The image that will be used to control this transition. 
+    A list of values is used to control this mapping. This list of
+    values consists 256 fully transparent values, a ramp (of a
+    specified number of steps) from full transparency to full opacity,
+    and 256 fully opaque values. A 256 entry window is slid over this
+    list, and the values found within are used to map the red channel
+    of the image onto the opacity of the new scene.
+
+    Basically, this means that while pixels come in first, black last,
+    and the ramp controls the sharpness of the transition.
+    
+    @param image: The image that will be used to control this
+    transition. The image should be the same size as the scene being
+    dissolved.
 
     @param time: The amount of time the dissolve will take.
 
-    @param ramplen: The number of pixels of ramp to use. 
-    
+    @param ramplen: The number of pixels of ramp to use. This defaults
+    to 8.
+
+    @param reverse: This reverses the ramp and the direction of the window
+    slide. When True, black pixels dissolve in first, and while pixels come
+    in last.    
     """
 
-    def __init__(self, image, time, ramplen=0,
+    def __init__(self, image, time, ramplen=8, reverse=False,
                  old_widget=None, new_widget=None):
 
         super(ImageDissolve, self).__init__(time)
@@ -805,8 +820,15 @@ class ImageDissolve(Transition):
 
         ramp += '\xff' * 256
 
+        if reverse:
+            ramp = list(ramp)
+            ramp.reverse()
+            ramp = ''.join(ramp)
+
         self.ramp = ramp
         self.steps = ramplen + 256
+
+        self.reverse = reverse
 
 
     def render(self, width, height, st):
@@ -819,6 +841,10 @@ class ImageDissolve(Transition):
             renpy.display.render.redraw(self, 0)
 
         step = int(self.steps * st / self.time)
+
+        if self.reverse:
+            step = self.steps - step
+
         ramp = self.ramp[step:step+256]
 
         rv = renpy.display.render.Render(width, height)

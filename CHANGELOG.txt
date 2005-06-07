@@ -13,6 +13,16 @@ init:
 
 Of course, the old way still works.
 
+There is now a new transition type, ImageDissolve. It lets us creat
+dissolve transitions in which pixels are dissolved at different times,
+which can be used for a range of effects. Two such effects are
+'squares' and 'blinds'. A number of other types are defined in the
+source of the demo game, in their own section.
+
+A new im.Tile image operator has been introduced. This operator tiles
+a source image until it reaches a specified size, or the size of the
+screen if no size is specified.
+
 Ren'Py now supports a presplash screen. If the file presplash.png is
 present in the game directory, it is shown to the user on
 startup. This occurs before any loading or initialization occurs, so

@@ -52,5 +52,9 @@ init -1:
     $ vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.25)
     $ hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.25)
 
+    # These use the ImageDissolve to do some nifty effects.
+    $ blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
+    $ squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
+
     image black = Solid((0, 0, 0, 255))
     
