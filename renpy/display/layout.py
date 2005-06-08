@@ -281,6 +281,9 @@ class Grid(Container):
         self.padding = padding
         self.transpose = transpose
 
+    def get_placement(self):
+        return self.style
+
     def render(self, width, height, st):
 
         # For convenience and speed.

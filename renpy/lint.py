@@ -73,13 +73,13 @@ def image_exists(node, name):
 # Lints ast.Image nodes.
 def check_image(node):
 
-    name = " ".join(node.name)
+    name = " ".join(node.imgname)
     files = [ ]
 
     def files_callback(img):
         files.extend(img.predict_files())
 
-    renpy.exports.images[node.name].predict(files_callback)
+    renpy.exports.images[node.imgname].predict(files_callback)
 
     for fn in files:
 

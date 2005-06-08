@@ -3324,6 +3324,8 @@ automatically present in the game namespace.
 
 <!-- func ui.bar -->
 
+<!-- func ui.null -->
+
 <!-- func ui.saybehavior -->
 
 <!-- func ui.pausebehavior -->
