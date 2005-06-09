@@ -10,7 +10,7 @@ def match_times(source, dest):
 def dosify(s):
     return s.replace("\n", "\r\n")
 
-def copy_file(source, dest, license=""):
+def copy_file(source, dest, license="", dos=True):
 
     print source, "->", dest
 
@@ -21,7 +21,8 @@ def copy_file(source, dest, license=""):
 
     data = sf.read()
     if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy") or dest.endswith(".bat"):
-        data = dosify(data)
+        if dos:
+            data = dosify(data)
 
     df.write(data)
 
@@ -99,6 +100,7 @@ def main():
         'example.html',
         'reference.html',
         'style.css',
+        'RELEASING.txt',
         ]
 
     # Copy doc
@@ -112,26 +114,45 @@ def main():
     copy_tree("common", target + "/common",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
+    copy_tree("dse", target + "/dse",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
     copy_tree("extras", target + "/extras",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
-    def cp(x, license=""):
-        copy_file(x, target + "/" + x)
+    copy_tree("scripts", target + "/scripts",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
+    def cp(x, license="", dos=True):
+        copy_file(x, target + "/" + x, dos=dos)
 
     cp("CHANGELOG.txt")
     cp("LICENSE.txt")
     cp("README_RENPY.txt")
     cp("archive_images.bat")
+    cp("lint.bat")
     cp("run_game.py", license=license)
     copy_file("run_game.py", target + "/run_game.pyw", license=license)
+    copy_file("run_game.py", target + "/run_dse.py", license=license)
+    copy_file("run_game.py", target + "/run_dse.pyw", license=license)
     cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
     cp("add_from.py", license=license)
     cp("dump_text.py", license=license)
     cp("renpy-mode.el")
     
-       
+    os.mkdir(target + "/module")
 
+    cp("module/README.txt")
+    cp("module/_renpy.pyx")
+    cp("module/_renpy.c")
+    cp("module/core.c")
+    cp("module/renpy.h")
+    cp("module/setup.py")
+    cp("module/setup_mac.py")
+    cp("module/setup_win32.py")
+    
+    
 
 if __name__ == "__main__":
     main()

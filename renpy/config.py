@@ -2,6 +2,9 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
+# This will be deleted by the end of this file.
+import renpy
+
 # The title of the game window.
 window_title = "A Ren'Py Game"
 
@@ -47,9 +50,9 @@ profile = False
 # The directory save files will be saved to.
 savedir = None
 
-# The number of images that are allowed to live in the image cache
-# at once.
-image_cache_size = 10
+# The number of screens worth of images that are allowed to live in the image
+# cache at once.
+image_cache_size = 8
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -83,14 +86,8 @@ force_archives = False
 # An image file containing the mouse cursor, if one is defined.
 mouse = None
 
-# The distance the keyboard moves the mouse, per 50 ms tick, in pixels.
-keymouse_distance = 5
-
 # The default sound playback sample rate.
 sound_sample_rate = 44100
-
-# How fast text is displayed on the screen, by default.
-annoying_text_cps = None
 
 # The amount of time music is faded out between tracks.
 fade_music = 0.0
@@ -109,9 +106,23 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
+# A list of layers that are displayed above all other layers.
+top_layers = [ ]
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_wait = True
+
+# True if we want to allow the fast dissolve.
+enable_fast_dissolve = True
+
+# When using the keyboard to navigate, how much we penalize
+# distance out of the preferred direction.
+focus_crossrange_penalty = 1024
+
+# If True, then we force all loading to occur before transitions
+# start.
+load_before_transition = True
 
 # The keymap that is used to change keypresses and mouse events.
 keymap = dict(
@@ -123,24 +134,18 @@ keymap = dict(
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
-    hide_windows = [ 'mouseup_2' ],
+    hide_windows = [ 'mouseup_2', 'h' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
-    # Keymouse.
-    keymouse_left = [ 'K_LEFT' ],
-    keymouse_right = [ 'K_RIGHT' ],
-    keymouse_up = [ 'K_UP' ],
-    keymouse_down = [ 'K_DOWN' ],
-    
-    # Menu.
-    menu_mouseselect = [ 'mouseup_1' ],
-    menu_keyselect = ['K_RETURN', 'K_KP_ENTER' ],
-    menu_keyup = [ 'K_UP' ],
-    menu_keydown = [ 'K_DOWN' ],
-    
+    # Focus.
+    focus_left = [ 'K_LEFT' ],
+    focus_right = [ 'K_RIGHT' ],
+    focus_up = [ 'K_UP' ],
+    focus_down = [ 'K_DOWN' ],
+        
     # Button.
     button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
@@ -148,24 +153,30 @@ keymap = dict(
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
-    # Imagemap.
-    imagemap_select = [ 'K_RETURN', 'K_KP_ENTER', 'mouseup_1' ],
-
-    # Bar.
-    bar_click = [ 'mouseup_1' ],
-
-
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
     )
 
+# A list of functions that are called before each interaction.
+interact_callbacks = [ ]
+
+# A function that is called when a music track ends, perhaps to
+# play another track.
+music_end_event = None
+
+# A function that is called to tokenize text.
+text_tokenizer = renpy.display.text.text_tokenizer
+
 # The number of frames that Ren'Py has shown.
 frames = 0
+
+del renpy
 
 def backup():
 
     import copy
+    import types
 
     global _globals
     _globals = globals().copy()
@@ -174,7 +185,13 @@ def backup():
     del _globals["reload"]
     del _globals["__builtins__"]
 
-    _globals = copy.deepcopy(_globals)
+    for k, v in _globals.items():
+
+        if k == "text_tokenizer":
+            continue
+
+        _globals[k] = copy.deepcopy(v)
+
 
 def reload():
     globals().update(_globals)

@@ -30,6 +30,13 @@ class Node(object):
     # a node from that file.
     serials = { }
 
+    __slots__ = [
+        'name',
+        'filename',
+        'linenumber',
+        'next',
+        ]
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -120,6 +127,12 @@ def say_menu_with(expression):
         
 class Say(Node):
 
+    __slots__ = [
+        'who',
+        'what',
+        'with',
+        ]
+
     def __init__(self, loc, who, what, with):
 
         super(Say, self).__init__(loc)
@@ -141,6 +154,11 @@ class Say(Node):
         return self.next
 
 class Init(Node):
+
+    __slots__ = [
+        'block',
+        'priority',
+        ]
 
     def __init__(self, loc, block, priority):
         super(Init, self).__init__(loc)
@@ -168,6 +186,11 @@ class Init(Node):
     
 
 class Label(Node):
+
+    __slots__ = [
+        'name',
+        'block',
+        ]
 
     def __init__(self, loc, name, block):
         """
@@ -199,6 +222,11 @@ class Label(Node):
 
 class Python(Node):
 
+    __slots__ = [
+        'hide',
+        'bytecode',
+        ]
+
     def __init__(self, loc, python_code, hide=False):
         """
         @param python_code: Properly-indented python code.
@@ -209,12 +237,15 @@ class Python(Node):
         
         super(Python, self).__init__(loc)
 
+        filename = loc[0]
+        lineno = loc[1]
+
         self.hide = hide
 
         old_ei = renpy.game.exception_info
 
         renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
-        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code)
+        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code, filename=filename, lineno=lineno)
         renpy.game.exception_info = old_ei
 
 
@@ -224,6 +255,11 @@ class Python(Node):
         return self.next
 
 class Image(Node):
+
+    __slots__ = [
+        'imgname',
+        'expr',
+        ]
 
     def __init__(self, loc, name, expr):
         """
@@ -235,58 +271,15 @@ class Image(Node):
 
         super(Image, self).__init__(loc)
         
-        self.name = name
+        self.imgname = name
         self.expr = expr
 
     def execute(self):
-        import renpy.exports as exports
-
-        if not renpy.game.init_phase:
-            raise Exception("image statement should only be inside an init: block.")
-
+        
         img = renpy.python.py_eval(self.expr)
-        exports.images[self.name] = img
+        renpy.exports.image(self.imgname, img)
 
         return self.next
-
-def imspec_common(imspec, hide=False):
-    """
-    This is code that's common to the three statements that can
-    take imspecs (scene, show, and hide).
-
-    It parses the imspec into a key, and an image, perhaps applying
-    at clauses.
-
-    @param hide: Reduces error checking, and changes the sticky position
-    logic.
-    """
-
-    import renpy.display.image
-
-    sls = renpy.game.context().scene_lists
-
-    name, at_list = imspec
-    key = name[0]
-
-    # Handle sticky positions.
-    if renpy.config.sticky_positions:
-        if hide:
-            if key in sls.sticky_positions:
-                del sls.sticky_positions[key]
-        else:
-            if not at_list and key in sls.sticky_positions:
-                at_list = sls.sticky_positions[key]
-
-            sls.sticky_positions[key] = at_list
-
-    # Get a reference to the base image.
-    img = renpy.display.image.ImageReference(name)
-
-    # Now, apply the at_list, from left to right.
-    for i in at_list:
-        img = renpy.python.py_eval(i)(img)
-
-    return key, img
 
 def predict_imspec(imspec, callback):
     """
@@ -304,6 +297,10 @@ def predict_imspec(imspec, callback):
         
 class Show(Node):
 
+    __slots__ = [
+        'imspec',
+        ]
+
     def __init__(self, loc, imspec):
         """
         @param imspec: A triple consisting of an image name (itself a
@@ -317,10 +314,10 @@ class Show(Node):
 
     def execute(self):
 
-        key, img = imspec_common(self.imspec)
-       
-        sls = renpy.game.context().scene_lists
-        sls.add('master', img, key)
+        name, at_list = self.imspec
+        at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+        renpy.exports.show(name, *at_list)
 
         return self.next
 
@@ -330,6 +327,10 @@ class Show(Node):
         
 
 class Scene(Node):
+
+    __slots__ = [
+        'imspec',
+        ]
 
     def __init__(self, loc, imgspec):
         """
@@ -345,17 +346,14 @@ class Scene(Node):
 
     def execute(self):
 
-        import renpy.exports as exports
-
-        sls = renpy.game.context().scene_lists
-        
-        sls.clear('master')
-        sls.sticky_positions.clear()
+        renpy.exports.scene()
 
         if self.imspec:
-            key, img = imspec_common(self.imspec)
-       
-            sls.add('master', img, key)
+            
+            name, at_list = self.imspec
+            at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+            renpy.exports.show(name, *at_list)
 
         return self.next
         
@@ -367,6 +365,10 @@ class Scene(Node):
         return [ self.next ]
 
 class Hide(Node):
+
+    __slots__ = [
+        'imspec',
+        ]
 
     def __init__(self, loc, imgspec):
         """
@@ -381,17 +383,15 @@ class Hide(Node):
 
     def execute(self):
 
-        import renpy.exports as exports
-
-        sls = renpy.game.context().scene_lists
-        
-        key, img = imspec_common(self.imspec, hide=True)
-       
-        sls.remove('master', key)
-
+        renpy.exports.hide(self.imspec[0])
         return self.next
 
 class With(Node):
+
+    __slots__ = [
+        'expr',
+        ]
+
     def __init__(self, loc, expr):
         """
         @param expr: An expression giving a transition or None.
@@ -410,6 +410,11 @@ class With(Node):
         
         
 class Call(Node):
+
+    __slots__ = [
+        'label',
+        'expression',
+        ]
 
     def __init__(self, loc, label, expression):
 
@@ -433,6 +438,8 @@ class Call(Node):
 
 class Return(Node):
 
+    __slots__ = [ ]
+
     # No __init__ needed.
 
     # We don't care what the next node is.
@@ -450,6 +457,12 @@ class Return(Node):
             return [ ]
 
 class Menu(Node):
+
+    __slots__ = [
+        'items',
+        'set',
+        'with',
+        ]
 
     def __init__(self, loc, items, set, with):
         super(Menu, self).__init__(loc)
@@ -509,6 +522,11 @@ class Menu(Node):
 # instead. 
 class Jump(Node):
 
+    __slots__ = [
+        'target',
+        'expression',
+        ]
+
     def  __init__(self, loc, target, expression):
         super(Jump, self).__init__(loc)
 
@@ -537,10 +555,17 @@ class Jump(Node):
 # GNDN
 class Pass(Node):
 
+    __slots__ = [ ]
+
     def execute(self):
         return self.next
 
 class While(Node):
+
+    __slots__ = [
+        'condition',
+        'block',
+        ]
 
     def __init__(self, loc, condition, block):
         super(While, self).__init__(loc)
@@ -567,6 +592,8 @@ class While(Node):
         
 
 class If(Node):
+
+    __slots__ = [ 'entries' ]
 
     def __init__(self, loc, entries):
         """

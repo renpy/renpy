@@ -1,6 +1,6 @@
 init:
     $ config.window_title = "Test Game"
-    $ config.profile = True
+    $ config.profile = False
 
     $ config.debug_sound = True
 
@@ -22,16 +22,17 @@ init:
     # Styles.
     $ style.window.background = Frame("frame.png", 120, 25)
 
-    $ style.menu.hover_sound = "chev1.wav"
-    $ style.menu.activate_sound = "chev2.wav"
+    $ style.menu_choice_button.hover_sound = "chev1.wav"
+    $ style.menu_choice_button.activate_sound = "chev2.wav"
 
-    $ style.imagemap.hover_sound = "chev3.wav"
-    $ style.imagemap.activate_sound = "chev4.wav"
+    $ style.imagemap_button.hover_sound = "chev3.wav"
+    $ style.imagemap_button.activate_sound = "chev4.wav"
 
     $ style.button.hover_sound = "chev6.wav"
     $ style.button.activate_sound = "chev7.wav"
 
-    $ style.mm_root_window.background = renpy.Solid((128, 128, 128, 255))
+    # $ style.mm_root_window.background = Solid((128, 128, 128, 255))
+    # $ style.gm_root_window.background = Solid((128, 128, 128, 255))
 
     # Backgrounds.
     image whitehouse = Image("whitehouse.jpg")
@@ -45,12 +46,13 @@ init:
 
     image eileen anim = Animation("9a_happy.png", 0.25,
                                   "9a_vhappy.png", 0.25,
-                                  "9a_concerned.png")
+                                  "9a_concerned.png", 0.5)
 
     image movie = Movie()
 
     # Character objects.
     $ e = Character('Eileen', color=(200, 255, 200, 255))
+    $ w = Character('Walter')
     $ pov = DynamicCharacter('pov_name', color=(255, 0, 0, 255))
     $ pov_name = '????'
 
@@ -82,6 +84,10 @@ label main_menu:
     # Stuff that happens before the real main menu.
 
     scene black
+
+    show eileen anim
+
+    $ renpy.pause()
         
 
     show text "American Bishoujo\nPresents" \
@@ -106,6 +112,32 @@ label start:
 
     scene whitehouse
     show eileen happy beret
+
+    e "Okay, let's play stargate."
+
+    voice "chev1.wav"
+    w "Chevron one encoded!"
+
+    voice "chev2.wav"
+    w "Chevron two encoded!"
+
+    voice "chev3.wav"
+    w "Chevron three encoded!"
+
+    voice "chev4.wav"
+    w "Chevron four encoded!"
+
+    voice "chev5.wav"
+    w "Chevron five encoded!"
+
+    voice "chev6.wav"
+    w "Chevron six encoded!"
+
+    voice "chev7.wav"
+    w "Chevron seven..."
+
+    voice_sustain ""
+    w "... locked!"
 
 
     python:

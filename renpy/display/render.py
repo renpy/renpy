@@ -62,6 +62,12 @@ def render(widget, width, height, st):
     Renders a widget on the screen.
     """
 
+    if widget.style.xmaximum is not None:
+        width = min(widget.style.xmaximum, width)
+
+    if widget.style.ymaximum is not None:
+        height = min(widget.style.ymaximum, height)
+
     if (widget, width, height) in old_renders:
         rv = old_renders[widget, width, height]
 
@@ -132,7 +138,6 @@ def render_screen(widget, width, height, st):
     global new_renders
     global mutated_surfaces
 
-    redraw_queue = [ ]
     mutated_surfaces = { }
 
     rv = render(widget, width, height, st)
@@ -149,6 +154,15 @@ def render_screen(widget, width, height, st):
     old_renders.update(new_renders)
     new_renders.clear()
 
+    # Figure out which widgets are still alive.
+    live_widgets = sets.Set()
+    for widget, height, width in old_renders:
+        live_widgets.add(widget)
+
+    # Filter dead widgets from the redraw queue.
+    redraw_queue = [ (when, widget) for when, widget in redraw_queue if
+                     widget in live_widgets ]
+    
     return rv
 
 old_blits = [ ]
@@ -295,9 +309,11 @@ class Render(object):
         # entries in old_renders that this render is in.
         self.render_of = [ ]
 
+        # The width and height of this render.
         self.width = width
         self.height = height
 
+        # The parents of this render.
         self.parents = [ ]
 
         self.blittables = [ ]
@@ -309,6 +325,10 @@ class Render(object):
         self.surface_alpha = False
 
         self.subsurfaces = { }
+
+        # The list of focusable widgets collected from this render
+        # and the children of this render. A list of (widget, arg, x, y, w, h,)
+        self.focuses = [ ]
 
     # def __del__(self):
     #     Render.renders -= 1
@@ -371,8 +391,9 @@ class Render(object):
 
         # Removes cycles.
         self.render_of = [ ]
+        self.focuses = [ ]
 
-    def blit(self, source, (x, y)):
+    def blit(self, source, (xo, yo), focus=True):
         """
         Adds the source to the list of things that need to be blitted
         to the screen. The source should be either a pygame.Surface,
@@ -385,8 +406,18 @@ class Render(object):
 
             source.parents.append(self)
             self.children.append(source)
-                      
-        self.blittables.append((x, y, source))
+
+            if focus and xo == 0 and yo == 0:
+                self.focuses.extend(source.focuses)
+            elif focus:
+                for widget, arg, x, y, w, h in source.focuses:
+                    if x is not None:
+                        x += xo
+                        y += yo
+
+                    self.add_focus(widget, arg, x, y, w, h)
+                                      
+        self.blittables.append((xo, yo, source))
 
 
     def blit_to(self, dest, x, y):
@@ -459,7 +490,7 @@ class Render(object):
 
         return rv
 
-    def subsurface(self, pos):
+    def subsurface(self, pos, focus=False):
         """
         Returns a subsurface of this render.
         """
@@ -477,6 +508,24 @@ class Render(object):
 
         rv = Render(width, height)
 
+        if focus:
+            for fwidget, farg, fx, fy, fw, fh in self.focuses:
+                if fx is not None:
+                    fx -= x
+                    fx = max(fx, 0)
+                    fy -= y
+                    fy = max(fy, 0)
+
+                    fw -= x
+                    fw = min(fw, width)
+                    fh -= y
+                    fh = min(fh, height)
+
+                    if fw <= 0 or fh <= 0:
+                        continue
+
+                rv.add_focus(fwidget, farg, fx, fy, fw, fh)
+                
         for xo, yo, source in self.blittables:
 
             # ulx, uly -- the coordinates of the upper-left hand corner of
@@ -539,4 +588,24 @@ class Render(object):
         self.depends.append(child)
         child.parents.append(self)
 
-    
+    def add_focus(self, widget, arg=None, x=0, y=0, w=None, h=None):
+        """
+        This is called to indicate a region of the screen that can be
+        focused.
+
+        @param widget: The widget that will be focused.
+        @param arg: A focus argument, which can be checked by the widget.
+
+        The rest of the parameters are a rectangle giving the portion of
+        this region corresponding to the focus. If they are all None, than
+        this focus is assumed to be the singular full-screen focus.
+        """
+
+        if x is not None:
+            if w is None:
+                w = self.width
+
+            if h is None:
+                h = self.height
+
+        self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
