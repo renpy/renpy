@@ -57,9 +57,9 @@ label day:
     # (especially dp_period_acts) to reflect the choices the
     # user has available to him.
 
-    $ morning_act = "class"
-    $ afternoon_act = "hang"
-    $ evening_act = "play"
+    $ morning_act = None
+    $ afternoon_act = None
+    $ evening_act = None
 
     # Now, we call the day planner, which may set the act variables
     # to new values. 

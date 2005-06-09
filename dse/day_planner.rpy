@@ -98,6 +98,9 @@ label day_planner:
 
         ui.grid(len(dp_period_names), 1, xfill=True, style='dp_grid')
 
+        # True iff every period has a valid value.
+        can_continue = True
+
         for period, var in zip(dp_period_names, dp_period_vars):
 
             ui.window(style='dp_choice')
@@ -106,22 +109,33 @@ label day_planner:
             _label_factory(period, "dp")
             ui.null(height=dp_padding)
 
+            valid_value = False
+
             for label, value in dp_period_acts[period]:
 
                 def clicked(var=var, value=value):
                     setattr(store, var, value)
                     return True
 
+                valid_value |= getattr(store, var) == value
+
                 _button_factory(label, "dp",
                                 selected = getattr(store, var) == value,
                                 clicked=clicked)
 
+            can_continue &= valid_value
+
             ui.close()
 
         ui.close()
+
+        if valid_value:
+            clicked = lambda : False
+        else:
+            clicked = None
             
         _button_factory(dp_done_title, "dp_done",
-                        clicked = lambda : False )
+                        clicked = clicked )
 
         ui.close()
 
@@ -130,3 +144,4 @@ label day_planner:
         jump day_planner
 
     return 
+
