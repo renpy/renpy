@@ -1,3 +1,10 @@
+New in Ren'Py 4.8.7
+-------------------
+
+The new DSE dating-sim engine code is now present in the dse/
+directory. It's not documented, apart from the comments in the source
+code, but it can be run by running the new run_dse program.
+
 The image statement now passes its argument to the Image function,
 in loose mode. This means that strings and tuples are turned into
 single and composited images, respectively. So it's now possible to 

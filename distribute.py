@@ -114,6 +114,9 @@ def main():
     copy_tree("common", target + "/common",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
+    copy_tree("dse", target + "/dse",
+              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+
     copy_tree("extras", target + "/extras",
               should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
 
@@ -130,6 +133,8 @@ def main():
     cp("lint.bat")
     cp("run_game.py", license=license)
     copy_file("run_game.py", target + "/run_game.pyw", license=license)
+    copy_file("run_game.py", target + "/run_dse.py", license=license)
+    copy_file("run_game.py", target + "/run_dse.pyw", license=license)
     cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
     cp("add_from.py", license=license)
