@@ -254,7 +254,7 @@ def keymousebehavior():
     return
 
 
-def saybehavior():
+def saybehavior(afm=None):
     """
     This is a psuedo-widget that adds the say behavior to the
     screen. The say behavior is to return True if the left mouse is
@@ -262,9 +262,12 @@ def saybehavior():
     cases, such as if the current statement has already been seen. This widget
     should not be added to any other widget, but should instead be
     only added to the screen itself.
+
+    If afm is present, it is a block of text, that's given to the auto
+    forwarding mode algorithm to determine the auto-forwarding timeout.
     """
 
-    return add(renpy.display.behavior.SayBehavior())
+    return add(renpy.display.behavior.SayBehavior(afm=afm))
 
 def pausebehavior(delay, result=False):
     """

@@ -80,6 +80,8 @@ class Preferences(object):
 
         self.text_cps = 0
 
+        self.afm_time = 0
+
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.

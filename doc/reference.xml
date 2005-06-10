@@ -2340,6 +2340,17 @@ ill effects.
 </ul>
 </var>
 
+<var name="config.afm_characters" value="250">
+The number of characters in a string it takes to cause the amount of time
+specified in the auto forward mode preference to be delayed before 
+auto-forward mode takes effect.
+</var>
+
+<var name="config.afm_bonus" value="25">
+The number of bonus characters added to every string when auto-forward
+mode is in effect.
+</var>
+
 <var name="library.file_page_cols" value = "2" >
 This is the number of columns of save slots that are show in the
 picker that's used in the load and save screens of the game 
@@ -2399,6 +2410,10 @@ the file picker.
 <var name="library.has_cps" value="True">
 If True, the preference for changing the text speed is shown to the
 user.
+</var>
+
+<var name="library.has_afm" value="True">
+If True, the preference for auto-forward mode is shown to the user.
 </var>
 
     <var name="library.has_transitions" value="True">

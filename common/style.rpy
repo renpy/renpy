@@ -412,13 +412,19 @@ init -1000:
                      '(position) The position of the left column of preferences.')
 
         style.prefs_left.xanchor = 'center'
-        style.prefs_left.xpos = 0.25
+        style.prefs_left.xpos = 1.0 / 6.0
+
+        style.create('prefs_center', 'default',
+                     '(position) The position of the center column of preferences.')
+
+        style.prefs_center.xanchor = 'center'
+        style.prefs_center.xpos = 3.0 / 6.0
 
         style.create('prefs_right', 'default',
-                     '(position) The position of the left column of preferences.')
+                     '(position) The position of the right column of preferences.')
 
         style.prefs_right.xanchor = 'center'
-        style.prefs_right.xpos = 0.75
+        style.prefs_right.xpos = 5.0 / 6.0
 
         style.create('prefs_spinner', 'default',
                      '(position) The position of the prefs spinner.')

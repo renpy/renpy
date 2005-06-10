@@ -160,41 +160,30 @@ init -450:
         library.has_sound = True
         library.has_transitions = True
         library.has_cps = True
+        library.has_afm = True
 
 
-        p1 = _Preference('Display', 'fullscreen', [
+        # Left
+
+        pl1 = _Preference('Display', 'fullscreen', [
             ('Window', False, None),
             ('Fullscreen', True, None),
             ])
 
-        p2 = _Preference('Music', 'music', [
-            ('Enabled', True, 'library.has_music'),
-            ('Disabled', False, 'library.has_music'),
-            ])
-            
-        p3 = _Preference('Sound Effects', 'sound', [
-            ('Enabled', True, 'library.has_sound'),
-            ('Disabled', False, 'library.has_sound'),
-            ])
-            
-
-        library.preferences['prefs_left'] = [ p1, p2, p3 ]
-
-        p4 = _Preference('TAB and CTRL Skip', 'skip_unseen', [
-            ('Seen Messages', False, 'config.allow_skipping'),
-            ('All Messages', True, 'config.allow_skipping'),
-            ])
-
-        p5 = _Preference('Transitions', 'transitions', [
+        pl2 = _Preference('Transitions', 'transitions', [
             ('All', 2, 'library.has_transitions'),
             ('Some', 1, 'library.has_transitions and default_transition'),
             ('None', 0, 'library.has_transitions'),
             ])
 
-#         p6 = _Preference('Text Display', 'fast_text', [
-#             ('Fast', True, 'config.annoying_text_cps'),
-#             ('Slow', False, 'config.annoying_text_cps'),
-#             ])
+
+        # Center
+
+        pc1 = _Preference('TAB and CTRL Skip', 'skip_unseen', [
+            ('Seen Messages', False, 'config.allow_skipping'),
+            ('All Messages', True, 'config.allow_skipping'),
+            ])
+
 
         def cps_render(n):
             if n == 0:
@@ -202,12 +191,37 @@ init -450:
             else:
                 return str(n)
             
-        p6 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
+        pc2 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
                                 0, 500, 10, 'library.has_cps',
                                 render=cps_render)
 
+        def afm_render(n):
+            if n == 0:
+                return "Disabled"
+            else:
+                return str(n)
 
-        library.preferences['prefs_right'] = [ p4, p5, p6 ]
+        pc3 = _PreferenceSpinner('Auto Forward Time', 'afm_time',
+                                0, 60, 1, 'library.has_afm',
+                                render=afm_render)
+
+        # Right
+
+        pr1 = _Preference('Music', 'music', [
+            ('Enabled', True, 'library.has_music'),
+            ('Disabled', False, 'library.has_music'),
+            ])
+            
+        pr2 = _Preference('Sound Effects', 'sound', [
+            ('Enabled', True, 'library.has_sound'),
+            ('Disabled', False, 'library.has_sound'),
+            ])
+            
+        library.preferences['prefs_left'] = [ pl1, pl2 ]
+        library.preferences['prefs_center'] = [ pc1, pc2, pc3 ]
+        library.preferences['prefs_right'] = [ pr1, pr2 ]
+
+
 
 label _prefs_screen:
 

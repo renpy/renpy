@@ -280,6 +280,7 @@ def display_say(who, what, who_style='say_label',
                 interact=True,
                 slow=True,
                 image=False,
+                afm=True,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -287,17 +288,23 @@ def display_say(who, what, who_style='say_label',
 
     @param what: What is being said.
 
+    @param afm: If True, the auto-forwarding mode is enabled. If False,
+    it is disabled.
+
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
 
+    what = what_prefix + what + what_suffix
+
     # If we're going to do an interaction, then saybehavior needs
     # to be here.
     if interact:
-        renpy.ui.saybehavior()
+        if afm:
+            renpy.ui.saybehavior(afm=what)
+        else:
+            renpy.ui.saybehavior()
     
-    what = what_prefix + what + what_suffix
-
     renpy.ui.window(style=window_style)
     renpy.ui.vbox(padding=10)
 

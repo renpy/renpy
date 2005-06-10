@@ -168,6 +168,12 @@ music_end_event = None
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
 
+# The number of characters per AFM time period.
+afm_characters = 250
+
+# The number of bonus characters to add to a string for afm.
+afm_bonus = 25
+
 # The number of frames that Ren'Py has shown.
 frames = 0
 

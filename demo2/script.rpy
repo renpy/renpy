@@ -209,8 +209,8 @@ label writing:
     $ save_name = "Writing Games"
 
     # We start off with a bunch of dialogue.
-    e "If you want to write a game, I recommend that you read the
-       Ren'Py tutorial, which you can get from our web page,
+    e "If you want to write a game, we recommend that you read the
+       Ren'Py reference, which you can get from our web page,
        http://www.bishoujo.us/renpy/."
 
     e "But here, we'll go over some of the basics of writing Ren'Py

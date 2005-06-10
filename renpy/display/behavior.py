@@ -141,19 +141,30 @@ class SayBehavior(renpy.display.layout.Null):
 
     focusable = True
 
-    def __init__(self, default=True, **properties):
+    def __init__(self, default=True, afm=None, **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
+
+        if afm is not None:
+            self.afm_length = len(afm)
+        else:
+            self.afm_length = None
               
     def event(self, ev, x, y):
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
-           renpy.config.allow_skipping and renpy.config.skipping and \
-           ev.duration > renpy.config.skip_delay / 1000.0:
+               renpy.config.allow_skipping and renpy.config.skipping and \
+               ev.duration > renpy.config.skip_delay / 1000.0:
 
             if renpy.game.preferences.skip_unseen:
                 return True
             elif renpy.game.context().seen_current(True):
                 return True
+
+        if ev.type == renpy.display.core.DISPLAYTIME and \
+               self.afm_length and renpy.game.preferences.afm_time and \
+               ev.duration > ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time:
+
+            return True
 
         if map_event(ev, "dismiss") and self.is_focused():
             return True

@@ -1,3 +1,16 @@
+New in Ren'Py ?.?.?
+-------------------
+
+Auto-forward-mode has been implemented. It is controlled by its own
+preference, which gives the number of seconds for which a given number
+of characters is shown to the user. The number of characters is
+configured by config.afm_characters, which defaults to 250. The number
+of characters is determined by the length of the string shown to the
+user with a number of bonus characters added to it. The number of
+bonus characters is configurable in config.afm_bonus, which defaults
+to 25. Auto-forward-mode can be hidden from the user by setting 
+library.had_afm to False.
+
 New in Ren'Py 4.8.7
 -------------------
 
