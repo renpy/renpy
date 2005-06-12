@@ -1,3 +1,9 @@
+4 - With Ren'Py 4.8.8
+---------------------
+
+Added a static check to ensure that the label referred to by an event
+exists.
+
 3
 -
 
