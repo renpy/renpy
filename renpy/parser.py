@@ -439,7 +439,7 @@ class Lexer(object):
 
         oldpos = self.pos
 
-        rv = self.match(r'[a-zA-Z_]\w*')
+        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
 
         if rv in self.keywords:
             self.pos = oldpos

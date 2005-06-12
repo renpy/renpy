@@ -232,7 +232,9 @@ line 2
 
     A <def>name</def>s consist of an alphabetic character or number,
     followed by zero or more alphabetic characters or underscores,
-    so long as the string isn't a keyword. 
+    so long as the string isn't a keyword. For our purpose, unicode 
+    characters between 00a0 and fffd are considered to be alphabetic
+    characters.
 
   </p><p>
 

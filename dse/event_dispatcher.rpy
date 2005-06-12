@@ -255,4 +255,9 @@ init 100:
         all_events.sort()        
         all_events = [ b for a, b in all_events ]
 
-        
+    python hide:
+
+        for i in all_events:
+            if not renpy.has_label(i.name):
+                raise Exception("'%s' is defined as an event somewhere in the game, but no label named '%s' was defined anywhere." % (i.name, i.name))
+    

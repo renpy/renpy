@@ -10,7 +10,6 @@ init:
     $ sg = Character('Sporty Girl', color=(255, 255, 192, 255))
     $ bg = Character('Both Girls')
     
-
 # First up, we define some simple events for the various actions, that
 # are run only if no higher-priority event is about to occur.
 
@@ -19,7 +18,7 @@ init:
     $ event("cut", "act == 'cut'", event.solo(), priority=200)
     $ event("study", "act == 'study'", event.solo(), priority=200)
     $ event("hang", "act == 'hang'", event.solo(), priority=200)
-    $ event("exercise", "act == 'exercise'", event.solo(), priority=200)
+    $ event("exercise", "act == 'exercise'", event.solo(), priority=200)    
     $ event("play", "act == 'play'", event.solo(), priority=200)
 
 label class:
