@@ -6,16 +6,16 @@
 import renpy
 
 # Many of these shouldn't be used directly.
-from renpy.display.layout import *
-from renpy.display.text import *
-from renpy.display.behavior import *
-from renpy.display.image import *
+# from renpy.display.layout import *
+from renpy.display.text import ParameterizedText
+from renpy.display.behavior import Keymap
+# from renpy.display.image import *
 
 from renpy.curry import curry
-from renpy.display.audio import music_start, music_stop
+# from renpy.display.audio import music_start, music_stop
 from renpy.display.audio import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
-from renpy.loadsave import *
+from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
@@ -44,57 +44,92 @@ def scene_lists(index=-1):
 
     return renpy.game.context(index).scene_lists
 
-def scene_list_add(listname, displayable, key=None):
+def image(name, img):
     """
-    Adds the displayable to the named scene list, with the
-    given key if one is provided.
+    This is used to execute the image statment. It takes as arguments
+    an image name and an image object, and associates the image name
+    with the image object.
 
-    @param listname: One of 'master' or 'transient'.
-    """
+    Like the image statment, this function should only be executed
+    in init blocks.
 
-    if listname not in ('master', 'transient'):
-        raise Exception("Scene list '%s' doesn't exist." % listname)
-
-    scene_lists().add(listname, displayable, key)
-
-def show(at_disp, with_disp=None, key=None):
-    """
-    Shows the displayable, as if it was added to a scene list with the show command.
-
-    @param at_disp: The displayable that is added to the screen as if
-    it was the result of the at clause in the show statement.
-
-    @param with_displ: The displayable that is added to the screen as
-    if it was the result of the with clause in the show statement. If
-    None, then this is taken from the at command.
-
-    @param key: The key that is used to remove this displayable from
-    the scene list, or None if there is no key.
+    @param name: The image name, a tuple of strings.
+    
+    @param img: The displayable that is associated with that name. If this
+    is a string or tuple, it is interpreted as an argument to Image.
     """
 
-    if not with_disp:
-        with_disp = at_disp
+    if not renpy.game.init_phase:
+        raise Exception("Images may only be declared inside init blocks.")
 
-    scene_list_add('master', at_disp, key)
-    scene_list_add('transient', at_disp, key)
+    img = renpy.display.im.image(img, loose=True)
 
-def hide(key):
+    images[name] = img
+    
+
+def show(name, *at_list):
     """
-    Removes items named with the given key from the scene lists.
+    This is used to execute the show statement, adding the named image
+    to the screen as part of the master layer.
+
+    @param name: The name of the image to add to the screen. This is a tuple
+    of strings, one string for each component of the image name.
+
+    @param at_list: The at list, a list of functions that are applied
+    to the image when shown. The members of the at list need to
+    be pickleable if sticky_positions is True.
     """
 
     sls = scene_lists()
+    key = name[0]
+
+    if renpy.config.sticky_positions:        
+        if not at_list and key in sls.sticky_positions:
+            at_list = sls.sticky_positions[key]
+
+        sls.sticky_positions[key] = at_list
+
+    img = renpy.display.image.ImageReference(name)
+    for i in at_list:
+        img = i(img)
+
+    # Update the list of images we have ever seen.
+    renpy.game.persistent._seen_images[tuple(name)] = True
+
+    sls.add('master', img, key)
+    
+
+def hide(name):
+    """
+    This finds items in the master layer that have the same name
+    as the first component of the given name, and removes them
+    from the master layer. This is used to execute the hide
+    statement.
+    
+    @param name: The name of an image. A tuple of strings, but only
+    the first component of this tuple is ever accessed.
+    """
+
+    sls = scene_lists()
+    key = name[0]
     sls.remove('master', key)
-    sls.remove('transient', key)
+
+    if key in sls.sticky_positions:
+        del sls.sticky_positions[key]
+
+    
 
 def scene():
     """
-    This clears the scene lists, as if the scene statement executed.
+    This clears out the master layer. This is used in the execution of
+    the scene statment, but only to clear out the layer. If you want
+    to then add something new, call renpy.show after this.
     """
 
     sls = scene_lists()
     sls.clear('master')
-    sls.clear('transient')
+    sls.sticky_positions.clear()
+    
         
 def watch(expression, style='default', **properties):
     """
@@ -107,8 +142,8 @@ def watch(expression, style='default', **properties):
     """
 
     def overlay_func():
-        return [ renpy.display.text.Text(renpy.python.py_eval(expression),
-                                         style=style, **properties) ]
+        renpy.ui.text(renpy.python.py_eval(expression),
+                      style=style, **properties)
 
     renpy.config.overlay_functions.append(overlay_func)
 
@@ -202,8 +237,11 @@ def display_menu(items, window_style='menu_window'):
 
 class TagQuotingDict(object):
     def __getitem__(self, key):
-        if key in renpy.game.store:
-            rv = renpy.game.store[key]
+
+        store = vars(renpy.store)
+        
+        if key in store:
+            rv = store[key]
 
             if isinstance(rv, (str, unicode)):
                 rv = rv.replace("{", "{{")
@@ -241,6 +279,8 @@ def display_say(who, what, who_style='say_label',
                 what_suffix='',
                 interact=True,
                 slow=True,
+                image=False,
+                afm=True,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -248,25 +288,31 @@ def display_say(who, what, who_style='say_label',
 
     @param what: What is being said.
 
+    @param afm: If True, the auto-forwarding mode is enabled. If False,
+    it is disabled.
+
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
 
+    what = what_prefix + what + what_suffix
+
     # If we're going to do an interaction, then saybehavior needs
     # to be here.
     if interact:
-        renpy.ui.saybehavior()
+        if afm:
+            renpy.ui.saybehavior(afm=what)
+        else:
+            renpy.ui.saybehavior()
     
-    if who is not None:
-        who = who_prefix + who + who_suffix
-
-    what = what_prefix + what + what_suffix
-
     renpy.ui.window(style=window_style)
     renpy.ui.vbox(padding=10)
 
-    if who is not None:
+    if who is not None and not image:
+        who = who_prefix + who + who_suffix
         renpy.ui.text(who, style=who_style, **properties)
+    elif who is not None and image:
+        renpy.ui.image(who, style=who_style, **properties)
 
     renpy.ui.text(what, style=what_style, slow=slow)
     renpy.ui.close()
@@ -309,8 +355,6 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
-
-    renpy.ui.keymousebehavior()
 
     rv = renpy.ui.interact(suppress_overlay=(not overlays))
     checkpoint()
@@ -461,6 +505,15 @@ def jump(label):
 
     raise renpy.game.JumpException(label)
 
+def jumpoutofcontext(label):
+    """
+    Causes control to leave the current context, and then to be
+    transferred in the parent context to the given label.
+    """
+
+    raise renpy.game.JumpOutException(label)
+
+
 def screenshot(filename):
     """
     Saves a screenshot in the named filename.
@@ -484,6 +537,14 @@ def version():
     """
 
     return renpy.version
+
+def module_version():
+    """
+    Returns a number corresponding to the current version of the Ren'Py module,
+    or 0 if the module wasn't loaded.
+    """
+
+    return renpy.display.module.version
 
 def transition(trans, layer=None):
     """
@@ -524,6 +585,15 @@ def get_game_runtime():
 
     return renpy.game.context().runtime / 1000.0
 
+def loadable(filename):
+    """
+    Returns True if the given filename is loadable, meaning that it
+    can be loaded from the disk or from inside an archive. Returns
+    False if this is not the case.
+    """
+
+    return renpy.loader.loadable(filename)
+
 def exists(filename):
     """
     Returns true if the given filename can be found in the
@@ -549,7 +619,16 @@ def restart_interaction():
 
     renpy.game.interface.restart_interaction = True
     
+def context():
+    """
+    Returns an object that is unique to the current context, that
+    participates in rollback and the like.
+    """
+
+    return renpy.game.context().info
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 
+invoke_in_new_context = renpy.game.invoke_in_new_context

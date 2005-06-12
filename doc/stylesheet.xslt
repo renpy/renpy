@@ -50,6 +50,21 @@
     </ul>
   </xsl:template>
 
+  <xsl:template match="defnindex">
+    <ul>
+      <xsl:for-each select="//defn">
+        <xsl:sort select="@name" />
+        <li>
+          <a>
+            <xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute>
+            <xsl:value-of select="@name"/>
+            (<xsl:value-of select="@type"/>)
+          </a>
+        </li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+
   <xsl:template match="varindex">
     <ul>
       <xsl:for-each select="//var">
@@ -161,5 +176,14 @@
       <xsl:apply-templates />
     </dd>
   </xsl:template>
+
+  <xsl:template match="defn">
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
+    <dt class="var"><b><xsl:value-of select="@name" /></b></dt>
+    <dd>
+      <xsl:apply-templates />
+    </dd>
+  </xsl:template>
+
     
 </xsl:stylesheet>

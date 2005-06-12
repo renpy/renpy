@@ -3,6 +3,9 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
+# We used time too many other times. :-(
+from time import time as now
+
 # This is a utility function that attempts to refactor an old and a new
 # Fixed into four Fixeds: below, old, new, and above. Since only the
 # old and new need transitions, this can be a significant win.
@@ -55,13 +58,13 @@ def refactor_fixed(in_old, in_new):
 
 class Transition(renpy.display.core.Displayable):
     """
-    This is the base class of all transitions. It takes care of event
-    dispatching (primarily by passing all events off to a SayBehavior.)
+    This is the base class of most transitions. It takes care of event
+    dispatching.
     """
 
     def __init__(self, delay):
+        super(Transition, self).__init__()
         self.delay = delay
-        self.offsets = [ ]
         self.events = True
         
     def event(self, ev, x, y):
@@ -70,7 +73,115 @@ class Transition(renpy.display.core.Displayable):
         else:
             return None
 
-class Fade(Transition):
+    def find_focusable(self, callback, focus_name):
+        self.new_widget.find_focusable(callback, focus_name)
+
+class NoTransition(Transition):
+    """
+    This is a transition that doesn't do anything, and simply displays
+    the new_widget for a specified amount of time. It's almost
+    certainly not interesting by itself, but it may come in quite
+    handy as part of a MultipleTransition.
+    """
+
+    def __init__(self, delay, old_widget=None, new_widget=None):
+        super(NoTransition, self).__init__(delay)
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = True
+
+    def render(self, width, height, st):
+
+        rv = renpy.display.render.Render(width, height)
+
+        rv.blit(renpy.display.render.render(self.new_widget,
+                                            width,
+                                            height,
+                                            st), (0, 0))
+
+        return rv
+
+
+class MultipleTransition(Transition):
+    """
+    This is a transition that can sequence between multiple screens,
+    showing a different transition between each.
+
+    This must be supplied with a tuple containing an odd number of
+    components. The first, third, and so on components are interpreted
+    as screens that can be shown to the user, while the even components
+    are transitions between those screens.
+
+    A screen can be any displayable, but normally an Image or Solid is
+    most appropriate. An screen can also be False to represent the screen
+    we are transitioning from, or True to represent the screen we are
+    transitioning to. Almost always, the first argument will be False
+    and the last will be True.
+    """
+    
+    def __init__(self, args, old_widget=None, new_widget=None):
+
+        if len(args) % 2 != 1 or len(args) < 3:
+            raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
+
+        self.transitions = [ ]
+
+        def oldnew(w):
+            if w is False:
+                return old_widget
+            if w is True:
+                return new_widget
+            return w
+
+        for old, trans, new in zip(args[0::2], args[1::2], args[2::2]):
+            old = oldnew(old)
+            new = oldnew(new)
+
+            self.transitions.append(trans(old_widget=old, new_widget=new))
+
+        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
+
+        self.event_target = None
+        self.time_offset = 0
+        self.new_widget = self.transitions[-1]
+        self.events = False
+
+    def render(self, width, height, st):
+
+        while True:
+            trans = self.transitions[0]
+            stoff = st - self.time_offset
+
+            if stoff < trans.delay:
+                break
+
+            if len(self.transitions) == 1:
+                break
+
+            self.time_offset += trans.delay
+            self.transitions.pop(0)
+
+        if len(self.transitions) == 1:
+            self.events = True
+
+        self.event_target = trans
+
+        rv = renpy.display.render.Render(width, height)
+        rv.blit(renpy.display.render.render(trans, width, height, stoff), (0,0))
+        
+        if stoff > 0:
+            renpy.display.render.redraw(self, stoff)
+
+        return rv
+            
+
+def Fade(out_time, hold_time, in_time,
+         old_widget=None, new_widget=None,
+         color=None,
+         widget=None,
+         ):
+
     """
     This returns an object that can be used as an argument to a with
     statement to fade the old scene into a solid color, waits for a
@@ -88,69 +199,34 @@ class Fade(Transition):
     fading from the solid color to the new scene. A float, given as
     seconds.
     
-    @param color:  The solid color that will be faded
-    to. This is an RGB triple, where each element is in the range 0
-    to 255. This defaults to black.
+    @param color:  The solid color that will be fade to. A tuple containing
+    three components, each between 0 or 255. This can also be None.
+
+    @param widget: This is a widget that will be faded to, if color
+    is None. This allows a fade to be to an image rather than just
+    a solid color.
+
+    If both color and widget are None, then the fade is to black.
     """
 
-    def __init__(self, out_time, hold_time, in_time,
-                 old_widget=None, new_widget=None, color=(0, 0, 0)):
+    dissolve = renpy.curry.curry(Dissolve)
+    notrans = renpy.curry.curry(NoTransition)
+    
+    if color:
+        widget = renpy.display.image.Solid(color)
 
-        super(Fade, self).__init__(out_time + hold_time + in_time)
+    if not widget:
+        widget = renpy.display.image.Solid((0, 0, 0, 255))
 
-        self.out_time = out_time
-        self.hold_time = hold_time
-        self.in_time = in_time
-        self.old_widget = old_widget
-        self.new_widget = new_widget
-        self.color = color
+    args = [ False, dissolve(out_time), widget ]
 
-        # self.frames = 0
+    if hold_time:
+        args.extend([ notrans(hold_time), widget, ])
 
-    # def __del__(self):
-    #     print "Faded using", self.frames, "frames."
+    args.extend([dissolve(in_time), True ])
 
-    def render(self, width, height, st):
+    return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
-        # self.frames += 1
-
-        rv = renpy.display.render.Render(width, height)
-
-        events = False
-
-        if st < self.out_time:
-            widget = self.old_widget
-            alpha = int(255 * (st / self.out_time))
-
-        elif st < self.out_time + self.hold_time:
-            widget = None
-            alpha = 255
-
-        else:
-            widget = self.new_widget
-            alpha = 255 - int(255 * ((st - self.out_time - self.hold_time) / self.in_time))
-            events = True
-
-        if widget:
-            surf = render(widget, width, height, st)
-            
-            rv.blit(surf, (0, 0))
-
-        self.events = events 
-
-        # Just to be sure.
-        if alpha < 0:
-            alpha = 0
-
-        if alpha > 255:
-            alpha = 255
-
-        rv.fill(self.color[:3] + (alpha,))
-
-        if st < self.in_time + self.hold_time + self.out_time:
-            renpy.display.render.redraw(self, 0)
-
-        return rv
 
 # This was a nifty idea that just didn't work out, since we can't vary
 # the alpha on an image with an alpha channel. Too bad.
@@ -212,6 +288,73 @@ class Fade(Transition):
 #         return rv
 
 
+class Pixellate(Transition):
+    """
+    This pixellates out the old scene, and then pixellates in the new
+    scene, taking the given amount of time and the given number of pixellate
+    steps in each direction.
+    """
+
+    def __init__(self, time, steps, old_widget=None, new_widget=None):
+
+        if not renpy.display.module.can_pixellate:
+            time = 0
+
+        super(Pixellate, self).__init__(time)
+
+        self.time = time
+        self.steps = steps
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+
+        self.surface = None
+        self.surface_size = None
+
+        self.events = False
+
+        self.quantum = time / ( 2 * steps )
+
+    def render(self, width, height, st):
+
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st)
+
+        step = st // self.quantum + 1
+        visible = self.old_widget
+
+        if step > self.steps:
+            step = (self.steps * 2) - step + 1
+            visible = self.new_widget
+            self.events = True
+
+        rv = renpy.display.render.Render(width, height)
+        rdr = render(visible, width, height, st)
+
+        # No alpha support.
+        surf = rdr.pygame_surface(False)
+        
+        if surf.get_size() != self.surface_size:
+            self.surface_size = surf.get_size()
+            self.surface = pygame.Surface(self.surface_size, surf.get_flags(), surf)
+
+        px = 2 ** step
+
+        renpy.display.module.pixellate(surf, self.surface, px, px, px, px)
+        renpy.display.render.mutated_surface(self.surface)
+
+        rv.blit(self.surface, (0, 0))
+
+        if self.events:
+            rv.focuses.extend(rdr.focuses)
+
+        # renpy.display.render.redraw(self, self.quantum - st % self.quantum)
+
+        renpy.display.render.redraw(self, 0)
+
+        return rv
+
         
 class Dissolve(Transition):
     """
@@ -219,7 +362,7 @@ class Dissolve(Transition):
     overlaying the new scene on top of the old scene and varying its
     alpha from 0 to 255.
 
-    @param delay: The amount of time the dissolve will take.
+    @param time: The amount of time the dissolve will take.
     """
 
     def __init__(self, time, old_widget=None, new_widget=None):
@@ -253,9 +396,10 @@ class Dissolve(Transition):
         surf = top.pygame_surface(False)
         renpy.display.render.mutated_surface(surf)
 
-        if id(top) == self.old_top and id(bottom) == self.old_bottom:
+        rv.focuses.extend(top.focuses)
 
-            # Fast rendering path.
+        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+            # Fast rendering path. Only used for full-screen, top-level, renders.
 
             alpha = alpha / 255.0
             change = ( alpha - self.old_alpha) / ( 1.0 - self.old_alpha)
@@ -271,7 +415,7 @@ class Dissolve(Transition):
 
             # Complete rendering path.
 
-            rv.blit(bottom, (0, 0))
+            rv.blit(bottom, (0, 0), focus=False)
             surf.set_alpha(alpha, RLEACCEL)
             rv.blit(surf, (0, 0))
 
@@ -352,7 +496,7 @@ class CropMove(Transition):
         image. Otherwise, the top layer contains the old image.
         """
         
-
+        super(CropMove, self).__init__(time)
         self.time = time
 
         if mode == "wiperight":
@@ -503,13 +647,252 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0))
+        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not self.topnew)
 
         top = render(self.top, width, height, st)
-        ss = top.subsurface(crop)
-        rv.blit(ss, pos)
+        ss = top.subsurface(crop, focus=self.topnew)
+        rv.blit(ss, pos, focus=self.topnew)
 
         renpy.display.render.redraw(self, 0)
         return rv
                 
             
+def MoveTransition(delay, old_widget=None, new_widget=None):
+    """
+    This transition attempts to find images that have changed
+    position, and moves them from the old position to the new
+    transition, taking delay seconds to complete the move.
+
+    Images are considered to be the same if they have the same tag, in
+    the same way that the tag is used to determine which image to
+    replace or to hide.
+
+    If you use this transition to slide an image off the side of the
+    screen, remember to hide it when you are done.
+    """
+
+    def position(d):
+
+        placement = d.get_placement()
+        xpos = placement.xpos
+        ypos = placement.ypos
+
+        if isinstance(xpos, float):
+            xpos = int(renpy.config.screen_width * xpos)
+
+        if isinstance(ypos, float):
+            ypos = int(renpy.config.screen_height * ypos)
+
+        return xpos, ypos, placement.xanchor, placement.yanchor
+        
+
+    def merge_slide(old, new):
+
+            
+        # If new does not have .layers or .scene_list, then we simply
+        # insert a move from the old position to the new position.
+
+        if not hasattr(new, 'layers') and not hasattr(new, 'scene_list'):
+            return renpy.display.layout.Move(position(old),
+                                             position(new),
+                                             delay,
+                                             new,
+                                             )
+
+        # If we're in the root widget, merge the child widgets for
+        # each layer.
+        if new.layers:
+            assert old.layers
+
+            rv = renpy.display.layout.Fixed()
+            rv.layers = { }
+
+            for layer in renpy.config.layers:
+
+                f = new.layers[layer]
+
+                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list:
+                    f = merge_slide(old.layers[layer], new.layers[layer])
+
+                rv.layers[layer] = f
+                rv.add(f)
+
+            return rv
+
+        # Otherwise, we recompute the scene list for the two widgets, merging
+        # as appropriate.
+
+        tags = { }
+
+        for tag, time, d in old.scene_list:
+
+            if tag is None:
+                continue
+
+            tags[tag] = d
+
+        newsl = [ ]
+
+        for tag, time, d in new.scene_list:
+
+            if tag is None or tag not in tags:
+                newsl.append((tag, time, d))
+                continue
+
+            oldpos = position(tags[tag])
+            newpos = position(d)
+
+            if oldpos == newpos:
+                newsl.append((tag, time, d))
+                continue
+                
+            move = renpy.display.layout.Move(position(tags[tag]),
+                                             position(d),
+                                             delay,
+                                             d,
+                                             )
+
+            newsl.append((tag, now(), move))
+
+        rv = renpy.display.layout.Fixed()
+        rv.append_scene_list(newsl)
+
+        return rv
+
+
+    rv = merge_slide(old_widget, new_widget)
+    rv.delay = delay
+
+    return rv
+
+            
+class ImageDissolve(Transition):
+    """
+    This dissolves the old scene into the new scene, using an image
+    to control the dissolve process.
+
+    A list of values is used to control this mapping. This list of
+    values consists 256 fully transparent values, a ramp (of a
+    specified number of steps) from full transparency to full opacity,
+    and 256 fully opaque values. A 256 entry window is slid over this
+    list, and the values found within are used to map the red channel
+    of the image onto the opacity of the new scene.
+
+    Basically, this means that while pixels come in first, black last,
+    and the ramp controls the sharpness of the transition.
+    
+    @param image: The image that will be used to control this
+    transition. The image should be the same size as the scene being
+    dissolved.
+
+    @param time: The amount of time the dissolve will take.
+
+    @param ramplen: The number of pixels of ramp to use. This defaults
+    to 8.
+
+    @param reverse: This reverses the ramp and the direction of the window
+    slide. When True, black pixels dissolve in first, and while pixels come
+    in last.    
+    """
+
+    def __init__(self, image, time, ramplen=8, reverse=False,
+                 old_widget=None, new_widget=None):
+
+        super(ImageDissolve, self).__init__(time)
+
+        self.time = time
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+
+        self.old_bottom = None
+        self.old_top = None
+        self.old_ramp = '\x00' * 256
+
+        self.image = renpy.display.im.load_image(image)
+
+        # Precompute the ramp.
+
+        ramp = '\x00' * 256
+
+        for i in range(ramplen):
+            ramp += chr(255 * i / ramplen)
+
+        ramp += '\xff' * 256
+
+        if reverse:
+            ramp = list(ramp)
+            ramp.reverse()
+            ramp = ''.join(ramp)
+
+        self.ramp = ramp
+        self.steps = ramplen + 256
+
+        self.reverse = reverse
+
+
+    def render(self, width, height, st):
+
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st)
+
+        if st < self.time:
+            renpy.display.render.redraw(self, 0)
+
+        step = int(self.steps * st / self.time)
+
+        if self.reverse:
+            step = self.steps - step
+
+        ramp = self.ramp[step:step+256]
+
+        rv = renpy.display.render.Render(width, height)
+
+        bottom = render(self.old_widget, width, height, st)
+        top = render(self.new_widget, width, height, st)
+
+        surf = top.pygame_surface(True)
+        renpy.display.render.mutated_surface(surf)
+
+        rv.focuses.extend(top.focuses)
+
+        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+            # Fast rendering path. Only used for full-screen, top-level, renders.
+
+            fast_ramp = [ ]
+
+            for new, old in zip(ramp, self.old_ramp):
+
+                new = ord(new)
+                old = ord(old)
+
+                if new >= 255:
+                    fast_ramp.append('\xff')
+                    continue
+
+                change = 255 * ( new - old ) / ( 255 - old )
+                fast_ramp.append(chr(int(change)))
+
+            renpy.display.module.alpha_munge(self.image, surf,
+                                             ''.join(fast_ramp))
+            
+            rv.blit(surf, (0, 0))
+                        
+        else:
+
+            # Complete rendering path.
+
+            rv.blit(bottom, (0, 0), focus=False)
+
+            renpy.display.module.alpha_munge(self.image, surf, ramp)
+            rv.blit(surf, (0, 0))
+
+        self.old_ramp = ramp
+
+        
+        self.old_top = id(top)
+        self.old_bottom = id(bottom)
+
+        return rv
+

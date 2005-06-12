@@ -111,35 +111,6 @@ class Keymap(renpy.display.layout.Null):
     # def render(self, width, height, st):
     #    return None
 
-class KeymouseBehavior(renpy.display.layout.Null):
-    """
-    This is a class that causes the keyboard to move the mouse. It's
-    useful on the game and key menus, as well as in imagemaps and the
-    like.
-    """
-
-    def event(self, ev, x, y):
-        if ev.type == renpy.display.core.DISPLAYTIME:
-
-            pressed = pygame.key.get_pressed()
-
-            x, y = pygame.mouse.get_pos()
-            ox, oy = x, y
-
-            if is_pressed(pressed, "keymouse_left"):
-                x -= renpy.config.keymouse_distance
-            if is_pressed(pressed, "keymouse_right"):
-                x += renpy.config.keymouse_distance
-            if is_pressed(pressed, "keymouse_up"):
-                y -= renpy.config.keymouse_distance
-            if is_pressed(pressed, "keymouse_down"):
-                y += renpy.config.keymouse_distance
-
-            if (x, y) != (ox, oy):
-                pygame.mouse.set_pos((x, y))
-
-            return None
-
 class PauseBehavior(renpy.display.layout.Null):
     """
     This is a class implementing the Pause behavior, which is to
@@ -168,23 +139,34 @@ class SayBehavior(renpy.display.layout.Null):
     mouse button.
     """
 
-    def __init__(self):
-        super(SayBehavior, self).__init__()
-              
+    focusable = True
 
+    def __init__(self, default=True, afm=None, **properties):
+        super(SayBehavior, self).__init__(default=default, **properties)
+
+        if afm is not None:
+            self.afm_length = len(afm)
+        else:
+            self.afm_length = None
+              
     def event(self, ev, x, y):
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
-           renpy.config.allow_skipping and renpy.config.skipping and \
-           ev.duration > renpy.config.skip_delay / 1000.0:
+               renpy.config.allow_skipping and renpy.config.skipping and \
+               ev.duration > renpy.config.skip_delay / 1000.0:
 
             if renpy.game.preferences.skip_unseen:
                 return True
             elif renpy.game.context().seen_current(True):
                 return True
 
+        if ev.type == renpy.display.core.DISPLAYTIME and \
+               self.afm_length and renpy.game.preferences.afm_time and \
+               ev.duration > ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time:
 
-        if map_event(ev, "dismiss"):
+            return True
+
+        if map_event(ev, "dismiss") and self.is_focused():
             return True
 
         if map_event(ev, "rollforward"):
@@ -192,210 +174,69 @@ class SayBehavior(renpy.display.layout.Null):
                 return True
             
         return None
-
-class Menu(renpy.display.layout.VBox):
-
-    def __init__(self, menuitems, style='menu', **properties):
-        """
-        @param menuitems: A list of menuitem tuples. The first element
-        of each tuple is the string that should be displayed to the
-        user. The second item is the value that should be returned if
-        this item is selected, or None to indicate that this item is a
-        caption.
-        """
-
-        super(Menu, self).__init__(style=style, **properties)
-
-        self.selected = None
-        self.results = [ ]
-
-        # self.caption_style = renpy.style.Style('menu_caption', { })
-        # self.selected_style = renpy.style.Style('menu_choice', { })
-        # self.unselected_style = renpy.style.Style('menu_choice', { })
-
-        # self.selected_style.set_prefix('hover_')
-        # self.unselected_style.set_prefix('idle_')
-
-        for i, (caption, result) in enumerate(menuitems):
-
-            if result is not None:
-                style = 'menu_choice'
-            else:
-                style = 'menu_caption'
-
-            self.add(renpy.display.text.Text(caption, style=style))
-            
-            if self.selected is None and result is not None:
-                self.selected = i
-
-            self.results.append(result)
-
-        self.update_styles()
-
-    def update_styles(self):
-        """
-        This updates the colors of our children to reflect the
-        one that has been selected by the user.
-        """
-
-        for i, (child, result) in enumerate(zip(self.children, self.results)):
-
-            # Captions should stay the default text color.
-            if result is None:
-                continue
-
-            # Actual choices change color if they are selected or not.
-            if i == self.selected:
-                child.set_style_prefix('hover_')
-            else:
-                child.set_style_prefix('idle_')
-
-
-    def event(self, ev, x, y):
-        """
-        Processes events.
-        """
-
-#        print ev
-#        print x, y
-
-        old_selected = self.selected
-        mouse_select = False
-
-        # Change selection based on mouse position.
-        if ev.type == MOUSEMOTION or map_event(ev, "menu_mouseselect"):
-            target = self.child_at_point(x, y)
-            if target is None:
-                return None
-
-            if self.results[target] is not None:
-                self.selected = target
-                mouse_select = True
-
-        # Change selection based on keypress.
-        if map_event(ev, "menu_keydown"):
-
-            selected = self.selected
-
-            while selected < len(self.results) - 1:
-                selected += 1
-                if self.results[selected] is not None:
-                    self.selected = selected
-                    break
-
-        # Change selection based on keypress.
-        if map_event(ev, "menu_keyup"):
-
-            selected = self.selected
-
-            while selected > 0:
-                selected -= 1
-                if self.results[selected] is not None:
-                    self.selected = selected
-                    break
-
-        # If the selected item changed, update the display.
-        if self.selected != old_selected:
-
-            self.children[self.selected].set_style_prefix("hover_")
-            self.children[old_selected].set_style_prefix("idle_")
-
-            renpy.display.audio.play(self.style.hover_sound)
-            # renpy.display.render.redraw(self, 0)
-
-        # Make selection based on keypress or mouse click.
-        if map_event(ev, "menu_keyselect") or \
-           (mouse_select and map_event(ev, "menu_mouseselect")):
-
-            self.children[self.selected].set_style_prefix("activate_")
-            
-            renpy.display.audio.play(self.style.activate_sound)
-            return self.results[self.selected]
-
-        return None
         
 class Button(renpy.display.layout.Window):
-    
 
     def __init__(self, child, style='button', clicked=None,
                  hovered=None, **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
-        self.style.set_prefix('idle_')
 
         self.activated = False
-
-        self.old_hover = False
         self.clicked = clicked
         self.hovered = hovered
+        self.focusable = clicked is not None
 
     def render(self, width, height, st):
 
-        if self.activated:
-            self.set_style_prefix('activate_')
-        elif self.old_hover:
-            self.set_style_prefix('hover_')
-        else:
-            self.set_style_prefix('idle_')
+        rv = super(Button, self).render(width, height, st)
 
+        if self.clicked:
+            rv.add_focus(self,
+                         None,
+                         self.style.left_margin,
+                         self.style.top_margin,
+                         rv.width - self.style.right_margin,
+                         rv.height - self.style.bottom_margin)
+            
+        return rv
 
-        return super(Button, self).render(width, height, st)
-
-    def set_hover(self, hover):
-        """
-        Called when we change from hovered to un-hovered, or
-        vice-versa.
-        """
-
-#         if hover:
-#             self.style.set_prefix('hover_')
-#         else:
-#             self.style.set_prefix('idle_')
-        
-        renpy.display.render.redraw(self, 0)
 
     def event(self, ev, x, y):
 
         # We deactivate on an event.
-        self.activated = False
+        if self.activated:
+            self.activated = False
 
-        inside = False
-
-        width, height = self.window_size
-
-        if x >= 0 and x < width and y >= 0 and y < height:
-            inside = True
-
-        if self.style.enable_hover and ev.type == MOUSEMOTION:
-
-            if self.old_hover != inside:
-                self.old_hover = inside
-                self.set_hover(inside)
-
-                if inside:
-                    if self.hovered:
-                        self.hovered()
-                        
-                    renpy.display.audio.play(self.style.hover_sound)
-
-
-        if map_event(ev, "button_select"):
-            if inside and self.clicked:
-                renpy.display.audio.play(self.style.activate_sound)
-
-                self.activated = True
-                renpy.display.render.redraw(self, 0)
-
-                rv = self.clicked()
-
-                if rv is not None:
-                    return rv
+            if self.focusable:
+                if self.is_focused():
+                    self.set_style_prefix('hover_')
                 else:
-                    raise renpy.display.core.IgnoreEvent()
+                    self.set_style_prefix('idle_')
+            else:
+                self.set_style_prefix('insensitive_')
+
+        # If not focused, ignore all events.
+        if not self.is_focused():
+            return None
+
+        # If clicked, 
+        if map_event(ev, "button_select") and self.clicked:
+
+            self.activated = True
+
+            self.set_style_prefix('activate_')
+            renpy.display.audio.play(self.style.sound)
+
+            rv = self.clicked()
+
+            if rv is not None:
+                return rv
+            else:
+                raise renpy.display.core.IgnoreEvent()
                     
+        return None
 
-
-        return super(Button, self).event(ev, x, y)
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -405,29 +246,6 @@ def TextButton(text, style='button', text_style='button_text',
     text = renpy.display.text.Text(text, style=text_style)
     return Button(text, style=style, clicked=clicked, **properties)
 
-
-
-# class TextButton(Button):
-
-#     def __init__(self, text, style='button', text_style='button_text',
-#                  clicked=None):
-
-#         self.text_widget = renpy.display.text.Text(text, style=text_style)
-
-#         super(TextButton, self).__init__(self.text_widget,
-#                                          style=style,
-#                                          clicked=clicked)
-
-#         self.text_widget.style.set_prefix('idle_')
-                                                  
-#     def set_hover(self, hover):
-#         super(TextButton, self).set_hover(hover)
-
-#         if hover:
-#             self.text_widget.style.set_prefix("hover_")
-#         else:
-#             self.text_widget.style.set_prefix("idle_")
-        
                 
 class Input(renpy.display.text.Text):
     """
@@ -457,13 +275,12 @@ class Input(renpy.display.text.Text):
             self.set_text(self.content.replace("{", "{{") + "_")
             renpy.display.render.redraw(self, 0)
 
-
         elif map_event(ev, "input_enter"):
             return self.content
 
         elif ev.type == KEYDOWN and ev.unicode:
             if ord(ev.unicode[0]) < 32:
-                    return None
+                return None
                 
             if self.length and len(self.content) >= self.length:
                 raise renpy.display.core.IgnoreEvent()
@@ -488,7 +305,7 @@ class Bar(renpy.display.core.Displayable):
     to clicks on that value.
     """
     
-    def __init__(self, width, height, range, value, clicked=None,
+    def __init__(self, width, height, range, value,
                  style='bar', **properties):
 
         super(Bar, self).__init__()
@@ -500,61 +317,14 @@ class Bar(renpy.display.core.Displayable):
         self.range = range
         self.value = value
 
-        self.clicked = clicked
-
-
-    def event(self, ev, x, y):
-
-        if not self.clicked:
-            return
-
-        if not map_event(ev, 'bar_click'):
-            return
-
-        if not (0 <= x < self.width and 0 <= y <= self.height):
-            return
-
-        # print x, y
-
-        lgutter = self.style.left_gutter
-        rgutter = self.style.right_gutter
-
-        if x < lgutter:
-            value = 0
-        elif x > self.width - rgutter:
-            value = self.range
-        else:
-            barwidth = self.width - lgutter - rgutter
-
-            # This makes it easier to select 100%.
-            x = x - lgutter
-            x = x + (barwidth / self.range // 2)
-
-            value = x * self.range / barwidth
-
-            value = max(value, 0)
-
-
-            rv = self.clicked(value)
-            
-            if rv is not None:
-                return rv
-            else:
-                raise renpy.display.core.IgnoreEvent()
 
     def render(self, width, height, st):
 
         width = self.width
         height = self.height
 
-        # The amount of space taken up by the bars.
-
-        if self.clicked:
-            lgutter = self.style.left_gutter
-            rgutter = self.style.right_gutter 
-        else:
-            lgutter = 0
-            rgutter = 0
+        lgutter = 0
+        rgutter = 0
 
         barwidth = width - lgutter - rgutter
 
@@ -587,7 +357,7 @@ class Conditional(renpy.display.layout.Container):
         self.condition = condition
         self.null = renpy.display.layout.Null()
 
-        self.state = eval(self.condition, renpy.game.store)
+        self.state = eval(self.condition, vars(renpy.store))
 
     def render(self, width, height, st):
         if self.state:
@@ -597,7 +367,7 @@ class Conditional(renpy.display.layout.Container):
 
     def event(self, ev, x, y):
 
-        state = eval(self.condition, renpy.game.store)
+        state = eval(self.condition, vars(renpy.store))
 
         if state != self.state:
             renpy.display.render.redraw(self, 0)

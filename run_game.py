@@ -2,15 +2,6 @@
 
 import os.path
 
-# Enable psyco. Warning: Check for memory leaks!
-
-try:
-    if not os.path.exists("nopsyco"):
-        import psyco
-        psyco.full()
-except ImportError:
-    pass
-
 import codecs
 import optparse
 import traceback
@@ -25,17 +16,17 @@ import encodings.unicode_escape
 import encodings.string_escape
 import encodings.raw_unicode_escape
 
+dirname = os.path.dirname(sys.argv[0])
 
-# Load up all of Ren'Py, in the right order.
-import renpy
+if dirname:
+    os.chdir(dirname)
+
+# Add the path to the module.
+sys.path.append("module")
 
 def main():
 
     name = os.path.basename(sys.argv[0])
-    dirname = os.path.dirname(sys.argv[0])
-
-    if dirname:
-        os.chdir(dirname)
 
     if name.find(".") != -1:
         name = name[:name.find(".")]
@@ -55,6 +46,9 @@ def main():
     op.add_option('--python', dest='python', default=None,
                   help='Run the argument in the python interpreter.')
 
+    op.add_option('--lint', dest='lint', default=False, action='store_true',
+                  help='Run a number of expensive tests, to try to detect errors in the script.')
+
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
 
@@ -64,8 +58,15 @@ def main():
         execfile(options.python)
         sys.exit(0)
 
+    if not options.lint:
+        import renpy.display.presplash
+        renpy.display.presplash.start(options.game)
+
+    # Load up all of Ren'Py, in the right order.
+    import renpy
+
     try:
-        renpy.main.main(options.game)
+        renpy.main.main(options.game, lint=options.lint)
             
     except Exception, e:
 
@@ -120,6 +121,8 @@ def main():
     sys.exit(0)
 
 def memory_profile():
+
+    import renpy
 
     print "Memory Profile"
     print

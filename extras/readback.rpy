@@ -115,7 +115,6 @@ init -100:
         
         # Save the old character object.
         readback_OldCharacter = Character
-        readback_OldDynamicCharacter = DynamicCharacter
         readback_oldmenu = menu
 
         class Character(readback_OldCharacter):
@@ -128,41 +127,22 @@ init -100:
                 self.readback_style = readback_style
                 
             def __call__(self, what, **kwargs):
+
+                if not self.check_condition():
+                    return
+
                 readback_OldCharacter.__call__(self, what, **kwargs)
-                readback_save(self, what)
 
-            def readback(self, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
+            def store_readback(self, who, what):
+                readback_save(self, who, what)
 
-
-
-        class DynamicCharacter(readback_OldDynamicCharacter):
-            def __init__(self, who,
-                         readback_style='readback_dialogue',
-                         **kwargs):
-                
-                readback_OldDynamicCharacter.__init__(self, who, **kwargs)
-                self.readback_style = readback_style
-                
-
-            def __call__(self, what, **kwargs):
-                name = renpy.renpy.python.py_eval(self.name_expr)
-                readback_OldDynamicCharacter.__call__(self, what, **kwargs)
-                readback_save(self, name, what)
-                
-            def readback(self, name, what):
-                renpy.display_say(self.name, what,
-                                  who_style=self.who_style,
-                                  what_style=self.readback_style,
-                                  window_style=self.window_style,
-                                  interact=False,
-                                  **self.properties)
-
+            def readback(self, who, what):
+                self.function(who, what,
+                              who_style=self.who_style,
+                              what_style=self.readback_style,
+                              window_style=self.window_style,
+                              interact=False,
+                              **self.properties)
     
         class Sayer(object):
             def __call__(self, who, what):
@@ -179,7 +159,7 @@ init -100:
         say = Sayer()
 
         def readback(what):
-            readback_save(narrator, what)
+            narrator.store_readback(None, what)
             
         def menu(menuitems):
             rv = readback_oldmenu(menuitems)
