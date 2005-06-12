@@ -11,6 +11,8 @@ bonus characters is configurable in config.afm_bonus, which defaults
 to 25. Auto-forward-mode can be hidden from the user by setting 
 library.has_afm to False.
 
+The preferences screen has been redesigned, to have three columns.
+
 Unicode support has been extended to names in the script. Now names in
 the script can contain unicode characters, as well as ascii
 characters. This includes labels and image names. Right now, we
