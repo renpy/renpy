@@ -93,6 +93,8 @@ label day_planner:
 
     python hide:
 
+        renpy.choice_for_skipping()
+
         ui.window(style='dp_window')
         ui.vbox(dp_done_padding)
 

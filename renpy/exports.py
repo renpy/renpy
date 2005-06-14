@@ -215,6 +215,17 @@ def menu(items, set_expr):
 
     return rv
 
+def choice_for_skipping():
+    """
+    This is called to indicate to the skipping code that we have
+    reached a choice. If we're skipping, and if the skip after
+    choices preference is not True, then this disables skipping.
+    """
+
+    if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
+        renpy.config.skipping = False
+    
+
 def display_menu(items, window_style='menu_window'):
     """
     Displays a menu containing the given items, returning the value of
@@ -226,6 +237,8 @@ def display_menu(items, window_style='menu_window'):
     if this item is selected, or None if this item is a non-selectable
     caption.
     """
+
+    choice_for_skipping()
 
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)

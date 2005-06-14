@@ -23,6 +23,8 @@ label old_day_planner_cycle:
     
     python hide:
 
+        renpy.choice_for_skipping()
+
         # Period Selection Window.
         ui.window(xpos=0,
                   ypos=200,

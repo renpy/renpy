@@ -377,12 +377,20 @@ init -1000:
         style.prefs_pref.xanchor = 'center'
         style.prefs_pref.bottom_margin = 10
 
+
+
         style.create('prefs_label', 'default',
                      '(text, position) The style that is applied to the label of a block of preferences.')
 
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
         style.prefs_label.color = green
+
+        style.create('prefs_hbox', 'default',
+                     '(position) If library.hbox_pref_choices is True, the style of the hbox containing the choices.')
+
+        style.prefs_hbox.xpos = 0.5
+        style.prefs_hbox.xanchor = 'center'
         
         style.create('prefs_button', 'button',
                      '(window, hover) The style of an unselected preferences button.')

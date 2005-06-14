@@ -82,11 +82,12 @@ class Preferences(object):
 
         self.afm_time = 0
 
-
         # 2 - All transitions.
         # 1 - Only non-default transitions.
         # 0 - No transitions.
         self.transitions = 2
+
+        self.skip_after_choices = False
 
     def __setstate__(self, state):
         self.reinit()

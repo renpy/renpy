@@ -9,6 +9,10 @@ init -450:
         # with that style.
         library.preferences = { }
 
+        # If true, the preference choices will be arraigned in an
+        # hbox.
+        library.hbox_pref_choices = False
+
         class _Preference(object):
             """
             This is a class that's used to represent a preference that
@@ -58,6 +62,9 @@ init -450:
 
                 cur = getattr(self.base, self.field)
 
+                if library.hbox_pref_choices:
+                    ui.hbox(style='prefs_hbox')
+
                 for name, value in values:
 
                     def clicked(value=value):
@@ -67,6 +74,9 @@ init -450:
                     _button_factory(name, "prefs",
                                     selected=cur==value,
                                     clicked=clicked)
+                
+                if library.hbox_pref_choices:
+                    ui.close()
                     
                 ui.close()
 
@@ -161,7 +171,9 @@ init -450:
         library.has_transitions = True
         library.has_cps = True
         library.has_afm = True
-
+        library.has_skipping = True
+        library.has_skip_after_choice = True
+    
 
         # Left
 
@@ -180,10 +192,15 @@ init -450:
         # Center
 
         pc1 = _Preference('TAB and CTRL Skip', 'skip_unseen', [
-            ('Seen Messages', False, 'config.allow_skipping'),
-            ('All Messages', True, 'config.allow_skipping'),
+            ('Seen Messages', False, 'config.allow_skipping and library.has_skipping'),
+            ('All Messages', True, 'config.allow_skipping and library.has_skipping'),
             ])
 
+        
+        pc2= _Preference('After Choices', 'skip_after_choices', [
+            ('Stop Skipping', False, 'config.allow_skipping and library.has_skip_after_choice'),
+            ('Continue Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
+            ])
 
         def cps_render(n):
             if n == 0:
@@ -191,7 +208,7 @@ init -450:
             else:
                 return str(n)
             
-        pc2 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
+        pc3 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
                                 0, 500, 10, 'library.has_cps',
                                 render=cps_render)
 
@@ -201,7 +218,7 @@ init -450:
             else:
                 return str(n)
 
-        pc3 = _PreferenceSpinner('Auto Forward Time', 'afm_time',
+        pc4 = _PreferenceSpinner('Auto Forward Time', 'afm_time',
                                 0, 60, 1, 'library.has_afm',
                                 render=afm_render)
 
@@ -218,7 +235,7 @@ init -450:
             ])
             
         library.preferences['prefs_left'] = [ pl1, pl2 ]
-        library.preferences['prefs_center'] = [ pc1, pc2, pc3 ]
+        library.preferences['prefs_center'] = [ pc1, pc2, pc3, pc4 ]
         library.preferences['prefs_right'] = [ pr1, pr2 ]
 
 

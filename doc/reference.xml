@@ -1870,6 +1870,8 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.get_game_runtime -->
   
+  <!-- func renpy.choice_for_skipping -->
+
   <!-- func color -->
 
   <p>
@@ -2424,6 +2426,21 @@ If True, the preference for auto-forward mode is shown to the user.
       game does not have any transitions (that is, never uses the with
       statement or clause).
     </var>
+
+<var name="library.has_skipping" value="True">
+If True, the preference controlling what TAB and CTRL skip will be 
+shown to the user.
+</var>
+
+<var name="library.has_skip_after_choices" value="True">
+If True, the preference enabling skip after choices will be shown
+to the user.
+</var>
+
+<var name="library.hbox_pref_choices" value="False">
+If True, the choice buttons in a preference will be placed together 
+in an hbox.
+</var>
 
     <var name="library.enter_sound" value="None">
       If not None, this is a sound file that is played when entering
