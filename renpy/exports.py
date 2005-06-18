@@ -383,10 +383,10 @@ def pause(delay=None, music=None):
 
     @param delay: The number of seconds to delay.
 
-    @param music: If supplied, this gives the number of seconds into
-    the background music that we will delay until. If music is
-    playing, this takes precedence, otherwise the delay parameter
-    take precedence.
+    @param music: If supplied, and music is playing, this takes
+    precedence over the delay parameter. It gives a time, in seconds,
+    into the playing music track. Ren'Py will pause until the music
+    has played up to that point..
 
     Returns True if the pause was interrupted by the user hitting a key
     or clicking a mouse, or False if the pause was ended by the appointed

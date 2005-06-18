@@ -7,6 +7,9 @@ The new function renpy.choice_for_skipping should be called by user
 code to indicate that a choice is occuring, and therefore we might
 want to end skipping.
 
+Fixed a bug that was preventing RevertableObjects from supporting
+properties.
+
 New in Ren'Py 4.8.8
 -------------------
 
