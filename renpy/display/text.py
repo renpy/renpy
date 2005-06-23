@@ -11,6 +11,9 @@ _font_cache = { }
 def get_font(fn, size, bold=False, italics=False, underline=False):
     from renpy.loader import transfn
 
+    if (fn, bold, italics) in renpy.config.font_replacement_map:
+        fn, bold, italics = renpy.config.font_replacement_map[fn, bold, italics]
+
     if (fn, size, bold, italics, underline) in _font_cache:
         return _font_cache[(fn, size, bold, italics, underline)]
 

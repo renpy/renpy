@@ -2356,6 +2356,19 @@ The number of bonus characters added to every string when auto-forward
 mode is in effect.
 </var>
 
+<var name="config.font_replacement_map" value="{ }">
+This is a map from (font, bold, italics) to (font, bold, italics),
+used to replace a font with one that's specialized as having bold
+and/or italics. For example, if you wanted to have everything using an
+italic version of "Vera.ttf" use "VeraIt.ttf" instead, you could
+write config.font_replacement_map["Vera.ttf", False, True] =
+("VeraIt.ttf", False, False). Please note that these mappings only
+apply to specific variants of a font. In this case, requests for a
+bold italic version of vera will get a bold italic version of vera,
+rather than a bold version of the italic vera.
+</var>
+
+
 <var name="library.file_page_cols" value = "2" >
 This is the number of columns of save slots that are show in the
 picker that's used in the load and save screens of the game 

@@ -1,3 +1,10 @@
+New in Ren'Py 4.8.10
+--------------------
+
+Added config.font_replacement_map, which is used to map from a regular
+font to a version of that font that is specialized as italic, bold, or
+both.
+
 New in Ren'Py 4.8.9
 -------------------
 
