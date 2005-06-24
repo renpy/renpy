@@ -174,6 +174,12 @@ afm_characters = 250
 # The number of bonus characters to add to a string for afm.
 afm_bonus = 25
 
+# A map from font, bold, italic to font, bold, italic. This is used
+# to replace (say) the italic version of a regular font with the regular
+# version of an italic font.
+font_replacement_map = { }
+
+
 # The number of frames that Ren'Py has shown.
 frames = 0
 
