@@ -1,3 +1,10 @@
+New in Ren'Py 5.0
+-----------------
+
+Blessed 4.8.10 as the 5.0 stable release.
+
+Minor changes to images in the demo game.
+
 New in Ren'Py 4.8.10
 --------------------
 
