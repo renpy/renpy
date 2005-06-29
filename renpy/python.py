@@ -236,10 +236,10 @@ class RevertableDict(dict):
 class RevertableObject(object):
 
     def __setattr__(self, attr, value):
-        self.__dict__[attr] = value
+        object.__setattr__(self, attr, value)
 
     def __delattr__(self, attr):
-        del self.__dict__[attr]
+        object.__delattr__(self, attr)
 
     __setattr__ = mutator(__setattr__)
     __delattr__ = mutator(__delattr__)

@@ -12,6 +12,12 @@ def dosify(s):
 
 def copy_file(source, dest, license="", dos=True):
 
+    if dest.endswith(".bak"):
+        return
+
+    if dest.endswith("~"):
+        return
+    
     print source, "->", dest
 
     sf = file(source, "rb")
@@ -63,6 +69,9 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
             if not should_copy(i):
                 continue
 
+            if i.startswith("."):
+                continue
+
             copy_file(dirpath + "/" + i, dstrel + "/" + i, license=license)
             
 
@@ -78,6 +87,10 @@ def main():
     license = "#!/usr/bin/env python\n\n"
     
     for l in lf:
+
+        if l.startswith("---"):
+            break
+        
         license += "# " + l
 
     lf.close()
@@ -109,19 +122,15 @@ def main():
 
     # Copy the game 
     copy_tree(gamedir, target + "/game",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~") and not fn.endswith(".mpg"))
+              should_copy = lambda fn : not fn.endswith(".mpg"))
 
-    copy_tree("common", target + "/common",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("common", target + "/common")
 
-    copy_tree("dse", target + "/dse",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("dse", target + "/dse")
 
-    copy_tree("extras", target + "/extras",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
-
-    copy_tree("scripts", target + "/scripts",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("extras", target + "/extras")
+    
+    copy_tree("scripts", target + "/scripts")
 
     def cp(x, license="", dos=True):
         copy_file(x, target + "/" + x, dos=dos)

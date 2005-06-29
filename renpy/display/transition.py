@@ -188,14 +188,14 @@ def Fade(out_time, hold_time, in_time,
     given amount of time, and then fades from the solid color into
     the new scene.
     
-    @param in_time:  The amount of time that will be spent
+    @param out_time:  The amount of time that will be spent
     fading from the old scene to the solid color. A float, given as
     seconds.
     
     @param hold_time:  The amount of time that will be spent
     displaying the solid color. A float, given as seconds.
 
-    @param out_time:  The amount of time that will be spent
+    @param in_time:  The amount of time that will be spent
     fading from the solid color to the new scene. A float, given as
     seconds.
     

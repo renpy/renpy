@@ -1,3 +1,17 @@
+New in Ren'Py 5.0
+-----------------
+
+Blessed 4.8.10 as the 5.0 stable release.
+
+Minor changes to images in the demo game.
+
+New in Ren'Py 4.8.10
+--------------------
+
+Added config.font_replacement_map, which is used to map from a regular
+font to a version of that font that is specialized as italic, bold, or
+both.
+
 New in Ren'Py 4.8.9
 -------------------
 
@@ -6,6 +20,9 @@ There is now a preference that controls skipping after choices.
 The new function renpy.choice_for_skipping should be called by user
 code to indicate that a choice is occuring, and therefore we might
 want to end skipping.
+
+Fixed a bug that was preventing RevertableObjects from supporting
+properties.
 
 New in Ren'Py 4.8.8
 -------------------
