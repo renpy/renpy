@@ -178,13 +178,14 @@ class SayBehavior(renpy.display.layout.Null):
 class Button(renpy.display.layout.Window):
 
     def __init__(self, child, style='button', clicked=None,
-                 hovered=None, **properties):
+                 hovered=None, unhovered=None, **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
 
         self.activated = False
         self.clicked = clicked
         self.hovered = hovered
+        self.unhovered = unhovered
         self.focusable = clicked is not None
 
     def render(self, width, height, st):
@@ -201,6 +202,18 @@ class Button(renpy.display.layout.Window):
             
         return rv
 
+
+    def focus(self, default=False):
+        super(Button, self).focus(default)
+
+        if self.hovered:
+            self.hovered()
+
+    def unfocus(self):
+        super(Button, self).unfocus()
+
+        if self.unhovered:
+            self.unhovered()
 
     def event(self, ev, x, y):
 

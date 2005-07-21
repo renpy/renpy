@@ -10,6 +10,8 @@ cp run_game.py console.py
 
 cmd /c build_exe.bat 
 
+strip dist/*.exe dist/*.dll dist/lib/*.pyd dist/lib/*.dll dist/lib/*.exe
+
 python distribute.py ../$1 demo2
 cd ..
 zip -9 -r $1.zip $1

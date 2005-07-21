@@ -89,10 +89,11 @@ def before_interact(root):
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
     for f, n in fwn:
-        if f is current:
-            f.focus(default=True)
-        else:
+        if f is not current:
             f.unfocus()
+
+    if current:
+        current.focus(default=True)
 
     
 

@@ -1,3 +1,17 @@
+New in Ren'Py 5.0.1
+-------------------
+
+The hovered callback on buttons was no longer working. This is now
+fixed. Also added a complementary unhovered callback. [ document if
+necessary ]
+
+A number of changes have been made to Ren'Py, that shrink the zip file
+by over ... k.
+
+The math module is now included.
+
+The presplash screen now displays without a title-bar.
+
 New in Ren'Py 5.0
 -----------------
 
