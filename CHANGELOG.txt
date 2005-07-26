@@ -17,8 +17,8 @@ run on a 16 bpp machine, but there will be a conversion from 32 -> 16
 bits when it is displayed. This fixes a number of transitions that did
 not work in 16 bit mode.
 
-Fixed a bug with im.Size in which 800x600 was used instead of the
-current screen size, as the default size.
+Fixed a bug with im.Size in which 800x600 was used as the default
+target size, instead of the current screen size.
 
 New in Ren'Py 5.0
 -----------------
