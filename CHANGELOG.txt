@@ -2,15 +2,20 @@ New in Ren'Py 5.0.1
 -------------------
 
 The hovered callback on buttons was no longer working. This is now
-fixed. Also added a complementary unhovered callback. [ document if
-necessary ]
+fixed. Also added a complementary unhovered callback. Documented them 
+both on ui.button().
 
-A number of changes have been made to Ren'Py, that shrink the zip file
-by over ... k.
+A number of changes have been made to Ren'Py, the cumulative effect of
+which is to shrink the package size by a bit.
 
-The math module is now included.
+The python math module is now included with Ren'Py.
 
-The presplash screen now displays without a title-bar.
+The presplash screen now displays without a titlebar.
+
+Ren'Py now always runs internally in 24 or 32 bpp mode. It will still
+run on a 16 bpp machine, but there will be a conversion from 32 -> 16
+bits when it is displayed. This fixes a number of transitions that did
+not work in 16 bit mode.
 
 New in Ren'Py 5.0
 -----------------

@@ -413,10 +413,19 @@ class Display(object):
         if fullscreen:
             fsflag = FULLSCREEN
 
+        # Pick an appropriate display mode. Prefer 32, but accept 24
+        # before letting SDL do conversions.
+        if 24 == pygame.display.mode_ok((renpy.config.screen_width,
+                                         renpy.config.screen_height),
+                                        fsflag, 32):
+            depth = 24
+        else:
+            depth = 32
+        
         # The window we display things in.
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
-                                              fsflag)
+                                              fsflag, depth)
 
         # The mouse buffer.
         if renpy.config.mouse:

@@ -394,6 +394,12 @@ def button(clicked=None, **properties):
 
     @param clicked: A function that is called when this button is
     clicked.
+
+    @param hovered: A function that is called when this button gains
+    focus.
+
+    @param unhovered: A function that is called when this button loses
+    focus.
     """
 
     return add(renpy.display.behavior.Button(None, clicked=clicked,

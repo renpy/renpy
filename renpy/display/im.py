@@ -647,22 +647,23 @@ class Tile(ImageBase):
 
         im = image(im)
 
-        if size is None:
-            size = (renpy.config.screen_width, renpy.config.screen_height)
-
         super(Tile, self).__init__(im, size)
         self.image = im
         self.size = size
 
     def load(self):
 
+        size = self.size
+
+        if size is None:
+            size = (renpy.config.screen_width, renpy.config.screen_height)
+
         surf = cache.get(self.image)
 
-        width, height = self.size
+        width, height = size
         sw, sh = surf.get_size()
 
-
-        rv = pygame.Surface(self.size, 0,
+        rv = pygame.Surface(size, 0,
                             renpy.game.interface.display.sample_surface)
 
         for y in range(0, height, sh):
