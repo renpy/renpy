@@ -542,7 +542,7 @@ menu what_to_do:
   <p>
     Without the ability to display images to the user, a visual
     novel would be a text adventure.  Ren'Py controls image display
-    by using a <def>layers</def>, each comprising a list of things to be
+    by using <def>layers</def>, each comprising a list of things to be
     displayed to the user. By default, there are three layers. The
     master layer is manipulated using the various image display
 statement defined in this section. The transient layer is used to
@@ -552,8 +552,9 @@ overlaid on top of the screen.
    </p>
 
    <p>
-    Every time an interaction starts (for example, a line of dialogue or a menu is displayed), the things in
-    the each of the layers is drawn to the screen, with the first being in
+    Every time an interaction starts (for example, a line of dialogue
+    or a menu is displayed), the contents of 
+    each of the layers is drawn to the screen, with the first being in
     the back and the last being in the front. A number of statements
     manipulate the contents of the master layer. Before we can explain them, however,
     we should first define a few terms.
@@ -1343,7 +1344,7 @@ label subroutine:
     clause in turn, and if it evaluates to a true value, then the
     block associated with that clause is executed. If no expression
     evaluates to true, then the block associated with the else
-    clause is executed. (If else clause exists, execution
+    clause is executed. (If an else clause exists, execution
     immediately continues with the next statement.)  In any case, at
     the end of the block, control is transferred to the statement
     following the if statement.
@@ -1638,7 +1639,7 @@ $ state.love_love_points = a + 1
   </example>
 
   <p>
-    The variables a and l are updated after the end of the init:
+    The variables a and b are updated after the end of the init:
     block, while state is not updated. The variable a is assigned a
     different integer object, while b is assigned a new empty list.
     While a field in the Character object is changed by the last
@@ -1744,7 +1745,7 @@ $ state.love_love_points = a + 1
       expected that the game will update this on a regular basis with
       the name of the section of the script that is currently
       executing. When a save file is shown to the user, this name will
-      be shown with it. Alternatively, never change this an no name
+      be shown with it. Alternatively, never change this and no save name
       will be shown.
     </var>
   </dl>
@@ -1807,7 +1808,7 @@ $ persistent.gallery_unlocked = True
 
   <example>
 init:
-    e = Character("Eileen", color=(200, 255, 200, 255))
+    $ e = Character("Eileen", color=(200, 255, 200, 255))
 
 e "My name is shown in full, and in green."
   </example>
@@ -2078,7 +2079,7 @@ we need to stop the decoding of the movie and hide the displayable.
 
 <example>
 init:
-    image movie = Movie
+    image movie = Movie()
 
 $ renpy.movie_start_displayable("bg.mpg", (640, 480), -1)
 scene movie
@@ -2354,6 +2355,19 @@ auto-forward mode takes effect.
 The number of bonus characters added to every string when auto-forward
 mode is in effect.
 </var>
+
+<var name="config.font_replacement_map" value="{ }">
+This is a map from (font, bold, italics) to (font, bold, italics),
+used to replace a font with one that's specialized as having bold
+and/or italics. For example, if you wanted to have everything using an
+italic version of "Vera.ttf" use "VeraIt.ttf" instead, you could
+write config.font_replacement_map["Vera.ttf", False, True] =
+("VeraIt.ttf", False, False). Please note that these mappings only
+apply to specific variants of a font. In this case, requests for a
+bold italic version of vera will get a bold italic version of vera,
+rather than a bold version of the italic vera.
+</var>
+
 
 <var name="library.file_page_cols" value = "2" >
 This is the number of columns of save slots that are show in the

@@ -15,6 +15,7 @@ import encodings.zlib_codec
 import encodings.unicode_escape
 import encodings.string_escape
 import encodings.raw_unicode_escape
+import math
 
 dirname = os.path.dirname(sys.argv[0])
 

@@ -198,7 +198,7 @@ if version >= 4008007:
 
 else:
 
-    can_munge = True
+    can_munge = False
 
     def alpha_munge(src, dst, amap):
         return

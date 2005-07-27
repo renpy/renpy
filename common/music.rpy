@@ -71,7 +71,7 @@ init -1000:
          if not hasattr(ctx, '_music_name'):
              ctx._music_name = None
              ctx._music_loops = None
-             
+
          playing, queued = audio.music_filenames()
 
          # If music is disabled, ensure that it is stopped.

@@ -1,3 +1,41 @@
+New in Ren'Py 5.0.1
+-------------------
+
+The hovered callback on buttons was no longer working. This is now
+fixed. Also added a complementary unhovered callback. Documented them 
+both on ui.button().
+
+A number of changes have been made to Ren'Py, the cumulative effect of
+which is to shrink the package size by a bit.
+
+The python math module is now included with Ren'Py.
+
+The presplash screen now displays without a titlebar.
+
+Ren'Py now always runs internally in 24 or 32 bpp mode. It will still
+run on a 16 bpp machine, but there will be a conversion from 32 -> 16
+bits when it is displayed. This fixes a number of transitions that did
+not work in 16 bit mode.
+
+Fixed a bug with im.Size in which 800x600 was used as the default
+target size, instead of the current screen size.
+
+Fixed a bug that prevented drop_shadow = None from working.
+
+New in Ren'Py 5.0
+-----------------
+
+Blessed 4.8.10 as the 5.0 stable release.
+
+Minor changes to images in the demo game.
+
+New in Ren'Py 4.8.10
+--------------------
+
+Added config.font_replacement_map, which is used to map from a regular
+font to a version of that font that is specialized as italic, bold, or
+both.
+
 New in Ren'Py 4.8.9
 -------------------
 
@@ -6,6 +44,9 @@ There is now a preference that controls skipping after choices.
 The new function renpy.choice_for_skipping should be called by user
 code to indicate that a choice is occuring, and therefore we might
 want to end skipping.
+
+Fixed a bug that was preventing RevertableObjects from supporting
+properties.
 
 New in Ren'Py 4.8.8
 -------------------
