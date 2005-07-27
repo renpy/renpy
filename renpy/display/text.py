@@ -513,6 +513,14 @@ class Text(renpy.display.core.Displayable):
                 dsyo = 0
             else:
                 yo = 0
+        else:
+            absxo = 0
+            absyo = 0
+            dsxo = 0
+            dsyo = 0
+            xo = 0
+            yo = 0
+
                 
         self.layout(width - absxo)
             

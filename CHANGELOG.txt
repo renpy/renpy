@@ -20,6 +20,8 @@ not work in 16 bit mode.
 Fixed a bug with im.Size in which 800x600 was used as the default
 target size, instead of the current screen size.
 
+Fixed a bug that prevented drop_shadow = None from working.
+
 New in Ren'Py 5.0
 -----------------
 
