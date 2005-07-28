@@ -1,3 +1,6 @@
+Fixed a bug that prevented objects from participating properly in 
+rollback.
+
 New in Ren'Py 5.0.1
 -------------------
 

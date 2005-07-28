@@ -35,7 +35,7 @@ def reached(obj, path, reachable):
     
     try:
         # Treat as fields, indexed by strings.
-        for k, v in vars(obj.iteritems()):
+        for k, v in vars(obj).iteritems():
             reached(v, path + "." + k, reachable)
     except:
         pass
@@ -183,8 +183,7 @@ def mutator(method):
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
-        
-        
+
         return method(self, *args, **kwargs)
 
     return do_mutation
