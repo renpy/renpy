@@ -184,7 +184,7 @@ def menu(items, set_expr):
 
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (label, value)
+    items = [ (label % tag_quoting_dict, value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
 
@@ -261,7 +261,9 @@ class TagQuotingDict(object):
 
             return rv
         else:
-            raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            if renpy.config.debug:
+                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            return "<" + key + " unbound>"
 
 tag_quoting_dict = TagQuotingDict()
 
