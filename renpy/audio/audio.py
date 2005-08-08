@@ -303,7 +303,7 @@ class Channel(object):
         if self.playing_midi:
             midi.stop()
         else:
-            pss.fadeout(self, ms)
+            pss.fadeout(self.number, ms)
 
 
     def enqueue(self, filename, loop=True, synchro_start=False):
