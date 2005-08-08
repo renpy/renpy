@@ -77,9 +77,7 @@ class Preferences(object):
         self.sound = True
         self.music = True
         self.skip_unseen = False
-
         self.text_cps = 0
-
         self.afm_time = 0
 
         # 2 - All transitions.
@@ -88,6 +86,8 @@ class Preferences(object):
         self.transitions = 2
 
         self.skip_after_choices = False
+
+        self.volumes = { }
 
     def __setstate__(self, state):
         self.reinit()

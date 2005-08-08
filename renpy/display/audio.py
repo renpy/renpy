@@ -6,10 +6,23 @@
 # Remember to code defensively against mikey's computer that
 # doesn't have the sound card in it.
 
-import pygame
+# import pygame
 import renpy
 import sys # to detect windows.
 import os
+
+# Import pysdlsound and nativemidi, failing if necessary.
+
+try:
+    import pysdlsound as pss
+except ImportError:
+    pss = None
+
+try:
+    import nativemidi as nm
+except ImportError:
+    nm = None
+    
 
 # The Windows Volume Management Strategy (tm).
 
@@ -55,9 +68,12 @@ def init():
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
-        
-        pygame.mixer.init(renpy.config.sound_sample_rate, -16, 2, bufsize)
-        pygame.mixer.music.get_volume()
+
+        pss.init(renpy.config.sound_sample_rate, 2, bufsize)
+
+        if nm:
+            nm.init()
+
         mixer_works = True
     except:
         if renpy.config.debug_sound:

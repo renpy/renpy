@@ -179,7 +179,6 @@ afm_bonus = 25
 # version of an italic font.
 font_replacement_map = { }
 
-
 # The number of frames that Ren'Py has shown.
 frames = 0
 

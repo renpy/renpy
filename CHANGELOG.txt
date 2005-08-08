@@ -1,3 +1,5 @@
+{font} text tag.
+
 Menu text now supports percent-substitutions, like say statements
 always did.
 
