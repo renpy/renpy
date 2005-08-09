@@ -337,6 +337,13 @@ channels[5].mixer = 'music'
 channels[6].mixer = 'music'
 channels[7].mixer = 'music'
 
+def get_channel(number):
+    if not 0 <= number < NUM_CHANNELS:
+        raise Exception("Channel number %d out of bounds." % channel)
+
+    return channels[number]
+    
+
 def init():
 
     global pcm_ok
@@ -380,14 +387,11 @@ def init():
 
     default_volume = 1.0
 
-    if mix and mix.get_wave() is not None:
+    if mix and not 'RENPY_NOMIXER' in os.environ and mix.get_wave() is not None:
         default_volume = mix.get_wave()
+        mix_ok = True
 
-        if default_volume >= 0:
-            mix_ok = True
-        else:
-            default_volume = 1.0
-
+    
     for m in mixers:
         renpy.game.preferences.volumes.setdefault(m, default_volume)
 
@@ -416,6 +420,19 @@ def periodic():
 
     midi.periodic()
 
+    # Perform a synchro-start if necessary.
+    need_ss = False
+
+    for c in channels:
+        if c.synchro_start and c.wait_stop:
+            need_ss = False
+            break
+
+        if c.synchro_start and not c.wait_stop:
+            need_ss = True
+
+    if need_ss:
+        pss.unpause_all()
 
     # Now, consider adjusting the volume of the channel. 
 
