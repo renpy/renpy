@@ -40,6 +40,10 @@ import renpy.display.video
 import renpy.display.focus
 import renpy.display.anim
 
+# import renpy.audio.audio
+# import renpy.audio.sound
+# import renpy.audio.music
+
 import renpy.ui
 import renpy.lint
 

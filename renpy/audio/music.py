@@ -1,5 +1,26 @@
 # The public API for music in games.
 
+# The music channels.
+music_channels = [ 3, 4, 5, 6, 7 ]
+
+def info():
+    """
+    Returns the info object. If the music fields are not on it, then
+    add them.
+    """
+
+    info = renpy.game.context().info
+
+    if getattr(info, "_music_last", None) is None:
+        info._music_last = renpy.python.RevertableDict()
+        return info
+
+    if getattr(info, "_music_volumes", None) is None:
+        info._music_volumes = renpy.python.RevertableDict()
+
+    return info
+    
+
 def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False):
     """
     This stops the music currently playing on the numbered channel, dequeues
@@ -63,3 +84,24 @@ def set_queue_empty_callback(callback, channel=7):
     queue slot is empty.
     """
     
+def set_music(channel, flag):
+    """
+    This should be called to indicate if the given channel should be
+    treated as a music channel. If the flag is True, the channel will
+    be treated as a music channel, if False, the channel will be
+    treated as a sound effects channel. Please note that this will not
+    change the mixer controlling the channel. Use
+    renpy.sound.set_mixer to do that.
+
+    By default, channels 3-7 are considered music channels.
+    """
+
+    if not 0 <= channel < renpy.audio.audio.NUM_CHANNELS:
+        raise Exception("Not a music channel.")
+
+    if flag:
+        if channel in music_channels:
+            music_channels.remove(channel)
+    else:
+        if channel not in music_channels:
+            music_channels.append(channel)

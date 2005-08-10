@@ -6,22 +6,22 @@
 # Remember to code defensively against mikey's computer that
 # doesn't have the sound card in it.
 
-# import pygame
+import pygame
 import renpy
 import sys # to detect windows.
 import os
 
 # Import pysdlsound and nativemidi, failing if necessary.
 
-try:
-    import pysdlsound as pss
-except ImportError:
-    pss = None
+# try:
+#     import pysdlsound as pss
+# except ImportError:
+#     pss = None
 
-try:
-    import nativemidi as nm
-except ImportError:
-    nm = None
+# try:
+#     import nativemidi as nm
+# except ImportError:
+#     nm = None
     
 
 # The Windows Volume Management Strategy (tm).

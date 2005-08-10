@@ -181,6 +181,24 @@ class Channel(object):
         into its queues, if necessary.
         """
 
+        # This should be set from something that checks to see if our
+        # mixer is muted.
+        force_stop = renpy.game.preferences.mute[self.mixer]
+
+        if self.playing and force_stop:
+            if self.playing_midi:
+                midi.stop()
+                self.playing = False
+                self.wait_stop = False
+                self.playing_midi = False
+
+            else:
+                pss.stop(self.number)
+                self.playing = False
+                self.wait_stop = False
+
+            return
+
         # If we're playing midi, and the midi device is busy, return.
         # Otherwise, it's stopped, so we can stop waiting.
         if self.playing_midi:
@@ -394,7 +412,34 @@ def init():
     
     for m in mixers:
         renpy.game.preferences.volumes.setdefault(m, default_volume)
+        renpy.game.preferences.mute.setdefault(m, False)
 
+
+def quit():
+    """
+    Deinitialize the mixer and the various libraries.
+    """
+
+    if not pcm_ok:
+        return
+    
+    for c in channels:
+        c.dequeue()
+        c.fadeout(0)
+        
+        c.queue = [ ]
+        c.loop = False
+        c.playing = False
+        c.playing_midi = False
+        c.wait_stop = False
+        c.synchro_start = False
+        
+    pss.quit()
+    
+    pcm_ok = None    
+    midi_ok = None
+    mix_ok = None
+ 
 # The last-set pcm volume.
 pcm_volume = None
 

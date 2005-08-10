@@ -1,5 +1,8 @@
 # The public API for sound playback from games.
 
+# TODO: Check to see if SFX are enabled before playing sounds with play or
+# queue.
+
 import renpy
 
 def play(filename, channel=0, fadeout=0):

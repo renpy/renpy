@@ -1,4 +1,3 @@
-
 # This file contains code that handles the execution of python code
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
@@ -519,6 +518,10 @@ class RollbackLog(renpy.object.Object):
         for k in self.ever_been_changed.keys():
             if k in store:
                 rv[k] = store[k]
+
+        # Enable rollback of the info.
+        for i, rb in enumerate(self.log):
+            rv[("info", i)] = rb.context.info
 
         return rv
 
