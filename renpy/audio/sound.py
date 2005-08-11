@@ -79,4 +79,38 @@ def set_mixer(channel, mixer):
     except:
         if renpy.config.debug_sound:
             raise
+
+def set_queue_empty_callback(callback, channel=0):
+    """
+    This sets a callback that is called when the queue is empty. This
+    callback is called when the queue first becomes empty, and at
+    least once per interaction while the queue is empty.
+
+    The callback is called with no parameters. It can queue sounds by
+    calling renpy.sound.queue with the appropriate arguments. Please
+    note that the callback may be called while a sound is playing, as
+    long as a queue slot is empty.
+    """
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        c.callback = callback
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+def set_volume(volume, channel=0):
+    """
+    Sets the volume of this channel, as a fraction of the volume of the
+    mixer controlling the channel.
+
+    This volume is not persisted or rolled-back, as are volumes set with
+    renpy.music.set_volume for music channels.
+    """
+
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        c.set_volume(volume)
+    except:
+        if renpy.config.debug_sound:
+            raise
     

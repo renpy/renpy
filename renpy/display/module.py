@@ -28,7 +28,7 @@ def convert_and_call(function, src, dst, *args):
     same format, they are converted and then converted back.
     """
 
-    if dst.get_flags() & SRCALPHA != src.get_flags() & SRCALPHA:
+    if (dst.get_masks()[3] != 0) != (src.get_masks()[3] != 0):
         raise Exception("Surface alphas do not match.")
 
     dstsize = dst.get_bitsize()
@@ -36,7 +36,7 @@ def convert_and_call(function, src, dst, *args):
     if dst.get_bitsize() in (24, 32):
         target = dst
     else:
-        if dst.get_flags() & SRCALPHA:
+        if dst.get_masks()[3]:
             target = pygame.Surface(dst.get_size(), SRCALPHA, 32)
         else:
             target = pygame.Surface(dst.get_size(), 0, 24)

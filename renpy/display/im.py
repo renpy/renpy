@@ -272,7 +272,7 @@ class Image(ImageBase):
     def load(self):
         im = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
-        if im.get_flags() & SRCALPHA:
+        if im.get_masks()[3]:
             im = im.convert_alpha()
         else:
             im = im.convert()   
@@ -487,10 +487,10 @@ class Scale(ImageBase):
     you can expect your image to look a bit jagged.
     """
 
-    def __init__(self, im, width, height):
+    def __init__(self, im, width, height, **properties):
 
         im = image(im)
-        super(Scale, self).__init__(im, width, height)
+        super(Scale, self).__init__(im, width, height, **properties)
 
         self.image = im
         self.width = width
@@ -508,7 +508,7 @@ class Rotozoom(ImageBase):
     This is an image manipulator that is a smooth rotation and zoom of another image manipulator.
     """
 
-    def __init__(self, im, angle, zoom):
+    def __init__(self, im, angle, zoom, **properties):
         """
         @param im: The image to be rotozoomed.
 
@@ -520,7 +520,7 @@ class Rotozoom(ImageBase):
         """
 
         im = image(im)
-        super(Rotozoom, self).__init__(im, angle, zoom)
+        super(Rotozoom, self).__init__(im, angle, zoom, **properties)
 
         self.image = im
         self.angle = angle
@@ -528,8 +528,10 @@ class Rotozoom(ImageBase):
 
     def load(self):
 
-        return pygame.transform.rotozoom(cache.get(self.image),
-                                         self.angle, self.zoom)
+        rv = pygame.transform.rotozoom(cache.get(self.image),
+                                       self.angle, self.zoom)
+        return rv
+
     def predict_files(self):
         return self.image.predict_files()
 
@@ -540,11 +542,11 @@ class Crop(ImageBase):
     This crops the image that is its child.
     """
 
-    def __init__(self, im, x, y, w, h):
+    def __init__(self, im, x, y, w, h, **properties):
 
         im = image(im)
 
-        super(Crop, self).__init__(im, x, y, w, h)
+        super(Crop, self).__init__(im, x, y, w, h, **properties)
 
         self.image = im
         self.x = x
@@ -588,11 +590,11 @@ class Map(ImageBase):
     """
 
     def __init__(self, im, rmap=identity, gmap=identity, bmap=identity,
-                 amap=identity, force_alpha=False):
+                 amap=identity, force_alpha=False, **properties):
 
         im = image(im)
 
-        super(Map, self).__init__(im, rmap, gmap, bmap, amap, force_alpha)
+        super(Map, self).__init__(im, rmap, gmap, bmap, amap, force_alpha, **properties)
         
         self.image = im
         self.rmap = rmap
@@ -609,7 +611,7 @@ class Map(ImageBase):
         if not renpy.display.module.can_map:
             return surf
 
-        if self.force_alpha and not (surf.get_flags() & SRCALPHA):
+        if self.force_alpha and not (surf.get_masks()[3]):
             surf = surf.convert_alpha()
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
@@ -622,7 +624,7 @@ class Map(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
-def Alpha(image, alpha):
+def Alpha(image, alpha, **properties):
     """
     Returns an alpha-mapped version of the image. Alpha is the maximum
     alpha that this image can have, a number between 0.0 (fully
@@ -634,7 +636,7 @@ def Alpha(image, alpha):
 
     amap = ramp(0, int(255 * alpha))
 
-    return Map(image, identity, identity, identity, amap, force_alpha=True)
+    return Map(image, identity, identity, identity, amap, force_alpha=True, **properties)
 
 class Tile(ImageBase):
     """
@@ -643,11 +645,11 @@ class Tile(ImageBase):
     then the size defaults to the size of the screen.
     """
 
-    def __init__(self, im, size=None):
+    def __init__(self, im, size=None, **properties):
 
         im = image(im)
 
-        super(Tile, self).__init__(im, size)
+        super(Tile, self).__init__(im, size, **properties)
         self.image = im
         self.size = size
 

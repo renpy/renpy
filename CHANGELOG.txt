@@ -6,6 +6,11 @@ always did.
 Fixed a bug that prevented objects from participating properly in 
 rollback.
 
+Now, all of the im image constructors take properties as arguments.
+
+Fixed a bug which made the images created with im.Rotozoom
+incompatible with im.Alpha.
+
 New in Ren'Py 5.0.1
 -------------------
 

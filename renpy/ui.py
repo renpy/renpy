@@ -343,13 +343,14 @@ def input(default, length=None, allow=None, exclude='{}', **properties):
 
     return add(renpy.display.behavior.Input(default, length=length, allow=allow, exclude=exclude, **properties))
 
-def image(filename, **properties):
+def image(im, **properties):
     """
-    This loads an image from the given file, and displays it as a
-    widget.
+    This loads an image, and displays it as a widget. The image may be
+    the name of a file containing the image, or an object constructed
+    with one of the im methods.
     """
 
-    return add(renpy.display.image.Image(filename, **properties))
+    return add(renpy.display.image.Image(im, **properties))
 
 def imagemap(ground, selected, hotspots, unselected=None,
              style='imagemap', button_style='imagemap_button',

@@ -175,6 +175,13 @@ class Channel(object):
         # once all channels are ready.
         self.synchro_start = False
 
+        # If we're a music channel, the time the music in this channel was
+        # last changed.
+        self.music_last_changed = 0
+
+        # The callback that is called if the queue becomes empty.
+        self.callback = None
+
     def periodic(self):
         """
         This is the periodic call that causes this channel to load new stuff
@@ -288,8 +295,8 @@ class Channel(object):
                 do_callback = True
 
         # TODO: Queue empty callback.
-        if do_callback:
-            pass
+        if do_callback and self.callback:
+            self.callback()
 
     def dequeue(self):
         """
@@ -305,6 +312,15 @@ class Channel(object):
 
         if not self.playing_midi:
             pss.dequeue(self.number)
+
+    def interact(self):
+        """
+        Called (mostly) once per interaction. Calls the queue callback
+        if it's becoming empty.
+        """
+
+        if not self.queue and self.callback:
+            self.callback()
 
 
     def fadeout(self, ms):
@@ -335,7 +351,8 @@ class Channel(object):
         self.wait_stop = synchro_start
         self.syncro_start = synchro_start
 
-            
+    def set_volume(self, volume):
+        self.chan_volume = volume
             
             
 
@@ -460,95 +477,104 @@ def periodic():
     if not pcm_ok:
         return False
 
-    for c in channels:
-        c.periodic()
-
-    midi.periodic()
-
-    # Perform a synchro-start if necessary.
-    need_ss = False
-
-    for c in channels:
-        if c.synchro_start and c.wait_stop:
-            need_ss = False
-            break
-
-        if c.synchro_start and not c.wait_stop:
-            need_ss = True
-
-    if need_ss:
-        pss.unpause_all()
-
-    # Now, consider adjusting the volume of the channel. 
-
-    max_volume = -1.0
-    volumes = renpy.game.preferences.volumes
-
-    if mix_ok:
-
-        print "Mix is OK!"
+    try:
 
         for c in channels:
+            c.periodic()
 
-            # if not c.playing:
-            #    continue
+        midi.periodic()
 
-            vol = c.chan_volume * volumes[c.mixer]
-            max_volume = max(max_volume, vol)
-
-        if max_volume == -1.0:
-            return
-
-        if max_volume != pcm_volume:    
-            mix.set_wave(max_volume)
-            pcm_volume = max_volume
+        # Perform a synchro-start if necessary.
+        need_ss = False
 
         for c in channels:
+            if c.synchro_start and c.wait_stop:
+                need_ss = False
+                break
 
-            # if not c.playing:
-            #    continue
+            if c.synchro_start and not c.wait_stop:
+                need_ss = True
 
-            vol = c.chan_volume * volumes[c.mixer]
+        if need_ss:
+            pss.unpause_all()
 
-            if c.playing_midi:
-                if midi_volume != vol:
-                    mix.set_midi(vol)
-                    midi.set_volume(1.0)
-                    midi_volume = vol
-            else:
-                vol /= max_volume
+        # Now, consider adjusting the volume of the channel. 
 
-                print c.number, "vol to", vol
-                
-                if c.actual_volume != vol:
-                    pss.set_volume(c.number, vol)
-                    c.acutal_volume = vol
+        max_volume = -1.0
+        volumes = renpy.game.preferences.volumes
 
-    else:
+        if mix_ok:
+
+            for c in channels:
+
+                # if not c.playing:
+                #    continue
+
+                vol = c.chan_volume * volumes[c.mixer]
+                max_volume = max(max_volume, vol)
+
+            if max_volume == -1.0:
+                return
+
+            if max_volume != pcm_volume:    
+                mix.set_wave(max_volume)
+                pcm_volume = max_volume
+
+            for c in channels:
+
+                # if not c.playing:
+                #    continue
+
+                vol = c.chan_volume * volumes[c.mixer]
+
+                if c.playing_midi:
+                    if midi_volume != vol:
+                        mix.set_midi(vol)
+                        midi.set_volume(1.0)
+                        midi_volume = vol
+                else:
+                    vol /= max_volume
+
+                    if c.actual_volume != vol:
+                        pss.set_volume(c.number, vol)
+                        c.acutal_volume = vol
+
+        else:
+
+            for c in channels:
+
+                if not c.playing:
+                    continue
+
+                vol = c.chan_volume * volumes[c.mixer]
+
+                if c.playing_midi:
+                    if vol != midi_volume:
+                        midi.set_volume(vol)
+                        midi_volume = vol
+                else:
+                    if vol != c.actual_volume:
+                        pss.set_volume(c.number, vol)
+                        c.actual_volume = vol
+
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+def interact():
+    """
+    Called at least once per interaction.
+    """
+
+    if not pcm_ok:
+        return
+
+    try:
 
         for c in channels:
+            c.interact()
 
-            if not c.playing:
-                continue
+    except:
+        if renpy.config.debug_sound:
+            raise
 
-            vol = c.chan_volume * volumes[c.mixer]
-            
-            if c.playing_midi:
-                if vol != midi_volume:
-                    midi.set_volume(vol)
-                    midi_volume = vol
-            else:
-                if vol != c.actual_volume:
-                    pss.set_volume(c.number, vol)
-                    c.actual_volume = vol
-
-                
-
-                
-                
-        
-        
-        
-    
-
-    
