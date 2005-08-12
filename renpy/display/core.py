@@ -770,6 +770,8 @@ class Interface(object):
         for i in renpy.config.interact_callbacks:
             i()
 
+        renpy.audio.audio.interact()
+
         # Tick time forward.
         renpy.display.im.cache.tick()
 

@@ -1,6 +1,7 @@
 # The public API for music in games.
 
 import time
+import renpy
 
 # The music channels.
 music_channels = [ 3, 4, 5, 6, 7 ]
@@ -15,11 +16,9 @@ def get_info():
 
     if getattr(info, "_music_last_file", None) is None:
         info._music_last_file = renpy.python.RevertableDict()
-        return info
 
     if getattr(info, "_music_last_changed", None) is None:
         info._music_last_changed = renpy.python.RevertableDict()
-        return info
 
     if getattr(info, "_music_volumes", None) is None:
         info._music_volumes = renpy.python.RevertableDict()
@@ -31,6 +30,7 @@ def get_channel(channel):
         raise Exception("Channel %d is not a music channel." % channel)
     
     c = renpy.audio.audio.get_channel(channel)
+    return c
 
 def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False):
     """
@@ -227,7 +227,7 @@ def interact():
         info = get_info()
 
         for i in music_channels:
-            c = renpy.audio.audio.get_channel(channel)
+            c = renpy.audio.audio.get_channel(i)
 
             # If we're in the same music change, then do nothing with the
             # music.

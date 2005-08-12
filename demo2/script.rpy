@@ -13,6 +13,8 @@
 
 init:
 
+    $ config.debug_sound = True
+
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
     $ config.screen_height = 600

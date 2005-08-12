@@ -160,7 +160,7 @@ keymap = dict(
 
 # A list of functions that are called at least once during each
 # interaction.
-interact_callbacks = [ renpy.audio.audio.interact ]
+interact_callbacks = [ ]
 
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer

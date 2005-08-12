@@ -15,6 +15,9 @@ def play(filename, channel=0, fadeout=0):
     The filename may be that of a file in an archive.
     """
 
+    if filename is None:
+        return
+
     stop(channel=channel, fadeout=fadeout)
     queue(filename, channel=channel, clear_queue=True)
 

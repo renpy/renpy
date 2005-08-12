@@ -49,9 +49,8 @@ def load(fn):
     Returns a file-like object for the given filename.
     """
 
-    _f = file(fn, "r")
-    print _f
-    return _f
+    rv = renpy.loader.load(fn)
+    return rv
 
 class Midi(object):
     """
@@ -121,15 +120,19 @@ class Midi(object):
         if not midi_ok:
             return
 
-        midi.stop()
+        nativemidi.stop()
         self.playing = None
 
     def set_volume(self, volume):
 
         if midi_ok:
-            midi.set_volume(volume)            
+            nativemidi.set_volume(volume)            
 
         self.volume = volume
+
+    def get_pos(self):
+
+        return nativemidi.get_pos()
 
 # A singleton Midi object that manages hardware midi playback.
 midi = Midi()
@@ -341,6 +344,8 @@ class Channel(object):
 
 
     def enqueue(self, filename, loop=True, synchro_start=False):
+
+        assert filename
 
         if not pcm_ok:
             return
@@ -586,3 +591,4 @@ def interact():
             raise
 
     renpy.audio.music.interact()
+    periodic()

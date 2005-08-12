@@ -642,6 +642,22 @@ def context():
 
     return renpy.game.context().info
     
+def music_start(filename, loops=True, fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout)
+
+def music_stop(fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.stop(fadeout=fadeout)
+
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
