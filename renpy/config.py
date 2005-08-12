@@ -158,12 +158,9 @@ keymap = dict(
     toggle_skip = [ 'K_TAB' ],
     )
 
-# A list of functions that are called before each interaction.
-interact_callbacks = [ ]
-
-# A function that is called when a music track ends, perhaps to
-# play another track.
-music_end_event = None
+# A list of functions that are called at least once during each
+# interaction.
+interact_callbacks = [ renpy.audio.audio.interact ]
 
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer

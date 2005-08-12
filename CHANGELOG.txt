@@ -11,6 +11,8 @@ Now, all of the im image constructors take properties as arguments.
 Fixed a bug which made the images created with im.Rotozoom
 incompatible with im.Alpha.
 
+music_end_event is gone.
+
 New in Ren'Py 5.0.1
 -------------------
 

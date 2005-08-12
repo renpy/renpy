@@ -29,7 +29,7 @@ import renpy.display.presplash
 import renpy.display.module
 import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object
-import renpy.display.audio
+# import renpy.display.audio
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
@@ -40,9 +40,9 @@ import renpy.display.video
 import renpy.display.focus
 import renpy.display.anim
 
-# import renpy.audio.audio
-# import renpy.audio.sound
-# import renpy.audio.music
+import renpy.audio.audio
+import renpy.audio.sound
+import renpy.audio.music
 
 import renpy.ui
 import renpy.lint

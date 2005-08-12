@@ -189,7 +189,65 @@ def set_music(channel, flag):
         if channel not in music_channels:
             music_channels.append(channel)
 
-pass
+def get_delay(time, channel=7):
+    """
+    Returns the number of seconds left until the given time in the
+    music.
+    """
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+
+        t = c.get_pos()
+
+        if not t or t < 0:
+            return None
+
+        if t > time:
+            return 0
+
+        return time - t
+
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+        return None
+            
+    
+
+def interact():
+    """
+    This is the music change logic that is called at least once per
+    interaction.
+    """
+
+    try:
+
+        info = get_info()
+
+        for i in music_channels:
+            c = renpy.audio.audio.get_channel(channel)
+
+            # If we're in the same music change, then do nothing with the
+            # music.
+            if c.music_last_changed == info._music_last_changed.get(i, 0):
+                continue
+
+            file = info._music_last_file.get(i, None)
+            c.dequeue()
+
+            if file != c.get_playing():
+                c.fadeout(renpy.config.fade_music)
+
+            if file:
+                c.enqueue(file, loop=True, synchro_start=True)
+
+            c.music_last_changed = info._music_last_changed.get(i, 0) 
+        
+    except:
+        if renpy.config.debug_sound:
+            raise
 
 # Music change logic:
 

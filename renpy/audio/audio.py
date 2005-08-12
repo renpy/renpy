@@ -351,10 +351,17 @@ class Channel(object):
         self.wait_stop = synchro_start
         self.syncro_start = synchro_start
 
+    def get_playing(self):
+        return pss.playing_name(self.number)
+
     def set_volume(self, volume):
         self.chan_volume = volume
             
-            
+    def get_pos(self):
+        if self.playing_midi:
+            return midi.get_pos()
+        else:
+            return pss.get_pos(self.number)
 
             
 # The number of channels we support.
@@ -578,3 +585,4 @@ def interact():
         if renpy.config.debug_sound:
             raise
 
+    renpy.audio.music.interact()

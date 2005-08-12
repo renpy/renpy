@@ -13,7 +13,7 @@ from renpy.display.behavior import Keymap
 
 from renpy.curry import curry
 # from renpy.display.audio import music_start, music_stop
-from renpy.display.audio import play
+from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
@@ -396,7 +396,7 @@ def pause(delay=None, music=None):
     """
 
     if music is not None:
-        newdelay = renpy.display.audio.music_delay(music)
+        newdelay = renpy.audio.music.get_delay(music)
 
         if newdelay is not None:
             delay = newdelay
