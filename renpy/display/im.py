@@ -385,10 +385,6 @@ class FrameImage(ImageBase):
 
         def draw(x0, x1, y0, y1):
 
-            # Quick exit.
-            if x0 == x1 or y0 == y1:
-                return
-
             # Compute the coordinates of the left, right, top, and
             # bottom sides of the region, for both the source and
             # destination surfaces.
@@ -424,6 +420,10 @@ class FrameImage(ImageBase):
             else:
                 dy1 = dh + y1
                 sy1 = sh + y1
+
+            # Quick exit.
+            if sx0 == sx1 or sy0 == sy1:
+                return
 
             # Compute sizes.
             srcsize = (sx1 - sx0, sy1 - sy0)

@@ -455,7 +455,7 @@ def imagebutton(idle_image, hover_image, clicked=None,
                                                image_style=image_style,
                                                **properties))
 
-def bar(width, height, range, value, clicked=None, **properties):
+def bar(*args, **properties):
     """
     This creates a bar widget. The bar widget can be used to display data
     in a bar graph format, and optionally to report when the user clicks on
@@ -482,8 +482,16 @@ def bar(width, height, range, value, clicked=None, **properties):
     twice as big as range.
     """
 
-    return add(renpy.display.behavior.Bar(width, height, range, value,
-                                          clicked=clicked, **properties))
+    if len(args) == 4:
+        width, height, range, value = args
+    else:
+        range, value = args
+        width = None
+        height = None
+
+
+    return add(renpy.display.behavior.Bar(range, value, width, height,
+                                          **properties))
     
 
 def conditional(condition):

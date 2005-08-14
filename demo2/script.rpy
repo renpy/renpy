@@ -26,6 +26,15 @@ init:
     $ style.gm_root_window.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("frame.png", 25, 25)
 
+    # Change the look of the slider.
+    $ style.bar.left_gutter = 10
+    $ style.bar.right_gutter = 12
+    $ style.bar.left_bar = Frame("slider_full.png", 10, 0)
+    $ style.bar.right_bar = Frame("slider_empty.png", 12, 0)
+    $ style.bar.thumb = Image("slider_idle.png")
+    $ style.bar.thumb_shadow = Image("slider_shadow.png")
+    $ style.bar.thumb_offset = -10
+
     # Change some styles involving the margins and padding of the
     # default window. (We need this, as we use a frame image that
     # includes a drop-shadow.)
@@ -123,6 +132,8 @@ label start:
     # interpolate it into the next line.
     $ version = renpy.version()
 
+    $ day_planner()
+    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
@@ -691,12 +702,11 @@ init:
                 ui.text('Statistics')
                 ui.null(height=20)
 
-
                 for name, range, value in stats:
 
                     ui.hbox()
                     ui.text(name, minwidth=150)
-                    ui.bar(600, 20, range, value, ypos=0.5, yanchor=center)
+                    ui.bar(600, 22, range, value, ypos=0.5, yanchor=center)
                     ui.close()
 
                 ui.close()
@@ -752,7 +762,7 @@ init:
                 ui.vbox()
                 ui.text("To get to the next screen, click the 'Continue' button.")
                 ui.close()
-                
+
                 type, value = ui.interact()
 
                 if type == "done":

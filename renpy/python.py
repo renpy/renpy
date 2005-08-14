@@ -519,10 +519,6 @@ class RollbackLog(renpy.object.Object):
             if k in store:
                 rv[k] = store[k]
 
-        # Enable rollback of the info.
-        for i, rb in enumerate(self.log):
-            rv[("info", i)] = rb.context.info
-
         return rv
 
     def purge_unreachable(self, roots):

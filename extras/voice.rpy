@@ -54,16 +54,13 @@ init -10:
         # appropriate voice file is played for the user.        
         def voice_interact():
 
-            if not audio.sound_enabled():
-                return
-
             if not persistent.voice:
                 return
             
             if _voice.play and not config.skipping:
-                audio.sound_play(_voice.play, channel=1)
+                renpy.sound.play(_voice.play, channel=2)
             elif not _voice.sustain:
-                audio.sound_stop(channel=1)
+                renpy.sound.stop(channel=1)
 
             _voice.play = None
             _voice.sustain = False

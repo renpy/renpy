@@ -318,39 +318,52 @@ class Bar(renpy.display.core.Displayable):
     to clicks on that value.
     """
     
-    def __init__(self, width, height, range, value,
+    def __init__(self, range, value, width=None, height=None,
                  style='bar', **properties):
 
         super(Bar, self).__init__()
 
+        if width is not None:
+            properties['xmaximum'] = width
+
+        if height is not None:
+            properties['ymaximum'] = height
+
         self.style = renpy.style.Style(style, properties)
 
-        self.width = width
-        self.height = height
         self.range = range
         self.value = value
 
 
     def render(self, width, height, st):
 
-        width = self.width
-        height = self.height
+        lgutter = self.style.left_gutter
+        rgutter = self.style.right_gutter
 
-        lgutter = 0
-        rgutter = 0
+        zone_width = width - lgutter - rgutter
 
-        barwidth = width - lgutter - rgutter
+        left_width = zone_width * self.value // self.range
+        right_width = zone_width - left_width
 
-        left_width = barwidth * self.value // self.range
-        right_width = barwidth - left_width
+        left_width += lgutter
+        right_width += rgutter
 
         rv = renpy.display.render.Render(width, height)
 
-        lsurf = render(self.style.left_bar, left_width, height, st)
-        rsurf = render(self.style.right_bar, right_width, height, st)
+        lsurf = render(self.style.left_bar, width, height, st)
+        rsurf = render(self.style.right_bar, width, height, st)
 
-        rv.blit(lsurf, (lgutter, 0))
-        rv.blit(rsurf, (lgutter + left_width, 0))
+        if self.style.thumb_shadow:
+            surf = render(self.style.thumb_shadow, width, height, st)
+            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+
+        rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
+        rv.blit(rsurf.subsurface((left_width, 0, right_width, height)),
+                (left_width, 0))
+
+        if self.style.thumb:
+            surf = render(self.style.thumb, width, height, st)
+            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
 
         return rv
         

@@ -19,6 +19,9 @@ from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
+import renpy.audio.sound as sound
+import renpy.audio.music as music
+
 import time
 
 # This is a map from image name to a Displayable object corresponding

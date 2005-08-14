@@ -22,7 +22,28 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
         rv.set_bold(bold)
         rv.set_italic(italics)
     except:
-        rv = pygame.font.SysFont(fn, size, bold, italics)
+        # Let's try to find the font on our own.
+        fonts = [ i.strip().lower() for i in fn.split(",") ]
+
+        pygame.sysfont.initsysfonts()
+
+        rv = None
+
+        for k, v in pygame.sysfont.Sysfonts.iteritems():
+            for flags, ffn in v.iteritems():
+                for i in fonts:
+                    if ffn.lower().endswith(i):
+                        rv = pygame.font.Font(ffn, size)
+                        rv.set_bold(bold)
+                        rv.set_italic(italics)
+                        break
+                if rv:
+                    break
+            if rv:
+                break
+        else:
+            # Let pygame try to find the font for us.
+            rv = pygame.font.SysFont(fn, size, bold, italics)
 
     rv.set_underline(underline)
 
@@ -345,6 +366,14 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].bold = False
                     tsl[-1].italic = False
                     tsl[-1].underline = False
+
+                elif i.startswith("font"):
+                    m = re.match(r'font=(.*)', i)
+
+                    if not m:
+                        raise Exception('Font tag %s could not be parsed.' % i)
+
+                    tsl[-1].font = m.group(1)
 
                 elif i.startswith("size"):
 

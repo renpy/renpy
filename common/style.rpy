@@ -230,6 +230,11 @@ init -1000:
 
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
+        style.bar.left_gutter = 0
+        style.bar.right_gutter = 0
+        style.bar.thumb = None
+        style.bar.thumb_offset = 0
+        style.bar.thumb_shadow = None
 
         # Styles that are used when laying out the main menu.
         style.create('mm_root_window', 'default',

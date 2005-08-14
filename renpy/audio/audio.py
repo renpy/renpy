@@ -245,6 +245,11 @@ class Channel(object):
             if depth >= 2:
                 break
 
+            # We can't queue anything if the depth is > 0 and we're
+            # waiting for a synchro_start.
+            if self.synchro_start and depth:
+                break
+
             # If the queue is full, return.
             if pss.queue_depth(self.number) >= 2:
                 break
@@ -326,7 +331,7 @@ class Channel(object):
             self.callback()
 
 
-    def fadeout(self, ms):
+    def fadeout(self, secs):
         """
         Causes the playing music to be faded out for the given number
         of seconds. Also clears any queued music.
@@ -340,7 +345,7 @@ class Channel(object):
         if self.playing_midi:
             midi.stop()
         else:
-            pss.fadeout(self.number, ms)
+            pss.fadeout(self.number, secs * 1000)
 
 
     def enqueue(self, filename, loop=True, synchro_start=False):
@@ -354,7 +359,7 @@ class Channel(object):
         self.loop = loop
 
         self.wait_stop = synchro_start
-        self.syncro_start = synchro_start
+        self.synchro_start = synchro_start
 
     def get_playing(self):
         return pss.playing_name(self.number)
@@ -449,6 +454,10 @@ def quit():
     Deinitialize the mixer and the various libraries.
     """
 
+    global pcm_ok
+    global midi_ok
+    global mix_ok
+
     if not pcm_ok:
         return
     
@@ -500,6 +509,7 @@ def periodic():
         need_ss = False
 
         for c in channels:
+            
             if c.synchro_start and c.wait_stop:
                 need_ss = False
                 break
@@ -509,6 +519,9 @@ def periodic():
 
         if need_ss:
             pss.unpause_all()
+
+            for c in channels:
+                c.synchro_start = False
 
         # Now, consider adjusting the volume of the channel. 
 
