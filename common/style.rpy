@@ -17,8 +17,63 @@
 init -1000:
     python hide:
 
+        # Style Declarations #################################################
+
         style.create('default', None,
                      'The default style that all styles inherit from.')
+
+        style.create('hbox', 'default', '(box) The base style for hboxen.')
+        style.create('vbox', 'default', '(box) The base style for vboxen.')
+
+        
+        style.create('window', 'default', '(window) The base style for the windows that contain dialogue, thoughts, and menus.')
+        
+        style.create('image_placement', 'default', 'This style is used to control the default placement of images on the screen.')
+
+        # say
+        style.create('say_label', 'default', '(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.')
+        style.create('say_dialogue', 'default', "(text) The style that is used by default for the text of dialogue.")
+        style.create('say_thought', 'default', "(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.""")
+        style.create('say_window', 'window', '(window, position) The default style for windows containing dialogue and thoughts.')
+
+        # menu
+        style.create('menu', 'default', "(position) The style that is used for the vbox containing a menu.")
+        style.create('menu_caption', 'default', "(text) The style that is used to render a menu caption.")
+        style.create('menu_choice', 'default', "(text, hover) The style that is used to render the text of a menu choice.""")
+        style.create('menu_choice_button', 'default', "(window, hover, sound) The style that is used to render the button containing a menu choice.")
+        style.create('menu_window', 'window', '(window, position) The default style for windows containing a menu.') 
+
+        # input
+        style.create('input_text', 'default', '(text) The style used for the text of an input box.')
+        style.create('input_prompt', 'default', '(text) The style used for the prompt of an input box.')
+        style.create('input_window', 'window', '(window, position) The style used for the window of an input box.')
+
+        # centered
+        style.create('centered_window', 'default', '(window) The style that is used for a "window" containing centered text.')
+        style.create('centered_text', 'default', '(text) The style used for centered text.')
+
+        # imagemap
+        style.create('imagemap', 'image_placement', '(position) The style that is used for imagemaps.')
+        style.create('imagemap_button', 'default', '(window, sound, hover) The style that is used for buttons inside imagemaps.')
+
+        # imagebutton
+        style.create('image_button', 'default', '(window, sound, hover) The default style used for image buttons.')
+        style.create('image_button_image', 'default', 'The default style used for images inside image buttons.')
+
+        # button
+        style.create('button', 'default', '(window, sound, hover) The default style used for buttons in the main and game menus.')
+        style.create('button_text', 'default', '(text, hover) The default style used for the label of a button.')
+        style.create('selected_button', 'button', '(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).')
+        style.create('selected_button_text', 'button_text', '(text, hover) The style that is used for the label of a selected button.')
+        
+        # boxen used by the various menus.
+        style.create('thin_hbox', 'hbox', '(box) A hbox with a small amount of spacing.')
+        style.create('thick_hbox', 'hbox', '(box) A hbox with a large amount of spacing.')
+        style.create('thin_vbox', 'vbox', '(box) A vbox with a small amount of spacing.')
+        style.create('thick_vbox', 'vbox', '(box) A vbox with a large amount of spacing.')
+
+# AUTOMATICALLY GENERATED
+# END AUTOMATICALLY GENERATED
 
         dark_cyan = (0, 192, 255, 255)
         bright_cyan = (0, 255, 255, 255)
@@ -70,9 +125,16 @@ init -1000:
         # Sound properties.
         style.default.sound = None
 
+        # Box properties.
+        style.default.box_spacing = 0
+        style.default.box_layout = None
+
+        # Box style.
+
+        style.hbox.box_layout = 'horizontal'
+        style.vbox.box_layout = 'vertical'
+
         # The base style for the large windows.
-        style.create('window', 'default',
-                     '(window, placement) The base style for the windows that contain dialogue, thoughts, and menus.')
                      
         style.window.background = Solid((0, 0, 128, 128))
         style.window.xpadding = 10
@@ -91,8 +153,6 @@ init -1000:
 
         # This style controls the default placement of images on the screen.
 
-        style.create('image_placement', 'default',
-                     'This style is used to control the default placement of images on the screen.')
 
         style.image_placement.xpos = 0.5
         style.image_placement.ypos = 1.0
@@ -101,67 +161,19 @@ init -1000:
 
         # Styles that are used for dialogue.
 
-        style.create('say_label', 'default',
-                     """(text) The style that is used by default for
-                     the label of dialogue. The label is used to
-                     indicate who is saying something.""")
 
         style.say_label.bold = True
 
-        style.create('say_dialogue', 'default',
-                     """(text) The style that is used by default for
-                     the text of dialogue.""")
-
-        style.create('say_thought', 'default',
-                     """(text) The label that is used by default for
-                     the text of thoughts or narration, when no
-                     speaker is given.""")
-                     
-        style.create('say_window', 'window',
-                     '(window, position) The default style for windows containing dialogue and thoughts.')
-
-
-        # Styles that are used for menus.
-
-        style.create('menu', 'default',
-                     "(position) The style that is used for the vbox containing a menu.")
-
-        style.create('menu_caption', 'default',
-                     "(text) The style that is used to render a menu caption.")
-
-        style.create('menu_choice', 'default',
-                     """(text, hover) The style that is used to render
-                        the text of a menu choice.""")
-
-        style.create('menu_choice_button', 'default',
-                     """(window, hover, sound) The style that is used
-                        to render the button containing a menu choice.""")
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
         style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
         style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
-        style.create('menu_window', 'window',
-                     '(window, position) The default style for windows containing a menu.') 
-
-        # Styles that are used by input widgets.
-        style.create('input_text', 'default',
-                     '(text) The style used for the text of an input box.')
 
         style.input_text.color = (255, 255, 0, 255)
 
-        style.create('input_prompt', 'default',
-                     '(text) The style used for the prompt of an input box.')
-
-        style.create('input_window', 'window',
-                     '(window, position) The style used for the window of an input box.')
 
         # Styles used by centered.
-        style.create('centered_window', 'default',
-                     '(window) The style that is used for a "window" containing centered text.')
-
-        style.create('centered_text', 'default',
-                     '(text) The style used for centered text.')
 
         style.centered_window.xpos = 0.5
         style.centered_window.xanchor = 'center'
@@ -179,30 +191,12 @@ init -1000:
         style.centered_text.xanchor = 'center'
         style.centered_text.yanchor = 'center'
            
-        # Styles that are used by imagemaps
-        style.create('imagemap', 'image_placement',
-                     '(position) The style that is used for imagemaps.')
-
-        style.create('imagemap_button', 'default',
-                     '(window, sound, hover) The style that is used for buttons inside imagemaps.')
-
-        # Styles that are used by imagebutttons.
-        style.create('image_button', 'default',
-                     '(window, sound, hover) The default style used for image buttons.')
-
-        style.create('image_button_image', 'default',
-                     'The default style used for images inside image buttons.')
 
 
-        # Styles that are used by all other Buttons.
-        style.create('button', 'default',
-                     '(window, sound, hover) The default style used for buttons in the main and game menus.')
 
         style.button.xpos = 0.5
         style.button.xanchor = 'center'
 
-        style.create('button_text', 'default',
-                     '(text, hover) The default style used for the label of a button.')
 
         style.button_text.xpos = 0.5
         style.button_text.xanchor = 'center'
@@ -213,12 +207,6 @@ init -1000:
         style.button_text.insensitive_color = (192, 192, 192, 255)
         style.button_text.drop_shadow = (2, 2)
         
-        # Selected button.
-        style.create('selected_button', 'button',
-                     '(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).')
-
-        style.create('selected_button_text', 'button_text',
-                     '(text, hover) The style that is used for the label of a selected button.')
                      
         style.selected_button_text.color = dark_red
         style.selected_button_text.hover_color = bright_red
@@ -301,7 +289,7 @@ init -1000:
         style.create('file_picker_navbox', 'default',
                      '(position) The position of the naviation (next/previous) buttons in the file picker.')
 
-        style.file_picker_navbox.xmargin = 10
+        style.file_picker_navbox.xpos = 10
 
         style.create('file_picker_nav_button', 'button',
                      '(window, hover) The style that is used for enabled file picker navigation buttons.')
@@ -372,8 +360,12 @@ init -1000:
         style.yesno_window.yminimum = 0.5
         style.yesno_window.xmargin = .1
 
-        # Preferences
+        style.yesno_window_vbox.xpos = 0.5
+        style.yesno_window_vbox.xanchor = 'center'
+        style.yesno_window_vbox.ypos = 0.5
+        style.yesno_window_vbox.yanchor = 'center'
 
+        # Preferences
 
         style.create('prefs_pref', 'default',
                      '(window, position) A window containing an individual preference.')
@@ -390,6 +382,17 @@ init -1000:
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
         style.prefs_label.color = green
+
+        style.create('prefs_slider', 'bar',
+                     '(bar, position) The style that is applied to preference sliders.')
+
+        style.prefs_slider.xmaximum=200
+        style.prefs_slider.ymaximum=22
+        style.prefs_slider.xpos = 0.5
+        style.prefs_slider.xanchor = 'center'
+
+        style.create('prefs_volume_slider', 'prefs_slider',
+                     '(bar, position) The style that is applied to volume sliders.')
 
         style.create('prefs_hbox', 'default',
                      '(position) If library.hbox_pref_choices is True, the style of the hbox containing the choices.')
