@@ -46,6 +46,7 @@ def common():
         nme = distutils.core.Extension(
             "nativemidi",
             nativemidi,
+            extra_compile_args=extra_compile_args,
             libraries=nativemidi_libs,
             include_dirs=include_dirs,
             extra_link_args=extra_link_args,

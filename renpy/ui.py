@@ -146,27 +146,29 @@ def text(label, **properties):
 
     return add(renpy.display.text.Text(label, **properties))
 
-def hbox(padding=0, **properties):
+def hbox(spacing=None, style='hbox', **properties):
     """
     This creates a layout that places widgets next to each other, from
     left to right. New widgets are added to this hbox until ui.close()
     is called.
 
-    @param padding: The number of pixels to leave between widgets.
+    @param spacing: The number of pixels to leave between widgets. If None,
+    take the amount of spacing from the style.
     """
 
-    return add(renpy.display.layout.HBox(padding, **properties), True)
+    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="horizontal", style=style, **properties), True)
 
-def vbox(padding=0, **properties):
+def vbox(spacing=None, style='vbox', **properties):
     """
     This creates a layout that places widgets next to each other, from
     top to bottom. New widgets are added to this vbox until ui.close()
     is called.
 
-    @param padding: The number of pixels to leave between widgets.
+    @param spacing: The number of pixels to leave between widgets. If None,
+    take the amount of spacing from the style.
     """
 
-    return add(renpy.display.layout.VBox(padding, **properties), True)
+    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="vertical", style=style, **properties), True)
 
 def grid(cols, rows, padding=0, transpose=False, **properties):
     """

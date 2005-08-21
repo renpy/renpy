@@ -17,3 +17,9 @@ def set_wave(vol):
 
     mixer.set(SOUND_MIXER_PCM, (v, v))
 
+
+def get_midi():
+    return None
+
+def set_midi(vol):
+    return

@@ -40,6 +40,8 @@ import renpy.display.video
 import renpy.display.focus
 import renpy.display.anim
 
+# Note: For windows to work, renpy.audio.audio needs to be after
+# renpy.display.module.
 import renpy.audio.audio
 import renpy.audio.sound
 import renpy.audio.music

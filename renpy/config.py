@@ -156,6 +156,12 @@ keymap = dict(
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
+
+    # These control the bar.
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+    bar_decrease = [ 'K_LEFT' ],
+    bar_increase = [ 'K_RIGHT' ],
     )
 
 # A list of functions that are called at least once during each

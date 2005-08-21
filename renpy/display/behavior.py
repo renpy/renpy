@@ -319,9 +319,7 @@ class Bar(renpy.display.core.Displayable):
     """
     
     def __init__(self, range, value, width=None, height=None,
-                 style='bar', **properties):
-
-        super(Bar, self).__init__()
+                 changed=None, style='bar', **properties):
 
         if width is not None:
             properties['xmaximum'] = width
@@ -329,13 +327,17 @@ class Bar(renpy.display.core.Displayable):
         if height is not None:
             properties['ymaximum'] = height
 
-        self.style = renpy.style.Style(style, properties)
+        super(Bar, self).__init__(style=style, **properties)
 
         self.range = range
         self.value = value
-
+        self.changed = changed
+        self.focusable = changed is not None
 
     def render(self, width, height, st):
+
+        # Store the width for the event function to use.
+        self.width = width
 
         lgutter = self.style.left_gutter
         rgutter = self.style.right_gutter
@@ -365,7 +367,62 @@ class Bar(renpy.display.core.Displayable):
             surf = render(self.style.thumb, width, height, st)
             rv.blit(surf, (left_width + self.style.thumb_offset, 0))
 
+        if self.changed:
+            rv.add_focus(self, None, 0, 0, width, height)
+
         return rv
+        
+    def event(self, ev, x, y):
+
+        if not self.changed:
+            return
+
+        if not self.is_focused():
+            return
+
+        old_value = self.value
+
+        grabbed = (renpy.display.focus.get_grab() is self)
+        just_grabbed = False
+            
+        if not grabbed and map_event(ev, "bar_activate"):
+            renpy.display.focus.set_grab(self)
+            just_grabbed = True
+            grabbed = True
+
+        if grabbed:
+
+            if map_event(ev, "bar_decrease"):
+                self.value -= 1
+
+            if map_event(ev, "bar_increase"):
+                self.value += 1
+
+            if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+
+                lgutter = self.style.left_gutter
+                rgutter = self.style.right_gutter
+                zone_width = self.width - lgutter - rgutter
+                
+                self.value = (x - lgutter) * self.range // zone_width
+
+            if self.value < 0:
+                self.value = 0
+
+            if self.value > self.range:
+                self.value = self.range
+
+        if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
+            renpy.display.focus.set_grab(None)
+
+        if self.value != old_value:
+            renpy.display.render.redraw(self, 0)
+            return self.changed(self.value)
+
+        return
+
+    def get_placement(self):
+        return self.style
         
      
 class Conditional(renpy.display.layout.Container):

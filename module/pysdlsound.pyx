@@ -95,7 +95,7 @@ def get_pos(channel):
     return PSS_get_pos(channel)
 
 def set_volume(channel, volume):
-    PSS_set_volume(channel, volume)
+    PSS_set_volume(channel, 10 ** volume / 10 )
     check_error()
 
 def set_end_event(channel, event):

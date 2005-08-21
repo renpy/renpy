@@ -172,7 +172,6 @@ class Displayable(renpy.object.Object):
         if isinstance(xoff, float):
             xoff = int(xoff * width)
 
-
         xanchor = style.xanchor
 
         if xanchor == 'left':

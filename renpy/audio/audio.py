@@ -8,24 +8,54 @@ import os
 import atexit
 
 # Import the appropriate modules, or set them to None if we cannot.
-try:
-    import pysdlsound as pss
-    atexit.register(pss.quit)
-except:
-    pss = None
 
-try:
-    import nativemidi as nativemidi
-except:
-    nativemidi = None
+disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
-try:
-    import winmixer as mix
-except:
+pss = None
+nativemidi = None
+mix = None
+
+if 'pss' not in disable:
     try:
-        import linmixer as mix
+        import pysdlsound as pss
+        atexit.register(pss.quit)
     except:
-        mix = None
+        pass
+
+
+if 'nativemidi' not in disable:
+    try:
+        import nativemidi as nativemidi
+    except:
+        pass
+
+
+if 'mix' not in disable:
+    try:
+        import winmixer as mix
+    except:
+        try:
+            import linmixer as mix
+        except:
+            pass
+
+# Save the mixer, and restore it at exit.
+
+if mix:
+
+    old_wave = mix.get_wave()
+    old_midi = mix.get_midi()
+
+    def restore_volumes():
+        if old_wave is not None:
+            mix.set_wave(old_wave)
+
+        if old_midi is not None:
+            mix.set_midi(old_midi)
+
+    atexit.register(restore_volumes)
+                         
+    
 
 
 # This is True if we were able to sucessfully enable the pcm audio.
@@ -63,11 +93,11 @@ class Midi(object):
 
         # The filename of the music that is currently playing through
         # native midi.
-        playing = None
+        self.playing = None
 
         # The natural volume of the music that is playing through
         # native midi.
-        volume = 1.0
+        self.volume = 1.0
 
     def play(self, f, filename):
 
@@ -382,7 +412,7 @@ channels = [ Channel(i) for i in range(NUM_CHANNELS) ]
     
 channels[0].mixer = 'sfx'
 channels[1].mixer = 'sfx'
-channels[2].mixer = 'voice'
+channels[2].mixer = 'sfx'
 channels[3].mixer = 'music'
 channels[4].mixer = 'music'
 channels[5].mixer = 'music'
@@ -402,9 +432,6 @@ def init():
     global midi_ok
     global mix_ok
 
-    if 'RENPY_DISABLE_SOUND' in os.environ:
-        return
-        
     if pcm_ok is None and pss:
         bufsize = 4096
                 
@@ -554,15 +581,15 @@ def periodic():
 
                 if c.playing_midi:
                     if midi_volume != vol:
-                        mix.set_midi(vol)
-                        midi.set_volume(1.0)
+                        # mix.set_midi(vol)
+                        midi.set_volume(vol)
                         midi_volume = vol
                 else:
                     vol /= max_volume
 
                     if c.actual_volume != vol:
                         pss.set_volume(c.number, vol)
-                        c.acutal_volume = vol
+                        c.actual_volume = vol
 
         else:
 

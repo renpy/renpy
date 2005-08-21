@@ -17,6 +17,8 @@ class Focus(object):
     def __iter__(self):
         return iter((self.widget, self.arg, self.x, self.y, self.w, self.h))
 
+# The widget currently grabbing the input, if any.
+grab = None
 
 # Sets the currently focused widget.
 def set_focused(widget):
@@ -25,8 +27,14 @@ def set_focused(widget):
 # Gets the currently focused widget.
 def get_focused():
     return renpy.game.context().scene_lists.focused
-    
 
+def set_grab(widget):
+    global grab
+    grab = widget
+
+def get_grab():
+    return grab
+    
 # The current list of focuses that we know about.
 focus_list = [ ]
 
@@ -40,6 +48,10 @@ def take_focuses(fl):
 # the other widgets as unfocused.
 
 def before_interact(root):
+
+    # Clear out an old grab.
+    global grab
+    grab = None
 
     # a list of focusable, name tuples.
     fwn = [ ]
@@ -101,6 +113,9 @@ def before_interact(root):
 # focus object.
 def change_focus(newfocus):
 
+    if grab:
+        return
+
     if newfocus is None:
         widget = None
     else:
@@ -123,6 +138,7 @@ def change_focus(newfocus):
 
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev):
+
     x, y = ev.pos
 
     newfocus = None

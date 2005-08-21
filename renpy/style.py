@@ -64,10 +64,23 @@ class StyleManager(object):
             raise Exception('The style %s does not exist.' % name)
 
     def create(self, name, parent, description=None):
+        """
+        This creates a new style, with the given name and parent. A
+        description may also be provided, although there is little
+        point in doing so for non-system styles.
+        """
+
         style_map[name] = Style(parent, { })
 
         if description:
             style_info.append((name, parent, description))
+
+    def exists(self, name):
+        """
+        This determines if the named style exists.
+        """
+        
+        return name in style_map
 
 # This expands out property names and adds them to style's property
 # dictionary. 
@@ -177,7 +190,7 @@ def write_docs(filename):
     f = file(filename, "w")
 
     import re
-
+ 
     for name, parent, description in style_info:
         f.write('    <renpy_style name="%s">' % name)
 
@@ -190,4 +203,32 @@ def write_docs(filename):
     f.close()            
         
 
+def write_hierarchy(fn):
+
+    f = file(fn, "w")
+
+    kids = { }
     
+    for name, parent, description in style_info:
+        kids.setdefault(parent, []).append(name)
+
+    def do(name):
+
+        f.write('<li> <a href="#%s">%s</a>\n' % (name, name))
+
+        if name in kids:
+            f.write('<ul>\n')
+
+            l = kids[name]
+            l.sort()
+
+            for n in l:
+                do(n)
+
+            f.write('</ul>\n')
+
+        f.write('</li>')
+
+    do('default')
+
+    f.close()
