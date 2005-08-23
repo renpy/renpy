@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.0.1"
+version = "Ren'Py 5.1"
 script_version = 8007
-savegame_suffix = "-8.9.save"
+savegame_suffix = "-5.1.save"
 
 
 # Can be first, because has no dependencies, and may be imported
@@ -29,7 +29,6 @@ import renpy.display.presplash
 import renpy.display.module
 import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object
-# import renpy.display.audio
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout

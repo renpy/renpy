@@ -1,4 +1,4 @@
-# This script, but not the artwork associated with it, is in the
+﻿# This script, but not the artwork associated with it, is in the
 # public domain. Feel free to use it as the basis for your own
 # game.
 
@@ -134,16 +134,6 @@ label start:
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()
-
-    "Before!"
-
-    $ def foo(a): print a 
-    $ ui.vbox()
-    $ ui.bar(300, 22, 10, 1, changed=foo)
-    $ ui.textbutton("Done", clicked=lambda : True)
-    $ ui.close()
-    $ ui.interact()
-                     
     
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the

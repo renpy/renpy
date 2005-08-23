@@ -27,9 +27,6 @@ init -499:
         # The number of pages to add quick access buttons for.
         library.file_quick_access_pages = 5
 
-        # A small amount of padding.
-        library.padding = 2
-
         # The width of a thumbnail.
         library.thumbnail_width = 66
 

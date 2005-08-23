@@ -17,7 +17,6 @@ import encodings.string_escape
 import encodings.raw_unicode_escape
 import math
 
-
 def main():
 
     dirname = os.path.dirname(sys.argv[0])

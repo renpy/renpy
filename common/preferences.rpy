@@ -401,17 +401,17 @@ init -450:
 #             ('Disabled', False, 'library.has_sound'),
 #             ])
 
+        ### prefs_column default
+        # The style of a vbox containing a column of preferences.
 
-        ### prefs_left default
+        ### prefs_left prefs_column
         # The position of the left column of preferences.
         
-        ### prefs_center default
-        # The position of the center column of
-        # preferences.
+        ### prefs_center prefs_column
+        # The position of the center column of preferences.
 
-        ### prefs_right default
-        # The position of the right column of
-        # preferences.
+        ### prefs_right prefs_column
+        # The position of the right column of preferences.
             
         library.preferences['prefs_left'] = [ pl1, pl2 ]
         library.preferences['prefs_center'] = [ pc1, pc2, pc3, pc4 ]
@@ -431,10 +431,9 @@ label _prefs_screen:
         ui.window(style='prefs_window')
         ui.fixed()
 
-
         for style, prefs in library.preferences.iteritems():
 
-            ui.vbox(library.padding * 3, style=style)
+            ui.vbox(style=style)
             for i in prefs:
                 i.render_preference()
             ui.close()

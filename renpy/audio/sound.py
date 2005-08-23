@@ -67,11 +67,11 @@ def stop(channel=0, fadeout=0):
 def set_mixer(channel, mixer):
     """
     This sets the name of the mixer associated with a given
-    channel. By default, there are three mixers, 'sfx', 'voice', and
-    'music'. 'sfx' is on channels 0 and 1, 'voice' on 2, and 'music'
-    on 3 to 7. You can create your own mixer, but will need to add it
-    to library.mixers yourself if you wish to allow the user to set
-    it.
+    channel. By default, there are two mixers, 'sfx' and
+    'music'. 'sfx' is on channels 0 to 3, and 'music'
+    on 3 to 7. The voice module calls this function to set channel 2 to voice.
+    You can create your own mixer, but will need to add a preference if you
+    wish to allow the user to set it.
 
     This function should only be called in an init block.
     """

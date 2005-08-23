@@ -1,20 +1,52 @@
-{font} text tag.
+New in Ren'Py 5.1
+-----------------
 
-Menu text now supports percent-substitutions, like say statements
-always did.
+There is now a new sound system, supporting playing up to 8 mp3, ogg
+vorbis, ogg speex, mod, or wav files at once. Midi can also be played,
+but is limited to one midi file at a time. Audio files can be read out
+of archives. Music and Sound now have their own mixers, which control
+the system mixer. The low-level audio api has been ripped out and
+replaced with new renpy.sound and renpy.music apis, which are somewhat
+higher-level, and more flexible.
 
-Fixed a bug that prevented objects from participating properly in 
-rollback.
+In order to support this, we've temporarily dropped Mac support. In a
+few weeks, we'll be releasing a tool that restores and improves
+Ren'Py's compatability with the Macintosh platform. To help support
+this tool, this release includes .rpyl files for the demo game and
+DSE.
 
-Now, all of the im image constructors take properties as arguments.
+The bar widget has been extended. It can now be adjusted by the user,
+and it can show a thumb in the middle. Various volume and speed
+preferences have been adjusted to take advantage of the new bar
+widget.
+
+All of the backgrounds in the demo-game script and in the reference
+now are of the form "bg name". This lets one run a command 
+"show bg newbg" to replace the background without replacing the
+current screen. The demo game also has been prefixed with a UTF-8 BOM,
+so editors should (hopefully) load and save it as UTF-8.
+
+There is now a new font text tag. By writing {font=Font1,Font2}, one
+can change the font in the middle of a block of text. Use this
+wisely. Font files with extensions are now also searched for in the
+system font directories, although we do not recommend this unless you
+are having encoding problems.
+
+Menu labels and choices support percent-substitution, like say
+statements always have.
+
+Now, all of the im image constructors take properties as
+arguments. This lets placement properties be applied to images, as
+with regular widgets.
+
+A new extra, chinese.rpy, implements word-wrapping for the Chinese
+language. Or at least tries to.
 
 Fixed a bug which made the images created with im.Rotozoom
 incompatible with im.Alpha.
 
-music_end_event is gone.
-
-Document style.create and style.exists.
-
+Fixed a weird focus bug that manifested upon rollback when resized
+frames were on the screen.
 
 New in Ren'Py 5.0.1
 -------------------

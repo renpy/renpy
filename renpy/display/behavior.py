@@ -80,9 +80,11 @@ def skipping(ev):
 
     if map_event(ev, "skip"):
         renpy.config.skipping = True
+        renpy.exports.restart_interaction()
 
     if map_keyup(ev, "skip"):
         renpy.config.skipping = False
+        renpy.exports.restart_interaction()
 
     return
 

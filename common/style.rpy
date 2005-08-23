@@ -124,9 +124,10 @@ init -1000:
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
         style.create("prefs_spinner_button", "prefs_button", "(window, hover) The style of the + or - buttons in a preference spinner.")
         style.create("prefs_spinner_button_text", "prefs_button_text", "(text, hover) The style of the text of the + and - buttons in a preference spinner.")
-        style.create("prefs_left", "default", "The position of the left column of preferences.")
-        style.create("prefs_center", "default", "The position of the center column of preferences.")
-        style.create("prefs_right", "default", "The position of the right column of preferences.")
+        style.create("prefs_column", "default", "The style of a vbox containing a column of preferences.")
+        style.create("prefs_left", "prefs_column", "The position of the left column of preferences.")
+        style.create("prefs_center", "prefs_column", "The position of the center column of preferences.")
+        style.create("prefs_right", "prefs_column", "The position of the right column of preferences.")
         style.create("prefs_window", "default", "(window) A window containing all preferences.")
 # END AUTOMATICALLY GENERATED
 
@@ -379,16 +380,16 @@ init -1000:
         style.prefs_hbox.xpos = 0.5
         style.prefs_hbox.xanchor = 'center'
         
-
         style.prefs_button.xpos = 0.5
         style.prefs_button.xanchor = 'center'
 
         style.prefs_selected_button.xpos = 0.5
         style.prefs_selected_button.xanchor = 'center'
 
-
         style.prefs_window.xfill=True
         style.prefs_window.ypadding = 0.05
+
+        style.prefs_column.box_spacing = 6
 
         style.prefs_left.xanchor = 'center'
         style.prefs_left.xpos = 1.0 / 6.0
