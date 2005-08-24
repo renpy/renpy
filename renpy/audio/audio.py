@@ -226,6 +226,7 @@ class Channel(object):
         force_stop = renpy.game.preferences.mute[self.mixer]
 
         if self.playing and force_stop:
+
             if self.playing_midi:
                 midi.stop()
                 self.playing = False
@@ -236,6 +237,12 @@ class Channel(object):
                 pss.stop(self.number)
                 self.playing = False
                 self.wait_stop = False
+
+        if force_stop:
+            if self.loop:
+                self.queue = self.queue[-1:]
+            else:
+                self.queue = [ ]
 
             return
 
@@ -257,7 +264,7 @@ class Channel(object):
 
             depth = pss.queue_depth(self.number)
 
-            if depth == 0:
+            if depth == 0 and not self.playing_midi:
                 self.wait_stop = False
                 self.playing = False
 
@@ -566,6 +573,9 @@ def periodic():
                 max_volume = max(max_volume, vol)
 
             if max_volume == -1.0:
+                return
+
+            if max_volume == 0.0:
                 return
 
             if max_volume != pcm_volume:    

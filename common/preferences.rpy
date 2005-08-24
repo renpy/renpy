@@ -140,12 +140,13 @@ init -450:
                 _label_factory(self.name, "prefs")
 
                 def changed(v):
-                    v /= 128.0
 
                     if v == 0:
                         _preferences.mute[self.mixer] = True
                     else:
                         _preferences.mute[self.mixer] = False
+
+                    v /= 128.0
 
                     _preferences.volumes[self.mixer] = v
 

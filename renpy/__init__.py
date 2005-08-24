@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.1"
+version = "Ren'Py 5.1.0"
 script_version = 8007
-savegame_suffix = "-5.1.save"
+savegame_suffix = "-5.1.0.save"
 
 
 # Can be first, because has no dependencies, and may be imported
@@ -40,7 +40,7 @@ import renpy.display.focus
 import renpy.display.anim
 
 # Note: For windows to work, renpy.audio.audio needs to be after
-# renpy.display.module.
+# renpy.display.module. 
 import renpy.audio.audio
 import renpy.audio.sound
 import renpy.audio.music

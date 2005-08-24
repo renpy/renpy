@@ -1,5 +1,5 @@
-New in Ren'Py 5.1
------------------
+New in Ren'Py 5.1.0
+-------------------
 
 There is now a new sound system, supporting playing up to 8 mp3, ogg
 vorbis, ogg speex, mod, or wav files at once. Midi can also be played,
