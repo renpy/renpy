@@ -78,7 +78,6 @@ def render(widget, width, height, st):
 
         return rv
 
-
     rv = widget.render(width, height, st)
 
     rv.render_of.append((widget, width, height))
@@ -149,7 +148,12 @@ def render_screen(widget, width, height, st):
     dead_render_set = old_render_set - new_render_set
 
     for r in dead_render_set:
+        render_of = r.render_of
+
         r.kill()
+
+        assert not rv.dead, render_of
+
 
     old_renders.update(new_renders)
     new_renders.clear()
@@ -507,6 +511,8 @@ class Render(object):
         height = min(self.height - y, height)
 
         rv = Render(width, height)
+
+        rv.children.append(self)
 
         if focus:
             for fwidget, farg, fx, fy, fw, fh in self.focuses:

@@ -74,13 +74,15 @@ class Preferences(object):
     """
     def reinit(self):
         self.fullscreen = False
+        self.skip_unseen = False
+        self.text_cps = 0
+        self.afm_time = 0
+
+
+        # These will be going away soon.
         self.sound = True
         self.music = True
-        self.skip_unseen = False
 
-        self.text_cps = 0
-
-        self.afm_time = 0
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
@@ -88,6 +90,11 @@ class Preferences(object):
         self.transitions = 2
 
         self.skip_after_choices = False
+
+        # Mixer channel info.
+        self.volumes = { }
+        self.mute = { }
+        
 
     def __setstate__(self, state):
         self.reinit()

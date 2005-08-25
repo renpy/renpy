@@ -1,4 +1,3 @@
-
 # This file contains code that handles the execution of python code
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
@@ -35,7 +34,7 @@ def reached(obj, path, reachable):
     
     try:
         # Treat as fields, indexed by strings.
-        for k, v in vars(obj.iteritems()):
+        for k, v in vars(obj).iteritems():
             reached(v, path + "." + k, reachable)
     except:
         pass
@@ -183,8 +182,7 @@ def mutator(method):
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
-        
-        
+
         return method(self, *args, **kwargs)
 
     return do_mutation
@@ -236,10 +234,10 @@ class RevertableDict(dict):
 class RevertableObject(object):
 
     def __setattr__(self, attr, value):
-        self.__dict__[attr] = value
+        object.__setattr__(self, attr, value)
 
     def __delattr__(self, attr):
-        del self.__dict__[attr]
+        object.__delattr__(self, attr)
 
     __setattr__ = mutator(__setattr__)
     __delattr__ = mutator(__delattr__)

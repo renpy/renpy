@@ -146,27 +146,29 @@ def text(label, **properties):
 
     return add(renpy.display.text.Text(label, **properties))
 
-def hbox(padding=0, **properties):
+def hbox(spacing=None, style='hbox', **properties):
     """
     This creates a layout that places widgets next to each other, from
     left to right. New widgets are added to this hbox until ui.close()
     is called.
 
-    @param padding: The number of pixels to leave between widgets.
+    @param spacing: The number of pixels to leave between widgets. If None,
+    take the amount of spacing from the style.
     """
 
-    return add(renpy.display.layout.HBox(padding, **properties), True)
+    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="horizontal", style=style, **properties), True)
 
-def vbox(padding=0, **properties):
+def vbox(spacing=None, style='vbox', **properties):
     """
     This creates a layout that places widgets next to each other, from
     top to bottom. New widgets are added to this vbox until ui.close()
     is called.
 
-    @param padding: The number of pixels to leave between widgets.
+    @param spacing: The number of pixels to leave between widgets. If None,
+    take the amount of spacing from the style.
     """
 
-    return add(renpy.display.layout.VBox(padding, **properties), True)
+    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="vertical", style=style, **properties), True)
 
 def grid(cols, rows, padding=0, transpose=False, **properties):
     """
@@ -343,13 +345,14 @@ def input(default, length=None, allow=None, exclude='{}', **properties):
 
     return add(renpy.display.behavior.Input(default, length=length, allow=allow, exclude=exclude, **properties))
 
-def image(filename, **properties):
+def image(im, **properties):
     """
-    This loads an image from the given file, and displays it as a
-    widget.
+    This loads an image, and displays it as a widget. The image may be
+    the name of a file containing the image, or an object constructed
+    with one of the im methods.
     """
 
-    return add(renpy.display.image.Image(filename, **properties))
+    return add(renpy.display.image.Image(im, **properties))
 
 def imagemap(ground, selected, hotspots, unselected=None,
              style='imagemap', button_style='imagemap_button',
@@ -394,6 +397,12 @@ def button(clicked=None, **properties):
 
     @param clicked: A function that is called when this button is
     clicked.
+
+    @param hovered: A function that is called when this button gains
+    focus.
+
+    @param unhovered: A function that is called when this button loses
+    focus.
     """
 
     return add(renpy.display.behavior.Button(None, clicked=clicked,
@@ -448,7 +457,7 @@ def imagebutton(idle_image, hover_image, clicked=None,
                                                image_style=image_style,
                                                **properties))
 
-def bar(width, height, range, value, clicked=None, **properties):
+def bar(*args, **properties):
     """
     This creates a bar widget. The bar widget can be used to display data
     in a bar graph format, and optionally to report when the user clicks on
@@ -475,8 +484,16 @@ def bar(width, height, range, value, clicked=None, **properties):
     twice as big as range.
     """
 
-    return add(renpy.display.behavior.Bar(width, height, range, value,
-                                          clicked=clicked, **properties))
+    if len(args) == 4:
+        width, height, range, value = args
+    else:
+        range, value = args
+        width = None
+        height = None
+
+
+    return add(renpy.display.behavior.Bar(range, value, width, height,
+                                          **properties))
     
 
 def conditional(condition):

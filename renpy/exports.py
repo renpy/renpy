@@ -13,11 +13,14 @@ from renpy.display.behavior import Keymap
 
 from renpy.curry import curry
 # from renpy.display.audio import music_start, music_stop
-from renpy.display.audio import play
+from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
+
+import renpy.audio.sound as sound
+import renpy.audio.music as music
 
 import time
 
@@ -184,7 +187,7 @@ def menu(items, set_expr):
 
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (label, value)
+    items = [ (label % tag_quoting_dict, value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
 
@@ -261,7 +264,9 @@ class TagQuotingDict(object):
 
             return rv
         else:
-            raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            if renpy.config.debug:
+                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            return "<" + key + " unbound>"
 
 tag_quoting_dict = TagQuotingDict()
 
@@ -383,10 +388,10 @@ def pause(delay=None, music=None):
 
     @param delay: The number of seconds to delay.
 
-    @param music: If supplied, this gives the number of seconds into
-    the background music that we will delay until. If music is
-    playing, this takes precedence, otherwise the delay parameter
-    take precedence.
+    @param music: If supplied, and music is playing, this takes
+    precedence over the delay parameter. It gives a time, in seconds,
+    into the playing music track. Ren'Py will pause until the music
+    has played up to that point..
 
     Returns True if the pause was interrupted by the user hitting a key
     or clicking a mouse, or False if the pause was ended by the appointed
@@ -394,7 +399,7 @@ def pause(delay=None, music=None):
     """
 
     if music is not None:
-        newdelay = renpy.display.audio.music_delay(music)
+        newdelay = renpy.audio.music.get_delay(music)
 
         if newdelay is not None:
             delay = newdelay
@@ -640,6 +645,22 @@ def context():
 
     return renpy.game.context().info
     
+def music_start(filename, loops=True, fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout)
+
+def music_stop(fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.stop(fadeout=fadeout)
+
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

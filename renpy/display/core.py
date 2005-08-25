@@ -11,7 +11,6 @@ import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
-MUSICEND = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -56,7 +55,7 @@ class Displayable(renpy.object.Object):
             self.set_style_prefix("hover_")
 
             if not default:
-                renpy.display.audio.play(self.style.sound)
+                renpy.audio.sound.play(self.style.sound)
 
     def unfocus(self):
         """
@@ -172,7 +171,6 @@ class Displayable(renpy.object.Object):
 
         if isinstance(xoff, float):
             xoff = int(xoff * width)
-
 
         xanchor = style.xanchor
 
@@ -403,7 +401,7 @@ class Display(object):
 
         pygame.display.init()
         pygame.font.init()
-        renpy.display.audio.init()
+        renpy.audio.audio.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
@@ -413,10 +411,19 @@ class Display(object):
         if fullscreen:
             fsflag = FULLSCREEN
 
+        # Pick an appropriate display mode. Prefer 32, but accept 24
+        # before letting SDL do conversions.
+        if 24 == pygame.display.mode_ok((renpy.config.screen_width,
+                                         renpy.config.screen_height),
+                                        fsflag, 32):
+            depth = 24
+        else:
+            depth = 32
+        
         # The window we display things in.
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
-                                              fsflag)
+                                              fsflag, depth)
 
         # The mouse buffer.
         if renpy.config.mouse:
@@ -720,6 +727,8 @@ class Interface(object):
             # Clean out transient stuff at the end of an interaction.
             scene_lists = renpy.game.context().scene_lists
             scene_lists.replace_transient()
+
+            self.restart_interaction = True
         
 
     def interact_core(self,
@@ -757,12 +766,10 @@ class Interface(object):
 
         # frames = 0
 
-        # Update the music, if necessary.
-        for i in pygame.event.get([ MUSICEND ]):
-            renpy.display.audio.music_end_event()
-
         for i in renpy.config.interact_callbacks:
             i()
+
+        renpy.audio.audio.interact()
 
         # Tick time forward.
         renpy.display.im.cache.tick()
@@ -951,18 +958,15 @@ class Interface(object):
                     ev = self.event_wait()
                     self.profile_time = time.time()
 
-                    # A song just ended.
-                    if ev.type == MUSICEND:
-                        renpy.display.audio.music_end_event()
-
                     if ev.type == DISPLAYTIME:
 
                         events = 1 + len(pygame.event.get([DISPLAYTIME]))
-
                         renpy.game.context().runtime += events * DISPLAYTIME_INTERVAL
+                        renpy.audio.audio.periodic()
 
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
+
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)

@@ -43,14 +43,14 @@
 
   <example>
 init:
-    image whitehouse = Image("whitehouse.jpg")
+    image bg whitehouse = Image("whitehouse.jpg")
     image eileen happy = Image("eileen_happy.png")
     image eileen upset = Image("eileen_upset.png")
 
 label start:
     $ e = Character('Eileen')
 
-    scene whitehouse
+    scene bg whitehouse
     show eileen happy
 
     e "I'm standing in front of the White House."
@@ -145,7 +145,7 @@ label start:
   
   <example>
 # This line contains only a comment.
-scene whitehouse  # This line contains a statement as well.
+scene bg whitehouse  # This line contains a statement as well.
   </example>
   
 
@@ -542,7 +542,7 @@ menu what_to_do:
   <p>
     Without the ability to display images to the user, a visual
     novel would be a text adventure.  Ren'Py controls image display
-    by using a <def>layers</def>, each comprising a list of things to be
+    by using <def>layers</def>, each comprising a list of things to be
     displayed to the user. By default, there are three layers. The
     master layer is manipulated using the various image display
 statement defined in this section. The transient layer is used to
@@ -552,8 +552,9 @@ overlaid on top of the screen.
    </p>
 
    <p>
-    Every time an interaction starts (for example, a line of dialogue or a menu is displayed), the things in
-    the each of the layers is drawn to the screen, with the first being in
+    Every time an interaction starts (for example, a line of dialogue
+    or a menu is displayed), the contents of 
+    each of the layers is drawn to the screen, with the first being in
     the back and the last being in the front. A number of statements
     manipulate the contents of the master layer. Before we can explain them, however,
     we should first define a few terms.
@@ -1101,7 +1102,7 @@ init:
   </p>
   
   <example>
-scene whitehouse
+scene bg whitehouse
 show eileen happy
 with fade
   </example>
@@ -1115,7 +1116,7 @@ with fade
   </p>
 
   <example>
-scene whitehouse
+scene bg whitehouse
 with None
 show eileen happy
 with dissolve
@@ -1145,7 +1146,7 @@ with dissolve
   </p>
     
   <example>
-scene whitehouse with fade
+scene bg whitehouse with fade
 show eileen happy at left with dissolve
 show lucy happy at right with dissolve
   </example>
@@ -1156,7 +1157,7 @@ show lucy happy at right with dissolve
 
   <example>
 with None
-scene whitehouse
+scene bg whitehouse
 with fade
 with None
 show eileen happy at left
@@ -1343,7 +1344,7 @@ label subroutine:
     clause in turn, and if it evaluates to a true value, then the
     block associated with that clause is executed. If no expression
     evaluates to true, then the block associated with the else
-    clause is executed. (If else clause exists, execution
+    clause is executed. (If an else clause exists, execution
     immediately continues with the next statement.)  In any case, at
     the end of the block, control is transferred to the statement
     following the if statement.
@@ -1638,7 +1639,7 @@ $ state.love_love_points = a + 1
   </example>
 
   <p>
-    The variables a and l are updated after the end of the init:
+    The variables a and b are updated after the end of the init:
     block, while state is not updated. The variable a is assigned a
     different integer object, while b is assigned a new empty list.
     While a field in the Character object is changed by the last
@@ -1744,7 +1745,7 @@ $ state.love_love_points = a + 1
       expected that the game will update this on a regular basis with
       the name of the section of the script that is currently
       executing. When a save file is shown to the user, this name will
-      be shown with it. Alternatively, never change this an no name
+      be shown with it. Alternatively, never change this and no save name
       will be shown.
     </var>
   </dl>
@@ -1807,7 +1808,7 @@ $ persistent.gallery_unlocked = True
 
   <example>
 init:
-    e = Character("Eileen", color=(200, 255, 200, 255))
+    $ e = Character("Eileen", color=(200, 255, 200, 255))
 
 e "My name is shown in full, and in green."
   </example>
@@ -2078,7 +2079,7 @@ we need to stop the decoding of the movie and hide the displayable.
 
 <example>
 init:
-    image movie = Movie
+    image movie = Movie()
 
 $ renpy.movie_start_displayable("bg.mpg", (640, 480), -1)
 scene movie
@@ -2355,6 +2356,23 @@ The number of bonus characters added to every string when auto-forward
 mode is in effect.
 </var>
 
+<var name="config.font_replacement_map" value="{ }">
+This is a map from (font, bold, italics) to (font, bold, italics),
+used to replace a font with one that's specialized as having bold
+and/or italics. For example, if you wanted to have everything using an
+italic version of "Vera.ttf" use "VeraIt.ttf" instead, you could
+write config.font_replacement_map["Vera.ttf", False, True] =
+("VeraIt.ttf", False, False). Please note that these mappings only
+apply to specific variants of a font. In this case, requests for a
+bold italic version of vera will get a bold italic version of vera,
+rather than a bold version of the italic vera.
+</var>
+
+<var name="config.interact_callbacks" value="...">
+A list of callbacks that are called (without any arguments) at the start (or
+restart) of each interaction. 
+</var>
+
 <var name="library.file_page_cols" value = "2" >
 This is the number of columns of save slots that are show in the
 picker that's used in the load and save screens of the game 
@@ -2468,7 +2486,12 @@ used when entering the game menu.
 If not None, this variable should give a transition that will be 
 performed when exiting the game menu.
 </var>
- 
+
+<var name="library.sample_sound" value="None">
+If not None, this variable should give a sample sound that is played
+when the "Test" button on the volume slider is clicked. If None, then
+the "Test" button is not shown.
+</var> 
 
   </dl>
 
@@ -2523,7 +2546,10 @@ init:
   <prop name="font">
     This can be either the name of file containing a truetype font
     that is used to render the text, or a string containing font
-    names, the first found of which will be used to render the text.
+    names, the first found of which will be used to render the
+    text. If the truetype file is not found in the game directory or
+    common directory, it will be searched for in the system's font
+    directory. 
 
     Examples: "Vera.ttf" or "Arial,Helvetica,FreeSans"
   </prop>
@@ -2724,9 +2750,10 @@ top_padding and bottom_padding to the same value.
 
   <p>
     Position properties are applied to widgets that are smaller than
-    the space allocated to them. They control the placement of the
-    widget in the space. For example, position properties can be used
-    to control the placement of a dialogue window on the screen. 
+    the space allocated to them. They apply to all widgets, and
+    control the placement of the widget in the space. For example,
+    position properties can be used to control the placement of a
+    dialogue window on the screen.
   </p>
 
   <p>
@@ -2811,21 +2838,73 @@ does not change.)
  
   <p>
 The ui.bar() widget has a few properties that are specific to
-it, that control the look of the bars.
+it, that control the look of the bars. The bar has gutters on the left
+and the right. The remaining space is the space in which the bar can
+change, with the division of the bar being the fraction of this space
+representing the bar's value as a fraction of the range.
 </p>
+
+<p>
+When the bar is drawn, the thumb's shadow is drawn first, followed by
+the left and right sides of the bar, followed by the thumb.
+</p>
+
+<prop name="left_gutter">
+The size of the left gutter of the bar, in pixels.
+</prop>
+
+<prop name="right_gutter">
+The size of the right gutter of the bar, in pixels.
+</prop>
 
 <prop name="left_bar">
 A Displayable that is used to draw the left side of the bar. This
-Displayable needs to be one that can change its size, such as a Solid
-or a Frame.
+displayable is first rendered at the full size of the bar, and then 
+cropped so only the left side is visible.
 </prop>
 
 <prop name="right_bar">
 A Displayable that is used to draw the right side of the bar. This
-Displayable needs to be one that can change its size, such as a Solid
-or a Frame.
+displayable is first rendered at the full size of the bar, and then 
+cropped so only the right side is visible.
 </prop>
 
+<prop name="thumb">
+If not None, this is a thumb image that is drawn near the break
+between the left and right side of the bar.
+</prop>
+
+<prop name="thumb_shadow">
+If not None, a shadow of the thumb that is drawn underneath the 
+break between the left and right side of the bar.
+</prop>
+
+<prop name="thumb_offset">
+The horizontal update between the division in the bar and the left
+side of the thumb, in pixels. This will often be negative, so that the
+thumb overlaps the division to some extent.
+</prop>
+
+<h4>Box Properties</h4>
+
+<p>
+Horizontal and Vertical boxes have a number of properties that can
+be used to control how they are laid out. By changing these
+properties, one can control the spacing between elements in a box, and
+even turn a box from horizontal to vertical (or vice versa).
+</p>
+
+<prop name="box_spacing">
+The spacing between elements in the box.
+</prop>
+
+<prop name="box_layout">
+If "horizontal", the box is laid out in a horizontal manner. If
+"vertical", the box is laid out in a vertical fashion. If None, the
+layout of the box is controlled by the function that created the
+box, with ui.hbox and ui.vbox making horizontal and vertical boxes,
+respectively. 
+</prop>
 
   <h4>Hovering</h4>
   
@@ -2986,8 +3065,8 @@ and whitespace.
 </p>
 
 <p>
-Some example tags are {b}, {i}, {color=#f88}, {size=+16}. The matching
-closing tags are {/b}, {i}, {/color}, and {/size}. Tags must be
+Some example tags are {b}, {i}, {color=#f88}, {size=+16}, and {font=VeraIt.ttf}. The matching
+closing tags are {/b}, {i}, {/color}, {/size}, and {/font}. Tags must be
 properly nested: "{b}{i}bold + italic{/i}{/b}" is okay,
 but "{b}{i}this is wrong{/b}{/i}". Right now, improper nesting won't
 cause an error but it probably won't do what you want. All open tags
@@ -3446,72 +3525,74 @@ The image manipulators are:
 <h3>Low-Level Audio Functions</h3>
 
 <p>
-These functions manipulate Ren'Py audio subsystem directly. Unlike the
-high-level music functions, these functions do not manipulate
-persistent state. As a result, calls to these functions will not
-persistent across sessions.
+Here, we give functions that allow for low-level control of the audio
+subsystem. There are two kinds of audio that we can play. The sound
+subsystem plays audio, but doesn't attempt in any way to make the
+audio that is played persistent. The music subsystem, on the other
+hand, handles saving and restoring the music as the game's situation
+changes. Use the sound functions to play sound effects, or to
+implement your own method of playing music. Use the music functions
+when you want music to be restored after playing and loading.
 </p>
 
 <p>
-Still, these functions are useful to allow access to behavior that 
-is not yet exposed through the high-level interface. They are also
-useful for a person who wants to change the high-level music or sound
-interfaces. So, we've documented them here. 
+Ren'Py supports 8 channels of audio. The first three channels (0-2)
+are dedicated to sound effects, while the rest (3-7) are intended for
+music. When voice is used, channel 2 is reserved for voice. All
+channels support playing compressed waveform audio. We support wav,
+mp3, ogg vorbis, ogg speex, and various mod formats, including xm. We
+also support midi, but impose that the requirement that only one
+channel can be playing midi at a time.
+</p>
+
+<p>
+Both sound and music functions deal with a queue of audio files. This
+queue contains the files that will be played after the currently
+playing file finishes. When looping, if the queue becomes empty the
+last-queued file is added to the queue.
+</p>
+
+<p>
+When synchro-start is enabled on two or more channels, the system
+waits for all of the channels to stop playing before playing the new
+files on those channels. All of the channels are started
+simultaneously, in a sample-accurate manner.
 </p>
 
 <h4>Sound Functions</h4>
 
-<!-- func audio.sound_enabled -->
+<!-- func renpy.sound.play -->
 
-<!-- func audio.sound_play -->
+<!-- func renpy.sound.queue -->
 
-<!-- func audio.sound_stop -->
+<!-- func renpy.sound.stop -->
+
+<!-- func renpy.sound.set_volume -->
+
+<!-- func renpy.sound.set_mixer -->
+
+<!-- func renpy.sound.set_queue_empty_callback -->
+
 
 <h4>Music Functions</h4>
 
 <p>
-The low-level music system deals with two music files at once, a
-playing file and a queued file. When the playing file finishes
-playing, the queued file is begun, and queued file becomes 
-empty.
+The music functions persists the information about playing music,
+allowing the music to be restored after a rollback, return from a
+menu, or load. What is saved is the time of the last change of music,
+and the last queued file. If the persistent time of last music change
+is different than what is currently playing, the system dequeues all
+queued music. It then check to see if the playing music is different
+from the persisted last queued music. If so, it stops the playing
+music. It then plays in a loop the last queued music, and sets the
+currently known last change time to the persisted last change time.
 </p>
 
-<!-- func audio.music_enabled -->
-
-<!-- func audio.music_play -->
-
-<!-- func audio.music_queue -->
-
-<!-- func audio.music_stop -->
-
-<!-- func audio.music_fadeout -->
-
-<!-- func audio.music_fading -->
-
-<!-- func audio.music_filenames -->
-
-<!-- func audio.music_pause -->
-
-<!-- func audio.music_unpause -->
-
-<h4>Music Callbacks</h4>
-
-<var name="config.interact_callbacks" value="...">
-A list of callbacks that are called (without any arguments) at the start (or
-restart) of each interaction. It's intended to allow the system to 
-restore music after a context change, or to implement changes in 
-the music that occured before that interaction. It will also help to 
-support voice.
-</var>
-
-<var name="config.music_end_event" value="...">
-This callback is called (without any arguments) when a track has 
-finished playing. If a second track has been queued, it will have 
-started before this callback is called. Usually, this callback is 
-used to queue up another track when one ends. It can also be used 
-to start the music playing again after a fadeout.
-</var>
-
+<!-- func renpy.music.play -->
+<!-- func renpy.music.queue -->
+<!-- func renpy.music.stop -->
+<!-- func renpy.music.set_volume -->
+<!-- func renpy.music.set_music -->
 
 <h3>Default Definitions</h3>
 
@@ -3689,6 +3770,14 @@ as a reasonable default image, for use in tutorials and incomplete games.
   <h3>Style Index</h3>
   
   <styleindex/>
+
+  <h3>Style Hierarchy</h3>
+  
+  <p>This shows the inheritance relationship between styles.</p>
+
+  <ul>
+<!-- include style_heirarchy.xml -->
+  </ul>
 
   <h3>Definition Index</h3>
 

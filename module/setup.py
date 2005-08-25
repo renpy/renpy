@@ -10,11 +10,17 @@ libraries = [ "SDL" ]
 extra_compile_args = [ ]
 extra_link_args = [ ]
 
+# The following turn on optional modules.
+nativemidi = None
+winmixer = None
+
 import distutils.core
 
 def common():
 
-    renpy_extension = distutils.core.Extension(
+    extensions = [ ]
+
+    rpe = distutils.core.Extension(
         "_renpy",
         [ "core.c", "_renpy.c" ],
         extra_compile_args=extra_compile_args,
@@ -22,13 +28,45 @@ def common():
         include_dirs=include_dirs,
         libraries=libraries,
         )
-#                            include_dirs=[ "." ],
-#                            libraries=[ "SDL" ],
+
+    extensions.append(rpe)
+
+    psse = distutils.core.Extension(
+        "pysdlsound",
+        [ "pss.c", "rwobject.c", "pysdlsound.c" ],
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
+        include_dirs=include_dirs,
+        libraries=[ "SDL_sound" ] + libraries,
+        )
+
+    extensions.append(psse)
+
+    if nativemidi:
+        nme = distutils.core.Extension(
+            "nativemidi",
+            nativemidi,
+            extra_compile_args=extra_compile_args,
+            libraries=nativemidi_libs,
+            include_dirs=include_dirs,
+            extra_link_args=extra_link_args,
+            )
+        
+        extensions.append(nme)
+
+    if winmixer:
+        wme = distutils.core.Extension(
+            "winmixer",
+            [ 'winmixer.c' ],
+            libraries=['winmm'],
+            )
+
+        extensions.append(wme)
     
     distutils.core.setup(
         name = "renpy_module",
-        version = "4.8.7",
-        ext_modules = [ renpy_extension ],
+        version = "5.1.0",
+        ext_modules = extensions,
         )
 
 if __name__ == "__main__":

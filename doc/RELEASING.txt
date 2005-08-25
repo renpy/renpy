@@ -88,6 +88,9 @@ moonlight.exe [windows] - The game executable that the user runs.
 
 moonlight.py [python] - The main python script that runs your game.
 
+moonlight.rpyl [python] - A file that allows your game to be easily
+launched on Mac OS X.
+
 python23.dll [windows] - The DLL containing the python interpreter. It
 may change versions in the future, in which case the numbers will
 change.

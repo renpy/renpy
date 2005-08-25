@@ -87,6 +87,11 @@ def check_image(node):
             report(node, "Image '%s' uses file '%s', which is not loadable.", name, fn)
             continue
 
+        try:
+           renpy.loader.transfn(fn)
+        except:
+            continue
+
         if renpy.loader.transfn(fn) and \
                fn.lower() in filenames and \
                fn != filenames[fn.lower()]:

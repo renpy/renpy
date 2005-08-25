@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 4.8.8"
+version = "Ren'Py 5.1.0"
 script_version = 8007
-savegame_suffix = "-8.4.save"
+savegame_suffix = "-5.1.0.save"
 
 
 # Can be first, because has no dependencies, and may be imported
@@ -29,7 +29,6 @@ import renpy.display.presplash
 import renpy.display.module
 import renpy.display.render # Most display stuff depends on this.
 import renpy.display.core # object
-import renpy.display.audio
 import renpy.display.text # core
 import renpy.display.layout # core
 import renpy.display.behavior # layout
@@ -39,6 +38,12 @@ import renpy.display.image # core, behavior, im
 import renpy.display.video
 import renpy.display.focus
 import renpy.display.anim
+
+# Note: For windows to work, renpy.audio.audio needs to be after
+# renpy.display.module. 
+import renpy.audio.audio
+import renpy.audio.sound
+import renpy.audio.music
 
 import renpy.ui
 import renpy.lint

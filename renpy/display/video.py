@@ -38,7 +38,7 @@ def movie_stop(clear=True):
         surface = None
         loops = 0
         
-        renpy.display.audio.enable_mixer()        
+        renpy.audio.audio.init()
 
     if clear:
         renpy.game.context().scene_lists.movie = None
@@ -104,7 +104,7 @@ def interact():
         if not movie:            
 
             # Needed so we get movie sound.
-            renpy.display.audio.disable_mixer()
+            renpy.audio.audio.quit()
 
             m = pygame.movie.Movie(renpy.loader.transfn(info.filename))
 
@@ -140,7 +140,7 @@ def interact():
         if renpy.config.debug_sound:
             raise
         else:
-            renpy.display.audio.enable_mixer()
+            renpy.audio.audio.enable_mixer()
             return False
 
 
