@@ -110,6 +110,8 @@ label main_menu:
 # The actual game starts here.
 label start:
 
+    jump foobar
+
     scene whitehouse
     show eileen happy beret
 
@@ -233,6 +235,8 @@ label start:
 #     centered "A PyTom Game...."
 
 #     $ renpy.pause(500, 10)
+
+label foobar:
         
     scene whitehouse with dissolve
     show eileen happy with dissolve

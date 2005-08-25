@@ -399,7 +399,10 @@ class Channel(object):
         self.synchro_start = synchro_start
 
     def get_playing(self):
-        return pss.playing_name(self.number)
+        if self.playing_midi:
+            return midi.playing
+        else:
+            return pss.playing_name(self.number)
 
     def set_volume(self, volume):
         self.chan_volume = volume
