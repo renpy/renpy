@@ -13,8 +13,6 @@
 
 init:
 
-    $ config.debug_sound = True
-
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
     $ config.screen_height = 600
@@ -707,7 +705,7 @@ init:
 
                     ui.hbox()
                     ui.text(name, minwidth=150)
-                    ui.bar(600, 22, range, value, ypos=0.5, yanchor=center)
+                    ui.bar(600, 22, range, value, ypos=0.5, yanchor='center')
                     ui.close()
 
                 ui.close()

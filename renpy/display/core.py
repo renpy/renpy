@@ -5,6 +5,7 @@ import renpy
 
 import pygame
 from pygame.constants import *
+import sys
 import os
 import time
 import cStringIO
@@ -399,6 +400,9 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
+        if hasattr(sys, 'winver'):
+            os.environ['SDL_VIDEODRIVER'] = 'windib'
+
         pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()
@@ -683,8 +687,8 @@ class Interface(object):
 
             renpy.display.im.cache.preload()
 
-        return pygame.event.wait()
-
+        ev = pygame.event.wait()
+        return ev
 
     def compute_scene(self, scene_lists):
         """
@@ -931,7 +935,7 @@ class Interface(object):
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
-                    if renpy.config.profile:
+                    if renpy.config.profile :
                         new_time = time.time()
                         print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
