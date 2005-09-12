@@ -248,7 +248,7 @@ void native_midi_start(NativeMidiSong *song)
 	
 	assert (gTunePlayer != NULL);
 	
-//	SDL_PauseAudio(1);
+	SDL_PauseAudio(1);
 //	SDL_UnlockAudio();
     
 	/* First, stop the currently playing music */
@@ -301,7 +301,7 @@ void native_midi_start(NativeMidiSong *song)
 done:
         1;
 //	SDL_LockAudio();
-//	SDL_PauseAudio(0);
+	SDL_PauseAudio(0);
 }
 
 void native_midi_stop()

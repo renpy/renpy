@@ -1,3 +1,40 @@
+New in Ren'Py 5.1.2
+-------------------
+
+Ren'Py now supports embedding images inside text. Please read the
+documentation of ui.text for some important caveats about how this
+works, but basically, the input of ui.text can be a string or a list
+containing strings and widgets. In the latter case, the widgets are
+rendered inside the text. One can also use a text tag like
+{image=filename.png} to include an image anywhere a text tag
+works. One thing to realize is that images so included cannot be any
+bigger then the text they are included with.
+
+Ren'Py can now read the script files out of an archive file. The
+archive used can either be game.rpa and game.rpi, or name.rpa and
+name.rpi, where name is the name of the file that is used to start
+Ren'Py, with the extension and any prefix (before an including an
+underscore) stripped off.
+
+New in Ren'Py 5.1.1
+-------------------
+
+Fixed a bug that prevented the various day-planners from working, in
+both the demo game and the DSE. (This was a bug in the game more so
+then a bug in Ren'Py proper.)
+
+Fixed a bug on Windows that manifested with DirectX under some
+circumstances. We now use SDL's windib driver, which seems just as
+fast for the software surface stuff we're doing.
+
+Updated native midi support on the Mac, eliminating a non-obvious
+race/locking problem. A new version of the Ren'Py launcher for
+Macintosh comes with this release.
+
+Removed the .rpyl files that were added in 5.1.0, as they wound up not
+being needed after all.
+
+
 New in Ren'Py 5.1.0
 -------------------
 

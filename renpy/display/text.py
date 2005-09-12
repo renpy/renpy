@@ -113,7 +113,7 @@ class TextStyle(object):
         # print font.get_ascent() - font.get_descent(), font.get_height(), font.get_linesize()
         return font.size(text)[0], font.get_ascent() - font.get_descent()
 
-    def render(self, text, antialias, color, use_colors):
+    def render(self, text, antialias, color, use_colors, time):
 
         if use_colors and self.color:
             color = self.color
@@ -122,7 +122,45 @@ class TextStyle(object):
 
         rv = font.render(text, antialias, color)
         renpy.display.render.mutated_surface(rv)
-        return rv
+        return rv, rv.get_size()
+
+    def length(self, text):
+        return len(text)
+    
+class WidgetStyle(object):
+    """
+    Represents the style of a widget.
+    """
+
+    def __init__(self, ts, widget, width, time):
+
+        self.height = ts.sizes(" ")[1]
+        self.ascent = ts.get_ascent()
+
+        # The widget we will render.
+        self.widget = widget
+        self.owidth = width
+
+        surf = renpy.display.render.render(widget, self.height, width, time)
+        self.width, _ = surf.get_size()
+
+    def get_ascent(self):
+        return self.ascent
+
+    def sizes(self, widget):
+        return self.width, self.height
+
+    def render(self, widget, antialias, color, foreground, time):
+
+        # If in the foreground
+        if foreground:
+            return renpy.display.render.render(widget, self.owidth, self.height, time), (self.width, self.height)
+        else:
+            return None, (self.width, self.height)
+        
+    def length(self, text):
+        return 1
+
     
 def text_tokenizer(s, style):
     """
@@ -168,6 +206,28 @@ def text_tokenizer(s, style):
         elif m.group('newline'):
             yield 'newline', m.group('newline')
     
+def input_tokenizer(l, style):
+    """
+    This tokenizes arbitrary input, which may be a string or a list which
+    can contain strings and widgets.
+    """
+
+    if isinstance(l, basestring):
+        for i in renpy.config.text_tokenizer(l, style):
+            yield i
+
+        return
+    
+    for s in l:
+        if isinstance(s, basestring):
+            for i in renpy.config.text_tokenizer(s, style):
+                yield i
+
+        elif isinstance(s, renpy.display.core.Displayable):
+            yield ("widget", s)
+        
+        else:
+            raise Exception("Couldn't figure out how to tokenize " + repr(s))
 
 class Text(renpy.display.core.Displayable):
     """
@@ -240,7 +300,7 @@ class Text(renpy.display.core.Displayable):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
-    def layout(self, width):
+    def layout(self, width, time):
         """
         This lays out the text of this widget. It sets self.laidout,
         self.laidout_lineheights, self.laidout_width, and
@@ -303,7 +363,7 @@ class Text(renpy.display.core.Displayable):
             text = self.text
 
         # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
-        for kind, i in renpy.config.text_tokenizer(text, self.style):
+        for kind, i in input_tokenizer(text, self.style):
 
             # Newline.
             if kind == "newline":
@@ -398,10 +458,25 @@ class Text(renpy.display.core.Displayable):
 
                     tsl[-1].color = color(m.group(1))
 
+                elif i.startswith("image"):
+
+                    m = re.match(r'image=(.*)', i)
+
+                    if not m:
+                        raise Exception('Image tag %s could not be parsed.' % i)
+
+                    kind = "widget"
+                    i = renpy.display.im.image(m.group(1))
+
+                    # The tag automatically closes.
+                    tsl.pop()
+                    
                 else:
                     raise Exception("Text tag %s was not recognized. Case and spacing matter here.")
 
-                continue
+                # Since the kind can change.
+                if kind == "tag":
+                    continue
 
             elif kind == "space":
                 # Spaces always get appended to the end of a line. So they
@@ -448,8 +523,50 @@ class Text(renpy.display.core.Displayable):
                     cur = cur + i
                     lineheight = max(lh, lineheight)
 
+
+                continue
+
+            elif kind == "widget":
+                pass
+            
             else:
                 raise Exception("Unknown text token kind %s." % kind)
+
+            if kind == "widget":
+
+                # Here, we have a widget that we can render.
+
+                # Close off an existing line, if it's open.
+                if cur:
+
+                    line.append((TextStyle(tsl[-1]), cur))
+                    cur = ""
+                    remwidth -= curwidth
+                    linewidth += curwidth
+                    curwidth = 0
+
+                wstyle = WidgetStyle(tsl[-1], i, width, time)
+                wwidth, wheight = wstyle.sizes(i)
+
+                # If we're bigger then the remaining width on a non-empty line.
+                if line and wwidth > remwidth:
+                    lines.append(line)
+                    maxwidth = max(maxwidth, linewidth)
+                    lineheights.append(lineheight)
+                    linewidths.append(width - remwidth)
+                    
+                    line = [ (wstyle, i) ]
+
+                    remwidth = width - indent() - wwidth
+                    linewidth = wwidth
+                    lineheight = wheight
+
+                else:
+                    line.append((wstyle, i))
+                    linewidth -= wwidth
+                    lineheight = max(lineheight, wheight)
+
+            
 
         # We're done. Let's close up.
 
@@ -471,7 +588,7 @@ class Text(renpy.display.core.Displayable):
         self.laidout_width = max(max(linewidths), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
 
-    def render_pass(self, r, xo, yo, color, user_colors, length):
+    def render_pass(self, r, xo, yo, color, user_colors, length, time):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -497,14 +614,16 @@ class Text(renpy.display.core.Displayable):
 
             for ts, text in line:
                 
-                length -= len(text)
+                length -= ts.length(text)
+
                 if length < 0:
                     text = text[:length]
                 
-                surf = ts.render(text, antialias, color, user_colors)
-                sw, sh = surf.get_size()
+                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time)
+                # sw, sh = surf.get_size()
 
-                r.blit(surf, (x, y + max_ascent - ts.get_ascent()))
+                if surf:
+                    r.blit(surf, (x, y + max_ascent - ts.get_ascent()))
 
                 x = x + sw
 
@@ -551,14 +670,14 @@ class Text(renpy.display.core.Displayable):
             yo = 0
 
                 
-        self.layout(width - absxo)
+        self.layout(width - absxo, st)
             
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length)
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st)
 
-        self.slow = not self.render_pass(rv, xo, yo, self.style.color, True, length)
+        self.slow = not self.render_pass(rv, xo, yo, self.style.color, True, length, st)
 
         if self.slow:
             renpy.display.render.redraw(self, 0)

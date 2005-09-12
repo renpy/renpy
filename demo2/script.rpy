@@ -1169,7 +1169,7 @@ label demonstrate:
             e "It's probably best if we stop here, before somebody's
                brain explodes."
 
-        "Text tags, added in 4.7.":
+        "Text tags, updated in 5.1.2.":
 
             e "Text tags let us control the appearance of text that is
                shown to the user."
@@ -1179,6 +1179,9 @@ label demonstrate:
 
             e "They can make the font size {size=+12}bigger{/size} or
                {size=-8}smaller{/size}."
+
+            e "They let you include {image=slider_idle.png} images
+               inside text."
 
             e "They can even change the
                {color=#f00}color{/color}

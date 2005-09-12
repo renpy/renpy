@@ -148,14 +148,41 @@ def run(restart=False, lint=False):
 
     # And, we're done.
     
-def main(basepath, lint=False):
+def main(basename, lint=False):
 
     renpy.game.exception_info = 'While loading the script.'
 
-    game.basepath = basepath
-    renpy.config.searchpath = [ "common", basepath ]
+    if os.path.isdir(basename):
+        basepath = basename
+    elif os.path.isdir("game"):
+        basepath = "game"
+    else:
+        basepath = "."
 
+    game.basepath = basepath
+    renpy.config.searchpath = [ basepath ]
+
+    if os.path.isdir("common"):
+        renpy.config.searchpath.append("common")
+
+    renpy.config.archives = [ ]
+
+    try:
+        renpy.loader.transfn(basename + ".rpi")
+        renpy.config.archives.append(basename)
+    except:
+        pass
+
+    try:
+        renpy.loader.transfn("game.rpi")
+        renpy.config.archives.append("game")
+    except:
+        pass
+        
     renpy.config.backup()
+
+    # Initialize archives.
+    renpy.loader.index_archives()
 
     # Load the script.
     game.script = renpy.script.load_script()
