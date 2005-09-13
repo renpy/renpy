@@ -299,6 +299,8 @@ def display_say(who, what, who_style='say_label',
                 slow=True,
                 image=False,
                 afm=True,
+                ctc=None,
+                ctc_position="nestled",
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -332,7 +334,20 @@ def display_say(who, what, who_style='say_label',
     elif who is not None and image:
         renpy.ui.image(who, style=who_style, **properties)
 
-    renpy.ui.text(what, style=what_style, slow=slow)
+    # Code to support ctc.
+    what = [ what ]
+
+    if ctc and ctc_position == "nestled":
+        what.extend([ " ", ctc ])
+
+    slow_done = None
+
+    if ctc and ctc_position == "fixed":
+        def slow_done():
+            renpy.ui.add(ctc)
+            restart_interaction()
+    
+    renpy.ui.text(what, style=what_style, slow=slow, slow_done=slow_done)
     renpy.ui.close()
 
     if interact:

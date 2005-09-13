@@ -1,6 +1,7 @@
 # This file contains support for state-machine controlled animations.
 
 import renpy
+import pygame
 import random
 
 class State(object):
@@ -287,4 +288,86 @@ def Animation(*args):
 
     return SMAnimation(*sm)
 
-                           
+
+class Blink(renpy.display.core.Displayable):
+
+    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,
+                 high=1.0, low=0.0, offset=0.0, **properties):
+
+        super(Blink, self).__init__(**properties)
+
+        self.image = renpy.display.im.image(image, loose=True)
+        self.on = on
+        self.off = off
+        self.rise = rise
+        self.set = set
+        self.high = high
+        self.low = low
+        self.offset = offset
+
+        self.cycle = on + set + off + rise
+
+    def get_placement(self):
+        return self.style
+
+    def render(self, height, width, st):
+
+        time = (self.offset + st) % self.cycle
+        alpha = self.high
+
+        if 0 <= time < self.on:
+            delay = self.on - time
+            alpha = self.high
+
+        time -= self.on
+
+        if 0 <= time < self.set:
+            delay = 0            
+            frac = time / self.set
+            alpha = self.low * frac + self.high * (1.0 - frac)
+
+        time -= self.set
+
+        if 0 <= time < self.off:
+            delay = self.off - time
+            alpha = self.low
+
+        time -= self.off
+
+        if 0 <= time < self.rise:
+            delay = 0
+            frac = time / self.rise 
+            alpha = self.high * frac + self.low * (1.0 - frac)
+
+
+        rend = renpy.display.render.render(self.image, height, width, st)
+
+        if not renpy.display.module.can_map:
+            return rend
+
+        w, h = rend.get_size()
+        rv = renpy.display.render.Render(w, h)
+
+        if alpha:
+
+            oldsurf = rend.pygame_surface()
+
+            if not (oldsurf.get_masks()[3]):
+                oldsurf = oldsurf.convert_alpha()
+
+            newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
+
+            amap = renpy.display.im.ramp(0, int(alpha * 255.0))
+            identity = renpy.display.im.identity
+
+            renpy.display.module.map(oldsurf, newsurf,
+                                     identity, identity, identity, amap)
+
+            renpy.display.render.mutated_surface(newsurf)
+
+            rv.blit(newsurf, (0, 0))
+
+        rv.depends_on(rend)
+        renpy.display.render.redraw(self, delay)
+
+        return rv

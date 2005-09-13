@@ -139,9 +139,18 @@ def text(label, **properties):
     """
     This creates a widget displaying a text label.
 
-    @param label: The text that will be displayed on the screen. 
+    @param label: The text that will be displayed on the screen. It
+    uses font properties. The label can also be a list containing both
+    text strings in widgets, in the case of a widget, the widget is
+    displayed as if it was text of the enclosing font. The height of
+    the area allocated is that of the font, with the width being taked
+    from a render of the widget.
 
-    It uses font properties.
+    @param slow: If True, text is displayed slowly, controlled by the
+    appropriate preference.
+    
+    @param slow_done: If not None and slow is True, this is a callback
+    that is called when we're done displaying text on the screen.
     """
 
     return add(renpy.display.text.Text(label, **properties))

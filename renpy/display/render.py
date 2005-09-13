@@ -149,9 +149,7 @@ def render_screen(widget, width, height, st):
 
     for r in dead_render_set:
         render_of = r.render_of
-
         r.kill()
-
         assert not rv.dead, render_of
 
 
@@ -351,6 +349,9 @@ class Render(object):
 
             # assert not i.dead
 
+            i.keep_alive()
+
+        for i in self.depends:
             i.keep_alive()
 
     def kill(self):

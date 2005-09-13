@@ -240,7 +240,8 @@ class Text(renpy.display.core.Displayable):
     def after_setstate(self):
         self.laidout = None
 
-    def __init__(self, text, slow=False, style='default', **properties):
+    def __init__(self, text, slow=False, slow_done=None,
+                 style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -249,6 +250,8 @@ class Text(renpy.display.core.Displayable):
         @param style: A style that will be applied to the text.
 
         @param properties: Additional properties that are applied to the text.
+
+        @param slow_done: A callback that occurs when slow text is done.
         """
 
         super(Text, self).__init__()
@@ -256,6 +259,7 @@ class Text(renpy.display.core.Displayable):
         self.text = text
         self.style = renpy.style.Style(style, properties)
         self.slow = slow
+        self.slow_done = slow_done
 
         self.laidout = None
 
@@ -642,6 +646,9 @@ class Text(renpy.display.core.Displayable):
             length = sys.maxint
             self.slow = False
 
+            if self.slow_done:
+                self.slow_done()
+
         if self.style.drop_shadow:
             dsxo, dsyo = self.style.drop_shadow
 
@@ -677,7 +684,11 @@ class Text(renpy.display.core.Displayable):
         if self.style.drop_shadow:
             self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st)
 
-        self.slow = not self.render_pass(rv, xo, yo, self.style.color, True, length, st)
+        if self.render_pass(rv, xo, yo, self.style.color, True, length, st):
+            if self.slow:
+                self.slow = False
+                if self.slow_done:
+                    self.slow_done()
 
         if self.slow:
             renpy.display.render.redraw(self, 0)
