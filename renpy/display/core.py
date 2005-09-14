@@ -374,8 +374,6 @@ class Display(object):
 
     @ivar window: The window that is being presented to the user.
 
-    @ivar buffer: A surface that buffers the window.
-
     @ivar sample_surface: A sample surface that is optimized for fast
     blitting to the window, with alpha. Used to create other surfaces
     from.
@@ -387,6 +385,12 @@ class Display(object):
 
     @ivar mouse_location: The mouse location the last time it was
     drawn, or None if it wasn't drawn the last time around.
+
+    @ivar mouse_backing: A backing store image holding the background
+    that goes behind the mouse.
+
+    @ivar mouse_backing_pos: The position of the upper-left hand
+    corner of the backing pos, relative to the window.
 
     @ivar full_redraw: Force a full redraw.
     """
@@ -428,12 +432,7 @@ class Display(object):
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
                                               fsflag, depth)
-
-        # The mouse buffer.
-        if renpy.config.mouse:
-            self.buffer = pygame.Surface((renpy.config.screen_width,
-                                          renpy.config.screen_height))
-
+        
         # Sample surface that all surfaces are created based on.
         self.sample_surface = self.window.convert_alpha()
 
@@ -455,9 +454,53 @@ class Display(object):
             pygame.mouse.set_visible(True)
 
         self.mouse_location = None
-        self.suppress_mouse = False
+        self.mouse_backing = None
+        self.mouse_backing_pos = None
 
+        self.suppress_mouse = False
         self.full_redraw = True
+
+    def show_mouse(self, pos):
+        """
+        Actually shows the mouse.
+        """
+
+        self.mouse_location = pos
+
+        # The offsets in the x and y dimensions of the hotspot, within the
+        # mouse image.
+        mxo = 0
+        myo = 0
+
+        mx, my = pos
+        mw, mh = self.mouse.get_size()
+
+        bx = mx - mxo
+        by = my - myo
+
+        self.mouse_backing_pos = (bx, by)
+        self.mouse_backing = pygame.Surface((mw, mh), self.window.get_flags(), self.window)
+        self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
+
+        self.window.blit(self.mouse, (bx, by))
+
+        return bx, by, mw, mh
+
+    def hide_mouse(self):
+        """
+        Actually hides the mouse.
+        """
+
+        size = self.mouse_backing.get_size()
+        self.window.blit(self.mouse_backing, self.mouse_backing_pos)
+
+        rv = self.mouse_backing_pos + size
+
+        self.mouse_backing = None
+        self.mouse_backing_pos = None
+        self.mouse_location = None 
+            
+        return rv
 
     def draw_mouse(self, show_mouse=True):
         """
@@ -465,35 +508,29 @@ class Display(object):
         buffer to minimize the amount of the screen that needs to be
         drawn, and only redraws if the mouse has actually been moved.
         """
-        
+
         if not self.mouse:
             return
 
         if self.suppress_mouse:
             return
-
-        mw, mh = self.mouse.get_size()
+            
         pos = pygame.mouse.get_pos()
 
-        if not pygame.mouse.get_focused():
-            pos = None
+        if pos == self.mouse_location and show_mouse:
+            return
 
-        if not show_mouse:
-            pos = None
+        if not pos and not show_mouse:
+            return
 
         updates = [ ]
 
-        if self.mouse_location and self.mouse_location != pos:
-            ox, oy = self.mouse_location
-            self.window.blit(self.buffer, (ox, oy), (ox, oy, mw, mh))
-            updates.append((ox, oy, mw, mh))
+        if self.mouse_location:
+            updates.append(self.hide_mouse())
 
-        if pos and (pos != self.mouse_location):
-            self.window.blit(self.mouse, pos)
-            updates.append(pos + (mw, mh))
-
-        self.mouse_location = pos
-
+        if show_mouse:
+            updates.append(self.show_mouse(pos))
+            
         pygame.display.update(updates)
             
         
@@ -513,19 +550,15 @@ class Display(object):
 
         if not suppress_blit:        
 
-            if self.mouse:
-                self.draw_mouse(False)
+            self.draw_mouse(False)
 
             damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
             self.full_redraw = False
 
-            if self.mouse:
-                if damage:
-                    self.buffer.blit(self.window, damage, damage)
-                self.draw_mouse(True)
-
             if damage:
                 pygame.display.update(damage)
+
+            self.draw_mouse(True)
 
         else:
             self.full_redraw = True
