@@ -54,8 +54,6 @@ init:
     # the game menu.
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
-    
-
 
     # There used to be a large list of definitions of placements and
     # transitions here. They've been moved into

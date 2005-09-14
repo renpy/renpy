@@ -294,6 +294,30 @@ class Blink(renpy.display.core.Displayable):
     def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,
                  high=1.0, low=0.0, offset=0.0, **properties):
 
+        """
+        This takes as an argument an image or widget, and blinks that image
+        by varying its alpha. The sequence of phases is
+        on - set - off - rise - on - ... All times are given in seconds, all
+        alphas are fractions between 0 and 1.
+
+        @param image: The image or widget that will be blinked.
+
+        @param on: The amount of time the widget spends on, at high alpha.
+
+        @param off: The amount of time the widget spends off, at low alpha.
+
+        @param rise: The amount time the widget takes to ramp from low to high alpha.
+
+        @param set: The amount of time the widget takes to ram from high to low.
+
+        @param high: The high alpha.
+
+        @param low: The low alpha.
+
+        @param offset: A time offset, in seconds. Use this to have a
+        blink that does not start at the start of the on phase.
+        """
+        
         super(Blink, self).__init__(**properties)
 
         self.image = renpy.display.im.image(image, loose=True)

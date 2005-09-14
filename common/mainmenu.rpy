@@ -94,7 +94,8 @@ label _library_main_menu:
         ui.close()
 
         store._result = ui.interact(suppress_overlay = True,
-                                    suppress_underlay = True)
+                                    suppress_underlay = True,
+                                    mouse="mainmenu")
 
     # Computed jump to the appropriate label.
     jump _main_menu

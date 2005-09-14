@@ -138,7 +138,8 @@ init -499:
         def _game_interact():
             
             return ui.interact(suppress_underlay=True,
-                               suppress_overlay=True)
+                               suppress_overlay=True,
+                               mouse="gamemenu")
 
                       
         # This renders a slot with a file in it, in the file picker.

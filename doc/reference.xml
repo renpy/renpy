@@ -2231,14 +2231,21 @@ depending on the name of the exe file. This variable is not used to
 load scripts, as scripts will be loaded before it can be set.
 </var>
 
-    <var name="config.mouse" value="None">
-      If this variable contains a string, that string is taken as an
-      image file that a color mouse cursor is loaded from. It's
-      probably best given as a PNG file, in which case the mouse can
-      have transparency and translucency. If this is None, a
-      black-and-white hardware mouse is used, and the speed of Ren'Py
-      is slightly increased.
-    </var>
+<var name="config.mouse" value="None"> 
+This variable controls the user of user-defined mouse cursors. If
+None, the system mouse is used, which is usually a black-and-white
+mouse cursor. Otherwise, this should be a dictionary giving the mouse
+animations for various mouse types. Keys used by the default library
+include "default", "say", "with", "menu", "prompt", "imagemap",
+"pause", "mainmenu", and "gamemenu". The "default" key should always
+be present. The values in the dictionary should be list of frames
+making up the mouse cursor. Each frame is an (image, x-offset,
+y-offset) tuple. Image is a filename of an image, while x- and y-
+offset are the offsets of the hotspot within the image. The frames are
+played back at 20hz, and the animation loops after all frames have
+been shown. Please note that to show a frame more than once, it must
+be repeated in a frame list. That is implemented efficiently.
+</var>
 
     <var name="config.focus_crossrange_penalty" value="1024">
 This is the amount of penalty to apply to moves perpendicular to the 

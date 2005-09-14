@@ -177,7 +177,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None):
 
     renpy.ui.close()
 
-    return renpy.ui.interact()
+    return renpy.ui.interact(mouse='prompt')
 
 def menu(items, set_expr):
     """
@@ -246,7 +246,7 @@ def display_menu(items, window_style='menu_window'):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
-    rv = renpy.ui.interact()
+    rv = renpy.ui.interact(mouse='menu')
     checkpoint()
 
     return rv
@@ -351,7 +351,7 @@ def display_say(who, what, who_style='say_label',
     renpy.ui.close()
 
     if interact:
-        renpy.ui.interact()
+        renpy.ui.interact(mouse='say')
         checkpoint()
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
@@ -389,7 +389,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
 
-    rv = renpy.ui.interact(suppress_overlay=(not overlays))
+    rv = renpy.ui.interact(suppress_overlay=(not overlays), mouse='imagemap')
     checkpoint()
     return rv
     
@@ -424,7 +424,7 @@ def pause(delay=None, music=None):
     if delay:
         renpy.ui.pausebehavior(delay, False)
 
-    return renpy.ui.interact()
+    return renpy.ui.interact(mouse='pause')
 
 def movie_cutscene(filename, delay, loops=0):
     """
@@ -470,7 +470,8 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_wait)
+                                                 suppress_overlay=not renpy.config.overlay_during_wait,
+                                                 mouse='with')
         else:
             return False
 

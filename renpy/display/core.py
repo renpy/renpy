@@ -372,6 +372,8 @@ class Display(object):
     """
     This is responsible for managing the display window.
 
+    @ivar interface: The interface corresponding to this display.
+
     @ivar window: The window that is being presented to the user.
 
     @ivar sample_surface: A sample surface that is optimized for fast
@@ -396,7 +398,9 @@ class Display(object):
     """
 
 
-    def __init__(self):
+    def __init__(self, interface):
+
+        self.interface = interface
 
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
@@ -447,7 +451,7 @@ class Display(object):
 
         # Load the mouse image, if any.
         if renpy.config.mouse:
-            self.mouse = renpy.display.im.load_image(renpy.config.mouse)
+            self.mouse = True
             pygame.mouse.set_visible(False)
         else:
             self.mouse = None
@@ -456,24 +460,25 @@ class Display(object):
         self.mouse_location = None
         self.mouse_backing = None
         self.mouse_backing_pos = None
+        self.mouse_info = None
 
         self.suppress_mouse = False
         self.full_redraw = True
 
-    def show_mouse(self, pos):
+    def show_mouse(self, pos, info):
         """
         Actually shows the mouse.
         """
 
         self.mouse_location = pos
+        self.mouse_info = info
 
-        # The offsets in the x and y dimensions of the hotspot, within the
-        # mouse image.
-        mxo = 0
-        myo = 0
+        img, mxo, myo = info
+        
+        mouse = renpy.display.im.load_image(img)
 
         mx, my = pos
-        mw, mh = self.mouse.get_size()
+        mw, mh = mouse.get_size()
 
         bx = mx - mxo
         by = my - myo
@@ -482,7 +487,7 @@ class Display(object):
         self.mouse_backing = pygame.Surface((mw, mh), self.window.get_flags(), self.window)
         self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
 
-        self.window.blit(self.mouse, (bx, by))
+        self.window.blit(mouse, (bx, by))
 
         return bx, by, mw, mh
 
@@ -510,18 +515,26 @@ class Display(object):
         """
 
         if not self.mouse:
-            return
+            return [ ]
 
         if self.suppress_mouse:
-            return
-            
+            return [ ]
+
+        # Figure out the mouse animation.
+        if self.interface.mouse in renpy.config.mouse:
+            anim = renpy.config.mouse[self.interface.mouse]
+        else:
+            anim = renpy.config.mouse['default']
+
+        info = anim[self.interface.ticks % len(anim)]
+
         pos = pygame.mouse.get_pos()
 
-        if pos == self.mouse_location and show_mouse:
-            return
+        if pos == self.mouse_location and show_mouse and info == self.mouse_info:
+            return [ ]
 
         if not pos and not show_mouse:
-            return
+            return [ ]
 
         updates = [ ]
 
@@ -529,10 +542,20 @@ class Display(object):
             updates.append(self.hide_mouse())
 
         if show_mouse:
-            updates.append(self.show_mouse(pos))
+            updates.append(self.show_mouse(pos, info))
             
-        pygame.display.update(updates)
-            
+        return updates
+
+    def update_mouse(self):
+        """
+        Draws the mouse, and then updates the screen.
+        """
+
+        updates = self.draw_mouse()
+
+        if updates:
+            pygame.display.update(updates)
+        
         
     def show(self, root_widget, suppress_blit):
         """
@@ -550,15 +573,19 @@ class Display(object):
 
         if not suppress_blit:        
 
-            self.draw_mouse(False)
+            updates = [ ]
+
+            updates.extend(self.draw_mouse(False))
 
             damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
-            self.full_redraw = False
 
             if damage:
-                pygame.display.update(damage)
+                updates.append(damage)
 
-            self.draw_mouse(True)
+            self.full_redraw = False
+
+            updates.extend(self.draw_mouse(True))
+            pygame.display.update(updates)
 
         else:
             self.full_redraw = True
@@ -622,10 +649,14 @@ class Interface(object):
     @ivar pushed_event: If not None, an event that was pushed back
     onto the stack.
 
+    @ivar mouse: The name of the mouse cursor to use during the current
+    interaction.
+
+    @ivar ticks: The number of 20hz ticks.
     """
 
     def __init__(self):
-        self.display = Display()
+        self.display = Display(self)
         self.profile_time = time.time()
         self.screenshot = None
         self.old_scene = None
@@ -635,6 +666,8 @@ class Interface(object):
         self.force_redraw = False
         self.restart_interaction = False
         self.pushed_event = None
+        self.ticks = 0
+        self.mouse = 'default'
 
     def take_screenshot(self, scale):
         """
@@ -769,11 +802,12 @@ class Interface(object):
         
 
     def interact_core(self,
-                 show_mouse=True,
-                 trans_pause=False,
-                 suppress_overlay=False,
-                 suppress_underlay=False,
-                 ):
+                      show_mouse=True,
+                      trans_pause=False,
+                      suppress_overlay=False,
+                      suppress_underlay=False,
+                      mouse='default',
+                      ):
 
         """
         This handles one cycle of displaying an image to the user,
@@ -800,6 +834,9 @@ class Interface(object):
 
         # We just restarted.
         self.restart_interaction = False
+
+        # Setup the mouse.
+        self.mouse = mouse
 
         # frames = 0
 
@@ -945,7 +982,7 @@ class Interface(object):
 
                 # Check for a change in fullscreen preference.
                 if self.display.fullscreen != renpy.game.preferences.fullscreen:
-                    self.display = Display()
+                    self.display = Display(self)
                     needs_redraw = True
 
                 # Check for a forced redraw.
@@ -975,7 +1012,7 @@ class Interface(object):
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
-                    self.display.draw_mouse()
+                    self.display.update_mouse()
                     
                 # Determine if we need a redraw.
                 needs_redraw = renpy.display.render.process_redraws()
@@ -998,6 +1035,7 @@ class Interface(object):
                     if ev.type == DISPLAYTIME:
 
                         events = 1 + len(pygame.event.get([DISPLAYTIME]))
+                        self.ticks += events
                         renpy.game.context().runtime += events * DISPLAYTIME_INTERVAL
                         renpy.audio.audio.periodic()
 

@@ -19,6 +19,16 @@ be used, this feature is especially useful with Images, Animations,
 and anim.Blink. The click-to-continue widget can be nestled in with
 the end of the text, or placed at a fixed location on the screen.
 
+Custom mouse support has been totaly rewritten. It now supports
+animated mice, and changing the mouse cursor based on the kind of
+interaction that is ongoing. Rather than describe the changes here,
+read the documentation of config.mouse to understand the new
+behavior. Please note that config.mouse has changed, and so if you use
+it in your game (and AFAIK noone does), it will need to be modified.
+
+Custom mouse support has also had significant performance
+improvements.
+
 Ren'Py can now read the script files out of an archive file. The
 archive used can either be game.rpa and game.rpi, or name.rpa and
 name.rpi, where name is the name of the file that is used to start
