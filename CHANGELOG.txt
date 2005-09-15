@@ -8,10 +8,10 @@ containing strings and widgets. In the latter case, the widgets are
 rendered inside the text. One can also use a text tag like
 {image=filename.png} to include an image anywhere a text tag
 works. One thing to realize is that images so included cannot be any
-bigger then the text they are included with. [doc]
+bigger then the text they are included with.
 
 A new widget, anim.Blink, blinks a child widget in and out of
-existence by varying its alpha channel. [doc]
+existence by varying its alpha channel.
 
 Character now allows for the use of a click-to-continue widget when
 the widget finishes showing text to the user. While many widgets can
@@ -33,7 +33,7 @@ Ren'Py can now read the script files out of an archive file. The
 archive used can either be game.rpa and game.rpi, or name.rpa and
 name.rpi, where name is the name of the file that is used to start
 Ren'Py, with the extension and any prefix (before an including an
-underscore) stripped off. [doc]
+underscore) stripped off.
 
 New in Ren'Py 5.1.1
 -------------------

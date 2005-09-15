@@ -828,8 +828,9 @@ show text1 "1/4 of the way down the screen."
 
 <p>
 Occasionally, one will want an image that changes while on the
-screen. Ren'Py provides two ways of doing this. The Animation function
-creates an animation from a simple list of images, while the
+screen. Ren'Py provides three ways of doing this. The Animation function
+creates an animation from a simple list of images, anim.Blink blinks
+an image in and out, and 
 anim.SMAnimation function creates a more complex, state-machine
 controlled animation.
 </p>
@@ -843,7 +844,8 @@ init:
                                 "frame_3.png", 0.25)
   </example>
 
-  
+<!-- func anim.Blink -->
+
 <!-- func anim.SMAnimation -->
 
 <!-- func anim.State -->
@@ -1504,6 +1506,11 @@ python:
     the game directory. Otherwise, the default game directory "game"
     is used.
 
+<p></p>
+
+If the game directory does not exist, the directory the executable
+file is in is used as the game directory.
+
   </p><p>
 
 It next checks to see if the file "presplash.png" is present in the
@@ -1512,10 +1519,16 @@ its own window, until just after the init code has finished
 running. The size of the window is determined by the size of the 
 presplash image, and we attempt to center this window on the screen.
 
+<p></p>
+The name of the game directory is also used to select a default
+archive. This archive is contained in the files game/game.rpi and
+game/game.rpa if the game directory exists, and the files game.rpi and
+game.rpa if it does not. 
+
   </p><p> 
 
     It then tries tries to parse all the .rpy files in the game
-    directory and common directory. If a .rpy file exists and is newer
+    directory, common directory, and default archives. If a .rpy file exists and is newer
     than the corresponding .rpyc file, it is loaded, and the script is
     then written out in a serialized form. If no .rpy files exist, but
     the serialized script (.rpyc file) does exist, or if the
@@ -3078,6 +3091,13 @@ properly nested: "{b}{i}bold + italic{/i}{/b}" is okay,
 but "{b}{i}this is wrong{/b}{/i}". Right now, improper nesting won't
 cause an error but it probably won't do what you want. All open tags
 must be closed by the end of the string.
+</p>
+
+<p>
+There is also an image tag {image=filename}, where filename is the name
+of an image file. The image tag does not take a closing tag. Images so
+including are placed as if they were text, and should be no larger
+than a single line of text.
 </p>
 
 <p>

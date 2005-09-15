@@ -780,6 +780,13 @@ init:
         povname = ""
         pov = DynamicCharacter("povname", color=(255, 0, 0, 255))
 
+    $ ectc = Character('Eileen', color=(200, 255, 200, 255),
+                       ctc = anim.Blink("arrow.png"))
+
+    $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
+                        ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
+                        ctc_position="fixed")
+
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
         "9a_happy.png", 1.0)
@@ -1381,6 +1388,26 @@ label demonstrate:
 
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
+
+        "Potpourri, added in 5.1.2.":
+
+            e "Welcome to the potpourri section of the demo."
+
+            e "Here, we demonstrate features that don't fit in any of
+               the other sections, but don't warrant their own
+               section."
+
+            ectc "Here, we demonstrate a click to continue
+                  indicator. In this example, it's nestled in with the
+                  text."
+
+            ectc "This also demonstrates the use of the anim.Blink
+                  function."
+
+            ectcf "A click to continue image can also be placed at a
+                   fixed location on the screen."
+
+            e "That's it for now."
     
 
         " " # Empty, so we have a blank line.
