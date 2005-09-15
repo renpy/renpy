@@ -35,13 +35,8 @@ def main():
     if name.find("_") != -1:
         name = name[name.find("_") + 1:]
 
-    if os.path.isdir(name):
-        game = name
-    else:
-        game = "game"
-
     op = optparse.OptionParser()
-    op.add_option('--game', dest='game', default=game,
+    op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
     op.add_option('--python', dest='python', default=None,

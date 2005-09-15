@@ -64,7 +64,6 @@ init:
     # $ slowdissove = Dissolve(1.0)
     # $ whitefade = Fade(.5, 0, .5, color=(255, 255, 255, 255))
 
-
     # Now, we declare the images that are used in the program.
 
     # Backgrounds.
