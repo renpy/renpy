@@ -12,6 +12,12 @@ def dosify(s):
 
 def copy_file(source, dest, license="", dos=True):
 
+    if dest.endswith(".bak"):
+        return
+
+    if dest.endswith("~"):
+        return
+    
     print source, "->", dest
 
     sf = file(source, "rb")
@@ -63,6 +69,9 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
             if not should_copy(i):
                 continue
 
+            if i.startswith("."):
+                continue
+
             copy_file(dirpath + "/" + i, dstrel + "/" + i, license=license)
             
 
@@ -78,6 +87,10 @@ def main():
     license = "#!/usr/bin/env python\n\n"
     
     for l in lf:
+
+        if l.startswith("---"):
+            break
+        
         license += "# " + l
 
     lf.close()
@@ -109,19 +122,15 @@ def main():
 
     # Copy the game 
     copy_tree(gamedir, target + "/game",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~") and not fn.endswith(".mpg"))
+              should_copy = lambda fn : not fn.endswith(".mpg"))
 
-    copy_tree("common", target + "/common",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("common", target + "/common")
 
-    copy_tree("dse", target + "/dse",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("dse", target + "/dse")
 
-    copy_tree("extras", target + "/extras",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
-
-    copy_tree("scripts", target + "/scripts",
-              should_copy = lambda fn : not fn.startswith(".") and not fn.endswith("~"))
+    copy_tree("extras", target + "/extras")
+    
+    copy_tree("scripts", target + "/scripts")
 
     def cp(x, license="", dos=True):
         copy_file(x, target + "/" + x, dos=dos)
@@ -135,6 +144,8 @@ def main():
     copy_file("run_game.py", target + "/run_game.pyw", license=license)
     copy_file("run_game.py", target + "/run_dse.py", license=license)
     copy_file("run_game.py", target + "/run_dse.pyw", license=license)
+    # copy_file("run_game.rpyl", target + "/run_game.rpyl")
+    # copy_file("run_dse.rpyl", target + "/run_dse.rpyl")
     cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
     cp("add_from.py", license=license)
@@ -143,15 +154,34 @@ def main():
     
     os.mkdir(target + "/module")
 
-    cp("module/README.txt")
-    cp("module/_renpy.pyx")
-    cp("module/_renpy.c")
-    cp("module/core.c")
-    cp("module/renpy.h")
-    cp("module/setup.py")
-    cp("module/setup_mac.py")
-    cp("module/setup_win32.py")
-    
+    module_files = [
+        "README.txt",
+        "_renpy.pyx",
+        "_renpy.c",
+        "core.c",
+        "linmixer.py",
+        "native_midi.h",
+        "native_midi_common.c",
+        "native_midi_common.h",
+        "native_midi_mac.c",
+        "native_midi_win32.c",
+        "nativemidi.c",
+        "nativemidi.pyx",
+        "pss.c",
+        "pss.h",
+        "pysdlsound.c",
+        "pysdlsound.pyx",
+        "rwobject.c",
+        "renpy.h",
+        "setup.py",
+        "setup_mac.py",
+        "setup_win32.py",
+        "winmixer.c",
+        "winmixer.pyx",
+        ]
+
+    for i in module_files:
+        cp("module/" + i)
     
 
 if __name__ == "__main__":

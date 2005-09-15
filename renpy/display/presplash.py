@@ -5,6 +5,7 @@
 import os
 import os.path
 import pygame.display
+import pygame.constants
 
 # The directory from which presplash images are loaded.
 gamedir = None
@@ -34,7 +35,7 @@ def start(_gamedir):
     pygame.display.init()
 
     img = pygame.image.load(gamedir + "/presplash.png")
-    screen = pygame.display.set_mode(img.get_size())
+    screen = pygame.display.set_mode(img.get_size(), pygame.constants.NOFRAME)
     screen.blit(img, (0, 0))
     pygame.display.update()
 

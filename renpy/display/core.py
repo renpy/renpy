@@ -5,13 +5,13 @@ import renpy
 
 import pygame
 from pygame.constants import *
+import sys
 import os
 import time
 import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
-MUSICEND = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -56,7 +56,7 @@ class Displayable(renpy.object.Object):
             self.set_style_prefix("hover_")
 
             if not default:
-                renpy.display.audio.play(self.style.sound)
+                renpy.audio.sound.play(self.style.sound)
 
     def unfocus(self):
         """
@@ -172,7 +172,6 @@ class Displayable(renpy.object.Object):
 
         if isinstance(xoff, float):
             xoff = int(xoff * width)
-
 
         xanchor = style.xanchor
 
@@ -373,9 +372,9 @@ class Display(object):
     """
     This is responsible for managing the display window.
 
-    @ivar window: The window that is being presented to the user.
+    @ivar interface: The interface corresponding to this display.
 
-    @ivar buffer: A surface that buffers the window.
+    @ivar window: The window that is being presented to the user.
 
     @ivar sample_surface: A sample surface that is optimized for fast
     blitting to the window, with alpha. Used to create other surfaces
@@ -389,11 +388,19 @@ class Display(object):
     @ivar mouse_location: The mouse location the last time it was
     drawn, or None if it wasn't drawn the last time around.
 
+    @ivar mouse_backing: A backing store image holding the background
+    that goes behind the mouse.
+
+    @ivar mouse_backing_pos: The position of the upper-left hand
+    corner of the backing pos, relative to the window.
+
     @ivar full_redraw: Force a full redraw.
     """
 
 
-    def __init__(self):
+    def __init__(self, interface):
+
+        self.interface = interface
 
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
@@ -401,9 +408,12 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
+        if hasattr(sys, 'winver'):
+            os.environ['SDL_VIDEODRIVER'] = 'windib'
+
         pygame.display.init()
         pygame.font.init()
-        renpy.display.audio.init()
+        renpy.audio.audio.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
@@ -413,16 +423,20 @@ class Display(object):
         if fullscreen:
             fsflag = FULLSCREEN
 
+        # Pick an appropriate display mode. Prefer 32, but accept 24
+        # before letting SDL do conversions.
+        if 24 == pygame.display.mode_ok((renpy.config.screen_width,
+                                         renpy.config.screen_height),
+                                        fsflag, 32):
+            depth = 24
+        else:
+            depth = 32
+        
         # The window we display things in.
         self.window = pygame.display.set_mode((renpy.config.screen_width,
                                                renpy.config.screen_height),
-                                              fsflag)
-
-        # The mouse buffer.
-        if renpy.config.mouse:
-            self.buffer = pygame.Surface((renpy.config.screen_width,
-                                          renpy.config.screen_height))
-
+                                              fsflag, depth)
+        
         # Sample surface that all surfaces are created based on.
         self.sample_surface = self.window.convert_alpha()
 
@@ -437,16 +451,61 @@ class Display(object):
 
         # Load the mouse image, if any.
         if renpy.config.mouse:
-            self.mouse = renpy.display.im.load_image(renpy.config.mouse)
+            self.mouse = True
             pygame.mouse.set_visible(False)
         else:
             self.mouse = None
             pygame.mouse.set_visible(True)
 
         self.mouse_location = None
-        self.suppress_mouse = False
+        self.mouse_backing = None
+        self.mouse_backing_pos = None
+        self.mouse_info = None
 
+        self.suppress_mouse = False
         self.full_redraw = True
+
+    def show_mouse(self, pos, info):
+        """
+        Actually shows the mouse.
+        """
+
+        self.mouse_location = pos
+        self.mouse_info = info
+
+        img, mxo, myo = info
+        
+        mouse = renpy.display.im.load_image(img)
+
+        mx, my = pos
+        mw, mh = mouse.get_size()
+
+        bx = mx - mxo
+        by = my - myo
+
+        self.mouse_backing_pos = (bx, by)
+        self.mouse_backing = pygame.Surface((mw, mh), self.window.get_flags(), self.window)
+        self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
+
+        self.window.blit(mouse, (bx, by))
+
+        return bx, by, mw, mh
+
+    def hide_mouse(self):
+        """
+        Actually hides the mouse.
+        """
+
+        size = self.mouse_backing.get_size()
+        self.window.blit(self.mouse_backing, self.mouse_backing_pos)
+
+        rv = self.mouse_backing_pos + size
+
+        self.mouse_backing = None
+        self.mouse_backing_pos = None
+        self.mouse_location = None 
+            
+        return rv
 
     def draw_mouse(self, show_mouse=True):
         """
@@ -454,37 +513,49 @@ class Display(object):
         buffer to minimize the amount of the screen that needs to be
         drawn, and only redraws if the mouse has actually been moved.
         """
-        
+
         if not self.mouse:
-            return
+            return [ ]
 
         if self.suppress_mouse:
-            return
+            return [ ]
 
-        mw, mh = self.mouse.get_size()
+        # Figure out the mouse animation.
+        if self.interface.mouse in renpy.config.mouse:
+            anim = renpy.config.mouse[self.interface.mouse]
+        else:
+            anim = renpy.config.mouse['default']
+
+        info = anim[self.interface.ticks % len(anim)]
+
         pos = pygame.mouse.get_pos()
 
-        if not pygame.mouse.get_focused():
-            pos = None
+        if pos == self.mouse_location and show_mouse and info == self.mouse_info:
+            return [ ]
 
-        if not show_mouse:
-            pos = None
+        if not pos and not show_mouse:
+            return [ ]
 
         updates = [ ]
 
-        if self.mouse_location and self.mouse_location != pos:
-            ox, oy = self.mouse_location
-            self.window.blit(self.buffer, (ox, oy), (ox, oy, mw, mh))
-            updates.append((ox, oy, mw, mh))
+        if self.mouse_location:
+            updates.append(self.hide_mouse())
 
-        if pos and (pos != self.mouse_location):
-            self.window.blit(self.mouse, pos)
-            updates.append(pos + (mw, mh))
-
-        self.mouse_location = pos
-
-        pygame.display.update(updates)
+        if show_mouse:
+            updates.append(self.show_mouse(pos, info))
             
+        return updates
+
+    def update_mouse(self):
+        """
+        Draws the mouse, and then updates the screen.
+        """
+
+        updates = self.draw_mouse()
+
+        if updates:
+            pygame.display.update(updates)
+        
         
     def show(self, root_widget, suppress_blit):
         """
@@ -502,19 +573,19 @@ class Display(object):
 
         if not suppress_blit:        
 
-            if self.mouse:
-                self.draw_mouse(False)
+            updates = [ ]
+
+            updates.extend(self.draw_mouse(False))
 
             damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
-            self.full_redraw = False
-
-            if self.mouse:
-                if damage:
-                    self.buffer.blit(self.window, damage, damage)
-                self.draw_mouse(True)
 
             if damage:
-                pygame.display.update(damage)
+                updates.append(damage)
+
+            self.full_redraw = False
+
+            updates.extend(self.draw_mouse(True))
+            pygame.display.update(updates)
 
         else:
             self.full_redraw = True
@@ -578,10 +649,14 @@ class Interface(object):
     @ivar pushed_event: If not None, an event that was pushed back
     onto the stack.
 
+    @ivar mouse: The name of the mouse cursor to use during the current
+    interaction.
+
+    @ivar ticks: The number of 20hz ticks.
     """
 
     def __init__(self):
-        self.display = Display()
+        self.display = Display(self)
         self.profile_time = time.time()
         self.screenshot = None
         self.old_scene = None
@@ -591,6 +666,8 @@ class Interface(object):
         self.force_redraw = False
         self.restart_interaction = False
         self.pushed_event = None
+        self.ticks = 0
+        self.mouse = 'default'
 
     def take_screenshot(self, scale):
         """
@@ -676,8 +753,8 @@ class Interface(object):
 
             renpy.display.im.cache.preload()
 
-        return pygame.event.wait()
-
+        ev = pygame.event.wait()
+        return ev
 
     def compute_scene(self, scene_lists):
         """
@@ -720,14 +797,17 @@ class Interface(object):
             # Clean out transient stuff at the end of an interaction.
             scene_lists = renpy.game.context().scene_lists
             scene_lists.replace_transient()
+
+            self.restart_interaction = True
         
 
     def interact_core(self,
-                 show_mouse=True,
-                 trans_pause=False,
-                 suppress_overlay=False,
-                 suppress_underlay=False,
-                 ):
+                      show_mouse=True,
+                      trans_pause=False,
+                      suppress_overlay=False,
+                      suppress_underlay=False,
+                      mouse='default',
+                      ):
 
         """
         This handles one cycle of displaying an image to the user,
@@ -755,14 +835,15 @@ class Interface(object):
         # We just restarted.
         self.restart_interaction = False
 
-        # frames = 0
+        # Setup the mouse.
+        self.mouse = mouse
 
-        # Update the music, if necessary.
-        for i in pygame.event.get([ MUSICEND ]):
-            renpy.display.audio.music_end_event()
+        # frames = 0
 
         for i in renpy.config.interact_callbacks:
             i()
+
+        renpy.audio.audio.interact()
 
         # Tick time forward.
         renpy.display.im.cache.tick()
@@ -901,7 +982,7 @@ class Interface(object):
 
                 # Check for a change in fullscreen preference.
                 if self.display.fullscreen != renpy.game.preferences.fullscreen:
-                    self.display = Display()
+                    self.display = Display(self)
                     needs_redraw = True
 
                 # Check for a forced redraw.
@@ -924,14 +1005,14 @@ class Interface(object):
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
-                    if renpy.config.profile:
+                    if renpy.config.profile :
                         new_time = time.time()
                         print "Profile: Redraw took %f seconds." % (new_time - draw_start)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
-                    self.display.draw_mouse()
+                    self.display.update_mouse()
                     
                 # Determine if we need a redraw.
                 needs_redraw = renpy.display.render.process_redraws()
@@ -951,18 +1032,16 @@ class Interface(object):
                     ev = self.event_wait()
                     self.profile_time = time.time()
 
-                    # A song just ended.
-                    if ev.type == MUSICEND:
-                        renpy.display.audio.music_end_event()
-
                     if ev.type == DISPLAYTIME:
 
                         events = 1 + len(pygame.event.get([DISPLAYTIME]))
-
+                        self.ticks += events
                         renpy.game.context().runtime += events * DISPLAYTIME_INTERVAL
+                        renpy.audio.audio.periodic()
 
                         ev = pygame.event.Event(DISPLAYTIME, {},
                                                 duration=(time.time() - start_time))
+
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)

@@ -352,139 +352,253 @@ class Grid(Container):
 
         return rv
 
-class HBox(Container):
-    """
-    A box where things are aligned horizontally. The height of the box
-    is equal to the height of the largest thing in the box, or minheight,
-    whichever is larger. For each child that is smaller than the height of the
-    box, alignment * (empty space) is placed above the child, with the rest
-    of the empty space being placed below. (So 0.0 for top, 0.5 for center,
-    and 1.0 for bottom alignment.)
+class MultiBox(Container):
 
-    If Full, the end result uses all of the width available to it.
+    def __init__(self, spacing=None, layout=None, style='default', **properties):
+
+        if spacing is not None:
+            properties['box_spacing'] = spacing
+
+        super(MultiBox, self).__init__(style=style, **properties)
+
+        self.default_layout = layout
     
-    """
-
-    def __init__(self, padding=0, style='default', **properties):
-        super(HBox, self).__init__()
-
-        self.padding = padding
-        self.style = renpy.style.Style(style, properties)
-
     def get_placement(self):
         return self.style
 
     def render(self, width, height, st):
 
-        self.offsets = [ ]
-        self.sizes = [ ]
+        layout = self.style.box_layout
+        padding = self.style.box_spacing
 
-        surfaces = [ ]
-        xoffsets = [ ]
+        if layout is None:
+            layout = self.default_layout
         
-        remwidth = width
-        xo = 0
+        if layout == "horizontal":
 
-        myheight = 0
+            # This is the horizontal path.
 
-        for i in self.children:
+            self.offsets = [ ]
+            self.sizes = [ ]
 
-            xoffsets.append(xo)
-            surf = render(i, remwidth, height, st)
+            surfaces = [ ]
+            xoffsets = [ ]
 
-            sw, sh = surf.get_size()
+            remwidth = width
+            xo = 0
 
-            remwidth -= sw
-            remwidth -= self.padding
+            myheight = 0
 
-            xo += sw + self.padding
+            for i in self.children:
 
-            myheight = max(sh, myheight)
+                xoffsets.append(xo)
+                surf = render(i, remwidth, height, st)
 
-            surfaces.append(surf)
-            self.sizes.append((sw, sh))
+                sw, sh = surf.get_size()
+
+                remwidth -= sw
+                remwidth -= padding
+
+                xo += sw + padding
+
+                myheight = max(sh, myheight)
+
+                surfaces.append(surf)
+                self.sizes.append((sw, sh))
 
 
-        width = xo - self.padding
+            width = xo - padding
+
+            rv = renpy.display.render.Render(width, myheight)
+
+            for surf, child, xo in zip(surfaces, self.children, xoffsets):
+                sw, sh = surf.get_size()
+
+                offset = child.place(rv, xo, 0, sw, myheight, surf)
+                self.offsets.append(offset)
+
+            return rv
         
-        rv = renpy.display.render.Render(width, myheight)
+        else:
+    
+            self.offsets = [ ]
+            self.sizes = [ ]
 
-        for surf, child, xo in zip(surfaces, self.children, xoffsets):
-            sw, sh = surf.get_size()
+            surfaces = [ ]
+            yoffsets = [ ]
 
-            offset = child.place(rv, xo, 0, sw, myheight, surf)
-            self.offsets.append(offset)
+            remheight = height
+            yo = 0
 
-        return rv
+            mywidth = 0
+
+            for i in self.children:
+
+                yoffsets.append(yo)
+
+                surf = render(i, width, remheight, st)
+
+                sw, sh = surf.get_size()
+
+                remheight -= sh
+                remheight -= padding
+
+                yo += sh + padding
+
+                mywidth = max(sw, mywidth)
+
+                surfaces.append(surf)
+                self.sizes.append((sw, sh))
+
+
+            height = yo - padding
+
+            rv = renpy.display.render.Render(mywidth, height)
+
+            for surf, child, yo in zip(surfaces, self.children, yoffsets):
+
+                sw, sh = surf.get_size()
+
+                offset = child.place(rv, 0, yo, mywidth, sh, surf)
+
+                self.offsets.append(offset)
+
+            return rv
+  
+
+# class HBox(Container):
+#     """
+#     A box where things are aligned horizontally. The height of the box
+#     is equal to the height of the largest thing in the box, or minheight,
+#     whichever is larger. For each child that is smaller than the height of the
+#     box, alignment * (empty space) is placed above the child, with the rest
+#     of the empty space being placed below. (So 0.0 for top, 0.5 for center,
+#     and 1.0 for bottom alignment.)
+
+#     If Full, the end result uses all of the width available to it.
+    
+#     """
+
+#     def __init__(self, padding=0, style='default', **properties):
+#         super(HBox, self).__init__()
+
+#         self.padding = padding
+#         self.style = renpy.style.Style(style, properties)
+
+#     def get_placement(self):
+#         return self.style
+
+#     def render(self, width, height, st):
+
+#         self.offsets = [ ]
+#         self.sizes = [ ]
+
+#         surfaces = [ ]
+#         xoffsets = [ ]
+        
+#         remwidth = width
+#         xo = 0
+
+#         myheight = 0
+
+#         for i in self.children:
+
+#             xoffsets.append(xo)
+#             surf = render(i, remwidth, height, st)
+
+#             sw, sh = surf.get_size()
+
+#             remwidth -= sw
+#             remwidth -= self.padding
+
+#             xo += sw + self.padding
+
+#             myheight = max(sh, myheight)
+
+#             surfaces.append(surf)
+#             self.sizes.append((sw, sh))
+
+
+#         width = xo - self.padding
+        
+#         rv = renpy.display.render.Render(width, myheight)
+
+#         for surf, child, xo in zip(surfaces, self.children, xoffsets):
+#             sw, sh = surf.get_size()
+
+#             offset = child.place(rv, xo, 0, sw, myheight, surf)
+#             self.offsets.append(offset)
+
+#         return rv
     
 
-class VBox(Container):
-    """
-    This is a box that lines displayables up vertically. The width of
-    the box is equal to the width of the widest displayable, or the
-    minwidth, whichever is smaller. Algnment * (empty space) of the
-    empty space is placed to the left of each displayable, with the
-    rest being placed to the right. Padding pixels of space are placed
-    between displayables.
+# class VBox(Container):
+#     """
+#     This is a box that lines displayables up vertically. The width of
+#     the box is equal to the width of the widest displayable, or the
+#     minwidth, whichever is smaller. Algnment * (empty space) of the
+#     empty space is placed to the left of each displayable, with the
+#     rest being placed to the right. Padding pixels of space are placed
+#     between displayables.
 
-    If full is given, then the height of the returned surface is the
-    full height allocated.
-    """
+#     If full is given, then the height of the returned surface is the
+#     full height allocated.
+#     """
 
-    def __init__(self, padding=0, style='default', **properties):
-        super(VBox, self).__init__()
+#     def __init__(self, padding=0, style='default', **properties):
+#         super(VBox, self).__init__()
 
-        self.padding = padding
-        self.style = renpy.style.Style(style, properties)
+#         self.padding = padding
+#         self.style = renpy.style.Style(style, properties)
 
-    def get_placement(self):
-        return self.style
+#     def get_placement(self):
+#         return self.style
         
-    def render(self, width, height, st):
+#     def render(self, width, height, st):
 
-        self.offsets = [ ]
-        self.sizes = [ ]
+#         self.offsets = [ ]
+#         self.sizes = [ ]
 
-        surfaces = [ ]
-        yoffsets = [ ]
+#         surfaces = [ ]
+#         yoffsets = [ ]
 
-        remheight = height
-        yo = 0
+#         remheight = height
+#         yo = 0
 
-        mywidth = 0
+#         mywidth = 0
 
-        for i in self.children:
+#         for i in self.children:
 
-            yoffsets.append(yo)
+#             yoffsets.append(yo)
 
-            surf = render(i, width, remheight, st)
+#             surf = render(i, width, remheight, st)
 
-            sw, sh = surf.get_size()
+#             sw, sh = surf.get_size()
 
-            remheight -= sh
-            remheight -= self.padding
+#             remheight -= sh
+#             remheight -= self.padding
 
-            yo += sh + self.padding
+#             yo += sh + self.padding
 
-            mywidth = max(sw, mywidth)
+#             mywidth = max(sw, mywidth)
 
-            surfaces.append(surf)
-            self.sizes.append((sw, sh))
+#             surfaces.append(surf)
+#             self.sizes.append((sw, sh))
 
 
-        height = yo - self.padding
+#         height = yo - self.padding
         
-        rv = renpy.display.render.Render(mywidth, height)
+#         rv = renpy.display.render.Render(mywidth, height)
 
-        for surf, child, yo in zip(surfaces, self.children, yoffsets):
+#         for surf, child, yo in zip(surfaces, self.children, yoffsets):
 
-            sw, sh = surf.get_size()
+#             sw, sh = surf.get_size()
 
-            offset = child.place(rv, 0, yo, mywidth, sh, surf)
+#             offset = child.place(rv, 0, yo, mywidth, sh, surf)
 
-            self.offsets.append(offset)
+#             self.offsets.append(offset)
 
-        return rv
+#         return rv
     
 
 class Window(Container):

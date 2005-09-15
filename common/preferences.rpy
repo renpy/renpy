@@ -55,22 +55,54 @@ init -450:
                 if not values:
                     return
 
+                ### prefs_pref default
+                # (window) A window containing an individual
+                # preference.
+
+                ### prefs_pref_vbox thin_vbox
+                # (box) The style of the vbox containing a preference.
+
+                ### prefs_label default
+                # (text) The style that is applied to the label of
+                # a block of preferences.
+
+
                 ui.window(style='prefs_pref')
-                ui.vbox()
+                ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
 
                 cur = getattr(self.base, self.field)
+
+                ### prefs_hbox default
+                # If library.hbox_pref_choices is True, the style
+                # of the hbox containing the choices.
 
                 if library.hbox_pref_choices:
                     ui.hbox(style='prefs_hbox')
 
                 for name, value in values:
 
+                    ### prefs_button button
+                    # (window, hover) The style of an unselected preferences
+                    # button.
+
+                    ### prefs_button_text button_text
+                    # (text, hover) The style of the text of an unselected
+                    # preferences button.
+
+                    ### prefs_selected_button selected_button
+                    # (window, hover) The style of a selected preferences
+                    # button.
+
+                    ### prefs_selected_button_text selected_button_text
+                    # (text, hover) The style of the text of a selected
+                    # preferences button.
+
                     def clicked(value=value):
                         setattr(self.base, self.field, value)
                         return True
-
+                    
                     _button_factory(name, "prefs",
                                     selected=cur==value,
                                     clicked=clicked)
@@ -79,6 +111,100 @@ init -450:
                     ui.close()
                     
                 ui.close()
+
+
+        class _VolumePreference(object):
+            """
+            This is a class that's used to represent a preference that
+            may be shown to the user.
+            """
+
+            def __init__(self, name, mixer, enable='True', sound='None', channel=0):
+                self.name = name
+                self.mixer = mixer
+                self.enable = enable
+                self.sound = sound
+                self.channel = channel
+                
+
+            def render_preference(self):
+
+                if not eval(self.enable):
+                    return
+
+                sound = eval(self.sound)
+
+                ui.window(style='prefs_pref')
+                ui.vbox(style='prefs_pref_vbox')
+
+                _label_factory(self.name, "prefs")
+
+                def changed(v):
+
+                    if v == 0:
+                        _preferences.mute[self.mixer] = True
+                    else:
+                        _preferences.mute[self.mixer] = False
+
+                    v /= 128.0
+
+                    _preferences.volumes[self.mixer] = v
+
+                ### prefs_volume_slider prefs_slider
+                # (bar) The style that is applied to volume
+                # sliders.
+                
+                ui.bar(128,
+                       int(_preferences.volumes[self.mixer] * 128),
+                       changed=changed,
+                       style='prefs_volume_slider')
+
+                if sound:
+                    def clicked():
+                        renpy.sound.play(sound, channel=self.channel)
+
+                    _button_factory("Test", "prefs", clicked=clicked)
+                    
+                ui.close()
+
+        class _SliderPreference(object):
+            """
+            A class that's used to represent a preference that is controlled
+            by a slider.
+            """
+
+            def __init__(self, name, range, get, set, enable):
+
+                self.name = name
+                self.range = range
+                self.get = get
+                self.set = set
+                self.enable = enable
+
+            def render_preference(self):
+
+                if not eval(self.enable):
+                    return
+                
+                ui.window(style='prefs_pref')
+                ui.vbox(style='prefs_pref_vbox')
+
+                _label_factory(self.name, "prefs")
+
+                def changed(v):
+                    self.set(v)
+
+                ### prefs_slider bar
+                # (bar) The style that is applied to preference
+                # sliders.
+    
+                ui.bar(self.range,
+                       self.get(),
+                       changed=changed,
+                       style='prefs_slider')
+                    
+                ui.close()
+                           
 
         class _PreferenceSpinner(object):
             """
@@ -128,12 +254,27 @@ init -450:
                 self.base = base
 
             def render_preference(self):
+
+                ### prefs_spinner default
+                # The position of the prefs spinner.
+
+                ### prefs_spinner_label prefs_label
+                # (text) This is the style that displays the value of a
+                # preference spinner.
+
+                ### prefs_spinner_button prefs_button
+                # (window, hover) The style of the + or - buttons in a
+                # preference spinner.
+
+                ### prefs_spinner_button_text prefs_button_text
+                # (text, hover) The style of the text of the + and - buttons
+                # in a preference spinner.
                 
                 if not renpy.eval(self.cond):
                     return
 
                 ui.window(style='prefs_pref')
-                ui.vbox()
+                ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
 
@@ -168,6 +309,7 @@ init -450:
         # Enablers for some preferences.
         library.has_music = True
         library.has_sound = True
+        library.sample_sound = None
         library.has_transitions = True
         library.has_cps = True
         library.has_afm = True
@@ -207,32 +349,70 @@ init -450:
                 return "Infinite"
             else:
                 return str(n)
-            
-        pc3 = _PreferenceSpinner('Text Speed (CPS)', 'text_cps',
-                                0, 500, 10, 'library.has_cps',
-                                render=cps_render)
 
-        def afm_render(n):
-            if n == 0:
-                return "Disabled"
+        def cps_get():
+            cps = _preferences.text_cps
+            if cps == 0:
+                cps = 100
             else:
-                return str(n)
+                cps -= 1
+            return cps
 
-        pc4 = _PreferenceSpinner('Auto Forward Time', 'afm_time',
-                                0, 60, 1, 'library.has_afm',
-                                render=afm_render)
+        def cps_set(cps):
+            cps += 1
+            if cps == 101:
+                cps = 0
+            _preferences.text_cps = cps
+
+            
+        pc3 = _SliderPreference('Text Speed', 100, cps_get, cps_set,
+                                'library.has_cps')
+
+
+        def afm_get():
+            afm = _preferences.afm_time
+            if afm == 0:
+                afm = 40
+            else:
+                afm -= 1
+            return afm
+
+        def afm_set(afm):
+            afm += 1
+            if afm == 41:
+                afm = 0
+            _preferences.afm_time = afm
+
+        pc4 = _SliderPreference('Auto-Forward Time', 40, afm_get, afm_set,
+                                'library.has_afm')
 
         # Right
 
-        pr1 = _Preference('Music', 'music', [
-            ('Enabled', True, 'library.has_music'),
-            ('Disabled', False, 'library.has_music'),
-            ])
+        pr1 = _VolumePreference("Music Volume", 'music', 'library.has_music')
+        pr2 = _VolumePreference("Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
+                                                        
+
+#         pr1 = _Preference('Music', 'music', [
+#             ('Enabled', True, 'library.has_music'),
+#             ('Disabled', False, 'library.has_music'),
+#             ])
             
-        pr2 = _Preference('Sound Effects', 'sound', [
-            ('Enabled', True, 'library.has_sound'),
-            ('Disabled', False, 'library.has_sound'),
-            ])
+#         pr2 = _Preference('Sound Effects', 'sound', [
+#             ('Enabled', True, 'library.has_sound'),
+#             ('Disabled', False, 'library.has_sound'),
+#             ])
+
+        ### prefs_column default
+        # The style of a vbox containing a column of preferences.
+
+        ### prefs_left prefs_column
+        # The position of the left column of preferences.
+        
+        ### prefs_center prefs_column
+        # The position of the center column of preferences.
+
+        ### prefs_right prefs_column
+        # The position of the right column of preferences.
             
         library.preferences['prefs_left'] = [ pl1, pl2 ]
         library.preferences['prefs_center'] = [ pc1, pc2, pc3, pc4 ]
@@ -246,13 +426,15 @@ label _prefs_screen:
 
         _game_nav("prefs")
 
+        ### prefs_window default
+        # (window) A window containing all preferences.
+
         ui.window(style='prefs_window')
         ui.fixed()
 
-
         for style, prefs in library.preferences.iteritems():
 
-            ui.vbox(library.padding * 3, style=style)
+            ui.vbox(style=style)
             for i in prefs:
                 i.render_preference()
             ui.close()

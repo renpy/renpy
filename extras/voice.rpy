@@ -42,28 +42,29 @@ init -10:
             _voice.sustain = True
 
     python hide:
-        
-        vp = _Preference('Voice', 'voice', [
-            ('Enabled', True, 'True'),
-            ('Disabled', False, 'True')
-            ], base=persistent)
 
-        library.preferences['prefs_left'].append(vp)
+        renpy.sound.set_mixer(2, "voice")
+        library.has_voice = True
+        library.sample_voice = None
+        
+        vp = _VolumePreference('Voice Volume',
+                               'voice',
+                               'library.has_voice',
+                               'library.sample_voice')
+
+        library.preferences['prefs_right'].append(vp)
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
         def voice_interact():
 
-            if not audio.sound_enabled():
-                return
-
             if not persistent.voice:
                 return
             
             if _voice.play and not config.skipping:
-                audio.sound_play(_voice.play, channel=1)
+                renpy.sound.play(_voice.play, channel=2)
             elif not _voice.sustain:
-                audio.sound_stop(channel=1)
+                renpy.sound.stop(channel=2)
 
             _voice.play = None
             _voice.sustain = False

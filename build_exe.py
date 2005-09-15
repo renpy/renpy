@@ -22,10 +22,13 @@ programs = [
     program(sys.argv[1]),
     ]
 
-sys.argv[1:] = [ 'py2exe' ]
+sys.argv[1:] = [ 'py2exe', '-x' ]
 
 setup(name="RenPy",
       windows=programs,
       console=[ "archiver.py", "add_from.py", "console.py", "dump_text.py", "run_dse.py" ],
-      zipfile='lib/renpy.zip',
+      zipfile='lib/renpy.code',
+      options={ 'py2exe' : { 'excludes' : [ 'doctest' ],
+                             'optimize' : 2,
+                             } },
       )

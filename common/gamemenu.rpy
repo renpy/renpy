@@ -27,9 +27,6 @@ init -499:
         # The number of pages to add quick access buttons for.
         library.file_quick_access_pages = 5
 
-        # A small amount of padding.
-        library.padding = 2
-
         # The width of a thumbnail.
         library.thumbnail_width = 66
 
@@ -82,14 +79,28 @@ init -499:
             ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
             ui.add(renpy.Keymap(game_menu=ui.jumps("_noisy_return")))
 
+            ### gm_root_window default
+            # (window) The style used for the root window of the game
+            # menu. This is primarily used to change the background of
+            # the game menu.
+ 
             ui.window(style='gm_root_window')
             ui.null()
 
             if not screen:
                 return
 
+            ### gm_nav_window default
+            # (window) The style used by a window containing
+            # buttons that allow the user to navigate through the
+            # different screens of the game menu.
+
+            ### gm_nav_vbox thin_vbox
+            # (box) The style that is used by the box inside the
+            # gm_nav_window
+
             ui.window(style='gm_nav_window')
-            ui.vbox(focus='gm_nav')
+            ui.vbox(focus='gm_nav', style='gm_nav_vbox')
             
             for key, label, clicked, enabled in library.game_menu:
 
@@ -98,6 +109,22 @@ init -499:
                 if not eval(enabled):
                     disabled = True
                     clicked = None
+
+                ### gm_nav_button button
+                # (window, hover) The style of an unselected game menu
+                # navigation button.
+
+                ### gm_nav_button_text button_text
+                # (text, hover) The style of the text of an unselected game
+                # menu navigation button.
+
+                ### gm_nav_selected_button selected_button
+                # (window, hover) The style of a selected game menu
+                # navigation button.
+
+                ### gm_nav_selected_button_text selected_button_text
+                # (text, hover) The style of the text of a selected game
+                # menu navigation button.
                              
                 _button_factory(label, "gm_nav",
                                 selected=(key==screen),
@@ -111,8 +138,57 @@ init -499:
         def _game_interact():
             
             return ui.interact(suppress_underlay=True,
-                               suppress_overlay=True)
+                               suppress_overlay=True,
+                               mouse="gamemenu")
 
+                      
+        # This renders a slot with a file in it, in the file picker.
+        def _render_savefile(name, info, newest):
+
+            image, extra = info
+
+
+            ### file_picker_entry button
+            # (window, hover) The style that is used for each of the
+            # slots in the file picker.
+            ui.button(style='file_picker_entry',
+                      clicked=ui.returns(("return", (name, True))))
+            
+            
+            ### file_picker_entry_box thin_hbox
+            # (box) The style that is used for the hbox inside of a
+            # file picker entry.            
+            ui.hbox(style='file_picker_entry_box')
+
+            if not library.disable_thumbnails:
+                ui.add(image)
+
+            ### file_picker_text default
+            # (text) A base style for all text that is displayed in the
+            # file picker.
+
+            ### file_picker_new file_picker_text
+            # (text) The style that is applied to the number of the new slot in
+            # the file picker.
+
+            ### file_picker_old file_picker_text
+            # (text) The style that is applied to the number of the old slot in
+            # the file picker.
+
+            
+            if name == newest:
+                ui.text(name + ". ", style='file_picker_new')
+            else:
+                ui.text(name + ". ", style='file_picker_old')
+
+            ### file_picker_extra_info file_picker_text
+            # (text) The style that is applied to extra info in the file
+            # picker. The extra info is the save time, and the save_name
+            # if one exists.
+            ui.text(extra, style='file_picker_extra_info')
+
+            ui.close()
+            
         # This renders an empty slot in the file picker.
         def _render_new_slot(name, save):
             
@@ -122,44 +198,26 @@ init -499:
             else:
                 clicked = None
                 enable_hover = True
-
+    
             ui.button(style='file_picker_entry',
                       clicked=clicked,
                       enable_hover=enable_hover)
-            
-            ui.hbox(padding=library.padding)
+
+            ui.hbox(style='file_picker_entry_box')
 
             if not library.disable_thumbnails:
                 ui.null(width=library.thumbnail_width,
                         height=library.thumbnail_height)
 
+            
             ui.text(name + ". ", style='file_picker_old')
+
+            ### file_picker_empty_slot file_picker_text
+            # (text) The style that is used for the empty slot indicator
+            # in the file picker.
             ui.text(_("Empty Slot."), style='file_picker_empty_slot')
             ui.close()
-                      
-        # This renders a slot with a file in it, in the file picker.
-        def _render_savefile(name, info, newest):
 
-            image, extra = info
-
-            ui.button(style='file_picker_entry',
-                      clicked=ui.returns(("return", (name, True))))
-            
-            ui.hbox(padding=library.padding)
-
-            if not library.disable_thumbnails:
-                ui.add(image)
-            
-            if name == newest:
-                ui.text(name + ". ", style='file_picker_new')
-            else:
-                ui.text(name + ". ", style='file_picker_old')
-
-            
-            ui.text(extra, style='file_picker_extra_info')
-
-            ui.close()
-            
         _scratch.file_picker_index = None
 
         # This displays a file picker that can chose a save file from
@@ -193,14 +251,35 @@ init -499:
 
                 # Show Navigation
                 _game_nav(selected)
+
                 
+                ### file_picker_window default
+                # (window) A window containing the file picker
+                # that is used to choose slots for loading and saving.
+
+                ### file_picker_window_vbox thin_vbox
+                # (box) The vbox containing both the nav and the grid in
+                # the file picker.
+
                 ui.window(style='file_picker_window')
-                ui.vbox() # whole thing.
+                ui.vbox(style='file_picker_window_vbox') # whole thing.
                 
                 if not library.disable_file_pager:
 
+                    ### file_picker_navbox thick_hbox
+                    # (box) The box containing the naviation (next/previous)
+                    # buttons in the file picker.
+
+                    ### file_picker_nav_button button
+                    # (window, hover) The style that is used for enabled file
+                    # picker navigation buttons.
+
+                    ### file_picker_nav_button_text button_text
+                    # (text) The style that is used for the label of enabled
+                    # file picker navigation buttons.
+                   
                     # Draw the navigation.
-                    ui.hbox(padding=library.padding * 10, style='file_picker_navbox') # nav buttons.
+                    ui.hbox(style='file_picker_navbox') # nav buttons.
 
                     def tb(cond, label, clicked):
                         _button_factory(label, "file_picker_nav", disabled=not cond, clicked=clicked)
@@ -230,6 +309,10 @@ init -499:
                     else:
                         _render_savefile(name, saves[name], newest)
                     
+                ### file_picker_grid default
+                # The style of the grid containing the file
+                # picker entries.
+
                 # Actually draw a slot.
                 ui.grid(library.file_page_cols,
                         library.file_page_rows,
@@ -262,8 +345,25 @@ init -499:
 
             _game_nav(screen)
 
+            ### yesno_window default
+            # (window) The style of a window containing a yes/no prompt.
+
+            ### yesno_window_vbox thick_vbox
+            # (box) The style of a box containing the widgets in a
+            # yes/no prompt.
+
             ui.window(style='yesno_window')
-            ui.vbox(library.padding * 10, xpos=0.5, xanchor='center', ypos=0.5, yanchor='center')
+            ui.vbox(style='yesno_window_vbox')
+
+            ### yesno_label default
+            # (text) The style used for the prompt in a yes/no
+            # dialog.
+
+            ### yesno_button button
+            # (window, hover) The style of yes/no buttons.
+
+            ### yesno_button_text button_text
+            # (window, hover) The style of yes/no button text.
 
             _label_factory(message, "yesno", xpos=0.5, xanchor='center')
 
@@ -283,6 +383,18 @@ init -499:
             return _game_interact()
 
         def _show_exception(title, message):
+
+            ### error_window default
+            # (window) The style of the window containing internal error
+            # messages.
+
+            ### error_title default
+            # (text) The style of the text containing the title of an
+            # error message.
+
+            ### error_body default
+            # (text) The style of the body of an error message.
+
             ui.window(style='error_window')
             ui.vbox()
 
