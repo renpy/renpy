@@ -1,3 +1,8 @@
+The label 'after_load' is now called after a game is loaded, if it
+exists on disk. This label can be used to upgrade save files, restore
+music, and the like. [doc]
+
+
 New in Ren'Py 5.1.2
 -------------------
 

@@ -554,7 +554,7 @@ class RollbackLog(renpy.object.Object):
         
         self.current.checkpoint = True
 
-    def rollback(self, checkpoints, force=False):
+    def rollback(self, checkpoints, force=False, label=None):
         """
         This rolls the system back to the first valid rollback point
         after having rolled back past the specified number of checkpoints.
@@ -565,6 +565,9 @@ class RollbackLog(renpy.object.Object):
         force makes us throw an exception if we can't find a place to stop
         rolling back, otherwise if we run out of log this call has no
         effect.
+
+        @param label: The label that is jumped to in the game script
+        after rollback has finished, if it exists.
         """
 
         # If we have exceeded the rollback limit, and don't have force,
@@ -612,7 +615,7 @@ class RollbackLog(renpy.object.Object):
             rng.reset()
 
         # Restart the game with the new state.
-        raise renpy.game.RestartException(renpy.game.contexts[:])
+        raise renpy.game.RestartException(renpy.game.contexts[:], label)
 
     def freeze(self):
         """
@@ -637,11 +640,14 @@ class RollbackLog(renpy.object.Object):
         # We need to do this to counteract the effects of self.purge_unreachable
         self.current.purged = False
 
-    def unfreeze(self):
+    def unfreeze(self, label=None):
         """
         Used to unfreeze the game state after a load of this log
         object. This call will always throw an exception. If we're
         lucky, it's the one that indicates load was successful.
+
+        @param label: The label that is jumped to in the game script
+        after rollback has finished, if it exists.
         """
 
         # Set us up as the game log.
@@ -660,7 +666,7 @@ class RollbackLog(renpy.object.Object):
         self.frozen_roots = None
 
         # Now, rollback to an acceptable point.
-        self.rollback(0, force=True)
+        self.rollback(0, force=True, label=label)
 
         # We never make it this far.
 

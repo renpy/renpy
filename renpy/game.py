@@ -111,6 +111,10 @@ class RestartException(Exception):
     This class will be used to convey to the system that the context has
     been changed, and therefore execution needs to be restarted.
     """
+
+    def __init__(self, contexts, label):
+        self.contexts = contexts
+        self.label = label
     
 class FullRestartException(Exception):
     """

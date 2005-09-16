@@ -100,7 +100,7 @@ class Context(object):
             raise "Context not capable of executing Ren'Py code."
 
         if return_site is None:
-            return_site is self.current
+            return_site = self.current
 
         self.return_stack.append(return_site)
         self.current = label

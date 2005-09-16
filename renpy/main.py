@@ -135,7 +135,14 @@ def run(restart=False, lint=False):
             # We get this when the context has changed, and so we go and
             # start running from the new context.
             except game.RestartException, e:
-                renpy.game.contexts = e.args[0]
+                renpy.game.contexts = e.contexts
+
+                label = e.label
+                
+                if label:
+                    if game.script.has_label(label):
+                        game.context().call(label)
+
                 continue
 
             except game.QuitException, e:

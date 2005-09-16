@@ -171,4 +171,4 @@ def load(filename):
     log = loads(zf.read("log"))
     zf.close()
 
-    log.unfreeze()
+    log.unfreeze(label="after_load")
