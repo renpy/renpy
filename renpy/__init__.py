@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.1.2"
-script_version = 8007
-savegame_suffix = "-5.1.0.save"
+version = "Ren'Py 5.1.3"
+script_version = 5001003
+savegame_suffix = "-5.1.3.save"
 
 
 # Can be first, because has no dependencies, and may be imported

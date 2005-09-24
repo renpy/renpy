@@ -219,6 +219,7 @@ line 2
   init
   jump
   menu
+  onlayer
   python
   return
   scene
@@ -577,10 +578,11 @@ overlaid on top of the screen.
     transforms. Display lists are applied from left to right. 
   </p>
 
-  <rule>image_spec -> image_name ( "at" transform_list )? ( "with" simple_expression )?</rule>
+  <rule>image_spec -> image_name ( "onlayer" layer) ( "at" transform_list )? ( "with" simple_expression )?</rule>
 
   <p>
-    An <def>image_spec</def> is an image name, an optional at list of
+    An <def>image_spec</def> is an image name, an optional layer that
+    the image will be displayed on or hidden from, an optional at list of
     transformers, and an optional with clause giving a
     transition. The image name is used to specify an image that will
     be shown. The at clause is a list of transformations that are
@@ -620,11 +622,12 @@ init:
   <p>
 
     The next display statement is the show statement, which takes an
-    image specifier and displays it on the master layer. If an image with
-    the same tag as the image given in the spec already exists in 
-    the master layer, it is replaced with the newly displayed
-    Displayable. Otherwise, the new one is added to the end of the
-    master layer (that is, closest to the user). 
+    image specifier and displays it on the layer specified, or the
+    "master" layer if no layer is given. If an image with the same tag
+    as the image given in the spec already exists in the layer, it is
+    replaced with the newly displayed Displayable. Otherwise, the new
+    one is added to the end of the master layer (that is, closest to
+    the user).
 
   </p><p>
 
@@ -640,13 +643,16 @@ init:
   </p>
 
 
-  <rule>scene_statement -> "scene" ( image_spec )?</rule>
+  <rule>scene_statement -> "scene" ("onlayer" layer)? ( image_spec )?</rule>
 
   <p>
-    The scene statement first clears the master layer. If the optional
+    The scene statement first clears the layer. If the optional
     image_spec is present, it is shown as if it was shown with the
-    show statement. The best use for the image_spec on a scene
-    command is show a background for the scene. 
+    show statement. The best use for the image_spec on a scene command
+    is show a background for the scene. The layer chosen is the layer
+    in the image_Spec if the image spec is present, the layer given in
+    the onlayer clause if no image spec is present, and the "master"
+    layer otherwise.
   </p>
 
   <p>
@@ -678,11 +684,12 @@ e "But sometimes, I can get upset for no good reason."
   <rule>hide_statement -> "hide" image_spec</rule>
   
   <p>
-    The hide statement is used to remove an image from the master
-    layer. The image spec is parsed for a tag, and any image matching
-    that tag is remove from the scene. The at list is ignored (but
-    should be valid or omitted), and transitions associated with the
-    image spec are run.
+    The hide statement is used to remove an image from the layer. The
+    image spec is parsed for a tag, and any image matching that tag is
+    remove from the scene. The at list is ignored (but should be valid
+    or omitted), and transitions associated with the image spec are
+    run. The onlayer clause in the image spec chooses the layer the
+    image is hidden from, with "master" being the default.
 
   </p><p>
 
@@ -1559,7 +1566,33 @@ game.rpa if it does not.
     manually accessed by jumping to _library_main_menu, which is useful
     if you want to display an intro before the menu is shown.
 
+  </p><p>
+
+The main menu and game menu execute in their own context, which is a
+different context from the one in which the game executes in. One
+should invoke renpy.jump_out_of_context() in order to leave the menu
+context and start execution at a label. Alternatively, executing a
+return statement in the main menu function will cause execution of the
+game proper to begin at the "start" label. So the following code:
+</p>
+
+<example>
+label main_menu:
+    return
+</example>
+
+<p>
+should cause execution to begin immediately, skipping the game menu
+entirely. You may want to customize _game_menu_screen in order to 
+allow the user to load a new game from the first few screens.
   </p>
+
+<p>
+Finally, we should point out here that if the label after_load exists,
+it is called after loading. When the code returns, execution proceeds
+at the start of the statement where it was saved at. The after_load
+label allows data structures to be updated after a load.
+</p>
 
   <h3>Saving, Loading, and Rollback</h3>
 
@@ -1899,6 +1932,8 @@ to the save file.
   <!-- func renpy.call_in_new_context -->
 
   <!-- func renpy.invoke_in_new_context -->
+
+  <!-- func renpy.jump_out_of_context -->
 
   <p>
     Finally, there exists an object named renpy.random. This object is
@@ -2295,7 +2330,9 @@ selected direction of motion, when moving focus with the keyboard.
       the screen. Future show statements without at clauses will be
       given the remembered at clause. This lets us easily change the
       character's expression without changing their position on the
-      screen.
+      screen. Sticky positions does not interact well with multiple
+      layers, when they are used with the show, hide, and scene
+      statements via an onlayer clause.
     </var>
 
     <var name="config.layers" value="[ 'master', 'transient', 'overlay' ]">
@@ -2437,6 +2474,18 @@ the file picker.
       which case it is called when the item is selected.
     </var>
     
+<var name="library.game_menu" value='[ ... ]'>
+Thi is used to customize the choices on the game menu. Please read the
+section on customizing the main and game menus for more details on the
+contents of this variable.
+</var>
+
+<var name="library.preferences" value='{ ... }'>
+This is used to customize the preferences. Please read the
+section on customizing the main and game menus for more details on the
+contents of this variable.
+</var>
+
     <var name="library.has_music" value="True">
       If True, the preference for enabling and disabling music will be
       presented to the user. This should be set to False if the game
@@ -2525,6 +2574,13 @@ the "Test" button is not shown.
     game, while at the same time allowing fine-grained control when it
     is desired.
   </p>
+
+  <p>
+A large number of styles are built into Ren'Py. It is possible to use
+style.create to make your own styles.
+</p>
+
+<!-- func style.create -->
   
   <p>
     There are two families of style properties. Text properties are
@@ -3620,6 +3676,141 @@ currently known last change time to the persisted last change time.
 <!-- func renpy.music.stop -->
 <!-- func renpy.music.set_volume -->
 <!-- func renpy.music.set_music -->
+
+<h3>Customizing the Main and Game Menus</h3>
+
+<p>
+This section describes how the content of the various menus can be
+customized. If you just want to change the look of the menus (to the
+extent made possible by the style system), use styles. To change just
+the text of menu items, consider using library.translations.
+</p>
+
+<h4>Main Menu</h4>
+
+<p>
+The main menu can be customized by setting the library.main_menu
+variable. This variable should be a list of pairs. The first element
+of each pair is the name of the button on the main menu. The second
+item can be one of three things. It can be a string, in which case it
+is a label at which the game execution starts (after a jump out of the
+menu context). It can be a function, in which cas the function is
+called when the button is clicked. Finally, it can be None, which
+causes the button to be insensitive.
+</p>
+
+<p>
+If one wants to change the main menu each time it is invoked, but keep
+the look of it the same, then the thing to do is to provide a
+main_menu label. The code after this main_menu label should set
+library.main_menu, and then jump to _library_main_menu. This is
+useful, for example, if there are some items in the main menu that
+should be absent or disabled until some condition is met. (Say, the
+user reaching an ending for the first time.)
+</p>
+
+<p>
+Finally, it may be desirable to write your own menu from scratch. This
+is done by creating the menu using ui functions called from code
+invoked through the main_menu label. To start the game, the code
+should jump out of the context, using ui.jumpsoutofcontext() or
+renpy.jump_out_of_context(). The code can also jump to any of the game
+menu screens, which can be reached at the labels "_load_screen",
+"_save_screen" and "_prefs_screen", to display the appropriate
+screen. When interacting with the user, ui.interact() should be called
+with suppress_overlay=True, suppress_underlay=True, and perhaps
+mouse="mainmenu". 
+</p>
+
+<p>
+The functions that are used to make a game menu screen, _game_nav()
+and _game_interact(), should also work with the main menu
+screen. When necessary, renpy.context().main_menu can be checked to
+see if we are in the main menu (it is True) or game menu (it is
+False).
+</p>
+
+<h4>Game Menu</h4>
+
+<p>
+The first thing one may wish to do when modifying the game menu is to
+add a screen to it. This is done in two steps. The first is to create
+the screen, and the second is to add it to the library.game_menu list
+so that it can be reached from the game menu.
+</p>
+
+<p>
+Each screen is represented in the code as a label that is jumped to to
+display the screen. There are five steps that this label should do in
+order to display the screen. First, it should call _game_nav(screen),
+where screen is the name of the screen (the first component of the
+tuples in library.game_menu, described below). Second, it should call
+the ui functions to actually draw the screen. Third, it should call
+_game_interact, instead of ui.interact, to interact with the
+user. This ensures that the game menu interaction is handled
+properly. Fourth, it should examine the results of _game_interact, and
+react appropriately. Finally, it should jump back up to the screen
+label, showing the screen again after each interaction.
+</p>
+
+<p>
+So that the user can see it, the screen should be added to
+library.game_menu. This is a list of four-component tuples. The first
+is the name of the screen. It's used to determine if the button used
+to reach that screen should be indicated as selected. The second
+component is the text used for that button.  The third component is a
+function that executes when the button is clicked. Normally, an
+appropriate function is ui.jumps('label'), where label is the name of
+the label under which your screen was defined above. Finally, the
+fourth parameter is a string containing a python expression. If the
+expression is not true, the button is insensitive.
+</p>
+
+<p>
+To customize the game menu navigation buttons, one can customize
+_game_nav(). This takes one parameter, the screen we're at. Default
+parameters for this are "restart", "load", "save", "prefs",
+"quit".
+</p>
+
+<var name="game_nav" value='"_load_screen"'>
+One can customize the screen the game menu jumps to by default by
+changing the value of _game_menu_screen. For example, one could set
+this to "_load_screen" for the first few interactions, and then set it
+to "_save_screen" for the rest of the game. This is especially useful
+for a game with no main menu.
+</var>
+
+<p>
+There is a convenience function for prompting the user for their
+response to a yes and no question.
+</p>
+
+<!-- func _yesno_prompt -->
+
+<h4>Preferences</h4>
+
+<p>
+Finally, it is possible to customize the preferences. This is done by
+modifying library.preferences, which is a dictionaty mapping from vbox
+style to a list of preferences to be placed in that vbox. Modifying
+this dictionary and lists can move preferences around, and eliminate
+preferences entirely. It may be desirable to create new vbox styles,
+by using style.create().
+</p>
+
+<p>
+To create an entirely new preference, create it with _Preference,
+_SliderPreference, or _VolumePreference, and then add it to an
+appropriate list in library.preferences.
+</p>
+
+<!-- func _Preference -->
+
+<!-- func _SliderPreference -->
+
+<!-- func _VolumePreference -->
+
 
 <h3>Default Definitions</h3>
 

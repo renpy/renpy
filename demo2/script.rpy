@@ -18,53 +18,7 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
-    # Change some styles, to add images in the background of
-    # the menus and windows.
-    $ style.mm_root_window.background = Image("mainmenu.jpg")
-    $ style.gm_root_window.background = Image("gamemenu.jpg")
-    $ style.window.background = Frame("frame.png", 25, 25)
-
-    # Change the look of the slider.
-    $ style.bar.left_gutter = 10
-    $ style.bar.right_gutter = 12
-    $ style.bar.left_bar = Frame("slider_full.png", 10, 0)
-    $ style.bar.right_bar = Frame("slider_empty.png", 12, 0)
-    $ style.bar.thumb = Image("slider_idle.png")
-    $ style.bar.hover_thumb = Image("slider_hover.png")
-    $ style.bar.thumb_shadow = Image("slider_shadow.png")
-    $ style.bar.thumb_offset = -10
-
-    # Change some styles involving the margins and padding of the
-    # default window. (We need this, as we use a frame image that
-    # includes a drop-shadow.)
-    $ style.window.xmargin = 0
-    $ style.window.ymargin = 0
-    $ style.window.xpadding = 20
-    $ style.window.top_padding = 5
-    $ style.window.bottom_padding = 15
-
-    # Interface sounds, just for the heck of it.
-    $ style.button.activate_sound = 'click.wav'
-    $ style.imagemap.activate_sound = 'click.wav'
-    $ library.enter_sound = 'click.wav'
-    $ library.exit_sound = 'click.wav'
-    $ library.sample_sound = "18005551212.wav"
-
-    # Select the transitions that are used when entering and exiting
-    # the game menu.
-    $ library.enter_transition = pixellate
-    $ library.exit_transition = pixellate
-
-    # There used to be a large list of definitions of placements and
-    # transitions here. They've been moved into
-    # common/definitions.rpy, to save space and allow them to be
-    # upgraded more easily. You can still define your own transitions
-    # and placements here, however.
-
-    # $ slowdissove = Dissolve(1.0)
-    # $ whitefade = Fade(.5, 0, .5, color=(255, 255, 255, 255))
-
-    # Now, we declare the images that are used in the program.
+    # Declare the images that are used in the program.
 
     # Backgrounds.
     image bg carillon = "carillon.jpg"
@@ -78,25 +32,11 @@ init:
     image eileen vhappy = "9a_vhappy.png"
     image eileen concerned = "9a_concerned.png"
 
-    # Finally, the character object. This object lets us have the
-    # character say dialogue without us having to repeatedly type
-    # her name. It also lets us change the color of her name.
+    # A character object. This object lets us have the character say
+    # dialogue without us having to repeatedly type her name. It also
+    # lets us change the color of her name.
 
-    # Character objects.    
     $ e = Character('Eileen', color=(200, 255, 200, 255))
-
-# The splashscreen is called, if it exists, before the main menu is
-# shown the first time. It is not called if the game has restarted.
-
-# We'll comment it out for now.
-#
-# label splashscreen:
-#     scene black
-#     show text "American Bishoujo Presents..." with dissolve
-#     $ renpy.pause(1.0)
-#     hide text with dissolve
-#
-#     return
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -1419,3 +1359,61 @@ label demonstrate:
 
     jump demo_menu
 
+
+# Here, are a number of customizations that make the game look
+# better. We place them down here at the bottom, to make the first few
+# lines of the script look better.
+#
+# These can be deleted without issue, if you do not want them.
+
+init:
+
+    # Change some styles, to add images in the background of
+    # the menus and windows.
+    $ style.mm_root_window.background = Image("mainmenu.jpg")
+    $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("frame.png", 25, 25)
+
+    # Change the look of the slider.
+    $ style.bar.left_gutter = 10
+    $ style.bar.right_gutter = 12
+    $ style.bar.left_bar = Frame("slider_full.png", 10, 0)
+    $ style.bar.right_bar = Frame("slider_empty.png", 12, 0)
+    $ style.bar.thumb = Image("slider_idle.png")
+    $ style.bar.hover_thumb = Image("slider_hover.png")
+    $ style.bar.thumb_shadow = Image("slider_shadow.png")
+    $ style.bar.thumb_offset = -10
+
+    # Change some styles involving the margins and padding of the
+    # default window. (We need this, as we use a frame image that
+    # includes a drop-shadow.)
+    $ style.window.xmargin = 0
+    $ style.window.ymargin = 0
+    $ style.window.xpadding = 20
+    $ style.window.top_padding = 5
+    $ style.window.bottom_padding = 15
+
+    # Interface sounds, just for the heck of it.
+    $ style.button.activate_sound = 'click.wav'
+    $ style.imagemap.activate_sound = 'click.wav'
+    $ library.enter_sound = 'click.wav'
+    $ library.exit_sound = 'click.wav'
+    $ library.sample_sound = "18005551212.wav"
+
+    # Select the transitions that are used when entering and exiting
+    # the game menu.
+    $ library.enter_transition = pixellate
+    $ library.exit_transition = pixellate
+
+# The splashscreen is called, if it exists, before the main menu is
+# shown the first time. It is not called if the game has restarted.
+
+# We'll comment it out for now.
+#
+# label splashscreen:
+#     scene black
+#     show text "American Bishoujo Presents..." with dissolve
+#     $ renpy.pause(1.0)
+#     hide text with dissolve
+#
+#     return

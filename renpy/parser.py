@@ -233,6 +233,7 @@ class Lexer(object):
         'init',
         'jump',
         'menu',
+        'onlayer',
         'python',
         'return',
         'scene',
@@ -778,23 +779,29 @@ def parse_image_specifier(l):
     """
     This parses an image specifier. An image specifier looks like:
 
-    <image name> [ "at" <at list> ] 
+    <image name> [ "onlayer" <layer> ] [ "at" <at list> ]
 
     The general idea is that the image name tells us which image to show,
     and the at list tells us where it should be shown.
 
-    This returns a tuple containing a tuple of strings, and a list
-    of expressions (which may be empty if the at part is omitted).
+    This returns a tuple containing a tuple of strings, a list
+    of expressions (which may be empty if the at part is omitted), and
+    a layer name.
     """
 
     image_name = parse_image_name(l)
+
+    if l.keyword('onlayer'):
+        layer = l.require(l.name)
+    else:
+        layer = 'master'
 
     if l.keyword('at'):
         at_list = parse_simple_expression_list(l)
     else:
         at_list = [ ]
 
-    return image_name, at_list
+    return image_name, at_list, layer
 
 def parse_with(l, node):
     """
@@ -1031,13 +1038,18 @@ def parse_statement(l):
     if l.keyword('scene'):
         l.expect_noblock('scene statement')
 
+        if l.keyword('onlayer'):
+            layer = l.require(l.name)
+        else:
+            layer = "master"
+
         # Empty.
         if l.eol():
             l.advance()
-            return ast.Scene(loc, None)
+            return ast.Scene(loc, None, layer)
 
         imspec = parse_image_specifier(l)
-        rv = parse_with(l, ast.Scene(loc, imspec))
+        rv = parse_with(l, ast.Scene(loc, imspec, imspec[2]))
 
         l.expect_eol()
         l.advance()

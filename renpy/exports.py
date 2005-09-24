@@ -70,7 +70,7 @@ def image(name, img):
     images[name] = img
     
 
-def show(name, *at_list):
+def show(name, at_list=[ ], layer='master'):
     """
     This is used to execute the show statement, adding the named image
     to the screen as part of the master layer.
@@ -99,10 +99,10 @@ def show(name, *at_list):
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[tuple(name)] = True
 
-    sls.add('master', img, key)
+    sls.add(layer, img, key)
     
 
-def hide(name):
+def hide(name, layer='master'):
     """
     This finds items in the master layer that have the same name
     as the first component of the given name, and removes them
@@ -115,14 +115,14 @@ def hide(name):
 
     sls = scene_lists()
     key = name[0]
-    sls.remove('master', key)
+    sls.remove(layer, key)
 
     if key in sls.sticky_positions:
         del sls.sticky_positions[key]
 
     
 
-def scene():
+def scene(layer='master'):
     """
     This clears out the master layer. This is used in the execution of
     the scene statment, but only to clear out the layer. If you want
@@ -130,7 +130,7 @@ def scene():
     """
 
     sls = scene_lists()
-    sls.clear('master')
+    sls.clear(layer)
     sls.sticky_positions.clear()
     
         
@@ -229,7 +229,7 @@ def choice_for_skipping():
         renpy.config.skipping = False
     
 
-def display_menu(items, window_style='menu_window'):
+def display_menu(items, window_style='menu_window', interact=True):
     """
     Displays a menu containing the given items, returning the value of
     the item the user selects.
@@ -239,6 +239,9 @@ def display_menu(items, window_style='menu_window'):
     for this menuitem. The second element is the value to be returned
     if this item is selected, or None if this item is a non-selectable
     caption.
+
+    @param interact: If True, then an interaction occurs. If False, no suc
+    interaction occurs, and the user should call ui.interact() manually.
     """
 
     choice_for_skipping()
@@ -246,10 +249,12 @@ def display_menu(items, window_style='menu_window'):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
-    rv = renpy.ui.interact(mouse='menu')
-    checkpoint()
+    if interact:
+        rv = renpy.ui.interact(mouse='menu')
+        checkpoint()
+        return rv
 
-    return rv
+    return None
 
 class TagQuotingDict(object):
     def __getitem__(self, key):
@@ -539,7 +544,7 @@ def jump(label):
 
     raise renpy.game.JumpException(label)
 
-def jumpoutofcontext(label):
+def jump_out_of_context(label):
     """
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.

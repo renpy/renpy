@@ -59,6 +59,9 @@ init -499:
         # the first few screens but not after that.)
         _load_prompt = True
 
+        # The screen that we go to when entering the game menu.
+        _game_menu_screen = "_save_screen"
+
         ######################################################################
         # Next, support code.
 
@@ -341,7 +344,14 @@ init -499:
 
         # This renders a yes/no prompt, as part of the game menu. If
         # screen is None, then it omits the game menu navigation. 
-        def _yesno_prompt(screen, message, nav=True):
+        def _yesno_prompt(screen, message):
+            """
+            @param screen: The screen button that should be highlighted when this prompt is shown. If None, then no game menu navigation is shown.
+
+            @param message: The message that is shown to the user to prompt them to answer yes or no.
+
+            This function returns True if the user clicks Yes, or False if the user clicks No.
+            """
 
             _game_nav(screen)
 
@@ -466,6 +476,10 @@ label _enter_game_menu:
 
 # Entry points from the game into menu-space.
 label _game_menu:
+    call _enter_game_menu from _call__enter_game_menu_0
+    jump expression _game_menu_screen
+
+
 label _game_menu_save:
     call _enter_game_menu from _call__enter_game_menu_1
     jump _save_screen

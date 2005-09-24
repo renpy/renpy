@@ -2,6 +2,7 @@
 # happens upon initial execution of a Ren'Py program.
 
 init -498:
+
     python hide:
         
         # The contents of the main menu.

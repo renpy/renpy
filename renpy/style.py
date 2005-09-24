@@ -65,9 +65,15 @@ class StyleManager(object):
 
     def create(self, name, parent, description=None):
         """
-        This creates a new style, with the given name and parent. A
-        description may also be provided, although there is little
-        point in doing so for non-system styles.
+        Creates a new style.
+
+        @param name: The name of the new style, as a string.
+
+        @param parent: The parent of the new style, as a string. This
+        is either 'default' or something more specific.
+
+        @param description: A description of the style, for
+        documentation purposes.
         """
 
         style_map[name] = Style(parent, { })

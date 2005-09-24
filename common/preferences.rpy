@@ -15,8 +15,8 @@ init -450:
 
         class _Preference(object):
             """
-            This is a class that's used to represent a preference that
-            may be shown to the user.
+            This is a class that's used to represent a multiple-choice
+            preference.
             """
 
             def __init__(self, name, field, values, base=_preferences):
@@ -115,11 +115,31 @@ init -450:
 
         class _VolumePreference(object):
             """
-            This is a class that's used to represent a preference that
-            may be shown to the user.
+            This represents a preference that controls one of the
+            volumes in the system. It is represented as a slider bar,
+            and a button that can be pushed to play a sample sound on
+            a channel.
             """
 
             def __init__(self, name, mixer, enable='True', sound='None', channel=0):
+                """
+                @param name: The name of this preference, as shown to the user.
+
+                @param mixer: The mixer this preference controls.
+
+                @param enable: A string giving a python expression. If
+                the expression is evaluates to false, this preference
+                is not shown.
+                
+                @param sound: A string that is evaluated to yield
+                another string. The yielded string is expected to give
+                a sound file, which is played as the sample sound. (We
+                apologize for the convolution of this.)
+
+                @param channel: The number of the channel the sample
+                sound is played on.                
+                """
+
                 self.name = name
                 self.mixer = mixer
                 self.enable = enable
@@ -169,11 +189,30 @@ init -450:
 
         class _SliderPreference(object):
             """
-            A class that's used to represent a preference that is controlled
-            by a slider.
+            A class that represents a preference that is controlled by a
+            slider.
             """
 
-            def __init__(self, name, range, get, set, enable):
+            def __init__(self, name, range, get, set, enable='True'):
+                """
+                @param set: The name of this preference, that is shown to the user.
+
+                @param range: An integer giving the maximum value of
+                this slider. The slider goes from 0 to range.
+
+                @param get: A function that's called to get the
+                initial value of the slider. It's called with no
+                arguments, and should return an integet between 0 and
+                range, inclusive.
+
+                @param set: A function that's called when the value of
+                the slider is set by the user. It is called with a
+                single integer, in the range 0 to range, inclusive.
+
+                @param enable: A string giving a python expression. If
+                the expression is evaluates to false, this preference
+                is not shown.
+                """
 
                 self.name = name
                 self.range = range
