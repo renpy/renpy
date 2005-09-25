@@ -1,3 +1,181 @@
+New in Ren'Py 5.1.3
+-------------------
+
+The scene, show, and hide statements now take an onlayer clause, which
+gives the layer that the operations occur on. So if we declare high to
+be another layer (by setting config.layers to something like [
+'master', 'high', 'transient', 'overlay' ]), then one can use a
+statement like "show eileen happy onlayer high" to show the given
+image on the high layer. This image will not be removed when scene
+statements clear other layers, such as the default master layer.
+
+To support the above, the parameters to renpy.show() changed in an
+incompatible way. If your code uses renpy.show(), it will need to be
+upgraded. Instead of considering the second and later parameters to be
+at expressions, it now takes as its second parameter a list of all at
+expressions. (This lets us use the third parameter to accept the layer
+name.) 
+
+The label 'after_load' is now called after a game is loaded, if it
+exists on disk. This label can be used to upgrade save files, restore
+music, and the like.
+
+It's now possible to pick the screen the game menu enters when it is
+invoked, by setting the _game_menu_screen variable.
+
+Simplified the demo game script by moving the style stuff out of that
+first init block, and down to the bottom of the script where it's out
+of the way of a first viewing. Hopefully, this will reduce the shock
+of someone first encountering Ren'Py.
+
+Documented how to modify and replace the game and main menus, and how
+to add in one's own preferences.
+
+
+New in Ren'Py 5.1.2
+-------------------
+
+Ren'Py now supports embedding images inside text. Please read the
+documentation of ui.text for some important caveats about how this
+works, but basically, the input of ui.text can be a string or a list
+containing strings and widgets. In the latter case, the widgets are
+rendered inside the text. One can also use a text tag like
+{image=filename.png} to include an image anywhere a text tag
+works. One thing to realize is that images so included cannot be any
+bigger then the text they are included with.
+
+A new widget, anim.Blink, blinks a child widget in and out of
+existence by varying its alpha channel.
+
+Character now allows for the use of a click-to-continue widget when
+the widget finishes showing text to the user. While many widgets can
+be used, this feature is especially useful with Images, Animations,
+and anim.Blink. The click-to-continue widget can be nestled in with
+the end of the text, or placed at a fixed location on the screen.
+
+Custom mouse support has been totaly rewritten. It now supports
+animated mice, and changing the mouse cursor based on the kind of
+interaction that is ongoing. Rather than describe the changes here,
+read the documentation of config.mouse to understand the new
+behavior. Please note that config.mouse has changed, and so if you use
+it in your game (and AFAIK noone does), it will need to be modified.
+
+Custom mouse support has also had significant performance
+improvements.
+
+Ren'Py can now read the script files out of an archive file. The
+archive used can either be game.rpa and game.rpi, or name.rpa and
+name.rpi, where name is the name of the file that is used to start
+Ren'Py, with the extension and any prefix (before an including an
+underscore) stripped off.
+
+New in Ren'Py 5.1.1
+-------------------
+
+Fixed a bug that prevented the various day-planners from working, in
+both the demo game and the DSE. (This was a bug in the game more so
+then a bug in Ren'Py proper.)
+
+Fixed a bug on Windows that manifested with DirectX under some
+circumstances. We now use SDL's windib driver, which seems just as
+fast for the software surface stuff we're doing.
+
+Updated native midi support on the Mac, eliminating a non-obvious
+race/locking problem. A new version of the Ren'Py launcher for
+Macintosh comes with this release.
+
+Removed the .rpyl files that were added in 5.1.0, as they wound up not
+being needed after all.
+
+
+New in Ren'Py 5.1.0
+-------------------
+
+There is now a new sound system, supporting playing up to 8 mp3, ogg
+vorbis, ogg speex, mod, or wav files at once. Midi can also be played,
+but is limited to one midi file at a time. Audio files can be read out
+of archives. Music and Sound now have their own mixers, which control
+the system mixer. The low-level audio api has been ripped out and
+replaced with new renpy.sound and renpy.music apis, which are somewhat
+higher-level, and more flexible.
+
+In order to support this, we've temporarily dropped Mac support. In a
+few weeks, we'll be releasing a tool that restores and improves
+Ren'Py's compatability with the Macintosh platform. To help support
+this tool, this release includes .rpyl files for the demo game and
+DSE.
+
+The bar widget has been extended. It can now be adjusted by the user,
+and it can show a thumb in the middle. Various volume and speed
+preferences have been adjusted to take advantage of the new bar
+widget.
+
+All of the backgrounds in the demo-game script and in the reference
+now are of the form "bg name". This lets one run a command 
+"show bg newbg" to replace the background without replacing the
+current screen. The demo game also has been prefixed with a UTF-8 BOM,
+so editors should (hopefully) load and save it as UTF-8.
+
+There is now a new font text tag. By writing {font=Font1,Font2}, one
+can change the font in the middle of a block of text. Use this
+wisely. Font files with extensions are now also searched for in the
+system font directories, although we do not recommend this unless you
+are having encoding problems.
+
+Menu labels and choices support percent-substitution, like say
+statements always have.
+
+Now, all of the im image constructors take properties as
+arguments. This lets placement properties be applied to images, as
+with regular widgets.
+
+A new extra, chinese.rpy, implements word-wrapping for the Chinese
+language. Or at least tries to.
+
+Fixed a bug which made the images created with im.Rotozoom
+incompatible with im.Alpha.
+
+Fixed a weird focus bug that manifested upon rollback when resized
+frames were on the screen.
+
+New in Ren'Py 5.0.1
+-------------------
+
+The hovered callback on buttons was no longer working. This is now
+fixed. Also added a complementary unhovered callback. Documented them 
+both on ui.button().
+
+A number of changes have been made to Ren'Py, the cumulative effect of
+which is to shrink the package size by a bit.
+
+The python math module is now included with Ren'Py.
+
+The presplash screen now displays without a titlebar.
+
+Ren'Py now always runs internally in 24 or 32 bpp mode. It will still
+run on a 16 bpp machine, but there will be a conversion from 32 -> 16
+bits when it is displayed. This fixes a number of transitions that did
+not work in 16 bit mode.
+
+Fixed a bug with im.Size in which 800x600 was used as the default
+target size, instead of the current screen size.
+
+Fixed a bug that prevented drop_shadow = None from working.
+
+New in Ren'Py 5.0
+-----------------
+
+Blessed 4.8.10 as the 5.0 stable release.
+
+Minor changes to images in the demo game.
+
+New in Ren'Py 4.8.10
+--------------------
+
+Added config.font_replacement_map, which is used to map from a regular
+font to a version of that font that is specialized as italic, bold, or
+both.
+
 New in Ren'Py 4.8.9
 -------------------
 
@@ -6,6 +184,9 @@ There is now a preference that controls skipping after choices.
 The new function renpy.choice_for_skipping should be called by user
 code to indicate that a choice is occuring, and therefore we might
 want to end skipping.
+
+Fixed a bug that was preventing RevertableObjects from supporting
+properties.
 
 New in Ren'Py 4.8.8
 -------------------

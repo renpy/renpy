@@ -1,4 +1,4 @@
-# This script, but not the artwork associated with it, is in the
+﻿# This script, but not the artwork associated with it, is in the
 # public domain. Feel free to use it as the basis for your own
 # game.
 
@@ -18,50 +18,13 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
-    # Change some styles, to add images in the background of
-    # the menus and windows.
-    $ style.mm_root_window.background = Image("mainmenu.jpg")
-    $ style.gm_root_window.background = Image("gamemenu.jpg")
-    $ style.window.background = Frame("frame.png", 25, 25)
-
-    # Change some styles involving the margins and padding of the
-    # default window. (We need this, as we use a frame image that
-    # includes a drop-shadow.)
-    $ style.window.xmargin = 0
-    $ style.window.ymargin = 0
-    $ style.window.xpadding = 20
-    $ style.window.top_padding = 5
-    $ style.window.bottom_padding = 15
-
-    # Interface sounds, just for the heck of it.
-    $ style.button.activate_sound = 'click.wav'
-    $ style.imagemap.activate_sound = 'click.wav'
-    $ library.enter_sound = 'click.wav'
-    $ library.exit_sound = 'click.wav'
-
-    # Select the transitions that are used when entering and exiting
-    # the game menu.
-    $ library.enter_transition = pixellate
-    $ library.exit_transition = pixellate
-
-
-    # There used to be a large list of definitions of placements and
-    # transitions here. They've been moved into
-    # common/definitions.rpy, to save space and allow them to be
-    # upgraded more easily. You can still define your own transitions
-    # and placements here, however.
-
-    # $ slowdissove = Dissolve(1.0)
-    # $ whitefade = Fade(.5, 0, .5, color=(255, 255, 255, 255))
-
-
-    # Now, we declare the images that are used in the program.
+    # Declare the images that are used in the program.
 
     # Backgrounds.
-    image carillon = "carillon.jpg"
-    image whitehouse = "whitehouse.jpg"
-    image washington = "washington.jpg"
-    image onememorial = "1memorial.jpg"
+    image bg carillon = "carillon.jpg"
+    image bg whitehouse = "whitehouse.jpg"
+    image bg washington = "washington.jpg"
+    image bg onememorial = "1memorial.jpg"
     image black = Solid((0, 0, 0, 255))
 
     # Character pictures.
@@ -69,26 +32,11 @@ init:
     image eileen vhappy = "9a_vhappy.png"
     image eileen concerned = "9a_concerned.png"
 
-    # Finally, the character object. This object lets us have the
-    # character say dialogue without us having to repeatedly type
-    # her name. It also lets us change the color of her name.
+    # A character object. This object lets us have the character say
+    # dialogue without us having to repeatedly type her name. It also
+    # lets us change the color of her name.
 
-    # Character objects.    
     $ e = Character('Eileen', color=(200, 255, 200, 255))
-
-
-# The splashscreen is called, if it exists, before the main menu is
-# shown the first time. It is not called if the game has restarted.
-
-# We'll comment it out for now.
-#
-# label splashscreen:
-#     scene black
-#     show text "American Bishoujo Presents..." with dissolve
-#     $ renpy.pause(1.0)
-#     hide text with dissolve
-#
-#     return
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -114,13 +62,13 @@ label start:
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
     # of it.
-    scene washington with fade
+    scene bg washington with fade
     show eileen vhappy with dissolve
 
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()
-
+    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
@@ -240,7 +188,7 @@ label writing:
     # this case (based on what is defined in the init clause at the
     # top of this script), it causes a fade to black, and then back
     # to the new scene.
-    scene whitehouse with fade
+    scene bg whitehouse with fade
 
     e "The scene statement clears the scene list, which is the list of
        things that are shown on the screen."
@@ -289,7 +237,7 @@ label writing:
     # have to reshow the eileen happy image, so that it appears that
     # just the background is dissolving. Sneaky.
     with None
-    scene washington
+    scene bg washington
     show eileen happy
     with dissolve
 
@@ -456,7 +404,7 @@ label washington:
     e "We're in Washington, DC because over Summer 2004 American
        Bishoujo's home base was just outside of DC."
 
-    scene whitehouse
+    scene bg whitehouse
     show eileen happy at left
     with fade
 
@@ -507,7 +455,7 @@ label netherlands:
 
     e "You've been to the Netherlands Carillon?"
 
-    scene carillon
+    scene bg carillon
     show eileen vhappy at left
     with dissolve
 
@@ -546,7 +494,7 @@ label netherlands:
         
 label post_netherlands:
 
-    scene washington
+    scene bg washington
     show eileen happy
     with fade
 
@@ -594,7 +542,7 @@ label ending:
 label speedtest:
 
     with None
-    scene whitehouse
+    scene bg whitehouse
     show eileen happy
     with dissolve
 
@@ -607,7 +555,7 @@ label speedtest:
     $ frames = config.frames
 
     with None
-    scene washington
+    scene bg washington
     show eileen happy
     with Dissolve(5.0)
 
@@ -689,12 +637,11 @@ init:
                 ui.text('Statistics')
                 ui.null(height=20)
 
-
                 for name, range, value in stats:
 
                     ui.hbox()
                     ui.text(name, minwidth=150)
-                    ui.bar(600, 20, range, value, ypos=0.5, yanchor=center)
+                    ui.bar(600, 22, range, value, ypos=0.5, yanchor='center')
                     ui.close()
 
                 ui.close()
@@ -750,7 +697,7 @@ init:
                 ui.vbox()
                 ui.text("To get to the next screen, click the 'Continue' button.")
                 ui.close()
-                
+
                 type, value = ui.interact()
 
                 if type == "done":
@@ -771,6 +718,13 @@ init:
     python:
         povname = ""
         pov = DynamicCharacter("povname", color=(255, 0, 0, 255))
+
+    $ ectc = Character('Eileen', color=(200, 255, 200, 255),
+                       ctc = anim.Blink("arrow.png"))
+
+    $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
+                        ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
+                        ctc_position="fixed")
 
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
@@ -819,7 +773,7 @@ init:
 
 label demonstrate:
 
-    scene washington
+    scene bg washington
     show eileen happy
 
     e "I can give you a demonstration of some of the features in
@@ -837,7 +791,7 @@ label demonstrate:
                transitions you'll probably use the most."
 
             with None
-            scene whitehouse
+            scene bg whitehouse
             show eileen happy
             with dissolve
 
@@ -854,7 +808,7 @@ label demonstrate:
                probably want to use dissolve rather than fade."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with pixellate
 
@@ -898,7 +852,7 @@ label demonstrate:
                default in the standard library."
             
             scene black with blinds
-            scene washington
+            scene bg washington
             show eileen happy
             with blinds
 
@@ -906,7 +860,7 @@ label demonstrate:
                vertical blinds."
 
             scene black with squares
-            scene washington
+            scene bg washington
             show eileen happy
             with squares
 
@@ -931,7 +885,7 @@ label demonstrate:
             e "We can hide things with a circirisin..."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with circirisout
 
@@ -953,7 +907,7 @@ label demonstrate:
             e "Let's try it."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with slowcirciris
 
@@ -971,68 +925,68 @@ label demonstrate:
             e "I'll stand offscreen, so you can see some of its modes. I'll read
                out the mode name after each transition."
 
-            scene whitehouse with wiperight
+            scene bg whitehouse with wiperight
 
             e "We first have wiperight..."
 
-            scene washington with wipeleft
+            scene bg washington with wipeleft
 
             e "...followed by wipeleft... "    
 
-            scene whitehouse with wipeup
+            scene bg whitehouse with wipeup
 
             e "...wipeup..."
 
-            scene washington with wipedown
+            scene bg washington with wipedown
 
             e "...and wipedown."
 
             e "Next, the slides."
 
-            scene whitehouse with slideright
+            scene bg whitehouse with slideright
 
             e "Slideright..."
 
-            scene washington with slideleft
+            scene bg washington with slideleft
 
             e "...slideleft..."
 
-            scene whitehouse with slideup
+            scene bg whitehouse with slideup
 
             e "...slideup..."
 
-            scene washington with slidedown
+            scene bg washington with slidedown
 
             e "and slidedown."
 
             e "While the slide transitions slide in the new scene, the
                slideaways slide out the old scene."
 
-            scene whitehouse with slideawayright
+            scene bg whitehouse with slideawayright
 
             e "Slideawayright..."
 
-            scene washington with slideawayleft
+            scene bg washington with slideawayleft
 
             e "...slideawayleft..."
 
-            scene whitehouse with slideawayup
+            scene bg whitehouse with slideawayup
 
             e "...slideawayup..."
 
-            scene washington with slideawaydown
+            scene bg washington with slideawaydown
 
             e "and slideawaydown."
 
             e "We also have a couple of transitions that use a
                rectangular iris."
 
-            scene whitehouse with irisout
+            scene bg whitehouse with irisout
 
             e "There's irisout..."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with irisin
 
@@ -1095,7 +1049,7 @@ label demonstrate:
             e "Move can repeat a movement, and even have it bounce
                back and forth, like I'm doing now."
 
-            scene onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
+            scene bg onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
 
             e "Finally, we can pan around an image larger than the
                screen, using the Pan function in an at
@@ -1105,7 +1059,7 @@ label demonstrate:
                the memorial to the Big Red One."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with dissolve
 
@@ -1151,14 +1105,14 @@ label demonstrate:
             e "Psychadelic."
 
             with None
-            scene washington
+            scene bg washington
             show eileen happy
             with dissolve
 
             e "It's probably best if we stop here, before somebody's
                brain explodes."
 
-        "Text tags, added in 4.7.":
+        "Text tags, updated in 5.1.2.":
 
             e "Text tags let us control the appearance of text that is
                shown to the user."
@@ -1168,6 +1122,9 @@ label demonstrate:
 
             e "They can make the font size {size=+12}bigger{/size} or
                {size=-8}smaller{/size}."
+
+            e "They let you include {image=slider_idle.png} images
+               inside text."
 
             e "They can even change the
                {color=#f00}color{/color}
@@ -1370,6 +1327,26 @@ label demonstrate:
 
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
+
+        "Potpourri, added in 5.1.2.":
+
+            e "Welcome to the potpourri section of the demo."
+
+            e "Here, we demonstrate features that don't fit in any of
+               the other sections, but don't warrant their own
+               section."
+
+            ectc "Here, we demonstrate a click to continue
+                  indicator. In this example, it's nestled in with the
+                  text."
+
+            ectc "This also demonstrates the use of the anim.Blink
+                  function."
+
+            ectcf "A click to continue image can also be placed at a
+                   fixed location on the screen."
+
+            e "That's it for now."
     
 
         " " # Empty, so we have a blank line.
@@ -1382,3 +1359,61 @@ label demonstrate:
 
     jump demo_menu
 
+
+# Here, are a number of customizations that make the game look
+# better. We place them down here at the bottom, to make the first few
+# lines of the script look better.
+#
+# These can be deleted without issue, if you do not want them.
+
+init:
+
+    # Change some styles, to add images in the background of
+    # the menus and windows.
+    $ style.mm_root_window.background = Image("mainmenu.jpg")
+    $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("frame.png", 25, 25)
+
+    # Change the look of the slider.
+    $ style.bar.left_gutter = 10
+    $ style.bar.right_gutter = 12
+    $ style.bar.left_bar = Frame("slider_full.png", 10, 0)
+    $ style.bar.right_bar = Frame("slider_empty.png", 12, 0)
+    $ style.bar.thumb = Image("slider_idle.png")
+    $ style.bar.hover_thumb = Image("slider_hover.png")
+    $ style.bar.thumb_shadow = Image("slider_shadow.png")
+    $ style.bar.thumb_offset = -10
+
+    # Change some styles involving the margins and padding of the
+    # default window. (We need this, as we use a frame image that
+    # includes a drop-shadow.)
+    $ style.window.xmargin = 0
+    $ style.window.ymargin = 0
+    $ style.window.xpadding = 20
+    $ style.window.top_padding = 5
+    $ style.window.bottom_padding = 15
+
+    # Interface sounds, just for the heck of it.
+    $ style.button.activate_sound = 'click.wav'
+    $ style.imagemap.activate_sound = 'click.wav'
+    $ library.enter_sound = 'click.wav'
+    $ library.exit_sound = 'click.wav'
+    $ library.sample_sound = "18005551212.wav"
+
+    # Select the transitions that are used when entering and exiting
+    # the game menu.
+    $ library.enter_transition = pixellate
+    $ library.exit_transition = pixellate
+
+# The splashscreen is called, if it exists, before the main menu is
+# shown the first time. It is not called if the game has restarted.
+
+# We'll comment it out for now.
+#
+# label splashscreen:
+#     scene black
+#     show text "American Bishoujo Presents..." with dissolve
+#     $ renpy.pause(1.0)
+#     hide text with dissolve
+#
+#     return

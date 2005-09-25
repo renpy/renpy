@@ -50,17 +50,17 @@ class Script(object):
         self.all_stmts = [ ]
         
         # A list of all files in the search directories.
-        dirlist = [ ]
+        dirlist = renpy.loader.listdirfiles()
 
-        for dirname in renpy.config.searchpath:
-            for fn in os.listdir(dirname):
-                dirlist.append(dirname + "/" + fn)
+#         for dirname in renpy.config.searchpath:
+#             for fn in os.listdir(dirname):
+#                 dirlist.append(dirname + "/" + fn)
 
         # Files to ensure (because they are the alts of files that
         # have been processed.)
         ignore = [ ]
 
-        for fn in dirlist:
+        for dir, fn in dirlist:
 
             if not (fn.endswith('.rpyc') or fn.endswith('.rpy')):
                 continue
@@ -73,23 +73,27 @@ class Script(object):
             else:
                 alt = fn + 'c'
 
-            if os.path.exists(alt):
-                fntime = os.stat(fn).st_mtime
-                alttime = os.stat(alt).st_mtime
+            if dir:
+                fullfn = dir + "/" + fn
+                fullalt = dir + "/" + alt
 
-                if alttime > fntime:
-                    continue
+                if os.path.exists(fullfn) and os.path.exists(fullalt):
+                    fntime = os.stat(fullfn).st_mtime
+                    alttime = os.stat(fullalt).st_mtime
+
+                    if alttime > fntime:
+                        continue
 
             ignore.append(alt)
 
             # print "Loading", fn
 
-            if self.load_file(fn, node_callback):
+            if self.load_file(dir, fn, node_callback):
                 continue
 
             print "Couldn't load %s, trying %s instead." % (fn, alt)
 
-            if self.load_file(alt, node_callback):
+            if self.load_file(dir, alt, node_callback):
                 continue
 
             raise Exception("Could not load %s or %s." % (fn, alt))
@@ -107,15 +111,21 @@ class Script(object):
 
         # Do some generic init here.
 
-    def load_file(self, fn, node_callback):
+    def load_file(self, dir, fn, node_callback):
 
         if fn.endswith(".rpy"):
-            stmts = renpy.parser.parse(fn)
-            f = file(fn + "c", "wb")
+
+            if not dir:
+                raise Exception("Cannot load rpy file %s from inside an archive." % fn) 
+
+            stmts = renpy.parser.parse(dir + "/" + fn)
+
+            f = file(dir + "/" + fn + "c", "wb")
             f.write(dumps((script_version, stmts), -1).encode('zlib'))
             f.close()
+
         elif fn.endswith(".rpyc"):
-            f = file(fn, "rb")
+            f = renpy.loader.load(fn)
 
             try:
                 version, stmts = loads(f.read().decode('zlib'))

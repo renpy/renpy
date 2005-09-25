@@ -120,6 +120,7 @@ init -500:
 
         def toggle_skipping():
             config.skipping = not config.skipping
+            renpy.restart_interaction()
 
         # The default keymap.
         km = renpy.Keymap(
@@ -140,9 +141,10 @@ init -500:
 
         def skip_indicator():
 
-            if config.allow_skipping and library.skip_indicator:
+            ### skip_indicator default
+            # (text) The style and placement of the skip indicator.            
 
-                ui.conditional("config.skipping")
+            if config.skipping and library.skip_indicator:
                 ui.text(_("Skip Mode"), style='skip_indicator')
 
         config.overlay_functions.append(skip_indicator)

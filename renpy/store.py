@@ -8,7 +8,6 @@ import renpy
 import renpy.ui as ui
 import renpy.display.im as im
 import renpy.display.anim as anim
-import renpy.display.audio as audio
 
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
@@ -116,6 +115,17 @@ class Character(object):
 
         @param image: If true, the name is considered to be the name
         of an image, which is rendered in place of the who label.
+
+        @param ctc: If present, this is interpreted as a widget that
+        is displayed when all text is shown to the user, prompting the
+        user to click to continue. Animation or anim.Blink is a good
+        choice for this sort of widget, as is Image.
+
+        @param ctc_position: If "nestled", the ctc widget is
+        displayed nestled in with the end of the text. If
+        "fixed", the ctc widget is displayed directly on the screen,
+        with its various position properties determining where it is
+        actually shown.
         """
         
         self.name = name

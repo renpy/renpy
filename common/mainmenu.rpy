@@ -2,6 +2,7 @@
 # happens upon initial execution of a Ren'Py program.
 
 init -498:
+
     python hide:
         
         # The contents of the main menu.
@@ -56,16 +57,37 @@ label _library_main_menu:
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
         ui.keymousebehavior()
 
+        ### mm_root_window default
+        # (window) The style used for the root window of the main
+        # menu. This is primarily used to set a background for the
+        # main menu.
+
         ui.window(style='mm_root_window')
         ui.fixed()
 
+        ### mm_menu_window default
+        # (window) A window that contains the choices in
+        # the main menu. Change this to change the placement of
+        # these choices on the main menu screen.
+
+        ### mm_menu_window_vbox thin_vbox
+        # (box) The vbox containing the main menu choices.
+
         ui.window(style='mm_menu_window')
-        ui.vbox()
+        ui.vbox(style='mm_menu_window_vbox')
 
         for text, clicked in library.main_menu:
 
             if isinstance(clicked, basestring):
                 clicked = ui.jumpsoutofcontext(clicked)
+
+            ### mm_button button
+            # (window, hover) The style that is used on buttons that are
+            # part of the main menu.
+
+            ### mm_button_text button_text
+            # (text, hover) The style that is used for the labels of
+            # buttons that are part of the main menu.
 
             _button_factory(text, "mm", clicked=clicked)
 
@@ -73,7 +95,8 @@ label _library_main_menu:
         ui.close()
 
         store._result = ui.interact(suppress_overlay = True,
-                                    suppress_underlay = True)
+                                    suppress_underlay = True,
+                                    mouse="mainmenu")
 
     # Computed jump to the appropriate label.
     jump _main_menu
