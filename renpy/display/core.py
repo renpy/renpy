@@ -395,6 +395,9 @@ class Display(object):
     corner of the backing pos, relative to the window.
 
     @ivar full_redraw: Force a full redraw.
+
+    @ivar next_frame: The time when the next frame should be drawn. In
+    ms returned from pygame.time.get_ticks().
     """
 
 
@@ -408,7 +411,7 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
-        if hasattr(sys, 'winver'):
+        if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
             os.environ['SDL_VIDEODRIVER'] = 'windib'
 
         pygame.display.init()
@@ -464,6 +467,41 @@ class Display(object):
 
         self.suppress_mouse = False
         self.full_redraw = True
+
+        self.next_frame = 0
+
+    def can_redraw(self, first_pass):
+        """
+        Uses the framerate to determine if we can and should redraw.
+        """
+        
+        framerate = renpy.config.framerate
+
+        if framerate is None:
+            return True
+        
+        next_frame = self.next_frame
+        now = pygame.time.get_ticks()
+
+        frametime = 1000 / framerate
+
+        # Handle timer rollover.
+        if next_frame > now + frametime:
+            next_frame = now
+
+        # It's not yet time for the next frame.
+        if now < next_frame and not first_pass:            
+            return False
+            
+        # Otherwise, it is. Schedule the next frame.
+        if next_frame + frametime < now:
+            next_frame = now + frametime
+        else:
+            next_frame += frametime
+
+        self.next_frame = next_frame
+
+        return True
 
     def show_mouse(self, pos, info):
         """
@@ -564,6 +602,13 @@ class Display(object):
         @returns A list of offsets corresponding to each widget,
         relative to the screen.
         """
+
+#         if self.next_draw < pygame.time.get_ticks():
+#             self.next_draw = pygame.time.get_ticks()
+
+#         pygame.time.delay(self.next_draw - pygame.time.get_ticks())
+
+#         self.next_draw += 1000 / 30
 
         surftree = renpy.display.render.render_screen(
             root_widget,
@@ -718,6 +763,7 @@ class Interface(object):
 
         self.transition[layer] = transition
 
+
     def event_peek(self):
         """
         This peeks the next event. It returns None if no event exists.
@@ -733,6 +779,21 @@ class Interface(object):
 
         self.pushed_event = ev
         return ev
+
+    def event_poll(self):
+        """
+        Called to busy-wait for an event while we're waiting to
+        redraw a frame.
+        """
+        
+        if self.pushed_event:
+            rv = self.pushed_event
+            self.pushed_event = None
+            return rv
+
+        else:
+            return pygame.event.poll()
+        
 
     def event_wait(self):
         """
@@ -750,6 +811,7 @@ class Interface(object):
             ev = pygame.event.poll()
             if ev.type != NOEVENT:
                 return ev
+
 
             renpy.display.im.cache.preload()
 
@@ -964,9 +1026,8 @@ class Interface(object):
         renpy.display.render.process_redraws()
         needs_redraw = True
 
-        # Post an event that moves us to the current mouse position.
-        # pygame.event.post(pygame.event.Event(MOUSEMOTION,
-        #                                     pos=pygame.mouse.get_pos()))
+        # First pass through the while loop?
+        first_pass = True
         
         # We only want to do prediction once, but we will defer it as
         # long as possible.
@@ -991,8 +1052,9 @@ class Interface(object):
                     self.force_redraw = False
 
                 # Redraw the screen.
-                if needs_redraw:
+                if needs_redraw and self.display.can_redraw(first_pass):
                     needs_redraw = False
+                    first_pass = False
 
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
@@ -1015,7 +1077,7 @@ class Interface(object):
                     self.display.update_mouse()
                     
                 # Determine if we need a redraw.
-                needs_redraw = renpy.display.render.process_redraws()
+                needs_redraw = needs_redraw or renpy.display.render.process_redraws()
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
@@ -1029,7 +1091,14 @@ class Interface(object):
                     did_prediction = True
 
                 try:
-                    ev = self.event_wait()
+                    if needs_redraw:
+                        ev = self.event_poll()
+                    else:
+                        ev = self.event_wait()
+
+                    if ev.type == NOEVENT:
+                        continue
+
                     self.profile_time = time.time()
 
                     if ev.type == DISPLAYTIME:
