@@ -21,12 +21,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+The character images in the demo game (game/9a_*.png) are under their
+own copyright. I allow them to be used as part of the demo game, but
+not as part of other games.
+
+---
+
 Please note that the above license only applies to Ren'Py
 proper. A binary distribution of Ren'Py contains a number of other
 packages, each with their own licenses, which you may be bound to
 comply with when distributing a Ren'Py game. 
 
-These packages may include:
+For the purposes of complicance with the LGPL, we've made available
+the source code to all of the LGPL libraries used by Ren'Py at 
+http://www.bishoujo.us/renpy/dl/lgpl/. 
+
+The following libraries are used in binary packages of Ren'Py:
 
 Python (Python License)
 http://www.python.org
@@ -37,16 +47,14 @@ http://www.pygame.org
 SDL (GNU LGPL)
 http://www.libsdl.org
 
-SDL_mixer (GNU LGPL)
-http://www.libsdl.org/projects/SDL_mixer
+SDL_image (GNU LGPL)
+http://www.libsdl.org/projects/SDL_image/
+
+SDL_sound (GNU LGPL)
+http://www.icculus.org/SDL_sound/
 
 SDL_ttf (GNU LGPL)
 http://www.libsdl.org/projects/SDL_ttf
 
 ctypes (MIT)
 http://starship.python.net/crew/theller/ctypes/
-
-
-The character images in the demo game (game/9a_*.png) are under their
-own copyright. I allow them to be used as part of the demo game, but
-not as part of other games.

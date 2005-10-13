@@ -177,6 +177,9 @@ afm_characters = 250
 # The number of bonus characters to add to a string for afm.
 afm_bonus = 25
 
+# A function that must return True for afm mode to forward.
+afm_callback = None
+
 # A map from font, bold, italic to font, bold, italic. This is used
 # to replace (say) the italic version of a regular font with the regular
 # version of an italic font.

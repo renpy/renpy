@@ -206,28 +206,40 @@ def text_tokenizer(s, style):
         elif m.group('newline'):
             yield 'newline', m.group('newline')
     
-def input_tokenizer(l, style):
+def input_tokenizer(l, style, pauses=None):
     """
-    This tokenizes arbitrary input, which may be a string or a list which
-    can contain strings and widgets.
+    This tokenizes the input into a list of lists of tokens, where
+    each token is a pair giving the type of token and the text of the
+    token.
     """
 
     if isinstance(l, basestring):
-        for i in renpy.config.text_tokenizer(l, style):
-            yield i
+        l = [ l ]
 
-        return
+
+    rv = [ ]
     
     for s in l:
+        
         if isinstance(s, basestring):
-            for i in renpy.config.text_tokenizer(s, style):
-                yield i
+            sl = [ ]
+            for type, text in renpy.config.text_tokenizer(s, style):
+                if type == "tag" and text == "p":
+                    sl.append(("tag", "w"))
+                    sl.append(("newline", "\n"))
+                else:
+                    sl.append((type, text))
+
+            rv.append(sl)
+                
 
         elif isinstance(s, renpy.display.core.Displayable):
-            yield ("widget", s)
+            rv.append([ ("widget", s) ])
         
         else:
             raise Exception("Couldn't figure out how to tokenize " + repr(s))
+
+        return rv
 
 class Text(renpy.display.core.Displayable):
     """
@@ -235,13 +247,14 @@ class Text(renpy.display.core.Displayable):
     """
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
-               'laidout_width', 'laidout_height', 'width' ]
+               'laidout_width', 'laidout_height', 'width', 'tokens' ]
 
     def after_setstate(self):
-        self.laidout = None
+        self._update()
 
     def __init__(self, text, slow=False, slow_done=None,
-                 style='default', **properties):
+                 slow_speed=None, slow_start=0, slow_abortable=False,
+                 pause=None, style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -251,15 +264,33 @@ class Text(renpy.display.core.Displayable):
 
         @param properties: Additional properties that are applied to the text.
 
+        @param pause: If not None, then we display up to the pauseth pause (0-numbered.)
+
         @param slow_done: A callback that occurs when slow text is done.
+
+        @param slow_speed: The speed of slow text. If none, it's taken from
+        the preferences.
+
+        @param slow_offset: The offset into the text to start the slow text.
+
+        @param slow_abortable: If True, clicking aborts the slow text.
+
         """
 
         super(Text, self).__init__()
 
-        self.text = text
+        self.text = text        
         self.style = renpy.style.Style(style, properties)
+        self.pause = pause
+        self.keep_pausing = False
+
+        self._update(redraw=False)
+
         self.slow = slow
         self.slow_done = slow_done
+        self.slow_start = slow_start
+        self.slow_speed = slow_speed
+        
 
         self.laidout = None
 
@@ -281,15 +312,40 @@ class Text(renpy.display.core.Displayable):
 
         self.style = style
         self._update()
-
-    def _update(self):
+        
+    def _update(self, redraw=True):
         """
         This is called after this widget has been updated by
         set_text or set_style.
         """        
 
         self.laidout = None
-        renpy.display.render.redraw(self, 0)
+
+        if self.text:
+            text = self.text
+        else:
+            text = " "
+
+        self.tokens = input_tokenizer(text, self.style)
+
+        if self.pause is not None:
+            pause = self.pause
+            l = [ ]
+            
+            for i in self.tokens[0]:
+                l.append(i)
+
+                if i == ("tag", "w"):
+                    if pause == 0:
+                        self.keep_pausing |= True
+                        break                    
+                    else:
+                        pause -= 1
+
+            self.tokens[0] = l
+
+        if redraw:
+            renpy.display.render.redraw(self, 0)
 
     def event(self, ev, x, y):
         """
@@ -297,6 +353,9 @@ class Text(renpy.display.core.Displayable):
         """
 
         if not self.slow:
+            return None
+
+        if not self.slow_abortable:
             return None
 
         if renpy.display.behavior.map_event(ev, "dismiss"):
@@ -367,7 +426,12 @@ class Text(renpy.display.core.Displayable):
             text = self.text
 
         # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
-        for kind, i in input_tokenizer(text, self.style):
+
+        tokens = [ ]
+        for l in self.tokens:
+            tokens.extend(l)
+
+        for kind, i in tokens:
 
             # Newline.
             if kind == "newline":
@@ -417,7 +481,11 @@ class Text(renpy.display.core.Displayable):
 
                 tsl.append(TextStyle(tsl[-1]))
 
-                if i == "b":
+                if i == "w":
+                    # Automatically closes.
+                    tsl.pop()
+                    
+                elif i == "b":
                     tsl[-1].bold = True
 
                 elif i == "i":
@@ -476,7 +544,7 @@ class Text(renpy.display.core.Displayable):
                     tsl.pop()
                     
                 else:
-                    raise Exception("Text tag %s was not recognized. Case and spacing matter here.")
+                    raise Exception("Text tag %s was not recognized. Case and spacing matter here." % i)
 
                 # Since the kind can change.
                 if kind == "tag":
@@ -592,6 +660,59 @@ class Text(renpy.display.core.Displayable):
         self.laidout_width = max(max(linewidths), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
 
+    def get_simple_length(self):
+        """
+        Returns a simple length of the text in the first segment of
+        the tokens. Doesn't use the same algorithm as get_laidout_length,
+        so isn't suitable for slow_start.
+        """
+
+        rv = 0
+
+        for tl in self.tokens:
+            for type, text in tl:
+                if type == "newline":
+                    rv += len(text)
+                elif type == "word":
+                    rv += len(text)
+                elif type == "space":
+                    rv += len(text)
+                elif type == "widget":
+                    rv += 1
+
+        return rv
+
+    def get_keep_pausing(self):
+        """
+        If true, we have text beyond the pause number indicated.
+        """
+
+        return self.keep_pausing
+
+    def get_laidout_length(self):
+        """
+        The (reasonably arbitrary) length this text field was laidout
+        to. This can only be called after the text field was drawn
+        (that is, after it has been on the screen for an interaction
+        with the user. Otherwise, it returns sys.maxint.
+        """
+
+        if not self.laidout:
+            import sys
+            return sys.maxint
+
+        rv = 0
+
+        for line in self.laidout:
+            for ts, text in line:
+                rv += ts.length(text)
+
+            rv += 1
+
+        return rv
+
+            
+
     def render_pass(self, r, xo, yo, color, user_colors, length, time):
         """
         Renders the text to r at xo, yo. Color is the base color,
@@ -634,14 +755,18 @@ class Text(renpy.display.core.Displayable):
                 if length <= 0:
                     return False
 
+            length -= 1
+
             y = y + line_height + line_spacing
 
         return True
             
     def render(self, width, height, st):
 
-        if self.slow and renpy.game.preferences.text_cps:
-            length = int(st * renpy.game.preferences.text_cps)
+        speed = self.slow_speed or renpy.game.preferences.text_cps
+
+        if self.slow and speed:
+            length = self.slow_start + int(st * speed)
         else:
             length = sys.maxint
             self.slow = False

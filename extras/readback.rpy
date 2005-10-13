@@ -142,6 +142,7 @@ init -100:
                               what_style=self.readback_style,
                               window_style=self.window_style,
                               interact=False,
+                              all_at_once=True,
                               **self.properties)
     
         class Sayer(object):
@@ -152,6 +153,7 @@ init -100:
             def readback(self, who, what):
                 renpy.display_say(who, what,
                                   what_style='readback_dialogue',
+                                  all_at_once=True,
                                   interact=False)
                 
         

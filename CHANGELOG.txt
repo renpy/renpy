@@ -1,8 +1,16 @@
+Implemented two new text tags, {w} and {p}. {w} pauses the display of
+dialogue, waiting for the user to click to continue. {p} does the same
+thing, but also breaks the line where it occurs. 
+
 Added a framerate limiter. When enabled by setting config.framerate,
 Ren'Py limits the number of frames that are displayed per second to
 the supplied values. This tends to smooth out the framerate, and hence
 the percieved smoothness of the program. It will lower the overall
 framerate, but make it more regular.
+
+Updated LICENSE.txt, to point to a mirror site that contains the
+source code for the LGPL libraries used in the various binary
+distributions of Ren'Py.
 
 New in Ren'Py 5.1.3
 -------------------

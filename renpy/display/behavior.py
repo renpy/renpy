@@ -150,6 +150,9 @@ class SayBehavior(renpy.display.layout.Null):
             self.afm_length = len(afm)
         else:
             self.afm_length = None
+
+    def set_afm_length(self, afm_length):
+        self.afm_length = afm_length
               
     def event(self, ev, x, y):
 
@@ -163,10 +166,19 @@ class SayBehavior(renpy.display.layout.Null):
                 return True
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
-               self.afm_length and renpy.game.preferences.afm_time and \
-               ev.duration > ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time:
+               self.afm_length and renpy.game.preferences.afm_time:
+                                                          
+            afm_delay = ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time
 
-            return True
+            if renpy.game.preferences.text_cps:
+                afm_delay += 1.0 / renpy.game.preferences.text_cps * self.afm_length
+
+            if ev.duration > afm_delay:
+                if renpy.config.afm_callback:
+                    if renpy.config.afm_callback():
+                        return True
+                else:
+                    return True
 
         if map_event(ev, "dismiss") and self.is_focused():
             return True

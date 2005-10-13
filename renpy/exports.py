@@ -302,10 +302,13 @@ def display_say(who, what, who_style='say_label',
                 what_suffix='',
                 interact=True,
                 slow=True,
+                slow_speed=None,
+                slow_abortable=True,
                 image=False,
                 afm=True,
                 ctc=None,
                 ctc_position="nestled",
+                all_at_once=False,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -316,47 +319,80 @@ def display_say(who, what, who_style='say_label',
     @param afm: If True, the auto-forwarding mode is enabled. If False,
     it is disabled.
 
+    @param all_at_once: If True, then the text is displayed all at once. (This is forced to true if interact=False.)
+
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
 
     what = what_prefix + what + what_suffix
 
-    # If we're going to do an interaction, then saybehavior needs
-    # to be here.
-    if interact:
-        if afm:
-            renpy.ui.saybehavior(afm=what)
+    if not interact:
+        all_at_once = True
+
+    if all_at_once:
+        pause = None
+    else:
+        pause = 0
+
+    keep_interacting = True
+    slow_start = 0
+
+    while keep_interacting:
+                
+        # If we're going to do an interaction, then saybehavior needs
+        # to be here.
+        if interact:            
+            behavior = renpy.ui.saybehavior()
         else:
-            renpy.ui.saybehavior()
-    
-    renpy.ui.window(style=window_style)
-    renpy.ui.vbox(padding=10)
+            behavior = None
 
-    if who is not None and not image:
-        who = who_prefix + who + who_suffix
-        renpy.ui.text(who, style=who_style, **properties)
-    elif who is not None and image:
-        renpy.ui.image(who, style=who_style, **properties)
+        renpy.ui.window(style=window_style)
+        renpy.ui.vbox(padding=10)
 
-    # Code to support ctc.
-    what = [ what ]
+        if who is not None and not image:
+            whotext = who_prefix + who + who_suffix
+            renpy.ui.text(whotext, style=who_style, **properties)
+        elif who is not None and image:
+            renpy.ui.image(who, style=who_style, **properties)
 
-    if ctc and ctc_position == "nestled":
-        what.extend([ " ", ctc ])
+        # Code to support ctc.
+        ctcwhat = [ what ]
 
-    slow_done = None
+        if ctc and ctc_position == "nestled":
+            ctcwhat.extend([ " ", ctc ])
 
-    if ctc and ctc_position == "fixed":
-        def slow_done():
-            renpy.ui.add(ctc)
-            restart_interaction()
-    
-    renpy.ui.text(what, style=what_style, slow=slow, slow_done=slow_done)
-    renpy.ui.close()
+        slow_done = None
+
+        if ctc and ctc_position == "fixed":
+            def slow_done():
+                renpy.ui.add(ctc)
+                restart_interaction()
+
+        what_text = renpy.ui.text(ctcwhat,
+                                  style=what_style,
+                                  slow=slow,
+                                  slow_done=slow_done,
+                                  slow_abortable=slow_abortable,
+                                  slow_start=slow_start,
+                                  pause=pause,
+                                  slow_speed = None)
+
+        if behavior and afm:
+            behavior.set_afm_length(what_text.get_simple_length() - slow_start)
+
+        renpy.ui.close()
+
+        if interact:
+            renpy.ui.interact(mouse='say')
+
+        keep_interacting = what_text.get_keep_pausing()
+        if keep_interacting:
+            slow_start = what_text.get_laidout_length()
+            pause += 1
+
 
     if interact:
-        renpy.ui.interact(mouse='say')
         checkpoint()
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,

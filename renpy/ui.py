@@ -148,6 +148,9 @@ def text(label, **properties):
 
     @param slow: If True, text is displayed slowly, controlled by the
     appropriate preference.
+
+    @param slow_speed: If slow is True, then this is the number of cps
+    the text is displayed at, overriding the preference.
     
     @param slow_done: If not None and slow is True, this is a callback
     that is called when we're done displaying text on the screen.

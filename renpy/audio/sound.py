@@ -62,8 +62,6 @@ def stop(channel=0, fadeout=0):
         if renpy.config.debug_sound:
             raise
     
-
-
 def set_mixer(channel, mixer):
     """
     This sets the name of the mixer associated with a given
@@ -117,3 +115,20 @@ def set_volume(volume, channel=0):
         if renpy.config.debug_sound:
             raise
     
+def is_playing(channel=0):
+    """
+    Returns True if the channel is currently playing a sound, False if
+    it is not, or if the sound system isn't working.
+    
+    This works with both sound and music channels, although it's intended
+    for the former.
+    """
+
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        return c.playing
+    except:
+        if renpy.config.debug_sound:
+            raise
+        else:
+            return False
