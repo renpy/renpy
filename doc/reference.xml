@@ -2413,6 +2413,12 @@ The number of bonus characters added to every string when auto-forward
 mode is in effect.
 </var>
 
+<var name="config.afm_callback" value="None">
+If not None, a python function that is called to determine if it is
+safe to auto-forward. The intent is that this can be used by a voice
+system to disable auto-forwarding when a voice is playing.
+</var>
+
 <var name="config.font_replacement_map" value="{ }">
 This is a map from (font, bold, italics) to (font, bold, italics),
 used to replace a font with one that's specialized as having bold
@@ -3150,6 +3156,14 @@ must be closed by the end of the string.
 </p>
 
 <p>
+There are two tags, {w} and {p}, that can only be used in
+dialogue. These tags cause a pause in the display of text, until the
+user clicks to continue, or an auto-forward occurs. This allows text
+to be displayed incrementally. The difference between {w} and {p} is
+that {p} adds a line break at the pause point.
+</p>
+
+<p>
 There is also an image tag {image=filename}, where filename is the name
 of an image file. The image tag does not take a closing tag. Images so
 including are placed as if they were text, and should be no larger
@@ -3649,6 +3663,8 @@ simultaneously, in a sample-accurate manner.
 <!-- func renpy.sound.queue -->
 
 <!-- func renpy.sound.stop -->
+
+<!-- func renpy.sound.is_playing -->
 
 <!-- func renpy.sound.set_volume -->
 

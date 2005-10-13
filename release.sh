@@ -14,5 +14,5 @@ cmd /c build_exe.bat
 
 python distribute.py ../$1 demo2
 cd ..
-zip -9 -r $1.zip $1
+zip -X9 -r $1.zip $1
 

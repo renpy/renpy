@@ -69,8 +69,6 @@ label start:
     # interpolate it into the next line.
     $ version = renpy.version()
 
-    e "This is a test {w}of the pause feature.{p}New line."
-    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
@@ -1114,7 +1112,7 @@ label demonstrate:
             e "It's probably best if we stop here, before somebody's
                brain explodes."
 
-        "Text tags, updated in 5.1.2.":
+        "Text tags, updated in 5.1.4.":
 
             e "Text tags let us control the appearance of text that is
                shown to the user."
@@ -1124,6 +1122,9 @@ label demonstrate:
 
             e "They can make the font size {size=+12}bigger{/size} or
                {size=-8}smaller{/size}."
+
+            e "They let you pause{w} the display of the text,
+               optionally with{p}line breaks."
 
             e "They let you include {image=slider_idle.png} images
                inside text."

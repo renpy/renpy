@@ -1,3 +1,6 @@
+New in Ren'Py 5.1.4
+-------------------
+
 Implemented two new text tags, {w} and {p}. {w} pauses the display of
 dialogue, waiting for the user to click to continue. {p} does the same
 thing, but also breaks the line where it occurs. 
@@ -7,6 +10,16 @@ Ren'Py limits the number of frames that are displayed per second to
 the supplied values. This tends to smooth out the framerate, and hence
 the percieved smoothness of the program. It will lower the overall
 framerate, but make it more regular.
+
+Some improvements in the auto-forward mode. AFM will no longer dismiss
+text when it is still being drawn onto the screen. (Because the text
+speed is not infinite.) There is now also an AFM callback that can be
+used to control if an auto-forward occurs. This is intended to be used
+with the new renpy.sound.is_playing call, to prevent auto-forwarding
+from occuring if when a voice is being played. I'm not bothering to
+actually implement much of the voice functionality until someone
+seriously proposes a voiced game, but I do want to add in the
+infrastructure.
 
 Updated LICENSE.txt, to point to a mirror site that contains the
 source code for the LGPL libraries used in the various binary
