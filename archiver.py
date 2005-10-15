@@ -16,7 +16,7 @@ from cPickle import loads, dumps, HIGHEST_PROTOCOL
 padding_every = 10240
 
 # The amount of padding we will add.
-padding_max = 32
+padding_max = 4
 
 def randpadding():
 

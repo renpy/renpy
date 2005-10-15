@@ -15,16 +15,17 @@ import encodings.zlib_codec
 import encodings.unicode_escape
 import encodings.string_escape
 import encodings.raw_unicode_escape
-
-dirname = os.path.dirname(sys.argv[0])
-
-if dirname:
-    os.chdir(dirname)
-
-# Add the path to the module.
-sys.path.append("module")
+import math
 
 def main():
+
+    dirname = os.path.dirname(sys.argv[0])
+
+    if dirname:
+        os.chdir(dirname)
+
+    # Add the path to the module.
+    sys.path.append("module")
 
     name = os.path.basename(sys.argv[0])
 
@@ -34,13 +35,8 @@ def main():
     if name.find("_") != -1:
         name = name[name.find("_") + 1:]
 
-    if os.path.isdir(name):
-        game = name
-    else:
-        game = "game"
-
     op = optparse.OptionParser()
-    op.add_option('--game', dest='game', default=game,
+    op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
     op.add_option('--python', dest='python', default=None,

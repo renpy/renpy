@@ -110,13 +110,20 @@ label main_menu:
 # The actual game starts here.
 label start:
 
+    jump foobar
+
     scene whitehouse
     show eileen happy beret
+
+    $ renpy.context().foo = 1
+    $ renpy.watch('str(renpy.context().foo)')
 
     e "Okay, let's play stargate."
 
     voice "chev1.wav"
     w "Chevron one encoded!"
+
+    $ renpy.context().foo = 2
 
     voice "chev2.wav"
     w "Chevron two encoded!"
@@ -228,6 +235,8 @@ label start:
 #     centered "A PyTom Game...."
 
 #     $ renpy.pause(500, 10)
+
+label foobar:
         
     scene whitehouse with dissolve
     show eileen happy with dissolve

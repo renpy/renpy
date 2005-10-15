@@ -314,10 +314,10 @@ class Show(Node):
 
     def execute(self):
 
-        name, at_list = self.imspec
+        name, at_list, layer = self.imspec
         at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-        renpy.exports.show(name, *at_list)
+        renpy.exports.show(name, at_list, layer)
 
         return self.next
 
@@ -330,9 +330,10 @@ class Scene(Node):
 
     __slots__ = [
         'imspec',
+        'layer',
         ]
 
-    def __init__(self, loc, imgspec):
+    def __init__(self, loc, imgspec, layer):
         """
         @param imspec: A triple consisting of an image name (itself a
         tuple of strings), a list of at expressions, and a list of
@@ -343,17 +344,18 @@ class Scene(Node):
         super(Scene, self).__init__(loc)
 
         self.imspec = imgspec
+        self.layer = layer
 
     def execute(self):
 
-        renpy.exports.scene()
+        renpy.exports.scene(self.layer)
 
         if self.imspec:
             
-            name, at_list = self.imspec
+            name, at_list, layer = self.imspec
             at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-            renpy.exports.show(name, *at_list)
+            renpy.exports.show(name, at_list, layer)
 
         return self.next
         
@@ -383,7 +385,7 @@ class Hide(Node):
 
     def execute(self):
 
-        renpy.exports.hide(self.imspec[0])
+        renpy.exports.hide(self.imspec[0], self.imspec[2])
         return self.next
 
 class With(Node):

@@ -80,9 +80,11 @@ def skipping(ev):
 
     if map_event(ev, "skip"):
         renpy.config.skipping = True
+        renpy.exports.restart_interaction()
 
     if map_keyup(ev, "skip"):
         renpy.config.skipping = False
+        renpy.exports.restart_interaction()
 
     return
 
@@ -148,6 +150,9 @@ class SayBehavior(renpy.display.layout.Null):
             self.afm_length = len(afm)
         else:
             self.afm_length = None
+
+    def set_afm_length(self, afm_length):
+        self.afm_length = afm_length
               
     def event(self, ev, x, y):
 
@@ -161,10 +166,19 @@ class SayBehavior(renpy.display.layout.Null):
                 return True
 
         if ev.type == renpy.display.core.DISPLAYTIME and \
-               self.afm_length and renpy.game.preferences.afm_time and \
-               ev.duration > ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time:
+               self.afm_length and renpy.game.preferences.afm_time:
+                                                          
+            afm_delay = ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time
 
-            return True
+            if renpy.game.preferences.text_cps:
+                afm_delay += 1.0 / renpy.game.preferences.text_cps * self.afm_length
+
+            if ev.duration > afm_delay:
+                if renpy.config.afm_callback:
+                    if renpy.config.afm_callback():
+                        return True
+                else:
+                    return True
 
         if map_event(ev, "dismiss") and self.is_focused():
             return True
@@ -178,13 +192,14 @@ class SayBehavior(renpy.display.layout.Null):
 class Button(renpy.display.layout.Window):
 
     def __init__(self, child, style='button', clicked=None,
-                 hovered=None, **properties):
+                 hovered=None, unhovered=None, **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
 
         self.activated = False
         self.clicked = clicked
         self.hovered = hovered
+        self.unhovered = unhovered
         self.focusable = clicked is not None
 
     def render(self, width, height, st):
@@ -201,6 +216,18 @@ class Button(renpy.display.layout.Window):
             
         return rv
 
+
+    def focus(self, default=False):
+        super(Button, self).focus(default)
+
+        if self.hovered:
+            self.hovered()
+
+    def unfocus(self):
+        super(Button, self).unfocus()
+
+        if self.unhovered:
+            self.unhovered()
 
     def event(self, ev, x, y):
 
@@ -226,7 +253,7 @@ class Button(renpy.display.layout.Window):
             self.activated = True
 
             self.set_style_prefix('activate_')
-            renpy.display.audio.play(self.style.sound)
+            renpy.audio.sound.play(self.style.sound)
 
             rv = self.clicked()
 
@@ -305,41 +332,111 @@ class Bar(renpy.display.core.Displayable):
     to clicks on that value.
     """
     
-    def __init__(self, width, height, range, value,
-                 style='bar', **properties):
+    def __init__(self, range, value, width=None, height=None,
+                 changed=None, style='bar', **properties):
 
-        super(Bar, self).__init__()
+        if width is not None:
+            properties['xmaximum'] = width
 
-        self.style = renpy.style.Style(style, properties)
+        if height is not None:
+            properties['ymaximum'] = height
 
-        self.width = width
-        self.height = height
+        super(Bar, self).__init__(style=style, **properties)
+
         self.range = range
         self.value = value
-
+        self.changed = changed
+        self.focusable = changed is not None
 
     def render(self, width, height, st):
 
-        width = self.width
-        height = self.height
+        # Store the width for the event function to use.
+        self.width = width
 
-        lgutter = 0
-        rgutter = 0
+        lgutter = self.style.left_gutter
+        rgutter = self.style.right_gutter
 
-        barwidth = width - lgutter - rgutter
+        zone_width = width - lgutter - rgutter
 
-        left_width = barwidth * self.value // self.range
-        right_width = barwidth - left_width
+        left_width = zone_width * self.value // self.range
+        right_width = zone_width - left_width
+
+        left_width += lgutter
+        right_width += rgutter
 
         rv = renpy.display.render.Render(width, height)
 
-        lsurf = render(self.style.left_bar, left_width, height, st)
-        rsurf = render(self.style.right_bar, right_width, height, st)
+        lsurf = render(self.style.left_bar, width, height, st)
+        rsurf = render(self.style.right_bar, width, height, st)
 
-        rv.blit(lsurf, (lgutter, 0))
-        rv.blit(rsurf, (lgutter + left_width, 0))
+        if self.style.thumb_shadow:
+            surf = render(self.style.thumb_shadow, width, height, st)
+            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+
+        rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
+        rv.blit(rsurf.subsurface((left_width, 0, right_width, height)),
+                (left_width, 0))
+
+        if self.style.thumb:
+            surf = render(self.style.thumb, width, height, st)
+            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+
+        if self.changed:
+            rv.add_focus(self, None, 0, 0, width, height)
 
         return rv
+        
+    def event(self, ev, x, y):
+
+        if not self.changed:
+            return
+
+        if not self.is_focused():
+            return
+
+        old_value = self.value
+
+        grabbed = (renpy.display.focus.get_grab() is self)
+        just_grabbed = False
+            
+        if not grabbed and map_event(ev, "bar_activate"):
+            renpy.display.focus.set_grab(self)
+            just_grabbed = True
+            grabbed = True
+
+        if grabbed:
+
+            if map_event(ev, "bar_decrease"):
+                self.value -= 1
+
+            if map_event(ev, "bar_increase"):
+                self.value += 1
+
+            if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+
+                lgutter = self.style.left_gutter
+                rgutter = self.style.right_gutter
+                zone_width = self.width - lgutter - rgutter
+                
+                self.value = (x - lgutter) * self.range // zone_width
+
+            if self.value < 0:
+                self.value = 0
+
+            if self.value > self.range:
+                self.value = self.range
+
+        if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
+            renpy.display.focus.set_grab(None)
+
+        if self.value != old_value:
+            renpy.display.render.redraw(self, 0)
+            return self.changed(self.value)
+
+        return
+
+    def get_placement(self):
+        return self.style
         
      
 class Conditional(renpy.display.layout.Container):

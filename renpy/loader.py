@@ -1,4 +1,5 @@
 import renpy
+import os
 import os.path
 from pickle import loads
 from cStringIO import StringIO
@@ -22,6 +23,25 @@ def index_archives():
         except:
             if renpy.config.debug:
                 raise
+
+def listdirfiles():
+    """
+    Returns a list of directory, file tuples known to the system. If
+    the file is in an archive, the directory is None.
+    """
+
+    rv = [ ]
+
+    for i in renpy.config.searchpath:
+        for j in os.listdir(i):
+            rv.append((i, j))
+
+    for prefix, index in archives:
+        for j in index.iterkeys():
+            rv.append((None, j))
+
+    return rv
+    
 
 def load(name):
     """

@@ -13,11 +13,14 @@ from renpy.display.behavior import Keymap
 
 from renpy.curry import curry
 # from renpy.display.audio import music_start, music_stop
-from renpy.display.audio import play
+from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import load, save, saved_games
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
+
+import renpy.audio.sound as sound
+import renpy.audio.music as music
 
 import time
 
@@ -67,7 +70,7 @@ def image(name, img):
     images[name] = img
     
 
-def show(name, *at_list):
+def show(name, at_list=[ ], layer='master'):
     """
     This is used to execute the show statement, adding the named image
     to the screen as part of the master layer.
@@ -96,10 +99,10 @@ def show(name, *at_list):
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[tuple(name)] = True
 
-    sls.add('master', img, key)
+    sls.add(layer, img, key)
     
 
-def hide(name):
+def hide(name, layer='master'):
     """
     This finds items in the master layer that have the same name
     as the first component of the given name, and removes them
@@ -112,14 +115,14 @@ def hide(name):
 
     sls = scene_lists()
     key = name[0]
-    sls.remove('master', key)
+    sls.remove(layer, key)
 
     if key in sls.sticky_positions:
         del sls.sticky_positions[key]
 
     
 
-def scene():
+def scene(layer='master'):
     """
     This clears out the master layer. This is used in the execution of
     the scene statment, but only to clear out the layer. If you want
@@ -127,7 +130,7 @@ def scene():
     """
 
     sls = scene_lists()
-    sls.clear('master')
+    sls.clear(layer)
     sls.sticky_positions.clear()
     
         
@@ -174,7 +177,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None):
 
     renpy.ui.close()
 
-    return renpy.ui.interact()
+    return renpy.ui.interact(mouse='prompt')
 
 def menu(items, set_expr):
     """
@@ -184,7 +187,7 @@ def menu(items, set_expr):
 
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (label, value)
+    items = [ (label % tag_quoting_dict, value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
 
@@ -226,7 +229,7 @@ def choice_for_skipping():
         renpy.config.skipping = False
     
 
-def display_menu(items, window_style='menu_window'):
+def display_menu(items, window_style='menu_window', interact=True):
     """
     Displays a menu containing the given items, returning the value of
     the item the user selects.
@@ -236,6 +239,9 @@ def display_menu(items, window_style='menu_window'):
     for this menuitem. The second element is the value to be returned
     if this item is selected, or None if this item is a non-selectable
     caption.
+
+    @param interact: If True, then an interaction occurs. If False, no suc
+    interaction occurs, and the user should call ui.interact() manually.
     """
 
     choice_for_skipping()
@@ -243,10 +249,12 @@ def display_menu(items, window_style='menu_window'):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
-    rv = renpy.ui.interact()
-    checkpoint()
+    if interact:
+        rv = renpy.ui.interact(mouse='menu')
+        checkpoint()
+        return rv
 
-    return rv
+    return None
 
 class TagQuotingDict(object):
     def __getitem__(self, key):
@@ -261,7 +269,9 @@ class TagQuotingDict(object):
 
             return rv
         else:
-            raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            if renpy.config.debug:
+                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+            return "<" + key + " unbound>"
 
 tag_quoting_dict = TagQuotingDict()
 
@@ -292,8 +302,13 @@ def display_say(who, what, who_style='say_label',
                 what_suffix='',
                 interact=True,
                 slow=True,
+                slow_speed=None,
+                slow_abortable=True,
                 image=False,
                 afm=True,
+                ctc=None,
+                ctc_position="nestled",
+                all_at_once=False,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -304,34 +319,80 @@ def display_say(who, what, who_style='say_label',
     @param afm: If True, the auto-forwarding mode is enabled. If False,
     it is disabled.
 
+    @param all_at_once: If True, then the text is displayed all at once. (This is forced to true if interact=False.)
+
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
 
     what = what_prefix + what + what_suffix
 
-    # If we're going to do an interaction, then saybehavior needs
-    # to be here.
-    if interact:
-        if afm:
-            renpy.ui.saybehavior(afm=what)
+    if not interact:
+        all_at_once = True
+
+    if all_at_once:
+        pause = None
+    else:
+        pause = 0
+
+    keep_interacting = True
+    slow_start = 0
+
+    while keep_interacting:
+                
+        # If we're going to do an interaction, then saybehavior needs
+        # to be here.
+        if interact:            
+            behavior = renpy.ui.saybehavior()
         else:
-            renpy.ui.saybehavior()
-    
-    renpy.ui.window(style=window_style)
-    renpy.ui.vbox(padding=10)
+            behavior = None
 
-    if who is not None and not image:
-        who = who_prefix + who + who_suffix
-        renpy.ui.text(who, style=who_style, **properties)
-    elif who is not None and image:
-        renpy.ui.image(who, style=who_style, **properties)
+        renpy.ui.window(style=window_style)
+        renpy.ui.vbox(padding=10)
 
-    renpy.ui.text(what, style=what_style, slow=slow)
-    renpy.ui.close()
+        if who is not None and not image:
+            whotext = who_prefix + who + who_suffix
+            renpy.ui.text(whotext, style=who_style, **properties)
+        elif who is not None and image:
+            renpy.ui.image(who, style=who_style, **properties)
+
+        # Code to support ctc.
+        ctcwhat = [ what ]
+
+        if ctc and ctc_position == "nestled":
+            ctcwhat.extend([ " ", ctc ])
+
+        slow_done = None
+
+        if ctc and ctc_position == "fixed":
+            def slow_done():
+                renpy.ui.add(ctc)
+                restart_interaction()
+
+        what_text = renpy.ui.text(ctcwhat,
+                                  style=what_style,
+                                  slow=slow,
+                                  slow_done=slow_done,
+                                  slow_abortable=slow_abortable,
+                                  slow_start=slow_start,
+                                  pause=pause,
+                                  slow_speed = None)
+
+        if behavior and afm:
+            behavior.set_afm_length(what_text.get_simple_length() - slow_start)
+
+        renpy.ui.close()
+
+        if interact:
+            renpy.ui.interact(mouse='say')
+
+        keep_interacting = what_text.get_keep_pausing()
+        if keep_interacting:
+            slow_start = what_text.get_laidout_length()
+            pause += 1
+
 
     if interact:
-        renpy.ui.interact()
         checkpoint()
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
@@ -369,7 +430,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
 
-    rv = renpy.ui.interact(suppress_overlay=(not overlays))
+    rv = renpy.ui.interact(suppress_overlay=(not overlays), mouse='imagemap')
     checkpoint()
     return rv
     
@@ -383,10 +444,10 @@ def pause(delay=None, music=None):
 
     @param delay: The number of seconds to delay.
 
-    @param music: If supplied, this gives the number of seconds into
-    the background music that we will delay until. If music is
-    playing, this takes precedence, otherwise the delay parameter
-    take precedence.
+    @param music: If supplied, and music is playing, this takes
+    precedence over the delay parameter. It gives a time, in seconds,
+    into the playing music track. Ren'Py will pause until the music
+    has played up to that point..
 
     Returns True if the pause was interrupted by the user hitting a key
     or clicking a mouse, or False if the pause was ended by the appointed
@@ -394,7 +455,7 @@ def pause(delay=None, music=None):
     """
 
     if music is not None:
-        newdelay = renpy.display.audio.music_delay(music)
+        newdelay = renpy.audio.music.get_delay(music)
 
         if newdelay is not None:
             delay = newdelay
@@ -404,7 +465,7 @@ def pause(delay=None, music=None):
     if delay:
         renpy.ui.pausebehavior(delay, False)
 
-    return renpy.ui.interact()
+    return renpy.ui.interact(mouse='pause')
 
 def movie_cutscene(filename, delay, loops=0):
     """
@@ -450,7 +511,8 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_wait)
+                                                 suppress_overlay=not renpy.config.overlay_during_wait,
+                                                 mouse='with')
         else:
             return False
 
@@ -518,7 +580,7 @@ def jump(label):
 
     raise renpy.game.JumpException(label)
 
-def jumpoutofcontext(label):
+def jump_out_of_context(label):
     """
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.
@@ -640,6 +702,22 @@ def context():
 
     return renpy.game.context().info
     
+def music_start(filename, loops=True, fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout)
+
+def music_stop(fadeout=None):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.stop(fadeout=fadeout)
+
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

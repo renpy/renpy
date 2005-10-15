@@ -135,7 +135,14 @@ def run(restart=False, lint=False):
             # We get this when the context has changed, and so we go and
             # start running from the new context.
             except game.RestartException, e:
-                renpy.game.contexts = e.args[0]
+                renpy.game.contexts = e.contexts
+
+                label = e.label
+                
+                if label:
+                    if game.script.has_label(label):
+                        game.context().call(label)
+
                 continue
 
             except game.QuitException, e:
@@ -148,14 +155,41 @@ def run(restart=False, lint=False):
 
     # And, we're done.
     
-def main(basepath, lint=False):
+def main(basename, lint=False):
 
     renpy.game.exception_info = 'While loading the script.'
 
-    game.basepath = basepath
-    renpy.config.searchpath = [ "common", basepath ]
+    if os.path.isdir(basename):
+        basepath = basename
+    elif os.path.isdir("game"):
+        basepath = "game"
+    else:
+        basepath = "."
 
+    game.basepath = basepath
+    renpy.config.searchpath = [ basepath ]
+
+    if os.path.isdir("common"):
+        renpy.config.searchpath.append("common")
+
+    renpy.config.archives = [ ]
+
+    try:
+        renpy.loader.transfn(basename + ".rpi")
+        renpy.config.archives.append(basename)
+    except:
+        pass
+
+    try:
+        renpy.loader.transfn("game.rpi")
+        renpy.config.archives.append("game")
+    except:
+        pass
+        
     renpy.config.backup()
+
+    # Initialize archives.
+    renpy.loader.index_archives()
 
     # Load the script.
     game.script = renpy.script.load_script()
