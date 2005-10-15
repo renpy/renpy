@@ -216,11 +216,10 @@ def input_tokenizer(l, style, pauses=None):
     if isinstance(l, basestring):
         l = [ l ]
 
-
     rv = [ ]
     
     for s in l:
-        
+
         if isinstance(s, basestring):
             sl = [ ]
             for type, text in renpy.config.text_tokenizer(s, style):
@@ -239,7 +238,7 @@ def input_tokenizer(l, style, pauses=None):
         else:
             raise Exception("Couldn't figure out how to tokenize " + repr(s))
 
-        return rv
+    return rv
 
 class Text(renpy.display.core.Displayable):
     """
