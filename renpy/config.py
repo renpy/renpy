@@ -34,7 +34,7 @@ rollback_length = 128
 
 # The maximum number of steps the user can rollback the game,
 # interactively.
-hard_rollback_limit = 10
+hard_rollback_limit = 100
 
 # A list of functions returning lists of displayables that will be
 # added to the end of the display list.

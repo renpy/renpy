@@ -7,8 +7,8 @@
 # either reduce config.hard_rollback_limit or set
 # config.rollback_enabled to false.
 
-# init:
-#     $ config.hard_rollback_limit = 1
+init -100:
+     $ config.hard_rollback_limit = 1
 
 # Readback works by replacing the default Character and Menu objects
 # with ones that record what is said in a readback buffer. The user

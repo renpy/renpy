@@ -169,14 +169,15 @@ class Character(object):
             import renpy.python as python            
             name = python.py_eval(name)
 
-        self.store_readback(name, what)
-        
         self.function(name, what,
                       who_style=self.who_style,
                       what_style=self.what_style,
                       window_style=self.window_style,
                       interact=interact,
                       **self.properties)
+
+        self.store_readback(name, what)
+        
 
 def DynamicCharacter(name_expr, **properties):
     """
