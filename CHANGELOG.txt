@@ -21,8 +21,9 @@ actually implement much of the voice functionality until someone
 seriously proposes a voiced game, but I do want to add in the
 infrastructure.
 
-Increased the default rollback length to 100, now that we have a
-readback extra people can use if they want to.
+Increased the default rollback length to back 100, now that we have a
+readback extra people can use if they want to. Updated readback so it
+works a little better.
 
 Updated LICENSE.txt, to point to a mirror site that contains the
 source code for the LGPL libraries used in the various binary
