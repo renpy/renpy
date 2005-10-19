@@ -304,8 +304,7 @@ class Show(Node):
     def __init__(self, loc, imspec):
         """
         @param imspec: A triple consisting of an image name (itself a
-        tuple of strings), a list of at expressions, and a list of
-        with expressions.
+        tuple of strings), a list of at expressions, and a layer.
         """
 
         super(Show, self).__init__(loc)
@@ -336,9 +335,8 @@ class Scene(Node):
     def __init__(self, loc, imgspec, layer):
         """
         @param imspec: A triple consisting of an image name (itself a
-        tuple of strings), a list of at expressions, and a list of
-        with expressions, or None to not have this scene statement
-        also display an image.
+        tuple of strings), a list of at expressions, and a layer, or
+        None to not have this scene statement also display an image.
         """
 
         super(Scene, self).__init__(loc)

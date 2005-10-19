@@ -108,7 +108,10 @@ def check_show(node):
     if not node.imspec:
         return
 
-    name, at_list = node.imspec
+    name, at_list, layer = node.imspec
+
+    if layer not in renpy.config.layers:
+        report(node, "Uses layer '%s', which is not in config.layers.", layer)
 
     image_exists(node, name)
 
@@ -120,7 +123,10 @@ def check_show(node):
 
 def check_hide(node):
 
-    name, at_list = node.imspec
+    name, at_list, layer = node.imspec
+
+    if layer not in renpy.config.layers:
+        report(node, "Uses layer '%s', which is not in config.layers.", layer)
 
     if name[0] not in image_prefixes:
         report(node, "The image prefix '%s' is not the prefix of any declared image.", name[0])
