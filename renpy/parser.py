@@ -394,30 +394,38 @@ class Lexer(object):
 
         self.skip_whitespace()
 
-        s = self.match(r'"([^\\"]|\\.)*"')
+        s = self.match(r'r?"([^\\"]|\\.)*"')
 
         if s is None:
-            s = self.match(r"'([^\\']|\\.)*'")
+            s = self.match(r"r?'([^\\']|\\.)*'")
 
         if s is None:
             return None
 
+        if s[0] == 'r':
+            raw = True
+            s = s[1:]
+        else:
+            raw = False
+
         # Strip off delimiters.
         s = s[1:-1]
 
-        # Collapse runs of whitespace into single spaces.
-        s = re.sub(r'\s+', ' ', s)
+        if not raw:
 
-        # Expand out backslash escapes.
-        def unescape(m):
-            c = m.group(1)
+            # Collapse runs of whitespace into single spaces.
+            s = re.sub(r'\s+', ' ', s)
 
-            if c == 'n':
-                return '\n'
+            # Expand out backslash escapes.
+            def unescape(m):
+                c = m.group(1)
 
-            return c
+                if c == 'n':
+                    return '\n'
 
-        s = re.sub(r'\\(.)', unescape, s)
+                return c
+
+            s = re.sub(r'\\(.)', unescape, s)
 
         return s
 

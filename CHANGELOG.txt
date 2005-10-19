@@ -1,3 +1,5 @@
+Fixed bug in lint caused by the introduction of layers.
+
 New in Ren'Py 5.1.4
 -------------------
 
