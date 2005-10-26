@@ -248,7 +248,7 @@ init:
                     return
 
 
-        library.main_menu.insert(2, ("CG Gallery", ui.jumps("gallery")))
+        library.main_menu.insert(2, ("CG Gallery", ui.jumps("gallery"), 'True'))
 
 
 label gallery:

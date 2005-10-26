@@ -34,7 +34,7 @@ rollback_length = 128
 
 # The maximum number of steps the user can rollback the game,
 # interactively.
-hard_rollback_limit = 10
+hard_rollback_limit = 100
 
 # A list of functions returning lists of displayables that will be
 # added to the end of the display list.
@@ -156,14 +156,17 @@ keymap = dict(
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
+
+    # These control the bar.
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+    bar_decrease = [ 'K_LEFT' ],
+    bar_increase = [ 'K_RIGHT' ],
     )
 
-# A list of functions that are called before each interaction.
+# A list of functions that are called at least once during each
+# interaction.
 interact_callbacks = [ ]
-
-# A function that is called when a music track ends, perhaps to
-# play another track.
-music_end_event = None
 
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
@@ -173,6 +176,17 @@ afm_characters = 250
 
 # The number of bonus characters to add to a string for afm.
 afm_bonus = 25
+
+# A function that must return True for afm mode to forward.
+afm_callback = None
+
+# A map from font, bold, italic to font, bold, italic. This is used
+# to replace (say) the italic version of a regular font with the regular
+# version of an italic font.
+font_replacement_map = { }
+
+# The framerate limit.
+framerate = None
 
 # The number of frames that Ren'Py has shown.
 frames = 0

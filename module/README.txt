@@ -30,15 +30,15 @@ Linux/Unix
 ----------
 
 You'll need to compile the module yourself. Ensure that you have the
-SDL development headers and libraries installed, and that you can run
-the sdl-config program. Then, in this directory, type:
+SDL, pygame, and SDL_sound development headers and libraries
+installed, and that you can run the sdl-config program. Then, in this
+directory, type:
 
   python setup.py build_ext -i
 
 It should autodetect SDL, and build the module in the current
-directory. If successful, a file named _renpy.so will come into
-existence. You can then run Ren'Py.
-
+directory. If successful, a number of .so files will come into
+existence in the current directory. You can then run Ren'Py.
 
 If you have question or problems, please contact us via the Ren'Py web
 page, http://www.bishoujo.us/renpy/.

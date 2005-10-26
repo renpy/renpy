@@ -5,6 +5,7 @@ import cStringIO
 import zipfile
 import time
 import os
+import re
 
 import renpy
 
@@ -20,7 +21,7 @@ def debug_dump(prefix, o, seen):
         return
 
     if id(o) in seen:
-        print prefix, "@%x" % id(o)
+        print prefix, "@%x" % id(o), type(o)
         return
 
     seen[id(o)] = True
@@ -44,6 +45,8 @@ def debug_dump(prefix, o, seen):
             debug_dump(prefix + "    ", v, seen)
         print prefix, "}"
 
+    elif isinstance(o, renpy.style.Style):
+        print "<style>"
     
     elif hasattr(o, "__dict__"):
 
@@ -96,6 +99,9 @@ def save(filename, extra_info=''):
 
         # print
         # print "Debug Dump!"
+        # if os.environ['RENPY_DEBUG_DUMP']:
+
+        # renpy.config.debug = True
         # debug_dump("", renpy.game.log, { })
 
         # The actual game.
@@ -107,7 +113,7 @@ def save(filename, extra_info=''):
 
 
 
-def saved_games():
+def saved_games(regexp=r'.'):
     """
     This scans the savegames that we know about and returns
     information about them. Specifically, it returns tuple containing
@@ -117,11 +123,13 @@ def saved_games():
     The savelist, in turn, is a list of tuples, with each tuple containing
     the filename of the saved game, a Displayable containing a screenshot,
     and a string giving the extra data of that save.
+
+    The regexp matches at the start of the filename, and filters the list.
     """
 
     files = os.listdir(renpy.config.savedir)
     files.sort()
-    files = [ i for i in files if i.endswith(savegame_suffix) ]
+    files = [ i for i in files if i.endswith(savegame_suffix) and re.match(regexp, i) ]
 
     if not files:
         newest = None
@@ -157,6 +165,19 @@ def saved_games():
 
     return saveinfo, newest
 
+def can_load(filename):
+    """
+    Returns true if we can load the given savegame file, False otherwise.
+    """
+
+    try:
+        zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
+        zf.close()
+        return True
+    except:
+        return False
+    
+
 def load(filename):
     """
     Loads the game from the given file. This function never returns.
@@ -166,4 +187,4 @@ def load(filename):
     log = loads(zf.read("log"))
     zf.close()
 
-    log.unfreeze()
+    log.unfreeze(label="after_load")

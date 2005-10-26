@@ -11,6 +11,9 @@ _font_cache = { }
 def get_font(fn, size, bold=False, italics=False, underline=False):
     from renpy.loader import transfn
 
+    if (fn, bold, italics) in renpy.config.font_replacement_map:
+        fn, bold, italics = renpy.config.font_replacement_map[fn, bold, italics]
+
     if (fn, size, bold, italics, underline) in _font_cache:
         return _font_cache[(fn, size, bold, italics, underline)]
 
@@ -19,7 +22,28 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
         rv.set_bold(bold)
         rv.set_italic(italics)
     except:
-        rv = pygame.font.SysFont(fn, size, bold, italics)
+        # Let's try to find the font on our own.
+        fonts = [ i.strip().lower() for i in fn.split(",") ]
+
+        pygame.sysfont.initsysfonts()
+
+        rv = None
+
+        for k, v in pygame.sysfont.Sysfonts.iteritems():
+            for flags, ffn in v.iteritems():
+                for i in fonts:
+                    if ffn.lower().endswith(i):
+                        rv = pygame.font.Font(ffn, size)
+                        rv.set_bold(bold)
+                        rv.set_italic(italics)
+                        break
+                if rv:
+                    break
+            if rv:
+                break
+        else:
+            # Let pygame try to find the font for us.
+            rv = pygame.font.SysFont(fn, size, bold, italics)
 
     rv.set_underline(underline)
 
@@ -89,7 +113,7 @@ class TextStyle(object):
         # print font.get_ascent() - font.get_descent(), font.get_height(), font.get_linesize()
         return font.size(text)[0], font.get_ascent() - font.get_descent()
 
-    def render(self, text, antialias, color, use_colors):
+    def render(self, text, antialias, color, use_colors, time):
 
         if use_colors and self.color:
             color = self.color
@@ -98,7 +122,45 @@ class TextStyle(object):
 
         rv = font.render(text, antialias, color)
         renpy.display.render.mutated_surface(rv)
-        return rv
+        return rv, rv.get_size()
+
+    def length(self, text):
+        return len(text)
+    
+class WidgetStyle(object):
+    """
+    Represents the style of a widget.
+    """
+
+    def __init__(self, ts, widget, width, time):
+
+        self.height = ts.sizes(" ")[1]
+        self.ascent = ts.get_ascent()
+
+        # The widget we will render.
+        self.widget = widget
+        self.owidth = width
+
+        surf = renpy.display.render.render(widget, self.height, width, time)
+        self.width, _ = surf.get_size()
+
+    def get_ascent(self):
+        return self.ascent
+
+    def sizes(self, widget):
+        return self.width, self.height
+
+    def render(self, widget, antialias, color, foreground, time):
+
+        # If in the foreground
+        if foreground:
+            return renpy.display.render.render(widget, self.owidth, self.height, time), (self.width, self.height)
+        else:
+            return None, (self.width, self.height)
+        
+    def length(self, text):
+        return 1
+
     
 def text_tokenizer(s, style):
     """
@@ -144,6 +206,39 @@ def text_tokenizer(s, style):
         elif m.group('newline'):
             yield 'newline', m.group('newline')
     
+def input_tokenizer(l, style, pauses=None):
+    """
+    This tokenizes the input into a list of lists of tokens, where
+    each token is a pair giving the type of token and the text of the
+    token.
+    """
+
+    if isinstance(l, basestring):
+        l = [ l ]
+
+    rv = [ ]
+    
+    for s in l:
+
+        if isinstance(s, basestring):
+            sl = [ ]
+            for type, text in renpy.config.text_tokenizer(s, style):
+                if type == "tag" and text == "p":
+                    sl.append(("tag", "w"))
+                    sl.append(("newline", "\n"))
+                else:
+                    sl.append((type, text))
+
+            rv.append(sl)
+                
+
+        elif isinstance(s, renpy.display.core.Displayable):
+            rv.append([ ("widget", s) ])
+        
+        else:
+            raise Exception("Couldn't figure out how to tokenize " + repr(s))
+
+    return rv
 
 class Text(renpy.display.core.Displayable):
     """
@@ -151,12 +246,14 @@ class Text(renpy.display.core.Displayable):
     """
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
-               'laidout_width', 'laidout_height', 'width' ]
+               'laidout_width', 'laidout_height', 'width', 'tokens' ]
 
     def after_setstate(self):
-        self.laidout = None
+        self._update()
 
-    def __init__(self, text, slow=False, style='default', **properties):
+    def __init__(self, text, slow=False, slow_done=None,
+                 slow_speed=None, slow_start=0, slow_abortable=False,
+                 pause=None, style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -165,13 +262,34 @@ class Text(renpy.display.core.Displayable):
         @param style: A style that will be applied to the text.
 
         @param properties: Additional properties that are applied to the text.
+
+        @param pause: If not None, then we display up to the pauseth pause (0-numbered.)
+
+        @param slow_done: A callback that occurs when slow text is done.
+
+        @param slow_speed: The speed of slow text. If none, it's taken from
+        the preferences.
+
+        @param slow_offset: The offset into the text to start the slow text.
+
+        @param slow_abortable: If True, clicking aborts the slow text.
+
         """
 
         super(Text, self).__init__()
 
-        self.text = text
+        self.text = text        
         self.style = renpy.style.Style(style, properties)
+        self.pause = pause
+        self.keep_pausing = False
+
+        self._update(redraw=False)
+
         self.slow = slow
+        self.slow_done = slow_done
+        self.slow_start = slow_start
+        self.slow_speed = slow_speed
+        
 
         self.laidout = None
 
@@ -193,15 +311,40 @@ class Text(renpy.display.core.Displayable):
 
         self.style = style
         self._update()
-
-    def _update(self):
+        
+    def _update(self, redraw=True):
         """
         This is called after this widget has been updated by
         set_text or set_style.
         """        
 
         self.laidout = None
-        renpy.display.render.redraw(self, 0)
+
+        if self.text:
+            text = self.text
+        else:
+            text = " "
+
+        self.tokens = input_tokenizer(text, self.style)
+
+        if self.pause is not None:
+            pause = self.pause
+            l = [ ]
+            
+            for i in self.tokens[0]:
+                l.append(i)
+
+                if i == ("tag", "w"):
+                    if pause == 0:
+                        self.keep_pausing |= True
+                        break                    
+                    else:
+                        pause -= 1
+
+            self.tokens[0] = l
+
+        if redraw:
+            renpy.display.render.redraw(self, 0)
 
     def event(self, ev, x, y):
         """
@@ -211,12 +354,15 @@ class Text(renpy.display.core.Displayable):
         if not self.slow:
             return None
 
+        if not self.slow_abortable:
+            return None
+
         if renpy.display.behavior.map_event(ev, "dismiss"):
 
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
-    def layout(self, width):
+    def layout(self, width, time):
         """
         This lays out the text of this widget. It sets self.laidout,
         self.laidout_lineheights, self.laidout_width, and
@@ -279,7 +425,12 @@ class Text(renpy.display.core.Displayable):
             text = self.text
 
         # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
-        for kind, i in renpy.config.text_tokenizer(text, self.style):
+
+        tokens = [ ]
+        for l in self.tokens:
+            tokens.extend(l)
+
+        for kind, i in tokens:
 
             # Newline.
             if kind == "newline":
@@ -329,7 +480,11 @@ class Text(renpy.display.core.Displayable):
 
                 tsl.append(TextStyle(tsl[-1]))
 
-                if i == "b":
+                if i == "w":
+                    # Automatically closes.
+                    tsl.pop()
+                    
+                elif i == "b":
                     tsl[-1].bold = True
 
                 elif i == "i":
@@ -342,6 +497,14 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].bold = False
                     tsl[-1].italic = False
                     tsl[-1].underline = False
+
+                elif i.startswith("font"):
+                    m = re.match(r'font=(.*)', i)
+
+                    if not m:
+                        raise Exception('Font tag %s could not be parsed.' % i)
+
+                    tsl[-1].font = m.group(1)
 
                 elif i.startswith("size"):
 
@@ -366,10 +529,25 @@ class Text(renpy.display.core.Displayable):
 
                     tsl[-1].color = color(m.group(1))
 
-                else:
-                    raise Exception("Text tag %s was not recognized. Case and spacing matter here.")
+                elif i.startswith("image"):
 
-                continue
+                    m = re.match(r'image=(.*)', i)
+
+                    if not m:
+                        raise Exception('Image tag %s could not be parsed.' % i)
+
+                    kind = "widget"
+                    i = renpy.display.im.image(m.group(1))
+
+                    # The tag automatically closes.
+                    tsl.pop()
+                    
+                else:
+                    raise Exception("Text tag %s was not recognized. Case and spacing matter here." % i)
+
+                # Since the kind can change.
+                if kind == "tag":
+                    continue
 
             elif kind == "space":
                 # Spaces always get appended to the end of a line. So they
@@ -416,8 +594,50 @@ class Text(renpy.display.core.Displayable):
                     cur = cur + i
                     lineheight = max(lh, lineheight)
 
+
+                continue
+
+            elif kind == "widget":
+                pass
+            
             else:
                 raise Exception("Unknown text token kind %s." % kind)
+
+            if kind == "widget":
+
+                # Here, we have a widget that we can render.
+
+                # Close off an existing line, if it's open.
+                if cur:
+
+                    line.append((TextStyle(tsl[-1]), cur))
+                    cur = ""
+                    remwidth -= curwidth
+                    linewidth += curwidth
+                    curwidth = 0
+
+                wstyle = WidgetStyle(tsl[-1], i, width, time)
+                wwidth, wheight = wstyle.sizes(i)
+
+                # If we're bigger then the remaining width on a non-empty line.
+                if line and wwidth > remwidth:
+                    lines.append(line)
+                    maxwidth = max(maxwidth, linewidth)
+                    lineheights.append(lineheight)
+                    linewidths.append(width - remwidth)
+                    
+                    line = [ (wstyle, i) ]
+
+                    remwidth = width - indent() - wwidth
+                    linewidth = wwidth
+                    lineheight = wheight
+
+                else:
+                    line.append((wstyle, i))
+                    linewidth -= wwidth
+                    lineheight = max(lineheight, wheight)
+
+            
 
         # We're done. Let's close up.
 
@@ -439,7 +659,60 @@ class Text(renpy.display.core.Displayable):
         self.laidout_width = max(max(linewidths), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
 
-    def render_pass(self, r, xo, yo, color, user_colors, length):
+    def get_simple_length(self):
+        """
+        Returns a simple length of the text in the first segment of
+        the tokens. Doesn't use the same algorithm as get_laidout_length,
+        so isn't suitable for slow_start.
+        """
+
+        rv = 0
+
+        for tl in self.tokens:
+            for type, text in tl:
+                if type == "newline":
+                    rv += len(text)
+                elif type == "word":
+                    rv += len(text)
+                elif type == "space":
+                    rv += len(text)
+                elif type == "widget":
+                    rv += 1
+
+        return rv
+
+    def get_keep_pausing(self):
+        """
+        If true, we have text beyond the pause number indicated.
+        """
+
+        return self.keep_pausing
+
+    def get_laidout_length(self):
+        """
+        The (reasonably arbitrary) length this text field was laidout
+        to. This can only be called after the text field was drawn
+        (that is, after it has been on the screen for an interaction
+        with the user. Otherwise, it returns sys.maxint.
+        """
+
+        if not self.laidout:
+            import sys
+            return sys.maxint
+
+        rv = 0
+
+        for line in self.laidout:
+            for ts, text in line:
+                rv += ts.length(text)
+
+            rv += 1
+
+        return rv
+
+            
+
+    def render_pass(self, r, xo, yo, color, user_colors, length, time):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -465,19 +738,23 @@ class Text(renpy.display.core.Displayable):
 
             for ts, text in line:
                 
-                length -= len(text)
+                length -= ts.length(text)
+
                 if length < 0:
                     text = text[:length]
                 
-                surf = ts.render(text, antialias, color, user_colors)
-                sw, sh = surf.get_size()
+                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time)
+                # sw, sh = surf.get_size()
 
-                r.blit(surf, (x, y + max_ascent - ts.get_ascent()))
+                if surf:
+                    r.blit(surf, (x, y + max_ascent - ts.get_ascent()))
 
                 x = x + sw
 
                 if length <= 0:
                     return False
+
+            length -= 1
 
             y = y + line_height + line_spacing
 
@@ -485,11 +762,16 @@ class Text(renpy.display.core.Displayable):
             
     def render(self, width, height, st):
 
-        if self.slow and renpy.game.preferences.text_cps:
-            length = int(st * renpy.game.preferences.text_cps)
+        speed = self.slow_speed or renpy.game.preferences.text_cps
+
+        if self.slow and speed:
+            length = self.slow_start + int(st * speed)
         else:
             length = sys.maxint
             self.slow = False
+
+            if self.slow_done:
+                self.slow_done()
 
         if self.style.drop_shadow:
             dsxo, dsyo = self.style.drop_shadow
@@ -510,15 +792,27 @@ class Text(renpy.display.core.Displayable):
                 dsyo = 0
             else:
                 yo = 0
+        else:
+            absxo = 0
+            absyo = 0
+            dsxo = 0
+            dsyo = 0
+            xo = 0
+            yo = 0
+
                 
-        self.layout(width - absxo)
+        self.layout(width - absxo, st)
             
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length)
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st)
 
-        self.slow = not self.render_pass(rv, xo, yo, self.style.color, True, length)
+        if self.render_pass(rv, xo, yo, self.style.color, True, length, st):
+            if self.slow:
+                self.slow = False
+                if self.slow_done:
+                    self.slow_done()
 
         if self.slow:
             renpy.display.render.redraw(self, 0)
