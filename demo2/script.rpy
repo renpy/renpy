@@ -1167,7 +1167,7 @@ label demonstrate:
             e "... and start it playing again."
             
             # This plays a sound effect.
-            $ renpy.play("18005551212.wav")
+            $ renpy.play("18005551212.ogg")
 
             e "We can also play up to eight channels of sound effects
                on top of the music."
