@@ -2470,14 +2470,17 @@ the file picker.
       thumbnail is shown to the user.
     </var>
       
-    <var name="library.main_menu" value='[ ( "Start Game", "start" ), ("Continue Game", ... ), ("Preferences", ... ), ("Quit Game", ...) ]'>
+    <var name="library.main_menu" value='[ ( "Start Game", "start", "True" ), ("Continue Game", ... ), ("Preferences", ... ), ("Quit Game", ...) ]'>
       This is used to give the main menu that is shown to the user
       when the game first starts. It is a list of tuples, where the
       first element of each tuple is the title of the menu button, and
       the second element is a label that we jump to when that button
       is selected. (This jump exits the context in which the start
       menu executes.) The second element may also be a function, in
-      which case it is called when the item is selected.
+      which case it is called when the item is selected, in the menu
+      context. The third element in each tuple is an expression, which
+is evaluated each time the main menu is displayed. If the expression
+evaluates to false, the menu choice is disabled.
     </var>
     
 <var name="library.game_menu" value='[ ... ]'>

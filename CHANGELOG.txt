@@ -1,6 +1,34 @@
-Added raw strings.
+New in Ren'Py 5.1.5
+-------------------
 
-Fixed bug in lint caused by the introduction of layers.
+There are now two new variables, library.main_menu_positions and
+library.game_menu_positions. If not None, then we expect these
+variables to be maps between main or game menu navigation button
+labels, and properties that will be supplied to those buttons. This is
+intended to allow the user to manually position the various
+buttons. This shuts off the default positioning code, so if you
+position one button in a menu, you'll need to position them all.
+
+Added a new extra, menu_positions.rpy, that demonstrates the new
+positioning code.
+
+Added a new extra, quick_save.rpy, that adds a quick save feature to
+Ren'Py. This feature adds a single save slot that can be quickly
+accessed without going through the game menu. It also adds a quick
+load button to the main menu, which causes a load from this slot. The
+button is disabled if no quick save game exists.
+
+To support this, changed the format of library.main_menu. Now, instead
+of being a list of pairs, library.main_menu is a list of triples. The
+new third component is an expression, which must evaluate to true for
+the menu button to be enabled.
+
+Fixed a bug in lint that was caused by the introduction of the onlayer
+clause in Ren'Py 5.1.3. This bug caused lint to fail entirely, so not
+it works again.
+
+Added raw string literals, although they're not a documented feature.
+
 
 New in Ren'Py 5.1.4
 -------------------

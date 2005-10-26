@@ -18,6 +18,11 @@ init -499:
                 ( "quit", "Quit", lambda : _quit_prompt("quit"), 'True' ),
                 ]
 
+        # If not None, a map from the names of the game menu
+        # navigation buttons to new fixed positions for them on
+        # the screen.
+        library.game_menu_positions = None
+
         # The number of columns of files to show at once.
         library.file_page_cols = 2
 
@@ -102,8 +107,11 @@ init -499:
             # (box) The style that is used by the box inside the
             # gm_nav_window
 
-            ui.window(style='gm_nav_window')
-            ui.vbox(focus='gm_nav', style='gm_nav_vbox')
+            if library.game_menu_positions:
+                ui.fixed()
+            else:
+                ui.window(style='gm_nav_window')
+                ui.vbox(focus='gm_nav', style='gm_nav_vbox')
             
             for key, label, clicked, enabled in library.game_menu:
 
@@ -128,11 +136,16 @@ init -499:
                 ### gm_nav_selected_button_text selected_button_text
                 # (text, hover) The style of the text of a selected game
                 # menu navigation button.
-                             
+
+                if library.game_menu_positions:
+                    kwargs = library.game_menu_positions.get(label, { })
+                else:
+                    kwargs = { }
+                
                 _button_factory(label, "gm_nav",
                                 selected=(key==screen),
                                 disabled=disabled,
-                                clicked=clicked)
+                                clicked=clicked, **kwargs)
 
             ui.close()
 
@@ -230,7 +243,7 @@ init -499:
             # The number of slots in a page.
             file_page_length = library.file_page_cols * library.file_page_rows
 
-            saves, newest = renpy.saved_games()
+            saves, newest = renpy.saved_games(regexp=r'[0-9]+')
 
             # The index of the first entry in the page.
             fpi = _scratch.file_picker_index
@@ -392,6 +405,7 @@ init -499:
 
             return _game_interact()
 
+
         def _show_exception(title, message):
 
             ### error_window default
@@ -448,9 +462,10 @@ init -499:
 # First up, we have the code that is common to all of the entry points into
 # the game.
 
-# This is the code that executes when entering a menu context.
-label _enter_menu:
-    scene
+
+# This is the code that executes when entering a menu context, except
+# for the scene statement.
+label _enter_menu_without_scene:
     $ renpy.movie_stop()
     $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
 
@@ -458,11 +473,15 @@ label _enter_menu:
     $ renpy.context().main_menu = False
 
     return
+
+label _enter_menu:
+    call _enter_menu_without_scene from _call_enter_menu_without_scene_1
+    scene
+    return
     
 # Factored this all into one place, to make our lives a bit easier.
 label _enter_game_menu:
     call _enter_menu from _call__enter_menu_2
-
     if library.enter_transition:
         $ renpy.transition(library.enter_transition)
 
@@ -496,7 +515,7 @@ label _confirm_quit:
     call _enter_menu from _call__enter_menu_3
     $ _quit_prompt(None)
     return
-    
+
 
 ##############################################################################
 # Finally, we have the actual menu screens that are shown to the user.

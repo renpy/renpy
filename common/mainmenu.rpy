@@ -7,11 +7,15 @@ init -498:
         
         # The contents of the main menu.
         library.main_menu = [
-            ( "Start Game", "start" ),
-            ( "Continue Game", ui.jumps("_load_screen") ),
-            ( "Preferences", ui.jumps("_prefs_screen") ),
-            ( "Quit Game",  ui.jumps("_quit") ),
+            ( "Start Game", "start", 'True'),
+            ( "Continue Game", ui.jumps("_load_screen"), 'True' ),
+            ( "Preferences", ui.jumps("_prefs_screen"), 'True' ),
+            ( "Quit Game",  ui.jumps("_quit"), 'True' ),
             ]
+
+        # If not None, this is used to fix the positions of the
+        # things in the main menu.
+        library.main_menu_positions = None
 
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
@@ -73,10 +77,13 @@ label _library_main_menu:
         ### mm_menu_window_vbox thin_vbox
         # (box) The vbox containing the main menu choices.
 
-        ui.window(style='mm_menu_window')
-        ui.vbox(style='mm_menu_window_vbox')
+        if library.main_menu_positions:
+            ui.fixed()
+        else:
+            ui.window(style='mm_menu_window')
+            ui.vbox(style='mm_menu_window_vbox')
 
-        for text, clicked in library.main_menu:
+        for text, clicked, enabled in library.main_menu:
 
             if isinstance(clicked, basestring):
                 clicked = ui.jumpsoutofcontext(clicked)
@@ -89,7 +96,18 @@ label _library_main_menu:
             # (text, hover) The style that is used for the labels of
             # buttons that are part of the main menu.
 
-            _button_factory(text, "mm", clicked=clicked)
+            if library.main_menu_positions:
+                kwargs = library.main_menu_positions.get(text, { })
+            else:
+                kwargs = { }
+
+            if not eval(enabled):
+                clicked = None
+                disabled = True
+            else:
+                disabled = False
+
+            _button_factory(text, "mm", clicked=clicked, disabled=disabled, **kwargs)
 
         ui.close()
         ui.close()
