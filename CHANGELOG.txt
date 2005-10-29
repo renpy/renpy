@@ -1,3 +1,8 @@
+Fixed Motion (the class that implements Move and Pan) to allow motions
+to be used as transitions, in conjunction with the say and menu
+statements. Previously, they only worked with the with statement.
+
+
 New in Ren'Py 5.1.5
 -------------------
 

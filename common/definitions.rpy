@@ -49,8 +49,9 @@ init -1:
     $ move = MoveTransition(0.5)
 
     # These shake the screen up and down for a quarter second.
-    $ vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.25)
-    $ hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.25)
+    # The delay needs to be an integer multiple of the period.
+    $ vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.275)
+    $ hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
 
     # These use the ImageDissolve to do some nifty effects.
     $ blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)

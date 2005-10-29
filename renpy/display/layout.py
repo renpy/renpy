@@ -737,7 +737,7 @@ class Motion(Container):
 
         @param bounce: Should we bounce?
 
-        @param delay: If we are used as a transition, how long we should take. If None, defaults to period.
+        @param delay: How long this motion should take. If repeat is None, defaults to period.
 
         This can also be used as a transition. When used as a
         transition, the motion is applied to the new_widget for delay
@@ -747,12 +747,13 @@ class Motion(Container):
         if child is None:
             child = new_widget
 
-        if delay is None:
+        if delay is None and not repeat:
             delay = period
 
         super(Motion, self).__init__(style=style, **properties)
 
         self.child = child
+        self.children = [ child ]
         self.function = function
         self.period = period
         self.repeat = repeat
@@ -763,11 +764,14 @@ class Motion(Container):
         return self.style
 
     def render(self, width, height, st):
-        
-        if self.repeat:
+
+        if self.delay and st >= self.delay:
+            st = self.delay            
+            if self.repeat:
+                st = st % self.period
+        elif self.repeat:
             st = st % self.period
             renpy.display.render.redraw(self, 0)
-
         else:
             if st > self.period:
                 st = self.period
