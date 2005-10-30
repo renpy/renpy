@@ -497,12 +497,14 @@ def movie_cutscene(filename, delay, loops=0):
 
 def with(trans):
     """
-    Behaves identically to a with statement. The only reason to use this
-    over a Ren'Py with statement is to get at the return code, which is
-    True if the transition was interrupted, or False otherwise.
+    Implements the with statement. One reason to use this over a
+    Ren'Py with statement is to get at the return code, which is True
+    if the transition was interrupted, or False otherwise.
     """
 
-    # Code basically copied from ast.With.execute.
+    if renpy.config.with_callback:
+        renpy.config.with_callback(trans)
+
     if not trans:
         renpy.game.interface.with_none()
         return False

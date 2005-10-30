@@ -755,6 +755,9 @@ class Interface(object):
             for i in renpy.config.overlay_layers:
                 self.old_scene[i] = old_old_scene[i]
 
+        scene_lists = renpy.game.context().scene_lists
+        scene_lists.replace_transient()
+
     def set_transition(self, transition, layer=None):
         """
         Sets the transition that will be performed as part of the next

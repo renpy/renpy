@@ -246,7 +246,8 @@ class Text(renpy.display.core.Displayable):
     """
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
-               'laidout_width', 'laidout_height', 'width', 'tokens' ]
+               'laidout_width', 'laidout_height', 'laidout_start',
+               'laidout_length', 'width', 'tokens' ]
 
     def after_setstate(self):
         self._update()
@@ -409,6 +410,12 @@ class Text(renpy.display.core.Displayable):
         # The maximum linewidth.
         maxwidth = 0
 
+        # The length of the laidout text.
+        laidout_length = 0
+
+        # Where we should start the slow effect from on the laidout text.
+        laidout_start = 0
+
         # The current text.
         cur = ""
 
@@ -434,6 +441,7 @@ class Text(renpy.display.core.Displayable):
 
             # Newline.
             if kind == "newline":
+
                 if cur:
                     line.append((TextStyle(tsl[-1]), cur))                    
                     maxwidth = max(maxwidth, linewidth + curwidth)
@@ -483,6 +491,12 @@ class Text(renpy.display.core.Displayable):
                 if i == "w":
                     # Automatically closes.
                     tsl.pop()
+
+                if i == "fast":
+                    # Automatically closes.
+                    tsl.pop()
+
+                    laidout_start = laidout_length
                     
                 elif i == "b":
                     tsl[-1].bold = True
@@ -557,12 +571,16 @@ class Text(renpy.display.core.Displayable):
                 cur += i
                 curwidth, lh = tsl[-1].sizes(cur)
                 lineheight = max(lh, lineheight)
+
+                laidout_length += len(i)
                 
                 continue
 
             elif kind == "word":
 
                 # If we made it here, then we have normal text.
+
+                laidout_length += len(i)
 
                 # We must have at least one word or something else in the
                 # line before we care about wrapping.
@@ -604,6 +622,8 @@ class Text(renpy.display.core.Displayable):
                 raise Exception("Unknown text token kind %s." % kind)
 
             if kind == "widget":
+
+                laidout_length += 1
 
                 # Here, we have a widget that we can render.
 
@@ -653,11 +673,15 @@ class Text(renpy.display.core.Displayable):
             lineheights.append(lineheight)
             linewidths.append(curwidth)
 
+        laidout_length += len(lines)
+
         self.laidout = lines
         self.laidout_lineheights = lineheights
         self.laidout_linewidths = linewidths
         self.laidout_width = max(max(linewidths), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
+        self.laidout_length = laidout_length
+        self.laidout_start = laidout_start
 
     def get_simple_length(self):
         """
@@ -700,15 +724,7 @@ class Text(renpy.display.core.Displayable):
             import sys
             return sys.maxint
 
-        rv = 0
-
-        for line in self.laidout:
-            for ts, text in line:
-                rv += ts.length(text)
-
-            rv += 1
-
-        return rv
+        return self.laidout_length
 
             
 
@@ -764,14 +780,6 @@ class Text(renpy.display.core.Displayable):
 
         speed = self.slow_speed or renpy.game.preferences.text_cps
 
-        if self.slow and speed:
-            length = self.slow_start + int(st * speed)
-        else:
-            length = sys.maxint
-            self.slow = False
-
-            if self.slow_done:
-                self.slow_done()
 
         if self.style.drop_shadow:
             dsxo, dsyo = self.style.drop_shadow
@@ -803,6 +811,17 @@ class Text(renpy.display.core.Displayable):
                 
         self.layout(width - absxo, st)
             
+        if self.slow and speed:
+            start = max(self.slow_start, self.laidout_start)
+            length = start + int(st * speed)
+        else:
+            length = sys.maxint
+            self.slow = False
+
+            if self.slow_done:
+                self.slow_done()
+
+
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:

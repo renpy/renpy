@@ -185,6 +185,12 @@ afm_callback = None
 # version of an italic font.
 font_replacement_map = { }
 
+# A callback that is called when a with statement (but not the with
+# clause of a say or menu statement) executes. If not None, it's
+# called with a single argument, the transition supplied to the with
+# clause.
+with_callback = None
+
 # The framerate limit.
 framerate = None
 
