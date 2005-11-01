@@ -309,6 +309,8 @@ def display_say(who, what, who_style='say_label',
                 ctc=None,
                 ctc_position="nestled",
                 all_at_once=False,
+                what_properties={},
+                window_properties={},
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -376,7 +378,8 @@ def display_say(who, what, who_style='say_label',
                                   slow_abortable=slow_abortable,
                                   slow_start=slow_start,
                                   pause=pause,
-                                  slow_speed = None)
+                                  slow_speed = None,
+                                  **what_properties)
 
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)

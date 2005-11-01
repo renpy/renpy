@@ -1,17 +1,22 @@
-Fixed Motion (the class that implements Move and Pan) to allow motions
+ Fixed Motion (the class that implements Move and Pan) to allow motions
 to be used as transitions, in conjunction with the say and menu
 statements. Previously, they only worked with the with statement.
 
 Added a new variable, config.with_callback, that can be used to
 specify a function that is called when a with statement runs. This can
 be used, for example, to put up a window when a transition occurs,
-which has the effect of preventing the window from disappearing.
+which has the effect of preventing the window from disappearing. [doc]
 
 Implemented a new text tag, {fast}. This tag causes the slow text
 display to start from a given point in the text string. This allows
 one to show some text, run some command, and show the same text with
-additions, and have the slow text display occur correctly.
+additions, and have the slow text display occur correctly. [doc]
 
+Character objects now can take properties prefixed with what_ or
+window_. Properties prefixed with what_ are applied to the text being
+spoken, while those prefixed with window_ are applied to the window
+containing everything. Unprefixed properties are still applied to the
+label giving the name of the character speaking.
 
 New in Ren'Py 5.1.5
 -------------------

@@ -126,6 +126,12 @@ class Character(object):
         "fixed", the ctc widget is displayed directly on the screen,
         with its various position properties determining where it is
         actually shown.
+
+        In addition, Character objects also take properties. If a
+        property is prefixed with window_, it is applied to the
+        window. If prefixed with what_, it is applied to the text
+        being spoken. Unprefixed properties are applied to the who
+        label, the name of the character speaking.
         """
         
         self.name = name
@@ -133,9 +139,23 @@ class Character(object):
         self.what_style = what_style
         self.window_style = window_style
         self.properties = properties
+        self.what_properties = { }
+        self.window_properties = { }
         self.function = function
         self.condition = condition
         self.dynamic = dynamic
+
+        for k in list(self.properties):
+            if k.startswith("what_"):
+                self.what_properties[k[len("what_"):]] = self.properties[k]
+                del self.properties[k]
+                continue
+
+            if k.startswith("window_"):
+                self.window_properties[k[len("window_"):]] = self.properties[k]
+                del self.properties[k]
+                continue
+                
 
     def check_condition(self):
         """
@@ -174,6 +194,8 @@ class Character(object):
                       what_style=self.what_style,
                       window_style=self.window_style,
                       interact=interact,
+                      what_properties=self.what_properties,
+                      window_properties=self.window_properties,
                       **self.properties)
 
         self.store_readback(name, what)
