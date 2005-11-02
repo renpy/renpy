@@ -349,7 +349,7 @@ def display_say(who, what, who_style='say_label',
         else:
             behavior = None
 
-        renpy.ui.window(style=window_style)
+        renpy.ui.window(style=window_style, **window_properties)
         renpy.ui.vbox(padding=10)
 
         if who is not None and not image:
