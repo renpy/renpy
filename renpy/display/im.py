@@ -289,27 +289,26 @@ class Composite(ImageBase):
 
     def __init__(self, size, *args, **properties):
         """
-        The first argument that this takes is size, which is either the
-        desired size of the image (in pixels), or None to indicate that
-        the size should be 
-        
-        This takes an even number of position arguments. Odd numbered
-        (starting the count with 1) arguments are positions, which
-        give the position of the image, in pixels, with the origin in
-        the upper-left corner of the image. The even-numbered
-        arguments give the images (image manipulators) that will be
-        composited in those positions. The images are composited in
-        bottom-to-top order.
+        This takes a variable number of arguments. The first argument
+        is size, which is either the desired size of the image (in
+        pixels), or None to indicate that the size should be the size of
+        the first image.
 
-        @param size: If given, this will be the size of the new
-        image. Otherwise, the size will be the same as that of the
-        first image.
+        It then takes an even number of further arguments. (For an odd
+        number of total arguments.) The second and other even numbered
+        arguments contain position tuples, while the third and further
+        odd-numbered arguments give images (or image
+        manipulators). A position argument gives the position of the
+        image immediately following it, with the position expressed as
+        a tuple giving an offset from the upper-left corner of the
+        image.  The images are composited in bottom-to-top order, with
+        the last image being closest to the user.
         """
 
         super(Composite, self).__init__(size, *args, **properties)
 
         if len(args) % 2 != 0:
-            raise Exception("Composite requires an even number of arguments.")
+            raise Exception("Composite requires an odd number of arguments.")
 
         self.size = size
         self.positions = args[0::2]

@@ -219,6 +219,48 @@ class Fixed(Container):
 
         return rv
 
+def LiveComposite(size, *args, **properties):
+    """
+    This is similar to im.Composite, but can be used with displayables
+    instead of images. This allows it to be used to composite, for
+    example, an animation on top of the image.
+
+    This is less efficient then im.Composite, as it needs to draw all
+    of the displayables on the screen. On the other hand, it allows
+    displayables to change while they are on the screen, which is
+    necessary for animation.
+    
+    This takes a variable number of arguments. The first argument is
+    size, which must be a tuple giving the width and height of the
+    composited widgets, for layout purposes.
+
+    It then takes an even number of further arguments. (For an odd
+    number of total arguments.) The second and other even numbered
+    arguments contain position tuples, while the third and further
+    odd-numbered arguments give displayables. A position argument
+    gives the position of the displayable immediately following it,
+    with the position expressed as a tuple giving an offset from the
+    upper-left corner of the LiveComposite.  The displayables are
+    drawn in bottom-to-top order, with the last being closest to the
+    user.
+    """
+
+    properties.setdefault('style', 'image_placement')
+
+    width, height = size
+
+    rv = Fixed(xmaximum=width, ymaximum=height, **properties)
+
+    if len(args) % 2 != 0:
+        raise Exception("LiveComposite requires an odd number of arguments.")
+
+    for pos, widget in zip(args[0::2], args[1::2]):
+        xpos, ypos = pos
+        rv.add(Position(renpy.display.im.image(widget, loose=True),
+                        xpos=xpos, xanchor='left', ypos=ypos, yanchor='top'))
+
+    return rv
+
 class Position(Container):
     """
     Controls the placement of a displayable on the screen, using

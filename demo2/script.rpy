@@ -755,6 +755,11 @@ init:
                                         (0, 50), "cyan.png",
                                         (0, 100), "cyan.png")
 
+    image cyan livecomposite = LiveComposite((200, 300),
+                                             (0, 0), anim.Blink(Image("cyan.png")),
+                                             (0, 50), "cyan.png",
+                                             (0, 100), "cyan.png")
+
     image cyan green = im.Map("cyan.png", bmap=im.ramp(0, 0))
 
     image cyan alpha = im.Alpha("cyan.png", 0.5)
@@ -1208,7 +1213,7 @@ label demonstrate:
 
             e "That's it for multimedia."
 
-        "Image Operations, added in 4.8.5":
+        "Image Operations, updated in 5.1.6":
 
             e "Image operations allow one to manipulate images as they
                are loaded in."
@@ -1239,6 +1244,14 @@ label demonstrate:
 
             e "While you can do this by showing multiple images, this
                is more efficent, if more complex."
+
+            show cyan livecomposite at cyanpos with dissolve
+
+            e "There's also LiveComposite, which is less efficent, but
+               allows for animation."
+
+            e "It isn't really an image operation, but we don't know
+               where else to put it."
 
             show cyan green at cyanpos with dissolve
 

@@ -1,4 +1,4 @@
- Fixed Motion (the class that implements Move and Pan) to allow motions
+Fixed Motion (the class that implements Move and Pan) to allow motions
 to be used as transitions, in conjunction with the say and menu
 statements. Previously, they only worked with the with statement.
 
@@ -17,6 +17,11 @@ window_. Properties prefixed with what_ are applied to the text being
 spoken, while those prefixed with window_ are applied to the window
 containing everything. Unprefixed properties are still applied to the
 label giving the name of the character speaking.
+
+There is now a new function, LiveComposite, that can composite
+together arbitrary displayables, rather than just images. It has the
+same API as im.Composite, but should be used when one of the things
+you wish to composite is an animation. [ doc ]
 
 New in Ren'Py 5.1.5
 -------------------

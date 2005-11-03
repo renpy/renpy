@@ -25,6 +25,7 @@ ImageReference = renpy.display.image.ImageReference
 Solid = renpy.display.image.Solid
 Frame = renpy.display.image.Frame
 Null = renpy.display.layout.Null
+LiveComposite = renpy.display.layout.LiveComposite
 # Animation = renpy.display.image.Animation
 Animation = anim.Animation
 Movie = renpy.display.video.Movie
