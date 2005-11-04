@@ -23,6 +23,13 @@ together arbitrary displayables, rather than just images. It has the
 same API as im.Composite, but should be used when one of the things
 you wish to composite is an animation. [ doc ]
 
+A new variable, config.auto_choice_delay, has been added. If not None,
+this variable gives a number of seconds that Ren'Py will pause at an
+in-game menu before picking a random choice from that menu. We'd
+expect this variable to always be set to None in released games, but
+setting it to a number will allow for automated demonstrations of
+games without much human interaction. [ doc ]
+
 New in Ren'Py 5.1.5
 -------------------
 

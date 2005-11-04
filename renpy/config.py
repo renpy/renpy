@@ -180,6 +180,11 @@ afm_bonus = 25
 # A function that must return True for afm mode to forward.
 afm_callback = None
 
+# The amount of time we delay before making an automatic choice from a
+# menu. This can be used for making a demo version of a game. It
+# should be set to None in a deployed game.
+auto_choice_delay = None
+
 # A map from font, bold, italic to font, bold, italic. This is used
 # to replace (say) the italic version of a regular font with the regular
 # version of an italic font.

@@ -246,6 +246,15 @@ def display_menu(items, window_style='menu_window', interact=True):
 
     choice_for_skipping()
 
+    if renpy.config.auto_choice_delay:
+        choices = [ val for label, val in items ]
+
+        while None in choices:
+            choices.remove(None)
+
+        renpy.ui.pausebehavior(renpy.config.auto_choice_delay,
+                               random.choice(choices))
+
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
