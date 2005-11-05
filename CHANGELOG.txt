@@ -30,6 +30,9 @@ expect this variable to always be set to None in released games, but
 setting it to a number will allow for automated demonstrations of
 games without much human interaction. [ doc ]
 
+The kanamode.rpy extra has been updated to support some of the newer
+features, like slow text and auto-forward mode.
+
 New in Ren'Py 5.1.5
 -------------------
 
