@@ -175,14 +175,15 @@ def main(basename, lint=False):
     renpy.config.archives = [ ]
 
     try:
-        renpy.loader.transfn(basename + ".rpi")
+        renpy.loader.transfn(basename + ".rpa")
         renpy.config.archives.append(basename)
     except:
         pass
 
     try:
-        renpy.loader.transfn("game.rpi")
-        renpy.config.archives.append("game")
+        if "game" not in renpy.config.archives:
+            renpy.loader.transfn("game.rpa")
+            renpy.config.archives.append("game")
     except:
         pass
         
