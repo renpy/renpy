@@ -36,6 +36,14 @@ def checkpoint():
 
     renpy.game.log.checkpoint()
 
+def block_rollback():
+    """
+    Prevents the game from rolling back to before the current
+    statement.
+    """
+
+    renpy.game.log.block()
+
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
 

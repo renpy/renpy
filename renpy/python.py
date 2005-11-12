@@ -317,7 +317,6 @@ class Rollback(renpy.object.Object):
 
     @ivar random: A list of random numbers that were generated during the
     execution of this element.
-
     """
 
     def __init__(self):
@@ -553,6 +552,14 @@ class RollbackLog(renpy.object.Object):
             self.rollback_limit += 1
         
         self.current.checkpoint = True
+
+    def block(self):
+        """
+        Called to indicate that the user should not be able to rollback
+        through this checkpoint.
+        """
+
+        self.rollback_limit = 0
 
     def rollback(self, checkpoints, force=False, label=None):
         """

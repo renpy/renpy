@@ -39,6 +39,10 @@ instead of needing .rpa and .rpi files, only a .rpa file is needed
 support this new format. The code still supports reading the old
 format, for compatability purposes. [ doc ]
 
+There is now a new function, renpy.block_rollback(), that prevents
+Ren'Py from rolling back through the point at which it was called.
+[doc]
+
 New in Ren'Py 5.1.5
 -------------------
 
