@@ -40,13 +40,17 @@ def main():
     archivef = file(prefix + ".rpa", "wb")
 
     # Index file.
-    indexf = file(prefix + ".rpi", "wb")
+    # indexf = file(prefix + ".rpi", "wb")
 
     index = { }
 
     random.seed()
 
-    offset = 0
+    
+    padding = "RPA-2.0 XXXXXXXXXXXXXXXX\n"
+
+    archivef.write(padding)
+    offset = len(padding)
 
     # Needed because windows sucks. It doesn't do globbing on the
     # command line.
@@ -85,10 +89,15 @@ def main():
                       
         datafile.close()
 
-    archivef.close()
+    indexoff = offset
 
-    indexf.write(dumps(index, HIGHEST_PROTOCOL).encode("zlib"))
-    indexf.close()
+    archivef.write(dumps(index, HIGHEST_PROTOCOL).encode("zlib"))
+
+    archivef.seek(0)
+    archivef.write("RPA-2.0 %016x\n" % indexoff)
+
+
+    archivef.close()
     
     
 

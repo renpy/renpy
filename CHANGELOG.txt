@@ -33,6 +33,12 @@ games without much human interaction. [ doc ]
 The kanamode.rpy extra has been updated to support some of the newer
 features, like slow text and auto-forward mode.
 
+Archives now combine the index and the data into a single file. Now,
+instead of needing .rpa and .rpi files, only a .rpa file is needed
+(and is created). The code and the archiver have been updated to
+support this new format. The code still supports reading the old
+format, for compatability purposes. [ doc ]
+
 New in Ren'Py 5.1.5
 -------------------
 
