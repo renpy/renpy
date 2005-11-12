@@ -37,7 +37,7 @@ Archives now combine the index and the data into a single file. Now,
 instead of needing .rpa and .rpi files, only a .rpa file is needed
 (and is created). The code and the archiver have been updated to
 support this new format. The code still supports reading the old
-format, for compatability purposes. [ doc ]
+format, for compatibility purposes. [ doc ]
 
 There is now a new function, renpy.block_rollback(), that prevents
 Ren'Py from rolling back through the point at which it was called.
