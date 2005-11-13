@@ -111,7 +111,7 @@ top_layers = [ ]
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
-overlay_during_wait = True
+overlay_during_with = True
 
 # True if we want to allow the fast dissolve.
 enable_fast_dissolve = True
