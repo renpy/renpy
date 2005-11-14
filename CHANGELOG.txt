@@ -1,3 +1,6 @@
+New in Ren'Py 5.1.6
+-------------------
+
 Fixed Motion (the class that implements Move and Pan) to allow motions
 to be used as transitions, in conjunction with the say and menu
 statements. Previously, they only worked with the with statement.
@@ -44,6 +47,7 @@ Ren'Py from rolling back through the point at which it was called.
 
 Renamed config.overlay_during_wait to config.overlay_during_with,
 since the former name was a mistake.
+
 
 New in Ren'Py 5.1.5
 -------------------

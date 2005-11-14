@@ -492,7 +492,7 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
-                if i == "fast":
+                elif i == "fast":
                     # Automatically closes.
                     tsl.pop()
 
