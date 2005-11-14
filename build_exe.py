@@ -22,7 +22,7 @@ programs = [
     program(sys.argv[1]),
     ]
 
-sys.argv[1:] = [ 'py2exe', '-x' ]
+sys.argv[1:] = [ 'py2exe', '-x', '-a' ]
 
 setup(name="RenPy",
       windows=programs,

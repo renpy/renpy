@@ -30,11 +30,22 @@ images = { }
 
 def checkpoint():
     """
-    Marks the current statement as a checkpoint, which is a place
-    where rolling back can stop when the user asks for a rollback.
+    This creates a checkpoint that the user can rollback to. The
+    checkpoint is placed at the statement after the last statement
+    that interacted with the user. Once this function has been called,
+    there should be no more interaction with the user in the current
+    statement.
     """
 
     renpy.game.log.checkpoint()
+
+def block_rollback():
+    """
+    Prevents the game from rolling back to before the current
+    statement.
+    """
+
+    renpy.game.log.block()
 
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
@@ -525,7 +536,7 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_wait,
+                                                 suppress_overlay=not renpy.config.overlay_during_with,
                                                  mouse='with')
         else:
             return False

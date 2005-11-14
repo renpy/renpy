@@ -795,6 +795,8 @@ init:
     image eileen concerned = Image("9a_concerned.png")
   </example>
 
+  <!-- func LiveComposite -->
+
   <!-- func ImageReference -->
 
   <!-- func Solid -->
@@ -1526,11 +1528,13 @@ its own window, until just after the init code has finished
 running. The size of the window is determined by the size of the 
 presplash image, and we attempt to center this window on the screen.
 
-<p></p>
-The name of the game directory is also used to select a default
-archive. This archive is contained in the files game/game.rpi and
-game/game.rpa if the game directory exists, and the files game.rpi and
-game.rpa if it does not. 
+<p></p> 
+
+
+The name of the game directory is also used to select a
+default archive. This archive is contained in the file game/game.rpa
+if the game directory exists, and the file game.rpa in the base
+directory if it does not.
 
   </p><p> 
 
@@ -1900,6 +1904,10 @@ e "Pleased to meet you, %(name)s."
   </example>
 
   <!-- func renpy.transition -->
+
+  <!-- func renpy.checkpoint -->
+
+  <!-- func renpy.block_rollback -->
 
   <!-- func renpy.restart_interaction -->
 
@@ -2362,9 +2370,17 @@ layers. If a layer name is listed here, it should not be listed in
 config.layers.
 </var>
 
-<var name="config.overlay_during_wait" value="True" >
-True if we want overlays to be shown during wait statements, or False 
-if we'd prefer that they be hidden during the wait statements.
+<var name="config.overlay_during_with" value="True" >
+True if we want overlays to be shown during with statements, or False 
+if we'd prefer that they be hidden during the with statements.
+</var>
+
+<var name="config.with_callback" value="None">
+If not None, this should be a function that is called when a with
+statement occurs. This function can be responsible for putting up
+transient things on the screen during the transition. The function is
+called with a single argument, which is the transition that is 
+occuring.
 </var>
 
 <var name="config.enable_fast_dissolve" value="True" >
@@ -2417,6 +2433,14 @@ mode is in effect.
 If not None, a python function that is called to determine if it is
 safe to auto-forward. The intent is that this can be used by a voice
 system to disable auto-forwarding when a voice is playing.
+</var>
+
+<var name="config.auto_choice_delay" value="None">
+If not None,this variable gives a number of seconds that Ren'Py will pause at an
+in-game menu before picking a random choice from that menu. We'd
+expect this variable to always be set to None in released games, but
+setting it to a number will allow for automated demonstrations of
+games without much human interaction.
 </var>
 
 <var name="config.font_replacement_map" value="{ }">
@@ -3163,7 +3187,16 @@ There are two tags, {w} and {p}, that can only be used in
 dialogue. These tags cause a pause in the display of text, until the
 user clicks to continue, or an auto-forward occurs. This allows text
 to be displayed incrementally. The difference between {w} and {p} is
-that {p} adds a line break at the pause point.
+that {p} adds a line break at the pause point. They do not use a
+closing tag.
+</p>
+
+<p>
+There is a tag, {fast}, that only has an effect if the text speed is
+not infinite. This tag specifies where slow text should begin
+displaying from. Use this if you have two lines of dialogue where the
+second is an extension of the first. (This is an alternate way of
+achieving the pause effect.) This tag does not take a closing tag.
 </p>
 
 <p>
@@ -3255,7 +3288,7 @@ probably drive your users mad.
   </p>
 
   <p>
-    This will create the files images.rpa and images.rpi in the game
+    This will create the file images.rpa in the game
     directory. One can then add to the script a line like:
   </p>
 
@@ -3608,8 +3641,6 @@ The image manipulators are:
 
 <!-- func im.Crop -->
 
-<!-- func im.Composite -->
-
 <!-- func im.Scale -->
 
 <!-- func im.Rotozoom -->
@@ -3621,6 +3652,8 @@ The image manipulators are:
 <!-- func im.ramp -->
 
 <!-- func im.Tile -->
+
+<!-- func im.Composite -->
 
 <h3>Low-Level Audio Functions</h3>
 
