@@ -1,3 +1,6 @@
+Fixed a bug in the text widget that caused it to be sized incorrectly
+in certain cases.
+
 New in Ren'Py 5.1.6
 -------------------
 

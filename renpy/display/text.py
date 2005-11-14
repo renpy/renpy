@@ -671,9 +671,11 @@ class Text(renpy.display.core.Displayable):
         if line:
             lines.append(line)
             lineheights.append(lineheight)
-            linewidths.append(curwidth)
+            linewidths.append(linewidth + curwidth)
 
         laidout_length += len(lines)
+
+        print self.tokens, linewidths
 
         self.laidout = lines
         self.laidout_lineheights = lineheights
@@ -820,7 +822,6 @@ class Text(renpy.display.core.Displayable):
 
             if self.slow_done:
                 self.slow_done()
-
 
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
