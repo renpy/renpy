@@ -1414,7 +1414,7 @@ init:
     $ style.imagemap.activate_sound = 'click.wav'
     $ library.enter_sound = 'click.wav'
     $ library.exit_sound = 'click.wav'
-    $ library.sample_sound = "18005551212.wav"
+    $ library.sample_sound = "18005551212.ogg"
 
     # Select the transitions that are used when entering and exiting
     # the game menu.

@@ -675,8 +675,6 @@ class Text(renpy.display.core.Displayable):
 
         laidout_length += len(lines)
 
-        print self.tokens, linewidths
-
         self.laidout = lines
         self.laidout_lineheights = lineheights
         self.laidout_linewidths = linewidths

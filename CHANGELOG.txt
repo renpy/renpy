@@ -1,5 +1,12 @@
+Implemented a new warp feature. By supplying a filename and line
+number, this feature tries to jump you to the statement preceding that
+line. It isn't perfect, but for some games, this lets you have a live
+preview of the game. Please see the reference manual for instructions on
+how to invoke this, and a number of caveats. [doc, including after_warp]
+
 Fixed a bug in the text widget that caused it to be sized incorrectly
-in certain cases.
+in certain cases. Fixed an incorrect reference to a wav that became an
+ogg in the demo.
 
 New in Ren'Py 5.1.6
 -------------------

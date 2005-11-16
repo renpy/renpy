@@ -48,6 +48,9 @@ def main():
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
 
+    op.add_option('--warp', dest='warp', default=None,
+                  help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
+
     options, args = op.parse_args()
 
     if options.python:
@@ -61,8 +64,10 @@ def main():
     # Load up all of Ren'Py, in the right order.
     import renpy
 
+    renpy.game.options = options
+
     try:
-        renpy.main.main(options.game, lint=options.lint)
+        renpy.main.main(options.game)
             
     except Exception, e:
 

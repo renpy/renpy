@@ -1,6 +1,9 @@
-
 # This file contains the AST for the Ren'Py script language. Each class
 # here corresponds to a statement in the script language.
+
+# NOTE:
+# When updating this file, consider if lint.py or warp.py also need
+# updating.
 
 import renpy
 
@@ -90,7 +93,7 @@ class Node(object):
         program or init block.
         """
 
-        assert False, "AST subclass forgot to define execute."
+        assert False, "Node subclass forgot to define execute."
 
     def predict(self, callback):
         """

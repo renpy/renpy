@@ -18,6 +18,9 @@ basepath = None
 # everything that can be loaded, before archives are used.
 searchpath = [ ]
 
+# The options that were read off the command line.
+options = None
+
 # A Script object, giving the script of the currently executing game.
 script = None
 
