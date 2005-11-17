@@ -4,6 +4,13 @@ line. It isn't perfect, but for some games, this lets you have a live
 preview of the game. Please see the reference manual for instructions on
 how to invoke this, and a number of caveats. [doc, including after_warp]
 
+Also implemented an editor feature. By pressing E (that's shift-e),
+one can launch an editor at the location of the current statement in
+the Ren'Py program. To enable this, one needs to set config.editor to
+the command line for your favorite text editor. Again, see the
+reference manual (for config.editor) for more details. [ doc,
+including changes to config.keymap. ]
+
 Fixed a bug in the text widget that caused it to be sized incorrectly
 in certain cases. Fixed an incorrect reference to a wav that became an
 ogg in the demo.

@@ -743,6 +743,28 @@ def music_stop(fadeout=None):
 
     renpy.audio.music.stop(fadeout=fadeout)
 
+def launch_editor():
+    """
+    This causes an editor to be launched at the location of the current
+    statement.
+    """
+
+    import renpy.subprocess as subprocess
+
+    if not renpy.config.editor:
+        return
+    
+    n = renpy.game.script.namemap[renpy.game.context().current]
+    subs = dict(filename=n.filename, line=n.linenumber)
+    cmd = renpy.config.editor % subs
+
+    try:
+        subprocess.Popen(cmd, shell=True, close_fds=True)
+    except:
+        if renpy.config.debug:
+            raise
+    
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

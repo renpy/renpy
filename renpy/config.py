@@ -135,6 +135,7 @@ keymap = dict(
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
     hide_windows = [ 'mouseup_2', 'h' ],
+    launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -201,6 +202,10 @@ framerate = None
 
 # The number of frames that Ren'Py has shown.
 frames = 0
+
+# A text editor that is launched at the location of the current
+# statement.
+editor = None
 
 del renpy
 

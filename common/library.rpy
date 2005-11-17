@@ -130,7 +130,8 @@ init -500:
             toggle_music = renpy.toggle_music,
             toggle_skip = toggle_skipping,
             game_menu = invoke_game_menu,
-            hide_windows = renpy.curried_call_in_new_context("_hide_windows")
+            hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
+            launch_editor = renpy.launch_editor,
             )
 
         config.underlay = [ km ]
