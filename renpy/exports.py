@@ -148,7 +148,7 @@ def scene(layer='master'):
 def watch(expression, style='default', **properties):
     """
     This watches the given python expression, by displaying it in the
-    upper-right corner of the screen (although position properties
+    upper-left corner of the screen (although position properties
     can change that). The expression should always be
     defined, never throwing an exception.
 
@@ -156,7 +156,7 @@ def watch(expression, style='default', **properties):
     """
 
     def overlay_func():
-        renpy.ui.text(renpy.python.py_eval(expression),
+        renpy.ui.text(unicode(renpy.python.py_eval(expression)),
                       style=style, **properties)
 
     renpy.config.overlay_functions.append(overlay_func)
