@@ -11,6 +11,11 @@ the command line for your favorite text editor. Again, see the
 reference manual (for config.editor) for more details. [ doc,
 including changes to config.keymap. ]
 
+Implemented a new function, renpy.get_filename_line(), which returns
+the filename and line number of the currently executing
+statement. This can be used in conjunction with renpy.watch() to
+constantly display the line number of the current statement. [ doc ]
+
 Fixed a bug in the text widget that caused it to be sized incorrectly
 in certain cases. Fixed an incorrect reference to a wav that became an
 ogg in the demo.

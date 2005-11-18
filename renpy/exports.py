@@ -743,6 +743,15 @@ def music_stop(fadeout=None):
 
     renpy.audio.music.stop(fadeout=fadeout)
 
+def get_filename_line():
+    """
+    Returns a pair giving the filename and line number of the current
+    statement.
+    """
+
+    n = renpy.game.script.namemap[renpy.game.context().current]
+    return n.filename, n.linenumber
+
 def launch_editor():
     """
     This causes an editor to be launched at the location of the current
@@ -753,9 +762,9 @@ def launch_editor():
 
     if not renpy.config.editor:
         return
-    
-    n = renpy.game.script.namemap[renpy.game.context().current]
-    subs = dict(filename=n.filename, line=n.linenumber)
+
+    filename, line = get_filename_line()
+    subs = dict(filename=filename, line=line)
     cmd = renpy.config.editor % subs
 
     try:
