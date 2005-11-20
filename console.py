@@ -10,12 +10,14 @@ import re
 import sys
 
 # Extra things used for distribution.
-import encodings.utf_8
-import encodings.zlib_codec
-import encodings.unicode_escape
-import encodings.string_escape
-import encodings.raw_unicode_escape
-import math
+def extra_imports():
+    import encodings.utf_8
+    import encodings.zlib_codec
+    import encodings.unicode_escape
+    import encodings.string_escape
+    import encodings.raw_unicode_escape
+    import math
+    import datetime
 
 def main():
 
