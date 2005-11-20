@@ -21,10 +21,11 @@ def extra_imports():
 
 def main():
 
-    dirname = os.path.dirname(sys.argv[0])
+    renpy_base = os.path.dirname(sys.argv[0])
+    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
 
-    if dirname:
-        os.chdir(dirname)
+    if renpy_base:
+        os.chdir(renpy_base)
 
     # Add the path to the module.
     sys.path.append("module")

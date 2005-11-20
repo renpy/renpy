@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# This program dumps all the text found in the script to the file text.txt.
-# If on windows, it also tries to show text.txt to the user.
+# This program dumps all the text found in the script to stdout.
 
 import codecs
 import sys
@@ -58,18 +57,13 @@ def main():
     files = glob.glob(pattern)
     files = [ i for i in files if not i.startswith("common/") ]
 
-    out = file("text.txt", "w")
+    out = sys.stdout
     out.write(codecs.BOM_UTF8)
 
     for fn in files:
         process(fn, out)
 
     out.close()
-
-    try:
-        os.startfile('text.txt')
-    except:
-        pass
 
 
 if __name__ == "__main__":
