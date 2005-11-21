@@ -1,3 +1,7 @@
+Restructured the distribution. All of the tools are now in the tools/
+directory, while the dse has been moved to extras/dse, with a script
+to launch it found in tools/. [ doc updates ]
+
 Implemented a new warp feature. By supplying a filename and line
 number, this feature tries to jump you to the statement preceding that
 line. It isn't perfect, but for some games, this lets you have a live

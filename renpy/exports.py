@@ -768,7 +768,7 @@ def launch_editor():
     cmd = renpy.config.editor % subs
 
     try:
-        subprocess.Popen(cmd, shell=True, close_fds=True)
+        subprocess.Popen(cmd, shell=True)
     except:
         if renpy.config.debug:
             raise

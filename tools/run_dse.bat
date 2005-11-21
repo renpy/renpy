@@ -1,2 +1,2 @@
-cd ..
-run_game --game extras/dse 
+@echo off
+"%~p0\..\console.exe" --game extras/dse

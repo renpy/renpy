@@ -1,3 +1,3 @@
 cd ..
-tools\add_from
+call tools\add_from.bat
 pause

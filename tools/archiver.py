@@ -10,7 +10,7 @@ import encodings.zlib_codec
 import random
 import glob
 
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+from pickle import loads, dumps, HIGHEST_PROTOCOL
 
 # The most we will go without inserting some padding. 10k.
 padding_every = 10240

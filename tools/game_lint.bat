@@ -1,3 +1,3 @@
-set RENPY_BASE=..
-console.exe --lint > lint.txt
-start lint.txt
+cd ..
+console.exe --lint > tools\lint.txt
+start tools\lint.txt

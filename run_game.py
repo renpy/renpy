@@ -10,23 +10,26 @@ import re
 import sys
 
 # Extra things used for distribution.
-import encodings.utf_8
-import encodings.zlib_codec
-import encodings.unicode_escape
-import encodings.string_escape
-import encodings.raw_unicode_escape
-import math
+def extra_imports():
+    import encodings.utf_8
+    import encodings.zlib_codec
+    import encodings.unicode_escape
+    import encodings.string_escape
+    import encodings.raw_unicode_escape
+    import math
+    import datetime
+    import glob
 
 def main():
 
-    dirname = os.path.dirname(sys.argv[0])
+    renpy_base = os.path.dirname(sys.argv[0])
+    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
+    renpy_base = os.path.abspath(renpy_base)
 
-    if dirname:
-        os.chdir(dirname)
-
-    # Add the path to the module.
-    sys.path.append("module")
-
+    # Add paths.
+    sys.path.append(renpy_base + "/module")
+    sys.path.append(renpy_base)
+    
     name = os.path.basename(sys.argv[0])
 
     if name.find(".") != -1:
@@ -54,8 +57,13 @@ def main():
     options, args = op.parse_args()
 
     if options.python:
-        execfile(options.python)
+        sys.argv = [ options.python ] + args
+        execfile(renpy_base + "/" + options.python, globals(), globals())
         sys.exit(0)
+
+    # If we made it this far, we will be running the game as Ren'Py.
+
+    os.chdir(renpy_base)
 
     if not options.lint:
         import renpy.display.presplash

@@ -1,3 +1,3 @@
 cd ..\game
-..\tools\archiver.exe images *.png *.jpg *.gif
+call ..\tools\archiver.bat images *.png *.jpg *.gif
 pause
