@@ -1,3 +1,6 @@
+New in Ren'Py 5.2.0
+-------------------
+
 Restructured the distribution. All of the tools are now in the tools/
 directory, while the dse has been moved to extras/dse, with a script
 to launch it found in tools/. [ doc updates ]
@@ -6,14 +9,13 @@ Implemented a new warp feature. By supplying a filename and line
 number, this feature tries to jump you to the statement preceding that
 line. It isn't perfect, but for some games, this lets you have a live
 preview of the game. Please see the reference manual for instructions on
-how to invoke this, and a number of caveats. [doc, including after_warp]
+how to invoke this, and a number of caveats.
 
 Also implemented an editor feature. By pressing E (that's shift-e),
 one can launch an editor at the location of the current statement in
 the Ren'Py program. To enable this, one needs to set config.editor to
 the command line for your favorite text editor. Again, see the
-reference manual (for config.editor) for more details. [ doc,
-including changes to config.keymap. ]
+reference manual (for config.editor) for more details.
 
 Implemented a new function, renpy.get_filename_line(), which returns
 the filename and line number of the currently executing
@@ -22,7 +24,10 @@ constantly display the line number of the current statement. [ doc ]
 
 Fixed a bug in the text widget that caused it to be sized incorrectly
 in certain cases. Fixed an incorrect reference to a wav that became an
-ogg in the demo.
+ogg in the demo. Modified renpy.watch() so that it coerces the result
+of evaluating its argument to unicode, meaning it's no longer
+necessary to manually do so.
+
 
 New in Ren'Py 5.1.6
 -------------------
