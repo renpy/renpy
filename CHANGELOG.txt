@@ -1,3 +1,37 @@
+New in Ren'Py 5.2.0
+-------------------
+
+Restructured the distribution. All of the tools are now in the tools/
+directory, while the dse has been moved to extras/dse, with a script
+to launch it found in tools/.
+
+Implemented a new warp feature. By supplying a filename and line
+number, this feature tries to jump you to the statement preceding that
+line. It isn't perfect, but for some games, this lets you have a live
+preview of the game. Please see the reference manual for instructions on
+how to invoke this, and a number of caveats.
+
+Also implemented an editor feature. By pressing E (that's shift-e),
+one can launch an editor at the location of the current statement in
+the Ren'Py program. To enable this, one needs to set config.editor to
+the command line for your favorite text editor. Again, see the
+reference manual (for config.editor) for more details.
+
+Implemented a new function, renpy.get_filename_line(), which returns
+the filename and line number of the currently executing
+statement. This can be used in conjunction with renpy.watch() to
+constantly display the line number of the current statement.
+
+Fixed a bug in the text widget that caused it to be sized incorrectly
+in certain cases. Fixed an incorrect reference to a wav that became an
+ogg in the demo. Modified renpy.watch() so that it coerces the result
+of evaluating its argument to unicode, meaning it's no longer
+necessary to manually do so.
+
+
+New in Ren'Py 5.1.6
+-------------------
+
 Fixed Motion (the class that implements Move and Pan) to allow motions
 to be used as transitions, in conjunction with the say and menu
 statements. Previously, they only worked with the with statement.
@@ -5,12 +39,12 @@ statements. Previously, they only worked with the with statement.
 Added a new variable, config.with_callback, that can be used to
 specify a function that is called when a with statement runs. This can
 be used, for example, to put up a window when a transition occurs,
-which has the effect of preventing the window from disappearing. [doc]
+which has the effect of preventing the window from disappearing.
 
 Implemented a new text tag, {fast}. This tag causes the slow text
 display to start from a given point in the text string. This allows
 one to show some text, run some command, and show the same text with
-additions, and have the slow text display occur correctly. [doc]
+additions, and have the slow text display occur correctly.
 
 Character objects now can take properties prefixed with what_ or
 window_. Properties prefixed with what_ are applied to the text being
@@ -21,14 +55,30 @@ label giving the name of the character speaking.
 There is now a new function, LiveComposite, that can composite
 together arbitrary displayables, rather than just images. It has the
 same API as im.Composite, but should be used when one of the things
-you wish to composite is an animation. [ doc ]
+you wish to composite is an animation.
 
 A new variable, config.auto_choice_delay, has been added. If not None,
 this variable gives a number of seconds that Ren'Py will pause at an
 in-game menu before picking a random choice from that menu. We'd
 expect this variable to always be set to None in released games, but
 setting it to a number will allow for automated demonstrations of
-games without much human interaction. [ doc ]
+games without much human interaction. 
+
+The kanamode.rpy extra has been updated to support some of the newer
+features, like slow text and auto-forward mode.
+
+Archives now combine the index and the data into a single file. Now,
+instead of needing .rpa and .rpi files, only a .rpa file is needed
+(and is created). The code and the archiver have been updated to
+support this new format. The code still supports reading the old
+format, for compatibility purposes.
+
+There is now a new function, renpy.block_rollback(), that prevents
+Ren'Py from rolling back through the point at which it was called.
+
+Renamed config.overlay_during_wait to config.overlay_during_with,
+since the former name was a mistake.
+
 
 New in Ren'Py 5.1.5
 -------------------

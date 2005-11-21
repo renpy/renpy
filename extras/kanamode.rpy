@@ -13,7 +13,7 @@
 init -100:
     python:
         
-        # This is a list of KanaCharacter, line of dialogue tuples.
+        # This is a list of KanaCharacter, what tuples.
         kana_display_list = [ ]
 
         # Spacings used.
@@ -26,17 +26,24 @@ init -100:
 
         def kana_show():
 
+            if not kana_display_list:
+                return
+
             ui.window(style='say_window')
             ui.vbox(kana_vspacing)
 
-            for char, what in kana_display_list:
-                char.show(what)
+            for i, (char, what) in enumerate(kana_display_list):
+                text = char.show(what, i == len(kana_display_list) - 1)
 
             ui.close()
 
-            ui.saybehavior()
+            # Magic to support auto-forward mode.
+            b = ui.saybehavior()
+            b.set_afm_length(text.get_simple_length())
+            
             ui.interact()
             renpy.checkpoint()            
+
             
         # Characters and the narrator should be instances of this
         # object.
@@ -60,13 +67,17 @@ init -100:
                 kana_display_list.append((self, what))
                 kana_show()
 
-            def show(self, what):
+            def show(self, what, slow):
                 ui.hbox(kana_hspacing)
                 ui.text(self.who, style=self.who_style,
                         **self.properties)
-                ui.text(self.what_prefix + what + self.what_suffix,
-                        style=self.what_style)
+
+                rv = ui.text(self.what_prefix + what + self.what_suffix,
+                             style=self.what_style, slow=slow)
+
                 ui.close()
+
+                return rv
 
 
 # This section updates the styles that are used by the Kana mode stuff

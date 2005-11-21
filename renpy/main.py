@@ -14,7 +14,7 @@ import renpy.game as game
 import os
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-def run(restart=False, lint=False):
+def run(restart=False):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
@@ -101,7 +101,7 @@ def run(restart=False, lint=False):
     # Make a clean copy of the store.
     game.clean_store = vars(renpy.store).copy()
 
-    if lint:
+    if renpy.game.options.lint:
         renpy.lint.lint()
         return
 
@@ -120,9 +120,19 @@ def run(restart=False, lint=False):
 
     # Jump to an appropriate start label.
     if game.script.has_label("_start"):
-        game.context().goto_label('_start')
+        start_label = '_start'
     else:
-        game.context().goto_label('start')
+        start_label = 'start'
+
+    game.context().goto_label(start_label)
+
+    # Perhaps warp.
+    if renpy.game.options.warp:
+        label = renpy.warp.warp(renpy.game.options.warp)
+        game.context().goto_label(label)
+
+        if game.script.has_label('after_warp'):
+            game.context().call('after_warp')
 
     try:
         while True:
@@ -155,7 +165,7 @@ def run(restart=False, lint=False):
 
     # And, we're done.
     
-def main(basename, lint=False):
+def main(basename):
 
     renpy.game.exception_info = 'While loading the script.'
 
@@ -175,14 +185,15 @@ def main(basename, lint=False):
     renpy.config.archives = [ ]
 
     try:
-        renpy.loader.transfn(basename + ".rpi")
+        renpy.loader.transfn(basename + ".rpa")
         renpy.config.archives.append(basename)
     except:
         pass
 
     try:
-        renpy.loader.transfn("game.rpi")
-        renpy.config.archives.append("game")
+        if "game" not in renpy.config.archives:
+            renpy.loader.transfn("game.rpa")
+            renpy.config.archives.append("game")
     except:
         pass
         
@@ -200,7 +211,7 @@ def main(basename, lint=False):
 
     while True:
         try:
-            run(restart, lint=lint)
+            run(restart)
             break
         except game.FullRestartException, e:
             restart = True

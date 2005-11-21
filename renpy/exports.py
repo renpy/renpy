@@ -30,11 +30,22 @@ images = { }
 
 def checkpoint():
     """
-    Marks the current statement as a checkpoint, which is a place
-    where rolling back can stop when the user asks for a rollback.
+    This creates a checkpoint that the user can rollback to. The
+    checkpoint is placed at the statement after the last statement
+    that interacted with the user. Once this function has been called,
+    there should be no more interaction with the user in the current
+    statement.
     """
 
     renpy.game.log.checkpoint()
+
+def block_rollback():
+    """
+    Prevents the game from rolling back to before the current
+    statement.
+    """
+
+    renpy.game.log.block()
 
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
@@ -137,7 +148,7 @@ def scene(layer='master'):
 def watch(expression, style='default', **properties):
     """
     This watches the given python expression, by displaying it in the
-    upper-right corner of the screen (although position properties
+    upper-left corner of the screen (although position properties
     can change that). The expression should always be
     defined, never throwing an exception.
 
@@ -145,7 +156,7 @@ def watch(expression, style='default', **properties):
     """
 
     def overlay_func():
-        renpy.ui.text(renpy.python.py_eval(expression),
+        renpy.ui.text(unicode(renpy.python.py_eval(expression)),
                       style=style, **properties)
 
     renpy.config.overlay_functions.append(overlay_func)
@@ -525,7 +536,7 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_wait,
+                                                 suppress_overlay=not renpy.config.overlay_during_with,
                                                  mouse='with')
         else:
             return False
@@ -732,6 +743,37 @@ def music_stop(fadeout=None):
 
     renpy.audio.music.stop(fadeout=fadeout)
 
+def get_filename_line():
+    """
+    Returns a pair giving the filename and line number of the current
+    statement.
+    """
+
+    n = renpy.game.script.namemap[renpy.game.context().current]
+    return n.filename, n.linenumber
+
+def launch_editor():
+    """
+    This causes an editor to be launched at the location of the current
+    statement.
+    """
+
+    import renpy.subprocess as subprocess
+
+    if not renpy.config.editor:
+        return
+
+    filename, line = get_filename_line()
+    subs = dict(filename=filename, line=line)
+    cmd = renpy.config.editor % subs
+
+    try:
+        subprocess.Popen(cmd, shell=True)
+    except:
+        if renpy.config.debug:
+            raise
+    
+    
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
