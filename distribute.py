@@ -24,7 +24,8 @@ def copy_file(source, dest, license="", dos=True):
     df = file(dest, "wb")
 
     if dest.endswith(".py") or dest.endswith(".rpy"):
-        df.write(license)
+        if not dest.endswith("subprocess.py"):
+            df.write(license)
 
     data = sf.read()
     if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".pyw") or \

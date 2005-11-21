@@ -3,7 +3,7 @@ New in Ren'Py 5.2.0
 
 Restructured the distribution. All of the tools are now in the tools/
 directory, while the dse has been moved to extras/dse, with a script
-to launch it found in tools/. [ doc updates ]
+to launch it found in tools/.
 
 Implemented a new warp feature. By supplying a filename and line
 number, this feature tries to jump you to the statement preceding that
@@ -20,7 +20,7 @@ reference manual (for config.editor) for more details.
 Implemented a new function, renpy.get_filename_line(), which returns
 the filename and line number of the currently executing
 statement. This can be used in conjunction with renpy.watch() to
-constantly display the line number of the current statement. [ doc ]
+constantly display the line number of the current statement.
 
 Fixed a bug in the text widget that caused it to be sized incorrectly
 in certain cases. Fixed an incorrect reference to a wav that became an

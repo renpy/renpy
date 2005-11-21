@@ -25,6 +25,9 @@
 # NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
 # WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+# Modified by PyTom: Remove dependencies on win32 modules, to reduce
+# the size of the distribution.
+
 """subprocess - Subprocesses with accessible I/O streams
 
 This module allows you to spawn processes and connect to their
@@ -367,27 +370,31 @@ import traceback
 if mswindows:
     import threading
     import msvcrt
-    try:
-        from _subprocess import *
-        class STARTUPINFO:
-            dwFlags = 0
-            hStdInput = None
-            hStdOutput = None
-            hStdError = None
-        class pywintypes:
-            error = IOError
-    except ImportError:
-        import pywintypes
-        from win32api import GetStdHandle, STD_INPUT_HANDLE, \
-                             STD_OUTPUT_HANDLE, STD_ERROR_HANDLE
-        from win32api import GetCurrentProcess, DuplicateHandle, \
-                             GetModuleFileName, GetVersion
-        from win32con import DUPLICATE_SAME_ACCESS
-        from win32pipe import CreatePipe
-        from win32process import CreateProcess, STARTUPINFO, \
-                                 GetExitCodeProcess, STARTF_USESTDHANDLES, \
-                                 CREATE_NEW_CONSOLE
-        from win32event import WaitForSingleObject, INFINITE, WAIT_OBJECT_0
+
+#    try:
+
+    from _subprocess import *
+    class STARTUPINFO:
+        dwFlags = 0
+        hStdInput = None
+        hStdOutput = None
+        hStdError = None
+    class pywintypes:
+        error = IOError
+
+#     except ImportError:
+#         import pywintypes
+#         from win32api import GetStdHandle, STD_INPUT_HANDLE, \
+#                              STD_OUTPUT_HANDLE, STD_ERROR_HANDLE
+#         from win32api import GetCurrentProcess, DuplicateHandle, \
+#                              GetModuleFileName, GetVersion
+#         from win32con import DUPLICATE_SAME_ACCESS
+#         from win32pipe import CreatePipe
+#         from win32process import CreateProcess, STARTUPINFO, \
+#                                  GetExitCodeProcess, STARTF_USESTDHANDLES, \
+#                                  CREATE_NEW_CONSOLE
+#         from win32event import WaitForSingleObject, INFINITE, WAIT_OBJECT_0
+
 else:
     import select
     import errno

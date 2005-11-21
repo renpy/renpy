@@ -28,7 +28,7 @@ setup(name="RenPy",
       windows=programs,
       console=[ "console.py" ],
       zipfile='lib/renpy.code',
-      options={ 'py2exe' : { 'excludes' : [ 'doctest' ],
+      options={ 'py2exe' : { 'excludes' : [ 'doctest', ],
                              'optimize' : 2,
                              } },
       )
