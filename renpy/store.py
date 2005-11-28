@@ -64,6 +64,13 @@ class Character(object):
 
     import renpy.config as config
 
+    # Properties beginning with what or window that are treated
+    # specially.
+    special_properties = [
+        'what_prefix',
+        'what_suffix',
+        ]
+    
     def __init__(self, name,
                  who_style='say_label',
                  what_style='say_dialogue',
@@ -147,6 +154,9 @@ class Character(object):
         self.dynamic = dynamic
 
         for k in list(self.properties):
+            if k in self.special_properties:
+                continue
+
             if k.startswith("what_"):
                 self.what_properties[k[len("what_"):]] = self.properties[k]
                 del self.properties[k]

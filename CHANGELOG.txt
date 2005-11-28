@@ -1,3 +1,6 @@
+Fixed a regression, introduced in 5.1.6, that prevented what_prefix
+and what_suffix from working.
+
 New in Ren'Py 5.2.0
 -------------------
 

@@ -38,8 +38,6 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
     $ girl = Character('Girl')
-    
-
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -67,6 +65,7 @@ label start:
     # of it.
     scene bg washington with fade
     show eileen vhappy with dissolve
+
 
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
