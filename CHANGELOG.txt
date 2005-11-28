@@ -1,3 +1,13 @@
+Added a command that allows the user to skip to the next
+choice. Primarily intended for developers, this feature needs to be
+enabled by setting config.fast_skipping to True before it can be
+used. Once enabled, fast skipping can be activated by typing '>'. It
+jumps the user to the next interaction that isn't a say, a transition,
+or a call to renpy.pause()
+
+Setting config.log to a filename will now cause a log of the user's
+actions to be written to that filename.
+
 Fixed a regression, introduced in 5.1.6, that prevented what_prefix
 and what_suffix from working.
 

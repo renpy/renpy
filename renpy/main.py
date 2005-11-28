@@ -12,6 +12,7 @@
 import renpy
 import renpy.game as game
 import os
+import time
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
 def run(restart=False):
@@ -136,6 +137,9 @@ def run(restart=False):
 
     try:
         while True:
+
+            renpy.exports.log("--- " + time.ctime())
+            renpy.exports.log("")
 
             # We first try running the script.
             try:

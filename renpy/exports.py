@@ -269,11 +269,29 @@ def display_menu(items, window_style='menu_window', interact=True):
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items)
 
+    for label, val in items:
+        if val:
+            log("Choice: " + label)
+        else:
+            log(label)
+
+    log("")
+
     if interact:
         rv = renpy.ui.interact(mouse='menu')
+
+        for label, val in items:
+            if rv == val:
+                log("User chose: " + label)
+                break
+        else:
+            log("No choice chosen.")
+
+        log("")
+
         checkpoint()
         return rv
-
+    
     return None
 
 class TagQuotingDict(object):
@@ -347,6 +365,11 @@ def display_say(who, what, who_style='say_label',
     please read the documentation for Character.
     """
 
+    # If we're in fast skipping mode, don't bother with say
+    # statements at all.
+    if renpy.config.skipping == "fast":
+        return
+
     what = what_prefix + what + what_suffix
 
     if not interact:
@@ -414,6 +437,10 @@ def display_say(who, what, who_style='say_label',
             slow_start = what_text.get_laidout_length()
             pause += 1
 
+    if who:
+        log(who)
+    log(what)
+    log("")
 
     if interact:
         checkpoint()
@@ -477,6 +504,9 @@ def pause(delay=None, music=None):
     time being reached.
     """
 
+    if renpy.config.skipping == "fast":
+        return True
+
     if music is not None:
         newdelay = renpy.audio.music.get_delay(music)
 
@@ -524,6 +554,9 @@ def with(trans):
     Ren'Py with statement is to get at the return code, which is True
     if the transition was interrupted, or False otherwise.
     """
+
+    if renpy.config.skipping:
+        trans = None
 
     if renpy.config.with_callback:
         renpy.config.with_callback(trans)
@@ -772,7 +805,31 @@ def launch_editor():
     except:
         if renpy.config.debug:
             raise
+
+# A file that log logs to.
+logfile = None
     
+def log(msg):
+    """
+    This formats the msg to 70 columns, and then sends it to the
+    logfile. (Which is opened if necessary.)
+    """
+    
+    global logfile
+
+    if not renpy.config.log:
+        return
+
+    if msg is None:
+        return
+
+    if not logfile:
+        logfile = file(renpy.config.log, "a")
+
+    import textwrap
+
+    print >>logfile, textwrap.fill(msg)
+    logfile.flush()
     
 
 call_in_new_context = renpy.game.call_in_new_context
