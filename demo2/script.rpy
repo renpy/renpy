@@ -18,6 +18,12 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
+    # Set this to true to enable some developer-specific
+    # functionality. It should be false in a finished game.
+    # Read the "Developer Tools" section of the reference
+    # to see what this enables.
+    $ config.developer = False
+
     # Declare the images that are used in the program.
 
     # Backgrounds.

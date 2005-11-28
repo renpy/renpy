@@ -8,6 +8,9 @@ or a call to renpy.pause()
 Setting config.log to a filename will now cause a log of the user's
 actions to be written to that filename.
 
+Added (optional, and discouraged) monkeypatch protection through the
+--lock command-line option.
+
 Fixed a regression, introduced in 5.1.6, that prevented what_prefix
 and what_suffix from working.
 

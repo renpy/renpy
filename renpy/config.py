@@ -212,6 +212,9 @@ frames = 0
 # statement.
 editor = None
 
+# Enable developer mode?
+developer = False
+
 # A logfile that logging messages are sent to.
 log = None
 

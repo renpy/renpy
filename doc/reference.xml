@@ -2276,6 +2276,11 @@ used by said transitions have finished loading.
       game.
     </var>
 
+    <var name="config.fast_skipping" value="False">
+       Set this to True to allow fast skipping outside of developer
+mode.
+    </var>
+
     <var name="config.skip_delay" value="75">
       The amount of time that dialogue will be shown for, when
       skipping statements using ctrl, in milliseconds. (Although it's
@@ -2474,6 +2479,16 @@ pressed. There are two subsitutions that make sense here. %(filename)s
 is replaced with the filename of the currently-executing line of
 Ren'Py code. %(line)d is replaced with the line number of the
 currently-executing line of Ren'Py code.
+</var>
+
+<var name="config.log" value="None">
+If not None, this is expected to be a filename. Much of the text shown
+to the user by say or menu statements will also be logged to this
+file.
+</var>
+
+<var name="config.developer" value="False">
+    If set to True, developer mode is enabled.
 </var>
 
 <var name="library.file_page_cols" value = "2" >
@@ -3310,6 +3325,16 @@ probably drive your users mad.
     stem, the newer one of them is chosen, meaning all games get this
     performance improvement.)
   </p>
+   
+  <p>
+Running Ren'Py with the --lock <i>key</i> command-line option will
+produce .rpyc files that are locked. These files will refuse to
+operate if a .rpyc file locked with a different key, or any .rpy file,
+would be loaded. Please note that this feature is discouraged, as it
+prevents the easy production of patches that work around issues in
+your game.
+</p>
+
 
   <p>
     Images can be archived using the tools/archiver program
@@ -3475,6 +3500,7 @@ keymap = dict(
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
+    fast_skip = [ '>' ],
     )
 </example>
 
@@ -3905,7 +3931,39 @@ appropriate list in library.preferences.
 
 <!-- func _VolumePreference -->
 
-<h3>Warping to a Line</h3>
+<h3>Developer Tools</h3>
+
+<p>
+Ren'Py includes a number of features to make a developer's life
+easier. Many of them need the variable <a href="#config.developer">config.developer</a> to be 
+set to True to operate.
+</p>
+
+<h4>Editor Support</h4>
+
+<p>
+The <a href="#config.editor">config.editor</a> variable allows a
+developer to specify an editor command that is run when the
+launch_editor keypress (by default, shift-E) occurs.
+</p>
+
+<p>
+Please see <a href="http://www.bishoujo.us/renpy/scite.html">http://www.bishoujo.us/renpy/scite.html</a>
+for information about how to integrate Ren'Py with the SciTE text editor.
+</p>
+
+<h4>Fast Skipping</h4>
+
+<p>
+When config.developer is True, pressing the fast_skip key (by
+default, '>') causes the the game to immediately skip to the next important
+interaction. For this purpose, an important interaction is one that is
+not caused by a say statement, transition, or pause command. Usually,
+this means skipping to the next menu, but it will also stop when 
+user-defined forms of interaction occur.
+</p>
+
+<h4>Warping to a Line</h4>
 
 <p>
 Ren'Py supports warping to a line in the script, without the developer
@@ -3954,6 +4012,11 @@ after a warp but before the warped-to statement executes. The code
 reached by this label can set up variables in the program, and then
 return to the preview.
 </p>
+
+<p>
+The warp feature requires config.developer to be True to operate.
+</p>
+
 
 <h3>Default Definitions</h3>
 

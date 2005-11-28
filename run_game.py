@@ -42,6 +42,9 @@ def main():
     op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
+    op.add_option('--lock', dest='lock', default=None, action='store',
+                  help='If True, produce locked version of the .rpyc files.')
+
     op.add_option('--python', dest='python', default=None,
                   help='Run the argument in the python interpreter.')
 
@@ -50,6 +53,7 @@ def main():
 
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
+
 
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')

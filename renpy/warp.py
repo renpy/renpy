@@ -18,9 +18,10 @@ def warp(spec):
     filename, line = spec.split(':', 1)
     line = int(line)
 
-    if not renpy.loader.transfn(filename):
-        raise Exception("Can't warp into '%s', as it wasn't found on disk." % filename)
+    if not renpy.config.developer:
+        raise Exception("Can't warp, developer mode disabled.")
 
+    
     # First, compute for each statement reachable from a scene statement,
     # one statement that reaches that statement.
 

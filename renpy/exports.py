@@ -368,6 +368,10 @@ def display_say(who, what, who_style='say_label',
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
     if renpy.config.skipping == "fast":
+
+        # Clears out transients.
+        with(None)
+        
         return
 
     what = what_prefix + what + what_suffix

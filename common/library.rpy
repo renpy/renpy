@@ -127,7 +127,7 @@ init -500:
             renpy.restart_interaction()
 
         def fast_skip():
-            if config.fast_skipping:
+            if config.fast_skipping or config.developer:
                 config.skipping = "fast"
 
         # The default keymap.
