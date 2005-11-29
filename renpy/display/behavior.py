@@ -162,6 +162,8 @@ class SayBehavior(renpy.display.layout.Null):
 
             if renpy.game.preferences.skip_unseen:
                 return True
+            elif renpy.config.skipping == "fast":
+                return True
             elif renpy.game.context().seen_current(True):
                 return True
 
