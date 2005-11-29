@@ -579,13 +579,33 @@ label speedtest:
     e "Thanks for viewing the secret speed test."
 
     return
+
+label developer:
+
+    scene black
+
+    # It's bad form to change a config variable outside of an init
+    # block. We're only doing this to help test the game. Don't do
+    # it in your own game.
+    $ config.developer = True
+
+    "Developer mode enabled. You can now use '>' to warp to the next
+     menu."
+
+    $ config.log = "log.txt"
+
+    "Logging enabled. You can now find a log of this game in log.txt."
+
+    return
     
-# Setup the secret key for the speedtest.
+# Setup the secret keys for the speedtest and developer mode.
 init:
     python:
         config.keymap['speedtest'] = [ 'S' ]
-        config.underlay.append(renpy.Keymap(speedtest=renpy.curried_call_in_new_context('speedtest')))
-
+        config.keymap['developer'] = [ 'D' ]
+        config.underlay.append(renpy.Keymap(
+            speedtest=renpy.curried_call_in_new_context('speedtest'),
+            developer=renpy.curried_call_in_new_context('developer')))
 
 init:
 
@@ -733,6 +753,13 @@ init:
     $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
                         ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
                         ctc_position="fixed")
+
+    $ equote = Character('Eileen',  color=(200, 255, 200, 255),
+                         who_suffix = ':', what_prefix='"', what_suffix='"')
+
+    $ eweird = Character('Eileen', color=(200, 255, 200, 255),
+                         what_underline=True, window_left_margin=200,
+                         window_yminimum=300)
 
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
@@ -1352,15 +1379,36 @@ label demonstrate:
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
 
-        "Potpourri, added in 5.1.2.":
+        "Character Objects, added in 5.2.1.":
 
-            e "Welcome to the potpourri section of the demo."
+            e "The Character object is used to declare characters, and
+               it can also be used to customize things about how a
+               character speaks."
 
-            e "Here, we demonstrate features that don't fit in any of
-               the other sections, but don't warrant their own
-               section."
+            e "By supplying it with the appropriate arguments, we can
+               really change around the feel of the game."
 
-            ectc "Here, we demonstrate a click to continue
+            e "In this section, we'll demonstrate some of what can be
+               accomplished by customizing character objects."
+
+            equote "By supplying what_prefix and what_suffix arguments
+                    to a Character object, we can automatically add
+                    things before each line of text."
+
+            equote "This is a lot easier than having to put those
+                    quotes in by hand."
+
+            equote "We can also use who_prefix and who_suffix to
+                    add text to the name of the speaker."
+
+            eweird "We can also supply arguments to the Character
+                    object that customize the look of the character
+                    name, the text that is being said, and the window
+                    itself."
+
+            eweird "These can really change the look of the game."
+
+            ectc "Finally, we demonstrate a click to continue
                   indicator. In this example, it's nestled in with the
                   text."
 
