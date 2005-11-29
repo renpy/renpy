@@ -1,3 +1,6 @@
+New in Ren'Py 5.2.1
+-------------------
+
 Added a command that allows the user to skip to the next
 choice. Primarily intended for developers, this feature needs to be
 enabled by setting config.fast_skipping to True before it can be
