@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.1.5"
-script_version = 5001003
-savegame_suffix = "-5.1.4.save"
+version = "Ren'Py 5.2.1"
+script_version = 5002001
+savegame_suffix = "-5.2.1.save"
 
 
 # Can be first, because has no dependencies, and may be imported
@@ -12,7 +12,7 @@ savegame_suffix = "-5.1.4.save"
 import renpy.game
 
 # Should probably be early, as we will add it as a base to serialized things.
-import renpy.object # ?
+import renpy.object 
 
 import renpy.ast
 import renpy.curry
@@ -46,7 +46,9 @@ import renpy.audio.sound
 import renpy.audio.music
 
 import renpy.ui
+
 import renpy.lint
+import renpy.warp
 
 import renpy.exports
 import renpy.config # depends on lots.

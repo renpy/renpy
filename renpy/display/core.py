@@ -751,7 +751,7 @@ class Interface(object):
 
         self.old_scene = self.compute_scene(scene_lists)        
 
-        if renpy.config.overlay_during_wait and old_old_scene:
+        if renpy.config.overlay_during_with and old_old_scene:
             for i in renpy.config.overlay_layers:
                 self.old_scene[i] = old_old_scene[i]
 
@@ -888,7 +888,7 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
-        self.suppress_transition |= renpy.config.skipping
+        self.suppress_transition = self.suppress_transition or renpy.config.skipping
 
         ## Safety condition, prevents deadlocks.
         if trans_pause:

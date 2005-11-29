@@ -492,7 +492,7 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
-                if i == "fast":
+                elif i == "fast":
                     # Automatically closes.
                     tsl.pop()
 
@@ -671,7 +671,7 @@ class Text(renpy.display.core.Displayable):
         if line:
             lines.append(line)
             lineheights.append(lineheight)
-            linewidths.append(curwidth)
+            linewidths.append(linewidth + curwidth)
 
         laidout_length += len(lines)
 
@@ -820,7 +820,6 @@ class Text(renpy.display.core.Displayable):
 
             if self.slow_done:
                 self.slow_done()
-
 
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 

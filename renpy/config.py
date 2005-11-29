@@ -67,8 +67,12 @@ debug_image_cache = False
 # Should we allow skipping at all?
 allow_skipping = True
 
-# Are we currently skipping?
-skipping = False
+# Should we allow fast skipping?
+fast_skipping = False
+
+# Are we currently skipping? If so, how fast?
+# May be "slow", "fast", or None.
+skipping = None
 
 # The delay while we are skipping say statements.
 skip_delay = 75
@@ -111,7 +115,7 @@ top_layers = [ ]
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
-overlay_during_wait = True
+overlay_during_with = True
 
 # True if we want to allow the fast dissolve.
 enable_fast_dissolve = True
@@ -135,6 +139,7 @@ keymap = dict(
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
     hide_windows = [ 'mouseup_2', 'h' ],
+    launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -156,6 +161,7 @@ keymap = dict(
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
+    fast_skip = [ '>' ],
 
     # These control the bar.
     bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
@@ -201,6 +207,16 @@ framerate = None
 
 # The number of frames that Ren'Py has shown.
 frames = 0
+
+# A text editor that is launched at the location of the current
+# statement.
+editor = None
+
+# Enable developer mode?
+developer = False
+
+# A logfile that logging messages are sent to.
+log = None
 
 del renpy
 

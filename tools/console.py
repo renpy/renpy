@@ -18,18 +18,17 @@ def extra_imports():
     import encodings.raw_unicode_escape
     import math
     import datetime
-    import glob
 
 def main():
 
-    renpy_base = os.path.dirname(sys.argv[0])
-    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
-    renpy_base = os.path.abspath(renpy_base)
+    dirname = os.path.dirname(sys.argv[0])
 
-    # Add paths.
-    sys.path.append(renpy_base + "/module")
-    sys.path.append(renpy_base)
-    
+    if dirname:
+        os.chdir(dirname)
+
+    # Add the path to the module.
+    sys.path.append("module")
+
     name = os.path.basename(sys.argv[0])
 
     if name.find(".") != -1:
@@ -42,9 +41,6 @@ def main():
     op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
-    op.add_option('--lock', dest='lock', default=None, action='store',
-                  help='If True, produce locked version of the .rpyc files.')
-
     op.add_option('--python', dest='python', default=None,
                   help='Run the argument in the python interpreter.')
 
@@ -54,20 +50,14 @@ def main():
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
 
-
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
     options, args = op.parse_args()
 
     if options.python:
-        sys.argv = [ options.python ] + args
-        execfile(renpy_base + "/" + options.python, globals(), globals())
+        execfile(options.python)
         sys.exit(0)
-
-    # If we made it this far, we will be running the game as Ren'Py.
-
-    os.chdir(renpy_base)
 
     if not options.lint:
         import renpy.display.presplash

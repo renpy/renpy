@@ -18,6 +18,12 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
+    # Set this to true to enable some developer-specific
+    # functionality. It should be false in a finished game.
+    # Read the "Developer Tools" section of the reference
+    # to see what this enables.
+    $ config.developer = False
+
     # Declare the images that are used in the program.
 
     # Backgrounds.
@@ -32,11 +38,12 @@ init:
     image eileen vhappy = "9a_vhappy.png"
     image eileen concerned = "9a_concerned.png"
 
-    # A character object. This object lets us have the character say
+    # Character objects. These lets us have the character say
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
 
-    $ e = Character('Eileen', color=(200, 255, 200, 255))
+    $ e = Character('Eileen', color=(200, 255, 200, 255))    
+    $ girl = Character('Girl')
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -65,6 +72,7 @@ label start:
     scene bg washington with fade
     show eileen vhappy with dissolve
 
+
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()
@@ -72,7 +80,7 @@ label start:
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
-    "Girl" "Hi, and welcome to the %(version)s demo program."
+    girl "Hi, and welcome to the %(version)s demo program."
 
     # This instantly replaces the very happy picture of Eileen with
     # one showing her merely happy. It demonstrates how the show
@@ -80,8 +88,8 @@ label start:
     show eileen happy
   
     # Another line of dialogue.
-    "Girl" "My name is Eileen, and while I plan to one day star in a
-            real game, for now I'm here to tell you about Ren'Py."
+    girl "My name is Eileen, and while I plan to one day star in a
+          real game, for now I'm here to tell you about Ren'Py."
 
     # This line used the e character object, which displays Eileen's
     # name in green. The use of a short name for a character object
@@ -571,13 +579,33 @@ label speedtest:
     e "Thanks for viewing the secret speed test."
 
     return
+
+label developer:
+
+    scene black
+
+    # It's bad form to change a config variable outside of an init
+    # block. We're only doing this to help test the game. Don't do
+    # it in your own game.
+    $ config.developer = True
+
+    "Developer mode enabled. You can now use '>' to warp to the next
+     menu."
+
+    $ config.log = "log.txt"
+
+    "Logging enabled. You can now find a log of this game in log.txt."
+
+    return
     
-# Setup the secret key for the speedtest.
+# Setup the secret keys for the speedtest and developer mode.
 init:
     python:
         config.keymap['speedtest'] = [ 'S' ]
-        config.underlay.append(renpy.Keymap(speedtest=renpy.curried_call_in_new_context('speedtest')))
-
+        config.keymap['developer'] = [ 'D' ]
+        config.underlay.append(renpy.Keymap(
+            speedtest=renpy.curried_call_in_new_context('speedtest'),
+            developer=renpy.curried_call_in_new_context('developer')))
 
 init:
 
@@ -725,6 +753,13 @@ init:
     $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
                         ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
                         ctc_position="fixed")
+
+    $ equote = Character('Eileen',  color=(200, 255, 200, 255),
+                         who_suffix = ':', what_prefix='"', what_suffix='"')
+
+    $ eweird = Character('Eileen', color=(200, 255, 200, 255),
+                         what_underline=True, window_left_margin=200,
+                         window_yminimum=300)
 
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
@@ -1344,15 +1379,36 @@ label demonstrate:
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
 
-        "Potpourri, added in 5.1.2.":
+        "Character Objects, added in 5.2.1.":
 
-            e "Welcome to the potpourri section of the demo."
+            e "The Character object is used to declare characters, and
+               it can also be used to customize things about how a
+               character speaks."
 
-            e "Here, we demonstrate features that don't fit in any of
-               the other sections, but don't warrant their own
-               section."
+            e "By supplying it with the appropriate arguments, we can
+               really change around the feel of the game."
 
-            ectc "Here, we demonstrate a click to continue
+            e "In this section, we'll demonstrate some of what can be
+               accomplished by customizing character objects."
+
+            equote "By supplying what_prefix and what_suffix arguments
+                    to a Character object, we can automatically add
+                    things before each line of text."
+
+            equote "This is a lot easier than having to put those
+                    quotes in by hand."
+
+            equote "We can also use who_prefix and who_suffix to
+                    add text to the name of the speaker."
+
+            eweird "We can also supply arguments to the Character
+                    object that customize the look of the character
+                    name, the text that is being said, and the window
+                    itself."
+
+            eweird "These can really change the look of the game."
+
+            ectc "Finally, we demonstrate a click to continue
                   indicator. In this example, it's nestled in with the
                   text."
 
@@ -1414,7 +1470,7 @@ init:
     $ style.imagemap.activate_sound = 'click.wav'
     $ library.enter_sound = 'click.wav'
     $ library.exit_sound = 'click.wav'
-    $ library.sample_sound = "18005551212.wav"
+    $ library.sample_sound = "18005551212.ogg"
 
     # Select the transitions that are used when entering and exiting
     # the game menu.

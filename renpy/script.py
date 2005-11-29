@@ -45,6 +45,8 @@ class Script(object):
         walking the various ASTs to initialize this Script object.
         """
 
+        self.key = None
+
         self.namemap = { }
         self.initcode = [ ]
         self.all_stmts = [ ]
@@ -120,24 +122,42 @@ class Script(object):
 
             stmts = renpy.parser.parse(dir + "/" + fn)
 
+            data = { }
+            data['version'] = script_version
+            data['key'] = renpy.game.options.lock or 'unlocked'
+
             f = file(dir + "/" + fn + "c", "wb")
-            f.write(dumps((script_version, stmts), -1).encode('zlib'))
+            f.write(dumps((data, stmts), -1).encode('zlib'))
             f.close()
 
         elif fn.endswith(".rpyc"):
+
+            # When locking, regenerate all files.
+            if renpy.game.options.lock:
+                return False
+            
             f = renpy.loader.load(fn)
 
             try:
-                version, stmts = loads(f.read().decode('zlib'))
+                data, stmts = loads(f.read().decode('zlib'))
             except ValueError:
                 return False
 
-            if version != script_version:
+            if not isinstance(data, dict):
                 return False
-            
+
+            if data['version'] != script_version:
+                return False
+
             f.close()
         else:
             return False
+
+        if self.key is None:
+            self.key = data['key']
+        elif self.key != data['key']:
+            raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
+            
 
         # All of the statements found in file, regardless of nesting
         # depth.

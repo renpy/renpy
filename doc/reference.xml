@@ -5,7 +5,7 @@
   <p>
     <b>Last Updated:</b> <!-- date -->
   </p>
-    
+
   <toc/>
     
   <p>
@@ -795,6 +795,8 @@ init:
     image eileen concerned = Image("9a_concerned.png")
   </example>
 
+  <!-- func LiveComposite -->
+
   <!-- func ImageReference -->
 
   <!-- func Solid -->
@@ -1295,13 +1297,18 @@ the label given by that string.
     including a label statement with the given name as the statement
     immediately following the call statement. An explicit label is
     required here to ensure that saved games with return stacks can
-    return to the proper place when loaded on a changed script. On
-    the other hand, from clauses may be distracting when a game is
-    still under development. We provide with Ren'Py a program, called
+    return to the proper place when loaded on a changed script. On the
+    other hand, from clauses may be distracting when a game is still
+    under development. We provide with Ren'Py a program, called
     "add_from", that adds from clauses to all bare calls in any game
-    directory. This program should be run before a final release of
-    your game is made. <b>Be sure to make a backup of your game
-      directories before running add_from.</b>
+    directory. It can be found in tools/add_from, although it needs to
+    be run from the base directory. The easiest way to do this on
+    windows is by running tools/game_add_from.bat. It should be run
+    before a final release of your game is made. <b>Be sure to make a
+    backup of your game directories before running add_from.</b> Also
+    note that add_from produces .bak files for all files it can
+    change, so delete them when you're satisfied that everything
+    worked.
 
   </p>
 
@@ -1526,11 +1533,13 @@ its own window, until just after the init code has finished
 running. The size of the window is determined by the size of the 
 presplash image, and we attempt to center this window on the screen.
 
-<p></p>
-The name of the game directory is also used to select a default
-archive. This archive is contained in the files game/game.rpi and
-game/game.rpa if the game directory exists, and the files game.rpi and
-game.rpa if it does not. 
+<p></p> 
+
+
+The name of the game directory is also used to select a
+default archive. This archive is contained in the file game/game.rpa
+if the game directory exists, and the file game.rpa in the base
+directory if it does not.
 
   </p><p> 
 
@@ -1901,13 +1910,15 @@ e "Pleased to meet you, %(name)s."
 
   <!-- func renpy.transition -->
 
+  <!-- func renpy.checkpoint -->
+
+  <!-- func renpy.block_rollback -->
+
   <!-- func renpy.restart_interaction -->
 
   <!-- func renpy.full_restart -->
 
   <!-- func renpy.quit -->
-
-  <!-- func renpy.watch -->
 
   <!-- func renpy.loadable -->
 
@@ -1934,6 +1945,10 @@ to the save file.
   <!-- func renpy.invoke_in_new_context -->
 
   <!-- func renpy.jump_out_of_context -->
+
+  <!-- func renpy.watch -->
+
+  <!-- func renpy.get_filename_line -->
 
   <p>
     Finally, there exists an object named renpy.random. This object is
@@ -2261,6 +2276,11 @@ used by said transitions have finished loading.
       game.
     </var>
 
+    <var name="config.fast_skipping" value="False">
+       Set this to True to allow fast skipping outside of developer
+mode.
+    </var>
+
     <var name="config.skip_delay" value="75">
       The amount of time that dialogue will be shown for, when
       skipping statements using ctrl, in milliseconds. (Although it's
@@ -2362,9 +2382,17 @@ layers. If a layer name is listed here, it should not be listed in
 config.layers.
 </var>
 
-<var name="config.overlay_during_wait" value="True" >
-True if we want overlays to be shown during wait statements, or False 
-if we'd prefer that they be hidden during the wait statements.
+<var name="config.overlay_during_with" value="True" >
+True if we want overlays to be shown during with statements, or False 
+if we'd prefer that they be hidden during the with statements.
+</var>
+
+<var name="config.with_callback" value="None">
+If not None, this should be a function that is called when a with
+statement occurs. This function can be responsible for putting up
+transient things on the screen during the transition. The function is
+called with a single argument, which is the transition that is 
+occuring.
 </var>
 
 <var name="config.enable_fast_dissolve" value="True" >
@@ -2419,6 +2447,14 @@ safe to auto-forward. The intent is that this can be used by a voice
 system to disable auto-forwarding when a voice is playing.
 </var>
 
+<var name="config.auto_choice_delay" value="None">
+If not None,this variable gives a number of seconds that Ren'Py will pause at an
+in-game menu before picking a random choice from that menu. We'd
+expect this variable to always be set to None in released games, but
+setting it to a number will allow for automated demonstrations of
+games without much human interaction.
+</var>
+
 <var name="config.font_replacement_map" value="{ }">
 This is a map from (font, bold, italics) to (font, bold, italics),
 used to replace a font with one that's specialized as having bold
@@ -2434,6 +2470,25 @@ rather than a bold version of the italic vera.
 <var name="config.interact_callbacks" value="...">
 A list of callbacks that are called (without any arguments) at the start (or
 restart) of each interaction. 
+</var>
+
+<var name="config.editor" value="None">
+If not None, this is expected to be a command-line for an editor that
+is invoked when the launch_editor (normally shift-E) key is
+pressed. There are two subsitutions that make sense here. %(filename)s
+is replaced with the filename of the currently-executing line of
+Ren'Py code. %(line)d is replaced with the line number of the
+currently-executing line of Ren'Py code.
+</var>
+
+<var name="config.log" value="None">
+If not None, this is expected to be a filename. Much of the text shown
+to the user by say or menu statements will also be logged to this
+file.
+</var>
+
+<var name="config.developer" value="False">
+    If set to True, developer mode is enabled.
 </var>
 
 <var name="library.file_page_cols" value = "2" >
@@ -2487,6 +2542,24 @@ evaluates to false, the menu choice is disabled.
 Thi is used to customize the choices on the game menu. Please read the
 section on customizing the main and game menus for more details on the
 contents of this variable.
+</var>
+
+<var name="library.main_menu_positions" value='None'>
+If not None, this is a map between the default label for buttons on
+the main menu, and a dictionary containing properties that are applied
+to that button. This provides a simple way of customizing the main
+menu by changing where buttons are located on the screen. Please note
+that this disables the usual button-placement algorithm, so if one
+button is positioned this way, all must be.
+</var>
+
+<var name="library.game_menu_positions" value='None'>
+If not None, this is a map between the default label for buttons on
+the game menu, and a dictionary containing properties that are applied
+to that button. This provides a simple way of customizing the game 
+menu by changing where buttons are located on the screen. Please note
+that this disables the usual button-placement algorithm, so if one
+button is positioned this way, all must be.
 </var>
 
 <var name="library.preferences" value='{ ... }'>
@@ -3163,7 +3236,16 @@ There are two tags, {w} and {p}, that can only be used in
 dialogue. These tags cause a pause in the display of text, until the
 user clicks to continue, or an auto-forward occurs. This allows text
 to be displayed incrementally. The difference between {w} and {p} is
-that {p} adds a line break at the pause point.
+that {p} adds a line break at the pause point. They do not use a
+closing tag.
+</p>
+
+<p>
+There is a tag, {fast}, that only has an effect if the text speed is
+not infinite. This tag specifies where slow text should begin
+displaying from. Use this if you have two lines of dialogue where the
+second is an extension of the first. (This is an alternate way of
+achieving the pause effect.) This tag does not take a closing tag.
 </p>
 
 <p>
@@ -3243,19 +3325,34 @@ probably drive your users mad.
     stem, the newer one of them is chosen, meaning all games get this
     performance improvement.)
   </p>
+   
+  <p>
+Running Ren'Py with the --lock <i>key</i> command-line option will
+produce .rpyc files that are locked. These files will refuse to
+operate if a .rpyc file locked with a different key, or any .rpy file,
+would be loaded. Please note that this feature is discouraged, as it
+prevents the easy production of patches that work around issues in
+your game.
+</p>
+
 
   <p>
-    Images can be archived using the archiver.py or archiver.exe
-    programs that ship as part of Ren'Py. To use this, one can change
+    Images can be archived using the tools/archiver program
+    that ships as part of Ren'Py. To use this, one can change
     into the game directory and run a command like:
   </p>
   
   <p>
-    <kbd>../archiver.exe images *.png *.jpg</kbd> 
+    <kbd>../tools/archiver images *.png *.jpg</kbd> 
   </p>
 
   <p>
-    This will create the files images.rpa and images.rpi in the game
+    Alternatively on Windows, one can run tools/game_archive_images.bat
+    directly, which will do the same thing.
+  </p>
+
+  <p>
+    This will create the file images.rpa in the game
     directory. One can then add to the script a line like:
   </p>
 
@@ -3381,6 +3478,7 @@ keymap = dict(
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
     hide_windows = [ 'mouseup_2', 'h' ],
+    launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -3402,6 +3500,7 @@ keymap = dict(
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
     toggle_skip = [ 'K_TAB' ],
+    fast_skip = [ '>' ],
     )
 </example>
 
@@ -3608,8 +3707,6 @@ The image manipulators are:
 
 <!-- func im.Crop -->
 
-<!-- func im.Composite -->
-
 <!-- func im.Scale -->
 
 <!-- func im.Rotozoom -->
@@ -3621,6 +3718,8 @@ The image manipulators are:
 <!-- func im.ramp -->
 
 <!-- func im.Tile -->
+
+<!-- func im.Composite -->
 
 <h3>Low-Level Audio Functions</h3>
 
@@ -3702,7 +3801,9 @@ currently known last change time to the persisted last change time.
 This section describes how the content of the various menus can be
 customized. If you just want to change the look of the menus (to the
 extent made possible by the style system), use styles. To change just
-the text of menu items, consider using library.translations.
+the text of menu items, consider using library.translations. To change
+just the position of buttons in a menu, use
+library.game_menu_positions and library.main_menu_positions.
 </p>
 
 <h4>Main Menu</h4>
@@ -3829,6 +3930,92 @@ appropriate list in library.preferences.
 <!-- func _SliderPreference -->
 
 <!-- func _VolumePreference -->
+
+<h3>Developer Tools</h3>
+
+<p>
+Ren'Py includes a number of features to make a developer's life
+easier. Many of them need the variable <a href="#config.developer">config.developer</a> to be 
+set to True to operate.
+</p>
+
+<h4>Editor Support</h4>
+
+<p>
+The <a href="#config.editor">config.editor</a> variable allows a
+developer to specify an editor command that is run when the
+launch_editor keypress (by default, shift-E) occurs.
+</p>
+
+<p>
+Please see <a href="http://www.bishoujo.us/renpy/scite.html">http://www.bishoujo.us/renpy/scite.html</a>
+for information about how to integrate Ren'Py with the SciTE text editor.
+</p>
+
+<h4>Fast Skipping</h4>
+
+<p>
+When config.developer is True, pressing the fast_skip key (by
+default, '>') causes the the game to immediately skip to the next important
+interaction. For this purpose, an important interaction is one that is
+not caused by a say statement, transition, or pause command. Usually,
+this means skipping to the next menu, but it will also stop when 
+user-defined forms of interaction occur.
+</p>
+
+<h4>Warping to a Line</h4>
+
+<p>
+Ren'Py supports warping to a line in the script, without the developer
+to play through the entire game to get there. While this warping
+technique has a number of warnings associated with it, it still may be
+useful in providing a live preview.
+</p>
+
+<p>
+To invoke warping, run Ren'Py with the --warp command-line argument
+followed by a filename:line combination, to specify where you would
+like to warp to. For example:
+</p>
+
+<example>
+run_game --warp script.rpy:458
+</example>
+
+<p>
+When warping is invoked, Ren'Py does a number of things. It first
+finds all of the scene statements in the program. It then tries to
+find a path from the scene statements to every reachable statement in
+the game. It then picks the reachable statement closest to, but
+before or at, the given line. It works backwards from that statement
+to a scene statement, recording the path it took. Ren'Py then executes
+the scene statement and any show or hide statements found along that
+path. Finally, it transfers control to the found statement.
+</p>
+
+<p>
+There are a number of fairly major caveats to the warp feature. The
+first is that it only examines a single path, which means that while
+the path may be representative of some route of execution, it's
+possible that there may be a bug along some other route. In general,
+the path doesn't consider game logic, so it's also possible to have a
+path that isn't actually reachable. (This is only really a problem on
+control-heavy games, espcially those that use alot of python code.
+</p>
+
+<p>
+The biggest problem, though, is that no python code is executed before
+the statement that is warped to. This means that all variables will be
+uninitalized, which can lead to crashes when they are used. To
+overcome this, one can define a label 'after_warp', which is called
+after a warp but before the warped-to statement executes. The code
+reached by this label can set up variables in the program, and then
+return to the preview.
+</p>
+
+<p>
+The warp feature requires config.developer to be True to operate.
+</p>
 
 
 <h3>Default Definitions</h3>

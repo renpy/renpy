@@ -16,13 +16,33 @@ def index_archives():
 
     for prefix in renpy.config.archives:
 
+        fn = transfn(prefix + ".rpa")
+
         try:
+            fn = transfn(prefix + ".rpa")
+            f = file(fn, "rb")
+            l = f.readline()
+
+            # 2.0 Branch.
+            if l.startswith("RPA-2.0 "):
+                offset = int(l[8:], 16)
+                f.seek(offset)
+                index = loads(f.read().decode("zlib"))
+                archives.append((prefix, index))
+                f.close()
+                continue
+
+            # 1.0 Branch.
+        
+            f.close()
+            
             fn = transfn(prefix + ".rpi")
             index = loads(file(fn, "rb").read().decode("zlib")) 
             archives.append((prefix, index))
         except:
             if renpy.config.debug:
                 raise
+            
 
 def listdirfiles():
     """
