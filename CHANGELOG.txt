@@ -1,3 +1,11 @@
+Fixed a bug that affected voice. This required splitting
+config.interact_callbacks into config.interact_callbacks and
+config.start_interact_callbacks. The former is called exactly once per
+interaction. [doc]
+
+Fixed a bug with non-ascii text and the new log feature.
+
+
 New in Ren'Py 5.2.1
 -------------------
 

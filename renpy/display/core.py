@@ -849,6 +849,9 @@ class Interface(object):
         # These things can be done once per interaction.
 
         try:
+            
+            for i in renpy.config.start_interact_callbacks:
+                i()
 
             repeat = True
 

@@ -828,11 +828,15 @@ def log(msg):
         return
 
     if not logfile:
+        import codecs
+
         logfile = file(renpy.config.log, "a")
+        if not logfile.tell():
+            logfile.write(codecs.BOM_UTF8)
 
     import textwrap
 
-    print >>logfile, textwrap.fill(msg)
+    print >>logfile, textwrap.fill(msg).encode("utf-8")
     logfile.flush()
     
 

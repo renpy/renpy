@@ -69,4 +69,4 @@ init -10:
             _voice.play = None
             _voice.sustain = False
         
-        config.interact_callbacks.append(voice_interact)
+        config.start_interact_callbacks.append(voice_interact)

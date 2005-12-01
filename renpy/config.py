@@ -170,9 +170,12 @@ keymap = dict(
     bar_increase = [ 'K_RIGHT' ],
     )
 
-# A list of functions that are called at least once during each
-# interaction.
+# A list of functions that are called when an interaction is started or
+# restarted.
 interact_callbacks = [ ]
+
+# A list of functions that are called when an interaction is started.
+start_interact_callbacks = [ ]
 
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
