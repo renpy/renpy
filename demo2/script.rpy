@@ -72,7 +72,6 @@ label start:
     scene bg washington with fade
     show eileen vhappy with dissolve
 
-
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()

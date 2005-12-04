@@ -161,6 +161,13 @@ class WidgetStyle(object):
     def length(self, text):
         return 1
 
+text_regexp = re.compile(r"""(?x)
+      (?P<space>[ \u200b])
+    | \{(?P<tag>[^{}]+)\}
+    | (?P<untag>\{\{)
+    | (?P<newline>\n)
+    | (?P<word>[^ \n\{]+)
+    """)
     
 def text_tokenizer(s, style):
     """
@@ -185,15 +192,7 @@ def text_tokenizer(s, style):
     the name of the tag, without any enclosing braces.
     """
 
-    regexp = r"""(?x)
-      (?P<space>\ )
-    | \{(?P<tag>[^{}]+)\}
-    | (?P<untag>\{\{)
-    | (?P<newline>\n)
-    | (?P<word>[^ \n\{]+)
-    """
-
-    for m in re.finditer(regexp, s):
+    for m in text_regexp.finditer(s):
 
         if m.group('space'):
             yield 'space', m.group('space')

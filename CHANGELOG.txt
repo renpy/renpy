@@ -1,3 +1,11 @@
+Renamed extras/chinese.rpy to extras/east_asian.rpy, and changed the
+line breaking algorithm to one that can be used with both Chinese and
+Japanese text. It may also be usable with Korean, but I'm not sure
+about that. 
+
+Made the zero-width-space character break lines if necessary, so it
+can be used to have auto-breaking with Thai.
+
 Fixed a bug that affected voice. This required splitting
 config.interact_callbacks into config.interact_callbacks and
 config.start_interact_callbacks. The former is called exactly once per
