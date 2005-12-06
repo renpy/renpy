@@ -297,6 +297,8 @@ class Pixellate(Transition):
 
     def __init__(self, time, steps, old_widget=None, new_widget=None):
 
+        time = float(time)
+
         if not renpy.display.module.can_pixellate:
             time = 0
 
