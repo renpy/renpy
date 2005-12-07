@@ -177,6 +177,8 @@ def main(basename):
         basepath = basename
     elif os.path.isdir("game"):
         basepath = "game"
+    elif os.path.isdir("data"):
+        basepath = "data"
     else:
         basepath = "."
 
@@ -188,18 +190,18 @@ def main(basename):
 
     renpy.config.archives = [ ]
 
-    try:
-        renpy.loader.transfn(basename + ".rpa")
-        renpy.config.archives.append(basename)
-    except:
-        pass
+    for i in basename, "game", "data":
 
-    try:
-        if "game" not in renpy.config.archives:
-            renpy.loader.transfn("game.rpa")
-            renpy.config.archives.append("game")
-    except:
-        pass
+        if i in renpy.config.archives:
+            continue
+        
+        try:
+            renpy.loader.transfn(i + ".rpa")
+            renpy.config.archives.append(i)
+            continue
+        except:
+            continue
+
         
     renpy.config.backup()
 
