@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 
-import os.path
-
-import codecs
 import optparse
-import traceback
 import os
-import re
+import os.path
 import sys
 
 # Extra things used for distribution.
@@ -52,7 +48,7 @@ def main():
                   help='Run a number of expensive tests, to try to detect errors in the script.')
 
     op.add_option('--profile', dest='profile', action='store_true', default=False,
-                  help='Causes te amount of time it takes to draw the screen to be profiled.')
+                  help='Causes the amount of time it takes to draw the screen to be profiled.')
 
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
@@ -67,16 +63,22 @@ def main():
         execfile(renpy_base + "/" + options.python, globals(), globals())
         sys.exit(0)
 
-    # If we made it this far, we will be running the game as Ren'Py.
-
+    # If we made it this far, we will be running the game, or at least
+    # doing a lint.
     os.chdir(renpy_base)
 
+    # Force windib on windows, unless the user explicitly overrides.
+    if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
+        os.environ['SDL_VIDEODRIVER'] = 'windib'
+
+    # Show the presplash.
     if not options.lint:
         import renpy.display.presplash
         renpy.display.presplash.start(options.game)
 
     # Load up all of Ren'Py, in the right order.
     import renpy
+    renpy.import_all()
 
     renpy.game.options = options
 
@@ -84,6 +86,8 @@ def main():
         renpy.main.main(options.game)
             
     except Exception, e:
+        import codecs
+        import traceback
 
         f = file("traceback.txt", "wU")
 

@@ -1,4 +1,5 @@
 Changes requring updates to user code are flagged with +++.
+Major bug fixes that could affect many systems are indicated with !!!.
 
 +++ 
 Alpha channels are now supported on text colors. When rendering
@@ -18,6 +19,13 @@ about that.
 
 Made the zero-width-space character break lines if necessary, so it
 can be used to have auto-breaking with Thai.
+
+!!!
+Now, we force the presplash to be shown using windib. This can fix
+potential directx incompatibility bugs with Windows XP. This only is
+an issue if a game has a presplash, the bug was fixed for regular code
+in 5.1.1. The presplash is also shown faster now, before the rest of
+Ren'Py loads.
 
 Fixed a bug that affected voice. This required splitting
 config.interact_callbacks into config.interact_callbacks and the new
