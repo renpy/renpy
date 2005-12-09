@@ -39,6 +39,9 @@ Now, invoking Ren'Py with --profile on the command line does the same
 thing as setting config.profile in the script, without requiring the
 user to actually change the script.
 
+Moved most of the code that used to be in run_game.py into
+renpy/bootstrap.py (the renpy.bootstrap module.) This shouldn't really
+affect anything, but it does make run_game.py a bit cleaner.
 
 New in Ren'Py 5.2.1
 -------------------
