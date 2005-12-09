@@ -155,7 +155,7 @@ init -1000:
         style.default.italic = False
         style.default.underline = False
         style.default.drop_shadow = (1, 1)
-        style.default.drop_shadow_color = (0, 0, 0, 128)
+        style.default.drop_shadow_color = (0, 0, 0, 255)
         style.default.minwidth = 0
         style.default.textalign = 0
         style.default.text_y_fudge = 0

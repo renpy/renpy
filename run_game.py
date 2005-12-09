@@ -51,9 +51,11 @@ def main():
     op.add_option('--lint', dest='lint', default=False, action='store_true',
                   help='Run a number of expensive tests, to try to detect errors in the script.')
 
+    op.add_option('--profile', dest='profile', action='store_true', default=False,
+                  help='Causes te amount of time it takes to draw the screen to be profiled.')
+
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help='When the game exits, dumps a profile of memory usage.')
-
 
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')

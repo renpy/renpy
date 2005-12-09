@@ -1,3 +1,16 @@
+Changes requring updates to user code are flagged with +++.
+
++++ 
+Alpha channels are now supported on text colors. When rendering
+text with a color or drop_shadow_color having an alpha that is not
+255, that alpha is then used to scale the alpha channel of the drawn
+text. This basically means that alpha is now respected in text, wheras
+previously it was ignored. The default drop_shadow_color is now 
+(0, 0, 0, 255), for compatibility with the way drop shadows were
+rendered previously. If user code renders text with an alpha that is
+not 255, the alpha should be set to 255 to ensure the text is rendered
+the same way as before.
+
 Renamed extras/chinese.rpy to extras/east_asian.rpy, and changed the
 line breaking algorithm to one that can be used with both Chinese and
 Japanese text. It may also be usable with Korean, but I'm not sure
@@ -7,11 +20,16 @@ Made the zero-width-space character break lines if necessary, so it
 can be used to have auto-breaking with Thai.
 
 Fixed a bug that affected voice. This required splitting
-config.interact_callbacks into config.interact_callbacks and
-config.start_interact_callbacks. The former is called exactly once per
-interaction. [doc]
+config.interact_callbacks into config.interact_callbacks and the new
+config.start_interact_callbacks. The latter is called exactly once per
+interaction, while the former is called whenever an interaction starts
+or restarts. [doc]
 
-Fixed a bug with non-ascii text and the new log feature.
+Fixed a bug with non-ascii text and the new log feature. [doc]
+
+Now, invoking Ren'Py with --profile on the command line does the same
+thing as setting config.profile in the script, without requiring the
+user to actually change the script.
 
 
 New in Ren'Py 5.2.1

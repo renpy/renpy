@@ -202,7 +202,10 @@ def main(basename):
         except:
             continue
 
-        
+    if renpy.game.options.profile:
+        renpy.config.profile = True
+
+    # Backup the configuration.
     renpy.config.backup()
 
     # Initialize archives.

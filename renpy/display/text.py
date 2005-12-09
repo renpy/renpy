@@ -118,9 +118,27 @@ class TextStyle(object):
         if use_colors and self.color:
             color = self.color
 
+        r, g, b, a = color
+        color = (r, g, b, 255)
+
         font = self.get_font()
 
-        rv = font.render(text, antialias, color)
+        surf = font.render(text, antialias, color)
+
+        if a != 255 and renpy.display.module.can_map:
+
+            if not surf.get_masks()[3]:
+                surf = surf.convert_alpha()
+
+            rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            alpha = renpy.display.im.ramp(0, a)
+            identity = renpy.display.im.identity
+
+            renpy.display.module.map(surf, rv, identity, identity, identity, alpha)
+            
+        else:
+            rv = surf
+
         renpy.display.render.mutated_surface(rv)
         return rv, rv.get_size()
 
