@@ -1,3 +1,16 @@
+# This file contains code contributed by Brian Turcotte, the copyright
+# assignment follows:
+#
+# Copyright for nonlinear ramp code added to ImageDissolve is hereby
+# assigned to PyTom <pytom@bishoujo.us>.
+# 
+# And feel free to change, improve, fold, spindle, or mutilate it,
+# obviously.
+# 
+# Cheers, Brian Turcotte (shaja).
+
+
+
 import renpy
 from renpy.display.render import render
 import pygame
@@ -792,12 +805,89 @@ class ImageDissolve(Transition):
     @param ramplen: The number of pixels of ramp to use. This defaults
     to 8.
 
+    @param ramptype: Type of alpha ramp. Possible types are: linear, cube,
+    dcube, mcube. Default is linear. Non-linear types must have
+    ramplen >= 8. "cube": Ease in, sharp out. "dcube": Sharp in, sharp out.
+    "mcube": Ease in, ease out.
+
     @param reverse: This reverses the ramp and the direction of the window
     slide. When True, black pixels dissolve in first, and while pixels come
     in last.    
     """
 
-    def __init__(self, image, time, ramplen=8, reverse=False,
+    def generate_ramp(self, ramplen, ramptype, reverse):
+        """
+        Precomputes the ramp.
+        """
+
+        ramp = '\x00' * 256
+        
+        if ramptype == 'cube':
+            # make sure ramplen is big enough, to avoid div-by-0 errors
+            # Not much point in nonlinear if the size is that small, anyway
+            if ramplen >= 8:
+                table = []
+                for i in range(ramplen):
+                    table.append(i * i * i)
+                scale = max(table) / 255.0
+                for i in range(ramplen):
+                    #print i, table[i], table[i] / scale
+                    ramp += chr(int(table[i] / scale))
+            else:
+                ramptype = 'linear'
+                
+        elif ramptype == 'dcube':
+            if ramplen >= 8:
+                table = []
+                for i in range(ramplen / 2 - ramplen, ramplen / 2):
+                    table.append(i * i * i)
+                adj = abs(min(table))
+                for i in range(len(table)):
+                    table[i] += adj
+                scale = max(table) / 255.0
+                #print "scale:", scale
+                for i in range(ramplen):
+                    #print i, table[i], table[i] / scale
+                    ramp += chr(int(table[i] / scale))
+            else:
+                ramptype = 'linear'
+                
+        elif ramptype == 'mcube':
+            if ramplen >= 8:
+                ramplen = (ramplen / 2) * 2 # make sure it's even
+                table = []
+                for i in range(ramplen / 2):
+                    table.append(i * i * i)
+                adj = table[-1]
+                tmptable = []
+                for i in table:
+                    tmptable.append(i)
+                for i in range(1, len(table) + 1):
+                    tmptable.append(abs(table[len(table) - i] - adj) + adj)
+                table = tmptable
+                scale = max(table) / 255.0
+                #print "scale:", scale
+                for i in range(ramplen):
+                    #print i, table[i], table[i] / scale
+                    ramp += chr(int(table[i] / scale))
+            else:
+                ramptype = 'linear'
+
+        if ramptype == 'linear':
+            for i in range(ramplen):
+                ramp += chr(255 * i / ramplen)
+
+        ramp += '\xff' * 256
+
+        if reverse:
+            ramp = list(ramp)
+            ramp.reverse()
+            ramp = ''.join(ramp)
+
+        return ramp
+        
+        
+    def __init__(self, image, time, ramplen=8, ramptype='linear', reverse=False,
                  old_widget=None, new_widget=None):
 
         super(ImageDissolve, self).__init__(time)
@@ -813,23 +903,8 @@ class ImageDissolve(Transition):
 
         self.image = renpy.display.im.load_image(image)
 
-        # Precompute the ramp.
-
-        ramp = '\x00' * 256
-
-        for i in range(ramplen):
-            ramp += chr(255 * i / ramplen)
-
-        ramp += '\xff' * 256
-
-        if reverse:
-            ramp = list(ramp)
-            ramp.reverse()
-            ramp = ''.join(ramp)
-
-        self.ramp = ramp
+        self.ramp = self.generate_ramp(ramplen, ramptype, reverse)
         self.steps = ramplen + 256
-
         self.reverse = reverse
 
 
