@@ -3,6 +3,8 @@ import os
 import os.path
 from pickle import loads
 from cStringIO import StringIO
+import sys
+import types
 
 archives = [ ]
 
@@ -126,3 +128,41 @@ def transfn(name):
             return d + "/" + name
 
     raise Exception("Couldn't find file '%s'." % name)
+
+
+class RenpyImporter(object):
+    """
+    An importer, that tries to load modules from the places where Ren'Py
+    searches for data files.
+    """
+
+    def translate(self, fullname):
+        fn = fullname.replace(".", "/") + ".py"
+        if loadable(fn):
+            return fn
+
+        fn = fullname.replace(".", "/") + "/__init__.py"
+        if loadable(fn):
+            return fn
+
+        return None
+
+    def find_module(self, fullname, path=None):
+        if self.translate(fullname):
+            return self
+
+    def load_module(self, fullname):
+
+        filename = self.translate(fullname)
+        
+        mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
+        mod.__file__ = filename
+        mod.__loader__ = self
+        mod.__path__ = [ ]
+        exec load(filename) in mod.__dict__
+        return mod
+
+    def get_data(self, filename):
+        return load(filename).read()
+
+sys.meta_path.append(RenpyImporter())

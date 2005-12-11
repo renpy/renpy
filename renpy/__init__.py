@@ -8,17 +8,17 @@ savegame_suffix = "-5.2.1.save"
 
 def import_all():
 
-    # Can be first, because has no dependencies, and may be imported
-    # directly.
     import renpy.game
 
     # Should probably be early, as we will add it as a base to serialized things.
     import renpy.object 
 
+    # Adds in the Ren'Py loader.
+    import renpy.loader
+
     import renpy.ast
     import renpy.curry
     import renpy.execution
-    import renpy.loader
     import renpy.loadsave
     import renpy.parser
     import renpy.python # object
@@ -55,3 +55,8 @@ def import_all():
     import renpy.config # depends on lots.
     import renpy.store  # depends on everything.
     import renpy.main
+
+    # Import everything into renpy.exports, provided it isn't
+    # already there.
+    for k, v in globals().iteritems():
+        vars(renpy.exports).setdefault(k, v)

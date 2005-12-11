@@ -839,6 +839,13 @@ def log(msg):
     print >>logfile, textwrap.fill(msg).encode("utf-8")
     logfile.flush()
     
+def force_full_redraw():
+    """
+    Forces the screen to be redrawn in full. Call this after using pygame
+    to redraw the screen directly.
+    """
+
+    renpy.game.interface.display.full_redraw = True
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

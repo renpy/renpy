@@ -689,9 +689,10 @@ def py_exec_bytecode(bytecode, hide=False):
     exec marshal.loads(bytecode) in store, locals
 
         
-def py_exec(source, hide=False):
+def py_exec(source, hide=False, store=None):
 
-    store = vars(renpy.store)
+    if store is None:
+        store = vars(renpy.store)
 
     if hide:
         locals = { }

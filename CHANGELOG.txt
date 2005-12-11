@@ -1,5 +1,16 @@
-Changes requring updates to user code are flagged with +++.
+Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
+
+New in Ren'Py 5.2.2
+-------------------
+
+Ren'Py searches data [doc].
+
+ImageDissolve now supports a number of different kinds of alpha
+ramps. Along with the default linear, we now support cubic,
+double-cubic, and mirrored-double-cubic ramp types. These types of
+ramps allow for smoother or sharper ImageDissolve transtions. Thanks
+go to shaja for contributing the code that implements this.
 
 +++ 
 Alpha channels are now supported on text colors. When rendering
@@ -12,6 +23,11 @@ rendered previously. If user code renders text with an alpha that is
 not 255, the alpha should be set to 255 to ensure the text is rendered
 the same way as before.
 
+Now, user code can import python modules from the game directory
+and .rpa archives. A guide to using Python to extened Ren'Py can be
+found in doc/EXTENDING.txt. For now, it's just about how to use
+pygame code with Ren'Py.
+
 Renamed extras/chinese.rpy to extras/east_asian.rpy, and changed the
 line breaking algorithm to one that can be used with both Chinese and
 Japanese text. It may also be usable with Korean, but I'm not sure
@@ -20,7 +36,6 @@ about that.
 Made the zero-width-space character break lines if necessary, so it
 can be used to have auto-breaking with Thai.
 
-!!!
 Now, we force the presplash to be shown using windib. This can fix
 potential directx incompatibility bugs with Windows XP. This only is
 an issue if a game has a presplash, the bug was fixed for regular code
@@ -131,11 +146,13 @@ games without much human interaction.
 The kanamode.rpy extra has been updated to support some of the newer
 features, like slow text and auto-forward mode.
 
++++
 Archives now combine the index and the data into a single file. Now,
 instead of needing .rpa and .rpi files, only a .rpa file is needed
 (and is created). The code and the archiver have been updated to
 support this new format. The code still supports reading the old
-format, for compatibility purposes.
+format, for compatibility purposes. When archives are re-created, the
+.rpi file can be deleted with no ill effects.
 
 There is now a new function, renpy.block_rollback(), that prevents
 Ren'Py from rolling back through the point at which it was called.
@@ -164,6 +181,7 @@ accessed without going through the game menu. It also adds a quick
 load button to the main menu, which causes a load from this slot. The
 button is disabled if no quick save game exists.
 
++++
 To support this, changed the format of library.main_menu. Now, instead
 of being a list of pairs, library.main_menu is a list of triples. The
 new third component is an expression, which must evaluate to true for
@@ -199,7 +217,7 @@ actually implement much of the voice functionality until someone
 seriously proposes a voiced game, but I do want to add in the
 infrastructure.
 
-Increased the default rollback length to back 100, now that we have a
+Increased the default rollback length back to 100, now that we have a
 readback extra people can use if they want to. Updated readback so it
 works a little better.
 
@@ -218,6 +236,7 @@ statement like "show eileen happy onlayer high" to show the given
 image on the high layer. This image will not be removed when scene
 statements clear other layers, such as the default master layer.
 
++++
 To support the above, the parameters to renpy.show() changed in an
 incompatible way. If your code uses renpy.show(), it will need to be
 upgraded. Instead of considering the second and later parameters to be
@@ -285,6 +304,7 @@ Fixed a bug that prevented the various day-planners from working, in
 both the demo game and the DSE. (This was a bug in the game more so
 then a bug in Ren'Py proper.)
 
+!!!
 Fixed a bug on Windows that manifested with DirectX under some
 circumstances. We now use SDL's windib driver, which seems just as
 fast for the software surface stuff we're doing.
@@ -300,6 +320,7 @@ being needed after all.
 New in Ren'Py 5.1.0
 -------------------
 
++++
 There is now a new sound system, supporting playing up to 8 mp3, ogg
 vorbis, ogg speex, mod, or wav files at once. Midi can also be played,
 but is limited to one midi file at a time. Audio files can be read out
@@ -410,7 +431,9 @@ bonus characters is configurable in config.afm_bonus, which defaults
 to 25. Auto-forward-mode can be hidden from the user by setting 
 library.has_afm to False.
 
-The preferences screen has been redesigned, to have three columns.
++++
+The preferences screen has been redesigned, to have three
+columns. Code that manipulates library.preferences may need to be adjusted.
 
 Unicode support has been extended to names in the script. Now names in
 the script can contain unicode characters, as well as ascii
@@ -620,23 +643,27 @@ in the scripts/ directory. It's there as an example for people to
 learn from. This script has been updated to work with Ren'Py 4.8, and
 to fix a tense error.
 
+!!!
 Fixed another segfault in windows native midi support.
 
 
 New in 4.8.3
 ------------
 
+!!!
 Ren'Py no longer uses the psyco specializing compiler. The relatively
 small (about 2%) speed increase it gave wasn't worth the hassle
 involved in dealing with memory leaks and other semantic changes. This
 change significantly lowers Ren'Py's memory usage, and fixes a major
 memory leak that was introduced in the 4.8 series.
 
+!!!
 A number of race conditions were fixed in the windows native midi
 code. The upshot of this is that we can now play midi on windows
 without there being a small chance of crashing each time we start a
 new track.
 
++++
 The config.music_interact variable is gone. It's been replaced by
 config.interact_callbacks, which is a list of functions to call before
 each interaction. (This will help us support voice.)
@@ -658,6 +685,7 @@ instead only be manipulated in the aggregate.
 New in 4.8.2a
 -------------
 
+!!!
 Clicking preferences on the main menu jumpled to an undefined
 label. This is now fixed.
 
@@ -683,6 +711,7 @@ of unicode strings is an error.
 We apologize to the non-english-speaking world for not noticing this
 one sooner.
 
++++
 The main menu was moved out of the context that the main body of the
 game code executes in, into its own context. The only effect this
 should have on user code is that some of the menu options changed from
@@ -734,7 +763,8 @@ The ui.grid object now has a new argument, transpose, which allows
 widgets to be added down the columns first. It also is smarter about
 allocating space to subwidgets when xfill or yfill are set.
 
-The file entries in the load and save screens are now arraigned in a
++++
+The file entries in the load and save screens are now arrainged in a
 grid, which has the style file_picker_grid. This means that we should
 now be smarter in the presence of games of varying size, and we should
 wrap text if it gets too long. As part of this,
@@ -754,10 +784,12 @@ properties limit the size of the widgets that they are applied to, as
 if that widget was placed inside a ui.sizer(). (In fact, ui.sizer() is
 now implemented in terms of these properties.) 
 
+!!!
 Now, we only restore or rollback to places where all of the transient
 layers are empty. This prevents a bug in which additional dialogue
 will be lost when a restore or rollback occurs. 
 
++++
 The way in which preferences are displayed has been made more
 configurable. Now, there is a new variable, library.preferences, which
 is a map from a style to a list of preferences to be displayed in a
@@ -784,6 +816,7 @@ allows the focus to be moved from widget to widget using the keyboard,
 without requiring the keymouse behavior be used. Because of this new
 system, the keymouse behavior is now a no-op. 
 
++++
 To simplify the code and make every widget compatible with the new
 focus code, a number of widgets were reimplemented in terms of
 buttons. This includes the ui.menu widget, which is the widget that is
@@ -882,6 +915,7 @@ New in 4.7.2
 This release should be compatiable with the .rpyc and .save files
 produced by 4.7.1.
 
+!!!
 The new readback extra caused save files to reach a size and/or
 complexity that caused errors in cPickle on Windows, which in turn
 lead to a repeatable crash of Ren'Py, and left a corrupt save file in

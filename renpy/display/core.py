@@ -411,9 +411,6 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
-        if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
-            os.environ['SDL_VIDEODRIVER'] = 'windib'
-
         pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()
@@ -631,6 +628,7 @@ class Display(object):
 
             updates.extend(self.draw_mouse(True))
             pygame.display.update(updates)
+
 
         else:
             self.full_redraw = True
@@ -1174,4 +1172,3 @@ class Interface(object):
             self.restart_interaction = True
 
             # print "It took", frames, "frames."
-
