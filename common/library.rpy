@@ -31,6 +31,10 @@ init -500:
         # Used to translate strings in the library.
         library.translations = { }
 
+        # Used internally to maintain compatiblity with old
+        # translations of strings.
+        library.old_names = { }
+
         # True if the skip indicator should be shown.
         library.skip_indicator = True
 
@@ -101,8 +105,11 @@ init -500:
             
             if s in library.translations:
                 return library.translations[s]
-            else:
-                return s
+
+            if s in library.old_names and library.old_names[s] in library.translations:
+                return library.translations[library.old_names[s]]
+
+            return s
 
         # Are the windows currently hidden?
         _windows_hidden = False

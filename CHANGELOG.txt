@@ -4,7 +4,16 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.2.2
 -------------------
 
-Ren'Py searches data [doc].
+There are now a few changes to Ren'Py to allow it to better support
+scripts that are not games. Some of the internal messages have been
+changed to remove the word "game". While "game" has still been left in
+the most prominent places (the main and game menus), this is because
+these places are the most obvious to the user, and hence the most
+likely to be translated using library.translations.
+
+For the same reason, Ren'Py will also search for the game in a data/
+directory if the game/ directory is not found, and it will then look
+for the game scripts in data.rpa along with game.rpa. [doc]
 
 ImageDissolve now supports a number of different kinds of alpha
 ramps. Along with the default linear, we now support cubic,
@@ -23,6 +32,10 @@ rendered previously. If user code renders text with an alpha that is
 not 255, the alpha should be set to 255 to ensure the text is rendered
 the same way as before.
 
+The DSE has been updated. There are now new event.only() and
+event.choose_one() condition functions, and a basic guide to writing
+events in the DSE can be found in extras/dse/EVENTS.txt.
+
 Now, user code can import python modules from the game directory
 and .rpa archives. A guide to using Python to extened Ren'Py can be
 found in doc/EXTENDING.txt. For now, it's just about how to use
@@ -35,6 +48,10 @@ about that.
 
 Made the zero-width-space character break lines if necessary, so it
 can be used to have auto-breaking with Thai.
+
+All defined preferences are now found in library.all_preferences,
+which provides a level of indirection when customizing the preferences
+screens. [doc]
 
 Now, we force the presplash to be shown using windib. This can fix
 potential directx incompatibility bugs with Windows XP. This only is

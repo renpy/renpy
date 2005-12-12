@@ -9,9 +9,36 @@ init -450:
         # with that style.
         library.preferences = { }
 
-        # If true, the preference choices will be arraigned in an
+        # This is a map from preference name to that preference
+        # object, that can be used in rearranging preferences.
+        library.all_preferences = { }
+
+        # If true, the preference choices will be arranged in an
         # hbox.
         library.hbox_pref_choices = False
+
+
+        def _prefs_screen_run(prefs_map):
+
+            _game_nav("prefs")
+
+            ### prefs_window default
+            # (window) A window containing all preferences.
+
+            ui.window(style='prefs_window')
+            ui.fixed()
+
+            for style, prefs in prefs_map.iteritems():
+
+                ui.vbox(style=style)
+                for i in prefs:
+                    i.render_preference()
+                ui.close()
+
+            ui.close()
+
+            _game_interact()
+
 
         class _Preference(object):
             """
@@ -47,6 +74,8 @@ init -450:
                 self.field = field
                 self.values = values
                 self.base = base
+
+                library.all_preferences[name] = self
 
             def render_preference(self):
                 values = [ (name, val) for name, val, cond in self.values
@@ -146,6 +175,7 @@ init -450:
                 self.sound = sound
                 self.channel = channel
                 
+                library.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -220,6 +250,8 @@ init -450:
                 self.set = set
                 self.enable = enable
 
+                library.all_preferences[name] = self
+
             def render_preference(self):
 
                 if not eval(self.enable):
@@ -291,6 +323,8 @@ init -450:
                 self.cond = cond
                 self.render = render
                 self.base = base
+
+                library.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -453,36 +487,30 @@ init -450:
         ### prefs_right prefs_column
         # The position of the right column of preferences.
             
-        library.preferences['prefs_left'] = [ pl1, pl2 ]
-        library.preferences['prefs_center'] = [ pc1, pc2, pc3, pc4 ]
-        library.preferences['prefs_right'] = [ pr1, pr2 ]
-
+        library.preferences['prefs_left'] = [
+            library.all_preferences['Display'],
+            library.all_preferences['Transitions'],
+            ]
+        
+        library.preferences['prefs_center'] = [
+            library.all_preferences['TAB and CTRL Skip'],
+            library.all_preferences['After Choices'],
+            library.all_preferences['Text Speed'],
+            library.all_preferences['Auto-Forward Time'],
+            ]
+        
+        library.preferences['prefs_right'] = [
+            library.all_preferences['Music Volume'],
+            library.all_preferences['Sound Volume'],
+            ]
 
 
 label _prefs_screen:
 
-    python hide:
-
-        _game_nav("prefs")
-
-        ### prefs_window default
-        # (window) A window containing all preferences.
-
-        ui.window(style='prefs_window')
-        ui.fixed()
-
-        for style, prefs in library.preferences.iteritems():
-
-            ui.vbox(style=style)
-            for i in prefs:
-                i.render_preference()
-            ui.close()
-
-        ui.close()
-
-        _game_interact()
+    $ _prefs_screen_run(library.preferences)
 
     jump _prefs_screen
+    
     
         
 
