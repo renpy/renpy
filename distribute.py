@@ -119,6 +119,7 @@ def main():
         'reference.html',
         'style.css',
         'RELEASING.txt',
+        'EXTENDING.txt',
         ]
 
     # Copy doc
