@@ -27,7 +27,7 @@ into a .rpya file (under the same conditions as .rpyc files can be
 added to .rpya files), realize that it may spring into existence in
 the game directory automatically if the user tries to run Ren'Py with
 a newer or older version of python. One should ship bytecode.rpyb as
-part of a completed Ren'Py game. [doc]
+part of a completed Ren'Py game.
 
 There are now a few changes to Ren'Py to allow it to better support
 scripts that are not games. Some of the internal messages have been

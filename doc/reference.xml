@@ -1551,6 +1551,21 @@ serialized script is read back in.
 
 </p><p>
 
+The second step in loading a Ren'Py script is to find or generate
+bytecode for all of the python blocks in the script. This is first
+done by loading in the file bytecode.rpyb, if it exists. The file may
+be loaded from disk, or from inside one of the default archives. For
+each python block, it is searched for bytecode corresponding to
+the current version of python. If such bytecode is not found, it is
+generated. If any python was generated, a new version of bytecode.rpyb
+is written into the game directory. Please note that the user can
+cause the generation of a new bytecode.rpyb file by running Ren'Py
+with an upgraded version of python. To prevent a pause for compilation
+from occuring when Ren'Py is first run, you'll want to ship
+bytecode.rpyb as part of your completed game.
+
+</p><p>
+
 Once the script is loaded, the first thing that occurs is that
 it is scanned for init blocks. These init blocks are then run
 immediately, in no particular order. The init blocks should do
