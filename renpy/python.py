@@ -166,7 +166,7 @@ def py_compile_exec_bytecode(source, **kwargs):
 
 def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()
-    code = py_compile(source, 'exec', **kwargs)
+    code = py_compile(source, 'eval', **kwargs)
     return marshal.dumps(code)
 
 

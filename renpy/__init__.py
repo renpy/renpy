@@ -2,9 +2,9 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.2.1"
-script_version = 5002001
-savegame_suffix = "-5.2.1.save"
+version = "Ren'Py 5.3.0"
+script_version = 5003000
+savegame_suffix = "-5.3.0.save"
 
 def import_all():
 

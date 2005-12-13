@@ -5,6 +5,7 @@ import renpy
 
 import os.path
 import os
+import imp
 
 from pickle import loads, dumps
 
@@ -109,7 +110,9 @@ class Script(object):
         
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
-
+        # Ensure that all of the python code found in the script has been
+        # compiled into bytecode.
+        self.update_bytecode()
 
         # Do some generic init here.
 
@@ -126,9 +129,12 @@ class Script(object):
             data['version'] = script_version
             data['key'] = renpy.game.options.lock or 'unlocked'
 
-            f = file(dir + "/" + fn + "c", "wb")
-            f.write(dumps((data, stmts), -1).encode('zlib'))
-            f.close()
+            try:
+                f = file(dir + "/" + fn + "c", "wb")
+                f.write(dumps((data, stmts), -1).encode('zlib'))
+                f.close()
+            except:
+                pass
 
         elif fn.endswith(".rpyc"):
 
@@ -140,7 +146,7 @@ class Script(object):
 
             try:
                 data, stmts = loads(f.read().decode('zlib'))
-            except ValueError:
+            except:
                 return False
 
             if not isinstance(data, dict):
@@ -202,6 +208,68 @@ class Script(object):
         self.all_stmts.extend(all_stmts)
 
         return True
+
+    def update_bytecode(self):
+        """
+        Updates the bytecode for all the bytecode objects in renpy.PyCode.extent.
+        """
+
+        VERSION = 1
+
+        oldcache = { }
+        newcache = { }
+        magic = imp.get_magic()
+        dirty = False
+
+        # Load the oldcache.
+        try:
+            version, cache = loads(renpy.loader.load("bytecode.rpyb").read().decode("zlib"))
+            if version == VERSION:
+                oldcache = cache
+        except:
+            pass
+
+        # Update all of the PyCode objects in the system with the loaded
+        # bytecode.
+        for i in renpy.ast.PyCode.extent:
+
+            codes = oldcache.get(i.location, { })
+
+            if magic in codes:
+                code = codes[magic]
+                
+            else:
+
+                dirty = True
+                
+                old_ei = renpy.game.exception_info
+                renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.location[1], i.location[0])
+
+                if i.mode == 'exec':
+                    code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                elif i.mode == 'eval':
+                    code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+
+                renpy.game.exception_info = old_ei
+                codes[magic] = code
+
+
+            i.source = None
+            i.bytecode = code
+            newcache[i.location] = codes
+
+
+        if dirty:
+            try:
+                data = (VERSION, newcache)
+                f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "w")
+                f.write(dumps(data).encode("zlib"))
+                f.close()
+            except:
+                pass
+
+        renpy.ast.PyCode.extent = None
+        
 
     def lookup(self, label):
         """

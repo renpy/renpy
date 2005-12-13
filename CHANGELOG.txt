@@ -1,8 +1,33 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py 5.2.2
+
+New in Ren'Py 5.3.0
 -------------------
+
+This changelog has been updated to flag changes requiring (or
+suggesting) script updates, or providing major bug fixes.
+
+!!!
+Script compatibility has been broken, but for a good reason. The
+previous version of Ren'Py stored python blocks in the script as bits
+of python bytecode in the .rpyc file. This has a problem. Python
+bytecode is not guaranteed to be forward or backwards
+compatible. Without some sort of versioning, an upgrade of python
+could cause these bytecodes to be silently interpreted incorrectly,
+which could lead to games failing to work properly. To fix this,
+several things have changed. The .rpyc files now store the python
+script, rather than just the bytecode. The bytecode has been moved
+into a bytecode.rpyb file, which is automatically created when a
+script changes. This file contains versioned bytecode, and is
+automatically regenerated if either the source code changes or the
+version of python used to run Ren'Py changes. It is always generated
+into the game directory. While it is possible to include bytecode.rpyb
+into a .rpya file (under the same conditions as .rpyc files can be
+added to .rpya files), realize that it may spring into existence in
+the game directory automatically if the user tries to run Ren'Py with
+a newer or older version of python. One should ship bytecode.rpyb as
+part of a completed Ren'Py game. [doc]
 
 There are now a few changes to Ren'Py to allow it to better support
 scripts that are not games. Some of the internal messages have been
@@ -13,7 +38,7 @@ likely to be translated using library.translations.
 
 For the same reason, Ren'Py will also search for the game in a data/
 directory if the game/ directory is not found, and it will then look
-for the game scripts in data.rpa along with game.rpa. [doc]
+for the game scripts in data.rpa along with game.rpa.
 
 ImageDissolve now supports a number of different kinds of alpha
 ramps. Along with the default linear, we now support cubic,
@@ -51,7 +76,7 @@ can be used to have auto-breaking with Thai.
 
 All defined preferences are now found in library.all_preferences,
 which provides a level of indirection when customizing the preferences
-screens. [doc]
+screens.
 
 Now, we force the presplash to be shown using windib. This can fix
 potential directx incompatibility bugs with Windows XP. This only is
@@ -63,9 +88,9 @@ Fixed a bug that affected voice. This required splitting
 config.interact_callbacks into config.interact_callbacks and the new
 config.start_interact_callbacks. The latter is called exactly once per
 interaction, while the former is called whenever an interaction starts
-or restarts. [doc]
+or restarts.
 
-Fixed a bug with non-ascii text and the new log feature. [doc]
+Fixed a bug with non-ascii text and the new log feature.
 
 Now, invoking Ren'Py with --profile on the command line does the same
 thing as setting config.profile in the script, without requiring the
@@ -74,6 +99,7 @@ user to actually change the script.
 Moved most of the code that used to be in run_game.py into
 renpy/bootstrap.py (the renpy.bootstrap module.) This shouldn't really
 affect anything, but it does make run_game.py a bit cleaner.
+
 
 New in Ren'Py 5.2.1
 -------------------
@@ -93,6 +119,7 @@ Added (optional, and discouraged) monkeypatch protection through the
 
 Fixed a regression, introduced in 5.1.6, that prevented what_prefix
 and what_suffix from working.
+
 
 New in Ren'Py 5.2.0
 -------------------

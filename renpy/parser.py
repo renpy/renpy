@@ -668,7 +668,7 @@ class Lexer(object):
 
     def get_location(self):
         """
-        Returns a (filename, line number) tuple representing the current
+        Returns a (filename, line number, file version) tuple representing the current
         physical location of the start of the current logical line.
         """
 

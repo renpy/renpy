@@ -43,7 +43,6 @@ init:
     # lets us change the color of her name.
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
-    $ girl = Character('Girl')
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -79,7 +78,7 @@ label start:
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
-    girl "Hi, and welcome to the %(version)s demo program."
+    "Girl" "Hi, and welcome to the %(version)s demo program."
 
     # This instantly replaces the very happy picture of Eileen with
     # one showing her merely happy. It demonstrates how the show
@@ -87,8 +86,8 @@ label start:
     show eileen happy
   
     # Another line of dialogue.
-    girl "My name is Eileen, and while I plan to one day star in a
-          real game, for now I'm here to tell you about Ren'Py."
+    "Girl" "My name is Eileen, and while I plan to one day star in a
+            real game, for now I'm here to tell you about Ren'Py."
 
     # This line used the e character object, which displays Eileen's
     # name in green. The use of a short name for a character object

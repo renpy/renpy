@@ -815,8 +815,9 @@ logfile = None
     
 def log(msg):
     """
-    This formats the msg to 70 columns, and then sends it to the
-    logfile. (Which is opened if necessary.)
+    If config.log is not set, this does nothing. Otherwise, it opens
+    the logfile (if not already open), formats the message to 70
+    columns, and prints it to the logfile.
     """
     
     global logfile

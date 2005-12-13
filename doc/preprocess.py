@@ -9,8 +9,9 @@ import inspect
 
 sys.path.append('..')
 sys.path.append('../module')
-import renpy
 
+import renpy
+renpy.import_all()
 
 keywords = [
     r'\bimage\b',

@@ -6,6 +6,9 @@ from cStringIO import StringIO
 import sys
 import types
 
+# Files on disk should be checked before archives. Otherwise, among
+# other things, using a new version of bytecode.rpb will break.
+
 archives = [ ]
 
 def index_archives():
