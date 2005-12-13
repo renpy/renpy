@@ -82,7 +82,9 @@ to run Ren'Py on windows.
 
 game/ [all] - The game directory containing your scripts and
 data. You probably do not want to distribute the saves/ directory
-inside here, so remove that first.
+inside here, so remove that. Be sure not to distribute
+game/saves/persistent, and be warned that it is recreated each time
+Ren'Py is run.
 
 run_game.exe [windows] - The game executable that the user runs.
 
