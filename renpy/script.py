@@ -131,7 +131,7 @@ class Script(object):
 
             try:
                 f = file(dir + "/" + fn + "c", "wb")
-                f.write(dumps((data, stmts), -1).encode('zlib'))
+                f.write(dumps((data, stmts), 2).encode('zlib'))
                 f.close()
             except:
                 pass
@@ -263,7 +263,7 @@ class Script(object):
             try:
                 data = (VERSION, newcache)
                 f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "w")
-                f.write(dumps(data).encode("zlib"))
+                f.write(dumps(data, 2).encode("zlib"))
                 f.close()
             except:
                 pass

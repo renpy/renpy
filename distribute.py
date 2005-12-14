@@ -67,7 +67,7 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
 
             if i == ".svn":
                 continue
-            
+
             os.mkdir(dstrel + "/" + i)
 
         for i in filenames:
@@ -134,7 +134,8 @@ def main():
 
     # copy_tree("dse", target + "/dse")
 
-    copy_tree("extras", target + "/extras")
+    copy_tree("extras", target + "/extras",
+              should_copy = lambda fn : not (fn.endswith(".rpyc") or fn.endswith(".rpyb")) )
     
     copy_tree("scripts", target + "/scripts")
 

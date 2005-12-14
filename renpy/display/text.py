@@ -179,7 +179,7 @@ class WidgetStyle(object):
     def length(self, text):
         return 1
 
-text_regexp = re.compile(r"""(?x)
+text_regexp = re.compile(ur"""(?x)
       (?P<space>[ \u200b])
     | \{(?P<tag>[^{}]+)\}
     | (?P<untag>\{\{)
