@@ -27,7 +27,7 @@ please go to http://www.bishoujo.us/renpy/mac.html .
 For information about running Ren'Py games under Linux and Unix,
 please go to http://www.bishoujo.us/renpy/linux.html . At the very
 least, you will need to compile the _renpy module. Read
-module/README.txt for details.
+the file module/README.txt for details.
 
 
 Playing the Game

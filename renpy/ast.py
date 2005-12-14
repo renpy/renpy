@@ -1,8 +1,45 @@
-
 # This file contains the AST for the Ren'Py script language. Each class
 # here corresponds to a statement in the script language.
 
+# NOTE:
+# When updating this file, consider if lint.py or warp.py also need
+# updating.
+
 import renpy
+import re
+
+class PyCode(object):
+
+    __slots__ = [
+        'source',
+        'location',
+        'mode',
+        'bytecode',
+        ]
+
+    # All PyCodes known to the system.
+    extent = [ ]
+
+    def __getstate__(self):
+        return (1, self.source, self.location, self.mode)
+
+    def __setstate__(self, state):
+        (_, self.source, self.location, self.mode) = state
+        self.bytecode = None
+        
+        PyCode.extent.append(self)
+
+    def __init__(self, source, loc=('<none>', 1, 0), mode='exec'):
+        # The source code.
+        self.source = source
+        self.location = loc
+        self.mode = mode
+
+        # This will be initialized later on, after we are serialized.
+        self.bytecode = None
+
+        PyCode.extent.append(self)
+
 
 def chain_block(block, next):
     """
@@ -90,7 +127,7 @@ class Node(object):
         program or init block.
         """
 
-        assert False, "AST subclass forgot to define execute."
+        assert False, "Node subclass forgot to define execute."
 
     def predict(self, callback):
         """
@@ -129,6 +166,7 @@ class Say(Node):
 
     __slots__ = [
         'who',
+        'who_fast',
         'what',
         'with',
         ]
@@ -136,15 +174,28 @@ class Say(Node):
     def __init__(self, loc, who, what, with):
 
         super(Say, self).__init__(loc)
-        
-        self.who = who
+
+        if who is not None:
+            self.who = who.strip()
+
+            if re.match(r'[a-zA-Z_]\w*$', self.who):
+                self.who_fast = True
+            else:
+                self.who_fast = False
+        else:
+            self.who = None 
+            self.who_fast = False
+            
         self.what = what
         self.with = with
 
     def execute(self):
 
         if self.who is not None:
-            who = renpy.python.py_eval(self.who)
+            if self.who_fast:
+                who = getattr(renpy.store, self.who)
+            else:
+                who = renpy.python.py_eval(self.who)
         else:
             who = None
 
@@ -224,12 +275,12 @@ class Python(Node):
 
     __slots__ = [
         'hide',
-        'bytecode',
+        'code',
         ]
 
     def __init__(self, loc, python_code, hide=False):
         """
-        @param python_code: Properly-indented python code.
+        @param code: A PyCode object.
 
         @param hide: If True, the code will be executed with its
         own local dictionary.
@@ -237,28 +288,25 @@ class Python(Node):
         
         super(Python, self).__init__(loc)
 
-        filename = loc[0]
-        lineno = loc[1]
-
         self.hide = hide
 
         old_ei = renpy.game.exception_info
 
-        renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
-        self.bytecode = renpy.python.py_compile_exec_bytecode(python_code, filename=filename, lineno=lineno)
-        renpy.game.exception_info = old_ei
+        # renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
+        # renpy.python.py_compile_exec_bytecode(python_code, filename=filename, lineno=lineno)
+        self.code = PyCode(python_code, loc=loc, mode='exec')
+        # renpy.game.exception_info = old_ei
 
 
     def execute(self):
-        renpy.python.py_exec_bytecode(self.bytecode, self.hide)
-        
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
         return self.next
 
 class Image(Node):
 
     __slots__ = [
         'imgname',
-        'expr',
+        'code',
         ]
 
     def __init__(self, loc, name, expr):
@@ -272,11 +320,11 @@ class Image(Node):
         super(Image, self).__init__(loc)
         
         self.imgname = name
-        self.expr = expr
+        self.code = PyCode(expr, loc=loc, mode='eval')
 
     def execute(self):
         
-        img = renpy.python.py_eval(self.expr)
+        img = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.exports.image(self.imgname, img)
 
         return self.next

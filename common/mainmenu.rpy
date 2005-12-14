@@ -4,13 +4,15 @@
 init -498:
 
     python hide:
+
+        library.old_names['Quit'] = 'Quit Game'
         
         # The contents of the main menu.
         library.main_menu = [
             ( "Start Game", "start", 'True'),
             ( "Continue Game", ui.jumps("_load_screen"), 'True' ),
             ( "Preferences", ui.jumps("_prefs_screen"), 'True' ),
-            ( "Quit Game",  ui.jumps("_quit"), 'True' ),
+            ( "Quit",  ui.jumps("_quit"), 'True' ),
             ]
 
         # If not None, this is used to fix the positions of the

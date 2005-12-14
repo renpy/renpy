@@ -9,8 +9,9 @@ import inspect
 
 sys.path.append('..')
 sys.path.append('../module')
-import renpy
 
+import renpy
+renpy.import_all()
 
 keywords = [
     r'\bimage\b',
@@ -129,6 +130,9 @@ def include(m):
     f.close()
     return rv
         
+class ret_none(object):
+    def __getattr__(self, k):
+        return None
     
 
 def main():
@@ -141,6 +145,7 @@ def main():
 
 
     try:
+        renpy.game.options = ret_none()
         renpy.main.main("dump_styles")
     except "foo":
         pass

@@ -3,6 +3,11 @@ import os
 import os.path
 from pickle import loads
 from cStringIO import StringIO
+import sys
+import types
+
+# Files on disk should be checked before archives. Otherwise, among
+# other things, using a new version of bytecode.rpb will break.
 
 archives = [ ]
 
@@ -16,13 +21,33 @@ def index_archives():
 
     for prefix in renpy.config.archives:
 
+        fn = transfn(prefix + ".rpa")
+
         try:
+            fn = transfn(prefix + ".rpa")
+            f = file(fn, "rb")
+            l = f.readline()
+
+            # 2.0 Branch.
+            if l.startswith("RPA-2.0 "):
+                offset = int(l[8:], 16)
+                f.seek(offset)
+                index = loads(f.read().decode("zlib"))
+                archives.append((prefix, index))
+                f.close()
+                continue
+
+            # 1.0 Branch.
+        
+            f.close()
+            
             fn = transfn(prefix + ".rpi")
             index = loads(file(fn, "rb").read().decode("zlib")) 
             archives.append((prefix, index))
         except:
             if renpy.config.debug:
                 raise
+            
 
 def listdirfiles():
     """
@@ -106,3 +131,41 @@ def transfn(name):
             return d + "/" + name
 
     raise Exception("Couldn't find file '%s'." % name)
+
+
+class RenpyImporter(object):
+    """
+    An importer, that tries to load modules from the places where Ren'Py
+    searches for data files.
+    """
+
+    def translate(self, fullname):
+        fn = fullname.replace(".", "/") + ".py"
+        if loadable(fn):
+            return fn
+
+        fn = fullname.replace(".", "/") + "/__init__.py"
+        if loadable(fn):
+            return fn
+
+        return None
+
+    def find_module(self, fullname, path=None):
+        if self.translate(fullname):
+            return self
+
+    def load_module(self, fullname):
+
+        filename = self.translate(fullname)
+        
+        mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
+        mod.__file__ = filename
+        mod.__loader__ = self
+        mod.__path__ = [ ]
+        exec load(filename) in mod.__dict__
+        return mod
+
+    def get_data(self, filename):
+        return load(filename).read()
+
+sys.meta_path.append(RenpyImporter())
