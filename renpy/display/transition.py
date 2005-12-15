@@ -810,74 +810,96 @@ class ImageDissolve(Transition):
     ramplen >= 8. "cube": Ease in, sharp out. "dcube": Sharp in, sharp out.
     "mcube": Ease in, ease out.
 
+    @param ramp: If given, this is expected to be a sequence of
+    integers in the range 0 to 255. This sequence explicitly gives the
+    ramp to be used. If given, this overrides ramplen and ramptype.
+
     @param reverse: This reverses the ramp and the direction of the window
     slide. When True, black pixels dissolve in first, and while pixels come
     in last.    
     """
 
-    def generate_ramp(self, ramplen, ramptype, reverse):
+    def generate_ramp(self, ramplen, ramptype, explicit_ramp, reverse):
         """
         Precomputes the ramp.
         """
 
         ramp = '\x00' * 256
-        
-        if ramptype == 'cube':
-            # make sure ramplen is big enough, to avoid div-by-0 errors
-            # Not much point in nonlinear if the size is that small, anyway
-            if ramplen >= 8:
-                table = []
-                for i in range(ramplen):
-                    table.append(i * i * i)
-                scale = max(table) / 255.0
-                for i in range(ramplen):
-                    #print i, table[i], table[i] / scale
-                    ramp += chr(int(table[i] / scale))
-            else:
-                ramptype = 'linear'
-                
-        elif ramptype == 'dcube':
-            if ramplen >= 8:
-                table = []
-                for i in range(ramplen / 2 - ramplen, ramplen / 2):
-                    table.append(i * i * i)
-                adj = abs(min(table))
-                for i in range(len(table)):
-                    table[i] += adj
-                scale = max(table) / 255.0
-                #print "scale:", scale
-                for i in range(ramplen):
-                    #print i, table[i], table[i] / scale
-                    ramp += chr(int(table[i] / scale))
-            else:
-                ramptype = 'linear'
-                
-        elif ramptype == 'mcube':
-            if ramplen >= 8:
-                ramplen = (ramplen / 2) * 2 # make sure it's even
-                table = []
-                for i in range(ramplen / 2):
-                    table.append(i * i * i)
-                adj = table[-1]
-                tmptable = []
-                for i in table:
-                    tmptable.append(i)
-                for i in range(1, len(table) + 1):
-                    tmptable.append(abs(table[len(table) - i] - adj) + adj)
-                table = tmptable
-                scale = max(table) / 255.0
-                #print "scale:", scale
-                for i in range(ramplen):
-                    #print i, table[i], table[i] / scale
-                    ramp += chr(int(table[i] / scale))
-            else:
-                ramptype = 'linear'
 
-        if ramptype == 'linear':
-            for i in range(ramplen):
-                ramp += chr(255 * i / ramplen)
+        if explicit_ramp is not None:
+
+            for i in explicit_ramp:
+                ramp += chr(i)
+
+        else:
+
+            if ramptype == 'cube':
+                # make sure ramplen is big enough, to avoid div-by-0 errors
+                # Not much point in nonlinear if the size is that small, anyway
+                if ramplen >= 8:
+                    table = []
+                    for i in range(ramplen):
+                        table.append(i * i * i)
+                    scale = max(table) / 255.0
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            elif ramptype == 'dcube':
+                if ramplen >= 8:
+                    table = []
+                    for i in range(ramplen / 2 - ramplen, ramplen / 2):
+                        table.append(i * i * i)
+                    adj = abs(min(table))
+                    for i in range(len(table)):
+                        table[i] += adj
+                    scale = max(table) / 255.0
+                    #print "scale:", scale
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            elif ramptype == 'mcube':
+                if ramplen >= 8:
+                    ramplen = (ramplen / 2) * 2 # make sure it's even
+                    table = []
+                    for i in range(ramplen / 2):
+                        table.append(i * i * i)
+                    adj = table[-1]
+                    tmptable = []
+                    for i in table:
+                        tmptable.append(i)
+                    for i in range(1, len(table) + 1):
+                        tmptable.append(abs(table[len(table) - i] - adj) + adj)
+                    table = tmptable
+                    scale = max(table) / 255.0
+                    #print "scale:", scale
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            if ramptype == 'linear':
+                for i in range(ramplen):
+                    ramp += chr(255 * i / ramplen)
 
         ramp += '\xff' * 256
+
+        old = 0
+        for i in ramp:
+            i = ord(i)
+            if i < old:
+                self.can_fast = False
+                break
+
+            old = i
+        else:
+            self.can_fast = True
 
         if reverse:
             ramp = list(ramp)
@@ -887,7 +909,7 @@ class ImageDissolve(Transition):
         return ramp
         
         
-    def __init__(self, image, time, ramplen=8, ramptype='linear', reverse=False,
+    def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False,
                  old_widget=None, new_widget=None):
 
         super(ImageDissolve, self).__init__(time)
@@ -903,7 +925,11 @@ class ImageDissolve(Transition):
 
         self.image = renpy.display.im.load_image(image)
 
-        self.ramp = self.generate_ramp(ramplen, ramptype, reverse)
+        if ramp is not None:
+            ramplen = len(ramp)
+
+        self.ramp = self.generate_ramp(ramplen, ramptype, ramp, reverse)
+        
         self.steps = ramplen + 256
         self.reverse = reverse
 
@@ -934,7 +960,7 @@ class ImageDissolve(Transition):
 
         rv.focuses.extend(top.focuses)
 
-        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+        if renpy.config.enable_fast_dissolve and self.can_fast and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
             # Fast rendering path. Only used for full-screen, top-level, renders.
 
             fast_ramp = [ ]

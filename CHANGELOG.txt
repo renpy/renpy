@@ -1,6 +1,15 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py ?.?.?
+-------------------
+
+ImageDissolve now support a ramp parameter, which can be used to give
+the ramp explicitly. 
+
+[TODO] Add preloading of images used by Character objects and
+Transitions.
+
 
 New in Ren'Py 5.3.0
 -------------------
