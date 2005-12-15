@@ -65,9 +65,11 @@ label start:
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
 
+    $ config.debug = True
+    $ config.debug_image_cache = True
+
     scene black
-    with None
-    scene bg whitehouse with ImageDissolve("circiris.png", 5.0, ramp=[255] * 30 + [0] * 30 + [ 255 ] )
+    scene bg whitehouse with ImageDissolve("circiris.png", 5.0, ramp=[ 16 * i for i in range(0, 15) + range(15, 0, -1) + range(0, 15) ])
 
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top

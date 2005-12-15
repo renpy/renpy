@@ -136,8 +136,7 @@ class Displayable(renpy.object.Object):
         the images it may want to load.
         """
 
-        if self.style and self.style.background:
-            self.style.background.predict(callback)
+        return
 
     def place(self, dest, x, y, width, height, surf):
         """

@@ -240,6 +240,14 @@ def choice_for_skipping():
         renpy.config.skipping = False
     
 
+def predict_menu():
+    """
+    Predicts widgets that are used by the menu.
+    """
+    
+    return [ renpy.game.style.menu_window.background,
+             renpy.game.style.menu_choice_button.background ]
+
 def display_menu(items, window_style='menu_window', interact=True):
     """
     Displays a menu containing the given items, returning the value of
@@ -330,7 +338,51 @@ def say(who, what):
         renpy.store.say(who, what)
     else:
         who(what)
+
+def predict_say(who, what):
+    """
+    This is called to predict the results of a say command.
+    """
+
+    if who is None:
+        who = renpy.store.narrator
+
+    if isinstance(who, (str, unicode)):
+        return renpy.store.predict_say(who, what)
+    else:
+        predict = getattr(who, 'predict', None)
+        if predict:            
+            return predict(what)
+        else:
+            return [ ]
+    
         
+def predict_display_say(who, what,
+                        window_style='say_window',
+                        window_properties={},
+                        image=False,
+                        ctc=None,
+                        **kwargs):
+
+    rv = [ ]
+
+
+    if "background" in window_properties:
+        rv.append(window_properties["background"])
+    else:        
+        rv.append(getattr(renpy.game.style, window_style).background)
+
+    if image:
+        rv.append(renpy.display.im.image(who, True))
+
+    if ctc:
+        rv.append(ctc)
+
+    return rv
+        
+                  
+    
+
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
                 window_style='say_window',

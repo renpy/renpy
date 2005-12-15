@@ -144,7 +144,7 @@ class Node(object):
             return [ ]
 
 
-def say_menu_with(expression):
+def say_menu_with(expression, callback):
     """
     This handles the with clause of a say or menu statement.
     """
@@ -160,7 +160,8 @@ def say_menu_with(expression):
         return
 
     if renpy.game.preferences.transitions:
-        renpy.game.interface.set_transition(what)
+        # renpy.game.interface.set_transition(what)
+        callback(what)
         
 class Say(Node):
 
@@ -199,10 +200,29 @@ class Say(Node):
         else:
             who = None
 
-        say_menu_with(self.with)
+        say_menu_with(self.with, renpy.game.interface.set_transition)
         renpy.exports.say(who, self.what)
 
         return self.next
+
+    def predict(self, callback):
+
+        if self.who is not None:
+            if self.who_fast:
+                who = getattr(renpy.store, self.who)
+            else:
+                who = renpy.python.py_eval(self.who)
+        else:
+            who = None
+
+        say_menu_with(self.with, callback)
+
+        for i in renpy.exports.predict_say(who, self.what):
+            if i is not None:
+                i.predict(callback)
+
+        return [ self.next ]
+        
 
 class Init(Node):
 
@@ -451,10 +471,19 @@ class With(Node):
     
     def execute(self):
         trans = renpy.python.py_eval(self.expr)
-
         renpy.exports.with(trans)
 
         return self.next
+
+    def predict(self, callback):
+
+        trans = renpy.python.py_eval(self.expr)
+
+        if trans:
+            trans(old_widget=None, new_widget=None).predict(callback)
+            
+        return [ self.next ]
+        
         
         
 class Call(Node):
@@ -547,7 +576,7 @@ class Menu(Node):
             else:
                 choices.append((label, condition, i))
 
-        say_menu_with(self.with)
+        say_menu_with(self.with, renpy.game.interface.set_transition)
         choice = renpy.exports.menu(choices, self.set)
 
         if choice is None:
@@ -558,6 +587,12 @@ class Menu(Node):
 
     def predict(self, callback):
         rv = [ ]
+
+        say_menu_with(self.with, callback)
+
+        for i in renpy.store.predict_menu():
+            if i is not None:
+                i.predict(callback)
 
         for label, condition, block in self.items:
             if block:

@@ -667,6 +667,11 @@ class Window(Container):
     def get_placement(self):
         return self.style
 
+    def predict(self, callback):
+
+        if self.style and self.style.background:
+            self.style.background.predict(callback)
+            
     def render(self, width, height, st):
 
         # save some typing.
@@ -801,6 +806,14 @@ class Motion(Container):
         self.repeat = repeat
         self.bounce = bounce
         self.delay = delay
+
+    def predict(self, callback):
+        """
+        Image prediction, when used as a transition. We don't really predict
+        anything, as it should already have been predicted.
+        """
+
+        return 
 
     def get_placement(self):
         return self.style

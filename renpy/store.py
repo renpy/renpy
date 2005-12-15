@@ -75,7 +75,8 @@ class Character(object):
                  who_style='say_label',
                  what_style='say_dialogue',
                  window_style='say_window',
-                 function = renpy.exports.display_say,
+                 function=renpy.exports.display_say,
+                 predict_function=renpy.exports.predict_display_say, 
                  condition=None,
                  dynamic=False,
                  **properties):
@@ -103,6 +104,11 @@ class Character(object):
         @param function: The function that is called to actually display
         this dialogue. This should either be renpy.display_say, or a function
         with the same signature as it.
+
+        @param predict_function: The function that is called to predict
+        the images from this dialogue. It is called with the same signature as
+        display_say, and is expected to return a list of displayables
+        that should be loaded.
 
         @param condition: A string containing a python expression, or
         None. If not None, the condition is evaluated when each line
@@ -150,6 +156,7 @@ class Character(object):
         self.what_properties = { }
         self.window_properties = { }
         self.function = function
+        self.predict_function = predict_function
         self.condition = condition
         self.dynamic = dynamic
 
@@ -211,6 +218,29 @@ class Character(object):
 
         self.store_readback(name, what)
         
+    def predict(self, what):
+
+        if self.dynamic and self.image:
+            return [ ]
+
+        if self.dynamic:
+            name = "<Dynamic>"
+        else:
+            name = self.name
+
+        return self.predict_function(
+            name,
+            what,
+            who_style=self.who_style,
+            what_style=self.what_style,
+            window_style=self.window_style,
+            what_properties=self.what_properties,
+            window_properties=self.window_properties,
+            **self.properties)
+            
+    
+        
+
 
 def DynamicCharacter(name_expr, **properties):
     """
@@ -236,12 +266,16 @@ import renpy.exports as renpy
 def narrator(what, interact=True):
     renpy.display_say(None, what, what_style='say_thought', interact=interact)
 
-# The default menu function.
+# The default menu functions.
 menu = renpy.display_menu
+predict_menu = renpy.predict_menu
 
 # The function that is called when anonymous text is said.
 def say(who, what):
     renpy.display_say(who, what)
+
+def predict_say(who, what):
+    return renpy.predict_display_say(who, what)
 
 # The default transition.
 default_transition = None

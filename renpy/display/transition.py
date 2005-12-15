@@ -9,7 +9,10 @@
 # 
 # Cheers, Brian Turcotte (shaja).
 
-
+# NOTE:
+# Transitions need to be able to work even when old_widget and new_widget
+# are None, at least to the point of making it through __init__. This is
+# so that prediction of images works.
 
 import renpy
 from renpy.display.render import render
@@ -19,61 +22,71 @@ from pygame.constants import *
 # We used time too many other times. :-(
 from time import time as now
 
-# This is a utility function that attempts to refactor an old and a new
-# Fixed into four Fixeds: below, old, new, and above. Since only the
-# old and new need transitions, this can be a significant win.
-def refactor_fixed(in_old, in_new):
+# # This is a utility function that attempts to refactor an old and a new
+# # Fixed into four Fixeds: below, old, new, and above. Since only the
+# # old and new need transitions, this can be a significant win.
+# def refactor_fixed(in_old, in_new):
 
-    Fixed = renpy.display.layout.Fixed
+#     Fixed = renpy.display.layout.Fixed
 
-    out_below = Fixed()
-    out_old = Fixed()
-    out_new = Fixed()
-    out_above = Fixed()
+#     out_below = Fixed()
+#     out_old = Fixed()
+#     out_new = Fixed()
+#     out_above = Fixed()
 
-    if (not isinstance(in_old, Fixed)) or (not isinstance(in_new, Fixed)):
-        return out_below, in_old, in_new, out_above
+#     if (not isinstance(in_old, Fixed)) or (not isinstance(in_new, Fixed)):
+#         return out_below, in_old, in_new, out_above
 
-    old_list = in_old.get_widget_time_list()
-    new_list = in_new.get_widget_time_list()
+#     old_list = in_old.get_widget_time_list()
+#     new_list = in_new.get_widget_time_list()
 
-    # Merge the beginnings of the lists.
-    while old_list and new_list:
-        if old_list[0] == new_list[0]:
-            out_below.add(new_list[0][0], new_list[0][1])
-            old_list.pop(0)
-            new_list.pop(0)
+#     # Merge the beginnings of the lists.
+#     while old_list and new_list:
+#         if old_list[0] == new_list[0]:
+#             out_below.add(new_list[0][0], new_list[0][1])
+#             old_list.pop(0)
+#             new_list.pop(0)
 
-        else:
-            break
+#         else:
+#             break
 
-    # Merge the ends of the lists.
-    above_list = [ ]
+#     # Merge the ends of the lists.
+#     above_list = [ ]
 
-    while old_list and new_list:
-        if old_list[-1] == new_list[-1]:
-            above_list.insert(0, new_list[-1])
-            old_list.pop()
-            new_list.pop()
-        else:
-            break
+#     while old_list and new_list:
+#         if old_list[-1] == new_list[-1]:
+#             above_list.insert(0, new_list[-1])
+#             old_list.pop()
+#             new_list.pop()
+#         else:
+#             break
 
-    for widget, time in above_list:
-        out_above.add(widget, time)
+#     for widget, time in above_list:
+#         out_above.add(widget, time)
 
-    for widget, time in old_list:
-        out_old.add(widget, time)
+#     for widget, time in old_list:
+#         out_old.add(widget, time)
 
-    for widget, time in new_list:
-        out_new.add(widget, time)
+#     for widget, time in new_list:
+#         out_new.add(widget, time)
 
-    return out_below, out_old, out_new, out_above
+#     return out_below, out_old, out_new, out_above
 
 class Transition(renpy.display.core.Displayable):
     """
     This is the base class of most transitions. It takes care of event
     dispatching.
     """
+
+    def predict(self, callback):
+        """
+        Predict the images that are used by this transition.
+        """
+
+        # Since most transitions don't use any images, this can return
+        # None.
+
+        return
 
     def __init__(self, delay):
         super(Transition, self).__init__()
@@ -140,6 +153,9 @@ class MultipleTransition(Transition):
 
         self.transitions = [ ]
 
+        # The screens that we use for the transition.
+        self.screens = args[0::2]
+
         def oldnew(w):
             if w is False:
                 return old_widget
@@ -153,12 +169,24 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
+
         super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
 
         self.event_target = None
         self.time_offset = 0
         self.new_widget = self.transitions[-1]
         self.events = False
+
+    def predict(self, callback):
+
+        # Predict screens.
+        for i in self.screens:
+            if isinstance(i, renpy.display.core.Displayable):
+                i.predict(callback)
+
+        # Predict transitions.
+        for i in self.transitions:
+            i.predict(callback)
 
     def render(self, width, height, st):
 
@@ -923,7 +951,7 @@ class ImageDissolve(Transition):
         self.old_top = None
         self.old_ramp = '\x00' * 256
 
-        self.image = renpy.display.im.load_image(image)
+        self.image = renpy.display.im.image(image)
 
         if ramp is not None:
             ramplen = len(ramp)
@@ -934,11 +962,16 @@ class ImageDissolve(Transition):
         self.reverse = reverse
 
 
+    def predict(self, callback):
+        callback(self.image)
+
     def render(self, width, height, st):
 
         if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st)
+
+        image = renpy.display.im.cache.get(self.image)
 
         if st < self.time:
             renpy.display.render.redraw(self, 0)
@@ -977,7 +1010,7 @@ class ImageDissolve(Transition):
                 change = 255 * ( new - old ) / ( 255 - old )
                 fast_ramp.append(chr(int(change)))
 
-            renpy.display.module.alpha_munge(self.image, surf,
+            renpy.display.module.alpha_munge(image, surf,
                                              ''.join(fast_ramp))
             
             rv.blit(surf, (0, 0))
@@ -988,7 +1021,7 @@ class ImageDissolve(Transition):
 
             rv.blit(bottom, (0, 0), focus=False)
 
-            renpy.display.module.alpha_munge(self.image, surf, ramp)
+            renpy.display.module.alpha_munge(image, surf, ramp)
             rv.blit(surf, (0, 0))
 
         self.old_ramp = ramp

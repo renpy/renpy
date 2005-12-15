@@ -58,7 +58,7 @@ image_cache_size = 8
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
-predict_statements = 10
+predict_statements = 16
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
