@@ -17,8 +17,21 @@ init -500:
         # These are settings that the user can tweak to control the
         # look of the main menu and the load/save/escape screens.
 
+        # The class that stores library variables.
+        class _Library(object):
+            def __setattr__(self, name, value):
+
+                if getattr(self, 'lock', False):
+                    if not name in vars(self):
+                        raise Exception('library.%s is not a known configuration variable.' % name)
+
+                object.__setattr__(self, name, value)
+                
+                
+            
+
         # Used to store library settings.
-        library = object()
+        library = _Library()
 
         # The minimum version of the module we work with. Don't change
         # this unless you know what you're doing.
@@ -214,9 +227,11 @@ label _check_module:
                          
 
 
-# Random nice things to have.
-init:
+init -401:
+    # Random nice things to have.
     $ centered = Character(None, what_style="centered_text", window_style="centered_window")
     image text = renpy.ParameterizedText(style="centered_text")
-    
+
+    # Lock the library object.
+    $ library.lock = True
         

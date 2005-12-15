@@ -14,6 +14,9 @@ experience and a lack of pauses for image loading.
 
 predict_menu, predict_say [ doc ]
 
+Setting a config or library variable that does not exist is now an
+now raises an error. Previously, this was ignored silently.
+
 New in Ren'Py 5.3.0
 -------------------
 

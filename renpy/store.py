@@ -9,6 +9,32 @@ import renpy.ui as ui
 import renpy.display.im as im
 import renpy.display.anim as anim
 
+# config.
+_config = renpy.config
+
+class _Config(object):
+
+    def __getattr__(self, name):
+        cvars = vars(_config)
+
+        if name not in cvars:
+            raise Exception('config.%s is not a known configuration variable.' % name)
+
+        return cvars[name]
+
+    def __setattr__(self, name, value):
+        cvars = vars(_config)
+
+        if name not in cvars:
+            raise Exception('config.%s is not a known configuration variable.' % name)
+
+        cvars[name] = value
+
+    def __delattr__(self, name):
+        raise Exception('Deleting configuration variables is not supported.')
+        
+config = _Config()
+
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
 
@@ -17,9 +43,9 @@ dict = __renpy__dict__
 
 from renpy.python import RevertableObject as object
 
-# Set up symbols.
 
-config = renpy.config
+
+# Set up symbols.
 Image = renpy.display.image.Image
 ImageReference = renpy.display.image.ImageReference
 Solid = renpy.display.image.Solid
