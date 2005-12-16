@@ -237,7 +237,7 @@ def choice_for_skipping():
     """
 
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
-        renpy.config.skipping = False
+        renpy.config.skipping = None
     
 
 def predict_menu():

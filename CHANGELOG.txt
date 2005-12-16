@@ -17,6 +17,9 @@ predict_menu, predict_say [ doc ]
 Setting a config or library variable that does not exist is now an
 now raises an error. Previously, this was ignored silently.
 
+Fixed a bug that required Tab to be pressed twice to re-enable skip
+mode after skipping was terminated by hitting a menu.
+
 New in Ren'Py 5.3.0
 -------------------
 
