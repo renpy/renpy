@@ -17,6 +17,10 @@ predict_menu, predict_say [ doc ]
 Setting a config or library variable that does not exist is now an
 now raises an error. Previously, this was ignored silently.
 
+If it exists, renpy.zip is added to the python search path. This lets
+one replace the renpy/ directory with a renpy.zip file containing that
+directory, if so desired.
+
 Fixed a bug that required Tab to be pressed twice to re-enable skip
 mode after skipping was terminated by hitting a menu.
 

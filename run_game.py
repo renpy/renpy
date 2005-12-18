@@ -12,8 +12,14 @@ if __name__ == "__main__":
     renpy_base = os.path.abspath(renpy_base)
 
     # Add paths.
-    sys.path.append(renpy_base + "/module")
+    if os.path.exists(renpy_base + "/module"):
+        sys.path.append(renpy_base + "/module")
+
     sys.path.append(renpy_base)
+
+    if os.path.exists(renpy_base + "/renpy.zip"):
+        sys.path.append(renpy_base + "/renpy.zip")
+    
 
     # Start Ren'Py proper.
     import renpy.bootstrap
