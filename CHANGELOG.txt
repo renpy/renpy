@@ -1,7 +1,7 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py ?.?.?
+New in Ren'Py 5.3.1
 -------------------
 
 ImageDissolve now support a ramp parameter, which can be used to give
@@ -10,9 +10,10 @@ the ramp explicitly.
 Now, we preload the images that are used in say statement, menus, and
 transitions. This means that just about every image in a basic game
 should be preloaded, which should in turn lead to an improved user
-experience and a lack of pauses for image loading.
-
-predict_menu, predict_say [ doc ]
+experience and a lack of pauses for image loading. To support this,
+the Character function grew a predict_function argument, and there are
+now also predict_menu and predict_say functions at the
+top-level. [doc]
 
 Setting a config or library variable that does not exist is now an
 now raises an error. Previously, this was ignored silently.
@@ -23,6 +24,15 @@ directory, if so desired.
 
 Fixed a bug that required Tab to be pressed twice to re-enable skip
 mode after skipping was terminated by hitting a menu.
+
+Maybe fixed a bug that was preventing non-fullscreen video from
+working. (I'm not totally sure this is a real bug.)
+
+Fixed a bug that prevents certain MOD files (including the .xm files
+that shipped with the non-Ren'Py game Transfer Teacher) from working
+under Ren'Py. This required the creation of a new Ren'Py Launcher for
+Macintosh, as well as a new release of the renpy module installer for
+Windows.
 
 New in Ren'Py 5.3.0
 -------------------

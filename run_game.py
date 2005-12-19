@@ -6,6 +6,10 @@ import sys
 
 if __name__ == "__main__":
 
+    # Check for mac compatibility.
+    if "mac_version" in globals():
+        mac_version((5, 3, 1))
+
     # Figure out the base directory.
     renpy_base = os.path.dirname(sys.argv[0])
     renpy_base = os.environ.get('RENPY_BASE', renpy_base)
