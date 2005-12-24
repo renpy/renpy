@@ -12,6 +12,7 @@ import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
+JOYEVENT = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -413,6 +414,7 @@ class Display(object):
         pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()
+        renpy.display.joystick.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
@@ -1100,6 +1102,11 @@ class Interface(object):
                         ev = self.event_wait()
 
                     if ev.type == NOEVENT:
+                        continue
+
+                    # This can set the event to None, to ignore it.
+                    ev = renpy.display.joystick.event(ev)
+                    if not ev:
                         continue
 
                     self.profile_time = time.time()

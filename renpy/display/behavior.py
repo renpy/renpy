@@ -42,6 +42,11 @@ def map_event(ev, name):
 
         return False
 
+    if ev.type == renpy.display.core.JOYEVENT:
+        for key in keys:
+            if renpy.game.preferences.joymap.get(key, None) == ev.name:
+                return True
+
     return False
 
 def map_keyup(ev, name):
@@ -131,7 +136,6 @@ class PauseBehavior(renpy.display.layout.Null):
         if ev.type == renpy.display.core.DISPLAYTIME and \
            self.delay and ev.duration > self.delay:
             return self.result
-    
 
 class SayBehavior(renpy.display.layout.Null):
     """

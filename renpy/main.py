@@ -159,8 +159,6 @@ def run(restart=False):
 
                 continue
 
-            except game.QuitException, e:
-                break
     finally:
         f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(game.persistent).encode("zlib"))
@@ -221,7 +219,10 @@ def main(basename):
     while True:
         try:
             run(restart)
+
+        except game.QuitException, e:
             break
         except game.FullRestartException, e:
-            restart = True
             pass
+
+        restart = True

@@ -133,26 +133,26 @@ keymap = dict(
     
     # Bindings present almost everywhere, unless explicitly
     # disabled.
-    rollback = [ 'K_PAGEUP', 'mousedown_4' ],
+    rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
     hide_windows = [ 'mouseup_2', 'h' ],
     launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Focus.
-    focus_left = [ 'K_LEFT' ],
-    focus_right = [ 'K_RIGHT' ],
-    focus_up = [ 'K_UP' ],
-    focus_down = [ 'K_DOWN' ],
+    focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
+    focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],
+    focus_up = [ 'K_UP', 'K_KP_UP', 'joy_up' ],
+    focus_down = [ 'K_DOWN', 'K_KP_DOWN', 'joy_down' ],
         
     # Button.
-    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
@@ -160,15 +160,18 @@ keymap = dict(
 
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
-    toggle_skip = [ 'K_TAB' ],
+    toggle_skip = [ 'K_TAB', 'joy_skip' ],
     fast_skip = [ '>' ],
 
     # These control the bar.
-    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
-    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
-    bar_decrease = [ 'K_LEFT' ],
-    bar_increase = [ 'K_RIGHT' ],
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_decrease = [ 'K_LEFT', 'joy_left' ],
+    bar_increase = [ 'K_RIGHT', 'joy_right' ],
     )
+
+# Should we try to support joysticks?
+joystick = True
 
 # A list of functions that are called when an interaction is started or
 # restarted.

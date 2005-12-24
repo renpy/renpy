@@ -139,8 +139,7 @@ init -500:
             renpy.call_in_new_context('_game_menu')
 
         def toggle_skipping():
-            print config.skipping
-            
+
             if not config.skipping:
                 config.skipping = "slow"
             else:

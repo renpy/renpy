@@ -9,6 +9,9 @@ init -450:
         # with that style.
         library.preferences = { }
 
+        # Ditto, for advanced preferences.
+        library.advanced_preferences = { }
+
         # This is a map from preference name to that preference
         # object, that can be used in rearranging preferences.
         library.all_preferences = { }
@@ -17,7 +20,19 @@ init -450:
         # hbox.
         library.hbox_pref_choices = False
 
-
+        # A list of (readable name, synthetic key) tuples
+        # corresponding to joystick events.
+        library.joystick_prefs = [
+            ('Left', 'joy_left'),
+            ('Right', 'joy_right'),
+            ('Up', 'joy_up'),
+            ('Down', 'joy_down'),
+            ('Select/Dismiss', 'joy_dismiss'),
+            ('Rollback', 'joy_rollback'),
+            ('Toggle Skip', 'joy_skip'),
+            ('Menu', 'joy_menu'),
+            ]
+        
         def _prefs_screen_run(prefs_map):
 
             _game_nav("prefs")
@@ -375,7 +390,98 @@ init -450:
                 ui.close()
                 
             
-                    
+        class _JoystickPreference(object):
+
+            def __init__(self, name):
+                self.name = name
+                library.all_preferences[name] = self
+
+            def render_preference(self):
+
+                ### prefs_js_button prefs_button
+                # (window, hover) The style of buttons giving a joystick mapping.
+
+                ### prefs_js_button_text prefs_button_text
+                # (text, hover) The style of the text in buttons giving a joystick mapping.
+
+                ### joy_window prefs_window
+                # (window) The window containing the joystick message.
+
+                ### joy_vbox thick_vbox
+                # (window) The vbox containing the joistick mapping message.
+                
+                ### joyfunc_label prefs_label
+                # (text, position) The style of the joystick mapping function name.
+
+                ### joyprompt_label prefs_label
+                # (text, position) The style of the joystick mapping prompt message.
+                
+
+                def set_binding(key, label):
+                    _game_nav(None)
+
+                    ui.window(style='joy_window')
+                    ui.vbox(style='joy_vbox')
+                    _label_factory(_("Joystick Mapping") + " - " + _(label), "joyfunc")
+                    _label_factory('Move the joystick or press a button to create the mapping. Click the mouse to remove the mapping.', 'joyprompt')
+                    ui.close()
+
+                    ui.saybehavior()
+                    ui.add(renpy.display.joystick.JoyBehavior())
+                    binding = _game_interact()
+
+                    if not isinstance(binding, basestring):
+                        del _preferences.joymap[key]
+                    else:
+                        _preferences.joymap[key] = binding
+
+                
+                ui.window(style='prefs_pref')
+                ui.vbox(style='prefs_pref_vbox')
+
+                _label_factory(self.name, 'prefs')
+
+
+
+                for label, key in library.joystick_prefs:
+
+                    def clicked(label=label, key=key):
+                        renpy.invoke_in_new_context(set_binding, key, label)
+                        return True
+
+                    _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, "Not Assigned")), "prefs_js", clicked=clicked)
+
+#                 def clicked():
+#                     for label, key in library.joystick_prefs:
+#                         renpy.invoke_in_new_context(set_binding, key, label)
+
+#                     return True
+
+#                 _button_factory("Assign All Mappings", "prefs_js", clicked=clicked)
+
+                ui.close()
+
+        class _JumpPreference(object):
+
+            def __init__(self, name, target):
+                self.name = name
+                self.target = target
+
+                library.all_preferences[name] = self
+
+            def render_preference(self):
+
+                ### prefs_jump prefs_pref
+                # (window) The style of a window containing a jump preference.
+
+                ### prefs_jump_button prefs_button
+                # (window, hover) The style of a jump preference button.
+
+                ### prefs_jump_button_text prefs_button_text
+                # (text, hover) The style of jump preference button text.
+
+                ui.window(style='prefs_jump')
+                _button_factory(self.name, 'prefs_jump', clicked=ui.jumps(self.target))
 
     python hide:
 
@@ -464,16 +570,11 @@ init -450:
         pr1 = _VolumePreference("Music Volume", 'music', 'library.has_music')
         pr2 = _VolumePreference("Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
                                                         
+        _JumpPreference('Advanced...', '_advanced_screen')
 
-#         pr1 = _Preference('Music', 'music', [
-#             ('Enabled', True, 'library.has_music'),
-#             ('Disabled', False, 'library.has_music'),
-#             ])
-            
-#         pr2 = _Preference('Sound Effects', 'sound', [
-#             ('Enabled', True, 'library.has_sound'),
-#             ('Disabled', False, 'library.has_sound'),
-#             ])
+        _JoystickPreference('Joystick Configuration')
+        
+        # Advanced 
 
         ### prefs_column default
         # The style of a vbox containing a column of preferences.
@@ -502,6 +603,11 @@ init -450:
         library.preferences['prefs_right'] = [
             library.all_preferences['Music Volume'],
             library.all_preferences['Sound Volume'],
+            library.all_preferences['Advanced...'],
+            ]
+
+        library.advanced_preferences['prefs_center'] = [
+            library.all_preferences['Joystick Configuration'],
             ]
 
 
@@ -511,8 +617,11 @@ label _prefs_screen:
 
     jump _prefs_screen
     
-    
+label _advanced_screen:    
         
+    $ _prefs_screen_run(library.advanced_preferences)
+
+    jump _advanced_screen
 
             
                         

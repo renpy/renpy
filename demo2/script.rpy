@@ -65,9 +65,6 @@ label start:
     # Start some music playing in the background.
     $ renpy.music_start('sun-flower-slow-drag.mid')
 
-    scene black
-    scene bg whitehouse with ImageDissolve("circiris.png", 2.0, ramp=[ 16 * i for i in range(0, 15) + range(15, 0, -1) + range(0, 15) ])
-
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
     # of it.
@@ -807,8 +804,10 @@ init:
 
     $ slowcirciris = ImageDissolve("circiris.png", 5.0, 8)
     $ circirisout = ImageDissolve("circiris.png", 1.0, 8)
+    $ circirisoutramp = ImageDissolve("circiris.png", 3.0, ramp=[ 16 * i for i in range(0, 15) + range(15, 0, -1) + range(0, 15) + range(15, 0, -1) + range(0, 15)  + range(15, 0, -1) + range(0, 15) ] )
     $ circirisin = ImageDissolve("circiris.png", 1.0, 8, reverse=True)
-    $ demotrans = ImageDissolve("demotrans.png", 3.0, 128)
+
+    $ demotrans = ImageDissolve("demotrans.png", 3.0, 16)
 
     image circiris = "circiris.png"
 
@@ -879,7 +878,7 @@ label demonstrate:
 
             e "We can also shake the screen horizontally, with hpunch."
 
-        "ImageDissolve transitions, added in 4.8.7.":
+        "ImageDissolve transitions, updated in 5.3.1.":
 
             e "ImageDissolve allows us to have dissolve transitions that are
                controlled by images."
@@ -927,10 +926,14 @@ label demonstrate:
 
             with None
             scene bg washington
-            show eileen happy
             with circirisout
 
             e "... and show them again with a circirisout."
+
+            e "The ramp parameter lets things dissolve in and out
+               along the way."
+
+            scene bg whitehouse with circirisoutramp
 
             e "It's even possible to have weird custom transitions."
 

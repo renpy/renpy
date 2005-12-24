@@ -29,7 +29,7 @@ label _start:
         call expression "splashscreen" from _call_splashscreen_1
 
     # Clean out any residual scene from the splashscreen.
-    scene
+    scene black
 
     $ renpy.call_in_new_context("_enter_main_menu")
 

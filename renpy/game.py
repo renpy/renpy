@@ -97,8 +97,10 @@ class Preferences(object):
         # Mixer channel info.
         self.volumes = { }
         self.mute = { }
-        
 
+        # Joystick mappings.
+        self.joymap = { }
+        
     def __setstate__(self, state):
         self.reinit()
         vars(self).update(state)
@@ -152,12 +154,15 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable):
+def invoke_in_new_context(callable, *args, **kwargs):
     """
     This pushes the current context, and invokes the given python
     function in a new context. When that function returns or raises an
     exception, it removes the new context, and restores the current
     context.
+
+    Additional arguments and keyword arguments are passed to the
+    callable.
 
     Please note that the context so created cannot execute renpy
     code. So exceptions that change the flow of renpy code (like
@@ -175,7 +180,7 @@ def invoke_in_new_context(callable):
     contexts.append(context)
 
     try:
-        return callable()
+        return callable(*args, **kwargs)
     finally:
         contexts.pop()
 

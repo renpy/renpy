@@ -39,6 +39,7 @@ def import_all():
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim
+    import renpy.display.joystick
 
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 

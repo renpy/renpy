@@ -131,10 +131,11 @@ class Character(object):
         this dialogue. This should either be renpy.display_say, or a function
         with the same signature as it.
 
-        @param predict_function: The function that is called to predict
-        the images from this dialogue. It is called with the same signature as
-        display_say, and is expected to return a list of displayables
-        that should be loaded.
+        @param predict_function: The function that is called to
+        predict the images from this dialogue. It is called with the
+        same signature as display_say (although some of the
+        parameters, such as what, may be inaccurate), and is expected
+        to return a list of displayables that should be loaded.
 
         @param condition: A string containing a python expression, or
         None. If not None, the condition is evaluated when each line

@@ -538,6 +538,12 @@ can read the documentation of that function to find out what menu
 expects as input.
 </var>
 
+<var name="predict_menu">
+A function that is called with no arguments sometime before a menu is
+displayed. It should return a list of widgets, which will then have
+images they use preloaded.
+</var>
+
 <h3>Displaying Images</h3>
 
 <p>
@@ -1324,10 +1330,9 @@ the label given by that string, in a manner similar to a normal call.
 
 <p>
 
-If the return stack is not empty, the return statement pops the
-top return site off of it and transfers control
-there. Otherwise, it terminates execution without raising an
-error.
+If the return stack is not empty, the return statement pops the top
+return site off of it and transfers control there. Otherwise, it
+performs a full restart of Ren'Py.
 
 </p>
 

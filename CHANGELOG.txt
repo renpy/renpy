@@ -4,6 +4,11 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.3.1
 -------------------
 
+Ren'Py now includes support for using a joystick to play the game. To
+configure joystick support, go into Preferences, click Advanced...,
+and then click the function you wish to assign to a joystick axis or
+button. [ doc config.joystick, keymaps, etc. ]
+
 ImageDissolve now support a ramp parameter, which can be used to give
 the ramp explicitly. 
 
@@ -21,6 +26,9 @@ now raises an error. Previously, this was ignored silently.
 If it exists, renpy.zip is added to the python search path. This lets
 one replace the renpy/ directory with a renpy.zip file containing that
 directory, if so desired.
+
+A non-nested return now returns the user to the main menu, rather than
+dumping him out of Ren'Py entirely.
 
 Fixed a bug that required Tab to be pressed twice to re-enable skip
 mode after skipping was terminated by hitting a menu.
