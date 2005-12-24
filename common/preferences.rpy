@@ -9,8 +9,8 @@ init -450:
         # with that style.
         library.preferences = { }
 
-        # Ditto, for advanced preferences.
-        library.advanced_preferences = { }
+        # Ditto, for joystick preferences.
+        library.joystick_preferences = { }
 
         # This is a map from preference name to that preference
         # object, that can be used in rearranging preferences.
@@ -22,7 +22,7 @@ init -450:
 
         # A list of (readable name, synthetic key) tuples
         # corresponding to joystick events.
-        library.joystick_prefs = [
+        library.joystick_keys = [
             ('Left', 'joy_left'),
             ('Right', 'joy_right'),
             ('Up', 'joy_up'),
@@ -443,7 +443,7 @@ init -450:
 
 
 
-                for label, key in library.joystick_prefs:
+                for label, key in library.joystick_keys:
 
                     def clicked(label=label, key=key):
                         renpy.invoke_in_new_context(set_binding, key, label)
@@ -452,7 +452,7 @@ init -450:
                     _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, "Not Assigned")), "prefs_js", clicked=clicked)
 
 #                 def clicked():
-#                     for label, key in library.joystick_prefs:
+#                     for label, key in library.joystick_keys:
 #                         renpy.invoke_in_new_context(set_binding, key, label)
 
 #                     return True
@@ -463,9 +463,10 @@ init -450:
 
         class _JumpPreference(object):
 
-            def __init__(self, name, target):
+            def __init__(self, name, target, condition="True"):
                 self.name = name
                 self.target = target
+                self.condition = condition
 
                 library.all_preferences[name] = self
 
@@ -481,7 +482,28 @@ init -450:
                 # (text, hover) The style of jump preference button text.
 
                 ui.window(style='prefs_jump')
-                _button_factory(self.name, 'prefs_jump', clicked=ui.jumps(self.target))
+
+                if eval(self.condition):
+                    clicked=ui.jumps(self.target)
+                else:
+                    clicked=None
+
+                _button_factory(self.name, 'prefs_jump', clicked=clicked)
+
+        def _remove_preference(name):
+            """
+            Removes the preference with the given name from the
+            preferences menu.
+            """
+
+            pref = library.all_preferences.get(name, None)
+            if not pref:
+                return
+
+            for k, v in library.preferences.iteritems():
+                if pref in v:
+                    v.remove(pref)
+            
 
     python hide:
 
@@ -570,7 +592,7 @@ init -450:
         pr1 = _VolumePreference("Music Volume", 'music', 'library.has_music')
         pr2 = _VolumePreference("Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
                                                         
-        _JumpPreference('Advanced...', '_advanced_screen')
+        _JumpPreference('Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled')
 
         _JoystickPreference('Joystick Configuration')
         
@@ -603,10 +625,10 @@ init -450:
         library.preferences['prefs_right'] = [
             library.all_preferences['Music Volume'],
             library.all_preferences['Sound Volume'],
-            library.all_preferences['Advanced...'],
+            library.all_preferences['Joystick...'],
             ]
 
-        library.advanced_preferences['prefs_center'] = [
+        library.joystick_preferences['prefs_center'] = [
             library.all_preferences['Joystick Configuration'],
             ]
 
@@ -617,11 +639,11 @@ label _prefs_screen:
 
     jump _prefs_screen
     
-label _advanced_screen:    
+label _joystick_screen:    
         
-    $ _prefs_screen_run(library.advanced_preferences)
+    $ _prefs_screen_run(library.joystick_preferences)
 
-    jump _advanced_screen
+    jump _joystick_screen
 
             
                         

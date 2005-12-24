@@ -29,8 +29,8 @@ def init():
     try:
         pygame.joystick.init()
         
-        if pygame.joystick.get_count() > 0:
-            pygame.joystick.Joystick(0).init()
+        for i in range(0, pygame.joystick.get_count()):
+            pygame.joystick.Joystick(i).init()
             enabled = True
     except:        
         if renpy.config.debug:
@@ -59,12 +59,12 @@ def event(ev):
             return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  name="Axis %d %s" % (ev.axis, state))
+                                  name="Axis %d.%d %s" % (ev.joy, ev.axis, state))
 
     if ev.type == JOYBUTTONDOWN:
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  name="Button %d" % ev.button)
+                                  name="Button %d.%d" % (ev.joy, ev.button))
 
     return ev
 

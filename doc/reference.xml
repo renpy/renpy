@@ -2364,6 +2364,11 @@ buttons assigned to each possible operation. Please see the
 section on keymaps for more information.
 </var>
 
+<var name="config.joystick" value="True">
+Governs if joystick support is enabled. If False, Joystick detection
+is disabled.
+</var>
+
 <var name="config.sticky_positions" value="False">
 Sticky positions causes the at clause of a show or scene
 statement to be remembered for as long as that character is on
@@ -2594,11 +2599,17 @@ section on customizing the main and game menus for more details on the
 contents of this variable.
 </var>
 
-<var name="library.add_preferences" value='{ ... }'>
+<var name="library.all_preferences" value='{ ... }'>
 This is a map from preference name to the preference object
 implementing that preference. This variable shouldn't be modified by
 the user directly, but instead provides a stable source of preferences
 that can be added to library.preferences.
+</var>
+
+<var name="library.joystick_keys" value='[ ... ]'>
+This is a listing of all the joystick synthetic keys known to Ren'Py. 
+It's a list of visible name, keysym pairs. Ren'Py uses this to
+populate the joystick preferences.
 </var>
 
 <var name="library.has_music" value="True">
@@ -3469,7 +3480,13 @@ example, "mousedown_1" is generally a press of the left mouse button,
 </p>
 
 <p>
-A second kind of keysym is a string containing a character that is
+A second kind of keysym is a joystick keysym. These begin with
+joy_. They are defined in library.joystick_keys, and mapped to
+actual joystick events by the user.
+</p>
+
+<p>
+A third kind of keysym is a string containing a character that is
 generated when a key is pressed. This is useful for binding alphabetic
 keys and numbers. Examples of these keysyms include "a", "A", and
 "7".
@@ -3497,34 +3514,34 @@ init:
 
 <p>
 The default keymap is contained inside the python code implementing
-Ren'Py, and as of version 4.5 is as follows:
+Ren'Py, and as of version 5.3.1 is as follows:
 </p>
 
 <example>
-keymap = dict(
-
+config.keymap = dict(
+    
     # Bindings present almost everywhere, unless explicitly
     # disabled.
-    rollback = [ 'K_PAGEUP', 'mousedown_4' ],
+    rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
     hide_windows = [ 'mouseup_2', 'h' ],
     launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Focus.
-    focus_left = [ 'K_LEFT' ],
-    focus_right = [ 'K_RIGHT' ],
-    focus_up = [ 'K_UP' ],
-    focus_down = [ 'K_DOWN' ],
-
+    focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
+    focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],
+    focus_up = [ 'K_UP', 'K_KP_UP', 'joy_up' ],
+    focus_down = [ 'K_DOWN', 'K_KP_DOWN', 'joy_down' ],
+        
     # Button.
-    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
@@ -3532,8 +3549,14 @@ keymap = dict(
 
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL' ],
-    toggle_skip = [ 'K_TAB' ],
+    toggle_skip = [ 'K_TAB', 'joy_skip' ],
     fast_skip = [ '>' ],
+
+    # These control the bar.
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_decrease = [ 'K_LEFT', 'joy_left' ],
+    bar_increase = [ 'K_RIGHT', 'joy_right' ],
     )
 </example>
 
@@ -3945,7 +3968,7 @@ response to a yes and no question.
 
 <p>
 Finally, it is possible to customize the preferences. This is done by
-modifying library.preferences, which is a dictionaty mapping from vbox
+modifying library.preferences, which is a dictionary mapping from vbox
 style to a list of preferences to be placed in that vbox. Modifying
 this dictionary and lists can move preferences around, and eliminate
 preferences entirely. It may be desirable to create new vbox styles,
@@ -3963,6 +3986,8 @@ appropriate list in library.preferences.
 <!-- func _SliderPreference -->
 
 <!-- func _VolumePreference -->
+
+<!-- func _remove_preference -->
 
 <h3>Developer Tools</h3>
 

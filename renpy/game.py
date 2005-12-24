@@ -99,7 +99,12 @@ class Preferences(object):
         self.mute = { }
 
         # Joystick mappings.
-        self.joymap = { }
+        self.joymap = dict(
+            joy_left="Axis 0.0 Negative",
+            joy_right="Axis 0.0 Positive",
+            joy_up="Axis 0.1 Negative",
+            joy_down="Axis 0.1 Positive",
+            joy_dismiss="Button 0.0")
         
     def __setstate__(self, state):
         self.reinit()
