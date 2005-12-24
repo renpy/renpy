@@ -333,6 +333,10 @@ class Blink(renpy.display.core.Displayable):
 
         self.cycle = on + set + off + rise
 
+
+    def predict(self, callback):
+        self.image.predict(callback)
+
     def get_placement(self):
         return self.style
 

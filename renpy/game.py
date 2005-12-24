@@ -18,6 +18,9 @@ basepath = None
 # everything that can be loaded, before archives are used.
 searchpath = [ ]
 
+# The options that were read off the command line.
+options = None
+
 # A Script object, giving the script of the currently executing game.
 script = None
 
@@ -94,8 +97,15 @@ class Preferences(object):
         # Mixer channel info.
         self.volumes = { }
         self.mute = { }
-        
 
+        # Joystick mappings.
+        self.joymap = dict(
+            joy_left="Axis 0.0 Negative",
+            joy_right="Axis 0.0 Positive",
+            joy_up="Axis 0.1 Negative",
+            joy_down="Axis 0.1 Positive",
+            joy_dismiss="Button 0.0")
+        
     def __setstate__(self, state):
         self.reinit()
         vars(self).update(state)
@@ -149,12 +159,15 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable):
+def invoke_in_new_context(callable, *args, **kwargs):
     """
     This pushes the current context, and invokes the given python
     function in a new context. When that function returns or raises an
     exception, it removes the new context, and restores the current
     context.
+
+    Additional arguments and keyword arguments are passed to the
+    callable.
 
     Please note that the context so created cannot execute renpy
     code. So exceptions that change the flow of renpy code (like
@@ -172,7 +185,7 @@ def invoke_in_new_context(callable):
     contexts.append(context)
 
     try:
-        return callable()
+        return callable(*args, **kwargs)
     finally:
         contexts.pop()
 

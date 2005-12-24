@@ -17,8 +17,21 @@ init -500:
         # These are settings that the user can tweak to control the
         # look of the main menu and the load/save/escape screens.
 
+        # The class that stores library variables.
+        class _Library(object):
+            def __setattr__(self, name, value):
+
+                if getattr(self, 'lock', False):
+                    if not name in vars(self):
+                        raise Exception('library.%s is not a known configuration variable.' % name)
+
+                object.__setattr__(self, name, value)
+                
+                
+            
+
         # Used to store library settings.
-        library = object()
+        library = _Library()
 
         # The minimum version of the module we work with. Don't change
         # this unless you know what you're doing.
@@ -30,6 +43,10 @@ init -500:
 
         # Used to translate strings in the library.
         library.translations = { }
+
+        # Used internally to maintain compatiblity with old
+        # translations of strings.
+        library.old_names = { }
 
         # True if the skip indicator should be shown.
         library.skip_indicator = True
@@ -101,8 +118,11 @@ init -500:
             
             if s in library.translations:
                 return library.translations[s]
-            else:
-                return s
+
+            if s in library.old_names and library.old_names[s] in library.translations:
+                return library.translations[library.old_names[s]]
+
+            return s
 
         # Are the windows currently hidden?
         _windows_hidden = False
@@ -119,8 +139,17 @@ init -500:
             renpy.call_in_new_context('_game_menu')
 
         def toggle_skipping():
-            config.skipping = not config.skipping
+
+            if not config.skipping:
+                config.skipping = "slow"
+            else:
+                config.skipping = None
+
             renpy.restart_interaction()
+
+        def fast_skip():
+            if config.fast_skipping or config.developer:
+                config.skipping = "fast"
 
         # The default keymap.
         km = renpy.Keymap(
@@ -129,8 +158,10 @@ init -500:
             toggle_fullscreen = renpy.toggle_fullscreen,
             toggle_music = renpy.toggle_music,
             toggle_skip = toggle_skipping,
+            fast_skip = fast_skip,
             game_menu = invoke_game_menu,
-            hide_windows = renpy.curried_call_in_new_context("_hide_windows")
+            hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
+            launch_editor = renpy.launch_editor,
             )
 
         config.underlay = [ km ]
@@ -144,8 +175,11 @@ init -500:
             ### skip_indicator default
             # (text) The style and placement of the skip indicator.            
 
-            if config.skipping and library.skip_indicator:
+            if config.skipping == "slow" and library.skip_indicator:
                 ui.text(_("Skip Mode"), style='skip_indicator')
+
+            if config.skipping == "fast" and library.skip_indicator:
+                ui.text(_("Fast Skip Mode"), style='skip_indicator')
 
         config.overlay_functions.append(skip_indicator)
 
@@ -163,8 +197,6 @@ label _hide_windows:
         _windows_hidden = False
 
     return
-
-
 
     
 ##############################################################################
@@ -194,9 +226,11 @@ label _check_module:
                          
 
 
-# Random nice things to have.
-init:
+init -401:
+    # Random nice things to have.
     $ centered = Character(None, what_style="centered_text", window_style="centered_window")
     image text = renpy.ParameterizedText(style="centered_text")
-    
+
+    # Lock the library object.
+    $ library.lock = True
         

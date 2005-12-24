@@ -1,0 +1,98 @@
+================
+Extending Ren'Py
+================
+
+This document talks a bit about extending Ren'Py using Python
+modules. This is fairly advanced stuff, as several things change
+between python-in-Ren'Py and python modules. Still, python modules
+allow one to extend the very core of Ren'Py itself, which may come in
+handy one day. They also let you leave Ren'Py entirely, to write
+things like minigames in pygame directly.
+
+It's assumed that if you're reading this, you have a decent amount of
+familiarity with programming in Python. If this isn't the case, then
+you should probably go and read the documentation on
+http://www.python.org/.
+
+
+Python Modules in Ren'Py
+========================
+
+Python modules can be imported from Ren'Py code using the standard
+Python import statement. Ren'Py installs an import hook that will
+attempt to load python modules from the same places that it searches
+for all game data. This includes the game directory, and any archives
+listed in config.archives. 
+
+It's important to ensure that your modules do not conflict with
+standard python modules used by Ren'Py, or with the renpy modules
+themselves. This is best done by putting your modules in an unused
+package, such as local. Ren'Py respects the Python convention that a
+package is a directory with an __init__.py file in it, and extends
+this convention into .rpa files when necessary.
+
+There are a number of differences between Python modules loaded by
+Ren'Py and python-in-renpy as found in the python blocks used in .rpy
+scripts. One of these differences is that the module names used are
+fairly different. Some of the commonly used modules have different
+from python-in-renpy (and hence the documentation). Some of these
+changes are:
+
+* ui is renpy.ui
+* anim is renpy.display.anim
+* config is renpy.config
+* renpy.sound is renpy.audio.sound
+* renpy.music is renpy.audio.music
+* renpy is renpy.exports
+* The top-level namespace is renpy.store
+
+It's important to deal with these name changes when writing python
+module code.
+
+A second, and perhaps more important, change is that objects loaded
+from python modules do not, by default, participate in
+rollback. Because of this, we do not recommend returning dictionaries,
+lists, or objects from python module code, but instead we prefer
+returning immutable types (such as strings, integers, floats, and
+tuples). 
+
+If it is necessary to return an object that needs to participate in
+rollback, then one must construct objects of the appropriate types
+manually. Lists must be of type renpy.python.RevertableList,
+dictionaries of type renpy.python.RevertableDict, and object should be
+of a subclass of renpy.python.RevertableObject. 
+
+
+Writing Pygame in Ren'Py
+========================
+
+It's possible (if perhaps not recommended) to include pygame code in
+Ren'Py. One use of this would be to implement mini-games that would
+otherwise not fit into the Ren'Py framework. (But it may make more
+sense to implement a minigame as a Ren'Py widget.) It can be done by
+importing the appropriate pygame modules, and then calling pygame
+functions as desired.
+
+Ren'Py initializes the pygame display to be 24 or 32 bits in depth, at
+the sizes chosen by screen_width and screen_height. The display is set
+to be a software surface. The display can be retrieved with
+pygame.display.get_surface().
+
+The pygame mixer is not initialized, and is often not included as part
+of Ren'Py. Instead, we recommend using renpy.audio.sound and
+renpy.audio.music calls to play sound and music. When playing music,
+it is necessary to call renpy.audio.interact() after music is changed,
+and renpy.audio.periodic() on a regular basis (Ren'Py does it at 20Hz)
+to ensure that track updates occur when appropriate.
+
+On returning to Ren'Py from a pygame interation that redraws the
+screen, it is necessary to call
+renpy.exports.force_full_redraw(). This will force the screen to be
+redrawn completely. If this is not done, Ren'Py may not know about
+areas of the screen drawn to directly with pygame.
+
+
+Implementing Ren'Py Widgets
+===========================
+
+(This hasn't been written yet, bug PyTom if you really need it.)
