@@ -42,9 +42,9 @@ def map_event(ev, name):
 
         return False
 
-    if ev.type == renpy.display.core.JOYEVENT:
+    if ev.type == renpy.display.core.JOYEVENT and ev.press:
         for key in keys:
-            if renpy.game.preferences.joymap.get(key, None) == ev.name:
+            if renpy.game.preferences.joymap.get(key, None) == ev.press:
                 return True
 
     return False
@@ -58,6 +58,11 @@ def map_keyup(ev, name):
             if ev.key == getattr(pygame.constants, key, None):
                 return True
 
+    if ev.type == renpy.display.core.JOYEVENT and ev.release:
+        for key in keys:
+            if renpy.game.preferences.joymap.get(key, None) == ev.release:
+                return True
+            
     return False
     
         

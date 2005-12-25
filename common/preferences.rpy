@@ -29,7 +29,9 @@ init -450:
             ('Down', 'joy_down'),
             ('Select/Dismiss', 'joy_dismiss'),
             ('Rollback', 'joy_rollback'),
-            ('Toggle Skip', 'joy_skip'),
+            ('Hold to Skip', 'joy_holdskip'),
+            ('Toggle Skip', 'joy_toggleskip'),
+            ('Hide Text', 'joy_hide'),
             ('Menu', 'joy_menu'),
             ]
         

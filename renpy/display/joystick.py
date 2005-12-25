@@ -6,6 +6,7 @@ import pygame
 from pygame.constants import *
 
 import renpy
+import sets
 
 # Do we have a joystick enabled?
 enabled = False
@@ -50,21 +51,39 @@ def event(ev):
         else:
             state = None
 
-        if state == old_axis_states.get(ev.axis, None):
+        oldstate = old_axis_states.get((ev.joy, ev.axis), None)
+
+        if state == oldstate:
             return None
 
-        old_axis_states[ev.axis] = state
+        if oldstate:
+            release = "Axis %d.%d %s" % (ev.joy, ev.axis, oldstate)
+        else:
+            release = None
 
-        if state is None:
+        old_axis_states[ev.joy, ev.axis] = state
+
+        if state:
+            press = "Axis %d.%d %s" % (ev.joy, ev.axis, state)
+        else:
+            press = None
+
+        if not press and not release:
             return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  name="Axis %d.%d %s" % (ev.joy, ev.axis, state))
+                                  press=press, release=release)
 
     if ev.type == JOYBUTTONDOWN:
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  name="Button %d.%d" % (ev.joy, ev.button))
+                                  press="Button %d.%d" % (ev.joy, ev.button),
+                                  release=None)
+    if ev.type == JOYBUTTONUP:
+
+        return pygame.event.Event(renpy.display.core.JOYEVENT,
+                                  press=None,
+                                  release="Button %d.%d" % (ev.joy, ev.button))
 
     return ev
 
@@ -76,6 +95,5 @@ class JoyBehavior(renpy.display.layout.Null):
 
     def event(self, ev, x, y):
         if ev.type == renpy.display.core.JOYEVENT:
-            return ev.name
-    
-    
+            return ev.press
+        

@@ -138,7 +138,7 @@ keymap = dict(
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
-    hide_windows = [ 'mouseup_2', 'h' ],
+    hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
     launch_editor = [ 'E' ],
 
     # Say.
@@ -159,8 +159,8 @@ keymap = dict(
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
     # These keys control skipping.
-    skip = [ 'K_LCTRL', 'K_RCTRL' ],
-    toggle_skip = [ 'K_TAB', 'joy_skip' ],
+    skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
+    toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
     fast_skip = [ '>' ],
 
     # These control the bar.

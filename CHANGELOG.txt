@@ -1,6 +1,12 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.3.2
+-------------------
+
+Joystick support now exposes Hold to Skip and Hide Text functionality
+to the user. 
+
 New in Ren'Py 5.3.1
 -------------------
 
