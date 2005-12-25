@@ -7,7 +7,7 @@ New in Ren'Py 5.3.1
 Ren'Py now includes support for using a joystick to play the game. To
 configure joystick support, go into Preferences, click Advanced...,
 and then click the function you wish to assign to a joystick axis or
-button. [ doc config.joystick, keymaps, etc. ]
+button.
 
 ImageDissolve now support a ramp parameter, which can be used to give
 the ramp explicitly. 
@@ -18,7 +18,7 @@ should be preloaded, which should in turn lead to an improved user
 experience and a lack of pauses for image loading. To support this,
 the Character function grew a predict_function argument, and there are
 now also predict_menu and predict_say functions at the
-top-level. [doc]
+top-level.
 
 Setting a config or library variable that does not exist is now an
 now raises an error. Previously, this was ignored silently.
