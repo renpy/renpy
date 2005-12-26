@@ -816,13 +816,13 @@ def context():
 
     return renpy.game.context().info
     
-def music_start(filename, loops=True, fadeout=None):
+def music_start(filename, loops=True, fadeout=None, fadein=0):
     """
     Deprecated music start function, retained for compatibility. Use
     renpy.music.play() or .queue() instead.
     """
 
-    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout)
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout, fadein=fadein)
 
 def music_stop(fadeout=None):
     """

@@ -9,6 +9,10 @@ import sys
 try:
     import _renpy
     version = _renpy.version()
+
+    if version < 5003002:
+        print >>sys.stderr, "The _renpy module was found, but is out of date.\nPlease read module/README.txt for more information."
+        
 except:
     # If for any reason we can't import the module, we have a version
     # number of 0.

@@ -18,10 +18,11 @@ mix = None
 if 'pss' not in disable:
     try:
         import pysdlsound as pss
+        pss.check_version(2)
         atexit.register(pss.quit)
-    except:
-        pass
-
+    except:        
+        pss = None
+        raise
 
 if 'nativemidi' not in disable:
     try:
@@ -184,8 +185,8 @@ class Channel(object):
         # The actual volume we imparted onto this channel.
         self.actual_volume = 1.0
 
-        # The filenames that are being queued for playback on this
-        # channel.
+        # The filenames, fadein time pairs that are being queued for
+        # playback on this channel.
         self.queue = [ ]
 
         # If true, we loop the music. This entails re-adding the element to
@@ -292,7 +293,7 @@ class Channel(object):
                 break
 
             # Otherwise, we might be able to enqueue something.
-            top = self.queue[0]
+            top, fadein = self.queue[0]
 
             # We can only play midi if we're not playing PCM.
             if ismidi(top):
@@ -322,9 +323,9 @@ class Channel(object):
 
                 else:
                     if depth == 0:
-                        pss.play(self.number, topf, top, self.synchro_start)
+                        pss.play(self.number, topf, top, paused=self.synchro_start, fadein=fadein)
                     else:
-                        pss.queue(self.number, topf, top)
+                        pss.queue(self.number, topf, top, fadein=fadein)
 
                     self.playing = True
 
@@ -335,7 +336,7 @@ class Channel(object):
                     return
 
             if self.loop and not self.queue:
-                self.queue.append(top)
+                self.queue.append((top, 0))
             else:
                 do_callback = True
 
@@ -385,14 +386,14 @@ class Channel(object):
             pss.fadeout(self.number, secs * 1000)
 
 
-    def enqueue(self, filename, loop=True, synchro_start=False):
+    def enqueue(self, filename, loop=True, synchro_start=False, fadein=0):
 
         assert filename
 
         if not pcm_ok:
             return
 
-        self.queue.append(filename)
+        self.queue.append((filename, fadein * 1000))
         self.loop = loop
 
         self.wait_stop = synchro_start

@@ -90,12 +90,18 @@ struct Channel {
 
     /* The name of the playing music. */
     PyObject *playing_name;
+
+    /* The number of ms to take to fade in the playing sample. */
+    int playing_fadein;
     
     /* The queued up sample. */
     Sound_Sample *queued;    
 
     /* The name of the queued up sample. */
     PyObject *queued_name;
+
+    /* The number of ms to take to fade in the queued sample. */
+    int queued_fadein;
     
     /* Is this channel paused? */
     int paused;
@@ -155,13 +161,27 @@ static int bytes_to_ms(int bytes) {
 }
 
 static void start_sample(struct Channel* c) {
+    int fade_steps;
+
+
     if (!c) return;
 
     c->decoded = 0;
     c->last = 0;
     c->pos = 0;
-    c->fade_step_len = 0;
     c->stop_bytes = -1;
+
+    if (c->playing_fadein == 0) {
+        c->fade_step_len = 0;
+    } else {
+        fade_steps = c->volume;
+        c->fade_delta = 1;
+        c->fade_off = 0;
+        c->fade_vol = 0;
+        
+        c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
+        c->fade_step_len &= ~0x7; // Even sample.
+    }
 }
 
 
@@ -293,9 +313,11 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 c->playing = c->queued;
                 c->playing_name = c->queued_name;
-
+                c->playing_fadein = c->queued_fadein;
+                
                 c->queued = NULL;
                 c->queued_name = NULL;
+                c->queued_fadein = 0;
                 
                 start_sample(c);
                 update_pause();
@@ -344,7 +366,7 @@ static Sound_Sample *load_sample(SDL_RWops *rw, const char *ext) {
 }
 
     
-void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int paused) {
+void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int paused) {
 
     BEGIN();
     
@@ -384,17 +406,18 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int p
 
     incref(name);
     c->playing_name = name;
+
+    c->playing_fadein = fadein;
     
     c->paused = paused;
-    start_sample(c);
-    
+    start_sample(c);    
     update_pause();
         
     EXIT();
     error(SUCCESS);
 }
 
-void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
+void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein) {
 
     BEGIN();
     
@@ -411,7 +434,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
         EXIT();
-        PSS_play(channel, rw, ext, name, 0);
+        PSS_play(channel, rw, ext, name, fadein, 0);
         return;            
     }
     
@@ -435,6 +458,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
 
     incref(name);
     c->queued_name = name;
+    c->queued_fadein = fadein;
     
     EXIT();
     error(SUCCESS);
