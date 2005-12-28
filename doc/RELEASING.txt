@@ -2,7 +2,7 @@ Releasing Ren'Py Games
 
 PyTom <pytom@bishoujo.us>
 
-Updated: 2005-05-28
+Updated: 2005-11-21
 
 
 Okay, so you've finished creating a game using Ren'Py, and now you
@@ -16,16 +16,23 @@ it. At the very least, ask about what was fixed between versions if
 you insist on using an older version.
 
 The next thing to do is to ensure that you actually have a finished
-and working game. Did you remember to run add_from? That tool will add
-from clauses to all of the call statements in your program, ensuring
-that everything continues working after a game is reloaded.
+and working game. Did you remember to run add_from? The easiest way to
+do this is to change into the tools/ directory, and run
+game_add_from.bat.  That tool will add from clauses to all of the call
+statements in your program, ensuring that everything continues working
+after a game is reloaded. It will also create .bak files for each of
+the .rpy files it can find, so you'll probably want to delete those by
+hand once you've tested the changes.
 
-You'll also want to run the lint.bat tool. This is a tool that will
-check your Ren'Py game for subtle bugs. If it reports any bugs, you
-should fix them, and run lint.bat again until they're all fixed. If
-you've changed the name of the .exe, you'll probably need to edit
-lint.bat so that it runs. In general, you don't want to release a game
-with lint errors, or at least a good excuse for said errors.
+You'll also want to run game_lint.bat, also found in the tools/
+directory. This is a tool that will check your Ren'Py game for subtle
+bugs. If it reports any bugs, you should fix them, and run lint.bat
+again until they're all fixed. If you've changed the name of the .exe,
+you'll probably need to edit lint.bat so that it runs. In general, you
+don't want to release a game with lint errors, or at least a good
+excuse for said errors. Many of the problems that are found this way
+are fairly subtle, and only manifest themselves on some of the
+platforms Ren'Py supports.
 
 If you're not totally sure that everything is A-OK, you can send me
 the game and I will check it over in confidence. If there's enough
@@ -38,18 +45,11 @@ want.
 
 Another thing to do is to change the icon of the exe file. The best
 way to do this is to create a .ico file containing 48x48, 32x32, and
-16x16 versions of your icon, and then to use PE Resource Explorer to
+16x16 versions of your icon, and then to use XN Resource Explorer to
 go in and change the icon of the file. Just delete off the existing
 icon, and then do a command like "Import image resource..." (going
 from memory here) to add in the new icon. Save the modified
 executable.
-
-If you haven't done so already, you may want to rename the
-executable. This will also allow you to rename the game directory. In
-the case of moonlight walks, the executable was named moonlight.exe
-and the game directory was moonlight. The python file run_game.py was
-renamed moonlight.py. I'll use the name moonlight as a placeholder for
-the name of your game throughout the rest of this document.
 
 Now, we have everything that goes into the final distribution. In
 fact, we have more than enough, as Ren'Py ships with a number of tools
@@ -74,17 +74,19 @@ Anyway, the list of files that you may concievably want to include as
 part of your game are:
 
 
-common/ [all ] - A directory containing common script files that help
+common/ [all] - A directory containing common script files that help
 Ren'Py work.
 
 lib/ [windows] - A directory containing the code and libraries needed
 to run Ren'Py on windows.
 
-moonlight/ [all] - The game directory containing your scripts and
+game/ [all] - The game directory containing your scripts and
 data. You probably do not want to distribute the saves/ directory
-inside here, so remove that first.
+inside here, so remove that. Be sure not to distribute
+game/saves/persistent, and be warned that it is recreated each time
+Ren'Py is run.
 
-moonlight.exe [windows] - The game executable that the user runs.
+run_game.exe [windows] - The game executable that the user runs.
 
 moonlight.py [python] - The main python script that runs your game.
 
@@ -96,12 +98,34 @@ renpy/ [python] - Contains the python source code for Ren'Py.
 
 module/ [python] - Contains the source code for the _renpy module.
 
+LICENSE.txt [all] - The license for Ren'Py. You may want to integrate
+this into the license for your game as a whole.
 
-If you're making a python or cross-platform distribution, remember
-that non-windows platforms have case-sensitive filenames. If you need
-help testing, I can help with that. (This caveat also goes for data
-files, like images and music.)
+README_RENPY.txt [all] - Instructions for running a Ren'Py game. You
+may want to integrate this into your own README.
 
 Anyway, once you have all of the files, you can zip them up (perhaps
 adding in things like README and license files) and post them on the
 web. You've just released a Ren'Py game!
+
+
+For the record, the following are the files distributed with Ren'Py
+that should not be distributed with a game.
+
+CHANGELOG.txt - The Ren'Py changelog.
+
+console.exe - A console/debugging version of Ren'Py.
+
+extras - Scripts that give additional features. Uninteresting as a
+whole, as to be used the scripts must be in the game/ directory.
+
+scripts - Example scripts.
+
+tools - Development tools.
+
+game/saves - This is the directory containing the savegame info. It
+should be deleted before distribution, but please note that running
+Ren'Py recreates it automatically. It contains a file named persistent
+that stores the list of seen lines. Shipping a persistent file
+may lead to the option to skip seen text skipping text not seen by
+the end-user.

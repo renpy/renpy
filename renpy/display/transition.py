@@ -1,3 +1,19 @@
+# This file contains code contributed by Brian Turcotte, the copyright
+# assignment follows:
+#
+# Copyright for nonlinear ramp code added to ImageDissolve is hereby
+# assigned to PyTom <pytom@bishoujo.us>.
+# 
+# And feel free to change, improve, fold, spindle, or mutilate it,
+# obviously.
+# 
+# Cheers, Brian Turcotte (shaja).
+
+# NOTE:
+# Transitions need to be able to work even when old_widget and new_widget
+# are None, at least to the point of making it through __init__. This is
+# so that prediction of images works.
+
 import renpy
 from renpy.display.render import render
 import pygame
@@ -6,61 +22,71 @@ from pygame.constants import *
 # We used time too many other times. :-(
 from time import time as now
 
-# This is a utility function that attempts to refactor an old and a new
-# Fixed into four Fixeds: below, old, new, and above. Since only the
-# old and new need transitions, this can be a significant win.
-def refactor_fixed(in_old, in_new):
+# # This is a utility function that attempts to refactor an old and a new
+# # Fixed into four Fixeds: below, old, new, and above. Since only the
+# # old and new need transitions, this can be a significant win.
+# def refactor_fixed(in_old, in_new):
 
-    Fixed = renpy.display.layout.Fixed
+#     Fixed = renpy.display.layout.Fixed
 
-    out_below = Fixed()
-    out_old = Fixed()
-    out_new = Fixed()
-    out_above = Fixed()
+#     out_below = Fixed()
+#     out_old = Fixed()
+#     out_new = Fixed()
+#     out_above = Fixed()
 
-    if (not isinstance(in_old, Fixed)) or (not isinstance(in_new, Fixed)):
-        return out_below, in_old, in_new, out_above
+#     if (not isinstance(in_old, Fixed)) or (not isinstance(in_new, Fixed)):
+#         return out_below, in_old, in_new, out_above
 
-    old_list = in_old.get_widget_time_list()
-    new_list = in_new.get_widget_time_list()
+#     old_list = in_old.get_widget_time_list()
+#     new_list = in_new.get_widget_time_list()
 
-    # Merge the beginnings of the lists.
-    while old_list and new_list:
-        if old_list[0] == new_list[0]:
-            out_below.add(new_list[0][0], new_list[0][1])
-            old_list.pop(0)
-            new_list.pop(0)
+#     # Merge the beginnings of the lists.
+#     while old_list and new_list:
+#         if old_list[0] == new_list[0]:
+#             out_below.add(new_list[0][0], new_list[0][1])
+#             old_list.pop(0)
+#             new_list.pop(0)
 
-        else:
-            break
+#         else:
+#             break
 
-    # Merge the ends of the lists.
-    above_list = [ ]
+#     # Merge the ends of the lists.
+#     above_list = [ ]
 
-    while old_list and new_list:
-        if old_list[-1] == new_list[-1]:
-            above_list.insert(0, new_list[-1])
-            old_list.pop()
-            new_list.pop()
-        else:
-            break
+#     while old_list and new_list:
+#         if old_list[-1] == new_list[-1]:
+#             above_list.insert(0, new_list[-1])
+#             old_list.pop()
+#             new_list.pop()
+#         else:
+#             break
 
-    for widget, time in above_list:
-        out_above.add(widget, time)
+#     for widget, time in above_list:
+#         out_above.add(widget, time)
 
-    for widget, time in old_list:
-        out_old.add(widget, time)
+#     for widget, time in old_list:
+#         out_old.add(widget, time)
 
-    for widget, time in new_list:
-        out_new.add(widget, time)
+#     for widget, time in new_list:
+#         out_new.add(widget, time)
 
-    return out_below, out_old, out_new, out_above
+#     return out_below, out_old, out_new, out_above
 
 class Transition(renpy.display.core.Displayable):
     """
     This is the base class of most transitions. It takes care of event
     dispatching.
     """
+
+    def predict(self, callback):
+        """
+        Predict the images that are used by this transition.
+        """
+
+        # Since most transitions don't use any images, this can return
+        # None.
+
+        return
 
     def __init__(self, delay):
         super(Transition, self).__init__()
@@ -127,6 +153,9 @@ class MultipleTransition(Transition):
 
         self.transitions = [ ]
 
+        # The screens that we use for the transition.
+        self.screens = args[0::2]
+
         def oldnew(w):
             if w is False:
                 return old_widget
@@ -140,12 +169,24 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
+
         super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
 
         self.event_target = None
         self.time_offset = 0
         self.new_widget = self.transitions[-1]
         self.events = False
+
+    def predict(self, callback):
+
+        # Predict screens.
+        for i in self.screens:
+            if isinstance(i, renpy.display.core.Displayable):
+                i.predict(callback)
+
+        # Predict transitions.
+        for i in self.transitions:
+            i.predict(callback)
 
     def render(self, width, height, st):
 
@@ -296,6 +337,8 @@ class Pixellate(Transition):
     """
 
     def __init__(self, time, steps, old_widget=None, new_widget=None):
+
+        time = float(time)
 
         if not renpy.display.module.can_pixellate:
             time = 0
@@ -790,12 +833,111 @@ class ImageDissolve(Transition):
     @param ramplen: The number of pixels of ramp to use. This defaults
     to 8.
 
+    @param ramptype: Type of alpha ramp. Possible types are: linear, cube,
+    dcube, mcube. Default is linear. Non-linear types must have
+    ramplen >= 8. "cube": Ease in, sharp out. "dcube": Sharp in, sharp out.
+    "mcube": Ease in, ease out.
+
+    @param ramp: If given, this is expected to be a sequence of
+    integers in the range 0 to 255. This sequence explicitly gives the
+    ramp to be used. If given, this overrides ramplen and ramptype.
+
     @param reverse: This reverses the ramp and the direction of the window
     slide. When True, black pixels dissolve in first, and while pixels come
     in last.    
     """
 
-    def __init__(self, image, time, ramplen=8, reverse=False,
+    def generate_ramp(self, ramplen, ramptype, explicit_ramp, reverse):
+        """
+        Precomputes the ramp.
+        """
+
+        ramp = '\x00' * 256
+
+        if explicit_ramp is not None:
+
+            for i in explicit_ramp:
+                ramp += chr(i)
+
+        else:
+
+            if ramptype == 'cube':
+                # make sure ramplen is big enough, to avoid div-by-0 errors
+                # Not much point in nonlinear if the size is that small, anyway
+                if ramplen >= 8:
+                    table = []
+                    for i in range(ramplen):
+                        table.append(i * i * i)
+                    scale = max(table) / 255.0
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            elif ramptype == 'dcube':
+                if ramplen >= 8:
+                    table = []
+                    for i in range(ramplen / 2 - ramplen, ramplen / 2):
+                        table.append(i * i * i)
+                    adj = abs(min(table))
+                    for i in range(len(table)):
+                        table[i] += adj
+                    scale = max(table) / 255.0
+                    #print "scale:", scale
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            elif ramptype == 'mcube':
+                if ramplen >= 8:
+                    ramplen = (ramplen / 2) * 2 # make sure it's even
+                    table = []
+                    for i in range(ramplen / 2):
+                        table.append(i * i * i)
+                    adj = table[-1]
+                    tmptable = []
+                    for i in table:
+                        tmptable.append(i)
+                    for i in range(1, len(table) + 1):
+                        tmptable.append(abs(table[len(table) - i] - adj) + adj)
+                    table = tmptable
+                    scale = max(table) / 255.0
+                    #print "scale:", scale
+                    for i in range(ramplen):
+                        #print i, table[i], table[i] / scale
+                        ramp += chr(int(table[i] / scale))
+                else:
+                    ramptype = 'linear'
+
+            if ramptype == 'linear':
+                for i in range(ramplen):
+                    ramp += chr(255 * i / ramplen)
+
+        ramp += '\xff' * 256
+
+        old = 0
+        for i in ramp:
+            i = ord(i)
+            if i < old:
+                self.can_fast = False
+                break
+
+            old = i
+        else:
+            self.can_fast = True
+
+        if reverse:
+            ramp = list(ramp)
+            ramp.reverse()
+            ramp = ''.join(ramp)
+
+        return ramp
+        
+        
+    def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False,
                  old_widget=None, new_widget=None):
 
         super(ImageDissolve, self).__init__(time)
@@ -809,33 +951,27 @@ class ImageDissolve(Transition):
         self.old_top = None
         self.old_ramp = '\x00' * 256
 
-        self.image = renpy.display.im.load_image(image)
+        self.image = renpy.display.im.image(image)
 
-        # Precompute the ramp.
+        if ramp is not None:
+            ramplen = len(ramp)
 
-        ramp = '\x00' * 256
-
-        for i in range(ramplen):
-            ramp += chr(255 * i / ramplen)
-
-        ramp += '\xff' * 256
-
-        if reverse:
-            ramp = list(ramp)
-            ramp.reverse()
-            ramp = ''.join(ramp)
-
-        self.ramp = ramp
+        self.ramp = self.generate_ramp(ramplen, ramptype, ramp, reverse)
+        
         self.steps = ramplen + 256
-
         self.reverse = reverse
 
+
+    def predict(self, callback):
+        callback(self.image)
 
     def render(self, width, height, st):
 
         if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st)
+
+        image = renpy.display.im.cache.get(self.image)
 
         if st < self.time:
             renpy.display.render.redraw(self, 0)
@@ -857,7 +993,7 @@ class ImageDissolve(Transition):
 
         rv.focuses.extend(top.focuses)
 
-        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
+        if renpy.config.enable_fast_dissolve and self.can_fast and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
             # Fast rendering path. Only used for full-screen, top-level, renders.
 
             fast_ramp = [ ]
@@ -874,7 +1010,7 @@ class ImageDissolve(Transition):
                 change = 255 * ( new - old ) / ( 255 - old )
                 fast_ramp.append(chr(int(change)))
 
-            renpy.display.module.alpha_munge(self.image, surf,
+            renpy.display.module.alpha_munge(image, surf,
                                              ''.join(fast_ramp))
             
             rv.blit(surf, (0, 0))
@@ -885,7 +1021,7 @@ class ImageDissolve(Transition):
 
             rv.blit(bottom, (0, 0), focus=False)
 
-            renpy.display.module.alpha_munge(self.image, surf, ramp)
+            renpy.display.module.alpha_munge(image, surf, ramp)
             rv.blit(surf, (0, 0))
 
         self.old_ramp = ramp

@@ -6,6 +6,18 @@ import renpy
 # The music channels.
 music_channels = [ 3, 4, 5, 6, 7 ]
 
+unique = time.time()
+serial = 0
+
+def get_serial():
+    """
+    Gets a globally unique serial number for each music change.
+    """
+    
+    global serial
+    serial += 1
+    return (unique, serial)
+
 def get_info():
     """
     Returns the info object. If the music fields are not on it, then
@@ -32,13 +44,16 @@ def get_channel(channel):
     c = renpy.audio.audio.get_channel(channel)
     return c
 
-def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False):
+def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False, fadein=0):
     """
     This stops the music currently playing on the numbered channel, dequeues
     any queued music, and begins playing the specified filename. If loop
     is True, the track will loop while it is still the last thing in
     the queue. If fadeout is None, the fadeout time is taken from
     config.fade_music, otherwise it is a time in seconds to fade for.
+
+    Fadein is the number of seconds to fade the music in for, on the
+    first loop only.
 
     If synchro_start is given, all the channels that have had play
     called on them with synchro_start set to True will be started at
@@ -57,10 +72,10 @@ def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False):
         if fadeout is None:
             fadeout = renpy.config.fade_music
 
-        c.fadeout(fadeout)        
-        c.enqueue(filename, loop=loop, synchro_start=synchro_start)
+        c.fadeout(fadeout)
+        c.enqueue(filename, loop=loop, synchro_start=synchro_start, fadein=fadein)
         
-        t = time.time()
+        t = get_serial()
         info._music_last_changed[channel] = t
         c.music_last_changed = t
 
@@ -75,7 +90,7 @@ def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False):
     
     
 
-def queue(filename, channel=7, loop=True, clear_queue=True):
+def queue(filename, channel=7, loop=True, clear_queue=True, fadein=0):
     """
     This queues the given filename on the specified channel. If
     clear_queue is True, then the queue is cleared, making this file
@@ -83,6 +98,9 @@ def queue(filename, channel=7, loop=True, clear_queue=True):
     finishes. If it is False, then this file is placed at the back of
     the queue. In either case, if no music is playing this music
     begins playing immediately.
+
+    Fadein is the number of seconds to fade the music in for, on the
+    first loop only.
 
     If loop is True, then this music will repeat as long as it is the
     last element of the queue.
@@ -98,9 +116,9 @@ def queue(filename, channel=7, loop=True, clear_queue=True):
         if clear_queue:
             c.dequeue()
 
-        c.enqueue(filename, loop=loop)
+        c.enqueue(filename, loop=loop, fadein=fadein)
         
-        t = time.time()
+        t = get_serial()
         info._music_last_changed[channel] = t
         c.music_last_changed = t
 
@@ -134,7 +152,7 @@ def stop(channel=7, fadeout=None):
 
         c.fadeout(fadeout)        
         
-        t = time.time()
+        t = get_serial()
         info._music_last_changed[channel] = t
         c.music_last_changed = t
         info._music_last_file[channel] = None

@@ -118,9 +118,27 @@ class TextStyle(object):
         if use_colors and self.color:
             color = self.color
 
+        r, g, b, a = color
+        color = (r, g, b, 255)
+
         font = self.get_font()
 
-        rv = font.render(text, antialias, color)
+        surf = font.render(text, antialias, color)
+
+        if a != 255 and renpy.display.module.can_map:
+
+            if not surf.get_masks()[3]:
+                surf = surf.convert_alpha()
+
+            rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            alpha = renpy.display.im.ramp(0, a)
+            identity = renpy.display.im.identity
+
+            renpy.display.module.map(surf, rv, identity, identity, identity, alpha)
+            
+        else:
+            rv = surf
+
         renpy.display.render.mutated_surface(rv)
         return rv, rv.get_size()
 
@@ -161,6 +179,13 @@ class WidgetStyle(object):
     def length(self, text):
         return 1
 
+text_regexp = re.compile(ur"""(?x)
+      (?P<space>[ \u200b])
+    | \{(?P<tag>[^{}]+)\}
+    | (?P<untag>\{\{)
+    | (?P<newline>\n)
+    | (?P<word>[^ \n\{]+)
+    """)
     
 def text_tokenizer(s, style):
     """
@@ -185,15 +210,7 @@ def text_tokenizer(s, style):
     the name of the tag, without any enclosing braces.
     """
 
-    regexp = r"""(?x)
-      (?P<space>\ )
-    | \{(?P<tag>[^{}]+)\}
-    | (?P<untag>\{\{)
-    | (?P<newline>\n)
-    | (?P<word>[^ \n\{]+)
-    """
-
-    for m in re.finditer(regexp, s):
+    for m in text_regexp.finditer(s):
 
         if m.group('space'):
             yield 'space', m.group('space')
@@ -492,7 +509,7 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
-                if i == "fast":
+                elif i == "fast":
                     # Automatically closes.
                     tsl.pop()
 
@@ -671,7 +688,7 @@ class Text(renpy.display.core.Displayable):
         if line:
             lines.append(line)
             lineheights.append(lineheight)
-            linewidths.append(curwidth)
+            linewidths.append(linewidth + curwidth)
 
         laidout_length += len(lines)
 
@@ -820,7 +837,6 @@ class Text(renpy.display.core.Displayable):
 
             if self.slow_done:
                 self.slow_done()
-
 
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 

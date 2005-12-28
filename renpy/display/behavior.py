@@ -42,6 +42,11 @@ def map_event(ev, name):
 
         return False
 
+    if ev.type == renpy.display.core.JOYEVENT and ev.press:
+        for key in keys:
+            if renpy.game.preferences.joymap.get(key, None) == ev.press:
+                return True
+
     return False
 
 def map_keyup(ev, name):
@@ -53,6 +58,11 @@ def map_keyup(ev, name):
             if ev.key == getattr(pygame.constants, key, None):
                 return True
 
+    if ev.type == renpy.display.core.JOYEVENT and ev.release:
+        for key in keys:
+            if renpy.game.preferences.joymap.get(key, None) == ev.release:
+                return True
+            
     return False
     
         
@@ -79,11 +89,11 @@ def skipping(ev):
     """
 
     if map_event(ev, "skip"):
-        renpy.config.skipping = True
+        renpy.config.skipping = "slow"
         renpy.exports.restart_interaction()
 
     if map_keyup(ev, "skip"):
-        renpy.config.skipping = False
+        renpy.config.skipping = None
         renpy.exports.restart_interaction()
 
     return
@@ -131,7 +141,6 @@ class PauseBehavior(renpy.display.layout.Null):
         if ev.type == renpy.display.core.DISPLAYTIME and \
            self.delay and ev.duration > self.delay:
             return self.result
-    
 
 class SayBehavior(renpy.display.layout.Null):
     """
@@ -161,6 +170,8 @@ class SayBehavior(renpy.display.layout.Null):
                ev.duration > renpy.config.skip_delay / 1000.0:
 
             if renpy.game.preferences.skip_unseen:
+                return True
+            elif renpy.config.skipping == "fast":
                 return True
             elif renpy.game.context().seen_current(True):
                 return True

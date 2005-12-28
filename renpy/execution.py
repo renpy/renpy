@@ -150,6 +150,7 @@ class Context(object):
         nodes = [ renpy.game.script.lookup(self.current) ]
 
         for i in range(0, renpy.config.predict_statements):
+
             if i >= len(nodes):
                 break
 

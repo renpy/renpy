@@ -116,7 +116,7 @@ def interact():
                                renpy.config.screen_width,
                                renpy.config.screen_height))
             else:
-                s = pygame.Surface(info.size)
+                s = pygame.Surface(info.size, 0, renpy.game.interface.display.window)
                 m.set_display(s, (0, 0) + info.size)
 
             movie = m

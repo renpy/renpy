@@ -434,20 +434,25 @@ init -499:
 
             ui.interact()
 
+
+        library.old_names["Are you sure you want to quit?"] = "Are you sure you want to quit the game?"
+
         def _quit_prompt(screen="quit"):
 
             def prompt():
-               return _yesno_prompt(screen, "Are you sure you want to quit the game?")
+               return _yesno_prompt(screen, "Are you sure you want to quit?")
             
             if renpy.invoke_in_new_context(prompt):
                 renpy.quit()
             else:
                 return
 
+        library.old_names["Are you sure you want to return to the main menu?\nThis will lose unsaved progress."] = "Are you sure you want to return to the main menu?\nThis will end your game."
+
         def _mainmenu_prompt(screen="mainmenu"):
 
             def prompt():
-               return _yesno_prompt(screen, "Are you sure you want to return to the main menu?\nThis will end your game.")
+               return _yesno_prompt(screen, "Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
             
             if renpy.invoke_in_new_context(prompt):
                 renpy.full_restart()
@@ -520,6 +525,9 @@ label _confirm_quit:
 ##############################################################################
 # Finally, we have the actual menu screens that are shown to the user.
 
+init -499:
+    $ library.old_names["Loading will lose unsaved progress.\nAre you sure you want to do this?"] = "Loading a new game will end your current game.\nAre you sure you want to do this?"
+
 label _load_screen:
 
     python hide:
@@ -527,7 +535,7 @@ label _load_screen:
         fn, exists = _file_picker("load", False )
 
         if not renpy.context().main_menu and _load_prompt:
-            if _yesno_prompt("load", "Loading a new game will end your current game.\nAre you sure you want to do this?"):
+            if _yesno_prompt("load", "Loading will lose unsaved progress.\nAre you sure you want to do this?"):
                 renpy.load(fn)
         else:                        
             renpy.load(fn)

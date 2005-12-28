@@ -5,12 +5,12 @@
 
 import renpy
 
-def play(filename, channel=0, fadeout=0):
+def play(filename, channel=0, fadeout=0, fadein=0):
     """
     Plays the named file once on the given channel. This will cause any
     playing sound effect to be stopped (after the given fadeout number of
     seconds, if necessary), and the new sound to be played in its
-    place.
+    place. The sound is faded in for the given number of seconds.
 
     The filename may be that of a file in an archive.
     """
@@ -21,7 +21,7 @@ def play(filename, channel=0, fadeout=0):
     stop(channel=channel, fadeout=fadeout)
     queue(filename, channel=channel, clear_queue=True)
 
-def queue(filename, channel=0, clear_queue=True):
+def queue(filename, channel=0, clear_queue=True, fadein=0):
     """
     This causes the name file to be queued to be played on the given
     channel.  If clear_queue is True, the queue will be cleared before
@@ -38,7 +38,7 @@ def queue(filename, channel=0, clear_queue=True):
         if clear_queue:
             c.dequeue()
 
-        c.enqueue(filename, loop=False)
+        c.enqueue(filename, loop=False, fadein=fadein)
 
     except:
         if renpy.config.debug_sound:

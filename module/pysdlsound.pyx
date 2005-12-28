@@ -25,8 +25,8 @@ cdef extern from "pss.h":
         pass
 
     SDL_RWops* RWopsFromPythonThreaded(object obj)
-    void PSS_play(int channel, SDL_RWops *rw, char *ext, object name, int paused)
-    void PSS_queue(int channel, SDL_RWops *rw, char *ext, object name)
+    void PSS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int paused)
+    void PSS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein)
     void PSS_stop(int channel)
     void PSS_dequeue(int channel)
     int PSS_queue_depth(int channel)
@@ -53,7 +53,7 @@ def check_error():
     if e:
         raise Exception, e
 
-def play(channel, file, name, paused=False):
+def play(channel, file, name, paused=False, fadein=0):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPythonThreaded(file)
@@ -68,17 +68,17 @@ def play(channel, file, name, paused=False):
 
     ext = _extension(name)
 
-    PSS_play(channel, rw, ext, name, pause)
+    PSS_play(channel, rw, ext, name, fadein, pause)
     check_error()
 
-def queue(channel, file, name):
+def queue(channel, file, name, fadein=0):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPythonThreaded(file)
 
     ext = _extension(name)
 
-    PSS_queue(channel, rw, ext, name)
+    PSS_queue(channel, rw, ext, name, fadein)
     check_error()
 
 def stop(channel):
@@ -133,4 +133,6 @@ def init(freq, stereo, samples):
 def quit():
     PSS_quit()
 
-    
+def check_version(version):
+    if version != 2:
+        raise Exception("pysdlsound version mismatch.")

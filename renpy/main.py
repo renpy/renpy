@@ -12,9 +12,10 @@
 import renpy
 import renpy.game as game
 import os
+import time
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-def run(restart=False, lint=False):
+def run(restart=False):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
@@ -101,7 +102,7 @@ def run(restart=False, lint=False):
     # Make a clean copy of the store.
     game.clean_store = vars(renpy.store).copy()
 
-    if lint:
+    if renpy.game.options.lint:
         renpy.lint.lint()
         return
 
@@ -120,12 +121,25 @@ def run(restart=False, lint=False):
 
     # Jump to an appropriate start label.
     if game.script.has_label("_start"):
-        game.context().goto_label('_start')
+        start_label = '_start'
     else:
-        game.context().goto_label('start')
+        start_label = 'start'
+
+    game.context().goto_label(start_label)
+
+    # Perhaps warp.
+    if renpy.game.options.warp:
+        label = renpy.warp.warp(renpy.game.options.warp)
+        game.context().goto_label(label)
+
+        if game.script.has_label('after_warp'):
+            game.context().call('after_warp')
 
     try:
         while True:
+
+            renpy.exports.log("--- " + time.ctime())
+            renpy.exports.log("")
 
             # We first try running the script.
             try:
@@ -145,8 +159,6 @@ def run(restart=False, lint=False):
 
                 continue
 
-            except game.QuitException, e:
-                break
     finally:
         f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(game.persistent).encode("zlib"))
@@ -155,7 +167,7 @@ def run(restart=False, lint=False):
 
     # And, we're done.
     
-def main(basename, lint=False):
+def main(basename):
 
     renpy.game.exception_info = 'While loading the script.'
 
@@ -163,6 +175,8 @@ def main(basename, lint=False):
         basepath = basename
     elif os.path.isdir("game"):
         basepath = "game"
+    elif os.path.isdir("data"):
+        basepath = "data"
     else:
         basepath = "."
 
@@ -174,18 +188,22 @@ def main(basename, lint=False):
 
     renpy.config.archives = [ ]
 
-    try:
-        renpy.loader.transfn(basename + ".rpi")
-        renpy.config.archives.append(basename)
-    except:
-        pass
+    for i in basename, "game", "data":
 
-    try:
-        renpy.loader.transfn("game.rpi")
-        renpy.config.archives.append("game")
-    except:
-        pass
+        if i in renpy.config.archives:
+            continue
         
+        try:
+            renpy.loader.transfn(i + ".rpa")
+            renpy.config.archives.append(i)
+            continue
+        except:
+            continue
+
+    if renpy.game.options.profile:
+        renpy.config.profile = True
+
+    # Backup the configuration.
     renpy.config.backup()
 
     # Initialize archives.
@@ -200,8 +218,11 @@ def main(basename, lint=False):
 
     while True:
         try:
-            run(restart, lint=lint)
+            run(restart)
+
+        except game.QuitException, e:
             break
         except game.FullRestartException, e:
-            restart = True
             pass
+
+        restart = True

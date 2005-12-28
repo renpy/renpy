@@ -166,7 +166,7 @@ def py_compile_exec_bytecode(source, **kwargs):
 
 def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()
-    code = py_compile(source, 'exec', **kwargs)
+    code = py_compile(source, 'eval', **kwargs)
     return marshal.dumps(code)
 
 
@@ -317,7 +317,6 @@ class Rollback(renpy.object.Object):
 
     @ivar random: A list of random numbers that were generated during the
     execution of this element.
-
     """
 
     def __init__(self):
@@ -554,6 +553,14 @@ class RollbackLog(renpy.object.Object):
         
         self.current.checkpoint = True
 
+    def block(self):
+        """
+        Called to indicate that the user should not be able to rollback
+        through this checkpoint.
+        """
+
+        self.rollback_limit = 0
+
     def rollback(self, checkpoints, force=False, label=None):
         """
         This rolls the system back to the first valid rollback point
@@ -682,9 +689,10 @@ def py_exec_bytecode(bytecode, hide=False):
     exec marshal.loads(bytecode) in store, locals
 
         
-def py_exec(source, hide=False):
+def py_exec(source, hide=False, store=None):
 
-    store = vars(renpy.store)
+    if store is None:
+        store = vars(renpy.store)
 
     if hide:
         locals = { }

@@ -65,7 +65,7 @@ def common():
     
     distutils.core.setup(
         name = "renpy_module",
-        version = "5.1.0",
+        version = "5.3.2",
         ext_modules = extensions,
         )
 
