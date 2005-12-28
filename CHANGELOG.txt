@@ -8,7 +8,9 @@ Joystick support now exposes Hold to Skip and Hide Text functionality
 to the user. 
 
 We now support the fading in of PCM (that is, non-MIDI) music and
-sounds. [ release new py4renpy, module 4 win, and RPL4M ]
+sounds.
+
+Fixed a regression in voice.rpy.
 
 New in Ren'Py 5.3.1
 -------------------

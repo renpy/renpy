@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     # Check for mac compatibility.
     if "mac_version" in globals():
-        mac_version((5, 3, 1))
+        mac_version((5, 3, 2))
 
     # Figure out the base directory.
     renpy_base = os.path.dirname(sys.argv[0])

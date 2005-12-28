@@ -615,6 +615,7 @@ init -450:
         library.preferences['prefs_left'] = [
             library.all_preferences['Display'],
             library.all_preferences['Transitions'],
+            library.all_preferences['Joystick...'],
             ]
         
         library.preferences['prefs_center'] = [
@@ -627,7 +628,6 @@ init -450:
         library.preferences['prefs_right'] = [
             library.all_preferences['Music Volume'],
             library.all_preferences['Sound Volume'],
-            library.all_preferences['Joystick...'],
             ]
 
         library.joystick_preferences['prefs_center'] = [

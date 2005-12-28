@@ -19,7 +19,7 @@
 #     $ voice_sustain()
 #     e "...to play for two lines of dialogue."
 
-init -450:
+init -440:
 
     python:
 
@@ -52,7 +52,7 @@ init -450:
                                'library.has_voice',
                                'library.sample_voice')
 
-        library.preferences['prefs_right'].append(vp)
+        library.preferences['prefs_right'].insert(1, vp)
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
