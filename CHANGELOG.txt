@@ -1,6 +1,13 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.3.3
+-------------------
+
+Worked around a bug in SDL that could cause popping in the case where
+a sound file was being mixed in at a length that was not a multiple of
+4 samples. [ module changed, rebuild. ]
+
 New in Ren'Py 5.3.2
 -------------------
 

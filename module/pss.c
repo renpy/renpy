@@ -203,6 +203,35 @@ static void free_sample(Sound_Sample *ss) {
     Sound_FreeSample(ss);
 }
 
+// Actually mixes the audio.
+static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
+ 
+    // SDL_MixAudio may not work when length % 16 != 0.
+    if ((length & 0x0f) == 0) {
+        SDL_MixAudio(dst, src, length, volume);
+    } else {
+        int i;
+        Uint8 copy[16];
+
+        // This copy is made to ensure we only mix the overlap once.
+        for (i = 0; i < 16; i++) {
+            copy[i] = dst[length - 16 + i];
+        }
+
+        // Mix the audio once.
+        SDL_MixAudio(dst, src, length, volume);
+        
+        // Copy back the overlap.
+        for (i = 0; i < 16; i++) {
+            dst[length - 16 + i] = copy[i];
+        }
+
+        // Mix the last 16 bytes again.
+        SDL_MixAudio(&dst[length - 16], &src[length - 16], 16, volume);
+
+    }    
+}
+
 // Mixes the audio, while performing fading.
 static void fade_mixaudio(struct Channel *c,
                           Uint8 *dst, Uint8 *src, int length) {
@@ -211,14 +240,14 @@ static void fade_mixaudio(struct Channel *c,
 
         // No fade case.
         if (c->fade_step_len == 0) {
-            SDL_MixAudio(dst, src, length, c->volume);
+            mixaudio(dst, src, length, c->volume);
             return;
         }
-        
+
         // Fading, but we have some space left in the current step.
         if (c->fade_off < c->fade_step_len) {
             int l = min(c->fade_step_len - c->fade_off, length);
-            SDL_MixAudio(dst, src, l, c->fade_vol);
+            mixaudio(dst, src, l, c->fade_vol);
 
             length -= l;
             dst += l;
@@ -259,7 +288,7 @@ static void post_event(struct Channel *c) {
 
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
-
+    
     for (channel = 0; channel < NUM_CHANNELS; channel++) {
 
         int mixed = 0;
@@ -782,7 +811,6 @@ float PSS_get_volume(int channel) {
  * sample buffer size.
  */
 void PSS_init(int freq, int stereo, int samples) {
-
     int i;
 
     if (initialized) {
