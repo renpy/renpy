@@ -35,14 +35,19 @@ class _Config(object):
         
 config = _Config()
 
+_list = list
+_dict = dict
+_object = object
+
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
 
 from renpy.python import RevertableDict as __renpy__dict__
 dict = __renpy__dict__
 
+from renpy.python import RevertableSet as set
+Set = set
 from renpy.python import RevertableObject as object
-
 
 
 # Set up symbols.

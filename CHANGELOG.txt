@@ -4,9 +4,24 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.3.3
 -------------------
 
+TODO: Tight loop support.
+TODO: Safe save.
+
 Worked around a bug in SDL that could cause popping in the case where
 a sound file was being mixed in at a length that was not a multiple of
 4 samples. [ module changed, rebuild. ]
+
+We now use modplug instead of mikmod. This fixes some problems with
+mod playing that were caused by mikmod not really being able to safely
+play two mods at the same time. (These problems occured even when
+someone only played one mod at a time, due to the way in which Ren'Py
+preloads sound files.)
+
+A set type that participates in rollback has been made
+available to user scripts. This type is named "set". The code that
+supports seensets in menus has been modified to accept a set along
+with a list. 
+
 
 New in Ren'Py 5.3.2
 -------------------

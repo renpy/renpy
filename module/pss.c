@@ -488,7 +488,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     incref(name);
     c->queued_name = name;
     c->queued_fadein = fadein;
-    
+
     EXIT();
     error(SUCCESS);
 }

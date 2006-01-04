@@ -300,6 +300,9 @@ class Channel(object):
                 if depth != 0:
                     break
 
+            # if 0 <= self.get_pos() <= 1000:
+            #    break
+            
             # At this point, we've decided to try to play
             # top. So let's see how far we can get.
 
@@ -448,7 +451,6 @@ def init():
                 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
-
 
         try:
             pss.init(renpy.config.sound_sample_rate, 2, bufsize)

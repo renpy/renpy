@@ -225,8 +225,10 @@ def menu(items, set_expr):
     if set is not None and rv is not None:
         for label, value in items:
             if value == rv:
-                set.append(label)
-
+                try:
+                    set.append(label)
+                except AttributeError:
+                    set.add(label)
     return rv
 
 def choice_for_skipping():

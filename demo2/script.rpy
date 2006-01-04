@@ -47,6 +47,37 @@ init:
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
+label splashscreen:
+    scene black
+    
+    $ config.searchpath.append("/tmp")
+    $ renpy.music.queue("brief-loop-1.mod")
+
+    "Foo"
+
+    $ a = [ 1, 2, 3 ]
+    $ b = [ 4, 5, 6 ]
+    $ c = a + b 
+
+    $ print type(c)
+    $ print c
+
+    $ a = set()
+
+    "Set is %(a)s. %(c)s"
+
+    $ a.add(1)
+    "Set is %(a)s."
+    $ a.add(2)
+    "Set is %(a)s."
+    $ a.add(3)
+    "Set is %(a)s."
+
+    
+
+
+    return
+
 label start:
 
     # The save_name variable sets the name of the save game. Like all
@@ -63,7 +94,7 @@ label start:
     $ renpy.clear_game_runtime()        
 
     # Start some music playing in the background.
-    $ renpy.music_start('sun-flower-slow-drag.mid')
+    # $ renpy.music_start('sun-flower-slow-drag.mid')
 
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
@@ -74,7 +105,7 @@ label start:
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()
-
+    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.

@@ -12,6 +12,7 @@ import marshal
 import random
 import types
 import weakref
+import sets
 
 import renpy
 
@@ -192,7 +193,8 @@ class RevertableList(list):
     __delitem__ = mutator(list.__delitem__)
     __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
-    __setslice__ = mutator(list.__setslice__)
+    __iadd__ = mutator(list.__iadd__)
+    __imul__ = mutator(list.__imul__)
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
@@ -201,9 +203,17 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
+    def wrapper(method):
+        def newmethod(*args, **kwargs):
+            return RevertableList(method(*args, **kwargs))
+
+        return newmethod
+
+    __add__ = wrapper(list.__add__)
+    __getslice__ = wrapper(list.__getslice__)
+    __mul__ = wrapper(list.__mul__)
+
     # TODO: Handle __iter__ (or not).
-    
-    
     def get_rollback(self):
         return self[:]
 
@@ -217,7 +227,7 @@ class RevertableDict(dict):
     clear = mutator(dict.clear)
     pop = mutator(dict.pop)
     popitem = mutator(dict.popitem)
-    values = mutator(dict.values)
+    setdefault = mutator(dict.setdefault)
 
     def copy(self):
         return RevertableDict(dict.copy(self))
@@ -230,6 +240,57 @@ class RevertableDict(dict):
 
         for k, v in old:
             self[k] = v
+
+class RevertableSet(sets.Set):
+
+    __iand__ = mutator(sets.Set.__iand__)
+    __ior__ = mutator(sets.Set.__ior__)
+    __isub__ = mutator(sets.Set.__isub__)
+    __ixor__ = mutator(sets.Set.__ixor__)
+    add = mutator(sets.Set.add)
+    clear = mutator(sets.Set.clear)
+    difference_update = mutator(sets.Set.difference_update)
+    discard = mutator(sets.Set.discard)
+    intersection_update = mutator(sets.Set.intersection_update)
+    pop = mutator(sets.Set.pop)
+    remove = mutator(sets.Set.remove)
+    symmetric_difference_update = mutator(sets.Set.symmetric_difference_update)
+    union_update = mutator(sets.Set.union_update)
+    update = mutator(sets.Set.update)
+
+    # TODO: Wrap all of the methods that can return normal sets.
+
+    def wrapper(method):
+        def newmethod(*args, **kwargs):
+            rv = method(*args, **kwargs)
+            if isinstance(rv, sets.Set):
+                return RevertableSet(rv)
+            else:
+                return rv
+
+        return newmethod
+
+    __and__ = wrapper(sets.Set.__and__)
+    __copy__ = wrapper(sets.Set.__copy__)
+    __deepcopy__ = wrapper(sets.Set.__deepcopy__)
+    __sub__ = wrapper(sets.Set.__sub__)
+    __xor__ = wrapper(sets.Set.__xor__)
+    __or__ = wrapper(sets.Set.__or__)
+    copy = wrapper(sets.Set.copy)
+    difference = wrapper(sets.Set.difference)
+    intersection = wrapper(sets.Set.intersection)
+    symmetric_difference = wrapper(sets.Set.symmetric_difference)
+    union = wrapper(sets.Set.union)
+
+    del wrapper
+
+    def get_rollback(self):
+        return list(self)
+
+    def rollback(self, old):
+        sets.Set.clear(self)
+        sets.Set.update(self, old)
+    
 
 class RevertableObject(object):
 
