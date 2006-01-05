@@ -623,7 +623,7 @@ class Display(object):
             damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
 
             if damage:
-                updates.append(damage)
+                updates.extend(damage)
 
             self.full_redraw = False
 

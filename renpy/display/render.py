@@ -189,7 +189,6 @@ def compute_clip(source):
     # Changes between the two lists.
     changes = [ ]
 
-
     # Set of things in bl1.
     bl1set = { }
     for i in bl1:
@@ -235,18 +234,77 @@ def compute_clip(source):
     if not changes:
         return None
 
-    surf, x0, y0, w, h = changes[0]
-    x1 = x0 + w
-    y1 = y0 + h
+    sw = renpy.config.screen_width
+    sh = renpy.config.screen_height
+    sa = sw * sh # screen area
 
-    for surf, x, y, w, h in changes:
-        x0 = min(x0, x)
-        y0 = min(y0, y)
+    # (size, x0, y0, x1, y1) tuples.
+    sized = [ ]
 
-        x1 = max(x1, x + w)
-        y1 = max(y1, y + h)
+    for surf, x0, y0, w, h in changes:
+        sized.append((w * h, x0, y0, x0 + w, y0 + h))
 
-    return x0, y0, x1 - x0, y1 - y0
+    sized.sort()
+
+    # The set of non-contained updates. (x0, y0, x1, y1) tuples. 
+    noncont = [ ]
+
+    # The sum of areas in noncont.
+    nca = 0
+
+    # Pick the largest area, merge with all overlapping smaller areas, repeat
+    # until no merge possible.
+    while sized:
+        area, x0, y0, x1, y1 = sized.pop()
+        
+        merged = False
+            
+        if nca + area >= sa:
+            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
+
+        newsized = [ ]
+            
+        for t in sized:
+            iarea, ix0, iy0, ix1, iy1 = t 
+
+            if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and \
+               (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
+
+                merged = True
+                x0 = min(x0, ix0)
+                x1 = max(x1, ix1)
+                y0 = min(y0, iy0)
+                y1 = max(y1, iy1)
+
+                area = (x1 - x0) * (y1 - y0)
+
+                continue
+
+            newsized.append(t)
+
+        sized = newsized
+        
+        if not merged:
+            noncont.append((x0, y0, x1, y1))
+            nca += area
+            continue
+
+        sized.append((area, x0, y0, x1, y1))
+
+    x0, y0, x1, y1 = noncont[0]
+
+    # A list of (x, y, w, h) tuples for each update.
+    updates = [ ]
+
+    for ix0, iy0, ix1, iy1 in noncont:
+        x0 = min(x0, ix0)
+        y0 = min(y0, iy0)
+        x1 = max(x1, ix1)
+        y1 = max(y1, iy1)
+
+        updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
+
+    return (x0, y0, x1 - x0, y1 - y0), updates
     
 
 def screen_blit(source, full=False):
@@ -259,12 +317,14 @@ def screen_blit(source, full=False):
 
     if full:
         source.blit_to(screen, 0, 0)
-        return (0, 0) + screen.get_size()
+        return [ (0, 0) + screen.get_size() ]
 
-    cliprect = compute_clip(source)
+    clip = compute_clip(source)
 
-    if not cliprect:
-        return None
+    if not clip:
+        return [ ]
+
+    cliprect, updates = clip
 
     screen = pygame.display.get_surface()
     screen.set_clip(cliprect)
@@ -273,7 +333,7 @@ def screen_blit(source, full=False):
 
     screen.set_clip()
 
-    return cliprect
+    return updates
     
 
 

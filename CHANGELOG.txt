@@ -6,6 +6,8 @@ New in Ren'Py 5.3.3
 
 TODO: Tight loop support.
 TODO: Safe save.
+TODO: For license reasons, py4renpy should use upstream modplug rather
+than the debian version.
 
 Worked around a bug in SDL that could cause popping in the case where
 a sound file was being mixed in at a length that was not a multiple of
@@ -21,6 +23,13 @@ A set type that participates in rollback has been made
 available to user scripts. This type is named "set". The code that
 supports seensets in menus has been modified to accept a set along
 with a list. 
+
+We now compute the set of rectangles to blit to the screen more
+precisely. If we have two non-overlapping updated areas of the screen,
+we now blit them individually, where previously we blit the smallest
+rectangle containing them both. (Which could be many times the size of
+the two updates, if they were small and widely separated.) This change
+makes particle animation more efficient.
 
 
 New in Ren'Py 5.3.2
