@@ -2,7 +2,7 @@
 # order.
 
 # Some version numbers and things.
-version = "Ren'Py 5.3.2"
+version = "Ren'Py 5.3.3"
 script_version = 5003000
 savegame_suffix = "-5.3.0.save"
 
@@ -39,6 +39,7 @@ def import_all():
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim
+    import renpy.display.particle
     import renpy.display.joystick
 
     # Note: For windows to work, renpy.audio.audio needs to be after

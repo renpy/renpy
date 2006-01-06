@@ -129,7 +129,7 @@ class Displayable(renpy.object.Object):
         to return something more sensible.
         """
 
-        return renpy.game.style.default
+        return self.style
 
     def predict(self, callback):
         """
@@ -139,7 +139,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def place(self, dest, x, y, width, height, surf):
+    def place(self, dest, x, y, width, height, surf, xpos=None, ypos=None):
         """
         This draws this Displayable onto a destination surface, using
         the placement style information returned by this object's
@@ -168,7 +168,10 @@ class Displayable(renpy.object.Object):
         sw, sh = surf.get_size()
 
         # x
-        xoff = style.xpos
+        if xpos is None:
+            xoff = style.xpos
+        else:
+            xoff = xpos
 
         if isinstance(xoff, float):
             xoff = int(xoff * width)
@@ -185,13 +188,14 @@ class Displayable(renpy.object.Object):
             raise Exception("xanchor %r is not known." % xanchor)
 
         xoff -= int(sw * xanchor)
-
-            
-            
         xoff += x
 
         # y
-        yoff = style.ypos
+
+        if ypos is None:
+            yoff = style.ypos
+        else:
+            yoff = ypos
 
         if isinstance(yoff, float):
             yoff = int(yoff * height)

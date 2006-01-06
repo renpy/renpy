@@ -60,6 +60,8 @@ LiveComposite = renpy.display.layout.LiveComposite
 # Animation = renpy.display.image.Animation
 Animation = anim.Animation
 Movie = renpy.display.video.Movie
+Particles = renpy.display.particle.Particles
+SnowBlossom = renpy.display.particle.SnowBlossom
 
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)

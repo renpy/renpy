@@ -44,35 +44,16 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
 
+    image snowblossom = SnowBlossom("slider_hover.png")
+
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
 label splashscreen:
-    scene black
-    
-    $ config.searchpath.append("/tmp")
-    $ renpy.music.queue("brief-loop-1.mod")
+    scene bg washington
+    show snowblossom
 
     "Foo"
-
-    $ a = [ 1, 2, 3 ]
-    $ b = [ 4, 5, 6 ]
-    $ c = a + b 
-
-    $ print type(c)
-    $ print c
-
-    $ a = set()
-
-    "Set is %(a)s. %(c)s"
-
-    $ a.add(1)
-    "Set is %(a)s."
-    $ a.add(2)
-    "Set is %(a)s."
-    $ a.add(3)
-    "Set is %(a)s."
-
     
 
 

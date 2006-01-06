@@ -8,6 +8,18 @@ TODO: Tight loop support.
 TODO: Safe save.
 TODO: For license reasons, py4renpy should use upstream modplug rather
 than the debian version.
+TODO: Particle animation.
+TODO: Snowblossom.
+TODO: Static.
+TODO: Filmstrip.
+
+Implemented a particle animation system, which allows absurdly high
+amounts of control of particles that are on the screen. It also allows
+these particles to be created during the middle of the
+interaction. The primary purpose of this Particles displayable is to
+allow for things like snow and falling cherry blossom leaves. We also
+have a special case constructor, SnowBlossom, that is intended for
+snow, cherry blossoms, and rising bubbles. [doc, including code docs ]
 
 Worked around a bug in SDL that could cause popping in the case where
 a sound file was being mixed in at a length that was not a multiple of
