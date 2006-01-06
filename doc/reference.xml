@@ -1064,6 +1064,98 @@ they affect the position of a single layer or the entire screen, as
 appropriate.
 </p>
 
+<h4>Particle Motion</h4>
+
+<p>
+Ren'Py also supports particle motion. Particle motion is the motion of
+many particles on the screen at once, with particles having a lifespan
+that is shorter than a single interaction. Particle motion can be used
+to have multiple things moving on the screen at once, such as snow,
+cherry blossoms, bubbles, fireflies, and more. There are two
+interfaces we've provided for the particle motion engine. The
+SnowBlossom function is a convenience constructor for the most common
+cases of linearly falling or rising particles, while the Particles
+function gives complete control over the particle engine.
+</p>
+
+<p>
+SnowBlossom is a function that can be used for the common case of
+linearly rising or falling particles. Some cases in which it can be
+used are for falling snow, falling cherry blossoms, and rising
+bubbles.
+</p>
+
+<!-- func SnowBlossom -->
+
+<p>
+The result of SnowBlossom is best used to define an image, which can
+then be shown to the user.
+</p>
+
+<example>
+init:
+    image blossoms = SnowBlossom(Animation("sakura1.png", 0.15,
+                                           "sakura2.png", 0.15))
+
+</example>
+
+<p>
+It may make sense to show multiple snowblossoms at once. For example,
+in a scene with falling cherry blossoms, one can have small cherry
+blossoms falling slowly behind a character, while having larger cherry
+blossoms falling faster in front of her.
+</p>
+
+<p>
+If SnowBlossom does not do what you want, it may make sense to define
+your own particle motion. This is done by calling the Particles
+function.
+</p>
+
+<!-- func Particles -->
+
+<p>
+The particles function expects to take as an argument a factory
+object. This object (which should be pickleable) must support two
+methods.
+</p>
+
+<p> 
+The create method of the factory object is called once per frame
+with two arguments. The first is either a list of existing particles,
+or None if this is the first time this Particles is shown (and hence
+there are no particles on the screen). The second argument is the time
+in seconds from some arbitrary point, increasing each time create is
+called. The method is expected to return a list of new particles
+created for this frame, or an empty list if no particles are to be
+created this frame.
+</p>
+
+<p>
+The predict method of the factory object is called when image
+prediction is requested for the Particles. It is expected to return a
+list of displayables and/or image filenames that will be used.
+</p>
+
+<p>
+Particles are represented by the objects returned from each factory
+function. Each particle object must have an update method. This method
+is called once per frame per particle, usually with the time from the
+same arbitrary point as was used to create the object. (The arbitrary
+point may change when hidden and shown, so particle code should be
+prepared to deal with this.) The update method may return None to 
+indicate that the particle is dead. Nothing is shown for a dead
+particle, and update is never called on it. The update function can
+also return an (xpos, ypos, time, displayable) tuple. The xpos and ypos
+parameters are a position on the screen to show the particle at,
+interpreted in the same way as the xpos and ypos style properties. The
+time is the time of display. This should start with the time
+parameter, but it may make sense to offset it to make multiple
+particle animations out of phase. Finally, the displayable is a
+displayable or image filename that is shown as the particle.
+</p>
+
+
 <h3>Transitions</h3>
 
 <p>
@@ -4125,6 +4217,7 @@ intended to be used with the move transition.
 </defn>
 
 </dl>
+
 
 <h4>Transitions</h4>
 

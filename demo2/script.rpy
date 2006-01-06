@@ -44,7 +44,8 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
 
-    image snowblossom = SnowBlossom("slider_hover.png")
+    image snowblossom = SnowBlossom(Animation("sakura1.png", 0.15,
+                                              "sakura2.png", 0.15))
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -54,7 +55,14 @@ label splashscreen:
     show snowblossom
 
     "Foo"
-    
+
+    hide snowblossom
+
+    "Bar"
+
+    show snowblossom
+
+    "Baz"
 
 
     return
