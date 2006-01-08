@@ -20,9 +20,8 @@ if 'pss' not in disable:
         import pysdlsound as pss
         pss.check_version(2)
         atexit.register(pss.quit)
-    except:        
+    except:
         pss = None
-        raise
 
 if 'nativemidi' not in disable:
     try:

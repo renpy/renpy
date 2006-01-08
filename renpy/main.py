@@ -1,4 +1,3 @@
-# This module is intended to be used as a singleton object.
 # It's purpose is to store in one global all of the data that would
 # be to annoying to lug around otherwise. 
 #
@@ -34,7 +33,7 @@ def run(restart=False):
     renpy.store._restart = restart
 
     renpy.config.savedir = game.basepath + "/saves"
-
+    
     # Make the save directory.
     try:
         os.makedirs(renpy.config.savedir)
@@ -103,8 +102,10 @@ def run(restart=False):
     game.clean_store = vars(renpy.store).copy()
 
     if renpy.game.options.lint:
-        renpy.lint.lint()
-        return
+        try:
+            renpy.lint.lint()
+        finally:
+            raise renpy.game.QuitException()
 
     # Remove the list of all statements from the script.
     game.script.all_stmts = None

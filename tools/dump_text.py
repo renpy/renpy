@@ -9,6 +9,7 @@ import re
 import glob
 
 import renpy
+renpy.import_all()
 
 def process_block(block, out):
 

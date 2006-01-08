@@ -43,6 +43,9 @@ rectangle containing them both. (Which could be many times the size of
 the two updates, if they were small and widely separated.) This change
 makes particle animation more efficient.
 
+Made lint report the number of words per screen of dialogue. Also,
+made lint not throw Ren'Py into an infinite loop, fixing a
+regression.
 
 New in Ren'Py 5.3.2
 -------------------
