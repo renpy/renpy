@@ -8,10 +8,8 @@ TODO: Tight loop support.
 TODO: Safe save.
 TODO: For license reasons, py4renpy should use upstream modplug rather
 than the debian version.
-TODO: Particle animation.
-TODO: Snowblossom.
-TODO: Static.
 TODO: Filmstrip.
+TODO: Menu seen support.
 
 Implemented a particle animation system, which allows absurdly high
 amounts of control of particles that are on the screen. It also allows
@@ -46,6 +44,10 @@ makes particle animation more efficient.
 Made lint report the number of words per screen of dialogue. Also,
 made lint not throw Ren'Py into an infinite loop, fixing a
 regression.
+
+There is now a 2-step process when writing the persistent data
+file. This ensures that if an error (out of disk, or whatever) occurs
+when writing it, the old data remains intact.
 
 New in Ren'Py 5.3.2
 -------------------
