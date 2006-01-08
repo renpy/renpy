@@ -17,11 +17,10 @@ these particles to be created during the middle of the
 interaction. The primary purpose of this Particles displayable is to
 allow for things like snow and falling cherry blossom leaves. We also
 have a special case constructor, SnowBlossom, that is intended for
-snow, cherry blossoms, and rising bubbles. [doc, including code docs ]
+snow, cherry blossoms, and rising bubbles.
 
-Worked around a bug in SDL that could cause popping in the case where
-a sound file was being mixed in at a length that was not a multiple of
-4 samples. [ module changed, rebuild. ]
+Added a new function, anim.Filmstrip, that allows one to make an
+animation out of an image containing a number of frames. [doc]
 
 We now use modplug instead of mikmod. This fixes some problems with
 mod playing that were caused by mikmod not really being able to safely
@@ -48,6 +47,13 @@ regression.
 There is now a 2-step process when writing the persistent data
 file. This ensures that if an error (out of disk, or whatever) occurs
 when writing it, the old data remains intact.
+
+Fixed a problem in which animations were not showing their first
+frame.
+
+Worked around a bug in SDL that could cause popping in the case where
+a sound file was being mixed in at a length that was not a multiple of
+4 samples.
 
 New in Ren'Py 5.3.2
 -------------------
