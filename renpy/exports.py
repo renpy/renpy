@@ -277,7 +277,7 @@ def display_menu(items, window_style='menu_window', interact=True):
                                random.choice(choices))
 
     renpy.ui.window(style=window_style)
-    renpy.ui.menu(items)
+    renpy.ui.menu(items, location=renpy.game.context().current)
 
     for label, val in items:
         if val:

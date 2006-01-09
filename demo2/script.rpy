@@ -49,6 +49,8 @@ init:
     image onetwothreefour = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5)
     image onetwothree = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5, frames=3)
     image onetwothreestop = anim.Filmstrip("1234.png", (100, 200), (2, 2), 1, frames=3, loop=False)
+
+    $ style.menu_choice_chosen.color = (128, 255, 128, 255)
                                                                     
 
 # The start label marks the place where the main menu jumps to to

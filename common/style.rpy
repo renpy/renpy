@@ -41,6 +41,8 @@ init -1000:
         style.create('menu_caption', 'default', "(text) The style that is used to render a menu caption.")
         style.create('menu_choice', 'default', "(text, hover) The style that is used to render the text of a menu choice.""")
         style.create('menu_choice_button', 'default', "(window, hover, sound) The style that is used to render the button containing a menu choice.")
+        style.create('menu_choice_chosen', 'menu_choice', "(text, hover) The style that is used to render the text of a menu choice that has been chosen by the user sometime in the past.""")
+        style.create('menu_choice_chosen_button', 'menu_choice_button', "(window, hover, sound) The style that is used to render the button containing a menu choice that has been chosen by the user sometime in the past.")
         style.create('menu_window', 'window', '(window) The default style for windows containing a menu.') 
 
         # input

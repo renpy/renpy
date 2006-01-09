@@ -5,10 +5,8 @@ New in Ren'Py 5.3.3
 -------------------
 
 TODO: Tight loop support.
-TODO: Safe save.
 TODO: For license reasons, py4renpy should use upstream modplug rather
 than the debian version.
-TODO: Filmstrip.
 TODO: Menu seen support.
 
 Implemented a particle animation system, which allows absurdly high
@@ -19,19 +17,27 @@ allow for things like snow and falling cherry blossom leaves. We also
 have a special case constructor, SnowBlossom, that is intended for
 snow, cherry blossoms, and rising bubbles.
 
+Ren'Py now tracks which menu choices have been chosen by the user
+(ever, in any game), and gives the choices that have been chosen at
+least once the new styles menu_choice_chosen and
+menu_choice_chosen_button. By changing some of the properties 
+of these styles, it's possible to the user a distinction between
+the choices the user has chosen once, and those the user has never
+chosen.
+
 Added a new function, anim.Filmstrip, that allows one to make an
 animation out of an image containing a number of frames. [doc]
+
+A set type that participates in rollback has been made
+available to user scripts. This type is named "set". The code that
+supports seensets in menus has been modified to accept a set along
+with a list. 
 
 We now use modplug instead of mikmod. This fixes some problems with
 mod playing that were caused by mikmod not really being able to safely
 play two mods at the same time. (These problems occured even when
 someone only played one mod at a time, due to the way in which Ren'Py
 preloads sound files.)
-
-A set type that participates in rollback has been made
-available to user scripts. This type is named "set". The code that
-supports seensets in menus has been modified to accept a set along
-with a list. 
 
 We now compute the set of rectangles to blit to the screen more
 precisely. If we have two non-overlapping updated areas of the screen,

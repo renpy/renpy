@@ -14,6 +14,8 @@
 # The stack should always be empty when we go to interact with the
 # user.
 
+import sets
+
 import renpy
 
 # The current widget. (Should never become None.)
@@ -310,7 +312,10 @@ def menu(menuitems,
          style = 'menu',
          caption_style='menu_caption',
          choice_style='menu_choice',
+         choice_chosen_style='menu_choice_chosen',
          choice_button_style='menu_choice_button',
+         choice_chosen_button_style='menu_choice_chosen_button',
+         location=None,
          **properties):
     """
     This creates a new menu widget. Unlike the menu statement or
@@ -322,6 +327,12 @@ def menu(menuitems,
     used for this menuitem. The second element is the value to be
     returned from ui.interact() if this item is selected, or None
     if this item is a non-selectable caption.
+
+    @param location: Some serializable and hashable object that
+    represents the location of this menu in the game. (Normally, this
+    is the name of the statement executing the menu.) If provided, then
+    this logs which menuitems have been chosen, and changes the style
+    of those menuitems to the choice_seen_style.
     """
 
     # menu is now a conglomeration of other widgets. And bully for it.
@@ -332,10 +343,27 @@ def menu(menuitems,
         if val is None:
             renpy.ui.text(label, style=caption_style)
         else:
+
+            text = choice_style
+            button = choice_button_style
+                        
+            if location:
+                chosen = renpy.game.persistent._chosen.setdefault(location, sets.Set())
+                if label in chosen:
+                    text = choice_chosen_style
+                    button = choice_chosen_button_style
+
+                def clicked(chosen=chosen, label=label, val=val):
+                    chosen.add(label)
+                    return val
+            else:
+                def clicked(val=val):
+                    return val
+            
             renpy.ui.textbutton(label,
-                                style=choice_button_style,
-                                text_style=choice_style,
-                                clicked=renpy.ui.returns(val))
+                                style=button,
+                                text_style=text,
+                                clicked=clicked)
 
     renpy.ui.close()
 
