@@ -44,32 +44,47 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
 
+    # PULL BEFORE LAUNCH
+
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
 
     image onetwothreefour = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5)
     image onetwothree = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5, frames=3)
     image onetwothreestop = anim.Filmstrip("1234.png", (100, 200), (2, 2), 1, frames=3, loop=False)
 
-    $ style.menu_choice_chosen.color = (128, 255, 128, 255)
+    $ config.debug_sound = True
                                                                     
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
 label splashscreen:
+    # $ renpy.music.play('alarm.wav', tight=True)
+    # $ renpy.music.queue('click.wav', clear_queue=False)
+
+    $ renpy.sound.play('alarm.wav', tight=True)
+    $ renpy.sound.queue('alarm.wav', tight=True, clear_queue=False)
+    $ renpy.sound.queue('alarm.wav', tight=True, clear_queue=False)
+
     scene bg washington
     show snowblossom
     #show onetwothreefour
 
     "123412341234..."
 
+    $ renpy.sound.stop(fadeout=1.5)
+
     # hide onetwothreefour
     # show onetwothree
+
+    # $ renpy.music.play('alarm.wav', tight=False, fadeout=1.5)
 
     "123123123..."
 
     # hide onetwothree
     show onetwothreestop
+
+    $ renpy.music.stop(fadeout=1.5)
 
     "123"
 
@@ -1509,6 +1524,9 @@ init:
     # the game menu.
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
+
+    # Set the color of idle chosen menu choices.
+    $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.

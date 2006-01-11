@@ -7,7 +7,7 @@ New in Ren'Py 5.3.3
 TODO: Tight loop support.
 TODO: For license reasons, py4renpy should use upstream modplug rather
 than the debian version.
-TODO: Menu seen support.
+TODO: Don't ship alarm.wav.
 
 Implemented a particle animation system, which allows absurdly high
 amounts of control of particles that are on the screen. It also allows
@@ -16,6 +16,17 @@ interaction. The primary purpose of this Particles displayable is to
 allow for things like snow and falling cherry blossom leaves. We also
 have a special case constructor, SnowBlossom, that is intended for
 snow, cherry blossoms, and rising bubbles.
+
+Implemented tight sound and music support. Tight sounds are sounds
+that do not stop, but instead are expected to seamlessly blend with
+the following sound or music segment. While these were supported in
+prior versions of Ren'Py, there was an issue with fadeout. If a
+fadeout occured near the end of a sound segment, the sound would
+suddenly stop. While this isn't an issue with normal tracks, for
+tracks involving tight loops this isn't desirable. Tight loop mode
+makes fadeouts span tracks, making the fadeout sound correct. Tight
+loop support only supports spanning a single track boundary, so the
+fadeout should be shorter then a single track length.
 
 Ren'Py now tracks which menu choices have been chosen by the user
 (ever, in any game), and gives the choices that have been chosen at
