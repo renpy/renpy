@@ -12,7 +12,8 @@ setup.extra_link_args = [ "-framework", "QuickTime",
                           "-framework", "SDL",
                           "-framework", "Cocoa",
                           "-L/Users/tom/install/lib",
-                          "-framework", "smpeg" ]
+		          "-lsmpeg",
+			  "-lobjc", "-lstdc++" ]
 setup.includes = [ ]
 setup.libraries = [ ]
 

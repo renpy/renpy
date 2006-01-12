@@ -658,3 +658,4 @@ def interact():
 
     renpy.audio.music.interact()
     periodic()
+

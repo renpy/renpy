@@ -8,7 +8,18 @@ if __name__ == "__main__":
 
     # Check for mac compatibility.
     if "mac_version" in globals():
-        mac_version((5, 3, 2))
+        mac_version((5, 3, 3))
+
+    # Check py4renpy compatibility.
+    try:
+        import py4renpy
+        if py4renpy.version < (2, 3, 5, 4):
+            print "The version of py4renpy that you are using is too old. Please go to"
+            print "http://www.bishoujo.us/renpy/linux.html, and download the latest"
+            print "version."
+            sys.exit(-1)
+    except ImportError:
+        pass
 
     # Figure out the base directory.
     renpy_base = os.path.dirname(sys.argv[0])

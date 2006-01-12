@@ -62,10 +62,10 @@ def common():
             )
 
         extensions.append(wme)
-    
+
     distutils.core.setup(
         name = "renpy_module",
-        version = "5.3.2",
+        version = "5.3.3",
         ext_modules = extensions,
         )
 

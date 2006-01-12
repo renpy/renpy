@@ -165,12 +165,9 @@ def run(restart=False):
                 continue
 
     finally:
-        f = file(renpy.config.savedir + "/persistent.new", "wb")
+        f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(game.persistent).encode("zlib"))
         f.close()
-
-        os.rename(renpy.config.savedir + "/persistent.new",
-                  renpy.config.savedir + "/persistent")
 
 
     # And, we're done.

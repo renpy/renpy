@@ -4,11 +4,6 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.3.3
 -------------------
 
-TODO: Tight loop support.
-TODO: For license reasons, py4renpy should use upstream modplug rather
-than the debian version.
-TODO: Don't ship alarm.wav.
-
 Implemented a particle animation system, which allows absurdly high
 amounts of control of particles that are on the screen. It also allows
 these particles to be created during the middle of the
@@ -16,6 +11,12 @@ interaction. The primary purpose of this Particles displayable is to
 allow for things like snow and falling cherry blossom leaves. We also
 have a special case constructor, SnowBlossom, that is intended for
 snow, cherry blossoms, and rising bubbles.
+
+Finally got around to defining which audio formats Ren'Py officially
+supports. On the 3 platforms we produce binaries for, Ren'Py supports
+WAV, MP3, OGG Vorbis, OGG Speex and MOD (Whatever formats ModPlug
+supports, including MOD and XM). All these formats were tested on all
+three platforms, and shown to work.
 
 Implemented tight sound and music support. Tight sounds are sounds
 that do not stop, but instead are expected to seamlessly blend with
@@ -60,10 +61,6 @@ makes particle animation more efficient.
 Made lint report the number of words per screen of dialogue. Also,
 made lint not throw Ren'Py into an infinite loop, fixing a
 regression.
-
-There is now a 2-step process when writing the persistent data
-file. This ensures that if an error (out of disk, or whatever) occurs
-when writing it, the old data remains intact.
 
 Fixed a problem in which animations were not showing their first
 frame.

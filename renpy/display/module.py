@@ -10,7 +10,7 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < 5003002:
+    if version < 5003003:
         print >>sys.stderr, "The _renpy module was found, but is out of date.\nPlease read module/README.txt for more information."
         
 except:
