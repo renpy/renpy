@@ -58,7 +58,7 @@ image_cache_size = 8
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
-predict_statements = 10
+predict_statements = 16
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
@@ -67,8 +67,12 @@ debug_image_cache = False
 # Should we allow skipping at all?
 allow_skipping = True
 
-# Are we currently skipping?
-skipping = False
+# Should we allow fast skipping?
+fast_skipping = False
+
+# Are we currently skipping? If so, how fast?
+# May be "slow", "fast", or None.
+skipping = None
 
 # The delay while we are skipping say statements.
 skip_delay = 75
@@ -111,7 +115,7 @@ top_layers = [ ]
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
-overlay_during_wait = True
+overlay_during_with = True
 
 # True if we want to allow the fast dissolve.
 enable_fast_dissolve = True
@@ -129,44 +133,52 @@ keymap = dict(
     
     # Bindings present almost everywhere, unless explicitly
     # disabled.
-    rollback = [ 'K_PAGEUP', 'mousedown_4' ],
+    rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
     screenshot = [ 's' ],
     toggle_fullscreen = [ 'f' ],
     toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouseup_3' ],
-    hide_windows = [ 'mouseup_2', 'h' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+    hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
+    launch_editor = [ 'E' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Focus.
-    focus_left = [ 'K_LEFT' ],
-    focus_right = [ 'K_RIGHT' ],
-    focus_up = [ 'K_UP' ],
-    focus_down = [ 'K_DOWN' ],
+    focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
+    focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],
+    focus_up = [ 'K_UP', 'K_KP_UP', 'joy_up' ],
+    focus_down = [ 'K_DOWN', 'K_KP_DOWN', 'joy_down' ],
         
     # Button.
-    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
     # These keys control skipping.
-    skip = [ 'K_LCTRL', 'K_RCTRL' ],
-    toggle_skip = [ 'K_TAB' ],
+    skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
+    toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
+    fast_skip = [ '>' ],
 
     # These control the bar.
-    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
-    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
-    bar_decrease = [ 'K_LEFT' ],
-    bar_increase = [ 'K_RIGHT' ],
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_decrease = [ 'K_LEFT', 'joy_left' ],
+    bar_increase = [ 'K_RIGHT', 'joy_right' ],
     )
 
-# A list of functions that are called at least once during each
-# interaction.
+# Should we try to support joysticks?
+joystick = True
+
+# A list of functions that are called when an interaction is started or
+# restarted.
 interact_callbacks = [ ]
+
+# A list of functions that are called when an interaction is started.
+start_interact_callbacks = [ ]
 
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
@@ -201,6 +213,16 @@ framerate = None
 
 # The number of frames that Ren'Py has shown.
 frames = 0
+
+# A text editor that is launched at the location of the current
+# statement.
+editor = None
+
+# Enable developer mode?
+developer = False
+
+# A logfile that logging messages are sent to.
+log = None
 
 del renpy
 

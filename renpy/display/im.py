@@ -63,8 +63,14 @@ class Cache(object):
         self.first_preload_in_tick = True
         self.size_of_current_generation = 0
 
+        if renpy.config.debug_image_cache:
+            print "IC ----"
+
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, image):
+        if renpy.config.debug_image_cache:
+            print "IC Request Preload", image
+            
         self.preloads.append(image)
 
     # Do we need to preload an image?

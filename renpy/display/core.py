@@ -12,6 +12,7 @@ import cStringIO
 
 # KEYREPEATEVENT = USEREVENT + 1
 DISPLAYTIME = USEREVENT + 2
+JOYEVENT = USEREVENT + 3
 
 # The number of msec 
 DISPLAYTIME_INTERVAL = 50
@@ -128,7 +129,7 @@ class Displayable(renpy.object.Object):
         to return something more sensible.
         """
 
-        return renpy.game.style.default
+        return self.style
 
     def predict(self, callback):
         """
@@ -136,10 +137,9 @@ class Displayable(renpy.object.Object):
         the images it may want to load.
         """
 
-        if self.style and self.style.background:
-            self.style.background.predict(callback)
+        return
 
-    def place(self, dest, x, y, width, height, surf):
+    def place(self, dest, x, y, width, height, surf, xpos=None, ypos=None):
         """
         This draws this Displayable onto a destination surface, using
         the placement style information returned by this object's
@@ -168,7 +168,10 @@ class Displayable(renpy.object.Object):
         sw, sh = surf.get_size()
 
         # x
-        xoff = style.xpos
+        if xpos is None:
+            xoff = style.xpos
+        else:
+            xoff = xpos
 
         if isinstance(xoff, float):
             xoff = int(xoff * width)
@@ -185,13 +188,14 @@ class Displayable(renpy.object.Object):
             raise Exception("xanchor %r is not known." % xanchor)
 
         xoff -= int(sw * xanchor)
-
-            
-            
         xoff += x
 
         # y
-        yoff = style.ypos
+
+        if ypos is None:
+            yoff = style.ypos
+        else:
+            yoff = ypos
 
         if isinstance(yoff, float):
             yoff = int(yoff * height)
@@ -411,12 +415,10 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
-        if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
-            os.environ['SDL_VIDEODRIVER'] = 'windib'
-
         pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()
+        renpy.display.joystick.init()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
@@ -625,12 +627,13 @@ class Display(object):
             damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
 
             if damage:
-                updates.append(damage)
+                updates.extend(damage)
 
             self.full_redraw = False
 
             updates.extend(self.draw_mouse(True))
             pygame.display.update(updates)
+
 
         else:
             self.full_redraw = True
@@ -751,7 +754,7 @@ class Interface(object):
 
         self.old_scene = self.compute_scene(scene_lists)        
 
-        if renpy.config.overlay_during_wait and old_old_scene:
+        if renpy.config.overlay_during_with and old_old_scene:
             for i in renpy.config.overlay_layers:
                 self.old_scene[i] = old_old_scene[i]
 
@@ -849,6 +852,9 @@ class Interface(object):
         # These things can be done once per interaction.
 
         try:
+            
+            for i in renpy.config.start_interact_callbacks:
+                i()
 
             repeat = True
 
@@ -888,7 +894,7 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
-        self.suppress_transition |= renpy.config.skipping
+        self.suppress_transition = self.suppress_transition or renpy.config.skipping
 
         ## Safety condition, prevents deadlocks.
         if trans_pause:
@@ -1102,6 +1108,11 @@ class Interface(object):
                     if ev.type == NOEVENT:
                         continue
 
+                    # This can set the event to None, to ignore it.
+                    ev = renpy.display.joystick.event(ev)
+                    if not ev:
+                        continue
+
                     self.profile_time = time.time()
 
                     if ev.type == DISPLAYTIME:
@@ -1171,4 +1182,3 @@ class Interface(object):
             self.restart_interaction = True
 
             # print "It took", frames, "frames."
-

@@ -111,6 +111,10 @@ class SMAnimation(renpy.display.core.Displayable):
         @param initial: The name (a string) of the initial state we
         start in.
 
+        @param showold: If the keyword parameter showold is True, then
+        the old image is shown instead of the new image when in an
+        edge.
+
         This accepts as additional arguments the anim.State and
         anim.Edge objects that are used to make up this state
         machine.
@@ -121,6 +125,12 @@ class SMAnimation(renpy.display.core.Displayable):
             del properties['delay']
         else:
             self.delay = None
+
+        if 'showold' in properties:
+            self.showold = properties['showold']
+            del properties['showold']
+        else:
+            self.showold = False
 
         super(SMAnimation, self).__init__(**properties)
 
@@ -163,7 +173,6 @@ class SMAnimation(renpy.display.core.Displayable):
         updates self.image to be the new image on the selected edge.
         """
 
-
         if state not in self.edges:
             self.edge = None
             return
@@ -179,11 +188,14 @@ class SMAnimation(renpy.display.core.Displayable):
         the old and new states, and any transition that is present.
         """
 
-        im = self.states[self.edge.new].get_image()
 
         if self.edge.trans:
             im = self.edge.trans(old_widget=self.states[self.edge.old].get_image(),
-                                 new_widget=im)
+                                 new_widget=self.states[self.edge.new].get_image())
+        elif self.showold:
+            im = self.states[self.edge.old].get_image()
+        else:
+            im = self.states[self.edge.new].get_image()
 
         self.edge_cache = im
 
@@ -206,7 +218,6 @@ class SMAnimation(renpy.display.core.Displayable):
 
         while self.edge and st > self.edge_start + self.edge.delay:
             self.edge_start += self.edge.delay
-
             self.edge_cache = None
             self.pick_edge(self.edge.new)
 
@@ -257,7 +268,7 @@ class SMAnimation(renpy.display.core.Displayable):
 
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
-def Animation(*args):
+def Animation(*args, **properties):
     """
     A Displayable that draws an animation, which is a series of images
     that are displayed with time delays between them.
@@ -286,7 +297,7 @@ def Animation(*args):
                 
             sm.append(Edge(i - 1, arg, new))
 
-    return SMAnimation(*sm)
+    return SMAnimation(showold=True, *sm, **properties)
 
 
 class Blink(renpy.display.core.Displayable):
@@ -332,6 +343,10 @@ class Blink(renpy.display.core.Displayable):
         self.offset = offset
 
         self.cycle = on + set + off + rise
+
+
+    def predict(self, callback):
+        self.image.predict(callback)
 
     def get_placement(self):
         return self.style
@@ -397,3 +412,66 @@ class Blink(renpy.display.core.Displayable):
         renpy.display.render.redraw(self, delay)
 
         return rv
+
+
+def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **properties):
+    """
+    This creates an animation from a single image. This image
+    must consist of a grid of frames, with the number of columns and
+    rows in the grid being taken from gridsize, and the size of each
+    frame in the grid being taken from framesize. This takes frames
+    and sticks them into an Animation, with the given delay between
+    each frame. The frames are taken by going from left-to-right
+    across the first row, left-to-right across the second row, and
+    so on until all frames are consumed, or a specified number of
+    frames are taken.
+
+    @param image: The image that the frames must be taken from.
+
+    @param framesize: A (width, height) tuple giving the size of
+    each of the frames in the animation.
+
+    @param gridsize: A (columns, rows) tuple giving the number of
+    columns and rows in the grid.
+
+    @param delay: The delay, in seconds, between frames.
+
+    @param frames: The number of frames in this animation. If None,
+    then this defaults to colums * rows frames, that is, taking
+    every frame in the grid.
+
+    @param loop: If True, loop at the end of the animation. If False,
+    this performs the animation once, and then stops.
+    """
+
+    width, height = framesize
+    cols, rows = gridsize
+
+    if frames is None:
+        frames = cols * rows
+
+    i = 0
+
+    # Arguments to Animation
+    args = [ ]
+
+    for r in range(0, rows):
+        for c in range(0, cols):
+
+            x = c * width
+            y = r * height
+
+            args.append(renpy.display.im.Crop(image, x, y, width, height))
+            args.append(delay)
+
+            i += 1
+            if i == frames:
+                break
+
+        if i == frames:
+            break
+            
+    if not loop:
+        args.pop()
+
+    return Animation(*args, **properties)

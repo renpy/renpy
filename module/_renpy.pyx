@@ -48,7 +48,7 @@ cdef extern from "renpy.h":
 import pygame
 
 def version():
-    return 4008007
+    return 5003003
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
