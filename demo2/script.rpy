@@ -44,17 +44,6 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))    
 
-    # PULL BEFORE LAUNCH
-
-    image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
-
-    image onetwothreefour = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5)
-    image onetwothree = anim.Filmstrip("1234.png", (100, 200), (2, 2), .5, frames=3)
-    image onetwothreestop = anim.Filmstrip("1234.png", (100, 200), (2, 2), 1, frames=3, loop=False)
-
-    $ config.debug_sound = True
-                                                                    
-
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
@@ -844,8 +833,6 @@ init:
 
     $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
-init:
-
     $ slowcirciris = ImageDissolve("circiris.png", 5.0, 8)
     $ circirisout = ImageDissolve("circiris.png", 1.0, 8)
     $ circirisoutramp = ImageDissolve("circiris.png", 3.0, ramp=[ 16 * i for i in range(0, 15) + range(15, 0, -1) + range(0, 15) + range(15, 0, -1) + range(0, 15)  + range(15, 0, -1) + range(0, 15) ] )
@@ -854,6 +841,8 @@ init:
     $ demotrans = ImageDissolve("demotrans.png", 3.0, 16)
 
     image circiris = "circiris.png"
+
+    image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
 
 label demonstrate:
 
@@ -1150,6 +1139,24 @@ label demonstrate:
             scene bg washington
             show eileen happy
             with dissolve
+
+            show snowblossom
+
+            e "Finally, there's now a particle motion system in
+               Ren'Py."
+
+            e "It can be used to animate things like falling cherry
+               blossoms, falling snow, and rising bubbles."
+
+            e "While there's convenient support for things rising and
+               falling in straight lines, it's also possible to define
+               your own motions."
+
+            e "The sky's the limit."
+
+            e "Or the ground, in the case of these cherry blossoms."
+
+            hide snowblossom with dissolve
 
         "Animation, updated in 4.8.5":
 

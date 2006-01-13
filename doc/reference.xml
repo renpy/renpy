@@ -843,11 +843,11 @@ show text1 "1/4 of the way down the screen."
 
 <p>
 Occasionally, one will want an image that changes while on the
-screen. Ren'Py provides three ways of doing this. The Animation function
-creates an animation from a simple list of images, anim.Blink blinks
-an image in and out, and
-anim.SMAnimation function creates a more complex, state-machine
-controlled animation.
+screen. Ren'Py provides three ways of doing this. The Animation
+function creates an animation from a simple list of images, anim.Blink
+blinks an image in and out, anim.Filmstrip creates an animation from
+an image, and anim.SMAnimation function creates a more complex,
+state-machine controlled animation.
 </p>
 
 <!-- func Animation -->
@@ -860,6 +860,8 @@ init:
 </example>
 
 <!-- func anim.Blink -->
+
+<!-- func anim.Filmstrip -->
 
 <!-- func anim.SMAnimation -->
 

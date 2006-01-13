@@ -38,7 +38,7 @@ the choices the user has chosen once, and those the user has never
 chosen.
 
 Added a new function, anim.Filmstrip, that allows one to make an
-animation out of an image containing a number of frames. [doc]
+animation out of an image containing a number of frames. 
 
 A set type that participates in rollback has been made
 available to user scripts. This type is named "set". The code that
