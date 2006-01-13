@@ -47,39 +47,6 @@ init:
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
-label splashscreen:
-    # $ renpy.music.play('alarm.wav', tight=True)
-    # $ renpy.music.queue('click.wav', clear_queue=False)
-
-    $ renpy.sound.play('alarm.wav', tight=True)
-    $ renpy.sound.queue('alarm.wav', tight=True, clear_queue=False)
-    $ renpy.sound.queue('alarm.wav', tight=True, clear_queue=False)
-
-    scene bg washington
-    show snowblossom
-    #show onetwothreefour
-
-    "123412341234..."
-
-    $ renpy.sound.stop(fadeout=1.5)
-
-    # hide onetwothreefour
-    # show onetwothree
-
-    # $ renpy.music.play('alarm.wav', tight=False, fadeout=1.5)
-
-    "123123123..."
-
-    # hide onetwothree
-    show onetwothreestop
-
-    $ renpy.music.stop(fadeout=1.5)
-
-    "123"
-
-
-    return
-
 label start:
 
     # The save_name variable sets the name of the save game. Like all
@@ -96,7 +63,7 @@ label start:
     $ renpy.clear_game_runtime()        
 
     # Start some music playing in the background.
-    # $ renpy.music_start('sun-flower-slow-drag.mid')
+    $ renpy.music.play('sun-flower-slow-drag.mid')
 
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
@@ -1071,7 +1038,7 @@ label demonstrate:
 
             e "It's enough to make you feel a bit dizzy."
             
-        "Positions and movement, updated in 4.8.":
+        "Positions and movement, updated in 5.3.3.":
 
             e "I'm not stuck standing in the middle of the screen,
                even though I like being the center of attention."
