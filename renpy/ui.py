@@ -221,8 +221,9 @@ def grid(cols, rows, padding=0, transpose=False, **properties):
 def fixed(**properties):
     """
     This creates a layout that places widgets at fixed locations
-    relative to the origin of the enclosing widget. New widgets are
-    added to this widget.
+    relative to the origin of the enclosing widget. The layout takes
+    up the entire area allocated to it. New widgets are added to this
+    widget.
     """
 
     rv = renpy.display.layout.Fixed(**properties)
