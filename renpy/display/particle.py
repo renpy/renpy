@@ -68,16 +68,33 @@ class Particles(renpy.display.core.Displayable):
     
 class SnowBlossomFactory(object):
 
-    def __init__(self, image, count, xspeed, yspeed, border):
+    def __setstate__(self, state):
+        self.start = 0
+        vars(self).update(state)
+        self.init()
+
+    def __init__(self, image, count, xspeed, yspeed, border, start):
         self.image = image
         self.count = count 
         self.xspeed = xspeed
         self.yspeed = yspeed
         self.border = border        
+        self.start = start
+        self.init()
 
+    def init(self):
+        self.starts = [ random.uniform(0, self.start) for i in range(0, self.count) ]
+        self.starts.append(self.start)
+        self.starts.sort()
+    
     def create(self, particles, st):
 
         if particles is None or len(particles) < self.count:
+
+            # Check to see if we have a particle ready to start. If not,
+            # don't start it.
+            if particles and st < self.starts[len(particles)]:
+                return None
 
             def ranged(n):
                 if isinstance(n, tuple):
@@ -143,7 +160,7 @@ class SnowBlossomParticle(object):
 
         return int(xpos), int(ypos), to + self.offset, self.image
     
-def SnowBlossom(image, count=10, border=50, xspeed=(20, 50), yspeed=(100, 200)):
+def SnowBlossom(image, count=10, border=50, xspeed=(20, 50), yspeed=(100, 200), start=0):
     """
     This implements the snowblossom effect, which is a simple linear
     motion up or down the screen. This effect can be used for falling
@@ -180,6 +197,11 @@ def SnowBlossom(image, count=10, border=50, xspeed=(20, 50), yspeed=(100, 200)):
     particles fall from the top of the screen to the bottom, as with
     snow or cherry blossoms. If negative numbers are given, the particles
     rise from the bottom of the screen to the top, as with bubbles.    
+
+    @param start: This is the number of seconds it will take to start all
+    particles moving. Setting this to a non-zero number prevents an initial
+    wave of particles from overwhelming the screen. Each particle will start
+    in a random amount of time less than this number of seconds.
     """
 
 
@@ -187,6 +209,7 @@ def SnowBlossom(image, count=10, border=50, xspeed=(20, 50), yspeed=(100, 200)):
                                         count=count,
                                         border=border,
                                         xspeed=xspeed,
-                                        yspeed=yspeed))
+                                        yspeed=yspeed,
+                                        start=start))
                                        
         

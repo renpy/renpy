@@ -1502,7 +1502,6 @@ init:
     # Set the color of idle chosen menu choices.
     $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
 
-
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.
 

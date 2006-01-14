@@ -8,6 +8,10 @@ Added Fixed, HBox, and VBox functions to the script namespace. These
 functions allow multiple displayables to be used when only a single
 displayable is expected.
 
+SnowBlossom now takes a start parameter, the value of which should be
+an amount of time in seconds. The starting times of the various
+particles are spread out over this amount of time.
+
 New in Ren'Py 5.3.3
 -------------------
 
