@@ -1,6 +1,13 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py x.y.z
+-------------------
+
+Added Fixed, HBox, and VBox functions to the script namespace. These
+functions allow multiple displayables to be used when only a single
+displayable is expected.
+
 New in Ren'Py 5.3.3
 -------------------
 

@@ -801,8 +801,6 @@ init:
     image eileen concerned = Image("9a_concerned.png")
 </example>
 
-<!-- func LiveComposite -->
-
 <!-- func ImageReference -->
 
 <!-- func Solid -->
@@ -907,6 +905,23 @@ images into others, and do all sorts of complicated, unexpected,
 things. (But be careful... not all transitions do what you'd expect
 when used with SMAnimation.)
 </p>
+
+<h4>Layout Functions</h4>
+
+<p>
+These functions allow one to layout multiple displayables on the
+screen. They let multiple displayables be used when only a single
+displayable is expected.
+</p>
+
+<!-- func LiveComposite -->
+
+<!-- func Fixed -->
+
+<!-- func HBox -->
+
+<!-- func VBox -->
+
 
 <h4>Position and Motion Functions</h4>
 

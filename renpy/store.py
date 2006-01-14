@@ -74,6 +74,46 @@ CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
 MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
 
+def layout(cls, doc, **extra_kwargs):
+
+    def f(*args, **properties):
+        kwargs = extra_kwargs.copy()
+        kwargs.update(properties)
+
+        rv = cls(**kwargs)
+        for i in args:
+            rv.add(Image(i, loose=True))
+
+        return rv
+
+    f.__doc__ = doc + """
+
+    This function takes both positional and keyword
+    arguments. Positional arguments should be displayables or images
+    to be laid out. Keyword arguments are interpreted as style properties,
+    except for the style keyword argument, which is the name of the parent
+    style of this layout.
+    """
+
+    return f
+
+Fixed = layout(renpy.display.layout.Fixed, """
+A layout that expands to take the size allotted to it.  Each
+displayable is allocated the entire size of the layout, with the first
+displayable further from the user than the second, and so on. Within
+""")
+
+HBox = layout(renpy.display.layout.MultiBox, """
+A layout that lays out displayables from left to right.
+""", layout='horizontal')
+
+VBox = layout(renpy.display.layout.MultiBox, """
+A layout that lays out displayables from top to bottom.
+""", layout='vertical')
+
+del layout
+        
+
 def _return(v):
     """
     Returns its input. This is pretty useless, but comes in handy
