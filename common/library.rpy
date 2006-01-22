@@ -132,7 +132,17 @@ init -500:
 
         # Called to make a screenshot happen.
         def screenshot():
-            renpy.screenshot("screenshot.bmp")
+            import os.path
+
+            i = 1
+            while True:
+                fn = "screenshot%04d.bmp" % i
+                if not os.path.exists(fn):
+                    break
+                i += 1
+
+            
+            renpy.screenshot(fn)
 
         def invoke_game_menu():
             renpy.play(library.enter_sound)

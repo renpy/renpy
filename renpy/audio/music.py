@@ -47,7 +47,7 @@ def get_channel(channel):
     c = renpy.audio.audio.get_channel(channel)
     return c
 
-def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False, fadein=0, tight=False):
+def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False, fadein=0, tight=False, if_changed=False):
     """
     This stops the music currently playing on the numbered channel, dequeues
     any queued music, and begins playing the specified filename. If loop
@@ -66,7 +66,12 @@ def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False, fade
     True. If loop is False, then the last queued file is set to None.
 
     If tight is True, then fadeouts will span into the next-queued sound.
-    """    
+    
+    If if_changed is True, and the music file is currently playing,
+    then it will not be stopped/faded out and faded back in again, but
+    instead will be kept playing. (This will always queue up an additional
+    loop of the music.)
+    """
 
     try:        
         c = get_channel(channel)
@@ -77,7 +82,11 @@ def play(filename, channel=7, loop=True, fadeout=None, synchro_start=False, fade
         if fadeout is None:
             fadeout = renpy.config.fade_music
 
-        c.fadeout(fadeout)
+        if if_changed and c.get_playing() == filename:
+            fadein = 0
+        else:
+            c.fadeout(fadeout)
+
         c.enqueue(filename, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight)
         
         t = get_serial()

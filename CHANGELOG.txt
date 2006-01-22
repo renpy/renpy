@@ -4,6 +4,12 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py x.y.z
 -------------------
 
+renpy.music.play() now takes a if_changed parameter. If given as
+True, and the music to be played is already playing, then the music
+will not be stopped and restarted. Use this when you want to
+immediately restart the music if and only if the music differs from
+the currently playing music.
+
 Added Fixed, HBox, and VBox functions to the script namespace. These
 functions allow multiple displayables to be used when only a single
 displayable is expected.
@@ -11,6 +17,11 @@ displayable is expected.
 SnowBlossom now takes a start parameter, the value of which should be
 an amount of time in seconds. The starting times of the various
 particles are spread out over this amount of time.
+
+Fixed a bug that caused Ren'Py to crash when attempting to predict
+images from transitions associated with say or menu statements.
+
+The screenshot key now creates numbered screenshots.
 
 New in Ren'Py 5.3.3
 -------------------

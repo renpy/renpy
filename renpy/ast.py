@@ -215,7 +215,10 @@ class Say(Node):
         else:
             who = None
 
-        say_menu_with(self.with, callback)
+        def predict_with(trans):
+            trans(old_widget=None, new_widget=None).predict(callback)
+
+        say_menu_with(self.with, predict_with)
 
         for i in renpy.exports.predict_say(who, self.what):
             if i is not None:
@@ -588,7 +591,10 @@ class Menu(Node):
     def predict(self, callback):
         rv = [ ]
 
-        say_menu_with(self.with, callback)
+        def predict_with(trans):
+            trans(old_widget=None, new_widget=None).predict(callback)
+
+        say_menu_with(self.with, predict_with)
 
         for i in renpy.store.predict_menu():
             if i is not None:

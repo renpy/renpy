@@ -70,6 +70,13 @@ class Cache(object):
     def preload_image(self, image):
         if renpy.config.debug_image_cache:
             print "IC Request Preload", image
+
+        if not isinstance(image, ImageBase):
+            if renpy.config.debug_image_cache:
+                print "IC Can't preload non image: ", image
+            else:
+                return
+
             
         self.preloads.append(image)
 
@@ -84,7 +91,8 @@ class Cache(object):
     def get(self, image):
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got something else.")
+            raise Exception("Expected an image of some sort, but got" + str(image) + ".")
+            
 
         if image in self.cache:
             ce = self.cache[image]
