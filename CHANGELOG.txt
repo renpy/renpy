@@ -18,6 +18,11 @@ SnowBlossom now takes a start parameter, the value of which should be
 an amount of time in seconds. The starting times of the various
 particles are spread out over this amount of time.
 
+The say and menu statements now supports unicode escapes. These should be
+a \u followed by 1-4 hex digits, and are used to include a unicode
+character. For example, \u00a0 will include the unicode NO-BREAK SPACE
+character.
+
 Fixed a bug that caused Ren'Py to crash when attempting to predict
 images from transitions associated with say or menu statements.
 

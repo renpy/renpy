@@ -74,7 +74,7 @@ label start:
     # Store the current version of Ren'Py into a variable, so we can
     # interpolate it into the next line.
     $ version = renpy.version()
-    
+
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
