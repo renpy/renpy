@@ -866,3 +866,91 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   style=style,
                   **properties)
 
+class Zoom(renpy.display.core.Displayable):
+    """
+    This displayable causes a zoom to take place, using image
+    scaling. The render of this displayable is always of the supplied
+    size. The child displayable is rendered, and a rectangle is
+    cropped out of it. This rectangle is interpolated between the
+    start and end rectangles. The rectangle is then scaled to the
+    supplied size. The zoom will take time seconds, after which it
+    will show the end rectangle, unless an after_child is
+    given.
+
+    The algorithm used for scaling does not perform any
+    interpolation or other smoothing.
+    """
+
+
+
+    def __init__(self, size, start, end, time, child,
+                 after_child=None, **properties):
+        """
+        @param size: The size that the rectangle is scaled to, a
+        (width, height) tuple.
+
+        @param start: The start rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+
+        @param end: The end rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+
+        @param time: The amount of time it will take to
+        interpolate from the start to the end rectange.
+
+        @param child: The child displayable.
+
+        @param after_child: If present, a second child
+        widget. This displayable will be rendered after the zoom
+        completes. Use this to snap to a sharp displayable after
+        the zoom is done.
+        """
+
+        super(Zoom, self).__init__(**properties)
+
+        self.size = size
+        self.start = start
+        self.end = end
+        self.time = time
+        self.child = child            
+
+        self.after_child = after_child
+
+    def predict(self, callback):
+        self.child.predict(callback)
+
+        if self.after_child:
+            self.after_child.predict(callback)
+
+    def render(self, width, height, st, at):
+
+        if self.time:
+            done = min(st / self.time, 1.0)
+        else:
+            done = 1.0
+
+        if self.after_child and done == 1.0:
+            return renpy.display.render.render(self.after_child, width, height, st, at)
+
+
+        rend = renpy.display.render.render(self.child, width, height, st, at)
+        surf = rend.pygame_surface()
+
+        rect = tuple([ (1.0 - done) * a + done * b for a, b in zip(self.start, self.end) ])
+        subsurf = surf.subsurface(rect)
+
+        scalesurf = pygame.transform.scale(subsurf, self.size)
+
+        renpy.display.render.mutated_surface(scalesurf)
+
+        rv = renpy.display.render.Render(self.size[0], self.size[1])
+        rv.blit(scalesurf, (0, 0))
+        rv.depends_on(rend)
+
+        if done < 1.0:
+            renpy.display.render.redraw(self, 0)
+
+        return rv
+
+    def event(self, ev, x, y, st):
+        return None

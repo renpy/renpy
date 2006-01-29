@@ -25,7 +25,7 @@ default to the motion timebase, but both have an option
 (anim_timebase) that lets you specify which timebases is wanted. For
 example, one may want to switch a looping motion onto the animation
 timebase if one wants to allow the character's expression to change
-while the motion continues.
+while the motion continues. [doc]
 
 We've implemented a more precise timeout system in Ren'Py. Previously,
 if we wanted to have an event occur at some time after a displayable
@@ -36,6 +36,9 @@ precise timeouts for event delivery, down to the ~10ms range. Among
 other things, this allows for more accurate pauses, and skipping to
 occur at a rate faster than the previous limit of 10 screens per
 second or so.
+
+Integrated a Zoom function into Ren'Py. This function lets you zoom
+into or out of an image. [doc]
 
 renpy.music.play() now takes a if_changed parameter. If given as
 True, and the music to be played is already playing, then the music
