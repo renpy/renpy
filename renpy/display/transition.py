@@ -93,9 +93,9 @@ class Transition(renpy.display.core.Displayable):
         self.delay = delay
         self.events = True
         
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         if self.events:
-            return self.new_widget.event(ev, x, y)
+            return self.new_widget.event(ev, x, y, st)
         else:
             return None
 
@@ -117,14 +117,14 @@ class NoTransition(Transition):
         self.new_widget = new_widget
         self.events = True
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
 
         rv.blit(renpy.display.render.render(self.new_widget,
                                             width,
                                             height,
-                                            st), (0, 0))
+                                            st, at), (0, 0))
 
         return rv
 
@@ -188,7 +188,7 @@ class MultipleTransition(Transition):
         for i in self.transitions:
             i.predict(callback)
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         while True:
             trans = self.transitions[0]
@@ -209,7 +209,7 @@ class MultipleTransition(Transition):
         self.event_target = trans
 
         rv = renpy.display.render.Render(width, height)
-        rv.blit(renpy.display.render.render(trans, width, height, stoff), (0,0))
+        rv.blit(renpy.display.render.render(trans, width, height, stoff, at), (0,0))
         
         if stoff > 0:
             renpy.display.render.redraw(self, stoff)
@@ -358,11 +358,11 @@ class Pixellate(Transition):
 
         self.quantum = time / ( 2 * steps )
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         if st >= self.time:
             self.events = True
-            return render(self.new_widget, width, height, st)
+            return render(self.new_widget, width, height, st, at)
 
         step = st // self.quantum + 1
         visible = self.old_widget
@@ -373,7 +373,7 @@ class Pixellate(Transition):
             self.events = True
 
         rv = renpy.display.render.Render(width, height)
-        rdr = render(visible, width, height, st)
+        rdr = render(visible, width, height, st, at)
 
         # No alpha support.
         surf = rdr.pygame_surface(False)
@@ -420,11 +420,11 @@ class Dissolve(Transition):
         self.old_top = None
         self.old_alpha = 0
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         if st >= self.time:
             self.events = True
-            return render(self.new_widget, width, height, st)
+            return render(self.new_widget, width, height, st, at)
 
         if st < self.time:
             renpy.display.render.redraw(self, 0)
@@ -433,8 +433,8 @@ class Dissolve(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        bottom = render(self.old_widget, width, height, st)
-        top = render(self.new_widget, width, height, st)
+        bottom = render(self.old_widget, width, height, st, at)
+        top = render(self.new_widget, width, height, st, at)
 
         surf = top.pygame_surface(False)
         renpy.display.render.mutated_surface(surf)
@@ -669,14 +669,14 @@ class CropMove(Transition):
             self.bottom = new_widget
             self.top = old_widget
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         time = 1.0 * st / self.time
 
         # Done rendering.
         if time >= 1.0:
             self.events = True
-            return render(self.new_widget, width, height, st)
+            return render(self.new_widget, width, height, st, at)
         
         # How we scale each element of a tuple.
         scales = (width, height, width, height)
@@ -690,9 +690,9 @@ class CropMove(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        rv.blit(render(self.bottom, width, height, st), (0, 0), focus=not self.topnew)
+        rv.blit(render(self.bottom, width, height, st, at), (0, 0), focus=not self.topnew)
 
-        top = render(self.top, width, height, st)
+        top = render(self.top, width, height, st, at)
         ss = top.subsurface(crop, focus=self.topnew)
         rv.blit(ss, pos, focus=self.topnew)
 
@@ -767,7 +767,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
         tags = { }
 
-        for tag, time, d in old.scene_list:
+        for tag, start, anim, d in old.scene_list:
 
             if tag is None:
                 continue
@@ -776,7 +776,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
         newsl = [ ]
 
-        for tag, time, d in new.scene_list:
+        for tag, time, anim, d in new.scene_list:
 
             if tag is None or tag not in tags:
                 newsl.append((tag, time, d))
@@ -786,7 +786,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
             newpos = position(d)
 
             if oldpos == newpos:
-                newsl.append((tag, time, d))
+                newsl.append((tag, time, anim, d))
                 continue
                 
             move = renpy.display.layout.Move(position(tags[tag]),
@@ -795,7 +795,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
                                              d,
                                              )
 
-            newsl.append((tag, now(), move))
+            newsl.append((tag, None, anim, move))
 
         rv = renpy.display.layout.Fixed()
         rv.append_scene_list(newsl)
@@ -965,11 +965,11 @@ class ImageDissolve(Transition):
     def predict(self, callback):
         callback(self.image)
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         if st >= self.time:
             self.events = True
-            return render(self.new_widget, width, height, st)
+            return render(self.new_widget, width, height, st, at)
 
         image = renpy.display.im.cache.get(self.image)
 
@@ -985,8 +985,8 @@ class ImageDissolve(Transition):
 
         rv = renpy.display.render.Render(width, height)
 
-        bottom = render(self.old_widget, width, height, st)
-        top = render(self.new_widget, width, height, st)
+        bottom = render(self.old_widget, width, height, st, at)
+        top = render(self.new_widget, width, height, st, at)
 
         surf = top.pygame_surface(True)
         renpy.display.render.mutated_surface(surf)

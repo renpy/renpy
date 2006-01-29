@@ -1,5 +1,6 @@
 #include "renpy.h"
 #include <pygame/pygame.h>
+// #include "SDL_stretch.h"
 #include <stdio.h>
 
 // Shows how to do this.
@@ -605,4 +606,18 @@ void alphamunge_core(PyObject *pysrc,
     }
 }
         
-        
+/* int stretch_core(PyObject *pysrc, PyObject *pydst, int x, int y, int w, int h) { */
+/*     SDL_Surface *src; */
+/*     SDL_Surface *dst; */
+/*     SDL_Rect rect; */
+    
+/*     src = PySurface_AsSurface(pysrc); */
+/*     dst = PySurface_AsSurface(pydst); */
+
+/*     rect.x = x; */
+/*     rect.y = y; */
+/*     rect.w = w; */
+/*     rect.h = h; */
+    
+/*     SDL_StretchSurfaceBlit(src, &rect, dst, NULL); */
+/* } */

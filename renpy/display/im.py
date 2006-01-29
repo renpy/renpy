@@ -249,7 +249,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         assert False
         
-    def render(self, w, h, st):
+    def render(self, w, h, st, at):
         im = cache.get(self)
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)

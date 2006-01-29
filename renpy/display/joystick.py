@@ -93,7 +93,7 @@ class JoyBehavior(renpy.display.layout.Null):
     event occurs, this returns it as a string.
     """
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         if ev.type == renpy.display.core.JOYEVENT:
             return ev.press
         

@@ -23,13 +23,13 @@ class Particles(renpy.display.core.Displayable):
         self.factory = factory
         self.particles = None
 
-    def render(self, w, h, st):
+    def render(self, w, h, st, at):
 
         particles = self.particles
         if particles is None:
             particles = [ ]
 
-        newparts = self.factory.create(self.particles, st)
+        newparts = self.factory.create(self.particles, at)
 
         if newparts is not None:
             particles.extend(newparts)
@@ -40,7 +40,7 @@ class Particles(renpy.display.core.Displayable):
 
         for p in particles:
 
-            new = p.update(st)
+            new = p.update(at)
             if new is None:
                 continue
 
@@ -48,7 +48,7 @@ class Particles(renpy.display.core.Displayable):
 
             xpos, ypos, t, widget = new            
             widget = renpy.display.im.image(widget, loose=True)
-            rend = renpy.display.render.render(widget, w, h, t)
+            rend = renpy.display.render.render(widget, w, h, t, t)
             widget.place(rv, 0, 0, w, h, rend, xpos=xpos, ypos=ypos)
 
         self.particles = liveparts

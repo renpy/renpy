@@ -1,8 +1,41 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py x.y.z
+New in Ren'Py 5.4.0
 -------------------
+
+This release introduces time correctness to the display subsystem of
+Ren'Py. Previously, time was a kinda flexible concept in
+Ren'Py. Objects were shown sometime before the first frame of an
+interaction, and the frames that we drew represented a smear of time,
+rather than some precise instant. This release changes that. Each
+frame now represents a single instant in time, and the timebases for
+things like animations, motions, and transitions all begin at the
+instant of the first frame of the first interaction in which they are
+present. 
+
+We also have precisely defined two timebases that displayables can
+use. The displayable timebase starts at the instant of the first frame
+in which a given displayable was present, while the animation timebase
+begins at the instant of the first frame in which an image with the
+same tag is present. Having two timebases makes it easier to specify
+what we want happening when, say, an animation is placed inside a
+motion. Animations default to the animation timebase, while motions
+default to the motion timebase, but both have an option
+(anim_timebase) that lets you specify which timebases is wanted. For
+example, one may want to switch a looping motion onto the animation
+timebase if one wants to allow the character's expression to change
+while the motion continues.
+
+We've implemented a more precise timeout system in Ren'Py. Previously,
+if we wanted to have an event occur at some time after a displayable
+has been shown, we'd have to use use the 20hz periodic event and deal
+with it as part of that. The meant that our best timing precision was
+50ms, and often it was significantly worse. Now, we can schedule
+precise timeouts for event delivery, down to the ~10ms range. Among
+other things, this allows for more accurate pauses, and skipping to
+occur at a rate faster than the previous limit of 10 screens per
+second or so.
 
 renpy.music.play() now takes a if_changed parameter. If given as
 True, and the music to be played is already playing, then the music
@@ -18,15 +51,19 @@ SnowBlossom now takes a start parameter, the value of which should be
 an amount of time in seconds. The starting times of the various
 particles are spread out over this amount of time.
 
-The say and menu statements now supports unicode escapes. These should be
-a \u followed by 1-4 hex digits, and are used to include a unicode
+The say and menu statements now supports unicode escapes. These should
+be a \u followed by 1-4 hex digits, and are used to include a unicode
 character. For example, \u00a0 will include the unicode NO-BREAK SPACE
 character.
+
+Fixed a bug that cause Animations and anim.Filmstrips to ignore
+position properties supplied to them. Now, these object properly
+respect position properties supplied to them.
 
 Fixed a bug that caused Ren'Py to crash when attempting to predict
 images from transitions associated with say or menu statements.
 
-The screenshot key now creates numbered screenshots.
+The screenshot key (s) now creates numbered screenshots.
 
 New in Ren'Py 5.3.3
 -------------------

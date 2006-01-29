@@ -57,7 +57,7 @@ old_renders = { }
 # contents.)
 mutated_surfaces = { }
 
-def render(widget, width, height, st):
+def render(widget, width, height, st, at):
     """
     Renders a widget on the screen.
     """
@@ -78,7 +78,7 @@ def render(widget, width, height, st):
 
         return rv
 
-    rv = widget.render(width, height, st)
+    rv = widget.render(width, height, st, at)
 
     rv.render_of.append((widget, width, height))
 
@@ -139,7 +139,7 @@ def render_screen(widget, width, height, st):
 
     mutated_surfaces = { }
 
-    rv = render(widget, width, height, st)
+    rv = render(widget, width, height, st, st)
 
     # Renders that are in the old set but not the new one die here.
     old_render_set = sets.Set(old_renders.itervalues())
@@ -676,3 +676,4 @@ class Render(object):
                 h = self.height
 
         self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
+

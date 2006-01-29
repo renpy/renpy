@@ -113,7 +113,7 @@ class TextStyle(object):
         # print font.get_ascent() - font.get_descent(), font.get_height(), font.get_linesize()
         return font.size(text)[0], font.get_ascent() - font.get_descent()
 
-    def render(self, text, antialias, color, use_colors, time):
+    def render(self, text, antialias, color, use_colors, time, at):
 
         if use_colors and self.color:
             color = self.color
@@ -159,7 +159,7 @@ class WidgetStyle(object):
         self.widget = widget
         self.owidth = width
 
-        surf = renpy.display.render.render(widget, self.height, width, time)
+        surf = renpy.display.render.render(widget, self.height, width, time, time)
         self.width, _ = surf.get_size()
 
     def get_ascent(self):
@@ -168,11 +168,11 @@ class WidgetStyle(object):
     def sizes(self, widget):
         return self.width, self.height
 
-    def render(self, widget, antialias, color, foreground, time):
+    def render(self, widget, antialias, color, foreground, st, at):
 
         # If in the foreground
         if foreground:
-            return renpy.display.render.render(widget, self.owidth, self.height, time), (self.width, self.height)
+            return renpy.display.render.render(widget, self.owidth, self.height, st, at), (self.width, self.height)
         else:
             return None, (self.width, self.height)
         
@@ -364,7 +364,7 @@ class Text(renpy.display.core.Displayable):
         if redraw:
             renpy.display.render.redraw(self, 0)
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         """
         Space, Enter, or Click ends slow, if it's enabled.
         """
@@ -376,9 +376,9 @@ class Text(renpy.display.core.Displayable):
             return None
 
         if renpy.display.behavior.map_event(ev, "dismiss"):
-
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
+
 
     def layout(self, width, time):
         """
@@ -745,7 +745,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, user_colors, length, time):
+    def render_pass(self, r, xo, yo, color, user_colors, length, time, at):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -776,7 +776,7 @@ class Text(renpy.display.core.Displayable):
                 if length < 0:
                     text = text[:length]
                 
-                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time)
+                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time, at)
                 # sw, sh = surf.get_size()
 
                 if surf:
@@ -793,7 +793,7 @@ class Text(renpy.display.core.Displayable):
 
         return True
             
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         speed = self.slow_speed or renpy.game.preferences.text_cps
 
@@ -841,9 +841,9 @@ class Text(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st)
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st, at)
 
-        if self.render_pass(rv, xo, yo, self.style.color, True, length, st):
+        if self.render_pass(rv, xo, yo, self.style.color, True, length, st, at):
             if self.slow:
                 self.slow = False
                 if self.slow_done:
@@ -854,18 +854,6 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def event(self, ev, x, y):
-        """
-        Space, Enter, or Click ends slow, if it's enabled.
-        """
-
-        if not self.slow:
-            return None
-
-        if renpy.display.behavior.map_event(ev, "dismiss"):
-
-            self.slow = False
-            raise renpy.display.core.IgnoreEvent()
 
 
 class ParameterizedText(object):

@@ -1,6 +1,8 @@
 # This file contains code for initializing and managing the display
 # window.
 
+# TODO! get audio.periodic working again!
+
 import renpy
 
 import pygame
@@ -10,12 +12,12 @@ import os
 import time
 import cStringIO
 
-# KEYREPEATEVENT = USEREVENT + 1
-DISPLAYTIME = USEREVENT + 2
+TIMEEVENT = USEREVENT + 1
+PERIODIC = USEREVENT + 2
 JOYEVENT = USEREVENT + 3
 
-# The number of msec 
-DISPLAYTIME_INTERVAL = 50
+# The number of msec between periodic events.
+PERIODIC_INTERVAL = 50
 
 class IgnoreEvent(Exception):
     """
@@ -95,7 +97,7 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def render(self, width, height, shown_time):
+    def render(self, width, height, st, at):
         """
         Called to display this displayable. This is called with width
         and height parameters, which give the largest width and height
@@ -103,18 +105,20 @@ class Displayable(renpy.object.Object):
         bounding box. It's also given two times. It returns a Surface
         that is the current image of this drawable. 
 
-        @param shown_time: The time since we first started showing this
-        drawable, a float in seconds.
+        @param st: The time since this widget was first shown, in seconds.
+        @param at: The time since a similarly named widget was first shown,
+        in seconds.        
         """
 
         assert False, "Draw not implemented."
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         """
         Called to report than an event has occured. Ev is the raw
         pygame event object representing that event. If the event
         involves the mouse, x and y are the translation of the event
-        into the coordinates of this displayable.
+        into the coordinates of this displayable. st is the time this
+        widget has been shown for.
 
         @returns A value that should be returned from Interact, or None if
         no value is appropriate.
@@ -318,8 +322,7 @@ class SceneLists(object):
 
         If key is provided, and there exists something in the selected
         layer with the given key, that entry from the layer
-        is replaced with the supplied displayable, preserving the
-        time it was first displayed.
+        is replaced with the supplied displayable.
 
         Otherwise, the displayable is added to the end of the layer, and
         the time it was first displayed is set to the current time.
@@ -331,17 +334,19 @@ class SceneLists(object):
         l = self.layers[layer]
 
         if key is not None:
-            for index, (k, t, d) in enumerate(l):
+            for index, (k, st, at, d) in enumerate(l):
                 if k == key:
                     break
             else:
                 index = None
 
+            st = None
+
             if index is not None:
-                l[index] = (key, t, thing)
+                l[index] = (key, st, at, thing)
                 return
 
-        l.append((key, time.time(), thing))
+        l.append((key, None, None, thing))
 
     def remove(self, layer, thing):
         """
@@ -357,7 +362,7 @@ class SceneLists(object):
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
         l = self.layers[layer]
-        l = [ (k, t, d) for k, t, d in l if k != thing if d is not thing ]
+        l = [ (k, st, at, d) for k, st, at, d in l if k != thing if d is not thing ]
 
         self.layers[layer] = l
 
@@ -370,6 +375,22 @@ class SceneLists(object):
             raise Exception("Trying to clear non-existent layer '%s'." % layer)
         
         self.layers[layer] = [ ]
+
+    def set_times(self, time):
+        """
+        This finds entries with a time of None, and replaces that
+        time with the given time.
+        """
+
+        for l in self.layers.values():
+            ll = [ ]
+
+            for i in range(0, len(l)):
+                k, st, at, d = l[i]
+                ll.append((k, st or time, at or time, d))
+
+            l[:] = ll
+            
     
 
 class Display(object):
@@ -701,6 +722,17 @@ class Interface(object):
     interaction.
 
     @ivar ticks: The number of 20hz ticks.
+
+    @ivar frame_time: The time at which we began drawing this frame.
+
+    @ivar interact_time: The time of the start of the first frame of the current interact_core.
+
+    @ivar time_event: A singleton ignored event.
+
+    @ivar event_time: The time of the current event.
+
+    @ivar timeout_time: The time at which the timeout will occur.
+
     """
 
     def __init__(self):
@@ -716,6 +748,14 @@ class Interface(object):
         self.pushed_event = None
         self.ticks = 0
         self.mouse = 'default'
+        self.timeout_time = None
+
+        # The time at which this draw occurs.
+        self.frame_time = 0
+
+        self.interact_time = None
+
+        self.time_event = pygame.event.Event(TIMEEVENT)
 
     def take_screenshot(self, scale):
         """
@@ -909,6 +949,10 @@ class Interface(object):
         # Setup the mouse.
         self.mouse = mouse
 
+        # The start and end times of this interaction.
+        start_time = time.time()
+        end_time = start_time
+
         # frames = 0
 
         for i in renpy.config.interact_callbacks:
@@ -919,15 +963,16 @@ class Interface(object):
         # Tick time forward.
         renpy.display.im.cache.tick()
 
-        # Set up key repeats.
-        # pygame.time.set_timer(KEYREPEATEVENT, renpy.config.skip_delay)
-
-        # Set up display time event.
-        pygame.time.set_timer(DISPLAYTIME, DISPLAYTIME_INTERVAL)
+        # Setup periodic event.
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
         # Clear some events.
-        pygame.event.clear((MOUSEMOTION, DISPLAYTIME,
-                            MOUSEBUTTONUP, MOUSEBUTTONDOWN))
+        pygame.event.clear((MOUSEMOTION, PERIODIC,
+                            MOUSEBUTTONUP, MOUSEBUTTONDOWN,
+                            TIMEEVENT))
+
+        # Add a single TIMEEVENT to the queue.
+        pygame.event.post(self.time_event)
         
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
@@ -943,7 +988,7 @@ class Interface(object):
 
         # Figure out the underlay layer.
         if not suppress_underlay:
-            underlay = [ ( None, 0, i) for i in renpy.config.underlay ]
+            underlay = [ ( None, 0, 0, i) for i in renpy.config.underlay ]
         else:
             underlay = [ ]
 
@@ -960,9 +1005,6 @@ class Interface(object):
             for w in scene.itervalues():
                 w.predict(renpy.display.im.cache.get)
 
-        # The start time of transitions.
-        start_time = time.time()
-
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.Fixed()
         layers_root.layers = { }
@@ -973,14 +1015,12 @@ class Interface(object):
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene[layer])
-                where.add(trans, start_time)
+                where.add(trans)
                 where.layers[layer] = trans
                 
             else:
                 where.layers[layer] = scene[layer]
-                where.add(scene[layer], start_time)
-            
-
+                where.add(scene[layer])
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:
@@ -995,22 +1035,22 @@ class Interface(object):
 
             for layer in renpy.config.layers:
                 old_root.layers[layer] = self.old_scene[layer]
-                old_root.add(self.old_scene[layer], start_time)
+                old_root.add(self.old_scene[layer])
             
             trans = self.transition[None](old_widget=old_root,
                                           new_widget=layers_root)
             
-            root_widget.add(trans, start_time)
+            root_widget.add(trans)
 
             if trans_pause:
                 sb = renpy.display.behavior.SayBehavior()
-                root_widget.add(sb, start_time)
+                root_widget.add(sb)
 
                 pb = renpy.display.behavior.PauseBehavior(trans.delay)
-                root_widget.add(pb, start_time)
+                root_widget.add(pb)
                 
         else:
-            root_widget.add(layers_root, start_time)
+            root_widget.add(layers_root)
 
 
         # Add top_layers to the root_widget.
@@ -1037,11 +1077,16 @@ class Interface(object):
 
         # First pass through the while loop?
         first_pass = True
+
+        # We don't yet know when the interaction began.
+        self.interact_time = None
         
         # We only want to do prediction once, but we will defer it as
         # long as possible.
         did_prediction = False
-        
+
+        old_timeout_time = None
+
         rv = None
 
         # This try block is used to force cleanup even on termination
@@ -1062,24 +1107,33 @@ class Interface(object):
 
                 # Redraw the screen.
                 if needs_redraw and self.display.can_redraw(first_pass):
-                    needs_redraw = False
-                    first_pass = False
 
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
 
                     # Draw the screen.
-                    draw_start = time.time()
+                    self.frame_time = time.time()
+
+                    if not self.interact_time:
+                        self.interact_time = self.frame_time
 
                     self.display.show(root_widget, suppress_blit)
                     
                     renpy.config.frames += 1
 
+
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile :
                         new_time = time.time()
-                        print "Profile: Redraw took %f seconds." % (new_time - draw_start)
+                        print "Profile: Redraw took %f seconds." % (new_time - self.draw_start)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
+
+                    if first_pass:
+                        scene_lists.set_times(self.interact_time)
+
+                    needs_redraw = False
+                    first_pass = False
+
 
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
@@ -1100,31 +1154,64 @@ class Interface(object):
                     did_prediction = True
 
                 try:
-                    if needs_redraw:
-                        ev = self.event_poll()
+                    # Handle the timeout timer.
+                    if not self.timeout_time:
+                        pygame.time.set_timer(TIMEEVENT, 0)
+                        ev = None
                     else:
-                        ev = self.event_wait()
+                        time_left = self.timeout_time - time.time() 
+
+                        if time_left < 0:
+                            self.timeout_time = None
+                            ev = self.time_event
+                            pygame.time.set_timer(TIMEEVENT, 0)
+                        else:
+                            ev = None
+
+                            if self.timeout_time != old_timeout_time:
+                                # Always set to at least 1ms.
+                                pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
+
+                                old_timeout_time = self.timeout_time
+
+
+                    # Get the event, if we don't have one already.
+                    if ev is None:
+                        if needs_redraw:
+                            ev = self.event_poll()
+                        else:
+                            ev = self.event_wait()
 
                     if ev.type == NOEVENT:
                         continue
 
+                    # Try to merge an TIMEEVENT with the next event.
+                    if ev.type == TIMEEVENT:
+                        old_timeout_time = None
+
+                        pygame.event.clear([TIMEEVENT])
+
+                        ev2 = self.event_peek()
+
+                        if ev2 and ev2.type not in (NOEVENT, PERIODIC):
+                            ev = self.event_poll()
+
+                            
                     # This can set the event to None, to ignore it.
                     ev = renpy.display.joystick.event(ev)
                     if not ev:
                         continue
 
-                    self.profile_time = time.time()
-
-                    if ev.type == DISPLAYTIME:
-
-                        events = 1 + len(pygame.event.get([DISPLAYTIME]))
+                    # Handle periodic events. This includes updating the mouse timers (and through the loop,
+                    # the mouse itself), and the audio system periodic calls.
+                    if ev.type == PERIODIC:
+                        events = 1 + len(pygame.event.get([PERIODIC]))
                         self.ticks += events
-                        renpy.game.context().runtime += events * DISPLAYTIME_INTERVAL
+
                         renpy.audio.audio.periodic()
+                        continue
 
-                        ev = pygame.event.Event(DISPLAYTIME, {},
-                                                duration=(time.time() - start_time))
-
+                    self.profile_time = time.time()
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
@@ -1149,14 +1236,19 @@ class Interface(object):
 
                     # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
+                    self.event_time = end_time = time.time()
 
-                    rv = root_widget.event(ev, x, y)
+                    rv = root_widget.event(ev, x, y, 0)
 
                     if rv is not None:
                         break
-
+            
                 except IgnoreEvent:
-                    pass
+                    # An ignored event can change the timeout. So we want to
+                    # process an TIMEEVENT to ensure that the timeout is
+                    # set correctly.
+                    pygame.event.post(self.time_event)
+                    
 
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.process_redraws()
@@ -1175,10 +1267,22 @@ class Interface(object):
                 scene_lists.clear(i)
 
             # pygame.time.set_timer(KEYREPEATEVENT, 0)
-            pygame.time.set_timer(DISPLAYTIME, 0)
+            pygame.time.set_timer(PERIODIC, 0)
+            pygame.time.set_timer(TIMEEVENT, 0)
+
+            renpy.game.context().runtime += end_time - start_time
 
             # Restart the old interaction, which also causes a
             # redraw if needed.
             self.restart_interaction = True
 
             # print "It took", frames, "frames."
+
+    def timeout(self, offset):
+        if offset < 0:
+            return
+
+        if self.timeout_time:
+            self.timeout_time = min(self.event_time + offset, self.timeout_time)
+        else:
+            self.timeout_time = self.event_time + offset

@@ -109,7 +109,7 @@ class Keymap(renpy.display.layout.Null):
         super(Keymap, self).__init__(style='default')
         self.keymap = keymap
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
@@ -136,11 +136,12 @@ class PauseBehavior(renpy.display.layout.Null):
         self.result = result 
 
 
-    def event(self, ev, x, y):
-              
-        if ev.type == renpy.display.core.DISPLAYTIME and \
-           self.delay and ev.duration > self.delay:
+    def event(self, ev, x, y, st):
+
+        if self.delay and st >= self.delay:
             return self.result
+
+        renpy.game.interface.timeout(self.delay - st)
 
 class SayBehavior(renpy.display.layout.Null):
     """
@@ -163,11 +164,12 @@ class SayBehavior(renpy.display.layout.Null):
     def set_afm_length(self, afm_length):
         self.afm_length = afm_length
               
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
-        if ev.type == renpy.display.core.DISPLAYTIME and \
-               renpy.config.allow_skipping and renpy.config.skipping and \
-               ev.duration > renpy.config.skip_delay / 1000.0:
+        skip_delay = renpy.config.skip_delay / 1000.0
+
+        if renpy.config.allow_skipping and renpy.config.skipping and \
+           st >= skip_delay:
 
             if renpy.game.preferences.skip_unseen:
                 return True
@@ -176,20 +178,27 @@ class SayBehavior(renpy.display.layout.Null):
             elif renpy.game.context().seen_current(True):
                 return True
 
-        if ev.type == renpy.display.core.DISPLAYTIME and \
-               self.afm_length and renpy.game.preferences.afm_time:
+        if renpy.config.allow_skipping and renpy.config.skipping and \
+           st < skip_delay:
+            renpy.game.interface.timeout(skip_delay - st)
+
+        if self.afm_length and renpy.game.preferences.afm_time:
                                                           
             afm_delay = ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time
 
             if renpy.game.preferences.text_cps:
                 afm_delay += 1.0 / renpy.game.preferences.text_cps * self.afm_length
 
-            if ev.duration > afm_delay:
+            if st > afm_delay:
                 if renpy.config.afm_callback:
                     if renpy.config.afm_callback():
                         return True
+                    else:
+                        renpy.game.interface.timeout(0.1)
                 else:
                     return True
+            else:
+                renpy.game.interface.timeout(afm_delay - st)
 
         if map_event(ev, "dismiss") and self.is_focused():
             return True
@@ -213,9 +222,9 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.focusable = clicked is not None
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
-        rv = super(Button, self).render(width, height, st)
+        rv = super(Button, self).render(width, height, st, at)
 
         if self.clicked:
             rv.add_focus(self,
@@ -240,7 +249,7 @@ class Button(renpy.display.layout.Window):
         if self.unhovered:
             self.unhovered()
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
         # We deactivate on an event.
         if self.activated:
@@ -304,7 +313,7 @@ class Input(renpy.display.text.Text):
         self.allow = allow
         self.exclude = exclude
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
         if map_event(ev, "input_backspace"):
             if self.content:
@@ -359,7 +368,7 @@ class Bar(renpy.display.core.Displayable):
         self.changed = changed
         self.focusable = changed is not None
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         # Store the width for the event function to use.
         self.width = width
@@ -377,11 +386,11 @@ class Bar(renpy.display.core.Displayable):
 
         rv = renpy.display.render.Render(width, height)
 
-        lsurf = render(self.style.left_bar, width, height, st)
-        rsurf = render(self.style.right_bar, width, height, st)
+        lsurf = render(self.style.left_bar, width, height, st, at)
+        rsurf = render(self.style.right_bar, width, height, st, at)
 
         if self.style.thumb_shadow:
-            surf = render(self.style.thumb_shadow, width, height, st)
+            surf = render(self.style.thumb_shadow, width, height, st, at)
             rv.blit(surf, (left_width + self.style.thumb_offset, 0))
 
         rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
@@ -389,7 +398,7 @@ class Bar(renpy.display.core.Displayable):
                 (left_width, 0))
 
         if self.style.thumb:
-            surf = render(self.style.thumb, width, height, st)
+            surf = render(self.style.thumb, width, height, st, at)
             rv.blit(surf, (left_width + self.style.thumb_offset, 0))
 
         if self.changed:
@@ -397,7 +406,7 @@ class Bar(renpy.display.core.Displayable):
 
         return rv
         
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
         if not self.changed:
             return
@@ -467,13 +476,13 @@ class Conditional(renpy.display.layout.Container):
 
         self.state = eval(self.condition, vars(renpy.store))
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
         if self.state:
-            return render(self.child, width, height, st)
+            return render(self.child, width, height, st, at)
         else:
-            return render(self.null, width, height, st)
+            return render(self.null, width, height, st, at)
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
 
         state = eval(self.condition, vars(renpy.store))
 

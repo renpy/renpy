@@ -749,7 +749,7 @@ init:
                        ctc = anim.Blink("arrow.png"))
 
     $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
-                        ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
+                        ctc = anim.Filmstrip("sakura.png", (20, 20), (2, 1), .30, xpos=760, ypos=560, xanchor=0, yanchor=0),
                         ctc_position="fixed")
 
     $ equote = Character('Eileen',  color=(200, 255, 200, 255),

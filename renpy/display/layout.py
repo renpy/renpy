@@ -34,7 +34,7 @@ class Null(renpy.display.core.Displayable):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
         rv = renpy.display.render.Render(self.width, self.height)
 
         if self.focusable:
@@ -98,9 +98,9 @@ class Container(renpy.display.core.Displayable):
         self.children.append(child)
         self.child = child
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
-        rv = render(self.child, width, height, st)
+        rv = render(self.child, width, height, st, at)
         self.offsets = [ (0, 0) ]
         self.sizes = [ rv.get_size() ]
 
@@ -109,15 +109,16 @@ class Container(renpy.display.core.Displayable):
     def get_placement(self):
         return self.child.get_placement()
     
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         children_offsets = zip(self.children, self.offsets)
         children_offsets.reverse()
 
         for i, (xo, yo) in children_offsets: 
-            rv = i.event(ev, x - xo, y - yo)    
+
+            rv = i.event(ev, x - xo, y - yo, st)    
             if rv is not None:
                 return rv
-
+                
         return None
 
     def child_at_point(self, x, y):
@@ -165,7 +166,8 @@ class Fixed(Container):
 
     def __init__(self, style='default', **properties):
         super(Fixed, self).__init__(style=style, **properties)
-        self.times = [ ]
+        self.start_times = [ ]
+        self.anim_times = [ ]
 
         # A map from layer name to the widget corresponding to
         # that layer.
@@ -175,39 +177,45 @@ class Fixed(Container):
         self.scene_list = [ ]
         
 
-    def add(self, widget, time=None):
+    def add(self, widget, start_time=None, anim_time=None):
         super(Fixed, self).add(widget)
-        self.times.append(time)
+        self.start_times.append(start_time)
+        self.anim_times.append(anim_time)
 
     def append_scene_list(self, l):
-        for tag, time, d in l:
-            self.add(d, time)
+        for tag, start, anim, d in l:
+            self.add(d, start, anim)
 
         self.scene_list.extend(l)
 
-    def get_widget_time_list(self):
-        return zip(self.children, self.times)
+#     def get_widget_time_list(self):
+#         return zip(self.children, self.times)
             
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         self.offsets = [ ]
         self.sizes = [ ]
 
         rv = renpy.display.render.Render(width, height)
 
-        t = time.time()
+        t = renpy.game.interface.frame_time
+        it = renpy.game.interface.interact_time
 
-        for child, start in zip(self.children, self.times):
+        # Things with a None time are started at the first draw.
 
-            if start:
-                newst = t - start
-            else:
-                newst = st
+        self.start_times = [ i or it for i in self.start_times ]
+        self.anim_times = [ i or it for i in self.anim_times ]
 
-            surf = render(child, width, height, newst)
+        
+        for child, start, anim in zip(self.children, self.start_times, self.anim_times):
+
+            cst = t - start
+            cat = t - anim
+
+            surf = render(child, width, height, cst, cat)
 
             if surf:
                 self.sizes.append(surf.get_size())
@@ -218,6 +226,24 @@ class Fixed(Container):
                 self.offsets.append((0, 0))
 
         return rv
+
+    def event(self, ev, x, y, st):
+        children_offsets = zip(self.children, self.offsets, self.start_times)
+        children_offsets.reverse()
+
+        for i, (xo, yo), t in children_offsets: 
+
+            if t is None:
+                cst = 0
+            else:
+                cst = renpy.game.interface.event_time - t
+
+            rv = i.event(ev, x - xo, y - yo, cst)    
+            if rv is not None:
+                return rv
+                
+        return None
+
 
 def LiveComposite(size, *args, **properties):
     """
@@ -282,9 +308,9 @@ class Position(Container):
         super(Position, self).__init__(style=style, **properties)
         self.add(child)
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
-        surf = render(self.child, width, height, st)
+        surf = render(self.child, width, height, st, at)
         cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
@@ -326,7 +352,7 @@ class Grid(Container):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         # For convenience and speed.
         padding = self.padding
@@ -357,7 +383,7 @@ class Grid(Container):
         if self.style.yfill:
             renheight = (height - (rows - 1) * padding) / rows
         
-        renders = [ render(i, renwidth, renheight, st) for i in self.children ]
+        renders = [ render(i, renwidth, renheight, st, at) for i in self.children ]
         self.sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
@@ -408,7 +434,7 @@ class MultiBox(Container):
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         layout = self.style.box_layout
         padding = self.style.box_spacing
@@ -434,7 +460,7 @@ class MultiBox(Container):
             for i in self.children:
 
                 xoffsets.append(xo)
-                surf = render(i, remwidth, height, st)
+                surf = render(i, remwidth, height, st, at)
 
                 sw, sh = surf.get_size()
 
@@ -478,7 +504,7 @@ class MultiBox(Container):
 
                 yoffsets.append(yo)
 
-                surf = render(i, width, remheight, st)
+                surf = render(i, width, remheight, st, at)
 
                 sw, sh = surf.get_size()
 
@@ -507,140 +533,6 @@ class MultiBox(Container):
 
             return rv
   
-
-# class HBox(Container):
-#     """
-#     A box where things are aligned horizontally. The height of the box
-#     is equal to the height of the largest thing in the box, or minheight,
-#     whichever is larger. For each child that is smaller than the height of the
-#     box, alignment * (empty space) is placed above the child, with the rest
-#     of the empty space being placed below. (So 0.0 for top, 0.5 for center,
-#     and 1.0 for bottom alignment.)
-
-#     If Full, the end result uses all of the width available to it.
-    
-#     """
-
-#     def __init__(self, padding=0, style='default', **properties):
-#         super(HBox, self).__init__()
-
-#         self.padding = padding
-#         self.style = renpy.style.Style(style, properties)
-
-#     def get_placement(self):
-#         return self.style
-
-#     def render(self, width, height, st):
-
-#         self.offsets = [ ]
-#         self.sizes = [ ]
-
-#         surfaces = [ ]
-#         xoffsets = [ ]
-        
-#         remwidth = width
-#         xo = 0
-
-#         myheight = 0
-
-#         for i in self.children:
-
-#             xoffsets.append(xo)
-#             surf = render(i, remwidth, height, st)
-
-#             sw, sh = surf.get_size()
-
-#             remwidth -= sw
-#             remwidth -= self.padding
-
-#             xo += sw + self.padding
-
-#             myheight = max(sh, myheight)
-
-#             surfaces.append(surf)
-#             self.sizes.append((sw, sh))
-
-
-#         width = xo - self.padding
-        
-#         rv = renpy.display.render.Render(width, myheight)
-
-#         for surf, child, xo in zip(surfaces, self.children, xoffsets):
-#             sw, sh = surf.get_size()
-
-#             offset = child.place(rv, xo, 0, sw, myheight, surf)
-#             self.offsets.append(offset)
-
-#         return rv
-    
-
-# class VBox(Container):
-#     """
-#     This is a box that lines displayables up vertically. The width of
-#     the box is equal to the width of the widest displayable, or the
-#     minwidth, whichever is smaller. Algnment * (empty space) of the
-#     empty space is placed to the left of each displayable, with the
-#     rest being placed to the right. Padding pixels of space are placed
-#     between displayables.
-
-#     If full is given, then the height of the returned surface is the
-#     full height allocated.
-#     """
-
-#     def __init__(self, padding=0, style='default', **properties):
-#         super(VBox, self).__init__()
-
-#         self.padding = padding
-#         self.style = renpy.style.Style(style, properties)
-
-#     def get_placement(self):
-#         return self.style
-        
-#     def render(self, width, height, st):
-
-#         self.offsets = [ ]
-#         self.sizes = [ ]
-
-#         surfaces = [ ]
-#         yoffsets = [ ]
-
-#         remheight = height
-#         yo = 0
-
-#         mywidth = 0
-
-#         for i in self.children:
-
-#             yoffsets.append(yo)
-
-#             surf = render(i, width, remheight, st)
-
-#             sw, sh = surf.get_size()
-
-#             remheight -= sh
-#             remheight -= self.padding
-
-#             yo += sh + self.padding
-
-#             mywidth = max(sw, mywidth)
-
-#             surfaces.append(surf)
-#             self.sizes.append((sw, sh))
-
-
-#         height = yo - self.padding
-        
-#         rv = renpy.display.render.Render(mywidth, height)
-
-#         for surf, child, yo in zip(surfaces, self.children, yoffsets):
-
-#             sw, sh = surf.get_size()
-
-#             offset = child.place(rv, 0, yo, mywidth, sh, surf)
-
-#             self.offsets.append(offset)
-
-#         return rv
     
 
 class Window(Container):
@@ -672,7 +564,7 @@ class Window(Container):
         if self.style and self.style.background:
             self.style.background.predict(callback)
             
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         # save some typing.
         style = self.style
@@ -703,7 +595,7 @@ class Window(Container):
         surf = render(self.child,
                       width  - cxmargin - cxpadding,
                       height - cymargin - cypadding,
-                      st)
+                      st, at)
 
         sw, sh = surf.get_size()
 
@@ -723,7 +615,7 @@ class Window(Container):
             bw = width  - cxmargin
             bh = height - cymargin
 
-            back = render(style.background, bw, bh, st)
+            back = render(style.background, bw, bh, st, at)
 
             rv.blit(back,
                     (left_margin, top_margin))
@@ -766,7 +658,7 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, style='default', **properties):
+    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, style='default', **properties):
         """
         @param child: The child displayable.
 
@@ -785,6 +677,8 @@ class Motion(Container):
         @param bounce: Should we bounce?
 
         @param delay: How long this motion should take. If repeat is None, defaults to period.
+
+        @param anim_timebase: If True, use the animation timebase rather than the shown timebase.
 
         This can also be used as a transition. When used as a
         transition, the motion is applied to the new_widget for delay
@@ -806,48 +700,50 @@ class Motion(Container):
         self.repeat = repeat
         self.bounce = bounce
         self.delay = delay
+        self.anim_timebase = anim_timebase
 
     def predict(self, callback):
-        """
-        Image prediction, when used as a transition. We don't really predict
-        anything, as it should already have been predicted.
-        """
-
-        return 
+        return self.child.predict(callback)
 
     def get_placement(self):
         return self.style
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
-        if self.delay and st >= self.delay:
-            st = self.delay            
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+
+        if self.delay and t >= self.delay:
+            t = self.delay            
             if self.repeat:
-                st = st % self.period
+                t = t % self.period
         elif self.repeat:
-            st = st % self.period
+            t = t % self.period
             renpy.display.render.redraw(self, 0)
         else:
-            if st > self.period:
-                st = self.period
+            if t > self.period:
+                t = self.period
             else:
                 renpy.display.render.redraw(self, 0)
                 
-        st /= self.period
+        t /= self.period
 
         if self.bounce:
-            st = st * 2
-            if st > 1.0:
-                st = 2.0 - st
+            t = t * 2
+            if t > 1.0:
+                t = 2.0 - t
 
-        res = self.function(st)
+        res = self.function(t)
 
         if len(res) == 2:
             self.style.xpos, self.style.ypos = res
         else:
             self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor = res
 
-        child = render(self.child, width, height, st)
+        child = render(self.child, width, height, st, at)
         cw, ch = child.get_size()
 
         rv = renpy.display.render.Render(cw, ch)
@@ -892,7 +788,7 @@ class Interpolate(object):
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
-        style='default', **properties):
+        anim_timebase=False, style='default', **properties):
     """
     This is used to pan over a child displayable, which is almost
     always an image. It works by interpolating the placement of the
@@ -915,6 +811,9 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
     @param bounce: True if we should bounce from the start to the end
     to the start.
 
+    @param anim_timebase: True if we use the animation timebase, False to use the
+    displayable timebase.
+
     This can be used as a transition. See Motion for details.
     """
 
@@ -927,10 +826,11 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   repeat=repeat, 
                   bounce=bounce,
                   style=style,
+                  anim_timebase=anim_timebase,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
-        style='default', **properties):
+         anim_timebase=False, style='default', **properties):
     """
     This is used to pan over a child displayable relative to
     the containing area. It works by interpolating the placement of the
@@ -951,6 +851,9 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
     @param bounce: True if we should bounce from the start to the end
     to the start.
 
+    @param anim_timebase: True if we use the animation timebase, False to use the
+    displayable timebase.
+
     This can be used as a transition. See Motion for details.
     """
 
@@ -959,7 +862,7 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   child,
                   repeat=repeat, 
                   bounce=bounce,
+                  anim_timebase=anim_timebase,
                   style=style,
                   **properties)
-
 
