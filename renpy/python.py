@@ -148,8 +148,12 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     """
 
     source = source.encode('raw_unicode_escape')
-    tree = parse(source, mode)
-
+    try:
+        tree = parse(source, mode)
+    except SyntaxError, e:
+        e.lineno += lineno - 1
+        raise
+    
     recursively_replace(tree, wrap_node)
 
     if mode == 'exec':

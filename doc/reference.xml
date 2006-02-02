@@ -848,6 +848,19 @@ an image, and anim.SMAnimation function creates a more complex,
 state-machine controlled animation.
 </p>
 
+<p>
+Animation and motion functions take a parameter, anim_timebase, that
+chooses which timebase is used. The animation timebase, used when
+anim_timebase is True, starts at the
+instant of the first frame from which the tag of the image containing
+this animation has been shown on the screen. This can be used to
+switch between two animations, in a way that ensures they are
+synchronized to the same timebase. The displayable timebase, used when
+anim_timebase=False, starts at the first frame after the displayable
+is shown, and can be used to ensure the entire animation is seen, even
+if an image with the same tag was already on the screen.
+</p>
+
 <!-- func Animation -->
 
 <example>
@@ -905,22 +918,6 @@ images into others, and do all sorts of complicated, unexpected,
 things. (But be careful... not all transitions do what you'd expect
 when used with SMAnimation.)
 </p>
-
-<h4>Layout Functions</h4>
-
-<p>
-These functions allow one to layout multiple displayables on the
-screen. They let multiple displayables be used when only a single
-displayable is expected.
-</p>
-
-<!-- func LiveComposite -->
-
-<!-- func Fixed -->
-
-<!-- func HBox -->
-
-<!-- func VBox -->
 
 
 <h4>Position and Motion Functions</h4>
@@ -1081,6 +1078,44 @@ they affect the position of a single layer or the entire screen, as
 appropriate.
 </p>
 
+<function name="Zoom" sig="(size, start, end, time, after_child=None, **properties)">
+
+<p>
+    This displayable causes a zoom to take place, using image
+    scaling. The render of this displayable is always of the supplied
+    size. The child displayable is rendered, and a rectangle is
+    cropped out of it. This rectangle is interpolated between the
+    start and end rectangles. The rectangle is then scaled to the
+    supplied size. The zoom will take time seconds, after which it
+    will show the end rectangle, unless an after_child is
+    given.
+</p><p>
+    The algorithm used for scaling does not perform any
+    interpolation or other smoothing.
+</p>
+
+<p>
+        <span class="param">size</span> - The size that the rectangle is scaled to, a
+        (width, height) tuple.
+</p><p>
+        <span class="param">start</span> - The start rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+</p><p>
+        <span class="param">end</span> - The end rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+</p><p>
+        <span class="param">time</span> - The amount of time it will take to
+        interpolate from the start to the end rectange.
+</p><p>
+        <span class="param">after_child</span> - If present, a second child
+        widget. This displayable will be rendered after the zoom
+        completes. Use this to snap to a sharp displayable after
+        the zoom is done.
+</p>
+
+</function>
+
+
 <h4>Particle Motion</h4>
 
 <p>
@@ -1171,6 +1206,22 @@ parameter, but it may make sense to offset it to make multiple
 particle animations out of phase. Finally, the displayable is a
 displayable or image filename that is shown as the particle.
 </p>
+
+<h4>Layout Functions</h4>
+
+<p>
+These functions allow one to layout multiple displayables on the
+screen. They let multiple displayables be used when only a single
+displayable is expected.
+</p>
+
+<!-- func LiveComposite -->
+
+<!-- func Fixed -->
+
+<!-- func HBox -->
+
+<!-- func VBox -->
 
 
 <h3>Transitions</h3>

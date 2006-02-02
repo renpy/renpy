@@ -269,66 +269,6 @@ def Fade(out_time, hold_time, in_time,
     return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
 
-# This was a nifty idea that just didn't work out, since we can't vary
-# the alpha on an image with an alpha channel. Too bad.
-
-# class Dissolve(Transition):
-
-#     def __init__(self, time, old_widget, new_widget):
-#         super(Dissolve, self).__init__(time)
-
-#         self.time = time
-#         self.below, self.old, self.new, self.above = refactor_fixed(old_widget, new_widget)
-
-#     def event(self, ev, x, y):
-
-#         rv = self.above.event(ev, x, y)
-
-#         if rv is None:
-#             rv = self.new.event(ev, x, y)
-
-#         if rv is None:
-#             rv = self.below.event(ev, x, y)
-            
-#         return rv
-    
-#     def render(self, width, height, st):
-
-#         rv = renpy.display.render.Render(width, height)
-
-#         # Below.
-#         below = render(self.below, width, height, st)
-#         rv.blit(below, (0, 0))
-
-#         if st < self.time:
-#             # Old.
-#             old = render(self.old, width, height, st)
-#             rv.blit(old, (0, 0))
-
-#         # New.
-#         alpha = min(255, int(255 * st / self.time))
-#         new = render(self.new, width, height, st)
-
-#         if alpha < 255:
-#             surf = new.pygame_surface(False)
-#             renpy.display.render.mutable_surface(surf)
-#             surf.set_alpha(alpha, RLEACCEL)
-#             rv.blit(surf, (0, 0))
-#             rv.depends_on(new)
-#         else:
-#             rv.blit(new, (0, 0))
-
-#         # Above.
-#         above = render(self.above, width, height, st)
-#         rv.blit(above, (0, 0))
-
-
-#         if st < self.time:
-#             renpy.display.render.redraw(self, 0)
-        
-#         return rv
-
-
 class Pixellate(Transition):
     """
     This pixellates out the old scene, and then pixellates in the new

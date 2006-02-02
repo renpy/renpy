@@ -811,6 +811,8 @@ init:
 
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
 
+    
+
 label demonstrate:
 
     scene bg washington
@@ -1038,7 +1040,7 @@ label demonstrate:
 
             e "It's enough to make you feel a bit dizzy."
             
-        "Positions and movement, updated in 5.3.3.":
+        "Positions and movement, updated in 5.4.0.":
 
             e "I'm not stuck standing in the middle of the screen,
                even though I like being the center of attention."
@@ -1092,16 +1094,25 @@ label demonstrate:
 
             e "Move can repeat a movement, and even have it bounce
                back and forth, like I'm doing now."
-
+            
             scene bg onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
 
-            e "Finally, we can pan around an image larger than the
+            e "We can pan around an image larger than the
                screen, using the Pan function in an at
                clause."
 
             e "That's what we're doing now, panning up a picture of
                the memorial to the Big Red One."
 
+            scene bg whitehouse with dissolve
+            scene bg whitehouse at Zoom((800, 600), (0, 0, 800, 600), (225, 150, 400, 300), 1.0)
+
+            e "We can zoom into images..."
+
+            scene bg whitehouse at Zoom((800, 600), (225, 150, 400, 300), (0, 0, 800, 600), 1.0)
+
+            e "... and zoom back out of them again."
+        
             with None
             scene bg washington
             show eileen happy

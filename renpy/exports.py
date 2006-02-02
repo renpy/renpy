@@ -774,7 +774,7 @@ def get_game_runtime():
     it doesn't count time spent in the game menu.)
     """
 
-    return renpy.game.context().runtime / 1000.0
+    return renpy.game.context().runtime
 
 def loadable(filename):
     """

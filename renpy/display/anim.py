@@ -259,7 +259,7 @@ class SMAnimation(renpy.display.core.Displayable):
 
             im = renpy.display.render.render(self.edge_cache, width, height, t - self.edge_start, at)
 
-            renpy.display.render.redraw(self.edge_cache, self.edge.delay - (st - self.edge_start))
+            renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
 
 
         iw, ih = im.get_size()
@@ -289,38 +289,104 @@ class SMAnimation(renpy.display.core.Displayable):
 
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
-def Animation(*args, **properties):
+# def Animation(*args, **properties):
+#     """
+#     A Displayable that draws an animation, which is a series of images
+#     that are displayed with time delays between them.
+
+#     Odd (first, third, fifth, etc.) arguments to Animation are
+#     interpreted as image filenames, while even arguments are the time
+#     to delay between each image. If the number of arguments is odd,
+#     the animation will stop with the last image (well, actually delay
+#     for a year before looping). Otherwise, the animation will restart
+#     after the final delay time.
+
+#     Keyword arguments are interpreted as for anim.SMAnimation.
+#     """
+
+#     sm = [ 0 ]
+
+#     for i, arg in enumerate(args):
+
+#         if i % 2 == 0:
+#             sm.append(State(i, arg, **properties))
+
+#         else:
+
+#             if i == len(args) - 1:
+#                 new = 0
+#             else:
+#                 new = i + 1
+                
+#             sm.append(Edge(i - 1, arg, new))
+
+#     return SMAnimation(showold=True, *sm)
+
+
+class Animation(renpy.display.core.Displayable):
     """
     A Displayable that draws an animation, which is a series of images
     that are displayed with time delays between them.
-
-    Odd (first, third, fifth, etc.) arguments to Animation are
-    interpreted as image filenames, while even arguments are the time
-    to delay between each image. If the number of arguments is odd,
-    the animation will stop with the last image (well, actually delay
-    for a year before looping). Otherwise, the animation will restart
-    after the final delay time.
-
-    Keyword arguments are interpreted as for anim.SMAnimation.
     """
 
-    sm = [ 0 ]
+    def __init__(self, *args, **properties):
+        """
+        Odd (first, third, fifth, etc.) arguments to Animation are
+        interpreted as image filenames, while even arguments are the
+        time to delay between each image. If the number of arguments
+        is odd, the animation will stop with the last image (well,
+        actually delay for a year before looping). Otherwise, the
+        animation will restart after the final delay time.
 
-    for i, arg in enumerate(args):
+        @param anim_timebase: If True, the default, use the animation
+        timebase. Otherwise, use the displayable timebase.
+        """
 
-        if i % 2 == 0:
-            sm.append(State(i, arg, **properties))
+        properties.setdefault('style', 'image_placement')
+        self.anim_timebase = properties.pop('anim_timebase', True)
 
-        else:
+        super(Animation, self).__init__(**properties)
 
-            if i == len(args) - 1:
-                new = 0
+        self.images = [ ]
+        self.delays = [ ]
+
+        for i, arg in enumerate(args):
+
+            if i % 2 == 0:
+                self.images.append(renpy.display.im.image(arg, loose=True))
             else:
-                new = i + 1
-                
-            sm.append(Edge(i - 1, arg, new))
+                self.delays.append(arg)
 
-    return SMAnimation(showold=True, *sm)
+        if len(self.images) > len(self.delays):
+            self.delays.append(365.25 * 86400.0) # One year, give or take.
+                
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at % sum(self.delays)
+        else:
+            t = st % sum(self.delays)
+
+        for image, delay in zip(self.images, self.delays):
+            if t < delay:
+                renpy.display.render.redraw(self, delay - t)
+
+                im = renpy.display.render.render(image, width, height, st, at)
+                width, height = im.get_size()
+                rv = renpy.display.render.Render(width, height)
+                rv.blit(im, (0, 0))
+
+                return rv
+            
+            else:
+                t = t - delay
+
+    def predict(self, callback):
+        for i in self.images:
+            i.predict(callback)
+
+    def get_placement(self):
+        return self.style
 
 
 class Blink(renpy.display.core.Displayable):

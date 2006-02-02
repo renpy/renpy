@@ -914,7 +914,11 @@ class Zoom(renpy.display.core.Displayable):
         self.time = time
         self.child = child            
 
-        self.after_child = after_child
+        if after_child:
+            self.after_child = renpy.display.im.image(after_child, loose=True)
+        else:
+            self.after_child = None
+        
 
     def predict(self, callback):
         self.child.predict(callback)

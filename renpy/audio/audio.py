@@ -53,7 +53,12 @@ if mix:
         if old_midi is not None:
             mix.set_midi(old_midi)
 
-    atexit.register(restore_volumes)
+else:
+
+    def restore_volumes():
+        pass
+
+atexit.register(restore_volumes)
                          
     
 

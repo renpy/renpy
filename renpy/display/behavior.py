@@ -120,8 +120,6 @@ class Keymap(renpy.display.layout.Null):
                 
                 raise renpy.display.core.IgnoreEvent()
         
-    # def render(self, width, height, st):
-    #    return None
 
 class PauseBehavior(renpy.display.layout.Null):
     """
@@ -492,6 +490,6 @@ class Conditional(renpy.display.layout.Container):
         self.state = state
 
         if state:
-            return self.child.event(ev, x, y)
+            return self.child.event(ev, x, y, st)
         
             
