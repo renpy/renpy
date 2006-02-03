@@ -1274,6 +1274,8 @@ label demonstrate:
                 $ renpy.movie_stop()
                 hide movie
 
+                $ renpy.music_start('sun-flower-slow-drag.mid')
+
             else:
 
                 e "You haven't downloaded the Eisenhower commercial, so we

@@ -24,11 +24,13 @@ init -1000:
 
         style.create('hbox', 'default', '(box) The base style for hboxen.')
         style.create('vbox', 'default', '(box) The base style for vboxen.')
-
         
         style.create('window', 'default', '(window) The base style for the windows that contain dialogue, thoughts, and menus.')
         
         style.create('image_placement', 'default', 'This style is used to control the default placement of images on the screen.')
+
+        style.create('image', 'default', 'This is the style of images themselves. Don\'t change this, change image_placement instead.')
+        style.create('animation', 'default', 'This is the default style of animations. Don\'t change this, change image_placement instead.')
 
         # say
         style.create('say_label', 'default', '(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.')
@@ -186,10 +188,10 @@ init -1000:
         style.default.yminimum = 0 # Includes margins and padding.
 
         # Placement properties.
-        style.default.xpos = 0
-        style.default.ypos = 0
-        style.default.xanchor = 'left'
-        style.default.yanchor = 'top'
+        style.default.xpos = None # 0
+        style.default.ypos = None # 0
+        style.default.xanchor = None # 0
+        style.default.yanchor = None # 0
         style.default.xmaximum = None
         style.default.ymaximum = None
 

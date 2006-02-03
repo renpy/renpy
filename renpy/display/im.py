@@ -219,9 +219,7 @@ class ImageBase(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        if 'style' not in properties:
-            properties = properties.copy()
-            properties['style'] = 'image_placement'
+        properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
         self.identity = (type(self).__name__, ) + args
@@ -255,9 +253,6 @@ class ImageBase(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(w, h)
         rv.blit(im, (0, 0))
         return rv
-
-    def get_placement(self):
-        return self.style
 
     def predict(self, callback):
         callback(self)

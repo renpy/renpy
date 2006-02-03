@@ -31,9 +31,6 @@ class Null(renpy.display.core.Displayable):
         self.width = width
         self.height = height
 
-    def get_placement(self):
-        return self.style
-
     def render(self, width, height, st, at):
         rv = renpy.display.render.Render(self.width, self.height)
 
@@ -106,9 +103,6 @@ class Container(renpy.display.core.Displayable):
 
         return rv
 
-    def get_placement(self):
-        return self.child.get_placement()
-    
     def event(self, ev, x, y, st):
         children_offsets = zip(self.children, self.offsets)
         children_offsets.reverse()
@@ -191,9 +185,6 @@ class Fixed(Container):
 #     def get_widget_time_list(self):
 #         return zip(self.children, self.times)
             
-    def get_placement(self):
-        return self.style
-
     def render(self, width, height, st, at):
 
         self.offsets = [ ]
@@ -318,9 +309,6 @@ class Position(Container):
 
         return surf
 
-    def get_placement(self):
-        return self.style
-
 class Grid(Container):
     """
     A grid is a widget that evenly allocates space to its children.
@@ -348,9 +336,6 @@ class Grid(Container):
 
         self.padding = padding
         self.transpose = transpose
-
-    def get_placement(self):
-        return self.style
 
     def render(self, width, height, st, at):
 
@@ -431,9 +416,6 @@ class MultiBox(Container):
 
         self.default_layout = layout
     
-    def get_placement(self):
-        return self.style
-
     def render(self, width, height, st, at):
 
         layout = self.style.box_layout
@@ -555,9 +537,6 @@ class Window(Container):
 
         super(Window, self).__init__(style=style, **properties)
         self.add(child)
-
-    def get_placement(self):
-        return self.style
 
     def predict(self, callback):
 
@@ -704,9 +683,6 @@ class Motion(Container):
 
     def predict(self, callback):
         return self.child.predict(callback)
-
-    def get_placement(self):
-        return self.style
 
     def render(self, width, height, st, at):
 

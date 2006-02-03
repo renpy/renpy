@@ -656,9 +656,19 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
     def position(d):
 
-        placement = d.get_placement()
-        xpos = placement.xpos
-        ypos = placement.ypos
+        xpos, ypos, xanchor, yanchor = d.get_placement()
+
+        if xpos is None:
+            xpos = 0
+
+        if ypos is None:
+            ypos = 0
+
+        if xanchor is None:
+            xanchor = 0
+
+        if yanchor is None:
+            yanchor = 0
 
         if isinstance(xpos, float):
             xpos = int(renpy.config.screen_width * xpos)
@@ -666,21 +676,27 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
         if isinstance(ypos, float):
             ypos = int(renpy.config.screen_height * ypos)
 
-        return xpos, ypos, placement.xanchor, placement.yanchor
+        return xpos, ypos, xanchor, yanchor
         
 
     def merge_slide(old, new):
 
             
         # If new does not have .layers or .scene_list, then we simply
-        # insert a move from the old position to the new position.
+        # insert a move from the old position to the new position, if
+        # a move occured.
 
         if not hasattr(new, 'layers') and not hasattr(new, 'scene_list'):
-            return renpy.display.layout.Move(position(old),
-                                             position(new),
-                                             delay,
-                                             new,
-                                             )
+
+            if position(old) != position(new):
+
+                return renpy.display.layout.Move(position(old),
+                                                 position(new),
+                                                 delay,
+                                                 new,
+                                                 )
+            else:
+                return new
 
         # If we're in the root widget, merge the child widgets for
         # each layer.

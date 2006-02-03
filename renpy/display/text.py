@@ -311,9 +311,6 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout = None
 
-    def get_placement(self):
-        return self.style
-
     def set_text(self, new_text):
         """
         Changes the text display by this object to new_text.

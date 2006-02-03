@@ -122,13 +122,26 @@ def process_redraws():
     
     return True
 
+def redraw_time():
+    """
+    Returns the time at which a redraw is scheduled. This
+    should be called only after process_redraws, so that
+    the list is sorted.
+    """
+
+    if redraw_queue:
+        return redraw_queue[0][0]
+    else:
+        return None
+        
+
 def redraw(widget, when):
     """
     Call this to queue the redraw of the supplied widget in the
     supplied number of seconds.
     """
 
-    redraw_queue.append((when + time.time(), widget))
+    redraw_queue.append((when + renpy.game.interface.frame_time, widget))
     
 def render_screen(widget, width, height, st):
 
@@ -178,7 +191,8 @@ def compute_clip(source):
     global old_blits
 
     new_blits = [ ]
-    source.clip_to(pygame.display.get_surface(), 0, 0, new_blits)
+    forced = [ ]
+    source.clip_to(0, 0, new_blits, forced)
 
     bl0 = old_blits[:]
     bl1 = new_blits[:]
@@ -231,7 +245,7 @@ def compute_clip(source):
     changes.extend(bl0[i0:])
     changes.extend(bl1[i1:])
 
-    if not changes:
+    if not changes and not forced:
         return None
 
     sw = renpy.config.screen_width
@@ -242,8 +256,17 @@ def compute_clip(source):
     sized = [ ]
 
     for surf, x0, y0, w, h in changes:
+        if w * h >= sa:
+            return (0, 0, w, h), [ (0, 0, w, h) ]
+            
         sized.append((w * h, x0, y0, x0 + w, y0 + h))
 
+    for x0, y0, w, h in forced:
+        if w * h >= sa:
+            return (0, 0, w, h), [ (0, 0, w, h) ]
+            
+        sized.append((w * h, x0, y0, x0 + w, y0 + h))
+        
     sized.sort()
 
     # The set of non-contained updates. (x0, y0, x1, y1) tuples. 
@@ -355,13 +378,20 @@ class Render(object):
     widget can be withdrawn).
     """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, draw_func=None, update_func=None):
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
 
-        @param widget: If this render corresponds directly to a
-        widget, then this is the widget it corresponds to.
+        If draw_func is not None, then it is a function that should
+        draw to the surface supplied to it. The draw_func should
+        always return the same thing, use renpy.display.render.redraw to
+        animate.
+
+        If update_func is not None, it's expected to return a list of
+        (x, y, w, h) rectangles representing updated areas of the
+        screen. If draw_func is supplied and update_func isn't
+        then we default to redrawing the entire area.
         """
 
         # Just for safety's sake.
@@ -391,6 +421,9 @@ class Render(object):
         # The list of focusable widgets collected from this render
         # and the children of this render. A list of (widget, arg, x, y, w, h,)
         self.focuses = [ ]
+
+        self.draw_func = draw_func
+        self.update_func = update_func
 
     # def __del__(self):
     #     Render.renders -= 1
@@ -493,6 +526,9 @@ class Render(object):
         destination surface.
         """
 
+        if self.draw_func:
+            self.draw_func(dest.subsurface((x, y, self.width, self.height)))
+
         for xo, yo, source in self.blittables:
 
             if isinstance(source, pygame.Surface):
@@ -500,17 +536,23 @@ class Render(object):
             else:
                 source.blit_to(dest, x + xo, y + yo)
 
-    def clip_to(self, dest, x, y, blits):
+    def clip_to(self, x, y, blits, forced):
         """
         This fills in blits with (id(surf), x, y, w, h) tuples.
         """
 
+        if self.draw_func:
+            if self.update_func:
+                for xo, yo, w, h in self.update_func():
+                    forced.append((x, y, w, h))
+            else:
+                forced.append((x, y, self.width, self.height))
+        
         for xo, yo, source in self.blittables:
-
             if isinstance(source, pygame.Surface):
                 blits.append((id(source), x + xo, y + yo) + source.get_size())
             else:
-                source.clip_to(dest, x + xo, y + yo, blits)
+                source.clip_to(x + xo, y + yo, blits, forced)
 
     def fill(self, color):
         """

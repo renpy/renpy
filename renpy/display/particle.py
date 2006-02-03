@@ -49,7 +49,7 @@ class Particles(renpy.display.core.Displayable):
             xpos, ypos, t, widget = new            
             widget = renpy.display.im.image(widget, loose=True)
             rend = renpy.display.render.render(widget, w, h, t, t)
-            widget.place(rv, 0, 0, w, h, rend, xpos=xpos, ypos=ypos)
+            widget.place(rv, 0, 0, w, h, rend, xoff=xpos, yoff=ypos)
 
         self.particles = liveparts
         renpy.display.render.redraw(self, 0)

@@ -15,6 +15,7 @@ import cStringIO
 TIMEEVENT = USEREVENT + 1
 PERIODIC = USEREVENT + 2
 JOYEVENT = USEREVENT + 3
+REDRAW = USEREVENT + 4
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -133,7 +134,7 @@ class Displayable(renpy.object.Object):
         to return something more sensible.
         """
 
-        return self.style
+        return self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor
 
     def predict(self, callback):
         """
@@ -143,7 +144,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def place(self, dest, x, y, width, height, surf, xpos=None, ypos=None):
+    def place(self, dest, x, y, width, height, surf, xoff=None, yoff=None):
         """
         This draws this Displayable onto a destination surface, using
         the placement style information returned by this object's
@@ -168,19 +169,27 @@ class Displayable(renpy.object.Object):
         self.render().
         """
 
-        style = self.get_placement()
+        xpos, ypos, xanchor, yanchor = self.get_placement()
+
+        if xpos is None:
+            xpos = 0
+        if ypos is None:
+            ypos = 0
+        if xanchor is None:
+            xanchor = 0
+        if yanchor is None:
+            yanchor = 0
+
+
         sw, sh = surf.get_size()
 
         # x
-        if xpos is None:
-            xoff = style.xpos
-        else:
+        if xoff is None:
             xoff = xpos
+
 
         if isinstance(xoff, float):
             xoff = int(xoff * width)
-
-        xanchor = style.xanchor
 
         if xanchor == 'left':
             xanchor = 0.0
@@ -191,31 +200,36 @@ class Displayable(renpy.object.Object):
         elif not isinstance(xanchor, (float, int)):
             raise Exception("xanchor %r is not known." % xanchor)
 
-        xoff -= int(sw * xanchor)
+        if isinstance(xanchor, int):
+            xoff -= xanchor
+        else:
+            xoff -= int(sw * xanchor)
+
         xoff += x
+        
 
         # y
 
-        if ypos is None:
-            yoff = style.ypos
-        else:
+        if yoff is None:
             yoff = ypos
 
         if isinstance(yoff, float):
             yoff = int(yoff * height)
 
-        yanchor = style.yanchor
-
         if yanchor == 'top':
             yanchor = 0.0
         elif yanchor == 'center':
             yanchor = 0.5
-        elif style.yanchor == 'bottom':
+        elif yanchor == 'bottom':
             yanchor = 1.0
         elif not isinstance(yanchor, (float, int)):
             raise Exception("yanchor %r is not known." % yanchor)
 
-        yoff -= int(sh * yanchor)
+        if isinstance(yanchor, int):
+            yoff -= yanchor
+        else:
+            yoff -= int(sh * yanchor)
+
         yoff += y
 
         # print self, xoff, yoff
@@ -969,7 +983,7 @@ class Interface(object):
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, PERIODIC,
                             MOUSEBUTTONUP, MOUSEBUTTONDOWN,
-                            TIMEEVENT))
+                            TIMEEVENT, REDRAW))
 
         # Add a single TIMEEVENT to the queue.
         pygame.event.post(self.time_event)
@@ -1086,6 +1100,7 @@ class Interface(object):
         did_prediction = False
 
         old_timeout_time = None
+        old_redraw_time = None
 
         rv = None
 
@@ -1108,6 +1123,7 @@ class Interface(object):
                 # Redraw the screen.
                 if needs_redraw and self.display.can_redraw(first_pass):
 
+
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
 
@@ -1121,7 +1137,6 @@ class Interface(object):
                     
                     renpy.config.frames += 1
 
-
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile :
                         new_time = time.time()
@@ -1133,6 +1148,10 @@ class Interface(object):
 
                     needs_redraw = False
                     first_pass = False
+
+                    pygame.time.set_timer(REDRAW, 0)
+                    pygame.event.clear([REDRAW])
+                    old_redraw_time = None
 
 
                 # Draw the mouse, if it needs drawing.
@@ -1153,7 +1172,20 @@ class Interface(object):
                     renpy.game.context().predict(renpy.display.im.cache.preload_image)
                     did_prediction = True
 
+
                 try:
+
+                    # Handle the redraw timer.
+                    redraw_time = renpy.display.render.redraw_time()
+                    if redraw_time and not needs_redraw:
+
+                        if redraw_time != old_redraw_time:
+                            time_left = redraw_time - time.time()
+                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                            old_redraw_time = redraw_time
+                    else:
+                        pygame.time.set_timer(REDRAW, 0)
+
                     # Handle the timeout timer.
                     if not self.timeout_time:
                         pygame.time.set_timer(TIMEEVENT, 0)
@@ -1185,6 +1217,8 @@ class Interface(object):
                     if ev.type == NOEVENT:
                         continue
 
+                    self.profile_time = time
+                    
                     # Try to merge an TIMEEVENT with the next event.
                     if ev.type == TIMEEVENT:
                         old_timeout_time = None
@@ -1193,13 +1227,11 @@ class Interface(object):
 
                         ev2 = self.event_peek()
 
-                        if ev2 and ev2.type not in (NOEVENT, PERIODIC):
+                        if ev2 and ev2.type not in (NOEVENT, PERIODIC, REDRAW, QUIT):
                             ev = self.event_poll()
 
-                            
-                    # This can set the event to None, to ignore it.
-                    ev = renpy.display.joystick.event(ev)
-                    if not ev:
+                    # Handle redraw timeouts.
+                    if ev.type == REDRAW:
                         continue
 
                     # Handle periodic events. This includes updating the mouse timers (and through the loop,
@@ -1210,8 +1242,11 @@ class Interface(object):
 
                         renpy.audio.audio.periodic()
                         continue
-
-                    self.profile_time = time.time()
+                            
+                    # This can set the event to None, to ignore it.
+                    ev = renpy.display.joystick.event(ev)
+                    if not ev:
+                        continue
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
@@ -1269,6 +1304,7 @@ class Interface(object):
             # pygame.time.set_timer(KEYREPEATEVENT, 0)
             pygame.time.set_timer(PERIODIC, 0)
             pygame.time.set_timer(TIMEEVENT, 0)
+            pygame.time.set_timer(REDRAW, 0)
 
             renpy.game.context().runtime += end_time - start_time
 

@@ -59,14 +59,32 @@ be a \u followed by 1-4 hex digits, and are used to include a unicode
 character. For example, \u00a0 will include the unicode NO-BREAK SPACE
 character.
 
++++
+We have changed the way placement of images work. Now, when used as
+a widget, images and animations default to the same placement as
+everything else (xpos=0, ypos=0, xanchor=0, yanchor=0). When used in
+an image (shown with show or scene), the placement of other
+displayables is now similar to that of an animation or image. The goal
+of this change is to make more regular programming using the ui
+functions, and the new semantics should lead to behavior that is
+similar to the old semantics.
+
 Fixed a bug that cause Animations and anim.Filmstrips to ignore
 position properties supplied to them. Now, these object properly
 respect position properties supplied to them.
 
+!!!
 Fixed a bug that caused Ren'Py to crash when attempting to predict
 images from transitions associated with say or menu statements.
 
 The screenshot key (s) now creates numbered screenshots.
+
+Made some internal changes that allow us to integrate better with
+libraries written in pygame, especially PGU. This could someday in the
+future allow for maps written in PGU to be integrated into a Ren'Py
+game. 
+(http://www.imitationpickles.org/pgu/)
+
 
 New in Ren'Py 5.3.3
 -------------------

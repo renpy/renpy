@@ -223,7 +223,7 @@ class SMAnimation(renpy.display.core.Displayable):
         if self.state:
             return self.states[self.state].get_image().get_placement()
 
-        return self.style
+        return super(SMAnimation, self).get_placement()
 
     def render(self, width, height, st, at):
 
@@ -289,39 +289,6 @@ class SMAnimation(renpy.display.core.Displayable):
 
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
-# def Animation(*args, **properties):
-#     """
-#     A Displayable that draws an animation, which is a series of images
-#     that are displayed with time delays between them.
-
-#     Odd (first, third, fifth, etc.) arguments to Animation are
-#     interpreted as image filenames, while even arguments are the time
-#     to delay between each image. If the number of arguments is odd,
-#     the animation will stop with the last image (well, actually delay
-#     for a year before looping). Otherwise, the animation will restart
-#     after the final delay time.
-
-#     Keyword arguments are interpreted as for anim.SMAnimation.
-#     """
-
-#     sm = [ 0 ]
-
-#     for i, arg in enumerate(args):
-
-#         if i % 2 == 0:
-#             sm.append(State(i, arg, **properties))
-
-#         else:
-
-#             if i == len(args) - 1:
-#                 new = 0
-#             else:
-#                 new = i + 1
-                
-#             sm.append(Edge(i - 1, arg, new))
-
-#     return SMAnimation(showold=True, *sm)
-
 
 class Animation(renpy.display.core.Displayable):
     """
@@ -342,10 +309,10 @@ class Animation(renpy.display.core.Displayable):
         timebase. Otherwise, use the displayable timebase.
         """
 
-        properties.setdefault('style', 'image_placement')
+        properties.setdefault('style', 'animation')
         self.anim_timebase = properties.pop('anim_timebase', True)
 
-        super(Animation, self).__init__(**properties)
+        super(Animation, self).__init__(style=style, **properties)
 
         self.images = [ ]
         self.delays = [ ]
@@ -384,9 +351,6 @@ class Animation(renpy.display.core.Displayable):
     def predict(self, callback):
         for i in self.images:
             i.predict(callback)
-
-    def get_placement(self):
-        return self.style
 
 
 class Blink(renpy.display.core.Displayable):
@@ -439,9 +403,6 @@ class Blink(renpy.display.core.Displayable):
 
     def predict(self, callback):
         self.image.predict(callback)
-
-    def get_placement(self):
-        return self.style
 
     def render(self, height, width, st, at):
 

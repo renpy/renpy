@@ -30,9 +30,6 @@ class UncachedImage(renpy.display.core.Displayable):
 
         self.style = renpy.style.Style(style, properties)
 
-    def get_placement(self):
-        return self.style
-
     def render(self, w, h, st, at):
         sw, sh = self.surf.get_size()
         rv = renpy.display.render.Render(sw, sh)
@@ -52,13 +49,14 @@ class ImageReference(renpy.display.core.Displayable):
     """
 
     nosave = [ 'target' ]
+    target = None
 
-    def __init__(self, name):
+    def __init__(self, name, **properties):
         """
         @param name: A tuple of strings, the name of the image.
         """
         
-        super(ImageReference, self).__init__()
+        super(ImageReference, self).__init__(**properties)
 
         self.name = name
 
@@ -69,7 +67,7 @@ class ImageReference(renpy.display.core.Displayable):
         parameters = [ ]
 
         def error(msg):
-            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255))
+            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
 
             if renpy.config.debug:
                 raise Exception(msg)
@@ -97,21 +95,41 @@ class ImageReference(renpy.display.core.Displayable):
 
         error("Image '%s' not found." % ' '.join(self.name))
         
+
+    def event(self, ev, x, y, st):
+        if not self.target:
+            self.find_target()
+
+        return self.target.event(ev, x, y, st)
         
     def render(self, width, height, st, at):
-        if not hasattr(self, 'target'):
+        if not self.target:
             self.find_target()
 
         return render(self.target, width, height, st, at)
 
     def get_placement(self):
-        if not hasattr(self, 'target'):
+        if not self.target:
             self.find_target()
 
-        return self.target.get_placement()
+        xpos, ypos, xanchor, yanchor = self.target.get_placement()
+        
+        if xpos is None:
+            xpos = self.style.xpos
+
+        if ypos is None:
+            ypos = self.style.ypos
+
+        if xanchor is None:
+            xanchor = self.style.xanchor
+
+        if yanchor is None:
+            yanchor = self.style.yanchor
+
+        return xpos, ypos, xanchor, yanchor
 
     def predict(self, callback):
-        if not hasattr(self, 'target'):
+        if not self.target:
             self.find_target()
 
         self.target.predict(callback)

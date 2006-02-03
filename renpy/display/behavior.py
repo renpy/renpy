@@ -452,9 +452,6 @@ class Bar(renpy.display.core.Displayable):
             return self.changed(self.value)
 
         return
-
-    def get_placement(self):
-        return self.style
         
      
 class Conditional(renpy.display.layout.Container):
