@@ -24,11 +24,13 @@ init -1000:
 
         style.create('hbox', 'default', '(box) The base style for hboxen.')
         style.create('vbox', 'default', '(box) The base style for vboxen.')
-
         
         style.create('window', 'default', '(window) The base style for the windows that contain dialogue, thoughts, and menus.')
         
         style.create('image_placement', 'default', 'This style is used to control the default placement of images on the screen.')
+
+        style.create('image', 'default', 'This is the style of images themselves. Don\'t change this, change image_placement instead.')
+        style.create('animation', 'default', 'This is the default style of animations. Don\'t change this, change image_placement instead.')
 
         # say
         style.create('say_label', 'default', '(text) The style that is used by default for the label of dialogue. The label is used to indicate who is saying something.')
@@ -41,6 +43,8 @@ init -1000:
         style.create('menu_caption', 'default', "(text) The style that is used to render a menu caption.")
         style.create('menu_choice', 'default', "(text, hover) The style that is used to render the text of a menu choice.""")
         style.create('menu_choice_button', 'default', "(window, hover, sound) The style that is used to render the button containing a menu choice.")
+        style.create('menu_choice_chosen', 'menu_choice', "(text, hover) The style that is used to render the text of a menu choice that has been chosen by the user sometime in the past.""")
+        style.create('menu_choice_chosen_button', 'menu_choice_button', "(window, hover, sound) The style that is used to render the button containing a menu choice that has been chosen by the user sometime in the past.")
         style.create('menu_window', 'window', '(window) The default style for windows containing a menu.') 
 
         # input
@@ -110,6 +114,7 @@ init -1000:
         style.create("mm_menu_window_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")
         style.create("mm_button", "button", "(window, hover) The style that is used on buttons that are part of the main menu.")
         style.create("mm_button_text", "button_text", "(text, hover) The style that is used for the labels of buttons that are part of the main menu.")
+        style.create("prefs_window", "default", "(window) A window containing all preferences.")
         style.create("prefs_pref", "default", "(window) A window containing an individual preference.")
         style.create("prefs_pref_vbox", "thin_vbox", "(box) The style of the vbox containing a preference.")
         style.create("prefs_label", "default", "(text) The style that is applied to the label of a block of preferences.")
@@ -124,11 +129,19 @@ init -1000:
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
         style.create("prefs_spinner_button", "prefs_button", "(window, hover) The style of the + or - buttons in a preference spinner.")
         style.create("prefs_spinner_button_text", "prefs_button_text", "(text, hover) The style of the text of the + and - buttons in a preference spinner.")
+        style.create("prefs_js_button", "prefs_button", "(window, hover) The style of buttons giving a joystick mapping.")
+        style.create("prefs_js_button_text", "prefs_button_text", "(text, hover) The style of the text in buttons giving a joystick mapping.")
+        style.create("joy_window", "prefs_window", "(window) The window containing the joystick message.")
+        style.create("joy_vbox", "thick_vbox", "(window) The vbox containing the joistick mapping message.")
+        style.create("joyfunc_label", "prefs_label", "(text, position) The style of the joystick mapping function name.")
+        style.create("joyprompt_label", "prefs_label", "(text, position) The style of the joystick mapping prompt message.")
+        style.create("prefs_jump", "prefs_pref", "(window) The style of a window containing a jump preference.")
+        style.create("prefs_jump_button", "prefs_button", "(window, hover) The style of a jump preference button.")
+        style.create("prefs_jump_button_text", "prefs_button_text", "(text, hover) The style of jump preference button text.")
         style.create("prefs_column", "default", "The style of a vbox containing a column of preferences.")
         style.create("prefs_left", "prefs_column", "The position of the left column of preferences.")
         style.create("prefs_center", "prefs_column", "The position of the center column of preferences.")
         style.create("prefs_right", "prefs_column", "The position of the right column of preferences.")
-        style.create("prefs_window", "default", "(window) A window containing all preferences.")
 # END AUTOMATICALLY GENERATED
 
         # Colors #############################################################
@@ -155,7 +168,7 @@ init -1000:
         style.default.italic = False
         style.default.underline = False
         style.default.drop_shadow = (1, 1)
-        style.default.drop_shadow_color = (0, 0, 0, 128)
+        style.default.drop_shadow_color = (0, 0, 0, 255)
         style.default.minwidth = 0
         style.default.textalign = 0
         style.default.text_y_fudge = 0
@@ -175,10 +188,10 @@ init -1000:
         style.default.yminimum = 0 # Includes margins and padding.
 
         # Placement properties.
-        style.default.xpos = 0
-        style.default.ypos = 0
-        style.default.xanchor = 'left'
-        style.default.yanchor = 'top'
+        style.default.xpos = None # 0
+        style.default.ypos = None # 0
+        style.default.xanchor = None # 0
+        style.default.yanchor = None # 0
         style.default.xmaximum = None
         style.default.ymaximum = None
 
@@ -406,6 +419,22 @@ init -1000:
         style.prefs_spinner_label.minwidth = 100
         style.prefs_spinner_label.textalign = 0.5
 
+        style.prefs_js_button_text.size = 18
+        style.prefs_js_button_text.drop_shadow = (1, 1)
+
+        style.joyfunc_label.textalign = 0.5
+        style.joyprompt_label.textalign = 0.5
+
+        style.joy_window.xfill = True
+        style.joy_window.yminimum = 0.5
+        style.joy_window.xmargin = .1
+
+        style.joy_vbox.xpos = 0.5
+        style.joy_vbox.xanchor = 'center'
+        style.joy_vbox.ypos = 0.5
+        style.joy_vbox.yanchor = 'center'
+
+        
         ######################################################################
         # Skip indicator.
 

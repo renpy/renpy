@@ -4,13 +4,15 @@
 init -498:
 
     python hide:
+
+        library.old_names['Quit'] = 'Quit Game'
         
         # The contents of the main menu.
         library.main_menu = [
             ( "Start Game", "start", 'True'),
             ( "Continue Game", ui.jumps("_load_screen"), 'True' ),
             ( "Preferences", ui.jumps("_prefs_screen"), 'True' ),
-            ( "Quit Game",  ui.jumps("_quit"), 'True' ),
+            ( "Quit",  ui.jumps("_quit"), 'True' ),
             ]
 
         # If not None, this is used to fix the positions of the
@@ -27,7 +29,7 @@ label _start:
         call expression "splashscreen" from _call_splashscreen_1
 
     # Clean out any residual scene from the splashscreen.
-    scene
+    scene black
 
     $ renpy.call_in_new_context("_enter_main_menu")
 
@@ -59,7 +61,6 @@ label _library_main_menu:
     python hide:
 
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
-        ui.keymousebehavior()
 
         ### mm_root_window default
         # (window) The style used for the root window of the main

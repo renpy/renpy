@@ -116,7 +116,7 @@ def interact():
                                renpy.config.screen_width,
                                renpy.config.screen_height))
             else:
-                s = pygame.Surface(info.size)
+                s = pygame.Surface(info.size, 0, renpy.game.interface.display.window)
                 m.set_display(s, (0, 0) + info.size)
 
             movie = m
@@ -157,7 +157,7 @@ class Movie(renpy.display.layout.Null):
     def __init__(self, style='image_placement', **properties):
         super(Movie, self).__init__(style=style, **properties)
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
         renpy.display.render.redraw(self, 0)
 
         if surface:
@@ -168,5 +168,5 @@ class Movie(renpy.display.layout.Null):
             rv.blit(surface, (0, 0))
             return rv
         else:
-            return super(Movie, self).render(width, height, st)
+            return super(Movie, self).render(width, height, st, at)
         

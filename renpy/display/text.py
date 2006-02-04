@@ -113,14 +113,32 @@ class TextStyle(object):
         # print font.get_ascent() - font.get_descent(), font.get_height(), font.get_linesize()
         return font.size(text)[0], font.get_ascent() - font.get_descent()
 
-    def render(self, text, antialias, color, use_colors, time):
+    def render(self, text, antialias, color, use_colors, time, at):
 
         if use_colors and self.color:
             color = self.color
 
+        r, g, b, a = color
+        color = (r, g, b, 255)
+
         font = self.get_font()
 
-        rv = font.render(text, antialias, color)
+        surf = font.render(text, antialias, color)
+
+        if a != 255 and renpy.display.module.can_map:
+
+            if not surf.get_masks()[3]:
+                surf = surf.convert_alpha()
+
+            rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            alpha = renpy.display.im.ramp(0, a)
+            identity = renpy.display.im.identity
+
+            renpy.display.module.map(surf, rv, identity, identity, identity, alpha)
+            
+        else:
+            rv = surf
+
         renpy.display.render.mutated_surface(rv)
         return rv, rv.get_size()
 
@@ -141,7 +159,7 @@ class WidgetStyle(object):
         self.widget = widget
         self.owidth = width
 
-        surf = renpy.display.render.render(widget, self.height, width, time)
+        surf = renpy.display.render.render(widget, self.height, width, time, time)
         self.width, _ = surf.get_size()
 
     def get_ascent(self):
@@ -150,17 +168,24 @@ class WidgetStyle(object):
     def sizes(self, widget):
         return self.width, self.height
 
-    def render(self, widget, antialias, color, foreground, time):
+    def render(self, widget, antialias, color, foreground, st, at):
 
         # If in the foreground
         if foreground:
-            return renpy.display.render.render(widget, self.owidth, self.height, time), (self.width, self.height)
+            return renpy.display.render.render(widget, self.owidth, self.height, st, at), (self.width, self.height)
         else:
             return None, (self.width, self.height)
         
     def length(self, text):
         return 1
 
+text_regexp = re.compile(ur"""(?x)
+      (?P<space>[ \u200b])
+    | \{(?P<tag>[^{}]+)\}
+    | (?P<untag>\{\{)
+    | (?P<newline>\n)
+    | (?P<word>[^ \n\{]+)
+    """)
     
 def text_tokenizer(s, style):
     """
@@ -185,15 +210,7 @@ def text_tokenizer(s, style):
     the name of the tag, without any enclosing braces.
     """
 
-    regexp = r"""(?x)
-      (?P<space>\ )
-    | \{(?P<tag>[^{}]+)\}
-    | (?P<untag>\{\{)
-    | (?P<newline>\n)
-    | (?P<word>[^ \n\{]+)
-    """
-
-    for m in re.finditer(regexp, s):
+    for m in text_regexp.finditer(s):
 
         if m.group('space'):
             yield 'space', m.group('space')
@@ -294,9 +311,6 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout = None
 
-    def get_placement(self):
-        return self.style
-
     def set_text(self, new_text):
         """
         Changes the text display by this object to new_text.
@@ -347,7 +361,7 @@ class Text(renpy.display.core.Displayable):
         if redraw:
             renpy.display.render.redraw(self, 0)
 
-    def event(self, ev, x, y):
+    def event(self, ev, x, y, st):
         """
         Space, Enter, or Click ends slow, if it's enabled.
         """
@@ -359,9 +373,9 @@ class Text(renpy.display.core.Displayable):
             return None
 
         if renpy.display.behavior.map_event(ev, "dismiss"):
-
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
+
 
     def layout(self, width, time):
         """
@@ -492,7 +506,7 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
-                if i == "fast":
+                elif i == "fast":
                     # Automatically closes.
                     tsl.pop()
 
@@ -671,7 +685,7 @@ class Text(renpy.display.core.Displayable):
         if line:
             lines.append(line)
             lineheights.append(lineheight)
-            linewidths.append(curwidth)
+            linewidths.append(linewidth + curwidth)
 
         laidout_length += len(lines)
 
@@ -728,7 +742,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, user_colors, length, time):
+    def render_pass(self, r, xo, yo, color, user_colors, length, time, at):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -759,7 +773,7 @@ class Text(renpy.display.core.Displayable):
                 if length < 0:
                     text = text[:length]
                 
-                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time)
+                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time, at)
                 # sw, sh = surf.get_size()
 
                 if surf:
@@ -776,7 +790,7 @@ class Text(renpy.display.core.Displayable):
 
         return True
             
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         speed = self.slow_speed or renpy.game.preferences.text_cps
 
@@ -821,13 +835,12 @@ class Text(renpy.display.core.Displayable):
             if self.slow_done:
                 self.slow_done()
 
-
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st)
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st, at)
 
-        if self.render_pass(rv, xo, yo, self.style.color, True, length, st):
+        if self.render_pass(rv, xo, yo, self.style.color, True, length, st, at):
             if self.slow:
                 self.slow = False
                 if self.slow_done:
@@ -838,18 +851,6 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def event(self, ev, x, y):
-        """
-        Space, Enter, or Click ends slow, if it's enabled.
-        """
-
-        if not self.slow:
-            return None
-
-        if renpy.display.behavior.map_event(ev, "dismiss"):
-
-            self.slow = False
-            raise renpy.display.core.IgnoreEvent()
 
 
 class ParameterizedText(object):

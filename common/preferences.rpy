@@ -9,9 +9,53 @@ init -450:
         # with that style.
         library.preferences = { }
 
-        # If true, the preference choices will be arraigned in an
+        # Ditto, for joystick preferences.
+        library.joystick_preferences = { }
+
+        # This is a map from preference name to that preference
+        # object, that can be used in rearranging preferences.
+        library.all_preferences = { }
+
+        # If true, the preference choices will be arranged in an
         # hbox.
         library.hbox_pref_choices = False
+
+        # A list of (readable name, synthetic key) tuples
+        # corresponding to joystick events.
+        library.joystick_keys = [
+            ('Left', 'joy_left'),
+            ('Right', 'joy_right'),
+            ('Up', 'joy_up'),
+            ('Down', 'joy_down'),
+            ('Select/Dismiss', 'joy_dismiss'),
+            ('Rollback', 'joy_rollback'),
+            ('Hold to Skip', 'joy_holdskip'),
+            ('Toggle Skip', 'joy_toggleskip'),
+            ('Hide Text', 'joy_hide'),
+            ('Menu', 'joy_menu'),
+            ]
+        
+        def _prefs_screen_run(prefs_map):
+
+            _game_nav("prefs")
+
+            ### prefs_window default
+            # (window) A window containing all preferences.
+
+            ui.window(style='prefs_window')
+            ui.fixed()
+
+            for style, prefs in prefs_map.iteritems():
+
+                ui.vbox(style=style)
+                for i in prefs:
+                    i.render_preference()
+                ui.close()
+
+            ui.close()
+
+            _game_interact()
+
 
         class _Preference(object):
             """
@@ -47,6 +91,8 @@ init -450:
                 self.field = field
                 self.values = values
                 self.base = base
+
+                library.all_preferences[name] = self
 
             def render_preference(self):
                 values = [ (name, val) for name, val, cond in self.values
@@ -146,6 +192,7 @@ init -450:
                 self.sound = sound
                 self.channel = channel
                 
+                library.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -220,6 +267,8 @@ init -450:
                 self.set = set
                 self.enable = enable
 
+                library.all_preferences[name] = self
+
             def render_preference(self):
 
                 if not eval(self.enable):
@@ -292,6 +341,8 @@ init -450:
                 self.render = render
                 self.base = base
 
+                library.all_preferences[name] = self
+
             def render_preference(self):
 
                 ### prefs_spinner default
@@ -341,7 +392,120 @@ init -450:
                 ui.close()
                 
             
-                    
+        class _JoystickPreference(object):
+
+            def __init__(self, name):
+                self.name = name
+                library.all_preferences[name] = self
+
+            def render_preference(self):
+
+                ### prefs_js_button prefs_button
+                # (window, hover) The style of buttons giving a joystick mapping.
+
+                ### prefs_js_button_text prefs_button_text
+                # (text, hover) The style of the text in buttons giving a joystick mapping.
+
+                ### joy_window prefs_window
+                # (window) The window containing the joystick message.
+
+                ### joy_vbox thick_vbox
+                # (window) The vbox containing the joistick mapping message.
+                
+                ### joyfunc_label prefs_label
+                # (text, position) The style of the joystick mapping function name.
+
+                ### joyprompt_label prefs_label
+                # (text, position) The style of the joystick mapping prompt message.
+                
+
+                def set_binding(key, label):
+                    _game_nav(None)
+
+                    ui.window(style='joy_window')
+                    ui.vbox(style='joy_vbox')
+                    _label_factory(_("Joystick Mapping") + " - " + _(label), "joyfunc")
+                    _label_factory('Move the joystick or press a button to create the mapping. Click the mouse to remove the mapping.', 'joyprompt')
+                    ui.close()
+
+                    ui.saybehavior()
+                    ui.add(renpy.display.joystick.JoyBehavior())
+                    binding = _game_interact()
+
+                    if not isinstance(binding, basestring):
+                        del _preferences.joymap[key]
+                    else:
+                        _preferences.joymap[key] = binding
+
+                
+                ui.window(style='prefs_pref')
+                ui.vbox(style='prefs_pref_vbox')
+
+                _label_factory(self.name, 'prefs')
+
+
+
+                for label, key in library.joystick_keys:
+
+                    def clicked(label=label, key=key):
+                        renpy.invoke_in_new_context(set_binding, key, label)
+                        return True
+
+                    _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, "Not Assigned")), "prefs_js", clicked=clicked)
+
+#                 def clicked():
+#                     for label, key in library.joystick_keys:
+#                         renpy.invoke_in_new_context(set_binding, key, label)
+
+#                     return True
+
+#                 _button_factory("Assign All Mappings", "prefs_js", clicked=clicked)
+
+                ui.close()
+
+        class _JumpPreference(object):
+
+            def __init__(self, name, target, condition="True"):
+                self.name = name
+                self.target = target
+                self.condition = condition
+
+                library.all_preferences[name] = self
+
+            def render_preference(self):
+
+                ### prefs_jump prefs_pref
+                # (window) The style of a window containing a jump preference.
+
+                ### prefs_jump_button prefs_button
+                # (window, hover) The style of a jump preference button.
+
+                ### prefs_jump_button_text prefs_button_text
+                # (text, hover) The style of jump preference button text.
+
+                ui.window(style='prefs_jump')
+
+                if eval(self.condition):
+                    clicked=ui.jumps(self.target)
+                else:
+                    clicked=None
+
+                _button_factory(self.name, 'prefs_jump', clicked=clicked)
+
+        def _remove_preference(name):
+            """
+            Removes the preference with the given name from the
+            preferences menu.
+            """
+
+            pref = library.all_preferences.get(name, None)
+            if not pref:
+                return
+
+            for k, v in library.preferences.iteritems():
+                if pref in v:
+                    v.remove(pref)
+            
 
     python hide:
 
@@ -430,16 +594,11 @@ init -450:
         pr1 = _VolumePreference("Music Volume", 'music', 'library.has_music')
         pr2 = _VolumePreference("Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
                                                         
+        _JumpPreference('Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled')
 
-#         pr1 = _Preference('Music', 'music', [
-#             ('Enabled', True, 'library.has_music'),
-#             ('Disabled', False, 'library.has_music'),
-#             ])
-            
-#         pr2 = _Preference('Sound Effects', 'sound', [
-#             ('Enabled', True, 'library.has_sound'),
-#             ('Disabled', False, 'library.has_sound'),
-#             ])
+        _JoystickPreference('Joystick Configuration')
+        
+        # Advanced 
 
         ### prefs_column default
         # The style of a vbox containing a column of preferences.
@@ -453,38 +612,40 @@ init -450:
         ### prefs_right prefs_column
         # The position of the right column of preferences.
             
-        library.preferences['prefs_left'] = [ pl1, pl2 ]
-        library.preferences['prefs_center'] = [ pc1, pc2, pc3, pc4 ]
-        library.preferences['prefs_right'] = [ pr1, pr2 ]
+        library.preferences['prefs_left'] = [
+            library.all_preferences['Display'],
+            library.all_preferences['Transitions'],
+            library.all_preferences['Joystick...'],
+            ]
+        
+        library.preferences['prefs_center'] = [
+            library.all_preferences['TAB and CTRL Skip'],
+            library.all_preferences['After Choices'],
+            library.all_preferences['Text Speed'],
+            library.all_preferences['Auto-Forward Time'],
+            ]
+        
+        library.preferences['prefs_right'] = [
+            library.all_preferences['Music Volume'],
+            library.all_preferences['Sound Volume'],
+            ]
 
+        library.joystick_preferences['prefs_center'] = [
+            library.all_preferences['Joystick Configuration'],
+            ]
 
 
 label _prefs_screen:
 
-    python hide:
-
-        _game_nav("prefs")
-
-        ### prefs_window default
-        # (window) A window containing all preferences.
-
-        ui.window(style='prefs_window')
-        ui.fixed()
-
-        for style, prefs in library.preferences.iteritems():
-
-            ui.vbox(style=style)
-            for i in prefs:
-                i.render_preference()
-            ui.close()
-
-        ui.close()
-
-        _game_interact()
+    $ _prefs_screen_run(library.preferences)
 
     jump _prefs_screen
     
+label _joystick_screen:    
         
+    $ _prefs_screen_run(library.joystick_preferences)
+
+    jump _joystick_screen
 
             
                         

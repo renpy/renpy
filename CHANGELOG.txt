@@ -1,3 +1,364 @@
+Changes potentially requiring updates to scripts are flagged with +++.
+Major bug fixes that could affect many systems are indicated with !!!.
+
+New in Ren'Py 5.4.0
+-------------------
+
+This release introduces time correctness to the display subsystem of
+Ren'Py. Previously, time was a kinda flexible concept in
+Ren'Py. Objects were shown sometime before the first frame of an
+interaction, and the frames that we drew represented a smear of time,
+rather than some precise instant. This release changes that. Each
+frame now represents a single instant in time, and the timebases for
+things like animations, motions, and transitions all begin at the
+instant of the first frame of the first interaction in which they are
+present. 
+
+We also have precisely defined two timebases that displayables can
+use. The displayable timebase starts at the instant of the first frame
+in which a given displayable was present, while the animation timebase
+begins at the instant of the first frame in which an image with the
+same tag is present. Having two timebases makes it easier to specify
+what we want happening when, say, an animation is placed inside a
+motion. Animations default to the animation timebase, while motions
+default to the motion timebase, but both have an option
+(anim_timebase) that lets you specify which timebases is wanted. For
+example, one may want to switch a looping motion onto the animation
+timebase if one wants to allow the character's expression to change
+while the motion continues.
+
+We've implemented a more precise timeout system in Ren'Py. Previously,
+if we wanted to have an event occur at some time after a displayable
+has been shown, we'd have to use use the 20hz periodic event and deal
+with it as part of that. The meant that our best timing precision was
+50ms, and often it was significantly worse (up to 100ms or so). Now, we
+can schedule precise timeouts for event delivery, down to the ~10ms
+range. Among other things, this allows for more accurate pauses, and
+skipping to occur at a rate faster than the previous limit of 10
+screens per second or so.
+
+Integrated a Zoom function into Ren'Py. This function lets you zoom
+into or out of an image.
+
+renpy.music.play() now takes a if_changed parameter. If given as
+True, and the music to be played is already playing, then the music
+will not be stopped and restarted. Use this when you want to
+immediately restart the music if and only if the music differs from
+the currently playing music.
+
+Added Fixed, HBox, and VBox functions to the script namespace. These
+functions allow multiple displayables to be used when only a single
+displayable is expected.
+
+SnowBlossom now takes a start parameter, the value of which should be
+an amount of time in seconds. The starting times of the various
+particles are spread out over this amount of time.
+
+The say and menu statements now supports unicode escapes. These should
+be a \u followed by 1-4 hex digits, and are used to include a unicode
+character. For example, \u00a0 will include the unicode NO-BREAK SPACE
+character.
+
++++
+We have changed the way placement of images work. Now, when used as
+a widget, images and animations default to the same placement as
+everything else (xpos=0, ypos=0, xanchor=0, yanchor=0). When used in
+an image (shown with show or scene), the placement of other
+displayables is now similar to that of an animation or image. The goal
+of this change is to make more regular programming using the ui
+functions, and the new semantics should lead to behavior that is
+similar to the old semantics.
+
+Fixed a bug that cause Animations and anim.Filmstrips to ignore
+position properties supplied to them. Now, these object properly
+respect position properties supplied to them.
+
+!!!
+Fixed a bug that caused Ren'Py to crash when attempting to predict
+images from transitions associated with say or menu statements.
+
+The screenshot key (s) now creates numbered screenshots.
+
+Made some internal changes that allow us to integrate better with
+libraries written in pygame, especially PGU. This could someday in the
+future allow for maps written in PGU to be integrated into a Ren'Py
+game. 
+(http://www.imitationpickles.org/pgu/)
+
+
+New in Ren'Py 5.3.3
+-------------------
+
+Implemented a particle animation system, which allows absurdly high
+amounts of control of particles that are on the screen. It also allows
+these particles to be created during the middle of the
+interaction. The primary purpose of this Particles displayable is to
+allow for things like snow and falling cherry blossom leaves. We also
+have a special case constructor, SnowBlossom, that is intended for
+snow, cherry blossoms, and rising bubbles.
+
+Finally got around to defining which audio formats Ren'Py officially
+supports. On the 3 platforms we produce binaries for, Ren'Py supports
+WAV, MP3, OGG Vorbis, OGG Speex and MOD (Whatever formats ModPlug
+supports, including MOD and XM). All these formats were tested on all
+three platforms, and shown to work.
+
+Implemented tight sound and music support. Tight sounds are sounds
+that do not stop, but instead are expected to seamlessly blend with
+the following sound or music segment. While these were supported in
+prior versions of Ren'Py, there was an issue with fadeout. If a
+fadeout occured near the end of a sound segment, the sound would
+suddenly stop. While this isn't an issue with normal tracks, for
+tracks involving tight loops this isn't desirable. Tight loop mode
+makes fadeouts span tracks, making the fadeout sound correct. Tight
+loop support only supports spanning a single track boundary, so the
+fadeout should be shorter then a single track length.
+
+Ren'Py now tracks which menu choices have been chosen by the user
+(ever, in any game), and gives the choices that have been chosen at
+least once the new styles menu_choice_chosen and
+menu_choice_chosen_button. By changing some of the properties 
+of these styles, it's possible to the user a distinction between
+the choices the user has chosen once, and those the user has never
+chosen.
+
+Added a new function, anim.Filmstrip, that allows one to make an
+animation out of an image containing a number of frames. 
+
+A set type that participates in rollback has been made
+available to user scripts. This type is named "set". The code that
+supports seensets in menus has been modified to accept a set along
+with a list. 
+
+We now use modplug instead of mikmod. This fixes some problems with
+mod playing that were caused by mikmod not really being able to safely
+play two mods at the same time. (These problems occured even when
+someone only played one mod at a time, due to the way in which Ren'Py
+preloads sound files.)
+
+We now compute the set of rectangles to blit to the screen more
+precisely. If we have two non-overlapping updated areas of the screen,
+we now blit them individually, where previously we blit the smallest
+rectangle containing them both. (Which could be many times the size of
+the two updates, if they were small and widely separated.) This change
+makes particle animation more efficient.
+
+Made lint report the number of words per screen of dialogue. Also,
+made lint not throw Ren'Py into an infinite loop, fixing a
+regression.
+
+Fixed a problem in which animations were not showing their first
+frame.
+
+Worked around a bug in SDL that could cause popping in the case where
+a sound file was being mixed in at a length that was not a multiple of
+4 samples.
+
+New in Ren'Py 5.3.2
+-------------------
+
+Joystick support now exposes Hold to Skip and Hide Text functionality
+to the user. 
+
+We now support the fading in of PCM (that is, non-MIDI) music and
+sounds.
+
+Fixed a regression in voice.rpy.
+
+New in Ren'Py 5.3.1
+-------------------
+
+Ren'Py now includes support for using a joystick to play the game. To
+configure joystick support, go into Preferences, click Advanced...,
+and then click the function you wish to assign to a joystick axis or
+button.
+
+ImageDissolve now support a ramp parameter, which can be used to give
+the ramp explicitly. 
+
+Now, we preload the images that are used in say statement, menus, and
+transitions. This means that just about every image in a basic game
+should be preloaded, which should in turn lead to an improved user
+experience and a lack of pauses for image loading. To support this,
+the Character function grew a predict_function argument, and there are
+now also predict_menu and predict_say functions at the
+top-level.
+
+Setting a config or library variable that does not exist is now an
+now raises an error. Previously, this was ignored silently.
+
+If it exists, renpy.zip is added to the python search path. This lets
+one replace the renpy/ directory with a renpy.zip file containing that
+directory, if so desired.
+
+A non-nested return now returns the user to the main menu, rather than
+dumping him out of Ren'Py entirely.
+
+Fixed a bug that required Tab to be pressed twice to re-enable skip
+mode after skipping was terminated by hitting a menu.
+
+Maybe fixed a bug that was preventing non-fullscreen video from
+working. (I'm not totally sure this is a real bug.)
+
+Fixed a bug that prevents certain MOD files (including the .xm files
+that shipped with the non-Ren'Py game Transfer Teacher) from working
+under Ren'Py. This required the creation of a new Ren'Py Launcher for
+Macintosh, as well as a new release of the renpy module installer for
+Windows.
+
+New in Ren'Py 5.3.0
+-------------------
+
+This changelog has been updated to flag changes requiring (or
+suggesting) script updates, or providing major bug fixes.
+
+!!!
+Script compatibility has been broken, but for a good reason. The
+previous version of Ren'Py stored python blocks in the script as bits
+of python bytecode in the .rpyc file. This has a problem. Python
+bytecode is not guaranteed to be forward or backwards
+compatible. Without some sort of versioning, an upgrade of python
+could cause these bytecodes to be silently interpreted incorrectly,
+which could lead to games failing to work properly. To fix this,
+several things have changed. The .rpyc files now store the python
+script, rather than just the bytecode. The bytecode has been moved
+into a bytecode.rpyb file, which is automatically created when a
+script changes. This file contains versioned bytecode, and is
+automatically regenerated if either the source code changes or the
+version of python used to run Ren'Py changes. It is always generated
+into the game directory. While it is possible to include bytecode.rpyb
+into a .rpya file (under the same conditions as .rpyc files can be
+added to .rpya files), realize that it may spring into existence in
+the game directory automatically if the user tries to run Ren'Py with
+a newer or older version of python. One should ship bytecode.rpyb as
+part of a completed Ren'Py game.
+
+There are now a few changes to Ren'Py to allow it to better support
+scripts that are not games. Some of the internal messages have been
+changed to remove the word "game". While "game" has still been left in
+the most prominent places (the main and game menus), this is because
+these places are the most obvious to the user, and hence the most
+likely to be translated using library.translations.
+
+For the same reason, Ren'Py will also search for the game in a data/
+directory if the game/ directory is not found, and it will then look
+for the game scripts in data.rpa along with game.rpa.
+
+ImageDissolve now supports a number of different kinds of alpha
+ramps. Along with the default linear, we now support cubic,
+double-cubic, and mirrored-double-cubic ramp types. These types of
+ramps allow for smoother or sharper ImageDissolve transtions. Thanks
+go to shaja for contributing the code that implements this.
+
++++ 
+Alpha channels are now supported on text colors. When rendering
+text with a color or drop_shadow_color having an alpha that is not
+255, that alpha is then used to scale the alpha channel of the drawn
+text. This basically means that alpha is now respected in text, wheras
+previously it was ignored. The default drop_shadow_color is now 
+(0, 0, 0, 255), for compatibility with the way drop shadows were
+rendered previously. If user code renders text with an alpha that is
+not 255, the alpha should be set to 255 to ensure the text is rendered
+the same way as before.
+
+The DSE has been updated. There are now new event.only() and
+event.choose_one() condition functions, and a basic guide to writing
+events in the DSE can be found in extras/dse/EVENTS.txt.
+
+Now, user code can import python modules from the game directory
+and .rpa archives. A guide to using Python to extened Ren'Py can be
+found in doc/EXTENDING.txt. For now, it's just about how to use
+pygame code with Ren'Py.
+
+Renamed extras/chinese.rpy to extras/east_asian.rpy, and changed the
+line breaking algorithm to one that can be used with both Chinese and
+Japanese text. It may also be usable with Korean, but I'm not sure
+about that. 
+
+Made the zero-width-space character break lines if necessary, so it
+can be used to have auto-breaking with Thai.
+
+All defined preferences are now found in library.all_preferences,
+which provides a level of indirection when customizing the preferences
+screens.
+
+Now, we force the presplash to be shown using windib. This can fix
+potential directx incompatibility bugs with Windows XP. This only is
+an issue if a game has a presplash, the bug was fixed for regular code
+in 5.1.1. The presplash is also shown faster now, before the rest of
+Ren'Py loads.
+
+Fixed a bug that affected voice. This required splitting
+config.interact_callbacks into config.interact_callbacks and the new
+config.start_interact_callbacks. The latter is called exactly once per
+interaction, while the former is called whenever an interaction starts
+or restarts.
+
+Fixed a bug with non-ascii text and the new log feature.
+
+Now, invoking Ren'Py with --profile on the command line does the same
+thing as setting config.profile in the script, without requiring the
+user to actually change the script.
+
+Moved most of the code that used to be in run_game.py into
+renpy/bootstrap.py (the renpy.bootstrap module.) This shouldn't really
+affect anything, but it does make run_game.py a bit cleaner.
+
+
+New in Ren'Py 5.2.1
+-------------------
+
+Added a command that allows the user to skip to the next
+choice. Primarily intended for developers, this feature needs to be
+enabled by setting config.fast_skipping to True before it can be
+used. Once enabled, fast skipping can be activated by typing '>'. It
+jumps the user to the next interaction that isn't a say, a transition,
+or a call to renpy.pause()
+
+Setting config.log to a filename will now cause a log of the user's
+actions to be written to that filename.
+
+Added (optional, and discouraged) monkeypatch protection through the
+--lock command-line option.
+
+Fixed a regression, introduced in 5.1.6, that prevented what_prefix
+and what_suffix from working.
+
+
+New in Ren'Py 5.2.0
+-------------------
+
+Restructured the distribution. All of the tools are now in the tools/
+directory, while the dse has been moved to extras/dse, with a script
+to launch it found in tools/.
+
+Implemented a new warp feature. By supplying a filename and line
+number, this feature tries to jump you to the statement preceding that
+line. It isn't perfect, but for some games, this lets you have a live
+preview of the game. Please see the reference manual for instructions on
+how to invoke this, and a number of caveats.
+
+Also implemented an editor feature. By pressing E (that's shift-e),
+one can launch an editor at the location of the current statement in
+the Ren'Py program. To enable this, one needs to set config.editor to
+the command line for your favorite text editor. Again, see the
+reference manual (for config.editor) for more details.
+
+Implemented a new function, renpy.get_filename_line(), which returns
+the filename and line number of the currently executing
+statement. This can be used in conjunction with renpy.watch() to
+constantly display the line number of the current statement.
+
+Fixed a bug in the text widget that caused it to be sized incorrectly
+in certain cases. Fixed an incorrect reference to a wav that became an
+ogg in the demo. Modified renpy.watch() so that it coerces the result
+of evaluating its argument to unicode, meaning it's no longer
+necessary to manually do so.
+
+
+New in Ren'Py 5.1.6
+-------------------
+
 Fixed Motion (the class that implements Move and Pan) to allow motions
 to be used as transitions, in conjunction with the say and menu
 statements. Previously, they only worked with the with statement.
@@ -5,12 +366,12 @@ statements. Previously, they only worked with the with statement.
 Added a new variable, config.with_callback, that can be used to
 specify a function that is called when a with statement runs. This can
 be used, for example, to put up a window when a transition occurs,
-which has the effect of preventing the window from disappearing. [doc]
+which has the effect of preventing the window from disappearing.
 
 Implemented a new text tag, {fast}. This tag causes the slow text
 display to start from a given point in the text string. This allows
 one to show some text, run some command, and show the same text with
-additions, and have the slow text display occur correctly. [doc]
+additions, and have the slow text display occur correctly.
 
 Character objects now can take properties prefixed with what_ or
 window_. Properties prefixed with what_ are applied to the text being
@@ -21,14 +382,32 @@ label giving the name of the character speaking.
 There is now a new function, LiveComposite, that can composite
 together arbitrary displayables, rather than just images. It has the
 same API as im.Composite, but should be used when one of the things
-you wish to composite is an animation. [ doc ]
+you wish to composite is an animation.
 
 A new variable, config.auto_choice_delay, has been added. If not None,
 this variable gives a number of seconds that Ren'Py will pause at an
 in-game menu before picking a random choice from that menu. We'd
 expect this variable to always be set to None in released games, but
 setting it to a number will allow for automated demonstrations of
-games without much human interaction. [ doc ]
+games without much human interaction. 
+
+The kanamode.rpy extra has been updated to support some of the newer
+features, like slow text and auto-forward mode.
+
++++
+Archives now combine the index and the data into a single file. Now,
+instead of needing .rpa and .rpi files, only a .rpa file is needed
+(and is created). The code and the archiver have been updated to
+support this new format. The code still supports reading the old
+format, for compatibility purposes. When archives are re-created, the
+.rpi file can be deleted with no ill effects.
+
+There is now a new function, renpy.block_rollback(), that prevents
+Ren'Py from rolling back through the point at which it was called.
+
+Renamed config.overlay_during_wait to config.overlay_during_with,
+since the former name was a mistake.
+
 
 New in Ren'Py 5.1.5
 -------------------
@@ -50,6 +429,7 @@ accessed without going through the game menu. It also adds a quick
 load button to the main menu, which causes a load from this slot. The
 button is disabled if no quick save game exists.
 
++++
 To support this, changed the format of library.main_menu. Now, instead
 of being a list of pairs, library.main_menu is a list of triples. The
 new third component is an expression, which must evaluate to true for
@@ -85,7 +465,7 @@ actually implement much of the voice functionality until someone
 seriously proposes a voiced game, but I do want to add in the
 infrastructure.
 
-Increased the default rollback length to back 100, now that we have a
+Increased the default rollback length back to 100, now that we have a
 readback extra people can use if they want to. Updated readback so it
 works a little better.
 
@@ -104,6 +484,7 @@ statement like "show eileen happy onlayer high" to show the given
 image on the high layer. This image will not be removed when scene
 statements clear other layers, such as the default master layer.
 
++++
 To support the above, the parameters to renpy.show() changed in an
 incompatible way. If your code uses renpy.show(), it will need to be
 upgraded. Instead of considering the second and later parameters to be
@@ -171,6 +552,7 @@ Fixed a bug that prevented the various day-planners from working, in
 both the demo game and the DSE. (This was a bug in the game more so
 then a bug in Ren'Py proper.)
 
+!!!
 Fixed a bug on Windows that manifested with DirectX under some
 circumstances. We now use SDL's windib driver, which seems just as
 fast for the software surface stuff we're doing.
@@ -186,6 +568,7 @@ being needed after all.
 New in Ren'Py 5.1.0
 -------------------
 
++++
 There is now a new sound system, supporting playing up to 8 mp3, ogg
 vorbis, ogg speex, mod, or wav files at once. Midi can also be played,
 but is limited to one midi file at a time. Audio files can be read out
@@ -296,7 +679,9 @@ bonus characters is configurable in config.afm_bonus, which defaults
 to 25. Auto-forward-mode can be hidden from the user by setting 
 library.has_afm to False.
 
-The preferences screen has been redesigned, to have three columns.
++++
+The preferences screen has been redesigned, to have three
+columns. Code that manipulates library.preferences may need to be adjusted.
 
 Unicode support has been extended to names in the script. Now names in
 the script can contain unicode characters, as well as ascii
@@ -506,23 +891,27 @@ in the scripts/ directory. It's there as an example for people to
 learn from. This script has been updated to work with Ren'Py 4.8, and
 to fix a tense error.
 
+!!!
 Fixed another segfault in windows native midi support.
 
 
 New in 4.8.3
 ------------
 
+!!!
 Ren'Py no longer uses the psyco specializing compiler. The relatively
 small (about 2%) speed increase it gave wasn't worth the hassle
 involved in dealing with memory leaks and other semantic changes. This
 change significantly lowers Ren'Py's memory usage, and fixes a major
 memory leak that was introduced in the 4.8 series.
 
+!!!
 A number of race conditions were fixed in the windows native midi
 code. The upshot of this is that we can now play midi on windows
 without there being a small chance of crashing each time we start a
 new track.
 
++++
 The config.music_interact variable is gone. It's been replaced by
 config.interact_callbacks, which is a list of functions to call before
 each interaction. (This will help us support voice.)
@@ -544,6 +933,7 @@ instead only be manipulated in the aggregate.
 New in 4.8.2a
 -------------
 
+!!!
 Clicking preferences on the main menu jumpled to an undefined
 label. This is now fixed.
 
@@ -569,6 +959,7 @@ of unicode strings is an error.
 We apologize to the non-english-speaking world for not noticing this
 one sooner.
 
++++
 The main menu was moved out of the context that the main body of the
 game code executes in, into its own context. The only effect this
 should have on user code is that some of the menu options changed from
@@ -620,7 +1011,8 @@ The ui.grid object now has a new argument, transpose, which allows
 widgets to be added down the columns first. It also is smarter about
 allocating space to subwidgets when xfill or yfill are set.
 
-The file entries in the load and save screens are now arraigned in a
++++
+The file entries in the load and save screens are now arrainged in a
 grid, which has the style file_picker_grid. This means that we should
 now be smarter in the presence of games of varying size, and we should
 wrap text if it gets too long. As part of this,
@@ -640,10 +1032,12 @@ properties limit the size of the widgets that they are applied to, as
 if that widget was placed inside a ui.sizer(). (In fact, ui.sizer() is
 now implemented in terms of these properties.) 
 
+!!!
 Now, we only restore or rollback to places where all of the transient
 layers are empty. This prevents a bug in which additional dialogue
 will be lost when a restore or rollback occurs. 
 
++++
 The way in which preferences are displayed has been made more
 configurable. Now, there is a new variable, library.preferences, which
 is a map from a style to a list of preferences to be displayed in a
@@ -670,6 +1064,7 @@ allows the focus to be moved from widget to widget using the keyboard,
 without requiring the keymouse behavior be used. Because of this new
 system, the keymouse behavior is now a no-op. 
 
++++
 To simplify the code and make every widget compatible with the new
 focus code, a number of widgets were reimplemented in terms of
 buttons. This includes the ui.menu widget, which is the widget that is
@@ -768,6 +1163,7 @@ New in 4.7.2
 This release should be compatiable with the .rpyc and .save files
 produced by 4.7.1.
 
+!!!
 The new readback extra caused save files to reach a size and/or
 complexity that caused errors in cPickle on Windows, which in turn
 lead to a repeatable crash of Ren'Py, and left a corrupt save file in

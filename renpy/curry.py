@@ -15,7 +15,6 @@ class Curry(object):
     def __call__(self, *args, **kwargs):
         return self.callable(*(self.args + args),
                              **dict(self.kwargs.items() + kwargs.items()))
-
     def __repr__(self):
         return "<curry " + repr(vars(self)) + ">"
 

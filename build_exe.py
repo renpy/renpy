@@ -22,13 +22,13 @@ programs = [
     program(sys.argv[1]),
     ]
 
-sys.argv[1:] = [ 'py2exe', '-x' ]
+sys.argv[1:] = [ 'py2exe', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
 
 setup(name="RenPy",
       windows=programs,
-      console=[ "archiver.py", "add_from.py", "console.py", "dump_text.py", "run_dse.py" ],
+      console=[ "console.py" ],
       zipfile='lib/renpy.code',
-      options={ 'py2exe' : { 'excludes' : [ 'doctest' ],
+      options={ 'py2exe' : { 'excludes' : [ 'doctest', 'pygame.macosx', 'pygame.surfarray' ],
                              'optimize' : 2,
                              } },
       )
