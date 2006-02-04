@@ -660,13 +660,10 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
         if xpos is None:
             xpos = 0
-
         if ypos is None:
             ypos = 0
-
         if xanchor is None:
             xanchor = 0
-
         if yanchor is None:
             yanchor = 0
 

@@ -181,7 +181,7 @@ def render_screen(widget, width, height, st):
     return rv
 
 old_blits = [ ]
-
+old_forced = [ ]
 
 def compute_clip(source):
     """
@@ -189,6 +189,7 @@ def compute_clip(source):
     """
 
     global old_blits
+    global old_forced
 
     new_blits = [ ]
     forced = [ ]
@@ -245,7 +246,7 @@ def compute_clip(source):
     changes.extend(bl0[i0:])
     changes.extend(bl1[i1:])
 
-    if not changes and not forced:
+    if not changes and not forced and not old_forced:
         return None
 
     sw = renpy.config.screen_width
@@ -255,17 +256,21 @@ def compute_clip(source):
     # (size, x0, y0, x1, y1) tuples.
     sized = [ ]
 
+    old_old_forced = old_forced
+    old_forced = forced
+
     for surf, x0, y0, w, h in changes:
         if w * h >= sa:
             return (0, 0, w, h), [ (0, 0, w, h) ]
             
         sized.append((w * h, x0, y0, x0 + w, y0 + h))
 
-    for x0, y0, w, h in forced:
+    for x0, y0, w, h in forced + old_old_forced:
         if w * h >= sa:
             return (0, 0, w, h), [ (0, 0, w, h) ]
             
         sized.append((w * h, x0, y0, x0 + w, y0 + h))
+
         
     sized.sort()
 

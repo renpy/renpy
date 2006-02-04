@@ -15,6 +15,9 @@ def copy_file(source, dest, license="", dos=True):
     if dest.endswith(".bak"):
         return
 
+    if dest.endswith(".cache"):
+        return
+
     if dest.endswith("~"):
         return
     

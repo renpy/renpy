@@ -312,7 +312,7 @@ class Animation(renpy.display.core.Displayable):
         properties.setdefault('style', 'animation')
         self.anim_timebase = properties.pop('anim_timebase', True)
 
-        super(Animation, self).__init__(style=style, **properties)
+        super(Animation, self).__init__(**properties)
 
         self.images = [ ]
         self.delays = [ ]

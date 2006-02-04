@@ -28,3 +28,4 @@ zip -X9 -r "/tmp/$1.zip" "$1"
 unset CYGWIN
 
 cp "/tmp/$1.zip" "$1.zip"
+cmd /c "start ."
