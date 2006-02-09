@@ -140,7 +140,7 @@ def interact():
         if renpy.config.debug_sound:
             raise
         else:
-            renpy.audio.audio.enable_mixer()
+            renpy.audio.audio.init()
             return False
 
 

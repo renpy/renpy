@@ -1,6 +1,10 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py x.y.z
+-------------------
+
+
 New in Ren'Py 5.4.0
 -------------------
 
