@@ -186,8 +186,6 @@ def main():
         "rwobject.c",
         "renpy.h",
         "setup.py",
-        "setup_mac.py",
-        "setup_win32.py",
         "winmixer.c",
         "winmixer.pyx",
         ]
