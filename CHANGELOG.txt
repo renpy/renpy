@@ -21,12 +21,11 @@ we officially support. We support PNG, JPG, GIF, BMP, and TGA images
 (although the latter two are discouraged, due to a lack of
 compression). We support TrueType fonts.
 
+It is now possible to declare a Character with interact=False.
+
 !!!
 Fixed a serious bug that caused Ren'Py to crash whenever a text speed
 slower than 100% was selected.
-
-Fixed an error in the error handling that prevented movies from
-playing.
 
 
 New in Ren'Py 5.4.0
