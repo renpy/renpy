@@ -12,6 +12,8 @@ cmd /c build_exe.bat
 
 # strip dist/*.dll dist/lib/*.pyd dist/lib/*.dll dist/lib/*.exe
 
+strip dist/lib/*.dll dist/lib/*.pyd dist/*.dll
+
 python distribute.py "../$1" demo2
 
 export CYGWIN=smbntsec

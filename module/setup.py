@@ -33,11 +33,12 @@ library_dirs = [ install + "/lib" ]
 extra_compile_args = [ "-O3" ]
 extra_link_args = [ ]
 sdl_libraries = [ 'SDL' ]
-sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'speex', 'FLAC', 'stdc++', ]
+sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'speex', 'stdc++', ]
 
 # The following turn on optional modules.
 nativemidi = None
 winmixer = None
+linmixer = None
 
 # Detect win32.
 if platform.win32_ver()[0]:
@@ -48,9 +49,17 @@ if platform.win32_ver()[0]:
 # Detect mac.
 if platform.mac_ver()[0]:
     nativemidi = [ 'nativemidi.c', 'native_midi_mac.c', 'native_midi_common.c', 'rwobject.c' ]
-    nativemidi_libs = [ ]
+    nativemidi_libs = [ 'SDL' ]
+
+# Detect OSS.
+try:
+    import ossaudiodev
+    linmixer = True
+except:
+    pass
 
 extensions = [ ]
+py_modules = [ ]
 
 rpe = distutils.core.Extension(
     "_renpy",
@@ -98,9 +107,13 @@ if winmixer:
 
     extensions.append(wme)
 
+if linmixer:
+    py_modules.append('linmixer')
+
 distutils.core.setup(
     name = "renpy_module",
     version = "5.4.1",
     ext_modules = extensions,
+    py_modules = py_modules,
     )
 

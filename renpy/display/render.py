@@ -343,11 +343,10 @@ def screen_blit(source, full=False):
 
     screen = pygame.display.get_surface()
 
-    if full:
-        source.blit_to(screen, 0, 0)
-        return [ (0, 0) + screen.get_size() ]
-
     clip = compute_clip(source)
+
+    if full:
+        clip = (0, 0) + screen.get_size(), [ (0, 0) + screen.get_size() ]
 
     if not clip:
         return [ ]
@@ -355,10 +354,9 @@ def screen_blit(source, full=False):
     cliprect, updates = clip
 
     screen = pygame.display.get_surface()
+
     screen.set_clip(cliprect)
-
     source.blit_to(screen, 0, 0)
-
     screen.set_clip()
 
     return updates

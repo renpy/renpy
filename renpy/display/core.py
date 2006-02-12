@@ -450,6 +450,11 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
+        try:
+            pygame.macosx.init()
+        except:
+            pass
+
         pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()

@@ -20,6 +20,10 @@
     max@quendi.de
 */
 
+#ifndef MACOSX
+#define MACOSX
+#endif
+
 #if defined(macintosh) || defined(MACOSX)
 
 #include "native_midi.h"

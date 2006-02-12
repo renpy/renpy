@@ -307,6 +307,7 @@ class Text(renpy.display.core.Displayable):
         self.slow_done = slow_done
         self.slow_start = slow_start
         self.slow_speed = slow_speed
+        self.slow_abortable = slow_abortable
         
 
         self.laidout = None

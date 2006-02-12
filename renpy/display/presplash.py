@@ -7,6 +7,11 @@ import os.path
 import pygame.display
 import pygame.constants
 
+try:
+    import pygame.macosx
+except:
+    pass
+
 # The directory from which presplash images are loaded.
 gamedir = None
 
@@ -32,6 +37,12 @@ def start(_gamedir):
     active = True
 
     os.environ['SDL_VIDEO_CENTERED'] = "1"
+
+    try:
+        pygame.macosx.init()
+    except (ImportError, IOError):
+        pass
+
     pygame.display.init()
 
     img = pygame.image.load(gamedir + "/presplash.png")

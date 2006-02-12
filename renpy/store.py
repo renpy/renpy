@@ -216,6 +216,10 @@ class Character(object):
         with its various position properties determining where it is
         actually shown.
 
+        @param interact: If True, the default, an interaction will
+        take place when the character speaks. Otherwise, no such
+        interaction will take place.
+
         In addition, Character objects also take properties. If a
         property is prefixed with window_, it is applied to the
         window. If prefixed with what_, it is applied to the text
@@ -271,7 +275,10 @@ class Character(object):
 
         return
 
-    def __call__(self, what, interact=True):
+    def __call__(self, what, **properties):
+
+        props = self.properties.copy()
+        props.update(properties)
 
         if not self.check_condition():
             return
@@ -286,10 +293,9 @@ class Character(object):
                       who_style=self.who_style,
                       what_style=self.what_style,
                       window_style=self.window_style,
-                      interact=interact,
                       what_properties=self.what_properties,
                       window_properties=self.window_properties,
-                      **self.properties)
+                      **props)
 
         self.store_readback(name, what)
         

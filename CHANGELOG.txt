@@ -1,8 +1,32 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py x.y.z
+New in Ren'Py 5.4.1
 -------------------
+
+Integrated the results of "Project Bardiche". This project aimed to
+improve the cross-platform compatibility of Ren'Py by building it with
+the same libraries, compiled with the same options, across all three
+supported platforms. As a secondary goal, we will also make available
+in a single bundle the source to all of these libraries, and a script
+that can be called to build them all from scratch. 
+
+The biggest user-visible change is that fonts are now rendered the
+same on Linux and Windows. Previously, Linux fonts tended to be a
+little less thick, which could lead to text being placed
+differently. 
+
+With this release, we also give the image and font file formats that
+we officially support. We support PNG, JPG, GIF, BMP, and TGA images
+(although the latter two are discouraged, due to a lack of
+compression). We support TrueType fonts.
+
+!!!
+Fixed a serious bug that caused Ren'Py to crash whenever a text speed
+slower than 100% was selected.
+
+Fixed an error in the error handling that prevented movies from
+playing.
 
 
 New in Ren'Py 5.4.0

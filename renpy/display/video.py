@@ -154,7 +154,7 @@ class Movie(renpy.display.layout.Null):
     """
 
 
-    def __init__(self, style='image_placement', **properties):
+    def __init__(self, style='default', **properties):
         super(Movie, self).__init__(style=style, **properties)
 
     def render(self, width, height, st, at):
@@ -168,5 +168,6 @@ class Movie(renpy.display.layout.Null):
             rv.blit(surface, (0, 0))
             return rv
         else:
+            print "X"
             return super(Movie, self).render(width, height, st, at)
         
