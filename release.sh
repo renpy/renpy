@@ -10,9 +10,9 @@ cp run_game.py console.py
 
 cmd /c build_exe.bat 
 
-# strip dist/*.dll dist/lib/*.pyd dist/lib/*.dll dist/lib/*.exe
+# strip --strip-debug dist/*.dll dist/lib/*.pyd dist/lib/*.dll
 
-strip dist/lib/*.dll dist/lib/*.pyd dist/*.dll
+strip dist/lib/*.dll
 
 python distribute.py "../$1" demo2
 

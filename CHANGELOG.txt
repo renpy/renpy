@@ -23,6 +23,11 @@ compression). We support TrueType fonts.
 
 It is now possible to declare a Character with interact=False.
 
+Made movies work more reliably on Windows and Mac. Movie() now takes
+an fps argument, which specifies how many frames per second of the
+movie to display. This gives the system some time to actually go and
+render the movie itself.
+
 !!!
 Fixed a serious bug that caused Ren'Py to crash whenever a text speed
 slower than 100% was selected.

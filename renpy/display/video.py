@@ -153,12 +153,16 @@ class Movie(renpy.display.layout.Null):
     removed.
     """
 
+    def __init__(self, fps=24, style='default', **properties):
+        """
+        @param fps: The framerate that the movie should be shown at.
+        """
 
-    def __init__(self, style='default', **properties):
+        self.frame_time = 1.0 / fps
         super(Movie, self).__init__(style=style, **properties)
 
     def render(self, width, height, st, at):
-        renpy.display.render.redraw(self, 0)
+        renpy.display.render.redraw(self, self.frame_time - st % self.frame_time)
 
         if surface:
             renpy.display.render.mutated_surface(surface)
@@ -168,6 +172,5 @@ class Movie(renpy.display.layout.Null):
             rv.blit(surface, (0, 0))
             return rv
         else:
-            print "X"
             return super(Movie, self).render(width, height, st, at)
         
