@@ -30,11 +30,22 @@ images = { }
 
 def checkpoint():
     """
-    Marks the current statement as a checkpoint, which is a place
-    where rolling back can stop when the user asks for a rollback.
+    This creates a checkpoint that the user can rollback to. The
+    checkpoint is placed at the statement after the last statement
+    that interacted with the user. Once this function has been called,
+    there should be no more interaction with the user in the current
+    statement.
     """
 
     renpy.game.log.checkpoint()
+
+def block_rollback():
+    """
+    Prevents the game from rolling back to before the current
+    statement.
+    """
+
+    renpy.game.log.block()
 
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
@@ -92,7 +103,7 @@ def show(name, at_list=[ ], layer='master'):
 
         sls.sticky_positions[key] = at_list
 
-    img = renpy.display.image.ImageReference(name)
+    img = renpy.display.image.ImageReference(name, style='image_placement')
     for i in at_list:
         img = i(img)
 
@@ -137,7 +148,7 @@ def scene(layer='master'):
 def watch(expression, style='default', **properties):
     """
     This watches the given python expression, by displaying it in the
-    upper-right corner of the screen (although position properties
+    upper-left corner of the screen (although position properties
     can change that). The expression should always be
     defined, never throwing an exception.
 
@@ -145,7 +156,7 @@ def watch(expression, style='default', **properties):
     """
 
     def overlay_func():
-        renpy.ui.text(renpy.python.py_eval(expression),
+        renpy.ui.text(unicode(renpy.python.py_eval(expression)),
                       style=style, **properties)
 
     renpy.config.overlay_functions.append(overlay_func)
@@ -214,8 +225,10 @@ def menu(items, set_expr):
     if set is not None and rv is not None:
         for label, value in items:
             if value == rv:
-                set.append(label)
-
+                try:
+                    set.append(label)
+                except AttributeError:
+                    set.add(label)
     return rv
 
 def choice_for_skipping():
@@ -226,8 +239,16 @@ def choice_for_skipping():
     """
 
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
-        renpy.config.skipping = False
+        renpy.config.skipping = None
     
+
+def predict_menu():
+    """
+    Predicts widgets that are used by the menu.
+    """
+    
+    return [ renpy.game.style.menu_window.background,
+             renpy.game.style.menu_choice_button.background ]
 
 def display_menu(items, window_style='menu_window', interact=True):
     """
@@ -256,13 +277,31 @@ def display_menu(items, window_style='menu_window', interact=True):
                                random.choice(choices))
 
     renpy.ui.window(style=window_style)
-    renpy.ui.menu(items)
+    renpy.ui.menu(items, location=renpy.game.context().current)
+
+    for label, val in items:
+        if val:
+            log("Choice: " + label)
+        else:
+            log(label)
+
+    log("")
 
     if interact:
         rv = renpy.ui.interact(mouse='menu')
+
+        for label, val in items:
+            if rv == val:
+                log("User chose: " + label)
+                break
+        else:
+            log("No choice chosen.")
+
+        log("")
+
         checkpoint()
         return rv
-
+    
     return None
 
 class TagQuotingDict(object):
@@ -301,7 +340,51 @@ def say(who, what):
         renpy.store.say(who, what)
     else:
         who(what)
+
+def predict_say(who, what):
+    """
+    This is called to predict the results of a say command.
+    """
+
+    if who is None:
+        who = renpy.store.narrator
+
+    if isinstance(who, (str, unicode)):
+        return renpy.store.predict_say(who, what)
+    else:
+        predict = getattr(who, 'predict', None)
+        if predict:            
+            return predict(what)
+        else:
+            return [ ]
+    
         
+def predict_display_say(who, what,
+                        window_style='say_window',
+                        window_properties={},
+                        image=False,
+                        ctc=None,
+                        **kwargs):
+
+    rv = [ ]
+
+
+    if "background" in window_properties:
+        rv.append(window_properties["background"])
+    else:        
+        rv.append(getattr(renpy.game.style, window_style).background)
+
+    if image:
+        rv.append(renpy.display.im.image(who, True))
+
+    if ctc:
+        rv.append(ctc)
+
+    return rv
+        
+                  
+    
+
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
                 window_style='say_window',
@@ -335,6 +418,15 @@ def display_say(who, what, who_style='say_label',
     For documentation of the various prefixes, suffixes, and styles,
     please read the documentation for Character.
     """
+
+    # If we're in fast skipping mode, don't bother with say
+    # statements at all.
+    if renpy.config.skipping == "fast":
+
+        # Clears out transients.
+        with(None)
+        
+        return
 
     what = what_prefix + what + what_suffix
 
@@ -403,6 +495,10 @@ def display_say(who, what, who_style='say_label',
             slow_start = what_text.get_laidout_length()
             pause += 1
 
+    if who:
+        log(who)
+    log(what)
+    log("")
 
     if interact:
         checkpoint()
@@ -466,6 +562,9 @@ def pause(delay=None, music=None):
     time being reached.
     """
 
+    if renpy.config.skipping == "fast":
+        return True
+
     if music is not None:
         newdelay = renpy.audio.music.get_delay(music)
 
@@ -514,6 +613,9 @@ def with(trans):
     if the transition was interrupted, or False otherwise.
     """
 
+    if renpy.config.skipping:
+        trans = None
+
     if renpy.config.with_callback:
         renpy.config.with_callback(trans)
 
@@ -525,7 +627,7 @@ def with(trans):
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_wait,
+                                                 suppress_overlay=not renpy.config.overlay_during_with,
                                                  mouse='with')
         else:
             return False
@@ -672,7 +774,7 @@ def get_game_runtime():
     it doesn't count time spent in the game menu.)
     """
 
-    return renpy.game.context().runtime / 1000.0
+    return renpy.game.context().runtime
 
 def loadable(filename):
     """
@@ -716,13 +818,13 @@ def context():
 
     return renpy.game.context().info
     
-def music_start(filename, loops=True, fadeout=None):
+def music_start(filename, loops=True, fadeout=None, fadein=0):
     """
     Deprecated music start function, retained for compatibility. Use
     renpy.music.play() or .queue() instead.
     """
 
-    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout)
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout, fadein=fadein)
 
 def music_stop(fadeout=None):
     """
@@ -732,6 +834,73 @@ def music_stop(fadeout=None):
 
     renpy.audio.music.stop(fadeout=fadeout)
 
+def get_filename_line():
+    """
+    Returns a pair giving the filename and line number of the current
+    statement.
+    """
+
+    n = renpy.game.script.namemap[renpy.game.context().current]
+    return n.filename, n.linenumber
+
+def launch_editor():
+    """
+    This causes an editor to be launched at the location of the current
+    statement.
+    """
+
+    import renpy.subprocess as subprocess
+
+    if not renpy.config.editor:
+        return
+
+    filename, line = get_filename_line()
+    subs = dict(filename=filename, line=line)
+    cmd = renpy.config.editor % subs
+
+    try:
+        subprocess.Popen(cmd, shell=True)
+    except:
+        if renpy.config.debug:
+            raise
+
+# A file that log logs to.
+logfile = None
+    
+def log(msg):
+    """
+    If config.log is not set, this does nothing. Otherwise, it opens
+    the logfile (if not already open), formats the message to 70
+    columns, and prints it to the logfile.
+    """
+    
+    global logfile
+
+    if not renpy.config.log:
+        return
+
+    if msg is None:
+        return
+
+    if not logfile:
+        import codecs
+
+        logfile = file(renpy.config.log, "a")
+        if not logfile.tell():
+            logfile.write(codecs.BOM_UTF8)
+
+    import textwrap
+
+    print >>logfile, textwrap.fill(msg).encode("utf-8")
+    logfile.flush()
+    
+def force_full_redraw():
+    """
+    Forces the screen to be redrawn in full. Call this after using pygame
+    to redraw the screen directly.
+    """
+
+    renpy.game.interface.display.full_redraw = True
 
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

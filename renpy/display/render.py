@@ -57,7 +57,7 @@ old_renders = { }
 # contents.)
 mutated_surfaces = { }
 
-def render(widget, width, height, st):
+def render(widget, width, height, st, at):
     """
     Renders a widget on the screen.
     """
@@ -78,7 +78,7 @@ def render(widget, width, height, st):
 
         return rv
 
-    rv = widget.render(width, height, st)
+    rv = widget.render(width, height, st, at)
 
     rv.render_of.append((widget, width, height))
 
@@ -122,13 +122,26 @@ def process_redraws():
     
     return True
 
+def redraw_time():
+    """
+    Returns the time at which a redraw is scheduled. This
+    should be called only after process_redraws, so that
+    the list is sorted.
+    """
+
+    if redraw_queue:
+        return redraw_queue[0][0]
+    else:
+        return None
+        
+
 def redraw(widget, when):
     """
     Call this to queue the redraw of the supplied widget in the
     supplied number of seconds.
     """
 
-    redraw_queue.append((when + time.time(), widget))
+    redraw_queue.append((when + renpy.game.interface.frame_time, widget))
     
 def render_screen(widget, width, height, st):
 
@@ -139,7 +152,7 @@ def render_screen(widget, width, height, st):
 
     mutated_surfaces = { }
 
-    rv = render(widget, width, height, st)
+    rv = render(widget, width, height, st, st)
 
     # Renders that are in the old set but not the new one die here.
     old_render_set = sets.Set(old_renders.itervalues())
@@ -168,7 +181,7 @@ def render_screen(widget, width, height, st):
     return rv
 
 old_blits = [ ]
-
+old_forced = [ ]
 
 def compute_clip(source):
     """
@@ -176,9 +189,11 @@ def compute_clip(source):
     """
 
     global old_blits
+    global old_forced
 
     new_blits = [ ]
-    source.clip_to(pygame.display.get_surface(), 0, 0, new_blits)
+    forced = [ ]
+    source.clip_to(0, 0, new_blits, forced)
 
     bl0 = old_blits[:]
     bl1 = new_blits[:]
@@ -188,7 +203,6 @@ def compute_clip(source):
 
     # Changes between the two lists.
     changes = [ ]
-
 
     # Set of things in bl1.
     bl1set = { }
@@ -232,21 +246,93 @@ def compute_clip(source):
     changes.extend(bl0[i0:])
     changes.extend(bl1[i1:])
 
-    if not changes:
+    if not changes and not forced and not old_forced:
         return None
 
-    surf, x0, y0, w, h = changes[0]
-    x1 = x0 + w
-    y1 = y0 + h
+    sw = renpy.config.screen_width
+    sh = renpy.config.screen_height
+    sa = sw * sh # screen area
 
-    for surf, x, y, w, h in changes:
-        x0 = min(x0, x)
-        y0 = min(y0, y)
+    # (size, x0, y0, x1, y1) tuples.
+    sized = [ ]
 
-        x1 = max(x1, x + w)
-        y1 = max(y1, y + h)
+    old_old_forced = old_forced
+    old_forced = forced
 
-    return x0, y0, x1 - x0, y1 - y0
+    for surf, x0, y0, w, h in changes:
+        if w * h >= sa:
+            return (0, 0, w, h), [ (0, 0, w, h) ]
+            
+        sized.append((w * h, x0, y0, x0 + w, y0 + h))
+
+    for x0, y0, w, h in forced + old_old_forced:
+        if w * h >= sa:
+            return (0, 0, w, h), [ (0, 0, w, h) ]
+            
+        sized.append((w * h, x0, y0, x0 + w, y0 + h))
+
+        
+    sized.sort()
+
+    # The set of non-contained updates. (x0, y0, x1, y1) tuples. 
+    noncont = [ ]
+
+    # The sum of areas in noncont.
+    nca = 0
+
+    # Pick the largest area, merge with all overlapping smaller areas, repeat
+    # until no merge possible.
+    while sized:
+        area, x0, y0, x1, y1 = sized.pop()
+        
+        merged = False
+            
+        if nca + area >= sa:
+            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
+
+        newsized = [ ]
+            
+        for t in sized:
+            iarea, ix0, iy0, ix1, iy1 = t 
+
+            if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and \
+               (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
+
+                merged = True
+                x0 = min(x0, ix0)
+                x1 = max(x1, ix1)
+                y0 = min(y0, iy0)
+                y1 = max(y1, iy1)
+
+                area = (x1 - x0) * (y1 - y0)
+
+                continue
+
+            newsized.append(t)
+
+        sized = newsized
+        
+        if not merged:
+            noncont.append((x0, y0, x1, y1))
+            nca += area
+            continue
+
+        sized.append((area, x0, y0, x1, y1))
+
+    x0, y0, x1, y1 = noncont[0]
+
+    # A list of (x, y, w, h) tuples for each update.
+    updates = [ ]
+
+    for ix0, iy0, ix1, iy1 in noncont:
+        x0 = min(x0, ix0)
+        y0 = min(y0, iy0)
+        x1 = max(x1, ix1)
+        y1 = max(y1, iy1)
+
+        updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
+
+    return (x0, y0, x1 - x0, y1 - y0), updates
     
 
 def screen_blit(source, full=False):
@@ -257,23 +343,23 @@ def screen_blit(source, full=False):
 
     screen = pygame.display.get_surface()
 
+    clip = compute_clip(source)
+
     if full:
-        source.blit_to(screen, 0, 0)
-        return (0, 0) + screen.get_size()
+        clip = (0, 0) + screen.get_size(), [ (0, 0) + screen.get_size() ]
 
-    cliprect = compute_clip(source)
+    if not clip:
+        return [ ]
 
-    if not cliprect:
-        return None
+    cliprect, updates = clip
 
     screen = pygame.display.get_surface()
+
     screen.set_clip(cliprect)
-
     source.blit_to(screen, 0, 0)
-
     screen.set_clip()
 
-    return cliprect
+    return updates
     
 
 
@@ -295,13 +381,20 @@ class Render(object):
     widget can be withdrawn).
     """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, draw_func=None, update_func=None):
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
 
-        @param widget: If this render corresponds directly to a
-        widget, then this is the widget it corresponds to.
+        If draw_func is not None, then it is a function that should
+        draw to the surface supplied to it. The draw_func should
+        always return the same thing, use renpy.display.render.redraw to
+        animate.
+
+        If update_func is not None, it's expected to return a list of
+        (x, y, w, h) rectangles representing updated areas of the
+        screen. If draw_func is supplied and update_func isn't
+        then we default to redrawing the entire area.
         """
 
         # Just for safety's sake.
@@ -331,6 +424,9 @@ class Render(object):
         # The list of focusable widgets collected from this render
         # and the children of this render. A list of (widget, arg, x, y, w, h,)
         self.focuses = [ ]
+
+        self.draw_func = draw_func
+        self.update_func = update_func
 
     # def __del__(self):
     #     Render.renders -= 1
@@ -433,6 +529,9 @@ class Render(object):
         destination surface.
         """
 
+        if self.draw_func:
+            self.draw_func(dest.subsurface((x, y, self.width, self.height)))
+
         for xo, yo, source in self.blittables:
 
             if isinstance(source, pygame.Surface):
@@ -440,17 +539,23 @@ class Render(object):
             else:
                 source.blit_to(dest, x + xo, y + yo)
 
-    def clip_to(self, dest, x, y, blits):
+    def clip_to(self, x, y, blits, forced):
         """
         This fills in blits with (id(surf), x, y, w, h) tuples.
         """
 
+        if self.draw_func:
+            if self.update_func:
+                for xo, yo, w, h in self.update_func():
+                    forced.append((x, y, w, h))
+            else:
+                forced.append((x, y, self.width, self.height))
+        
         for xo, yo, source in self.blittables:
-
             if isinstance(source, pygame.Surface):
                 blits.append((id(source), x + xo, y + yo) + source.get_size())
             else:
-                source.clip_to(dest, x + xo, y + yo, blits)
+                source.clip_to(x + xo, y + yo, blits, forced)
 
     def fill(self, color):
         """
@@ -616,3 +721,4 @@ class Render(object):
                 h = self.height
 
         self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
+

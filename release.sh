@@ -5,14 +5,29 @@ if test "x$1" = "x"; then
    exit -1
 fi
 
-rm -Rf build dist
+rm -Rf build dist "/tmp/$1.zip"
 cp run_game.py console.py
 
 cmd /c build_exe.bat 
 
-# strip dist/*.dll dist/lib/*.pyd dist/lib/*.dll dist/lib/*.exe
+# strip --strip-debug dist/*.dll dist/lib/*.pyd dist/lib/*.dll
 
-python distribute.py ../$1 demo2
+strip dist/lib/*.dll
+
+python distribute.py "../$1" demo2
+
+export CYGWIN=smbntsec
 cd ..
-zip -X9 -r $1.zip $1
 
+chmod +x "$1/run_game.py"
+chmod +x "$1/tools/add_from"
+chmod +x "$1/tools/archiver"
+chmod +x "$1/tools/dump_text"
+chmod +x "$1/tools/run_dse"
+
+zip -X9 -r "/tmp/$1.zip" "$1"
+
+unset CYGWIN
+
+cp "/tmp/$1.zip" "$1.zip"
+cmd /c "start ."

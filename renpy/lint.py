@@ -264,4 +264,10 @@ def lint():
             
     print
     print
-    print "The game contains", say_count, "lines of dialogue containing a total of", say_words, "words, and", menu_count, "menus."
+    print "Statistics:"
+    print
+    print "The game contains", say_count, "screens of dialogue."
+    print "These screens contain total of", say_words, "words."
+    print "For an average of %.1f words per screen." % (1.0 * say_words / say_count) 
+    print "The game contains", menu_count, "menus."
+

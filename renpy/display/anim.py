@@ -10,7 +10,7 @@ class State(object):
     """
 
 
-    def __init__(self, name, image, *atlist):
+    def __init__(self, name, image, *atlist, **properties):
         """
         @param name: A string giving the name of this state.
 
@@ -25,14 +25,18 @@ class State(object):
         @param atlist: A list of functions to call on the image. (In
         general, if something can be used in an at clause, it can be
         used here as well.)
+
+        If any keyword arguments are given, they are used to construct a
+        Position object, that modifies the position of the image.
         """
 
         if image and not isinstance(image, renpy.display.core.Displayable):
             image = renpy.display.image.Image(image)
-            
+
         self.name = name
         self.image = image
         self.atlist = atlist
+        self.properties = properties
 
 
     def add(self, sma):
@@ -43,6 +47,9 @@ class State(object):
 
         for i in self.atlist:
             rv = i(rv)
+
+        if self.properties:
+            rv = renpy.display.layout.Position(rv, **properties)
 
         return rv
 
@@ -111,6 +118,13 @@ class SMAnimation(renpy.display.core.Displayable):
         @param initial: The name (a string) of the initial state we
         start in.
 
+        @param showold: If the keyword parameter showold is True, then
+        the old image is shown instead of the new image when in an
+        edge.
+
+        @param anim_timebase: If True, we use the animation
+        timebase. If False, we use the displayable timebase.
+
         This accepts as additional arguments the anim.State and
         anim.Edge objects that are used to make up this state
         machine.
@@ -121,6 +135,18 @@ class SMAnimation(renpy.display.core.Displayable):
             del properties['delay']
         else:
             self.delay = None
+
+        if 'showold' in properties:
+            self.showold = properties['showold']
+            del properties['showold']
+        else:
+            self.showold = False
+
+        if 'anim_timebase' in properties:
+            self.anim_timebase = properties['anim_timebase']
+            del properties['anim_timebase']
+        else:
+            self.anim_timebase = True
 
         super(SMAnimation, self).__init__(**properties)
 
@@ -163,7 +189,6 @@ class SMAnimation(renpy.display.core.Displayable):
         updates self.image to be the new image on the selected edge.
         """
 
-
         if state not in self.edges:
             self.edge = None
             return
@@ -179,11 +204,14 @@ class SMAnimation(renpy.display.core.Displayable):
         the old and new states, and any transition that is present.
         """
 
-        im = self.states[self.edge.new].get_image()
 
         if self.edge.trans:
             im = self.edge.trans(old_widget=self.states[self.edge.old].get_image(),
-                                 new_widget=im)
+                                 new_widget=self.states[self.edge.new].get_image())
+        elif self.showold:
+            im = self.states[self.edge.old].get_image()
+        else:
+            im = self.states[self.edge.new].get_image()
 
         self.edge_cache = im
 
@@ -195,18 +223,22 @@ class SMAnimation(renpy.display.core.Displayable):
         if self.state:
             return self.states[self.state].get_image().get_placement()
 
-        return self.style
+        return super(SMAnimation, self).get_placement()
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
-        if self.edge_start is None or st < self.edge_start:
-            self.edge_start = st
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+        if self.edge_start is None or t < self.edge_start:
+            self.edge_start = t
             self.edge_cache = None
             self.pick_edge(self.initial)
 
-        while self.edge and st > self.edge_start + self.edge.delay:
+        while self.edge and t > self.edge_start + self.edge.delay:
             self.edge_start += self.edge.delay
-
             self.edge_cache = None
             self.pick_edge(self.edge.new)
 
@@ -216,7 +248,7 @@ class SMAnimation(renpy.display.core.Displayable):
         if not self.edge:
             im = renpy.display.render.render(self.states[self.state].get_image(),
                                              width, height,
-                                             st - self.edge_start)
+                                             st - self.edge_start, at)
 
 
         # Otherwise, we have another edge.
@@ -225,9 +257,9 @@ class SMAnimation(renpy.display.core.Displayable):
             if not self.edge_cache:
                 self.update_cache()
 
-            im = renpy.display.render.render(self.edge_cache, width, height, st - self.edge_start)            
+            im = renpy.display.render.render(self.edge_cache, width, height, t - self.edge_start, at)
 
-            renpy.display.render.redraw(self.edge_cache, self.edge.delay - (st - self.edge_start))
+            renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
 
 
         iw, ih = im.get_size()
@@ -257,36 +289,68 @@ class SMAnimation(renpy.display.core.Displayable):
 
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
-def Animation(*args):
+
+class Animation(renpy.display.core.Displayable):
     """
     A Displayable that draws an animation, which is a series of images
     that are displayed with time delays between them.
-
-    Odd (first, third, fifth, etc.) arguments to Animation are
-    interpreted as image filenames, while even arguments are the time
-    to delay between each image. If the number of arguments is odd,
-    the animation will stop with the last image (well, actually delay
-    for a year before looping). Otherwise, the animation will restart
-    after the final delay time.
     """
 
-    sm = [ 0 ]
+    def __init__(self, *args, **properties):
+        """
+        Odd (first, third, fifth, etc.) arguments to Animation are
+        interpreted as image filenames, while even arguments are the
+        time to delay between each image. If the number of arguments
+        is odd, the animation will stop with the last image (well,
+        actually delay for a year before looping). Otherwise, the
+        animation will restart after the final delay time.
 
-    for i, arg in enumerate(args):
+        @param anim_timebase: If True, the default, use the animation
+        timebase. Otherwise, use the displayable timebase.
+        """
 
-        if i % 2 == 0:
-            sm.append(State(i, arg))
+        properties.setdefault('style', 'animation')
+        self.anim_timebase = properties.pop('anim_timebase', True)
 
-        else:
+        super(Animation, self).__init__(**properties)
 
-            if i == len(args) - 1:
-                new = 0
+        self.images = [ ]
+        self.delays = [ ]
+
+        for i, arg in enumerate(args):
+
+            if i % 2 == 0:
+                self.images.append(renpy.display.im.image(arg, loose=True))
             else:
-                new = i + 1
-                
-            sm.append(Edge(i - 1, arg, new))
+                self.delays.append(arg)
 
-    return SMAnimation(*sm)
+        if len(self.images) > len(self.delays):
+            self.delays.append(365.25 * 86400.0) # One year, give or take.
+                
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at % sum(self.delays)
+        else:
+            t = st % sum(self.delays)
+
+        for image, delay in zip(self.images, self.delays):
+            if t < delay:
+                renpy.display.render.redraw(self, delay - t)
+
+                im = renpy.display.render.render(image, width, height, st, at)
+                width, height = im.get_size()
+                rv = renpy.display.render.Render(width, height)
+                rv.blit(im, (0, 0))
+
+                return rv
+            
+            else:
+                t = t - delay
+
+    def predict(self, callback):
+        for i in self.images:
+            i.predict(callback)
 
 
 class Blink(renpy.display.core.Displayable):
@@ -294,7 +358,7 @@ class Blink(renpy.display.core.Displayable):
     """
 
     def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,
-                 high=1.0, low=0.0, offset=0.0, **properties):
+                 high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
 
         """
         This takes as an argument an image or widget, and blinks that image
@@ -318,6 +382,8 @@ class Blink(renpy.display.core.Displayable):
 
         @param offset: A time offset, in seconds. Use this to have a
         blink that does not start at the start of the on phase.
+
+        @param anim_timebase: If True, use the animation timebase, if false, the displayable timebase.
         """
         
         super(Blink, self).__init__(**properties)
@@ -330,15 +396,22 @@ class Blink(renpy.display.core.Displayable):
         self.high = high
         self.low = low
         self.offset = offset
+        self.anim_timebase = anim_timebase
 
         self.cycle = on + set + off + rise
 
-    def get_placement(self):
-        return self.style
 
-    def render(self, height, width, st):
+    def predict(self, callback):
+        self.image.predict(callback)
 
-        time = (self.offset + st) % self.cycle
+    def render(self, height, width, st, at):
+
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+        time = (self.offset + t) % self.cycle
         alpha = self.high
 
         if 0 <= time < self.on:
@@ -366,7 +439,7 @@ class Blink(renpy.display.core.Displayable):
             alpha = self.high * frac + self.low * (1.0 - frac)
 
 
-        rend = renpy.display.render.render(self.image, height, width, st)
+        rend = renpy.display.render.render(self.image, height, width, st, at)
 
         if not renpy.display.module.can_map:
             return rend
@@ -397,3 +470,68 @@ class Blink(renpy.display.core.Displayable):
         renpy.display.render.redraw(self, delay)
 
         return rv
+
+
+def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **properties):
+    """
+    This creates an animation from a single image. This image
+    must consist of a grid of frames, with the number of columns and
+    rows in the grid being taken from gridsize, and the size of each
+    frame in the grid being taken from framesize. This takes frames
+    and sticks them into an Animation, with the given delay between
+    each frame. The frames are taken by going from left-to-right
+    across the first row, left-to-right across the second row, and
+    so on until all frames are consumed, or a specified number of
+    frames are taken.
+
+    @param image: The image that the frames must be taken from.
+
+    @param framesize: A (width, height) tuple giving the size of
+    each of the frames in the animation.
+
+    @param gridsize: A (columns, rows) tuple giving the number of
+    columns and rows in the grid.
+
+    @param delay: The delay, in seconds, between frames.
+
+    @param frames: The number of frames in this animation. If None,
+    then this defaults to colums * rows frames, that is, taking
+    every frame in the grid.
+
+    @param loop: If True, loop at the end of the animation. If False,
+    this performs the animation once, and then stops.
+
+    Other keyword arguments are as for anim.SMAnimation.
+    """
+
+    width, height = framesize
+    cols, rows = gridsize
+
+    if frames is None:
+        frames = cols * rows
+
+    i = 0
+
+    # Arguments to Animation
+    args = [ ]
+
+    for r in range(0, rows):
+        for c in range(0, cols):
+
+            x = c * width
+            y = r * height
+
+            args.append(renpy.display.im.Crop(image, x, y, width, height))
+            args.append(delay)
+
+            i += 1
+            if i == frames:
+                break
+
+        if i == frames:
+            break
+            
+    if not loop:
+        args.pop()
+
+    return Animation(*args, **properties)

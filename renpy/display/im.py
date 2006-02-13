@@ -63,8 +63,21 @@ class Cache(object):
         self.first_preload_in_tick = True
         self.size_of_current_generation = 0
 
+        if renpy.config.debug_image_cache:
+            print "IC ----"
+
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, image):
+        if renpy.config.debug_image_cache:
+            print "IC Request Preload", image
+
+        if not isinstance(image, ImageBase):
+            if renpy.config.debug_image_cache:
+                print "IC Can't preload non image: ", image
+            else:
+                return
+
+            
         self.preloads.append(image)
 
     # Do we need to preload an image?
@@ -78,7 +91,8 @@ class Cache(object):
     def get(self, image):
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got something else.")
+            raise Exception("Expected an image of some sort, but got" + str(image) + ".")
+            
 
         if image in self.cache:
             ce = self.cache[image]
@@ -205,9 +219,7 @@ class ImageBase(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        if 'style' not in properties:
-            properties = properties.copy()
-            properties['style'] = 'image_placement'
+        properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
         self.identity = (type(self).__name__, ) + args
@@ -235,15 +247,12 @@ class ImageBase(renpy.display.core.Displayable):
 
         assert False
         
-    def render(self, w, h, st):
+    def render(self, w, h, st, at):
         im = cache.get(self)
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)
         rv.blit(im, (0, 0))
         return rv
-
-    def get_placement(self):
-        return self.style
 
     def predict(self, callback):
         callback(self)

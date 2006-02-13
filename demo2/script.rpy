@@ -18,6 +18,12 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
+    # Set this to true to enable some developer-specific
+    # functionality. It should be false in a finished game.
+    # Read the "Developer Tools" section of the reference
+    # to see what this enables.
+    $ config.developer = False
+
     # Declare the images that are used in the program.
 
     # Backgrounds.
@@ -32,11 +38,11 @@ init:
     image eileen vhappy = "9a_vhappy.png"
     image eileen concerned = "9a_concerned.png"
 
-    # A character object. This object lets us have the character say
+    # Character objects. These lets us have the character say
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
 
-    $ e = Character('Eileen', color=(200, 255, 200, 255))
+    $ e = Character('Eileen', color=(200, 255, 200, 255))    
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -57,7 +63,7 @@ label start:
     $ renpy.clear_game_runtime()        
 
     # Start some music playing in the background.
-    $ renpy.music_start('sun-flower-slow-drag.mid')
+    $ renpy.music.play('sun-flower-slow-drag.mid')
 
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
@@ -571,13 +577,33 @@ label speedtest:
     e "Thanks for viewing the secret speed test."
 
     return
+
+label developer:
+
+    scene black
+
+    # It's bad form to change a config variable outside of an init
+    # block. We're only doing this to help test the game. Don't do
+    # it in your own game.
+    $ config.developer = True
+
+    "Developer mode enabled. You can now use '>' to warp to the next
+     menu."
+
+    $ config.log = "log.txt"
+
+    "Logging enabled. You can now find a log of this game in log.txt."
+
+    return
     
-# Setup the secret key for the speedtest.
+# Setup the secret keys for the speedtest and developer mode.
 init:
     python:
         config.keymap['speedtest'] = [ 'S' ]
-        config.underlay.append(renpy.Keymap(speedtest=renpy.curried_call_in_new_context('speedtest')))
-
+        config.keymap['developer'] = [ 'D' ]
+        config.underlay.append(renpy.Keymap(
+            speedtest=renpy.curried_call_in_new_context('speedtest'),
+            developer=renpy.curried_call_in_new_context('developer')))
 
 init:
 
@@ -723,8 +749,15 @@ init:
                        ctc = anim.Blink("arrow.png"))
 
     $ ectcf = Character('Eileen', color=(200, 255, 200, 255),
-                        ctc = anim.Blink("arrow.png", xpos=760, ypos=560),
+                        ctc = anim.Filmstrip("sakura.png", (20, 20), (2, 1), .30, xpos=760, ypos=560, xanchor=0, yanchor=0),
                         ctc_position="fixed")
+
+    $ equote = Character('Eileen',  color=(200, 255, 200, 255),
+                         who_suffix = ':', what_prefix='"', what_suffix='"')
+
+    $ eweird = Character('Eileen', color=(200, 255, 200, 255),
+                         what_underline=True, window_left_margin=200,
+                         window_yminimum=300)
 
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
@@ -767,14 +800,18 @@ init:
 
     $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
-init:
-
     $ slowcirciris = ImageDissolve("circiris.png", 5.0, 8)
     $ circirisout = ImageDissolve("circiris.png", 1.0, 8)
+    $ circirisoutramp = ImageDissolve("circiris.png", 3.0, ramp=[ 16 * i for i in range(0, 15) + range(15, 0, -1) + range(0, 15) + range(15, 0, -1) + range(0, 15)  + range(15, 0, -1) + range(0, 15) ] )
     $ circirisin = ImageDissolve("circiris.png", 1.0, 8, reverse=True)
-    $ demotrans = ImageDissolve("demotrans.png", 3.0, 128)
+
+    $ demotrans = ImageDissolve("demotrans.png", 3.0, 16)
 
     image circiris = "circiris.png"
+
+    image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
+
+    
 
 label demonstrate:
 
@@ -843,7 +880,7 @@ label demonstrate:
 
             e "We can also shake the screen horizontally, with hpunch."
 
-        "ImageDissolve transitions, added in 4.8.7.":
+        "ImageDissolve transitions, updated in 5.3.1.":
 
             e "ImageDissolve allows us to have dissolve transitions that are
                controlled by images."
@@ -891,10 +928,14 @@ label demonstrate:
 
             with None
             scene bg washington
-            show eileen happy
             with circirisout
 
             e "... and show them again with a circirisout."
+
+            e "The ramp parameter lets things dissolve in and out
+               along the way."
+
+            scene bg whitehouse with circirisoutramp
 
             e "It's even possible to have weird custom transitions."
 
@@ -999,7 +1040,7 @@ label demonstrate:
 
             e "It's enough to make you feel a bit dizzy."
             
-        "Positions and movement, updated in 4.8.":
+        "Positions and movement, updated in 5.4.0.":
 
             e "I'm not stuck standing in the middle of the screen,
                even though I like being the center of attention."
@@ -1053,20 +1094,47 @@ label demonstrate:
 
             e "Move can repeat a movement, and even have it bounce
                back and forth, like I'm doing now."
-
+            
             scene bg onememorial at Pan((0, 800), (0, 0), 10.0) with dissolve
 
-            e "Finally, we can pan around an image larger than the
+            e "We can pan around an image larger than the
                screen, using the Pan function in an at
                clause."
 
             e "That's what we're doing now, panning up a picture of
                the memorial to the Big Red One."
 
+            scene bg whitehouse with dissolve
+            scene bg whitehouse at Zoom((800, 600), (0, 0, 800, 600), (225, 150, 400, 300), 1.0)
+
+            e "We can zoom into images..."
+
+            scene bg whitehouse at Zoom((800, 600), (225, 150, 400, 300), (0, 0, 800, 600), 1.0)
+
+            e "... and zoom back out of them again."
+        
             with None
             scene bg washington
             show eileen happy
             with dissolve
+
+            show snowblossom
+
+            e "Finally, there's now a particle motion system in
+               Ren'Py."
+
+            e "It can be used to animate things like falling cherry
+               blossoms, falling snow, and rising bubbles."
+
+            e "While there's convenient support for things rising and
+               falling in straight lines, it's also possible to define
+               your own motions."
+
+            e "The sky's the limit."
+
+            e "Or the ground, in the case of these cherry blossoms."
+
+            hide snowblossom with dissolve
 
         "Animation, updated in 4.8.5":
 
@@ -1206,6 +1274,8 @@ label demonstrate:
                 $ renpy.movie_stop()
                 hide movie
 
+                $ renpy.music_start('sun-flower-slow-drag.mid')
+
             else:
 
                 e "You haven't downloaded the Eisenhower commercial, so we
@@ -1344,15 +1414,36 @@ label demonstrate:
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
 
-        "Potpourri, added in 5.1.2.":
+        "Character Objects, added in 5.2.1.":
 
-            e "Welcome to the potpourri section of the demo."
+            e "The Character object is used to declare characters, and
+               it can also be used to customize things about how a
+               character speaks."
 
-            e "Here, we demonstrate features that don't fit in any of
-               the other sections, but don't warrant their own
-               section."
+            e "By supplying it with the appropriate arguments, we can
+               really change around the feel of the game."
 
-            ectc "Here, we demonstrate a click to continue
+            e "In this section, we'll demonstrate some of what can be
+               accomplished by customizing character objects."
+
+            equote "By supplying what_prefix and what_suffix arguments
+                    to a Character object, we can automatically add
+                    things before each line of text."
+
+            equote "This is a lot easier than having to put those
+                    quotes in by hand."
+
+            equote "We can also use who_prefix and who_suffix to
+                    add text to the name of the speaker."
+
+            eweird "We can also supply arguments to the Character
+                    object that customize the look of the character
+                    name, the text that is being said, and the window
+                    itself."
+
+            eweird "These can really change the look of the game."
+
+            ectc "Finally, we demonstrate a click to continue
                   indicator. In this example, it's nestled in with the
                   text."
 
@@ -1414,12 +1505,15 @@ init:
     $ style.imagemap.activate_sound = 'click.wav'
     $ library.enter_sound = 'click.wav'
     $ library.exit_sound = 'click.wav'
-    $ library.sample_sound = "18005551212.wav"
+    $ library.sample_sound = "18005551212.ogg"
 
     # Select the transitions that are used when entering and exiting
     # the game menu.
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
+
+    # Set the color of idle chosen menu choices.
+    $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.

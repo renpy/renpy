@@ -1,3 +1,4 @@
+# -*- python -*- 
 # Copyright 2005 PyTom <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
@@ -25,10 +26,10 @@ cdef extern from "pss.h":
         pass
 
     SDL_RWops* RWopsFromPythonThreaded(object obj)
-    void PSS_play(int channel, SDL_RWops *rw, char *ext, object name, int paused)
-    void PSS_queue(int channel, SDL_RWops *rw, char *ext, object name)
+    void PSS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, int paused)
+    void PSS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight)
     void PSS_stop(int channel)
-    void PSS_dequeue(int channel)
+    void PSS_dequeue(int channel, int even_tight)
     int PSS_queue_depth(int channel)
     object PSS_playing_name(int channel)
     void PSS_fadeout(int channel, int ms)
@@ -53,7 +54,7 @@ def check_error():
     if e:
         raise Exception, e
 
-def play(channel, file, name, paused=False):
+def play(channel, file, name, paused=False, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPythonThreaded(file)
@@ -66,27 +67,37 @@ def play(channel, file, name, paused=False):
     else:
         pause = 0
 
+    if tight:
+        tight = 1
+    else:
+        tight = 0
+
     ext = _extension(name)
 
-    PSS_play(channel, rw, ext, name, pause)
+    PSS_play(channel, rw, ext, name, fadein, tight, pause)
     check_error()
 
-def queue(channel, file, name):
+def queue(channel, file, name, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPythonThreaded(file)
 
+    if tight:
+        tight = 1
+    else:
+        tight = 0
+
     ext = _extension(name)
 
-    PSS_queue(channel, rw, ext, name)
+    PSS_queue(channel, rw, ext, name, fadein, tight)
     check_error()
 
 def stop(channel):
     PSS_stop(channel)
     check_error()
 
-def dequeue(channel):
-    PSS_dequeue(channel)
+def dequeue(channel, even_tight=False):
+    PSS_dequeue(channel, even_tight)
 
 def queue_depth(channel):
     return PSS_queue_depth(channel)
@@ -133,4 +144,6 @@ def init(freq, stereo, samples):
 def quit():
     PSS_quit()
 
-    
+def check_version(version):
+    if version < 2 or version > 3:
+        raise Exception("pysdlsound version mismatch.")

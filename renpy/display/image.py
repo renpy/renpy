@@ -30,10 +30,7 @@ class UncachedImage(renpy.display.core.Displayable):
 
         self.style = renpy.style.Style(style, properties)
 
-    def get_placement(self):
-        return self.style
-
-    def render(self, w, h, st):
+    def render(self, w, h, st, at):
         sw, sh = self.surf.get_size()
         rv = renpy.display.render.Render(sw, sh)
         rv.blit(self.surf, (0, 0))
@@ -52,13 +49,14 @@ class ImageReference(renpy.display.core.Displayable):
     """
 
     nosave = [ 'target' ]
+    target = None
 
-    def __init__(self, name):
+    def __init__(self, name, **properties):
         """
         @param name: A tuple of strings, the name of the image.
         """
         
-        super(ImageReference, self).__init__()
+        super(ImageReference, self).__init__(**properties)
 
         self.name = name
 
@@ -69,7 +67,7 @@ class ImageReference(renpy.display.core.Displayable):
         parameters = [ ]
 
         def error(msg):
-            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255))
+            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
 
             if renpy.config.debug:
                 raise Exception(msg)
@@ -97,21 +95,41 @@ class ImageReference(renpy.display.core.Displayable):
 
         error("Image '%s' not found." % ' '.join(self.name))
         
-        
-    def render(self, width, height, st):
-        if not hasattr(self, 'target'):
+
+    def event(self, ev, x, y, st):
+        if not self.target:
             self.find_target()
 
-        return render(self.target, width, height, st)
+        return self.target.event(ev, x, y, st)
+        
+    def render(self, width, height, st, at):
+        if not self.target:
+            self.find_target()
+
+        return render(self.target, width, height, st, at)
 
     def get_placement(self):
-        if not hasattr(self, 'target'):
+        if not self.target:
             self.find_target()
 
-        return self.target.get_placement()
+        xpos, ypos, xanchor, yanchor = self.target.get_placement()
+        
+        if xpos is None:
+            xpos = self.style.xpos
+
+        if ypos is None:
+            ypos = self.style.ypos
+
+        if xanchor is None:
+            xanchor = self.style.xanchor
+
+        if yanchor is None:
+            yanchor = self.style.yanchor
+
+        return xpos, ypos, xanchor, yanchor
 
     def predict(self, callback):
-        if not hasattr(self, 'target'):
+        if not self.target:
             self.find_target()
 
         self.target.predict(callback)
@@ -133,13 +151,13 @@ class Solid(renpy.display.core.Displayable):
         super(Solid, self).__init__()
         self.color = color
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         si = renpy.display.im.SolidImage(self.color,
                                          width,
                                          height)
 
-        return render(si, width, height, st)
+        return render(si, width, height, st, at)
         
 class Frame(renpy.display.core.Displayable):
     """
@@ -175,7 +193,7 @@ class Frame(renpy.display.core.Displayable):
         self.xborder = xborder
         self.yborder = yborder
 
-    def render(self, width, height, st):
+    def render(self, width, height, st, at):
 
         fi = renpy.display.im.FrameImage(self.image,
                                          self.xborder,
@@ -183,67 +201,11 @@ class Frame(renpy.display.core.Displayable):
                                          width,
                                          height)
 
-        return render(fi, width, height, st)
+        return render(fi, width, height, st, at)
 
     def predict(self, callback):
         self.image.predict(callback)
 
-# This class has been replaced with a function in anim.
-class OldAnimation(renpy.display.core.Displayable):
-    """
-    A Displayable that draws an animation, which is a series of images
-    that are displayed with time delays between them.
-    """
-
-    def __init__(self, *args):
-        """
-        Odd (first, third, fifth, etc.) arguments to Animation are
-        interpreted as image filenames, while even arguments are the
-        time to delay between each image. If the number of arguments
-        is odd, the animation will stop with the last image (well,
-        actually delay for a year before looping). Otherwise, the
-        animation will restart after the final delay time.
-        """
-
-        super(Animation, self).__init__(style='image_placement')
-
-        self.images = [ ]
-        self.delays = [ ]
-
-        for i, arg in enumerate(args):
-
-            if i % 2 == 0:
-                self.images.append(Image(arg))
-            else:
-                self.delays.append(arg)
-
-        if len(self.images) > len(self.delays):
-            self.delays.append(365.25 * 86400.0) # One year, give or take.
-                
-    def render(self, width, height, st):
-
-        t = st % sum(self.delays)
-
-        for image, delay in zip(self.images, self.delays):
-            if t < delay:
-                renpy.display.render.redraw(self, delay - t)
-
-                im = render(image, width, height, st)
-                width, height = im.get_size()
-                rv = renpy.display.render.Render(width, height)
-                rv.blit(im, (0, 0))
-
-                return rv
-            
-            else:
-                t = t - delay
-
-    def predict(self, callback):
-        for i in self.images:
-            i.predict(callback)
-
-    def get_placement(self):
-        return renpy.game.style.image_placement
 
                 
 class ImageButton(renpy.display.behavior.Button):

@@ -38,17 +38,16 @@ cdef extern from "renpy.h":
                     char *)
 
     void xblur32_core(object, object, int)
-
     
     void alphamunge_core(object, object, int, int, int, char *)
 
-                    
+    # int stretch_core(object, object, int, int, int, int)
 
-    
+
 import pygame
 
 def version():
-    return 4008007
+    return 5003003
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
@@ -111,19 +110,19 @@ def map(pysrc, pydst, r, g, b, a):
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
     if not isinstance(pysrc, pygame.Surface):
-        raise Exception("map requires a pygame Surface as its first argument.")
+        raise Exception("alpha_munge requires a pygame Surface as its first argument.")
 
     if not isinstance(pydst, pygame.Surface):
-        raise Exception("map requires a pygame Surface as its second argument.")
+        raise Exception("alpha_munge requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("map requires a 24 or 32 bit surface.")
+        raise Exception("alpha_munge requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("map requires both surfaces have the same bitsize.")
+        raise Exception("alpha_munge requires both surfaces have the same bitsize.")
 
     if pydst.get_size() != pysrc.get_size():
-        raise Exception("map requires both surfaces have the same size.")
+        raise Exception("alpha_munge requires both surfaces have the same size.")
 
 
     if pysrc.get_bitsize() == 24:
@@ -138,6 +137,7 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
     pydst.unlock()
     pysrc.unlock()
+
     
 
 
@@ -172,5 +172,24 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 #     pysrc.unlock()
 
 
+# def stretch(pysrc, pydst, rect):
+
+#     if not isinstance(pysrc, pygame.Surface):
+#         raise Exception("stretch requires a pygame Surface as its first argument.")
+
+#     if not isinstance(pydst, pygame.Surface):
+#         raise Exception("stretch requires a pygame Surface as its second argument.")
+
+#     if pydst.get_bitsize() != pysrc.get_bitsize():
+#         raise Exception("stretch requires both surfaces have the same bitsize.")
+
+#     if rect:
+#         x, y, w, h = rect
+#     else:
+#         x, y = 0, 0
+#         w, h = pysrc.get_size()
+
+#     return stretch_core(pysrc, pydst, x, y, w, h)
+    
 
 core_init()

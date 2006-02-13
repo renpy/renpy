@@ -18,14 +18,15 @@ mix = None
 if 'pss' not in disable:
     try:
         import pysdlsound as pss
+        pss.check_version(3)
         atexit.register(pss.quit)
     except:
-        pass
-
+        pss = None
 
 if 'nativemidi' not in disable:
     try:
         import nativemidi as nativemidi
+        atexit.register(nativemidi.stop)
     except:
         pass
 
@@ -53,7 +54,12 @@ if mix:
         if old_midi is not None:
             mix.set_midi(old_midi)
 
-    atexit.register(restore_volumes)
+else:
+
+    def restore_volumes():
+        pass
+
+atexit.register(restore_volumes)
                          
     
 
@@ -167,6 +173,17 @@ class Midi(object):
 # A singleton Midi object that manages hardware midi playback.
 midi = Midi()
 
+class QueueEntry(object):
+    """
+    A queue entry object.
+    """
+
+    def __init__(self, filename, fadein, tight):
+        self.filename = filename
+        self.fadein = fadein
+        self.tight = tight
+
+
 class Channel(object):
 
     def __init__(self, number):
@@ -184,8 +201,7 @@ class Channel(object):
         # The actual volume we imparted onto this channel.
         self.actual_volume = 1.0
 
-        # The filenames that are being queued for playback on this
-        # channel.
+        # The QueueEntries queued for playback on this channel.
         self.queue = [ ]
 
         # If true, we loop the music. This entails re-adding the element to
@@ -292,13 +308,16 @@ class Channel(object):
                 break
 
             # Otherwise, we might be able to enqueue something.
-            top = self.queue[0]
+            topq = self.queue[0]
 
             # We can only play midi if we're not playing PCM.
-            if ismidi(top):
+            if ismidi(topq.filename):
                 if depth != 0:
                     break
 
+            # if 0 <= self.get_pos() <= 1000:
+            #    break
+            
             # At this point, we've decided to try to play
             # top. So let's see how far we can get.
 
@@ -306,9 +325,9 @@ class Channel(object):
             self.queue = self.queue[1:]
 
             try:
-                topf = load(top)
+                topf = load(topq.filename)
 
-                if ismidi(top):
+                if ismidi(topq.filename):
 
                     # If someone else is playing midi, then raise
                     # an error to that effect.
@@ -316,15 +335,15 @@ class Channel(object):
                         raise Exception, "We can only play one midi at a time."                        
 
                     # Play midi.
-                    midi.play(topf, top)
+                    midi.play(topf, topq.filename)
                     self.playing = True
                     self.playing_midi = True
 
                 else:
                     if depth == 0:
-                        pss.play(self.number, topf, top, self.synchro_start)
+                        pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
                     else:
-                        pss.queue(self.number, topf, top)
+                        pss.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight)
 
                     self.playing = True
 
@@ -335,7 +354,8 @@ class Channel(object):
                     return
 
             if self.loop and not self.queue:
-                self.queue.append(top)
+                newq = QueueEntry(topq.filename, 0, topq.tight)
+                self.queue.append(newq)
             else:
                 do_callback = True
 
@@ -343,7 +363,7 @@ class Channel(object):
         if do_callback and self.callback:
             self.callback()
 
-    def dequeue(self):
+    def dequeue(self, even_tight=False):
         """
         Clears any queued music. Doesn't stop the playing music, if
         any, but will prevent looping from occuring.
@@ -356,7 +376,7 @@ class Channel(object):
             return
 
         if not self.playing_midi:
-            pss.dequeue(self.number)
+            pss.dequeue(self.number, even_tight)
 
     def interact(self):
         """
@@ -382,17 +402,18 @@ class Channel(object):
         if self.playing_midi:
             midi.stop()
         else:
-            pss.fadeout(self.number, secs * 1000)
+            pss.fadeout(self.number, int(secs * 1000))
 
 
-    def enqueue(self, filename, loop=True, synchro_start=False):
+    def enqueue(self, filename, loop=True, synchro_start=False, fadein=0, tight=False):
 
         assert filename
 
         if not pcm_ok:
             return
 
-        self.queue.append(filename)
+        qe = QueueEntry(filename, int(fadein * 1000), tight)
+        self.queue.append(qe)
         self.loop = loop
 
         self.wait_stop = synchro_start
@@ -447,7 +468,6 @@ def init():
                 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
-
 
         try:
             pss.init(renpy.config.sound_sample_rate, 2, bufsize)
@@ -635,7 +655,6 @@ def interact():
         return
 
     try:
-
         for c in channels:
             c.interact()
 
@@ -645,3 +664,4 @@ def interact():
 
     renpy.audio.music.interact()
     periodic()
+

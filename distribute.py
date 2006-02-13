@@ -15,6 +15,9 @@ def copy_file(source, dest, license="", dos=True):
     if dest.endswith(".bak"):
         return
 
+    if dest.endswith(".cache"):
+        return
+
     if dest.endswith("~"):
         return
     
@@ -23,12 +26,17 @@ def copy_file(source, dest, license="", dos=True):
     sf = file(source, "rb")
     df = file(dest, "wb")
 
-    df.write(license)
+    if dest.endswith(".py") or dest.endswith(".rpy"):
+        if not dest.endswith("subprocess.py"):
+            df.write(license)
 
     data = sf.read()
-    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".rpy") or dest.endswith(".bat"):
+    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".pyw") or \
+           dest.endswith(".rpy") or dest.endswith(".bat"):
         if dos:
             data = dosify(data)
+            if data.startswith("#!"):
+                data = data.replace("\r\n", "\n\r\n", 1)
 
     df.write(data)
 
@@ -41,7 +49,7 @@ def copy_file(source, dest, license="", dos=True):
 def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
 
     os.makedirs(dest)
-
+    
     for dirpath, dirnames, filenames in os.walk(source):
 
         if "/saves" in dirpath:
@@ -62,7 +70,7 @@ def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
 
             if i == ".svn":
                 continue
-            
+
             os.mkdir(dstrel + "/" + i)
 
         for i in filenames:
@@ -84,7 +92,7 @@ def main():
 
     # Read license.
     lf = file("LICENSE.txt")
-    license = "#!/usr/bin/env python\n\n"
+    license = "#!/usr/bin/env python\n\r\n"
     
     for l in lf:
 
@@ -114,6 +122,7 @@ def main():
         'reference.html',
         'style.css',
         'RELEASING.txt',
+        'EXTENDING.txt',
         ]
 
     # Copy doc
@@ -126,11 +135,14 @@ def main():
 
     copy_tree("common", target + "/common")
 
-    copy_tree("dse", target + "/dse")
+    # copy_tree("dse", target + "/dse")
 
-    copy_tree("extras", target + "/extras")
+    copy_tree("extras", target + "/extras",
+              should_copy = lambda fn : not (fn.endswith(".rpyc") or fn.endswith(".rpyb")) )
     
     copy_tree("scripts", target + "/scripts")
+
+    copy_tree("tools", target + "/tools", license=license)
 
     def cp(x, license="", dos=True):
         copy_file(x, target + "/" + x, dos=dos)
@@ -138,19 +150,19 @@ def main():
     cp("CHANGELOG.txt")
     cp("LICENSE.txt")
     cp("README_RENPY.txt")
-    cp("archive_images.bat")
-    cp("lint.bat")
+    # cp("archive_images.bat")
+    # cp("lint.bat")
     cp("run_game.py", license=license)
-    copy_file("run_game.py", target + "/run_game.pyw", license=license)
-    copy_file("run_game.py", target + "/run_dse.py", license=license)
-    copy_file("run_game.py", target + "/run_dse.pyw", license=license)
+    # copy_file("run_game.py", target + "/run_game.pyw", license=license)
+    # copy_file("run_game.py", target + "/run_dse.py", license=license)
+    # copy_file("run_game.py", target + "/run_dse.pyw", license=license)
     # copy_file("run_game.rpyl", target + "/run_game.rpyl")
     # copy_file("run_dse.rpyl", target + "/run_dse.rpyl")
-    cp("archiver.py", license=license)
+    # cp("archiver.py", license=license)
     # cp("build_exe.py", license=license)
-    cp("add_from.py", license=license)
-    cp("dump_text.py", license=license)
-    cp("renpy-mode.el")
+    # cp("add_from.py", license=license)
+    # cp("dump_text.py", license=license)
+    # cp("renpy-mode.el")
     
     os.mkdir(target + "/module")
 
@@ -174,8 +186,6 @@ def main():
         "rwobject.c",
         "renpy.h",
         "setup.py",
-        "setup_mac.py",
-        "setup_win32.py",
         "winmixer.c",
         "winmixer.pyx",
         ]

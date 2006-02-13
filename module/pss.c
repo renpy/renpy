@@ -90,12 +90,24 @@ struct Channel {
 
     /* The name of the playing music. */
     PyObject *playing_name;
+
+    /* The number of ms to take to fade in the playing sample. */
+    int playing_fadein;
+
+    /* Is the playing sample tight? */
+    int playing_tight;
     
     /* The queued up sample. */
     Sound_Sample *queued;    
 
     /* The name of the queued up sample. */
     PyObject *queued_name;
+
+    /* The number of ms to take to fade in the queued sample. */
+    int queued_fadein;
+
+    /* Is the queued sample tight? */
+    int queued_tight;
     
     /* Is this channel paused? */
     int paused;
@@ -126,7 +138,7 @@ struct Channel {
 
     /* The change in fade_vol for each step. */
     int fade_delta;
-
+    
     /* The number of bytes in which we'll stop. */
     int stop_bytes;
 
@@ -154,14 +166,31 @@ static int bytes_to_ms(int bytes) {
     return ((long long) bytes) * 1000 / (audio_spec.freq * audio_spec.channels * 2);
 }
 
-static void start_sample(struct Channel* c) {
+static void start_sample(struct Channel* c, int reset_fade) {
+    int fade_steps;
+
     if (!c) return;
 
     c->decoded = 0;
     c->last = 0;
     c->pos = 0;
-    c->fade_step_len = 0;
-    c->stop_bytes = -1;
+
+    if (reset_fade) {
+        
+        if (c->playing_fadein == 0) {
+            c->fade_step_len = 0;
+        } else {
+            fade_steps = c->volume;
+            c->fade_delta = 1;
+            c->fade_off = 0;
+            c->fade_vol = 0;
+        
+            c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
+            c->fade_step_len &= ~0x7; // Even sample.
+        }
+
+        c->stop_bytes = -1;
+    } 
 }
 
 
@@ -183,6 +212,35 @@ static void free_sample(Sound_Sample *ss) {
     Sound_FreeSample(ss);
 }
 
+// Actually mixes the audio.
+static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
+ 
+    // SDL_MixAudio may not work when length % 16 != 0.
+    if ((length & 0x0f) == 0) {
+        SDL_MixAudio(dst, src, length, volume);
+    } else {
+        int i;
+        Uint8 copy[16];
+
+        // This copy is made to ensure we only mix the overlap once.
+        for (i = 0; i < 16; i++) {
+            copy[i] = dst[length - 16 + i];
+        }
+
+        // Mix the audio once.
+        SDL_MixAudio(dst, src, length, volume);
+        
+        // Copy back the overlap.
+        for (i = 0; i < 16; i++) {
+            dst[length - 16 + i] = copy[i];
+        }
+
+        // Mix the last 16 bytes again.
+        SDL_MixAudio(&dst[length - 16], &src[length - 16], 16, volume);
+
+    }    
+}
+
 // Mixes the audio, while performing fading.
 static void fade_mixaudio(struct Channel *c,
                           Uint8 *dst, Uint8 *src, int length) {
@@ -191,14 +249,14 @@ static void fade_mixaudio(struct Channel *c,
 
         // No fade case.
         if (c->fade_step_len == 0) {
-            SDL_MixAudio(dst, src, length, c->volume);
+            mixaudio(dst, src, length, c->volume);
             return;
         }
-        
+
         // Fading, but we have some space left in the current step.
         if (c->fade_off < c->fade_step_len) {
             int l = min(c->fade_step_len - c->fade_off, length);
-            SDL_MixAudio(dst, src, l, c->fade_vol);
+            mixaudio(dst, src, l, c->fade_vol);
 
             length -= l;
             dst += l;
@@ -239,7 +297,7 @@ static void post_event(struct Channel *c) {
 
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
-
+    
     for (channel = 0; channel < NUM_CHANNELS; channel++) {
 
         int mixed = 0;
@@ -252,9 +310,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         if (c->paused) {
             continue;
         }
-        
-        while (mixed < length && c->playing) {
 
+        while (mixed < length && c->playing) {
             int mixleft = length - mixed;
             int bufleft = c->decoded - c->last;
 
@@ -264,7 +321,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 if (c->stop_bytes != -1)
                     bytes = min(c->stop_bytes, bytes);
-                
+
                 fade_mixaudio(c, &stream[mixed],
                               &( ((Uint8*) c->playing->buffer) [c->last]),
                               bytes);
@@ -285,6 +342,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
             // EOF or ERROR -- Skip to the next sample.
             if (c->stop_bytes == 0 || c->playing->flags & (SOUND_SAMPLEFLAG_ERROR | SOUND_SAMPLEFLAG_EOF)) {
+                int old_tight = c->playing_tight;
 
                 post_event(c);
 
@@ -293,11 +351,15 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 c->playing = c->queued;
                 c->playing_name = c->queued_name;
-
+                c->playing_fadein = c->queued_fadein;
+                c->playing_tight = c->queued_tight;
+                
                 c->queued = NULL;
                 c->queued_name = NULL;
+                c->queued_fadein = 0;
+                c->queued_tight = 0;
                 
-                start_sample(c);
+                start_sample(c, ! old_tight);
                 update_pause();
                 
                 continue;                
@@ -344,7 +406,7 @@ static Sound_Sample *load_sample(SDL_RWops *rw, const char *ext) {
 }
 
     
-void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int paused) {
+void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, int paused) {
 
     BEGIN();
     
@@ -363,6 +425,7 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int p
         c->playing = NULL;
         decref(c->playing_name);
         c->playing_name = NULL;
+        c->playing_tight = 0;
     }
         
     if (c->queued) {
@@ -370,6 +433,7 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int p
         c->queued = NULL;
         decref(c->queued_name);
         c->queued_name = NULL;
+        c->queued_tight = 0;
     }
         
     /* Allocate playing sample. */
@@ -384,17 +448,19 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int p
 
     incref(name);
     c->playing_name = name;
+
+    c->playing_fadein = fadein;
+    c->playing_tight = tight;
     
     c->paused = paused;
-    start_sample(c);
-    
+    start_sample(c, 1);    
     update_pause();
         
     EXIT();
     error(SUCCESS);
 }
 
-void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
+void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight) {
 
     BEGIN();
     
@@ -411,7 +477,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
         EXIT();
-        PSS_play(channel, rw, ext, name, 0);
+        PSS_play(channel, rw, ext, name, fadein, tight, 0);
         return;            
     }
     
@@ -422,6 +488,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
         c->queued = NULL;
         decref(c->queued_name);
         c->queued_name = NULL;
+        c->queued_tight = 0;
     }
         
     /* Allocate queued sample. */
@@ -435,6 +502,8 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name) {
 
     incref(name);
     c->queued_name = name;
+    c->queued_fadein = fadein;
+    c->queued_tight = tight;
     
     EXIT();
     error(SUCCESS);
@@ -488,8 +557,11 @@ void PSS_stop(int channel) {
  * This dequeues the queued sound from the supplied channel, if
  * such a sound is queued. This does nothing to the playing
  * sound.
+ *
+ * This does nothing if the playing sound is tight, ever_tight is
+ * false.
  */
-void PSS_dequeue(int channel) {
+void PSS_dequeue(int channel, int even_tight) {
     BEGIN();
 
     struct Channel *c;
@@ -502,12 +574,16 @@ void PSS_dequeue(int channel) {
 
     ENTER();
 
-    if (c->queued) {
+    if (c->queued && (! c->playing_tight || even_tight)) {
         free_sample(c->queued);
         c->queued = NULL;
         decref(c->queued_name);
         c->queued_name = NULL;
+    } else {
+        c->queued_tight = 0;
     }
+
+
     
     EXIT();    
     error(SUCCESS);
@@ -605,7 +681,12 @@ void PSS_fadeout(int channel, int ms) {
     c->fade_step_len &= ~0x7; // Even sample.
 
     c->stop_bytes = ms_to_bytes(ms);
+    c->queued_tight = 0;
 
+    if (!c->queued) {
+        c->playing_tight = 0;
+    }
+    
     EXIT();    
 
     error(SUCCESS);
@@ -758,7 +839,6 @@ float PSS_get_volume(int channel) {
  * sample buffer size.
  */
 void PSS_init(int freq, int stereo, int samples) {
-
     int i;
 
     if (initialized) {

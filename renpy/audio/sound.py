@@ -5,23 +5,35 @@
 
 import renpy
 
-def play(filename, channel=0, fadeout=0):
+def play(filename, channel=0, fadeout=0, fadein=0, tight=False):
     """
     Plays the named file once on the given channel. This will cause any
     playing sound effect to be stopped (after the given fadeout number of
     seconds, if necessary), and the new sound to be played in its
-    place.
+    place. The sound is faded in for the given number of seconds.
 
     The filename may be that of a file in an archive.
+
+    If tight is True, then a fadeout of this sound will continue into
+    the next-queued sound.
     """
 
     if filename is None:
         return
 
     stop(channel=channel, fadeout=fadeout)
-    queue(filename, channel=channel, clear_queue=True)
 
-def queue(filename, channel=0, clear_queue=True):
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        c.dequeue()
+        c.enqueue(filename, loop=False, fadein=fadein, tight=tight)
+    except:
+        if renpy.config.debug_sound:
+            raise
+    
+
+
+def queue(filename, channel=0, clear_queue=True, fadein=0, tight=False):
     """
     This causes the name file to be queued to be played on the given
     channel.  If clear_queue is True, the queue will be cleared before
@@ -36,9 +48,9 @@ def queue(filename, channel=0, clear_queue=True):
         c = renpy.audio.audio.get_channel(channel)
 
         if clear_queue:
-            c.dequeue()
+            c.dequeue(True)
 
-        c.enqueue(filename, loop=False)
+        c.enqueue(filename, loop=False, fadein=fadein, tight=tight)
 
     except:
         if renpy.config.debug_sound:
@@ -57,7 +69,7 @@ def stop(channel=0, fadeout=0):
     try:        
         c = renpy.audio.audio.get_channel(channel)
         c.dequeue()
-        c.fadeout(int(fadeout * 1000))
+        c.fadeout(fadeout)
     except:
         if renpy.config.debug_sound:
             raise
