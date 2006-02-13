@@ -26,6 +26,7 @@ if 'pss' not in disable:
 if 'nativemidi' not in disable:
     try:
         import nativemidi as nativemidi
+        atexit.register(nativemidi.stop)
     except:
         pass
 
