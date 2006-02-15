@@ -110,55 +110,51 @@ else:
 
         return pygame.transform.scale(s, size)
 
+# def slow_endian_order(shifts, masks, r, g, b, a):
 
+#     has_alpha = masks[3]
 
+#     if not has_alpha:
 
-def slow_endian_order(shifts, masks, r, g, b, a):
+#         l = zip(shifts, (r, g, b))
+#         l.sort()
 
-    has_alpha = masks[3]
+#         if sys.byteorder == 'big':
+#             l.reverse()
 
-    if not has_alpha:
-
-        l = zip(shifts, (r, g, b))
-        l.sort()
-
-        if sys.byteorder == 'big':
-            l.reverse()
-
-        return [ j for i, j in l] + [ a ]
+#         return [ j for i, j in l] + [ a ]
 
     
-    l = zip(shifts, (r, g, b, a))
-    l.sort()
+#     l = zip(shifts, (r, g, b, a))
+#     l.sort()
 
-    if sys.byteorder == 'big':
-        l.reverse()
+#     if sys.byteorder == 'big':
+#         l.reverse()
 
-    return [ j for i, j in l]
+#     return [ j for i, j in l]
 
     
-endian_order_cache = { }
+# endian_order_cache = { }
 
 
-def endian_order(src, r, g, b, a):
-    """
-    Returns the four arguments, in endian-order.
-    """
+# def endian_order(src, r, g, b, a):
+#     """
+#     Returns the four arguments, in endian-order.
+#     """
 
-    shifts = src.get_shifts()
+#     shifts = src.get_shifts()
 
-    try:
-        func = endian_order_cache[shifts]
+#     try:
+#         func = endian_order_cache[shifts]
 
-    except KeyError:
-        masks = src.get_masks()
-        order = slow_endian_order(shifts, masks, 'r', 'g', 'b', 'a')
-        func = eval( "lambda r, g, b, a : (" + ", ".join(order) + ")")
-        endian_order_cache[shifts] = func
+#     except KeyError:
+#         masks = src.get_masks()
+#         order = slow_endian_order(shifts, masks, 'r', 'g', 'b', 'a')
+#         func = eval( "lambda r, g, b, a : (" + ", ".join(order) + ")")
+#         endian_order_cache[shifts] = func
 
-    return func(r, g, b, a)
+#     return func(r, g, b, a)
         
-    
 
 if version >= 4008005:
 
@@ -182,6 +178,34 @@ else:
     can_map = False
 
 
+# Okay, what we have here are a pair of tables mapping masks to byte offsets
+# for 24 and 32 bpp modes. We represent 0xff000000 as positive and negative
+# numbers so that it doesn't yield a warning, and so that it works on
+# 32 and 64 bit platforms.
+if sys.byteorder == 'big':
+    bo24 = { 255 : 2, 65280 : 1, 16711680 : 0, }
+    bo32 = { 255 : 3, 65280 : 2, 16711680 : 1, 4278190080 : 0, -16777216 : 0, }
+else:
+    bo24 = { 255 : 0, 65280 : 1, 16711680 : 2, }
+    bo32 = { 255 : 0, 65280 : 1, 16711680 : 2, 4278190080 : 3, -16777216 : 3, }
+
+
+def byte_offset(src):
+    """
+    Given the surface src, returns a 4-tuple giving the byte offsets
+    for the red, green, blue, and alpha components of the pixels in
+    the surface. If a component doesn't exist, None is returned.
+    """
+
+    if src.get_bytesize() == 3:
+        bo = bo24
+    else:
+        bo = bo32
+
+    return [ bo.get(i, None) for i in src.get_masks() ]
+
+
+
 if version >= 4008007:
 
     can_munge = True
@@ -195,10 +219,11 @@ if version >= 4008007:
         if src.get_size() != dst.get_size():
             return
 
-        red = list(endian_order(src, 1, 2, 3, 4)).index(1)
-        alpha = list(endian_order(dst, 1, 2, 3, 4)).index(4)
+        red = byte_offset(src)[0]
+        alpha = byte_offset(dst)[3]
 
-        _renpy.alpha_munge(src, dst, red, alpha, amap)        
+        if red is not None and alpha is not None:
+            _renpy.alpha_munge(src, dst, red, alpha, amap)        
 
 else:
 
