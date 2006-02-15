@@ -732,7 +732,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
         for tag, time, anim, d in new.scene_list:
 
             if tag is None or tag not in tags:
-                newsl.append((tag, time, d))
+                newsl.append((tag, time, anim, d))
                 continue
 
             oldpos = position(tags[tag])

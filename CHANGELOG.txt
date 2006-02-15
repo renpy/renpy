@@ -4,6 +4,9 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.2
 -------------------
 
+Fixed a bug in the move transition that manifests itself if the move
+transition is used while a transient is on the screen.
+
 Fixed a bug that prevented ImageDissolves from working correctly on
 big-ending platforms, like PowerPC-based Macs.
 
