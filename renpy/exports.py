@@ -428,6 +428,10 @@ def display_say(who, what, who_style='say_label',
         
         return
 
+    # If we're just after a rollback, disable slow.
+    if renpy.game.after_rollback:
+        slow = False
+
     what = what_prefix + what + what_suffix
 
     if not interact:

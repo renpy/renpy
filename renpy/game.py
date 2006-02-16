@@ -55,6 +55,9 @@ seen_session = { }
 # The set of statements we've ever seen.
 seen_ever = { }
 
+# True if we're in the first interaction after a rollback.
+after_rollback = False
+
 # The class that's used to hold the persistent data.
 class Persistent(object):
 

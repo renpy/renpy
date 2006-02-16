@@ -4,6 +4,10 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.2
 -------------------
 
+Ren'Py now displays dialogue shown via a rollback as quickly as
+possible. This is a change from the previous behavior, which was to
+show such dialogue at the speed set by the "Text Speed" preference.
+
 Fixed a bug in the move transition that manifests itself if the move
 transition is used while a transient is on the screen.
 

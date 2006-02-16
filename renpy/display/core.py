@@ -911,6 +911,7 @@ class Interface(object):
         # These things can be done once per interaction.
 
         try:
+            renpy.game.after_rollback = False
             
             for i in renpy.config.start_interact_callbacks:
                 i()

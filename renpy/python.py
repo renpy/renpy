@@ -686,6 +686,9 @@ class RollbackLog(renpy.object.Object):
         if force:
             rng.reset()
 
+        # Flag that we're in the transition immediately after a rollback.
+        renpy.game.after_rollback = True
+
         # Restart the game with the new state.
         raise renpy.game.RestartException(renpy.game.contexts[:], label)
 
