@@ -40,7 +40,7 @@ def start(_gamedir):
 
     try:
         pygame.macosx.init()
-    except (ImportError, IOError):
+    except:
         pass
 
     pygame.display.init()
