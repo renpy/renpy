@@ -42,7 +42,7 @@ init:
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
 
-    $ e = Character('Eileen', color=(200, 255, 200, 255))    
+    $ e = Character('Eileen', color=(200, 255, 200, 255))
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.

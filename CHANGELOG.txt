@@ -4,8 +4,29 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.2
 -------------------
 
-[doc] Refactored display_say.
-todo: two_window_say.
+The renpy.display_say function was refactored into two functions,
+renpy.display_say and renpy.show_display_say. In it's original
+incarnation, display_say had been a simple function responsible for
+showing dialogue to the user. Over the past few months, it has
+accreted logic for click-to-continue and for slow text, among other
+features. This made it hard to change the behavior of display_say, as
+a function overriding it would have to implement all that logic
+itself. 
+
+To fix this, we've created a new function, renpy.show_display_say, and
+made Character and display_say take a new parameter,
+show_function. This function is now responsible for actually placing
+widgets on the screen. It has a reasonably well-defined interface, to 
+allow it to be overridden by user code in a way in which display_say
+is no longer practically able to be. [doc]
+
++++
+The two_window_say extra has been rewritten to take advantage of this
+refactoring. To update, you'll need to copy over the new copy of
+two_window_say. You'll then need to change Character objects with
+the argument "function=two_window_say", to instead have the argument
+"show_function=two_window_say". In return for this, features such as
+pauses in text and slow text now work with two_window_say.
 
 Ren'Py now displays dialogue shown via a rollback as quickly as
 possible. This is a change from the previous behavior, which was to
@@ -16,6 +37,9 @@ transition is used while a transient is on the screen.
 
 Fixed a bug that prevented ImageDissolves from working correctly on
 big-ending platforms, like PowerPC-based Macs.
+
+Fixed a bug that caused crashes with a presplash image on non-mac
+computers.
 
 New in Ren'Py 5.4.1
 -------------------
