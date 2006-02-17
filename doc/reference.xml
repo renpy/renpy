@@ -1,0 +1,4442 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doc>
+<title>The Ren'Py Reference Manual</title>
+
+<p>
+<b>Last Updated:</b> <!-- date -->
+</p>
+
+<toc/>
+
+<p>
+Ren'Py is a programming language and runtime, intended to ease
+the creation of visual-novel type games. It contains features
+that make it easy to display thoughts, dialogue, and menus; to
+display images to the user; to write game logic; and to support
+the saving and loading of games. Ren'Py tries to be like an
+executable script, allowing you to get a working game without much
+more effort than is required to type the game script into the
+computer.
+
+</p><p>
+
+Ren'Py is implemented on top of python, and that python heritage
+shows through in many places. Many Ren'Py statements allow
+python expressions to be used, and there are also Ren'Py
+statements that allow for the execution of arbitrary python
+code. Many of the less-used features of Ren'Py are exposed to
+the user by way of python. By only requiring use of the simplest
+features of python, it's hoped that Ren'Py will be usable by
+all game authors.
+
+</p>
+
+<h3>A Simple Ren'Py Script</h3>
+
+<p>
+
+The following is a simple but complete Ren'Py script. The colors
+are added to make it easier to read, and aren't part of the
+script proper.
+
+</p>
+
+<example>
+init:
+    image bg whitehouse = Image("whitehouse.jpg")
+    image eileen happy = Image("eileen_happy.png")
+    image eileen upset = Image("eileen_upset.png")
+
+label start:
+    $ e = Character('Eileen')
+
+    scene bg whitehouse
+    show eileen happy
+
+    e "I'm standing in front of the White House."
+
+    show eileen upset
+
+    e "I once wanted to go on a tour of the West Wing, but you have to
+       know somebody to get in."
+
+    "For some reason, she really seems upset about this."
+
+    e "I considered sneaking in, but that probably isn't a good idea."
+</example>
+
+<p>
+This example, shows many aspects of a Ren'Py script. The first
+four lines of the script serve to load in three images. After
+the label indicating the start of the game, a character is
+declared. The script then proceeds to display a picture of a
+character on top of a background image, and to have the
+character say two lines of dialogue, changing her picture in
+between. The POV character then thinks a line of dialogue,
+before the character says her final line.
+
+</p><p>
+
+We'll go into detail into what each of the statements here does
+over the course of this tutorial. For now, however let me just
+point out that the first 6 statements initialize the game, while
+the last 7 (starting with "scene") show images and display
+dialogue. As such, the bulk of a game is more like the last 7
+then the first 6.
+
+</p><p>
+
+Of particular note is that a keyword isn't required to introduce
+dialogue. This allows visual novels consisting mostly of
+dialogue to be expressed in a concise form.
+
+</p>
+
+<h3>The Structure of a Ren'Py Script</h3>
+
+<p>
+
+The largest division of a Ren'Py script is into files. By
+default, Ren'Py reads the script from all files ending in .rpy
+found in the game underneath the directory in which Ren'Py is
+installed. These script files may be read in any order, and all
+of them together make up a Ren'Py script.
+
+</p><p>
+
+Each of these files is divided into a series of <def>logical
+line</def>s. The first logical line of a file begins at the start of a
+file, and another logical line begins after each logical line
+ends, until the end of the file is reached. By default, a
+logical line is terminated by the first newline
+encountered. However, a line will not terminate if any of the
+following are true:
+
+</p>
+
+<ul>
+<li>
+The newline is immediately preceded by a backslash. In this
+case, the backslash is removed, and the newline is
+ignored.
+</li>
+
+<li>
+An opening parenthesis, bracket, or brace has been encountered
+without encountering the corresponding closing character.
+</li>
+
+<li>
+The newline occurs within a string.
+</li>
+</ul>
+
+<p>
+
+These rules should be the same as for Python.
+
+</p><p>
+
+Ren'Py also supports <def>comment</def>s. A comment begins with a hash mark
+that is not contained within a string, and continues to, but
+does not include, the next newline character. Some examples are:
+
+</p>
+
+<example>
+# This line contains only a comment.
+scene bg whitehouse  # This line contains a statement as well.
+</example>
+
+
+<p>
+
+If, after eliminating comments, a logical line is empty, that
+logical line is ignored.
+
+</p><p>
+
+Logical lines are then combined into <def>block</def>s. Two
+logical lines are in the same block if the lines have the same
+indentation preceding them, and no logical line with a lesser
+amount of indentation occurs between the two lines. In the
+following example:
+</p>
+
+<example>
+line 1
+    line a
+    line b
+line 2
+    line c
+    line d
+</example>
+
+<p>
+
+There are three blocks. One block contains lines 1 and 2,
+another lines a and b, and the third contains lines c and
+d. This example can also serve to illustrate the concept of a
+<def>block associated with a line</def>. A block is associated
+with a line if the block starts on the next logical line
+following the line. For example, the block containing lines a
+and b is associated with line 1.
+
+
+</p><p>
+
+There are three kinds of blocks in an Ren'Py program. The most
+common is a block containing Ren'Py statements. Other blocks may
+contain menu entries or python code. The top-level block (the
+one that contains the first line of a file) is always a block of
+Ren'Py statements.
+
+</p>
+
+<h3>Lexical Structure of Statements</h3>
+
+<p>
+Before we can discuss statements, however, we must first discuss
+the tokens statements are built up out of. So here's a short
+list of all the tokens we use.
+
+</p><p>
+
+<def>Keyword</def>s are words that appear in the source
+code. They're used to introduce a statement, or to delimit parts
+of a statement. You'll see keywords throughout the descriptions
+of statements. In grammar rules, keywords are in quotes. The
+keywords are:
+
+</p>
+
+<pre>
+at
+call
+hide
+if
+image
+init
+jump
+menu
+onlayer
+python
+return
+scene
+set
+show
+with
+while
+</pre>
+
+<p>
+
+A <def>name</def>s consist of an alphabetic character or number,
+followed by zero or more alphabetic characters or underscores,
+so long as the string isn't a keyword. For our purpose, unicode
+characters between 00a0 and fffd are considered to be alphabetic
+characters.
+
+</p><p>
+
+An <def>image_name</def> is a list of one or more names,
+separated by a space.
+
+</p><p>
+
+A <def>string</def> begins with a " or a ', and continues until
+a matching unescaped " or ' is reached. Runs of whitespace
+inside a string are collapsed into a single space character,
+allowing strings to span multiple lines. The \ character is used
+inside the string to escape special characters, such as
+whitespace, quotes, and (as \n) to include a newline.
+
+</p><p>
+
+A <def>simple_expression</def> is a python expression that
+starts with a name, a string, or any python expression in
+parenthesis. This may be followed by any number of the
+following:
+
+</p>
+
+<ul>
+<li>A dot followed by a name.</li>
+<li>A parenthesized python expression.</li>
+</ul>
+
+<p>
+
+In general, simple expressions are strings, names, or method
+calls. They are not expected to contain operators.
+
+</p><p>
+
+A <def>python_expression</def> is an arbitrary python
+expression that may not include a colon. These expressions are
+generally used to express the conditions in the if and while
+statements.
+
+</p>
+
+<h3>Grammar Rules</h3>
+
+<p>
+We will be giving grammar rules for some of the statements. In
+these rules, a word in quotes means that that word is literally
+expected. Parenthesis are used to group things together, but
+they don't correspond to anything in the source code. Star,
+question mark, and plus are used to indicate that the token or
+group they are to the right of can occur zero or more, zero or
+one, or one or more times, respectively.
+
+</p><p>
+
+If we give a name for the rule, it will be separated from the
+body of the rule with a crude ascii-art arrow (->).
+
+</p>
+
+
+<h3>Dialogue: The Say Statement</h3>
+
+<p>
+As the bulk of the content of a visual novel is presented to the
+user in the form of dialogue or thoughts, it's important that
+the ability to display text to the user be as convenient as
+possible. In Ren'Py, both actions are done through the say
+statement. The say statement doesn't require a keyword to
+introduce it. Instead, it consists of either a single string, or
+a simple_expression followed by a string.
+</p>
+
+<rule>say_statement -> ( simple_expression )? string ( "with" simple_expression )?</rule>
+
+<p>
+We can distinguish two forms of the say statement, depending on
+if the simple_expression is provided. The single-argument form
+of say consists only of a single string. This form causes the
+string to be displayed to the user without any label as to who
+is saying it. Conventionally, this is used to indicate to the
+user thoughts or narration.
+</p>
+
+<example>
+"I moved to my left, and she moved to her right."
+
+"So we were still blocking each other's path."
+
+"I then moved to my right, and at the same time she moved to her
+ left."
+
+"We could be at this all day."
+</example>
+
+<p>
+The two-argument form of the say statement first evaluates the
+expression to see what its value is. If the expression returns a
+string, that string is used as a character name to indicate who
+is saying the dialogue. If it returns an object, that object is
+responsible for displaying the dialogue to the user.
+
+</p><p>
+
+The most common type of object used in a dialogue statement is a
+Character object. Character objects have associated with them a
+name and a color. When a character object is asked to display a
+line of dialogue, it labels it with the character name in the
+character's signature color. In general, strings are used to
+indicate the names of lesser characters or ones who we have not
+discovered the name of yet, while character objects are used to
+indicate important characters.
+
+</p>
+
+<example>
+"Girl" "Hi, my name is Eileen."
+
+e "Starting today, I'll be living here."
+</example>
+
+<p>
+Finally, the string in a dialogue is subject to interpolation of
+variables. A string variable can be interpolated with %(name)s,
+while a number requires %(name)d. The interpolated value is quoted
+so that a text tag cannot be interpolated in by mistake. For example:
+</p>
+
+<example>
+e "I know all about you."
+
+e "I know that you're %(player_age)d years old, and your zodiac
+   sign is %(player_sign)s."
+</example>
+
+
+<p>
+When the first object is a character object, that character object
+is given given complete control over how text is displated. As an
+example of this, the standard library includes a character object
+called "centered", which displays the text centered on the screen,
+without any background window.
+</p>
+
+<example>
+centered "American Bishoujo presents..."
+centered "The Ren'Py Demo Game"
+</example>
+
+<p>
+The way this is done is that the character object is called with
+the string to display. The character object doesn't actually have to
+be a Character object, it can be any python callable. It's responsible
+for displaying the dialogue to the user. In the case of a thought,
+the contents of the narrator variable is used to display the text to
+the user.
+</p>
+
+<var name="narrator" value="...">
+A function that expects a single string as input, that is called to
+display narration to the user.
+</var>
+
+<p>
+The say statement also takes a with clause that is used to control
+the transition that is used to introduce the dialogue or
+thought. Please see the section on transitions for details on how
+to use the with clause.
+</p>
+
+<h3>Menus</h3>
+
+<p>
+Menus present a user with a list of choices that can be made. In a
+visual novel game, menus are the primary means by which the user
+can influence the game's story.
+</p>
+
+<rule>menu_statement -> "menu" ( name )? ":"</rule>
+
+<p>
+A menu statement consists simply of the word menu, an optional
+name, and a colon. If the name is supplied it's treated as a
+label for this menu statement, as if the menu statement was
+preceded by a label statement. (See the section on control flow
+for details about the label statement.)
+
+</p><p>
+
+The menu statement must have a block associated with it. This
+block must contain one or more menuitems in it. There are four
+kinds of menuitems that can be contained in a menu block.
+
+</p>
+
+<rule>caption_menuitem -> string</rule>
+
+<p>
+
+The first kind of menuitem is simply a string. This string is
+placed into a menu as a caption that cannot be selected. In
+general, captions are used to indicate what the menu is for,
+especially when it is not clear from the choices.
+
+</p>
+
+<rule>choice_menuitem -> string ( "if" python_expression )? ":"</rule>
+
+<p>
+The second kind of menuitem gives a choice the user can
+make. Each choice must have a block of Ren'Py statements
+associated with the choice. If the choice is selected by the
+user, then block of statements associated with the choice
+is executed. A choice may also have an optional if clause that
+includes a python expression. This clause gives a condition that
+must be satisfied for the choice to be presented to the
+user. The terminating colon is what indicates that this menuitem
+is a choice.
+</p>
+
+<rule>set_menuitem -> "set" simple_expression</rule>
+
+<p>
+The third kind of menuitem gives an expression that yields a
+set. There may only be one of this kind of menuitem per menu. If
+present, it's used to filter the list of choices shown to the
+user.
+
+</p>
+
+<rule>with_menuitem -> "with" simple_expression</rule>
+
+<p>
+
+The final kind of menuitem is a with clause. This is used to
+specify the transition that introduces this menu. Please see the
+section on transitions for a discussion of this.
+
+</p><p>
+
+When a menu is to be shown to the user, the first thing that
+happens is that a list of captions and choices is built up from
+the menuitems associated with the menu. Each of the choices that
+has an expression associated with it has that expression
+evaluated, and if it evaluates to false, that choice is removed
+from the list. Finally, if a set is present, it is checked to
+see if the text of a choice is in the set. If the text is found,
+the choice is removed from the list.
+
+</p><p>
+
+If no choices survive this process, the menu is not displayed
+and execution continues with the next statement. Otherwise, the
+menu is presented to the user. When the user makes a choice, the
+text of that choice is added to the set (if one is present), and
+execution continues with the block associated with the
+choice. When that block finishes, execution continues with the
+statement after the menu.
+
+</p><p>
+
+Here's a fairly complicated menu that uses all three kinds of
+menuitems. Most menus in actual games will not be this
+complicated.
+
+</p>
+
+<example>
+menu what_to_do:
+
+    # Ensure that we can only do a given thing once.
+    set what_to_do_set
+
+    "What should we do today?"
+
+    "Go to the movies.":
+        "We went to the movies."
+
+    "Go shopping.":
+        "We went shopping, and the girls bought swimsuits."
+        $ have_swimsuits = True
+
+    "Go to the beach." if have_swimsuits:
+        "We went to the beach together. I got to see the girls in their
+         new swimsuits."
+</example>
+
+<p>
+This menu will only allow a given activity to be chosen once,
+and will allow the user to chose to go to the beach only if
+the user has chosen to go shopping.
+</p>
+
+<var name="menu" value="...">
+The menu variable contains the function that is called to display
+the menu to the user. By default, this variable contains a
+function that passes its only argument to renpy.display_menu. You
+can read the documentation of that function to find out what menu
+expects as input.
+</var>
+
+<var name="predict_menu">
+A function that is called with no arguments sometime before a menu is
+displayed. It should return a list of widgets, which will then have
+images they use preloaded.
+</var>
+
+<h3>Displaying Images</h3>
+
+<p>
+Without the ability to display images to the user, a visual
+novel would be a text adventure.  Ren'Py controls image display
+by using <def>layers</def>, each comprising a list of things to be
+displayed to the user. By default, there are three layers. The
+master layer is manipulated using the various image display
+statement defined in this section. The transient layer is used to
+display ui widgets, like windows containing dialogue and
+menus. Finally, an overlay layer exists to allow things to be
+overlaid on top of the screen.
+</p>
+
+<p>
+Every time an interaction starts (for example, a line of dialogue
+or a menu is displayed), the contents of
+each of the layers is drawn to the screen, with the first being in
+the back and the last being in the front. A number of statements
+manipulate the contents of the master layer. Before we can explain them, however,
+we should first define a few terms.
+</p>
+
+<p>
+An <def>image_name</def> is a space-separated list of names
+that's used to refer to an image. This list of names may not
+include keywords in it. The first element of the image name is
+known as the <def>image tag</def>, and is treated specially.
+</p>
+
+<p>
+A <def>Displayable</def> is a python object implementing an
+interface that allows it to be displayed to the screen. A
+<def>transform</def> is a function that, when applied to a
+Displayable, returns a new Displayable. Transforms are used to
+change the way an image is displayed to the user. A
+<def>transform_list</def> is a comma-separated list of
+transforms. Display lists are applied from left to right.
+</p>
+
+<rule>image_spec -> image_name ( "onlayer" layer) ( "at" transform_list )? ( "with" simple_expression )?</rule>
+
+<p>
+An <def>image_spec</def> is an image name, an optional layer that
+the image will be displayed on or hidden from, an optional at list of
+transformers, and an optional with clause giving a
+transition. The image name is used to specify an image that will
+be shown. The at clause is a list of transformations that are
+applied to that image, which can control things like the placement
+of the image on the screen. The with clause is used to specify the
+transition that the image is being shown or hidden with. It will
+be discussed more in the section on transitions.
+</p>
+
+<rule>image_statement -> "image" image_name "=" python_expression</rule>
+
+<p>
+
+The first display statement is the image statement, which does binds
+an image name with a displayable defining that image. As the list of
+image to name bindings is never saved, the image statement can only
+appear inside of an init block. The argument given here is passed to
+<a href="#">Image</a> in loose mode. Among other things, this means that if the
+argument is a single string, it is interpreted as the filename of an
+image. If another displayable (such as Animation) is given, it is
+passed through unchanged.
+
+</p><p>
+
+An example of image in use is:
+
+</p>
+
+<example>
+init:
+    image eileen happy = "eileen/happy.png"
+    image eileen upset = "eileen/upset.png"
+</example>
+
+<rule>show_statement -> "show" image_spec</rule>
+
+<p>
+
+The next display statement is the show statement, which takes an
+image specifier and displays it on the layer specified, or the
+"master" layer if no layer is given. If an image with the same tag
+as the image given in the spec already exists in the layer, it is
+replaced with the newly displayed Displayable. Otherwise, the new
+one is added to the end of the master layer (that is, closest to
+the user).
+
+</p><p>
+
+If an at list is present, the image is transformed with the at
+list before being added to the master layer.
+
+</p><p>
+
+Automatically replacing an image with the same tag is a useful
+feature that allows characters to change expression without
+having to explicitly hide the old image.
+
+</p>
+
+
+<rule>scene_statement -> "scene" ("onlayer" layer)? ( image_spec )?</rule>
+
+<p>
+The scene statement first clears the layer. If the optional
+image_spec is present, it is shown as if it was shown with the
+show statement. The best use for the image_spec on a scene command
+is show a background for the scene. The layer chosen is the layer
+in the image_Spec if the image spec is present, the layer given in
+the onlayer clause if no image spec is present, and the "master"
+layer otherwise.
+</p>
+
+<p>
+By default, no background is added to the screen. (See
+config.background to change this.) Without such a background,
+Ren'Py will produce odd results if there is not at least one image
+in the scene list that is the full size of the screen. So we
+strongly advise that the scene statement always be used with an
+image, and that image be one that takes up the full width and
+height of the screen.
+</p>
+
+<p>
+We can put together the scene and show statements to get the
+following example:
+</p>
+
+<example>
+scene living_room
+show eileen happy at left
+
+e "I'm feeling happy right now."
+
+show eileen upset at left
+
+e "But sometimes, I can get upset for no good reason."
+</example>
+
+<rule>hide_statement -> "hide" image_spec</rule>
+
+<p>
+The hide statement is used to remove an image from the layer. The
+image spec is parsed for a tag, and any image matching that tag is
+remove from the scene. The at list is ignored (but should be valid
+or omitted), and transitions associated with the image spec are
+run. The onlayer clause in the image spec chooses the layer the
+image is hidden from, with "master" being the default.
+
+</p><p>
+
+Hide is a rarely used display statement. The show statement
+automatically replaces an old image when a character changes
+emotion, and the scene image removes all images when the scene
+changes. Hide is generally only used for when a character leaves
+in the middle of a scene.
+
+</p>
+
+<example>
+e "Well, I'll be going now."
+
+hide eileen
+
+"And with that, she left."
+</example>
+
+
+<p>
+These four statements, along with the library of Displayables
+and transforms provided with Ren'Py, should be enough to render
+most scenes needed in a visual novel type game.
+</p>
+
+<h4>Programmatic Equivalents</h4>
+
+<p>
+Each of the four statements given above has an equivalent python
+function, documented below.
+</p>
+
+<!-- func renpy.image -->
+<!-- func renpy.scene -->
+<!-- func renpy.show -->
+<!-- func renpy.hide -->
+
+<h4>Parameterized Images</h4>
+
+<p>
+Show and scene statements may also take parameterized images. If a
+name of an image is a prefix of the name given in a scene or show
+statement, the rest of the name is considered to be
+parameters. Parameters may be names, but they may also be
+simple_expressions, which includes strings. Parameters are handed
+off to the object that the prefix is defined to, and that object
+is responsible for returning a displayable that can be shown to
+the user.
+</p>
+
+<p>
+An example of this is the pre-defined text displayable, which
+displays text as if it was an image. For example, the following
+code:
+</p>
+
+<example>
+show text "American Bishoujo Presents..."
+</example>
+
+<p>
+Will display the given text as if it was an image. The game will
+not pause while the text is being displayed. Such an image can
+also be processed through an at clause, as in the following code
+which moves the text down from the top of the screen, while
+waiting 10 seconds or until the user makes some input.
+</p>
+
+<example>
+show text "A PyTom Game" \
+        at Move((0.5, 0.0), (0.5, 0.5), 4.0,
+                xanchor='center', yanchor='bottom')
+
+$ renpy.pause(10)
+</example>
+
+<p>
+Please note that parameterized images are replaced in the same way
+that normal images are. (So you can only have one image created
+with text on the screen at a time, without creating a second
+ParameterizedText object.)
+</p>
+
+<h3>Image and Scene Functions</h3>
+
+<p>
+This section includes functions that are useful when defining
+images or composing scenes.
+</p>
+
+<!-- func Image -->
+
+<p>
+The Image function is generally used in conjunction with the image
+statement. For example:
+</p>
+
+<example>
+init:
+    image eileen happy = Image("9a_happy.png")
+    image eileen vhappy = Image("9a_vhappy.png")
+    image eileen concerned = Image("9a_concerned.png")
+</example>
+
+<!-- func ImageReference -->
+
+<!-- func Solid -->
+
+<!-- func Frame -->
+
+<example>
+init:
+    style.window.background = Frame("frame.png", 125, 25)
+</example>
+
+<p>
+Frames are normally used in conjunction with styles, to provide
+the displayable that is the background for a window containing a
+menu or dialogue.
+</p>
+
+<!-- func renpy.ParameterizedText -->
+
+<p>
+This is used to implement the text image. The user may also want
+to instantiate their own ParameterizedText object (in an init
+block) if they want to have more than one bit of text on the
+screen at once, or if they want to change the style (and therefore
+the position) of that text.
+</p>
+
+<example>
+init:
+    image text1 = renpy.ParameterizedText(ypos=0.25)
+
+show text "centered."
+show text1 "1/4 of the way down the screen."
+</example>
+
+
+<h4>Animation Functions</h4>
+
+<p>
+Occasionally, one will want an image that changes while on the
+screen. Ren'Py provides three ways of doing this. The Animation
+function creates an animation from a simple list of images, anim.Blink
+blinks an image in and out, anim.Filmstrip creates an animation from
+an image, and anim.SMAnimation function creates a more complex,
+state-machine controlled animation.
+</p>
+
+<p>
+Animation and motion functions take a parameter, anim_timebase, that
+chooses which timebase is used. The animation timebase, used when
+anim_timebase is True, starts at the
+instant of the first frame from which the tag of the image containing
+this animation has been shown on the screen. This can be used to
+switch between two animations, in a way that ensures they are
+synchronized to the same timebase. The displayable timebase, used when
+anim_timebase=False, starts at the first frame after the displayable
+is shown, and can be used to ensure the entire animation is seen, even
+if an image with the same tag was already on the screen.
+</p>
+
+<!-- func Animation -->
+
+<example>
+init:
+    image animation = Animation("frame_1.png", 0.25,
+                                "frame_2.png", 0.25,
+                                "frame_3.png", 0.25)
+</example>
+
+<!-- func anim.Blink -->
+
+<!-- func anim.Filmstrip -->
+
+<!-- func anim.SMAnimation -->
+
+<!-- func anim.State -->
+
+<!-- func anim.Edge -->
+
+<p>
+We present two examples of this in action. The first shows how one can
+create a character that ocassionally, randomly, performs a 3-frame
+blink about once a minute.
+</p>
+
+<example>
+init:
+    image blinking = anim.SMAnimation("a",
+        anim.State("a", "eyes_open.png"),
+
+        # This edge keeps us showing the eyes open for a second.
+        anim.Edge("a", 1.0, "a", prob=60),
+
+        # This edge causes the eyes to start closing...
+        anim.Edge("a", 0.25, "b"),
+
+        # ..because it brings us here.
+        anim.State("b", "eyes_half.png"),
+
+        # And so on...
+        anim.Edge("b", 0.25, "c"),
+        anim.State("c", "eyes_closed.png"),
+        anim.Edge("c", 0.25, "d"),
+        anim.State("d", "eyes_half.png"),
+
+        # And back to a.
+        anim.Edge("d", 0.5, "a")
+        )
+</example>
+
+<p>
+Remember, State can take a Position, and Edge can take a
+transition. This lets you move things around the screen, dissolve
+images into others, and do all sorts of complicated, unexpected,
+things. (But be careful... not all transitions do what you'd expect
+when used with SMAnimation.)
+</p>
+
+
+<h4>Position and Motion Functions</h4>
+
+<function name="Position" sig="(**properties)">
+
+<p>
+Position, when given position properties as arguments, returns a
+callable that can be passed to the "at" clause of a show or
+scene statement to display the image at the given location. See
+the section below on position properties to get a full
+explanation of how they are used to lay things out, but
+hopefully this example will show how Position can be used:
+</p>
+</function>
+
+<example>
+init:
+    left = Position(xpos=0.0, xanchor='left')
+    center = Position(xpos=0.5, xanchor='center')
+    right = Position(xpos=1.0, xanchor='right')
+
+    top = Position(xpos=0.5, xanchor='center', ypos=0.0,
+                   yanchor='top')
+
+show eileen happy at left
+</example>
+
+<function name="Motion" sig="(function, period, repeat=False, bounce=False, **properties)">
+
+<p>
+Motion, when given the appropriate arguments, returns an object that
+when given as the at clause of an image causes an image to be moved on
+the screen. Function is a function that, when given a number between 0
+and 1, returns two or four values. The first two values are
+interpreted as the xpos and the ypos of the motion. (Please note that
+if these values are floating point numbers, they are interpreted as a
+fraction of the screen. If they are integers, they are interpreted as
+the absolute position of the anchor of the motion.) If four values are
+returned, the third and fourth values are interpreted as an xanchor
+and yanchor.
+</p>
+
+<p>
+Please note that the function may be pickeled, which means that it
+cannot be an inner function or a lambda, but must be a function
+defined in an init block of your script. In general, it's better to
+use a Pan or a Move, rather than defining your own motion.
+</p>
+
+<p>
+Period is the time, in seconds, it takes to complete one cycle of
+a motion. If repeat is True, then the cycle repeats when it finishes,
+if False, the motion stops after one period. If bounce is True, the
+argument to the function goes from 0 to 1 to 0 in a single period, if
+False, it goes from 0 to 1.
+</p>
+
+</function>
+
+<function name="Pan" sig="(startpos, endpos, time, repeat=False, bounce=False, **properties)">
+
+<p>
+
+Pan, when given the appropriate arguments, gives an object that
+can be passed to the at clause of an image to cause the image to
+be panned on the screen. The parameters startpos and endpos are
+tuples, containing the x and y coordinates of the upper-left hand
+corner of the screen relative to the image. Time is the time it
+will take this position to move from startpos to endpos. Repeat
+and bounce are as for Motion.
+
+</p><p>
+
+As the current implementation of Ren'Py is quite limited, there
+are quite a few restrictions that we put on pan. The big one is
+that there always must be a screen's worth of pixels to the
+right and below the start and end positions. Failure to ensure
+this may lead to inconsistent rendering.
+
+</p><p>
+
+Hopefully, an example will demonstrate how Pan is used. For this
+example, assume that the screen is 800 x 600, and that the
+image marspan is 2400 x 600 pixels in size. We want to take 10
+seconds to pan from left to right on the image.
+
+</p>
+
+<example>
+scene marspan at Pan((0, 0), (1600, 0), 10.0)
+</example>
+
+<p>
+Please note that the pan will be immediately displayed, and that
+Ren'Py will not wait for it to complete before moving on to
+the next statement. This may lead to the pan being overlayed
+with text or dialogue. You may want to use a call to renpy.pause
+to delay for the time it will take to complete the pan.
+</p>
+
+<p>
+Finally, also note that when a pan is completed, the image locks
+into the ending position.
+</p>
+
+</function>
+
+<function name="Move" sig="(startpos, endpos, time, repeat=False, bounce=False, **properties)">
+
+<p>
+Move is similar to Pan, insofar as it involves moving
+things. But where Pan moves the screen through an image, Move
+moves an image on the screen. Specifially, move changes the
+position style of an image with time.
+</p>
+
+<p>
+Move takes as parameters a starting position, an ending
+position, the amount of time it takes to move from the starting
+position to the ending position, and extra position
+properties. The positions are given as tuples containing xpos
+and ypos properties. The positions may be integer or floating
+point, but it's not permissable to mix the two. Repeat and
+bounce are as for Motion.
+
+</p>
+
+<p>
+The following example moves a ball from the upper-left to the
+lower-right of the screen, taking 10 seconds to do so.
+</p>
+
+<example>
+show ball at Move((0.0, 0.0), (1.0, 1.0), 10.0,
+                  xanchor="center", yanchor="center")
+</example>
+
+</function>
+
+<p>
+In general, one wants to use Pan when an image is bigger than the
+screen, and Move when it is smaller. Both Pan and Move are special
+cases of Motion.
+</p>
+
+<p>
+anim.SMAnimation can also be used to declare complicated motions. Use
+None instead of an image in States, and supply a move transition
+when moving between states. A SMAnimation so created can be passed in
+to the at clause of an image, allowing it to move things around the
+screen.
+</p>
+
+<p>
+These movement clauses can also be used as transitions, in which case
+they affect the position of a single layer or the entire screen, as
+appropriate.
+</p>
+
+<function name="Zoom" sig="(size, start, end, time, after_child=None, **properties)">
+
+<p>
+    This displayable causes a zoom to take place, using image
+    scaling. The render of this displayable is always of the supplied
+    size. The child displayable is rendered, and a rectangle is
+    cropped out of it. This rectangle is interpolated between the
+    start and end rectangles. The rectangle is then scaled to the
+    supplied size. The zoom will take time seconds, after which it
+    will show the end rectangle, unless an after_child is
+    given.
+</p><p>
+    The algorithm used for scaling does not perform any
+    interpolation or other smoothing.
+</p>
+
+<p>
+        <span class="param">size</span> - The size that the rectangle is scaled to, a
+        (width, height) tuple.
+</p><p>
+        <span class="param">start</span> - The start rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+</p><p>
+        <span class="param">end</span> - The end rectangle, an (xoffset, yoffset,
+        width, height) tuple.
+</p><p>
+        <span class="param">time</span> - The amount of time it will take to
+        interpolate from the start to the end rectange.
+</p><p>
+        <span class="param">after_child</span> - If present, a second child
+        widget. This displayable will be rendered after the zoom
+        completes. Use this to snap to a sharp displayable after
+        the zoom is done.
+</p>
+
+</function>
+
+
+<h4>Particle Motion</h4>
+
+<p>
+Ren'Py also supports particle motion. Particle motion is the motion of
+many particles on the screen at once, with particles having a lifespan
+that is shorter than a single interaction. Particle motion can be used
+to have multiple things moving on the screen at once, such as snow,
+cherry blossoms, bubbles, fireflies, and more. There are two
+interfaces we've provided for the particle motion engine. The
+SnowBlossom function is a convenience constructor for the most common
+cases of linearly falling or rising particles, while the Particles
+function gives complete control over the particle engine.
+</p>
+
+<p>
+SnowBlossom is a function that can be used for the common case of
+linearly rising or falling particles. Some cases in which it can be
+used are for falling snow, falling cherry blossoms, and rising
+bubbles.
+</p>
+
+<!-- func SnowBlossom -->
+
+<p>
+The result of SnowBlossom is best used to define an image, which can
+then be shown to the user.
+</p>
+
+<example>
+init:
+    image blossoms = SnowBlossom(Animation("sakura1.png", 0.15,
+                                           "sakura2.png", 0.15))
+
+</example>
+
+<p>
+It may make sense to show multiple snowblossoms at once. For example,
+in a scene with falling cherry blossoms, one can have small cherry
+blossoms falling slowly behind a character, while having larger cherry
+blossoms falling faster in front of her.
+</p>
+
+<p>
+If SnowBlossom does not do what you want, it may make sense to define
+your own particle motion. This is done by calling the Particles
+function.
+</p>
+
+<!-- func Particles -->
+
+<p>
+The particles function expects to take as an argument a factory
+object. This object (which should be pickleable) must support two
+methods.
+</p>
+
+<p> 
+The create method of the factory object is called once per frame
+with two arguments. The first is either a list of existing particles,
+or None if this is the first time this Particles is shown (and hence
+there are no particles on the screen). The second argument is the time
+in seconds from some arbitrary point, increasing each time create is
+called. The method is expected to return a list of new particles
+created for this frame, or an empty list if no particles are to be
+created this frame.
+</p>
+
+<p>
+The predict method of the factory object is called when image
+prediction is requested for the Particles. It is expected to return a
+list of displayables and/or image filenames that will be used.
+</p>
+
+<p>
+Particles are represented by the objects returned from each factory
+function. Each particle object must have an update method. This method
+is called once per frame per particle, usually with the time from the
+same arbitrary point as was used to create the object. (The arbitrary
+point may change when hidden and shown, so particle code should be
+prepared to deal with this.) The update method may return None to 
+indicate that the particle is dead. Nothing is shown for a dead
+particle, and update is never called on it. The update function can
+also return an (xpos, ypos, time, displayable) tuple. The xpos and ypos
+parameters are a position on the screen to show the particle at,
+interpreted in the same way as the xpos and ypos style properties. The
+time is the time of display. This should start with the time
+parameter, but it may make sense to offset it to make multiple
+particle animations out of phase. Finally, the displayable is a
+displayable or image filename that is shown as the particle.
+</p>
+
+<h4>Layout Functions</h4>
+
+<p>
+These functions allow one to layout multiple displayables on the
+screen. They let multiple displayables be used when only a single
+displayable is expected.
+</p>
+
+<!-- func LiveComposite -->
+
+<!-- func Fixed -->
+
+<!-- func HBox -->
+
+<!-- func VBox -->
+
+
+<h3>Transitions</h3>
+
+<p>
+By default, Ren'Py displays each scene by replacing the old
+scene with a new one. This is appropriate in general (such as
+for emotion changes), but it may be boring for large
+changes, such as a change in location or a character entering or
+leaving the scene. Ren'Py supports transitions that control how
+changes to the scene lists are exposed to the user.
+</p>
+
+<p>
+Transitions occur between the last scene that was shown to
+the user, and the current scene that has been updated using
+the scene, show, or hide statements. A transition takes both lists
+as input, and is responsible for displaying the transition between
+them to the user. Each transition runs for a given amount of time,
+but may be dismissed early by the user. Once a transition is
+shown, the scene is considered shown for the purposes of
+future transitions.
+</p>
+
+<rule>with_statement -> "with" simple_expression</rule>
+
+<p>
+Transitions are introduced with the with statement. The with
+statement takes an expression that is suitable for use with the
+with statement (that is, a callable that takes as input two scene
+lists), and runs that transition. Alternatively, if the expression
+is None, then the with statement has the effect of showing the
+scene to the user, and returning instantly. This is useful in
+conjunction with a future with statement, so that only some
+changes to the scene list will be transitioned in.
+</p>
+
+<p>
+An example is in order. First, let us define a few objects that
+can be passed in as the argument to a with statement:
+</p>
+
+<example>
+init:
+    # Fades to black, then to the new scene.
+    fade = Fade(0.5, 0, 0.5)
+
+    # Dissolves between old and new scenes.
+    dissolve = Dissolve(0.5)
+</example>
+
+<p>
+A simple use of with would be to place it after a series of show
+and hide statements of the program. As an example:
+</p>
+
+<example>
+scene bg whitehouse
+show eileen happy
+with fade
+</example>
+
+<p>
+This series of statements will cause the old scene (displayed
+before these statements started) to fade to black, and be replaced
+with the new scene all at once. This is a useful behavior, for
+example, when we are replacing a scene with a new one, such as
+when the story changes locations.
+</p>
+
+<example>
+scene bg whitehouse
+with None
+show eileen happy
+with dissolve
+</example>
+
+<p>
+The "with None" statement is useful to break changes to the scene
+list into parts, as in the example above. When run, the background
+will be instantly shown, and then the character image will be
+dissolved in over the background.
+</p>
+
+<p>
+Another use of the "with None" statement is to remove transient
+elements before a transition begins. By default, the scene list
+includes transient elements like dialogue, thoughts, and
+menus. "with None" always executes without these elements, and so
+gets rid of them.
+</p>
+
+<p>
+The "show", "hide", and "scene" statements all take a with
+clause. One of these statement with a with clause associated with
+it is actually converted into three statements: A "with None"
+statement, the original statement sans the with clause, and the
+with clause as a with statement. For example:
+</p>
+
+<example>
+scene bg whitehouse with fade
+show eileen happy at left with dissolve
+show lucy happy at right with dissolve
+</example>
+
+<p>
+becomes
+</p>
+
+<example>
+with None
+scene bg whitehouse
+with fade
+with None
+show eileen happy at left
+with dissolve
+with None
+show lucy happy at right
+with dissolve
+</example>
+
+<p>
+This has the effect of fading out the old scene and fading in the
+new background, then dissolving in the characters one after the
+other.
+</p>
+
+<p>
+We also allow with clauses to be supplied for say and menu
+statements. When a with clause is supplied on one of these
+statements, the transition is used to introduce the say or menu
+element. For example,
+</p>
+
+<example>
+e "How are you doing?" with dissolve
+</example>
+
+<p>
+Will dissolve in a line of dialogue. The line of dialogue will be
+dismissed immediately, unless it is followed by a with statement
+or clause that causes it to transition to something else.
+</p>
+
+<p>
+There is one variable that controls transitions:
+</p>
+
+<dl>
+<var name="default_transition" value="None">
+If not none, specifies a default transition that is applied to
+all say and menu statements that are not provided a with
+clause. This is only considered if the transitions preference is
+set to "All".
+</var>
+</dl>
+
+<p>
+The following are functions that return things useful as
+transitions. The user should not supply the new_widget or old_widget
+parameters, as these are supplied by Ren'Py when a transition
+begins.
+</p>
+
+<!-- func Fade -->
+
+<!-- func Dissolve -->
+
+<!-- func ImageDissolve -->
+
+<!-- func CropMove -->
+
+<!-- func Pixellate -->
+
+<!-- func MoveTransition -->
+
+<p>
+Some transitions can also be applied to specific layers, using the
+renpy.transition function (documented below). Only transitions that
+are not completely opaque can be used in this way.
+</p>
+
+<h3>Control Statements</h3>
+
+<p>
+Control statements change the order in which statements in a
+Ren'Py script execute. These statements allow for control
+transfers, conditional execution, and procedure calls.
+</p>
+
+<rule>label_statement -> "label" name ":"</rule>
+
+<p>
+The label statements assigns a name to a point in the program,
+allowing control to be transfered to this point by the jump or
+call statements. The label statement may have a block associated
+with it. If it does, the statement executed after the label is
+the first statement in the block. Otherwise, the next statement
+to be executed is the first statement after the label.
+</p>
+
+<rule>jump statement -> "jump" name</rule>
+<rule>jump statement -> "jump" "expression" simple_expression</rule>
+
+<p>
+The jump statement unconditionally transfers control to the
+statement with the given name. If the name does not exist, an
+error is raised.
+</p>
+
+<example>
+label loop_start:
+
+e "Oh no! It looks like we're trapped in an infinite loop."
+
+jump loop_start
+</example>
+
+<p>
+A second form of the jump statement is invoked if the expression
+keyword is in the statement. In this form, the supplied simple
+expression is evaluated to get a string, and control is transferred to
+the label given by that string.
+</p>
+
+<rule>call_statement -> "call" name ( "from" name )?</rule>
+<rule>call_statement -> "call" "expression" simple_expression ( "from" name )?</rule>
+
+<p>
+The call statement transfers control to the location given. It
+also pushes the name of the return site onto the return stack,
+allowing the return statement to return to the statement after
+the call site.
+
+</p><p>
+
+If the optional from clause is present, it has the effect of
+including a label statement with the given name as the statement
+immediately following the call statement. An explicit label is
+required here to ensure that saved games with return stacks can
+return to the proper place when loaded on a changed script. On the
+other hand, from clauses may be distracting when a game is still
+under development. We provide with Ren'Py a program, called
+"add_from", that adds from clauses to all bare calls in any game
+directory. It can be found in tools/add_from, although it needs to
+be run from the base directory. The easiest way to do this on
+windows is by running tools/game_add_from.bat. It should be run
+before a final release of your game is made. <b>Be sure to make a
+backup of your game directories before running add_from.</b> Also
+note that add_from produces .bak files for all files it can
+change, so delete them when you're satisfied that everything
+worked.
+
+</p>
+
+<p>
+A second form of the call statement is invoked if the expression
+keyword is in the statement. In this form, the supplied simple
+expression is evaluated to get a string, and control is transferred to
+the label given by that string, in a manner similar to a normal call.
+</p>
+
+
+<rule>return_statement -> "return"</rule>
+
+<p>
+
+If the return stack is not empty, the return statement pops the top
+return site off of it and transfers control there. Otherwise, it
+performs a full restart of Ren'Py.
+
+</p>
+
+<example>
+e "First, we will call a subroutine."
+
+call subroutine from _call_site_1
+
+e "Finally, we will exit the program."
+
+return
+
+label subroutine:
+
+    e "Next, we will return from the subroutine."
+
+    return
+</example>
+
+<rule>if_statement -> "if" python_expression ":"</rule>
+<rule>elif_clause -> "elif" python_expression ":"</rule>
+<rule>else_clause -> "else" ":"</rule>
+
+<p>
+The if statement is used to conditionally execute a block of
+statements. It is the only statement that consists of more than
+one logical line in the same block. The initial if statement may
+be followed by zero or more elif clauses, concluded with an
+optional else clause. The expression is evaluated for each
+clause in turn, and if it evaluates to a true value, then the
+block associated with that clause is executed. If no expression
+evaluates to true, then the block associated with the else
+clause is executed. (If an else clause exists, execution
+immediately continues with the next statement.)  In any case, at
+the end of the block, control is transferred to the statement
+following the if statement.
+</p>
+
+<example>
+if points >= 10:
+
+   e "Congratulations! You're getting the best ending!"
+
+elif points >= 5:
+
+   e "It's the good ending for you."
+
+else:
+
+   e "Sorry, you're about to get the bad ending."
+</example>
+
+<rule>while_statement -> "while" python_expression ":"</rule>
+
+<p>
+
+The while statement executes its block while the expression is
+true. Specifically, each time the while statement executes, it
+evaluates the expression. If the expression is true, control is
+transferred to the first statement of the block associated with
+the while loop. If it is false, then control is transferred to
+the next statement. The while statement is the statement that
+normally executes after the last statement in the block, causing
+the condition to be evaluated again and the loop to repeat.
+
+</p><p>
+
+This definition of a while loop means that it would be hard to
+implement statements like python's "continue" or "break". These
+statements can be easily faked with labels in the right places
+and jumps to those labels. This definition also means that it's
+possible to jump into the middle of the block associated with
+a while loop and, if at the end of the block the condition
+is true, have the while loop repeat the block.
+
+</p>
+
+<example>
+while not endgame:
+
+   "It's now morning. Time to get up and seize the day."
+
+    call morning
+    call afternoon
+    call evening
+
+    "Well, time to call it a night."
+
+"Now it's time to wake up and face the endgame."
+</example>
+
+
+<rule>pass_statement -> "pass"</rule>
+
+<p>
+
+The pass statement can be used where a block is required, but
+there's no statement that can be placed in that block. When
+executed, pass has no effect.
+
+</p><p>
+
+For example, pass can be used in a menu if we don't want to take
+any action when a choice is selected.
+
+</p>
+
+<example>
+menu:
+    "Should I go to the movies?"
+
+    "Yes":
+        call go_see_movie
+
+    "No":
+        pass
+
+"Now it's getting close to dinner time, and I'm starving."
+</example>
+
+<rule>init_statement -> "init" ":"</rule>
+
+<p>
+
+The init statement is used to introduce a block of code that
+should be run when the game first starts. When the game is first
+loaded, the script is scanned for init blocks, and code in init
+blocks is run in an arbitrary order. An init statement
+encountered during execution, however, is treated as a pass
+statement, and the block is not executed.
+
+</p>
+
+<h3>Python Statements</h3>
+
+<rule>python_statement -> "$" python_code</rule>
+
+<p>
+There are two Ren'Py statements that allow python statements to be
+mixed with Ren'Py code. Any statement beginning with a
+dollar-sign ('$') will be interpreted as python code extending
+to the end of the logical line. This form can only include a
+python statement containing a single logical line. (So python
+control constructs cannot be used.)
+</p>
+
+<rule>python_block_statement -> "python" ( "hide" )? ":"</rule>
+
+<p>
+The other way to introduce python statements is with a python
+block statement. The block associated with this statement, along
+with any block inside those blocks, is interpreted as python
+code that is passed to the python interpreter. The block nesting
+structure is reflected in the python code that is interpreted,
+so that python control structures will work as advertised.
+
+</p><p>
+
+If the optional hide keyword is added to a python block
+statements, local variables created in the block will not
+be added to the store. The variables in the store can be
+accessed as attributes of the store, however.
+</p>
+
+<example>
+$ score += 1
+
+# Pointless python that uses a loop.
+python:
+    for i in ('e', 'l'):
+        globals()[i].points = 0
+</example>
+
+<p>
+In general, if a Ren'Py construct exists that does what you want
+(like while or if), it should be used in preference to a python
+block, unless a large amount of code is to be executed with
+no user interaction.
+</p>
+
+
+<h3>Starting a Game</h3>
+
+<p>
+When Ren'Py is first invoked, it first determines the name of the
+game directory. It does this by looking at the name of the
+executable file that is being run. It strips off the extension and
+any prefix up to and including the first underscore. It looks to
+see if what's left (the basename) corresponds to a directory, and if so, that is
+the game directory. Otherwise, Ren'Py looks for the default game
+directories, "game" and "data", in that order. If the game directory
+still cannot be found, the directory the executable
+file is in is used as the game directory.
+
+</p><p>
+
+It next checks to see if the file "presplash.png" is present in the
+game directory. If this file is present, it is shown to the user, in
+its own window, until just after the init code has finished
+running. The size of the window is determined by the size of the
+presplash image. We attempt to center this window on the screen,
+and to show the window without a title bar.
+
+<p></p>
+
+Ren'Py then attempts to add some default archives. There are three
+archives Ren'Py will add by default. The first is the basename
+determined from the executable name, and extended with .rpa. (For
+example, if the executable is "run_en.exe", we will add "en.rpa") The
+other two are game.rpa and data.rpa. Each archive is only added once.
+
+</p><p>
+
+Ren'Py then tries to process all the .rpy and .rpyc files in the game
+directory, common directory, and default archives. If a .rpy file
+exists and is newer than the corresponding .rpyc file, it is loaded,
+and the script is then written out in a serialized form. If no .rpy
+files exist, but the serialized script (.rpyc file) does exist, or if
+the serialized script is newer than the corresponding .rpy file, the
+serialized script is read back in.
+
+</p><p>
+
+The second step in loading a Ren'Py script is to find or generate
+bytecode for all of the python blocks in the script. This is first
+done by loading in the file bytecode.rpyb, if it exists. The file may
+be loaded from disk, or from inside one of the default archives. For
+each python block, it is searched for bytecode corresponding to
+the current version of python. If such bytecode is not found, it is
+generated. If any python was generated, a new version of bytecode.rpyb
+is written into the game directory. Please note that the user can
+cause the generation of a new bytecode.rpyb file by running Ren'Py
+with an upgraded version of python. To prevent a pause for compilation
+from occuring when Ren'Py is first run, you'll want to ship
+bytecode.rpyb as part of your completed game.
+
+</p><p>
+
+Once the script is loaded, the first thing that occurs is that
+it is scanned for init blocks. These init blocks are then run
+immediately, in no particular order. The init blocks should do
+things like loading images and changing Ren'Py configuration. On
+no account should an init block try to display an image or
+interact with the user, as the display system is not yet
+initialized, and so such interaction will not work.
+
+</p><p>
+
+After the last init block has finished running, the display is
+initialized, and the actual game can begin. If the library is
+present it looks for a label named "splashscreen", and calls it if
+it exists and this is not a reset of Ren'Py. It then looks for the
+label "main_menu". If it exists, then that label is jumped to as
+the main menu. Otherwise, the library main menu is
+displayed. While library.main_menu allows this menu to be
+customized, the default main menu calles the label "start" when
+the user chooses "Start Game". The library main menu can also be
+manually accessed by jumping to _library_main_menu, which is useful
+if you want to display an intro before the menu is shown.
+
+</p><p>
+
+The main menu and game menu execute in their own context, which is a
+different context from the one in which the game executes in. One
+should invoke renpy.jump_out_of_context() in order to leave the menu
+context and start execution at a label. Alternatively, executing a
+return statement in the main menu function will cause execution of the
+game proper to begin at the "start" label. So the following code:
+</p>
+
+<example>
+label main_menu:
+    return
+</example>
+
+<p>
+should cause execution to begin immediately, skipping the game menu
+entirely. You may want to customize _game_menu_screen in order to
+allow the user to load a new game from the first few screens.
+</p>
+
+<p>
+Finally, we should point out here that if the label after_load exists,
+it is called after loading. When the code returns, execution proceeds
+at the start of the statement where it was saved at. The after_load
+label allows data structures to be updated after a load.
+</p>
+
+<h3>Saving, Loading, and Rollback</h3>
+
+<p>
+In Ren'Py, saving, loading, and rollback are three actions that
+share quite a bit of infrastructure. So, we'll discuss them
+together in this section. We will pay special attention as to what
+it takes to support loading of a saved game when the script
+changes between saving in loading, while running on the same
+Ren'Py version. Apart from designated bug-fix releases of Ren'Py,
+we do not plan to support loading a save created on an older
+version of Ren'Py in a newer release of Ren'Py. Once a game has
+been released once, it's expected that future releases of that
+game will use the same release of Ren'Py.
+
+</p><p>
+
+The state of the game in Ren'Py consists of two basic
+parts. The interpreter state consists of state that the user never
+manipulates directly, while the user state consists of variables
+that have been changed by the user, and objects reachable from
+those variables. Currently, the interpreter state that is
+saved consists of:
+</p>
+
+<ul>
+<li>The currently-executing statement.</li>
+<li>The return stack.</li>
+<li>The scene list.</li>
+<li>What music is currently playing.</li>
+</ul>
+
+<p>
+These items are automatically saved, restored, or rolled-back when
+the appropriate commands are invoked by the user. You do not need
+do anything for this state to be handled, and there is no way to
+prevent these things from being saved.
+</p>
+
+<p>
+There are some important portions of interpreter state that are not
+saved, and therefore should only be changed in init: blocks. These
+are:
+</p>
+
+<ul>
+<li>The mappings of image names to Displayable created by the image
+statement.</li>
+<li>Configuration variables (config.varname).</li>
+<li>Library variables (library.varname).</li>
+<li>Styles (style.stylename).</li>
+</ul>
+
+<p>
+To deal with this, one should ensure that all images and config
+variables are set up in init blocks, and then left alone for the
+life of the game. In addition, as a scene list in a saved game may
+contain references to image names, once an image name is defined
+in a released version of the game, the image name should remain
+defined in all future release of the game.
+</p>
+
+<p>
+The other kind of state that Ren'Py can save and restore is user
+state. User state consists of the values of all variables that are
+changed after the end of the init phase, as well as all data
+reachable from those variables.
+
+</p><p>
+
+It's important to clarify what it means for a variable to be
+changed. In Python and Ren'Py, variable names are bound to
+objects. The variable changes when a new object is assigned to
+it. It does not change when the object that is assigned to it
+changes.
+
+</p><p>
+
+As an example, in the following code:
+</p>
+
+<example>
+init:
+      $ a = 0
+      $ state = object()
+
+$ a = 1
+$ b = [ ]
+$ state.love_love_points = a + 1
+</example>
+
+<p>
+The variables a and b are updated after the end of the init:
+block, while state is not updated. The variable a is assigned a
+different integer object, while b is assigned a new empty list.
+While a field in the Character object is changed by the last
+statement, state still points to the same object, and therefore it
+is not considered to have changed. (And therefore, the object
+isn't considered to be part of user state.)
+</p>
+
+<p>
+User state is gathered by first finding all variables changed
+since the end of the init phase. We then find all objects
+reachable from one of those variables through some combination
+of field access, iteration, or iteration over items (as in a
+dictionary). This combination of variable bindings and object
+values comprises the user state.
+</p>
+
+<p>
+It's important that everything that's kept in the user state can
+be pickled (serialized). Thankfully, most python constructs can
+be, including booleans, integers, floating-point numbers, strings,
+lists, tuples, dictionaries, and most objects. You can also refer
+to your own classes and functions, provided that they are defined
+in a python block (not a python hide block) inside an init block,
+and always exist with the same name in later versions of the
+script. Things that can't be pickled include strange objects
+like iterators and files. Usually, you don't have to worry much
+about this.
+</p>
+
+<p>
+As the game is played, Ren'Py logs all changes to user and
+interpreter state. When the game is saved, it writes this log out
+to disk, alongside the current state.
+</p>
+
+<p>
+When the game is loaded back in, the variables are reset to what
+the were when the init code in the current version of the script
+finished running. The saved user state is then merged with this,
+with saved user state overriding any variable that was also
+assigned in the init code. Finally, a rollback is triggered.
+</p>
+
+<p>
+The rollback that is triggered on load ends when it can find a
+statement that has the same name as it had when it was encountered
+in the log. When the script hasn't changed, all statement have the
+same name, so the effect of the rollback is to bring control back
+to the start of the statement that was executing when the user
+saved. When the script has changed, however, the only statements
+that retain their names are statements that have an explicit
+name specified. (Such as a label, a menu with a name, or a call
+with a from clause.) The game will rollback to the start of one of
+these statements. To ensure that rollback works correctly when the
+script changes, a label that exists in a released version of the
+game should continue to exist in all future version of the game.
+</p>
+
+<p>
+When a rollback occurs, both user and interpreter state are
+restored to what they were when the statement that is being
+rolled-back to began executing. The statement is then executed
+again, and play continues normally.
+</p>
+
+<p>
+Please note that we can only roll back the currently-executing
+statement, and not the return sites listed on the return
+stack. If the name of a return site changes, we will not be able
+to return from a procedure call, and the script will crash. If a
+return site has an explicit name, however, that name is returned
+to even if the script change. Because of this, it's important that
+every call site in a released game have a from clause associated
+with it.
+</p>
+
+<p>
+Finally, if allowed, rollback can be invoked explicitly by user
+input. When such a rollback occurs, we first look for a previous
+statement that is a checkpoint (checkpoints are say and menu
+statements, as well as python blocks that called
+renpy.checkpoint()). Once a checkpoint is found, we look for a
+statement which has a name that exists in the current script (this
+is normally the same statement). We then rollback to that
+statement and begin executing again.
+</p>
+
+<p>
+The upshot of this is that when a user rollback occurs, the game
+is reverted to the start of the say or menu statement that
+executed before the currently executing one.
+</p>
+
+<p>
+There is one variable that controls the behavior of loading and
+saving:
+</p>
+
+<dl>
+<var name="save_name" value="''">
+This is a name that will be associated with save files. It's
+expected that the game will update this on a regular basis with
+the name of the section of the script that is currently
+executing. When a save file is shown to the user, this name will
+be shown with it. Alternatively, never change this and no save name
+will be shown.
+</var>
+</dl>
+
+<p>
+While these rules may seem to be complex, it's hoped that in
+practice they can be reduced to a simple heuristic: Any variable
+changed outside of an init block, and any object reachable from
+such a variable, will be saved, loaded, and rolled-back properly.
+</p>
+
+<h3>Persistent Data</h3>
+
+<p>
+Persistent data is data that is saved that is not associated with a
+single game. One possible use of it is to store information about
+things that have been unlocked, such as an image gallery that is
+only unlocked when an ending has been reached.
+</p>
+
+<p>
+Persistent data is stored as fields on the "persistent"
+object. This object is special, as uninitialized fields are forced
+to take the value None. A change to this object is visible in
+every game that the player undertakes.
+</p>
+
+<p>
+Take as an example an unlockable image gallery. The code to
+display the gallery look like:
+</p>
+
+<example>
+label gallery:
+
+    if not persistent.gallery_unlocked:
+        show background
+        centered "You haven't unlocked this gallery yet."
+        $ renpy.full_restart()
+
+    # Actually show the gallery here.
+</example>
+
+<p>
+Then, to unlock the gallery, run the following code somewhere in
+your program.
+</p>
+
+<example>
+$ persistent.gallery_unlocked = True
+</example>
+
+<h3>Interaction Functions</h3>
+
+<p>
+The following functions either implement new game behavior that
+didn't merit its own statement, or complement the behavior of
+statements.
+</p>
+
+<example>
+init:
+    $ e = Character("Eileen", color=(200, 255, 200, 255))
+
+e "My name is shown in full, and in green."
+</example>
+
+<p>
+It's probably best to define Character objects in an init block,
+and not attempt to set attributes on them.
+</p>
+
+
+<!-- func Character -->
+
+<!-- func DynamicCharacter -->
+
+<!-- func renpy.pause -->
+
+<!-- func renpy.display_say -->
+
+<!-- func renpy.display_menu -->
+
+<!-- func renpy.input -->
+
+<example>
+$ name = renpy.input("What is your name?", "Joe User", length=20)
+
+e "Pleased to meet you, %(name)s."
+</example>
+
+<!-- func renpy.imagemap -->
+
+<example>
+    $ result = renpy.imagemap("ground.png", "selected.png", [
+        (100, 100, 300, 400, "eileen"),
+        (500, 100, 700, 400, "lucy")
+        ])
+
+
+    if result == "eileen":
+        e "You picked me!"
+
+    elif result == "lucy":
+        e "It looks like you picked Lucy."
+</example>
+
+<!-- func renpy.transition -->
+
+<!-- func renpy.checkpoint -->
+
+<!-- func renpy.block_rollback -->
+
+<!-- func renpy.restart_interaction -->
+
+<!-- func renpy.full_restart -->
+
+<!-- func renpy.quit -->
+
+<!-- func renpy.loadable -->
+
+<!-- func renpy.exists -->
+
+<!-- func renpy.clear_game_runtime -->
+
+<!-- func renpy.get_game_runtime -->
+
+<!-- func renpy.choice_for_skipping -->
+
+<!-- func color -->
+
+<p>
+Contexts store the current scene lists and execution location. Ren'Py
+supports a stack of contexts, but only the top-level context is saved
+to the save file.
+</p>
+
+<!-- func renpy.context -->
+
+<!-- func renpy.call_in_new_context -->
+
+<!-- func renpy.invoke_in_new_context -->
+
+<!-- func renpy.jump_out_of_context -->
+
+<!-- func renpy.log -->
+
+<!-- func renpy.watch -->
+
+<!-- func renpy.get_filename_line -->
+
+<p>
+Finally, there exists an object named renpy.random. This object is
+a random number generator that implements the <a
+href="http://www.python.org/doc/2.3.4/lib/module-random.html">Python
+random number generation interface</a>. However, unlike the
+standard random number generator, this object cooperates with
+rollback, generating the same numbers regardless of how many times
+we rollback. It should be used instead of the standard Python
+random module.
+</p>
+
+<h3>Overlays</h3>
+
+<p>
+Overlays are used to display information above the scene currently
+displayed. The overlay is regenerated each time an interaction
+with the user begins, making it suitable for displaying to the
+user things like statistics or dates. The overlay is generally
+displayed whenever transient things (like dialogue, thoughts and
+menus) are.
+</p>
+
+<p>
+Overlays are set up by adding to the config.overlay_functions list
+a python function which, when called, uses the ui functions to add
+widgets to the screen. By default, such widgets are added to the
+'overlay' layer, but a call to ui.layer() can change the layer
+to any of the layers listed in library.overlay_layers. These functions are
+called for each interaction, which allows the overlay to change to
+reflect the status of game variables. If a variable affecting the
+overlay changes during an interaction, renpy.restart_interaction()
+should be called to regenerate the overlay.
+</p>
+
+<p>
+As an example, take the following code fragement. When added to a
+program, this displays a date image in the upper-right corner of
+the screen (as is done in Kanon). The image shown is based on the
+variable date. If date is None, then no date is shown. Otherwise,
+a png file beginning with the value of date is shown.
+</p>
+
+<example>
+init:
+    $ date = "mar25"
+
+    python hide:
+        def date_overlay():
+            if date:
+                ui.image(date + ".png",
+                         xpos=1.0, xanchor="right",
+                         ypos=0.0, yanchor="top") ]
+
+        config.overlay_functions.append(date_overlay)
+</example>
+
+<p>
+Like all config variables, config.overlay_functions should only be
+changed in an init block. If you need to toggle an overlay on and
+off, then the overlay function should be conditioned on some
+normal variable, returning an empty list if it is false. This is
+done in the example above when date is None.
+</p>
+
+
+<h3>Multimedia: Sound, Music, and Movies</h3>
+
+<h4>Sound</h4>
+
+<p>
+Ren'py supports playing sounds in the background, using the
+renpy.play function. These sounds must be in wav files, but
+may live in an archive file.
+</p>
+
+<!-- func renpy.play -->
+
+<example>
+$ renpy.play("quindar.wav")
+e "Ground control to Major Tom."
+</example>
+
+<p>
+Sounds can also be associated with buttons, menu choices, and
+imagemaps becoming hovered and activated. See the section on
+sound properties in styles for how to used this.
+</p>
+
+<h4>Music</h4>
+
+<p>
+Ren'Py supports playing music in the background of your
+game. Theoretically, Ren'Py should support any format SDL_mixer
+supports (mp3, ogg, midi, mod, and more), but we've only tested
+mp3 and ogg support. The music that is currently playing is kept
+as part of the interpreter state, and is restored when a player
+loads a game or rolls back the game state, automatically.
+</p>
+
+<p>
+Music must exist in real files (not archive files), named with
+paths starting at the game directory. The filename that the music
+is stored in is saved with the game state. If the filename changes
+between game releases, the game will still proceed, but music that
+was playing when the game was saved may be absent when the game is
+loaded.
+</p>
+
+<p>
+The playing of music is controlled by a pair of Python function
+calls:
+</p>
+
+<!-- func renpy.music_start -->
+<!-- func renpy.music_stop -->
+
+<p>
+Here's an example of a script fragment that comes with musical
+accompaniment.
+</p>
+
+<example>
+e "Lemma kept asking for support for playing music."
+
+# Loads game/music/taps.mp3
+$ renpy.music_start("music/taps.mp3")
+
+show eileen flaming mad
+
+e "Well, we'll show him."
+
+$ renpy.music_stop()
+
+show eileen wink
+
+e "Just kidding."
+</example>
+
+<p>
+The config.fade_music variable is used to control the fading out
+of old music when a new track is started.
+</p>
+
+<h4>Movies</h4>
+
+<p>
+As of version 4.5, Ren'Py is capable of playing MPEG-1 movies. This
+allows you to include video as part of your game. There are two ways
+that this can be done. Displaying video in fullscreen mode allows
+video to be scaled up to very large sizes, while displaying video in a
+displayable allows it to be blended with images and text.
+</p>
+
+<p>
+Displaying a video fullscreen allows it to take advantage of hardware
+decode and scaling support. The downside of fullscreen mode is that
+nothing else can be displayed while the movie is being displayed.
+</p>
+
+<p>
+The easiest way to display a movie fullscreen is to display it using
+the renpy.cutscene function. This function displays a movie for a
+specified length of time. When that time has elapsed, or when the user
+clicks to dismiss the movie, the movie ends and the function returns.
+</p>
+
+<!-- func renpy.movie_cutscene -->
+
+<p>
+Displaying a movie in a displayable is more difficult, but it allows
+the movie to be mixed with rendered text and graphics. A downside of
+this method is that the screen needs to be re-rendered with each
+frame, a process that may be unacceptibly slow when the screen is
+large. We don't recommend this when the game window is larger that
+640x480.
+</p>
+
+<p>
+To display a movie in a displayable, we must start the movie and show
+a Movie displayable on the screen. The movie is then displayed on the
+screen along with any other widget. When we no longer want to show it,
+we need to stop the decoding of the movie and hide the displayable.
+</p>
+
+<!-- func Movie -->
+
+<!-- func renpy.movie_start_displayable -->
+
+<!-- func renpy.movie_stop -->
+
+<example>
+init:
+    image movie = Movie()
+
+$ renpy.movie_start_displayable("bg.mpg", (640, 480), -1)
+scene movie
+show eileen happy
+
+e "I'm standing in front of a movie."
+
+e "Isn't that keen?"
+
+hide movie
+$ renpy.movie_stop()
+</example>
+
+<p>
+Whenever a movie is playing, it is expected to provide all sound that
+the user hears. Ren'Py disables sound hardware for the duration of the
+movie.
+</p>
+
+<example>
+$ renpy.cutscene("On_Your_Mark.mpg", 394)
+</example>
+
+<h3>Configuration Variables</h3>
+
+<p>
+Much of the the configuration of Ren'Py is done using
+configuration variable. These variable, when assigned in a python
+block, change the behavior of the interpreter. As configuration
+variables aren't saved, and many need to be set before the GUI
+initializes, it makes sense to set all configuration variable
+inside init blocks. An example setting of variables is:
+</p>
+
+<example>
+init:
+    $ config.screen_width = 640
+    $ config.screen_width = 480
+</example>
+
+<dl>
+<var name="config.screen_width" value="800">
+This sets the width of the screen.
+</var>
+
+<var name="config.screen_height" value="600">
+This sets the height of the screen.
+</var>
+
+<var name="config.background" value="None">
+This sets the default background that is shown in areas of the
+screen where there are no images. If the screen will always be
+filled with an image, it makes sense to set this to None, which
+will improve performance by not drawing a default
+background. Otherwise, this is interpreted as an RGBA tuple,
+which will be drawn before any image is.
+</var>
+
+<var name="config.debug" value="False">
+Enables some minor debugging functionality (mostly by turning some
+missing files into errors.) This should always be turned off in a
+release.
+</var>
+
+<var name="config.debug_sound" value="False">
+Enables debugging of sound functionality. This disables the
+supression of errors when generating sound. However, if a sound
+card is missing or flawed, then such errors are normal, and
+enabling this may prevent Ren'Py from functioning normally. This
+should always be False in a released game.
+</var>
+
+<var name="config.rollback_enabled" value="True">
+Should the user be allowed to rollback the game? If set to False,
+the user cannot interactively rollback. (The feature still works
+for loading savegames when the script changes.)
+</var>
+
+<var name="config.rollback_length" value="128">
+When there are more than this many statements in the rollback log,
+Ren'Py will consider trimming the log.
+</var>
+
+<var name="config.hard_rollback_limit" value="10">
+This is the number of steps that Ren'Py will let the user
+interactively rollback. Set this to 0 to disable rollback
+entirely, although we don't recommend that, as rollback is
+useful to let the user see text he skipped by mistake.
+</var>
+
+<var name="config.profile" value="False">
+If set to True, some profiling information will be output to
+stdout (wherever that may go to).
+</var>
+
+<var name="config.image_cache_size" value="8">
+
+This is used to set the size of the image cache, as a multiple of the
+screen size.  This is mostly a suggestion, as if Ren'Py ever needs to
+display more than this amount of images at once, it will cache
+them all. But it will stop predictively loading images when the
+cache is filled beyond this, and it will try to drop images from
+the cache until it shrinks below this size. If this is too
+small, there will be more disk access as images are loaded and
+re-loaded. If this is too large, memory usage will be increased
+as images are kept in memory.
+</var>
+
+<var name="config.predict_statements" value="10">
+This is the number of statements, including the current one, to
+consider when doing predictive image loading. A breadth-first
+search from the current statement is performed until this many
+statements is considered, and any image referenced in those
+statements is potentially predictively loaded. Setting this to 0
+will disable predictive loading of images.
+</var>
+
+<var name="config.debug_image_cache" value="False">
+If True, Ren'Py will print the contents of the image cache to
+standard output (wherever that goes) whenever the contents of
+the image cache change.
+</var>
+
+<var name="config.load_before_transitions" value="True">
+If True, the start of transitions will be delayed until the images
+used by said transitions have finished loading.
+</var>
+
+<var name="config.allow_skipping" value="True">
+If set to False, the user is not able to skip over the text of the
+game.
+</var>
+
+<var name="config.fast_skipping" value="False">
+Set this to True to allow fast skipping outside of developer
+mode.
+</var>
+
+<var name="config.skip_delay" value="75">
+The amount of time that dialogue will be shown for, when
+skipping statements using ctrl, in milliseconds. (Although it's
+nowhere near that precise in practice.)
+</var>
+
+<var name="config.archives" value="[ ]">
+A list of archive files that will be searched for images.
+</var>
+
+<var name="config.searchpath" value="[ 'common', 'game' ]">
+A list of directories that are searched for images, music, archives,
+and other media, but not scripts. This is initialized to a list
+containing "common" and the name of the game directory, which changes
+depending on the name of the exe file. This variable is not used to
+load scripts, as scripts will be loaded before it can be set.
+</var>
+
+<var name="config.mouse" value="None">
+This variable controls the user of user-defined mouse cursors. If
+None, the system mouse is used, which is usually a black-and-white
+mouse cursor. Otherwise, this should be a dictionary giving the mouse
+animations for various mouse types. Keys used by the default library
+include "default", "say", "with", "menu", "prompt", "imagemap",
+"pause", "mainmenu", and "gamemenu". The "default" key should always
+be present. The values in the dictionary should be list of frames
+making up the mouse cursor. Each frame is an (image, x-offset,
+y-offset) tuple. Image is a filename of an image, while x- and y-
+offset are the offsets of the hotspot within the image. The frames are
+played back at 20hz, and the animation loops after all frames have
+been shown. Please note that to show a frame more than once, it must
+be repeated in a frame list. That is implemented efficiently.
+</var>
+
+<var name="config.focus_crossrange_penalty" value="1024">
+This is the amount of penalty to apply to moves perpendicular to the
+selected direction of motion, when moving focus with the keyboard.
+</var>
+
+<var name="config.sound_sample_rate" value="44100">
+The sample rate that the sound card will be run at. If all of
+your wav files are of a lower rate, changing this to that rate
+may make things more efficent.
+</var>
+
+<var name="config.overlay_functions" value="[ ]">
+A list of functions. When called, each function is expected to
+return a list of displayables, which are added to the overlay
+list. See the section on overlays for more.
+</var>
+
+<var name="config.fade_music" value="0.0">
+This is the amount of time in seconds to spend fading the old track out
+before a new music track starts. This should probably be fairly
+short, so the wrong music doesn't play for too long.
+</var>
+
+<var name="config.keymap" value="dict(...)">
+This variable contains a keymap giving the keys and mouse
+buttons assigned to each possible operation. Please see the
+section on keymaps for more information.
+</var>
+
+<var name="config.joystick" value="True">
+Governs if joystick support is enabled. If False, Joystick detection
+is disabled.
+</var>
+
+<var name="config.sticky_positions" value="False">
+Sticky positions causes the at clause of a show or scene
+statement to be remembered for as long as that character is on
+the screen. Future show statements without at clauses will be
+given the remembered at clause. This lets us easily change the
+character's expression without changing their position on the
+screen. Sticky positions does not interact well with multiple
+layers, when they are used with the show, hide, and scene
+statements via an onlayer clause.
+</var>
+
+<var name="config.layers" value="[ 'master', 'transient', 'overlay' ]">
+This variable gives a list of all of the layers that Ren'Py knows
+about, in the order that they will be displayed to the screen. (The
+lowest layer is the first entry in the list.) Ren'Py uses the layers
+"master", "transient", and "overlay" internally, so they should
+always be in this list.
+</var>
+
+<var name="config.transient_layers" value="[ 'transient' ]" >
+This variable gives a list of all of the transient layers. Transient
+layers are layers that are cleared after each interaction. "transient"
+should always be in this list.
+</var>
+
+<var name="config.overlay_layers" value="[ 'overlay' ]" >
+This is a list of all of the overlay layers. Overlay layers are
+cleared before the overlay functions are called. "overlay" should
+always be in this list.
+</var>
+
+<var name="config.top_layers" value="[ ]" >
+This is a list of names of layers that are displayed above all other
+layers, and do not participate in a transition that is applied to all
+layers. If a layer name is listed here, it should not be listed in
+config.layers.
+</var>
+
+<var name="config.overlay_during_with" value="True" >
+True if we want overlays to be shown during with statements, or False
+if we'd prefer that they be hidden during the with statements.
+</var>
+
+<var name="config.with_callback" value="None">
+If not None, this should be a function that is called when a with
+statement occurs. This function can be responsible for putting up
+transient things on the screen during the transition. The function is
+called with a single argument, which is the transition that is
+occuring.
+</var>
+
+<var name="config.enable_fast_dissolve" value="True" >
+Setting this to False can fix a potential bug in the
+dissolve transition when used with an overlay layer that has an alpha
+channel that is not fully transparent or opaque, at the cost of 25% of
+the performance of dissolve. It usually can be kept at True with no
+ill effects.
+</var>
+
+<var name="config.text_tokenizer" value="..." >
+
+<p>
+This functions is used to tokenize text. It's called when laying
+out a Text widget, and is given the string that is the text of the
+widget, and the style associated with the widget.
+</p><p>
+It's expected to yield some number of pairs. In each pair, the
+first element is the kind of token found, and the second element
+is the text corresponding to that token. The following token
+types are defined:
+</p>
+<ul>
+
+<li>"newline" -- A newline, which when encountered starts a new line.</li>
+
+<li>"word" -- A word of text. A line will never be broken inside of
+a word.</li>
+
+<li>"space" -- A space. Spaces are always placed on the current line,
+and will never be placed as the start of a line.</li>
+
+<li>"tag" -- A text tag. If encountered, the second element should be
+the name of the tag, without any enclosing braces.</li>
+</ul>
+</var>
+
+<var name="config.afm_characters" value="250">
+The number of characters in a string it takes to cause the amount of time
+specified in the auto forward mode preference to be delayed before
+auto-forward mode takes effect.
+</var>
+
+<var name="config.afm_bonus" value="25">
+The number of bonus characters added to every string when auto-forward
+mode is in effect.
+</var>
+
+<var name="config.afm_callback" value="None">
+If not None, a python function that is called to determine if it is
+safe to auto-forward. The intent is that this can be used by a voice
+system to disable auto-forwarding when a voice is playing.
+</var>
+
+<var name="config.auto_choice_delay" value="None">
+If not None,this variable gives a number of seconds that Ren'Py will pause at an
+in-game menu before picking a random choice from that menu. We'd
+expect this variable to always be set to None in released games, but
+setting it to a number will allow for automated demonstrations of
+games without much human interaction.
+</var>
+
+<var name="config.font_replacement_map" value="{ }">
+This is a map from (font, bold, italics) to (font, bold, italics),
+used to replace a font with one that's specialized as having bold
+and/or italics. For example, if you wanted to have everything using an
+italic version of "Vera.ttf" use "VeraIt.ttf" instead, you could
+write config.font_replacement_map["Vera.ttf", False, True] =
+("VeraIt.ttf", False, False). Please note that these mappings only
+apply to specific variants of a font. In this case, requests for a
+bold italic version of vera will get a bold italic version of vera,
+rather than a bold version of the italic vera.
+</var>
+
+<var name="config.interact_callbacks" value="...">
+A list of callbacks that are called (without any arguments) when an
+interaction is started or restarted.
+</var>
+
+<var name="config.start_interact_callbacks" value="...">
+A list of callbacks that are called (without any arguments) when an
+interaction is started. These callbacks are not called when an
+interaction is restarted.
+</var>
+
+<var name="config.editor" value="None">
+If not None, this is expected to be a command-line for an editor that
+is invoked when the launch_editor (normally shift-E) key is
+pressed. There are two subsitutions that make sense here. %(filename)s
+is replaced with the filename of the currently-executing line of
+Ren'Py code. %(line)d is replaced with the line number of the
+currently-executing line of Ren'Py code.
+</var>
+
+<var name="config.log" value="None">
+If not None, this is expected to be a filename. Much of the text shown
+to the user by say or menu statements will also be logged to this
+file.
+</var>
+
+<var name="config.developer" value="False">
+If set to True, developer mode is enabled.
+</var>
+
+<var name="library.file_page_cols" value = "2" >
+This is the number of columns of save slots that are show in the
+picker that's used in the load and save screens of the game
+menu.
+</var>
+
+<var name="library.file_page_rows" value = "5" >
+This is the number of rows of save slots that are show in the
+picker that's used in the load and save screens of the game
+menu.
+</var>
+
+<var name="library.file_quick_access_pages" value="5">
+The number of pages of the file picker to provide quick access
+to. Quick access is provided by number buttons which are at the top of
+the file picker.
+</var>
+
+<var name="library.thumbnail_width" value="100">
+The width of the thumbnails that are taken when the game is
+saved. These thumbnails are shown when the game is
+loaded. Please note that the thumbnail is shown at the size it
+was taken at, rather than the value of this setting when the
+thumbnail is shown to the user.
+</var>
+
+<var name="library.thumbnail_height" value="75">
+The width of the thumbnails that are taken when the game is
+saved. These thumbnails are shown when the game is
+loaded. Please note that the thumbnail is shown at the size it
+was taken at, rather than the value of this setting when the
+thumbnail is shown to the user.
+</var>
+
+<var name="library.main_menu" value='[ ( "Start Game", "start", "True" ), ("Continue Game", ... ), ("Preferences", ... ), ("Quit Game", ...) ]'>
+This is used to give the main menu that is shown to the user
+when the game first starts. It is a list of tuples, where the
+first element of each tuple is the title of the menu button, and
+the second element is a label that we jump to when that button
+is selected. (This jump exits the context in which the start
+menu executes.) The second element may also be a function, in
+which case it is called when the item is selected, in the menu
+context. The third element in each tuple is an expression, which
+is evaluated each time the main menu is displayed. If the expression
+evaluates to false, the menu choice is disabled.
+</var>
+
+<var name="library.game_menu" value='[ ... ]'>
+Thi is used to customize the choices on the game menu. Please read the
+section on customizing the main and game menus for more details on the
+contents of this variable.
+</var>
+
+<var name="library.main_menu_positions" value='None'>
+If not None, this is a map between the default label for buttons on
+the main menu, and a dictionary containing properties that are applied
+to that button. This provides a simple way of customizing the main
+menu by changing where buttons are located on the screen. Please note
+that this disables the usual button-placement algorithm, so if one
+button is positioned this way, all must be.
+</var>
+
+<var name="library.game_menu_positions" value='None'>
+If not None, this is a map between the default label for buttons on
+the game menu, and a dictionary containing properties that are applied
+to that button. This provides a simple way of customizing the game
+menu by changing where buttons are located on the screen. Please note
+that this disables the usual button-placement algorithm, so if one
+button is positioned this way, all must be.
+</var>
+
+<var name="library.preferences" value='{ ... }'>
+This is used to customize the preferences. Please read the
+section on customizing the main and game menus for more details on the
+contents of this variable.
+</var>
+
+<var name="library.all_preferences" value='{ ... }'>
+This is a map from preference name to the preference object
+implementing that preference. This variable shouldn't be modified by
+the user directly, but instead provides a stable source of preferences
+that can be added to library.preferences.
+</var>
+
+<var name="library.joystick_keys" value='[ ... ]'>
+This is a listing of all the joystick synthetic keys known to Ren'Py. 
+It's a list of visible name, keysym pairs. Ren'Py uses this to
+populate the joystick preferences.
+</var>
+
+<var name="library.has_music" value="True">
+If True, the preference for enabling and disabling music will be
+presented to the user. This should be set to False if the game
+does not play any music.
+</var>
+
+<var name="library.has_sound" value="True">
+If True, the preference for enabling and disabling sound effects
+is presented to the user. This should be set to False if the
+game does not have any sound effects.
+</var>
+
+<var name="library.has_cps" value="True">
+If True, the preference for changing the text speed is shown to the
+user.
+</var>
+
+<var name="library.has_afm" value="True">
+If True, the preference for auto-forward mode is shown to the user.
+</var>
+
+<var name="library.has_transitions" value="True">
+If True, the preference for enabling and disabling transitions
+is presented to the user. This should be set to False if the
+game does not have any transitions (that is, never uses the with
+statement or clause).
+</var>
+
+<var name="library.has_skipping" value="True">
+If True, the preference controlling what TAB and CTRL skip will be
+shown to the user.
+</var>
+
+<var name="library.has_skip_after_choices" value="True">
+If True, the preference enabling skip after choices will be shown
+to the user.
+</var>
+
+<var name="library.hbox_pref_choices" value="False">
+If True, the choice buttons in a preference will be placed together
+in an hbox.
+</var>
+
+<var name="library.enter_sound" value="None">
+If not None, this is a sound file that is played when entering
+the game menu without clicking a button. (For example, when
+right-clicking during the game.)
+</var>
+
+<var name="library.exit_sound" value="None">
+If not None, this is a sound file that is played when exiting
+the game menu without clicking a button. (For example, when
+right-clicking inside the game menu.)
+</var>
+
+<var name="library.skip_indicator" value="True">
+If True, the library will display a skip indicator when skipping
+through the script.
+</var>
+
+<var name="library.enter_transition" value="None">
+If not None, this variable should give a transition that will be
+used when entering the game menu.
+</var>
+
+<var name="library.exit_transition" value="None">
+If not None, this variable should give a transition that will be
+performed when exiting the game menu.
+</var>
+
+<var name="library.sample_sound" value="None">
+If not None, this variable should give a sample sound that is played
+when the "Test" button on the volume slider is clicked. If None, then
+the "Test" button is not shown.
+</var>
+
+</dl>
+
+<h3>Properties and Styles</h3>
+
+<p>
+Ren'Py includes a style system that allows the user to control the
+styles of text and windows (including things that inherit from
+window, like buttons). A style inheritance mechanism allows a
+single change to (for example) font size to affect the entire
+game, while at the same time allowing fine-grained control when it
+is desired.
+</p>
+
+<p>
+A large number of styles are built into Ren'Py. It is possible to use
+style.create to make your own styles.
+</p>
+
+<!-- func style.create -->
+
+<p>
+There are two families of style properties. Text properties are
+used to control the font, size, and color of text, while window
+properties are used to control the layout, background, and padding
+of windows. If a widget displays text inside a window (as a
+textbutton does), then it respects both text and window
+properties. A widget is a Displayable that can accept properties.
+</p>
+
+<p>
+Many style properties take as an argument RGBA tuples. These are
+python tuples containing four values, representing the red, green,
+blue, and alpha components of a color. Each of these values is a
+number between 0 and 255. Alpha is used to control how opaque the
+thing should be, with 0 being transparent, and 255 being fully
+opaque. It's probably easiest to show an example of RGBA tuples
+being used as part of styles.
+</p>
+
+<example>
+init:
+
+    # Selected menu choices should be yellow and solid.
+    $ style.menu_choice.hover_color = (255, 255, 0, 255)
+
+    # Unselected menu choices should be cyan and translucent.
+    $ style.menu_choice.idle_color = (0, 255, 255, 128)
+</example>
+
+
+<h4>Text Properties</h4>
+
+<p>
+The following are properties that can be applied to Displayables
+that take text styles.
+</p>
+
+<prop name="font">
+This can be either the name of file containing a truetype font
+that is used to render the text, or a string containing font
+names, the first found of which will be used to render the
+text. If the truetype file is not found in the game directory or
+common directory, it will be searched for in the system's font
+directory.
+
+Examples: "Vera.ttf" or "Arial,Helvetica,FreeSans"
+</prop>
+
+<prop name="size">
+The size of the font that is used to display the text on the
+screen. Please note that the meaning of this can vary from font to
+font, and bears only a weak relationship with the number of pixels
+high that the font will be on the screen. Example: 22
+</prop>
+
+<prop name="color">
+The color in which the text will be displayed on the screen, as an
+RGBA tuple. Due to a limitation of pygame, currently the alpha is
+ignored. Example: (255, 255, 255, 255)
+</prop>
+
+<prop name="bold">
+If True, then this text will be rendered in bold.
+</prop>
+
+<prop name="italic">
+If True, then this text will be rendered in italics.
+</prop>
+
+<prop name="underline">
+If true, then this text will be rendered with an underline.
+</prop>
+
+<prop name="antialias">
+If True, the text will be antialiased. Otherwise, it will be left
+jagged.
+</prop>
+
+<prop name="drop_shadow">
+This is used to control the generation of a drop shadow on
+text. It's either a 2-element tuple, or None. If it's a tuple,
+then the 2 elements control the drop shadow offsets in X and Y,
+respectively. (Both numbers should be positive for best results.)
+If None, then no drop shadow is created for the text.
+Example: (2, 3)
+</prop>
+
+<prop name="drop_shadow_color">
+An RGBA tuple that's used to give the color of the drop shadow.
+Example: (0, 0, 0, 128)
+</prop>
+
+<prop name="minwidth">
+The minimum width in pixels of this text. If the rendered text is
+smaller than this, it is right-padded with whitespace until it is
+at least this many pixels long.
+</prop>
+
+<prop name="line_spacing">
+This is used to increase or decrease the spacing between lines of
+text by a constant number of pixels. A positive value increases, while
+a negative value decreases the spacing.
+</prop>
+
+<prop name="text_y_fudge">
+This fudges the y position of a block of text by adding whitespace
+above the first line.
+</prop>
+
+<prop name="textalign">
+This is used to control the horizontal alignment of the lines of
+text in the area allocated to the Text widget containing that
+text. It only really has any effect if the text is more than one
+line long. It's a number between 0 and 1, which gives the fraction
+of empty space that should be to the left of each line of
+text. (To center text, it should be 0.5.)
+</prop>
+
+<prop name="first_indent">
+This is used to give, in pixels, the indentation of the first line
+of text in the text widget. It can be used to indent the first line of
+a paragraph of text. (Not that that's a good idea on a computer
+monitor, better to leave a blank line between paragraphs.)
+</prop>
+
+<prop name="rest_indent">
+This is used to give, in pixels, the indentation of the second
+and later lines of a text widget. It can be used to give a hanging
+indent to quoted dialogue.
+</prop>
+
+
+<h4>Window Properties</h4>
+
+<p>
+Window properties are used to control the display of windows, and
+other widgets that involve a rectangular area with a background
+being displayed on the screen.
+</p>
+
+<prop name="background">
+A Displayable that is used as the background for the window. This
+needs to be a Displayable that always draws exactly the size
+requested of it, which usually means either a Solid or a
+renpy.Frame. This can also be None, which means that there is no
+background on this window. (All the other window properties that
+refer to a background still work. Just think of them as if their
+background was transparent.) Example: Solid((0, 0, 128,
+128))
+</prop>
+
+<prop name="left_margin">
+The amount of transparent space left to the left of this window. If a
+floating point number, it is scaled to the available width.
+</prop>
+
+<prop name="right_margin">
+The amount of transparent space left to the right of this window. If a
+floating point number, it is scaled to the available width.
+</prop>
+
+<prop name="top_margin">
+The amount of transparent space left to the top of this window. If a
+floating point number, it is scaled to the available height.
+</prop>
+
+<prop name="bottom_margin">
+The amount of transparent space left to the bottom of this window. If a
+floating point number, it is scaled to the available height.
+</prop>
+
+<prop name="xmargin">
+This is a convenient (and backwards compatible) way of setting
+left_margin and right_margin to the same value.
+</prop>
+
+<prop name="ymargin">
+This is a convenient (and backwards compatible) way of setting
+top_margin and bottom_margin to the same value.
+</prop>
+
+<prop name="left_padding">
+The amount of space left between the edge of the border and the
+left side of the contents of the window. If a float, it is scaled to the
+width of the window.
+</prop>
+
+<prop name="right_padding">
+The amount of space left between the edge of the border and the
+right side of the contents of the window. If a float, it is scaled to the
+width of the window.
+</prop>
+
+<prop name="top_padding">
+The amount of space left between the edge of the border and the
+top side of the contents of the window. If a float, it is scaled to the
+height of the window.
+</prop>
+
+<prop name="bottom_padding">
+The amount of space left between the edge of the border and the
+bottom side of the contents of the window. If a float, it is scaled to the
+height of the window.
+</prop>
+
+<prop name="xpadding">
+A convenient (and backwards compatible) way of setting
+left_padding and right_padding to the same value.
+</prop>
+
+<prop name="ypadding">
+A convenient (and backwards compatible) way of setting
+top_padding and bottom_padding to the same value.
+</prop>
+
+<prop name="xfill">
+If True, the window will expand to fill all available space in the
+x direction. If False, it will shrink to fit its contents.
+</prop>
+
+<prop name="yfill">
+If True, the window will expand to fill all available space in the
+y direction. If False, it will shrink to fit its contents.
+</prop>
+
+<prop name="xminimum">
+The minimum size of this window in the x direction, including
+margins and padding. If the window would be smaller than this, it
+is grown to be at least this size. If a floating point number, it is
+scaled to the available width.
+</prop>
+
+<prop name="yminimum">
+The minimum size of this window in the y direction, including
+margins and padding. If the window would be smaller than this, it
+is grown to be at least this size. If a floating point number, it is
+scaled to the available height.
+</prop>
+
+
+<h4>Position Properties</h4>
+
+<p>
+Position properties are applied to widgets that are smaller than
+the space allocated to them. They apply to all widgets, and
+control the placement of the widget in the space. For example,
+position properties can be used to control the placement of a
+dialogue window on the screen.
+</p>
+
+<p>
+Position properties work best when a small widget is placed into
+empty space. This is the case for say windows, and the menus that
+are displayed as part of the main menu. Position properties work
+on many updates, but the vagaries of how space is allocated by
+widgets may make some of the results counterintuitive.
+</p>
+
+<p>
+Positioning is done by specifying the placement of an anchor that
+is part of a widget within the space allocated to that widget. The
+position is either specified as an absolute number of pixels or a
+fraction of the available space, while the position of the anchor
+within the widget is done by selecting one of three settings for
+each dimension.
+</p>
+
+<prop name="xpos">
+Controls the positioning of the widget anchor in the x
+dimension. If an integer, this is taken as the number of pixels to
+the left of the anchor. If a float, this is taken as a fraction of
+the available space in the x direction.
+</prop>
+
+<prop name="xanchor">
+Controls the placement of the anchor within the widget, in the x
+dimension. This can be one of 'left', 'center', or 'right', or a
+number between 0 and 1, where 0 is the left edge and 1 is the
+right edge.
+</prop>
+
+<prop name="ypos">
+Controls the positioning of the widget anchor in the y
+dimension. If an integer, this is taken as the number of pixels to
+the left of the anchor. If a float, this is taken as a fraction of
+the available space in the y direction.
+</prop>
+
+<prop name="yanchor">
+Controls the placement of the anchor within the widget, in the y
+dimension. This can be one of 'top', 'center', or 'bottom', or a
+number between 0 and 1, where 0 is the top edge and 1 is the
+bottom edge.
+</prop>
+
+<prop name="xmaximum">
+If not None, this property gives the maximum width of this widget.
+(Most widgets respect this, but some have a fixed size which this
+does not change.)
+</prop>
+
+<prop name="ymaximum">
+If not None, this property gives the maximum height of this widget.
+(Most widgets respect this, but some have a fixed size which this
+does not change.)
+</prop>
+
+<h4>Sound Properties</h4>
+
+<p>
+Some widgets can take sound style properties. These widgets can cause
+a sound to play when they become hovered (see below), and also
+when they are selected. Currently, the styles that can take sound
+properties belong to buttons, imagemaps, and menu choices. Sound
+style properties are either the name of a wav file which is played
+with renpy.play when appropriate event occurs, or None to disable
+sound playback.
+</p>
+
+<prop name="hover_sound">
+The sound to play when this widget becomes hovered.
+</prop>
+
+<prop name="activate_sound">
+The sound to play when the widget is activated, by clicking on or
+otherwise selecting it.
+</prop>
+
+<h4>Bar Properties</h4>
+
+<p>
+The ui.bar() widget has a few properties that are specific to
+it, that control the look of the bars. The bar has gutters on the left
+and the right. The remaining space is the space in which the bar can
+change, with the division of the bar being the fraction of this space
+representing the bar's value as a fraction of the range.
+</p>
+
+<p>
+When the bar is drawn, the thumb's shadow is drawn first, followed by
+the left and right sides of the bar, followed by the thumb.
+</p>
+
+<prop name="left_gutter">
+The size of the left gutter of the bar, in pixels.
+</prop>
+
+<prop name="right_gutter">
+The size of the right gutter of the bar, in pixels.
+</prop>
+
+<prop name="left_bar">
+A Displayable that is used to draw the left side of the bar. This
+displayable is first rendered at the full size of the bar, and then
+cropped so only the left side is visible.
+</prop>
+
+<prop name="right_bar">
+A Displayable that is used to draw the right side of the bar. This
+displayable is first rendered at the full size of the bar, and then
+cropped so only the right side is visible.
+</prop>
+
+<prop name="thumb">
+If not None, this is a thumb image that is drawn near the break
+between the left and right side of the bar.
+</prop>
+
+<prop name="thumb_shadow">
+If not None, a shadow of the thumb that is drawn underneath the
+break between the left and right side of the bar.
+</prop>
+
+<prop name="thumb_offset">
+The horizontal update between the division in the bar and the left
+side of the thumb, in pixels. This will often be negative, so that the
+thumb overlaps the division to some extent.
+</prop>
+
+<h4>Box Properties</h4>
+
+<p>
+Horizontal and Vertical boxes have a number of properties that can
+be used to control how they are laid out. By changing these
+properties, one can control the spacing between elements in a box, and
+even turn a box from horizontal to vertical (or vice versa).
+</p>
+
+<prop name="box_spacing">
+The spacing between elements in the box.
+</prop>
+
+<prop name="box_layout">
+If "horizontal", the box is laid out in a horizontal manner. If
+"vertical", the box is laid out in a vertical fashion. If None, the
+layout of the box is controlled by the function that created the
+box, with ui.hbox and ui.vbox making horizontal and vertical boxes,
+respectively.
+</prop>
+
+<h4>Hovering</h4>
+
+<p>
+In Ren'Py, buttons and their contents support the idea of
+hovering: using different sets of properties for different states
+of the widget. If the widget cannot be given focus, it is
+considered to be insensitive. If the widget has been selected by
+the user, it is considered to be activated. Otherwise, if the
+widget has focus, then that widget is hovered, else it is idle. On
+these widgets, Ren'Py will look up a property prefixed with
+"insensitive_", "activate_", "hover_", or "idle_" (as appropriate)
+in a style, before looking up an unprefixed property. If neither
+form is found on a style, the process is repeated again on the
+parent style. (The search pattern for background on a hovered
+button goes: button.hover_background, button.background,
+default.hover_background, default.background.)
+</p>
+
+<p>
+The only time an activated widget will be seen by the user is if a
+transition occurs immediately after the widget has been activated.
+</p>
+
+<p>
+As an example, take assigning a background to buttons that changes
+when the button is hovered over.
+</p>
+
+<example>
+init:
+    style.button.hover_background = Solid((255, 255, 255, 255))
+    style.button.idle_background = Solid((0, 0, 0, 255))
+</example>
+
+<prop name="enable_hover">
+This property must be set to True (the default) on the style of a
+hoverable widget (like a button) for hovering to be
+enabled. Setting it to False speeds up Ren'Py, at the cost of
+making the widget not respond to hovering.
+</prop>
+
+<h4>Using Properties and Styles</h4>
+
+<p>
+For properties to be useful, there needs to be a way to change the
+properties associated with a given widget. Ren'Py provides several
+ways to do this.
+</p>
+
+<p>
+The most common way to do this is to change the definition of one
+of the standard styles. Widgets that use this style, or one of the
+styles that inherits from it, will pick up the change and change
+how they are displayed.
+</p>
+
+<p>
+The following example code ensures that the label of a button is
+colored light green and aligned to the left. It also changes the
+background images that are used when the button is idled and
+hovered.
+</p>
+
+<example>
+init:
+    $ style.button.color = (128, 255, 128, 255)
+    $ style.button.xpos = 0
+    $ style.button.idle_background = \
+          renpy.Frame(renpy.Image("button_idled.png"),
+                      xborder=10, yborder=10)
+    $ style.button_hover.background = \
+          renpy.Frame(renpy.Image("button_hover.png"),
+                      xborder=10, yborder=10)
+</example>
+
+<p>
+This is the only way to change the look of widgets that are
+automatically generated, such as those used to implement the
+interface of the say and menu statements, except for say
+statements that are routed through an object, like a character
+object.
+</p>
+
+<p>
+The second way to change the look of a widget is to change the
+name of the style associated with that widgets. All widgets have
+one or more parameters that take styles that the widget
+take on. One can define a new style using style.new_style, and
+modify that style, and tell widgets to use that style when
+appropriate.
+</p>
+
+<p>
+While normally new styles can only be assigned to widgets
+constructed by the user, there are some exceptions to this
+rule. The Character object takes as optional arguments styles that
+are given to the say window, character name, and dialogue text.
+</p>
+
+<p>
+The final way of assigning properties is to list them as keyword
+arguments on a constructor that takes properties. (Indicated by
+having **properties in its argument list.) Properties that are
+given in this way take precedence over all other properties. The
+Character argument also takes properties that are applied to the
+window and the label.
+</p>
+
+<h4>Standard Styles</h4>
+
+<p>
+In this section find a list of the standard styles that come with
+Ren'Py, either built-in or in the standard library. Before each in
+parentheses, we list the types of properties that are used on the
+style, and "hover" if the default use of the style supports
+hovering.
+</p>
+
+<dl>
+
+<!-- include styles.xml -->
+
+</dl>
+
+<h3>Text Tags</h3>
+
+<p>
+Styles are useful if you want to change the look of entire blocks
+of text in the game. But what if you only want to change the look of a
+small amount of text, or if you want to only change the look of entire
+blocks of text. Text tags let you change the look of text within a
+single text widget.
+</p>
+
+<p>
+Text tags work wherever text can be placed. This means that they can
+be used inside text widgets, text buttons, and menu and say
+statements. But please note that say statement protect from
+subsituting in a text tag, as that would most likely be an
+error. Generally, though, if Ren'Py shows text to the user, that text
+can be formatted through the use of text tags.
+</p>
+
+<p>
+As an aside, let me point out that if you're using a text tag on every
+line of a script, or even many lines, you're probably doing something
+wrong. That's what styles are for.
+</p>
+
+<p>
+Text tags start with a left brace, and continue to the matching right
+brace. We chose to use braces because they do not require quoting in
+HTML or BBCode. An open text tag may take a parameter, and then continues until
+a closing tag, which is a tag that has a slash immediately after the
+opening brace. Please note that text tags are sensitive to both case
+and whitespace.
+</p>
+
+<p>
+Some example tags are {b}, {i}, {color=#f88}, {size=+16}, and {font=VeraIt.ttf}. The matching
+closing tags are {/b}, {i}, {/color}, {/size}, and {/font}. Tags must be
+properly nested: "{b}{i}bold + italic{/i}{/b}" is okay,
+but "{b}{i}this is wrong{/b}{/i}". Right now, improper nesting won't
+cause an error but it probably won't do what you want. All open tags
+must be closed by the end of the string.
+</p>
+
+<p>
+There are two tags, {w} and {p}, that can only be used in
+dialogue. These tags cause a pause in the display of text, until the
+user clicks to continue, or an auto-forward occurs. This allows text
+to be displayed incrementally. The difference between {w} and {p} is
+that {p} adds a line break at the pause point. They do not use a
+closing tag.
+</p>
+
+<p>
+There is a tag, {fast}, that only has an effect if the text speed is
+not infinite. This tag specifies where slow text should begin
+displaying from. Use this if you have two lines of dialogue where the
+second is an extension of the first. (This is an alternate way of
+achieving the pause effect.) This tag does not take a closing tag.
+</p>
+
+<p>
+There is also an image tag {image=filename}, where filename is the name
+of an image file. The image tag does not take a closing tag. Images so
+including are placed as if they were text, and should be no larger
+than a single line of text.
+</p>
+
+<p>
+If you, for some reason, want to include a left brace, just write two
+left braces ({{) instead.
+</p>
+
+<h4>Supported Text Tags</h4>
+
+<p>The following are supported text tags:</p>
+
+<ul>
+
+<li>{b}text{/b} makes the enclosed text bold.</li>
+
+<li>{i}text{/i} makes the enclosed text italic.</li>
+
+<li>{u}text{/u} makes the enclosed text underlined.</li>
+
+<li>{plain}text{/plain} makes the enclosed text plain, which means that
+it is not bold, italic, or underlined.</li>
+
+<li>{size=<i>spec</i>}text{/size} changes the size of the text. The
+supplied spec may be a number, in which case it is the number of
+pixels high that the text will be. If it is a number preceded by a
+plus (like "+10"), it means to increase the size by that number of
+pixels, while if it is preceded by a minus it means to decrease.
+</li>
+
+<li>{color=<i>spec</i>}text{/color} changes the color of the text. The
+color may be a hex triple or a hex sextuple, optionally preceded by a
+hash mark. (This is the same format that color() accepts.)</li>
+
+</ul>
+
+<p>
+Here's an example of a say statement that uses many of the text
+tags. If you actually use this many text tags in a real game, you'll
+probably drive your users mad.
+</p>
+
+<example>
+"Using text tags, we can make text {size=+12}bigger{/size} or
+ {size=-8}smaller{/size}. We can make it {b}bold{/b}, {i}italic{/i},
+ or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
+</example>
+
+
+<h3>Obfuscating your Game</h3>
+
+<p>
+For some reason, many people seem to want to distribute their
+games in an obfuscated form, making it difficult to read the
+script, or to view the images associated with a game. Ren'Py
+supports this, to a point, by compiling scripts and allowing
+images to be archived. While a moderately skilled programmer could
+easily crack this obfuscation, it should be enough to protect a
+game from casual browsing.
+</p>
+
+<p>
+Obfuscating the script is practically automatic. Every time the
+game runs, any .rpy file in the game directory is written out as an
+.rpyc file. These .rpyc files are enough to run the game, so simply
+running the game once (to create the .rpyc files) and then
+deleting (or more appropriately, moving away) the .rpy files will
+leave you with a runnable game with an obfuscated script. As a
+bonus, the .rpyc files are already parsed, improving game load
+time. (If a directory contains .rpy and .rpyc files with the same
+stem, the newer one of them is chosen, meaning all games get this
+performance improvement.)
+</p>
+
+<p>
+Running Ren'Py with the --lock <i>key</i> command-line option will
+produce .rpyc files that are locked. These files will refuse to
+operate if a .rpyc file locked with a different key, or any .rpy file,
+would be loaded. Please note that this feature is discouraged, as it
+prevents the easy production of patches that work around issues in
+your game.
+</p>
+
+
+<p>
+Images can be archived using the tools/archiver program
+that ships as part of Ren'Py. To use this, one can change
+into the game directory and run a command like:
+</p>
+
+<p>
+<kbd>../tools/archiver images *.png *.jpg</kbd>
+</p>
+
+<p>
+Alternatively on Windows, one can run tools/game_archive_images.bat
+directly, which will do the same thing.
+</p>
+
+<p>
+This will create the file images.rpa in the game
+directory. One can then add to the script a line like:
+</p>
+
+<example>
+init:
+    $ config.archives = [ 'images' ]
+</example>
+
+<p>
+Then, delete the .jpg and .png files from the game
+directory. Ren'Py will look in the images archive to find images
+that need to be loaded.
+</p>
+
+<h3>Localizing Ren'Py</h3>
+
+<p>
+While Ren'Py is by default set up to operate in an English
+speaking environment, it is not limited to such settings. Assuming
+a proper font is loaded, Ren'Py scripts can contain any language
+expressible in Unicode.
+</p>
+
+<p>
+There are two things in the Ren'Py library that may need to be
+translated into a user's language. The first is the main
+menu. There is no explicit support for doing this, but as the
+library.main_menu variable supports changing the text of the main
+menu, it also supports translating said text.
+</p>
+
+<p>
+The second thing that needs to be translated is the game menu. The
+library.translations dictionary is used to translate text in the
+game menu into your language. If a key in this map corresponds to
+the English text that would be displayed, the value corresponding
+to that key is displayed again. For example:
+</p>
+
+<example>
+init:
+    $ library.translations = {
+        "Yes" : u"HIja'",
+        "No" : u"ghobe'",
+        # etc.
+        }
+</example>
+
+<p>
+The u characters prefixed to the strings on the right, while not
+strictly necessary in this case, are used to tell Python that the
+string is in Unicode rather than ASCII. This is useful if your
+language uses non-ascii characters.
+</p>
+
+<h3>Changing the Keymap</h3>
+
+<p>
+The variable config.keymap contains a map from functions that can be
+performed by the various user-interface elements of Ren'Py to a list
+of keysyms that actually perform those functions. Modifying the
+contents of the keymap can change the keys and mouse buttons that
+cause things to happen.
+</p>
+
+<p>
+While this functionality has been added to Ren'Py at a user's request
+(and because it simplifies the Ren'Py code), it's not altogether clear
+that it should be used. Having a common set of keybindings makes games
+easier to play, by reducing the learning curve of users. It's probably
+better to build consensus around a change in keybindings, rather than
+unilaterally making something different from everyone else.
+</p>
+
+<p>
+Anyway, in Ren'Py keysyms are strings. The first kind of keysym is of
+the form 'mouseup_#' or 'mousedown_#', for a number between 1 and 5. These keysyms are
+generated by mouse button presses, releases, or turns of the mouse wheel. For
+example, "mousedown_1" is generally a press of the left mouse button,
+"mouseup_1" is a release of that button, and "mousedown_4" is a turn of the the mouse wheel to the top.
+</p>
+
+<p>
+A second kind of keysym is a joystick keysym. These begin with
+joy_. They are defined in library.joystick_keys, and mapped to
+actual joystick events by the user.
+</p>
+
+<p>
+A third kind of keysym is a string containing a character that is
+generated when a key is pressed. This is useful for binding alphabetic
+keys and numbers. Examples of these keysyms include "a", "A", and
+"7".
+</p>
+
+<p>
+The final kind of keysym is the symbolic name for the key. This can be
+any of the K_ constants taken from
+<a href="http://www.pygame.org/docs/ref/pygame_constants.html">pygame.constants</a>
+This type of keysym looks like "K_BACKSPACE", "K_RETURN", and "K_TAB".
+</p>
+
+<p>
+To change a binding, update the appropriate list in
+config.keymap. The following code adds the 't' key to the list of
+keys that dismiss a say statement, and removes the space key from
+that list.
+</p>
+
+<example>
+init:
+    $ config.keymap['dismiss'].append('t')
+    $ config.keymap['dismiss'].remove('K_SPACE')
+</example>
+
+<p>
+The default keymap is contained inside the python code implementing
+Ren'Py, and as of version 5.3.1 is as follows:
+</p>
+
+<example>
+config.keymap = dict(
+    
+    # Bindings present almost everywhere, unless explicitly
+    # disabled.
+    rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+    screenshot = [ 's' ],
+    toggle_fullscreen = [ 'f' ],
+    toggle_music = [ 'm' ],
+    game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+    hide_windows = [ 'mouseup_2', 'h' ],
+    launch_editor = [ 'E' ],
+
+    # Say.
+    rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
+    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
+
+    # Focus.
+    focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
+    focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],
+    focus_up = [ 'K_UP', 'K_KP_UP', 'joy_up' ],
+    focus_down = [ 'K_DOWN', 'K_KP_DOWN', 'joy_down' ],
+        
+    # Button.
+    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+
+    # Input.
+    input_backspace = [ 'K_BACKSPACE' ],
+    input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+
+    # These keys control skipping.
+    skip = [ 'K_LCTRL', 'K_RCTRL' ],
+    toggle_skip = [ 'K_TAB', 'joy_skip' ],
+    fast_skip = [ '>' ],
+
+    # These control the bar.
+    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+    bar_decrease = [ 'K_LEFT', 'joy_left' ],
+    bar_increase = [ 'K_RIGHT', 'joy_right' ],
+    )
+</example>
+
+<h3>UI Functions</h3>
+
+<p>
+While it's hoped that Ren'Py say and menu statements will be
+appropriate for much of the user interaction that goes on in a visual
+novel, we recognize that not all games can be fit in such a mold. To
+allow other, similar, games to be built, we've exposed the functions
+that we use to build the Ren'Py user interface. These functions are
+used both for normal gameplay, and to build the main and game
+menus. While these functions won't be enough for all games (Ren'Py
+will never be a RPG engine), hopefully these will allow the creation
+of, for example, schedule-management dating-simulation games.
+</p>
+
+<p>
+To start, let's give a script snippet that uses the UI functions.
+The following displays a window containing three buttons, arraigned
+horizontally. The string assigned to choice varies depending on which
+of the three is picked.
+</p>
+
+<example>
+$ ui.window()
+$ ui.hbox()
+
+$ ui.textbutton("A", clicked=ui.returns("A"))
+$ ui.textbutton("B", clicked=ui.returns("B"))
+$ ui.textbutton("C", clicked=ui.returns("C"))
+
+$ ui.close()
+$ choice = ui.interact(suppress_overlay=True)
+</example>
+
+<p>
+To understand the ui functions, you must first understand the three
+kinds of widgets that Ren'Py supports. The first kind of widget (of
+which window is one), takes a single child widget. When this kind of
+widget is open, the next widget to be created is added to it, and it
+then closes automatically.
+</p>
+
+<p>
+A second kind of widget can take an arbitrary number of child
+widgets. This kind of widget is exemplified by the layout widgets:
+vbox, hbox, and fixed. New widgets are added to this kind of widget
+until a matching call to ui.close() occurs, unless they are instead
+added to an open child of this widget.
+</p>
+
+<p>
+The final kind of widget cannot take any children. This kind of
+widget is exemplified by textbutton.
+</p>
+
+<p>
+Nothing is displayed on the screen until ui.interact() is called. Once
+it has been called, Ren'Py displays the screen to the user. It then
+waits for a widget to return a value. In the example given above, when
+a textbutton is clicked, the function returned by ui.returns is
+called, which in turn causes ui.interact to return the same
+value. When ui.interact returns, the screed is cleared of all
+transient ui elements, and control proceeds with the next
+statement. The ui functions must be called again if we want to show
+the same user interface to the user again.
+</p>
+
+<p>
+It's important to ensure that, if a lambda or nested function is used
+as an argument to one of these ui functions, ui.interact() is called
+in the same python block. Failure to do this will prevent your game
+from saving, and that's probably a bad thing. ui.returns doesn't
+suffer from this problem, and so should probably be used in preference
+to lambda.
+</p>
+
+<p>
+By default, widgets are added to the 'transient' layer. This can be
+changed by a call to ui.layer(), followed by a matching call to
+ui.close() when done adding widgets to the new layer.
+</p>
+
+<p>
+Widgets can be added to a focus group by supplying the name of the
+focus group as the focus parameter to a ui widget. If the same focus
+group exists on two interactions, Ren'Py will ensure that if the nth
+widget is selected in the first interaction, the nth widget will be
+given focus at the start of the second interaction. If no widget is
+given focus in this way, then Ren'Py looks for one that has had the
+default=True argument supplied to it. If it finds such a widget, then
+it focuses it. Otherwise, it uses fallback rules to determine if a
+widget should be given focus.
+</p>
+
+<p>
+The following are the functions available in the ui module, which is
+automatically present in the game namespace.
+</p>
+
+<h4>Single-Child Widgets</h4>
+
+<!-- func ui.window -->
+
+<!-- func ui.button -->
+
+<!-- func ui.sizer -->
+
+<h4>Multiple-Child Widgets</h4>
+
+<!-- func ui.vbox -->
+
+<!-- func ui.hbox -->
+
+<!-- func ui.grid -->
+
+<!-- func ui.fixed -->
+
+<h4>No-Child Widgets and Psuedo-Widgets</h4>
+
+<!-- func ui.text -->
+
+<!-- func ui.image -->
+
+<!-- func ui.textbutton -->
+
+<!-- func ui.imagebutton -->
+
+<!-- func ui.imagemap -->
+
+<!-- func ui.menu -->
+
+<!-- func ui.bar -->
+
+<!-- func ui.null -->
+
+<!-- func ui.saybehavior -->
+
+<!-- func ui.pausebehavior -->
+
+<h4>Functions</h4>
+
+<!-- func ui.interact -->
+
+<!-- func ui.layer -->
+
+<!-- func ui.close -->
+
+<function name="ui.returns" sig="(value)">
+<p>
+This function returns a function that, when called, returns the
+supplied value. It's best used to supply the clicked argument to the
+various button widgets.
+</p>
+</function>
+
+<function name="ui.jumps" sig="(label)">
+<p>
+This function returns a function that, when called, jumps the game to
+the given label, ending the current interaction in the process. It's
+best used to supply the clicked argument to the various button
+widgets.
+</p>
+</function>
+
+<function name="ui.jumpsoutofcontext" sig="(label)">
+<p>
+This function returns a function that, when called, exits the current
+context, and in the parent context jumps to the named label. It's
+intended to be used as the clicked argument to a button.
+</p>
+</function>
+
+<h3>Image Manipulators</h3>
+
+<p>
+Image manipulators are objects that can return images. Every image
+manipulator can be used as a widget, but the opposite is not
+true. Image manipulators are used to implement the Image function,
+but constructing them directly can give you finer control.
+</p>
+
+<p>
+When an image manipulator requires another as input, the second image
+manipulator can be specified in any of a number of ways. The first way
+is as a string, which is turned into an im.Image. The second is a
+tuple, which is turned into an im.Composite using the rules for tuples
+given in Image. The third is that an image manipulator can be
+specified directly, in which case it is passed through unchanged.
+</p>
+
+<p>
+Widgets may not be used as arguments to image manipulators. This is
+because image manipulators are very efficent, caching the computed
+images on their first load.
+</p>
+
+<p>
+The image manipulators are:
+</p>
+
+<!-- func im.Image -->
+
+<!-- func im.Crop -->
+
+<!-- func im.Scale -->
+
+<!-- func im.Rotozoom -->
+
+<!-- func im.Alpha -->
+
+<!-- func im.Map -->
+
+<!-- func im.ramp -->
+
+<!-- func im.Tile -->
+
+<!-- func im.Composite -->
+
+<h3>Low-Level Audio Functions</h3>
+
+<p>
+Here, we give functions that allow for low-level control of the audio
+subsystem. There are two kinds of audio that we can play. The sound
+subsystem plays audio, but doesn't attempt in any way to make the
+audio that is played persistent. The music subsystem, on the other
+hand, handles saving and restoring the music as the game's situation
+changes. Use the sound functions to play sound effects, or to
+implement your own method of playing music. Use the music functions
+when you want music to be restored after playing and loading.
+</p>
+
+<p>
+Ren'Py supports 8 channels of audio. The first three channels (0-2)
+are dedicated to sound effects, while the rest (3-7) are intended for
+music. When voice is used, channel 2 is reserved for voice. All
+channels support playing compressed waveform audio. We support wav,
+mp3, ogg vorbis, ogg speex, and various mod formats, including xm. We
+also support midi, but impose that the requirement that only one
+channel can be playing midi at a time.
+</p>
+
+<p>
+Both sound and music functions deal with a queue of audio files. This
+queue contains the files that will be played after the currently
+playing file finishes. When looping, if the queue becomes empty the
+last-queued file is added to the queue.
+</p>
+
+<p>
+When synchro-start is enabled on two or more channels, the system
+waits for all of the channels to stop playing before playing the new
+files on those channels. All of the channels are started
+simultaneously, in a sample-accurate manner.
+</p>
+
+<h4>Sound Functions</h4>
+
+<!-- func renpy.sound.play -->
+
+<!-- func renpy.sound.queue -->
+
+<!-- func renpy.sound.stop -->
+
+<!-- func renpy.sound.is_playing -->
+
+<!-- func renpy.sound.set_volume -->
+
+<!-- func renpy.sound.set_mixer -->
+
+<!-- func renpy.sound.set_queue_empty_callback -->
+
+
+<h4>Music Functions</h4>
+
+<p>
+The music functions persists the information about playing music,
+allowing the music to be restored after a rollback, return from a
+menu, or load. What is saved is the time of the last change of music,
+and the last queued file. If the persistent time of last music change
+is different than what is currently playing, the system dequeues all
+queued music. It then check to see if the playing music is different
+from the persisted last queued music. If so, it stops the playing
+music. It then plays in a loop the last queued music, and sets the
+currently known last change time to the persisted last change time.
+</p>
+
+<!-- func renpy.music.play -->
+<!-- func renpy.music.queue -->
+<!-- func renpy.music.stop -->
+<!-- func renpy.music.set_volume -->
+<!-- func renpy.music.set_music -->
+
+<h3>Customizing the Main and Game Menus</h3>
+
+<p>
+This section describes how the content of the various menus can be
+customized. If you just want to change the look of the menus (to the
+extent made possible by the style system), use styles. To change just
+the text of menu items, consider using library.translations. To change
+just the position of buttons in a menu, use
+library.game_menu_positions and library.main_menu_positions.
+</p>
+
+<h4>Main Menu</h4>
+
+<p>
+The main menu can be customized by setting the library.main_menu
+variable. This variable should be a list of pairs. The first element
+of each pair is the name of the button on the main menu. The second
+item can be one of three things. It can be a string, in which case it
+is a label at which the game execution starts (after a jump out of the
+menu context). It can be a function, in which cas the function is
+called when the button is clicked. Finally, it can be None, which
+causes the button to be insensitive.
+</p>
+
+<p>
+If one wants to change the main menu each time it is invoked, but keep
+the look of it the same, then the thing to do is to provide a
+main_menu label. The code after this main_menu label should set
+library.main_menu, and then jump to _library_main_menu. This is
+useful, for example, if there are some items in the main menu that
+should be absent or disabled until some condition is met. (Say, the
+user reaching an ending for the first time.)
+</p>
+
+<p>
+Finally, it may be desirable to write your own menu from scratch. This
+is done by creating the menu using ui functions called from code
+invoked through the main_menu label. To start the game, the code
+should jump out of the context, using ui.jumpsoutofcontext() or
+renpy.jump_out_of_context(). The code can also jump to any of the game
+menu screens, which can be reached at the labels "_load_screen",
+"_save_screen" and "_prefs_screen", to display the appropriate
+screen. When interacting with the user, ui.interact() should be called
+with suppress_overlay=True, suppress_underlay=True, and perhaps
+mouse="mainmenu".
+</p>
+
+<p>
+The functions that are used to make a game menu screen, _game_nav()
+and _game_interact(), should also work with the main menu
+screen. When necessary, renpy.context().main_menu can be checked to
+see if we are in the main menu (it is True) or game menu (it is
+False).
+</p>
+
+<h4>Game Menu</h4>
+
+<p>
+The first thing one may wish to do when modifying the game menu is to
+add a screen to it. This is done in two steps. The first is to create
+the screen, and the second is to add it to the library.game_menu list
+so that it can be reached from the game menu.
+</p>
+
+<p>
+Each screen is represented in the code as a label that is jumped to to
+display the screen. There are five steps that this label should do in
+order to display the screen. First, it should call _game_nav(screen),
+where screen is the name of the screen (the first component of the
+tuples in library.game_menu, described below). Second, it should call
+the ui functions to actually draw the screen. Third, it should call
+_game_interact, instead of ui.interact, to interact with the
+user. This ensures that the game menu interaction is handled
+properly. Fourth, it should examine the results of _game_interact, and
+react appropriately. Finally, it should jump back up to the screen
+label, showing the screen again after each interaction.
+</p>
+
+<p>
+So that the user can see it, the screen should be added to
+library.game_menu. This is a list of four-component tuples. The first
+is the name of the screen. It's used to determine if the button used
+to reach that screen should be indicated as selected. The second
+component is the text used for that button.  The third component is a
+function that executes when the button is clicked. Normally, an
+appropriate function is ui.jumps('label'), where label is the name of
+the label under which your screen was defined above. Finally, the
+fourth parameter is a string containing a python expression. If the
+expression is not true, the button is insensitive.
+</p>
+
+<p>
+To customize the game menu navigation buttons, one can customize
+_game_nav(). This takes one parameter, the screen we're at. Default
+parameters for this are "restart", "load", "save", "prefs",
+"quit".
+</p>
+
+<var name="game_nav" value='"_load_screen"'>
+One can customize the screen the game menu jumps to by default by
+changing the value of _game_menu_screen. For example, one could set
+this to "_load_screen" for the first few interactions, and then set it
+to "_save_screen" for the rest of the game. This is especially useful
+for a game with no main menu.
+</var>
+
+<p>
+There is a convenience function for prompting the user for their
+response to a yes and no question.
+</p>
+
+<!-- func _yesno_prompt -->
+
+<h4>Preferences</h4>
+
+<p>
+Finally, it is possible to customize the preferences. This is done by
+modifying library.preferences, which is a dictionary mapping from vbox
+style to a list of preferences to be placed in that vbox. Modifying
+this dictionary and lists can move preferences around, and eliminate
+preferences entirely. It may be desirable to create new vbox styles,
+by using style.create().
+</p>
+
+<p>
+To create an entirely new preference, create it with _Preference,
+_SliderPreference, or _VolumePreference, and then add it to an
+appropriate list in library.preferences.
+</p>
+
+<!-- func _Preference -->
+
+<!-- func _SliderPreference -->
+
+<!-- func _VolumePreference -->
+
+<!-- func _remove_preference -->
+
+<h3>Developer Tools</h3>
+
+<p>
+Ren'Py includes a number of features to make a developer's life
+easier. Many of them need the variable <a href="#config.developer">config.developer</a> to be
+set to True to operate.
+</p>
+
+<h4>Editor Support</h4>
+
+<p>
+The <a href="#config.editor">config.editor</a> variable allows a
+developer to specify an editor command that is run when the
+launch_editor keypress (by default, shift-E) occurs.
+</p>
+
+<p>
+Please see <a href="http://www.bishoujo.us/renpy/scite.html">http://www.bishoujo.us/renpy/scite.html</a>
+for information about how to integrate Ren'Py with the SciTE text editor.
+</p>
+
+<h4>Fast Skipping</h4>
+
+<p>
+When config.developer is True, pressing the fast_skip key (by
+default, '>') causes the the game to immediately skip to the next important
+interaction. For this purpose, an important interaction is one that is
+not caused by a say statement, transition, or pause command. Usually,
+this means skipping to the next menu, but it will also stop when
+user-defined forms of interaction occur.
+</p>
+
+<h4>Warping to a Line</h4>
+
+<p>
+Ren'Py supports warping to a line in the script, without the developer
+to play through the entire game to get there. While this warping
+technique has a number of warnings associated with it, it still may be
+useful in providing a live preview.
+</p>
+
+<p>
+To invoke warping, run Ren'Py with the --warp command-line argument
+followed by a filename:line combination, to specify where you would
+like to warp to. For example:
+</p>
+
+<example>
+run_game --warp script.rpy:458
+</example>
+
+<p>
+When warping is invoked, Ren'Py does a number of things. It first
+finds all of the scene statements in the program. It then tries to
+find a path from the scene statements to every reachable statement in
+the game. It then picks the reachable statement closest to, but
+before or at, the given line. It works backwards from that statement
+to a scene statement, recording the path it took. Ren'Py then executes
+the scene statement and any show or hide statements found along that
+path. Finally, it transfers control to the found statement.
+</p>
+
+<p>
+There are a number of fairly major caveats to the warp feature. The
+first is that it only examines a single path, which means that while
+the path may be representative of some route of execution, it's
+possible that there may be a bug along some other route. In general,
+the path doesn't consider game logic, so it's also possible to have a
+path that isn't actually reachable. (This is only really a problem on
+control-heavy games, espcially those that use alot of python code.
+</p>
+
+<p>
+The biggest problem, though, is that no python code is executed before
+the statement that is warped to. This means that all variables will be
+uninitalized, which can lead to crashes when they are used. To
+overcome this, one can define a label 'after_warp', which is called
+after a warp but before the warped-to statement executes. The code
+reached by this label can set up variables in the program, and then
+return to the preview.
+</p>
+
+<p>
+The warp feature requires config.developer to be True to operate.
+</p>
+
+
+<h3>Default Definitions</h3>
+
+<p>
+This section documents a number of definitions that are found in the
+Ren'Py standard library. These include default instatiations of the
+various transitions and placements, and even one image.
+</p>
+
+<p>
+These definitions are found in common/definitions.rpy. You
+shouldn't change them there, but should instead copy the corresponding
+line into your script file, and change that instead.
+</p>
+
+<h4>Positions</h4>
+
+<dl>
+
+<defn name="left" type="position">
+A Position in which the left side of the image is aligned with the
+left side of the screen.
+</defn>
+
+<defn name="right" type="position">
+A position in which the right side of the image is aligned with the
+right side of the screen.
+</defn>
+
+<defn name="center" type="position">
+A position in which the image is centered horizontally on the screen.
+</defn>
+
+<defn name="offscreenleft" type="position">
+A position in which the image is placed just off the left side of the
+screen. Please note that an image placed in this position, while not
+visible to the user, still consumes resources, and so images should be
+hidden when not visible. This position is
+intended to be used with the move transition.
+</defn>
+
+<defn name="offscreenright" type="position">
+A position in which the image is placed just off the right side of the
+screen. Please note that an image placed in this position, while not
+visible to the user, still consumes resources, and so images should be
+hidden when not visible. This position is
+intended to be used with the move transition.
+</defn>
+
+</dl>
+
+
+<h4>Transitions</h4>
+
+<dl>
+
+<defn name="fade" type="transition">
+An instance of the Fade transition that takes 0.5 seconds to fade
+to black, and then 0.5 seconds to fade to the new screen.
+</defn>
+
+<defn name="dissolve" type="transition">
+An instance of the Dissolve transition that takes 0.5 seconds to complete.
+</defn>
+
+<defn name="pixellate" type="transition">
+An instance of the Pixellate transition, which takes 1 second to
+complete, and creates pixels as big as 32x32 over the course of 5
+steps in either direction.
+</defn>
+
+<defn name="move" type="transition">
+An instance of the MoveTransition transition, this takes 0.5 seconds
+to move images that changed position to their new locations.
+</defn>
+
+<defn name="vpunch" type="transition">
+When invoked, this transition shakes the screen vertically for a
+quarter second.
+</defn>
+
+<defn name="hpunch" type="transition">
+When invoked, this transition shakes the screen horizontally for a
+quarter second.
+</defn>
+
+<defn name="blinds" type="transition">
+Transitions the screen in a vertical blinds effect lasting 1 second.
+</defn>
+
+<defn name="squares" type="transition">
+Transitions the screen in a vertical blinds effect lasting 1 second.
+</defn>
+
+<defn name="wiperight" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen right.
+</defn>
+
+<defn name="wipeleft" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen left.
+</defn>
+
+<defn name="wipeup" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen up.
+</defn>
+
+<defn name="wipedown" type="transition">
+An instance of CropMove that takes 1 second to wipe the screen down.
+</defn>
+
+<defn name="slideright" type="transition">
+An instance of CropMove that takes 1 second to slide the screen right.
+</defn>
+
+<defn name="slideleft" type="transition">
+An instance of CropMove that takes 1 second to slide the screen left.
+</defn>
+
+<defn name="slideup" type="transition">
+An instance of CropMove that takes 1 second to slide the screen up.
+</defn>
+
+<defn name="slidedown" type="transition">
+An instance of CropMove that takes 1 second to slide the screen down.
+</defn>
+
+<defn name="slideawayright" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  right.
+</defn>
+
+<defn name="slideawayleft" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  left.
+</defn>
+
+<defn name="slideawayup" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  up.
+</defn>
+
+<defn name="slideawaydown" type="transition">
+An instance of CropMove that takes 1 second to slide the screen away and to the  down.
+</defn>
+
+<defn name="irisout" type="transition">
+An instance of CropMove that irises the screen out for 1 second.
+</defn>
+
+<defn name="irisin" type="transition">
+An instance of CropMove that irises the screen in for 1 second.
+</defn>
+
+</dl>
+
+<h4>Images</h4>
+
+<dl>
+
+<defn name="black" type="image">
+This is a predefinition of a Solid black image. It's here to serve
+as a reasonable default image, for use in tutorials and incomplete games.
+</defn>
+
+</dl>
+
+<h3>Function Index</h3>
+
+<funcindex/>
+
+<h3>Variable Index</h3>
+
+<varindex/>
+
+<h3>Property Index</h3>
+
+<propindex/>
+
+<h3>Style Index</h3>
+
+<styleindex/>
+
+<h3>Style Hierarchy</h3>
+
+<p>This shows the inheritance relationship between styles.</p>
+
+<ul>
+<!-- include style_heirarchy.xml -->
+</ul>
+
+<h3>Definition Index</h3>
+
+<defnindex />
+
+<h3>Example Script</h3>
+
+<p>
+For your browsing pleasure, we present a syntax-highlighted
+version of the <a href="example.html">demo that ships with
+Ren'Py</a>. The start of this script has been commented to make
+it easier to understand.
+</p>
+
+</doc>
+
+<!-- (define-key xml-mode-map [(control return)] 'tompy-xml-ctrlret) -->
+<!-- -->
+

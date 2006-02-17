@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<renpydoc>
+
+  <!-- (define-key xml-mode-map '(control return) 'tompy-xml-ctrlret) -->
+  
+  <section title="Say Statement">
+
+    <rule name="statement">
+      <alt>string</alt>
+      <alt>string string</alt>
+      <alt>identifier string</alt>
+    </rule>
+
+    <formal>
+      These three productions are the various forms of the say
+      statement. In order, they are the 1-string form, the 2-string
+      form, and the name-string form. We'll discuss individually
+      what each one does.
+    </formal><formal>
+      The 1-string form calls the <f>say</f> function (found in the
+      execution context) with the string.
+    </formal><formal>
+      The 2-string form also calls the <f>say</f> function, but this
+      time it passes it the two strings. The strings are passed in the
+      order in which they appear.
+    </formal><formal>
+      When a identifierstring say statement is executed, the first thing
+      that happens is that the identifier is looked up in the execution
+      context. It's an error if the name is not defined. If the name
+      is bound to a string, both strings are passed to the <f>say</f>
+      function, as if the 2-string form was used. Otherwise, the
+      <f>say</f> method is called on the object that the identifier was
+      bound to, with the string as the only argument.
+    </formal>
+
+    <user>
+      While the various say statements are very flexible, there are
+      some conventions that we suspect users will use when writing
+      games.
+    </user><user>
+      The 1-string form of the say statment is rendered to the user in
+      a text box without any name associated with it. It's used to
+      indicate the thoughts of the POV character, or to narrate
+      actions that occur in the game.
+    </user><user>
+      The 2-string form is displayed with the first string as a name,
+      and the second string as the line of dialogue said by the
+      character with that name. It's used to indicate spoken dialogue,
+      usually from characters that are minor enough to not have a
+      character object associated with them. The 2-string form is
+      rarely used directly, as normally the name-string or 1-string
+      forms are preferred for dialogue from main characters.
+    </user><user>
+      Generally, when the name-string form is used, the first name
+      refers to a character object. The name field of that character
+      object is looked up, and used to display dialogue as if the
+      2-string form was used. So the name-string form is what is used
+      when we want a main character to say something. This form allows
+      the direct use of the character's name before the dialogue,
+      without requiring the quoting needed by the 2-string form.
+    </user>
+
+    <example>
+      "I was walking down the street one day, when I came across the postman."
+
+      me "Hey, any mail for me today?"
+
+      "Postman" "Yeah, a package came for you. But there's no return address."
+    </example>
+
+  </section>
+
+  <subsection title="Image Display">
+
+    <formal>
+      In Ren'Py, image display is controlled by a pair of image
+      lists. The two image lists are the are called the master image
+      list and the temporary image list. These lists contain python
+      objects that are capable of drawing themselves to the
+      screen. When the time comes to show something to the user, we
+      iterate through the temporary image list, drawing things on
+      the screen in the order in which they appear in the list. So
+      the first thing in the list will be the background, and the
+      thing that's drawn closest to the user will be the last thing
+      in the list.
+    </formal><formal>
+      We can divide the execution of a Ren'Py program into periods
+      where we are showing a screen to the user (for example, during
+      the execution of a say statement) and periods where we are
+      not. After a period of showing the screen to the user, the master image
+      list is copied over the temporary image list. 
+    </formal>
+
+    <user>
+      We have two image lists for two reasons. The first is the idea
+      that only the temporary image list will include transitions,
+      and once we're done performing the transition, we want it to
+      be remove from the list. The second reason is an idea that
+      (behind the scenes) the temporary list will also include
+      interface elements (like boxes containing character
+      dialog). We, in general, want these boxes to be shown to the
+      user once and then removed from the screen.
+    </user>
+
+    <rule name="image_name">
+      <alt>identifier+</alt>
+    </rule>
+    
+    <formal>
+      An image name consists of one or more identifiers. The first
+      identifier is called the primary identifier of this image
+      name, while the second and later identifier are called
+      secondary identifers. An image name may not include a Ren'Py
+      keyword.
+    </formal><formal>
+      Ren'Py maintains an image dictionary, which maps between image
+      names and objects implementing images that can be show to the
+      user.
+    </formal>
+
+    <user>
+      The idea behind primary identifiers is that we will normally
+      want to display only one image of a character at a time. So we
+      use an image's primary identifier to find other images in the
+      master display list that have the same primary identifier.
+    </user>
+
+
+    <rule name="statement">
+      <alt>"image" image_name "=" python_expression</alt>
+    </rule>
+
+    <formal>
+      This adds a new entry to the image dictionary. Specifically, the
+      python_expression is evaluated to get something that's drawable,
+      and then that object is stored in a tuple in the image
+      dictionary.
+    </formal>
+
+    <user>
+      In general, the python expression will be a call to the image
+      constructor, which loads in a new image from disk (or
+      somewhere... read the documentation for the image constructor.)
+      It's also possible to use another constructor, like the one for
+      animation, but that will probably be more rare.
+    </user><user>
+      It's important to note that this doesn't actually load the image
+      into ram, until close to the time when the image is actually
+      needed.
+    </user><user>
+      In general, it makes sense to ensure that all image statements
+      execure during game startup, before the call to
+      startup_complete().
+    </user>
+
+    <example>
+      image woods = image("backgrounds/woods.jpg")
+      image eileen red upset = image("eileen/red_upset.png")
+      image eileen red happy = image("eileen/red_happy.png")
+    </example>
+
+  </subsection>
+</renpydoc>

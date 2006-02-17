@@ -1,0 +1,104 @@
+DSE Events
+==========
+
+The core of DSE is the event dispatch system. This system is
+responsible for calling Ren'Py code that implements each of the
+events. The event dispatcher chooses a list of events that should be
+run during a given period, and then is responsible for calling each of
+those events in turn until either all events are exhausted, or one of
+the events indicates that the period should come to an end.
+
+Events
+------
+
+An event consists of a block of Ren'Py code. The name of the event
+is the name of the label that is called to execute that event. There
+are three ways of returning from an event. Simply executing a 'return'
+statement will end the event, and activate any later event in the same
+period. Jumping to events_end_period will end the current period,
+ignoring any future-scheduled event. Jumping to events_skip_period
+will both end the current period, and cause the next period to be
+skipped. 
+
+Events are declared by calling the event(name, ...) function from
+inside an init block. This function takes a variable number of
+arguments. The first argument is always the name of the event, which
+is also the label that is called to start the event. The second and
+later arguments are conditions that must be true for the event to
+occur. These conditions may either be python expressions in strings,
+or the result of one of condition functions given below. The event
+function takes one keyword argument, which gives the priority of the
+event. Events with a smaller priority number are considered before
+those with a larget priority number, with the default priority being
+100. 
+
+Consideration of events occurs in two phases. First, the conditions
+are evaluated on each event. If any condition is false, the event is
+discarded, otherwise it is added to the event list. Then, the list is
+filtered and random elements chosen such that only one event is in
+each choice group, for the events that are in choice groups. The
+events are always kept in priority order, with lower numbers being
+higher priority. The first event in the list is recorded as being
+executed, and then executed. Execution continues until all events are
+exhausted, or the period is forced to end.
+
+The following condition functions ship as part of the DSE.
+
+event.once()
+
+ Returns True until the event has been executed once, and then
+ returns False. It can be used to ensure that the user will only see
+ and event once.
+
+event.solo()
+
+ Returns True if there are no higher-priority events scheduled. Use
+ this on a very-low-priority event that should only occur if no
+ high-priority events occur.
+
+event.only()
+
+ Returns True if no higher-priority events have been . If it returns
+ True, it prevents all other events from being considered.
+
+event.happened(*events)
+ 
+ Supply this function with one or more events names (strings). It
+ returns true if those events have happened already, at any time in
+ the game. 
+
+event.depends(*events)
+ 
+ Supply this function with one or more events names (strings). It
+ returns true if those events have executed, yesterday or before.
+
+event.random(probability)
+
+ Probability is a float between 0.0 and 1.0. Returns True with the
+ supplied probability, each time it is evaluated. (Each period.)
+
+event.choose_one(group, count=1)
+
+ This defines a group from which only one event can be chosen. DSE
+ randomly picks one of the elements from the group such that all of
+ the other conditions are True. An event can only be in one group at a
+ time. (Objects returned from here should not have operators applied
+ to them.) The count is used to determine the relative likelyhood of
+ an event in a group being chosen, with a count of 10 being 10 times
+ more likely then a count of 1.
+
+The objects returned from condition functions can be combined using
+the and, or, and not operators. For example:
+
+ event('bachelor_party', event.depends('engaged_a') or event.depends('engaged_b'))
+
+Call from Main
+--------------
+
+There are a few entry points that are used in main to call the event
+dispatcher. First of all, there is the function check_skip_period(),
+that should be called to determine if a period should be run at
+all. The Ren'Py label events_run_period should be called to run a
+single period. Finally, the Ren'Py label events_end_day should be
+called to end a day. Ending a day stops skipping periods, and also
+changes the events that are considered executed by event.depends. 
