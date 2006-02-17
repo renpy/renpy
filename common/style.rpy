@@ -37,6 +37,7 @@ init -1000:
         style.create('say_dialogue', 'default', "(text) The style that is used by default for the text of dialogue.")
         style.create('say_thought', 'default', "(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.""")
         style.create('say_window', 'window', '(window) The default style for windows containing dialogue and thoughts.')
+        style.create('say_vbox', 'vbox', '(box) The vbox containing the label (if present) and the body of dialogue and thoughts.')
 
         # menu
         style.create('menu', 'default', "(position) The style that is used for the vbox containing a menu.")
@@ -244,6 +245,7 @@ init -1000:
         # Dialogue
 
         style.say_label.bold = True
+        style.say_vbox.box_spacing = 10
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
         style.menu_choice.activate_color = (255, 255, 0, 255) # yellow

@@ -4,6 +4,9 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.2
 -------------------
 
+[doc] Refactored display_say.
+todo: two_window_say.
+
 Ren'Py now displays dialogue shown via a rollback as quickly as
 possible. This is a change from the previous behavior, which was to
 show such dialogue at the speed set by the "Text Speed" preference.

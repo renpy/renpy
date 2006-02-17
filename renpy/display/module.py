@@ -156,28 +156,6 @@ else:
 #     return func(r, g, b, a)
         
 
-if version >= 4008005:
-
-    can_map = True
-
-    def map(src, dst, rmap, gmap, bmap, amap):
-        """
-        This maps the colors between two surfaces. The various map
-        parameters must be 256 character long strings, with the value
-        of a character at a given offset being what a particular pixel
-        component value is mapped to.
-        """
-
-        convert_and_call(_renpy.map,
-                         src, dst,
-                         *endian_order(dst, rmap, gmap, bmap, amap))
-
-
-else:
-
-    can_map = False
-
-
 # Okay, what we have here are a pair of tables mapping masks to byte offsets
 # for 24 and 32 bpp modes. We represent 0xff000000 as positive and negative
 # numbers so that it doesn't yield a warning, and so that it works on
@@ -203,6 +181,38 @@ def byte_offset(src):
         bo = bo32
 
     return [ bo.get(i, None) for i in src.get_masks() ]
+
+
+def endian_order(src, r, g, b, a):
+    rv = [ a ] * 4
+
+    for i, index_i in zip((r, g, b, a), byte_offset(src)):
+        rv[index_i] = i
+
+    return rv
+
+
+if version >= 4008005:
+
+    can_map = True
+
+    def map(src, dst, rmap, gmap, bmap, amap):
+        """
+        This maps the colors between two surfaces. The various map
+        parameters must be 256 character long strings, with the value
+        of a character at a given offset being what a particular pixel
+        component value is mapped to.
+        """
+
+        convert_and_call(_renpy.map,
+                         src, dst,
+                         *endian_order(dst, rmap, gmap, bmap, amap))
+
+
+else:
+
+    can_map = False
+
 
 
 

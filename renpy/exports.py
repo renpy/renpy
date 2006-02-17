@@ -383,8 +383,54 @@ def predict_display_say(who, what,
     return rv
         
                   
-    
+def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, **kwargs):
+    """
+    This is called (by default) by renpy.display_say to add the
+    widgets corresponding to a screen of dialogue to the user. It is
+    not expected to be called by the user, but instead to be called by
+    display_say, or by a function passed as the show_function argument
+    to Character or display_say.
 
+    @param who: The name of the character that is speaking, or None to
+    not show this name to the user.
+
+    @param what: What that character is saying. Please not that this
+    may not be a string, as it can also be a list containing both text
+    and displayables, suitable for use as the first argument of ui.text().
+
+    @param who_args: Additional keyword arguments intended to be
+    supplied to the ui.text that creates the who widget of this dialogue.
+
+    @param what_args: Additional keyword arguments intended to be
+    supplied to the ui.text that creates the what widget of this dialogue.
+
+    @param window_args: Additional keyword arguments intended to be
+    supplied to the ui.window that creates the who widget of this
+    dialogue.
+
+    @param image: If True, then who should be interpreted as an image
+    or displayable rather than a text string.
+
+    @param kwargs: Additional keyword arguments should be ignored.
+
+    This function is required to return the ui.text() widget
+    displaying the what text.
+    """
+
+    renpy.ui.window(**window_args)
+    renpy.ui.vbox(style='say_vbox')
+
+    if who:
+        if image:
+            renpy.ui.add(renpy.display.im.image(who, loose=True, **who_args))
+        else:
+            renpy.ui.text(who, **who_args)
+
+    rv = renpy.ui.text(what, **what_args)
+    renpy.ui.close()
+
+    return rv
+            
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
                 window_style='say_window',
@@ -403,6 +449,7 @@ def display_say(who, what, who_style='say_label',
                 all_at_once=False,
                 what_properties={},
                 window_properties={},
+                show_function = show_display_say,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -415,8 +462,8 @@ def display_say(who, what, who_style='say_label',
 
     @param all_at_once: If True, then the text is displayed all at once. (This is forced to true if interact=False.)
 
-    For documentation of the various prefixes, suffixes, and styles,
-    please read the documentation for Character.
+    For documentation of the other arguments, please read the
+    documentation for Character.
     """
 
     # If we're in fast skipping mode, don't bother with say
@@ -445,6 +492,18 @@ def display_say(who, what, who_style='say_label',
     keep_interacting = True
     slow_start = 0
 
+    # Figure out window args.
+    window_args = dict(style=window_style, **window_properties)
+
+    # Figure out who and its arguments.
+    if who is not None and not image:
+        who = who_prefix + who + who_suffix
+        who_args = dict(style=who_style, **properties)
+    elif who is not None and image:
+        who_args = dict(style=who_style, **properties)
+    else:
+        who_args = dict()
+
     while keep_interacting:
                 
         # If we're going to do an interaction, then saybehavior needs
@@ -453,15 +512,6 @@ def display_say(who, what, who_style='say_label',
             behavior = renpy.ui.saybehavior()
         else:
             behavior = None
-
-        renpy.ui.window(style=window_style, **window_properties)
-        renpy.ui.vbox(padding=10)
-
-        if who is not None and not image:
-            whotext = who_prefix + who + who_suffix
-            renpy.ui.text(whotext, style=who_style, **properties)
-        elif who is not None and image:
-            renpy.ui.image(who, style=who_style, **properties)
 
         # Code to support ctc.
         ctcwhat = [ what ]
@@ -476,20 +526,20 @@ def display_say(who, what, who_style='say_label',
                 renpy.ui.add(ctc)
                 restart_interaction()
 
-        what_text = renpy.ui.text(ctcwhat,
-                                  style=what_style,
-                                  slow=slow,
-                                  slow_done=slow_done,
-                                  slow_abortable=slow_abortable,
-                                  slow_start=slow_start,
-                                  pause=pause,
-                                  slow_speed = None,
-                                  **what_properties)
+                
+        what_args = dict(style=what_style,
+                         slow=slow,
+                         slow_done=slow_done,
+                         slow_abortable=slow_abortable,
+                         slow_start=slow_start,
+                         pause=pause,
+                         slow_speed = None,
+                         **what_properties)
+
+        what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image)
 
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
-
-        renpy.ui.close()
 
         if interact:
             renpy.ui.interact(mouse='say')
@@ -499,7 +549,7 @@ def display_say(who, what, who_style='say_label',
             slow_start = what_text.get_laidout_length()
             pause += 1
 
-    if who:
+    if who and isinstance(who, (str, unicode)):
         log(who)
     log(what)
     log("")

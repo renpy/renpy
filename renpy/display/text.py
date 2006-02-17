@@ -772,7 +772,10 @@ class Text(renpy.display.core.Displayable):
                 length -= ts.length(text)
 
                 if length < 0:
-                    text = text[:length]
+                    if isinstance(text, (str, unicode)):
+                        text = text[:length]
+                    else:
+                        return False
                 
                 surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time, at)
                 # sw, sh = surf.get_size()

@@ -175,10 +175,10 @@ class Character(object):
 
         @param what_suffix: A suffix that is appended to the text body.
 
-        @param function: The function that is called to actually display
-        this dialogue. This should either be renpy.display_say, or a function
-        with the same signature as it.
-
+        @param show_function: A function that is called to show each
+        step of this dialogue to the user. It should have the same
+        signature as renpy.show_display_say.
+        
         @param predict_function: The function that is called to
         predict the images from this dialogue. It is called with the
         same signature as display_say (although some of the
