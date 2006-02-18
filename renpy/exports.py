@@ -365,9 +365,14 @@ def predict_display_say(who, what,
                         image=False,
                         ctc=None,
                         **kwargs):
+    """
+    This is the default function used Character to predict images that
+    will be used by display_say. It's called with more-or-less the
+    same parameters as display_say, and is expected to return a list
+    of images used by display_say.
+    """
 
     rv = [ ]
-
 
     if "background" in window_properties:
         rv.append(window_properties["background"])

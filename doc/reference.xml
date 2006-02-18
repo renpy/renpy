@@ -2056,11 +2056,16 @@ and not attempt to set attributes on them.
 
 <!-- func DynamicCharacter -->
 
-<!-- func renpy.pause -->
 
 <!-- func renpy.display_say -->
 
+<!-- func renpy.show_display_say -->
+
+<!-- func renpy.predict_display_say -->
+
 <!-- func renpy.display_menu -->
+
+<!-- func renpy.pause -->
 
 <!-- func renpy.input -->
 

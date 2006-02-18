@@ -18,7 +18,7 @@ made Character and display_say take a new parameter,
 show_function. This function is now responsible for actually placing
 widgets on the screen. It has a reasonably well-defined interface, to 
 allow it to be overridden by user code in a way in which display_say
-is no longer practically able to be. [doc]
+is no longer practically able to be.
 
 +++
 The two_window_say extra has been rewritten to take advantage of this
