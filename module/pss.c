@@ -194,19 +194,19 @@ static void start_sample(struct Channel* c, int reset_fade) {
 }
 
 
-static void update_pause(void) {
-    int i;
-    int pause = 1;
+/* static void update_pause(void) { */
+/*     int i; */
+/*     int pause = 1; */
     
-    for (i = 0; i < NUM_CHANNELS; i++) {
-        if (channels[i].playing) {
-            pause = 0;
-            break;
-        }
-    }
+/*     for (i = 0; i < NUM_CHANNELS; i++) { */
+/*         if (channels[i].playing) { */
+/*             pause = 0; */
+/*             break; */
+/*         } */
+/*     } */
 
-    SDL_PauseAudio(pause);
-}
+/*     SDL_PauseAudio(pause); */
+/* } */
 
 static void free_sample(Sound_Sample *ss) {
     Sound_FreeSample(ss);
@@ -360,7 +360,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->queued_tight = 0;
                 
                 start_sample(c, ! old_tight);
-                update_pause();
+/*                 update_pause(); */
                 
                 continue;                
             }
@@ -454,7 +454,7 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     
     c->paused = paused;
     start_sample(c, 1);    
-    update_pause();
+/*     update_pause(); */
         
     EXIT();
     error(SUCCESS);
@@ -546,7 +546,7 @@ void PSS_stop(int channel) {
         c->queued_name = NULL;
     }
     
-    update_pause();
+/*     update_pause(); */
     
     EXIT();    
 
@@ -892,6 +892,8 @@ void PSS_init(int freq, int stereo, int samples) {
         channels[i].paused = 1;
         channels[i].event = 0;
     }
+
+    SDL_PauseAudio(0);
     
     initialized = 1;
 

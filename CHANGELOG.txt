@@ -32,6 +32,11 @@ Ren'Py now displays dialogue shown via a rollback as quickly as
 possible. This is a change from the previous behavior, which was to
 show such dialogue at the speed set by the "Text Speed" preference.
 
+The sound module has been rewritten to play sound (or silence) all the
+time, rather than pausing and restarting sound playback as
+necessary. This eliminates popping and errors in some edge cases, like
+playing a very short sound.
+
 Fixed a bug in the move transition that manifests itself if the move
 transition is used while a transient is on the screen.
 
