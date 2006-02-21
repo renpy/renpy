@@ -110,6 +110,9 @@ def recursively_replace(o, func):
     if isinstance(o, list):
         return [ recursively_replace(i, func) for i in o ]
 
+    if isinstance(o, tuple):
+        return tuple([ recursively_replace(i, func) for i in o ])
+
     if isinstance(o, ast.Node):
         for k in vars(o):
             setattr(o, k, recursively_replace(getattr(o, k), func))
