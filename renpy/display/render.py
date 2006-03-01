@@ -335,7 +335,7 @@ def compute_clip(source):
     return (x0, y0, x1 - x0, y1 - y0), updates
     
 
-def screen_blit(source, full=False):
+def screen_blit(source, full=False, xoffset=0):
     """
     Blits the given render to the screen. Computes the difference
     between the current blit list and old_blits.
@@ -355,8 +355,16 @@ def screen_blit(source, full=False):
 
     screen = pygame.display.get_surface()
 
+    if xoffset:
+        sw = renpy.config.screen_width
+        sh = renpy.config.screen_height
+        
+        x, y, w, h = cliprect
+        cliprect = (x + xoffset, y, min(w, sw - x), h)
+        updates = [ (x + xoffset, y, min(w, sw - x), h) for x, y, w, h in updates ]
+
     screen.set_clip(cliprect)
-    source.blit_to(screen, 0, 0)
+    source.blit_to(screen, xoffset, 0)
     screen.set_clip()
 
     return updates

@@ -112,7 +112,7 @@ def interact():
                 s = None
 
                 m.set_display(pygame.display.get_surface(),
-                              (0, 0,
+                              (renpy.game.interface.display.screen_xoffset, 0,
                                renpy.config.screen_width,
                                renpy.config.screen_height))
             else:

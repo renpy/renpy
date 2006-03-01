@@ -1,6 +1,14 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.4.3
+-------------------
+
+The presence of tabs in a script causes a more appropriate error
+message to be generated. Previously, they simply caused random parse
+errors. 
+
+
 New in Ren'Py 5.4.2
 -------------------
 

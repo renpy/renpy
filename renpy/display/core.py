@@ -463,24 +463,39 @@ class Display(object):
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
-        fullscreen = self.fullscreen and not os.environ.get('RENPY_DISABLE_FULLSCREEN', False)
+        fullscreen = self.fullscreen
+
+        if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
+            fullscreen = False
 
         if fullscreen:
             fsflag = FULLSCREEN
 
+        width = renpy.config.screen_width
+        height = renpy.config.screen_height
+        self.screen_xoffset = 0
+
+        # Try out the widescreen mode.
+        if os.environ.get('RENPY_FULLSCREEN_WIDE', False):
+            wide_width = max(int(1.6 * height), width)
+
+            try:
+                pygame.display.set_mode((wide_width, height), fsflag, 32)
+                self.screen_xoffset = (wide_width - width) // 2 
+                width = wide_width
+            except:
+                pass
+
+                
         # Pick an appropriate display mode. Prefer 32, but accept 24
         # before letting SDL do conversions.
-        if 24 == pygame.display.mode_ok((renpy.config.screen_width,
-                                         renpy.config.screen_height),
-                                        fsflag, 32):
+        if 24 == pygame.display.mode_ok((width, height), fsflag, 32):
             depth = 24
         else:
             depth = 32
         
         # The window we display things in.
-        self.window = pygame.display.set_mode((renpy.config.screen_width,
-                                               renpy.config.screen_height),
-                                              fsflag, depth)
+        self.window = pygame.display.set_mode((width, height), fsflag, depth)
         
         # Sample surface that all surfaces are created based on.
         self.sample_surface = self.window.convert_alpha()
@@ -664,7 +679,7 @@ class Display(object):
 
             updates.extend(self.draw_mouse(False))
 
-            damage = renpy.display.render.screen_blit(surftree, self.full_redraw)
+            damage = renpy.display.render.screen_blit(surftree, self.full_redraw, self.screen_xoffset)
 
             if damage:
                 updates.extend(damage)
@@ -673,7 +688,6 @@ class Display(object):
 
             updates.extend(self.draw_mouse(True))
             pygame.display.update(updates)
-
 
         else:
             self.full_redraw = True
@@ -1273,10 +1287,13 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                    renpy.display.focus.event_handler(ev)
 
                     # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
+                    x -= self.display.screen_xoffset
+
+                    renpy.display.focus.event_handler(ev, x, y)
+
                     self.event_time = end_time = time.time()
 
                     rv = root_widget.event(ev, x, y, 0)

@@ -68,6 +68,9 @@ def list_logical_lines(filename):
                             
             c = data[pos]
 
+            if c == '\t':
+                raise Exception("%s contains a tab character on line %d. Tab characters are not allowed in Ren'Py scripts." % (filename, number))
+
             if c == '\n':
                 number += 1
 
@@ -170,14 +173,14 @@ def group_logical_lines(lines):
                 index += 1
                 continue
 
-            if l[index] == '\t':
-                index += 1
-                depth = depth + 8 - (depth % 8)
-                continue
+            # if l[index] == '\t':
+            #    index += 1
+            #    depth = depth + 8 - (depth % 8)
+            #    continue
                 
             break
 
-        return depth, l[depth:]
+        return depth, l[index:]
 
     # i, min_depth -> block, new_i
     def gll_core(i, min_depth):
