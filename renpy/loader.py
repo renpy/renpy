@@ -68,6 +68,51 @@ def listdirfiles():
     return rv
     
 
+class SubFile(object):
+
+    def __init__(self, f, base, length):
+        self.f = f
+        self.base = base
+        self.offset = 0
+        self.length = length
+
+        self.f.seek(self.offset + self.base)
+
+    def read(self, length=None):
+
+        maxlength  = self.length - self.offset
+        if length is not None:
+            length = min(length, maxlength)
+        else:
+            length = maxlength
+
+        rv = self.f.read(length)
+
+        self.offset += len(rv)
+
+        return rv
+
+    def seek(self, offset, whence=0):
+
+        if whence == 0:
+            self.offset = offset
+        elif whence == 1:
+            self.offset = self.offset + offset
+        elif whence == 2:
+            self.offset = self.length + offset
+
+        self.f.seek(self.offset + self.base)
+
+    def tell(self):        
+        return self.offset
+
+    def close(self):
+        self.f.close()
+
+    def write(self, s):
+        raise Exception("Write not supported by SubFile")
+    
+
 def load(name):
     """
     Returns an open python file object of the given type.
@@ -91,13 +136,20 @@ def load(name):
 
         data = [ ]
 
-        for offset, dlen in index[name]:           
-            f.seek(offset)
-            data.append(f.read(dlen))
+        # Direct path.
+        if len(index[name]) == 1:
+            offset, dlen = index[name][0]
+            rv = SubFile(f, offset, dlen)
 
-        rv = StringIO(''.join(data))
-        f.close()
+        # Compatability path.
+        else:
+            for offset, dlen in index[name]:           
+                f.seek(offset)
+                data.append(f.read(dlen))
 
+            rv = StringIO(''.join(data))
+            f.close()
+            
         return rv
 
     raise Exception("Couldn't find file '%s'." % name)

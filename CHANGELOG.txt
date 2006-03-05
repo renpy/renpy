@@ -4,6 +4,16 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.3
 -------------------
 
+The format of archive files has been changed, to store each media file
+contiguously on disk. This allows us to use disk access to retrieve
+files from archives, whereas previously the files had to be
+reassembled in memory before use. Eliminating this memory assembly can
+drop the resident size of Ren'Py significantly. (When music was
+playing, there was a memory overhead equal to double the size of the
+playing file... this has been eliminated.) While Ren'Py remains
+compatible with the older-format archives, regenerating the archives
+for a game allows it to take advantage of the new format.
+
 The presence of tabs in a script causes a more appropriate error
 message to be generated. Previously, they simply caused random parse
 errors. 

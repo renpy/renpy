@@ -12,11 +12,8 @@ import glob
 
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-# The most we will go without inserting some padding. 10k.
-padding_every = 10240
-
 # The amount of padding we will add.
-padding_max = 4
+padding_max = 64
 
 def randpadding():
 
@@ -47,7 +44,7 @@ def main():
     random.seed()
 
     
-    padding = "RPA-2.0 XXXXXXXXXXXXXXXX\n"
+    padding = "RPA-2.0 XXXXXXXXXXXXXXXX direct\n"
 
     archivef.write(padding)
     offset = len(padding)
@@ -72,10 +69,7 @@ def main():
             archivef.write(padding)
             offset += len(padding)
 
-            # Pick a random block size.
-            block = random.randint(1, padding_every)
-
-            data = datafile.read(block)
+            data = datafile.read()
 
             if not data:
                 break
