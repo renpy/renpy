@@ -2,8 +2,13 @@ Releasing Ren'Py Games
 
 PyTom <pytom@bishoujo.us>
 
-Updated: 2005-11-21
+Updated: 2006-03-05
 
+Quick checklist:
+
+* Did you run lint?
+* Are you shipping the correct files?
+* Are you sure you deleted game/saves?
 
 Okay, so you've finished creating a game using Ren'Py, and now you
 want to release it. Congratulations! This tech note will help you to
@@ -88,7 +93,7 @@ Ren'Py is run.
 
 run_game.exe [windows] - The game executable that the user runs.
 
-moonlight.py [python] - The main python script that runs your game.
+run_game.py [python] - The main python script that runs your game.
 
 python23.dll [windows] - The DLL containing the python interpreter. It
 may change versions in the future, in which case the numbers will

@@ -693,7 +693,7 @@ class Text(renpy.display.core.Displayable):
         self.laidout = lines
         self.laidout_lineheights = lineheights
         self.laidout_linewidths = linewidths
-        self.laidout_width = max(max(linewidths), self.style.minwidth)
+        self.laidout_width = max(max(linewidths + [ 0 ]), self.style.minwidth)
         self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
         self.laidout_length = laidout_length
         self.laidout_start = laidout_start

@@ -1173,7 +1173,7 @@ def parse_statement(l):
     else:
         with = None
 
-    if what and l.eol():
+    if what is not None and l.eol():
         # We have a one-argument say statement.
         l.expect_noblock('say statement')
         l.advance()
@@ -1189,6 +1189,8 @@ def parse_statement(l):
         with = l.require(l.simple_expression)
     else:
         with = None
+
+    print who, what
         
     if who and what is not None:
         l.expect_eol()

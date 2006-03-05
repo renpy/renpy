@@ -159,7 +159,8 @@ logical line is ignored.
 Logical lines are then combined into <def>block</def>s. Two
 logical lines are in the same block if the lines have the same
 indentation preceding them, and no logical line with a lesser
-amount of indentation occurs between the two lines. In the
+amount of indentation occurs between the two lines. Indentation may
+only consist of spaces, not tabs. In the
 following example:
 </p>
 

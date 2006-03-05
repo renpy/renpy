@@ -14,9 +14,15 @@ playing file... this has been eliminated.) While Ren'Py remains
 compatible with the older-format archives, regenerating the archives
 for a game allows it to take advantage of the new format.
 
+RELEASING.txt has been updated and corrected.
+
+Empty strings are now allowed in Say statements, although it's not
+immediately obvious to me why they would be used, except in some
+strange cases, or as placeholders.
+
 The presence of tabs in a script causes a more appropriate error
 message to be generated. Previously, they simply caused random parse
-errors. 
+errors.
 
 
 New in Ren'Py 5.4.2
