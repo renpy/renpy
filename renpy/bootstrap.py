@@ -49,8 +49,9 @@ def bootstrap(renpy_base):
     options, args = op.parse_args()
 
     if options.python:
+        import __main__
         sys.argv = [ options.python ] + args
-        execfile(renpy_base + "/" + options.python, globals(), globals())
+        execfile(renpy_base + "/" + options.python, __main__.__dict__, __main__.__dict__)
         sys.exit(0)
 
     # If we made it this far, we will be running the game, or at least

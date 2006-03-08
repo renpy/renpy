@@ -24,6 +24,7 @@ The presence of tabs in a script causes a more appropriate error
 message to be generated. Previously, they simply caused random parse
 errors.
 
+Fixed a bug preventing dump_text.bat and archiver.bat from working.
 
 New in Ren'Py 5.4.2
 -------------------
