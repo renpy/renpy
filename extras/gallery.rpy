@@ -27,11 +27,22 @@ init:
         store.gallery_height = 120
 
         # The contents of each of the page. Each of these is a list of
-        # tuples with the first element of the tuple being the image
-        # filename and the second element being the name of the image
+        # tuples with the first component of the tuple being an image
+        # filename and the second component being the name of the image
         # that will unlock the image with this filename. (That is,
         # the name that is used in show or scene statements, as a
         # string.)
+        #
+        # If the third element of the tuple exists, it's a filename
+        # corresponding to this image, used for computing the
+        # thumbnail by the method given below.
+        # 
+        #
+        # The first component may consist of:
+        # - A string, which is taken to be an image filename.
+        # - A displayable, which is shown to the user.
+        # - A tuple, which is used to display multiple of the above.
+        # - A list, which is used to show things one after another.
         #
         # When displaying an image as a thumbnail, this code first
         # looks for the file thumbnail_<filename>. If that file
@@ -43,38 +54,38 @@ init:
         # You probably want to create thumbnails for most images, to
         # limit memory consumption.
         page1 = [
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
             ]
 
         page2 = [
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
-            ( "carillon.jpg", "carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
+            ( "carillon.jpg", "bg carillon" ),
             ]
 
         page3 = [
-            ( "whitehouse.jpg", "whitehouse" ),
-            ( "washington.jpg", "washington" ),
+            ( "whitehouse.jpg", "bg whitehouse" ),
+            ( "washington.jpg", "bg washington" ),
             ]        
 
         page4 = [
@@ -155,6 +166,16 @@ init:
         # gallery.
         def gallery():
 
+            def show_things(what):
+                if isinstance(what, tuple):
+                    for i in what:
+                        show_things(i)
+
+                elif isinstance(what, (str, unicode)):
+                    ui.image(what)
+                else:
+                    ui.add(what)
+
             page = 0
 
             while True:
@@ -198,7 +219,11 @@ init:
 
                     # Otherwise, get the filename and spec and see if
                     # we've unlocked it.
-                    filename, spec = images[i]
+                    if len(images[i]) == 2:
+                        filename, spec = images[i]
+                        toshow = filename
+                    elif len(images[i]) == 3:
+                        toshow, spec, filename = images[i]
 
                     if spec:
                         spec = spec.split()
@@ -207,7 +232,7 @@ init:
                         filename = None
                         clicked = None
                     else:
-                        clicked = ui.returns(('show', filename))
+                        clicked = ui.returns(('show', toshow))
 
                     # Create the button, containing the appropriate
                     # image or a null if we haven't unlocked it yet.
@@ -234,11 +259,16 @@ init:
 
                 # Process the user's commands.
                 if cmd == "show":
-                    ui.add(Solid((0, 0, 0, 255)))
-                    ui.image(arg)
-                    ui.saybehavior()
-                    renpy.transition(gallery_transition)
-                    ui.interact(suppress_overlay=True, suppress_underlay=True)
+
+                    if not isinstance(arg, list):
+                        arg = [ arg ]
+
+                    for i in arg:
+                        ui.add(Solid((0, 0, 0, 255)))
+                        show_things(i)
+                        ui.saybehavior()
+                        renpy.transition(gallery_transition)
+                        ui.interact(suppress_overlay=True, suppress_underlay=True)
 
                 if cmd == "page":
                     page = arg

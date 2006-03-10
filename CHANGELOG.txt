@@ -1,6 +1,16 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py x.y.z
+-------------------
+
+Updated the gallery extra to support showing arbitrary displayables,
+rather than just images with filenames. It was also updated to support
+tuples, corresponding to composing one image atop another, and lists,
+which display things in sequence. To support this, the tuples used by
+gallery take a third argument which gives a filename which is used,
+somewhat indirectly, to compute the thumbnail.
+
 New in Ren'Py 5.4.3
 -------------------
 
