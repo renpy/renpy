@@ -550,9 +550,13 @@ def display_say(who, what, who_style='say_label',
             renpy.ui.interact(mouse='say')
 
         keep_interacting = what_text.get_keep_pausing()
+
         if keep_interacting:
             slow_start = what_text.get_laidout_length()
             pause += 1
+
+            for i in renpy.config.say_sustain_callbacks:
+                i()
 
     if who and isinstance(who, (str, unicode)):
         log(who)

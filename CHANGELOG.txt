@@ -1,7 +1,7 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py x.y.z
+New in Ren'Py 5.4.4
 -------------------
 
 Updated the gallery extra to support showing arbitrary displayables,
@@ -10,6 +10,20 @@ tuples, corresponding to composing one image atop another, and lists,
 which display things in sequence. To support this, the tuples used by
 gallery take a third argument which gives a filename which is used,
 somewhat indirectly, to compute the thumbnail.
+
+Clarified that the voice extra can take non-wave sound files, such as
+OGG Vorbis and especially OGG Speex files. Also, made voice
+automatically sustain through pauses.
+
+Fixed a bug in Ren'Py that was causing the voice extra to
+malfunction. The bug was caused by the contents of the config
+namespace being copied at the wrong time, leading it to not be
+restored properly to default values when Ren'Py was reset (as the Main
+Menu choice.) 
+
+Removed a leftover debugging statement that caused Ren'Py to spew out
+all of the say statements in .rpy files it parsed.
+
 
 New in Ren'Py 5.4.3
 -------------------

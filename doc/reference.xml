@@ -2659,14 +2659,20 @@ rather than a bold version of the italic vera.
 </var>
 
 <var name="config.interact_callbacks" value="...">
-A list of callbacks that are called (without any arguments) when an
+A list of functions that are called (without any arguments) when an
 interaction is started or restarted.
 </var>
 
 <var name="config.start_interact_callbacks" value="...">
-A list of callbacks that are called (without any arguments) when an
+A list of functions that are called (without any arguments) when an
 interaction is started. These callbacks are not called when an
 interaction is restarted.
+</var>
+
+<var name="config.say_sustain_callbacks" value="...">
+A list of functions that are called, without arguments, before the
+second and later interactions caused by a line of dialogue with pauses
+in it. Used to sustain voice through pauses.
 </var>
 
 <var name="config.editor" value="None">

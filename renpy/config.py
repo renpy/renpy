@@ -180,6 +180,9 @@ interact_callbacks = [ ]
 # A list of functions that are called when an interaction is started.
 start_interact_callbacks = [ ]
 
+# A list of functions that are called when a say statement is sustained.
+say_sustain_callbacks = [ ]
+
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
 
@@ -227,10 +230,6 @@ log = None
 del renpy
 
 def backup():
-
-    import copy
-    import types
-
     global _globals
     _globals = globals().copy()
 
@@ -238,13 +237,15 @@ def backup():
     del _globals["reload"]
     del _globals["__builtins__"]
 
+def reload():
+    import copy
+    globals().update(_globals)
+
     for k, v in _globals.items():
 
-        if k == "text_tokenizer":
-            continue
+        try:
+            v = copy.deepcopy(v)
+        except:
+            pass
 
-        _globals[k] = copy.deepcopy(v)
-
-
-def reload():
-    globals().update(_globals)
+        globals()[k] = v

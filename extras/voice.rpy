@@ -3,17 +3,17 @@
 # turned off. In the future, we'll probably provide some way of
 # toggling it on or off for individual characters.
 #
-# To use it, place a voice "<wavfile>" line before each voiced line of
+# To use it, place a voice "<sndfile>" line before each voiced line of
 # dialogue.
 #
-#     voice "e_1001.wav"
+#     voice "e_1001.ogg"
 #     e "Voice support lets you add the spoken word to your games."
 #
 # Normally, a voice is cancelled at the start of the next
 # interaction. If you want a voice to span interactions, call
 # voice_sustain.
 #
-#     voice "e_1002.wav"
+#     voice "e_1002.ogg"
 #     e "Voice sustain is a technique that allows the same voice file.."
 #
 #     $ voice_sustain()
@@ -22,10 +22,6 @@
 init -440:
 
     python:
-
-        # Ensure the voice preference exists.
-        if persistent.voice is None:
-            persistent.voice = True
 
         _voice = object()
         _voice.play = None
@@ -58,9 +54,6 @@ init -440:
         # appropriate voice file is played for the user.        
         def voice_interact():
 
-            if not persistent.voice:
-                return
-            
             if _voice.play and not config.skipping:
                 renpy.sound.play(_voice.play, channel=2)
             elif not _voice.sustain:
@@ -70,3 +63,4 @@ init -440:
             _voice.sustain = False
         
         config.start_interact_callbacks.append(voice_interact)
+        config.say_sustain_callbacks.append(voice_sustain)

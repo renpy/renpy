@@ -1190,8 +1190,6 @@ def parse_statement(l):
     else:
         with = None
 
-    print who, what
-        
     if who and what is not None:
         l.expect_eol()
         l.expect_noblock('say statement')
