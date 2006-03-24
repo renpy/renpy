@@ -1,6 +1,26 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.4.5
+-------------------
+
+Slow text and skipping conflicted, in that when skipping one will see
+the slow text effect. This may be a regression, but it's fixed now.
+
+Ren'Py now takes some new command line options:
+
+* --savedir allows the user to set the directory in which Ren'Py saves
+data in. This allows Ren'Py games to be run from a non-writable
+directory. 
+
+* --version prints the version of Ren'Py.
+
+[Todo]
+--compile
+hookable lint?
+Doc config.window_icon
+Undoc and/or fix config.background
+
 New in Ren'Py 5.4.4
 -------------------
 

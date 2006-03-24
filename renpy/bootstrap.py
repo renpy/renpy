@@ -28,11 +28,14 @@ def bootstrap(renpy_base):
     op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
+    op.add_option("--savedir", dest='savedir', default=None, action='store',
+                  help='The directory in which to save data. Defaults to the saves directory under the game directory.')
+
     op.add_option('--lock', dest='lock', default=None, action='store',
                   help='If True, produce locked version of the .rpyc files.')
 
     op.add_option('--python', dest='python', default=None,
-                  help='Run the argument in the python interpreter.')
+                  help='Run the argument file in the python interpreter.')
 
     op.add_option('--lint', dest='lint', default=False, action='store_true',
                   help='Run a number of expensive tests, to try to detect errors in the script.')
@@ -45,6 +48,9 @@ def bootstrap(renpy_base):
 
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
+
+    op.add_option('--version', dest='version', default=False, action='store_true',
+                  help="Display the version of Ren'Py")
 
     options, args = op.parse_args()
 
@@ -71,6 +77,10 @@ def bootstrap(renpy_base):
     import renpy
     renpy.import_all()
 
+    if options.version:
+        print renpy.version
+        sys.exit(0)
+
     renpy.game.options = options
 
     try:
@@ -80,50 +90,57 @@ def bootstrap(renpy_base):
         import codecs
         import traceback
 
-        f = file("traceback.txt", "wU")
-
-        f.write(codecs.BOM_UTF8)
-
-        print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
-        print >>f, "script."
-        print >>f
-
         type, value, tb = sys.exc_info()
 
-
-        print >>f, type.__name__ + ":", 
-        print >>f, unicode(e).encode('utf-8')
-        print >>f
-        print >>f, renpy.game.exception_info
-
-        print >>f
-        print >>f, "-- Full Traceback ------------------------------------------------------------"
-        print >>f  
-
+        # Outside of the file.
         traceback.print_tb(tb, None, sys.stdout)
-        traceback.print_tb(tb, None, f)
-
-        print >>f, type.__name__ + ":", 
         print type.__name__ + ":", 
-
-        print >>f, unicode(e).encode('utf-8')
         print unicode(e).encode('utf-8')
-
         print
-        print >>f
-
         print renpy.game.exception_info
-        print >>f, renpy.game.exception_info
 
-        print >>f
-        print >>f, "Ren'Py Version:", renpy.version
 
-        f.close()
-
+        # Inside of the file, which may not be openable.
         try:
-            os.startfile('traceback.txt')
+
+            f = file("traceback.txt", "wU")
+
+            f.write(codecs.BOM_UTF8)
+
+            print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
+            print >>f, "script."
+            print >>f
+
+            print >>f, type.__name__ + ":", 
+            print >>f, unicode(e).encode('utf-8')
+            print >>f
+            print >>f, renpy.game.exception_info
+
+            print >>f
+            print >>f, "-- Full Traceback ------------------------------------------------------------"
+            print >>f  
+
+            traceback.print_tb(tb, None, f)
+            print >>f, type.__name__ + ":", 
+            print >>f, unicode(e).encode('utf-8')
+
+            print >>f
+
+            print >>f, renpy.game.exception_info
+
+            print >>f
+            print >>f, "Ren'Py Version:", renpy.version
+
+            f.close()
+
+            try:
+                os.startfile('traceback.txt')
+            except:
+                pass
+
         except:
             pass
+
 
     if options.leak:
         memory_profile()

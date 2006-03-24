@@ -33,6 +33,9 @@ def run(restart=False):
     renpy.store._restart = restart
 
     renpy.config.savedir = game.basepath + "/saves"
+
+    if renpy.game.options.savedir:
+        renpy.config.savedir = renpy.game.options.savedir
     
     # Make the save directory.
     try:
