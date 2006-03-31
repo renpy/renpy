@@ -44,6 +44,14 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
+    $ renpy.register_sfont("demosfont", 24, filename="demosfont.png", default_kern=-2)
+    $ renpy.register_sfont("demosfont", 22, filename="demosfont.png", default_kern=-2)
+
+    $ style.default.font = "demosfont"
+    $ style.default.drop_shadow = None
+    $ style.button_text.drop_shadow = None
+
+
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
@@ -75,6 +83,11 @@ label start:
     # interpolate it into the next line.
     $ version = renpy.version()
 
+
+    "!\"#$%%&'()*+,-./0123456789:;<=>?@
+     ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'
+     abcdefghijklmnopqrstuvwxyz{{|}~"
+    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
@@ -1514,6 +1527,9 @@ init:
 
     # Set the color of idle chosen menu choices.
     $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
+
+    $ style.window.background = Solid((192, 192, 192, 255))
+
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.

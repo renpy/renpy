@@ -5,17 +5,158 @@ import re
 import renpy
 import sys
 
-_font_cache = { }
+# This contains a map from (fn, size, bold, italics, underline) to the
+# unloaded font object corresponding to that specification. 
+fonts = { }
 
-# TODO: Something sane if the font file can't be found.
-def get_font(fn, size, bold=False, italics=False, underline=False):
-    from renpy.loader import transfn
+# This contains a map from (fn, size, bold, italics, underline) to the
+# loaded font object corresponding to that specification.
+font_cache = { }
 
-    if (fn, bold, italics) in renpy.config.font_replacement_map:
-        fn, bold, italics = renpy.config.font_replacement_map[fn, bold, italics]
 
-    if (fn, size, bold, italics, underline) in _font_cache:
-        return _font_cache[(fn, size, bold, italics, underline)]
+class SFont(object):
+
+    def __init__(self,
+                 filename,
+                 spacewidth,
+                 default_kern,
+                 kerns,
+                 charset):
+
+        self.filename = filename
+        self.spacewidth = spacewidth
+        self.default_kern = default_kern
+        self.kerns = kerns
+        self.charset = charset
+
+    def load(self):
+
+        # The color key used to separate characters.
+        KEY=(255, 0, 255, 255)
+
+        # Map from character to subsurface.
+        self.chars = { }
+
+        # Map from character to width, height.
+        self.sizes = { }
+
+        # Load in the image.
+        surf = renpy.display.im.load_image(self.filename)
+        self.surf = surf
+
+        surf.lock()
+
+        sw, sh = surf.get_size()
+        height = sh - 1
+        self.height = height
+
+        # Create space characters.
+        self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
+        self.sizes[u' '] = self.spacewidth
+        self.chars[u'\u00a0'] = self.chars[u' ']
+        self.sizes[u'\u00a0'] = self.sizes[u' ']
+
+        i = 0
+        ci = 0
+
+        # Find real characters, create them.
+        while i < sw and ci < len(self.charset):
+
+            if surf.get_at((i, 0)) != KEY:
+                start = i
+                i += 1
+
+                while i < sw:
+                    if surf.get_at((i, 0)) == KEY:
+                        break
+
+                    i += 1
+
+                c = self.charset[ci]
+                ci += 1
+                self.chars[c] = surf.subsurface((start, 1, i - start, height))
+                self.sizes[c] = i - start
+
+
+            i += 1
+
+        surf.unlock()
+
+    def size(self, text):
+        w = 0
+
+        if not text:
+            return (0, self.height)
+        
+        for a, b in zip(text, text[1:]):
+            w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+
+        w += self.sizes[text[-1]]
+
+        return (w, self.height)
+            
+    def render(self, text, antialias, color, background=None):
+        surf = pygame.Surface(self.size(text), 0,
+                              renpy.game.interface.display.sample_surface)
+
+        if not text:
+            return surf
+
+        x = 0
+        y = 0
+        
+        for a, b in zip(text, text[1:]):
+            surf.blit(self.chars[a], (x, y))
+            x += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+
+        surf.blit(self.chars[text[-1]], (x, y))
+
+        return surf
+
+    def get_linesize(self):
+        return self.height 
+
+    def get_height(self):
+        return self.height
+
+    def get_ascent(self):
+        return self.height
+
+    def get_descent(self):
+        return 0
+
+def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
+                   filename=None, spacewidth=10, default_kern=0, kerns={},
+                   charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~"):
+    """
+    This registers an SFont with the given details. Please note that
+    size, bold, italic, and underline are all advisory (used for matching), and
+    do not change the appearance of the font.
+
+    @param name: The name of the font being registered.
+    @param size: The size of the font being registered.
+    @param bold: The boldness of the font being registered.
+    @param italics: The italicness of the font being registered.
+    @param underline: The underline of the font being registered.
+
+    @param filename: The file containing the sfont image.
+    @param spacewidth: The width of a space character.
+    @param default_kern: The default kern spacing between characters.
+    @param kerns: A map from two-character strings to the kern that should
+    be used between those characters.
+    @param charset: The character set of the font. A string containing characters
+    in the order in which they are found in the image.
+    """
+    
+    if name is None or size is None or filename is None:
+        raise Exception("When registering an SFont, the font name, font size, and filename are required.")
+
+    sf = SFont(filename, spacewidth, default_kern, kerns, charset)
+    fonts[(name, size, bold, italics, underline)] = sf
+
+
+
+def load_ttf(fn, size, bold, italics, underline):
 
     try:
         rv = pygame.font.Font(transfn(fn), size)
@@ -45,9 +186,29 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
             # Let pygame try to find the font for us.
             rv = pygame.font.SysFont(fn, size, bold, italics)
 
-    rv.set_underline(underline)
+        rv.set_underline(underline)
+    
 
-    _font_cache[(fn, size, bold, italics, underline)] = rv
+# TODO: Something sane if the font file can't be found.
+def get_font(fn, size, bold=False, italics=False, underline=False):
+    from renpy.loader import transfn
+
+    if (fn, bold, italics) in renpy.config.font_replacement_map:
+        fn, bold, italics = renpy.config.font_replacement_map[fn, bold, italics]
+
+    if (fn, size, bold, italics, underline) in font_cache:
+        return font_cache[(fn, size, bold, italics, underline)]
+
+    rv = fonts.get((fn, size, bold, italics, underline), None)
+    if rv is not None:
+        rv.load()
+    else:
+        try:
+            rv = load_ttf(fn, size, bold, italics, underline)
+        except:
+            raise Exception("Could not find font: %r" % ((fn, size, bold, italics, underline), ))
+
+    font_cache[(fn, size, bold, italics, underline)] = rv
 
     return rv
     

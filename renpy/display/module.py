@@ -187,7 +187,8 @@ def endian_order(src, r, g, b, a):
     rv = [ a ] * 4
 
     for i, index_i in zip((r, g, b, a), byte_offset(src)):
-        rv[index_i] = i
+        if index_i is not None:
+            rv[index_i] = i
 
     return rv
 

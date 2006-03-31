@@ -222,11 +222,11 @@ def set_music(channel, flag):
         raise Exception("Not a music channel.")
 
     if flag:
-        if channel in music_channels:
-            music_channels.remove(channel)
-    else:
         if channel not in music_channels:
             music_channels.append(channel)
+    else:
+        if channel in music_channels:
+            music_channels.remove(channel)
 
 def get_delay(time, channel=7):
     """

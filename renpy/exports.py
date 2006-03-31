@@ -7,7 +7,7 @@ import renpy
 
 # Many of these shouldn't be used directly.
 # from renpy.display.layout import *
-from renpy.display.text import ParameterizedText
+from renpy.display.text import ParameterizedText, register_sfont
 from renpy.display.behavior import Keymap
 # from renpy.display.image import *
 
