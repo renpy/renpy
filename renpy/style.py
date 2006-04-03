@@ -88,10 +88,7 @@ class StyleManager(object):
         
         return name in style_map
 
-# This expands out property names and adds them to style's property
-# dictionary. 
-def compute_properties(style, properties):
-
+def expand_properties(properties):
     props = { }
 
     # Expand substitutions.
@@ -112,9 +109,28 @@ def compute_properties(style, properties):
         for p in prefixes:
             props[p + k] = v
 
+    return props
+
+# This expands out property names and adds them to style's property
+# dictionary. 
+def compute_properties(style, properties):
+
+    props = expand_properties(properties)
 
     style.properties.update(props)
     style.cache.update(props)
+
+# This expands out names, and removes them from the properties of
+# the style. (But not the cache!)
+def remove_properties(style, properties):
+
+    props = expand_properties(properties)
+
+    for k in props:
+        if k in style.properties:
+            del style.properties[k]
+
+
 
 # This builds the style. If recurse is True, this also builds the
 # parent style.
@@ -188,6 +204,9 @@ class Style(object):
 
     def __setattr__(self, name, value):
         compute_properties(self, { name : value } )
+
+    def __delattr__(self, name):
+        remove_properties(self, { name : None })
 
     
         

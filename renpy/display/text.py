@@ -159,7 +159,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
 def load_ttf(fn, size, bold, italics, underline):
 
     try:
-        rv = pygame.font.Font(transfn(fn), size)
+        rv = pygame.font.Font(renpy.loader.transfn(fn), size)
         rv.set_bold(bold)
         rv.set_italic(italics)
     except:
@@ -186,7 +186,8 @@ def load_ttf(fn, size, bold, italics, underline):
             # Let pygame try to find the font for us.
             rv = pygame.font.SysFont(fn, size, bold, italics)
 
-        rv.set_underline(underline)
+    rv.set_underline(underline)
+    return rv
     
 
 # TODO: Something sane if the font file can't be found.
@@ -206,6 +207,8 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
         try:
             rv = load_ttf(fn, size, bold, italics, underline)
         except:
+            if renpy.config.debug:
+                raise
             raise Exception("Could not find font: %r" % ((fn, size, bold, italics, underline), ))
 
     font_cache[(fn, size, bold, italics, underline)] = rv

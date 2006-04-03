@@ -60,7 +60,7 @@ init -500:
                             selected=None,
                             disabled=False,
                             clicked=None,
-                            **properties):
+                            properties={}):
             """
             This function is called to create the various buttons used
             in the game menu. By overriding this function, one can
@@ -96,7 +96,7 @@ init -500:
 
             ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, **properties)
 
-        def _label_factory(label, type, **properties):
+        def _label_factory(label, type, properties={}):
             """
             This function is called to create a new label. It can be
             overridden by the user to change how these labels are created.
@@ -186,10 +186,10 @@ init -500:
             # (text) The style and placement of the skip indicator.            
 
             if config.skipping == "slow" and library.skip_indicator:
-                ui.text(_("Skip Mode"), style='skip_indicator')
+                ui.text(_(u"Skip Mode"), style='skip_indicator')
 
             if config.skipping == "fast" and library.skip_indicator:
-                ui.text(_("Fast Skip Mode"), style='skip_indicator')
+                ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
 
         config.overlay_functions.append(skip_indicator)
 

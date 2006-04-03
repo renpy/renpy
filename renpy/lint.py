@@ -31,7 +31,7 @@ def add(msg):
     if not msg in added:
         added[msg] = True    
         print unicode(msg).encode('utf-8')
-    
+
 
 # Trys to evaluate an expression, announcing an error if it fails.
 def try_eval(node, where, expr, additional=None):
@@ -261,6 +261,9 @@ def lint():
 
         elif isinstance(node, renpy.ast.If):
             check_if(node)
+
+    for f in renpy.config.lint_hooks:
+        f()
             
     print
     print

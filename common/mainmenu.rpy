@@ -9,10 +9,10 @@ init -498:
         
         # The contents of the main menu.
         library.main_menu = [
-            ( "Start Game", "start", 'True'),
-            ( "Continue Game", ui.jumps("_load_screen"), 'True' ),
-            ( "Preferences", ui.jumps("_prefs_screen"), 'True' ),
-            ( "Quit",  ui.jumps("_quit"), 'True' ),
+            ( u"Start Game", "start", 'True'),
+            ( u"Continue Game", ui.jumps("_load_screen"), 'True' ),
+            ( u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
+            ( u"Quit",  ui.jumps("_quit"), 'True' ),
             ]
 
         # If not None, this is used to fix the positions of the
@@ -108,7 +108,7 @@ label _library_main_menu:
             else:
                 disabled = False
 
-            _button_factory(text, "mm", clicked=clicked, disabled=disabled, **kwargs)
+            _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs)
 
         ui.close()
         ui.close()

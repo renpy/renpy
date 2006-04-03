@@ -365,6 +365,8 @@ init -1000:
 
         style.yesno_label.color = green
         style.yesno_label.textalign = 0.5
+        style.yesno_label.xpos = 0.5
+        style.yesno_label.xanchor = 0.5
 
         style.yesno_window.xfill = True
         style.yesno_window.yminimum = 0.5

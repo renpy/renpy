@@ -79,6 +79,16 @@ def add(w, make_current=False, once=False):
 
     return w
 
+def clear():
+    """
+    Clears the current layer of widgets.
+    """
+
+    if isinstance(current, str):
+        renpy.game.context(-1).scene_lists.clear(current)
+    else:
+        raise Exception("ui.clear cannot be called when a widget is open.")
+    
 
 def layer(name):
     """

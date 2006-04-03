@@ -23,16 +23,16 @@ init -450:
         # A list of (readable name, synthetic key) tuples
         # corresponding to joystick events.
         library.joystick_keys = [
-            ('Left', 'joy_left'),
-            ('Right', 'joy_right'),
-            ('Up', 'joy_up'),
-            ('Down', 'joy_down'),
-            ('Select/Dismiss', 'joy_dismiss'),
-            ('Rollback', 'joy_rollback'),
-            ('Hold to Skip', 'joy_holdskip'),
-            ('Toggle Skip', 'joy_toggleskip'),
-            ('Hide Text', 'joy_hide'),
-            ('Menu', 'joy_menu'),
+            (u'Left'), 'joy_left'),
+            (u'Right', 'joy_right'),
+            (u'Up', 'joy_up'),
+            (u'Down', 'joy_down'),
+            (u'Select/Dismiss', 'joy_dismiss'),
+            (u'Rollback', 'joy_rollback'),
+            (u'Hold to Skip', 'joy_holdskip'),
+            (u'Toggle Skip', 'joy_toggleskip'),
+            (u'Hide Text', 'joy_hide'),
+            (u'Menu', 'joy_menu'),
             ]
         
         def _prefs_screen_run(prefs_map):
@@ -230,7 +230,7 @@ init -450:
                     def clicked():
                         renpy.sound.play(sound, channel=self.channel)
 
-                    _button_factory("Test", "prefs", clicked=clicked)
+                    _button_factory(u"Test", "prefs", clicked=clicked)
                     
                 ui.close()
 
@@ -443,15 +443,13 @@ init -450:
 
                 _label_factory(self.name, 'prefs')
 
-
-
                 for label, key in library.joystick_keys:
 
                     def clicked(label=label, key=key):
                         renpy.invoke_in_new_context(set_binding, key, label)
                         return True
 
-                    _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, "Not Assigned")), "prefs_js", clicked=clicked)
+                    _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked)
 
 #                 def clicked():
 #                     for label, key in library.joystick_keys:
@@ -522,36 +520,31 @@ init -450:
 
         # Left
 
-        pl1 = _Preference('Display', 'fullscreen', [
-            ('Window', False, None),
-            ('Fullscreen', True, None),
+        pl1 = _Preference(u'Display', 'fullscreen', [
+            (u'Window', False, None),
+            (u'Fullscreen', True, None),
             ])
 
-        pl2 = _Preference('Transitions', 'transitions', [
-            ('All', 2, 'library.has_transitions'),
-            ('Some', 1, 'library.has_transitions and default_transition'),
-            ('None', 0, 'library.has_transitions'),
+        pl2 = _Preference(u'Transitions', 'transitions', [
+            (u'All', 2, 'library.has_transitions'),
+            (u'Some', 1, 'library.has_transitions and default_transition'),
+            (u'None', 0, 'library.has_transitions'),
             ])
 
 
         # Center
 
-        pc1 = _Preference('TAB and CTRL Skip', 'skip_unseen', [
-            ('Seen Messages', False, 'config.allow_skipping and library.has_skipping'),
-            ('All Messages', True, 'config.allow_skipping and library.has_skipping'),
+        pc1 = _Preference(u'TAB and CTRL Skip', 'skip_unseen', [
+            (u'Seen Messages', False, 'config.allow_skipping and library.has_skipping'),
+            (u'All Messages', True, 'config.allow_skipping and library.has_skipping'),
             ])
 
         
-        pc2= _Preference('After Choices', 'skip_after_choices', [
-            ('Stop Skipping', False, 'config.allow_skipping and library.has_skip_after_choice'),
-            ('Continue Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
+        pc2= _Preference(u'After Choices', 'skip_after_choices', [
+            (u'Stop Skipping', False, 'config.allow_skipping and library.has_skip_after_choice'),
+            (u'Continue Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
             ])
 
-        def cps_render(n):
-            if n == 0:
-                return "Infinite"
-            else:
-                return str(n)
 
         def cps_get():
             cps = _preferences.text_cps
@@ -568,7 +561,7 @@ init -450:
             _preferences.text_cps = cps
 
             
-        pc3 = _SliderPreference('Text Speed', 100, cps_get, cps_set,
+        pc3 = _SliderPreference(u'Text Speed', 100, cps_get, cps_set,
                                 'library.has_cps')
 
 
@@ -586,17 +579,17 @@ init -450:
                 afm = 0
             _preferences.afm_time = afm
 
-        pc4 = _SliderPreference('Auto-Forward Time', 40, afm_get, afm_set,
+        pc4 = _SliderPreference(u'Auto-Forward Time', 40, afm_get, afm_set,
                                 'library.has_afm')
 
         # Right
 
-        pr1 = _VolumePreference("Music Volume", 'music', 'library.has_music')
-        pr2 = _VolumePreference("Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
+        pr1 = _VolumePreference(u"Music Volume", 'music', 'library.has_music')
+        pr2 = _VolumePreference(u"Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
                                                         
-        _JumpPreference('Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled')
+        _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled')
 
-        _JoystickPreference('Joystick Configuration')
+        _JoystickPreference(u'Joystick Configuration')
         
         # Advanced 
 
@@ -613,25 +606,25 @@ init -450:
         # The position of the right column of preferences.
             
         library.preferences['prefs_left'] = [
-            library.all_preferences['Display'],
-            library.all_preferences['Transitions'],
-            library.all_preferences['Joystick...'],
+            library.all_preferences[u'Display'],
+            library.all_preferences[u'Transitions'],
+            library.all_preferences[u'Joystick...'],
             ]
         
         library.preferences['prefs_center'] = [
-            library.all_preferences['TAB and CTRL Skip'],
-            library.all_preferences['After Choices'],
-            library.all_preferences['Text Speed'],
-            library.all_preferences['Auto-Forward Time'],
+            library.all_preferences[u'TAB and CTRL Skip'],
+            library.all_preferences[u'After Choices'],
+            library.all_preferences[u'Text Speed'],
+            library.all_preferences[u'Auto-Forward Time'],
             ]
         
         library.preferences['prefs_right'] = [
-            library.all_preferences['Music Volume'],
-            library.all_preferences['Sound Volume'],
+            library.all_preferences[u'Music Volume'],
+            library.all_preferences[u'Sound Volume'],
             ]
 
         library.joystick_preferences['prefs_center'] = [
-            library.all_preferences['Joystick Configuration'],
+            library.all_preferences[u'Joystick Configuration'],
             ]
 
 

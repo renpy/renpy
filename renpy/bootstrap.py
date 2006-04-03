@@ -25,6 +25,9 @@ def bootstrap(renpy_base):
         name = name[name.find("_") + 1:]
 
     op = optparse.OptionParser()
+    op.add_option('--version', dest='version', default=False, action='store_true',
+                  help="Display the version of Ren'Py")
+
     op.add_option('--game', dest='game', default=name,
                   help='The directory the game is in.')
 
@@ -32,10 +35,13 @@ def bootstrap(renpy_base):
                   help='The directory in which to save data. Defaults to the saves directory under the game directory.')
 
     op.add_option('--lock', dest='lock', default=None, action='store',
-                  help='If True, produce locked version of the .rpyc files.')
+                  help=optparse.SUPPRESS_HELP)
 
     op.add_option('--python', dest='python', default=None,
-                  help='Run the argument file in the python interpreter.')
+                  help=optparse.SUPPRESS_HELP)
+
+    op.add_option('--compile', dest='compile', default=False, action='store_true',
+                  help="Causes Ren'Py to compile all .rpy files to .rpyc files, and then quit.")
 
     op.add_option('--lint', dest='lint', default=False, action='store_true',
                   help='Run a number of expensive tests, to try to detect errors in the script.')
@@ -44,13 +50,11 @@ def bootstrap(renpy_base):
                   help='Causes the amount of time it takes to draw the screen to be profiled.')
 
     op.add_option('--leak', dest='leak', action='store_true', default=False,
-                  help='When the game exits, dumps a profile of memory usage.')
+                  help=optparse.SUPPRESS_HELP)
 
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
-    op.add_option('--version', dest='version', default=False, action='store_true',
-                  help="Display the version of Ren'Py")
 
     options, args = op.parse_args()
 

@@ -15,9 +15,6 @@ window_icon = None
 screen_width = 800
 screen_height = 600
 
-# The background color.
-background = None # (0, 0, 0, 255)
-
 # Turns recoverable errors into fatal ones, so that the user can know
 # about and fix them.
 debug = False

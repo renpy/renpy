@@ -1,7 +1,7 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py 5.4.5
+New in Ren'Py 5.5.0
 -------------------
 
 SFont support. [doc]
@@ -9,21 +9,34 @@ SFont support. [doc]
 Slow text and skipping conflicted, in that when skipping one will see
 the slow text effect. This may be a regression, but it's fixed now.
 
+Properties can now be deleted from styles, restoring the previous
+inheritance.
+
+There is now a function, ui.clear(), that clears out a layer. This
+allows the ui functions to be used on non-transient layers, although
+not all widgets may be used in this way.
+
 Ren'Py now takes some new command line options. The --savedir option
 allows the user to set the directory in which Ren'Py saves data
 in. This allows Ren'Py games to be run from a non-writable directory.
-The --version prints the version of Ren'Py.
+The --version option prints the version of Ren'Py. The --compile
+option causes Ren'Py to compile rpy files into rpyb files. 
+
+There is now a variable, config.lint_hooks, that contains functions
+that are called at lint time. 
+
+A new extra, translations.py, gives all of the translatable strings in
+the Ren'Py common code.
 
 +++
 Fixed a bug in renpy.music.set_music, in which the test was inverted
 in the code. (But not in the documentation.) This may require a
 script change if your game uses that function.
 
-[Todo]
---compile
-hookable lint?
+
+Doc config.lint_hooks
 Doc config.window_icon
-Undoc and/or fix config.background
+Undoc config.background
 
 New in Ren'Py 5.4.4
 -------------------

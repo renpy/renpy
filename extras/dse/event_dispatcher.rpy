@@ -336,3 +336,4 @@ init 100:
             if not renpy.has_label(i.name):
                 raise Exception("'%s' is defined as an event somewhere in the game, but no label named '%s' was defined anywhere." % (i.name, i.name))
     
+

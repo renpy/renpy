@@ -108,6 +108,9 @@ def run(restart=False):
     # Make a clean copy of the store.
     game.clean_store = vars(renpy.store).copy()
 
+    if renpy.game.options.compile:
+        raise renpy.game.QuitException()
+
     if renpy.game.options.lint:
         try:
             renpy.lint.lint()

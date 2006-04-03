@@ -10,12 +10,12 @@ init -499:
 
         # The contents of the game menu choices.
         library.game_menu = [
-                ( "return", "Return", ui.jumps("_return"), 'True'),
-                ( "prefs", "Preferences", ui.jumps("_prefs_screen"), 'True' ),
-                ( "save", "Save Game", ui.jumps("_save_screen"), 'not renpy.context().main_menu' ),
-                ( "load", "Load Game", ui.jumps("_load_screen"), 'True'),
-                ( "mainmenu", "Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context().main_menu' ),
-                ( "quit", "Quit", lambda : _quit_prompt("quit"), 'True' ),
+                ( "return", u"Return", ui.jumps("_return"), 'True'),
+                ( "prefs", u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
+                ( "save", u"Save Game", ui.jumps("_save_screen"), 'not renpy.context().main_menu' ),
+                ( "load", u"Load Game", ui.jumps("_load_screen"), 'True'),
+                ( "mainmenu", u"Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context().main_menu' ),
+                ( "quit", u"Quit", lambda : _quit_prompt("quit"), 'True' ),
                 ]
 
         # If not None, a map from the names of the game menu
@@ -145,7 +145,8 @@ init -499:
                 _button_factory(label, "gm_nav",
                                 selected=(key==screen),
                                 disabled=disabled,
-                                clicked=clicked, **kwargs)
+                                clicked=clicked,
+                                properties=kwargs)
 
             ui.close()
 
@@ -231,7 +232,7 @@ init -499:
             ### file_picker_empty_slot file_picker_text
             # (text) The style that is used for the empty slot indicator
             # in the file picker.
-            ui.text(_("Empty Slot."), style='file_picker_empty_slot')
+            ui.text(_(u"Empty Slot."), style='file_picker_empty_slot')
             ui.close()
 
         _scratch.file_picker_index = None
@@ -301,7 +302,7 @@ init -499:
                         _button_factory(label, "file_picker_nav", disabled=not cond, clicked=clicked)
 
                     # Previous
-                    tb(fpi > 0, _('Previous'), ui.returns(("fpidelta", -1)))
+                    tb(fpi > 0, _(u'Previous'), ui.returns(("fpidelta", -1)))
 
                     # Quick Access
                     for i in range(0, library.file_quick_access_pages):
@@ -309,7 +310,7 @@ init -499:
                         tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
 
                     # Next
-                    tb(True, _('Next'), ui.returns(("fpidelta", +1)))
+                    tb(True, _(u'Next'), ui.returns(("fpidelta", +1)))
 
                     # Done with nav buttons.
                     ui.close()
@@ -388,16 +389,16 @@ init -499:
             ### yesno_button_text button_text
             # (window, hover) The style of yes/no button text.
 
-            _label_factory(message, "yesno", xpos=0.5, xanchor='center')
+            _label_factory(message, "yesno")
 
             ui.grid(5, 1, xfill=True)
 
             # The extra nulls are because we want equal whitespace surrounding
             # the two buttons. It should work as long as we have xfill=True
             ui.null()
-            _button_factory("Yes", 'yesno', clicked=ui.returns(True), xpos=0.5, xanchor='center')
+            _button_factory(u"Yes", 'yesno', clicked=ui.returns(True))
             ui.null()
-            _button_factory("No", 'yesno', clicked=ui.returns(False), xpos=0.5, xanchor='center')
+            _button_factory(u"No", 'yesno', clicked=ui.returns(False))
             ui.null()
 
             ui.close()
@@ -426,7 +427,7 @@ init -499:
             ui.text("")
             ui.text(message, style='error_body')
             ui.text("")
-            ui.text(_("Please click to continue."), style='error_body')
+            ui.text(_(u"Please click to continue."), style='error_body')
 
             ui.close()
 
@@ -434,13 +435,12 @@ init -499:
 
             ui.interact()
 
-
         library.old_names["Are you sure you want to quit?"] = "Are you sure you want to quit the game?"
 
         def _quit_prompt(screen="quit"):
 
             def prompt():
-               return _yesno_prompt(screen, "Are you sure you want to quit?")
+               return _yesno_prompt(screen, u"Are you sure you want to quit?")
             
             if renpy.invoke_in_new_context(prompt):
                 renpy.quit()
@@ -452,7 +452,7 @@ init -499:
         def _mainmenu_prompt(screen="mainmenu"):
 
             def prompt():
-               return _yesno_prompt(screen, "Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
+               return _yesno_prompt(screen, u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
             
             if renpy.invoke_in_new_context(prompt):
                 renpy.full_restart()
@@ -535,7 +535,7 @@ label _load_screen:
         fn, exists = _file_picker("load", False )
 
         if not renpy.context().main_menu and _load_prompt:
-            if _yesno_prompt("load", "Loading will lose unsaved progress.\nAre you sure you want to do this?"):
+            if _yesno_prompt("load", u"Loading will lose unsaved progress.\nAre you sure you want to do this?"):
                 renpy.load(fn)
         else:                        
             renpy.load(fn)
@@ -545,7 +545,7 @@ label _load_screen:
 label _save_screen:
     $ _fn, _exists = _file_picker("save", True)
 
-    if not _exists or _yesno_prompt("save", "Are you sure you want to overwrite your save?"):
+    if not _exists or _yesno_prompt("save", u"Are you sure you want to overwrite your save?"):
         python hide:
 
             if save_name:
@@ -562,11 +562,11 @@ label _save_screen:
                 if config.debug:
                     raise
                 
-                message = ( _("The error message was:\n\n") +
+                message = ( _(u"The error message was:") + "\n\n" + 
                             e.__class__.__name__  + ": " + unicode(e) + "\n\n" +
-                            _("You may want to try saving in a different slot, or playing for a while and trying again later."))
+                            _(u"You may want to try saving in a different slot, or playing for a while and trying again later.") )
 
-                _show_exception(_("Save Failed."), message)
+                _show_exception(_(u"Save Failed."), message)
                 
                 
     jump _save_screen
