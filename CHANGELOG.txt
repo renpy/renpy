@@ -1,10 +1,22 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py 5.5.0
+New in Ren'Py 5.4.5
 -------------------
 
-SFont support. [doc]
+Ren'Py now supports SFonts, which are image files containing character
+images and separator information. Once SFonts are registered (using
+renpy.register_sfont), they can be used any place TTF fonts can,
+although they cannot be scaled, recolored, bolded, italiced, or
+underlined automatically like TTF fonts. Despite this, SFonts have
+some advantages. They are bitmapped fonts, with all the legal
+advantages that implies (in the US). They also allow special effects
+to be precomposed onto fonts, if necessary.
+
+Ren'Py's implementation of SFonts is a new one, not borrowing from
+other libraries. It supports the use of an arbitrary unicode character
+set (defaulting to the usual ASCII-oriented SFont character set) and
+kerning.
 
 Slow text and skipping conflicted, in that when skipping one will see
 the slow text effect. This may be a regression, but it's fixed now.
@@ -33,10 +45,6 @@ Fixed a bug in renpy.music.set_music, in which the test was inverted
 in the code. (But not in the documentation.) This may require a
 script change if your game uses that function.
 
-
-Doc config.lint_hooks
-Doc config.window_icon
-Undoc config.background
 
 New in Ren'Py 5.4.4
 -------------------

@@ -13,6 +13,9 @@
 
 init:
 
+    # The version of this script.
+    $ library.script_version = (5, 4, 5)
+
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
     $ config.screen_height = 600
@@ -43,13 +46,6 @@ init:
     # lets us change the color of her name.
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))
-
-    $ renpy.register_sfont("demosfont", 24, filename="demosfont.png", default_kern=-2)
-    $ renpy.register_sfont("demosfont", 22, filename="demosfont.png", default_kern=-2)
-
-    $ style.default.font = "demosfont"
-    $ style.default.drop_shadow = None
-    $ style.button_text.drop_shadow = None
 
 
 # The start label marks the place where the main menu jumps to to
@@ -83,11 +79,6 @@ label start:
     # interpolate it into the next line.
     $ version = renpy.version()
 
-
-    "!\"#$%%&'()*+,-./0123456789:;<=>?@
-     ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'
-     abcdefghijklmnopqrstuvwxyz{{|}~"
-    
     # Display a line of dialogue. In this case, we manually specify
     # who's saying the line of dialogue. We also interpolate in the
     # version of Ren'Py we're using.
@@ -824,8 +815,11 @@ init:
 
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
 
-    
+    $ renpy.register_sfont("skyfont", 22, filename="skyfont.png", default_kern=-1)
 
+    $ esf = Character('Eileen', color=(200, 255, 200, 255),
+                      what_font="skyfont", what_size=22, what_drop_shadow=None)
+    
 label demonstrate:
 
     scene bg washington
@@ -1198,7 +1192,7 @@ label demonstrate:
             e "It's probably best if we stop here, before somebody's
                brain explodes."
 
-        "Text tags, updated in 5.1.4.":
+        "Fonts and Text Tags, updated in 5.4.5.":
 
             e "Text tags let us control the appearance of text that is
                shown to the user."
@@ -1236,6 +1230,18 @@ label demonstrate:
 
             e "And we want to give you all the power you need."
 
+            esf "For even more control, Ren'Py supports SFonts."
+
+            esf "An SFont is an image file containing font
+                 information."
+
+            esf "SFonts let you use fonts you otherwise couldn't, and
+                 apply special effects to fonts... like I'm doing
+                 now."
+
+            e "We recommend keeping your usual font simple and readable."
+
+            esf "Not like this one."
 
         "Music, sound and movies, updated in 4.5.":
             
@@ -1527,8 +1533,6 @@ init:
 
     # Set the color of idle chosen menu choices.
     $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
-
-    $ style.window.background = Solid((192, 192, 192, 255))
 
 
 # The splashscreen is called, if it exists, before the main menu is

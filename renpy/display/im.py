@@ -685,7 +685,6 @@ class Tile(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
     
-    
 
 def image(arg, loose=False, **properties):
     """

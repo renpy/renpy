@@ -23,7 +23,7 @@ init -450:
         # A list of (readable name, synthetic key) tuples
         # corresponding to joystick events.
         library.joystick_keys = [
-            (u'Left'), 'joy_left'),
+            (u'Left', 'joy_left'),
             (u'Right', 'joy_right'),
             (u'Up', 'joy_up'),
             (u'Down', 'joy_down'),

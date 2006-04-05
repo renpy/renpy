@@ -54,9 +54,10 @@ def interact(**kwargs):
 
 def add(w, make_current=False, once=False):
     """
-    Adds a new widget to the current widget. If make_current is true,
-    then the widget is also made the current widget, with the old 
-    widget being pushed onto a stack.
+    This is used to add a displayable to the current widget. If
+    make_current is True, then the widget is made the current
+    widget. If once is True, then the displayable will be made the current
+    widget, but only for the next widget to be added.
     """
 
     global current

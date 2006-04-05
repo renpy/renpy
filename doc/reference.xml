@@ -663,8 +663,7 @@ layer otherwise.
 </p>
 
 <p>
-By default, no background is added to the screen. (See
-config.background to change this.) Without such a background,
+By default, no background is added to the screen. Without such a background,
 Ren'Py will produce odd results if there is not at least one image
 in the scene list that is the full size of the screen. So we
 strongly advise that the scene statement always be used with an
@@ -2378,13 +2377,9 @@ This sets the width of the screen.
 This sets the height of the screen.
 </var>
 
-<var name="config.background" value="None">
-This sets the default background that is shown in areas of the
-screen where there are no images. If the screen will always be
-filled with an image, it makes sense to set this to None, which
-will improve performance by not drawing a default
-background. Otherwise, this is interpreted as an RGBA tuple,
-which will be drawn before any image is.
+<var name="config.window_icon" value="None">
+If not None, this is expected to be the filename of an image giving
+an icon that is used for the window.
 </var>
 
 <var name="config.debug" value="False">
@@ -2694,6 +2689,19 @@ file.
 If set to True, developer mode is enabled.
 </var>
 
+<var name="config.lint_hooks" value="...">
+This is a list of functions that are called, with no arguments, when
+lint is run. The functions are expected to check the script data for 
+errors, and print any they find to standard output (using the python
+print statement is fine in this case).
+</var>
+
+<var name="library.script_version" value="None">
+If not None, this is interpreted as a script version. The library will
+use this script version to enable some compatibility features, if
+necessary. If None, we assume this is a latest-version script.
+</var>
+
 <var name="library.file_page_cols" value = "2" >
 This is the number of columns of save slots that are show in the
 picker that's used in the load and save screens of the game
@@ -2918,27 +2926,23 @@ that take text styles.
 </p>
 
 <prop name="font">
-This can be either the name of file containing a truetype font
-that is used to render the text, or a string containing font
-names, the first found of which will be used to render the
-text. If the truetype file is not found in the game directory or
-common directory, it will be searched for in the system's font
-directory.
-
-Examples: "Vera.ttf" or "Arial,Helvetica,FreeSans"
+The font that will be used to render text. This is either the name of 
+a file containing a truetype font, or the name of a font. In the
+former case, the font is loaded from the file. In the latter case, the
+filename is used to search SFonts registered with register_sfont, and 
+truetype fonts found on the system font directory. 
 </prop>
 
 <prop name="size">
 The size of the font that is used to display the text on the
 screen. Please note that the meaning of this can vary from font to
 font, and bears only a weak relationship with the number of pixels
-high that the font will be on the screen. Example: 22
+high that the font will be on the screen.
 </prop>
 
 <prop name="color">
 The color in which the text will be displayed on the screen, as an
-RGBA tuple. Due to a limitation of pygame, currently the alpha is
-ignored. Example: (255, 255, 255, 255)
+RGBA tuple. This is ignored when an SFont is used.
 </prop>
 
 <prop name="bold">
@@ -3516,6 +3520,44 @@ probably drive your users mad.
  or {u}underlined{/u}. We can even change its {color=#f88}color{/color}."
 </example>
 
+<h3>SFonts</h3>
+
+<p>
+Ren'Py supports rendering text using SFonts as well as TrueType
+fonts. An SFont is a properly prepared image file, usually a PNG,
+containing images of the character in the font. Ren'Py has its own
+implementation of SFonts that supports an arbitrary unicode character
+set and kerning. 
+</p>
+
+<p>
+SFonts have several advantages and several disadvantages. One of
+the advantages is that SFonts are bitmap-based. This allows them to be
+distributed without having to worry about the copyrights associated
+with TrueType fonts (consult your lawyer!). Also, as SFonts are
+images, it's possible to apply effects to them that Ren'Py would not
+otherwise support. The downsides of SFonts come from the fact that
+Ren'Py isn't rendering. Because of this, one needs to supply another
+image to Ren'Py if one wants the font to be scaled, made bold or
+italic, underlined, or colorized.
+</p>
+
+<p>
+To use SFonts, they must first be registered with Ren'Py using the
+renpy.register_sfont function. They can then be used by setting the
+font property of a style to the name of the SFont.
+</p>
+
+<!-- func renpy.register_sfont -->
+
+<p>
+Please note that you must register a sfont for each combination of
+font, size, bold, italic, and underline your game uses. Also note that
+since SFonts can't be recolored, one must register under a separate
+font name for each color. (Especially important when SFonts are
+used for button labels, to ensure that selected buttons look distinct
+from unselected ones.)
+</p>
 
 <h3>Obfuscating your Game</h3>
 
@@ -3871,6 +3913,10 @@ automatically present in the game namespace.
 <!-- func ui.pausebehavior -->
 
 <h4>Functions</h4>
+
+<!-- func ui.add -->
+
+<!-- func ui.clear -->
 
 <!-- func ui.interact -->
 

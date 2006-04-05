@@ -51,6 +51,9 @@ init -500:
         # True if the skip indicator should be shown.
         library.skip_indicator = True
 
+        # Used to ensure library compatibility.
+        library.script_version = None
+
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
