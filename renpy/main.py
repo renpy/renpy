@@ -114,8 +114,9 @@ def run(restart=False):
     if renpy.game.options.lint:
         try:
             renpy.lint.lint()
-        finally:
             raise renpy.game.QuitException()
+        except:
+            raise
 
     # Remove the list of all statements from the script.
     game.script.all_stmts = None

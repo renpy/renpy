@@ -1,4 +1,4 @@
-﻿# This script, but not the artwork associated with it, is in the
+﻿# This script and the artwork associated with it, is in the
 # public domain. Feel free to use it as the basis for your own
 # game.
 

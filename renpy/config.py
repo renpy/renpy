@@ -224,6 +224,9 @@ developer = False
 # A logfile that logging messages are sent to.
 log = None
 
+# Lint hooks.
+lint_hooks = [ ]
+
 del renpy
 
 def backup():

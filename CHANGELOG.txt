@@ -4,6 +4,11 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.4.5
 -------------------
 
+There is now a variable, library.script_version, that should be set by
+all scripts to (5, 4, 5). While this variable isn't used yet, it will
+be used by future version of Ren'Py (the 5.5/6 series) to ensure that
+current scripts remain compatible with changes to Ren'Py proper.
+
 Ren'Py now supports SFonts, which are image files containing character
 images and separator information. Once SFonts are registered (using
 renpy.register_sfont), they can be used any place TTF fonts can,
@@ -21,8 +26,9 @@ kerning.
 Slow text and skipping conflicted, in that when skipping one will see
 the slow text effect. This may be a regression, but it's fixed now.
 
-Properties can now be deleted from styles, restoring the previous
-inheritance.
+Properties can now be deleted from styles. Deleting a property from a
+style allows it to be inherited from that style's parent, using the
+usual inheritence rules.
 
 There is now a function, ui.clear(), that clears out a layer. This
 allows the ui functions to be used on non-transient layers, although
@@ -43,7 +49,8 @@ the Ren'Py common code.
 +++
 Fixed a bug in renpy.music.set_music, in which the test was inverted
 in the code. (But not in the documentation.) This may require a
-script change if your game uses that function.
+script change if your game uses the undocumented behavior of that
+button. 
 
 
 New in Ren'Py 5.4.4

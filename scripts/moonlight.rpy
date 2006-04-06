@@ -3,15 +3,15 @@
 #
 # We've released this to give an example of a complete game. It's okay
 # to get ideas from this script, but remember, it's still copyright by
-# me. You're explicitly not allowed to make derivative works of
-# Moonlight Walks, featuring the same characters.
+# me. This script may be distributed either modified or unmodified,
+# provided a modified script is not called "Moonlight Walks".
 #
 # While I will probably allow people to translate this game not
 # non-english languages, I ask that you contact me for permission
 # before doing so.
 
-# This file works with Ren'Py 4.8, but uses the media that's shipped
-# with the moonlight walks distribution.
+# This file works with modern versions of Ren'Py, but uses the media
+# that's shipped with the moonlight walks distribution.
 
 init:
     # Basic configuration.
