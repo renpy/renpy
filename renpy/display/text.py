@@ -128,7 +128,7 @@ class SFont(object):
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, spacewidth=10, default_kern=0, kerns={},
-                   charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~"):
+                   charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
     """
     This registers an SFont with the given details. Please note that
     size, bold, italic, and underline are all advisory (used for matching), and

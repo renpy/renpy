@@ -1,6 +1,14 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py x.y.z
+-------------------
+
+The list of characters used by SFonts was wrong, so that has been
+fixed. The documentation has also been improved to include a
+convenient list of what those fonts should look like.
+
+
 New in Ren'Py 5.4.5
 -------------------
 

@@ -107,8 +107,9 @@ def function(m):
         args = inspect.formatargspec(*inspect.getargspec(func))
         
     args = re.sub(r"'\\x00\\x01.*?\\xff'", "im.ramp(0, 255)", args)
-    args = re.sub(r'<.*?>', '...', args)
     args = args.replace("&", "&amp;")
+    args = args.replace("<=>", "&lt;=&gt;")
+    args = re.sub(r'<.*?>', '...', args)
     args = args.replace("<", "&lt;")
     args = args.replace("\"", "&quot;")
 
