@@ -824,7 +824,7 @@ def parse_with(l, node):
 
     expr = l.require(l.simple_expression)
 
-    return [ ast.With(loc, "None"),
+    return [ ast.With(loc, "None", expr),
              node,
              ast.With(loc, expr) ]
 

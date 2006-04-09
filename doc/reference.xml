@@ -2578,7 +2578,8 @@ If not None, this should be a function that is called when a with
 statement occurs. This function can be responsible for putting up
 transient things on the screen during the transition. The function is
 called with a single argument, which is the transition that is
-occuring.
+occuring. It is expected to return a transition, which may or may not
+be the transition supplied as its argument.
 </var>
 
 <var name="config.enable_fast_dissolve" value="True" >

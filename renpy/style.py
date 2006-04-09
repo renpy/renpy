@@ -208,6 +208,16 @@ class Style(object):
     def __delattr__(self, name):
         remove_properties(self, { name : None })
 
+
+    def setdefault(self, **properties):
+        """
+        This sets the default value of the given properties, if no more
+        explicit values have been set.
+        """
+
+        for k, v in expand_properties(properties):
+            self.properties.setdefault(k, v)
+            
     
         
 def write_docs(filename):

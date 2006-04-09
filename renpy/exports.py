@@ -669,18 +669,23 @@ def movie_cutscene(filename, delay, loops=0):
     return rv
         
 
-def with(trans):
+def with(trans, paired=None):
     """
     Implements the with statement. One reason to use this over a
     Ren'Py with statement is to get at the return code, which is True
     if the transition was interrupted, or False otherwise.
+
+    @param trans: The transition.
+
+    @param paired: The transition paired with this with one.
     """
 
     if renpy.config.skipping:
-        trans = None
+        renpy.game.interface.with_none()
+        return False
 
     if renpy.config.with_callback:
-        renpy.config.with_callback(trans)
+        trans = renpy.config.with_callback(trans, paired)
 
     if not trans:
         renpy.game.interface.with_none()

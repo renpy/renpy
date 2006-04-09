@@ -461,9 +461,12 @@ class With(Node):
 
     __slots__ = [
         'expr',
+        'paired',
         ]
 
-    def __init__(self, loc, expr):
+    paired = None
+
+    def __init__(self, loc, expr, paired=None):
         """
         @param expr: An expression giving a transition or None.
         """
@@ -474,7 +477,13 @@ class With(Node):
     
     def execute(self):
         trans = renpy.python.py_eval(self.expr)
-        renpy.exports.with(trans)
+
+        if self.paired is not None:
+            trans = renpy.python.py_eval(self.expr, paired)
+        else:
+            paired = None 
+
+        renpy.exports.with(trans, paired)
 
         return self.next
 
