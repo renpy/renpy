@@ -7,10 +7,6 @@ New in Ren'Py x.y.z
 The library.script_version should be set to (x, y, z) to take
 advantages of changes in this version.
 
-The list of characters used by SFonts was wrong, so that has been
-fixed. The documentation has also been improved to include a
-convenient list of what those fonts should look like.
-
 +++ 
 config.with_callback has been changed. It now takes two arguments. The
 first is the transition being performed. If this transition is a None
@@ -21,6 +17,13 @@ to return a transition, which replaces the specified
 transition. Hopefully, this is enough to make with_callback useful, by
 always giving the callback information specified by the user.
 
+The list of characters used by SFonts was wrong, so that has been
+fixed. The documentation has also been improved to include a
+convenient list of what those fonts should look like.
+
+Doc: property box_first_spacing
+Doc: xfill, yfill on v/hbox
+Doc/Test: library.always_has_joystick
 
 New in Ren'Py 5.4.5
 -------------------

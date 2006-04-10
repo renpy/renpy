@@ -147,6 +147,7 @@ class Script(object):
             try:
                 data, stmts = loads(f.read().decode('zlib'))
             except:
+                raise
                 return False
 
             if not isinstance(data, dict):

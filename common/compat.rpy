@@ -17,3 +17,5 @@ init 1000:
                 config.with_callback = trans
                 
                 
+        if compat(5, 4, 5):
+            style.button_text.setdefault(size=24, drop_shadow=(2, 2))

@@ -215,7 +215,7 @@ class Style(object):
         explicit values have been set.
         """
 
-        for k, v in expand_properties(properties):
+        for k, v in expand_properties(properties).iteritems():
             self.properties.setdefault(k, v)
             
     

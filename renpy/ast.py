@@ -8,6 +8,11 @@
 import renpy
 import re
 
+# Called to set the state of a Node, when necessary.
+def setstate(node, state):
+    for k, v in state[1].iteritems():
+        setattr(node, k, v)
+
 class PyCode(object):
 
     __slots__ = [
@@ -464,8 +469,11 @@ class With(Node):
         'paired',
         ]
 
-    paired = None
 
+    def __setstate__(self, state):
+        self.paired = None
+        setstate(self, state)
+    
     def __init__(self, loc, expr, paired=None):
         """
         @param expr: An expression giving a transition or None.
@@ -473,13 +481,14 @@ class With(Node):
 
         super(With, self).__init__(loc)
         self.expr = expr
+        self.paired = paired
 
-    
     def execute(self):
+
         trans = renpy.python.py_eval(self.expr)
 
         if self.paired is not None:
-            trans = renpy.python.py_eval(self.expr, paired)
+            paired = renpy.python.py_eval(self.paired)
         else:
             paired = None 
 

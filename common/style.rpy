@@ -125,6 +125,8 @@ init -1000:
         style.create("prefs_selected_button", "selected_button", "(window, hover) The style of a selected preferences button.")
         style.create("prefs_selected_button_text", "selected_button_text", "(text, hover) The style of the text of a selected preferences button.")
         style.create("prefs_volume_slider", "prefs_slider", "(bar) The style that is applied to volume sliders.")
+        style.create("sndtest_button", "prefs_button", "(window, hover) The style of an unselected preferences button.")
+        style.create("sndtest_button_text", "prefs_button_text", "(text, hover) The style of the text of an unselected preferences button.")
         style.create("prefs_slider", "bar", "(bar) The style that is applied to preference sliders.")
         style.create("prefs_spinner", "default", "The position of the prefs spinner.")
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
@@ -143,6 +145,7 @@ init -1000:
         style.create("prefs_left", "prefs_column", "The position of the left column of preferences.")
         style.create("prefs_center", "prefs_column", "The position of the center column of preferences.")
         style.create("prefs_right", "prefs_column", "The position of the right column of preferences.")
+        style.create("prefs_joystick", "prefs_center", "The position of the column of joystick preferences.")
 # END AUTOMATICALLY GENERATED
 
         # Colors #############################################################
@@ -201,6 +204,7 @@ init -1000:
 
         # Box properties.
         style.default.box_spacing = 0
+        style.default.box_first_spacing = None
         style.default.box_layout = None
 
         ######################################################################
@@ -277,13 +281,13 @@ init -1000:
         
         style.button_text.xpos = 0.5
         style.button_text.xanchor = 'center'
-        style.button_text.size = 24
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
         style.button_text.activate_color = bright_cyan
         style.button_text.insensitive_color = (192, 192, 192, 255)
-        style.button_text.drop_shadow = (2, 2)
-                             
+        style.button_text.size = 24
+        style.button_text.drop_shadow = (2, 2)        
+        
         style.selected_button_text.color = dark_red
         style.selected_button_text.hover_color = bright_red
         style.selected_button_text.activate_color = bright_red
@@ -320,7 +324,7 @@ init -1000:
         style.gm_root_window.xfill = True
         style.gm_root_window.yfill = True
     
-        style.gm_nav_window.xpos = 0.9
+        style.gm_nav_window.xpos = 0.95
         style.gm_nav_window.xanchor = 'right'
         style.gm_nav_window.ypos = 0.95
         style.gm_nav_window.yanchor = 'bottom'

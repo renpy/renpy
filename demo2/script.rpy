@@ -14,7 +14,7 @@
 init:
 
     # The version of this script.
-    $ library.script_version = (5, 4, 5)
+    $ library.script_version = (5, 5, 0)
 
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800

@@ -419,7 +419,12 @@ class MultiBox(Container):
     def render(self, width, height, st, at):
 
         layout = self.style.box_layout
-        padding = self.style.box_spacing
+        spacing = self.style.box_spacing
+        first_spacing = self.style.box_first_spacing
+        if first_spacing is None:
+            first_spacing = spacing
+
+        spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
         if layout is None:
             layout = self.default_layout
@@ -439,7 +444,7 @@ class MultiBox(Container):
 
             myheight = 0
 
-            for i in self.children:
+            for i, padding in zip(self.children, spacings):
 
                 xoffsets.append(xo)
                 surf = render(i, remwidth, height, st, at)
@@ -458,6 +463,9 @@ class MultiBox(Container):
 
 
             width = xo - padding
+
+            if self.style.yfill:
+                myheight = height
 
             rv = renpy.display.render.Render(width, myheight)
 
@@ -482,7 +490,7 @@ class MultiBox(Container):
 
             mywidth = 0
 
-            for i in self.children:
+            for i, padding in zip(self.children, spacings):
 
                 yoffsets.append(yo)
 
@@ -500,8 +508,10 @@ class MultiBox(Container):
                 surfaces.append(surf)
                 self.sizes.append((sw, sh))
 
-
             height = yo - padding
+
+            if self.style.xfill:
+                mywidth = width
 
             rv = renpy.display.render.Render(mywidth, height)
 

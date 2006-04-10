@@ -377,8 +377,8 @@ class FrameImage(ImageBase):
         self.image = im
         self.xborder = xborder
         self.yborder = yborder
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
 
     def load(self):
 

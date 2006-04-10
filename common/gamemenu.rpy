@@ -11,6 +11,7 @@ init -499:
         # The contents of the game menu choices.
         library.game_menu = [
                 ( "return", u"Return", ui.jumps("_return"), 'True'),
+                # ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
                 ( "prefs", u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
                 ( "save", u"Save Game", ui.jumps("_save_screen"), 'not renpy.context().main_menu' ),
                 ( "load", u"Load Game", ui.jumps("_load_screen"), 'True'),
@@ -58,6 +59,12 @@ init -499:
 
         # This lets us disable the thumbnails in the file pager.
         library.disable_thumbnails = False
+
+        # How we format time.
+        library.time_format = "%b %d, %H:%M"
+
+        # How we format loade_save slot formats.
+        library.file_entry_format = "%(time)s\n%(save_name)s"
 
         # If True, we will be prompted before loading a game. (This can
         # be changed from inside the game code, so that one can load from
@@ -160,9 +167,7 @@ init -499:
 
                       
         # This renders a slot with a file in it, in the file picker.
-        def _render_savefile(name, info, newest):
-
-            image, extra = info
+        def _render_savefile(name, extra_info, screenshot, mtime, newest):
 
 
             ### file_picker_entry button
@@ -178,7 +183,7 @@ init -499:
             ui.hbox(style='file_picker_entry_box')
 
             if not library.disable_thumbnails:
-                ui.add(image)
+                ui.add(screenshot)
 
             ### file_picker_text default
             # (text) A base style for all text that is displayed in the
@@ -191,9 +196,8 @@ init -499:
             ### file_picker_old file_picker_text
             # (text) The style that is applied to the number of the old slot in
             # the file picker.
-
             
-            if name == newest:
+            if newest:
                 ui.text(name + ". ", style='file_picker_new')
             else:
                 ui.text(name + ". ", style='file_picker_old')
@@ -202,7 +206,14 @@ init -499:
             # (text) The style that is applied to extra info in the file
             # picker. The extra info is the save time, and the save_name
             # if one exists.
-            ui.text(extra, style='file_picker_extra_info')
+
+            s = library.file_entry_format % dict(
+                time=renpy.time.strftime(library.time_format,
+                                         renpy.time.localtime(mtime)),
+                save_name=extra_info)
+
+
+            ui.text(s, style='file_picker_extra_info')
 
             ui.close()
             
@@ -244,7 +255,19 @@ init -499:
             # The number of slots in a page.
             file_page_length = library.file_page_cols * library.file_page_rows
 
-            saves, newest = renpy.saved_games(regexp=r'[0-9]+')
+            saved_games = renpy.list_saved_games(regexp=r'[0-9]+')
+
+            newest = None
+            newest_mtime = None
+            save_info = { }
+
+            for fn, extra_info, screenshot, mtime in saved_games:
+                save_info[fn] = (extra_info, screenshot, mtime)
+
+                if mtime > newest_mtime:
+                    newest = fn
+                    newest_mtime = mtime
+
 
             # The index of the first entry in the page.
             fpi = _scratch.file_picker_index
@@ -266,10 +289,10 @@ init -499:
 
                 _scratch.file_picker_index = fpi
 
-                # Show Navigation
+                # Show navigation
                 _game_nav(selected)
 
-                
+
                 ### file_picker_window default
                 # (window) A window containing the file picker
                 # that is used to choose slots for loading and saving.
@@ -321,10 +344,12 @@ init -499:
 
                     name = str(i + 1)
 
-                    if name not in saves:
+                    if name not in save_info:
                         _render_new_slot(name, save)
                     else:
-                        _render_savefile(name, saves[name], newest)
+                        extra_info, screenshot, mtime = save_info[name]
+                        _render_savefile(name, extra_info, screenshot,
+                                         mtime, newest == name)
                     
                 ### file_picker_grid default
                 # The style of the grid containing the file
@@ -501,8 +526,11 @@ label _enter_game_menu:
 # Entry points from the game into menu-space.
 label _game_menu:
     call _enter_game_menu from _call__enter_game_menu_0
-    jump expression _game_menu_screen
 
+    if renpy.has_label("game_menu"):
+        jump expression "game_menu"
+
+    jump expression _game_menu_screen
 
 label _game_menu_save:
     call _enter_game_menu from _call__enter_game_menu_1
@@ -549,13 +577,12 @@ label _save_screen:
         python hide:
 
             if save_name:
-                full_save_name = "\n" + save_name
+                full_save_name = save_name
             else:
                 full_save_name = ""
 
             try:
-                renpy.save(_fn, renpy.time.strftime("%b %d, %H:%M") +
-                           full_save_name)
+                renpy.save(_fn, full_save_name)
 
             except Exception, e:
 
@@ -573,6 +600,11 @@ label _save_screen:
 
 label _quit:
     $ renpy.quit()
+
+label _return_skipping:
+    $ config.skipping = "slow"
+    jump _return
+    
 
 # Make some noise, then return.
 label _noisy_return:

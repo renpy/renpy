@@ -5,6 +5,7 @@ import cStringIO
 import zipfile
 import time
 import os
+import os.path
 import re
 
 import renpy
@@ -113,17 +114,17 @@ def save(filename, extra_info=''):
 
 
 
-def saved_games(regexp=r'.'):
+def list_saved_games(regexp=r'.'):
     """
     This scans the savegames that we know about and returns
-    information about them. Specifically, it returns tuple containing
-    a savelist and the filename of the newest save file (or None if no
-    save file exists).
-
-    The savelist, in turn, is a list of tuples, with each tuple containing
-    the filename of the saved game, a Displayable containing a screenshot,
-    and a string giving the extra data of that save.
-
+    information about them. It returns a list of tuples, where each
+    tuple represents one savegame and consists of:
+    
+    - The filename of the save.
+    - The extra_info that was passed to renpy.save.
+    - A displayable, the screenshot used to show the game.
+    - The time the game was saved at, seconds since 1/1/1970 UTC.
+    
     The regexp matches at the start of the filename, and filters the list.
     """
 
@@ -131,39 +132,28 @@ def saved_games(regexp=r'.'):
     files.sort()
     files = [ i for i in files if i.endswith(savegame_suffix) and re.match(regexp, i) ]
 
-    if not files:
-        newest = None
-    else:
-        datefiles = [ (os.stat(renpy.config.savedir + "/" + i).st_mtime, i) for i in files ]
-        datefiles.sort()
-        newest = datefiles[-1][1]
-        newest = newest[:-len(savegame_suffix)]
-
-    saveinfo = { }
+    rv = [ ]
 
     for f in files:
 
         try:
 
             zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
-            extra_info = zf.read("extra_info")
             sio = cStringIO.StringIO(zf.read("screenshot.tga"))
+            extra_info = zf.read("extra_info")
             zf.close()
 
             screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
-
+            mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
             f = f[:-len(savegame_suffix)]
 
-            saveinfo[f] = screenshot, extra_info
+            rv.append((f, extra_info, screenshot, mtime))
 
         except:
             if renpy.config.debug:
                 raise Exception
 
-    if newest not in saveinfo:
-        newest = None
-
-    return saveinfo, newest
+    return rv
 
 def can_load(filename):
     """

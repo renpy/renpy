@@ -34,6 +34,10 @@ init -450:
             (u'Hide Text', 'joy_hide'),
             (u'Menu', 'joy_menu'),
             ]
+
+        # If True, then we can always get into the joystick
+        # preferences.
+        library.always_has_joystick = False
         
         def _prefs_screen_run(prefs_map):
 
@@ -230,7 +234,15 @@ init -450:
                     def clicked():
                         renpy.sound.play(sound, channel=self.channel)
 
-                    _button_factory(u"Test", "prefs", clicked=clicked)
+                    ### sndtest_button prefs_button
+                    # (window, hover) The style of an unselected preferences
+                    # button.
+
+                    ### sndtest_button_text prefs_button_text
+                    # (text, hover) The style of the text of an unselected
+                    # preferences button.
+
+                    _button_factory(u"Test", "sndtest", clicked=clicked)
                     
                 ui.close()
 
@@ -424,8 +436,8 @@ init -450:
 
                     ui.window(style='joy_window')
                     ui.vbox(style='joy_vbox')
-                    _label_factory(_("Joystick Mapping") + " - " + _(label), "joyfunc")
-                    _label_factory('Move the joystick or press a button to create the mapping. Click the mouse to remove the mapping.', 'joyprompt')
+                    _label_factory(_(u"Joystick Mapping") + " - " + _(label), "joyfunc")
+                    _label_factory(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'joyprompt')
                     ui.close()
 
                     ui.saybehavior()
@@ -433,7 +445,8 @@ init -450:
                     binding = _game_interact()
 
                     if not isinstance(binding, basestring):
-                        del _preferences.joymap[key]
+                        if key in _preferences.joymap:
+                            del _preferences.joymap[key]
                     else:
                         _preferences.joymap[key] = binding
 
@@ -587,7 +600,7 @@ init -450:
         pr1 = _VolumePreference(u"Music Volume", 'music', 'library.has_music')
         pr2 = _VolumePreference(u"Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
                                                         
-        _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled')
+        _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled or library.always_has_joystick')
 
         _JoystickPreference(u'Joystick Configuration')
         
@@ -604,6 +617,9 @@ init -450:
 
         ### prefs_right prefs_column
         # The position of the right column of preferences.
+
+        ### prefs_joystick prefs_center
+        # The position of the column of joystick preferences.
             
         library.preferences['prefs_left'] = [
             library.all_preferences[u'Display'],
@@ -623,7 +639,7 @@ init -450:
             library.all_preferences[u'Sound Volume'],
             ]
 
-        library.joystick_preferences['prefs_center'] = [
+        library.joystick_preferences['prefs_joystick'] = [
             library.all_preferences[u'Joystick Configuration'],
             ]
 
