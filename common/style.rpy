@@ -26,6 +26,7 @@ init -1000:
         style.create('vbox', 'default', '(box) The base style for vboxen.')
         
         style.create('window', 'default', '(window) The base style for the windows that contain dialogue, thoughts, and menus.')
+        style.create('frame', 'default', '(window) The base style for frames.')
         
         style.create('image_placement', 'default', 'This style is used to control the default placement of images on the screen.')
 
@@ -125,8 +126,8 @@ init -1000:
         style.create("prefs_selected_button", "selected_button", "(window, hover) The style of a selected preferences button.")
         style.create("prefs_selected_button_text", "selected_button_text", "(text, hover) The style of the text of a selected preferences button.")
         style.create("prefs_volume_slider", "prefs_slider", "(bar) The style that is applied to volume sliders.")
-        style.create("sndtest_button", "prefs_button", "(window, hover) The style of an unselected preferences button.")
-        style.create("sndtest_button_text", "prefs_button_text", "(text, hover) The style of the text of an unselected preferences button.")
+        style.create("soundtest_button", "prefs_button", "(window, hover) The style of an unselected preferences button.")
+        style.create("soundtest_button_text", "prefs_button_text", "(text, hover) The style of the text of an unselected preferences button.")
         style.create("prefs_slider", "bar", "(bar) The style that is applied to preference sliders.")
         style.create("prefs_spinner", "default", "The position of the prefs spinner.")
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
@@ -236,6 +237,13 @@ init -1000:
         style.window.xanchor = 'center'
         style.window.yanchor = 'bottom'
 
+        # Frames.
+        style.frame.background = Solid((0, 0, 128, 128))
+        style.frame.xpadding = 10
+        style.frame.ypadding = 5
+        style.frame.xmargin = 10
+        style.frame.ymargin = 5
+
         ######################################################################
         # Image placement.
 
@@ -275,9 +283,6 @@ init -1000:
 
         ######################################################################
         # Buttons.
-
-        style.button.xpos = 0.5
-        style.button.xanchor = 'center'
         
         style.button_text.xpos = 0.5
         style.button_text.xanchor = 'center'

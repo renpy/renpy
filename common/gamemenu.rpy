@@ -11,7 +11,7 @@ init -499:
         # The contents of the game menu choices.
         library.game_menu = [
                 ( "return", u"Return", ui.jumps("_return"), 'True'),
-                # ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
+                ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
                 ( "prefs", u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
                 ( "save", u"Save Game", ui.jumps("_save_screen"), 'not renpy.context().main_menu' ),
                 ( "load", u"Load Game", ui.jumps("_load_screen"), 'True'),
@@ -506,7 +506,7 @@ label _enter_menu_without_scene:
 
 label _enter_menu:
     call _enter_menu_without_scene from _call_enter_menu_without_scene_1
-    scene
+    $ ui.clear()
     return
     
 # Factored this all into one place, to make our lives a bit easier.

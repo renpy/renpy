@@ -8,6 +8,7 @@ init 1000:
             return library.script_version and library.script_version <= (x, y, z)
 
 
+        # Compat for changes to with-callback.
         if compat(5, 4, 5):
             if config.with_callback:
                 def compat_with_function(trans, paired, old=config.with_function):
@@ -16,6 +17,7 @@ init 1000:
 
                 config.with_callback = trans
                 
-                
+        # Compat for changes to button look.
         if compat(5, 4, 5):
-            style.button_text.setdefault(size=24, drop_shadow=(2, 2))
+            style.button.xpos = 0.5
+            style.button.xanchor = 0.5

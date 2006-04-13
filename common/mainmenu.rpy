@@ -56,8 +56,6 @@ label _main_menu:
 # defined his own, or if that function calls this explicitly.        
 label _library_main_menu:
 
-    scene
-
     python hide:
 
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))

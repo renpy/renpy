@@ -234,15 +234,15 @@ init -450:
                     def clicked():
                         renpy.sound.play(sound, channel=self.channel)
 
-                    ### sndtest_button prefs_button
+                    ### soundtest_button prefs_button
                     # (window, hover) The style of an unselected preferences
                     # button.
 
-                    ### sndtest_button_text prefs_button_text
+                    ### soundtest_button_text prefs_button_text
                     # (text, hover) The style of the text of an unselected
                     # preferences button.
 
-                    _button_factory(u"Test", "sndtest", clicked=clicked)
+                    _button_factory(u"Test", "soundtest", clicked=clicked)
                     
                 ui.close()
 
@@ -547,17 +547,21 @@ init -450:
 
         # Center
 
-        pc1 = _Preference(u'TAB and CTRL Skip', 'skip_unseen', [
+        pc1 = _Preference(u'Skip', 'skip_unseen', [
             (u'Seen Messages', False, 'config.allow_skipping and library.has_skipping'),
             (u'All Messages', True, 'config.allow_skipping and library.has_skipping'),
             ])
 
+        library.old_names['Skip'] = 'TAB and CTRL Skip'
+        library.all_preferences['TAB and CTRL Skip'] = pc1
+
         
         pc2= _Preference(u'After Choices', 'skip_after_choices', [
             (u'Stop Skipping', False, 'config.allow_skipping and library.has_skip_after_choice'),
-            (u'Continue Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
+            (u'Keep Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
             ])
 
+        library.old_names['Keep Skipping'] = 'Continue Skipping' 
 
         def cps_get():
             cps = _preferences.text_cps
@@ -628,7 +632,7 @@ init -450:
             ]
         
         library.preferences['prefs_center'] = [
-            library.all_preferences[u'TAB and CTRL Skip'],
+            library.all_preferences[u'Skip'],
             library.all_preferences[u'After Choices'],
             library.all_preferences[u'Text Speed'],
             library.all_preferences[u'Auto-Forward Time'],
