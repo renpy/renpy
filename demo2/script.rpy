@@ -1503,8 +1503,8 @@ init:
 
     # Change some styles, to add images in the background of
     # the menus and windows.
-    # $ style.mm_root_window.background = Image("mainmenu.jpg")
-    # $ style.gm_root_window.background = Image("gamemenu.jpg")
+    # $ style.mm_root.background = Image("mainmenu.jpg")
+    # $ style.gm_root.background = Image("gamemenu.jpg")
     $ style.window.background = Frame("window.png", 24, 24)
 
     $ style.menu_choice_button.background = RoundRect((0, 60, 120, 220))

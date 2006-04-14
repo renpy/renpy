@@ -43,10 +43,10 @@ init -450:
 
             _game_nav("prefs")
 
-            ### prefs_window default
+            ### prefs_frame default
             # (window) A window containing all preferences.
 
-            ui.window(style='prefs_window')
+            ui.window(style='prefs_frame')
             ui.fixed()
 
             for style, prefs in prefs_map.iteritems():
@@ -105,7 +105,7 @@ init -450:
                 if not values:
                     return
 
-                ### prefs_pref default
+                ### prefs_pref_frame default
                 # (window) A window containing an individual
                 # preference.
 
@@ -117,7 +117,7 @@ init -450:
                 # a block of preferences.
 
 
-                ui.window(style='prefs_pref')
+                ui.window(style='prefs_pref_frame')
                 ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
@@ -205,7 +205,7 @@ init -450:
 
                 sound = eval(self.sound)
 
-                ui.window(style='prefs_pref')
+                ui.window(style='prefs_pref_frame')
                 ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
@@ -286,7 +286,7 @@ init -450:
                 if not eval(self.enable):
                     return
                 
-                ui.window(style='prefs_pref')
+                ui.window(style='prefs_pref_frame')
                 ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
@@ -375,7 +375,7 @@ init -450:
                 if not renpy.eval(self.cond):
                     return
 
-                ui.window(style='prefs_pref')
+                ui.window(style='prefs_pref_frame')
                 ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, "prefs")
@@ -418,26 +418,26 @@ init -450:
                 ### prefs_js_button_text prefs_button_text
                 # (text, hover) The style of the text in buttons giving a joystick mapping.
 
-                ### joy_window prefs_window
+                ### js_frame prefs_frame
                 # (window) The window containing the joystick message.
 
-                ### joy_vbox thick_vbox
+                ### js_frame_vbox thick_vbox
                 # (window) The vbox containing the joistick mapping message.
                 
-                ### joyfunc_label prefs_label
+                ### js_function_label prefs_label
                 # (text, position) The style of the joystick mapping function name.
 
-                ### joyprompt_label prefs_label
+                ### js_prompt_label prefs_label
                 # (text, position) The style of the joystick mapping prompt message.
                 
 
                 def set_binding(key, label):
                     _game_nav(None)
 
-                    ui.window(style='joy_window')
-                    ui.vbox(style='joy_vbox')
-                    _label_factory(_(u"Joystick Mapping") + " - " + _(label), "joyfunc")
-                    _label_factory(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'joyprompt')
+                    ui.window(style='js_frame')
+                    ui.vbox(style='js_frame_vbox')
+                    _label_factory(_(u"Joystick Mapping") + " - " + _(label), "js_function")
+                    _label_factory(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'js_prompt')
                     ui.close()
 
                     ui.saybehavior()
@@ -451,7 +451,7 @@ init -450:
                         _preferences.joymap[key] = binding
 
                 
-                ui.window(style='prefs_pref')
+                ui.window(style='prefs_pref_frame')
                 ui.vbox(style='prefs_pref_vbox')
 
                 _label_factory(self.name, 'prefs')
@@ -485,7 +485,7 @@ init -450:
 
             def render_preference(self):
 
-                ### prefs_jump prefs_pref
+                ### prefs_jump prefs_pref_frame
                 # (window) The style of a window containing a jump preference.
 
                 ### prefs_jump_button prefs_button

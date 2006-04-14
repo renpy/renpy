@@ -60,27 +60,27 @@ label _library_main_menu:
 
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
 
-        ### mm_root_window default
+        ### mm_root default
         # (window) The style used for the root window of the main
         # menu. This is primarily used to set a background for the
         # main menu.
 
-        ui.window(style='mm_root_window')
+        ui.window(style='mm_root')
         ui.fixed()
 
-        ### mm_menu_window default
+        ### mm_menu_frame default
         # (window) A window that contains the choices in
         # the main menu. Change this to change the placement of
         # these choices on the main menu screen.
 
-        ### mm_menu_window_vbox thin_vbox
+        ### mm_menu_frame_vbox thin_vbox
         # (box) The vbox containing the main menu choices.
 
         if library.main_menu_positions:
             ui.fixed()
         else:
-            ui.window(style='mm_menu_window')
-            ui.vbox(style='mm_menu_window_vbox')
+            ui.window(style='mm_menu_frame')
+            ui.vbox(style='mm_menu_frame_vbox')
 
         for text, clicked, enabled in library.main_menu:
 

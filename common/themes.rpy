@@ -44,7 +44,6 @@ init -402:
             style.menu_choice_chosen.clear()
             style.menu_choice_chosen_button.clear()
 
-
             style.menu_choice_button.xminimum = int(config.screen_width * 0.75)
             style.menu_choice_button.xmaximum = int(config.screen_width * 0.75)
 
@@ -169,6 +168,7 @@ init -402:
             else:
                 store._roundrect_radius = 6
 
+            style.button.clear()
             style.button.background = RoundRect(widget)
             style.button.hover_background = RoundRect(widget_hover)
             style.button.activate_background = RoundRect(widget_hover)
@@ -193,28 +193,28 @@ init -402:
 
             style.selected_button_text.color = widget_selected 
 
-            style.mm_root_window.background = mm_root
-            style.gm_root_window.background = gm_root
+            style.mm_root.background = mm_root
+            style.gm_root.background = gm_root
 
-            style.mm_menu_window_vbox.box_spacing = spacing
-            rrframe(style.mm_menu_window)
-            style.mm_menu_window.xpos = nav_xpos
-            style.mm_menu_window.xanchor = 0.5
+            style.mm_menu_frame_vbox.box_spacing = spacing
+            rrframe(style.mm_menu_frame)
+            style.mm_menu_frame.xpos = nav_xpos
+            style.mm_menu_frame.xanchor = 0.5
 
             style.gm_nav_vbox.box_spacing = spacing
-            rrframe(style.gm_nav_window)
-            style.gm_nav_window.xpos = nav_xpos
-            style.gm_nav_window.xanchor = 0.5
+            rrframe(style.gm_nav_frame)
+            style.gm_nav_frame.xpos = nav_xpos
+            style.gm_nav_frame.xanchor = 0.5
 
-            rrframe(style.prefs_pref)
-            del style.prefs_pref.bottom_margin
-            style.prefs_pref.xfill = True
+            rrframe(style.prefs_pref_frame)
+            del style.prefs_pref_frame.bottom_margin
+            style.prefs_pref_frame.xfill = True
 
             style.prefs_pref_vbox.box_spacing = spacing
             style.prefs_pref_vbox.box_first_spacing = title_spacing
             style.prefs_pref_vbox.xfill = True
 
-            style.prefs_window.ypadding = pref_spacing
+            style.prefs_frame.ypadding = pref_spacing
 
             style.prefs_column.box_spacing = pref_spacing
             style.prefs_column.xmaximum = frame_width
@@ -277,40 +277,40 @@ init -402:
             style.prefs_js_button_text.size = small
             style.prefs_js_button.xminimum = 450
 
-            rrframe(style.joy_window)
-            del style.joy_window.yminimum
-            style.joy_window.ypadding = .05
-            style.joy_window.xpadding = rrslider_radius
-            style.joy_window.xmargin = .05
-            style.joy_window.ypos = .1
-            style.joy_window.yanchor = 0
+            rrframe(style.js_frame)
+            del style.js_frame.yminimum
+            style.js_frame.ypadding = .05
+            style.js_frame.xpadding = rrslider_radius
+            style.js_frame.xmargin = .05
+            style.js_frame.ypos = .1
+            style.js_frame.yanchor = 0
 
-            style.joyfunc_label.xpos = 0.5
-            style.joyfunc_label.xanchor = 0.5
+            style.js_function_label.xpos = 0.5
+            style.js_function_label.xanchor = 0.5
 
-            style.joyprompt_label.xpos = 0.5
-            style.joyprompt_label.xanchor = 0.5
+            style.js_prompt_label.xpos = 0.5
+            style.js_prompt_label.xanchor = 0.5
 
             # Yes/No
 
-            rrframe(style.yesno_window)
-            del style.yesno_window.yminimum
-            style.yesno_window.ypadding = .05
-            style.yesno_window.xpadding = rrslider_radius
-            style.yesno_window.xmargin = .05
-            style.yesno_window.ypos = .1
-            style.yesno_window.yanchor = 0
+            rrframe(style.yesno_frame)
+            del style.yesno_frame.yminimum
+            style.yesno_frame.ypadding = .05
+            style.yesno_frame.xpadding = rrslider_radius
+            style.yesno_frame.xmargin = .05
+            style.yesno_frame.ypos = .1
+            style.yesno_frame.yanchor = 0
 
             style.yesno_label.color = label
             style.yesno_label.drop_shadow = None
 
             # File Picker
 
-            rrframe(style.file_picker_window)
-            style.file_picker_window.xmargin = 6
-            style.file_picker_window.ymargin = 6
+            rrframe(style.file_picker_frame)
+            style.file_picker_frame.xmargin = 6
+            style.file_picker_frame.ymargin = 6
 
-            style.file_picker_window_vbox.box_spacing = 4            
+            style.file_picker_frame_vbox.box_spacing = 4            
             style.file_picker_nav_button.xminimum = 0
 
             style.file_picker_navbox.box_spacing = spacing

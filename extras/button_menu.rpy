@@ -8,8 +8,8 @@
 # The code that implements button menus.
 init:
     python:
-        style.create('menu_button', 'button')
-        style.create('menu_button_text', 'button_text')
+        style.create('button', 'button')
+        style.create('button_text', 'button_text')
 
         def menu(menuitems):
 
@@ -26,8 +26,8 @@ init:
                     continue
 
                 ui.textbutton(label,
-                              style="menu_button",
-                              text_style="menu_button_text",
+                              style="button",
+                              text_style="button_text",
                               clicked=ui.returns(value))
 
             ui.close()
@@ -48,16 +48,16 @@ init 1:
         style.menu_window.yanchor = 'center'
         style.menu_window.xfill = True
 
-        style.menu_button.background = Solid((0, 0, 255, 128))
-        style.menu_button.xfill = True
-        style.menu_button.top_padding = 5
-        style.menu_button.bottom_margin = 5
+        style.button.background = Solid((0, 0, 255, 128))
+        style.button.xfill = True
+        style.button.top_padding = 5
+        style.button.bottom_margin = 5
 
-        style.menu_button_text.xpos = 0.5
-        style.menu_button_text.xanchor = 'center'
+        style.button_text.xpos = 0.5
+        style.button_text.xanchor = 'center'
 
-        style.menu_button_text.hover_color = (255, 255, 0, 255)
-        style.menu_button_text.idle_color = (255, 255, 255, 255)
+        style.button_text.hover_color = (255, 255, 0, 255)
+        style.button_text.idle_color = (255, 255, 255, 255)
         
     
         

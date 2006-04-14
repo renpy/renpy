@@ -82,9 +82,9 @@ init -1000:
         style.create('thick_vbox', 'vbox', '(box) A vbox with a large amount of spacing.')
 
 # AUTOMATICALLY GENERATED
-        style.create("gm_root_window", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
-        style.create("gm_nav_window", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
-        style.create("gm_nav_vbox", "thin_vbox", "(box) The style that is used by the box inside the gm_nav_window")
+        style.create("gm_root", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
+        style.create("gm_nav_frame", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
+        style.create("gm_nav_vbox", "thin_vbox", "(box) The style that is used by the box inside the gm_nav_frame")
         style.create("gm_nav_button", "button", "(window, hover) The style of an unselected game menu navigation button.")
         style.create("gm_nav_button_text", "button_text", "(text, hover) The style of the text of an unselected game menu navigation button.")
         style.create("gm_nav_selected_button", "selected_button", "(window, hover) The style of a selected game menu navigation button.")
@@ -96,28 +96,28 @@ init -1000:
         style.create("file_picker_old", "file_picker_text", "(text) The style that is applied to the number of the old slot in the file picker.")
         style.create("file_picker_extra_info", "file_picker_text", "(text) The style that is applied to extra info in the file picker. The extra info is the save time, and the save_name if one exists.")
         style.create("file_picker_empty_slot", "file_picker_text", "(text) The style that is used for the empty slot indicator in the file picker.")
-        style.create("file_picker_window", "default", "(window) A window containing the file picker that is used to choose slots for loading and saving.")
-        style.create("file_picker_window_vbox", "thin_vbox", "(box) The vbox containing both the nav and the grid in the file picker.")
+        style.create("file_picker_frame", "default", "(window) A window containing the file picker that is used to choose slots for loading and saving.")
+        style.create("file_picker_frame_vbox", "thin_vbox", "(box) The vbox containing both the nav and the grid in the file picker.")
         style.create("file_picker_navbox", "thick_hbox", "(box) The box containing the naviation (next/previous) buttons in the file picker.")
         style.create("file_picker_nav_button", "button", "(window, hover) The style that is used for enabled file picker navigation buttons.")
         style.create("file_picker_nav_button_text", "button_text", "(text) The style that is used for the label of enabled file picker navigation buttons.")
         style.create("file_picker_grid", "default", "The style of the grid containing the file picker entries.")
-        style.create("yesno_window", "default", "(window) The style of a window containing a yes/no prompt.")
-        style.create("yesno_window_vbox", "thick_vbox", "(box) The style of a box containing the widgets in a yes/no prompt.")
+        style.create("yesno_frame", "default", "(window) The style of a window containing a yes/no prompt.")
+        style.create("yesno_frame_vbox", "thick_vbox", "(box) The style of a box containing the widgets in a yes/no prompt.")
         style.create("yesno_label", "default", "(text) The style used for the prompt in a yes/no dialog.")
         style.create("yesno_button", "button", "(window, hover) The style of yes/no buttons.")
         style.create("yesno_button_text", "button_text", "(window, hover) The style of yes/no button text.")
-        style.create("error_window", "default", "(window) The style of the window containing internal error messages.")
+        style.create("error_root", "default", "(window) The style of the window containing internal error messages.")
         style.create("error_title", "default", "(text) The style of the text containing the title of an error message.")
         style.create("error_body", "default", "(text) The style of the body of an error message.")
         style.create("skip_indicator", "default", "(text) The style and placement of the skip indicator.")
-        style.create("mm_root_window", "default", "(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.")
-        style.create("mm_menu_window", "default", "(window) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.")
-        style.create("mm_menu_window_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")
+        style.create("mm_root", "default", "(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.")
+        style.create("mm_menu_frame", "default", "(window) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.")
+        style.create("mm_menu_frame_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")
         style.create("mm_button", "button", "(window, hover) The style that is used on buttons that are part of the main menu.")
         style.create("mm_button_text", "button_text", "(text, hover) The style that is used for the labels of buttons that are part of the main menu.")
-        style.create("prefs_window", "default", "(window) A window containing all preferences.")
-        style.create("prefs_pref", "default", "(window) A window containing an individual preference.")
+        style.create("prefs_frame", "default", "(window) A window containing all preferences.")
+        style.create("prefs_pref_frame", "default", "(window) A window containing an individual preference.")
         style.create("prefs_pref_vbox", "thin_vbox", "(box) The style of the vbox containing a preference.")
         style.create("prefs_label", "default", "(text) The style that is applied to the label of a block of preferences.")
         style.create("prefs_hbox", "default", "If library.hbox_pref_choices is True, the style of the hbox containing the choices.")
@@ -135,11 +135,11 @@ init -1000:
         style.create("prefs_spinner_button_text", "prefs_button_text", "(text, hover) The style of the text of the + and - buttons in a preference spinner.")
         style.create("prefs_js_button", "prefs_button", "(window, hover) The style of buttons giving a joystick mapping.")
         style.create("prefs_js_button_text", "prefs_button_text", "(text, hover) The style of the text in buttons giving a joystick mapping.")
-        style.create("joy_window", "prefs_window", "(window) The window containing the joystick message.")
-        style.create("joy_vbox", "thick_vbox", "(window) The vbox containing the joistick mapping message.")
-        style.create("joyfunc_label", "prefs_label", "(text, position) The style of the joystick mapping function name.")
-        style.create("joyprompt_label", "prefs_label", "(text, position) The style of the joystick mapping prompt message.")
-        style.create("prefs_jump", "prefs_pref", "(window) The style of a window containing a jump preference.")
+        style.create("js_frame", "prefs_frame", "(window) The window containing the joystick message.")
+        style.create("js_frame_vbox", "thick_vbox", "(window) The vbox containing the joistick mapping message.")
+        style.create("js_function_label", "prefs_label", "(text, position) The style of the joystick mapping function name.")
+        style.create("js_prompt_label", "prefs_label", "(text, position) The style of the joystick mapping prompt message.")
+        style.create("prefs_jump", "prefs_pref_frame", "(window) The style of a window containing a jump preference.")
         style.create("prefs_jump_button", "prefs_button", "(window, hover) The style of a jump preference button.")
         style.create("prefs_jump_button_text", "prefs_button_text", "(text, hover) The style of jump preference button text.")
         style.create("prefs_column", "default", "The style of a vbox containing a column of preferences.")
@@ -284,8 +284,6 @@ init -1000:
         ######################################################################
         # Buttons.
         
-        style.button_text.xpos = 0.5
-        style.button_text.xanchor = 'center'
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
         style.button_text.activate_color = bright_cyan
@@ -297,6 +295,11 @@ init -1000:
         style.selected_button_text.hover_color = bright_red
         style.selected_button_text.activate_color = bright_red
 
+        style.button.xpos = 0.5
+        style.button.xanchor = 0.5
+        style.button_text.xpos = 0.5
+        style.button_text.xanchor = 0.5
+  
         ######################################################################
         # Bar.
 
@@ -312,37 +315,37 @@ init -1000:
         ######################################################################
         # Main menu.
 
-        style.mm_root_window.background = Solid((0, 0, 0, 255))
-        style.mm_root_window.xfill = True
-        style.mm_root_window.yfill = True
+        style.mm_root.background = Solid((0, 0, 0, 255))
+        style.mm_root.xfill = True
+        style.mm_root.yfill = True
 
-        style.mm_menu_window.xpos = 0.9
-        style.mm_menu_window.xanchor = 'right'
-        style.mm_menu_window.ypos = 0.9
-        style.mm_menu_window.yanchor = 'bottom'
+        style.mm_menu_frame.xpos = 0.9
+        style.mm_menu_frame.xanchor = 'right'
+        style.mm_menu_frame.ypos = 0.9
+        style.mm_menu_frame.yanchor = 'bottom'
 
 
         ######################################################################
         # Game menu common.
 
-        style.gm_root_window.background = Solid((0, 0, 0, 255))
-        style.gm_root_window.xfill = True
-        style.gm_root_window.yfill = True
+        style.gm_root.background = Solid((0, 0, 0, 255))
+        style.gm_root.xfill = True
+        style.gm_root.yfill = True
     
-        style.gm_nav_window.xpos = 0.95
-        style.gm_nav_window.xanchor = 'right'
-        style.gm_nav_window.ypos = 0.95
-        style.gm_nav_window.yanchor = 'bottom'
+        style.gm_nav_frame.xpos = 0.95
+        style.gm_nav_frame.xanchor = 'right'
+        style.gm_nav_frame.ypos = 0.95
+        style.gm_nav_frame.yanchor = 'bottom'
 
 
         ##############################################################################
         # File picker.
     
-        style.file_picker_window.xpos = 0
-        style.file_picker_window.xanchor = 'left'
-        style.file_picker_window.ypos = 0
-        style.file_picker_window.yanchor = 'top'
-        style.file_picker_window.xpadding = 5
+        style.file_picker_frame.xpos = 0
+        style.file_picker_frame.xanchor = 'left'
+        style.file_picker_frame.ypos = 0
+        style.file_picker_frame.yanchor = 'top'
+        style.file_picker_frame.xpadding = 5
 
         style.file_picker_navbox.xpos = 10
 
@@ -377,22 +380,22 @@ init -1000:
         style.yesno_label.xpos = 0.5
         style.yesno_label.xanchor = 0.5
 
-        style.yesno_window.xfill = True
-        style.yesno_window.yminimum = 0.5
-        style.yesno_window.xmargin = .1
+        style.yesno_frame.xfill = True
+        style.yesno_frame.yminimum = 0.5
+        style.yesno_frame.xmargin = .1
 
-        style.yesno_window_vbox.xpos = 0.5
-        style.yesno_window_vbox.xanchor = 'center'
-        style.yesno_window_vbox.ypos = 0.5
-        style.yesno_window_vbox.yanchor = 'center'
+        style.yesno_frame_vbox.xpos = 0.5
+        style.yesno_frame_vbox.xanchor = 'center'
+        style.yesno_frame_vbox.ypos = 0.5
+        style.yesno_frame_vbox.yanchor = 'center'
 
         ##############################################################################
         # Preferences.
 
 
-        style.prefs_pref.xpos = 0.5
-        style.prefs_pref.xanchor = 'center'
-        style.prefs_pref.bottom_margin = 10
+        style.prefs_pref_frame.xpos = 0.5
+        style.prefs_pref_frame.xanchor = 'center'
+        style.prefs_pref_frame.bottom_margin = 10
 
         style.prefs_label.xpos = 0.5
         style.prefs_label.xanchor = "center"
@@ -412,8 +415,8 @@ init -1000:
         style.prefs_selected_button.xpos = 0.5
         style.prefs_selected_button.xanchor = 'center'
 
-        style.prefs_window.xfill=True
-        style.prefs_window.ypadding = 0.05
+        style.prefs_frame.xfill=True
+        style.prefs_frame.ypadding = 0.05
 
         style.prefs_column.box_spacing = 6
 
@@ -435,17 +438,17 @@ init -1000:
         style.prefs_js_button_text.size = 18
         style.prefs_js_button_text.drop_shadow = (1, 1)
 
-        style.joyfunc_label.textalign = 0.5
-        style.joyprompt_label.textalign = 0.5
+        style.js_function_label.textalign = 0.5
+        style.js_prompt_label.textalign = 0.5
 
-        style.joy_window.xfill = True
-        style.joy_window.yminimum = 0.5
-        style.joy_window.xmargin = .1
+        style.js_frame.xfill = True
+        style.js_frame.yminimum = 0.5
+        style.js_frame.xmargin = .1
 
-        style.joy_vbox.xpos = 0.5
-        style.joy_vbox.xanchor = 'center'
-        style.joy_vbox.ypos = 0.5
-        style.joy_vbox.yanchor = 'center'
+        style.js_frame_vbox.xpos = 0.5
+        style.js_frame_vbox.xanchor = 'center'
+        style.js_frame_vbox.ypos = 0.5
+        style.js_frame_vbox.yanchor = 'center'
 
         
         ######################################################################
@@ -457,13 +460,35 @@ init -1000:
         ######################################################################
         # Error messages.
 
-        style.error_window.background = Solid((220, 220, 255, 255))
-        style.error_window.xfill = True
-        style.error_window.yfill = True
-        style.error_window.xpadding = 20
-        style.error_window.ypadding = 20
+        style.error_root.background = Solid((220, 220, 255, 255))
+        style.error_root.xfill = True
+        style.error_root.yfill = True
+        style.error_root.xpadding = 20
+        style.error_root.ypadding = 20
         
         style.error_title.color = (255, 128, 128, 255)
                      
         style.error_body.color = (128, 128, 255, 255)
-        
+
+
+        # Compatibility names for renamed styles.
+        style.file_picker_window_vbox = style.file_picker_frame_vbox
+        style.prefs_window = style.prefs_frame
+        style.mm_root_window = style.mm_root
+        style.file_picker_window = style.file_picker_frame
+        style.menu_selected_button = style.selected_button
+        style.prefs_pref = style.prefs_pref_frame
+        style.gm_root_window = style.gm_root
+        style.yesno_window_vbox = style.yesno_frame_vbox
+        style.menu_button = style.button
+        style.joyprompt_label = style.js_prompt_label
+        style.menu_button_text = style.button_text
+        style.gm_nav_window = style.gm_nav_frame
+        style.joy_window = style.js_frame
+        style.mm_menu_window = style.mm_menu_frame
+        style.menu_selected_button_text = style.selected_button_text
+        style.error_window = style.error_root
+        style.joyfunc_label = style.js_function_label
+        style.joy_vbox = style.js_frame_vbox
+        style.yesno_window = style.yesno_frame
+        style.mm_menu_window_vbox = style.mm_menu_frame_vbox

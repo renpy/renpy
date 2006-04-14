@@ -18,6 +18,12 @@ init 1000:
                 config.with_callback = trans
                 
         # Compat for changes to button look.
-        if compat(5, 4, 5):
-            style.button.xpos = 0.5
-            style.button.xanchor = 0.5
+        if compat(5, 4, 5):            
+            style.button.setdefault(xpos=0.5, xanchor=0.5)
+            style.button.clear()
+            style.button_text.clear()
+            style.selected_button.clear()
+            style.selected_button_text.clear()
+            
+
+            

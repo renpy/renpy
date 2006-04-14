@@ -94,30 +94,30 @@ init -499:
             ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
             ui.add(renpy.Keymap(game_menu=ui.jumps("_noisy_return")))
 
-            ### gm_root_window default
+            ### gm_root default
             # (window) The style used for the root window of the game
             # menu. This is primarily used to change the background of
             # the game menu.
  
-            ui.window(style='gm_root_window')
+            ui.window(style='gm_root')
             ui.null()
 
             if not screen:
                 return
 
-            ### gm_nav_window default
+            ### gm_nav_frame default
             # (window) The style used by a window containing
             # buttons that allow the user to navigate through the
             # different screens of the game menu.
 
             ### gm_nav_vbox thin_vbox
             # (box) The style that is used by the box inside the
-            # gm_nav_window
+            # gm_nav_frame
 
             if library.game_menu_positions:
                 ui.fixed()
             else:
-                ui.window(style='gm_nav_window')
+                ui.window(style='gm_nav_frame')
                 ui.vbox(focus='gm_nav', style='gm_nav_vbox')
             
             for key, label, clicked, enabled in library.game_menu:
@@ -293,16 +293,16 @@ init -499:
                 _game_nav(selected)
 
 
-                ### file_picker_window default
+                ### file_picker_frame default
                 # (window) A window containing the file picker
                 # that is used to choose slots for loading and saving.
 
-                ### file_picker_window_vbox thin_vbox
+                ### file_picker_frame_vbox thin_vbox
                 # (box) The vbox containing both the nav and the grid in
                 # the file picker.
 
-                ui.window(style='file_picker_window')
-                ui.vbox(style='file_picker_window_vbox') # whole thing.
+                ui.window(style='file_picker_frame')
+                ui.vbox(style='file_picker_frame_vbox') # whole thing.
                 
                 if not library.disable_file_pager:
 
@@ -394,15 +394,15 @@ init -499:
 
             _game_nav(screen)
 
-            ### yesno_window default
+            ### yesno_frame default
             # (window) The style of a window containing a yes/no prompt.
 
-            ### yesno_window_vbox thick_vbox
+            ### yesno_frame_vbox thick_vbox
             # (box) The style of a box containing the widgets in a
             # yes/no prompt.
 
-            ui.window(style='yesno_window')
-            ui.vbox(style='yesno_window_vbox')
+            ui.window(style='yesno_frame')
+            ui.vbox(style='yesno_frame_vbox')
 
             ### yesno_label default
             # (text) The style used for the prompt in a yes/no
@@ -434,7 +434,7 @@ init -499:
 
         def _show_exception(title, message):
 
-            ### error_window default
+            ### error_root default
             # (window) The style of the window containing internal error
             # messages.
 
@@ -445,7 +445,7 @@ init -499:
             ### error_body default
             # (text) The style of the body of an error message.
 
-            ui.window(style='error_window')
+            ui.window(style='error_root')
             ui.vbox()
 
             ui.text(title, style='error_title')

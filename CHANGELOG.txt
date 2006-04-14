@@ -25,6 +25,8 @@ Doc: property box_first_spacing
 Doc: xfill, yfill on v/hbox
 Doc/Test: library.always_has_joystick
 Doc: ui.frame
+Doc: music looping, change docstrings.
+Doc: renamed styles.
 
 New in Ren'Py 5.4.5
 -------------------
