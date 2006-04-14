@@ -13,6 +13,8 @@
 
 init:
 
+    $ config.debug_sound = True
+
     # The version of this script.
     $ library.script_version = (5, 5, 0)
 
@@ -20,6 +22,10 @@ init:
     $ config.screen_width = 800
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
+
+    # Set up the theme for this game. This must be after the
+    # library.script_version and config.screen_width lines.
+    $ theme.roundrect()
 
     # Set this to true to enable some developer-specific
     # functionality. It should be false in a finished game.
@@ -90,7 +96,7 @@ label start:
     show eileen happy
   
     # Another line of dialogue.
-    "Girl" "My name is Eileen, and while I plan to one day star in a
+    "Girl" "My name is Eileen, and while I hope to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
 
     # This line used the e character object, which displays Eileen's
@@ -125,7 +131,7 @@ label choices:
 
         # This is a menu choice. When chosen, the statements in its
         # block are executed.
-        "What are some user-visible features of Ren'Py games?":
+        "What are some features of Ren'Py games?":
 
             # We call the features label. The from clause needs to be
             # here to ensure that save games work, even after we
@@ -654,13 +660,12 @@ init:
             while True:
 
                 # Stats Window
-                ui.window(xpos=0,
-                          ypos=0,
-                          xanchor='left',
-                          yanchor='top',
-                          xfill=True,
-                          yminimum=200,
-                          )
+                ui.frame(xpos=0,
+                         ypos=0,
+                         xanchor='left',
+                         yanchor='top',
+                         xfill=True,
+                         )
 
                 ui.vbox()
 
@@ -671,7 +676,7 @@ init:
 
                     ui.hbox()
                     ui.text(name, minwidth=150)
-                    ui.bar(600, 22, range, value, ypos=0.5, yanchor='center')
+                    ui.bar(range, value, ypos=0.5, yanchor='center')
                     ui.close()
 
                 ui.close()
@@ -680,13 +685,13 @@ init:
 
             
                 # Period Selection Window.
-                ui.window(xpos=0,
-                          ypos=200,
-                          xanchor='left',
-                          yanchor='top',
-                          xfill=False,
-                          xminimum=300
-                          )
+                ui.frame(xpos=0,
+                         ypos=200,
+                         xanchor='left',
+                         yanchor='top',
+                         xfill=False,
+                         xminimum=300
+                         )
                 
                 ui.vbox(xpos=0.5, xanchor='center')
                 ui.text(day, xpos=0.5, xanchor='center', textalign=0.5)
@@ -694,17 +699,17 @@ init:
                 
                 for i in periods:
                     face = i + ": " + plan[i]
-                    button(face, editing == i, ("edit", i))
+                    button(face, editing == i, ("edit", i), xminimum=250)
 
                 ui.null(height=20)
-                ui.textbutton("Continue", clicked=ui.returns(("done", True)))
+                ui.textbutton("Continue", clicked=ui.returns(("done", True)), xminimum=250)
                 ui.null(height=20)
                 ui.close()
 
 
                 # Choice window.
                 if editing:
-                    ui.window(xpos=300,
+                    ui.frame(xpos=300,
                               ypos=200,
                               xanchor='left',
                               yanchor='top',
@@ -747,7 +752,7 @@ init:
 
     python:
         povname = ""
-        pov = DynamicCharacter("povname", color=(255, 0, 0, 255))
+        pov = DynamicCharacter("povname", color=(192, 64, 64, 255))
 
     $ ectc = Character('Eileen', color=(200, 255, 200, 255),
                        ctc = anim.Blink("arrow.png"))
@@ -819,6 +824,8 @@ init:
 
     $ esf = Character('Eileen', color=(200, 255, 200, 255),
                       what_font="skyfont", what_size=22, what_drop_shadow=None)
+
+    $ style.frame.background = Frame("frame.png", 12, 12)
     
 label demonstrate:
 
@@ -1496,28 +1503,21 @@ init:
 
     # Change some styles, to add images in the background of
     # the menus and windows.
-    $ style.mm_root_window.background = Image("mainmenu.jpg")
-    $ style.gm_root_window.background = Image("gamemenu.jpg")
-    $ style.window.background = Frame("frame.png", 25, 25)
+    # $ style.mm_root_window.background = Image("mainmenu.jpg")
+    # $ style.gm_root_window.background = Image("gamemenu.jpg")
+    $ style.window.background = Frame("window.png", 24, 24)
 
-    # Change the look of the slider.
-    $ style.bar.left_gutter = 10
-    $ style.bar.right_gutter = 12
-    $ style.bar.left_bar = Frame("slider_full.png", 10, 0)
-    $ style.bar.right_bar = Frame("slider_empty.png", 12, 0)
-    $ style.bar.thumb = Image("slider_idle.png")
-    $ style.bar.hover_thumb = Image("slider_hover.png")
-    $ style.bar.thumb_shadow = Image("slider_shadow.png")
-    $ style.bar.thumb_offset = -10
+    $ style.menu_choice_button.background = RoundRect((0, 60, 120, 220))
+    $ style.menu_choice_button.hover_background = RoundRect((0, 80, 160, 220))
 
     # Change some styles involving the margins and padding of the
     # default window. (We need this, as we use a frame image that
     # includes a drop-shadow.)
     $ style.window.xmargin = 0
     $ style.window.ymargin = 0
-    $ style.window.xpadding = 20
-    $ style.window.top_padding = 5
-    $ style.window.bottom_padding = 15
+    $ style.window.xpadding = 12
+    $ style.window.top_padding = 6
+    $ style.window.bottom_padding = 12
 
     # Interface sounds, just for the heck of it.
     $ style.button.activate_sound = 'click.wav'
@@ -1530,10 +1530,7 @@ init:
     # the game menu.
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
-
-    # Set the color of idle chosen menu choices.
-    $ style.menu_choice_chosen.idle_color = (0, 192, 192, 255)
-
+    
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.

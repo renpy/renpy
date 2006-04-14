@@ -24,6 +24,7 @@ convenient list of what those fonts should look like.
 Doc: property box_first_spacing
 Doc: xfill, yfill on v/hbox
 Doc/Test: library.always_has_joystick
+Doc: ui.frame
 
 New in Ren'Py 5.4.5
 -------------------

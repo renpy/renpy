@@ -26,7 +26,7 @@ def play(filename, channel=0, fadeout=0, fadein=0, tight=False):
     try:        
         c = renpy.audio.audio.get_channel(channel)
         c.dequeue()
-        c.enqueue(filename, loop=False, fadein=fadein, tight=tight)
+        c.enqueue([ filename ], loop=False, fadein=fadein, tight=tight)
     except:
         if renpy.config.debug_sound:
             raise
@@ -35,7 +35,7 @@ def play(filename, channel=0, fadeout=0, fadein=0, tight=False):
 
 def queue(filename, channel=0, clear_queue=True, fadein=0, tight=False):
     """
-    This causes the name file to be queued to be played on the given
+    This causes the named file to be queued to be played on the given
     channel.  If clear_queue is True, the queue will be cleared before
     playback, so this sound is played immediately after the currently
     playing sound. If False, the channel's queue will not be cleared,
@@ -50,7 +50,7 @@ def queue(filename, channel=0, clear_queue=True, fadein=0, tight=False):
         if clear_queue:
             c.dequeue(True)
 
-        c.enqueue(filename, loop=False, fadein=fadein, tight=tight)
+        c.enqueue([ filename ], loop=False, fadein=fadein, tight=tight)
 
     except:
         if renpy.config.debug_sound:

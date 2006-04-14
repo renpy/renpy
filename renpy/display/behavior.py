@@ -199,7 +199,13 @@ class SayBehavior(renpy.display.layout.Null):
                 renpy.game.interface.timeout(afm_delay - st)
 
         if map_event(ev, "dismiss") and self.is_focused():
-            return True
+
+            if renpy.config.skipping:
+                renpy.config.skipping = None
+                renpy.exports.restart_interaction()
+                raise renpy.display.core.IgnoreEvent()
+            else:
+                return True
 
         if map_event(ev, "rollforward"):
             if renpy.game.context().seen_current(False):

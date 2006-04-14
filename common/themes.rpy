@@ -1,4 +1,55 @@
-init -100:
+init -402:
+    python:
+
+        def _recolor(img, color):
+            r, g, b, a = color
+            rr = im.ramp(r, r)
+            gr = im.ramp(g, g)
+            br = im.ramp(b, b)
+            ar = im.ramp(0, a)
+
+            return im.Map(img, rr, gr, br, ar) 
+
+
+        def RoundRect(color, size=None):
+            """
+            Creates a roundrect displayable. Size should be one of
+            6 or 12, while color is the color of the roundrect.
+            """
+
+            if size is None:
+                size = _roundrect_radius
+
+            return Frame(_recolor("rr%d.png" % size, color), size, size)
+            
+        def _button_menu():
+
+            style.menu.clear()
+
+            style.menu.box_spacing = 2
+
+            style.menu_window.clear()
+            style.menu_window.take(style.default)
+            style.menu_window.xpos = 0.5
+            style.menu_window.xanchor = 0.5
+            style.menu_window.ypos = (config.screen_height - style.window.yminimum) // 2
+            style.menu_window.yanchor = 0.5
+
+            style.menu_choice.clear()
+            style.menu_choice.take(style.button_text)
+
+            style.menu_choice_button.clear()
+            style.menu_choice_button.take(style.button)
+
+            style.menu_choice_chosen.clear()
+            style.menu_choice_chosen_button.clear()
+
+
+            style.menu_choice_button.xminimum = int(config.screen_width * 0.75)
+            style.menu_choice_button.xmaximum = int(config.screen_width * 0.75)
+
+
+
     python hide:
 
         store.theme = object()
@@ -16,6 +67,7 @@ init -100:
             mm_root = Solid((220, 235, 255, 255)),
             gm_root = Solid((220, 235, 255, 255)),
             centered = False,
+            button_menu = True,
             ):
 
             """This enables the use of the roundrect theme. By
@@ -106,20 +158,6 @@ init -100:
             rrslider_radius = 6
             rrslider_height = 24
 
-            def recolor(img, color):
-                r, g, b, a = color
-                rr = im.ramp(r, r)
-                gr = im.ramp(g, g)
-                br = im.ramp(b, b)
-                ar = im.ramp(0, a)
-
-                return im.Map(img, rr, gr, br, ar) 
-
-            def RoundRect(color, big=big):
-                if big:
-                    return Frame(recolor("rr12.png", color), 12, 12)
-                else:
-                    return Frame(recolor("rr6.png", color), 6, 6)
 
             def rrframe(sty):
                 sty.background = RoundRect(frame)
@@ -127,16 +165,16 @@ init -100:
                 sty.ypadding = 6
 
             if big:
-                roundrect_radius = 12
+                store._roundrect_radius = 12
             else:
-                roundrect_radius = 6
+                store._roundrect_radius = 6
 
             style.button.background = RoundRect(widget)
             style.button.hover_background = RoundRect(widget_hover)
             style.button.activate_background = RoundRect(widget_hover)
             style.button.xminimum = widget_width
             style.button.ypadding = 1
-            style.button.xpadding = roundrect_radius
+            style.button.xpadding = _roundrect_radius
             style.button.xmargin = 1
             style.button.ymargin = 1
             
@@ -147,6 +185,8 @@ init -100:
             style.button_text.xanchor = 0.5
             style.button_text.ypos = 0.5
             style.button_text.yanchor = 0.5
+            style.button_text.xalign = 0.5
+            style.button_text.textalign = 0.5 
 
             style.button.insensitive_background = RoundRect(disabled)
             style.button_text.insensitive_color = disabled_text
@@ -209,13 +249,13 @@ init -100:
             style.prefs_slider.xmaximum=widget_width
             del style.prefs_slider.ymaximum
 
-            style.bar.left_bar = Frame(recolor(rrslider_full, widget), rrslider_radius * 2, 0)
-            style.bar.right_bar = Frame(recolor(rrslider_empty, widget), rrslider_radius * 2, 0)
-            style.bar.thumb = recolor(rrslider_thumb, widget)
+            style.bar.left_bar = Frame(_recolor(rrslider_full, widget), rrslider_radius * 2, 0)
+            style.bar.right_bar = Frame(_recolor(rrslider_empty, widget), rrslider_radius * 2, 0)
+            style.bar.thumb = _recolor(rrslider_thumb, widget)
 
-            style.bar.hover_left_bar = Frame(recolor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_right_bar = Frame(recolor(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_thumb = recolor(rrslider_thumb, widget_hover)
+            style.bar.hover_left_bar = Frame(_recolor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_right_bar = Frame(_recolor(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_thumb = _recolor(rrslider_thumb, widget_hover)
 
             if centered:
                 style.prefs_slider.xpos = 0.5
@@ -231,8 +271,8 @@ init -100:
             style.prefs_joystick.xmaximum = 600
             style.prefs_joystick.xpos = 0.5
             style.prefs_joystick.xanchor = 0.5
-            style.prefs_js_button.background = RoundRect(widget, False)
-            style.prefs_js_button.hover_background = RoundRect(widget_hover, False)
+            style.prefs_js_button.background = RoundRect(widget, 6)
+            style.prefs_js_button.hover_background = RoundRect(widget_hover, 6)
             style.prefs_js_button_text.drop_shadow = None
             style.prefs_js_button_text.size = small
             style.prefs_js_button.xminimum = 450
@@ -278,7 +318,7 @@ init -100:
 
             style.file_picker_entry.background = RoundRect(widget)
             style.file_picker_entry.hover_background = RoundRect(widget_hover)
-            style.file_picker_entry.xpadding = roundrect_radius
+            style.file_picker_entry.xpadding = _roundrect_radius
             style.file_picker_entry.xmargin = 2
 
             style.file_picker_text.size = small
@@ -304,6 +344,10 @@ init -100:
             style.frame.ypadding = 6
             style.frame.xmargin = 6
             style.frame.ymargin = 6
+
+            if button_menu:
+                _button_menu()
+                
 
 
         theme.roundrect = theme_roundrect

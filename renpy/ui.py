@@ -272,6 +272,18 @@ def window(**properties):
 
     return add(renpy.display.layout.Window(None, **properties), True, True)
 
+def frame(**properties):
+    """
+    A frame contains a single widget. This is similar to a window, but may
+    be styled differently.
+    """
+
+    properties.setdefault('style', 'frame')
+
+    return add(renpy.display.layout.Window(None, **properties), True, True)
+
+
+
 def keymousebehavior():
     """
     This is a psuedo-widget that adds the keymouse behavior to the

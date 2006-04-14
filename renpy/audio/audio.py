@@ -204,9 +204,9 @@ class Channel(object):
         # The QueueEntries queued for playback on this channel.
         self.queue = [ ]
 
-        # If true, we loop the music. This entails re-adding the element to
-        # the queue if it would make the queue empty. 
-        self.loop = False
+        # If true, we loop the music. This entails adding everything in this
+        # variable to the end of the queue.
+        self.loop = [ ]
 
         # Are we playing anything at all?
         self.playing = False
@@ -255,11 +255,7 @@ class Channel(object):
                 self.wait_stop = False
 
         if force_stop:
-            if self.loop:
-                self.queue = self.queue[-1:]
-            else:
-                self.queue = [ ]
-
+            self.queue = [ ]
             return
 
         # If we're playing midi, and the midi device is busy, return.
@@ -354,8 +350,9 @@ class Channel(object):
                     return
 
             if self.loop and not self.queue:
-                newq = QueueEntry(topq.filename, 0, topq.tight)
-                self.queue.append(newq)
+                for i in self.loop:
+                    newq = QueueEntry(i, 0, topq.tight)                    
+                    self.queue.append(newq)
             else:
                 do_callback = True
 
@@ -370,7 +367,7 @@ class Channel(object):
         """
 
         self.queue = [ ]
-        self.loop = False
+        self.loop = [ ]
 
         if not pcm_ok:
             return
@@ -405,16 +402,19 @@ class Channel(object):
             pss.fadeout(self.number, int(secs * 1000))
 
 
-    def enqueue(self, filename, loop=True, synchro_start=False, fadein=0, tight=False):
-
-        assert filename
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=False):
 
         if not pcm_ok:
             return
 
-        qe = QueueEntry(filename, int(fadein * 1000), tight)
-        self.queue.append(qe)
-        self.loop = loop
+        for filename in filenames:
+            qe = QueueEntry(filename, int(fadein * 1000), tight)
+            self.queue.append(qe)
+
+        if loop:
+            self.loop = list(filenames)
+        else:
+            self.loop = [ ]
 
         self.wait_stop = synchro_start
         self.synchro_start = synchro_start
@@ -523,7 +523,7 @@ def quit():
         c.fadeout(0)
         
         c.queue = [ ]
-        c.loop = False
+        c.loop = [ ]
         c.playing = False
         c.playing_midi = False
         c.wait_stop = False

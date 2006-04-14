@@ -208,6 +208,17 @@ class Style(object):
     def __delattr__(self, name):
         remove_properties(self, { name : None })
 
+        
+    def clear(self):
+        if styles_built:
+            raise Exception("Cannot clear a style after styles have been built.")
+        else:
+            self.properties.clear()
+
+    def take(self, other):
+        self.properties.update(other.properties)
+        if styles_built:
+            build_style(self)
 
     def setdefault(self, **properties):
         """
