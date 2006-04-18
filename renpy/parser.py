@@ -860,7 +860,7 @@ def parse_menu(l, loc):
 
         label = l.string()
 
-        if not label:
+        if label is None:
             l.error('expected menuitem')
 
         # A string on a line by itself is a caption.

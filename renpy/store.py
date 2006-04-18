@@ -143,6 +143,7 @@ class Character(object):
     special_properties = [
         'what_prefix',
         'what_suffix',
+        'show_function',
         ]
     
     def __init__(self, name,
@@ -234,6 +235,7 @@ class Character(object):
         self.properties = properties
         self.what_properties = { }
         self.window_properties = { }
+        self.show_args = { }
         self.function = function
         self.predict_function = predict_function
         self.condition = condition
@@ -241,6 +243,11 @@ class Character(object):
 
         for k in list(self.properties):
             if k in self.special_properties:
+                continue
+
+            if k.startswith("show_"):
+                self.show_args[k[len("show_"):]] = self.properties[k]
+                del self.properties[k]
                 continue
 
             if k.startswith("what_"):
@@ -317,6 +324,7 @@ class Character(object):
             window_style=self.window_style,
             what_properties=self.what_properties,
             window_properties=self.window_properties,
+            show_args=self.show_args,
             **self.properties)
             
     
@@ -352,8 +360,8 @@ menu = renpy.display_menu
 predict_menu = renpy.predict_menu
 
 # The function that is called when anonymous text is said.
-def say(who, what):
-    renpy.display_say(who, what)
+def say(who, what, interact=True):
+    renpy.display_say(who, what, interact=True)
 
 def predict_say(who, what):
     return renpy.predict_display_say(who, what)

@@ -10,6 +10,7 @@ init -402:
 
             return im.Map(img, rr, gr, br, ar) 
 
+        _roundrect_radius = 12
 
         def RoundRect(color, size=None):
             """
@@ -24,6 +25,18 @@ init -402:
             
         def _button_menu():
 
+            def menu(menuitems):
+
+                narration = [ s for s, i in menuitems if i is None and s ]
+                menuitems = [ (s, i) for s, i in menuitems if i is not None or not s ]
+
+                if narration:
+                    renpy.say(None, "\n".join(narration), interact=False)
+
+                return renpy.display_menu(menuitems)
+
+            store.menu = menu
+
             style.menu.clear()
 
             style.menu.box_spacing = 2
@@ -32,7 +45,7 @@ init -402:
             style.menu_window.take(style.default)
             style.menu_window.xpos = 0.5
             style.menu_window.xanchor = 0.5
-            style.menu_window.ypos = (config.screen_height - style.window.yminimum) // 2
+            style.menu_window.ypos = 0.5
             style.menu_window.yanchor = 0.5
 
             style.menu_choice.clear()

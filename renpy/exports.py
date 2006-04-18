@@ -323,7 +323,7 @@ class TagQuotingDict(object):
 
 tag_quoting_dict = TagQuotingDict()
 
-def say(who, what):
+def say(who, what, interact=True):
     """
     This is the core of the say command. If the who parameter is None
     or a string, it is passed directly to display_say. Otherwise, the
@@ -337,9 +337,9 @@ def say(who, what):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        renpy.store.say(who, what)
+        renpy.store.say(who, what, interact=interact)
     else:
-        who(what)
+        who(what, interact=interact)
 
 def predict_say(who, what):
     """
@@ -364,9 +364,10 @@ def predict_display_say(who, what,
                         window_properties={},
                         image=False,
                         ctc=None,
+                        show_args={},
                         **kwargs):
     """
-    This is the default function used Character to predict images that
+    This is the default function used by Character to predict images that
     will be used by display_say. It's called with more-or-less the
     same parameters as display_say, and is expected to return a list
     of images used by display_say.
@@ -455,6 +456,7 @@ def display_say(who, what, who_style='say_label',
                 what_properties={},
                 window_properties={},
                 show_function = show_display_say,
+                show_args = { },
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -541,7 +543,7 @@ def display_say(who, what, who_style='say_label',
                          slow_speed = None,
                          **what_properties)
 
-        what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image)
+        what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image, **show_args)
 
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)

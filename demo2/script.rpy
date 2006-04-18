@@ -53,6 +53,9 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
+    $ style.mm_menu_window_vbox.box_spacing = 10
+    $ style.mm_button.xpos = 1.0
+    $ style.mm_button.xanchor = 1.0
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -1482,7 +1485,7 @@ label demonstrate:
             e "That's it for now."
     
 
-        " " # Empty, so we have a blank line.
+        "" # Empty, so we have a blank line.
 
         "That's enough for me.":
 

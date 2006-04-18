@@ -27,6 +27,8 @@ Doc/Test: library.always_has_joystick
 Doc: ui.frame
 Doc: music looping, change docstrings.
 Doc: renamed styles.
+Doc: library.main_menu_music
+Doc: Character.show_...
 
 New in Ren'Py 5.4.5
 -------------------

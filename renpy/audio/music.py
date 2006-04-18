@@ -50,10 +50,12 @@ def get_channel(channel):
 def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fadein=0, tight=False, if_changed=False):
     """
     This stops the music currently playing on the numbered channel, dequeues
-    any queued music, and begins playing the specified filenames. If loop
-    is True, the track will loop while it is still the last thing in
+    any queued music, and begins playing the specified file or files. If loop
+    is True, the tracks will loop while they are the last thing in
     the queue. If fadeout is None, the fadeout time is taken from
     config.fade_music, otherwise it is a time in seconds to fade for.
+
+    Filenames may be a single file, or a list of files.
 
     Fadein is the number of seconds to fade the music in for, on the
     first loop only.
@@ -62,8 +64,8 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
     called on them with synchro_start set to True will be started at
     the same time, in a sample accurate manner.
 
-    The filenames given becomes the last queued file if loop is
-    True. If loop is False, then the last queued file is set to None.
+    The filenames given becomes the last queued files if loop is
+    True. If loop is False, then there are no last queued files.
 
     If tight is True, then fadeouts will span into the next-queued sound.
     
@@ -112,11 +114,13 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
 def queue(filenames, channel=7, loop=True, clear_queue=True, fadein=0, tight=False):
     """
     This queues the given filenames on the specified channel. If
-    clear_queue is True, then the queue is cleared, making this file
-    the file that is played when the currently playing music
-    finishes. If it is False, then this file is placed at the back of
-    the queue. In either case, if no music is playing this music
-    begins playing immediately.
+    clear_queue is True, then the queue is cleared, making these files
+    the files that are played when the currently playing file
+    finishes. If it is False, then these files are placed at the back of
+    the queue. In either case, if no music is playing these files
+    begin playing immediately.
+
+    Filenames may either be a single filename, or a list of filenames.
 
     Fadein is the number of seconds to fade the music in for, on the
     first loop only.

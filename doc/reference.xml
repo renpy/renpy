@@ -436,12 +436,11 @@ kinds of menuitems that can be contained in a menu block.
 <rule>caption_menuitem -> string</rule>
 
 <p>
-
 The first kind of menuitem is simply a string. This string is
 placed into a menu as a caption that cannot be selected. In
 general, captions are used to indicate what the menu is for,
-especially when it is not clear from the choices.
-
+especially when it is not clear from the choices. A menu may have
+multiple captions.
 </p>
 
 <rule>choice_menuitem -> string ( "if" python_expression )? ":"</rule>
@@ -466,6 +465,15 @@ set. There may only be one of this kind of menuitem per menu. If
 present, it's used to filter the list of choices shown to the
 user.
 
+</p>
+
+<rule>say_menuitem -> simple_expression string</rule>
+
+<p>
+A fourth kind of menuitem is the say_menuitem. This is a menuitem that
+is rendered similarly to the say statement. It only makes sense for
+certain styles of menu, and in general does not make sense on a menu
+with caption_menuitems.
 </p>
 
 <rule>with_menuitem -> "with" simple_expression</rule>
@@ -4064,10 +4072,10 @@ simultaneously, in a sample-accurate manner.
 The music functions persists the information about playing music,
 allowing the music to be restored after a rollback, return from a
 menu, or load. What is saved is the time of the last change of music,
-and the last queued file. If the persistent time of last music change
+and the last queued file or files. If the persistent time of last music change
 is different than what is currently playing, the system dequeues all
-queued music. It then check to see if the playing music is different
-from the persisted last queued music. If so, it stops the playing
+queued music. It then check to see if the playing music is not one of the
+from the persisted last queued music filenames. If so, it stops the playing
 music. It then plays in a loop the last queued music, and sets the
 currently known last change time to the persisted last change time.
 </p>

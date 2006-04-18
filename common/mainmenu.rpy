@@ -19,6 +19,9 @@ init -498:
         # things in the main menu.
         library.main_menu_positions = None
 
+        # Music to play at the main menu.
+        library.main_menu_music = None
+
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -27,6 +30,9 @@ label _start:
 
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
+
+    if library.main_menu_music:
+        $ renpy.music.play(library.main_menu_music)
 
     # Clean out any residual scene from the splashscreen.
     scene black
