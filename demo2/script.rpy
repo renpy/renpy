@@ -53,10 +53,6 @@ init:
 
     $ e = Character('Eileen', color=(200, 255, 200, 255))
 
-    $ style.mm_menu_window_vbox.box_spacing = 10
-    $ style.mm_button.xpos = 1.0
-    $ style.mm_button.xanchor = 1.0
-
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
@@ -1506,8 +1502,8 @@ init:
 
     # Change some styles, to add images in the background of
     # the menus and windows.
-    # $ style.mm_root.background = Image("mainmenu.jpg")
-    # $ style.gm_root.background = Image("gamemenu.jpg")
+    $ style.mm_root.background = Image("mainmenu.png")
+    $ style.gm_root.background = Image("gamemenu.png")
     $ style.window.background = Frame("window.png", 24, 24)
 
     $ style.menu_choice_button.background = RoundRect((0, 60, 120, 220))

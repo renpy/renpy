@@ -9,6 +9,29 @@ music_channels = [ 3, 4, 5, 6, 7 ]
 unique = time.time()
 serial = 0
 
+class AttrDict(object):
+
+    def __init__(self, attr):
+        self.attr = attr
+
+    def __getitem__(self, item):
+        info = renpy.game.context().info
+        return getattr(info, self.attr + str(item))
+
+    def __setitem__(self, item, value):
+        info = renpy.game.context().info
+        setattr(info, self.attr + str(item), value)
+        
+    def get(self, item, default=None):
+        info = renpy.game.context().info
+        return getattr(info, self.attr + str(item), default)
+
+_music_last_filenames = AttrDict('_music_last_filenames')
+_music_last_tight = AttrDict('_music_last_tight')
+_music_last_changed = AttrDict('_music_last_changed')
+_music_volumes = AttrDict('_music_volumes')
+
+
 def get_serial():
     """
     Gets a globally unique serial number for each music change.
@@ -18,27 +41,6 @@ def get_serial():
     serial += 1
     return (unique, serial)
 
-def get_info():
-    """
-    Returns the info object. If the music fields are not on it, then
-    add them.
-    """
-
-    info = renpy.game.context().info
-
-    if getattr(info, "_music_last_filenames", None) is None:
-        info._music_last_filenames = renpy.python.RevertableDict()
-
-    if getattr(info, "_music_last_tight", None) is None:
-        info._music_last_tight = renpy.python.RevertableDict()
-
-    if getattr(info, "_music_last_changed", None) is None:
-        info._music_last_changed = renpy.python.RevertableDict()
-
-    if getattr(info, "_music_volumes", None) is None:
-        info._music_volumes = renpy.python.RevertableDict()
-
-    return info
     
 def get_channel(channel):
     if not channel in music_channels:
@@ -80,7 +82,6 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
 
     try:        
         c = get_channel(channel)
-        info = get_info()
 
         c.dequeue()
 
@@ -95,15 +96,15 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
         c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight)
         
         t = get_serial()
-        info._music_last_changed[channel] = t
+        _music_last_changed[channel] = t
         c.music_last_changed = t
 
         if loop:
-            info._music_last_filenames[channel] = filenames            
-            info._music_last_tight[channel] = tight            
+            _music_last_filenames[channel] = filenames            
+            _music_last_tight[channel] = tight            
         else:
-            info._music_last_filenames[channel] = None
-            info._music_last_tight[channel] = False
+            _music_last_filenames[channel] = None
+            _music_last_tight[channel] = False
         
     except:
         if renpy.config.debug_sound:
@@ -139,7 +140,6 @@ def queue(filenames, channel=7, loop=True, clear_queue=True, fadein=0, tight=Fal
 
     try:        
         c = get_channel(channel)
-        info = get_info()
 
         if clear_queue:
             c.dequeue(True)
@@ -147,15 +147,15 @@ def queue(filenames, channel=7, loop=True, clear_queue=True, fadein=0, tight=Fal
         c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
         
         t = get_serial()
-        info._music_last_changed[channel] = t
+        _music_last_changed[channel] = t
         c.music_last_changed = t
 
         if loop:
-            info._music_last_filenames[channel] = filenames
-            info._music_last_tight[channel] = tight
+            _music_last_filenames[channel] = filenames
+            _music_last_tight[channel] = tight
         else:
-            info._music_last_filenames[channel] = None
-            info._music_last_tight[channel] = False
+            _music_last_filenames[channel] = None
+            _music_last_tight[channel] = False
         
     except:
         if renpy.config.debug_sound:
@@ -173,7 +173,6 @@ def stop(channel=7, fadeout=None):
 
     try:        
         c = get_channel(channel)
-        info = get_info()
 
         c.dequeue()
 
@@ -183,10 +182,10 @@ def stop(channel=7, fadeout=None):
         c.fadeout(fadeout)        
         
         t = get_serial()
-        info._music_last_changed[channel] = t
+        _music_last_changed[channel] = t
         c.music_last_changed = t
-        info._music_last_filenames[channel] = None
-        info._music_last_tight[channel] = False
+        _music_last_filenames[channel] = None
+        _music_last_tight[channel] = False
         
     except:
         if renpy.config.debug_sound:
@@ -205,11 +204,9 @@ def set_volume(volume, channel=7):
 
     try:        
         c = get_channel(channel)
-        info = get_info()
-
 
         c.set_volume(channel, volume)
-        info._music_volumes[channel] = volume
+        _music_volumes[channel] = volume
         
     except:
         if renpy.config.debug_sound:
@@ -273,28 +270,28 @@ def interact():
 
     try:
 
-        info = get_info()
+
 
         for i in music_channels:
             c = renpy.audio.audio.get_channel(i)
 
             # If we're in the same music change, then do nothing with the
             # music.
-            if c.music_last_changed == info._music_last_changed.get(i, 0):
+            if c.music_last_changed == _music_last_changed.get(i, 0):
                 continue
 
-            filenames = info._music_last_filenames.get(i, None)
-            tight = info._music_last_tight.get(i, False)
+            filenames = _music_last_filenames.get(i, None)
+            tight = _music_last_tight.get(i, False)
 
             c.dequeue()
-
-            if c.get_playing() not in filenames:
+            
+            if not filenames or c.get_playing() not in filenames:
                 c.fadeout(renpy.config.fade_music)
 
-            if file:
+            if filenames:
                 c.enqueue(filenames, loop=True, synchro_start=True, tight=tight)
 
-            c.music_last_changed = info._music_last_changed.get(i, 0) 
+            c.music_last_changed = _music_last_changed.get(i, 0) 
         
     except:
         if renpy.config.debug_sound:

@@ -2,8 +2,13 @@
 #define RENPY_H
 
 #include <Python.h>
+#include <SDL/SDL.h>
+
+SDL_RWops* RWopsFromPython(PyObject* obj);
 
 void core_init(void);
+
+void save_png_core(PyObject *pysurf, SDL_RWops *file, int compress);
 
 void pixellate32_core(PyObject *pysrc,
                       PyObject *pydst,
@@ -31,6 +36,19 @@ void map24_core(PyObject *pysrc,
                 char *rmap,
                 char *gmap,
                 char *bmap);
+
+void linmap32_core(PyObject *pysrc,
+                PyObject *pydst,
+                int rmap,
+                int gmap,
+                int bmap,
+                int amap);
+
+void linmap24_core(PyObject *pysrc,
+                PyObject *pydst,
+                int rmap,
+                int gmap,
+                int bmap);
 
 #if 0
 

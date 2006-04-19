@@ -139,7 +139,7 @@ init -500:
 
             i = 1
             while True:
-                fn = "screenshot%04d.bmp" % i
+                fn = "screenshot%04d.png" % i
                 if not os.path.exists(fn):
                     break
                 i += 1

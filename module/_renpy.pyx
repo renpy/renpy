@@ -21,7 +21,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 cdef extern from "renpy.h":
+
+    cdef struct SDL_RWops:
+        pass
+
+    SDL_RWops* RWopsFromPython(object obj)
+
     void core_init()
+
+    void save_png_core(object, SDL_RWops *, int)
     
     void pixellate32_core(object, object, int, int, int, int)
     void pixellate24_core(object, object, int, int, int, int)
@@ -37,6 +45,17 @@ cdef extern from "renpy.h":
                     char *, 
                     char *)
 
+    void linmap32_core(object, object,
+                    int,
+                    int, 
+                    int, 
+                    int)
+
+    void linmap24_core(object, object,
+                    int,
+                    int, 
+                    int)
+
     void xblur32_core(object, object, int)
     
     void alphamunge_core(object, object, int, int, int, char *)
@@ -47,7 +66,15 @@ cdef extern from "renpy.h":
 import pygame
 
 def version():
-    return 5003003
+    return 5005000
+
+def save_png(surf, file, compress=-1):
+
+    if not isinstance(surf, pygame.Surface):
+        raise Exception("save_png requires a pygame Surface as its first argument.")
+
+    save_png_core(surf, RWopsFromPython(file), compress)
+
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
@@ -103,6 +130,38 @@ def map(pysrc, pydst, r, g, b, a):
         map32_core(pysrc, pydst, r, g, b, a)
     else:
         map24_core(pysrc, pydst, r, g, b)
+
+    pydst.unlock()
+    pysrc.unlock()
+
+# Please note that r, g, b, and a are not necessarily red, green, blue
+# and alpha. Instead, they are the first through fourth byte of data.
+# The mapping between byte and color/alpha varies from system to
+# system, and needs to be determined at a higher level.
+def linmap(pysrc, pydst, r, g, b, a):
+
+    if not isinstance(pysrc, pygame.Surface):
+        raise Exception("map requires a pygame Surface as its first argument.")
+
+    if not isinstance(pydst, pygame.Surface):
+        raise Exception("map requires a pygame Surface as its second argument.")
+
+    if pysrc.get_bitsize() not in (24, 32):
+        raise Exception("map requires a 24 or 32 bit surface.")
+
+    if pydst.get_bitsize() != pysrc.get_bitsize():
+        raise Exception("map requires both surfaces have the same bitsize.")
+
+    if pydst.get_size() != pysrc.get_size():
+        raise Exception("map requires both surfaces have the same size.")
+
+    pysrc.lock()
+    pydst.lock()
+
+    if pysrc.get_bitsize() == 32:
+        linmap32_core(pysrc, pydst, r, g, b, a)
+    else:
+        linmap24_core(pysrc, pydst, r, g, b)
 
     pydst.unlock()
     pysrc.unlock()

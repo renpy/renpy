@@ -1,11 +1,17 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py x.y.z
+New in Ren'Py 5.5.0
 -------------------
 
-The library.script_version should be set to (x, y, z) to take
+The library.script_version should be set to (5, 5, 0) to take
 advantages of changes in this version.
+
+The big feature of this release is the new Ren'Py default theme, which
+can be enabled by calling theme.roundrect(). This theme can easily be
+recolored. An alternate version of this theme can loaded by calling
+theme.roundrect_red(). The call should be placed after
+library.script_version and config.screen_width have been assigned to.
 
 +++ 
 config.with_callback has been changed. It now takes two arguments. The
@@ -21,14 +27,66 @@ The list of characters used by SFonts was wrong, so that has been
 fixed. The documentation has also been improved to include a
 convenient list of what those fonts should look like.
 
-Doc: property box_first_spacing
-Doc: xfill, yfill on v/hbox
-Doc/Test: library.always_has_joystick
-Doc: ui.frame
-Doc: music looping, change docstrings.
-Doc: renamed styles.
-Doc: library.main_menu_music
-Doc: Character.show_...
+Character has been updated to pass arguments beginning with show_ as
+keyword arguments to its show_function and predict_function.
+
+There is a new function, ui.frame(), which has been split off from
+ui.window(). While both functions create a window, the default style
+of frame is one that allows widgets to be placed atop it. (Whereas
+ui.window() generates a window optimized for text.)
+
+There is a new property, box_first_spacing, that if not None gives the
+spacing between the first and second elements of a hbox or vbox. The
+xfill and yfill properties also are now used by vboxes and hboxes. 
+
+renpy.music.play and renpy.music.queue have been updated to take lists
+of filenames as well as single filenames. If a list of filenames is
+given, and loop is True, Ren'Py will loop through the list of
+filenames, rather than a single filename.
+
+Two variables, library.main_menu_music and library.game_menu_music
+allow one to cause music to be played when in the main and game menus,
+respectively.
+
+By setting the library.always_has_joystick variable to True, one can
+access the joystick menu even if no joystick is connected to the
+computer. This enables a joystickless developer to customize the
+joystick menu.
+
+A bug prevented music changed by a game menu from reverting back when
+leaving the game menu has been fixed.
+
+The screenshots taken with the 's' key are now PNGs, rather than BMPs.
+
+There is a new image operation, im.Recolor, that can be used to
+recolor each channel of an image.
+
+A number of styles have been renamed. The following are the style name
+changes: 
+
+  style.error_window -> style.error_root
+  style.file_picker_window -> style.file_picker_frame
+  style.file_picker_window_vbox -> style.file_picker_frame_vbox
+  style.gm_nav_window -> style.gm_nav_frame
+  style.gm_root_window -> style.gm_root
+  style.joy_vbox -> style.js_frame_vbox
+  style.joy_window -> style.js_frame
+  style.joyfunc -> style.js_function
+  style.joyfunc_label -> style.js_function_label
+  style.joyprompt -> style.js_prompt
+  style.joyprompt_label -> style.js_prompt_label
+  style.mm_menu_window -> style.mm_menu_frame
+  style.mm_menu_window_vbox -> style.mm_menu_frame_vbox
+  style.mm_root_window -> style.mm_root
+  style.prefs_pref -> style.prefs_pref_frame
+  style.prefs_window -> style.prefs_frame
+  style.yesno_window -> style.yesno_frame
+  style.yesno_window_vbox -> style.yesno_frame_vbox
+
+Basically, the purpose was to normalize styles with the frame vs
+window distinction, and to normalize the abbreviation of joystick as
+js. Previous style names will work for the forseeable future.
+
 
 New in Ren'Py 5.4.5
 -------------------

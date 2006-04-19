@@ -30,8 +30,9 @@ if not os.path.isdir(install):
 # Default compile arguements for everybody.
 include_dirs = [ install + "/include", install + "/include/SDL" ]
 library_dirs = [ install + "/lib" ]
-extra_compile_args = [ "-O3" ]
+extra_compile_args = [ "-O3", "-funroll-loops" ]
 extra_link_args = [ ]
+png_libraries = [ 'png' ]
 sdl_libraries = [ 'SDL' ]
 sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'speex', 'stdc++', ]
 
@@ -63,12 +64,12 @@ py_modules = [ ]
 
 rpe = distutils.core.Extension(
     "_renpy",
-    [ "core.c", "_renpy.c" ],
+    [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries,
+    libraries=sdl_libraries + png_libraries,
     )
 
 extensions.append(rpe)

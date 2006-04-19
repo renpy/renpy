@@ -701,7 +701,12 @@ class Display(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        pygame.image.save(self.window, filename)
+        if filename.endswith(".png"):
+            f = file(filename, "w")
+            renpy.display.module.save_png(self.window, f)
+            f.close()
+        else:
+            pygame.image.save(self.window, filename)
 
     def screenshot(self, scale):
         """
@@ -1160,7 +1165,7 @@ class Interface(object):
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile :
                         new_time = time.time()
-                        print "Profile: Redraw took %f seconds." % (new_time - self.draw_start)
+                        print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
                     if first_pass:
@@ -1237,7 +1242,8 @@ class Interface(object):
                     if ev.type == NOEVENT:
                         continue
 
-                    self.profile_time = time
+                    if renpy.config.profile:
+                        self.profile_time = time.time()
                     
                     # Try to merge an TIMEEVENT with the next event.
                     if ev.type == TIMEEVENT:

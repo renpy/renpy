@@ -1,6 +1,6 @@
 #include "renpy.h"
 #include <pygame/pygame.h>
-// #include "SDL_stretch.h"
+#include "IMG_savepng.h"
 #include <stdio.h>
 
 // Shows how to do this.
@@ -12,6 +12,14 @@
 void core_init() {
     import_pygame_base();
     import_pygame_surface();
+}
+
+void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
+    SDL_Surface *surf;
+    
+    surf = PySurface_AsSurface(pysurf);
+
+    IMG_SavePNG_RW(rw, surf, compress);
 }
 
 
@@ -395,6 +403,124 @@ void map24_core(PyObject *pysrc,
             *dstp++ = rmap[(unsigned char) *srcp++];
             *dstp++ = gmap[(unsigned char) *srcp++];
             *dstp++ = bmap[(unsigned char) *srcp++];
+        }
+
+        srcrow += srcpitch;
+        dstrow += dstpitch;
+    }
+
+}
+
+/*
+ * This expects pysrc and pydst to be surfaces of the same size. It
+ * the source surface to the destination surface, using the r, g, b,
+ * and a maps. These maps are expected to be 256 bytes long, with each
+ * byte corresponding to a possible value of a channel in pysrc,
+ * giving what that value is mapped to in pydst.
+ */
+void linmap32_core(PyObject *pysrc,
+                PyObject *pydst,
+                int rmul,
+                int gmul,
+                int bmul,
+                int amul) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    char *srcpixels;
+    char *dstpixels;
+
+    char *srcrow;
+    char *dstrow;
+    char *srcp;
+    char *dstp;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (char *) src->pixels;
+    dstpixels = (char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    srcrow = srcpixels;
+    dstrow = dstpixels;
+    
+    for (y = 0; y < srch; y++) {
+        srcp = srcrow;
+        dstp = dstrow;
+
+
+        for (x = 0; x < srcw; x++) {
+            *dstp++ = ((unsigned char) *srcp++) * rmul >> 8;
+            *dstp++ = ((unsigned char) *srcp++) * gmul >> 8;
+            *dstp++ = ((unsigned char) *srcp++) * bmul >> 8;
+            *dstp++ = ((unsigned char) *srcp++) * amul >> 8;            
+        }
+
+        srcrow += srcpitch;
+        dstrow += dstpitch;
+    }
+
+}
+
+void linmap24_core(PyObject *pysrc,
+                PyObject *pydst,
+                int rmul,
+                int gmul,
+                int bmul) {
+
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    
+    char *srcpixels;
+    char *dstpixels;
+
+    char *srcrow;
+    char *dstrow;
+    char *srcp;
+    char *dstp;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (char *) src->pixels;
+    dstpixels = (char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    srcrow = srcpixels;
+    dstrow = dstpixels;
+    
+    for (y = 0; y < srch; y++) {
+        srcp = srcrow;
+        dstp = dstrow;
+
+
+        for (x = 0; x < srcw; x++) {
+            *dstp++ = ((unsigned char) *srcp++) * rmul >> 8;
+            *dstp++ = ((unsigned char) *srcp++) * gmul >> 8;
+            *dstp++ = ((unsigned char) *srcp++) * bmul >> 8;
         }
 
         srcrow += srcpitch;

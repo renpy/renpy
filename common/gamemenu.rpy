@@ -24,6 +24,9 @@ init -499:
         # the screen.
         library.game_menu_positions = None
 
+        # Music to play when entering the game menu.
+        library.game_menu_music = None
+
         # The number of columns of files to show at once.
         library.file_page_cols = 2
 
@@ -517,6 +520,9 @@ label _enter_game_menu:
 
     if renpy.has_label("enter_game_menu"):
         call expression "enter_game_menu" from _call_enter_game_menu_1
+
+    if library.game_menu_music:
+        $ renpy.music.play(library.game_menu_music, if_changed=True)
 
     return
 

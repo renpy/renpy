@@ -237,7 +237,9 @@ class RevertableDict(dict):
     setdefault = mutator(dict.setdefault)
 
     def copy(self):
-        return RevertableDict(dict.copy(self))
+        rv = RevertableDict()
+        rv.update(self)
+        return rv
 
     def get_rollback(self):
         return self.items()
@@ -302,6 +304,7 @@ class RevertableSet(sets.Set):
 class RevertableObject(object):
 
     def __setattr__(self, attr, value):
+        import sys
         object.__setattr__(self, attr, value)
 
     def __delattr__(self, attr):

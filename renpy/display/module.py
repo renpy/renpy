@@ -193,6 +193,31 @@ def endian_order(src, r, g, b, a):
     return rv
 
 
+if version >= 5005000:
+
+    can_linmap = True
+
+    def linmap(src, dst, rmap, gmap, bmap, amap):
+        """
+        This maps the colors between two surfaces. The various map
+        parameters should be fixed-point integers, with 1.0 == 256.
+        """
+        
+        convert_and_call(_renpy.linmap,
+                         src, dst,
+                         *endian_order(dst, rmap, gmap, bmap, amap))
+
+
+    save_png = _renpy.save_png
+
+else:
+
+    can_map = False
+
+    def save_png(surf, file):
+        return
+    
+
 if version >= 4008005:
 
     can_map = True

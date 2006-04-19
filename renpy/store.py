@@ -224,7 +224,8 @@ class Character(object):
         In addition, Character objects also take properties. If a
         property is prefixed with window_, it is applied to the
         window. If prefixed with what_, it is applied to the text
-        being spoken. Unprefixed properties are applied to the who
+        being spoken. If prefixed with show_, properties are passed as keyword arguments
+        to the show_ and predict_ functions. Unprefixed properties are applied to the who
         label, the name of the character speaking.
         """
         
@@ -302,6 +303,7 @@ class Character(object):
                       window_style=self.window_style,
                       what_properties=self.what_properties,
                       window_properties=self.window_properties,
+                      show_args=self.show_args,
                       **props)
 
         self.store_readback(name, what)

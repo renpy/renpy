@@ -13,6 +13,7 @@ init:
     # Translatable strings found in common/gamemenu.rpy
 
     $ library.translations[u'Return'] = u'Return'
+    $ library.translations[u'Begin Skipping'] = u'Begin Skipping'
     $ library.translations[u'Save Game'] = u'Save Game'
     $ library.translations[u'Load Game'] = u'Load Game'
     $ library.translations[u'Main Menu'] = u'Main Menu'
@@ -38,6 +39,7 @@ init:
     # Translatable strings found in common/preferences.rpy
 
     $ library.translations[u'Test'] = u'Test'
+    $ library.translations[u'Joystick Mapping'] = u'Joystick Mapping'
     $ library.translations[u'Not Assigned'] = u'Not Assigned'
     $ library.translations[u'Music Volume'] = u'Music Volume'
     $ library.translations[u'Sound Volume'] = u'Sound Volume'
@@ -51,6 +53,7 @@ init:
     $ library.translations[u'Toggle Skip'] = u'Toggle Skip'
     $ library.translations[u'Hide Text'] = u'Hide Text'
     $ library.translations[u'Menu'] = u'Menu'
+    $ library.translations[u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.'] = u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.'
     $ library.translations[u'Display'] = u'Display'
     $ library.translations[u'Window'] = u'Window'
     $ library.translations[u'Fullscreen'] = u'Fullscreen'
@@ -58,12 +61,12 @@ init:
     $ library.translations[u'All'] = u'All'
     $ library.translations[u'Some'] = u'Some'
     $ library.translations[u'None'] = u'None'
-    $ library.translations[u'TAB and CTRL Skip'] = u'TAB and CTRL Skip'
+    $ library.translations[u'Skip'] = u'Skip'
     $ library.translations[u'Seen Messages'] = u'Seen Messages'
     $ library.translations[u'All Messages'] = u'All Messages'
     $ library.translations[u'After Choices'] = u'After Choices'
     $ library.translations[u'Stop Skipping'] = u'Stop Skipping'
-    $ library.translations[u'Continue Skipping'] = u'Continue Skipping'
+    $ library.translations[u'Keep Skipping'] = u'Keep Skipping'
     $ library.translations[u'Text Speed'] = u'Text Speed'
     $ library.translations[u'Auto-Forward Time'] = u'Auto-Forward Time'
     $ library.translations[u'Joystick...'] = u'Joystick...'

@@ -32,7 +32,7 @@ label _start:
         call expression "splashscreen" from _call_splashscreen_1
 
     if library.main_menu_music:
-        $ renpy.music.play(library.main_menu_music)
+        $ renpy.music.play(library.main_menu_music, if_changed=True)
 
     # Clean out any residual scene from the splashscreen.
     scene black

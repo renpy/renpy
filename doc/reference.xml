@@ -2877,6 +2877,20 @@ when the "Test" button on the volume slider is clicked. If None, then
 the "Test" button is not shown.
 </var>
 
+<var name="library.main_menu_music" value="None">
+If not None, a music file to play when at the main menu.
+</var>
+
+<var name="library.game_menu_music" value="None">
+If not None, a music file to play when at the game menu.
+</var>
+
+<var name="library.always_has_joystick" value="False">
+If True, the joystick interface is always available. This may be used
+by people without joysticks to see the joystick interface for themeing
+purposes.
+</var>
+
 </dl>
 
 <h3>Properties and Styles</h3>
@@ -3285,6 +3299,10 @@ even turn a box from horizontal to vertical (or vice versa).
 The spacing between elements in the box.
 </prop>
 
+<prop name="box_first_spacing">
+If not None, the spacing between the first two elements in the box.
+</prop>
+
 <prop name="box_layout">
 If "horizontal", the box is laid out in a horizontal manner. If
 "vertical", the box is laid out in a vertical fashion. If None, the
@@ -3292,6 +3310,18 @@ layout of the box is controlled by the function that created the
 box, with ui.hbox and ui.vbox making horizontal and vertical boxes,
 respectively.
 </prop>
+
+<prop name="xfill">
+If True, the box will expand to fill all available space in the
+x direction. If False, it will shrink to fit its contents.
+</prop>
+
+<prop name="yfill">
+If True, the box will expand to fill all available space in the
+y direction. If False, it will shrink to fit its contents.
+</prop>
+
+
 
 <h4>Hovering</h4>
 
@@ -3892,6 +3922,8 @@ automatically present in the game namespace.
 <h4>Single-Child Widgets</h4>
 
 <!-- func ui.window -->
+
+<!-- func ui.frame -->
 
 <!-- func ui.button -->
 

@@ -283,6 +283,9 @@ class Image(ImageBase):
 
         if im.get_masks()[3]:
             im = im.convert_alpha()
+            im.set_alpha(255, pygame.RLEACCEL)
+            im.lock()
+            im.unlock()
         else:
             im = im.convert()   
 
@@ -632,6 +635,48 @@ class Map(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+class Recolor(ImageBase):
+    """
+    This adjusts the colors of the image that is its child. It takes as an
+    argument 4 numbers between 0 and 255, and maps each channel of the image
+    linearly between 0 and the supplied color.
+    """
+
+    def __init__(self, im, rmul=identity, gmul=identity, bmul=identity,
+                 amul=identity, force_alpha=False, **properties):
+
+        im = image(im)
+
+        super(Recolor, self).__init__(im, rmul, gmul, bmul, amul, force_alpha, **properties)
+        
+        self.image = im
+        self.rmul = rmul + 1
+        self.gmul = gmul + 1
+        self.bmul = bmul + 1
+        self.amul = amul + 1
+
+        self.force_alpha = force_alpha
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        if not renpy.display.module.can_linmap:
+            return surf
+
+        if self.force_alpha and not (surf.get_masks()[3]):
+            surf = surf.convert_alpha()
+
+        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+
+        renpy.display.module.linmap(surf, rv,
+                                    self.rmul, self.gmul, self.bmul, self.amul)
+
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
 def Alpha(image, alpha, **properties):
     """
     Returns an alpha-mapped version of the image. Alpha is the maximum
@@ -642,9 +687,7 @@ def Alpha(image, alpha, **properties):
     channel are reduced as appropriate.
     """
 
-    amap = ramp(0, int(255 * alpha))
-
-    return Map(image, identity, identity, identity, amap, force_alpha=True, **properties)
+    return Recolor(image, 255, 255, 255, int(255 * alpha), force_alpha=True, **properties)
 
 class Tile(ImageBase):
     """
