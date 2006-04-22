@@ -212,7 +212,7 @@ if version >= 5005000:
 
 else:
 
-    can_map = False
+    can_linmap = False
 
     def save_png(surf, file):
         return

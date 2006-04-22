@@ -1183,6 +1183,10 @@ class Interface(object):
                 if show_mouse:
                     self.display.update_mouse()
                     
+                # See if we want to restart the interaction entirely.
+                if self.restart_interaction:                    
+                    return True, None
+
                 # Determine if we need a redraw.
                 needs_redraw = needs_redraw or renpy.display.render.process_redraws()
 

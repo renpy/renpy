@@ -3,12 +3,7 @@ init -402:
 
         def _recolor(img, color):
             r, g, b, a = color
-            rr = im.ramp(r, r)
-            gr = im.ramp(g, g)
-            br = im.ramp(b, b)
-            ar = im.ramp(0, a)
-
-            return im.Map(img, rr, gr, br, ar) 
+            return im.Recolor(img, r, g, b, a)
 
         _roundrect_radius = 12
 

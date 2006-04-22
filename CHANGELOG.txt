@@ -53,8 +53,11 @@ access the joystick menu even if no joystick is connected to the
 computer. This enables a joystickless developer to customize the
 joystick menu.
 
-A bug prevented music changed by a game menu from reverting back when
+A bug that prevented music changed by a game menu from reverting back when
 leaving the game menu has been fixed.
+
+A bug that prevented a fixed click-to-continue indicator from working
+has been fixed.
 
 The screenshots taken with the 's' key are now PNGs, rather than BMPs.
 

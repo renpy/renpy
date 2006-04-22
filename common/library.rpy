@@ -226,14 +226,14 @@ label _check_module:
         return
 
     python hide:
-        module_info = _("While Ren'Py games are playable without the _renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/.")
+        module_info = _(u"While Ren'Py games may be playable without the renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/.")
 
         if renpy.module_version() == 0:
-            _show_exception(_("_renpy module not found."),
-                            _("The _renpy module could not be loaded on your system.") + "\n\n" + module_info)
+            _show_exception(_(u"renpy module not found."),
+                            _(u"The renpy module could not be loaded on your system.") + "\n\n" + module_info)
         elif renpy.module_version() < library.module_version:
-            _show_exception(_("Old _renpy module found."),
-                            _("An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d.") % (renpy.module_version(), library.module_version) + "\n\n" + module_info)
+            _show_exception(_(u"Old renpy module found."),
+                            _(u"An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d.") % (renpy.module_version(), library.module_version) + "\n\n" + module_info)
 
     return
                          
