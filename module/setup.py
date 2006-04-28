@@ -32,7 +32,7 @@ include_dirs = [ install + "/include", install + "/include/SDL" ]
 library_dirs = [ install + "/lib" ]
 extra_compile_args = [ "-O3", "-funroll-loops" ]
 extra_link_args = [ ]
-png_libraries = [ 'png' ]
+png_libraries = [ 'png', "z" ]
 sdl_libraries = [ 'SDL' ]
 sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'speex', 'stdc++', ]
 
@@ -60,7 +60,7 @@ except:
     pass
 
 extensions = [ ]
-py_modules = [ ]
+py_modules = [ 'pysdlsound.__init__' ]
 
 rpe = distutils.core.Extension(
     "_renpy",
@@ -75,8 +75,8 @@ rpe = distutils.core.Extension(
 extensions.append(rpe)
 
 psse = distutils.core.Extension(
-    "pysdlsound",
-    [ "pss.c", "rwobject.c", "pysdlsound.c" ],
+    "pysdlsound.sound",
+    [ "pss.c", "rwobject.c", "sound.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
@@ -88,7 +88,7 @@ extensions.append(psse)
 
 if nativemidi:
     nme = distutils.core.Extension(
-        "nativemidi",
+        "pysdlsound.nativemidi",
         nativemidi,
         include_dirs=include_dirs,
         library_dirs=library_dirs,
@@ -101,7 +101,7 @@ if nativemidi:
 
 if winmixer:
     wme = distutils.core.Extension(
-        "winmixer",
+        "pysdlsound.winmixer",
         [ 'winmixer.c' ],
         libraries=['winmm'],
         )
@@ -109,11 +109,11 @@ if winmixer:
     extensions.append(wme)
 
 if linmixer:
-    py_modules.append('linmixer')
+    py_modules.append('pysdlsound.linmixer')
 
 distutils.core.setup(
     name = "renpy_module",
-    version = "5.4.1",
+    version = "5.5.0",
     ext_modules = extensions,
     py_modules = py_modules,
     )
