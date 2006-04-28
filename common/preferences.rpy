@@ -412,6 +412,12 @@ init -450:
 
             def render_preference(self):
 
+                ### prefs_js_frame prefs_pref_frame
+                # (window) The window containing a joystick mapping preference.
+
+                ### prefs_js_vbox prefs_pref_vbox
+                # (box) A vbox containing a joystick mapping preference.
+                
                 ### prefs_js_button prefs_button
                 # (window, hover) The style of buttons giving a joystick mapping.
 
@@ -451,8 +457,8 @@ init -450:
                         _preferences.joymap[key] = binding
 
                 
-                ui.window(style='prefs_pref_frame')
-                ui.vbox(style='prefs_pref_vbox')
+                ui.window(style='prefs_js_frame')
+                ui.vbox(style='prefs_js_vbox')
 
                 _label_factory(self.name, 'prefs')
 

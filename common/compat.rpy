@@ -26,4 +26,6 @@ init 1000:
             style.selected_button_text.clear()
             
 
-            
+        if not config.sound:
+            library.has_sound = False
+            library.has_music = False

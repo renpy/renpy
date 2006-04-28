@@ -2390,6 +2390,11 @@ If not None, this is expected to be the filename of an image giving
 an icon that is used for the window.
 </var>
 
+<var name="config.sound" value="True">
+If True, sound works. If False, the sound/mixer subsystem is
+completely disabled.
+</var>
+
 <var name="config.debug" value="False">
 Enables some minor debugging functionality (mostly by turning some
 missing files into errors.) This should always be turned off in a

@@ -133,6 +133,8 @@ init -1000:
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
         style.create("prefs_spinner_button", "prefs_button", "(window, hover) The style of the + or - buttons in a preference spinner.")
         style.create("prefs_spinner_button_text", "prefs_button_text", "(text, hover) The style of the text of the + and - buttons in a preference spinner.")
+        style.create("prefs_js_frame", "prefs_pref_frame", "(window) The window containing a joystick mapping preference.")
+        style.create("prefs_js_vbox", "prefs_pref_vbox", "(box) A vbox containing a joystick mapping preference.")
         style.create("prefs_js_button", "prefs_button", "(window, hover) The style of buttons giving a joystick mapping.")
         style.create("prefs_js_button_text", "prefs_button_text", "(text, hover) The style of the text in buttons giving a joystick mapping.")
         style.create("js_frame", "prefs_frame", "(window) The window containing the joystick message.")

@@ -444,6 +444,8 @@ class MultiBox(Container):
 
             myheight = 0
 
+            padding = 0
+
             for i, padding in zip(self.children, spacings):
 
                 xoffsets.append(xo)
@@ -489,6 +491,8 @@ class MultiBox(Container):
             yo = 0
 
             mywidth = 0
+
+            padding = 0
 
             for i, padding in zip(self.children, spacings):
 

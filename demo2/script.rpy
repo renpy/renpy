@@ -12,9 +12,7 @@
 # program.
 
 init:
-
-    $ config.debug_sound = True
-
+    
     # The version of this script.
     $ library.script_version = (5, 5, 0)
 

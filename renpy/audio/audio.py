@@ -48,6 +48,9 @@ if mix:
     old_midi = mix.get_midi()
 
     def restore_volumes():
+        if not mix_ok:
+            return
+
         if old_wave is not None:
             mix.set_wave(old_wave)
 
@@ -61,8 +64,6 @@ else:
 
 atexit.register(restore_volumes)
                          
-    
-
 
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
@@ -462,6 +463,12 @@ def init():
     global pcm_ok
     global midi_ok
     global mix_ok
+
+    if not renpy.config.sound:
+        pcm_ok = False
+        midi_ok = False
+        mix_ok = False
+        return
 
     if pcm_ok is None and pss:
         bufsize = 4096

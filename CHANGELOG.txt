@@ -64,6 +64,9 @@ The screenshots taken with the 's' key are now PNGs, rather than BMPs.
 There is a new image operation, im.Recolor, that can be used to
 recolor each channel of an image.
 
+A new config variable, config.sound, can be used to completely disable
+the sound subsystem.
+
 A number of styles have been renamed. The following are the style name
 changes: 
 
