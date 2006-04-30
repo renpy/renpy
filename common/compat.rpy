@@ -15,7 +15,7 @@ init 1000:
                     old(trans)
                     return trans
 
-                config.with_callback = trans
+                config.with_callback = compat_with_function
                 
         # Compat for changes to button look.
         if compat(5, 4, 5):            

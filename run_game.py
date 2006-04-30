@@ -8,12 +8,12 @@ if __name__ == "__main__":
 
     # Check for mac compatibility.
     if "mac_version" in globals():
-        mac_version((5, 3, 3))
+        mac_version((5, 5, 0))
 
     # Check py4renpy compatibility.
     try:
         import py4renpy
-        if py4renpy.version < (2, 3, 5, 4):
+        if py4renpy.version < (5, 5, 0):
             print "The version of py4renpy that you are using is too old. Please go to"
             print "http://www.bishoujo.us/renpy/linux.html, and download the latest"
             print "version."

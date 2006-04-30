@@ -1373,12 +1373,29 @@ label demonstrate:
             show eileen happy with move
 
             
-        "User interaction.":
+        "User interaction, updated in 5.5.0":
 
             e "Ren'Py gives a number of ways of interacting with the
                user."
 
             e "You've already seen say statements and menus."
+
+            menu:
+                
+                e "But were you aware that you can have dialogue and
+                   menus onscreen at the same time?"
+
+                "Yes.":
+
+                    show eileen vhappy
+
+                    e "Good!"
+
+                    show eileen happy
+
+                "No.":
+
+                    e "Well, now you know."
 
             e "We can also prompt the user to enter some text."
 

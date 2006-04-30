@@ -160,7 +160,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
 def load_ttf(fn, size, bold, italics, underline):
 
     try:
-        rv = pygame.font.Font(renpy.loader.transfn(fn), size)
+        rv = pygame.font.Font(renpy.loader.load(fn), size)
         rv.set_bold(bold)
         rv.set_italic(italics)
     except:

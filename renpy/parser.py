@@ -832,8 +832,14 @@ def parse_with(l, node):
     
 def parse_menu(l, loc):
 
+    has_say = False
+    has_caption = False
+
     with = None
     set = None
+
+    say_who = None
+    say_what = None
 
     # Tuples of (label, condition, block)
     items = [ ]
@@ -858,6 +864,34 @@ def parse_menu(l, loc):
 
             continue
 
+        # Try to parse a say menuitem.
+        state = l.checkpoint()
+
+        who = l.simple_expression()
+        what = l.string()
+
+        if who is not None and what is not None:
+
+            l.expect_eol()
+            l.expect_noblock("say menuitem")
+
+            if has_caption:
+                l.error("Say menuitems and captions may not exist in the same menu.")
+
+            if has_say:
+                l.error("Only one say menuitem may exist per menu.")
+
+            has_say = True
+            say_who = who
+            say_what = what
+
+            l.advance()
+
+            continue
+        
+        l.revert(state)
+
+
         label = l.string()
 
         if label is None:
@@ -866,6 +900,13 @@ def parse_menu(l, loc):
         # A string on a line by itself is a caption.
         if l.eol():
             l.expect_noblock('caption menuitem')
+
+            if label and has_say:
+                l.error("Captions and say menuitems may not exist in the same menu.")
+
+            # Only set this if the caption is not "".
+            if label:
+                has_caption = True
 
             items.append((label, "True", None))
             l.advance()
@@ -887,7 +928,13 @@ def parse_menu(l, loc):
         items.append((label, condition, block))
         l.advance()
 
-    return ast.Menu(loc, items, set, with)
+    rv = [ ]
+    if has_say:
+        rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
+
+    rv.append(ast.Menu(loc, items, set, with))
+
+    return rv
 
 
 def parse_statement(l):
@@ -987,7 +1034,7 @@ def parse_statement(l):
         if label:
             rv.append(ast.Label(loc, label, []))
 
-        rv.append(menu)
+        rv.extend(menu)
 
         return rv
         

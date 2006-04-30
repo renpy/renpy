@@ -116,5 +116,6 @@ distutils.core.setup(
     version = "5.5.0",
     ext_modules = extensions,
     py_modules = py_modules,
+    package_dir = { '' : 'lib' },
     )
 

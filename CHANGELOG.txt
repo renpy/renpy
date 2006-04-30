@@ -67,6 +67,8 @@ recolor each channel of an image.
 A new config variable, config.sound, can be used to completely disable
 the sound subsystem.
 
+Fonts can now be read out of .rpa archives.
+
 A number of styles have been renamed. The following are the style name
 changes: 
 

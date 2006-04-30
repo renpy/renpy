@@ -165,13 +165,16 @@ def main():
     # cp("renpy-mode.el")
     
     os.mkdir(target + "/module")
+    os.mkdir(target + "/module/lib")
+    os.mkdir(target + "/module/lib/pysdlsound")
 
     module_files = [
+        "lib/pysdlsound/linmixer.py",
+        "lib/pysdlsound/__init__.py",
         "README.txt",
         "_renpy.pyx",
         "_renpy.c",
         "core.c",
-        "linmixer.py",
         "native_midi.h",
         "native_midi_common.c",
         "native_midi_common.h",
@@ -181,8 +184,8 @@ def main():
         "nativemidi.pyx",
         "pss.c",
         "pss.h",
-        "pysdlsound.c",
-        "pysdlsound.pyx",
+        "sound.c",
+        "sound.pyx",
         "rwobject.c",
         "renpy.h",
         "setup.py",

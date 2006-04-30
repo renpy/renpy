@@ -4039,6 +4039,8 @@ The image manipulators are:
 
 <!-- func im.Rotozoom -->
 
+<!-- func im.Recolor -->
+
 <!-- func im.Alpha -->
 
 <!-- func im.Map -->

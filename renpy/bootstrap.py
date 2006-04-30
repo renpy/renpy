@@ -13,6 +13,11 @@ def extra_imports():
     import math
     import datetime
     import glob
+    import pysdlsound
+    import pysdlsound.sound
+    import pysdlsound.nativemidi
+    import pysdlsound.winmixer
+    import pysdlsound.linmixer
 
 def bootstrap(renpy_base):
     

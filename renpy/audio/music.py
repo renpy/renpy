@@ -270,8 +270,6 @@ def interact():
 
     try:
 
-
-
         for i in music_channels:
             c = renpy.audio.audio.get_channel(i)
 

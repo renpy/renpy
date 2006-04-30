@@ -175,9 +175,10 @@ class Say(Node):
         'who_fast',
         'what',
         'with',
+        'interact',
         ]
 
-    def __init__(self, loc, who, what, with):
+    def __init__(self, loc, who, what, with, interact=True):
 
         super(Say, self).__init__(loc)
 
@@ -194,6 +195,7 @@ class Say(Node):
             
         self.what = what
         self.with = with
+        self.interact = interact
 
     def execute(self):
 
@@ -206,7 +208,7 @@ class Say(Node):
             who = None
 
         say_menu_with(self.with, renpy.game.interface.set_transition)
-        renpy.exports.say(who, self.what)
+        renpy.exports.say(who, self.what, interact=getattr(self, 'interact', True))
 
         return self.next
 
@@ -561,6 +563,7 @@ class Menu(Node):
         'set',
         'with',
         ]
+
 
     def __init__(self, loc, items, set, with):
         super(Menu, self).__init__(loc)

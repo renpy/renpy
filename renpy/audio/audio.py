@@ -256,7 +256,10 @@ class Channel(object):
                 self.wait_stop = False
 
         if force_stop:
-            self.queue = [ ]
+            if self.loop:
+                self.queue = self.queue[-len(self.loop):]
+            else:
+                self.queue = [ ]
             return
 
         # If we're playing midi, and the midi device is busy, return.
