@@ -1,6 +1,12 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.5.1
+-------------------
+
+Fixed a bug with clipping rectangle computations, when faced with an
+image larger then the screen.
+
 New in Ren'Py 5.5.0
 -------------------
 

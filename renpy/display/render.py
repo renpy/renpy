@@ -260,14 +260,36 @@ def compute_clip(source):
     old_forced = forced
 
     for surf, x0, y0, w, h in changes:
+
+        if x0 < 0:
+            x0 = 0
+        if y0 < 0:
+            y0 = 0
+        if w > sw - x0:
+            w = sw - x0
+        if h > sh - y0:
+            h = sh - y0
+
         if w * h >= sa:
-            return (0, 0, w, h), [ (0, 0, w, h) ]
+            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
             
         sized.append((w * h, x0, y0, x0 + w, y0 + h))
 
     for x0, y0, w, h in forced + old_old_forced:
+
+        if x0 < 0:
+            x0 = 0
+        if y0 < 0:
+            y0 = 0
+        if w > sw - x0:
+            w = sw - x0
+        if h > sh - y0:
+            h = sh - y0
+
         if w * h >= sa:
-            return (0, 0, w, h), [ (0, 0, w, h) ]
+            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
+        if w * h >= sa:
+            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
             
         sized.append((w * h, x0, y0, x0 + w, y0 + h))
 
@@ -331,6 +353,7 @@ def compute_clip(source):
         y1 = max(y1, iy1)
 
         updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
+    
 
     return (x0, y0, x1 - x0, y1 - y0), updates
     
