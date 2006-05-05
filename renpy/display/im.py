@@ -514,6 +514,47 @@ class Scale(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
+class Flip(ImageBase):
+    """
+    This is an image manipulator that can flip the image horizontally or vertically.
+    """
+
+    def __init__(self, im, horizontal=False, vertical=False, **properties):
+        """
+        @param im: The image to be rotozoomed.
+
+        @param horizontal: True to flip the image horizontally.
+
+        @param vertical: True to flip the image vertically.
+        """
+
+        if not (horizontal or vertical):
+            raise Exception("im.Flip must be called with a true value for horizontal or vertical.")
+
+        im = image(im)
+        super(Flip, self).__init__(im, horizontal, vertical, **properties)
+
+    
+
+        self.image = im
+        self.horizontal = horizontal
+        self.vertical = vertical
+
+    def load(self):
+
+        
+
+        rv = pygame.transform.flip(cache.get(self.image),
+                                   self.horizontal, self.vertical)
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+    
+    
+
 class Rotozoom(ImageBase):
     """
     This is an image manipulator that is a smooth rotation and zoom of another image manipulator.

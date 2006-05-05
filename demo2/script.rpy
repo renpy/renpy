@@ -42,7 +42,7 @@ init:
 
     # Character pictures.
     image eileen happy = "9a_happy.png"
-    image eileen vhappy = "9a_vhappy.png"
+    image eileen vhappy = im.Flip("9a_vhappy.png", vertical=True)
     image eileen concerned = "9a_concerned.png"
 
     # Character objects. These lets us have the character say
