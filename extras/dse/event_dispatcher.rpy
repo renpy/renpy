@@ -265,9 +265,8 @@ label events_run_period:
         egroups = { }
         eingroup = { }
 
-
         for i in all_events:
-            if not i.check(events):
+            if not i.check(eobjs):
                 continue
                 
             eobjs.append(i)

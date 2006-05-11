@@ -10,6 +10,9 @@ image larger then the screen.
 Added im.Flip, an image manipulator that allows images to be flipped
 in a vertical or horizontal direction. [doc]
 
+Fixed a longstanding bug in the DSE that prevented event.only and event.solo from
+working.
+
 New in Ren'Py 5.5.0
 -------------------
 

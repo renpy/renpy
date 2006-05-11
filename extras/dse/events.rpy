@@ -95,7 +95,7 @@ label play:
 # to class. 
 
 init:
-    $ event("introduction", "act == 'class'", event.once())
+    $ event("introduction", "act == 'class'", event.once(), event.only())
 
 label introduction:
 
