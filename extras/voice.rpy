@@ -29,12 +29,12 @@ init -440:
 
         # Call this to specify the voice file that will be played for
         # the user.
-        def voice(file):
+        def voice(file, **kwargs):
             _voice.play = file
 
         # Call this to specify that the currently playing voice file
         # should be sustained through the current interaction.
-        def voice_sustain(ignored=""):
+        def voice_sustain(ignored="", **kwargs):
             _voice.sustain = True
 
     python hide:

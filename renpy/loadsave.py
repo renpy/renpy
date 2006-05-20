@@ -96,7 +96,7 @@ def save(filename, extra_info=''):
         zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
 
         # Extra info.
-        zf.writestr("extra_info", extra_info)
+        zf.writestr("extra_info", extra_info.encode("utf-8"))
 
         # print
         # print "Debug Dump!"
@@ -140,7 +140,7 @@ def list_saved_games(regexp=r'.'):
 
             zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
             sio = cStringIO.StringIO(zf.read("screenshot.tga"))
-            extra_info = zf.read("extra_info")
+            extra_info = zf.read("extra_info").decode("utf-8")
             zf.close()
 
             screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)

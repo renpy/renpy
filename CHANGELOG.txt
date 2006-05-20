@@ -10,8 +10,13 @@ image larger then the screen.
 Added im.Flip, an image manipulator that allows images to be flipped
 in a vertical or horizontal direction. [doc]
 
-Fixed a longstanding bug in the DSE that prevented event.only and event.solo from
-working.
+Fixed a longstanding bug in the DSE that prevented event.only and
+event.solo from working.
+
+The save_name variable now can be a unicode string.
+
+Fixed the voice.rpy extra to work with 5.5.
+
 
 New in Ren'Py 5.5.0
 -------------------

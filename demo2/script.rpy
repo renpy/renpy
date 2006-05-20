@@ -1558,3 +1558,18 @@ init:
 #     hide text with dissolve
 #
 #     return
+
+
+label splashscreen:
+
+    show black
+
+    show eileen happy at Move((1.0, 1.0, 'right', 'bottom'),
+                                      (0.0, 1.0, 'left', 'bottom'),
+                                      4.0, repeat=True, bounce=True)
+    
+    e "It's also possible to have a movement happen while
+       showing dialogue on the screen, using the Move function."
+
+
+    return

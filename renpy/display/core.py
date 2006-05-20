@@ -493,7 +493,7 @@ class Display(object):
             depth = 24
         else:
             depth = 32
-        
+
         # The window we display things in.
         self.window = pygame.display.set_mode((width, height), fsflag, depth)
         
@@ -673,7 +673,7 @@ class Display(object):
             renpy.config.screen_height,
             0)
 
-        if not suppress_blit:        
+        if not suppress_blit:
 
             updates = [ ]
 
@@ -1193,6 +1193,8 @@ class Interface(object):
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
                 if needs_redraw and not self.event_peek():
+                    if renpy.config.profile:
+                        self.profile_time = time.time()
                     continue
 
                 # Predict images, if we haven't done so already.
@@ -1248,6 +1250,7 @@ class Interface(object):
 
                     if renpy.config.profile:
                         self.profile_time = time.time()
+
                     
                     # Try to merge an TIMEEVENT with the next event.
                     if ev.type == TIMEEVENT:
