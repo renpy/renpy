@@ -32,9 +32,10 @@ if __name__ == "__main__":
 
     sys.path.append(renpy_base)
 
+    # This is looked for by the mac launcher.
     if os.path.exists(renpy_base + "/renpy.zip"):
         sys.path.append(renpy_base + "/renpy.zip")
-    
+
 
     # Start Ren'Py proper.
     import renpy.bootstrap
