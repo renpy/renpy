@@ -1,8 +1,6 @@
 # This file contains code for initializing and managing the display
 # window.
 
-# TODO! get audio.periodic working again!
-
 import renpy
 
 import pygame
@@ -47,9 +45,13 @@ class Displayable(renpy.object.Object):
         self.default = default
 
     def find_focusable(self, callback, focus_name):
-        if self.focusable:
-            callback(self, self.focus_name or focus_name)
+
+        def finder(d):
+            if d.focusable:
+                callback(d, d.focus_name or focus_name)
             
+        self.visit_all(finder)
+
 
     def focus(self, default=False):
         """
@@ -136,7 +138,49 @@ class Displayable(renpy.object.Object):
 
         return self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor
 
+    def visit_all(self, callback):
+        """
+        Calls the callback on this displayable and all children of this
+        displayable.
+        """
+
+        worklist = [ self ]
+
+        while worklist:
+            d = worklist.pop()
+
+            if d is None:
+                continue
+
+            callback(d)
+            worklist.extend(d.visit())
+        
+
+    def visit(self):
+        """
+        Called to ask the displayable to return a list of its children
+        (including children taken from styles). For convenience, this
+        list may also include None values.
+        """
+
+        return [ ]
+
+    def per_interact(self):
+        """
+        Called once per widget per interaction.
+        """
+
+        return None
+
     def predict(self, callback):
+        """
+        Called to ask this displayable to call the callback with all
+        the images it, and its children, may want to load.
+        """
+        
+        self.visit_all(lambda i : i.predict_one(callback))
+        
+    def predict_one(self, callback):
         """
         Called to ask this displayable to call the callback with all
         the images it may want to load.
@@ -1096,6 +1140,8 @@ class Interface(object):
         for layer in renpy.config.top_layers:
             add_layer(root_widget, layer)
 
+        # Call per-interaction code for all widgets.
+        root_widget.visit_all(lambda i : i.per_interact())
 
         # Now, update various things regarding scenes and transitions,
         # so we are ready for a new interaction or a restart.

@@ -20,6 +20,10 @@ Fixed the voice.rpy extra to work with 5.5.
 Added provisions for utf-8 characters in the window title, on
 platforms that allow that.
 
+DynamicDisplayable
+
+hypertext/config.hypertext
+
 New in Ren'Py 5.5.0
 -------------------
 

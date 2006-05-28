@@ -78,16 +78,6 @@ class Transition(renpy.display.core.Displayable):
     dispatching.
     """
 
-    def predict(self, callback):
-        """
-        Predict the images that are used by this transition.
-        """
-
-        # Since most transitions don't use any images, this can return
-        # None.
-
-        return
-
     def __init__(self, delay):
         super(Transition, self).__init__()
         self.delay = delay
@@ -99,8 +89,8 @@ class Transition(renpy.display.core.Displayable):
         else:
             return None
 
-    def find_focusable(self, callback, focus_name):
-        self.new_widget.find_focusable(callback, focus_name)
+    def visit(self):
+        return [ self.old_widget, self.new_widget ]
 
 class NoTransition(Transition):
     """
@@ -177,16 +167,9 @@ class MultipleTransition(Transition):
         self.new_widget = self.transitions[-1]
         self.events = False
 
-    def predict(self, callback):
+    def visit(self):
 
-        # Predict screens.
-        for i in self.screens:
-            if isinstance(i, renpy.display.core.Displayable):
-                i.predict(callback)
-
-        # Predict transitions.
-        for i in self.transitions:
-            i.predict(callback)
+        return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
 
     def render(self, width, height, st, at):
 
@@ -915,8 +898,8 @@ class ImageDissolve(Transition):
         self.reverse = reverse
 
 
-    def predict(self, callback):
-        callback(self.image)
+    def visit(self):
+        return [ self.image ]
 
     def render(self, width, height, st, at):
 

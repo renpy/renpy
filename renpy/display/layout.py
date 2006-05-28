@@ -70,14 +70,6 @@ class Container(renpy.display.core.Displayable):
 
         super(Container, self).__init__(**properties)
 
-
-    def find_focusable(self, callback, focus_name):
-        super(Container, self).find_focusable(callback, focus_name)
-
-        for i in self.children:
-            i.find_focusable(callback, self.focus_name or focus_name)
-        
-
     def set_style_prefix(self, prefix):
         super(Container, self).set_style_prefix(prefix)
 
@@ -136,13 +128,9 @@ class Container(renpy.display.core.Displayable):
 
         return None
 
-    def predict(self, callback):
-
-        super(Container, self).predict(callback)
-
-        for i in self.children:
-            i.predict(callback)
-
+    def visit(self):
+        return self.children
+    
 class Fixed(Container):
     """
     A container that lays out each of its children at fixed
@@ -552,11 +540,9 @@ class Window(Container):
         super(Window, self).__init__(style=style, **properties)
         self.add(child)
 
-    def predict(self, callback):
+    def visit(self):
+        return [ self.style.background ] + self.children
 
-        if self.style and self.style.background:
-            self.style.background.predict(callback)
-            
     def render(self, width, height, st, at):
 
         # save some typing.
@@ -694,9 +680,6 @@ class Motion(Container):
         self.bounce = bounce
         self.delay = delay
         self.anim_timebase = anim_timebase
-
-    def predict(self, callback):
-        return self.child.predict(callback)
 
     def render(self, width, height, st, at):
 
@@ -910,11 +893,8 @@ class Zoom(renpy.display.core.Displayable):
             self.after_child = None
         
 
-    def predict(self, callback):
-        self.child.predict(callback)
-
-        if self.after_child:
-            self.after_child.predict(callback)
+    def visit(self):
+        return [ self.child, self.after_child ]
 
     def render(self, width, height, st, at):
 
@@ -948,3 +928,34 @@ class Zoom(renpy.display.core.Displayable):
 
     def event(self, ev, x, y, st):
         return None
+
+
+        
+class DynamicDisplayable(renpy.display.core.Displayable):
+
+    nosave = [ 'child' ]
+
+    def after_setstate(self):
+        self.child = None
+
+    def __init__(self, expression):
+        super(DynamicDisplayable, self).__init__()
+        self.child = None
+        self.expression = expression
+
+    def visit(self):
+        return [ self.child ]
+
+    def per_interact(self):
+        child = renpy.python.py_eval(self.expression)
+        if child is not self.child:
+            self.child = child
+            renpy.display.render.redraw(self, 0)
+
+        child.visit_all(lambda c : c.per_interact())
+
+    def render(self, w, h, st, at):
+        return renpy.display.render.render(self.child, w, h, st, at)
+
+    def event(self, ev, x, y, st):
+        return self.child.event(ev, x, y, st)

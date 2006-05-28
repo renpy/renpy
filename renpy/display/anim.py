@@ -177,9 +177,8 @@ class SMAnimation(renpy.display.core.Displayable):
         # The state we're in.
         self.state = None
 
-    def predict(self, callback):
-        for i in self.states.itervalues():
-            i.image.predict(callback)
+    def visit(self):
+        return [ i.image for i in self.states.itervalues() ]
 
     def pick_edge(self, state):
         """
@@ -348,10 +347,8 @@ class Animation(renpy.display.core.Displayable):
             else:
                 t = t - delay
 
-    def predict(self, callback):
-        for i in self.images:
-            i.predict(callback)
-
+    def visit(self):
+        return self.images
 
 class Blink(renpy.display.core.Displayable):
     """
@@ -401,8 +398,8 @@ class Blink(renpy.display.core.Displayable):
         self.cycle = on + set + off + rise
 
 
-    def predict(self, callback):
-        self.image.predict(callback)
+    def visit(self):
+        return [ self.image ]
 
     def render(self, height, width, st, at):
 
@@ -520,8 +517,8 @@ class OldBlink(renpy.display.core.Displayable):
         self.cycle = on + set + off + rise
 
 
-    def predict(self, callback):
-        self.image.predict(callback)
+    def visit(self):
+        return [ self.image ]
 
     def render(self, height, width, st, at):
 

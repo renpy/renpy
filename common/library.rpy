@@ -196,7 +196,15 @@ init -500:
 
         config.overlay_functions.append(skip_indicator)
 
-    return
+    # The default hyperlink handler.
+    python hide:
+
+        def hyperlink_function(target):
+            renpy.call_in_new_context(target)
+            return
+
+        config.hyperlink_callback = hyperlink_function
+        
 
 label _hide_windows:
 

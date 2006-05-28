@@ -191,6 +191,8 @@ def main():
         "setup.py",
         "winmixer.c",
         "winmixer.pyx",
+        "IMG_savepng.c",
+        "IMG_savepng.h",
         ]
 
     for i in module_files:

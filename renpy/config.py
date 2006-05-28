@@ -230,6 +230,9 @@ log = None
 # Lint hooks.
 lint_hooks = [ ]
 
+# Hyperlink callback.
+hyperlink_callback = None
+
 del renpy
 
 def backup():

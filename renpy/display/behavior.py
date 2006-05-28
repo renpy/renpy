@@ -372,6 +372,9 @@ class Bar(renpy.display.core.Displayable):
         self.changed = changed
         self.focusable = changed is not None
 
+    def visit(self):
+        return [ self.style.left_bar, self.style.right_bar ]
+        
     def render(self, width, height, st, at):
 
         # Store the width for the event function to use.

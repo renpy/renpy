@@ -25,6 +25,7 @@ init:
     # library.script_version and config.screen_width lines.
     $ theme.roundrect()
 
+
     # Set this to true to enable some developer-specific
     # functionality. It should be false in a finished game.
     # Read the "Developer Tools" section of the reference
@@ -42,7 +43,7 @@ init:
 
     # Character pictures.
     image eileen happy = "9a_happy.png"
-    image eileen vhappy = im.Flip("9a_vhappy.png", vertical=True)
+    image eileen vhappy = "9a_vhappy.png"
     image eileen concerned = "9a_concerned.png"
 
     # Character objects. These lets us have the character say
@@ -785,7 +786,8 @@ init:
         anim.Edge("b", .5, "g", dissolve),         
         )
 
-    image cyan base = Image("cyan.png")
+    # There's no reason to use DynamicDisplayable here, except to test it.
+    image cyan base = DynamicDisplayable("Image('cyan.png')")
 
     image cyan crop = im.Crop("cyan.png", 100, 0, 100, 200)
     
@@ -803,6 +805,8 @@ init:
 
     image cyan alpha = im.Alpha("cyan.png", 0.5)
     image eileen alpha = im.Alpha("9a_happy.png", 0.5)
+
+    image eileen flip = im.Flip("9a_happy.png", vertical=True)
 
     $ cyanpos = Position(xpos=700, xanchor='right', ypos=100, yanchor='top')
 
@@ -823,6 +827,9 @@ init:
                       what_font="skyfont", what_size=22, what_drop_shadow=None)
 
     $ style.frame.background = Frame("frame.png", 12, 12)
+
+    $ definition = Character(None, window_yfill=True, window_xmargin=20, window_ymargin=20, window_background=Solid((0, 0, 0, 192)))
+
     
 label demonstrate:
 
@@ -1222,6 +1229,9 @@ label demonstrate:
             e "There are also bold, italic, and underline style properties, which can
                be styled onto any text."
 
+            e "{a=define_hyperlink}Hyperlinks{/a} let buttons be
+               defined as using text tags."
+
             e "If you find yourself using text tags on every line, you
                should probably look at style properties instead."
 
@@ -1372,6 +1382,14 @@ label demonstrate:
 
             show eileen happy with move
 
+            show eileen flip with dissolve
+
+            e "Finally, there's im.Flip, which can flip an image horizontally or vertically."
+
+            e "I think the less I say about this, the better."
+
+            show eileen happy with dissolve
+
             
         "User interaction, updated in 5.5.0":
 
@@ -1507,6 +1525,15 @@ label demonstrate:
     jump demo_menu
 
 
+label define_hyperlink:
+
+    definition "A hyperlink is a button that is defined inside text, using
+                text tags. They're ideal for including definitons of words
+                used in the script, but they shouldn't be used in place of
+                menus."
+
+    return
+
 # Here, are a number of customizations that make the game look
 # better. We place them down here at the bottom, to make the first few
 # lines of the script look better.
@@ -1560,16 +1587,3 @@ init:
 #     return
 
 
-label splashscreen:
-
-    show black
-
-    show eileen happy at Move((1.0, 1.0, 'right', 'bottom'),
-                                      (0.0, 1.0, 'left', 'bottom'),
-                                      4.0, repeat=True, bounce=True)
-    
-    e "It's also possible to have a movement happen while
-       showing dialogue on the screen, using the Move function."
-
-
-    return

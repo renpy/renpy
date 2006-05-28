@@ -201,7 +201,9 @@ class Say(Node):
 
         if self.who is not None:
             if self.who_fast:
-                who = getattr(renpy.store, self.who)
+                who = getattr(renpy.store, self.who, None)
+                if who is None:
+                    raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
             else:
                 who = renpy.python.py_eval(self.who)
         else:

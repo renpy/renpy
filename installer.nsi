@@ -10,15 +10,15 @@
 ;;; First up, change the settings below to match your game.
 
 ;;; The exe used to run your game.
-!define EXE "moonlight.exe"
+!define EXE "run_game.exe"
 
 ;;; The exe containing the installer. This will be created in the directory
 ;;; above the root directory containing your game. 
-!define INSTALLER_EXE "moonlight-1.0ni.exe"
+!define INSTALLER_EXE "moonlight-1.1.exe"
 
 ;;; The name and version.
 !define PRODUCT_NAME "Moonlight Walks"
-!define PRODUCT_VERSION "1.0"
+!define PRODUCT_VERSION "1.1"
 
 ;;; The following settings are only shown to the user in Add/Remove programs
 ;;; but you'll still want to use them.
@@ -61,7 +61,11 @@ SetCompressor lzma
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
 
 ;;; Okay, that's it for the commentary. You're on your own from here...
 ;;; but you probably won't need to touch anything below this point.
@@ -106,16 +110,6 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
 
-
-Function un.onUninstSuccess
-  HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
-FunctionEnd
-
-Function un.onInit
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
-  Abort
-FunctionEnd
 
 Section Uninstall
 

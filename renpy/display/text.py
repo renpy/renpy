@@ -324,7 +324,7 @@ class WidgetStyle(object):
         self.widget = widget
         self.owidth = width
 
-        surf = renpy.display.render.render(widget, self.height, width, time, time)
+        surf = renpy.display.render.render(widget, width, self.height, time, time)
         self.width, _ = surf.get_size()
 
     def get_ascent(self):
@@ -429,14 +429,15 @@ class Text(renpy.display.core.Displayable):
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
                'laidout_width', 'laidout_height', 'laidout_start',
-               'laidout_length', 'width', 'tokens' ]
+               'laidout_length', 'width', 'tokens', 'children',
+               'child_pos']
 
     def after_setstate(self):
         self._update()
 
     def __init__(self, text, slow=False, slow_done=None,
                  slow_speed=None, slow_start=0, slow_abortable=False,
-                 pause=None, style='default', **properties):
+                 pause=None, tokenized=False, style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -457,6 +458,8 @@ class Text(renpy.display.core.Displayable):
 
         @param slow_abortable: If True, clicking aborts the slow text.
 
+        @param tokenized: True if the text is already tokenized.
+
         """
 
         super(Text, self).__init__()
@@ -465,6 +468,7 @@ class Text(renpy.display.core.Displayable):
         self.style = renpy.style.Style(style, properties)
         self.pause = pause
         self.keep_pausing = False
+        self.tokenized = tokenized
 
         self._update(redraw=False)
 
@@ -473,9 +477,9 @@ class Text(renpy.display.core.Displayable):
         self.slow_start = slow_start
         self.slow_speed = slow_speed
         self.slow_abortable = slow_abortable
-        
 
         self.laidout = None
+
 
     def set_text(self, new_text):
         """
@@ -500,13 +504,16 @@ class Text(renpy.display.core.Displayable):
         """        
 
         self.laidout = None
-
+        
         if self.text:
             text = self.text
         else:
             text = " "
 
-        self.tokens = input_tokenizer(text, self.style)
+        if not self.tokenized:
+            self.tokens = input_tokenizer(text, self.style)
+        else:
+            self.tokens = self.text
 
         if self.pause is not None:
             pause = self.pause
@@ -524,6 +531,59 @@ class Text(renpy.display.core.Displayable):
 
             self.tokens[0] = l
 
+
+        # Postprocess the tokens list to create widgets, as necessary.
+
+        self.children = [ ]
+        newtokens = [ ]
+        
+        for tl in self.tokens:
+            ntl = [ ]
+
+            tliter = iter(tl)
+
+            for kind, i in tliter:
+
+
+                if kind == "tag" and i.startswith("image="):
+
+                    m = re.match(r'image=(.*)', i)
+
+                    if not m:
+                        raise Exception('Image tag %s could not be parsed.' % i)
+
+                    i = renpy.display.im.image(m.group(1))
+                    ntl.append(("widget", i))
+                    self.children.append(i)
+                    
+                elif kind == "tag" and i.startswith("a="):
+
+                    label_tokens  = [ ]
+
+                    for kkind, ii in tliter:
+                        if kkind == "tag" and ii == "/a":
+                            break
+
+                        label_tokens.append((kkind, ii))
+
+                    def clicked(target=i[2:]):
+                        return renpy.config.hyperlink_callback(target)
+
+                    label = Text([ label_tokens ], tokenized=True, style='hyperlink_text')
+                    i = renpy.display.behavior.Button(label, style='hyperlink', clicked=clicked, focus='hyperlinks')
+                    ntl.append(("widget", i))
+                    self.children.append(i)
+
+                else:
+                    if kind == "widget":
+                        self.children.append(i)
+                    
+                    ntl.append((kind, i))
+
+            newtokens.append(ntl)
+
+        self.tokens = newtokens
+                    
         if redraw:
             renpy.display.render.redraw(self, 0)
 
@@ -532,16 +592,17 @@ class Text(renpy.display.core.Displayable):
         Space, Enter, or Click ends slow, if it's enabled.
         """
 
-        if not self.slow:
-            return None
-
-        if not self.slow_abortable:
-            return None
-
-        if renpy.display.behavior.map_event(ev, "dismiss"):
+        if self.slow and self.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
+        for child, xo, yo in self.child_pos:
+            rv = child.event(ev, x - xo, y - yo, st)
+            if rv is not None:
+                return rv
+
+    def visit(self):
+        return self.children
 
     def layout(self, width, time):
         """
@@ -617,7 +678,9 @@ class Text(renpy.display.core.Displayable):
         for l in self.tokens:
             tokens.extend(l)
 
-        for kind, i in tokens:
+        ti = iter(tokens)
+
+        for kind, i in ti:
 
             # Newline.
             if kind == "newline":
@@ -723,18 +786,8 @@ class Text(renpy.display.core.Displayable):
 
                     tsl[-1].color = color(m.group(1))
 
-                elif i.startswith("image"):
-
-                    m = re.match(r'image=(.*)', i)
-
-                    if not m:
-                        raise Exception('Image tag %s could not be parsed.' % i)
-
-                    kind = "widget"
-                    i = renpy.display.im.image(m.group(1))
-
-                    # The tag automatically closes.
-                    tsl.pop()
+                    
+                    
                     
                 else:
                     raise Exception("Text tag %s was not recognized. Case and spacing matter here." % i)
@@ -842,7 +895,7 @@ class Text(renpy.display.core.Displayable):
         # We're done. Let's close up.
 
         if len(tsl) != 1:
-            exception("A tag was left open at the end of the text.")
+            Exception("A tag was left open at the end of the text.")
             
         if cur:
             line.append((tsl[-1], cur))
@@ -908,7 +961,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, user_colors, length, time, at):
+    def render_pass(self, r, xo, yo, color, user_colors, length, time, at, child_pos):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -941,13 +994,17 @@ class Text(renpy.display.core.Displayable):
                         text = text[:length]
                     else:
                         return False
-                
+
                 surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time, at)
-                # sw, sh = surf.get_size()
+
+                actual_y = y + max_ascent - ts.get_ascent()
 
                 if surf:
-                    r.blit(surf, (x, y + max_ascent - ts.get_ascent()))
+                    r.blit(surf, (x, actual_y))
 
+                if not isinstance(text, (str, unicode)):
+                    child_pos.append((text, x, actual_y))
+                
                 x = x + sw
 
                 if length <= 0:
@@ -962,7 +1019,6 @@ class Text(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
 
         speed = self.slow_speed or renpy.game.preferences.text_cps
-
 
         if self.style.drop_shadow:
             dsxo, dsyo = self.style.drop_shadow
@@ -991,7 +1047,7 @@ class Text(renpy.display.core.Displayable):
             xo = 0
             yo = 0
 
-                
+
         self.layout(width - absxo, st)
             
         if self.slow and speed:
@@ -1007,9 +1063,11 @@ class Text(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st, at)
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st, at, [ ])
 
-        if self.render_pass(rv, xo, yo, self.style.color, True, length, st, at):
+        self.child_pos = [ ]
+
+        if self.render_pass(rv, xo, yo, self.style.color, True, length, st, at, self.child_pos):
             if self.slow:
                 self.slow = False
                 if self.slow_done:
@@ -1043,5 +1101,3 @@ class ParameterizedText(object):
 
         return Text(string, style=self.style, **self.properties)
         
-    def predict(self, callback):
-        return

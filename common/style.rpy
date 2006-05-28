@@ -81,6 +81,10 @@ init -1000:
         style.create('thin_vbox', 'vbox', '(box) A vbox with a small amount of spacing.')
         style.create('thick_vbox', 'vbox', '(box) A vbox with a large amount of spacing.')
 
+        # Hyperlinks.
+        style.create('hyperlink', 'default', 'The style of a hyperlink button.')
+        style.create('hyperlink_text', 'default', 'The stype of hyperlink button text.')
+
 # AUTOMATICALLY GENERATED
         style.create("gm_root", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
         style.create("gm_nav_frame", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
@@ -303,6 +307,13 @@ init -1000:
         style.button_text.xanchor = 0.5
   
         ######################################################################
+        # Hyperlinks
+        style.hyperlink_text.underline = True
+        style.hyperlink_text.hover_color = bright_cyan
+        style.hyperlink_text.idle_color = dark_cyan
+
+        
+        ######################################################################
         # Bar.
 
         style.bar.left_bar = Solid(bright_cyan)
@@ -473,6 +484,7 @@ init -1000:
         style.error_body.color = (128, 128, 255, 255)
 
 
+        ######################################################################
         # Compatibility names for renamed styles.
         style.file_picker_window_vbox = style.file_picker_frame_vbox
         style.prefs_window = style.prefs_frame

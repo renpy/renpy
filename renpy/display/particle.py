@@ -56,15 +56,18 @@ class Particles(renpy.display.core.Displayable):
 
         return rv
 
-    def predict(self, callback):
+    def visit(self):
+        rv = [ ]
 
         try:
             pl = self.factory.predict()
             for i in pl:
                 i = renpy.display.im.image(i, loose=True)
-                i.predict(callback)
+                rv.append(i)
         except:
             pass
+
+        return rv
     
 class SnowBlossomFactory(object):
 

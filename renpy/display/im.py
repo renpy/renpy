@@ -254,7 +254,7 @@ class ImageBase(renpy.display.core.Displayable):
         rv.blit(im, (0, 0))
         return rv
 
-    def predict(self, callback):
+    def predict_one(self, callback):
         callback(self)
 
     def predict_files(self):

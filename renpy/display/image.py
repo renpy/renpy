@@ -37,9 +37,6 @@ class UncachedImage(renpy.display.core.Displayable):
 
         return rv
 
-    # Should never be called, but what the hey?
-    def predict(self, callback):
-        return None
 
 class ImageReference(renpy.display.core.Displayable):
     """
@@ -128,11 +125,11 @@ class ImageReference(renpy.display.core.Displayable):
 
         return xpos, ypos, xanchor, yanchor
 
-    def predict(self, callback):
+    def visit(self):
         if not self.target:
             self.find_target()
 
-        self.target.predict(callback)
+        return [ self.target ]
     
     
 class Solid(renpy.display.core.Displayable):
@@ -203,10 +200,8 @@ class Frame(renpy.display.core.Displayable):
 
         return render(fi, width, height, st, at)
 
-    def predict(self, callback):
-        self.image.predict(callback)
-
-
+    def visit(self):
+        return [ self.image ]
                 
 class ImageButton(renpy.display.behavior.Button):
     """
@@ -229,9 +224,8 @@ class ImageButton(renpy.display.behavior.Button):
                                           hovered=hovered,
                                           **properties)
         
-    def predict(self, callback):
-        self.idle_image.predict(callback)
-        self.hover_image.predict(callback)
+    def visit(self):
+        return [ self.idle_image, self.hover_image ]
 
     def focus(self, default=False):
         self.child = self.hover_image

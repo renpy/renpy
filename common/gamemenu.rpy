@@ -94,6 +94,9 @@ init -499:
         # nav buttons should be shown.
         def _game_nav(screen, buttons=True):
 
+            global _screen
+            _screen = screen
+
             ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
             ui.add(renpy.Keymap(game_menu=ui.jumps("_noisy_return")))
 
