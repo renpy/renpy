@@ -8,21 +8,27 @@ Fixed a bug with clipping rectangle computations, when faced with an
 image larger then the screen.
 
 Added im.Flip, an image manipulator that allows images to be flipped
-in a vertical or horizontal direction. [doc]
+in a vertical or horizontal direction.
 
 Fixed a longstanding bug in the DSE that prevented event.only and
 event.solo from working.
 
-The save_name variable now can be a unicode string.
+The save_name variable can now be a unicode string.
 
-Fixed the voice.rpy extra to work with 5.5.
+Fixed the voice.rpy and kanamode.rpy extras to work with modern
+versions of Ren'Py.
 
 Added provisions for utf-8 characters in the window title, on
 platforms that allow that.
 
-DynamicDisplayable
+There is now a new displayable, DynamicDisplayable, that executes an
+expression upon each interaction and uses the result of that
+expression as a displayable. 
 
-hypertext/config.hypertext
+There is now support for hypertext in Ren'Py, using the 
+{a=argument}{/a} text tags. This support can be further controlled
+using the config.hypertext_callback variable.
+
 
 New in Ren'Py 5.5.0
 -------------------

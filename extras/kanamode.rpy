@@ -63,7 +63,7 @@ init -100:
                 self.what_style = what_style
                 self.properties = properties
 
-            def __call__(self, what):
+            def __call__(self, what, **kwargs):
                 kana_display_list.append((self, what))
                 kana_show()
 
