@@ -22,7 +22,7 @@ programs = [
     program(sys.argv[1]),
     ]
 
-sys.argv[1:] = [ 'py2exe', '--bundle', '1', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
+sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
 
 setup(name="RenPy",
       windows=programs,

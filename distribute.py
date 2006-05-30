@@ -121,7 +121,6 @@ def main():
         'example.html',
         'reference.html',
         'style.css',
-        'RELEASING.txt',
         'EXTENDING.txt',
         ]
 

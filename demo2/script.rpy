@@ -1203,7 +1203,7 @@ label demonstrate:
             e "It's probably best if we stop here, before somebody's
                brain explodes."
 
-        "Fonts and Text Tags, updated in 5.4.5.":
+        "Fonts and Text Tags, updated in 5.5.1.":
 
             e "Text tags let us control the appearance of text that is
                shown to the user."
@@ -1316,7 +1316,7 @@ label demonstrate:
 
             e "That's it for multimedia."
 
-        "Image Operations, updated in 5.1.6":
+        "Image Operations, updated in 5.5.1":
 
             e "Image operations allow one to manipulate images as they
                are loaded in."
