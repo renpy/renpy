@@ -1,6 +1,13 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.5.2
+-------------------
+
+Fixed a bug that prevented Animations with long or no repeats from
+functioning correctly.
+
+
 New in Ren'Py 5.5.1
 -------------------
 

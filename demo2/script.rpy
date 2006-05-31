@@ -14,7 +14,7 @@
 init:
     
     # The version of this script.
-    $ library.script_version = (5, 5, 0)
+    $ library.script_version = (5, 5, 2)
 
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
@@ -1587,3 +1587,11 @@ init:
 #     return
 
 
+init:
+    image test = Animation("9a_happy.png")
+
+label splashscreen:
+    scene black
+    show test
+
+    "Foo!"

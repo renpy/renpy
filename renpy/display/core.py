@@ -1258,6 +1258,7 @@ class Interface(object):
 
                         if redraw_time != old_redraw_time:
                             time_left = redraw_time - time.time()
+                            time_left = min(time_left, 3600)
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
                             old_redraw_time = redraw_time
                     else:
@@ -1269,6 +1270,7 @@ class Interface(object):
                         ev = None
                     else:
                         time_left = self.timeout_time - time.time() 
+                        time_left = min(time_left, 3600)
 
                         if time_left < 0:
                             self.timeout_time = None
@@ -1311,6 +1313,7 @@ class Interface(object):
 
                     # Handle redraw timeouts.
                     if ev.type == REDRAW:
+                        old_redraw_time = None
                         continue
 
                     # Handle periodic events. This includes updating the mouse timers (and through the loop,
