@@ -1114,3 +1114,6 @@ class ParameterizedText(object):
 
         return Text(string, style=self.style, **self.properties)
         
+    def predict(self, callback):
+        return
+    
