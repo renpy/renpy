@@ -112,6 +112,19 @@ class SFont(object):
 
         surf.blit(self.chars[text[-1]], (x, y))
 
+        if renpy.config.recolor_sfonts and color != (255, 255, 255, 255) and renpy.display.module.can_linmap:
+            r, g, b, a = color
+
+            newsurf = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            renpy.display.module.linmap(surf, newsurf, r, g, b, a)
+            renpy.display.render.mutated_surface(newsurf)
+
+            surf = newsurf
+            
+
+            
+            
+
         return surf
 
     def get_linesize(self):
@@ -290,7 +303,7 @@ class TextStyle(object):
 
         surf = font.render(text, antialias, color)
 
-        if a != 255 and renpy.display.module.can_map:
+        if a != 255 and renpy.display.module.can_map and not isinstance(font, SFont):
 
             if not surf.get_masks()[3]:
                 surf = surf.convert_alpha()

@@ -824,7 +824,8 @@ init:
     $ renpy.register_sfont("skyfont", 22, filename="skyfont.png", default_kern=-1)
 
     $ esf = Character('Eileen', color=(200, 255, 200, 255),
-                      what_font="skyfont", what_size=22, what_drop_shadow=None)
+                      what_font="skyfont", what_size=22,
+                      what_drop_shadow=(1, 1))
 
     $ style.frame.background = Frame("frame.png", 12, 12)
 
@@ -1591,7 +1592,7 @@ init:
     image test = Animation("9a_happy.png")
 
 label splashscreen:
-    scene black
+    scene bg washington
     show test
 
-    "Foo!"
+    esf "Foo! This should have a shadow."

@@ -233,6 +233,9 @@ lint_hooks = [ ]
 # Hyperlink callback.
 hyperlink_callback = None
 
+# Should SFonts be recolored? internal.
+recolor_sfonts = True
+
 del renpy
 
 def backup():

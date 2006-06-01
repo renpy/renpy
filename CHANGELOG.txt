@@ -4,6 +4,14 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.5.2
 -------------------
 
++++
+SFonts are now rendered in color. When a non-(255, 255, 255, 255)
+color is supplied to a SFont, the supplied image is remapped so that
+each channel has its value interpolated between 0 and the supplied
+color. Most importantly, this means that white pixels will have the
+supplied color. This functionality means that drop shadows are now
+rendered correctly.
+
 Fixed a bug that prevented Animations with long or no repeats from
 functioning correctly.
 

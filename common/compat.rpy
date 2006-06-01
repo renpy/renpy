@@ -24,8 +24,11 @@ init 1000:
             style.button_text.clear()
             style.selected_button.clear()
             style.selected_button_text.clear()
-            
 
         if not config.sound:
             library.has_sound = False
             library.has_music = False
+
+        # Compat for SFont recoloring.
+        if compat(5, 1, 1):
+            config.recolor_sfonts = False
