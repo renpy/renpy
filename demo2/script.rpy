@@ -50,7 +50,7 @@ init:
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
 
-    $ e = Character('Eileen', color=(200, 255, 200, 255))
+    $ e = Character(u'Eileen', color=(200, 255, 200, 255))
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -1587,12 +1587,3 @@ init:
 #
 #     return
 
-
-init:
-    image test = Animation("9a_happy.png")
-
-label splashscreen:
-    scene bg washington
-    show test
-
-    esf "Foo! This should have a shadow."
