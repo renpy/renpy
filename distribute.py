@@ -31,8 +31,7 @@ def copy_file(source, dest, license="", dos=True):
             df.write(license)
 
     data = sf.read()
-    if dest.endswith(".txt") or dest.endswith(".py") or dest.endswith(".pyw") or \
-           dest.endswith(".rpy") or dest.endswith(".bat"):
+    if dest.endswith(".txt") or dest.endswith(".rpy") or dest.endswith(".bat"):
         if dos:
             data = dosify(data)
             if data.startswith("#!"):
