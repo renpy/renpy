@@ -239,6 +239,9 @@ recolor_sfonts = True
 # Function that is called to layout text.
 layout_text = renpy.display.text.layout_text
 
+# A callback that is called 20 times a second.
+periodic_callback = None
+
 del renpy
 
 def backup():

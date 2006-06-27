@@ -1322,6 +1322,9 @@ class Interface(object):
                         events = 1 + len(pygame.event.get([PERIODIC]))
                         self.ticks += events
 
+                        if renpy.config.periodic_callback:
+                            renpy.config.periodic_callback()
+
                         renpy.audio.audio.periodic()
                         continue
                             

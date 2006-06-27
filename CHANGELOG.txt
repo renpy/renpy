@@ -6,6 +6,10 @@ New in Ren'Py 5.5.3
 
 Configurable text layout algorithm. [doc]
 
+confirm_quit label
+
+config.periodic_callback
+
 
 New in Ren'Py 5.5.2b
 --------------------

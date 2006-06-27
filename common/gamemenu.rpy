@@ -555,6 +555,10 @@ label _game_menu_preferences:
 
 label _confirm_quit:
     call _enter_menu from _call__enter_menu_3
+
+    if renpy.has_label("confirm_quit"):
+        jump expression "confirm_quit"
+
     $ _quit_prompt(None)
     return
 

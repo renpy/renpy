@@ -205,7 +205,7 @@ def set_volume(volume, channel=7):
     try:        
         c = get_channel(channel)
 
-        c.set_volume(channel, volume)
+        c.set_volume(volume)
         _music_volumes[channel] = volume
         
     except:
@@ -272,6 +272,9 @@ def interact():
 
         for i in music_channels:
             c = renpy.audio.audio.get_channel(i)
+
+            if _music_volumes.get(i, 1.0) != c.chan_volume:
+                c.set_volume(_music_volumes.get(i, 1.0))
 
             # If we're in the same music change, then do nothing with the
             # music.

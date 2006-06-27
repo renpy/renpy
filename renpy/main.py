@@ -228,10 +228,10 @@ def main(basename):
 
     restart = False
 
+
     while True:
         try:
             run(restart)
-
         except game.QuitException, e:
             break
         except game.FullRestartException, e:
