@@ -236,6 +236,9 @@ hyperlink_callback = None
 # Should SFonts be recolored? internal.
 recolor_sfonts = True
 
+# Function that is called to layout text.
+layout_text = renpy.display.text.layout_text
+
 del renpy
 
 def backup():

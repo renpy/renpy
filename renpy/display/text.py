@@ -435,6 +435,103 @@ def input_tokenizer(l, style, pauses=None):
 
     return rv
 
+
+def layout_width(triples, cache):
+    """
+    Returns the width of the given list of triples. Cache
+    should be a dictionary, which is used to cache results.
+    """
+
+    rv = 0
+
+    curts = None
+    cur = None
+
+    def size():
+        if curts is None:
+            return 0
+        
+        rv = cache.get((curts, cur), None)
+        if rv is None:
+            rv = curts.sizes(cur)[0]
+            cache[curts, cur] = rv
+
+        return rv
+    
+    for type, ts, i in triples:
+        if ts is not curts:
+            rv += size()
+            curts = ts
+            cur = i
+        else:
+            cur += i
+        
+    rv += size()
+    return rv
+    
+
+def layout_text(triples, width, style):
+    """
+    Breaks the text up into rows. 
+
+    @param triples: The text to be laid out. This is a list of
+    (type, style, data) triples.
+
+    @param width: The width we want to layout to.
+
+    @param style: The style of the text widget.
+    """
+    
+    def indent():
+        if lines:
+            return style.rest_indent
+        else:
+            return style.first_indent
+
+    sizecache = { }
+
+    lines = [ ]
+    line = [ ]
+
+    target = width - indent()
+    
+    for triple in triples:
+
+        type, ts, i = triple
+
+        if type == "newline":
+            lines.append(line)
+            line = [ triple ]
+            target = width - indent()
+
+            continue
+
+        if type == "space":
+            if not line:
+                continue
+            line.append(triple)
+            continue
+
+        else:
+            if layout_width(line + [ triple ], sizecache) > target:
+                lines.append(line)
+                line = [ triple ]
+                target = width - indent()
+            else:
+                line.append(triple)
+                
+    lines.append(line)
+
+    # Remove trailing whitespace.
+    for l in lines:
+        if l and l[0][0] == "space":
+            l.pop()
+
+    return lines
+        
+        
+
+
 class Text(renpy.display.core.Displayable):
     """
     A displayable that can format and display text on the screen.
@@ -617,6 +714,7 @@ class Text(renpy.display.core.Displayable):
     def visit(self):
         return self.children
 
+
     def layout(self, width, time):
         """
         This lays out the text of this widget. It sets self.laidout,
@@ -630,13 +728,11 @@ class Text(renpy.display.core.Displayable):
         # Set this, so caching works.
         self.width = width
 
-        def indent():
-            if lines:
-                return self.style.rest_indent
-            else:
-                return self.style.first_indent
+        # We are building this list of triples, which will be passed
+        # to layout_text.
+        triples = [ ]
 
-
+        # The default style.
         tsl = [ TextStyle() ]
         tsl[-1].font = self.style.font
         tsl[-1].size = self.style.size
@@ -644,41 +740,6 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].italic = self.style.italic
         tsl[-1].underline = self.style.underline
         tsl[-1].color = None
-
-        lines = [ ]
-        line = [ ]
-
-        # The height of the current line, in pixels, not including
-        # line_spacing.
-        lineheight = 0
-
-        # A list of same.
-        lineheights = [ ]
-
-        # The width of the current line.
-        linewidth = 0
-
-        # A list of the same.
-        linewidths = [ ]
-
-        # The maximum linewidth.
-        maxwidth = 0
-
-        # The length of the laidout text.
-        laidout_length = 0
-
-        # Where we should start the slow effect from on the laidout text.
-        laidout_start = 0
-
-        # The current text.
-        cur = ""
-
-        # The width, in pixels, of cur.
-        curwidth = 0
-
-        # The remaining width of the line, not including the text in
-        # cur.
-        remwidth = width - indent()
 
         if not self.text:
             text = " "
@@ -697,33 +758,13 @@ class Text(renpy.display.core.Displayable):
 
             # Newline.
             if kind == "newline":
-
-                if cur:
-                    line.append((TextStyle(tsl[-1]), cur))                    
-                    maxwidth = max(maxwidth, linewidth + curwidth)
-                    cur = ""
-                
-                lines.append(line)
-                lineheights.append(lineheight)
-                linewidths.append(curwidth)
-                
-                line = [ ]
-                linewidth = 0
-                curwidth, lineheight = tsl[-1].sizes(" ")
-                remwidth = width - indent()
-
+                triples.append(("newline", tsl[-1], ""))                
                 continue
 
             elif kind == "tag":
 
                 # Are we closing a tag?
                 if i.startswith("/"):
-                    if cur:
-                        line.append((TextStyle(tsl[-1]), cur))
-                        cur = ""
-                        remwidth -= curwidth
-                        linewidth += curwidth
-                        curwidth = 0
 
                     tsl.pop()
 
@@ -733,15 +774,6 @@ class Text(renpy.display.core.Displayable):
                     continue
 
                 # Otherwise, we're opening a new tag.
-
-                # Mark up any text that uses an old style.
-                if cur:
-                    line.append((TextStyle(tsl[-1]), cur))
-                    cur = ""
-                    remwidth -= curwidth
-                    linewidth += curwidth
-                    curwidth = 0
-
                 tsl.append(TextStyle(tsl[-1]))
 
                 if i == "w":
@@ -752,7 +784,7 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
-                    laidout_start = laidout_length
+                    triples.append(("start", tsl[-1], ""))
                     
                 elif i == "b":
                     tsl[-1].bold = True
@@ -798,9 +830,6 @@ class Text(renpy.display.core.Displayable):
                         raise Exception('Color tag %s could not be parsed.' % i)
 
                     tsl[-1].color = color(m.group(1))
-
-                    
-                    
                     
                 else:
                     raise Exception("Text tag %s was not recognized. Case and spacing matter here." % i)
@@ -814,52 +843,13 @@ class Text(renpy.display.core.Displayable):
                 # will never show up at the start of a line, unless they're
                 # after a newline or at the start of a string.
 
-                cur += i
-                curwidth, lh = tsl[-1].sizes(cur)
-                lineheight = max(lh, lineheight)
-
-                laidout_length += len(i)
+                triples.append(("space", tsl[-1], i))
                 
                 continue
 
             elif kind == "word":
+                triples.append(("word", tsl[-1], i))
 
-                # If we made it here, then we have normal text.
-
-                laidout_length += len(i)
-
-                # We must have at least one word or something else in the
-                # line before we care about wrapping.
-                if not cur and not line:
-                    cur = i                
-                    curwidth, lineheight = tsl[-1].sizes(cur)
-                    continue
-
-                # Should we wrap?
-                oldcurwidth = curwidth
-                curwidth, lh = tsl[-1].sizes(cur + i)
-
-                if curwidth > remwidth:
-                    line.append((TextStyle(tsl[-1]), cur))
-                    lines.append(line)
-
-                    maxwidth = max(maxwidth, linewidth)
-
-                    line = [ ]
-                    lineheights.append(lineheight)
-
-                    linewidths.append(width + oldcurwidth - remwidth)
-
-                    cur = i
-                    curwidth, lineheight = tsl[-1].sizes(cur)                
-                    remwidth = width - indent()
-                    linewidth = 0
-                else:
-                    cur = cur + i
-                    lineheight = max(lh, lineheight)
-
-
-                continue
 
             elif kind == "widget":
                 pass
@@ -869,65 +859,81 @@ class Text(renpy.display.core.Displayable):
 
             if kind == "widget":
 
-                laidout_length += 1
-
-                # Here, we have a widget that we can render.
-
-                # Close off an existing line, if it's open.
-                if cur:
-
-                    line.append((TextStyle(tsl[-1]), cur))
-                    cur = ""
-                    remwidth -= curwidth
-                    linewidth += curwidth
-                    curwidth = 0
-
                 wstyle = WidgetStyle(tsl[-1], i, width, time)
-                wwidth, wheight = wstyle.sizes(i)
-
-                # If we're bigger then the remaining width on a non-empty line.
-                if line and wwidth > remwidth:
-                    lines.append(line)
-                    maxwidth = max(maxwidth, linewidth)
-                    lineheights.append(lineheight)
-                    linewidths.append(width - remwidth)
-                    
-                    line = [ (wstyle, i) ]
-
-                    remwidth = width - indent() - wwidth
-                    linewidth = wwidth
-                    lineheight = wheight
-
-                else:
-                    line.append((wstyle, i))
-                    linewidth -= wwidth
-                    lineheight = max(lineheight, wheight)
-
-            
-
-        # We're done. Let's close up.
+                triples.append(("word", wstyle, i))
+                            
+        # We're done matching tags.
 
         if len(tsl) != 1:
             Exception("A tag was left open at the end of the text.")
+
+
+        # Give layout_text a list of triples, get back a list of lists of
+        # triples, one per line.
+        linetriples = renpy.config.layout_text(triples, width, self.style)
+
+
+        # Now, we need to go through these lines, to generate the data
+        # we need to render text.
+
+        self.laidout = [ ]
+        self.laidout_lineheights = [ ]
+        self.laidout_linewidths = [ ]
+        self.laidout_length = 0
+        self.laidout_start = 0
+        self.laidout_width = self.style.minwidth
+        self.laidout_height = 0
+        
+        for l in linetriples:
+
+            line = [ ]
+            oldts = None
+            cur = None
             
-        if cur:
-            line.append((tsl[-1], cur))
-            maxwidth = max(maxwidth, curwidth)
+            for kind, ts, i in l:
 
-        if line:
-            lines.append(line)
-            lineheights.append(lineheight)
-            linewidths.append(linewidth + curwidth)
+                if kind == "start":
+                    self.laidout_start = self.laidout_length
+                    continue
 
-        laidout_length += len(lines)
+                self.laidout_length += ts.length(i)
 
-        self.laidout = lines
-        self.laidout_lineheights = lineheights
-        self.laidout_linewidths = linewidths
-        self.laidout_width = max(max(linewidths + [ 0 ]), self.style.minwidth)
-        self.laidout_height = sum(lineheights) + len(lineheights) * self.style.line_spacing
-        self.laidout_length = laidout_length
-        self.laidout_start = laidout_start
+                if ts is not oldts:
+                    if oldts is not None:
+                        line.append((oldts, cur))
+
+                    oldts = ts
+                    cur = i
+                else:
+                    cur += i
+
+            if oldts:
+                line.append((oldts, cur))
+
+            width = 0
+            height = 0
+
+            for ts, i in line:
+
+                # This is a special case to handle mostly-blank lines introduced
+                # by newlines.
+                if len(line) == 1 and i == "":
+                    i = " "
+
+                w, h = ts.sizes(i)
+
+                width += w
+                height = max(height, h)
+
+            self.laidout.append(line)
+            self.laidout_linewidths.append(width)
+            self.laidout_lineheights.append(height)
+            self.laidout_width = max(width, self.laidout_width)
+            self.laidout_height += height + self.style.line_spacing
+
+            # For the newline.
+            self.laidout_length += 1
+                    
 
     def get_simple_length(self):
         """

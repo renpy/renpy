@@ -1,6 +1,12 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.5.3
+-------------------
+
+Configurable text layout algorithm. [doc]
+
+
 New in Ren'Py 5.5.2b
 --------------------
 
