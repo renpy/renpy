@@ -280,16 +280,28 @@ class TextStyle(object):
         if source is not None:
             vars(self).update(vars(source))
 
+        # Width cache.
+        self.wcache = { }
+
+    def update(self):
+        self.f = get_font(self.font, self.size, self.bold, self.italic, self.underline)
+
     def get_font(self):
-        return get_font(self.font, self.size, self.bold, self.italic, self.underline)
+        return self.f
 
     def get_ascent(self):
-        return self.get_font().get_ascent()
-    
+        return self.f.get_ascent()
+
+    def get_width(self, text):
+
+        rv = self.wcache.get(text, None)
+        if rv is None:
+            rv = self.f.size(text)[0]
+            self.wcache[rv] = text
+        return rv
+
     def sizes(self, text):
-        font = self.get_font()
-        # print font.get_ascent() - font.get_descent(), font.get_height(), font.get_linesize()
-        return font.size(text)[0], font.get_ascent() - font.get_descent()
+        return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
     def render(self, text, antialias, color, use_colors, time, at):
 
@@ -299,7 +311,7 @@ class TextStyle(object):
         r, g, b, a = color
         color = (r, g, b, 255)
 
-        font = self.get_font()
+        font = self.f
 
         surf = font.render(text, antialias, color)
 
@@ -340,8 +352,14 @@ class WidgetStyle(object):
         surf = renpy.display.render.render(widget, width, self.height, time, time)
         self.width, _ = surf.get_size()
 
+    def update(self):
+        pass
+
     def get_ascent(self):
         return self.ascent
+
+    def get_width(self, widget):
+        return self.width
 
     def sizes(self, widget):
         return self.width, self.height
@@ -436,7 +454,7 @@ def input_tokenizer(l, style, pauses=None):
     return rv
 
 
-def layout_width(triples, cache):
+def layout_width(triples):
     """
     Returns the width of the given list of triples. Cache
     should be a dictionary, which is used to cache results.
@@ -446,27 +464,18 @@ def layout_width(triples, cache):
 
     curts = None
     cur = None
-
-    def size():
-        if curts is None:
-            return 0
-        
-        rv = cache.get((curts, cur), None)
-        if rv is None:
-            rv = curts.sizes(cur)[0]
-            cache[curts, cur] = rv
-
-        return rv
-    
+            
     for type, ts, i in triples:
         if ts is not curts:
-            rv += size()
+            if curts:
+                rv += curts.get_width(cur)
             curts = ts
             cur = i
         else:
             cur += i
-        
-    rv += size()
+
+    if curts:
+        rv += curts.get_width(cur)
     return rv
     
 
@@ -482,18 +491,10 @@ def layout_text(triples, width, style):
     @param style: The style of the text widget.
     """
     
-    def indent():
-        if lines:
-            return style.rest_indent
-        else:
-            return style.first_indent
-
-    sizecache = { }
-
     lines = [ ]
     line = [ ]
 
-    target = width - indent()
+    target = width - style.first_indent
     
     for triple in triples:
 
@@ -502,7 +503,7 @@ def layout_text(triples, width, style):
         if type == "newline":
             lines.append(line)
             line = [ triple ]
-            target = width - indent()
+            target = width - style.rest_indent
 
             continue
 
@@ -513,10 +514,10 @@ def layout_text(triples, width, style):
             continue
 
         else:
-            if layout_width(line + [ triple ], sizecache) > target:
+            if layout_width(line + [ triple ]) > target:
                 lines.append(line)
                 line = [ triple ]
-                target = width - indent()
+                target = width - style.rest_indent
             else:
                 line.append(triple)
                 
@@ -524,7 +525,7 @@ def layout_text(triples, width, style):
 
     # Remove trailing whitespace.
     for l in lines:
-        if l and l[0][0] == "space":
+        if l and l[-1][0] == "space":
             l.pop()
 
     return lines
@@ -714,7 +715,6 @@ class Text(renpy.display.core.Displayable):
     def visit(self):
         return self.children
 
-
     def layout(self, width, time):
         """
         This lays out the text of this widget. It sets self.laidout,
@@ -740,6 +740,7 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].italic = self.style.italic
         tsl[-1].underline = self.style.underline
         tsl[-1].color = None
+        tsl[-1].update()
 
         if not self.text:
             text = " "
@@ -788,17 +789,21 @@ class Text(renpy.display.core.Displayable):
                     
                 elif i == "b":
                     tsl[-1].bold = True
+                    tsl[-1].update()
 
                 elif i == "i":
                     tsl[-1].italic = True
+                    tsl[-1].update()
 
                 elif i == "u":
                     tsl[-1].underline = True
+                    tsl[-1].update()
 
                 elif i == "plain":
                     tsl[-1].bold = False
                     tsl[-1].italic = False
                     tsl[-1].underline = False
+                    tsl[-1].update()
 
                 elif i.startswith("font"):
                     m = re.match(r'font=(.*)', i)
@@ -807,6 +812,7 @@ class Text(renpy.display.core.Displayable):
                         raise Exception('Font tag %s could not be parsed.' % i)
 
                     tsl[-1].font = m.group(1)
+                    tsl[-1].update()
 
                 elif i.startswith("size"):
 
@@ -821,6 +827,7 @@ class Text(renpy.display.core.Displayable):
                         tsl[-1].size -= int(m.group(2))
                     else:
                         tsl[-1].size = int(m.group(2))                    
+                    tsl[-1].update()
 
                 elif i.startswith("color"):
 
@@ -830,6 +837,7 @@ class Text(renpy.display.core.Displayable):
                         raise Exception('Color tag %s could not be parsed.' % i)
 
                     tsl[-1].color = color(m.group(1))
+                    tsl[-1].update()
                     
                 else:
                     raise Exception("Text tag %s was not recognized. Case and spacing matter here." % i)
@@ -883,7 +891,7 @@ class Text(renpy.display.core.Displayable):
         self.laidout_start = 0
         self.laidout_width = self.style.minwidth
         self.laidout_height = 0
-        
+
         for l in linetriples:
 
             line = [ ]
@@ -896,7 +904,10 @@ class Text(renpy.display.core.Displayable):
                     self.laidout_start = self.laidout_length
                     continue
 
-                self.laidout_length += ts.length(i)
+                try:
+                    self.laidout_length += len(i)
+                except:
+                    self.laidout_length += ts.length(i)
 
                 if ts is not oldts:
                     if oldts is not None:
@@ -933,7 +944,6 @@ class Text(renpy.display.core.Displayable):
 
             # For the newline.
             self.laidout_length += 1
-                    
 
     def get_simple_length(self):
         """
