@@ -82,6 +82,8 @@ def example(m):
 def function(m):
 
     name = m.group(1)
+    print >>sys.stderr, name
+
 
     store = vars(renpy.store)
     renpy.store.renpy = renpy.exports
@@ -114,6 +116,7 @@ def function(m):
     args = args.replace("\"", "&quot;")
 
     docparas = []
+
 
     for p in re.split(r'\n\s*\n', doc):
         p = p.strip()
@@ -155,7 +158,7 @@ def main():
 
     os.chdir("doc")
 
-    s = re.sub(r"<!-- func (\S+) -->", function, s)
+    s = re.sub(r"<!-- func ?(\S+) ?-->", function, s)
     s = re.sub(r"<!-- include (\S+) -->", include, s)
     s = re.sub(r"<!-- date -->", time.strftime("%04Y-%02m-%02d %02H:%02M"), s)
     s = re.sub(r"(?s)<example>(.*?)</example>", example, s)

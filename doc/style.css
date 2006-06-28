@@ -20,7 +20,16 @@ PRE.example {
         margin-right: 10%;
         background: #f0f0f0;
         padding: 1em;
-        padding-bottom: 0em;
+        padding-bottom: 1em;
+}
+
+PRE {
+        border: 2px black solid;
+        margin-left: 10%;
+        margin-right: 10%;
+        background: #f0f0ff;
+        padding: 1em;
+        padding-bottom: 1em;
 }
 
 DIV.rule {
@@ -55,6 +64,11 @@ TD.funcsig {
 }
 
 DIV.funcbody {
+        margin-left: 5%;
+        margin-bottom: 1em;
+}
+
+DIV.varbody { 
         margin-left: 5%;
         margin-bottom: 1em;
 }

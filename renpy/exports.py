@@ -671,7 +671,7 @@ def movie_cutscene(filename, delay, loops=0):
     return rv
         
 
-def with(trans, paired=None):
+def with(trans, paired=None, always=False):
     """
     Implements the with statement. One reason to use this over a
     Ren'Py with statement is to get at the return code, which is True
@@ -680,6 +680,8 @@ def with(trans, paired=None):
     @param trans: The transition.
 
     @param paired: The transition paired with this with one.
+
+    @param always: Always perform the transition.
     """
 
     if renpy.config.skipping:
@@ -693,7 +695,7 @@ def with(trans, paired=None):
         renpy.game.interface.with_none()
         return False
     else:
-        if renpy.game.preferences.transitions:
+        if renpy.game.preferences.transitions or always:
             renpy.game.interface.set_transition(trans)
             return renpy.game.interface.interact(show_mouse=False,
                                                  trans_pause=True,
@@ -807,7 +809,7 @@ def module_version():
 
     return renpy.display.module.version
 
-def transition(trans, layer=None):
+def transition(trans, layer=None, always=False):
     """
     Sets the transition that will be used for the next
     interaction. This is useful when the next interaction doesn't take
@@ -817,6 +819,9 @@ def transition(trans, layer=None):
     will be applied only to the layer named. Please note that only some
     transitions can be applied to specific layers.
     """
+
+    if not always and not renpy.game.preferences.transitions:
+        trans = None
 
     if trans is None:
         renpy.game.interface.with_none()

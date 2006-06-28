@@ -932,6 +932,8 @@ class Zoom(renpy.display.core.Displayable):
 
         
 class DynamicDisplayable(renpy.display.core.Displayable):
+    """
+    """
 
     nosave = [ 'child' ]
 
@@ -939,6 +941,14 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.child = None
 
     def __init__(self, expression):
+        """
+        <i>expression</i> is expected to be a python expression evaluating to
+        a displayable. While the DynamicDisplayable is shown, it
+        evaluates the python expression, and renders the value of that
+        expression. The expression is evaluated at least once per
+        interaction.
+        """
+        
         super(DynamicDisplayable, self).__init__()
         self.child = None
         self.expression = expression

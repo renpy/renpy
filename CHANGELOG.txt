@@ -4,6 +4,8 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.5.3
 -------------------
 
+TODO: saving somewhere else.
+
 Configurable text layout algorithm. [doc]
 
 confirm_quit label

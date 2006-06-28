@@ -107,6 +107,13 @@
     </ul>
   </xsl:template>
 
+  <xsl:template match="rel">
+    <a>
+      <xsl:attribute name="href">#<xsl:value-of select="." /></xsl:attribute>
+      <xsl:apply-templates />
+    </a>
+  </xsl:template>
+
   <xsl:template match="h3">
     <a>
       <xsl:attribute name="name"><xsl:value-of select="." /></xsl:attribute>
@@ -171,10 +178,22 @@
 
   <xsl:template match="var">
     <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
-    <dt class="var"><b><xsl:value-of select="@name" /></b> = <xsl:value-of select="@value" /></dt>
-    <dd>
+    <p>
+    <b><xsl:value-of select="@name" /></b> = <xsl:value-of select="@value" />
+    </p>
+    <div class="varbody">
       <xsl:apply-templates />
-    </dd>
+    </div>
+  </xsl:template>
+
+
+
+  <xsl:template match="label">
+    <a><xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute></a>
+    <p>label <b><xsl:value-of select="@name" /></b>:</p>
+    <div class="varbody">
+      <xsl:apply-templates />
+    </div>
   </xsl:template>
 
   <xsl:template match="defn">
