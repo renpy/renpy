@@ -143,9 +143,12 @@ init -500:
                 if not os.path.exists(fn):
                     break
                 i += 1
-
             
             renpy.screenshot(fn)
+
+        def dump_styles():
+            if config.developer:
+                renpy.style.write_text("styles.txt")
 
         def invoke_game_menu():
             renpy.play(library.enter_sound)
@@ -164,6 +167,7 @@ init -500:
             if config.fast_skipping or config.developer:
                 config.skipping = "fast"
 
+
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
@@ -175,6 +179,7 @@ init -500:
             game_menu = invoke_game_menu,
             hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
             launch_editor = renpy.launch_editor,
+            dump_styles = dump_styles,
             )
 
         config.underlay = [ km ]
@@ -220,12 +225,6 @@ label _hide_windows:
     return
 
     
-##############################################################################
-# 
-# Code for the game menu.
-
-
-
 # This code here handles check for the correct version of the Ren'Py module.
 
 label _check_module:
@@ -254,4 +253,3 @@ init -401:
 
     # Lock the library object.
     $ library.lock = True
-        

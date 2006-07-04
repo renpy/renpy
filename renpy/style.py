@@ -13,6 +13,8 @@ def startswith_prefix(s):
 substitutes = dict(
     xmargin = [ 'left_margin', 'right_margin' ],
     ymargin = [ 'top_margin', 'bottom_margin' ],
+    xalign = [ 'xpos', 'xanchor' ],
+    yalign = [ 'ypos', 'yanchor' ],
     xpadding = [ 'left_padding', 'right_padding' ],
     ypadding = [ 'top_padding', 'bottom_padding' ],
     )
@@ -278,3 +280,43 @@ def write_hierarchy(fn):
     do('default')
 
     f.close()
+
+
+def write_text(filename):
+
+    f = file(filename, "w")
+
+    styles = style_map.items()
+    styles.sort()
+
+    for name, sty in styles:
+
+        print >>f, name, "inherits from", sty.parent
+
+        props = sty.cache.items()
+        props.sort()
+
+        for prop, val in props:
+
+            pname = name
+
+            while pname:
+                psty = style_map[pname]
+
+                if prop in psty.properties:
+                    break
+                else:
+                    pname = psty.parent
+
+            if pname != name:
+                inherit = "(%s)" % pname
+            else:
+                inherit = "(****)"
+
+            print >>f, "   ", inherit, prop, "=", repr(val)
+
+        print >>f
+
+    f.close()
+        
+    

@@ -1656,9 +1656,20 @@ Text can be used to show text to the user, as a displayable.
 
 Ren'Py also supports a parameterized text object, which shows text as
 if it was an image on the screen. But care should be taken, as it's
-almost always better to use a Character object to show text.
+almost always better to use a Character object to show text. By
+default there is one ParameterizedText image, named <kbd>text</kbd>
+declared, but the user can declare more than one to show multiple text
+blocks on the screen at once.
 
 <!-- func ParameterizedText -->
+
+<example>
+init:
+    image text1 = renpy.ParameterizedText(ypos=0.25)
+
+show text "centered."
+show text1 "1/4 of the way down the screen."
+</example>
 
 <h4>Dynamic</h4>
 

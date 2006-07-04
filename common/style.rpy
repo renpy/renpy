@@ -115,6 +115,8 @@ init -1000:
         style.create("error_title", "default", "(text) The style of the text containing the title of an error message.")
         style.create("error_body", "default", "(text) The style of the body of an error message.")
         style.create("skip_indicator", "default", "(text) The style and placement of the skip indicator.")
+        style.create("stybrow_button", "default", "The style of buttons in the style browser.")
+        style.create("stybrow_button_text", "default", "The style of button text in the style browser.")
         style.create("mm_root", "default", "(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.")
         style.create("mm_menu_frame", "default", "(window) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.")
         style.create("mm_menu_frame_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")

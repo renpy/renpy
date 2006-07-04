@@ -193,7 +193,6 @@ init -402:
             style.button_text.xanchor = 0.5
             style.button_text.ypos = 0.5
             style.button_text.yanchor = 0.5
-            style.button_text.xalign = 0.5
             style.button_text.textalign = 0.5 
 
             style.button.insensitive_background = RoundRect(disabled)

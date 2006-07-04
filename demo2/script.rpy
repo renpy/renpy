@@ -57,8 +57,6 @@ init:
 
 label start:
 
-    "This is a test.\n\n123."
-
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
     # saved and restored with a save file.

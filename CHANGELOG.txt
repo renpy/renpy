@@ -12,6 +12,8 @@ confirm_quit label
 
 config.periodic_callback
 
+Y now dumps styles when config.developer is True... update keymap and doc.
+
 
 New in Ren'Py 5.5.2b
 --------------------
