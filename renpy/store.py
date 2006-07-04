@@ -63,6 +63,8 @@ Movie = renpy.display.video.Movie
 Particles = renpy.display.particle.Particles
 SnowBlossom = renpy.display.particle.SnowBlossom
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
+Text = renpy.display.text.Text
+ParameterizedText = renpy.display.text.ParameterizedText
 
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)

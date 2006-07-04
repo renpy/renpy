@@ -1410,3 +1410,4 @@ class Interface(object):
             self.timeout_time = min(self.event_time + offset, self.timeout_time)
         else:
             self.timeout_time = self.event_time + offset
+

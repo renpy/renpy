@@ -40,4 +40,3 @@ if __name__ == "__main__":
     # Start Ren'Py proper.
     import renpy.bootstrap
     renpy.bootstrap.bootstrap(renpy_base)
-

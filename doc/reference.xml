@@ -1216,7 +1216,7 @@ to 255.
 
 The <kbd>Character</kbd> function is defined as follows:
 
-<func name="Character" sig="(name, **kwargs)">
+<function name="Character" sig="(name, **kwargs)">
 
 Creates a new character object. This object is suitable for use as the
 first argument of a two-argument say statement. When it is used as
@@ -1328,14 +1328,14 @@ the "show_" prefix stripped off.</li>
 label.</li>
 </ul>
 
-</func>
+</function>
 
 There is also a <kbd>DynamicCharacter</kbd> function:
 
-<func name="DynamicCharacter" sig="(name, **kwargs)">
+<function name="DynamicCharacter" sig="(name, **kwargs)">
 Equivalent to calling  <ref>Character</ref> with the same arguments, and
 with the <i>dynamic</i> argument set to true.
-</func>
+</function>
 
 <b>Calling Character Objects.</b>
 Character objects may be called directly, as if they were
@@ -1614,9 +1614,9 @@ The image manipulators are:
 
 <!-- func im.Image-->
 
-<func name="Image" sig="(...)">
+<function name="Image" sig="(...)">
 An alias for <kwd>im.Image</kwd>.
-</func>
+</function>
 
 <!-- func im.Alpha -->
 
@@ -1646,6 +1646,19 @@ backgrounds:
 <!-- func Frame-->
 
 <!-- func Solid-->
+
+
+<h4>Text</h4>
+
+Text can be used to show text to the user, as a displayable.
+
+<!-- func Text -->
+
+Ren'Py also supports a parameterized text object, which shows text as
+if it was an image on the screen. But care should be taken, as it's
+almost always better to use a Character object to show text.
+
+<!-- func ParameterizedText -->
 
 <h4>Dynamic</h4>
 
@@ -4307,6 +4320,30 @@ currently known last change time to the persisted last change time.
 <!-- func renpy.music.set_volume -->
 <!-- func renpy.music.set_music -->
 
+# START NOPAR
+<h3>Themes</h3>
+
+Themes provide a simple way of changing the look of the main and game
+menus. A single function call applies styles to many of the elements
+of the main and game menus, giving a consistent look to the
+interface. These colors, and the background images used, can be
+changed by supplying parameters to the theme functions.
+
+Theme functions should be called after the
+<ref>config.screen_width</ref>, <ref>config.screen_height</ref>, and
+<ref>library.script_version</ref> variables have been set. They should
+be called before any style is changed by hand.
+
+<b>Roundrect themes.</b> Roundrect themes turn buttons and windows
+into rounded rectangles, giving a fairly modern look. (Albeit one
+inspired by the original Macintosh.)
+
+# END NOPAR
+
+<!-- func theme.roundrect -->
+
+<!-- func theme.roundrect_red --> 
+
 <h3>Customizing the Main and Game Menus</h3>
 
 <p>
@@ -4732,6 +4769,8 @@ it easier to understand.
 </p>
 
 </doc>
+
+<!-- TODO: menu, predict_menu -->
 
 <!-- (define-key xml-mode-map [(control return)] 'tompy-xml-ctrlret) -->
 <!-- -->
