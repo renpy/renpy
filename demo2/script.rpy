@@ -97,6 +97,10 @@ label start:
     "Girl" "My name is Eileen, and while I hope to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
 
+    with None
+    scene black
+    $ renpy.with(dissolve, always=True)
+
     # This line used the e character object, which displays Eileen's
     # name in green. The use of a short name for a character object
     # lets us save typing when writing the bulk of the dialogue.

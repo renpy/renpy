@@ -4001,6 +4001,8 @@ config.keymap = dict(
     game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
     hide_windows = [ 'mouseup_2', 'h' ],
     launch_editor = [ 'E' ],
+    dump_styles = [ 'Y' ],
+
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -4512,6 +4514,16 @@ launch_editor keypress (by default, shift-E) occurs.
 <p>
 Please see <a href="http://www.bishoujo.us/renpy/scite.html">http://www.bishoujo.us/renpy/scite.html</a>
 for information about how to integrate Ren'Py with the SciTE text editor.
+</p>
+
+<h4>Style Dumping</h4>
+
+<p>
+When config.developer is True, pressing the dump_styles key (by
+default, shift-Y), will write a description of every style Ren'Py
+knows about to the file styles.txt. This description includes every
+property that is part of the style, the value of that property, and
+the style the property is inherited from.
 </p>
 
 <h4>Fast Skipping</h4>

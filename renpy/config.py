@@ -238,7 +238,7 @@ hyperlink_callback = None
 recolor_sfonts = True
 
 # Function that is called to layout text.
-layout_text = renpy.display.text.layout_text
+text_layout = renpy.display.text.text_layout
 
 # A callback that is called 20 times a second.
 periodic_callback = None

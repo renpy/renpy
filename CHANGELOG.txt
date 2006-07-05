@@ -4,15 +4,25 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.5.3
 -------------------
 
-TODO: saving somewhere else.
+The reference manual has been updated to integrate changes that were
+previously only in the wiki.
 
-Configurable text layout algorithm. [doc]
+The renpy.with function (the equivalent of the with statement) now
+takes a parameter, always, which controls if the transition should
+always be executed.
 
-confirm_quit label
+The text layout algorithm has been made configurable. This will
+probably not be documented, but will become a the basis of an extra at
+sometime in the future.
 
-config.periodic_callback
+There is now a confirm_quit label, which allows the user to customize
+what happens when the user clicks the window close button.
 
-Y now dumps styles when config.developer is True... update keymap and doc.
+There is now config.periodic_callback. If not None, this variable
+should be a function that is called with no arguments at around 20hz. 
+
+When config.developer is True, pressing the 'Y' key will dump a
+description of the styles in the system to styles.txt.
 
 
 New in Ren'Py 5.5.2b
@@ -20,10 +30,12 @@ New in Ren'Py 5.5.2b
 
 Fixed bug in packaging.
 
+
 New in Ren'Py 5.5.2a
 --------------------
 
 Fixed bug in lint.
+
 
 New in Ren'Py 5.5.2
 -------------------

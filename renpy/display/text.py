@@ -479,12 +479,12 @@ def layout_width(triples):
     return rv
     
 
-def layout_text(triples, width, style):
+def text_layout(triples, width, style):
     """
     Breaks the text up into rows. 
 
     @param triples: The text to be laid out. This is a list of
-    (type, style, data) triples.
+    (type, text/widgetstyle, data) triples.
 
     @param width: The width we want to layout to.
 
@@ -729,7 +729,7 @@ class Text(renpy.display.core.Displayable):
         self.width = width
 
         # We are building this list of triples, which will be passed
-        # to layout_text.
+        # to text_layout.
         triples = [ ]
 
         # The default style.
@@ -876,9 +876,9 @@ class Text(renpy.display.core.Displayable):
             Exception("A tag was left open at the end of the text.")
 
 
-        # Give layout_text a list of triples, get back a list of lists of
+        # Give text_layout a list of triples, get back a list of lists of
         # triples, one per line.
-        linetriples = renpy.config.layout_text(triples, width, self.style)
+        linetriples = renpy.config.text_layout(triples, width, self.style)
 
 
         # Now, we need to go through these lines, to generate the data
