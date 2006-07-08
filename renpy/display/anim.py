@@ -49,7 +49,7 @@ class State(object):
             rv = i(rv)
 
         if self.properties:
-            rv = renpy.display.layout.Position(rv, **properties)
+            rv = renpy.display.layout.Position(rv, **self.properties)
 
         return rv
 

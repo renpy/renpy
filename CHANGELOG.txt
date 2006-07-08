@@ -24,6 +24,14 @@ should be a function that is called with no arguments at around 20hz.
 When config.developer is True, pressing the 'Y' key will dump a
 description of the styles in the system to styles.txt.
 
+Window and button backgrounds no participate in layout, using xpos,
+xanchor, ypos, and yanchor.
+
+There are now two new properties, xalign and yalign. Assigning to xalign
+is equivalent to assigning the same value to xpos and xanchor, and
+similarly for yalign. This means that it is now possible to write
+xalign=0.5 to center a displayable, rather than having to write
+xpos=0.5, xanchor=0.5. [doc]
 
 New in Ren'Py 5.5.2b
 --------------------

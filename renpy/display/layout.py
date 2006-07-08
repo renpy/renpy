@@ -596,9 +596,7 @@ class Window(Container):
 
             back = render(style.background, bw, bh, st, at)
 
-            rv.blit(back,
-                    (left_margin, top_margin))
-                    # (0, 0, bw, bh))
+            style.background.place(rv, left_margin, top_margin, bw, bh, back)
 
         offsets = self.child.place(rv,
                                    left_margin + left_padding, 

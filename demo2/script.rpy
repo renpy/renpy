@@ -14,7 +14,7 @@
 init:
     
     # The version of this script.
-    $ library.script_version = (5, 5, 2)
+    $ library.script_version = (5, 5, 3)
 
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
@@ -1590,4 +1590,13 @@ init:
 #     hide text with dissolve
 #
 #     return
+
+init:
+    $ style.mm_root.background = anim.SMAnimation(
+        "a",
+        anim.State("a", "cyan.png", left),
+        anim.State("b", "cyan.png", Position(ypos=1.0, yanchor='top')),
+        anim.Edge("a", 1.0, "b", move),
+        anim.Edge("b", 1.0, "a", move),
+        )
 

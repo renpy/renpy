@@ -47,17 +47,20 @@ class SFont(object):
         height = sh - 1
         self.height = height
 
-        # The color key used to separate characters.
-        key=surf.get_at((0, 0))
-
-
         # Create space characters.
         self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
         self.sizes[u' '] = self.spacewidth
         self.chars[u'\u00a0'] = self.chars[u' ']
         self.sizes[u'\u00a0'] = self.sizes[u' ']
 
+        # The color key used to separate characters.
         i = 0
+        while True:
+            key = surf.get_at((i, 0))
+            if key[3] != 0:
+                break
+            i += 1
+
         ci = 0
 
         # Find real characters, create them.
