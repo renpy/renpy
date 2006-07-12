@@ -1592,11 +1592,40 @@ init:
 #     return
 
 init:
-    $ style.mm_root.background = anim.SMAnimation(
-        "a",
-        anim.State("a", "cyan.png", left),
-        anim.State("b", "cyan.png", Position(ypos=1.0, yanchor='top')),
-        anim.Edge("a", 1.0, "b", move),
-        anim.Edge("b", 1.0, "a", move),
-        )
+    image a0 = Solid((0, 0, 0, 255))
+    image a1 = Solid((0, 100, 0, 255))
+    image a2 = Solid((100, 0, 0, 255))
+    image a3 = Solid((0, 100, 0, 255))
+    image a4 = Solid((0, 0, 100, 255))
+    image a5 = Solid((100, 0, 0, 255))
+    image a6 = Solid((0, 100, 0, 255))
+    image a7 = Solid((0, 0, 100, 255))
+    image a8 = Solid((100, 100, 0, 255))
+    image a9 = Solid((100, 100, 100, 255))
 
+
+label splashscreen:
+
+    show a0
+    $ renpy.pause(0)
+    show a1
+    $ renpy.pause(0)
+    show a2
+    $ renpy.pause(0)
+    show a3
+    $ renpy.pause(0)
+    show a4
+    $ renpy.pause(0)
+    show a5
+    $ renpy.pause(0)
+    show a6
+    $ renpy.pause(0)
+    show a7
+    $ renpy.pause(0)
+    show a8
+    $ renpy.pause(0)
+    show a9
+    $ renpy.pause(0)
+
+
+    

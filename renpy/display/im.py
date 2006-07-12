@@ -484,9 +484,14 @@ class SolidImage(ImageBase):
         self.height = height
 
     def load(self):
+
+        if self.color[3] != 255:
+            sample = renpy.game.interface.display.sample_surface
+        else:
+            sample = renpy.game.interface.display.window
         
         rv = pygame.Surface((self.width, self.height), 0,
-                            renpy.game.interface.display.sample_surface)
+                            sample)
         rv.fill(self.color)
 
         return rv

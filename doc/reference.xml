@@ -3399,6 +3399,12 @@ number between 0 and 1, where 0 is the left edge and 1 is the
 right edge.
 </prop>
 
+<prop name="xalign">
+This can be used as a shortcut for setting xpos and xanchor to the
+same value. This is expected to be used with floats between 0.0 and
+1.0.
+</prop>
+
 <prop name="ypos">
 Controls the positioning of the widget anchor in the y
 dimension. If an integer, this is taken as the number of pixels to
@@ -3411,6 +3417,12 @@ Controls the placement of the anchor within the widget, in the y
 dimension. This can be one of 'top', 'center', or 'bottom', or a
 number between 0 and 1, where 0 is the top edge and 1 is the
 bottom edge.
+</prop>
+
+<prop name="yalign">
+This can be used as a shortcut for setting ypos and yanchor to the
+same value. This is expected to be used with floats between 0.0 and
+1.0.
 </prop>
 
 <prop name="xmaximum">

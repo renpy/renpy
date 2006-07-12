@@ -12,8 +12,8 @@ takes a parameter, always, which controls if the transition should
 always be executed.
 
 The text layout algorithm has been made configurable. This will
-probably not be documented, but will become a the basis of an extra at
-sometime in the future.
+probably not be documented, but will instead become a the basis of an
+extra at sometime in the future.
 
 There is now a confirm_quit label, which allows the user to customize
 what happens when the user clicks the window close button.
@@ -24,14 +24,23 @@ should be a function that is called with no arguments at around 20hz.
 When config.developer is True, pressing the 'Y' key will dump a
 description of the styles in the system to styles.txt.
 
-Window and button backgrounds no participate in layout, using xpos,
+Window and button backgrounds now participate in layout, using xpos,
 xanchor, ypos, and yanchor.
 
 There are now two new properties, xalign and yalign. Assigning to xalign
 is equivalent to assigning the same value to xpos and xanchor, and
 similarly for yalign. This means that it is now possible to write
 xalign=0.5 to center a displayable, rather than having to write
-xpos=0.5, xanchor=0.5. [doc]
+xpos=0.5, xanchor=0.5.
+
+A new optimization is that we only draw images that are above the
+uppermost full-screen image that does not have an alpha channel.
+Images below this image cannot be seen, and now are not drawn. This
+optimization only considers the presence or absence of an alpha
+channel, and not the content of that channel. So a PNG image with an
+alpha channel that has full opacity will not trigger this
+optimization, while the same image with the alpha channel removed will.
+
 
 New in Ren'Py 5.5.2b
 --------------------

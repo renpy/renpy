@@ -136,7 +136,7 @@ class PauseBehavior(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
-        if self.delay and st >= self.delay:
+        if self.delay is not None and st >= self.delay:
             return self.result
 
         renpy.game.interface.timeout(self.delay - st)

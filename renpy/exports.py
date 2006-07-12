@@ -638,7 +638,7 @@ def pause(delay=None, music=None):
 
     renpy.ui.saybehavior()
 
-    if delay:
+    if delay is not None:
         renpy.ui.pausebehavior(delay, False)
 
     return renpy.ui.interact(mouse='pause')

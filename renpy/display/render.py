@@ -459,6 +459,9 @@ class Render(object):
         self.draw_func = draw_func
         self.update_func = update_func
 
+        # Is this render fullscreen? None == not sure.
+        self.fullscreen = None
+    
     # def __del__(self):
     #     Render.renders -= 1
     #     print "Render del", Render.renders, Render.liverenders, self
@@ -552,6 +555,13 @@ class Render(object):
         self.blittables.append((xo, yo, source))
 
 
+        
+        
+            
+            
+        
+    
+
     def blit_to(self, dest, x, y):
         """
         This blits the children of this Render to dest, which must be
@@ -563,7 +573,13 @@ class Render(object):
         if self.draw_func:
             self.draw_func(dest.subsurface((x, y, self.width, self.height)))
 
-        for xo, yo, source in self.blittables:
+        fullscreen = 0
+
+        for i, (xo, yo, source) in enumerate(self.blittables):
+            if is_fullscreen(source, xo, yo):
+                fullscreen = i
+
+        for xo, yo, source in self.blittables[fullscreen:]:
 
             if isinstance(source, pygame.Surface):
                 dest.blit(source, (x + xo, y + yo))
@@ -582,7 +598,13 @@ class Render(object):
             else:
                 forced.append((x, y, self.width, self.height))
         
-        for xo, yo, source in self.blittables:
+        fullscreen = 0
+
+        for i, (xo, yo, source) in enumerate(self.blittables):
+            if is_fullscreen(source, xo, yo):
+                fullscreen = i
+
+        for xo, yo, source in self.blittables[fullscreen:]:
             if isinstance(source, pygame.Surface):
                 blits.append((id(source), x + xo, y + yo) + source.get_size())
             else:
@@ -753,3 +775,31 @@ class Render(object):
 
         self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
 
+
+# Determine if a surface is fullscreen or not.
+def is_fullscreen(surf, x, y):
+
+    if isinstance(surf, pygame.Surface):
+
+        sw, sh = surf.get_size()
+
+        if (x <= 0 and y <= 0 and
+            sw - x >= renpy.config.screen_width and
+            sw - y >= renpy.config.screen_height and
+            surf.get_masks()[3] == 0):
+
+            return True
+        else:
+            return False
+
+
+    if surf.fullscreen is not None:
+        return surf.fullscreen
+
+    for xo, yo, source in surf.blittables:
+        if is_fullscreen(source, x + xo, y + yo):
+            surf.fullscreen = True
+            return True
+
+    surf.fullscreen = False
+    return False
