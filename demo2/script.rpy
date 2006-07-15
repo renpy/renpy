@@ -1519,6 +1519,8 @@ label demonstrate:
 
         "That's enough for me.":
 
+            e "Is there anything else you'd like to ask?"
+
             return
 
     e "Is there anything else you want demonstrated?"
