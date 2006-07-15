@@ -25,8 +25,10 @@ def run(restart=False):
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
-    # Reload some things, in case this is a restart.
-    renpy.store.reload()
+    # Reinitialize the store and the config to their default values.
+    renpy.store.__dict__.clear()
+    renpy.store.__dict__.update(renpy.game.uninit_store)
+    
     renpy.config.reload()
 
     # Note that this is a restart.
@@ -218,6 +220,9 @@ def main(basename):
     # Backup the configuration.
     renpy.config.backup()
 
+    # Backup the store.
+    renpy.game.uninit_store = renpy.store.__dict__.copy()
+
     # Initialize archives.
     renpy.loader.index_archives()
 
@@ -225,7 +230,6 @@ def main(basename):
     game.script = renpy.script.load_script()
 
     # Start things running.
-
     restart = False
 
 

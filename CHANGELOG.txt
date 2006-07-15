@@ -4,6 +4,11 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.5.3
 -------------------
 
+!!!
+Fixed a bug in which some variables were not saved after the game was
+restarted. This is a fairly major bug that could affect end users in
+certain circumstances.
+
 The reference manual has been updated to integrate changes that were
 previously only in the wiki.
 
@@ -41,6 +46,8 @@ channel, and not the content of that channel. So a PNG image with an
 alpha channel that has full opacity will not trigger this
 optimization, while the same image with the alpha channel removed will.
 
+The renpy.pause function can now take a delay of 0. This will cause
+the scene to display for exactly one frame. 
 
 New in Ren'Py 5.5.2b
 --------------------

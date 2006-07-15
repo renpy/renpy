@@ -1,6 +1,9 @@
 # This is the Ren'Py store. It's the module in which the user code
 # is executed.
 
+# NOTE: This should not include any objects that will have fields
+# changed by the user, as we only do a shallow copy.
+
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
 import renpy
@@ -374,7 +377,3 @@ def predict_say(who, what):
 # The default transition.
 default_transition = None
 
-_globals = globals().copy()
-
-def reload():
-    globals().update(_globals)

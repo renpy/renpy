@@ -97,11 +97,7 @@ label start:
     "Girl" "My name is Eileen, and while I hope to one day star in a
             real game, for now I'm here to tell you about Ren'Py."
 
-    with None
-    scene black
-    $ renpy.with(dissolve, always=True)
-
-    # This line used the e character object, which displays Eileen's
+    # This line uses the e character object, which displays Eileen's
     # name in green. The use of a short name for a character object
     # lets us save typing when writing the bulk of the dialogue.
     e "Ren'Py is a language and engine for writing and playing visual
@@ -1590,42 +1586,3 @@ init:
 #     hide text with dissolve
 #
 #     return
-
-init:
-    image a0 = Solid((0, 0, 0, 255))
-    image a1 = Solid((0, 100, 0, 255))
-    image a2 = Solid((100, 0, 0, 255))
-    image a3 = Solid((0, 100, 0, 255))
-    image a4 = Solid((0, 0, 100, 255))
-    image a5 = Solid((100, 0, 0, 255))
-    image a6 = Solid((0, 100, 0, 255))
-    image a7 = Solid((0, 0, 100, 255))
-    image a8 = Solid((100, 100, 0, 255))
-    image a9 = Solid((100, 100, 100, 255))
-
-
-label splashscreen:
-
-    show a0
-    $ renpy.pause(0)
-    show a1
-    $ renpy.pause(0)
-    show a2
-    $ renpy.pause(0)
-    show a3
-    $ renpy.pause(0)
-    show a4
-    $ renpy.pause(0)
-    show a5
-    $ renpy.pause(0)
-    show a6
-    $ renpy.pause(0)
-    show a7
-    $ renpy.pause(0)
-    show a8
-    $ renpy.pause(0)
-    show a9
-    $ renpy.pause(0)
-
-
-    

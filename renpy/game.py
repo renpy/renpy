@@ -21,12 +21,13 @@ searchpath = [ ]
 # The options that were read off the command line.
 options = None
 
-# A Script object, giving the script of the currently executing game.
-script = None
+# A copy of the uninitialized store, used to restore the store
+# after a restart.
+uninit_store = None
 
-# A shallow copy of the store made at the end of the init phase. If
-# a key in here points to the same value here as it does in the store,
-# it is not saved.
+# A shallow copy of the store dictionary made at the end of the init
+# phase. If a key in here points to the same value here as it does in
+# the store, it is not saved.
 clean_store = None
 
 # A stack of execution contexts.

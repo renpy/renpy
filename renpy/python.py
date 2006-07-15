@@ -527,7 +527,7 @@ class RollbackLog(renpy.object.Object):
         self.log.append(self.current)
 
         self.mutated = { }
-        self.old_store = vars(renpy.store).copy()
+        self.old_store = renpy.store.__dict__.copy()
 
     def complete(self):
         """
@@ -538,7 +538,7 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        new_store = vars(renpy.store)
+        new_store = renpy.store.__dict__
         store = [ ]
 
         # Find store values that have changed since the last call to

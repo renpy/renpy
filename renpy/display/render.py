@@ -786,7 +786,9 @@ def is_fullscreen(surf, x, y):
         if (x <= 0 and y <= 0 and
             sw - x >= renpy.config.screen_width and
             sw - y >= renpy.config.screen_height and
-            surf.get_masks()[3] == 0):
+            surf.get_masks()[3] == 0 and
+            (surf.get_alpha() == None or surf.get_alpha() == 255) 
+            ):
 
             return True
         else:
