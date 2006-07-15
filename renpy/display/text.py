@@ -622,7 +622,7 @@ class Text(renpy.display.core.Displayable):
         if self.text:
             text = self.text
         else:
-            text = " "
+            text = u" "
 
         if not self.tokenized:
             self.tokens = input_tokenizer(text, self.style)
@@ -644,7 +644,6 @@ class Text(renpy.display.core.Displayable):
                         pause -= 1
 
             self.tokens[0] = l
-
 
         # Postprocess the tokens list to create widgets, as necessary.
 
@@ -894,6 +893,11 @@ class Text(renpy.display.core.Displayable):
         self.laidout_start = 0
         self.laidout_width = self.style.minwidth
         self.laidout_height = 0
+
+        # Add something to empty lines.
+        for l in linetriples:
+            if not l:
+                l.append(('word', tsl[-1], ' '))
 
         for l in linetriples:
 

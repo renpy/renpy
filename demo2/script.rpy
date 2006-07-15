@@ -1529,7 +1529,7 @@ label demonstrate:
 label define_hyperlink:
 
     definition "A hyperlink is a button that is defined inside text, using
-                text tags. They're ideal for including definitons of words
+                text tags. They're ideal for including definitions of words
                 used in the script, but they shouldn't be used in place of
                 menus."
 
