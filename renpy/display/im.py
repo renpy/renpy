@@ -619,6 +619,8 @@ class Crop(ImageBase):
         return self.image.predict_files()
 
 
+ramp_cache = { }
+
 
 def ramp(start, end):
     """
@@ -627,14 +629,19 @@ def ramp(start, end):
     ramp can be used as a map argument of im.Map.
     """
 
-    chars = [ ]
+    rv = ramp_cache.get((start, end), None)
+    if rv is None:
 
-    for i in range(0, 256):
-        i = i / 255.0
-        chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
+        chars = [ ]
 
-    return "".join(chars)
+        for i in range(0, 256):
+            i = i / 255.0
+            chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
+            
+        rv = "".join(chars)
+        ramp_cache[start, end] = rv
 
+    return rv
 
 identity = ramp(0, 255)
 
@@ -675,6 +682,48 @@ class Map(ImageBase):
 
         renpy.display.module.map(surf, rv,
                                  self.rmap, self.gmap, self.bmap, self.amap)
+
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+class Twocolor(ImageBase):
+    """
+    This takes as arguments two colors, white and black. The image is
+    mapped such that pixels in white have the white color, pixels in
+    black have the black color, and shades of gray are linearly
+    interpolated inbetween.  The alpha channel is mapped linearly
+    between 0 and the alpha found in the white color, the black
+    color's alpha is ignored.
+    """
+
+    def __init__(self, im, white, black, force_alpha=False, **properties):
+
+        im = image(im)
+
+        super(Twocolor, self).__init__(im, white, black, force_alpha, **properties)
+        
+        self.image = im
+        self.white = white
+        self.black = black
+
+        self.force_alpha = force_alpha
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        if not renpy.display.module.can_twomap:
+            return surf
+
+        if self.force_alpha and not (surf.get_masks()[3]):
+            surf = surf.convert_alpha()
+
+        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+
+        renpy.display.module.twomap(surf, rv,
+                                    self.white, self.black)
 
         return rv
 
@@ -722,6 +771,7 @@ class Recolor(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
+
 
 def Alpha(image, alpha, **properties):
     """

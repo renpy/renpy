@@ -99,7 +99,7 @@ class SFont(object):
 
         return (w, self.height)
             
-    def render(self, text, antialias, color, background=None):
+    def render(self, text, antialias, color, black_color, background=None):
         surf = pygame.Surface(self.size(text), 0,
                               renpy.game.interface.display.sample_surface)
 
@@ -115,18 +115,15 @@ class SFont(object):
 
         surf.blit(self.chars[text[-1]], (x, y))
 
-        if renpy.config.recolor_sfonts and color != (255, 255, 255, 255) and renpy.display.module.can_linmap:
-            r, g, b, a = color
+        if renpy.config.recolor_sfonts and \
+               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
+               renpy.display.module.can_twomap:
 
             newsurf = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
-            renpy.display.module.linmap(surf, newsurf, r, g, b, a)
+            renpy.display.module.twomap(surf, newsurf, color, black_color)
             renpy.display.render.mutated_surface(newsurf)
 
             surf = newsurf
-            
-
-            
-            
 
         return surf
 
@@ -231,7 +228,6 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
     font_cache[(fn, size, bold, italics, underline)] = rv
 
     return rv
-    
 
 def color(s):
     """
@@ -308,29 +304,37 @@ class TextStyle(object):
 
     def render(self, text, antialias, color, use_colors, time, at):
 
-        if use_colors and self.color:
+        if use_colors:
             color = self.color
-
-        r, g, b, a = color
-        color = (r, g, b, 255)
+            black_color = self.black_color
+        else:
+            black_color = color
+            
 
         font = self.f
 
-        surf = font.render(text, antialias, color)
+        if isinstance(font, SFont):
+            rv = font.render(text, antialias, color, black_color)
 
-        if a != 255 and renpy.display.module.can_map and not isinstance(font, SFont):
-
-            if not surf.get_masks()[3]:
-                surf = surf.convert_alpha()
-
-            rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
-            alpha = renpy.display.im.ramp(0, a)
-            identity = renpy.display.im.identity
-
-            renpy.display.module.map(surf, rv, identity, identity, identity, alpha)
-            
         else:
-            rv = surf
+            r, g, b, a = color
+            color = (r, g, b, 255)
+
+            surf = font.render(text, antialias, color)
+
+            if a != 255 and renpy.display.module.can_recolor:
+
+                if not surf.get_masks()[3]:
+                    surf = surf.convert_alpha()
+
+                rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+                alpha = renpy.display.im.ramp(0, a)
+                identity = renpy.display.im.identity
+
+                renpy.display.module.map(surf, rv, 256, 256, 256, alpha + 1)
+            
+            else:
+                rv = surf
 
         renpy.display.render.mutated_surface(rv)
         return rv, rv.get_size()
@@ -741,8 +745,10 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].bold = self.style.bold
         tsl[-1].italic = self.style.italic
         tsl[-1].underline = self.style.underline
-        tsl[-1].color = None
+        tsl[-1].color = self.style.color
+        tsl[-1].black_color = self.style.black_color
         tsl[-1].update()
+
 
         if not self.text:
             text = " "

@@ -1,6 +1,7 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
+import renpy
 import pygame
 from pygame.constants import *
 
@@ -240,6 +241,44 @@ else:
     can_map = False
 
 
+if can_map or can_linmap:
+
+    can_twomap = True
+
+    def twomap(src, dst, white, black):
+        """
+        Given colors for white and black, linearly maps things
+        appropriately, taking the alpha channel from white.
+        """
+
+        wr = white[0]
+        wg = white[1]
+        wb = white[2]
+        wa = white[3]
+ 
+        br = black[0]
+        bg = black[1]
+        bb = black[2]
+
+        ramp = renpy.display.im.ramp
+
+        if can_linmap and br == 0 and bg == 0 and bb == 0:
+            linmap(src, dst,
+                   wr + 1,
+                   wg + 1,
+                   wb + 1,
+                   wa + 1)
+        else:
+            map(src, dst,
+                ramp(br, wr),
+                ramp(bg, wg),
+                ramp(bb, wb),
+                ramp(0, wa))
+
+else:
+
+    can_twomap = False
+    
 
 
 if version >= 4008007:

@@ -803,7 +803,16 @@ init:
 
     image cyan green = im.Map("cyan.png", bmap=im.ramp(0, 0))
 
+    image cyan green2 = im.Recolor("cyan.png", 255, 255, 0, 255)
+
     image cyan alpha = im.Alpha("cyan.png", 0.5)
+
+    image cyan blackwhite = "blackwhite.png"
+
+    image cyan twocolor = im.Twocolor("blackwhite.png",
+                                      (0, 255, 255, 255),
+                                      (255, 255, 0, 255))
+
     image eileen alpha = im.Alpha("9a_happy.png", 0.5)
 
     image eileen flip = im.Flip("9a_happy.png", vertical=True)
@@ -1322,7 +1331,7 @@ label demonstrate:
             e "Image operations allow one to manipulate images as they
                are loaded in."
 
-            e "These are efficent, as they are only evaluated when an
+            e "These are efficient, as they are only evaluated when an
                image is first loaded."
 
             e "This way, there's no extra work that needs to be done
@@ -1365,6 +1374,21 @@ label demonstrate:
             e "In this case, we removed all the blue from the image,
                leaving only the green component of cyan."
 
+            show cyan base at cyanpos with dissolve
+            show cyan green2 at cyanpos with dissolve 
+
+            e "The im.Recolor operation can do the same thing, but is more
+               efficient when we're linearly mapping colors."
+
+            show cyan blackwhite at cyanpos with dissolve
+
+            e "The im.Twocolor operation lets you take a black and white image, like this one..."
+
+            show cyan twocolor at cyanpos with dissolve
+
+            e "... and assign colors to replace black and white."
+
+            show cyan base at cyanpos with dissolve
             show cyan alpha at cyanpos with dissolve
 
             e "The im.Alpha operation can adjust the alpha channel on
@@ -1588,3 +1612,9 @@ init:
 #     hide text with dissolve
 #
 #     return
+
+label splashscreen:
+
+    show cyan twocolor
+
+    "Foo!"

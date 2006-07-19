@@ -177,6 +177,7 @@ init -1000:
         style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
+        style.default.black_color = (0, 0, 0, 255)
         style.default.bold = False
         style.default.italic = False
         style.default.underline = False
