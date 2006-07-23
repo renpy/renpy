@@ -407,6 +407,10 @@ static int rw_close_th(SDL_RWops* context)
 		Py_XDECREF(result);
 	}
 
+        PyThreadState_Swap(oldstate);
+        PyThreadState_Clear(helper->thread);
+        PyThreadState_Delete(helper->thread);
+
 	Py_XDECREF(helper->seek);
 	Py_XDECREF(helper->tell);
 	Py_XDECREF(helper->write);
@@ -414,9 +418,6 @@ static int rw_close_th(SDL_RWops* context)
 	Py_XDECREF(helper->close);
 	PyMem_Del(helper);
 
-        PyThreadState_Swap(oldstate);
-        PyThreadState_Clear(helper->thread);
-        PyThreadState_Delete(helper->thread);
         PyEval_ReleaseLock();
 
 	SDL_FreeRW(context);
