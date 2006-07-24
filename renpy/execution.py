@@ -163,8 +163,8 @@ class Context(object):
                     if n not in nodes:
                         nodes.append(n)
             except:
-                if renpy.config.debug:
-                    raise
+                # We accept that sometimes prediction won't work.
+                pass
                 
                 
     def seen_current(self, ever):

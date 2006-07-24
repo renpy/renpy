@@ -75,6 +75,7 @@ def before_interact(root):
     # it becomes the new current widget.
 
     current = get_focused()
+
     if current is not None:
         current_name = current.full_focus_name
 

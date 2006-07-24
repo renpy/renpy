@@ -6,6 +6,8 @@ Major bug fixes that could affect many systems are indicated with !!!.
 Fixed a use-after-free bug in the sound playback code. The result of
 this bug was random crashing when changing music.
 
+Fixed bug that caused the wrong menu choice to be focused.
+
 There is now a new method of recoloring that allows one to specify two
 colors, one of which replaces white and one which replaces
 black. This is accessed through im.Twocolor. This effect can also be

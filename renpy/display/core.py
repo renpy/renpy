@@ -147,7 +147,7 @@ class Displayable(renpy.object.Object):
         worklist = [ self ]
 
         while worklist:
-            d = worklist.pop()
+            d = worklist.pop(0)
 
             if d is None:
                 continue

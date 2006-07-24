@@ -340,6 +340,8 @@ def menu(menuitems,
          choice_button_style='menu_choice_button',
          choice_chosen_button_style='menu_choice_chosen_button',
          location=None,
+         focus=None,
+         default=False,
          **properties):
     """
     This creates a new menu widget. Unlike the menu statement or
@@ -387,7 +389,9 @@ def menu(menuitems,
             renpy.ui.textbutton(label,
                                 style=button,
                                 text_style=text,
-                                clicked=clicked)
+                                clicked=clicked,
+                                focus=focus,
+                                default=default)
 
     renpy.ui.close()
 

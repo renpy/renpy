@@ -302,15 +302,12 @@ class TextStyle(object):
     def sizes(self, text):
         return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
-    def render(self, text, antialias, color, use_colors, time, at):
+    def render(self, text, antialias, color, black_color, use_colors, time, at):
 
         if use_colors:
-            color = self.color
-            black_color = self.black_color
-        else:
-            black_color = color
+            color = self.color or color
+            black_color = self.black_color or black_color
             
-
         font = self.f
 
         if isinstance(font, SFont):
@@ -371,7 +368,7 @@ class WidgetStyle(object):
     def sizes(self, widget):
         return self.width, self.height
 
-    def render(self, widget, antialias, color, foreground, st, at):
+    def render(self, widget, antialias, color, black_color, foreground, st, at):
 
         # If in the foreground
         if foreground:
@@ -745,8 +742,8 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].bold = self.style.bold
         tsl[-1].italic = self.style.italic
         tsl[-1].underline = self.style.underline
-        tsl[-1].color = self.style.color
-        tsl[-1].black_color = self.style.black_color
+        tsl[-1].color = None
+        tsl[-1].black_color = None
         tsl[-1].update()
 
 
@@ -1003,7 +1000,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, user_colors, length, time, at, child_pos):
+    def render_pass(self, r, xo, yo, color, black_color, user_colors, length, time, at, child_pos):
         """
         Renders the text to r at xo, yo. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -1037,7 +1034,7 @@ class Text(renpy.display.core.Displayable):
                     else:
                         return False
 
-                surf, (sw, sh) = ts.render(text, antialias, color, user_colors, time, at)
+                surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at)
 
                 actual_y = y + max_ascent - ts.get_ascent()
 
@@ -1105,11 +1102,11 @@ class Text(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
 
         if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, False, length, st, at, [ ])
+            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ])
 
         self.child_pos = [ ]
 
-        if self.render_pass(rv, xo, yo, self.style.color, True, length, st, at, self.child_pos):
+        if self.render_pass(rv, xo, yo, self.style.color, self.style.black_color, True, length, st, at, self.child_pos):
             if self.slow:
                 self.slow = False
                 if self.slow_done:
