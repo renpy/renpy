@@ -50,6 +50,14 @@ def block_rollback():
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
 
+def preload(img):
+    """
+    Preloads the supplied image or displayable.
+    """
+
+    img = renpy.display.im.image(img, loose=True)
+    renpy.game.interface.preloads.append(img)
+
 def scene_lists(index=-1):
     """
     Returns either the current scenelists object, or the one for the

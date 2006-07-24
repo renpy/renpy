@@ -832,6 +832,9 @@ class Interface(object):
         self.mouse = 'default'
         self.timeout_time = None
 
+        # Things to be preloaded.
+        self.preloads = [ ]
+
         # The time at which this draw occurs.
         self.frame_time = 0
 
@@ -973,6 +976,9 @@ class Interface(object):
 
         # These things can be done once per interaction.
 
+        preloads = self.preloads
+        self.preloads = [ ]
+
         try:
             renpy.game.after_rollback = False
             
@@ -982,7 +988,7 @@ class Interface(object):
             repeat = True
 
             while repeat:
-                repeat, rv = self.interact_core(**kwargs)
+                repeat, rv = self.interact_core(preloads=preloads, **kwargs)
             
             return rv
         
@@ -1001,6 +1007,7 @@ class Interface(object):
                       suppress_overlay=False,
                       suppress_underlay=False,
                       mouse='default',
+                      preloads=[],
                       ):
 
         """
@@ -1246,6 +1253,10 @@ class Interface(object):
                 # Predict images, if we haven't done so already.
                 if not did_prediction and not self.event_peek():
                     root_widget.predict(renpy.display.im.cache.preload_image)
+
+                    for w in preloads:
+                        w.predict(renpy.display.im.cache.preload_image)
+
                     renpy.game.context().predict(renpy.display.im.cache.preload_image)
                     did_prediction = True
 
