@@ -367,13 +367,38 @@ def predict_say(who, what):
             return [ ]
     
         
+def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, **kwargs):
+    """
+    This is the default function used by Character to predict images that
+    will be used by show_display_say. It's called with more-or-less the
+    same parameters as show_display_say, and it's expected to return a
+    list of images used by show_display_say.
+    """
+
+    rv = [ ]
+
+    if "background" in window_args:
+        rv.append(window_args["background"])
+    else:        
+        rv.append(getattr(renpy.game.style, window_args["style"]).background)
+
+    if image:
+        rv.append(renpy.display.im.image(who, True))
+
+
+    return rv
+
+
 def predict_display_say(who, what,
                         window_style='say_window',
                         window_properties={},
+                        what_style='say_dialogue',
+                        what_properties={},
+                        who_style='say_label',
                         image=False,
                         ctc=None,
                         show_args={},
-                        **kwargs):
+                        **who_properties):
     """
     This is the default function used by Character to predict images that
     will be used by display_say. It's called with more-or-less the
@@ -381,21 +406,24 @@ def predict_display_say(who, what,
     of images used by display_say.
     """
 
-    rv = [ ]
+    window_args = window_properties.copy()
+    window_args["style"] = window_style
 
-    if "background" in window_properties:
-        rv.append(window_properties["background"])
-    else:        
-        rv.append(getattr(renpy.game.style, window_style).background)
+    who_args = who_properties.copy()
+    who_args["style"] = who_style
 
-    if image:
-        rv.append(renpy.display.im.image(who, True))
+    what_args = what_properties.copy()
+    what_args["style"] = who_style
+
+    func = show_args.get("predict_function", predict_show_display_say)
+    rv = func(who, what, who_args=who_args, what_args=what_args, window_args=window_args, image=image,
+              **show_args) 
 
     if ctc:
         rv.append(ctc)
 
     return rv
-        
+
                   
 def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, **kwargs):
     """

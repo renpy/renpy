@@ -50,7 +50,11 @@ init:
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
 
-    $ e = Character(u'Eileen', color=(200, 255, 200, 255))
+#    $ e = Character(u'Eileen', color=(200, 255, 200, 255))
+    $ e = Character(u'Eileen', color=(200, 255, 200, 255),
+                    show_function=side_show_say,
+                    show_predict_function=side_show_predict_say,
+                    show_side="cyan.png")
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
@@ -1613,8 +1617,3 @@ init:
 #
 #     return
 
-label splashscreen:
-
-    show cyan twocolor
-
-    "Foo!"
