@@ -377,39 +377,80 @@ class Bar(renpy.display.core.Displayable):
         
     def render(self, width, height, st, at):
 
-        # Store the width for the event function to use.
+        # Store the width and height for the event function to use.
         self.width = width
+        self.height = height
 
-        lgutter = self.style.left_gutter
-        rgutter = self.style.right_gutter
+        if self.style.bar_invert:
+            value = self.range - self.value
+        else:
+            value = self.value
 
-        zone_width = width - lgutter - rgutter
+        if self.style.bar_vertical:
 
-        left_width = zone_width * self.value // self.range
-        right_width = zone_width - left_width
+            tgutter = self.style.top_gutter
+            bgutter = self.style.bottom_gutter
 
-        left_width += lgutter
-        right_width += rgutter
+            zone_height = height - tgutter - bgutter
 
-        rv = renpy.display.render.Render(width, height)
+            bottom_height = zone_height * value // self.range
+            top_height = zone_height - bottom_height
 
-        lsurf = render(self.style.left_bar, width, height, st, at)
-        rsurf = render(self.style.right_bar, width, height, st, at)
+            top_height += tgutter
+            bottom_height += bgutter
 
-        if self.style.thumb_shadow:
-            surf = render(self.style.thumb_shadow, width, height, st, at)
-            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+            rv = renpy.display.render.Render(width, height)
 
-        rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
-        rv.blit(rsurf.subsurface((left_width, 0, right_width, height)),
-                (left_width, 0))
+            tsurf = render(self.style.top_bar, width, height, st, at)
+            bsurf = render(self.style.bottom_bar, width, height, st, at)
 
-        if self.style.thumb:
-            surf = render(self.style.thumb, width, height, st, at)
-            rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+            if self.style.thumb_shadow:
+                surf = render(self.style.thumb_shadow, width, height, st, at)
+                rv.blit(surf, (0, top_height + self.style.thumb_offset))
 
-        if self.changed:
-            rv.add_focus(self, None, 0, 0, width, height)
+            rv.blit(tsurf.subsurface((0, 0, width, top_height)), (0, 0))
+            rv.blit(bsurf.subsurface((0, top_height, width, bottom_height)),
+                    (0, top_height))
+
+            if self.style.thumb:
+                surf = render(self.style.thumb, width, height, st, at)
+                rv.blit(surf, (0, top_height + self.style.thumb_offset))
+
+            if self.changed:
+                rv.add_focus(self, None, 0, 0, width, height)
+
+        else:
+
+            lgutter = self.style.left_gutter
+            rgutter = self.style.right_gutter
+
+            zone_width = width - lgutter - rgutter
+
+            left_width = zone_width * value // self.range
+            right_width = zone_width - left_width
+
+            left_width += lgutter
+            right_width += rgutter
+
+            rv = renpy.display.render.Render(width, height)
+
+            lsurf = render(self.style.left_bar, width, height, st, at)
+            rsurf = render(self.style.right_bar, width, height, st, at)
+
+            if self.style.thumb_shadow:
+                surf = render(self.style.thumb_shadow, width, height, st, at)
+                rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+
+            rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
+            rv.blit(rsurf.subsurface((left_width, 0, right_width, height)),
+                    (left_width, 0))
+
+            if self.style.thumb:
+                surf = render(self.style.thumb, width, height, st, at)
+                rv.blit(surf, (left_width + self.style.thumb_offset, 0))
+
+            if self.changed:
+                rv.add_focus(self, None, 0, 0, width, height)
 
         return rv
         
@@ -423,6 +464,10 @@ class Bar(renpy.display.core.Displayable):
 
         old_value = self.value
 
+        value = self.value
+        if self.style.bar_invert:
+            value = self.range - value
+
         grabbed = (renpy.display.focus.get_grab() is self)
         just_grabbed = False
             
@@ -434,24 +479,39 @@ class Bar(renpy.display.core.Displayable):
         if grabbed:
 
             if map_event(ev, "bar_decrease"):
-                self.value -= 1
+                value -= 1
 
             if map_event(ev, "bar_increase"):
-                self.value += 1
+                value += 1
 
             if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
 
-                lgutter = self.style.left_gutter
-                rgutter = self.style.right_gutter
-                zone_width = self.width - lgutter - rgutter
+                if self.style.bar_vertical:
+
+                    tgutter = self.style.left_gutter
+                    bgutter = self.style.right_gutter
+                    zone_width = self.height - tgutter - bgutter
+
+                    value = (self.height - bgutter - y) * self.range // zone_width
+
+                else:
+                    lgutter = self.style.left_gutter
+                    rgutter = self.style.right_gutter
+                    zone_width = self.width - lgutter - rgutter
                 
-                self.value = (x - lgutter) * self.range // zone_width
+                    value = (x - lgutter) * self.range // zone_width
 
-            if self.value < 0:
-                self.value = 0
+            if value < 0:
+                value = 0
 
-            if self.value > self.range:
-                self.value = self.range
+            if value > self.range:
+                value = self.range
+
+            if self.style.bar_invert:
+                value = self.range - value
+
+            self.value = value
+
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.focus.set_grab(None)

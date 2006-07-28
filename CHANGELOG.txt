@@ -15,6 +15,8 @@ applied to SFonts using the black_color style property. [doc]
 
 Now, renpy.predict can be called to programatically predict an image. [doc]
 
+Bars now support vertical mode, and invert mode. [expand, doc]
+
 
 New in Ren'Py 5.5.3
 -------------------

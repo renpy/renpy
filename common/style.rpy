@@ -319,10 +319,17 @@ init -1000:
         ######################################################################
         # Bar.
 
+        style.bar.bar_vertical = False
+        style.bar.bar_invert = False
+
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
+        style.bar.bottom_bar = Solid(bright_cyan)
+        style.bar.top_bar = Solid((0, 0, 0, 128))
         style.bar.left_gutter = 0
         style.bar.right_gutter = 0
+        style.bar.bottom_gutter = 0
+        style.bar.top_gutter = 0
         style.bar.thumb = None
         style.bar.thumb_offset = 0
         style.bar.thumb_shadow = None
