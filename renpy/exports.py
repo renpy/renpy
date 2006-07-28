@@ -50,9 +50,11 @@ def block_rollback():
 # def interact(**kwargs):
 #    return renpy.game.interface.interact(**kwargs)
 
-def preload(img):
+def predict(img):
     """
-    Preloads the supplied image or displayable.
+    Predicts the supplied image or displayable. This will cause it to be
+    loaded during the next (and only the next) interaction, if there's any
+    free time.
     """
 
     img = renpy.display.im.image(img, loose=True)

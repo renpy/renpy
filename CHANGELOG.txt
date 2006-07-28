@@ -13,7 +13,7 @@ colors, one of which replaces white and one which replaces
 black. This is accessed through im.Twocolor. This effect can also be
 applied to SFonts using the black_color style property. [doc]
 
-Now, renpy.preload can be called to programatically preload an image. [doc]
+Now, renpy.predict can be called to programatically predict an image. [doc]
 
 
 New in Ren'Py 5.5.3
