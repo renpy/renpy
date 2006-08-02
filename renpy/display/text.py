@@ -319,16 +319,14 @@ class TextStyle(object):
 
             surf = font.render(text, antialias, color)
 
-            if a != 255 and renpy.display.module.can_recolor:
+            if a != 255 and renpy.display.module.can_linmap:
 
                 if not surf.get_masks()[3]:
                     surf = surf.convert_alpha()
 
                 rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
-                alpha = renpy.display.im.ramp(0, a)
-                identity = renpy.display.im.identity
 
-                renpy.display.module.map(surf, rv, 256, 256, 256, alpha + 1)
+                renpy.display.module.linmap(surf, rv, 256, 256, 256, a + 1)
             
             else:
                 rv = surf
