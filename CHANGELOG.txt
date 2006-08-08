@@ -2,20 +2,27 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
-+++
-Fixed a use-after-free bug in the sound playback code. The result of
-this bug was random crashing when changing music.
+New in Ren'Py 5.5.4
+-------------------
 
-Fixed bug that caused the wrong menu choice to be focused.
+!!!
+Fixed a use-after-free issue in the sound playback code.
+
+!!!
+Fixed a regression that caused the wrong menu choice to be focused.
 
 There is now a new method of recoloring that allows one to specify two
 colors, one of which replaces white and one which replaces
 black. This is accessed through im.Twocolor. This effect can also be
-applied to SFonts using the black_color style property. [doc]
+applied to SFonts using the black_color style property. 
 
-Now, renpy.predict can be called to programatically predict an image. [doc]
+Now, the renpy.predict function can be called to programatically
+predict an image.
 
-Bars now support vertical mode, and invert mode. [expand, doc]
+Bars now support a vertical mode, in which the bar is laid out
+vertically instead of horizontally. They also support an invert mode,
+in which the value is represented by the right/top bar, rather then
+the left/bottom one.
 
 
 New in Ren'Py 5.5.3

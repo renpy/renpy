@@ -18,7 +18,8 @@ def extra_imports():
     import pysdlsound.nativemidi
     import pysdlsound.winmixer
     import pysdlsound.linmixer
-
+    import difflib
+    
 def bootstrap(renpy_base):
     
     name = os.path.basename(sys.argv[0])

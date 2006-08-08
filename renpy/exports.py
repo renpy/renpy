@@ -91,18 +91,29 @@ def image(name, img):
     images[name] = img
     
 
-def show(name, at_list=[ ], layer='master'):
+def show(name, at_list=[ ], layer='master', what=None):
     """
     This is used to execute the show statement, adding the named image
     to the screen as part of the master layer.
 
-    @param name: The name of the image to add to the screen. This is a tuple
-    of strings, one string for each component of the image name.
+    @param name: The name of the image to add to the screen. This may
+    be a tuple of strings, or a single string. In the latter case, it
+    is split on whitespace to make a tuple.
 
     @param at_list: The at list, a list of functions that are applied
     to the image when shown. The members of the at list need to
     be pickleable if sticky_positions is True.
+
+    @param layer: The layer the image will be shown on.
+
+    @param what: If not None, this is expected to be a
+    displayable. That displayable is shown, instead of going through
+    the normal lookup process. 
+
     """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
 
     sls = scene_lists()
     key = name[0]
@@ -113,7 +124,7 @@ def show(name, at_list=[ ], layer='master'):
 
         sls.sticky_positions[key] = at_list
 
-    img = renpy.display.image.ImageReference(name, style='image_placement')
+    img = what or renpy.display.image.ImageReference(name, style='image_placement')
     for i in at_list:
         img = i(img)
 
@@ -130,9 +141,16 @@ def hide(name, layer='master'):
     from the master layer. This is used to execute the hide
     statement.
     
-    @param name: The name of an image. A tuple of strings, but only
-    the first component of this tuple is ever accessed.
+    @param name: The name of the image to hide from the screen. This
+    may be a tuple of strings, or a single string. In the latter case,
+    it is split on whitespace to make a tuple. Only the first element
+    of the tuple is used.
+
+    @param layer: The layer this operates on.
     """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
 
     sls = scene_lists()
     key = name[0]

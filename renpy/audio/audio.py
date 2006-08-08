@@ -424,6 +424,10 @@ class Channel(object):
         self.synchro_start = synchro_start
 
     def get_playing(self):
+
+        if not pcm_ok:
+            return None
+
         if self.playing_midi:
             return midi.playing
         else:
@@ -433,6 +437,10 @@ class Channel(object):
         self.chan_volume = volume
             
     def get_pos(self):
+
+        if not pcm_ok:
+            return -1
+        
         if self.playing_midi:
             return midi.get_pos()
         else:

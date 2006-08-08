@@ -1634,6 +1634,8 @@ An alias for <kwd>im.Image</kwd>.
 
 <!-- func im.Recolor -->
 
+<!-- func im.Twocolor -->
+ 
 <!-- func im.Rotozoom -->
 
 <!-- func im.Tile -->
@@ -2261,6 +2263,8 @@ e "My name is shown in full, and in green."
 <!-- func renpy.predict_display_say -->
 
 <!-- func renpy.display_menu -->
+
+<!-- func renpy.predict -->
 
 <!-- func renpy.pause -->
 
@@ -3176,7 +3180,14 @@ high that the font will be on the screen.
 
 <prop name="color">
 The color in which the text will be displayed on the screen, as an
-RGBA tuple. This is ignored when an SFont is used.
+RGBA tuple. When an SFont is used, this is the color that white in
+that Sfont will be displayed as.
+</prop>
+
+<prop name="black_color">
+This should be an RGBA triple. When an SFont is used, this is the
+color the black will be mapped to. This property is ignored when a
+truetype font is used. The alpha channel in this color is ignored.
 </prop>
 
 <prop name="bold">
@@ -3473,38 +3484,68 @@ When the bar is drawn, the thumb's shadow is drawn first, followed by
 the left and right sides of the bar, followed by the thumb.
 </p>
 
+<prop name="bar_vertical">
+If true, the bar is drawn vertically, if false, horizontally.
+</prop>
+
+<prop name="bar_invert">
+If true, the value of the bar is represented on the right/top side of
+the bar, rather then the left/bottom side of the bar.
+</prop>
+
 <prop name="left_gutter">
-The size of the left gutter of the bar, in pixels.
+The size of the left gutter of a horizontal bar, in pixels.
 </prop>
 
 <prop name="right_gutter">
-The size of the right gutter of the bar, in pixels.
+The size of the right gutter of a horizontal bar, in pixels.
 </prop>
 
+<prop name="top_gutter">
+The size of the top gutter of a vertical bar, in pixels.
+</prop>
+
+<prop name="bottom_gutter">
+The size of the bottom gutter of a vertical bar, in pixels.
+</prop>
+
+
 <prop name="left_bar">
-A Displayable that is used to draw the left side of the bar. This
+A Displayable that is used to draw the left side of a horizontal bar. This
 displayable is first rendered at the full size of the bar, and then
 cropped so only the left side is visible.
 </prop>
 
 <prop name="right_bar">
-A Displayable that is used to draw the right side of the bar. This
+A Displayable that is used to draw the right side of a horizontal bar. This
 displayable is first rendered at the full size of the bar, and then
 cropped so only the right side is visible.
 </prop>
 
+<prop name="top_bar">
+A Displayable that is used to draw the top of a vertical bar. This
+displayable is first rendered at the full size of the bar, and then
+cropped so only the top is visible.
+</prop>
+
+<prop name="bottom_bar">
+A Displayable that is used to draw the bottom of a vertical bar. This
+displayable is first rendered at the full size of the bar, and then
+cropped so only the bottom is visible.
+</prop>
+
 <prop name="thumb">
-If not None, this is a thumb image that is drawn near the break
-between the left and right side of the bar.
+If not None, this is a thumb image that is drawn over the break
+between the sides of the bar.
 </prop>
 
 <prop name="thumb_shadow">
 If not None, a shadow of the thumb that is drawn underneath the
-break between the left and right side of the bar.
+break between the sides of the bar.
 </prop>
 
 <prop name="thumb_offset">
-The horizontal update between the division in the bar and the left
+The offset between the division in the bar and the
 side of the thumb, in pixels. This will often be negative, so that the
 thumb overlaps the division to some extent.
 </prop>
