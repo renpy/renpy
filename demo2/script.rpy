@@ -1327,7 +1327,7 @@ label demonstrate:
 
             e "That's it for multimedia."
 
-        "Image Operations, updated in 5.5.1":
+        "Image Operations, updated in 5.5.4":
 
             e "Image operations allow one to manipulate images as they
                are loaded in."
@@ -1614,6 +1614,5 @@ init:
 #
 #     return
 
-label splashscreen:
 
     
