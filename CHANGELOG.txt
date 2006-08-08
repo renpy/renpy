@@ -30,7 +30,7 @@ components. The renpy.show function also takes a new parameter, what,
 giving what will be shown (instead of looking it up as is usual).
 
 There is a new side_image extra, that supports showing images to the
-side of text.
+side of dialogue.
 
 New in Ren'Py 5.5.3
 -------------------
