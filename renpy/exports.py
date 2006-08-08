@@ -124,7 +124,10 @@ def show(name, at_list=[ ], layer='master', what=None):
 
         sls.sticky_positions[key] = at_list
 
-    img = what or renpy.display.image.ImageReference(name, style='image_placement')
+    if what is None:
+        what = name
+
+    img = renpy.display.image.ImageReference(what, style='image_placement')
     for i in at_list:
         img = i(img)
 

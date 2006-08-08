@@ -50,7 +50,8 @@ class ImageReference(renpy.display.core.Displayable):
 
     def __init__(self, name, **properties):
         """
-        @param name: A tuple of strings, the name of the image.
+        @param name: A tuple of strings, the name of the image. Or else
+        a displayable, containing the image directly.
         """
         
         super(ImageReference, self).__init__(**properties)
@@ -61,6 +62,12 @@ class ImageReference(renpy.display.core.Displayable):
         import renpy.exports as exports
 
         name = self.name
+
+        if isinstance(name, renpy.display.core.Displayable):
+            self.target = name
+            return
+
+        
         parameters = [ ]
 
         def error(msg):

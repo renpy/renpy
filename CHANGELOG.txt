@@ -24,6 +24,13 @@ vertically instead of horizontally. They also support an invert mode,
 in which the value is represented by the right/top bar, rather then
 the left/bottom one.
 
+The renpy.show and renpy.hide functions now take string image names,
+as well as tuples containing image names broken up into
+components. The renpy.show function also takes a new parameter, what,
+giving what will be shown (instead of looking it up as is usual).
+
+There is a new side_image extra, that supports showing images to the
+side of text.
 
 New in Ren'Py 5.5.3
 -------------------
