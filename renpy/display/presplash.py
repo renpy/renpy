@@ -31,9 +31,12 @@ def start(_gamedir):
 
     gamedir = _gamedir
 
-    if not os.path.exists(gamedir + "/presplash.png"):
+    for gamedir in [ _gamedir, 'game', 'data' ]:
+        if os.path.exists(gamedir + "/presplash.png"):
+            break
+    else:
         return
-
+        
     active = True
 
     os.environ['SDL_VIDEO_CENTERED'] = "1"

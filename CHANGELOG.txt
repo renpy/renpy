@@ -2,6 +2,10 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
+We now look for the presplash image in the "game" and "data" directories,
+as well as the directory derived from the script filename.
+
+
 New in Ren'Py 5.5.4
 -------------------
 
