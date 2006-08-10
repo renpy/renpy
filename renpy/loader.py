@@ -215,7 +215,7 @@ class RenpyImporter(object):
         mod.__file__ = filename
         mod.__loader__ = self
         mod.__path__ = [ ]
-        exec load(filename) in mod.__dict__
+        exec load(filename).read() in mod.__dict__
         return mod
 
     def get_data(self, filename):
