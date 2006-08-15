@@ -1569,7 +1569,7 @@ label define_hyperlink:
 # These can be deleted without issue, if you do not want them.
 
 init:
-
+    
     # Change some styles, to add images in the background of
     # the menus and windows.
     $ style.mm_root.background = Image("mainmenu.png")

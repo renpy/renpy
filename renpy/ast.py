@@ -7,6 +7,7 @@
 
 import renpy
 import re
+import time
 
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):
@@ -34,10 +35,13 @@ class PyCode(object):
         
         PyCode.extent.append(self)
 
-    def __init__(self, source, loc=('<none>', 1, 0), mode='exec'):
+    def __init__(self, source, loc=('<none>', 1), mode='exec'):
         # The source code.
         self.source = source
-        self.location = loc
+
+        # The time is necessary so we can disambiguate between Python
+        # blocks on the same line in different script versions.
+        self.location = loc + ( int(time.time()), )
         self.mode = mode
 
         # This will be initialized later on, after we are serialized.
@@ -68,10 +72,6 @@ class Node(object):
     @ivar linenumber: The line number of the line on which this node is defined.
     """
     
-    # A map from filename to the largest serial number assigned to
-    # a node from that file.
-    serials = { }
-
     __slots__ = [
         'name',
         'filename',
@@ -87,11 +87,18 @@ class Node(object):
         logical line on which this Node node starts.
         """
 
-        self.filename, self.linenumber, version = loc
+        self.filename, self.linenumber  = loc
 
-        self.serials.setdefault(self.filename, 0)
-        self.name = (self.filename, version, self.serials[self.filename])
-        self.serials[self.filename] += 1
+        self.name = None
+
+    def diff_info(self):
+        """
+        Returns a tuple of diff info about ourself. This is used to
+        compare Nodes to see if they should be considered the same node. The
+        tuple returned must be hashable.
+        """
+
+        return ( id(self), )
 
     def get_children(self):
         """
@@ -177,6 +184,9 @@ class Say(Node):
         'with',
         'interact',
         ]
+
+    def diff_info(self):
+        return (Say, self.who, self.what)
 
     def __init__(self, loc, who, what, with, interact=True):
 
@@ -289,6 +299,9 @@ class Label(Node):
         self.name = name
         self.block = block
 
+    def diff_info(self):
+        return (Label, self.name)
+
     def get_children(self):
         return self.block 
 
@@ -330,6 +343,9 @@ class Python(Node):
         # renpy.game.exception_info = old_ei
 
 
+    def diff_info(self):
+        return (Python, self.code.source)
+
     def execute(self):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
         return self.next
@@ -353,6 +369,9 @@ class Image(Node):
         
         self.imgname = name
         self.code = PyCode(expr, loc=loc, mode='eval')
+
+    def diff_info(self): 
+        return (Image, tuple(self.imgname))
 
     def execute(self):
         
@@ -391,6 +410,9 @@ class Show(Node):
 
         self.imspec = imspec
 
+    def diff_info(self): 
+        return (Show, tuple(self.imspec[0]))
+
     def execute(self):
 
         name, at_list, layer = self.imspec
@@ -423,6 +445,15 @@ class Scene(Node):
 
         self.imspec = imgspec
         self.layer = layer
+
+    def diff_info(self): 
+
+        if self.imspec:
+            data = tuple(self.imspec[0])
+        else:
+            data = None
+
+        return (Scene, data)
 
     def execute(self):
 
@@ -461,6 +492,9 @@ class Hide(Node):
 
         self.imspec = imgspec
 
+    def diff_info(self): 
+        return (Hide, tuple(self.imspec[0]))
+
     def execute(self):
 
         renpy.exports.hide(self.imspec[0], self.imspec[2])
@@ -487,6 +521,9 @@ class With(Node):
         self.expr = expr
         self.paired = paired
 
+    def diff_info(self):
+        return (With, self.expr)
+        
     def execute(self):
 
         trans = renpy.python.py_eval(self.expr)
@@ -524,6 +561,10 @@ class Call(Node):
         self.label = label
         self.expression = expression
 
+
+    def diff_info(self):
+        return (Call, self.label, self.expression)
+
     def execute(self):
 
         label = self.label
@@ -543,6 +584,9 @@ class Return(Node):
     __slots__ = [ ]
 
     # No __init__ needed.
+
+    def diff_info(self):
+        return (Return, )
 
     # We don't care what the next node is.
     def chain(self, next):
@@ -573,6 +617,9 @@ class Menu(Node):
         self.items = items
         self.set = set
         self.with = with
+
+    def diff_info(self):
+        return (Menu,)
 
     def get_children(self):
         rv = [ ]
@@ -645,6 +692,9 @@ class Jump(Node):
         self.target = target
         self.expression = expression
 
+    def diff_info(self):
+        return (Jump, self.target, self.expression)
+
     # We don't care what our next node is.
     def chain(self, next):
         return
@@ -669,6 +719,9 @@ class Pass(Node):
 
     __slots__ = [ ]
 
+    def diff_info(self):
+        return (Pass,)
+
     def execute(self):
         return self.next
 
@@ -684,6 +737,9 @@ class While(Node):
 
         self.condition = condition
         self.block = block
+
+    def diff_info(self):
+        return (While, self.condition)
 
     def get_children(self):
         return self.block
@@ -715,6 +771,9 @@ class If(Node):
         super(If, self).__init__(loc)
 
         self.entries = entries
+
+    def diff_info(self):
+        return (If,)
 
     def get_children(self):
         rv = [ ]

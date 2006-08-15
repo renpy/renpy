@@ -247,11 +247,10 @@ class Lexer(object):
         ]
         
 
-    def __init__(self, block, version):
+    def __init__(self, block):
 
         self.block = block        
         self.eob = False
-        self.version = version
         
         self.line = -1
         
@@ -383,7 +382,7 @@ class Lexer(object):
         associated with this line.
         """
 
-        return Lexer(self.subblock, self.version)
+        return Lexer(self.subblock)
         
     def string(self):
         """
@@ -666,11 +665,11 @@ class Lexer(object):
 
     def get_location(self):
         """
-        Returns a (filename, line number, file version) tuple representing the current
+        Returns a (filename, line number) tuple representing the current
         physical location of the start of the current logical line.
         """
 
-        return self.filename, self.number, self.version
+        return self.filename, self.number
 
     def require(self, thing):
         """
@@ -1274,10 +1273,9 @@ def parse(fn):
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
-    version = os.stat(fn).st_mtime
     lines = list_logical_lines(fn)
     nested = group_logical_lines(lines)
 
-    l = Lexer(nested, version)
+    l = Lexer(nested)
     
     return parse_block(l)

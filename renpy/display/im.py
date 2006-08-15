@@ -737,8 +737,8 @@ class Recolor(ImageBase):
     linearly between 0 and the supplied color.
     """
 
-    def __init__(self, im, rmul=identity, gmul=identity, bmul=identity,
-                 amul=identity, force_alpha=False, **properties):
+    def __init__(self, im, rmul=255, gmul=255, bmul=255,
+                 amul=255, force_alpha=False, **properties):
 
         im = image(im)
 

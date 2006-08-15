@@ -6,6 +6,7 @@ import renpy
 import os.path
 import os
 import imp
+import difflib
 
 from pickle import loads, dumps
 
@@ -17,6 +18,27 @@ class ScriptError(Exception):
     Exception that is raised if the script is somehow inconsistent,
     or otherwise wrong.
     """
+
+def collapse_stmts(stmts):
+    """
+    Returns a flat list containing every statement in the tree
+    stmts.
+    """
+
+    all_stmts = [ ]
+
+    def extend_all(block_list):
+        all_stmts.extend(block_list)
+
+        for i in block_list:
+            extend_all(i.get_children())
+
+    extend_all(stmts)
+
+    return all_stmts
+
+
+    
 
 class Script(object):
     """
@@ -116,18 +138,64 @@ class Script(object):
 
         # Do some generic init here.
 
-    def load_file(self, dir, fn, node_callback):
+    def assign_names(self, stmts, fn):
+        # Assign names to statements that don't have one already.
 
+        all_stmts = collapse_stmts(stmts)
+
+        version = int(os.stat(fn).st_mtime)
+        serial = 0
+
+        for s in all_stmts:
+            if s.name is None:
+                s.name = (fn, version, serial)
+                serial += 1
+
+
+    def merge_names(self, old_stmts, new_stmts):
+
+        old_stmts = collapse_stmts(old_stmts)
+        new_stmts = collapse_stmts(new_stmts)
+
+        old_info = [ i.diff_info() for i in old_stmts ]
+        new_info = [ i.diff_info() for i in new_stmts ]
+
+        sm = difflib.SequenceMatcher(None, old_info, new_info)
+
+        for oldl, newl, count in sm.get_matching_blocks():
+            for i in range(count):
+                old = old_stmts[oldl + i]
+                new = new_stmts[newl + i]
+
+                if new.name is None:
+                    new.name = old.name
+
+    def load_file_core(self, dir, fn):
+        
         if fn.endswith(".rpy"):
 
             if not dir:
                 raise Exception("Cannot load rpy file %s from inside an archive." % fn) 
 
-            stmts = renpy.parser.parse(dir + "/" + fn)
+            fullfn = dir + "/" + fn
+
+            stmts = renpy.parser.parse(fullfn)
 
             data = { }
             data['version'] = script_version
             data['key'] = renpy.game.options.lock or 'unlocked'
+
+
+            # See if we have a corresponding .rpyc file. If so, then
+            # we want to try to upgrade our .rpy file with it.
+            try:
+                old_data, old_stmts = self.load_file_core(dir, fn + "c")
+                self.merge_names(old_stmts, stmts)
+                del old_stmts
+            except:
+                pass
+
+            self.assign_names(stmts, fullfn)
 
             try:
                 f = file(dir + "/" + fn + "c", "wb")
@@ -140,7 +208,7 @@ class Script(object):
 
             # When locking, regenerate all files.
             if renpy.game.options.lock:
-                return False
+                return None, None
             
             f = renpy.loader.load(fn)
 
@@ -148,18 +216,31 @@ class Script(object):
                 data, stmts = loads(f.read().decode('zlib'))
             except:
                 raise
-                return False
+                return None, None
 
             if not isinstance(data, dict):
-                return False
+                return None, None
 
             if data['version'] != script_version:
-                return False
+                return None, None
 
             f.close()
         else:
+            return None, None
+
+        return data, stmts
+
+
+
+    def load_file(self, dir, fn, node_callback):
+
+
+        # Actually do the loading.
+        data, stmts = self.load_file_core(dir, fn)
+        if data is None:
             return False
 
+        # Check the key.
         if self.key is None:
             self.key = data['key']
         elif self.key != data['key']:
@@ -168,15 +249,7 @@ class Script(object):
 
         # All of the statements found in file, regardless of nesting
         # depth.
-        all_stmts = [ ]
-
-        def extend_all(block_list):
-            all_stmts.extend(block_list)
-
-            for i in block_list:
-                extend_all(i.get_children())
-
-        extend_all(stmts)
+        all_stmts = collapse_stmts(stmts)
 
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
