@@ -86,10 +86,33 @@ def image(name, img):
     if not renpy.game.init_phase:
         raise Exception("Images may only be declared inside init blocks.")
 
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
     img = renpy.display.im.image(img, loose=True)
 
     images[name] = img
     
+
+def showing(name, layer='master'):
+    """
+    This returns true if an image with the same tag as that found in
+    the suppled image name is present on the given layer.
+
+    @param name may be a tuple of strings, or a single string. In the latter
+    case, it is split on whitespace to make a tuple. The first element
+    of the tuple is used as the image tag.
+
+    @param layer is the name of the layer.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    sls = scene_lists()
+    key = name[0]
+
+    return sls.showing(layer, key)
 
 def show(name, at_list=[ ], layer='master', what=None):
     """

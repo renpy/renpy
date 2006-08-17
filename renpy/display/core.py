@@ -288,21 +288,13 @@ class SceneLists(object):
     This stores the current scene lists that are being used to display
     things to the user. 
 
-    Scene lists are lists of triples. The elements of the triple are
-    (key, time, displayable), where key is a key that can be used to
-    remove things from the list, time is the time that this entry was
-    first added to a list, and drawable is the thing that is being
-    drawn.
-
-    @ivar master: The current master display list.
-    @ivar transient: The current transient display list.
-    @ivar overlay: The current overlay display list.
-
     @ivar focused: The widget that is currently focused.
     """
 
     def __init__(self, oldsl=None):
 
+        # A map from layer name -> list of
+        # (key, show time, animation time, displayable) 
         self.layers = { }
          
         if oldsl:
@@ -449,6 +441,18 @@ class SceneLists(object):
 
             l[:] = ll
             
+
+    def showing(self, layer, key):
+        """
+        Returns true of tan entry with the given key is found in the
+        given layer. Returns False otherwise. Key should be a string.
+        """
+
+        for k, st, at, d in self.layers[layer]:
+            if k == key:
+                return True
+
+        return False
     
 
 class Display(object):

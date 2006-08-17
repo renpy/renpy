@@ -12,8 +12,8 @@ changed script, and come back to roughly the spot where you left
 off. (Previously, the closest we would come is the prior label.) Of
 course, variables are given the values they when the game was saved.
 
-
-
+Added a function, renpy.showing() that allows us to check to see if
+an image is shown or not.
 
 We now look for the presplash image in the "game" and "data" directories,
 as well as the directory derived from the script filename.
