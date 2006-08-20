@@ -247,8 +247,11 @@ class Lexer(object):
         ]
         
 
-    def __init__(self, block):
+    def __init__(self, block, init=False):
 
+        # Are we underneath an init block?
+        self.init = init
+        
         self.block = block        
         self.eob = False
         
@@ -376,13 +379,15 @@ class Lexer(object):
             self.error('%s expects a non-empty block.' % stmt)
 
 
-    def subblock_lexer(self):
+    def subblock_lexer(self, init=False):
         """
         Returns a new lexer object, equiped to parse the block
         associated with this line.
         """
 
-        return Lexer(self.subblock)
+        init = self.init or init
+
+        return Lexer(self.subblock, init=init)
         
     def string(self):
         """
@@ -1141,6 +1146,10 @@ def parse_statement(l):
     
     ### Image statement.
     if l.keyword('image'):
+
+        if not l.init:
+            l.error('image statements may only appear in init blocks.')
+        
         name = parse_image_name(l)
         l.require('=')
         expr = l.rest()
@@ -1201,7 +1210,7 @@ def parse_statement(l):
         l.expect_eol()
         l.expect_block('init statement')
 
-        block = parse_block(l.subblock_lexer())
+        block = parse_block(l.subblock_lexer(True))
 
         l.advance()
         return ast.Init(loc, block, priority)

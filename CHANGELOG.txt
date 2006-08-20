@@ -7,8 +7,6 @@ New in Ren'Py 5.5.5
 
 New character art.
 
-image outside of init.
-
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
 the script. This means that it's now usually possible to load in a
@@ -35,6 +33,11 @@ when they occured in interactions beginning with a transition, when no
 events occured during the interaction. A symptom of the bug was that
 if the user moved the mouse, the pause would immediately terminate and
 the game would advance.
+
+Ren'Py now checks, when parsing a file, that image statements are
+contained within init blocks. It has long been an error to run an
+image statement outside of an init block, so this primarily checks for
+useless init statements.
 
 We now look for the presplash image in the "game" and "data" directories,
 as well as the directory derived from the script filename.
