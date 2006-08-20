@@ -2,10 +2,12 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
-New in Ren'Py 5.6.0
+New in Ren'Py 5.5.5
 -------------------
 
 New character art.
+
+image outside of init.
 
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
@@ -13,6 +15,17 @@ the script. This means that it's now usually possible to load in a
 changed script, and come back to roughly the spot where you left
 off. (Previously, the closest we would come is the prior label.) Of
 course, variables are given the values they when the game was saved.
+
+This allows us to implement a new feature. Pressing shift+R when
+config.developer is set saves the game, reloads the script from disk,
+and then reloads the game. Doing this generally brings you to the last
+unchanged line seen before saving, making it easy to edit the script
+and then see your changes in action. Like many developer features,
+this may not work perfectly in all circumstances.
+
+Returning to the main menu no longer causes init code to be
+re-run. This improves the speed of returning to the main menu, while
+bringing its semantics inline with loading a game.
 
 Added a function, renpy.showing() that allows us to check to see if
 an image is shown or not. (Suggested by Blue Lemma.)

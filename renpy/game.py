@@ -21,10 +21,6 @@ searchpath = [ ]
 # The options that were read off the command line.
 options = None
 
-# A copy of the uninitialized store, used to restore the store
-# after a restart.
-uninit_store = None
-
 # A shallow copy of the store dictionary made at the end of the init
 # phase. If a key in here points to the same value here as it does in
 # the store, it is not saved.
@@ -134,6 +130,12 @@ class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
     destroying the store and config and so on.
+    """
+
+class UtterRestartException(Exception):
+    """
+    An exception of this type forces an even harder restart, causing
+    Ren'Py and the script to be reloaded.
     """
 
 class QuitException(Exception):

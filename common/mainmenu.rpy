@@ -28,6 +28,8 @@ label _start:
 
     call _check_module from _call__check_module_1
 
+    call _load_reload_game from _call__load_reload_game_1
+
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
 

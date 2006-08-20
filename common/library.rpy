@@ -168,7 +168,11 @@ init -500:
                 config.skipping = "fast"
 
         def reload_game():
-            pass
+            if not config.developer:
+                return
+
+            renpy.call_in_new_context("_save_reload_game")
+
 
 
         # The default keymap.
@@ -247,7 +251,48 @@ label _check_module:
                             _(u"An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d.") % (renpy.module_version(), library.module_version) + "\n\n" + module_info)
 
     return
+    
+
                          
+label _save_reload_game:
+    python hide:
+        renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+                
+        ui.add(Solid((0, 0, 0, 255)))
+        ui.text("Saving game...",
+                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+
+        renpy.pause(0)
+        renpy.save("reload", "reload save game")
+
+        persistent._reload_save = "reload"
+        
+        ui.add(Solid((0, 0, 0, 255)))
+        ui.text("Reloading script...",
+                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+
+        renpy.pause(0)
+        
+        renpy.utter_restart()
+
+label _load_reload_game:
+
+    if not persistent._reload_save:
+        return
+
+    python hide:
+        save = persistent._reload_save
+        persistent._reload_save = 0
+
+        ui.add(Solid((0, 0, 0, 255)))
+        ui.text("Reloading game...",
+                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+
+        renpy.pause(0)
+        
+        renpy.load(save)
+
+    return
 
 
 init -401:

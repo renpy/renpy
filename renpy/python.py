@@ -734,7 +734,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
         
         # Restore the store.
-        store = vars(renpy.store)
+        store = renpy.store.__dict__
         store.clear()
         store.update(renpy.game.clean_store)
 

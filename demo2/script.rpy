@@ -25,12 +25,11 @@ init:
     # library.script_version and config.screen_width lines.
     $ theme.roundrect()
 
-
     # Set this to true to enable some developer-specific
     # functionality. It should be false in a finished game.
     # Read the "Developer Tools" section of the reference
     # to see what this enables.
-    $ config.developer = False
+    $ config.developer = True
 
     # Declare the images that are used in the program.
 

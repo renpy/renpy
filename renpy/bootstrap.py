@@ -91,10 +91,20 @@ def bootstrap(renpy_base):
         print renpy.version
         sys.exit(0)
 
-    renpy.game.options = options
-
     try:
-        renpy.main.main(options.game)
+
+        keep_running = True
+        while keep_running:
+            try:
+                renpy.game.options = options
+                renpy.main.main(options.game)
+                keep_running = False
+
+            except renpy.game.UtterRestartException:
+
+                # On an UtterRestart, reload Ren'Py.
+                renpy.reload_all()
+                continue
             
     except Exception, e:
         import codecs

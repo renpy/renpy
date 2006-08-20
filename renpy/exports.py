@@ -827,13 +827,18 @@ def take_screenshot(scale):
 
 def full_restart():
     """
-    This causes a full restart of Ren'Py. This clears the store and
-    configuration, and re-runs init before branching off to
-    start. It's very close to what happens when we quit out and re-run
-    the interpreter, save for some caches not being cleared.
+    This causes a full restart of Ren'Py. 
     """
 
     raise renpy.game.FullRestartException()
+
+def utter_restart():
+    """
+    This causes an utter restart of Ren'Py. This reloads the script and
+    re-runs initialization.
+    """
+
+    raise renpy.game.UtterRestartException()
 
 def quit():
     """

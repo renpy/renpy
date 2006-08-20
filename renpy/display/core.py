@@ -856,7 +856,8 @@ class Interface(object):
 
     def get_screenshot(self):
         """
-        Gets the current screenshot, as a string containing a TGA file.
+        Gets the current screenshot, as a string. Returns None if there isn't
+        a current screenshot.
         """
 
         if not self.screenshot:
