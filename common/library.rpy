@@ -167,6 +167,9 @@ init -500:
             if config.fast_skipping or config.developer:
                 config.skipping = "fast"
 
+        def reload_game():
+            pass
+
 
         # The default keymap.
         km = renpy.Keymap(
@@ -180,6 +183,7 @@ init -500:
             hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
             launch_editor = renpy.launch_editor,
             dump_styles = dump_styles,
+            reload_game = reload_game,
             )
 
         config.underlay = [ km ]

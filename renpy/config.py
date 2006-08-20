@@ -141,6 +141,7 @@ keymap = dict(
     hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
     launch_editor = [ 'E' ],
     dump_styles = [ 'Y' ],
+    reload_game = [ 'R' ],
 
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

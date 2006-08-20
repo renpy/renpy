@@ -84,7 +84,7 @@ class Transition(renpy.display.core.Displayable):
         self.events = True
         
     def event(self, ev, x, y, st):
-        if self.events:
+        if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.new_widget.event(ev, x, y, st)
         else:
             return None

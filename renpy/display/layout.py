@@ -64,6 +64,7 @@ class Container(renpy.display.core.Displayable):
 
         self.children = []
         self.child = None
+        self.offsets = []
 
         for i in args:
             self.add(i)
@@ -85,17 +86,20 @@ class Container(renpy.display.core.Displayable):
             return
 
         self.children.append(child)
+        self.offsets.append((0, 0))
         self.child = child
 
     def render(self, width, height, st, at):
 
         rv = render(self.child, width, height, st, at)
+        self.children = [ self.child ]
         self.offsets = [ (0, 0) ]
         self.sizes = [ rv.get_size() ]
 
         return rv
 
     def event(self, ev, x, y, st):
+
         children_offsets = zip(self.children, self.offsets)
         children_offsets.reverse()
 

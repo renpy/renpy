@@ -5,6 +5,8 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.0
 -------------------
 
+New character art.
+
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
 the script. This means that it's now usually possible to load in a
@@ -13,7 +15,13 @@ off. (Previously, the closest we would come is the prior label.) Of
 course, variables are given the values they when the game was saved.
 
 Added a function, renpy.showing() that allows us to check to see if
-an image is shown or not.
+an image is shown or not. (Suggested by Blue Lemma.)
+
+Fixed a bug, reported by Shaja, that prevented pauses from terminated
+when they occured in interactions beginning with a transition, when no
+events occured during the interaction. A symptom of the bug was that
+if the user moved the mouse, the pause would immediately terminate and
+the game would advance.
 
 We now look for the presplash image in the "game" and "data" directories,
 as well as the directory derived from the script filename.
