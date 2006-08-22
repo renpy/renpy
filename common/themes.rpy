@@ -198,7 +198,7 @@ init -402:
             style.button.insensitive_background = RoundRect(disabled)
             style.button_text.insensitive_color = disabled_text
 
-            style.selected_button_text.color = widget_selected 
+            style.button_text.selected_color = widget_selected 
 
             style.mm_root.background = mm_root
             style.gm_root.background = gm_root
@@ -239,13 +239,9 @@ init -402:
             if centered:
                 style.prefs_button.xpos = 0.5
                 style.prefs_button.xanchor = 0.5
-                style.prefs_selected_button.xpos = 0.5
-                style.prefs_selected_button.xanchor = 0.5
             else:
                 style.prefs_button.xpos = 1.0
                 style.prefs_button.xanchor = 1.0
-                style.prefs_selected_button.xpos = 1.0
-                style.prefs_selected_button.xanchor = 1.0
 
 
             style.bar.ymaximum = rrslider_height

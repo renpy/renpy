@@ -89,7 +89,9 @@ init -500:
             style = type
 
             if selected and not disabled:
-                style += "_selected"
+                role = "selected_"
+            else:
+                role = ""
 
             if disabled:
                 clicked = None
@@ -97,7 +99,7 @@ init -500:
             style = style + "_button"
             text_style = style + "_text"
 
-            ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, **properties)
+            ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, role=role, **properties)
 
         def _label_factory(label, type, properties={}):
             """

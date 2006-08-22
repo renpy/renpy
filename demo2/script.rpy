@@ -56,6 +56,14 @@ init:
 
 label start:
 
+    "Foo."
+
+    $ ui.textbutton("Foo", clicked=ui.returns("foo"))
+    $ ui.interact()
+
+    with Dissolve(3.0)
+
+
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
     # saved and restored with a save file.
@@ -1569,18 +1577,13 @@ label define_hyperlink:
 
 init:
     
-    # Change some styles, to add images in the background of
-    # the menus and windows.
-    $ style.mm_root.background = Image("mainmenu.png")
-    $ style.gm_root.background = Image("gamemenu.png")
+    # Change the look of the main menu.
+    $ style.mm_root.background = Image("mainmenu.jpg")
+    $ style.mm_menu_window.yanchor = 0
+    $ style.mm_menu_window.ypos = .05
+
+    # Change the look of the text window.    
     $ style.window.background = Frame("window.png", 24, 24)
-
-    $ style.menu_choice_button.background = RoundRect((0, 60, 120, 220))
-    $ style.menu_choice_button.hover_background = RoundRect((0, 80, 160, 220))
-
-    # Change some styles involving the margins and padding of the
-    # default window. (We need this, as we use a frame image that
-    # includes a drop-shadow.)
     $ style.window.xmargin = 0
     $ style.window.ymargin = 0
     $ style.window.xpadding = 12
@@ -1613,5 +1616,3 @@ init:
 #
 #     return
 
-
-    

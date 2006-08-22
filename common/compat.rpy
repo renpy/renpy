@@ -32,3 +32,42 @@ init 1000:
         # Compat for SFont recoloring.
         if compat(5, 1, 1):
             config.recolor_sfonts = False
+
+
+# Style compatibility.
+init -999:
+    python:
+
+        _selected_compat = [ ]
+
+        class _SelectedCompat(object):
+
+            def __init__(self, target):
+                self.__dict__["target"] = target
+                self.__dict__["property_updates"] = [ ]
+
+                _selected_compat.append(self)
+
+            def __setattr__(self, k, v):
+                
+                self.property_updates.append((k, v))
+
+            def apply(self):
+                target = getattr(style, self.target)
+                for k, v in self.property_updates:
+                    setattr(target, "selected_" + k, v)
+
+        style.selected_button = _SelectedCompat('button')
+        style.selected_button_text = _SelectedCompat('button_text')
+        style.gm_nav_selected_button = _SelectedCompat('gm_nav_button')
+        style.gm_nav_selected_button_text = _SelectedCompat('gm_nav_button_text')
+        style.prefs_selected_button = _SelectedCompat('prefs_button')
+        style.prefs_selected_button_text = _SelectedCompat('prefs_button_text')
+    
+
+init 1000:
+
+    python hide:
+        
+        for scs in _selected_compat:
+            scs.apply()

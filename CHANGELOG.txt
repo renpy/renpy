@@ -2,10 +2,32 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
-New in Ren'Py 5.5.5
+New in Ren'Py 5.6.0
 -------------------
 
+Layers as subparts of the screen.
+
+Improved Move, MoveTransition, etc.
+
+show image
+
+menu -> choice
+
+H/Middle dismisses no-window-mode.
+
+Easy way to leave window up during transitions.
+
+Implicit with None (default)
+
+Compat for styles. 
+
+Doc styles.
+
+Easy styles (etc.)
+
 New character art.
+
+Errors in .rpy files.
 
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of

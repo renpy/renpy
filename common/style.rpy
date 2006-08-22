@@ -69,8 +69,6 @@ init -1000:
         # button
         style.create('button', 'default', '(window, sound, hover) The default style used for buttons in the main and game menus.')
         style.create('button_text', 'default', '(text, hover) The default style used for the label of a button.')
-        style.create('selected_button', 'button', '(window, hover) The style that is used for a selected button (for example, the active screen or a chosen preference).')
-        style.create('selected_button_text', 'button_text', '(text, hover) The style that is used for the label of a selected button.')
 
         # bar
         style.create('bar', 'default', '(bar) The style that is used by default for bars.')
@@ -89,10 +87,8 @@ init -1000:
         style.create("gm_root", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
         style.create("gm_nav_frame", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
         style.create("gm_nav_vbox", "thin_vbox", "(box) The style that is used by the box inside the gm_nav_frame")
-        style.create("gm_nav_button", "button", "(window, hover) The style of an unselected game menu navigation button.")
-        style.create("gm_nav_button_text", "button_text", "(text, hover) The style of the text of an unselected game menu navigation button.")
-        style.create("gm_nav_selected_button", "selected_button", "(window, hover) The style of a selected game menu navigation button.")
-        style.create("gm_nav_selected_button_text", "selected_button_text", "(text, hover) The style of the text of a selected game menu navigation button.")
+        style.create("gm_nav_button", "button", "(window, hover) The style of a game menu navigation button.")
+        style.create("gm_nav_button_text", "button_text", "(text, hover) The style of the text of a  game menu navigation button.")
         style.create("file_picker_entry", "button", "(window, hover) The style that is used for each of the slots in the file picker.")
         style.create("file_picker_entry_box", "thin_hbox", "(box) The style that is used for the hbox inside of a file picker entry.")
         style.create("file_picker_text", "default", "(text) A base style for all text that is displayed in the file picker.")
@@ -115,8 +111,6 @@ init -1000:
         style.create("error_title", "default", "(text) The style of the text containing the title of an error message.")
         style.create("error_body", "default", "(text) The style of the body of an error message.")
         style.create("skip_indicator", "default", "(text) The style and placement of the skip indicator.")
-        style.create("stybrow_button", "default", "The style of buttons in the style browser.")
-        style.create("stybrow_button_text", "default", "The style of button text in the style browser.")
         style.create("mm_root", "default", "(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.")
         style.create("mm_menu_frame", "default", "(window) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.")
         style.create("mm_menu_frame_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")
@@ -129,11 +123,9 @@ init -1000:
         style.create("prefs_hbox", "default", "If library.hbox_pref_choices is True, the style of the hbox containing the choices.")
         style.create("prefs_button", "button", "(window, hover) The style of an unselected preferences button.")
         style.create("prefs_button_text", "button_text", "(text, hover) The style of the text of an unselected preferences button.")
-        style.create("prefs_selected_button", "selected_button", "(window, hover) The style of a selected preferences button.")
-        style.create("prefs_selected_button_text", "selected_button_text", "(text, hover) The style of the text of a selected preferences button.")
         style.create("prefs_volume_slider", "prefs_slider", "(bar) The style that is applied to volume sliders.")
-        style.create("soundtest_button", "prefs_button", "(window, hover) The style of an unselected preferences button.")
-        style.create("soundtest_button_text", "prefs_button_text", "(text, hover) The style of the text of an unselected preferences button.")
+        style.create("soundtest_button", "prefs_button", "(window, hover) The style of a sound test button.")
+        style.create("soundtest_button_text", "prefs_button_text", "(text, hover) The style of the text of a sound test  button.")
         style.create("prefs_slider", "bar", "(bar) The style that is applied to preference sliders.")
         style.create("prefs_spinner", "default", "The position of the prefs spinner.")
         style.create("prefs_spinner_label", "prefs_label", "(text) This is the style that displays the value of a preference spinner.")
@@ -168,9 +160,6 @@ init -1000:
         green = (0, 128, 0, 255)
 
         # The Default Style ###################################################
-
-        # Magic.
-        style.default.enable_hover = True
 
         # Text properties.
         style.default.font = "Vera.ttf"
@@ -300,9 +289,8 @@ init -1000:
         style.button_text.size = 24
         style.button_text.drop_shadow = (2, 2)        
         
-        style.selected_button_text.color = dark_red
-        style.selected_button_text.hover_color = bright_red
-        style.selected_button_text.activate_color = bright_red
+        style.button_text.selected_color = dark_red
+        style.button_text.selected_hover_color = bright_red
 
         style.button.xpos = 0.5
         style.button.xanchor = 0.5
@@ -435,8 +423,8 @@ init -1000:
         style.prefs_button.xpos = 0.5
         style.prefs_button.xanchor = 'center'
 
-        style.prefs_selected_button.xpos = 0.5
-        style.prefs_selected_button.xanchor = 'center'
+        style.prefs_button.selected_xpos = 0.5
+        style.prefs_button.selected_xanchor = 'center'
 
         style.prefs_frame.xfill=True
         style.prefs_frame.ypadding = 0.05
@@ -500,7 +488,6 @@ init -1000:
         style.prefs_window = style.prefs_frame
         style.mm_root_window = style.mm_root
         style.file_picker_window = style.file_picker_frame
-        style.menu_selected_button = style.selected_button
         style.prefs_pref = style.prefs_pref_frame
         style.gm_root_window = style.gm_root
         style.yesno_window_vbox = style.yesno_frame_vbox
@@ -510,7 +497,6 @@ init -1000:
         style.gm_nav_window = style.gm_nav_frame
         style.joy_window = style.js_frame
         style.mm_menu_window = style.mm_menu_frame
-        style.menu_selected_button_text = style.selected_button_text
         style.error_window = style.error_root
         style.joyfunc_label = style.js_function_label
         style.joy_vbox = style.js_frame_vbox

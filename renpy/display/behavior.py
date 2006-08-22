@@ -4,12 +4,6 @@
 import renpy
 from renpy.display.render import render
 
-# import renpy.display.core as core
-# import renpy.display.layout as layout
-# import renpy.display.text as text
-# import renpy.config as config
-# import renpy.game as game
-
 import pygame
 from pygame.constants import *
 
@@ -216,7 +210,8 @@ class SayBehavior(renpy.display.layout.Null):
 class Button(renpy.display.layout.Window):
 
     def __init__(self, child, style='button', clicked=None,
-                 hovered=None, unhovered=None, **properties):
+                 hovered=None, unhovered=None, role='',
+                 **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
 
@@ -225,6 +220,7 @@ class Button(renpy.display.layout.Window):
         self.hovered = hovered
         self.unhovered = unhovered
         self.focusable = clicked is not None
+        self.role = role
 
     def render(self, width, height, st, at):
 
@@ -253,6 +249,10 @@ class Button(renpy.display.layout.Window):
         if self.unhovered:
             self.unhovered()
 
+    def per_interact(self):
+        if not self.clicked:
+            self.set_style_prefix(self.role + "insensitive_")
+
     def event(self, ev, x, y, st):
 
         # We deactivate on an event.
@@ -261,11 +261,11 @@ class Button(renpy.display.layout.Window):
 
             if self.focusable:
                 if self.is_focused():
-                    self.set_style_prefix('hover_')
+                    self.set_style_prefix(self.role + 'hover_')
                 else:
-                    self.set_style_prefix('idle_')
+                    self.set_style_prefix(self.role + 'idle_')
             else:
-                self.set_style_prefix('insensitive_')
+                self.set_style_prefix(self.role + 'insensitive_')
 
         # If not focused, ignore all events.
         if not self.is_focused():
@@ -276,8 +276,7 @@ class Button(renpy.display.layout.Window):
 
             self.activated = True
 
-            self.set_style_prefix('activate_')
-            renpy.audio.sound.play(self.style.sound)
+            renpy.audio.sound.play(self.style.activate_sound)
 
             rv = self.clicked()
 

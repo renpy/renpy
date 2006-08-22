@@ -141,14 +141,6 @@ init -450:
                     # (text, hover) The style of the text of an unselected
                     # preferences button.
 
-                    ### prefs_selected_button selected_button
-                    # (window, hover) The style of a selected preferences
-                    # button.
-
-                    ### prefs_selected_button_text selected_button_text
-                    # (text, hover) The style of the text of a selected
-                    # preferences button.
-
                     def clicked(value=value):
                         setattr(self.base, self.field, value)
                         return True
@@ -235,12 +227,11 @@ init -450:
                         renpy.sound.play(sound, channel=self.channel)
 
                     ### soundtest_button prefs_button
-                    # (window, hover) The style of an unselected preferences
-                    # button.
+                    # (window, hover) The style of a sound test button.
 
                     ### soundtest_button_text prefs_button_text
-                    # (text, hover) The style of the text of an unselected
-                    # preferences button.
+                    # (text, hover) The style of the text of a sound
+                    # test  button.
 
                     _button_factory(u"Test", "soundtest", clicked=clicked)
                     

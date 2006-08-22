@@ -1,14 +1,47 @@
 import renpy
 
-# A list of style prefixes we care about, including no prefix.
-prefixes = [ 'hover_', 'idle_', 'activate_' , 'insensitive_' ]
+# A list of roles we know about.
+roles = [ 'selected_', '' ]
 
-def startswith_prefix(s):
-    for i in prefixes:
-        if s.startswith(i):
-            return True
+# A list of style prefixes we care about, including no prefix.
+prefixes = [ 'hover_', 'idle_', 'insensitive_' ]
+
+
+# A list of prefix, length, priority, (tuple of prefixes).
+prefix_subs = [ ]
+
+def register_prefix(prefix, prio):
+
+    for r in roles:
+        if r and prefix.startswith(r):
+            alts1 = [ r ]
+            break
     else:
-        return False
+        alts1 = roles
+
+    for p in prefixes:
+        if prefix.endswith(p):
+            alts2 = [ p ]
+            break
+    else:
+        alts2 = prefixes
+
+    alts = [ a1 + a2 for a1 in alts1 for a2 in alts2 ]
+
+    prefix_subs.append((prefix, len(prefix), prio, alts))
+
+
+register_prefix('selected_hover_', 4)
+register_prefix('selected_idle_', 4)
+register_prefix('selected_insensitive_', 4)
+register_prefix('selected_', 3)
+register_prefix('hover_', 2)
+register_prefix('idle_', 2)
+register_prefix('insensitive_', 2)
+register_prefix('', 1)
+    
+
+
 
 substitutes = dict(
     xmargin = [ 'left_margin', 'right_margin' ],
@@ -91,54 +124,38 @@ class StyleManager(object):
         return name in style_map
 
 def expand_properties(properties):
-    props = { }
 
-    # Expand substitutions.
-    for k, v in properties.items():
-        if k in substitutes:
-            for j in substitutes[k]:
-                props[j] = v
-        else:
-            props[k] = v
+    rv = [ ]
 
-    # Expand prefixes, where necessary.
-    for k, v in props.items():
-        if startswith_prefix(k):
-            continue
+    for prop, val in properties.iteritems():
 
-        del props[k]
 
-        for p in prefixes:
-            props[p + k] = v
+        for prefix, plen, prio, alts in prefix_subs:
 
-    return props
+            # This will always terminate.
+            if prop.startswith(prefix):
+                break
 
-# This expands out property names and adds them to style's property
-# dictionary. 
-def compute_properties(style, properties):
+        # We use the values of plen, prio, and alts.
 
-    props = expand_properties(properties)
+            
+        prop = prop[plen:]
 
-    style.properties.update(props)
-    style.cache.update(props)
+        for prop in substitutes.get( prop, ( prop, )):
 
-# This expands out names, and removes them from the properties of
-# the style. (But not the cache!)
-def remove_properties(style, properties):
+            for a in alts:
+                rv.append((prio, a + prop, val))
 
-    props = expand_properties(properties)
-
-    for k in props:
-        if k in style.properties:
-            del style.properties[k]
+    # Places things in priority order... so more important properties
+    # come last.
+    rv.sort()
+    return rv
 
 
 
 # This builds the style. If recurse is True, this also builds the
 # parent style.
-def build_style(style, recurse=False):
-
-    style.cache.clear()
+def build_style(style):
 
     if style.parent:
 
@@ -147,12 +164,17 @@ def build_style(style, recurse=False):
         except:
             raise Exception('Style %s is not known.' % style.parent)
 
-        if recurse:
+        if not parent.cache:
             build_style(parent)
-        
-        style.cache.update(parent.cache)
 
-    style.cache.update(style.properties)
+        if not style.properties:
+            style.__dict__["cache"] = parent.cache
+        else:
+            style.__dict__["cache"] = parent.cache.copy()
+            style.cache.update(style.properties)
+        
+    else:
+        style.__dict__["cache"] = style.properties
 
 # This builds all pending styles, recursing to ensure that they are built
 # in the right order.
@@ -162,7 +184,7 @@ def build_styles():
     global styles_built
 
     for s in styles_pending:
-        build_style(s, True)
+        build_style(s)
 
     styles_pending = None
     styles_built = True
@@ -171,10 +193,10 @@ def build_styles():
 class Style(object):
 
     def __getstate__(self):
-        return dict(prefix = self.prefix,
-                    parent = self.parent,
-                    cache = { },
-                    properties = self.properties)
+
+        rv = self.__dict__.copy()
+        rv["cache"] = { }
+        return rv
 
     def __setstate__(self, state):
         vars(self).update(state)
@@ -191,12 +213,14 @@ class Style(object):
 
         vars(self).update(fields)
 
+        if properties:
+            for prio, prop, val in expand_properties(properties):
+                self.properties[prop] = val
+
         if styles_built:
             build_style(self)
         else:
             styles_pending.append(self)
-    
-        compute_properties(self, properties)
 
     def set_prefix(self, prefix):
         vars(self)["prefix"] = prefix
@@ -205,20 +229,29 @@ class Style(object):
         return self.cache[self.prefix + name]
 
     def __setattr__(self, name, value):
-        compute_properties(self, { name : value } )
+
+        for prio, prop, val in expand_properties({ name : value }):
+            self.properties[prop] = val
+
+        if styles_built:
+            build_style(self)
 
     def __delattr__(self, name):
-        remove_properties(self, { name : None })
 
+        for prio, prop, val in expand_properties({ name : None }):
+            if prop in self.properties:
+                del self.properties[prop]
         
     def clear(self):
         if styles_built:
             raise Exception("Cannot clear a style after styles have been built.")
         else:
             self.properties.clear()
-
+            
     def take(self, other):
+
         self.properties.update(other.properties)
+        
         if styles_built:
             build_style(self)
 
@@ -228,8 +261,8 @@ class Style(object):
         explicit values have been set.
         """
 
-        for k, v in expand_properties(properties).iteritems():
-            self.properties.setdefault(k, v)
+        for d, prop, val in expand_properties(properties):
+            d.setdefault(prop, v)
             
     
         
@@ -307,7 +340,7 @@ def write_text(filename):
                     break
                 else:
                     pname = psty.parent
-
+ 
             if pname != name:
                 inherit = "(%s)" % pname
             else:

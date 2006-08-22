@@ -474,6 +474,9 @@ def button(clicked=None, **properties):
 
     @param unhovered: A function that is called when this button loses
     focus.
+
+    @param role: The role this button undertakes. This can be the empty
+    string, or "selected_".
     """
 
     return add(renpy.display.behavior.Button(None, clicked=clicked,
@@ -492,6 +495,9 @@ def textbutton(text, clicked=None, text_style='button_text', **properties):
     clicked.
 
     @param text_style: The style that is used for button text.
+
+    @param role: The role this button undertakes. This can be the empty
+    string, or "selected_".
     """
 
     return add(renpy.display.behavior.TextButton(text, clicked=clicked,
@@ -520,6 +526,9 @@ def imagebutton(idle_image, hover_image, clicked=None,
 
     @param image_style: The style that is applied to the images that
     are used as part of the imagebutton.
+
+    @param role: The role this button undertakes. This can be the empty
+    string, or "selected_".
     """
     
     return add(renpy.display.image.ImageButton(idle_image,

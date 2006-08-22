@@ -37,6 +37,7 @@ class Displayable(renpy.object.Object):
     """
 
     focusable = False
+    role = ''
 
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties)
@@ -58,19 +59,19 @@ class Displayable(renpy.object.Object):
         Called to indicate that this widget has the focus.
         """
 
-        if self.style.enable_hover:
-            self.set_style_prefix("hover_")
-
-            if not default:
-                renpy.audio.sound.play(self.style.sound)
+        self.set_style_prefix(self.role + "hover_")
+        
+        if not default:
+            renpy.audio.sound.play(self.style.sound)
 
     def unfocus(self):
         """
         Called to indicate that this widget has become unfocused.
         """
 
-        if self.style.enable_hover:
-            self.set_style_prefix("idle_")
+        self.set_style_prefix(self.role + "idle_")
+
+
 
     def is_focused(self):
         return renpy.game.context().scene_lists.focused is self

@@ -135,19 +135,11 @@ init -499:
                     clicked = None
 
                 ### gm_nav_button button
-                # (window, hover) The style of an unselected game menu
+                # (window, hover) The style of a game menu
                 # navigation button.
 
                 ### gm_nav_button_text button_text
-                # (text, hover) The style of the text of an unselected game
-                # menu navigation button.
-
-                ### gm_nav_selected_button selected_button
-                # (window, hover) The style of a selected game menu
-                # navigation button.
-
-                ### gm_nav_selected_button_text selected_button_text
-                # (text, hover) The style of the text of a selected game
+                # (text, hover) The style of the text of a  game
                 # menu navigation button.
 
                 if library.game_menu_positions:
