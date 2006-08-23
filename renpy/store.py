@@ -89,7 +89,7 @@ def layout(cls, doc, **extra_kwargs):
 
         rv = cls(**kwargs)
         for i in args:
-            rv.add(Image(i, loose=True))
+            rv.add(renpy.easy.displayable(i))
 
         return rv
 
