@@ -29,6 +29,14 @@ New character art.
 
 Errors in .rpy files.
 
+Frame now takes a tile= parameter. [doc]
+
+im.Color() [doc]
+
+config.style_properties [doc]
+
+
+
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
 the script. This means that it's now usually possible to load in a

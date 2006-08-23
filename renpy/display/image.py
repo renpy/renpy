@@ -175,7 +175,7 @@ class Frame(renpy.display.core.Displayable):
     the center of the image is scaled in both x and y directions.
     """
 
-    def __init__(self, image, xborder, yborder):
+    def __init__(self, image, xborder, yborder, tile=False):
         """
         @param image: The image (which may be a filename or image
         object) that will be scaled.
@@ -185,6 +185,9 @@ class Frame(renpy.display.core.Displayable):
 
         @param yborder: The number of pixels in the y direction to use as
         a border.
+
+        @param tile: If true, instead of scaling a region, we tile that
+        region.
 
         For better performance, have the image share a dimension
         length in common with the size the frame will be rendered
@@ -196,6 +199,7 @@ class Frame(renpy.display.core.Displayable):
         self.image = Image(image)
         self.xborder = xborder
         self.yborder = yborder
+        self.tile = tile
 
     def render(self, width, height, st, at):
 
@@ -203,7 +207,8 @@ class Frame(renpy.display.core.Displayable):
                                          self.xborder,
                                          self.yborder,
                                          width,
-                                         height)
+                                         height,
+                                         self.tile)
 
         return render(fi, width, height, st, at)
 

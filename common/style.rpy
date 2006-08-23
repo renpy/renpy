@@ -206,6 +206,9 @@ init -1000:
         style.default.box_first_spacing = None
         style.default.box_layout = None
 
+        # Misc.
+        style.default.activate_sound = None
+
         ######################################################################
         # The style of various boxes.
 
@@ -258,7 +261,6 @@ init -1000:
         style.say_vbox.box_spacing = 10
 
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
-        style.menu_choice.activate_color = (255, 255, 0, 255) # yellow
         style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
         style.input_text.color = (255, 255, 0, 255)
@@ -284,7 +286,6 @@ init -1000:
         
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
-        style.button_text.activate_color = bright_cyan
         style.button_text.insensitive_color = (192, 192, 192, 255)
         style.button_text.size = 24
         style.button_text.drop_shadow = (2, 2)        
@@ -369,14 +370,12 @@ init -1000:
         style.file_picker_entry.ymargin = 2        
         style.file_picker_entry.background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
-        style.file_picker_entry.activate_background = Solid((255, 255, 192, 255))
 
         style.file_picker_text.size = 18
         style.file_picker_text.color = dark_cyan
         style.file_picker_text.hover_color = bright_cyan
 
         style.file_picker_new.hover_color = bright_red
-        style.file_picker_new.activate_color = bright_red
         style.file_picker_new.idle_color = dark_red
         style.file_picker_new.minwidth = 30
 

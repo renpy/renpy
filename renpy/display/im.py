@@ -357,7 +357,7 @@ class FrameImage(ImageBase):
     such a new frame is needed.
     """
 
-    def __init__(self, im, xborder, yborder, width, height):
+    def __init__(self, im, xborder, yborder, width, height, tile):
         """
         @param image: The image that will be used as the base of this
         frame.
@@ -371,17 +371,27 @@ class FrameImage(ImageBase):
         @param width: The width we are being rendered at.
 
         @param height: The height we are being rendered at.
+
+        @param tile: Should we tile? If False, we scale.
         """
 
         im = image(im)
 
-        super(FrameImage, self).__init__(im, xborder, yborder, width, height)
+        super(FrameImage, self).__init__(im, xborder, yborder, width, height, tile)
 
         self.image = im
         self.xborder = xborder
         self.yborder = yborder
         self.width = int(width)
         self.height = int(height)
+        self.tile = tile
+
+        if self.width < self.xborder * 2:
+            raise Exception("Frame width is too small for its border.")
+
+        if self.height < self.yborder * 2:
+            raise Exception("Frame height is too small for its border.")
+            
 
     def load(self):
 
@@ -443,9 +453,25 @@ class FrameImage(ImageBase):
             # Get a subsurface.
             surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
 
-            # Scale if we have to.
+            # Scale or tile if we have to.
             if dstsize != srcsize:
-                surf = pygame.transform.scale(surf, dstsize)
+                if self.tile:
+                    tilew, tileh = srcsize
+                    dstw, dsth = dstsize
+
+                    surf2 = pygame.Surface(dstsize, 0, surf)
+
+                    print "---"
+
+                    for y in range(0, dsth, tileh):
+                        for x in range(0, dstw, tilew):
+                            print x, y
+                            surf2.blit(surf, (x, y))
+
+                    surf = surf2
+                    
+                else:
+                    surf = pygame.transform.scale(surf, dstsize)
 
             # Blit.
             dest.blit(surf, (dx0, dy0))
@@ -700,6 +726,9 @@ class Twocolor(ImageBase):
 
     def __init__(self, im, white, black, force_alpha=False, **properties):
 
+        white = renpy.easy.color(white)
+        black = renpy.easy.color(black)
+
         im = image(im)
 
         super(Twocolor, self).__init__(im, white, black, force_alpha, **properties)
@@ -772,6 +801,14 @@ class Recolor(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+def Color(im, color):
+    """
+    This recolors the supplied image, mapping colors such that black is
+    black and white is the supplied color.
+    """
+
+    return Twocolor(im, color, (0, 0, 0, 255))
+
 
 def Alpha(image, alpha, **properties):
     """
@@ -812,8 +849,7 @@ class Tile(ImageBase):
         width, height = size
         sw, sh = surf.get_size()
 
-        rv = pygame.Surface(size, 0,
-                            renpy.game.interface.display.sample_surface)
+        rv = pygame.Surface(size, 0, surf)
 
         for y in range(0, height, sh):
             for x in range(0, width, sw):

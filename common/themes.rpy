@@ -1,10 +1,6 @@
 init -402:
     python:
 
-        def _recolor(img, color):
-            r, g, b, a = color
-            return im.Recolor(img, r, g, b, a)
-
         _roundrect_radius = 12
 
         def RoundRect(color, size=None):
@@ -16,7 +12,7 @@ init -402:
             if size is None:
                 size = _roundrect_radius
 
-            return Frame(_recolor("rr%d.png" % size, color), size, size)
+            return Frame(im.Color("rr%d.png" % size, color), size, size)
             
         def _button_menu():
 
@@ -252,13 +248,13 @@ init -402:
             style.prefs_slider.xmaximum=widget_width
             del style.prefs_slider.ymaximum
 
-            style.bar.left_bar = Frame(_recolor(rrslider_full, widget), rrslider_radius * 2, 0)
-            style.bar.right_bar = Frame(_recolor(rrslider_empty, widget), rrslider_radius * 2, 0)
-            style.bar.thumb = _recolor(rrslider_thumb, widget)
+            style.bar.left_bar = Frame(im.Color(rrslider_full, widget), rrslider_radius * 2, 0)
+            style.bar.right_bar = Frame(im.Color(rrslider_empty, widget), rrslider_radius * 2, 0)
+            style.bar.thumb = im.Color(rrslider_thumb, widget)
 
-            style.bar.hover_left_bar = Frame(_recolor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_right_bar = Frame(_recolor(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_thumb = _recolor(rrslider_thumb, widget_hover)
+            style.bar.hover_left_bar = Frame(im.Color(rrslider_full, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_right_bar = Frame(im.Color(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_thumb = im.Color(rrslider_thumb, widget_hover)
 
             if centered:
                 style.prefs_slider.xpos = 0.5
