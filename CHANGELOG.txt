@@ -20,14 +20,12 @@ Easy way to leave window up during transitions.
 Implicit with None (default)
 
 Compat for styles. 
-
 Doc styles.
-
-Easy styles (etc.)
+Easy styles (etc.) [doc]
 
 New character art.
 
-Errors in .rpy files.
+Errors in .rpy files. [doc]
 
 Frame now takes a tile= parameter. [doc]
 

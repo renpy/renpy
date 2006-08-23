@@ -56,13 +56,6 @@ init:
 
 label start:
 
-    "Foo."
-
-    $ ui.textbutton("Foo", clicked=ui.returns("foo"))
-    $ ui.interact()
-
-    with Dissolve(3.0)
-
 
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
