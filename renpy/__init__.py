@@ -21,6 +21,7 @@ def import_all():
 
     import renpy.ast
     import renpy.curry
+    import renpy.easy
     import renpy.execution
     import renpy.loadsave
     import renpy.parser

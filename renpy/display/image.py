@@ -153,7 +153,7 @@ class Solid(renpy.display.core.Displayable):
         """
         
         super(Solid, self).__init__()
-        self.color = color
+        self.color = renpy.easy.color(color)
 
     def render(self, width, height, st, at):
 

@@ -892,7 +892,7 @@ class Text(renpy.display.core.Displayable):
         self.laidout_linewidths = [ ]
         self.laidout_length = 0
         self.laidout_start = 0
-        self.laidout_width = self.style.minwidth
+        self.laidout_width = self.style.min_width
         self.laidout_height = 0
 
         # Add something to empty lines.
@@ -1014,7 +1014,7 @@ class Text(renpy.display.core.Displayable):
         line_spacing = self.style.line_spacing
         
         for line, line_height, line_width in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths):
-            x = xo + indent + self.style.textalign * (self.laidout_width - line_width)
+            x = xo + indent + self.style.text_align * (self.laidout_width - line_width)
             indent = rest_indent
 
             max_ascent = 0

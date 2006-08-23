@@ -60,6 +60,8 @@ def add(w, make_current=False, once=False):
     widget, but only for the next widget to be added.
     """
 
+    w = renpy.easy.displayable(w)
+
     global current
     global current_once
 

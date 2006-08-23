@@ -89,7 +89,11 @@ def run(restart=False):
     
 def main(basename):
 
+
     renpy.game.exception_info = 'While loading the script.'
+
+    # Init the config after load.
+    renpy.config.init()
 
     if os.path.isdir(basename):
         basepath = basename

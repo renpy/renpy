@@ -31,7 +31,7 @@ class State(object):
         """
 
         if image and not isinstance(image, renpy.display.core.Displayable):
-            image = renpy.display.image.Image(image)
+            image = renpy.easy.displayable(image)
 
         self.name = name
         self.image = image
@@ -319,7 +319,7 @@ class Animation(renpy.display.core.Displayable):
         for i, arg in enumerate(args):
 
             if i % 2 == 0:
-                self.images.append(renpy.display.im.image(arg, loose=True))
+                self.images.append(renpy.easy.displayable(arg))
             else:
                 self.delays.append(arg)
 
@@ -385,7 +385,7 @@ class Blink(renpy.display.core.Displayable):
         
         super(Blink, self).__init__(**properties)
 
-        self.image = renpy.display.im.image(image, loose=True)
+        self.image = renpy.easy.displayable(image)
         self.on = on
         self.off = off
         self.rise = rise
@@ -468,124 +468,6 @@ class Blink(renpy.display.core.Displayable):
 
         return rv
 
-
-class OldBlink(renpy.display.core.Displayable):
-    """
-    """
-
-    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,
-                 high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
-
-        """
-        This takes as an argument an image or widget, and blinks that image
-        by varying its alpha. The sequence of phases is
-        on - set - off - rise - on - ... All times are given in seconds, all
-        alphas are fractions between 0 and 1.
-
-        @param image: The image or widget that will be blinked.
-
-        @param on: The amount of time the widget spends on, at high alpha.
-
-        @param off: The amount of time the widget spends off, at low alpha.
-
-        @param rise: The amount time the widget takes to ramp from low to high alpha.
-
-        @param set: The amount of time the widget takes to ram from high to low.
-
-        @param high: The high alpha.
-
-        @param low: The low alpha.
-
-        @param offset: A time offset, in seconds. Use this to have a
-        blink that does not start at the start of the on phase.
-
-        @param anim_timebase: If True, use the animation timebase, if false, the displayable timebase.
-        """
-        
-        super(Blink, self).__init__(**properties)
-
-        self.image = renpy.display.im.image(image, loose=True)
-        self.on = on
-        self.off = off
-        self.rise = rise
-        self.set = set
-        self.high = high
-        self.low = low
-        self.offset = offset
-        self.anim_timebase = anim_timebase
-
-        self.cycle = on + set + off + rise
-
-
-    def visit(self):
-        return [ self.image ]
-
-    def render(self, height, width, st, at):
-
-        if self.anim_timebase:
-            t = at
-        else:
-            t = st
-
-        time = (self.offset + t) % self.cycle
-        alpha = self.high
-
-        if 0 <= time < self.on:
-            delay = self.on - time
-            alpha = self.high
-
-        time -= self.on
-
-        if 0 <= time < self.set:
-            delay = 0            
-            frac = time / self.set
-            alpha = self.low * frac + self.high * (1.0 - frac)
-
-        time -= self.set
-
-        if 0 <= time < self.off:
-            delay = self.off - time
-            alpha = self.low
-
-        time -= self.off
-
-        if 0 <= time < self.rise:
-            delay = 0
-            frac = time / self.rise 
-            alpha = self.high * frac + self.low * (1.0 - frac)
-
-
-        rend = renpy.display.render.render(self.image, height, width, st, at)
-
-        if not renpy.display.module.can_map:
-            return rend
-
-        w, h = rend.get_size()
-        rv = renpy.display.render.Render(w, h)
-
-        if alpha:
-
-            oldsurf = rend.pygame_surface()
-
-            if not (oldsurf.get_masks()[3]):
-                oldsurf = oldsurf.convert_alpha()
-
-            newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
-
-            amap = renpy.display.im.ramp(0, int(alpha * 255.0))
-            identity = renpy.display.im.identity
-
-            renpy.display.module.map(oldsurf, newsurf,
-                                     identity, identity, identity, amap)
-
-            renpy.display.render.mutated_surface(newsurf)
-
-            rv.blit(newsurf, (0, 0))
-
-        rv.depends_on(rend)
-        renpy.display.render.redraw(self, delay)
-
-        return rv
 
 
 def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **properties):

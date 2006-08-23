@@ -4,6 +4,7 @@
 
 # This will be deleted by the end of this file.
 import renpy
+import sets
 
 # The title of the game window.
 window_title = "A Ren'Py Game"
@@ -244,25 +245,14 @@ text_layout = renpy.display.text.text_layout
 # A callback that is called 20 times a second.
 periodic_callback = None
 
+# A dictionary, mapping from style property to functions (which map arguments
+# to values) or to None to indicate no such function is necessary.
+style_properties = None
+
 del renpy
+del sets
 
-def backup():
-    global _globals
-    _globals = globals().copy()
-
-    del _globals["backup"]
-    del _globals["reload"]
-    del _globals["__builtins__"]
-
-def reload():
-    import copy
-    globals().update(_globals)
-
-    for k, v in _globals.items():
-
-        try:
-            v = copy.deepcopy(v)
-        except:
-            pass
-
-        globals()[k] = v
+def init():
+    import renpy
+    global properties
+    style_properties = renpy.style.style_properties

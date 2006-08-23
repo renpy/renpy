@@ -6,7 +6,6 @@ roles = [ 'selected_', '' ]
 # A list of style prefixes we care about, including no prefix.
 prefixes = [ 'hover_', 'idle_', 'insensitive_' ]
 
-
 # A list of prefix, length, priority, (tuple of prefixes).
 prefix_subs = [ ]
 
@@ -40,8 +39,64 @@ register_prefix('idle_', 2)
 register_prefix('insensitive_', 2)
 register_prefix('', 1)
     
-
-
+# A map of properties that we know about. The properties may take a
+# function that is called on the argument.
+style_properties = dict(
+    activate_sound = None,
+    antialias = None,
+    background = renpy.easy.displayable,
+    bar_invert = None,
+    bar_vertical = None,
+    black_color = renpy.easy.color,
+    bold = None,
+    bottom_bar = renpy.easy.displayable,
+    bottom_gutter = None,
+    bottom_margin = None,
+    bottom_padding = None,
+    box_first_spacing = None,
+    box_layout = None,
+    box_spacing = None,
+    color = renpy.easy.color,
+    drop_shadow = None,
+    drop_shadow_color = renpy.easy.color,
+    enable_hover = None, # Doesn't do anything anymore.
+    first_indent = None,
+    font = None,
+    sound = None,
+    italic = None,
+    left_bar = renpy.easy.displayable,
+    left_gutter = None,
+    left_margin = None,
+    left_padding = None,
+    line_spacing = None,
+    min_width = None,
+    rest_indent = None,
+    right_bar = renpy.easy.displayable,
+    right_gutter = None,
+    right_margin = None,
+    right_padding = None,
+    size = None,
+    text_y_fudge = None,
+    text_align = None,
+    thumb = renpy.easy.displayable,
+    thumb_offset = None,
+    thumb_shadow = renpy.easy.displayable,
+    top_bar = renpy.easy.displayable,
+    top_gutter = None,
+    top_margin = None,
+    top_padding = None,
+    underline = None,
+    xanchor = None,
+    xfill = None,
+    xmaximum = None,
+    xminimum = None,
+    xpos = None,
+    yanchor = None,
+    yfill = None,
+    ymaximum = None,
+    yminimum = None,
+    ypos = None,
+    )
 
 substitutes = dict(
     xmargin = [ 'left_margin', 'right_margin' ],
@@ -50,6 +105,8 @@ substitutes = dict(
     yalign = [ 'ypos', 'yanchor' ],
     xpadding = [ 'left_padding', 'right_padding' ],
     ypadding = [ 'top_padding', 'bottom_padding' ],
+    minwidth = [ 'min_width' ],
+    textalign = [ 'text_align' ],
     )
 
 # Expand out substitutes:
@@ -143,8 +200,23 @@ def expand_properties(properties):
 
         for prop in substitutes.get( prop, ( prop, )):
 
+            try:
+                func = style_properties[prop]
+            except KeyError:
+                if prop.startswith("activate_"):
+                    continue
+
+                raise Exception("Style property %s is unknown." % prop)
+
+
+
+            if func:
+                newval = func(val)
+            else:
+                newval = val
+
             for a in alts:
-                rv.append((prio, a + prop, val))
+                rv.append((prio, a + prop, newval))
 
     # Places things in priority order... so more important properties
     # come last.

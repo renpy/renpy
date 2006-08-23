@@ -89,7 +89,7 @@ def image(name, img):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    img = renpy.display.im.image(img, loose=True)
+    img = renpy.easy.displayable(img)
 
     images[name] = img
     

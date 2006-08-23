@@ -265,7 +265,7 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        rv.add(Position(renpy.display.im.image(widget, loose=True),
+        rv.add(Position(renpy.easy.displayable(widget),
                         xpos=xpos, xanchor='left', ypos=ypos, yanchor='top'))
 
     return rv
@@ -666,6 +666,8 @@ class Motion(Container):
         seconds.
         """
 
+        child = renpy.easy.displayable(child)
+
         if child is None:
             child = new_widget
 
@@ -674,7 +676,7 @@ class Motion(Container):
 
         super(Motion, self).__init__(style=style, **properties)
 
-        self.child = child
+        self.child = child 
         self.children = [ child ]
         self.function = function
         self.period = period
@@ -883,6 +885,8 @@ class Zoom(renpy.display.core.Displayable):
 
         super(Zoom, self).__init__(**properties)
 
+        child = renpy.easy.displayable(child)
+
         self.size = size
         self.start = start
         self.end = end
@@ -960,7 +964,10 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def per_interact(self):
         child = renpy.python.py_eval(self.expression)
-        if child is not self.child:
+        child = renpy.easy.displayable(child)
+        
+
+        if child != self.child:
             self.child = child
             renpy.display.render.redraw(self, 0)
 
