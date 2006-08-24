@@ -592,6 +592,7 @@ class Text(renpy.display.core.Displayable):
         self.slow_abortable = slow_abortable
 
         self.laidout = None
+        self.child_pos = [ ]
 
 
     def set_text(self, new_text):
@@ -617,6 +618,7 @@ class Text(renpy.display.core.Displayable):
         """        
 
         self.laidout = None
+        self.child_pos = [ ]
         
         if self.text:
             text = self.text

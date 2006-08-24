@@ -68,6 +68,15 @@ def scene_lists(index=-1):
 
     return renpy.game.context(index).scene_lists
 
+def count_displayables_in_layer(layer):
+    """
+    Returns how many displayables are in the supplied layer.
+    """
+
+    sls = scene_lists()
+
+    return len(sls.layers[layer])
+
 def image(name, img):
     """
     This is used to execute the image statment. It takes as arguments
@@ -93,7 +102,6 @@ def image(name, img):
 
     images[name] = img
     
-
 def showing(name, layer='master'):
     """
     This returns true if an image with the same tag as that found in
@@ -113,6 +121,10 @@ def showing(name, layer='master'):
     key = name[0]
 
     return sls.showing(layer, key)
+
+
+
+
 
 def show(name, at_list=[ ], layer='master', what=None):
     """
@@ -767,24 +779,13 @@ def with(trans, paired=None, always=False):
     """
 
     if renpy.config.skipping:
-        renpy.game.interface.with_none()
-        return False
+        trans = None
 
-    if renpy.config.with_callback:
-        trans = renpy.config.with_callback(trans, paired)
+    if not (renpy.game.preferences.transitions or always):
+        trans = None
 
-    if not trans:
-        renpy.game.interface.with_none()
-        return False
-    else:
-        if renpy.game.preferences.transitions or always:
-            renpy.game.interface.set_transition(trans)
-            return renpy.game.interface.interact(show_mouse=False,
-                                                 trans_pause=True,
-                                                 suppress_overlay=not renpy.config.overlay_during_with,
-                                                 mouse='with')
-        else:
-            return False
+    return renpy.game.interface.with(trans, paired)
+
 
 def rollback():
     """
@@ -979,6 +980,16 @@ def context():
     """
 
     return renpy.game.context().info
+
+def context_nesting_level():
+    """
+    Returns the nesting level of the current context. This is 0 for the
+    outermost context (the context that is saved, and in which most of
+    the game runs), and greater than zero when in a menu or other nested
+    context.
+    """
+
+    return len(renpy.game.contexts) - 1
     
 def music_start(filename, loops=True, fadeout=None, fadein=0):
     """

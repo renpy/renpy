@@ -807,7 +807,9 @@ def Color(im, color):
     black and white is the supplied color.
     """
 
-    return Twocolor(im, color, (0, 0, 0, 255))
+    r, g, b, a = renpy.easy.color(color)
+
+    return Recolor(im, r, g, b, a)
 
 
 def Alpha(image, alpha, **properties):

@@ -249,6 +249,9 @@ periodic_callback = None
 # to values) or to None to indicate no such function is necessary.
 style_properties = None
 
+# If True, then we implicily do a with None after every interaction.
+implicit_with_none = True
+
 del renpy
 del sets
 

@@ -33,6 +33,11 @@ im.Color() [doc]
 
 config.style_properties [doc]
 
+config.implicit_with_none
+
+renpy.context_nesting_level()
+
+renpy.count_displayables_in_layer()
 
 
 When changing the script, Ren'Py now tries fairly hard to assign

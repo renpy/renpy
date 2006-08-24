@@ -872,7 +872,23 @@ class Interface(object):
         """
 
         self.screenshot = None
+
+
+    def with(self, trans, paired):
+
         
+        if renpy.config.with_callback:
+            trans = renpy.config.with_callback(trans, paired)
+
+        if not trans:
+            self.with_none()
+            return False
+        else:
+            self.set_transition(trans)
+            return self.interact(show_mouse=False, trans_pause=True,
+                                 suppress_overlay=not renpy.config.overlay_during_with,
+                                 mouse='with')
+
     def with_none(self):
         """
         Implements the with None command, which sets the scene we will
@@ -1003,6 +1019,8 @@ class Interface(object):
             # Clean out transient stuff at the end of an interaction.
             scene_lists = renpy.game.context().scene_lists
             scene_lists.replace_transient()
+            if renpy.config.implicit_with_none:
+                self.with(None, None)
 
             self.restart_interaction = True
         
