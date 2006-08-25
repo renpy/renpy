@@ -227,9 +227,11 @@ class Lexer(object):
     # A list of keywords which should not be parsed as names, because
     # there is a huge chance of confusion.
     keywords = [
+        'as',
         'at',
         'call',
-        'expression'
+        'depth',
+        'expression',
         'hide',
         'if',
         'image',

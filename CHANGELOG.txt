@@ -5,13 +5,13 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.0
 -------------------
 
+New keywords: as, depth.
+
 Layers as subparts of the screen.
 
 Improved Move, MoveTransition, etc.
 
 show image
-
-menu -> choice
 
 H/Middle dismisses no-window-mode.
 
