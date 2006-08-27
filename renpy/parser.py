@@ -145,7 +145,7 @@ def list_logical_lines(filename):
             pos += 1
 
 
-    if line != "":
+    if not re.match(r'\s*', line):
         raise ParseError(filename, start_number, "is not terminated with a newline (check quotes and parenthesis).")
 
     return rv

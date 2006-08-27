@@ -111,7 +111,8 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
-# A list of layers that are displayed above all other layers.
+# A list of layers that are displayed atop all other layers, and do
+# not participate in transitions.
 top_layers = [ ]
 
 # True if we want to show overlays during wait statements, or
@@ -251,6 +252,9 @@ style_properties = None
 
 # If True, then we implicily do a with None after every interaction.
 implicit_with_none = True
+
+# A map from a layer to (x, y, w, h) tuples that the layer is clipped to.
+layer_clipping = { }
 
 del renpy
 del sets

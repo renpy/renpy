@@ -21,6 +21,8 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
+    $ config.layer_clipping['master'] = (0, 100, 800, 400)
+
     # Set up the theme for this game. This must be after the
     # library.script_version and config.screen_width lines.
     $ theme.roundrect()

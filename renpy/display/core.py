@@ -847,6 +847,27 @@ class Interface(object):
 
         self.time_event = pygame.event.Event(TIMEEVENT)
 
+        # Properties for each layer.
+        self.layer_properties = { }
+
+        for layer in renpy.config.layers + renpy.config.top_layers:
+            if layer in renpy.config.layer_clipping:
+                x, y, w, h = renpy.config.layer_clipping[layer]
+                self.layer_properties[layer] = dict(
+                    xpos = x,
+                    xanchor = 0,
+                    ypos = y,
+                    yanchor = 0,
+                    xmaximum = w,
+                    ymaximum = h,
+                    clipping = True,
+                    )
+
+            else:
+                self.layer_properties[layer] = dict()
+                
+
+
     def take_screenshot(self, scale):
         """
         This takes a screenshot of the current screen, and stores it so
@@ -981,7 +1002,7 @@ class Interface(object):
 
         for layer in renpy.config.layers + renpy.config.top_layers:
 
-            f = renpy.display.layout.Fixed(focus=layer)
+            f = renpy.display.layout.Fixed(focus=layer, **self.layer_properties[layer])
 
             f.append_scene_list(scene_lists.layers[layer])
 

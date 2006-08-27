@@ -79,6 +79,7 @@ def render(widget, width, height, st, at):
         return rv
 
     rv = widget.render(width, height, st, at)
+    rv.clipped = widget.style.clipping
 
     rv.render_of.append((widget, width, height))
 
@@ -461,6 +462,10 @@ class Render(object):
 
         # Is this render fullscreen? None == not sure.
         self.fullscreen = None
+
+        # Is this render clipped?
+        self.clipped = False
+        
     
     # def __del__(self):
     #     Render.renders -= 1
@@ -553,13 +558,6 @@ class Render(object):
                     self.add_focus(widget, arg, x, y, w, h)
                                       
         self.blittables.append((xo, yo, source))
-
-
-        
-        
-            
-            
-        
     
 
     def blit_to(self, dest, x, y):
@@ -579,12 +577,30 @@ class Render(object):
             if is_fullscreen(source, xo, yo):
                 fullscreen = i
 
+
+        if self.clipped:
+            oldx, oldy, oldw, oldh = dest.get_clip()
+
+            newx = max(x, oldx)
+            newy = max(y, oldy)
+
+            neww = min(x + self.width, oldx + oldw) - newx
+            newh = min(y + self.height, oldy + oldh) - newy
+
+            if neww < 0 or newh < 0:
+                return
+
+            dest.set_clip((newx, newy, neww, newh))
+
         for xo, yo, source in self.blittables[fullscreen:]:
 
             if isinstance(source, pygame.Surface):
                 dest.blit(source, (x + xo, y + yo))
             else:
                 source.blit_to(dest, x + xo, y + yo)
+
+        if self.clipped:
+            dest.set_clip((oldx, oldy, oldw, oldh))
 
     def clip_to(self, x, y, blits, forced):
         """
@@ -604,11 +620,36 @@ class Render(object):
             if is_fullscreen(source, xo, yo):
                 fullscreen = i
 
+        if self.clipped:
+            my_blits = [ ]
+        else:
+            my_blits = blits
+                
         for xo, yo, source in self.blittables[fullscreen:]:
             if isinstance(source, pygame.Surface):
-                blits.append((id(source), x + xo, y + yo) + source.get_size())
+                my_blits.append((id(source), x + xo, y + yo) + source.get_size())
             else:
-                source.clip_to(x + xo, y + yo, blits, forced)
+                source.clip_to(x + xo, y + yo, my_blits, forced)
+
+        # Apply the clipping effect to the list of blits.
+        if self.clipped:
+            width = self.width
+            height = self.height
+            
+            for surfid, blitx, blity, blitw, blith in my_blits:
+                newx = max(x, blitx)
+                newy = max(y, blity)
+
+                neww = min(x + width, blitx + blitw) - newx
+                newh = min(y + height, blity + blith) - newy
+
+                if neww < 0 or newh < 0:
+                    continue
+
+                blits.append((surfid, newx, newy, neww, newh))
+                
+
+        
 
     def fill(self, color):
         """

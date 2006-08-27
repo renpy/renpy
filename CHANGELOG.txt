@@ -7,7 +7,10 @@ New in Ren'Py 5.6.0
 
 New keywords: as, depth.
 
-Layers as subparts of the screen.
+Default font to Vera.
+
+Layers as subparts of the screen. [doc]
+- config.layer_clipping
 
 Improved Move, MoveTransition, etc.
 
@@ -15,9 +18,9 @@ show image
 
 H/Middle dismisses no-window-mode.
 
-Easy way to leave window up during transitions.
+Easy way to leave window up during transitions. [extra]
 
-Implicit with None (default)
+Implicit with None (default) [doc]
 
 Compat for styles. 
 Doc styles.

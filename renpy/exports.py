@@ -576,8 +576,14 @@ def display_say(who, what, who_style='say_label',
         
         return
 
-    # If we're just after a rollback, or skipping, disable slow.
-    if renpy.game.after_rollback or renpy.config.skipping:
+    # If we're just after a rollback, disable slow.
+    if renpy.game.after_rollback:
+        slow = False
+        
+    # If we're committed to skipping this statement, disable slow.
+    elif (renpy.config.skipping and
+          (renpy.game.preferences.skip_unseen or
+           renpy.game.context().seen_current(True))):    
         slow = False
 
     what = what_prefix + what + what_suffix

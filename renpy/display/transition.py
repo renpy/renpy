@@ -452,10 +452,10 @@ class CropMove(Transition):
         @param startpos: The starting place that the top image is drawn
         to the screen at, a 2-element tuple containing x and y.
 
-        @param startcrop: The starting rectangle that is cropped out of the
+        @param endcrop: The ending rectangle that is cropped out of the
         top image. A 4-element tuple containing x, y, width, and height. 
         
-        @param startpos: The starting place that the top image is drawn
+        @param endpos: The ending place that the top image is drawn
         to the screen at, a 2-element tuple containing x and y.
 
         @param topnew: If True, the top layer contains the new

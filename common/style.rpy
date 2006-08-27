@@ -208,6 +208,7 @@ init -1000:
 
         # Misc.
         style.default.activate_sound = None
+        style.default.clipping = False
 
         ######################################################################
         # The style of various boxes.

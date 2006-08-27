@@ -56,6 +56,7 @@ style_properties = dict(
     box_first_spacing = None,
     box_layout = None,
     box_spacing = None,
+    clipping = None,
     color = renpy.easy.color,
     drop_shadow = None,
     drop_shadow_color = renpy.easy.color,
@@ -234,7 +235,10 @@ def build_style(style):
         try:
             parent = style_map[style.parent]
         except:
-            raise Exception('Style %s is not known.' % style.parent)
+            try:
+                parent = getattr(renpy.game.style, parent)
+            except:
+                raise Exception('Style %s is not known.' % style.parent)
 
         if not parent.cache:
             build_style(parent)
