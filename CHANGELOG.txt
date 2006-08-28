@@ -7,15 +7,15 @@ New in Ren'Py 5.6.0
 
 New keywords: as, depth.
 
-Default font to DejaVu.
+Default font to DejaVu. [doc]
 
-MultiPersistent
+MultiPersistent [doc]
 
 Improved Move, MoveTransition, etc.
 
 show image
 
-H/Middle dismisses no-window-mode.
+H/Middle dismisses no-window-mode. [doc]
 
 Layers as subparts of the screen. [doc]
 - config.layer_clipping

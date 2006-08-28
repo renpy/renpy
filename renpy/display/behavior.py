@@ -145,13 +145,16 @@ class SayBehavior(renpy.display.layout.Null):
 
     focusable = True
 
-    def __init__(self, default=True, afm=None, **properties):
+    def __init__(self, default=True, afm=None, dismiss='dismiss', **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
 
         if afm is not None:
             self.afm_length = len(afm)
         else:
             self.afm_length = None
+
+        # What keybindings lead to dismissal?
+        self.dismiss = dismiss
 
     def set_afm_length(self, afm_length):
         self.afm_length = afm_length
@@ -192,7 +195,7 @@ class SayBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.timeout(afm_delay - st)
 
-        if map_event(ev, "dismiss") and self.is_focused():
+        if map_event(ev, self.dismiss) and self.is_focused():
 
             if renpy.config.skipping:
                 renpy.config.skipping = None

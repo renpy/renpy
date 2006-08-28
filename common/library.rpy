@@ -221,6 +221,22 @@ init -500:
         config.hyperlink_callback = hyperlink_function
         
 
+    # The default with callback.
+    python:
+        _window_during_transitions = False
+
+        def _default_with_callback(trans, paired=None):
+            if (_window_during_transitions and not
+                renpy.context_nesting_level() and
+                not renpy.count_displayables_in_layer('transient')):
+
+                narrator("", interact=False)
+
+            return trans
+        
+        config.with_callback = _default_with_callback
+
+
 label _hide_windows:
 
     if _windows_hidden:
@@ -229,6 +245,7 @@ label _hide_windows:
     python:
         _windows_hidden = True
         ui.saybehavior()
+        ui.saybehavior(dismiss='hide_windows')
         ui.interact(suppress_overlay=True)
         _windows_hidden = False
 
@@ -304,3 +321,5 @@ init -401:
 
     # Lock the library object.
     $ library.lock = True
+
+    

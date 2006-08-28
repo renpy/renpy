@@ -299,7 +299,7 @@ def keymousebehavior():
     return
 
 
-def saybehavior(afm=None):
+def saybehavior(afm=None, dismiss='dismiss'):
     """
     This is a psuedo-widget that adds the say behavior to the
     screen. The say behavior is to return True if the left mouse is
@@ -310,9 +310,12 @@ def saybehavior(afm=None):
 
     If afm is present, it is a block of text, that's given to the auto
     forwarding mode algorithm to determine the auto-forwarding timeout.
+
+    If dismiss is present, it is the name of the keybinding that is used
+    to dismiss this saybehavior.
     """
 
-    return add(renpy.display.behavior.SayBehavior(afm=afm))
+    return add(renpy.display.behavior.SayBehavior(afm=afm, dismiss=dismiss))
 
 def pausebehavior(delay, result=False):
     """

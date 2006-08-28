@@ -58,6 +58,8 @@ def import_all():
     import renpy.warp
 
     import renpy.exports
+    import renpy.character # depends on exports.
+
     import renpy.config # depends on lots.
     import renpy.store  # depends on everything.
     import renpy.main
@@ -131,6 +133,8 @@ def reload_all():
     myreload(renpy.warp)
 
     myreload(renpy.exports)
+    myreload(renpy.character)
+
     myreload(renpy.config)
     myreload(renpy.store)
     myreload(renpy.main)

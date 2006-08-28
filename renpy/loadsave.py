@@ -178,3 +178,51 @@ def load(filename):
     zf.close()
 
     log.unfreeze(label="after_load")
+
+
+class _MultiPersistent(object):
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_filename']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
+    def __getattr__(self, name):
+        return None
+
+    def save(self):
+        
+        fn = self._filename
+        f = file(fn + ".new", "wb")
+        f.write(dumps(self))
+        f.close()
+
+        os.rename(fn + ".new", fn)
+
+def MultiPersistent(name):
+
+    if not renpy.game.init_phase:
+        raise Exception("MultiPersistent objects must be created during the init phase.")
+    
+    if os.name == 'nt':
+        fn = os.path.expanduser("~/RenPy/Persistent")
+    else:
+        fn = os.path.expanduser("~/.renpy/persistent")
+
+    try:
+        os.makedirs(fn)
+    except:
+        pass
+
+    fn = fn + "/" + name
+
+    try:
+        rv = loads(file(fn).read())
+    except:
+        rv = _MultiPersistent()
+
+    rv._filename = fn
+    return rv

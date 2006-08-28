@@ -21,8 +21,6 @@ init:
     $ config.screen_height = 600
     $ config.window_title = "The Ren'Py Demo Game"
 
-    $ config.layer_clipping['master'] = (0, 100, 800, 400)
-
     # Set up the theme for this game. This must be after the
     # library.script_version and config.screen_width lines.
     $ theme.roundrect()
@@ -53,6 +51,7 @@ init:
 
     $ e = Character(u'Eileen', color=(200, 255, 200, 255))
 
+
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
@@ -74,7 +73,6 @@ label start:
 
     # Start some music playing in the background.
     $ renpy.music.play('sun-flower-slow-drag.mid')
-
 
     # Now, set up the first scene. We first fade in our washington
     # background, and then we dissolve in the image of Eileen on top
