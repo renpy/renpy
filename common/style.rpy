@@ -162,7 +162,7 @@ init -1000:
         # The Default Style ###################################################
 
         # Text properties.
-        style.default.font = "Vera.ttf"
+        style.default.font = "DejaVuSans.ttf"
         style.default.antialias = True
         style.default.size = 22
         style.default.color = (255, 255, 255, 255)
