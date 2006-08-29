@@ -639,7 +639,7 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, style='default', **properties):
+    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, style='default', **properties):
         """
         @param child: The child displayable.
 
@@ -660,6 +660,11 @@ class Motion(Container):
         @param delay: How long this motion should take. If repeat is None, defaults to period.
 
         @param anim_timebase: If True, use the animation timebase rather than the shown timebase.
+
+        @param time_warp: If not None, this is a function that takes a
+        fraction of the period (between 0.0 and 1.0), and returns a
+        new fraction of the period. Use this to warp time, applying
+        acceleration and deceleration to motions.
 
         This can also be used as a transition. When used as a
         transition, the motion is applied to the new_widget for delay
@@ -684,6 +689,7 @@ class Motion(Container):
         self.bounce = bounce
         self.delay = delay
         self.anim_timebase = anim_timebase
+        self.time_warp = time_warp
 
     def render(self, width, height, st, at):
 
@@ -707,6 +713,9 @@ class Motion(Container):
                 renpy.display.render.redraw(self, 0)
                 
         t /= self.period
+
+        if self.time_warp:
+            t = self.time_warp(t)
 
         if self.bounce:
             t = t * 2
@@ -765,7 +774,7 @@ class Interpolate(object):
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
-        anim_timebase=False, style='default', **properties):
+        anim_timebase=False, style='default', time_warp=None, **properties):
     """
     This is used to pan over a child displayable, which is almost
     always an image. It works by interpolating the placement of the
@@ -791,6 +800,11 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
     @param anim_timebase: True if we use the animation timebase, False to use the
     displayable timebase.
 
+    @param time_warp: If not None, this is a function that takes a
+    fraction of the period (between 0.0 and 1.0), and returns a
+    new fraction of the period. Use this to warp time, applying
+    acceleration and deceleration to motions.
+
     This can be used as a transition. See Motion for details.
     """
 
@@ -804,10 +818,11 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   bounce=bounce,
                   style=style,
                   anim_timebase=anim_timebase,
+                  time_warp=time_warp,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
-         anim_timebase=False, style='default', **properties):
+         anim_timebase=False, style='default', time_warp=None, **properties):
     """
     This is used to pan over a child displayable relative to
     the containing area. It works by interpolating the placement of the
@@ -831,6 +846,11 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
     @param anim_timebase: True if we use the animation timebase, False to use the
     displayable timebase.
 
+    @param time_warp: If not None, this is a function that takes a
+    fraction of the period (between 0.0 and 1.0), and returns a
+    new fraction of the period. Use this to warp time, applying
+    acceleration and deceleration to motions.
+
     This can be used as a transition. See Motion for details.
     """
 
@@ -841,6 +861,7 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   bounce=bounce,
                   anim_timebase=anim_timebase,
                   style=style,
+                  time_warp=time_warp,
                   **properties)
 
 class Zoom(renpy.display.core.Displayable):
@@ -861,7 +882,7 @@ class Zoom(renpy.display.core.Displayable):
 
 
     def __init__(self, size, start, end, time, child,
-                 after_child=None, **properties):
+                 after_child=None, time_warp=None, **properties):
         """
         @param size: The size that the rectangle is scaled to, a
         (width, height) tuple.
@@ -881,6 +902,11 @@ class Zoom(renpy.display.core.Displayable):
         widget. This displayable will be rendered after the zoom
         completes. Use this to snap to a sharp displayable after
         the zoom is done.
+
+        @param time_warp: If not None, this is a function that takes a
+        fraction of the period (between 0.0 and 1.0), and returns a
+        new fraction of the period. Use this to warp time, applying
+        acceleration and deceleration to motions.
         """
 
         super(Zoom, self).__init__(**properties)
@@ -898,6 +924,9 @@ class Zoom(renpy.display.core.Displayable):
         else:
             self.after_child = None
         
+        self.time_warp = time_warp
+
+
 
     def visit(self):
         return [ self.child, self.after_child ]
@@ -912,6 +941,8 @@ class Zoom(renpy.display.core.Displayable):
         if self.after_child and done == 1.0:
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
+        if self.time_warp:
+            done = self.time_warp(done)
 
         rend = renpy.display.render.render(self.child, width, height, st, at)
         surf = rend.pygame_surface()

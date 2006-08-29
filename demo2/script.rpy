@@ -538,6 +538,8 @@ label ending:
 
     "Ren'Py and the Ren'Py demo were written by PyTom."
 
+    "The character art was done by Piroshki (from the Lemmasoft forums)."
+
     'The background music is "Sun Flower Slow Drag" by S. Joplin
      (1868-1917). Thanks to the Mutopia project for making it
        available.'

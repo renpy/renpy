@@ -623,7 +623,7 @@ class CropMove(Transition):
         return rv
                 
             
-def MoveTransition(delay, old_widget=None, new_widget=None):
+def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
     """
     This transition attempts to find images that have changed
     position, and moves them from the old position to the new
@@ -635,7 +635,14 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
     If you use this transition to slide an image off the side of the
     screen, remember to hide it when you are done.
+
+    factory is a function that takes the old position, the new position, the
+    delay time, and the displayable, and returns a new displayable that
+    performs the move.
     """
+
+    if factory is None:
+        factory = renpy.display.layout.Move
 
     def position(d):
 
@@ -670,11 +677,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None):
 
             if position(old) != position(new):
 
-                return renpy.display.layout.Move(position(old),
-                                                 position(new),
-                                                 delay,
-                                                 new,
-                                                 )
+                return factory(position(old),
+                               position(new),
+                               delay,
+                               new,
+                               )
             else:
                 return new
 
