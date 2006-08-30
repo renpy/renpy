@@ -9,6 +9,10 @@ New keywords: as, depth.
 
 show image
 
+show_left_image= [doc]
+show_right_image=
+show_two_window=
+
 Default font to DejaVu. [doc]
 
 MultiPersistent [doc]

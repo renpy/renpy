@@ -1579,7 +1579,7 @@ init:
     $ style.mm_menu_window.ypos = .05
 
     # Change the look of the text window.    
-    $ style.window.background = Frame("window.png", 24, 24)
+    $ style.window.background = Frame("window.png", 16, 16)
     $ style.window.xmargin = 0
     $ style.window.ymargin = 0
     $ style.window.xpadding = 12

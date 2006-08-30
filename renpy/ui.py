@@ -424,11 +424,10 @@ def input(default, length=None, allow=None, exclude='{}', **properties):
 def image(im, **properties):
     """
     This loads an image, and displays it as a widget. The image may be
-    the name of a file containing the image, or an object constructed
-    with one of the im methods.
+    the name of a file containing the image, or an arbitrary displayable.
     """
 
-    return add(renpy.display.image.Image(im, **properties))
+    return add(renpy.display.im.image(im, loose=True, **properties))
 
 def imagemap(ground, selected, hotspots, unselected=None,
              style='imagemap', button_style='imagemap_button',

@@ -19,6 +19,8 @@ from renpy.loadsave import load, save, list_saved_games, can_load
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
+from renpy.character import display_say, predict_display_say, show_display_say, predict_show_display_say
+
 import renpy.audio.sound as sound
 import renpy.audio.music as music
 
@@ -389,24 +391,6 @@ class TagQuotingDict(object):
 
 tag_quoting_dict = TagQuotingDict()
 
-def say(who, what, interact=True):
-    """
-    This is the core of the say command. If the who parameter is None
-    or a string, it is passed directly to display_say. Otherwise, the
-    say method is called on the who object with what as a parameter.
-    """
-
-    # Interpolate variables.
-    what = what % tag_quoting_dict
-
-    if who is None:
-        who = renpy.store.narrator
-
-    if isinstance(who, (str, unicode)):
-        renpy.store.say(who, what, interact=interact)
-    else:
-        who(what, interact=interact)
-
 def predict_say(who, what):
     """
     This is called to predict the results of a say command.
@@ -425,248 +409,24 @@ def predict_say(who, what):
             return [ ]
     
         
-def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, **kwargs):
+def say(who, what, interact=True):
     """
-    This is the default function used by Character to predict images that
-    will be used by show_display_say. It's called with more-or-less the
-    same parameters as show_display_say, and it's expected to return a
-    list of images used by show_display_say.
-    """
-
-    rv = [ ]
-
-    if "background" in window_args:
-        rv.append(window_args["background"])
-    else:        
-        rv.append(getattr(renpy.game.style, window_args["style"]).background)
-
-    if image:
-        rv.append(renpy.display.im.image(who, True))
-
-
-    return rv
-
-
-def predict_display_say(who, what,
-                        window_style='say_window',
-                        window_properties={},
-                        what_style='say_dialogue',
-                        what_properties={},
-                        who_style='say_label',
-                        image=False,
-                        ctc=None,
-                        show_args={},
-                        **who_properties):
-    """
-    This is the default function used by Character to predict images that
-    will be used by display_say. It's called with more-or-less the
-    same parameters as display_say, and is expected to return a list
-    of images used by display_say.
+    This is the core of the say command. If the who parameter is None
+    or a string, it is passed directly to display_say. Otherwise, the
+    say method is called on the who object with what as a parameter.
     """
 
-    window_args = window_properties.copy()
-    window_args["style"] = window_style
+    # Interpolate variables.
+    what = what % tag_quoting_dict
 
-    who_args = who_properties.copy()
-    who_args["style"] = who_style
+    if who is None:
+        who = renpy.store.narrator
 
-    what_args = what_properties.copy()
-    what_args["style"] = who_style
-
-    func = show_args.get("predict_function", predict_show_display_say)
-    rv = func(who, what, who_args=who_args, what_args=what_args, window_args=window_args, image=image,
-              **show_args) 
-
-    if ctc:
-        rv.append(ctc)
-
-    return rv
-
-                  
-def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, **kwargs):
-    """
-    This is called (by default) by renpy.display_say to add the
-    widgets corresponding to a screen of dialogue to the user. It is
-    not expected to be called by the user, but instead to be called by
-    display_say, or by a function passed as the show_function argument
-    to Character or display_say.
-
-    @param who: The name of the character that is speaking, or None to
-    not show this name to the user.
-
-    @param what: What that character is saying. Please not that this
-    may not be a string, as it can also be a list containing both text
-    and displayables, suitable for use as the first argument of ui.text().
-
-    @param who_args: Additional keyword arguments intended to be
-    supplied to the ui.text that creates the who widget of this dialogue.
-
-    @param what_args: Additional keyword arguments intended to be
-    supplied to the ui.text that creates the what widget of this dialogue.
-
-    @param window_args: Additional keyword arguments intended to be
-    supplied to the ui.window that creates the who widget of this
-    dialogue.
-
-    @param image: If True, then who should be interpreted as an image
-    or displayable rather than a text string.
-
-    @param kwargs: Additional keyword arguments should be ignored.
-
-    This function is required to return the ui.text() widget
-    displaying the what text.
-    """
-
-    renpy.ui.window(**window_args)
-    renpy.ui.vbox(style='say_vbox')
-
-    if who:
-        if image:
-            renpy.ui.add(renpy.display.im.image(who, loose=True, **who_args))
-        else:
-            renpy.ui.text(who, **who_args)
-
-    rv = renpy.ui.text(what, **what_args)
-    renpy.ui.close()
-
-    return rv
-            
-def display_say(who, what, who_style='say_label',
-                what_style='say_dialogue',
-                window_style='say_window',
-                who_prefix='',
-                who_suffix=': ',
-                what_prefix='',
-                what_suffix='',
-                interact=True,
-                slow=True,
-                slow_speed=None,
-                slow_abortable=True,
-                image=False,
-                afm=True,
-                ctc=None,
-                ctc_position="nestled",
-                all_at_once=False,
-                what_properties={},
-                window_properties={},
-                show_function = show_display_say,
-                show_args = { },
-                **properties):
-    """
-    @param who: Who is saying the dialogue, or None if it's not being
-    said by anyone.
-
-    @param what: What is being said.
-
-    @param afm: If True, the auto-forwarding mode is enabled. If False,
-    it is disabled.
-
-    @param all_at_once: If True, then the text is displayed all at once. (This is forced to true if interact=False.)
-
-    For documentation of the other arguments, please read the
-    documentation for Character.
-    """
-
-    # If we're in fast skipping mode, don't bother with say
-    # statements at all.
-    if renpy.config.skipping == "fast":
-
-        # Clears out transients.
-        with(None)
-        
-        return
-
-    # If we're just after a rollback, disable slow.
-    if renpy.game.after_rollback:
-        slow = False
-        
-    # If we're committed to skipping this statement, disable slow.
-    elif (renpy.config.skipping and
-          (renpy.game.preferences.skip_unseen or
-           renpy.game.context().seen_current(True))):    
-        slow = False
-
-    what = what_prefix + what + what_suffix
-
-    if not interact:
-        all_at_once = True
-
-    if all_at_once:
-        pause = None
+    if isinstance(who, (str, unicode)):
+        renpy.store.say(who, what, interact=interact)
     else:
-        pause = 0
+        who(what, interact=interact)
 
-    keep_interacting = True
-    slow_start = 0
-
-    # Figure out window args.
-    window_args = dict(style=window_style, **window_properties)
-
-    # Figure out who and its arguments.
-    if who is not None and not image:
-        who = who_prefix + who + who_suffix
-        who_args = dict(style=who_style, **properties)
-    elif who is not None and image:
-        who_args = dict(style=who_style, **properties)
-    else:
-        who_args = dict()
-
-    while keep_interacting:
-                
-        # If we're going to do an interaction, then saybehavior needs
-        # to be here.
-        if interact:            
-            behavior = renpy.ui.saybehavior()
-        else:
-            behavior = None
-
-        # Code to support ctc.
-        ctcwhat = [ what ]
-
-        if ctc and ctc_position == "nestled":
-            ctcwhat.extend([ " ", ctc ])
-
-        slow_done = None
-
-        if ctc and ctc_position == "fixed":
-            def slow_done():
-                renpy.ui.add(ctc)
-                restart_interaction()
-
-                
-        what_args = dict(style=what_style,
-                         slow=slow,
-                         slow_done=slow_done,
-                         slow_abortable=slow_abortable,
-                         slow_start=slow_start,
-                         pause=pause,
-                         slow_speed = None,
-                         **what_properties)
-
-        what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image, **show_args)
-
-        if behavior and afm:
-            behavior.set_afm_length(what_text.get_simple_length() - slow_start)
-
-        if interact:
-            renpy.ui.interact(mouse='say')
-
-        keep_interacting = what_text.get_keep_pausing()
-
-        if keep_interacting:
-            slow_start = what_text.get_laidout_length()
-            pause += 1
-
-            for i in renpy.config.say_sustain_callbacks:
-                i()
-
-    if who and isinstance(who, (str, unicode)):
-        log(who)
-    log(what)
-    log("")
-
-    if interact:
-        checkpoint()
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', **properties):

@@ -38,7 +38,10 @@ init -1000:
         style.create('say_dialogue', 'default', "(text) The style that is used by default for the text of dialogue.")
         style.create('say_thought', 'default', "(text) The label that is used by default for the text of thoughts or narration, when no speaker is given.""")
         style.create('say_window', 'window', '(window) The default style for windows containing dialogue and thoughts.')
+        style.create('say_who_window', 'window', '(window) The style used for the window containing the label, of a character with show_two_window set.')
+        style.create('say_two_window_vbox', 'vbox', '(window) The style used for the containing vbox in dialogue for a character with two_window set.')
         style.create('say_vbox', 'vbox', '(box) The vbox containing the label (if present) and the body of dialogue and thoughts.')
+        style.create('say_hbox', 'hbox', '(box) If a say has a left_image or right_image, then this is a hbox containing the images and the body of the dialogue or thoughts.')
 
         # menu
         style.create('menu', 'default', "(position) The style that is used for the vbox containing a menu.")
@@ -261,6 +264,15 @@ init -1000:
         style.say_label.bold = True
         style.say_vbox.box_spacing = 10
 
+        # Two window styles.
+        style.say_who_window.xminimum = 200
+        style.say_who_window.yminimum = 34
+        style.say_who_window.xfill = False
+        style.say_who_window.xalign = 0
+
+        style.say_two_window_vbox.yalign = 1.0
+
+        # Menus.
         style.menu_choice.hover_color = (255, 255, 0, 255) # yellow
         style.menu_choice.idle_color = (0, 255, 255, 255) # cyan
 
