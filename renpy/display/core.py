@@ -1413,11 +1413,13 @@ class Interface(object):
                     x, y = pygame.mouse.get_pos()
                     x -= self.display.screen_xoffset
 
-                    renpy.display.focus.event_handler(ev, x, y)
+                    renpy.display.focus.mouse_handler(ev, x, y)
 
                     self.event_time = end_time = time.time()
 
                     rv = root_widget.event(ev, x, y, 0)
+
+                    renpy.display.focus.key_handler(ev)
 
                     if rv is not None:
                         break

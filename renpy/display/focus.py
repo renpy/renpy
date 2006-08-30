@@ -140,6 +140,9 @@ def change_focus(newfocus):
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y):
 
+    if ev.type not in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+        return
+
     newfocus = None
     default = None
 
@@ -360,12 +363,3 @@ def key_handler(ev):
 
         
                                 
-
-
-# This handles pygame events that may change focus.
-def event_handler(ev, x, y):
-
-    if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
-        mouse_handler(ev, x, y)
-
-    key_handler(ev)

@@ -99,7 +99,7 @@ class SFont(object):
 
         return (w, self.height)
             
-    def render(self, text, antialias, color, black_color, background=None):
+    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
         surf = pygame.Surface(self.size(text), 0,
                               renpy.game.interface.display.sample_surface)
 

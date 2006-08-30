@@ -9,6 +9,8 @@ New keywords: as, depth.
 
 show image
 
+Minigame
+
 show_left_image= [doc]
 show_right_image=
 show_two_window=
