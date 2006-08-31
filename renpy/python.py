@@ -761,7 +761,7 @@ def py_traceback():
         filename = co.co_filename
         
         if filename.endswith(".rpy") and not filename.startswith("common"):
-            renpy.game.exception_info += "\nWhile executing python code on line %d of %s.\n" % (line, filename)
+            renpy.game.exception_info += "\nWhile executing python code on line %d of %s." % (line, filename)
                 
         tb = tb.tb_next
 

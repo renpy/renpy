@@ -14,7 +14,7 @@
 init:
     
     # The version of this script.
-    $ library.script_version = (5, 5, 4)
+    $ library.script_version = (5, 6, 0)
 
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
@@ -647,16 +647,17 @@ init:
             editing = None
 
             def button(text, selected, returns, **properties):
-                style = 'button'
-                style_text = 'button_text'
-
+                style='selected_button'
+                style_text='selected_button_text'
+                    
                 if selected:
-                    style='selected_button'
-                    style_text='selected_button_text'
+                    role='selected_'
+                else:
+                    role=''
 
                 ui.button(clicked=ui.returns(returns),
-                          style=style, **properties)
-                ui.text(text, style=style_text)
+                          style='button', role=role, **properties)
+                ui.text(text, style='button_text')
 
 
             while True:

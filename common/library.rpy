@@ -2,15 +2,6 @@
 # touched by the user too much. We reserve the _ prefix for names
 # defined in the library.
 
-# It's strongly reccomended that you don't edit this file, as future
-# releases of Ren'Py will probably change this file to include more
-# functionality.
-
-# It's also strongly recommended that you leave this file in the
-# game directory, so its functionality is included in your game.
-
-
-
 init -500:
     python:
 
@@ -25,6 +16,9 @@ init -500:
                     if not name in vars(self):
                         raise Exception('library.%s is not a known configuration variable.' % name)
 
+                if name == "script_version":
+                    _set_script_version(value)
+
                 object.__setattr__(self, name, value)
                 
                 
@@ -35,7 +29,7 @@ init -500:
 
         # The minimum version of the module we work with. Don't change
         # this unless you know what you're doing.
-        library.module_version = 4008002
+        library.module_version = 5005000
 
         # Should we warn the user if the module is missing or has a bad
         # version?

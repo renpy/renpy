@@ -134,11 +134,11 @@ init -499:
                     disabled = True
                     clicked = None
 
-                ### gm_nav_button button
+                ### gm_nav_button menu_button
                 # (window, hover) The style of a game menu
                 # navigation button.
 
-                ### gm_nav_button_text button_text
+                ### gm_nav_button_text menu_button_text
                 # (text, hover) The style of the text of a  game
                 # menu navigation button.
 
@@ -168,7 +168,7 @@ init -499:
         def _render_savefile(name, extra_info, screenshot, mtime, newest):
 
 
-            ### file_picker_entry button
+            ### file_picker_entry menu_button
             # (window, hover) The style that is used for each of the
             # slots in the file picker.
             ui.button(style='file_picker_entry',
@@ -308,11 +308,11 @@ init -499:
                     # (box) The box containing the naviation (next/previous)
                     # buttons in the file picker.
 
-                    ### file_picker_nav_button button
+                    ### file_picker_nav_button menu_button
                     # (window, hover) The style that is used for enabled file
                     # picker navigation buttons.
 
-                    ### file_picker_nav_button_text button_text
+                    ### file_picker_nav_button_text menu_button_text
                     # (text) The style that is used for the label of enabled
                     # file picker navigation buttons.
                    
@@ -406,10 +406,10 @@ init -499:
             # (text) The style used for the prompt in a yes/no
             # dialog.
 
-            ### yesno_button button
+            ### yesno_button menu_button
             # (window, hover) The style of yes/no buttons.
 
-            ### yesno_button_text button_text
+            ### yesno_button_text menu_button_text
             # (window, hover) The style of yes/no button text.
 
             _label_factory(message, "yesno")

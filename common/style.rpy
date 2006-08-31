@@ -72,6 +72,8 @@ init -1000:
         # button
         style.create('button', 'default', '(window, sound, hover) The default style used for buttons in the main and game menus.')
         style.create('button_text', 'default', '(text, hover) The default style used for the label of a button.')
+        style.create('menu_button', 'button', 'The base style for buttons that are part of the main or game menus.')
+        style.create('menu_button_text', 'button_text', 'The base style for the label of buttons that are part of the main or game menus.')
 
         # bar
         style.create('bar', 'default', '(bar) The style that is used by default for bars.')
@@ -90,9 +92,9 @@ init -1000:
         style.create("gm_root", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
         style.create("gm_nav_frame", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
         style.create("gm_nav_vbox", "thin_vbox", "(box) The style that is used by the box inside the gm_nav_frame")
-        style.create("gm_nav_button", "button", "(window, hover) The style of a game menu navigation button.")
-        style.create("gm_nav_button_text", "button_text", "(text, hover) The style of the text of a  game menu navigation button.")
-        style.create("file_picker_entry", "button", "(window, hover) The style that is used for each of the slots in the file picker.")
+        style.create("gm_nav_button", "menu_button", "(window, hover) The style of a game menu navigation button.")
+        style.create("gm_nav_button_text", "menu_button_text", "(text, hover) The style of the text of a  game menu navigation button.")
+        style.create("file_picker_entry", "menu_button", "(window, hover) The style that is used for each of the slots in the file picker.")
         style.create("file_picker_entry_box", "thin_hbox", "(box) The style that is used for the hbox inside of a file picker entry.")
         style.create("file_picker_text", "default", "(text) A base style for all text that is displayed in the file picker.")
         style.create("file_picker_new", "file_picker_text", "(text) The style that is applied to the number of the new slot in the file picker.")
@@ -102,14 +104,14 @@ init -1000:
         style.create("file_picker_frame", "default", "(window) A window containing the file picker that is used to choose slots for loading and saving.")
         style.create("file_picker_frame_vbox", "thin_vbox", "(box) The vbox containing both the nav and the grid in the file picker.")
         style.create("file_picker_navbox", "thick_hbox", "(box) The box containing the naviation (next/previous) buttons in the file picker.")
-        style.create("file_picker_nav_button", "button", "(window, hover) The style that is used for enabled file picker navigation buttons.")
-        style.create("file_picker_nav_button_text", "button_text", "(text) The style that is used for the label of enabled file picker navigation buttons.")
+        style.create("file_picker_nav_button", "menu_button", "(window, hover) The style that is used for enabled file picker navigation buttons.")
+        style.create("file_picker_nav_button_text", "menu_button_text", "(text) The style that is used for the label of enabled file picker navigation buttons.")
         style.create("file_picker_grid", "default", "The style of the grid containing the file picker entries.")
         style.create("yesno_frame", "default", "(window) The style of a window containing a yes/no prompt.")
         style.create("yesno_frame_vbox", "thick_vbox", "(box) The style of a box containing the widgets in a yes/no prompt.")
         style.create("yesno_label", "default", "(text) The style used for the prompt in a yes/no dialog.")
-        style.create("yesno_button", "button", "(window, hover) The style of yes/no buttons.")
-        style.create("yesno_button_text", "button_text", "(window, hover) The style of yes/no button text.")
+        style.create("yesno_button", "menu_button", "(window, hover) The style of yes/no buttons.")
+        style.create("yesno_button_text", "menu_button_text", "(window, hover) The style of yes/no button text.")
         style.create("error_root", "default", "(window) The style of the window containing internal error messages.")
         style.create("error_title", "default", "(text) The style of the text containing the title of an error message.")
         style.create("error_body", "default", "(text) The style of the body of an error message.")
@@ -117,15 +119,15 @@ init -1000:
         style.create("mm_root", "default", "(window) The style used for the root window of the main menu. This is primarily used to set a background for the main menu.")
         style.create("mm_menu_frame", "default", "(window) A window that contains the choices in the main menu. Change this to change the placement of these choices on the main menu screen.")
         style.create("mm_menu_frame_vbox", "thin_vbox", "(box) The vbox containing the main menu choices.")
-        style.create("mm_button", "button", "(window, hover) The style that is used on buttons that are part of the main menu.")
-        style.create("mm_button_text", "button_text", "(text, hover) The style that is used for the labels of buttons that are part of the main menu.")
+        style.create("mm_button", "menu_button", "(window, hover) The style that is used on buttons that are part of the main menu.")
+        style.create("mm_button_text", "menu_button_text", "(text, hover) The style that is used for the labels of buttons that are part of the main menu.")
         style.create("prefs_frame", "default", "(window) A window containing all preferences.")
         style.create("prefs_pref_frame", "default", "(window) A window containing an individual preference.")
         style.create("prefs_pref_vbox", "thin_vbox", "(box) The style of the vbox containing a preference.")
         style.create("prefs_label", "default", "(text) The style that is applied to the label of a block of preferences.")
         style.create("prefs_hbox", "default", "If library.hbox_pref_choices is True, the style of the hbox containing the choices.")
-        style.create("prefs_button", "button", "(window, hover) The style of an unselected preferences button.")
-        style.create("prefs_button_text", "button_text", "(text, hover) The style of the text of an unselected preferences button.")
+        style.create("prefs_button", "menu_button", "(window, hover) The style of an unselected preferences button.")
+        style.create("prefs_button_text", "menu_button_text", "(text, hover) The style of the text of an unselected preferences button.")
         style.create("prefs_volume_slider", "prefs_slider", "(bar) The style that is applied to volume sliders.")
         style.create("soundtest_button", "prefs_button", "(window, hover) The style of a sound test button.")
         style.create("soundtest_button_text", "prefs_button_text", "(text, hover) The style of the text of a sound test  button.")
@@ -306,10 +308,11 @@ init -1000:
         style.button_text.selected_color = dark_red
         style.button_text.selected_hover_color = bright_red
 
-        style.button.xpos = 0.5
-        style.button.xanchor = 0.5
         style.button_text.xpos = 0.5
         style.button_text.xanchor = 0.5
+
+        style.menu_button.xpos = 0.5
+        style.menu_button.xanchor = 0.5
   
         ######################################################################
         # Hyperlinks
@@ -503,9 +506,7 @@ init -1000:
         style.prefs_pref = style.prefs_pref_frame
         style.gm_root_window = style.gm_root
         style.yesno_window_vbox = style.yesno_frame_vbox
-        style.menu_button = style.button
         style.joyprompt_label = style.js_prompt_label
-        style.menu_button_text = style.button_text
         style.gm_nav_window = style.gm_nav_frame
         style.joy_window = style.js_frame
         style.mm_menu_window = style.mm_menu_frame

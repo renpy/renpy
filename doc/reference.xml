@@ -2314,8 +2314,6 @@ e "Pleased to meet you, %(name)s."
 
 <!-- func renpy.choice_for_skipping -->
 
-<!-- func color -->
-
 <p>
 Contexts store the current scene lists and execution location. Ren'Py
 supports a stack of contexts, but only the top-level context is saved

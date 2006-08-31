@@ -9,6 +9,7 @@ import renpy
 # from renpy.display.layout import *
 from renpy.display.text import ParameterizedText, register_sfont
 from renpy.display.behavior import Keymap
+from renpy.display.minigame import Minigame
 # from renpy.display.image import *
 
 from renpy.curry import curry
@@ -256,7 +257,12 @@ def input(prompt, default='', allow=None, exclude='{}', length=None):
 
     renpy.ui.close()
 
-    return renpy.ui.interact(mouse='prompt')
+    rv = renpy.ui.interact(mouse='prompt')
+
+    if renpy.config.implicit_with_none:
+        renpy.game.interface.with(None, None)
+
+    return rv
 
 def menu(items, set_expr):
     """
@@ -368,6 +374,10 @@ def display_menu(items, window_style='menu_window', interact=True):
         log("")
 
         checkpoint()
+
+        if renpy.config.implicit_with_none:
+            renpy.game.interface.with(None, None)
+
         return rv
     
     return None
@@ -428,6 +438,7 @@ def say(who, what, interact=True):
         who(what, interact=interact)
 
 
+
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', **properties):
     """
@@ -465,6 +476,10 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
     rv = renpy.ui.interact(suppress_overlay=(not overlays), mouse='imagemap')
     checkpoint()
+
+    if renpy.config.implicit_with_none:
+        renpy.game.interface.with(None, None)
+
     return rv
     
 
@@ -501,7 +516,13 @@ def pause(delay=None, music=None):
     if delay is not None:
         renpy.ui.pausebehavior(delay, False)
 
-    return renpy.ui.interact(mouse='pause')
+    rv = renpy.ui.interact(mouse='pause')
+
+    if renpy.config.implicit_with_none:
+        renpy.game.interface.with(None, None)
+
+    return rv
+
 
 def movie_cutscene(filename, delay, loops=0):
     """

@@ -288,6 +288,10 @@ def display_say(who, what, who_style='say_label',
     if interact:
         renpy.exports.checkpoint()
 
+        if renpy.config.implicit_with_none:
+            renpy.game.interface.with(None, None)
+
+
 
 class Character(object):
     """

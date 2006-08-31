@@ -207,8 +207,10 @@ def expand_properties(properties):
                 if prop.startswith("activate_"):
                     continue
 
-                raise Exception("Style property %s is unknown." % prop)
+                if renpy.config.check_properties:
+                    raise Exception("Style property %s is unknown." % prop)
 
+                func = None
 
 
             if func:
@@ -248,7 +250,7 @@ def build_style(style):
         else:
             style.__dict__["cache"] = parent.cache.copy()
             style.cache.update(style.properties)
-        
+
     else:
         style.__dict__["cache"] = style.properties
 
@@ -338,7 +340,7 @@ class Style(object):
         """
 
         for d, prop, val in expand_properties(properties):
-            d.setdefault(prop, v)
+            self.properties.setdefault(prop, val)
             
     
         

@@ -250,6 +250,9 @@ periodic_callback = None
 # to values) or to None to indicate no such function is necessary.
 style_properties = None
 
+# Should we check that all style properties are in style_properties? (Internal)
+check_properties = True
+
 # If True, then we implicily do a with None after every interaction.
 implicit_with_none = True
 

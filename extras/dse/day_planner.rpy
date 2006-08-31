@@ -23,9 +23,7 @@ init -100:
 
         # Action buttons.
         style.create('dp_button', 'button')
-        style.create('dp_selected_button', 'selected_button')
         style.create('dp_button_text', 'button_text')
-        style.create('dp_selected_button_text', 'selected_button_text')
 
         style.create('dp_done_button', 'button')
         style.create('dp_done_button_text', 'button_text')

@@ -1,3 +1,16 @@
+init -501:
+    python:
+
+        # This is called when script_version is set, to immediately
+        # run code in response to a script_version change.        
+        def _set_script_version(version):
+
+            if version is None:
+                return
+
+            if version <= (5, 6, 0):
+                config.check_properties = False
+
 init 1000:
     python hide:
 
@@ -7,23 +20,15 @@ init 1000:
         def compat(x, y, z):
             return library.script_version and library.script_version <= (x, y, z)
 
-
         # Compat for changes to with-callback.
         if compat(5, 4, 5):
             if config.with_callback:
-                def compat_with_function(trans, paired, old=config.with_function):
+                def compat_with_function(trans, paired, old=config.with_callback):
                     old(trans)
                     return trans
 
                 config.with_callback = compat_with_function
                 
-        # Compat for changes to button look.
-        if compat(5, 4, 5):            
-            style.button.setdefault(xpos=0.5, xanchor=0.5)
-            style.button.clear()
-            style.button_text.clear()
-            style.selected_button.clear()
-            style.selected_button_text.clear()
 
         if not config.sound:
             library.has_sound = False
@@ -33,7 +38,15 @@ init 1000:
         if compat(5, 1, 1):
             config.recolor_sfonts = False
 
-
+        if compat(5, 5, 4):
+            config.implicit_with_none = False
+            
+        # Compat for changes to button look.
+        if compat(5, 5, 4):            
+            style.button.setdefault(xpos=0.5, xanchor=0.5)
+            style.menu_button.clear()
+            style.menu_button_text.clear()
+            
 # Style compatibility.
 init -999:
     python:
@@ -56,6 +69,10 @@ init -999:
                 target = getattr(style, self.target)
                 for k, v in self.property_updates:
                     setattr(target, "selected_" + k, v)
+
+            def clear(self):
+                self.__dict__["property_updates"] = [ ]
+
 
         style.selected_button = _SelectedCompat('button')
         style.selected_button_text = _SelectedCompat('button_text')

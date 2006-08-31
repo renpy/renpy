@@ -30,6 +30,8 @@ label _start:
 
     call _load_reload_game from _call__load_reload_game_1
 
+    scene black
+
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
 
@@ -41,7 +43,7 @@ label _start:
 
     $ renpy.call_in_new_context("_enter_main_menu")
 
-    # Should never happen... but might as well do something 
+    # If the main menu returns, then start the game.
     jump start
 
 # At this point, we've been switched into a new context. So we
@@ -95,11 +97,11 @@ label _library_main_menu:
             if isinstance(clicked, basestring):
                 clicked = ui.jumpsoutofcontext(clicked)
 
-            ### mm_button button
+            ### mm_button menu_button
             # (window, hover) The style that is used on buttons that are
             # part of the main menu.
 
-            ### mm_button_text button_text
+            ### mm_button_text menu_button_text
             # (text, hover) The style that is used for the labels of
             # buttons that are part of the main menu.
 

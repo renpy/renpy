@@ -1,5 +1,7 @@
 # The minigame API.
 
+import renpy
+
 # A map from (text, font, size, color, bold, italics, underline) -> surface.
 # This one is for the old frame.
 old_text_cache = { }
@@ -8,9 +10,11 @@ old_text_cache = { }
 # This is for the new frame.
 new_text_cache = { }
 
-class Minigame(renpy.display.core.object):
+class Minigame(renpy.display.core.Displayable):
     
-    def __init__(self, render_callback, event_callback):
+    def __init__(self, render_callback, event_callback, **properties):
+        super(Minigame, self).__init__(**properties)
+
         self.render_callback = render_callback
         self.event_callback = event_callback
 
@@ -20,7 +24,7 @@ class Minigame(renpy.display.core.object):
         global new_text_cache
 
         rv = renpy.display.render.Render(width, height)
-        self.render_callback(self, st)
+        self.render_callback(rv, st)
 
         old_text_cache = new_text_cache
         new_text_cache = { }
@@ -40,7 +44,7 @@ class Minigame(renpy.display.core.object):
     def mutated_surface(self, surf):
         renpy.display.render.mutated_surface(surf)
 
-    def render_text(text, font, size, color, bold=False, italics=False, underline=False, antialias=True):
+    def render_text(self, text, font, size, color, bold=False, italics=False, underline=False, antialias=True):
         color = renpy.easy.color(color)
 
         key = (text, font, size, color, bold, italics, underline, antialias)
@@ -48,7 +52,7 @@ class Minigame(renpy.display.core.object):
 
         if rv is None:
 
-            font = renpy.display.text.get_font(text, font, size, bold=bold, italics=italics, underline=underline)
+            font = renpy.display.text.get_font(font, size, bold=bold, italics=italics, underline=underline)
             rv = font.render(text, antialias, color)
             self.mutated_surface(rv)
 

@@ -9,7 +9,7 @@ New keywords: as, depth.
 
 show image
 
-Minigame
+Minigame [doced]
 
 show_left_image= [doc]
 show_right_image=
@@ -33,6 +33,7 @@ Implicit with None (default) [doc]
 Compat for styles. 
 Doc styles.
 Easy styles (etc.) [doc]
+menu_button, menu_button_text.
 
 New character art.
 

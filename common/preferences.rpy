@@ -133,11 +133,11 @@ init -450:
 
                 for name, value in values:
 
-                    ### prefs_button button
+                    ### prefs_button menu_button
                     # (window, hover) The style of an unselected preferences
                     # button.
 
-                    ### prefs_button_text button_text
+                    ### prefs_button_text menu_button_text
                     # (text, hover) The style of the text of an unselected
                     # preferences button.
 

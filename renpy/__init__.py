@@ -4,9 +4,9 @@
 # Some version numbers and things.
 
 # Be sure to change script_version in the demo game, too!
-version = "Ren'Py 5.5.4o3"
+version = "Ren'Py 5.6pre1"
 script_version = 5003000
-savegame_suffix = "-5.5.1.save"
+savegame_suffix = "-5.6.0.save"
 
 
 def import_all():
@@ -45,6 +45,7 @@ def import_all():
     import renpy.display.anim
     import renpy.display.particle
     import renpy.display.joystick
+    import renpy.display.minigame
 
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
@@ -120,6 +121,7 @@ def reload_all():
     myreload(renpy.display.anim)
     myreload(renpy.display.particle)
     myreload(renpy.display.joystick)
+    myreload(renpy.display.minigame)
 
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 

@@ -175,13 +175,13 @@ init -402:
             style.button.clear()
             style.button.background = RoundRect(widget)
             style.button.hover_background = RoundRect(widget_hover)
-            style.button.activate_background = RoundRect(widget_hover)
             style.button.xminimum = widget_width
             style.button.ypadding = 1
             style.button.xpadding = _roundrect_radius
             style.button.xmargin = 1
             style.button.ymargin = 1
-            
+
+            style.button_text.clear()
             style.button_text.drop_shadow = None
             style.button_text.color = widget_text
             style.button_text.size = size
@@ -196,6 +196,8 @@ init -402:
 
             style.button_text.selected_color = widget_selected 
 
+            style.menu_button.clear()
+            
             style.mm_root.background = mm_root
             style.gm_root.background = gm_root
 

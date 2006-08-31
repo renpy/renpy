@@ -1040,8 +1040,6 @@ class Interface(object):
             # Clean out transient stuff at the end of an interaction.
             scene_lists = renpy.game.context().scene_lists
             scene_lists.replace_transient()
-            if renpy.config.implicit_with_none:
-                self.with(None, None)
 
             self.restart_interaction = True
         
