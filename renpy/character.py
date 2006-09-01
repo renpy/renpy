@@ -24,16 +24,12 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
     if image:
         rv.append(renpy.display.im.image(who, True))
 
-    if left_image:
-        rv.append(renpy.display.im.image(left_image, True))
-
-    if right_image:
-        rv.append(renpy.display.im.image(right_image, True))
-
+    if side_image:
+        rv.append(renpy.display.im.image(side_image, True))
 
     return rv
 
-def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, left_image=None, right_image=None, two_window=False, **kwargs):
+def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, side_image=None, two_window=False, **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
     widgets corresponding to a screen of dialogue to the user. It is
@@ -89,21 +85,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image
     if not two_window:
         handle_who()
 
-    if left_image or right_image:        
-        # Opens the say_hbox.
-        renpy.ui.hbox(style='say_hbox')
-
-    if left_image:
-        renpy.ui.image(left_image)
-
     rv = renpy.ui.text(what, **what_args)
-
-    if right_image:
-        renpy.ui.image(right_image)
-
-    if left_image or right_image:
-        # Closes the say_hbox.
-        renpy.ui.close()
 
     # Closes the say_vbox.
     renpy.ui.close()
@@ -112,19 +94,34 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image
         # Closes the say_two_window_vbox.
         renpy.ui.close()
 
+    if side_image:
+        renpy.ui.image(side_image)
+
     return rv
 
 
 def predict_display_say(who, what,
-                        window_style='say_window',
-                        window_properties={},
-                        what_style='say_dialogue',
-                        what_properties={},
-                        who_style='say_label',
-                        image=False,
-                        ctc=None,
-                        show_args={},
-                        **who_properties):
+                what_style='say_dialogue',
+                window_style='say_window',
+                who_prefix='',
+                who_suffix=': ',
+                what_prefix='',
+                what_suffix='',
+                interact=True,
+                slow=True,
+                slow_speed=None,
+                slow_abortable=True,
+                image=False,
+                afm=True,
+                ctc=None,
+                ctc_position="nestled",
+                all_at_once=False,
+                what_properties={},
+                window_properties={},
+                show_function = show_display_say,
+                show_args = { },
+                with_none = None,
+                **who_properties):
     """
     This is the default function used by Character to predict images that
     will be used by display_say. It's called with more-or-less the
@@ -171,6 +168,7 @@ def display_say(who, what, who_style='say_label',
                 window_properties={},
                 show_function = show_display_say,
                 show_args = { },
+                with_none = None,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -288,7 +286,10 @@ def display_say(who, what, who_style='say_label',
     if interact:
         renpy.exports.checkpoint()
 
-        if renpy.config.implicit_with_none:
+        if with_none is None:
+            with_none = renpy.config.implicit_with_none
+
+        if with_none:
             renpy.game.interface.with(None, None)
 
 
@@ -321,81 +322,6 @@ class Character(object):
                  condition=None,
                  dynamic=False,
                  **properties):
-        """
-        @param name: The name of the character, as shown to the user.
-
-        @param who_style: The name of the style that is applied to the
-        characters name when it is shown to the user.
-
-        @param what_style: The name of the style that is applied to
-        the body of the character's dialogue, when it is shown to the
-        user.
-
-        @param window_style: The name of the style of the window
-        containing all the dialogue.
-
-        @param who_prefix: A prefix that is prepended to the name.
-     
-        @param who_suffix: A suffix that is appended to the name. (Defaults to ':')
-
-        @param what_prefix: A prefix that is prepended to the text body.
-
-        @param what_suffix: A suffix that is appended to the text body.
-
-        @param show_function: A function that is called to show each
-        step of this dialogue to the user. It should have the same
-        signature as renpy.show_display_say.
-
-        @param show_predict_function: A function that is called to predict
-        images used by show_function. This should have the same signature
-        as renpy.show_predict_function.
-
-        @param function: deprecated, do not change.
-        
-        @param predict_function: deprecated, do not change.
-        
-        @param condition: A string containing a python expression, or
-        None. If not None, the condition is evaluated when each line
-        of dialogue is said. If it evaluates to False, the dialogue is
-        not shown to the user.
-
-        @param interact: If True (the default), then each line said
-        through this character causes an interaction. If False, then
-        the window is added to the screen, but control immediately
-        proceeds. You'll need to call ui.interact yourself to show it.
-
-        @param properties: Additional style properties, that are
-        applied to the label containing the character's name.
-
-        @param dynamic: If true, the name is interpreted as a python
-        expression, which is evaluated to get the name that will be
-        used by the rest of the code.
-
-        @param image: If true, the name is considered to be the name
-        of an image, which is rendered in place of the who label.
-
-        @param ctc: If present, this is interpreted as a widget that
-        is displayed when all text is shown to the user, prompting the
-        user to click to continue. Animation or anim.Blink is a good
-        choice for this sort of widget, as is Image.
-
-        @param ctc_position: If "nestled", the ctc widget is
-        displayed nestled in with the end of the text. If
-        "fixed", the ctc widget is displayed directly on the screen,
-        with its various position properties determining where it is
-        actually shown.
-
-        @param interact: If True, the default, an interaction will
-        take place when the character speaks. Otherwise, no such
-        interaction will take place.
-
-        In addition, Character objects also take properties. If a
-        property is prefixed with window_, it is applied to the
-        window. If prefixed with what_, it is applied to the text
-        being spoken. If prefixed with show_, properties are passed as keyword arguments
-        to the show_ and predict_ functions. Unprefixed properties are applied to the who
-        label, the name of the character speaking.
-        """
         
         self.name = name
         self.who_style = who_style

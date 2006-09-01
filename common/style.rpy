@@ -41,7 +41,6 @@ init -1000:
         style.create('say_who_window', 'window', '(window) The style used for the window containing the label, of a character with show_two_window set.')
         style.create('say_two_window_vbox', 'vbox', '(window) The style used for the containing vbox in dialogue for a character with two_window set.')
         style.create('say_vbox', 'vbox', '(box) The vbox containing the label (if present) and the body of dialogue and thoughts.')
-        style.create('say_hbox', 'hbox', '(box) If a say has a left_image or right_image, then this is a hbox containing the images and the body of the dialogue or thoughts.')
 
         # menu
         style.create('menu', 'default', "(position) The style that is used for the vbox containing a menu.")
@@ -241,8 +240,8 @@ init -1000:
 
         style.window.xpos = 0.5
         style.window.ypos = 1.0
-        style.window.xanchor = 'center'
-        style.window.yanchor = 'bottom'
+        style.window.xanchor = 0.5
+        style.window.yanchor = 1.0
 
         # Frames.
         style.frame.background = Solid((0, 0, 128, 128))
@@ -256,8 +255,8 @@ init -1000:
 
         style.image_placement.xpos = 0.5
         style.image_placement.ypos = 1.0
-        style.image_placement.xanchor = 'center'
-        style.image_placement.yanchor = 'bottom'
+        style.image_placement.xanchor = 0.5
+        style.image_placement.yanchor = 1.0
 
 
         ######################################################################
@@ -282,18 +281,18 @@ init -1000:
         
         # Styles used by centered.
         style.centered_window.xpos = 0.5
-        style.centered_window.xanchor = 'center'
+        style.centered_window.xanchor = 0.5
         style.centered_window.xfill = False                      
         style.centered_window.ypos = 0.5
-        style.centered_window.yanchor = 'center'
+        style.centered_window.yanchor = 0.5
         style.centered_window.yfill = False
         style.centered_window.xpadding = 10
 
         style.centered_text.textalign = 0.5
         style.centered_text.xpos = 0.5
         style.centered_text.ypos = 0.5
-        style.centered_text.xanchor = 'center'
-        style.centered_text.yanchor = 'center'
+        style.centered_text.xanchor = 0.5
+        style.centered_text.yanchor = 0.5
            
 
         ######################################################################
@@ -348,9 +347,9 @@ init -1000:
         style.mm_root.yfill = True
 
         style.mm_menu_frame.xpos = 0.9
-        style.mm_menu_frame.xanchor = 'right'
+        style.mm_menu_frame.xanchor = 1.0
         style.mm_menu_frame.ypos = 0.9
-        style.mm_menu_frame.yanchor = 'bottom'
+        style.mm_menu_frame.yanchor = 1.0
 
 
         ######################################################################
@@ -361,18 +360,18 @@ init -1000:
         style.gm_root.yfill = True
     
         style.gm_nav_frame.xpos = 0.95
-        style.gm_nav_frame.xanchor = 'right'
+        style.gm_nav_frame.xanchor = 1.0
         style.gm_nav_frame.ypos = 0.95
-        style.gm_nav_frame.yanchor = 'bottom'
+        style.gm_nav_frame.yanchor = 1.0
 
 
         ##############################################################################
         # File picker.
     
         style.file_picker_frame.xpos = 0
-        style.file_picker_frame.xanchor = 'left'
+        style.file_picker_frame.xanchor = 0.0
         style.file_picker_frame.ypos = 0
-        style.file_picker_frame.yanchor = 'top'
+        style.file_picker_frame.yanchor = 0.0
         style.file_picker_frame.xpadding = 5
 
         style.file_picker_navbox.xpos = 10
@@ -411,52 +410,52 @@ init -1000:
         style.yesno_frame.xmargin = .1
 
         style.yesno_frame_vbox.xpos = 0.5
-        style.yesno_frame_vbox.xanchor = 'center'
+        style.yesno_frame_vbox.xanchor = 0.5
         style.yesno_frame_vbox.ypos = 0.5
-        style.yesno_frame_vbox.yanchor = 'center'
+        style.yesno_frame_vbox.yanchor = 0.5
 
         ##############################################################################
         # Preferences.
 
 
         style.prefs_pref_frame.xpos = 0.5
-        style.prefs_pref_frame.xanchor = 'center'
+        style.prefs_pref_frame.xanchor = 0.5
         style.prefs_pref_frame.bottom_margin = 10
 
         style.prefs_label.xpos = 0.5
-        style.prefs_label.xanchor = "center"
+        style.prefs_label.xanchor = 0.5
         style.prefs_label.color = green
 
         style.prefs_slider.xmaximum=200
         style.prefs_slider.ymaximum=22
         style.prefs_slider.xpos = 0.5
-        style.prefs_slider.xanchor = 'center'
+        style.prefs_slider.xanchor = 0.5
 
         style.prefs_hbox.xpos = 0.5
-        style.prefs_hbox.xanchor = 'center'
+        style.prefs_hbox.xanchor = 0.5
         
         style.prefs_button.xpos = 0.5
-        style.prefs_button.xanchor = 'center'
+        style.prefs_button.xanchor = 0.5
 
         style.prefs_button.selected_xpos = 0.5
-        style.prefs_button.selected_xanchor = 'center'
+        style.prefs_button.selected_xanchor = 0.5
 
         style.prefs_frame.xfill=True
         style.prefs_frame.ypadding = 0.05
 
         style.prefs_column.box_spacing = 6
 
-        style.prefs_left.xanchor = 'center'
+        style.prefs_left.xanchor = 0.5
         style.prefs_left.xpos = 1.0 / 6.0
 
-        style.prefs_center.xanchor = 'center'
+        style.prefs_center.xanchor = 0.5
         style.prefs_center.xpos = 3.0 / 6.0
 
-        style.prefs_right.xanchor = 'center'
+        style.prefs_right.xanchor = 0.5
         style.prefs_right.xpos = 5.0 / 6.0
 
         style.prefs_spinner.xpos = 0.5
-        style.prefs_spinner.xanchor = 'center'
+        style.prefs_spinner.xanchor = 0.5
 
         style.prefs_spinner_label.minwidth = 100
         style.prefs_spinner_label.textalign = 0.5
@@ -472,9 +471,9 @@ init -1000:
         style.js_frame.xmargin = .1
 
         style.js_frame_vbox.xpos = 0.5
-        style.js_frame_vbox.xanchor = 'center'
+        style.js_frame_vbox.xanchor = 0.5
         style.js_frame_vbox.ypos = 0.5
-        style.js_frame_vbox.yanchor = 'center'
+        style.js_frame_vbox.yanchor = 0.5
 
         
         ######################################################################

@@ -65,13 +65,18 @@ void alphamunge_core(PyObject *pysrc,
                      int dst_aoff, // alpha offset.
                      char *amap);
     
-int stretch_core(PyObject *pysrc,
-                 PyObject *pydst,
-                 int x,
-                 int y,
-                 int w,
-                 int h);
+/* int stretch_core(PyObject *pysrc, */
+/*                  PyObject *pydst, */
+/*                  int x, */
+/*                  int y, */
+/*                  int w, */
+/*                  int h); */
 
+void scale32_core(PyObject *pysrc,
+                  PyObject *pydst);
+
+void scale24_core(PyObject *pysrc,
+                  PyObject *pydst);
 
 
 #endif 

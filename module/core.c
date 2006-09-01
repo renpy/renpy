@@ -747,3 +747,177 @@ void alphamunge_core(PyObject *pysrc,
     
 /*     SDL_StretchSurfaceBlit(src, &rect, dst, NULL); */
 /* } */
+
+
+
+void scale32_core(PyObject *pysrc, PyObject *pydst) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y, i, j;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    short xdelta, ydelta;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    xdelta = 255 * srcw / dstw;
+    ydelta = 255 * srch / dsth;
+
+    for (y = 0; y < dsth; y++) {
+
+        unsigned char *s0;
+        unsigned char *s1;
+        unsigned char *d;
+        unsigned char *dend;
+
+        int sline;
+        short s0frac;
+        short s1frac;
+        int scol;
+        
+        d = dstpixels + dstpitch * y;
+        dend = d + 4 * dstw; // bpp
+
+        sline = y * ydelta;
+        s1frac = sline & 255;
+        s0frac = 256 - s1frac;
+
+        s0 = srcpixels + (sline >> 8) * srcpitch;
+        s1 = s0 + srcpitch;
+
+        scol = 0;
+
+        while (d < dend) {
+
+            unsigned char *s0p;
+            unsigned char *s1p;
+
+            short xfrac = 256 - (scol & 255);
+            unsigned short r, g, b, a;
+            
+            s0p = s0 + (scol >> 8) * 4; // bpp
+            s1p = s0p + srcpitch;
+
+            r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            g = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            b = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            a = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+
+            xfrac = 256 - xfrac;
+
+            r += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            g += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            b += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            a += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+
+            *d++ = r >> 8;
+            *d++ = g >> 8;
+            *d++ = b >> 8;
+            *d++ = a >> 8;
+
+            scol += xdelta;
+        }
+    }
+}
+
+void scale24_core(PyObject *pysrc, PyObject *pydst) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int x, y, i, j;
+    Uint32 srcpitch, dstpitch;
+    Uint32 srcw, srch;
+    Uint32 dstw, dsth;
+    short xdelta, ydelta;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    xdelta = 255 * srcw / dstw;
+    ydelta = 255 * srch / dsth;
+
+    for (y = 0; y < dsth; y++) {
+
+        unsigned char *s0;
+        unsigned char *s1;
+        unsigned char *d;
+        unsigned char *dend;
+
+        int sline;
+        short s0frac;
+        short s1frac;
+        int scol;
+        
+        d = dstpixels + dstpitch * y;
+        dend = d + 3 * dstw; // bpp
+
+        sline = y * ydelta;
+        s1frac = sline & 255;
+        s0frac = 256 - s1frac;
+
+        s0 = srcpixels + (sline >> 8) * srcpitch;
+        s1 = s0 + srcpitch;
+
+        scol = 0;
+
+        while (d < dend) {
+
+            unsigned char *s0p;
+            unsigned char *s1p;
+
+            short xfrac = 256 - (scol & 255);
+            unsigned short r, g, b;
+            
+            s0p = s0 + (scol >> 8) * 3; // bpp
+            s1p = s0p + srcpitch;
+
+            r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            g = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            b = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+
+            xfrac = 256 - xfrac;
+
+            r += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            g += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+            b += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
+
+            *d++ = r >> 8;
+            *d++ = g >> 8;
+            *d++ = b >> 8;
+
+            scol += xdelta;
+        }
+    }
+}
+

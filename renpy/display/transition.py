@@ -622,7 +622,8 @@ class CropMove(Transition):
         renpy.display.render.redraw(self, 0)
         return rv
                 
-            
+
+# TODO: Move isn't properly respecting positions when x < 0.
 def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
     """
     This transition attempts to find images that have changed
@@ -657,16 +658,10 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
         if yanchor is None:
             yanchor = 0
 
-        if isinstance(xpos, float):
-            xpos = int(renpy.config.screen_width * xpos)
-
-        if isinstance(ypos, float):
-            ypos = int(renpy.config.screen_height * ypos)
-
         return xpos, ypos, xanchor, yanchor
         
 
-    def merge_slide(old, new):
+    def merge_slide(old, new, layer_name=None):
 
             
         # If new does not have .layers or .scene_list, then we simply
@@ -698,7 +693,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
                 f = new.layers[layer]
 
                 if isinstance(f, renpy.display.layout.Fixed) and f.scene_list:
-                    f = merge_slide(old.layers[layer], new.layers[layer])
+                    f = merge_slide(old.layers[layer], new.layers[layer], layer_name=layer)
 
                 rv.layers[layer] = f
                 rv.add(f)
@@ -740,8 +735,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
 
             newsl.append((tag, None, anim, move))
 
-        rv = renpy.display.layout.Fixed()
-        rv.append_scene_list(newsl)
+        rv = renpy.game.interface.make_layer(layer_name, newsl)
 
         return rv
 

@@ -11,7 +11,7 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < 5003003:
+    if version < 5006000:
         print >>sys.stderr, "The _renpy module was found, but is out of date.\nPlease read module/README.txt for more information."
         
 except:
@@ -305,4 +305,19 @@ else:
     can_munge = False
 
     def alpha_munge(src, dst, amap):
+        return
+
+
+
+if version >= 5006000:
+
+    can_bilinear_scale = True
+
+    bilinear_scale = _renpy.scale
+
+else:
+
+    can_bilinear_scale = False
+
+    def bilinear_scale(src, dst):
         return

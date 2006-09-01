@@ -60,13 +60,19 @@ cdef extern from "renpy.h":
     
     void alphamunge_core(object, object, int, int, int, char *)
 
+    void scale32_core(object, object)
+
+    void scale24_core(object, object)
+    
+
     # int stretch_core(object, object, int, int, int, int)
 
 
 import pygame
 
+# Update this in library.rpy as well!
 def version():
-    return 5005000
+    return 5006000
 
 def save_png(surf, file, compress=-1):
 
@@ -166,6 +172,7 @@ def linmap(pysrc, pydst, r, g, b, a):
     pydst.unlock()
     pysrc.unlock()
 
+
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
     if not isinstance(pysrc, pygame.Surface):
@@ -250,5 +257,31 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
 #     return stretch_core(pysrc, pydst, x, y, w, h)
     
+
+def scale(pysrc, pydst):
+
+    if not isinstance(pysrc, pygame.Surface):
+        raise Exception("scale requires a pygame Surface as its first argument.")
+
+    if not isinstance(pydst, pygame.Surface):
+        raise Exception("scale requires a pygame Surface as its second argument.")
+
+    if pysrc.get_bitsize() not in (24, 32):
+        raise Exception("scale requires a 24 or 32 bit surface.")
+
+    if pydst.get_bitsize() != pysrc.get_bitsize():
+        raise Exception("scale requires both surfaces have the same bitsize.")
+
+    pysrc.lock()
+    pydst.lock()
+
+    if pysrc.get_bitsize() == 32:
+        scale32_core(pysrc, pydst)
+    else:
+        scale24_core(pysrc, pydst)
+
+    pydst.unlock()
+    pysrc.unlock()
+
 
 core_init()

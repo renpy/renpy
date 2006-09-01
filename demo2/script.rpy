@@ -57,6 +57,8 @@ init:
 
 label start:
 
+    show bg whitehouse onlayer background
+
 
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
@@ -1599,6 +1601,9 @@ init:
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
     
+    $ config.layer_clipping['master'] = (50, 50, 700, 500)
+    $ config.layers.insert(0, 'background')
+
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.

@@ -230,7 +230,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None):
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None):
     """
     This pops up a window requesting that the user enter in some text.
     It returns the entered text.
@@ -247,6 +247,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None):
 
     @param exclude: If not None, then if an input character is in this
     set, it is ignored.
+
+    @param with_none: If True, performs a with None after the input. If None,
+    takes the value from config.implicit_with_none.
     """
 
     renpy.ui.window(style='input_window')
@@ -259,7 +262,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None):
 
     rv = renpy.ui.interact(mouse='prompt')
 
-    if renpy.config.implicit_with_none:
+    if with_none is None:
+        with_none = renpy.config.implicit_with_none
+
+    if with_none:
         renpy.game.interface.with(None, None)
 
     return rv
@@ -324,7 +330,7 @@ def predict_menu():
     return [ renpy.game.style.menu_window.background,
              renpy.game.style.menu_choice_button.background ]
 
-def display_menu(items, window_style='menu_window', interact=True):
+def display_menu(items, window_style='menu_window', interact=True, with_none=None):
     """
     Displays a menu containing the given items, returning the value of
     the item the user selects.
@@ -337,6 +343,9 @@ def display_menu(items, window_style='menu_window', interact=True):
 
     @param interact: If True, then an interaction occurs. If False, no suc
     interaction occurs, and the user should call ui.interact() manually.
+
+    @param with_none: If True, performs a with None after the input. If None,
+    takes the value from config.implicit_with_none.
     """
 
     choice_for_skipping()
@@ -374,8 +383,11 @@ def display_menu(items, window_style='menu_window', interact=True):
         log("")
 
         checkpoint()
+        
+        if with_none is None:
+            with_none = renpy.config.implicit_with_none
 
-        if renpy.config.implicit_with_none:
+        if with_none:
             renpy.game.interface.with(None, None)
 
         return rv
@@ -440,7 +452,7 @@ def say(who, what, interact=True):
 
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
-             style='imagemap', **properties):
+             style='imagemap', with_none=None, **properties):
     """
     Displays an imagemap. An image map consists of two images and a
     list of hotspots that are defined on that image. When the user
@@ -469,6 +481,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
  
     @param overlays: If True, overlays are displayed when this imagemap
     is active. If False, the overlays are suppressed.
+
+    @param with_none: If True, performs a with None after the input. If None,
+    takes the value from config.implicit_with_none.
     """
 
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
@@ -477,13 +492,16 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     rv = renpy.ui.interact(suppress_overlay=(not overlays), mouse='imagemap')
     checkpoint()
 
-    if renpy.config.implicit_with_none:
+    if with_none is None:
+        with_none = renpy.config.implicit_with_none
+
+    if with_none:
         renpy.game.interface.with(None, None)
 
     return rv
     
 
-def pause(delay=None, music=None):
+def pause(delay=None, music=None, with_none=None):
     """
     When called, this pauses and waits for the user to click before
     advancing the script. If given a delay parameter, the Ren'Py will
@@ -500,6 +518,9 @@ def pause(delay=None, music=None):
     Returns True if the pause was interrupted by the user hitting a key
     or clicking a mouse, or False if the pause was ended by the appointed
     time being reached.
+
+    @param with_none: If True, performs a with None after the input. If None,
+    takes the value from config.implicit_with_none.
     """
 
     if renpy.config.skipping == "fast":
@@ -518,7 +539,10 @@ def pause(delay=None, music=None):
 
     rv = renpy.ui.interact(mouse='pause')
 
-    if renpy.config.implicit_with_none:
+    if with_none is None:
+        with_none = renpy.config.implicit_with_none
+
+    if with_none:
         renpy.game.interface.with(None, None)
 
     return rv

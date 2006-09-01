@@ -194,7 +194,12 @@ def compute_clip(source):
 
     new_blits = [ ]
     forced = [ ]
-    source.clip_to(0, 0, new_blits, forced)
+
+    # source.clip_to(0, 0, new_blits, forced)
+    clipsurf = ClipSurface((0, 0, renpy.config.screen_width, renpy.config.screen_height),
+                           new_blits, forced)
+
+    source.blit_to(clipsurf, 0, 0)
 
     bl0 = old_blits[:]
     bl1 = new_blits[:]
@@ -260,7 +265,7 @@ def compute_clip(source):
     old_old_forced = old_forced
     old_forced = forced
 
-    for surf, x0, y0, w, h in changes:
+    for surf, srcx, srcy, x0, y0, w, h in changes:
 
         if x0 < 0:
             x0 = 0
@@ -354,10 +359,61 @@ def compute_clip(source):
         y1 = max(y1, iy1)
 
         updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
-    
 
     return (x0, y0, x1 - x0, y1 - y0), updates
     
+
+class ClipSurface(object):
+
+    def __init__(self, (x, y, w, h), blits, forced):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+
+        self.blits = blits
+        self.forced = forced
+
+    def set_clip(self, rect):
+        return 
+
+    def get_clip(self):
+        return (0, 0, self.w, self.h)
+
+    def get_size(self):
+        return (self.w, self.h)
+
+    def blit(self, surf, (xo, yo)):
+
+        if xo < 0:
+            srcx = xo
+            xo = 0
+        else:
+            srcx = 0
+
+        if yo < 0:
+            srcy = yo
+            yo = 0
+        else:
+            srcy = 0
+
+        sw, sh = surf.get_size()
+
+        bw = min(self.w - xo, sw + srcx)
+        bh = min(self.h - yo, sh + srcy)
+
+        if bw <= 0 or bh <= 0:
+            return
+
+        self.blits.append((id(surf), srcx, srcy, xo + self.x, yo + self.y, bw, bh))
+
+    def force(self):
+        self.forced.append((self.x, self.y, self.w, self.h))
+
+    def subsurface(self, (x, y, w, h)):
+        return ClipSurface((self.x + x, self.y + y, w, h),
+                           self.blits, self.forced)
+        
 
 def screen_blit(source, full=False, xoffset=0):
     """
@@ -413,20 +469,10 @@ class Render(object):
     widget can be withdrawn).
     """
 
-    def __init__(self, width, height, draw_func=None, update_func=None):
+    def __init__(self, width, height, draw_func=None, opaque=False):
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
-
-        If draw_func is not None, then it is a function that should
-        draw to the surface supplied to it. The draw_func should
-        always return the same thing, use renpy.display.render.redraw to
-        animate.
-
-        If update_func is not None, it's expected to return a list of
-        (x, y, w, h) rectangles representing updated areas of the
-        screen. If draw_func is supplied and update_func isn't
-        then we default to redrawing the entire area.
         """
 
         # Just for safety's sake.
@@ -458,13 +504,15 @@ class Render(object):
         self.focuses = [ ]
 
         self.draw_func = draw_func
-        self.update_func = update_func
 
         # Is this render fullscreen? None == not sure.
-        self.fullscreen = None
+        self.fullscreen = { }
 
         # Is this render clipped?
         self.clipped = False
+
+        # Is this render opaque? (Only needs to be set for surfaces with draw_func.)
+        self.opaque = opaque
         
     
     # def __del__(self):
@@ -568,88 +616,74 @@ class Render(object):
         destination surface.
         """
 
+        if self.clipped or self.draw_func:
+
+            if x >= 0:
+                newx = 0
+                subx = x
+            else:
+                newx = x
+                subx = 0
+
+            if y >= 0:
+                newy = 0
+                suby = y
+            else:
+                newy = y
+                suby = 0
+
+            destw, desth = dest.get_size()
+
+            if subx >= destw or suby >= desth:
+                return
+
+            # newx and newy are the offset of this render relative to the
+            # subsurface. They can only be negative or 0, as otherwise we
+            # would make a smaller subsurface.
+                
+            subw = min(destw - subx, self.width + newx) 
+            subh = min(desth - suby, self.height + newy)
+
+            if subw <= 0 or subh <= 0:
+                return
+
+            clipx, clipy, clipw, cliph = dest.get_clip()
+
+            newclipx = max(clipx - subx, 0)
+            newclipy = max(clipy - suby, 0)
+            newclipw = min(clipx + clipw - subx, subw - newclipx)
+            newcliph = min(clipy + cliph - suby, subh - newclipy)
+
+            if newclipw <= 0 or newcliph <= 0:
+                return 
+
+            dest = dest.subsurface((subx, suby, subw, subh))
+            dest.set_clip((newclipx, newclipy, newclipw, newcliph))
+
+            x = newx
+            y = newy
+
         if self.draw_func:
-            self.draw_func(dest.subsurface((x, y, self.width, self.height)))
+            if isinstance(dest, ClipSurface):
+                dest.force()
+            else:
+                self.draw_func(dest, x, y)
+
+            return
+
+        # Note... none of this runs if self.draw_func is True.
 
         fullscreen = 0
 
         for i, (xo, yo, source) in enumerate(self.blittables):
-            if is_fullscreen(source, xo, yo):
+            if is_fullscreen(source, x + xo, y + yo, dest.get_size()):
                 fullscreen = i
 
-
-        if self.clipped:
-            oldx, oldy, oldw, oldh = dest.get_clip()
-
-            newx = max(x, oldx)
-            newy = max(y, oldy)
-
-            neww = min(x + self.width, oldx + oldw) - newx
-            newh = min(y + self.height, oldy + oldh) - newy
-
-            if neww < 0 or newh < 0:
-                return
-
-            dest.set_clip((newx, newy, neww, newh))
-
         for xo, yo, source in self.blittables[fullscreen:]:
-
             if isinstance(source, pygame.Surface):
                 dest.blit(source, (x + xo, y + yo))
             else:
                 source.blit_to(dest, x + xo, y + yo)
-
-        if self.clipped:
-            dest.set_clip((oldx, oldy, oldw, oldh))
-
-    def clip_to(self, x, y, blits, forced):
-        """
-        This fills in blits with (id(surf), x, y, w, h) tuples.
-        """
-
-        if self.draw_func:
-            if self.update_func:
-                for xo, yo, w, h in self.update_func():
-                    forced.append((x, y, w, h))
-            else:
-                forced.append((x, y, self.width, self.height))
-        
-        fullscreen = 0
-
-        for i, (xo, yo, source) in enumerate(self.blittables):
-            if is_fullscreen(source, xo, yo):
-                fullscreen = i
-
-        if self.clipped:
-            my_blits = [ ]
-        else:
-            my_blits = blits
-                
-        for xo, yo, source in self.blittables[fullscreen:]:
-            if isinstance(source, pygame.Surface):
-                my_blits.append((id(source), x + xo, y + yo) + source.get_size())
-            else:
-                source.clip_to(x + xo, y + yo, my_blits, forced)
-
-        # Apply the clipping effect to the list of blits.
-        if self.clipped:
-            width = self.width
-            height = self.height
-            
-            for surfid, blitx, blity, blitw, blith in my_blits:
-                newx = max(x, blitx)
-                newy = max(y, blity)
-
-                neww = min(x + width, blitx + blitw) - newx
-                newh = min(y + height, blity + blith) - newy
-
-                if neww < 0 or newh < 0:
-                    continue
-
-                blits.append((surfid, newx, newy, neww, newh))
-                
-
-        
 
     def fill(self, color):
         """
@@ -818,15 +852,15 @@ class Render(object):
 
 
 # Determine if a surface is fullscreen or not.
-def is_fullscreen(surf, x, y):
+def is_fullscreen(surf, x, y, (w, h)):
 
     if isinstance(surf, pygame.Surface):
 
         sw, sh = surf.get_size()
 
         if (x <= 0 and y <= 0 and
-            sw - x >= renpy.config.screen_width and
-            sh - y >= renpy.config.screen_height and
+            sw + x >= w and
+            sh + y >= h and
             surf.get_masks()[3] == 0 and
             (surf.get_alpha() == None or surf.get_alpha() == 255) 
             ):
@@ -835,14 +869,24 @@ def is_fullscreen(surf, x, y):
         else:
             return False
 
+    xywh = (x, y, w, h)
 
-    if surf.fullscreen is not None:
-        return surf.fullscreen
+    rv = surf.fullscreen.get(xywh, None)
+    if rv is not None:
+        return rv
+
+    if (surf.opaque and x <= 0 and y <= 0 and
+        sw + x >= w and
+        sh + y >= h):
+
+        surf.fullscreen[xywh] = True
+        return True
 
     for xo, yo, source in surf.blittables:
-        if is_fullscreen(source, x + xo, y + yo):
-            surf.fullscreen = True
+        if is_fullscreen(source, x + xo, y + yo, (w, h)):
+            surf.fullscreen[xywh] = True
             return True
 
-    surf.fullscreen = False
+    surf.fullscreen[xywh] = False
     return False
+

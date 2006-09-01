@@ -9,15 +9,15 @@ init -425:
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
-    $ left = Position(xpos=0.0, xanchor='left')
+    $ left = Position(xpos=0.0, xanchor=0.0)
     $ center = Position()
-    $ right = Position(xpos=1.0, xanchor='right')
+    $ right = Position(xpos=1.0, xanchor=1.0)
 
     # Offscreen positions for use with the move transition. Images at
     # these positions are still shown (and consume
     # resources)... remember to hide the image after the transition.    
-    $ offscreenleft = Position(xpos=0.0, xanchor='right')
-    $ offscreenright = Position(xpos=1.0, xanchor='left')
+    $ offscreenleft = Position(xpos=0.0, xanchor=1.0)
+    $ offscreenright = Position(xpos=1.0, xanchor=0.0)
 
     # Transitions ############################################################
 

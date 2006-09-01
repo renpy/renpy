@@ -270,14 +270,13 @@ class Displayable(renpy.object.Object):
         elif not isinstance(yanchor, (float, int)):
             raise Exception("yanchor %r is not known." % yanchor)
 
+
         if isinstance(yanchor, int):
             yoff -= yanchor
         else:
             yoff -= int(sh * yanchor)
 
         yoff += y
-
-        # print self, xoff, yoff
 
         dest.blit(surf, (xoff, yoff))
 
@@ -992,6 +991,16 @@ class Interface(object):
         ev = pygame.event.wait()
         return ev
 
+    def make_layer(self, name, scene_list):
+        """
+        Creates a Fixed with the given layer name and scene_list.
+        """
+
+        rv = renpy.display.layout.Fixed(focus=name, **self.layer_properties[name])
+        rv.append_scene_list(scene_list)
+        return rv
+    
+
     def compute_scene(self, scene_lists):
         """
         This converts scene lists into a dictionary mapping layer
@@ -1002,10 +1011,7 @@ class Interface(object):
 
         for layer in renpy.config.layers + renpy.config.top_layers:
 
-            f = renpy.display.layout.Fixed(focus=layer, **self.layer_properties[layer])
-
-            f.append_scene_list(scene_lists.layers[layer])
-
+            f = self.make_layer(layer, scene_lists.layers[layer])
             rv[layer] = f
 
         return rv
