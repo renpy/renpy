@@ -169,7 +169,7 @@ class Fixed(Container):
         self.anim_times.append(anim_time)
 
     def append_scene_list(self, l):
-        for tag, start, anim, d in l:
+        for tag, zo, start, anim, d in l:
             self.add(d, start, anim)
 
         self.scene_list.extend(l)

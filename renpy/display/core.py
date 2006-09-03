@@ -287,14 +287,15 @@ class SceneLists(object):
     """
     This stores the current scene lists that are being used to display
     things to the user. 
-
-    @ivar focused: The widget that is currently focused.
     """
 
     def __init__(self, oldsl=None):
 
         # A map from layer name -> list of
-        # (key, show time, animation time, displayable) 
+        # (key, zorder, show time, animation time, displayable) 
+        #
+        # The structure of a scene list is used in:
+        # Scenelists, Interface.make_layer, Fixed, and MoveTransition.
         self.layers = { }
          
         if oldsl:
@@ -364,15 +365,18 @@ class SceneLists(object):
 
         return True
 
-    def add(self, layer, thing, key=None):
+    def add(self, layer, thing, key=None, zorder=0):
         """
         This is called to add something to a layer. Layer is
         the name of the layer that we need to add the thing to,
-        one of 'master' or 'transient'. Key is an optional key.
+        one of 'master' or 'transient'. Key is an optional key. Zorder
+        is a place in the zorder to add the thing.
 
         If key is provided, and there exists something in the selected
-        layer with the given key, that entry from the layer
-        is replaced with the supplied displayable.
+        layer with the given key, and the same zorder, that entry from
+        the layer is replaced with the supplied displayable. If the
+        same key exists, but a different zorder, the thing with the
+        old key is removed.
 
         Otherwise, the displayable is added to the end of the layer, and
         the time it was first displayed is set to the current time.
@@ -383,24 +387,38 @@ class SceneLists(object):
 
         l = self.layers[layer]
 
+        at = None
+        st = None
+
         if key is not None:
-            for index, (k, st, at, d) in enumerate(l):
+            for index, (k, zo, st, at, d) in enumerate(l):
                 if k == key:
                     break
             else:
                 index = None
+                at = None
 
             st = None
 
             if index is not None:
-                l[index] = (key, st, at, thing)
-                return
+                if zorder == zo:                
+                    l[index] = (key, zorder, st, at, thing)
+                    return
+                else:
+                    l.pop(index)
 
-        l.append((key, None, None, thing))
+        index = 0
+        for index, (ignore_key, zo, ignore_st, ignore_at, ignore_thing) in enumerate(l):
+            if zo > zorder:
+                break
+        else:
+            index = len(l)
+            
+        l.insert(index, (key, zorder, st, at, thing))
 
     def remove(self, layer, thing):
         """
-        This is either a key or a displayable. This iterates through the
+        Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
         When they are found, they are removed from the displaylist.
 
@@ -412,7 +430,7 @@ class SceneLists(object):
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
         l = self.layers[layer]
-        l = [ (k, st, at, d) for k, st, at, d in l if k != thing if d is not thing ]
+        l = [ (k, zo, st, at, d) for k, zo, st, at, d in l if k != thing if d is not thing ]
 
         self.layers[layer] = l
 
@@ -436,8 +454,8 @@ class SceneLists(object):
             ll = [ ]
 
             for i in range(0, len(l)):
-                k, st, at, d = l[i]
-                ll.append((k, st or time, at or time, d))
+                k, zo, st, at, d = l[i]
+                ll.append((k, zo, st or time, at or time, d))
 
             l[:] = ll
             
@@ -448,7 +466,7 @@ class SceneLists(object):
         given layer. Returns False otherwise. Key should be a string.
         """
 
-        for k, st, at, d in self.layers[layer]:
+        for k, zo, st, at, d in self.layers[layer]:
             if k == key:
                 return True
 
@@ -1125,16 +1143,13 @@ class Interface(object):
 
         renpy.ui.close()
 
-        # Figure out the underlay layer.
-        if not suppress_underlay:
-            underlay = [ ( None, 0, 0, i) for i in renpy.config.underlay ]
-        else:
-            underlay = [ ]
-
         # The root widget of everything that is displayed on the screen.
         root_widget = renpy.display.layout.Fixed() 
-        root_widget.append_scene_list(underlay)
-        root_widget.layers = { }
+
+        # Add the underlay to the root widget.
+        if not suppress_underlay:
+            for i in renpy.config.underlay:
+                root_widget.add(i)
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)

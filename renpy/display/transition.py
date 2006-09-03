@@ -680,8 +680,8 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
             else:
                 return new
 
-        # If we're in the root widget, merge the child widgets for
-        # each layer.
+        # If we're in the layers_root widget, merge the child widgets
+        # for each layer.
         if new.layers:
             assert old.layers
 
@@ -705,7 +705,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
 
         tags = { }
 
-        for tag, start, anim, d in old.scene_list:
+        for tag, zo, start, anim, d in old.scene_list:
 
             if tag is None:
                 continue
@@ -714,17 +714,17 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
 
         newsl = [ ]
 
-        for tag, time, anim, d in new.scene_list:
+        for tag, zo, time, anim, d in new.scene_list:
 
             if tag is None or tag not in tags:
-                newsl.append((tag, time, anim, d))
+                newsl.append((tag, zo, time, anim, d))
                 continue
 
             oldpos = position(tags[tag])
             newpos = position(d)
 
             if oldpos == newpos:
-                newsl.append((tag, time, anim, d))
+                newsl.append((tag, zo, time, anim, d))
                 continue
                 
             move = renpy.display.layout.Move(position(tags[tag]),
@@ -733,7 +733,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
                                              d,
                                              )
 
-            newsl.append((tag, None, anim, move))
+            newsl.append((tag, zo, None, anim, move))
 
         rv = renpy.game.interface.make_layer(layer_name, newsl)
 

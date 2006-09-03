@@ -10,20 +10,30 @@ New keywords: as, zorder.
 show expression ...
 
 
-bilinear scaling, in Zoom, FactorZoom, im.Scale.
+Ren'Py now includes a bilinear scaling feature. im.Scale, Zoom, and
+the new FactorZoom function now use bilinear scaling by
+default. FactorZoom and Zoom default to a very fast scaling method
+that only works on opaque images, but this can be disabled usin their
+opaque parameter.
 
-Minigame [doced]
+A new documented minigame interface has been added to Ren'Py. This
+interface allows programmers to write 2D minigames. These mingames
+take advantage of Ren'Py's screen update management code. 
 
-show_side_image= [doc]
-show_two_window=
+Character now takes two new parameters, show_side_image and
+show_two_windows. These parameters take the place of the side_image
+and two_window_say extras.
 
-Default font to DejaVu. [doc]
+The default font has been changed to Deja Vu Sans. While the glyphs
+shared with Vera Sans remain indentical, Deja Vu improves support for
+Eastern European languages.
 
 MultiPersistent [doc]
 
-Improved Move, MoveTransition, etc. [doc]
-
-H/Middle dismisses no-window-mode. [doc]
+Move, Pan, Motion, Zoom, and FactorZoom all take a time_warp
+parameter, which allows a function to be provided that changes how
+time is processed in those functions. This makes adding acceleration
+and deceleration easy.
 
 Layers as subparts of the screen. [doc]
 - config.layer_clipping
@@ -53,6 +63,7 @@ renpy.context_nesting_level()
 
 renpy.count_displayables_in_layer()
 
+A bug with MP3 playback on Windows has been resolved.
 
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
@@ -72,14 +83,14 @@ Returning to the main menu no longer causes init code to be
 re-run. This improves the speed of returning to the main menu, while
 bringing its semantics inline with loading a game.
 
-Added a function, renpy.showing() that allows us to check to see if
-an image is shown or not. (Suggested by Blue Lemma.)
+Added a function, renpy.showing() that allows us to check to see if an
+image is shown or not.
 
-Fixed a bug, reported by Shaja, that prevented pauses from terminated
-when they occured in interactions beginning with a transition, when no
-events occured during the interaction. A symptom of the bug was that
-if the user moved the mouse, the pause would immediately terminate and
-the game would advance.
+Fixed a bug that prevented pauses from terminated when they occured in
+interactions beginning with a transition, when no events occured
+during the interaction. A symptom of the bug was that if the user
+moved the mouse, the pause would immediately terminate and the game
+would advance.
 
 Ren'Py now checks, when parsing a file, that image statements are
 contained within init blocks. It has long been an error to run an
