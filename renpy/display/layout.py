@@ -882,7 +882,9 @@ class Zoom(renpy.display.core.Displayable):
 
 
     def __init__(self, size, start, end, time, child,
-                 after_child=None, time_warp=None, **properties):
+                 after_child=None, time_warp=None,
+                 bilinear=True, opaque=True,
+                 **properties):
         """
         @param size: The size that the rectangle is scaled to, a
         (width, height) tuple.
@@ -920,12 +922,13 @@ class Zoom(renpy.display.core.Displayable):
         self.child = child            
 
         if after_child:
-            self.after_child = renpy.display.im.image(after_child, loose=True)
+            self.after_child = renpy.easy.displayable(after_child)
         else:
             self.after_child = None
         
         self.time_warp = time_warp
-
+        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.opaque = opaque
 
 
     def visit(self):
@@ -948,15 +951,133 @@ class Zoom(renpy.display.core.Displayable):
         surf = rend.pygame_surface()
 
         rect = tuple([ (1.0 - done) * a + done * b for a, b in zip(self.start, self.end) ])
-        subsurf = surf.subsurface(rect)
 
-        scalesurf = pygame.transform.scale(subsurf, self.size)
+        rv = zoom_core(rend, surf, rect, self.size[0], self.size[1], self.bilinear, self.opaque)
+
+        if done < 1.0:
+            renpy.display.render.redraw(self, 0)
+
+        return rv
+
+    def event(self, ev, x, y, st):
+        return None
+
+def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
+
+
+    if bilinear and opaque:
+
+        def draw(dest, x, y, surf=surf, rect=rect, neww=neww, newh=newh):
+
+            # Find the part of dest we must draw to. Realize x and y
+            # are negative or 0.
+
+            sx, sy, sw, sh = rect
+            dw, dh = dest.get_size()
+
+            subw = min(neww + x, dw)
+            subh = min(newh + y, dh)
+
+            if subw <= 0 or subh <= 0:
+                return
+
+            dest = dest.subsurface((0, 0, subw, subh))
+
+            renpy.display.module.bilinear_scale(surf, dest,
+                                                sx, sy, sw, sh,
+                                                -x, -y, neww, newh)
+
+        rv = renpy.display.render.Render(neww, newh, draw_func=draw, opaque=True)
+        
+
+    else:
+        
+        if bilinear:
+            scalesurf = pygame.Surface((neww, newh), 0, surf)
+            renpy.display.module.bilinear_scale(surf, scalesurf)
+        else:
+            scalesurf = pygame.transform.scale(surf, (neww, newh))
 
         renpy.display.render.mutated_surface(scalesurf)
 
-        rv = renpy.display.render.Render(self.size[0], self.size[1])
+        rv = renpy.display.render.Render(neww, newh)
         rv.blit(scalesurf, (0, 0))
-        rv.depends_on(rend)
+
+    rv.depends_on(rend)
+    return rv
+
+
+class FactorZoom(renpy.display.core.Displayable):
+
+    def __init__(self, start, end, time, child,
+                 after_child=None, time_warp=None,
+                 bilinear=True, opaque=True,
+                 **properties):
+        """
+        @param start: The start scaling factor.
+
+        @param end: The end scaling factor.
+
+        @param time: The amount of time it will take to
+        from the start to the end scaling factors.
+
+        @param child: The child displayable.
+
+        @param after_child: If present, a second child
+        widget. This displayable will be rendered after the zoom
+        completes. Use this to snap to a sharp displayable after
+        the zoom is done.
+
+        @param time_warp: If not None, this is a function that takes a
+        fraction of the period (between 0.0 and 1.0), and returns a
+        new fraction of the period. Use this to warp time, applying
+        acceleration and deceleration to motions.
+        """
+
+        super(FactorZoom, self).__init__(**properties)
+
+        child = renpy.easy.displayable(child)
+
+        self.start = start
+        self.end = end
+        self.time = time
+        self.child = child            
+
+        if after_child:
+            self.after_child = renpy.easy.displayable(after_child)
+        else:
+            self.after_child = None
+        
+        self.time_warp = time_warp
+        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.opaque = opaque
+
+    def visit(self):
+        return [ self.child, self.after_child ]
+
+    def render(self, width, height, st, at):
+
+        if self.time:
+            done = min(st / self.time, 1.0)
+        else:
+            done = 1.0
+
+        if self.after_child and done == 1.0:
+            return renpy.display.render.render(self.after_child, width, height, st, at)
+
+        if self.time_warp:
+            done = self.time_warp(done)
+
+        rend = renpy.display.render.render(self.child, width, height, st, at)
+        surf = rend.pygame_surface()
+
+        factor = self.start * (1.0 - done) + self.end * done
+
+        oldw, oldh = surf.get_size()
+        neww = int(oldw * factor)
+        newh = int(oldh * factor)
+        
+        rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
 
         if done < 1.0:
             renpy.display.render.redraw(self, 0)

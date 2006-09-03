@@ -732,34 +732,21 @@ void alphamunge_core(PyObject *pysrc,
     }
 }
         
-/* int stretch_core(PyObject *pysrc, PyObject *pydst, int x, int y, int w, int h) { */
-/*     SDL_Surface *src; */
-/*     SDL_Surface *dst; */
-/*     SDL_Rect rect; */
-    
-/*     src = PySurface_AsSurface(pysrc); */
-/*     dst = PySurface_AsSurface(pydst); */
+void scale32_core(PyObject *pysrc, PyObject *pydst,
+                  float source_xoff, float source_yoff,
+                  float source_width, float source_height,
+                  float dest_xoff, float dest_yoff,
+                  float dest_width, float dest_height) {
 
-/*     rect.x = x; */
-/*     rect.y = y; */
-/*     rect.w = w; */
-/*     rect.h = h; */
-    
-/*     SDL_StretchSurfaceBlit(src, &rect, dst, NULL); */
-/* } */
-
-
-
-void scale32_core(PyObject *pysrc, PyObject *pydst) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
     
-    int x, y, i, j;
+    int y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    short xdelta, ydelta;
+    float xdelta, ydelta;
     
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -777,8 +764,8 @@ void scale32_core(PyObject *pysrc, PyObject *pydst) {
     srch = src->h;
     dsth = dst->h;
 
-    xdelta = 255 * srcw / dstw;
-    ydelta = 255 * srch / dsth;
+    xdelta = 255.0 * source_width / dest_width;
+    ydelta = 255.0 * source_height / dest_height;
 
     for (y = 0; y < dsth; y++) {
 
@@ -790,29 +777,29 @@ void scale32_core(PyObject *pysrc, PyObject *pydst) {
         int sline;
         short s0frac;
         short s1frac;
-        int scol;
+        float scol;
         
         d = dstpixels + dstpitch * y;
         dend = d + 4 * dstw; // bpp
 
-        sline = y * ydelta;
-        s1frac = sline & 255;
+        sline = source_yoff * 255 + (y + dest_yoff) * ydelta;
+        s1frac = (int) sline & 255;
         s0frac = 256 - s1frac;
 
         s0 = srcpixels + (sline >> 8) * srcpitch;
         s1 = s0 + srcpitch;
 
-        scol = 0;
+        scol = source_xoff * 255 + dest_xoff * xdelta;
 
         while (d < dend) {
 
             unsigned char *s0p;
             unsigned char *s1p;
 
-            short xfrac = 256 - (scol & 255);
+            short xfrac = 256 - ((int) scol & 255);
             unsigned short r, g, b, a;
             
-            s0p = s0 + (scol >> 8) * 4; // bpp
+            s0p = s0 + ((int) scol >> 8) * 4; // bpp
             s1p = s0p + srcpitch;
 
             r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;
@@ -837,16 +824,22 @@ void scale32_core(PyObject *pysrc, PyObject *pydst) {
     }
 }
 
-void scale24_core(PyObject *pysrc, PyObject *pydst) {
+
+void scale24_core(PyObject *pysrc, PyObject *pydst,
+                  float source_xoff, float source_yoff,
+                  float source_width, float source_height,
+                  float dest_xoff, float dest_yoff,
+                  float dest_width, float dest_height) {
+
 
     SDL_Surface *src;
     SDL_Surface *dst;
     
-    int x, y, i, j;
+    int y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    short xdelta, ydelta;
+    float xdelta, ydelta;
     
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -864,8 +857,8 @@ void scale24_core(PyObject *pysrc, PyObject *pydst) {
     srch = src->h;
     dsth = dst->h;
 
-    xdelta = 255 * srcw / dstw;
-    ydelta = 255 * srch / dsth;
+    xdelta = 255.0 * source_width / dest_width;
+    ydelta = 255.0 * source_height / dest_height;
 
     for (y = 0; y < dsth; y++) {
 
@@ -877,29 +870,29 @@ void scale24_core(PyObject *pysrc, PyObject *pydst) {
         int sline;
         short s0frac;
         short s1frac;
-        int scol;
+        float scol;
         
         d = dstpixels + dstpitch * y;
         dend = d + 3 * dstw; // bpp
 
-        sline = y * ydelta;
-        s1frac = sline & 255;
+        sline = source_yoff * 255 + (y + dest_yoff) * ydelta;
+        s1frac = (int) sline & 255;
         s0frac = 256 - s1frac;
 
         s0 = srcpixels + (sline >> 8) * srcpitch;
         s1 = s0 + srcpitch;
 
-        scol = 0;
+        scol = source_xoff * 255 + dest_xoff * xdelta;
 
         while (d < dend) {
 
             unsigned char *s0p;
             unsigned char *s1p;
 
-            short xfrac = 256 - (scol & 255);
+            short xfrac = 256 - ((int) scol & 255);
             unsigned short r, g, b;
             
-            s0p = s0 + (scol >> 8) * 3; // bpp
+            s0p = s0 + ((int) scol >> 8) * 3; // bpp
             s1p = s0p + srcpitch;
 
             r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac;

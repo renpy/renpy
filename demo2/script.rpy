@@ -57,9 +57,6 @@ init:
 
 label start:
 
-    show bg whitehouse onlayer background
-
-
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
     # saved and restored with a save file.
@@ -797,6 +794,8 @@ init:
     image cyan base = DynamicDisplayable("Image('cyan.png')")
 
     image cyan crop = im.Crop("cyan.png", 100, 0, 100, 200)
+
+    image cyan scale = im.Scale("cyan.png", 100, 100) 
     
     image cyan composite = im.Composite((200, 300),
                                         (0, 0), "cyan.png",
@@ -1333,7 +1332,7 @@ label demonstrate:
 
             e "That's it for multimedia."
 
-        "Image Operations, updated in 5.5.4":
+        "Image Operations, updated in 5.6.0":
 
             e "Image operations allow one to manipulate images as they
                are loaded in."
@@ -1372,6 +1371,10 @@ label demonstrate:
 
             e "It isn't really an image operation, but we don't know
                where else to put it."
+
+            show cyan scale at cyanpos with dissolve
+
+            e "The im.Scale operation lets us change the size of images."
 
             show cyan green at cyanpos with dissolve
 
@@ -1601,8 +1604,8 @@ init:
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
     
-    $ config.layer_clipping['master'] = (50, 50, 700, 500)
-    $ config.layers.insert(0, 'background')
+    # $ config.layer_clipping['master'] = (50, 50, 700, 500)
+    # $ config.layers.insert(0, 'background')
 
 
 # The splashscreen is called, if it exists, before the main menu is
@@ -1618,3 +1621,25 @@ init:
 #
 #     return
 
+
+label splashscreen:
+
+    "Foo!"
+    
+    scene black
+
+    show bg whitehouse at offscreenright
+    with None
+    
+    show bg whitehouse at FactorZoom(0.5, 1.0, 4.0, xalign=0.5, yalign=0.5)
+    with MoveTransition(4)
+
+    show eileen vhappy at FactorZoom(0.5, 2.0, 4.0, opaque=False), center
+
+    e "We can zoom into images..."
+
+    show eileen vhappy at FactorZoom(1.0, 0.25, 4.0, opaque=False), center
+    
+    e "... and zoom back out of them again."
+
+    return

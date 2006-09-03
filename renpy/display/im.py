@@ -525,22 +525,32 @@ class SolidImage(ImageBase):
 class Scale(ImageBase):
     """
     This is an image manipulator that scales another image manipulator
-    to the specified width and height. This scalling is unfiltered, so
-    you can expect your image to look a bit jagged.
+    to the specified width and height.
     """
 
-    def __init__(self, im, width, height, **properties):
+    def __init__(self, im, width, height, bilinear=True, **properties):
+
+        bilinear = bilinear and renpy.display.module.can_bilinear_scale
 
         im = image(im)
-        super(Scale, self).__init__(im, width, height, **properties)
+        super(Scale, self).__init__(im, width, height, bilinear, **properties)
 
         self.image = im
         self.width = width
         self.height = height
+        self.bilinear = bilinear
 
     def load(self):
-        return pygame.transform.scale(cache.get(self.image),
-                                      (self.width, self.height))
+
+        if self.bilinear:
+            surf = cache.get(self.image)
+            rv = pygame.Surface((self.width, self.height), 0, surf)
+            renpy.display.module.bilinear_scale(surf, rv)
+            return rv
+
+        else:
+            return pygame.transform.scale(cache.get(self.image),
+                                          (self.width, self.height))
 
     def predict_files(self):
         return self.image.predict_files()

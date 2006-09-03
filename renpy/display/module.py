@@ -313,7 +313,7 @@ if version >= 5006000:
 
     can_bilinear_scale = True
 
-    bilinear_scale = _renpy.scale
+    bilinear_scale = _renpy.bilinear
 
 else:
 

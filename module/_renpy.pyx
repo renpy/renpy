@@ -60,12 +60,13 @@ cdef extern from "renpy.h":
     
     void alphamunge_core(object, object, int, int, int, char *)
 
-    void scale32_core(object, object)
+    void scale32_core(object, object,
+                      float, float, float, float,
+                      float, float, float, float)
 
-    void scale24_core(object, object)
-    
-
-    # int stretch_core(object, object, int, int, int, int)
+    void scale24_core(object, object,
+                      float, float, float, float,
+                      float, float, float, float)
 
 
 import pygame
@@ -258,27 +259,41 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 #     return stretch_core(pysrc, pydst, x, y, w, h)
     
 
-def scale(pysrc, pydst):
+def bilinear(pysrc, pydst,
+             source_xoff=0.0, source_yoff=0.0, source_width=None, source_height=None,
+             dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None):
 
     if not isinstance(pysrc, pygame.Surface):
-        raise Exception("scale requires a pygame Surface as its first argument.")
+        raise Exception("bilinear requires a pygame Surface as its first argument.")
 
     if not isinstance(pydst, pygame.Surface):
-        raise Exception("scale requires a pygame Surface as its second argument.")
+        raise Exception("bilinear requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("scale requires a 24 or 32 bit surface.")
+        raise Exception("bilinear requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("scale requires both surfaces have the same bitsize.")
+        raise Exception("bilinear requires both surfaces have the same bitsize.")
+
+    if source_width is None or source_height is None:
+        source_width, source_height = pysrc.get_size()
+
+    if dest_width is None or dest_height is None:
+        dest_width, dest_height = pydst.get_size()
 
     pysrc.lock()
     pydst.lock()
 
     if pysrc.get_bitsize() == 32:
-        scale32_core(pysrc, pydst)
+        scale32_core(pysrc, pydst,
+                     source_xoff, source_yoff, source_width, source_height,
+                     dest_xoff, dest_yoff, dest_width, dest_height)
+
     else:
-        scale24_core(pysrc, pydst)
+        scale24_core(pysrc, pydst,
+                     source_xoff, source_yoff, source_width, source_height,
+                     dest_xoff, dest_yoff, dest_width, dest_height)
+
 
     pydst.unlock()
     pysrc.unlock()

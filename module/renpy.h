@@ -73,10 +73,15 @@ void alphamunge_core(PyObject *pysrc,
 /*                  int h); */
 
 void scale32_core(PyObject *pysrc,
-                  PyObject *pydst);
+                  PyObject *pydst,
+                  float, float, float, float,
+                  float, float, float, float);
 
 void scale24_core(PyObject *pysrc,
-                  PyObject *pydst);
+                  PyObject *pydst,
+                  float, float, float, float,
+                  float, float, float, float);
+
 
 
 #endif 

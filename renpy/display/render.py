@@ -876,8 +876,8 @@ def is_fullscreen(surf, x, y, (w, h)):
         return rv
 
     if (surf.opaque and x <= 0 and y <= 0 and
-        sw + x >= w and
-        sh + y >= h):
+        surf.width + x >= w and
+        surf.height + y >= h):
 
         surf.fullscreen[xywh] = True
         return True
