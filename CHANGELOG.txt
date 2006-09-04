@@ -47,6 +47,9 @@ Eastern European languages.
 The new MultiPersistent object allows the storage of inter-game
 persistent data. [doc]
 
+The same inputs that hide transient windows can be used to show them
+again.
+
 Move, Pan, Motion, Zoom, and FactorZoom all take a time_warp
 parameter, which allows a function to be provided that changes how
 time is processed in those functions. This makes adding acceleration
