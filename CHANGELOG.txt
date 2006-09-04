@@ -5,7 +5,8 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.0
 -------------------
 
-The demo now features new character art, contributed by Piroshki.
+The demo features new character art, contributed by Piroshki.
+
 
 The syntax of the show, scene, and hide statements has been
 expression. Along with image names, these statements also can take
@@ -24,7 +25,9 @@ show eileen vhappy as eileen2 zorder 1
 This shows two eileen images, and it shows the second one below the
 first. 
 
++++
 As part of this, "as" and "zorder" are now Ren'Py keywords.
+
 
 Ren'Py now includes a bilinear scaling feature. im.Scale, Zoom, and
 the new FactorZoom function now use bilinear scaling by
@@ -32,63 +35,112 @@ default. FactorZoom and Zoom default to a very fast scaling method
 that only works on opaque images, but this can be disabled usin their
 opaque parameter.
 
+
 A new documented minigame interface has been added to Ren'Py. This
 interface allows programmers to write 2D minigames. These mingames
 take advantage of Ren'Py's screen update management code. 
 
+
 Character now takes two new parameters, show_side_image and
 show_two_windows. These parameters take the place of the side_image
-and two_window_say extras.
+and two_window_say extras, which have been removed.
+
 
 The default font has been changed to Deja Vu Sans. While the glyphs
 shared with Vera Sans remain indentical, Deja Vu improves support for
 Eastern European languages.
 
+
 The new MultiPersistent object allows the storage of inter-game
 persistent data. [doc]
 
+
 The same inputs that hide transient windows can be used to show them
 again.
+
 
 Move, Pan, Motion, Zoom, and FactorZoom all take a time_warp
 parameter, which allows a function to be provided that changes how
 time is processed in those functions. This makes adding acceleration
 and deceleration easy.
 
+
 We now support layers that comprise a rectangle that is smaller then
 the entire screen, through the config.layer_clipping variable. [doc]
+
 
 Now, setting _window_during_transitions to True causes the narration
 window to be displayed during transitions. [doc]
 
+
+Now, colors can be written in html-like hexadecimal notation strings, as well
+as 4-tuples. When a displayable is needed, an image can be specified
+by giving its filename as a string, and a solid color can be specified
+by giving a color string beginning with '#'.
+
+
++++
 When config.implicit_with_none is True (the new default), the
 equivalent of a "with None" statement is run after each line of
 dialogue, menu, renpy.input() and renpy.imagemap(). This allows for
 transitions to be written as a single with statement, rather than a
 "with None/with transition" pair. [doc]
 
-Compat for styles. 
-Doc styles.
-Easy styles (etc.) [doc]
-menu_button, menu_button_text.
-config.style_properties [doc]
+
++++
+There are quite a few changes in styles. A big one is that we have
+replaced the "selected_" styles, and replaced them with properties
+beginning with "selected_". For example, instead of writing:
+
+$ style.selected_button_text.hover_color = (255, 255, 0, 255)
+
+we now write:
+
+$ style.button_text.selected_hover_color = (255, 255, 0, 255)
+
+Using the new hexidecimal string color notation, we could also write:
+
+$ style.button_text.selected_hover_color = "#ffff00"
+
+The old style names now are used in a compatibilty mode, but that mode
+does not work with style inheritance. (So one can set
+style.selected_button_text, but you can't inherit from the
+selected_button_text style)
+
++++
+We no longer support the activate_ style prefix, as it never
+really worked. (We still support activate_sound, which did.)
+
+All buttons used by the main and game menus inherit from menu_button
+and menu_button_text. 
+
+Now, style properties are checked to see if they are valid, and it is
+an error to set a nonexistent style property. The
+config.style_properies variable lets one define new style properties,
+should it prove necessary. [doc]
+
 
 Ren'Py now tries to give an accurate line number for runtime errors in
 python blocks found inside .rpy files.
 
+
 Frame now takes a tile= parameter. When True, it will tile images
 rather then scaling them. [doc]
+
 
 There is now a im.Color image manipulator, which is similar to
 im.Recolor, but takes colors as strings or tuples rather then
 4 parameters. The im.Scale image manipulator is now documented. [doc]
 
+
 The renpy.context_nesting_level function returns the depth of the
 context we are in, with the normal game context (the context that is
 saved) being 0. [doc] 
 
+
 The renpy.showing function can be used to determine if an image tag is
 currently being shown on a layer. [doc]
+
 
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
@@ -104,27 +156,33 @@ unchanged line seen before saving, making it easy to edit the script
 and then see your changes in action. Like many developer features,
 this may not work perfectly in all circumstances.
 
+
 Returning to the main menu no longer causes init code to be
 re-run. This improves the speed of returning to the main menu, while
 bringing its semantics inline with loading a game.
+
 
 Ren'Py now checks, when parsing a file, that image statements are
 contained within init blocks. It has long been an error to run an
 image statement outside of an init block, so this primarily checks for
 useless init statements.
 
+
 Ren'Py is now more forgiving of whitespace on the last line of a
 file.
+
 
 We now look for the presplash image in the "game" and "data" directories,
 as well as the directory derived from the script filename.
 
+!!!
 Fixed a bug that prevented pauses from terminating when they occured in
 interactions beginning with a transition, when no events occured
 during the interaction. A symptom of the bug was that if the user
 moved the mouse, the pause would immediately terminate and the game
 would advance.
 
+!!!
 A bug with MP3 playback on Windows has been resolved.
 
 
