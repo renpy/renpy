@@ -15,6 +15,7 @@ import time
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
 def save_persistent():
+
     f = file(renpy.config.savedir + "/persistent", "wb")
     f.write(dumps(game.persistent).encode("zlib"))
     f.close()
@@ -63,13 +64,10 @@ def run(restart=False):
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")
 
+
         # We run until we get an exception.
         try:
-            try:
-                game.context().run()
-            finally:
-                save_persistent()
-
+            game.context().run()
             break
 
         # We get this when the context has changed, and so we go and
@@ -84,7 +82,7 @@ def run(restart=False):
                     game.context().call(label)
 
             continue
-
+            
     # And, we're done.
     
 def main(basename):
@@ -240,7 +238,11 @@ def main(basename):
 
     while True:
         try:
-            run(restart)
+            try:
+                run(restart)
+            finally:
+                save_persistent()
+                
         except game.QuitException, e:
             break
         except game.FullRestartException, e:
