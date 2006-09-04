@@ -461,19 +461,6 @@ class Lexer(object):
 
         return rv
 
-    def match_number(self):
-        """
-        This tries to parse a number. Returns the number, or None.
-        """
-
-        self.skip_whitespace()
-
-        oldpos = self.pos
-
-        rv = self.match(ur'\d+')
-        return rv
-
-    
     def python_string(self):
         """
         This tries to match a python string at the current
@@ -641,7 +628,7 @@ class Lexer(object):
         # python
         if (not self.python_string() and
             not self.name() and
-            not self.match_number() and 
+            not self.integer() and 
             not self.parenthesised_python()):
 
             return None

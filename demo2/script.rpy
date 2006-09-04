@@ -770,6 +770,13 @@ init:
                          what_underline=True, window_left_margin=200,
                          window_yminimum=300)
 
+    $ etwo = Character('Eileen', color=(200, 255, 200, 255),
+                       show_two_window=True)
+
+    $ eside = Character('Eileen', color=(200, 255, 200, 255),
+                        window_left_margin=270,
+                        show_side_image=Image("9a_happy.png", xalign=0.0, ypos=380))
+
     image eileen animated = Animation(
         "9a_vhappy.png", 1.0,
         "9a_happy.png", 1.0)
@@ -845,6 +852,9 @@ init:
     $ style.frame.background = Frame("frame.png", 12, 12)
 
     $ definition = Character(None, window_yfill=True, window_xmargin=20, window_ymargin=20, window_background=Solid((0, 0, 0, 192)))
+
+    $ config.layers.insert(1, 'demo')
+    $ config.layer_clipping['demo'] = (50, 50, 700, 500)
 
     
 label demonstrate:
@@ -1074,7 +1084,7 @@ label demonstrate:
 
             e "It's enough to make you feel a bit dizzy."
             
-        "Positions and movement, updated in 5.4.0.":
+        "Positions and movement, updated in 5.6.0.":
 
             e "I'm not stuck standing in the middle of the screen,
                even though I like being the center of attention."
@@ -1146,6 +1156,16 @@ label demonstrate:
             scene bg whitehouse at Zoom((800, 600), (225, 150, 400, 300), (0, 0, 800, 600), 1.0)
 
             e "... and zoom back out of them again."
+
+            scene bg whitehouse
+            show eileen happy at FactorZoom(1.0, 0.5, 1.0, opaque=False), center
+
+            e "We can also zoom images by a factor..."
+
+            show eileen happy at FactorZoom(0.5, 1.0, 1.0, opaque=False), center
+
+            e "... and zoom {i}them{/i} out again."
+            
         
             with None
             scene bg washington
@@ -1507,7 +1527,7 @@ label demonstrate:
             e "Hopefully, this gives you enough power to write any
                visual novel you want."
 
-        "Character Objects, added in 5.2.1.":
+        "Character Objects, updated in 5.6.0.":
 
             e "The Character object is used to declare characters, and
                it can also be used to customize things about how a
@@ -1529,13 +1549,20 @@ label demonstrate:
             equote "We can also use who_prefix and who_suffix to
                     add text to the name of the speaker."
 
-            eweird "We can also supply arguments to the Character
-                    object that customize the look of the character
-                    name, the text that is being said, and the window
-                    itself."
+            e "We can also supply arguments to the Character
+               object that customize the look of the character
+               name, the text that is being said, and the window
+               itself."
 
             eweird "These can really change the look of the game."
 
+            eside "A more practical use of that is in conjunction with
+                   show_side_image, which lets us position an image next
+                   to the text."
+
+            etwo "There's also show_two_window, which puts the character's
+                  name in its own window."
+            
             ectc "Finally, we demonstrate a click to continue
                   indicator. In this example, it's nestled in with the
                   text."
@@ -1547,7 +1574,76 @@ label demonstrate:
                    fixed location on the screen."
 
             e "That's it for now."
-    
+
+        "Layers and Advanced Show, added in 5.6.0.":
+
+            e "Ren'Py lets you define layers, and show images on
+               specific layers."
+
+            hide eileen
+            with dissolve
+
+            show bg whitehouse onlayer demo
+            with dissolve
+
+            show eileen happy onlayer demo 
+            with dissolve
+
+            e "The \"onlayer\" clause of the scene, show, and hide
+               statements lets us pick which layers the commands
+               affect."
+
+            e "As you can see, layers do not have to take up the
+               entire screen. When a layer doesn't, images are
+               clipped to the layer."
+
+            scene onlayer demo
+            show eileen happy
+            with dissolve
+
+            e "The \"as\" clause lets you change the tag of an image."
+
+            show eileen happy as eileen2
+            with None
+
+            show eileen happy at left
+            show eileen happy at right as eileen2
+            with move
+
+            e "This is useful when you want to show two copies of the
+               same image."
+
+            e "Or if a character has a twin."
+
+            show eileen happy at center
+            show eileen happy at offscreenright as eileen2
+            with move
+
+            hide eileen2
+
+            show expression Text("This is text.", size=50, yalign=0.5, xalign=0.5, drop_shadow=(2, 2)) as text
+            with dissolve
+
+            e "You can use \"show expression\" to show things that
+               aren't just images, like text."
+
+            hide text
+            with dissolve
+
+            show eileen happy zorder 2
+            show cyan base at Position(xalign=0.6, yalign=0.0) zorder 1
+            with dissolve
+
+            e "Finally, the \"zorder\" clause lets you place an image behind
+               another."
+
+            hide cyan base
+            show eileen happy
+            with dissolve
+
+            e "And that's it for layers and advanced show."
+
+            
 
         "" # Empty, so we have a blank line.
 
@@ -1621,37 +1717,3 @@ init:
 #
 #     return
 
-
-label splashscreen:
-
-    scene black
-
-    show eileen happy as eileen2 at Position(xpos=0.4, xanchor=0.5) zorder 2
-
-    "Foo."
-
-    show eileen vhappy
-
-    "Bar."
-
-    hide eileen2
-
-    "Baz."
-
-    scene expression "#ff0"
-
-    show bg whitehouse at offscreenright
-    with None
-    
-    show bg whitehouse at FactorZoom(0.5, 1.0, 4.0, xalign=0.5, yalign=0.5)
-    with MoveTransition(4)
-
-    show eileen vhappy at FactorZoom(0.5, 2.0, 4.0, opaque=False), center
-
-    e "We can zoom into images..."
-
-    show eileen vhappy at FactorZoom(1.0, 0.25, 4.0, opaque=False), center
-    
-    e "... and zoom back out of them again."
-
-    return
