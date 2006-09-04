@@ -1624,9 +1624,21 @@ init:
 
 label splashscreen:
 
-    "Foo!"
-    
     scene black
+
+    show eileen happy as eileen2 at Position(xpos=0.4, xanchor=0.5) zorder 2
+
+    "Foo."
+
+    show eileen vhappy
+
+    "Bar."
+
+    hide eileen2
+
+    "Baz."
+
+    scene expression "#ff0"
 
     show bg whitehouse at offscreenright
     with None

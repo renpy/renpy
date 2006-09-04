@@ -129,7 +129,7 @@ def showing(name, layer='master'):
 
 
 
-def show(name, at_list=[ ], layer='master', what=None):
+def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None):
     """
     This is used to execute the show statement, adding the named image
     to the screen as part of the master layer.
@@ -154,7 +154,7 @@ def show(name, at_list=[ ], layer='master', what=None):
         name = tuple(name.split())
 
     sls = scene_lists()
-    key = name[0]
+    key = tag or name[0]
 
     if renpy.config.sticky_positions:        
         if not at_list and key in sls.sticky_positions:
@@ -172,7 +172,7 @@ def show(name, at_list=[ ], layer='master', what=None):
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[tuple(name)] = True
 
-    sls.add(layer, img, key)
+    sls.add(layer, img, key, zorder)
     
 
 def hide(name, layer='master'):

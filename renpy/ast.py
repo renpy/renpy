@@ -373,6 +373,10 @@ class Image(Node):
     def diff_info(self): 
         return (Image, tuple(self.imgname))
 
+
+
+
+
     def execute(self):
         
         img = renpy.python.py_eval_bytecode(self.code.bytecode)
@@ -386,14 +390,49 @@ def predict_imspec(imspec, callback):
     in imspec.
     """
 
-    if imspec[0] not in renpy.exports.images:
-        return
-    
-    im = renpy.exports.images[imspec[0]]
+    if len(imspec) == 3:
+        name, at_list, layer = imspec
+    else:
+        name, expression, tag, at_list, layer, zorder = imspec
 
-    im.predict(callback)
+    if expression:
+        try:
+            img = renpy.python.py_eval(expression)
+            img = renpy.easy.displayable(img)
+        except:
+            return
+
+    else:
+        img = renpy.exports.images.get(name, None)
+        if img is None:
+            return
+
+    img.predict(callback)
             
-        
+def show_imspec(imspec):
+
+    if len(imspec) == 3:
+        name, at_list, layer = imspec
+        expression = None
+        tag = None
+        zorder = 0
+    else:
+        name, expression, tag, at_list, layer, zorder = imspec
+
+        if zorder:
+            zorder = renpy.python.py_eval(zorder)
+        else:
+            zorder = 0
+
+        if expression:
+            expression = renpy.python.py_eval(expression)
+            expression = renpy.easy.displayable(expression)
+
+    at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+    renpy.exports.show(name, at_list=at_list, layer=layer,
+                       what=expression, zorder=zorder, tag=tag)
+
 class Show(Node):
 
     __slots__ = [
@@ -415,10 +454,7 @@ class Show(Node):
 
     def execute(self):
 
-        name, at_list, layer = self.imspec
-        at_list = [ renpy.python.py_eval(i) for i in at_list ]
-
-        renpy.exports.show(name, at_list, layer)
+        show_imspec(self.imspec)
 
         return self.next
 
@@ -460,11 +496,8 @@ class Scene(Node):
         renpy.exports.scene(self.layer)
 
         if self.imspec:
-            
-            name, at_list, layer = self.imspec
-            at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-            renpy.exports.show(name, at_list, layer)
+            show_imspec(self.imspec)
 
         return self.next
         
@@ -497,7 +530,16 @@ class Hide(Node):
 
     def execute(self):
 
-        renpy.exports.hide(self.imspec[0], self.imspec[2])
+        if len(self.imspec) == 3:
+            name, at_list, layer = self.imspec
+            expression = None
+            tag = None
+            zorder = 0
+        else:
+            name, expression, tag, at_list, layer, zorder = self.imspec
+
+        renpy.exports.hide(tag or name, layer)
+
         return self.next
 
 class With(Node):

@@ -35,6 +35,8 @@ label _start:
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
 
+    $ renpy.block_rollback()
+
     if library.main_menu_music:
         $ renpy.music.play(library.main_menu_music, if_changed=True)
 

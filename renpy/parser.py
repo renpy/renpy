@@ -4,6 +4,7 @@
 import codecs
 import re
 import os
+import sets
 
 import renpy
 import renpy.ast as ast
@@ -226,11 +227,10 @@ class Lexer(object):
 
     # A list of keywords which should not be parsed as names, because
     # there is a huge chance of confusion.
-    keywords = [
+    keywords = sets.Set([
         'as',
         'at',
         'call',
-        'depth',
         'expression',
         'hide',
         'if',
@@ -246,7 +246,8 @@ class Lexer(object):
         'show',
         'with',
         'while',
-        ]
+        'zorder',
+        ])
         
 
     def __init__(self, block, init=False):
@@ -460,6 +461,18 @@ class Lexer(object):
 
         return rv
 
+    def match_number(self):
+        """
+        This tries to parse a number. Returns the number, or None.
+        """
+
+        self.skip_whitespace()
+
+        oldpos = self.pos
+
+        rv = self.match(ur'\d+')
+        return rv
+
     
     def python_string(self):
         """
@@ -628,6 +641,7 @@ class Lexer(object):
         # python
         if (not self.python_string() and
             not self.name() and
+            not self.match_number() and 
             not self.parenthesised_python()):
 
             return None
@@ -789,31 +803,62 @@ def parse_simple_expression_list(l):
 
 def parse_image_specifier(l):
     """
-    This parses an image specifier. An image specifier looks like:
-
-    <image name> [ "onlayer" <layer> ] [ "at" <at list> ]
-
-    The general idea is that the image name tells us which image to show,
-    and the at list tells us where it should be shown.
-
-    This returns a tuple containing a tuple of strings, a list
-    of expressions (which may be empty if the at part is omitted), and
-    a layer name.
+    This parses an image specifier. 
     """
 
-    image_name = parse_image_name(l)
+    tag = None
+    layer = None
+    at_list = [ ]
+    zorder = None
 
-    if l.keyword('onlayer'):
-        layer = l.require(l.name)
-    else:
+    if l.keyword("expression"):
+        expression = l.require(l.simple_expression)
+        image_name = ( expression.strip(), )
+    else: 
+        image_name = parse_image_name(l)
+        expression = None
+
+    while True:
+
+        if l.keyword("onlayer"):
+            if layer:
+                l.error("multiple onlayer clauses are prohibited.")
+            else:
+                layer = l.require(l.name)
+
+            continue
+
+        if l.keyword("at"):
+
+            if at_list:
+                l.error("multiple at clauses are prohibited.")
+            else:
+                at_list = parse_simple_expression_list(l)
+
+            continue
+
+        if l.keyword("as"):
+
+            if tag:
+                l.error("multiple as clauses are prohibited.")
+            else:
+                tag = l.require(l.name)
+
+            continue
+
+        if l.keyword("zorder"):
+
+            if zorder is not None:
+                l.error("multiple zorder clauses are prohibited.")
+            else:
+                zorder = l.require(l.simple_expression)
+                
+        break
+
+    if layer is None:
         layer = 'master'
 
-    if l.keyword('at'):
-        at_list = parse_simple_expression_list(l)
-    else:
-        at_list = [ ]
-
-    return image_name, at_list, layer
+    return image_name, expression, tag, at_list, layer, zorder
 
 def parse_with(l, node):
     """
@@ -1108,7 +1153,7 @@ def parse_statement(l):
             return ast.Scene(loc, None, layer)
 
         imspec = parse_image_specifier(l)
-        rv = parse_with(l, ast.Scene(loc, imspec, imspec[2]))
+        rv = parse_with(l, ast.Scene(loc, imspec, imspec[4]))
 
         l.expect_eol()
         l.advance()

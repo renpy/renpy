@@ -55,7 +55,14 @@ def try_compile(node, where, expr):
 
 # This reports an error if we're sure that the image with the given name
 # does not exist.
-def image_exists(node, name):
+def image_exists(node, name, expression, tag):
+
+    # Add the tag to the set of known tags.
+    tag = tag or name[0]
+    image_prefixes[tag] = True
+
+    if expression:
+        return
 
     name = list(name)
     names = " ".join(name)
@@ -75,6 +82,7 @@ def check_image(node):
 
     name = " ".join(node.imgname)
     files = [ ]
+
 
     def files_callback(img):
         files.extend(img.predict_files())
@@ -100,6 +108,12 @@ def check_image(node):
             add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")
             continue
 
+def imspec(t):
+    if len(t) == 3:
+        return t[0], None, None, t[1], t[2], 0
+    else:
+        return t
+
 
 # Lints ast.Show and ast.Scene nodets.
 def check_show(node):
@@ -108,12 +122,12 @@ def check_show(node):
     if not node.imspec:
         return
 
-    name, at_list, layer = node.imspec
+    name, expression, tag, at_list, layer, zorder = imspec(node.imspec)
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report(node, "Uses layer '%s', which is not in config.layers.", layer)
 
-    image_exists(node, name)
+    image_exists(node, name, expression, tag)
 
     for i in at_list:
         try_eval(node, "the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
@@ -123,16 +137,18 @@ def check_show(node):
 
 def check_hide(node):
 
-    name, at_list, layer = node.imspec
+    name, expression, tag, at_list, layer, zorder = imspec(node.imspec)
+
+    tag = tag or name[0]
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report(node, "Uses layer '%s', which is not in config.layers.", layer)
 
-    if name[0] not in image_prefixes:
-        report(node, "The image prefix '%s' is not the prefix of any declared image.", name[0])
+    if tag not in image_prefixes:
+        report(node, "The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
 
-    for i in at_list:
-        try_eval(node, "at list of hide statment", i)
+    # for i in at_list:
+    #    try_eval(node, "at list of hide statment", i)
         
 def check_with(node):
     try_eval(node, "a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")

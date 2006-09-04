@@ -413,7 +413,7 @@ class SceneLists(object):
                 break
         else:
             index = len(l)
-            
+
         l.insert(index, (key, zorder, st, at, thing))
 
     def remove(self, layer, thing):
@@ -441,7 +441,7 @@ class SceneLists(object):
 
         if layer not in self.layers is None:
             raise Exception("Trying to clear non-existent layer '%s'." % layer)
-        
+
         self.layers[layer] = [ ]
 
     def set_times(self, time):

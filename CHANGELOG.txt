@@ -5,10 +5,26 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.0
 -------------------
 
-New keywords: as, zorder.
+The demo now features new character art, contributed by Piroshki.
 
-show expression ...
+The syntax of the show, scene, and hide statements has been
+expression. Along with image names, these statements also can take
+image names and expressions evaluating displayables. So one can write:
 
+show expression "foo.png"
+
+to show foo.png, without having to declare an image. We have also
+introduced an as clause that lets one specify the tag of an image, and
+a zorder clause that lets you control the height of images inside a
+layer. One can write:
+
+show eileen happy zorder 2
+show eileen vhappy as eileen2 zorder 1
+
+This shows two eileen images, and it shows the second one below the
+first. 
+
+As part of this, "as" and "zorder" are now Ren'Py keywords.
 
 Ren'Py now includes a bilinear scaling feature. im.Scale, Zoom, and
 the new FactorZoom function now use bilinear scaling by
@@ -28,42 +44,48 @@ The default font has been changed to Deja Vu Sans. While the glyphs
 shared with Vera Sans remain indentical, Deja Vu improves support for
 Eastern European languages.
 
-MultiPersistent [doc]
+The new MultiPersistent object allows the storage of inter-game
+persistent data. [doc]
 
 Move, Pan, Motion, Zoom, and FactorZoom all take a time_warp
 parameter, which allows a function to be provided that changes how
 time is processed in those functions. This makes adding acceleration
 and deceleration easy.
 
-Layers as subparts of the screen. [doc]
-- config.layer_clipping
+We now support layers that comprise a rectangle that is smaller then
+the entire screen, through the config.layer_clipping variable. [doc]
 
-Easy way to leave window up during transitions. [extra]
+Now, setting _window_during_transitions to True causes the narration
+window to be displayed during transitions. [doc]
 
-Implicit with None (default) [doc]
+When config.implicit_with_none is True (the new default), the
+equivalent of a "with None" statement is run after each line of
+dialogue, menu, renpy.input() and renpy.imagemap(). This allows for
+transitions to be written as a single with statement, rather than a
+"with None/with transition" pair. [doc]
 
 Compat for styles. 
 Doc styles.
 Easy styles (etc.) [doc]
 menu_button, menu_button_text.
-
-New character art.
-
-Errors in .rpy files. [doc]
-
-Frame now takes a tile= parameter. [doc]
-
-im.Color() [doc]
-
 config.style_properties [doc]
 
-config.implicit_with_none
+Ren'Py now tries to give an accurate line number for runtime errors in
+python blocks found inside .rpy files.
 
-renpy.context_nesting_level()
+Frame now takes a tile= parameter. When True, it will tile images
+rather then scaling them. [doc]
 
-renpy.count_displayables_in_layer()
+There is now a im.Color image manipulator, which is similar to
+im.Recolor, but takes colors as strings or tuples rather then
+4 parameters. The im.Scale image manipulator is now documented. [doc]
 
-A bug with MP3 playback on Windows has been resolved.
+The renpy.context_nesting_level function returns the depth of the
+context we are in, with the normal game context (the context that is
+saved) being 0. [doc] 
+
+The renpy.showing function can be used to determine if an image tag is
+currently being shown on a layer. [doc]
 
 When changing the script, Ren'Py now tries fairly hard to assign
 statements the same internal name they had in the previous version of
@@ -83,22 +105,25 @@ Returning to the main menu no longer causes init code to be
 re-run. This improves the speed of returning to the main menu, while
 bringing its semantics inline with loading a game.
 
-Added a function, renpy.showing() that allows us to check to see if an
-image is shown or not.
-
-Fixed a bug that prevented pauses from terminated when they occured in
-interactions beginning with a transition, when no events occured
-during the interaction. A symptom of the bug was that if the user
-moved the mouse, the pause would immediately terminate and the game
-would advance.
-
 Ren'Py now checks, when parsing a file, that image statements are
 contained within init blocks. It has long been an error to run an
 image statement outside of an init block, so this primarily checks for
 useless init statements.
 
+Ren'Py is now more forgiving of whitespace on the last line of a
+file.
+
 We now look for the presplash image in the "game" and "data" directories,
 as well as the directory derived from the script filename.
+
+Fixed a bug that prevented pauses from terminating when they occured in
+interactions beginning with a transition, when no events occured
+during the interaction. A symptom of the bug was that if the user
+moved the mouse, the pause would immediately terminate and the game
+would advance.
+
+A bug with MP3 playback on Windows has been resolved.
+
 
 
 New in Ren'Py 5.5.4
