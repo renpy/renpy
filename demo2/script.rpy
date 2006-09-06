@@ -48,7 +48,6 @@ init:
     # Character objects. These lets us have the character say
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
-
     $ e = Character(u'Eileen', color=(200, 255, 200, 255))
 
 
@@ -1700,9 +1699,6 @@ init:
     $ library.enter_transition = pixellate
     $ library.exit_transition = pixellate
     
-    # $ config.layer_clipping['master'] = (50, 50, 700, 500)
-    # $ config.layers.insert(0, 'background')
-
 
 # The splashscreen is called, if it exists, before the main menu is
 # shown the first time. It is not called if the game has restarted.
