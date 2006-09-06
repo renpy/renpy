@@ -4,7 +4,7 @@
 # Some version numbers and things.
 
 # Be sure to change script_version in the demo game, too!
-version = "Ren'Py 5.6pre1"
+version = "Ren'Py 5.6.0"
 script_version = 5003000
 savegame_suffix = "-5.6.0.save"
 

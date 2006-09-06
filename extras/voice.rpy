@@ -64,3 +64,9 @@ init -440:
         
         config.start_interact_callbacks.append(voice_interact)
         config.say_sustain_callbacks.append(voice_sustain)
+
+        def voice_afm_callback():
+            return not renpy.sound.is_playing(channel=2)
+
+        config.afm_callback = voice_afm_callback
+            

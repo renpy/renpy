@@ -52,7 +52,7 @@ Eastern European languages.
 
 
 The new MultiPersistent object allows the storage of inter-game
-persistent data. [doc]
+persistent data.
 
 
 The same inputs that hide transient windows can be used to show them
@@ -66,11 +66,11 @@ and deceleration easy.
 
 
 We now support layers that comprise a rectangle that is smaller then
-the entire screen, through the config.layer_clipping variable. [doc]
+the entire screen, through the config.layer_clipping variable.
 
 
 Now, setting _window_during_transitions to True causes the narration
-window to be displayed during transitions. [doc]
+window to be displayed during transitions. 
 
 
 Now, colors can be written in html-like hexadecimal notation strings, as well
@@ -84,7 +84,7 @@ When config.implicit_with_none is True (the new default), the
 equivalent of a "with None" statement is run after each line of
 dialogue, menu, renpy.input() and renpy.imagemap(). This allows for
 transitions to be written as a single with statement, rather than a
-"with None/with transition" pair. [doc]
+"with None/with transition" pair.
 
 
 +++
@@ -117,7 +117,7 @@ and menu_button_text.
 Now, style properties are checked to see if they are valid, and it is
 an error to set a nonexistent style property. The
 config.style_properies variable lets one define new style properties,
-should it prove necessary. [doc]
+should it prove necessary. 
 
 
 Ren'Py now tries to give an accurate line number for runtime errors in
@@ -125,7 +125,7 @@ python blocks found inside .rpy files.
 
 
 Frame now takes a tile= parameter. When True, it will tile images
-rather then scaling them. [doc]
+rather then scaling them.
 
 
 There is now a im.Color image manipulator, which is similar to
@@ -134,12 +134,9 @@ im.Recolor, but takes colors as strings or tuples rather then
 
 
 The renpy.context_nesting_level function returns the depth of the
-context we are in, with the normal game context (the context that is
-saved) being 0. [doc] 
-
-
-The renpy.showing function can be used to determine if an image tag is
-currently being shown on a layer. [doc]
+context we are in.  The renpy.count_displayables_in_layer returns the
+number of displayables in a layer. The renpy.showing function can be
+used to determine if an image tag is currently being shown on a layer.
 
 
 When changing the script, Ren'Py now tries fairly hard to assign
