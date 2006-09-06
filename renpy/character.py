@@ -190,7 +190,7 @@ def display_say(who, what, who_style='say_label',
     if renpy.config.skipping == "fast":
 
         # Clears out transients.
-        with(None)
+        renpy.exports.with(None)
         
         return
 
