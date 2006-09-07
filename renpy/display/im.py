@@ -281,7 +281,7 @@ class Image(ImageBase):
     def load(self):
         im = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
-        if im.get_masks()[3]:
+        if im.get_masks()[3] or im.get_colorkey():
             im = im.convert_alpha()
             im.set_alpha(255, pygame.RLEACCEL)
             im.lock()

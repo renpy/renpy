@@ -8,6 +8,10 @@ work, and often segfault.)
 
 A regression in fast skipping was fixed.
 
+A regression involving PNG images with colorkey alpha has been
+fixed. I didn't realize PNG images _could_ have colorkey alpha. Go
+figure.
+
 The mp3 decoder now supports id3v2 tags, but there are still a number of
 mp3 files it refuses to support. We suggest reencoding them,
 preferably to ogg vorbis. [rebuild]

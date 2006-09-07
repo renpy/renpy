@@ -862,7 +862,7 @@ def is_fullscreen(surf, x, y, (w, h)):
             sw + x >= w and
             sh + y >= h and
             surf.get_masks()[3] == 0 and
-            (surf.get_alpha() == None or surf.get_alpha() == 255) 
+            (surf.get_alpha() == None or surf.get_alpha() == 255)
             ):
 
             return True
