@@ -952,6 +952,12 @@ class Zoom(renpy.display.core.Displayable):
 
         rect = tuple([ (1.0 - done) * a + done * b for a, b in zip(self.start, self.end) ])
 
+        # Check for inclusion, report an error otherwise.
+        rx, ry, rw, rh = rect
+
+        if rx < 0 or ry < 0 or rx + rw > rend.width or ry + rh > rend.height:
+            raise Exception("Zoom rectangle %r falls outside of %dx%d parent surface." % (rect, rend.width, rend.height))
+
         rv = zoom_core(rend, surf, rect, self.size[0], self.size[1], self.bilinear, self.opaque)
 
         if done < 1.0:

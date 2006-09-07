@@ -16,6 +16,7 @@
 ; The big list of things we highlight.
 (setq renpy-font-lock-keywords
       (list       
+       (renpy-keyword "as")
        (renpy-keyword "at")
        (renpy-keyword "call")
        (renpy-keyword "hide")
@@ -24,6 +25,7 @@
        (renpy-keyword "init")
        (renpy-keyword "jump")
        (renpy-keyword "menu")
+       (renpy-keyword "onlayer")
        (renpy-keyword "python")
        (renpy-keyword "return")
        (renpy-keyword "scene")
@@ -31,7 +33,8 @@
        (renpy-keyword "show")
        (renpy-keyword "with")
        (renpy-keyword "while")
-       
+       (renpy-keyword "zorder")
+
        ; Python keywords we want to keep highlighting.
 
        (renpy-keyword "and")

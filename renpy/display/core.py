@@ -1145,6 +1145,7 @@ class Interface(object):
 
         # The root widget of everything that is displayed on the screen.
         root_widget = renpy.display.layout.Fixed() 
+        root_widget.layers = { }
 
         # Add the underlay to the root widget.
         if not suppress_underlay:

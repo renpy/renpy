@@ -181,7 +181,7 @@ def check_jump(node):
         return
 
     if not renpy.game.script.has_label(node.target):
-        report(node, "The jump is to notexistent label '%s'.", node.target)
+        report(node, "The jump is to nonexistent label '%s'.", node.target)
 
 def check_call(node):
 
@@ -194,7 +194,7 @@ def check_call(node):
         return
 
     if not renpy.game.script.has_label(node.label):
-        report(node, "The call is to notexistent label '%s'.", node.label)
+        report(node, "The call is to nonexistent label '%s'.", node.label)
 
 def check_while(node):
     try_compile(node, "in the condition of the while statement", node.condition)

@@ -2,6 +2,17 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
+The Zoom function now checks its parameters, and will refuse to work
+if they fall outside the source surface. (Previously, it would try to
+work, and often segfault.)
+
+A regression in fast skipping was fixed.
+
+The mp3 decoder now supports id3v2 tags, but there are still a number of
+mp3 files it refuses to support. We suggest reencoding them,
+preferably to ogg vorbis. [rebuild]
+
+
 New in Ren'Py 5.6.0
 -------------------
 
@@ -162,7 +173,7 @@ bringing its semantics inline with loading a game.
 Ren'Py now checks, when parsing a file, that image statements are
 contained within init blocks. It has long been an error to run an
 image statement outside of an init block, so this primarily checks for
-useless init statements.
+useless image statements.
 
 
 Ren'Py is now more forgiving of whitespace on the last line of a
