@@ -39,6 +39,9 @@ def list_logical_lines(filename):
     data = f.read()
     f.close()
 
+    # Add some newlines, to fix lousy editors.
+    data += "\n\n"
+
     # The result.
     rv = []
 
@@ -146,7 +149,7 @@ def list_logical_lines(filename):
             pos += 1
 
 
-    if not re.match(r'\s*', line):
+    if not line == "":
         raise ParseError(filename, start_number, "is not terminated with a newline (check quotes and parenthesis).")
 
     return rv

@@ -29,7 +29,12 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
 
     return rv
 
-def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image=False, side_image=None, two_window=False, **kwargs):
+def show_display_say(who, what, who_args={}, what_args={}, window_args={},
+                     image=False, side_image=None, two_window=False,
+                     two_window_vbox_properties={},
+                     who_window_properties={},
+                     say_vbox_properties={},
+                     **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
     widgets corresponding to a screen of dialogue to the user. It is
@@ -73,14 +78,14 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={}, image
     if two_window:
 
         # Opens say_two_window_vbox.
-        renpy.ui.vbox(style='say_two_window_vbox')
+        renpy.ui.vbox(style='say_two_window_vbox', **two_window_vbox_properties)
 
-        renpy.ui.window(style='say_who_window')
+        renpy.ui.window(style='say_who_window', **who_window_properties)
         handle_who()
 
     renpy.ui.window(**window_args)
     # Opens the say_vbox.
-    renpy.ui.vbox(style='say_vbox')
+    renpy.ui.vbox(style='say_vbox', **say_vbox_properties)
 
     if not two_window:
         handle_who()
