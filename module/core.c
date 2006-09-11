@@ -764,8 +764,8 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
-    xdelta = 255.0 * source_width / dest_width;
-    ydelta = 255.0 * source_height / dest_height;
+    xdelta = 255.0 * (source_width - 1) / dest_width;
+    ydelta = 255.0 * (source_height - 1) / dest_height;
 
     for (y = 0; y < dsth; y++) {
 
@@ -857,8 +857,8 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
-    xdelta = 255.0 * source_width / dest_width;
-    ydelta = 255.0 * source_height / dest_height;
+    xdelta = 255.0 * (source_width - 1) / dest_width;
+    ydelta = 255.0 * (source_height - 1) / dest_height;
 
     for (y = 0; y < dsth; y++) {
 

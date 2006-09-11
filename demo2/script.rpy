@@ -1713,8 +1713,10 @@ init:
 #
 #     return
 init:
-    python:
-        1 + 1
+    image gradient = im.Scale("wwbb.png", 800, 600)
 
+label splashscreen:
 
-"Foo"
+    scene gradient
+
+    "Foo"

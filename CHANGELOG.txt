@@ -2,6 +2,9 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
+Improved the precision of bilinear scaling, which fixes artifacting
+experienced with very small source surfaces.
+
 Fixed a bug in the way python code was pre-compiled. This bug
 manifested by "phantom syntax-errors", syntax errors that would occur
 again the first time Ren'Py was started after they were first
