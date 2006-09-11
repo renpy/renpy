@@ -2,6 +2,11 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
+Fixed a bug in the way python code was pre-compiled. This bug
+manifested by "phantom syntax-errors", syntax errors that would occur
+again the first time Ren'Py was started after they were first
+eliminated. 
+
 The Zoom function now checks its parameters, and will refuse to work
 if they fall outside the source surface. (Previously, it would try to
 work, and often segfault.)

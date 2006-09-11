@@ -33,8 +33,6 @@ class PyCode(object):
         (_, self.source, self.location, self.mode) = state
         self.bytecode = None
         
-        PyCode.extent.append(self)
-
     def __init__(self, source, loc=('<none>', 1), mode='exec'):
         # The source code.
         self.source = source
@@ -46,9 +44,6 @@ class PyCode(object):
 
         # This will be initialized later on, after we are serialized.
         self.bytecode = None
-
-        PyCode.extent.append(self)
-
 
 def chain_block(block, next):
     """
@@ -154,6 +149,14 @@ class Node(object):
             return [ self.next ]
         else:
             return [ ]
+
+    def get_pycode(self):
+        """
+        Returns a list of PyCode objects associated with this Node,
+        or None if no objects are associated with it.
+        """
+
+        return [ ]
 
 
 def say_menu_with(expression, callback):
@@ -342,6 +345,8 @@ class Python(Node):
         self.code = PyCode(python_code, loc=loc, mode='exec')
         # renpy.game.exception_info = old_ei
 
+    def get_pycode(self):
+        return [ self.code ]
 
     def diff_info(self):
         return (Python, self.code.source)
@@ -373,9 +378,8 @@ class Image(Node):
     def diff_info(self): 
         return (Image, tuple(self.imgname))
 
-
-
-
+    def get_pycode(self):
+        return [ self.code ]
 
     def execute(self):
         

@@ -73,6 +73,7 @@ class Script(object):
         self.namemap = { }
         self.initcode = [ ]
         self.all_stmts = [ ]
+        self.all_pycode = [ ]
         
         # A list of all files in the search directories.
         dirlist = renpy.loader.listdirfiles()
@@ -279,6 +280,9 @@ class Script(object):
             if init:
                 self.initcode.append(init)
 
+            # Add any PyCode to all_pycode.
+            self.all_pycode.extend(node.get_pycode())
+
         self.all_stmts.extend(all_stmts)
 
         return True
@@ -305,7 +309,7 @@ class Script(object):
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
-        for i in renpy.ast.PyCode.extent:
+        for i in self.all_pycode:
 
             codes = oldcache.get(i.location, { })
 
@@ -342,7 +346,7 @@ class Script(object):
             except:
                 pass
 
-        renpy.ast.PyCode.extent = None
+        self.all_pycode = None
         
 
     def lookup(self, label):

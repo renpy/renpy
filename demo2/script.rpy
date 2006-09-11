@@ -1712,3 +1712,9 @@ init:
 #     hide text with dissolve
 #
 #     return
+init:
+    python:
+        1 + 1
+
+
+"Foo"

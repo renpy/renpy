@@ -158,11 +158,20 @@ class Context(object):
 
             # Ignore exceptions in prediction, so long as
             # prediction is not needed.
+
             try:
                 for n in node.predict(callback):
                     if n not in nodes:
                         nodes.append(n)
             except:
+
+                if renpy.config.debug_image_cache:
+                    import traceback
+
+                    print
+                    traceback.print_exc()
+                    print "While predicting images."
+
                 # We accept that sometimes prediction won't work.
                 pass
                 

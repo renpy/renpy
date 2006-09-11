@@ -3,7 +3,7 @@
 import renpy
 
 
-def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, left_image=False, right_image=False, **kwargs):
+def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, **kwargs):
     """
     This is the default function used by Character to predict images that
     will be used by show_display_say. It's called with more-or-less the
@@ -108,6 +108,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 def predict_display_say(who, what,
                 what_style='say_dialogue',
                 window_style='say_window',
+                who_style='say_label',
                 who_prefix='',
                 who_suffix=': ',
                 what_prefix='',
