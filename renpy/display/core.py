@@ -1099,7 +1099,9 @@ class Interface(object):
                 return False, None
             if self.suppress_transition:
                 return False, None
-
+            if not self.old_scene:
+                return False, None
+            
         # We just restarted.
         self.restart_interaction = False
 
