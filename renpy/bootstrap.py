@@ -112,13 +112,18 @@ def bootstrap(renpy_base):
 
         type, value, tb = sys.exc_info()
 
+        def safe_utf8(e):
+            try:
+                return unicode(e).encode("utf-8")
+            except:
+                return str(e)
+
         # Outside of the file.
         traceback.print_tb(tb, None, sys.stdout)
         print type.__name__ + ":", 
-        print unicode(e).encode('utf-8')
+        print safe_utf8(e)
         print
         print renpy.game.exception_info
-
 
         # Inside of the file, which may not be openable.
         try:
@@ -132,7 +137,7 @@ def bootstrap(renpy_base):
             print >>f
 
             print >>f, type.__name__ + ":", 
-            print >>f, unicode(e).encode('utf-8')
+            print >>f, safe_utf8(e)
             print >>f
             print >>f, renpy.game.exception_info
 
@@ -142,7 +147,7 @@ def bootstrap(renpy_base):
 
             traceback.print_tb(tb, None, f)
             print >>f, type.__name__ + ":", 
-            print >>f, unicode(e).encode('utf-8')
+            print >>f, safe_utf8(e)
 
             print >>f
 
