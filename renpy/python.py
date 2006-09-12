@@ -653,8 +653,6 @@ class RollbackLog(renpy.object.Object):
         if not self.rollback_limit > 0 and not force:
             return
 
-        self.rollback_limit -= 1
-
         self.purge_unreachable(self.get_roots())
 
         revlog = [ ]
@@ -665,6 +663,7 @@ class RollbackLog(renpy.object.Object):
 
             if rb.checkpoint:
                 checkpoints -= 1
+                self.rollback_limit -= 1
 
             if checkpoints <= 0:
                 if renpy.game.script.has_label(rb.context.current):

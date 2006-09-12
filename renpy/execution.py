@@ -161,6 +161,9 @@ class Context(object):
 
             try:
                 for n in node.predict(callback):
+                    if n is None:
+                        continue
+
                     if n not in nodes:
                         nodes.append(n)
             except:

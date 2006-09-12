@@ -1,6 +1,11 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+!!!
+Fixed a bug that prevented image preloading from working.
+
+After a load, the user can roll back the number of screens he could
+before the load. Previously, this number was one less.
 
 Prevented hang when executing a with statement without a prior shown
 scene.
