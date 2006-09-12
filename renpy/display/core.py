@@ -289,7 +289,19 @@ class SceneLists(object):
     things to the user. 
     """
 
+
+    def __setstate__(self, state):
+
+        self.__dict__.update(state)
+
+        for i in renpy.config.layers + renpy.config.top_layers:
+            if i not in self.layers:
+                self.layers[i] = [ ]
+
+
     def __init__(self, oldsl=None):
+
+
 
         # A map from layer name -> list of
         # (key, zorder, show time, animation time, displayable) 
@@ -302,6 +314,7 @@ class SceneLists(object):
 
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = oldsl.layers[i][:]
+                self.layers[i] = [ ]
 
             for i in renpy.config.overlay_layers:
                 self.clear(i)
@@ -1168,7 +1181,9 @@ class Interface(object):
 
 
         def add_layer(where, layer):
-            if self.transition.get(layer, None) and self.old_scene and not self.suppress_transition:
+            if (self.transition.get(layer, None) and
+                self.old_scene and
+                not self.suppress_transition):
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene[layer])
@@ -1184,7 +1199,9 @@ class Interface(object):
             add_layer(layers_root, layer)
                 
         # Add layers_root to root_widget, perhaps through a transition.
-        if None in self.transition and self.old_scene and not self.suppress_transition:
+        if (None in self.transition and
+            self.old_scene and
+            not self.suppress_transition):
 
             # Compute what the old root should be.
             old_root = renpy.display.layout.Fixed()

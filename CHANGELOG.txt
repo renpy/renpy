@@ -4,6 +4,9 @@ Major bug fixes that could affect many systems are indicated with !!!.
 !!!
 Fixed a bug that prevented image preloading from working.
 
+Now, it is possible to load a save into a game with a changes set of
+layers. 
+
 After a load, the user can roll back the number of screens he could
 before the load. Previously, this number was one less.
 
