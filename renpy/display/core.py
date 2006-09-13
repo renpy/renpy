@@ -37,6 +37,7 @@ class Displayable(renpy.object.Object):
     """
 
     focusable = False
+    full_focus_name = None
     role = ''
 
     def __init__(self, focus=None, default=False, style='default', **properties):
@@ -313,8 +314,10 @@ class SceneLists(object):
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
-                self.layers[i] = oldsl.layers[i][:]
-                self.layers[i] = [ ]
+                try:
+                    self.layers[i] = oldsl.layers[i][:]
+                except KeyError:
+                    self.layers[i] = [ ]
 
             for i in renpy.config.overlay_layers:
                 self.clear(i)
@@ -1148,7 +1151,7 @@ class Interface(object):
         
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
-        
+
         # Figure out what the overlay layer should look like.
         renpy.ui.layer("overlay")
 
@@ -1162,10 +1165,15 @@ class Interface(object):
         root_widget = renpy.display.layout.Fixed() 
         root_widget.layers = { }
 
+        # A list of widgets that are roots of trees of widgets that are
+        # considered for focusing.
+        focus_roots = [ ]
+
         # Add the underlay to the root widget.
         if not suppress_underlay:
             for i in renpy.config.underlay:
                 root_widget.add(i)
+                focus_roots.append(i)
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
@@ -1179,20 +1187,23 @@ class Interface(object):
         layers_root = renpy.display.layout.Fixed()
         layers_root.layers = { }
 
-
         def add_layer(where, layer):
+
+            scene_layer = scene[layer]
+            focus_roots.append(scene_layer)
+
             if (self.transition.get(layer, None) and
                 self.old_scene and
                 not self.suppress_transition):
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
-                                               new_widget=scene[layer])
+                                               new_widget=scene_layer)
                 where.add(trans)
                 where.layers[layer] = trans
                 
             else:
-                where.layers[layer] = scene[layer]
-                where.add(scene[layer])
+                where.layers[layer] = scene_layer
+                where.add(scene_layer)
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:
@@ -1219,9 +1230,11 @@ class Interface(object):
             if trans_pause:
                 sb = renpy.display.behavior.SayBehavior()
                 root_widget.add(sb)
+                focus_roots.append(sb)
 
                 pb = renpy.display.behavior.PauseBehavior(trans.delay)
                 root_widget.add(pb)
+                focus_roots.append(pb)
                 
         else:
             root_widget.add(layers_root)
@@ -1245,7 +1258,7 @@ class Interface(object):
         # which we will try to show to the user.
 
         # Figure out what should be focused.
-        renpy.display.focus.before_interact(root_widget)
+        renpy.display.focus.before_interact(focus_roots)
 
         # Redraw the screen.
         renpy.display.render.process_redraws()

@@ -974,6 +974,8 @@ class Text(renpy.display.core.Displayable):
                     rv += len(text)
                 elif type == "widget":
                     rv += 1
+                elif type == "tag" and text == "fast":
+                    rv = 0
 
         return rv
 

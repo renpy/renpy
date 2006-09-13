@@ -850,9 +850,14 @@ class Render(object):
 
         self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
 
+def is_fullscreen(surf, x, y, wh):
+    if renpy.config.disable_fullscreen_opt:
+        return False
+
+    return is_fullscreen_core(surf, x, y, wh)
 
 # Determine if a surface is fullscreen or not.
-def is_fullscreen(surf, x, y, (w, h)):
+def is_fullscreen_core(surf, x, y, (w, h)):
 
     if isinstance(surf, pygame.Surface):
 
@@ -875,6 +880,16 @@ def is_fullscreen(surf, x, y, (w, h)):
     if rv is not None:
         return rv
 
+    # Clipping can stop its children from being fullscreen.
+    if (surf.clipped and
+        (x > 0 or
+         y > 0 or
+         x + self.width < w or
+         y + self.height < h)):
+
+        surf.fullscreen[xywh] = False
+        return False
+
     if (surf.opaque and x <= 0 and y <= 0 and
         surf.width + x >= w and
         surf.height + y >= h):
@@ -883,7 +898,7 @@ def is_fullscreen(surf, x, y, (w, h)):
         return True
 
     for xo, yo, source in surf.blittables:
-        if is_fullscreen(source, x + xo, y + yo, (w, h)):
+        if is_fullscreen_core(source, x + xo, y + yo, (w, h)):
             surf.fullscreen[xywh] = True
             return True
 

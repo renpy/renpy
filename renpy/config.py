@@ -259,6 +259,9 @@ implicit_with_none = True
 # A map from a layer to (x, y, w, h) tuples that the layer is clipped to.
 layer_clipping = { }
 
+# Should we disable the fullscreen optimization?
+disable_fullscreen_opt = False
+
 del renpy
 del sets
 

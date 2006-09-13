@@ -90,7 +90,7 @@ class Transition(renpy.display.core.Displayable):
             return None
 
     def visit(self):
-        return [ self.old_widget, self.new_widget ]
+        return [ self.new_widget, self.old_widget ]
 
 class NoTransition(Transition):
     """

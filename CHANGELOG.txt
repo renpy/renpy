@@ -1,10 +1,22 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+
+New in Ren'Py 5.6.0
+-------------------
+
 !!!
 Fixed a bug that prevented image preloading from working.
 
-Now, it is possible to load a save into a game with a changes set of
+Previously, in statements with a transition, focusable objects from
+the old scene could be assigned the default focus. This is no longer
+possible.
+
+Auto-forward mode now takes into account the {fast} text tag.
+
+The fullscreen image optimization now takes into account layer clipping.
+
+Now, it is possible to load a save into a game with a changed list of
 layers. 
 
 After a load, the user can roll back the number of screens he could

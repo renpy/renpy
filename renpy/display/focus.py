@@ -47,7 +47,7 @@ def take_focuses(fl):
 # the widget that is focused, and to mark it as focused and all of
 # the other widgets as unfocused.
 
-def before_interact(root):
+def before_interact(roots):
 
     # Clear out an old grab.
     global grab
@@ -59,7 +59,8 @@ def before_interact(root):
     def callback(f, n):
         fwn.append((f, n))
 
-    root.find_focusable(callback, None)
+    for root in roots:
+        root.find_focusable(callback, None)
 
     # Assign a full name to each focusable.
 
@@ -80,7 +81,7 @@ def before_interact(root):
         current_name = current.full_focus_name
 
         for f, n in fwn:
-            if f.full_focus_name == current.full_focus_name:
+            if f.full_focus_name == current_name:
                 current = f
                 set_focused(f)
                 break
