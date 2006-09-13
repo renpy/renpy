@@ -5,7 +5,7 @@ import os.path
 import sys
 
 # The version of the Mac Launcher and py4renpy that we use.
-mac_linux_version = (5, 6, 0)
+mac_linux_version = (5, 6, 1)
 
 if __name__ == "__main__":
 
