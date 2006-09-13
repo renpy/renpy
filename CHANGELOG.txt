@@ -45,7 +45,7 @@ figure.
 
 The mp3 decoder now supports id3v2 tags, but there are still a number of
 mp3 files it refuses to support. We suggest reencoding them,
-preferably to ogg vorbis. [rebuild]
+preferably to ogg vorbis.
 
 
 New in Ren'Py 5.6.0
