@@ -14,10 +14,8 @@
 init:
     
     # The version of this script.
-    $ library.script_version = (5, 6, 0)
+    $ library.script_version = (5, 6, 1)
 
-    $ config.layers.append('fuzzy')
-    
     # Set up the size of the screen, and the window title.
     $ config.screen_width = 800
     $ config.screen_height = 600
