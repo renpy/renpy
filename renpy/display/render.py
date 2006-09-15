@@ -881,11 +881,13 @@ def is_fullscreen_core(surf, x, y, (w, h)):
         return rv
 
     # Clipping can stop its children from being fullscreen.
+
+
     if (surf.clipped and
         (x > 0 or
          y > 0 or
-         x + self.width < w or
-         y + self.height < h)):
+         x + surf.width < w or
+         y + surf.height < h)):
 
         surf.fullscreen[xywh] = False
         return False

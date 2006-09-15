@@ -145,8 +145,11 @@ class SayBehavior(renpy.display.layout.Null):
 
     focusable = True
 
-    def __init__(self, default=True, afm=None, dismiss='dismiss', **properties):
+    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
+
+        if not isinstance(dismiss, (list, tuple)):
+            dismiss = [ dismiss ]
 
         if afm is not None:
             self.afm_length = len(afm)
@@ -195,14 +198,16 @@ class SayBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.timeout(afm_delay - st)
 
-        if map_event(ev, self.dismiss) and self.is_focused():
+        for dismiss in self.dismiss:
 
-            if renpy.config.skipping:
-                renpy.config.skipping = None
-                renpy.exports.restart_interaction()
-                raise renpy.display.core.IgnoreEvent()
-            else:
-                return True
+            if map_event(ev, dismiss) and self.is_focused():
+
+                if renpy.config.skipping:
+                    renpy.config.skipping = None
+                    renpy.exports.restart_interaction()
+                    raise renpy.display.core.IgnoreEvent()
+                else:
+                    return True
 
         if map_event(ev, "rollforward"):
             if renpy.game.context().seen_current(False):

@@ -1712,3 +1712,13 @@ init:
 #     hide text with dissolve
 #
 #     return
+
+init:
+    $ MicroLayer = renpy.curry(Fixed)
+
+label splashscreen:
+    "Foo."
+
+    show bg whitehouse at Pan((0, 0), (200, 200), 3.0,), MicroLayer(xpos=100, ypos=100, xmaximum=200, ymaximum=200, clipping=True)
+
+    "Bar."

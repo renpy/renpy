@@ -2,7 +2,16 @@ Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
 
-New in Ren'Py 5.6.0
+New in Ren'Py 5.6.2
+-------------------
+
+Fixed a bug that manifested itself in a crash when a clipped
+Displayable was placed at (x, y) where x <= 0 and y <= 0.
+
+Fixed a focus bug that made it difficult to unhide windows.
+
+
+New in Ren'Py 5.6.1
 -------------------
 
 !!!

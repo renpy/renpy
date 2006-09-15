@@ -238,8 +238,7 @@ label _hide_windows:
 
     python:
         _windows_hidden = True
-        ui.saybehavior()
-        ui.saybehavior(dismiss='hide_windows')
+        ui.saybehavior(dismiss=['dismiss', 'hide_windows'])
         ui.interact(suppress_overlay=True)
         _windows_hidden = False
 
