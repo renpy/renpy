@@ -580,12 +580,13 @@ class Display(object):
         self.window = pygame.display.set_mode((width, height), fsflag, depth)
         
         # Sample surface that all surfaces are created based on.
-        self.sample_surface = self.window.convert_alpha()
+        sample = pygame.Surface((10, 10))
+        self.sample_surface = sample.convert_alpha()
 
         pygame.event.set_grab(False)
 
         # Window title and icon.
-        pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
+        pygame.display.set_caption(unicode(renpy.config.window_title))
 
         if renpy.config.window_icon:
             pygame.display.set_icon(renpy.display.im.load_image(renpy.config.window_icon))

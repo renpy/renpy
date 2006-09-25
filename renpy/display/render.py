@@ -681,6 +681,10 @@ class Render(object):
 
         for xo, yo, source in self.blittables[fullscreen:]:
             if isinstance(source, pygame.Surface):
+
+                if dest is renpy.game.interface.display.window:
+                    source = renpy.display.im.rle_cache.get(id(source), source)
+
                 dest.blit(source, (x + xo, y + yo))
             else:
                 source.blit_to(dest, x + xo, y + yo)

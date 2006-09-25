@@ -21,20 +21,18 @@ def extra_imports():
     import difflib
     
 def bootstrap(renpy_base):
-    
+
+    # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 
     if name.find(".") != -1:
         name = name[:name.find(".")]
 
-    if name.find("_") != -1:
-        name = name[name.find("_") + 1:]
-
     op = optparse.OptionParser()
     op.add_option('--version', dest='version', default=False, action='store_true',
                   help="Display the version of Ren'Py")
 
-    op.add_option('--game', dest='game', default=name,
+    op.add_option('--game', dest='game', default=None,
                   help='The directory the game is in.')
 
     op.add_option("--savedir", dest='savedir', default=None, action='store',
@@ -61,27 +59,56 @@ def bootstrap(renpy_base):
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
-
     options, args = op.parse_args()
 
     if options.python:
         import __main__
         sys.argv = [ options.python ] + args
-        execfile(renpy_base + "/" + options.python, __main__.__dict__, __main__.__dict__)
+        execfile(options.python, __main__.__dict__, __main__.__dict__)
         sys.exit(0)
+
+    if len(args) >= 1:
+        basedir = os.path.abspath(args[0])
+    else:
+        basedir = renpy_base
 
     # If we made it this far, we will be running the game, or at least
     # doing a lint.
-    os.chdir(renpy_base)
 
+    # os.chdir(renpy_base)
+
+    # Look for the game directory.
+    if options.game:
+        gamedir = options.game
+
+    else:
+        gamedirs = [ name ]
+        game_name = name
+
+        while game_name:
+            prefix = game_name[0]
+            game_name = game_name[1:]
+
+            if prefix == ' ' or prefix == '_':
+                gamedirs.append(game_name)
+
+        gamedirs.extend([ 'game', 'data',])
+
+        for i in gamedirs:
+            gamedir = basedir + "/" + i
+            if os.path.isdir(gamedir):
+                break
+        else:
+            gamedir = basedir
+    
     # Force windib on windows, unless the user explicitly overrides.
     if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
         os.environ['SDL_VIDEODRIVER'] = 'windib'
 
     # Show the presplash.
-    if not options.lint and not options.compile:
+    if not options.lint and not options.compile and not options.version:
         import renpy.display.presplash
-        renpy.display.presplash.start(options.game)
+        renpy.display.presplash.start(gamedir)
 
     # Load up all of Ren'Py, in the right order.
     import renpy
@@ -97,7 +124,12 @@ def bootstrap(renpy_base):
         while keep_running:
             try:
                 renpy.game.options = options
-                renpy.main.main(options.game)
+
+                renpy.config.renpy_base = renpy_base
+                renpy.config.basedir = basedir
+                renpy.config.gamedir = gamedir
+
+                renpy.main.main()
                 keep_running = False
 
             except renpy.game.UtterRestartException:

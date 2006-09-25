@@ -179,8 +179,10 @@ def transfn(name):
     """
 
     for d in renpy.config.searchpath:
-        if os.path.exists(d + "/" + name):
-            return d + "/" + name
+        fn = os.path.join(renpy.config.basedir, d, name)
+
+        if os.path.exists(fn):
+            return fn
 
     raise Exception("Couldn't find file '%s'." % name)
 

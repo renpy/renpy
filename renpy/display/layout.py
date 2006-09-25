@@ -1123,7 +1123,6 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def per_interact(self):
         child = renpy.python.py_eval(self.expression)
         child = renpy.easy.displayable(child)
-        
 
         if child != self.child:
             self.child = child

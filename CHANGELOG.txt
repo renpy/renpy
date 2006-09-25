@@ -5,6 +5,42 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.2
 -------------------
 
+TODO: make ui.imagebutton accept arbitrary displayables.
+
+The rules for searching for the base directory have changed
+slightly. The base directory may now be given as the first positional
+argument on the command line. If that doesn't work, it defaults to the
+directory containing the program used to launch Ren'Py.
+
+The game directory search has also changed. If a --game directory is
+given, then it is used relative to the current directory. (This is a
+change from the current behavior.) Othewise, all extensions are
+stripped from the program used to start Ren'Py. We first look for a
+directory with this name in the base directory. If it's not found,
+then we strip off everything before the first space or underscore, and
+try again. We repeat this until we find the game directory, or until
+we can't. We then try the "game" and "base" subdirectories of the base
+directory. If those don't exist, we use the base directory as the game
+directory.
+
+config.renpy_base
+config.basedir
+config.gamedir
+
+We no longer change directory into the base directory. This means that
+screenshots are written into the current directory, rather then the
+base directory.
+
+run_game.py has been updated with two functions intended for
+customization by distributors. These functions control how Ren'Py
+looks for the common directory, and for save directories.
+
+Fixed a bug that made RLE images sometimes crash the system. Added a
+rle argument to Image and other image manipulators.
+
+Fixed a bug that prevented the factory argument to MoveTransition from
+being accepted.
+
 Fixed a bug that manifested itself in a crash when a clipped
 Displayable was placed at (x, y) where x <= 0 and y <= 0.
 

@@ -1719,6 +1719,36 @@ init:
 label splashscreen:
     "Foo."
 
-    show bg whitehouse at Pan((0, 0), (200, 200), 3.0,), MicroLayer(xpos=100, ypos=100, xmaximum=200, ymaximum=200, clipping=True)
+    python hide:
 
-    "Bar."
+        store.hovered_text = ""
+
+        def mybutton(text, hovered_text, clicked):
+
+            def hovered(hovered_text=hovered_text):
+
+                if store.hovered_text == hovered_text:
+                    return
+
+                store.hovered_text = hovered_text
+                renpy.restart_interaction()
+                return None
+
+            
+            ui.textbutton(text, hovered=hovered, clicked=clicked)
+
+        ui.vbox()
+        ui.hbox()
+        mybutton("Foo", "You're hovering the foo button.", ui.returns(1))
+        mybutton("Bar", "You're hovering the bar button.", ui.returns(2))
+        mybutton("Baz", "You're hovering the baz button.", ui.returns(3))
+        ui.close()
+
+        ui.add(DynamicDisplayable("Text(store.hovered_text)"))
+        ui.close()
+
+        ui.interact()
+
+$ foo = "bar"
+
+        

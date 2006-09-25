@@ -97,9 +97,11 @@ class Cache(object):
         if image in self.cache:
             ce = self.cache[image]
 
-            if ce.time == self.time:
-                return ce.surf
+
         else:
+            if renpy.config.debug_image_cache:
+                print "IC Adding", image
+
             ce = CacheEntry(image, image.load())
             self.total_cache_size += ce.size
             self.cache[image] = ce
@@ -107,13 +109,24 @@ class Cache(object):
             # Indicate that this surface had changed.
             renpy.display.render.mutated_surface(ce.surf)
 
+
             if renpy.config.debug_image_cache:
                 print "IC Added", ce.what
 
 
+
         # Move it into the current generation.
-        ce.time = self.time
-        self.size_of_current_generation += ce.size
+        if ce.time != self.time:
+            ce.time = self.time
+            self.size_of_current_generation += ce.size
+
+        if image.rle:
+            if image not in rle_cache:
+                rle_surf = ce.surf.convert_alpha()
+                rle_surf.set_alpha(255, RLEACCEL)
+                rle_cache[id(ce.surf)] = rle_surf
+                renpy.display.render.mutated_surface(ce.surf)
+                print "Added to rle cache."
 
         return ce.surf
 
@@ -126,6 +139,9 @@ class Cache(object):
 
         self.total_cache_size -= ce.size
         del self.cache[ce.what]
+
+        if id(ce.surf) in rle_cache:
+            del rle_cache[id(ce.surf)]
 
         if renpy.config.debug_image_cache:
             print "IC Removed", ce.what
@@ -210,6 +226,8 @@ class Cache(object):
         
 cache = Cache()
 
+# A map from id(cached surface) to rle version of cached surface.
+rle_cache = { }
 
 class ImageBase(renpy.display.core.Displayable):
     """
@@ -218,6 +236,12 @@ class ImageBase(renpy.display.core.Displayable):
     """
 
     def __init__(self, *args, **properties):
+
+        if 'rle' in properties:
+            self.rle = True
+            del properties['rle']
+        else:
+            self.rle = False
 
         properties.setdefault('style', 'image')
 
@@ -283,9 +307,6 @@ class Image(ImageBase):
 
         if im.get_masks()[3] or im.get_colorkey():
             im = im.convert_alpha()
-            im.set_alpha(255, pygame.RLEACCEL)
-            im.lock()
-            im.unlock()
         else:
             im = im.convert()   
 

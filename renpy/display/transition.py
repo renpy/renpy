@@ -235,10 +235,12 @@ def Fade(out_time, hold_time, in_time,
 
     dissolve = renpy.curry.curry(Dissolve)
     notrans = renpy.curry.curry(NoTransition)
+
+    widget = renpy.easy.displayable(widget)
     
     if color:
         widget = renpy.display.image.Solid(color)
-
+	
     if not widget:
         widget = renpy.display.image.Solid((0, 0, 0, 255))
 
@@ -727,11 +729,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
                 newsl.append((tag, zo, time, anim, d))
                 continue
                 
-            move = renpy.display.layout.Move(position(tags[tag]),
-                                             position(d),
-                                             delay,
-                                             d,
-                                             )
+            move = self.factory(position(tags[tag]),
+                                position(d),
+                                delay,
+                                d,
+                                )
 
             newsl.append((tag, zo, None, anim, move))
 

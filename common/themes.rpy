@@ -56,7 +56,7 @@ init -402:
     python hide:
 
         store.theme = object()
-
+        
         def theme_roundrect(
             widget = (0, 60, 120, 255),
             widget_hover = (0, 80, 160, 255),
@@ -111,7 +111,7 @@ init -402:
                right side.
                """
 
-            if config.screen_width == 640:
+            if config.screen_width <= 640:
                 size = 18
                 small = 14
 
@@ -348,8 +348,6 @@ init -402:
 
             if button_menu:
                 _button_menu()
-                
-
 
         theme.roundrect = theme_roundrect
 

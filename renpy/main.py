@@ -13,6 +13,7 @@ import renpy.game as game
 import os
 import time
 from pickle import loads, dumps, HIGHEST_PROTOCOL
+import __main__
 
 def save_persistent():
 
@@ -85,7 +86,7 @@ def run(restart=False):
             
     # And, we're done.
     
-def main(basename):
+def main():
 
 
     renpy.game.exception_info = 'While loading the script.'
@@ -93,21 +94,24 @@ def main(basename):
     # Init the config after load.
     renpy.config.init()
 
-    if os.path.isdir(basename):
-        basepath = basename
-    elif os.path.isdir("game"):
-        basepath = "game"
-    elif os.path.isdir("data"):
-        basepath = "data"
-    else:
-        basepath = "."
+    # Note the game directory.
+    game.basepath = renpy.config.gamedir
+    renpy.config.searchpath = [ renpy.config.gamedir ]
 
-    game.basepath = basepath
-    renpy.config.searchpath = [ basepath ]
+    # Find the common directory.
+    commondir = __main__.path_to_common(renpy.config.renpy_base)
 
-    if os.path.isdir("common"):
-        renpy.config.searchpath.append("common")
+    if os.path.isdir(commondir):
+        renpy.config.searchpath.append(commondir)
 
+    # The basename is the final component of the path to the gamedir.
+
+    basename = renpy.config.gamedir
+    if basename[-1] == '/':
+        basename = basename[:-1]
+    basename = os.path.basename(basename)
+
+    # Look for an archived game.
     renpy.config.archives = [ ]
 
     for i in basename, "game", "data":
@@ -122,6 +126,7 @@ def main(basename):
         except:
             continue
 
+    # Note the profile option.
     if renpy.game.options.profile:
         renpy.config.profile = True
 
@@ -137,7 +142,8 @@ def main(basename):
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
-    renpy.config.savedir = game.basepath + "/saves"
+    # Find the save directory.
+    renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir)
 
     if renpy.game.options.savedir:
         renpy.config.savedir = renpy.game.options.savedir

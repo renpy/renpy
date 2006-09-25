@@ -31,10 +31,8 @@ def start(_gamedir):
 
     gamedir = _gamedir
 
-    for gamedir in [ _gamedir, 'game', 'data' ]:
-        if os.path.exists(gamedir + "/presplash.png"):
-            break
-    else:
+
+    if not os.path.exists(gamedir + "/presplash.png"):
         return
         
     active = True

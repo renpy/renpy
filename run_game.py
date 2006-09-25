@@ -4,6 +4,20 @@ import os
 import os.path
 import sys
 
+# Functions to be customized by distributors. ################################
+
+# Given the Ren'Py base directory (usually the directory containing
+# this file), this is expected to return the path to the common directory.
+def path_to_common(renpy_base):
+    return renpy_base + "/common"
+
+# Give a directory holding a Ren'Py game, this is expected to return
+# the path to a directory that will hold save files.
+def path_to_saves(gamedir):
+    return gamedir + "/saves"
+
+##############################################################################
+
 # The version of the Mac Launcher and py4renpy that we use.
 mac_linux_version = (5, 6, 1)
 
@@ -38,7 +52,6 @@ if __name__ == "__main__":
     # This is looked for by the mac launcher.
     if os.path.exists(renpy_base + "/renpy.zip"):
         sys.path.append(renpy_base + "/renpy.zip")
-
 
     # Start Ren'Py proper.
     import renpy.bootstrap
