@@ -11,10 +11,22 @@ import sys
 def path_to_common(renpy_base):
     return renpy_base + "/common"
 
-# Give a directory holding a Ren'Py game, this is expected to return
+# Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
     return gamedir + "/saves"
+
+# Returns the path to the Ren'Py base directory (containing common and
+# the launcher, usually.)
+def path_to_renpy_base():
+    renpy_base = os.path.dirname(sys.argv[0])
+    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
+    renpy_base = os.path.abspath(renpy_base)
+
+    return renpy_base
+    
+
+
 
 ##############################################################################
 
@@ -38,10 +50,7 @@ if __name__ == "__main__":
     except ImportError:
         pass
 
-    # Figure out the base directory.
-    renpy_base = os.path.dirname(sys.argv[0])
-    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
-    renpy_base = os.path.abspath(renpy_base)
+    renpy_base = path_to_renpy_base()
 
     # Add paths.
     if os.path.exists(renpy_base + "/module"):

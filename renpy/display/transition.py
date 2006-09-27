@@ -729,11 +729,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
                 newsl.append((tag, zo, time, anim, d))
                 continue
                 
-            move = self.factory(position(tags[tag]),
-                                position(d),
-                                delay,
-                                d,
-                                )
+            move = factory(position(tags[tag]),
+                           position(d),
+                           delay,
+                           d,
+                           )
 
             newsl.append((tag, zo, None, anim, move))
 

@@ -48,11 +48,18 @@ class Displayable(renpy.object.Object):
 
     def find_focusable(self, callback, focus_name):
 
-        def finder(d):
-            if d.focusable:
-                callback(d, d.focus_name or focus_name)
+        focus_name = self.focus_name or focus_name
+        
+
+        if self.focusable:
+            callback(self, focus_name)
+
+        for i in self.visit():
+            if i is None:
+                continue
+
+            i.find_focusable(callback, focus_name)
             
-        self.visit_all(finder)
 
 
     def focus(self, default=False):

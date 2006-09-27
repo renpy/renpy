@@ -248,7 +248,7 @@ class Button(renpy.display.layout.Window):
     def focus(self, default=False):
         super(Button, self).focus(default)
 
-        if self.hovered:
+        if self.hovered and not default:
             self.hovered()
 
     def unfocus(self):

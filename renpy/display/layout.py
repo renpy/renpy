@@ -1133,5 +1133,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def render(self, w, h, st, at):
         return renpy.display.render.render(self.child, w, h, st, at)
 
+    def get_placement(self):
+        return self.child.get_placement()
+
     def event(self, ev, x, y, st):
         return self.child.event(ev, x, y, st)
