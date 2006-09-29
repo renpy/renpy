@@ -52,6 +52,9 @@ def chain_block(block, next):
     next.
     """
 
+    if not block:
+        return
+
     for a, b in zip(block, block[1:]):
         a.chain(b)
 

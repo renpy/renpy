@@ -22,6 +22,9 @@ def extra_imports():
     import difflib
     import shutil
     import renpy.tools.archiver
+    import renpy.tools.add_from
+    import tarfile
+    import bz2
     
 def bootstrap(renpy_base):
 
@@ -194,7 +197,10 @@ def bootstrap(renpy_base):
             f.close()
 
             try:
-                os.startfile('traceback.txt')
+                if renpy.config.editor:
+                    renpy.exports.launch_editor([ 'traceback.txt' ], 1)
+                else:
+                    os.startfile('traceback.txt')
             except:
                 pass
 

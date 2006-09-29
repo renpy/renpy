@@ -103,6 +103,10 @@ def main():
 
     if os.path.isdir(commondir):
         renpy.config.searchpath.append(commondir)
+        renpy.config.commondir = commondir
+    else:
+        renpy.config.commondir = None
+        
 
     # The basename is the final component of the path to the gamedir.
 

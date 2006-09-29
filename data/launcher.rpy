@@ -29,8 +29,8 @@ init:
         def title(name):
             ui.text(name, xpos=4, ypos=4, size=30, color="#559")
 
-        def text(name):
-            ui.text(name, xalign=0.5, text_align=0.5, color="#559", xmaximum=200)
+        def text(name, color="#559"):
+            ui.text(name, xalign=0.5, text_align=0.5, color=color, xmaximum=200)
 
 
         def mid(focus="mid"):
@@ -51,6 +51,26 @@ init:
             ui.button(clicked=clicked, hovered=hovered)
             ui.text(text, style="button_text")
             
+
+        def prompt(name, message, cancel, default='', hint=''):
+            store.message = hint
+
+            # Creating the project.
+            title(name)
+
+            mid()
+
+            text(message)
+
+            ui.input(default, exclude='{}/\\', xmaximum=200, xalign=0.5, text_align=0.5, color="#000")
+
+            ui.close()
+
+            bottom()
+            button("Cancel", clicked=ui.jumps("main"))
+            ui.close()
+
+            return interact()
 
 
         def paged_menu(tit, choices, message, per_page=7):
@@ -183,7 +203,33 @@ init:
 
             if not store.projects:
                 raise Exception("The launcher will not function without any projects.")
+
+        def lint():
             
+            import renpy.subprocess as subprocess
+            import sys
+
+            store.message = "Lint in progress."
+            title("Lint")
+            ui.pausebehavior(0)
+            interact()
+
+            lf = file("lint.txt", "w")
+
+            if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
+                proc = subprocess.Popen([sys.argv[0], "--lint", project.path], stdout=lf)
+
+            else:
+                proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
+
+            proc.wait()
+
+            lf.close()
+
+            renpy.launch_editor([ "lint.txt" ])
+
+
+
             
     # Set up images.
     image background = "launcher.png"
@@ -382,24 +428,25 @@ label tools_menu:
                "Checks the game's script for likely errors. This should be run before releasing.",
                clicked=ui.jumps("lint"))
 
-        button("Make Backup",
-               "Makes a backup of the game.",
-               clicked=ui.jumps("backup")
-               )
+        button("Quick Backup",
+               "Makes a backup copy of the project. You also need to make backups somewhere other then this computer.",
+               clicked=ui.jumps("backup"))
 
         ui.add(Null(1, 22))
 
         text("Release Day")
 
         button("Add From to Calls",
-               "Adds a from clause to all of the call statements in your script.", 
-               )
+               "Adds a from clause to each of the call statements in your script.", 
+               clicked=ui.jumps("add_from_to_calls"))
         
         button("Archive Images",
                "Archive the images found under the game directory.",
                clicked=ui.jumps("archive_images"))
                
-        button("Build Distribution")
+        button("Build Distributions",
+               "Build distributions for the platforms supported by Ren'Py.",
+               clicked=ui.jumps("distribute"))
 
         ui.close()
 
@@ -416,28 +463,7 @@ label tools_menu:
 label lint:
 
     python hide:
-        import renpy.subprocess as subprocess
-        import sys
-
-        store.message = "Lint in progress."
-        title("Lint")
-
-        ui.pausebehavior(0)
-        interact()
-
-        lf = file("lint.txt", "w")
-
-        if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], "--lint", project.path], stdout=lf)
-        
-        else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
-
-        proc.wait()
-
-        lf.close()
-
-        renpy.launch_editor([ "lint.txt" ])
+        lint()
 
         store.message = "A lint report should appear shortly."
 
@@ -455,24 +481,9 @@ label new:
 
         template = paged_menu("Select a Template", choices, "Please select a project to use as a template for your project.")
 
-        store.message = ""
+        name = prompt("Project Name", "Type the name of your new project, and press enter.\n", "main")
 
-        # Creating the project.
-        title("Project Name")
-
-        mid()
-        
-        text("Type the name of your new project, and press enter.\n")
-        
-        ui.input('', exclude='{}/\\', xmaximum=200, xalign=0.5, text_align=0.5, color="#000")
-
-        ui.close()
-
-        bottom()
-        button("Cancel", "Return to the top menu.", clicked=ui.jumps("main"))
-        ui.close()
-
-        name = interact().strip()
+        name = name.strip()
 
         error = None
 
@@ -628,8 +639,30 @@ label backup:
 
     jump tools_menu
                 
+
+label add_from_to_calls:
+
+    python hide:
+        import os
+        import time
+        import shutil
+
+        title("Add From to Calls")
+        store.message = "Please wait while we add from clauses to call statements."
+        ui.pausebehavior(0)
+        interact()
+
+        import renpy.tools.add_from as add_from
+
+        add_from.add_from(project.gamedir, config.commondir)
+
+        store.message = "Done adding from clauses to call statements. You may want to remove the .bak files created."
+
+    jump tools_menu
+                
     
     
+        
         
 label confirm_quit:
     $ renpy.quit()
