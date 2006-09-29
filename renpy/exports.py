@@ -827,26 +827,41 @@ def get_filename_line():
     n = renpy.game.script.namemap[renpy.game.context().current]
     return n.filename, n.linenumber
 
-def launch_editor():
+def launch_editor(filenames, line=1):
     """
     This causes an editor to be launched at the location of the current
     statement.
     """
 
     import renpy.subprocess as subprocess
+    import re
+    import os.path
 
     if not renpy.config.editor:
         return
 
-    filename, line = get_filename_line()
-    subs = dict(filename=filename, line=line)
+    if not len(filenames):
+        return
+
+    def escape(s):
+        s = re.sub(r'([\&\;\`\'\\\\\"\|\*\?\~\<\>\^\(\)\[\]\{\}\$\s])', r'\\\1', s)
+        return s
+
+    filenames = [ escape(os.path.normpath(i)) for i in filenames ]
+    filename = filenames[0]
+
+    allfiles = " ".join(filenames)
+    otherfiles = " ".join(filenames[1:])
+                                
+    subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     cmd = renpy.config.editor % subs
 
     try:
-        subprocess.Popen(cmd, shell=True)
+        return subprocess.Popen(cmd, shell=True)
     except:
         if renpy.config.debug:
             raise
+        return None
 
 # A file that log logs to.
 logfile = None

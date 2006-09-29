@@ -169,6 +169,12 @@ init -500:
 
             renpy.call_in_new_context("_save_reload_game")
 
+        def launch_editor():
+            if not config.developer:
+                return
+
+            filename, line = renpy.get_filename_line()
+            renpy.launch_editor([ filename ], line)
 
 
         # The default keymap.
@@ -181,7 +187,7 @@ init -500:
             fast_skip = fast_skip,
             game_menu = invoke_game_menu,
             hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
-            launch_editor = renpy.launch_editor,
+            launch_editor = launch_editor,
             dump_styles = dump_styles,
             reload_game = reload_game,
             )

@@ -5,20 +5,23 @@ import sys
 
 # Extra things used for distribution.
 def extra_imports():
+    import datetime
     import encodings.utf_8
     import encodings.zlib_codec
     import encodings.unicode_escape
     import encodings.string_escape
     import encodings.raw_unicode_escape
     import math
-    import datetime
     import glob
+    import platform
     import pysdlsound
     import pysdlsound.sound
     import pysdlsound.nativemidi
     import pysdlsound.winmixer
     import pysdlsound.linmixer
     import difflib
+    import shutil
+    import renpy.tools.archiver
     
 def bootstrap(renpy_base):
 

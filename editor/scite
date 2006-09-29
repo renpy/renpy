@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export SciTE_HOME=`dirname $0`
+
+case `uname -s -m` in 
+Linux\ i*86)
+    $SciTE_HOME/scite.linux-i686 "$@"
+    ;;
+esac
+    

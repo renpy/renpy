@@ -5,6 +5,7 @@
 # This will be deleted by the end of this file.
 import renpy
 import sets
+import os
 
 # The title of the game window.
 window_title = "A Ren'Py Game"
@@ -223,7 +224,7 @@ frames = 0
 
 # A text editor that is launched at the location of the current
 # statement.
-editor = None
+editor = os.environ.get('RENPY_EDITOR', None)
 
 # Enable developer mode?
 developer = False
