@@ -101,6 +101,10 @@ def bootstrap(renpy_base):
         gamedirs.extend([ 'game', 'data',])
 
         for i in gamedirs:
+
+            if i == "renpy":
+                continue
+
             gamedir = basedir + "/" + i
             if os.path.isdir(gamedir):
                 break
