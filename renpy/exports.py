@@ -856,8 +856,14 @@ def launch_editor(filenames, line=1):
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     cmd = renpy.config.editor % subs
 
+    import platform
+    if platform.win32_ver()[0]:
+        shell = False
+    else:
+        shell = True
+
     try:
-        return subprocess.Popen(cmd, shell=True)
+        return subprocess.Popen(cmd, shell=shell)
     except:
         if renpy.config.debug:
             raise

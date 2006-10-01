@@ -4,31 +4,17 @@ from distutils.core import setup
 import py2exe
 import sys
 
-if len(sys.argv) != 2:
-    print "Usage: build_exe.py <prefix>"
-    print ""
-    print "Builds <prefix>.exe."
-    print "Expects icons in <prefix>.ico."
-
-    sys.exit(-1)
-
-def program(name):
-    return dict(script="run_game.py",
-                icon_resources=[ (0, name + ".ico"),
-                                 ],
-                dest_base=name)
-
-programs = [
-    program(sys.argv[1]),
-    ]
-
 sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
-# sys.argv[1:] = [ 'py2exe', '--bundle', '0', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
 
 setup(name="RenPy",
-      windows=programs,
-      console=[ "console.py" ],
+      windows=[ dict(script="renpy.py",
+                     dest_base="renpy",
+                     icon_resources=[ (0, "newicon.ico") ] ) ],
+      
+      console=[ dict(script="renpy.py", dest_base="console") ],
+
       zipfile='renpy.code',
+
       options={ 'py2exe' : { 'excludes' : [ 'doctest',
                                             'pygame.macosx',
                                             'pygame.surfarray',
@@ -38,3 +24,7 @@ setup(name="RenPy",
                              'optimize' : 2,
                              } },
       )
+
+print
+print "Press return to quit."
+raw_input()

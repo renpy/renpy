@@ -1,3 +1,8 @@
+# Copyright 2004-2006 PyTom
+#
+# Please see the LICENSE.txt distributed with Ren'Py for permission to
+# copy and modify.
+
 # This file is responsible for creating and defining the default styles
 # used by the system.
 

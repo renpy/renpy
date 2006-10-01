@@ -1,8 +1,8 @@
 #!/bin/sh
 
-export SciTE_HOME=`dirname $0`
+export SciTE_HOME="`dirname \"$0\"`"
 
 for i in $SciTE_HOME/scite.*-*; do
-    $i "$@" && exit 0
+    "$i" "$@" && exit 0
 done
     

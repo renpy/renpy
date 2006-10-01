@@ -29,9 +29,11 @@ init:
         def title(name):
             ui.text(name, xpos=4, ypos=4, size=30, color="#559")
 
-        def text(name, color="#559"):
-            ui.text(name, xalign=0.5, text_align=0.5, color=color, xmaximum=200)
+        def text(name, color="#559", size=18):
+            ui.text(name, xalign=0.5, text_align=0.5, color=color, xmaximum=200, size=size)
 
+        def spacer():
+            ui.add(Null(1, 6))
 
         def mid(focus="mid"):
             ui.vbox(ypos=50, yanchor=0, xpos=293, xanchor=0.5, focus=focus)
@@ -304,7 +306,7 @@ label top_menu:
                    "Shows the tools menu.",
                    clicked=ui.jumps("tools"))
 
-            ui.add(Null(1, 22))
+            spacer()
 
             text("Change Project")
 
@@ -432,7 +434,7 @@ label tools_menu:
                "Makes a backup copy of the project. You also need to make backups somewhere other then this computer.",
                clicked=ui.jumps("backup"))
 
-        ui.add(Null(1, 22))
+        spacer()
 
         text("Release Day")
 

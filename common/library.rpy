@@ -1,3 +1,8 @@
+# Copyright 2004-2006 PyTom
+#
+# Please see the LICENSE.txt distributed with Ren'Py for permission to
+# copy and modify.
+
 # This file consists of renpy functions that aren't expected to be
 # touched by the user too much. We reserve the _ prefix for names
 # defined in the library.

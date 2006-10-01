@@ -1,3 +1,8 @@
+# Copyright 2004-2006 PyTom
+#
+# Please see the LICENSE.txt distributed with Ren'Py for permission to
+# copy and modify.
+
 # This file contains code fo the main menu, and anything else that
 # happens upon initial execution of a Ren'Py program.
 
