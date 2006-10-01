@@ -9,7 +9,7 @@ import renpy.tools.add_from as add_from
 def main():
 
     if len(sys.argv) != 3:
-        print "Usage: %s <game directory> <common directory>"
+        print "Usage: %s <game directory> <common directory>" % sys.argv[0]
         return
 
 

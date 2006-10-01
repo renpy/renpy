@@ -342,6 +342,8 @@ label select_project:
 
         persistent.project = store.project.name
 
+        store.game_proc = None
+
     jump main
 
 label launch:
@@ -438,13 +440,20 @@ label tools_menu:
 
         text("Release Day")
 
+        def ifrw(label):
+            if project.info["ro"]:
+                return None
+            else:
+                return ui.jumps(label)
+            
+
         button("Add From to Calls",
                "Adds a from clause to each of the call statements in your script.", 
-               clicked=ui.jumps("add_from_to_calls"))
+               clicked=ifrw("add_from_to_calls"))
         
         button("Archive Images",
                "Archive the images found under the game directory.",
-               clicked=ui.jumps("archive_images"))
+               clicked=ifrw("archive_images"))
                
         button("Build Distributions",
                "Build distributions for the platforms supported by Ren'Py.",

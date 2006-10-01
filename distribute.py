@@ -1,170 +1,106 @@
-import os.path
-import os
+#!/usr/bin/env python
+# Builds a distributions of Ren'Py.
+
 import sys
+import os
+import zipfile
+import tarfile
+import time
 
-def match_times(source, dest):
+# Gets the data for the given file.
+def data(fn):
 
-    stat = os.stat(source)
-    os.utime(dest, (stat.st_atime, stat.st_mtime))
+    rv = file(fn, "rb").read()
+
+    if fn.startswith("renpy.app"):
+        return rv
+
+    if fn.endswith(".rpy") or fn.endswith(".py"):
+        rv = rv.replace("\n", "\r\n")
+        rv = rv.replace("\r\r\n", "\r\n")
+
+    return rv
     
-def dosify(s):
-    return s.replace("\n", "\r\n")
 
-def copy_file(source, dest, license="", dos=True):
+# Creates a zip file.
+def zipup(filename, prefix, files):
 
-    if dest.endswith(".bak"):
-        return
+    zf = zipfile.ZipFile(filename, "w")
 
-    if dest.endswith(".cache"):
-        return
+    for fn in files:
 
-    if dest.endswith("~"):
-        return
+        print fn
+
+        zi = zipfile.ZipInfo(prefix + fn)
+
+        st = os.stat(fn)
+
+        zi.date_time = time.localtime(st.st_mtime)[:6]
+        zi.compress_type = zipfile.ZIP_DEFLATED
+        zi.create_system = 3
+        zi.external_attr = long(st.st_mode) << 16
+
+        zf.writestr(zi, data(fn))
+        
+    zf.close()
     
-    print source, "->", dest
-
-    sf = file(source, "rb")
-    df = file(dest, "wb")
-
-    if dest.endswith(".py") or dest.endswith(".rpy"):
-        if not dest.endswith("subprocess.py"):
-            df.write(license)
-
-    data = sf.read()
-    if dest.endswith(".txt") or dest.endswith(".rpy") or dest.endswith(".bat"):
-        if dos:
-            data = dosify(data)
-            if data.startswith("#!"):
-                data = data.replace("\r\n", "\n\r\n", 1)
-
-    df.write(data)
-
-    sf.close()
-    df.close()
-
-    match_times(source, dest)
-
-
-def copy_tree(source, dest, should_copy=lambda fn : True, license=""):
-
-    os.makedirs(dest)
     
-    for dirpath, dirnames, filenames in os.walk(source):
 
-        if "/saves" in dirpath:
-            continue
+def tree(root):
 
-        if "/CVS" in dirpath:
-            continue
+    rv = [ ]
 
-        if "/.svn" in dirpath:
-            continue
+    for dirname, dirs, filenames in os.walk(root):
 
-        reldir = dirpath[len(source):]
-        dstrel = dest + "/" + reldir
+        if "saves" in dirs:
+            dirs.remove("saves")
 
-        for i in dirnames:
-            if i == "CVS":
-                continue
-
-            if i == ".svn":
-                continue
-
-            os.mkdir(dstrel + "/" + i)
-
-        for i in filenames:
-            if not should_copy(i):
-                continue
-
-            if i.startswith("."):
-                continue
-
-            copy_file(dirpath + "/" + i, dstrel + "/" + i, license=license)
+        if ".svn" in dirs:
+            dirs.remove(".svn")
+        else:
+            if not root == "lib":
+                print "Note:", dirname, "not in subversion."
             
 
-            
+        for f in filenames:
+            if f[-1] == '~' or f[0] == '.':
+                continue
+
+            if f.endswith(".bak") or f.endswith(".pyc") or f.endswith(".pyo"):
+                continue
+
+            if f == "semantic.cache":
+                continue
+
+            rv.append(dirname + "/" + f)
+
+    return rv
 
 def main():
 
-    target = sys.argv[1]
-    gamedir = sys.argv[2]
+    if len(sys.argv) != 2:
+        print "Usage: %s <prefix>" % sys.argv[0]
+        return
 
-    # Read license.
-    lf = file("LICENSE.txt")
-    license = "#!/usr/bin/env python\n\r\n"
-    
-    for l in lf:
+    prefix = sys.argv[1]
 
-        if l.startswith("---"):
-            break
-        
-        license += "# " + l
+    files = [ ]
+    more_files = [ ]
 
-    lf.close()
+    files.append("CHANGELOG.txt")
+    files.append("LICENSE.txt")
+    files.extend(tree("common"))
+    files.extend(tree("data"))
+    files.extend(tree("demo"))
+    files.extend(tree("dse"))
 
-    license = dosify(license)
+    editor = tree("editor")
+    editor.remove("editor/scite.exe")
+    files.append("editor/scite.exe")
+    more_files.extend(editor)
 
-    if os.path.exists(target):
-        raise Exception("Target exists!")
-
-    # Start off with the target.
-    copy_tree("dist", target,
-              should_copy = lambda fn : fn not in [ 'traceback.txt' ] and not fn.endswith(".log"))
-
-    # Copy renpy modules.
-    copy_tree("renpy", target + "/renpy",
-              should_copy = lambda fn : fn.endswith(".py"),              
-              license=license)
-
-    doc_files = [
-        'example.html',
-        'reference.html',
-        'style.css',
-        'EXTENDING.txt',
-        ]
-
-    # Copy doc
-    copy_tree("doc", target + "/doc",
-              should_copy = lambda fn : fn in doc_files)
-
-    # Copy the game 
-    copy_tree(gamedir, target + "/game",
-              should_copy = lambda fn : not fn.endswith(".mpg"))
-
-    copy_tree("common", target + "/common")
-
-    # copy_tree("dse", target + "/dse")
-
-    copy_tree("extras", target + "/extras",
-              should_copy = lambda fn : not (fn.endswith(".rpyc") or fn.endswith(".rpyb")) )
-    
-    copy_tree("scripts", target + "/scripts")
-
-    copy_tree("tools", target + "/tools", license=license)
-
-    def cp(x, license="", dos=True):
-        copy_file(x, target + "/" + x, dos=dos)
-
-    cp("CHANGELOG.txt")
-    cp("LICENSE.txt")
-    cp("README_RENPY.txt")
-    # cp("archive_images.bat")
-    # cp("lint.bat")
-    cp("run_game.py", license=license)
-    # copy_file("run_game.py", target + "/run_game.pyw", license=license)
-    # copy_file("run_game.py", target + "/run_dse.py", license=license)
-    # copy_file("run_game.py", target + "/run_dse.pyw", license=license)
-    # copy_file("run_game.rpyl", target + "/run_game.rpyl")
-    # copy_file("run_dse.rpyl", target + "/run_dse.rpyl")
-    # cp("archiver.py", license=license)
-    # cp("build_exe.py", license=license)
-    # cp("add_from.py", license=license)
-    # cp("dump_text.py", license=license)
-    # cp("renpy-mode.el")
-    
-    os.mkdir(target + "/module")
-    os.mkdir(target + "/module/lib")
-    os.mkdir(target + "/module/lib/pysdlsound")
+    files.extend(tree("extras"))
+    more_files.extend(tree("lib"))
 
     module_files = [
         "lib/pysdlsound/linmixer.py",
@@ -194,10 +130,24 @@ def main():
         ]
 
     for i in module_files:
-        cp("module/" + i)
+        more_files.append('module/' + i)
+
+    files.append('python23.dll')
+    files.extend(tree('renpy'))
+    files.append('renpy.code')
+    files.append('renpy.exe')
+    files.append('renpy.py')
+
+    more_files.append('renpy.sh')
+    files.extend(tree('tools'))
+
+    files.sort()
+    more_files.sort()
+
+    zipup("dists/" + prefix + "-win32.zip", prefix, files)
+    zipup("dists/" + prefix + "-full.zip", prefix, files + more_files)
+    
     
 
 if __name__ == "__main__":
     main()
-
-    

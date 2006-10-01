@@ -225,9 +225,9 @@ class ImageButton(renpy.display.behavior.Button):
                  image_style='image_button_image',
                  clicked=None, hovered=None, **properties):
 
-        self.idle_image = Image(idle_image, style=image_style)
+        self.idle_image = renpy.easy.displayable(idle_image)
         self.idle_image.style.set_prefix("idle_")
-        self.hover_image = Image(hover_image, style=image_style)
+        self.hover_image = renpy.easy.displayable(hover_image)
         self.hover_image.style.set_prefix("hover_")
 
         super(ImageButton, self).__init__(self.idle_image,

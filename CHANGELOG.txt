@@ -5,7 +5,10 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.2
 -------------------
 
-TODO: make ui.imagebutton accept arbitrary displayables.
+The Ren'Py distribution has been reorganized, and now includes a
+launcher program that lets one edit Ren'Py programs, and perform
+common tasks with them. It also includes the SciTE text editor.
+
 
 The rules for searching for the base directory have changed
 slightly. The base directory may now be given as the first positional
@@ -31,9 +34,15 @@ We no longer change directory into the base directory. This means that
 screenshots are written into the current directory, rather then the
 base directory.
 
+
 run_game.py has been updated with two functions intended for
 customization by distributors. These functions control how Ren'Py
 looks for the common directory, and for save directories.
+
+
+The ui.imagebutton function has been modified to accept arbitrary
+displayables, rather then just images. 
+
 
 Fixed a bug that made RLE images sometimes crash the system. Added a
 rle argument to Image and other image manipulators.
