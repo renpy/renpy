@@ -22,20 +22,37 @@ def data(fn):
     return rv
     
 
+def tarup(filename, prefix, files):
+
+    tf = tarfile.open(filename, "w:bz2")
+    tf.dereference = True
+
+    print
+
+    for fn in files:
+        print fn
+        
+        tf.add(fn, prefix + "/" + fn, False)
+
+    tf.close()
+    
+
 # Creates a zip file.
 def zipup(filename, prefix, files):
 
     zf = zipfile.ZipFile(filename, "w")
 
+    print
+
     for fn in files:
 
         print fn
 
-        zi = zipfile.ZipInfo(prefix + fn)
+        zi = zipfile.ZipInfo(prefix + "/" + fn)
 
         st = os.stat(fn)
 
-        zi.date_time = time.localtime(st.st_mtime)[:6]
+        zi.date_time = time.gmtime(st.st_mtime)[:6]
         zi.compress_type = zipfile.ZIP_DEFLATED
         zi.create_system = 3
         zi.external_attr = long(st.st_mode) << 16
@@ -84,12 +101,18 @@ def main():
 
     prefix = sys.argv[1]
 
+    # Compile the various games
+    for i in [ 'demo/game', 'data', 'dse/game', 'template/game' ]:
+        os.system("./renpy.sh --compile --game " + i)
+    
+
     files = [ ]
     more_files = [ ]
 
     files.append("CHANGELOG.txt")
     files.append("LICENSE.txt")
     files.extend(tree("common"))
+    files.append("console.exe")
     files.extend(tree("data"))
     files.extend(tree("demo"))
     files.extend(tree("dse"))
@@ -134,11 +157,14 @@ def main():
 
     files.append('python23.dll')
     files.extend(tree('renpy'))
+    files.extend(tree('renpy.app'))
     files.append('renpy.code')
     files.append('renpy.exe')
     files.append('renpy.py')
 
     more_files.append('renpy.sh')
+
+    files.extend(tree('template'))
     files.extend(tree('tools'))
 
     files.sort()
@@ -146,8 +172,12 @@ def main():
 
     zipup("dists/" + prefix + "-win32.zip", prefix, files)
     zipup("dists/" + prefix + "-full.zip", prefix, files + more_files)
+    tarup("dists/" + prefix + "-full.tar.bz2", prefix, files + more_files)
+
     
     
+    print
+    print "Did you remember to rebuild the exe after the last change?"
 
 if __name__ == "__main__":
     main()

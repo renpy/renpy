@@ -1,3 +1,24 @@
+# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 # This file contains code contributed by Brian Turcotte, the copyright
 # assignment follows:
 #
@@ -119,6 +140,7 @@ class NoTransition(Transition):
         return rv
 
 
+
 class MultipleTransition(Transition):
     """
     This is a transition that can sequence between multiple screens,
@@ -144,7 +166,7 @@ class MultipleTransition(Transition):
         self.transitions = [ ]
 
         # The screens that we use for the transition.
-        self.screens = args[0::2]
+        self.screens = [ renpy.easy.displayable(i) for i in args[0::2] ]
 
         def oldnew(w):
             if w is False:
@@ -153,7 +175,7 @@ class MultipleTransition(Transition):
                 return new_widget
             return w
 
-        for old, trans, new in zip(args[0::2], args[1::2], args[2::2]):
+        for old, trans, new in zip(self.screens[0:], args[1::2], self.screens[1:]):
             old = oldnew(old)
             new = oldnew(new)
 

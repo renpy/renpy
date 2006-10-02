@@ -827,14 +827,24 @@ def get_filename_line():
     n = renpy.game.script.namemap[renpy.game.context().current]
     return n.filename, n.linenumber
 
+def shell_escape(s):
+    import sys
+    import re
+
+    if hasattr(sys, "winver"):
+        return s.replace("\\", "\\\\").replace("\"", "\\\"")
+    else:
+        return s.replace("\\", "\\\\").replace("'", "\\'")
+
+
 def launch_editor(filenames, line=1):
     """
     This causes an editor to be launched at the location of the current
     statement.
     """
 
+    import sys
     import renpy.subprocess as subprocess
-    import re
     import os.path
 
     if not renpy.config.editor:
@@ -843,24 +853,22 @@ def launch_editor(filenames, line=1):
     if not len(filenames):
         return
 
-    def escape(s):
-        s = re.sub(r'([\&\;\`\'\\\\\"\|\*\?\~\<\>\^\(\)\[\]\{\}\$\s])', r'\\\1', s)
-        return s
+    if hasattr(sys, "winver"):
+        shell = False
+        join = '" "'
+    else:
+        shell = True
+        join = "' '"
 
-    filenames = [ escape(os.path.normpath(i)) for i in filenames ]
+
+    filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
-    allfiles = " ".join(filenames)
-    otherfiles = " ".join(filenames[1:])
+    allfiles = join.join(filenames)
+    otherfiles = join.join(filenames[1:])
                                 
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     cmd = renpy.config.editor % subs
-
-    import platform
-    if platform.win32_ver()[0]:
-        shell = False
-    else:
-        shell = True
 
     try:
         return subprocess.Popen(cmd, shell=shell)

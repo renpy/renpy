@@ -26,10 +26,6 @@ we can't. We then try the "game" and "base" subdirectories of the base
 directory. If those don't exist, we use the base directory as the game
 directory.
 
-config.renpy_base
-config.basedir
-config.gamedir
-
 We no longer change directory into the base directory. This means that
 screenshots are written into the current directory, rather then the
 base directory.
@@ -42,6 +38,11 @@ looks for the common directory, and for save directories.
 
 The ui.imagebutton function has been modified to accept arbitrary
 displayables, rather then just images. 
+
+
+Exported wo new types of transitions. Pause is a transition that shows
+the new image for a given number of seconds, while MultipleTransition
+lets you combine multiple transitions into one.
 
 
 Fixed a bug that made RLE images sometimes crash the system. Added a

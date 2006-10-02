@@ -200,7 +200,7 @@ init:
                 for dd in contents:
                     dir = d + "/" + dd
 
-                    if os.path.isdir(dd):
+                    if os.path.isdir(dir):
                         load_project(dir, dd)
 
             if not store.projects:
@@ -210,17 +210,17 @@ init:
             
             import renpy.subprocess as subprocess
             import sys
+            import os.path
 
             store.message = "Lint in progress."
             title("Lint")
             ui.pausebehavior(0)
             interact()
 
-            lf = file("lint.txt", "w")
-
+            lf = file("lint.txt", "w+")
+            
             if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
-                proc = subprocess.Popen([sys.argv[0], "--lint", project.path], stdout=lf)
-
+                proc = subprocess.Popen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf)
             else:
                 proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
 
@@ -351,10 +351,10 @@ label launch:
     python hide:
         import renpy.subprocess
         import sys
+        import os.path
 
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
             proc = renpy.subprocess.Popen([sys.argv[0], project.path])
-        
         else:
             proc = renpy.subprocess.Popen([sys.executable, sys.argv[0], project.path])
 
@@ -636,7 +636,7 @@ label backup:
 
         while True:
 
-            btime = time.strftime("%04Y-%02m-%02d-%02H:%02M:%02S")
+            btime = str(int(time.time()))
             bdir = "backups/%s.%s" % (project.name, btime)
 
             if not os.path.exists(bdir):
