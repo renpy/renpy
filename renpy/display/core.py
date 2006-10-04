@@ -614,7 +614,7 @@ class Display(object):
         pygame.event.set_grab(False)
 
         # Window title and icon.
-        pygame.display.set_caption(unicode(renpy.config.window_title))
+        pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
 
         if renpy.config.window_icon:
             pygame.display.set_icon(renpy.display.im.load_image(renpy.config.window_icon))

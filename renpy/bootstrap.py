@@ -32,6 +32,7 @@ def extra_imports():
     import encodings.unicode_escape
     import encodings.string_escape
     import encodings.raw_unicode_escape
+    import encodings.mbcs
     import math
     import glob
     import platform
