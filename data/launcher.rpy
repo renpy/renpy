@@ -74,6 +74,22 @@ init:
 
             return interact()
 
+        def error(name, message, target):
+            store.message = ''
+
+            # Creating the project.
+            title(name)
+
+            mid()
+            text(message)
+            ui.close()
+
+            bottom()
+            button("Cancel", clicked=ui.jumps(target))
+            ui.close()
+
+            return interact()
+
 
         def paged_menu(tit, choices, message, per_page=7):
 
@@ -160,6 +176,11 @@ init:
 
         def load_project(dir, name):
             import os.path
+
+            # Ignore non-unicode files.
+            for i in dir:
+                if ord(i) >= 127:
+                    return 
 
             if os.path.isdir(dir + "/game"):
                 gamedir = dir + "/game"
@@ -441,7 +462,7 @@ label tools_menu:
         text("Release Day")
 
         def ifrw(label):
-            if project.info["ro"]:
+            if project.info.get("ro", False):
                 return None
             else:
                 return ui.jumps(label)
@@ -493,7 +514,6 @@ label new:
         template = paged_menu("Select a Template", choices, "Please select a project to use as a template for your project.")
 
         name = prompt("Project Name", "Type the name of your new project, and press enter.\n", "main")
-
         name = name.strip()
 
         error = None
@@ -502,22 +522,14 @@ label new:
             error = "Please enter a non-empty project name."
         elif os.path.exists(name):
             error = "A file or directory named '%s' already exists." % name
+        else:
+            try:
+                name = name.encode("ascii")
+            except:
+                error = "Project names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way."
 
         if error:
-            title("Error")
-
-            mid()
-            text(error)
-            ui.close()
-
-            bottom()
-            button("Cancel", "Return to the top menu.", clicked=ui.jumps("main"))
-            ui.close()
-
-            interact()
-
-            # Shouldn't ever happen.
-            renpy.jump("main")
+            store.error("Error", error, "main")
 
         # Tell the user we're creating the project.
         title("Creating Project")
