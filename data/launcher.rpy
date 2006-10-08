@@ -195,7 +195,12 @@ init:
             info["description"] = desc
 
             if os.path.exists(dir + "/launcherinfo.py"):
-                execfile(dir + "/launcherinfo.py", info)
+                source = file(dir + "/launcherinfo.py", "rU").read().decode("utf8")
+                if source[0] == u'\ufeff':
+                    source = source[1:]
+                source = source.encode("raw_unicode_escape")
+
+                exec source in info
 
             store.projects.append(Project(name, dir, gamedir, info))
                 

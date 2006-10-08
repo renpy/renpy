@@ -6,6 +6,9 @@ import os
 import zipfile
 import tarfile
 import time
+import zlib
+
+zlib.Z_DEFAULT_COMPRESSION = 9
 
 # Gets the data for the given file.
 def data(fn):

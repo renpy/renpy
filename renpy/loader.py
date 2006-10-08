@@ -26,6 +26,7 @@ from pickle import loads
 from cStringIO import StringIO
 import sys
 import types
+import codecs
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpb will break.
@@ -239,7 +240,11 @@ class RenpyImporter(object):
         mod.__loader__ = self
         mod.__path__ = [ ]
 
-        source = load(filename).read()
+        source = load(filename).read().decode("utf8")
+        if source[0] == u'\ufeff':
+            source = source[1:]
+        source = source.encode("raw_unicode_escape")
+        
         source = source.replace("\r", "")
         exec source in mod.__dict__
         return mod

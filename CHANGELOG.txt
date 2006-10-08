@@ -1,6 +1,19 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.6.3
+-------------------
+
+Loaded python files are assumed to be UTF-8. This includes the
+launcherinfo.py files loaded by the launcher. (Thanks to denzil for
+reporting this one.)
+
+The voice.rpy extra now plays the sample sound on the voice
+channel. (Thanks to NetGenSuperstar for reporting this, and for
+supplying the fix.)
+
+
+
 
 New in Ren'Py 5.6.2
 -------------------

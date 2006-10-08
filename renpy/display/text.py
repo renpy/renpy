@@ -531,7 +531,7 @@ def text_layout(triples, width, style):
             continue
 
         if type == "space":
-            if not line:
+            if not line and lines:
                 continue
             line.append(triple)
             continue
@@ -546,8 +546,9 @@ def text_layout(triples, width, style):
                 
     lines.append(line)
 
-    # Remove trailing whitespace.
-    for l in lines:
+    # Remove trailing whitespace, except on the last line, where it
+    # might be intentional.
+    for l in lines[:-1]:
         if l and l[-1][0] == "space":
             l.pop()
 
@@ -721,6 +722,7 @@ class Text(renpy.display.core.Displayable):
                     
         if redraw:
             renpy.display.render.redraw(self, 0)
+
 
     def event(self, ev, x, y, st):
         """
@@ -975,6 +977,7 @@ class Text(renpy.display.core.Displayable):
 
             # For the newline.
             self.laidout_length += 1
+
 
     def get_simple_length(self):
         """

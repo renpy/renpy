@@ -46,7 +46,8 @@ init -440:
         vp = _VolumePreference('Voice Volume',
                                'voice',
                                'library.has_voice',
-                               'library.sample_voice')
+                               'library.sample_voice',
+                               2)
 
         library.preferences['prefs_right'].insert(1, vp)
 
