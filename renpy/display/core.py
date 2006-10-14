@@ -1528,7 +1528,7 @@ class Interface(object):
             # If we were trans-paused and rv is true, suppress
             # transitions up to the next interaction.
             if trans_pause and rv:
-                self.suppress_transitions = True
+                self.suppress_transition = True
 
                 
             # But wait, there's more! The finally block runs some cleanup

@@ -125,10 +125,6 @@ def showing(name, layer='master'):
 
     return sls.showing(layer, key)
 
-
-
-
-
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None):
     """
     This is used to execute the show statement, adding the named image
@@ -260,8 +256,13 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.ui.close()
 
-    rv = renpy.ui.interact(mouse='prompt')
-
+    roll_forward = renpy.exports.roll_forward_info()
+    if not isinstance(roll_forward, basestring):
+        roll_forward = None
+    
+    rv = renpy.ui.interact(mouse='prompt', roll_forward=roll_forward)
+    renpy.exports.checkpoint(rv)
+    
     if with_none is None:
         with_none = renpy.config.implicit_with_none
 
@@ -501,8 +502,15 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
                       style=style, **properties)
 
-    rv = renpy.ui.interact(suppress_overlay=(not overlays), mouse='imagemap')
-    checkpoint()
+    roll_forward = renpy.exports.roll_forward_info()
+    if roll_forward not in [ result for x0, y0, x1, y1, result in hotspots]:
+        roll_forward = None
+    
+    rv = renpy.ui.interact(suppress_overlay=(not overlays),
+                           mouse='imagemap',
+                           roll_forward=roll_forward)
+
+    renpy.exports.checkpoint(rv)
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none
@@ -549,7 +557,13 @@ def pause(delay=None, music=None, with_none=None):
     if delay is not None:
         renpy.ui.pausebehavior(delay, False)
 
-    rv = renpy.ui.interact(mouse='pause')
+    roll_forward = renpy.exports.roll_forward_info()
+    if roll_forward not in [ True, False ]:
+        roll_forward = None
+    
+    rv = renpy.ui.interact(mouse='pause', roll_forward=roll_forward)
+    renpy.exports.checkpoint(rv)
+
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none
@@ -581,8 +595,19 @@ def movie_cutscene(filename, delay, loops=0):
     renpy.ui.saybehavior()
     renpy.ui.pausebehavior(delay, False)
 
-    rv = renpy.ui.interact(suppress_overlay=True, suppress_underlay=True, show_mouse=False)
+    if renpy.game.log.forward:
+        roll_forward = True
+    else:
+        roll_forward = None
+    
+    rv = renpy.ui.interact(suppress_overlay=True,
+                           suppress_underlay=True,
+                           show_mouse=False,
+                           roll_forward=roll_forward)
 
+    # We don't want to put a checkpoint here, as we can't roll back from
+    # here.
+    
     movie_stop()
 
     return rv

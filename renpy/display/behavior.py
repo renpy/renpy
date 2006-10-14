@@ -151,7 +151,7 @@ class RollForward(renpy.display.layout.Null):
     def event(self, ev, x, y, st):
         
         if map_event(ev, "rollforward"):
-            renpy.game.interface.suppress_transitions = True
+            renpy.game.interface.suppress_transition = True
             renpy.game.after_rollback = True
             return self.value
 

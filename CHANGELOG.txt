@@ -4,6 +4,17 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.3
 -------------------
 
+Now, aborting a transition will abort all successive transitions until
+the next non-transition interaction.
+
+Rollback and Rollforward have been extended to support remembering
+what the user did the first time he encountered an interaction. This
+required changing ui.interact and renpy.checkpoint, and adding
+renpy.roll_forward_info. The say, menu, pause, input, and imagemap
+interactions all support this memory. Most notably, this means one can
+roll forward at a menu, and automatically make the same choice as when
+the menu was previously encountered.
+
 Loaded python files are assumed to be UTF-8. This includes the
 launcherinfo.py files loaded by the launcher. (Thanks to denzil for
 reporting this one.)
