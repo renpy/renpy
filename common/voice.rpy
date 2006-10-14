@@ -40,16 +40,16 @@ init -440:
     python hide:
 
         renpy.sound.set_mixer(2, "voice")
-        library.has_voice = True
-        library.sample_voice = None
+        config.has_voice = True
+        config.sample_voice = None
         
         vp = _VolumePreference('Voice Volume',
                                'voice',
-                               'library.has_voice',
-                               'library.sample_voice',
+                               'config.has_voice',
+                               'config.sample_voice',
                                2)
 
-        library.preferences['prefs_right'].insert(1, vp)
+        config.preferences['prefs_right'].insert(1, vp)
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        

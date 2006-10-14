@@ -18,7 +18,7 @@ init 1000:
         # script_version supplied. Give it the last script version
         # where an old version was used.
         def compat(x, y, z):
-            return library.script_version and library.script_version <= (x, y, z)
+            return config.script_version and config.script_version <= (x, y, z)
 
         # Compat for changes to with-callback.
         if compat(5, 4, 5):
@@ -31,8 +31,8 @@ init 1000:
                 
 
         if not config.sound:
-            library.has_sound = False
-            library.has_music = False
+            config.has_sound = False
+            config.has_music = False
 
         # Compat for SFont recoloring.
         if compat(5, 1, 1):

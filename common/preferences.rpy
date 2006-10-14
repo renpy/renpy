@@ -12,22 +12,22 @@ init -450:
         # This is a map from the name of the style that is applied to
         # a list of preferences that should be placed into a vbox
         # with that style.
-        library.preferences = { }
+        config.preferences = { }
 
         # Ditto, for joystick preferences.
-        library.joystick_preferences = { }
+        config.joystick_preferences = { }
 
         # This is a map from preference name to that preference
         # object, that can be used in rearranging preferences.
-        library.all_preferences = { }
+        config.all_preferences = { }
 
         # If true, the preference choices will be arranged in an
         # hbox.
-        library.hbox_pref_choices = False
+        config.hbox_pref_choices = False
 
         # A list of (readable name, synthetic key) tuples
         # corresponding to joystick events.
-        library.joystick_keys = [
+        config.joystick_keys = [
             (u'Left', 'joy_left'),
             (u'Right', 'joy_right'),
             (u'Up', 'joy_up'),
@@ -42,7 +42,7 @@ init -450:
 
         # If True, then we can always get into the joystick
         # preferences.
-        library.always_has_joystick = False
+        config.always_has_joystick = False
         
         def _prefs_screen_run(prefs_map):
 
@@ -101,7 +101,7 @@ init -450:
                 self.values = values
                 self.base = base
 
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
                 values = [ (name, val) for name, val, cond in self.values
@@ -130,10 +130,10 @@ init -450:
                 cur = getattr(self.base, self.field)
 
                 ### prefs_hbox default
-                # If library.hbox_pref_choices is True, the style
+                # If config.hbox_pref_choices is True, the style
                 # of the hbox containing the choices.
 
-                if library.hbox_pref_choices:
+                if config.hbox_pref_choices:
                     ui.hbox(style='prefs_hbox')
 
                 for name, value in values:
@@ -154,7 +154,7 @@ init -450:
                                     selected=cur==value,
                                     clicked=clicked)
                 
-                if library.hbox_pref_choices:
+                if config.hbox_pref_choices:
                     ui.close()
                     
                 ui.close()
@@ -193,7 +193,7 @@ init -450:
                 self.sound = sound
                 self.channel = channel
                 
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -275,7 +275,7 @@ init -450:
                 self.set = set
                 self.enable = enable
 
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -349,7 +349,7 @@ init -450:
                 self.render = render
                 self.base = base
 
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -404,7 +404,7 @@ init -450:
 
             def __init__(self, name):
                 self.name = name
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -458,7 +458,7 @@ init -450:
 
                 _label_factory(self.name, 'prefs')
 
-                for label, key in library.joystick_keys:
+                for label, key in config.joystick_keys:
 
                     def clicked(label=label, key=key):
                         renpy.invoke_in_new_context(set_binding, key, label)
@@ -467,7 +467,7 @@ init -450:
                     _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked)
 
 #                 def clicked():
-#                     for label, key in library.joystick_keys:
+#                     for label, key in config.joystick_keys:
 #                         renpy.invoke_in_new_context(set_binding, key, label)
 
 #                     return True
@@ -483,7 +483,7 @@ init -450:
                 self.target = target
                 self.condition = condition
 
-                library.all_preferences[name] = self
+                config.all_preferences[name] = self
 
             def render_preference(self):
 
@@ -511,11 +511,11 @@ init -450:
             preferences menu.
             """
 
-            pref = library.all_preferences.get(name, None)
+            pref = config.all_preferences.get(name, None)
             if not pref:
                 return
 
-            for k, v in library.preferences.iteritems():
+            for k, v in config.preferences.iteritems():
                 if pref in v:
                     v.remove(pref)
             
@@ -523,14 +523,14 @@ init -450:
     python hide:
 
         # Enablers for some preferences.
-        library.has_music = True
-        library.has_sound = True
-        library.sample_sound = None
-        library.has_transitions = True
-        library.has_cps = True
-        library.has_afm = True
-        library.has_skipping = True
-        library.has_skip_after_choice = True
+        config.has_music = True
+        config.has_sound = True
+        config.sample_sound = None
+        config.has_transitions = True
+        config.has_cps = True
+        config.has_afm = True
+        config.has_skipping = True
+        config.has_skip_after_choice = True
     
 
         # Left
@@ -541,29 +541,29 @@ init -450:
             ])
 
         pl2 = _Preference(u'Transitions', 'transitions', [
-            (u'All', 2, 'library.has_transitions'),
-            (u'Some', 1, 'library.has_transitions and default_transition'),
-            (u'None', 0, 'library.has_transitions'),
+            (u'All', 2, 'config.has_transitions'),
+            (u'Some', 1, 'config.has_transitions and default_transition'),
+            (u'None', 0, 'config.has_transitions'),
             ])
 
 
         # Center
 
         pc1 = _Preference(u'Skip', 'skip_unseen', [
-            (u'Seen Messages', False, 'config.allow_skipping and library.has_skipping'),
-            (u'All Messages', True, 'config.allow_skipping and library.has_skipping'),
+            (u'Seen Messages', False, 'config.allow_skipping and config.has_skipping'),
+            (u'All Messages', True, 'config.allow_skipping and config.has_skipping'),
             ])
 
-        library.old_names['Skip'] = 'TAB and CTRL Skip'
-        library.all_preferences['TAB and CTRL Skip'] = pc1
+        config.old_names['Skip'] = 'TAB and CTRL Skip'
+        config.all_preferences['TAB and CTRL Skip'] = pc1
 
         
         pc2= _Preference(u'After Choices', 'skip_after_choices', [
-            (u'Stop Skipping', False, 'config.allow_skipping and library.has_skip_after_choice'),
-            (u'Keep Skipping', True, 'config.allow_skipping and library.has_skip_after_choice'),
+            (u'Stop Skipping', False, 'config.allow_skipping and config.has_skip_after_choice'),
+            (u'Keep Skipping', True, 'config.allow_skipping and config.has_skip_after_choice'),
             ])
 
-        library.old_names['Keep Skipping'] = 'Continue Skipping' 
+        config.old_names['Keep Skipping'] = 'Continue Skipping' 
 
         def cps_get():
             cps = _preferences.text_cps
@@ -581,7 +581,7 @@ init -450:
 
             
         pc3 = _SliderPreference(u'Text Speed', 100, cps_get, cps_set,
-                                'library.has_cps')
+                                'config.has_cps')
 
 
         def afm_get():
@@ -599,14 +599,14 @@ init -450:
             _preferences.afm_time = afm
 
         pc4 = _SliderPreference(u'Auto-Forward Time', 40, afm_get, afm_set,
-                                'library.has_afm')
+                                'config.has_afm')
 
         # Right
 
-        pr1 = _VolumePreference(u"Music Volume", 'music', 'library.has_music')
-        pr2 = _VolumePreference(u"Sound Volume", 'sfx', 'library.has_sound', 'library.sample_sound')
+        pr1 = _VolumePreference(u"Music Volume", 'music', 'config.has_music')
+        pr2 = _VolumePreference(u"Sound Volume", 'sfx', 'config.has_sound', 'config.sample_sound')
                                                         
-        _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled or library.always_has_joystick')
+        _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled or config.always_has_joystick')
 
         _JoystickPreference(u'Joystick Configuration')
         
@@ -627,38 +627,38 @@ init -450:
         ### prefs_joystick prefs_center
         # The position of the column of joystick preferences.
             
-        library.preferences['prefs_left'] = [
-            library.all_preferences[u'Display'],
-            library.all_preferences[u'Transitions'],
-            library.all_preferences[u'Joystick...'],
+        config.preferences['prefs_left'] = [
+            config.all_preferences[u'Display'],
+            config.all_preferences[u'Transitions'],
+            config.all_preferences[u'Joystick...'],
             ]
         
-        library.preferences['prefs_center'] = [
-            library.all_preferences[u'Skip'],
-            library.all_preferences[u'After Choices'],
-            library.all_preferences[u'Text Speed'],
-            library.all_preferences[u'Auto-Forward Time'],
+        config.preferences['prefs_center'] = [
+            config.all_preferences[u'Skip'],
+            config.all_preferences[u'After Choices'],
+            config.all_preferences[u'Text Speed'],
+            config.all_preferences[u'Auto-Forward Time'],
             ]
         
-        library.preferences['prefs_right'] = [
-            library.all_preferences[u'Music Volume'],
-            library.all_preferences[u'Sound Volume'],
+        config.preferences['prefs_right'] = [
+            config.all_preferences[u'Music Volume'],
+            config.all_preferences[u'Sound Volume'],
             ]
 
-        library.joystick_preferences['prefs_joystick'] = [
-            library.all_preferences[u'Joystick Configuration'],
+        config.joystick_preferences['prefs_joystick'] = [
+            config.all_preferences[u'Joystick Configuration'],
             ]
 
 
 label _prefs_screen:
 
-    $ _prefs_screen_run(library.preferences)
+    $ _prefs_screen_run(config.preferences)
 
     jump _prefs_screen
     
 label _joystick_screen:    
         
-    $ _prefs_screen_run(library.joystick_preferences)
+    $ _prefs_screen_run(config.joystick_preferences)
 
     jump _joystick_screen
 

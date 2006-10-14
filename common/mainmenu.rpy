@@ -10,10 +10,10 @@ init -498:
 
     python hide:
 
-        library.old_names['Quit'] = 'Quit Game'
+        config.old_names['Quit'] = 'Quit Game'
         
         # The contents of the main menu.
-        library.main_menu = [
+        config.main_menu = [
             ( u"Start Game", "start", 'True'),
             ( u"Continue Game", ui.jumps("_load_screen"), 'True' ),
             ( u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
@@ -22,10 +22,10 @@ init -498:
 
         # If not None, this is used to fix the positions of the
         # things in the main menu.
-        library.main_menu_positions = None
+        config.main_menu_positions = None
 
         # Music to play at the main menu.
-        library.main_menu_music = None
+        config.main_menu_music = None
 
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
@@ -42,8 +42,8 @@ label _start:
 
     $ renpy.block_rollback()
 
-    if library.main_menu_music:
-        $ renpy.music.play(library.main_menu_music, if_changed=True)
+    if config.main_menu_music:
+        $ renpy.music.play(config.main_menu_music, if_changed=True)
 
     # Clean out any residual scene from the splashscreen.
     scene black
@@ -93,13 +93,13 @@ label _library_main_menu:
         ### mm_menu_frame_vbox thin_vbox
         # (box) The vbox containing the main menu choices.
 
-        if library.main_menu_positions:
+        if config.main_menu_positions:
             ui.fixed()
         else:
             ui.window(style='mm_menu_frame')
             ui.vbox(style='mm_menu_frame_vbox')
 
-        for text, clicked, enabled in library.main_menu:
+        for text, clicked, enabled in config.main_menu:
 
             if isinstance(clicked, basestring):
                 clicked = ui.jumpsoutofcontext(clicked)
@@ -112,8 +112,8 @@ label _library_main_menu:
             # (text, hover) The style that is used for the labels of
             # buttons that are part of the main menu.
 
-            if library.main_menu_positions:
-                kwargs = library.main_menu_positions.get(text, { })
+            if config.main_menu_positions:
+                kwargs = config.main_menu_positions.get(text, { })
             else:
                 kwargs = { }
 

@@ -14,7 +14,7 @@ init -499:
         # user can change.
 
         # The contents of the game menu choices.
-        library.game_menu = [
+        config.game_menu = [
                 ( "return", u"Return", ui.jumps("_return"), 'True'),
                 ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
                 ( "prefs", u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
@@ -27,52 +27,52 @@ init -499:
         # If not None, a map from the names of the game menu
         # navigation buttons to new fixed positions for them on
         # the screen.
-        library.game_menu_positions = None
+        config.game_menu_positions = None
 
         # Music to play when entering the game menu.
-        library.game_menu_music = None
+        config.game_menu_music = None
 
         # The number of columns of files to show at once.
-        library.file_page_cols = 2
+        config.file_page_cols = 2
 
         # The number of rows of files to show at once.
-        library.file_page_rows = 5
+        config.file_page_rows = 5
 
         # The number of pages to add quick access buttons for.
-        library.file_quick_access_pages = 5
+        config.file_quick_access_pages = 5
 
         # The width of a thumbnail.
-        library.thumbnail_width = 66
+        config.thumbnail_width = 66
 
         # The height of a thumbnail.
-        library.thumbnail_height = 50
+        config.thumbnail_height = 50
 
         # Sound played when entering the library without clicking a
         # button.
-        library.enter_sound = None
+        config.enter_sound = None
 
         # Sound played when leaving the library without clicking a
         # button.
-        library.exit_sound = None
+        config.exit_sound = None
 
         # Transition that occurs when entering the game menu.
-        library.enter_transition = None
+        config.enter_transition = None
 
         # Transition that occurs when leaving the game menu.
-        library.exit_transition = None
+        config.exit_transition = None
 
         # This lets us disable the file pager. (So we only have one
         # page of files.)
-        library.disable_file_pager = False
+        config.disable_file_pager = False
 
         # This lets us disable the thumbnails in the file pager.
-        library.disable_thumbnails = False
+        config.disable_thumbnails = False
 
         # How we format time.
-        library.time_format = "%b %d, %H:%M"
+        config.time_format = "%b %d, %H:%M"
 
         # How we format loade_save slot formats.
-        library.file_entry_format = "%(time)s\n%(save_name)s"
+        config.file_entry_format = "%(time)s\n%(save_name)s"
 
         # If True, we will be prompted before loading a game. (This can
         # be changed from inside the game code, so that one can load from
@@ -125,13 +125,13 @@ init -499:
             # (box) The style that is used by the box inside the
             # gm_nav_frame
 
-            if library.game_menu_positions:
+            if config.game_menu_positions:
                 ui.fixed()
             else:
                 ui.window(style='gm_nav_frame')
                 ui.vbox(focus='gm_nav', style='gm_nav_vbox')
             
-            for key, label, clicked, enabled in library.game_menu:
+            for key, label, clicked, enabled in config.game_menu:
 
                 disabled = False
 
@@ -147,8 +147,8 @@ init -499:
                 # (text, hover) The style of the text of a  game
                 # menu navigation button.
 
-                if library.game_menu_positions:
-                    kwargs = library.game_menu_positions.get(label, { })
+                if config.game_menu_positions:
+                    kwargs = config.game_menu_positions.get(label, { })
                 else:
                     kwargs = { }
                 
@@ -185,7 +185,7 @@ init -499:
             # file picker entry.            
             ui.hbox(style='file_picker_entry_box')
 
-            if not library.disable_thumbnails:
+            if not config.disable_thumbnails:
                 ui.add(screenshot)
 
             ### file_picker_text default
@@ -210,8 +210,8 @@ init -499:
             # picker. The extra info is the save time, and the save_name
             # if one exists.
 
-            s = library.file_entry_format % dict(
-                time=renpy.time.strftime(library.time_format,
+            s = config.file_entry_format % dict(
+                time=renpy.time.strftime(config.time_format,
                                          renpy.time.localtime(mtime)),
                 save_name=extra_info)
 
@@ -236,9 +236,9 @@ init -499:
 
             ui.hbox(style='file_picker_entry_box')
 
-            if not library.disable_thumbnails:
-                ui.null(width=library.thumbnail_width,
-                        height=library.thumbnail_height)
+            if not config.disable_thumbnails:
+                ui.null(width=config.thumbnail_width,
+                        height=config.thumbnail_height)
 
             
             ui.text(name + ". ", style='file_picker_old')
@@ -256,7 +256,7 @@ init -499:
         def _file_picker(selected, save):
 
             # The number of slots in a page.
-            file_page_length = library.file_page_cols * library.file_page_rows
+            file_page_length = config.file_page_cols * config.file_page_rows
 
             saved_games = renpy.list_saved_games(regexp=r'[0-9]+')
 
@@ -307,7 +307,7 @@ init -499:
                 ui.window(style='file_picker_frame')
                 ui.vbox(style='file_picker_frame_vbox') # whole thing.
                 
-                if not library.disable_file_pager:
+                if not config.disable_file_pager:
 
                     ### file_picker_navbox thick_hbox
                     # (box) The box containing the naviation (next/previous)
@@ -331,7 +331,7 @@ init -499:
                     tb(fpi > 0, _(u'Previous'), ui.returns(("fpidelta", -1)))
 
                     # Quick Access
-                    for i in range(0, library.file_quick_access_pages):
+                    for i in range(0, config.file_quick_access_pages):
                         target = i * file_page_length
                         tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
 
@@ -359,8 +359,8 @@ init -499:
                 # picker entries.
 
                 # Actually draw a slot.
-                ui.grid(library.file_page_cols,
-                        library.file_page_rows,
+                ui.grid(config.file_page_cols,
+                        config.file_page_rows,
                         style='file_picker_grid',
                         transpose=True) # slots
 
@@ -463,7 +463,7 @@ init -499:
 
             ui.interact()
 
-        library.old_names["Are you sure you want to quit?"] = "Are you sure you want to quit the game?"
+        config.old_names["Are you sure you want to quit?"] = "Are you sure you want to quit the game?"
 
         def _quit_prompt(screen="quit"):
 
@@ -475,7 +475,7 @@ init -499:
             else:
                 return
 
-        library.old_names["Are you sure you want to return to the main menu?\nThis will lose unsaved progress."] = "Are you sure you want to return to the main menu?\nThis will end your game."
+        config.old_names["Are you sure you want to return to the main menu?\nThis will lose unsaved progress."] = "Are you sure you want to return to the main menu?\nThis will end your game."
 
         def _mainmenu_prompt(screen="mainmenu"):
 
@@ -500,7 +500,7 @@ init -499:
 # for the scene statement.
 label _enter_menu_without_scene:
     $ renpy.movie_stop()
-    $ renpy.take_screenshot((library.thumbnail_width, library.thumbnail_height))
+    $ renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
     # This may be changed, if we are already in the main menu.
     $ renpy.context().main_menu = False
@@ -515,14 +515,14 @@ label _enter_menu:
 # Factored this all into one place, to make our lives a bit easier.
 label _enter_game_menu:
     call _enter_menu from _call__enter_menu_2
-    if library.enter_transition:
-        $ renpy.transition(library.enter_transition)
+    if config.enter_transition:
+        $ renpy.transition(config.enter_transition)
 
     if renpy.has_label("enter_game_menu"):
         call expression "enter_game_menu" from _call_enter_game_menu_1
 
-    if library.game_menu_music:
-        $ renpy.music.play(library.game_menu_music, if_changed=True)
+    if config.game_menu_music:
+        $ renpy.music.play(config.game_menu_music, if_changed=True)
 
     return
 
@@ -564,7 +564,7 @@ label _confirm_quit:
 # Finally, we have the actual menu screens that are shown to the user.
 
 init -499:
-    $ library.old_names["Loading will lose unsaved progress.\nAre you sure you want to do this?"] = "Loading a new game will end your current game.\nAre you sure you want to do this?"
+    $ config.old_names["Loading will lose unsaved progress.\nAre you sure you want to do this?"] = "Loading a new game will end your current game.\nAre you sure you want to do this?"
 
 label _load_screen:
 
@@ -618,7 +618,7 @@ label _return_skipping:
 
 # Make some noise, then return.
 label _noisy_return:
-    $ renpy.play(library.exit_sound)
+    $ renpy.play(config.exit_sound)
 
 # Return to the game.
 label _return:
@@ -626,7 +626,7 @@ label _return:
     if renpy.context().main_menu:
         jump _main_menu
 
-    if library.exit_transition:
-        $ renpy.transition(library.exit_transition)
+    if config.exit_transition:
+        $ renpy.transition(config.exit_transition)
 
     return

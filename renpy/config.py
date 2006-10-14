@@ -28,6 +28,9 @@ import renpy
 import sets
 import os
 
+# Can we add more config variables?
+locked = False
+
 # The title of the game window.
 window_title = "A Ren'Py Game"
 

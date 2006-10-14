@@ -38,26 +38,36 @@ _config = renpy.config
 
 class _Config(object):
 
+    def __init__(self, name):
+        vars(self)["_name"] = name
+    
     def __getattr__(self, name):
         cvars = vars(_config)
 
         if name not in cvars:
-            raise Exception('config.%s is not a known configuration variable.' % name)
+            raise Exception('%s.%s is not a known configuration variable.' % (self._name, name))
 
         return cvars[name]
 
     def __setattr__(self, name, value):
         cvars = vars(_config)
 
-        if name not in cvars:
-            raise Exception('config.%s is not a known configuration variable.' % name)
+        if name not in cvars and renpy.config.locked:
+            raise Exception('%s.%s is not a known configuration variable.' % (self._name, name))
 
+        if name == "script_version":
+            renpy.store._set_script_version(value)
+        
         cvars[name] = value
 
     def __delattr__(self, name):
-        raise Exception('Deleting configuration variables is not supported.')
+        if renpy.config.locked:
+            raise Exception('Deleting configuration variables is not supported.')
+        else:
+            delattr(renpy.config, name)
         
-config = _Config()
+config = _Config("config")
+library = _Config("library")
 
 _list = list
 _dict = dict

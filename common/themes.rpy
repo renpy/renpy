@@ -129,11 +129,11 @@ init -402:
                 frame_width = 200
                 widget_width = 160
 
-                library.thumbnail_width = 60
-                library.thumbnail_height = 45
+                config.thumbnail_width = 60
+                config.thumbnail_height = 45
 
-                library.file_page_cols = 2
-                library.file_page_rows = 4
+                config.file_page_cols = 2
+                config.file_page_rows = 4
                 # style.file_picker_frame.xmaximum = 450
 
                 prefcols = [ 110, 320, 530 ]
@@ -332,7 +332,7 @@ init -402:
             style.file_picker_text.color = widget_text
             style.file_picker_new.color = widget_selected
             
-            library.file_quick_access_pages = 10
+            config.file_quick_access_pages = 10
 
             # In-game.
 

@@ -129,7 +129,7 @@ init -1000:
         style.create("prefs_pref_frame", "default", "(window) A window containing an individual preference.")
         style.create("prefs_pref_vbox", "thin_vbox", "(box) The style of the vbox containing a preference.")
         style.create("prefs_label", "default", "(text) The style that is applied to the label of a block of preferences.")
-        style.create("prefs_hbox", "default", "If library.hbox_pref_choices is True, the style of the hbox containing the choices.")
+        style.create("prefs_hbox", "default", "If config.hbox_pref_choices is True, the style of the hbox containing the choices.")
         style.create("prefs_button", "menu_button", "(window, hover) The style of an unselected preferences button.")
         style.create("prefs_button_text", "menu_button_text", "(text, hover) The style of the text of an unselected preferences button.")
         style.create("prefs_volume_slider", "prefs_slider", "(bar) The style that is applied to volume sliders.")
