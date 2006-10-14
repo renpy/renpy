@@ -31,7 +31,10 @@ import time
 # to that image name.
 images = { }
 
-def checkpoint():
+def roll_forward_info():
+    return renpy.game.log.forward_info()
+
+def checkpoint(data=None):
     """
     This creates a checkpoint that the user can rollback to. The
     checkpoint is placed at the statement after the last statement
@@ -40,7 +43,7 @@ def checkpoint():
     statement.
     """
 
-    renpy.game.log.checkpoint()
+    renpy.game.log.checkpoint(data)
 
 def block_rollback():
     """
@@ -49,9 +52,6 @@ def block_rollback():
     """
 
     renpy.game.log.block()
-
-# def interact(**kwargs):
-#    return renpy.game.interface.interact(**kwargs)
 
 def predict(img):
     """
@@ -330,7 +330,7 @@ def predict_menu():
     return [ renpy.game.style.menu_window.background,
              renpy.game.style.menu_choice_button.background ]
 
-def display_menu(items, window_style='menu_window', interact=True, with_none=None):
+def display_menu(items, window_style='menu_window', interact=True, with_none=None, **kwargs):
     """
     Displays a menu containing the given items, returning the value of
     the item the user selects.
@@ -350,18 +350,29 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
 
     choice_for_skipping()
 
-    if renpy.config.auto_choice_delay:
-        choices = [ val for label, val in items ]
+    # The possible choices in the menu.
+    choices = [ val for label, val in items ]
+    while None in choices:
+        choices.remove(None)
 
-        while None in choices:
-            choices.remove(None)
+    # Roll forward.
+    roll_forward = renpy.exports.roll_forward_info()
+
+    if roll_forward not in choices:
+        roll_forward = None
+
+        
+    # Auto choosing.
+    if renpy.config.auto_choice_delay:
 
         renpy.ui.pausebehavior(renpy.config.auto_choice_delay,
                                random.choice(choices))
 
+    # Show the menu.
     renpy.ui.window(style=window_style)
-    renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True)
+    renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True, **kwargs)
 
+    # Log the chosen choice.
     for label, val in items:
         if val:
             log("Choice: " + label)
@@ -371,7 +382,8 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
     log("")
 
     if interact:
-        rv = renpy.ui.interact(mouse='menu')
+            
+        rv = renpy.ui.interact(mouse='menu', roll_forward=roll_forward)
 
         for label, val in items:
             if rv == val:
@@ -382,7 +394,7 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
 
         log("")
 
-        checkpoint()
+        checkpoint(rv)
         
         if with_none is None:
             with_none = renpy.config.implicit_with_none

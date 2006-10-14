@@ -419,7 +419,8 @@ class Rollback(renpy.object.Object):
         self.checkpoint = False
         self.purged = False
         self.random = [ ]
-
+        self.forward = None
+        
     def purge_unreachable(self, reachable):
         """
         Adds objects that are reachable from the store of this
@@ -517,7 +518,8 @@ class RollbackLog(renpy.object.Object):
         self.ever_been_changed = { }
         self.frozen_roots = None
         self.rollback_limit = 0
-
+        self.forward = [ ]
+        
         # Reset the RNG on the creation of a new game.
         rng.reset()
 
@@ -631,20 +633,52 @@ class RollbackLog(renpy.object.Object):
         for i in revlog:
             if not i.purge_unreachable(reachable):
                 break
-                
 
-    def checkpoint(self):
+    def forward_info(self):
+        """
+        Returns the current forward info, if any.
+        """
+        
+        if self.forward:
+            name, data = self.forward[0]
+            if self.current.context.current == name:
+                return data
+
+        return None
+            
+
+    def checkpoint(self, data=None):
         """
         Called to indicate that this is a checkpoint, which means
         that the user may want to rollback to just before this
         node.
         """
 
+        if self.current.checkpoint:
+            return
+            
         if self.rollback_limit < renpy.config.hard_rollback_limit: 
             self.rollback_limit += 1
-        
+
         self.current.checkpoint = True
 
+        if data is not None:
+            if self.forward:
+
+                # If the data is the same, pop it from the forward stack.
+                # Otherwise, clear the forward stack.
+                fwd_name, fwd_data = self.forward[0]
+
+                if (self.current.context.current == fwd_name and data == fwd_data):
+                    self.forward.pop(0)
+                else:
+                    self.forward = [ ]
+
+            # Log the data in case we roll back again.
+            self.current.forward = data
+
+            
+        
     def block(self):
         """
         Called to indicate that the user should not be able to rollback
@@ -704,14 +738,17 @@ class RollbackLog(renpy.object.Object):
 
         for rb in revlog:
             rb.rollback()
-
+            if rb.forward:
+                self.forward.insert(0, (rb.context.current, rb.forward))
+            
         # Disable the next transition, as it's pointless.
         renpy.game.interface.suppress_transition = True
 
         # If necessary, reset the RNG.
         if force:
             rng.reset()
-
+            self.forward = [ ]
+            
         # Flag that we're in the transition immediately after a rollback.
         renpy.game.after_rollback = True
 

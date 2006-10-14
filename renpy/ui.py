@@ -49,19 +49,7 @@ current_stack = [ ]
 current_once = False
 
 def interact(**kwargs):
-    """
-    Displays the current scene to the user, waits for a widget to indicate
-    a return value, and returns that value to the user. As a side-effect,
-    disables fast skip mode when executed.
-
-    Some useful keyword arguments are:
-
-    @param show_mouse: Should the mouse be shown during this
-    interaction? Only advisory, as this doesn't work reliably.
-
-    @param suppress_overlay: This suppresses the display of the overlay
-    during this interaction.
-    """
+    # Docs in wiki.
 
     if renpy.config.skipping == "fast":
         renpy.config.skipping = None

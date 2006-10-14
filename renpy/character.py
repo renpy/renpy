@@ -96,17 +96,22 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
             else:
                 renpy.ui.text(who, **who_args)
 
+    def merge_style(style, properties):
+        rv = dict(style=style)
+        rv.update(properties)
+        return rv
+
     if two_window:
 
         # Opens say_two_window_vbox.
-        renpy.ui.vbox(style='say_two_window_vbox', **two_window_vbox_properties)
+        renpy.ui.vbox(**merge_style('say_two_window_vbox', two_window_vbox_properties))
 
-        renpy.ui.window(style='say_who_window', **who_window_properties)
+        renpy.ui.window(**merge_style('say_who_window', who_window_properties))
         handle_who()
 
     renpy.ui.window(**window_args)
     # Opens the say_vbox.
-    renpy.ui.vbox(style='say_vbox', **say_vbox_properties)
+    renpy.ui.vbox(**merge_style('say_vbox', say_vbox_properties))
 
     if not two_window:
         handle_who()
@@ -221,7 +226,12 @@ def display_say(who, what, who_style='say_label',
         
         return
 
-    # If we're just after a rollback, disable slow.
+    if renpy.exports.roll_forward_info():
+        roll_forward = False
+    else:
+        roll_forward = None
+    
+    # If we're just after a rollback or roll_forward, disable slow.
     if renpy.game.after_rollback:
         slow = False
         
@@ -294,8 +304,13 @@ def display_say(who, what, who_style='say_label',
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 
         if interact:
-            renpy.ui.interact(mouse='say')
+            rv = renpy.ui.interact(mouse='say', roll_forward=roll_forward)
 
+            # This is only the case if the user has rolled forward, or
+            # maybe in some other obscure cases.
+            if rv is False:
+                break
+            
         keep_interacting = what_text.get_keep_pausing()
 
         if keep_interacting:
@@ -311,7 +326,7 @@ def display_say(who, what, who_style='say_label',
     renpy.exports.log("")
 
     if interact:
-        renpy.exports.checkpoint()
+        renpy.exports.checkpoint(True)
 
         if with_none is None:
             with_none = renpy.config.implicit_with_none

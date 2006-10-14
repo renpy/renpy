@@ -1101,7 +1101,7 @@ class Interface(object):
 
             while repeat:
                 repeat, rv = self.interact_core(preloads=preloads, **kwargs)
-            
+
             return rv
         
         finally:
@@ -1120,6 +1120,7 @@ class Interface(object):
                       suppress_underlay=False,
                       mouse='default',
                       preloads=[],
+                      roll_forward=None,
                       ):
 
         """
@@ -1204,6 +1205,12 @@ class Interface(object):
                 root_widget.add(i)
                 focus_roots.append(i)
 
+            if roll_forward is not None:
+                rfw = renpy.display.behavior.RollForward(roll_forward)
+                root_widget.add(rfw)
+                focus_roots.append(rfw)
+                
+                
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
 
@@ -1517,7 +1524,13 @@ class Interface(object):
 
                 if self.restart_interaction:
                     return True, None
-                    
+
+            # If we were trans-paused and rv is true, suppress
+            # transitions up to the next interaction.
+            if trans_pause and rv:
+                self.suppress_transitions = True
+
+                
             # But wait, there's more! The finally block runs some cleanup
             # after this.
             return False, rv
