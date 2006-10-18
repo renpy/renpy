@@ -361,6 +361,7 @@ class Channel(object):
                     self.playing_midi = True
 
                 else:
+
                     if depth == 0:
                         pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
                     else:

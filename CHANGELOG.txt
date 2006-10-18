@@ -4,6 +4,15 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.3
 -------------------
 
+New displayables:
+Bar
+Button
+Input
+Window
+Grid
+
+(doc ui.input?)
+
 Now, aborting a transition will abort all successive transitions until
 the next non-transition interaction.
 
@@ -14,6 +23,15 @@ renpy.roll_forward_info. The say, menu, pause, input, and imagemap
 interactions all support this memory. Most notably, this means one can
 roll forward at a menu, and automatically make the same choice as when
 the menu was previously encountered.
+
+DynamicDisplayable has been changed, to take a function as an
+argument. This function returns a displayable and a time in seconds
+for which the displayable is valid. (The old behavior is retained when
+a string is passed in.)
+
+Character objects may be copied using the Character.copy method. This
+method takes the same arguments as Character, with the values supplied
+to the method taking precedence over those in the Character object. [doc]
 
 Loaded python files are assumed to be UTF-8. This includes the
 launcherinfo.py files loaded by the launcher. (Thanks to denzil for

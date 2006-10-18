@@ -1116,46 +1116,53 @@ class FactorZoom(renpy.display.core.Displayable):
 
 
         
+def dynamic_displayable_compat(st, at, expr):
+    child = renpy.python.py_eval(expr)
+    return child, None
+
 class DynamicDisplayable(renpy.display.core.Displayable):
-    """
-    """
 
     nosave = [ 'child' ]
 
     def after_setstate(self):
         self.child = None
 
-    def __init__(self, expression):
-        """
-        <i>expression</i> is expected to be a python expression evaluating to
-        a displayable. While the DynamicDisplayable is shown, it
-        evaluates the python expression, and renders the value of that
-        expression. The expression is evaluated at least once per
-        interaction.
-        """
-        
+    def __init__(self, function, *args, **kwargs):
         super(DynamicDisplayable, self).__init__()
         self.child = None
-        self.expression = expression
+
+        if isinstance(function, basestring):
+            args = ( function, )
+            kwargs = { }
+            function = dynamic_displayable_compat
+            
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
 
     def visit(self):
         return [ self.child ]
 
     def per_interact(self):
-        child = renpy.python.py_eval(self.expression)
+
+        renpy.display.render.redraw(self, 0)
+        
+    def render(self, w, h, st, at):
+
+        child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
 
-        if child != self.child:
-            self.child = child
-            renpy.display.render.redraw(self, 0)
-
+        self.child = child
         child.visit_all(lambda c : c.per_interact())
 
-    def render(self, w, h, st, at):
+        if redraw is not None:
+            renpy.display.render.redraw(self, 0)
+        
         return renpy.display.render.render(self.child, w, h, st, at)
 
     def get_placement(self):
         return self.child.get_placement()
 
     def event(self, ev, x, y, st):
-        return self.child.event(ev, x, y, st)
+        if self.child:
+            return self.child.event(ev, x, y, st)

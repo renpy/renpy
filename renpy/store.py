@@ -84,22 +84,30 @@ Set = set
 from renpy.python import RevertableObject as object
 
 
-# Set up symbols.
+# Displayables.
+Bar = renpy.display.behavior.Bar
+Button = renpy.display.behavior.Button
+Input = renpy.display.behavior.Input
+
+Frame = renpy.display.image.Frame
 Image = renpy.display.image.Image
 ImageReference = renpy.display.image.ImageReference
 Solid = renpy.display.image.Solid
-Frame = renpy.display.image.Frame
-Null = renpy.display.layout.Null
+
 LiveComposite = renpy.display.layout.LiveComposite
+Null = renpy.display.layout.Null
+Window = renpy.display.layout.Window
+DynamicDisplayable = renpy.display.layout.DynamicDisplayable
+
 Animation = anim.Animation
 Movie = renpy.display.video.Movie
 Particles = renpy.display.particle.Particles
 SnowBlossom = renpy.display.particle.SnowBlossom
-DynamicDisplayable = renpy.display.layout.DynamicDisplayable
+
 Text = renpy.display.text.Text
 ParameterizedText = renpy.display.text.ParameterizedText
-MultiPersistent = renpy.loadsave.MultiPersistent
 
+# Currying things.
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)
@@ -115,18 +123,24 @@ MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
 MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 
-
+# Misc.
 Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
+MultiPersistent = renpy.loadsave.MultiPersistent
 
-def layout(cls, doc, **extra_kwargs):
+
+def layout(cls, doc, nargs=0, **extra_kwargs):
 
     def f(*args, **properties):
+
+        conargs = args[:nargs]
+        kids = args[nargs:]
+        
         kwargs = extra_kwargs.copy()
         kwargs.update(properties)
 
         rv = cls(**kwargs)
-        for i in args:
+        for i in kids:
             rv.add(renpy.easy.displayable(i))
 
         return rv
@@ -155,6 +169,10 @@ A layout that lays out displayables from left to right.
 VBox = layout(renpy.display.layout.MultiBox, """
 A layout that lays out displayables from top to bottom.
 """, layout='vertical')
+
+Grid = layout(renpy.display.layout.Grid, """
+A layout that lays out displayables in a grid.
+""", nargs=2, layout='vertical')
 
 del layout
         

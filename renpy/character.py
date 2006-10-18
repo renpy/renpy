@@ -335,6 +335,8 @@ def display_say(who, what, who_style='say_label',
             renpy.game.interface.with(None, None)
 
 
+# Used by copy.
+NotSet = object()
 
 class Character(object):
     """
@@ -354,7 +356,8 @@ class Character(object):
         'what_suffix',
         'show_function',
         ]
-    
+
+    # When adding a new argument here, remember to add it to copy below.
     def __init__(self, name,
                  who_style='say_label',
                  what_style='say_dialogue',
@@ -396,8 +399,59 @@ class Character(object):
                 self.window_properties[k[len("window_"):]] = self.properties[k]
                 del self.properties[k]
                 continue
-                
 
+    def copy(self,
+             name=NotSet,
+             who_style=NotSet,
+             what_style=NotSet,
+             window_style=NotSet,
+             function=NotSet,
+             predict_function=NotSet,
+             condition=NotSet,
+             dynamic=NotSet,
+             **properties):
+
+
+        rv = Character(name=NotSet,
+                       who_style=who_style,
+                       what_style=what_style,
+                       window_style=window_style,
+                       function=function,
+                       predict_function=predict_function,
+                       condition=condition,
+                       dynamic=dynamic,
+                       **properties)
+
+        
+        def merge(a, b):
+            if a is not NotSet:
+                return a
+            else:
+                return b
+
+        def merge_dict(a, b):
+            for k, v in b.iteritems():
+                if k not in a:
+                    a[k] = v
+                    
+        
+        rv.name = merge(rv.name, self.name)
+        rv.who_style = merge(rv.who_style, self.who_style)
+        rv.what_style = merge(rv.what_style, self.what_style)
+        rv.window_style = merge(rv.window_style, self.window_style)
+    
+        merge_dict(rv.properties, self.properties)
+        merge_dict(rv.what_properties, self.what_properties)
+        merge_dict(rv.window_properties, self.window_properties)
+        merge_dict(rv.show_args, self.show_args)
+        
+        rv.function = merge(rv.function, self.function)
+        rv.predict_function = merge(rv.predict_function, self.predict_function)
+        rv.condition = merge(rv.condition, self.condition)
+        rv.dynamic = merge(rv.dynamic, self.dynamic)
+
+        return rv
+        
     def check_condition(self):
         """
         Returns true if we should show this line of dialogue.

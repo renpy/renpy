@@ -46,13 +46,18 @@ init:
     # dialogue without us having to repeatedly type her name. It also
     # lets us change the color of her name.
     $ e = Character(u'Eileen', color=(200, 255, 200, 255))
-
+    $ ee = e.copy("Yellow Eileen", color="#ff0", what_size=42)
+    
 
 # The start label marks the place where the main menu jumps to to
 # begin the actual game.
 
 label start:
 
+    ee "This is a test."
+
+    ee "This is also a test."
+    
     # The save_name variable sets the name of the save game. Like all
     # variables declared outside of init blocks, this variable is
     # saved and restored with a save file.
@@ -1708,3 +1713,32 @@ init:
 #     hide text with dissolve
 #
 #     return
+
+init:
+    python:
+        def fadeup(mul):
+
+            def inner(st, at):
+                i = int(st * mul)
+                if i > 255:
+                    i = 255
+                    
+                return Solid((i, i, i, 255)), .1
+
+            return DynamicDisplayable(inner)
+    
+label splashscreen:
+
+
+    
+    show expression DynamicDisplayable("'#f00'") as bg
+
+    "Foo."
+
+    scene black
+    
+    show expression fadeup(80) as bg
+
+    "Bar."
+    
+    
