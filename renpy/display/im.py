@@ -24,6 +24,7 @@
 # cropping and scaling).
 
 import renpy
+import random
 
 import pygame
 from pygame.constants import *
@@ -117,7 +118,7 @@ class Cache(object):
 
         if image in self.cache:
             ce = self.cache[image]
-
+            new = False
 
         else:
             if renpy.config.debug_image_cache:
@@ -134,6 +135,7 @@ class Cache(object):
             if renpy.config.debug_image_cache:
                 print "IC Added", ce.what
 
+            new = True
 
 
         # Move it into the current generation.
@@ -141,14 +143,34 @@ class Cache(object):
             ce.time = self.time
             self.size_of_current_generation += ce.size
 
-        if image.rle:
-            if image not in rle_cache:
+
+            
+        # RLE detection.
+        if new and id(ce.surf) not in rle_cache:
+            rle = image.rle
+            surf = ce.surf
+
+            # If we don't know if the image is RLE or not, guess.
+            # Only do so if the image has an alpha channel.
+            if rle is None and surf.get_masks()[3]:
+                sw, sh = surf.get_size()
+
+                for i in range(0, 10):
+                    if surf.get_at((random.randint(0, sw-1),
+                                    random.randint(0, sh-1)))[3] == 0:
+                        rle = True
+                        break
+
+            if rle:
                 rle_surf = ce.surf.convert_alpha()
                 rle_surf.set_alpha(255, RLEACCEL)
                 rle_cache[id(ce.surf)] = rle_surf
                 renpy.display.render.mutated_surface(ce.surf)
-                print "Added to rle cache."
+                if renpy.config.debug_image_cache:
+                    print "Added to rle cache:", image
 
+
+        # Done... return the surface.
         return ce.surf
 
     # This kills off a given cache entry.
@@ -259,10 +281,10 @@ class ImageBase(renpy.display.core.Displayable):
     def __init__(self, *args, **properties):
 
         if 'rle' in properties:
-            self.rle = True
+            self.rle = properties['rle']
             del properties['rle']
         else:
-            self.rle = False
+            self.rle = None
 
         properties.setdefault('style', 'image')
 
