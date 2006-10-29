@@ -841,7 +841,7 @@ init:
 
     image circiris = "circiris.png"
 
-    image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15))
+    image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15), fast=True)
 
     $ renpy.register_sfont("skyfont", 22, filename="skyfont.png", default_kern=-1)
 

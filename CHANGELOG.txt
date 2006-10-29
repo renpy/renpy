@@ -29,6 +29,10 @@ argument. This function returns a displayable and a time in seconds
 for which the displayable is valid. (The old behavior is retained when
 a string is passed in.)
 
+SnowBlossom now takes a fast argument, which if true causes the
+particles to start all at once all over the screen, rather then at the
+top or the bottom only.
+
 Character objects may be copied using the Character.copy method. This
 method takes the same arguments as Character, with the values supplied
 to the method taking precedence over those in the Character object. [doc]
