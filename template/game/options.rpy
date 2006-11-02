@@ -62,7 +62,7 @@ init -1:
             ## If this is True, in-game menus are placed in the center
             ## the screen. If False, they are placed inside a window
             ## at the bottom of the screen.
-            button_menu = False,
+            button_menu = True,
 
             ## The background of the main menu. This can be a color
             ## beginning with '#', or an image filename. The latter
@@ -153,11 +153,11 @@ init -1:
 
         ## Set this to False if the game does not have any sound effects.
 
-        library.has_sound = True
+        config.has_sound = True
 
         ## Set this to False if the game does not have any music.
 
-        library.has_music = True
+        config.has_music = True
 
         ## Sounds that are used when button and imagemaps are clicked.
 
@@ -166,16 +166,16 @@ init -1:
 
         ## Sounds that are used when entering and exiting the game menu.
 
-        # library.enter_sound = "click.wav"
-        # library.exit_sound = "click.wav"
+        # config.enter_sound = "click.wav"
+        # config.exit_sound = "click.wav"
 
         ## A sample sound that can be played to check the sound volume.
 
-        # library.sample_sound = "click.wav"
+        # config.sample_sound = "click.wav"
 
         ## Music that is played while the user is at the main menu.
 
-        # library.main_menu_music = "main_menu_theme.ogg"
+        # config.main_menu_music = "main_menu_theme.ogg"
 
         
         #########################################
@@ -184,6 +184,6 @@ init -1:
         ## These let you change the transitions that are used when entering
         ## and exiting the game menu.
 
-        library.enter_transition = dissolve
-        library.exit_transition = dissolve
+        config.enter_transition = dissolve
+        config.exit_transition = dissolve
         

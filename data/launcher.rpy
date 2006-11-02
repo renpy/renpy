@@ -6,6 +6,9 @@ init:
         config.screen_height = 400
         config.window_title = "Ren'Py Launcher"
 
+        # Disables sound (for the demo game).
+        config.sound = False
+        
         # Choose ther roundrect_red theme for the buttons.
         theme.roundrect(
             widget="#559",

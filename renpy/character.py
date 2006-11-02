@@ -281,12 +281,14 @@ def display_say(who, what, who_style='say_label',
         if ctc and ctc_position == "nestled":
             ctcwhat.extend([ " ", ctc ])
 
-        slow_done = None
-
-        if ctc and ctc_position == "fixed":
+        if slow:
             def slow_done():
-                renpy.ui.add(ctc)
-                renpy.exports.restart_interaction()
+                if ctc and ctc_position == "fixed":
+                    renpy.ui.add(ctc)
+                    renpy.exports.restart_interaction()
+                    
+        else:
+            slow_done = None
 
                 
         what_args = dict(style=what_style,
