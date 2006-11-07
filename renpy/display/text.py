@@ -502,7 +502,7 @@ def layout_width(triples):
     return rv
     
 
-def text_layout(triples, width, style):
+def greedy_text_layout(triples, width, style):
     """
     Breaks the text up into rows. 
 
@@ -553,8 +553,110 @@ def text_layout(triples, width, style):
             l.pop()
 
     return lines
-        
-        
+
+
+def subtitle_text_layout_core(triples, width, style, soft, n):
+
+    sizecache = { }
+
+    lines = [ ]
+    line = [ ]
+
+    target = width
+
+    total = soft * n
+    linesoft = total / n
+
+    for triple in triples:
+
+        type, ts, i = triple
+
+        if type == "newline":
+            raise Exception("Subtitles may not contain newlines.")
+
+            continue
+
+        if type == "space":
+            if not line:
+                continue
+            line.append(triple)
+            continue
+
+        else:
+            lw = layout_width(line + [ triple ])
+
+            if lw > target:
+
+                n -= 1
+                if n > 0:
+
+                    if line and line[-1][0] == "space":
+                        line.pop()
+
+                    total -= layout_width(line)
+                    linesoft = total / n
+                else:
+                    linesoft = soft
+
+                lines.append(line)
+                line = [ triple ]
+                target = width
+            else:
+                line.append(triple)
+
+                if lw > linesoft:
+
+                    n -= 1
+                    if n > 0:
+                        total -= lw
+                        linesoft = total / n
+                    else:
+                        linesoft = soft
+
+                    lines.append(line)
+                    line = [ ]
+                    target = width
+
+    lines.append(line)
+
+    # Remove trailing whitespace.
+    for l in lines:
+        if l and l[-1][0] == "space":
+            l.pop()
+
+        if l and l[0][0] == "space":
+            l.pop(0)
+
+
+    return lines
+
+
+def subtitle_text_layout(triples, width, style):
+
+    softwidth = style.subtitle_width
+    if isinstance(softwidth, float):
+        softwidth = int(softwidth * width)
+
+    sumwidths = layout_width(triples)
+
+    i = 1
+    while sumwidths / i > min(width, softwidth):
+        i += 1
+
+    while True:
+        rv = subtitle_text_layout_core(triples, width, style, sumwidths / i, i)
+        if len(rv) == i:
+            break
+        i += 1
+
+    return rv
+
+def text_layout(triples, width, style):
+
+    if style.layout == "subtitle":
+        return subtitle_text_layout(triples, width, style)
+    else:
+        return greedy_text_layout(triples, width, style)
 
 
 class Text(renpy.display.core.Displayable):

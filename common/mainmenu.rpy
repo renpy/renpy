@@ -27,10 +27,17 @@ init -498:
         # Music to play at the main menu.
         config.main_menu_music = None
 
+        # Callbacks to run at start.
+        config.start_callbacks = [ ]
+        
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
 
+    python hide:
+        for i in config.start_callbacks:
+            i()
+    
     call _check_module from _call__check_module_1
 
     call _load_reload_game from _call__load_reload_game_1

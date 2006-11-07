@@ -187,7 +187,9 @@ init -1000:
         style.default.first_indent = 0
         style.default.rest_indent = 0
         style.default.line_spacing = 0
-
+        style.default.layout = "greedy"
+        style.default.subtitle_width = 0.9
+        
         # Window properties.
         style.default.background = None
         style.default.xpadding = 0

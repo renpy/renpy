@@ -153,6 +153,7 @@ def predict_display_say(who, what,
                 show_function = show_display_say,
                 show_args = { },
                 with_none = None,
+                callback = None,
                 **who_properties):
     """
     This is the default function used by Character to predict images that
@@ -201,6 +202,7 @@ def display_say(who, what, who_style='say_label',
                 show_function = show_display_say,
                 show_args = { },
                 with_none = None,
+                callback = None,
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -226,6 +228,9 @@ def display_say(who, what, who_style='say_label',
         
         return
 
+    if callback:
+        callback("begin", interact=interact)
+    
     if renpy.exports.roll_forward_info():
         roll_forward = False
     else:
@@ -286,6 +291,10 @@ def display_say(who, what, who_style='say_label',
                 if ctc and ctc_position == "fixed":
                     renpy.ui.add(ctc)
                     renpy.exports.restart_interaction()
+
+                if callback:
+                    callback("slow_done", interact=interact)
+
                     
         else:
             slow_done = None
@@ -299,6 +308,9 @@ def display_say(who, what, who_style='say_label',
                          pause=pause,
                          slow_speed = None,
                          **what_properties)
+
+        if callback:
+            callback("show", interact=interact)
 
         what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image, **show_args)
 
@@ -336,6 +348,8 @@ def display_say(who, what, who_style='say_label',
         if with_none:
             renpy.game.interface.with(None, None)
 
+    if callback:
+        callback("end", interact=interact)
 
 # Used by copy.
 NotSet = object()

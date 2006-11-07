@@ -19,19 +19,19 @@ init -402:
 
             return Frame(im.Color("rr%d.png" % size, color), size, size)
             
+        def _display_button_menu(menuitems):
+
+            narration = [ s for s, i in menuitems if i is None and s ]
+            menuitems = [ (s, i) for s, i in menuitems if i is not None or not s ]
+
+            if narration:
+                renpy.say(None, "\n".join(narration), interact=False)
+
+            return renpy.display_menu(menuitems)
+
         def _button_menu():
 
-            def menu(menuitems):
-
-                narration = [ s for s, i in menuitems if i is None and s ]
-                menuitems = [ (s, i) for s, i in menuitems if i is not None or not s ]
-
-                if narration:
-                    renpy.say(None, "\n".join(narration), interact=False)
-
-                return renpy.display_menu(menuitems)
-
-            store.menu = menu
+            store.menu = _display_button_menu
 
             style.menu.clear()
 
