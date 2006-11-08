@@ -24,7 +24,7 @@ init -1:
         ## This controls the title of the window, when Ren'Py is
         ## running in a window.
 
-        config.window_title = u"A Ren'Py Game"
+        config.window_title = u"The Ren'Py Demo Game"
 
         ## We then want to call a theme function. themes.roundrect is
         ## a theme that features the use of rounded rectangles. It's
@@ -161,17 +161,17 @@ init -1:
 
         ## Sounds that are used when button and imagemaps are clicked.
 
-        # style.button.activate_sound = "click.wav"
-        # style.imagemap.activate_sound = "click.wav"
+        style.button.activate_sound = "click.wav"
+        style.imagemap.activate_sound = "click.wav"
 
         ## Sounds that are used when entering and exiting the game menu.
 
-        # config.enter_sound = "click.wav"
-        # config.exit_sound = "click.wav"
+        config.enter_sound = "click.wav"
+        config.exit_sound = "click.wav"
 
         ## A sample sound that can be played to check the sound volume.
 
-        # config.sample_sound = "click.wav"
+        config.sample_sound = "click.wav"
 
         ## Music that is played while the user is at the main menu.
 
