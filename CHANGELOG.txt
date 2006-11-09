@@ -8,8 +8,6 @@ Character(callback)
 
 nvl_mode
 
-
-
 New displayables:
 Bar
 Button
@@ -46,6 +44,11 @@ to the method taking precedence over those in the Character object. [doc]
 Ren'Py now attempts to automatically determine if the RLE optimization
 will be profitable, and will automatically use the RLE optimization if
 it deems it worthwhile.
+
+Ren'Py now considers config.has_sound, config.has_music, and
+config.has_voice when assigning mixer names to channels. If all of
+these are set False, sound will be disabled. If only some are set,
+only those mixers will control system volume.
 
 Loaded python files are assumed to be UTF-8. This includes the
 launcherinfo.py files loaded by the launcher. (Thanks to denzil for

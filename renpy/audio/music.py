@@ -24,8 +24,11 @@
 import time
 import renpy
 
-# The music channels.
-music_channels = [ 3, 4, 5, 6, 7 ]
+# A list of music channels.
+music_channels = [ ]
+
+# A list of channels for which set_music has been called, either way.
+music_set = [ ]
 
 unique = time.time()
 serial = 0
@@ -234,7 +237,7 @@ def set_volume(volume, channel=7):
             raise
 
     
-def set_music(channel, flag):
+def set_music(channel, flag, default=False):
     """
     This should be called to indicate if the given channel should be
     treated as a music channel. If the flag is True, the channel will
@@ -249,6 +252,11 @@ def set_music(channel, flag):
     if not 0 <= channel < renpy.audio.audio.NUM_CHANNELS:
         raise Exception("Not a music channel.")
 
+    if default and channel in music_set:
+        return
+
+    music_set.append(channel)
+    
     if flag:
         if channel not in music_channels:
             music_channels.append(channel)

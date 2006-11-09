@@ -95,7 +95,7 @@ def stop(channel=0, fadeout=0):
         if renpy.config.debug_sound:
             raise
     
-def set_mixer(channel, mixer):
+def set_mixer(channel, mixer, default=False):
     """
     This sets the name of the mixer associated with a given
     channel. By default, there are two mixers, 'sfx' and
@@ -109,7 +109,10 @@ def set_mixer(channel, mixer):
 
     try:        
         c = renpy.audio.audio.get_channel(channel)
-        c.mixer = mixer
+
+        if not default or c.mixer is None:
+            c.mixer = mixer
+
     except:
         if renpy.config.debug_sound:
             raise

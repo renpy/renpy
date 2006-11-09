@@ -475,15 +475,6 @@ NUM_CHANNELS = 8
 # A list of channels.
 channels = [ Channel(i) for i in range(NUM_CHANNELS) ]
     
-channels[0].mixer = 'sfx'
-channels[1].mixer = 'sfx'
-channels[2].mixer = 'sfx'
-channels[3].mixer = 'music'
-channels[4].mixer = 'music'
-channels[5].mixer = 'music'
-channels[6].mixer = 'music'
-channels[7].mixer = 'music'
-
 def get_channel(number):
     if not 0 <= number < NUM_CHANNELS:
         raise Exception("Channel number %d out of bounds." % channel)
