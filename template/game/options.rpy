@@ -159,6 +159,10 @@ init -1:
 
         config.has_music = True
 
+        ## Set this to False if the game does not have voicing.
+
+        config.has_voice = True
+
         ## Sounds that are used when button and imagemaps are clicked.
 
         style.button.activate_sound = "click.wav"

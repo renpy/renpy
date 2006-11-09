@@ -27,6 +27,7 @@ init:
         # We don't want the user going into the game menu.
         def interact():
             ui.add(DynamicDisplayable("Text(store.message, size=14, color='#fff', xpos=5, ypos=340, xmaximum=350)"))
+            ui.text(renpy.version(), xalign=1.0, yalign=1.0, size=12, color='#fff')
             return ui.interact(suppress_underlay=True)
 
         def title(name):
