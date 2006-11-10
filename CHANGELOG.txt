@@ -1,21 +1,20 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+
 New in Ren'Py 5.6.3
 -------------------
 
-Character(callback)
+The demo has been rewritten from scratch, to better reflect the modern
+way of coding Ren'Py.
 
-nvl_mode
+The extras/ directory has been eliminated. Voice.rpy is now included
+in common/ as part of the standard Ren'Py library. Kana Mode has been
+renamed to NVL Mode, and is now included in the
+newdemo/game/nvl_mode.rpy file. All of the other extras are now part
+of the cookbook section of the web site.
 
-New displayables:
-Bar
-Button
-Input
-Window
-Grid
-
-(doc ui.input?)
+Bar, Button, and Window are now documented as displayables.
 
 Now, aborting a transition will abort all successive transitions until
 the next non-transition interaction.
@@ -39,7 +38,10 @@ top or the bottom only.
 
 Character objects may be copied using the Character.copy method. This
 method takes the same arguments as Character, with the values supplied
-to the method taking precedence over those in the Character object. [doc]
+to the method taking precedence over those in the Character object. 
+
+Character now takes a callback parameter, specifying a function that
+will be called at various points during dialogue.
 
 Ren'Py now attempts to automatically determine if the RLE optimization
 will be profitable, and will automatically use the RLE optimization if
@@ -57,7 +59,6 @@ reporting this one.)
 The voice.rpy extra now plays the sample sound on the voice
 channel. (Thanks to NetGenSuperstar for reporting this, and for
 supplying the fix.)
-
 
 
 

@@ -48,7 +48,7 @@ init -440:
         config.has_voice = True
         config.sample_voice = None
         
-        vp = _VolumePreference('Voice Volume',
+        vp = _VolumePreference(u'Voice Volume',
                                'voice',
                                'config.has_voice',
                                'config.sample_voice',

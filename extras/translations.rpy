@@ -31,10 +31,19 @@ init:
     $ library.translations[u'Previous'] = u'Previous'
     $ library.translations[u'Next'] = u'Next'
 
+    # Translatable strings found in common/voice.rpy
+
+    $ library.translations[u'Voice Volume'] = u'Voice Volume'
+
     # Translatable strings found in common/library.rpy
 
     $ library.translations[u'Skip Mode'] = u'Skip Mode'
     $ library.translations[u'Fast Skip Mode'] = u'Fast Skip Mode'
+    $ library.translations[u"While Ren'Py games may be playable without the renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/."] = u"While Ren'Py games may be playable without the renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/."
+    $ library.translations[u'renpy module not found.'] = u'renpy module not found.'
+    $ library.translations[u'The renpy module could not be loaded on your system.'] = u'The renpy module could not be loaded on your system.'
+    $ library.translations[u'Old renpy module found.'] = u'Old renpy module found.'
+    $ library.translations[u"An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d."] = u"An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d."
 
     # Translatable strings found in common/preferences.rpy
 
