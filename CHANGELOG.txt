@@ -10,9 +10,9 @@ way of coding Ren'Py.
 
 The extras/ directory has been eliminated. Voice.rpy is now included
 in common/ as part of the standard Ren'Py library. Kana Mode has been
-renamed to NVL Mode, and is now included in the
-newdemo/game/nvl_mode.rpy file. All of the other extras are now part
-of the cookbook section of the web site.
+renamed to NVL Mode, and is now included in the commmon/ directory.
+All of the other extras are now part of the cookbook section of the
+web site.
 
 Bar, Button, and Window are now documented as displayables.
 
