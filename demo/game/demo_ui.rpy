@@ -200,7 +200,7 @@ label demo_ui:
 
         e "You chose art."
         
-        e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can chage that."
+        e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
 
     elif result == "go home":
 

@@ -121,8 +121,9 @@ init -100:
 
             ui.close()
 
-            rv = ui.interact()
+            roll_forward = renpy.roll_forward_info()
             
-            renpy.checkpoint()
+            rv = ui.interact(roll_forward=roll_forward)
+            renpy.checkpoint(rv)
 
             return rv
