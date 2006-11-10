@@ -27,15 +27,15 @@ label demo_transitions:
 
         "Simple Transitions":            
 
-            call demo_simple_transitions
+            call demo_simple_transitions from _call_demo_simple_transitions_1
 
         "ImageDissolve Transitions":
 
-            call demo_imagedissolve_transitions
+            call demo_imagedissolve_transitions from _call_demo_imagedissolve_transitions_1
 
         "CropMove Transitions":
 
-            call demo_cropmove_transitions
+            call demo_cropmove_transitions from _call_demo_cropmove_transitions_1
 
             
             

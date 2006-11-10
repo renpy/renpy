@@ -173,7 +173,7 @@ label demo_ui:
     # top, right, and bottom sides, and the value to return if it is
     # picked.
 
-    $ result = renpy.imagemap("ground.png", "hover.png", [
+    $ result = renpy.imagemap("ground.jpg", "hover.jpg", [
         (8, 200, 86, 278, "swimming"),
         (204, 50, 282, 128, "science"), 
         (452, 79, 530, 157, "art"),
