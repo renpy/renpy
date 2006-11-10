@@ -361,7 +361,6 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
 
     if roll_forward not in choices:
         roll_forward = None
-
         
     # Auto choosing.
     if renpy.config.auto_choice_delay:

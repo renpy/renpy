@@ -125,7 +125,7 @@ def main():
     files.append("editor/scite.exe")
     more_files.extend(editor)
 
-    files.extend(tree("extras"))
+    # files.extend(tree("extras"))
     more_files.extend(tree("lib"))
 
     module_files = [

@@ -70,7 +70,7 @@ label about_menus_no:
 
 label about_menus_unsure:
 
-    $ about_menu_choice = "unsure"
+    $ about_menus_choice = "unsure"
     
     e "Well, it doesn't really matter. Whatever you decide, Ren'Py is ready for you."
 

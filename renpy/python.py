@@ -738,7 +738,7 @@ class RollbackLog(renpy.object.Object):
 
         for rb in revlog:
             rb.rollback()
-            if rb.forward:
+            if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
             
         # Disable the next transition, as it's pointless.

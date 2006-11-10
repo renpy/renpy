@@ -83,6 +83,10 @@ label demo_repeat:
     # If the result is False, then the user clicked the "Enough for
     # now" button, and we should return to the main script.
     if result == False:
+
+        show eileen happy at center
+        with move
+
         return
 
     # If the result is the advanced demo, just call it without
@@ -129,6 +133,7 @@ label demo_advanced:
     # If the result is False, then the user clicked the "Enough for
     # now" button, and we should return to the main script.
     if result == False:
+        
         return
 
     else:
