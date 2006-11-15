@@ -197,7 +197,8 @@ init:
 
             info = dict()
             info["description"] = desc
-
+            info["ignored"] = ignored
+            
             if os.path.exists(dir + "/launcherinfo.py"):
                 source = file(dir + "/launcherinfo.py", "rU").read().decode("utf8")
                 if source[0] == u'\ufeff':
@@ -481,9 +482,9 @@ label tools_menu:
                "Adds a from clause to each of the call statements in your script.", 
                clicked=ifrw("add_from_to_calls"))
         
-        button("Archive Images",
-               "Archive the images found under the game directory.",
-               clicked=ifrw("archive_images"))
+        button("Archive Files",
+               "Archive files found under the game and archived directories.",
+               clicked=ifrw("archive_files"))
                
         button("Build Distributions",
                "Build distributions for the platforms supported by Ren'Py.",
@@ -536,7 +537,7 @@ label new:
                 name = name.encode("ascii")
             except:
                 error = "Project names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way."
-
+                
         if error:
             store.error("Error", error, "main")
 
@@ -563,7 +564,7 @@ label new:
 
     jump start
 
-label archive_images:
+label archive_files:
 
     python hide:
         import os
@@ -571,10 +572,17 @@ label archive_images:
 
         import renpy.tools.archiver as archiver
 
+        extensions = persistent.extensions or "png gif jpg"
+        extensions = prompt("Archiving Files", "Please enter a space separated list of the file extensions you want archived.", "tools", extensions)
+        if not extensions.strip():
+            renpy.jumps("tools_menu")
+        persistent.extensions = extensions    
+        extensions = [ i.strip() for i in extensions.strip().split() ]
+        
 
         # Tell the user we're archiving images.
-        title("Archiving Images")
-        store.message = "Please wait while we archive images."
+        title("Archiving Files")
+        store.message = "Please wait while we archive files."
         ui.pausebehavior(0)
         interact()
 
@@ -583,16 +591,17 @@ label archive_images:
         archived = project.path + "/archived"
 
         files = [ ]
-        prefix = gamedir + "/images"
+        prefix = gamedir + "/data"
 
-        def should_archive(fn):
+        def should_archive(fn, extensions=extensions):
             fn = fn.lower()
 
             if fn[0] == ".":
                 return False
 
-            if fn.endswith(".png") or fn.endswith(".jpg") or fn.endswith(".gif"):
-                return True
+            for e in extensions:
+                if fn.endswith(e):
+                    return True
 
             return False
 
@@ -615,10 +624,10 @@ label archive_images:
 
         archiver.archive(prefix, files)
 
-        f = file(gamedir + "/images.rpy", "w")
-        print >>f, "init:"
-        print >>f, "    $ config.archives.append('images')"
-        f.close()
+#         f = file(gamedir + "/images.rpy", "w")
+#         print >>f, "init:"
+#         print >>f, "    $ config.archives.append('images')"
+#         f.close()
                     
         for fullfn, shortfn in files:
             afn = archived + "/" + shortfn
@@ -633,7 +642,7 @@ label archive_images:
 
             os.rename(fullfn, afn)
 
-        store.message = "The images have been added to the archive, and moved into the archived directory."
+        store.message = "The files have been added to the archive, and moved into the archived directory."
 
     jump tools_menu
 

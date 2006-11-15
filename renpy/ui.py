@@ -307,6 +307,8 @@ def keymousebehavior():
 
     return
 
+def keymap(**kwargs):
+    return add(renpy.display.behavior.Keymap(**kwargs))
 
 def saybehavior(afm=None, dismiss='dismiss'):
     """

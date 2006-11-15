@@ -1,6 +1,18 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.6.4
+-------------------
+
+Implemented the ui.keymap function, which lets one easily map keys to
+functions.
+
+Modified the launcher so the user can chose which files are archived
+by the "Archive Files" tool. (Which has been renamed from "Archive Images".)
+
+Fixed a bug that prevented new projects from being created under
+Linux.
+
 
 New in Ren'Py 5.6.3
 -------------------
@@ -13,6 +25,9 @@ in common/ as part of the standard Ren'Py library. Kana Mode has been
 renamed to NVL Mode, and is now included in the commmon/ directory.
 All of the other extras are now part of the cookbook section of the
 web site.
+
+We've unifed config. and library. variables. They are now all config
+variables, with library being an alias to config.
 
 Bar, Button, and Window are now documented as displayables.
 

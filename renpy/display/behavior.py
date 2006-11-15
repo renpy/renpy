@@ -36,7 +36,7 @@ def map_event(ev, name):
     True, otherwise it returns False.
     """
     
-    keys = renpy.config.keymap[name]
+    keys = renpy.config.keymap.get(name, [ name ])
 
     if ev.type == MOUSEBUTTONDOWN:
         if ( "mousedown_" + str(ev.button) ) in keys:

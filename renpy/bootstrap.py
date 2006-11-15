@@ -27,6 +27,7 @@ import sys
 # Extra things used for distribution.
 def extra_imports():
     import datetime
+    import encodings.ascii
     import encodings.utf_8
     import encodings.zlib_codec
     import encodings.unicode_escape
