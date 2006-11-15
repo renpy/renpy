@@ -130,6 +130,6 @@ label about_menus_done:
 
     e "Ren'Py embeds the Python programming language, which lets you do some very sophisticated things."
 
-    e "But you don't need to use it if you don't want to."
+    e "But you don't need learn Python if you don't want to."
 
     return

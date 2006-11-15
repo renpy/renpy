@@ -39,13 +39,13 @@ init -100:
         # A list of arguments that have been passed to nvl_record_show.
         nvl_list = None
 
-        def nvl_show(*args, **kwargs):
-
-            nvl_list[-1] = (args, kwargs)
-
+        def nvl_show_core():
+        
             ui.window(style='nvl_window')
             ui.vbox(style='nvl_vbox')
 
+            rv = None
+            
             for i in nvl_list:
                 if not i:
                     continue
@@ -55,11 +55,31 @@ init -100:
 
             ui.close()
 
+            return rv
+
+            
+        def nvl_show_function(*args, **kwargs):
+ 
+            nvl_list[-1] = (args, kwargs)
+            
+            rv = nvl_show_core()
+                
             nvl_list[-1][1]["what_args"]["slow"] = False
             nvl_list[-1][1]["what_args"]["slow_done"] = None
                 
             return rv
 
+        def nvl_show(with):
+            nvl_show_core()
+            renpy.with(with)
+
+        def nvl_hide(with):
+            nvl_show_core()
+            renpy.with(None)
+            renpy.with(with)
+            
+            
+        
         class NVLCharacter(Character):
 
             def __init__(self, who,
@@ -74,7 +94,7 @@ init -100:
                                    who_style=who_style,
                                    what_style=what_style,
                                    window_style=window_style,
-                                   show_function=nvl_show,
+                                   show_function=nvl_show_function,
                                    **kwargs)
 
             def __call__(self, *args, **kwargs):
@@ -127,3 +147,4 @@ init -100:
             renpy.checkpoint(rv)
 
             return rv
+

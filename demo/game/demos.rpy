@@ -25,6 +25,9 @@ init:
             ]
         
         def demos_show(demos_info, nevermind):
+
+            renpy.choice_for_skipping()
+            
             ui.vbox(xpos=250, ypos=225, yanchor=0.5)
 
             for label, name, ver in demos_info:

@@ -30,6 +30,7 @@ init:
 label demo_nvlmode:
 
     $ nvl_clear()
+    $ nvl_show(dissolve)
     
     nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a file at the bottom of the screen."
 
@@ -62,7 +63,8 @@ label demo_nvlmode:
             nvle "Well, it might help if you take a look at the demo code."
 
     $ menu = renpy.display_menu
-
+    $ nvl_hide(dissolve)
+    
     return
         
     

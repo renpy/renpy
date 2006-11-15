@@ -7,6 +7,10 @@ New in Ren'Py 5.6.4
 Implemented the ui.keymap function, which lets one easily map keys to
 functions.
 
+There are now two new functions in the NVL-mode. The nvl_show function
+shows the NVL window with a transition, and the nvl_hide function
+hides it with a transition.
+
 Modified the launcher so the user can chose which files are archived
 by the "Archive Files" tool. (Which has been renamed from "Archive Images".)
 
