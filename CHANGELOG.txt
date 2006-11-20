@@ -1,6 +1,13 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+
+New in Ren'Py 5.6.5
+-------------------
+
+Ren'Py (not python) strings can now be quoted with ` as well as ' and ".
+
+
 New in Ren'Py 5.6.4
 -------------------
 

@@ -133,7 +133,7 @@ def list_logical_lines(filename):
                 continue
 
             # Strings.
-            if c in ('"', "'"):
+            if c in ('"', "'", "`"):
                 delim = c
                 line += c
                 pos += 1
@@ -434,6 +434,9 @@ class Lexer(object):
             s = self.match(r"r?'([^\\']|\\.)*'")
 
         if s is None:
+            s = self.match(r"r?`([^\\`]|\\.)*`")
+
+        if s is None:
             return None
 
         if s[0] == 'r':
@@ -454,7 +457,6 @@ class Lexer(object):
             s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
                        lambda m : unichr(int(m.group(1), 16)), s)
             s = re.sub(r'\\(.)', r'\1', s)
-                                         
 
         return s
 
