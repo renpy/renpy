@@ -116,7 +116,7 @@ init:
 
                 bottom()
 
-                if pages > 1:
+                if pages >= 1:
 
                     if page < pages:
                         button("Next Page", "Go to the next page of projects.", clicked=ui.returns(("page", page + 1)))
@@ -181,8 +181,8 @@ init:
         def load_project(dir, name):
             import os.path
 
-            # Ignore non-unicode files.
-            for i in dir:
+            # Ignore unicode files.
+            for i in name:
                 if ord(i) >= 127:
                     return 
 
@@ -193,7 +193,7 @@ init:
             else:
                 return
 
-            desc = u"Project found in " + dir + "."
+            desc = u""
 
             info = dict()
             info["description"] = desc
@@ -234,6 +234,7 @@ init:
                     if os.path.isdir(dir):
                         load_project(dir, dd)
 
+                        
             if not store.projects:
                 raise Exception("The launcher will not function without any projects.")
 
@@ -369,6 +370,8 @@ label select_project:
 
         choices = [ (p.name, p.info["description"], p) for p in projects ]
 
+        print choices
+        
         store.project = paged_menu("Select a Project", choices, "Please select a project.")
 
         persistent.project = store.project.name
