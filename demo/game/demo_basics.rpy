@@ -36,7 +36,7 @@ label demo_basics:
     e "Ren'Py also supports menus, which let you make decisions based on user input."
 
 
-    menu about_menus:
+    menu:
 
         e "Do you think you'd ever use menus in a game?"
 

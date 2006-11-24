@@ -409,12 +409,13 @@ class SceneLists(object):
 
         return True
 
-    def add(self, layer, thing, key=None, zorder=0):
+    def add(self, layer, thing, key=None, zorder=0, behind=[ ]):
         """
         This is called to add something to a layer. Layer is
         the name of the layer that we need to add the thing to,
         one of 'master' or 'transient'. Key is an optional key. Zorder
-        is a place in the zorder to add the thing.
+        is a place in the zorder to add the thing. Behind is a list of keys
+        this thing must be placed below, within the zorder.
 
         If key is provided, and there exists something in the selected
         layer with the given key, and the same zorder, that entry from
@@ -422,8 +423,9 @@ class SceneLists(object):
         same key exists, but a different zorder, the thing with the
         old key is removed.
 
-        Otherwise, the displayable is added to the end of the layer, and
-        the time it was first displayed is set to the current time.
+        Otherwise, the displayable is placed in the given zorder, behind all
+        keys listed in behind. If no keys are listed in behind, the
+        displayable is placed at the end of the zorder.
         """
 
         if layer not in self.layers:
@@ -452,7 +454,10 @@ class SceneLists(object):
                     l.pop(index)
 
         index = 0
-        for index, (ignore_key, zo, ignore_st, ignore_at, ignore_thing) in enumerate(l):
+        for index, (behind_key, zo, ignore_st, ignore_at, ignore_thing) in enumerate(l):
+            if zo == zorder and behind_key in behind:
+                break
+
             if zo > zorder:
                 break
         else:

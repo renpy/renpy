@@ -90,3 +90,5 @@ class Minigame(renpy.display.core.Displayable):
     def load(self, filename):
         return renpy.loader.load(filename)
     
+    def ignore_event(self):
+        raise renpy.display.core.IgnoreEvent()

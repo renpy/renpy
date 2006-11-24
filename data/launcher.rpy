@@ -370,8 +370,6 @@ label select_project:
 
         choices = [ (p.name, p.info["description"], p) for p in projects ]
 
-        print choices
-        
         store.project = paged_menu("Select a Project", choices, "Please select a project.")
 
         persistent.project = store.project.name

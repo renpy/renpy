@@ -254,6 +254,7 @@ class Lexer(object):
     keywords = sets.Set([
         'as',
         'at',
+        'behind',
         'call',
         'expression',
         'hide',
@@ -823,7 +824,8 @@ def parse_image_specifier(l):
     layer = None
     at_list = [ ]
     zorder = None
-
+    behind = [ ]
+    
     if l.keyword("expression"):
         expression = l.require(l.simple_expression)
         image_name = ( expression.strip(), )
@@ -865,13 +867,28 @@ def parse_image_specifier(l):
                 l.error("multiple zorder clauses are prohibited.")
             else:
                 zorder = l.require(l.simple_expression)
+
+            continue
+                
+        if l.keyword("behind"):
+
+            if behind:
+                l.error("multiple behind clauses are prohibited.")
+            
+            while True:
+                bhtag = l.require(l.name)
+                behind.append(bhtag)
+                if not l.match(','):
+                    break
+
+            continue
                 
         break
 
     if layer is None:
         layer = 'master'
 
-    return image_name, expression, tag, at_list, layer, zorder
+    return image_name, expression, tag, at_list, layer, zorder, behind
 
 def parse_with(l, node):
     """

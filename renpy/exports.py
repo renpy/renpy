@@ -125,27 +125,10 @@ def showing(name, layer='master'):
 
     return sls.showing(layer, key)
 
-def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None):
-    """
-    This is used to execute the show statement, adding the named image
-    to the screen as part of the master layer.
+def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ]):
+    "Documented in wiki as renpy.show."
 
-    @param name: The name of the image to add to the screen. This may
-    be a tuple of strings, or a single string. In the latter case, it
-    is split on whitespace to make a tuple.
-
-    @param at_list: The at list, a list of functions that are applied
-    to the image when shown. The members of the at list need to
-    be pickleable if sticky_positions is True.
-
-    @param layer: The layer the image will be shown on.
-
-    @param what: If not None, this is expected to be a
-    displayable. That displayable is shown, instead of going through
-    the normal lookup process. 
-
-    """
-
+    
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
@@ -168,7 +151,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None):
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[tuple(name)] = True
 
-    sls.add(layer, img, key, zorder)
+    sls.add(layer, img, key, zorder, behind)
     
 
 def hide(name, layer='master'):

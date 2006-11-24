@@ -420,9 +420,12 @@ def predict_imspec(imspec, callback):
 
     if len(imspec) == 3:
         name, at_list, layer = imspec
-    else:
+    elif len(imspec) == 6:
         name, expression, tag, at_list, layer, zorder = imspec
-
+    elif len(imspec) == 7:
+        name, expression, tag, at_list, layer, zorder, behind = imspec
+        
+        
     if expression:
         try:
             img = renpy.python.py_eval(expression)
@@ -443,23 +446,28 @@ def show_imspec(imspec):
         name, at_list, layer = imspec
         expression = None
         tag = None
-        zorder = 0
-    else:
+        zorder = None
+        behind = [ ]
+    elif len(imspec) == 6:
         name, expression, tag, at_list, layer, zorder = imspec
+        behind = [ ]
+    elif len(imspec) == 7:
+        name, expression, tag, at_list, layer, zorder, behind = imspec
+        
+    if zorder is not None:
+        zorder = renpy.python.py_eval(zorder)
+    else:
+        zorder = 0
 
-        if zorder:
-            zorder = renpy.python.py_eval(zorder)
-        else:
-            zorder = 0
-
-        if expression:
-            expression = renpy.python.py_eval(expression)
-            expression = renpy.easy.displayable(expression)
+    if expression is not None:
+        expression = renpy.python.py_eval(expression)
+        expression = renpy.easy.displayable(expression)
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
+
     renpy.exports.show(name, at_list=at_list, layer=layer,
-                       what=expression, zorder=zorder, tag=tag)
+                       what=expression, zorder=zorder, tag=tag, behind=behind)
 
 class Show(Node):
 
