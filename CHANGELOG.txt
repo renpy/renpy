@@ -5,10 +5,16 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.5
 -------------------
 
+We now store a digest of .rpy files in the corresponding .rpyc
+file. This will allow us to detect that the .rpy file has changed,
+even if there are problems with the system clock.
+
 The show statement now takes a 'behind' clause, which gives a list of
 image tags the current image should be shown behind.
 
 Ren'Py (not python) strings can now be quoted with ` as well as ' and ".
+
+Fixed minor bugs in the launcher.
 
 
 New in Ren'Py 5.6.4

@@ -571,9 +571,11 @@ class Hide(Node):
             expression = None
             tag = None
             zorder = 0
-        else:
+        elif len(self.imspec) == 6:
             name, expression, tag, at_list, layer, zorder = self.imspec
-
+        elif len(self.imspec) == 7:
+            name, expression, tag, at_list, layer, zorder, behind = self.imspec
+            
         renpy.exports.hide(tag or name, layer)
 
         return self.next

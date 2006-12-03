@@ -28,6 +28,7 @@ import os.path
 import os
 import imp
 import difflib
+import md5
 
 from pickle import loads, dumps
 
@@ -103,48 +104,65 @@ class Script(object):
 #             for fn in os.listdir(dirname):
 #                 dirlist.append(dirname + "/" + fn)
 
-        # Files to ensure (because they are the alts of files that
-        # have been processed.)
-        ignore = [ ]
 
+        # A list of directory, filename w/o extension pairs. This is
+        # the basics of what we will be laoding.
+        script_files = [ ]
+                
         for dir, fn in dirlist:
 
-            if not (fn.endswith('.rpyc') or fn.endswith('.rpy')):
-                continue
+            if fn.endswith(".rpy"):
+                if dir is None:
+                    continue
 
-            if fn in ignore:
-                continue
-
-            if fn[-1] == 'c':
-                alt = fn[:-1]
+                fn = fn[:-4]
+            elif fn.endswith(".rpyc"):
+                fn = fn[:-5]
             else:
-                alt = fn + 'c'
+                continue
+            
+            if (dir, fn) not in script_files:
+                script_files.append((dir, fn))
 
-            if dir:
-                fullfn = dir + "/" + fn
-                fullalt = dir + "/" + alt
+        for dir, fn in script_files:
 
-                if os.path.exists(fullfn) and os.path.exists(fullalt):
-                    fntime = os.stat(fullfn).st_mtime
-                    alttime = os.stat(fullalt).st_mtime
+            # This can only be a .rpyc file, since we're loading it
+            # from an archive.
+            if dir is None:
+                if not self.load_file(dir, fn + ".rpyc", node_callback):
+                    raise Exception("Could not load from archive %s.rpyc" % fn)
 
-                    if alttime > fntime:
+                continue
+                
+            # Otherwise, we're loading from disk. So we need to decide if
+            # we want to load the rpy or the rpyc file.
+            rpyfn = dir + "/" + fn + ".rpy"
+            rpycfn = dir + "/" + fn + ".rpyc"
+
+            if os.path.exists(rpyfn) and os.path.exists(rpycfn):
+                rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
+                f = file(rpycfn)
+                f.seek(-md5.digest_size, 2)
+                rpycdigest = f.read(md5.digest_size)
+                f.close()
+
+                if rpydigest == rpycdigest:
+
+                    if self.load_file(dir, fn + ".rpyc", node_callback):
                         continue
 
-            ignore.append(alt)
+                    print "Could not load " + rpycfn
 
-            # print "Loading", fn
+                if not self.load_file(dir, fn + ".rpy", node_callback):
+                    raise Exception("Could not load file %s." % rpyfn) 
+                
+            elif os.path.exists(rpycfn):
+                if not self.load_file(dir, fn + ".rpyc", node_callback):
+                    raise Exception("Could not load file %s." % rpycfn) 
 
-            if self.load_file(dir, fn, node_callback):
-                continue
-
-            print "Couldn't load %s, trying %s instead." % (fn, alt)
-
-            if self.load_file(dir, alt, node_callback):
-                continue
-
-            raise Exception("Could not load %s or %s." % (fn, alt))
-            
+            elif os.path.exists(rpyfn):
+                if not self.load_file(dir, fn + ".rpy", node_callback):
+                    raise Exception("Could not load file %s." % rpyfn) 
 
         # Make the sort stable.
         initcode = [ (prio, index, code) for index, (prio, code) in
@@ -220,8 +238,10 @@ class Script(object):
             self.assign_names(stmts, fullfn)
 
             try:
+                rpydigest = md5.md5(file(fullfn, "rU").read()).digest()
                 f = file(dir + "/" + fn + "c", "wb")
                 f.write(dumps((data, stmts), 2).encode('zlib'))
+                f.write(rpydigest)
                 f.close()
             except:
                 pass

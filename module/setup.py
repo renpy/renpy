@@ -111,6 +111,17 @@ if winmixer:
 if linmixer:
     py_modules.append('pysdlsound.linmixer')
 
+
+ffplay = distutils.core.Extension(
+    "renpy_ffplay",
+    ["renpy_ffplay.c", "ffplay_module.c"],
+    include_dirs = [ install + '/include/SDL', install + '/include/ffmpeg', install + '/include' ],
+    library_dirs = [ install + '/lib' ],
+    libraries = [ 'avcodec', 'avformat', 'avcodec', 'avutil', 'vorbis', 'vorbisenc', 'ogg', 'SDL', 'z', 'm', ],
+    )
+
+extensions.append(ffplay)
+
 distutils.core.setup(
     name = "renpy_module",
     version = "5.5.0",
