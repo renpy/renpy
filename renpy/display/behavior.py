@@ -275,12 +275,34 @@ class Button(renpy.display.layout.Window):
         rv = super(Button, self).render(width, height, st, at)
 
         if self.clicked:
-            rv.add_focus(self,
-                         None,
-                         self.style.left_margin,
-                         self.style.top_margin,
-                         rv.width - self.style.right_margin,
-                         rv.height - self.style.bottom_margin)
+
+            rect = self.style.focus_rect
+            if rect is not None:
+                fx, fy, fw, fh = rect
+            else:
+                fx = self.style.left_margin
+                fy = self.style.top_margin
+                fw = rv.width - self.style.right_margin
+                fh = rv.height - self.style.bottom_margin
+
+            mask = self.style.focus_mask
+
+            if mask is True:
+                mask = rv
+            elif mask is not None:
+                mask = renpy.easy.displayable(mask)
+                mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
+
+            if mask is not None:
+                fmx = 0
+                fmy = 0
+            else:
+                fmx = None
+                fmy = None
+                
+            rv.add_focus(self, None,
+                         fx, fy, fw, fh,
+                         fmx, fmy, mask)
             
         return rv
 

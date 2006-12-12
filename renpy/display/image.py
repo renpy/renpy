@@ -167,13 +167,13 @@ class Solid(renpy.display.core.Displayable):
     making it suitable for use as a background.
     """
 
-    def __init__(self, color):
+    def __init__(self, color, **properties):
         """
         @param color: An RGBA tuple, giving the color that the display
         will be filled with.
         """
         
-        super(Solid, self).__init__()
+        super(Solid, self).__init__(**properties)
         self.color = renpy.easy.color(color)
 
     def render(self, width, height, st, at):
@@ -196,7 +196,7 @@ class Frame(renpy.display.core.Displayable):
     the center of the image is scaled in both x and y directions.
     """
 
-    def __init__(self, image, xborder, yborder, tile=False):
+    def __init__(self, image, xborder, yborder, tile=False, **properties):
         """
         @param image: The image (which may be a filename or image
         object) that will be scaled.
@@ -215,7 +215,7 @@ class Frame(renpy.display.core.Displayable):
         at. We detect this and avoid scaling if possible.
         """
 
-        super(Frame, self).__init__()
+        super(Frame, self).__init__(**properties)
 
         self.image = Image(image)
         self.xborder = xborder

@@ -619,12 +619,16 @@ class Render(object):
             if focus and xo == 0 and yo == 0:
                 self.focuses.extend(source.focuses)
             elif focus:
-                for widget, arg, x, y, w, h in source.focuses:
+                for widget, arg, x, y, w, h, mx, my, mask in source.focuses:
                     if x is not None:
                         x += xo
                         y += yo
 
-                    self.add_focus(widget, arg, x, y, w, h)
+                    if mx is not None:
+                        mx += xo
+                        my += yo
+                        
+                    self.add_focus(widget, arg, x, y, w, h, mx, my, mask)
                                       
         self.blittables.append((xo, yo, source))
     
@@ -774,7 +778,7 @@ class Render(object):
         rv.children.append(self)
 
         if focus:
-            for fwidget, farg, fx, fy, fw, fh in self.focuses:
+            for fwidget, farg, fx, fy, fw, fh, fmx, fmy, fmask in self.focuses:
                 if fx is not None:
                     fx -= x
                     fx = max(fx, 0)
@@ -789,7 +793,32 @@ class Render(object):
                     if fw <= 0 or fh <= 0:
                         continue
 
-                rv.add_focus(fwidget, farg, fx, fy, fw, fh)
+                if fmx is not None:
+
+                    fmx -= x
+                    if fmx < 0:
+                        fmxo = -fmx
+                        fmx = 0
+                    else:
+                        fmxo = 0
+
+                    fmy -= y
+                    if fmy < 0:
+                        fmyo = -fmy
+                        fmy = 0
+                    else:
+                        fmyo = 0
+                    
+                    fmw, fmh = fmask.get_size()
+                    fmw = min(fmw - fmxo, width - fmx)
+                    fmh = min(fmh - fmyo, height - fmy)
+
+                    if fmw <= 0 or fmh <= 0:
+                        continue
+
+                    fmask = fmask.subsurface((fmxo, fmyo, fmw, fmh))
+                    
+                rv.add_focus(fwidget, farg, fx, fy, fw, fh, fmx, fmy, fmask)
                 
         for xo, yo, source in self.blittables:
 
@@ -853,7 +882,7 @@ class Render(object):
         self.depends.append(child)
         child.parents.append(self)
 
-    def add_focus(self, widget, arg=None, x=0, y=0, w=None, h=None):
+    def add_focus(self, widget, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
         This is called to indicate a region of the screen that can be
         focused.
@@ -873,8 +902,39 @@ class Render(object):
             if h is None:
                 h = self.height
 
-        self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h))
+        if mask is not None and mask is not self:
+            self.depends_on(mask)
+                
+        self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h, mx, my, mask))
 
+    # Determines if the pixel at x, y is opaque or not.
+    def is_opaque(self, x, y):
+        if x >= self.width or y >= self.height:
+            return False
+        
+        for xo, yo, source in self.blittables:
+            xx = x - xo
+            yy = y - yo
+
+            if xx < 0 or yy < 0:
+                continue
+
+            if isinstance(source, pygame.Surface):
+                ww, hh = source.get_size()
+                if xx >= ww or yy >= hh:
+                    continue
+
+                if not source.get_masks()[3] or source.get_at((xx, yy))[3]:
+                    return True
+            else:
+                if source.is_opaque(xx, yy):
+                    return True
+
+        return False
+                
+        
+        
+        
 def is_fullscreen(surf, x, y, wh):
     if renpy.config.disable_fullscreen_opt:
         return False

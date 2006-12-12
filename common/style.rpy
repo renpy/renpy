@@ -217,10 +217,15 @@ init -1000:
         style.default.box_first_spacing = None
         style.default.box_layout = None
 
+        # Focus properties.
+        style.default.focus_mask = None
+        style.default.focus_rect = None
+        
         # Misc.
         style.default.activate_sound = None
         style.default.clipping = False
-
+        
+        
         ######################################################################
         # The style of various boxes.
 

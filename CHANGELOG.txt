@@ -5,14 +5,23 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.5
 -------------------
 
-We now store a digest of .rpy files in the corresponding .rpyc
-file. This will allow us to detect that the .rpy file has changed,
-even if there are problems with the system clock.
+The new config.image_buttons and config.image_labels variables can now
+be used to replace the buttons and labels (respectively) found on the
+game and main menus with image-based replacements.
+
+The new focus_mask property allows image buttons to take a mask image
+that defines where the mouse must be for it to be focused. The
+focus_rect property lets a subrectangle be used to specify focus, when
+two imagebuttons overlap.
 
 The show statement now takes a 'behind' clause, which gives a list of
 image tags the current image should be shown behind.
 
-Ren'Py (not python) strings can now be quoted with ` as well as ' and ".
+Ren'Py (not python) strings can now be quoted with ` as well as " and '.
+
+We now store a digest of .rpy files in the corresponding .rpyc
+file. This will allow us to detect that the .rpy file has changed,
+even if there are problems with the system clock.
 
 Fixed minor bugs in the launcher.
 

@@ -463,6 +463,7 @@ def imagemap(ground, selected, hotspots, unselected=None,
                     style=button_style,
                     xpos=x0, xanchor='left',
                     ypos=y0, yanchor='top',
+                    focus_mask=True,
                     )
 
     close()

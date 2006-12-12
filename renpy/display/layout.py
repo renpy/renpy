@@ -1159,7 +1159,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         child.visit_all(lambda c : c.per_interact())
 
         if redraw is not None:
-            renpy.display.render.redraw(self, 0)
+            renpy.display.render.redraw(self, redraw)
         
         return renpy.display.render.render(self.child, w, h, st, at)
 

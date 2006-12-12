@@ -6,8 +6,6 @@ init -440:
     # Set to true in the very unlikely event you want to manually init
     # the sound system.
     $ config.force_sound = False
-
-    $ config.debug_sound = True
     
 init 500:
 

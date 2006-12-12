@@ -34,6 +34,12 @@ init -500:
         # Used to ensure library compatibility.
         config.script_version = None
 
+        # A dict of 5-tuples mapping button labels to image buttons.
+        config.image_buttons = { }
+
+        # A dict mapping label to image.
+        config.image_labels = { }
+        
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
@@ -66,15 +72,27 @@ init -500:
             @param properties: Addtional layout properties.
             """
 
+            if disabled:
+                clicked = None
+
+            if label in config.image_buttons:
+                (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
+
+                if not clicked:
+                    ui.image(disabled, **properties)
+                elif selected:
+                    ui.imagebutton(sel_idle, sel_hover, clicked=clicked, **properties)
+                else:
+                    ui.imagebutton(idle, hover, clicked=clicked, **properties)
+
+                return
+
             style = type
 
             if selected and not disabled:
                 role = "selected_"
             else:
                 role = ""
-
-            if disabled:
-                clicked = None
 
             style = style + "_button"
             text_style = style + "_text"
@@ -88,10 +106,14 @@ init -500:
 
             @param label: The label of the box.
 
-            @param type: "prefs" or "yesno". 
+            @param type: "prefs" or "yesno". (perhaps more by now.)
 
             @param properties: This may contain position properties.
             """
+
+            if label in config.image_labels:
+                ui.image(config.image_labels[label], **properties)
+                return
 
             ui.text(_(label), style=type + "_label", **properties)
 

@@ -27,16 +27,20 @@ from pygame.constants import *
 
 class Focus(object):
 
-    def __init__(self, widget, arg, x, y, w, h):
+    def __init__(self, widget, arg, x, y, w, h, mx, my, mask):
         self.widget = widget
         self.arg = arg
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        
+        self.mx = mx
+        self.my = my
+        self.mask = mask
+
+    # Used in render, where we treat focuses as tuples.
     def __iter__(self):
-        return iter((self.widget, self.arg, self.x, self.y, self.w, self.h))
+        return iter((self.widget, self.arg, self.x, self.y, self.w, self.h, self.mx, self.my, self.mask))
 
 # The widget currently grabbing the input, if any.
 grab = None
@@ -174,6 +178,13 @@ def mouse_handler(ev, x, y):
             default = f
             continue
 
+        if f.mx is not None:
+            if f.mask.is_opaque(x - f.mx, y - f.my):
+                newfocus = f
+                break
+            else:
+                continue
+            
         if f.x <= x <= f.x + f.w and f.y <= y <= f.y + f.h:
             newfocus = f
             break

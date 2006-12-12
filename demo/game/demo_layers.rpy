@@ -58,11 +58,10 @@ label demo_layers:
     hide text
     with dissolve
 
-    show eileen happy zorder 2
-    show logo base at Position(xalign=0.6, yalign=0.0) zorder 1
+    show logo base at Position(xalign=0.6, yalign=0.0) behind eileen
     with dissolve
 
-    e "Finally, the \"zorder\" clause lets you place an image behind another."
+    e "Finally, the \"behind\" clause lets you place an image behind another."
 
     hide logo base
     show eileen happy
