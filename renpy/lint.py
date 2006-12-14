@@ -132,6 +132,8 @@ def check_image(node):
 def imspec(t):
     if len(t) == 3:
         return t[0], None, None, t[1], t[2], 0
+    if len(t) == 6:
+        return t[0], t[1], t[2], t[3], t[4], t[5], None
     else:
         return t
 
@@ -143,7 +145,7 @@ def check_show(node):
     if not node.imspec:
         return
 
-    name, expression, tag, at_list, layer, zorder = imspec(node.imspec)
+    name, expression, tag, at_list, layer, zorder, behind = imspec(node.imspec)
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report(node, "Uses layer '%s', which is not in config.layers.", layer)
@@ -158,7 +160,7 @@ def check_show(node):
 
 def check_hide(node):
 
-    name, expression, tag, at_list, layer, zorder = imspec(node.imspec)
+    name, expression, tag, at_list, layer, zorder, behind = imspec(node.imspec)
 
     tag = tag or name[0]
 
@@ -175,6 +177,52 @@ def check_with(node):
     try_eval(node, "a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
 
+def text_checks(node, s):
+    msg = renpy.display.text.check_text_tags(s)
+    if msg:
+        report(node, "%s (in %s)", msg, repr(s)[1:])
+
+    if "%" in s:
+        
+        state = 0
+        pos = 0
+        fmt = ""
+        while pos < len(s):            
+            c = s[pos]
+            pos += 1
+
+            # Not in a format.
+            if state == 0:
+                if c == "%":
+                    state = 1
+                    fmt = "%"
+                    
+            # In a format.
+            elif state == 1:
+                fmt += c
+                if c == "(":
+                    state = 2
+                elif c in "#0123456780- +hlL":
+                    state = 1
+                elif c in "diouxXeEfFgGcrs%":
+                    state = 0
+                else:
+                    report(node, "Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    state = 0
+                    
+            # In a mapping key.
+            elif state == 2:
+                fmt += c
+                if c == ")":
+                    state = 1
+
+        if state != 0:
+            report(node, "Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    
+                    
+                
+
+        
 def check_say(node):
 
     if node.who:
@@ -183,18 +231,23 @@ def check_say(node):
     if node.with:
         try_eval(node, "the with clause of a say statement", node.with, "Perhaps you forgot to declare, or misspelled, a transition?")
 
+    text_checks(node, node.what)
+        
 def check_menu(node):
 
     if node.with:
         try_eval(node, "the with clause of a menu statement", node.with, "Perhaps you forgot to declare, or misspelled, a transition?")
 
-    if not [ (l, c, b) for l, c, b in node.items if l ]:
+    if not [ (l, c, b) for l, c, b in node.items if b ]:
         report(node, "The menu does not contain any selectable choices.")
 
     for l, c, b in node.items:
         if c:
             try_compile(node, "in the if clause of a menuitem", c)
-        
+
+        text_checks(node, l)
+
+            
 
 def check_jump(node):
 
@@ -311,4 +364,5 @@ def lint():
     if say_count > 0:
         print "For an average of %.1f words per screen." % (1.0 * say_words / say_count) 
     print "The game contains", menu_count, "menus."
-
+    print
+    print "Lint is not a substitute for thorough testing."

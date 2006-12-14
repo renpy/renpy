@@ -26,6 +26,22 @@ import re
 import renpy
 import sys
 
+# A list of text tags, mapping from the text tag prefix to if it
+# requires a closing tag.
+text_tags = dict(
+    image=False,
+    p=False,
+    w=False,
+    fast=False,
+    b=True,
+    i=True,
+    u=True,
+    a=True,
+    plain=True,
+    font=True,
+    color=True,
+    size=True)
+
 # This contains a map from (fn, size, bold, italics, underline) to the
 # unloaded font object corresponding to that specification. 
 fonts = { }
@@ -1271,3 +1287,39 @@ class ParameterizedText(object):
     def predict(self, callback):
         return
     
+# This checks the text tags in a string to be sure they are all matched, and
+# properly nested. It returns an error message, or None if the line is okay.
+def check_text_tags(s):
+    tokens = renpy.config.text_tokenizer(s, None)
+
+    tag_stack = [ ]
+
+    for type, text in tokens:
+        if type != "tag":
+            continue
+
+        # Closing tag.
+        if text[0] == '/':
+            if not tag_stack:
+                return "Close text tag '%s' does not match an open text tag." % text
+
+            if tag_stack[-1] != text[1:]:
+                return "Close text tag '%s' does not match open text tag '%s'." % (text, tag_stack[-1])
+
+            tag_stack.pop()
+            continue
+                
+        # Strip off arguments for open tags.
+        if text.find('=') != -1:
+            text = text[:text.find('=')]
+        
+        if text not in text_tags:
+            return "Text tag '%s' is not known." % text
+        
+        if text_tags[text]:
+            tag_stack.append(text)
+
+    if tag_stack:
+        return "One or more text tags were left open at the end of the string: " + ", ".join([ "'" + i + "'" for i in tag_stack])
+
+    return None

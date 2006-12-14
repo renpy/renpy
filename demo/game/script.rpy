@@ -10,7 +10,7 @@ label start:
     scene bg washington
     show eileen vhappy
     with dissolve
-    
+
     # Start the background music playing.
     $ renpy.music.play("mozart.ogg")
 

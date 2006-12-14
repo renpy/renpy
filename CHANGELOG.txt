@@ -5,6 +5,13 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.5
 -------------------
 
+The reference manual once again ships with Ren'Py.
+
+Lint now checks for improperly matched text tags, and for
+syntactically incorrect formating codes. Note that it cannot check for
+the use of undefined variables in an otherwise correct formatting
+code.
+
 The new config.image_buttons and config.image_labels variables can now
 be used to replace the buttons and labels (respectively) found on the
 game and main menus with image-based replacements.
@@ -22,6 +29,10 @@ Ren'Py (not python) strings can now be quoted with ` as well as " and '.
 We now store a digest of .rpy files in the corresponding .rpyc
 file. This will allow us to detect that the .rpy file has changed,
 even if there are problems with the system clock.
+
+The default who_suffix for characters has been changed from ': ' to
+'', that is, to the empty string. (We believe this improves the look of
+Ren'Py games.)
 
 Fixed minor bugs in the launcher.
 
