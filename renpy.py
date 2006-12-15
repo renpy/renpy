@@ -52,18 +52,19 @@ def path_to_renpy_base():
 ##############################################################################
 
 # The version of the Mac Launcher and py4renpy that we use.
-mac_linux_version = (5, 6, 2)
+macos_version = (5, 6, 2)
+linux_version = (5, 6, 5)
 
 if __name__ == "__main__":
 
     # Check for mac compatibility.
     if "mac_version" in globals():
-        mac_version(mac_linux_version)
+        mac_version(macos_version)
 
     # Check py4renpy compatibility.
     try:
         import py4renpy
-        if py4renpy.version < mac_linux_version:
+        if py4renpy.version < linux_version:
             print "The version of py4renpy that you are using is too old. Please go to"
             print "http://www.bishoujo.us/renpy/linux.html, and download the latest"
             print "version."

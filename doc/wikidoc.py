@@ -49,9 +49,9 @@ XHTML = "{http://www.w3.org/1999/xhtml}"
 
 def process(fn):
 
-
-
-    
+    if "This page does not exist yet" in file("mirror/" + fn + ".html").read():
+        return
+        
     dir = os.path.dirname(fn)
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
@@ -65,7 +65,7 @@ def process(fn):
 | <a href="http://www.renpy.org/wiki/renpy/doc/reference/">online</a>)
 </div>
 """ % locals())
-    
+
                             
     tree = TidyHTMLTreeBuilder.parse("mirror/" + fn + ".html") 
 

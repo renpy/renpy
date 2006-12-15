@@ -4,7 +4,7 @@ from distutils.core import setup
 import py2exe
 import sys
 
-sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-x', '-a', '--dll-excludes', 'w9xpopen.exe' ]
+sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe' ]
 
 setup(name="RenPy",
       windows=[ dict(script="renpy.py",

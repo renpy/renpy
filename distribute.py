@@ -178,7 +178,9 @@ def main():
     more_files.sort()
 
     zipup("dists/" + prefix + "-win32.zip", prefix, files)
+    print "----"
     zipup("dists/" + prefix + "-full.zip", prefix, files + more_files)
+    print "----"
     tarup("dists/" + prefix + "-full.tar.bz2", prefix, files + more_files)
 
     
