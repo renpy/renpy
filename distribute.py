@@ -170,6 +170,10 @@ def main():
     files.extend(tree('template'))
     files.extend(tree('tools'))
 
+    files.append('doc/index.html')
+    files.append('doc/screen.css')
+    files.extend(tree('doc/reference'))
+    
     files.sort()
     more_files.sort()
 
