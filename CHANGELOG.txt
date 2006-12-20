@@ -1,6 +1,17 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 5.6.6
+-------------------
+
+It is now possible to supply a function that determines if the say
+statement is allowed to be dismissed, by setting
+config.say_allow_dismiss. ui.saybehavior has been updated with similar
+functionality. This was added to support children's games, where
+dismissing dialogue before it's fully spoken harms the value of a game
+as a pedagogical tool... this functionality should not be used in visual 
+novels aimed at adults.
+
 
 New in Ren'Py 5.6.5
 -------------------

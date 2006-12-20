@@ -185,7 +185,7 @@ class SayBehavior(renpy.display.layout.Null):
 
     focusable = True
 
-    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], **properties):
+    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
 
         if not isinstance(dismiss, (list, tuple)):
@@ -199,6 +199,8 @@ class SayBehavior(renpy.display.layout.Null):
         # What keybindings lead to dismissal?
         self.dismiss = dismiss
 
+        self.allow_dismiss = allow_dismiss
+        
     def set_afm_length(self, afm_length):
         self.afm_length = afm_length
               
@@ -246,8 +248,17 @@ class SayBehavior(renpy.display.layout.Null):
                     renpy.config.skipping = None
                     renpy.exports.restart_interaction()
                     raise renpy.display.core.IgnoreEvent()
-                else:
-                    return True
+
+
+                print self.allow_dismiss
+
+                if self.allow_dismiss:
+                    if not self.allow_dismiss():
+                        raise renpy.display.core.IgnoreEvent()
+
+                return True
+                    
+                
 
         # if map_event(ev, "rollforward"):
         #    if renpy.game.context().seen_current(False):

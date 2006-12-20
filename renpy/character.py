@@ -276,7 +276,7 @@ def display_say(who, what, who_style='say_label',
         # If we're going to do an interaction, then saybehavior needs
         # to be here.
         if interact:            
-            behavior = renpy.ui.saybehavior()
+            behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
         else:
             behavior = None
 

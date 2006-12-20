@@ -212,6 +212,10 @@ start_interact_callbacks = [ ]
 # A list of functions that are called when a say statement is sustained.
 say_sustain_callbacks = [ ]
 
+# A function that is called to see if say should allow itself to be
+# dismissed.
+say_allow_dismiss = None
+
 # A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
 
