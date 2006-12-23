@@ -249,9 +249,6 @@ class SayBehavior(renpy.display.layout.Null):
                     renpy.exports.restart_interaction()
                     raise renpy.display.core.IgnoreEvent()
 
-
-                print self.allow_dismiss
-
                 if self.allow_dismiss:
                     if not self.allow_dismiss():
                         raise renpy.display.core.IgnoreEvent()
