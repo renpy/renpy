@@ -959,8 +959,8 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 1) * 256;
-    float fsh = (srch - 1) * 256;
+    float fsw = (srcw - 2) * 256;
+    float fsh = (srch - 2) * 256;
     
     
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
@@ -976,35 +976,40 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
         if (xdx != 0) {
             float d1 = -lsx / xdx;
-            float d2 = (fsw - lsx) / xdx - 1;
+            float d2 = (fsw - lsx) / xdx;
 
             minx = fmaxf(minx, fminf(d1, d2)); 
             maxx = fminf(maxx, fmaxf(d1, d2)); 
             
-            // printf("ZZZ %f %f\n", d1, d2);
+//            printf("ZZZ1 %f %f\n", d1, d2);
         } else if ( lsx < 0 || lsx >= fsw) {
             continue;
         }
 
         if (ydx != 0) {
             float d1 = -lsy / ydx;
-            float d2 = (fsh - lsy) / ydx - 1;
+            float d2 = (fsh - lsy) / ydx;
 
             minx = fmaxf(minx, fminf(d1, d2)); 
             maxx = fminf(maxx, fmaxf(d1, d2)); 
-            // printf("ZZZ %f %f\n", d1, d2);
+//            printf("ZZZ2 %f %f\n", d1, d2);
         } else if ( lsy < 0 || lsy >= fsh) {
             continue;
         }
-
 
         if (minx > maxx) {
             continue;
         }
 
+//        printf("CCC %f %f\n", minx, maxx); 
+        
         minx = ceil(minx);
         maxx = floor(maxx);
 
+//        printf("CCC2 %f %f\n", minx, maxx); 
+//        printf("XXX %f %f %f %f\n", lsx / 256, xdx / 256, lsy / 256, ydx/256);
+
+        
         // printf("%f %f\n", minx, maxx);
         
         // printf("Minx at: %f %f\n", (lsx + xdx * minx) / 256, (lsy + ydx * minx) / 256);
@@ -1027,11 +1032,11 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
             py = syi >> 8;
 
 
-            /* We need to check these bounds analytically. */
+            /* These bounds are checked analytically, hence the if (1)
+             * { */
             
-            if (0 <= px && px < srcw - 1 && 0 <= py && py < srch - 1) {
-            // if (px < srcw && py < srch) {
-            // if (1) {
+            // if (0 <= px && px < srcw - 1 && 0 <= py && py < srch - 1) {
+            if (1) {
                 
                 unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
@@ -1077,6 +1082,8 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
                 
 
             } else {
+                // This code can't execute.
+
                 printf("Failed x %f (%d, %d)\n", minx, px, py);
  
                 *d++ = 0;
@@ -1088,7 +1095,7 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
             
             sx += xdx;
             sy += ydx;
-            minx++;
+            // minx++;
         }
     }
 }
