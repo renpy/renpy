@@ -68,6 +68,9 @@ cdef extern from "renpy.h":
                       float, float, float, float,
                       float, float, float, float)
 
+    void transform32_core(object, object,
+                          float, float, float, float, float, float)
+    
 
 import pygame
 
@@ -294,6 +297,34 @@ def bilinear(pysrc, pydst,
                      source_xoff, source_yoff, source_width, source_height,
                      dest_xoff, dest_yoff, dest_width, dest_height)
 
+
+    pydst.unlock()
+    pysrc.unlock()
+
+
+def transform(pysrc, pydst,
+              corner_x, corner_y,
+              xdx, ydx, xdy, ydy):
+
+    if not isinstance(pysrc, pygame.Surface):
+        raise Exception("transform requires a pygame Surface as its first argument.")
+
+    if not isinstance(pydst, pygame.Surface):
+        raise Exception("transform requires a pygame Surface as its second argument.")
+
+    if pysrc.get_bitsize() != 32:
+        raise Exception("transform requires a 32 bit surface.")
+
+    if pydst.get_bitsize() != pysrc.get_bitsize():
+        raise Exception("transform requires both surfaces have the same bitsize.")
+
+    pysrc.lock()
+    pydst.lock()
+
+    transform32_core(pysrc, pydst,
+                     corner_x, corner_y,
+                     xdx, ydx,
+                     xdy, ydy)
 
     pydst.unlock()
     pysrc.unlock()

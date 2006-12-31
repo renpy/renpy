@@ -82,6 +82,10 @@ void scale24_core(PyObject *pysrc,
                   float, float, float, float,
                   float, float, float, float);
 
-
+void transform32_core(PyObject *pysrc,
+                      PyObject *pydst,
+                      float, float,
+                      float, float,
+                      float, float);
 
 #endif 

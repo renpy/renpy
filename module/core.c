@@ -2,6 +2,7 @@
 #include <pygame/pygame.h>
 #include "IMG_savepng.h"
 #include <stdio.h>
+#include <math.h>
 
 // Shows how to do this.
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -913,4 +914,385 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
         }
     }
 }
+
+/****************************************************************************/
+
+/* /\* A similar concept to rotozoom, but implemented differently, so we */
+/*    can limit the target are. *\/ */
+/* void transform32_core(PyObject *pysrc, PyObject *pydst, */
+/*                       float corner_x, float corner_y, */
+/*                       float xdx, float ydx, */
+/*                       float xdy, float ydy) { */
+
+/*     SDL_Surface *src; */
+/*     SDL_Surface *dst; */
+    
+/*     int y; */
+/*     int srcpitch, dstpitch; */
+/*     int srcw, srch; */
+/*     int dstw, dsth; */
+
+/*     unsigned char *srcpixels; */
+/*     unsigned char *dstpixels; */
+    
+/*     src = PySurface_AsSurface(pysrc); */
+/*     dst = PySurface_AsSurface(pydst); */
+        
+/*     srcpixels = (unsigned char *) src->pixels; */
+/*     dstpixels = (unsigned char *) dst->pixels; */
+/*     srcpitch = src->pitch; */
+/*     dstpitch = dst->pitch; */
+/*     srcw = src->w; */
+/*     dstw = dst->w; */
+/*     srch = src->h; */
+/*     dsth = dst->h; */
+
+/*     dstw -= 2; */
+/*     dsth -= 2; */
+
+    
+
+    
+/*     for (y = 0; y < dsth; y++) { */
+
+/*         // x is 0, so we can ignore xdx and ydx for now. */
+/*         float sx = corner_x + xdy * y; */
+/*         float sy = corner_y + ydy * y; */
+
+/*         unsigned char *d = dstpixels + dstpitch * y; */
+/*         unsigned char *dend = d + 4 * dstw; */
+        
+/*         while (d < dend) { */
+
+                
+/*             if (0 <= sx && sx < srcw - 1  && 0 <= sy && sy < srch - 1) { */
+
+/*                 if (d == dend - 8) { */
+/*                 short sx0 =  (short) sx; */
+/*                 short sy0 =  (short) sy; */
+
+/*                 // printf("%d %d --- ", sx0, sy0); */
+                
+
+/*                 unsigned char *s0p = srcpixels + sy0 * srcpitch + sx0 * 4; */
+/*                 unsigned char *s1p = s0p + srcpitch; */
+
+/*                 unsigned short s1frac = (short) (255 * (sy - sy0)); */
+/*                 unsigned short s0frac = 256 - s1frac; */
+            
+/*                 unsigned short xfrac = 256 - (sx - sx0) * 255.0; */
+/*                 unsigned short r, g, b, a; */
+                
+/*                 r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 g = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 b = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 a = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+
+/*                 xfrac = 256 - xfrac; */
+
+/*                 r += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 g += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 b += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 a += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+
+/*                 *d++ = r >> 8; */
+/*                 *d++ = g >> 8; */
+/*                 *d++ = b >> 8; */
+/*                 *d++ = a >> 8; */
+
+/*                 } else { */
+/*                 d += 4; */
+/*                 } */
+                
+/*             } else { */
+/*                 *d++ = 0; */
+/*                 *d++ = 0; */
+/*                 *d++ = 0; */
+/*                 *d++ = 0;                 */
+/*             } */
+
+            
+/*             sx += xdx; */
+/*             sy += ydx; */
+/*         } */
+/*     } */
+/* } */
+
+
+/* A similar concept to rotozoom, but implemented differently, so we
+   can limit the target are. */
+void transform32_core_fixedpoint(PyObject *pysrc, PyObject *pydst,
+                      float corner_x, float corner_y,
+                      float xdx, float ydx,
+                      float xdy, float ydy) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int y;
+    int srcpitch, dstpitch;
+    int srcw, srch;
+    int dstw, dsth;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    int lsx, lsy; // The position of the current line in the source.
+    int sx, sy; // The position of the current pixel in the source.
+    int fxdx, fydx, fxdy, fydy; 
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    lsx = (int) (corner_x * 256);
+    lsy = (int) (corner_y * 256);
+
+    fxdx = (int) (xdx * 256);
+    fydx = (int) (ydx * 256);
+    fxdy = (int) (xdy * 256);
+    fydy = (int) (ydy * 256);
+
+    srch -= 1;
+    srcw -= 1;
+    
+    for (y = 0; y < dsth; y++) {
+
+        sx = lsx;
+        sy = lsy;
+        
+        unsigned char *d = dstpixels + dstpitch * y;
+        unsigned char *dend = d + 4 * dstw;
+        
+        while (d < dend) {
+
+            int px, py;
+            px = sx >> 8;
+            py = sy >> 8;
+            
+            if (0 <= px && px < srcw && 0 <= py && py < srch) {
+                
+                unsigned char *sp = srcpixels + py * srcpitch + px * 4;
+
+
+                // unsigned char *s1p = s0p + srcpitch;
+                
+                unsigned short s1frac = sy & 0xff;
+                unsigned short xfrac = sx & 255;
+
+#define I(a, b, mul) ((((a << 8) + ((b - a) * mul)) >> 8) & 0xff00ff)
+// #define I(a, b, mul)
+
+                
+                unsigned int rl, rh;
+
+                unsigned int pal = *(unsigned int *) sp;
+                unsigned int pbl = *(unsigned int *) (sp + 4);
+                sp += srcpitch;
+                unsigned int pcl = *(unsigned int *) sp;
+                unsigned int pdl = *(unsigned int *) (sp + 4);
+
+                unsigned int pah = (pal >> 8) & 0xff00ff;
+                unsigned int pbh = (pbl >> 8) & 0xff00ff;
+                unsigned int pch = (pcl >> 8) & 0xff00ff;
+                unsigned int pdh = (pdl >> 8) & 0xff00ff;
+
+                pal &= 0xff00ff;
+                pbl &= 0xff00ff;
+                pcl &= 0xff00ff;
+                pdl &= 0xff00ff;
+
+                // if (y == 10)
+                // printf("%x %x %x %x\n", pah, pbh, pch, pdh);
+                
+
+                rh = I(I(pah, pch, s1frac), I(pbh, pdh, s1frac), xfrac);
+                rl = I(I(pal, pcl, s1frac), I(pbl, pdl, s1frac), xfrac);
+                // rl = 0;
+
+                // if (y == 10) 
+                // printf("%x\n", rh);
+                
+                * (unsigned int *) d = (rh << 8) | rl;
+
+                d += 4;
+                
+                 
+                
+/*                 *d++ = I(I(s0p[0], s1p[0], s1frac), I(s0p[4], s1p[4], s1frac), xfrac); */
+/*                 *d++ = I(I(s0p[1], s1p[1], s1frac), I(s0p[5], s1p[5], s1frac), xfrac); */
+/*                 *d++ = I(I(s0p[2], s1p[2], s1frac), I(s0p[6], s1p[6], s1frac), xfrac); */
+/*                 *d++ = I(I(s0p[3], s1p[3], s1frac), I(s0p[7], s1p[7], s1frac), xfrac); */
+                
+                
+/*                 r = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 g = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 b = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 a = (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+
+/*                 xfrac = 256 - xfrac; */
+
+/*                 r += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 g += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 b += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+/*                 a += (((*s0p++ * s0frac) + (*s1p++ * s1frac)) >> 8) * xfrac; */
+
+/*                 *d++ = r >> 8; */
+/*                 *d++ = g >> 8; */
+/*                 *d++ = b >> 8; */
+/*                 *d++ = a >> 8; */
+
+            } else {
+                *d++ = 0;
+                *d++ = 0;
+                *d++ = 0;
+                *d++ = 0;                
+            }
+
+            
+            sx += fxdx;
+            sy += fydx;
+        }
+
+        lsx += fxdy;
+        lsy += fydy;
+    }
+}
+
+
+/* A similar concept to rotozoom, but implemented differently, so we
+   can limit the target are. */
+void transform32_core(PyObject *pysrc, PyObject *pydst,
+                      float corner_x, float corner_y,
+                      float xdx, float ydx,
+                      float xdy, float ydy) {
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int y;
+    int srcpitch, dstpitch;
+    int srcw, srch;
+    int dstw, dsth;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    float lsx, lsy; // The position of the current line in the source.
+    float sx, sy; // The position of the current pixel in the source.
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    lsx = corner_x * 256;
+    lsy = corner_y * 256;
+
+    xdx *= 256;
+    ydx *= 256;
+    xdy *= 256;
+    ydy *= 256;
+    
+    // Shrink this by 1, so we always stay inbounds.
+    srch -= 1;
+    srcw -= 1;
+    
+    for (y = 0; y < dsth; y++) {
+
+        sx = lsx;
+        sy = lsy;
+        
+        unsigned char *d = dstpixels + dstpitch * y;
+        unsigned char *dend = d + 4 * dstw;
+        
+        while (d < dend) {
+
+            int px, py, sxi, syi;
+            sxi = ((int) sx);
+            syi = ((int) sy);                
+            px = sxi >> 8;
+            py = syi >> 8;
+
+
+            /* We need to check these bounds analytically. */
+            
+//            if (0 <= px && px < srcw && 0 <= py && py < srch) {
+            // if (px < srcw && py < srch) {
+                    if (1) {
+                
+                unsigned char *sp = srcpixels + py * srcpitch + px * 4;
+
+                // unsigned char *s1p = s0p + srcpitch;
+                
+                int s1frac = syi & 0xff; // ((short) sy) & 0xff;
+                int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
+
+#define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
+                
+                unsigned int rl, rh;
+
+                unsigned int pal = *(unsigned int *) sp;
+                unsigned int pbl = *(unsigned int *) (sp + 4);
+                sp += srcpitch;
+                unsigned int pcl = *(unsigned int *) sp;
+                unsigned int pdl = *(unsigned int *) (sp + 4);
+
+                unsigned int pah = (pal >> 8) & 0xff00ff;
+                unsigned int pbh = (pbl >> 8) & 0xff00ff;
+                unsigned int pch = (pcl >> 8) & 0xff00ff;
+                unsigned int pdh = (pdl >> 8) & 0xff00ff;
+
+                pal &= 0xff00ff;
+                pbl &= 0xff00ff;
+                pcl &= 0xff00ff;
+                pdl &= 0xff00ff;
+
+                // if (y == 10)
+                // printf("%x %x %x %x\n", pah, pbh, pch, pdh);
+                
+
+                rh = I(I(pah, pch, s1frac), I(pbh, pdh, s1frac), xfrac);
+                rl = I(I(pal, pcl, s1frac), I(pbl, pdl, s1frac), xfrac);
+                // rl = 0;
+
+                // if (y == 10) 
+                // printf("%x\n", rh);
+                
+                * (unsigned int *) d = (rh << 8) | rl;
+
+                d += 4;
+                
+
+            } else {
+                *d++ = 0;
+                *d++ = 0;
+                *d++ = 0;
+                *d++ = 0;                
+            }
+            
+            sx += xdx;
+            sy += ydx;
+        }
+
+        lsx += xdy;
+        lsy += ydy;
+    }
+}
+
 
