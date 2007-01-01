@@ -90,7 +90,7 @@ label _library_main_menu:
         # main menu.
 
         ui.window(style='mm_root')
-        ui.fixed()
+        ui.null()
 
         ### mm_menu_frame default
         # (window) A window that contains the choices in
@@ -100,9 +100,7 @@ label _library_main_menu:
         ### mm_menu_frame_vbox thin_vbox
         # (box) The vbox containing the main menu choices.
 
-        if config.main_menu_positions:
-            ui.fixed()
-        else:
+        if not config.main_menu_positions:
             ui.window(style='mm_menu_frame')
             ui.vbox(style='mm_menu_frame_vbox')
 
@@ -132,8 +130,8 @@ label _library_main_menu:
 
             _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs)
 
-        ui.close()
-        ui.close()
+        if not config.main_menu_positions:
+            ui.close()
 
         store._result = ui.interact(suppress_overlay = True,
                                     suppress_underlay = True,

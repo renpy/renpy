@@ -125,9 +125,7 @@ init -499:
             # (box) The style that is used by the box inside the
             # gm_nav_frame
 
-            if config.game_menu_positions:
-                ui.fixed()
-            else:
+            if not config.game_menu_positions:
                 ui.window(style='gm_nav_frame')
                 ui.vbox(focus='gm_nav', style='gm_nav_vbox')
             
@@ -158,7 +156,8 @@ init -499:
                                 clicked=clicked,
                                 properties=kwargs)
 
-            ui.close()
+            if not config.game_menu_positions:
+                ui.close()
 
         # This is called from the game menu to interact with the
         # user.  It suppresses all of the underlays and overlays.
