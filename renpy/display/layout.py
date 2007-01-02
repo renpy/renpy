@@ -958,7 +958,8 @@ class Zoom(renpy.display.core.Displayable):
         self.end = end
         self.time = time
         self.child = child            
-
+        self.done = 0.0
+        
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
         else:
@@ -979,7 +980,10 @@ class Zoom(renpy.display.core.Displayable):
         else:
             done = 1.0
 
+        self.done = done
+
         if self.after_child and done == 1.0:
+            self.child = self.after_child
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
         if self.time_warp:
@@ -1004,7 +1008,11 @@ class Zoom(renpy.display.core.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-        return None
+        if self.done == 1.0:
+            return self.child.event(ev, x, y, st)
+        else:
+            return None
+
 
 def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
 
@@ -1098,7 +1106,8 @@ class FactorZoom(renpy.display.core.Displayable):
         self.time_warp = time_warp
         self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
         self.opaque = opaque
-
+        self.done = 0.0
+        
     def visit(self):
         return [ self.child, self.after_child ]
 
@@ -1109,7 +1118,10 @@ class FactorZoom(renpy.display.core.Displayable):
         else:
             done = 1.0
 
+        self.done = done
+            
         if self.after_child and done == 1.0:
+            self.child = self.after_child
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
         if self.time_warp:
@@ -1129,10 +1141,15 @@ class FactorZoom(renpy.display.core.Displayable):
         if done < 1.0:
             renpy.display.render.redraw(self, 0)
 
+        self.done = done
+            
         return rv
 
     def event(self, ev, x, y, st):
-        return None
+        if self.done == 1.0:
+            return self.child.event(ev, x, y, st)
+        else:
+            return None
 
 
         
