@@ -286,7 +286,6 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        print widget
         rv.add(Position(renpy.easy.displayable(widget),
                         xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 

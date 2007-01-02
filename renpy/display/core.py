@@ -601,16 +601,8 @@ class Display(object):
             except:
                 pass
 
-                
-        # Pick an appropriate display mode. Prefer 32, but accept 24
-        # before letting SDL do conversions.
-        if 24 == pygame.display.mode_ok((width, height), fsflag, 32):
-            depth = 24
-        else:
-            depth = 32
-
         # The window we display things in.
-        self.window = pygame.display.set_mode((width, height), fsflag, depth)
+        self.window = pygame.display.set_mode((width, height), fsflag, 32)
         
         # Sample surface that all surfaces are created based on.
         sample = pygame.Surface((10, 10))

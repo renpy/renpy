@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -645,10 +645,18 @@ class CropMove(Transition):
 
         renpy.display.render.redraw(self, 0)
         return rv
-                
+
+
+
+# These are used by MoveTransition.
+def default_enter_factory(pos, delay, d):
+    return d
+
+def default_leave_factory(pos, delay, d):
+    return None
 
 # TODO: Move isn't properly respecting positions when x < 0.
-def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
+def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None):
     """
     This transition attempts to find images that have changed
     position, and moves them from the old position to the new
@@ -669,6 +677,12 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
     if factory is None:
         factory = renpy.display.layout.Move
 
+    if enter_factory is None:
+        enter_factory = default_enter_factory
+
+    if leave_factory is None:
+        leave_factory = default_leave_factory
+        
     def position(d):
 
         xpos, ypos, xanchor, yanchor = d.get_placement()
@@ -727,43 +741,92 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None):
         # Otherwise, we recompute the scene list for the two widgets, merging
         # as appropriate.
 
-        tags = { }
+        def tag_d(sle):
+            return sle[0], sle[4]
 
-        for tag, zo, start, anim, d in old.scene_list:
+        def merge(sle, d):
+            return sle[:4] + (d,)
+        
+        # A list of tags on the new layer.
+        new_tags = { }
 
-            if tag is None:
+        # The scene list we're creating.
+        rv_sl = [ ]
+
+        # The new scene list we're copying from.
+        new_scene_list = new.scene_list[:]
+        
+        for new_sle in new.scene_list:
+            new_tag, new_d = tag_d(new_sle)
+            
+            if new_tag is not None:
+                new_tags[new_tag] = new_d
+            
+        for old_sle in old.scene_list:
+            old_tag, old_d = tag_d(old_sle)
+            
+            # In old, not in new.
+            if old_tag not in new_tags:
+
+                move = leave_factory(position(old_d), delay, old_d)
+                if move is None:
+                    continue
+
+                rv_sl.append(merge(old_sle, move))
                 continue
 
-            tags[tag] = d
+            # In new, not in old.
+            while new_scene_list:
+                new_sle = (new_scene_list.pop(0))                
+                new_tag, new_d = tag_d(new_sle)
 
-        newsl = [ ]
-
-        for tag, zo, time, anim, d in new.scene_list:
-
-            if tag is None or tag not in tags:
-                newsl.append((tag, zo, time, anim, d))
-                continue
-
-            oldpos = position(tags[tag])
-            newpos = position(d)
-
-            if oldpos == newpos:
-                newsl.append((tag, zo, time, anim, d))
-                continue
+                if new_tag in new_tags:
+                    del new_tags[new_tag]
                 
-            move = factory(position(tags[tag]),
-                           position(d),
-                           delay,
-                           d,
-                           )
+                if new_tag == old_tag:
+                    break
 
-            newsl.append((tag, zo, None, anim, move))
+                move = enter_factory(position(new_d), delay, new_d)
+                if move is None:
+                    continue
 
-        rv = renpy.game.interface.make_layer(layer_name, newsl)
+                rv_sl.append(merge(new_sle, move))
+                continue
 
+            # In both.
+            if new_tag == old_tag:
+
+                move = factory(position(old_d), position(new_d), delay, new_d)
+                if move is None:
+                    continue
+
+                rv_sl.append(merge(new_sle, move))
+                
+        # In new scene list after we're done processing the stuff in the old
+        # scene list.
+        while new_scene_list:
+            new_sle = (new_scene_list.pop(0))                
+            new_tag, new_d = tag_d(new_sle)
+
+            if new_tag in new_tags:
+                del new_tags[new_tag]
+
+            if new_tag == old_tag:
+                break
+
+            move = enter_factory(position(new_d), delay, new_d)
+            if move is None:
+                continue
+
+            rv_sl.append(merge(new_sle, move))
+            continue
+
+        
+        rv = renpy.game.interface.make_layer(layer_name, rv_sl)
         return rv
 
 
+    # This calls merge_slide to actually do the merging.
     rv = merge_slide(old_widget, new_widget)
     rv.delay = delay
 
@@ -993,3 +1056,15 @@ class ImageDissolve(Transition):
 
         return rv
 
+def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
+    if before is not None:
+        old = before(new_widget=new_widget, old_widget=old_widget)
+    else:
+        old = old_widget
+        
+    if after is not None:
+        new = after(new_widget=new_widget, old_widget=old_widget)
+    else:
+        new = new_widget
+
+    return trans(new_widget=new, old_widget=old)
