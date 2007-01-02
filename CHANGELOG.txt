@@ -25,9 +25,12 @@ TODO: Per-button/label attrs.
 
 TODO: Mac compat fix.
 
-All graphics are now performed in 32bpp mode. Previously, we used a
-mix of 32 and 24bpp, but usually 32bpp anyway.
+Motion now takes a add_sizes arguments, which causes the interpolation
+function to be supplied with the sizes of the area in which the object
+will be placed, and the size of the child.
 
+All graphics are now 32 bits per pixel. Previously, we used a mix of
+32 and 24bpp, but ran at 32 in most circumstances.
 
 It is now possible to supply a function that determines if the say
 statement is allowed to be dismissed, by setting

@@ -725,14 +725,14 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
     if leave_factory is None:
         leave_factory = default_leave_factory
         
-    def merge_slide(old, new, layer_name=None):
+    def merge_slide(old, new):
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
         # a move occured.
 
         if (not isinstance(new, renpy.display.layout.Fixed)
-            or (new.layers is None and new.scene_list is None)):
+            or (new.layers is None and new.layer_name is None)):
         
             if position(old) != position(new):
 
@@ -757,8 +757,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
                 f = new.layers[layer]
 
-                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list is not None:
-                    f = merge_slide(old.layers[layer], new.layers[layer], layer_name=layer)
+                if isinstance(f, renpy.display.layout.Fixed) \
+                        and f.scene_list is not None \
+                        and layer not in renpy.config.overlay_layers:
+
+                    f = merge_slide(old.layers[layer], new.layers[layer])
 
                 rv.layers[layer] = f
                 rv.add(f)
@@ -798,6 +801,8 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
                 move = leave_factory(position(old_d), delay, old_d)
                 if move is None:
                     continue
+                
+                move = renpy.display.layout.IgnoresEvents(move)
                 
                 rv_sl.append(merge(old_sle, move))
                 continue
@@ -845,11 +850,14 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             rv_sl.append(merge(new_sle, move))
             continue
 
-        rv = renpy.game.interface.make_layer(layer_name, rv_sl)
+        
+        
+        rv = renpy.game.interface.make_layer(new.layer_name, rv_sl)
         return rv
 
 
     # This calls merge_slide to actually do the merging.
+
     rv = merge_slide(old_widget, new_widget)
     rv.delay = delay
 

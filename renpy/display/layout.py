@@ -171,6 +171,8 @@ class Fixed(Container):
 
     """
 
+    layer_name = None
+    
     def __init__(self, style='default', **properties):
         super(Fixed, self).__init__(style=style, **properties)
         self.start_times = [ ]
@@ -663,7 +665,7 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, style='default', **properties):
+    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, add_sizes=False, style='default', **properties):
         """
         @param child: The child displayable.
 
@@ -714,7 +716,8 @@ class Motion(Container):
         self.delay = delay
         self.anim_timebase = anim_timebase
         self.time_warp = time_warp
-
+        self.add_sizes = add_sizes
+        
     def render(self, width, height, st, at):
 
         if self.anim_timebase:
@@ -746,15 +749,18 @@ class Motion(Container):
             if t > 1.0:
                 t = 2.0 - t
 
-        res = self.function(t)
+        child = render(self.child, width, height, st, at)
+        cw, ch = child.get_size()
 
+        if self.add_sizes:
+            res = self.function(t, (width, height, cw, ch))
+        else:
+            res = self.function(t)
+            
         if len(res) == 2:
             self.style.xpos, self.style.ypos = res
         else:
             self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor = res
-
-        child = render(self.child, width, height, st, at)
-        cw, ch = child.get_size()
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
@@ -783,10 +789,16 @@ class Interpolate(object):
         self.start = [ self.anchors.get(i, i) for i in start ]
         self.end = [ self.anchors.get(i, i) for i in end ]
 
-    def __call__(self, t):
+    def __call__(self, t, sizes=(None, None, None, None)):
 
-        def interp(a, b):
+        def interp(a, b, c):
 
+            if c is not None and isinstance(a, float):
+                a = int(a * c)
+
+            if c is not None and isinstance(b, float):
+                b = int(b * c)
+            
             rv = (1.0 - t) * a + t * b
             
             if isinstance(a, int) and isinstance(b, int):
@@ -794,7 +806,7 @@ class Interpolate(object):
             else:
                 return rv
 
-        return [ interp(a, b) for a, b in zip(self.start, self.end) ]
+        return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -843,6 +855,7 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   style=style,
                   anim_timebase=anim_timebase,
                   time_warp=time_warp,
+                  add_sizes=True,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -886,6 +899,7 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   anim_timebase=anim_timebase,
                   style=style,
                   time_warp=time_warp,
+                  add_sizes=True,
                   **properties)
 
 class Zoom(renpy.display.core.Displayable):
@@ -1172,3 +1186,33 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
         if self.child:
             return self.child.event(ev, x, y, st)
+
+class IgnoresEvents(renpy.display.core.Displayable):
+
+    def __init__(self, child):
+        super(IgnoresEvents, self).__init__(style='default')
+        self.child = renpy.easy.displayable(child)
+    
+    def visit(self):
+        return [ self.child ]
+
+    def render(self, w, h, st, at):
+        cr = renpy.display.render.render(self.child, w, h, st, at)
+        cw, ch = cr.get_size()
+
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(cr, (0, 0))
+        rv.focuses = [ ]
+
+        return rv
+
+    def get_placement(self):
+        return self.child.get_placement()
+
+    # Ignores events.
+    def event(self, ev, x, y, st):
+        return None
+    
+
+        
+        

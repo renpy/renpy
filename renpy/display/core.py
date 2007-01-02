@@ -1058,6 +1058,7 @@ class Interface(object):
 
         rv = renpy.display.layout.Fixed(focus=name, **self.layer_properties[name])
         rv.append_scene_list(scene_list)
+        rv.layer_name = name
         return rv
     
 
