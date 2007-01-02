@@ -289,6 +289,22 @@ def get_delay(time, channel=7):
 
         return None
             
+def get_playing(channel=7):
+    """
+    Returns the number of seconds left until the given time in the
+    music.
+    """
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        return c.get_playing()
+
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+        return None
+            
     
 
 def interact():

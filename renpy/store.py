@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -120,7 +120,10 @@ ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
 MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
+MoveIn = renpy.curry.curry(renpy.display.transition.MoveIn)
+MoveOut = renpy.curry.curry(renpy.display.transition.MoveOut)
 MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransition)
+ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 
 # Misc.

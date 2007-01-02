@@ -43,6 +43,9 @@ label _start:
     call _load_reload_game from _call__load_reload_game_1
 
     scene black
+    $ renpy.pause(0)
+
+    $ renpy.block_rollback()
 
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1

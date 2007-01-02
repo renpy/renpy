@@ -647,14 +647,56 @@ class CropMove(Transition):
         return rv
 
 
+# Utility function used by MoveTransition et al.
+def position(d):
 
+    xpos, ypos, xanchor, yanchor = d.get_placement()
+
+    if xpos is None:
+        xpos = 0
+    if ypos is None:
+        ypos = 0
+    if xanchor is None:
+        xanchor = 0
+    if yanchor is None:
+        yanchor = 0
+
+    return xpos, ypos, xanchor, yanchor
+        
 # These are used by MoveTransition.
+def default_move_factory(pos1, pos2, delay, d):
+    if pos1 == pos2:
+        return d
+
+    return renpy.display.layout.Move(pos1, pos2, delay, d)
+
 def default_enter_factory(pos, delay, d):
     return d
 
 def default_leave_factory(pos, delay, d):
     return None
 
+# These can be used to move things in and out of the screen.
+def MoveIn(pos, pos1, delay, d, **kwargs):
+
+    def aorb(a, b):
+        if a is None:
+            return b
+        return a
+
+    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    return renpy.display.layout.Move(pos, pos1, delay, d, **kwargs)
+
+def MoveOut(pos, pos1, delay, d, **kwargs):
+
+    def aorb(a, b):
+        if a is None:
+            return b
+        return a
+
+    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    return renpy.display.layout.Move(pos1, pos, delay, d, **kwargs)
+    
 # TODO: Move isn't properly respecting positions when x < 0.
 def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None):
     """
@@ -675,7 +717,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
     """
 
     if factory is None:
-        factory = renpy.display.layout.Move
+        factory = default_move_factory
 
     if enter_factory is None:
         enter_factory = default_enter_factory
@@ -683,31 +725,15 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
     if leave_factory is None:
         leave_factory = default_leave_factory
         
-    def position(d):
-
-        xpos, ypos, xanchor, yanchor = d.get_placement()
-
-        if xpos is None:
-            xpos = 0
-        if ypos is None:
-            ypos = 0
-        if xanchor is None:
-            xanchor = 0
-        if yanchor is None:
-            yanchor = 0
-
-        return xpos, ypos, xanchor, yanchor
-        
-
     def merge_slide(old, new, layer_name=None):
 
-            
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
         # a move occured.
 
-        if not hasattr(new, 'layers') and not hasattr(new, 'scene_list'):
-
+        if (not isinstance(new, renpy.display.layout.Fixed)
+            or (new.layers is None and new.scene_list is None)):
+        
             if position(old) != position(new):
 
                 return factory(position(old),
@@ -721,6 +747,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.
         if new.layers:
+
             assert old.layers
 
             rv = renpy.display.layout.Fixed()
@@ -730,7 +757,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
                 f = new.layers[layer]
 
-                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list:
+                if isinstance(f, renpy.display.layout.Fixed) and f.scene_list is not None:
                     f = merge_slide(old.layers[layer], new.layers[layer], layer_name=layer)
 
                 rv.layers[layer] = f
@@ -745,7 +772,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             return sle[0], sle[4]
 
         def merge(sle, d):
-            return sle[:4] + (d,)
+            return (sle[0], sle[1], 0, sle[3], d)
         
         # A list of tags on the new layer.
         new_tags = { }
@@ -761,17 +788,17 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             
             if new_tag is not None:
                 new_tags[new_tag] = new_d
-            
+
         for old_sle in old.scene_list:
             old_tag, old_d = tag_d(old_sle)
-            
+
             # In old, not in new.
             if old_tag not in new_tags:
 
                 move = leave_factory(position(old_d), delay, old_d)
                 if move is None:
                     continue
-
+                
                 rv_sl.append(merge(old_sle, move))
                 continue
 
@@ -811,9 +838,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             if new_tag in new_tags:
                 del new_tags[new_tag]
 
-            if new_tag == old_tag:
-                break
-
             move = enter_factory(position(new_d), delay, new_d)
             if move is None:
                 continue
@@ -821,7 +845,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             rv_sl.append(merge(new_sle, move))
             continue
 
-        
         rv = renpy.game.interface.make_layer(layer_name, rv_sl)
         return rv
 

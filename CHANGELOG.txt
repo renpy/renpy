@@ -4,6 +4,31 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.6
 -------------------
 
+TODO: Transitions:
+
+movein{left,right,top,bottom}
+zoomin
+zoomout
+
+MoveTransition (updated)
+MoveIn
+MoveOut
+
+ComposeTransition... note that not all transitions work like you'd
+expect.
+
+TODO: Rotozoom... and a way of composing it with other zooms.
+
+TODO: Hover can end an interaction?
+
+TODO: Per-button/label attrs.
+
+TODO: Mac compat fix.
+
+All graphics are now performed in 32bpp mode. Previously, we used a
+mix of 32 and 24bpp, but usually 32bpp anyway.
+
+
 It is now possible to supply a function that determines if the say
 statement is allowed to be dismissed, by setting
 config.say_allow_dismiss. ui.saybehavior has been updated with similar

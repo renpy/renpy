@@ -58,7 +58,7 @@ def import_all():
     import renpy.display.text # core
     import renpy.display.layout # core
     import renpy.display.behavior # layout
-    import renpy.display.transition # core
+    import renpy.display.transition # core, layout
     import renpy.display.im
     import renpy.display.image # core, behavior, im
     import renpy.display.video

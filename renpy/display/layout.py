@@ -181,7 +181,7 @@ class Fixed(Container):
         self.layers = None
 
         # The scene list for this widget.
-        self.scene_list = [ ]
+        self.scene_list = None
         
 
     def add(self, widget, start_time=None, anim_time=None):
@@ -193,6 +193,9 @@ class Fixed(Container):
         for tag, zo, start, anim, d in l:
             self.add(d, start, anim)
 
+        if self.scene_list is None:
+            self.scene_list = [ ]
+            
         self.scene_list.extend(l)
 
 #     def get_widget_time_list(self):

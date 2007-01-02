@@ -47,7 +47,10 @@ init -425:
 
     # This moves changed images to their new locations
     $ move = MoveTransition(0.5)
+    $ moveinright = MoveTransition(0.5, enter_factory=MoveIn((1.0, None, 0.0, None)))
+    $ moveoutright = MoveTransition(0.5, leave_factory=MoveOut((1.0, None, 0.0, None)))
 
+    
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.
     $ vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.275)
