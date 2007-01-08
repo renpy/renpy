@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom
+# Copyright 2004-2007 PyTom
 #
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
@@ -17,9 +17,9 @@ init -499:
         config.game_menu = [
                 ( "return", u"Return", ui.jumps("_return"), 'True'),
                 ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
-                ( "prefs", u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
-                ( "save", u"Save Game", ui.jumps("_save_screen"), 'not renpy.context().main_menu' ),
-                ( "load", u"Load Game", ui.jumps("_load_screen"), 'True'),
+                ( "prefs", u"Preferences", _intra_jumps("_prefs_screen"), 'True' ),
+                ( "save", u"Save Game", _intra_jumps("_save_screen"), 'not renpy.context().main_menu' ),
+                ( "load", u"Load Game", _intra_jumps("_load_screen"), 'True'),
                 ( "mainmenu", u"Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context().main_menu' ),
                 ( "quit", u"Quit", lambda : _quit_prompt("quit"), 'True' ),
                 ]
@@ -41,6 +41,9 @@ init -499:
         # The number of pages to add quick access buttons for.
         config.file_quick_access_pages = 5
 
+        # The positions of file picker components.
+        config.file_picker_positions = None
+        
         # The width of a thumbnail.
         config.thumbnail_width = 66
 
@@ -61,6 +64,9 @@ init -499:
         # Transition that occurs when leaving the game menu.
         config.exit_transition = None
 
+        # Transition that's used when going from one screen to another.
+        config.intra_transition = None
+        
         # This lets us disable the file pager. (So we only have one
         # page of files.)
         config.disable_file_pager = False
@@ -169,14 +175,15 @@ init -499:
 
                       
         # This renders a slot with a file in it, in the file picker.
-        def _render_savefile(name, extra_info, screenshot, mtime, newest):
+        def _render_savefile(name, extra_info, screenshot, mtime, newest, **positions):
 
 
             ### file_picker_entry menu_button
             # (window, hover) The style that is used for each of the
             # slots in the file picker.
             ui.button(style='file_picker_entry',
-                      clicked=ui.returns(("return", (name, True))))
+                      clicked=ui.returns(("return", (name, True))),
+                      **positions)
             
             
             ### file_picker_entry_box thin_hbox
@@ -220,7 +227,7 @@ init -499:
             ui.close()
             
         # This renders an empty slot in the file picker.
-        def _render_new_slot(name, save):
+        def _render_new_slot(name, save, **positions):
             
             if save:
                 clicked=ui.returns(("return", (name, False)))
@@ -231,7 +238,8 @@ init -499:
     
             ui.button(style='file_picker_entry',
                       clicked=clicked,
-                      enable_hover=enable_hover)
+                      enable_hover=enable_hover,
+                      **positions)
 
             ui.hbox(style='file_picker_entry_box')
 
@@ -263,6 +271,11 @@ init -499:
             newest_mtime = None
             save_info = { }
 
+            if config.file_picker_positions:
+                positions = config.file_picker_positions
+            else:
+                positions = { }
+            
             for fn, extra_info, screenshot, mtime in saved_games:
                 save_info[fn] = (extra_info, screenshot, mtime)
 
@@ -303,8 +316,10 @@ init -499:
                 # (box) The vbox containing both the nav and the grid in
                 # the file picker.
 
-                ui.window(style='file_picker_frame')
-                ui.vbox(style='file_picker_frame_vbox') # whole thing.
+                if not config.file_picker_positions:
+
+                    ui.window(style='file_picker_frame')
+                    ui.vbox(style='file_picker_frame_vbox') # whole thing.
                 
                 if not config.disable_file_pager:
 
@@ -321,24 +336,31 @@ init -499:
                     # file picker navigation buttons.
                    
                     # Draw the navigation.
-                    ui.hbox(style='file_picker_navbox') # nav buttons.
+                    if not config.file_picker_positions:
+                        ui.hbox(style='file_picker_navbox') # nav buttons.
 
-                    def tb(cond, label, clicked):
-                        _button_factory(label, "file_picker_nav", disabled=not cond, clicked=clicked)
+                    def tb(cond, label, clicked, selected):
+                        _button_factory(label,
+                                        "file_picker_nav",
+                                        disabled=not cond,
+                                        clicked=clicked,
+                                        selected=selected,
+                                        properties=positions.get("nav_" + label, { }))
 
                     # Previous
-                    tb(fpi > 0, _(u'Previous'), ui.returns(("fpidelta", -1)))
+                    tb(fpi > 0, _(u'Previous'), ui.returns(("fpidelta", -1)), selected=False)
 
                     # Quick Access
                     for i in range(0, config.file_quick_access_pages):
                         target = i * file_page_length
-                        tb(fpi != target, str(i + 1), ui.returns(("fpiset", target)))
+                        tb(True, str(i + 1), ui.returns(("fpiset", target)), fpi == target)
 
                     # Next
-                    tb(True, _(u'Next'), ui.returns(("fpidelta", +1)))
+                    tb(True, _(u'Next'), ui.returns(("fpidelta", +1)), False)
 
                     # Done with nav buttons.
-                    ui.close()
+                    if not config.file_picker_positions:
+                        ui.close()
 
                 # This draws a single slot.
                 def entry(offset):
@@ -346,29 +368,31 @@ init -499:
 
                     name = str(i + 1)
 
+                    place = positions.get("entry_" + str(offset + 1), { })
+                    
                     if name not in save_info:
-                        _render_new_slot(name, save)
+                        _render_new_slot(name, save, **place)
                     else:
                         extra_info, screenshot, mtime = save_info[name]
                         _render_savefile(name, extra_info, screenshot,
-                                         mtime, newest == name)
+                                         mtime, newest == name, **place)
                     
                 ### file_picker_grid default
                 # The style of the grid containing the file
                 # picker entries.
 
-                # Actually draw a slot.
-                ui.grid(config.file_page_cols,
-                        config.file_page_rows,
-                        style='file_picker_grid',
-                        transpose=True) # slots
+                if not config.file_picker_positions:
+                    ui.grid(config.file_page_cols,
+                            config.file_page_rows,
+                            style='file_picker_grid',
+                            transpose=True) # slots
 
                 for i in range(0, file_page_length):
                     entry(i)
 
-                ui.close() # slots
-
-                ui.close() # whole thing
+                if not config.file_picker_positions:                    
+                    ui.close() # slots
+                    ui.close() # whole thing
 
                 result = _game_interact()
                 type, value = result

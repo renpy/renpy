@@ -48,6 +48,9 @@ current_stack = [ ]
 # True if the current widget should be used at most once.
 current_once = False
 
+# A stack of open ui.ats.
+at_stack = [ ]
+
 def interact(**kwargs):
     # Docs in wiki.
 
@@ -57,6 +60,9 @@ def interact(**kwargs):
     if current_stack:
         raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
 
+    if at_stack:
+        raise Exception("ui.interact called with non-empty at stack.")
+    
     rv = renpy.game.interface.interact(**kwargs)
     renpy.game.context(-1).mark_seen()
     return rv
@@ -74,6 +80,9 @@ def add(w, make_current=False, once=False):
     global current
     global current_once
 
+    while at_stack:
+        w = at_stack.pop()(w)
+    
     if isinstance(current, str):
         renpy.game.context(-1).scene_lists.add(current, w)
     else:
@@ -90,6 +99,9 @@ def add(w, make_current=False, once=False):
         current = w
 
     return w
+
+def at(a):
+    at_stack.append(a)
 
 def clear():
     """

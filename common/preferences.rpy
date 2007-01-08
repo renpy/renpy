@@ -17,6 +17,10 @@ init -450:
         # Ditto, for joystick preferences.
         config.joystick_preferences = { }
 
+        # Positions for preferences... overrides the above.
+        config.preference_positions = None
+        config.joystick_preference_positions = None
+        
         # This is a map from preference name to that preference
         # object, that can be used in rearranging preferences.
         config.all_preferences = { }
@@ -44,24 +48,33 @@ init -450:
         # preferences.
         config.always_has_joystick = False
         
-        def _prefs_screen_run(prefs_map):
+        def _prefs_screen_run(prefs_map, positions):
 
+            
             _game_nav("prefs")
 
-            ### prefs_frame default
-            # (window) A window containing all preferences.
+            if positions is not None:
+                for name, pos in positions.iteritems():
+                    ui.vbox(**pos)
+                    config.all_preferences[name].render_preference()
+                    ui.close()
 
-            ui.window(style='prefs_frame')
-            ui.fixed()
+            else:
 
-            for style, prefs in prefs_map.iteritems():
+                ### prefs_frame default
+                # (window) A window containing all preferences.
 
-                ui.vbox(style=style)
-                for i in prefs:
-                    i.render_preference()
+                ui.window(style='prefs_frame')
+                ui.fixed()
+
+                for style, prefs in prefs_map.iteritems():
+
+                    ui.vbox(style=style)
+                    for i in prefs:
+                        i.render_preference()
+                    ui.close()
+
                 ui.close()
-
-            ui.close()
 
             _game_interact()
 
@@ -652,13 +665,13 @@ init -450:
 
 label _prefs_screen:
 
-    $ _prefs_screen_run(config.preferences)
+    $ _prefs_screen_run(config.preferences, config.preference_positions)
 
     jump _prefs_screen
     
 label _joystick_screen:    
         
-    $ _prefs_screen_run(config.joystick_preferences)
+    $ _prefs_screen_run(config.joystick_preferences, config.joystick_preference_positions)
 
     jump _joystick_screen
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom
+# Copyright 2004-2007 PyTom
 #
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
@@ -15,7 +15,7 @@ init -500:
 
         # The minimum version of the module we work with. Don't change
         # this unless you know what you're doing.
-        config.module_version = 5005000
+        config.module_version = 5005006
 
         # Should we warn the user if the module is missing or has a bad
         # version?
@@ -39,11 +39,26 @@ init -500:
 
         # A dict mapping label to image.
         config.image_labels = { }
+
+        # Maps from button or label to additional properties.
+        config.button_properties = { }
+        config.button_text_properties = { }
+        config.label_properties = { }
         
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
 
+
+        # This is used to jump to a label with a transition.
+        def _intra_jumps_core(label):
+            if config.intra_transition:
+                renpy.transition(config.intra_transition)
+
+            renpy.jump(label)
+
+        _intra_jumps = renpy.curry(_intra_jumps_core)
+        
         def _button_factory(label,
                             type=None,
                             selected=None,
@@ -72,6 +87,10 @@ init -500:
             @param properties: Addtional layout properties.
             """
 
+            props = { }
+            props.update(properties)
+            props.update(config.button_properties.get(label, { }))
+            
             if disabled:
                 clicked = None
 
@@ -81,9 +100,9 @@ init -500:
                 if not clicked:
                     ui.image(disabled, **properties)
                 elif selected:
-                    ui.imagebutton(sel_idle, sel_hover, clicked=clicked, **properties)
+                    ui.imagebutton(sel_idle, sel_hover, clicked=clicked, **props)
                 else:
-                    ui.imagebutton(idle, hover, clicked=clicked, **properties)
+                    ui.imagebutton(idle, hover, clicked=clicked, **props)
 
                 return
 
@@ -97,8 +116,9 @@ init -500:
             style = style + "_button"
             text_style = style + "_text"
 
-            ui.textbutton(_(label), style=style, text_style=text_style, clicked=clicked, role=role, **properties)
-
+            ui.button(style=style, clicked=clicked, role=role, **props)
+            ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
+            
         def _label_factory(label, type, properties={}):
             """
             This function is called to create a new label. It can be
@@ -111,11 +131,15 @@ init -500:
             @param properties: This may contain position properties.
             """
 
+            props = { }
+            props.update(properties)
+            props.update(config.label_properties.get(label, { }))
+
             if label in config.image_labels:
-                ui.image(config.image_labels[label], **properties)
+                ui.image(config.image_labels[label], **props)
                 return
 
-            ui.text(_(label), style=type + "_label", **properties)
+            ui.text(_(label), style=type + "_label", **props)
 
         # The function that's used to translate strings in the game menu.
         def _(s):

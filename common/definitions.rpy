@@ -65,9 +65,15 @@ init -425:
                               xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor,
                               )(d)
 
-        zoomin = MoveTransition(0.5, enter_factory=_zoom_in)
-        
+        def _zoom_out(pos, delay, d):
+            xpos, ypos, xanchor, yanchor = pos
+            return FactorZoom(1.0, 0.01, delay, after_child=Null(), opaque=False,
+                              xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor,
+                              )(d)
 
+    $ zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
+    $ zoomout = MoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
+    $ zoominout = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
     
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.

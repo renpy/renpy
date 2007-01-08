@@ -17,13 +17,32 @@ MoveOut
 ComposeTransition... note that not all transitions work like you'd
 expect.
 
+Revolve
+
+config.file_picker_positions, preference_positions, joystick_preference_positions [doc]
+
+
 TODO: Rotozoom... and a way of composing it with other zooms.
 
-TODO: Hover can end an interaction?
-
-TODO: Per-button/label attrs.
-
 TODO: Mac compat fix.
+
+The file picker now shows the selected page with the selected style,
+rather than the insensitive style.
+
+
+
+The config.button_properties, config.button_text_properties and
+config.label_properties variables can be used to specify properties
+for specific game and main menu buttons, based on the text of the
+button or label.
+
+
+The ui.at function can take a position (or other effect), and apply it
+to a widget added with the other ui functions.
+
+The hovered callback to the various kinds of buttons now can return a
+value. If a non-None value is returned, the interaction is terminated,
+and the value is returned from ui.interact. Try not to abuse this, okay?
 
 Motion now takes a add_sizes arguments, which causes the interpolation
 function to be supplied with the sizes of the area in which the object

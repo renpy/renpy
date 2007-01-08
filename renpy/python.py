@@ -176,7 +176,8 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     try:
         tree = parse(source, mode)
     except SyntaxError, e:
-        e.lineno += lineno - 1
+        if e.lineno is not None:
+            e.lineno += lineno - 1
         raise
     
     recursively_replace(tree, wrap_node)

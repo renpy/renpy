@@ -76,7 +76,7 @@ import pygame
 
 # Update this in library.rpy as well!
 def version():
-    return 5006000
+    return 5006006
 
 def save_png(surf, file, compress=-1):
 

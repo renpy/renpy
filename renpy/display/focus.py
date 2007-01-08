@@ -140,6 +140,8 @@ def before_interact(roots):
 # focus object.
 def change_focus(newfocus):
 
+    rv = None
+    
     if grab:
         return
 
@@ -152,17 +154,19 @@ def change_focus(newfocus):
 
     # Nothing to do.
     if current is widget:
-        return
+        return rv
 
     if current is not None:
         current.unfocus()
 
     current = widget
     if widget is not None:
-        widget.focus()
+        rv = widget.focus()
 
     set_focused(current)
 
+    return rv
+    
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y):
 
@@ -191,7 +195,7 @@ def mouse_handler(ev, x, y):
     else:
         newfocus = default
 
-    change_focus(newfocus)
+    return change_focus(newfocus)
 
 
 # This focuses an extreme widget, which is one of the widgets that's
@@ -218,7 +222,7 @@ def focus_extreme(xmul, ymul, wmul, hmul):
             max_focus = f
 
     if max_focus:
-        change_focus(max_focus)
+        return change_focus(max_focus)
         
 
 # This calculates the distance between two points, applying
@@ -358,7 +362,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     # If we have something, switch to it.
     if new_focus:
-        change_focus(new_focus)
+        return change_focus(new_focus)
 
     # And, we're done.
 
@@ -367,32 +371,32 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 def key_handler(ev):
 
     if renpy.display.behavior.map_event(ev, 'focus_right'):
-        focus_nearest(0.9, 0.1, 0.9, 0.9,
-                      0.1, 0.1, 0.1, 0.9,
-                      verti_line_dist,                      
-                      lambda old, new : old.x + old.w <= new.x,
-                      -1, 0, 0, 0)
+        return focus_nearest(0.9, 0.1, 0.9, 0.9,
+                             0.1, 0.1, 0.1, 0.9,
+                             verti_line_dist,                      
+                             lambda old, new : old.x + old.w <= new.x,
+                             -1, 0, 0, 0)
         
     if renpy.display.behavior.map_event(ev, 'focus_left'):
-        focus_nearest(0.1, 0.1, 0.1, 0.9,
-                      0.9, 0.1, 0.9, 0.9,
-                      verti_line_dist,
-                      lambda old, new : new.x + new.w <= old.x,
-                      1, 0, 1, 0)
+        return focus_nearest(0.1, 0.1, 0.1, 0.9,
+                             0.9, 0.1, 0.9, 0.9,
+                             verti_line_dist,
+                             lambda old, new : new.x + new.w <= old.x,
+                             1, 0, 1, 0)
 
     if renpy.display.behavior.map_event(ev, 'focus_up'):
-        focus_nearest(0.1, 0.1, 0.9, 0.1,
-                      0.1, 0.9, 0.9, 0.9,
-                      horiz_line_dist,
-                      lambda old, new : new.y + new.h <= old.y,
-                      0, 1, 0, 1)
+        return focus_nearest(0.1, 0.1, 0.9, 0.1,
+                             0.1, 0.9, 0.9, 0.9,
+                             horiz_line_dist,
+                             lambda old, new : new.y + new.h <= old.y,
+                             0, 1, 0, 1)
 
     if renpy.display.behavior.map_event(ev, 'focus_down'):
-        focus_nearest(0.1, 0.9, 0.9, 0.9,
-                      0.1, 0.1, 0.9, 0.1,
-                      horiz_line_dist,
-                      lambda old, new : old.y + old.h <= new.y,
-                      0, -1, 0, 0)
+        return focus_nearest(0.1, 0.9, 0.9, 0.9,
+                             0.1, 0.1, 0.9, 0.1,
+                             horiz_line_dist,
+                             lambda old, new : old.y + old.h <= new.y,
+                             0, -1, 0, 0)
 
         
                                 

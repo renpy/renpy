@@ -140,7 +140,6 @@ class NoTransition(Transition):
         return rv
 
 
-
 class MultipleTransition(Transition):
     """
     This is a transition that can sequence between multiple screens,
@@ -173,6 +172,7 @@ class MultipleTransition(Transition):
                 return old_widget
             if w is True:
                 return new_widget
+
             return w
 
         for old, trans, new in zip(self.screens[0:], args[1::2], self.screens[1:]):
@@ -696,6 +696,22 @@ def MoveOut(pos, pos1, delay, d, **kwargs):
 
     pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
     return renpy.display.layout.Move(pos1, pos, delay, d, **kwargs)
+
+def ZoomInOut(start, end, pos, delay, d):
+
+    xpos, ypos, xanchor, yanchor = pos
+
+    FactorZoom = renpy.display.layout.FactorZoom
+    
+    if end == 1.0:
+        return FactorZoom(start, end, delay, d, after_child=d, opaque=False,
+                          xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor)
+    else:
+        return FactorZoom(start, end, delay, d, opaque=False,
+                          xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor)
+
+def RevolveInOut(start, end, pos, delay, d, **kwargs):
+    return renpy.display.layout.Revolve(start, end, delay, d, pos=pos, **kwargs)
     
 # TODO: Move isn't properly respecting positions when x < 0.
 def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None):
@@ -772,7 +788,12 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
         # as appropriate.
 
         def tag_d(sle):
-            return sle[0], sle[4]
+            if sle[0] is None:
+                tag = sle[4]
+            else:
+                tag = sle[0]
+
+            return tag, sle[4]
 
         def merge(sle, d):
             return (sle[0], sle[1], 0, sle[3], d)

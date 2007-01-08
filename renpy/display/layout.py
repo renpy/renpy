@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,7 @@ from pygame.constants import *
 import renpy
 from renpy.display.render import render
 import time
+import math
 
 def scale(num, base):
     """
@@ -902,6 +903,79 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   add_sizes=True,
                   **properties)
 
+
+class Revolver(object):
+
+    def __init__(self, start, end, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None):
+        self.start = start
+        self.end = end
+        self.around = around
+        self.cor = cor
+        self.pos = pos
+        self.child = child
+        
+    def __call__(self, t, (w, h, cw, ch)):
+
+        # Converts a float to an integer in the given range, passes
+        # integers through unchanged.
+        def fti(x, r):
+            if x is None:
+                x = 0
+
+            if isinstance(x, float):
+                return int(x * r)
+            else:
+                return x
+        
+        if self.pos is None:
+            pos = self.child.get_placement()
+        else:
+            pos = self.pos
+            
+        xpos, ypos, xanchor, yanchor = pos
+
+        xpos = fti(xpos, w)
+        ypos = fti(ypos, h)
+        xanchor = fti(xanchor, cw)
+        yanchor = fti(yanchor, ch)
+
+        xaround, yaround = self.around
+
+        xaround = fti(xaround, w)
+        yaround = fti(yaround, h)
+
+        xcor, ycor = self.cor
+
+        xcor = fti(xcor, cw)
+        ycor = fti(ycor, ch)
+
+        angle = self.start + (self.end - self.start) * t
+        angle *= math.pi / 180
+        
+        # The center of rotation, relative to the xaround.
+        x = xpos - xanchor + xcor - xaround
+        y = ypos - yanchor + ycor - yaround
+
+        # Rotate it.
+        nx = x * math.cos(angle) - y * math.sin(angle)
+        ny = x * math.sin(angle) + y * math.cos(angle)
+
+        # Project it back.
+        nx = nx - xcor + xaround
+        ny = ny - ycor + yaround
+
+        return (int(nx), int(ny), 0, 0)
+
+
+def Revolve(start, end, time, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None, **properties):
+
+    return Motion(Revolver(start, end, child, around=around, cor=cor, pos=pos),
+                  time,
+                  child,
+                  add_sizes=True,
+                  **properties)
+        
+            
 class Zoom(renpy.display.core.Displayable):
     """
     This displayable causes a zoom to take place, using image
@@ -963,7 +1037,10 @@ class Zoom(renpy.display.core.Displayable):
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
         else:
-            self.after_child = None
+            if self.end == 1.0:
+                self.after_child = child
+            else:
+                self.after_child = None
         
         self.time_warp = time_warp
         self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
@@ -1096,12 +1173,15 @@ class FactorZoom(renpy.display.core.Displayable):
         self.start = start
         self.end = end
         self.time = time
-        self.child = child            
-
+        self.child = child                    
+        
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
         else:
-            self.after_child = None
+            if self.end == 1.0:
+                self.after_child = child
+            else:
+                self.after_child = None
         
         self.time_warp = time_warp
         self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
@@ -1231,5 +1311,142 @@ class IgnoresEvents(renpy.display.core.Displayable):
         return None
     
 
+class RotoZoom(renpy.display.core.Displayable):
+
+    def __init__(self,
+                 rot_start, rot_end, rot_delay,
+                 zoom_start, zoom_end, zoom_delay,
+                 child,
+                 rot_repeat=False, zoom_repeat=False,
+                 rot_bounce=False, zoom_bounce=False,
+                 rot_anim_timebase=False, zoom_anim_timebase=False,
+                 rot_time_warp=None, zoom_time_warp=None,
+                 opaque=True,
+                 **properties):
+
+        super(RotoZoom, self).__init__(**properties)
+
+        self.rot_start = rot_start
+        self.rot_end = rot_end
+        self.rot_delay = rot_delay
+
+        self.zoom_start = zoom_start
+        self.zoom_end = zoom_end
+        self.zoom_delay = zoom_delay
+
+        self.child = renpy.easy.displayable(child)
+        
+        self.rot_repeat = rot_repeat
+        self.zoom_repeat = zoom_repeat
+
+        self.rot_bounce = rot_bounce
+        self.zoom_bounce = zoom_bounce
+        
+        self.rot_anim_timebase = rot_anim_timebase
+        self.zoom_anim_timebase = zoom_anim_timebase
+
+        self.rot_time_warp = rot_time_warp
+        self.zoom_time_warp = zoom_time_warp
+
+        self.opaque = False
+
+    def visit(self):
+        return [ self.child ]
+        
+    def render(self, w, h, st, at):
+
+        if not renpy.display.module.can_transform:
+            rv = renpy.display.render.Render(1, 1)
+            return rv
+        
+        if self.rot_anim_timebase:
+            rot_time = at
+        else:
+            rot_time = st
+
+        if self.zoom_anim_timebase:
+            zoom_time = at
+        else:
+            zoom_time = st
+
+        rot_time /= self.rot_delay
+        zoom_time /= self.zoom_delay
+
+        if self.rot_repeat:
+            rot_time %= 1.0
+
+        if self.zoom_repeat:
+            zoom_time %= 1.0
+
+        if self.rot_bounce:
+            rot_time *= 2
+            rot_time = min(rot_time, 2.0 - rot_time)
+
+        if self.zoom_bounce:
+            zoom_time *= 2
+            zoom_time = min(zoom_time, 2.0 - zoom_time)
+
+        if rot_time <= 1.0 or zoom_time <= 1.0:
+            renpy.display.render.redraw(self, 0)
+
+        rot_time = min(rot_time, 1.0)
+        zoom_time = min(zoom_time, 1.0)
+            
+        if self.rot_time_warp:
+            rot_time = self.rot_time_warp(rot_time)
+
+        if self.zoom_time_warp:
+            zoom_time = self.zoom_time_warp(zoom_time)
+
+        angle = self.rot_start + (self.rot_end - self.rot_start) * rot_time
+        zoom = self.zoom_start + (self.zoom_end - self.zoom_start) * zoom_time
+        angle = -angle * math.pi / 180
+
+        zoom = max(zoom, 0.001) 
+        
+        child_rend = renpy.display.render.render(self.child, w, h, st, at)
+        surf = child_rend.pygame_surface(True)
+
+        cw, ch = child_rend.get_size()
+
+        # We shrink the size by one, since we can't access these pixels.
+        cw -= 1
+        ch -= 1
+
+        # Figure out the size of the target.
+        dw = math.hypot(cw, ch) * zoom
+        dh = dw
+        
+        # Figure out the various components of the rotation.
+        xdx = math.cos(angle) / zoom
+        xdy = - math.sin(angle) / zoom
+        ydx = math.sin(angle) / zoom
+        ydy = math.cos(angle) / zoom
+
+        def draw(dest, xo, yo):
+
+            if not self.opaque:
+                target = pygame.Surface(dest.get_size(), 0,
+                                        renpy.game.interface.display.sample_surface)
+            else:
+                target = dest
+            
+            dulcx = -dw / 2 + xo
+            dulcy = -dh / 2 + yo
+
+            culcx = cw / 2 + xdx * dulcx + xdy * dulcy
+            culcy = ch / 2 + ydx * dulcx + ydy * dulcy
+
+            renpy.display.module.transform(surf, target,
+                                           culcx, culcy,
+                                           xdx, ydx, xdy, ydy)
+
+            if not self.opaque:
+                dest.blit(target, (0, 0))
+
+            
+        return renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
         
         
+                
+                
