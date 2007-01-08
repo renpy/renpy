@@ -4,27 +4,30 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.6
 -------------------
 
-TODO: Transitions:
+This release includes a number of new transitions. The movein
+transitions (moveinleft, moveinright, moveintop, moveinbottom) move
+newly-added images onto the screen from the appropriate side. The
+moveout transtions (moveoutleft, moveoutright, moveouttop,
+moveoutbottom) move newly-hidden images off of the screen.
+The zoomin and zoomout transitions zoom in newly-added image, and 
+zoom out removed images, respectively.
 
-movein{left,right,top,bottom}
-zoomin
-zoomout
+All of these are made possible by new arguments to MoveTransition,
+which allow it to also process images that are entering and leaving
+the scene.
 
-MoveTransition (updated)
-MoveIn
-MoveOut
+Transitions can be composed using ComposeTransition. For example, one
+could dissolve together a moveoutleft and a moveinright. Note that not 
+all transitions can be composed.
 
-ComposeTransition... note that not all transitions work like you'd
-expect.
+The new RotoZoom feature allows images to be rotated and zoomed around
+their central point. The new Revolve feature allows images to be
+revolved around a different point.
 
-Revolve
-
-config.file_picker_positions, preference_positions, joystick_preference_positions [doc]
-
-
-Rotozoom... and a way of composing it with other zooms.
-
-TODO: Mac compat fix.
+The positions of elements of the file picker can be customized with
+config.file_picker_positions.  The positions of preferences can be
+customoize with config.preference_positions and
+config.joystick_preference_positions.
 
 We now support a "show image" syntax that, while identical to "show
 expression", is easier to type. (Ditto for scene and hide.)
@@ -36,7 +39,6 @@ The config.button_properties, config.button_text_properties and
 config.label_properties variables can be used to specify properties
 for specific game and main menu buttons, based on the text of the
 button or label.
-
 
 The ui.at function can take a position (or other effect), and apply it
 to a widget added with the other ui functions.
@@ -59,6 +61,12 @@ functionality. This was added to support children's games, where
 dismissing dialogue before it's fully spoken harms the value of a game
 as a pedagogical tool... this functionality should not be used in visual 
 novels aimed at adults.
+
+Two fixes for the Mac. One is a fix for platform.macsos_version when
+used on older macs, while the other fixes a problem that manifested
+when clicking the dock icon.
+
+The new magic circle art is by Jake. Thanks!
 
 
 New in Ren'Py 5.6.5

@@ -39,6 +39,8 @@ label start:
 
     e "We'd like to thank Piroshki for contributing character art... I've never looked better."
 
+    e "Thanks to Jake for the magic circle."
+    
     e "The background music was generating using a Musikalisches Würfelspiel attributed to Mozart... even though that's probably wrong."
 
     show eileen vhappy 
