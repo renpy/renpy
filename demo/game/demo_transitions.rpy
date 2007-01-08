@@ -33,10 +33,13 @@ label demo_transitions:
 
             call demo_imagedissolve_transitions from _call_demo_imagedissolve_transitions_1
 
+        "MoveTransition Transitions":
+
+            call demo_movetransition from _call_demo_movetransition_1
+
         "CropMove Transitions":
 
             call demo_cropmove_transitions from _call_demo_cropmove_transitions_1
-
             
             
         ""
@@ -322,4 +325,59 @@ label demo_cropmove_transitions:
 
     e "It's enough to make you feel a bit dizzy."
 
+    return
+
+label demo_movetransition:
+
+    e "The most common MoveTransition is move, which slides around images that have changed position on the screen."
+
+    show eileen happy at left
+    with move
+
+    e "Just like that."
+
+    e "There are also the moveout and movein transitions."
+
+    e "The moveout transitions (moveoutleft, moveoutright, moveouttop, and moveoutbottom) slide hidden images off the appropriate side of the screen."
+
+    e "The movein transitions (moveinleft, moveinright, moveintop, and moveinbottom) slide in new images."
+
+    e "Let's see them all in action."
+
+    hide eileen happy
+    with moveoutleft
+
+    show eileen happy
+    with moveinbottom
+
+    hide eileen happy
+    with moveoutbottom
+
+    show eileen happy
+    with moveinright
+
+    hide eileen happy
+    with moveoutright
+
+    show eileen flip
+    with moveintop
+
+    hide eileen flip
+    with moveouttop
+
+    show eileen happy
+    with moveinleft
+
+    e "That's it for the moveins and moveouts."
+
+    e "Finally, there are the zoomin and zoomout transtions, which show and hide things using a zoom."
+
+    hide eileen happy
+    with zoomout
+
+    show eileen happy
+    with zoomin
+
+    e "And that's all there is."
+    
     return

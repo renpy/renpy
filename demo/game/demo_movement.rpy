@@ -6,6 +6,9 @@ init:
     # cherry blossom petals.
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15), fast=True)
 
+    # Defines the magic circle image.
+    image magic_circle = "magic.png"
+    
     
 label demo_movement:
 
@@ -15,11 +18,6 @@ label demo_movement:
     e "Positions, given with an at clause, specify where I'm standing, while the 'move' transition moves around images that have changed position."
 
     e "For example..."
-
-    show eileen happy at offscreenleft
-    with move
-
-    e "I can move over to the offscreenleft position, just off the left side of the screen."
 
     show eileen happy at left
     with move
@@ -34,17 +32,9 @@ label demo_movement:
     show eileen happy at right
     with move
 
-    e "... the right ..."
+    e "and the right."
 
-    show eileen happy at offscreenright
-    with move
-
-    e "... or even to offscreenright, off the right-hand side of the screen."
-
-    show eileen happy at right
-    with move
-
-    e "We don't limit you to these five positions either. You can always create your own Position objects."
+    e "We don't limit you to these positions either. You can always create your own Position objects."
 
     # This is necessary to restart the time at which we are
     # shown. 
@@ -82,9 +72,29 @@ label demo_movement:
 
     e "... and zoom {i}them{/i} out again."
 
-
-    scene bg washington
     show eileen happy
+    show magic_circle at RotoZoom(0, 360, 5, 0, 1, 1, rot_repeat=True, rot_anim_timebase=True, opaque=False, xalign=0.5, yalign=0.5)
+
+    $ renpy.pause(1)
+    
+    e "We can rotate and zoom images in a single operation."
+
+    e "And when we're no longer feeling so occult, we can zoom them back out again."
+
+    show magic_circle at RotoZoom(0, 360, 5, 1, 0, 1, rot_repeat=True, rot_anim_timebase=True, opaque=False, xalign=0.5, yalign=0.5)
+
+    $ renpy.pause(1)
+
+    hide magic_circle
+    
+    show eileen happy    
+    show logo base at Position(xpos=250, ypos=300, xanchor=0.5, yanchor=0.5), Revolve(0, 360, 4, repeat=True) behind eileen
+    with dissolve
+    
+    "We can also revolve an image around in a circle."
+
+    show bg washington
+    hide logo base
     show snowblossom
     with dissolve
 
@@ -92,7 +102,7 @@ label demo_movement:
 
     e "The particle motion system uses a factory to create particles over the course of an interaction."
     
-    e "While the  SnowBlossom function wraps a factory that provides convenient support for things rising and falling in straight lines, it's also possible to define your own."
+    e "While the SnowBlossom function wraps a factory that provides convenient support for things rising and falling in straight lines, it's also possible to define your own."
 
     e "The sky's the limit."
 

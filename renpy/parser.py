@@ -826,7 +826,7 @@ def parse_image_specifier(l):
     zorder = None
     behind = [ ]
     
-    if l.keyword("expression"):
+    if l.keyword("expression") or l.keyword("image"):
         expression = l.require(l.simple_expression)
         image_name = ( expression.strip(), )
     else: 

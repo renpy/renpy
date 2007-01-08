@@ -58,19 +58,6 @@ init -425:
     $ moveouttop = MoveTransition(0.5, leave_factory=MoveOut((None, 0.0, None, 1.0)))
     $ moveoutbottom = MoveTransition(0.5, leave_factory=MoveOut((None, 1.0, None, 0.0)))
 
-    python:
-        def _zoom_in(pos, delay, d):
-            xpos, ypos, xanchor, yanchor = pos
-            return FactorZoom(0.01, 1.0, delay, after_child=d, opaque=False,
-                              xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor,
-                              )(d)
-
-        def _zoom_out(pos, delay, d):
-            xpos, ypos, xanchor, yanchor = pos
-            return FactorZoom(1.0, 0.01, delay, after_child=Null(), opaque=False,
-                              xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor,
-                              )(d)
-
     $ zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     $ zoomout = MoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
     $ zoominout = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))

@@ -7,8 +7,8 @@ init:
         demos_main = [
             ("demo_basics", "Basic Scripting", "5.6.3"),
             ("demo_experience", "User Experience", "5.6.3"), 
-            ("demo_transitions", "Transitions", "5.6.3"),
-            ("demo_movement", "Positions and Movement", "5.6.3"),
+            ("demo_transitions", "Transitions", "5.6.6"),
+            ("demo_movement", "Positions and Movement", "5.6.6"),
             ("demo_animation", "Animation", "5.6.3"),
             ("demo_multimedia", "Music and Sound", "5.6.3"),
             ("demo_imageops", "Image Operations", "5.6.3"),

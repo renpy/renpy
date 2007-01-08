@@ -22,14 +22,15 @@ Revolve
 config.file_picker_positions, preference_positions, joystick_preference_positions [doc]
 
 
-TODO: Rotozoom... and a way of composing it with other zooms.
+Rotozoom... and a way of composing it with other zooms.
 
 TODO: Mac compat fix.
 
+We now support a "show image" syntax that, while identical to "show
+expression", is easier to type. (Ditto for scene and hide.)
+
 The file picker now shows the selected page with the selected style,
 rather than the insensitive style.
-
-
 
 The config.button_properties, config.button_text_properties and
 config.label_properties variables can be used to specify properties
