@@ -361,13 +361,7 @@ class Python(Node):
         super(Python, self).__init__(loc)
 
         self.hide = hide
-
-        old_ei = renpy.game.exception_info
-
-        # renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (self.linenumber, self.filename)
-        # renpy.python.py_compile_exec_bytecode(python_code, filename=filename, lineno=lineno)
         self.code = PyCode(python_code, loc=loc, mode='exec')
-        # renpy.game.exception_info = old_ei
 
     def get_pycode(self):
         return [ self.code ]
@@ -379,6 +373,39 @@ class Python(Node):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
         return self.next
 
+class EarlyPython(Node):
+
+    __slots__ = [
+        'hide',
+        'code',
+        ]
+
+    def __init__(self, loc, python_code, hide=False):
+        """
+        @param code: A PyCode object.
+
+        @param hide: If True, the code will be executed with its
+        own local dictionary.
+        """
+        
+        super(EarlyPython, self).__init__(loc)
+
+        self.hide = hide
+        self.code = PyCode(python_code, loc=loc, mode='exec')
+
+    def get_pycode(self):
+        return [ self.code ]
+
+    def diff_info(self):
+        return (EarlyPython, self.code.source)
+
+    def execute(self):
+        return self.next
+
+    def early_execute(self):
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+
+    
 class Image(Node):
 
     __slots__ = [
@@ -881,3 +908,44 @@ class If(Node):
 
         return [ block[0] for condition, block in self.entries ] + \
                [ self.next ]
+
+
+class UserStatement(Node):
+
+    __slots__ = [ 'line', 'parsed' ]
+
+    def __init__(self, loc, line):
+
+        super(UserStatement, self).__init__(self, loc)
+        self.line = line
+
+        self.parsed = None
+        self.call("check")
+        self.parsed = None # Don't save this.
+        
+    def diff_info(self):
+        return (UserStatement, self.line)
+
+    def execute(self):
+        self.call("execute")
+        return self.next
+
+    def predict(self, callback):
+        predicted = self.call("predict") or [ ]
+
+        for i in predicted:
+            callback(i)
+        return [ self.next ]
+
+    def call(self, method, *args, **kwargs):
+        
+        parsed = self.parsed        
+        if parsed is None:
+            renpy.statement.parse(self, self.line)
+            self.parsed = parsed
+
+        self.statement.call(method, parsed, *args, **kwargs)
+
+        
+                            
+            

@@ -1,6 +1,13 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in ...
+----------
+
+init python:
+
+Drop-shadow -> outline.
+
 New in Ren'Py 5.6.6
 -------------------
 

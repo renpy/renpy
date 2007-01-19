@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,13 +30,16 @@ import sets
 import renpy
 import renpy.ast as ast
 
+# A list of parse error messages.
+parse_errors = [ ]
+
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None):
         message = u"On line %d of %s: %s" % (number, filename, msg)
 
         if line is not None:
-            message += "\n\n" + line
+            message += "\n" + line
 
         if pos is not None:
             message += "\n" + " " * pos + "^"
@@ -1248,6 +1251,11 @@ def parse_statement(l):
     if l.keyword('python'):
 
         hide = False
+        early = False
+
+        if l.keyword('early'):
+            early = True
+        
         if l.keyword('hide'):
             hide = True
 
@@ -1257,7 +1265,11 @@ def parse_statement(l):
         python_code = l.python_block()
 
         l.advance()
-        return ast.Python(loc, python_code, hide)
+
+        if early:
+            return ast.EarlyPython(loc, python_code, hide)
+        else:
+            return ast.Python(loc, python_code, hide)
 
     ### Label Statement
     if l.keyword('label'):
@@ -1281,15 +1293,31 @@ def parse_statement(l):
             priority = int(p)
         else:
             priority = 0
-            
-        l.require(':')
 
-        l.expect_eol()
-        l.expect_block('init statement')
+        if l.keyword('python'):
 
-        block = parse_block(l.subblock_lexer(True))
+            hide = False
+            if l.keyword('hide'):
+                hide = True
 
-        l.advance()
+            l.require(':')
+            l.expect_block('python block')
+
+            python_code = l.python_block()
+
+            l.advance()
+            block = [ ast.Python(loc, python_code, hide) ]
+
+        else:
+            l.require(':')
+
+            l.expect_eol()
+            l.expect_block('init statement')
+
+            block = parse_block(l.subblock_lexer(True))
+
+            l.advance()
+
         return ast.Init(loc, block, priority)
 
 
@@ -1341,18 +1369,23 @@ def parse_block(l):
     rv = [ ]
 
     while not l.eob:
-        stmt = parse_statement(l)
-        if isinstance(stmt, list):
-            rv.extend(stmt)
-        else:
-            rv.append(stmt)
+        try:
 
+            stmt = parse_statement(l)
+            if isinstance(stmt, list):
+                rv.extend(stmt)
+            else:
+                rv.append(stmt)
+
+        except ParseError, e:
+            parse_errors.append(e.message)
+            l.advance()
+            
     return rv
-
 
 def parse(fn):
     """
-    Parses an Ren'Py script contained within the file with the given
+    Parses a Ren'Py script contained within the file with the given
     filename. Returns a list of AST objects representing the
     statements that were found at the top level of the file.
     """
@@ -1363,5 +1396,50 @@ def parse(fn):
     nested = group_logical_lines(lines)
 
     l = Lexer(nested)
+
+    rv = parse_block(l)
+
+    if parse_errors:
+        return None
     
-    return parse_block(l)
+    return rv
+    
+def report_parse_errors():
+
+    if not parse_errors:
+        return False
+    
+    f = file("errors.txt", "wU")
+    f.write(codecs.BOM_UTF8)
+
+    print >>f, "I'm sorry, but errors were detected in your script. Please correct the"
+    print >>f, "errors listed below, and try again."
+    print >>f
+    
+    for i in parse_errors:
+
+        try:
+            i = i.encode("utf-8")
+        except:
+            pass
+        
+        print
+        print >>f
+        print i
+        print >>f, i
+
+    print >>f
+    print >>f, "Ren'Py Version:", renpy.version
+
+    f.close()
+
+    try:
+        if renpy.config.editor:
+            renpy.exports.launch_editor([ 'errors.txt' ], 1)
+        else:
+            os.startfile('errors.txt')
+    except:
+        pass
+        
+    return True
+

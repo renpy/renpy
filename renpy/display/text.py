@@ -1144,23 +1144,23 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, black_color, user_colors, length, time, at, child_pos):
+    def render_pass(self, r, offsets, color, black_color, user_colors, length, time, at, child_pos):
         """
-        Renders the text to r at xo, yo. Color is the base color,
+        Renders the text to r at the offsets. Color is the base color,
         and user_colors controls if the user can override those colors.
 
         Returns True if all characters were rendered, or False if a
         length restriction stopped some from being rendered.
         """
 
-        y = yo
+        y = 0
         indent = self.style.first_indent
         rest_indent = self.style.rest_indent
         antialias = self.style.antialias
         line_spacing = self.style.line_spacing
         
         for line, line_height, line_width in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths):
-            x = xo + indent + self.style.text_align * (self.laidout_width - line_width)
+            x = indent + self.style.text_align * (self.laidout_width - line_width)
             indent = rest_indent
 
             max_ascent = 0
@@ -1182,11 +1182,13 @@ class Text(renpy.display.core.Displayable):
 
                 actual_y = y + max_ascent - ts.get_ascent()
 
-                if surf:
-                    r.blit(surf, (x, actual_y))
+                for xo, yo in offsets:
 
-                if not isinstance(text, (str, unicode)):
-                    child_pos.append((text, x, actual_y))
+                    if surf:
+                        r.blit(surf, (x + xo, actual_y + yo))
+
+                    if not isinstance(text, (str, unicode)):
+                        child_pos.append((text, x + xo, actual_y + yo))
                 
                 x = x + sw
 
@@ -1199,39 +1201,32 @@ class Text(renpy.display.core.Displayable):
 
         return True
             
+
     def render(self, width, height, st, at):
 
         speed = self.slow_speed or renpy.game.preferences.text_cps
 
-        if self.style.drop_shadow:
-            dsxo, dsyo = self.style.drop_shadow
+        dslist = self.style.drop_shadow
 
-            absxo = abs(dsxo)
-            absyo = abs(dsyo)
+        if dslist is None:
+            dslist = [ ]
+        elif not isinstance(dslist, list):
+            dslist = [ dslist ]
 
-            width -= absxo
+        mindsx = 0
+        mindsy = 0
+        maxdsx = 0
+        maxdsy = 0
 
-            if dsxo < 0:
-                xo = -dsxo
-                dsxo = 0
-            else:
-                xo = 0
+        for dsx, dsy in dslist:
+            mindsx = min(mindsx, dsx)
+            mindsy = min(mindsy, dsy)
+            maxdsx = max(maxdsx, dsx)
+            maxdsy = max(maxdsy, dsy)
 
-            if dsyo < 0:
-                yo = -dsyo
-                dsyo = 0
-            else:
-                yo = 0
-        else:
-            absxo = 0
-            absyo = 0
-            dsxo = 0
-            dsyo = 0
-            xo = 0
-            yo = 0
-
-
-        self.layout(width - absxo, st)
+        # minds{x,y} are negative (or 0), maxds{x,y} are positive (or 0).
+            
+        self.layout(width + mindsx - maxdsx, st)
             
         if self.slow and speed:
             start = max(self.slow_start, self.laidout_start)
@@ -1243,14 +1238,15 @@ class Text(renpy.display.core.Displayable):
             if self.slow_done:
                 self.slow_done()
 
-        rv = renpy.display.render.Render(self.laidout_width + absxo, self.laidout_height + absyo)
+        rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
-        if self.style.drop_shadow:
-            self.render_pass(rv, dsxo, dsyo, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ])
+        if dslist:
+            dsoffsets = [ (dsxo - mindsx, dsyo - mindsy) for dsxo, dsyo in dslist ]
+            self.render_pass(rv, dsoffsets, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ])
 
         self.child_pos = [ ]
 
-        if self.render_pass(rv, xo, yo, self.style.color, self.style.black_color, True, length, st, at, self.child_pos):
+        if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos):
             if self.slow:
                 self.slow = False
                 if self.slow_done:
@@ -1260,7 +1256,6 @@ class Text(renpy.display.core.Displayable):
             renpy.display.render.redraw(self, 0)
 
         return rv
-
 
 
 class ParameterizedText(object):

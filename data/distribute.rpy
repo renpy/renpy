@@ -14,12 +14,9 @@ init:
             if fn.endswith(".bak"):
                 return True
 
-            if fn.lower() == "thumbs.db":
+            if fn.lower() in ("thumbs.db", "launcherinfo.py", "traceback.txt", "errors.txt"):
                 return True
-
-            if fn.lower() == "launcherinfo.py":
-                return True
-
+            
             if fn == "saves":
                 return True
 

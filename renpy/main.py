@@ -109,8 +109,7 @@ def run(restart=False):
     
 def main():
 
-
-    renpy.game.exception_info = 'While loading the script.'
+    renpy.game.exception_info = 'Before loading the script.'
 
     # Init the config after load.
     renpy.config.init()
@@ -157,12 +156,6 @@ def main():
 
     # Initialize archives.
     renpy.loader.index_archives()
-
-    # Load the script.
-    game.script = renpy.script.load_script()
-
-    # Note that this is a restart.
-    renpy.game.exception_info = 'While beginning to run the game.'
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -220,6 +213,15 @@ def main():
     renpy.style.reset()
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
+
+    # Load the script.
+    renpy.game.exception_info = 'While loading the script.'
+    game.script = renpy.script.load_script()
+
+    if renpy.parser.report_parse_errors():
+        return
+    
+    renpy.game.exception_info = 'While executing init code.'
 
     # Run init code in its own context. (Don't log.)
     game.contexts = [ renpy.execution.Context(False) ]

@@ -35,6 +35,9 @@ from pickle import loads, dumps
 # The version of the dumped script.
 script_version = renpy.script_version
 
+# The version of the bytecode cache.
+BYTECODE_VERSION = 1
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -96,14 +99,12 @@ class Script(object):
         self.initcode = [ ]
         self.all_stmts = [ ]
         self.all_pycode = [ ]
+
+        # Init the bytecode compiler.
+        self.init_bytecode()
         
         # A list of all files in the search directories.
         dirlist = renpy.loader.listdirfiles()
-
-#         for dirname in renpy.config.searchpath:
-#             for fn in os.listdir(dirname):
-#                 dirlist.append(dirname + "/" + fn)
-
 
         # A list of directory, filename w/o extension pairs. This is
         # the basics of what we will be laoding.
@@ -121,10 +122,13 @@ class Script(object):
             else:
                 continue
             
-            if (dir, fn) not in script_files:
-                script_files.append((dir, fn))
+            if (fn, dir) not in script_files:
+                script_files.append((fn, dir))
 
-        for dir, fn in script_files:
+        # Sort script files by filename.
+        script_files.sort()
+                
+        for fn, dir in script_files:
 
             # This can only be a .rpyc file, since we're loading it
             # from an archive.
@@ -172,11 +176,9 @@ class Script(object):
         
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
-        # Ensure that all of the python code found in the script has been
-        # compiled into bytecode.
-        self.update_bytecode()
+        # Save the compiled bytecode to disk.
+        self.save_bytecode()
 
-        # Do some generic init here.
 
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.
@@ -221,10 +223,13 @@ class Script(object):
 
             stmts = renpy.parser.parse(fullfn)
 
+            
             data = { }
             data['version'] = script_version
             data['key'] = renpy.game.options.lock or 'unlocked'
 
+            if stmts is None:
+                return data, [ ]
 
             # See if we have a corresponding .rpyc file. If so, then
             # we want to try to upgrade our .rpy file with it.
@@ -296,6 +301,8 @@ class Script(object):
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
 
+        early = [ ]
+        
         # Check each node individually.
         for node in all_stmts:
 
@@ -324,42 +331,58 @@ class Script(object):
             # Add any PyCode to all_pycode.
             self.all_pycode.extend(node.get_pycode())
 
+            if isinstance(node, renpy.ast.EarlyPython):
+                early.append(node)
+            
+        # Compile bytecode from the file.
+        self.update_bytecode()
+
+        # Exec early python.
+        for node in early:
+            node.early_execute()
+        
         self.all_stmts.extend(all_stmts)
 
         return True
-
-    def update_bytecode(self):
+    
+    def init_bytecode(self):
         """
-        Updates the bytecode for all the bytecode objects in renpy.PyCode.extent.
+        Init/Loads the bytecode cache.
         """
 
-        VERSION = 1
-
-        oldcache = { }
-        newcache = { }
-        magic = imp.get_magic()
-        dirty = False
+        self.bytecode_oldcache = { }
+        self.bytecode_newcache = { }
+        self.bytecode_dirty = False
 
         # Load the oldcache.
         try:
             version, cache = loads(renpy.loader.load("bytecode.rpyb").read().decode("zlib"))
-            if version == VERSION:
-                oldcache = cache
+            if version == BYTECODE_VERSION:
+                self.bytecode_oldcache = cache
         except:
             pass
 
+        
+    def update_bytecode(self):
+        """
+        Compiles the PyCode objects in self.all_pycode, updating the
+        cache. Clears out self.all_pycode.
+        """
+        
+        magic = imp.get_magic()
+        
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
         for i in self.all_pycode:
 
-            codes = oldcache.get(i.location, { })
+            codes = self.bytecode_oldcache.get(i.location, { })
 
             if magic in codes:
                 code = codes[magic]
                 
             else:
 
-                dirty = True
+                self.bytecode_dirty = True
                 
                 old_ei = renpy.game.exception_info
                 renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.location[1], i.location[0])
@@ -375,19 +398,22 @@ class Script(object):
 
             i.source = None
             i.bytecode = code
-            newcache[i.location] = codes
+            self.bytecode_newcache[i.location] = codes
+
+        self.all_pycode = [ ]
 
 
-        if dirty:
+    def save_bytecode(self):
+        
+        if self.bytecode_dirty:
             try:
-                data = (VERSION, newcache)
+                data = (BYTECODE_VERSION, self.bytecode_newcache)
                 f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "w")
                 f.write(dumps(data, 2).encode("zlib"))
                 f.close()
             except:
                 pass
 
-        self.all_pycode = None
         
 
     def lookup(self, label):
