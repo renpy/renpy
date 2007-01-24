@@ -916,12 +916,13 @@ class UserStatement(Node):
 
     def __init__(self, loc, line):
 
-        super(UserStatement, self).__init__(self, loc)
+        super(UserStatement, self).__init__(loc)
         self.line = line
 
         self.parsed = None
-        self.call("check")
-        self.parsed = None # Don't save this.
+
+        # Do not store the parse quite yet.
+        renpy.statements.parse(self, self.line)
         
     def diff_info(self):
         return (UserStatement, self.line)
@@ -941,10 +942,10 @@ class UserStatement(Node):
         
         parsed = self.parsed        
         if parsed is None:
-            renpy.statement.parse(self, self.line)
+            parsed = renpy.statements.parse(self, self.line)
             self.parsed = parsed
 
-        self.statement.call(method, parsed, *args, **kwargs)
+        renpy.statements.call(method, parsed, *args, **kwargs)
 
         
                             

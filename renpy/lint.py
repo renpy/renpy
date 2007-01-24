@@ -176,7 +176,17 @@ def check_hide(node):
 def check_with(node):
     try_eval(node, "a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
+def check_user(node):
 
+    def error(msg):
+        report(node, "%s", msg)
+
+    renpy.exports.push_error_handler(error)
+    try:
+        node.call("lint")
+    finally:
+        renpy.exports.pop_error_handler()
+    
 def text_checks(node, s):
     msg = renpy.display.text.check_text_tags(s)
     if msg:
@@ -352,6 +362,9 @@ def lint():
         elif isinstance(node, renpy.ast.If):
             check_if(node)
 
+        elif isinstance(node, renpy.ast.UserStatement):
+            check_user(node)
+            
     for f in renpy.config.lint_hooks:
         f()
             

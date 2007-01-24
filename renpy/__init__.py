@@ -48,6 +48,7 @@ def import_all():
     import renpy.parser
     import renpy.python # object
     import renpy.script
+    import renpy.statements
     import renpy.style
 
     import renpy.display

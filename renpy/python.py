@@ -861,9 +861,14 @@ def py_eval_bytecode(bytecode):
 
     return eval(marshal.loads(bytecode), vars(renpy.store))
 
-def py_eval(source):
+def py_eval(source, globals=None, locals=None):
     source = source.strip()
 
-    return eval(py_compile(source, 'eval'),
-                vars(renpy.store))
+    if globals is None:
+        globals = renpy.store.__dict__
+
+    if locals is None:
+        locals = globals
+    
+    return eval(py_compile(source, 'eval'), globals, locals)
 

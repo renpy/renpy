@@ -934,7 +934,24 @@ def force_full_redraw():
 
     renpy.game.interface.display.full_redraw = True
 
+# New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
-
 invoke_in_new_context = renpy.game.invoke_in_new_context
+
+
+# Error handling stuff.
+def _error(msg):
+    raise Exception(msg)
+    
+_error_handlers = [ _error ]
+    
+def push_error_handler(eh):
+    _error_handlers.append(eh)
+
+def pop_error_handler():
+    _error_handlers.pop()
+
+def error(msg):
+    _error_handlers[-1](msg)
+    

@@ -4,6 +4,12 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in ...
 ----------
 
+Fix bug w/ slow callback being an inner function.
+
+ud-statements.
+
+python early:
+
 init python:
 
 Drop-shadow -> outline.

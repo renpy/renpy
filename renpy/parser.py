@@ -430,8 +430,6 @@ class Lexer(object):
         different than None.
         """
 
-        self.skip_whitespace()
-
         s = self.match(r'r?"([^\\"]|\\.)*"')
 
         if s is None:
@@ -470,21 +468,26 @@ class Lexer(object):
         integer, or None.
         """
 
-        self.skip_whitespace()
-
         return self.match(r'(\+|\-)?\d+')
 
+    def word(self):
+        """
+        Parses a name, which may be a keyword or not.
+        """
+        
+        return self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        
+    
     def name(self):
         """
         This tries to parse a name. Returns the name or None.
         """        
 
-        self.skip_whitespace()
-
         oldpos = self.pos
 
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
-
+        # rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        rv = self.word()
+        
         if rv in self.keywords:
             self.pos = oldpos
             return None
@@ -1032,7 +1035,7 @@ def parse_statement(l):
 
     # Store the current location.
     loc = l.get_location()
-
+    
     ### If statement
     if l.keyword('if'):
         entries = [ ]
@@ -1320,12 +1323,34 @@ def parse_statement(l):
 
         return ast.Init(loc, block, priority)
 
+    # Try parsing as a user-statement. If that doesn't work, revert and
+    # try as a say.
+
+    state = l.checkpoint()
+
+    word = l.word()
+    if (word,) in renpy.statements.registry:
+        text = l.text
+
+        l.expect_noblock(word + ' statement')
+        l.advance()
+
+        renpy.exports.push_error_handler(l.error)
+        try:
+            rv = ast.UserStatement(loc, text)
+        finally:
+            renpy.exports.pop_error_handler()
+
+        return rv
+        
+    l.revert(state)
 
     # The one and two arguement say statements are ambiguous in terms
     # of lookahead. So we first try parsing as a one-argument, then a
     # two-argument.
 
-    state = l.checkpoint()
+    # We're using the checkpoint from above.
+
     what = l.string()
 
     if l.keyword('with'):

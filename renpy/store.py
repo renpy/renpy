@@ -83,6 +83,7 @@ from renpy.python import RevertableSet as set
 Set = set
 from renpy.python import RevertableObject as object
 
+eval = renpy.python.py_eval
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
