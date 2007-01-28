@@ -99,13 +99,13 @@ label distribute:
         spacer()
 
         if windows:
-            text("Windows 98+", color="#000")
+            text("Windows 98+", style='launcher_input')
 
         if linux:
-            text("Linux x86", color="#000")
+            text("Linux x86", style='launcher_input')
 
         if mac:
-            text("Mac OS X 10.3+", color="#000")
+            text("Mac OS X 10.3+", style='launcher_input')
 
         spacer()
 
