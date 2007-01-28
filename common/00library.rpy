@@ -64,7 +64,8 @@ init -500:
                             selected=None,
                             disabled=False,
                             clicked=None,
-                            properties={}):
+                            properties={},
+                            **props):
             """
             This function is called to create the various buttons used
             in the game menu. By overriding this function, one can
@@ -87,7 +88,6 @@ init -500:
             @param properties: Addtional layout properties.
             """
 
-            props = { }
             props.update(properties)
             props.update(config.button_properties.get(label, { }))
             
@@ -119,7 +119,7 @@ init -500:
             ui.button(style=style, clicked=clicked, role=role, **props)
             ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
             
-        def _label_factory(label, type, properties={}):
+        def _label_factory(label, type, properties={}, **props):
             """
             This function is called to create a new label. It can be
             overridden by the user to change how these labels are created.
@@ -131,7 +131,6 @@ init -500:
             @param properties: This may contain position properties.
             """
 
-            props = { }
             props.update(properties)
             props.update(config.label_properties.get(label, { }))
 

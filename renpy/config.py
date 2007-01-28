@@ -291,6 +291,9 @@ layer_clipping = { }
 # Should we disable the fullscreen optimization?
 disable_fullscreen_opt = False
 
+# Should we reject midi files?
+reject_midi = True
+
 del renpy
 del sets
 

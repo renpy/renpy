@@ -26,11 +26,11 @@ label new:
 
             choices.append((i, None, i, hovered))
 
-        theme = paged_menu("Select a Theme", choices, "Please select a color theme for your project.")
+        color_theme = paged_menu("Select a Theme", choices, "Please select a color theme for your project. You can always change the colors later.")
 
         # Restore default theme.
         renpy.style.restore(style_backup)
-        theme.roundrect(launcher=True, **td)
+        theme.roundrect(launcher=True)
         renpy.style.rebuild()
 
         

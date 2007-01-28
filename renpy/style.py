@@ -292,7 +292,40 @@ def build_styles():
     styles_pending = None
     styles_built = True
         
+def rebuild():
 
+    global style_pending
+    global styles_built
+
+    styles_pending = style_map.values()
+    styles_built = False
+    
+    for i in styles_pending:
+        i.__dict__["cache"] = { }
+
+    build_styles()
+
+def backup():
+    rv = { }
+    
+    for k, v in style_map.iteritems():
+        rv[k] = v.properties.copy()
+
+    return rv
+        
+def restore(o):
+    global styles_built
+    global styles_pending
+    
+    styles_pending = [ ]
+    styles_built = False
+
+    for k, v in o.iteritems():
+        style_map[k].properties.clear()
+        style_map[k].properties.update(v)
+        styles_pending.append(style_map[k])
+        
+    
 class Style(object):
 
     def __getstate__(self):

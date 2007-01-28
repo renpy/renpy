@@ -99,8 +99,8 @@ def ismidi(s):
     """
     Returns true if s is the filename of a midi file.
     """
-
-    return midi_ok and s is not None and s.endswith(".mid")
+    
+    return (midi_ok or renpy.config.reject_midi) and s is not None and s.endswith(".mid")
 
 def load(fn):
     """
@@ -350,10 +350,13 @@ class Channel(object):
 
                 if ismidi(topq.filename):
 
+                    if renpy.config.reject_midi:
+                        raise Exception("Midi files are no longer supported.")
+                    
                     # If someone else is playing midi, then raise
                     # an error to that effect.
                     if midi.busy():
-                        raise Exception, "We can only play one midi at a time."                        
+                        raise Exception("We can only play one midi at a time.")
 
                     # Play midi.
                     midi.play(topf, topq.filename)

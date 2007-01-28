@@ -46,6 +46,10 @@ init 1000:
             style.button.setdefault(xpos=0.5, xanchor=0.5)
             style.menu_button.clear()
             style.menu_button_text.clear()
+
+        if compat(5, 6, 6):
+            config.reject_midi = False
+            
             
 # Style compatibility.
 init -999:

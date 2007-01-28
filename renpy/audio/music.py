@@ -159,6 +159,10 @@ def queue(filenames, channel=7, loop=True, clear_queue=True, fadein=0, tight=Fal
     If tight is True, then fadeouts will span into the next-queued sound.
     """
 
+    if filenames is None:
+        filenames = [ ]
+        loop = False
+
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
 

@@ -21,6 +21,8 @@ init:
 
         style_backup = renpy.style.backup()
         
+        _launcher_per_page = 8
+        
         # Choose the roundrect theme for the buttons.
         theme.roundrect(launcher=True)
 
@@ -109,8 +111,6 @@ init:
             return interact()
 
 
-        _launcher_per_page = 8
-        
         def paged_menu(tit, choices, message, per_page=None):
 
             if per_page is None:

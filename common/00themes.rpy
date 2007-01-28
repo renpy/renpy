@@ -76,6 +76,7 @@ init -402:
             gm_root = Solid((220, 235, 255, 255)),
             centered = False,
             button_menu = True,
+            launcher=False,
             ):
 
             """This enables the use of the roundrect theme. By
@@ -235,7 +236,7 @@ init -402:
 
             style.prefs_label.color = label
             style.prefs_label.size = size
-            style.prefs_label.drop_shadow = 0
+            style.prefs_label.drop_shadow = None
             style.prefs_label.xpos = 0
             style.prefs_label.xanchor = 0
 
@@ -354,6 +355,44 @@ init -402:
             if button_menu:
                 _button_menu()
 
+            if launcher:
+                style.launcher_mid_vbox.xpos = 80
+                style.launcher_mid_vbox.ypos = 50
+
+                style.launcher_bottom_vbox.xpos = 80
+                style.launcher_bottom_vbox.ypos = 360
+                style.launcher_bottom_vbox.yanchor = 1.0
+
+                style.launcher_button.xpos = 20
+                style.launcher_button.xminimum = 240
+
+                style.launcher_title_label.color = label
+                style.launcher_title_label.size = 28
+                
+                style.launcher_text.xpos = 140
+                style.launcher_text.xanchor = 0.5
+                style.launcher_text.xmaximum = 240
+                style.launcher_text.color = label
+                style.launcher_text.text_align = 0.5
+                
+                
+                style.launcher_label.xpos = 140
+                style.launcher_label.xanchor = 0.5
+                style.launcher_label.xmaximum = 240
+                style.launcher_label.color = label
+                style.launcher_label.text_align = 0.5
+                
+                style.launcher_input.xpos = 140
+                style.launcher_input.xanchor = 0.5
+                style.launcher_input.xmaximum = 240
+                style.launcher_input.color = widget
+                style.launcher_input.text_align = 0.5
+                
+                store._launcher_per_page = 9
+
+
+                
+                
         theme.roundrect = theme_roundrect
 
         def theme_roundrect_red(**params):

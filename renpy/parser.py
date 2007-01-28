@@ -470,6 +470,22 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
+    def float(self):
+        """
+        Tries to parse a number (float). Returns a string containing the
+        number, or None.
+        """
+
+        return self.match(r'(\+|\-)?(\d+\.\d*|\.\d+)([eE][-+]?\d+)?')
+
+    def integer(self):
+        """
+        Tries to parse an integer. Returns a string containing the
+        integer, or None.
+        """
+
+        return self.match(r'(\+|\-)?\d+')
+
     def word(self):
         """
         Parses a name, which may be a keyword or not.
@@ -661,7 +677,7 @@ class Lexer(object):
         # python
         if (not self.python_string() and
             not self.name() and
-            not self.integer() and 
+            not self.float() and 
             not self.parenthesised_python()):
 
             return None
