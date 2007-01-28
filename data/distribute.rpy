@@ -8,11 +8,9 @@ init:
             if fn[0] == ".":
                 return True
 
-            if fn[-1] == "~":
-                return True
-
-            if fn.endswith(".bak"):
-                return True
+            for i in store.ignore_extensions:
+                if fn.endswith(i):
+                    return True
 
             if fn.lower() in ("thumbs.db", "launcherinfo.py", "traceback.txt", "errors.txt"):
                 return True
@@ -147,6 +145,12 @@ label distribute:
 
         persistent.build_project = project.name
         persistent.build_name = name
+
+        ignore_extensions = persistent.ignore_extensions or "~ .bak"
+        ignore_extensions = prompt("Building Distributions", "Please enter a space separated list of the file extensions you do not want included in the distribution.", "tools", ignore_extensions)
+        persistent.ignore_extensions = ignore_extensions    
+        store.ignore_extensions = [ i.strip() for i in ignore_extensions.strip().split() ]
+
         
         # Figure out the files that will make up the distribution.
 
@@ -382,7 +386,7 @@ label distribute:
         spacer()
 
         if mac:
-            text("Note that unpacking and repacking the Mac zip on Windows isn't supported.", size=16)
+            text("Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.", size=16)
 
         ui.close()
 
