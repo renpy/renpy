@@ -2,61 +2,75 @@ init:
 
     python:
         # Set up the window.
-        config.screen_width = 400
-        config.screen_height = 400
+        config.screen_width = 350
+        config.screen_height = 450
         config.window_title = "Ren'Py Launcher"
 
         # Disables sound (for the demo game).
         config.sound = False
+
+        # Create some launcher styles.
+        style.create('launcher_button', 'button')
+        style.create('launcher_button_text', 'button_text')
+        style.create('launcher_title_label', 'default')
+        style.create('launcher_label', 'default')
+        style.create('launcher_input', 'default')
+        style.create('launcher_text', 'default')
+        style.create('launcher_bottom_vbox', 'vbox')
+        style.create('launcher_mid_vbox', 'vbox')
+
+        style_backup = renpy.style.backup()
         
-        # Choose ther roundrect_red theme for the buttons.
-        theme.roundrect(
-            widget="#559",
-            widget_text="#eef",
-            widget_hover="#77c",
-            disabled="#888",
-            disabled_text="#eee",
-            )
+        # Choose the roundrect theme for the buttons.
+        theme.roundrect(launcher=True)
 
-        # Change the default text color, since we'll be using
-        # white as a background.
-        style.default.color = "#000"
-
-        style.button.xminimum = 200
 
         # We don't want the user going into the game menu.
         def interact():
-            ui.add(DynamicDisplayable("Text(store.message, size=14, color='#fff', xpos=5, ypos=340, xmaximum=350)"))
-            ui.text(renpy.version(), xalign=1.0, yalign=1.0, size=12, color='#fff')
+            ui.window(background=Solid("#0008"), ypos=1.0, yminimum=80, xmargin=0, ymargin=0)
+            ui.null()
+
+            ui.image("eileen_small.png", xalign=0.0, yalign=1.0)
+            ui.add(DynamicDisplayable("Text(_(store.message), size=14, color='#fff', xpos=100, ypos=375, xmaximum=240)"))
+            ui.text(renpy.version(), xalign=0, yalign=1.0, size=12, color='#000')
+            
             return ui.interact(suppress_underlay=True)
 
         def title(name):
-            ui.text(name, xpos=4, ypos=4, size=30, color="#559")
+            ui.window(style='mm_root')
+            ui.null()
 
-        def text(name, color="#559", size=18):
-            ui.text(name, xalign=0.5, text_align=0.5, color=color, xmaximum=200, size=size)
+            ui.frame(xminimum=350, yminimum=370)
+            _label_factory(name, "launcher_title", size=28)
+            
+            # ui.text(name, xpos=4, ypos=4, size=30, color="#559")
 
+        def text(name, style="launcher_text"):
+            ui.text(_(name), style=style)
+            
+        def label(name):
+            _label_factory(name, "launcher")
+            
         def spacer():
             ui.add(Null(1, 6))
 
         def mid(focus="mid"):
-            ui.vbox(ypos=50, yanchor=0, xpos=293, xanchor=0.5, focus=focus)
+            ui.vbox(style='launcher_mid_vbox', focus=focus)
 
         def bottom(focus="bottom"):
-            ui.vbox(ypos=326, yanchor=1.0, xpos=293, xanchor=0.5, focus=focus)
+            ui.vbox(style='launcher_bottom_vbox', focus=focus)
 
-        def button(text, hover_text="", clicked=None):
+        def button(text, hover_text=None, clicked=None, hovered=None):
             if hover_text:
                 def hovered(hover_text=hover_text):
                     if store.message != hover_text:
                         store.message = hover_text
                         renpy.restart_interaction()
-            else:
-                hovered=None
                         
-            ui.button(clicked=clicked, hovered=hovered)
-            ui.text(text, style="button_text")
-            
+            # ui.button(clicked=clicked, hovered=hovered)
+            # ui.text(text, style="button_text")
+            _button_factory(text, 'launcher', clicked=clicked, hovered=hovered)
+                
 
         def prompt(name, message, cancel, default='', hint=''):
             store.message = hint
@@ -68,7 +82,7 @@ init:
 
             text(message)
 
-            ui.input(default, exclude='{}/\\', xmaximum=200, xalign=0.5, text_align=0.5, color="#000")
+            ui.input(default, exclude='{}/\\', style='launcher_input')
 
             ui.close()
 
@@ -95,8 +109,13 @@ init:
             return interact()
 
 
-        def paged_menu(tit, choices, message, per_page=7):
+        _launcher_per_page = 8
+        
+        def paged_menu(tit, choices, message, per_page=None):
 
+            if per_page is None:
+                per_page = _launcher_per_page
+            
             page = 0
             pages = len(choices) / per_page
 
@@ -109,8 +128,8 @@ init:
 
                 mid(focus="paged_menu")
 
-                for name, desc, ret in choices[page * per_page:(page + 1) * per_page]:
-                    button(name, desc, clicked=ui.returns(("return", ret)))
+                for name, desc, ret, hovered in choices[page * per_page:(page + 1) * per_page]:
+                    button(name, desc, clicked=ui.returns(("return", ret)), hovered=hovered)
                     
                 ui.close()
 
@@ -134,6 +153,9 @@ init:
 
                 cmd, arg = interact()
 
+                if cmd == "repeat":
+                    continue
+                
                 if cmd == "page":
                     page = arg
                     continue
@@ -263,16 +285,6 @@ init:
             renpy.launch_editor([ "lint.txt" ])
 
 
-
-            
-    # Set up images.
-    image background = "launcher.png"
-
-                
-
-
-
-
 label main_menu:
     return
 
@@ -292,8 +304,6 @@ label start:
 
         store.game_proc = None
 
-    scene background
-
 label main:
 
     python:
@@ -310,7 +320,7 @@ label top_menu:
 
             mid()
 
-            text("This Project")
+            label("This Project")
 
             if not game_proc or game_proc.poll() is not None:
                 clicked = ui.jumps("launch")
@@ -340,7 +350,7 @@ label top_menu:
 
             spacer()
 
-            text("Change Project")
+            label("Change Project")
 
             button("Select Project",
                    "Select a project to work with.",
@@ -368,7 +378,7 @@ label select_project:
 
     python hide:
 
-        choices = [ (p.name, p.info["description"], p) for p in projects ]
+        choices = [ (p.name, p.info["description"], p, None) for p in projects ]
 
         store.project = paged_menu("Select a Project", choices, "Please select a project.")
 
@@ -458,7 +468,7 @@ label tools_menu:
 
         mid()
 
-        text("Anytime")
+        label("Anytime")
 
         button("Check Script (Lint)",
                "Checks the game's script for likely errors. This should be run before releasing.",
@@ -470,7 +480,7 @@ label tools_menu:
 
         spacer()
 
-        text("Release Day")
+        label("Release Day")
 
         def ifrw(label):
             if project.info.get("ro", False):
@@ -520,7 +530,7 @@ label new:
         import os
         import os.path
 
-        choices = [ (p.name, p.info["description"], p) for p in projects if p.info.get("template", None)]
+        choices = [ (p.name, p.info["description"], p, None) for p in projects if p.info.get("template", None)]
 
         template = paged_menu("Select a Template", choices, "Please select a project to use as a template for your project.")
 
@@ -708,5 +718,4 @@ label add_from_to_calls:
         
 label confirm_quit:
     $ renpy.quit()
-    
     
