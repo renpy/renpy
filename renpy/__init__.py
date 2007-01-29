@@ -127,6 +127,7 @@ def reload_all():
     myreload(renpy.parser)
     myreload(renpy.python) # object
     myreload(renpy.script)
+    myreload(renpy.statements)
     myreload(renpy.style)
 
     myreload(renpy.display.presplash)

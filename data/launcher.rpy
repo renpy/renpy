@@ -26,6 +26,11 @@ init:
         # Choose the roundrect theme for the buttons.
         theme.roundrect(launcher=True)
 
+        def ifrw(label):
+            if project.info.get("ro", False):
+                return None
+            else:
+                return ui.jumps(label)            
 
         # We don't want the user going into the game menu.
         def interact():
@@ -111,7 +116,7 @@ init:
             return interact()
 
 
-        def paged_menu(tit, choices, message, per_page=None):
+        def paged_menu(tit, choices, message, per_page=None, cancel='main'):
 
             if per_page is None:
                 per_page = _launcher_per_page
@@ -147,7 +152,7 @@ init:
                     else:
                         button("Previous Page")
 
-                button("Cancel", "Return to the top menu.", ui.jumps("main"))
+                button("Cancel", "Return to the top menu.", ui.jumps(cancel))
                         
                 ui.close()
 
@@ -288,7 +293,8 @@ init:
 label main_menu:
     return
 
-label start:
+label find_project:
+
     python hide:
         load_projects()
 
@@ -304,6 +310,13 @@ label start:
 
         store.game_proc = None
 
+    return
+        
+    
+label start:
+
+    call find_project from _call_find_project_1
+    
 label main:
 
     python:
@@ -338,6 +351,10 @@ label top_menu:
                        clicked=ui.jumps("edit"))
 
 
+            button("Change Theme",
+                   "Changes the color theme of the project.",
+                   ifrw("choose_theme"))
+                
             button("Game Directory",
                    "Opens the game directory.",
                    clicked=ui.jumps("game_directory"))
@@ -481,12 +498,6 @@ label tools_menu:
 
         label("Release Day")
 
-        def ifrw(label):
-            if project.info.get("ro", False):
-                return None
-            else:
-                return ui.jumps(label)
-            
 
         button("Add From to Calls",
                "Adds a from clause to each of the call statements in your script.", 
