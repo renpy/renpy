@@ -78,8 +78,6 @@ init -100:
             renpy.with(None)
             renpy.with(with)
             
-            
-        
         class NVLCharacter(Character):
 
             def __init__(self, who,
@@ -148,3 +146,48 @@ init -100:
 
             return rv
 
+python early hide:
+
+    def parse_nvl_show_hide(l):
+        rv = l.simple_expression()
+        if rv is None:
+            renpy.error('expected simple expression')
+
+        if not l.eol():
+            renpy.error('expected end of line')
+
+        return rv
+            
+    def lint_nvl_show_hide(trans):
+        _try_eval(trans, 'transition')
+
+    def execute_nvl_show(trans):
+        nvl_show(eval(trans))
+
+    def execute_nvl_hide(trans):
+        nvl_hide(eval(trans))
+
+    renpy.statements.register("nvl show",
+                              parse=parse_nvl_show_hide,
+                              execute=execute_nvl_show,
+                              lint=lint_nvl_show_hide)
+
+    renpy.statements.register("nvl hide",
+                              parse=parse_nvl_show_hide,
+                              execute=execute_nvl_hide,
+                              lint=lint_nvl_show_hide)
+
+    def parse_nvl_clear(l):
+        if not l.eol():
+            renpy.error('expected end of line')
+
+        return None
+
+    def execute_nvl_clear(parse):
+        nvl_clear()
+
+    renpy.statements.register('nvl clear',
+                              parse=parse_nvl_clear,
+                              execute=execute_nvl_clear)
+
+    

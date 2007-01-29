@@ -76,7 +76,8 @@ init -402:
             gm_root = Solid((220, 235, 255, 255)),
             centered = False,
             button_menu = True,
-            launcher=False,
+            launcher = False,
+            rounded_window = True,
             ):
 
             """This enables the use of the roundrect theme. By
@@ -337,12 +338,23 @@ init -402:
 
             # In-game.
 
-            style.window.background = RoundRect(window)
-            style.window.xpadding = 6
-            style.window.ypadding = 6
-            style.window.xmargin = 6
-            style.window.ymargin = 6
+            if rounded_window:
 
+                style.window.background = RoundRect(window)
+                style.window.xpadding = 6
+                style.window.ypadding = 6
+                style.window.xmargin = 6
+                style.window.ymargin = 6
+
+            else:
+                
+                style.window.background = Solid(window)
+                style.window.xpadding = 6
+                style.window.ypadding = 6
+                style.window.xmargin = 0
+                style.window.ymargin = 0
+                
+                
             style.default.size = size
             style.default.drop_shadow = None
 

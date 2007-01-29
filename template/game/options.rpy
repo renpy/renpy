@@ -64,6 +64,10 @@ init -1:
             ## at the bottom of the screen.
             button_menu = True,
 
+            ## If this is True, the in-game window is rounded. If False,
+            ## the in-game window is square.
+            rounded_window = False,
+
             ## The background of the main menu. This can be a color
             ## beginning with '#', or an image filename. The latter
             ## should take up the full height and width of the screen.

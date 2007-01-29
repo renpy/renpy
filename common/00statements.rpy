@@ -104,10 +104,9 @@ python early hide:
 
     def lint_play_music(p):
 
-        try:
-            file = eval(p["file"])
-        except:
-            file = None
+        file = _try_eval(p["file"], 'filename')
+        if p["channel"] is not None:
+            _try_eval(p["channel"], 'channel')
 
         if not isinstance(file, list):
             file = [ file ]
@@ -239,3 +238,11 @@ python early hide:
 
     
                               
+init python:
+
+    def _try_eval(e, what):
+        try:
+            return eval(e)
+        except:
+            renpy.error('unable to evaluate %s %r' % (what, e))
+    

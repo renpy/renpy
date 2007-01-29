@@ -79,3 +79,43 @@ init -440:
 
         config.afm_callback = voice_afm_callback
             
+python early hide:
+
+    def parse_voice(l):
+        fn = l.simple_expression()
+        if fn is None:
+            renpy.error('expected simple expression (string)')
+
+        if not l.eol():
+            renpy.error('expected end of line')
+
+        return fn
+
+    def execute_voice(fn):
+        fn = eval(fn)
+        voice(fn)
+
+    def lint_voice(fn):
+        fn = _try_eval(fn)
+        if isinstance(fn, basestring) and not renpy.loadable(fn):
+            renpy.error('voice file %r is not loadable' % fn)
+
+    renpy.statements.register('voice',
+                              parse=parse_voice,
+                              execute=execute_voice,
+                              lint=lint_voice)
+
+    def parse_voice_sustain(l):
+        if not l.eol():
+            renpy.error('expected end of line')
+
+        return None
+
+    def execute_voice_sustain(parsed):
+        voice_sustain()
+
+    renpy.statements.register('voice sustain',
+                              parse=parse_voice_sustain,
+                              execute=execute_voice_sustain)
+
+    

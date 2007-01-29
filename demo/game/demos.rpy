@@ -20,7 +20,7 @@ init:
 
         demos_advanced = [
             ("demo_layers", "Layers & Advanced Show", "5.6.5"),
-            ("demo_nvlmode", "NVL Mode", "5.6.3"),
+            ("demo_nvlmode", "NVL Mode", "5.6.7"),
             ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
             ("demo_minigame", "Minigame Support", "5.6.5"),
             ]
