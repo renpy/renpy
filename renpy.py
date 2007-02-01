@@ -53,7 +53,7 @@ def path_to_renpy_base():
 
 # The version of the Mac Launcher and py4renpy that we use.
 macos_version = (5, 6, 6)
-linux_version = (5, 6, 6)
+linux_version = (5, 6, 7)
 
 if __name__ == "__main__":
 
@@ -86,6 +86,13 @@ if __name__ == "__main__":
     if os.path.exists(renpy_base + "/renpy.zip"):
         sys.path.append(renpy_base + "/renpy.zip")
 
+        
     # Start Ren'Py proper.
-    import renpy.bootstrap
+    try:
+        import renpy.bootstrap
+    except ImportError:
+        print >>sys.stderr, "Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py"
+        print >>sys.stderr, "correctly, preserving the directory structure."
+        raise
+
     renpy.bootstrap.bootstrap(renpy_base)

@@ -171,7 +171,7 @@ label distribute:
                 if f[0] == "." or f[-1] == "~":
                     continue
 
-                if f.endswith(".pyc") or f.endswith(".pyo"):
+                if f.endswith(".pyc"):
                     continue
                 
                 multi_files.append((dirname + "/" + f, shortdir + "/" + f))
@@ -386,7 +386,7 @@ label distribute:
         spacer()
 
         if mac:
-            text("Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.", size=16)
+            text("Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.")
 
         ui.close()
 

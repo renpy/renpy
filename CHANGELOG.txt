@@ -4,8 +4,9 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in ...
 ----------
 
-TODO: Fix bug w/ slow callback being an inner function.
+midi removed.
 
+TODO: Fix bug w/ slow callback being an inner function.
 
 
 ud-statements.

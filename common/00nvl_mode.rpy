@@ -146,6 +146,26 @@ init -100:
 
             return rv
 
+    # Set up nvl mode styles.
+    $ style.nvl_label.minwidth = 150
+    $ style.nvl_label.text_align = 1.0
+    
+    $ style.nvl_window.background = "#0008"
+    $ style.nvl_window.yfill = True
+    $ style.nvl_window.xfill = True
+    $ style.nvl_window.xpadding = 20
+    $ style.nvl_window.ypadding = 30
+
+    $ style.nvl_vbox.box_spacing = 10
+    
+    $ style.nvl_menu_choice.idle_color = "#0ff"
+    $ style.nvl_menu_choice.hover_color = "#ff0"
+    $ style.nvl_menu_choice_button.left_margin = 160
+    $ style.nvl_menu_choice_button.right_margin = 20
+    $ style.nvl_menu_choice_button.xfill = True
+    $ style.nvl_menu_choice_button.hover_background = "#F0F2"
+
+
 python early hide:
 
     def parse_nvl_show_hide(l):

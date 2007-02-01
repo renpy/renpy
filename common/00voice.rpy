@@ -26,7 +26,8 @@ init -440:
         _voice = object()
         _voice.play = None
         _voice.sustain = False
-
+        _voice.seen_in_lint = False
+        
         # Call this to specify the voice file that will be played for
         # the user.
         def voice(file, **kwargs):
@@ -78,7 +79,7 @@ init -440:
             return not renpy.sound.is_playing(channel=2)
 
         config.afm_callback = voice_afm_callback
-            
+                       
 python early hide:
 
     def parse_voice(l):
@@ -96,6 +97,8 @@ python early hide:
         voice(fn)
 
     def lint_voice(fn):
+        _voice.seen_in_lint = True
+
         fn = _try_eval(fn)
         if isinstance(fn, basestring) and not renpy.loadable(fn):
             renpy.error('voice file %r is not loadable' % fn)

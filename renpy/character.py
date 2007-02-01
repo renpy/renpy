@@ -180,6 +180,21 @@ def predict_display_say(who, what,
 
     return rv
 
+class SlowDone(object):
+    def __init__(self, ctc, ctc_position, callback, interact):
+        self.ctc = ctc
+        self.ctc_position = ctc_position
+        self.callback = callback
+        self.interact = interact
+
+    def __call__(self):
+        
+        if self.ctc and self.ctc_position == "fixed":
+            renpy.ui.add(self.ctc)
+            renpy.exports.restart_interaction()
+
+        if self.callback:
+            self.callback("slow_done", interact=self.interact)
 
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -287,15 +302,7 @@ def display_say(who, what, who_style='say_label',
             ctcwhat.extend([ " ", ctc ])
 
         if slow:
-            def slow_done():
-                if ctc and ctc_position == "fixed":
-                    renpy.ui.add(ctc)
-                    renpy.exports.restart_interaction()
-
-                if callback:
-                    callback("slow_done", interact=interact)
-
-                    
+            slow_done = SlowDone(ctc, ctc_position, callback, interact)
         else:
             slow_done = None
 

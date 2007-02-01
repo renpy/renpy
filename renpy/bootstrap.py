@@ -48,6 +48,7 @@ def extra_imports():
     import renpy.tools.add_from
     import tarfile
     import bz2
+    import webbrowser
     
 def bootstrap(renpy_base):
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/tom/bin/renpython -O
 # Builds a distributions of Ren'Py.
 
 import sys
@@ -7,6 +7,7 @@ import zipfile
 import tarfile
 import time
 import zlib
+import compileall
 
 zlib.Z_DEFAULT_COMPRESSION = 9
 
@@ -86,10 +87,16 @@ def tree(root):
             if f[-1] == '~' or f[0] == '.':
                 continue
 
-            if f.endswith(".bak") or f.endswith(".pyc") or f.endswith(".pyo"):
+            if f.endswith(".bak") or f.endswith(".pyc"):
                 continue
 
+            if f.endswith(".pyo") and "renpy" not in dirname:
+                continue
+            
             if f == "semantic.cache":
+                continue
+
+            if "libSDL_mixer" in f or "mixer_music" in f:
                 continue
 
             rv.append(dirname + "/" + f)
@@ -104,8 +111,10 @@ def main():
 
     prefix = sys.argv[1]
 
+    compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
+    
     # Compile the various games
-    for i in [ 'demo/game', 'data', 'dse/game', 'template/game' ]:
+    for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'question' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
@@ -119,6 +128,7 @@ def main():
     files.extend(tree("data"))
     files.extend(tree("demo"))
     files.extend(tree("dse"))
+    files.extend(tree("question"))
 
     editor = tree("editor")
     editor.remove("editor/scite.exe")
@@ -187,6 +197,7 @@ def main():
     
     print
     print "Did you remember to rebuild the exe after the last change?"
-
+    print "Did you run me with renpython -O?"
+    
 if __name__ == "__main__":
     main()

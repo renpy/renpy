@@ -12,7 +12,7 @@ label start:
     with dissolve
 
     # Start the background music playing.
-    $ renpy.music.play("mozart.ogg")
+    play music "mozart.ogg"
 
     e "Hi, and welcome to the Ren'Py demo game."
 

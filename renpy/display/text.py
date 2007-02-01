@@ -318,7 +318,7 @@ class TextStyle(object):
 
         # Width cache.
         self.wcache = { }
-
+        
     def update(self):
         self.f = get_font(self.font, self.size, self.bold, self.italic, self.underline)
 

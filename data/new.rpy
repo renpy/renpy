@@ -116,7 +116,6 @@ label choose_theme:
             elif changing:
 
                 def repl(m, td=td):
-                    print m.group(2)
                     return m.group(1) + m.group(2) + " = \"" + td.get(m.group(2), m.group(3)) + "\","
 
                 l = re.sub(r'^(\s*)(\w+) = "([\da-fA-F#]+)",', repl, l)

@@ -10,17 +10,17 @@ label demo_multimedia:
     e "You're probably hearing music playing in the background."
 
     # This stops the music, and fades it out.
-    $ renpy.music.stop(fadeout=0.5)
+    stop music fadeout 0.5
 
     e "We can stop it, with a fadeout..."
 
     # This plays music.
-    $ renpy.music.play('mozart.ogg')
+    play music "mozart.ogg"
 
     e "... and start it playing again."
 
     # This plays a sound effect.
-    $ renpy.sound.play("18005551212.ogg")
+    play sound "18005551212.ogg"
 
     e "We can also play up to eight channels of sound effects on top of the music."
 

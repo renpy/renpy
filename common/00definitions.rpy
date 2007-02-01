@@ -9,9 +9,10 @@ init -425:
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
-    $ left = Position(xpos=0.0, xanchor=0.0)
-    $ center = Position()
-    $ right = Position(xpos=1.0, xanchor=1.0)
+    $ left = Position(xalign=0.0)
+    $ center = Position(xalign=0.5)
+    $ truecenter = Position(xalign=0.5, yalign=0.5)
+    $ right = Position(yalign=1.0)
 
     # Offscreen positions for use with the move transition. Images at
     # these positions are still shown (and consume

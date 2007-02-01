@@ -436,14 +436,16 @@ label edit:
 
         files.sort()
 
-        if "options.rpy" in files:
-            files.remove("options.rpy")
-            files.insert(0, "options.rpy")
+        for i in files[:]:
+            if i.endswith("options.rpy"):
+                files.remove(i)
+                files.insert(0, i)
 
-        if "script.rpy" in files:
-            files.remove("script.rpy")
-            files.insert(0, "script.rpy")
-
+        for i in files[:]:
+            if i.endswith("script.rpy"):
+                files.remove(i)
+                files.insert(0, i)
+            
         renpy.launch_editor(files)
         
         store.message = "Launched editor with %d script files." % len(files)
