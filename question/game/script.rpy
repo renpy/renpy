@@ -95,7 +95,7 @@ label rightaway:
     
     show sylvie smile
     
-    s "Sure, but what is a visual novel?"
+    s "Sure, but what is a \"visual novel?\""
 
     menu:
 
@@ -148,6 +148,10 @@ label marry:
 
     "And so, we became a visual novel creating team."
     "We made games and had a lot of fun making them."
+
+    if bl_game:
+        "Well, apart from that Boy's Love game she insisted on making."
+
     "And one day..."
         
     show sylvie2 normal

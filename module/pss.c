@@ -159,7 +159,7 @@ SDL_AudioSpec audio_spec;
 
 
 static int ms_to_bytes(int ms) {
-    return ms * audio_spec.freq * audio_spec.channels * 2 / 1000;
+    return ((long long) ms) * audio_spec.freq * audio_spec.channels * 2 / 1000;
 }
 
 static int bytes_to_ms(int bytes) {
@@ -184,9 +184,10 @@ static void start_sample(struct Channel* c, int reset_fade) {
             c->fade_delta = 1;
             c->fade_off = 0;
             c->fade_vol = 0;
-        
+
             c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
             c->fade_step_len &= ~0x7; // Even sample.
+
         }
 
         c->stop_bytes = -1;
@@ -262,6 +263,7 @@ static void fade_mixaudio(struct Channel *c,
             dst += l;
             src += l;
             c->fade_off += l;
+            continue;
         }
         
         // Otherwise, we have no space left in the current fade step.
@@ -273,7 +275,7 @@ static void fade_mixaudio(struct Channel *c,
         if (c->fade_vol <= 0) {
             c->fade_vol = 0;
         }
-
+        
         // Stop on a fadein.
         if (c->fade_vol >= c->volume) {
             c->fade_vol = c->volume;

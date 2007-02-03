@@ -200,7 +200,15 @@ def load(filename):
 
     log.unfreeze(label="after_load")
 
+def rename_save(old, new):
+    os.rename(renpy.config.savedir + "/" + old + savegame_suffix, 
+              renpy.config.savedir + "/" + new + savegame_suffix)
+    
 
+def unlink_save(filename):
+    os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
+
+    
 class _MultiPersistent(object):
 
     def __getstate__(self):

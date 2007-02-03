@@ -80,7 +80,9 @@ python early hide:
                 channel = l.simple_expression()
                 if channel is None:
                     renpy.error('expected simple expression')
-            
+
+                continue
+                    
             renpy.error('could not parse statement.')
 
         return dict(file=file,
@@ -200,8 +202,10 @@ python early hide:
         else:
             channel = 0
 
+        fadeout = eval(p["fadeout"]) or 0
+            
         renpy.sound.play(eval(p["file"]),
-                         fadeout=eval(p["fadeout"]),
+                         fadeout=fadeout,
                          fadein=eval(p["fadein"]),
                          channel=channel)
                        
@@ -230,7 +234,9 @@ python early hide:
         else:
             channel = 0
 
-        renpy.music.stop(fadeout=eval(p["fadeout"]), channel=channel)
+        fadeout = eval(p["fadeout"]) or 0
+
+        renpy.sound.stop(fadeout=fadeout, channel=channel)
 
     renpy.statements.register('stop sound',
                               parse=parse_stop_music,

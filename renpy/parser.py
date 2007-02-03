@@ -476,7 +476,7 @@ class Lexer(object):
         number, or None.
         """
 
-        return self.match(r'(\+|\-)?(\d+\.\d*|\.\d+)([eE][-+]?\d+)?')
+        return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
 
     def integer(self):
         """

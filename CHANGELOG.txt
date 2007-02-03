@@ -1,25 +1,63 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in ...
-----------
+New in Ren'Py 5.6.7
+-------------------
 
-midi removed.
+A quickstart manual has been included in the documentation, and the
+corresponding examples included in the demo. The sample game, "The
+Question", has been included in the question/ directory.
 
-TODO: Fix bug w/ slow callback being an inner function.
+Several new statements have been added to Ren'Py. These include the
+play, queue, and stop statements that control the playback of music
+and sound, the voice statement that plays voice, and the nvl
+statements that are used in nvl-mode. While the old (python function
+based) ways of invoking this functionality will still work, using the
+statement allows lint to check your code for errors, like missing
+files. 
 
+These statements use the new user-defined statement support, which is
+"documented" in common/00statements.rpy. 
 
-ud-statements.
+Ren'Py now ships with many color variants of the roundrect
+theme. The launcher can now change the color theme of a game, as
+well. Thanks to absinthe for making these color schemes.
 
-python early:
+There have been improvements to error handling. The big one is that
+parse errors are now reported all at once, rather than one at a
+time. Several error messages have been clarified, to better let the
+user know what is going on.
 
-init python:
-
-Drop-shadow -> outline.
+The drop_shadow style property can now take a list of drop-shadow
+offsets. This can be used to outline text, without requiring the use
+of a SFont.
 
 When building a distribution, the launcher now prompts for a list of
 file extensions to ignore. Files with these extensions will not be
 included in the distribution.
+
+Documented loading/saving, voice, and nvl-mode.
+
+Names of files in the common directory have been prefixed with
+00. This reduces the risk of naming conflicts, and ensures they are
+loaded before other files. The latter allows user-defined statements
+to be used.
+
++++
+Midi support has been dropped, and will now trigger an error.
+
+!!!
+A bug has been fixed that prevented sound playback on older Linux
+systems. 
+
+!!! +++ 
+A long-standing bug has been fixed that caused fadeout and
+fadein times to be incorrect. This may cause the timings of fadeins
+and fadeouts to change (to be what was specified in the appropriate
+calls).
+
+Text displayables no longer use an inner function in any cases, which
+should better allow them to be saved.
 
 
 New in Ren'Py 5.6.6
