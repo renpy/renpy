@@ -24,6 +24,8 @@ init:
 # The game starts here.
 label start:
 
+    $ bl_game = False
+    
     play music "illurock.ogg"
 
     scene bg lecturehall
@@ -122,6 +124,8 @@ label vn:
     
 label hentai:
 
+    $ bl_game = True
+    
     m "Why it's a game with lots of sex."
     s "You mean, like a boy's love game?"
     s "I've always wanted to make one of those."

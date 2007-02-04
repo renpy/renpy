@@ -18,8 +18,33 @@ label start:
 
     show eileen happy
     
-    e "My name is Eileen, and I'm here to demonstrate some of the features of the Ren'Py visual novel engine."
+    e "My name is Eileen, and today I can teach you about Ren'Py. I can also give you a demonstration of its features."
 
+    menu:
+        e "What would you like?"
+
+        "Please teach me about Ren'Py.":
+            jump teach
+
+        "I'd like you to demonstrate its features.":
+            jump demonstrate
+
+label teach:
+
+    call tutorial from _call_tutorial_1
+
+    menu:
+
+        e "Would you like to see the demonstration?"
+
+        "Yes.":
+            jump demonstrate
+
+        "No.":
+            jump credits
+    
+label demonstrate:
+    
     # Show the editor button, which is defined in editor.rpy.
     $ show_editor_button = True
 
@@ -33,9 +58,13 @@ label start:
 
     call demos from _call_demos_1
 
+label credits:
+    
     e "Thank you for viewing the Ren'Py demo script."
 
-    e "For Ren'Py help and discussion on visual novel development, check out the Lemma Soft Forums, at http://lemmasoft.renai.us."
+    e "You can always find the latest version of Ren'Py at http://www.renpy.org/"
+    
+    e "For Ren'Py help and discussion of visual novel development, check out the Lemma Soft forums, at http://lemmasoft.renai.us."
 
     e "We'd like to thank Piroshki for contributing character art... I've never looked better."
 
