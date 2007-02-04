@@ -23,6 +23,7 @@ import renpy
 import sys
 import codecs
 import os
+import os.path
 import time
 
 # Things to check in lint.
@@ -303,7 +304,7 @@ def lint():
     filenames = { }
 
     for d in renpy.config.searchpath:
-        for fn in os.listdir(d):
+        for fn in os.listdir(os.path.join(renpy.config.basedir, d)):
             filenames[fn.lower()] = fn
 
     # This supports check_hide.

@@ -114,7 +114,7 @@ def main():
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
     
     # Compile the various games
-    for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'question' ]:
+    for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'the_question' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
@@ -128,7 +128,7 @@ def main():
     files.extend(tree("data"))
     files.extend(tree("demo"))
     files.extend(tree("dse"))
-    files.extend(tree("question"))
+    files.extend(tree("the_question"))
 
     editor = tree("editor")
     editor.remove("editor/scite.exe")
@@ -183,6 +183,7 @@ def main():
     files.append('doc/index.html')
     files.append('doc/screen.css')
     files.extend(tree('doc/reference'))
+    files.extend(tree('doc/tutorials'))
     
     files.sort()
     more_files.sort()

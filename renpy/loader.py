@@ -80,6 +80,7 @@ def listdirfiles():
     rv = [ ]
 
     for i in renpy.config.searchpath:
+        i = os.path.join(renpy.config.basedir, i)
         for j in os.listdir(i):
             rv.append((i, j))
 

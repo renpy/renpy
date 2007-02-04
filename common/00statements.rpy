@@ -179,7 +179,7 @@ python early hide:
 
         return dict(fadeout=fadeout, channel=channel)
 
-    def execute_stop_music(l):
+    def execute_stop_music(p):
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:

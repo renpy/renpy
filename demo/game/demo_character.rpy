@@ -36,8 +36,8 @@ init:
     # Image on the side.
     $ eside = Character('Eileen',
                         color="#c8ffc8",
-                        window_left_margin=270,
-                        show_side_image=Image("eileen_happy.png", xalign=0.0, ypos=380))
+                        window_left_padding=160,
+                        show_side_image=Image("eileen_side.png", xalign=0.0, yalign=1.0))
 
 label demo_character:
 

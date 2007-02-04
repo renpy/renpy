@@ -18,7 +18,10 @@ for name in os.listdir(dir):
     name = name.replace("(2d)", "-")
     name = name.replace("(2c)", ",")
     
-    if not name.startswith("renpy/doc/reference"):
+    if not (name.startswith("renpy/doc/reference") or 
+            name.startswith("renpy/doc/tutorials/Quick") or
+            name.startswith("renpy/doc/tutorials/TheQuestion")):
+
         continue
 
     if name == "renpy/doc/reference":
@@ -49,6 +52,8 @@ XHTML = "{http://www.w3.org/1999/xhtml}"
 
 def process(fn):
 
+    print "Processing", fn
+    
     if "This page does not exist yet" in file("mirror/" + fn + ".html").read():
         return
         
@@ -60,9 +65,12 @@ def process(fn):
 
     disclaimer = fromstring("""\
 <div align="center">
-<b>The Ren'Py Reference Manual:</b>
+<b>Reference Manual:</b>
 (<a href="%(root)sreference/Reference_Manual.html">offline</a>
 | <a href="http://www.renpy.org/wiki/renpy/doc/reference/">online</a>)
+<b>Quickstart:</b>
+(<a href="%(root)stutorials/Quickstart.html">offline</a>
+| <a href="http://www.renpy.org/wiki/renpy/doc/tutorials/Quickstart">online</a>)
 </div>
 """ % locals())
 

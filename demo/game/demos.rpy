@@ -15,9 +15,10 @@ init:
             ("demo_ui", "User Interaction", "5.6.3"),
             ("demo_text", "Fonts and Text Tags", "5.6.3"),
             ("demo_character", "Character Objects", "5.6.3"), 
-            ("demo_advanced", "Advanced Features", "5.6.3"),
+            ("demo_advanced", "Advanced Features", "5.6.7"),
             ]
 
+        # Update above with this!
         demos_advanced = [
             ("demo_layers", "Layers & Advanced Show", "5.6.5"),
             ("demo_nvlmode", "NVL Mode", "5.6.7"),

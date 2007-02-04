@@ -125,8 +125,15 @@ label choose_theme:
         outf.close()
         inf.close()
 
-        os.rename(ofn + ".new", ofn)
-        
+        try:
+            os.rename(ofn + ".new", ofn)            
+        except:
+            
+            # I hate windows.
+            os.rename(ofn, ofn + ".old")
+            os.rename(ofn + ".new", ofn)
+            os.unlink(ofn + ".old")
+            
         if not changed:
             error("Changing Theme", "Could not modify options.rpy, perhaps it was edited too much.", "main")
         

@@ -68,9 +68,11 @@ label credits:
 
     e "We'd like to thank Piroshki for contributing character art... I've never looked better."
 
-    e "Thanks to Jake for the magic circle."
+    e "Thanks to Jake for the magic circle picture."
+
+    e "Thanks go to Alessio, DaFool, derik, Kathryn, and mikey for contributing {i}The Question{/i} for use as our tutorial game."
     
-    e "The background music was generating using a Musikalisches Würfelspiel attributed to Mozart... even though that's probably wrong."
+    e "The background music was generated using a Musikalisches Würfelspiel attributed to Mozart... even though that's probably wrong."
 
     show eileen vhappy 
     
@@ -78,6 +80,3 @@ label credits:
 
     # Returning from the top level quits the game.
     return
-
-    
-    

@@ -12,7 +12,7 @@ init -425:
     $ left = Position(xalign=0.0)
     $ center = Position(xalign=0.5)
     $ truecenter = Position(xalign=0.5, yalign=0.5)
-    $ right = Position(yalign=1.0)
+    $ right = Position(xalign=1.0)
 
     # Offscreen positions for use with the move transition. Images at
     # these positions are still shown (and consume

@@ -592,7 +592,7 @@ init -499:
 label _load_screen:
 
     if renpy.has_label("_load_screen_hook"):
-        call expression "_load_screen_hook"
+        call expression "_load_screen_hook" from _call__load_screen_hook
     
     python hide:
 
@@ -609,7 +609,7 @@ label _load_screen:
 label _save_screen:
     
     if renpy.has_label("_save_screen_hook"):
-        call expression "_save_screen_hook"
+        call expression "_save_screen_hook" from _call__save_screen_hook
 
     $ _fn, _exists = _file_picker("save", True)
 

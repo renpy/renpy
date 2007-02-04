@@ -205,6 +205,8 @@ label marry:
 
     ".:. Good Ending."
 
+    return
+    
 label later:
 
     scene black
@@ -217,3 +219,4 @@ label later:
     
     ".:. Bad Ending."
     
+    return

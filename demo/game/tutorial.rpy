@@ -14,7 +14,7 @@ init:
     $ s = Character('Sylvie', color="#c8ffc8")
     $ m = Character('Me', color="#c8c8ff")
 
-    $ config.searchpath.append('../question/game')
+    $ config.searchpath.append('../the_question/game')
 
 label tutorial:
 
@@ -27,10 +27,20 @@ label tutorial:
         e "Would you like me to open the quickstart manual for you?"
 
         "Yes.":
+            
             python hide:
-                import webbrowser
-                webbrowser.open('http://www.renpy.org/', new=True)
 
+                try:
+                    import os
+                    os.startfile(config.renpy_base + "/doc/tutorials/Quickstart.html")
+                except:
+                    try:
+                        import webbrowser
+                        url = 'file://' + config.renpy_base + "/doc/tutorials/Quickstart.html"
+                        webbrowser.open(url, new=True)
+                    except:
+                        pass
+                        
             e "Okay, here goes."
                 
         "No.":

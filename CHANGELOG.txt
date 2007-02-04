@@ -6,7 +6,8 @@ New in Ren'Py 5.6.7
 
 A quickstart manual has been included in the documentation, and the
 corresponding examples included in the demo. The sample game, "The
-Question", has been included in the question/ directory.
+Question", has been included in the the_question/ directory. Thanks to 
+Alessio, DaFool, derik, Kathryn, and mikey for contributing it.
 
 Several new statements have been added to Ren'Py. These include the
 play, queue, and stop statements that control the playback of music
@@ -43,6 +44,11 @@ Names of files in the common directory have been prefixed with
 loaded before other files. The latter allows user-defined statements
 to be used.
 
+The renpy.code file no longer contains the code for Ren'Py
+proper. This means on windows, one must always distribute the renpy/
+directory, or else a zipped up version as renpy.zip. This change
+reduces startup time on Windows.
+
 +++
 Midi support has been dropped, and will now trigger an error.
 
@@ -56,8 +62,9 @@ fadein times to be incorrect. This may cause the timings of fadeins
 and fadeouts to change (to be what was specified in the appropriate
 calls).
 
-Text displayables no longer use an inner function in any cases, which
-should better allow them to be saved.
+Text displayables no longer use an inner function in any case, which
+should better allow them to be saved. Previously, there were some
+problems when slow=True was set.
 
 
 New in Ren'Py 5.6.6
