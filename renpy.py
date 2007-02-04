@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,7 +52,7 @@ def path_to_renpy_base():
 ##############################################################################
 
 # The version of the Mac Launcher and py4renpy that we use.
-macos_version = (5, 6, 6)
+macos_version = (5, 6, 7)
 linux_version = (5, 6, 7)
 
 if __name__ == "__main__":
