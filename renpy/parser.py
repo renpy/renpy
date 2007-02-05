@@ -933,8 +933,12 @@ def parse_with(l, node):
 
     
     
-def parse_menu(l, loc):
+def parse_menu(stmtl, loc):
 
+    l = stmtl.subblock_lexer()
+
+    has_choice = False
+    
     has_say = False
     has_caption = False
 
@@ -1017,8 +1021,10 @@ def parse_menu(l, loc):
             continue
 
         # Otherwise, we have a choice.
-        condition = "True"
+        has_choice = True
 
+        condition = "True"
+        
         if l.keyword('if'):
             condition = l.require(l.python_expression)
 
@@ -1031,10 +1037,13 @@ def parse_menu(l, loc):
         items.append((label, condition, block))
         l.advance()
 
+    if not has_choice:
+        stmtl.error("Menu does not contain any choices.")
+        
     rv = [ ]
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
-
+        
     rv.append(ast.Menu(loc, items, set, with))
 
     return rv
@@ -1128,7 +1137,7 @@ def parse_statement(l):
         l.require(':')
         l.expect_eol()
 
-        menu = parse_menu(l.subblock_lexer(), loc)
+        menu = parse_menu(l, loc)
 
         l.advance()
 

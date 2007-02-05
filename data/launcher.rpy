@@ -67,7 +67,7 @@ init:
         def bottom(focus="bottom"):
             ui.vbox(style='launcher_bottom_vbox', focus=focus)
 
-        def button(text, hover_text=None, clicked=None, hovered=None):
+        def button(text, hover_text=None, clicked=None, hovered=None, selected=False):
             if hover_text:
                 def hovered(hover_text=hover_text):
                     if store.message != hover_text:
@@ -76,7 +76,7 @@ init:
                         
             # ui.button(clicked=clicked, hovered=hovered)
             # ui.text(text, style="button_text")
-            _button_factory(text, 'launcher', clicked=clicked, hovered=hovered)
+            _button_factory(text, 'launcher', clicked=clicked, hovered=hovered, selected=selected)
                 
 
         def prompt(name, message, cancel, default='', hint=''):
@@ -133,8 +133,8 @@ init:
 
                 mid(focus="paged_menu")
 
-                for name, desc, ret, hovered in choices[page * per_page:(page + 1) * per_page]:
-                    button(name, desc, clicked=ui.returns(("return", ret)), hovered=hovered)
+                for name, desc, ret, hovered, selected in choices[page * per_page:(page + 1) * per_page]:
+                    button(name, desc, clicked=ui.returns(("return", ret)), hovered=hovered, selected=selected)
                     
                 ui.close()
 
@@ -395,7 +395,7 @@ label select_project:
 
     python hide:
 
-        choices = [ (p.name, p.info["description"], p, None) for p in projects ]
+        choices = [ (p.name, p.info["description"], p, None, p.info.get("special")) for p in projects if not p.info.get("template") ]
 
         store.project = paged_menu("Select a Project", choices, "Please select a project.")
 

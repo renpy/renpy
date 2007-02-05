@@ -8,7 +8,7 @@ label new:
 
         # Select a template.
         
-        choices = [ (p.name, p.info["description"], p, None) for p in projects if p.info.get("template", None)]
+        choices = [ (p.name, p.info["description"], p, None, False) for p in projects if p.info.get("template", None)]
 
         template = paged_menu("Select a Template", choices, "Please select a project to use as a template for your project.")
 
@@ -78,7 +78,7 @@ label choose_theme:
                     renpy.style.rebuild()
                     return ("repeat", 0)
 
-            choices.append((i, None, i, hovered))
+            choices.append((i, None, i, hovered, False))
 
         color_theme = paged_menu("Select a Theme", choices, "Please select a color theme for your project. You can always change the colors later.", cancel='color_theme_cancel')
 
