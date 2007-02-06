@@ -243,6 +243,9 @@ def display_say(who, what, who_style='say_label',
         
         return
 
+    if callback is None:
+        callback = renpy.config.character_callback
+    
     if callback:
         callback("begin", interact=interact)
     
@@ -321,6 +324,9 @@ def display_say(who, what, who_style='say_label',
 
         what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image, **show_args)
 
+        if callback:
+            callback("show_done", interact=interact)
+        
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 

@@ -112,6 +112,8 @@ def main():
     prefix = sys.argv[1]
 
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
+
+    os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
     
     # Compile the various games
     for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'the_question' ]:

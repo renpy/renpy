@@ -294,6 +294,9 @@ disable_fullscreen_opt = False
 # Should we reject midi files?
 reject_midi = True
 
+# Default character callback.
+character_callback = None
+
 del renpy
 del sets
 

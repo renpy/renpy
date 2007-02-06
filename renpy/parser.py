@@ -63,6 +63,10 @@ def list_logical_lines(filename):
     data = f.read()
     f.close()
 
+    if "RENPY_PATH_ELIDE" in os.environ:
+        old, new = os.environ["RENPY_PATH_ELIDE"].split(':')
+        filename = filename.replace(old, new)
+    
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
 

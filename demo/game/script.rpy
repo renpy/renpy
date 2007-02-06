@@ -18,33 +18,8 @@ label start:
 
     show eileen happy
     
-    e "My name is Eileen, and today I can teach you about Ren'Py. I can also give you a demonstration of its features."
+    e "My name is Eileen, and I'm here to demonstrate some of the features of the Ren'Py visual novel engine."
 
-    menu:
-        e "What would you like?"
-
-        "Please teach me about Ren'Py.":
-            jump teach
-
-        "I'd like you to demonstrate its features.":
-            jump demonstrate
-
-label teach:
-
-    call tutorial from _call_tutorial_1
-
-    menu:
-
-        e "Would you like to see the demonstration?"
-
-        "Yes.":
-            jump demonstrate
-
-        "No.":
-            jump credits
-    
-label demonstrate:
-    
     # Show the editor button, which is defined in editor.rpy.
     $ show_editor_button = True
 
@@ -58,19 +33,13 @@ label demonstrate:
 
     call demos from _call_demos_1
 
-label credits:
+    e "Thank you for viewing the Ren'Py demo."
+
+    e "If you'd like to see a full Ren'Py game, go to the launcher and choose \"Select Project\", then \"the_question\"."
     
-    e "Thank you for viewing the Ren'Py demo script."
-
-    e "You can always find the latest version of Ren'Py at http://www.renpy.org/"
+    e "You can download new versions of Ren'Py from http://www.renpy.org/. For help and discussion, check out the Lemma Soft Forums, at http://lemmasoft.renai.us/."
     
-    e "For Ren'Py help and discussion of visual novel development, check out the Lemma Soft forums, at http://lemmasoft.renai.us."
-
-    e "We'd like to thank Piroshki for contributing character art... I've never looked better."
-
-    e "Thanks to Jake for the magic circle picture."
-
-    e "Thanks go to Alessio, DaFool, derik, Kathryn, and mikey for contributing {i}The Question{/i} for use as our tutorial game."
+    e "We'd like to thank Piroshki for contributing character art... I've never looked better. We also thank Jake for the magic circle."
     
     e "The background music was generated using a Musikalisches Würfelspiel attributed to Mozart... even though that's probably wrong."
 
@@ -80,3 +49,6 @@ label credits:
 
     # Returning from the top level quits the game.
     return
+
+    
+    

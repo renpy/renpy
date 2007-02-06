@@ -4,10 +4,10 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 5.6.7
 -------------------
 
-A quickstart manual has been included in the documentation, and the
-corresponding examples included in the demo. The sample game, "The
-Question", has been included in the the_question/ directory. Thanks to 
-Alessio, DaFool, derik, Kathryn, and mikey for contributing it.
+A quickstart manual has been included in the documentation, with a
+sample game, "The Question", included in the "the_question"
+directory. Thanks to Alessio, DaFool, derik, Kathryn, and mikey for
+contributing it.
 
 Several new statements have been added to Ren'Py. These include the
 play, queue, and stop statements that control the playback of music
@@ -48,6 +48,13 @@ The renpy.code file no longer contains the code for Ren'Py
 proper. This means on windows, one must always distribute the renpy/
 directory, or else a zipped up version as renpy.zip. This change
 reduces startup time on Windows.
+
+The DejaVuSans font has been updated to a newer version.
+
+A new config.character_callback variable has been created, which
+allows one to specify a character callback for characters that do not
+define a more specific one. Character callbacks are now called for 
+a "show_done" phase, after the show_function has been called.
 
 +++
 Midi support has been dropped, and will now trigger an error.

@@ -203,7 +203,7 @@ init -500:
         def launch_editor():
             if not config.developer:
                 return
-
+            
             filename, line = renpy.get_filename_line()
             renpy.launch_editor([ filename ], line)
 

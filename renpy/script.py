@@ -29,6 +29,7 @@ import os
 import imp
 import difflib
 import md5
+import time
 
 from pickle import loads, dumps
 
@@ -150,7 +151,7 @@ class Script(object):
                 rpycdigest = f.read(md5.digest_size)
                 f.close()
 
-                if rpydigest == rpycdigest:
+                if rpydigest == rpycdigest and not renpy.game.options.compile:
 
                     if self.load_file(dir, fn + ".rpyc", node_callback):
                         continue
@@ -185,7 +186,7 @@ class Script(object):
 
         all_stmts = collapse_stmts(stmts)
 
-        version = int(os.stat(fn).st_mtime)
+        version = int(time.time())
         serial = 0
 
         for s in all_stmts:
