@@ -183,7 +183,7 @@ init -1:
 
         ## A sample sound that can be played to check the sound volume.
 
-        config.sample_sound = "click.wav"
+        config.sample_sound = "18005551212.ogg"
 
         ## Music that is played while the user is at the main menu.
 
