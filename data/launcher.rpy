@@ -395,7 +395,7 @@ label select_project:
 
     python hide:
 
-        choices = [ (p.name, p.info["description"], p, None, p.info.get("special")) for p in projects if not p.info.get("template") ]
+        choices = [ (p.name, p.info["description"], p, None, False) for p in projects if not p.info.get("template") ]
 
         store.project = paged_menu("Select a Project", choices, "Please select a project.")
 

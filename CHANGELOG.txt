@@ -56,6 +56,10 @@ allows one to specify a character callback for characters that do not
 define a more specific one. Character callbacks are now called for 
 a "show_done" phase, after the show_function has been called.
 
+The new config.default_fullscreen and config.default_text_cps
+variables control the default values of the fullscreen and text speed
+preferences, respectively.
+
 +++
 Midi support has been dropped, and will now trigger an error.
 

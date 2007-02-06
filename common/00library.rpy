@@ -44,6 +44,11 @@ init -500:
         config.button_properties = { }
         config.button_text_properties = { }
         config.label_properties = { }
+
+        # Defaults for preferences.
+        config.default_fullscreen = None
+        config.default_text_cps = None
+
         
         # This is updated to give the user an idea of where a save is
         # taking place.
@@ -343,7 +348,6 @@ label _load_reload_game:
 
     return
 
-
 init -401:
     # Random nice things to have.
     $ centered = Character(None, what_style="centered_text", window_style="centered_window")
@@ -352,4 +356,18 @@ init -401:
     # Lock the library object.
     $ config.locked = True
 
-    
+
+# Implement config.default_fullscreen and config.default_text_cps.
+init 401 python:
+
+    if not persistent._set_preferences:
+        persistent._set_preferences = True
+        
+        if config.default_fullscreen is not None:
+            _preferences.fullscreen = config.default_fullscreen
+
+        if config.default_text_cps is not None:
+            _preferences.text_cps = config.default_text_cps
+            
+
+        

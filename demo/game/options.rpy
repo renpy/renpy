@@ -199,3 +199,14 @@ init -1:
         config.enter_transition = dissolve
         config.exit_transition = dissolve
         
+        ## Note: The following two options are only evaluated the first time
+        ## a game is run. To have them run a second time, delete
+        ## game/saves/persistent
+        
+        ## Should we start in fullscreen mode?
+        config.default_fullscreen = False
+
+        ## The default text speed in characters per second. 0 is infinite.
+        config.default_text_cps = 0
+        
+        
