@@ -4,11 +4,13 @@
 init:
     python hide:
         import os.path
+        import sys
         import platform
         
 
         if not config.editor:
-            if platform.win32_ver()[0]:
+             
+            if sys.platform == 'win32':
                 editor = config.renpy_base + "/editor/scite.exe"
 
                 if os.path.exists(editor):

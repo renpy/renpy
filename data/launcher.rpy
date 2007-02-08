@@ -458,12 +458,13 @@ label game_directory:
         import os
         import os.path
         import platform
-
+        import sys
+        
         gamedir = os.path.normpath(project.gamedir)
 
         store.message = "Opening game directory:\n%s" % gamedir
 
-        if platform.win32_ver()[0]:
+        if sys.platform == "win32":
             os.startfile(gamedir)
         elif platform.mac_ver()[0]:
             import renpy.subprocess as subprocess
