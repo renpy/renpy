@@ -112,7 +112,7 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
         if fadeout is None:
             fadeout = renpy.config.fade_music
 
-        if if_changed and c.get_playing() == filenames:
+        if if_changed and c.get_playing() in filenames:
             fadein = 0
         else:
             c.fadeout(fadeout)

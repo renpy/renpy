@@ -73,6 +73,9 @@ fadein times to be incorrect. This may cause the timings of fadeins
 and fadeouts to change (to be what was specified in the appropriate
 calls).
 
+Fixed a bug that prevented the if_changed parameter to
+renpy.music.play from working.
+
 Text displayables no longer use an inner function in any case, which
 should better allow them to be saved. Previously, there were some
 problems when slow=True was set.

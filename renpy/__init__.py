@@ -26,7 +26,7 @@
 
 
 
-version = "Ren'Py 5.6.7b" # Be sure to change script_version in data/script_version.rpy, too!
+version = "Ren'Py 5.6.7c" # Be sure to change script_version in data/script_version.rpy, too!
 script_version = 5003000
 savegame_suffix = "-5.6.6.save"
 

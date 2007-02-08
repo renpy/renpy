@@ -5,7 +5,7 @@ import py2exe
 import sys
 import zipfile
 
-sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe' ]
+sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', '-x' ]
 
 setup(name="RenPy",
       windows=[ dict(script="renpy.py",
@@ -21,6 +21,9 @@ setup(name="RenPy",
                                             'pygame.surfarray',
                                             'pygame.mixer',
                                             'pygame.mixer_music',
+                                            '_ssl',
+                                            'win32con',
+                                            'win32api',
                                             'Numeric',  ],
                              'optimize' : 2,
                              } },

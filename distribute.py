@@ -87,12 +87,9 @@ def tree(root):
             if f[-1] == '~' or f[0] == '.':
                 continue
 
-            if f.endswith(".bak") or f.endswith(".pyc"):
+            if f.endswith(".bak") or f.endswith(".pyc") or f.endswith(".pyo"):
                 continue
 
-            if f.endswith(".pyo") and "renpy" not in dirname:
-                continue
-            
             if f == "semantic.cache":
                 continue
 

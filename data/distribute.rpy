@@ -171,7 +171,7 @@ label distribute:
                 if f[0] == "." or f[-1] == "~":
                     continue
 
-                if f.endswith(".pyc"):
+                if f.endswith(".pyc") or f.endswith(".pyo"):
                     continue
                 
                 multi_files.append((dirname + "/" + f, shortdir + "/" + f))
