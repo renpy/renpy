@@ -1,6 +1,17 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 6.0.0
+-------------------
+
+Changed main menu image to the 6.0 image.
+
+Modified the "doesn't expect a block" error message, to better convey
+that the problem is with the next line.
+
+Everyone who contributed to the 5.6 series once again has my thanks!
+
+
 New in Ren'Py 5.6.7
 -------------------
 

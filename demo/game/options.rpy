@@ -83,10 +83,6 @@ init -1:
             ## do so below.            
             )
 
-        # Move the main menu to near the top of the screen.
-        style.mm_menu_window.yanchor = 0
-        style.mm_menu_window.ypos = 0.05
-  
 
         #########################################
         ## These settings let you customize the window containing the
