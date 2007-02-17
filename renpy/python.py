@@ -259,6 +259,16 @@ class RevertableDict(dict):
     popitem = mutator(dict.popitem)
     setdefault = mutator(dict.setdefault)
 
+    def list_wrapper(method):
+        def newmethod(*args, **kwargs):
+            return RevertableList(method(*args, **kwargs))
+
+        return newmethod
+
+    keys = list_wrapper(dict.keys)
+    values = list_wrapper(dict.values)
+    items = list_wrapper(dict.items)
+    
     def copy(self):
         rv = RevertableDict()
         rv.update(self)

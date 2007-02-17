@@ -101,6 +101,8 @@ style_properties = dict(
     right_margin = None,
     right_padding = None,
     size = None,
+    slow_speed = None,
+    slow_multiplier = None,
     subtitle_width = None,
     text_y_fudge = None,
     text_align = None,
@@ -135,22 +137,59 @@ substitutes = dict(
     textalign = [ 'text_align' ],
     )
 
-# Expand out substitutes:
-for k in substitutes.keys():
-    for p in prefixes:
-        substitutes[p + k] = [ p + i for i in substitutes[k] ]
+# Map from property to number.
+property_number = { }
 
+# Map from prefix to offset.
+prefix_offset = { }
+
+# Map from prefix_property to prefix offset + property number.
+prefixed_property_number = { }
+
+# The total number of property numbers out there.
+property_numbers = 0
+
+# This is a function, to prevent namespace pollution. It's called
+# once at module load time.
+def init():
+
+    global property_numbers
+    
+    # Expand out substitutes:
+    for k in substitutes.keys():
+        for p in prefixes:
+            substitutes[p + k] = [ p + i for i in substitutes[k] ]
+
+    # Figure out a map from style property name to an (arbitrary,
+    # session-specific) style property number.
+    for i, p in enumerate(style_properties):
+        property_number[p] = i
+
+    # Figure out a map from style prefix to style property number offset.
+    property_numbers = 0    
+    for r in roles:
+        for p in prefixes:
+            prefix_offset[r + p] = property_numbers
+            property_numbers += len(style_properties)
+
+    # Figure out a map from prefixed property to number.
+    for prefix, prefixn in prefix_offset.iteritems():
+        for prop, propn in property_number.iteritems():
+            prefixed_property_number[prefix + prop] = prefixn + propn
+
+init()
+            
 # A map from a style name to the style associated with that name.
 style_map = { }
+
+# A map from a style name to the style proxy associated with that name.
+style_proxy_map = { }
 
 # True if we have expanded all of the style caches, False otherwise.
 styles_built = False
 
 # A list of styles that are pending expansion.
 styles_pending = [ ]
-
-# A list of created styles giving the style's name, parent, and description.
-style_info = [ ]
 
 def reset():
     """
@@ -159,15 +198,15 @@ def reset():
     """
 
     global style_map
+    global style_proxy_map
     global styles_built
     global styles_pending
     global style_info 
     
     style_map = { }
+    style_proxy_map = { }
     styles_built = False
     styles_pending = [ ]
-    style_info = [ ]
-
 
 class StyleManager(object):
     """
@@ -177,7 +216,7 @@ class StyleManager(object):
 
     def __getattr__(self, name):
         try:
-            return style_map[name]
+            return style_proxy_map[name]
         except:
             raise Exception('The style %s does not exist.' % name)
 
@@ -194,10 +233,9 @@ class StyleManager(object):
         documentation purposes.
         """
 
-        style_map[name] = Style(parent, { })
-
-        if description:
-            style_info.append((name, parent, description))
+        s = Style(parent, { })        
+        style_map[name] = s
+        style_proxy_map[name] = StyleProxy(s)
 
     def exists(self, name):
         """
@@ -264,20 +302,27 @@ def build_style(style):
         except:
             try:
                 parent = getattr(renpy.game.style, parent)
+
+                if isinstance(parent, StyleProxy):
+                    parent = parent.target
+                    
             except:
                 raise Exception('Style %s is not known.' % style.parent)
 
         if not parent.cache:
             build_style(parent)
 
-        if not style.properties:
-            style.__dict__["cache"] = parent.cache
-        else:
-            style.__dict__["cache"] = parent.cache.copy()
-            style.cache.update(style.properties)
-
+        cache = parent.cache[:]
     else:
-        style.__dict__["cache"] = style.properties
+        cache = [ None ] * property_numbers
+
+    style.cache = cache
+        
+    # For speed, make this local.
+    ppn = prefixed_property_number
+    
+    for k, v in style.properties.iteritems():
+        cache[ppn[k]] = v
 
 # This builds all pending styles, recursing to ensure that they are built
 # in the right order.
@@ -324,31 +369,44 @@ def restore(o):
         style_map[k].properties.clear()
         style_map[k].properties.update(v)
         styles_pending.append(style_map[k])
-        
+
+def style_metaclass(name, bases, attrs):
+    
+    for k, number in property_number.iteritems():
+        def getter(self, number=number):
+            return self.cache[self.offset + number]
+
+        attrs[k] = property(getter)
+
+    return type(name, bases, attrs)
     
 class Style(object):
 
+    __metaclass__ = style_metaclass
+    
     def __getstate__(self):
 
         rv = self.__dict__.copy()
-        rv["cache"] = { }
+        rv["cache"] = [ ]
         return rv
 
     def __setstate__(self, state):
         vars(self).update(state)
+
+        self.cache = [ ]
+        self.offset = prefix_offset[self.prefix]
+
         build_style(self)
 
     def __init__(self, parent, properties):
 
-        fields = dict(
-            prefix = 'insensitive_',
-            parent = parent,
-            cache = { },
-            properties = { },
-            )
+        self.prefix = 'insensitive_'
+        self.offset = prefix_offset['insensitive_']
 
-        vars(self).update(fields)
-
+        self.parent = parent
+        self.cache = [ ]
+        self.properties = { }
+        
         if properties:
             for prio, prop, val in expand_properties(properties):
                 self.properties[prop] = val
@@ -359,12 +417,10 @@ class Style(object):
             styles_pending.append(self)
 
     def set_prefix(self, prefix):
-        vars(self)["prefix"] = prefix
+        self.prefix = prefix
+        self.offset = prefix_offset[prefix]
             
-    def __getattr__(self, name):
-        return self.cache[self.prefix + name]
-
-    def __setattr__(self, name, value):
+    def setattr(self, name, value):
 
         for prio, prop, val in expand_properties({ name : value }):
             self.properties[prop] = val
@@ -372,7 +428,7 @@ class Style(object):
         if styles_built:
             build_style(self)
 
-    def __delattr__(self, name):
+    def delattr(self, name):
 
         for prio, prop, val in expand_properties({ name : None }):
             if prop in self.properties:
@@ -400,56 +456,33 @@ class Style(object):
         for d, prop, val in expand_properties(properties):
             self.properties.setdefault(prop, val)
             
-    
+class StyleProxy(object):
+
+    def __init__(self, target):
+        self.__dict__["target"] = target
+
+    def __getattr__(self, k):
+        raise Exception("Getting attributes of styles is not supported.")
         
-def write_docs(filename):
+    def __setattr__(self, k, v):
+        self.target.setattr(k, v)
 
-    f = file(filename, "w")
+    def __delattr__(self, k):
+        self.target.delattr(k)
 
-    import re
- 
-    for name, parent, description in style_info:
-        f.write('    <renpy_style name="%s">' % name)
+    def clear(self):
+        self.target.clear()
 
-        if parent:
-            f.write('<renpy_style_inherits>%s</renpy_style_inherits>' % parent)
+    def take(self, other):
+        if isinstance(other, StyleProxy):
+            other = other.target
 
-        f.write(re.sub(r'\s+', ' ', description))
-        f.write("</renpy_style>\n\n")
+        self.target.take(other)
 
-    f.close()            
+    def setdefault(self, prop, val):
+        self.target.setdefault(self, prop, val)
+            
         
-
-def write_hierarchy(fn):
-
-    f = file(fn, "w")
-
-    kids = { }
-    
-    for name, parent, description in style_info:
-        kids.setdefault(parent, []).append(name)
-
-    def do(name):
-
-        f.write('<li> <a href="#%s">%s</a>\n' % (name, name))
-
-        if name in kids:
-            f.write('<ul>\n')
-
-            l = kids[name]
-            l.sort()
-
-            for n in l:
-                do(n)
-
-            f.write('</ul>\n')
-
-        f.write('</li>')
-
-    do('default')
-
-    f.close()
-
 
 def write_text(filename):
 
@@ -462,7 +495,7 @@ def write_text(filename):
 
         print >>f, name, "inherits from", sty.parent
 
-        props = sty.cache.items()
+        props = [ (name, sty.cache[n]) for name, n in prefixed_property_names.iteritems() ]
         props.sort()
 
         for prop, val in props:

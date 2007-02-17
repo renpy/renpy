@@ -174,6 +174,9 @@ keymap = dict(
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
+    # Pause.
+    dismiss_hard_pause = [ ],
+    
     # Focus.
     focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
     focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],

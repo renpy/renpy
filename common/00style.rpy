@@ -189,6 +189,8 @@ init -1000:
         style.default.line_spacing = 0
         style.default.layout = "greedy"
         style.default.subtitle_width = 0.9
+        style.default.slow_speed = None
+        style.default.slow_multiplier = 1.0
         
         # Window properties.
         style.default.background = None

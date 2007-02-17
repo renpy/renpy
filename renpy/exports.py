@@ -524,28 +524,8 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
     
 
-def pause(delay=None, music=None, with_none=None):
-    """
-    When called, this pauses and waits for the user to click before
-    advancing the script. If given a delay parameter, the Ren'Py will
-    wait for that amount of time before continuing, unless a user clicks to
-    interrupt the delay.
-
-    @param delay: The number of seconds to delay.
-
-    @param music: If supplied, and music is playing, this takes
-    precedence over the delay parameter. It gives a time, in seconds,
-    into the playing music track. Ren'Py will pause until the music
-    has played up to that point..
-
-    Returns True if the pause was interrupted by the user hitting a key
-    or clicking a mouse, or False if the pause was ended by the appointed
-    time being reached.
-
-    @param with_none: If True, performs a with None after the input. If None,
-    takes the value from config.implicit_with_none.
-    """
-
+def pause(delay=None, music=None, with_none=None, hard=False):
+    
     if renpy.config.skipping == "fast":
         return True
 
@@ -555,8 +535,11 @@ def pause(delay=None, music=None, with_none=None):
         if newdelay is not None:
             delay = newdelay
 
-    renpy.ui.saybehavior()
-
+    if hard:            
+        renpy.ui.saybehavior(dismiss='dismiss_hard_pause')
+    else:
+        renpy.ui.saybehavior()
+        
     if delay is not None:
         renpy.ui.pausebehavior(delay, False)
 

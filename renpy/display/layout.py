@@ -718,7 +718,12 @@ class Motion(Container):
         self.anim_timebase = anim_timebase
         self.time_warp = time_warp
         self.add_sizes = add_sizes
+
+        self.position = (self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor)
         
+    def get_placement(self):
+        return self.position
+                
     def render(self, width, height, st, at):
 
         if self.anim_timebase:
@@ -757,11 +762,13 @@ class Motion(Container):
             res = self.function(t, (width, height, cw, ch))
         else:
             res = self.function(t)
+
+        res = tuple(res)
             
         if len(res) == 2:
-            self.style.xpos, self.style.ypos = res
+            self.position = res + (self.style.xanchor, self.style.yanchor)
         else:
-            self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor = res
+            self.position = res
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))

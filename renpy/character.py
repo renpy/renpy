@@ -438,7 +438,7 @@ class Character(object):
              **properties):
 
 
-        rv = Character(name=NotSet,
+        rv = Character(name=name,
                        who_style=who_style,
                        what_style=what_style,
                        window_style=window_style,
