@@ -660,12 +660,12 @@ def take_screenshot(scale):
 
     renpy.game.interface.take_screenshot(scale)
 
-def full_restart():
+def full_restart(reason="end_game"):
     """
     This causes a full restart of Ren'Py. 
     """
 
-    raise renpy.game.FullRestartException()
+    raise renpy.game.FullRestartException(reason)
 
 def utter_restart():
     """

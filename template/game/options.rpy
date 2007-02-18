@@ -185,18 +185,36 @@ init -1:
 
         # config.main_menu_music = "main_menu_theme.ogg"
 
+        #########################################
+        ## Transitions.
+
+        ## Used when entering the game menu from the game.
+        config.enter_transition = None
+
+        ## Used when exiting the game menu to the game.
+        config.exit_transition = None
+
+        ## Used between screens of the game menu.
+        config.intra_transition = None
+
+        ## Used when entering the game menu from the main menu.
+        config.main_game_transition = None
+
+        ## Used when returning to the main menu from the game.
+        config.game_main_transition = None
+
+        ## Used when entering the main menu from the splashscreen.
+        config.end_splash_transition = None
+
+        ## Used when entering the main menu after the game has ended.
+        config.end_game_transition = None
+        
         
         #########################################
-        ## Miscellaneous customizations
+        ## Default values of Preferences.
 
-        ## These let you change the transitions that are used when entering
-        ## and exiting the game menu.
-
-        config.enter_transition = dissolve
-        config.exit_transition = dissolve
-
-        ## Note: The following two options are only evaluated the first time
-        ## a game is run. To have them run a second time, delete
+        ## Note: These options are only evaluated the first time a
+        ## game is run. To have them run a second time, delete
         ## game/saves/persistent
         
         ## Should we start in fullscreen mode?

@@ -153,6 +153,10 @@ class FullRestartException(Exception):
     destroying the store and config and so on.
     """
 
+    def __init__(self, reason="end_game"):
+        self.reason = reason
+
+    
 class UtterRestartException(Exception):
     """
     An exception of this type forces an even harder restart, causing

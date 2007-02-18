@@ -56,9 +56,9 @@ init -500:
 
 
         # This is used to jump to a label with a transition.
-        def _intra_jumps_core(label):
+        def _intra_jumps_core(label, transition):
             if config.intra_transition:
-                renpy.transition(config.intra_transition)
+                renpy.transition(getattr(config, transition))
 
             renpy.jump(label)
 

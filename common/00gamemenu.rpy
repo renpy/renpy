@@ -17,9 +17,9 @@ init -499:
         config.game_menu = [
                 ( "return", u"Return", ui.jumps("_return"), 'True'),
                 ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
-                ( "prefs", u"Preferences", _intra_jumps("_prefs_screen"), 'True' ),
-                ( "save", u"Save Game", _intra_jumps("_save_screen"), 'not renpy.context().main_menu' ),
-                ( "load", u"Load Game", _intra_jumps("_load_screen"), 'True'),
+                ( "prefs", u"Preferences", _intra_jumps("_prefs_screen", "intra_transition"), 'True' ),
+                ( "save", u"Save Game", _intra_jumps("_save_screen", "intra_transition"), 'not renpy.context().main_menu' ),
+                ( "load", u"Load Game", _intra_jumps("_load_screen", "intra_transition"), 'True'),
                 ( "mainmenu", u"Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context().main_menu' ),
                 ( "quit", u"Quit", lambda : _quit_prompt("quit"), 'True' ),
                 ]
@@ -66,6 +66,23 @@ init -499:
 
         # Transition that's used when going from one screen to another.
         config.intra_transition = None
+        
+        # Transition that's used when going from the main to the game
+        # menu.
+        config.main_game_transition = None
+
+        # Transition that's used when going from the game to the main
+        # menu.
+        config.game_main_transition = None
+
+        # Transition that's used at the end of the game, when returning
+        # to the main menu.
+        config.end_game_transition = None
+
+        # Transition that's used at the end of the splash screen, when
+        # it is shown.
+        config.end_splash_transition = None
+        
         
         # This lets us disable the file pager. (So we only have one
         # page of files.)
@@ -418,6 +435,8 @@ init -499:
             This function returns True if the user clicks Yes, or False if the user clicks No.
             """
 
+            renpy.transition(config.intra_transition)
+            
             _game_nav(screen)
 
             ### yesno_frame default
@@ -455,8 +474,10 @@ init -499:
             ui.close()
             ui.close()
 
-            return _game_interact()
-
+            rv =  _game_interact()
+            renpy.transition(config.intra_transition)
+            return rv
+        
 
         def _show_exception(title, message):
 
@@ -506,7 +527,7 @@ init -499:
                return _yesno_prompt(screen, u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
             
             if renpy.invoke_in_new_context(prompt):
-                renpy.full_restart()
+                renpy.full_restart(reason='main_menu')
             else:
                 return
 
@@ -538,8 +559,8 @@ label _enter_menu:
 # Factored this all into one place, to make our lives a bit easier.
 label _enter_game_menu:
     call _enter_menu from _call__enter_menu_2
-    if config.enter_transition:
-        $ renpy.transition(config.enter_transition)
+
+    $ renpy.transition(config.enter_transition)
 
     if renpy.has_label("enter_game_menu"):
         call expression "enter_game_menu" from _call_enter_game_menu_1
@@ -654,9 +675,9 @@ label _noisy_return:
 label _return:
 
     if renpy.context().main_menu:
+        $ renpy.transition(config.game_main_transition)
         jump _main_menu
 
-    if config.exit_transition:
-        $ renpy.transition(config.exit_transition)
+    $ renpy.transition(config.exit_transition)
 
     return

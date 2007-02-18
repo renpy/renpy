@@ -1,6 +1,42 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 6.1.0
+-------------------
+
+TODO: Check that shift+Y still works.
+
+Implemented hard pauses, pauses that cannot be interrupted by the
+user. They can be invoked by passing hard=True to renpy.pause, but
+it's probably a bad idea to use them. You should strongly consider
+using with Pause() instead, as that lets you develop timed sequences
+that can be aborted with a single click.
+
+Added a handful of new config variables controlling transitions:
+
+ * config.end_splash_transition is used to display the main menu after
+the splash screen.
+ * config.main_game_transition is used to display the game menu when in 
+the main menu. 
+ * config.game_main_transition is used to display the main menu after 
+leaving the game menu.
+ * config.end_game_transition is used to display the main menu after the 
+game ends. 
+ * config.intra_transition is used between screens of the game menu. Now, 
+it is also used when a yes/no choice is displayed.
+
+We still support config.enter_transition and config.exit_transition,
+which are used when entering or exiting the game menu from the game
+proper.
+
+The roundrect theme has been updated to color insensitive file picker
+entries with the disabled color.
+
+Rewrote the style system to use lists indexed by integers rather than
+dictionaries indexed by strings. This change shouldn't be user
+visible, except perhaps as improved speed and decreased memory usage.
+
+
 New in Ren'Py 6.0.0
 -------------------
 

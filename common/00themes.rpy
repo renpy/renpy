@@ -333,6 +333,11 @@ init -402:
             style.file_picker_text.drop_shadow = None
             style.file_picker_text.color = widget_text
             style.file_picker_new.color = widget_selected
+
+            if config.script_version is None or config.script_version > (6, 0, 0):
+                style.file_picker_text.insensitive_color = disabled_text
+                style.file_picker_entry.insensitive_background = RoundRect(disabled)
+
             
             config.file_quick_access_pages = 10
 

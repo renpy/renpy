@@ -15,8 +15,8 @@ init -498:
         # The contents of the main menu.
         config.main_menu = [
             ( u"Start Game", "start", 'True'),
-            ( u"Continue Game", ui.jumps("_load_screen"), 'True' ),
-            ( u"Preferences", ui.jumps("_prefs_screen"), 'True' ),
+            ( u"Continue Game", _intra_jumps("_load_screen", "main_game_transition"), 'True' ),
+            ( u"Preferences", _intra_jumps("_prefs_screen", "main_game_transition"), 'True' ),
             ( u"Quit",  ui.jumps("_quit"), 'True' ),
             ]
 
@@ -43,7 +43,9 @@ label _start:
     call _load_reload_game from _call__load_reload_game_1
 
     scene black
-    $ renpy.pause(0)
+
+    if not _restart:
+        $ renpy.pause(0)
 
     $ renpy.block_rollback()
 
@@ -58,6 +60,14 @@ label _start:
     # Clean out any residual scene from the splashscreen.
     scene black
 
+    if _restart == None:
+        $ renpy.transition(config.end_splash_transition)
+    elif _restart == "main_menu":
+        $ renpy.transition(config.game_main_transition)
+    else:
+        $ renpy.transition(config.end_game_transition)
+        
+    
     $ renpy.call_in_new_context("_enter_main_menu")
 
     # If the main menu returns, then start the game.

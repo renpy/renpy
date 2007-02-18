@@ -267,18 +267,18 @@ def main():
 
 
     # Start things running.
-    restart = False
+    restart = None
 
     while True:
         try:
             try:
                 run(restart)
             finally:
+                restart = "end_game"
                 save_persistent()
                 
         except game.QuitException, e:
             break
         except game.FullRestartException, e:
-            pass
-
-        restart = True
+            print e.reason
+            restart = e.reason
