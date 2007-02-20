@@ -15,7 +15,7 @@ init -500:
 
         # The minimum version of the module we work with. Don't change
         # this unless you know what you're doing.
-        config.module_version = 5005006
+        config.module_version = 6001000
 
         # Should we warn the user if the module is missing or has a bad
         # version?

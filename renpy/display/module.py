@@ -352,4 +352,33 @@ if version >= 5006006:
 else:
 
     can_transform = False
+
+
     
+if version >= 6001000:
+
+    # Note: Blend requires all surfaces to be the same size.
+    
+    can_blend = True
+    blend = _renpy.blend
+
+else:
+
+    can_blend = False
+
+
+if version >= 6001000:
+
+    # Note: Blend requires all surfaces to be the same size.
+    
+    can_imageblend = True
+
+    def imageblend(a, b, dst, img, amap):        
+        red = byte_offset(img)[0]
+        _renpy.imageblend(a, b, dst, img, red, amap)
+
+else:
+
+    can_imageblend = False
+
+

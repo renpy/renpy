@@ -363,13 +363,10 @@ class Dissolve(Transition):
         self.new_widget = new_widget
         self.events = False
 
-        self.old_bottom = None
-        self.old_top = None
-        self.old_alpha = 0
 
     def render(self, width, height, st, at):
 
-        if st >= self.time:
+        if st >= self.time or not renpy.display.module.can_blend:
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
@@ -378,43 +375,31 @@ class Dissolve(Transition):
 
         alpha = min(255, int(255 * st / self.time))
 
-        rv = renpy.display.render.Render(width, height)
-
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        surf = top.pygame_surface(False)
-        renpy.display.render.mutated_surface(surf)
+        bottom_surface = bottom.pygame_surface(False)
+        top_surface = top.pygame_surface(False)
 
-        rv.focuses.extend(top.focuses)
+        def draw(dest, x, y):
 
-        if renpy.config.enable_fast_dissolve and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
-            # Fast rendering path. Only used for full-screen, top-level, renders.
+            dw, dh = dest.get_size()
+            tw, th = top_surface.get_size()
+            bw, bh = bottom_surface.get_size()
+        
+            w = min(dw, tw + x, bw + x)
+            h = min(dh, th + y, bh + y)
 
-            alpha = alpha / 255.0
-            change = ( alpha - self.old_alpha) / ( 1.0 - self.old_alpha)
-            change = int(change * 255.0)
-
-            surf.set_alpha(change, RLEACCEL)
-            rv.blit(surf, (0, 0))
-
-            change /= 255.0
-            self.old_alpha = self.old_alpha * ( 1 - change ) + change
-            
-        else:
-
-            # Complete rendering path.
-
-            rv.blit(bottom, (0, 0), focus=False)
-            surf.set_alpha(alpha, RLEACCEL)
-            rv.blit(surf, (0, 0))
-
-            self.old_alpha = alpha / 255.0
-
-
-        self.old_top = id(top)
-        self.old_bottom = id(bottom)
-
+            renpy.display.module.blend(
+                bottom_surface.subsurface((-x, -y, w, h)),
+                top_surface.subsurface((-x, -y, w, h)),
+                dest.subsurface((0, 0, w, h)),
+                alpha)
+        
+        rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+        rv.focuses.extend(top.focuses)        
+        rv.depends_on(top)
+        rv.depends_on(bottom)
         return rv
 
 
@@ -1023,10 +1008,6 @@ class ImageDissolve(Transition):
         self.new_widget = new_widget
         self.events = False
 
-        self.old_bottom = None
-        self.old_top = None
-        self.old_ramp = '\x00' * 256
-
         self.image = renpy.display.im.image(image)
 
         if ramp is not None:
@@ -1043,7 +1024,7 @@ class ImageDissolve(Transition):
 
     def render(self, width, height, st, at):
 
-        if st >= self.time:
+        if st >= self.time or not renpy.display.module.can_imageblend:
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
@@ -1059,53 +1040,36 @@ class ImageDissolve(Transition):
 
         ramp = self.ramp[step:step+256]
 
-        rv = renpy.display.render.Render(width, height)
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        surf = top.pygame_surface(True)
-        renpy.display.render.mutated_surface(surf)
+        
+        bottom_surface = bottom.pygame_surface(False)
+        top_surface = top.pygame_surface(False)
 
-        rv.focuses.extend(top.focuses)
+        def draw(dest, x, y):
 
-        if renpy.config.enable_fast_dissolve and self.can_fast and id(top) == self.old_top and id(bottom) == self.old_bottom and hasattr(self.new_widget, 'layers'):
-            # Fast rendering path. Only used for full-screen, top-level, renders.
+            dw, dh = dest.get_size()
+            tw, th = top_surface.get_size()
+            bw, bh = bottom_surface.get_size()
+            iw, ih = image.get_size()
 
-            fast_ramp = [ ]
+            w = min(dw, tw + x, bw + x, iw + x)
+            h = min(dh, th + y, bh + y, ih + y)
 
-            for new, old in zip(ramp, self.old_ramp):
-
-                new = ord(new)
-                old = ord(old)
-
-                if new >= 255:
-                    fast_ramp.append('\xff')
-                    continue
-
-                change = 255 * ( new - old ) / ( 255 - old )
-                fast_ramp.append(chr(int(change)))
-
-            renpy.display.module.alpha_munge(image, surf,
-                                             ''.join(fast_ramp))
-            
-            rv.blit(surf, (0, 0))
-                        
-        else:
-
-            # Complete rendering path.
-
-            rv.blit(bottom, (0, 0), focus=False)
-
-            renpy.display.module.alpha_munge(image, surf, ramp)
-            rv.blit(surf, (0, 0))
-
-        self.old_ramp = ramp
+            renpy.display.module.imageblend(
+                bottom_surface.subsurface((-x, -y, w, h)),
+                top_surface.subsurface((-x, -y, w, h)),
+                dest.subsurface((0, 0, w, h)),
+                image.subsurface((-x, -y, w, h)),
+                ramp)
 
         
-        self.old_top = id(top)
-        self.old_bottom = id(bottom)
-
+        rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+        rv.focuses.extend(top.focuses)        
+        rv.depends_on(top)
+        rv.depends_on(bottom)
         return rv
 
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
