@@ -358,7 +358,7 @@ class Animation(renpy.display.core.Displayable):
             if t < delay:
                 renpy.display.render.redraw(self, delay - t)
 
-                im = renpy.display.render.render(image, width, height, st, at)
+                im = renpy.display.render.render(image, width, height, t, at)
                 width, height = im.get_size()
                 rv = renpy.display.render.Render(width, height)
                 rv.blit(im, (0, 0))
