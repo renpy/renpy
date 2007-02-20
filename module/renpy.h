@@ -88,4 +88,13 @@ void transform32_core(PyObject *pysrc,
                       float, float,
                       float, float);
 
+void blend32_core(PyObject *pysrca,
+                  PyObject *pysrcb,
+                  PyObject *pydst,
+                  int alpha);
+
+void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
+                       PyObject *pydst, PyObject *pyimg,
+                       int alpha, char *amap);
+
 #endif 

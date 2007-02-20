@@ -3,6 +3,13 @@
 #include "IMG_savepng.h"
 #include <stdio.h>
 #include <math.h>
+#include "mmx.h"
+
+
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+#define GCC_MMX 1
+#endif
+
 
 // Shows how to do this.
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -917,7 +924,7 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
-   can limit the target are. */
+   can limit the target area. */
 void transform32_core(PyObject *pysrc, PyObject *pydst,
                       float corner_x, float corner_y,
                       float xdx, float ydx,
@@ -1101,3 +1108,309 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 }
 
 
+void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
+                      int alpha) {
+
+    SDL_Surface *srca;
+    SDL_Surface *srcb;
+    SDL_Surface *dst;
+    
+    int srcapitch, srcbpitch, dstpitch;
+    unsigned short dstw, dsth;
+    unsigned short y;
+
+    unsigned char *srcapixels;
+    unsigned char *srcbpixels;
+    unsigned char *dstpixels;
+
+    srca = PySurface_AsSurface(pysrca);
+    srcb = PySurface_AsSurface(pysrcb);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcapixels = (unsigned char *) srca->pixels;
+    srcbpixels = (unsigned char *) srcb->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcapitch = srca->pitch;
+    srcbpitch = srcb->pitch;
+    dstpitch = dst->pitch;
+    dstw = dst->w;
+    dsth = dst->h;
+
+    for (y = 0; y < dsth; y++) {
+
+        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
+        unsigned int *dpe = dp + dstw;
+
+        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
+        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
+
+        while (dp < dpe) {
+            unsigned int sal = *sap++;
+            unsigned int sbl = *sbp++;
+
+            unsigned int sah = (sal >> 8) & 0xff00ff;
+            unsigned int sbh = (sbl >> 8) & 0xff00ff;
+            
+            sal &= 0xff00ff;
+            sbl &= 0xff00ff;
+
+            *dp++ = I(sal, sbl, alpha) | (I(sah, sbh, alpha) << 8);
+        }
+    }
+}
+
+#ifdef GCC_MMX
+
+void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
+                      int alpha) {
+
+    SDL_Surface *srca;
+    SDL_Surface *srcb;
+    SDL_Surface *dst;
+    
+    int srcapitch, srcbpitch, dstpitch;
+    unsigned short dstw, dsth;
+    unsigned short y;
+
+    unsigned char *srcapixels;
+    unsigned char *srcbpixels;
+    unsigned char *dstpixels;
+
+    srca = PySurface_AsSurface(pysrca);
+    srcb = PySurface_AsSurface(pysrcb);
+    dst = PySurface_AsSurface(pydst);
+        
+    srcapixels = (unsigned char *) srca->pixels;
+    srcbpixels = (unsigned char *) srcb->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcapitch = srca->pitch;
+    srcbpitch = srcb->pitch;
+    dstpitch = dst->pitch;
+    dstw = dst->w;
+    dsth = dst->h;
+
+    /* This code is a slightly modified version of that found in
+     * SDL_blit_A.c */
+    
+    pxor_r2r(mm5, mm5); /* 0 -> mm5 */
+    /* form the alpha mult */
+    movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
+    punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
+    punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
+    
+    for (y = 0; y < dsth; y++) {
+
+        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
+        unsigned int *dpe = dp + dstw;
+
+        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
+        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
+
+        while (dp < dpe) {
+            
+            movd_m2r((*sbp++), mm1);
+            movd_m2r((*sap++), mm2);
+            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */                                      
+            punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
+            psubw_r2r(mm2, mm1);/* a - b -> mm1 */
+            pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
+            psrlw_i2r(8, mm1); /* mm1 >> 8 -> mm1 */
+            paddb_r2r(mm1, mm2); /* mm1 + mm2(a) -> mm2 */
+            packuswb_r2r(mm5, mm2); /* ARGBARGB -> mm2 */
+            movd_r2m(mm2, *dp++);
+            
+            
+        }
+    }
+
+    emms();
+}
+    
+#endif
+
+void blend32_core(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
+                  int alpha) {
+
+#ifdef GCC_MMX
+    static int checked_mmx = 0;
+    static int has_mmx = 0;
+
+    if (! checked_mmx) {
+        has_mmx = SDL_HasMMX();
+        checked_mmx = 1;
+    }
+
+    if (has_mmx) {
+        blend32_core_mmx(pysrca, pysrcb, pydst, alpha);
+        return;
+    }
+    
+#endif
+
+    blend32_core_std(pysrca, pysrcb, pydst, alpha);
+}
+
+
+void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
+                           PyObject *pydst, PyObject *pyimg,
+                           int alpha_off, char *amap) {
+
+    SDL_Surface *srca;
+    SDL_Surface *srcb;
+    SDL_Surface *dst;
+    SDL_Surface *img;
+    
+    int srcapitch, srcbpitch, dstpitch, imgpitch;
+    unsigned short dstw, dsth;
+    unsigned short y;
+
+    unsigned char *srcapixels;
+    unsigned char *srcbpixels;
+    unsigned char *dstpixels;
+    unsigned char *imgpixels;
+
+    srca = PySurface_AsSurface(pysrca);
+    srcb = PySurface_AsSurface(pysrcb);
+    dst = PySurface_AsSurface(pydst);
+    img = PySurface_AsSurface(pyimg);
+    
+    srcapixels = (unsigned char *) srca->pixels;
+    srcbpixels = (unsigned char *) srcb->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    imgpixels = (unsigned char *) img->pixels;
+    srcapitch = srca->pitch;
+    srcbpitch = srcb->pitch;
+    dstpitch = dst->pitch;
+    imgpitch = img->pitch;
+
+    dstw = dst->w;
+    dsth = dst->h;
+
+    for (y = 0; y < dsth; y++) {
+
+        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
+        unsigned int *dpe = dp + dstw;
+
+        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
+        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
+
+        unsigned char *ip = (unsigned char *)(imgpixels + imgpitch * y);
+        ip += alpha_off;
+        
+        while (dp < dpe) {
+            unsigned char alpha = (unsigned char) amap[*ip];
+            ip += 4;
+
+            unsigned int sal = *sap++;
+            unsigned int sbl = *sbp++;
+
+            unsigned int sah = (sal >> 8) & 0xff00ff;
+            unsigned int sbh = (sbl >> 8) & 0xff00ff;
+            
+            sal &= 0xff00ff;
+            sbl &= 0xff00ff;
+
+            *dp++ = I(sal, sbl, alpha) | (I(sah, sbh, alpha) << 8);
+        }
+    }
+}
+
+#ifdef GCC_MMX
+
+void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
+                           PyObject *pydst, PyObject *pyimg,
+                           int alpha_off, char *amap) {
+
+    SDL_Surface *srca;
+    SDL_Surface *srcb;
+    SDL_Surface *dst;
+    SDL_Surface *img;
+    
+    int srcapitch, srcbpitch, dstpitch, imgpitch;
+    unsigned short dstw, dsth;
+    unsigned short y;
+
+    unsigned char *srcapixels;
+    unsigned char *srcbpixels;
+    unsigned char *dstpixels;
+    unsigned char *imgpixels;
+
+    srca = PySurface_AsSurface(pysrca);
+    srcb = PySurface_AsSurface(pysrcb);
+    dst = PySurface_AsSurface(pydst);
+    img = PySurface_AsSurface(pyimg);
+    
+    srcapixels = (unsigned char *) srca->pixels;
+    srcbpixels = (unsigned char *) srcb->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    imgpixels = (unsigned char *) img->pixels;
+    srcapitch = srca->pitch;
+    srcbpitch = srcb->pitch;
+    dstpitch = dst->pitch;
+    imgpitch = img->pitch;
+
+    dstw = dst->w;
+    dsth = dst->h;
+
+    pxor_r2r(mm5, mm5); /* 0 -> mm5 */
+
+    for (y = 0; y < dsth; y++) {
+
+        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
+        unsigned int *dpe = dp + dstw;
+
+        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
+        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
+
+        unsigned char *ip = (unsigned char *)(imgpixels + imgpitch * y);
+        ip += alpha_off;
+        
+        while (dp < dpe) {
+            unsigned int alpha = (unsigned char) amap[*ip];
+            ip += 4;
+
+            /* form the alpha mult */
+            movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
+            punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
+            punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
+            
+            movd_m2r((*sbp++), mm1);
+            movd_m2r((*sap++), mm2);
+            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */                                      
+            punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
+            psubw_r2r(mm2, mm1);/* a - b -> mm1 */
+            pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
+            psrlw_i2r(8, mm1); /* mm1 >> 8 -> mm1 */
+            paddb_r2r(mm1, mm2); /* mm1 + mm2(a) -> mm2 */
+            packuswb_r2r(mm5, mm2); /* ARGBARGB -> mm2 */
+            movd_r2m(mm2, *dp++);
+        }
+    }
+
+    emms();
+}
+
+#endif
+
+void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
+                       PyObject *pydst, PyObject *pyimg,
+                       int aoff, char *amap) {
+
+#ifdef GCC_MMX
+    static int checked_mmx = 0;
+    static int has_mmx = 0;
+
+    if (! checked_mmx) {
+        has_mmx = SDL_HasMMX();
+        checked_mmx = 1;
+    }
+
+    if (has_mmx) {
+        imageblend32_core_mmx(pysrca, pysrcb, pydst, pyimg, aoff, amap);
+        return;
+    }
+    
+#endif
+
+    imageblend32_core_std(pysrca, pysrcb, pydst, pyimg, aoff, amap);
+}

@@ -70,13 +70,17 @@ cdef extern from "renpy.h":
 
     void transform32_core(object, object,
                           float, float, float, float, float, float)
+
+    void blend32_core(object, object, object, int)
+
+    void imageblend32_core(object, object, object, object, int, char *)
     
 
 import pygame
 
 # Update this in library.rpy as well!
 def version():
-    return 5006006
+    return 6001000
 
 def save_png(surf, file, compress=-1):
 
@@ -330,4 +334,30 @@ def transform(pysrc, pydst,
     pysrc.unlock()
 
 
+def blend(pysrca, pysrcb, pydst, alpha):
+
+    pysrca.lock()
+    pysrcb.lock()
+    pydst.lock()
+
+    blend32_core(pysrca, pysrcb, pydst, alpha)
+
+    pydst.unlock()
+    pysrcb.unlock()
+    pysrca.unlock()
+
+def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
+    pysrca.lock()
+    pysrcb.lock()
+    pydst.lock()
+    pyimg.lock()
+
+    imageblend32_core(pysrca, pysrcb, pydst, pyimg, aoff, amap)
+    
+    pyimg.unlock()
+    pydst.unlock()
+    pysrcb.unlock()
+    pysrca.unlock()
+
+    
 core_init()
