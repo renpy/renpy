@@ -6,6 +6,11 @@ New in Ren'Py 6.1.0
 
 TODO: Check that shift+Y still works.
 
+DOC: renpy.with
+DOC: Improved dissolve.
+DOC: slow_cps, slow_cps_multiplier, slow_abortable. 
+DOC: New behavior of slow parameter to ui.text, Character.
+
 Implemented hard pauses, pauses that cannot be interrupted by the
 user. They can be invoked by passing hard=True to renpy.pause, but
 it's probably a bad idea to use them. You should strongly consider
@@ -28,6 +33,7 @@ it is also used when a yes/no choice is displayed.
 We still support config.enter_transition and config.exit_transition,
 which are used when entering or exiting the game menu from the game
 proper.
+
 
 The roundrect theme has been updated to color insensitive file picker
 entries with the disabled color.

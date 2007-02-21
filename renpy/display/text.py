@@ -688,9 +688,8 @@ class Text(renpy.display.core.Displayable):
     def after_setstate(self):
         self._update()
 
-    def __init__(self, text, slow=False, slow_done=None,
-                 slow_speed=None, slow_start=0, slow_abortable=False,
-                 pause=None, tokenized=False, style='default', **properties):
+    def __init__(self, text, slow=None, slow_done=None,
+                 slow_start=0, pause=None, tokenized=False, style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -704,12 +703,7 @@ class Text(renpy.display.core.Displayable):
 
         @param slow_done: A callback that occurs when slow text is done.
 
-        @param slow_speed: The speed of slow text. If none, it's taken from
-        the preferences.
-
         @param slow_offset: The offset into the text to start the slow text.
-
-        @param slow_abortable: If True, clicking aborts the slow text.
 
         @param tokenized: True if the text is already tokenized.
 
@@ -725,11 +719,15 @@ class Text(renpy.display.core.Displayable):
 
         self._update(redraw=False)
 
-        self.slow = slow
+        if slow or slow is None:
+            self.slow = True
+        else:
+            self.slow = False
+
+        self.slow_param = slow
         self.slow_done = slow_done
         self.slow_start = slow_start
-        self.slow_speed = slow_speed
-        self.slow_abortable = slow_abortable
+
 
         self.laidout = None
         self.child_pos = [ ]
@@ -847,7 +845,7 @@ class Text(renpy.display.core.Displayable):
         Space, Enter, or Click ends slow, if it's enabled.
         """
 
-        if self.slow and self.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
+        if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
@@ -1204,8 +1202,21 @@ class Text(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        speed = self.slow_speed or renpy.game.preferences.text_cps
+        if self.slow:
 
+            speed = self.style.slow_cps
+
+            if self.slow_param:
+                if speed is None:
+                    speed = renpy.game.preferences.text_cps    
+
+            if speed is True:
+                speed = renpy.game.preferences.text_cps
+
+            if speed:
+                speed *= self.style.slow_cps_multiplier
+
+                
         dslist = self.style.drop_shadow
 
         if dslist is None:
@@ -1237,7 +1248,8 @@ class Text(renpy.display.core.Displayable):
 
             if self.slow_done:
                 self.slow_done()
-
+                self.slow_done = None
+                
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
         if dslist:
@@ -1249,9 +1261,11 @@ class Text(renpy.display.core.Displayable):
         if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos):
             if self.slow:
                 self.slow = False
+                
                 if self.slow_done:
                     self.slow_done()
-
+                    self.slow_done = None
+                    
         if self.slow:
             renpy.display.render.redraw(self, 0)
 

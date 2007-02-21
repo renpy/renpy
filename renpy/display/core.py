@@ -428,6 +428,9 @@ class SceneLists(object):
         displayable is placed at the end of the zorder.
         """
 
+        if not isinstance(thing, Displayable):
+            raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
+        
         if layer not in self.layers:
             raise Exception("Trying to add something to non-existent layer '%s'." % layer)
 

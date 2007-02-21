@@ -101,8 +101,9 @@ style_properties = dict(
     right_margin = None,
     right_padding = None,
     size = None,
-    slow_speed = None,
-    slow_multiplier = None,
+    slow_abortable = None,
+    slow_cps = None,
+    slow_cps_multiplier = None,
     subtitle_width = None,
     text_y_fudge = None,
     text_align = None,
@@ -135,6 +136,7 @@ substitutes = dict(
     ypadding = [ 'top_padding', 'bottom_padding' ],
     minwidth = [ 'min_width' ],
     textalign = [ 'text_align' ],
+    slow_speed = [ 'slow_cps' ],
     )
 
 # Map from property to number.
@@ -495,7 +497,7 @@ def write_text(filename):
 
         print >>f, name, "inherits from", sty.parent
 
-        props = [ (name, sty.cache[n]) for name, n in prefixed_property_names.iteritems() ]
+        props = [ (propname, sty.cache[n]) for propname, n in prefixed_property_number.iteritems() ]
         props.sort()
 
         for prop, val in props:

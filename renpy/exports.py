@@ -116,6 +116,9 @@ def image(name, img):
     is a string or tuple, it is interpreted as an argument to Image.
     """
 
+    if img is None:
+        raise Exception("Images may not be declared to be None.")
+        
     if not renpy.game.init_phase:
         raise Exception("Images may only be declared inside init blocks.")
 

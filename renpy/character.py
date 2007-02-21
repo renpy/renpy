@@ -302,19 +302,16 @@ def display_say(who, what, who_style='say_label',
         if ctc and ctc_position == "nestled":
             ctcwhat.extend([ " ", ctc ])
 
-        if slow:
-            slow_done = SlowDone(ctc, ctc_position, callback, interact)
-        else:
-            slow_done = None
-
+        slow_done = SlowDone(ctc, ctc_position, callback, interact)
                 
         what_args = dict(style=what_style,
                          slow=slow,
                          slow_done=slow_done,
                          slow_abortable=slow_abortable,
                          slow_start=slow_start,
-                         pause=pause,
-                         **what_properties)
+                         pause=pause)
+
+        what_args.update(what_properties)
 
         if callback:
             callback("show", interact=interact)
@@ -426,6 +423,17 @@ class Character(object):
                 del self.properties[k]
                 continue
 
+        for k in list(self.properties):
+            if k in self.special_properties:
+                continue
+
+            if k.startswith("who_"):
+                self.properties[k[len("who_"):]] = self.properties[k]
+                del self.properties[k]
+                continue
+            
+
+            
     def copy(self,
              name=NotSet,
              who_style=NotSet,
