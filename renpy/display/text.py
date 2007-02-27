@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -75,7 +75,7 @@ class SFont(object):
         self.sizes = { }
 
         # Load in the image.
-        surf = renpy.display.im.load_image(self.filename)
+        surf = renpy.display.im.Image(self.filename).load(unscaled=True)
         self.surf = surf
 
         surf.lock()
@@ -115,7 +115,11 @@ class SFont(object):
 
                 c = self.charset[ci]
                 ci += 1
-                self.chars[c] = surf.subsurface((start, 1, i - start, height))
+
+                ss = surf.subsurface((start, 1, i - start, height))
+                ss = renpy.display.scale.surface_scale(ss)
+                
+                self.chars[c] = ss
                 self.sizes[c] = i - start
 
 

@@ -464,11 +464,11 @@ class StyleProxy(object):
         self.__dict__["target"] = target
 
     def __getattr__(self, k):
-        raise Exception("Getting attributes of styles is not supported.")
+        return getattr(self.target, k)
         
     def __setattr__(self, k, v):
         self.target.setattr(k, v)
-
+        
     def __delattr__(self, k):
         self.target.delattr(k)
 

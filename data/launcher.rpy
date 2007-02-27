@@ -613,8 +613,13 @@ label archive_files:
             except:
                 pass
 
-            os.rename(fullfn, afn)
-
+            try:
+                os.rename(fullfn, afn)
+            except:
+                os.rename(afn, afn + ".old")
+                os.rename(fullfn, afn)
+                os.unlink(afn + ".old")
+                
         store.message = "The files have been added to the archive, and moved into the archived directory."
 
     jump tools_menu

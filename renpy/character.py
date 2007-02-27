@@ -192,8 +192,8 @@ class SlowDone(object):
             renpy.ui.add(self.ctc)
             renpy.exports.restart_interaction()
 
-        if self.callback:
-            self.callback("slow_done", interact=self.interact)
+        for c in self.callback:
+            c("slow_done", interact=self.interact)
 
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -242,10 +242,16 @@ def display_say(who, what, who_style='say_label',
         return
 
     if callback is None:
-        callback = renpy.config.character_callback
+        if renpy.config.character_callback:
+            callback = [ renpy.config.character_callback ]
+        else:
+            callback = [ ]
+            
+    if not isinstance(callback, list):
+        callback = [ callback ]
     
-    if callback:
-        callback("begin", interact=interact)
+    for c in callback:
+        c("begin", interact=interact)
     
     if renpy.exports.roll_forward_info():
         roll_forward = False
@@ -288,7 +294,7 @@ def display_say(who, what, who_style='say_label',
         who_args = dict()
 
     while keep_interacting:
-                
+
         # If we're going to do an interaction, then saybehavior needs
         # to be here.
         if interact:            
@@ -304,22 +310,29 @@ def display_say(who, what, who_style='say_label',
 
         slow_done = SlowDone(ctc, ctc_position, callback, interact)
                 
+        for c in callback:
+            c("show", interact=interact)
+
+            
         what_args = dict(style=what_style,
                          slow=slow,
                          slow_done=slow_done,
                          slow_abortable=slow_abortable,
                          slow_start=slow_start,
                          pause=pause)
-
-        what_args.update(what_properties)
-
-        if callback:
-            callback("show", interact=interact)
-
-        what_text = show_function(who, ctcwhat, who_args=who_args, what_args=what_args, window_args=window_args, image=image, **show_args)
-
-        if callback:
-            callback("show_done", interact=interact)
+            
+        what_text = show_function(
+            who,
+            ctcwhat,
+            who_args=who_args,
+            what_args=what_args,
+            window_args=window_args,
+            image=image,
+            no_ctc_what=what,
+            **show_args)
+        
+        for c in callback:
+            c("show_done", interact=interact)
         
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
@@ -330,22 +343,46 @@ def display_say(who, what, who_style='say_label',
             # This is only the case if the user has rolled forward, or
             # maybe in some other obscure cases.
             if rv is False:
-                break
-            
+                break 
+
         keep_interacting = what_text.get_keep_pausing()
+        slow_start = what_text.get_laidout_length()
 
         if keep_interacting:
-            slow_start = what_text.get_laidout_length()
             pause += 1
 
             for i in renpy.config.say_sustain_callbacks:
                 i()
 
+    if interact:
+
+        # Store that we have shown the last thing we need to show.
+        what_args = dict(style=what_style,
+                         slow=False,
+                         slow_done=None,
+                         slow_abortable=slow_abortable,
+                         slow_start=slow_start,
+                         pause=pause)
+
+        what_args.update(what_properties)
+
+        renpy.store._reshow_say = renpy.curry.curry(show_function)(
+            who,
+            what,
+            who_args=who_args,
+            what_args=what_args,
+            window_args=window_args,
+            image=image,
+            no_ctc_what=what,
+            **show_args)
+
+    # Log this line of dialogue.        
     if who and isinstance(who, (str, unicode)):
         renpy.exports.log(who)
     renpy.exports.log(what)
     renpy.exports.log("")
 
+    # Do the checkpoint and with None.
     if interact:
         renpy.exports.checkpoint(True)
 
@@ -355,7 +392,7 @@ def display_say(who, what, who_style='say_label',
         if with_none:
             renpy.game.interface.with(None, None)
 
-    if callback:
+    for c in callback:
         callback("end", interact=interact)
 
 # Used by copy.

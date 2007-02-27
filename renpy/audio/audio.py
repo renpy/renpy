@@ -65,11 +65,25 @@ if 'mix' not in disable:
 
 if mix:
 
-    old_wave = mix.get_wave()
-    old_midi = mix.get_midi()
+    mixer_enabled = False
+    
+    def enable_mixer():
 
-    def restore_volumes():
-        if not mix_ok:
+        global old_wave
+        global old_midi
+        global mixer_enabled
+
+        if mix_ok and not mixer_enabled:
+        
+            old_wave = mix.get_wave()
+            old_midi = mix.get_midi()
+            mixer_enabled = True
+            
+            
+    def disable_mixer():
+        global mixer_enabled
+        
+        if not mix_ok or not mixer_enabled:
             return
 
         if old_wave is not None:
@@ -78,13 +92,9 @@ if mix:
         if old_midi is not None:
             mix.set_midi(old_midi)
 
-else:
+        mixer_enabled = False
 
-    def restore_volumes():
-        pass
-
-atexit.register(restore_volumes)
-                         
+    atexit.register(disable_mixer)
 
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
@@ -541,9 +551,6 @@ def init():
 
 
 def quit():
-    """
-    Deinitialize the mixer and the various libraries.
-    """
 
     global pcm_ok
     global midi_ok
@@ -618,17 +625,24 @@ def periodic():
 
         max_volume = -1.0
         volumes = renpy.game.preferences.volumes
-
+        
         if mix_ok:
 
+            anything_playing = False
+            
             for c in channels:
-
-                # if not c.playing:
-                #    continue
-
                 vol = c.chan_volume * volumes[c.mixer]
                 max_volume = max(max_volume, vol)
 
+                if vol != 0:
+                    anything_playing = True
+
+            if not anything_playing:
+                disable_mixer()
+                return
+
+            enable_mixer()
+                
             if max_volume == -1.0:
                 return
 

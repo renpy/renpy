@@ -466,7 +466,7 @@ def screen_blit(source, full=False, xoffset=0):
 
     screen.set_clip(cliprect)
     source.blit_to(screen, xoffset, 0)
-    screen.set_clip()
+    screen.set_clip(None)
 
     return updates
     

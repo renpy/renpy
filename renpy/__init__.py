@@ -54,6 +54,7 @@ def import_all():
 
     import renpy.display
     import renpy.display.presplash
+    import renpy.display.scale # Must be before module.
     import renpy.display.module
     import renpy.display.render # Most display stuff depends on this.
     import renpy.display.core # object

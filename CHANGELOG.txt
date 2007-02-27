@@ -4,12 +4,17 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.1.0
 -------------------
 
-TODO: Check that shift+Y still works.
+TODO: Accellerate pygame_surface.
+TODO: Interact type.
+TODO: auto show/hide nvl-mode.
 
 DOC: renpy.with
 DOC: Improved dissolve.
-DOC: slow_cps, slow_cps_multiplier, slow_abortable. 
+DOC: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
 DOC: New behavior of slow parameter to ui.text, Character.
+
+DOC: _reshow_say()
+
 
 Implemented hard pauses, pauses that cannot be interrupted by the
 user. They can be invoked by passing hard=True to renpy.pause, but
@@ -34,9 +39,12 @@ We still support config.enter_transition and config.exit_transition,
 which are used when entering or exiting the game menu from the game
 proper.
 
-
 The roundrect theme has been updated to color insensitive file picker
 entries with the disabled color.
+
+Ren'Py now releases control over the mixer when all mixers are set to
+zero. This makes it easier to play alternative music in the background
+of a game.
 
 Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user

@@ -143,10 +143,9 @@ class Cache(object):
             ce.time = self.time
             self.size_of_current_generation += ce.size
 
-
-            
-        # RLE detection.
-        if new and id(ce.surf) not in rle_cache:
+        # RLE detection. (ce.size is used to check that we're not
+        # 0 pixels big.)
+        if new and id(ce.surf) not in rle_cache and ce.size:
             rle = image.rle
             surf = ce.surf
 
@@ -345,8 +344,11 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def load(self):
-        im = pygame.image.load(renpy.loader.load(self.filename), self.filename)
+    def load(self, unscaled=False):
+        if unscaled:
+            im = renpy.display.scale.image_load_unscaled(renpy.loader.load(self.filename), self.filename)
+        else:
+            im = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
         if im.get_masks()[3] or im.get_colorkey():
             im = im.convert_alpha()
@@ -451,10 +453,12 @@ class FrameImage(ImageBase):
         self.tile = tile
 
         if self.width < self.xborder * 2:
-            raise Exception("Frame width is too small for its border.")
-
+            # raise Exception("Frame width is too small for its border.")
+            self.xborder = self.width / 2
+            
         if self.height < self.yborder * 2:
-            raise Exception("Frame height is too small for its border.")
+            # raise Exception("Frame height is too small for its border.")
+            self.yborder = self.height / 2
             
 
     def load(self):
@@ -465,9 +469,20 @@ class FrameImage(ImageBase):
         dest = pygame.Surface((dw, dh), 0,
                               renpy.game.interface.display.sample_surface)
         
-        source = cache.get(self.image)
-        sw, sh = source.get_size()
+        rv = dest
 
+        source = cache.get(self.image)
+
+        dest = renpy.display.scale.real(dest)
+        source = renpy.display.scale.real(source)
+        
+        xb = renpy.display.scale.scale(self.xborder)
+        yb = renpy.display.scale.scale(self.yborder)
+        
+        sw, sh = source.get_size()
+        dw, dh = dest.get_size()
+    
+        
         def draw(x0, x1, y0, y1):
 
             # Compute the coordinates of the left, right, top, and
@@ -535,13 +550,10 @@ class FrameImage(ImageBase):
                     surf = surf2
                     
                 else:
-                    surf = pygame.transform.scale(surf, dstsize)
+                    surf = renpy.display.scale.real_transform_scale(surf, dstsize)
 
             # Blit.
             dest.blit(surf, (dx0, dy0))
-
-        xb = self.xborder
-        yb = self.yborder
 
         # Top row.
         draw(0, xb, 0, yb)
@@ -559,7 +571,7 @@ class FrameImage(ImageBase):
         draw(-xb, 0, -yb, 0)
         
         # And, finish up.
-        return dest
+        return rv
 
 class SolidImage(ImageBase):
     """

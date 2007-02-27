@@ -201,6 +201,7 @@ def load(filename):
     log.unfreeze(label="after_load")
 
 def rename_save(old, new):
+    unlink_save(new)
     os.rename(renpy.config.savedir + "/" + old + savegame_suffix, 
               renpy.config.savedir + "/" + new + savegame_suffix)
     
@@ -229,8 +230,12 @@ class _MultiPersistent(object):
         f.write(dumps(self))
         f.close()
 
-        os.rename(fn + ".new", fn)
-
+        try:
+            os.rename(fn + ".new", fn)
+        except:
+            os.unlink(fn)
+            os.rename(fm + ".new", fn)
+            
 def MultiPersistent(name):
 
     if not renpy.game.init_phase:

@@ -50,23 +50,26 @@ init -100:
                 if not i:
                     continue
 
-                a, kw = i                
-                rv = renpy.show_display_say(*a, **kw)
+                who, what, kw = i                
+                rv = renpy.show_display_say(who, what, **kw)
 
             ui.close()
 
             return rv
 
             
-        def nvl_show_function(*args, **kwargs):
+        def nvl_show_function(who, what, **kwargs ):
  
-            nvl_list[-1] = (args, kwargs)
+            nvl_list[-1] = (who, what, kwargs)
             
             rv = nvl_show_core()
-                
-            nvl_list[-1][1]["what_args"]["slow"] = False
-            nvl_list[-1][1]["what_args"]["slow_done"] = None
-                
+
+            what = kwargs["no_ctc_what"]
+            kwargs["what_args"]["slow"] = False
+            kwargs["what_args"]["slow_done"] = None
+
+            nvl_list[-1] = (who, what, kwargs)
+            
             return rv
 
         def nvl_show(with):
@@ -126,8 +129,8 @@ init -100:
                 if not i:
                     continue
 
-                a, kw = i            
-                rv = renpy.show_display_say(*a, **kw)
+                who, what, kw = i            
+                rv = renpy.show_display_say(who, what, **kw)
 
             renpy.display_menu(items, interact=False,
                                window_style='nvl_menu_window',

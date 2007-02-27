@@ -78,13 +78,15 @@ cdef extern from "renpy.h":
 
 import pygame
 
+PygameSurface = pygame.Surface
+
 # Update this in library.rpy as well!
 def version():
     return 6001000
 
 def save_png(surf, file, compress=-1):
 
-    if not isinstance(surf, pygame.Surface):
+    if not isinstance(surf, PygameSurface):
         raise Exception("save_png requires a pygame Surface as its first argument.")
 
     save_png_core(surf, RWopsFromPython(file), compress)
@@ -92,10 +94,10 @@ def save_png(surf, file, compress=-1):
 
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
-    if not isinstance(pysrc, pygame.Surface):
+    if not isinstance(pysrc, PygameSurface):
         raise Exception("pixellate requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, pygame.Surface):
+    if not isinstance(pydst, PygameSurface):
         raise Exception("pixellate requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -122,10 +124,10 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 # system, and needs to be determined at a higher level.
 def map(pysrc, pydst, r, g, b, a):
 
-    if not isinstance(pysrc, pygame.Surface):
+    if not isinstance(pysrc, PygameSurface):
         raise Exception("map requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, pygame.Surface):
+    if not isinstance(pydst, PygameSurface):
         raise Exception("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -154,10 +156,10 @@ def map(pysrc, pydst, r, g, b, a):
 # system, and needs to be determined at a higher level.
 def linmap(pysrc, pydst, r, g, b, a):
 
-    if not isinstance(pysrc, pygame.Surface):
+    if not isinstance(pysrc, PygameSurface):
         raise Exception("map requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, pygame.Surface):
+    if not isinstance(pydst, PygameSurface):
         raise Exception("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -183,10 +185,10 @@ def linmap(pysrc, pydst, r, g, b, a):
 
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
-    if not isinstance(pysrc, pygame.Surface):
+    if not isinstance(pysrc, PygameSurface):
         raise Exception("alpha_munge requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, pygame.Surface):
+    if not isinstance(pydst, PygameSurface):
         raise Exception("alpha_munge requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -217,10 +219,10 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
 # def xblur(pysrc, pydst, radius):
 
-#     if not isinstance(pysrc, pygame.Surface):
+#     if not isinstance(pysrc, PygameSurface):
 #         raise Exception("blur requires a pygame Surface as its first argument.")
 
-#     if not isinstance(pydst, pygame.Surface):
+#     if not isinstance(pydst, PygameSurface):
 #         raise Exception("blur requires a pygame Surface as its second argument.")
 
 #     if pysrc.get_bitsize() not in (24, 32):
@@ -248,10 +250,10 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
 # def stretch(pysrc, pydst, rect):
 
-#     if not isinstance(pysrc, pygame.Surface):
+#     if not isinstance(pysrc, PygameSurface):
 #         raise Exception("stretch requires a pygame Surface as its first argument.")
 
-#     if not isinstance(pydst, pygame.Surface):
+#     if not isinstance(pydst, PygameSurface):
 #         raise Exception("stretch requires a pygame Surface as its second argument.")
 
 #     if pydst.get_bitsize() != pysrc.get_bitsize():
@@ -270,10 +272,10 @@ def bilinear(pysrc, pydst,
              source_xoff=0.0, source_yoff=0.0, source_width=None, source_height=None,
              dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None):
 
-    if not isinstance(pysrc, pygame.Surface):
+    if not isinstance(pysrc, PygameSurface):
         raise Exception("bilinear requires a pygame Surface as its first argument.")
 
-    if not isinstance(pydst, pygame.Surface):
+    if not isinstance(pydst, PygameSurface):
         raise Exception("bilinear requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
@@ -306,22 +308,21 @@ def bilinear(pysrc, pydst,
     pysrc.unlock()
 
 
+def check(surf):
+    if not isinstance(surf, PygameSurface):
+        raise Exception("Surface must be a pygame surface.")
+
+    if surf.get_bitsize() != 32:
+        raise Exception("Surface must be 32-bit.")
+    
+    
 def transform(pysrc, pydst,
               corner_x, corner_y,
               xdx, ydx, xdy, ydy):
 
-    if not isinstance(pysrc, pygame.Surface):
-        raise Exception("transform requires a pygame Surface as its first argument.")
-
-    if not isinstance(pydst, pygame.Surface):
-        raise Exception("transform requires a pygame Surface as its second argument.")
-
-    if pysrc.get_bitsize() != 32:
-        raise Exception("transform requires a 32 bit surface.")
-
-    if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("transform requires both surfaces have the same bitsize.")
-
+    check(pysrc)
+    check(pydst)
+    
     pysrc.lock()
     pydst.lock()
 
@@ -336,6 +337,10 @@ def transform(pysrc, pydst,
 
 def blend(pysrca, pysrcb, pydst, alpha):
 
+    check(pysrca)
+    check(pysrcb)
+    check(pydst)
+    
     pysrca.lock()
     pysrcb.lock()
     pydst.lock()
@@ -347,6 +352,11 @@ def blend(pysrca, pysrcb, pydst, alpha):
     pysrca.unlock()
 
 def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
+    check(pysrca)
+    check(pysrcb)
+    check(pydst)
+    check(pyimg)
+    
     pysrca.lock()
     pysrcb.lock()
     pydst.lock()
@@ -359,5 +369,6 @@ def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
     pysrcb.unlock()
     pysrca.unlock()
 
+# Be sure to update scale.py when adding something new here!
     
 core_init()
