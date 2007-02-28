@@ -655,12 +655,15 @@ def has_label(name):
 
     return renpy.game.script.has_label(name)
 
-def take_screenshot(scale):
+def take_screenshot(scale=None):
     """
     This causes a screenshot to be taken. This screenshot will be
     saved with a savegame when the game is saved.
     """
 
+    if scale is None:
+        scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
+    
     renpy.game.interface.take_screenshot(scale)
 
 def full_restart(reason="end_game"):
@@ -753,6 +756,9 @@ def transition(trans, layer=None, always=False):
     else:
         renpy.game.interface.set_transition(trans, layer)
 
+def get_transition(layer=None):
+    return renpy.game.interface.transition[layer]
+        
 def clear_game_runtime():
     """
     Resets the game runtime timer down to 0.
@@ -941,6 +947,12 @@ def force_full_redraw():
 
     renpy.game.interface.display.full_redraw = True
 
+def get_reshow_say():
+    return renpy.game.context().info._reshow_say
+
+def reshow_say():
+    return renpy.game.context().info._reshow_say()
+    
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

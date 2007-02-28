@@ -39,6 +39,16 @@ REDRAW = USEREVENT + 4
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# Time management.
+time_base = None
+
+def init_time():
+    global time_base
+    time_base = time.time() - pygame.time.get_ticks() / 1000.0
+
+def get_time():
+    return time_base + pygame.time.get_ticks() / 1000.0
+
 class IgnoreEvent(Exception):
     """
     Exception that is raised when we want to ignore an event, but
@@ -577,6 +587,8 @@ class Display(object):
         pygame.font.init()
         renpy.audio.audio.init()
         renpy.display.joystick.init()
+
+        init_time()
         
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
@@ -886,7 +898,7 @@ class Interface(object):
 
     def __init__(self):
         self.display = Display(self)
-        self.profile_time = time.time()
+        self.profile_time = get_time()
         self.screenshot = None
         self.old_scene = None
         self.transition = { }
@@ -1156,7 +1168,7 @@ class Interface(object):
         self.mouse = mouse
 
         # The start and end times of this interaction.
-        start_time = time.time()
+        start_time = get_time()
         end_time = start_time
 
         # frames = 0
@@ -1340,7 +1352,7 @@ class Interface(object):
                     suppress_blit = renpy.display.video.interact()
 
                     # Draw the screen.
-                    self.frame_time = time.time()
+                    self.frame_time = get_time()
 
                     if not self.interact_time:
                         self.interact_time = self.frame_time
@@ -1351,7 +1363,7 @@ class Interface(object):
 
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile :
-                        new_time = time.time()
+                        new_time = get_time()
                         print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
@@ -1381,7 +1393,7 @@ class Interface(object):
                 # event going on.
                 if needs_redraw and not self.event_peek():
                     if renpy.config.profile:
-                        self.profile_time = time.time()
+                        self.profile_time = get_time()
                     continue
 
                 # Predict images, if we haven't done so already.
@@ -1402,7 +1414,7 @@ class Interface(object):
                     if redraw_time and not needs_redraw:
 
                         if redraw_time != old_redraw_time:
-                            time_left = redraw_time - time.time()
+                            time_left = redraw_time - get_time()
                             time_left = min(time_left, 3600)
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
                             old_redraw_time = redraw_time
@@ -1414,7 +1426,7 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, 0)
                         ev = None
                     else:
-                        time_left = self.timeout_time - time.time() 
+                        time_left = self.timeout_time - get_time() 
                         time_left = min(time_left, 3600)
 
                         if time_left < 0:
@@ -1442,7 +1454,7 @@ class Interface(object):
                         continue
 
                     if renpy.config.profile:
-                        self.profile_time = time.time()
+                        self.profile_time = get_time()
 
                     
                     # Try to merge an TIMEEVENT with the next event.
@@ -1502,7 +1514,7 @@ class Interface(object):
                     x, y = pygame.mouse.get_pos()
                     x -= self.display.screen_xoffset
 
-                    self.event_time = end_time = time.time()
+                    self.event_time = end_time = get_time()
 
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
                     

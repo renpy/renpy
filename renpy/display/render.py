@@ -122,7 +122,7 @@ def process_redraws():
 
     i = 0
     dead_widgets = sets.Set()
-    now = time.time()
+    now = renpy.display.core.get_time()
 
     for when, widget in redraw_queue:
 

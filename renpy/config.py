@@ -300,6 +300,9 @@ reject_midi = True
 # Default character callback.
 character_callback = None
 
+# Character callback list.
+all_character_callbacks = [ ]
+
 del renpy
 del sets
 

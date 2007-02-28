@@ -9,11 +9,15 @@ TODO: Interact type.
 TODO: auto show/hide nvl-mode.
 
 DOC: renpy.with
+DOC: renpy.get_transition
 DOC: Improved dissolve.
 DOC: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
 DOC: New behavior of slow parameter to ui.text, Character.
 
-DOC: _reshow_say()
+DOC: renpy.reshow_say(), renpy.get_reshow_say()
+DOC: renpy.get_transition()
+DOC: config.all_character_callbacks
+DOC: callback change.
 
 
 Implemented hard pauses, pauses that cannot be interrupted by the
@@ -45,6 +49,9 @@ entries with the disabled color.
 Ren'Py now releases control over the mixer when all mixers are set to
 zero. This makes it easier to play alternative music in the background
 of a game.
+
+Ren'Py now uses a higher-resolution timer, preventing framerate from
+being limited by timer resolution.
 
 Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user

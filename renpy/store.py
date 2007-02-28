@@ -83,6 +83,8 @@ from renpy.python import RevertableSet as set
 Set = set
 from renpy.python import RevertableObject as object
 
+from renpy.python import revertable_range as range
+
 eval = renpy.python.py_eval
 
 # Displayables.

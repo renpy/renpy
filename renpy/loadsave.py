@@ -22,6 +22,8 @@
 # This file contains functions that load and save the game state.
 
 from pickle import dumps, loads, HIGHEST_PROTOCOL
+# from cPickle import dumps, loads, HIGHEST_PROTOCOL
+
 import cStringIO
 import zipfile
 import time

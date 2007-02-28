@@ -250,6 +250,9 @@ class RevertableList(list):
     def rollback(self, old):
         self[:] = old
 
+def revertable_range(*args):
+    return RevertableList(range(*args))
+        
 class RevertableDict(dict):
 
     __delitem__ = mutator(dict.__delitem__)

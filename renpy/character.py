@@ -249,7 +249,9 @@ def display_say(who, what, who_style='say_label',
             
     if not isinstance(callback, list):
         callback = [ callback ]
-    
+
+    callback = renpy.config.all_character_callbacks + callback 
+        
     for c in callback:
         c("begin", interact=interact)
     
@@ -366,7 +368,7 @@ def display_say(who, what, who_style='say_label',
 
         what_args.update(what_properties)
 
-        renpy.store._reshow_say = renpy.curry.curry(show_function)(
+        renpy.game.context().info._reshow_say = renpy.curry.curry(show_function)(
             who,
             what,
             who_args=who_args,
