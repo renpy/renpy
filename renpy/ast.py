@@ -208,14 +208,14 @@ class Say(Node):
         'who',
         'who_fast',
         'what',
-        'with',
+        'with_',
         'interact',
         ]
 
     def diff_info(self):
         return (Say, self.who, self.what)
 
-    def __init__(self, loc, who, what, with, interact=True):
+    def __init__(self, loc, who, what, with_, interact=True):
 
         super(Say, self).__init__(loc)
 
@@ -231,7 +231,7 @@ class Say(Node):
             self.who_fast = False
             
         self.what = what
-        self.with = with
+        self.with_ = with_
         self.interact = interact
 
     def execute(self):
@@ -246,7 +246,7 @@ class Say(Node):
         else:
             who = None
 
-        say_menu_with(self.with, renpy.game.interface.set_transition)
+        say_menu_with(self.with_, renpy.game.interface.set_transition)
         renpy.exports.say(who, self.what, interact=getattr(self, 'interact', True))
 
         return self.next
@@ -264,14 +264,16 @@ class Say(Node):
         def predict_with(trans):
             trans(old_widget=None, new_widget=None).predict(callback)
 
-        say_menu_with(self.with, predict_with)
+        say_menu_with(self.with_, predict_with)
 
         for i in renpy.exports.predict_say(who, self.what):
             if i is not None:
                 i.predict(callback)
 
         return [ self.next ]
-        
+
+# Copy the descriptor.
+setattr(Say, "with", Say.with_)
 
 class Init(Node):
 
@@ -640,7 +642,7 @@ class With(Node):
         else:
             paired = None 
 
-        renpy.exports.with(trans, paired)
+        renpy.exports.with_statement(trans, paired)
 
         return self.next
 
@@ -714,16 +716,16 @@ class Menu(Node):
     __slots__ = [
         'items',
         'set',
-        'with',
+        'with_',
         ]
 
 
-    def __init__(self, loc, items, set, with):
+    def __init__(self, loc, items, set, with_):
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
-        self.with = with
+        self.with_ = with_
 
     def diff_info(self):
         return (Menu,)
@@ -756,7 +758,7 @@ class Menu(Node):
             else:
                 choices.append((label, condition, i))
 
-        say_menu_with(self.with, renpy.game.interface.set_transition)
+        say_menu_with(self.with_, renpy.game.interface.set_transition)
         choice = renpy.exports.menu(choices, self.set)
 
         if choice is None:
@@ -771,7 +773,7 @@ class Menu(Node):
         def predict_with(trans):
             trans(old_widget=None, new_widget=None).predict(callback)
 
-        say_menu_with(self.with, predict_with)
+        say_menu_with(self.with_, predict_with)
 
         for i in renpy.store.predict_menu():
             if i is not None:
@@ -782,7 +784,8 @@ class Menu(Node):
                 rv.append(block[0])
 
         return rv
-                
+
+setattr(Menu, "with", Menu.with_)
 
 # Goto is considered harmful. So we decided to name it "jump"
 # instead. 

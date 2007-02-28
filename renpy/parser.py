@@ -946,7 +946,7 @@ def parse_menu(stmtl, loc):
     has_say = False
     has_caption = False
 
-    with = None
+    with_ = None
     set = None
 
     say_who = None
@@ -960,7 +960,7 @@ def parse_menu(stmtl, loc):
     while not l.eob:
 
         if l.keyword('with'):
-            with = l.require(l.simple_expression)
+            with_ = l.require(l.simple_expression)
             l.expect_eol()
             l.expect_noblock('with clause')
             l.advance()
@@ -1048,7 +1048,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
         
-    rv.append(ast.Menu(loc, items, set, with))
+    rv.append(ast.Menu(loc, items, set, with_))
 
     return rv
 
@@ -1383,15 +1383,15 @@ def parse_statement(l):
     what = l.string()
 
     if l.keyword('with'):
-        with = l.require(l.simple_expression)
+        with_ = l.require(l.simple_expression)
     else:
-        with = None
+        with_ = None
 
     if what is not None and l.eol():
         # We have a one-argument say statement.
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, None, what, with)
+        return ast.Say(loc, None, what, with_)
 
     l.revert(state)
 
@@ -1400,15 +1400,15 @@ def parse_statement(l):
     what = l.string()
 
     if l.keyword('with'):
-        with = l.require(l.simple_expression)
+        with_ = l.require(l.simple_expression)
     else:
-        with = None
+        with_ = None
 
     if who and what is not None:
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what, with)
+        return ast.Say(loc, who, what, with_)
 
     l.error('expected statement.')
 

@@ -51,9 +51,9 @@ current_once = False
 # A stack of open ui.ats.
 at_stack = [ ]
 
-def interact(**kwargs):
+def interact(type='misc', **kwargs):
     # Docs in wiki.
-
+    
     if renpy.config.skipping == "fast":
         renpy.config.skipping = None
 
@@ -64,7 +64,8 @@ def interact(**kwargs):
         raise Exception("ui.interact called with non-empty at stack.")
     
     rv = renpy.game.interface.interact(**kwargs)
-    renpy.game.context(-1).mark_seen()
+    renpy.game.context().mark_seen()
+    renpy.game.context().info._last_interact_type = type
     return rv
 
 def add(w, make_current=False, once=False):

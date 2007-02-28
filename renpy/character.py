@@ -153,6 +153,7 @@ def predict_display_say(who, what,
                 show_args = { },
                 with_none = None,
                 callback = None,
+                type='say',        
                 **who_properties):
     """
     This is the default function used by Character to predict images that
@@ -180,11 +181,12 @@ def predict_display_say(who, what,
     return rv
 
 class SlowDone(object):
-    def __init__(self, ctc, ctc_position, callback, interact):
+    def __init__(self, ctc, ctc_position, callback, interact, type):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
         self.interact = interact
+        self.type = type
 
     def __call__(self):
         
@@ -193,7 +195,7 @@ class SlowDone(object):
             renpy.exports.restart_interaction()
 
         for c in self.callback:
-            c("slow_done", interact=self.interact)
+            c("slow_done", interact=self.interact, type=self.type)
 
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -216,6 +218,7 @@ def display_say(who, what, who_style='say_label',
                 show_args = { },
                 with_none = None,
                 callback = None,
+                type='say',
                 **properties):
     """
     @param who: Who is saying the dialogue, or None if it's not being
@@ -253,7 +256,7 @@ def display_say(who, what, who_style='say_label',
     callback = renpy.config.all_character_callbacks + callback 
         
     for c in callback:
-        c("begin", interact=interact)
+        c("begin", interact=interact, type=type)
     
     if renpy.exports.roll_forward_info():
         roll_forward = False
@@ -310,10 +313,10 @@ def display_say(who, what, who_style='say_label',
         if ctc and ctc_position == "nestled":
             ctcwhat.extend([ " ", ctc ])
 
-        slow_done = SlowDone(ctc, ctc_position, callback, interact)
+        slow_done = SlowDone(ctc, ctc_position, callback, interact, type)
                 
         for c in callback:
-            c("show", interact=interact)
+            c("show", interact=interact, type=type)
 
             
         what_args = dict(style=what_style,
@@ -334,13 +337,13 @@ def display_say(who, what, who_style='say_label',
             **show_args)
         
         for c in callback:
-            c("show_done", interact=interact)
+            c("show_done", interact=interact, type=type)
         
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 
         if interact:
-            rv = renpy.ui.interact(mouse='say', roll_forward=roll_forward)
+            rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
             # This is only the case if the user has rolled forward, or
             # maybe in some other obscure cases.
@@ -392,10 +395,10 @@ def display_say(who, what, who_style='say_label',
             with_none = renpy.config.implicit_with_none
 
         if with_none:
-            renpy.game.interface.with(None, None)
+            renpy.game.interface.do_with(None, None)
 
     for c in callback:
-        callback("end", interact=interact)
+        c("end", interact=interact, type=type)
 
 # Used by copy.
 NotSet = object()

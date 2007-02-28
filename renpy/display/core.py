@@ -969,8 +969,7 @@ class Interface(object):
         self.screenshot = None
 
 
-    def with(self, trans, paired):
-
+    def do_with(self, trans, paired):
         
         if renpy.config.with_callback:
             trans = renpy.config.with_callback(trans, paired)

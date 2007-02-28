@@ -5,12 +5,9 @@ New in Ren'Py 6.1.0
 -------------------
 
 TODO: Accellerate pygame_surface.
-TODO: Interact type.
-TODO: auto show/hide nvl-mode.
 
 DOC: renpy.with
 DOC: renpy.get_transition
-DOC: Improved dissolve.
 DOC: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
 DOC: New behavior of slow parameter to ui.text, Character.
 
@@ -18,6 +15,8 @@ DOC: renpy.reshow_say(), renpy.get_reshow_say()
 DOC: renpy.get_transition()
 DOC: config.all_character_callbacks
 DOC: callback change.
+DOC: config.adv_nvl_transition, config.nvl_adv_transition
+DOC: renpy.last_interact_type
 
 
 Implemented hard pauses, pauses that cannot be interrupted by the
@@ -38,6 +37,10 @@ leaving the game menu.
 game ends. 
  * config.intra_transition is used between screens of the game menu. Now, 
 it is also used when a yes/no choice is displayed.
+ * config.adv_nvl_transition is used when an adv-mode screen is immediately
+followed by an nvl-mode screen.
+ * config.nvl_adv_transition is used when an nvl-mode screen is immediately 
+followed by an adv-mode screen.
 
 We still support config.enter_transition and config.exit_transition,
 which are used when entering or exiting the game menu from the game
@@ -46,12 +49,27 @@ proper.
 The roundrect theme has been updated to color insensitive file picker
 entries with the disabled color.
 
+Ren'Py can now re-show the last say statement. This is done by calling
+renpy.reshow_say. renpy.get_reshow_say() allows the screen to be
+retrieved, and reshown at some time in the future.
+
+We now track the type of the last interaction. This is determined by
+supplying the type parameter to ui.interact or Character, and can be
+retrieved using renpy.last_interact_type.
+
+The new renpy.get_transition function allows one to determine if a
+transition has been set for the next interaction. The renpy.with_statement
+function (equivalent to the with statement) 
+
 Ren'Py now releases control over the mixer when all mixers are set to
 zero. This makes it easier to play alternative music in the background
 of a game.
 
 Ren'Py now uses a higher-resolution timer, preventing framerate from
 being limited by timer resolution.
+
+Dissolve has been rewritten to improve color correctness, at the cost
+of a speed decrease on non-MMX platforms.
 
 Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user

@@ -18,7 +18,7 @@
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
-init -100:
+init -496:
 
     python:
 
@@ -34,7 +34,26 @@ init -100:
         style.create('nvl_menu_choice_chosen', 'nvl_menu_choice')
         style.create('nvl_menu_choice_button', 'default')
         style.create('nvl_menu_choice_chosen_button', 'nvl_menu_choice_button')
-        
+
+        # Set up nvl mode styles.
+        style.nvl_label.minwidth = 150
+        style.nvl_label.text_align = 1.0
+
+        style.nvl_window.background = "#0008"
+        style.nvl_window.yfill = True
+        style.nvl_window.xfill = True
+        style.nvl_window.xpadding = 20
+        style.nvl_window.ypadding = 30
+
+        style.nvl_vbox.box_spacing = 10
+
+        style.nvl_menu_choice.idle_color = "#0ff"
+        style.nvl_menu_choice.hover_color = "#ff0"
+        style.nvl_menu_choice_button.left_margin = 160
+        style.nvl_menu_choice_button.right_margin = 20
+        style.nvl_menu_choice_button.xfill = True
+        style.nvl_menu_choice_button.hover_background = "#F0F2"
+
 
         # A list of arguments that have been passed to nvl_record_show.
         nvl_list = None
@@ -74,12 +93,12 @@ init -100:
 
         def nvl_show(with):
             nvl_show_core()
-            renpy.with(with)
+            renpy.with_statement(with)
 
         def nvl_hide(with):
             nvl_show_core()
-            renpy.with(None)
-            renpy.with(with)
+            renpy.with_statement(None)
+            renpy.with_statement(with)
             
         class NVLCharacter(Character):
 
@@ -88,6 +107,7 @@ init -100:
                          who_style='nvl_label',
                          what_style='nvl_dialogue',
                          window_style='nvl_entry',
+                         type='nvl',
                          **kwargs):
 
                 Character.__init__(self, who,
@@ -96,6 +116,7 @@ init -100:
                                    what_style=what_style,
                                    window_style=window_style,
                                    show_function=nvl_show_function,
+                                   type='nvl',
                                    **kwargs)
 
             def __call__(self, *args, **kwargs):
@@ -117,7 +138,7 @@ init -100:
 
             # Clear out the previous scene list, as we will need to redraw
             # it.
-            renpy.with(None)
+            renpy.with_statement(None)
 
             if nvl_list is None:
                 store.nvl_list = [ ]
@@ -149,26 +170,28 @@ init -100:
 
             return rv
 
-    # Set up nvl mode styles.
-    $ style.nvl_label.minwidth = 150
-    $ style.nvl_label.text_align = 1.0
+        config.nvl_adv_transition = None
+        config.adv_nvl_transition = None
+
+init 496 python:
+
+    if config.nvl_adv_transition or config.adv_nvl_transition:
+
+        def _nvl_adv_callback(event, interact, type, **kwargs):
+        
+            if event != "begin" or not interact or renpy.get_transition():
+                return 
+            
+            old_type = renpy.last_interact_type()
+
+            if old_type == "say" and type == "nvl":
+                nvl_show(config.adv_nvl_transition)
+            elif old_type == "nvl" and type == "say":
+                nvl_hide(config.nvl_adv_transition)
+
+        config.all_character_callbacks.insert(0, _nvl_adv_callback)
+
     
-    $ style.nvl_window.background = "#0008"
-    $ style.nvl_window.yfill = True
-    $ style.nvl_window.xfill = True
-    $ style.nvl_window.xpadding = 20
-    $ style.nvl_window.ypadding = 30
-
-    $ style.nvl_vbox.box_spacing = 10
-    
-    $ style.nvl_menu_choice.idle_color = "#0ff"
-    $ style.nvl_menu_choice.hover_color = "#ff0"
-    $ style.nvl_menu_choice_button.left_margin = 160
-    $ style.nvl_menu_choice_button.right_margin = 20
-    $ style.nvl_menu_choice_button.xfill = True
-    $ style.nvl_menu_choice_button.hover_background = "#F0F2"
-
-
 python early hide:
 
     def parse_nvl_show_hide(l):

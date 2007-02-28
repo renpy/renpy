@@ -267,14 +267,14 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if not isinstance(roll_forward, basestring):
         roll_forward = None
     
-    rv = renpy.ui.interact(mouse='prompt', roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
     
     if with_none is None:
         with_none = renpy.config.implicit_with_none
 
     if with_none:
-        renpy.game.interface.with(None, None)
+        renpy.game.interface.do_with(None, None)
 
     return rv
 
@@ -390,7 +390,7 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
 
     if interact:
             
-        rv = renpy.ui.interact(mouse='menu', roll_forward=roll_forward)
+        rv = renpy.ui.interact(mouse='menu', type="menu", roll_forward=roll_forward)
 
         for label, val in items:
             if rv == val:
@@ -407,7 +407,7 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
             with_none = renpy.config.implicit_with_none
 
         if with_none:
-            renpy.game.interface.with(None, None)
+            renpy.game.interface.do_with(None, None)
 
         return rv
     
@@ -513,6 +513,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
         roll_forward = None
     
     rv = renpy.ui.interact(suppress_overlay=(not overlays),
+                           type='imagemap',
                            mouse='imagemap',
                            roll_forward=roll_forward)
 
@@ -522,7 +523,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
         with_none = renpy.config.implicit_with_none
 
     if with_none:
-        renpy.game.interface.with(None, None)
+        renpy.game.interface.do_with(None, None)
 
     return rv
     
@@ -550,7 +551,7 @@ def pause(delay=None, music=None, with_none=None, hard=False):
     if roll_forward not in [ True, False ]:
         roll_forward = None
     
-    rv = renpy.ui.interact(mouse='pause', roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
 
 
@@ -558,7 +559,7 @@ def pause(delay=None, music=None, with_none=None, hard=False):
         with_none = renpy.config.implicit_with_none
 
     if with_none:
-        renpy.game.interface.with(None, None)
+        renpy.game.interface.do_with(None, None)
 
     return rv
 
@@ -602,7 +603,7 @@ def movie_cutscene(filename, delay, loops=0):
     return rv
         
 
-def with(trans, paired=None, always=False):
+def with_statement(trans, paired=None, always=False):
     """
     Implements the with statement. One reason to use this over a
     Ren'Py with statement is to get at the return code, which is True
@@ -621,8 +622,9 @@ def with(trans, paired=None, always=False):
     if not (renpy.game.preferences.transitions or always):
         trans = None
 
-    return renpy.game.interface.with(trans, paired)
+    return renpy.game.interface.do_with(trans, paired)
 
+globals()["with"] = with_statement
 
 def rollback():
     """
@@ -757,7 +759,7 @@ def transition(trans, layer=None, always=False):
         renpy.game.interface.set_transition(trans, layer)
 
 def get_transition(layer=None):
-    return renpy.game.interface.transition[layer]
+    return renpy.game.interface.transition.get(layer, None)
         
 def clear_game_runtime():
     """
@@ -952,7 +954,10 @@ def get_reshow_say():
 
 def reshow_say():
     return renpy.game.context().info._reshow_say()
-    
+
+def last_interact_type():
+    return renpy.game.context().info._last_interact_type
+
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
