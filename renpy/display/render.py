@@ -384,9 +384,10 @@ def compute_clip(source):
     return (x0, y0, x1 - x0, y1 - y0), updates
     
 
+# This is used to compute clipping, and also to see if rgwew ua =
 class ClipSurface(object):
 
-    def __init__(self, (x, y, w, h), blits, forced):
+    def __init__(self, (x, y, w, h), blits, forced, surfid=id):
         self.x = x
         self.y = y
         self.w = w
@@ -395,6 +396,9 @@ class ClipSurface(object):
         self.blits = blits
         self.forced = forced
 
+        # Function that transforms the surface.
+        self.surfid = surfid
+        
     def set_clip(self, rect):
         return 
 
@@ -407,26 +411,26 @@ class ClipSurface(object):
     def blit(self, surf, (xo, yo)):
 
         if xo < 0:
-            srcx = xo
+            srcx = -xo
             xo = 0
         else:
             srcx = 0
 
         if yo < 0:
-            srcy = yo
+            srcy = -yo
             yo = 0
         else:
             srcy = 0
 
         sw, sh = surf.get_size()
 
-        bw = min(self.w - xo, sw + srcx)
-        bh = min(self.h - yo, sh + srcy)
+        bw = min(self.w - xo, sw - srcx)
+        bh = min(self.h - yo, sh - srcy)
 
         if bw <= 0 or bh <= 0:
             return
 
-        self.blits.append((id(surf), srcx, srcy, xo + self.x, yo + self.y, bw, bh))
+        self.blits.append((self.surfid(surf), srcx, srcy, xo + self.x, yo + self.y, bw, bh))
 
     def force(self):
         self.forced.append((self.x, self.y, self.w, self.h))
@@ -434,8 +438,8 @@ class ClipSurface(object):
     def subsurface(self, (x, y, w, h)):
         return ClipSurface((self.x + x, self.y + y, w, h),
                            self.blits, self.forced)
-        
 
+    
 def screen_blit(source, full=False, xoffset=0):
     """
     Blits the given render to the screen. Computes the difference
@@ -738,13 +742,28 @@ class Render(object):
         (so you probably shouldn't change the output of this much).
         """
 
-        if self.surface and self.surface_alpha == alpha:
+        # We no longer respect the alpha parameter, there's no need to.
+        
+        if self.surface:
             return self.surface
 
-        if alpha:
-            sample = renpy.game.interface.display.sample_surface
-        else:
-            sample = renpy.game.interface.display.window
+        # Check to see if we have a single surface, bigger then the render.
+        forced = [ ]
+        blits = [ ]
+
+        clipsurf = ClipSurface((0, 0, self.width, self.height),
+                               blits, forced, lambda x : x)
+
+        self.blit_to(clipsurf, 0, 0)
+        
+        if len(blits) == 1 and not forced:
+            surf, sx, sy, x, y, w, h = blits[0]
+            if x <= 0 and y <= 0 and w + x >= self.width and h + y >= self.height:
+                return surf.subsurface((sx - x, sy - y, self.width, self.height))
+            
+        # Otherwise, do things the hard way.
+        
+        sample = renpy.game.interface.display.sample_surface
         
         rv = pygame.Surface((self.width, self.height), 0, sample)
 

@@ -4,13 +4,11 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.1.0
 -------------------
 
-TODO: Accellerate pygame_surface.
+DOCED: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
+DOCED: New behavior of slow parameter to ui.text, Character.
 
 DOC: renpy.with
 DOC: renpy.get_transition
-DOC: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
-DOC: New behavior of slow parameter to ui.text, Character.
-
 DOC: renpy.reshow_say(), renpy.get_reshow_say()
 DOC: renpy.get_transition()
 DOC: config.all_character_callbacks
@@ -75,6 +73,9 @@ Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user
 visible, except perhaps as improved speed and decreased memory usage.
 
+Eliminated the use of the name "with" in Python (not Ren'Py) source
+code. This means we should be ready for Python 2.6, where "with" will
+be a keyword.
 
 New in Ren'Py 6.0.0
 -------------------
