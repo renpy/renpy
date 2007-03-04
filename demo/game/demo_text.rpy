@@ -56,7 +56,7 @@ label demo_text:
 
     e "There are also bold, italic, and underline style properties, which can be styled onto any text."
 
-    e "{a=define_hyperlink}Hyperlinks{/a} let buttons be defined as using text tags."
+    e "{a=define_hyperlink}Hyperlinks{/a} let buttons be defined using text tags."
 
     e "If you find yourself using text tags on every line, you should probably look at style properties instead."
 

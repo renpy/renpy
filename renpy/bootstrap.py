@@ -194,7 +194,7 @@ def bootstrap(renpy_base):
         # Inside of the file, which may not be openable.
         try:
 
-            f = file("traceback.txt", "wU")
+            f = file("traceback.txt", "w")
 
             f.write(codecs.BOM_UTF8)
 

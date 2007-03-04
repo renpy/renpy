@@ -744,7 +744,7 @@ class Render(object):
 
         # We no longer respect the alpha parameter, there's no need to.
         
-        if self.surface:
+        if self.surface and self.surface_alpha == alpha:
             return self.surface
 
         # Check to see if we have a single surface, bigger then the render.
@@ -759,12 +759,19 @@ class Render(object):
         if len(blits) == 1 and not forced:
             surf, sx, sy, x, y, w, h = blits[0]
             if x <= 0 and y <= 0 and w + x >= self.width and h + y >= self.height:
-                return surf.subsurface((sx - x, sy - y, self.width, self.height))
-            
+
+                if bool(surf.get_masks()[3]) == bool(alpha):
+                    self.surface_alpha = alpha
+                    self.surface = surf.subsurface((sx - x, sy - y, self.width, self.height))
+                    return self.surface
+                    
         # Otherwise, do things the hard way.
-        
-        sample = renpy.game.interface.display.sample_surface
-        
+
+        if alpha:
+            sample = renpy.game.interface.display.sample_surface
+        else:
+            sample = renpy.game.interface.display.window
+                
         rv = pygame.Surface((self.width, self.height), 0, sample)
 
         self.blit_to(rv, 0, 0)

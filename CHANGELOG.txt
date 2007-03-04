@@ -76,6 +76,9 @@ config.all_character_callbacks variable can be used to specify a
 list of character callbacks that are called by all characters.
 
 
+NVL-mode now properly removes nestled click-to-continue indicators.
+
+
 Ren'Py now releases control over the mixer when all mixers are set to
 zero. This makes it easier to play alternative music in the background
 of a game.
@@ -93,6 +96,13 @@ Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user
 visible, except perhaps as improved speed and decreased memory usage.
 
+
+Implemented Imouto-mode, an experimental new feature. Setting the
+RENPY_SCALE_FACTOR environment variable to a number, will cause Ren'Py
+to scale the game by that factor. For example, setting
+RENPY_SCALE_FACTOR=.5 will cause the game to scale to half the normal
+size. This is done in a memory efficent way... scaling to 1/2 the
+size will cause the game to use 1/4 of the memory storing images.
 
 
 New in Ren'Py 6.0.0

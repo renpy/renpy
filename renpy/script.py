@@ -146,7 +146,7 @@ class Script(object):
 
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
                 rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
-                f = file(rpycfn)
+                f = file(rpycfn, "rb")
                 f.seek(-md5.digest_size, 2)
                 rpycdigest = f.read(md5.digest_size)
                 f.close()

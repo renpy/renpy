@@ -389,7 +389,7 @@ class Dissolve(Transition):
         
             w = min(dw, tw + x, bw + x)
             h = min(dh, th + y, bh + y)
-
+            
             renpy.display.module.blend(
                 bottom_surface.subsurface((-x, -y, w, h)),
                 top_surface.subsurface((-x, -y, w, h)),

@@ -325,7 +325,9 @@ def display_say(who, what, who_style='say_label',
                          slow_abortable=slow_abortable,
                          slow_start=slow_start,
                          pause=pause)
-            
+        
+        what_args.update(what_properties)
+        
         what_text = show_function(
             who,
             ctcwhat,
@@ -419,6 +421,8 @@ class Character(object):
     special_properties = [
         'what_prefix',
         'what_suffix',
+        'who_prefix',
+        'who_suffix',
         'show_function',
         ]
 
@@ -473,7 +477,6 @@ class Character(object):
                 self.properties[k[len("who_"):]] = self.properties[k]
                 del self.properties[k]
                 continue
-            
 
             
     def copy(self,
