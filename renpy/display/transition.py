@@ -40,9 +40,6 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
-# We used time too many other times. :-(
-from time import time as now
-
 # # This is a utility function that attempts to refactor an old and a new
 # # Fixed into four Fixeds: below, old, new, and above. Since only the
 # # old and new need transitions, this can be a significant win.
@@ -378,9 +375,12 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
+        import time
+        start = time.time()
+        
         bottom_surface = bottom.pygame_surface(False)
         top_surface = top.pygame_surface(False)
-
+        
         def draw(dest, x, y):
 
             dw, dh = dest.get_size()

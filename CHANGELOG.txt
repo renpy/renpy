@@ -4,17 +4,7 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.1.0
 -------------------
 
-DOCED: slow_cps (w/ True meaning), slow_cps_multiplier, slow_abortable. 
-DOCED: New behavior of slow parameter to ui.text, Character.
-
-DOC: renpy.with
-DOC: renpy.get_transition
-DOC: renpy.reshow_say(), renpy.get_reshow_say()
-DOC: renpy.get_transition()
-DOC: config.all_character_callbacks
-DOC: callback change.
-DOC: config.adv_nvl_transition, config.nvl_adv_transition
-DOC: renpy.last_interact_type
+Added support for Windows Vista.
 
 
 Implemented hard pauses, pauses that cannot be interrupted by the
@@ -22,6 +12,7 @@ user. They can be invoked by passing hard=True to renpy.pause, but
 it's probably a bad idea to use them. You should strongly consider
 using with Pause() instead, as that lets you develop timed sequences
 that can be aborted with a single click.
+
 
 Added a handful of new config variables controlling transitions:
 
@@ -44,12 +35,28 @@ We still support config.enter_transition and config.exit_transition,
 which are used when entering or exiting the game menu from the game
 proper.
 
+
+There are now new slow_cps, slow_cps_multiplier, and slow_abortable
+properties, that control the slow text effect. The slow parameter to
+ui.text and Character has been modified slightly, so that if the user
+specifies slow_cps without specifying slow, the slow_cps will still take
+effect.
+
+
 The roundrect theme has been updated to color insensitive file picker
 entries with the disabled color.
+
 
 Ren'Py can now re-show the last say statement. This is done by calling
 renpy.reshow_say. renpy.get_reshow_say() allows the screen to be
 retrieved, and reshown at some time in the future.
+
+
+Documented a functional equivalent of the with statement,
+renpy.with_statement(). This replaces the equivalent (undocumented)
+function renpy.with(), which is now deprecated, as it is not compatible 
+with the upcoming python 2.6 release.
+
 
 We now track the type of the last interaction. This is determined by
 supplying the type parameter to ui.interact or Character, and can be
@@ -59,23 +66,31 @@ The new renpy.get_transition function allows one to determine if a
 transition has been set for the next interaction. The renpy.with_statement
 function (equivalent to the with statement) 
 
+The callback system that is used for character dialogue has been
+improved. The slow_done callback is now always called. Characters can
+take a list of callbacks as well as a single callback. The new 
+config.all_character_callbacks variable can be used to specify a 
+list of character callbacks that are called by all characters.
+
+
 Ren'Py now releases control over the mixer when all mixers are set to
 zero. This makes it easier to play alternative music in the background
 of a game.
 
+
 Ren'Py now uses a higher-resolution timer, preventing framerate from
 being limited by timer resolution.
 
+
 Dissolve has been rewritten to improve color correctness, at the cost
 of a speed decrease on non-MMX platforms.
+
 
 Rewrote the style system to use lists indexed by integers rather than
 dictionaries indexed by strings. This change shouldn't be user
 visible, except perhaps as improved speed and decreased memory usage.
 
-Eliminated the use of the name "with" in Python (not Ren'Py) source
-code. This means we should be ready for Python 2.6, where "with" will
-be a keyword.
+
 
 New in Ren'Py 6.0.0
 -------------------

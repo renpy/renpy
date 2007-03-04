@@ -10,7 +10,7 @@ sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.ex
 setup(name="RenPy",
       windows=[ dict(script="renpy.py",
                      dest_base="renpy",
-                     icon_resources=[ (0, "newicon.ico") ] ) ],
+                     icon_resources=[ (1, "newicon.ico") ] ) ],
       
       console=[ dict(script="renpy.py", dest_base="console") ],
 

@@ -59,7 +59,7 @@ def list_logical_lines(filename):
     line number, line text) triples.
     """
 
-    f = codecs.open(filename, "rU", "utf-8")
+    f = codecs.open(filename, "r", "utf-8")
     data = f.read()
     f.close()
 
