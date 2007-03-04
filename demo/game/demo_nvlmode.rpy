@@ -6,6 +6,8 @@ init:
     $ nvle = NVLCharacter("Eileen",
                           color="#c8ffc8")
 
+    $ config.adv_nvl_transition = dissolve
+    $ config.nvl_adv_transition = dissolve
 
 label demo_nvlmode:
 
@@ -48,6 +50,12 @@ label demo_nvlmode:
 
             nvle "Well, it might help if you take a look at the demo code."
 
+    eside "Finally, you can specify transitions that occur when going from ADV-mode to NVL-mode."
+
+    nvl clear
+
+    nvle "As well as when going from ADV-mode to NVL-mode."
+            
     $ menu = renpy.display_menu
 
     nvl hide dissolve

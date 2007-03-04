@@ -4,13 +4,16 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.1.0
 -------------------
 
-Added support for Windows Vista.
+!!!
+Added support for Windows Vista. Previous versions of Ren'Py will
+not run on Vista without a fix. Please do not release with 
+earlier versions of Ren'Py.
 
 
 Implemented hard pauses, pauses that cannot be interrupted by the
 user. They can be invoked by passing hard=True to renpy.pause, but
 it's probably a bad idea to use them. You should strongly consider
-using with Pause() instead, as that lets you develop timed sequences
+using "with Pause()" instead, as that lets you develop timed sequences
 that can be aborted with a single click.
 
 
