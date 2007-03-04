@@ -105,6 +105,11 @@ size. This is done in a memory efficent way... scaling to 1/2 the
 size will cause the game to use 1/4 of the memory storing images.
 
 
+Fixed a bug that caused recompilation on startup, on Windows
+systems. This should improve startup time.
+
+
+
 New in Ren'Py 6.0.0
 -------------------
 

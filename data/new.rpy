@@ -96,7 +96,7 @@ label choose_theme:
             error("Changing Theme", "The options file does not seem to exist.", "main")
         
         inf = file(ofn, "rU")
-        outf = file(ofn + ".new", "wU")
+        outf = file(ofn + ".new", "w")
 
         td = theme_data[color_theme]
 
