@@ -481,8 +481,8 @@ class StyleProxy(object):
 
         self.target.take(other)
 
-    def setdefault(self, prop, val):
-        self.target.setdefault(self, prop, val)
+    def setdefault(self, **properties):
+        self.target.setdefault(self, **properties)
             
         
 
