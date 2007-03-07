@@ -956,7 +956,7 @@ def reshow_say():
     return renpy.game.context().info._reshow_say()
 
 def last_interact_type():
-    return renpy.game.context().info._last_interact_type
+    return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
