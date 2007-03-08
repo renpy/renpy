@@ -99,7 +99,8 @@ python early hide:
         
         renpy.music.play(eval(p["file"]),
                          fadeout=eval(p["fadeout"]),
-                         fadein=eval(p["fadein"]))
+                         fadein=eval(p["fadein"]),
+                         channel=channel)
 
     def predict_play_music(p):
         return [ ]
