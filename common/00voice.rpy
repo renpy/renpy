@@ -99,7 +99,7 @@ python early hide:
     def lint_voice(fn):
         _voice.seen_in_lint = True
 
-        fn = _try_eval(fn)
+        fn = _try_eval(fn, 'voice filename')
         if isinstance(fn, basestring) and not renpy.loadable(fn):
             renpy.error('voice file %r is not loadable' % fn)
 

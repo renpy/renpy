@@ -144,6 +144,7 @@ def main():
         "_renpy.pyx",
         "_renpy.c",
         "core.c",
+        "mmx.h",
         "native_midi.h",
         "native_midi_common.c",
         "native_midi_common.h",

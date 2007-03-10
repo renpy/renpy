@@ -3,11 +3,11 @@
 #include "IMG_savepng.h"
 #include <stdio.h>
 #include <math.h>
-#include "mmx.h"
 
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #define GCC_MMX 1
+#include "mmx.h"
 #endif
 
 

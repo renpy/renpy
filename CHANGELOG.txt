@@ -8,6 +8,14 @@ Fixed a bug that caused the play music statement to ignore the channel
 clause.
 
 
+Fixed a bug that prevented lint from working on games containing voice
+statements.
+
+
+Added in omitted files, that prevented the Ren'Py module from being
+buildable.
+
+
 New in Ren'Py 6.1.0
 -------------------
 
