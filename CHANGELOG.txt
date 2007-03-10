@@ -13,7 +13,13 @@ statements.
 
 
 Added in omitted files, that prevented the Ren'Py module from being
-buildable.
+buildable 
+
+Modified renpy-deps to make them buildable on the x86_64 architecture. 
+
+
+Eliminated remaining uses of the identifier "with", which will become
+a keyword in Python 2.6.
 
 
 New in Ren'Py 6.1.0

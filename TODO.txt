@@ -1,4 +1,15 @@
-Document Imouto-mode.
-BPP mode.
+A version of dissolve that only draws the pixels that are being
+dissolved, while doing a straight-blit on pixels that remain the same
+between the two images.
 
+Figure out some way of having variables updated in a new context saved
+permanently, even if we return to the outer context because of a
+rollback or something. Need to be very careful here.
 
+Dynamic variables, parameterized labels, etc.
+
+Implement an extension mechanism of some sort, so that users can drop
+packages of Ren'Py code into the Ren'Py directory, and get stuff like
+speech support.
+
+Implement speech control support.

@@ -239,15 +239,15 @@ def check_say(node):
     if node.who:
         try_eval(node, "the who part of a say statement", node.who, "Perhaps you forgot to declare a character?")
         
-    if node.with:
-        try_eval(node, "the with clause of a say statement", node.with, "Perhaps you forgot to declare, or misspelled, a transition?")
+    if node.with_:
+        try_eval(node, "the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
 
     text_checks(node, node.what)
         
 def check_menu(node):
 
-    if node.with:
-        try_eval(node, "the with clause of a menu statement", node.with, "Perhaps you forgot to declare, or misspelled, a transition?")
+    if node.with_:
+        try_eval(node, "the with clause of a menu statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
 
     if not [ (l, c, b) for l, c, b in node.items if b ]:
         report(node, "The menu does not contain any selectable choices.")
@@ -257,8 +257,6 @@ def check_menu(node):
             try_compile(node, "in the if clause of a menuitem", c)
 
         text_checks(node, l)
-
-            
 
 def check_jump(node):
 
