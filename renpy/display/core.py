@@ -616,21 +616,24 @@ class Display(object):
             except:
                 pass
 
+        # Window icon.
+        if renpy.config.window_icon:
+            pygame.display.set_icon(
+                pygame.image.load(renpy.loader.load(renpy.config.window_icon),
+                                  renpy.config.window_icon))
+            
         # The window we display things in.
         self.window = pygame.display.set_mode((width, height), fsflag, 32)
-        
+
+        # Window totle.
+        pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
+
+
         # Sample surface that all surfaces are created based on.
         sample = pygame.Surface((10, 10))
         self.sample_surface = sample.convert_alpha()
 
         pygame.event.set_grab(False)
-
-        # Window title and icon.
-        pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
-
-        if renpy.config.window_icon:
-            pygame.display.set_icon(renpy.display.im.load_image(renpy.config.window_icon))
-            
 
         # Load the mouse image, if any.
         if renpy.config.mouse:

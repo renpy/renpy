@@ -22,6 +22,15 @@ Eliminated remaining uses of the identifier "with", which will become
 a keyword in Python 2.6.
 
 
+Implemented a new trace mode that will help to diagnose problems with
+Ren'Py itself. Supplying the --trace option to Ren'Py will write
+information about function calls to trace.txt. Supplying --trace twice 
+will also dump information about line execution and function
+returns. Note that trace mode comes with a significant speed penalty, 
+when active. 
+
+
+
 New in Ren'Py 6.1.0
 -------------------
 

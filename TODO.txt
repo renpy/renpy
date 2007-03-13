@@ -13,3 +13,8 @@ packages of Ren'Py code into the Ren'Py directory, and get stuff like
 speech support.
 
 Implement speech control support.
+
+BPP conversion (perhaps as a package).
+
+Automatically scale to a fixed size.
+

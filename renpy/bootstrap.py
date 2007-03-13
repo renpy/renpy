@@ -49,6 +49,27 @@ def extra_imports():
     import tarfile
     import bz2
     import webbrowser
+
+trace_file = None
+trace_local = None
+
+def trace_function(frame, event, arg):
+    fn = os.path.basename(frame.f_code.co_filename)
+    print >>trace_file, fn, frame.f_lineno, frame.f_code.co_name, event
+    return trace_local
+    
+def enable_trace(level):
+    global trace_file
+    global trace_local
+
+    trace_file = file("trace.txt", "w", 1)
+
+    if level > 1:
+        trace_local = trace_function
+    else:
+        trace_local = None
+ 
+    sys.settrace(trace_function)
     
 def bootstrap(renpy_base):
 
@@ -83,6 +104,9 @@ def bootstrap(renpy_base):
     op.add_option('--profile', dest='profile', action='store_true', default=False,
                   help='Causes the amount of time it takes to draw the screen to be profiled.')
 
+    op.add_option('--trace', dest='trace', action='count', default=0,
+                  help='Dump internal trace data to trace.txt. Use twice to dump in absurd detail.')
+    
     op.add_option('--leak', dest='leak', action='store_true', default=False,
                   help=optparse.SUPPRESS_HELP)
 
@@ -91,6 +115,9 @@ def bootstrap(renpy_base):
 
     options, args = op.parse_args()
 
+    if options.trace:
+        enable_trace(options.trace)
+    
     if options.python:
         import __main__
         sys.argv = [ options.python ] + args
@@ -101,7 +128,7 @@ def bootstrap(renpy_base):
         basedir = os.path.abspath(args[0])
     else:
         basedir = renpy_base
-
+        
     # If we made it this far, we will be running the game, or at least
     # doing a lint.
 

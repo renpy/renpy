@@ -116,7 +116,7 @@ else:
 
     class Surface(object):
 
-        def __init__(self, what, flags=None, sample=None, wh=None):
+        def __init__(self, what, flags=0, sample=None, wh=None):
 
             if isinstance(what, PygameSurface):
                 self.surface = what
@@ -135,11 +135,7 @@ else:
 
                 w = int(w * factor)
                 h = int(h * factor)
-
                 
-                if flags is None:
-                    flags = screen.surface.get_flags()
-
                 if sample is None:
                     sample = screen
 

@@ -91,14 +91,14 @@ init -496:
             
             return rv
 
-        def nvl_show(with):
+        def nvl_show(with_):
             nvl_show_core()
-            renpy.with_statement(with)
+            renpy.with_statement(with_)
 
-        def nvl_hide(with):
+        def nvl_hide(with_):
             nvl_show_core()
             renpy.with_statement(None)
-            renpy.with_statement(with)
+            renpy.with_statement(with_)
             
         class NVLCharacter(Character):
 

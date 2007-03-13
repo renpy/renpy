@@ -5,7 +5,7 @@ init:
         config.screen_width = 350
         config.screen_height = 450
         config.window_title = "Ren'Py Launcher"
-
+                
         # Disables sound (for the demo game).
         config.sound = False
 
