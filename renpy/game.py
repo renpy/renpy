@@ -182,6 +182,12 @@ class JumpOutException(Exception):
     the current context, and then raises a JumpException.
     """
 
+class ParseErrorException(Exception):
+    """
+    This is raised when a parse error occurs, after it has been
+    reported to the user.
+    """
+    
 def context(index=-1):
     """
     Return the current execution context, or the context at the

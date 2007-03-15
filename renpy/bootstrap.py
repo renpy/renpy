@@ -70,6 +70,7 @@ def enable_trace(level):
         trace_local = None
  
     sys.settrace(trace_function)
+
     
 def bootstrap(renpy_base):
 
@@ -179,95 +180,124 @@ def bootstrap(renpy_base):
         print renpy.version
         sys.exit(0)
 
-    try:
 
-        keep_running = True
-        while keep_running:
-            try:
-                renpy.game.options = options
+    keep_running = True
+    report_error = None
 
-                renpy.config.renpy_base = renpy_base
-                renpy.config.basedir = basedir
-                renpy.config.gamedir = gamedir
-
-                renpy.main.main()
-                keep_running = False
-
-            except renpy.game.UtterRestartException:
-
-                # On an UtterRestart, reload Ren'Py.
-                renpy.reload_all()
-                continue
-            
-    except Exception, e:
-        import codecs
-        import traceback
-
-        type, value, tb = sys.exc_info()
-
-        def safe_utf8(e):
-            try:
-                return unicode(e).encode("utf-8")
-            except:
-                return str(e)
-
-        # Outside of the file.
-        traceback.print_tb(tb, None, sys.stdout)
-        print type.__name__ + ":", 
-        print safe_utf8(e)
-        print
-        print renpy.game.exception_info
-
-        # Inside of the file, which may not be openable.
+    while keep_running:
         try:
+            renpy.game.options = options
 
-            f = file("traceback.txt", "w")
+            renpy.config.renpy_base = renpy_base
+            renpy.config.basedir = basedir
+            renpy.config.gamedir = gamedir
 
-            f.write(codecs.BOM_UTF8)
+            renpy.main.main()
+            keep_running = False
 
-            print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
-            print >>f, "script."
-            print >>f
+        except KeyboardInterrupt:
+            break
+            
+        except renpy.game.UtterRestartException:
 
-            print >>f, type.__name__ + ":", 
-            print >>f, safe_utf8(e)
-            print >>f
-            print >>f, renpy.game.exception_info
+            report_error = renpy.display.error.ReportError()
+            
+            # On an UtterRestart, reload Ren'Py.
+            renpy.reload_all()
+            continue
 
-            print >>f
-            print >>f, "-- Full Traceback ------------------------------------------------------------"
-            print >>f  
+        except renpy.game.ParseErrorException:
+            
+            if report_error and report_error.report('a parse error'):
+                renpy.reload_all()
+                keep_running = True
+            else:
+                keep_running = False
+            
+        
+        except Exception, e:
+            report_exception(e)
 
-            traceback.print_tb(tb, None, f)
-            print >>f, type.__name__ + ":", 
-            print >>f, safe_utf8(e)
+            if renpy.game.init_phase and report_error and report_error.report('an exception'):
+                renpy.reload_all()
+                keep_running = True
+            else:
+                keep_running = False
+            
 
-            print >>f
-
-            print >>f, renpy.game.exception_info
-
-            print >>f
-            print >>f, "Ren'Py Version:", renpy.version
-
-            f.close()
-
-            try:
-                if renpy.config.editor:
-                    renpy.exports.launch_editor([ 'traceback.txt' ], 1)
-                else:
-                    os.startfile('traceback.txt')
-            except:
-                pass
-
-        except:
-            pass
-
-
+            
     if options.leak:
         memory_profile()
 
     sys.exit(0)
 
+def report_exception(e):
+    import renpy
+
+    import codecs
+    import traceback
+
+    type, value, tb = sys.exc_info()
+
+    def safe_utf8(e):
+        try:
+            return unicode(e).encode("utf-8")
+        except:
+            return str(e)
+
+    # Outside of the file.
+    traceback.print_tb(tb, None, sys.stdout)
+    print type.__name__ + ":", 
+    print safe_utf8(e)
+    print
+    print renpy.game.exception_info
+
+    # Inside of the file, which may not be openable.
+    try:
+
+        f = file("traceback.txt", "w")
+
+        f.write(codecs.BOM_UTF8)
+
+        print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
+        print >>f, "script."
+        print >>f
+
+        print >>f, type.__name__ + ":", 
+        print >>f, safe_utf8(e)
+        print >>f
+        print >>f, renpy.game.exception_info
+
+        print >>f
+        print >>f, "-- Full Traceback ------------------------------------------------------------"
+        print >>f  
+
+        traceback.print_tb(tb, None, f)
+        print >>f, type.__name__ + ":", 
+        print >>f, safe_utf8(e)
+
+        print >>f
+
+        print >>f, renpy.game.exception_info
+
+        print >>f
+        print >>f, "Ren'Py Version:", renpy.version
+
+        f.close()
+
+        try:
+            if renpy.config.editor:
+                renpy.exports.launch_editor([ 'traceback.txt' ], 1)
+            else:
+                os.startfile('traceback.txt')
+        except:
+            pass
+
+    except:
+        pass
+
+
+    
 def memory_profile():
 
     import renpy

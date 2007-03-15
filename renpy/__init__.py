@@ -70,7 +70,8 @@ def import_all():
     import renpy.display.particle
     import renpy.display.joystick
     import renpy.display.minigame
-
+    import renpy.display.error
+    
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
     import renpy.audio.audio
@@ -147,7 +148,8 @@ def reload_all():
     myreload(renpy.display.particle)
     myreload(renpy.display.joystick)
     myreload(renpy.display.minigame)
-
+    myreload(renpy.display.error)
+    
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
     myreload(renpy.audio.audio)

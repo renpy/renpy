@@ -4,6 +4,12 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.1.1
 -------------------
 
+Introduced the "Black Screen of Death". Now, if an exception occurs 
+during a shift+R reload, instead of exiting, Ren'Py displays the 
+black screen of death. The black screen of death allows the user 
+to choose between trying again and exiting Ren'Py.
+
+
 Fixed a bug that caused the play music statement to ignore the channel
 clause.
 

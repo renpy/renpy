@@ -309,15 +309,24 @@ static int rw_seek_th(SDL_RWops* context, int offset, int whence)
 	if(!(offset == 0 && whence == SEEK_CUR)) /*being called only for 'tell'*/
 	{
 		result = PyObject_CallFunction(helper->seek, "ii", offset, whence);
-		if(!result)
+		if(!result) {
+                        PyThreadState_Swap(oldstate);
+                        PyEval_ReleaseLock();
 			return -1;
+                }
+
 		Py_DECREF(result);
 	}
 
 	result = PyObject_CallFunction(helper->tell, NULL);
-	if(!result)
-		return -1;
+	if(!result) {
+                PyThreadState_Swap(oldstate);
+                PyEval_ReleaseLock();
 
+		return -1;
+        }
+
+                
 	retval = PyInt_AsLong(result);
 	Py_DECREF(result);
 
@@ -342,12 +351,18 @@ static int rw_read_th(SDL_RWops* context, void* ptr, int size, int maxnum)
         oldstate = PyThreadState_Swap(helper->thread);
 
 	result = PyObject_CallFunction(helper->read, "i", size * maxnum);
-	if(!result)
+	if(!result) {
+                PyThreadState_Swap(oldstate);
+                PyEval_ReleaseLock();
 		return -1;
+        }
 
+                
 	if(!PyString_Check(result))
 	{
 		Py_DECREF(result);
+                PyThreadState_Swap(oldstate);
+                PyEval_ReleaseLock();
 		return -1;
 	}
 
@@ -377,9 +392,13 @@ static int rw_write_th(SDL_RWops* context, const void* ptr, int size, int num)
         oldstate = PyThreadState_Swap(helper->thread);
 
 	result = PyObject_CallFunction(helper->write, "s#", ptr, size * num);
-	if(!result)
-		return -1;
+	if(!result) {
+                PyThreadState_Swap(oldstate);
+                PyEval_ReleaseLock();
 
+		return -1;
+        }
+                
 	Py_DECREF(result);
 
         PyThreadState_Swap(oldstate);

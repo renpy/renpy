@@ -219,7 +219,7 @@ def main():
     game.script = renpy.script.load_script()
 
     if renpy.parser.report_parse_errors():
-        return
+        raise renpy.game.ParseErrorException()
     
     renpy.game.exception_info = 'While executing init code.'
 
