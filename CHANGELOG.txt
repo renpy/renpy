@@ -10,6 +10,11 @@ black screen of death. The black screen of death allows the user
 to choose between trying again and exiting Ren'Py.
 
 
+Added a mechanism that allows extensions and patches to Ren'Py to be
+distributed in .rpe files. (This isn't intended for game-developer 
+use.)
+
+
 Fixed a bug that caused the play music statement to ignore the channel
 clause.
 
@@ -18,8 +23,8 @@ Fixed a bug that prevented lint from working on games containing voice
 statements.
 
 
-Added in omitted files, that prevented the Ren'Py module from being
-buildable 
+Added in files that were accidentally omitted. These files made the 
+Ren'Py module unbuildable.
 
 Modified renpy-deps to make them buildable on the x86_64 architecture. 
 

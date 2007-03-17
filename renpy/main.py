@@ -32,7 +32,9 @@
 import renpy
 import renpy.game as game
 import os
+import sys
 import time
+import zipfile
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 import __main__
 
@@ -106,7 +108,16 @@ def run(restart=False):
             continue
             
     # And, we're done.
-    
+
+def load_rpe(fn):
+
+    zfn = zipfile.ZipFile(fn)
+    autorun = zfn.read("autorun.py")
+    zfn.close()
+
+    sys.path.insert(0, fn)
+    exec autorun in dict()
+        
 def main():
 
     renpy.game.exception_info = 'Before loading the script.'
@@ -126,8 +137,14 @@ def main():
         renpy.config.commondir = commondir
     else:
         renpy.config.commondir = None
-        
 
+    # Load Ren'Py extensions.
+    for dir in renpy.config.searchpath:
+        for fn in os.listdir(dir):
+            if fn.lower().endswith(".rpe"):
+                load_rpe(dir + "/" + fn)
+
+        
     # The basename is the final component of the path to the gamedir.
 
     basename = renpy.config.gamedir
