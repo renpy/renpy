@@ -125,7 +125,7 @@ def save(filename, extra_info=''):
         # print "Debug Dump!"
         # if os.environ['RENPY_DEBUG_DUMP']:
 
-        # renpy.config.debug = True
+        # renpy.config.debug = True    
         # debug_dump("", renpy.game.log, { })
 
         # The actual game.

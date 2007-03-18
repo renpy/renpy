@@ -4,6 +4,7 @@
 # Declarations of characters and images used throughout the game can be found
 # in demo_basics.rpy. Options can be set in options.rpy.
 
+
 # The game starts here.
 label start:
 
@@ -13,7 +14,7 @@ label start:
 
     # Start the background music playing.
     play music "mozart.ogg"
-
+    
     e "Hi, and welcome to the Ren'Py demo game."
 
     show eileen happy

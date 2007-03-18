@@ -297,5 +297,4 @@ def main():
         except game.QuitException, e:
             break
         except game.FullRestartException, e:
-            print e.reason
             restart = e.reason

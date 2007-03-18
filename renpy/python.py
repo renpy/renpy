@@ -205,8 +205,12 @@ def py_compile_eval_bytecode(source, **kwargs):
 ##### Classes that are exported in place of the normal list, dict, and
 ##### object.
 
+
 def mutator(method):
 
+    import time
+    gen = time.time()
+    
     def do_mutation(self, *args, **kwargs):
 
         mutated = renpy.game.log.mutated
