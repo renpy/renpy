@@ -170,7 +170,7 @@ def main():
 
     files.append('python23.dll')
     files.extend(tree('renpy'))
-    files.extend(tree('renpy.app'))
+    more_files.extend(tree('renpy.app'))
     files.append('renpy.code')
     files.append('renpy.exe')
     files.append('renpy.py')

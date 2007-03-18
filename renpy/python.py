@@ -208,9 +208,6 @@ def py_compile_eval_bytecode(source, **kwargs):
 
 def mutator(method):
 
-    import time
-    gen = time.time()
-    
     def do_mutation(self, *args, **kwargs):
 
         mutated = renpy.game.log.mutated
