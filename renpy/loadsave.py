@@ -151,7 +151,11 @@ def list_saved_games(regexp=r'.'):
     The regexp matches at the start of the filename, and filters the list.
     """
 
-    files = os.listdir(renpy.config.savedir)
+    try:
+        files = os.listdir(renpy.config.savedir)
+    except:
+        return [ ]
+
     files.sort()
     files = [ i for i in files if i.endswith(savegame_suffix) and re.match(regexp, i) ]
 

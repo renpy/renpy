@@ -40,9 +40,14 @@ import __main__
 
 def save_persistent():
 
-    f = file(renpy.config.savedir + "/persistent", "wb")
-    f.write(dumps(game.persistent).encode("zlib"))
-    f.close()
+    try:
+        f = file(renpy.config.savedir + "/persistent", "wb")
+        f.write(dumps(game.persistent).encode("zlib"))
+        f.close()
+    except:
+        if renpy.config.debug:
+            raise
+        
 
 def run(restart=False):
     """
