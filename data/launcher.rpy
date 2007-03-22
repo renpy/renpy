@@ -122,7 +122,7 @@ init:
                 per_page = _launcher_per_page
             
             page = 0
-            pages = len(choices) / per_page
+            pages = (len(choices) - 1) / per_page
 
 
             while True:
@@ -261,10 +261,10 @@ init:
                     if os.path.isdir(dir):
                         load_project(dir, dd)
 
-                        
             if not store.projects:
                 raise Exception("The launcher will not function without any projects.")
 
+            
         def lint():
             
             import renpy.subprocess as subprocess
@@ -493,9 +493,9 @@ label tools_menu:
                "Checks the game's script for likely errors. This should be run before releasing.",
                clicked=ui.jumps("lint"))
 
-        button("Quick Backup",
-               "Makes a backup copy of the project. You also need to make backups somewhere other then this computer.",
-               clicked=ui.jumps("backup"))
+        # button("Quick Backup",
+        #       "Makes a backup copy of the project. You also need to make backups somewhere other then this computer.",
+        #       clicked=ui.jumps("backup"))
 
         spacer()
 

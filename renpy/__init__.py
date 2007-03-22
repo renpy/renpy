@@ -26,7 +26,7 @@
 
 
 
-version = "Ren'Py 6.1.1a"
+version = "Ren'Py 6.1.1b"
 # Be sure to change script_version in data/script_version.rpy, too!
 
 script_version = 5003000

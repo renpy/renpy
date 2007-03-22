@@ -41,6 +41,12 @@ returns. Note that trace mode comes with a significant speed penalty,
 when active. 
 
 
+Added code that helps Ren'Py run from read-only media.
+
+
+Removed the "Quick Backup" option from the launcher, as it was
+tempting, but not a replacement for a real backup solution.
+
 
 New in Ren'Py 6.1.0
 -------------------
