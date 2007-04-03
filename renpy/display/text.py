@@ -719,6 +719,7 @@ class Text(renpy.display.core.Displayable):
         self.style = renpy.style.Style(style, properties)
         self.pause = pause
         self.keep_pausing = False
+        self.pause_length = None
         self.tokenized = tokenized
 
         self._update(redraw=False)
@@ -779,15 +780,26 @@ class Text(renpy.display.core.Displayable):
             for i in self.tokens[0]:
                 l.append(i)
 
-                if i == ("tag", "w"):
-                    if pause == 0:
-                        self.keep_pausing |= True
-                        break                    
-                    else:
-                        pause -= 1
+                if i[0] == "tag":
+                    if i[1] == "w":
+                        if pause == 0:                
+                            self.keep_pausing |= True
+                            self.pause_length = None
+                            break                    
+                        else:
+                            pause -= 1
+
+                    elif i[1][:2] == "w=":
+                        if pause == 0:
+                            self.keep_pausing |= True
+                            self.pause_length = float(i[1][2:])
+                            break                    
+                        else:
+                            pause -= 1
 
             self.tokens[0] = l
-
+        
+            
         # Postprocess the tokens list to create widgets, as necessary.
 
         self.children = [ ]
@@ -929,6 +941,10 @@ class Text(renpy.display.core.Displayable):
                     # Automatically closes.
                     tsl.pop()
 
+                elif i.startswith("w="):
+                    # Automatically closes.
+                    tsl.pop()
+                    
                 elif i == "fast":
                     # Automatically closes.
                     tsl.pop()
@@ -1128,7 +1144,7 @@ class Text(renpy.display.core.Displayable):
         If true, we have text beyond the pause number indicated.
         """
 
-        return self.keep_pausing
+        return self.keep_pausing, self.pause_length
 
     def get_laidout_length(self):
         """

@@ -165,8 +165,16 @@ init -402:
             rrslider_empty = "rrslider_empty.png"
             rrslider_full = "rrslider_full.png"
             rrslider_thumb = "rrslider_thumb.png"
+
             rrslider_radius = 6
             rrslider_height = 24
+
+            rrvslider_empty = "rrvslider_empty.png"
+            rrvslider_full = "rrvslider_full.png"
+            rrvslider_thumb = "rrvslider_thumb.png"
+
+            rrvslider_radius = 6
+            rrvslider_width = 24
 
 
             def rrframe(sty):
@@ -249,13 +257,11 @@ init -402:
                 style.prefs_button.xanchor = 1.0
 
 
+                
             style.bar.ymaximum = rrslider_height
             style.bar.left_gutter = rrslider_radius
             style.bar.right_gutter = rrslider_radius
             style.bar.thumb_offset = -rrslider_radius
-
-            style.prefs_slider.xmaximum=widget_width
-            del style.prefs_slider.ymaximum
 
             style.bar.left_bar = Frame(im.Color(rrslider_full, widget), rrslider_radius * 2, 0)
             style.bar.right_bar = Frame(im.Color(rrslider_empty, widget), rrslider_radius * 2, 0)
@@ -264,6 +270,34 @@ init -402:
             style.bar.hover_left_bar = Frame(im.Color(rrslider_full, widget_hover), rrslider_radius * 2, 0)
             style.bar.hover_right_bar = Frame(im.Color(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
             style.bar.hover_thumb = im.Color(rrslider_thumb, widget_hover)
+
+            style.scrollbar.clear()
+            style.scrollbar.right_bar = Frame(im.Color(rrslider_full, widget), rrslider_radius * 2, 0)
+            style.scrollbar.hover_right_bar = Frame(im.Color(rrslider_full, widget_hover), rrslider_radius * 2, 0)
+
+
+            
+            style.vbar.xmaximum = rrvslider_width
+            style.vbar.top_gutter = rrvslider_radius
+            style.vbar.bottom_gutter = rrvslider_radius
+            style.vbar.thumb_offset = -rrvslider_radius
+
+            style.vbar.bottom_bar = Frame(im.Color(rrvslider_full, widget), 0, rrvslider_radius * 2)
+            style.vbar.top_bar = Frame(im.Color(rrvslider_empty, widget), 0, rrvslider_radius * 2)
+            style.vbar.thumb = im.Color(rrvslider_thumb, widget)
+
+            style.vbar.hover_bottom_bar = Frame(im.Color(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
+            style.vbar.hover_top_bar = Frame(im.Color(rrvslider_empty, widget_hover), 0, rrvslider_radius * 2)
+            style.vbar.hover_thumb = im.Color(rrvslider_thumb, widget_hover)
+
+            style.vscrollbar.clear()
+            style.vscrollbar.bar_invert = True
+            style.vscrollbar.top_bar = Frame(im.Color(rrvslider_full, widget), 0, rrvslider_radius * 2)
+            style.vscrollbar.hover_top_bar = Frame(im.Color(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
+
+            
+            style.prefs_slider.xmaximum=widget_width
+            del style.prefs_slider.ymaximum
 
             if centered:
                 style.prefs_slider.xpos = 0.5

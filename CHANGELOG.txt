@@ -1,6 +1,36 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 6.2.0
+-------------------
+
+There are now three new styles for bars. Along with bar, there is now
+scrollbar, vbar, and vscrollbar. The roundrect theme styles each 
+kind of bar appropriately. [doc styles]
+
+Added a new ScrollArea displayable. This lets you display something
+that is bigger then the area alotted to it, and to use scrollbars to
+scroll around inside. ScrollAreas can be created with ScrollArea or 
+ui.scrollarea. [doc scrollarea style, doc ScrollArea, doc ui.scrollarea]
+
+
+Modified the {w} text tag, so it can also be written as {w=number},
+where number is a number giving the number of seconds to pause for.
+
+
+The script is now loaded before the persistent object is created. This
+lets "python early" blocks update config.savedir, which means that a
+script can now find the save directory by itself, when running off 
+of read-only media. (Try not to be too windows-centric, 'kay?)
+
+
+Adjusted spacing in the text box a little bit, so that it's now
+possible to have four lines of text without stretching the text box.
+
+
+
+
+
 New in Ren'Py 6.1.1
 -------------------
 
@@ -46,6 +76,7 @@ Added code that helps Ren'Py run from read-only media.
 
 Removed the "Quick Backup" option from the launcher, as it was
 tempting, but not a replacement for a real backup solution.
+
 
 
 New in Ren'Py 6.1.0

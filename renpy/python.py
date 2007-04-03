@@ -782,6 +782,7 @@ class RollbackLog(renpy.object.Object):
         self.frozen_roots = self.get_roots()
         self.purge_unreachable(self.frozen_roots)
 
+        
     def discard_freeze(self):
         """
         Called to indicate that we will not be restoring from the

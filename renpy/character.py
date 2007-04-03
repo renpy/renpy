@@ -344,7 +344,12 @@ def display_say(who, what, who_style='say_label',
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 
+        keep_interacting, pause_length = what_text.get_keep_pausing()
+
         if interact:
+            if pause_length is not None:
+                renpy.ui.pausebehavior(pause_length, True)
+            
             rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
             # This is only the case if the user has rolled forward, or
@@ -352,7 +357,6 @@ def display_say(who, what, who_style='say_label',
             if rv is False:
                 break 
 
-        keep_interacting = what_text.get_keep_pausing()
         slow_start = what_text.get_laidout_length()
 
         if keep_interacting:

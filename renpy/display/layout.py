@@ -1454,6 +1454,41 @@ class RotoZoom(renpy.display.core.Displayable):
             
         return renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
         
+
+class ScrollArea(Container):
+
+    def __init__(self, child=None, child_size=(None, None), style='scrollarea', **properties):
+
+        super(ScrollArea, self).__init__(style=style, **properties)
+        self.add(child)
+
+        self.child_width, self.child_height = child_size
+        self.xoffset = 0.0
+        self.yoffset = 0.0
+
+    def render(self, width, height, st, at):
+
+        child_width = self.child_width or width
+        child_height = self.child_height or height
+
+        surf = render(self.child, width, height, st, at)
+        cw, ch = surf.get_size()
+
+        cxo = max(cw - width, 0) * -self.xoffset
+        cyo = max(ch - height, 0) * -self.yoffset 
+
+        self.offsets = [ (cxo, cyo) ]
+        self.sizes = [ (cw, ch) ]
+
+        rv = renpy.display.render.Render(width, height)
+        rv.blit(surf, (cxo, cyo))
+        return rv
+
+    def set_xoffset(self, offset):
+        self.xoffset = offset
+        renpy.display.render.redraw(self, 0)
         
-                
-                
+    def set_yoffset(self, offset):
+        self.yoffset = offset
+        renpy.display.render.redraw(self, 0)
+        

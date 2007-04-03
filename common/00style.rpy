@@ -81,6 +81,9 @@ init -1000:
 
         # bar
         style.create('bar', 'default', '(bar) The style that is used by default for bars.')
+        style.create('vbar', 'default', '(bar) The style that is used for vertical bars.')
+        style.create('scrollbar', 'bar', '(bar) The style that is used for scrollbars.')
+        style.create('vscrollbar', 'vbar', '(bar) The style that is used for vertical scollbars.')
         
         # boxen used by the various menus.
         style.create('thin_hbox', 'hbox', '(box) A hbox with a small amount of spacing.')
@@ -92,6 +95,10 @@ init -1000:
         style.create('hyperlink', 'default', 'The style of a hyperlink button.')
         style.create('hyperlink_text', 'default', 'The stype of hyperlink button text.')
 
+        # Scroll area
+        style.create('scrollarea', 'default', 'The default style of a scrollarea.')
+        
+        
 # AUTOMATICALLY GENERATED
         style.create("gm_root", "default", "(window) The style used for the root window of the game menu. This is primarily used to change the background of the game menu.")
         style.create("gm_nav_frame", "default", "(window) The style used by a window containing buttons that allow the user to navigate through the different screens of the game menu.")
@@ -277,7 +284,7 @@ init -1000:
         # Dialogue
 
         style.say_label.bold = True
-        style.say_vbox.box_spacing = 10
+        style.say_vbox.box_spacing = 8
 
         # Two window styles.
         style.say_who_window.xminimum = 200
@@ -339,7 +346,8 @@ init -1000:
 
         style.bar.bar_vertical = False
         style.bar.bar_invert = False
-
+        style.bar.ymaximum = 22
+        
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
         style.bar.bottom_bar = Solid(bright_cyan)
@@ -352,6 +360,29 @@ init -1000:
         style.bar.thumb_offset = 0
         style.bar.thumb_shadow = None
 
+        style.vbar.bar_vertical = True
+        style.vbar.bar_invert = False
+        style.vbar.xmaximum = 22
+        
+        style.vbar.left_bar = Solid(bright_cyan)
+        style.vbar.right_bar = Solid((0, 0, 0, 128))
+        style.vbar.bottom_bar = Solid(bright_cyan)
+        style.vbar.top_bar = Solid((0, 0, 0, 128))
+        style.vbar.left_gutter = 0
+        style.vbar.right_gutter = 0
+        style.vbar.bottom_gutter = 0
+        style.vbar.top_gutter = 0
+        style.vbar.thumb = None
+        style.vbar.thumb_offset = 0
+        style.vbar.thumb_shadow = None
+
+        style.vscrollbar.bottom_bar = Solid((0, 0, 0, 128))        
+        style.vscrollbar.top_bar = Solid(bright_cyan) 
+        style.vscrollbar.bar_invert = True
+        
+        ######################################################################
+        # Scrollarea
+        style.scrollarea.clipping = True
 
         ######################################################################
         # Main menu.

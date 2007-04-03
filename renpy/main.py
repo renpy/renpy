@@ -188,6 +188,18 @@ def main():
     if renpy.game.options.savedir:
         renpy.config.savedir = renpy.game.options.savedir
     
+    # Initialize the store.
+    renpy.store.store = renpy.store
+
+    # Load the script.
+    renpy.game.exception_info = 'While loading the script.'
+    game.script = renpy.script.load_script()
+
+    if renpy.parser.report_parse_errors():
+        raise renpy.game.ParseErrorException()
+    
+    renpy.game.exception_info = 'After loading the script.'
+
     # Make the save directory.
     try:
         os.makedirs(renpy.config.savedir)
@@ -226,8 +238,7 @@ def main():
 
     game.preferences = game.persistent._preferences
 
-    # Initialize the store.
-    renpy.store.store = renpy.store
+    # Initialize persistent variables.
     renpy.store.persistent = game.persistent
     renpy.store._preferences = game.preferences
 
@@ -236,13 +247,6 @@ def main():
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
-    # Load the script.
-    renpy.game.exception_info = 'While loading the script.'
-    game.script = renpy.script.load_script()
-
-    if renpy.parser.report_parse_errors():
-        raise renpy.game.ParseErrorException()
-    
     renpy.game.exception_info = 'While executing init code.'
 
     # Run init code in its own context. (Don't log.)

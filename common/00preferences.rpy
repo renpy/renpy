@@ -581,19 +581,19 @@ init -450:
         def cps_get():
             cps = _preferences.text_cps
             if cps == 0:
-                cps = 100
+                cps = 150
             else:
                 cps -= 1
             return cps
 
         def cps_set(cps):
             cps += 1
-            if cps == 101:
+            if cps == 151:
                 cps = 0
             _preferences.text_cps = cps
 
             
-        pc3 = _SliderPreference(u'Text Speed', 100, cps_get, cps_set,
+        pc3 = _SliderPreference(u'Text Speed', 150, cps_get, cps_set,
                                 'config.has_cps')
 
 
