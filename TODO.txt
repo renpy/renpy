@@ -18,3 +18,4 @@ BPP conversion (perhaps as a package).
 
 Automatically scale to a fixed size.
 
+Hide picture-mouse when leaving window, restore it when entering window.

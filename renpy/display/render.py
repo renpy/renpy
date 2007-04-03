@@ -468,9 +468,10 @@ def screen_blit(source, full=False, xoffset=0):
         cliprect = (x + xoffset, y, min(w, sw - x), h)
         updates = [ (x + xoffset, y, min(w, sw - x), h) for x, y, w, h in updates ]
 
+    old_clip = screen.get_clip()
     screen.set_clip(cliprect)
     source.blit_to(screen, xoffset, 0)
-    screen.set_clip(None)
+    screen.set_clip(old_clip)
 
     return updates
     
@@ -687,10 +688,14 @@ class Render(object):
                 return 
 
             dest = dest.subsurface((subx, suby, subw, subh))
+
+            old_clip = dest.get_clip()
             dest.set_clip((newclipx, newclipy, newclipw, newcliph))
 
             x = newx
             y = newy
+
+            dest.set_clip(old_clip)
 
         if self.draw_func:
             if isinstance(dest, ClipSurface):
