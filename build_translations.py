@@ -3,6 +3,7 @@
 import glob
 import re
 from sets import Set as set
+import sys
 
 seen_files = set()
 seen_strings = set()
@@ -38,7 +39,9 @@ def process(fn):
 
 if __name__ == "__main__":
 
-    out = file("extras/translations.rpy", "w")
+    # out = file("extras/translations.rpy", "w")
+    out = sys.stdout
+    
     print >>out, "# This file contains a list of all of the phrases you can translate"
     print >>out, "# from the Ren'Py common code."
     print >>out, ""
