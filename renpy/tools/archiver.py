@@ -68,6 +68,9 @@ def archive(prefix, files):
     # command line.
 
     for fullfn, shortfn in files:
+
+        shortfn = shortfn.replace("\\", "/")
+
         index[shortfn] = [ ]
 
         print "Adding %s..." % shortfn
