@@ -41,42 +41,43 @@ import renpy
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
-def reached(obj, path, reachable):
+def reached(obj, reachable):
     """
     @param obj: The object that was reached.
     @param path: The path from the store via which it was reached.
     @param reachable: A map from reachable object id to path.
     """
 
-    if id(obj) in reachable:
+    idobj = id(obj)
+    
+    if idobj in reachable:
         return
 
-    reachable[id(obj)] = path
+    reachable[idobj] = 1
 
-    # print id(obj), repr(obj), path
+    if isinstance(obj, (type, sys.__class__)):
+        return
     
     try:
         # Treat as fields, indexed by strings.
-        for k, v in vars(obj).iteritems():
-            reached(v, path + "." + k, reachable)
+        for v in vars(obj).itervalues():
+            reached(v, reachable)
     except:
         pass
 
     try:
         if not isinstance(obj, basestring):
             # Treat as iterable
-            for i, v in enumerate(obj):
-                reached(v, path + "[" + str(i) + "]", reachable)
+            for v in obj:
+                reached(v, reachable)
     except:
         pass
         
 
     try:
         # Treat as dict.
-        for k, v in obj.iteritems():
-            mypath = path + "[" + repr(k) + "]"
-            # Keys will be handled by iterable code.
-            reached(v, mypath, reachable)
+        for v in obj.itervalues():
+            reached(v, reachable)
     except:
         pass
 
@@ -91,11 +92,11 @@ def reached_vars(store, reachable):
     the path by which the object was reached.
     """
 
-    for k, v in store.iteritems():
-        reached(v, k, reachable)    
+    for v in store.itervalues():
+        reached(v, reachable)    
     
     for c in renpy.game.contexts:
-        reached(c.info, "#context", reachable)
+        reached(c.info, reachable)
 
 
 ##### Code that replaces literals will calls to magic constructors.
@@ -457,7 +458,7 @@ class Rollback(renpy.object.Object):
                 continue
 
             k, v = i
-            reached(v, k, reachable)
+            reached(v, reachable)
 
         # Purge object update information for unreachable objects.
         new_objects = [ ]
@@ -724,7 +725,7 @@ class RollbackLog(renpy.object.Object):
             return
 
         self.purge_unreachable(self.get_roots())
-
+        
         revlog = [ ]
 
         while self.log:
@@ -782,7 +783,6 @@ class RollbackLog(renpy.object.Object):
         self.frozen_roots = self.get_roots()
         self.purge_unreachable(self.frozen_roots)
 
-        
     def discard_freeze(self):
         """
         Called to indicate that we will not be restoring from the

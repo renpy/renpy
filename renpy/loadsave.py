@@ -107,9 +107,7 @@ def save(filename, extra_info=''):
     except:
         pass
 
-
     renpy.game.log.freeze()
-
 
     try:
         zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename,

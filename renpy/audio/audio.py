@@ -508,7 +508,7 @@ def init():
         return
 
     if pcm_ok is None and pss:
-        bufsize = 4096
+        bufsize = 2048
                 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
