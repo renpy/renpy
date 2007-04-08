@@ -1467,7 +1467,7 @@ class Interface(object):
                                 old_timeout_time = self.timeout_time
 
                     # Handle autosaving, as necessary.
-                    if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .1 and timeout_in > .1:
+                    if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
                         renpy.loadsave.autosave()
                         did_autosave = True
                         

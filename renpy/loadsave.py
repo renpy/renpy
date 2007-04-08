@@ -265,7 +265,6 @@ def autosave_thread():
     cycle_saves("auto-", renpy.config.autosave_slots)
     
     renpy.display.core.cpu_idle.wait()
-    print "Got some CPU."
 
     try:
         try:
@@ -275,12 +274,10 @@ def autosave_thread():
             autosave_counter = 0
             
         except SaveAbort:
-            print "Save aborted due to mutation."
+            pass
 
     finally:
         autosave_in_progress = False
-            
-    print "Autosave thread done."
     
 
 def autosave():

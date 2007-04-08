@@ -617,6 +617,15 @@ init -499:
                 return
 
 
+# Run at the end of init, to set up autosaving based on the user's
+# choices.
+init 499 python:
+
+    if config.has_autosave:
+        config.autosave_slots = config.file_page_cols * config.file_page_rows
+    else:
+        config.autosave_frequency = None
+            
             
 ##############################################################################
 # The actual menus begin around here.

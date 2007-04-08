@@ -4,6 +4,22 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.2.0
 -------------------
 
+Added auto-saving. This causes Ren'Py to save the game at semi-regular
+intervals (currently, around every 200 interactions). The saves take
+place in a background thread, so they shouldn't interfere too much
+with normal game operation. The saves also only occur when the game
+has 250ms with nothing scheduled. 
+[doc config.autosave_frequency, config.has_autosave]
+
+Adding autosave required a rewrite and minor redesign of the load/save
+screens. There is now a new page, "Auto", that contains the autosave
+files. To make room for this page, we reduced the number of quick page
+access buttons to 8. (You can still access an unlimited number of
+pages by hitting "Next".) The text in these screens has been reduced
+in size by 2 pixels, this is to make room for the longer filenames
+(like a10).
+
+
 There are now three new styles for bars. Along with bar, there is now
 scrollbar, vbar, and vscrollbar. The roundrect theme styles each 
 kind of bar appropriately. [doc styles]

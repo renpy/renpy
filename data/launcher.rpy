@@ -6,9 +6,12 @@ init:
         config.screen_height = 450
         config.window_title = "Ren'Py Launcher"
                 
-        # Disables sound (for the demo game).
+        # Disables sound
         config.sound = False
 
+        # Disables autosave (we can't save/load)
+        config.has_autosave = False
+        
         # Create some launcher styles.
         style.create('launcher_button', 'button')
         style.create('launcher_button_text', 'button_text')
