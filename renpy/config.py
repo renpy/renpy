@@ -303,6 +303,13 @@ character_callback = None
 # Character callback list.
 all_character_callbacks = [ ]
 
+# The number of autosave slots we have.
+autosave_slots = 10
+
+# How often do we autosave. (Number of interactions, sort of.)
+autosave_frequency = 200
+
+
 del renpy
 del sets
 

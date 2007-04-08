@@ -30,6 +30,13 @@ import sys
 import os
 import time
 import cStringIO
+import threading
+
+# Is the cpu idle enough to do other things?
+cpu_idle = threading.Event()
+cpu_idle.clear()
+
+
 
 TIMEEVENT = USEREVENT + 1
 PERIODIC = USEREVENT + 2
@@ -1065,7 +1072,12 @@ class Interface(object):
 
             renpy.display.im.cache.preload()
 
-        ev = pygame.event.wait()
+        try:
+            cpu_idle.set()            
+            ev = pygame.event.wait()
+        finally:
+            cpu_idle.clear()
+
         return ev
 
     def make_layer(self, name, scene_list):
@@ -1325,6 +1337,9 @@ class Interface(object):
         # long as possible.
         did_prediction = False
 
+        # We only want to do autsave once.
+        did_autosave = False
+        
         old_timeout_time = None
         old_redraw_time = None
 
@@ -1411,6 +1426,11 @@ class Interface(object):
 
                 try:
 
+                    # Times until events occur.
+                    # We use large values to approximate infinity.
+                    redraw_in = 3600
+                    timeout_in = 3600
+                    
                     # Handle the redraw timer.
                     redraw_time = renpy.display.render.redraw_time()
                     if redraw_time and not needs_redraw:
@@ -1418,6 +1438,7 @@ class Interface(object):
                         if redraw_time != old_redraw_time:
                             time_left = redraw_time - get_time()
                             time_left = min(time_left, 3600)
+                            redraw_in = time_left
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
                             old_redraw_time = redraw_time
                     else:
@@ -1430,7 +1451,8 @@ class Interface(object):
                     else:
                         time_left = self.timeout_time - get_time() 
                         time_left = min(time_left, 3600)
-
+                        redraw_in = time_left
+                        
                         if time_left < 0:
                             self.timeout_time = None
                             ev = self.time_event
@@ -1444,7 +1466,11 @@ class Interface(object):
 
                                 old_timeout_time = self.timeout_time
 
-
+                    # Handle autosaving, as necessary.
+                    if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .1 and timeout_in > .1:
+                        renpy.loadsave.autosave()
+                        did_autosave = True
+                        
                     # Get the event, if we don't have one already.
                     if ev is None:
                         if needs_redraw:

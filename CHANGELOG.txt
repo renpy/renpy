@@ -28,6 +28,8 @@ Adjusted spacing in the text box a little bit, so that it's now
 possible to have four lines of text without stretching the text box.
 
 
+Lowered the sound buffer size from 4096 to 2048 samples. This should
+hopefully reduce sound latency.
 
 
 

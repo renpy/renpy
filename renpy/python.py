@@ -41,13 +41,16 @@ import renpy
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
-def reached(obj, reachable):
+def reached(obj, reachable, wait):
     """
     @param obj: The object that was reached.
     @param path: The path from the store via which it was reached.
     @param reachable: A map from reachable object id to path.
     """
 
+    if wait:
+        wait()
+    
     idobj = id(obj)
     
     if idobj in reachable:
@@ -55,21 +58,23 @@ def reached(obj, reachable):
 
     reachable[idobj] = 1
 
-    if isinstance(obj, (type, sys.__class__)):
+    if not isinstance(obj, (tuple, RevertableList, RevertableDict, RevertableSet, RevertableObject)):
         return
+
+    # if isinstance(obj, (type, sys.__class__)):
+    #    return
     
     try:
         # Treat as fields, indexed by strings.
         for v in vars(obj).itervalues():
-            reached(v, reachable)
+            reached(v, reachable, wait)
     except:
         pass
 
     try:
-        if not isinstance(obj, basestring):
-            # Treat as iterable
-            for v in obj:
-                reached(v, reachable)
+       # Treat as iterable
+        for v in obj:
+            reached(v, reachable, wait)
     except:
         pass
         
@@ -77,12 +82,12 @@ def reached(obj, reachable):
     try:
         # Treat as dict.
         for v in obj.itervalues():
-            reached(v, reachable)
+            reached(v, reachable, wait)
     except:
         pass
 
             
-def reached_vars(store, reachable):
+def reached_vars(store, reachable, wait):
     """
     Marks everything reachable from the variables in the store
     or from the context info objects as reachable.
@@ -93,10 +98,10 @@ def reached_vars(store, reachable):
     """
 
     for v in store.itervalues():
-        reached(v, reachable)    
+        reached(v, reachable, wait)    
     
     for c in renpy.game.contexts:
-        reached(c.info, reachable)
+        reached(c.info, reachable, wait)
 
 
 ##### Code that replaces literals will calls to magic constructors.
@@ -206,16 +211,22 @@ def py_compile_eval_bytecode(source, **kwargs):
 ##### Classes that are exported in place of the normal list, dict, and
 ##### object.
 
+# This is set to True whenever a mutation occurs. The save code uses
+# this to check to see if a background-save is valid.
+mutate_flag = True
 
 def mutator(method):
 
     def do_mutation(self, *args, **kwargs):
 
+        global mutate_flag
+        
         mutated = renpy.game.log.mutated
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
-
+            mutate_flag = True
+            
         return method(self, *args, **kwargs)
 
     return do_mutation
@@ -437,7 +448,7 @@ class Rollback(renpy.object.Object):
         self.random = [ ]
         self.forward = None
         
-    def purge_unreachable(self, reachable):
+    def purge_unreachable(self, reachable, wait):
         """
         Adds objects that are reachable from the store of this
         rollback to the set of reachable objects, and purges
@@ -458,7 +469,7 @@ class Rollback(renpy.object.Object):
                 continue
 
             k, v = i
-            reached(v, reachable)
+            reached(v, reachable, wait)
 
         # Purge object update information for unreachable objects.
         new_objects = [ ]
@@ -510,9 +521,6 @@ class RollbackLog(renpy.object.Object):
     variable in the store that has ever been changed. (These variables
     become the roots of what is changed or rolled-back.)
 
-    @ivar frozen_roots: A frozen copy of the roots. When freeze is called,
-    this holds a copy of roots. It's None at other times.
-
     @ivar rollback_limit: The number of steps left that we can
     interactively rollback.
 
@@ -532,7 +540,6 @@ class RollbackLog(renpy.object.Object):
         self.current = None
         self.mutated = { }
         self.ever_been_changed = { }
-        self.frozen_roots = None
         self.rollback_limit = 0
         self.forward = [ ]
         
@@ -569,6 +576,11 @@ class RollbackLog(renpy.object.Object):
         self.mutated = { }
         self.old_store = renpy.store.__dict__.copy()
 
+        # Flag a mutation as having happened. This is used by the
+        # save code.
+        global mutate_flag
+        mutate_flag = True
+        
     def complete(self):
         """
         Called after a node is finished executing, before a save
@@ -630,7 +642,7 @@ class RollbackLog(renpy.object.Object):
 
         return rv
 
-    def purge_unreachable(self, roots):
+    def purge_unreachable(self, roots, wait=None):
         """
         This is called to purge objects that are unreachable from the
         roots from the object rollback lists inside the Rollback entries.
@@ -641,13 +653,13 @@ class RollbackLog(renpy.object.Object):
 
         reachable = { }
 
-        reached_vars(roots, reachable)
+        reached_vars(roots, reachable, wait)
 
         revlog = self.log[:]
         revlog.reverse()
 
         for i in revlog:
-            if not i.purge_unreachable(reachable):
+            if not i.purge_unreachable(reachable, wait):
                 break
 
     def forward_info(self):
@@ -771,7 +783,7 @@ class RollbackLog(renpy.object.Object):
         # Restart the game with the new state.
         raise renpy.game.RestartException(renpy.game.contexts[:], label)
 
-    def freeze(self):
+    def freeze(self, wait=None):
         """
         This is called to freeze the store and the log, in preparation
         for serialization. The next call on log should either be
@@ -780,26 +792,28 @@ class RollbackLog(renpy.object.Object):
         """
         
         self.complete()
-        self.frozen_roots = self.get_roots()
-        self.purge_unreachable(self.frozen_roots)
+        roots = self.get_roots()
+        self.purge_unreachable(roots, wait=wait)
 
+        # The current is not purged.
+        self.current.purged = False
+
+        return roots
+        
     def discard_freeze(self):
         """
         Called to indicate that we will not be restoring from the
         frozen state.
         """
-
-        self.frozen_roots = None
-
-        # We need to do this to counteract the effects of self.purge_unreachable
-        self.current.purged = False
-
-    def unfreeze(self, label=None):
+        
+    def unfreeze(self, roots, label=None):
         """
         Used to unfreeze the game state after a load of this log
         object. This call will always throw an exception. If we're
         lucky, it's the one that indicates load was successful.
 
+        @param roots: The roots returned from freeze.
+        
         @param label: The label that is jumped to in the game script
         after rollback has finished, if it exists.
         """
@@ -816,8 +830,7 @@ class RollbackLog(renpy.object.Object):
             if k in store:
                 del store[k]
 
-        store.update(self.frozen_roots)
-        self.frozen_roots = None
+        store.update(roots)
 
         # Now, rollback to an acceptable point.
         self.rollback(0, force=True, label=label)

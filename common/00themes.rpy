@@ -120,7 +120,7 @@ init -402:
 
             if config.screen_width <= 640:
                 size = 18
-                small = 14
+                small = 12
 
                 big = False
 
@@ -144,7 +144,7 @@ init -402:
             else:
 
                 size = 22
-                small = 18
+                small = 16
 
                 big = True
 
@@ -368,12 +368,18 @@ init -402:
             style.file_picker_text.color = widget_text
             style.file_picker_new.color = widget_selected
 
+            style.file_picker_old.minwidth = 40
+            style.file_picker_new.minwidth = 40
+            
+            style.file_picker_old.text_align = 1.0
+            style.file_picker_new.text_align = 1.0
+            
             if config.script_version is None or config.script_version > (6, 0, 0):
                 style.file_picker_text.insensitive_color = disabled_text
                 style.file_picker_entry.insensitive_background = RoundRect(disabled)
 
             
-            config.file_quick_access_pages = 10
+            config.file_quick_access_pages = 8
 
             # In-game.
 

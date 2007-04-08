@@ -431,16 +431,19 @@ init -1000:
         style.file_picker_entry.background = Solid((255, 255, 255, 255))
         style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
 
-        style.file_picker_text.size = 18
+        style.file_picker_text.size = 16
         style.file_picker_text.color = dark_cyan
         style.file_picker_text.hover_color = bright_cyan
 
         style.file_picker_new.hover_color = bright_red
         style.file_picker_new.idle_color = dark_red
-        style.file_picker_new.minwidth = 30
 
-        style.file_picker_old.minwidth = 30
+        style.file_picker_new.minwidth = 40
+        style.file_picker_old.minwidth = 40
 
+        style.file_picker_new.text_align = 1.0
+        style.file_picker_old.text_align = 1.0
+        
 
         ######################################################################
         # Yes/No Dialog

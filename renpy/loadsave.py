@@ -21,76 +21,98 @@
 
 # This file contains functions that load and save the game state.
 
-from pickle import dumps, loads, HIGHEST_PROTOCOL
-# from cPickle import dumps, loads, HIGHEST_PROTOCOL
+# from pickle import dumps, loads, HIGHEST_PROTOCOL
+from cPickle import dump, loads, HIGHEST_PROTOCOL
 
+import StringIO
 import cStringIO
+
 import zipfile
 import time
 import os
 import os.path
 import re
+import threading
 
 import renpy
-
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
 savegame_suffix = renpy.savegame_suffix
 
-def debug_dump(prefix, o, seen):
+# def debug_dump(prefix, o, seen):
 
-    if isinstance(o, (int, str, float, bool)):
-        print prefix, o
-        return
+#     if isinstance(o, (int, str, float, bool)):
+#         print prefix, o
+#         return
 
-    if id(o) in seen:
-        print prefix, "@%x" % id(o), type(o)
-        return
+#     if id(o) in seen:
+#         print prefix, "@%x" % id(o), type(o)
+#         return
 
-    seen[id(o)] = True
+#     seen[id(o)] = True
 
-    if isinstance(o, tuple):
-        print prefix, "("
-        for i in o:
-            debug_dump(prefix + "  ", i, seen)
-        print prefix, ")"
+#     if isinstance(o, tuple):
+#         print prefix, "("
+#         for i in o:
+#             debug_dump(prefix + "  ", i, seen)
+#         print prefix, ")"
 
-    elif isinstance(o, list):
-        print prefix, "["
-        for i in o:
-            debug_dump(prefix + "  ", i, seen)
-        print prefix, "]"
+#     elif isinstance(o, list):
+#         print prefix, "["
+#         for i in o:
+#             debug_dump(prefix + "  ", i, seen)
+#         print prefix, "]"
 
-    elif isinstance(o, dict):
-        print prefix, "{"
-        for k, v in o.iteritems():
-            print prefix, repr(k), "="
-            debug_dump(prefix + "    ", v, seen)
-        print prefix, "}"
+#     elif isinstance(o, dict):
+#         print prefix, "{"
+#         for k, v in o.iteritems():
+#             print prefix, repr(k), "="
+#             debug_dump(prefix + "    ", v, seen)
+#         print prefix, "}"
 
-    elif isinstance(o, renpy.style.Style):
-        print "<style>"
+#     elif isinstance(o, renpy.style.Style):
+#         print "<style>"
     
-    elif hasattr(o, "__dict__"):
+#     elif hasattr(o, "__dict__"):
 
-        ignored = getattr(o, "nosave", [ ])
+#         ignored = getattr(o, "nosave", [ ])
 
-        print prefix, repr(o), "{{"
-        for k, v in vars(o).iteritems():
-            if k in ignored:
-                continue
+#         print prefix, repr(o), "{{"
+#         for k, v in vars(o).iteritems():
+#             if k in ignored:
+#                 continue
 
-            print prefix, repr(k), "="
-            debug_dump(prefix + "    ", v, seen)
-        print prefix, "}}"
+#             print prefix, repr(k), "="
+#             debug_dump(prefix + "    ", v, seen)
+#         print prefix, "}}"
 
-    else:
-        print prefix, repr(o)
+#     else:
+#         print prefix, repr(o)
 
-    
 
-def save(filename, extra_info=''):
+# A file that can only be written to while the cpu is idle.
+class IdleFile(file):
+
+    def write(self, s):
+        renpy.display.core.cpu_idle.wait()
+        return file.write(self, s)
+
+# A similar StringIO.
+class IdleStringIO(StringIO.StringIO):
+
+    def write(self, s):
+        renpy.display.core.cpu_idle.wait()
+        return StringIO.StringIO.write(self, s)
+
+# Used to indicate an aborted save, due to the game being mutated
+# while the save is in progress.
+class SaveAbort(Exception):
+    pass
+
+def save(filename, extra_info='',
+         file=file, StringIO=cStringIO.StringIO,
+         mutate_flag=False, wait=None):
     """
     Saves the game in the given filename. This will save the game
     along with a screnshot and the given extra_info, which is just
@@ -107,32 +129,33 @@ def save(filename, extra_info=''):
     except:
         pass
 
-    renpy.game.log.freeze()
+    if mutate_flag:
+        renpy.python.mutate_flag = False
+    
+    roots = renpy.game.log.freeze(wait)
 
-    try:
-        zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename,
-                             "w", zipfile.ZIP_DEFLATED)
+    logf = StringIO()
+    dump((roots, renpy.game.log), logf, HIGHEST_PROTOCOL)
 
-        # Screenshot.
-        zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
+    if mutate_flag and renpy.python.mutate_flag:
+        raise SaveAbort()
 
-        # Extra info.
-        zf.writestr("extra_info", extra_info.encode("utf-8"))
+    rf = file(renpy.config.savedir + "/" + filename, "w")
+    zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
 
-        # print
-        # print "Debug Dump!"
-        # if os.environ['RENPY_DEBUG_DUMP']:
+    # Screenshot.
+    zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
 
-        # renpy.config.debug = True    
-        # debug_dump("", renpy.game.log, { })
+    # Extra info.
+    zf.writestr("extra_info", extra_info.encode("utf-8"))
 
-        # The actual game.
-        zf.writestr("log", dumps(renpy.game.log, HIGHEST_PROTOCOL))
 
-        zf.close()
-    finally:              
-        renpy.game.log.discard_freeze()
+    # The actual game.
+    zf.writestr("log", logf.getvalue())
 
+    zf.close()
+    rf.close()
+    
 
 
 def list_saved_games(regexp=r'.'):
@@ -199,10 +222,10 @@ def load(filename):
     """
     
     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
-    log = loads(zf.read("log"))
+    roots, log = loads(zf.read("log"))
     zf.close()
 
-    log.unfreeze(label="after_load")
+    log.unfreeze(roots, label="after_load")
 
 def rename_save(old, new):
     unlink_save(new)
@@ -211,8 +234,79 @@ def rename_save(old, new):
     
 
 def unlink_save(filename):
-    os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
+    if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
+        os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
 
+
+def cycle_saves(name, count):
+
+    for count in range(1, count + 1):
+        if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
+            break
+
+    print "count is now", count
+        
+    for i in range(count - 1, 0, -1):
+        rename_save(name + str(i), name + str(i + 1))
+        
+
+# Flag that lets us know if an autosave is in progress.
+autosave_in_progress = False
+
+# The number of times autosave has been called without a save occuring.
+autosave_counter = 0
+        
+def autosave_thread():
+
+    global autosave_in_progress
+    global autosave_counter
+    
+    renpy.display.core.cpu_idle.wait()
+    cycle_saves("auto-", renpy.config.autosave_slots)
+    
+    renpy.display.core.cpu_idle.wait()
+    print "Got some CPU."
+
+    try:
+        try:
+            
+            renpy.exports.take_screenshot()
+            save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait)
+            autosave_counter = 0
+            
+        except SaveAbort:
+            print "Save aborted due to mutation."
+
+    finally:
+        autosave_in_progress = False
+            
+    print "Autosave thread done."
+    
+
+def autosave():
+    global autosave_counter
+    global autosave_in_progress
+    
+    if not renpy.config.autosave_frequency:
+        return 
+    
+    if autosave_in_progress:
+        return
+
+    if renpy.config.skipping:
+        return
+    
+    if len(renpy.game.contexts) > 1:
+        return
+
+    autosave_counter += 1
+
+    if autosave_counter < renpy.config.autosave_frequency:
+        return
+
+    autosave_in_progress = True
+    threading.Thread(target=autosave_thread).start()
+    
     
 class _MultiPersistent(object):
 
