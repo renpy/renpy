@@ -4,6 +4,12 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.2.0
 -------------------
 
+Added dynamically-scoped variables. When a variable is declared to be
+dynamically scoped, changes to its value are reverted when returning 
+from the current call. Variables are declared dynamic using the 
+renpy.dynamic function. [doc]
+
+
 Added auto-saving. This causes Ren'Py to save the game at semi-regular
 intervals (currently, around every 200 interactions). The saves take
 place in a background thread, so they shouldn't interfere too much

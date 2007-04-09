@@ -245,6 +245,8 @@ def call_in_new_context(label):
         context.run()
         contexts.pop()
     except renpy.game.JumpOutException, e:        
+
+        context.pop_all_dynamic()
         contexts.pop()
         raise renpy.game.JumpException(e.args[0])
 

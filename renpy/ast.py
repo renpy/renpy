@@ -702,6 +702,7 @@ class Return(Node):
         return
 
     def execute(self):
+        renpy.game.context().pop_dynamic()
         return renpy.game.context().lookup_return(pop=True)
 
     def predict(self, callback):

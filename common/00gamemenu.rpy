@@ -211,8 +211,6 @@ init -499:
                       clicked=clicked,
                       **positions)
 
-            print clicked
-            
             
             ### file_picker_entry_box thin_hbox
             # (box) The style that is used for the hbox inside of a
@@ -370,8 +368,6 @@ init -499:
 
             saved_games = renpy.list_saved_games(regexp=r'(auto-|quick-)?[0-9]+')
 
-            print saved_games
-            
             newest = None
             newest_mtime = None
             save_info = { }

@@ -25,6 +25,9 @@
 import renpy
 import copy
 
+class Delete(object):
+    pass
+
 class Context(object):
     """
     This is the context object which stores the current context
@@ -52,6 +55,7 @@ class Context(object):
 
         self.current = None
         self.return_stack = [ ]
+        self.dynamic_stack = [ { } ]
         self.rollback = rollback
         self.runtime = 0
         self.info = renpy.python.RevertableObject()
@@ -64,6 +68,54 @@ class Context(object):
             vars(self.info).update(vars(context.info))
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl)
+
+        self.make_dynamic([ "_return" ])
+        
+    def make_dynamic(self, names):
+        """
+        Makes the variable names listed in names dynamic, by backing up
+        their current value (if not already dynamic in the current call).
+        """
+
+        store = vars(renpy.store)
+        
+        for i in names:
+
+            if i in self.dynamic_stack[-1]:
+                continue
+            
+            if i in store:
+                self.dynamic_stack[-1][i] = store[i]
+            else:
+                self.dynamic_stack[-1][i] = Delete()
+
+
+    def pop_dynamic(self):
+        """
+        Pops one level of the dynamic stack. Called when the return
+        statement is run.
+        """
+
+        
+        store = vars(renpy.store)
+
+        dynamic = self.dynamic_stack.pop()
+
+        for k, v in dynamic.iteritems():
+            if isinstance(v, Delete):
+                del store[k]
+            else:
+                store[k] = v
+
+    def pop_all_dynamic(self):
+        """
+        Pops all levels of the dynamic stack. Called when we jump
+        out of a context.
+        """
+        
+        while self.dynamic_stack:
+            self.pop_dynamic()
+                
         
     def goto_label(self, node_name):
         """
@@ -124,6 +176,7 @@ class Context(object):
             return_site = self.current
 
         self.return_stack.append(return_site)
+        self.dynamic_stack.append({ })
         self.current = label
 
         return renpy.game.script.lookup(label)
@@ -151,6 +204,7 @@ class Context(object):
 
         rv = Context(self.rollback)
         rv.return_stack = self.return_stack[:]
+        rv.dynamic_stack = [ i.copy() for i in self.dynamic_stack ]
         rv.current = self.current
         rv.scene_lists = self.scene_lists.rollback_copy()
         rv.runtime = self.runtime

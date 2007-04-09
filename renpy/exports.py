@@ -958,6 +958,9 @@ def reshow_say():
 def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
+def dynamic(*vars):
+    renpy.game.context().make_dynamic(vars)
+
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

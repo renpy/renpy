@@ -102,6 +102,9 @@ def reached_vars(store, reachable, wait):
     
     for c in renpy.game.contexts:
         reached(c.info, reachable, wait)
+        for d in c.dynamic_stack:
+            for v in d.itervalues():
+                reached(v, reachable, wait)
 
 
 ##### Code that replaces literals will calls to magic constructors.
@@ -471,6 +474,13 @@ class Rollback(renpy.object.Object):
             k, v = i
             reached(v, reachable, wait)
 
+
+        # Add in objects reachable through the context.
+        reached(self.context.info, reachable, wait)
+        for d in self.context.dynamic_stack:
+            for v in d.itervalues():
+                reached(v, reachable, wait)
+            
         # Purge object update information for unreachable objects.
         new_objects = [ ]
 
