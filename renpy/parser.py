@@ -52,6 +52,26 @@ class ParseError(Exception):
         return self.message
 
 
+def unicode_filename(fn):
+    """
+    Converts the supplied filename to unicode.
+    """
+
+    # Windows.
+    try:
+        return fn.decode("mbcs")
+    except:
+        pass
+
+    # Mac and (sane) Unix
+    try:
+        return fn.decode("utf-8")
+    except:
+        pass
+
+    # Insane systems, mojibake.
+    return fn.decode("latin-1")
+    
 def list_logical_lines(filename):
     """
     This reads the specified filename, and divides it into logical
@@ -66,7 +86,9 @@ def list_logical_lines(filename):
     if "RENPY_PATH_ELIDE" in os.environ:
         old, new = os.environ["RENPY_PATH_ELIDE"].split(':')
         filename = filename.replace(old, new)
-    
+
+    filename = unicode_filename(filename)
+        
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
 
