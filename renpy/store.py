@@ -33,6 +33,11 @@ import renpy.ui as ui
 import renpy.display.im as im
 import renpy.display.anim as anim
 
+# Used by the call/return mechanism.
+_return = None
+_args = None
+_kwargs = None
+
 # config.
 _config = renpy.config
 
@@ -187,19 +192,6 @@ A layout that lays out displayables in a grid.
 
 del layout
         
-
-def _return(v):
-    """
-    Returns its input. This is pretty useless, but comes in handy
-    when curried.
-    """
-    
-    return v
-
-_return = renpy.curry.curry(_return)
-
-# Note that this is really a RevertableObject.
-
 
 # The color function. (Moved, since text needs it, too.)
 color = renpy.easy.color

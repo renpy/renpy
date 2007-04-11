@@ -226,7 +226,7 @@ def invoke_in_new_context(callable, *args, **kwargs):
     finally:
         contexts.pop()
 
-def call_in_new_context(label):
+def call_in_new_context(label, *args, **kwargs):
     """
     This code creates a new context, and starts executing code from
     that label in the new context. Rollback is disabled in the
@@ -239,7 +239,8 @@ def call_in_new_context(label):
 
     context = renpy.execution.Context(False, contexts[-1])
     contexts.append(context)
-
+    renpy.ast.handle_arguments(label, args, kwargs)
+    
     try:
         context.goto_label(label)
         context.run()

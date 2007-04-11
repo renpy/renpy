@@ -35,6 +35,46 @@ def setstate(node, state):
     for k, v in state[1].iteritems():
         setattr(node, k, v)
 
+class ParameterInfo(object):
+    """
+    This class is used to store information about parameters to a
+    label.
+    """
+    def __init__(self, parameters, positional, extrapos, extrakw):
+
+        # A list of parameter name, default value pairs.
+        self.parameters = parameters
+
+        # A list, giving the positional parameters to this function,
+        # in order.
+        self.positional = positional
+
+        # A variable that takes the extra positional arguments, if
+        # any. None if no such variable exists.
+        self.extrapos = extrapos
+
+        # A variable that takes the extra keyword arguments, if
+        # any. None if no such variable exists.
+        self.extrakw = extrakw
+
+class ArgumentInfo(object):
+
+    def __init__(self, arguments, extrapos, extrakw):
+
+        # A list of (keyword, expression) pairs. If an argument doesn't
+        # have a keyword, it's thought of as positional.
+        self.arguments = arguments
+
+        # An expression giving extra positional arguments being
+        # supplied to this function.
+        self.extrapos = extrapos
+
+        # An expression giving extra keyword arguments that need
+        # to be supplied to this function.
+        self.extrakw = extrakw
+
+        
+        
 class PyCode(object):
 
     __slots__ = [
@@ -311,10 +351,15 @@ class Label(Node):
 
     __slots__ = [
         'name',
+        'parameters',
         'block',
         ]
 
-    def __init__(self, loc, name, block):
+    def __setstate__(self, state):
+        self.parameters = None
+        setstate(self, state)
+    
+    def __init__(self, loc, name, block, parameters):
         """
         Constructs a new Label node.
 
@@ -327,6 +372,7 @@ class Label(Node):
 
         self.name = name
         self.block = block
+        self.parameters = parameters
 
     def diff_info(self):
         return (Label, self.name)
@@ -343,6 +389,70 @@ class Label(Node):
             self.next = next
             
     def execute(self):
+        args = renpy.store._args
+        kwargs = renpy.store._kwargs
+
+        if self.parameters is None:
+            if (args is not None) or (kwargs is not None):
+                raise Exception("Arguments supplied, but label does not take parameters.")
+            else:
+                return self.next
+        else:
+            if args is None:
+                args = ()
+
+            if kwargs is None:
+                kwargs = { }
+            
+        values = { }        
+        params = self.parameters
+
+        for name, value in zip(params.positional, args):
+            if name in values:
+                raise Exception("Parameter %s has two values." % name)
+
+            values[name] = value
+
+        extrapos = tuple(args[len(params.positional):])
+
+        for name, value in kwargs.iteritems():
+            if name in values:
+                raise Exception("Parameter %s has two values." % name)
+
+            values[name] = value
+
+        for name, default in params.parameters:
+
+            if name not in values:
+                if default is None:
+                    raise Exception("Required parameter %s has no value." % name)
+                else:
+                    values[name] = renpy.python.py_eval(default)
+
+            renpy.exports.dynamic(name)
+            setattr(renpy.store, name, values[name])
+            del values[name]
+
+        # Now, values has the left-over keyword arguments, and extrapos
+        # has the left-over positional arguments.
+
+        if params.extrapos:
+            renpy.exports.dynamic(params.extrapos)
+            setattr(renpy.store, params.extrapos, extrapos)
+        else:
+            if extrapos:
+                raise Exception("Too many arguments in call (expected %d, got %d)." % (len(params.positional), len(args)))
+
+        if params.extrakw:
+            renpy.exports.dynamic(params.extrakw)
+            setattr(renpy.store, params.extrakw, renpy.python.RevertableDict(values))
+        else:
+            if values:
+                raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+
+        renpy.store._args = None
+        renpy.store._kwargs = None
+            
         return self.next
 
 class Python(Node):
@@ -655,21 +765,26 @@ class With(Node):
             
         return [ self.next ]
         
-        
+    
         
 class Call(Node):
 
     __slots__ = [
         'label',
+        'arguments',
         'expression',
         ]
 
-    def __init__(self, loc, label, expression):
+    def __setstate__(self, state):
+        self.arguments = None
+        setstate(self, state)
+    
+    def __init__(self, loc, label, expression, arguments):
 
         super(Call, self).__init__(loc)
         self.label = label
         self.expression = expression
-
+        self.arguments = arguments
 
     def diff_info(self):
         return (Call, self.label, self.expression)
@@ -680,8 +795,12 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
-        return renpy.game.context().call(label, return_site=self.next.name)
-
+        print "Calling:", label
+            
+        rv = renpy.game.context().call(label, return_site=self.next.name)
+        return rv
+        
+        
     def predict(self, callback):
         if self.expression:
             return [ ]

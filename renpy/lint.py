@@ -40,7 +40,7 @@ import time
 
 # Reports a message to the user.
 def report(node, msg, *args):
-    out = "%s:%d " % (node.filename, node.linenumber)     
+    out = u"%s:%d " % (renpy.parser.unicode_filename(node.filename), node.linenumber)     
     out += msg % args
     print
     print out.encode('utf-8')

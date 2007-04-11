@@ -36,7 +36,7 @@ parse_errors = [ ]
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None):
-        message = u"On line %d of %s: %s" % (number, filename, msg)
+        message = u"On line %d of %s: %s" % (number, unicode_filename(filename), msg)
 
         if line is not None:
             message += "\n" + line
@@ -57,6 +57,9 @@ def unicode_filename(fn):
     Converts the supplied filename to unicode.
     """
 
+    if isinstance(fn, unicode):
+        return fn
+    
     # Windows.
     try:
         return fn.decode("mbcs")
@@ -86,8 +89,6 @@ def list_logical_lines(filename):
     if "RENPY_PATH_ELIDE" in os.environ:
         old, new = os.environ["RENPY_PATH_ELIDE"].split(':')
         filename = filename.replace(old, new)
-
-    filename = unicode_filename(filename)
         
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
@@ -614,7 +615,7 @@ class Lexer(object):
     def delimited_python(self, delim):
         """
         This matches python code up to, but not including, the non-whitespace
-        delimiter character. Returns a string containing the matched code,
+        delimiter characters. Returns a string containing the matched code,
         which may be empty if the first thing is the delimiter. Raises an
         error if EOL is reached before the delimiter.
         """
@@ -625,7 +626,7 @@ class Lexer(object):
 
             c = self.text[self.pos]
 
-            if c == delim:
+            if c in delim:
                 return self.text[start:self.pos]
 
             if c == '"' or c == "'":
@@ -1074,6 +1075,131 @@ def parse_menu(stmtl, loc):
 
     return rv
 
+def parse_parameters(l):
+
+    parameters = [ ]
+    positional = [ ]
+    extrapos = None
+    extrakw = None
+
+    add_positional = True
+
+    names = sets.Set()
+    
+    if not l.match(r'\('):
+        return None
+
+    while True:
+
+        if l.match('\)'):
+            break
+
+        if l.match(r'\*\*'):
+
+            if extrakw is not None:
+                l.error('a label may have only one ** parameter')
+
+            extrakw = l.require(l.name)
+
+            if extrakw in names:
+                l.error('parameter %s appears twice.' % extrakw)
+
+            names.add(extrakw)
+            
+
+        elif l.match(r'\*'):
+
+            if not add_positional:
+                l.error('a label may have only one * parameter')
+
+            add_positional = False
+                
+            extrapos = l.name()
+
+            if extrapos is not None:
+            
+                if extrapos in names:
+                    l.error('parameter %s appears twice.' % extrapos)
+
+                names.add(extrapos)
+            
+        else:
+        
+            name = l.require(l.name)
+
+            if name in names:
+                l.error('parameter %s appears twice.' % name)
+
+            names.add(name)
+            
+            if l.match(r'='):
+                default = l.delimited_python("),")
+            else:
+                default = None
+                
+            parameters.append((name, default))
+
+            if add_positional:
+               positional.append(name) 
+
+        if l.match(r'\)'):
+            break
+
+        l.require(r',')
+
+    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw)
+
+def parse_arguments(l):
+    """
+    Parse a list of arguments, if one is present.
+    """
+
+    arguments = [ ]
+    extrakw = None
+    extrapos = None
+    
+    if not l.match(r'\('):
+        return None
+
+    while True:
+
+        if l.match('\)'):
+            break
+
+        if l.match(r'\*\*'):
+
+            if extrakw is not None:
+                l.error('a call may have only one ** argument')
+
+            extrakw = l.delimited_python("),")
+
+
+        elif l.match(r'\*'):
+            if extrapos is not None:
+                l.error('a call may have only one * argument')
+
+            extrapos = l.delimited_python("),")
+
+        else:
+
+            state = l.checkpoint()
+            
+            name = l.name()
+            if not (name and l.match(r'=')):
+                l.revert(state)
+                name = None
+
+            arguments.append((name, l.delimited_python("),")))
+            
+        if l.match(r'\)'):
+            break
+
+        l.require(r',')
+
+    return renpy.ast.ArgumentInfo(arguments, extrapos, extrakw)
+    
+        
+    
 
 def parse_statement(l):
     """
@@ -1170,7 +1296,7 @@ def parse_statement(l):
         rv = [ ]
 
         if label:
-            rv.append(ast.Label(loc, label, []))
+            rv.append(ast.Label(loc, label, [], None))
 
         rv.extend(menu)
 
@@ -1212,11 +1338,13 @@ def parse_statement(l):
             expression = False            
             target = l.require(l.name)
 
-        rv = [ ast.Call(loc, target, expression) ]
+        arguments = parse_arguments(l)
+            
+        rv = [ ast.Call(loc, target, expression, arguments) ]
 
         if l.keyword('from'):
             name = l.require(l.name)
-            rv.append(ast.Label(loc, name, []))
+            rv.append(ast.Label(loc, name, [], None))
         else:
             rv.append(ast.Pass(loc))
 
@@ -1328,6 +1456,9 @@ def parse_statement(l):
     ### Label Statement
     if l.keyword('label'):
         name = l.require(l.name)
+
+        parameters = parse_parameters(l)
+
         l.require(':')
         l.expect_eol()
 
@@ -1336,7 +1467,7 @@ def parse_statement(l):
         block = parse_block(l.subblock_lexer())
 
         l.advance()
-        return ast.Label(loc, name, block)
+        return ast.Label(loc, name, block, parameters)
 
     ### Init Statement
     if l.keyword('init'):

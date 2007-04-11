@@ -69,7 +69,7 @@ class Context(object):
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl)
 
-        self.make_dynamic([ "_return" ])
+        self.make_dynamic([ "_return", "_args", "_kwargs" ])
         
     def make_dynamic(self, names):
         """
