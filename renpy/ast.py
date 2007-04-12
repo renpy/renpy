@@ -840,10 +840,16 @@ class Call(Node):
 
 class Return(Node):
 
-    __slots__ = [ ]
+    __slots__ = [ 'expression']
 
-    # No __init__ needed.
-
+    def __setstate__(self, state):
+        self.expression = None
+        setstate(self, state)
+    
+    def __init__(self, loc, expression):
+        super(Return, self).__init__(loc)
+        self.expression = expression
+        
     def diff_info(self):
         return (Return, )
 
@@ -853,6 +859,12 @@ class Return(Node):
 
     def execute(self):
         renpy.game.context().pop_dynamic()
+
+        if self.expression:
+            renpy.store._return = renpy.python.py_eval(self.expression)
+        else:
+            renpy.store._return = None
+
         return renpy.game.context().lookup_return(pop=True)
 
     def predict(self, callback):

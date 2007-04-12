@@ -1305,10 +1305,15 @@ def parse_statement(l):
     ### Return statement.
     if l.keyword('return'):
         l.expect_noblock('return statement')
+
+        rest = l.rest()
+        if not rest:
+            rest = None
+
         l.expect_eol()
         l.advance()
 
-        return ast.Return(loc)
+        return ast.Return(loc, rest)
 
     ### Jump statement
     if l.keyword('jump'):

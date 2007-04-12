@@ -257,9 +257,10 @@ def call_in_new_context(label, *args, **kwargs):
 
         rv = renpy.store._return        
         context.pop_all_dynamic()
-
         contexts.pop()
 
+        return rv
+        
     except renpy.game.JumpOutException, e:        
 
         context.pop_all_dynamic()
