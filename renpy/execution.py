@@ -54,12 +54,19 @@ class Context(object):
     def __init__(self, rollback, context=None):
 
         self.current = None
+        self.call_location_stack = [ ]
         self.return_stack = [ ]
+
+        # Two deeper then the return stack and call location stack.
+        # 1 deeper is for the context top-level, 2 deeper is for
+        # _args, _kwargs, and _return.
         self.dynamic_stack = [ { } ]
+
         self.rollback = rollback
         self.runtime = 0
         self.info = renpy.python.RevertableObject()
         self.seen = False
+        
         
         oldsl = None
         if context:
@@ -70,6 +77,7 @@ class Context(object):
         self.scene_lists = renpy.display.core.SceneLists(oldsl)
 
         self.make_dynamic([ "_return", "_args", "_kwargs" ])
+        self.dynamic_stack.append({ })
         
     def make_dynamic(self, names):
         """
@@ -124,7 +132,22 @@ class Context(object):
         """
         
         self.current = node_name
-        
+
+    def report_tb(self, out):
+
+        for i in self.call_location_stack:
+            try:
+                node = renpy.game.script.lookup(i)
+                print >>out, " - script call at line %d of %s" % (node.linenumber, node.filename)
+            except:
+                pass
+                
+        try:
+            node = renpy.game.script.lookup(self.current)
+            print >>out, " - script at line %d of %s" % (node.linenumber, node.filename)
+        except:
+            pass
+            
     def run(self, node=None):
         """
         Executes as many nodes as possible in the current context. If the
@@ -132,13 +155,12 @@ class Context(object):
         looks up the node given in self.current, and executes from there.
         """
 
+        
         if node is None:
             node = renpy.game.script.lookup(self.current)
 
         while node:
             self.current = node.name
-
-            renpy.game.exception_info = "While executing game script on line %d of %s." % (node.linenumber, node.filename)
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
@@ -153,10 +175,11 @@ class Context(object):
             if self.seen:
                 renpy.game.seen_ever[self.current] = True
                 renpy.game.seen_session[self.current] = True
-                
+
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
 
+                    
     def mark_seen(self):
         """
         Marks the current statement as one that has been seen by the user.
@@ -175,6 +198,8 @@ class Context(object):
         if return_site is None:
             return_site = self.current
 
+        self.call_location_stack.append(self.current)
+
         self.return_stack.append(return_site)
         self.dynamic_stack.append({ })
         self.current = label
@@ -192,6 +217,7 @@ class Context(object):
 
         if pop:
             label = self.return_stack.pop()
+            self.call_location_stack.pop()
         else:
             label = self.return_stack[-1]
 
@@ -203,6 +229,7 @@ class Context(object):
         """
 
         rv = Context(self.rollback)
+        rv.call_location_stack = self.call_location_stack[:]
         rv.return_stack = self.return_stack[:]
         rv.dynamic_stack = [ i.copy() for i in self.dynamic_stack ]
         rv.current = self.current

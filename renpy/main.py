@@ -93,10 +93,10 @@ def run(restart=False):
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")
 
-
         # We run until we get an exception.
         try:
             game.context().run()
+            game.context().pop_all_dynamic()
             break
 
         # We get this when the context has changed, and so we go and
@@ -247,7 +247,7 @@ def main():
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
-    renpy.game.exception_info = 'While executing init code.'
+    renpy.game.exception_info = 'While executing init code:'
 
     # Run init code in its own context. (Don't log.)
     game.contexts = [ renpy.execution.Context(False) ]
@@ -294,6 +294,8 @@ def main():
 
     # Start things running.
     restart = None
+
+    renpy.game.exception_info = 'While running game code:'
 
     while True:
         try:

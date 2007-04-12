@@ -847,22 +847,6 @@ class RollbackLog(renpy.object.Object):
 
         # We never make it this far.
 
-def py_traceback():
-    type, value, tb = sys.exc_info()
-
-    while tb:
-        f = tb.tb_frame
-        line = tb.tb_lineno
-        co = f.f_code
-        filename = co.co_filename
-        
-        if filename.endswith(".rpy") and not filename.startswith("common"):
-            renpy.game.exception_info += "\nWhile executing python code on line %d of %s." % (line, filename)
-                
-        tb = tb.tb_next
-
-    
-
 def py_exec_bytecode(bytecode, hide=False):
 
     store = vars(renpy.store)
@@ -872,11 +856,7 @@ def py_exec_bytecode(bytecode, hide=False):
     else:
         locals = store
 
-    try:
-        exec marshal.loads(bytecode) in store, locals
-    except:
-        py_traceback()
-        raise
+    exec marshal.loads(bytecode) in store, locals
 
         
 def py_exec(source, hide=False, store=None):
@@ -889,11 +869,7 @@ def py_exec(source, hide=False, store=None):
     else:
         locals = store
 
-    try:
-        exec py_compile(source, 'exec') in store, locals
-    except:
-        py_traceback()
-        raise
+    exec py_compile(source, 'exec') in store, locals
 
 def py_eval_bytecode(bytecode):
 

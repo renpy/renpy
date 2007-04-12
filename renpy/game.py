@@ -239,12 +239,27 @@ def call_in_new_context(label, *args, **kwargs):
 
     context = renpy.execution.Context(False, contexts[-1])
     contexts.append(context)
-    renpy.ast.handle_arguments(label, args, kwargs)
+
+    
+    if args:
+        renpy.store._args = args
+    else:
+        renpy.store._args = None
+
+    if kwargs:    
+        renpy.store._kwargs = renpy.python.RevertableDict(kwargs)
+    else:
+        renpy.store._kwargs = None
     
     try:
         context.goto_label(label)
         context.run()
+
+        rv = renpy.store._return        
+        context.pop_all_dynamic()
+
         contexts.pop()
+
     except renpy.game.JumpOutException, e:        
 
         context.pop_all_dynamic()

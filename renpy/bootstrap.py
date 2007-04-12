@@ -71,7 +71,7 @@ def enable_trace(level):
  
     sys.settrace(trace_function)
 
-    
+
 def bootstrap(renpy_base):
 
     # Get a working name for the game.
@@ -172,7 +172,9 @@ def bootstrap(renpy_base):
         import renpy.display.presplash
         renpy.display.presplash.start(gamedir)
 
+        
     # Load up all of Ren'Py, in the right order.
+    global renpy
     import renpy
     renpy.import_all()
 
@@ -231,6 +233,26 @@ def bootstrap(renpy_base):
 
     sys.exit(0)
 
+
+def report_tb(out, tb):
+
+    while tb:
+        f = tb.tb_frame
+        line = tb.tb_lineno
+        co = f.f_code
+        filename = co.co_filename
+        
+        if filename.endswith(".rpy") and not filename.startswith("common"):
+            print >>out, " - python at line %d of %s." % (line, filename)
+
+        elif 'self' in f.f_locals:
+            obj = f.f_locals['self']
+
+            if isinstance(obj, renpy.execution.Context):
+                obj.report_tb(out)
+
+        tb = tb.tb_next
+
 def report_exception(e):
     import renpy
 
@@ -251,7 +273,8 @@ def report_exception(e):
     print safe_utf8(e)
     print
     print renpy.game.exception_info
-
+    report_tb(sys.stdout, tb)
+    
     # Inside of the file, which may not be openable.
     try:
 
@@ -267,7 +290,8 @@ def report_exception(e):
         print >>f, safe_utf8(e)
         print >>f
         print >>f, renpy.game.exception_info
-
+        report_tb(f, tb)
+        
         print >>f
         print >>f, "-- Full Traceback ------------------------------------------------------------"
         print >>f  
@@ -297,7 +321,6 @@ def report_exception(e):
         pass
 
 
-    
 def memory_profile():
 
     import renpy

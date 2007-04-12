@@ -795,7 +795,38 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
-        print "Calling:", label
+
+        if self.arguments:
+
+            args = [ ]
+            kwargs = renpy.python.RevertableDict()
+
+            for name, expr in self.arguments.arguments:
+
+                value = renpy.python.py_eval(expr)
+
+                if name is None:
+                    args.append(value)
+                else:
+                    if name in kwargs:
+                        raise Exception("The argument named %s appears twice." % name)
+
+                    kwargs[name] = value
+
+            if self.arguments.extrapos:
+                args.extend(renpy.python.py_eval(self.arguments.extrapos))
+
+            if self.arguments.extrakw:
+                for name, value in renpy.python.py_eval(self.arguments.extrakw).iteritems():
+                    if name in kwargs:
+                        raise Exception("The argument named %s appears twice." % name)
+
+                    kwargs[name] = value
+
+
+            renpy.store._args = tuple(args)
+            renpy.store._kwargs = kwargs
+                    
             
         rv = renpy.game.context().call(label, return_site=self.next.name)
         return rv
