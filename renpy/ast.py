@@ -605,8 +605,8 @@ def show_imspec(imspec):
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
 
-    renpy.exports.show(name, at_list=at_list, layer=layer,
-                       what=expression, zorder=zorder, tag=tag, behind=behind)
+    renpy.config.show(name, at_list=at_list, layer=layer,
+                      what=expression, zorder=zorder, tag=tag, behind=behind)
 
 class Show(Node):
 
@@ -668,7 +668,7 @@ class Scene(Node):
 
     def execute(self):
 
-        renpy.exports.scene(self.layer)
+        renpy.config.scene(self.layer)
 
         if self.imspec:
 
@@ -715,7 +715,7 @@ class Hide(Node):
         elif len(self.imspec) == 7:
             name, expression, tag, at_list, layer, zorder, behind = self.imspec
             
-        renpy.exports.hide(tag or name, layer)
+        renpy.config.hide(tag or name, layer)
 
         return self.next
 

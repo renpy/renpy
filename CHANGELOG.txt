@@ -9,6 +9,10 @@ dynamically scoped, changes to its value are reverted when returning
 from the current call. Variables are declared dynamic using the 
 renpy.dynamic function. [doc]
 
+Added function calls. [doc]
+
+
+
 
 Added auto-saving. This causes Ren'Py to save the game at semi-regular
 intervals (currently, around every 200 interactions). The saves take
@@ -24,6 +28,15 @@ access buttons to 8. (You can still access an unlimited number of
 pages by hitting "Next".) The text in these screens has been reduced
 in size by 2 pixels, this is to make room for the longer filenames
 (like a10).
+
+
+The scene, show, and hide functions now use config.scene, config.show,
+and config.hide, which default to renpy.scene, renpy.show, and
+renpy.hide, respectively. By changing the config variables, the user
+can intercept the guts of these statements. [doc]
+
+The character callback is now passed the same user-defined arguments
+as the show function. [doc]
 
 
 There are now three new styles for bars. Along with bar, there is now

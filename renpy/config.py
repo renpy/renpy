@@ -309,6 +309,14 @@ autosave_slots = 10
 # How often do we autosave. (Number of interactions, sort of.)
 autosave_frequency = 200
 
+# The callback that is used by the scene statement.
+scene = renpy.scene
+
+# The callback that is used by the show statement.
+show = renpy.show
+
+# The callback that is used by the hide statement.
+hide = renpy.hide
 
 del renpy
 del sets

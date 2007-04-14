@@ -181,13 +181,14 @@ def predict_display_say(who, what,
     return rv
 
 class SlowDone(object):
-    def __init__(self, ctc, ctc_position, callback, interact, type):
+    def __init__(self, ctc, ctc_position, callback, interact, type, show_args):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
         self.interact = interact
         self.type = type
-
+        self.show_args = show_args
+        
     def __call__(self):
         
         if self.ctc and self.ctc_position == "fixed":
@@ -195,7 +196,7 @@ class SlowDone(object):
             renpy.exports.restart_interaction()
 
         for c in self.callback:
-            c("slow_done", interact=self.interact, type=self.type)
+            c("slow_done", interact=self.interact, type=self.type, **self.show_args)
 
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -256,7 +257,7 @@ def display_say(who, what, who_style='say_label',
     callback = renpy.config.all_character_callbacks + callback 
         
     for c in callback:
-        c("begin", interact=interact, type=type)
+        c("begin", interact=interact, type=type, **show_args)
     
     if renpy.exports.roll_forward_info():
         roll_forward = False
@@ -313,10 +314,10 @@ def display_say(who, what, who_style='say_label',
         if ctc and ctc_position == "nestled":
             ctcwhat.extend([ " ", ctc ])
 
-        slow_done = SlowDone(ctc, ctc_position, callback, interact, type)
+        slow_done = SlowDone(ctc, ctc_position, callback, interact, type, show_args)
                 
         for c in callback:
-            c("show", interact=interact, type=type)
+            c("show", interact=interact, type=type, **show_args)
 
             
         what_args = dict(style=what_style,
@@ -339,7 +340,7 @@ def display_say(who, what, who_style='say_label',
             **show_args)
         
         for c in callback:
-            c("show_done", interact=interact, type=type)
+            c("show_done", interact=interact, type=type, **show_args)
         
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
@@ -404,7 +405,7 @@ def display_say(who, what, who_style='say_label',
             renpy.game.interface.do_with(None, None)
 
     for c in callback:
-        c("end", interact=interact, type=type)
+        c("end", interact=interact, type=type, **show_args)
 
 # Used by copy.
 NotSet = object()
