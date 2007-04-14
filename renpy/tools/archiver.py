@@ -31,7 +31,7 @@ import encodings.zlib_codec
 import random
 import glob
 
-from pickle import loads, dumps, HIGHEST_PROTOCOL
+from cPickle import loads, dumps, HIGHEST_PROTOCOL
 
 # The amount of padding we will add.
 padding_max = 64

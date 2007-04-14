@@ -31,7 +31,7 @@ import difflib
 import md5
 import time
 
-from pickle import loads, dumps
+from cPickle import loads, dumps
 
 # The version of the dumped script.
 script_version = renpy.script_version

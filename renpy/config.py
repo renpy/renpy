@@ -310,13 +310,13 @@ autosave_slots = 10
 autosave_frequency = 200
 
 # The callback that is used by the scene statement.
-scene = renpy.scene
+scene = renpy.exports.scene
 
 # The callback that is used by the show statement.
-show = renpy.show
+show = renpy.exports.show
 
 # The callback that is used by the hide statement.
-hide = renpy.hide
+hide = renpy.exports.hide
 
 del renpy
 del sets

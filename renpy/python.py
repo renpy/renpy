@@ -58,8 +58,8 @@ def reached(obj, reachable, wait):
 
     reachable[idobj] = 1
 
-    if not isinstance(obj, (tuple, RevertableList, RevertableDict, RevertableSet, RevertableObject)):
-        return
+    # if not isinstance(obj, (tuple, RevertableList, RevertableDict, RevertableSet, RevertableObject)):
+    #    return
 
     # if isinstance(obj, (type, sys.__class__)):
     #    return
@@ -73,8 +73,9 @@ def reached(obj, reachable, wait):
 
     try:
        # Treat as iterable
-        for v in obj:
-            reached(v, reachable, wait)
+        if not isinstance(i, basestring):
+            for v in obj:
+                reached(v, reachable, wait)
     except:
         pass
         

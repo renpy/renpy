@@ -96,8 +96,8 @@ class Transition(renpy.display.core.Displayable):
     dispatching.
     """
 
-    def __init__(self, delay):
-        super(Transition, self).__init__()
+    def __init__(self, delay, **properties):
+        super(Transition, self).__init__(**properties)
         self.delay = delay
         self.events = True
         
@@ -118,8 +118,8 @@ class NoTransition(Transition):
     handy as part of a MultipleTransition.
     """
 
-    def __init__(self, delay, old_widget=None, new_widget=None):
-        super(NoTransition, self).__init__(delay)
+    def __init__(self, delay, old_widget=None, new_widget=None, **properties):
+        super(NoTransition, self).__init__(delay, **properties)
 
         self.old_widget = old_widget
         self.new_widget = new_widget
@@ -127,12 +127,16 @@ class NoTransition(Transition):
 
     def render(self, width, height, st, at):
 
-        rv = renpy.display.render.Render(width, height)
+        surf = renpy.display.render.render(self.new_widget,
+                                           width,
+                                           height,
+                                           st, at)
 
-        rv.blit(renpy.display.render.render(self.new_widget,
-                                            width,
-                                            height,
-                                            st, at), (0, 0))
+        width = min(surf.width, width)
+        height = min(surf.height, height)
+        
+        rv = renpy.display.render.Render(width, height)
+        rv.blit(surf, (0, 0))
 
         return rv
 
@@ -210,8 +214,10 @@ class MultipleTransition(Transition):
 
         self.event_target = trans
 
+        surf = renpy.display.render.render(trans, width, height, stoff, at)
+        width, height = surf.get_size()
         rv = renpy.display.render.Render(width, height)
-        rv.blit(renpy.display.render.render(trans, width, height, stoff, at), (0,0))
+        rv.blit(surf, (0, 0))
         
         if stoff > 0:
             renpy.display.render.redraw(self, stoff)
@@ -280,14 +286,14 @@ class Pixellate(Transition):
     steps in each direction.
     """
 
-    def __init__(self, time, steps, old_widget=None, new_widget=None):
+    def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
 
         time = float(time)
 
         if not renpy.display.module.can_pixellate:
             time = 0
 
-        super(Pixellate, self).__init__(time)
+        super(Pixellate, self).__init__(time, **properties)
 
         self.time = time
         self.steps = steps
@@ -316,7 +322,6 @@ class Pixellate(Transition):
             visible = self.new_widget
             self.events = True
 
-        rv = renpy.display.render.Render(width, height)
         rdr = render(visible, width, height, st, at)
 
         # No alpha support.
@@ -331,6 +336,10 @@ class Pixellate(Transition):
         renpy.display.module.pixellate(surf, self.surface, px, px, px, px)
         renpy.display.render.mutated_surface(self.surface)
 
+        width = min(width, rdr.width)
+        height = min(height, rdr.height)
+        
+        rv = renpy.display.render.Render(width, height)
         rv.blit(self.surface, (0, 0))
 
         if self.events:
@@ -352,8 +361,8 @@ class Dissolve(Transition):
     @param time: The amount of time the dissolve will take.
     """
 
-    def __init__(self, time, old_widget=None, new_widget=None):
-        super(Dissolve, self).__init__(time)
+    def __init__(self, time, old_widget=None, new_widget=None, **properties):
+        super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
         self.old_widget = old_widget
@@ -395,7 +404,10 @@ class Dissolve(Transition):
                 top_surface.subsurface((-x, -y, w, h)),
                 dest.subsurface((0, 0, w, h)),
                 alpha)
-        
+
+        width = min(width, top.width, bottom.width)
+        height = min(height, top.height, bottom.height)
+            
         rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
         rv.focuses.extend(top.focuses)        
         rv.depends_on(top)
@@ -446,7 +458,8 @@ class CropMove(Transition):
                  endpos=(0.0, 0.0),
                  topnew=True,
                  old_widget=None,
-                 new_widget=None):
+                 new_widget=None,
+                 **properties):
 
         """
         @param time: The time that this transition will last for, in seconds.
@@ -471,7 +484,7 @@ class CropMove(Transition):
         image. Otherwise, the top layer contains the old image.
         """
         
-        super(CropMove, self).__init__(time)
+        super(CropMove, self).__init__(time, **properties)
         self.time = time
 
         if mode == "wiperight":
@@ -620,11 +633,16 @@ class CropMove(Transition):
         crop = interpolate_tuple(self.startcrop, self.endcrop)
         pos = interpolate_tuple(self.startpos, self.endpos)
 
-        rv = renpy.display.render.Render(width, height)
-
-        rv.blit(render(self.bottom, width, height, st, at), (0, 0), focus=not self.topnew)
 
         top = render(self.top, width, height, st, at)
+        bottom = render(self.bottom, width, height, st, at)
+        
+        width = min(bottom.width, width)
+        height = min(bottom.height, height)
+        rv = renpy.display.render.Render(width, height)
+
+        rv.blit(bottom, (0, 0), focus=not self.topnew)
+
         ss = top.subsurface(crop, focus=self.topnew)
         rv.blit(ss, pos, focus=self.topnew)
 
@@ -999,9 +1017,9 @@ class ImageDissolve(Transition):
         
         
     def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False,
-                 old_widget=None, new_widget=None):
+                 old_widget=None, new_widget=None, **properties):
 
-        super(ImageDissolve, self).__init__(time)
+        super(ImageDissolve, self).__init__(time, **properties)
 
         self.time = time
         self.old_widget = old_widget
@@ -1043,7 +1061,6 @@ class ImageDissolve(Transition):
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
-
         
         bottom_surface = bottom.pygame_surface(False)
         top_surface = top.pygame_surface(False)
@@ -1065,8 +1082,13 @@ class ImageDissolve(Transition):
                 image.subsurface((-x, -y, w, h)),
                 ramp)
 
-        
+
+        width = min(bottom.width, top.width, width)
+        height = min(bottom.height, top.height, height)
+            
         rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+
+
         rv.focuses.extend(top.focuses)        
         rv.depends_on(top)
         rv.depends_on(bottom)

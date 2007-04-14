@@ -35,7 +35,7 @@ import os
 import sys
 import time
 import zipfile
-from pickle import loads, dumps, HIGHEST_PROTOCOL
+from cPickle import loads, dumps, HIGHEST_PROTOCOL
 import __main__
 
 def save_persistent():

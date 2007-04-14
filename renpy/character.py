@@ -151,6 +151,7 @@ def predict_display_say(who, what,
                 window_properties={},
                 show_function = show_display_say,
                 show_args = { },
+                cb_args = { },
                 with_none = None,
                 callback = None,
                 type='say',        
@@ -181,13 +182,13 @@ def predict_display_say(who, what,
     return rv
 
 class SlowDone(object):
-    def __init__(self, ctc, ctc_position, callback, interact, type, show_args):
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
         self.interact = interact
         self.type = type
-        self.show_args = show_args
+        self.cb_args = cb_args
         
     def __call__(self):
         
@@ -196,7 +197,7 @@ class SlowDone(object):
             renpy.exports.restart_interaction()
 
         for c in self.callback:
-            c("slow_done", interact=self.interact, type=self.type, **self.show_args)
+            c("slow_done", interact=self.interact, type=self.type, **self.cb_args)
 
 def display_say(who, what, who_style='say_label',
                 what_style='say_dialogue',
@@ -217,6 +218,7 @@ def display_say(who, what, who_style='say_label',
                 window_properties={},
                 show_function = show_display_say,
                 show_args = { },
+                cb_args = { },
                 with_none = None,
                 callback = None,
                 type='say',
@@ -257,7 +259,7 @@ def display_say(who, what, who_style='say_label',
     callback = renpy.config.all_character_callbacks + callback 
         
     for c in callback:
-        c("begin", interact=interact, type=type, **show_args)
+        c("begin", interact=interact, type=type, **cb_args)
     
     if renpy.exports.roll_forward_info():
         roll_forward = False
@@ -314,10 +316,10 @@ def display_say(who, what, who_style='say_label',
         if ctc and ctc_position == "nestled":
             ctcwhat.extend([ " ", ctc ])
 
-        slow_done = SlowDone(ctc, ctc_position, callback, interact, type, show_args)
+        slow_done = SlowDone(ctc, ctc_position, callback, interact, type, cb_args)
                 
         for c in callback:
-            c("show", interact=interact, type=type, **show_args)
+            c("show", interact=interact, type=type, **cb_args)
 
             
         what_args = dict(style=what_style,
@@ -340,7 +342,7 @@ def display_say(who, what, who_style='say_label',
             **show_args)
         
         for c in callback:
-            c("show_done", interact=interact, type=type, **show_args)
+            c("show_done", interact=interact, type=type, **cb_args)
         
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
@@ -405,7 +407,7 @@ def display_say(who, what, who_style='say_label',
             renpy.game.interface.do_with(None, None)
 
     for c in callback:
-        c("end", interact=interact, type=type, **show_args)
+        c("end", interact=interact, type=type, **cb_args)
 
 # Used by copy.
 NotSet = object()
@@ -418,8 +420,6 @@ class Character(object):
     showing the name, the text of the dialogue, and the window
     containing both the label and the dialogue.
     """
-
-    import renpy.config as config
 
     # Properties beginning with what or window that are treated
     # specially.
@@ -450,6 +450,7 @@ class Character(object):
         self.what_properties = { }
         self.window_properties = { }
         self.show_args = { }
+        self.cb_args = { }
         self.function = function
         self.predict_function = predict_function
         self.condition = condition
@@ -461,6 +462,11 @@ class Character(object):
 
             if k.startswith("show_"):
                 self.show_args[k[len("show_"):]] = self.properties[k]
+                del self.properties[k]
+                continue
+
+            if k.startswith("cb_"):
+                self.cb_args[k[len("cb_"):]] = self.properties[k]
                 del self.properties[k]
                 continue
 
@@ -528,6 +534,7 @@ class Character(object):
         merge_dict(rv.what_properties, self.what_properties)
         merge_dict(rv.window_properties, self.window_properties)
         merge_dict(rv.show_args, self.show_args)
+        merge_dict(rv.cb_args, self.cb_args)
         
         rv.function = merge(rv.function, self.function)
         rv.predict_function = merge(rv.predict_function, self.predict_function)
@@ -578,6 +585,7 @@ class Character(object):
                       what_properties=self.what_properties,
                       window_properties=self.window_properties,
                       show_args=self.show_args,
+                      cb_args=self.cb_args,
                       **props)
 
         self.store_readback(name, what)
@@ -601,6 +609,7 @@ class Character(object):
             what_properties=self.what_properties,
             window_properties=self.window_properties,
             show_args=self.show_args,
+            cb_args=self.cb_args,
             **self.properties)
             
 def DynamicCharacter(name_expr, **properties):
