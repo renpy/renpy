@@ -43,10 +43,10 @@ There are now three new styles for bars. Along with bar, there is now
 scrollbar, vbar, and vscrollbar. The roundrect theme styles each 
 kind of bar appropriately. [doc styles]
 
-Added a new ScrollArea displayable. This lets you display something
+Added a new Viewport displayable. This lets you display something
 that is bigger then the area alotted to it, and to use scrollbars to
-scroll around inside. ScrollAreas can be created with ScrollArea or 
-ui.scrollarea. [doc scrollarea style, doc ScrollArea, doc ui.scrollarea]
+scroll around inside. Viewports can be created with Viewport or 
+ui.viewport. [doc viewport style, doc Viewport, doc ui.viewport]
 
 
 Modified the {w} text tag, so it can also be written as {w=number},

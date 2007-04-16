@@ -1455,28 +1455,38 @@ class RotoZoom(renpy.display.core.Displayable):
         return renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
         
 
-class ScrollArea(Container):
+class Viewport(Container):
 
-    def __init__(self, child=None, child_size=(None, None), style='scrollarea', **properties):
+    def __init__(self, child=None, child_size=(None, None), offsets=(0.0, 0.0), style='viewport', **properties):
 
-        super(ScrollArea, self).__init__(style=style, **properties)
+        super(Viewport, self).__init__(style=style, **properties)
         self.add(child)
 
         self.child_width, self.child_height = child_size
-        self.xoffset = 0.0
-        self.yoffset = 0.0
+        self.xoffset, self.yoffset = offsets
 
     def render(self, width, height, st, at):
 
         child_width = self.child_width or width
         child_height = self.child_height or height
 
-        surf = render(self.child, width, height, st, at)
+        surf = render(self.child, child_width, child_height, st, at)
+
         cw, ch = surf.get_size()
 
-        cxo = max(cw - width, 0) * -self.xoffset
-        cyo = max(ch - height, 0) * -self.yoffset 
+        if isinstance(self.xoffset, int):
+            cxo = -self.xoffset
+        else:
+            cxo = max(cw - width, 0) * -self.xoffset
 
+        if isinstance(self.yoffset, int):
+            cyo = -self.xoffset
+        else:
+            cyo = max(ch - height, 0) * -self.yoffset 
+
+        cxo = int(cxo)
+        cyo = int(cyo)
+            
         self.offsets = [ (cxo, cyo) ]
         self.sizes = [ (cw, ch) ]
 
@@ -1492,3 +1502,7 @@ class ScrollArea(Container):
         self.yoffset = offset
         renpy.display.render.redraw(self, 0)
         
+def LiveCrop(rect, child, **properties):
+    x, y, w, h = rect
+
+    return Viewport(child, offsets=(-x, -y), xmaximum=w, ymaximum=h, **properties)

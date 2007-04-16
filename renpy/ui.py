@@ -589,9 +589,8 @@ def bar(*args, **properties):
     return add(renpy.display.behavior.Bar(range, value, width, height,
                                           **properties))
 
-def scrollarea(**properties):
-    return add(renpy.display.layout.ScrollArea(**properties),
-               True, True)
+def viewport(**properties):
+    return add(renpy.display.layout.Viewport(**properties), True, True)
 
 
 def conditional(condition):

@@ -95,8 +95,8 @@ init -1000:
         style.create('hyperlink', 'default', 'The style of a hyperlink button.')
         style.create('hyperlink_text', 'default', 'The stype of hyperlink button text.')
 
-        # Scroll area
-        style.create('scrollarea', 'default', 'The default style of a scrollarea.')
+        # Viewport
+        style.create('viewport', 'default', 'The default style of a viewport.')
         
         
 # AUTOMATICALLY GENERATED
@@ -381,8 +381,8 @@ init -1000:
         style.vscrollbar.bar_invert = True
         
         ######################################################################
-        # Scrollarea
-        style.scrollarea.clipping = True
+        # Viewport
+        style.viewport.clipping = True
 
         ######################################################################
         # Main menu.

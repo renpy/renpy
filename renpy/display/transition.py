@@ -1106,3 +1106,21 @@ def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widge
         new = new_widget
 
     return trans(new_widget=new, old_widget=old)
+
+def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
+    x, y, w, h = rect
+
+    old = renpy.display.layout.LiveCrop(rect, old_widget)
+    new = renpy.display.layout.LiveCrop(rect, new_widget)
+
+    inner = trans(old_widget=old, new_widget=new)
+    delay = inner.delay
+    inner = renpy.display.layout.Position(inner, xpos=x, ypos=y, xanchor=0, yanchor=0)
+    
+    f = renpy.display.layout.Fixed()
+    f.add(new_widget)
+    f.add(inner)
+
+    return NoTransition(delay, old_widget=f, new_widget=f)
+
+    

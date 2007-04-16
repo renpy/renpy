@@ -103,8 +103,10 @@ ImageReference = renpy.display.image.ImageReference
 Solid = renpy.display.image.Solid
 
 LiveComposite = renpy.display.layout.LiveComposite
+LiveCrop = renpy.display.layout.LiveCrop
 Null = renpy.display.layout.Null
 Window = renpy.display.layout.Window
+Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 
 Animation = anim.Animation
@@ -124,7 +126,6 @@ Revolve = renpy.curry.curry(renpy.display.layout.Revolve)
 Zoom = renpy.curry.curry(renpy.display.layout.Zoom)
 RotoZoom = renpy.curry.curry(renpy.display.layout.RotoZoom)
 FactorZoom = renpy.curry.curry(renpy.display.layout.FactorZoom)
-ScrollArea = renpy.curry.curry(renpy.display.layout.ScrollArea)
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)
@@ -138,6 +139,7 @@ RevolveInOut = renpy.curry.curry(renpy.display.transition.RevolveInOut)
 MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransition)
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
+SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
 
 # Misc.
 Character = renpy.character.Character

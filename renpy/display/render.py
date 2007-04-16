@@ -437,7 +437,7 @@ class ClipSurface(object):
 
     def subsurface(self, (x, y, w, h)):
         return ClipSurface((self.x + x, self.y + y, w, h),
-                           self.blits, self.forced)
+                           self.blits, self.forced, self.surfid)
 
     
 def screen_blit(source, full=False, xoffset=0):
