@@ -64,38 +64,6 @@ class IgnoreEvent(Exception):
 
     pass
 
-class Times(object):
-    """
-    This represents the various timebases in the system. It's
-    passed to the event and render functions, and usually passed
-    to their children.
-    """
-    
-    def __init__(self, st, at, ht):
-
-        # The time that this displayable has been shown for.
-        self.st = st
-
-        # The time that a displayable with the same tag as this
-        # displayable has been shown for.
-        self.at = at
-
-        # The time that this displayable has been hovered (or idle)
-        # for.
-        self.ht = ht
-
-    def get(self, timebase):
-
-        if timebase == "animation":
-            return self.at
-        elif timebase == "show":
-            return self.st
-        elif timebase == "hover":
-            return self.ht
-        elif timebase:
-            return self.at
-        else:
-            return self.st
         
 class Displayable(renpy.object.Object):
     """
@@ -180,7 +148,7 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def render(self, width, height, times):
+    def render(self, width, height, st, at):
         """
         Called to display this displayable. This is called with width
         and height parameters, which give the largest width and height
@@ -195,7 +163,7 @@ class Displayable(renpy.object.Object):
 
         assert False, "Draw not implemented."
 
-    def event(self, ev, x, y, times):
+    def event(self, ev, x, y, st):
         """
         Called to report than an event has occured. Ev is the raw
         pygame event object representing that event. If the event

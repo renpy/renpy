@@ -37,8 +37,6 @@ init:
             editing = None
 
             def button(text, selected, returns, **properties):
-                style='selected_button'
-                style_text='selected_button_text'
                     
                 if selected:
                     role='selected_'
@@ -137,6 +135,43 @@ init:
 
             return plan
 
+init python:
+
+    def stats_frame(name, level, hp, maxhp, **properties):
+
+        ui.frame(xfill=False, yminimum=None, **properties)
+
+        ui.hbox() # (name, "HP", bar) from (level, hp, maxhp)
+        ui.vbox() # name from ("HP", bar)
+
+        ui.text(name, size=20)
+
+        ui.hbox() # "HP" from bar
+        ui.text("HP", size=20)
+        ui.bar(maxhp, hp,
+               xmaximum=150,
+               left_bar=Frame("rrslider_full.png", 12, 0),
+               right_bar=Frame("rrslider_empty.png", 12, 0),
+               thumb=None,
+               thumb_shadow=None)
+
+        ui.close()
+        ui.close()
+
+        ui.vbox() # Level from (hp/maxhp)
+
+        ui.text("Lv. %d" % level, xalign=0.5, size=20)
+        ui.text("%d/%d" % (hp, maxhp), xalign=0.5, size=20)
+
+        ui.close()
+        ui.close()
+
+label fight(ename, elevel, ehp, pname="Zanthier", plevel=4, php=40):
+    $ stats_frame(pname, plevel, int(php * .73), php, xalign=.02, yalign=.05)
+    $ stats_frame(ename, elevel, ehp, ehp, xalign=.98, yalign=.05)
+
+    return
+    
 label demo_ui:
 
     e "Ren'Py gives a number of ways of interacting with the user."
@@ -161,7 +196,7 @@ label demo_ui:
 
     e "We can also prompt the user to enter some text."
 
-    $ povname = renpy.input("What is your name?")
+    $ povname = renpy.input("What is your name?") or "Guy Shy"
 
     pov "My name is %(povname)s."
 
@@ -207,7 +242,24 @@ label demo_ui:
         e "You chose to go home."
 
     e "Anyway..."
-                
+
+    e "We also support viewports, that allow us to display things that are bigger then the screen."
+
+    show eileen happy at right
+    with move
+    
+    python hide:
+        vp = ui.viewport(xmaximum=400, ymaximum=400, xpos=100, ypos=50)
+        ui.image("mainmenu.jpg")
+        ui.bar(1.0, 0.0, style='scrollbar', xmaximum=400, xpos=100, ypos=452, changed=vp.set_xoffset)
+        ui.bar(1.0, 0.0, style='vscrollbar', ymaximum=400, xpos=502, ypos=50, changed=vp.set_yoffset)
+
+        ui.textbutton("Dismiss", xpos=300, xanchor=0.5, ypos=550, yanchor=0.5, clicked=ui.returns(True))
+        ui.interact()
+
+    show eileen happy at center
+    
+        
     e "While these constructs are probably enough for most visual novels, dating simulations may be more complicated."
 
     e "The ui functions allow you to create quite complicated interfaces."
@@ -217,9 +269,11 @@ label demo_ui:
     $ day_planner()
 
     e "For a better implementation of this, take a look at the dating sim engine (DSE) that ships with Ren'Py."
-    
-    e "The ui functions can be used to rewrite many parts of the interface."
 
+    e "The ui functions can be also be used to show the sorts of stats you'd need if your game involves combat."
+
+    call fight("Eileen", 10, 99, pname=povname) from _call_fight_1
+    
     e "Hopefully, the ui functions will let you write whatever visual novel or dating sim you want."
 
     return

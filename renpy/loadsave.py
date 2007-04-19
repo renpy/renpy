@@ -21,8 +21,8 @@
 
 # This file contains functions that load and save the game state.
 
-# from pickle import dumps, loads, HIGHEST_PROTOCOL
-from cPickle import dump, loads, HIGHEST_PROTOCOL
+import pickle
+import cPickle
 
 import StringIO
 import cStringIO
@@ -35,6 +35,19 @@ import re
 import threading
 
 import renpy
+
+# Dump that choses which pickle to use:
+def dump(o, f):
+    if renpy.config.use_cpickle:
+        cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
+    else:
+        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
+
+def loads(s):
+    if renpy.config.use_cpickle:
+        return cPickle.loads(s)
+    else:
+        return pickle.loads(s)
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
@@ -243,8 +256,6 @@ def cycle_saves(name, count):
     for count in range(1, count + 1):
         if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
             break
-
-    print "count is now", count
         
     for i in range(count - 1, 0, -1):
         rename_save(name + str(i), name + str(i + 1))

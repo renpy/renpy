@@ -277,9 +277,15 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.focusable = clicked is not None
         self.role = role
-
+        self.stoff = -self.style.initial_time_offset
+        
     def render(self, width, height, st, at):
 
+        if self.stoff is None:
+            self.stoff = st
+
+        st -= self.stoff
+        
         rv = super(Button, self).render(width, height, st, at)
 
         if self.clicked:
@@ -318,12 +324,18 @@ class Button(renpy.display.layout.Window):
     def focus(self, default=False):
         super(Button, self).focus(default)
 
+        if not default:
+            self.stoff = None
+
         if self.hovered and not default:
             return self.hovered()
+
 
     def unfocus(self):
         super(Button, self).unfocus()
 
+        self.stoff = None
+        
         if self.unhovered:
             self.unhovered()
 

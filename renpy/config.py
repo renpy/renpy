@@ -318,6 +318,9 @@ show = renpy.exports.show
 # The callback that is used by the hide statement.
 hide = renpy.exports.hide
 
+# Should we use cPickle or pickle for load/save?
+use_cpickle = True
+
 del renpy
 del sets
 

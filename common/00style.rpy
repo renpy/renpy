@@ -234,6 +234,7 @@ init -1000:
         # Misc.
         style.default.activate_sound = None
         style.default.clipping = False
+        style.default.initial_time_offset = 0
         
         ######################################################################
         # The style of various boxes.

@@ -631,6 +631,9 @@ def rollback():
     Rolls the state of the game back to the last checkpoint.
     """
 
+    if not renpy.game.context().rollback:
+        return
+    
     if renpy.config.rollback_enabled:
         renpy.game.log.complete()
         renpy.game.log.rollback(1)

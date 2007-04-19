@@ -27,6 +27,7 @@ void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
     
     surf = PySurface_AsSurface(pysurf);
 
+    /* Can't release GIL, since we're not using threaded RWops. */
     IMG_SavePNG_RW(rw, surf, compress);
 }
 
@@ -68,7 +69,9 @@ void pixellate32_core(PyObject *pysrc,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
+    Py_BEGIN_ALLOW_THREADS
+    
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -166,6 +169,9 @@ void pixellate32_core(PyObject *pysrc,
             }
         }
     }
+
+    Py_END_ALLOW_THREADS
+
 }
 
 /* This pixellates a 32-bit RGBA pygame surface to a destination
@@ -206,6 +212,8 @@ void pixellate24_core(PyObject *pysrc,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -299,6 +307,9 @@ void pixellate24_core(PyObject *pysrc,
             }
         }
     }
+
+    Py_END_ALLOW_THREADS
+
 }
 
 /*
@@ -334,6 +345,8 @@ void map32_core(PyObject *pysrc,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (char *) src->pixels;
     dstpixels = (char *) dst->pixels;
     srcpitch = src->pitch;
@@ -362,6 +375,7 @@ void map32_core(PyObject *pysrc,
         dstrow += dstpitch;
     }
 
+    Py_END_ALLOW_THREADS
 }
 
 void map24_core(PyObject *pysrc,
@@ -390,6 +404,8 @@ void map24_core(PyObject *pysrc,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (char *) src->pixels;
     dstpixels = (char *) dst->pixels;
     srcpitch = src->pitch;
@@ -417,6 +433,7 @@ void map24_core(PyObject *pysrc,
         dstrow += dstpitch;
     }
 
+    Py_END_ALLOW_THREADS
 }
 
 /*
@@ -451,7 +468,9 @@ void linmap32_core(PyObject *pysrc,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (char *) src->pixels;
     dstpixels = (char *) dst->pixels;
     srcpitch = src->pitch;
@@ -480,6 +499,7 @@ void linmap32_core(PyObject *pysrc,
         dstrow += dstpitch;
     }
 
+    Py_END_ALLOW_THREADS
 }
 
 void linmap24_core(PyObject *pysrc,
@@ -507,7 +527,9 @@ void linmap24_core(PyObject *pysrc,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
+    Py_BEGIN_ALLOW_THREADS
+    
     srcpixels = (char *) src->pixels;
     dstpixels = (char *) dst->pixels;
     srcpitch = src->pitch;
@@ -535,6 +557,7 @@ void linmap24_core(PyObject *pysrc,
         dstrow += dstpitch;
     }
 
+    Py_END_ALLOW_THREADS
 }
 
 
@@ -564,7 +587,9 @@ void xblur32_core(PyObject *pysrc,
     
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
+    Py_BEGIN_ALLOW_THREADS
+    
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -666,6 +691,8 @@ void xblur32_core(PyObject *pysrc,
             suma -= *trailer++;
         }    
     }
+
+    Py_END_ALLOW_THREADS
 }
 
 #endif
@@ -706,6 +733,8 @@ void alphamunge_core(PyObject *pysrc,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+    
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -738,6 +767,8 @@ void alphamunge_core(PyObject *pysrc,
         dstline += dstpitch;
 
     }
+    
+    Py_END_ALLOW_THREADS
 }
         
 void scale32_core(PyObject *pysrc, PyObject *pydst,
@@ -763,6 +794,8 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -830,6 +863,8 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
             scol += xdelta;
         }
     }
+
+    Py_END_ALLOW_THREADS
 }
 
 
@@ -855,6 +890,8 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
+
+    Py_BEGIN_ALLOW_THREADS
         
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
@@ -920,6 +957,8 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
             scol += xdelta;
         }
     }
+
+    Py_END_ALLOW_THREADS
 }
 
 /****************************************************************************/
@@ -947,6 +986,8 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -1105,6 +1146,8 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
             // minx++;
         }
     }
+
+    Py_END_ALLOW_THREADS
 }
 
 
@@ -1127,6 +1170,8 @@ void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcapixels = (unsigned char *) srca->pixels;
     srcbpixels = (unsigned char *) srcb->pixels;
     dstpixels = (unsigned char *) dst->pixels;
@@ -1157,6 +1202,9 @@ void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
             *dp++ = I(sal, sbl, alpha) | (I(sah, sbh, alpha) << 8);
         }
     }
+
+    Py_END_ALLOW_THREADS
+
 }
 
 #ifdef GCC_MMX
@@ -1180,6 +1228,8 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
         
+    Py_BEGIN_ALLOW_THREADS
+
     srcapixels = (unsigned char *) srca->pixels;
     srcbpixels = (unsigned char *) srcb->pixels;
     dstpixels = (unsigned char *) dst->pixels;
@@ -1224,6 +1274,7 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     }
 
     emms();
+    Py_END_ALLOW_THREADS
 }
     
 #endif
@@ -1274,6 +1325,8 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
     dst = PySurface_AsSurface(pydst);
     img = PySurface_AsSurface(pyimg);
     
+    Py_BEGIN_ALLOW_THREADS
+
     srcapixels = (unsigned char *) srca->pixels;
     srcbpixels = (unsigned char *) srcb->pixels;
     dstpixels = (unsigned char *) dst->pixels;
@@ -1313,6 +1366,8 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
             *dp++ = I(sal, sbl, alpha) | (I(sah, sbh, alpha) << 8);
         }
     }
+
+    Py_END_ALLOW_THREADS
 }
 
 #ifdef GCC_MMX
@@ -1339,6 +1394,8 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
     img = PySurface_AsSurface(pyimg);
+
+    Py_BEGIN_ALLOW_THREADS
     
     srcapixels = (unsigned char *) srca->pixels;
     srcbpixels = (unsigned char *) srcb->pixels;
@@ -1388,6 +1445,7 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
     }
 
     emms();
+    Py_END_ALLOW_THREADS   
 }
 
 #endif

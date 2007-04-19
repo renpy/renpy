@@ -7,11 +7,14 @@ New in Ren'Py 6.2.0
 Added dynamically-scoped variables. When a variable is declared to be
 dynamically scoped, changes to its value are reverted when returning 
 from the current call. Variables are declared dynamic using the 
-renpy.dynamic function. [doc]
+renpy.dynamic function.
 
-Added function calls. [doc]
+Added the ability to call a label with arguments. These arguments are
+placed into the parameters specified by the label, which are
+dynamically-scoped variables. 
 
-
+The return statement can now take an expression, which is placed into
+the _return variable.
 
 
 Added auto-saving. This causes Ren'Py to save the game at semi-regular
@@ -19,7 +22,6 @@ intervals (currently, around every 200 interactions). The saves take
 place in a background thread, so they shouldn't interfere too much
 with normal game operation. The saves also only occur when the game
 has 250ms with nothing scheduled. 
-[doc config.autosave_frequency, config.has_autosave]
 
 Adding autosave required a rewrite and minor redesign of the load/save
 screens. There is now a new page, "Auto", that contains the autosave
@@ -33,20 +35,20 @@ in size by 2 pixels, this is to make room for the longer filenames
 The scene, show, and hide functions now use config.scene, config.show,
 and config.hide, which default to renpy.scene, renpy.show, and
 renpy.hide, respectively. By changing the config variables, the user
-can intercept the guts of these statements. [doc]
+can intercept the guts of these statements.
 
-The character callback is now passed the same user-defined arguments
-as the show function. [doc]
+The character callback now gets the cb_-prefixed keyword arguments 
+that are passed to Character, if any.
 
 
 There are now three new styles for bars. Along with bar, there is now
 scrollbar, vbar, and vscrollbar. The roundrect theme styles each 
-kind of bar appropriately. [doc styles]
+kind of bar appropriately.
 
 Added a new Viewport displayable. This lets you display something
 that is bigger then the area alotted to it, and to use scrollbars to
 scroll around inside. Viewports can be created with Viewport or 
-ui.viewport. [doc viewport style, doc Viewport, doc ui.viewport]
+ui.viewport.
 
 
 Modified the {w} text tag, so it can also be written as {w=number},
@@ -59,12 +61,37 @@ script can now find the save directory by itself, when running off
 of read-only media. (Try not to be too windows-centric, 'kay?)
 
 
+In one of those "anticipating future needs" sort of changes, changed
+Button to set the displayable timebase of its children to 0 each time
+the button becomes hovered or idle. This makes it possible to animate
+a button becoming hovered or idle, by using an animation as the
+background. (Or by using animations in a ui.imagebutton.) The new
+initial_time_offset property controls the displayable timebase when
+the button is first displayed, allowing the animation to be skipped
+when not invoked by the user. (Note that to use the displayable
+timebase, you'll often have to set anim_timebase=False.)
+
+
+Rollback is now disabled when in code called in a new context.
+
+
 Adjusted spacing in the text box a little bit, so that it's now
 possible to have four lines of text without stretching the text box.
 
 
 Lowered the sound buffer size from 4096 to 2048 samples. This should
-hopefully reduce sound latency.
+hopefully reduce sound latency. Made code in the Ren'Py module
+non-blocking, to allow music to run even while the main code is 
+
+
+Switched back to using cPickle for pickling. CPickle will cause a
+C-level crash when using a highly-nested data structure. (The pickle
+module we're using will cause a python traceback in the same case.)
+Setting the new config.use_cpickle module will disable the use of
+cpickle for save and load.
+
+
+Recompiled SciTE to include support for Lua scripting.
 
 
 

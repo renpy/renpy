@@ -570,7 +570,7 @@ class Window(Container):
 
         super(Window, self).__init__(style=style, **properties)
         self.add(child)
-
+        
     def visit(self):
         return [ self.style.background ] + self.children
 

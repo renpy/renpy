@@ -50,6 +50,8 @@ label demo_text:
 
     e "They let you pause{w} the display of the text, optionally with{p}line breaks."
 
+    e "We can pause the text for a short time, and have it auto-advance.{w=1} Just like that."
+    
     e "They let you include images inside text{image=exclamation.png} Neat {image=exclamation.png}"
 
     e "They can even change the {color=#f00}color{/color} {color=#ff0}of{/color} {color=#0f0}the{/color} {color=#0ff}text{/color}."

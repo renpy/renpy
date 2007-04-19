@@ -12,7 +12,11 @@ init:
                 if fn.endswith(i):
                     return True
 
-            if fn.lower() in ("thumbs.db", "launcherinfo.py", "traceback.txt", "errors.txt"):
+            if fn.lower() in ("thumbs.db",
+                              "launcherinfo.py",
+                              "traceback.txt",
+                              "errors.txt",
+                              "completion.lua",):
                 return True
             
             if fn == "saves":
