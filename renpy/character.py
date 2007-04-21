@@ -267,7 +267,8 @@ def display_say(who, what, who_style='say_label',
         roll_forward = None
     
     # If we're just after a rollback or roll_forward, disable slow.
-    if renpy.game.after_rollback:
+    after_rollback = renpy.game.after_rollback
+    if after_rollback:
         slow = False
         
     # If we're committed to skipping this statement, disable slow.
@@ -285,6 +286,9 @@ def display_say(who, what, who_style='say_label',
         pause = None
     else:
         pause = 0
+
+    # True if the {nw} tag was found in what_text.
+    no_wait = False
 
     keep_interacting = True
     slow_start = 0
@@ -340,6 +344,8 @@ def display_say(who, what, who_style='say_label',
             image=image,
             no_ctc_what=what,
             **show_args)
+
+        no_wait |= what_text.no_wait
         
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
@@ -395,11 +401,15 @@ def display_say(who, what, who_style='say_label',
         renpy.exports.log(who)
     renpy.exports.log(what)
     renpy.exports.log("")
-
+    
     # Do the checkpoint and with None.
     if interact:
-        renpy.exports.checkpoint(True)
 
+        if not no_wait:
+            renpy.exports.checkpoint(True)
+        else:
+            renpy.game.after_rollback = after_rollback
+            
         if with_none is None:
             with_none = renpy.config.implicit_with_none
 

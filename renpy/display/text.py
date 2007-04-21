@@ -477,16 +477,8 @@ def input_tokenizer(l, style, pauses=None):
     for s in l:
 
         if isinstance(s, basestring):
-            sl = [ ]
-            for type, text in renpy.config.text_tokenizer(s, style):
-                if type == "tag" and text == "p":
-                    sl.append(("tag", "w"))
-                    sl.append(("newline", "\n"))
-                else:
-                    sl.append((type, text))
-
+            sl = renpy.config.text_tokenizer(s, style)
             rv.append(sl)
-                
 
         elif isinstance(s, renpy.display.core.Displayable):
             rv.append([ ("widget", s) ])
@@ -773,15 +765,53 @@ class Text(renpy.display.core.Displayable):
         else:
             self.tokens = self.text
 
+
+        new_tokens = [ ]
+        fasts = 0
+        self.no_wait = False
+        self.no_wait_once = False
+        self.no_wait_done = False
+        
+        for i in self.tokens[0]:
+            type, text = i
+            
+            if type == "tag":
+                if text == "p":
+                    new_tokens.append(("tag", "w"))
+                    new_tokens.append(("newline", "\n"))
+                    continue
+                elif text == "nw":
+                    self.no_wait = True
+                elif text == "fast":
+                    fasts += 1
+
+            new_tokens.append(i)
+
+        self.tokens[0] = new_tokens
+            
         if self.pause is not None:
             pause = self.pause
-            l = [ ]
+            new_tokens = [ ]
             
             for i in self.tokens[0]:
-                l.append(i)
+                new_tokens.append(i)
+                type, text = i
+                
+                if type == "tag":
+                    if text == "fast":
+                        fasts -= 1
 
-                if i[0] == "tag":
-                    if i[1] == "w":
+                    if text == "nw":
+                        new_tokens.pop()
+
+                    # If we have a fast to go, then ignore keep_pausing.
+                    if fasts:
+                        continue
+
+                    if text == "nw":
+                        self.no_wait_once = True
+                    
+                    elif text == "w":
                         if pause == 0:                
                             self.keep_pausing |= True
                             self.pause_length = None
@@ -789,15 +819,15 @@ class Text(renpy.display.core.Displayable):
                         else:
                             pause -= 1
 
-                    elif i[1][:2] == "w=":
+                    elif text[:2] == "w=":
                         if pause == 0:
                             self.keep_pausing |= True
-                            self.pause_length = float(i[1][2:])
+                            self.pause_length = float(text[2:])
                             break                    
                         else:
                             pause -= 1
 
-            self.tokens[0] = l
+            self.tokens[0] = new_tokens
         
             
         # Postprocess the tokens list to create widgets, as necessary.
@@ -865,6 +895,9 @@ class Text(renpy.display.core.Displayable):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
+        if self.no_wait_done:
+            return False
+        
         for child, xo, yo in self.child_pos:
             rv = child.event(ev, x - xo, y - yo, st)
             if rv is not None:
@@ -1269,6 +1302,11 @@ class Text(renpy.display.core.Displayable):
             if self.slow_done:
                 self.slow_done()
                 self.slow_done = None
+
+            if self.no_wait_once:
+                self.no_wait_done = True
+                renpy.game.interface.timeout(0)
+
                 
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
@@ -1285,7 +1323,11 @@ class Text(renpy.display.core.Displayable):
                 if self.slow_done:
                     self.slow_done()
                     self.slow_done = None
-                    
+
+                if self.no_wait_once:
+                    self.no_wait_done = True
+                    renpy.game.interface.timeout(0)
+                
         if self.slow:
             renpy.display.render.redraw(self, 0)
 
