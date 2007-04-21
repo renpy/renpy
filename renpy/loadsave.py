@@ -148,12 +148,12 @@ def save(filename, extra_info='',
     roots = renpy.game.log.freeze(wait)
 
     logf = StringIO()
-    dump((roots, renpy.game.log), logf, HIGHEST_PROTOCOL)
+    dump((roots, renpy.game.log), logf)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
 
-    rf = file(renpy.config.savedir + "/" + filename, "w")
+    rf = file(renpy.config.savedir + "/" + filename, "wb")
     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
 
     # Screenshot.

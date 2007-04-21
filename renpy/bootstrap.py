@@ -74,6 +74,8 @@ def enable_trace(level):
 
 def bootstrap(renpy_base):
 
+    global renpy
+
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 
@@ -171,10 +173,8 @@ def bootstrap(renpy_base):
     if not options.lint and not options.compile and not options.version:
         import renpy.display.presplash
         renpy.display.presplash.start(gamedir)
-
         
     # Load up all of Ren'Py, in the right order.
-    global renpy
     import renpy
     renpy.import_all()
 
