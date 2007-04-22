@@ -40,7 +40,9 @@ text_tags = dict(
     plain=True,
     font=True,
     color=True,
-    size=True)
+    size=True,
+    nw=False,
+    )
 
 # This contains a map from (fn, size, bold, italics, underline) to the
 # unloaded font object corresponding to that specification. 
