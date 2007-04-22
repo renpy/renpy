@@ -310,21 +310,102 @@ class SMAnimation(renpy.display.core.Displayable):
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
 
-class Animation(renpy.display.core.Displayable):
+# class Animation(renpy.display.core.Displayable):
+#     """
+#     A Displayable that draws an animation, which is a series of images
+#     that are displayed with time delays between them.
+#     """
+
+#     def __init__(self, *args, **properties):
+#         """
+#         Odd (first, third, fifth, etc.) arguments to Animation are
+#         interpreted as image filenames, while even arguments are the
+#         time to delay between each image. If the number of arguments
+#         is odd, the animation will stop with the last image (well,
+#         actually delay for a year before looping). Otherwise, the
+#         animation will restart after the final delay time.
+
+#         @param anim_timebase: If True, the default, use the animation
+#         timebase. Otherwise, use the displayable timebase.
+#         """
+
+#         properties.setdefault('style', 'animation')
+#         self.anim_timebase = properties.pop('anim_timebase', True)
+
+#         super(Animation, self).__init__(**properties)
+
+#         self.images = [ ]
+#         self.delays = [ ]
+
+#         for i, arg in enumerate(args):
+
+#             if i % 2 == 0:
+#                 self.images.append(renpy.easy.displayable(arg))
+#             else:
+#                 self.delays.append(arg)
+
+#         if len(self.images) > len(self.delays):
+#             self.delays.append(365.25 * 86400.0) # One year, give or take.
+                
+#     def render(self, width, height, st, at):
+
+#         if self.anim_timebase:
+#             t = at % sum(self.delays)
+#         else:
+#             t = st % sum(self.delays)
+
+#         for image, delay in zip(self.images, self.delays):
+#             if t < delay:
+#                 renpy.display.render.redraw(self, delay - t)
+
+#                 im = renpy.display.render.render(image, width, height, t, at)
+#                 width, height = im.get_size()
+#                 rv = renpy.display.render.Render(width, height)
+#                 rv.blit(im, (0, 0))
+
+#                 return rv
+            
+#             else:
+#                 t = t - delay
+
+#     def visit(self):
+#         return self.images
+
+def Animation(*args, **kwargs):
+    newargs = [ ]
+
+    for i, a in enumerate(args):
+        newargs.append(a)
+        if i % 2 == 1:
+            newargs.append(None)
+
+    return TransitionAnimation(*newargs, **kwargs)
+    
+
+class TransitionAnimation(renpy.display.core.Displayable):
     """
-    A Displayable that draws an animation, which is a series of images
-    that are displayed with time delays between them.
+    A displayable that draws an animation with each frame separated
+    by a transition.
     """
 
     def __init__(self, *args, **properties):
         """
-        Odd (first, third, fifth, etc.) arguments to Animation are
-        interpreted as image filenames, while even arguments are the
-        time to delay between each image. If the number of arguments
-        is odd, the animation will stop with the last image (well,
-        actually delay for a year before looping). Otherwise, the
-        animation will restart after the final delay time.
+        This takes arguments such that the 1st, 4th, 7th, ...
+        arguments are displayables, the 2nd, 5th, 8th, ... on arguments
+        are times, and the 3rd, 6th, 9th, ... are transitions.
 
+        This displays the first displayable for the given time, then
+        transitions to the second displayable using the given
+        transition, and shows it for the given time (the time of the
+        transition is taken out of the time the frame is shown), and
+        so on.
+
+        The last argument may be a displayable (in which case that
+        displayable is used to transition back to the first frame), or
+        a displayable (which is shown forever).
+
+        There is one keyword argument, apart from the style properties:
+        
         @param anim_timebase: If True, the default, use the animation
         timebase. Otherwise, use the displayable timebase.
         """
@@ -332,32 +413,48 @@ class Animation(renpy.display.core.Displayable):
         properties.setdefault('style', 'animation')
         self.anim_timebase = properties.pop('anim_timebase', True)
 
-        super(Animation, self).__init__(**properties)
+        super(TransitionAnimation, self).__init__(**properties)
 
-        self.images = [ ]
-        self.delays = [ ]
-
+        images = [ ]
+        delays = [ ]
+        transitions = [ ]
+        
         for i, arg in enumerate(args):
 
-            if i % 2 == 0:
-                self.images.append(renpy.easy.displayable(arg))
+            if i % 3 == 0:
+                images.append(renpy.easy.displayable(arg))
+            elif i % 3 == 1:
+                delays.append(arg)
             else:
-                self.delays.append(arg)
+                transitions.append(arg)
 
-        if len(self.images) > len(self.delays):
-            self.delays.append(365.25 * 86400.0) # One year, give or take.
-                
+        if len(images) > len(delays):
+            delays.append(365.25 * 86400.0) # One year, give or take.
+        if len(images) > len(transitions):
+            transitions.append(None)
+
+        self.images = images
+        self.prev_images = [ images[-1] ] + images[:-1]
+        self.delays = delays
+        self.transitions = [ transitions[-1] ] + transitions[:-1]
+            
+            
     def render(self, width, height, st, at):
 
         if self.anim_timebase:
-            t = at % sum(self.delays)
+            orig_t = at
         else:
-            t = st % sum(self.delays)
+            orig_t = st
 
-        for image, delay in zip(self.images, self.delays):
+        t = orig_t % sum(self.delays)
+            
+        for image, prev, delay, trans in zip(self.images, self.prev_images, self.delays, self.transitions):
             if t < delay:
                 renpy.display.render.redraw(self, delay - t)
 
+                if trans and orig_t >= self.delays[0]:
+                    image = trans(old_widget=prev, new_widget=image)
+                
                 im = renpy.display.render.render(image, width, height, t, at)
                 width, height = im.get_size()
                 rv = renpy.display.render.Render(width, height)

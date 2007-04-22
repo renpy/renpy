@@ -285,9 +285,13 @@ class Say(Node):
                 who = renpy.python.py_eval(self.who)
         else:
             who = None
-
+            
         say_menu_with(self.with_, renpy.game.interface.set_transition)
         renpy.exports.say(who, self.what, interact=getattr(self, 'interact', True))
+
+        if getattr(who, "record_say", True):
+            renpy.store._last_say_who = self.who
+            renpy.store._last_say_what = self.what
 
         return self.next
 

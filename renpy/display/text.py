@@ -783,6 +783,7 @@ class Text(renpy.display.core.Displayable):
                 elif text == "nw":
                     self.no_wait = True
                 elif text == "fast":
+                    self.no_wait = False
                     fasts += 1
 
             new_tokens.append(i)

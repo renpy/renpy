@@ -99,6 +99,10 @@ init -496:
             nvl_show_core()
             renpy.with_statement(None)
             renpy.with_statement(with_)
+
+        def nvl_erase():
+            if nvl_list:
+                nvl_list.pop()
             
         class NVLCharacter(Character):
 

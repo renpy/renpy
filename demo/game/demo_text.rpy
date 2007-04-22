@@ -22,6 +22,10 @@ init:
                        what_font="subfont",
                        what_black_color="#282")
 
+    $ eslow = Character("Eileen",
+                        color="#c8ffc8",
+                        what_slow_cps=20)
+                       
     # Use it in subtitle mode.
     $ esubtitle = Character(None,
                             what_font="subfont",
@@ -37,6 +41,7 @@ init:
                              window_yfill=True,
                              window_xmargin=20,
                              window_ymargin=30)
+
     
 label demo_text:
 
@@ -51,6 +56,12 @@ label demo_text:
     e "They let you pause{w} the display of the text, optionally with{p}line breaks."
 
     e "We can pause the text for a short time, and have it auto-advance.{w=1} Just like that."
+
+    eslow "We can even have the text auto-advance,{nw}"
+
+    with flashbulb
+    extend " when we reach the end of a block of text, in slow text mode."
+
     
     e "They let you include images inside text{image=exclamation.png} Neat {image=exclamation.png}"
 

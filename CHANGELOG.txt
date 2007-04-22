@@ -4,6 +4,30 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.2.0
 -------------------
 
+Added a new "extend" pseudo-character. When "extend" says something, the 
+last character to speak says the last thing to be said, "{fast}", and 
+the new thing being said. This makes it easy to have a character
+say something, wait for a click, change their expression, and then 
+say something else in the same block of text. For example:
+
+e "Sometimes I'm feeling a bit down..."
+show eileen happy
+extend " but I get over it!"
+
+Added a {nw} text tag. Including this text tag in a string causes the
+text to immediately dismiss once the string has been fully shown. This
+is useful in conjunction with extend, to have a character change
+expression when slow text gets up to a certain point.
+
+
+The new nvl_erase function erases the last line of text said in
+NVL-mode, allowing you to replace it with something else.
+
+
+Added anim.TransitionAnimation, a way of specifying animations that
+use a transition between each frame. 
+
+
 Added dynamically-scoped variables. When a variable is declared to be
 dynamically scoped, changes to its value are reverted when returning 
 from the current call. Variables are declared dynamic using the 

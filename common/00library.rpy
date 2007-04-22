@@ -369,5 +369,23 @@ init 401 python:
         if config.default_text_cps is not None:
             _preferences.text_cps = config.default_text_cps
             
+# Implement the extend character-like object.
+init -500 python:
 
+    config.extend_interjection = "{fast}"
+    
+    def extend(what, interact=True):
+        who = _last_say_who
+
+        if who is not None:
+            who = eval(who)
         
+        if isinstance(who, NVLCharacter):
+            nvl_erase()
+
+        what = _last_say_what + config.extend_interjection + what
+            
+        renpy.exports.say(who, what, interact=interact)
+        store._last_say_what = what
+        
+    extend.record_say = False

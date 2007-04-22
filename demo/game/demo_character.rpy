@@ -68,4 +68,32 @@ label demo_character:
 
     e "There's a lot more you can do with Character, as it lets you set style properties on all of the displayed text."
 
+    e "Finally, let me point out a couple of special characters we pre-define."
+
+    show black
+    with dissolve
+
+    centered "The \"centered\" character shows text at the center\nof the screen, without a window."
+
+    centered "It's just a highly customized normal character,\nthat's useful for dates and titles."
+    
+    hide black
+    with dissolve
+
+    e "The \"extend\" character is very special."
+
+    e "It lets you "
+
+    show eileen vhappy
+
+    extend " extend the previous dialogue"
+
+    show eileen happy
+
+    extend " with additional text."
+
+    e "That lets you have things happen in the middle of text. If you didn't notice, I was changing my expression."
+
+    e "Hopefully, these characters, along with the ones you define, will lead to a very expressive game."
+    
     return

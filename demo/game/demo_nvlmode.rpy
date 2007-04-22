@@ -28,6 +28,12 @@ label demo_nvlmode:
     nvl show dissolve
 
     nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
+
+    nvle "The nvl_erase function removes a line from the screen."
+
+    $ nvl_erase()
+
+    nvle "Like that."
     
     # Doing this during the game isn't recommended, it's better to do
     # it in an init block. We have to do it here because we need to use

@@ -9,19 +9,19 @@ init:
             ("demo_experience", "User Experience", "5.6.3"), 
             ("demo_transitions", "Transitions", "5.6.6"),
             ("demo_movement", "Positions and Movement", "5.6.6"),
-            ("demo_animation", "Animation", "5.6.3"),
+            ("demo_animation", "Animation", "6.2.0"),
             ("demo_multimedia", "Music and Sound", "5.6.3"),
             ("demo_imageops", "Image Operations", "5.6.3"),
             ("demo_ui", "User Interaction", "6.2.0"),
-            ("demo_text", "Fonts and Text Tags", "5.6.3"),
-            ("demo_character", "Character Objects", "5.6.3"), 
-            ("demo_advanced", "Advanced Features", "5.6.7"),
+            ("demo_text", "Fonts and Text Tags", "6.2.0"),
+            ("demo_character", "Character Objects", "6.2.0"), 
+            ("demo_advanced", "Advanced Features", "6.2.0"),
             ]
 
         # Update above with this!
         demos_advanced = [
             ("demo_layers", "Layers & Advanced Show", "5.6.5"),
-            ("demo_nvlmode", "NVL Mode", "5.6.7"),
+            ("demo_nvlmode", "NVL Mode", "6.2.0"),
             ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
             ("demo_minigame", "Minigame Support", "5.6.5"),
             ]

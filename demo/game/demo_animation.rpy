@@ -8,6 +8,10 @@ init:
         "eileen_vhappy.png", 1.0,
         "eileen_happy.png", 1.0)
 
+    image transanimation = anim.TransitionAnimation(
+        im.Scale("whitehouse.jpg", 400, 300), 1.0, dissolve,
+        im.Scale("washington.jpg", 400, 300), 1.0, dissolve)
+        
     # The blink animation.
     image blinking text = anim.Blink(Text("Blink", color="#ff0", size=72))
     
@@ -60,6 +64,16 @@ label demo_animation:
 
     e "The sequence can repeat, or can stop after one go-through."
 
+    show eileen happy at right
+    show transanimation at Position(xpos=50, ypos=50, xanchor=0, yanchor=0)
+    with moveinleft
+
+    e "The anim.TransitionAnimation function is similar, but it lets you specify a transition between frames."
+
+    show eileen happy
+    hide transanimation
+    with moveoutleft
+    
     e "If you want more control, you can use the anim.SMAnimation function."
 
     e "It can randomly change images, and even apply transitions to changes."
