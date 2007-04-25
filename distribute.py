@@ -111,6 +111,9 @@ def main():
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
 
     os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
+
+    # Chmod the mac app.
+    os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
     
     # Compile the various games
     for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'the_question' ]:
