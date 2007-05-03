@@ -1,6 +1,15 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 6.2.1
+-------------------
+
+Fixed Ren'Py such that movies properly loop when required. Changes
+renpy.movie_cutscene so that it allows a delay of None, which will
+delay until the user clicks. (Note that you still need to specify
+loops=-1 in this case.) [doc]
+
+
 New in Ren'Py 6.2.0
 -------------------
 

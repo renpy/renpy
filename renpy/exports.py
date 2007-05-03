@@ -572,7 +572,7 @@ def movie_cutscene(filename, delay, loops=0):
 
     @param filename: The name of a file containing an MPEG-1 movie.
 
-    @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds.
+    @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds. None to have the cutscene go on until the user clicks.
 
     @param loops: The number of extra loops to show, -1 to loop forever.
 
@@ -583,7 +583,9 @@ def movie_cutscene(filename, delay, loops=0):
     movie_start_fullscreen(filename, loops=loops)
 
     renpy.ui.saybehavior()
-    renpy.ui.pausebehavior(delay, False)
+
+    if delay is not None:
+        renpy.ui.pausebehavior(delay, False)
 
     if renpy.game.log.forward:
         roll_forward = True

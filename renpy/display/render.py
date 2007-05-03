@@ -162,7 +162,7 @@ def redraw(widget, when):
     Call this to queue the redraw of the supplied widget in the
     supplied number of seconds.
     """
-
+    
     redraw_queue.append((when + renpy.game.interface.frame_time, widget))
     
 def render_screen(widget, width, height, st):
@@ -198,7 +198,7 @@ def render_screen(widget, width, height, st):
 
     # Filter dead widgets from the redraw queue.
     redraw_queue = [ (when, widget) for when, widget in redraw_queue if
-                     widget in live_widgets ]
+                     widget in live_widgets or widget is None]
     
     return rv
 

@@ -143,14 +143,19 @@ def interact():
             movie = m
             surface = s
 
+            renpy.display.render.redraw(None, 1.0/48)
+            
         if not movie.get_busy():
             if not info.loops or loops < info.loops:
                 movie.rewind()
                 movie.play()
                 loops += 1
+                renpy.display.render.redraw(None, 1.0/48)
             else:
                 movie_stop()
-    
+        else:
+            renpy.display.render.redraw(None, 1.0/48)
+                
 
         # Movie is playing (by now).
         return info.fullscreen

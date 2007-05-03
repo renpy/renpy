@@ -1364,8 +1364,7 @@ class Interface(object):
 
                 # Redraw the screen.
                 if needs_redraw and self.display.can_redraw(first_pass):
-
-
+                    
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
 
@@ -1434,6 +1433,7 @@ class Interface(object):
                     
                     # Handle the redraw timer.
                     redraw_time = renpy.display.render.redraw_time()
+
                     if redraw_time and not needs_redraw:
 
                         if redraw_time != old_redraw_time:
