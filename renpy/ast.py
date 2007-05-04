@@ -393,6 +393,8 @@ class Label(Node):
             self.next = next
             
     def execute(self):
+        renpy.game.context().mark_seen()
+        
         args = renpy.store._args
         kwargs = renpy.store._kwargs
 
@@ -456,7 +458,7 @@ class Label(Node):
 
         renpy.store._args = None
         renpy.store._kwargs = None
-            
+
         return self.next
 
 class Python(Node):

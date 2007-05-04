@@ -4,6 +4,10 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.2.1
 -------------------
 
+Added a function, renpy.seen_label, that returns True if a label has
+been executed at least once, in any execution of the game. [doc]
+
+
 Fixed Ren'Py such that movies properly loop when required. Changes
 renpy.movie_cutscene so that it allows a delay of None, which will
 delay until the user clicks. (Note that you still need to specify

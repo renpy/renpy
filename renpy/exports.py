@@ -966,6 +966,9 @@ def last_interact_type():
 def dynamic(*vars):
     renpy.game.context().make_dynamic(vars)
 
+def seen_label(label):
+    return label in renpy.game.seen_ever
+    
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
