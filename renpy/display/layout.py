@@ -121,7 +121,7 @@ class Container(renpy.display.core.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-
+                
         children_offsets = zip(self.children, self.offsets)
         children_offsets.reverse()
 
@@ -1464,7 +1464,11 @@ class Viewport(Container):
 
         self.child_width, self.child_height = child_size
         self.xoffset, self.yoffset = offsets
-
+#         self.page_height = 0
+#         self.real_child_height = 0
+#         self.page_width = 0
+#         self.real_child_width = 0
+        
     def render(self, width, height, st, at):
 
         child_width = self.child_width or width

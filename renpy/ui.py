@@ -81,13 +81,15 @@ def add(w, make_current=False, once=False):
     global current
     global current_once
 
+    atw = w 
+    
     while at_stack:
-        w = at_stack.pop()(w)
+        neww = at_stack.pop()(atw)
     
     if isinstance(current, str):
-        renpy.game.context(-1).scene_lists.add(current, w)
+        renpy.game.context(-1).scene_lists.add(current, atw)
     else:
-        current.add(w)
+        current.add(atw)
 
     if current_once:
         current_once = False

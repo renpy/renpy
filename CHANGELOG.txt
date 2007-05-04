@@ -14,6 +14,9 @@ delay until the user clicks. (Note that you still need to specify
 loops=-1 in this case.) [doc]
 
 
+Fixed a bug that prevented ui.at from working properly.
+
+
 New in Ren'Py 6.2.0
 -------------------
 

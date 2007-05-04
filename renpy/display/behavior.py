@@ -361,6 +361,7 @@ class Button(renpy.display.layout.Window):
         if not self.is_focused():
             return None
 
+        
         # If clicked, 
         if map_event(ev, "button_select") and self.clicked:
 

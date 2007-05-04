@@ -30,7 +30,7 @@ version = "Ren'Py 6.2.0c"
 # Be sure to change script_version in data/script_version.rpy, too!
 # Also check to see if we have to update renpy.py.
 script_version = 5003000
-savegame_suffix = "-6.2.0b.save"
+savegame_suffix = "-LT1.save"
 
 
 def import_all():
