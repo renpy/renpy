@@ -74,6 +74,12 @@ cdef extern from "renpy.h":
     void blend32_core(object, object, object, int)
 
     void imageblend32_core(object, object, object, object, int, char *)
+
+    void colormatrix32_core(object, object,
+                            float, float, float, float, float,
+                            float, float, float, float, float,
+                            float, float, float, float, float,
+                            float, float, float, float, float)
     
 
 import pygame
@@ -82,7 +88,7 @@ PygameSurface = pygame.Surface
 
 # Update this in library.rpy as well!
 def version():
-    return 6001000
+    return 6002001
 
 def save_png(surf, file, compress=-1):
 
@@ -369,6 +375,28 @@ def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
     pysrcb.unlock()
     pysrca.unlock()
 
+def colormatrix(pysrc, pydst,
+                c00, c01, c02, c03, c04,
+                c10, c11, c12, c13, c14,
+                c20, c21, c22, c23, c24,
+                c30, c31, c32, c33, c34):
+
+    check(pysrc)
+    check(pydst)
+
+    pysrc.lock()
+    pydst.lock()
+    
+    colormatrix32_core(pysrc, pydst,
+                       c00, c01, c02, c03, c04,
+                       c10, c11, c12, c13, c14,
+                       c20, c21, c22, c23, c24,
+                       c30, c31, c32, c33, c34)
+
+    pydst.unlock()
+    pysrc.unlock()
+
+    
 # Be sure to update scale.py when adding something new here!
     
 core_init()

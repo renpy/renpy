@@ -97,4 +97,12 @@ void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
                        PyObject *pydst, PyObject *pyimg,
                        int alpha, char *amap);
 
+
+void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
+                        float c00, float c01, float c02, float c03, float c04,
+                        float c10, float c11, float c12, float c13, float c14,
+                        float c20, float c21, float c22, float c23, float c24,
+                        float c30, float c31, float c32, float c33, float c34);
+
+
 #endif 

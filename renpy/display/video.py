@@ -94,7 +94,10 @@ def movie_start_displayable(filename, size, loops=0):
     movie_stop()
     renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, False, size)
     
-
+def movie_length(filename):
+    m = pygame.movie.Movie(renpy.loader.transfn(filename))
+    return m.get_length()
+    
 def interact():
     """
     This is called at the start of an interaction. It starts the required

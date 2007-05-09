@@ -9,9 +9,9 @@ been executed at least once, in any execution of the game. [doc]
 
 
 Fixed Ren'Py such that movies properly loop when required. Changes
-renpy.movie_cutscene so that it allows a delay of None, which will
-delay until the user clicks. (Note that you still need to specify
-loops=-1 in this case.) [doc]
+renpy.movie_cutscene so that it allows delays of None, which will delay
+until the movie is done playing, and -1, which will cause the cutscene
+to wait until the user clicks. [doc]
 
 
 Fixed a bug that prevented ui.at from working properly.

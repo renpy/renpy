@@ -381,4 +381,21 @@ else:
 
     can_imageblend = False
 
+if version >= 6002001:
 
+    can_colormatrix = True
+
+    def colormatrix(src, dst, matrix):
+        c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
+        o = byte_offset(src)
+
+        
+        
+        _renpy.colormatrix(src, dst,
+                           c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],    
+                           c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],    
+                           c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],    
+                           c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
+
+else:
+    can_colormatrix = False

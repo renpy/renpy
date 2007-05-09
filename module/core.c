@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <math.h>
 
-
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #define GCC_MMX 1
 #include "mmx.h"
@@ -1471,4 +1470,87 @@ void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
 #endif
 
     imageblend32_core_std(pysrca, pysrcb, pydst, pyimg, aoff, amap);
+}
+
+
+void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
+                        float c00, float c01, float c02, float c03, float c04,
+                        float c10, float c11, float c12, float c13, float c14,
+                        float c20, float c21, float c22, float c23, float c24,
+                        float c30, float c31, float c32, float c33, float c34) {
+    
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int srcpitch, dstpitch;
+    unsigned short dstw, dsth;
+    unsigned short y;
+
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+    
+    Py_BEGIN_ALLOW_THREADS
+
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+
+    dstw = dst->w;
+    dsth = dst->h;
+
+    int o0 = c04 * 255;
+    int o1 = c14 * 255;
+    int o2 = c24 * 255;
+    int o3 = c34 * 255;
+        
+    for (y = 0; y < dsth; y++) {
+
+        int r;
+        
+        unsigned char *dp =  dstpixels + dstpitch * y;
+        unsigned char *dpe = dp + dstw * 4;
+        unsigned char *sp = srcpixels + srcpitch * y;
+        
+        while (dp < dpe) {
+            unsigned char s0 = *sp++;
+            unsigned char s1 = *sp++;
+            unsigned char s2 = *sp++;
+            unsigned char s3 = *sp++;
+
+/*             *dp++ = (unsigned char) */
+/*                 fminf(255, fmaxf(0, fmaf(s0, c00, fmaf(s1, c01, fmaf(s2, c02, fmaf(s3, c03, o0)))))); */
+/*             *dp++ = (unsigned char) */
+/*                 fminf(255, fmaxf(0, fmaf(s0, c10, fmaf(s1, c11, fmaf(s2, c12, fmaf(s3, c13, o1)))))); */
+/*             *dp++ = (unsigned char) */
+/*                 fminf(255, fmaxf(0, fmaf(s0, c20, fmaf(s1, c21, fmaf(s2, c22, fmaf(s3, c23, o2)))))); */
+/*             *dp++ = (unsigned char) */
+/*                 fminf(255, fmaxf(0, fmaf(s0, c30, fmaf(s1, c31, fmaf(s2, c32, fmaf(s3, c33, o3)))))); */
+
+            r = o0 + (int) (c00 * s0 + c01 * s1 + c02 * s2 + c03 * s3);
+            if (r < 0) r = 0;
+            if (r > 255) r = 255;
+            *dp++ = r;
+
+            r = o1 + (int) (c10 * s0 + c11 * s1 + c12 * s2 + c13 * s3);
+            if (r < 0) r = 0;
+            if (r > 255) r = 255;
+            *dp++ = r;
+
+            r = o2 + (int) (c20 * s0 + c21 * s1 + c22 * s2 + c23 * s3);
+            if (r < 0) r = 0;
+            if (r > 255) r = 255;
+            *dp++ = r;
+
+            r = o3 + (int) (c30 * s0 + c31 * s1 + c32 * s2 + c33 * s3);
+            if (r < 0) r = 0;
+            if (r > 255) r = 255;
+            *dp++ = r;
+        }
+    }
+
+    Py_END_ALLOW_THREADS
 }

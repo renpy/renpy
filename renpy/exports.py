@@ -564,7 +564,7 @@ def pause(delay=None, music=None, with_none=None, hard=False):
     return rv
 
 
-def movie_cutscene(filename, delay, loops=0):
+def movie_cutscene(filename, delay=None, loops=0):
     """
     This displays an MPEG-1 cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
@@ -572,8 +572,11 @@ def movie_cutscene(filename, delay, loops=0):
 
     @param filename: The name of a file containing an MPEG-1 movie.
 
-    @param delay: The number of seconds to wait before ending the cutscene. Normally the length of the movie, in seconds. None to have the cutscene go on until the user clicks.
-
+    @param delay: The number of seconds to wait before ending the cutscene.
+    Normally the length of the movie, in seconds. If None, then the
+    delay is computed from the number of loops (that is, loops + 1) *
+    the length of the movie. If -1, we wait until the user clicks.
+    
     @param loops: The number of extra loops to show, -1 to loop forever.
 
     Returns True if the movie was terminated by the user, or False if the
@@ -584,7 +587,13 @@ def movie_cutscene(filename, delay, loops=0):
 
     renpy.ui.saybehavior()
 
-    if delay is not None:
+    if delay is None:
+        if loops < 0:
+            delay = -1
+        else:
+            delay = renpy.display.video.movie_length(filename) * (loops + 1)
+
+    if delay >= 0:
         renpy.ui.pausebehavior(delay, False)
 
     if renpy.game.log.forward:

@@ -845,6 +845,7 @@ class Twocolor(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
 class Recolor(ImageBase):
     """
     This adjusts the colors of the image that is its child. It takes as an
@@ -886,6 +887,125 @@ class Recolor(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
+
+class ColorMatrix(ImageBase):
+    """
+    This applies a 20 element matrix, thay turns the color vector:
+    [ r, g, b, a, 1 ] into [ r, g, b, a ].
+    """
+
+    def __init__(self, im, matrix, **properties):
+
+        im = image(im)
+
+        if len(matrix) != 20 and len(matrix) != 25:
+            raise Exception("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
+        
+        super(ColorMatrix, self).__init__(im, matrix, **properties)
+        
+        self.image = im
+        self.matrix = matrix
+        
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        if not renpy.display.module.can_colormatrix:
+            return surf
+
+        if not (surf.get_masks()[3]):
+            surf = surf.convert_alpha()
+
+        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+
+        import time
+        start = time.time()
+        
+        renpy.display.module.colormatrix(surf, rv, self.matrix)
+
+        print time.time() - start, rv
+        
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+class matrix(tuple):
+    """
+    This class represents a 5x5 mathematical matrix.
+    """
+
+    def __new__(cls, *args):
+
+        if len(args) == 1:
+            args = tuple(args[0])
+
+        if len(args) == 20:
+            args = args + (0, 0, 0, 0, 1)
+
+        if len(args) != 25:
+            raise Exception("Matrix expects to be given 20 or 25 entries, not %d." % len(args))
+
+        return tuple.__new__(cls, args)
+    
+    def mul(self, a, b):
+
+        if not isinstance(a, matrix):
+            a = matrix(a)
+
+        if not isinstance(b, matrix):
+            b = matrix(b)
+            
+        result = [ 0 ] * 25
+        for y in range(0, 5):
+            for x in range(0, 5):
+                for i in range(0, 5):
+                    result[x + y * 5] += a[x + i * 5] * b[y + i * 5]
+                    
+        return matrix(result)
+                    
+    def __mul__(self, other):
+        return self.mul(self, other)
+
+    def __rmul__(self, other):
+        return self.mul(other, self)
+
+    def __repr__(self):
+        return """\
+im.matrix(%f, %f, %f, %f, %f.
+          %f, %f, %f, %f, %f,
+          %f, %f, %f, %f, %f,
+          %f, %f, %f, %f, %f,
+          %f, %f, %f, %f, %f)""" % self
+
+    
+    def identity():
+        return matrix(1, 0, 0, 0, 0,
+                      0, 1, 0, 0, 0,
+                      0, 0, 1, 0, 0,
+                      0, 0, 0, 1, 0)
+
+    identity = staticmethod(identity)
+    
+    def desaturate(r=0.30, g=0.59, b=0.11):
+        return matrix(r, g, b, 0, 0,
+                      r, g, b, 0, 0,
+                      r, g, b, 0, 0,
+                      0, 0, 0, 1, 0)
+
+    desaturate = staticmethod(desaturate)
+
+    
+    def tint(r, g, b):
+        return matrix(r, 0, 0, 0, 0,
+                      0, g, 0, 0, 0,
+                      0, 0, b, 0, 0,
+                      0, 0, 0, 1, 0)
+
+    tint = staticmethod(tint)
+    
+print matrix.desaturate() * matrix.tint(1.0, .5, 0)
+
 
 def Color(im, color):
     """
