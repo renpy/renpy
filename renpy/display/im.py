@@ -888,9 +888,9 @@ class Recolor(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
-class ColorMatrix(ImageBase):
+class MatrixColor(ImageBase):
     """
-    This applies a 20 element matrix, thay turns the color vector:
+    This applies a 20 element matrix, that turns the color vector:
     [ r, g, b, a, 1 ] into [ r, g, b, a ].
     """
 
@@ -901,7 +901,7 @@ class ColorMatrix(ImageBase):
         if len(matrix) != 20 and len(matrix) != 25:
             raise Exception("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
         
-        super(ColorMatrix, self).__init__(im, matrix, **properties)
+        super(MatrixColor, self).__init__(im, matrix, **properties)
         
         self.image = im
         self.matrix = matrix
@@ -960,14 +960,40 @@ class matrix(tuple):
         for y in range(0, 5):
             for x in range(0, 5):
                 for i in range(0, 5):
-                    result[x + y * 5] += a[x + i * 5] * b[y + i * 5]
+                    result[x + y * 5] += a[x + i * 5] * b[i + y * 5]
                     
         return matrix(result)
-                    
+
+    def scalar_mul(self, other):
+        other = float(other)
+        return matrix([ i * other for i in self ])
+
+    def __add__(self, other):
+        if isinstance(other, (int, float)):
+            other = float(other)
+            return matrix([ i + other for i in self ])
+
+        other = matrix(other)
+        return matrix([ i + j for i, j in zip(self, other)])
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self + other * -1
+
+    def __rsub__(self, other):
+        return self * -1 + other
+        
     def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return self.scalar_mul(other)
+
         return self.mul(self, other)
 
     def __rmul__(self, other):
+        if isinstance(other, (int, float)):
+            return self.scalar_mul(other)
+
         return self.mul(other, self)
 
     def __repr__(self):
@@ -986,13 +1012,24 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, 0, 1, 0)
 
     identity = staticmethod(identity)
-    
-    def desaturate(r=0.30, g=0.59, b=0.11):
-        return matrix(r, g, b, 0, 0,
-                      r, g, b, 0, 0,
-                      r, g, b, 0, 0,
+
+    def saturation(level, desat=(0.2126, 0.7152, 0.0722)):
+
+        r, g, b = desat
+        
+        def I(a, b):
+            return a + (b - a) * level
+
+        return matrix(I(r, 1), I(g, 0), I(b, 0), 0, 0,
+                      I(r, 0), I(g, 1), I(b, 0), 0, 0,
+                      I(r, 0), I(g, 0), I(b, 1), 0, 0,
                       0, 0, 0, 1, 0)
 
+    saturation = staticmethod(saturation)
+    
+    def desaturate():
+        return matrix.saturation(0.0)
+    
     desaturate = staticmethod(desaturate)
 
     
@@ -1003,10 +1040,40 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, 0, 1, 0)
 
     tint = staticmethod(tint)
+
+    def invert():
+        return matrix(-1, 0, 0, 0, 1,
+                      0, -1, 0, 0, 1,
+                      0, 0, -1, 0, 1,
+                      0, 0, 0, 1, 0)
+
+    invert = staticmethod(invert)
+
+    def brightness(b):
+        return matrix(1, 0, 0, 0, b,
+                      0, 1, 0, 0, b,
+                      0, 0, 1, 0, b,
+                      0, 0, 0, 1, 0)
+
+    brightness = staticmethod(brightness)
+
+    def opacity(o):
+        return matrix(1, 0, 0, 0, 0,
+                      0, 1, 0, 0, 0,
+                      0, 0, 1, 0, 0,
+                      0, 0, 0, o, 0)
+
+    opacity = staticmethod(opacity)
+
+    def contrast(c):
+        return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5) 
     
-print matrix.desaturate() * matrix.tint(1.0, .5, 0)
+def Grayscale(im, desat=(0.2126, 0.7152, 0.0722)):
+    return MatrixColor(im, matrix.saturation(0.0, desat))
 
-
+def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722)):
+    return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]))
+    
 def Color(im, color):
     """
     This recolors the supplied image, mapping colors such that black is

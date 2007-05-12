@@ -378,6 +378,9 @@ label distribute:
 
                 zf.writestr(zi, data)
 
+            zf.close()
+
+                
         # Announce Success
 
         store.message = ""
