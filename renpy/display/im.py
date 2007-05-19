@@ -540,11 +540,8 @@ class FrameImage(ImageBase):
 
                     surf2 = pygame.Surface(dstsize, 0, surf)
 
-                    print "---"
-
                     for y in range(0, dsth, tileh):
                         for x in range(0, dstw, tilew):
-                            print x, y
                             surf2.blit(surf, (x, y))
 
                     surf = surf2
@@ -918,12 +915,7 @@ class MatrixColor(ImageBase):
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 
-        import time
-        start = time.time()
-        
         renpy.display.module.colormatrix(surf, rv, self.matrix)
-
-        print time.time() - start, rv
         
         return rv
 

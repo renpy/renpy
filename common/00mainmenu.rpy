@@ -49,9 +49,15 @@ label _start:
 
     $ renpy.block_rollback()
 
+    $ _old_game_menu_screen = _game_menu_screen
+    $ _game_menu_screen = None
+    
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
 
+    $ _game_menu_screen = _old_game_menu_screen
+    $ del _old_game_menu_screen
+        
     $ renpy.block_rollback()
 
     if config.main_menu_music:

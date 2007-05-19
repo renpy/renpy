@@ -28,85 +28,122 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
-def map_event(ev, name):
+
+
+def compile_event(key, keydown):
     """
-    This looks up the name in the keymap, and uses it to determine if
-    the given event was caused by one of the keys or mouse buttons
-    mapped to the given name in config.keymap. If so, it returns
-    True, otherwise it returns False.
+    Compiles a keymap entry into a python expression.
+
+    keydown determines if we are dealing with keys going down (press),
+    or keys going up (release).
     """
     
-    keys = renpy.config.keymap.get(name, [ name ])
+    # Lists or tuples get turned into or expressions.
+    if isinstance(key, (list, tuple)):
+        if not key:
+            return "(False)"
 
-    if ev.type == MOUSEBUTTONDOWN:
-        if ( "mousedown_" + str(ev.button) ) in keys:
-            return True
-        else:
-            return False
+        return "(" + " or ".join([compile_event(i, keydown) for i in key]) + ")"
 
-    if ev.type == MOUSEBUTTONUP:
-        if ( "mouseup_" + str(ev.button) ) in keys:
-            return True
-        else:
-            return False
+    # If it's in config.keymap, compile what's in config.keymap.
+    if key in renpy.config.keymap:
+        return compile_event(renpy.config.keymap[key], keydown)
 
-    if ev.type == KEYDOWN:
-        for key in keys:
-            if key == ev.unicode or ev.key == getattr(pygame.constants, key, None):
-                return True
-
-        return False
-
-    if ev.type == renpy.display.core.JOYEVENT and ev.press:
-        for key in keys:
-            if renpy.game.preferences.joymap.get(key, None) == ev.press:
-                return True
-
-    return False
-
-def map_keyup(ev, name):
-
-    keys = renpy.config.keymap[name]
+    if key is None:
+        return "(False)"
     
-    if ev.type == KEYUP:
-        for key in keys:
-            if ev.key == getattr(pygame.constants, key, None):
-                return True
+    part = key.split("_")
 
-    if ev.type == renpy.display.core.JOYEVENT and ev.release:
-        for key in keys:
-            if renpy.game.preferences.joymap.get(key, None) == ev.release:
-                return True
-            
-    return False
-    
+    # Deal with the mouse.
+    if part[0] == "mousedown":
+        if keydown:
+            return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONDOWN, int(part[1]))
+        else:
+            return "(False)"
+
+    if part[0] == "mouseup":
+        if keydown:
+            return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONUP, int(part[1]))
+        else:
+            return "(False)"
+
+    # Deal with the Joystick.
+    if part[0] == "joy":
+        if keydown:
+            return "(ev.type == %d and ev.press and ev.press == renpy.game.preferences.joymap.get(%r, None))" % (renpy.display.core.JOYEVENT, key)
+        else:
+            return "(ev.type == %d and ev.release and ev.release == renpy.game.preferences.joymap.get(%r, None))" % (renpy.display.core.JOYEVENT, key)
+
+    # Otherwise, deal with it as a key.
+    if keydown:
+        rv = "(ev.type == %d" % pygame.KEYDOWN
+    else:
+        rv = "(ev.type == %d" % pygame.KEYUP
+
+    if part[0] == "alt":
+        part.pop(0)
+        rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
+    else:
+        rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
+
+    if part[0] == "shift":
+        part.pop(0)
+        rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
+
+    if part[0] == "noshift":
+        part.pop(0)
+        rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
+
+    if len(part) == 1:
+        if len(part[0]) != 1:
+            raise Exception("Invalid key specifier %s" % key)
+        rv += " and ev.unicode == %r)" % part[0]        
+
+    else:
+        if part[0] != "K":
+            raise Exception("Invalid key specifier %s" % key)
+
+        key = "_".join(part)
         
-def is_pressed(pressed, name):
-    """
-    This looks the given name up in the keymap. For each binding of the
-    form K_whatever, it checks to see if the given key is pressed, and if
-    so, returns the keycode of the pressed key. Otherwise, returns False.
-    """
+        rv += " and ev.key == %d)" % (getattr(pygame.constants, key)) 
 
-    keys = renpy.config.keymap[name]
+    return rv
 
-    for key in keys:
-        code = getattr(pygame.constants, key)
-        if pressed[code]:
-            return code
+# These store a lambda for each compiled key in the system.
+event_cache = { }
+keyup_cache = { }
 
-    return False
+def map_event(ev, name):
+    """Returns true if the event matches the named keycode being pressed."""
+
+    check_code = event_cache.get(name, None)
+    if check_code is None:
+        check_code = eval("lambda ev : " + compile_event(name, True), globals())
+        event_cache[name] = check_code
+
+    return check_code(ev)
+        
+def map_keyup(ev, name):
+    """Returns true if the event matches the named keycode being released."""
+    
+    check_code = keyup_cache.get(name, None)
+    if check_code is None:
+        check_code = eval("lambda ev : " + compile_event(name, False), globals())
+        keyup_cache[name] = check_code
+
+    return check_code(ev)
+    
 
 def skipping(ev):
     """
     This handles setting skipping in response to the press of one of the
     CONTROL keys. The library handles skipping in response to TAB.
     """
-
+    
     if map_event(ev, "skip"):
         renpy.config.skipping = "slow"
         renpy.exports.restart_interaction()
-
+        
     if map_keyup(ev, "skip"):
         renpy.config.skipping = None
         renpy.exports.restart_interaction()

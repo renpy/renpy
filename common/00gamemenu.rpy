@@ -665,11 +665,16 @@ label _enter_game_menu:
 
 # Entry points from the game into menu-space.
 label _game_menu:
+    if not _game_menu_screen:
+        return
+
+    $ renpy.play(config.enter_sound)
+    
     call _enter_game_menu from _call__enter_game_menu_0
 
     if renpy.has_label("game_menu"):
         jump expression "game_menu"
-
+        
     jump expression _game_menu_screen
 
 label _game_menu_save:

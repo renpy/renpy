@@ -977,7 +977,10 @@ def dynamic(*vars):
 
 def seen_label(label):
     return label in renpy.game.seen_ever
-    
+
+def file(fn):
+    return renpy.loader.load(fn)
+
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

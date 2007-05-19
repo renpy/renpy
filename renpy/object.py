@@ -24,26 +24,37 @@ class Object(object):
     Our own base class. Contains methods to simplify serialization.
     """
 
+    __version__ = 0
+    
     nosave = [ ]
 
     def __getstate__(self):
         rv = vars(self).copy()
-
+        
         for f in self.nosave:
-            if rv.has_key(f):
+            if f in rv:
                 del rv[f]
 
+
+        rv["__version__"] = self.__version__
+                
         return rv
 
 
-    def after_setstate(self):
-        """
-        Called after a deserialization has occured.
-        """
-
-        return
-
+    # None, to prevent this from being called when unnecessary.
+    after_setstate = None
 
     def __setstate__(self, new_dict):
-        self.__dict__ = new_dict
-        self.after_setstate()
+
+        version = new_dict.pop("__version__", 0)
+        
+        self.__dict__.update(new_dict)
+        
+        if version != self.__version__:
+            self.after_upgrade(version)
+            
+        if self.after_setstate:
+            self.after_setstate()
+
+# We don't handle slots with this mechanism, since the call to vars should
+# throw an error.

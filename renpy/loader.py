@@ -115,6 +115,56 @@ class SubFile(object):
 
         return rv
 
+    def readline(self, length=None):
+
+        maxlength  = self.length - self.offset
+        if length is not None:
+            length = min(length, maxlength)
+        else:
+            length = maxlength
+
+        rv = self.f.readline(length)
+
+        self.offset += len(rv)
+
+        return rv
+
+    def readlines(self, length=None):
+        rv = [ ]
+
+        while True:
+            l = self.readline(length)
+
+            if not l:
+                break
+
+            if length is not None:
+                length -= len(l)
+                if l < 0:
+                    break
+
+            rv.append(l)
+
+        return rv
+
+    def xreadlines(self):
+        return self
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        rv = self.readline()
+
+        if not rv:
+            raise StopIteration()
+
+        return rv
+    
+    def flush(self):
+        return
+
+    
     def seek(self, offset, whence=0):
 
         if whence == 0:

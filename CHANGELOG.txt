@@ -4,8 +4,38 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.2.1
 -------------------
 
+Added im.MatrixColor, an image operator that uses a matrix to alter
+the colors in an image. This can be used by objects of the im.matrix
+type, which can be constructed by the im.matrix.identity,
+im.matrix.saturation, im.matrix.desaturate, im.matrix.tint,
+im.matrix.invert, im.matrix.brightness, im.matrix.opacity, and 
+im.matrix.contrast functions. [doc]
+
+We also have created two convenience wrappers for im.MatrixColor:
+im.Grayscale and im.Sepia. [doc]
+
+
+Added a function, renpy.file, that will open a read-only file-like
+object from a file that exists in the game directory or in an
+archive. [doc]
+
+
 Added a function, renpy.seen_label, that returns True if a label has
 been executed at least once, in any execution of the game. [doc]
+
+
+Setting _game_menu_screen = None prevents the game menu from being
+shown. (Setting it to a value like "_save_screen" or "_load_screen"
+shows the game menu again.) This is the default during the
+splashscreen. [doc]
+
+
+NVLCharacter has a new parameter, clear, that if true causes the nvl-mode
+screen to be cleared after that character speaks. [doc]
+
+
+Rewrote the input handling code. Now, we can deal with keysyms prefixed 
+with alt_, shift_, and noshift_.
 
 
 Fixed Ren'Py such that movies properly loop when required. Changes

@@ -56,7 +56,25 @@ label distribute:
             ui.pausebehavior(0)
             interact()
             
-             
+        # Check to see which platforms we can build on.
+        if os.path.exists(config.renpy_base + "/renpy.exe"):
+            windows = True
+        else:
+            windows = False
+
+        if os.path.exists(config.renpy_base + "/lib/linux-x86"):
+            linux = True
+        else:
+            linux = False
+
+        if os.path.exists(config.renpy_base + "/renpy.app"):
+            mac = True
+        else:
+            mac = False
+
+        if not (windows or mac or linux):
+            store.error("Can't Distribute", "Ren'Py is missing files required for distribution. Please download the full package from http://www.renpy.org/.", "tools_menu")
+        
         lint()
 
         store.message = ""
@@ -74,22 +92,6 @@ label distribute:
 
         if not interact():
             renpy.jump("tools")
-
-
-        if os.path.exists(config.renpy_base + "/renpy.exe"):
-            windows = True
-        else:
-            windows = False
-
-        if os.path.exists(config.renpy_base + "/lib/linux-x86"):
-            linux = True
-        else:
-            linux = False
-
-        if os.path.exists(config.renpy_base + "/renpy.app"):
-            mac = True
-        else:
-            mac = False
 
 
         if not windows or not mac or not linux:
@@ -165,11 +167,12 @@ label distribute:
         for dirname, dirs, files in os.walk(config.renpy_base + "/renpy"):
 
             shortdir = dirname[len(config.renpy_base)+1:]
-
+            shortdir += "/"
+            
             dirs[:] = [ i for i in dirs if not i[0] == '.' ]
 
             for d in dirs:
-                multi_dirs.append((dirname + "/" + d, shortdir + "/" + d))
+                multi_dirs.append((dirname + "/" + d, shortdir + d))
 
             for f in files:
                 if f[0] == "." or f[-1] == "~":
@@ -178,15 +181,19 @@ label distribute:
                 if f.endswith(".pyc") or f.endswith(".pyo"):
                     continue
                 
-                multi_files.append((dirname + "/" + f, shortdir + "/" + f))
+                multi_files.append((dirname + "/" + f, shortdir + f))
 
         multi_files.append((config.renpy_base + "/LICENSE.txt", "renpy/LICENSE.txt"))
 
         # Project files.
+
         for dirname, dirs, files in os.walk(project.path):
 
             shortdir = dirname[len(project.path)+1:]
 
+            if shortdir:
+                shortdir += "/"
+            
             dirs[:] = [ i for i in dirs if not project.info["ignored"](i) ]
                                                                        
 
@@ -194,14 +201,15 @@ label distribute:
                 if project.info["ignored"](d):
                     continue
                 
-                multi_dirs.append((dirname + "/" + d, shortdir + "/" + d))
+                multi_dirs.append((dirname + "/" + d, shortdir + d))
 
             for f in files:
                 if project.info["ignored"](f):
                     continue
                 
-                multi_files.append((dirname + "/" + f, shortdir + "/" + f))
-
+                multi_files.append((dirname + "/" + f, shortdir + f))
+                
+                
         # Common directory... doesn't include subdirs.
         multi_dirs.append((config.commondir, "common"))
         for i in os.listdir(config.commondir):

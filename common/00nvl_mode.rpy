@@ -112,6 +112,7 @@ init -496:
                          what_style='nvl_dialogue',
                          window_style='nvl_entry',
                          type='nvl',
+                         clear=False,
                          **kwargs):
 
                 Character.__init__(self, who,
@@ -123,6 +124,9 @@ init -496:
                                    type='nvl',
                                    **kwargs)
 
+                self.clear = clear
+
+                
             def __call__(self, *args, **kwargs):
                 if nvl_list is None:
                     store.nvl_list = [ ]
@@ -130,6 +134,9 @@ init -496:
                 nvl_list.append(None)
                 rv = Character.__call__(self, *args, **kwargs)
 
+                if self.clear:
+                    nvl_clear()
+                
 
         def nvl_clear():
             global nvl_list

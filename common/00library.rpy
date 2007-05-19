@@ -183,7 +183,6 @@ init -500:
                 renpy.style.write_text("styles.txt")
 
         def invoke_game_menu():
-            renpy.play(config.enter_sound)
             renpy.call_in_new_context('_game_menu')
 
         def toggle_skipping():

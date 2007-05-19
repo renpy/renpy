@@ -178,10 +178,10 @@ keymap = dict(
     dismiss_hard_pause = [ ],
     
     # Focus.
-    focus_left = [ 'K_LEFT', 'K_KP_LEFT', 'joy_left' ],
-    focus_right = [ 'K_RIGHT', 'K_KP_RIGHT', 'joy_right' ],
-    focus_up = [ 'K_UP', 'K_KP_UP', 'joy_up' ],
-    focus_down = [ 'K_DOWN', 'K_KP_DOWN', 'joy_down' ],
+    focus_left = [ 'K_LEFT', 'joy_left' ],
+    focus_right = [ 'K_RIGHT', 'joy_right' ],
+    focus_up = [ 'K_UP', 'joy_up' ],
+    focus_down = [ 'K_DOWN', 'joy_down' ],
         
     # Button.
     button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
