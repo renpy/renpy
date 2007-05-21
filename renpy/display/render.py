@@ -495,7 +495,7 @@ class Render(object):
     widget can be withdrawn).
     """
 
-    def __init__(self, width, height, draw_func=None, opaque=False):
+    def __init__(self, width, height, draw_func=None, opaque=False, layer_name=None):
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -519,6 +519,10 @@ class Render(object):
         self.children = [ ]
         self.depends = [ ]
 
+        # A list of child renders that were marked important when we
+        # blitted them.
+        self.main_child_renders = [ ]
+        
         # A pygame surface holding this Render, if one exists.
         self.surface = None
         self.surface_alpha = False
@@ -539,6 +543,9 @@ class Render(object):
 
         # Is this render opaque? (Only needs to be set for surfaces with draw_func.)
         self.opaque = opaque
+
+        # The name of this layer, if this render corresponds to a layer.
+        self.layer_name = layer_name
         
     
     # def __del__(self):
@@ -600,6 +607,7 @@ class Render(object):
         # for p in parents:
         #     # assert p.dead
 
+        self.main_child_renders = [ ]
         self.children = [ ]
         self.depends = [ ]
 
@@ -607,7 +615,7 @@ class Render(object):
         self.render_of = [ ]
         self.focuses = [ ]
 
-    def blit(self, source, (xo, yo), focus=True):
+    def blit(self, source, (xo, yo), focus=True, main=True):
         """
         Adds the source to the list of things that need to be blitted
         to the screen. The source should be either a pygame.Surface,
@@ -620,6 +628,9 @@ class Render(object):
 
             source.parents.append(self)
             self.children.append(source)
+
+            if main:
+                self.main_child_renders.append((xo, yo, source))
 
             if focus and xo == 0 and yo == 0:
                 self.focuses.extend(source.focuses)
@@ -963,7 +974,27 @@ class Render(object):
 
         return False
                 
+    def main_displayables_at_point(self, x, y, layers, depth=None):
         
+        if x < 0 or y < 0 or x >= self.width or y >= self.height:
+            return [ ]
+
+        rv = [ ]
+        
+        if depth is not None:
+            for w, width, height in self.render_of:
+                rv.append((depth, w))
+
+            depth += 1
+            
+        elif self.layer_name in layers:
+            depth = 0
+
+        for xo, yo, child in self.main_child_renders:
+            rv.extend(child.main_displayables_at_point(x - xo, y - yo, layers, depth))
+
+        return rv
+            
         
         
 def is_fullscreen(surf, x, y, wh):

@@ -6,19 +6,22 @@
 init -402:
     python:
 
-        _roundrect_radius = 12
-
-        def RoundRect(color, size=None):
+        def RoundRect(color, small=False):
             """
             Creates a roundrect displayable. Size should be one of
             6 or 12, while color is the color of the roundrect.
             """
 
-            if size is None:
-                size = _roundrect_radius
+            if small or 1:
+                size = 6
+            else:
+                if config.screen_width <= 640:
+                    size = 6
+                else:
+                    size = 12
 
             return Frame(im.Color("rr%d.png" % size, color), size, size)
-            
+                            
         def _display_button_menu(menuitems):
 
             narration = [ s for s, i in menuitems if i is None and s ]
@@ -78,6 +81,7 @@ init -402:
             button_menu = True,
             launcher = False,
             rounded_window = True,
+            less_rounded = False,
             ):
 
             """This enables the use of the roundrect theme. By
@@ -139,8 +143,9 @@ init -402:
                 # style.file_picker_frame.xmaximum = 450
 
                 prefcols = [ 110, 320, 530 ]
-                nav_xpos = 530
 
+                nav_xpos = 530
+                    
             else:
 
                 size = 22
@@ -157,11 +162,8 @@ init -402:
 
                 prefcols = [ 137, 400, 663 ]
 
-                if config.screen_width == 800:
-                    nav_xpos = 663
-                else:
-                    nav_xpos = 5.0 / 6.0
-
+                nav_xpos = 663
+                
             rrslider_empty = "rrslider_empty.png"
             rrslider_full = "rrslider_full.png"
             rrslider_thumb = "rrslider_thumb.png"
@@ -178,18 +180,18 @@ init -402:
 
 
             def rrframe(sty):
-                sty.background = RoundRect(frame)
+                sty.background = RoundRect(frame, less_rounded)
                 sty.xpadding = 6
                 sty.ypadding = 6
 
-            if big:
+            if big and not less_rounded:
                 store._roundrect_radius = 12
             else:
                 store._roundrect_radius = 6
 
             style.button.clear()
-            style.button.background = RoundRect(widget)
-            style.button.hover_background = RoundRect(widget_hover)
+            style.button.background = RoundRect(widget, less_rounded)
+            style.button.hover_background = RoundRect(widget_hover, less_rounded)
             style.button.xminimum = widget_width
             style.button.ypadding = 1
             style.button.xpadding = _roundrect_radius
@@ -206,7 +208,7 @@ init -402:
             style.button_text.yanchor = 0.5
             style.button_text.textalign = 0.5 
 
-            style.button.insensitive_background = RoundRect(disabled)
+            style.button.insensitive_background = RoundRect(disabled, less_rounded)
             style.button_text.insensitive_color = disabled_text
 
             style.button_text.selected_color = widget_selected 
@@ -215,7 +217,7 @@ init -402:
             
             style.mm_root.background = mm_root
             style.gm_root.background = gm_root
-
+            
             style.mm_menu_frame_vbox.box_spacing = spacing
             rrframe(style.mm_menu_frame)
             style.mm_menu_frame.xpos = nav_xpos
@@ -226,6 +228,7 @@ init -402:
             style.gm_nav_frame.xpos = nav_xpos
             style.gm_nav_frame.xanchor = 0.5
 
+            
             rrframe(style.prefs_pref_frame)
             del style.prefs_pref_frame.bottom_margin
             style.prefs_pref_frame.xfill = True
@@ -236,6 +239,7 @@ init -402:
 
             style.prefs_frame.ypadding = pref_spacing
 
+            rrframe(style.prefs_column)
             style.prefs_column.box_spacing = pref_spacing
             style.prefs_column.xmaximum = frame_width
 
@@ -313,8 +317,8 @@ init -402:
             style.prefs_joystick.xmaximum = 600
             style.prefs_joystick.xpos = 0.5
             style.prefs_joystick.xanchor = 0.5
-            style.prefs_js_button.background = RoundRect(widget, 6)
-            style.prefs_js_button.hover_background = RoundRect(widget_hover, 6)
+            style.prefs_js_button.background = RoundRect(widget, True)
+            style.prefs_js_button.hover_background = RoundRect(widget_hover, True)
             style.prefs_js_button_text.drop_shadow = None
             style.prefs_js_button_text.size = small
             style.prefs_js_button.xminimum = 450
@@ -358,8 +362,8 @@ init -402:
             style.file_picker_navbox.box_spacing = spacing
             del style.file_picker_navbox.xpos
 
-            style.file_picker_entry.background = RoundRect(widget)
-            style.file_picker_entry.hover_background = RoundRect(widget_hover)
+            style.file_picker_entry.background = RoundRect(widget, less_rounded)
+            style.file_picker_entry.hover_background = RoundRect(widget_hover, less_rounded)
             style.file_picker_entry.xpadding = _roundrect_radius
             style.file_picker_entry.xmargin = 2
 
@@ -376,7 +380,7 @@ init -402:
             
             if config.script_version is None or config.script_version > (6, 0, 0):
                 style.file_picker_text.insensitive_color = disabled_text
-                style.file_picker_entry.insensitive_background = RoundRect(disabled)
+                style.file_picker_entry.insensitive_background = RoundRect(disabled, less_rounded)
 
             
             config.file_quick_access_pages = 8
@@ -385,7 +389,7 @@ init -402:
 
             if rounded_window:
 
-                style.window.background = RoundRect(window)
+                style.window.background = RoundRect(window, less_rounded)
                 style.window.xpadding = 6
                 style.window.ypadding = 6
                 style.window.xmargin = 6
@@ -446,9 +450,6 @@ init -402:
                 style.launcher_input.text_align = 0.5
                 
                 store._launcher_per_page = 9
-
-
-                
                 
         theme.roundrect = theme_roundrect
 
@@ -470,39 +471,4 @@ init -402:
 
         theme.roundrect_red = theme_roundrect_red
 
-#         def magic(h, s, lmul=1.0, loff=0.0,  **params):
-
-#             colors = dict(
-#                 widget=(.25, 1.0),
-#                 disabled=(.25, 0.0),
-#                 widget_hover=(.33, 1.0),
-#                 widget_text=(.90, 1.0),
-#                 disabled_text=(.90, 0.0),
-#                 frame=(.55, 1.0),
-#                 )
-
-#             import colorsys
-
-#             def rgba(h, l, s, a):
-#                 l = l * lmul + loff
-                
-#                 r, g, b = colorsys.hls_to_rgb(h, l, s)
-#                 return (int(r * 255),
-#                         int(g * 255),
-#                         int(b * 255),
-#                         a)
-
-#             for name, (l, ss) in colors.iteritems():
-#                 params.setdefault(name, rgba(h, l, ss * s, 255))
-
-#             params.setdefault("mm_root", Solid(rgba(h, .93, ss * 1.0, 255)))
-#             params.setdefault("gm_root", Solid(rgba(h, .93, ss * 1.0, 255)))
-
-#             theme.roundrect(**params)
-
-
-#         magic(.58, 1.0)
-#         magic(0, .5, .5, .5)
-
-
-    
+        

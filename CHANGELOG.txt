@@ -1,8 +1,30 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
-New in Ren'Py 6.2.1
+New in Ren'Py 6.3.0
 -------------------
+
+There is a new style inspector, which can be activated with 'I' when
+config.developer is true. [elaborate, doc, implement]
+
+
+The activate_ property prefix has made a comeback. This prefix is
+applied to buttons that have been selected by the user. It is applied
+when the button is first selected (while the clicked function is
+running). If the clicked function returns a non-None value, or an 
+exception, then the button remains activated forever. [doc]
+
+
+The new xoffset and yoffset placement properties allow one to specify 
+a pixel offset to the position computed using xpos/xanchor and
+ypos/yanchor. This makes it easy to specify, say, that a button's
+label should be a pixel or two above center. [doc]
+
+
+The default roundrect theme now takes a new argument, less_rounded. If
+True, this will use the 6-pixel rounded rectangles, even on an 800x600
+game. This is the default for new projects. [doc, implement]
+
 
 Added im.MatrixColor, an image operator that uses a matrix to alter
 the colors in an image. This can be used by objects of the im.matrix
@@ -13,6 +35,12 @@ im.matrix.contrast functions. [doc]
 
 We also have created two convenience wrappers for im.MatrixColor:
 im.Grayscale and im.Sepia. [doc]
+
+
+
+
+Buttons now take a new time_policy argument, which can be used to 
+warp time for the children of the button. [doc]
 
 
 Added a function, renpy.file, that will open a read-only file-like

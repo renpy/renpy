@@ -218,7 +218,10 @@ init -1000:
         style.default.yanchor = None # 0
         style.default.xmaximum = None
         style.default.ymaximum = None
+        style.default.xoffset = 0
+        style.default.yoffset = 0
 
+        
         # Sound properties.
         style.default.sound = None
 
@@ -524,6 +527,7 @@ init -1000:
         style.js_frame_vbox.ypos = 0.5
         style.js_frame_vbox.yanchor = 0.5
 
+        style.soundtest_button.activate_sound = None
         
         ######################################################################
         # Skip indicator.

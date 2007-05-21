@@ -169,7 +169,8 @@ keymap = dict(
     launch_editor = [ 'E' ],
     dump_styles = [ 'Y' ],
     reload_game = [ 'R' ],
-
+    inspector = [ 'I' ],
+    
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
     dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
@@ -320,6 +321,9 @@ hide = renpy.exports.hide
 
 # Should we use cPickle or pickle for load/save?
 use_cpickle = True
+
+# The function to call as the inspector.
+inspector = None
 
 del renpy
 del sets

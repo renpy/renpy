@@ -653,7 +653,7 @@ class CropMove(Transition):
 # Utility function used by MoveTransition et al.
 def position(d):
 
-    xpos, ypos, xanchor, yanchor = d.get_placement()
+    xpos, ypos, xanchor, yanchor, xoffset, yoffset = d.get_placement()
 
     if xpos is None:
         xpos = 0

@@ -209,7 +209,7 @@ class Fixed(Container):
         self.offsets = [ ]
         self.sizes = [ ]
 
-        rv = renpy.display.render.Render(width, height)
+        rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
         t = renpy.game.interface.frame_time
         it = renpy.game.interface.interact_time
@@ -627,7 +627,7 @@ class Window(Container):
 
             back = render(style.background, bw, bh, st, at)
 
-            style.background.place(rv, left_margin, top_margin, bw, bh, back)
+            style.background.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
         offsets = self.child.place(rv,
                                    left_margin + left_padding, 
@@ -722,7 +722,7 @@ class Motion(Container):
         self.position = (self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor)
         
     def get_placement(self):
-        return self.position
+        return self.position + (self.style.xoffset, self.style.yoffset)
                 
     def render(self, width, height, st, at):
 
@@ -1268,7 +1268,6 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         return [ self.child ]
 
     def per_interact(self):
-
         renpy.display.render.redraw(self, 0)
         
     def render(self, w, h, st, at):

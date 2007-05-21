@@ -367,7 +367,31 @@ init 401 python:
 
         if config.default_text_cps is not None:
             _preferences.text_cps = config.default_text_cps
+
+# Implement the inspector:
+init 500 python:
+
+    if config.developer:
+
+        def _inspector(l):
+
+            ui.add("#000")
+            ui.vbox()
             
+            
+            for depth, d in l:
+                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + " : " + d.style.parent)
+
+            ui.close()
+            ui.saybehavior()
+            ui.interact()
+            
+            return
+
+        config.inspector = _inspector
+        
+
+    
 # Implement the extend character-like object.
 init -500 python:
 

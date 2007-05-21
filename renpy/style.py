@@ -25,12 +25,12 @@ import renpy
 roles = [ 'selected_', '' ]
 
 # A list of style prefixes we care about, including no prefix.
-prefixes = [ 'hover_', 'idle_', 'insensitive_' ]
+prefixes = [ 'hover_', 'idle_', 'insensitive_', 'activate_', ]
 
 # A list of prefix, length, priority, (tuple of prefixes).
 prefix_subs = [ ]
 
-def register_prefix(prefix, prio):
+def register_prefix(prefix, prio, addprefixes=[]):
 
     for r in roles:
         if r and prefix.startswith(r):
@@ -46,24 +46,27 @@ def register_prefix(prefix, prio):
     else:
         alts2 = prefixes
 
+    alts2 += addprefixes
+        
     alts = [ a1 + a2 for a1 in alts1 for a2 in alts2 ]
 
     prefix_subs.append((prefix, len(prefix), prio, alts))
 
 
-register_prefix('selected_hover_', 4)
-register_prefix('selected_idle_', 4)
-register_prefix('selected_insensitive_', 4)
-register_prefix('selected_', 3)
-register_prefix('hover_', 2)
+register_prefix('selected_activate_', 6)
+register_prefix('selected_hover_', 5, [ 'activate_' ])
+register_prefix('selected_idle_', 5)
+register_prefix('selected_insensitive_', 5)
+register_prefix('selected_', 4)
+register_prefix('activate_', 3)
+register_prefix('hover_', 2, [ 'activate_' ])
 register_prefix('idle_', 2)
 register_prefix('insensitive_', 2)
 register_prefix('', 1)
-    
+
 # A map of properties that we know about. The properties may take a
 # function that is called on the argument.
 style_properties = dict(
-    activate_sound = None,
     antialias = None,
     background = renpy.easy.displayable,
     bar_invert = None,
@@ -120,11 +123,13 @@ style_properties = dict(
     xfill = None,
     xmaximum = None,
     xminimum = None,
+    xoffset = None,
     xpos = None,
     yanchor = None,
     yfill = None,
     ymaximum = None,
     yminimum = None,
+    yoffset = None,
     ypos = None,
     )
 

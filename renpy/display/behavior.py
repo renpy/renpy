@@ -28,8 +28,6 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
-
-
 def compile_event(key, keydown):
     """
     Compiles a keymap entry into a python expression.
@@ -149,6 +147,11 @@ def skipping(ev):
         renpy.exports.restart_interaction()
 
     return
+
+
+def inspector(ev):
+    return map_event(ev, "inspector")
+
 
 class Keymap(renpy.display.layout.Null):
     """
@@ -299,11 +302,25 @@ class SayBehavior(renpy.display.layout.Null):
         #         return True
             
         return None
-        
+
+def default_time_policy(st, state, style):
+    if state is None:
+        stoff = style.initial_time_offset
+        oldprefix = style.prefix
+    else:
+        stoff, oldprefix = state
+
+    if style.prefix != oldprefix:
+        stoff = st
+
+    return st - stoff, (stoff, style.prefix)
+    
+    
 class Button(renpy.display.layout.Window):
 
     def __init__(self, child, style='button', clicked=None,
                  hovered=None, unhovered=None, role='',
+                 time_policy=default_time_policy, 
                  **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
@@ -314,14 +331,14 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.focusable = clicked is not None
         self.role = role
-        self.stoff = -self.style.initial_time_offset
+
+        self.time_policy = time_policy
+        self.time_policy_data = None
+        
         
     def render(self, width, height, st, at):
 
-        if self.stoff is None:
-            self.stoff = st
-
-        st -= self.stoff
+        st, self.time_policy_data = self.time_policy(st, self.time_policy_data, self.style)
         
         rv = super(Button, self).render(width, height, st, at)
 
@@ -361,9 +378,9 @@ class Button(renpy.display.layout.Window):
     def focus(self, default=False):
         super(Button, self).focus(default)
 
-        if not default:
-            self.stoff = None
-
+        if self.activated:
+            return None
+        
         if self.hovered and not default:
             return self.hovered()
 
@@ -371,7 +388,8 @@ class Button(renpy.display.layout.Window):
     def unfocus(self):
         super(Button, self).unfocus()
 
-        self.stoff = None
+        if self.activated:
+            return None
         
         if self.unhovered:
             self.unhovered()
@@ -382,35 +400,27 @@ class Button(renpy.display.layout.Window):
 
     def event(self, ev, x, y, st):
 
-        # We deactivate on an event.
-        if self.activated:
-            self.activated = False
-
-            if self.focusable:
-                if self.is_focused():
-                    self.set_style_prefix(self.role + 'hover_')
-                else:
-                    self.set_style_prefix(self.role + 'idle_')
-            else:
-                self.set_style_prefix(self.role + 'insensitive_')
-
         # If not focused, ignore all events.
         if not self.is_focused():
             return None
-
         
         # If clicked, 
         if map_event(ev, "button_select") and self.clicked:
 
+            old_prefix = self.style_prefix
+
             self.activated = True
-
-            renpy.audio.sound.play(self.style.activate_sound)
-
+            self.style.set_prefix(self.role + 'activate_')
+            
+            renpy.audio.sound.play(self.style.sound)
+                    
             rv = self.clicked()
 
             if rv is not None:
                 return rv
             else:
+                self.activated = False
+                self.set_style_prefix(old_prefix)
                 raise renpy.display.core.IgnoreEvent()
                     
         return None
@@ -533,15 +543,15 @@ class Bar(renpy.display.core.Displayable):
 
             if self.style.thumb_shadow:
                 surf = render(self.style.thumb_shadow, width, height, st, at)
-                rv.blit(surf, (0, top_height + self.style.thumb_offset))
+                rv.blit(surf, (0, top_height + self.style.thumb_offset), main=False)
 
-            rv.blit(tsurf.subsurface((0, 0, width, top_height)), (0, 0))
+            rv.blit(tsurf.subsurface((0, 0, width, top_height)), (0, 0), main=False)
             rv.blit(bsurf.subsurface((0, top_height, width, bottom_height)),
-                    (0, top_height))
+                    (0, top_height), main=False)
 
             if self.style.thumb:
                 surf = render(self.style.thumb, width, height, st, at)
-                rv.blit(surf, (0, top_height + self.style.thumb_offset))
+                rv.blit(surf, (0, top_height + self.style.thumb_offset), main=False)
 
             if self.changed:
                 rv.add_focus(self, None, 0, 0, width, height)
@@ -604,12 +614,19 @@ class Bar(renpy.display.core.Displayable):
             grabbed = True
 
         if grabbed:
-
+            
             if map_event(ev, "bar_decrease"):
-                value -= 1
+                if isinstance(self.range, int):
+                    value -= 1
+                else:
+                    value -= self.range / 20.0
 
             if map_event(ev, "bar_increase"):
-                value += 1
+                if isinstance(self.range, int):
+                    value -= 1
+                else:
+                    value -= self.range / 20.0
+
 
             if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
 

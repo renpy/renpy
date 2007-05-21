@@ -137,7 +137,7 @@ class ImageReference(renpy.display.core.Displayable):
         if not self.target:
             self.find_target()
 
-        xpos, ypos, xanchor, yanchor = self.target.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.target.get_placement()
         
         if xpos is None:
             xpos = self.style.xpos
@@ -151,7 +151,7 @@ class ImageReference(renpy.display.core.Displayable):
         if yanchor is None:
             yanchor = self.style.yanchor
 
-        return xpos, ypos, xanchor, yanchor
+        return xpos, ypos, xanchor, yanchor, xoffset, yoffset
 
     def visit(self):
         if not self.target:

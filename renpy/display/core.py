@@ -75,6 +75,7 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
+    activated = False
     focusable = False
     full_focus_name = None
     role = ''
@@ -106,7 +107,8 @@ class Displayable(renpy.object.Object):
         Called to indicate that this widget has the focus.
         """
 
-        self.set_style_prefix(self.role + "hover_")
+        if not self.activated:
+            self.set_style_prefix(self.role + "hover_")
         
         if not default:
             renpy.audio.sound.play(self.style.sound)
@@ -116,7 +118,8 @@ class Displayable(renpy.object.Object):
         Called to indicate that this widget has become unfocused.
         """
 
-        self.set_style_prefix(self.role + "idle_")
+        if not self.activated:
+            self.set_style_prefix(self.role + "idle_")
 
 
 
@@ -184,7 +187,9 @@ class Displayable(renpy.object.Object):
         to return something more sensible.
         """
 
-        return self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor
+        return (self.style.xpos, self.style.ypos,
+                self.style.xanchor, self.style.yanchor,
+                self.style.xoffset, self.style.yoffset)
 
     def visit_all(self, callback):
         """
@@ -236,7 +241,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def place(self, dest, x, y, width, height, surf, xoff=None, yoff=None):
+    def place(self, dest, x, y, width, height, surf, xoff=None, yoff=None, main=True):
         """
         This draws this Displayable onto a destination surface, using
         the placement style information returned by this object's
@@ -261,7 +266,7 @@ class Displayable(renpy.object.Object):
         self.render().
         """
 
-        xpos, ypos, xanchor, yanchor = self.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.get_placement()
 
         if xpos is None:
             xpos = 0
@@ -325,7 +330,11 @@ class Displayable(renpy.object.Object):
 
         yoff += y
 
-        dest.blit(surf, (xoff, yoff))
+        # Add in offsets.
+        xoff += xoffset
+        yoff += yoffset
+        
+        dest.blit(surf, (xoff, yoff), main=main)
 
         return xoff, yoff
 
@@ -661,6 +670,9 @@ class Display(object):
 
         self.next_frame = 0
 
+        # A tree of surfaces from the last time the screen was rendered.
+        self.surftree = None
+        
     def can_redraw(self, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
@@ -829,6 +841,8 @@ class Display(object):
         self.suppress_mouse = suppress_blit
 
         renpy.display.focus.take_focuses(surftree.focuses)
+
+        self.surftree = surftree
         
     def save_screenshot(self, filename):
         """
@@ -1545,6 +1559,8 @@ class Interface(object):
 
                     self.event_time = end_time = get_time()
 
+
+                    # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
                     
                     if rv is None:
@@ -1555,6 +1571,12 @@ class Interface(object):
 
                     if rv is not None:
                         break
+
+                    # Handle displayable inspector.
+                    if renpy.config.inspector and renpy.display.behavior.inspector(ev):
+                        l = self.display.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.overlay_layers)
+                        renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                        
             
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to
