@@ -37,8 +37,6 @@ We also have created two convenience wrappers for im.MatrixColor:
 im.Grayscale and im.Sepia. [doc]
 
 
-
-
 Buttons now take a new time_policy argument, which can be used to 
 warp time for the children of the button. [doc]
 
@@ -64,6 +62,9 @@ screen to be cleared after that character speaks. [doc]
 
 Rewrote the input handling code. Now, we can deal with keysyms prefixed 
 with alt_, shift_, and noshift_.
+
+
+Made it so that {nw} interacts properly with NVL-mode.
 
 
 Fixed Ren'Py such that movies properly loop when required. Changes

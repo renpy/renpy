@@ -687,7 +687,8 @@ class Text(renpy.display.core.Displayable):
         self._update()
 
     def __init__(self, text, slow=None, slow_done=None,
-                 slow_start=0, pause=None, tokenized=False, style='default', **properties):
+                 slow_start=0, pause=None, tokenized=False,
+                 style='default', **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -716,8 +717,6 @@ class Text(renpy.display.core.Displayable):
         self.pause_length = None
         self.tokenized = tokenized
 
-        self._update(redraw=False)
-
         if slow or slow is None:
             self.slow = True
         else:
@@ -727,9 +726,10 @@ class Text(renpy.display.core.Displayable):
         self.slow_done = slow_done
         self.slow_start = slow_start
 
-
         self.laidout = None
         self.child_pos = [ ]
+        
+        self._update(redraw=False)
 
 
     def set_text(self, new_text):
@@ -831,7 +831,10 @@ class Text(renpy.display.core.Displayable):
                             pause -= 1
 
             self.tokens[0] = new_tokens
-        
+
+        if not self.slow:
+            self.no_wait = False
+            self.no_wait_once = False
             
         # Postprocess the tokens list to create widgets, as necessary.
 

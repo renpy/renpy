@@ -40,7 +40,11 @@ import time
 
 # Reports a message to the user.
 def report(node, msg, *args):
-    out = u"%s:%d " % (renpy.parser.unicode_filename(node.filename), node.linenumber)     
+    if node:
+        out = u"%s:%d " % (renpy.parser.unicode_filename(node.filename), node.linenumber)     
+    else:
+        out = ""
+        
     out += msg % args
     print
     print out.encode('utf-8')
@@ -366,7 +370,7 @@ def lint():
             
     for f in renpy.config.lint_hooks:
         f()
-            
+
     print
     print
     print "Statistics:"
@@ -377,4 +381,8 @@ def lint():
         print "For an average of %.1f words per screen." % (1.0 * say_words / say_count) 
     print "The game contains", menu_count, "menus."
     print
+
+    if renpy.config.developer:
+        print "Remember to set config.developer to False before releasing."
+
     print "Lint is not a substitute for thorough testing."
