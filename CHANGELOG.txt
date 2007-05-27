@@ -64,6 +64,11 @@ Rewrote the input handling code. Now, we can deal with keysyms prefixed
 with alt_, shift_, and noshift_.
 
 
+Show text and centered now display their text using the "subtitle"
+layout algorithm, which tries to minimize the difference in line
+length. 
+
+
 Made it so that {nw} interacts properly with NVL-mode.
 
 

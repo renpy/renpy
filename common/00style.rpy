@@ -318,7 +318,8 @@ init -1000:
         style.centered_text.ypos = 0.5
         style.centered_text.xanchor = 0.5
         style.centered_text.yanchor = 0.5
-           
+        style.centered_text.layout = "subtitle"
+        
 
         ######################################################################
         # Buttons.
