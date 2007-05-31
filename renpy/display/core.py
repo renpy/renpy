@@ -81,7 +81,7 @@ class Displayable(renpy.object.Object):
     role = ''
 
     def __init__(self, focus=None, default=False, style='default', **properties):
-        self.style = renpy.style.Style(style, properties)
+        self.style = renpy.style.Style(style, properties, heavy=True)
         self.style_prefix = 'insensitive_'
         self.focus_name = focus
         self.default = default

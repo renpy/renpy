@@ -346,9 +346,7 @@ class Grid(Container):
         @params transpose: True if the grid should be transposed.
         """
 
-        super(Grid, self).__init__()
-
-        self.style = renpy.style.Style(style, properties)
+        super(Grid, self).__init__(style=style, **properties)
 
         self.cols = cols
         self.rows = rows

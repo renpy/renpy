@@ -708,10 +708,9 @@ class Text(renpy.display.core.Displayable):
 
         """
 
-        super(Text, self).__init__()
+        super(Text, self).__init__(style=style, **properties)
 
         self.text = text        
-        self.style = renpy.style.Style(style, properties)
         self.pause = pause
         self.keep_pausing = False
         self.pause_length = None

@@ -39,7 +39,7 @@ class UncachedImage(renpy.display.core.Displayable):
     def __init__(self, file, hint=None, scale=None, style='image_placement',
                  **properties):
 
-        super(UncachedImage, self).__init__()
+        super(UncachedImage, self).__init__(style=style, **properties)
 
         self.surf = pygame.image.load(file, hint)
         self.surf = self.surf.convert_alpha()
@@ -48,8 +48,6 @@ class UncachedImage(renpy.display.core.Displayable):
             self.surf = pygame.transform.scale(self.surf, scale)
 
         renpy.display.render.mutated_surface(self.surf)
-
-        self.style = renpy.style.Style(style, properties)
 
     def render(self, w, h, st, at):
         sw, sh = self.surf.get_size()

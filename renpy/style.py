@@ -27,8 +27,8 @@ roles = [ 'selected_', '' ]
 # A list of style prefixes we care about, including no prefix.
 prefixes = [ 'hover_', 'idle_', 'insensitive_', 'activate_', ]
 
-# A list of prefix, length, priority, (tuple of prefixes).
-prefix_subs = [ ]
+# A map from prefix to priority and alternates.
+prefix_subs = { }
 
 def register_prefix(prefix, prio, addprefixes=[]):
 
@@ -50,7 +50,7 @@ def register_prefix(prefix, prio, addprefixes=[]):
         
     alts = [ a1 + a2 for a1 in alts1 for a2 in alts2 ]
 
-    prefix_subs.append((prefix, len(prefix), prio, alts))
+    prefix_subs[prefix] = prio, alts
 
 
 register_prefix('selected_activate_', 6)
@@ -151,8 +151,8 @@ property_number = { }
 # Map from prefix to offset.
 prefix_offset = { }
 
-# Map from prefix_property to prefix offset + property number.
-prefixed_property_number = { }
+# Map from prefix_property to a list of priorities, offset numbers, and functions.
+expansions = { }
 
 # The total number of property numbers out there.
 property_numbers = 0
@@ -163,11 +163,6 @@ def init():
 
     global property_numbers
     
-    # Expand out substitutes:
-    for k in substitutes.keys():
-        for p in prefixes:
-            substitutes[p + k] = [ p + i for i in substitutes[k] ]
-
     # Figure out a map from style property name to an (arbitrary,
     # session-specific) style property number.
     for i, p in enumerate(style_properties):
@@ -180,13 +175,22 @@ def init():
             prefix_offset[r + p] = property_numbers
             property_numbers += len(style_properties)
 
-    # Figure out a map from prefixed property to number.
-    for prefix, prefixn in prefix_offset.iteritems():
-        for prop, propn in property_number.iteritems():
-            prefixed_property_number[prefix + prop] = prefixn + propn
+    # Figure out the mappings from prefixed properties to expansions of
+    # those properties.
+    for prefix, (prio, alts) in prefix_subs.iteritems():
 
-init()
+        for prop, propn in property_number.iteritems():
+            func = style_properties[prop]
+            expansions[prefix + prop] = [ (prio, propn + prefix_offset[a], func) for a in alts ]
+
+    # Expand out substitutes.
+    for k in substitutes.keys():
+        for p in prefixes + [ '' ]:
+            expansions[p + k] = [ a for b in substitutes[k] for a in expansions[p + b] ]
+        
             
+init()
+
 # A map from a style name to the style associated with that name.
 style_map = { }
 
@@ -206,13 +210,11 @@ def reset():
     """
 
     global style_map
-    global style_proxy_map
     global styles_built
     global styles_pending
     global style_info 
     
     style_map = { }
-    style_proxy_map = { }
     styles_built = False
     styles_pending = [ ]
 
@@ -224,7 +226,7 @@ class StyleManager(object):
 
     def __getattr__(self, name):
         try:
-            return style_proxy_map[name]
+            return style_map[name]
         except:
             raise Exception('The style %s does not exist.' % name)
 
@@ -241,10 +243,10 @@ class StyleManager(object):
         documentation purposes.
         """
 
-        s = Style(parent, { })        
+        s = Style(parent, { }, heavy=True)        
         style_map[name] = s
-        style_proxy_map[name] = StyleProxy(s)
-
+        s.name = name
+        
     def exists(self, name):
         """
         This determines if the named style exists.
@@ -255,42 +257,33 @@ class StyleManager(object):
 def expand_properties(properties):
 
     rv = [ ]
-
+    cache = { }
+    
     for prop, val in properties.iteritems():
 
+        if cache:
+            cache.clear()
 
-        for prefix, plen, prio, alts in prefix_subs:
+        try:
+            e = expansions[prop]
+        except KeyError:
+            raise Exception("Style property %s is unknown." % prop)
 
-            # This will always terminate.
-            if prop.startswith(prefix):
-                break
-
-        # We use the values of plen, prio, and alts.
-
-            
-        prop = prop[plen:]
-
-        for prop in substitutes.get( prop, ( prop, )):
-
-            try:
-                func = style_properties[prop]
-            except KeyError:
-                if prop.startswith("activate_"):
-                    continue
-
-                if renpy.config.check_properties:
-                    raise Exception("Style property %s is unknown." % prop)
-
-                func = None
-
+        for prio, propn, func in e:
 
             if func:
-                newval = func(val)
+                idval = id(val)
+                
+                if idval in cache:
+                    newval = cache[idval]
+                else:
+                    newval = func(val)
+                    cache[idval] = newval
+
             else:
                 newval = val
-
-            for a in alts:
-                rv.append((prio, a + prop, newval))
+                    
+            rv.append((prio, propn, newval))
 
     # Places things in priority order... so more important properties
     # come last.
@@ -303,35 +296,65 @@ def expand_properties(properties):
 # parent style.
 def build_style(style):
 
-    if style.parent:
+    if not style.heavy:
+        return
+    
+    # This is a list of light styles, which don't have a cache. This
+    # also includes the current style as the last entry, since we haven't
+    # built the cache for it yet.
+    light_styles = [ ]
 
+    s = style
+    
+    while s:
+        
+        light_styles.insert(0, s)       
+
+        parent = s.parent
+        
+        # No parent... we're done.
+        if parent is None:
+            break
+
+        # Otherwise, parent is a string. Turn it into a Style object.    
         try:
-            parent = style_map[style.parent]
+            parent = style_map[parent]
         except:
             try:
                 parent = getattr(renpy.game.style, parent)
 
-                if isinstance(parent, StyleProxy):
-                    parent = parent.target
-                    
             except:
                 raise Exception('Style %s is not known.' % style.parent)
 
+        # If the parent is heavy, get out of here.
+        if parent.heavy:
+            break
+
+        # Otherwise, recurse.
+        s = parent
+
+    if parent:
+
+        # This will only build a heavy style.
         if not parent.cache:
             build_style(parent)
 
         cache = parent.cache[:]
+
     else:
         cache = [ None ] * property_numbers
 
-    style.cache = cache
-        
     # For speed, make this local.
-    ppn = prefixed_property_number
-    
-    for k, v in style.properties.iteritems():
-        cache[ppn[k]] = v
+    e = expansions
 
+    for s in light_styles:
+        for p in s.properties:
+            for prio, propn, val in expand_properties(p):
+                cache[propn] = val
+
+    style.cache = cache
+
+                
 # This builds all pending styles, recursing to ensure that they are built
 # in the right order.
 def build_styles():
@@ -344,13 +367,13 @@ def build_styles():
 
     styles_pending = None
     styles_built = True
-        
+
 def rebuild():
 
     global style_pending
     global styles_built
 
-    styles_pending = style_map.values()
+    styles_pending = [ i for i in style_map.values() if i.heavy ]
     styles_built = False
     
     for i in styles_pending:
@@ -362,7 +385,7 @@ def backup():
     rv = { }
     
     for k, v in style_map.iteritems():
-        rv[k] = v.properties.copy()
+        rv[k] = v.properties[:]
 
     return rv
         
@@ -374,50 +397,94 @@ def restore(o):
     styles_built = False
 
     for k, v in o.iteritems():
-        style_map[k].properties.clear()
-        style_map[k].properties.update(v)
+        style_map[k].properties = v
         styles_pending.append(style_map[k])
 
 def style_metaclass(name, bases, attrs):
+
+    for k in expansions.iterkeys():
+        def setter(self, v,  k=k):
+            self.setattr(k, v)
+
+        def deleter(self, k=k):
+            self.delattr(k)
+
+        attrs[k] = property(None, setter, deleter)
     
     for k, number in property_number.iteritems():
         def getter(self, number=number):
             return self.cache[self.offset + number]
 
-        attrs[k] = property(getter)
+        def setter(self, v,  k=k):
+            self.setattr(k, v)
+
+        def deleter(self, k=k):
+            self.delattr(k)
+
+        attrs[k] = property(getter, setter, deleter)
 
     return type(name, bases, attrs)
-    
+
+
+# This class is used for heavyweight and lightweight styles. (Heavyweight
+# styles have a class, lightweight styles do not.)
 class Style(object):
 
     __metaclass__ = style_metaclass
+    __slots__ = [
+        'cache',
+        'properties',
+        'offset',
+        'prefix',
+        'heavy',
+        'name',
+        'help',
+        'parent',
+        ]
+
     
     def __getstate__(self):
 
-        rv = self.__dict__.copy()
-        rv["cache"] = [ ]
+        rv = dict(vars(self))
+
+        del rv["cache"]
+        del rv["offset"]
+
         return rv
 
     def __setstate__(self, state):
-        vars(self).update(state)
+
+        for k, v in state.iteritems():
+            setattr(self, k, v)
 
         self.cache = [ ]
         self.offset = prefix_offset[self.prefix]
 
         build_style(self)
 
-    def __init__(self, parent, properties):
+    def __init__(self, parent, properties=None, heavy=False, name=None, help=None):
 
         self.prefix = 'insensitive_'
         self.offset = prefix_offset['insensitive_']
 
-        self.parent = parent
-        self.cache = [ ]
-        self.properties = { }
+        self.heavy = heavy
+        self.name = name
         
+        if parent and not isinstance(parent, basestring):
+            parent = parent.name
+            if parent is None:
+                raise Exception("The parent of a style must be a named style.")
+            
+        self.parent = parent
+
+        self.cache = None
+        self.properties = [ ]
+
         if properties:
-            for prio, prop, val in expand_properties(properties):
-                self.properties[prop] = val
+            self.properties.append(properties)
+            
+            # for prio, prop, val in expand_properties(properties):
+            #    self.properties[prop] = val
 
         if styles_built:
             build_style(self)
@@ -430,28 +497,27 @@ class Style(object):
             
     def setattr(self, name, value):
 
-        for prio, prop, val in expand_properties({ name : value }):
-            self.properties[prop] = val
-
+        self.properties.append({ name : value })
+ 
         if styles_built:
             build_style(self)
 
     def delattr(self, name):
 
-        for prio, prop, val in expand_properties({ name : None }):
-            if prop in self.properties:
-                del self.properties[prop]
+        for p in self.properties:
+            if name in p:
+                del p[name]
         
     def clear(self):
         if styles_built:
             raise Exception("Cannot clear a style after styles have been built.")
         else:
-            self.properties.clear()
+            self.properties = [ ]
             
     def take(self, other):
 
-        self.properties.update(other.properties)
-        
+        self.properties = other.properties[:]
+
         if styles_built:
             build_style(self)
 
@@ -461,36 +527,14 @@ class Style(object):
         explicit values have been set.
         """
 
-        for d, prop, val in expand_properties(properties):
-            self.properties.setdefault(prop, val)
-            
-class StyleProxy(object):
+        for p in self.properties:
+            for k in p:
+                if k in properties:
+                    del properties[k]
 
-    def __init__(self, target):
-        self.__dict__["target"] = target
+        if properties:
+            self.properties.append(properties)
 
-    def __getattr__(self, k):
-        return getattr(self.target, k)
-        
-    def __setattr__(self, k, v):
-        self.target.setattr(k, v)
-        
-    def __delattr__(self, k):
-        self.target.delattr(k)
-
-    def clear(self):
-        self.target.clear()
-
-    def take(self, other):
-        if isinstance(other, StyleProxy):
-            other = other.target
-
-        self.target.take(other)
-
-    def setdefault(self, **properties):
-        self.target.setdefault(**properties)
-            
-        
 
 def write_text(filename):
 
@@ -503,7 +547,10 @@ def write_text(filename):
 
         print >>f, name, "inherits from", sty.parent
 
-        props = [ (propname, sty.cache[n]) for propname, n in prefixed_property_number.iteritems() ]
+        props = [ (prefix + prop, sty.cache[prefixn + propn])
+                  for prefix, prefixn in prefix_offset.iteritems()
+                  for prop, propn in property_number.iteritems() ]
+
         props.sort()
 
         for prop, val in props:
