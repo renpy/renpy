@@ -18,7 +18,7 @@
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
-init -496:
+init -1140:
 
     python:
 
@@ -184,7 +184,7 @@ init -496:
         config.nvl_adv_transition = None
         config.adv_nvl_transition = None
 
-init 496 python:
+init 1140 python:
 
     if config.nvl_adv_transition or config.adv_nvl_transition:
 

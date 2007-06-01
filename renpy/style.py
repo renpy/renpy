@@ -230,6 +230,19 @@ class StyleManager(object):
         except:
             raise Exception('The style %s does not exist.' % name)
 
+    def __setattr__(self, name, value):
+
+        if styles_built:
+            raise Exception("Cannot assign to style outside of the init phase.")
+        
+        if isinstance(value, Style):
+            if value.name is None:
+                value.name = (name, )
+
+            style_map[name] = value
+        else:
+            object.__setattr__(self, name, value)
+        
     def create(self, name, parent, description=None):
         """
         Creates a new style.
@@ -243,9 +256,8 @@ class StyleManager(object):
         documentation purposes.
         """
 
-        s = Style(parent, { }, heavy=True)        
-        style_map[name] = s
-        s.name = name
+        s = Style(parent, { }, heavy=True, help=description)
+        setattr(self, name, s)
         
     def exists(self, name):
         """
@@ -254,16 +266,26 @@ class StyleManager(object):
         
         return name in style_map
 
+    def get(self, name):
+
+        if not isinstance(name, tuple):
+            name = (name, )
+
+        s = style_map
+            
+        for i in name:
+            s = s[i]
+
+        return s
+    
 def expand_properties(properties):
 
     rv = [ ]
-    cache = { }
     
     for prop, val in properties.iteritems():
 
-        if cache:
-            cache.clear()
-
+        oldfunc = None
+        
         try:
             e = expansions[prop]
         except KeyError:
@@ -272,17 +294,12 @@ def expand_properties(properties):
         for prio, propn, func in e:
 
             if func:
-                idval = id(val)
-                
-                if idval in cache:
-                    newval = cache[idval]
-                else:
+                if oldfunc is not func:
+                    oldfunc = func
                     newval = func(val)
-                    cache[idval] = newval
-
             else:
                 newval = val
-                    
+                                
             rv.append((prio, propn, newval))
 
     # Places things in priority order... so more important properties
@@ -292,39 +309,39 @@ def expand_properties(properties):
 
 
 
-# This builds the style. If recurse is True, this also builds the
-# parent style.
+# This builds the style. 
 def build_style(style):
-
+    
     if not style.heavy:
         return
-    
-    # This is a list of light styles, which don't have a cache. This
-    # also includes the current style as the last entry, since we haven't
-    # built the cache for it yet.
+
+    # A list of styles with properties we encounter, including this
+    # style.
     light_styles = [ ]
 
+    
     s = style
     
     while s:
-        
-        light_styles.insert(0, s)       
 
-        parent = s.parent
-        
+        if s.properties:
+            light_styles.insert(0, s)
+
+        parent_name = s.parent
+
         # No parent... we're done.
-        if parent is None:
+        if parent_name is None:
+            parent = None
             break
 
-        # Otherwise, parent is a string. Turn it into a Style object.    
-        try:
-            parent = style_map[parent]
-        except:
-            try:
-                parent = getattr(renpy.game.style, parent)
+        # Otherwise, parent is a tuple, use it to find the style.
+        parent = style_map
 
-            except:
-                raise Exception('Style %s is not known.' % style.parent)
+        try:
+            for i in parent_name:
+                parent = parent[i]
+        except:
+            raise Exception("Style %r is not known." % i)
 
         # If the parent is heavy, get out of here.
         if parent.heavy:
@@ -335,25 +352,25 @@ def build_style(style):
 
     if parent:
 
-        # This will only build a heavy style.
         if not parent.cache:
             build_style(parent)
 
-        cache = parent.cache[:]
-
+        if light_styles:
+            cache = parent.cache[:]
+        else:
+            cache = parent.cache
+            
     else:
         cache = [ None ] * property_numbers
 
-    # For speed, make this local.
-    e = expansions
-
+        
     for s in light_styles:
         for p in s.properties:
             for prio, propn, val in expand_properties(p):
                 cache[propn] = val
-
+                
     style.cache = cache
-
+    
                 
 # This builds all pending styles, recursing to ensure that they are built
 # in the right order.
@@ -377,8 +394,8 @@ def rebuild():
     styles_built = False
     
     for i in styles_pending:
-        i.__dict__["cache"] = { }
-
+        i.cache = None
+        
     build_styles()
 
 def backup():
@@ -397,7 +414,7 @@ def restore(o):
     styles_built = False
 
     for k, v in o.iteritems():
-        style_map[k].properties = v
+        style_map[k].properties = v[:]
         styles_pending.append(style_map[k])
 
 def style_metaclass(name, bases, attrs):
@@ -438,11 +455,10 @@ class Style(object):
         'prefix',
         'heavy',
         'name',
-        'help',
         'parent',
+        'indexed',
         ]
 
-    
     def __getstate__(self):
 
         rv = dict(vars(self))
@@ -468,15 +484,24 @@ class Style(object):
         self.offset = prefix_offset['insensitive_']
 
         self.heavy = heavy
-        self.name = name
-        
-        if parent and not isinstance(parent, basestring):
-            parent = parent.name
-            if parent is None:
-                raise Exception("The parent of a style must be a named style.")
+
+        if name is None or isinstance(name, tuple):
+            self.name = name
+        else:
+            self.name = ( name, )
+                
+        if parent:
+            if isinstance(parent, basestring):
+                parent = ( parent, )
+            else:
+                parent = parent.name
+
+                if parent is None:
+                    raise Exception("The parent of a style must be a named style.")
             
         self.parent = parent
-
+        self.indexed = None
+        
         self.cache = None
         self.properties = [ ]
 
@@ -486,22 +511,20 @@ class Style(object):
             # for prio, prop, val in expand_properties(properties):
             #    self.properties[prop] = val
 
-        if styles_built:
-            build_style(self)
-        else:
-            styles_pending.append(self)
+        if heavy:
+            
+            if styles_built:
+                build_style(self)
+            else:
+                styles_pending.append(self)
 
     def set_prefix(self, prefix):
         self.prefix = prefix
         self.offset = prefix_offset[prefix]
             
     def setattr(self, name, value):
-
         self.properties.append({ name : value })
  
-        if styles_built:
-            build_style(self)
-
     def delattr(self, name):
 
         for p in self.properties:
@@ -535,6 +558,21 @@ class Style(object):
         if properties:
             self.properties.append(properties)
 
+    def __getitem__(self, index):
+
+        if self.indexed is None:            
+            self.indexed = { }
+
+        if index in self.indexed:
+            return self.indexed[index]
+
+        s = Style(self, name=self.name + (index,))
+
+        if not styles_built:
+            self.indexed[index] = s
+        
+        return s
+            
 
 def write_text(filename):
 
@@ -545,6 +583,9 @@ def write_text(filename):
 
     for name, sty in styles:
 
+        if not isinstance(sty, Style):
+            continue
+        
         print >>f, name, "inherits from", sty.parent
 
         props = [ (prefix + prop, sty.cache[prefixn + propn])

@@ -1,4 +1,4 @@
-init -501:
+init -1210:
     python:
 
         # This is called when script_version is set, to immediately
@@ -11,7 +11,7 @@ init -501:
             if version <= (5, 6, 0):
                 config.check_properties = False
 
-init 1000:
+init 1210:
     python hide:
 
         # This returns true if the script_version is <= the
@@ -52,7 +52,7 @@ init 1000:
             
             
 # Style compatibility.
-init -999:
+init -1080:
     python:
 
         _selected_compat = [ ]
@@ -86,7 +86,7 @@ init -999:
         style.prefs_selected_button_text = _SelectedCompat('prefs_button_text')
     
 
-init 1000:
+init 1080:
 
     python hide:
         

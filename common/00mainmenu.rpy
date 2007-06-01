@@ -6,30 +6,36 @@
 # This file contains code fo the main menu, and anything else that
 # happens upon initial execution of a Ren'Py program.
 
-init -498:
+init -1170 python hide:
 
-    python hide:
+    config.old_names['Quit'] = 'Quit Game'
 
-        config.old_names['Quit'] = 'Quit Game'
-        
-        # The contents of the main menu.
-        config.main_menu = [
-            ( u"Start Game", "start", 'True'),
-            ( u"Continue Game", _intra_jumps("_load_screen", "main_game_transition"), 'True' ),
-            ( u"Preferences", _intra_jumps("_prefs_screen", "main_game_transition"), 'True' ),
-            ( u"Quit",  ui.jumps("_quit"), 'True' ),
-            ]
+    # The contents of the main menu.
+    config.main_menu = [
+        ( u"Start Game", "start", 'True'),
+        ( u"Continue Game", _intra_jumps("_load_screen", "main_game_transition"), 'True' ),
+        ( u"Preferences", _intra_jumps("_prefs_screen", "main_game_transition"), 'True' ),
+        ( u"Quit",  ui.jumps("_quit"), 'True' ),
+        ]
 
-        # If not None, this is used to fix the positions of the
-        # things in the main menu.
-        config.main_menu_positions = None
+    # If not None, this is used to fix the positions of the
+    # things in the main menu.
+    config.main_menu_positions = None
 
-        # Music to play at the main menu.
-        config.main_menu_music = None
+    # Music to play at the main menu.
+    config.main_menu_music = None
 
-        # Callbacks to run at start.
-        config.start_callbacks = [ ]
-        
+    # Callbacks to run at start.
+    config.start_callbacks = [ ]
+
+    # Styles used in this file.
+    style.mm_root = Style(style.default, heavy=True, help='The root window of the main menu screen.')
+    style.mm_menu_frame = Style(style.default, heavy=True, help='The frame containing the main menu.')
+    style.mm_menu_frame_vbox = Style(style.thin_vbox, heavy=True, help='The vbox containing the main menu.')
+    style.mm_button = Style(style.menu_button, heavy=True, help='A main menu button.')
+    style.mm_button_text = Style(style.menu_button_text, heavy=True, help='A main menu button label.')
+
+    
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -103,38 +109,17 @@ label _library_main_menu:
 
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
 
-        ### mm_root default
-        # (window) The style used for the root window of the main
-        # menu. This is primarily used to set a background for the
-        # main menu.
-
         ui.window(style='mm_root')
         ui.null()
-
-        ### mm_menu_frame default
-        # (window) A window that contains the choices in
-        # the main menu. Change this to change the placement of
-        # these choices on the main menu screen.
-
-        ### mm_menu_frame_vbox thin_vbox
-        # (box) The vbox containing the main menu choices.
 
         if not config.main_menu_positions:
             ui.window(style='mm_menu_frame')
             ui.vbox(style='mm_menu_frame_vbox')
 
-        for text, clicked, enabled in config.main_menu:
+        for i, (text, clicked, enabled) in enumerate(config.main_menu):
 
             if isinstance(clicked, basestring):
                 clicked = ui.jumpsoutofcontext(clicked)
-
-            ### mm_button menu_button
-            # (window, hover) The style that is used on buttons that are
-            # part of the main menu.
-
-            ### mm_button_text menu_button_text
-            # (text, hover) The style that is used for the labels of
-            # buttons that are part of the main menu.
 
             if config.main_menu_positions:
                 kwargs = config.main_menu_positions.get(text, { })
@@ -147,13 +132,13 @@ label _library_main_menu:
             else:
                 disabled = False
 
-            _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs)
+            _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs, index=i)
 
         if not config.main_menu_positions:
             ui.close()
 
-        store._result = ui.interact(suppress_overlay = True,
-                                    suppress_underlay = True,
+        store._result = ui.interact(suppress_overlay=True,
+                                    suppress_underlay=True,
                                     mouse="mainmenu")
 
     # Computed jump to the appropriate label.

@@ -1,13 +1,13 @@
 # This file contains code that sets up the various mixers, based on how
 # the user sets config.has_music, .has_sound, and .has_voice.
 
-init -440:
+init -1130:
 
     # Set to true in the very unlikely event you want to manually init
     # the sound system.
     $ config.force_sound = False
     
-init 500:
+init 1130:
 
     python hide:
 

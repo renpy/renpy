@@ -3,7 +3,7 @@
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
 
-init -402:
+init -1100:
     python:
 
         def RoundRect(color, small=False):

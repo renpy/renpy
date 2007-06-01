@@ -7,9 +7,9 @@
 # touched by the user too much. We reserve the _ prefix for names
 # defined in the library.
 
-init -500:
+init -1180:
     python:
-
+        
         # These are settings that the user can tweak to control the
         # look of the main menu and the load/save/escape screens.
 
@@ -47,13 +47,13 @@ init -500:
 
         # Defaults for preferences.
         config.default_fullscreen = None
-        config.default_text_cps = None
-
+        config.default_text_cps = None        
         
         # This is updated to give the user an idea of where a save is
         # taking place.
         save_name = ''
 
+        style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
 
         # This is used to jump to a label with a transition.
         def _intra_jumps_core(label, transition):
@@ -69,6 +69,7 @@ init -500:
                             selected=None,
                             disabled=False,
                             clicked=None,
+                            index=None,
                             properties={},
                             **props):
             """
@@ -111,17 +112,20 @@ init -500:
 
                 return
 
-            style = type
-
             if selected and not disabled:
                 role = "selected_"
             else:
                 role = ""
 
-            style = style + "_button"
-            text_style = style + "_text"
-
-            ui.button(style=style, clicked=clicked, role=role, **props)
+            button_style = type + "_button"
+            text_style = type + "_button_text"
+            
+            if index is not None:
+                button_style = getattr(style, button_style)[index]
+                text_style = getattr(style, text_style)[index]
+                
+            
+            ui.button(style=button_style, clicked=clicked, role=role, **props)
             ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
             
         def _label_factory(label, type, properties={}, **props):
@@ -347,7 +351,7 @@ label _load_reload_game:
 
     return
 
-init -401:
+init -1001:
     # Random nice things to have.
     $ centered = Character(None, what_style="centered_text", window_style="centered_window")
     image text = renpy.ParameterizedText(style="centered_text")
@@ -357,7 +361,7 @@ init -401:
 
 
 # Implement config.default_fullscreen and config.default_text_cps.
-init 401 python:
+init 1180 python:
 
     if not persistent._set_preferences:
         persistent._set_preferences = True
@@ -369,7 +373,7 @@ init 401 python:
             _preferences.text_cps = config.default_text_cps
 
 # Implement the inspector:
-init 500 python:
+init 1180 python:
 
     if config.developer:
 
@@ -378,9 +382,22 @@ init 500 python:
             ui.add("#000")
             ui.vbox()
             
-            
             for depth, d in l:
-                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + " : " + d.style.parent)
+
+                s = d.style
+
+                while s:
+                    if s.name:
+                        break
+                    
+                    if s.parent:
+                        s = style.get(s.parent)
+                    else:
+                        break
+                        
+                name = s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ]) 
+
+                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + ":" + name)
 
             ui.close()
             ui.saybehavior()
@@ -393,7 +410,7 @@ init 500 python:
 
     
 # Implement the extend character-like object.
-init -500 python:
+init -1180 python:
 
     config.extend_interjection = "{fast}"
     

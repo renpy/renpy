@@ -3,7 +3,7 @@
 # directory so that it's easy for an updated version of all of these
 # definitions.
 
-init -425:
+init -1110:
 
     # Positions ##############################################################
 

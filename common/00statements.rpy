@@ -245,7 +245,7 @@ python early hide:
 
     
                               
-init python:
+init -1200 python:
 
     def _try_eval(e, what):
         try:

@@ -146,6 +146,8 @@ Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
 MultiPersistent = renpy.loadsave.MultiPersistent
 
+Style = renpy.style.Style
+
 
 def layout(cls, doc, nargs=0, **extra_kwargs):
 
