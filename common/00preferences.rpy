@@ -156,20 +156,9 @@ init -1150 python:
             if not values:
                 return
 
-            ### prefs_pref_frame default
-            # (window) A window containing an individual
-            # preference.
 
-            ### prefs_pref_vbox thin_vbox
-            # (box) The style of the vbox containing a preference.
-
-            ### prefs_label default
-            # (text) The style that is applied to the label of
-            # a block of preferences.
-
-
-            ui.window(style='prefs_pref_frame')
-            ui.vbox(style='prefs_pref_vbox')
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
 
             _label_factory(self.name, "prefs")
 
@@ -180,7 +169,7 @@ init -1150 python:
             # of the hbox containing the choices.
 
             if config.hbox_pref_choices:
-                ui.hbox(style='prefs_hbox')
+                ui.hbox(style=style.prefs_hbox[self.name])
 
             for name, value in values:
 
@@ -248,8 +237,8 @@ init -1150 python:
 
             sound = eval(self.sound)
 
-            ui.window(style='prefs_pref_frame')
-            ui.vbox(style='prefs_pref_vbox')
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
 
             _label_factory(self.name, "prefs")
 
@@ -264,27 +253,16 @@ init -1150 python:
 
                 _preferences.volumes[self.mixer] = v
 
-            ### prefs_volume_slider prefs_slider
-            # (bar) The style that is applied to volume
-            # sliders.
-
             ui.bar(128,
                    int(_preferences.volumes[self.mixer] * 128),
                    changed=changed,
-                   style='prefs_volume_slider')
+                   style=style.prefs_volume_slider[self.name])
 
             if sound:
                 def clicked():
                     renpy.sound.play(sound, channel=self.channel)
 
-                ### soundtest_button prefs_button
-                # (window, hover) The style of a sound test button.
-
-                ### soundtest_button_text prefs_button_text
-                # (text, hover) The style of the text of a sound
-                # test  button.
-
-                _button_factory(u"Test", "soundtest", clicked=clicked)
+                _button_factory(u"Test", "soundtest", clicked=clicked, index=self.name)
 
             ui.close()
 
@@ -328,8 +306,8 @@ init -1150 python:
             if not eval(self.enable):
                 return
 
-            ui.window(style='prefs_pref_frame')
-            ui.vbox(style='prefs_pref_vbox')
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
 
             _label_factory(self.name, "prefs")
 
@@ -343,7 +321,7 @@ init -1150 python:
             ui.bar(self.range,
                    self.get(),
                    changed=changed,
-                   style='prefs_slider')
+                   style=style.prefs_slider[self.name])
 
             ui.close()
 
@@ -399,31 +377,15 @@ init -1150 python:
 
         def render_preference(self):
 
-            ### prefs_spinner default
-            # The position of the prefs spinner.
-
-            ### prefs_spinner_label prefs_label
-            # (text) This is the style that displays the value of a
-            # preference spinner.
-
-            ### prefs_spinner_button prefs_button
-            # (window, hover) The style of the + or - buttons in a
-            # preference spinner.
-
-            ### prefs_spinner_button_text prefs_button_text
-            # (text, hover) The style of the text of the + and - buttons
-            # in a preference spinner.
-
             if not renpy.eval(self.cond):
                 return
 
-            ui.window(style='prefs_pref_frame')
-            ui.vbox(style='prefs_pref_vbox')
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
 
             _label_factory(self.name, "prefs")
 
             cur = getattr(self.base, self.field)
-
 
             def minus_clicked():
                 value = cur - self.delta
@@ -437,7 +399,7 @@ init -1150 python:
                 setattr(self.base, self.field, value)
                 return True
 
-            ui.hbox(style='prefs_spinner')
+            ui.hbox(style=style.prefs_spinner[self.name])
             _button_factory("-", "prefs_spinner", clicked=minus_clicked)
             _label_factory(self.render(cur), "prefs_spinner")
             _button_factory("+", "prefs_spinner", clicked=plus_clicked)
@@ -453,31 +415,6 @@ init -1150 python:
             config.all_preferences[name] = self
 
         def render_preference(self):
-
-            ### prefs_js_frame prefs_pref_frame
-            # (window) The window containing a joystick mapping preference.
-
-            ### prefs_js_vbox prefs_pref_vbox
-            # (box) A vbox containing a joystick mapping preference.
-
-            ### prefs_js_button prefs_button
-            # (window, hover) The style of buttons giving a joystick mapping.
-
-            ### prefs_js_button_text prefs_button_text
-            # (text, hover) The style of the text in buttons giving a joystick mapping.
-
-            ### js_frame prefs_frame
-            # (window) The window containing the joystick message.
-
-            ### js_frame_vbox thick_vbox
-            # (window) The vbox containing the joistick mapping message.
-
-            ### js_function_label prefs_label
-            # (text, position) The style of the joystick mapping function name.
-
-            ### js_prompt_label prefs_label
-            # (text, position) The style of the joystick mapping prompt message.
-
 
             def set_binding(key, label):
                 _game_nav(None)
@@ -510,7 +447,7 @@ init -1150 python:
                     renpy.invoke_in_new_context(set_binding, key, label)
                     return True
 
-                _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked)
+                _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked, index=label)
 
             ui.close()
 
@@ -525,16 +462,7 @@ init -1150 python:
 
         def render_preference(self):
 
-            ### prefs_jump prefs_pref_frame
-            # (window) The style of a window containing a jump preference.
-
-            ### prefs_jump_button prefs_button
-            # (window, hover) The style of a jump preference button.
-
-            ### prefs_jump_button_text prefs_button_text
-            # (text, hover) The style of jump preference button text.
-
-            ui.window(style='prefs_jump')
+            ui.window(style=style.prefs_jump[self.name])
 
             if eval(self.condition):
                 clicked=ui.jumps(self.target)
@@ -646,23 +574,6 @@ init -1150 python hide:
     _JumpPreference(u'Joystick...', '_joystick_screen', 'renpy.display.joystick.enabled or config.always_has_joystick')
 
     _JoystickPreference(u'Joystick Configuration')
-
-    # Advanced 
-
-    ### prefs_column default
-    # The style of a vbox containing a column of preferences.
-
-    ### prefs_left prefs_column
-    # The position of the left column of preferences.
-
-    ### prefs_center prefs_column
-    # The position of the center column of preferences.
-
-    ### prefs_right prefs_column
-    # The position of the right column of preferences.
-
-    ### prefs_joystick prefs_center
-    # The position of the column of joystick preferences.
 
     config.preferences['prefs_left'] = [
         config.all_preferences[u'Display'],

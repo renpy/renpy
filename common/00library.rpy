@@ -69,8 +69,8 @@ init -1180:
                             selected=None,
                             disabled=False,
                             clicked=None,
-                            index=None,
                             properties={},
+                            index=None,
                             **props):
             """
             This function is called to create the various buttons used
@@ -119,11 +119,12 @@ init -1180:
 
             button_style = type + "_button"
             text_style = type + "_button_text"
+
+            if index is None:
+                index = label
             
-            if index is not None:
-                button_style = getattr(style, button_style)[index]
-                text_style = getattr(style, text_style)[index]
-                
+            button_style = getattr(style, button_style)[index]
+            text_style = getattr(style, text_style)[index]
             
             ui.button(style=button_style, clicked=clicked, role=role, **props)
             ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
@@ -147,7 +148,9 @@ init -1180:
                 ui.image(config.image_labels[label], **props)
                 return
 
-            ui.text(_(label), style=type + "_label", **props)
+            style = getattr(store.style, type + "_label")[label]
+            
+            ui.text(_(label), style=style, **props)
 
         # The function that's used to translate strings in the game menu.
         def _(s):

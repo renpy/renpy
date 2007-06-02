@@ -132,7 +132,7 @@ label _library_main_menu:
             else:
                 disabled = False
 
-            _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs, index=i)
+            _button_factory(text, "mm", clicked=clicked, disabled=disabled, properties=kwargs)
 
         if not config.main_menu_positions:
             ui.close()

@@ -195,8 +195,7 @@ init -1160 python:
                             selected=(key==screen),
                             disabled=disabled,
                             clicked=clicked,
-                            properties=kwargs,
-                            index=i)
+                            properties=kwargs)
 
         if not config.game_menu_positions:
             ui.close()
@@ -411,24 +410,23 @@ init -1160 python:
                 if not config.file_picker_positions:
                     ui.hbox(style='file_picker_navbox') # nav buttons.
 
-                def tb(cond, label, clicked, selected, index):
+                def tb(cond, label, clicked, selected):
                     _button_factory(label,
                                     "file_picker_nav",
                                     disabled=not cond,
                                     clicked=clicked,
                                     selected=selected,
-                                    index=index,
                                     properties=positions.get("nav_" + label, { }))
 
                 # Previous
-                tb(fpp > 0, _(u'Previous'), ui.returns(("fppdelta", -1)), selected=False, index=0)
+                tb(fpp > 0, _(u'Previous'), ui.returns(("fppdelta", -1)), selected=False)
     
                 # Quick Access
                 for i, name in enumerate(_file_picker_pages()):
-                    tb(True, name, ui.returns(("fppset", i)), fpp == i, index=i + 1)
+                    tb(True, name, ui.returns(("fppset", i)), fpp == i)
 
                 # Next
-                tb(True, _(u'Next'), ui.returns(("fppdelta", +1)), False, index=i + 2)
+                tb(True, _(u'Next'), ui.returns(("fppdelta", +1)), False)
 
                 # Done with nav buttons.
                 if not config.file_picker_positions:
@@ -499,8 +497,8 @@ init -1160 python:
         
         # The extra nulls are because we want equal whitespace surrounding
         # the two buttons. It should work as long as we have xfill=True
-        _button_factory(u"Yes", 'yesno', clicked=ui.returns(True), index=0)
-        _button_factory(u"No", 'yesno', clicked=ui.returns(False), index=1)
+        _button_factory(u"Yes", 'yesno', clicked=ui.returns(True))
+        _button_factory(u"No", 'yesno', clicked=ui.returns(False))
 
         ui.close()
         ui.close()
