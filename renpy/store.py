@@ -176,11 +176,11 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
 
     return f
 
-Fixed = layout(renpy.display.layout.Fixed, """
+Fixed = layout(renpy.display.layout.MultiBox, """
 A layout that expands to take the size allotted to it.  Each
 displayable is allocated the entire size of the layout, with the first
 displayable further from the user than the second, and so on. Within
-""")
+""", layout="fixed")
 
 HBox = layout(renpy.display.layout.MultiBox, """
 A layout that lays out displayables from left to right.

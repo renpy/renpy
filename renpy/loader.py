@@ -33,11 +33,22 @@ import codecs
 
 archives = [ ]
 
+# The value of renpy.config.archives the last time index_archives was
+# run.
+old_config_archives = None
+
 def index_archives():
     """
     Loads in the indexes for the archive files.
     """
 
+    global old_config_archives
+
+    if old_config_archives == renpy.config.archives:
+        return
+
+    old_config_archives = renpy.config.archives[:]
+    
     global archives
     archives = [ ]
 
@@ -110,7 +121,7 @@ class SubFile(object):
             length = maxlength
 
         rv = self.f.read(length)
-
+        
         self.offset += len(rv)
 
         return rv
@@ -176,7 +187,7 @@ class SubFile(object):
 
         self.f.seek(self.offset + self.base)
 
-    def tell(self):        
+    def tell(self):
         return self.offset
 
     def close(self):
@@ -190,6 +201,9 @@ def load(name):
     """
     Returns an open python file object of the given type.
     """
+    
+    if renpy.config.reject_backslash and "\\" in name:
+        raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
     # Look for the file directly.
     if not renpy.config.force_archives:
@@ -250,6 +264,9 @@ def transfn(name):
     Tries to translate the name to a file that exists in one of the
     searched directories.
     """
+
+    if renpy.config.reject_backslash and "\\" in name:
+        raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)

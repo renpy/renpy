@@ -157,102 +157,102 @@ class Container(renpy.display.core.Displayable):
     def visit(self):
         return self.children
     
-class Fixed(Container):
-    """
-    A container that lays out each of its children at fixed
-    coordinates determined by the position style of the child. Each
-    widget is given the whole area of this widget, and then placed
-    within that area based on its position style.
+# class Fixed(Container):
+#     """
+#     A container that lays out each of its children at fixed
+#     coordinates determined by the position style of the child. Each
+#     widget is given the whole area of this widget, and then placed
+#     within that area based on its position style.
 
-    The result of this layout is the size of the entire area allocated
-    to it. So it's probably only viable for laying out a root window.
+#     The result of this layout is the size of the entire area allocated
+#     to it. So it's probably only viable for laying out a root window.
 
-    Fixed is used by the display core to render scene lists, and to
-    pass them off to transitions.
+#     Fixed is used by the display core to render scene lists, and to
+#     pass them off to transitions.
 
-    """
+#     """
 
-    layer_name = None
+#     layer_name = None
     
-    def __init__(self, style='default', **properties):
-        super(Fixed, self).__init__(style=style, **properties)
-        self.start_times = [ ]
-        self.anim_times = [ ]
+#     def __init__(self, style='default', **properties):
+#         super(Fixed, self).__init__(style=style, **properties)
+#         self.start_times = [ ]
+#         self.anim_times = [ ]
 
-        # A map from layer name to the widget corresponding to
-        # that layer.
-        self.layers = None
+#         # A map from layer name to the widget corresponding to
+#         # that layer.
+#         self.layers = None
 
-        # The scene list for this widget.
-        self.scene_list = None
+#         # The scene list for this widget.
+#         self.scene_list = None
         
 
-    def add(self, widget, start_time=None, anim_time=None):
-        super(Fixed, self).add(widget)
-        self.start_times.append(start_time)
-        self.anim_times.append(anim_time)
+#     def add(self, widget, start_time=None, anim_time=None):
+#         super(Fixed, self).add(widget)
+#         self.start_times.append(start_time)
+#         self.anim_times.append(anim_time)
 
-    def append_scene_list(self, l):
-        for tag, zo, start, anim, d in l:
-            self.add(d, start, anim)
+#     def append_scene_list(self, l):
+#         for tag, zo, start, anim, d in l:
+#             self.add(d, start, anim)
 
-        if self.scene_list is None:
-            self.scene_list = [ ]
+#         if self.scene_list is None:
+#             self.scene_list = [ ]
             
-        self.scene_list.extend(l)
+#         self.scene_list.extend(l)
 
-#     def get_widget_time_list(self):
-#         return zip(self.children, self.times)
+# #     def get_widget_time_list(self):
+# #         return zip(self.children, self.times)
             
-    def render(self, width, height, st, at):
+#     def render(self, width, height, st, at):
 
-        self.offsets = [ ]
-        self.sizes = [ ]
+#         self.offsets = [ ]
+#         self.sizes = [ ]
 
-        rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+#         rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
-        t = renpy.game.interface.frame_time
-        it = renpy.game.interface.interact_time
+#         t = renpy.game.interface.frame_time
+#         it = renpy.game.interface.interact_time
 
-        # Things with a None time are started at the first draw.
+#         # Things with a None time are started at the first draw.
 
-        self.start_times = [ i or it for i in self.start_times ]
-        self.anim_times = [ i or it for i in self.anim_times ]
+#         self.start_times = [ i or it for i in self.start_times ]
+#         self.anim_times = [ i or it for i in self.anim_times ]
 
         
-        for child, start, anim in zip(self.children, self.start_times, self.anim_times):
+#         for child, start, anim in zip(self.children, self.start_times, self.anim_times):
 
-            cst = t - start
-            cat = t - anim
+#             cst = t - start
+#             cat = t - anim
 
-            surf = render(child, width, height, cst, cat)
+#             surf = render(child, width, height, cst, cat)
 
-            if surf:
-                self.sizes.append(surf.get_size())
-                offset = child.place(rv, 0, 0, width, height, surf)
-                self.offsets.append(offset)
-            else:
-                self.sizes.append((0, 0))
-                self.offsets.append((0, 0))
+#             if surf:
+#                 self.sizes.append(surf.get_size())
+#                 offset = child.place(rv, 0, 0, width, height, surf)
+#                 self.offsets.append(offset)
+#             else:
+#                 self.sizes.append((0, 0))
+#                 self.offsets.append((0, 0))
 
-        return rv
+#         return rv
 
-    def event(self, ev, x, y, st):
-        children_offsets = zip(self.children, self.offsets, self.start_times)
-        children_offsets.reverse()
+#     def event(self, ev, x, y, st):
+#         children_offsets = zip(self.children, self.offsets, self.start_times)
+#         children_offsets.reverse()
 
-        for i, (xo, yo), t in children_offsets: 
+#         for i, (xo, yo), t in children_offsets: 
 
-            if t is None:
-                cst = 0
-            else:
-                cst = renpy.game.interface.event_time - t
+#             if t is None:
+#                 cst = 0
+#             else:
+#                 cst = renpy.game.interface.event_time - t
 
-            rv = i.event(ev, x - xo, y - yo, cst)    
-            if rv is not None:
-                return rv
+#             rv = i.event(ev, x - xo, y - yo, cst)    
+#             if rv is not None:
+#                 return rv
                 
-        return None
+#         return None
 
 
 def LiveComposite(size, *args, **properties):
@@ -424,6 +424,8 @@ class Grid(Container):
 
 class MultiBox(Container):
 
+    layer_name = None
+    
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:
@@ -432,23 +434,54 @@ class MultiBox(Container):
         super(MultiBox, self).__init__(style=style, **properties)
 
         self.default_layout = layout
-    
+        
+        self.start_times = [ ]
+        self.anim_times = [ ]
+
+        # A map from layer name to the widget corresponding to
+        # that layer.
+        self.layers = None
+
+        # The scene list for this widget.
+        self.scene_list = None
+        
+        
+    def add(self, widget, start_time=None, anim_time=None):
+        super(MultiBox, self).add(widget)
+        self.start_times.append(start_time)
+        self.anim_times.append(anim_time)
+
+    def append_scene_list(self, l):
+        for tag, zo, start, anim, d in l:
+            self.add(d, start, anim)
+
+        if self.scene_list is None:
+            self.scene_list = [ ]
+            
+        self.scene_list.extend(l)
+        
     def render(self, width, height, st, at):
 
-        layout = self.style.box_layout
-        spacing = self.style.box_spacing
-        first_spacing = self.style.box_first_spacing
-        if first_spacing is None:
-            first_spacing = spacing
+        t = renpy.game.interface.frame_time
+        it = renpy.game.interface.interact_time
 
-        spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
+        self.start_times = [ i or it for i in self.start_times ]
+        self.anim_times = [ i or it for i in self.anim_times ]
+
+        layout = self.style.box_layout
 
         if layout is None:
             layout = self.default_layout
         
         if layout == "horizontal":
 
-            # This is the horizontal path.
+            spacing = self.style.box_spacing
+            first_spacing = self.style.box_first_spacing
+
+            if first_spacing is None:
+                first_spacing = spacing
+
+            spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
             self.offsets = [ ]
             self.sizes = [ ]
@@ -463,10 +496,10 @@ class MultiBox(Container):
 
             padding = 0
 
-            for i, padding in zip(self.children, spacings):
+            for i, padding, start, anim in zip(self.children, spacings, self.start_times, self.anim_times):
 
                 xoffsets.append(xo)
-                surf = render(i, remwidth, height, st, at)
+                surf = render(i, remwidth, height, t - start, t - anim)
 
                 sw, sh = surf.get_size()
 
@@ -496,7 +529,15 @@ class MultiBox(Container):
 
             return rv
         
-        else:
+        elif layout == "vertical":
+
+            spacing = self.style.box_spacing
+            first_spacing = self.style.box_first_spacing
+
+            if first_spacing is None:
+                first_spacing = spacing
+
+            spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
     
             self.offsets = [ ]
             self.sizes = [ ]
@@ -511,11 +552,11 @@ class MultiBox(Container):
 
             padding = 0
 
-            for i, padding in zip(self.children, spacings):
+            for i, padding, start, anim in zip(self.children, spacings, self.start_times, self.anim_times):
 
                 yoffsets.append(yo)
 
-                surf = render(i, width, remheight, st, at)
+                surf = render(i, width, remheight, t - start, t - anim)
 
                 sw, sh = surf.get_size()
 
@@ -545,9 +586,53 @@ class MultiBox(Container):
                 self.offsets.append(offset)
 
             return rv
-  
-    
 
+        elif layout == "fixed":
+
+            self.offsets = [ ]
+            self.sizes = [ ]
+            
+            rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+
+        
+            for child, start, anim in zip(self.children, self.start_times, self.anim_times):
+
+                cst = t - start
+                cat = t - anim
+
+                surf = render(child, width, height, cst, cat)
+
+                if surf:
+                    self.sizes.append(surf.get_size())
+                    offset = child.place(rv, 0, 0, width, height, surf)
+                    self.offsets.append(offset)
+                else:
+                    self.sizes.append((0, 0))
+                    self.offsets.append((0, 0))
+
+            return rv
+                    
+        
+    def event(self, ev, x, y, st):
+        children_offsets = zip(self.children, self.offsets, self.start_times)
+        children_offsets.reverse()
+
+        for i, (xo, yo), t in children_offsets: 
+
+            if t is None:
+                cst = 0
+            else:
+                cst = renpy.game.interface.event_time - t
+
+            rv = i.event(ev, x - xo, y - yo, cst)    
+            if rv is not None:
+                return rv
+                
+        return None
+
+def Fixed(**properties):
+    return MultiBox(layout='fixed', **properties)
+    
 class Window(Container):
     """
     A window is a container that holds a single Displayable in it. A window

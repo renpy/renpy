@@ -461,8 +461,11 @@ class Style(object):
 
     def __getstate__(self):
 
-        rv = dict(vars(self))
+        rv = dict()
 
+        for i in self.__slots__:
+            rv[i] = getattr(self, i)
+        
         del rv["cache"]
         del rv["offset"]
 

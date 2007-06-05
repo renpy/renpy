@@ -263,7 +263,7 @@ def fixed(**properties):
     widget.
     """
 
-    rv = renpy.display.layout.Fixed(**properties)
+    rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
     add(rv, True)
 
     return rv
@@ -457,8 +457,8 @@ def imagemap(ground, selected, hotspots, unselected=None,
     image(ground)
 
     for x0, y0, x1, y1, result in hotspots:
-        imagebutton(renpy.display.im.Crop(unselected, x0, y0, x1 - x0, y1 - y0),
-                    renpy.display.im.Crop(selected, x0, y0, x1 - x0, y1 - y0),
+        imagebutton(renpy.display.layout.LiveCrop(unselected, x0, y0, x1 - x0, y1 - y0),
+                    renpy.display.layout.LiveCrop(selected, x0, y0, x1 - x0, y1 - y0),
                     clicked=returns(result),
                     style=button_style,
                     xpos=x0, xanchor='left',

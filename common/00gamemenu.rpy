@@ -168,7 +168,7 @@ init -1160 python:
         ui.add(renpy.Keymap(toggle_fullscreen = renpy.toggle_fullscreen))
         ui.add(renpy.Keymap(game_menu=ui.jumps("_noisy_return")))
 
-        ui.window(style='gm_root')
+        ui.window(style=style.gm_root[screen])
         ui.null()
 
         if not screen:

@@ -49,6 +49,9 @@ init 1210:
 
         if compat(5, 6, 6):
             config.reject_midi = False
+
+        if compat(6, 2, 0):
+            config.reject_backslash = False
             
             
 # Style compatibility.

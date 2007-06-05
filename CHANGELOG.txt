@@ -4,6 +4,19 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.3.0
 -------------------
 
+box_layout=fixed.
+
+renpy.image_size
+
+MPEG-1 movies can now be read out of archive files.
+
+Backslash characters in filenames now cause an error to occur.
+
+imagemap is live.
+
+mouse_hide_time
+
+
 There is a new style inspector, which can be activated with 'I' when
 config.developer is true. [elaborate, doc, implement]
 

@@ -383,7 +383,14 @@ init 1180 python:
         def _inspector(l):
 
             ui.add("#000")
-            ui.vbox()
+            ui.vbox(xalign=.05, yalign=.05)
+
+            ui.text("Style Inspector")
+            ui.text("")
+
+
+            if not l:
+                ui.text("Nothing to inspect.")
             
             for depth, d in l:
 
@@ -402,9 +409,12 @@ init 1180 python:
 
                 ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + ":" + name)
 
+            ui.text("")
+            ui.text("(click to continue)")
+                
             ui.close()
             ui.saybehavior()
-            ui.interact()
+            ui.interact(suppress_overlay=True, suppress_underlay=True)
             
             return
 

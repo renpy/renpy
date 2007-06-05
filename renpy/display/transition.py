@@ -750,7 +750,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
         # insert a move from the old position to the new position, if
         # a move occured.
 
-        if (not isinstance(new, renpy.display.layout.Fixed)
+        if (not isinstance(new, renpy.display.layout.MultiBox)
             or (new.layers is None and new.layer_name is None)):
         
             if position(old) != position(new):
@@ -769,14 +769,14 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
             assert old.layers
 
-            rv = renpy.display.layout.Fixed()
+            rv = renpy.display.layout.MultiBox(layout='fixed')
             rv.layers = { }
 
             for layer in renpy.config.layers:
 
                 f = new.layers[layer]
 
-                if isinstance(f, renpy.display.layout.Fixed) \
+                if isinstance(f, renpy.display.layout.MultiBox) \
                         and f.scene_list is not None \
                         and layer not in renpy.config.overlay_layers:
 
@@ -1117,7 +1117,7 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     delay = inner.delay
     inner = renpy.display.layout.Position(inner, xpos=x, ypos=y, xanchor=0, yanchor=0)
     
-    f = renpy.display.layout.Fixed()
+    f = renpy.display.layout.MultiBox(layout='fixed')
     f.add(new_widget)
     f.add(inner)
 

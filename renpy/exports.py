@@ -981,6 +981,22 @@ def seen_label(label):
 def file(fn):
     return renpy.loader.load(fn)
 
+def image_size(im):
+    # Index the archives, if we haven't already.
+    renpy.loader.index_archives()
+
+    im = renpy.easy.displayable(im)
+
+    if not isinstance(im, renpy.display.im.Image):
+        raise Exception("renpy.image_size expects it's argument to be an image.")
+
+    surf = im.load()
+    return im.get_size()
+
+    
+
+
+    
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

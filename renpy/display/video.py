@@ -95,7 +95,7 @@ def movie_start_displayable(filename, size, loops=0):
     renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, False, size)
     
 def movie_length(filename):
-    m = pygame.movie.Movie(renpy.loader.transfn(filename))
+    m = pygame.movie.Movie(renpy.loader.load(filename))
     return m.get_length()
     
 def interact():
@@ -130,15 +130,20 @@ def interact():
             # Needed so we get movie sound.
             renpy.audio.audio.quit()
 
-            m = pygame.movie.Movie(renpy.loader.transfn(info.filename))
+            m = pygame.movie.Movie(renpy.loader.load(info.filename))
 
             if info.fullscreen:
                 s = None
 
+                print "XXX"
+                
                 m.set_display(pygame.display.get_surface(),
                               (renpy.game.interface.display.screen_xoffset, 0,
                                renpy.config.screen_width,
                                renpy.config.screen_height))
+
+                print "YYY"
+                
             else:
                 s = pygame.Surface(info.size, 0, renpy.game.interface.display.window)
                 m.set_display(s, (0, 0) + info.size)

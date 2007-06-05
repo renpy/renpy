@@ -665,7 +665,9 @@ class Display(object):
         self.mouse_backing_pos = None
         self.mouse_info = None
 
-        self.suppress_mouse = False
+        self.mouse_event_time = get_time()
+        
+        self.suppressed_blit = False
         self.full_redraw = True
 
         self.next_frame = 0
@@ -706,6 +708,11 @@ class Display(object):
 
         return True
 
+    def mouse_event(self, ev):
+
+        if ev.type == pygame.MOUSEMOTION or pygame.MOUSEBUTTONDOWN or pygame.MOUSEBUTTONUP:
+            self.mouse_event_time = get_time()
+         
     def show_mouse(self, pos, info):
         """
         Actually shows the mouse.
@@ -755,12 +762,26 @@ class Display(object):
         drawn, and only redraws if the mouse has actually been moved.
         """
 
+        # Figure out if the mouse visibility algorithm is hiding the mouse.
+        if self.mouse_event_time + renpy.config.mouse_hide_time < get_time():
+            visible = False
+        else:
+            visible = True
+
+
+        # Deal with a hardware mouse, the easy way.
         if not self.mouse:
+            pygame.mouse.set_visible(visible)
             return [ ]
 
-        if self.suppress_mouse:
+
+        # The rest of this is for the software mouse.
+        
+        if self.suppressed_blit:
             return [ ]
 
+        show_mouse = show_mouse or visible
+        
         # Figure out the mouse animation.
         if self.interface.mouse in renpy.config.mouse:
             anim = renpy.config.mouse[self.interface.mouse]
@@ -791,7 +812,7 @@ class Display(object):
         """
         Draws the mouse, and then updates the screen.
         """
-
+        
         updates = self.draw_mouse()
 
         if updates:
@@ -838,7 +859,7 @@ class Display(object):
         else:
             self.full_redraw = True
             
-        self.suppress_mouse = suppress_blit
+        self.suppressed_blit = suppress_blit
 
         renpy.display.focus.take_focuses(surftree.focuses)
 
@@ -1004,7 +1025,7 @@ class Interface(object):
             return False
         else:
             self.set_transition(trans)
-            return self.interact(show_mouse=False, trans_pause=True,
+            return self.interact(trans_pause=True,
                                  suppress_overlay=not renpy.config.overlay_during_with,
                                  mouse='with')
 
@@ -1100,7 +1121,7 @@ class Interface(object):
         Creates a Fixed with the given layer name and scene_list.
         """
 
-        rv = renpy.display.layout.Fixed(focus=name, **self.layer_properties[name])
+        rv = renpy.display.layout.MultiBox(layout='fixed', focus=name, **self.layer_properties[name])
         rv.append_scene_list(scene_list)
         rv.layer_name = name
         return rv
@@ -1234,7 +1255,7 @@ class Interface(object):
         renpy.ui.close()
 
         # The root widget of everything that is displayed on the screen.
-        root_widget = renpy.display.layout.Fixed() 
+        root_widget = renpy.display.layout.MultiBox(layout='fixed') 
         root_widget.layers = { }
 
         # A list of widgets that are roots of trees of widgets that are
@@ -1262,7 +1283,7 @@ class Interface(object):
                 w.predict(renpy.display.im.cache.get)
 
         # The root widget of all of the layers.
-        layers_root = renpy.display.layout.Fixed()
+        layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
 
         def add_layer(where, layer):
@@ -1293,7 +1314,7 @@ class Interface(object):
             not self.suppress_transition):
 
             # Compute what the old root should be.
-            old_root = renpy.display.layout.Fixed()
+            old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
 
             for layer in renpy.config.layers:
@@ -1527,7 +1548,12 @@ class Interface(object):
 
                         renpy.audio.audio.periodic()
                         continue
-                            
+
+                    
+                    # This checks the event to see if it's a mouse event,
+                    # and updates the mouse event timer as appropriate.
+                    self.display.mouse_event(ev)
+                    
                     # This can set the event to None, to ignore it.
                     ev = renpy.display.joystick.event(ev)
                     if not ev:

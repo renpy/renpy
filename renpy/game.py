@@ -102,7 +102,7 @@ class Preferences(object):
         self.text_cps = 0
         self.afm_time = 0
 
-
+        
         # These will be going away soon.
         self.sound = True
         self.music = True
@@ -126,6 +126,7 @@ class Preferences(object):
             joy_up="Axis 0.1 Negative",
             joy_down="Axis 0.1 Positive",
             joy_dismiss="Button 0.0")
+
         
     def __setstate__(self, state):
         self.reinit()

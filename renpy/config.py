@@ -325,6 +325,12 @@ use_cpickle = True
 # The function to call as the inspector.
 inspector = None
 
+# Should we reject backslashes in filenames?
+reject_backslash = True
+
+# Hide the mouse.
+mouse_hide_time = 30
+
 del renpy
 del sets
 

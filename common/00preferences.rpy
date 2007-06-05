@@ -511,7 +511,6 @@ init -1150 python hide:
         (u'None', 0, 'config.has_transitions'),
         ])
 
-
     # Center
 
     pc1 = _Preference(u'Skip', 'skip_unseen', [
