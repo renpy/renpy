@@ -383,7 +383,8 @@ init 1180 python:
         def _inspector(l):
 
             ui.add("#000")
-            ui.vbox(xalign=.05, yalign=.05)
+            ui.window(xmargin=20, ymargin=20, style='default')
+            ui.vbox()
 
             ui.text("Style Inspector")
             ui.text("")
@@ -392,7 +393,7 @@ init 1180 python:
             if not l:
                 ui.text("Nothing to inspect.")
             
-            for depth, d in l:
+            for depth, width, height, d in l:
 
                 s = d.style
 
@@ -407,7 +408,7 @@ init 1180 python:
                         
                 name = s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ]) 
 
-                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + ":" + name)
+                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + " : " + name + " (%dx%d)" % (width, height))
 
             ui.text("")
             ui.text("(click to continue)")

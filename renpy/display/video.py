@@ -135,15 +135,11 @@ def interact():
             if info.fullscreen:
                 s = None
 
-                print "XXX"
-                
                 m.set_display(pygame.display.get_surface(),
                               (renpy.game.interface.display.screen_xoffset, 0,
                                renpy.config.screen_width,
                                renpy.config.screen_height))
 
-                print "YYY"
-                
             else:
                 s = pygame.Surface(info.size, 0, renpy.game.interface.display.window)
                 m.set_display(s, (0, 0) + info.size)

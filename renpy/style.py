@@ -80,11 +80,11 @@ style_properties = dict(
     box_first_spacing = None,
     box_layout = None,
     box_spacing = None,
+    child = renpy.easy.displayable,
     clipping = None,
     color = renpy.easy.color,
     drop_shadow = None,
     drop_shadow_color = renpy.easy.color,
-    enable_hover = None, # Doesn't do anything anymore.
     first_indent = None,
     focus_mask = None,
     focus_rect = None,
@@ -143,6 +143,7 @@ substitutes = dict(
     minwidth = [ 'min_width' ],
     textalign = [ 'text_align' ],
     slow_speed = [ 'slow_cps' ],
+    enable_hover = [ ],
     )
 
 # Map from property to number.

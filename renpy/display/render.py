@@ -983,7 +983,7 @@ class Render(object):
         
         if depth is not None:
             for w, width, height in self.render_of:
-                rv.append((depth, w))
+                rv.append((depth, self.width, self.height, w))
 
             depth += 1
             
