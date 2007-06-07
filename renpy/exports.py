@@ -37,7 +37,7 @@ from renpy.curry import curry
 # from renpy.display.audio import music_start, music_stop
 from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
-from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save
+from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 

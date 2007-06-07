@@ -244,17 +244,10 @@ init -1150 python:
 
             def changed(v):
 
-                if v == 0:
-                    _preferences.mute[self.mixer] = True
-                else:
-                    _preferences.mute[self.mixer] = False
-
-                v /= 128.0
-
-                _preferences.volumes[self.mixer] = v
-
+                _preferences.set_volume(self.mixer, v / 128.0)
+                
             ui.bar(128,
-                   int(_preferences.volumes[self.mixer] * 128),
+                   int(_preferences.get_volume(self.mixer) * 128),
                    changed=changed,
                    style=style.prefs_volume_slider[self.name])
 
@@ -407,16 +400,40 @@ init -1150 python:
 
             ui.close()
 
+    def _joystick_select_binding():
 
+        for label, key in config.joystick_keys:
+
+            def my_clicked(label=label, key=key):
+                return (label, key)
+
+            _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=my_clicked, index=label)
+        
+
+    def _joystick_get_binding():
+        ui.add(renpy.display.joystick.JoyBehavior())
+        ui.saybehavior()
+
+    def _joystick_take_binding(binding, key):
+
+        if not isinstance(binding, basestring):
+            if key in _preferences.joymap:
+                del _preferences.joymap[key]
+        else:
+            _preferences.joymap[key] = binding
+
+        
+            
     class _JoystickPreference(object):
 
         def __init__(self, name):
             self.name = name
             config.all_preferences[name] = self
 
+            
         def render_preference(self):
 
-            def set_binding(key, label):
+            def set_binding(label, key):
                 _game_nav(None)
 
                 ui.window(style='js_frame')
@@ -425,31 +442,26 @@ init -1150 python:
                 _label_factory(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'js_prompt')
                 ui.close()
 
-                ui.saybehavior()
-                ui.add(renpy.display.joystick.JoyBehavior())
+                _joystick_get_binding()
                 binding = _game_interact()
-
-                if not isinstance(binding, basestring):
-                    if key in _preferences.joymap:
-                        del _preferences.joymap[key]
-                else:
-                    _preferences.joymap[key] = binding
-
+                _joystick_take_binding(binding, key)
+                
+                return True
+                
 
             ui.window(style='prefs_js_frame')
             ui.vbox(style='prefs_js_vbox')
-
             _label_factory(self.name, 'prefs')
 
             for label, key in config.joystick_keys:
 
                 def clicked(label=label, key=key):
-                    renpy.invoke_in_new_context(set_binding, key, label)
-                    return True
+                    return renpy.invoke_in_new_context(set_binding, label, key)
 
                 _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked, index=label)
-
+            
             ui.close()
+            
 
     class _JumpPreference(object):
 
@@ -600,7 +612,7 @@ init -1150 python hide:
 label _prefs_screen:
 
     $ _prefs_screen_run(config.preferences, config.preference_positions)
-
+    
     jump _prefs_screen
     
 label _joystick_screen:    

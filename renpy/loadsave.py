@@ -170,6 +170,25 @@ def save(filename, extra_info='',
     rf.close()
     
 
+def scan_saved_game(name):
+
+    try:
+        f = name + savegame_suffix
+    
+        zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
+        sio = cStringIO.StringIO(zf.read("screenshot.tga"))
+        extra_info = zf.read("extra_info").decode("utf-8")
+        zf.close()
+    
+        screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
+        mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
+        f = f[:-len(savegame_suffix)]
+
+        return extra_info, screenshot, mtime
+    except:
+        return None
+    
+    
 
 def list_saved_games(regexp=r'.'):
     """
@@ -191,28 +210,20 @@ def list_saved_games(regexp=r'.'):
         return [ ]
 
     files.sort()
-    files = [ i for i in files if i.endswith(savegame_suffix) and re.match(regexp, i) ]
+    files = [ i[:-len(savegame_suffix)]
+              for i in files
+              if i.endswith(savegame_suffix) and re.match(regexp, i) ]
 
     rv = [ ]
 
     for f in files:
 
-        try:
+        info = scan_saved_game(f)
 
-            zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
-            sio = cStringIO.StringIO(zf.read("screenshot.tga"))
-            extra_info = zf.read("extra_info").decode("utf-8")
-            zf.close()
-
-            screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
-            mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
-            f = f[:-len(savegame_suffix)]
-
-            rv.append((f, extra_info, screenshot, mtime))
-
-        except:
-            if renpy.config.debug:
-                raise Exception
+        if info is not None:
+            extra_info, screenshot, mtime = info
+        
+        rv.append((f, extra_info, screenshot, mtime))
 
     return rv
 
