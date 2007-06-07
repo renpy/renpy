@@ -302,25 +302,12 @@ class SayBehavior(renpy.display.layout.Null):
         #         return True
             
         return None
-
-def default_time_policy(st, state, style):
-    if state is None:
-        stoff = style.initial_time_offset
-        oldprefix = style.prefix
-    else:
-        stoff, oldprefix = state
-
-    if style.prefix != oldprefix:
-        stoff = st
-
-    return st - stoff, (stoff, style.prefix)
-    
     
 class Button(renpy.display.layout.Window):
 
     def __init__(self, child, style='button', clicked=None,
                  hovered=None, unhovered=None, role='',
-                 time_policy=default_time_policy, 
+                 time_policy=None, 
                  **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
@@ -332,13 +319,13 @@ class Button(renpy.display.layout.Window):
         self.focusable = clicked is not None
         self.role = role
 
-        self.time_policy = time_policy
         self.time_policy_data = None
         
         
     def render(self, width, height, st, at):
 
-        st, self.time_policy_data = self.time_policy(st, self.time_policy_data, self.style)
+        if self.style.time_policy:
+            st, self.time_policy_data = self.style.time_policy(st, self.time_policy_data, self.style)
         
         rv = super(Button, self).render(width, height, st, at)
 

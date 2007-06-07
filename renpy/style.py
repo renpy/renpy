@@ -91,7 +91,6 @@ style_properties = dict(
     font = None,
     sound = None,
     italic = None,
-    initial_time_offset = None,
     layout = None,
     left_bar = renpy.easy.displayable,
     left_gutter = None,
@@ -114,6 +113,7 @@ style_properties = dict(
     thumb = renpy.easy.displayable,
     thumb_offset = None,
     thumb_shadow = renpy.easy.displayable,
+    time_policy = None,
     top_bar = renpy.easy.displayable,
     top_gutter = None,
     top_margin = None,
@@ -482,7 +482,7 @@ class Style(object):
 
         build_style(self)
 
-    def __init__(self, parent, properties=None, heavy=False, name=None, help=None):
+    def __init__(self, parent, properties=None, heavy=True, name=None, help=None):
 
         self.prefix = 'insensitive_'
         self.offset = prefix_offset['insensitive_']
@@ -516,7 +516,6 @@ class Style(object):
             #    self.properties[prop] = val
 
         if heavy:
-            
             if styles_built:
                 build_style(self)
             else:
@@ -545,9 +544,6 @@ class Style(object):
 
         self.properties = other.properties[:]
 
-        if styles_built:
-            build_style(self)
-
     def setdefault(self, **properties):
         """
         This sets the default value of the given properties, if no more
@@ -570,7 +566,7 @@ class Style(object):
         if index in self.indexed:
             return self.indexed[index]
 
-        s = Style(self, name=self.name + (index,))
+        s = Style(self, heavy=False, name=self.name + (index,))
 
         if not styles_built:
             self.indexed[index] = s
@@ -580,42 +576,58 @@ class Style(object):
 
 def write_text(filename):
 
+    def style_name(name):
+        rv = name[0]
+        for i in name[1:]:
+            rv += "[%r]" % i
+
+        return rv
+
+    
     f = file(filename, "w")
 
     styles = style_map.items()
     styles.sort()
 
+
+    style_props = { }
+
     for name, sty in styles:
 
         if not isinstance(sty, Style):
             continue
-        
-        print >>f, name, "inherits from", sty.parent
 
-        props = [ (prefix + prop, sty.cache[prefixn + propn])
+        print >>f, style_name(sty.name),
+
+        if sty.parent:
+            print >>f, "inherits from", style_name(sty.parent)
+        else:
+            print >>f
+
+        
+        inherited = [ True ] * property_numbers
+            
+        for p in sty.properties:
+            for prio, propn, newval in expand_properties(p):
+                inherited[propn] = False
+            
+        if not sty.heavy:
+            sty = Style(sty, heavy=True)
+
+        props = [ (prefix + prop, sty.cache[prefixn + propn], inherited[prefixn + propn])
                   for prefix, prefixn in prefix_offset.iteritems()
                   for prop, propn in property_number.iteritems() ]
-
+        
         props.sort()
 
-        for prop, val in props:
+        for prop, value, inherit in props:
 
-            pname = name
-
-            while pname:
-                psty = style_map[pname]
-
-                if prop in psty.properties:
-                    break
-                else:
-                    pname = psty.parent
- 
-            if pname != name:
-                inherit = "(%s)" % pname
+            if inherit:
+                inherit = "(inherited)"
             else:
-                inherit = "(****)"
-
-            print >>f, "   ", inherit, prop, "=", repr(val)
+                inherit = ""
+            
+            print >>f, "   ", prop, "=", repr(value), inherit
 
         print >>f
 

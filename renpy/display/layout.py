@@ -657,6 +657,9 @@ class Window(Container):
     def visit(self):
         return [ self.style.background ] + self.children
 
+    def get_child(self):
+        return self.style.child or self.child
+    
     def render(self, width, height, st, at):
 
         # save some typing.
@@ -684,7 +687,7 @@ class Window(Container):
         cxpadding = left_padding + right_padding
         cypadding = top_padding + bottom_padding
 
-        child = self.style.child or self.child
+        child = self.get_child()
         
         # Render the child.
         surf = render(child,

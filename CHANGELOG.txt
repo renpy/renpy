@@ -4,39 +4,46 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.3.0
 -------------------
 
-box_layout=fixed.
-
-renpy.image_size
-
-MPEG-1 movies can now be read out of archive files.
-
-Backslash characters in filenames now cause an error to occur.
-
-imagemap is live.
-
-mouse_hide_time
-
-
 There is a new style inspector, which can be activated with 'I' when
-config.developer is true. [elaborate, doc, implement]
+config.developer is true. The style inspector shows the contents of 
+the transient and overlay layers, and for each displayable shows the 
+type of displayable, the style used, and the size it's rendered to.
+
+
+We now support indexed styles, which can be accessed by indexing a
+style with a value. These are lightweight styles, that do not take up
+any space unless they have a value set. The main and game menus have
+been modified to take advantage of these indexed styles, allowing just
+about everything on those game menus to be customized individually.
 
 
 The activate_ property prefix has made a comeback. This prefix is
 applied to buttons that have been selected by the user. It is applied
 when the button is first selected (while the clicked function is
 running). If the clicked function returns a non-None value, or an 
-exception, then the button remains activated forever. [doc]
+exception, then the button remains activated forever.
+
+
+Styles may now be constructed using the Style function, and accessed
+directly off of the style object, rather than always being referred to
+by name.
+
+
+The Fixed displayable has been merged with the MultiBox displayable
+(which is what implements HBox and VBox). The box_layout property 
+now has a new value, 'fixed', which can be used to turn an HBox or
+VBox into a fixed layout.
 
 
 The new xoffset and yoffset placement properties allow one to specify 
 a pixel offset to the position computed using xpos/xanchor and
 ypos/yanchor. This makes it easy to specify, say, that a button's
-label should be a pixel or two above center. [doc]
+label should be a pixel or two above center.
 
 
 The default roundrect theme now takes a new argument, less_rounded. If
 True, this will use the 6-pixel rounded rectangles, even on an 800x600
-game. This is the default for new projects. [doc, implement]
+game. This is the default for new projects.
 
 
 Added im.MatrixColor, an image operator that uses a matrix to alter
@@ -44,33 +51,43 @@ the colors in an image. This can be used by objects of the im.matrix
 type, which can be constructed by the im.matrix.identity,
 im.matrix.saturation, im.matrix.desaturate, im.matrix.tint,
 im.matrix.invert, im.matrix.brightness, im.matrix.opacity, and 
-im.matrix.contrast functions. [doc]
+im.matrix.contrast functions.
 
 We also have created two convenience wrappers for im.MatrixColor:
-im.Grayscale and im.Sepia. [doc]
+im.Grayscale and im.Sepia.
 
 
-Buttons now take a new time_policy argument, which can be used to 
-warp time for the children of the button. [doc]
+The mouse is now hidden after 30 seconds of inactivity, as a boon to
+Joystick and keyboard users. (The time is controlled by
+config.mouse_hide_time.) 
+
+
+The renpy.imagemap function is no longer limited to images. It can now
+take arbitrary displayables, like animations.
+
+
+Buttons now take a new time_policy style property, which can be used
+to warp time for the children of the button. We took a mulligan on the
+initial_time_base style property, which has been removed. 
 
 
 Added a function, renpy.file, that will open a read-only file-like
 object from a file that exists in the game directory or in an
-archive. [doc]
+archive.
 
 
 Added a function, renpy.seen_label, that returns True if a label has
-been executed at least once, in any execution of the game. [doc]
+been executed at least once, in any execution of the game.
 
 
 Setting _game_menu_screen = None prevents the game menu from being
 shown. (Setting it to a value like "_save_screen" or "_load_screen"
 shows the game menu again.) This is the default during the
-splashscreen. [doc]
+splashscreen. 
 
 
 NVLCharacter has a new parameter, clear, that if true causes the nvl-mode
-screen to be cleared after that character speaks. [doc]
+screen to be cleared after that character speaks. 
 
 
 Rewrote the input handling code. Now, we can deal with keysyms prefixed 
@@ -85,10 +102,16 @@ length.
 Made it so that {nw} interacts properly with NVL-mode.
 
 
+Using backslash '\' in filenames now triggers an error message, even
+on Windows. Use forward-slash ('/') instead. 
+
+
+Made it so that MPEG-1 movies can be read out of archive files.
+
 Fixed Ren'Py such that movies properly loop when required. Changes
 renpy.movie_cutscene so that it allows delays of None, which will delay
 until the movie is done playing, and -1, which will cause the cutscene
-to wait until the user clicks. [doc]
+to wait until the user clicks.
 
 
 Fixed a bug that prevented ui.at from working properly.

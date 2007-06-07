@@ -239,30 +239,48 @@ class ImageButton(renpy.display.behavior.Button):
     Used to implement the guts of an image button.
     """
 
-    def __init__(self, idle_image, hover_image,
+    def __init__(self,
+                 idle_image,
+                 hover_image,
+                 disabled_image = None,
+                 activate_image = None,
+                 selected_idle_image = None,
+                 selected_hover_image = None,
+                 selected_disabled_image = None,
+                 selected_activate_image = None,                 
                  style='image_button',
-                 image_style='image_button_image',
-                 clicked=None, hovered=None, **properties):
+                 clicked=None,
+                 hovered=None,
+                 **properties):
 
-        self.idle_image = renpy.easy.displayable(idle_image)
-        self.idle_image.style.set_prefix("idle_")
-        self.hover_image = renpy.easy.displayable(hover_image)
-        self.hover_image.style.set_prefix("hover_")
+        disabled_image = disabled_image or idle_image
+        activate_image = activate_image or hover_image
 
-        super(ImageButton, self).__init__(self.idle_image,
+        selected_idle_image = selected_idle_image or idle_image
+        selected_hover_image = selected_hover_image or hover_image
+        selected_disabled_image = selected_disabled_image or disabled_image
+        selected_activate_image = selected_activate_image or activate_image
+
+        self.state_children = dict(
+            idle_ = renpy.easy.displayable(idle_image),
+            hover_ = renpy.easy.displayable(hover_image),
+            disabled_ = renpy.easy.displayable(disabled_image),
+            activate_ = renpy.easy.displayable(activate_image),
+
+            selected_idle_ = renpy.easy.displayable(selected_idle_image),
+            selected_hover_ = renpy.easy.displayable(selected_hover_image),
+            selected_disabled_ = renpy.easy.displayable(selected_disabled_image),
+            selected_activate_ = renpy.easy.displayable(selected_activate_image),
+            )
+
+        super(ImageButton, self).__init__(renpy.display.layout.Null(),
                                           style=style,
                                           clicked=clicked,
                                           hovered=hovered,
                                           **properties)
         
     def visit(self):
-        return [ self.idle_image, self.hover_image ]
+        return self.state_children.values()
 
-    def focus(self, default=False):
-        self.child = self.hover_image
-        super(ImageButton, self).focus(default=default)
-
-    def unfocus(self):
-        self.child = self.idle_image
-        super(ImageButton, self).unfocus()
-
+    def get_child(self):
+        return self.style.child or self.state_children[self.style.prefix]

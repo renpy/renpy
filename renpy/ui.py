@@ -520,8 +520,18 @@ def textbutton(text, clicked=None, text_style='button_text', **properties):
                                                  text_style=text_style,
                                                  **properties))
 
-def imagebutton(idle_image, hover_image, clicked=None,
-                image_style='image_button_image', **properties):
+def imagebutton(idle_image,
+                hover_image,
+                disabled_image = None,
+                activate_image = None,
+                selected_idle_image = None,
+                selected_hover_image = None,
+                selected_disabled_image = None,
+                selected_activate_image = None,    
+                clicked=None,
+                style='image_button',
+                image_style=None,
+                **properties):
 
     """
     This creates a button that contains two images. The first is the
@@ -540,18 +550,22 @@ def imagebutton(idle_image, hover_image, clicked=None,
     @param clicked: The function that is called when this button is
     clicked.
 
-    @param image_style: The style that is applied to the images that
-    are used as part of the imagebutton.
-
     @param role: The role this button undertakes. This can be the empty
     string, or "selected_".
     """
     
-    return add(renpy.display.image.ImageButton(idle_image,
-                                               hover_image,
-                                               clicked=clicked,
-                                               image_style=image_style,
-                                               **properties))
+    return add(renpy.display.image.ImageButton(
+            idle_image,
+            hover_image,
+            disabled_image = disabled_image,
+            activate_image = activate_image,
+            selected_idle_image = selected_idle_image,
+            selected_hover_image = selected_hover_image,
+            selected_disabled_image = selected_disabled_image,
+            selected_activate_image = selected_activate_image,    
+            clicked=clicked,
+            style=style,
+            **properties))
 
 def bar(*args, **properties):
     """

@@ -100,22 +100,30 @@ init -1180:
             if disabled:
                 clicked = None
 
-            if label in config.image_buttons:
-                (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
-
-                if not clicked:
-                    ui.image(disabled, **properties)
-                elif selected:
-                    ui.imagebutton(sel_idle, sel_hover, clicked=clicked, **props)
-                else:
-                    ui.imagebutton(idle, hover, clicked=clicked, **props)
-
-                return
-
             if selected and not disabled:
                 role = "selected_"
             else:
                 role = ""
+
+                
+            if label in config.image_buttons:
+                
+                (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
+
+                ui.imagebutton(idle,
+                               hover,
+                               disabled,
+                               hover,
+                               sel_idle,
+                               sel_hover,
+                               disabled,
+                               sel_hover,
+                               clicked=clicked,
+                               style=style.image_button[label],
+                               role=role,
+                               **props)
+                
+                return
 
             button_style = type + "_button"
             text_style = type + "_button_text"
