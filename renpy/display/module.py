@@ -387,9 +387,11 @@ if version >= 6002001:
 
     def colormatrix(src, dst, matrix):
         c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
-        o = byte_offset(src)
+        offs = byte_offset(src)
 
-        
+        o = [ None ] * 4
+        for i in range(0, 4):
+            o[offs[i]] = i
         
         _renpy.colormatrix(src, dst,
                            c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],    

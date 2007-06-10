@@ -47,7 +47,7 @@ init:
                                           0,  0,  0, 1, 0, ])
 
     image logo tintblue = im.MatrixColor("logo.png",
-                                         im.matrix.desaturate() * im.matrix.tint(.9, .9, 1.0))
+                                         im.matrix.saturation(.5) * im.matrix.tint(.75, .75, 1.0))
 
     image logo bright = im.MatrixColor("logo.png",
                                        im.matrix.brightness(.5))
@@ -132,8 +132,13 @@ label demo_imageops:
     show logo tintblue at logopos
     with dissolve
     
-    e "It can alter colors, say by tinting the image blue."
+    e "... tint the image blue..."
 
+    show logo invert at logopos
+    with dissolve
+    
+    e "... or invert the colors, for a kinda scary look."
+    
     show logo bright at logopos
     with dissolve
     
@@ -149,7 +154,7 @@ label demo_imageops:
     show logo sepia at logopos
     with dissolve
     
-    e "While im.Sepia can sepia-tone an image."
+    e "... while im.Sepia can sepia-tone an image."
        
     show logo base at logopos
     with dissolve

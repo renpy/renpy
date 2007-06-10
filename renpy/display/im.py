@@ -897,7 +897,8 @@ class MatrixColor(ImageBase):
 
         if len(matrix) != 20 and len(matrix) != 25:
             raise Exception("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
-        
+
+        matrix = tuple(matrix)        
         super(MatrixColor, self).__init__(im, matrix, **properties)
         
         self.image = im
