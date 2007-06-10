@@ -390,6 +390,9 @@ init -1090 python:
     style.yesno_frame_vbox.ypos = 0.5
     style.yesno_frame_vbox.yanchor = 0.5
 
+    style.yesno_button_hbox.xalign = 0.5
+    style.yesno_button_hbox.box_spacing = 100
+    
     ##############################################################################
     # Preferences.
 

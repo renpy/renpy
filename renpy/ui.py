@@ -401,7 +401,10 @@ def menu(menuitems,
             else:
                 def clicked(val=val):
                     return val
-            
+
+            button = getattr(renpy.game.style, button)[label]
+            text = getattr(renpy.game.style, text)[label]
+                
             renpy.ui.textbutton(label,
                                 style=button,
                                 text_style=text,

@@ -514,17 +514,23 @@ class MultiBox(Container):
                 self.sizes.append((sw, sh))
 
 
-            width = xo - padding
-
             if self.style.yfill:
                 myheight = height
 
+            if not self.style.xfill:
+                width = xo - padding
+                bonus = 0
+            else:
+                bonus = (remwidth + padding) / len(xoffsets)
+                xoffsets = [ xo + i * bonus for i, xo in enumerate(xoffsets) ]
+                
+                
             rv = renpy.display.render.Render(width, myheight)
 
             for surf, child, xo in zip(surfaces, self.children, xoffsets):
                 sw, sh = surf.get_size()
 
-                offset = child.place(rv, xo, 0, sw, myheight, surf)
+                offset = child.place(rv, xo, 0, sw + bonus, myheight, surf)
                 self.offsets.append(offset)
 
             return rv
@@ -570,18 +576,23 @@ class MultiBox(Container):
                 surfaces.append(surf)
                 self.sizes.append((sw, sh))
 
-            height = yo - padding
-
             if self.style.xfill:
                 mywidth = width
 
+            if not self.style.yfill:
+                height = yo - padding
+                bonus = 0
+            else:
+                bonus = (remheight + padding) / len(yoffsets)
+                yoffsets = [ yo + i * bonus for i, yo in enumerate(yoffsets) ]
+                
             rv = renpy.display.render.Render(mywidth, height)
 
             for surf, child, yo in zip(surfaces, self.children, yoffsets):
 
                 sw, sh = surf.get_size()
 
-                offset = child.place(rv, 0, yo, mywidth, sh, surf)
+                offset = child.place(rv, 0, yo, mywidth, sh + bonus, surf)
 
                 self.offsets.append(offset)
 
