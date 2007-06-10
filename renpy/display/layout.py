@@ -1038,7 +1038,7 @@ class Revolver(object):
         else:
             pos = self.pos
             
-        xpos, ypos, xanchor, yanchor = pos
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset = pos
 
         xpos = fti(xpos, w)
         ypos = fti(ypos, h)
@@ -1582,18 +1582,19 @@ class Viewport(Container):
             cxo = max(cw - width, 0) * -self.xoffset
 
         if isinstance(self.yoffset, int):
-            cyo = -self.xoffset
+            cyo = -self.yoffset
         else:
             cyo = max(ch - height, 0) * -self.yoffset 
 
         cxo = int(cxo)
         cyo = int(cyo)
-            
+
         self.offsets = [ (cxo, cyo) ]
         self.sizes = [ (cw, ch) ]
 
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
+
         return rv
 
     def set_xoffset(self, offset):
@@ -1607,4 +1608,5 @@ class Viewport(Container):
 def LiveCrop(rect, child, **properties):
     x, y, w, h = rect
 
-    return Viewport(child, offsets=(-x, -y), xmaximum=w, ymaximum=h, **properties)
+    child = renpy.easy.displayable(child)    
+    return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)

@@ -73,9 +73,9 @@ label demo_character:
     show black
     with dissolve
 
-    centered "The \"centered\" character shows text at the center\nof the screen, without a window."
+    centered "The \"centered\" character shows text at the center of the screen, without a window."
 
-    centered "It's just a highly customized normal character,\nthat's useful for dates and titles."
+    centered "It's just a highly customized normal character, that's useful for dates and titles."
     
     hide black
     with dissolve

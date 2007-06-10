@@ -585,11 +585,6 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
 
         type, ts, i = triple
 
-        if type == "newline":
-            raise Exception("Subtitles may not contain newlines.")
-
-            continue
-
         if type == "space":
             if not line:
                 continue
@@ -597,9 +592,10 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
             continue
 
         else:
+
             lw = layout_width(line + [ triple ])
 
-            if lw > target:
+            if lw > target or type == "newline":
 
                 n -= 1
                 if n > 0:
@@ -613,8 +609,13 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
                     linesoft = soft
 
                 lines.append(line)
-                line = [ triple ]
                 target = width
+
+                if type == "newline":
+                    line = [ ]
+                else:
+                    line = [ triple ]
+
             else:
                 line.append(triple)
 

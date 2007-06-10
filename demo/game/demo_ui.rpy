@@ -270,9 +270,11 @@ label demo_ui:
 
     e "For a better implementation of this, take a look at the dating sim engine (DSE) that ships with Ren'Py."
 
+    call fight("Eileen", 10, 99, pname=povname) from _call_fight_1
+
     e "The ui functions can be also be used to show the sorts of stats you'd need if your game involves combat."
 
-    call fight("Eileen", 10, 99, pname=povname) from _call_fight_1
+    call fight("Eileen", 10, 99, pname=povname) from _call_fight_2
     
     e "Hopefully, the ui functions will let you write whatever visual novel or dating sim you want."
 

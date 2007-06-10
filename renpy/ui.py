@@ -460,12 +460,15 @@ def imagemap(ground, selected, hotspots, unselected=None,
     image(ground)
 
     for x0, y0, x1, y1, result in hotspots:
-        imagebutton(renpy.display.layout.LiveCrop(unselected, x0, y0, x1 - x0, y1 - y0),
-                    renpy.display.layout.LiveCrop(selected, x0, y0, x1 - x0, y1 - y0),
+
+        imagebutton(renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), unselected),
+                    renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), selected),
                     clicked=returns(result),
                     style=button_style,
-                    xpos=x0, xanchor='left',
-                    ypos=y0, yanchor='top',
+                    xpos=x0,
+                    xanchor=0,
+                    ypos=y0,
+                    yanchor=0,
                     focus_mask=True,
                     )
 
