@@ -34,6 +34,29 @@ init:
 
     image eileen flip = im.Flip("eileen_happy.png", vertical=True)
 
+
+    image logo halfsat = im.MatrixColor("logo.png",
+                                        im.matrix.saturation(.5))
+
+    # This could be better done with im.matrix.invert(), but I want to show 
+    # how to use a matrix.
+    image logo invert = im.MatrixColor("logo.png",
+                                       [ -1,  0,  0, 0, 1,
+                                          0, -1,  0, 0, 1,
+                                          0,  0, -1, 0, 1,
+                                          0,  0,  0, 1, 0, ])
+
+    image logo tintblue = im.MatrixColor("logo.png",
+                                         im.matrix.desaturate() * im.matrix.tint(.9, .9, 1.0))
+
+    image logo bright = im.MatrixColor("logo.png",
+                                       im.matrix.brightness(.5))
+    
+    image logo sepia = im.Sepia("logo.png")
+    
+    image logo grayscale = im.Grayscale("logo.png")
+    
+    
     $ logopos = Position(xpos=.5, xanchor=0, ypos=50, yanchor=0)
     
 label demo_imageops:
@@ -101,6 +124,33 @@ label demo_imageops:
 
     e "... and assign colors to replace black and white."
 
+    show logo halfsat at logopos
+    with dissolve
+    
+    e "The im.MatrixColor operation lets you use a matrix to alter the colors. With the right matrix, you can desaturate colors..."
+
+    show logo tintblue at logopos
+    with dissolve
+    
+    e "It can alter colors, say by tinting the image blue."
+
+    show logo bright at logopos
+    with dissolve
+    
+    e "It can even adjust brightness and contrast."
+
+    e "We've made some of the most common matrices into image operators."
+
+    show logo grayscale at logopos
+    with dissolve
+
+    e "im.Grayscale can make an image grayscale..."
+
+    show logo sepia at logopos
+    with dissolve
+    
+    e "While im.Sepia can sepia-tone an image."
+       
     show logo base at logopos
     with dissolve
     show logo alpha at logopos

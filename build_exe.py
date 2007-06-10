@@ -5,6 +5,10 @@ import py2exe
 import sys
 import zipfile
 
+# The pythonpath on my system.
+sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\bin')
+sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\python')
+
 sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', '-x' ]
 
 setup(name="RenPy",

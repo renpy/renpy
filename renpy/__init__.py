@@ -24,7 +24,7 @@
 
 # Some version numbers and things.
 
-version = "Ren'Py 6.2.0c"
+version = "Ren'Py 6.3.0a"
 
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in data/script_version.rpy, too!

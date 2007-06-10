@@ -11,7 +11,7 @@ init:
             ("demo_movement", "Positions and Movement", "5.6.6"),
             ("demo_animation", "Animation", "6.2.0"),
             ("demo_multimedia", "Music and Sound", "5.6.3"),
-            ("demo_imageops", "Image Operations", "5.6.3"),
+            ("demo_imageops", "Image Operations", "6.3.0"),
             ("demo_ui", "User Interaction", "6.2.0"),
             ("demo_text", "Fonts and Text Tags", "6.2.0"),
             ("demo_character", "Character Objects", "6.2.0"), 
