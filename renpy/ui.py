@@ -563,7 +563,7 @@ def imagebutton(idle_image,
     return add(renpy.display.image.ImageButton(
             idle_image,
             hover_image,
-            insensitive_image = disabled_image,
+            insensitive_image = insensitive_image,
             activate_image = activate_image,
             selected_idle_image = selected_idle_image,
             selected_hover_image = selected_hover_image,
