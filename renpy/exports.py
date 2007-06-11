@@ -24,6 +24,9 @@
 # their behavior, while functions imported in are probably best left
 # alone as part of the api.
 
+# Remember the real file.
+_file = file
+
 import renpy
 
 # Many of these shouldn't be used directly.
@@ -946,7 +949,7 @@ def log(msg):
     if not logfile:
         import codecs
 
-        logfile = file(renpy.config.log, "a")
+        logfile = _file(renpy.config.log, "a")
         if not logfile.tell():
             logfile.write(codecs.BOM_UTF8)
 

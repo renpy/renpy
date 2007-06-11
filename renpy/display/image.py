@@ -242,34 +242,34 @@ class ImageButton(renpy.display.behavior.Button):
     def __init__(self,
                  idle_image,
                  hover_image,
-                 disabled_image = None,
+                 insensitive_image = None,
                  activate_image = None,
                  selected_idle_image = None,
                  selected_hover_image = None,
-                 selected_disabled_image = None,
+                 selected_insensitive_image = None,
                  selected_activate_image = None,                 
                  style='image_button',
                  clicked=None,
                  hovered=None,
                  **properties):
 
-        disabled_image = disabled_image or idle_image
+        insensitive_image = insensitive_image or idle_image
         activate_image = activate_image or hover_image
 
         selected_idle_image = selected_idle_image or idle_image
         selected_hover_image = selected_hover_image or hover_image
-        selected_disabled_image = selected_disabled_image or disabled_image
+        selected_insensitive_image = selected_insensitive_image or insensitive_image
         selected_activate_image = selected_activate_image or activate_image
 
         self.state_children = dict(
             idle_ = renpy.easy.displayable(idle_image),
             hover_ = renpy.easy.displayable(hover_image),
-            disabled_ = renpy.easy.displayable(disabled_image),
+            insensitive_ = renpy.easy.displayable(insensitive_image),
             activate_ = renpy.easy.displayable(activate_image),
 
             selected_idle_ = renpy.easy.displayable(selected_idle_image),
             selected_hover_ = renpy.easy.displayable(selected_hover_image),
-            selected_disabled_ = renpy.easy.displayable(selected_disabled_image),
+            selected_insensitive_ = renpy.easy.displayable(selected_insensitive_image),
             selected_activate_ = renpy.easy.displayable(selected_activate_image),
             )
 
