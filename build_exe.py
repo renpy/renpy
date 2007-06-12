@@ -9,49 +9,56 @@ import zipfile
 sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\bin')
 sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\python')
 
-sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', '-x' ]
+def main():
 
-setup(name="RenPy",
-      windows=[ dict(script="renpy.py",
-                     dest_base="renpy",
-                     icon_resources=[ (1, "newicon.ico") ] ) ],
-      
-      console=[ dict(script="renpy.py", dest_base="console") ],
+    sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', ]
 
-      zipfile='renpy.code',
+    setup(name="RenPy",
+          windows=[ dict(script="renpy.py",
+                         dest_base="renpy",
+                         icon_resources=[ (1, "newicon.ico") ] ) ],
 
-      options={ 'py2exe' : { 'excludes' : [ 'doctest',
-                                            'pygame.macosx',
-                                            'pygame.surfarray',
-                                            'pygame.mixer',
-                                            'pygame.mixer_music',
-                                            '_ssl',
-                                            'win32con',
-                                            'win32api',
-                                            'Numeric',  ],
-                             'optimize' : 2,
-                             } },
-      )
+          console=[ dict(script="renpy.py", dest_base="console") ],
+
+          zipfile='renpy.code',
+
+          options={ 'py2exe' : { 'excludes' : [ 'doctest',
+                                                'pygame.macosx',
+                                                'pygame.surfarray',
+                                                'pygame.mixer',
+                                                'pygame.mixer_music',
+                                                '_ssl',
+                                                'win32con',
+                                                'win32api',
+                                                'Numeric',  ],
+                                 'optimize' : 2,
+                                 } },
+          )
 
 
-zfold = zipfile.ZipFile("dist/renpy.code")
-zfnew = zipfile.ZipFile("renpy.code", "w", zipfile.ZIP_STORED)
+    zfold = zipfile.ZipFile("dist/renpy.code")
+    zfnew = zipfile.ZipFile("renpy.code", "w", zipfile.ZIP_STORED)
 
-seen = { }
+    seen = { }
 
-for fn in zfold.namelist():
-    if fn.startswith("renpy/"):
-        continue
+    for fn in zfold.namelist():
+        if fn.startswith("renpy/"):
+            continue
 
-    if fn in seen:
-        continue
+        if fn in seen:
+            continue
 
-    seen[fn] = True
-    
-    zfnew.writestr(fn, zfold.read(fn))
+        seen[fn] = True
 
-zfold.close()
-zfnew.close()
+        zfnew.writestr(fn, zfold.read(fn))
+
+    zfold.close()
+    zfnew.close()
+
+try:
+    main()
+except:
+    traceback.print_exc()
 
 print
 print "Press return to quit."
