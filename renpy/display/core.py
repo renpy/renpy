@@ -768,23 +768,23 @@ class Display(object):
         else:
             visible = True
 
-
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:
             pygame.mouse.set_visible(visible)
             return [ ]
-
 
         # The rest of this is for the software mouse.
         
         if self.suppressed_blit:
             return [ ]
 
-        show_mouse = show_mouse or visible
+        visible = show_mouse and visible
+        
+        mouse_kind = renpy.display.focus.get_mouse() or self.interface.mouse 
         
         # Figure out the mouse animation.
-        if self.interface.mouse in renpy.config.mouse:
-            anim = renpy.config.mouse[self.interface.mouse]
+        if mouse_kind in renpy.config.mouse:
+            anim = renpy.config.mouse[mouse_kind]
         else:
             anim = renpy.config.mouse['default']
 
@@ -792,10 +792,10 @@ class Display(object):
 
         pos = pygame.mouse.get_pos()
 
-        if pos == self.mouse_location and show_mouse and info == self.mouse_info:
-            return [ ]
-
-        if not pos and not show_mouse:
+        if (pos == self.mouse_location and
+            show_mouse and
+            info == self.mouse_info):
+            
             return [ ]
 
         updates = [ ]
@@ -803,7 +803,7 @@ class Display(object):
         if self.mouse_location:
             updates.append(self.hide_mouse())
 
-        if show_mouse:
+        if visible and pos:
             updates.append(self.show_mouse(pos, info))
             
         return updates

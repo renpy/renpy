@@ -28,6 +28,7 @@ from pygame.constants import *
 class Focus(object):
 
     def __init__(self, widget, arg, x, y, w, h, mx, my, mask):
+
         self.widget = widget
         self.arg = arg
         self.x = x
@@ -38,10 +39,18 @@ class Focus(object):
         self.my = my
         self.mask = mask
 
-    # Used in render, where we treat focuses as tuples.
-    def __iter__(self):
-        return iter((self.widget, self.arg, self.x, self.y, self.w, self.h, self.mx, self.my, self.mask))
-
+    def copy(self):
+        return Focus(
+            self.widget,
+            self.arg,
+            self.x,
+            self.y,
+            self.w,
+            self.h,
+            self.mx,
+            self.my,
+            self.mask)
+    
 # The widget currently grabbing the input, if any.
 grab = None
 
@@ -52,6 +61,15 @@ def set_focused(widget):
 # Gets the currently focused widget.
 def get_focused():
     return renpy.game.context().scene_lists.focused
+
+# Get the mouse cursor for the focused widget.
+def get_mouse():
+    focused = get_focused()
+    if focused is None:
+        return None
+    else:
+        return focused.style.mouse
+    
 
 def set_grab(widget):
     global grab

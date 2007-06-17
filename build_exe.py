@@ -12,6 +12,7 @@ sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\python')
 def main():
 
     sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', ]
+    # sys.argv[1:] = [ 'py2exe', '-a', '--dll-excludes', 'w9xpopen.exe', ]
 
     setup(name="RenPy",
           windows=[ dict(script="renpy.py",

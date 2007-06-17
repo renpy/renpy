@@ -97,6 +97,7 @@ style_properties = dict(
     left_margin = None,
     left_padding = None,
     line_spacing = None,
+    mouse = None,
     min_width = None,
     rest_indent = None,
     right_bar = renpy.easy.displayable,

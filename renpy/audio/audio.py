@@ -520,6 +520,9 @@ def init():
             if renpy.config.debug_sound:
                 raise
             pcm_ok = False
+
+    if renpy.config.reject_midi:
+        midi_ok = False
             
     if midi_ok is None and nativemidi:
 

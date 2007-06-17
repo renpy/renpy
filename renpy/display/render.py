@@ -635,16 +635,19 @@ class Render(object):
             if focus and xo == 0 and yo == 0:
                 self.focuses.extend(source.focuses)
             elif focus:
-                for widget, arg, x, y, w, h, mx, my, mask in source.focuses:
-                    if x is not None:
-                        x += xo
-                        y += yo
 
-                    if mx is not None:
-                        mx += xo
-                        my += yo
-                        
-                    self.add_focus(widget, arg, x, y, w, h, mx, my, mask)
+                for f in source.focuses:
+                    nf = f.copy()
+                    
+                    if nf.x is not None:
+                        nf.x += xo
+                        nf.y += yo
+
+                    if nf.mx is not None:
+                        nf.mx += xo
+                        nf.my += yo
+
+                    self.focuses.append(nf)
                                       
         self.blittables.append((xo, yo, source))
     
