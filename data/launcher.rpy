@@ -581,7 +581,9 @@ label archive_files:
 
             return False
 
-        for bdir in gamedir, archived:
+        archived = set()
+        
+        for bdir in (gamedir, archived):
 
             for dirname, dirs, filenames in os.walk(bdir):
 
@@ -593,11 +595,15 @@ label archive_files:
                     fullfn = dirname + "/" + fn
                     shortfn = fullfn[len(bdir)+1:]
 
+                    if shortfn in archived:
+                        continue
+                    
                     if not should_archive(shortfn):
                         continue
 
                     files.append((fullfn, shortfn))
-
+                    archived.add(shortfn)
+                    
         archiver.archive(prefix, files)
 
 #         f = file(gamedir + "/images.rpy", "w")

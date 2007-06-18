@@ -80,7 +80,6 @@ def index_archives():
         except:
             if renpy.config.debug:
                 raise
-            
 
 def listdirfiles():
     """
