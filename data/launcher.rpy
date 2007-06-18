@@ -581,7 +581,7 @@ label archive_files:
 
             return False
 
-        archived = set()
+        archived_files = set()
         
         for bdir in (gamedir, archived):
 
@@ -595,14 +595,14 @@ label archive_files:
                     fullfn = dirname + "/" + fn
                     shortfn = fullfn[len(bdir)+1:]
 
-                    if shortfn in archived:
+                    if shortfn in archived_files:
                         continue
                     
                     if not should_archive(shortfn):
                         continue
 
                     files.append((fullfn, shortfn))
-                    archived.add(shortfn)
+                    archived_files.add(shortfn)
                     
         archiver.archive(prefix, files)
 
