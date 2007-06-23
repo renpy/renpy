@@ -99,6 +99,7 @@ class Container(renpy.display.core.Displayable):
         for i in self.children:
             i.set_style_prefix(prefix)
 
+            
     def add(self, child):
         """
         Adds a child to this container.

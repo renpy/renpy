@@ -394,8 +394,6 @@ class Button(renpy.display.layout.Window):
         # If clicked, 
         if map_event(ev, "button_select") and self.clicked:
 
-            old_prefix = self.style_prefix
-
             self.activated = True
             self.style.set_prefix(self.role + 'activate_')
             
@@ -407,7 +405,12 @@ class Button(renpy.display.layout.Window):
                 return rv
             else:
                 self.activated = False
-                self.set_style_prefix(old_prefix)
+
+                if self.is_focused():
+                    self.set_style_prefix(self.role + "hover_")
+                else:
+                    self.set_style_prefix(self.role + "idle_")
+                    
                 raise renpy.display.core.IgnoreEvent()
                     
         return None

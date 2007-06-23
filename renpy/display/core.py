@@ -82,7 +82,7 @@ class Displayable(renpy.object.Object):
 
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties, heavy=True)
-        self.style_prefix = 'insensitive_'
+        # self.style_prefix = 'insensitive_'
         self.focus_name = focus
         self.default = default
 
@@ -132,11 +132,13 @@ class Displayable(renpy.object.Object):
         widgets, if any.
         """
 
-        if prefix == self.style_prefix:
+        if prefix == self.style.prefix:
             return
+        
+        # if prefix == self.style_prefix:
+        #    return
 
         self.style.set_prefix(prefix)
-        self.style_prefix = prefix
         renpy.display.render.redraw(self, 0)
 
     def parameterize(self, name, parameters):
@@ -956,7 +958,8 @@ class Interface(object):
         self.ticks = 0
         self.mouse = 'default'
         self.timeout_time = None
-
+        self.last_event = None
+        
         # Things to be preloaded.
         self.preloads = [ ]
 
@@ -1082,11 +1085,12 @@ class Interface(object):
         if self.pushed_event:
             rv = self.pushed_event
             self.pushed_event = None
-            return rv
-
         else:
-            return pygame.event.poll()
-        
+            rv = pygame.event.poll()
+
+        self.last_event = rv
+        return rv
+            
 
     def event_wait(self):
         """
@@ -1097,14 +1101,15 @@ class Interface(object):
         if self.pushed_event:
             rv = self.pushed_event
             self.pushed_event = None
+            self.last_event = rv
             return rv
 
         # We load at most one image per wait.
         if renpy.display.im.cache.needs_preload():
             ev = pygame.event.poll()
             if ev.type != NOEVENT:
+                self.last_event = rv
                 return ev
-
 
             renpy.display.im.cache.preload()
 
@@ -1114,6 +1119,7 @@ class Interface(object):
         finally:
             cpu_idle.clear()
 
+        self.last_event = ev
         return ev
 
     def make_layer(self, name, scene_list):
@@ -1359,6 +1365,12 @@ class Interface(object):
         # Figure out what should be focused.
         renpy.display.focus.before_interact(focus_roots)
 
+        if self.last_event:
+            x, y = pygame.mouse.get_pos()
+            x -= self.display.screen_xoffset
+            renpy.display.focus.mouse_handler(self.last_event, x, y)
+
+        
         # Redraw the screen.
         renpy.display.render.process_redraws()
         needs_redraw = True

@@ -56,4 +56,4 @@ def displayable(d):
     if d is True or d is False:
         return d
     
-    raise Exception("Not a displayable: %r" % d)
+    raise Exception("Not a displayable: %r" % (d,))

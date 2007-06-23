@@ -156,7 +156,7 @@ def before_interact(roots):
 
 # This changes the focus to be the widget contained inside the new
 # focus object.
-def change_focus(newfocus):
+def change_focus(newfocus, default=False):
 
     rv = None
     
@@ -179,14 +179,14 @@ def change_focus(newfocus):
 
     current = widget
     if widget is not None:
-        rv = widget.focus()
+        rv = widget.focus(default=default)
 
     set_focused(current)
 
     return rv
     
 # This handles mouse events, to see if they change the focus.
-def mouse_handler(ev, x, y):
+def mouse_handler(ev, x, y, default=False):
 
     if ev.type not in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
         return
@@ -213,7 +213,7 @@ def mouse_handler(ev, x, y):
     else:
         newfocus = default
 
-    return change_focus(newfocus)
+    return change_focus(newfocus, default=default)
 
 
 # This focuses an extreme widget, which is one of the widgets that's
