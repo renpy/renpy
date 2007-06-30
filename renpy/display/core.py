@@ -1108,7 +1108,7 @@ class Interface(object):
         if renpy.display.im.cache.needs_preload():
             ev = pygame.event.poll()
             if ev.type != NOEVENT:
-                self.last_event = rv
+                self.last_event = ev
                 return ev
 
             renpy.display.im.cache.preload()

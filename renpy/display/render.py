@@ -823,47 +823,51 @@ class Render(object):
         rv.children.append(self)
 
         if focus:
-            for fwidget, farg, fx, fy, fw, fh, fmx, fmy, fmask in self.focuses:
-                if fx is not None:
-                    fx -= x
-                    fx = max(fx, 0)
-                    fy -= y
-                    fy = max(fy, 0)
 
-                    fw -= x
-                    fw = min(fw, width)
-                    fh -= y
-                    fh = min(fh, height)
+            for f in self.focuses:
 
-                    if fw <= 0 or fh <= 0:
+                nf = f.copy()
+
+                if nf.x is not None:
+                    nf.x -= x
+                    nf.x = max(nf.x, 0)
+                    nf.y -= y
+                    nf.y = max(nf.y, 0)
+
+                    nf.w -= x
+                    nf.w = min(nf.w, width)
+                    nf.h -= y
+                    nf.h = min(nf.h, height)
+
+                    if nf.w <= 0 or nf.h <= 0:
                         continue
 
-                if fmx is not None:
+                if nf.mx is not None:
 
-                    fmx -= x
-                    if fmx < 0:
+                    nf.mx -= x
+                    if nf.mx < 0:
                         fmxo = -fmx
-                        fmx = 0
+                        nf.mx = 0
                     else:
                         fmxo = 0
 
-                    fmy -= y
-                    if fmy < 0:
+                    nf.my -= y
+                    if nf.my < 0:
                         fmyo = -fmy
-                        fmy = 0
+                        nf.my = 0
                     else:
                         fmyo = 0
                     
-                    fmw, fmh = fmask.get_size()
-                    fmw = min(fmw - fmxo, width - fmx)
-                    fmh = min(fmh - fmyo, height - fmy)
+                    fmw, fmh = nf.mask.get_size()
+                    fmw = min(fmw - fmxo, width - nf.mx)
+                    fmh = min(fmh - fmyo, height - nf.my)
 
                     if fmw <= 0 or fmh <= 0:
                         continue
 
-                    fmask = fmask.subsurface((fmxo, fmyo, fmw, fmh))
+                    nf.mask = nf.mask.subsurface((fmxo, fmyo, fmw, fmh))
                     
-                rv.add_focus(fwidget, farg, fx, fy, fw, fh, fmx, fmy, fmask)
+                rv.focuses.append(nf)
                 
         for xo, yo, source in self.blittables:
 
