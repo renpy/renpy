@@ -28,7 +28,21 @@ import copy
 class Delete(object):
     pass
 
-class Context(object):
+
+class PredictInfo(renpy.object.Object):
+    """
+    This stores information involved in prediction.
+    """
+
+    def __init__(self, pi=None):
+
+        if pi:
+            self.images = renpy.display.core.ImagePredictInfo(pi.images)
+        else:
+            self.images = renpy.display.core.ImagePredictInfo(None)
+    
+
+class Context(renpy.object.Object):
     """
     This is the context object which stores the current context
     of the game interpreter.
@@ -51,6 +65,13 @@ class Context(object):
     does participates in rollback.
     """
 
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.predict_info = PredictInfo()
+            self.scene_lists.image_predict_info = self.predict_info.images
+    
     def __init__(self, rollback, context=None):
 
         self.current = None
@@ -66,16 +87,16 @@ class Context(object):
         self.runtime = 0
         self.info = renpy.python.RevertableObject()
         self.seen = False
-        
-        
+                
         oldsl = None
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
             vars(self.info).update(vars(context.info))
 
-        self.scene_lists = renpy.display.core.SceneLists(oldsl)
-
+        self.predict_info = PredictInfo()
+        self.scene_lists = renpy.display.core.SceneLists(oldsl, self.predict_info.images)
+        
         self.make_dynamic([ "_return", "_args", "_kwargs" ])
         self.dynamic_stack.append({ })
         
@@ -233,7 +254,9 @@ class Context(object):
         rv.return_stack = self.return_stack[:]
         rv.dynamic_stack = [ i.copy() for i in self.dynamic_stack ]
         rv.current = self.current
-        rv.scene_lists = self.scene_lists.rollback_copy()
+
+        rv.scene_lists.focused = None
+
         rv.runtime = self.runtime
         rv.info = self.info
         

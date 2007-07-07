@@ -1,6 +1,22 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+New in Ren'Py 6.3.1
+-------------------
+
+Changed the focus code so that when a mouse event ends an interaction,
+the displayable underneath the mouse at the start of the next
+interaction will become focused.
+
+
+Disabled joystick support in the launcher, so that it doesn't conflict
+with joystick support in the game proper.
+
+
+Fixed a bug in the subsurface code that prevented the various CropMove
+transitions from working.
+
+
 New in Ren'Py 6.3.0
 -------------------
 

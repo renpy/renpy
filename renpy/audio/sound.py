@@ -38,7 +38,7 @@ def play(filename, channel=0, fadeout=0, fadein=0, tight=False):
     If tight is True, then a fadeout of this sound will continue into
     the next-queued sound.
     """
-
+    
     if filename is None:
         return
 

@@ -35,10 +35,11 @@ init -1:
         theme.roundrect(
 
             ## The color of an idle widget face.
-            widget = "#003c78",
-
+#            widget = "#003c78",
+            widget = ("#005c98", "#003c78"),
+            
             ## The color of a focused widget face.
-            widget_hover = "#0050a0",
+            widget_hover = ("#0070c0", "#0050a0"),
 
             ## The color of the text in a widget.
             widget_text = "#c8ffff",
@@ -48,7 +49,7 @@ init -1:
             widget_selected = "#ffffc8",
 
             ## The color of a disabled widget face. 
-            disabled = "#404040",
+            disabled = ("#606060", "#404040"),
 
             ## The color of disabled widget text.
             disabled_text = "#c8c8c8",

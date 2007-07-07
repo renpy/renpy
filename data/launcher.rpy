@@ -6,9 +6,10 @@ init:
         config.screen_height = 450
         config.window_title = "Ren'Py Launcher"
                 
-        # Disables sound
+        # Disable sound and joystick.
         config.sound = False
-
+        config.joystick = False
+        
         # Disables autosave (we can't save/load)
         config.has_autosave = False
         

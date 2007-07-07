@@ -1,10 +1,12 @@
-# Copyright 2004-2006 PyTom
+# Copyright 2004-2007 PyTom
 #
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
 
 init -1100:
     python:
+
+        theme = object()
 
         def RoundRect(color, small=False):
             """
@@ -20,7 +22,7 @@ init -1100:
                 else:
                     size = 12
 
-            return Frame(im.Color("rr%d.png" % size, color), size, size)
+            return Frame(theme.OneOrTwoColor("_roundrect/rr%dg.png" % size, color), size, size)
                             
         def _display_button_menu(menuitems):
 
@@ -37,7 +39,6 @@ init -1100:
             store.menu = _display_button_menu
 
             style.menu.clear()
-
             style.menu.box_spacing = 2
 
             style.menu_window.clear()
@@ -60,11 +61,11 @@ init -1100:
             style.menu_choice_button.xmaximum = int(config.screen_width * 0.75)
 
 
+        theme.button_menu = _button_menu
 
+            
     python hide:
 
-        store.theme = object()
-        
         def theme_roundrect(
             widget = (0, 60, 120, 255),
             widget_hover = (0, 80, 160, 255),
@@ -164,16 +165,16 @@ init -1100:
 
                 nav_xpos = 663
                 
-            rrslider_empty = "rrslider_empty.png"
-            rrslider_full = "rrslider_full.png"
-            rrslider_thumb = "rrslider_thumb.png"
+            rrslider_empty = "_roundrect/rrslider_empty.png"
+            rrslider_full = "_roundrect/rrslider_full.png"
+            rrslider_thumb = "_roundrect/rrslider_thumb.png"
 
             rrslider_radius = 6
             rrslider_height = 24
 
-            rrvslider_empty = "rrvslider_empty.png"
-            rrvslider_full = "rrvslider_full.png"
-            rrvslider_thumb = "rrvslider_thumb.png"
+            rrvslider_empty = "_roundrect/rrvslider_empty.png"
+            rrvslider_full = "_roundrect/rrvslider_full.png"
+            rrvslider_thumb = "_roundrect/rrvslider_thumb.png"
 
             rrvslider_radius = 6
             rrvslider_width = 24
@@ -267,17 +268,17 @@ init -1100:
             style.bar.right_gutter = rrslider_radius
             style.bar.thumb_offset = -rrslider_radius
 
-            style.bar.left_bar = Frame(im.Color(rrslider_full, widget), rrslider_radius * 2, 0)
-            style.bar.right_bar = Frame(im.Color(rrslider_empty, widget), rrslider_radius * 2, 0)
-            style.bar.thumb = im.Color(rrslider_thumb, widget)
+            style.bar.left_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget), rrslider_radius * 2, 0)
+            style.bar.right_bar = Frame(theme.OneOrTwoColor(rrslider_empty, widget), rrslider_radius * 2, 0)
+            style.bar.thumb = theme.OneOrTwoColor(rrslider_thumb, widget)
 
-            style.bar.hover_left_bar = Frame(im.Color(rrslider_full, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_right_bar = Frame(im.Color(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
-            style.bar.hover_thumb = im.Color(rrslider_thumb, widget_hover)
+            style.bar.hover_left_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_right_bar = Frame(theme.OneOrTwoColor(rrslider_empty, widget_hover), rrslider_radius * 2, 0)
+            style.bar.hover_thumb = theme.OneOrTwoColor(rrslider_thumb, widget_hover)
 
             style.scrollbar.clear()
-            style.scrollbar.right_bar = Frame(im.Color(rrslider_full, widget), rrslider_radius * 2, 0)
-            style.scrollbar.hover_right_bar = Frame(im.Color(rrslider_full, widget_hover), rrslider_radius * 2, 0)
+            style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget), rrslider_radius * 2, 0)
+            style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
 
 
             
@@ -286,18 +287,18 @@ init -1100:
             style.vbar.bottom_gutter = rrvslider_radius
             style.vbar.thumb_offset = -rrvslider_radius
 
-            style.vbar.bottom_bar = Frame(im.Color(rrvslider_full, widget), 0, rrvslider_radius * 2)
-            style.vbar.top_bar = Frame(im.Color(rrvslider_empty, widget), 0, rrvslider_radius * 2)
-            style.vbar.thumb = im.Color(rrvslider_thumb, widget)
+            style.vbar.bottom_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget), 0, rrvslider_radius * 2)
+            style.vbar.top_bar = Frame(theme.OneOrTwoColor(rrvslider_empty, widget), 0, rrvslider_radius * 2)
+            style.vbar.thumb = theme.OneOrTwoColor(rrvslider_thumb, widget)
 
-            style.vbar.hover_bottom_bar = Frame(im.Color(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
-            style.vbar.hover_top_bar = Frame(im.Color(rrvslider_empty, widget_hover), 0, rrvslider_radius * 2)
-            style.vbar.hover_thumb = im.Color(rrvslider_thumb, widget_hover)
+            style.vbar.hover_bottom_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
+            style.vbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvslider_empty, widget_hover), 0, rrvslider_radius * 2)
+            style.vbar.hover_thumb = theme.OneOrTwoColor(rrvslider_thumb, widget_hover)
 
             style.vscrollbar.clear()
             style.vscrollbar.bar_invert = True
-            style.vscrollbar.top_bar = Frame(im.Color(rrvslider_full, widget), 0, rrvslider_radius * 2)
-            style.vscrollbar.hover_top_bar = Frame(im.Color(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
+            style.vscrollbar.top_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget), 0, rrvslider_radius * 2)
+            style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
 
             
             style.prefs_slider.xmaximum=widget_width
@@ -471,4 +472,11 @@ init -1100:
 
         theme.roundrect_red = theme_roundrect_red
 
+        def OneOrTwoColor(image, color):
+            if len(color) == 2:
+                return im.Twocolor(image, color[0], color[1])
+            else:
+                return im.Twocolor(image, color, color)
+            
+        theme.OneOrTwoColor = OneOrTwoColor
         

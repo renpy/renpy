@@ -84,7 +84,7 @@ def add(w, make_current=False, once=False):
     atw = w 
     
     while at_stack:
-        neww = at_stack.pop()(atw)
+        atw = at_stack.pop()(atw)
     
     if isinstance(current, str):
         renpy.game.context(-1).scene_lists.add(current, atw)

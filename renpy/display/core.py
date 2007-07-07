@@ -110,7 +110,7 @@ class Displayable(renpy.object.Object):
         if not self.activated:
             self.set_style_prefix(self.role + "hover_")
         
-        if not default:
+        if not default and not self.activated:
             renpy.audio.sound.play(self.style.sound)
 
     def unfocus(self):
@@ -340,26 +340,67 @@ class Displayable(renpy.object.Object):
 
         return xoff, yoff
 
+class ImagePredictInfo(renpy.object.Object):
+    """
+    This stores information involved in image prediction.
+    """
 
-class SceneLists(object):
+    def after_setstate(self):
+        for i in renpy.config.layers + renpy.config.top_layers:
+            self.images.setdefault(i, {})
+    
+    def __init__(self, ipi=None):
+
+        # layer -> (tag -> image name)
+        self.images = { }
+
+        if ipi is None:
+            for i in renpy.config.layers + renpy.config.top_layers:
+                self.images[i] = { }
+        else:
+            for i in renpy.config.layers + renpy.config.top_layers:
+                self.images[i] = ipi.images[i].copy()
+            
+                
+    def showing(self, layer, name):
+
+        shown = self.images[layer].get(name[0], None)
+        
+        if shown is None or len(shown) < len(name):
+            return False
+
+        for a, b in zip(name, shown):
+            if a != b:
+                return False
+
+        return True
+
+            
+
+class SceneLists(renpy.object.Object):
     """
     This stores the current scene lists that are being used to display
     things to the user. 
     """
 
-
-    def __setstate__(self, state):
-
-        self.__dict__.update(state)
-
+    __version__ = 1
+    
+    def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
 
+    def after_upgrade(self, version):
 
-    def __init__(self, oldsl=None):
+        if version < 1:
 
+            self.at_list = { }
+            for i in renpy.config.layers + renpy.config.top_layers:
+                self.at_list[i] = i
 
+            
+
+    def __init__(self, oldsl, ipi):
 
         # A map from layer name -> list of
         # (key, zorder, show time, animation time, displayable) 
@@ -367,7 +408,10 @@ class SceneLists(object):
         # The structure of a scene list is used in:
         # Scenelists, Interface.make_layer, Fixed, and MoveTransition.
         self.layers = { }
-         
+        self.at_list = { }
+
+        self.image_predict_info = ipi
+        
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
@@ -376,41 +420,25 @@ class SceneLists(object):
                 except KeyError:
                     self.layers[i] = [ ]
 
+                self.at_list[i] = oldsl.at_list[i].copy()
+                
+                    
             for i in renpy.config.overlay_layers:
                 self.clear(i)
 
             self.replace_transient()
 
-            self.sticky_positions = oldsl.sticky_positions.copy()
             self.movie = oldsl.movie
             self.focused = None
             
         else:
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = [ ]
-
+                self.at_list[i] = { }
+                
             self.music = None
             self.movie = None
-            self.sticky_positions = { }
             self.focused = None
-
-    def rollback_copy(self):
-        """
-        Makes a shallow copy of all the lists, except for the stack,
-        which is a 2-level copy.
-        """
-
-        rv = SceneLists(self)
-        rv.focused = None
-
-#         rv.master = self.master[:]
-#         rv.transient = self.transient[:]
-
-#         rv.music = self.music
-#         rv.movie = self.movie
-
-        return rv
-         
 
     def replace_transient(self):
         """
@@ -422,7 +450,9 @@ class SceneLists(object):
 
         for i in renpy.config.transient_layers:
             self.layers[i] = [ ]
-
+            self.at_list[i].clear()
+            self.image_predict_info.images[i].clear()
+            
     def transient_is_empty(self):
         """
         This returns True if all transient layers are empty. This is
@@ -438,7 +468,7 @@ class SceneLists(object):
 
         return True
 
-    def add(self, layer, thing, key=None, zorder=0, behind=[ ]):
+    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None):
         """
         This is called to add something to a layer. Layer is
         the name of the layer that we need to add the thing to,
@@ -463,6 +493,12 @@ class SceneLists(object):
         if layer not in self.layers:
             raise Exception("Trying to add something to non-existent layer '%s'." % layer)
 
+        if key:
+            self.at_list[layer][key] = at_list
+
+        if key and name:
+            self.image_predict_info.images[layer][key] = name
+                
         l = self.layers[layer]
 
         at = None
@@ -509,11 +545,14 @@ class SceneLists(object):
 
         if layer not in self.layers:
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
-
+        
         l = self.layers[layer]
         l = [ (k, zo, st, at, d) for k, zo, st, at, d in l if k != thing if d is not thing ]
-
         self.layers[layer] = l
+
+        self.at_list[layer].pop(thing, None)
+        self.image_predict_info.images[layer].pop(thing, None)
+            
 
     def clear(self, layer):
         """
@@ -524,7 +563,10 @@ class SceneLists(object):
             raise Exception("Trying to clear non-existent layer '%s'." % layer)
 
         self.layers[layer] = [ ]
-
+        self.at_list[layer].clear()
+        self.image_predict_info.images[layer].clear()
+        
+        
     def set_times(self, time):
         """
         This finds entries with a time of None, and replaces that
@@ -541,17 +583,13 @@ class SceneLists(object):
             l[:] = ll
             
 
-    def showing(self, layer, key):
+    def showing(self, layer, name):
         """
-        Returns true of tan entry with the given key is found in the
-        given layer. Returns False otherwise. Key should be a string.
+        Returns true if something with the prefix of the given name
+        is found in the scene list.
         """
 
-        for k, zo, st, at, d in self.layers[layer]:
-            if k == key:
-                return True
-
-        return False
+        return self.image_predict_info.showing(layer, name)
     
 
 class Display(object):

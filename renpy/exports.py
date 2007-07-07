@@ -148,9 +148,8 @@ def showing(name, layer='master'):
         name = tuple(name.split())
 
     sls = scene_lists()
-    key = name[0]
 
-    return sls.showing(layer, key)
+    return sls.showing(layer, name)
 
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ]):
     "Documented in wiki as renpy.show."
@@ -163,10 +162,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     key = tag or name[0]
 
     if renpy.config.sticky_positions:        
-        if not at_list and key in sls.sticky_positions:
-            at_list = sls.sticky_positions[key]
-
-        sls.sticky_positions[key] = at_list
+        if not at_list and key in sls.at_list[layer]:
+            at_list = sls.at_list[layer][key]
 
     if what is None:
         what = name
@@ -176,9 +173,12 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
         img = i(img)
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[tuple(name)] = True
+    renpy.game.persistent._seen_images[name] = True
 
-    sls.add(layer, img, key, zorder, behind)
+    if tag:
+        name = (tag,) + name[1:]
+    
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name)
     
 
 def hide(name, layer='master'):
@@ -202,10 +202,6 @@ def hide(name, layer='master'):
     sls = scene_lists()
     key = name[0]
     sls.remove(layer, key)
-
-    if key in sls.sticky_positions:
-        del sls.sticky_positions[key]
-
     
 
 def scene(layer='master'):
@@ -217,7 +213,6 @@ def scene(layer='master'):
 
     sls = scene_lists()
     sls.clear(layer)
-    sls.sticky_positions.clear()
     
         
 def watch(expression, style='default', **properties):
