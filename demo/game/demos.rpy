@@ -8,7 +8,7 @@ init:
             ("demo_basics", "Basic Scripting", "5.6.3"),
             ("demo_experience", "User Experience", "5.6.3"), 
             ("demo_transitions", "Transitions", "5.6.6"),
-            ("demo_movement", "Positions and Movement", "5.6.6"),
+            ("demo_movement", "Positions and Movement", "6.3.1"),
             ("demo_animation", "Animation", "6.2.0"),
             ("demo_multimedia", "Music and Sound", "5.6.3"),
             ("demo_imageops", "Image Operations", "6.3.0"),

@@ -163,6 +163,8 @@ label distribute:
         multi_dirs = [ ]
         multi_files = [ ]
 
+        multi_dirs.append((config.renpy_base + "/renpy", "renpy"))
+
         # Ren'Py Source.
         for dirname, dirs, files in os.walk(config.renpy_base + "/renpy"):
 
@@ -183,10 +185,29 @@ label distribute:
                 
                 multi_files.append((dirname + "/" + f, shortdir + f))
 
+        multi_dirs.append((config.commondir, "common"))
+
+        # Common directory.
+        for dirname, dirs, files in os.walk(config.renpy_base + "/common"):
+
+            shortdir = dirname[len(config.renpy_base)+1:]
+            shortdir += "/"
+            
+            dirs[:] = [ i for i in dirs if not i[0] == '.' ]
+
+            for d in dirs:
+                multi_dirs.append((dirname + "/" + d, shortdir + d))
+
+            for f in files:
+                if f[0] == "." or f[-1] == "~" or f.endswith(".bak"):
+                    continue
+
+                multi_files.append((dirname + "/" + f, shortdir + f))
+
+        # LICENSE.txt
         multi_files.append((config.renpy_base + "/LICENSE.txt", "renpy/LICENSE.txt"))
 
         # Project files.
-
         for dirname, dirs, files in os.walk(project.path):
 
             shortdir = dirname[len(project.path)+1:]
@@ -208,17 +229,6 @@ label distribute:
                     continue
                 
                 multi_files.append((dirname + "/" + f, shortdir + f))
-                
-                
-        # Common directory... doesn't include subdirs.
-        multi_dirs.append((config.commondir, "common"))
-        for i in os.listdir(config.commondir):
-            if i[0] == "." or i[-1] == "~" or i.endswith(".bak"):
-                continue
-
-            multi_files.append((config.commondir + "/" + i,
-                                "common/" + i))
-
 
         shortgamedir = project.gamedir[len(project.path)+1:]
 
