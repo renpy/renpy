@@ -39,6 +39,17 @@ class Curry(object):
     def __repr__(self):
         return "<curry " + repr(vars(self)) + ">"
 
+    def __eq__(self, other):
+
+        return (
+            isinstance(other, Curry) and 
+            self.callable == other.callable and
+            self.args == other.args and
+            self.kwargs == other.kwargs)
+        
+    def __hash__(self):
+        return hash(self.callable) ^ hash(self.args) ^ hash(self.kwargs)
+    
 def curry(fn):
     """
     Takes a callable, and returns something that, when called, returns

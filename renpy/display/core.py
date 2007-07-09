@@ -375,7 +375,15 @@ class ImagePredictInfo(renpy.object.Object):
 
         return True
 
-            
+    def predict_scene(self, layer):
+        self.images[layer].clear()
+
+    def predict_show(self, name, layer):
+        self.images[layer][name[0]] = name
+        
+    def predict_hide(self, tag, layer):
+        self.images[layer].pop(tag, None)
+    
 
 class SceneLists(renpy.object.Object):
     """
@@ -389,6 +397,7 @@ class SceneLists(renpy.object.Object):
         for i in renpy.config.layers + renpy.config.top_layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
+                self.at_list[i] = { }
 
     def after_upgrade(self, version):
 
@@ -396,7 +405,7 @@ class SceneLists(renpy.object.Object):
 
             self.at_list = { }
             for i in renpy.config.layers + renpy.config.top_layers:
-                self.at_list[i] = i
+                self.at_list[i] = { }
 
             
 
@@ -421,7 +430,6 @@ class SceneLists(renpy.object.Object):
                     self.layers[i] = [ ]
 
                 self.at_list[i] = oldsl.at_list[i].copy()
-                
                     
             for i in renpy.config.overlay_layers:
                 self.clear(i)

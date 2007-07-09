@@ -556,8 +556,10 @@ class Image(Node):
         renpy.exports.image(self.imgname, img)
 
         return self.next
+    
 
-def predict_imspec(imspec, callback):
+    
+def predict_imspec(imspec, callback, scene=False):
     """
     Call this to use the given callback to predict the image named
     in imspec.
@@ -583,6 +585,15 @@ def predict_imspec(imspec, callback):
         if img is None:
             return
 
+    full_name = name
+    if tag:
+        full_name = (tag,) + full_name[1:]
+
+    if scene:
+        renpy.game.context().predict_info.images.predict_scene(layer)
+        
+    renpy.game.context().predict_info.images.predict_show(tag or name, layer)
+        
     img.predict(callback)
             
 def show_imspec(imspec):
@@ -684,8 +695,10 @@ class Scene(Node):
         
     def predict(self, callback):
 
+        
+        
         if self.imspec:
-            predict_imspec(self.imspec, callback)
+            predict_imspec(self.imspec, callback, scene=True)
 
         return [ self.next ]
 
@@ -709,6 +722,24 @@ class Hide(Node):
     def diff_info(self): 
         return (Hide, tuple(self.imspec[0]))
 
+    def predict(self, callback):
+
+        if len(self.imspec) == 3:
+            name, at_list, layer = self.imspec
+            expression = None
+            tag = None
+            zorder = 0
+        elif len(self.imspec) == 6:
+            name, expression, tag, at_list, layer, zorder = self.imspec
+        elif len(self.imspec) == 7:
+            name, expression, tag, at_list, layer, zorder, behind = self.imspec
+
+
+        if tag is None:
+            tag = name[0]
+            
+        renpy.game.context().predict_info.images.predict_hide(tag, layer)
+                
     def execute(self):
 
         if len(self.imspec) == 3:

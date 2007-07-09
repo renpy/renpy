@@ -158,103 +158,7 @@ class Container(renpy.display.core.Displayable):
     def visit(self):
         return self.children
     
-# class Fixed(Container):
-#     """
-#     A container that lays out each of its children at fixed
-#     coordinates determined by the position style of the child. Each
-#     widget is given the whole area of this widget, and then placed
-#     within that area based on its position style.
-
-#     The result of this layout is the size of the entire area allocated
-#     to it. So it's probably only viable for laying out a root window.
-
-#     Fixed is used by the display core to render scene lists, and to
-#     pass them off to transitions.
-
-#     """
-
-#     layer_name = None
     
-#     def __init__(self, style='default', **properties):
-#         super(Fixed, self).__init__(style=style, **properties)
-#         self.start_times = [ ]
-#         self.anim_times = [ ]
-
-#         # A map from layer name to the widget corresponding to
-#         # that layer.
-#         self.layers = None
-
-#         # The scene list for this widget.
-#         self.scene_list = None
-        
-
-#     def add(self, widget, start_time=None, anim_time=None):
-#         super(Fixed, self).add(widget)
-#         self.start_times.append(start_time)
-#         self.anim_times.append(anim_time)
-
-#     def append_scene_list(self, l):
-#         for tag, zo, start, anim, d in l:
-#             self.add(d, start, anim)
-
-#         if self.scene_list is None:
-#             self.scene_list = [ ]
-            
-#         self.scene_list.extend(l)
-
-# #     def get_widget_time_list(self):
-# #         return zip(self.children, self.times)
-            
-#     def render(self, width, height, st, at):
-
-#         self.offsets = [ ]
-#         self.sizes = [ ]
-
-#         rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
-
-#         t = renpy.game.interface.frame_time
-#         it = renpy.game.interface.interact_time
-
-#         # Things with a None time are started at the first draw.
-
-#         self.start_times = [ i or it for i in self.start_times ]
-#         self.anim_times = [ i or it for i in self.anim_times ]
-
-        
-#         for child, start, anim in zip(self.children, self.start_times, self.anim_times):
-
-#             cst = t - start
-#             cat = t - anim
-
-#             surf = render(child, width, height, cst, cat)
-
-#             if surf:
-#                 self.sizes.append(surf.get_size())
-#                 offset = child.place(rv, 0, 0, width, height, surf)
-#                 self.offsets.append(offset)
-#             else:
-#                 self.sizes.append((0, 0))
-#                 self.offsets.append((0, 0))
-
-#         return rv
-
-#     def event(self, ev, x, y, st):
-#         children_offsets = zip(self.children, self.offsets, self.start_times)
-#         children_offsets.reverse()
-
-#         for i, (xo, yo), t in children_offsets: 
-
-#             if t is None:
-#                 cst = 0
-#             else:
-#                 cst = renpy.game.interface.event_time - t
-
-#             rv = i.event(ev, x - xo, y - yo, cst)    
-#             if rv is not None:
-#                 return rv
-                
-#         return None
-
 
 def LiveComposite(size, *args, **properties):
     """
@@ -329,6 +233,25 @@ class Position(Container):
 
         return surf
 
+    def get_placement(self):
+    
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.child.get_placement()
+            
+        if self.style.xpos is not None:
+            xpos = self.style.xpos
+
+        if self.style.ypos is not None:
+            ypos = self.style.ypos
+
+        if self.style.xanchor is not None:
+            xanchor = self.style.xanchor
+
+        if self.style.yanchor is not None:
+            yanchor = self.style.yanchor
+
+        return xpos, ypos, xanchor, yanchor, xoffset, yoffset
+
+    
 class Grid(Container):
     """
     A grid is a widget that evenly allocates space to its children.
@@ -1359,13 +1282,14 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             args = ( function, )
             kwargs = { }
             function = dynamic_displayable_compat
-            
+
+        self.predict_function = kwargs.pop("_predict_function", None)            
         self.function = function
         self.args = args
         self.kwargs = kwargs
 
     def visit(self):
-        return [ self.child ]
+        return [ ]
 
     def per_interact(self):
         renpy.display.render.redraw(self, 0)
@@ -1383,6 +1307,15 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         
         return renpy.display.render.render(self.child, w, h, st, at)
 
+    def predict_one(self, callback):
+
+        if not self.predict_function:
+            return
+        
+        for i in self.predict_function(*self.args, **self.kwargs):
+            if i is not None:
+                i.predict(callback)
+        
     def get_placement(self):
         return self.child.get_placement()
 
@@ -1390,6 +1323,71 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         if self.child:
             return self.child.event(ev, x, y, st)
 
+# This chooses the first member of switch that's being shown on the
+# given layer.
+def condition_switch_pick(switch):
+    for cond, d in switch:
+        if cond is None or renpy.python.py_eval(cond):
+            return d
+
+    raise Excepton("Switch could not choose a displayable.")
+
+def condition_switch_show(st, at, switch):
+    return condition_switch_pick(switch), None
+
+def condition_switch_predict(switch):
+    return [ condition_switch_pick(switch) ]
+
+def ConditionSwitch(*args, **kwargs):
+
+    kwargs.setdefault('style', 'default')
+    
+    switch = [ ]
+    
+    if len(args) % 2 != 0:
+        raise Exception('ConditionSwitch takes an even number of arguments')
+
+    for cond, d in zip(args[0::2], args[1::2]):
+
+        d = renpy.easy.displayable(d)
+        switch.append((cond, d))
+
+    rv = DynamicDisplayable(condition_switch_show,
+                            switch,
+                            _predict_function=condition_switch_predict)
+                              
+    return Position(rv, **kwargs)
+
+    
+def ShowingSwitch(*args, **kwargs):
+
+    layer = kwargs.pop('layer', 'master')
+
+    
+    if len(args) % 2 != 0:
+        raise Exception('ConditionSwitch takes an even number of arguments')
+
+    condargs = [ ]
+
+    
+    for name, d in zip(args[0::2], args[1::2]):
+        if name is not None:
+            if not isinstance(name, tuple):        
+                name = tuple(name.split())
+            cond = "renpy.showing(%r, layer=%r)" % (name, layer)
+        else:
+            cond = None 
+            
+ 
+        condargs.append(cond)
+        condargs.append(d)
+
+    return ConditionSwitch(*condargs, **kwargs)
+    
+    
+    
+
+        
 class IgnoresEvents(renpy.display.core.Displayable):
 
     def __init__(self, child):

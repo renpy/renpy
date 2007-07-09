@@ -4,6 +4,31 @@ Major bug fixes that could affect many systems are indicated with !!!.
 New in Ren'Py 6.3.1
 -------------------
 
+
+The image prediction mechanism has been improved. Now, it tracks the
+names of images that will be shown to the user.
+
+
+There are two new displayables. ConditionSwitch chooses a displayable
+based on a series of conditions, while ShowingSwitch makes the choice
+based on what other displayables are being shown. ShowingSwitch takes 
+advantage of the new image prediction information.
+ 
+
+Changed the behavior of renpy.showing. Now, renpy.showing can
+determine which images are showing, as opposed to which image tags are
+showing. This also takes advantage of the new image prediction
+information.
+
+
+Added a new renpy.get_at_list function, which retrieves the at_list
+that was used to show a given image.
+
+
+The roundrect theme now support putting a vertical gradient on buttons
+and sliders. See theme.roundrect for more details.
+
+
 Changed the focus code so that when a mouse event ends an interaction,
 the displayable underneath the mouse at the start of the next
 interaction will become focused.
@@ -15,6 +40,8 @@ with joystick support in the game proper.
 
 Fixed a bug in the subsurface code that prevented the various CropMove
 transitions from working.
+
+Fixed a bug that prevented ui.at from working.
 
 
 New in Ren'Py 6.3.0

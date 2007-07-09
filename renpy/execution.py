@@ -88,13 +88,15 @@ class Context(renpy.object.Object):
         self.info = renpy.python.RevertableObject()
         self.seen = False
                 
-        oldsl = None
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
-            vars(self.info).update(vars(context.info))
+            vars(self.info).update(vars(context.info))            
+            self.predict_info = PredictInfo(context.predict_info)
+        else:
+            oldsl = None
+            self.predict_info = PredictInfo()
 
-        self.predict_info = PredictInfo()
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.predict_info.images)
         
         self.make_dynamic([ "_return", "_args", "_kwargs" ])
@@ -249,13 +251,11 @@ class Context(renpy.object.Object):
         Makes a copy of this object, suitable for rolling back to.
         """
 
-        rv = Context(self.rollback)
+        rv = Context(self.rollback, self)
         rv.call_location_stack = self.call_location_stack[:]
         rv.return_stack = self.return_stack[:]
         rv.dynamic_stack = [ i.copy() for i in self.dynamic_stack ]
         rv.current = self.current
-
-        rv.scene_lists.focused = None
 
         rv.runtime = self.runtime
         rv.info = self.info
@@ -272,15 +272,18 @@ class Context(renpy.object.Object):
         if not self.current:
             return
 
-        nodes = [ renpy.game.script.lookup(self.current) ]
+        old_predict_info = self.predict_info
+        
+        nodes = [ (renpy.game.script.lookup(self.current), self.predict_info) ]
 
         for i in range(0, renpy.config.predict_statements):
 
             if i >= len(nodes):
                 break
 
-            node = nodes[i]
-
+            node, predict_info = nodes[i]
+            self.predict_info = PredictInfo(predict_info)
+            
             # Ignore exceptions in prediction, so long as
             # prediction is not needed.
 
@@ -290,7 +293,7 @@ class Context(renpy.object.Object):
                         continue
 
                     if n not in nodes:
-                        nodes.append(n)
+                        nodes.append((n, self.predict_info))
             except:
 
                 if renpy.config.debug_image_cache:
@@ -302,8 +305,10 @@ class Context(renpy.object.Object):
 
                 # We accept that sometimes prediction won't work.
                 pass
-                
-                
+            
+        self.predict_info = old_predict_info
+
+            
     def seen_current(self, ever):
         """
         Returns a true value if we have finshed the current statement

@@ -108,6 +108,8 @@ Null = renpy.display.layout.Null
 Window = renpy.display.layout.Window
 Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
+ConditionSwitch = renpy.display.layout.ConditionSwitch
+ShowingSwitch = renpy.display.layout.ShowingSwitch
 
 Animation = anim.Animation
 Movie = renpy.display.video.Movie

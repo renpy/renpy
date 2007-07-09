@@ -35,7 +35,6 @@ init -1:
         theme.roundrect(
 
             ## The color of an idle widget face.
-#            widget = "#003c78",
             widget = ("#005c98", "#003c78"),
             
             ## The color of a focused widget face.

@@ -147,9 +147,7 @@ def showing(name, layer='master'):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    sls = scene_lists()
-
-    return sls.showing(layer, name)
+    return renpy.game.context().predict_info.images.showing(layer, name)
 
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ]):
     "Documented in wiki as renpy.show."
@@ -991,7 +989,14 @@ def image_size(im):
     surf = im.load()
     return im.get_size()
 
-    
+def get_at_list(name, layer='master'):
+    if isinstance(name, basestring):
+        name = tuple(name.split())
+
+    tag = name[0]
+
+    return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
+
 
 
     
