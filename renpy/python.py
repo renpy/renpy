@@ -887,3 +887,18 @@ def py_eval(source, globals=None, locals=None):
     
     return eval(py_compile(source, 'eval'), globals, locals)
 
+
+# Code for pickling bound methods.
+
+def method_pickle(method):
+    name = method.im_func.__name__
+    obj = method.im_class
+
+    return method_unpickle, (obj, name)
+
+def method_unpickle(obj, name):
+    return getattr(obj, name)
+
+import copy_reg
+import types
+copy_reg.pickle(types.MethodType, method_pickle, method_unpickle)

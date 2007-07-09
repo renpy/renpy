@@ -87,6 +87,7 @@ def list_logical_lines(filename):
     f.close()
 
     data = data.replace("\r\n", "\n")
+    data = data.replace("\r", "\n")
     
     if "RENPY_PATH_ELIDE" in os.environ:
         old, new = os.environ["RENPY_PATH_ELIDE"].split(':')

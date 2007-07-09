@@ -743,7 +743,7 @@ class Motion(Container):
         self.add_sizes = add_sizes
 
         self.position = (self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor)
-        
+
     def get_placement(self):
         return self.position + (self.style.xoffset, self.style.yoffset)
                 

@@ -180,9 +180,9 @@ def change_focus(newfocus, default=False):
     current = widget
     if widget is not None:
         rv = widget.focus(default=default)
-
+                    
     set_focused(current)
-
+    
     return rv
     
 # This handles mouse events, to see if they change the focus.
@@ -192,12 +192,12 @@ def mouse_handler(ev, x, y, default=False):
         return
 
     newfocus = None
-    default = None
+    default_focus = None
 
     for f in focus_list:
 
         if f.x is None:
-            default = f
+            default_focus = f
             continue
 
         if f.mx is not None:
@@ -211,7 +211,7 @@ def mouse_handler(ev, x, y, default=False):
             newfocus = f
             break
     else:
-        newfocus = default
+        newfocus = default_focus
 
     return change_focus(newfocus, default=default)
 

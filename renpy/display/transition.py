@@ -875,8 +875,12 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             continue
 
         
-        
-        rv = renpy.game.interface.make_layer(new.layer_name, rv_sl)
+
+        layer = new.layer_name
+        rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **renpy.game.interface.layer_properties[layer])
+        rv.append_scene_list(rv_sl)
+        rv.layer_name = layer
+
         return rv
 
 
@@ -1123,4 +1127,3 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
 
     return NoTransition(delay, old_widget=f, new_widget=f)
 
-    

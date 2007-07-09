@@ -997,7 +997,8 @@ def get_at_list(name, layer='master'):
 
     return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
 
-
+def layer_at_list(at_list, layer='master'):
+    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
 
     
 # New context stuff.

@@ -73,9 +73,19 @@ label demo_movement:
     e "... and zoom {i}them{/i} out again."
 
     show eileen happy
+    
+    $ renpy.layer_at_list([ Zoom((800, 600), (0, 0, 800, 600), (200, 0, 400, 300), .5)])
+    with Pause(.5)
+    $ renpy.layer_at_list([ Zoom((800, 600), (200, 0, 400, 300), (0, 0, 800, 600), .5)])
+    with Pause(.5)
+    $ renpy.layer_at_list([ ])
+
+    e "We can apply motions to a layer as a whole."
+    
+    show eileen happy
     show magic_circle at RotoZoom(0, 360, 5, 0, 1, 1, rot_repeat=True, rot_anim_timebase=True, opaque=False, xalign=0.5, yalign=0.5)
 
-    $ renpy.pause(1)
+    with Pause(1)
     
     e "We can rotate and zoom images in a single operation."
 
@@ -83,7 +93,7 @@ label demo_movement:
 
     show magic_circle at RotoZoom(0, 360, 5, 1, 0, 1, rot_repeat=True, rot_anim_timebase=True, opaque=False, xalign=0.5, yalign=0.5)
 
-    $ renpy.pause(1)
+    with Pause(1)
 
     hide magic_circle
     

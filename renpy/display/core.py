@@ -404,21 +404,21 @@ class SceneLists(renpy.object.Object):
         if version < 1:
 
             self.at_list = { }
+            self.layer_at_list = { }
+
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.at_list[i] = { }
-
-            
+                self.layer_at_list[i] = (None, [ ])
+                
 
     def __init__(self, oldsl, ipi):
 
         # A map from layer name -> list of
         # (key, zorder, show time, animation time, displayable) 
-        #
-        # The structure of a scene list is used in:
-        # Scenelists, Interface.make_layer, Fixed, and MoveTransition.
         self.layers = { }
         self.at_list = { }
-
+        self.layer_at_list = { }
+        
         self.image_predict_info = ipi
         
         if oldsl:
@@ -430,7 +430,8 @@ class SceneLists(renpy.object.Object):
                     self.layers[i] = [ ]
 
                 self.at_list[i] = oldsl.at_list[i].copy()
-                    
+                self.layer_at_list[i] = oldsl.layer_at_list[i]
+                
             for i in renpy.config.overlay_layers:
                 self.clear(i)
 
@@ -443,6 +444,7 @@ class SceneLists(renpy.object.Object):
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
+                self.layer_at_list[i] = (None, [ ])
                 
             self.music = None
             self.movie = None
@@ -460,6 +462,7 @@ class SceneLists(renpy.object.Object):
             self.layers[i] = [ ]
             self.at_list[i].clear()
             self.image_predict_info.images[i].clear()
+            self.layer_at_list[i] = (None, [ ])
             
     def transient_is_empty(self):
         """
@@ -573,7 +576,10 @@ class SceneLists(renpy.object.Object):
         self.layers[layer] = [ ]
         self.at_list[layer].clear()
         self.image_predict_info.images[layer].clear()
-        
+        self.layer_at_list[layer] = (None, [ ])
+
+    def set_layer_at_list(self, layer, at_list):
+        self.layer_at_list[layer] = (None, list(at_list))
         
     def set_times(self, time):
         """
@@ -581,6 +587,9 @@ class SceneLists(renpy.object.Object):
         time with the given time.
         """
 
+        for l, (t, list) in self.layer_at_list.items():
+            self.layer_at_list[l] = (t or time, list)
+        
         for l in self.layers.values():
             ll = [ ]
 
@@ -598,6 +607,27 @@ class SceneLists(renpy.object.Object):
         """
 
         return self.image_predict_info.showing(layer, name)
+
+    def make_layer(self, layer, properties):
+        """
+        Creates a Fixed with the given layer name and scene_list.
+        """
+
+        rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **properties)
+        rv.append_scene_list(self.layers[layer])
+
+        time, at_list = self.layer_at_list[layer]
+
+        if at_list:
+            for a in at_list:
+                rv = a(rv)
+
+                f = renpy.display.layout.MultiBox(layout='fixed')
+                f.add(rv, time, time)
+                rv = f
+
+        rv.layer_name = layer
+        return rv
     
 
 class Display(object):
@@ -1168,16 +1198,6 @@ class Interface(object):
         self.last_event = ev
         return ev
 
-    def make_layer(self, name, scene_list):
-        """
-        Creates a Fixed with the given layer name and scene_list.
-        """
-
-        rv = renpy.display.layout.MultiBox(layout='fixed', focus=name, **self.layer_properties[name])
-        rv.append_scene_list(scene_list)
-        rv.layer_name = name
-        return rv
-    
 
     def compute_scene(self, scene_lists):
         """
@@ -1189,9 +1209,8 @@ class Interface(object):
 
         for layer in renpy.config.layers + renpy.config.top_layers:
 
-            f = self.make_layer(layer, scene_lists.layers[layer])
-            rv[layer] = f
-
+            rv[layer] = scene_lists.make_layer(layer, self.layer_properties[layer])
+            
         return rv
             
 
@@ -1349,6 +1368,7 @@ class Interface(object):
 
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene_layer)
+
                 where.add(trans)
                 where.layers[layer] = trans
                 
@@ -1372,10 +1392,10 @@ class Interface(object):
             for layer in renpy.config.layers:
                 old_root.layers[layer] = self.old_scene[layer]
                 old_root.add(self.old_scene[layer])
-            
+
             trans = self.transition[None](old_widget=old_root,
                                           new_widget=layers_root)
-            
+                
             root_widget.add(trans)
 
             if trans_pause:
@@ -1411,12 +1431,6 @@ class Interface(object):
         # Figure out what should be focused.
         renpy.display.focus.before_interact(focus_roots)
 
-        if self.last_event:
-            x, y = pygame.mouse.get_pos()
-            x -= self.display.screen_xoffset
-            renpy.display.focus.mouse_handler(self.last_event, x, y)
-
-        
         # Redraw the screen.
         renpy.display.render.process_redraws()
         needs_redraw = True
@@ -1479,6 +1493,11 @@ class Interface(object):
 
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
+
+                    if first_pass and self.last_event:
+                        x, y = pygame.mouse.get_pos()
+                        x -= self.display.screen_xoffset
+                        renpy.display.focus.mouse_handler(self.last_event, x, y, default=False)
 
                     needs_redraw = False
                     first_pass = False

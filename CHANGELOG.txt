@@ -25,6 +25,11 @@ Added a new renpy.get_at_list function, which retrieves the at_list
 that was used to show a given image.
 
 
+Add the renpy.layer_at_list function. This sets an at_list that
+applies to a layer as a whole, allowing you to perform certain absurd
+effects, like zooming into an entire layer as a whole.
+
+
 The roundrect theme now support putting a vertical gradient on buttons
 and sliders. See theme.roundrect for more details.
 
@@ -43,6 +48,7 @@ transitions from working.
 
 Fixed a bug that prevented ui.at from working.
 
+Fixed a bug that prevented saving after using a Minigame.
 
 New in Ren'Py 6.3.0
 -------------------

@@ -494,3 +494,5 @@ init -1090 python:
     style.joy_vbox = style.js_frame_vbox
     style.yesno_window = style.yesno_frame
     style.mm_menu_window_vbox = style.mm_menu_frame_vbox
+    style.menu_choice_button_text = style.menu_choice
+    style.menu_choice_chosen_button_text = style.menu_choice_chosen

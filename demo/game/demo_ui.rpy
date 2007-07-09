@@ -150,8 +150,8 @@ init python:
         ui.text("HP", size=20)
         ui.bar(maxhp, hp,
                xmaximum=150,
-               left_bar=Frame("rrslider_full.png", 12, 0),
-               right_bar=Frame("rrslider_empty.png", 12, 0),
+               left_bar=Frame(im.Twocolor("_roundrect/rrslider_full.png", "#fff", "#fff"), 12, 0),
+               right_bar=Frame(im.Twocolor("_roundrect/rrslider_empty.png", "#fff", "#fff"), 12, 0),
                thumb=None,
                thumb_shadow=None)
 

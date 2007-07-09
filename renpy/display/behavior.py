@@ -367,7 +367,7 @@ class Button(renpy.display.layout.Window):
 
         if self.activated:
             return None
-        
+
         if self.hovered and not default:
             return self.hovered()
 
