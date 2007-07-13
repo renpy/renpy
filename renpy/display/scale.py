@@ -22,6 +22,7 @@
 # This hacks pygame to support resolution-scaling.
 
 import os
+import math
 
 factor = 1.0
 
@@ -386,11 +387,19 @@ else:
         old_pixellate = _renpy.pixellate
 
         def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
+            print "PIXELLATE", max(avgwidth * factor, 1), outwidth * factor
+
+            ow = max(int(outwidth * factor), 1)
+            oh = max(int(outheight * factor), 1)
+
+            owf = 1.0 * ow / outwidth
+            ohf = 1.0 * oh / outheight
+
+            
             old_pixellate(pysrc.surface, pydst.surface,
-                          max(avgwidth * factor, 1),
-                          max(avgheight * factor, 1),
-                          outwidth * factor,
-                          outheight * factor)
+                          max(avgwidth * owf, 1),
+                          max(avgheight * ohf, 1),
+                          ow, oh)
 
         _renpy.pixellate = pixellate
             

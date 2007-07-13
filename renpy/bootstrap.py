@@ -127,6 +127,15 @@ def bootstrap(renpy_base):
         execfile(options.python, __main__.__dict__, __main__.__dict__)
         sys.exit(0)
 
+    args = list(args)
+        
+    if "--" in args:
+        ddindex = args.index("--")
+        args = args[0:ddindex]
+        config_args = args[ddindex+1:]
+    else:
+        config_args = [ ]
+        
     if len(args) >= 1:
         basedir = os.path.abspath(args[0])
     else:
@@ -193,7 +202,8 @@ def bootstrap(renpy_base):
             renpy.config.renpy_base = renpy_base
             renpy.config.basedir = basedir
             renpy.config.gamedir = gamedir
-
+            renpy.config.args = config_args
+            
             renpy.main.main()
             keep_running = False
 
