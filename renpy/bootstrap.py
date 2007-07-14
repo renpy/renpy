@@ -83,6 +83,10 @@ def bootstrap(renpy_base):
         name = name[:name.find(".")]
 
     op = optparse.OptionParser()
+
+    op.add_option('--arg', dest='args', default=[], action='append',
+                  help='Append an argument to a list that can be accessed as config.args.')
+
     op.add_option('--version', dest='version', default=False, action='store_true',
                   help="Display the version of Ren'Py")
 
@@ -128,14 +132,7 @@ def bootstrap(renpy_base):
         sys.exit(0)
 
     args = list(args)
-        
-    if "--" in args:
-        ddindex = args.index("--")
-        args = args[0:ddindex]
-        config_args = args[ddindex+1:]
-    else:
-        config_args = [ ]
-        
+            
     if len(args) >= 1:
         basedir = os.path.abspath(args[0])
     else:
@@ -202,7 +199,7 @@ def bootstrap(renpy_base):
             renpy.config.renpy_base = renpy_base
             renpy.config.basedir = basedir
             renpy.config.gamedir = gamedir
-            renpy.config.args = config_args
+            renpy.config.args = options.args
             
             renpy.main.main()
             keep_running = False

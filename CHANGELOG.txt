@@ -42,6 +42,13 @@ Disabled joystick support in the launcher, so that it doesn't conflict
 with joystick support in the game proper.
 
 
+Now, command-line arguments preceded by --arg will be stored in
+config.args.
+
+
+Pixellate and save thumbnails now work when in imouto-mode.
+
+
 Fixed a bug in the subsurface code that prevented the various CropMove
 transitions from working.
 
