@@ -24,10 +24,6 @@ import pygame
 
 from pygame.display import *
 
-def flip():
-    renpy.game.interface.display.full_redraw = True
-    pygame.display.flip()
-
 def gl_get_attribute(flag):
     """
     RPG: Not supported under renpy.
@@ -96,7 +92,10 @@ def set_mode(size, flags=0, depth=0):
     the screen given to Ren'Py. ''flags'' and ''depth'' are ignored,
     with depth defaulting to 32.
     """
-
+    renpy.game.interface.display.full_redraw = True
+    pygame.time.set_timer(renpy.display.core.REDRAW, 0)
+    pygame.time.set_timer(renpy.display.core.TIMEEVENT, 0)
+    
     screen = pygame.display.get_surface()
     
     if tuple(size) != screen.get_size():
@@ -118,15 +117,5 @@ def toggle_fullscreen():
 
     raise Exception("Not supported.")
 
-def update(rectstyle=None):
-    renpy.game.interface.display.full_redraw = True
-    pygame.time.set_timer(renpy.display.core.REDRAW, 0)
-    pygame.time.set_timer(renpy.display.core.TIMEEVENT, 0)
-    
-
-    if rectstyle is not None:
-        pygame.display.update(rectstyle)
-    else:
-        pygame.display.update()
 
 

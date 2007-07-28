@@ -19,29 +19,4 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
-import pygame
-
-def Font(filename, size):
-    """
-    RPG: Extended to load fonts from the game directory.
-    """
-
-    if filename is None:
-        filename = renpy.store.style.default.font
-
-    return pygame.font.Font(renpy.loader.transfn(filename), size)
-
-SysFont = pygame.font.SysFont
-get_default_font = pygame.font.get_default_font
-get_fonts = pygame.font.get_fonts
-get_init = pygame.font.get_init
-
-def init():
-    """
-    RPG: Does nothing.
-    """
-
-match_font = pygame.font.match_font
-quit = pygame.font.quit
-
+from pygame.transform import *

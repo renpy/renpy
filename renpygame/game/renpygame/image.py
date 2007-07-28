@@ -24,5 +24,9 @@ import pygame
 
 from pygame.image import *
 
-def load(filename, namehint):
+def load(filename, namehint=None):
+
+    if namehint is None:
+        namehint = filename
+    
     return pygame.image.load(renpy.loader.load(filename), namehint)

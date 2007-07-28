@@ -60,10 +60,21 @@ def register_quit(callback):
 
 # Importing the other modules.
 import renpygame.constants
+import renpygame.cursors
 import renpygame.display
-import renpygame.sprite
-import renpygame.image
+import renpygame.draw
 import renpygame.event
+import renpygame.font
+import renpygame.image
+import renpygame.locals
+import renpygame.joystick
+import renpygame.key
+import renpygame.mixer
+import renpygame.mixer.music
+import renpygame.mouse
+import renpygame.sprite
+import renpygame.time
+import renpygame.transform
 
 # Needs to be from renpygame, so we get the right constant.
 from renpygame.constants import *
