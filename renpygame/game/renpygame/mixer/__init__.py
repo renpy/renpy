@@ -24,7 +24,7 @@ import time
 import pygame
 
 # The ren'py.sound channels corresponding to pygame channels.
-channels = [ 0, 1, 2 ]
+channels = [ 0, 1, 2]
 
 # A map from pygame channel to channel objects.
 chanobjs = { }
@@ -83,12 +83,13 @@ def set_reserved(num):
     reserved = num
 
 def get_channel(i):
-    if i not in chanobjs:
-        chanobjs[i] = Channel(i)
-    else:
-        return chanobjs[i]
+    rv = chanobjs.get(i, None)
+    if rv is None:
+        rv = chanobjs[i] = Channel(i)
+
+    return rv
     
-def find_channel(self, force=False):
+def find_channel(force=False):
 
     times = [ ]
     
@@ -103,7 +104,9 @@ def find_channel(self, force=False):
         return None
     else:
         return min(times)[1]
-
+    
+    
+    
 def get_busy():
     for c in chanobjs.values():
         if c.get_busy():
@@ -160,7 +163,7 @@ class Channel(object):
         self.sound = None
         
     def get_busy(self):
-        return renpy.sound.is_playing(self.renpy_channel)
+        return renpy.audio.sound.is_playing(self.renpy_channel)
 
     def play(self, sound, loops=0):
         """
@@ -171,13 +174,13 @@ class Channel(object):
         self.start_time = time.time()
         self.sound = sound
 
-        renpy.sound.play(sound.filename, channel=self.renpy_channel)
+        renpy.audio.sound.play(sound.filename, channel=self.renpy_channel)
 
         for i in range(0, loops):
-            renpy.sound.queue(sound.filename, clear_queue=None, channel=self.renpy_channel)
+            renpy.audio.sound.queue(sound.filename, clear_queue=None, channel=self.renpy_channel)
 
     def stop(self):
-        renpy.sound.stop(channel=self.renpy_channel)
+        renpy.audio.sound.stop(channel=self.renpy_channel)
         
     def pause(self):
         """
@@ -190,7 +193,7 @@ class Channel(object):
         """
 
     def fadeout(self, time):
-        renpy.sound.stop(channel=self.renpy_channel, fadeout=time/1000.0)
+        renpy.audio.sound.stop(channel=self.renpy_channel, fadeout=time/1000.0)
 
     def set_volume(self, *args, **kwargs):
         """
@@ -217,7 +220,7 @@ class Channel(object):
         self.start_time = time.time()
         self.sound = sound
 
-        renpy.sound.queue(sound.filename, channel=self.renpy_channel)
+        renpy.audio.sound.queue(sound.filename, channel=self.renpy_channel)
 
     def get_queue(self, sound):
         """

@@ -59,6 +59,7 @@ def register_quit(callback):
     
 
 # Importing the other modules.
+import renpygame.color
 import renpygame.constants
 import renpygame.cursors
 import renpygame.display

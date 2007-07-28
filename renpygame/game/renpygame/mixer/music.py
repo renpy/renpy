@@ -27,7 +27,7 @@ current_loops = 0
 
 def load(filename):
     global current_filename
-    current_filename = fn
+    current_filename = filename
 
 def play(loops=0, start=0.0):
     """
@@ -39,13 +39,13 @@ def play(loops=0, start=0.0):
     global current_loops
     current_loops = loops
     
-    renpy.music.play(filename, loop=loops)
+    renpy.audio.music.play(current_filename, loop=loops)
 
 def rewind():
-    renpy.music.play(filename, loop=loops)
+    renpy.audio.music.play(current_filename, loop=loops)
     
 def stop():
-    renpy.music.stop()
+    renpy.audio.music.stop()
 
 def pause():
     """
@@ -58,7 +58,7 @@ def unpause():
     """
 
 def fadeout(time):
-    renpy.music.stop(fadeout=time/1000.0)
+    renpy.audio.music.stop(fadeout=time/1000.0)
 
 def set_volume(*args, **kwargs):
     """
@@ -91,7 +91,7 @@ def queue(filename):
     global current_filename
     current_filename = filename
     
-    renpy.music.queue(filename)
+    renpy.audio.music.queue(filename)
 
 def set_endevent(event=None):
     """
