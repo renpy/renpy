@@ -203,14 +203,13 @@ def mouse_handler(ev, x, y, default=False):
         if f.mx is not None:
             if f.mask.is_opaque(x - f.mx, y - f.my):
                 newfocus = f
-                break
-            else:
-                continue
+
+            continue
             
         if f.x <= x <= f.x + f.w and f.y <= y <= f.y + f.h:
             newfocus = f
-            break
-    else:
+
+    if newfocus is None:
         newfocus = default_focus
 
     return change_focus(newfocus, default=default)

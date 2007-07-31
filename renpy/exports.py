@@ -84,7 +84,7 @@ def predict(img):
     free time.
     """
 
-    img = renpy.display.im.image(img, loose=True)
+    img = renpy.easy.displayable(img)
     renpy.game.interface.preloads.append(img)
 
 def scene_lists(index=-1):
@@ -1022,3 +1022,15 @@ def pop_error_handler():
 def error(msg):
     _error_handlers[-1](msg)
     
+
+# User-defined Displayable stuff.
+
+Displayable = renpy.display.core.Displayable
+Render = renpy.display.render.Render
+render = renpy.display.render.render
+IgnoreEvent = renpy.display.core.IgnoreEvent
+
+def timeout(seconds):
+    renpy.game.interface.timeout(seconds)
+
+

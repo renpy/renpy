@@ -685,6 +685,7 @@ class Display(object):
 
         init_time()
         
+        # Setup screen.
         self.fullscreen = renpy.game.preferences.fullscreen
         fsflag = 0
 
@@ -753,6 +754,9 @@ class Display(object):
         # A tree of surfaces from the last time the screen was rendered.
         self.surftree = None
         
+        # Setup periodic event.
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
     def can_redraw(self, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
@@ -1302,9 +1306,6 @@ class Interface(object):
         # Tick time forward.
         renpy.display.im.cache.tick()
 
-        # Setup periodic event.
-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, PERIODIC,
                             MOUSEBUTTONUP, MOUSEBUTTONDOWN,
@@ -1710,8 +1711,9 @@ class Interface(object):
             for i in renpy.config.overlay_layers:
                 scene_lists.clear(i)
 
-            # pygame.time.set_timer(KEYREPEATEVENT, 0)
-            pygame.time.set_timer(PERIODIC, 0)
+            # We no longer disable periodic between interactions.
+            # pygame.time.set_timer(PERIODIC, 0)
+
             pygame.time.set_timer(TIMEEVENT, 0)
             pygame.time.set_timer(REDRAW, 0)
 

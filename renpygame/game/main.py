@@ -37,9 +37,14 @@ def main():
         run_engine()
         draw_world()
         clock.tick(60)
-        if levels.current.frame % 10 == 0:
-            pygame.display.set_caption("Blastwave // %ifps" % (clock.get_fps(), ))
+        # if levels.current.frame % 10 == 0:
+        #     pygame.display.set_caption("Blastwave // %ifps" % (clock.get_fps(), ))
 
+        if players.current.power < 0:
+            return True
+
+
+            
 def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -101,6 +106,5 @@ def draw_world():
 
     pygame.display.flip()
 
-if __name__ == "__main__":
-    main()
+    
 

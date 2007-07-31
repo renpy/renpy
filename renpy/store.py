@@ -223,3 +223,4 @@ def predict_say(who, what):
 # The default transition.
 default_transition = None
 
+__name__ = 'store'

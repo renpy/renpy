@@ -19,16 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# It's purpose is to store in one global all of the data that would
-# be to annoying to lug around otherwise. 
-#
-# Many modules will probablt want to import this using a command like:
-#
-# import renpy.game as game
-#
-# These modules will then be able to access the various globals defined
-# in this module as fields on game.
-
 import renpy
 import renpy.game as game
 import os

@@ -1,6 +1,28 @@
 Changes potentially requiring updates to scripts are flagged with +++.
 Major bug fixes that could affect many systems are indicated with !!!.
 
+
+New in Ren'Py 6.3.2
+-------------------
+
+*** Exes need to be rebuilt before release. ***
+
+TODO: store.default_mouse.
+
+Documented how displayables work, and how users can define their own
+displayables. This involved making public the types renpy.Displayable,
+renpy.Render, and renpy.IgnoreEvent; and the functions renpy.render, 
+renpy.redraw, and renpy.timeout. 
+
+Added in support for the new renpygame extension, which allows many
+pygame games to be run under Ren'Py.
+
+Modified Ren'Py so that when using the mouse to focus overlapping
+buttons, the topmost button is the one that's focused. Previously the
+order was undefined (and happened to be the lowest one). The keyboard
+focus behavior of overlapping buttons is still undefined.
+
+
 New in Ren'Py 6.3.1
 -------------------
 

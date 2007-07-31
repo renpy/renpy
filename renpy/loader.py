@@ -284,11 +284,13 @@ class RenpyImporter(object):
     """
 
     def translate(self, fullname):
+        
         fn = fullname.replace(".", "/") + ".py"
         if loadable(fn):
             return fn
 
         fn = fullname.replace(".", "/") + "/__init__.py"
+
         if loadable(fn):
             return fn
 
@@ -313,7 +315,8 @@ class RenpyImporter(object):
         source = source.encode("raw_unicode_escape")
         
         source = source.replace("\r", "")
-        exec source in mod.__dict__
+        code = compile(source, filename, 'exec')
+        exec code in mod.__dict__
         return mod
 
     def get_data(self, filename):
