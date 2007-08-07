@@ -49,7 +49,10 @@ def extra_imports():
     import tarfile
     import bz2
     import webbrowser
-
+    import pygame.locals
+    import pygame.color
+    
+    
 trace_file = None
 trace_local = None
 

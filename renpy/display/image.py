@@ -85,7 +85,9 @@ class ImageReference(renpy.display.core.Displayable):
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
             return
-
+        
+        if not isinstance(name, tuple):
+            name = tuple(name.split())
         
         parameters = [ ]
 

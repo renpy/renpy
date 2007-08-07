@@ -1153,6 +1153,11 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
+    if isinstance(arg, ImageReference):
+        arg.find_target()
+        return image(arg.target, loose=loose, **properties)
+        
+    
     elif isinstance(arg, basestring):
         return Image(arg, **properties)
 

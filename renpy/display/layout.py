@@ -1330,7 +1330,7 @@ def condition_switch_pick(switch):
         if cond is None or renpy.python.py_eval(cond):
             return d
 
-    raise Excepton("Switch could not choose a displayable.")
+    raise Exception("Switch could not choose a displayable.")
 
 def condition_switch_show(st, at, switch):
     return condition_switch_pick(switch), None
