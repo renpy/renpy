@@ -52,7 +52,6 @@ fonts = { }
 # loaded font object corresponding to that specification.
 font_cache = { }
 
-
 class SFont(object):
 
     def __init__(self,
@@ -271,6 +270,13 @@ def get_font(fn, size, bold=False, italics=False, underline=False):
     font_cache[(fn, size, bold, italics, underline)] = rv
 
     return rv
+
+def free_memory():
+    """
+    Clears the font cache.
+    """
+
+    font_cache.clear()
 
 def color(s):
     """

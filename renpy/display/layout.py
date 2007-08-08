@@ -1336,6 +1336,10 @@ def condition_switch_show(st, at, switch):
     return condition_switch_pick(switch), None
 
 def condition_switch_predict(switch):
+
+    if renpy.game.lint:
+        return [ d for cond, d in switch ]
+
     return [ condition_switch_pick(switch) ]
 
 def ConditionSwitch(*args, **kwargs):

@@ -22,6 +22,8 @@
 import renpy
 import pygame
 
+from pygame.font import *
+
 def Font(filename, size):
     """
     RPG: Extended to load fonts from the game directory.
@@ -32,16 +34,8 @@ def Font(filename, size):
 
     return pygame.font.Font(renpy.loader.transfn(filename), size)
 
-SysFont = pygame.font.SysFont
-get_default_font = pygame.font.get_default_font
-get_fonts = pygame.font.get_fonts
-get_init = pygame.font.get_init
-
 def init():
     """
     RPG: Does nothing.
     """
-
-match_font = pygame.font.match_font
-quit = pygame.font.quit
 

@@ -265,11 +265,22 @@ class Cache(object):
 
         # And, we're done.
         self.cleanout()
+
         
 cache = Cache()
 
 # A map from id(cached surface) to rle version of cached surface.
 rle_cache = { }
+
+def free_memory():
+    """
+    Frees some memory.
+    """
+
+    global cache
+    cache = Cache()
+    rle_cache.clear()
+
 
 class ImageBase(renpy.display.core.Displayable):
     """
@@ -1153,7 +1164,7 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
-    if isinstance(arg, ImageReference):
+    if isinstance(arg, renpy.display.image.ImageReference):
         arg.find_target()
         return image(arg.target, loose=loose, **properties)
         

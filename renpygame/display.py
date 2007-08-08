@@ -24,64 +24,13 @@ import pygame
 
 from pygame.display import *
 
-def gl_get_attribute(flag):
-    """
-    RPG: Not supported under renpy.
-    """
-
-    raise Exception("Not supported.")
-
-def gl_set_attribute(flag):
-    """
-    RPG: Not supported under renpy.
-    """
-
-    raise Exception("Not supported.")
-
 def init():
     """
     RPG: Does nothing, since Ren'Py will have already inited the
     display subsystem.
     """
 
-def list_modes(depth=32, flags=0):
-    """
-    RPG: If the depth is 32 or 0, returns the size of the Ren'Py window.
-    Otherwise, returns an empty list.
-    """
-
-    if depth == 32 or depth == 0:
-        return [ pygame.display.get_surface().get_size() ]
-
-    return [ ]
-
-def mode_ok(size, flags=0, depth=32):
-    """
-    RPG: The mode is ok iff it is the mode we're already in. Otherwise,
-    it's not ok, and we return 0.
-    """
-
-    size = tuple(size)
-    
-    if size == pygame.display.get_surface().get_size():
-        return 32
-    else:
-        return 0
-
 def quit():
-    """
-    RPG: Does nothing.
-    """
-
-def set_caption(title, icontitle=""):
-    """
-    RPG: Does nothing.
-    """
-
-set_gamma = pygame.display.set_gamma
-set_gamma_ramp = pygame.display.set_gamma_ramp
-
-def set_icon(surface):
     """
     RPG: Does nothing.
     """
@@ -92,30 +41,9 @@ def set_mode(size, flags=0, depth=0):
     the screen given to Ren'Py. ''flags'' and ''depth'' are ignored,
     with depth defaulting to 32.
     """
-    renpy.game.interface.display.full_redraw = True
+    renpy.game.interface.display_reset = True
     pygame.time.set_timer(renpy.display.core.REDRAW, 0)
     pygame.time.set_timer(renpy.display.core.TIMEEVENT, 0)
     
-    screen = pygame.display.get_surface()
-    
-    if tuple(size) != screen.get_size():
-        raise Exception("Renpygame can only set the screen size to the Ren'Py screen size.")
-
-    return screen
-
-def set_palette(l):
-    """
-    RPG: Not supported under Ren'Py.
-    """
-
-    raise Exception("Not supported.")
-
-def toggle_fullscreen():
-    """
-    RPG: Not supported under Ren'Py.
-    """
-
-    raise Exception("Not supported.")
-
-
+    return pygame.display.set_mode(size, flags, depth)
 

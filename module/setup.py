@@ -45,6 +45,7 @@ linmixer = None
 if platform.win32_ver()[0]:
     nativemidi = [ 'nativemidi.c', 'native_midi_win32.c', 'native_midi_common.c', 'rwobject.c' ]
     nativemidi_libs = [ 'winmm', 'SDL' ]
+    extra_compile_args.append("-fno-strict-aliasing")
     winmixer = True
 
 # Detect mac.

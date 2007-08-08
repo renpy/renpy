@@ -21,11 +21,16 @@
 
 from pygame.joystick import *
 
-# class Joystick(Joystick):
+class Joystick(object):
 
-#     def init():
-#         pass
+    def __init__(self, id):
+        self.joystick = pygame.joystick.Joystick(id)
 
-#     def quit():
-#         pass
-    
+    def init(self):
+        pass
+
+    def quit(self):
+        pass
+
+    def __getattr__(self, name):
+        return getattr(self.joystick, name)

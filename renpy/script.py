@@ -94,7 +94,11 @@ class Script(object):
         walking the various ASTs to initialize this Script object.
         """
 
-        self.key = None
+        self.key = renpy.game.options.lock
+
+        if self.key is None:
+            if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
+                self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
 
         self.namemap = { }
         self.initcode = [ ]
@@ -227,7 +231,7 @@ class Script(object):
             
             data = { }
             data['version'] = script_version
-            data['key'] = renpy.game.options.lock or 'unlocked'
+            data['key'] = self.key or 'unlocked'
 
             if stmts is None:
                 return data, [ ]
@@ -254,10 +258,6 @@ class Script(object):
 
         elif fn.endswith(".rpyc"):
 
-            # When locking, regenerate all files.
-            if renpy.game.options.lock:
-                return None, None
-            
             f = renpy.loader.load(fn)
 
             try:
@@ -269,6 +269,9 @@ class Script(object):
             if not isinstance(data, dict):
                 return None, None
 
+            if self.key and data.get('key', 'unlocked') != self.key:
+                return None, None
+            
             if data['version'] != script_version:
                 return None, None
 

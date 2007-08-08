@@ -78,6 +78,24 @@ old_renders = { }
 # contents.)
 mutated_surfaces = { }
 
+def free_memory():
+    """
+    Frees up some memory.
+    """
+
+    global new_renders
+    global old_renders
+    global mutated_surfaces
+    global old_blits
+    global old_forced
+    
+    new_renders = { }
+    old_renders = { }
+    mutated_surfaces = { }
+    old_blits = [ ]
+    old_forced = [ ]
+    
+    
 def render(widget, width, height, st, at):
     """
     Renders a widget on the screen.
@@ -535,7 +553,7 @@ class Render(object):
 
         self.draw_func = draw_func
 
-        # Is this render fullscreen? None == not sure.
+        # Is this render fullscreen? 
         self.fullscreen = { }
 
         # Is this render clipped?

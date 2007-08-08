@@ -297,6 +297,8 @@ def lint():
     other checks.
     """
 
+    renpy.game.lint = True
+    
     print codecs.BOM_UTF8
     print unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8")
 

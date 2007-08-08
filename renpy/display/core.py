@@ -1021,7 +1021,7 @@ class Interface(object):
     @ivar event_time: The time of the current event.
 
     @ivar timeout_time: The time at which the timeout will occur.
-
+    
     """
 
     def __init__(self):
@@ -1039,6 +1039,9 @@ class Interface(object):
         self.mouse = 'default'
         self.timeout_time = None
         self.last_event = None
+
+        # Should we reset the display?
+        self.display_reset = False
         
         # Things to be preloaded.
         self.preloads = [ ]
@@ -1069,8 +1072,8 @@ class Interface(object):
             else:
                 self.layer_properties[layer] = dict()
                 
-
-
+                
+                
     def take_screenshot(self, scale):
         """
         This takes a screenshot of the current screen, and stores it so
@@ -1460,10 +1463,11 @@ class Interface(object):
 
             while rv is None:
 
-                # Check for a change in fullscreen preference.
-                if self.display.fullscreen != renpy.game.preferences.fullscreen:
+                # Check for a change in fullscreen preference, or a triggered display reset.
+                if self.display.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
                     self.display = Display(self)
                     needs_redraw = True
+                    self.display_reset = False
 
                 # Check for a forced redraw.
                 if self.force_redraw:

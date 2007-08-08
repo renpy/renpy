@@ -1000,6 +1000,12 @@ def get_at_list(name, layer='master'):
 def layer_at_list(at_list, layer='master'):
     renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
 
+def free_memory():
+    force_full_redraw()
+    renpy.display.im.free_memory()
+    renpy.display.text.free_memory()
+    renpy.display.render.free_memory()
+
     
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context

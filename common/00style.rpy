@@ -14,7 +14,7 @@
 # transparent dark red, add:
 #
 # init:
-#     $ style.window.background = renpy.Solid((128, 0, 0, 128)
+#     $ style.window.background = "#8008"
 #
 # to your script. No need to mess around here, it will just make your
 # life harder when a new version of Ren'Py is released.

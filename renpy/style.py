@@ -187,8 +187,9 @@ def init():
 
     # Expand out substitutes.
     for k in substitutes.keys():
-        for p in prefixes + [ '' ]:
-            expansions[p + k] = [ a for b in substitutes[k] for a in expansions[p + b] ]
+        for r in roles:
+            for p in prefixes + [ '' ]:
+                expansions[r + p + k] = [ a for b in substitutes[k] for a in expansions[r + p + b] ]
         
             
 init()

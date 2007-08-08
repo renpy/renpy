@@ -92,6 +92,6 @@ init -1080:
 init 1080:
 
     python hide:
-        
+
         for scs in _selected_compat:
             scs.apply()
