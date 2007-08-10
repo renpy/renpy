@@ -91,6 +91,7 @@ style_properties = dict(
     font = None,
     sound = None,
     italic = None,
+    language = None,
     layout = None,
     left_bar = renpy.easy.displayable,
     left_gutter = None,

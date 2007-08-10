@@ -23,7 +23,7 @@ init:
             ("demo_layers", "Layers & Advanced Show", "5.6.5"),
             ("demo_nvlmode", "NVL Mode", "6.2.0"),
             ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
-            ("demo_minigame", "Minigame Support", "5.6.5"),
+            ("demo_minigame", "Minigame Support", "6.3.2"),
             ]
         
         def demos_show(demos_info, nevermind):

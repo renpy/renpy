@@ -58,8 +58,10 @@ def archive(prefix, files):
     index = { }
 
     random.seed()
+
+    key = random.randint(0, 0x7ffffffe)
     
-    padding = "RPA-2.0 XXXXXXXXXXXXXXXX direct\n"
+    padding = "RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n"
 
     archivef.write(padding)
     offset = len(padding)
@@ -93,7 +95,7 @@ def archive(prefix, files):
 
             archivef.write(data)
 
-            index[shortfn].append((offset, dlen))
+            index[shortfn].append((offset ^ key, dlen ^ key))
             offset += dlen
                       
         datafile.close()
@@ -103,7 +105,7 @@ def archive(prefix, files):
     archivef.write(dumps(index, HIGHEST_PROTOCOL).encode("zlib"))
 
     archivef.seek(0)
-    archivef.write("RPA-2.0 %016x\n" % indexoff)
+    archivef.write("RPA-3.0 %016x %08x\n" % (indexoff, key))
 
     archivef.close()
     

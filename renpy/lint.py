@@ -100,39 +100,51 @@ def image_exists(node, name, expression, tag):
         name.pop()
 
     report(node, "The image named '%s' was not declared.", names)
-    
-            
 
-# Lints ast.Image nodes.
-def check_image(node):
+# Only check each file once.
+check_file_cache = { }
 
-    name = " ".join(node.imgname)
+def check_file(node, what, fn):
+    if fn in check_file_cache:
+        return True
+
+    check_file_cache[fn] = True
+
+    if not renpy.loader.loadable(fn):
+        report(node, "%s uses file '%s', which is not loadable.", what.capitalize(), fn)
+        return
+
+    try:
+       renpy.loader.transfn(fn)
+    except:
+        return
+
+    if renpy.loader.transfn(fn) and \
+           fn.lower() in filenames and \
+           fn != filenames[fn.lower()]:
+        report(node, "Filename case mismatch for %s. '%s' was used in the script, but '%s' was found on disk.", what, fn, filenames[fn.lower()])
+
+        add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")
+
+def check_displayable(node, what, d):
+
     files = [ ]
-
 
     def files_callback(img):
         files.extend(img.predict_files())
 
-    renpy.exports.images[node.imgname].predict(files_callback)
+    d.predict(files_callback)
 
     for fn in files:
+        check_file(node, what, fn)
+    
+        
+# Lints ast.Image nodes.
+def check_image(node):
 
-        if not renpy.loader.loadable(fn):
-            report(node, "Image '%s' uses file '%s', which is not loadable.", name, fn)
-            continue
-
-        try:
-           renpy.loader.transfn(fn)
-        except:
-            continue
-
-        if renpy.loader.transfn(fn) and \
-               fn.lower() in filenames and \
-               fn != filenames[fn.lower()]:
-            report(node, "Filename case mismatch for image '%s'. '%s' was used in the script, but '%s' was found on disk.", name, fn, filenames[fn.lower()])
-
-            add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")
-            continue
+    name = " ".join(node.imgname)
+    
+    check_displayable(node, 'image %s' % name, renpy.exports.images[node.imgname])
 
 def imspec(t):
     if len(t) == 3:
@@ -291,6 +303,37 @@ def check_if(node):
     for condition, block in node.entries:
         try_compile(node, "in a condition of the if statement", condition)
 
+def check_style(name, s):
+
+    if s.indexed:
+        for i in s.indexed:
+            check_style(name + "[%r]" % (name,), s.indexed[i])
+
+    for p in s.properties:
+        for k, v in p.iteritems():
+
+            kname = name + "." + k
+            
+            # Treat font specially.
+            if k.endswith("font"):
+                check_file(None, name, v)
+
+            e = renpy.style.expansions[k]
+
+            # We only need to check the first function.
+            for prio, propn, func in e:
+                if func:
+                    v = func(v)
+                break
+                
+            if isinstance(v, renpy.display.core.Displayable):
+                check_displayable(None, kname, v) 
+    
+
+def check_styles():
+    for name, s in renpy.style.style_map.iteritems():
+        check_style("Style property style." + name, s)
+    
 def lint():
     """
     The master lint function, that's responsible for staging all of the
@@ -369,6 +412,8 @@ def lint():
 
         elif isinstance(node, renpy.ast.UserStatement):
             check_user(node)
+
+    check_styles()
             
     for f in renpy.config.lint_hooks:
         f()
@@ -386,5 +431,8 @@ def lint():
 
     if renpy.config.developer:
         print "Remember to set config.developer to False before releasing."
-
+        print
+        
     print "Lint is not a substitute for thorough testing."
+    print "Remember to update Ren'Py before releasing. New releases fix bugs and"
+    print "improve compatibility."

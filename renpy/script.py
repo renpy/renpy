@@ -94,6 +94,8 @@ class Script(object):
         walking the various ASTs to initialize this Script object.
         """
 
+        # A key that's used to lock the script file, should that
+        # prove necessary.
         self.key = renpy.game.options.lock
 
         if self.key is None:

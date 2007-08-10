@@ -183,6 +183,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     """
 
     source = source.encode('raw_unicode_escape')
+
     try:
         tree = parse(source, mode)
     except SyntaxError, e:

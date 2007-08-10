@@ -103,6 +103,7 @@ init -1090 python:
 
     # Text properties.
     style.default.font = "DejaVuSans.ttf"
+    style.default.language = "western"
     style.default.antialias = True
     style.default.size = 22
     style.default.color = (255, 255, 255, 255)

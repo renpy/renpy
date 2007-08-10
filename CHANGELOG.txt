@@ -7,7 +7,13 @@ New in Ren'Py 6.3.2
 
 *** Exes need to be rebuilt before release. ***
 
-TODO: store.default_mouse.
+Recompiled the windows version using GCC 4.1.
+
+East Asian (Chinese and Japanese) line breaking support is now
+included in Ren'Py proper. It can be enabled by setting the language style 
+property of a text field to "eastasian". 
+
+Lint has been improved to now check that files used by styles exist.
 
 Documented how displayables work, and how users can define their own
 displayables. This involved making public the types renpy.Displayable,
@@ -17,11 +23,22 @@ renpy.redraw, and renpy.timeout.
 Added in support for the new renpygame extension, which allows many
 pygame games to be run under Ren'Py.
 
+Added a new function, renpy.free_memory(), that causes Ren'Py to
+temporarily reduce it's memory usage. This is useful to prepare 
+for a game.
+
+The .rpa format has been modified slightly to make it work better with
+DLsite's protect mechanism.
+
 Modified Ren'Py so that when using the mouse to focus overlapping
 buttons, the topmost button is the one that's focused. Previously the
 order was undefined (and happened to be the lowest one). The keyboard
 focus behavior of overlapping buttons is still undefined.
 
+Bug fixes in lint and styles.
+
+Fixed a bug that prevented the linux version from working when
+installed on a path that includes a space in the name.
 
 New in Ren'Py 6.3.1
 -------------------

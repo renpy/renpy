@@ -868,7 +868,7 @@ class Display(object):
         if mouse_kind in renpy.config.mouse:
             anim = renpy.config.mouse[mouse_kind]
         else:
-            anim = renpy.config.mouse['default']
+            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
 
         info = anim[self.interface.ticks % len(anim)]
 

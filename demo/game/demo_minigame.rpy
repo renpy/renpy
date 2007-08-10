@@ -4,13 +4,19 @@ init:
 
     python:
 
-        class PongMinigame(object):
+        class PongDisplayable(renpy.Displayable):
 
             def __init__(self):
-                # The minigame object, initialized with the methods it calls
-                # for various events.
-                self.minigame = renpy.Minigame(self.render, self.event)
 
+                renpy.Displayable.__init__(self)
+                
+                # Some displayables we use.
+                self.paddle = Image("pong.png")
+                self.ball = Image("pong_ball.png")
+                self.player = Text("Player", size=36)
+                self.eileen = Text("Eileen", size=36)
+                self.ctb = Text("Click to Begin", size=36)
+                
                 # The sizes of some of the images.
                 self.PADDLE_WIDTH = 8
                 self.PADDLE_HEIGHT = 79
@@ -43,12 +49,16 @@ init:
                 # The winner.
                 self.winner = None
 
-
+            def visit(self):
+                return [ self.paddle, self.ball, self.player, self.eileen, self.ctb ]
+                
             # Recomputes the position of the ball, handles bounces, and
             # draws the screen.
-            def render(self, r, st):
+            def render(self, width, height, st, at):
 
-
+                # The Render object we'll be drawing into.
+                r = renpy.Render(width, height)
+                
                 # Figure out the time elapsed since the previous frame.
                 if self.oldst is None:
                     self.oldst = st
@@ -93,7 +103,15 @@ init:
                 # This draws a paddle, and checks for bounces.                       
                 def paddle(px, py, hotside):
 
-                    pi = self.minigame.load_image("pong.png")
+                    # Render the paddle image. We give it an 800x600 area
+                    # to render into, knowing that images will render smaller.
+                    # (This isn't the case with all displayables. Solid, Frame,
+                    # and Fixed will expand to fill the space allotted.)
+                    # We also pass in st and at.
+                    pi = renpy.render(self.paddle, 800, 600, st, at)
+
+                    # renpy.render returns a Render object, which we can
+                    # blit to the Render we're making.
                     r.blit(pi, (int(px), int(py - self.PADDLE_HEIGHT / 2)))
 
                     if py - self.PADDLE_HEIGHT / 2 <= self.by <= py + self.PADDLE_HEIGHT / 2:
@@ -119,32 +137,22 @@ init:
                 paddle(724, self.computery, 724)
 
                 # Draw the ball.
-                ball = self.minigame.load_image("pong_ball.png")
+                ball = renpy.render(self.ball, 800, 600, st, at)
                 r.blit(ball, (int(self.bx - self.BALL_WIDTH / 2),
                               int(self.by - self.BALL_HEIGHT / 2)))
 
-                # Show the player names.
-                player = self.minigame.render_text("Player",
-                                                   style.default.font,
-                                                   36,
-                                                   "#fff")
+                # Show the player names.                
+                player = renpy.render(self.player, 800, 600, st, at)
                 r.blit(player, (20, 25))
 
                 # Show Eileen's name.
-                eileen = self.minigame.render_text("Eileen",
-                                                    style.default.font,
-                                                    36,
-                                                    "#fff")
+                eileen = renpy.render(self.eileen, 800, 600, st, at)
                 ew, eh = eileen.get_size()
                 r.blit(eileen, (790 - ew, 25))
                 
                 # Show the "Click to Begin" label.
                 if self.stuck:
-                    ctb = self.minigame.render_text("Click to Begin",
-                                                    style.default.font,
-                                                    36,
-                                                    "#fff")
-
+                    ctb = renpy.render(self.ctb, 800, 600, st, at)
                     cw, ch = ctb.get_size()
                     r.blit(ctb, (400 - cw / 2, 30)) 
                     
@@ -155,16 +163,19 @@ init:
 
                     # Needed to ensure that event is called, noticing
                     # the winner.
-                    self.minigame.timeout(0)
+                    renpy.timeout(0)
 
                 elif self.bx > 1000:
                     self.winner = "player"
-                    self.minigame.timeout(0)
+                    renpy.timeout(0)
 
                 # Ask that we be re-rendered ASAP, so we can show the next
                 # frame.
-                self.minigame.redraw()
+                renpy.redraw(self, 0)
 
+                # Return the Render object.
+                return r
+                
             # Handles events.
             def event(self, ev, x, y, st):
 
@@ -185,14 +196,30 @@ init:
                 if self.winner:
                     return self.winner
                 else:
-                    self.minigame.ignore_event()
+                    raise renpy.IgnoreEvent()
             
 
 label demo_minigame:
 
-    e "The Minigame interface lets experienced pygame programmers extend Ren'Py with minigames."
+    e "You may want to mix Ren'Py with other forms of gameplay. There are many ways to do this."
 
-    e "It's not for everyone, but it does allow for a change of pace."
+    e "The first is with the UI functions, which can be used to create powerful button and menu based interfaces."
+
+    e "These are often enough for many simulation-style games."
+
+    e "We also have two more ways in which Ren'Py can be extended. Both require experience with Python programming, and so aren't for the faint of heart."
+
+    e "Renpygame is a library that allows pygame games to be run inside Ren'Py."
+
+    e "When using renpygame, Ren'Py steps out of the way and gives you total control over the user's experience."
+
+    e "You can get renpygame from the Frameworks page of the Ren'Py website."
+    
+    e "If you want to integrate your code with Ren'Py, you can write a user-defined displayable."
+
+    e "User-defined displayables are somewhat more limited, but integrate better with the rest of Ren'Py."
+
+    e "For example, one could support loading and saving while a user-defined displayable is shown."
 
     e "Now, why don't we play some pong?"
 
@@ -203,8 +230,8 @@ label demo_minigame_pong:
 
     # Run the pong minigame, and determine the winner.
     python:
-        pm = PongMinigame()
-        winner = pm.minigame.run()
+        ui.add(PongDisplayable())
+        winner = ui.interact(suppress_overlay=True, suppress_underlay=True)
 
     
     scene bg washington
@@ -230,7 +257,7 @@ label demo_minigame_pong:
             pass        
 
         
-    e "You need to be careful about putting minigames in a visual novel, as not every visual novel player wants to be good at arcade games."
+    e "Remember to be careful about putting minigames in a visual novel, since not every visual novel player wants to be good at arcade games."
 
     return
 

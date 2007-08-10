@@ -1035,6 +1035,7 @@ Displayable = renpy.display.core.Displayable
 Render = renpy.display.render.Render
 render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
+redraw = renpy.display.render.redraw
 
 def timeout(seconds):
     renpy.game.interface.timeout(seconds)

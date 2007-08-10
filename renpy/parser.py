@@ -138,7 +138,7 @@ def list_logical_lines(filename):
 
                     # Add to the results.
                     rv.append((filename, start_number, line))
-                    
+
                 pos += 1
                 # This helps out error checking.
                 line = ""
@@ -148,7 +148,7 @@ def list_logical_lines(filename):
             if c == "\\" and data[pos+1] == "\n":
                 pos += 2
                 number += 1
-                line += "\n"
+                line += "\\\n"
                 continue
 
             # Parenthesis.
@@ -372,7 +372,7 @@ class Lexer(object):
 
         # print self.text[self.pos].encode('unicode_escape')
 
-        self.match_regexp(ur"\s+")
+        self.match_regexp(ur"(\s+|\\\n)+")
 
     def match(self, regexp):
         """

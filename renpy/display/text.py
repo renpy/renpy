@@ -426,14 +426,46 @@ class WidgetStyle(object):
     def length(self, text):
         return 1
 
-text_regexp = re.compile(ur"""(?x)
+
+    
+# The line breaking algorithm for western languages.    
+western_text_regexp = re.compile(ur"""(?x)
       (?P<space>[ \u200b])
     | \{(?P<tag>[^{}]+)\}
     | (?P<untag>\{\{)
     | (?P<newline>\n)
     | (?P<word>[^ \n\{]+)
     """)
-    
+
+# These are characters for which line breaking is forbidden before them.
+# In our algorithm, they try to cling to the back of a word.
+ea_not_before = ur'\!\"\%\)\,\-\.\:\;\?\]\u2010\u2019\u201d\u2030\u2032\u2033' + \
+    ur'\u2103\u2212\u3001\u3002\u3005\u3009\u300b\u300d\u300f\u3011' + \
+    ur'\u3015\u3017\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085' + \
+    ur'\u3087\u308e\u309b\u309c\u309d\u309e\u30a1\u30a3\u30a5\u30a7' + \
+    ur'\u30a9\u30c3\u30e3\u30e5\u30e7\u30ee\u30f5\u30f6\u30fc\u30fd' + \
+    ur'\u30fe\uff01\uff02\uff05\uff09\uff09\uff0c\uff0d\uff0e\uff1a' + \
+    ur'\uff1b\uff1f\uff3d\uff5d\uff5d\uff61\uff63\uff9e\uff9f'
+
+# These are characters for which line breaking is forbidden after them.
+# In our algorithm, they try to cling to the front of a word.
+ea_not_after = ur'\"\#\$\(\@\[\u00a2\u00a3\u00a5\u00a7\u2018\u201c\u266f' + \
+    ur'\u3008\u300a\u300c\u300e\u3010\u3012\u3014\u3016\uff03\uff04' + \
+    ur'\uff08\uff08\uff20\uff3b\uff5b\uff5b\uff62\uffe0\uffe1\uffe5'
+
+# These are ranges of characters that are treated as western. (And hence are always grouped
+# together as a word.
+ea_western = ur'\'\w\u000a-\u007a\u007c\u007e\u024f\uff10-\uff19\uff20-\uff2a\uff41-\uff5a'
+
+eastasian_text_regexp = re.compile(ur"""(?x)
+  (?P<space>[ \u200b])
+| \{(?P<tag>[^{}]+)\}
+| (?P<untag>\{\{)
+| (?P<newline>\n)
+| (?P<word>([%(not_after)s]*""" + \
+    ur'([^ \n\{\u200b%(ea_not_before)s%(ea_not_after)s%(ea_western)s]|[%(ea_western)s]+)' + \
+    ur'[%(ea_not_before)s]*)|[%(ea_not_after)s]|[%(ea_not_before)s])'% locals())
+
 def text_tokenizer(s, style):
     """
     This functions is used to tokenize text. It's called when laying
@@ -457,7 +489,14 @@ def text_tokenizer(s, style):
     the name of the tag, without any enclosing braces.
     """
 
-    for m in text_regexp.finditer(s):
+    if style.language == "western":
+        regexp = western_text_regexp
+    elif style.language == "eastasian":
+        regexp = eastasian_text_regexp
+    else:
+        raise Exception("Language %r is unknown." % style.language)
+
+    for m in regexp.finditer(s):
 
         if m.group('space'):
             yield 'space', m.group('space')
@@ -469,7 +508,8 @@ def text_tokenizer(s, style):
             yield 'word', '{'
         elif m.group('newline'):
             yield 'newline', m.group('newline')
-    
+
+                
 def input_tokenizer(l, style, pauses=None):
     """
     This tokenizes the input into a list of lists of tokens, where
@@ -691,7 +731,7 @@ class Text(renpy.display.core.Displayable):
                'child_pos']
 
     def after_setstate(self):
-        self._update()
+        self.update()
 
     def __init__(self, text, slow=None, slow_done=None,
                  slow_start=0, pause=None, tokenized=False,
@@ -734,8 +774,10 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout = None
         self.child_pos = [ ]
+
+        self.tokens = None
         
-        self._update(redraw=False)
+        self.update(redraw=False)
 
 
     def set_text(self, new_text):
@@ -744,7 +786,7 @@ class Text(renpy.display.core.Displayable):
         """
 
         self.text = new_text
-        self._update()
+        self.update()
 
     def set_style(self, style):
         """
@@ -752,9 +794,9 @@ class Text(renpy.display.core.Displayable):
         """
 
         self.style = style
-        self._update()
+        self.update()
         
-    def _update(self, redraw=True):
+    def update(self, redraw=True):
         """
         This is called after this widget has been updated by
         set_text or set_style.
@@ -768,6 +810,10 @@ class Text(renpy.display.core.Displayable):
         else:
             text = u" "
 
+        # Annoyingly, we can't tokenize until styles get built.
+        if not renpy.style.styles_built:
+            return
+            
         if not self.tokenized:
             self.tokens = input_tokenizer(text, self.style)
         else:
@@ -928,6 +974,9 @@ class Text(renpy.display.core.Displayable):
         if self.laidout and self.width == width:
             return
 
+        if self.tokens is None:
+            self.update()
+        
         # Set this, so caching works.
         self.width = width
 
