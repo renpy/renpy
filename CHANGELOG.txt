@@ -1,10 +1,12 @@
 New in Ren'Py 6.3.2
 -------------------
 
-*** Exes need to be rebuilt before release. ***
-
 Recompiled the Windows version using GCC 4.1. This should lead to some
 performance improvements.
+
+When config.developer is set to True, hitting shift+D will display the 
+value of every varible that has been changed since the end of the init
+phase.
 
 East Asian (Chinese and Japanese) line breaking support is now
 included in Ren'Py proper. It can be enabled by setting the language style 

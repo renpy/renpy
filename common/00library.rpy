@@ -226,7 +226,58 @@ init -1180:
             filename, line = renpy.get_filename_line()
             renpy.launch_editor([ filename ], line)
 
+        def debugger():
 
+            if not config.developer:
+                return
+            
+            ui.saybehavior()
+            
+            ui.add("#000")
+
+            width = config.screen_width - 30
+
+            vp = ui.viewport(xmaximum=width, ymaximum=config.screen_height - 10, xpos=5, ypos=5)
+            ui.vbox(4)
+
+            ui.text("Variable value debugger.\n", size=12, color="#fff")
+            
+            ebc = renpy.game.log.ever_been_changed
+            ebc = list(ebc)
+            ebc.sort()
+
+            ebc.remove("nvl_list")
+        
+            import repr
+            aRepr = repr.Repr()
+            aRepr.maxstring = 40
+            
+            for var in ebc:
+                if not hasattr(store, var):
+                    continue
+
+                if var[0] == "_":
+                    continue
+                
+                val = aRepr.repr(getattr(store, var))
+                ui.text((var + " = " + val).replace("{", "{{"),
+                        size=12, color="#fff")
+                                                     
+
+            ui.text("\nClick to continue.\n", size=12, color="#fff")
+                
+            ui.close()
+
+            ui.bar(1.0, 0.0,
+                   style='vscrollbar',
+                   xpos=config.screen_width - 5,
+                   xanchor=1.0,
+                   changed=vp.set_yoffset)
+            
+            ui.interact(suppress_overlay=True, suppress_underlay=True)
+            
+
+            
         # The default keymap.
         km = renpy.Keymap(
             rollback = renpy.rollback,
@@ -240,6 +291,7 @@ init -1180:
             launch_editor = launch_editor,
             dump_styles = dump_styles,
             reload_game = reload_game,
+            debugger = renpy.curried_invoke_in_new_context(debugger),
             )
 
         config.underlay = [ km ]

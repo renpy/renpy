@@ -1,3 +1,4 @@
+
 # Copyright 2004-2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -1011,6 +1012,7 @@ def free_memory():
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
+curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
 
 
 # Error handling stuff.

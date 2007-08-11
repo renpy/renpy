@@ -170,6 +170,7 @@ keymap = dict(
     dump_styles = [ 'Y' ],
     reload_game = [ 'R' ],
     inspector = [ 'I' ],
+    debugger = [ 'D' ],
     
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

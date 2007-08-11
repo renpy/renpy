@@ -28,5 +28,5 @@ from pygame.time import *
 # This doesn't work right if the wait is too long. Well, probably other
 # things will break as well, so no biggie.
 def wait(time):
-    renpygame.event.peek([])
+    renpygame.event.periodic()
     pygame.time.wait(time)
