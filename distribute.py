@@ -116,7 +116,7 @@ def main():
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
     
     # Compile the various games
-    for i in [ 'demo/game', 'data', 'dse/game', 'template/game', 'the_question' ]:
+    for i in [ 'demo/game', 'data', 'template/game', 'the_question' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
@@ -129,7 +129,7 @@ def main():
     files.append("console.exe")
     files.extend(tree("data"))
     files.extend(tree("demo"))
-    files.extend(tree("dse"))
+    # files.extend(tree("dse"))
     files.extend(tree("the_question"))
 
     editor = tree("editor")
@@ -191,8 +191,8 @@ def main():
     files.sort()
     more_files.sort()
 
-    zipup("dists/" + prefix + "-win32.zip", prefix, files)
-    print "----"
+    # zipup("dists/" + prefix + "-win32.zip", prefix, files)
+    # print "----"
     zipup("dists/" + prefix + "-full.zip", prefix, files + more_files)
     print "----"
     tarup("dists/" + prefix + "-full.tar.bz2", prefix, files + more_files)

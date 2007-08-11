@@ -1,13 +1,10 @@
-Changes potentially requiring updates to scripts are flagged with +++.
-Major bug fixes that could affect many systems are indicated with !!!.
-
-
 New in Ren'Py 6.3.2
 -------------------
 
 *** Exes need to be rebuilt before release. ***
 
-Recompiled the windows version using GCC 4.1.
+Recompiled the Windows version using GCC 4.1. This should lead to some
+performance improvements.
 
 East Asian (Chinese and Japanese) line breaking support is now
 included in Ren'Py proper. It can be enabled by setting the language style 
@@ -35,10 +32,13 @@ buttons, the topmost button is the one that's focused. Previously the
 order was undefined (and happened to be the lowest one). The keyboard
 focus behavior of overlapping buttons is still undefined.
 
+The distribution code in the launcher has been simplified.
+
 Bug fixes in lint and styles.
 
-Fixed a bug that prevented the linux version from working when
+Fixed a bug that prevented the Linux version from working when
 installed on a path that includes a space in the name.
+
 
 New in Ren'Py 6.3.1
 -------------------

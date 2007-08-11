@@ -173,7 +173,9 @@ def bootstrap(renpy_base):
                 break
         else:
             gamedir = basedir
-    
+
+    sys.path.insert(0, basedir)
+            
     # Force windib on windows, unless the user explicitly overrides.
     if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
         os.environ['SDL_VIDEODRIVER'] = 'windib'

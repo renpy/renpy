@@ -1,43 +1,107 @@
 # This file contains the code needed to build a Ren'Py distribution.
 
-init:
-    python:
-        # Returns true if a file or directory should not be included in
-        # the distribution
-        def ignored(fn):
-            if fn[0] == ".":
+init python:
+    import zipfile
+    import tarfile
+    import os
+    import os.path
+    import time
+    import sys
+    import zlib
+
+    # Returns true if a file or directory should not be included in
+    # the distribution
+
+    ignored_files = ("thumbs.db",
+                     "launcherinfo.py",
+                     "traceback.txt",
+                     "errors.txt",
+                     "completion.lua",)
+
+    def ignored(fn):
+        if fn[0] == ".":
+            return True
+
+        for i in store.ignore_extensions:
+            if fn.endswith(i):
                 return True
 
-            for i in store.ignore_extensions:
+        if fn.lower() in ignored_files:
+            return True
+
+        if fn == "saves":
+            return True
+
+        if fn == "archived":
+            return True
+
+        return False
+
+    def tree(src, dest,
+             exclude_suffix=[ ".pyc", "~", ".bak" ],
+             exclude_prefix=[ "." ],
+             exclude=ignored_files,
+             exclude_func=None,
+             ):
+
+        # Get rid of trailing slashes.
+        if src[-1] == "/":
+            src = src[:-1]
+
+        if dest and dest[-1] == "/":
+            dest = dest[:-1]
+
+        # What should we include?
+        def include(fn):
+            for i in exclude_suffix:
                 if fn.endswith(i):
-                    return True
+                    return False
 
-            if fn.lower() in ("thumbs.db",
-                              "launcherinfo.py",
-                              "traceback.txt",
-                              "errors.txt",
-                              "completion.lua",):
-                return True
-            
-            if fn == "saves":
-                return True
+            for i in exclude_prefix:
+                if fn.startswith(i):
+                    return False
 
-            if fn == "archived":
-                return True
+            for i in exclude:
+                if i == fn.lower():
+                    return False
 
-            return False
-            
+            if exclude_func and exclude_func(fn):
+                return False
+
+            return True
+
+
+        rv = [ ]
+
+        # Walk the tree, including what is necessary.
+        for srcdir, dirs, files in os.walk(src):
+
+            if dest:
+                destdir = dest + srcdir[len(src):]
+            else:
+                destdir = srcdir[len(src) + 1:]
+
+            if destdir:
+                rv.append((srcdir, destdir))
+
+            for fn in files:
+
+                if not include(fn):
+                    continue
+
+                sfn = srcdir + "/" + fn
+                dfn = destdir + "/" + fn
+
+                rv.append((sfn, dfn))
+
+            dirs[:] = [ i for i in dirs if include(i) ]
+
+        return rv
+
+        
 label distribute:
 
     python hide:
-        import zipfile
-        import tarfile
-        import os
-        import os.path
-        import time
-        import sys
-        import zlib
-
         zlib.Z_DEFAULT_COMPRESSION = 9
 
         store.progress_time = 0
@@ -160,91 +224,43 @@ label distribute:
         
         # Figure out the files that will make up the distribution.
 
-        multi_dirs = [ ]
-        multi_files = [ ]
+        multi = [ ]
 
-        multi_dirs.append((config.renpy_base + "/renpy", "renpy"))
+        # This finds the files and directories in the tree, and includes
+        # them in the result.
 
-        # Ren'Py Source.
-        for dirname, dirs, files in os.walk(config.renpy_base + "/renpy"):
-
-            shortdir = dirname[len(config.renpy_base)+1:]
-            shortdir += "/"
-            
-            dirs[:] = [ i for i in dirs if not i[0] == '.' ]
-
-            for d in dirs:
-                multi_dirs.append((dirname + "/" + d, shortdir + d))
-
-            for f in files:
-                if f[0] == "." or f[-1] == "~":
-                    continue
-
-                if f.endswith(".pyc") or f.endswith(".pyo"):
-                    continue
                 
-                multi_files.append((dirname + "/" + f, shortdir + f))
-
-        multi_dirs.append((config.commondir, "common"))
-
-        # Common directory.
-        for dirname, dirs, files in os.walk(config.renpy_base + "/common"):
-
-            shortdir = dirname[len(config.renpy_base)+1:]
-            shortdir += "/"
-            
-            dirs[:] = [ i for i in dirs if not i[0] == '.' ]
-
-            for d in dirs:
-                multi_dirs.append((dirname + "/" + d, shortdir + d))
-
-            for f in files:
-                if f[0] == "." or f[-1] == "~" or f.endswith(".bak"):
-                    continue
-
-                multi_files.append((dirname + "/" + f, shortdir + f))
-
-        # LICENSE.txt
-        multi_files.append((config.renpy_base + "/LICENSE.txt", "renpy/LICENSE.txt"))
-
-        # Project files.
-        for dirname, dirs, files in os.walk(project.path):
-
-            shortdir = dirname[len(project.path)+1:]
-
-            if shortdir:
-                shortdir += "/"
-            
-            dirs[:] = [ i for i in dirs if not project.info["ignored"](i) ]
-                                                                       
-
-            for d in dirs:
-                if project.info["ignored"](d):
-                    continue
-                
-                multi_dirs.append((dirname + "/" + d, shortdir + d))
-
-            for f in files:
-                if project.info["ignored"](f):
-                    continue
-                
-                multi_files.append((dirname + "/" + f, shortdir + f))
-
+        # renpy and common directories.
+        multi.extend(tree(config.renpy_base + "/renpy", "renpy"))
+        multi.append((config.renpy_base + "/LICENSE.txt", "renpy/LICENSE.txt"))
+        multi.extend(tree(config.commondir, "common"))
+        
+        # Include the project.
+        multi.extend(tree(project.path, '',
+                          exclude_suffix = [ ],
+                          exclude_prefix = [ ],
+                          exclude=[ ],
+                          exclude_func = project.info["ignored"]))
+        
         shortgamedir = project.gamedir[len(project.path)+1:]
 
-        # Script version.
-        multi_files.append((config.gamedir + "/script_version.rpy",
-                            shortgamedir + "/script_version.rpy"))
+        for i in store.ignore_extensions:
+            if "script_version.rpy".endswith(i):
+                break
+        else:
+            multi.append((config.gamedir + "/script_version.rpy",
+                          shortgamedir + "/script_version.rpy"))
 
-        multi_files.append((config.gamedir + "/script_version.rpyc",
-                            shortgamedir + "/script_version.rpyc"))
+        for i in store.ignore_extensions:
+            if "script_version.rpyc".endswith(i):
+                break
+        else:
+            multi.append((config.gamedir + "/script_version.rpyc",
+                          shortgamedir + "/script_version.rpyc"))
        
         # renpy.py
-        multi_files.append((config.renpy_base + "/renpy.py", project.name + ".py"))
-
-
-        multi_dirs.sort()
-        multi_files.sort()
+        multi.append((config.renpy_base + "/renpy.py",
+                      project.name + ".py"))
 
         # Windows Zip
         if windows:
@@ -256,12 +272,15 @@ label distribute:
 
             zf = zipfile.ZipFile(name + ".zip", "w", zipfile.ZIP_DEFLATED)
 
-            progress_len = len(multi_files) + len(win_files)
+            progress_len = len(multi) + len(win_files)
             store.message = "Be sure to announce your project at the Lemma Soft Forums."
                                
-            for i, (fn, an) in enumerate(multi_files + win_files):
+            for i, (fn, an) in enumerate(multi + win_files):
                 progress("Building Windows", i, progress_len)
 
+                if os.path.isdir(fn):
+                    continue
+                
                 zi = zipfile.ZipInfo(name + "/" + an)
 
                 s = os.stat(fn)
@@ -281,46 +300,23 @@ label distribute:
         # Linux Tar Bz2
         if linux:
 
-            linux_dirs = [
-                (config.renpy_base + "/lib", "lib"),
-                ]
-
             linux_files = [
+                (config.renpy_base + "/lib", "lib"),
                 (config.renpy_base + "/renpy.sh", project.name + ".sh"),
                 (config.renpy_base + "/lib/python", "lib/python"),
                 ]
                 
 
-            linux_base = config.renpy_base + "/lib/linux-x86"
-            
+            linux_files.extend(tree(config.renpy_base + "/lib/linux-x86", "lib/linux-x86"))
 
-            for dirname, dirs, files in os.walk(linux_base):
-                
-                dirs[:] = [ i for i in dirs if not i[0] == '.' ]
-
-                shortname = dirname[len(config.renpy_base)+1:]
-
-                for d in dirs:
-                    linux_dirs.append((dirname + "/" + d,
-                                       shortname + "/" + d))
-
-                for f in files:
-                    if f.endswith(".pyc") or f.endswith(".pyo"):
-                        continue
-                    
-                    linux_files.append((dirname + "/" + f,
-                                        shortname + "/" + f))
-
-            linux_dirs.sort()
-            linux_files.sort()
 
             tf = tarfile.open(name + "-linux-x86.tar.bz2", "w:bz2")
             tf.dereference = True
 
-            progress_len = len(multi_dirs) + len(linux_dirs) + len(multi_files) + len(linux_files)
+            progress_len = len(multi) + len(linux_files)
             store.message = "If appropriate, please submit your game to www.renai.us."
 
-            for j, i in enumerate(multi_dirs + linux_dirs + multi_files + linux_files):
+            for j, i in enumerate(multi + linux_files):
 
                 progress("Building Linux", j, progress_len)
 
@@ -356,36 +352,28 @@ label distribute:
 
         if mac:
 
-            mac_files = [ ]
-
-            for dirname, dirs, files in os.walk(config.renpy_base + "/renpy.app"):
-                shortname = project.name + ".app/" + dirname[len(config.renpy_base + "/renpy.app")+1:]
-
-                dirs[:] = [ i for i in dirs if not i[0] == '.' ]
-
-                for f in files:
-                    mac_files.append((dirname + "/" + f, shortname + "/" + f))
-
+            mac_files = tree(config.renpy_base + "/renpy.app",
+                             project.name + ".app")
 
             zf = zipfile.ZipFile(name + "-mac.zip", "w", zipfile.ZIP_DEFLATED)
 
-
-            progress_len = len(multi_files) + len(mac_files)
+            progress_len = len(multi) + len(mac_files)
             store.message = "Thank you for choosing Ren'Py."
 
-            for i, (fn, an) in enumerate(multi_files + mac_files):
+            for i, (fn, an) in enumerate(multi + mac_files):
 
                 progress("Building Mac OS X", i, progress_len)
 
-                zi = zipfile.ZipInfo(name + "-mac/" + an)
+                if os.path.isdir(fn):
+                    continue
 
+                
+                zi = zipfile.ZipInfo(name + "-mac/" + an)
+                
                 s = os.stat(fn)
                 zi.date_time = time.gmtime(s.st_mtime)[:6]
-
                 zi.compress_type = zipfile.ZIP_DEFLATED
-
                 zi.create_system = 3
-
 
                 if os.path.dirname(fn).endswith("MacOS") or fn.endswith(".so") or fn.endswith(".dylib"):
                     zi.external_attr = long(0100777) << 16 
