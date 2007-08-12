@@ -22,7 +22,7 @@ renpy.redraw, and renpy.timeout.
 Added in support for the new renpygame extension, which allows many
 pygame games to be run under Ren'Py.
 
-Added a new function, renpy.free_memory(), that causes Ren'Py to
+Added a new function, renpy.free_memory, that causes Ren'Py to
 temporarily reduce it's memory usage. This is useful to prepare 
 for a game.
 

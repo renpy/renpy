@@ -489,7 +489,7 @@ def text_tokenizer(s, style):
     the name of the tag, without any enclosing braces.
     """
 
-    if style.language == "western":
+    if style is None or style.language == "western":
         regexp = western_text_regexp
     elif style.language == "eastasian":
         regexp = eastasian_text_regexp
@@ -962,7 +962,10 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
     def visit(self):
-        return self.children
+       if self.tokens is None:
+            self.update()
+
+       return self.children
 
     def layout(self, width, time):
         """

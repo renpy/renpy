@@ -180,6 +180,9 @@ def redraw(widget, when):
     Call this to queue the redraw of the supplied widget in the
     supplied number of seconds.
     """
+
+    if not renpy.game.interface:
+        return
     
     redraw_queue.append((when + renpy.game.interface.frame_time, widget))
     

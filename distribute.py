@@ -116,7 +116,7 @@ def main():
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
     
     # Compile the various games
-    for i in [ 'demo/game', 'data', 'template/game', 'the_question' ]:
+    for i in [ 'demo/game', 'data', 'template/game', 'the_question/game' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
