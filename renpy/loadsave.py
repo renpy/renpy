@@ -221,9 +221,8 @@ def list_saved_games(regexp=r'.'):
         info = scan_saved_game(f)
 
         if info is not None:
-            extra_info, screenshot, mtime = info
-        
-        rv.append((f, extra_info, screenshot, mtime))
+            extra_info, screenshot, mtime = info        
+            rv.append((f, extra_info, screenshot, mtime))
 
     return rv
 
