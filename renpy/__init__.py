@@ -29,7 +29,7 @@
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in data/script_version.rpy, too!
 # Also check to see if we have to update renpy.py.
-version = "Ren'Py 6.3.2a"
+version = "Ren'Py 6.3.2b"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 

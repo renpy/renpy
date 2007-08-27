@@ -865,7 +865,8 @@ class Text(renpy.display.core.Displayable):
 
                     if text == "nw":
                         self.no_wait_once = True
-                    
+                        break
+                        
                     elif text == "w":
                         if pause == 0:                
                             self.keep_pausing |= True

@@ -346,6 +346,9 @@ def display_say(who, what, who_style='say_label',
             **show_args)
 
         no_wait |= what_text.no_wait
+
+        if no_wait:
+            slow_done.ctc = None
         
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)

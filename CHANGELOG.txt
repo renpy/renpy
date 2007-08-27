@@ -1,3 +1,10 @@
+New in Ren'Py 6.3.3
+-------------------
+
+The {nw} text tag now suppresses text after it, and click-to-continue
+indicators.
+
+
 New in Ren'Py 6.3.2
 -------------------
 
