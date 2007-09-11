@@ -1,9 +1,12 @@
 New in Ren'Py 6.3.3
 -------------------
 
+The subtitle layout algorithm now properly deals with newlines.
+
 The {nw} text tag now suppresses text after it, and click-to-continue
 indicators.
 
+Fixed bars so that they can be decreased using the keyboard.
 
 New in Ren'Py 6.3.2
 -------------------

@@ -698,19 +698,37 @@ def subtitle_text_layout(triples, width, style):
     if isinstance(softwidth, float):
         softwidth = int(softwidth * width)
 
-    sumwidths = layout_width(triples)
+    # Split things up into paragraphs.
+    pars = [ [ ] ]
 
-    i = 1
-    while sumwidths / i > min(width, softwidth):
-        i += 1
+    for tup in triples:
+        if tup[0] == "newline":
+            pars.append([])
+            continue
 
-    while True:
-        rv = subtitle_text_layout_core(triples, width, style, sumwidths / i, i)
-        if len(rv) == i:
-            break
-        i += 1
+        pars[-1].append(tup)
 
-    return rv
+
+    # Deal with each paragraph separately.
+    rrv = [ ] # Real return value.
+        
+    for triples in pars:
+
+        sumwidths = layout_width(triples)
+
+        i = 1
+        while sumwidths / i > min(width, softwidth):
+            i += 1
+
+        while True:
+            rv = subtitle_text_layout_core(triples, width, style, sumwidths / i, i)
+            if len(rv) == i:
+                break
+            i += 1
+
+        rrv.extend(rv)
+            
+    return rrv
 
 def text_layout(triples, width, style):
 

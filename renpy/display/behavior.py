@@ -613,9 +613,9 @@ class Bar(renpy.display.core.Displayable):
 
             if map_event(ev, "bar_increase"):
                 if isinstance(self.range, int):
-                    value -= 1
+                    value += 1
                 else:
-                    value -= self.range / 20.0
+                    value += self.range / 20.0
 
 
             if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
