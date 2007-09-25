@@ -347,7 +347,7 @@ def build_style(style):
         except:
             raise Exception("Style %r is not known." % i)
 
-        # If the parent is heavy, get out of here.
+        # If the parent is heavy get out of here.
         if parent.heavy:
             break
 
@@ -448,7 +448,7 @@ def style_metaclass(name, bases, attrs):
 
 
 # This class is used for heavyweight and lightweight styles. (Heavyweight
-# styles have a class, lightweight styles do not.)
+# styles have a cache, lightweight styles do not.)
 class Style(object):
 
     __metaclass__ = style_metaclass

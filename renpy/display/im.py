@@ -114,12 +114,17 @@ class Cache(object):
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
+
+        if not image.cache:
+            surf = image.load()
+            renpy.display.render.mutated_surface(ce.surf)
+            return surf
             
 
         if image in self.cache:
             ce = self.cache[image]
             new = False
-
+            
         else:
             if renpy.config.debug_image_cache:
                 print "IC Adding", image
@@ -130,7 +135,6 @@ class Cache(object):
 
             # Indicate that this surface had changed.
             renpy.display.render.mutated_surface(ce.surf)
-
 
             if renpy.config.debug_image_cache:
                 print "IC Added", ce.what
@@ -288,14 +292,17 @@ class ImageBase(renpy.display.core.Displayable):
     we can possibly have.
     """
 
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.cache = True
+    
     def __init__(self, *args, **properties):
 
-        if 'rle' in properties:
-            self.rle = properties['rle']
-            del properties['rle']
-        else:
-            self.rle = None
-
+        self.rle = properties.pop('rle', None)
+        self.cache = properties.pop('cache', True)
+            
         properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
@@ -356,21 +363,40 @@ class Image(ImageBase):
         self.filename = filename
 
     def load(self, unscaled=False):
-        if unscaled:
-            im = renpy.display.scale.image_load_unscaled(renpy.loader.load(self.filename), self.filename)
-        else:
-            im = pygame.image.load(renpy.loader.load(self.filename), self.filename)
+        try:
 
-        if im.get_masks()[3] or im.get_colorkey():
-            im = im.convert_alpha()
-        else:
-            im = im.convert()   
+            if unscaled:
+                surf = renpy.display.scale.image_load_unscaled(renpy.loader.load(self.filename), self.filename)
+            else:
+                surf = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
-        return im
+            surf = surf.convert_alpha()
 
+            return surf
+
+        except Exception, e:
+
+            if renpy.config.missing_image_callback:
+                im = renpy.config.missing_image_callback(self.filename)
+                if im is None:
+                    raise e
+
+                return im.load()
+
+            raise e
+        
     def predict_files(self):
-        return [ self.filename ]
 
+        if renpy.loader.loadable(self.filename):
+            return [ self.filename ]
+        else:
+            if renpy.config.missing_image_callback:
+                im = renpy.config.missing_image_callback(self.filename)
+                if im is not None:
+                    return im.predict_files()
+
+            return [ ]
+        
 class Composite(ImageBase):
     """
     This image manipulator composites one or more images together.
@@ -1138,8 +1164,34 @@ class Tile(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
-    
 
+class AlphaMask(ImageBase):
+
+    def __init__(self, base, mask, **properties):
+        super(AlphaMask, self).__init__(base, mask, **properties)
+
+        self.base = image(base)
+        self.mask = image(mask)
+
+    def load(self):
+
+        basesurf = cache.get(self.base)
+        masksurf = cache.get(self.mask)
+
+        if basesurf.get_size() != masksurf.get_size():
+            raise Exception("AlphaMask surfaces must be the same size.")
+
+        rv = pygame.Surface(basesurf.get_size(), 0, renpy.game.interface.display.sample_surface)
+        # rv.fill((0, 255, 0, 0))
+        
+        if renpy.display.module.can_imageblend and 1:
+            renpy.display.module.imageblend(rv, basesurf, rv, masksurf, identity)
+
+        return rv
+            
+    def predict_files(self):
+        return self.base.predict_files() + self.mask.predict_files()
+        
 def image(arg, loose=False, **properties):
     """
     This takes as input one of a number of ways of specifying an

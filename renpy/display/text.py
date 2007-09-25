@@ -403,6 +403,8 @@ class WidgetStyle(object):
         surf = renpy.display.render.render(widget, width, self.height, time, time)
         self.width, _ = surf.get_size()
 
+        self.hyperlink = None
+        
     def update(self):
         pass
 
@@ -455,16 +457,18 @@ ea_not_after = ur'\"\#\$\(\@\[\u00a2\u00a3\u00a5\u00a7\u2018\u201c\u266f' + \
 
 # These are ranges of characters that are treated as western. (And hence are always grouped
 # together as a word.
-ea_western = ur'\'\w\u000a-\u007a\u007c\u007e\u024f\uff10-\uff19\uff20-\uff2a\uff41-\uff5a'
+ea_western = ur'\'\w\u0021-\u007a\u007c\u007e\u024f\uff10-\uff19\uff20-\uff2a\uff41-\uff5a'
 
-eastasian_text_regexp = re.compile(ur"""(?x)
-  (?P<space>[ \u200b])
+eastasian_text_regexp = ur"""(?x)
+  (?P<space>[ \t\u200b])
 | \{(?P<tag>[^{}]+)\}
 | (?P<untag>\{\{)
 | (?P<newline>\n)
-| (?P<word>([%(not_after)s]*""" + \
-    ur'([^ \n\{\u200b%(ea_not_before)s%(ea_not_after)s%(ea_western)s]|[%(ea_western)s]+)' + \
-    ur'[%(ea_not_before)s]*)|[%(ea_not_after)s]|[%(ea_not_before)s])'% locals())
+| (?P<word>([%(ea_not_after)s]*""" % globals() + \
+    ur'([^ \n\{\u200b%(ea_not_before)s%(ea_not_after)s%(ea_western)s]|[%(ea_western)s]+)' % globals() + \
+    ur'[%(ea_not_before)s]*)|[%(ea_not_after)s]|[%(ea_not_before)s])'% globals()
+
+eastasian_text_regexp = re.compile(eastasian_text_regexp)
 
 def text_tokenizer(s, style):
     """
@@ -745,9 +749,15 @@ class Text(renpy.display.core.Displayable):
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
                'laidout_width', 'laidout_height', 'laidout_start',
-               'laidout_length', 'width', 'tokens', 'children',
+               'laidout_length', 'laidout_hyperlinks', 'width', 'tokens', 'children',
                'child_pos']
 
+    __version__ = 1
+
+    def after_upgrade(version):
+        if version <= 0:
+            self.activated = None
+    
     def after_setstate(self):
         self.update()
 
@@ -861,7 +871,7 @@ class Text(renpy.display.core.Displayable):
             new_tokens.append(i)
 
         self.tokens[0] = new_tokens
-            
+
         if self.pause is not None:
             pause = self.pause
             new_tokens = [ ]
@@ -931,23 +941,23 @@ class Text(renpy.display.core.Displayable):
                     ntl.append(("widget", i))
                     self.children.append(i)
                     
-                elif kind == "tag" and i.startswith("a="):
+#                 elif kind == "tag" and i.startswith("a="):
 
-                    label_tokens  = [ ]
+#                     label_tokens  = [ ]
 
-                    for kkind, ii in tliter:
-                        if kkind == "tag" and ii == "/a":
-                            break
+#                     for kkind, ii in tliter:
+#                         if kkind == "tag" and ii == "/a":
+#                             break
 
-                        label_tokens.append((kkind, ii))
+#                         label_tokens.append((kkind, ii))
 
-                    def clicked(target=i[2:]):
-                        return renpy.config.hyperlink_callback(target)
+#                     def clicked(target=i[2:]):
+#                         return renpy.config.hyperlink_callbacxk(target)
 
-                    label = Text([ label_tokens ], tokenized=True, style='hyperlink_text')
-                    i = renpy.display.behavior.Button(label, style='hyperlink', clicked=clicked, focus='hyperlinks')
-                    ntl.append(("widget", i))
-                    self.children.append(i)
+#                     label = Text([ label_tokens ], tokenized=True, style='hyperlink_text')
+#                     i = renpy.display.behavior.Button(label, style='hyperlink', clicked=clicked, focus='hyperlinks')
+#                     ntl.append(("widget", i))
+#                     self.children.append(i)
 
                 else:
                     if kind == "widget":
@@ -980,6 +990,23 @@ class Text(renpy.display.core.Displayable):
             if rv is not None:
                 return rv
 
+        if (self.is_focused() and
+            renpy.display.behavior.map_event(ev, "button_select") and
+            renpy.config.hyperlink_callback):
+
+            self.activated = True
+            self.laidout = None
+            renpy.display.render.redraw(self, 0)
+
+            renpy.config.hyperlink_callback(self.laidout_hyperlinks[renpy.display.focus.argument])
+
+            self.activated = False
+            self.laidout = None
+            renpy.display.render.redraw(self, 0)
+            
+            
+            
+            
     def visit(self):
        if self.tokens is None:
             self.update()
@@ -1006,7 +1033,7 @@ class Text(renpy.display.core.Displayable):
         # to text_layout.
         triples = [ ]
 
-        # The default style.
+        # The default style. (Duplicated in {a})
         tsl = [ TextStyle() ]
         tsl[-1].font = self.style.font
         tsl[-1].size = self.style.size
@@ -1015,9 +1042,11 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].underline = self.style.underline
         tsl[-1].color = None
         tsl[-1].black_color = None
+        tsl[-1].hyperlink = None
         tsl[-1].update()
 
-
+        self.laidout_hyperlinks = [ ]
+        
         if not self.text:
             text = " "
         else:
@@ -1050,24 +1079,63 @@ class Text(renpy.display.core.Displayable):
 
                     continue
 
-                # Otherwise, we're opening a new tag.
-                tsl.append(TextStyle(tsl[-1]))
 
                 if i == "w":
                     # Automatically closes.
-                    tsl.pop()
-
+                    continue
+                    
                 elif i.startswith("w="):
                     # Automatically closes.
-                    tsl.pop()
+                    continue
                     
                 elif i == "fast":
                     # Automatically closes.
-                    tsl.pop()
-
                     triples.append(("start", tsl[-1], ""))
+                    continue
                     
-                elif i == "b":
+                elif i.startswith("a="):
+                    m = re.match(r'a=(.*)', i)
+                    if not m:
+                        raise Exception('Hyperlink tag %s could not be parsed.' % i)
+
+                    # TODO: check to see if we need to be focused.
+
+                    hls = renpy.style.style_map["hyperlink_text"]
+
+                    old_prefix = hls.prefix
+
+                    link = len(self.laidout_hyperlinks)
+
+                    if renpy.display.focus.argument == link:
+
+                        if self.activated:
+                            hls.set_prefix("activate_")
+                        else:
+                            hls.set_prefix("hover_")
+                    else:
+                        hls.set_prefix("idle_")
+                    
+                    tsl.append(TextStyle())
+                    tsl[-1].font = hls.font
+                    tsl[-1].size = hls.size
+                    tsl[-1].bold = hls.bold
+                    tsl[-1].italic = hls.italic
+                    tsl[-1].underline = hls.underline
+                    tsl[-1].color = hls.color
+                    tsl[-1].black_color = hls.black_color
+                    tsl[-1].hyperlink = link
+                    tsl[-1].update()
+
+                    self.laidout_hyperlinks.append(m.group(1))
+                    
+                    hls.set_prefix(old_prefix)
+
+                    continue
+                    
+                # Otherwise, we're opening a new tag.
+                tsl.append(TextStyle(tsl[-1]))
+
+                if i == "b":
                     tsl[-1].bold = True
                     tsl[-1].update()
 
@@ -1278,7 +1346,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, offsets, color, black_color, user_colors, length, time, at, child_pos):
+    def render_pass(self, r, offsets, color, black_color, user_colors, length, time, at, child_pos, add_focus):
         """
         Renders the text to r at the offsets. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -1321,6 +1389,9 @@ class Text(renpy.display.core.Displayable):
                     if surf:
                         r.blit(surf, (x + xo, actual_y + yo))
 
+                    if add_focus and ts.hyperlink is not None:
+                        r.add_focus(self, ts.hyperlink, x + xo, y + yo, sw, sh)
+                        
                     if not isinstance(text, (str, unicode)):
                         child_pos.append((text, x + xo, actual_y + yo))
                 
@@ -1395,11 +1466,11 @@ class Text(renpy.display.core.Displayable):
 
         if dslist:
             dsoffsets = [ (dsxo - mindsx, dsyo - mindsy) for dsxo, dsyo in dslist ]
-            self.render_pass(rv, dsoffsets, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ])
+            self.render_pass(rv, dsoffsets, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False)
 
         self.child_pos = [ ]
 
-        if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos):
+        if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True):
             if self.slow:
                 self.slow = False
                 
@@ -1416,7 +1487,22 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
+    def focus(self, default=False):
+        self.laidout = None
+        renpy.display.render.redraw(self, 0)
 
+        if renpy.config.hyperlink_focus:
+            return renpy.config.hyperlink_focus(self.laidout_hyperlinks[renpy.display.focus.argument])
+
+    def unfocus(self):
+        self.laidout = None
+        renpy.display.render.redraw(self, 0)
+
+        if renpy.config.hyperlink_focus:
+            renpy.config.hyperlink_focus(None)
+        
+
+    
 class ParameterizedText(object):
     """
     This can be used as an image. When used, this image is expected to

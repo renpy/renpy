@@ -271,6 +271,9 @@ lint_hooks = [ ]
 # Hyperlink callback.
 hyperlink_callback = None
 
+# Hyperlink focus.
+hyperlink_focus = None
+
 # Should SFonts be recolored? internal.
 recolor_sfonts = True
 
@@ -331,6 +334,9 @@ reject_backslash = True
 
 # Hide the mouse.
 mouse_hide_time = 30
+
+# Called when we can't load an image.
+missing_image_callback = None
 
 del renpy
 del sets

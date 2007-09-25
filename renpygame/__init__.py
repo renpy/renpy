@@ -29,6 +29,7 @@ Rect = pygame.Rect
 Surface = pygame.Surface
 get_error = pygame.get_error
 get_sdl_version = pygame.get_sdl_version
+error = pygame.error
 
 def init():
     """

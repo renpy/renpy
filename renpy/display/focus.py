@@ -50,12 +50,17 @@ class Focus(object):
             self.mx,
             self.my,
             self.mask)
+
+# The current focus argument.
+argument = None
     
 # The widget currently grabbing the input, if any.
 grab = None
 
 # Sets the currently focused widget.
-def set_focused(widget):
+def set_focused(widget, arg):
+    global argument
+    argument = arg
     renpy.game.context().scene_lists.focused = widget
 
 # Gets the currently focused widget.
@@ -70,7 +75,6 @@ def get_mouse():
     else:
         return focused.style.mouse
     
-
 def set_grab(widget):
     global grab
     grab = widget
@@ -126,7 +130,7 @@ def before_interact(roots):
         for f, n in fwn:
             if f.full_focus_name == current_name:
                 current = f
-                set_focused(f)
+                set_focused(f, None)
                 break
         else:
             current = None
@@ -137,10 +141,10 @@ def before_interact(roots):
         for f, n in fwn:
             if f.default:
                 current = f
-                set_focused(f)
+                set_focused(f, None)
                 break
         else:        
-            set_focused(None)
+            set_focused(None, None)
 
 
     # Finally, mark the current widget as the focused widget, and
@@ -158,6 +162,8 @@ def before_interact(roots):
 # focus object.
 def change_focus(newfocus, default=False):
 
+    global argument
+
     rv = None
     
     if grab:
@@ -171,18 +177,24 @@ def change_focus(newfocus, default=False):
     current = get_focused()
 
     # Nothing to do.
-    if current is widget:
+    if current is widget and (newfocus is None or newfocus.arg == argument):
         return rv
 
     if current is not None:
         current.unfocus()
 
     current = widget
+
+    if newfocus is not None:
+        arg = newfocus.arg
+    else:
+        arg = None
+        
+    set_focused(current, arg)
+
     if widget is not None:
         rv = widget.focus(default=default)
-                    
-    set_focused(current)
-    
+
     return rv
     
 # This handles mouse events, to see if they change the focus.
