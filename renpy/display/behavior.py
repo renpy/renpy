@@ -696,3 +696,39 @@ class Conditional(renpy.display.layout.Container):
             return self.child.event(ev, x, y, st)
         
             
+class Timer(renpy.display.layout.Null):
+
+    def __init__(self, delay, function, repeat=False, args=(), kwargs={}):
+        super(Timer, self).__init__()
+
+        if delay <= 0:
+            raise Exception("A timer's delay must be > 0.")
+
+        self.delay = delay
+        self.function = function
+        self.repeat = repeat
+        self.next_event = delay
+        self.args = args
+        self.kwargs = kwargs
+        
+    def event(self, ev, x, y, st):
+
+        if self.next_event is None:
+            return
+        
+        if st < self.next_event:
+            renpy.game.interface.timeout(self.next_event - st)
+            return
+
+        if not self.repeat:
+            self.next_event = None
+        else:
+            while self.next_event < st:
+                self.next_event += self.delay
+
+            renpy.game.interface.timeout(self.next_event - st)
+
+        return self.function(*self.args, **self.kwargs)
+
+    
+        

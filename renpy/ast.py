@@ -285,13 +285,17 @@ class Say(Node):
                 who = renpy.python.py_eval(self.who)
         else:
             who = None
+
+        what = self.what
+        if renpy.config.say_menu_text_filter:
+            what = renpy.config.say_menu_text_filter(what)
             
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        renpy.exports.say(who, self.what, interact=getattr(self, 'interact', True))
+        renpy.exports.say(who, what, interact=getattr(self, 'interact', True))
 
         if getattr(who, "record_say", True):
             renpy.store._last_say_who = self.who
-            renpy.store._last_say_what = self.what
+            renpy.store._last_say_what = what
 
         return self.next
 
@@ -310,7 +314,11 @@ class Say(Node):
 
         say_menu_with(self.with_, predict_with)
 
-        for i in renpy.exports.predict_say(who, self.what):
+        what = self.what
+        if renpy.config.say_menu_text_filter:
+            what = renpy.config.say_menu_text_filter(what)
+
+        for i in renpy.exports.predict_say(who, what):
             if i is not None:
                 i.predict(callback)
 
@@ -953,6 +961,10 @@ class Menu(Node):
         choices = [ ]
             
         for i, (label, condition, block) in enumerate(self.items):
+
+            if renpy.config.say_menu_text_filter:
+                label = renpy.config.say_menu_text_filter(label)
+
             if block is None:
                 choices.append((label, condition, None))
             else:
