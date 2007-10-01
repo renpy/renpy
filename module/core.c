@@ -1554,3 +1554,4 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
 
     Py_END_ALLOW_THREADS
 }
+

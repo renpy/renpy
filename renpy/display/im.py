@@ -117,7 +117,7 @@ class Cache(object):
 
         if not image.cache:
             surf = image.load()
-            renpy.display.render.mutated_surface(ce.surf)
+            renpy.display.render.mutated_surface(surf)
             return surf
             
 

@@ -1,12 +1,16 @@
 New in Ren'Py 6.3.3
 -------------------
 
+Raised the minimum supported Mac version to 1.4. No code was changed
+to break compatibility with 1.3, but such compatibility hasn't been
+tested in ages... Caveat Emptor.
+
+
 The new im.AlphaMask image operator lets you use an image to
 alpha-mask another. The new config.missing_image_callback lets you
 specify a function that's called when an image is missing. Together,
 they provide the necessary infrastructure for JCC--- JPEG Compression of
 Character art.
-[doc]
 
 
 The code for supporting hyperlinks (the {a} text tag) has been
@@ -17,19 +21,18 @@ focused, using the config.hyperlink_focus callback.
 This necessitated some changes to how hyperlinks work. They are no
 longer buttons, so style.hyperlink is no longer used... now, only
 style.hyperlink_text is used to change the look of a hyperlink.
-[doc]
 
 
 The new ui.timer function lets you call a function after a certain
 amount of time has passed. The function may be called once, or it may
-repeat. [doc]
+repeat.
 
 
 The ui.remove function removes a displayable from a layer.
 
 
 The new config.say_menu_text_filter variable can be used to preprocess 
-strings found in say and menu statements. [doc]
+strings found in say and menu statements.
 
 The subtitle layout algorithm now properly deals with newlines.
 
@@ -37,6 +40,8 @@ The {nw} text tag now suppresses text after it, and click-to-continue
 indicators.
 
 Fixed bars so that they can be decreased using the keyboard.
+
+
 
 New in Ren'Py 6.3.2
 -------------------
