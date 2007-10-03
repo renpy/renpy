@@ -25,7 +25,7 @@ style.hyperlink_text is used to change the look of a hyperlink.
 
 The new ui.timer function lets you call a function after a certain
 amount of time has passed. The function may be called once, or it may
-repeat.
+repeat. 
 
 
 The ui.remove function removes a displayable from a layer.
