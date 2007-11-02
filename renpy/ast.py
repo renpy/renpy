@@ -903,13 +903,14 @@ class Return(Node):
         return
 
     def execute(self):
-        renpy.game.context().pop_dynamic()
 
         if self.expression:
             renpy.store._return = renpy.python.py_eval(self.expression)
         else:
             renpy.store._return = None
 
+        renpy.game.context().pop_dynamic()
+            
         return renpy.game.context().lookup_return(pop=True)
 
     def predict(self, callback):

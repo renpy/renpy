@@ -51,7 +51,8 @@ label _start:
     scene black
 
     if not _restart:
-        $ renpy.pause(0)
+        $ ui.pausebehavior(0)
+        $ ui.interact(suppress_underlay=True, suppress_overlay=True)
 
     $ renpy.block_rollback()
 

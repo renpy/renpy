@@ -580,6 +580,10 @@ label _enter_menu_without_scene:
 
 label _enter_menu:
     call _enter_menu_without_scene from _call_enter_menu_without_scene_1
+
+    $ renpy.dynamic("_mouse_visible")
+    $ _mouse_visible = True
+
     $ ui.clear()
     return
     

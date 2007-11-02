@@ -1,3 +1,17 @@
+Modified the behavior of return so that it evaluates the return
+expression with the values of dynamic variables found inside the
+function that has been called.
+
+Added a new variable, _mouse_visible, that controls if the mouse 
+should be visible at any given moment. [doc]
+
+renpy.with_statement and ui.interact now take a clear argument, which 
+controls if the transient layer is cleared at the end of a transition
+or interaction. [doc]
+
+The new At function provides a nicer syntax for applying position
+objects (the result of Position, Move, etc.) to displayables. [doc]
+
 New in Ren'Py 6.3.3
 -------------------
 
@@ -33,6 +47,7 @@ The ui.remove function removes a displayable from a layer.
 
 The new config.say_menu_text_filter variable can be used to preprocess 
 strings found in say and menu statements.
+
 
 The subtitle layout algorithm now properly deals with newlines.
 

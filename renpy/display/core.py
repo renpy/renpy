@@ -848,7 +848,7 @@ class Display(object):
         if self.mouse_event_time + renpy.config.mouse_hide_time < get_time():
             visible = False
         else:
-            visible = True
+            visible = renpy.store._mouse_visible
 
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:
@@ -1101,7 +1101,7 @@ class Interface(object):
         self.screenshot = None
 
 
-    def do_with(self, trans, paired):
+    def do_with(self, trans, paired, clear=False):
         
         if renpy.config.with_callback:
             trans = renpy.config.with_callback(trans, paired)
@@ -1113,7 +1113,8 @@ class Interface(object):
             self.set_transition(trans)
             return self.interact(trans_pause=True,
                                  suppress_overlay=not renpy.config.overlay_during_with,
-                                 mouse='with')
+                                 mouse='with',
+                                 clear=clear)
 
     def with_none(self):
         """
@@ -1221,7 +1222,7 @@ class Interface(object):
         return rv
             
 
-    def interact(self, **kwargs):
+    def interact(self, clear=True, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
@@ -1248,8 +1249,9 @@ class Interface(object):
         finally:
 
             # Clean out transient stuff at the end of an interaction.
-            scene_lists = renpy.game.context().scene_lists
-            scene_lists.replace_transient()
+            if clear:
+                scene_lists = renpy.game.context().scene_lists
+                scene_lists.replace_transient()
 
             self.restart_interaction = True
         

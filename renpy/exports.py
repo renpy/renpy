@@ -611,7 +611,7 @@ def movie_cutscene(filename, delay=None, loops=0):
     return rv
         
 
-def with_statement(trans, paired=None, always=False):
+def with_statement(trans, paired=None, always=False, clear=True):
     """
     Implements the with statement. One reason to use this over a
     Ren'Py with statement is to get at the return code, which is True
@@ -630,7 +630,7 @@ def with_statement(trans, paired=None, always=False):
     if not (renpy.game.preferences.transitions or always):
         trans = None
 
-    return renpy.game.interface.do_with(trans, paired)
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 globals()["with"] = with_statement
 
@@ -965,6 +965,9 @@ def get_reshow_say():
 
 def reshow_say():
     return renpy.game.context().info._reshow_say()
+
+def current_interact_type():
+    return getattr(renpy.game.context().info, "_current_interact_type", None)
 
 def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)

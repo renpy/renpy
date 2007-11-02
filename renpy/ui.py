@@ -54,6 +54,7 @@ def interact(type='misc', **kwargs):
     if at_stack:
         raise Exception("ui.interact called with non-empty at stack.")
     
+    renpy.game.context().info._current_interact_type = type
     rv = renpy.game.interface.interact(**kwargs)
     renpy.game.context().mark_seen()
     renpy.game.context().info._last_interact_type = type

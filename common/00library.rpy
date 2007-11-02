@@ -408,7 +408,8 @@ label _load_reload_game:
         ui.text("Reloading game...",
                 size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
 
-        renpy.pause(0)
+        ui.pausebehavior(0)
+        ui.interact(suppress_underlay=True, suppress_overlay=True)
         
         renpy.load(save)
 

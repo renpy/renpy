@@ -198,6 +198,14 @@ A layout that lays out displayables in a grid.
 
 del layout
         
+def At(disp, *at_list):
+    rv = renpy.easy.displayable(disp)
+
+    for i in at_list:
+        rv = i(rv)
+
+    return rv
+
 
 # The color function. (Moved, since text needs it, too.)
 color = renpy.easy.color
@@ -222,5 +230,8 @@ def predict_say(who, what):
 
 # The default transition.
 default_transition = None
+
+# Is the mouse visible?
+_mouse_visible = True
 
 __name__ = 'store'
