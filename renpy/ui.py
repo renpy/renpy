@@ -377,3 +377,9 @@ def _jumpsoutofcontext(label):
     raise renpy.game.JumpOutException(label)
 
 jumpsoutofcontext = renpy.curry.curry(_jumpsoutofcontext)
+
+def callsinnewcontext(*args, **kwargs):
+    return renpy.exports.curried_call_in_new_context(*args, **kwargs)
+
+def invokesinnewcontext(*args, **kwargs):
+    return renpy.exports.curried_invoke_in_new_context(*args, **kwargs)

@@ -2,15 +2,27 @@ Modified the behavior of return so that it evaluates the return
 expression with the values of dynamic variables found inside the
 function that has been called.
 
+
 Added a new variable, _mouse_visible, that controls if the mouse 
 should be visible at any given moment. [doc]
+
 
 renpy.with_statement and ui.interact now take a clear argument, which 
 controls if the transient layer is cleared at the end of a transition
 or interaction. [doc]
 
+
 The new At function provides a nicer syntax for applying position
 objects (the result of Position, Move, etc.) to displayables. [doc]
+
+
+Added ui.callsinnewcontext and ui.invokesinnewcontext as aliases for 
+renpy.curried_call_in_new_context and renpy.curried_invoke_in_new_context,
+respectively.
+
+
+Patched SDL so that it can properly set non-ascii window titles on
+Microsoft windows.
 
 New in Ren'Py 6.3.3
 -------------------
