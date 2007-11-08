@@ -144,6 +144,7 @@ Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
 
 # Misc.
+ADVCharacter = renpy.character.ADVCharacter
 Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
 MultiPersistent = renpy.loadsave.MultiPersistent
@@ -213,20 +214,9 @@ color = renpy.easy.color
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy
 
-# The default narrator.
-def narrator(what, interact=True):
-    renpy.display_say(None, what, what_style='say_thought', interact=interact)
-
 # The default menu functions.
 menu = renpy.display_menu
 predict_menu = renpy.predict_menu
-
-# The function that is called when anonymous text is said.
-def say(who, what, interact=True):
-    renpy.display_say(who, what, interact=True)
-
-def predict_say(who, what):
-    return renpy.predict_display_say(who, what)
 
 # The default transition.
 default_transition = None

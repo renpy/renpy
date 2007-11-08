@@ -45,7 +45,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
-from renpy.character import display_say, predict_display_say, show_display_say, predict_show_display_say
+from renpy.character import show_display_say, predict_show_display_say
 
 import renpy.audio.sound as sound
 import renpy.audio.music as music
@@ -438,13 +438,13 @@ def predict_say(who, what):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        return renpy.store.predict_say(who, what)
+        who = renpy.store.unknown.copy(who)
+
+    predict = getattr(who, 'predict', None)
+    if predict:            
+        return predict(what)
     else:
-        predict = getattr(who, 'predict', None)
-        if predict:            
-            return predict(what)
-        else:
-            return [ ]
+        return [ ]
     
         
 def say(who, what, interact=True):
@@ -461,9 +461,9 @@ def say(who, what, interact=True):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        renpy.store.say(who, what, interact=interact)
-    else:
-        who(what, interact=interact)
+        who = renpy.store.unknown.copy(who)
+
+    who(what, interact=interact)
 
 
 

@@ -416,8 +416,6 @@ label _load_reload_game:
     return
 
 init -1001:
-    # Random nice things to have.
-    $ centered = Character(None, what_style="centered_text", window_style="centered_window")
     image text = renpy.ParameterizedText(style="centered_text")
 
     # Lock the library object.

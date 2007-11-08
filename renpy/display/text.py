@@ -824,7 +824,7 @@ class Text(renpy.display.core.Displayable):
         self.style = style
         self.update()
         
-    def update(self, redraw=True):
+    def update(self, redraw=True, retokenize=True):
         """
         This is called after this widget has been updated by
         set_text or set_style.
@@ -841,11 +841,13 @@ class Text(renpy.display.core.Displayable):
         # Annoyingly, we can't tokenize until styles get built.
         if not renpy.style.styles_built:
             return
-            
-        if not self.tokenized:
-            self.tokens = input_tokenizer(text, self.style)
-        else:
-            self.tokens = self.text
+
+        if retokenize:
+
+            if not self.tokenized:
+                self.tokens = input_tokenizer(text, self.style)
+            else:
+                self.tokens = self.text
 
 
         new_tokens = [ ]
@@ -940,24 +942,6 @@ class Text(renpy.display.core.Displayable):
                     i = renpy.display.im.image(m.group(1))
                     ntl.append(("widget", i))
                     self.children.append(i)
-                    
-#                 elif kind == "tag" and i.startswith("a="):
-
-#                     label_tokens  = [ ]
-
-#                     for kkind, ii in tliter:
-#                         if kkind == "tag" and ii == "/a":
-#                             break
-
-#                         label_tokens.append((kkind, ii))
-
-#                     def clicked(target=i[2:]):
-#                         return renpy.config.hyperlink_callbacxk(target)
-
-#                     label = Text([ label_tokens ], tokenized=True, style='hyperlink_text')
-#                     i = renpy.display.behavior.Button(label, style='hyperlink', clicked=clicked, focus='hyperlinks')
-#                     ntl.append(("widget", i))
-#                     self.children.append(i)
 
                 else:
                     if kind == "widget":

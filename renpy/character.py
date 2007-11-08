@@ -23,7 +23,6 @@
 
 import renpy
 
-
 def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, **kwargs):
     """
     This is the default function used by Character to predict images that
@@ -131,55 +130,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     return rv
 
 
-def predict_display_say(who, what,
-                what_style='say_dialogue',
-                window_style='say_window',
-                who_style='say_label',
-                who_prefix='',
-                who_suffix='',
-                what_prefix='',
-                what_suffix='',
-                interact=True,
-                slow=True,
-                slow_abortable=True,
-                image=False,
-                afm=True,
-                ctc=None,
-                ctc_position="nestled",
-                all_at_once=False,
-                what_properties={},
-                window_properties={},
-                show_function = show_display_say,
-                show_args = { },
-                cb_args = { },
-                with_none = None,
-                callback = None,
-                type='say',        
-                **who_properties):
-    """
-    This is the default function used by Character to predict images that
-    will be used by display_say. It's called with more-or-less the
-    same parameters as display_say, and is expected to return a list
-    of images used by display_say.
-    """
-
-    window_args = window_properties.copy()
-    window_args["style"] = window_style
-
-    who_args = who_properties.copy()
-    who_args["style"] = who_style
-
-    what_args = what_properties.copy()
-    what_args["style"] = who_style
-
-    func = show_args.get("predict_function", predict_show_display_say)
-    rv = func(who, what, who_args=who_args, what_args=what_args, window_args=window_args, image=image,
-              **show_args) 
-
-    if ctc:
-        rv.append(ctc)
-
-    return rv
 
 class SlowDone(object):
     def __init__(self, ctc, ctc_position, callback, interact, type, cb_args):
@@ -199,54 +149,33 @@ class SlowDone(object):
         for c in self.callback:
             c("slow_done", interact=self.interact, type=self.type, **self.cb_args)
 
-def display_say(who, what, who_style='say_label',
-                what_style='say_dialogue',
-                window_style='say_window',
-                who_prefix='',
-                who_suffix='',
-                what_prefix='',
-                what_suffix='',
-                interact=True,
-                slow=True,
-                slow_abortable=True,
-                image=False,
-                afm=True,
-                ctc=None,
-                ctc_position="nestled",
-                all_at_once=False,
-                what_properties={},
-                window_properties={},
-                show_function = show_display_say,
-                show_args = { },
-                cb_args = { },
-                with_none = None,
-                callback = None,
-                type='say',
-                **properties):
-    """
-    @param who: Who is saying the dialogue, or None if it's not being
-    said by anyone.
+            
+# This function takes care of repeatably showing the screen as part of
+# an interaction.
+def display_say(show_function,
+                interact,
+                slow,
+                slow_abortable,
+                afm,
+                ctc,
+                ctc_position,
+                all_at_once,
+                cb_args,
+                with_none,
+                callback,
+                type):
 
-    @param what: What is being said.
-
-    @param afm: If True, the auto-forwarding mode is enabled. If False,
-    it is disabled.
-
-    @param all_at_once: If True, then the text is displayed all at once. (This is forced to true if interact=False.)
-
-    For documentation of the other arguments, please read the
-    documentation for Character.
-    """
-
+    ctc = renpy.easy.displayable(ctc)
+    
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
     if renpy.config.skipping == "fast":
 
         # Clears out transients.
         renpy.exports.with_statement(None)
-        
         return
 
+    # Figure out the callback(s) we want to use.
     if callback is None:
         if renpy.config.character_callback:
             callback = [ renpy.config.character_callback ]
@@ -257,7 +186,8 @@ def display_say(who, what, who_style='say_label',
         callback = [ callback ]
 
     callback = renpy.config.all_character_callbacks + callback 
-        
+
+    # Call the begin callback.
     for c in callback:
         c("begin", interact=interact, type=type, **cb_args)
     
@@ -277,8 +207,6 @@ def display_say(who, what, who_style='say_label',
            renpy.game.context().seen_current(True))):    
         slow = False
 
-    what = what_prefix + what + what_suffix
-
     if not interact:
         all_at_once = True
 
@@ -293,18 +221,6 @@ def display_say(who, what, who_style='say_label',
     keep_interacting = True
     slow_start = 0
 
-    # Figure out window args.
-    window_args = dict(style=window_style, **window_properties)
-
-    # Figure out who and its arguments.
-    if who is not None and not image:
-        who = who_prefix + who + who_suffix
-        who_args = dict(style=who_style, **properties)
-    elif who is not None and image:
-        who_args = dict(style=who_style, **properties)
-    else:
-        who_args = dict()
-
     while keep_interacting:
 
         # If we're going to do an interaction, then saybehavior needs
@@ -314,37 +230,26 @@ def display_say(who, what, who_style='say_label',
         else:
             behavior = None
 
-        # Code to support ctc.
-        ctcwhat = [ what ]
-
-        if ctc and ctc_position == "nestled":
-            ctcwhat.extend([ " ", ctc ])
-
+        # This object is called when the slow text is done.
         slow_done = SlowDone(ctc, ctc_position, callback, interact, type, cb_args)
-                
+        
         for c in callback:
             c("show", interact=interact, type=type, **cb_args)
-
             
-        what_args = dict(style=what_style,
-                         slow=slow,
-                         slow_done=slow_done,
-                         slow_abortable=slow_abortable,
-                         slow_start=slow_start,
-                         pause=pause)
-        
-        what_args.update(what_properties)
-        
-        what_text = show_function(
-            who,
-            ctcwhat,
-            who_args=who_args,
-            what_args=what_args,
-            window_args=window_args,
-            image=image,
-            no_ctc_what=what,
-            **show_args)
+        what_text = show_function()
 
+        # Update the properties of the what_text widget.
+        what_text.slow = slow
+        what_text.slow_done = slow_done
+        what_text.slow_abortable = slow_abortable
+        what_text.pause = pause
+                
+        if ctc and ctc_position == "nestled":
+            what_text.tokens.append([ ("widget", ctc) ])
+
+        # Now, re-run update on what_text.
+        what_text.update(retokenize=False)
+            
         no_wait |= what_text.no_wait
 
         if no_wait:
@@ -376,34 +281,6 @@ def display_say(who, what, who_style='say_label',
 
             for i in renpy.config.say_sustain_callbacks:
                 i()
-
-    if interact:
-
-        # Store that we have shown the last thing we need to show.
-        what_args = dict(style=what_style,
-                         slow=False,
-                         slow_done=None,
-                         slow_abortable=slow_abortable,
-                         slow_start=slow_start,
-                         pause=pause)
-
-        what_args.update(what_properties)
-
-        renpy.game.context().info._reshow_say = renpy.curry.curry(show_function)(
-            who,
-            what,
-            who_args=who_args,
-            what_args=what_args,
-            window_args=window_args,
-            image=image,
-            no_ctc_what=what,
-            **show_args)
-
-    # Log this line of dialogue.        
-    if who and isinstance(who, (str, unicode)):
-        renpy.exports.log(who)
-    renpy.exports.log(what)
-    renpy.exports.log("")
     
     # Do the checkpoint and with None.
     if interact:
@@ -422,10 +299,11 @@ def display_say(who, what, who_style='say_label',
     for c in callback:
         c("end", interact=interact, type=type, **cb_args)
 
-# Used by copy.
+
+# This is used to flag values that haven't been set by the user.
 NotSet = object()
 
-class Character(object):
+class ADVCharacter(object):
     """
     The character object contains information about a character. When
     passed as the first argument to a say statement, it can control
@@ -445,163 +323,176 @@ class Character(object):
         ]
 
     # When adding a new argument here, remember to add it to copy below.
-    def __init__(self, name,
-                 who_style='say_label',
-                 what_style='say_dialogue',
-                 window_style='say_window',
-                 function=display_say,
-                 predict_function=predict_display_say, 
-                 condition=None,
-                 dynamic=False,
-                 **properties):
-        
-        self.name = name
-        self.who_style = who_style
-        self.what_style = what_style
-        self.window_style = window_style
-        self.properties = properties
-        self.what_properties = { }
-        self.window_properties = { }
-        self.show_args = { }
-        self.cb_args = { }
-        self.function = function
-        self.predict_function = predict_function
-        self.condition = condition
-        self.dynamic = dynamic
+    def __init__(
+        self,
+        name=NotSet,
+        kind=None,
+        **properties):
 
-        for k in list(self.properties):
-            if k in self.special_properties:
-                continue
+        if kind is None:
+            kind = renpy.store.adv
 
-            if k.startswith("show_"):
-                self.show_args[k[len("show_"):]] = self.properties[k]
-                del self.properties[k]
-                continue
+        if name is not NotSet:
+            properties["name"] = name
 
-            if k.startswith("cb_"):
-                self.cb_args[k[len("cb_"):]] = self.properties[k]
-                del self.properties[k]
-                continue
-
-            if k.startswith("what_"):
-                self.what_properties[k[len("what_"):]] = self.properties[k]
-                del self.properties[k]
-                continue
-
-            if k.startswith("window_"):
-                self.window_properties[k[len("window_"):]] = self.properties[k]
-                del self.properties[k]
-                continue
-
-        for k in list(self.properties):
-            if k in self.special_properties:
-                continue
-
-            if k.startswith("who_"):
-                self.properties[k[len("who_"):]] = self.properties[k]
-                del self.properties[k]
-                continue
-
-            
-    def copy(self,
-             name=NotSet,
-             who_style=NotSet,
-             what_style=NotSet,
-             window_style=NotSet,
-             function=NotSet,
-             predict_function=NotSet,
-             condition=NotSet,
-             dynamic=NotSet,
-             **properties):
-
-
-        rv = Character(name=name,
-                       who_style=who_style,
-                       what_style=what_style,
-                       window_style=window_style,
-                       function=function,
-                       predict_function=predict_function,
-                       condition=condition,
-                       dynamic=dynamic,
-                       **properties)
-
-        
-        def merge(a, b):
-            if a is not NotSet:
-                return a
+        # This grabs a value out of properties, and then grabs it out of
+        # kind if it's not set.
+        def v(n):
+            if n in properties:
+                return properties.pop(n)
             else:
-                return b
+                return getattr(kind, n)
 
-        def merge_dict(a, b):
-            for k, v in b.iteritems():
-                if k not in a:
-                    a[k] = v
-                    
+
+        # Similar, but it grabs the value out of kind.display_args instead.            
+        def d(n):
+            if n in properties:
+                return properties.pop(n)
+            else:
+                return kind.display_args[n]
+            
+        self.name = v('name')
+        self.who_prefix = v('who_prefix')
+        self.who_suffix = v('who_suffix')
+        self.what_prefix = v('what_prefix')
+        self.what_suffix = v('what_suffix')
+
+        self.show_function = v('show_function')
+        self.predict_function = v('predict_function')
+
+        self.condition = v('condition')
+        self.dynamic = v('dynamic')
+
+
+        self.display_args = dict(
+            interact = d('interact'),
+            slow = d('slow'),
+            slow_abortable = d('slow_abortable'),
+            afm = d('afm'),
+            ctc = d('ctc'),
+            ctc_position = d('ctc_position'),
+            all_at_once = d('all_at_once'),
+            with_none = d('with_none'),
+            callback = d('callback'),
+            type = d('type'),
+        )
+
+
+        if kind:
+            self.who_args = kind.who_args.copy()
+            self.what_args = kind.what_args.copy()
+            self.window_args = kind.window_args.copy()
+            self.show_args = kind.show_args.copy()
+            self.cb_args = kind.cb_args.copy()
+
+        else:
+            self.who_args = { }
+            self.what_args = { }
+            self.window_args = { }
+            self.show_args = { }
+            self.cb_args = { }
+
+        if "image" in properties:
+            self.show_args["image"] = properties.pop("image")
+            
+        for k in list(properties):
+
+            if "_" in k:
+                prefix, suffix = k.split("_", 1)
+
+                if prefix == "show":
+                    self.show_args[suffix] = properties[k]
+                    continue
+                elif prefix == "cb":
+                    self.cb_args[suffix] = properties[k]
+                    continue
+                elif prefix == "what":
+                    self.what_args[suffix] = properties[k]
+                    continue
+                elif prefix == "window":
+                    self.window_args[suffix] = properties[k]
+                    continue
+                elif prefix == "who":
+                    self.who_args[suffix] = properties[k]
+                    continue
+
+            self.who_args[k] = properties[k]
+
+    def copy(self, name=NotSet, **properties):
+        return type(self)(name, kind=self, **properties)
         
-        rv.name = merge(rv.name, self.name)
-        rv.who_style = merge(rv.who_style, self.who_style)
-        rv.what_style = merge(rv.what_style, self.what_style)
-        rv.window_style = merge(rv.window_style, self.window_style)
-    
-        merge_dict(rv.properties, self.properties)
-        merge_dict(rv.what_properties, self.what_properties)
-        merge_dict(rv.window_properties, self.window_properties)
-        merge_dict(rv.show_args, self.show_args)
-        merge_dict(rv.cb_args, self.cb_args)
-        
-        rv.function = merge(rv.function, self.function)
-        rv.predict_function = merge(rv.predict_function, self.predict_function)
-        rv.condition = merge(rv.condition, self.condition)
-        rv.dynamic = merge(rv.dynamic, self.dynamic)
 
-        return rv
-        
-    def check_condition(self):
-        """
-        Returns true if we should show this line of dialogue.
-        """
-
-        if self.condition is None:
-            return True
-
-        import renpy.python as python
-
-        return python.py_eval(self.condition)
-        
-
-    def store_readback(self, who, what):
-        """
-        This is called when a say occurs, to store the information
-        about what is said into the readback buffers.
-        """
-
+    # This is called before the interaction. 
+    def do_add(self, who, what):
         return
 
-    def __call__(self, what, **properties):
+    # A curried version of this is called to cause the interaction to
+    # occur.
+    def do_show(self, who, what):
+        return self.show_function(
+            who,
+            what, 
+            who_args=self.who_args,
+            what_args=self.what_args,
+            window_args=self.window_args,
+            **self.show_args)
+            
+    # This is called when an extend occurs, before the usual add/show
+    # cycel.
+    def do_extend(self):
+        return
 
-        props = self.properties.copy()
-        props.update(properties)
+    # This is called to predict images that will be used by this
+    # statement.
+    def do_predict(self, who, what):
+        return self.predict_function(
+            name,
+            what,
+            who_args=self.who_args,
+            what_args=self.what_args,
+            window_args=self.window_args,
+            **self.show_args)
+    
+    def __call__(self, what, **kwargs):
 
-        if not self.check_condition():
-            return
+        # Check self.condition to see if we should show this line at all.
 
-        name = self.name
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+            return True
 
+        # Figure out the arguments to display.
+        display_args = self.display_args.copy()
+        display_args.update(kwargs)
+                
+        who = self.name
+
+        # If dynamic is set, evaluate the name expression.
         if self.dynamic:
-            import renpy.python as python            
-            name = python.py_eval(name)
+            who = renpy.python.py_eval(who)
 
-        self.function(name, what,
-                      who_style=self.who_style,
-                      what_style=self.what_style,
-                      window_style=self.window_style,
-                      what_properties=self.what_properties,
-                      window_properties=self.window_properties,
-                      show_args=self.show_args,
-                      cb_args=self.cb_args,
-                      **props)
+        if who is not None:
+            who = self.who_prefix + who + self.who_suffix
 
-        self.store_readback(name, what)
+        what = self.what_prefix + what + self.what_suffix
+
+        # Run the add_function, to add this character to the
+        # things like NVL-mode.
+        self.do_add(who, what)
+
+        # Now, pass an appropriate call to do_show into display_say.
+
+        display_say(lambda : self.do_show(who, what),
+                    cb_args=self.cb_args,
+                    **display_args)
+
+        
+
+        # Finally, log this line of dialogue.        
+        if who and isinstance(who, (str, unicode)):
+            renpy.exports.log(who)
+        renpy.exports.log(what)
+        renpy.exports.log("")
+        
         
     def predict(self, what):
 
@@ -609,32 +500,17 @@ class Character(object):
             return [ ]
 
         if self.dynamic:
-            name = "<Dynamic>"
+            who = "<Dynamic>"
         else:
-            name = self.name
+            who = self.name
 
-        return self.predict_function(
-            name,
-            what,
-            who_style=self.who_style,
-            what_style=self.what_style,
-            window_style=self.window_style,
-            what_properties=self.what_properties,
-            window_properties=self.window_properties,
-            show_args=self.show_args,
-            cb_args=self.cb_args,
-            **self.properties)
+def Character(name, kind=None, **properties):
+    if kind is None:
+        kind = renpy.store.adv
+
+    return type(kind)(name, kind=kind, **properties)
+    
             
 def DynamicCharacter(name_expr, **properties):
-    """
-    A DynamicCharacter is similar to a Character, except that instead
-    of having a fixed name, it has an expression that is evaluated to
-    produce a name before each line of dialogue is displayed. This allows
-    one to have a character with a name that is read from the user, as
-    may be the case for the POV character.
-
-    This is now exactly the same as constructing a character with
-    dynamic=True.
-    """
-
     return Character(name_expr, dynamic=True, **properties)
+
