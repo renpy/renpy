@@ -176,14 +176,16 @@ def scan_saved_game(name):
         f = name + savegame_suffix
     
         zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
-        sio = cStringIO.StringIO(zf.read("screenshot.tga"))
+
+        # Fail early if screenshot.tga doesn't exist.
+        zf.getinfo('screenshot.tga')
+        
         extra_info = zf.read("extra_info").decode("utf-8")
         zf.close()
-    
-        screenshot = renpy.display.image.UncachedImage(sio, "screenshot.tga", False)
+       
         mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
-        f = f[:-len(savegame_suffix)]
-
+        screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.tga", mtime)
+        
         return extra_info, screenshot, mtime
     except:
         return None

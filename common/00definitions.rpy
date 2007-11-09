@@ -72,36 +72,6 @@ init -1110 python:
     blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
     squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
 
-    adv = None
-    adv = ADVCharacter(None,
-                       who_prefix='',
-                       who_suffix='',
-                       what_prefix='',
-                       what_suffix='',
-                       
-                       show_function=renpy.show_display_say,
-                       predict_function=renpy.predict_show_display_say,
-
-                       condition=None,
-                       dynamic=False,
-                       image=False,
-                    
-                       interact=True,
-                       slow=True,
-                       slow_abortable=True,
-                       afm=True,
-                       ctc=None,
-                       ctc_position="nestled",
-                       all_at_once=False,
-                       with_none=None,
-                       callback=None,
-                       type='say',
-                       
-                       who_style='say_label',
-                       what_style='say_dialogue',
-                       window_style='say_window',
-                       
-                       kind=adv)
 
 init -1110:
     image black = Solid("#000")

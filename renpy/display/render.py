@@ -118,7 +118,11 @@ def render(widget, width, height, st, at):
         return rv
 
     rv = widget.render(width, height, st, at)
-    rv.clipped = widget.style.clipping
+
+    if widget.style.clipping:
+        rv = rv.subsurface((0, 0, width, height), focus=True)
+        
+    # rv.clipped = widget.style.clipping
 
     rv.render_of.append((widget, width, height))
 
@@ -460,6 +464,42 @@ class ClipSurface(object):
         return ClipSurface((self.x + x, self.y + y, w, h),
                            self.blits, self.forced, self.surfid)
 
+
+# This takes two rectangles: A "source" rectangle and a "clipping" 
+# rectangle. It returns two tuples: the (xo, yo) of the source rectangle
+# relative to the upper left of the clipping rectangle. And the (x, y, w, h)
+# of the part of the source rectangle that is shown within the clipping
+# rectangle.
+def compute_subrect(source, clipping):
+    sx, sy, sw, sh = source
+    cx, cy, cw, ch = clipping
+
+    # The coordinates of the upper-left corner of the source
+    # rectangle inside the clipping rectange.
+    ulx = sx - cx
+    uly = sy - cy
+
+    if ulx < 0:
+        ox = 0
+        sx = -ulx
+    else:
+        ox = ulx
+        sx = 0
+
+    if uly < 0:
+        oy = 0
+        sy = -uly
+    else:
+        oy = uly
+        sy = 0
+
+    if ox > cw or oy > ch:
+        return (0, 0), (0, 0, 0, 0)
+
+    sw = min(sw - sx, cw - ox)
+    sh = min(sh - sy, ch - oy)
+
+    return (ox, oy), (sx, sy, sw, sh)
     
 def screen_blit(source, full=False, xoffset=0):
     """
@@ -681,7 +721,7 @@ class Render(object):
         destination surface.
         """
 
-        if self.clipped or self.draw_func:
+        if self.draw_func:
 
             if x >= 0:
                 newx = 0
@@ -850,40 +890,21 @@ class Render(object):
                 nf = f.copy()
 
                 if nf.x is not None:
-                    nf.x -= x
-                    nf.x = max(nf.x, 0)
-                    nf.y -= y
-                    nf.y = max(nf.y, 0)
-
-                    nf.w -= x
-                    nf.w = min(nf.w, width)
-                    nf.h -= y
-                    nf.h = min(nf.h, height)
+                    (nf.x, nf.y), (ignored1, ignored2, nf.w, nf.h) = compute_subrect(
+                        (nf.x, nf.y, nf.w, nf.h),
+                        (x, y, width, height))
 
                     if nf.w <= 0 or nf.h <= 0:
                         continue
 
                 if nf.mx is not None:
 
-                    nf.mx -= x
-                    if nf.mx < 0:
-                        fmxo = -fmx
-                        nf.mx = 0
-                    else:
-                        fmxo = 0
+                    (nf.mx, nf.my), (mcx, mcy, mcw, mch) = compute_subrect(
+                        (nf.mx, nf.my) + nf.mask.get_size(),
+                        (x, y, width, height))
 
-                    nf.my -= y
-                    if nf.my < 0:
-                        fmyo = -fmy
-                        nf.my = 0
-                    else:
-                        fmyo = 0
-                    
-                    fmw, fmh = nf.mask.get_size()
-                    fmw = min(fmw - fmxo, width - nf.mx)
-                    fmh = min(fmh - fmyo, height - nf.my)
 
-                    if fmw <= 0 or fmh <= 0:
+                    if mcx <= 0 or mcy <= 0:
                         continue
 
                     nf.mask = nf.mask.subsurface((fmxo, fmyo, fmw, fmh))
@@ -892,38 +913,10 @@ class Render(object):
                 
         for xo, yo, source in self.blittables:
 
-            # ulx, uly -- the coordinates of the upper-left hand corner of
-            # the image, relative to the subsurface.
-
-            ulx = xo - x
-            uly = yo - y
-
-            # ox, oy -- the offsets that the source will be blitted at.
-            # sx, sy -- the offset within the subsurface at which we begin.
-
-            if ulx < 0:
-                ox = 0
-                sx = -ulx
-            else:
-                ox = ulx
-                sx = 0
-
-            if uly < 0:
-                oy = 0
-                sy = -uly
-            else:
-                oy = uly
-                sy = 0
-
-                
-            if ox > width or oy > height:
-                continue
-
-            sw, sh = source.get_size()
-
-            sw = min(sw - sx, width - ox)
-            sh = min(sh - sy, height - oy)
-
+            (xo, yo), (sx, sy, sw, sh) = compute_subrect(
+                (xo, yo) + source.get_size(),
+                (x, y, width, height))
+            
             if sw <= 0 or sh <= 0:
                 continue
 
@@ -932,7 +925,7 @@ class Render(object):
             if isinstance(subsurf, pygame.Surface):
                 mutated_surface(subsurf) 
             
-            rv.blit(subsurf, (ox, oy))
+            rv.blit(subsurf, (xo, yo))
 
 
         self.subsurfaces[pos] = rv
@@ -1056,16 +1049,6 @@ def is_fullscreen_core(surf, x, y, (w, h)):
         return rv
 
     # Clipping can stop its children from being fullscreen.
-
-
-    if (surf.clipped and
-        (x > 0 or
-         y > 0 or
-         x + surf.width < w or
-         y + surf.height < h)):
-
-        surf.fullscreen[xywh] = False
-        return False
 
     if (surf.opaque and x <= 0 and y <= 0 and
         surf.width + x >= w and

@@ -26,6 +26,9 @@
 import renpy
 import random
 
+import zipfile
+import cStringIO
+
 import pygame
 from pygame.constants import *
 
@@ -396,6 +399,27 @@ class Image(ImageBase):
                     return im.predict_files()
 
             return [ ]
+
+class ZipFileImage(ImageBase):
+
+    def __init__(self, zipfilename, filename, mtime=0, **properties):
+        super(ZipFileImage, self).__init__(zipfilename, filename, mtime, **properties)
+
+        self.zipfilename = zipfilename
+        self.filename = filename
+
+    def load(self):
+        zf = zipfile.ZipFile(self.zipfilename, 'r')
+        sio = cStringIO.StringIO(zf.read(self.filename))
+        rv = pygame.image.load(sio, self.filename)
+        zf.close()
+
+        return rv
+
+    def predict_files(self):
+        return [ ]
+        
+    
         
 class Composite(ImageBase):
     """

@@ -1,3 +1,38 @@
+
+Rewrote the way in which dialogue is handled. This has a number of
+repercussions, although it should be mostly backwards-compatible for
+existing games.
+
+The first change is that Character is now a function, rather than a
+class. It can create instances of the new ADVCharacter and
+NVLCharacter classes, which are the classes responsible for managing
+dialogue. 
+
+The Character function takes a new kind argument. This argument takes
+another character object that is used as a template for the object
+being created. It defaults to the adv character object when a
+Character or ADVCharacter is being created, and the nvl character
+object when an NVLCharacter is being created. The new preferred way to
+create an NVLCharacter is to write:
+
+init:
+    $ eileen nvl = Character("Eileen", kind=nvl)
+
+By defining a new adv or nvl character, it's possible to change the
+behavior of all characters of the given kind defined after that one.
+
+The default narrator is now a character. There is also a new character
+object, unknown, which is copied and used when an unknown character
+(that is, one with a string for a name) speaks. 
+
+Characters now take a new pause_ctc argument. If supplied, it gives a
+click-to-continue indicator that is used when the 
+
+Added config.nvl_page_ctc and config.nvl_page_ctc_position. If set,
+these override the ctc and ctc_position parameters of a character
+during dialogue when the next statement is "nvl clear". 
+
+
 Modified the behavior of return so that it evaluates the return
 expression with the values of dynamic variables found inside the
 function that has been called.
@@ -21,8 +56,33 @@ renpy.curried_call_in_new_context and renpy.curried_invoke_in_new_context,
 respectively.
 
 
+Added persistent._played_audio, a dictionary where the keys are audio
+files that have been played.
+
+
+Added renpy.current_interact_type, which is the counterpart of
+renpy.last_interact_type.
+
+
+The screenshot displayables returned from renpy.list_saved_games and
+renpy.scan_saved_game are now image manipulators, which means that
+other image manipulators can be applied to them. For example, one can
+apply im.Sepia to a screenshot to sepia-tone it. The new 
+_file_picker_process_screenshot function can be overrideen by the 
+user to change the look of the game in the current menus.
+
+
+The config.label_overrides variable is a map that allows one label 
+to be overridden by another.
+
+
 Patched SDL so that it can properly set non-ascii window titles on
 Microsoft windows.
+
+
+This release is dedicated to the memory of Sindu the Cat (1992-2007).
+
+
 
 New in Ren'Py 6.3.3
 -------------------

@@ -3,8 +3,7 @@
 init:
 
     # Declare an nvl-version of eileen.
-    $ nvle = NVLCharacter("Eileen",
-                          color="#c8ffc8")
+    $ nvle = Character("Eileen", color="#c8ffc8", kind=nvl)
 
     $ config.adv_nvl_transition = dissolve
     $ config.nvl_adv_transition = dissolve
@@ -20,7 +19,7 @@ label demo_nvlmode:
 
     nvl clear
     
-    nvle "To use NVL-mode, you need to define NVLCharacters instead of regular old Characters."
+    nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
 
     nvle "You use 'nvl clear' to clear the screen when that becomes necessary."
 
@@ -50,18 +49,26 @@ label demo_nvlmode:
 
             nvle "Good!"
 
+            nvl clear
+            
         "No.":
 
             nvl clear
 
             nvle "Well, it might help if you take a look at the demo code."
 
-    eside "Finally, you can specify transitions that occur when going from ADV-mode to NVL-mode."
-
-    nvl clear
+            nvl clear
+            
+    eside "You can specify transitions that occur when going from NVL-mode to ADV-mode."
 
     nvle "As well as when going from ADV-mode to NVL-mode."
-            
+
+    nvle "Text tags like {{w}{w} work in NVL-mode."
+
+    extend " As does the \"extend\" special character."
+
+    nvle "And that's it for NVL-mode."
+    
     $ menu = renpy.display_menu
 
     nvl hide dissolve

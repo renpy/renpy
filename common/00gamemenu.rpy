@@ -340,6 +340,9 @@ init -1160 python:
         return base + int((int(filename) - 1) / per_page)
 
 
+    def _file_picker_process_screenshot(s):
+        return s
+    
     # This displays a file picker that can chose a save file from
     # the list of save files.
     def _file_picker(selected, save):
@@ -353,18 +356,18 @@ init -1160 python:
         newest_mtime = None
         save_info = { }
 
-        if config.file_picker_positions:
-            positions = config.file_picker_positions
-        else:
-            positions = { }
-
         for fn, extra_info, screenshot, mtime in saved_games:
+            screenshot = _file_picker_process_screenshot(screenshot)
             save_info[fn] = (extra_info, screenshot, mtime)
 
             if not fn.startswith("auto-") and mtime > newest_mtime:
                 newest = fn
                 newest_mtime = mtime
 
+        if config.file_picker_positions:
+            positions = config.file_picker_positions
+        else:
+            positions = { }
 
         # The index of the first entry in the page.
         fpp = _scratch.file_picker_page

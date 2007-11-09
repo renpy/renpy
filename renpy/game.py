@@ -130,7 +130,6 @@ class Preferences(object):
             joy_down="Axis 0.1 Positive",
             joy_dismiss="Button 0.0")
 
-
     def set_volume(self, mixer, volume):
         if volume == 0:
             self.mute[mixer] = True

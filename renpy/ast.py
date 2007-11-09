@@ -121,6 +121,26 @@ def chain_block(block, next):
 
     block[-1].chain(next)
 
+
+class Scry(object):
+    """
+    This is used to store information about the future, if we know it. Unlike
+    predict, this tries to only get things we _know_ will happen.
+    """
+
+    # By default, all attributes are None.
+    def __getattr__(self, name):
+        return None
+
+    def next(self):
+        if self._next is None:
+            return None
+        else:
+            return self._next.scry()
+
+    
+
+    
 class Node(object):
     """
     A node in the abstract syntax tree of the program.
@@ -222,6 +242,15 @@ class Node(object):
 
         return [ ]
 
+    def scry(self):
+        """
+        Called to return an object with some general, user-definable information
+        about the future.
+        """
+
+        rv = Scry()
+        rv._next = self.next
+        return rv
 
 def say_menu_with(expression, callback):
     """
@@ -324,6 +353,11 @@ class Say(Node):
 
         return [ self.next ]
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv.interacts = True
+        return rv
+    
 # Copy the descriptor.
 setattr(Say, "with", Say.with_)
 
@@ -499,6 +533,11 @@ class Python(Node):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
         return self.next
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv.interacts = True
+        return rv
+
 class EarlyPython(Node):
 
     __slots__ = [
@@ -531,7 +570,6 @@ class EarlyPython(Node):
     def early_execute(self):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
 
-    
 class Image(Node):
 
     __slots__ = [
@@ -564,7 +602,7 @@ class Image(Node):
         renpy.exports.image(self.imgname, img)
 
         return self.next
-    
+
 
     
 def predict_imspec(imspec, callback, scene=False):
@@ -883,6 +921,11 @@ class Call(Node):
         else:
             return [ renpy.game.script.lookup(self.label) ]
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv._next = None
+        return rv
+    
 class Return(Node):
 
     __slots__ = [ 'expression']
@@ -920,6 +963,11 @@ class Return(Node):
         else:
             return [ ]
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv._next = None
+        return rv
+    
 class Menu(Node):
 
     __slots__ = [
@@ -998,6 +1046,12 @@ class Menu(Node):
 
         return rv
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv._next = None
+        rv.interacts = True
+        return rv
+    
 setattr(Menu, "with", Menu.with_)
 
 # Goto is considered harmful. So we decided to name it "jump"
@@ -1037,6 +1091,15 @@ class Jump(Node):
         else:
             return [ renpy.game.script.lookup(self.target) ]
 
+    def scry(self):
+        rv = Node.scry(self)
+        if self.expression:
+            rv._next = None
+        else:
+            rv._next = renpy.game.script.lookup(self.target)
+            
+        return rv
+    
 # GNDN
 class Pass(Node):
 
@@ -1081,6 +1144,10 @@ class While(Node):
     def predict(self, callback):
         return [ self.block[0], self.next ]
         
+    def scry(self):
+        rv = Node.scry(self)
+        rv._next = None
+        return rv
 
 class If(Node):
 
@@ -1125,6 +1192,10 @@ class If(Node):
         return [ block[0] for condition, block in self.entries ] + \
                [ self.next ]
 
+    def scry(self):
+        rv = Node.scry(self)
+        rv._next = None
+        return rv
 
 class UserStatement(Node):
 
@@ -1164,5 +1235,9 @@ class UserStatement(Node):
         renpy.statements.call(method, parsed, *args, **kwargs)
 
         
+    def scry(self):
+        rv = Node.scry(self)
+        self.call("scry", rv)
+        return rv
                             
             

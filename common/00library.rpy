@@ -305,12 +305,24 @@ init -1180:
             ### skip_indicator default
             # (text) The style and placement of the skip indicator.            
 
-            if config.skipping == "slow" and config.skip_indicator:
-                ui.text(_(u"Skip Mode"), style='skip_indicator')
+            if config.skip_indicator is True:
 
-            if config.skipping == "fast" and config.skip_indicator:
-                ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
+                if config.skipping == "slow" and config.skip_indicator:
+                    ui.text(_(u"Skip Mode"), style='skip_indicator')
 
+                if config.skipping == "fast" and config.skip_indicator:
+                    ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
+
+                return
+
+            if not config.skip_indicator:
+                return
+
+            if not config.skipping:
+                return
+
+            ui.add(renpy.easy.displayable(config.skip_indicator))
+                    
         config.overlay_functions.append(skip_indicator)
 
     # The default hyperlink handler.
@@ -492,10 +504,16 @@ init -1180 python:
 
         if who is not None:
             who = eval(who)
-        
-        if isinstance(who, NVLCharacter):
-            nvl_erase()
 
+        if who is None:
+            who = narrator 
+            
+        if isinstance(who, basestring):
+            who = unknown.copy(who)
+
+        # This ensure extend works even with NVL mode.
+        who.do_extend()
+            
         what = _last_say_what + config.extend_interjection + what
             
         renpy.exports.say(who, what, interact=interact)

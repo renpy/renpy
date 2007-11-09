@@ -45,7 +45,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 
-from renpy.character import show_display_say, predict_show_display_say
+from renpy.character import show_display_say, predict_show_display_say, display_say
 
 import renpy.audio.sound as sound
 import renpy.audio.music as music
@@ -960,11 +960,20 @@ def force_full_redraw():
 
     renpy.game.interface.display.full_redraw = True
 
-def get_reshow_say():
-    return renpy.game.context().info._reshow_say
+def do_reshow_say(who, what, interact=False):
+    
+    if who is not None:
+        who = renpy.python.py_eval(who)
 
-def reshow_say():
-    return renpy.game.context().info._reshow_say()
+    say(who, what, interact=interact)
+
+curried_do_reshow_say = curry(do_reshow_say)
+    
+def get_reshow_say(**kwargs):
+    return curried_do_reshow_say(store._last_say_who, store._last_say_what, **kwargs)
+
+def reshow_say(**kwargs):
+    get_reshow_say()(**kwargs)
 
 def current_interact_type():
     return getattr(renpy.game.context().info, "_current_interact_type", None)
@@ -1010,13 +1019,11 @@ def free_memory():
     renpy.display.text.free_memory()
     renpy.display.render.free_memory()
 
-    
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
 curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
-
 
 # Error handling stuff.
 def _error(msg):
@@ -1033,7 +1040,6 @@ def pop_error_handler():
 def error(msg):
     _error_handlers[-1](msg)
     
-
 # User-defined Displayable stuff.
 
 Displayable = renpy.display.core.Displayable
@@ -1045,4 +1051,7 @@ redraw = renpy.display.render.redraw
 def timeout(seconds):
     renpy.game.interface.timeout(seconds)
 
-
+def scry():
+    name = renpy.game.context().current
+    node = renpy.game.script.lookup(name)
+    return node.scry()

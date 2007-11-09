@@ -82,7 +82,7 @@ label demo_character:
 
     e "The \"extend\" character is very special."
 
-    e "It lets you "
+    e "It lets you"
 
     show eileen vhappy
 

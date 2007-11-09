@@ -428,6 +428,8 @@ class Script(object):
         raises a ScriptError.
         """
 
+        label = renpy.config.label_overrides.get(label, label)
+        
         if label not in self.namemap:
             raise ScriptError("could not find label '%s'." % str(label))
 
@@ -437,6 +439,8 @@ class Script(object):
         """
         Returns true if the label exists, or false otherwise.
         """
+
+        label = renpy.config.label_overrides.get(label, label)
 
         return label in self.namemap
 

@@ -155,9 +155,9 @@ class SlowDone(object):
 def display_say(show_function,
                 interact,
                 slow,
-                slow_abortable,
                 afm,
                 ctc,
+                ctc_pause,
                 ctc_position,
                 all_at_once,
                 cb_args,
@@ -220,7 +220,7 @@ def display_say(show_function,
 
     keep_interacting = True
     slow_start = 0
-
+        
     while keep_interacting:
 
         # If we're going to do an interaction, then saybehavior needs
@@ -230,22 +230,31 @@ def display_say(show_function,
         else:
             behavior = None
 
-        # This object is called when the slow text is done.
-        slow_done = SlowDone(ctc, ctc_position, callback, interact, type, cb_args)
-        
         for c in callback:
             c("show", interact=interact, type=type, **cb_args)
             
         what_text = show_function()
 
         # Update the properties of the what_text widget.
+
+        keep_interacting, pause_length = what_text.get_keep_pausing()
+
+        if keep_interacting:
+            what_ctc = pause_ctc
+        else:
+            what_ctc = ctc
+        
+        # This object is called when the slow text is done.
+        slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args)
+        
         what_text.slow = slow
+        what_text.slow_param = slow
         what_text.slow_done = slow_done
-        what_text.slow_abortable = slow_abortable
+        what_text.slow_start = slow_start
         what_text.pause = pause
-                
+
         if ctc and ctc_position == "nestled":
-            what_text.tokens.append([ ("widget", ctc) ])
+            what_text.tokens.append([ ("widget", what_ctc) ])
 
         # Now, re-run update on what_text.
         what_text.update(retokenize=False)
@@ -261,7 +270,6 @@ def display_say(show_function,
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 
-        keep_interacting, pause_length = what_text.get_keep_pausing()
 
         if interact:
             if pause_length is not None:
@@ -367,9 +375,9 @@ class ADVCharacter(object):
         self.display_args = dict(
             interact = d('interact'),
             slow = d('slow'),
-            slow_abortable = d('slow_abortable'),
             afm = d('afm'),
             ctc = d('ctc'),
+            ctc_pause = d('ctc_pause'),
             ctc_position = d('ctc_position'),
             all_at_once = d('all_at_once'),
             with_none = d('with_none'),
@@ -394,6 +402,9 @@ class ADVCharacter(object):
 
         if "image" in properties:
             self.show_args["image"] = properties.pop("image")
+
+        if "slow_abortable" in properties:
+            self.what_args["slow_abortable"] = properties.pop("slow_abortable")
             
         for k in list(properties):
 
@@ -420,7 +431,7 @@ class ADVCharacter(object):
 
     def copy(self, name=NotSet, **properties):
         return type(self)(name, kind=self, **properties)
-        
+
 
     # This is called before the interaction. 
     def do_add(self, who, what):
@@ -436,12 +447,22 @@ class ADVCharacter(object):
             what_args=self.what_args,
             window_args=self.window_args,
             **self.show_args)
-            
+
+    # This is called after the last interaction is done.
+    def do_done(self, who, what):
+        return
+    
     # This is called when an extend occurs, before the usual add/show
     # cycel.
     def do_extend(self):
         return
 
+    # This is called to actually do the displaying.
+    def do_display(self, who, what, **display_args):                
+        display_say(lambda : self.do_show(who, what),
+                    **display_args)
+        
+    
     # This is called to predict images that will be used by this
     # statement.
     def do_predict(self, who, what):
@@ -479,13 +500,11 @@ class ADVCharacter(object):
         # things like NVL-mode.
         self.do_add(who, what)
 
-        # Now, pass an appropriate call to do_show into display_say.
+        # Now, display the damned thing.
+        self.do_display(who, what, cb_args=self.cb_args, **display_args)
 
-        display_say(lambda : self.do_show(who, what),
-                    cb_args=self.cb_args,
-                    **display_args)
-
-        
+        # Indicate that we're done.
+        self.do_done(who, what)
 
         # Finally, log this line of dialogue.        
         if who and isinstance(who, (str, unicode)):

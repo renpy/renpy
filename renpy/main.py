@@ -218,7 +218,10 @@ def main():
     # Initialize the set of chosen menu choices.
     if not game.persistent._chosen:
         game.persistent._chosen = { }
-    
+
+    if not game.persistent._played_audio:
+        game.persistent._played_audio = { }
+        
     # Clear the list of seen statements in this game.
     game.seen_session = { }
 
