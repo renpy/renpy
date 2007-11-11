@@ -438,7 +438,7 @@ def predict_say(who, what):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        who = renpy.store.unknown.copy(who)
+        return renpy.store.predict_say(who, what)
 
     predict = getattr(who, 'predict', None)
     if predict:            
@@ -461,9 +461,9 @@ def say(who, what, interact=True):
         who = renpy.store.narrator
 
     if isinstance(who, (str, unicode)):
-        who = renpy.store.unknown.copy(who)
-
-    who(what, interact=interact)
+        renpy.store.say(who, what, interact=interact)
+    else:
+        who(what, interact=interact)
 
 
 
@@ -986,6 +986,15 @@ def dynamic(*vars):
 
 def seen_label(label):
     return label in renpy.game.seen_ever
+
+def seen_audio(filename):
+    return filename in renpy.game.persistent._seen_audio
+
+def seen_image(name):
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+    
+    return name in renpy.game.persistent._seen_images
 
 def file(fn):
     return renpy.loader.load(fn)

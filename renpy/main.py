@@ -219,8 +219,8 @@ def main():
     if not game.persistent._chosen:
         game.persistent._chosen = { }
 
-    if not game.persistent._played_audio:
-        game.persistent._played_audio = { }
+    if not game.persistent._seen_audio:
+        game.persistent._seen_audio = { }
         
     # Clear the list of seen statements in this game.
     game.seen_session = { }

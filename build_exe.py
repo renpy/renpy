@@ -4,6 +4,7 @@ from distutils.core import setup
 import py2exe
 import sys
 import zipfile
+import traceback
 
 # The pythonpath on my system.
 sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\bin')

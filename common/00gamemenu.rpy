@@ -608,7 +608,7 @@ label _enter_game_menu:
 # Now, we have the actual entry points into the various menu screens.
 
 # Entry points from the game into menu-space.
-label _game_menu:
+label _game_menu(_game_menu_screen=_game_menu_screen):
     if not _game_menu_screen:
         return
 

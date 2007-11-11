@@ -222,7 +222,7 @@ predict_menu = renpy.predict_menu
 default_transition = None
 
 # Is the mouse visible?
-_mouse_visible = True
+mouse_visible = True
 
 # The default ADVCharacter.
 adv = ADVCharacter(None,
@@ -255,5 +255,16 @@ adv = ADVCharacter(None,
                    window_style='say_window',
 
                    kind=False)
+
+def predict_say(who, what):
+    who = Character(who, kind=name_only)
+    try:
+        return who.predict(what)
+    except:
+        return [ ]
+    
+def say(who, what, interact=True):
+    who = Character(who, kind=name_only)
+    who(what, interact=interact)
 
 __name__ = 'store'

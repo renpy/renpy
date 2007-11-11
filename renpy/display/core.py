@@ -848,7 +848,7 @@ class Display(object):
         if self.mouse_event_time + renpy.config.mouse_hide_time < get_time():
             visible = False
         else:
-            visible = renpy.store._mouse_visible
+            visible = renpy.store.mouse_visible
 
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:

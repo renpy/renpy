@@ -80,11 +80,8 @@ init 1110 python:
     if not hasattr(store, 'narrator'):
         narrator = Character(None, kind=adv, what_style='say_thought')
 
-    if not hasattr(store, 'unknown'):
-        unknown = adv
+    if not hasattr(store, 'name_only'):
+        name_only = adv
 
     if not hasattr(store, 'centered'):
         centered = Character(None, what_style="centered_text", window_style="centered_window")
-
-                   
-    
