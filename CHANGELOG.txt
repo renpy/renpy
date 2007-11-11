@@ -77,6 +77,10 @@ expression with the values of dynamic variables found inside the
 function that has been called.
 
 
+Fixed viewports so that they properly block access to buttons that are
+outside the viewport.
+
+
 Patched SDL so that it can properly set non-ascii window titles on
 Microsoft windows.
 

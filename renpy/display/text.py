@@ -855,21 +855,27 @@ class Text(renpy.display.core.Displayable):
         self.no_wait = False
         self.no_wait_once = False
         self.no_wait_done = False
+
+        self.pauses = 0
         
         for i in self.tokens[0]:
             type, text = i
             
             if type == "tag":
-                if text == "p":
-                    new_tokens.append(("tag", "w"))
+                if text == "p" or text.startswith("p="):
+                    new_tokens.append(("tag", 'w' + text[1:]))
                     new_tokens.append(("newline", "\n"))
+                    self.pauses += 1
                     continue
                 elif text == "nw":
                     self.no_wait = True
                 elif text == "fast":
                     self.no_wait = False
                     fasts += 1
-
+                    self.pauses = 0
+                elif text == "w" or text.startswith("w="):
+                    self.pauses += 1
+                    
             new_tokens.append(i)
 
         self.tokens[0] = new_tokens
@@ -898,7 +904,8 @@ class Text(renpy.display.core.Displayable):
                         break
                         
                     elif text == "w":
-                        if pause == 0:                
+
+                        if pause == 0:                                            
                             self.keep_pausing |= True
                             self.pause_length = None
                             break                    

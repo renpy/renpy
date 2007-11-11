@@ -237,10 +237,8 @@ def display_say(show_function,
 
         # Update the properties of the what_text widget.
 
-        keep_interacting, pause_length = what_text.get_keep_pausing()
-
-        if keep_interacting:
-            what_ctc = pause_ctc
+        if pause is not None and pause < what_text.pauses:
+            what_ctc = ctc_pause
         else:
             what_ctc = ctc
         
@@ -259,6 +257,7 @@ def display_say(show_function,
         # Now, re-run update on what_text.
         what_text.update(retokenize=False)
             
+        keep_interacting, pause_length = what_text.get_keep_pausing()
         no_wait |= what_text.no_wait
 
         if no_wait:
