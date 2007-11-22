@@ -14,7 +14,7 @@ init -1100:
             6 or 12, while color is the color of the roundrect.
             """
 
-            if small or 1:
+            if small:
                 size = 6
             else:
                 if config.screen_width <= 640:

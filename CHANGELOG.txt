@@ -28,14 +28,15 @@ object, unknown, which is copied and used when an unknown character
 (that is, one with a string for a name) speaks. 
 
 Characters now take a new ctc_pause argument. If supplied, it gives a
-click-to-continue indicator that is used when the 
+click-to-continue indicator that is used when the {p} or {w} text tags
+cause the display of dialogue to be paused.
 
 Added config.nvl_page_ctc and config.nvl_page_ctc_position. If set,
 these override the ctc and ctc_position parameters of a character
 during dialogue when the next statement is "nvl clear". 
 
 
-Added a new variable, _mouse_visible, that controls if the mouse 
+Added a new variable, mouse_visible, that controls if the mouse 
 should be visible at any given moment.
 
 
