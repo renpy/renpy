@@ -1,6 +1,15 @@
+New in Ren'Py 6.5.0
+-------------------
+
+We are now using Python 2.5.
+
+
 Modified the default hyperlink handler such that a link of the form:
-{a=http://www.renpy.org}link{/a} will bring people to a web page in the 
-user's default web browser.
+{a=http://www.renpy.org}link{/a} will bring people to a web page in
+the user's default web browser. Modified config.hyperlink_callback so
+that if it returns a value, that value will be returned from the
+current interaction. (For example, one could have it return True to
+end a say statement.) [doc]
 
 
 Fixed a bug that prevented {w} from working when a ctc indicator was set, 
