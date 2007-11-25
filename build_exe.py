@@ -7,8 +7,8 @@ import zipfile
 import traceback
 
 # The pythonpath on my system.
-sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\bin')
-sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\python')
+sys.path.insert(0, 'c:\\msys\\1.0\\newbuild25\\install\\bin')
+sys.path.insert(0, 'c:\\msys\\1.0\\newbuild25\\install\\python')
 
 def main():
 
@@ -30,9 +30,16 @@ def main():
                                                 'pygame.mixer',
                                                 'pygame.mixer_music',
                                                 '_ssl',
+                                                '_hashlib',
                                                 'win32con',
                                                 'win32api',
-                                                'Numeric',  ],
+                                                'Numeric',
+                                                'locale',
+                                                'gettext',
+                                                'os2emxpath',
+                                                'macpath',
+                                                'posixpath',
+                                                ],
                                  'optimize' : 2,
                                  } },
           )

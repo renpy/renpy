@@ -171,7 +171,8 @@ def main():
     for i in module_files:
         more_files.append('module/' + i)
 
-    files.append('python23.dll')
+    files.append('python25.dll')
+    files.append('msvcr71.dll')
     files.extend(tree('renpy'))
     more_files.extend(tree('renpy.app'))
     files.append('renpy.code')
@@ -202,6 +203,7 @@ def main():
     print
     print "Did you remember to rebuild the exe after the last change?"
     print "Did you run me with renpython -O?"
+    print "Was ming using the right crt?"
     
 if __name__ == "__main__":
     main()

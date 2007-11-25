@@ -38,7 +38,7 @@ init python:
         return False
 
     def tree(src, dest,
-             exclude_suffix=[ ".pyc", "~", ".bak" ],
+             exclude_suffix=[ ".pyc", ".pyo", "~", ".bak" ],
              exclude_prefix=[ "." ],
              exclude=ignored_files,
              exclude_func=None,
@@ -267,7 +267,8 @@ label distribute:
             win_files = [
                 ( config.renpy_base + "/renpy.exe", project.name + ".exe"),
                 ( config.renpy_base + "/renpy.code", "renpy.code" ),
-                ( config.renpy_base + "/python23.dll", "python23.dll" ),
+                ( config.renpy_base + "/python25.dll", "python25.dll" ),
+                ( config.renpy_base + "/msvcr71.dll", "msvcr71.dll" ),
                 ]
 
             zf = zipfile.ZipFile(name + ".zip", "w", zipfile.ZIP_DEFLATED)

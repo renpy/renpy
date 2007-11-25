@@ -989,13 +989,13 @@ class Text(renpy.display.core.Displayable):
             self.laidout = None
             renpy.display.render.redraw(self, 0)
 
-            renpy.config.hyperlink_callback(self.laidout_hyperlinks[renpy.display.focus.argument])
+            rv = renpy.config.hyperlink_callback(self.laidout_hyperlinks[renpy.display.focus.argument])
 
             self.activated = False
             self.laidout = None
             renpy.display.render.redraw(self, 0)
             
-            
+            return rv
             
             
     def visit(self):

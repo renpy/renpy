@@ -329,8 +329,11 @@ init -1180:
     python hide:
 
         def hyperlink_function(target):
-            renpy.call_in_new_context(target)
-            return
+            if target.startswith("http:"):
+                import webbrowser
+                webbrowser.open(target, new = True)
+            else:
+                renpy.call_in_new_context(target)
 
         config.hyperlink_callback = hyperlink_function
         

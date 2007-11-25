@@ -1,3 +1,12 @@
+Modified the default hyperlink handler such that a link of the form:
+{a=http://www.renpy.org}link{/a} will bring people to a web page in the 
+user's default web browser.
+
+
+Fixed a bug that prevented {w} from working when a ctc indicator was set, 
+but a ctc_pause indicator wasn't.
+
+
 New in Ren'Py 6.4.0
 -------------------
 

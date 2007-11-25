@@ -251,7 +251,7 @@ def display_say(show_function,
         what_text.slow_start = slow_start
         what_text.pause = pause
 
-        if ctc and ctc_position == "nestled":
+        if what_ctc and ctc_position == "nestled":
             what_text.tokens.append([ ("widget", what_ctc) ])
 
         # Now, re-run update on what_text.
@@ -375,8 +375,8 @@ class ADVCharacter(object):
             interact = d('interact'),
             slow = d('slow'),
             afm = d('afm'),
-            ctc = d('ctc'),
-            ctc_pause = d('ctc_pause'),
+            ctc = renpy.easy.displayable(d('ctc')),
+            ctc_pause = renpy.easy.displayable(d('ctc_pause')),
             ctc_position = d('ctc_position'),
             all_at_once = d('all_at_once'),
             with_none = d('with_none'),

@@ -36,6 +36,7 @@ def extra_imports():
     import encodings.mbcs
     import math
     import glob
+    import pickle
     import platform
     import pysdlsound
     import pysdlsound.sound

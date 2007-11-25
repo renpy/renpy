@@ -78,6 +78,10 @@ init -1:
             ## should take up the full height and width of the screen.
             gm_root = "#dcebff",
 
+            ## If True, buttons, frames, and windows will rounded using a
+            ## 6px radius, rather then 12.
+            less_rounded = True,
+            
             ## And we're done with the theme. The theme will customize
             ## various styles, so if we want to change them, we should
             ## do so below.            
