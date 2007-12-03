@@ -1565,6 +1565,9 @@ class Viewport(Container):
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
             self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
             self.mousewheel = False
+            self.draggable = False
+            self.width = 0
+            self.height = 0
             
     def __init__(self,
                  child=None,
@@ -1573,6 +1576,7 @@ class Viewport(Container):
                  xadjustment=None,
                  yadjustment=None,
                  mousewheel=False,
+                 draggable=False,
                  style='viewport',
                  **properties):
 
@@ -1595,6 +1599,10 @@ class Viewport(Container):
         self.child_width, self.child_height = child_size
         self.xoffset, self.yoffset = offsets
         self.mousewheel = mousewheel
+        self.draggable = draggable
+
+        self.width = 0
+        self.height = 0
         
     def render(self, width, height, st, at):
 
@@ -1650,7 +1658,23 @@ class Viewport(Container):
 
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             return
-        
+
+        if self.draggable and renpy.display.focus.get_grab() == self:
+
+            oldx, oldy = self.drag_position
+            dx = x - oldx
+            dy = y - oldy
+
+            self.xadjustment.change(self.xadjustment.value - dx)
+            self.yadjustment.change(self.yadjustment.value - dy)
+
+            self.drag_position = (x, y)
+            
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
+                renpy.display.focus.set_grab(None)
+                raise renpy.display.core.IgnoreEvent()
+                
+                
         if self.mousewheel:
 
             if renpy.display.behavior.map_event(ev, 'viewport_up'):
@@ -1667,6 +1691,13 @@ class Viewport(Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
+        if self.draggable:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
+                self.drag_position = (x, y)
+                renpy.display.focus.set_grab(self)
+                raise renpy.display.core.IgnoreEvent()
+                
         return None
     
     def set_xoffset(self, offset):
