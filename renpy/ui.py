@@ -333,15 +333,22 @@ def imagebutton(idle_image,
             style=style,
             **properties))
 
+def adjustment(range=1, value=0, step=None, page=0, changed=None):
+    return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed)
+
 def bar(*args, **properties):
 
     if len(args) == 4:
         width, height, range, value = args
-    else:
+    if len(args) == 2:
         range, value = args
         width = None
         height = None
-
+    else:
+        range = 1
+        value = 0
+        width = None
+        height = None
 
     return add(renpy.display.behavior.Bar(range, value, width, height,
                                           **properties))

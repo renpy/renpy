@@ -475,17 +475,73 @@ class Input(renpy.display.text.Text):
             renpy.display.render.redraw(self, 0)
 
             raise renpy.display.core.IgnoreEvent()
-                
 
+
+# This class contains information about an adjustment that can change the
+# position of content.
+class Adjustment(renpy.object.Object):
+
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None):
+        self.value = value
+        self.range = range
+        self.page = page
+
+        if step is None:
+            if isinstance(range, float):
+                step = range / 20
+            else:
+                step = 1
+
+        self.step = step
+        self.changed = changed
+        self.useful = changed is not None
+        
+        self.registered = [ ]
+
+    # Register a displayable to be redrawn when this adjustment changes.
+    def register(self, d):
+        self.registered.append(d)
+        self.useful = True
+        
+    def change(self, value):
+
+        if value < 0:
+            value = 0
+        if value > self.range:
+            value = self.range
+
+        if value != self.value:
+            self.value = value
+            for d in self.registered:
+                renpy.display.render.redraw(d, 0)
+            if self.changed:
+                return self.changed(value)
+
+        return None
+            
 class Bar(renpy.display.core.Displayable):
     """
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
     """
-    
-    def __init__(self, range, value, width=None, height=None,
-                 changed=None, style='bar', **properties):
 
+    __version__ = 1
+
+    def after_upgrade(version):
+
+        if version < 1:
+            self.adjustment = Adjustment(self.range, self.value, changed=self.changed)
+            self.adjustment.register(self)
+            del self.range
+            del self.value
+            del self.changed
+    
+    def __init__(self, range=None, value=None, width=None, height=None,
+                 changed=None, adjustment=None, style='bar', **properties):
+
+        if adjustment is None:
+            adjustment = Adjustment(range, value, changed=changed)
+        
         if width is not None:
             properties['xmaximum'] = width
 
@@ -494,13 +550,13 @@ class Bar(renpy.display.core.Displayable):
 
         super(Bar, self).__init__(style=style, **properties)
 
-        self.range = range
-        self.value = value
-        self.changed = changed
-        self.focusable = changed is not None
+        self.adjustment = adjustment
+        self.focusable = adjustment.useful
 
+        adjustment.register(self)
+        
     def visit(self):
-        return [ self.style.left_bar, self.style.right_bar ]
+        return [ self.style.fore_bar, self.style.aft_bar, self.style.thumb, self.style.thumb_shadow ]
         
     def render(self, width, height, st, at):
 
@@ -508,93 +564,117 @@ class Bar(renpy.display.core.Displayable):
         self.width = width
         self.height = height
 
-        if self.style.bar_invert:
-            value = self.range - self.value
+        range = self.adjustment.range
+        value = self.adjustment.value
+        page = self.adjustment.page
+        
+        if self.style.bar_invert ^ self.style.bar_vertical:
+            value = range - value
+
+        bar_vertical = self.style.bar_vertical
+
+        if bar_vertical:
+            dimension = height
         else:
-            value = self.value
+            dimension = width
 
-        if self.style.bar_vertical:
+        fore_gutter = self.style.fore_gutter
+        aft_gutter = self.style.aft_gutter
 
-            tgutter = self.style.top_gutter
-            bgutter = self.style.bottom_gutter
+        active = dimension - fore_gutter - aft_gutter
+        if range:
+            thumb_dim = active * page / (range + page) 
+        else:
+            thumb_dim = active
 
-            zone_height = height - tgutter - bgutter
+        thumb_offset = abs(self.style.thumb_offset)
 
-            bottom_height = zone_height * value // self.range
-            top_height = zone_height - bottom_height
+        if bar_vertical:
+            thumb = render(self.style.thumb, width, thumb_dim, st, at)
+            thumb_shadow = render(self.style.thumb_shadow, width, thumb_dim, st, at)
+            thumb_dim = thumb.height
+        else:
+            thumb = render(self.style.thumb, thumb_dim, height, st, at)
+            thumb_shadow = render(self.style.thumb_shadow, thumb_dim, height, st, at)
+            thumb_dim = thumb.width
 
-            top_height += tgutter
-            bottom_height += bgutter
+        # Remove the offset from the thumb.
+        thumb_dim -= thumb_offset * 2
+        self.thumb_dim = thumb_dim
+        
+        active -= thumb_dim
 
-            rv = renpy.display.render.Render(width, height)
+        if range:
+            fore_size = active * value / range
+        else:
+            fore_size = active
+            
+        aft_size = active - fore_size
 
-            tsurf = render(self.style.top_bar, width, height, st, at)
-            bsurf = render(self.style.bottom_bar, width, height, st, at)
+        fore_size += fore_gutter
+        aft_size += aft_gutter
 
-            if self.style.thumb_shadow:
-                surf = render(self.style.thumb_shadow, width, height, st, at)
-                rv.blit(surf, (0, top_height + self.style.thumb_offset), main=False)
+        rv = renpy.display.render.Render(width, height)
+        
+        if bar_vertical:
 
-            rv.blit(tsurf.subsurface((0, 0, width, top_height)), (0, 0), main=False)
-            rv.blit(bsurf.subsurface((0, top_height, width, bottom_height)),
-                    (0, top_height), main=False)
+            if self.style.bar_resizing:
+                foresurf = render(self.style.fore_bar, fore_size, height, st, at)
+                aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
+                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
+                rv.blit(foresurf, (0, 0), main=False)
+                rv.blit(aftsurf, (width-aft_size, 0), main=False)
+                rv.blit(thumb, (fore_size - thumb_offset, 0))
 
-            if self.style.thumb:
-                surf = render(self.style.thumb, width, height, st, at)
-                rv.blit(surf, (0, top_height + self.style.thumb_offset), main=False)
+            else:
+                foresurf = render(self.style.fore_bar, width, height, st, at)
+                aftsurf = render(self.style.aft_bar, width, height, st, at)
 
-            if self.changed:
-                rv.add_focus(self, None, 0, 0, width, height)
+                rv.blit(thumb_shadow, (0, fore_size - thumb_offset))
+                rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (0, 0), main=False)
+                rv.blit(aftsurf.subsurface((0, height - aft_size, width, aft_size)), (0, height - aft_size), main=False)
+                rv.blit(thumb, (0, fore_size - thumb_offset))
 
         else:
+            if self.style.bar_resizing:
+                foresurf = render(self.style.fore_bar, fore_size, height, st, at)
+                aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
+                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
+                rv.blit(foresurf, (0, 0), main=False)
+                rv.blit(aftsurf, (width-aft_size, 0), main=False)
+                rv.blit(thumb, (fore_size - thumb_offset, 0))
 
-            lgutter = self.style.left_gutter
-            rgutter = self.style.right_gutter
+            else:
+                foresurf = render(self.style.fore_bar, width, height, st, at)
+                aftsurf = render(self.style.aft_bar, width, height, st, at)
 
-            zone_width = width - lgutter - rgutter
-
-            left_width = zone_width * value // self.range
-            right_width = zone_width - left_width
-
-            left_width += lgutter
-            right_width += rgutter
-
-            rv = renpy.display.render.Render(width, height)
-
-            lsurf = render(self.style.left_bar, width, height, st, at)
-            rsurf = render(self.style.right_bar, width, height, st, at)
-
-            if self.style.thumb_shadow:
-                surf = render(self.style.thumb_shadow, width, height, st, at)
-                rv.blit(surf, (left_width + self.style.thumb_offset, 0))
-
-            rv.blit(lsurf.subsurface((0, 0, left_width, height)), (0, 0))
-            rv.blit(rsurf.subsurface((left_width, 0, right_width, height)),
-                    (left_width, 0))
-
-            if self.style.thumb:
-                surf = render(self.style.thumb, width, height, st, at)
-                rv.blit(surf, (left_width + self.style.thumb_offset, 0))
-
-            if self.changed:
-                rv.add_focus(self, None, 0, 0, width, height)
+                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
+                rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, 0), main=False)
+                rv.blit(aftsurf.subsurface((width - aft_size, 0, aft_size, height)), (width-aft_size, 0), main=False)
+                rv.blit(thumb, (fore_size - thumb_offset, 0))
+        
+        if self.focusable:
+            rv.add_focus(self, None, 0, 0, width, height)
 
         return rv
-        
+    
+      
     def event(self, ev, x, y, st):
 
-        if not self.changed:
+        if not self.focusable:
             return
 
         if not self.is_focused():
             return
 
-        old_value = self.value
+        range = self.adjustment.range
+        old_value = self.adjustment.value
+        value = old_value
 
-        value = self.value
-        if self.style.bar_invert:
-            value = self.range - value
-
+        invert = self.style.bar_invert ^ self.style.bar_vertical
+        if invert:
+            value = range - value
+        
         grabbed = (renpy.display.focus.get_grab() is self)
         just_grabbed = False
             
@@ -604,61 +684,47 @@ class Bar(renpy.display.core.Displayable):
             grabbed = True
 
         if grabbed:
-            
+
             if map_event(ev, "bar_decrease"):
-                if isinstance(self.range, int):
-                    value -= 1
-                else:
-                    value -= self.range / 20.0
+                value -= self.adjustment.page
 
             if map_event(ev, "bar_increase"):
-                if isinstance(self.range, int):
-                    value += 1
-                else:
-                    value += self.range / 20.0
-
+                value += self.adjustment.page
 
             if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
 
                 if self.style.bar_vertical:
 
-                    tgutter = self.style.left_gutter
-                    bgutter = self.style.right_gutter
-                    zone_width = self.height - tgutter - bgutter
-
-                    value = (self.height - bgutter - y) * self.range / zone_width
+                    tgutter = self.style.fore_gutter
+                    bgutter = self.style.aft_gutter
+                    zone_height = self.height - tgutter - bgutter - self.thumb_dim
+                    value = (y - tgutter - self.thumb_dim / 2) * range / zone_height
 
                 else:
-                    lgutter = self.style.left_gutter
-                    rgutter = self.style.right_gutter
-                    zone_width = self.width - lgutter - rgutter
-                
-                    value = (x - lgutter) * self.range / zone_width
+                    lgutter = self.style.fore_gutter
+                    rgutter = self.style.aft_gutter
+                    zone_width = self.width - lgutter - rgutter - self.thumb_dim   
+                    value = (x - lgutter - self.thumb_dim / 2) * range / zone_width
 
-            if isinstance(self.range, int):
+            if isinstance(range, int):
                 value = int(value)
-                    
+
             if value < 0:
                 value = 0
 
-            if value > self.range:
-                value = self.range
+            if value > range:
+                value = range
 
-            if self.style.bar_invert:
-                value = self.range - value
-
-            self.value = value
-
+        if invert:
+            value = range - value
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.focus.set_grab(None)
 
-        if self.value != old_value:
-            renpy.display.render.redraw(self, 0)
-            return self.changed(self.value)
+        if value != old_value:
+            return self.adjustment.change(value)
 
-        return
-        
+        return None
      
 class Conditional(renpy.display.layout.Container):
     """

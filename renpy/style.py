@@ -64,17 +64,26 @@ register_prefix('idle_', 2)
 register_prefix('insensitive_', 2)
 register_prefix('', 1)
 
+# A function that turns None into an instance of Null()
+def none_is_null(d):
+    if d is None:
+        return renpy.display.layout.Null()
+    else:
+        return renpy.easy.displayable(d)
+
 # A map of properties that we know about. The properties may take a
-# function that is called on the argument.
+# function that is called to convert the argument to something more
+# useful.
 style_properties = dict(
+    aft_bar = renpy.easy.displayable,
+    aft_gutter = None,
     antialias = None,
     background = renpy.easy.displayable,
     bar_invert = None,
+    bar_resizing = None,
     bar_vertical = None,
     black_color = renpy.easy.color,
     bold = None,
-    bottom_bar = renpy.easy.displayable,
-    bottom_gutter = None,
     bottom_margin = None,
     bottom_padding = None,
     box_first_spacing = None,
@@ -89,20 +98,18 @@ style_properties = dict(
     focus_mask = None,
     focus_rect = None,
     font = None,
+    fore_bar = renpy.easy.displayable,
+    fore_gutter = None,
     sound = None,
     italic = None,
     language = None,
     layout = None,
-    left_bar = renpy.easy.displayable,
-    left_gutter = None,
     left_margin = None,
     left_padding = None,
     line_spacing = None,
     mouse = None,
     min_width = None,
     rest_indent = None,
-    right_bar = renpy.easy.displayable,
-    right_gutter = None,
     right_margin = None,
     right_padding = None,
     size = None,
@@ -112,12 +119,10 @@ style_properties = dict(
     subtitle_width = None,
     text_y_fudge = None,
     text_align = None,
-    thumb = renpy.easy.displayable,
+    thumb = none_is_null,
     thumb_offset = None,
-    thumb_shadow = renpy.easy.displayable,
+    thumb_shadow = none_is_null,
     time_policy = None,
-    top_bar = renpy.easy.displayable,
-    top_gutter = None,
     top_margin = None,
     top_padding = None,
     underline = None,
@@ -146,6 +151,14 @@ substitutes = dict(
     textalign = [ 'text_align' ],
     slow_speed = [ 'slow_cps' ],
     enable_hover = [ ],
+    left_gutter = [ 'fore_gutter' ],
+    right_gutter = [ 'aft_gutter' ], 
+    top_gutter = [ 'fore_gutter' ],
+    bottom_gutter = [ 'aft_gutter' ],
+    left_bar = [ 'fore_bar' ],
+    right_bar = [ 'aft_bar'],
+    top_bar = [ 'fore_bar' ],
+    bottom_bar = [ 'aft_bar'],
     )
 
 # Map from property to number.

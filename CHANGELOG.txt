@@ -1,8 +1,28 @@
 New in Ren'Py 6.5.0
 -------------------
 
-We are now using Python 2.5.
+We are now using Python 2.5. Python 2.5 syntax should be allowed any
+place that python syntax is allowed.
 
+Rewrote the Bar class, which implements ui.bar. This class now
+optionally takes an adjustment object, which is what stores
+information about the range, value, page size, and step size of 
+the bar. [doc]
+
+Bars now take a new style_property, bar_resizing. If this is true, we 
+resize sub-bars, rather than rendering them at the full bar size and
+then cropping. This changes the look of bars a bit.
+
+Viewports now use adjustments to control their x and y scrolling
+information. They properly fill in a range and step size, allowing
+scrollbars to indicate the fraction of the viewport that is being
+displayed to the user. [doc]
+
+Viewports now also support several new ways of scrolling around. If
+a true mousewheel argument is given to ui.viewport, the user will be
+able to scroll the viewport using the mousewheel. If the draggable
+argument is true, then the user will be able to drag the viewport
+around using the mouse. [doc, implement draggable, doc config.keymap]
 
 Modified the default hyperlink handler such that a link of the form:
 {a=http://www.renpy.org}link{/a} will bring people to a web page in
@@ -14,6 +34,7 @@ end a say statement.) [doc]
 
 Fixed a bug that prevented {w} from working when a ctc indicator was set, 
 but a ctc_pause indicator wasn't.
+
 
 
 New in Ren'Py 6.4.0

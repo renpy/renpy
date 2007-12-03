@@ -1558,20 +1558,49 @@ class RotoZoom(renpy.display.core.Displayable):
 
 class Viewport(Container):
 
-    def __init__(self, child=None, child_size=(None, None), offsets=(0.0, 0.0), style='viewport', **properties):
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
+            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+            self.mousewheel = False
+            
+    def __init__(self,
+                 child=None,
+                 child_size=(None, None),
+                 offsets=(None, None),
+                 xadjustment=None,
+                 yadjustment=None,
+                 mousewheel=False,
+                 style='viewport',
+                 **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
         self.add(child)
 
+        if xadjustment is None:
+            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.xadjustment = xadjustment
+
+        if yadjustment is None:
+            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.yadjustment = yadjustment
+
+        self.xadjustment.register(self)
+        self.yadjustment.register(self)
+            
         self.child_width, self.child_height = child_size
         self.xoffset, self.yoffset = offsets
-#         self.page_height = 0
-#         self.real_child_height = 0
-#         self.page_width = 0
-#         self.real_child_width = 0
+        self.mousewheel = mousewheel
         
     def render(self, width, height, st, at):
 
+        self.width = width
+        self.height = height
+        
         child_width = self.child_width or width
         child_height = self.child_height or height
 
@@ -1579,18 +1608,31 @@ class Viewport(Container):
 
         cw, ch = surf.get_size()
 
-        if isinstance(self.xoffset, int):
-            cxo = -self.xoffset
-        else:
-            cxo = max(cw - width, 0) * -self.xoffset
+        self.xadjustment.range = max(cw - width, 0)
+        self.yadjustment.range = max(ch - height, 0)
+        self.xadjustment.page = width
+        self.yadjustment.page = height
+        
+        if self.xoffset is not None:
+            if isinstance(self.xoffset, int):
+                value = self.xoffset
+            else:
+                value = max(cw - width, 0) * self.xoffset
+                
+            self.xadjustment.value = value
+            self.xoffset = None
+            
+        if self.yoffset is not None:
+            if isinstance(self.yoffset, int):
+                value = self.yoffset
+            else:
+                value = max(ch - height, 0) * self.yoffset 
 
-        if isinstance(self.yoffset, int):
-            cyo = -self.yoffset
-        else:
-            cyo = max(ch - height, 0) * -self.yoffset 
-
-        cxo = int(cxo)
-        cyo = int(cyo)
+            self.yadjustment.value = value
+            self.yoffset = None
+                
+        cxo = -int(self.xadjustment.value)
+        cyo = -int(self.yadjustment.value)
 
         self.offsets = [ (cxo, cyo) ]
         self.sizes = [ (cw, ch) ]
@@ -1600,6 +1642,33 @@ class Viewport(Container):
 
         return rv
 
+    def event(self, ev, x, y, st):
+
+        rv = super(Viewport, self).event(ev, x, y, st)
+        if rv is not None:
+            return ev
+
+        if not ((0 <= x < self.width) and (0 <= y <= self.height)):
+            return
+        
+        if self.mousewheel:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_up'):
+                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.page)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_down'):
+                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.page)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+        return None
+    
     def set_xoffset(self, offset):
         self.xoffset = offset
         renpy.display.render.redraw(self, 0)

@@ -192,6 +192,12 @@ keymap = dict(
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
 
+    # Viewport.
+    viewport_up = [ 'mousedown_4' ],
+    viewport_down = [ 'mousedown_5' ],
+    viewport_drag_start = [ 'mousedown_1' ],
+    viewport_drag_end = [ 'mouseup_1' ],
+    
     # These keys control skipping.
     skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
     toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],

@@ -604,7 +604,7 @@ class RollbackLog(renpy.object.Object):
 
         new_store = renpy.store.__dict__
         store = [ ]
-
+        
         # Find store values that have changed since the last call to
         # begin, and use them to update the store. Also, update the
         # list of store keys that have ever been changed.
@@ -633,8 +633,6 @@ class RollbackLog(renpy.object.Object):
                 continue
 
             self.current.objects.append((obj, roll))
-
-
 
     def get_roots(self):
         """
