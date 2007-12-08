@@ -176,6 +176,11 @@ init -1100:
             rrvslider_full = "_roundrect/rrvslider_full.png"
             rrvslider_thumb = "_roundrect/rrvslider_thumb.png"
 
+            rrscrollbar = "_roundrect/rrscrollbar.png"
+            rrscrollbar_thumb = "_roundrect/rrscrollbar_thumb.png"
+            rrvscrollbar = "_roundrect/rrvscrollbar.png"
+            rrvscrollbar_thumb = "_roundrect/rrvscrollbar_thumb.png"
+            
             rrvslider_radius = 6
             rrvslider_width = 24
 
@@ -277,9 +282,16 @@ init -1100:
             style.bar.hover_thumb = theme.OneOrTwoColor(rrslider_thumb, widget_hover)
 
             style.scrollbar.clear()
-            style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget), rrslider_radius * 2, 0)
-            style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrslider_full, widget_hover), rrslider_radius * 2, 0)
-
+            style.scrollbar.left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 18, 0)
+            style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 18, 0)
+            style.scrollbar.hover_left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 18, 0)
+            style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 18, 0)
+            style.scrollbar.thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget), 6, 0) 
+            style.scrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget_hover), 18, 0) 
+            style.scrollbar.left_gutter = 20
+            style.scrollbar.right_gutter = 20
+            style.scrollbar.ymaximum = 12
+            style.scrollbar.thumb_offset = 6
 
             
             style.vbar.xmaximum = rrvslider_width
@@ -297,9 +309,17 @@ init -1100:
 
             style.vscrollbar.clear()
             style.vscrollbar.bar_invert = True
-            style.vscrollbar.top_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget), 0, rrvslider_radius * 2)
-            style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvslider_full, widget_hover), 0, rrvslider_radius * 2)
-
+            style.vscrollbar.top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 18)
+            style.vscrollbar.bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 18)
+            style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 18)
+            style.vscrollbar.hover_bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 18)
+            style.vscrollbar.thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget), 0, 6) 
+            style.vscrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget_hover), 0, 6) 
+            style.vscrollbar.top_gutter = 20
+            style.vscrollbar.bottom_gutter = 20
+            style.vscrollbar.xmaximum = 12
+            style.vscrollbar.thumb_offset = 6
+            
             
             style.prefs_slider.xmaximum=widget_width
             del style.prefs_slider.ymaximum
