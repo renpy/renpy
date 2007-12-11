@@ -1423,7 +1423,7 @@ class Interface(object):
 
         # Call per-interaction code for all widgets.
         root_widget.visit_all(lambda i : i.per_interact())
-
+        
         # Now, update various things regarding scenes and transitions,
         # so we are ready for a new interaction or a restart.
         self.old_scene = scene
@@ -1451,7 +1451,7 @@ class Interface(object):
         # long as possible.
         did_prediction = False
 
-        # We only want to do autsave once.
+        # We only want to do autosave once.
         did_autosave = False
         
         old_timeout_time = None

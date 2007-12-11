@@ -441,7 +441,7 @@ def predict_say(who, what):
         return renpy.store.predict_say(who, what)
 
     predict = getattr(who, 'predict', None)
-    if predict:            
+    if predict: 
         return predict(what)
     else:
         return [ ]

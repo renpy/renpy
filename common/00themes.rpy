@@ -62,9 +62,17 @@ init -1100:
 
 
         theme.button_menu = _button_menu
-
             
     python hide:
+
+        def OneOrTwoColor(image, color):
+            if len(color) == 2:
+                return im.Twocolor(image, color[0], color[1])
+            else:
+                return im.Twocolor(image, color, color)
+            
+        theme.OneOrTwoColor = OneOrTwoColor
+        
 
         def theme_roundrect(
             widget = (0, 60, 120, 255),
@@ -282,17 +290,16 @@ init -1100:
             style.bar.hover_thumb = theme.OneOrTwoColor(rrslider_thumb, widget_hover)
 
             style.scrollbar.clear()
-            style.scrollbar.left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 18, 0)
-            style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 18, 0)
-            style.scrollbar.hover_left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 18, 0)
-            style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 18, 0)
+            style.scrollbar.left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 6, 0)
+            style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 6, 0)
+            style.scrollbar.hover_left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 6, 0)
+            style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 6, 0)
             style.scrollbar.thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget), 6, 0) 
-            style.scrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget_hover), 18, 0) 
-            style.scrollbar.left_gutter = 20
-            style.scrollbar.right_gutter = 20
+            style.scrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget_hover), 6, 0) 
+            style.scrollbar.left_gutter = 6
+            style.scrollbar.right_gutter = 6
             style.scrollbar.ymaximum = 12
             style.scrollbar.thumb_offset = 6
-
             
             style.vbar.xmaximum = rrvslider_width
             style.vbar.top_gutter = rrvslider_radius
@@ -309,17 +316,16 @@ init -1100:
 
             style.vscrollbar.clear()
             style.vscrollbar.bar_invert = True
-            style.vscrollbar.top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 18)
-            style.vscrollbar.bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 18)
-            style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 18)
-            style.vscrollbar.hover_bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 18)
+            style.vscrollbar.top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 6)
+            style.vscrollbar.bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 6)
+            style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 6)
+            style.vscrollbar.hover_bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 6)
             style.vscrollbar.thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget), 0, 6) 
             style.vscrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget_hover), 0, 6) 
-            style.vscrollbar.top_gutter = 20
-            style.vscrollbar.bottom_gutter = 20
+            style.vscrollbar.top_gutter = 6
+            style.vscrollbar.bottom_gutter = 6
             style.vscrollbar.xmaximum = 12
             style.vscrollbar.thumb_offset = 6
-            
             
             style.prefs_slider.xmaximum=widget_width
             del style.prefs_slider.ymaximum
@@ -492,11 +498,3 @@ init -1100:
 
         theme.roundrect_red = theme_roundrect_red
 
-        def OneOrTwoColor(image, color):
-            if len(color) == 2:
-                return im.Twocolor(image, color[0], color[1])
-            else:
-                return im.Twocolor(image, color, color)
-            
-        theme.OneOrTwoColor = OneOrTwoColor
-        

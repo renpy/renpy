@@ -659,6 +659,16 @@ class Window(Container):
                                    height - cymargin - cypadding,
                                    surf)
 
+        # Draw the foreground. The background should render at exactly the
+        # requested size. (That is, be a Frame or a Solid).
+        if style.foreground:
+            bw = width  - cxmargin
+            bh = height - cymargin
+
+            back = render(style.foreground, bw, bh, st, at)
+
+            style.foreground.place(rv, left_margin, top_margin, bw, bh, back, main=False)
+
         self.offsets = [ offsets ]
         self.sizes = [ (sw, sh) ]
 

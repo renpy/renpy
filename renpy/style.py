@@ -100,6 +100,7 @@ style_properties = dict(
     font = None,
     fore_bar = renpy.easy.displayable,
     fore_gutter = None,
+    foreground = renpy.easy.displayable,
     sound = None,
     italic = None,
     language = None,

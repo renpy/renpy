@@ -25,7 +25,7 @@
 
 import renpy
 import random
-
+import math
 import zipfile
 import cStringIO
 
@@ -1022,6 +1022,17 @@ class matrix(tuple):
         other = float(other)
         return matrix([ i * other for i in self ])
 
+    def vector_mul(self, o):
+        print "XXX", self
+        print "YYY", o
+        
+        return (o[0]*self[0] + o[1]*self[1] + o[2]*self[2] + o[3]*self[3] + self[4],
+                o[0]*self[5] + o[1]*self[6] + o[2]*self[7] + o[3]*self[8] + self[9],
+                o[0]*self[10] + o[1]*self[11] + o[2]*self[12] + o[3]*self[13] + self[14],
+                o[0]*self[15] + o[1]*self[16] + o[2]*self[17] + o[3]*self[18] + self[19],
+                1)
+
+                 
     def __add__(self, other):
         if isinstance(other, (int, float)):
             other = float(other)
@@ -1043,11 +1054,11 @@ class matrix(tuple):
             return self.scalar_mul(other)
 
         return self.mul(self, other)
-
+    
     def __rmul__(self, other):
         if isinstance(other, (int, float)):
             return self.scalar_mul(other)
-
+        
         return self.mul(other, self)
 
     def __repr__(self):
@@ -1121,6 +1132,25 @@ im.matrix(%f, %f, %f, %f, %f.
 
     def contrast(c):
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5) 
+
+
+    # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
+    def hue(h):
+        h = h * math.pi / 180
+        cosVal = math.cos(h)
+        sinVal = math.sin(h)
+        lumR = 0.213;
+        lumG = 0.715;
+        lumB = 0.072;
+        return matrix(
+            lumR+cosVal*(1-lumR)+sinVal*(-lumR),lumG+cosVal*(-lumG)+sinVal*(-lumG),lumB+cosVal*(-lumB)+sinVal*(1-lumB),0,0,
+            lumR+cosVal*(-lumR)+sinVal*(0.143),lumG+cosVal*(1-lumG)+sinVal*(0.140),lumB+cosVal*(-lumB)+sinVal*(-0.283),0,0,
+            lumR+cosVal*(-lumR)+sinVal*(-(1-lumR)),lumG+cosVal*(-lumG)+sinVal*(lumG),lumB+cosVal*(1-lumB)+sinVal*(lumB),0,0,
+            0,0,0,1,0,
+            0,0,0,0,1
+            )
+
+    hue = staticmethod(hue)
     
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722)):
     return MatrixColor(im, matrix.saturation(0.0, desat))

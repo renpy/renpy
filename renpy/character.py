@@ -466,7 +466,7 @@ class ADVCharacter(object):
     # statement.
     def do_predict(self, who, what):
         return self.predict_function(
-            name,
+            who,
             what,
             who_args=self.who_args,
             what_args=self.what_args,
@@ -522,6 +522,8 @@ class ADVCharacter(object):
         else:
             who = self.name
 
+        return self.do_predict(who, what)
+            
 def Character(name, kind=None, **properties):
     if kind is None:
         kind = renpy.store.adv
