@@ -1723,3 +1723,137 @@ def LiveCrop(rect, child, **properties):
 
     child = renpy.easy.displayable(child)    
     return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
+
+
+class SideLayout(Container):
+
+    possible_positions = set([ 'tl', 't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'c'])
+    
+    def __init__(self, positions, style='default', **properties):
+
+        super(SideLayout, self).__init__(style=style, **properties)
+
+        for i in positions:
+            if not i in SideLayout.possible_positions:
+                raise Exception("SideLayout used with impossible position '%s'." % (i,))
+
+        self.positions = tuple(positions)
+
+
+    def render(self, width, height, st, at):
+
+        pos_d = { }
+        pos_i = { }
+        
+        for i, (pos, d) in enumerate(zip(self.positions, self.children)):
+            pos_d[pos] = d
+            pos_i[pos] = i
+
+        # The size of various borders.
+        left = 0
+        right = 0
+        top = 0
+        bottom = 0
+
+        cwidth = 0
+        cheight = 0
+
+        # Figure out the size of each widget (and hence where the
+        # widget needs to be placed).
+        
+        if 'tl' in pos_d:
+            tl = render(pos_d['tl'], width, height, st, at)
+            left = max(left, tl.width)
+            top = max(top, tl.height)
+        else:
+            tl = None
+
+        if 'tr' in pos_d:
+            tr = render(pos_d['tr'], width - left, height, st, at)
+            right = max(right, tr.width)
+            top = max(top, tr.height)
+        else:
+            tr = None
+
+        if 'br' in pos_d:
+            br = render(pos_d['br'], width - left, height - top, st, at)
+            right = max(right, br.width)
+            bottom = max(bottom, br.height)
+        else:
+            br = None
+
+        if 'bl' in pos_d:
+            bl = render(pos_d['bl'], width - right, height - top, st, at)
+            left = max(left, bl.width)
+            bottom = max(bottom, bl.height)
+        else:
+            bl = None
+            
+        if 't' in pos_d:
+            t = render(pos_d['t'], width - left - right, height - bottom, st, at)
+            top = max(top, t.height)
+            cwidth = max(cwidth, t.width)
+        else:
+            t = None
+
+        if 'r' in pos_d:
+            r = render(pos_d['r'], width - left, height - top - bottom, st, at)
+            right = max(right, r.width)
+            cheight = max(cheight, r.height)
+        else:
+            r = None
+
+        if 'b' in pos_d:
+            b = render(pos_d['b'], width - left - right, height - top, st, at)
+            bottom = max(bottom, b.height)
+            cwidth = max(cwidth, b.width)
+        else:
+            b = None
+
+        if 'l' in pos_d:
+            l = render(pos_d['l'], width - right, height - top - bottom, st, at)
+            left = max(left, l.width)
+            cheight = max(cheight, l.height)
+        else:
+            l = None
+
+        if 'c' in pos_d:
+            c = render(pos_d['c'], width - left - right, height - top - bottom, st, at)
+            cwidth = max(cwidth, c.width)
+            cheight = max(cheight, c.height)
+        else:
+            c = None
+
+        # Now, place everything onto the render.
+        
+        self.offsets = [ None ] * len(self.children)
+        self.sizes = [ None ] * len(self.children)
+
+        rv = renpy.display.render.Render(left + cwidth + right, top + cheight + bottom)
+
+        def place(pos, rend, x, y, w, h):
+
+            if rend is None:
+                return
+
+            i = pos_i[pos]
+            self.sizes[i] = rend.get_size()
+            self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
+
+        place('tl', tl, 0, 0, left, top)
+        place('tr', tr, left + cwidth, 0, right, top)
+        place('br', br, left + cwidth, top + cheight, right, bottom)
+        place('bl', bl, 0, top + cheight, left, bottom)
+
+        place('t', t, left, 0, cwidth, top)
+        place('r', r, left + cwidth, top, right, cheight)
+        place('b', b, left, top + cheight, cwidth, bottom)
+        place('l', l, 0, top, left, cheight)
+
+        place('c', c, left, top, cwidth, cheight)
+
+        return rv
+        
+        
+
+            

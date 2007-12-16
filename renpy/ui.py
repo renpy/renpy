@@ -172,6 +172,14 @@ def fixed(**properties):
 
     return rv
 
+def sidelayout(positions, **properties):
+    rv = renpy.display.layout.SideLayout(positions, **properties)
+    add(rv, True)
+
+    return rv
+
+    
+
 def sizer(maxwidth=None, maxheight=None, **properties):
     
     return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),

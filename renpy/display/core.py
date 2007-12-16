@@ -79,10 +79,9 @@ class Displayable(renpy.object.Object):
     focusable = False
     full_focus_name = None
     role = ''
-
+    
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties, heavy=True)
-        # self.style_prefix = 'insensitive_'
         self.focus_name = focus
         self.default = default
 
@@ -90,7 +89,6 @@ class Displayable(renpy.object.Object):
 
         focus_name = self.focus_name or focus_name
         
-
         if self.focusable:
             callback(self, focus_name)
 
