@@ -90,8 +90,12 @@ init python:
                     continue
 
                 sfn = srcdir + "/" + fn
-                dfn = destdir + "/" + fn
 
+                if destdir:
+                    dfn = destdir + "/" + fn
+                else:
+                    dfn = fn
+                    
                 rv.append((sfn, dfn))
 
             dirs[:] = [ i for i in dirs if include(i) ]

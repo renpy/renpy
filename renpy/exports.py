@@ -51,6 +51,7 @@ import renpy.audio.sound as sound
 import renpy.audio.music as music
 
 import time
+import sets
 
 # This is a map from image name to a Displayable object corresponding
 # to that image name.
@@ -667,6 +668,16 @@ def has_label(name):
     """
 
     return renpy.game.script.has_label(name)
+
+def get_all_labels():
+    rv = [ ]
+
+    for i in renpy.game.script.namemap.iterkeys():
+        if isinstance(i, basestring):
+            rv.append(i)
+
+    return renpy.python.RevertableSet(rv)
+    
 
 def take_screenshot(scale=None):
     """

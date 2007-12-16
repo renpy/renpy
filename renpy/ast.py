@@ -477,6 +477,7 @@ class Label(Node):
                 else:
                     values[name] = renpy.python.py_eval(default)
 
+                    
             renpy.exports.dynamic(name)
             setattr(renpy.store, name, values[name])
             del values[name]

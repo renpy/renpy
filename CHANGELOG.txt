@@ -32,6 +32,8 @@ foreground style property. This is like background, but it goes on top
 of the rendered child of the image. It could be used to add things
 like shines to buttons. [doc]
 
+im.matrix.hue [doc]
+
 
 Modified the default hyperlink handler such that a link of the form:
 {a=http://www.renpy.org}link{/a} will bring people to a web page in
@@ -41,11 +43,18 @@ current interaction. (For example, one could have it return True to
 end a say statement.) [doc]
 
 
-im.hue [doc]
+Dissolve now takes an alpha argument. If this argument is True, the
+alpha channel is preserved across dissolves, at the cost of some
+speed. [doc]
 
+
+There is a new renpy.get_all_labels function, that returns the set of
+all labels defined in the script. [doc]
+
+
+Fixed a bug that caused corruption in zip files created by the launcher.
 
 Fixed a bug that prevented image prediction from working in many cases.
-
 
 Fixed a bug that prevented {w} from working when a ctc indicator was set, 
 but a ctc_pause indicator wasn't.

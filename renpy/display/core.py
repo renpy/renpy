@@ -1306,8 +1306,6 @@ class Interface(object):
         for i in renpy.config.interact_callbacks:
             i()
 
-        renpy.audio.audio.interact()
-
         # Tick time forward.
         renpy.display.im.cache.tick()
 
@@ -1458,6 +1456,9 @@ class Interface(object):
         old_redraw_time = None
 
         rv = None
+
+        # Start sound.
+        renpy.audio.audio.interact()
 
         # This try block is used to force cleanup even on termination
         # caused by an exception propigating through this function.

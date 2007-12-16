@@ -40,55 +40,6 @@ from renpy.display.render import render
 import pygame
 from pygame.constants import *
 
-# # This is a utility function that attempts to refactor an old and a new
-# # Fixed into four Fixeds: below, old, new, and above. Since only the
-# # old and new need transitions, this can be a significant win.
-# def refactor_fixed(in_old, in_new):
-
-#     Fixed = renpy.display.layout.Fixed
-
-#     out_below = Fixed()
-#     out_old = Fixed()
-#     out_new = Fixed()
-#     out_above = Fixed()
-
-#     if (not isinstance(in_old, Fixed)) or (not isinstance(in_new, Fixed)):
-#         return out_below, in_old, in_new, out_above
-
-#     old_list = in_old.get_widget_time_list()
-#     new_list = in_new.get_widget_time_list()
-
-#     # Merge the beginnings of the lists.
-#     while old_list and new_list:
-#         if old_list[0] == new_list[0]:
-#             out_below.add(new_list[0][0], new_list[0][1])
-#             old_list.pop(0)
-#             new_list.pop(0)
-
-#         else:
-#             break
-
-#     # Merge the ends of the lists.
-#     above_list = [ ]
-
-#     while old_list and new_list:
-#         if old_list[-1] == new_list[-1]:
-#             above_list.insert(0, new_list[-1])
-#             old_list.pop()
-#             new_list.pop()
-#         else:
-#             break
-
-#     for widget, time in above_list:
-#         out_above.add(widget, time)
-
-#     for widget, time in old_list:
-#         out_old.add(widget, time)
-
-#     for widget, time in new_list:
-#         out_new.add(widget, time)
-
-#     return out_below, out_old, out_new, out_above
 
 class Transition(renpy.display.core.Displayable):
     """
@@ -361,13 +312,20 @@ class Dissolve(Transition):
     @param time: The amount of time the dissolve will take.
     """
 
-    def __init__(self, time, old_widget=None, new_widget=None, **properties):
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.alpha = False
+    
+    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, **properties):
         super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
         self.old_widget = old_widget
         self.new_widget = new_widget
         self.events = False
+        self.alpha = alpha
 
 
     def render(self, width, height, st, at):
@@ -384,31 +342,38 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        import time
-        start = time.time()
+        bottom_surface = bottom.pygame_surface(self.alpha)
+        top_surface = top.pygame_surface(self.alpha)
         
-        bottom_surface = bottom.pygame_surface(False)
-        top_surface = top.pygame_surface(False)
-        
+        width = min(width, top.width, bottom.width)
+        height = min(height, top.height, bottom.height)
+
         def draw(dest, x, y):
 
             dw, dh = dest.get_size()
             tw, th = top_surface.get_size()
             bw, bh = bottom_surface.get_size()
-        
+
             w = min(dw, tw + x, bw + x)
             h = min(dh, th + y, bh + y)
-            
+
             renpy.display.module.blend(
                 bottom_surface.subsurface((-x, -y, w, h)),
                 top_surface.subsurface((-x, -y, w, h)),
                 dest.subsurface((0, 0, w, h)),
                 alpha)
 
-        width = min(width, top.width, bottom.width)
-        height = min(height, top.height, bottom.height)
-            
-        rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+        if self.alpha:
+
+            rv = renpy.display.render.Render(width, height)
+            surf = pygame.Surface((width, height), bottom_surface.get_flags(), bottom_surface)
+            draw(surf, 0, 0)
+            renpy.display.render.mutated_surface(surf)
+            rv.blit(surf, (0, 0))
+
+        else:
+            rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+
         rv.focuses.extend(top.focuses)        
         rv.depends_on(top)
         rv.depends_on(bottom)
