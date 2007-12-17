@@ -86,15 +86,14 @@ style_properties = dict(
     bold = None,
     bottom_margin = None,
     bottom_padding = None,
-    box_first_spacing = None,
     box_layout = None,
-    box_spacing = None,
     child = renpy.easy.displayable,
     clipping = None,
     color = renpy.easy.color,
     drop_shadow = None,
     drop_shadow_color = renpy.easy.color,
     first_indent = None,
+    first_spacing = None,
     focus_mask = None,
     focus_rect = None,
     font = None,
@@ -117,6 +116,7 @@ style_properties = dict(
     slow_abortable = None,
     slow_cps = None,
     slow_cps_multiplier = None,
+    spacing = None,
     subtitle_width = None,
     text_y_fudge = None,
     text_align = None,
@@ -160,6 +160,8 @@ substitutes = dict(
     right_bar = [ 'aft_bar'],
     top_bar = [ 'fore_bar' ],
     bottom_bar = [ 'aft_bar'],
+    box_spacing = [ 'spacing' ],
+    box_first_spacing = [ 'first_spacing' ],
     )
 
 # Map from property to number.

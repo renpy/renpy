@@ -172,8 +172,8 @@ def fixed(**properties):
 
     return rv
 
-def sidelayout(positions, **properties):
-    rv = renpy.display.layout.SideLayout(positions, **properties)
+def side(positions, **properties):
+    rv = renpy.display.layout.Side(positions, **properties)
     add(rv, True)
 
     return rv

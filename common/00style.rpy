@@ -124,7 +124,7 @@ init -1090 python:
     style.default.slow_cps = None
     style.default.slow_cps_multiplier = 1.0
     style.default.slow_abortable = False
-
+    
     # Window properties.
     style.default.background = None
     style.default.xpadding = 0
@@ -151,8 +151,8 @@ init -1090 python:
     style.default.sound = None
 
     # Box properties.
-    style.default.box_spacing = 0
-    style.default.box_first_spacing = None
+    style.default.spacing = 0
+    style.default.first_spacing = None
     style.default.box_layout = None
 
     # Focus properties.
@@ -169,10 +169,10 @@ init -1090 python:
     style.hbox.box_layout = 'horizontal'
     style.vbox.box_layout = 'vertical'
 
-    style.thin_hbox.box_spacing = 3
-    style.thick_hbox.box_spacing = 30
-    style.thin_vbox.box_spacing = 0
-    style.thick_vbox.box_spacing = 30
+    style.thin_hbox.spacing = 3
+    style.thick_hbox.spacing = 30
+    style.thin_vbox.spacing = 0
+    style.thick_vbox.spacing = 30
 
     ######################################################################
     # Windows.
@@ -212,7 +212,7 @@ init -1090 python:
     # Dialogue
 
     style.say_label.bold = True
-    style.say_vbox.box_spacing = 8
+    style.say_vbox.spacing = 8
 
     # Two window styles.
     style.say_who_window.xminimum = 200
@@ -391,7 +391,7 @@ init -1090 python:
     style.yesno_frame_vbox.yanchor = 0.5
 
     style.yesno_button_hbox.xalign = 0.5
-    style.yesno_button_hbox.box_spacing = 100
+    style.yesno_button_hbox.spacing = 100
     
     ##############################################################################
     # Preferences.
@@ -422,7 +422,7 @@ init -1090 python:
     style.prefs_frame.xfill=True
     style.prefs_frame.ypadding = 0.05
 
-    style.prefs_column.box_spacing = 6
+    style.prefs_column.spacing = 6
 
     style.prefs_left.xanchor = 0.5
     style.prefs_left.xpos = 1.0 / 6.0

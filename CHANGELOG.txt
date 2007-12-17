@@ -27,6 +27,11 @@ argument is true, then the user will be able to drag the viewport
 around using the mouse. [doc, doc config.keymap]
 
 
+We have implemented a new container, ui.side. This container divides a
+space into the center, four sides, and four corners, and allows one
+displayable to be placed in each. [doc]
+
+
 Windows (and related things, like frames and buttons) now take a new
 foreground style property. This is like background, but it goes on top
 of the rendered child of the image. It could be used to add things
@@ -53,8 +58,9 @@ There is a new renpy.get_all_labels function, that returns the set of
 all labels defined in the script. [doc]
 
 
-Additional keyword arguments passed to MoveTransition are now supplied
-to the default factory function. [doc]
+Renamed two style properties: box_spacing is now spacing, and
+box_first_spacing is now first_spacing. These properties can now be
+used by grids and sides. The old names are left in as aliases. [doc]
 
 
 Fixed a bug that caused corruption in zip files created by the launcher.

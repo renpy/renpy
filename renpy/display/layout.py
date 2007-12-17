@@ -259,7 +259,7 @@ class Grid(Container):
     widgets that only use part of the space available to them.
     """
 
-    def __init__(self, cols, rows, padding=0,
+    def __init__(self, cols, rows, padding=None,
                  transpose=False,
                  style='default', **properties):
         """
@@ -270,18 +270,20 @@ class Grid(Container):
         @params transpose: True if the grid should be transposed.
         """
 
+        if padding is not None:
+            properties.setdefault('spacing', padding)
+        
         super(Grid, self).__init__(style=style, **properties)
 
         self.cols = cols
         self.rows = rows
 
-        self.padding = padding
         self.transpose = transpose
 
     def render(self, width, height, st, at):
 
         # For convenience and speed.
-        padding = self.padding
+        padding = self.style.spacing
         cols = self.cols
         rows = self.rows
 
@@ -353,7 +355,7 @@ class MultiBox(Container):
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:
-            properties['box_spacing'] = spacing
+            properties['spacing'] = spacing
 
         super(MultiBox, self).__init__(style=style, **properties)
 
@@ -399,8 +401,8 @@ class MultiBox(Container):
         
         if layout == "horizontal":
 
-            spacing = self.style.box_spacing
-            first_spacing = self.style.box_first_spacing
+            spacing = self.style.spacing
+            first_spacing = self.style.first_spacing
 
             if first_spacing is None:
                 first_spacing = spacing
@@ -461,8 +463,8 @@ class MultiBox(Container):
         
         elif layout == "vertical":
 
-            spacing = self.style.box_spacing
-            first_spacing = self.style.box_first_spacing
+            spacing = self.style.spacing
+            first_spacing = self.style.first_spacing
 
             if first_spacing is None:
                 first_spacing = spacing
@@ -1725,20 +1727,28 @@ def LiveCrop(rect, child, **properties):
     return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
 
 
-class SideLayout(Container):
+class Side(Container):
 
     possible_positions = set([ 'tl', 't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'c'])
+
+    def after_setatate(self):
+        self.sized = False
     
     def __init__(self, positions, style='default', **properties):
 
         super(SideLayout, self).__init__(style=style, **properties)
 
+        if isinstance(positions, basestring):
+            positions = positions.split()
+
+        
         for i in positions:
             if not i in SideLayout.possible_positions:
                 raise Exception("SideLayout used with impossible position '%s'." % (i,))
 
         self.positions = tuple(positions)
-
+        self.sized = False
+        
 
     def render(self, width, height, st, at):
 
@@ -1749,108 +1759,111 @@ class SideLayout(Container):
             pos_d[pos] = d
             pos_i[pos] = i
 
-        # The size of various borders.
-        left = 0
-        right = 0
-        top = 0
-        bottom = 0
-
-        cwidth = 0
-        cheight = 0
-
         # Figure out the size of each widget (and hence where the
         # widget needs to be placed).
-        
-        if 'tl' in pos_d:
-            tl = render(pos_d['tl'], width, height, st, at)
-            left = max(left, tl.width)
-            top = max(top, tl.height)
-        else:
-            tl = None
 
-        if 'tr' in pos_d:
-            tr = render(pos_d['tr'], width - left, height, st, at)
-            right = max(right, tr.width)
-            top = max(top, tr.height)
-        else:
-            tr = None
-
-        if 'br' in pos_d:
-            br = render(pos_d['br'], width - left, height - top, st, at)
-            right = max(right, br.width)
-            bottom = max(bottom, br.height)
-        else:
-            br = None
-
-        if 'bl' in pos_d:
-            bl = render(pos_d['bl'], width - right, height - top, st, at)
-            left = max(left, bl.width)
-            bottom = max(bottom, bl.height)
-        else:
-            bl = None
+        if not self.sized:
+            self.sized = True
             
-        if 't' in pos_d:
-            t = render(pos_d['t'], width - left - right, height - bottom, st, at)
-            top = max(top, t.height)
-            cwidth = max(cwidth, t.width)
-        else:
-            t = None
+            # Deal with various spacings.
+            spacing = self.style.spacing
+            
+            def spacer(a, b, c, axis):
+                if (a in pos_d) or (b in pos_d) or (c in pos_d):
+                    return spacing, axis - spacing
+                else:
+                    return 0, axis
+                
+            self.left_space, width = spacer('tl', 'l', 'bl', width)
+            self.right_space, width = spacer('tr', 'r', 'br', width)
+            self.top_space, height = spacer('tl', 't', 'tr', height)
+            self.bottom_space, height = spacer('bl', 'b', 'br', height)
+            
+            # The sizes of the various borders.
+            left = 0
+            right = 0
+            top = 0
+            bottom = 0
+            cwidth = 0
+            cheight = 0
+            
+            def sizeit(pos, width, height, owidth, oheight):
+                if pos not in pos_d:
+                    return owidth, oheight
+                
+                rend = render(pos_d[pos], width, height, st, at)
+                return max(owidth, rend.width), max(oheight, rend.height)
 
-        if 'r' in pos_d:
-            r = render(pos_d['r'], width - left, height - top - bottom, st, at)
-            right = max(right, r.width)
-            cheight = max(cheight, r.height)
-        else:
-            r = None
+            cwidth, cheight = sizeit('c', width, height, 0, 0)
+            cwidth, top = sizeit('t', cwidth, height, cwidth, top)
+            cwidth, bottom = sizeit('b', cwidth, height, cwidth, bottom)
+            left, cheight = sizeit('l', width, cheight, left, cheight) 
+            right, cheight = sizeit('r', width, cheight, right, cheight) 
 
-        if 'b' in pos_d:
-            b = render(pos_d['b'], width - left - right, height - top, st, at)
-            bottom = max(bottom, b.height)
-            cwidth = max(cwidth, b.width)
-        else:
-            b = None
+            left, top = sizeit('tl', left, top, left, top)
+            left, bottom = sizeit('bl', left, bottom, left, bottom)
+            right, top = sizeit('tr', right, top, right, top)
+            right, bottom = sizeit('br', right, bottom, right, bottom)
+            
+            self.cwidth = cwidth
+            self.cheight = cheight
 
-        if 'l' in pos_d:
-            l = render(pos_d['l'], width - right, height - top - bottom, st, at)
-            left = max(left, l.width)
-            cheight = max(cheight, l.height)
-        else:
-            l = None
+            self.top = top
+            self.bottom = bottom
+            self.left = left
+            self.right = right
 
-        if 'c' in pos_d:
-            c = render(pos_d['c'], width - left - right, height - top - bottom, st, at)
-            cwidth = max(cwidth, c.width)
-            cheight = max(cheight, c.height)
         else:
-            c = None
-
+            cwidth = self.cwidth
+            cheight = self.cheight
+            top = self.top
+            bottom = self.bottom
+            left = self.left
+            right = self.right
+        
         # Now, place everything onto the render.
         
         self.offsets = [ None ] * len(self.children)
         self.sizes = [ None ] * len(self.children)
 
-        rv = renpy.display.render.Render(left + cwidth + right, top + cheight + bottom)
+        lefts = self.left_space
+        rights = self.right_space
+        tops = self.top_space
+        bottoms = self.bottom_space
 
-        def place(pos, rend, x, y, w, h):
+        rv = renpy.display.render.Render(left + lefts + cwidth + rights + right,
+                                         top + tops + cheight + bottoms + bottom)
 
-            if rend is None:
+        def place(pos, x, y, w, h):
+
+            if pos not in pos_d:
                 return
 
+            d = pos_d[pos]
             i = pos_i[pos]
-            self.sizes[i] = rend.get_size()
-            self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
+            rend = render(d, w, h, st, at)
+            self.sizes[i] = (cw, ch) = rend.get_size()
+            self.offsets[i] = pos_d[pos].place(rv, x, y, cw, ch, rend)
 
-        place('tl', tl, 0, 0, left, top)
-        place('tr', tr, left + cwidth, 0, right, top)
-        place('br', br, left + cwidth, top + cheight, right, bottom)
-        place('bl', bl, 0, top + cheight, left, bottom)
+        col1 = 0
+        col2 = left + lefts
+        col3 = left + lefts + cwidth + rights
 
-        place('t', t, left, 0, cwidth, top)
-        place('r', r, left + cwidth, top, right, cheight)
-        place('b', b, left, top + cheight, cwidth, bottom)
-        place('l', l, 0, top, left, cheight)
+        row1 = 0
+        row2 = top + tops
+        row3 = top + tops + cheight + bottoms
 
-        place('c', c, left, top, cwidth, cheight)
+        place('c', col2, row2, cwidth, cheight)
+
+        place('t', col2, row1, cwidth, top)
+        place('r', col3, row2, right, cheight)
+        place('b', col2, row3, cwidth, bottom)
+        place('l', col1, row2, left, cheight)
+
+        place('tl', col1, row1, left, top)
+        place('tr', col3, row1, right, top)
+        place('br', col3, row3, right, bottom)
+        place('bl', col1, row3, left, bottom)
 
         return rv
         
