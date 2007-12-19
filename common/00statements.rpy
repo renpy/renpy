@@ -42,6 +42,17 @@
 # The lint function is called at lint time, after the init code is
 # run. It should check the statement for errors, and report them by
 # calling renpy.error with the appropriate error message.
+#
+# The scry function is called with a scry object. It may mutate that
+# object, but it is then expected to return it. See 00nvlmode.rpy for
+# details.
+# 
+# The next function is expected to return a string giving the label of
+# the next statement to execute, or None to indicate that next
+# statement in the block should be executed. The next function is
+# called during predict, scry, and execute, and should always return
+# the same value. (Or scrying may be incorrect.)
+
 
 python early hide:
 

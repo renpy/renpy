@@ -87,8 +87,11 @@ def warp(spec):
 
             if seen_true:
                 continue
-                
-        if getattr(n, 'next', None) is not None:
+
+        if isinstance(n, renpy.ast.UserStatement):
+            add(n, n.get_next())
+
+        elif getattr(n, 'next', None) is not None:
             add(n, n.next)
 
     # Now, attempt to find a statement preceding the line that the

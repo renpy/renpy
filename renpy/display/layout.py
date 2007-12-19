@@ -1740,7 +1740,6 @@ class Side(Container):
 
         if isinstance(positions, basestring):
             positions = positions.split()
-
         
         for i in positions:
             if not i in SideLayout.possible_positions:

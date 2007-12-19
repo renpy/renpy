@@ -58,6 +58,11 @@ There is a new renpy.get_all_labels function, that returns the set of
 all labels defined in the script. [doc]
 
 
+User-defined statements can now be provided a next function, which is
+called to get the label of the statement to be executed after the
+current one. [doc]
+
+
 Renamed two style properties: box_spacing is now spacing, and
 box_first_spacing is now first_spacing. These properties can now be
 used by grids and sides. The old names are left in as aliases. [doc]

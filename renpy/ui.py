@@ -123,7 +123,7 @@ def layer(name):
     current_once = False
     current = name
 
-def close():
+def close(d=None):
 
     global current
 
@@ -133,6 +133,9 @@ def close():
     if current_once:
         raise Exception("ui.close() called when expecting a widget.")
 
+    if d is not None and d is not current:
+        raise Exception("ui.close() closed %r, not expected %r." % (current, d))
+    
     current = current_stack.pop()
 
 def reopen(w, clear):

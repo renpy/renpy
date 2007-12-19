@@ -27,7 +27,7 @@ import renpy
 # statements to dictionaries giving the methods used for that statement.
 registry = { }
 
-def register(name, parse=None, lint=None, execute=None, predict=None, scry=None):
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None):
     name = tuple(name.split())
     
     if registry.get(name) is not None:
@@ -37,6 +37,7 @@ def register(name, parse=None, lint=None, execute=None, predict=None, scry=None)
                           lint=lint,
                           execute=execute,
                           predict=predict,
+                          next=next,
                           scry=scry)
 
     while True:

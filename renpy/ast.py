@@ -1206,7 +1206,6 @@ class UserStatement(Node):
 
         super(UserStatement, self).__init__(loc)
         self.line = line
-
         self.parsed = None
 
         # Do not store the parse quite yet.
@@ -1217,15 +1216,16 @@ class UserStatement(Node):
 
     def execute(self):
         self.call("execute")
-        return self.next
+        return self.get_next()
 
     def predict(self, callback):
         predicted = self.call("predict") or [ ]
 
         for i in predicted:
             callback(i)
-        return [ self.next ]
-
+            
+        return [ self.get_next() ]
+    
     def call(self, method, *args, **kwargs):
         
         parsed = self.parsed        
@@ -1235,9 +1235,16 @@ class UserStatement(Node):
 
         renpy.statements.call(method, parsed, *args, **kwargs)
 
+    def get_next(self):
+        rv = self.call("next")
+        if rv is not None:
+            return renpy.game.script.lookup(rv)
+        else:
+            return self.next
         
     def scry(self):
         rv = Node.scry(self)
+        rv._next = self.get_next()
         self.call("scry", rv)
         return rv
                             

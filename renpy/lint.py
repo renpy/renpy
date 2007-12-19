@@ -203,7 +203,12 @@ def check_user(node):
         node.call("lint")
     finally:
         renpy.exports.pop_error_handler()
-    
+
+    try:
+        node.get_next()
+    except:
+        report(node, "Didn't properly report what the next statement should be.")
+        
 def text_checks(node, s):
     msg = renpy.display.text.check_text_tags(s)
     if msg:
