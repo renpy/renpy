@@ -97,7 +97,7 @@ def warp(spec):
     # Now, attempt to find a statement preceding the line that the
     # user wants to warp to.
 
-     candidates = [ (n.linenumber, n)
+    candidates = [ (n.linenumber, n)
                    for n in seenset
                    if n.filename.endswith('/' + filename) and n.linenumber <= line ]
 

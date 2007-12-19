@@ -1371,6 +1371,9 @@ class Interface(object):
                 trans = self.transition[layer](old_widget=self.old_scene[layer],
                                                new_widget=scene_layer)
 
+                if not isinstance(trans, Displayable):
+                    raise Exception("Expected transition to be a displayable, not a %r" % trans)
+
                 where.add(trans)
                 where.layers[layer] = trans
                 
@@ -1397,7 +1400,10 @@ class Interface(object):
 
             trans = self.transition[None](old_widget=old_root,
                                           new_widget=layers_root)
-                
+
+            if not isinstance(trans, Displayable):
+                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+            
             root_widget.add(trans)
 
             if trans_pause:

@@ -37,7 +37,7 @@ class Curry(object):
         return self.callable(*(self.args + args),
                              **dict(self.kwargs.items() + kwargs.items()))
     def __repr__(self):
-        return "<curry " + repr(vars(self)) + ">"
+        return "<curry %s %r %r>" % (self.callable, self.args, self.kwargs)
 
     def __eq__(self, other):
 
