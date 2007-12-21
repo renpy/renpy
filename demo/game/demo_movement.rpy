@@ -6,6 +6,9 @@ init:
     # cherry blossom petals.
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15), fast=True)
 
+    # Similar, but shows dandelions moving from left to right.
+    image fuzz = SnowBlossom("dandelion.png", xspeed=(50, 100), yspeed=(-10, 10))
+    
     # Defines the magic circle image.
     image magic_circle = "magic.png"
     
