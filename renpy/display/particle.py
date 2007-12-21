@@ -100,12 +100,14 @@ class Particles(renpy.display.core.Displayable):
     
 class SnowBlossomFactory(object):
 
+    rotate = False
+    
     def __setstate__(self, state):
         self.start = 0
         vars(self).update(state)
         self.init()
 
-    def __init__(self, image, count, xspeed, yspeed, border, start, fast):
+    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False):
         self.image = image
         self.count = count 
         self.xspeed = xspeed
@@ -113,6 +115,7 @@ class SnowBlossomFactory(object):
         self.border = border        
         self.start = start
         self.fast = fast
+        self.rotate = rotate
         self.init()
 
     def init(self):
@@ -138,7 +141,8 @@ class SnowBlossomFactory(object):
                                               self.border,
                                               st,
                                               random.uniform(0, 100),
-                                              fast=True))
+                                              fast=True,
+                                              rotate=self.rotate))
             return rv
             
         
@@ -155,7 +159,8 @@ class SnowBlossomFactory(object):
                                          self.border,
                                          st,
                                          random.uniform(0, 100),
-                                         fast=False) ]
+                                         fast=False,
+                                         rotate=self.rotate) ]
 
     def predict(self):
         return [ self.image ]
@@ -163,7 +168,7 @@ class SnowBlossomFactory(object):
 
 class SnowBlossomParticle(object):
 
-    def __init__(self, image, xspeed, yspeed, border, start, offset, fast):
+    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate):
 
         # safety.
         if yspeed == 0:
@@ -175,10 +180,17 @@ class SnowBlossomParticle(object):
         self.border = border
         self.start = start
         self.offset = offset
-
-        sh = renpy.config.screen_height
-        sw = renpy.config.screen_width
-
+        self.rotate = rotate
+        
+        
+        if not rotate:
+            sh = renpy.config.screen_height
+            sw = renpy.config.screen_width
+        else:
+            sw = renpy.config.screen_height
+            sh = renpy.config.screen_width
+            
+            
         if self.yspeed > 0:
             self.ystart = -border
         else:
@@ -195,8 +207,8 @@ class SnowBlossomParticle(object):
         self.xstart = random.uniform(x0, x1)
 
         if fast:
-            self.ystart = random.uniform(-border, renpy.config.screen_height + border)
-            self.xstart = random.uniform(0, renpy.config.screen_width)
+            self.ystart = random.uniform(-border, sh + border)
+            self.xstart = random.uniform(0, sw)
 
     def update(self, st):
         to = st - self.start
@@ -204,17 +216,34 @@ class SnowBlossomParticle(object):
         xpos = self.xstart + to * self.xspeed
         ypos = self.ystart + to * self.yspeed
 
-        if ypos > renpy.config.screen_height + self.border:
+        if not self.rotate:
+            sh = renpy.config.screen_height
+        else:
+            sh = renpy.config.screen_width
+        
+        if ypos > sh + self.border:
             return None
 
         if ypos < -self.border:
             return None
 
-        return int(xpos), int(ypos), to + self.offset, self.image
-    
-def SnowBlossom(image, count=10, border=50, xspeed=(20, 50),
-                yspeed=(100, 200), start=0, fast=False):
+        if not self.rotate:
+            return int(xpos), int(ypos), to + self.offset, self.image
+        else:
+            return int(ypos), int(xpos), to + self.offset, self.image
+        
+def SnowBlossom(image,
+                count=10,
+                border=50,
+                xspeed=(20, 50),
+                yspeed=(100, 200),
+                start=0,
+                fast=False,
+                horizontal=False):
 
+    # If going horizontal, swap the xspeed and the yspeed.
+    if horizontal:
+        xspeed, yspeed = yspeed, xspeed
 
     return Particles(SnowBlossomFactory(image=image,
                                         count=count,
@@ -222,6 +251,6 @@ def SnowBlossom(image, count=10, border=50, xspeed=(20, 50),
                                         xspeed=xspeed,
                                         yspeed=yspeed,
                                         start=start,
-                                        fast=fast))
-                                       
-        
+                                        fast=fast,
+                                        rotate=horizontal))
+

@@ -632,11 +632,11 @@ def position(d):
     return xpos, ypos, xanchor, yanchor
         
 # These are used by MoveTransition.
-def default_move_factory(pos1, pos2, delay, d):
+def MoveFactory(pos1, pos2, delay, d, **kwargs):
     if pos1 == pos2:
         return d
 
-    return renpy.display.layout.Move(pos1, pos2, delay, d)
+    return renpy.display.layout.Move(pos1, pos2, delay, d, **kwargs)
 
 def default_enter_factory(pos, delay, d):
     return d
@@ -701,7 +701,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
     """
 
     if factory is None:
-        factory = default_move_factory
+        factory = MoveFactory
 
     if enter_factory is None:
         enter_factory = default_enter_factory
@@ -895,6 +895,12 @@ class ImageDissolve(Transition):
     in last.    
     """
 
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.alpha = False
+    
     def generate_ramp(self, ramplen, ramptype, explicit_ramp, reverse):
         """
         Precomputes the ramp.
@@ -985,7 +991,7 @@ class ImageDissolve(Transition):
         return ramp
         
         
-    def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False,
+    def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False, alpha=False,
                  old_widget=None, new_widget=None, **properties):
 
         super(ImageDissolve, self).__init__(time, **properties)
@@ -994,7 +1000,8 @@ class ImageDissolve(Transition):
         self.old_widget = old_widget
         self.new_widget = new_widget
         self.events = False
-
+        self.alpha = alpha
+        
         self.image = renpy.display.im.image(image)
 
         if ramp is not None:
@@ -1031,9 +1038,12 @@ class ImageDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
         
-        bottom_surface = bottom.pygame_surface(False)
-        top_surface = top.pygame_surface(False)
+        bottom_surface = bottom.pygame_surface(True)
+        top_surface = top.pygame_surface(True)
 
+        width = min(bottom.width, top.width, width)
+        height = min(bottom.height, top.height, height)
+            
         def draw(dest, x, y):
 
             dw, dh = dest.get_size()
@@ -1051,11 +1061,16 @@ class ImageDissolve(Transition):
                 image.subsurface((-x, -y, w, h)),
                 ramp)
 
+        if self.alpha:
 
-        width = min(bottom.width, top.width, width)
-        height = min(bottom.height, top.height, height)
-            
-        rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
+            rv = renpy.display.render.Render(width, height)
+            surf = pygame.Surface((width, height), bottom_surface.get_flags(), bottom_surface)
+            draw(surf, 0, 0)
+            renpy.display.render.mutated_surface(surf)
+            rv.blit(surf, (0, 0))
+
+        else:
+            rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
 
 
         rv.focuses.extend(top.focuses)        

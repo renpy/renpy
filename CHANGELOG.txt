@@ -38,7 +38,8 @@ of the rendered child of the image. It could be used to add things
 like shines to buttons. [doc]
 
 
-im.matrix.hue [doc]
+The new im.matrix.hue function returns a matrix that can rotate the
+hue of an image.
 
 
 Modified the default hyperlink handler such that a link of the form:
@@ -46,12 +47,12 @@ Modified the default hyperlink handler such that a link of the form:
 the user's default web browser. Modified config.hyperlink_callback so
 that if it returns a value, that value will be returned from the
 current interaction. (For example, one could have it return True to
-end a say statement.) [doc]
+end a say statement.)
 
 
-Dissolve now takes an alpha argument. If this argument is True, the
-alpha channel is preserved across dissolves, at the cost of some
-speed. [doc]
+Dissolve and ImageDissolve now take an alpha argument. If this
+argument is True, the alpha channel is preserved across dissolves, at
+the cost of some speed.
 
 
 There is a new renpy.get_all_labels function, that returns the set of
@@ -60,12 +61,16 @@ all labels defined in the script. [doc]
 
 User-defined statements can now be provided a next function, which is
 called to get the label of the statement to be executed after the
-current one. [doc]
+current one.
 
 
 Renamed two style properties: box_spacing is now spacing, and
 box_first_spacing is now first_spacing. These properties can now be
-used by grids and sides. The old names are left in as aliases. [doc]
+used by grids and sides. The old names are left in as aliases.
+
+
+Modified SnowBlossom to take a new parameter, horizontal, that causes
+it to move particles in a horizontal direction.
 
 
 Fixed a bug that caused corruption in zip files created by the launcher.

@@ -1736,14 +1736,14 @@ class Side(Container):
     
     def __init__(self, positions, style='default', **properties):
 
-        super(SideLayout, self).__init__(style=style, **properties)
+        super(Side, self).__init__(style=style, **properties)
 
         if isinstance(positions, basestring):
             positions = positions.split()
         
         for i in positions:
-            if not i in SideLayout.possible_positions:
-                raise Exception("SideLayout used with impossible position '%s'." % (i,))
+            if not i in Side.possible_positions:
+                raise Exception("Side used with impossible position '%s'." % (i,))
 
         self.positions = tuple(positions)
         self.sized = False

@@ -46,7 +46,7 @@ init -1110 python:
     irisout = CropMove(1.0, "irisout")
     irisin = CropMove(1.0, "irisin")
 
-    # This moves changed images to their new locations
+    # Move images around.
     move = MoveTransition(0.5)
 
     moveinright = MoveTransition(0.5, enter_factory=MoveIn((1.0, None, 0.0, None)))
@@ -59,9 +59,56 @@ init -1110 python:
     moveouttop = MoveTransition(0.5, leave_factory=MoveOut((None, 0.0, None, 1.0)))
     moveoutbottom = MoveTransition(0.5, leave_factory=MoveOut((None, 1.0, None, 0.0)))
 
+    # Ease images around. These are basically cosine-warped moves.
+    def _ease_out_time_warp(x):
+        import math
+        return 1.0 - math.cos(x * math.pi / 2.0)
+
+    def _ease_in_time_warp(x):
+        import math
+        return math.cos((1.0 - x) * math.pi / 2.0)
+
+    def _ease_time_warp(x):
+        import math
+        return .5 - math.cos(math.pi * x) / 2.0
+
+        
+    ease = MoveTransition(0.5,
+                          factory=MoveFactory(time_warp=_ease_time_warp))
+
+    easeinright = MoveTransition(0.5,
+                                 factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                 enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=_ease_in_time_warp))
+    easeinleft = MoveTransition(0.5,
+                                factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=_ease_in_time_warp))
+    easeintop = MoveTransition(0.5,
+                               factory=MoveFactory(time_Warp=_ease_time_warp), 
+                               enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=_ease_in_time_warp))
+    easeinbottom = MoveTransition(0.5,
+                                  factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                  enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=_ease_in_time_warp))
+
+    easeoutright = MoveTransition(0.5,
+                                  factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                  leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=_ease_out_time_warp))
+    easeoutleft = MoveTransition(0.5,
+                                 factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                 leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=_ease_out_time_warp))
+    easeouttop = MoveTransition(0.5,
+                                factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=_ease_out_time_warp))
+    easeoutbottom = MoveTransition(0.5,
+                                   factory=MoveFactory(time_Warp=_ease_time_warp), 
+                                   leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=_ease_out_time_warp))
+    
+
+    # Zoom-based transitions.
     zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     zoomout = MoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
     zoominout = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
+
+
     
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.

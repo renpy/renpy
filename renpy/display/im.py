@@ -1151,6 +1151,7 @@ im.matrix(%f, %f, %f, %f, %f.
             )
 
     hue = staticmethod(hue)
+
     
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722)):
     return MatrixColor(im, matrix.saturation(0.0, desat))
