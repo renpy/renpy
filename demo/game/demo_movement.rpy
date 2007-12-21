@@ -6,9 +6,6 @@ init:
     # cherry blossom petals.
     image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15), fast=True)
 
-    # Similar, but shows dandelions moving from left to right.
-    image fuzz = SnowBlossom("dandelion.png", xspeed=(50, 100), yspeed=(-10, 10))
-    
     # Defines the magic circle image.
     image magic_circle = "magic.png"
     
@@ -112,7 +109,7 @@ label demo_movement:
     with dissolve
 
     e "Finally, Ren'Py has a particle motion system, that can be used for things like falling cherry blossoms, falling snow, and rising bubbles."
-
+    
     e "The particle motion system uses a factory to create particles over the course of an interaction."
     
     e "While the SnowBlossom function wraps a factory that provides convenient support for things rising and falling in straight lines, it's also possible to define your own."
