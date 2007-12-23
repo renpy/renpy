@@ -5,6 +5,9 @@
 
 init -1110 python:
 
+    define = object()
+
+    
     # Positions ##############################################################
 
     # These are positions that can be used inside at clauses. We set
@@ -46,19 +49,6 @@ init -1110 python:
     irisout = CropMove(1.0, "irisout")
     irisin = CropMove(1.0, "irisin")
 
-    # Move images around.
-    move = MoveTransition(0.5)
-
-    moveinright = MoveTransition(0.5, enter_factory=MoveIn((1.0, None, 0.0, None)))
-    moveinleft = MoveTransition(0.5, enter_factory=MoveIn((0.0, None, 1.0, None)))
-    moveintop = MoveTransition(0.5, enter_factory=MoveIn((None, 0.0, None, 1.0)))
-    moveinbottom = MoveTransition(0.5, enter_factory=MoveIn((None, 1.0, None, 0.0)))
-
-    moveoutright = MoveTransition(0.5, leave_factory=MoveOut((1.0, None, 0.0, None)))
-    moveoutleft = MoveTransition(0.5, leave_factory=MoveOut((0.0, None, 1.0, None)))
-    moveouttop = MoveTransition(0.5, leave_factory=MoveOut((None, 0.0, None, 1.0)))
-    moveoutbottom = MoveTransition(0.5, leave_factory=MoveOut((None, 1.0, None, 0.0)))
-
     # Ease images around. These are basically cosine-warped moves.
     def _ease_out_time_warp(x):
         import math
@@ -72,36 +62,53 @@ init -1110 python:
         import math
         return .5 - math.cos(math.pi * x) / 2.0
 
-        
-    ease = MoveTransition(0.5,
-                          factory=MoveFactory(time_warp=_ease_time_warp))
+    # This defines a family of move transitions.
+    def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None):
+        moves = {
+            "" : MoveTransition(0.5,
+                                factory=MoveFactory(time_warp=time_warp)),
 
-    easeinright = MoveTransition(0.5,
-                                 factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                 enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=_ease_in_time_warp))
-    easeinleft = MoveTransition(0.5,
-                                factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=_ease_in_time_warp))
-    easeintop = MoveTransition(0.5,
-                               factory=MoveFactory(time_Warp=_ease_time_warp), 
-                               enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=_ease_in_time_warp))
-    easeinbottom = MoveTransition(0.5,
-                                  factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                  enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=_ease_in_time_warp))
+            "inright" : MoveTransition(0.5,
+                                       factory=MoveFactory(time_warp=time_warp), 
+                                       enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp)),
 
-    easeoutright = MoveTransition(0.5,
-                                  factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                  leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=_ease_out_time_warp))
-    easeoutleft = MoveTransition(0.5,
-                                 factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                 leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=_ease_out_time_warp))
-    easeouttop = MoveTransition(0.5,
-                                factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=_ease_out_time_warp))
-    easeoutbottom = MoveTransition(0.5,
-                                   factory=MoveFactory(time_Warp=_ease_time_warp), 
-                                   leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=_ease_out_time_warp))
-    
+            "inleft" : MoveTransition(0.5,
+                                      factory=MoveFactory(time_warp=_ease_time_warp), 
+                                      enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp)),
+
+            "intop" : MoveTransition(0.5,
+                                     factory=MoveFactory(time_warp=time_warp), 
+                                     enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp)),
+
+            "inbottom" : MoveTransition(0.5,
+                                        factory=MoveFactory(time_warp=time_warp), 
+                                        enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp)),
+
+            "outright" : MoveTransition(0.5,
+                                        factory=MoveFactory(time_warp=time_warp), 
+                                        leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp)),
+
+            "outleft" : MoveTransition(0.5,
+                                       factory=MoveFactory(time_warp=time_warp), 
+                                       leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp)),
+
+            "outtop" : MoveTransition(0.5,
+                                      factory=MoveFactory(time_warp=time_warp), 
+                                      leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp)),
+
+            "outbottom" : MoveTransition(0.5,
+                                         factory=MoveFactory(time_warp=time_warp), 
+                                         leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp)),
+            }
+
+        for k, v in moves.iteritems():
+            setattr(store, prefix + k, v)
+
+    define.move_transitions = move_transitions
+    del move_transitions
+
+    define.move_transitions("move", 0.5)
+    define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp) 
 
     # Zoom-based transitions.
     zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))

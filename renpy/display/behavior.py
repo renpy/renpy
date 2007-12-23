@@ -481,7 +481,7 @@ class Input(renpy.display.text.Text):
 # position of content.
 class Adjustment(renpy.object.Object):
 
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None):
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True):
         self.value = value
         self.range = range
         self.page = page
@@ -494,15 +494,14 @@ class Adjustment(renpy.object.Object):
 
         self.step = step
         self.changed = changed
-        self.useful = changed is not None
+        self.adjustable = changed or adjustable
         
         self.registered = [ ]
 
     # Register a displayable to be redrawn when this adjustment changes.
     def register(self, d):
         self.registered.append(d)
-        self.useful = True
-        
+                
     def change(self, value):
 
         if value < 0:
@@ -551,7 +550,7 @@ class Bar(renpy.display.core.Displayable):
         super(Bar, self).__init__(style=style, **properties)
 
         self.adjustment = adjustment
-        self.focusable = adjustment.useful
+        self.focusable = adjustment.adjustable
 
         adjustment.register(self)
         
