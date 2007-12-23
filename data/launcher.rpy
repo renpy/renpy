@@ -30,6 +30,9 @@ init:
         # Choose the roundrect theme for the buttons.
         theme.roundrect(launcher=True)
 
+        style.hyperlink_text.color = "#00f"
+
+        
         def ifrw(label):
             if project.info.get("ro", False):
                 return None

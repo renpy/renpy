@@ -329,7 +329,7 @@ init -1180:
         def hyperlink_function(target):
             if target.startswith("http:"):
                 import webbrowser
-                webbrowser.open(target, new = True)
+                webbrowser.open(target)
             else:
                 renpy.call_in_new_context(target)
 
