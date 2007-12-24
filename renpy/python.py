@@ -271,7 +271,10 @@ class RevertableList(list):
 
 def revertable_range(*args):
     return RevertableList(range(*args))
-        
+
+def revertable_sorted(*args, **kwargs):
+    return RevertableList(sorted(*args, **kwargs))
+
 class RevertableDict(dict):
 
     __delitem__ = mutator(dict.__delitem__)

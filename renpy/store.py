@@ -89,6 +89,7 @@ Set = set
 from renpy.python import RevertableObject as object
 
 from renpy.python import revertable_range as range
+from renpy.python import revertable_sorted as sorted
 
 eval = renpy.python.py_eval
 
