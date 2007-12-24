@@ -42,6 +42,14 @@ The new im.matrix.hue function returns a matrix that can rotate the
 hue of an image.
 
 
+We have implemented a new family of transitions, the ease
+transitions. (Such as ease, easeinright, easeoutbottom, etc.) These
+are counterparts to the equivalent move transitions, that use a
+cosine-based function to slow the start and/or end of the move as
+appropriate. The new define.move_transitions function simplifies the
+creation of your own family of move transitions.
+
+
 Modified the default hyperlink handler such that a link of the form:
 {a=http://www.renpy.org}link{/a} will bring people to a web page in
 the user's default web browser. Modified config.hyperlink_callback so
@@ -57,20 +65,18 @@ the cost of some speed.
 
 There is a new renpy.get_all_labels function, that returns the set of
 all labels defined in the script.
-
-
 User-defined statements can now be provided a next function, which is
 called to get the label of the statement to be executed after the
 current one.
 
 
+Modified SnowBlossom to take a new parameter, horizontal, that causes
+it to move particles in a horizontal direction.
+
+
 Renamed two style properties: box_spacing is now spacing, and
 box_first_spacing is now first_spacing. These properties can now be
 used by grids and sides. The old names are left in as aliases.
-
-
-Modified SnowBlossom to take a new parameter, horizontal, that causes
-it to move particles in a horizontal direction.
 
 
 Fixed a bug that caused corruption in zip files created by the launcher.
