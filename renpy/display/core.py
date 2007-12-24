@@ -265,7 +265,7 @@ class Displayable(renpy.object.Object):
         @param surf: The surface returned by a previous call to
         self.render().
         """
-
+        
         xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.get_placement()
 
         if xpos is None:
@@ -276,7 +276,6 @@ class Displayable(renpy.object.Object):
             xanchor = 0
         if yanchor is None:
             yanchor = 0
-
 
         sw, sh = surf.get_size()
 

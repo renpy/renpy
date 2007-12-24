@@ -9,7 +9,7 @@ Rewrote the Bar class, which implements ui.bar. This class now
 optionally takes an adjustment object, which is what stores
 information about the range, value, page size, and step size of 
 the bar. Scrollbars can now indicate what fraction of the viewport is 
-being shown. [doc]
+being shown.
 
 Bars now take a new style property, bar_resizing. If this is true, we 
 resize sub-bars, rather than rendering them at the full bar size and
@@ -18,24 +18,24 @@ then cropping. This changes the look of bars a bit.
 Viewports now use adjustments to control their x and y scrolling
 information. They properly fill in a range and step size, allowing
 scrollbars to indicate the fraction of the viewport that is being
-displayed to the user. [doc]
+displayed to the user. 
 
 Viewports now also support several new ways of scrolling around. If
 a true mousewheel argument is given to ui.viewport, the user will be
 able to scroll the viewport using the mousewheel. If the draggable
 argument is true, then the user will be able to drag the viewport
-around using the mouse. [doc, doc config.keymap]
+around using the mouse. 
 
 
 We have implemented a new container, ui.side. This container divides a
 space into the center, four sides, and four corners, and allows one
-displayable to be placed in each. [doc]
+displayable to be placed in each.
 
 
 Windows (and related things, like frames and buttons) now take a new
 foreground style property. This is like background, but it goes on top
 of the rendered child of the image. It could be used to add things
-like shines to buttons. [doc]
+like shines to buttons. 
 
 
 The new im.matrix.hue function returns a matrix that can rotate the
@@ -56,7 +56,7 @@ the cost of some speed.
 
 
 There is a new renpy.get_all_labels function, that returns the set of
-all labels defined in the script. [doc]
+all labels defined in the script.
 
 
 User-defined statements can now be provided a next function, which is
@@ -80,6 +80,7 @@ Fixed a bug that prevented image prediction from working in many cases.
 Fixed a bug that prevented {w} from working when a ctc indicator was set, 
 but a ctc_pause indicator wasn't.
 
+Fixed a bug that manifested when a RotoZoom was larger than the screen.
 
 
 New in Ren'Py 6.4.0

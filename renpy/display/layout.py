@@ -1545,14 +1545,16 @@ class RotoZoom(renpy.display.core.Displayable):
 
         def draw(dest, xo, yo):
 
+            print xo, yo
+            
             if not self.opaque:
                 target = pygame.Surface(dest.get_size(), 0,
                                         renpy.game.interface.display.sample_surface)
             else:
                 target = dest
             
-            dulcx = -dw / 2 + xo
-            dulcy = -dh / 2 + yo
+            dulcx = -dw / 2 - xo
+            dulcy = -dh / 2 - yo
 
             culcx = cw / 2 + xdx * dulcx + xdy * dulcy
             culcy = ch / 2 + ydx * dulcx + ydy * dulcy
