@@ -150,7 +150,7 @@ label distribute:
         title("Building Distributions")
 
         mid()
-        text("I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nCheck the {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")
+        text("I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nCheck {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")
         ui.close()
 
         bottom()
