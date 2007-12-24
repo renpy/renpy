@@ -245,20 +245,27 @@ label demo_ui:
 
     e "We also support viewports, that allow us to display things that are bigger then the screen."
 
+    e "This viewport can be adjusted by dragging, by the mouse wheel, and by the scrollbars."
+    
     show eileen happy at right
     with move
     
     python hide:
-        vp = ui.viewport(xmaximum=400, ymaximum=400, xpos=100, ypos=50)
-        ui.image("mainmenu.jpg")
-        ui.bar(1.0, 0.0, style='scrollbar', xmaximum=400, xpos=100, ypos=452, changed=vp.set_xoffset)
-        ui.bar(1.0, 0.0, style='vscrollbar', ymaximum=400, xpos=502, ypos=50, changed=vp.set_yoffset)
 
+        ui.side(('c', 'b', 'r'), xpos=100, ypos=50, spacing=5)
+        
+        vp = ui.viewport(draggable=True, mousewheel=True, xmaximum=400, ymaximum=400)
+        ui.image("mainmenu.jpg")
+        ui.bar(adjustment=vp.xadjustment, style='scrollbar')
+        ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
+
+        ui.close()
+        
         ui.textbutton("Dismiss", xpos=300, xanchor=0.5, ypos=550, yanchor=0.5, clicked=ui.returns(True))
         ui.interact()
 
     show eileen happy at center
-    
+    with move
         
     e "While these constructs are probably enough for most visual novels, dating simulations may be more complicated."
 

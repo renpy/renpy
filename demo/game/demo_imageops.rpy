@@ -49,9 +49,12 @@ init:
     image logo tintblue = im.MatrixColor("logo.png",
                                          im.matrix.saturation(.5) * im.matrix.tint(.75, .75, 1.0))
 
+    image logo hue = im.MatrixColor("logo.png",
+                                    im.matrix.hue(90))
+    
     image logo bright = im.MatrixColor("logo.png",
                                        im.matrix.brightness(.5))
-    
+
     image logo sepia = im.Sepia("logo.png")
     
     image logo grayscale = im.Grayscale("logo.png")
@@ -134,9 +137,14 @@ label demo_imageops:
     
     e "... tint the image blue..."
 
-    show logo invert at logopos
+    show logo hue at logopos
     with dissolve
     
+    e "... rotate the hue... "
+    
+    show logo invert at logopos
+    with dissolve
+
     e "... or invert the colors, for a kinda scary look."
     
     show logo bright at logopos

@@ -1670,9 +1670,6 @@ class Viewport(Container):
         if rv is not None:
             return ev
 
-        if not ((0 <= x < self.width) and (0 <= y <= self.height)):
-            return
-
         if self.draggable and renpy.display.focus.get_grab() == self:
 
             oldx, oldy = self.drag_position
@@ -1688,6 +1685,8 @@ class Viewport(Container):
                 renpy.display.focus.set_grab(None)
                 raise renpy.display.core.IgnoreEvent()
                 
+        if not ((0 <= x < self.width) and (0 <= y <= self.height)):
+            return
                 
         if self.mousewheel:
 
