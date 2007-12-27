@@ -482,22 +482,60 @@ class Input(renpy.display.text.Text):
 class Adjustment(renpy.object.Object):
 
     def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True):
-        self.value = value
-        self.range = range
-        self.page = page
-
-        if step is None:
-            if isinstance(range, float):
-                step = range / 20
-            else:
-                step = 1
-
-        self.step = step
+        self._value = value
+        self._range = range
+        self._page = page
+        self._step = step
         self.changed = changed
         self.adjustable = changed or adjustable
         
         self.registered = [ ]
 
+    def get_value(self):
+        return self._value
+
+    def set_value(self, v):
+        self._value = v
+
+    value = property(get_value, set_value)
+        
+    def get_range(self):
+        return self._range
+
+    def set_range(self, v):
+        self._range = v
+
+    range = property(get_range, set_range)
+
+    def get_page(self):
+        if self._page is not None:
+            return self._page
+
+        return self._range / 10
+
+    def set_page(self, v):
+        self._page = v
+
+    page = property(get_page, set_page)
+
+    def get_step(self):
+        if self._step is not None:
+            return self._step
+
+        if self._page is not None:
+            return self._page / 10
+
+        if isinstance(self._range, float):
+            return self._range / 20
+        else:
+            return 1
+
+    def set_step(self, v):
+        self._step = v
+
+    step = property(get_step, set_step)
+        
+        
     # Register a displayable to be redrawn when this adjustment changes.
     def register(self, d):
         self.registered.append(d)
@@ -506,11 +544,11 @@ class Adjustment(renpy.object.Object):
 
         if value < 0:
             value = 0
-        if value > self.range:
-            value = self.range
+        if value > self._range:
+            value = self._range
 
-        if value != self.value:
-            self.value = value
+        if value != self._value:
+            self._value = value
             for d in self.registered:
                 renpy.display.render.redraw(d, 0)
             if self.changed:
@@ -535,11 +573,21 @@ class Bar(renpy.display.core.Displayable):
             del self.value
             del self.changed
     
-    def __init__(self, range=None, value=None, width=None, height=None,
-                 changed=None, adjustment=None, style='bar', **properties):
+    def __init__(self,
+                 range=None,
+                 value=None,
+                 width=None,
+                 height=None,
+                 changed=None,
+                 adjustment=None,
+                 step=None,
+                 page=None,
+                 bar=None,
+                 style='bar',
+                 **properties):
 
         if adjustment is None:
-            adjustment = Adjustment(range, value, changed=changed)
+            adjustment = Adjustment(range, value, step=step, page=page,changed=changed)
         
         if width is not None:
             properties['xmaximum'] = width
@@ -618,12 +666,12 @@ class Bar(renpy.display.core.Displayable):
         if bar_vertical:
 
             if self.style.bar_resizing:
-                foresurf = render(self.style.fore_bar, fore_size, height, st, at)
-                aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
-                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
+                foresurf = render(self.style.fore_bar, width, fore_size, st, at)
+                aftsurf = render(self.style.aft_bar, width, aft_size, st, at)
+                rv.blit(thumb_shadow, (0, fore_size - thumb_offset))
                 rv.blit(foresurf, (0, 0), main=False)
-                rv.blit(aftsurf, (width-aft_size, 0), main=False)
-                rv.blit(thumb, (fore_size - thumb_offset, 0))
+                rv.blit(aftsurf, (0, height-aft_size), main=False)
+                rv.blit(thumb, (0, fore_size - thumb_offset))
 
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
@@ -685,10 +733,10 @@ class Bar(renpy.display.core.Displayable):
         if grabbed:
 
             if map_event(ev, "bar_decrease"):
-                value -= self.adjustment.page
+                value -= self.adjustment.step
 
             if map_event(ev, "bar_increase"):
-                value += self.adjustment.page
+                value += self.adjustment.step
 
             if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
 

@@ -1578,6 +1578,7 @@ class Viewport(Container):
         if version < 1:
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
             self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+            self.set_adjustments = False
             self.mousewheel = False
             self.draggable = False
             self.width = 0
@@ -1589,6 +1590,7 @@ class Viewport(Container):
                  offsets=(None, None),
                  xadjustment=None,
                  yadjustment=None,
+                 set_adjustments=True,
                  mousewheel=False,
                  draggable=False,
                  style='viewport',
@@ -1601,15 +1603,17 @@ class Viewport(Container):
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
         else:
             self.xadjustment = xadjustment
-
+            
         if yadjustment is None:
             self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
         else:
             self.yadjustment = yadjustment
-
+            
         self.xadjustment.register(self)
         self.yadjustment.register(self)
-            
+
+        self.set_adjustments = set_adjustments
+        
         self.child_width, self.child_height = child_size
         self.xoffset, self.yoffset = offsets
         self.mousewheel = mousewheel
@@ -1630,10 +1634,11 @@ class Viewport(Container):
 
         cw, ch = surf.get_size()
 
-        self.xadjustment.range = max(cw - width, 0)
-        self.yadjustment.range = max(ch - height, 0)
-        self.xadjustment.page = width
-        self.yadjustment.page = height
+        if self.set_adjustments:
+            self.xadjustment.range = max(cw - width, 0)
+            self.xadjustment.page = width
+            self.yadjustment.range = max(ch - height, 0)
+            self.yadjustment.page = height
         
         if self.xoffset is not None:
             if isinstance(self.xoffset, int):
@@ -1668,7 +1673,7 @@ class Viewport(Container):
 
         rv = super(Viewport, self).event(ev, x, y, st)
         if rv is not None:
-            return ev
+            return rv
 
         if self.draggable and renpy.display.focus.get_grab() == self:
 
@@ -1691,14 +1696,14 @@ class Viewport(Container):
         if self.mousewheel:
 
             if renpy.display.behavior.map_event(ev, 'viewport_up'):
-                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.page)
+                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
                 if rv is not None:
                     return rv
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_down'):
-                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.page)
+                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
                 if rv is not None:
                     return rv
                 else:
