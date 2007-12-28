@@ -79,6 +79,16 @@ box_first_spacing is now first_spacing. These properties can now be
 used by grids and sides. The old names are left in as aliases.
 
 
+The archiver will now ignore presplash.png.
+
+
+Lexer tokens beginning with __ and not containing __ are now munged in
+a filename-dependent manner. This means that one can use __word in a
+file, and be sure it will not conflict with __word in a different file.
+
+
+Fixed a bug that made syntax errors more confusing than necessary.
+
 Fixed a bug that caused corruption in zip files created by the launcher.
 
 Fixed a bug that prevented image prediction from working in many cases.

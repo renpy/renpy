@@ -1075,3 +1075,6 @@ def scry():
     name = renpy.game.context().current
     node = renpy.game.script.lookup(name)
     return node.scry()
+
+def munged_filename():
+    return renpy.parser.munge_filename(get_filename_line()[0])

@@ -25,6 +25,7 @@
 import codecs
 import re
 import os
+import os.path
 import sets
 
 import renpy
@@ -39,19 +40,18 @@ class ParseError(Exception):
         message = u"On line %d of %s: %s" % (number, unicode_filename(filename), msg)
 
         if line is not None:
-            message += "\n" + line
+            message += "\n" + line.encode('unicode_escape')
 
         if pos is not None:
             message += "\n" + " " * pos + "^"
 
         self.message = message
 
-        Exception.__init__(self, message.encode('unicode_escape'))
+        Exception.__init__(self, message)
 
     def __unicode__(self):
         return self.message
-
-
+    
 def unicode_filename(fn):
     """
     Converts the supplied filename to unicode.
@@ -74,7 +74,18 @@ def unicode_filename(fn):
 
     # Insane systems, mojibake.
     return fn.decode("latin-1")
-    
+
+# Matches either a word, or something else. Most magic is taken care of 
+# before this.
+lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
+
+def munge_filename(fn):
+    # The prefix that's used when __ is found in the file.
+    rv = os.path.basename(fn)
+    rv = os.path.splitext(rv)[0]
+    rv = rv.replace(" ", "_")
+    return "__" + rv + "__"
+
 def list_logical_lines(filename):
     """
     This reads the specified filename, and divides it into logical
@@ -92,6 +103,8 @@ def list_logical_lines(filename):
     if "RENPY_PATH_ELIDE" in os.environ:
         old, new = os.environ["RENPY_PATH_ELIDE"].split(':')
         filename = filename.replace(old, new)
+
+    prefix = munge_filename(filename)
         
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
@@ -197,10 +210,25 @@ def list_logical_lines(filename):
                     line += c
                     pos += 1
 
+                    continue
+
                 continue
-            
-            line += c
-            pos += 1
+
+            m = lllword.match(data, pos)
+
+            if m is None:
+                print repr(data[pos:])
+
+            word = m.group(0)
+            rest = m.group(1)
+
+            if rest and "__" not in rest:
+                word = prefix + rest
+                
+            line += word
+            pos = m.end(0)
+
+            # print repr(data[pos:])
 
 
     if not line == "":

@@ -3,6 +3,6 @@
 export LD_LIBRARY_PATH=$RENPY_SCITE_LD_LIBRARY_PATH
 export SciTE_HOME="`dirname \"$0\"`"
 
-for i in $SciTE_HOME/scite.*-*; do
+for i in "$SciTE_HOME"/scite.*-*; do
     "$i" "$@" && exit 0
 done

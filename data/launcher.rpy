@@ -579,6 +579,9 @@ label archive_files:
             if fn[0] == ".":
                 return False
 
+            if fn == "presplash.png":
+                return False
+            
             for e in extensions:
                 if fn.endswith(e):
                     return True
