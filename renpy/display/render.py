@@ -711,7 +711,6 @@ class Render(object):
                     self.focuses.append(nf)
                                       
         self.blittables.append((xo, yo, source))
-    
 
     def blit_to(self, dest, x, y):
         """
@@ -721,6 +720,7 @@ class Render(object):
         destination surface.
         """
 
+        
         if self.draw_func:
 
             if x >= 0:
@@ -752,48 +752,37 @@ class Render(object):
             if subw <= 0 or subh <= 0:
                 return
 
-            clipx, clipy, clipw, cliph = dest.get_clip()
-
-            newclipx = max(clipx - subx, 0)
-            newclipy = max(clipy - suby, 0)
-            newclipw = min(clipx + clipw - subx, subw - newclipx)
-            newcliph = min(clipy + cliph - suby, subh - newclipy)
-
-            if newclipw <= 0 or newcliph <= 0:
-                return 
-
             dest = dest.subsurface((subx, suby, subw, subh))
 
-            old_clip = dest.get_clip()
-            dest.set_clip((newclipx, newclipy, newclipw, newcliph))
-
-            x = newx
-            y = newy
-
-            dest.set_clip(old_clip)
-
-        if self.draw_func:
-            if isinstance(dest, ClipSurface):
+            if dest.__class__ is ClipSurface:
                 dest.force()
             else:
-                self.draw_func(dest, x, y)
+                self.draw_func(dest, newx, newy)
 
             return
 
         # Note... none of this runs if self.draw_func is True.
 
         fullscreen = 0
+        i = 0
+        dsize = dest.get_size()
+        
+        for xo, yo, source in self.blittables:
+           if is_fullscreen(source, x + xo, y + yo, dsize):
+               fullscreen = i
+           i += 1
 
-        for i, (xo, yo, source) in enumerate(self.blittables):
-            if is_fullscreen(source, x + xo, y + yo, dest.get_size()):
-                fullscreen = i
-
+           
+        winblit = dest is renpy.game.interface.display.window
+        if winblit:
+            cacheget = renpy.display.im.rle_cache.get # bound method.
+        
         for xo, yo, source in self.blittables[fullscreen:]:
-            if isinstance(source, pygame.Surface):
+            if source.__class__ is pygame.Surface:
 
-                if dest is renpy.game.interface.display.window:
-                    source = renpy.display.im.rle_cache.get(id(source), source)
-
+                if winblit:
+                    source = cacheget(id(source), source)
+                   
                 dest.blit(source, (x + xo, y + yo))
             else:
                 source.blit_to(dest, x + xo, y + yo)
@@ -823,7 +812,7 @@ class Render(object):
         """
 
         # We no longer respect the alpha parameter, there's no need to.
-        
+
         if self.surface and self.surface_alpha == alpha:
             return self.surface
 
@@ -1025,19 +1014,19 @@ def is_fullscreen(surf, x, y, wh):
     return is_fullscreen_core(surf, x, y, wh)
 
 # Determine if a surface is fullscreen or not.
-def is_fullscreen_core(surf, x, y, (w, h)):
+def is_fullscreen_core(surf, x, y, wh):
 
-    if isinstance(surf, pygame.Surface):
+    w, h = wh
+    sw, sh = surf.get_size()
 
-        sw, sh = surf.get_size()
+    # Check that this surface is on the screen.
+    if (x > 0) or (y > 0) or (sw + x < w) or (sh + y < h):
+        return False
+        
+    if surf.__class__ is pygame.Surface:
 
-        if (x <= 0 and y <= 0 and
-            sw + x >= w and
-            sh + y >= h and
-            surf.get_masks()[3] == 0 and
-            (surf.get_alpha() == None or surf.get_alpha() == 255)
-            ):
-
+        if (surf.get_masks()[3] == 0 and
+            (surf.get_alpha() == None or surf.get_alpha() == 255)):
             return True
         else:
             return False
@@ -1050,15 +1039,12 @@ def is_fullscreen_core(surf, x, y, (w, h)):
 
     # Clipping can stop its children from being fullscreen.
 
-    if (surf.opaque and x <= 0 and y <= 0 and
-        surf.width + x >= w and
-        surf.height + y >= h):
-
+    if surf.opaque:
         surf.fullscreen[xywh] = True
         return True
 
     for xo, yo, source in surf.blittables:
-        if is_fullscreen_core(source, x + xo, y + yo, (w, h)):
+        if is_fullscreen_core(source, x + xo, y + yo, wh):
             surf.fullscreen[xywh] = True
             return True
 
