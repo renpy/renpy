@@ -339,9 +339,9 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        bottom_surface = bottom.pygame_surface(self.alpha)
-        top_surface = top.pygame_surface(self.alpha)
-        
+        bottom_surface = bottom.pygame_surface()
+        top_surface = top.pygame_surface()
+
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
 
@@ -350,7 +350,7 @@ class Dissolve(Transition):
             dw, dh = dest.get_size()
 
             w = min(dw, width + x)
-            h = min(dh, height + x)
+            h = min(dh, height + y)
 
             if w <= 0 or h <= 0:
                 return

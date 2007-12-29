@@ -766,10 +766,15 @@ class Motion(Container):
         self.time_warp = time_warp
         self.add_sizes = add_sizes
 
-        self.position = (self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor)
+        self.position = None
+        
 
     def get_placement(self):
-        return self.position + (self.style.xoffset, self.style.yoffset)
+
+        if self.position is None:
+            return super(Motion, self).get_placement()
+        else:
+            return self.position + (self.style.xoffset, self.style.yoffset)
                 
     def render(self, width, height, st, at):
 

@@ -829,8 +829,9 @@ class Render(object):
         if len(blits) == 1 and not forced:
             surf, sx, sy, x, y, w, h = blits[0]
             if x <= 0 and y <= 0 and w + x >= self.width and h + y >= self.height:
-                self.surface = surf.subsurface((sx - x, sy - y, self.width, self.height))
-                return self.surface
+                if surf.get_masks()[3]:
+                    self.surface = surf.subsurface((sx - x, sy - y, self.width, self.height))
+                    return self.surface
                     
         # Otherwise, do things the hard way.
 
