@@ -1177,6 +1177,7 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
         
         if bilinear:
             sx, sy, sw, sh = rect
+
             scalesurf = pygame.Surface((neww, newh), 0, surf)
             renpy.display.module.bilinear_scale(surf, scalesurf,
                                                 sx, sy, sw, sh,
@@ -1188,7 +1189,7 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
 
         rv = renpy.display.render.Render(neww, newh)
         rv.blit(scalesurf, (0, 0))
-
+        
     rv.depends_on(rend)
     return rv
 
@@ -1269,9 +1270,9 @@ class FactorZoom(renpy.display.core.Displayable):
         oldw, oldh = surf.get_size()
         neww = int(oldw * factor)
         newh = int(oldh * factor)
-        
-        rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
 
+        rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
+        
         if done < 1.0:
             renpy.display.render.redraw(self, 0)
 
