@@ -351,6 +351,7 @@ class Grid(Container):
 class MultiBox(Container):
 
     layer_name = None
+    first = True
     
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -389,16 +390,52 @@ class MultiBox(Container):
     def render(self, width, height, st, at):
 
         t = renpy.game.interface.frame_time
-        it = renpy.game.interface.interact_time
 
-        self.start_times = [ i or it for i in self.start_times ]
-        self.anim_times = [ i or it for i in self.anim_times ]
-
-        layout = self.style.box_layout
-
-        if layout is None:
-            layout = self.default_layout
+        if self.first:
         
+            it = renpy.game.interface.interact_time
+
+            self.start_times = [ i or it for i in self.start_times ]
+            self.anim_times = [ i or it for i in self.anim_times ]
+
+            self.first = False
+            
+            layout = self.style.box_layout
+
+            if layout is None:
+                layout = self.default_layout
+
+            self.layout = layout
+
+        else:
+            layout = self.layout
+
+                
+        if layout == "fixed":
+
+            self.offsets = [ ]
+            self.sizes = [ ]
+            
+            rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+
+        
+            for child, start, anim in zip(self.children, self.start_times, self.anim_times):
+
+                cst = t - start
+                cat = t - anim
+
+                surf = render(child, width, height, cst, cat)
+
+                if surf:
+                    self.sizes.append(surf.get_size())
+                    offset = child.place(rv, 0, 0, width, height, surf)
+                    self.offsets.append(offset)
+                else:
+                    self.sizes.append((0, 0))
+                    self.offsets.append((0, 0))
+
+            return rv
+                    
         if layout == "horizontal":
 
             spacing = self.style.spacing
@@ -524,31 +561,6 @@ class MultiBox(Container):
 
             return rv
 
-        elif layout == "fixed":
-
-            self.offsets = [ ]
-            self.sizes = [ ]
-            
-            rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
-
-        
-            for child, start, anim in zip(self.children, self.start_times, self.anim_times):
-
-                cst = t - start
-                cat = t - anim
-
-                surf = render(child, width, height, cst, cat)
-
-                if surf:
-                    self.sizes.append(surf.get_size())
-                    offset = child.place(rv, 0, 0, width, height, surf)
-                    self.offsets.append(offset)
-                else:
-                    self.sizes.append((0, 0))
-                    self.offsets.append((0, 0))
-
-            return rv
-                    
         
     def event(self, ev, x, y, st):
         children_offsets = zip(self.children, self.offsets, self.start_times)

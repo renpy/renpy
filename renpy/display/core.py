@@ -64,7 +64,16 @@ class IgnoreEvent(Exception):
 
     pass
 
-        
+
+# Names for anchors.
+anchors = dict(
+    left=0.0,
+    right=1.0,
+    center=0.5,
+    top=0.0,
+    bottom=1.0,
+    )
+
 class Displayable(renpy.object.Object):
     """
     The base class for every object in Ren'Py that can be
@@ -187,10 +196,8 @@ class Displayable(renpy.object.Object):
         to return something more sensible.
         """
 
-        return (self.style.xpos, self.style.ypos,
-                self.style.xanchor, self.style.yanchor,
-                self.style.xoffset, self.style.yoffset)
-
+        return self.style.get_placement()
+    
     def visit_all(self, callback):
         """
         Calls the callback on this displayable and all children of this
@@ -287,22 +294,13 @@ class Displayable(renpy.object.Object):
         if isinstance(xoff, float):
             xoff = int(xoff * width)
 
-        if xanchor == 'left':
-            xanchor = 0.0
-        elif xanchor == 'center':
-            xanchor = 0.5
-        elif xanchor == 'right':
-            xanchor = 1.0
-        elif not isinstance(xanchor, (float, int)):
-            raise Exception("xanchor %r is not known." % xanchor)
-
         if isinstance(xanchor, int):
             xoff -= xanchor
-        else:
+        else:            
+            xanchor = anchors.get(xanchor, xanchor)
             xoff -= int(sw * xanchor)
 
         xoff += x
-        
 
         # y
 
@@ -312,19 +310,10 @@ class Displayable(renpy.object.Object):
         if isinstance(yoff, float):
             yoff = int(yoff * height)
 
-        if yanchor == 'top':
-            yanchor = 0.0
-        elif yanchor == 'center':
-            yanchor = 0.5
-        elif yanchor == 'bottom':
-            yanchor = 1.0
-        elif not isinstance(yanchor, (float, int)):
-            raise Exception("yanchor %r is not known." % yanchor)
-
-
         if isinstance(yanchor, int):
             yoff -= yanchor
-        else:
+        else:            
+            yanchor = anchors.get(yanchor, yanchor)
             yoff -= int(sh * yanchor)
 
         yoff += y

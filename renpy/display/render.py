@@ -26,7 +26,11 @@
 # due to lack of use by the end of a cycle or because it was killed between
 # cycles due to a timeout.
 
-import sets
+try:
+    set()
+except:
+    from sets import Set as set
+
 import time
 import renpy
 import pygame
@@ -143,7 +147,7 @@ def process_redraws():
     redraw_queue.sort()
 
     i = 0
-    dead_widgets = sets.Set()
+    dead_widgets = set()
     now = renpy.display.core.get_time()
 
     for when, widget in redraw_queue:
@@ -202,8 +206,8 @@ def render_screen(widget, width, height, st):
     rv = render(widget, width, height, st, st)
 
     # Renders that are in the old set but not the new one die here.
-    old_render_set = sets.Set(old_renders.itervalues())
-    new_render_set = sets.Set(new_renders.itervalues())
+    old_render_set = set(old_renders.itervalues())
+    new_render_set = set(new_renders.itervalues())
 
     dead_render_set = old_render_set - new_render_set
 
@@ -217,7 +221,7 @@ def render_screen(widget, width, height, st):
     new_renders.clear()
 
     # Figure out which widgets are still alive.
-    live_widgets = sets.Set()
+    live_widgets = set()
     for widget, height, width in old_renders:
         live_widgets.add(widget)
 
@@ -247,8 +251,8 @@ def compute_clip(source):
 
     source.blit_to(clipsurf, 0, 0)
 
-    bl0 = old_blits[:]
-    bl1 = new_blits[:]
+    bl0 = old_blits
+    bl1 = new_blits
 
     # Backup blits.
     old_blits = new_blits
@@ -338,8 +342,6 @@ def compute_clip(source):
         if h > sh - y0:
             h = sh - y0
 
-        if w * h >= sa:
-            return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
         if w * h >= sa:
             return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
             
@@ -720,73 +722,80 @@ class Render(object):
         destination surface.
         """
 
+        worklist = [ (self, x, y) ]
+
+        destw, desth = dest_size = dest.get_size()
         
-        if self.draw_func:
-
-            if x >= 0:
-                newx = 0
-                subx = x
-            else:
-                newx = x
-                subx = 0
-
-            if y >= 0:
-                newy = 0
-                suby = y
-            else:
-                newy = y
-                suby = 0
-
-            destw, desth = dest.get_size()
-
-            if subx >= destw or suby >= desth:
-                return
-
-            # newx and newy are the offset of this render relative to the
-            # subsurface. They can only be negative or 0, as otherwise we
-            # would make a smaller subsurface.
-                
-            subw = min(destw - subx, self.width + newx) 
-            subh = min(desth - suby, self.height + newy)
-
-            if subw <= 0 or subh <= 0:
-                return
-
-            dest = dest.subsurface((subx, suby, subw, subh))
-
-            if dest.__class__ is ClipSurface:
-                dest.force()
-            else:
-                self.draw_func(dest, newx, newy)
-
-            return
-
-        # Note... none of this runs if self.draw_func is True.
-
-        fullscreen = 0
-        i = 0
-        dsize = dest.get_size()
-        
-        for xo, yo, source in self.blittables:
-           if is_fullscreen(source, x + xo, y + yo, dsize):
-               fullscreen = i
-           i += 1
-
-           
         winblit = dest is renpy.game.interface.display.window
-        if winblit:
-            cacheget = renpy.display.im.rle_cache.get # bound method.
-        
-        for xo, yo, source in self.blittables[fullscreen:]:
-            if source.__class__ is pygame.Surface:
+        cacheget = renpy.display.im.rle_cache.get # bound method.
+
+        while worklist:
+
+            what, x, y = worklist.pop()
+
+            if what.__class__ is pygame.Surface:
 
                 if winblit:
-                    source = cacheget(id(source), source)
-                   
-                dest.blit(source, (x + xo, y + yo))
-            else:
-                source.blit_to(dest, x + xo, y + yo)
+                    what = cacheget(id(what), what)
 
+                dest.blit(what, (x, y))
+                continue
+
+            
+            if what.draw_func:
+
+                if x >= 0:
+                    newx = 0
+                    subx = x
+                else:
+                    newx = x
+                    subx = 0
+
+                if y >= 0:
+                    newy = 0
+                    suby = y
+                else:
+                    newy = y
+                    suby = 0
+
+                if subx >= destw or suby >= desth:
+                    return
+
+                # newx and newy are the offset of this render relative to the
+                # subsurface. They can only be negative or 0, as otherwise we
+                # would make a smaller subsurface.
+
+                subw = min(destw - subx, what.width + newx) 
+                subh = min(desth - suby, what.height + newy)
+
+                if subw <= 0 or subh <= 0:
+                    return
+
+                newdest = dest.subsurface((subx, suby, subw, subh))
+                
+                if newdest.__class__ is ClipSurface:
+                    newdest.force()
+                else:
+                    what.draw_func(newdest, newx, newy)
+
+                continue
+
+            fullscreen = 0
+            i = 0
+
+            if x <= 0 and y <= 0:
+            
+                for xo, yo, source in what.blittables:
+                    if is_fullscreen(source, x + xo, y + yo, dest_size):
+                       fullscreen = i
+                    i += 1
+                    
+            wll = len(worklist)
+            
+            for xo, yo, source in what.blittables[fullscreen:]:
+                worklist.insert(wll, (source, x + xo, y + yo))
+
+                
     def fill(self, color):
         """
         Fake a pygame.Surface.fill()
@@ -1006,15 +1015,8 @@ class Render(object):
         return rv
             
         
-        
-def is_fullscreen(surf, x, y, wh):
-    if renpy.config.disable_fullscreen_opt:
-        return False
-
-    return is_fullscreen_core(surf, x, y, wh)
-
 # Determine if a surface is fullscreen or not.
-def is_fullscreen_core(surf, x, y, wh):
+def is_fullscreen(surf, x, y, wh):
 
     w, h = wh
     sw, sh = surf.get_size()
@@ -1044,7 +1046,7 @@ def is_fullscreen_core(surf, x, y, wh):
         return True
 
     for xo, yo, source in surf.blittables:
-        if is_fullscreen_core(source, x + xo, y + yo, wh):
+        if is_fullscreen(source, x + xo, y + yo, wh):
             surf.fullscreen[xywh] = True
             return True
 

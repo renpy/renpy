@@ -207,7 +207,10 @@ def init():
         for r in roles:
             for p in prefixes + [ '' ]:
                 expansions[r + p + k] = [ a for b in substitutes[k] for a in expansions[r + p + b] ]
-        
+
+    for i in ('xpos', 'xanchor', 'xoffset', 'ypos', 'yanchor', 'yoffset'):
+        globals()["prop_" + i] = property_number[i]
+                
             
 init()
 
@@ -591,7 +594,20 @@ class Style(object):
             self.indexed[index] = s
         
         return s
-            
+
+    # This is here to accelerate Displayable.get_placement.
+    def get_placement(self):
+        o = self.offset
+        c = self.cache
+        return (
+            c[o + prop_xpos],
+            c[o + prop_ypos],
+            c[o + prop_xanchor],
+            c[o + prop_yanchor],
+            c[o + prop_xoffset],
+            c[o + prop_yoffset],
+            )
+    
 
 def write_text(filename):
 
