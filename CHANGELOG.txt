@@ -103,6 +103,8 @@ Fixed a bug that manifested when a RotoZoom was larger than the screen.
 
 Fixed a bug that prevented At from being applied to Motions in init blocks.
 
+
+
 New in Ren'Py 6.4.0
 -------------------
 
