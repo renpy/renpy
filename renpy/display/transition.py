@@ -1039,8 +1039,10 @@ class ImageDissolve(Transition):
         bottom_surface = bottom.pygame_surface(True)
         top_surface = top.pygame_surface(True)
 
-        width = min(bottom.width, top.width, image.width)
-        height = min(bottom.height, top.height, image.height)
+        iw, ih = image.get_size()
+
+        width = min(bottom.width, top.width, iw)
+        height = min(bottom.height, top.height, ih)
             
         def draw(dest, x, y):
 
