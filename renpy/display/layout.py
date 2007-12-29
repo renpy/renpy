@@ -1557,8 +1557,6 @@ class RotoZoom(renpy.display.core.Displayable):
         ydy = math.cos(angle) / zoom
 
         def draw(dest, xo, yo):
-
-            print xo, yo
             
             if not self.opaque:
                 target = pygame.Surface(dest.get_size(), 0,

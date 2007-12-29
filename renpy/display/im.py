@@ -1023,8 +1023,6 @@ class matrix(tuple):
         return matrix([ i * other for i in self ])
 
     def vector_mul(self, o):
-        print "XXX", self
-        print "YYY", o
         
         return (o[0]*self[0] + o[1]*self[1] + o[2]*self[2] + o[3]*self[3] + self[4],
                 o[0]*self[5] + o[1]*self[6] + o[2]*self[7] + o[3]*self[8] + self[9],
