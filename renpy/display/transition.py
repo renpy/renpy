@@ -287,10 +287,7 @@ class Pixellate(Transition):
         renpy.display.module.pixellate(surf, self.surface, px, px, px, px)
         renpy.display.render.mutated_surface(self.surface)
 
-        width = min(width, rdr.width)
-        height = min(height, rdr.height)
-        
-        rv = renpy.display.render.Render(width, height)
+        rv = renpy.display.render.Render(rdr.width, rdr.height)
         rv.blit(self.surface, (0, 0))
 
         if self.events:
@@ -345,18 +342,19 @@ class Dissolve(Transition):
         bottom_surface = bottom.pygame_surface(self.alpha)
         top_surface = top.pygame_surface(self.alpha)
         
-        width = min(width, top.width, bottom.width)
-        height = min(height, top.height, bottom.height)
+        width = min(top.width, bottom.width)
+        height = min(top.height, bottom.height)
 
         def draw(dest, x, y):
 
             dw, dh = dest.get_size()
-            tw, th = top_surface.get_size()
-            bw, bh = bottom_surface.get_size()
 
-            w = min(dw, tw + x, bw + x)
-            h = min(dh, th + y, bh + y)
+            w = min(dw, width + x)
+            h = min(dh, height + x)
 
+            if w <= 0 or h <= 0:
+                return
+            
             renpy.display.module.blend(
                 bottom_surface.subsurface((-x, -y, w, h)),
                 top_surface.subsurface((-x, -y, w, h)),
@@ -1041,18 +1039,15 @@ class ImageDissolve(Transition):
         bottom_surface = bottom.pygame_surface(True)
         top_surface = top.pygame_surface(True)
 
-        width = min(bottom.width, top.width, width)
-        height = min(bottom.height, top.height, height)
+        width = min(bottom.width, top.width, image.width)
+        height = min(bottom.height, top.height, image.height)
             
         def draw(dest, x, y):
 
             dw, dh = dest.get_size()
-            tw, th = top_surface.get_size()
-            bw, bh = bottom_surface.get_size()
-            iw, ih = image.get_size()
 
-            w = min(dw, tw + x, bw + x, iw + x)
-            h = min(dh, th + y, bh + y, ih + y)
+            w = min(dw, width + x)
+            h = min(dh, height + y)
 
             renpy.display.module.imageblend(
                 bottom_surface.subsurface((-x, -y, w, h)),

@@ -617,21 +617,15 @@ class Render(object):
 
     def keep_alive(self):
 
-        # assert not self.dead
-
         for widget, width, height in self.render_of:
             new_renders[widget, width, height] = self
 
         for i in self.children:
-
-            # assert self in i.parents
-
-            # assert not i.dead
-
             i.keep_alive()
 
         for i in self.depends:
             i.keep_alive()
+                
 
     def kill(self):
         """

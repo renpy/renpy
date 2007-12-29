@@ -87,6 +87,9 @@ a filename-dependent manner. This means that one can use __word in a
 file, and be sure it will not conflict with __word in a different file.
 
 
+Various performance enhancements, guided by profiling.
+
+
 Fixed a bug that made syntax errors more confusing than necessary.
 
 Fixed a bug that caused corruption in zip files created by the launcher.

@@ -732,6 +732,9 @@ class Display(object):
 
         self.mouse_event_time = get_time()
         
+        # Used for HW mouse.
+        self.mouse_old_visible = None
+        
         self.suppressed_blit = False
         self.full_redraw = True
 
@@ -820,7 +823,7 @@ class Display(object):
         self.mouse_backing = None
         self.mouse_backing_pos = None
         self.mouse_location = None 
-            
+
         return rv
 
     def draw_mouse(self, show_mouse=True):
@@ -838,7 +841,11 @@ class Display(object):
 
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:
-            pygame.mouse.set_visible(visible)
+
+            if self.mouse_old_visible != visible:
+                pygame.mouse.set_visible(visible)
+                self.mouse_old_visible = visible
+            
             return [ ]
 
         # The rest of this is for the software mouse.
