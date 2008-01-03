@@ -73,6 +73,10 @@ class ArgumentInfo(object):
         # to be supplied to this function.
         self.extrakw = extrakw
 
+
+def __newobj__(cls, *args):
+    return cls.__new__(cls, *args)  
+
 # This represents a string containing python code.
 class PyExpr(unicode):
 
@@ -87,6 +91,9 @@ class PyExpr(unicode):
         self.linenumber = linenumber
         return self
 
+    def __reduce__(self):
+        return (__newobj__, (PyExpr, unicode(self), self.filename, self.linenumber))
+    
     
 class PyCode(object):
 
