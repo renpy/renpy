@@ -91,8 +91,8 @@ class PyExpr(unicode):
         self.linenumber = linenumber
         return self
 
-    def __reduce__(self):
-        return (__newobj__, (PyExpr, unicode(self), self.filename, self.linenumber))
+    def __getnewargs__(self):
+        return (unicode(self), self.filename, self.linenumber)
     
     
 class PyCode(object):
