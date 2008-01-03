@@ -216,9 +216,6 @@ def list_logical_lines(filename):
 
             m = lllword.match(data, pos)
 
-            if m is None:
-                print repr(data[pos:])
-
             word = m.group(0)
             rest = m.group(1)
 
@@ -301,7 +298,6 @@ def group_logical_lines(lines):
         return rv, i
     
     return gll_core(0, 0)[0]
-
 
 class Lexer(object):
     """
@@ -652,13 +648,13 @@ class Lexer(object):
         """
 
         start = self.pos
-
+        
         while not self.eol():
 
             c = self.text[self.pos]
 
             if c in delim:
-                return self.text[start:self.pos]
+                return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
 
             if c == '"' or c == "'":
                 self.python_string()
@@ -679,12 +675,10 @@ class Lexer(object):
 
         rv = self.delimited_python(':')
 
-        if rv:
-            rv = rv.strip()
-
         if not rv:
             self.error("expected python_expression")
 
+        rv = renpy.ast.PyExpr(rv.strip(), rv.filename, rv.linenumber)
 
         return rv
         
@@ -1265,7 +1259,7 @@ def parse_statement(l):
             l.require(':')
             l.expect_eol()
             l.expect_block('elif clause')
-            
+
             block = parse_block(l.subblock_lexer())
             
             entries.append((condition, block))

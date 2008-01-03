@@ -182,6 +182,10 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     @param lineno: The line number of the first line of the source code.
     """
 
+    if isinstance(source, renpy.ast.PyExpr):
+        filename = source.filename
+        lineno = source.linenumber
+    
     source = source.replace("\r", "")
     source = source.encode('raw_unicode_escape')
 
@@ -189,8 +193,14 @@ def py_compile(source, mode, filename='<none>', lineno=1):
         tree = parse(source, mode)
     except SyntaxError, e:
         if e.lineno is not None:
-            e.lineno += lineno - 1
-        raise
+            msg = "Syntax error on line %d of %s" % (e.lineno + lineno - 1, filename)
+
+            if len(source) < 128:
+                msg += ":\n    " + source
+            
+            raise Exception(msg)
+        else:
+            raise
     
     recursively_replace(tree, wrap_node)
 
@@ -880,7 +890,8 @@ def py_eval_bytecode(bytecode):
     return eval(marshal.loads(bytecode), vars(renpy.store))
 
 def py_eval(source, globals=None, locals=None):
-    source = source.strip()
+    
+    # source = source.strip()
 
     if globals is None:
         globals = renpy.store.__dict__

@@ -5,8 +5,8 @@
 
 init -1110 python:
 
-    define = object()
-
+    _define = define = object()
+    
     
     # Positions ##############################################################
 

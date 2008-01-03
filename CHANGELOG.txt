@@ -1,3 +1,9 @@
+New in Ren'Py 6.5.1
+-------------------
+
+Made more syntax errors display the proper line number.
+
+
 New in Ren'Py 6.5.0
 -------------------
 

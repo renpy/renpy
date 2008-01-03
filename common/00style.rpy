@@ -260,9 +260,6 @@ init -1090 python:
     style.button_text.xpos = 0.5
     style.button_text.xanchor = 0.5
 
-    style.menu_button.xpos = 0.5
-    style.menu_button.xanchor = 0.5
-
     ######################################################################
     # Hyperlinks
     style.hyperlink_text.underline = True

@@ -73,8 +73,21 @@ class ArgumentInfo(object):
         # to be supplied to this function.
         self.extrakw = extrakw
 
-        
-        
+# This represents a string containing python code.
+class PyExpr(unicode):
+
+    __slots__ = [ 
+        'filename',
+        'linenumber'
+        ]
+
+    def __new__(cls, s, filename, linenumber):
+        self = unicode.__new__(cls, s)
+        self.filename = filename
+        self.linenumber = linenumber
+        return self
+
+    
 class PyCode(object):
 
     __slots__ = [

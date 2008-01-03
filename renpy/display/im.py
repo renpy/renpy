@@ -640,8 +640,8 @@ class SolidImage(ImageBase):
     def __init__(self, color, width, height):
         super(SolidImage, self).__init__(color, width, height)
         self.color = color
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
 
     def load(self):
 
