@@ -514,7 +514,9 @@ init -1150 python hide:
 
     pl1 = _Preference(u'Display', 'fullscreen', [
         (u'Window', False, None),
-        (u'Fullscreen', True, None),
+        (u'Fullscreen (4:3)', "4:3", None),
+        (u'Fullscreen (16:9)', "16:9", None),
+        (u'Fullscreen (16:10)', "16:10", None),
         ])
 
     pl2 = _Preference(u'Transitions', 'transitions', [

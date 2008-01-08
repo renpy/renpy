@@ -503,7 +503,7 @@ def compute_subrect(source, clipping):
 
     return (ox, oy), (sx, sy, sw, sh)
     
-def screen_blit(source, full=False, xoffset=0):
+def screen_blit(source, full=False, xoffset=0, yoffset=0):
     """
     Blits the given render to the screen. Computes the difference
     between the current blit list and old_blits.
@@ -528,12 +528,12 @@ def screen_blit(source, full=False, xoffset=0):
         sh = renpy.config.screen_height
         
         x, y, w, h = cliprect
-        cliprect = (x + xoffset, y, min(w, sw - x), h)
-        updates = [ (x + xoffset, y, min(w, sw - x), h) for x, y, w, h in updates ]
+        cliprect = (x + xoffset, y + yoffset, min(w, sw - x), h)
+        updates = [ (x + xoffset, y + yoffset, min(w, sw - x), h) for x, y, w, h in updates ]
 
     old_clip = screen.get_clip()
     screen.set_clip(cliprect)
-    source.blit_to(screen, xoffset, 0)
+    source.blit_to(screen, xoffset, yoffset)
     screen.set_clip(old_clip)
 
     return updates

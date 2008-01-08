@@ -52,6 +52,12 @@ init 1210:
 
         if compat(6, 2, 0):
             config.reject_backslash = False
+
+        if "Fullscreen" in config.translations:
+            fs = config.translations["Fullscreen"]
+            config.translations.setdefault("Fullscreen (4:3)", fs + " (4:3)")
+            config.translations.setdefault("Fullscreen (16:9)", fs + " (16:9)")
+            config.translations.setdefault("Fullscreen (16:10)", fs + " (16:10)")
             
             
 # Style compatibility.

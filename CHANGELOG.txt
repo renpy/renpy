@@ -1,7 +1,16 @@
 New in Ren'Py 6.5.1
 -------------------
 
+The display preference now includes the ability to display fullscreen
+in various aspect ratios, ensuring that Ren'Py will display correctly
+on widescreen monitors.
+
+
 Made more syntax errors display the proper line number.
+
+The Windows build now uses directsound for sound playback, where
+available. This should noticably reduce sound latency on systems that
+support it.
 
 
 New in Ren'Py 6.5.0

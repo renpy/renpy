@@ -672,32 +672,42 @@ class Display(object):
         init_time()
         
         # Setup screen.
-        self.fullscreen = renpy.game.preferences.fullscreen
-        fsflag = 0
+        fullscreen = renpy.game.preferences.fullscreen
 
-        fullscreen = self.fullscreen
+        # If we're in fullscreen mode, and changing to another mode, go to
+        # windowed mode first.
+        s = pygame.display.get_surface()
+        if s and (s.get_flags() & FULLSCREEN):
+            fullscreen = False
+            
+        self.fullscreen = fullscreen
 
         if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
             fullscreen = False
+            self.fullscreen = renpy.game.preferences.fullscreen
 
-        if fullscreen:
+        if fullscreen == "16:9":
+            fsratio = 16.0 / 9.0
+        elif fullscreen == "16:10":
+            fsratio = 16.0 / 10.0
+        elif fullscreen: # 4:3 mode.
+            fsratio = 4.0 / 3.0
+        else:
+            fsratio = None
+
+        if fsratio:
             fsflag = FULLSCREEN
-
-        width = renpy.config.screen_width
-        height = renpy.config.screen_height
-        self.screen_xoffset = 0
-
-        # Try out the widescreen mode.
-        if os.environ.get('RENPY_FULLSCREEN_WIDE', False):
-            wide_width = max(int(1.6 * height), width)
-
-            try:
-                pygame.display.set_mode((wide_width, height), fsflag, 32)
-                self.screen_xoffset = (wide_width - width) // 2 
-                width = wide_width
-            except:
-                pass
-
+            width = int(max(renpy.config.screen_width, renpy.config.screen_height * fsratio))
+            height = int(max(renpy.config.screen_height, renpy.config.screen_width / fsratio))
+            self.screen_xoffset = (width - renpy.config.screen_width) / 2
+            self.screen_yoffset = (height - renpy.config.screen_height) / 2            
+        else:
+            fsflag = 0
+            width = renpy.config.screen_width
+            height = renpy.config.screen_height
+            self.screen_xoffset = 0
+            self.screen_yoffset = 0
+            
         # Window icon.
         if renpy.config.window_icon:
             pygame.display.set_icon(
@@ -921,7 +931,7 @@ class Display(object):
 
             updates.extend(self.draw_mouse(False))
 
-            damage = renpy.display.render.screen_blit(surftree, self.full_redraw, self.screen_xoffset)
+            damage = renpy.display.render.screen_blit(surftree, self.full_redraw, self.screen_xoffset, self.screen_yoffset)
 
             if damage:
                 updates.extend(damage)
@@ -1504,6 +1514,7 @@ class Interface(object):
                     if first_pass and self.last_event:
                         x, y = pygame.mouse.get_pos()
                         x -= self.display.screen_xoffset
+                        y -= self.display.screen_yoffset
                         renpy.display.focus.mouse_handler(self.last_event, x, y, default=False)
 
                     needs_redraw = False
@@ -1666,6 +1677,7 @@ class Interface(object):
                     # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
                     x -= self.display.screen_xoffset
+                    y -= self.display.screen_yoffset
 
                     self.event_time = end_time = get_time()
 
