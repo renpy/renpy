@@ -98,6 +98,22 @@ def index_archives():
             if renpy.config.debug:
                 raise
 
+def walkdir(dir):
+    rv = [ ]
+
+    for i in os.listdir(dir):
+        if i[0] == ".":
+            continue
+
+        if os.path.isdir(dir + "/" + i):
+            for fn in walkdir(dir + "/" + i):
+                rv.append(i + "/" + fn)
+        else:
+            rv.append(i)
+
+    return rv
+        
+    
 def listdirfiles():
     """
     Returns a list of directory, file tuples known to the system. If
@@ -108,7 +124,7 @@ def listdirfiles():
 
     for i in renpy.config.searchpath:
         i = os.path.join(renpy.config.basedir, i)
-        for j in os.listdir(i):
+        for j in walkdir(i):
             rv.append((i, j))
 
     for prefix, index in archives:

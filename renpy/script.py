@@ -88,7 +88,7 @@ class Script(object):
 
     """
 
-    def __init__(self, node_callback=None):
+    def __init__(self):
         """
         Loads the script by parsing all of the given files, and then
         walking the various ASTs to initialize this Script object.
@@ -103,7 +103,6 @@ class Script(object):
                 self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
 
         self.namemap = { }
-        self.initcode = [ ]
         self.all_stmts = [ ]
         self.all_pycode = [ ]
 
@@ -114,9 +113,12 @@ class Script(object):
         dirlist = renpy.loader.listdirfiles()
 
         # A list of directory, filename w/o extension pairs. This is
-        # the basics of what we will be laoding.
+        # what we will load immediately.
         script_files = [ ]
-                
+
+        # Similar, but for modules:
+        self.module_files = [ ]
+        
         for dir, fn in dirlist:
 
             if fn.endswith(".rpy"):
@@ -124,69 +126,63 @@ class Script(object):
                     continue
 
                 fn = fn[:-4]
+                target = script_files
             elif fn.endswith(".rpyc"):
                 fn = fn[:-5]
+                target = script_files
+            elif fn.endswith(".rpym"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-5]
+                target = self.module_files
+            elif fn.endswith(".rpymc"):
+                fn = fn[:-6]
+                target = self.module_files
             else:
                 continue
-            
-            if (fn, dir) not in script_files:
-                script_files.append((fn, dir))
+                
+            if (fn, dir) not in target:
+                target.append((fn, dir))
 
+                
         # Sort script files by filename.
         script_files.sort()
-                
+
+        initcode = [ ]
+        
         for fn, dir in script_files:
-
-            # This can only be a .rpyc file, since we're loading it
-            # from an archive.
-            if dir is None:
-                if not self.load_file(dir, fn + ".rpyc", node_callback):
-                    raise Exception("Could not load from archive %s.rpyc" % fn)
-
-                continue
-                
-            # Otherwise, we're loading from disk. So we need to decide if
-            # we want to load the rpy or the rpyc file.
-            rpyfn = dir + "/" + fn + ".rpy"
-            rpycfn = dir + "/" + fn + ".rpyc"
-
-            if os.path.exists(rpyfn) and os.path.exists(rpycfn):
-                rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
-                f = file(rpycfn, "rb")
-                f.seek(-md5.digest_size, 2)
-                rpycdigest = f.read(md5.digest_size)
-                f.close()
-
-                if rpydigest == rpycdigest and not renpy.game.options.compile:
-
-                    if self.load_file(dir, fn + ".rpyc", node_callback):
-                        continue
-
-                    print "Could not load " + rpycfn
-
-                if not self.load_file(dir, fn + ".rpy", node_callback):
-                    raise Exception("Could not load file %s." % rpyfn) 
-                
-            elif os.path.exists(rpycfn):
-                if not self.load_file(dir, fn + ".rpyc", node_callback):
-                    raise Exception("Could not load file %s." % rpycfn) 
-
-            elif os.path.exists(rpyfn):
-                if not self.load_file(dir, fn + ".rpy", node_callback):
-                    raise Exception("Could not load file %s." % rpyfn) 
+            self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.
         initcode = [ (prio, index, code) for index, (prio, code) in
-                     enumerate(self.initcode) ]
+                     enumerate(initcode) ]
                      
         initcode.sort()
         
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
-        # Save the compiled bytecode to disk.
-        self.save_bytecode()
 
+    def load_module(self, name):
 
+        files = [ (fn, dir) for fn, dir in self.module_files if fn == name ]
+
+        if not files:
+            raise Exception("Module %s could not be loaded." % name)
+
+        if len(files) > 2:
+            raise Exception("Module %s ambiguous, multiple variants exist." % name)
+
+        fn, dir = files[0]
+        initcode = [ ]
+
+        self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
+
+        initcode.sort()
+
+        return initcode
+
+        
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.
 
@@ -221,15 +217,14 @@ class Script(object):
 
     def load_file_core(self, dir, fn):
         
-        if fn.endswith(".rpy"):
+        if fn.endswith(".rpy") or fn.endswith(".rpym"):
 
             if not dir:
-                raise Exception("Cannot load rpy file %s from inside an archive." % fn) 
+                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn) 
 
             fullfn = dir + "/" + fn
 
             stmts = renpy.parser.parse(fullfn)
-
             
             data = { }
             data['version'] = script_version
@@ -258,7 +253,7 @@ class Script(object):
             except:
                 pass
 
-        elif fn.endswith(".rpyc"):
+        elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
 
             f = renpy.loader.load(fn)
 
@@ -285,7 +280,7 @@ class Script(object):
 
 
 
-    def load_file(self, dir, fn, node_callback):
+    def load_file(self, dir, fn, initcode):
 
 
         # Actually do the loading.
@@ -312,9 +307,6 @@ class Script(object):
         # Check each node individually.
         for node in all_stmts:
 
-            if node_callback:
-                node_callback(node)
-
             # Check to see if the name is defined twice. If it is,
             # report the error.
             name = node.name
@@ -332,7 +324,7 @@ class Script(object):
             # Add any init nodes to self.initcode.
             init = node.get_init()
             if init:
-                self.initcode.append(init)
+                initcode.append(init)
 
             # Add any PyCode to all_pycode.
             self.all_pycode.extend(node.get_pycode())
@@ -350,6 +342,46 @@ class Script(object):
         self.all_stmts.extend(all_stmts)
 
         return True
+
+    
+    def load_appropriate_file(self, compiled, source, dir, fn, initcode):
+        # This can only be a .rpyc file, since we're loading it
+        # from an archive.
+        if dir is None:
+            if not self.load_file(dir, fn + compiled, initcode):
+                raise Exception("Could not load from archive %s.%s" % (fn, compiled))
+            return
+            
+        # Otherwise, we're loading from disk. So we need to decide if
+        # we want to load the rpy or the rpyc file.
+        rpyfn = dir + "/" + fn + source
+        rpycfn = dir + "/" + fn + compiled
+
+        if os.path.exists(rpyfn) and os.path.exists(rpycfn):
+            rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
+            f = file(rpycfn, "rb")
+            f.seek(-md5.digest_size, 2)
+            rpycdigest = f.read(md5.digest_size)
+            f.close()
+
+            if rpydigest == rpycdigest and not renpy.game.options.compile:
+
+                if self.load_file(dir, fn + compiled, initcode):
+                    return
+
+                print "Could not load " + rpycfn
+
+            if not self.load_file(dir, fn + source, initcode):
+                raise Exception("Could not load file %s." % rpyfn) 
+
+        elif os.path.exists(rpycfn):
+            if not self.load_file(dir, fn + compiled, initcode):
+                raise Exception("Could not load file %s." % rpycfn) 
+
+        elif os.path.exists(rpyfn):
+            if not self.load_file(dir, fn + source, initcode):
+                raise Exception("Could not load file %s." % rpyfn) 
+        
     
     def init_bytecode(self):
         """

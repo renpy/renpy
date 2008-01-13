@@ -1,5 +1,10 @@
-New in Ren'Py 6.5.1
+New in Ren'Py 6.6.0
 -------------------
+
+Ren'Py now supports modules which can be loaded with the
+renpy.load_module function. Modules are stored in .rpym files, which
+get compiled down to .rpymc files. [doc]
+
 
 The display preference now includes the ability to display fullscreen
 in various aspect ratios, ensuring that Ren'Py will display correctly

@@ -256,9 +256,12 @@ def main():
         game.context().run(node)
 
     game.init_phase = False
-
+    
     renpy.game.exception_info = 'After initialization, but before game start.'
 
+    # Save the bytecode in a cache.
+    renpy.game.script.save_bytecode()
+    
     # Rebuild the various style caches.
     renpy.style.build_styles()
 

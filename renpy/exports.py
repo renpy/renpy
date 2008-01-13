@@ -1078,3 +1078,23 @@ def scry():
 
 def munged_filename():
     return renpy.parser.munge_filename(get_filename_line()[0])
+
+def load_module(name, **kwargs):
+
+    if not renpy.game.init_phase:
+        raise Exception("Module loading is only allowed in init code.")
+
+    initcode = renpy.game.script.load_module(name)
+
+    context = renpy.execution.Context(False)
+    renpy.game.contexts.append(context)
+    
+    context.make_dynamic(kwargs)
+    renpy.store.__dict__.update(kwargs)
+    
+    for prio, node in initcode:
+        renpy.game.context().run(node)
+
+    context.pop_all_dynamic()
+        
+    renpy.game.contexts.pop()
