@@ -7,352 +7,258 @@
 # touched by the user too much. We reserve the _ prefix for names
 # defined in the library.
 
-init -1180:
-    python:
-        
-        # These are settings that the user can tweak to control the
-        # look of the main menu and the load/save/escape screens.
-
-        # The minimum version of the module we work with. Don't change
-        # this unless you know what you're doing.
-        config.module_version = 6002001
-
-        # Should we warn the user if the module is missing or has a bad
-        # version?
-        config.module_warning = False
-
-        # Used to translate strings in the config.
-        config.translations = { }
-
-        # Used internally to maintain compatiblity with old
-        # translations of strings.
-        config.old_names = { }
-
-        # True if the skip indicator should be shown.
-        config.skip_indicator = True
-
-        # Used to ensure library compatibility.
-        config.script_version = None
-
-        # A dict of 5-tuples mapping button labels to image buttons.
-        config.image_buttons = { }
-
-        # A dict mapping label to image.
-        config.image_labels = { }
-
-        # Maps from button or label to additional properties.
-        config.button_properties = { }
-        config.button_text_properties = { }
-        config.label_properties = { }
-
-        # Defaults for preferences.
-        config.default_fullscreen = None
-        config.default_text_cps = None        
-        
-        # This is updated to give the user an idea of where a save is
-        # taking place.
-        save_name = ''
-
-        style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
-
-        # This is used to jump to a label with a transition.
-        def _intra_jumps_core(label, transition):
-            renpy.transition(getattr(config, transition))
-            renpy.jump(label)
-
-        _intra_jumps = renpy.curry(_intra_jumps_core)
-        
-        def _button_factory(label,
-                            type=None,
-                            selected=None,
-                            disabled=False,
-                            clicked=None,
-                            properties={},
-                            index=None,
-                            **props):
-            """
-            This function is called to create the various buttons used
-            in the game menu. By overriding this function, one can
-            (for example) replace the default textbuttons with image buttons.
-            When it is called, it's expected to add a button to the screen.
-
-            @param label: The label of this button, before translation. 
-
-            @param type: The type of the button. One of "mm" (main menu),
-            "gm_nav" (game menu), "file_picker_nav", "yesno", or "prefs".
-
-            @param selected: True if the button is selected, False if not,
-            or None if it doesn't matter.
-
-            @param disabled: True if the button is disabled, False if not.
-
-            @param clicked: A function that should be executed when the
-            button is clicked.
-
-            @param properties: Addtional layout properties.
-            """
-
-            props.update(properties)
-            props.update(config.button_properties.get(label, { }))
-            
-            if disabled:
-                clicked = None
-
-            if selected and not disabled:
-                role = "selected_"
-            else:
-                role = ""
-
-                
-            if label in config.image_buttons:
-                
-                (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
-
-                ui.imagebutton(idle,
-                               hover,
-                               disabled,
-                               hover,
-                               sel_idle,
-                               sel_hover,
-                               disabled,
-                               sel_hover,
-                               clicked=clicked,
-                               style=style.image_button[label],
-                               role=role,
-                               **props)
-                
-                return
-
-            button_style = type + "_button"
-            text_style = type + "_button_text"
-
-            if index is None:
-                index = label
-            
-            button_style = getattr(style, button_style)[index]
-            text_style = getattr(style, text_style)[index]
-            
-            ui.button(style=button_style, clicked=clicked, role=role, **props)
-            ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
-            
-        def _label_factory(label, type, properties={}, **props):
-            """
-            This function is called to create a new label. It can be
-            overridden by the user to change how these labels are created.
-
-            @param label: The label of the box.
-
-            @param type: "prefs" or "yesno". (perhaps more by now.)
-
-            @param properties: This may contain position properties.
-            """
-
-            props.update(properties)
-            props.update(config.label_properties.get(label, { }))
-
-            if label in config.image_labels:
-                ui.image(config.image_labels[label], **props)
-                return
-
-            style = getattr(store.style, type + "_label")[label]
-            
-            ui.text(_(label), style=style, **props)
-
-        # The function that's used to translate strings in the game menu.
-        def _(s):
-            """
-            Translates s into another language or something.
-            """
-            
-            if s in config.translations:
-                return config.translations[s]
-
-            if s in config.old_names and config.old_names[s] in config.translations:
-                return config.translations[config.old_names[s]]
-
-            return s
-
-        # Are the windows currently hidden?
-        _windows_hidden = False
-
-    # Set up the default keymap.    
-    python hide:
-
-        # Called to make a screenshot happen.
-        def screenshot():
-            import os.path
-
-            i = 1
-            while True:
-                fn = "screenshot%04d.png" % i
-                if not os.path.exists(fn):
-                    break
-                i += 1
-            
-            renpy.screenshot(fn)
-
-        def dump_styles():
-            if config.developer:
-                renpy.style.write_text("styles.txt")
-
-        def invoke_game_menu():
-            renpy.call_in_new_context('_game_menu')
-
-        def toggle_skipping():
-
-            if not config.skipping:
-                config.skipping = "slow"
-            else:
-                config.skipping = None
-
-            renpy.restart_interaction()
-
-        def fast_skip():
-            if config.fast_skipping or config.developer:
-                config.skipping = "fast"
-
-        def reload_game():
-            if not config.developer:
-                return
-
-            renpy.call_in_new_context("_save_reload_game")
-
-        def launch_editor():
-            if not config.developer:
-                return
-            
-            filename, line = renpy.get_filename_line()
-            renpy.launch_editor([ filename ], line)
-
-        def debugger():
-
-            if not config.developer:
-                return
-            
-            ui.saybehavior()
-            
-            ui.add("#000")
-
-            width = config.screen_width - 30
-
-            vp = ui.viewport(xmaximum=width, ymaximum=config.screen_height - 10, xpos=5, ypos=5)
-            ui.vbox(4)
-
-            ui.text("Variable value debugger.\n", size=12, color="#fff")
-            
-            ebc = renpy.game.log.ever_been_changed
-            ebc = list(ebc)
-            ebc.sort()
-
-            ebc.remove("nvl_list")
-        
-            import repr
-            aRepr = repr.Repr()
-            aRepr.maxstring = 40
-            
-            for var in ebc:
-                if not hasattr(store, var):
-                    continue
-
-                if var[0] == "_":
-                    continue
-                
-                val = aRepr.repr(getattr(store, var))
-                ui.text((var + " = " + val).replace("{", "{{"),
-                        size=12, color="#fff")
-                                                     
-
-            ui.text("\nClick to continue.\n", size=12, color="#fff")
-                
-            ui.close()
-
-            ui.bar(1.0, 0.0,
-                   style='vscrollbar',
-                   xpos=config.screen_width - 5,
-                   xanchor=1.0,
-                   changed=vp.set_yoffset)
-            
-            ui.interact(suppress_overlay=True, suppress_underlay=True)
-            
-
-            
-        # The default keymap.
-        km = renpy.Keymap(
-            rollback = renpy.rollback,
-            screenshot = screenshot,
-            toggle_fullscreen = renpy.toggle_fullscreen,
-            toggle_music = renpy.toggle_music,
-            toggle_skip = toggle_skipping,
-            fast_skip = fast_skip,
-            game_menu = invoke_game_menu,
-            hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
-            launch_editor = launch_editor,
-            dump_styles = dump_styles,
-            reload_game = reload_game,
-            debugger = renpy.curried_invoke_in_new_context(debugger),
-            )
-
-        config.underlay = [ km ]
-
-
-    # The skip indicator.
-    python hide:
-
-        def skip_indicator():
-
-            ### skip_indicator default
-            # (text) The style and placement of the skip indicator.            
-
-            if config.skip_indicator is True:
-
-                if config.skipping == "slow" and config.skip_indicator:
-                    ui.text(_(u"Skip Mode"), style='skip_indicator')
-
-                if config.skipping == "fast" and config.skip_indicator:
-                    ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
-
-                return
-
-            if not config.skip_indicator:
-                return
-
-            if not config.skipping:
-                return
-
-            ui.add(renpy.easy.displayable(config.skip_indicator))
-                    
-        config.overlay_functions.append(skip_indicator)
-
-    # The default hyperlink handler.
-    python hide:
-
-        def hyperlink_function(target):
-            if target.startswith("http:"):
-                try:
-                    import webbrowser
-                    webbrowser.open(target)
-                except:
-                    pass
-            else:
-                renpy.call_in_new_context(target)
-
-        config.hyperlink_callback = hyperlink_function
+init -1180 python:
+
+    # These are settings that the user can tweak to control the
+    # look of the main menu and the load/save/escape screens.
+
+    # The minimum version of the module we work with. Don't change
+    # this unless you know what you're doing.
+    config.module_version = 6002001
+
+    # Should we warn the user if the module is missing or has a bad
+    # version?
+    config.module_warning = False
+
+    # Used to translate strings in the config.
+    config.translations = { }
+
+    # Used internally to maintain compatiblity with old
+    # translations of strings.
+    config.old_names = { }
+
+    # True if the skip indicator should be shown.
+    config.skip_indicator = True
+
+    # Defaults for preferences.
+    config.default_fullscreen = None
+    config.default_text_cps = None        
+
+    # This is updated to give the user an idea of where a save is
+    # taking place.
+    save_name = ''
+
+    _window_during_transitions = False
+
+    def _default_with_callback(trans, paired=None):
+        if (_window_during_transitions and not
+            renpy.context_nesting_level() and
+            not renpy.count_displayables_in_layer('transient')):
+
+            narrator("", interact=False)
+
+        return trans
+
+    config.with_callback = _default_with_callback
+
+    style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
+
+    # This is used to jump to a label with a transition.
+    def _intra_jumps_core(label, transition):
+        renpy.transition(getattr(config, transition))
+        renpy.jump(label)
+
+    _intra_jumps = renpy.curry(_intra_jumps_core)
+
+
+    # The function that's used to translate strings in the game menu.
+    def _(s):
+        """
+        Translates s into another language or something.
+        """
+
+        if s in config.translations:
+            return config.translations[s]
+
+        if s in config.old_names and config.old_names[s] in config.translations:
+            return config.translations[config.old_names[s]]
+
+        return s
+
+    # Are the windows currently hidden?
+    _windows_hidden = False
+
+    # Set up the default keymap.
+init -1180 python hide:
+
+    # Called to make a screenshot happen.
+    def screenshot():
+        import os.path
+
+        i = 1
+        while True:
+            fn = "screenshot%04d.png" % i
+            if not os.path.exists(fn):
+                break
+            i += 1
+
+        renpy.screenshot(fn)
+
+    def dump_styles():
+        if config.developer:
+            renpy.style.write_text("styles.txt")
+
+    def invoke_game_menu():
+        renpy.call_in_new_context('_game_menu')
+
+    def toggle_skipping():
+
+        if not config.skipping:
+            config.skipping = "slow"
+        else:
+            config.skipping = None
+
+        renpy.restart_interaction()
+
+    def fast_skip():
+        if config.fast_skipping or config.developer:
+            config.skipping = "fast"
+
+    def reload_game():
+        if not config.developer:
+            return
+
+        renpy.call_in_new_context("_save_reload_game")
+
+    def launch_editor():
+        if not config.developer:
+            return
+
+        filename, line = renpy.get_filename_line()
+        renpy.launch_editor([ filename ], line)
+
+    def debugger():
+
+        if not config.developer:
+            return
+
+        ui.saybehavior()
+
+        ui.add("#000")
+
+        width = config.screen_width - 30
+
+        vp = ui.viewport(xmaximum=width, ymaximum=config.screen_height - 10, xpos=5, ypos=5)
+        ui.vbox(4)
+
+        ui.text("Variable value debugger.\n", size=12, color="#fff")
+
+        ebc = renpy.game.log.ever_been_changed
+        ebc = list(ebc)
+        ebc.sort()
+
+        ebc.remove("nvl_list")
+
+        import repr
+        aRepr = repr.Repr()
+        aRepr.maxstring = 40
+
+        for var in ebc:
+            if not hasattr(store, var):
+                continue
+
+            if var[0] == "_":
+                continue
+
+            val = aRepr.repr(getattr(store, var))
+            ui.text((var + " = " + val).replace("{", "{{"),
+                    size=12, color="#fff")
+
+
+        ui.text("\nClick to continue.\n", size=12, color="#fff")
+
+        ui.close()
+
+        ui.bar(1.0, 0.0,
+               style='vscrollbar',
+               xpos=config.screen_width - 5,
+               xanchor=1.0,
+               changed=vp.set_yoffset)
+
+        ui.interact(suppress_overlay=True, suppress_underlay=True)
+
+
+
+    # The default keymap.
+    km = renpy.Keymap(
+        rollback = renpy.rollback,
+        screenshot = screenshot,
+        toggle_fullscreen = renpy.toggle_fullscreen,
+        toggle_music = renpy.toggle_music,
+        toggle_skip = toggle_skipping,
+        fast_skip = fast_skip,
+        game_menu = invoke_game_menu,
+        hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
+        launch_editor = launch_editor,
+        dump_styles = dump_styles,
+        reload_game = reload_game,
+        debugger = renpy.curried_invoke_in_new_context(debugger),
+        )
+
+    config.underlay = [ km ]
+
+    def skip_indicator():
+
+        ### skip_indicator default
+        # (text) The style and placement of the skip indicator.            
+
+        if config.skip_indicator is True:
+
+            if config.skipping == "slow" and config.skip_indicator:
+                ui.text(_(u"Skip Mode"), style='skip_indicator')
+
+            if config.skipping == "fast" and config.skip_indicator:
+                ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
+
+            return
+
+        if not config.skip_indicator:
+            return
+
+        if not config.skipping:
+            return
+
+        ui.add(renpy.easy.displayable(config.skip_indicator))
+
+    config.overlay_functions.append(skip_indicator)
+
+
+    def hyperlink_function(target):
+        if target.startswith("http:"):
+            try:
+                import webbrowser
+                webbrowser.open(target)
+            except:
+                pass
+        else:
+            renpy.call_in_new_context(target)
+
+    config.hyperlink_callback = hyperlink_function
         
 
-    # The default with callback.
-    python:
-        _window_during_transitions = False
+    config.extend_interjection = "{fast}"
+    
+    def extend(what, interact=True):
+        who = _last_say_who
 
-        def _default_with_callback(trans, paired=None):
-            if (_window_during_transitions and not
-                renpy.context_nesting_level() and
-                not renpy.count_displayables_in_layer('transient')):
+        if who is not None:
+            who = eval(who)
 
-                narrator("", interact=False)
+        if who is None:
+            who = narrator 
+            
+        if isinstance(who, basestring):
+            who = unknown.copy(who)
 
-            return trans
+        # This ensure extend works even with NVL mode.
+        who.do_extend()
+            
+        what = _last_say_what + config.extend_interjection + what
+            
+        renpy.exports.say(who, what, interact=interact)
+        store._last_say_what = what
         
-        config.with_callback = _default_with_callback
+    extend.record_say = False
 
 
 label _hide_windows:
@@ -450,9 +356,6 @@ init 1180 python:
         if config.default_text_cps is not None:
             _preferences.text_cps = config.default_text_cps
 
-# Implement the inspector:
-init 1180 python:
-
     if config.developer:
 
         def _inspector(l):
@@ -496,31 +399,249 @@ init 1180 python:
 
         config.inspector = _inspector
         
+##############################################################################
+# Code that originated in 00gamemenu.rpy
+init -1160 python:
 
+    ######################################################################
+    # First up, we define a bunch of configuration variable, which the
+    # user can change.
+
+    # Sound played when entering the library without clicking a
+    # button.
+    config.enter_sound = None
+
+    # Sound played when leaving the library without clicking a
+    # button.
+    config.exit_sound = None
+
+    # Transition that occurs when entering the game menu.
+    config.enter_transition = None
+
+    # Transition that occurs when leaving the game menu.
+    config.exit_transition = None
+
+    # Transition that's used when going from one screen to another.
+    config.intra_transition = None
+
+    # Transition that's used when going from the main to the game
+    # menu.
+    config.main_game_transition = None
+
+    # Transition that's used when going from the game to the main
+    # menu.
+    config.game_main_transition = None
+
+    # Transition that's used at the end of the game, when returning
+    # to the main menu.
+    config.end_game_transition = None
+
+    # Transition that's used at the end of the splash screen, when
+    # it is shown.
+    config.end_splash_transition = None
+
+    # Do we have autosave and quicksave?
+    config.has_autosave = True
+    config.has_quicksave = False
+
+    # The screen that we go to when entering the game menu.
+    _game_menu_screen = "save_screen"
+
+    def _show_exception(title, message):
+
+        ui.window(style='error_root')
+        ui.vbox()
+
+        ui.text(title, style='error_title')
+        ui.text("")
+        ui.text(message, style='error_body')
+        ui.text("")
+        ui.text(_(u"Please click to continue."), style='error_body')
+
+        ui.close()
+
+        ui.saybehavior()
+
+        ui.interact()
+
+# Run at the end of init, to set up autosaving based on the user's
+# choices.
+init 1160 python:
+
+    if config.has_autosave:
+        config.autosave_slots = 20
+    else:
+        config.autosave_frequency = None
+            
+# This is the code that executes when entering a menu context, except
+# for the scene statement.
+label _enter_menu_without_scene:
+    $ renpy.movie_stop()
+    $ renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
+
+    # This may be changed, if we are already in the main menu.
+    $ renpy.context().main_menu = False
+
+    return
+
+label _enter_menu:
+    call _enter_menu_without_scene from _call_enter_menu_without_scene_1
+
+    $ renpy.dynamic("_mouse_visible")
+    $ _mouse_visible = True
+
+    $ ui.clear()
+    return
     
-# Implement the extend character-like object.
-init -1180 python:
+# Factored this all into one place, to make our lives a bit easier.
+label _enter_game_menu:
+    call _enter_menu from _call__enter_menu_2
 
-    config.extend_interjection = "{fast}"
+    $ renpy.transition(config.enter_transition)
+
+    if renpy.has_label("enter_game_menu"):
+        call expression "enter_game_menu" from _call_enter_game_menu_1
+
+    if config.game_menu_music:
+        $ renpy.music.play(config.game_menu_music, if_changed=True)
+
+    return
+
+# Entry points from the game into menu-space.
+label _game_menu(_game_menu_screen=_game_menu_screen):
+    if not _game_menu_screen:
+        return
+
+    $ renpy.play(config.enter_sound)
     
-    def extend(what, interact=True):
-        who = _last_say_who
+    call _enter_game_menu from _call__enter_game_menu_0
 
-        if who is not None:
-            who = eval(who)
-
-        if who is None:
-            who = narrator 
-            
-        if isinstance(who, basestring):
-            who = unknown.copy(who)
-
-        # This ensure extend works even with NVL mode.
-        who.do_extend()
-            
-        what = _last_say_what + config.extend_interjection + what
-            
-        renpy.exports.say(who, what, interact=interact)
-        store._last_say_what = what
+    if renpy.has_label("game_menu"):
+        jump expression "game_menu"
         
-    extend.record_say = False
+    jump expression _game_menu_screen
+
+label _game_menu_save:
+    call _enter_game_menu from _call__enter_game_menu_1
+    jump _save_screen
+
+label _game_menu_load:
+    call _enter_game_menu from _call__enter_game_menu_2
+    jump _load_screen
+
+label _game_menu_preferences:
+    call _enter_game_menu from _call__enter_game_menu_3
+    jump _prefs_screen
+
+label _quit:
+    $ renpy.quit()
+
+label _return_skipping:
+    $ config.skipping = "slow"
+    jump _return
+    
+# Make some noise, then return.
+label _noisy_return:
+    $ renpy.play(config.exit_sound)
+
+# Return to the game.
+label _return:
+
+    if renpy.context().main_menu:
+        $ renpy.transition(config.game_main_transition)
+        jump _main_menu
+
+    $ renpy.transition(config.exit_transition)
+
+    return
+
+label _confirm_quit:
+    call _enter_menu from _call__enter_menu_3
+
+    if renpy.has_label("confirm_quit"):
+        jump expression "confirm_quit"
+    else:
+        jump expression "quit_screen"
+
+
+##############################################################################
+# Code that originated in 00mainmenu.rpy
+
+init -1170 python hide:
+
+    # Music to play at the main menu.
+    config.main_menu_music = None
+
+    # Callbacks to run at start.
+    config.start_callbacks = [ ]
+
+# This is the true starting point of the program. Sssh... Don't
+# tell anyone.
+label _start:
+
+    python hide:
+        for i in config.start_callbacks:
+            i()
+    
+    call _check_module from _call__check_module_1
+
+    call _load_reload_game from _call__load_reload_game_1
+
+    scene black
+
+    if not _restart:
+        $ ui.pausebehavior(0)
+        $ ui.interact(suppress_underlay=True, suppress_overlay=True)
+
+    $ renpy.block_rollback()
+
+    $ _old_game_menu_screen = _game_menu_screen
+    $ _game_menu_screen = None
+    
+    if renpy.has_label("splashscreen") and not _restart:
+        call expression "splashscreen" from _call_splashscreen_1
+
+    $ _game_menu_screen = _old_game_menu_screen
+    $ del _old_game_menu_screen
+        
+    $ renpy.block_rollback()
+
+    if config.main_menu_music:
+        $ renpy.music.play(config.main_menu_music, if_changed=True)
+
+    # Clean out any residual scene from the splashscreen.
+    scene black
+
+    if getattr(store, "_restart", None) is None:
+        $ renpy.transition(config.end_splash_transition)
+    elif _restart == "main_menu":
+        $ renpy.transition(config.game_main_transition)
+    else:
+        $ renpy.transition(config.end_game_transition)
+        
+    
+    $ renpy.call_in_new_context("_enter_main_menu")
+
+    # If the main menu returns, then start the game.
+    jump start
+
+# At this point, we've been switched into a new context. So we
+# initialize it.
+label _enter_main_menu:
+
+    call _enter_menu from _call__enter_menu_1
+
+    $ renpy.context().main_menu = True
+    
+# This is called to show the main menu to the user.
+label _main_menu:    
+
+    # Let the user completely override the main menu. (But please note
+    # it still lives in the menu context, rather than the game context.)
+    if renpy.has_label("main_menu"):
+        jump expression "main_menu"
+    
+    if renpy.has_label("_library_main_menu"):
+        jump expression "_library_main_menu"
+   
+    return

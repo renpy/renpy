@@ -6,7 +6,7 @@
 # This file contains the code to implement the Ren'Py preferences
 # screen.
 
-init -1150 python:
+init python:
 
     # This is a map from the name of the style that is applied to
     # a list of preferences that should be placed into a vbox
@@ -497,7 +497,7 @@ init -1150 python:
             if pref in v:
                 v.remove(pref)
             
-init -1150 python hide:
+init python hide:
 
     # Enablers for some preferences.
     config.has_music = True
@@ -515,8 +515,6 @@ init -1150 python hide:
     pl1 = _Preference(u'Display', 'fullscreen', [
         (u'Window', False, None),
         (u'Fullscreen (4:3)', "4:3", None),
-        (u'Fullscreen (16:9)', "16:9", None),
-        (u'Fullscreen (16:10)', "16:10", None),
         ])
 
     pl2 = _Preference(u'Transitions', 'transitions', [
