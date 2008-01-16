@@ -31,6 +31,9 @@ import os
 # Can we add more config variables?
 locked = False
 
+# Contains help for config variables added after the fact.
+help = { }
+
 # The title of the game window.
 window_title = "A Ren'Py Game"
 

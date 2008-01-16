@@ -12,6 +12,8 @@ init -1180 python:
     # These are settings that the user can tweak to control the
     # look of the main menu and the load/save/escape screens.
 
+    config.script_version = None
+    
     # The minimum version of the module we work with. Don't change
     # this unless you know what you're doing.
     config.module_version = 6002001
@@ -52,6 +54,9 @@ init -1180 python:
     config.with_callback = _default_with_callback
 
     style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
+    style.skip_indicator.xpos = 10
+    style.skip_indicator.ypos = 10
+
 
     # This is used to jump to a label with a transition.
     def _intra_jumps_core(label, transition):
@@ -446,6 +451,11 @@ init -1160 python:
 
     # The screen that we go to when entering the game menu.
     _game_menu_screen = "save_screen"
+    
+    style.error_root = Style(style.default)
+    style.error_title = Style(style.default)
+    style.error_body = Style(style.default)
+
 
     def _show_exception(title, message):
 

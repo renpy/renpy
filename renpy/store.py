@@ -46,6 +46,10 @@ class _Config(object):
     def __init__(self, name):
         vars(self)["_name"] = name
     
+    def register(self, name, default, help=""):
+        setattr(_config, name, default)
+        _config.help[name] = help
+
     def __getattr__(self, name):
         cvars = vars(_config)
 

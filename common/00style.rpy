@@ -82,20 +82,6 @@ init -1200 python hide:
 
     style.viewport = Style(style.default, heavy=True, help='Used for viewports.')
         
-    # Skip indicator.
-    style.skip_indicator.xpos = 10
-    style.skip_indicator.ypos = 10
-
-    # Error messages.
-    style.error_root.background = Solid((220, 220, 255, 255))
-    style.error_root.xfill = True
-    style.error_root.yfill = True
-    style.error_root.xpadding = 20
-    style.error_root.ypadding = 20
-
-    style.error_title.color = (255, 128, 128, 255)
-    style.error_body.color = (128, 128, 255, 255)
-
 init -1090 python:
     
     # Colors #############################################################
@@ -244,15 +230,14 @@ init -1090 python:
     style.viewport.clipping = True
 
     ######################################################################
-    # Main menu.
 
-    style.mm_root.background = "#000"
-    style.mm_root.xfill = True
-    style.mm_root.yfill = True
+    # Error messages.
+    style.error_root.background = Solid((220, 220, 255, 255))
+    style.error_root.xfill = True
+    style.error_root.yfill = True
+    style.error_root.xpadding = 20
+    style.error_root.ypadding = 20
 
-
-    # Game menu.
-    style.gm_root.background = "#000"
-    style.gm_root.xfill = True
-    style.gm_root.yfill = True
+    style.error_title.color = (255, 128, 128, 255)
+    style.error_body.color = (128, 128, 255, 255)
 

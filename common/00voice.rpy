@@ -47,15 +47,7 @@ init -1120:
     python hide:
 
         config.has_voice = True
-        config.sample_voice = None
-        
-        vp = _VolumePreference(u'Voice Volume',
-                               'voice',
-                               'config.has_voice',
-                               'config.sample_voice',
-                               2)
 
-        config.preferences['prefs_right'].insert(1, vp)
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
