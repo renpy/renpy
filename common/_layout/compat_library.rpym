@@ -1,0 +1,109 @@
+init:
+    python:
+
+        # A dict of 5-tuples mapping button labels to image buttons.
+        config.image_buttons = { }
+
+        # A dict mapping label to image.
+        config.image_labels = { }
+
+        # Maps from button or label to additional properties.
+        config.button_properties = { }
+        config.button_text_properties = { }
+        config.label_properties = { }
+
+        def _button_factory(label,
+                            type=None,
+                            selected=None,
+                            disabled=False,
+                            clicked=None,
+                            properties={},
+                            index=None,
+                            **props):
+            """
+            This function is called to create the various buttons used
+            in the game menu. By overriding this function, one can
+            (for example) replace the default textbuttons with image buttons.
+            When it is called, it's expected to add a button to the screen.
+
+            @param label: The label of this button, before translation. 
+
+            @param type: The type of the button. One of "mm" (main menu),
+            "gm_nav" (game menu), "file_picker_nav", "yesno", or "prefs".
+
+            @param selected: True if the button is selected, False if not,
+            or None if it doesn't matter.
+
+            @param disabled: True if the button is disabled, False if not.
+
+            @param clicked: A function that should be executed when the
+            button is clicked.
+
+            @param properties: Addtional layout properties.
+            """
+
+            props.update(properties)
+            props.update(config.button_properties.get(label, { }))
+            
+            if disabled:
+                clicked = None
+
+            if selected and not disabled:
+                role = "selected_"
+            else:
+                role = ""
+
+                
+            if label in config.image_buttons:
+                
+                (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
+
+                ui.imagebutton(idle,
+                               hover,
+                               disabled,
+                               hover,
+                               sel_idle,
+                               sel_hover,
+                               disabled,
+                               sel_hover,
+                               clicked=clicked,
+                               style=style.image_button[label],
+                               role=role,
+                               **props)
+                
+                return
+
+            button_style = type + "_button"
+            text_style = type + "_button_text"
+
+            if index is None:
+                index = label
+            
+            button_style = getattr(style, button_style)[index]
+            text_style = getattr(style, text_style)[index]
+            
+            ui.button(style=button_style, clicked=clicked, role=role, **props)
+            ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
+            
+        def _label_factory(label, type, properties={}, **props):
+            """
+            This function is called to create a new label. It can be
+            overridden by the user to change how these labels are created.
+
+            @param label: The label of the box.
+
+            @param type: "prefs" or "yesno". (perhaps more by now.)
+
+            @param properties: This may contain position properties.
+            """
+
+            props.update(properties)
+            props.update(config.label_properties.get(label, { }))
+
+            if label in config.image_labels:
+                ui.image(config.image_labels[label], **props)
+                return
+
+            style = getattr(store.style, type + "_label")[label]
+            
+            ui.text(_(label), style=style, **props)
