@@ -28,6 +28,7 @@ init:
         _launcher_per_page = 8
         
         # Choose the roundrect theme for the buttons.
+        layout.compat()
         theme.roundrect(launcher=True)
 
         style.hyperlink_text.color = "#00f"

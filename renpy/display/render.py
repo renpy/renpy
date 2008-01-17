@@ -100,19 +100,29 @@ def free_memory():
     old_forced = [ ]
     
     
-def render(widget, width, height, st, at):
+def render(d, width, height, st, at):
     """
     Renders a widget on the screen.
     """
 
-    if widget.style.xmaximum is not None:
-        width = min(widget.style.xmaximum, width)
+    style = d.style
+    xmaximum = style.xmaximum
+    ymaximum = style.ymaximum
+    
+    if xmaximum is not None:
+        if isinstance(xmaximum, float):
+            width = int(width * xmaximum)
+        else:
+            width = min(xmaximum, width)
 
-    if widget.style.ymaximum is not None:
-        height = min(widget.style.ymaximum, height)
+    if ymaximum is not None:
+        if isinstance(ymaximum, float):
+            width = int(height * ymaximum)
+        else:
+            height = min(ymaximum, height)
 
-    if (widget, width, height) in old_renders:
-        rv = old_renders[widget, width, height]
+    if (d, width, height) in old_renders:
+        rv = old_renders[d, width, height]
 
         # assert (widget, width, height) in rv.render_of
         # assert not rv.dead
@@ -121,17 +131,17 @@ def render(widget, width, height, st, at):
 
         return rv
 
-    rv = widget.render(width, height, st, at)
+    rv = d.render(width, height, st, at)
 
-    if widget.style.clipping:
+    if style.clipping:
         rv = rv.subsurface((0, 0, width, height), focus=True)
         
     # rv.clipped = widget.style.clipping
 
-    rv.render_of.append((widget, width, height))
+    rv.render_of.append((d, width, height))
 
-    old_renders[widget, width, height] = rv
-    new_renders[widget, width, height] = rv
+    old_renders[d, width, height] = rv
+    new_renders[d, width, height] = rv
 
     return rv
 

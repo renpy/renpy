@@ -6,6 +6,9 @@ init -1130:
     # Set to true in the very unlikely event you want to manually init
     # the sound system.
     $ config.force_sound = False
+
+    $ config.has_music = True
+    $ config.has_sound = True
     
 init 1130:
 

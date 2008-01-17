@@ -32,6 +32,12 @@ init -1180 python:
     # True if the skip indicator should be shown.
     config.skip_indicator = True
 
+    # The width of a thumbnail.
+    config.thumbnail_width = 66
+
+    # The height of a thumbnail.
+    config.thumbnail_height = 50
+
     # Defaults for preferences.
     config.default_fullscreen = None
     config.default_text_cps = None        

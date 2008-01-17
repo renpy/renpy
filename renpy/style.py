@@ -425,7 +425,7 @@ def backup():
     rv = { }
     
     for k, v in style_map.iteritems():
-        rv[k] = v.properties[:]
+        rv[k] = (v.parent, v.properties[:])
 
     return rv
         
@@ -437,7 +437,8 @@ def restore(o):
     styles_built = False
 
     for k, v in o.iteritems():
-        style_map[k].properties = v[:]
+        style_map[k].set_parent(v[0])
+        style_map[k].properties = v[1][:]
         styles_pending.append(style_map[k])
 
 def style_metaclass(name, bases, attrs):
@@ -504,6 +505,20 @@ class Style(object):
 
         build_style(self)
 
+    def set_parent(self, parent):
+
+        if parent:
+            if isinstance(parent, basestring):
+                parent = ( parent, )
+            else:
+                parent = parent.name
+
+                if parent is None:
+                    raise Exception("The parent of a style must be a named style.")
+            
+        self.parent = parent
+        
+        
     def __init__(self, parent, properties=None, heavy=True, name=None, help=None):
 
         self.prefix = 'insensitive_'
@@ -515,19 +530,10 @@ class Style(object):
             self.name = name
         else:
             self.name = ( name, )
-                
-        if parent:
-            if isinstance(parent, basestring):
-                parent = ( parent, )
-            else:
-                parent = parent.name
 
-                if parent is None:
-                    raise Exception("The parent of a style must be a named style.")
+        self.set_parent(parent)
             
-        self.parent = parent
         self.indexed = None
-        
         self.cache = None
         self.properties = [ ]
 
