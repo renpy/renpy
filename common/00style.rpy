@@ -1,4 +1,4 @@
-# Copyright 2004-2006 PyTom
+# Copyright 2004-2008 PyTom
 #
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
@@ -29,7 +29,6 @@ init -1200 python hide:
     style.vbox = Style(style.default, heavy=True, help='Default for vboxen')
 
     style.window = Style(style.default, heavy=True, help='Windows created by ui.window')
-    style.frame = Style(style.default, heavy=True, help='Frames created by ui.frame')
 
     style.image_placement = Style(style.default, heavy=True, help='The default placement of images on the screen.')
     style.image = Style(style.default, heavy=True, help="Default style of images.")
@@ -65,34 +64,46 @@ init -1200 python hide:
     style.image_button = Style(style.default, heavy=True, help='Image buttons.')
     style.image_button_image = Style(style.default, heavy=True, help='Images inside image buttons.')
 
-    style.button = Style(style.default, heavy=True, help='Buttons created using ui.button.')
-    style.button_text = Style(style.default, heavy=True, help='The text of buttons created using ui.textbutton ')
-
-    style.menu_button = Style(style.button, heavy=True, help='Buttons that are part of the main or game menus.')
-    style.menu_button_text = Style(style.button_text, heavy=True, help='The label of buttons that are part of the main or game menus.')
-
-    style.bar = Style(style.default, heavy=True, help='Used for bars.')
-    style.vbar = Style(style.default, heavy=True, help='Used for vertical bars.')
-    style.scrollbar = Style(style.bar, heavy=True, help='Used for scrollbars.')
-    style.vscrollbar = Style(style.vbar, heavy=True, help='Used for vertical scollbars.')
-
-
     style.hyperlink = Style(style.default, heavy=True, help='A hyperlink button.')
     style.hyperlink_text = Style(style.default, heavy=True, help='Hyperlink button text.')
 
     style.viewport = Style(style.default, heavy=True, help='Used for viewports.')
-        
+
+    # The base styles that can be customized by themes.
+
+    style.frame = Style(style.default, heavy=True, help='Base style for frames.')
+    
+    style.button = Style(style.default, heavy=True, help='Base style for buttons.')
+    style.button_text = Style(style.default, heavy=True, help='Base style for button text.')
+
+    style.small_button = Style(style.button, heavy=True, help="Base style for small buttons.")
+    style.small_button_text = Style(style.button_text, heavy=True, help="Base style for small button text.")
+    style.radio_button = Style(style.button, heavy=True, help="Base style for radio buttons.")
+    style.radio_button_text = Style(style.button_text, heavy=True, help="Base style for radio button text.")
+    style.check_button = Style(style.button, heavy=True, help="Base style for check buttons.")
+    style.check_button_text = Style(style.button_text, heavy=True, help="Base style for check button text.")
+
+    style.large_button = Style(style.default, heavy=True, help="Base style for large buttons.")
+
+    style.label = Style(style.default, heavy=True, help="Base style for windows surrounding labels.")
+    style.label_text = Style(style.default, heavy=True, help="Base style for label text.")
+
+    style.prompt = Style(style.default, heavy=True, help="Base style for windows surrounding prompts.")
+    style.prompt_text = Style(style.default, heavy=True, help="Base style for prompt text.")
+    
+    style.bar = Style(style.default, heavy=True, help='Base style for horizontal bars.')
+    style.vbar = Style(style.default, heavy=True, help='Base style for vertical bars.')
+    style.scrollbar = Style(style.bar, heavy=True, help='Base style for horizontal scrollbars.')
+    style.vscrollbar = Style(style.vbar, heavy=True, help='Used for vertical scollbars.')
+    
+    style.text = Style(style.default, heavy=True, help="Base style for interface text.")
+    style.small_text = Style(style.text, heavy=True, help="Base style for small interface text.")
+
+
+    
 init -1090 python:
     
     # Colors #############################################################
-
-    dark_cyan = (0, 192, 255, 255)
-    bright_cyan = (0, 255, 255, 255)
-
-    dark_red = (255, 128, 128, 255)
-    bright_red = (255, 64, 64, 255)
-
-    green = (0, 128, 0, 255)
 
     # The Default Style ###################################################
 
@@ -212,18 +223,15 @@ init -1090 python:
 
     # Hyperlinks.
     style.hyperlink_text.underline = True
-    style.hyperlink_text.hover_color = bright_cyan
-    style.hyperlink_text.idle_color = dark_cyan
-
-
+    style.hyperlink_text.hover_color = "#0ff"
+    style.hyperlink_text.idle_color = "#08f"
+    
     # Bars.
     style.bar.bar_invert = False
     style.bar.bar_resizing = False
     style.bar.bar_vertical = False
-
     style.vbar.bar_vertical = True
     style.vbar.bar_invert = False
-
     style.vscrollbar.bar_invert = True
 
     # Viewport

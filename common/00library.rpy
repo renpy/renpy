@@ -406,7 +406,7 @@ init 1180 python:
         
 ##############################################################################
 # Code that originated in 00gamemenu.rpy
-init -1160 python:
+init -1180 python:
 
     ######################################################################
     # First up, we define a bunch of configuration variable, which the
@@ -456,7 +456,6 @@ init -1160 python:
     style.error_title = Style(style.default)
     style.error_body = Style(style.default)
 
-
     def _show_exception(title, message):
 
         ui.window(style='error_root')
@@ -474,9 +473,10 @@ init -1160 python:
 
         ui.interact()
 
+        
 # Run at the end of init, to set up autosaving based on the user's
 # choices.
-init 1160 python:
+init 1180 python:
 
     if config.has_autosave:
         config.autosave_slots = 20
@@ -577,7 +577,7 @@ label _confirm_quit:
 ##############################################################################
 # Code that originated in 00mainmenu.rpy
 
-init -1170 python hide:
+init -1180 python hide:
 
     # Music to play at the main menu.
     config.main_menu_music = None

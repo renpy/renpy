@@ -1,5 +1,8 @@
 init python hide:
 
+    style.menu_button = Style(style.button, heavy=True, help='Buttons that are part of the main or game menus.')
+    style.menu_button_text = Style(style.button_text, heavy=True, help='The label of buttons that are part of the main or game menus.')
+    
     style.thin_hbox = Style(style.hbox, heavy=True, help='A hbox with a small amount of spacing.')
     style.thick_hbox = Style(style.hbox, heavy=True, help='A hbox with a large amount of spacing.')
     style.thin_vbox = Style(style.vbox, heavy=True, help='A vbox with a small amount of spacing.')
@@ -73,11 +76,16 @@ init python hide:
     style.prefs_right = Style(style.prefs_column, heavy=True, help='')
     style.prefs_joystick = Style(style.prefs_center, heavy=True, help='')
 
-    
     style.thin_hbox.spacing = 3
     style.thick_hbox.spacing = 30
     style.thin_vbox.spacing = 0
     style.thick_vbox.spacing = 30
+
+    dark_cyan = (0, 192, 255, 255)
+    bright_cyan = (0, 255, 255, 255)
+    dark_red = (255, 128, 128, 255)
+    bright_red = (255, 64, 64, 255)
+    green = (0, 128, 0, 255)
 
     # Frames.
     style.frame.background = Solid((0, 0, 128, 128))

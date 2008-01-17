@@ -142,7 +142,7 @@ init -1100:
                 title_spacing = 6
 
                 frame_width = 200
-                widget_width = 170
+                widget_width = 160
 
                 config.thumbnail_width = 60
                 config.thumbnail_height = 45
@@ -167,7 +167,7 @@ init -1100:
                 title_spacing = 12
 
                 frame_width = 250
-                widget_width = 220
+                widget_width = 200
 
                 prefcols = [ 137, 400, 663 ]
 

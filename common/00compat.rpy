@@ -11,6 +11,9 @@ init -1210:
             if version <= (5, 6, 0):
                 config.check_properties = False
 
+            if version <= (6, 5, 0):
+                layout.compat()
+                
 init 1210:
     python hide:
 
