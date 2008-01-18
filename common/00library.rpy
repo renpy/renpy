@@ -426,6 +426,9 @@ init -1180 python:
     # First up, we define a bunch of configuration variable, which the
     # user can change.
 
+    # menus: Music to play when entering the game menu.
+    config.game_menu_music = None
+
     # menus: Sound played when entering the library without clicking a
     # button.
     config.enter_sound = None

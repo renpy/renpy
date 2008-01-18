@@ -20,9 +20,6 @@ init python:
     # the screen.
     config.game_menu_positions = None
 
-    # Music to play when entering the game menu.
-    config.game_menu_music = None
-
     # The number of columns of files to show at once.
     config.file_page_cols = 2
 

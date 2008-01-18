@@ -12,9 +12,6 @@ init python hide:
     style.yesno_button_text = Style(style.button_text)
 
     # Alter styles.
-    style.yesno_prompt_text.textalign = 0.5
-    style.yesno_prompt.xalign = 0.5
-
     style.yesno_frame.xfill = True
     style.yesno_frame.xmargin = .05
     style.yesno_frame.ypos = .1

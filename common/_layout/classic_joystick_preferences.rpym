@@ -1,0 +1,108 @@
+init python:
+
+    style.js_frame = Style(style.frame)
+    style.js_frame_vbox = Style(style.vbox)
+    style.js_function_prompt = Style(style.prompt)
+    style.js_function_prompt_text = Style(style.prompt_text)
+    style.js_action_prompt = Style(style.prompt)
+    style.js_action_prompt_text = Style(style.prompt_text)
+
+    style.js_prefs_frame = Style(style.frame)
+    style.js_prefs_vbox = Style(style.vbox)
+    style.js_prefs_button = Style(style.button)
+    style.js_prefs_button_text = Style(style.button_text)
+    
+    style.js_prefs_label = Style(style.label) 
+    style.js_prefs_label_text = Style(style.label_text) 
+
+    style.js_frame.ypos = .1
+    style.js_frame.ypadding = .05
+    style.js_frame.xmargin = .1
+    style.js_frame_vbox.box_spacing = 30
+
+    style.js_prefs_frame.xpos = 10
+    style.js_prefs_frame.ypos = 10
+
+    style.js_prefs_button.xminimum = 0.5
+    style.js_prefs_vbox.box_first_spacing = 10
+    
+
+    
+    config.joystick_keys = [
+        (u'Left', 'joy_left'),
+        (u'Right', 'joy_right'),
+        (u'Up', 'joy_up'),
+        (u'Down', 'joy_down'),
+        (u'Select/Dismiss', 'joy_dismiss'),
+        (u'Rollback', 'joy_rollback'),
+        (u'Hold to Skip', 'joy_holdskip'),
+        (u'Toggle Skip', 'joy_toggleskip'),
+        (u'Hide Text', 'joy_hide'),
+        (u'Menu', 'joy_menu'),
+        ]
+
+    
+    
+    def _joystick_select_binding():
+
+        for label, key in config.joystick_keys:
+
+            def my_clicked(label=label, key=key):
+                return (label, key)
+
+            layout.button(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=my_clicked, index=label)
+    
+    def _joystick_get_binding():
+        ui.add(renpy.display.joystick.JoyBehavior())
+        ui.saybehavior()
+
+    def _joystick_take_binding(binding, key):
+
+        if not isinstance(binding, basestring):
+            if key in _preferences.joymap:
+                del _preferences.joymap[key]
+        else:
+            _preferences.joymap[key] = binding
+        
+            
+    def _joystick_preferences():
+
+            def set_binding(label, key):
+                layout.navigation(None)
+
+                ui.window(style='js_frame')
+                ui.vbox(style='js_frame_vbox')
+                layout.prompt(_(u"Joystick Mapping") + " - " + _(label), "js_function")
+                layout.prompt(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'js_action')
+                ui.close()
+
+                _joystick_get_binding()
+                binding = ui.interact()
+                _joystick_take_binding(binding, key)
+                
+                return True
+
+            ui.window(style='js_prefs_frame')
+            ui.vbox(style='js_prefs_vbox')
+
+            layout.label("Joystick Configuration", "js_prefs")
+            
+            for label, key in config.joystick_keys:
+
+                def clicked(label=label, key=key):
+                    return renpy.invoke_in_new_context(set_binding, label, key)
+
+                layout.button(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "js_prefs", clicked=clicked, index=label)
+            
+            ui.close()
+
+label joystick_preferences_screen:
+
+    while True:
+        python:
+            layout.navigation("joystick_preferences")
+            _joystick_preferences()
+            ui.interact()
+
+            
+        
