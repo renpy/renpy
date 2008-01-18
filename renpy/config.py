@@ -31,130 +31,130 @@ import os
 # Can we add more config variables?
 locked = False
 
-# Contains help for config variables added after the fact.
-help = { }
+# Contains help for config variables.
+help = [ ]
 
-# The title of the game window.
+# basics: The title of the game window.
 window_title = "A Ren'Py Game"
 
-# An image file containing the window icon image.
+# basics: An image file containing the window icon image.
 window_icon = None
 
-# The width and height of the drawable area of the screen.
+# basics: The width and height of the drawable area of the screen.
 screen_width = 800
 screen_height = 600
 
-# Should sound be enabled?
+# advanced: Should sound be enabled?
 sound = True
 
-# Turns recoverable errors into fatal ones, so that the user can know
+# advanced: Turns recoverable errors into fatal ones, so that the user can know
 # about and fix them.
 debug = False
 
-# Ditto, but for sound operations
+# advanced: Ditto, but for sound operations
 debug_sound = False
 
-# Is rollback enabled? (This only controls if the user-invoked
+# advanced: Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
 rollback_enabled = True
 
-# If the rollback is longer than this, we may trim it.
+# advanced: If the rollback is longer than this, we may trim it.
 rollback_length = 128
 
-# The maximum number of steps the user can rollback the game,
+# advanced: The maximum number of steps the user can rollback the game,
 # interactively.
 hard_rollback_limit = 100
 
-# A list of functions returning lists of displayables that will be
+# advanced: A list of functions returning lists of displayables that will be
 # added to the end of the display list.
 overlay_functions = [ ]
 
-# A list of Displayables that should always be added to the start
+# advanced: A list of Displayables that should always be added to the start
 # of the scene list. (Mostly used for keymaps and the like.)
 underlay = [ ]
 
-# True to enable profiling.
+# advanced: True to enable profiling.
 profile = False
 
-# The directory save files will be saved to.
+# advanced: The directory save files will be saved to.
 savedir = None
 
-# The number of screens worth of images that are allowed to live in the image
-# cache at once.
+# advanced: The number of screens worth of images that are allowed to
+# live in the image cache at once.
 image_cache_size = 8
 
-# The number of statements we will analyze when doing predictive
+# advanced: The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
 predict_statements = 16
 
-# Causes the contents of the image cache to be printed to stdout when
+# advanced: Causes the contents of the image cache to be printed to stdout when
 # it changes.
 debug_image_cache = False
 
-# Should we allow skipping at all?
+# advanced: Should we allow skipping at all?
 allow_skipping = True
 
-# Should we allow fast skipping?
+# advanced: Should we allow fast skipping?
 fast_skipping = False
 
-# Are we currently skipping? If so, how fast?
+# advanced: Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
 skipping = None
 
-# The delay while we are skipping say statements.
+# advanced: The delay while we are skipping say statements.
 skip_delay = 75
 
-# Archive files that are searched for images.
+# basic: Archive files that are searched for images.
 archives = [ ]
 
-# Searchpath.
+# advanced: Searchpath.
 searchpath = [ ]
 
-# If True, we will only try loading from archives.
+# advanced: If True, we will only try loading from archives.
 # Only useful for debugging Ren'Py, don't document.
 force_archives = False
 
-# An image file containing the mouse cursor, if one is defined.
+# advanced: Used to control the software mouse cursor.
 mouse = None
 
-# The default sound playback sample rate.
+# advanced: The default sound playback sample rate.
 sound_sample_rate = 44100
 
-# The amount of time music is faded out between tracks.
+# advanced: The amount of time music is faded out between tracks.
 fade_music = 0.0
 
-# Should the at list be sticky?
+# advanced: Should the at list be sticky?
 sticky_positions = False
 
-# A list of all of the layers that we know about.
+# advanced: A list of all of the layers that we know about.
 layers = [ 'master', 'transient', 'overlay' ]
 
-# A list of layers that should be cleared when we replace
+# advanced: A list of layers that should be cleared when we replace
 # transients.
 transient_layers = [ 'transient' ]
 
-# A list of layers that should be cleared when we recompute
+# advanced: A list of layers that should be cleared when we recompute
 # overlays.
 overlay_layers = [ 'overlay' ]
 
-# A list of layers that are displayed atop all other layers, and do
+# advanced: A list of layers that are displayed atop all other layers, and do
 # not participate in transitions.
 top_layers = [ ]
 
-# True if we want to show overlays during wait statements, or
+# advanced: True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_with = True
 
 # True if we want to allow the fast dissolve.
 enable_fast_dissolve = True
 
-# When using the keyboard to navigate, how much we penalize
+# advanced: When using the keyboard to navigate, how much we penalize
 # distance out of the preferred direction.
 focus_crossrange_penalty = 1024
 
-# If True, then we force all loading to occur before transitions
+# advanced: If True, then we force all loading to occur before transitions
 # start.
 load_before_transition = True
 
@@ -213,52 +213,53 @@ keymap = dict(
     bar_increase = [ 'K_RIGHT', 'joy_right' ],
     )
 
-# Should we try to support joysticks?
+# advanced: Should we try to support joysticks?
 joystick = True
 
-# A list of functions that are called when an interaction is started or
-# restarted.
+# advanced: A list of functions that are called when an interaction is
+# started or restarted.
 interact_callbacks = [ ]
 
-# A list of functions that are called when an interaction is started.
+# advanced: A list of functions that are called when an interaction is started.
 start_interact_callbacks = [ ]
 
-# A list of functions that are called when a say statement is sustained.
+# advanced: A list of functions that are called when a say statement
+# is sustained.
 say_sustain_callbacks = [ ]
 
-# A function that is called to see if say should allow itself to be
-# dismissed.
+# advanced: A function that is called to see if say should allow
+# itself to be dismissed.
 say_allow_dismiss = None
 
-# A function that is called to tokenize text.
+# advanced: A function that is called to tokenize text.
 text_tokenizer = renpy.display.text.text_tokenizer
 
-# The number of characters per AFM time period.
+# advanced: The number of characters per AFM time period.
 afm_characters = 250
 
-# The number of bonus characters to add to a string for afm.
+# advanced: The number of bonus characters to add to a string for afm.
 afm_bonus = 25
 
-# A function that must return True for afm mode to forward.
+# advanced: A function that must return True for afm mode to forward.
 afm_callback = None
 
-# The amount of time we delay before making an automatic choice from a
-# menu. This can be used for making a demo version of a game. It
-# should be set to None in a deployed game.
+# advanced: The amount of time we delay before making an automatic
+# choice from a menu. This can be used for making a demo version of a
+# game. It should be set to None in a deployed game.
 auto_choice_delay = None
 
-# A map from font, bold, italic to font, bold, italic. This is used
+# advanced: A map from font, bold, italic to font, bold, italic. This is used
 # to replace (say) the italic version of a regular font with the regular
 # version of an italic font.
 font_replacement_map = { }
 
-# A callback that is called when a with statement (but not the with
-# clause of a say or menu statement) executes. If not None, it's
-# called with a single argument, the transition supplied to the with
-# clause.
+# advanced: A callback that is called when a with statement (but not
+# the with clause of a say or menu statement) executes. If not None,
+# it's called with a single argument, the transition supplied to the
+# with clause.
 with_callback = None
 
-# The framerate limit.
+# advanced: The framerate limit, in frames per second.
 framerate = None
 
 # The number of frames that Ren'Py has shown.
@@ -268,41 +269,42 @@ frames = 0
 # statement.
 editor = os.environ.get('RENPY_EDITOR', None)
 
-# Enable developer mode?
+# basics: Enable developer mode?
 developer = False
 
-# A logfile that logging messages are sent to.
+# advanced: A logfile that logging messages are sent to.
 log = None
 
-# Lint hooks.
+# advanced: Lint hooks.
 lint_hooks = [ ]
 
-# Hyperlink callback.
+# advanced: Hyperlink callback.
 hyperlink_callback = None
 
-# Hyperlink focus.
+# advanced: Hyperlink focus.
 hyperlink_focus = None
 
 # Should SFonts be recolored? internal.
 recolor_sfonts = True
 
-# Function that is called to layout text.
+# advanced: Function that is called to layout text.
 text_layout = renpy.display.text.text_layout
 
-# A callback that is called 20 times a second.
+# advanced: A callback that is called 20 times a second.
 periodic_callback = None
 
-# A dictionary, mapping from style property to functions (which map arguments
-# to values) or to None to indicate no such function is necessary.
+# A dictionary, mapping from style property to functions (which map
+# arguments to values) or to None to indicate no such function is
+# necessary.
 style_properties = None
 
 # Should we check that all style properties are in style_properties? (Internal)
 check_properties = True
 
-# If True, then we implicily do a with None after every interaction.
+# advanced: If True, then we implicily do a with None after every interaction.
 implicit_with_none = True
 
-# A map from a layer to (x, y, w, h) tuples that the layer is clipped to.
+# advanced: A map from a layer to (x, y, w, h) tuples that the layer is clipped to.
 layer_clipping = { }
 
 # Should we disable the fullscreen optimization?
@@ -311,16 +313,16 @@ disable_fullscreen_opt = False
 # Should we reject midi files?
 reject_midi = True
 
-# Default character callback.
+# advanced: Default character callback.
 character_callback = None
 
-# Character callback list.
+# advanced: Character callback list.
 all_character_callbacks = [ ]
 
-# The number of autosave slots we have.
+# basics: The number of autosave slots we have.
 autosave_slots = 10
 
-# How often do we autosave. (Number of interactions, sort of.)
+# basics: How often do we autosave. (Number of interactions, sort of.)
 autosave_frequency = 200
 
 # The callback that is used by the scene statement.
@@ -341,16 +343,16 @@ inspector = None
 # Should we reject backslashes in filenames?
 reject_backslash = True
 
-# Hide the mouse.
+# basics: Hide the mouse.
 mouse_hide_time = 30
 
-# Called when we can't load an image.
+# advanced: Called when we can't load an image.
 missing_image_callback = None
 
-# Called to filter text in the say and menu statements.
+# advanced: Called to filter text in the say and menu statements.
 say_menu_text_filter = None
 
-# Used to replace one label with another.
+# advanced: Used to replace one label with another.
 label_overrides = { }
 
 del renpy

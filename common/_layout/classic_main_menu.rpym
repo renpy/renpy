@@ -1,0 +1,41 @@
+init python:
+    style.mm_root = Style(style.default)
+    style.mm_menu_frame = Style(style.frame)
+    style.mm_menu_frame_vbox = Style(style.vbox)
+
+    style.mm_button = Style(style.button)
+    style.mm_button_text = Style(style.button_text)
+
+    style.mm_menu_frame.xpos = 5.0/6.0
+    style.mm_menu_frame.xanchor = 0.5
+    style.mm_menu_frame.ypos = 0.9
+    style.mm_menu_frame.yanchor = 1.0
+    
+label main_menu_screen:
+
+    python hide:
+
+        # Show the background.
+        ui.window(style='mm_root')
+        ui.null()
+
+        ui.frame(style='mm_menu_frame')
+        ui.vbox(style='mm_menu_frame_vbox')
+
+        for label, clicked, enabled in config.main_menu:
+
+            # This checks to see if clicked is a string. If so, we want clicked
+            # to jump us out of the current context.
+            if isinstance(clicked, basestring):
+                clicked=ui.jumpsoutofcontext(clicked)
+
+            # Create each button.
+            layout.button(label, "mm", enabled=eval(enabled), clicked=clicked)
+
+        ui.close()
+
+        ui.interact()
+        
+    return
+            
+    

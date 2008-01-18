@@ -30,11 +30,11 @@ init 1210 python hide::
 
             config.with_callback = compat_with_function
 
-
     if not config.sound:
         config.has_sound = False
         config.has_music = False
-
+        config.has_voice = False
+        
     # Compat for SFont recoloring.
     if compat(5, 1, 1):
         config.recolor_sfonts = False
@@ -60,5 +60,5 @@ init 1210 python hide::
         config.translations.setdefault("Fullscreen 16:9", fs + " 16:9")
         config.translations.setdefault("Fullscreen 16:10", fs + " 16:10")
             
-    for i in _lo.compat_funcs:
+    for i in layout.compat_funcs:
         i()

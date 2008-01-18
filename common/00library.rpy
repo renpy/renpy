@@ -502,21 +502,26 @@ init 1180 python:
 # This is the code that executes when entering a menu context, except
 # for the scene statement.
 label _enter_menu_without_scene:
-    $ renpy.movie_stop()
-    $ renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
+    python:
+        renpy.movie_stop()
+        renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
-    # This may be changed, if we are already in the main menu.
-    $ renpy.context().main_menu = False
+        # This may be changed, if we are already in the main menu.
+        renpy.context().main_menu = False
 
     return
 
 label _enter_menu:
     call _enter_menu_without_scene from _call_enter_menu_without_scene_1
 
-    $ renpy.dynamic("_mouse_visible")
-    $ _mouse_visible = True
+    python:
+    
+        renpy.dynamic("_mouse_visible")
+        renpy.dynamic("_suppress_overlay")
+        _mouse_visible = True
+        _suppress_overlay = True
+        ui.clear()
 
-    $ ui.clear()
     return
     
 # Factored this all into one place, to make our lives a bit easier.
@@ -549,15 +554,27 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
 
 label _game_menu_save:
     call _enter_game_menu from _call__enter_game_menu_1
-    jump _save_screen
+
+    if renpy.has_label("save_screen"):
+        jump expression "save_screen"
+    else:
+        jump expression "_save_screen"
 
 label _game_menu_load:
     call _enter_game_menu from _call__enter_game_menu_2
-    jump _load_screen
+
+    if renpy.has_label("load_screen"):
+        jump expression "load_screen"
+    else:
+        jump expression "_load_screen"
 
 label _game_menu_preferences:
     call _enter_game_menu from _call__enter_game_menu_3
-    jump _prefs_screen
+
+    if renpy.has_label("preferences_screen"):
+        jump expression "preferences_screeen"
+    else:
+        jump expression "_prefs_screen"
 
 label _quit:
     $ renpy.quit()
@@ -579,7 +596,7 @@ label _return:
 
     $ renpy.transition(config.exit_transition)
 
-    return
+    return False
 
 label _confirm_quit:
     call _enter_menu from _call__enter_menu_3
@@ -587,7 +604,7 @@ label _confirm_quit:
     if renpy.has_label("confirm_quit"):
         jump expression "confirm_quit"
     else:
-        jump expression "quit_screen"
+        jump expression "_quit_prompt"
 
 
 ##############################################################################
@@ -610,7 +627,6 @@ label _start:
             i()
     
     call _check_module from _call__check_module_1
-
     call _load_reload_game from _call__load_reload_game_1
 
     scene black
@@ -657,7 +673,11 @@ label _enter_main_menu:
 
     call _enter_menu from _call__enter_menu_1
 
-    $ renpy.context().main_menu = True
+    python:
+        renpy.dynamic("_load_prompt")
+        _load_prompt = False
+        
+        renpy.context().main_menu = True
     
 # This is called to show the main menu to the user.
 label _main_menu:    

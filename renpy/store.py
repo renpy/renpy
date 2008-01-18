@@ -46,9 +46,9 @@ class _Config(object):
     def __init__(self, name):
         vars(self)["_name"] = name
     
-    def register(self, name, default, help=""):
-        setattr(_config, name, default)
-        _config.help[name] = help
+    def register(self, name, default, cat=None, help=None):
+        setattr(self, name, default)
+        _config.help.append((cat, name, help))
 
     def __getattr__(self, name):
         cvars = vars(_config)
@@ -229,6 +229,9 @@ default_transition = None
 
 # Is the mouse visible?
 mouse_visible = True
+
+# Is the overlay suppressed?
+_suppress_overlay = False
 
 # The default ADVCharacter.
 adv = ADVCharacter(None,

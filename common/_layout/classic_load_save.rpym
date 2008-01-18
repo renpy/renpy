@@ -1,0 +1,322 @@
+init python:
+
+    # Define styles
+    style.file_picker_entry = Style(style.large_button)
+    style.file_picker_entry_box = Style(style.hbox)
+    style.file_picker_text = Style(style.small_text)
+    style.file_picker_empty_slot = Style(style.file_picker_text)
+    style.file_picker_extra_info = Style(style.file_picker_text)
+    style.file_picker_new = Style(style.file_picker_text)
+    style.file_picker_old = Style(style.file_picker_text)
+
+    style.file_picker_frame = Style(style.frame)
+    style.file_picker_frame_vbox = Style(style.vbox)
+
+    style.file_picker_navbox = Style(style.hbox)
+
+    style.file_picker_nav_button = Style(style.small_button)
+    style.file_picker_nav_button_text = Style(style.small_button_text)
+
+    style.file_picker_grid = Style(style.default)
+
+    # Adjust styles.
+    style.file_picker_entry.xminimum = 0.5
+
+    style.file_picker_frame.xmargin = 6
+    style.file_picker_frame.ymargin = 6
+
+    style.file_picker_frame_vbox.box_spacing = 4            
+    
+    # The number of columns per page of files.
+    config.file_page_cols = 2
+
+    if config.screen_width <= 640:
+        # The number of rows per page of files.
+        config.file_page_rows = 4
+
+        # The number of quick access pages.
+        config.file_quick_access_pages = 6
+    else:
+        config.file_page_rows = 5
+        config.file_quick_access_pages = 8
+
+    # True if we want to disable the file pager.
+    config.disable_file_pager = False
+
+    # True to suppress the display of thumbnails.
+    config.disable_thumbnails = False
+
+    # How we format time in a file entry.
+    config.time_format = "%b %d, %H:%M"
+
+    # How we format a file entry.
+    config.file_entry_format = "%(time)s\n%(save_name)s"
+
+    # True if we should prompt before loading a game.
+    _load_prompt = True
+
+    # This is used to store scratch data that's used by the
+    # library, but shouldn't be saved out as part of the savegame.
+    __scratch = object()
+    __scratch.file_picker_page = None
+    
+    def _render_savefile(index, name, extra_info, screenshot, mtime, newest, clicked):
+
+        import time
+        
+        ui.button(style=style.file_picker_entry[index],
+                  clicked=clicked,
+                  selected=newest)
+
+        ui.hbox(style=style.file_picker_entry_box[index])
+
+        if not config.disable_thumbnails:
+            ui.add(screenshot)
+
+        if newest:
+            ui.text(name + ". ", style=style.file_picker_new[index])
+        else:
+            ui.text(name + ". ", style=style.file_picker_old[index])
+            
+        s = config.file_entry_format % dict(
+            time=time.strftime(config.time_format,
+                               time.localtime(mtime)),
+            save_name=extra_info)
+
+        ui.text(s, style=style.file_picker_extra_info[index])
+
+        ui.close()
+        
+    def _render_new_slot(index, name, clicked):
+
+        ui.button(style=style.file_picker_entry[index],
+                  clicked=clicked)
+
+        
+        ui.hbox(style=style.file_picker_entry_box[index])
+
+        if not config.disable_thumbnails:
+            ui.null(width=config.thumbnail_width,
+                    height=config.thumbnail_height)
+        
+        ui.text(name + ". ", style=style.file_picker_old[index])
+
+        ui.text(_(u"Empty Slot."), style=style.file_picker_empty_slot[index])
+        ui.close()
+
+
+    # Returns the names of the various pages that the file picker knows
+    # about.
+    def _file_picker_pages():
+
+        rv = [ ]
+
+        if config.has_autosave:
+            rv.append("Auto")
+
+        if config.has_quicksave:
+            rv.append("Quick")
+
+        for i in range(1, config.file_quick_access_pages + 1):
+            rv.append(str(i))
+
+        return rv
+
+
+    # This function is given a page, and should map it to the names
+    # of the files on that page.
+    def _file_picker_page_files(page):
+
+        per_page = config.file_page_cols * config.file_page_rows
+        rv = [ ]
+
+        if config.has_autosave:
+            if page == 0:
+                for i in range(1, per_page + 1):
+                    rv.append(("auto-" + str(i), "a" + str(i), True))
+
+                return rv
+            else:
+                page -= 1
+
+        if config.has_quicksave:
+            if page == 0:
+                for i in range(1, per_page + 1):
+                    rv.append(("quick-" + str(i), "q" + str(i), True))
+
+                return rv
+            else:
+                page -= 1
+
+        for i in range(per_page * page + 1, per_page * page + 1 + per_page):
+            rv.append(("%d" % i, "%d" % i, False))
+
+        return rv
+
+    # Given a filename, returns the page that filename is on. 
+    def _file_picker_file_page(filename):
+
+        per_page = config.file_page_cols * config.file_page_rows
+
+        base = 0
+
+        if config.has_autosave:
+            if filename.startswith("auto-"):
+                return base
+            else:
+                base += 1
+
+        if config.has_quicksave:
+            if filename.startswith("quick-"):
+                return base
+            else:
+                base += 1
+
+        return base + int((int(filename) - 1) / per_page)
+
+    # Processes a screenshot.
+    def _file_picker_process_screenshot(s):
+        return s
+    
+    # This displays a file picker that can chose a save file from
+    # the list of save files.
+    def _file_picker(screen, save):
+
+        # The number of slots in a page.
+        file_page_length = config.file_page_cols * config.file_page_rows
+
+        saved_games = renpy.list_saved_games(regexp=r'(auto-|quick-)?[0-9]+')
+
+        newest = None
+        newest_mtime = None
+        save_info = { }
+
+        for fn, extra_info, screenshot, mtime in saved_games:
+            screenshot = _file_picker_process_screenshot(screenshot)
+            save_info[fn] = (extra_info, screenshot, mtime)
+
+            if not fn.startswith("auto-") and mtime > newest_mtime:
+                newest = fn
+                newest_mtime = mtime
+
+        # The index of the first entry in the page.
+        fpp = __scratch.file_picker_page
+
+        if fpp is None:
+
+            if newest:
+                fpp = _file_picker_file_page(newest)
+            else:
+                fpp = _file_picker_file_page("1")
+
+
+        while True:
+
+            if fpp < 0:
+                fpp = 0
+
+            __scratch.file_picker_page = fpp
+
+            # Show navigation
+            layout.navigation(screen)
+
+            ui.window(style='file_picker_frame')
+            ui.vbox(style='file_picker_frame_vbox') # whole thing.
+
+            if not config.disable_file_pager:
+
+                # Draw the navigation.
+                ui.hbox(style='file_picker_navbox') # nav buttons.
+
+                def tb(cond, label, clicked, selected):
+                    layout.button(label,
+                                  "file_picker_nav",
+                                  enabled=cond,
+                                  clicked=clicked,
+                                  selected=selected)
+
+                # Previous
+                tb(fpp > 0, u'Previous', ui.returns(("fppdelta", -1)), selected=False)
+    
+                # Quick Access
+                for i, name in enumerate(_file_picker_pages()):
+                    tb(True, name, ui.returns(("fppset", i)), fpp == i)
+
+                # Next
+                tb(True, u'Next', ui.returns(("fppdelta", +1)), False)
+
+                ui.close()
+
+            # This draws a single slot.
+            def entry(name, filename, offset, ro):
+                clicked = ui.returns(("return", filename))
+                
+                if filename not in save_info:
+                    if (not save) or ro:
+                        clicked = None
+
+                    _render_new_slot(offset, name, clicked)
+                else:
+                    if ro:
+                        clicked = None
+
+                    extra_info, screenshot, mtime = save_info[filename]
+                    _render_savefile(offset,
+                                     name,
+                                     extra_info,
+                                     screenshot,
+                                     mtime,
+                                     newest == filename,
+                                     clicked)
+
+            ui.grid(config.file_page_cols,
+                    config.file_page_rows,
+                    style='file_picker_grid',
+                    transpose=True) # slots
+
+            for i, (filename, name, ro) in enumerate(_file_picker_page_files(fpp)):
+                entry(name, filename, i, ro)
+
+            ui.close() # slots
+            ui.close() # whole thing
+
+            result = ui.interact()
+            type, value = result
+
+            if type == "return":
+                return value
+
+            if type == "fppdelta":
+                fpp += value
+
+            if type == "fppset":
+                fpp = value
+
+
+label save_screen:
+
+    python hide:
+        while True:
+            fn = _file_picker("save", True)
+
+            if renpy.can_load(fn):
+                if not layout.yesno_prompt("save", u"Are you sure you want to overwrite your save?"):
+                    continue
+
+            renpy.save(fn)
+
+
+label load_screen:
+
+    python hide:
+        while True:
+            fn = _file_picker("load", False)
+            
+            if _load_prompt:
+                if not layout.yesno_prompt("load",  u"Loading will lose unsaved progress.\nAre you sure you want to do this?"):
+                    continue
+
+            renpy.load(fn)
+            
+            
+            

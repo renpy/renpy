@@ -192,6 +192,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     try:
         tree = parse(source, mode)
     except SyntaxError, e:
+        
         if e.lineno is not None:
             msg = "Syntax error on line %d of %s" % (e.lineno + lineno - 1, filename)
 

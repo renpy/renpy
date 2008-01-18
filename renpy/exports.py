@@ -1084,6 +1084,9 @@ def load_module(name, **kwargs):
     if not renpy.game.init_phase:
         raise Exception("Module loading is only allowed in init code.")
 
+    old_locked = renpy.config.locked
+    renpy.config.locked = False
+    
     initcode = renpy.game.script.load_module(name)
 
     context = renpy.execution.Context(False)
@@ -1098,3 +1101,5 @@ def load_module(name, **kwargs):
     context.pop_all_dynamic()
         
     renpy.game.contexts.pop()
+
+    renpy.config.locked = old_locked

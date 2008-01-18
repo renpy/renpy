@@ -1283,6 +1283,8 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+        suppress_overlay = suppress_overlay and renpy.store._suppress_overlay
+        
         self.suppress_transition = self.suppress_transition or renpy.config.skipping
 
         ## Safety condition, prevents deadlocks.

@@ -1,0 +1,38 @@
+init python:
+    style.gm_root = Style(style.default)
+    style.gm_nav_frame = Style(style.frame)
+    style.gm_nav_vbox = Style(style.vbox)
+
+    style.gm_nav_button = Style(style.button)
+    style.gm_nav_button_text = Style(style.button_text)
+
+    style.gm_nav_frame.xpos = 5.0/6.0
+    style.gm_nav_frame.xanchor = 0.5
+    style.gm_nav_frame.ypos = 0.95
+    style.gm_nav_frame.yanchor = 1.0
+
+    
+    
+    def navigation(screen=None):
+
+        # Display the game menu background
+        ui.window(style=style.gm_root[screen])
+        ui.null()
+
+        if screen is None:
+            return
+        
+        # Display the navigation frame.
+        ui.frame(style='gm_nav_frame')
+        ui.vbox(focus='gm_nav', style='gm_nav_vbox')
+
+        for key, label, clicked, enabled in config.game_menu:
+            layout.button(label,
+                          "gm_nav",
+                          selected=(screen==key),
+                          enabled=enabled,
+                          clicked=clicked)
+
+        ui.close()
+
+    layout.navigation = navigation
