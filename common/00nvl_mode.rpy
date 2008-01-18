@@ -52,8 +52,10 @@ init -1100 python:
     style.nvl_menu_choice_button.xfill = True
     style.nvl_menu_choice_button.hover_background = "#F0F2"
 
-    # The CTC indicator to use when at the end of an NVL page.
+    # nvlmode: The CTC indicator to use when at the end of an NVL page.
     config.nvl_page_ctc = None
+
+    # nvlmode: The position of the CTC indicator used at the end of an NVL page.
     config.nvl_page_ctc_position = "nestled"
     
     # A list of arguments that have been passed to nvl_record_show.

@@ -12,6 +12,8 @@ init -1180 python:
     # These are settings that the user can tweak to control the
     # look of the main menu and the load/save/escape screens.
 
+    # basics: The version of Ren'Py this script is intended for, or
+    # None if it's intended for the current version.
     config.script_version = None
     
     # The minimum version of the module we work with. Don't change
@@ -22,30 +24,36 @@ init -1180 python:
     # version?
     config.module_warning = False
 
-    # Used to translate strings in the config.
+    # basics: A map from a string that's displayed by the interface to
+    # a translated value of that string.
     config.translations = { }
 
     # Used internally to maintain compatiblity with old
     # translations of strings.
     config.old_names = { }
 
-    # True if the skip indicator should be shown.
+    # basics: True if the skip indicator should be shown.
     config.skip_indicator = True
 
-    # The width of a thumbnail.
+    # basics: The width of a thumbnail.
     config.thumbnail_width = 66
 
-    # The height of a thumbnail.
+    # basics: The height of a thumbnail.
     config.thumbnail_height = 50
 
-    # Defaults for preferences.
+    # basics: If not None, the default value of the fullscreen
+    # preference when the game is first run.
     config.default_fullscreen = None
+
+    # basics: If not None, the default value of the text_cps
+    # preference when the game is first run.
     config.default_text_cps = None        
 
     # This is updated to give the user an idea of where a save is
     # taking place.
     save_name = ''
 
+    # Should the window be shown during transitions?
     _window_during_transitions = False
 
     def _default_with_callback(trans, paired=None):
@@ -418,41 +426,43 @@ init -1180 python:
     # First up, we define a bunch of configuration variable, which the
     # user can change.
 
-    # Sound played when entering the library without clicking a
+    # menus: Sound played when entering the library without clicking a
     # button.
     config.enter_sound = None
 
-    # Sound played when leaving the library without clicking a
+    # menus: Sound played when leaving the library without clicking a
     # button.
     config.exit_sound = None
 
-    # Transition that occurs when entering the game menu.
+    # menus: Transition that occurs when entering the game menu.
     config.enter_transition = None
 
-    # Transition that occurs when leaving the game menu.
+    # menus: Transition that occurs when leaving the game menu.
     config.exit_transition = None
 
-    # Transition that's used when going from one screen to another.
+    # menus: Transition that's used when going from one screen to another.
     config.intra_transition = None
 
-    # Transition that's used when going from the main to the game
+    # menus: Transition that's used when going from the main to the game
     # menu.
     config.main_game_transition = None
 
-    # Transition that's used when going from the game to the main
+    # menus: Transition that's used when going from the game to the main
     # menu.
     config.game_main_transition = None
 
-    # Transition that's used at the end of the game, when returning
+    # menus: Transition that's used at the end of the game, when returning
     # to the main menu.
     config.end_game_transition = None
 
-    # Transition that's used at the end of the splash screen, when
+    # menus: Transition that's used at the end of the splash screen, when
     # it is shown.
     config.end_splash_transition = None
 
-    # Do we have autosave and quicksave?
+    # basics: True if autosave should be used.
     config.has_autosave = True
+
+    # basics: True if quicksave has been enabled.
     config.has_quicksave = False
 
     # The screen that we go to when entering the game menu.
@@ -585,10 +595,10 @@ label _confirm_quit:
 
 init -1180 python hide:
 
-    # Music to play at the main menu.
+    # menus: Music to play at the main menu.
     config.main_menu_music = None
 
-    # Callbacks to run at start.
+    # advanced: Callbacks to run at start.
     config.start_callbacks = [ ]
 
 # This is the true starting point of the program. Sssh... Don't
@@ -656,8 +666,13 @@ label _main_menu:
     # it still lives in the menu context, rather than the game context.)
     if renpy.has_label("main_menu"):
         jump expression "main_menu"
-    
+
+    # New name.
+    if renpy.has_label("main_menu_screen"):
+        jump expression "main_menu_screen"
+
+    # Compatibility name.
     if renpy.has_label("_library_main_menu"):
         jump expression "_library_main_menu"
-   
+        
     return

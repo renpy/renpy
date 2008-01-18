@@ -6,8 +6,7 @@
 init -1110 python:
 
     _define = define = object()
-    
-    
+        
     # Positions ##############################################################
 
     # These are positions that can be used inside at clauses. We set

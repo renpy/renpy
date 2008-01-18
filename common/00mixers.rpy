@@ -7,7 +7,10 @@ init -1130:
     # the sound system.
     $ config.force_sound = False
 
+    # basics: True if the game will have music.
     $ config.has_music = True
+
+    # basics: True if the game will have sound effects.
     $ config.has_sound = True
     
 init 1130:

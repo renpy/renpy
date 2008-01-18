@@ -46,8 +46,8 @@ init -1120:
 
     python hide:
 
+        # basics: True if the game will have voice.
         config.has_voice = True
-
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        

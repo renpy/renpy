@@ -35,12 +35,6 @@ init python:
     # The positions of file picker components.
     config.file_picker_positions = None
 
-    # The width of a thumbnail.
-    config.thumbnail_width = 66
-
-    # The height of a thumbnail.
-    config.thumbnail_height = 50
-
     
     # This lets us disable the file pager. (So we only have one
     # page of files.)
