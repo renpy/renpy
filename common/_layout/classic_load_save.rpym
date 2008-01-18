@@ -3,7 +3,8 @@ init python:
     # Define styles
     style.file_picker_entry = Style(style.large_button)
     style.file_picker_entry_box = Style(style.hbox)
-    style.file_picker_text = Style(style.small_text)
+
+    style.file_picker_text = Style(style.large_button_text)
     style.file_picker_empty_slot = Style(style.file_picker_text)
     style.file_picker_extra_info = Style(style.file_picker_text)
     style.file_picker_new = Style(style.file_picker_text)

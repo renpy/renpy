@@ -1,0 +1,352 @@
+init python:
+
+    # Styles
+    style.prefs_frame = Style(style.default)
+
+    style.prefs_pref_frame = Style(style.frame)
+    style.prefs_pref_vbox = Style(style.vbox)
+    style.prefs_pref_choicebox = Style(style.vbox)
+
+    style.prefs_label = Style(style.label)
+    style.prefs_label_text = Style(style.label_text)
+
+    style.prefs_button = Style(style.radio_button)
+    style.prefs_button_text = Style(style.radio_button_text)
+
+    style.prefs_slider = Style(style.bar)
+    style.prefs_volume_slider = Style(style.prefs_slider)
+
+    style.soundtest_button = Style(style.small_button)
+    style.soundtest_button_text = Style(style.small_button_text)
+
+    style.prefs_jump = Style(style.prefs_pref_frame)
+    style.prefs_jump_button = Style(style.button)
+    style.prefs_jump_button_text = Style(style.button_text)
+    
+    # This is a map from the name of the style that is applied to
+    # a list of preferences that should be placed into a vbox
+    # with that style.
+    config.preferences = { }
+
+    # This is a map from preference name to that preference
+    # object, that can be used in rearranging preferences.
+    config.all_preferences = { }
+
+    def _prefs_screen_run(prefs_map):
+
+        layout.navigation("preferences")
+        
+        ui.window(style='prefs_frame')
+        ui.fixed()
+
+        for style, prefs in prefs_map.iteritems():
+
+            ui.vbox(style=style)
+            for i in prefs:
+                i.render()
+            ui.close()
+
+        ui.close()
+        ui.interact()
+
+    class _Preference(object):
+        """
+        This is a class that's used to represent a multiple-choice
+        preference.
+        """
+
+        def __init__(self, name, field, values, base=_preferences):
+            """
+            @param name: The name of this preference. It will be
+            displayed to the user.
+
+            @param variable: The field on the base object
+            that will be assigned the selected value. This field
+            must exist.
+
+            @param values: A list of value name, value, condition
+            triples. The value name is the name of this value that
+            will be shown to the user. The value is the literal
+            python value that will be assigned if this value is
+            selected. The condition is a condition that will be
+            evaluated to determine if this is a legal value. If no
+            conditions are true, this preference will not be
+            displayed to the user. A condition of None is always
+            considered to be True.
+
+            @param base: The base object on which the variable is
+               read from and set. This defaults to _preferences,
+               the user preferences object.
+            """
+
+            self.name = name
+            self.field = field
+            self.values = values
+            self.base = base
+
+            config.all_preferences[name] = self
+
+            
+        def render(self):
+            values = [ (name, val) for name, val, cond in self.values
+                       if cond is None or renpy.eval(cond) ]
+
+            if not values:
+                return
+
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
+
+            layout.label(self.name, "prefs")
+
+            cur = getattr(self.base, self.field)
+
+            ui.hbox(style=style.prefs_pref_choicebox[self.name])
+
+            for name, value in values:
+                def clicked(value=value):
+                    setattr(self.base, self.field, value)
+                    return True
+
+                layout.button(name, "prefs",
+                              selected=(cur==value),
+                              clicked=clicked)
+
+
+            ui.close() # choicebox
+            ui.close() # vbox
+
+    class _VolumePreference(object):
+        """
+        This represents a preference that controls one of the
+        volumes in the system. It is represented as a slider bar,
+        and a button that can be pushed to play a sample sound on
+        a channel.
+        """
+
+        def __init__(self, name, mixer, enable='True', sound='None', channel=0):
+            """
+            @param name: The name of this preference, as shown to the user.
+
+            @param mixer: The mixer this preference controls.
+
+            @param enable: A string giving a python expression. If
+            the expression is evaluates to false, this preference
+            is not shown.
+
+            @param sound: A string that is evaluated to yield
+            another string. The yielded string is expected to give
+            a sound file, which is played as the sample sound. (We
+            apologize for the convolution of this.)
+
+            @param channel: The number of the channel the sample
+            sound is played on.                
+            """
+
+            self.name = name
+            self.mixer = mixer
+            self.enable = enable
+            self.sound = sound
+            self.channel = channel
+
+            config.all_preferences[name] = self
+
+        def render(self):
+
+            if not eval(self.enable):
+                return
+
+            sound = eval(self.sound)
+
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
+
+            layout.label(self.name, "prefs")
+
+            def changed(v):
+                _preferences.set_volume(self.mixer, v / 128.0)
+                
+            ui.bar(128,
+                   int(_preferences.get_volume(self.mixer) * 128),
+                   changed=changed,
+                   style=style.prefs_volume_slider[self.name])
+
+            if sound:
+                def clicked():
+                    renpy.sound.play(sound, channel=self.channel)
+
+                layout.button(u"Test", "soundtest", clicked=clicked, index=self.name)
+
+            ui.close()
+
+    class _SliderPreference(object):
+        """
+        A class that represents a preference that is controlled by a
+        slider.
+        """
+
+        def __init__(self, name, field, range, enable='True', base=_preferences):
+            """
+            @param name: The name of this preference, that is shown to the user.
+
+            @param range: An integer giving the maximum value of
+            this slider. The slider goes from 0 to range.
+
+            @param get: A function that's called to get the
+            initial value of the slider. It's called with no
+            arguments, and should return an integet between 0 and
+            range, inclusive.
+
+            @param set: A function that's called when the value of
+            the slider is set by the user. It is called with a
+            single integer, in the range 0 to range, inclusive.
+
+            @param enable: A string giving a python expression. If
+            the expression is evaluates to false, this preference
+            is not shown.
+            """
+
+            self.name = name
+            self.field = field
+            self.range = range
+            self.enable = enable
+            self.base = base
+            
+            config.all_preferences[name] = self
+
+        def get(self):
+            value = getattr(self.base, self.field)
+            if value == 0:
+                value = self.range
+            else:
+                value -= 1
+
+            return value
+
+        def set(self, value):
+            value += 1
+            if value == self.range + 1:
+                value = 0
+
+            setattr(self.base, self.field, value)
+            
+        def render(self):
+
+            if not eval(self.enable):
+                return
+
+            ui.window(style=style.prefs_pref_frame[self.name])
+            ui.vbox(style=style.prefs_pref_vbox[self.name])
+
+            layout.label(self.name, "prefs")
+
+            def changed(v):
+                self.set(v)
+
+            ui.bar(self.range,
+                   self.get(),
+                   changed=changed,
+                   style=style.prefs_slider[self.name])
+
+            ui.close()
+
+
+    class _JumpPreference(object):
+
+        def __init__(self, name, target, condition="True"):
+            self.name = name
+            self.target = target
+            self.condition = condition
+
+            config.all_preferences[name] = self
+
+        def render(self):
+
+            ui.window(style=style.prefs_jump[self.name])
+
+            if eval(self.condition):
+                clicked=ui.jumps(self.target)
+            else:
+                clicked=None
+
+            layout.button(self.name, 'prefs_jump', clicked=clicked)
+
+    def _remove_preference(name):
+        """
+        Removes the preference with the given name from the
+        preferences menu.
+        """
+
+        pref = config.all_preferences.get(name, None)
+        if not pref:
+            return
+
+        for k, v in config.preferences.iteritems():
+            if pref in v:
+                v.remove(pref)
+            
+init python hide:
+
+    # Enablers for some preferences.
+    config.sample_sound = None
+    config.sample_voice = None
+    config.has_transitions = True
+    config.has_cps = True
+    config.has_afm = True
+    config.has_skipping = True
+    config.has_skip_after_choice = True
+    config.always_has_joystick = False
+    
+
+    # Left
+
+    _Preference(u'Display', 'fullscreen', [
+        (u'Window', False, None),
+        (u'Fullscreen 4:3', "4:3", None),
+        (u'Fullscreen 16:9', "16:9", None),
+        (u'Fullscreen 16:10', "16:10", None),
+        ])
+
+    _Preference(u'Transitions', 'transitions', [
+        (u'All', 2, 'config.has_transitions'),
+        (u'Some', 1, 'config.has_transitions and default_transition'),
+        (u'None', 0, 'config.has_transitions'),
+        ])
+
+    # Center
+
+    _Preference(u'Skip', 'skip_unseen', [
+        (u'Seen Messages', False, 'config.allow_skipping and config.has_skipping'),
+        (u'All Messages', True, 'config.allow_skipping and config.has_skipping'),
+        ])
+
+
+    _Preference(u'After Choices', 'skip_after_choices', [
+        (u'Stop Skipping', False, 'config.allow_skipping and config.has_skip_after_choice'),
+        (u'Keep Skipping', True, 'config.allow_skipping and config.has_skip_after_choice'),
+        ])
+
+    config.old_names['Keep Skipping'] = 'Continue Skipping' 
+
+    _SliderPreference(u'Text Speed', "text_cps", 150, 'config.has_cps')
+    _SliderPreference(u'Auto-Forward Time', "afm_time", 40, 'config.has_afm')
+
+    # Right
+
+    _VolumePreference(u"Music Volume",
+                      'music',
+                      'config.has_music')
+    _VolumePreference(u"Sound Volume",
+                      'sfx',
+                      'config.has_sound',
+                      'config.sample_sound')
+    _VolumePreference(u'Voice Volume',
+                      'voice',
+                      'config.has_voice',
+                      'config.sample_voice',
+                      2)
+
+    _JumpPreference(u'Joystick...',
+                    'joystick_preferences_screen',
+                    'renpy.display.joystick.enabled or config.always_has_joystick')
+

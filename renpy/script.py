@@ -178,8 +178,6 @@ class Script(object):
 
         self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
 
-        initcode.sort()
-
         return initcode
 
         
