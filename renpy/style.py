@@ -75,7 +75,7 @@ def none_is_null(d):
 # function that is called to convert the argument to something more
 # useful.
 style_properties = dict(
-    aft_bar = renpy.easy.displayable,
+    aft_bar = none_is_null,
     aft_gutter = None,
     antialias = None,
     background = renpy.easy.displayable,
@@ -97,7 +97,7 @@ style_properties = dict(
     focus_mask = None,
     focus_rect = None,
     font = None,
-    fore_bar = renpy.easy.displayable,
+    fore_bar = none_is_null,
     fore_gutter = None,
     foreground = renpy.easy.displayable,
     sound = None,

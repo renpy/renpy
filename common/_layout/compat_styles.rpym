@@ -282,18 +282,18 @@ init python hide:
 
     style.soundtest_button.activate_sound = None
 
-    # Main menu.
+    style.window.background = Solid((0, 0, 128, 128))
+    style.window.xpadding = 10
+    style.window.ypadding = 5
+    style.window.xmargin = 10
+    style.window.ymargin = 5
+    style.window.xfill = True
+    style.window.yfill = False
+    style.window.xminimum = 0 # Includes margins and padding.
+    style.window.yminimum = 150 # Includes margins and padding.
 
-    style.mm_root.background = "#000"
-    style.mm_root.xfill = True
-    style.mm_root.yfill = True
 
-
-    # Game menu.
-    style.gm_root.background = "#000"
-    style.gm_root.xfill = True
-    style.gm_root.yfill = True
-
+    
     ######################################################################
     # Compatibility names for renamed styles.
     style.file_picker_window_vbox = style.file_picker_frame_vbox
@@ -348,4 +348,4 @@ init python hide:
         for scs in _selected_compat:
             scs.apply()
 
-    layout.compat_funcs.append(scs)
+    layout.compat_funcs.append(apply_selected_compat)

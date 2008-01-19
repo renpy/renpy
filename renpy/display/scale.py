@@ -24,6 +24,14 @@
 import os
 import math
 
+import pygame
+
+# This needs to be done before we mess too hard with pygame.
+try:
+    import _renpy
+except ImportError:
+    _renpy = None
+    
 factor = 1.0
 
 if 'RENPY_SCALE_FACTOR' in os.environ:
@@ -39,9 +47,13 @@ if factor == 1.0:
 
     # Scales the number, n.
     def scale(n):
-        
         return n
 
+    def real_bilinear(src, size):
+        rv = pygame.Surface(size, 0, src)
+        _renpy.bilinear(src, rv)
+        return rv
+        
     # Does pygame.transform.scale.
     def real_transform_scale(surf, size):
         import pygame
@@ -72,7 +84,12 @@ else:
             return n
 
         return int(n * factor)
-    
+
+    def real_bilinear(src, size):
+        rv = PygameSurface(size, 0, src)
+        old_bilinear(src, rv)
+        return rv
+        
     def real_transform_scale(surf, size):
         return old_transform_scale(surf, size)
 
@@ -82,14 +99,6 @@ else:
     def surface_scale(full):
         return Surface(old_transform_scale(full, v2p(full.get_size())), wh=full.get_size())
 
-    
-    import pygame
-
-    # This needs to be done before we mess too hard with pygame.
-    try:
-        import _renpy
-    except ImportError:
-        _renpy = None
     
     PygameSurface = pygame.Surface
 
@@ -121,13 +130,13 @@ else:
 
             if isinstance(what, PygameSurface):
                 self.surface = what
-                
+
                 if wh is not None:
                     self.width = int(wh[0])
                     self.height = int(wh[1])
                 else:
-                    self.width = int(self.surface.get_width() / factor)
-                    self.height = int(self.surface.get_height() / factor)
+                    self.width = int(math.ceil(self.surface.get_width() / factor))
+                    self.height = int(math.ceil(self.surface.get_height() / factor))
 
             else:
 
@@ -387,8 +396,6 @@ else:
         old_pixellate = _renpy.pixellate
 
         def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
-            print "PIXELLATE", max(avgwidth * factor, 1), outwidth * factor
-
             ow = max(int(outwidth * factor), 1)
             oh = max(int(outheight * factor), 1)
 
@@ -439,7 +446,7 @@ else:
             dest_yoff = f(dest_yoff)
             dest_width = f(dest_width)
             dest_height = f(dest_height)
-            
+
             old_bilinear(pysrc.surface, pydst.surface,
                          source_xoff=source_xoff,
                          source_yoff=source_yoff,

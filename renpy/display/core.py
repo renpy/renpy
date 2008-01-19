@@ -711,8 +711,9 @@ class Display(object):
         # Window icon.
         if renpy.config.window_icon:
             pygame.display.set_icon(
-                pygame.image.load(renpy.loader.load(renpy.config.window_icon),
-                                  renpy.config.window_icon))
+                renpy.display.scale.image_load_unscaled(
+                    renpy.loader.load(renpy.config.window_icon),
+                    renpy.config.window_icon))
             
         # The window we display things in.
         self.window = pygame.display.set_mode((width, height), fsflag, 32)

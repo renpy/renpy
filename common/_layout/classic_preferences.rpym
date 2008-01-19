@@ -44,7 +44,7 @@ init python:
     style.prefs_button.xalign = 1.0
     style.prefs_jump_button.xalign = 1.0
     style.prefs_slider.xalign = 1.0
-        
+    style.soundtest_button.xalign = 1.0
 
     # Place preferences into groups.
     config.preferences['prefs_left'] = [

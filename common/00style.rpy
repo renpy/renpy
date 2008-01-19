@@ -99,6 +99,8 @@ init -1200 python hide:
     style.text = Style(style.default, help="Base style for interface text.")
     style.small_text = Style(style.text, help="Base style for small interface text.")
 
+    style.mm_root = Style(style.default, help="Main menu root window.")
+    style.gm_root = Style(style.default, help="Game menu root window.")
 
     
 init -1090 python:
@@ -165,10 +167,13 @@ init -1090 python:
     style.default.focus_rect = None
 
     # Bar properties.
-    style.default.left_bar = None
-    style.default.right_bar = None
+    style.default.fore_bar = Null()
+    style.default.aft_bar = Null()
     style.default.thumb = None
     style.default.thumb_shadow = None
+    style.default.left_gutter = 0
+    style.default.right_gutter = 0
+    style.default.thumb_offset = 0
     
     # Misc.
     style.default.activate_sound = None
@@ -179,14 +184,13 @@ init -1090 python:
     style.vbox.box_layout = 'vertical'
 
     # Windows.
-    style.window.background = Solid((0, 0, 128, 128))
-    style.window.xpadding = 10
-    style.window.ypadding = 5
-    style.window.xmargin = 10
-    style.window.ymargin = 5
+    style.window.background = Solid((0, 0, 0, 192))
+    style.window.xpadding = 6
+    style.window.ypadding = 6
+    style.window.xmargin = 0
+    style.window.ymargin = 0
     style.window.xfill = True
     style.window.yfill = False
-    style.window.xminimum = 0 # Includes margins and padding.
     style.window.yminimum = 150 # Includes margins and padding.
 
     style.window.xalign = 0.5
@@ -243,6 +247,15 @@ init -1090 python:
     # Viewport
     style.viewport.clipping = True
 
+    # Menu windows.
+    style.mm_root.background = "#000"
+    style.mm_root.xfill = True
+    style.mm_root.yfill = True
+
+    style.gm_root.background = "#000"
+    style.gm_root.xfill = True
+    style.gm_root.yfill = True
+    
     ######################################################################
 
     # Error messages.

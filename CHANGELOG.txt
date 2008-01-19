@@ -6,12 +6,27 @@ renpy.load_module function. Modules are stored in .rpym files, which
 get compiled down to .rpymc files. [doc]
 
 
+A new _suppress_overlay variable has been added. This variable
+suppresses the display of overlay functions when set to true. It's
+automatically set to true when entering the menus. [doc]
+
+The default underlay now is compatible with menus. This makes it
+possible to do things like take screenshots while in a menu. 
+
+
+
 The display preference now includes the ability to display fullscreen
 in various aspect ratios, ensuring that Ren'Py will display correctly
 on widescreen monitors.
 
 
+Frame now supports a bilinear argument, which controls if bilinear
+scaling is used. [doc]
+
+
 Made more syntax errors display the proper line number.
+
+Fixed some bugs in imouto-mode.
 
 The Windows build now uses directsound for sound playback, where
 available. This should noticably reduce sound latency on systems that

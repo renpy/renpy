@@ -118,7 +118,10 @@ init -1180 python hide:
             renpy.style.write_text("styles.txt")
 
     def invoke_game_menu():
-        renpy.call_in_new_context('_game_menu')
+        if renpy.context()._menu:
+            renpy.jump("_noisy_return")
+        else:
+            renpy.call_in_new_context('_game_menu')
 
     def toggle_skipping():
 
@@ -127,11 +130,17 @@ init -1180 python hide:
         else:
             config.skipping = None
 
-        renpy.restart_interaction()
+        if renpy.context()._menu:
+            renpy.jump("_noisy_return")
+        else:            
+            renpy.restart_interaction()
 
     def fast_skip():
         if config.fast_skipping or config.developer:
             config.skipping = "fast"
+
+        if renpy.context()._menu:
+            renpy.jump("_noisy_return")
 
     def reload_game():
         if not config.developer:
@@ -282,6 +291,9 @@ init -1180 python hide:
 
 label _hide_windows:
 
+    if renpy.context()._menu:
+        return
+    
     if _windows_hidden:
         return
 
@@ -502,23 +514,16 @@ init 1180 python:
     else:
         config.autosave_frequency = None
             
-# This is the code that executes when entering a menu context, except
-# for the scene statement.
-label _enter_menu_without_scene:
+label _enter_menu:
     python:
         renpy.movie_stop()
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
+        renpy.context()._menu = True
+        
         # This may be changed, if we are already in the main menu.
         renpy.context().main_menu = False
-
-    return
-
-label _enter_menu:
-    call _enter_menu_without_scene from _call_enter_menu_without_scene_1
-
-    python:
-    
+        
         renpy.dynamic("_mouse_visible")
         renpy.dynamic("_suppress_overlay")
         _mouse_visible = True
@@ -606,6 +611,8 @@ label _confirm_quit:
 
     if renpy.has_label("confirm_quit"):
         jump expression "confirm_quit"
+    elif renpy.has_label("_compat_confirm_quit"):
+        jump expression "_compat_confirm_quit"
     else:
         jump expression "_quit_prompt"
 
@@ -626,6 +633,8 @@ init -1180 python hide:
 label _start:
 
     python hide:
+        renpy.context()._menu = False
+        
         for i in config.start_callbacks:
             i()
     
@@ -679,9 +688,9 @@ label _enter_main_menu:
     python:
         renpy.dynamic("_load_prompt")
         _load_prompt = False
-        
+
         renpy.context().main_menu = True
-    
+        
 # This is called to show the main menu to the user.
 label _main_menu:    
 

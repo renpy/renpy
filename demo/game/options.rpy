@@ -25,9 +25,6 @@ init -1:
         ## running in a window.
 
         config.window_title = u"The Ren'Py Demo Game"
-
-
-        layout.compat()
         
         ## We then want to call a theme function. themes.roundrect is
         ## a theme that features the use of rounded rectangles. It's

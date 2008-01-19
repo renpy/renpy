@@ -196,7 +196,13 @@ class Frame(renpy.display.core.Displayable):
     the center of the image is scaled in both x and y directions.
     """
 
-    def __init__(self, image, xborder, yborder, tile=False, **properties):
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.bilinear = False
+    
+    def __init__(self, image, xborder, yborder, bilinear=False, tile=False, **properties):
         """
         @param image: The image (which may be a filename or image
         object) that will be scaled.
@@ -221,6 +227,7 @@ class Frame(renpy.display.core.Displayable):
         self.xborder = xborder
         self.yborder = yborder
         self.tile = tile
+        self.bilinear = bilinear
 
     def render(self, width, height, st, at):
 
@@ -229,7 +236,8 @@ class Frame(renpy.display.core.Displayable):
                                          self.yborder,
                                          width,
                                          height,
-                                         self.tile)
+                                         self.tile,
+                                         self.bilinear)
 
         return render(fi, width, height, st, at)
 

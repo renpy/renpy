@@ -66,8 +66,7 @@ init python:
         import time
         
         ui.button(style=style.file_picker_entry[index],
-                  clicked=clicked,
-                  selected=newest)
+                  clicked=clicked)
 
         ui.hbox(style=style.file_picker_entry_box[index])
 
@@ -310,6 +309,7 @@ label save_screen:
 label load_screen:
 
     python hide:
+
         while True:
             fn = _file_picker("load", False)
             

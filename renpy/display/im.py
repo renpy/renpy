@@ -484,7 +484,7 @@ class FrameImage(ImageBase):
     such a new frame is needed.
     """
 
-    def __init__(self, im, xborder, yborder, width, height, tile):
+    def __init__(self, im, xborder, yborder, width, height, tile, bilinear):
         """
         @param image: The image that will be used as the base of this
         frame.
@@ -504,7 +504,7 @@ class FrameImage(ImageBase):
 
         im = image(im)
 
-        super(FrameImage, self).__init__(im, xborder, yborder, width, height, tile)
+        super(FrameImage, self).__init__(im, xborder, yborder, width, height, tile, bilinear)
 
         self.image = im
         self.xborder = xborder
@@ -512,7 +512,8 @@ class FrameImage(ImageBase):
         self.width = int(width)
         self.height = int(height)
         self.tile = tile
-
+        self.bilinear = bilinear
+        
         if self.width < self.xborder * 2:
             # raise Exception("Frame width is too small for its border.")
             self.xborder = self.width / 2
@@ -543,7 +544,7 @@ class FrameImage(ImageBase):
         sw, sh = source.get_size()
         dw, dh = dest.get_size()
     
-        
+
         def draw(x0, x1, y0, y1):
 
             # Compute the coordinates of the left, right, top, and
@@ -605,11 +606,18 @@ class FrameImage(ImageBase):
                         for x in range(0, dstw, tilew):
                             surf2.blit(surf, (x, y))
 
-                    surf = surf2
-                    
-                else:
-                    surf = renpy.display.scale.real_transform_scale(surf, dstsize)
 
+                    surf = surf2 
+                else:
+
+                    if self.bilinear and renpy.display.module.can_bilinear_scale:
+                        print "BILINEAR", self.bilinear
+                        surf2 = renpy.display.scale.real_bilinear(surf, dstsize)
+                    else:
+                        surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
+
+                    surf = surf2
+                        
             # Blit.
             dest.blit(surf, (dx0, dy0))
 

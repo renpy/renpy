@@ -11,7 +11,8 @@ init python:
     style.gm_nav_frame.ypos = 0.95
     style.gm_nav_frame.yanchor = 1.0
 
-    
+    style.gm_root.xfill = True
+    style.gm_root.yfill = True
     
     def navigation(screen=None):
 
@@ -27,10 +28,11 @@ init python:
         ui.vbox(focus='gm_nav', style='gm_nav_vbox')
 
         for key, label, clicked, enabled in config.game_menu:
+
             layout.button(label,
                           "gm_nav",
                           selected=(screen==key),
-                          enabled=enabled,
+                          enabled=eval(enabled),
                           clicked=clicked)
 
         ui.close()

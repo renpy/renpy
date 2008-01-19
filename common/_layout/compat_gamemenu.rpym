@@ -443,7 +443,7 @@ init python:
         else:
             return
         
-label _library_confirm_quit:
+label _compat_confirm_quit:
     $ _quit_prompt(None)
     return
 
