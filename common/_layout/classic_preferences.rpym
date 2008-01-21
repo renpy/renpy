@@ -1,5 +1,7 @@
 init python:
 
+    layout.provides('preferences')
+    
     # Load the common code.
     renpy.load_module("_layout/classic_preferences_common")
 

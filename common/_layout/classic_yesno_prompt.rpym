@@ -1,5 +1,7 @@
 init python hide:
 
+    layout.provides('yesno_prompt')
+    
     # Define styles
     style.yesno_frame = Style(style.frame)
     style.yesno_frame_vbox = Style(style.vbox)

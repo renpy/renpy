@@ -1,5 +1,7 @@
 init python:
 
+    layout.provides('load_save')
+    
     # Define styles
     style.file_picker_entry = Style(style.large_button)
     style.file_picker_entry_box = Style(style.hbox)

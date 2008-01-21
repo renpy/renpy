@@ -1,5 +1,7 @@
 init python:
 
+    layout.provides('joystick_preferences')
+    
     style.js_frame = Style(style.frame)
     style.js_frame_vbox = Style(style.vbox)
     style.js_function_prompt = Style(style.prompt)

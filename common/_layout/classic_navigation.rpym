@@ -1,4 +1,7 @@
 init python:
+
+    layout.provides('navigation')
+
     style.gm_root = Style(style.default)
     style.gm_nav_frame = Style(style.frame)
     style.gm_nav_vbox = Style(style.vbox)

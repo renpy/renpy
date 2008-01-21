@@ -510,7 +510,7 @@ class Style(object):
         if parent:
             if isinstance(parent, basestring):
                 parent = ( parent, )
-            else:
+            if isinstance(parent, Style):
                 parent = parent.name
 
                 if parent is None:

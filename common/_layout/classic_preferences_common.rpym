@@ -1,8 +1,9 @@
 init python:
-
+    
     # Styles
     style.prefs_frame = Style(style.default)
-
+    style.prefs_frame_box = Style(style.default)
+    
     style.prefs_pref_frame = Style(style.frame)
     style.prefs_pref_vbox = Style(style.vbox)
     style.prefs_pref_choicebox = Style(style.vbox)
@@ -14,8 +15,10 @@ init python:
     style.prefs_button_text = Style(style.radio_button_text)
 
     style.prefs_slider = Style(style.bar)
-    style.prefs_volume_slider = Style(style.prefs_slider)
 
+    style.prefs_volume_vbox = Style(style.vbox)
+    style.prefs_volume_slider = Style(style.prefs_slider)
+    
     style.soundtest_button = Style(style.small_button)
     style.soundtest_button_text = Style(style.small_button_text)
 
@@ -32,12 +35,15 @@ init python:
     # object, that can be used in rearranging preferences.
     config.all_preferences = { }
 
+    # Should the soundtest button be before the volume slider?
+    config.soundtest_before_volume = False
+    
     def _prefs_screen_run(prefs_map, size_group=None):
 
         layout.navigation("preferences")
         
         ui.window(style='prefs_frame')
-        ui.fixed()
+        ui.fixed(style='prefs_frame_box')
 
         for style, prefs in prefs_map.iteritems():
 
@@ -164,6 +170,15 @@ init python:
 
             layout.label(self.name, "prefs")
 
+            ui.vbox(style=style.prefs_volume_vbox[self.name])
+            
+            if sound:
+                def clicked():
+                    renpy.sound.play(sound, channel=self.channel)
+            
+            if sound and config.soundtest_before_volume:
+                layout.button(u"Test", "soundtest", clicked=clicked, index=self.name)
+
             def changed(v):
                 _preferences.set_volume(self.mixer, v / 128.0)
                 
@@ -172,12 +187,10 @@ init python:
                    changed=changed,
                    style=style.prefs_volume_slider[self.name])
 
-            if sound:
-                def clicked():
-                    renpy.sound.play(sound, channel=self.channel)
-
+            if sound and not config.soundtest_before_volume:
                 layout.button(u"Test", "soundtest", clicked=clicked, index=self.name)
 
+            ui.close()
             ui.close()
 
     class _SliderPreference(object):
