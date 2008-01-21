@@ -6,6 +6,13 @@ renpy.load_module function. Modules are stored in .rpym files, which
 get compiled down to .rpymc files. [doc]
 
 
+Windows and Buttons now take a new size_group argument. This argument,
+when not None, takes the object returned by ui.size_group(). All
+windows and buttons belonging to the same size_group are treated as if
+they had a minimum width equal to the width of the widest button in
+the group.
+
+
 A new _suppress_overlay variable has been added. This variable
 suppresses the display of overlay functions when set to true. It's
 automatically set to true when entering the menus. [doc]

@@ -69,7 +69,9 @@ init python:
 
 label preferences_screen:
 
-    $ _prefs_screen_run(config.preferences)
+    python hide:
+        size_group = ui.size_group()
+        _prefs_screen_run(config.preferences, size_group=size_group)
     
     jump preferences_screen
     

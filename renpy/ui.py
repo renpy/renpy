@@ -188,7 +188,10 @@ def sizer(maxwidth=None, maxheight=None, **properties):
     return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),
                True, True)
 
-    
+
+def size_group():
+    return renpy.display.layout.SizeGroup()
+
 def window(**properties):
 
     return add(renpy.display.layout.Window(None, **properties), True, True)

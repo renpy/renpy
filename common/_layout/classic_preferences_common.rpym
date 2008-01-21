@@ -32,7 +32,7 @@ init python:
     # object, that can be used in rearranging preferences.
     config.all_preferences = { }
 
-    def _prefs_screen_run(prefs_map):
+    def _prefs_screen_run(prefs_map, size_group=None):
 
         layout.navigation("preferences")
         
@@ -43,7 +43,7 @@ init python:
 
             ui.vbox(style=style)
             for i in prefs:
-                i.render()
+                i.render(size_group)
             ui.close()
 
         ui.close()
@@ -87,7 +87,7 @@ init python:
             config.all_preferences[name] = self
 
             
-        def render(self):
+        def render(self, size_group):
             values = [ (name, val) for name, val, cond in self.values
                        if cond is None or renpy.eval(cond) ]
 
@@ -110,7 +110,8 @@ init python:
 
                 layout.button(name, "prefs",
                               selected=(cur==value),
-                              clicked=clicked)
+                              clicked=clicked,
+                              size_group=size_group)
 
 
             ui.close() # choicebox
@@ -151,7 +152,7 @@ init python:
 
             config.all_preferences[name] = self
 
-        def render(self):
+        def render(self, size_group):
 
             if not eval(self.enable):
                 return
@@ -230,7 +231,7 @@ init python:
 
             setattr(self.base, self.field, value)
             
-        def render(self):
+        def render(self, size_group):
 
             if not eval(self.enable):
                 return
@@ -260,7 +261,7 @@ init python:
 
             config.all_preferences[name] = self
 
-        def render(self):
+        def render(self, size_group):
 
             ui.window(style=style.prefs_jump[self.name])
 
@@ -269,7 +270,7 @@ init python:
             else:
                 clicked=None
 
-            layout.button(self.name, 'prefs_jump', clicked=clicked)
+            layout.button(self.name, 'prefs_jump', clicked=clicked, size_group=size_group)
 
     def _remove_preference(name):
         """

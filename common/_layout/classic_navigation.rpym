@@ -27,13 +27,16 @@ init python:
         ui.frame(style='gm_nav_frame')
         ui.vbox(focus='gm_nav', style='gm_nav_vbox')
 
+        size_group = ui.size_group()
+        
         for key, label, clicked, enabled in config.game_menu:
 
             layout.button(label,
                           "gm_nav",
                           selected=(screen==key),
                           enabled=eval(enabled),
-                          clicked=clicked)
+                          clicked=clicked,
+                          size_group=size_group)
 
         ui.close()
 

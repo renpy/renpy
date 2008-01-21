@@ -21,6 +21,8 @@ label main_menu_screen:
         ui.frame(style='mm_menu_frame')
         ui.vbox(style='mm_menu_frame_vbox')
 
+        size_group = ui.size_group()
+        
         for label, clicked, enabled in config.main_menu:
 
             # This checks to see if clicked is a string. If so, we want clicked
@@ -29,7 +31,7 @@ label main_menu_screen:
                 clicked=ui.jumpsoutofcontext(clicked)
 
             # Create each button.
-            layout.button(label, "mm", enabled=eval(enabled), clicked=clicked)
+            layout.button(label, "mm", enabled=eval(enabled), clicked=clicked, size_group=size_group)
 
         ui.close()
 

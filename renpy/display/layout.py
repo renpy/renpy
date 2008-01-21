@@ -581,7 +581,36 @@ class MultiBox(Container):
 
 def Fixed(**properties):
     return MultiBox(layout='fixed', **properties)
-    
+
+class SizeGroup(renpy.object.Object):
+
+    def __init__(self):
+        self.members = [ ]
+        self._width = None
+        self.computing_width = False
+        
+    def width(self, width, height, st, at):
+        if self._width is not None:
+            return self._width
+
+        if self.computing_width:
+            return 0
+
+        self.computing_width = True
+        
+        maxwidth = 0
+
+        for i in self.members:
+            rend = renpy.display.render.render(i, width, height, st, at)
+            maxwidth = max(rend.width, maxwidth)
+            rend.kill()
+            
+        self._width = maxwidth
+        self.computing_width = False
+
+        return maxwidth
+        
+        
 class Window(Container):
     """
     A window is a container that holds a single Displayable in it. A window
@@ -598,10 +627,17 @@ class Window(Container):
     2*padding shrink below the minimum.    
     """
 
-    def __init__(self, child, style='window', **properties):
+    size_group = None
+    
+    def __init__(self, child, size_group=None, style='window', **properties):
 
         super(Window, self).__init__(style=style, **properties)
         self.add(child)
+
+        self.size_group = size_group
+        if size_group:
+            size_group.members.append(self)
+            
         
     def visit(self):
         return [ self.style.background ] + self.children
@@ -617,6 +653,9 @@ class Window(Container):
         xminimum = scale(style.xminimum, width)
         yminimum = scale(style.yminimum, height)
 
+        if self.size_group:
+            xminimum = max(xminimum, self.size_group.width(width, height, st, at))
+        
         left_margin = scale(style.left_margin, width)
         left_padding = scale(style.left_padding, width)
 

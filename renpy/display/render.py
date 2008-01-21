@@ -647,7 +647,9 @@ class Render(object):
         self.dead = True
 
         for widget, width, height in self.render_of:
-            del old_renders[widget, width, height]
+
+            if (widget, width, height) in old_renders:
+                del old_renders[widget, width, height]
 
             if (widget, width, height) in new_renders:
                 del new_renders[widget, width, height]
