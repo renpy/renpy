@@ -8,7 +8,7 @@ init python:
     # Create styles.
     style.prefs_column = Style(style.vbox)
 
-    style.prefs_frame.set_parent(style.frame)
+    style.prefs_frame.set_parent(style.menu_frame)
     style.prefs_pref_frame.set_parent(style.default)
 
     # Adjust styles.

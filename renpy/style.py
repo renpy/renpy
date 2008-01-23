@@ -481,6 +481,7 @@ class Style(object):
         'name',
         'parent',
         'indexed',
+        'help',
         ]
 
     def __getstate__(self):
@@ -536,7 +537,8 @@ class Style(object):
         self.indexed = None
         self.cache = None
         self.properties = [ ]
-
+        self.help = help
+        
         if properties:
             self.properties.append(properties)
             
@@ -675,3 +677,27 @@ def write_text(filename):
     f.close()
         
     
+def style_hierarchy():
+    rv = [ ]
+    children = { } # Map from parent to list of children.
+    
+    for v in style_map.values():
+
+        if v.parent is not None:
+            parent = style_map        
+            for i in v.parent:
+                parent = parent[i]
+        else:
+            parent = None
+                
+        children.setdefault(parent, [ ]).append(v)
+
+    def recurse(p, depth):
+        for s in sorted(children.get(p, []), key=lambda i : i.name):
+            rv.append((depth, "style." + s.name[0], s.help))
+            recurse(s, depth + 1)
+
+    recurse(None, 0)
+            
+    return rv
+            

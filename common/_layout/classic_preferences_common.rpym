@@ -4,7 +4,7 @@ init python:
     style.prefs_frame = Style(style.default)
     style.prefs_frame_box = Style(style.default)
     
-    style.prefs_pref_frame = Style(style.frame)
+    style.prefs_pref_frame = Style(style.menu_frame)
     style.prefs_pref_vbox = Style(style.vbox)
     style.prefs_pref_choicebox = Style(style.vbox)
 

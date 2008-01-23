@@ -1689,6 +1689,9 @@ class Viewport(Container):
 
         cw, ch = surf.get_size()
 
+        width = min(cw, width)
+        height = min(ch, height)
+
         if self.set_adjustments:
             self.xadjustment.range = max(cw - width, 0)
             self.xadjustment.page = width
@@ -1891,6 +1894,10 @@ class Side(Container):
         tops = self.top_space
         bottoms = self.bottom_space
 
+
+        cwidth = min(cwidth, width - left - lefts - right - rights)
+        cheight = min(cheight, height - top - tops - bottom - bottoms)
+        
         rv = renpy.display.render.Render(left + lefts + cwidth + rights + right,
                                          top + tops + cheight + bottoms + bottom)
 
@@ -1902,9 +1909,9 @@ class Side(Container):
             d = pos_d[pos]
             i = pos_i[pos]
             rend = render(d, w, h, st, at)
-            self.sizes[i] = (cw, ch) = rend.get_size()
-            self.offsets[i] = pos_d[pos].place(rv, x, y, cw, ch, rend)
-
+            self.sizes[i] = rend.get_size()
+            self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
+            
         col1 = 0
         col2 = left + lefts
         col3 = left + lefts + cwidth + rights

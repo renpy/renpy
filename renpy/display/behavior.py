@@ -745,14 +745,20 @@ class Bar(renpy.display.core.Displayable):
                     tgutter = self.style.fore_gutter
                     bgutter = self.style.aft_gutter
                     zone_height = self.height - tgutter - bgutter - self.thumb_dim
-                    value = (y - tgutter - self.thumb_dim / 2) * range / zone_height
-
+                    if zone_height:
+                        value = (y - tgutter - self.thumb_dim / 2) * range / zone_height
+                    else:
+                        value = 0
+                        
                 else:
                     lgutter = self.style.fore_gutter
                     rgutter = self.style.aft_gutter
                     zone_width = self.width - lgutter - rgutter - self.thumb_dim   
-                    value = (x - lgutter - self.thumb_dim / 2) * range / zone_width
-
+                    if zone_width:
+                        value = (x - lgutter - self.thumb_dim / 2) * range / zone_width
+                    else:
+                        value = 0
+                        
             if isinstance(range, int):
                 value = int(value)
 

@@ -2,14 +2,14 @@ init python:
 
     layout.provides('joystick_preferences')
     
-    style.js_frame = Style(style.frame)
+    style.js_frame = Style(style.menu_frame)
     style.js_frame_vbox = Style(style.vbox)
     style.js_function_prompt = Style(style.prompt)
     style.js_function_prompt_text = Style(style.prompt_text)
     style.js_action_prompt = Style(style.prompt)
     style.js_action_prompt_text = Style(style.prompt_text)
 
-    style.js_prefs_frame = Style(style.frame)
+    style.js_prefs_frame = Style(style.menu_frame)
     style.js_prefs_vbox = Style(style.vbox)
     style.js_prefs_button = Style(style.button)
     style.js_prefs_button_text = Style(style.button_text)

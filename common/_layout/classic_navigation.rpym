@@ -3,7 +3,7 @@ init python:
     layout.provides('navigation')
 
     style.gm_root = Style(style.default)
-    style.gm_nav_frame = Style(style.frame)
+    style.gm_nav_frame = Style(style.menu_frame)
     style.gm_nav_vbox = Style(style.vbox)
 
     style.gm_nav_button = Style(style.button)
@@ -25,6 +25,10 @@ init python:
 
         if screen is None:
             return
+
+        # Display the developer console prompt, if necessary.
+        if config.developer:
+            ui.text(_(u"Press shift+D to access the developer menu."), style='small_text', yalign=1.0)
         
         # Display the navigation frame.
         ui.frame(style='gm_nav_frame')

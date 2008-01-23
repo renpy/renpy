@@ -2,7 +2,7 @@ init python:
 
     layout.provides('main_menu')
 
-    style.mm_menu_frame = Style(style.frame)
+    style.mm_menu_frame = Style(style.menu_frame)
     style.mm_menu_frame_vbox = Style(style.vbox)
 
     style.mm_button = Style(style.button)

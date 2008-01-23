@@ -42,6 +42,7 @@ init python:
         style.prefs_slider.xmaximum = 200
         
     style.prefs_pref_vbox.xfill = True
+    style.prefs_volume_vbox.xfill = True
     style.prefs_pref_choicebox.xfill = True
     style.prefs_button.xalign = 1.0
     style.prefs_jump_button.xalign = 1.0

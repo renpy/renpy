@@ -23,84 +23,92 @@ init -1200 python hide:
 
     # Style Declarations #################################################
 
-    style.default = Style(None, help='The default style that all styles inherit from.')
+    style.default = Style(None, help='root of style hierarchy')
 
-    style.hbox = Style(style.default, help='Default for hboxes')
-    style.vbox = Style(style.default, help='Default for vboxen')
+    style.hbox = Style(style.default, help='horizontal boxes')
+    style.vbox = Style(style.default, help='vertical boxes')
 
-    style.window = Style(style.default, help='Windows created by ui.window')
+    style.window = Style(style.default, help='windows created with ui.window')
 
-    style.image_placement = Style(style.default, help='The default placement of images on the screen.')
-    style.image = Style(style.default, help="Default style of images.")
+    style.image_placement = Style(style.default, help='default placement of images on the screen')
+    style.image = Style(style.default, help="default style of images")
 
-    style.animation = Style(style.default, help="Default style of animations.")
+    style.animation = Style(style.default, help="default style of animations.")
 
-    style.say_label = Style(style.default, help='The speaker of dialogue.')
-    style.say_dialogue = Style(style.default, help='Used for dialogue text.')
-    style.say_thought = Style(style.default, help='Used for thoughts by the narrator.')
-    style.say_window = Style(style.window, help='Windows containing dialogue and thoughts.')
-    style.say_who_window = Style(style.window, help='Used for the window containing the label in two-window-say mode.')
-    style.say_two_window_vbox = Style(style.vbox, help='The vbox containing the two windows in two-window-say mode.')
-    style.say_vbox = Style(style.vbox, help='Containins the label (if present) and the body of dialogue and thoughts.')
+    style.say_label = Style(style.default, help='the name of the character speaking dialogue.')
+    style.say_dialogue = Style(style.default, help='used for dialogue text')
+    style.say_thought = Style(style.default, help='used by the default narrator')
+    style.say_window = Style(style.window, help='windows containing dialogue and thoughts')
+    style.say_who_window = Style(style.window, help='window containing the label in two-window-say mode')
+    style.say_two_window_vbox = Style(style.vbox, help='vbox containing the two windows in two-window-say mode')
+    style.say_vbox = Style(style.vbox, help='contains the label (if present) and the body of dialogue')
 
-    style.menu = Style(style.default, help='Used for the vbox containing a menu.')
-    style.menu_caption = Style(style.default, help='Used for menu captions.')
-    style.menu_choice = Style(style.default, help='Used to for the text of a menu choice.')
-    style.menu_choice_button = Style(style.default, help='Used for buttons containing menu choices.')
-    style.menu_choice_chosen = Style(style.menu_choice, help='Used for the text of a menu choice that has been chosen.')
-    style.menu_choice_chosen_button = Style(style.menu_choice_button, help='Used for buttons containing chosen menu choices.')
-    style.menu_window = Style(style.window, help='The style of a window containing a menu.')
+    style.menu = Style(style.default, help='the vbox containing an in-game menu')
+    style.menu_caption = Style(style.default, help='in-game menu caption text')
+    style.menu_choice = Style(style.default, help='text of an in-game menu choice')
+    style.menu_choice_button = Style(style.default, help='buttons containing in-game menu choices')
+    style.menu_choice_chosen = Style(style.menu_choice, help='text of an in-game menu choice that has been chosen')
+    style.menu_choice_chosen_button = Style(style.menu_choice_button, help='buttons containing chosen in-game menu choices')
+    style.menu_window = Style(style.window, help='a window containing a menu')
 
-    style.input_text = Style(style.default, help='Used for the text of an input box.')
-    style.input_prompt = Style(style.default, help='Used for the prompt of an input box.')
-    style.input_window = Style(style.window, help='Used for the window of an input box.')
+    style.input_text = Style(style.default, help='text of an input box')
+    style.input_prompt = Style(style.default, help='prompt of an input box')
+    style.input_window = Style(style.window, help='window of an input box')
 
-    style.centered_window = Style(style.default, help='Used for a "window" containing centered text, displayed using centered.')
-    style.centered_text = Style(style.default, help='Used for centered text displayed by centered or show text.')
+    style.centered_window = Style(style.default, help='window containing centered text')
+    style.centered_text = Style(style.default, help='centered text')
 
-    style.imagemap = Style(style.image_placement, help='Used for imagemaps.')
-    style.imagemap_button = Style(style.default, help='Buttons inside imagemaps.')
+    style.imagemap = Style(style.image_placement, help='default style of imagemaps')
+    style.imagemap_button = Style(style.default, help='default style of buttons inside imagemaps')
 
-    style.image_button = Style(style.default, help='Image buttons.')
-    style.image_button_image = Style(style.default, help='Images inside image buttons.')
+    style.image_button = Style(style.default, help='default style of image buttons')
+    style.image_button_image = Style(style.default, help='default style of images inside image buttons')
 
-    style.hyperlink = Style(style.default, help='A hyperlink button.')
-    style.hyperlink_text = Style(style.default, help='Hyperlink button text.')
+    style.hyperlink = Style(style.default, help=None) # ignored
+    style.hyperlink_text = Style(style.default, help='hyperlinked text')
 
-    style.viewport = Style(style.default, help='Used for viewports.')
+    style.viewport = Style(style.default, help='default style of viewports')
 
     # The base styles that can be customized by themes.
 
-    style.frame = Style(style.default, help='Base style for frames.')
+    style.frame = Style(style.default, help='base style for frames.')
+    style.menu_frame = Style(style.frame, help='base style for frames used in the game and main menus.')
     
-    style.button = Style(style.default, help='Base style for buttons.')
-    style.button_text = Style(style.default, help='Base style for button text.')
+    style.button = Style(style.default, help='base style for buttons.')
+    style.button_text = Style(style.default, help='base style for button text')
 
-    style.small_button = Style(style.button, help="Base style for small buttons.")
-    style.small_button_text = Style(style.button_text, help="Base style for small button text.")
-    style.radio_button = Style(style.button, help="Base style for radio buttons.")
-    style.radio_button_text = Style(style.button_text, help="Base style for radio button text.")
-    style.check_button = Style(style.button, help="Base style for check buttons.")
-    style.check_button_text = Style(style.button_text, help="Base style for check button text.")
-    style.large_button = Style(style.button, help="Base style for large buttons.")
-    style.large_button_text = Style(style.button_text, help="Base style for large button text.")
+    style.small_button = Style(style.button, help="base style for small buttons")
+    style.small_button_text = Style(style.button_text, help="base style for small button text")
+    style.radio_button = Style(style.button, help="base style for radio buttons")
+    style.radio_button_text = Style(style.button_text, help="base style for radio button text")
+    style.check_button = Style(style.button, help="base style for check buttons")
+    style.check_button_text = Style(style.button_text, help="base style for check button text")
+    style.large_button = Style(style.button, help="base style for large buttons")
+    style.large_button_text = Style(style.button_text, help="base style for large button text")
 
-    style.label = Style(style.default, help="Base style for windows surrounding labels.")
-    style.label_text = Style(style.default, help="Base style for label text.")
+    style.label = Style(style.default, help="base style for windows surrounding labels")
+    style.label_text = Style(style.default, help="base style for label text")
 
-    style.prompt = Style(style.default, help="Base style for windows surrounding prompts.")
-    style.prompt_text = Style(style.default, help="Base style for prompt text.")
+    style.prompt = Style(style.default, help="base style for windows surrounding prompts")
+    style.prompt_text = Style(style.default, help="base style for prompt text")
     
-    style.bar = Style(style.default, help='Base style for horizontal bars.')
-    style.vbar = Style(style.default, help='Base style for vertical bars.')
-    style.scrollbar = Style(style.bar, help='Base style for horizontal scrollbars.')
-    style.vscrollbar = Style(style.vbar, help='Used for vertical scollbars.')
+    style.bar = Style(style.default, help='base style for horizontal bars')
+    style.vbar = Style(style.default, help='base style for vertical bars')
+    style.scrollbar = Style(style.bar, help='base style for horizontal scrollbars')
+    style.vscrollbar = Style(style.vbar, help='Used for vertical scollbars')
     
-    style.text = Style(style.default, help="Base style for interface text.")
-    style.small_text = Style(style.text, help="Base style for small interface text.")
+    style.text = Style(style.default, help="base style for interface text")
+    style.small_text = Style(style.text, help="base style for small interface text")
 
-    style.mm_root = Style(style.default, help="Main menu root window.")
-    style.gm_root = Style(style.default, help="Game menu root window.")
+    style.list = Style(style.default, help="base style for a window containing a list")
+    style.list_box = Style(style.vbox, help="base style for a box containing a list")
+    style.list_row = Style(style.button, help="base style for a row of a list")
+    style.list_row_box = Style(style.hbox, help="base style for a box containing each row of a list")
+    style.list_spacer = Style(style.default, help="base style for a spacer in a list")    
+    style.list_text = Style(style.small_text, help="base style for text in a list")
+    
+    style.mm_root = Style(style.default, help="main menu root window")
+    style.gm_root = Style(style.default, help="game menu root window")
 
     
 init -1090 python:
@@ -255,6 +263,9 @@ init -1090 python:
     style.gm_root.background = "#000"
     style.gm_root.xfill = True
     style.gm_root.yfill = True
+
+    # Lists.
+    style.list_row.xfill = True
     
     ######################################################################
 

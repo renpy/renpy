@@ -12,7 +12,7 @@ init python:
     style.file_picker_new = Style(style.file_picker_text)
     style.file_picker_old = Style(style.file_picker_text)
 
-    style.file_picker_frame = Style(style.frame)
+    style.file_picker_frame = Style(style.menu_frame)
     style.file_picker_frame_vbox = Style(style.vbox)
 
     style.file_picker_navbox = Style(style.hbox)
@@ -68,7 +68,8 @@ init python:
         import time
         
         ui.button(style=style.file_picker_entry[index],
-                  clicked=clicked)
+                  clicked=clicked,
+                  role=("selected_" if newest else ""))
 
         ui.hbox(style=style.file_picker_entry_box[index])
 
