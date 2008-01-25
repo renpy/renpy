@@ -6,9 +6,9 @@ init python:
     renpy.load_module("_layout/classic_preferences_common")
 
     # Create styles.
-    style.prefs_column = Style(style.vbox)
-    style.prefs_left = Style(style.prefs_column)
-    style.prefs_right = Style(style.prefs_column)
+    style.prefs_column = Style(style.vbox, help="columns of preferences")
+    style.prefs_left = Style(style.prefs_column, help="the left preference column")
+    style.prefs_right = Style(style.prefs_column, help="the right preference column")
 
     style.prefs_left.xmaximum = 520
     style.prefs_right.xmaximum = 250
@@ -27,7 +27,7 @@ init python:
     style.prefs_volume_slider.xmaximum = 200
     style.prefs_volume_slider.xalign = 1.0
     
-    style.prefs_pref_vbox.xfill = True
+    style.prefs_pref_box.xfill = True
     style.prefs_pref_choicebox.box_layout = 'horizontal'
     style.prefs_pref_choicebox.xalign = 1.0
 

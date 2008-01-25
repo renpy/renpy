@@ -6,17 +6,17 @@ init python:
     renpy.load_module("_layout/classic_preferences_common")
 
     # Create styles.
-    style.prefs_column = Style(style.vbox)
-    style.prefs_left = Style(style.prefs_column)
-    style.prefs_center = Style(style.prefs_column)
-    style.prefs_right = Style(style.prefs_column)
+    style.prefs_column = Style(style.vbox, help="preference columns")
+    style.prefs_left = Style(style.prefs_column, help="the left preference column")
+    style.prefs_center = Style(style.prefs_column, help="the center preference column")
+    style.prefs_right = Style(style.prefs_column, help="the right preference column")
 
     # Customize styles.
     style.prefs_pref_frame.xfill = True
     style.prefs_column.xanchor = 0.5
     
     if config.screen_width <= 640:
-        style.prefs_pref_vbox.box_spacing = 6
+        style.prefs_pref_box.box_spacing = 6
 
         style.prefs_column.xmaximum = 200
         style.prefs_column.box_spacing = 5
@@ -29,7 +29,7 @@ init python:
         style.prefs_slider.xmaximum = 160
         
     else:
-        style.prefs_pref_vbox.box_spacing = 12
+        style.prefs_pref_box.box_spacing = 12
 
         style.prefs_column.xmaximum = 250
         style.prefs_column.box_spacing = 10
@@ -41,8 +41,8 @@ init python:
 
         style.prefs_slider.xmaximum = 200
         
-    style.prefs_pref_vbox.xfill = True
-    style.prefs_volume_vbox.xfill = True
+    style.prefs_pref_box.xfill = True
+    style.prefs_volume_box.xfill = True
     style.prefs_pref_choicebox.xfill = True
     style.prefs_button.xalign = 1.0
     style.prefs_jump_button.xalign = 1.0

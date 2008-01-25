@@ -3,15 +3,15 @@ init python hide:
     layout.provides('yesno_prompt')
     
     # Define styles
-    style.yesno_frame = Style(style.menu_frame)
-    style.yesno_frame_vbox = Style(style.vbox)
+    style.yesno_frame = Style(style.menu_frame, help="frame containing a yes/no prompt and yes/no buttons")
+    style.yesno_frame_vbox = Style(style.vbox, help="box separating yes/no prompt from yes/no buttons")
 
-    style.yesno_prompt = Style(style.prompt)
-    style.yesno_prompt_text = Style(style.prompt_text)
+    style.yesno_prompt = Style(style.prompt, help="a yes/no prompt")
+    style.yesno_prompt_text = Style(style.prompt_text, help="a yes/no prompt (text)")
 
-    style.yesno_button_hbox = Style(style.hbox)
-    style.yesno_button = Style(style.button)
-    style.yesno_button_text = Style(style.button_text)
+    style.yesno_button_hbox = Style(style.hbox, help="the box separating yes and no buttons")
+    style.yesno_button = Style(style.button, help="a yes or no button")
+    style.yesno_button_text = Style(style.button_text, help="a yes or no button (text)")
 
     # Alter styles.
     style.yesno_frame.xfill = True

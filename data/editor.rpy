@@ -15,7 +15,7 @@ init:
 
                 if os.path.exists(editor):
                     editor = renpy.shell_escape(editor)
-                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s" -revert: -goto:%(line)d'
+                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s" -goto:%(line)d'
 
             elif platform.mac_ver()[0]:
                 config.editor = "open -t '%(allfiles)s'"
@@ -25,7 +25,7 @@ init:
             
                 if os.path.exists(editor):
                     editor = renpy.shell_escape(editor)
-                    config.editor = "'" + editor + "' '%(allfiles)s' '-open:%(filename)s' -revert: -goto:%(line)d"
+                    config.editor = "'" + editor + "' '%(allfiles)s' '-open:%(filename)s' -goto:%(line)d"
 
             if config.editor:
                 os.environ['RENPY_EDITOR'] = config.editor

@@ -1,30 +1,30 @@
 init python:
     
     # Styles
-    style.prefs_frame = Style(style.default)
-    style.prefs_frame_box = Style(style.default)
+    style.prefs_frame = Style(style.default, help="the frame containing all of the preferences")
+    style.prefs_frame_box = Style(style.default, help="the box inside the frame containing all of the preferences")
     
-    style.prefs_pref_frame = Style(style.menu_frame)
-    style.prefs_pref_vbox = Style(style.vbox)
-    style.prefs_pref_choicebox = Style(style.vbox)
+    style.prefs_pref_frame = Style(style.menu_frame, help="a frame containing a single preference")
+    style.prefs_pref_box = Style(style.vbox, help="the box separating the preference label from the preference choices")
+    style.prefs_pref_choicebox = Style(style.vbox, help="the box containing the preference choices")
 
-    style.prefs_label = Style(style.label)
-    style.prefs_label_text = Style(style.label_text)
+    style.prefs_label = Style(style.label, help="a preference label (window)")
+    style.prefs_label_text = Style(style.label_text, help="a preference label (text)")
 
-    style.prefs_button = Style(style.radio_button)
-    style.prefs_button_text = Style(style.radio_button_text)
+    style.prefs_button = Style(style.radio_button, help="preference value button")
+    style.prefs_button_text = Style(style.radio_button_text, help="preference value button (text)")
 
-    style.prefs_slider = Style(style.bar)
+    style.prefs_slider = Style(style.bar, help="preference value slider bar")
 
-    style.prefs_volume_vbox = Style(style.vbox)
-    style.prefs_volume_slider = Style(style.prefs_slider)
+    style.prefs_volume_box = Style(style.vbox, help="box containing a volume slider and soundtest button")
+    style.prefs_volume_slider = Style(style.prefs_slider, help="volume slider bar")
     
-    style.soundtest_button = Style(style.small_button)
-    style.soundtest_button_text = Style(style.small_button_text)
+    style.soundtest_button = Style(style.small_button, help="soundtest button")
+    style.soundtest_button_text = Style(style.small_button_text, help="soundtest button (text)")
 
-    style.prefs_jump = Style(style.prefs_pref_frame)
-    style.prefs_jump_button = Style(style.button)
-    style.prefs_jump_button_text = Style(style.button_text)
+    style.prefs_jump = Style(style.prefs_pref_frame, help="jump preference frame")
+    style.prefs_jump_button = Style(style.button, help="jump preference button")
+    style.prefs_jump_button_text = Style(style.button_text, help="jump preference button (text)")
     
     # This is a map from the name of the style that is applied to
     # a list of preferences that should be placed into a vbox
@@ -101,7 +101,7 @@ init python:
                 return
 
             ui.window(style=style.prefs_pref_frame[self.name])
-            ui.vbox(style=style.prefs_pref_vbox[self.name])
+            ui.vbox(style=style.prefs_pref_box[self.name])
 
             layout.label(self.name, "prefs")
 
@@ -166,11 +166,11 @@ init python:
             sound = eval(self.sound)
 
             ui.window(style=style.prefs_pref_frame[self.name])
-            ui.vbox(style=style.prefs_pref_vbox[self.name])
+            ui.vbox(style=style.prefs_pref_box[self.name])
 
             layout.label(self.name, "prefs")
 
-            ui.vbox(style=style.prefs_volume_vbox[self.name])
+            ui.vbox(style=style.prefs_volume_box[self.name])
             
             if sound:
                 def clicked():
@@ -250,7 +250,7 @@ init python:
                 return
 
             ui.window(style=style.prefs_pref_frame[self.name])
-            ui.vbox(style=style.prefs_pref_vbox[self.name])
+            ui.vbox(style=style.prefs_pref_box[self.name])
 
             layout.label(self.name, "prefs")
 

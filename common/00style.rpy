@@ -97,15 +97,12 @@ init -1200 python hide:
     style.scrollbar = Style(style.bar, help='base style for horizontal scrollbars')
     style.vscrollbar = Style(style.vbar, help='Used for vertical scollbars')
     
-    style.text = Style(style.default, help="base style for interface text")
-    style.small_text = Style(style.text, help="base style for small interface text")
-
-    style.list = Style(style.default, help="base style for a window containing a list")
-    style.list_box = Style(style.vbox, help="base style for a box containing a list")
-    style.list_row = Style(style.button, help="base style for a row of a list")
-    style.list_row_box = Style(style.hbox, help="base style for a box containing each row of a list")
-    style.list_spacer = Style(style.default, help="base style for a spacer in a list")    
-    style.list_text = Style(style.small_text, help="base style for text in a list")
+    style.list = Style(style.default)
+    style.list_box = Style(style.vbox)
+    style.list_row = Style(style.button)
+    style.list_row_box = Style(style.hbox)
+    style.list_spacer = Style(style.default)    
+    style.list_text = Style(style.default)
     
     style.mm_root = Style(style.default, help="main menu root window")
     style.gm_root = Style(style.default, help="game menu root window")
@@ -266,6 +263,18 @@ init -1090 python:
 
     # Lists.
     style.list_row.xfill = True
+
+    style.list_row.ymargin = 0
+    style.list_row.background = "#eee"
+    style.list_row[1].background = "#ddd"
+    style.list_row.hover_background = "#fff"
+    style.list_row[1].hover_background = "#fff"
+    style.list_row.selected_background = "#cce"
+    style.list_row[1].selected_background = "#cce"
+    style.list_text.color = "#000"
+    style.list_text.size = 14
+    style.list_spacer.xminimum = 15
+       
     
     ######################################################################
 

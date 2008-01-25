@@ -72,10 +72,10 @@ label _debugger_screen:
             layout.list(entries)
             ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
         else:
-            ui.text("No variables have changed since the game started.", style='text')
+            layout.prompt("No variables have changed since the game started.", None)
             ui.null()
 
-        layout.button(u"Return to the Debug Menu", None, clicked=ui.returns(True))
+        layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
 
         ui.close()
         
@@ -95,7 +95,7 @@ label _theme_test:
                 return ""
         
         toggle_var = True
-        adj = ui.adjustment(100, 25)
+        adj = ui.adjustment(100, 25, page=25)
         
         while True:
 
@@ -131,50 +131,28 @@ label _theme_test:
             ui.close()
 
             ui.frame(style='menu_frame')
+            ui.vbox(box_spacing=2)
             ui.bar(adjustment=adj, style='bar', xmaximum=200)
-
+            ui.bar(adjustment=adj, style='scrollbar', xmaximum=200)
+            ui.close()
+            
             ui.close() # vbox
 
             ui.frame(style='menu_frame')
+            ui.hbox(box_spacing=2)
             ui.bar(adjustment=adj, style='vbar', ymaximum=200)
-
-            ui.vbox(box_spacing=10)
+            ui.bar(adjustment=adj, style='vscrollbar', ymaximum=200)
+            ui.close()
             
-            ui.frame(style='menu_frame', xmaximum=0.9)
+            ui.frame(style='menu_frame', xmaximum=0.95)
             ui.vbox(box_spacing=20)
             layout.prompt("This a prompt. Hopefully, we've made this long enough to wrap around at least once.", None)
-            ui.text("This is text, and hopefully we've made it long enough to wrap around at least once.", style='text')
-            ui.text("This is small text, and hopefully we've made it long enough to wrap around at least once.", style='small_text')
             ui.close()
 
-            ui.frame(style='menu_frame')
-            ui.side(['c', 'b', 'r' ], spacing=2)
-
-            data = [
-                (0, 'line 0 (spacing 0)'),
-                (1, 'line 1 (spacing 1, and this line is selected)'),
-                (1, 'line 2 (spacing 1)'),
-                (2, 'line 3 (spacing 2)'),
-                (1, 'line 4 (spacing 1)'),
-                (0, 'line 5 (spacing 0)'),
-                (1, 'line 6 (spacing 1)'),
-                (2, 'line 7 (spacing 2)'),
-                (1, 'line 8 (spacing 1)'),
-                (2, 'line 9 (spacing 2)'),
-                ]
-
-            vp = ui.viewport(xmaximum=250, ymaximum=100)
-            layout.list(data, selected=1)
-
-            ui.bar(adjustment=vp.xadjustment, style='scrollbar')
-            ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
-            ui.close()
-            
-            ui.close() # vbox
             ui.close() # hbox
 
             ui.frame(style='menu_frame', xalign=.01, yalign=.99)
-            ui.textbutton("Return to the Debug Menu", clicked=ui.returns("return"))
+            ui.textbutton("Return to the developer menu", clicked=ui.returns("return"))
             
             rv = ui.interact()
             if rv == "return":
@@ -207,7 +185,7 @@ label _style_hierarchy:
         layout.list(entries)
         ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
 
-        layout.button(u"Return to the Debug Menu", None, clicked=ui.returns(True))
+        layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
         
         ui.close()
         

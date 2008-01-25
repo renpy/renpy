@@ -6,7 +6,7 @@ init python:
     renpy.load_module("_layout/classic_preferences_common")
 
     # Create styles.
-    style.prefs_column = Style(style.vbox)
+    style.prefs_column = Style(style.vbox, help="the single preferences column")
 
     style.prefs_frame.set_parent(style.menu_frame)
     style.prefs_pref_frame.set_parent(style.default)
@@ -24,11 +24,11 @@ init python:
 
     style.prefs_volume_slider.xmaximum = 200
     style.prefs_volume_slider.xalign = 1.0
-    style.prefs_volume_vbox.xalign = 1.0
-    style.prefs_volume_vbox.box_layout = 'horizontal'
+    style.prefs_volume_box.xalign = 1.0
+    style.prefs_volume_box.box_layout = 'horizontal'
 
-    style.prefs_pref_vbox.xfill = True
-    style.prefs_pref_vbox.box_layout = 'horizontal'
+    style.prefs_pref_box.xfill = True
+    style.prefs_pref_box.box_layout = 'horizontal'
     style.prefs_pref_choicebox.box_layout = 'horizontal'
     style.prefs_pref_choicebox.xalign = 1.0
 
@@ -39,8 +39,6 @@ init python:
     style.soundtest_button.xalign = 1.0
     style.prefs_jump_button.xalign = 1.0
     
-    
-    config.sample_voice = "18005551212.ogg"
     config.translations["Fullscreen 16:9"] = "16:9"
     config.translations["Fullscreen 16:10"] = "16:10"
 

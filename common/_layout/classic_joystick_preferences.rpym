@@ -2,31 +2,31 @@ init python:
 
     layout.provides('joystick_preferences')
     
-    style.js_frame = Style(style.menu_frame)
-    style.js_frame_vbox = Style(style.vbox)
-    style.js_function_prompt = Style(style.prompt)
-    style.js_function_prompt_text = Style(style.prompt_text)
-    style.js_action_prompt = Style(style.prompt)
-    style.js_action_prompt_text = Style(style.prompt_text)
+    style.js_frame = Style(style.menu_frame, help="frame used for changing a joystick binding")
+    style.js_frame_box = Style(style.vbox, help="vbox used for changing a joystick binding")
+    style.js_function_prompt = Style(style.prompt, help="the name of the joystick binding to change (window)")
+    style.js_function_prompt_text = Style(style.prompt_text, help="the name of the joystick binding to change (text)")
+    style.js_action_prompt = Style(style.prompt, help="prompting the user how to change a joystick binding (window)")
+    style.js_action_prompt_text = Style(style.prompt_text, help="prompting the user how to change a joystick binding (text)")
 
-    style.js_prefs_frame = Style(style.menu_frame)
-    style.js_prefs_vbox = Style(style.vbox)
-    style.js_prefs_button = Style(style.button)
-    style.js_prefs_button_text = Style(style.button_text)
+    style.js_prefs_frame = Style(style.menu_frame, help="frame containing all joystick bindings")
+    style.js_prefs_box = Style(style.vbox, help="box containing all joystick bindings")
+    style.js_prefs_button = Style(style.button, help="button containing a joystick binding")
+    style.js_prefs_button_text = Style(style.button_text, help="button containing a joystick binding (text)")
     
-    style.js_prefs_label = Style(style.label) 
-    style.js_prefs_label_text = Style(style.label_text) 
+    style.js_prefs_label = Style(style.label, help="joystick preferences label (window)") 
+    style.js_prefs_label_text = Style(style.label_text, help="joystick preferences label (text)") 
 
     style.js_frame.ypos = .1
     style.js_frame.ypadding = .05
     style.js_frame.xmargin = .1
-    style.js_frame_vbox.box_spacing = 30
+    style.js_frame_box.box_spacing = 30
 
     style.js_prefs_frame.xpos = 10
     style.js_prefs_frame.ypos = 10
 
     style.js_prefs_button.xminimum = 0.5
-    style.js_prefs_vbox.box_first_spacing = 10
+    style.js_prefs_box.box_first_spacing = 10
     
 
     
@@ -73,7 +73,7 @@ init python:
                 layout.navigation(None)
 
                 ui.window(style='js_frame')
-                ui.vbox(style='js_frame_vbox')
+                ui.vbox(style='js_frame_box')
                 layout.prompt(_(u"Joystick Mapping") + " - " + _(label), "js_function")
                 layout.prompt(u'Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping.', 'js_action')
                 ui.close()
@@ -85,7 +85,7 @@ init python:
                 return True
 
             ui.window(style='js_prefs_frame')
-            ui.vbox(style='js_prefs_vbox')
+            ui.vbox(style='js_prefs_box')
 
             layout.label("Joystick Configuration", "js_prefs")
             

@@ -2,20 +2,16 @@ init python:
 
     layout.provides('navigation')
 
-    style.gm_root = Style(style.default)
-    style.gm_nav_frame = Style(style.menu_frame)
-    style.gm_nav_vbox = Style(style.vbox)
+    style.gm_nav_frame = Style(style.menu_frame, help="game menu navigation frame")
+    style.gm_nav_box = Style(style.vbox, help="box containing game menu navigation buttons")
 
-    style.gm_nav_button = Style(style.button)
-    style.gm_nav_button_text = Style(style.button_text)
+    style.gm_nav_button = Style(style.button, help="game menu navigation button")
+    style.gm_nav_button_text = Style(style.button_text, help="game menu navigation button (text)")
 
     style.gm_nav_frame.xpos = 5.0/6.0
     style.gm_nav_frame.xanchor = 0.5
     style.gm_nav_frame.ypos = 0.95
     style.gm_nav_frame.yanchor = 1.0
-
-    style.gm_root.xfill = True
-    style.gm_root.yfill = True
     
     def navigation(screen=None):
 
@@ -26,13 +22,9 @@ init python:
         if screen is None:
             return
 
-        # Display the developer console prompt, if necessary.
-        if config.developer:
-            ui.text(_(u"Press shift+D to access the developer menu."), style='small_text', yalign=1.0)
-        
         # Display the navigation frame.
         ui.frame(style='gm_nav_frame')
-        ui.vbox(focus='gm_nav', style='gm_nav_vbox')
+        ui.vbox(focus='gm_nav', style='gm_nav_box')
 
         size_group = ui.size_group()
         

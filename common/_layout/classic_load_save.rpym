@@ -3,24 +3,24 @@ init python:
     layout.provides('load_save')
     
     # Define styles
-    style.file_picker_entry = Style(style.large_button)
-    style.file_picker_entry_box = Style(style.hbox)
+    style.file_picker_entry = Style(style.large_button, help="used to select a file to load or save")
+    style.file_picker_entry_box = Style(style.hbox, help="the box inside a file picker entry")
 
-    style.file_picker_text = Style(style.large_button_text)
-    style.file_picker_empty_slot = Style(style.file_picker_text)
+    style.file_picker_text = Style(style.large_button_text, help="text inside a file picker entry")
+    style.file_picker_empty_slot = Style(style.file_picker_text, help="text inside an empty file picker entry slot")
     style.file_picker_extra_info = Style(style.file_picker_text)
     style.file_picker_new = Style(style.file_picker_text)
     style.file_picker_old = Style(style.file_picker_text)
 
-    style.file_picker_frame = Style(style.menu_frame)
-    style.file_picker_frame_vbox = Style(style.vbox)
+    style.file_picker_frame = Style(style.menu_frame, help="the frame enclosing the entire file picker")
+    style.file_picker_frame_box = Style(style.vbox, help="the box containing the navbox and the grid of file picker entries")
 
-    style.file_picker_navbox = Style(style.hbox)
+    style.file_picker_navbox = Style(style.hbox, help="the box containing navigation buttons")
 
-    style.file_picker_nav_button = Style(style.small_button)
-    style.file_picker_nav_button_text = Style(style.small_button_text)
+    style.file_picker_nav_button = Style(style.small_button, help="a file picker navigation button")
+    style.file_picker_nav_button_text = Style(style.small_button_text, help="file picker navigation button text")
 
-    style.file_picker_grid = Style(style.default)
+    style.file_picker_grid = Style(style.default, help="a grid containing file picker navigation buttons")
 
     # Adjust styles.
     style.file_picker_entry.xminimum = 0.5
@@ -28,7 +28,8 @@ init python:
     style.file_picker_frame.xmargin = 6
     style.file_picker_frame.ymargin = 6
 
-    style.file_picker_frame_vbox.box_spacing = 4            
+    style.file_picker_frame_box.box_spacing = 4            
+    style.file_picker_entry_box.box_spacing = 4
     
     # The number of columns per page of files.
     config.file_page_cols = 2
@@ -224,7 +225,7 @@ init python:
             layout.navigation(screen)
 
             ui.window(style='file_picker_frame')
-            ui.vbox(style='file_picker_frame_vbox') # whole thing.
+            ui.vbox(style='file_picker_frame_box') # whole thing.
 
             if not config.disable_file_pager:
 

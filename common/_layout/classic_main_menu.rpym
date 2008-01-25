@@ -2,11 +2,11 @@ init python:
 
     layout.provides('main_menu')
 
-    style.mm_menu_frame = Style(style.menu_frame)
-    style.mm_menu_frame_vbox = Style(style.vbox)
+    style.mm_menu_frame = Style(style.menu_frame, help="frame containing main menu")
+    style.mm_menu_frame_box = Style(style.vbox, help="box containing main menu buttons")
 
-    style.mm_button = Style(style.button)
-    style.mm_button_text = Style(style.button_text)
+    style.mm_button = Style(style.button, help="main menu button")
+    style.mm_button_text = Style(style.button_text, help="main menu button (text)")
 
     style.mm_menu_frame.xpos = 5.0/6.0
     style.mm_menu_frame.xanchor = 0.5
@@ -22,7 +22,7 @@ label main_menu_screen:
         ui.null()
 
         ui.frame(style='mm_menu_frame')
-        ui.vbox(style='mm_menu_frame_vbox')
+        ui.vbox(style='mm_menu_frame_box')
 
         size_group = ui.size_group()
         
