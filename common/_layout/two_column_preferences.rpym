@@ -27,9 +27,10 @@ init python:
     style.prefs_volume_slider.xmaximum = 200
     style.prefs_volume_slider.xalign = 1.0
     
-    style.prefs_pref_box.xfill = True
+    style.prefs_pref_box.xfill = True    
     style.prefs_pref_choicebox.box_layout = 'horizontal'
     style.prefs_pref_choicebox.xalign = 1.0
+    style.prefs_volume_box.xalign = 1.0
 
     style.prefs_jump.xfill = True
     
@@ -55,6 +56,7 @@ init python:
         config.all_preferences[u'Display'],
         config.all_preferences[u'Transitions'],
         config.all_preferences[u'Skip'],
+        config.all_preferences[u'Begin Skipping'],
         config.all_preferences[u'After Choices'],
         config.all_preferences[u'Text Speed'],
         config.all_preferences[u'Auto-Forward Time'],

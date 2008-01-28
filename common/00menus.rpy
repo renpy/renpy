@@ -20,7 +20,6 @@ init -1150 python:
     
     config.game_menu = [
         ( None, u"Return", ui.jumps("_return"), 'True'),
-        ( None, u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
         ( "preferences", u"Preferences", _intra_jumps("preferences_screen", "intra_transition"), 'True' ),
         ( "save", u"Save Game", _intra_jumps("save_screen", "intra_transition"), 'not renpy.context().main_menu' ),
         ( "load", u"Load Game", _intra_jumps("load_screen", "intra_transition"), 'True'),
@@ -41,3 +40,4 @@ label _main_menu_prompt:
         return
 
     
+ 

@@ -17,7 +17,7 @@ label _developer_screen:
         ui.vbox(box_first_spacing=10)
         layout.label(u"Developer Menu", None)
 
-        sg = ui.size_group()
+        sg = "developer_menu"
 
         layout.button("Return", None, clicked=ui.returns(True), size_group=sg)
         layout.button("Reload Game (Shift+R)", None, clicked=ui.callsinnewcontext("_save_reload_game"), size_group=sg)
@@ -107,7 +107,7 @@ label _theme_test:
 
             ui.vbox(box_spacing=10)
 
-            sg = ui.size_group()
+            sg = "theme_test"
 
             ui.frame(style='menu_frame')
             ui.vbox()

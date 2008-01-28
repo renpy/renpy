@@ -26,6 +26,8 @@ init python hide:
     
     style.yesno_button_hbox.xalign = 0.5
     style.yesno_button_hbox.spacing = 100
+
+    style.yesno_button.size_group = "yesno"
     
     def yesno_prompt(screen, message):
         renpy.transition(config.intra_transition)
@@ -41,9 +43,8 @@ init python hide:
         
         # The extra nulls are because we want equal whitespace surrounding
         # the two buttons. It should work as long as we have xfill=True
-        size_group = ui.size_group()
-        layout.button(u"Yes", 'yesno', clicked=ui.returns(True), size_group=size_group)
-        layout.button(u"No", 'yesno', clicked=ui.returns(False), size_group=size_group)
+        layout.button(u"Yes", 'yesno', clicked=ui.returns(True))
+        layout.button(u"No", 'yesno', clicked=ui.returns(False))
 
         ui.close()
         ui.close()

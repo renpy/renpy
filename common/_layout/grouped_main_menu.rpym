@@ -3,18 +3,19 @@ init python:
     layout.provides('main_menu')
 
     style.mm_menu_frame = Style(style.menu_frame, help="frame containing main menu")
-    style.mm_menu_frame_box = Style(style.vbox, help="box containing main menu buttons")
-
+    style.mm_outer_box = Style(style.vbox, help="outer box containing main menu buttons")
+    style.mm_inner_box = Style(style.hbox, help="inner box containing main menu buttons")
+    
     style.mm_button = Style(style.button, help="main menu button")
     style.mm_button_text = Style(style.button_text, help="main menu button (text)")
 
-    style.mm_button.size_group = "mm"
-
-    style.mm_menu_frame.xpos = 5.0/6.0
-    style.mm_menu_frame.xanchor = 0.5
-    style.mm_menu_frame.ypos = 0.9
-    style.mm_menu_frame.yanchor = 1.0
+    style.mm_menu_frame.xalign = 0.5
+    style.mm_menu_frame.yalign = 0.98
+    style.mm_inner_box.xalign = 0.5
     
+    config.main_menu_per_group = 2
+
+
 label main_menu_screen:
 
     python hide:
@@ -24,10 +25,19 @@ label main_menu_screen:
         ui.null()
 
         ui.frame(style='mm_menu_frame')
-        ui.vbox(style='mm_menu_frame_box')
+        ui.vbox(style='mm_outer_box')
 
-        for label, clicked, enabled in config.main_menu:
+        inner_open = False
+        
+        for i, (label, clicked, enabled) in enumerate(config.main_menu):
 
+            if i % config.main_menu_per_group == 0:
+                if inner_open:
+                    ui.close()
+
+                ui.hbox(style='mm_inner_box')
+                inner_open = True
+                
             # This checks to see if clicked is a string. If so, we want clicked
             # to jump us out of the current context.
             if isinstance(clicked, basestring):
@@ -36,7 +46,10 @@ label main_menu_screen:
             # Create each button.
             layout.button(label, "mm", enabled=eval(enabled), clicked=clicked)
 
-        ui.close()
+        if inner_open:
+            ui.close() # inner box
+            
+        ui.close() # outer box
 
         ui.interact()
         

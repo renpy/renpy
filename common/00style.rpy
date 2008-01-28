@@ -68,8 +68,15 @@ init -1200 python hide:
     style.hyperlink_text = Style(style.default, help='hyperlinked text')
 
     style.viewport = Style(style.default, help='default style of viewports')
+    
+    style.list = Style(style.default)
+    style.list_box = Style(style.vbox)
+    style.list_row = Style(style.default)
+    style.list_row_box = Style(style.hbox)
+    style.list_spacer = Style(style.default)    
+    style.list_text = Style(style.default)
 
-    # The base styles that can be customized by themes.
+# The base styles that can be customized by themes.
 
     style.frame = Style(style.default, help='base style for frames.')
     style.menu_frame = Style(style.frame, help='base style for frames used in the game and main menus.')
@@ -95,14 +102,7 @@ init -1200 python hide:
     style.bar = Style(style.default, help='base style for horizontal bars')
     style.vbar = Style(style.default, help='base style for vertical bars')
     style.scrollbar = Style(style.bar, help='base style for horizontal scrollbars')
-    style.vscrollbar = Style(style.vbar, help='Used for vertical scollbars')
-    
-    style.list = Style(style.default)
-    style.list_box = Style(style.vbox)
-    style.list_row = Style(style.button)
-    style.list_row_box = Style(style.hbox)
-    style.list_spacer = Style(style.default)    
-    style.list_text = Style(style.default)
+    style.vscrollbar = Style(style.vbar, help='base style for vertical scollbars')
     
     style.mm_root = Style(style.default, help="main menu root window")
     style.gm_root = Style(style.default, help="game menu root window")

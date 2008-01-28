@@ -8,6 +8,8 @@ init python:
     style.gm_nav_button = Style(style.button, help="game menu navigation button")
     style.gm_nav_button_text = Style(style.button_text, help="game menu navigation button (text)")
 
+    style.gm_nav_button.size_group = "gm_nav_button"
+    
     style.gm_nav_frame.xpos = 5.0/6.0
     style.gm_nav_frame.xanchor = 0.5
     style.gm_nav_frame.ypos = 0.95
@@ -26,16 +28,13 @@ init python:
         ui.frame(style='gm_nav_frame')
         ui.vbox(focus='gm_nav', style='gm_nav_box')
 
-        size_group = ui.size_group()
-        
         for key, label, clicked, enabled in config.game_menu:
 
             layout.button(label,
                           "gm_nav",
                           selected=(screen==key),
                           enabled=eval(enabled),
-                          clicked=clicked,
-                          size_group=size_group)
+                          clicked=clicked)
 
         ui.close()
 

@@ -113,6 +113,7 @@ style_properties = dict(
     right_margin = None,
     right_padding = None,
     size = None,
+    size_group = None,
     slow_abortable = None,
     slow_cps = None,
     slow_cps_multiplier = None,

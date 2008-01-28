@@ -16,7 +16,6 @@ init python:
 
     style.prefs_frame.xalign = 0.0
     style.prefs_frame.ypos = 10
-    style.prefs_frame.xmaximum = 540
     style.prefs_frame.xmargin = 10
     
     style.prefs_slider.xmaximum = 200
@@ -50,6 +49,7 @@ init python:
         config.all_preferences[u'Display'],
         config.all_preferences[u'Transitions'],
         config.all_preferences[u'Skip'],
+        config.all_preferences[u'Begin Skipping'],
         config.all_preferences[u'After Choices'],
         config.all_preferences[u'Text Speed'],
         config.all_preferences[u'Auto-Forward Time'],

@@ -1315,6 +1315,9 @@ class Interface(object):
         # Tick time forward.
         renpy.display.im.cache.tick()
 
+        # Cleare the size groups.
+        renpy.display.layout.size_groups.clear()
+        
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, PERIODIC,
                             MOUSEBUTTONUP, MOUSEBUTTONDOWN,

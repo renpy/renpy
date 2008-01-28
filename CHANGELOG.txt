@@ -6,11 +6,20 @@ renpy.load_module function. Modules are stored in .rpym files, which
 get compiled down to .rpymc files. [doc]
 
 
-Windows and Buttons now take a new size_group argument. This argument,
-when not None, takes the object returned by ui.size_group(). All
-windows and buttons belonging to the same size_group are treated as if
-they had a minimum width equal to the width of the widest button in
-the group.
+Windows and Buttons now take a new size_group style property. This
+property, when not None, should be a string giving the name of the
+size group the window or button is in. All windows and buttons
+belonging to the same size_group are treated as if they had a minimum
+width equal to the width of the widest button in the group. [doc]
+
+
+The Begin Skipping command has been moved from the game menu
+navigation to the preferemcers screen.
+
+
+The display preference now includes the ability to display fullscreen
+in various aspect ratios, ensuring that Ren'Py will display correctly
+on widescreen monitors.
 
 
 A new _suppress_overlay variable has been added. This variable
@@ -20,11 +29,6 @@ automatically set to true when entering the menus. [doc]
 The default underlay now is compatible with menus. This makes it
 possible to do things like take screenshots while in a menu. 
 
-
-
-The display preference now includes the ability to display fullscreen
-in various aspect ratios, ensuring that Ren'Py will display correctly
-on widescreen monitors.
 
 
 Frame now supports a bilinear argument, which controls if bilinear

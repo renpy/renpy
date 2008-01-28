@@ -38,7 +38,7 @@ init python:
     # Should the soundtest button be before the volume slider?
     config.soundtest_before_volume = False
     
-    def _prefs_screen_run(prefs_map, size_group=None):
+    def _prefs_screen_run(prefs_map):
 
         layout.navigation("preferences")
         
@@ -49,7 +49,7 @@ init python:
 
             ui.vbox(style=style)
             for i in prefs:
-                i.render(size_group)
+                i.render()
             ui.close()
 
         ui.close()
@@ -93,7 +93,7 @@ init python:
             config.all_preferences[name] = self
 
             
-        def render(self, size_group):
+        def render(self):
             values = [ (name, val) for name, val, cond in self.values
                        if cond is None or renpy.eval(cond) ]
 
@@ -116,9 +116,7 @@ init python:
 
                 layout.button(name, "prefs",
                               selected=(cur==value),
-                              clicked=clicked,
-                              size_group=size_group)
-
+                              clicked=clicked)
 
             ui.close() # choicebox
             ui.close() # vbox
@@ -158,7 +156,7 @@ init python:
 
             config.all_preferences[name] = self
 
-        def render(self, size_group):
+        def render(self):
 
             if not eval(self.enable):
                 return
@@ -244,7 +242,7 @@ init python:
 
             setattr(self.base, self.field, value)
             
-        def render(self, size_group):
+        def render(self):
 
             if not eval(self.enable):
                 return
@@ -267,15 +265,19 @@ init python:
 
     class _JumpPreference(object):
 
-        def __init__(self, name, target, condition="True"):
+        def __init__(self, name, target, condition="True", show="True"):
             self.name = name
             self.target = target
             self.condition = condition
-
+            self.show = show
+            
             config.all_preferences[name] = self
 
-        def render(self, size_group):
+        def render(self):
 
+            if not eval(self.show):
+                return
+            
             ui.window(style=style.prefs_jump[self.name])
 
             if eval(self.condition):
@@ -283,7 +285,7 @@ init python:
             else:
                 clicked=None
 
-            layout.button(self.name, 'prefs_jump', clicked=clicked, size_group=size_group)
+            layout.button(self.name, 'prefs_jump', clicked=clicked)
 
     def _remove_preference(name):
         """
@@ -310,6 +312,7 @@ init python hide:
     config.has_skipping = True
     config.has_skip_after_choice = True
     config.always_has_joystick = False
+    config.has_joystick = True
     
 
     # Left
@@ -334,7 +337,12 @@ init python hide:
         (u'All Messages', True, 'config.allow_skipping and config.has_skipping'),
         ])
 
-
+    _JumpPreference(u'Begin Skipping',
+                    '_return_skipping',
+                    'not renpy.context().main_menu',
+                    'config.allow_skipping and config.has_skipping')
+    
+    
     _Preference(u'After Choices', 'skip_after_choices', [
         (u'Stop Skipping', False, 'config.allow_skipping and config.has_skip_after_choice'),
         (u'Keep Skipping', True, 'config.allow_skipping and config.has_skip_after_choice'),
@@ -362,5 +370,6 @@ init python hide:
 
     _JumpPreference(u'Joystick...',
                     'joystick_preferences_screen',
-                    'renpy.display.joystick.enabled or config.always_has_joystick')
+                    'renpy.display.joystick.enabled or config.always_has_joystick',
+                    'config.has_joystick')
 

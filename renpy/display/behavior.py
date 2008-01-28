@@ -385,6 +385,8 @@ class Button(renpy.display.layout.Window):
         if not self.clicked:
             self.set_style_prefix(self.role + "insensitive_")
 
+        super(Button, self).per_interact()
+            
     def event(self, ev, x, y, st):
 
         # If not focused, ignore all events.

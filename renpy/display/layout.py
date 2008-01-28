@@ -610,7 +610,9 @@ class SizeGroup(renpy.object.Object):
 
         return maxwidth
         
-        
+
+size_groups = dict()
+    
 class Window(Container):
     """
     A window is a container that holds a single Displayable in it. A window
@@ -626,25 +628,29 @@ class Window(Container):
     fit the child, but on no account will the size of child area +
     2*padding shrink below the minimum.    
     """
-
-    size_group = None
     
-    def __init__(self, child, size_group=None, style='window', **properties):
+    def __init__(self, child, style='window', **properties):
 
         super(Window, self).__init__(style=style, **properties)
         self.add(child)
 
-        self.size_group = size_group
-        if size_group:
-            size_group.members.append(self)
-            
-        
     def visit(self):
         return [ self.style.background ] + self.children
 
     def get_child(self):
         return self.style.child or self.child
-    
+
+    def per_interact(self):
+        size_group = self.style.size_group
+
+        if size_group:
+            group = size_groups.get(size_group, None)
+            if group is None:
+                group = size_groups[size_group] = SizeGroup()
+
+            group.members.append(self)
+
+                
     def render(self, width, height, st, at):
 
         # save some typing.
@@ -653,8 +659,9 @@ class Window(Container):
         xminimum = scale(style.xminimum, width)
         yminimum = scale(style.yminimum, height)
 
-        if self.size_group:
-            xminimum = max(xminimum, self.size_group.width(width, height, st, at))
+        size_group = self.style.size_group
+        if size_group:
+            xminimum = max(xminimum, size_groups[size_group].width(width, height, st, at))
         
         left_margin = scale(style.left_margin, width)
         left_padding = scale(style.left_padding, width)

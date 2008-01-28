@@ -49,17 +49,21 @@ init python:
     style.prefs_slider.xalign = 1.0
     style.soundtest_button.xalign = 1.0
 
+    style.prefs_button.size_group = "prefs"
+    style.prefs_jump_button.size_group = "prefs"
+    
     # Place preferences into groups.
     config.preferences['prefs_left'] = [
         config.all_preferences[u'Display'],
         config.all_preferences[u'Transitions'],
+        config.all_preferences[u'Text Speed'],
         config.all_preferences[u'Joystick...'],
         ]
 
     config.preferences['prefs_center'] = [
         config.all_preferences[u'Skip'],
+        config.all_preferences[u'Begin Skipping'],
         config.all_preferences[u'After Choices'],
-        config.all_preferences[u'Text Speed'],
         config.all_preferences[u'Auto-Forward Time'],
         ]
 
@@ -73,8 +77,7 @@ init python:
 label preferences_screen:
 
     python hide:
-        size_group = ui.size_group()
-        _prefs_screen_run(config.preferences, size_group=size_group)
+        _prefs_screen_run(config.preferences)
     
     jump preferences_screen
     
