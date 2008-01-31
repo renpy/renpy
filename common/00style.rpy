@@ -90,8 +90,9 @@ init -1200 python hide:
     style.radio_button_text = Style(style.button_text, help="base style for radio button text")
     style.check_button = Style(style.button, help="base style for check buttons")
     style.check_button_text = Style(style.button_text, help="base style for check button text")
-    style.large_button = Style(style.button, help="base style for large buttons")
-    style.large_button_text = Style(style.button_text, help="base style for large button text")
+
+    style.large_button = Style(style.default, help="base style for large buttons")
+    style.large_button_text = Style(style.default, help="base style for large button text")
 
     style.label = Style(style.default, help="base style for windows surrounding labels")
     style.label_text = Style(style.default, help="base style for label text")
