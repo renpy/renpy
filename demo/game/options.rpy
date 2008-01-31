@@ -25,6 +25,8 @@ init -1 python hide:
 
     config.window_title = u"The Ren'Py Demo Game"
 
+    layout.scrolling_load_save()
+    
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.

@@ -119,8 +119,11 @@ if version >= 4008002:
             d = pygame.Surface((dx, dy), SRCALPHA)
         else:
             d = pygame.Surface((dx, dy), 0)
-
-        pixellate(s, d, width / dx, height / dy, 1, 1)
+            
+        if can_bilinear_scale:
+            multistep_bilinear_scale(s, d)
+        else:
+            pixellate(s, d, width / dx, height / dy, 1, 1)
 
         return d
 
@@ -343,6 +346,24 @@ else:
     def bilinear_scale(src, dst):
         return
 
+def multistep_bilinear_scale(src, dst):
+    while True:
+        sw, sh = src.get_size()
+        dw, dh = dst.get_size()
+
+        if sw <= dw * 2 and dw <= dh * 2:
+            break
+
+        nsw = max(sw / 2, dw)
+        nsh = max(sh / 2, dh)
+
+        nsrc = pygame.Surface((nsw, nsh), src.get_flags())
+        bilinear_scale(src, nsrc)
+        src = nsrc
+            
+    bilinear_scale(src, dst)
+        
+    
 
 if version >= 5006006:
 

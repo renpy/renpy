@@ -19,6 +19,8 @@ init python:
 label main_menu_screen:
 
     python hide:
+        # Ignore right-click while at the main menu.
+        ui.keymap(game_menu=ui.returns(None))
 
         # Show the background.
         ui.window(style='mm_root')

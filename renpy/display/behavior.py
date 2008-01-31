@@ -483,13 +483,14 @@ class Input(renpy.display.text.Text):
 # position of content.
 class Adjustment(renpy.object.Object):
 
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True):
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None):
         self._value = value
         self._range = range
         self._page = page
         self._step = step
         self.changed = changed
         self.adjustable = changed or adjustable
+        self.ranged = ranged
         
         self.registered = [ ]
 
@@ -506,7 +507,10 @@ class Adjustment(renpy.object.Object):
 
     def set_range(self, v):
         self._range = v
+        if self.ranged:
+            self.ranged(self)
 
+        
     range = property(get_range, set_range)
 
     def get_page(self):

@@ -53,18 +53,6 @@ init python:
     style.thumbnail_frame.xpos = 0.75
     style.thumbnail_frame.xanchor = 0.5
     
-    @renpy.curry
-    def _file_picker_hover(thumbnail):
-        if __session.thumbnail is not thumbnail:
-            __session.thumbnail = thumbnail
-            renpy.restart_interaction()
-
-    @renpy.curry
-    def _file_picker_unhover(thumbnail):
-        if __session.thumbnail is thumbnail:
-            __session.thumbnail = None
-            renpy.restart_interaction()
-
     def _file_picker_thumbnail(st, at):
         if __session.thumbnail:
             rv = __session.thumbnail
@@ -77,6 +65,18 @@ init python:
             
             
     def _file_picker(screen):
+
+        @renpy.curry
+        def hovered(thumbnail):
+            if __session.thumbnail is not thumbnail:
+                __session.thumbnail = thumbnail
+                renpy.restart_interaction()
+
+        @renpy.curry
+        def unhovered(thumbnail):
+            if __session.thumbnail is thumbnail:
+                __session.thumbnail = None
+                renpy.restart_interaction()
 
         __session.thumbnail = None
         
@@ -113,7 +113,23 @@ init python:
 
         ui.frame(style=style.file_picker_frame)
         ui.side(['c', 'r'], style=style.file_picker_side)
-        vp = ui.viewport(style=style.file_picker_viewport)
+
+        
+        
+        if __session.scrollbar_position is None:
+            if newest is None:
+                yoffset = 0
+            else:
+                yoffset = 1.0 * (int(newest) - 1) / len(slots)
+            value = 0
+
+        else:
+            value = __session.scrollbar_position
+            yoffset = None
+
+        adj = ui.adjustment(value=value)
+        ui.viewport(yadjustment=adj, offsets=(0, yoffset), style=style.file_picker_viewport)
+
         ui.vbox(style=style.file_picker_box)
 
         
@@ -132,8 +148,8 @@ init python:
 
                 ui.button(style=style.file_picker_entry[i],
                           clicked=clicked,
-                          hovered=_file_picker_hover(thumbnail),
-                          unhovered=_file_picker_unhover(thumbnail),
+                          hovered=hovered(thumbnail),
+                          unhovered=unhovered(thumbnail),
                           role = "selected_" if (fn == newest) else "")
                 
                 s = config.file_entry_format % dict(
@@ -154,7 +170,7 @@ init python:
 
         ui.close() # vbox/viewport
         
-        ui.bar(adjustment=vp.yadjustment, style=style.file_picker_scrollbar)
+        ui.bar(adjustment=adj, style=style.file_picker_scrollbar)
         
         ui.close() # side/window
 
@@ -162,12 +178,11 @@ init python:
         ui.frame(style=style.thumbnail_frame)
         ui.add(DynamicDisplayable(_file_picker_thumbnail))
 
-
-        
-        rv = ui.interact()
-        __session.thumbnail = None
-
-        # TODO: Save/load/set initial offset.
+        try:
+            rv = ui.interact()
+        finally:
+            __session.scrollbar_position = adj.value
+            __session.thumbnail = None
 
         return rv
         
