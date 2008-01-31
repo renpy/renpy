@@ -51,7 +51,7 @@ if factor == 1.0:
 
     def real_bilinear(src, size):
         rv = pygame.Surface(size, 0, src)
-        _renpy.bilinear(src, rv)
+        renpy.display.module.bilinear_scale(src, rv)
         return rv
         
     # Does pygame.transform.scale.

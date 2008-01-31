@@ -34,6 +34,11 @@ possible to do things like take screenshots while in a menu.
 Frame now supports a bilinear argument, which controls if bilinear
 scaling is used. [doc]
 
+Ren'Py now uses an improved multi-step bilinear scaling algorithm that
+is more correct when scaling by a factor of less that 1/2.
+
+Save thumbnails now use bilinear scaling.
+
 
 Made more syntax errors display the proper line number.
 

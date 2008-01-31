@@ -608,10 +608,9 @@ class FrameImage(ImageBase):
 
 
                     surf = surf2 
-                else:
 
+                else:
                     if self.bilinear and renpy.display.module.can_bilinear_scale:
-                        print "BILINEAR", self.bilinear
                         surf2 = renpy.display.scale.real_bilinear(surf, dstsize)
                     else:
                         surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
