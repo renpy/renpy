@@ -458,7 +458,7 @@ init -1180 python:
 init 1180 python:
 
     if config.has_autosave:
-        config.autosave_slots = 20
+        config.autosave_slots = 10
     else:
         config.autosave_frequency = None
             
