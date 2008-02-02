@@ -1,0 +1,16 @@
+#bodyContent {
+    font-size: 136%;
+    background: #fff;
+    margin-left: 3em;
+    margin-right: 3em;
+    padding: 1.5em;
+}
+
+.editsection {
+    display: none;
+}
+
+#bodyContent a.external {
+    background: none;
+    padding-right: 0px;
+}
