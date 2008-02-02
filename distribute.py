@@ -185,9 +185,14 @@ def main():
     files.extend(tree('tools'))
 
     files.append('doc/index.html')
-    files.append('doc/screen.css')
+    files.append('doc/common.css')
+    files.append('doc/docs.css')
+    files.append('doc/monobook.css')
+    files.append('doc/monobook2.css')
+    files.append('doc/shared.css')
     files.extend(tree('doc/reference'))
     files.extend(tree('doc/tutorials'))
+    files.extend(tree('doc/images'))
     
     files.sort()
     more_files.sort()

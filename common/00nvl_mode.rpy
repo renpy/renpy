@@ -21,17 +21,17 @@
 init -1100 python:
 
     # Styles that are used by nvl mode.
-    style.create('nvl_window', 'default')
-    style.create('nvl_vbox', 'vbox')
-    style.create('nvl_label', 'say_label')
-    style.create('nvl_dialogue', 'say_dialogue')
-    style.create('nvl_entry', 'default')
+    style.create('nvl_window', 'default', 'the window containing nvl-mode dialogue')
+    style.create('nvl_vbox', 'vbox', 'the vbox containing each box of nvl-mode dialogue')
+    style.create('nvl_label', 'say_label', 'an nvl-mode character\'s name')
+    style.create('nvl_dialogue', 'say_dialogue', 'nvl-mode character dialogue')
+    style.create('nvl_entry', 'default', 'a window containing each line of nvl-mode dialogue')
 
-    style.create('nvl_menu_window', 'default')
-    style.create('nvl_menu_choice', 'default')
-    style.create('nvl_menu_choice_chosen', 'nvl_menu_choice')
-    style.create('nvl_menu_choice_button', 'default')
-    style.create('nvl_menu_choice_chosen_button', 'nvl_menu_choice_button')
+    style.create('nvl_menu_window', 'default', 'a window containing an nvl-mode menu')
+    style.create('nvl_menu_choice', 'default', 'an nvl-mode menu choice')
+    style.create('nvl_menu_choice_chosen', 'nvl_menu_choice', 'an nvl-mode menu choice that has been chosen')
+    style.create('nvl_menu_choice_button', 'default', 'an nvl-mode choice button')
+    style.create('nvl_menu_choice_chosen_button', 'nvl_menu_choice_button', 'an nvl-mode choice button that\'s been chosen.')
 
     # Set up nvl mode styles.
     style.nvl_label.minwidth = 150

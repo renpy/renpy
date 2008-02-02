@@ -128,9 +128,9 @@ init python:
             yoffset = None
 
         adj = ui.adjustment(value=value)
-        ui.viewport(yadjustment=adj, offsets=(0, yoffset), style=style.file_picker_viewport)
+        ui.viewport(yadjustment=adj, offsets=(0, yoffset), style=style.file_picker_viewport, mousewheel=True)
 
-        ui.vbox(style=style.file_picker_box)
+        ui.vbox(style=style.file_picker_box, focus=renpy.time.time())
 
         
         for i, (fn, n) in enumerate(slots):
