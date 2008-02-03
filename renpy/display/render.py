@@ -598,6 +598,8 @@ class Render(object):
         
         # A pygame surface holding this Render, if one exists.
         self.surface = None
+        self.surface_alpha = None
+        
         self.subsurfaces = { }
 
         # The list of focusable widgets collected from this render
@@ -816,7 +818,7 @@ class Render(object):
         """
 
         return self.width, self.height
-                
+    
     def pygame_surface(self, alpha=True):
         """
         Returns a pygame surface constructed from this Render. This
@@ -824,9 +826,8 @@ class Render(object):
         (so you probably shouldn't change the output of this much).
         """
 
-        # We no longer respect the alpha parameter, there's no need to.
-
-        if self.surface:
+        
+        if self.surface and self.surface_alpha == alpha:
             return self.surface
 
         # Check to see if we have a single surface, bigger then the render.
@@ -847,13 +848,18 @@ class Render(object):
                     
         # Otherwise, do things the hard way.
 
-        sample = renpy.game.interface.display.sample_surface
+        if alpha:
+            sample = renpy.game.interface.display.sample_surface
+        else:
+            sample = renpy.game.interface.display.window
+
         rv = pygame.Surface((self.width, self.height), 0, sample)
 
         self.blit_to(rv, 0, 0)
 
         self.surface = rv
-
+        self.surface_alpha = rv
+        
         mutated_surface(rv)
 
         return rv

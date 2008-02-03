@@ -231,7 +231,7 @@ default_transition = None
 mouse_visible = True
 
 # Is the overlay suppressed?
-_suppress_overlay = False
+suppress_overlay = False
 
 # The default ADVCharacter.
 adv = ADVCharacter(None,

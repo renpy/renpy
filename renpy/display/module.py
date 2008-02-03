@@ -71,9 +71,9 @@ def convert_and_call(function, src, dst, *args):
         source = src
     else:
         source = src.convert(target)
-    
-    function(source, target, *args)
 
+    function(source, target, *args)
+    
     if target is not dst:
         dst.blit(target, (0, 0))
 

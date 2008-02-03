@@ -101,7 +101,6 @@ class Cache(object):
                 print "IC Can't preload non image: ", image
             else:
                 return
-
             
         self.preloads.append(image)
 
@@ -127,6 +126,7 @@ class Cache(object):
         if image in self.cache:
             ce = self.cache[image]
             new = False
+
             
         else:
             if renpy.config.debug_image_cache:
@@ -652,11 +652,16 @@ class SolidImage(ImageBase):
 
     def load(self):
 
-        sample = renpy.game.interface.display.sample_surface        
-        rv = pygame.Surface((self.width, self.height), 0, sample)
+        if self.color[3] != 255:
+            sample = renpy.game.interface.display.sample_surface
+        else:
+            sample = renpy.game.interface.display.window
+        
+        rv = pygame.Surface((self.width, self.height), 0,
+                            sample)
         rv.fill(self.color)
 
-        return rv
+        return rv  
 
 class Scale(ImageBase):
     """

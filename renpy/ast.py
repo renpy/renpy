@@ -862,11 +862,15 @@ class With(Node):
 
     def predict(self, callback):
 
-        trans = renpy.python.py_eval(self.expr)
+        try:
+            trans = renpy.python.py_eval(self.expr)
 
-        if trans:
-            trans(old_widget=None, new_widget=None).predict(callback)
-            
+            if trans:
+                trans(old_widget=None, new_widget=None).predict(callback)
+        except:
+            pass
+
+                
         return [ self.next ]
         
     

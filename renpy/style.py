@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import collections
 import renpy
 
 # A list of roles we know about.
@@ -218,8 +219,12 @@ init()
 # A map from a style name to the style associated with that name.
 style_map = { }
 
-# A map from a style name to the style proxy associated with that name.
-style_proxy_map = { }
+# A map from a the first part of a style name to a dict giving the
+# second part of the style name.
+style_parts = collections.defaultdict(dict)
+
+# A map from style to style help.
+style_help = { }
 
 # True if we have expanded all of the style caches, False otherwise.
 styles_built = False
@@ -234,11 +239,14 @@ def reset():
     """
 
     global style_map
+    global style_parts
     global styles_built
     global styles_pending
-    global style_info 
+    global style_help
     
     style_map = { }
+    style_help = { }
+    style_parts = collections.defaultdict(dict)
     styles_built = False
     styles_pending = [ ]
 
@@ -264,6 +272,7 @@ class StyleManager(object):
                 value.name = (name, )
 
             style_map[name] = value
+            style_parts[name][()] = value
         else:
             object.__setattr__(self, name, value)
         
@@ -335,64 +344,78 @@ def expand_properties(properties):
 
 # This builds the style. 
 def build_style(style):
-    
-    if not style.heavy:
+
+    if style.cache is not None:
         return
 
-    # A list of styles with properties we encounter, including this
-    # style.
-    light_styles = [ ]
+    updates = [ ]
 
-    
-    s = style
-    
-    while s:
+    if style.parent is not None:
 
-        if s.properties:
-            light_styles.insert(0, s)
+        name = style.parent
 
-        parent_name = s.parent
+        left_base = None
+        down_base = [ ]
 
-        # No parent... we're done.
-        if parent_name is None:
-            parent = None
-            break
+        while True:
+            first = name[0]
+            rest = name[1:]
 
-        # Otherwise, parent is a tuple, use it to find the style.
-        parent = style_map
+            while first:
 
-        try:
-            for i in parent_name:
-                parent = parent[i]
-        except:
-            raise Exception("Style %r is not known." % i)
+                left_base = style_parts[first].get(rest, None)
+                if left_base:
+                    break
 
-        # If the parent is heavy get out of here.
-        if parent.heavy:
-            break
+                ss = style_map[first]
+                down_base.insert(0, ss)
+                first = ss.parent and ss.parent[0]
 
-        # Otherwise, recurse.
-        s = parent
+            if left_base:
+                break
 
-    if parent:
+            name = name[:-1]
+            down_base = [ ]
 
-        if not parent.cache:
-            build_style(parent)
+        for ss in down_base:
+            if ss.updates:
 
-        if light_styles:
-            cache = parent.cache[:]
-        else:
-            cache = parent.cache
-            
+                if ss.cache is None:
+                    build_style(ss)
+                
+                updates.extend(ss.updates)
+
+            for j in rest:
+                ss = ss.indexed.get(j, None)
+
+                if ss is None:
+                    break
+
+                if ss.cache is None:
+                    build_style(ss)
+
+                updates.extend(ss.updates)
+
+        if left_base.cache is None:
+            build_style(left_base)
+
+        cache = left_base.cache
+                
     else:
         cache = [ None ] * property_numbers
 
+    style.updates = my_updates = [ ]
         
-    for s in light_styles:
-        for p in s.properties:
-            for prio, propn, val in expand_properties(p):
-                cache[propn] = val
-                
+    for p in style.properties:
+        my_updates.extend(expand_properties(p))
+
+    if updates or my_updates:
+        cache = cache[:]
+        for prio, propn, val in updates:
+            cache[propn] = val
+        for prio, propn, val in my_updates:
+            cache[propn] = val
+
     style.cache = cache
     
                 
@@ -414,7 +437,7 @@ def rebuild():
     global style_pending
     global styles_built
 
-    styles_pending = [ i for i in style_map.values() if i.heavy ]
+    styles_pending = [ j for i in style_parts.values() for j in i.values() ]
     styles_built = False
     
     for i in styles_pending:
@@ -425,8 +448,9 @@ def rebuild():
 def backup():
     rv = { }
     
-    for k, v in style_map.iteritems():
-        rv[k] = (v.parent, v.properties[:])
+    for first, parts in style_parts.iteritems():
+        for rest, v in parts.iteritems():
+            rv[first, rest] = (v.parent, v.properties[:])
 
     return rv
         
@@ -437,10 +461,10 @@ def restore(o):
     styles_pending = [ ]
     styles_built = False
 
-    for k, v in o.iteritems():
-        style_map[k].set_parent(v[0])
-        style_map[k].properties = v[1][:]
-        styles_pending.append(style_map[k])
+    for (first, rest), (parent, properties) in o.iteritems():
+        style_parts[first][rest].set_parent(parent)
+        style_parts[first][rest].properties = properties[:]
+        styles_pending.append(style_parts[first][rest])
 
 def style_metaclass(name, bases, attrs):
 
@@ -478,11 +502,10 @@ class Style(object):
         'properties',
         'offset',
         'prefix',
-        'heavy',
+        'updates',
         'name',
         'parent',
         'indexed',
-        'help',
         ]
 
     def __getstate__(self):
@@ -494,15 +517,20 @@ class Style(object):
         
         del rv["cache"]
         del rv["offset"]
-
+        del rv["updates"]
+        
         return rv
 
     def __setstate__(self, state):
 
+        state.pop("heavy", None)
+        state.pop("help", None)
+        
         for k, v in state.iteritems():
             setattr(self, k, v)
 
-        self.cache = [ ]
+        self.cache = None
+        self.updates = None
         self.offset = prefix_offset[self.prefix]
 
         build_style(self)
@@ -526,8 +554,6 @@ class Style(object):
         self.prefix = 'insensitive_'
         self.offset = prefix_offset['insensitive_']
 
-        self.heavy = heavy
-
         if name is None or isinstance(name, tuple):
             self.name = name
         else:
@@ -538,7 +564,8 @@ class Style(object):
         self.indexed = None
         self.cache = None
         self.properties = [ ]
-        self.help = help
+
+        style_help[self] = help
         
         if properties:
             self.properties.append(properties)
@@ -597,11 +624,14 @@ class Style(object):
         if index in self.indexed:
             return self.indexed[index]
 
-        s = Style(self, heavy=False, name=self.name + (index,))
+        name = self.name + (index,)
+        
+        s = Style(self.parent, name=name, heavy=not styles_built)
 
         if not styles_built:
             self.indexed[index] = s
-        
+            style_parts[name[0]][name[1:]] = s
+            
         return s
 
     # This is here to accelerate Displayable.get_placement.
@@ -695,7 +725,7 @@ def style_hierarchy():
 
     def recurse(p, depth):
         for s in sorted(children.get(p, []), key=lambda i : i.name):
-            rv.append((depth, "style." + s.name[0], s.help))
+            rv.append((depth, "style." + s.name[0], style_help[s]))
             recurse(s, depth + 1)
 
     recurse(None, 0)

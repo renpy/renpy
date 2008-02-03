@@ -339,8 +339,8 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        bottom_surface = bottom.pygame_surface()
-        top_surface = top.pygame_surface()
+        bottom_surface = bottom.pygame_surface(self.alpha)
+        top_surface = top.pygame_surface(self.alpha)
 
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
@@ -1036,8 +1036,8 @@ class ImageDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
         
-        bottom_surface = bottom.pygame_surface(True)
-        top_surface = top.pygame_surface(True)
+        bottom_surface = bottom.pygame_surface(self.alpha)
+        top_surface = top.pygame_surface(self.alpha)
 
         iw, ih = image.get_size()
 
