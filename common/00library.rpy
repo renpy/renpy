@@ -71,7 +71,6 @@ init -1180 python:
     style.skip_indicator.xpos = 10
     style.skip_indicator.ypos = 10
 
-
     # This is used to jump to a label with a transition.
     def _intra_jumps_core(label, transition):
         renpy.transition(getattr(config, transition))
@@ -473,7 +472,7 @@ label _enter_menu:
         renpy.context().main_menu = False
         
         store.mouse_visible = True
-        store._suppress_overlay = True
+        store.suppress_overlay = True
         ui.clear()
 
     return

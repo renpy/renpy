@@ -53,6 +53,7 @@ init python:
             ui.close()
 
         ui.close()
+
         ui.interact()
 
     class _Preference(object):
