@@ -471,7 +471,7 @@ label _enter_menu:
         # This may be changed, if we are already in the main menu.
         renpy.context().main_menu = False
         renpy.context_dynamic("main_menu")
-        store.main_menu = True
+        store.main_menu = False
         
         store.mouse_visible = True
         store.suppress_overlay = True

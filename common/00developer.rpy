@@ -4,7 +4,7 @@ label _developer:
     if not config.developer:
         return
 
-    call _enter_menu
+    call _enter_menu from _call__enter_menu_4
 
 label _developer_screen:
 

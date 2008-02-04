@@ -320,9 +320,7 @@ init python hide:
 
     _Preference(u'Display', 'fullscreen', [
         (u'Window', False, None),
-        (u'Fullscreen 4:3', "4:3", None),
-        (u'Fullscreen 16:9', "16:9", None),
-        (u'Fullscreen 16:10', "16:10", None),
+        (u'Fullscreen', True, None),
         ])
 
     _Preference(u'Transitions', 'transitions', [

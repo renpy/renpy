@@ -51,11 +51,6 @@ The Begin Skipping command has been moved from the game menu
 navigation to the preferences screen.
 
 
-The display preference now includes the ability to display fullscreen
-in various aspect ratios, ensuring that Ren'Py will display correctly
-on widescreen monitors.
-
-
 A new _suppress_overlay variable has been added. This variable
 suppresses the display of overlay functions when set to true. It's
 automatically set to true when entering the menus.

@@ -685,9 +685,6 @@ def write_text(filename):
             for prio, propn, newval in expand_properties(p):
                 inherited[propn] = False
             
-        if not sty.heavy:
-            sty = Style(sty, heavy=True)
-
         props = [ (prefix + prop, sty.cache[prefixn + propn], inherited[prefixn + propn])
                   for prefix, prefixn in prefix_offset.iteritems()
                   for prop, propn in property_number.iteritems() ]

@@ -686,27 +686,28 @@ class Display(object):
             fullscreen = False
             self.fullscreen = renpy.game.preferences.fullscreen
 
-        if fullscreen == "16:9":
-            fsratio = 16.0 / 9.0
-        elif fullscreen == "16:10":
-            fsratio = 16.0 / 10.0
-        elif fullscreen: # 4:3 mode.
-            fsratio = 4.0 / 3.0
-        else:
-            fsratio = None
+#         if fullscreen == "16:9":
+#             fsratio = 16.0 / 9.0
+#         elif fullscreen == "16:10":
+#             fsratio = 16.0 / 10.0
+#         elif fullscreen: # 4:3 mode.
+#             fsratio = 4.0 / 3.0
+#         else:
+#             fsratio = None
 
-        if fsratio:
+        if fullscreen:
             fsflag = FULLSCREEN
-            width = int(max(renpy.config.screen_width, renpy.config.screen_height * fsratio))
-            height = int(max(renpy.config.screen_height, renpy.config.screen_width / fsratio))
-            self.screen_xoffset = (width - renpy.config.screen_width) / 2
-            self.screen_yoffset = (height - renpy.config.screen_height) / 2            
+#             width = int(max(renpy.config.screen_width, renpy.config.screen_height * fsratio))
+#             height = int(max(renpy.config.screen_height, renpy.config.screen_width / fsratio))
+#             self.screen_xoffset = (width - renpy.config.screen_width) / 2
+#             self.screen_yoffset = (height - renpy.config.screen_height) / 2            
         else:
             fsflag = 0
-            width = renpy.config.screen_width
-            height = renpy.config.screen_height
-            self.screen_xoffset = 0
-            self.screen_yoffset = 0
+
+        width = renpy.config.screen_width
+        height = renpy.config.screen_height
+        self.screen_xoffset = 0
+        self.screen_yoffset = 0
             
         # Window icon.
         if renpy.config.window_icon:
@@ -718,7 +719,7 @@ class Display(object):
         # The window we display things in.
         self.window = pygame.display.set_mode((width, height), fsflag, 32)
 
-        # Window totle.
+        # Window title.
         pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
 
 

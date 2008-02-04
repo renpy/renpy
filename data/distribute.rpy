@@ -179,7 +179,7 @@ label distribute:
             text("Linux x86", style='launcher_input')
 
         if mac:
-            text("Mac OS X 10.3+", style='launcher_input')
+            text("Mac OS X 10.4+", style='launcher_input')
 
         spacer()
 

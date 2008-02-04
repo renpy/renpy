@@ -31,7 +31,7 @@ init:
         layout.compat()
         theme.roundrect(launcher=True)
 
-        style.hyperlink_text.color = "#00f"
+        style.hyperlink_text.color = "#0ff"
 
         
         def ifrw(label):

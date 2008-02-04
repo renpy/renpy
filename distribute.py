@@ -19,7 +19,7 @@ def data(fn):
     if fn.startswith("renpy.app"):
         return rv
 
-    if fn.endswith(".rpy") or fn.endswith(".py"):
+    if fn.endswith(".rpy") or fn.endswith(".py") or fn.endswith(".txt"):
         rv = rv.replace("\n", "\r\n")
         rv = rv.replace("\r\r\n", "\r\n")
 
