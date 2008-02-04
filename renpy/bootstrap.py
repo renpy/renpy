@@ -324,7 +324,7 @@ def report_exception(e):
 
         try:
             if renpy.config.editor:
-                renpy.exports.launch_editor([ 'traceback.txt' ], 1)
+                renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
             else:
                 os.startfile('traceback.txt')
         except:

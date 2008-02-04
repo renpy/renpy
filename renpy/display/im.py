@@ -373,7 +373,10 @@ class Image(ImageBase):
             else:
                 surf = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
-            surf = surf.convert_alpha()
+            if im.get_masks()[3] or im.get_colorkey():
+                im = im.convert_alpha()
+            else:
+                im = im.convert()   
 
             return surf
 

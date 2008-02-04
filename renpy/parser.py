@@ -1672,7 +1672,7 @@ def report_parse_errors():
 
     try:
         if renpy.config.editor:
-            renpy.exports.launch_editor([ 'errors.txt' ], 1)
+            renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
         else:
             os.startfile('errors.txt')
     except:

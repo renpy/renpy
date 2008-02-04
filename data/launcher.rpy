@@ -295,7 +295,7 @@ init:
 
             lf.close()
 
-            renpy.launch_editor([ "lint.txt" ])
+            renpy.launch_editor([ "lint.txt" ],transient=1)
 
 
 label main_menu:

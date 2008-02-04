@@ -1,6 +1,26 @@
 New in Ren'Py 6.6.0
 -------------------
 
+This release features a total rewrite of the out-of-game menus, which
+divide these menus into themes which control the look of the menus,
+and layouts which control the feel (layout and functionality) of the
+menu components.
+
+Writing new layouts and themes has been made much easier by
+documentation listing what is required for each. There are also a
+number of new layouts, one new theme (outline).
+
+Games are now required to select a theme before they can operate
+properly. The implicit theme from the previous version of Ren'Py has now 
+been turned into the ancient theme. 
+
+Finally, to ensure older games can operate in this new version of Ren'Py, 
+a compatibility mode has been added. This mode is engaged automatically if 
+config.script_version is set to (6, 5, 0) or less.
+
+
+This release features a new developer menu. Hit Shift+D to access it.
+
 
 Ren'Py now supports modules which can be loaded with the
 renpy.load_module function. Modules are stored in .rpym files, which
@@ -17,7 +37,7 @@ then style.child['index'] inherits from, in order:
 
 This makes it possible to define imagebuttons and imagelabels in the
 style.button and style.label styles, rather than in all sorts of
-different styles. [doc]
+different styles.
 
 
 Windows and Buttons now take a new size_group style property. This
@@ -43,6 +63,10 @@ automatically set to true when entering the menus.
 The default underlay now is compatible with menus. This makes it
 possible to do things like take screenshots while in a menu. 
 
+
+Applied Hentai Senshi's patch that adds a config.editor_transient
+variables. The default editor will no longer clobber changed files if
+they are opened twice, while the transient editor will.
 
 
 Frame now supports a bilinear argument, which controls if bilinear

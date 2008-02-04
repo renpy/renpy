@@ -893,7 +893,7 @@ def shell_escape(s):
         return s.replace("\\", "\\\\").replace("'", "\\'")
 
 
-def launch_editor(filenames, line=1):
+def launch_editor(filenames, line=1, transient=0):
     """
     This causes an editor to be launched at the location of the current
     statement.
@@ -924,7 +924,10 @@ def launch_editor(filenames, line=1):
     otherfiles = join.join(filenames[1:])
                                 
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
-    cmd = renpy.config.editor % subs
+    if transient and (renpy.config.editor_transient is not None):
+        cmd = renpy.config.editor_transient % subs
+    else:
+        cmd = renpy.config.editor % subs
 
     try:
         return subprocess.Popen(cmd, shell=shell)
