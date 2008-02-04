@@ -1,4 +1,4 @@
-# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2008 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -373,10 +373,10 @@ class Image(ImageBase):
             else:
                 surf = pygame.image.load(renpy.loader.load(self.filename), self.filename)
 
-            if im.get_masks()[3] or im.get_colorkey():
-                im = im.convert_alpha()
+            if surf.get_masks()[3] or surf.get_colorkey():
+                surf = surf.convert_alpha()
             else:
-                im = im.convert()   
+                surf = surf.convert()   
 
             return surf
 
@@ -389,7 +389,7 @@ class Image(ImageBase):
 
                 return im.load()
 
-            raise e
+            raise
         
     def predict_files(self):
 
