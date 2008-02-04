@@ -337,12 +337,14 @@ if version >= 5006000:
 
     can_bilinear_scale = True
 
-    bilinear_scale = _renpy.bilinear
+    def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
 
-    def bilinear_scale(src, dst):
-        while True:
+        if sw is None:
             sw, sh = src.get_size()
+        if dw is None:
             dw, dh = dst.get_size()
+            
+        while True:
 
             if sw <= dw * 2 and sh <= dh * 2:
                 break
@@ -351,10 +353,14 @@ if version >= 5006000:
             nsh = max(sh / 2, dh)
 
             nsrc = pygame.Surface((nsw, nsh), src.get_flags())
-            _renpy.bilinear(src, nsrc)
+            _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
+            sx = 0
+            sy = 0
+            sw = nsw
+            sh = nsh
             src = nsrc
 
-        _renpy.bilinear(src, dst)
+        _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh)
         
 
     
@@ -362,7 +368,7 @@ else:
 
     can_bilinear_scale = False
 
-    def bilinear_scale(src, dst):
+    def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
         return
 
     

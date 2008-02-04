@@ -340,7 +340,7 @@ init python hide:
 
     _JumpPreference(u'Begin Skipping',
                     '_return_skipping',
-                    'not renpy.context().main_menu',
+                    'not main_menu',
                     'config.allow_skipping and config.has_skipping')
     
     

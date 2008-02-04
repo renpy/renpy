@@ -997,6 +997,9 @@ def last_interact_type():
 def dynamic(*vars):
     renpy.game.context().make_dynamic(vars)
 
+def context_dynamic(*vars):
+    renpy.game.context().make_dynamic(vars, context=True)
+    
 def seen_label(label):
     return label in renpy.game.seen_ever
 

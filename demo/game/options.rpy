@@ -25,7 +25,9 @@ init -1 python hide:
 
     config.window_title = u"The Ren'Py Demo Game"
 
-    layout.scrolling_load_save()
+    ## This enables the use of an in-game menu that is made out of
+    ## buttons.
+    layout.button_menu()
     
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
@@ -59,11 +61,6 @@ init -1 python hide:
 
         ## The color of a frame containing widgets.
         frame = "#6496c8",
-
-        ## If this is True, in-game menus are placed in the center
-        ## the screen. If False, they are placed inside a window
-        ## at the bottom of the screen.
-        button_menu = True,
 
         ## If this is True, the in-game window is rounded. If False,
         ## the in-game window is square.

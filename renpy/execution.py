@@ -102,23 +102,28 @@ class Context(renpy.object.Object):
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay" ])
         self.dynamic_stack.append({ })
         
-    def make_dynamic(self, names):
+    def make_dynamic(self, names, context=False):
         """
         Makes the variable names listed in names dynamic, by backing up
         their current value (if not already dynamic in the current call).
         """
 
         store = vars(renpy.store)
+
+        if context:
+            index = 0
+        else:
+            index = -1
         
         for i in names:
 
-            if i in self.dynamic_stack[-1]:
+            if i in self.dynamic_stack[index]:
                 continue
             
             if i in store:
-                self.dynamic_stack[-1][i] = store[i]
+                self.dynamic_stack[index][i] = store[i]
             else:
-                self.dynamic_stack[-1][i] = Delete()
+                self.dynamic_stack[index][i] = Delete()
 
 
     def pop_dynamic(self):

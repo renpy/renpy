@@ -96,7 +96,6 @@ init -1180 python:
     # Are the windows currently hidden?
     _windows_hidden = False
 
-    # Set up the default keymap.
 init -1180 python hide:
 
     # Called to make a screenshot happen.
@@ -213,6 +212,7 @@ init -1180 python hide:
 
     config.extend_interjection = "{fast}"
     
+init -1180 python:
     def extend(what, interact=True):
         who = _last_say_who
 
@@ -225,7 +225,7 @@ init -1180 python hide:
         if isinstance(who, basestring):
             who = unknown.copy(who)
 
-        # This ensure extend works even with NVL mode.
+        # This ensures extend works even with NVL mode.
         who.do_extend()
             
         what = _last_say_what + config.extend_interjection + what
@@ -470,6 +470,8 @@ label _enter_menu:
         
         # This may be changed, if we are already in the main menu.
         renpy.context().main_menu = False
+        renpy.context_dynamic("main_menu")
+        store.main_menu = True
         
         store.mouse_visible = True
         store.suppress_overlay = True
@@ -573,6 +575,18 @@ init -1180 python hide:
     # advanced: Callbacks to run at start.
     config.start_callbacks = [ ]
 
+
+# This fixes up the context, if necessary, then calls the real
+# after_load.
+label _after_load:
+    $ renpy.context()._menu = False
+
+    if renpy.has_label("after_load"):
+        jump expression "after_load"
+    else:
+        return
+
+    
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -635,6 +649,7 @@ label _enter_main_menu:
         _load_prompt = False
 
         renpy.context().main_menu = True
+        store.main_menu = True
         
 # This is called to show the main menu to the user.
 label _main_menu:    

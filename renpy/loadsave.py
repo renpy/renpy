@@ -250,7 +250,7 @@ def load(filename):
     roots, log = loads(zf.read("log"))
     zf.close()
 
-    log.unfreeze(roots, label="after_load")
+    log.unfreeze(roots, label="_after_load")
 
 def rename_save(old, new):
     unlink_save(new)
