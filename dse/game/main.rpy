@@ -2,9 +2,10 @@
 # customize it for your program... But remember what you do, so you
 # can integrate with a new version of DSE when it comes out.
 
-# Declare black, so we can use it in the game,
-init:
-    image black = Solid((0, 0, 0, 255))
+# Set up a default theme.
+init python:
+    theme.ancient()
+    config.developer = True
 
 # This is the entry point into the game.
 label start:

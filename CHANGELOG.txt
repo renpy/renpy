@@ -44,14 +44,14 @@ Windows and Buttons now take a new size_group style property. This
 property, when not None, should be a string giving the name of the
 size group the window or button is in. All windows and buttons
 belonging to the same size_group are treated as if they had a minimum
-width equal to the width of the widest button in the group. [doc]
+width equal to the width of the widest button in the group.
 
 
 The Begin Skipping command has been moved from the game menu
 navigation to the preferences screen.
 
 
-A new _suppress_overlay variable has been added. This variable
+A new suppress_overlay variable has been added. This variable
 suppresses the display of overlay functions when set to true. It's
 automatically set to true when entering the menus.
 

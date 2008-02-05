@@ -56,7 +56,7 @@ init -100:
             def render(self):
                 ui.hbox()
                 ui.text(self.name, minwidth=150)
-                ui.bar(600, 20, self.__maxvalue, self.__value, ypos=0.5, yanchor='center')
+                ui.bar(600, 20, self.__maxvalue, self.__value, yalign=0.5, style='bar')
                 ui.close()
 
 label stats_show:
@@ -64,7 +64,7 @@ label stats_show:
     python hide:
 
         # This is the window that the stats are kept in, if any.
-        ui.window(xpos=0,
+        ui.frame(xpos=0,
                   ypos=0,
                   xanchor='left',
                   yanchor='top',

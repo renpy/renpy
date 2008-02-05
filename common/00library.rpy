@@ -428,7 +428,7 @@ init -1180 python:
     config.has_quicksave = False
 
     # The screen that we go to when entering the game menu.
-    _game_menu_screen = "save_screen"
+    _game_menu_screen = None
     
     style.error_root = Style(style.default)
     style.error_title = Style(style.default)

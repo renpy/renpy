@@ -8,7 +8,7 @@ init -100:
     python:
 
         # A window placed behind the day planner (empty).
-        style.create('dp_window', 'window')
+        style.create('dp_window', 'frame')
         style.dp_window.ypos = 120
         style.dp_window.yanchor = 'top'
 
@@ -18,23 +18,27 @@ init -100:
         
         # Windows containing the groups of choices in the day planner.
         style.create('dp_choice', 'default')
-        style.dp_choice.xpos = 0.5
-        style.dp_choice.xanchor = 'center'
+        style.dp_choice.xalign = 0.5
+        style.dp_choice.xanchor = 0.5
 
         # Action buttons.
         style.create('dp_button', 'button')
         style.create('dp_button_text', 'button_text')
 
+        style.dp_button.xalign = 0.5
+        
         style.create('dp_done_button', 'button')
         style.create('dp_done_button_text', 'button_text')
 
+        style.dp_done_button.xalign = 0.5
         style.dp_done_button.ypos = 0.95
-        style.dp_done_button.yanchor = 'bottom'
+        style.dp_done_button.yanchor = 1.0
         
         # Labels.
-        style.create('dp_label', 'default')
-        style.dp_label.xpos = 0.5
-        style.dp_label.xanchor = 'center'
+        style.create('dp_label', 'label')
+        style.create('dp_label_text', 'label_text')
+        style.dp_label.xalign = 0.5
+        style.dp_label_text.text_align = 0.5
 
         # The amount of padding between the label and the action
         # in a choice.
@@ -106,7 +110,8 @@ label day_planner:
             ui.window(style='dp_choice')
             ui.vbox()
 
-            _label_factory(period, "dp")
+            layout.label(period, "dp")
+            
             ui.null(height=dp_padding)
 
             valid_value = False
@@ -119,9 +124,9 @@ label day_planner:
 
                 valid_value |= getattr(store, var) == value
 
-                _button_factory(label, "dp",
-                                selected = getattr(store, var) == value,
-                                clicked=clicked)
+                layout.button(label, "dp",
+                              selected = getattr(store, var) == value,
+                              clicked=clicked)
 
             can_continue &= valid_value
 
@@ -134,8 +139,8 @@ label day_planner:
         else:
             clicked = None
             
-        _button_factory(dp_done_title, "dp_done",
-                        clicked = clicked )
+        layout.button(dp_done_title, "dp_done",
+                      clicked = clicked )
 
         ui.close()
 
