@@ -1,3 +1,4 @@
+
 # This file contains logic for detecting an editor, and for selecting
 # the default editor.
 
@@ -15,8 +16,8 @@ init:
 
                 if os.path.exists(editor):
                     editor = renpy.shell_escape(editor)
-                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s"'
-                    config.editor_transient = config.editor+' -revert: -goto:%(line)d'
+                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s" -goto:%(line)d'
+                    config.editor_transient = config.editor+' -revert:'
 
             elif platform.mac_ver()[0]:
                 config.editor = "open -t '%(allfiles)s'"
@@ -26,8 +27,8 @@ init:
             
                 if os.path.exists(editor):
                     editor = renpy.shell_escape(editor)
-                    config.editor = "'" + editor + "' '%(allfiles)s' '-open:%(filename)s'"
-                    config.editor_transient = config.editor+' -revert: -goto:%(line)d'
+                    config.editor = "'" + editor + "' '%(allfiles)s' '-open:%(filename)s' -goto:%(line)d"
+                    config.editor_transient = config.editor+' -revert:'
 
             if config.editor:
                 os.environ['RENPY_EDITOR'] = config.editor
