@@ -307,7 +307,7 @@ label save_screen:
                 if not layout.yesno_prompt("save", u"Are you sure you want to overwrite your save?"):
                     continue
 
-            renpy.save(fn)
+            renpy.save(fn, extra_info=store.save_name)
 
 
 label load_screen:
