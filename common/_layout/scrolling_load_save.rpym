@@ -5,6 +5,9 @@ init python:
     # Store some global information that won't be saved.
     __session = object()
     __session.scrollbar_position = None
+
+    # Should we prompt to load?
+    _load_prompt = True
     
     # The number of normal save slots.
     config.load_save_slots = 50
@@ -197,7 +200,7 @@ label save_screen:
                 if not layout.yesno_prompt("save", u"Are you sure you want to overwrite your save?"):
                     continue
 
-            renpy.save(fn)
+            renpy.save(fn, extra_info=store.save_name)
 
 
 label load_screen:
