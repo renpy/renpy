@@ -478,6 +478,9 @@ class Input(renpy.display.text.Text):
 
             raise renpy.display.core.IgnoreEvent()
 
+# A map from adjustment to lists of displayables that want to be redrawn
+# if the adjustment changes.
+adj_registered = { }
 
 # This class contains information about an adjustment that can change the
 # position of content.
@@ -492,8 +495,6 @@ class Adjustment(renpy.object.Object):
         self.adjustable = changed or adjustable
         self.ranged = ranged
         
-        self.registered = [ ]
-
     def get_value(self):
         return self._value
 
@@ -540,11 +541,10 @@ class Adjustment(renpy.object.Object):
 
     step = property(get_step, set_step)
         
-        
     # Register a displayable to be redrawn when this adjustment changes.
     def register(self, d):
-        self.registered.append(d)
-                
+        adj_registered.setdefault(self, [ ]).append(d)
+            
     def change(self, value):
 
         if value < 0:
@@ -554,7 +554,7 @@ class Adjustment(renpy.object.Object):
 
         if value != self._value:
             self._value = value
-            for d in self.registered:
+            for d in adj_registered.setdefault(self, [ ]):
                 renpy.display.render.redraw(d, 0)
             if self.changed:
                 return self.changed(value)
@@ -604,12 +604,13 @@ class Bar(renpy.display.core.Displayable):
 
         self.adjustment = adjustment
         self.focusable = adjustment.adjustable
-
-        adjustment.register(self)
         
     def visit(self):
         return [ self.style.fore_bar, self.style.aft_bar, self.style.thumb, self.style.thumb_shadow ]
-        
+
+    def per_interact(self):
+        self.adjustment.register(self)
+    
     def render(self, width, height, st, at):
 
         # Store the width and height for the event function to use.

@@ -1671,9 +1671,6 @@ class Viewport(Container):
         else:
             self.yadjustment = yadjustment
             
-        self.xadjustment.register(self)
-        self.yadjustment.register(self)
-
         self.set_adjustments = set_adjustments
         
         self.child_width, self.child_height = child_size
@@ -1683,6 +1680,10 @@ class Viewport(Container):
 
         self.width = 0
         self.height = 0
+
+    def per_interact(self):
+        self.xadjustment.register(self)
+        self.yadjustment.register(self)
         
     def render(self, width, height, st, at):
 
