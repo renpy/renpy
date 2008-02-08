@@ -133,6 +133,7 @@ label _theme_test:
             ui.frame(style='menu_frame')
             ui.vbox(box_spacing=2)
             ui.bar(adjustment=adj, style='bar', xmaximum=200)
+            ui.bar(adjustment=adj, style='slider', xmaximum=200)
             ui.bar(adjustment=adj, style='scrollbar', xmaximum=200)
             ui.close()
             
@@ -141,6 +142,7 @@ label _theme_test:
             ui.frame(style='menu_frame')
             ui.hbox(box_spacing=2)
             ui.bar(adjustment=adj, style='vbar', ymaximum=200)
+            ui.bar(adjustment=adj, style='vslider', ymaximum=200)
             ui.bar(adjustment=adj, style='vscrollbar', ymaximum=200)
             ui.close()
             

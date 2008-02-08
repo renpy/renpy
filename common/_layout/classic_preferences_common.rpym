@@ -14,7 +14,7 @@ init python:
     style.prefs_button = Style(style.radio_button, help="preference value button")
     style.prefs_button_text = Style(style.radio_button_text, help="preference value button (text)")
 
-    style.prefs_slider = Style(style.bar, help="preference value slider bar")
+    style.prefs_slider = Style(style.slider, help="preference value slider bar")
 
     style.prefs_volume_box = Style(style.vbox, help="box containing a volume slider and soundtest button")
     style.prefs_volume_slider = Style(style.prefs_slider, help="volume slider bar")

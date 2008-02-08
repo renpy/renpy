@@ -712,12 +712,12 @@ class Window(Container):
 
             style.background.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
-        offsets = self.child.place(rv,
-                                   left_margin + left_padding, 
-                                   top_margin + top_padding,
-                                   width  - cxmargin - cxpadding,
-                                   height - cymargin - cypadding,
-                                   surf)
+        offsets = child.place(rv,
+                              left_margin + left_padding, 
+                              top_margin + top_padding,
+                              width  - cxmargin - cxpadding,
+                              height - cymargin - cypadding,
+                              surf)
 
         # Draw the foreground. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).

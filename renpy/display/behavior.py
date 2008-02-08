@@ -509,7 +509,6 @@ class Adjustment(renpy.object.Object):
         self._range = v
         if self.ranged:
             self.ranged(self)
-
         
     range = property(get_range, set_range)
 
@@ -593,7 +592,7 @@ class Bar(renpy.display.core.Displayable):
                  **properties):
 
         if adjustment is None:
-            adjustment = Adjustment(range, value, step=step, page=page,changed=changed)
+            adjustment = Adjustment(range, value, step=step, page=page, changed=changed, adjustable=False)
         
         if width is not None:
             properties['xmaximum'] = width

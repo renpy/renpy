@@ -102,9 +102,13 @@ init -1200 python hide:
     
     style.bar = Style(style.default, help='base style for horizontal bars')
     style.vbar = Style(style.default, help='base style for vertical bars')
-    style.scrollbar = Style(style.bar, help='base style for horizontal scrollbars')
-    style.vscrollbar = Style(style.vbar, help='base style for vertical scollbars')
-    
+
+    style.slider = Style(style.default, help='base style for horizontal sliders')
+    style.vslider = Style(style.default, help='base style for vertical sliders')
+
+    style.scrollbar = Style(style.default, help='base style for horizontal scrollbars')
+    style.vscrollbar = Style(style.default, help='base style for vertical scollbars')
+
     style.mm_root = Style(style.default, help="main menu root window")
     style.gm_root = Style(style.default, help="game menu root window")
 
@@ -243,11 +247,13 @@ init -1090 python:
     style.hyperlink_text.idle_color = "#08f"
     
     # Bars.
-    style.bar.bar_invert = False
-    style.bar.bar_resizing = False
-    style.bar.bar_vertical = False
+    style.default.bar_invert = False
+    style.default.bar_resizing = False
+    style.default.bar_vertical = False
+
     style.vbar.bar_vertical = True
-    style.vbar.bar_invert = False
+    style.vslider.bar_vertical = True
+    style.vscrollbar.bar_vertical = True
     style.vscrollbar.bar_invert = True
 
     # Viewport
