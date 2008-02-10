@@ -527,7 +527,7 @@ label _game_menu_preferences:
     call _enter_game_menu from _call__enter_game_menu_3
 
     if renpy.has_label("preferences_screen"):
-        jump expression "preferences_screeen"
+        jump expression "preferences_screen"
     else:
         jump expression "_prefs_screen"
 
