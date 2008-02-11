@@ -1705,7 +1705,7 @@ class Viewport(Container):
             self.xadjustment.page = width
             self.yadjustment.range = max(ch - height, 0)
             self.yadjustment.page = height
-        
+
         if self.xoffset is not None:
             if isinstance(self.xoffset, int):
                 value = self.xoffset

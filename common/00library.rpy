@@ -510,26 +510,26 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
 label _game_menu_save:
     call _enter_game_menu from _call__enter_game_menu_1
 
-    if renpy.has_label("save_screen"):
-        jump expression "save_screen"
-    else:
+    if renpy.has_label("_save_screen"):
         jump expression "_save_screen"
+    else:
+        jump expression "save_screen"
 
 label _game_menu_load:
     call _enter_game_menu from _call__enter_game_menu_2
 
-    if renpy.has_label("load_screen"):
-        jump expression "load_screen"
-    else:
+    if renpy.has_label("_load_screen"):
         jump expression "_load_screen"
+    else:
+        jump expression "load_screen"
 
 label _game_menu_preferences:
     call _enter_game_menu from _call__enter_game_menu_3
 
-    if renpy.has_label("preferences_screen"):
-        jump expression "preferences_screen"
-    else:
+    if renpy.has_label("_prefs_screen"):
         jump expression "_prefs_screen"
+    else:
+        jump expression "preferences_screen"
 
 label _quit:
     $ renpy.quit()

@@ -620,7 +620,7 @@ class Bar(renpy.display.core.Displayable):
         range = self.adjustment.range
         value = self.adjustment.value
         page = self.adjustment.page
-        
+
         if self.style.bar_invert ^ self.style.bar_vertical:
             value = range - value
 

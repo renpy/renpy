@@ -140,9 +140,15 @@ init python hide:
     style.vbar.thumb_offset = 0
     style.vbar.thumb_shadow = None
 
+    style.vscrollbar.set_parent(style.vbar)
+    style.scrollbar.set_parent(style.bar)
+    
     style.vscrollbar.bottom_bar = Solid((0, 0, 0, 128))        
     style.vscrollbar.top_bar = Solid(bright_cyan) 
 
+    style.slider.ymaximum = 1
+    style.vslider.xmaximum = 1
+    
     ######################################################################
     # Main menu.
 
