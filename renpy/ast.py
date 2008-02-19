@@ -968,6 +968,7 @@ class Return(Node):
 
     # We don't care what the next node is.
     def chain(self, next):
+        self.next = None
         return
 
     def execute(self):
