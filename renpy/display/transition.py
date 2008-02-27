@@ -1012,7 +1012,7 @@ class ImageDissolve(Transition):
 
 
     def visit(self):
-        return [ self.image ]
+        return super(ImageDissolve, self).visit() + [ self.image ]
 
     def render(self, width, height, st, at):
 
@@ -1068,7 +1068,6 @@ class ImageDissolve(Transition):
 
         else:
             rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
-
 
         rv.focuses.extend(top.focuses)        
         rv.depends_on(top)

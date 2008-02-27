@@ -122,13 +122,15 @@ class Container(renpy.display.core.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-                
-        children_offsets = zip(self.children, self.offsets)
-        children_offsets.reverse()
 
-        for i, (xo, yo) in children_offsets: 
+        children = self.children
+        offsets = self.offsets
+        
+        for i in xrange(len(self.children)-1, -1, -1):
+            d = children[i]
+            xo, yo = offsets[i]
 
-            rv = i.event(ev, x - xo, y - yo, st)    
+            rv = d.event(ev, x - xo, y - yo, st)    
             if rv is not None:
                 return rv
                 
@@ -231,7 +233,10 @@ class Position(Container):
         self.offsets = [ (0, 0) ]
         self.sizes = [ (cw, ch) ]
 
-        return surf
+        rv = renpy.display.render.Render(surf.width, surf.height)
+        rv.blit(surf, (0, 0))
+        
+        return rv
 
     def get_placement(self):
     

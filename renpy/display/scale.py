@@ -23,8 +23,8 @@
 
 import os
 import math
-
 import pygame
+import renpy
 
 # This needs to be done before we mess too hard with pygame.
 try:
@@ -496,3 +496,4 @@ else:
                            pyimg.surface, aoff, amap)
 
         _renpy.imageblend = imageblend
+

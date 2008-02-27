@@ -24,12 +24,19 @@
 # of the stuff thar uses images remaining.
 
 import renpy
-from renpy.display.render import render
+from renpy.display.render import render, Render
 
 import pygame
 from pygame.constants import *
 
 Image = renpy.display.im.image
+
+def wrap_render(child, w, h, st, at):
+    rend = render(child, w, h, st, at)
+    rv = Render(rend.width, rend.height)
+    rv.blit(rend, (0, 0))
+    return rv
+            
 
 class UncachedImage(renpy.display.core.Displayable):
     """
@@ -131,7 +138,7 @@ class ImageReference(renpy.display.core.Displayable):
         if not self.target:
             self.find_target()
 
-        return render(self.target, width, height, st, at)
+        return wrap_render(self.target, width, height, st, at)
 
     def get_placement(self):
         if not self.target:
@@ -182,7 +189,7 @@ class Solid(renpy.display.core.Displayable):
                                          width,
                                          height)
 
-        return render(si, width, height, st, at)
+        return wrap_render(si, width, height, st, at)
         
 class Frame(renpy.display.core.Displayable):
     """
@@ -239,7 +246,7 @@ class Frame(renpy.display.core.Displayable):
                                          self.tile,
                                          self.bilinear)
 
-        return render(fi, width, height, st, at)
+        return wrap_render(fi, width, height, st, at)
 
     def visit(self):
         return [ self.image ]

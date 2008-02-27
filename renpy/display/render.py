@@ -226,7 +226,6 @@ def render_screen(widget, width, height, st):
         r.kill()
         assert not rv.dead, render_of
 
-
     old_renders.update(new_renders)
     new_renders.clear()
 
@@ -627,9 +626,15 @@ class Render(object):
 
     def keep_alive(self):
 
-        for widget, width, height in self.render_of:
-            new_renders[widget, width, height] = self
+        new = False
 
+        if self.render_of and self.render_of[0] in new_renders:
+            return
+
+        # wwh == widget, width, height
+        for wwh in self.render_of:
+            new_renders[wwh] = self
+            
         for i in self.children:
             i.keep_alive()
 

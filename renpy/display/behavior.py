@@ -776,7 +776,7 @@ class Bar(renpy.display.core.Displayable):
 
         if invert:
             value = range - value
-
+            
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.focus.set_grab(None)
 

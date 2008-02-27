@@ -1,3 +1,11 @@
+New in Ren'Py 6.6.1
+-------------------
+
+Fixed a bug that caused bilinear scaling to sometimes fail.
+
+Fixed a bug that caused weird (often unrelated-seeming) problems with
+ImageDissolves.
+
 New in Ren'Py 6.6.0
 -------------------
 
