@@ -104,7 +104,8 @@ class Preferences(object):
         self.skip_unseen = False
         self.text_cps = 0
         self.afm_time = 0
-
+        self.afm_enable = True
+        
         
         # These will be going away soon.
         self.sound = True

@@ -1,6 +1,11 @@
 New in Ren'Py 6.6.1
 -------------------
 
+Added a new _preferences.afm_enable preference. Setting this to False
+will disable auto-forward mode, while setting it to true will
+re-enable it. This allows the creating of a button that toggles
+auto-forward mode.
+
 Fixed a bug that caused bilinear scaling to sometimes fail.
 
 Fixed a bug that caused weird (often unrelated-seeming) problems with

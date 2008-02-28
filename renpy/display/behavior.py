@@ -262,7 +262,7 @@ class SayBehavior(renpy.display.layout.Null):
            st < skip_delay:
             renpy.game.interface.timeout(skip_delay - st)
 
-        if self.afm_length and renpy.game.preferences.afm_time:
+        if self.afm_length and renpy.game.preferences.afm_time and renpy.game.preferences.afm_enable:
                                                           
             afm_delay = ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time
 

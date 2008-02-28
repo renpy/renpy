@@ -904,16 +904,15 @@ class Render(object):
                         continue
 
                 if nf.mx is not None:
-
+                    
                     (nf.mx, nf.my), (mcx, mcy, mcw, mch) = compute_subrect(
                         (nf.mx, nf.my) + nf.mask.get_size(),
                         (x, y, width, height))
 
-
-                    if mcx <= 0 or mcy <= 0:
+                    if mcw <= 0 or mch <= 0:
                         continue
 
-                    nf.mask = nf.mask.subsurface((fmxo, fmyo, fmw, fmh))
+                    nf.mask = nf.mask.subsurface((mcx, mcy, mcw, mch))
                     
                 rv.focuses.append(nf)
                 
