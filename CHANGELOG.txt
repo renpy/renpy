@@ -23,12 +23,17 @@ old=True) use ComposeTransition(dissolve, oldmove, move) to dissolve
 between two sliding images.
 
 
+Fixed a bug that caused memory corruption when faced with an audio
+frame that was not a multiple of 8 samples (16 bytes) long. 
+
 Fixed a bug that prevented MultiPersistent from working.
 
 Fixed a bug that caused bilinear scaling to sometimes fail.
 
 Fixed a bug that caused weird (often unrelated-seeming) problems with
 ImageDissolves.
+
+Fixed a bug that cause large memory leaks.
 
 New in Ren'Py 6.6.0
 -------------------

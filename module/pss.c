@@ -220,25 +220,18 @@ static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
     if ((length & 0x0f) == 0) {
         SDL_MixAudio(dst, src, length, volume);
     } else {
-        int i;
-        Uint8 copy[16];
 
-        // This copy is made to ensure we only mix the overlap once.
-        for (i = 0; i < 16; i++) {
-            copy[i] = dst[length - 16 + i];
-        }
+        int newlength = length + 16 - (length & 0xf);
+        Uint8 newsrc[newlength];
+        Uint8 newdst[newlength];
+        
+        memcpy(newsrc, src, length);
+        memcpy(newdst, dst, length);
 
         // Mix the audio once.
-        SDL_MixAudio(dst, src, length, volume);
-        
-        // Copy back the overlap.
-        for (i = 0; i < 16; i++) {
-            dst[length - 16 + i] = copy[i];
-        }
+        SDL_MixAudio(newdst, newsrc, newlength, volume);
 
-        // Mix the last 16 bytes again.
-        SDL_MixAudio(&dst[length - 16], &src[length - 16], 16, volume);
-
+        memcpy(dst, newdst, length);
     }    
 }
 

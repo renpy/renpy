@@ -565,7 +565,8 @@ class Style(object):
         self.cache = None
         self.properties = [ ]
 
-        style_help[self] = help
+        if help is not None:
+            style_help[self] = help
         
         if properties:
             self.properties.append(properties)
