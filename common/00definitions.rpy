@@ -62,42 +62,60 @@ init -1110 python:
         return .5 - math.cos(math.pi * x) / 2.0
 
     # This defines a family of move transitions.
-    def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None):
+    def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False):
         moves = {
-            "" : MoveTransition(delay,
-                                factory=MoveFactory(time_warp=time_warp)),
+            "" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp)),
 
-            "inright" : MoveTransition(delay,
-                                       factory=MoveFactory(time_warp=time_warp), 
-                                       enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp)),
+            "inright" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp)),
 
-            "inleft" : MoveTransition(delay,
-                                      factory=MoveFactory(time_warp=time_warp), 
-                                      enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp)),
+            "inleft" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp)),
 
-            "intop" : MoveTransition(delay,
-                                     factory=MoveFactory(time_warp=time_warp), 
-                                     enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp)),
+            "intop" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp)),
 
-            "inbottom" : MoveTransition(delay,
-                                        factory=MoveFactory(time_warp=time_warp), 
-                                        enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp)),
+            "inbottom" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp)),
 
-            "outright" : MoveTransition(delay,
-                                        factory=MoveFactory(time_warp=time_warp), 
-                                        leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp)),
+            "outright" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp)),
 
-            "outleft" : MoveTransition(delay,
-                                       factory=MoveFactory(time_warp=time_warp), 
-                                       leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp)),
+            "outleft" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp)),
 
-            "outtop" : MoveTransition(delay,
-                                      factory=MoveFactory(time_warp=time_warp), 
-                                      leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp)),
+            "outtop" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp)),
 
-            "outbottom" : MoveTransition(delay,
-                                         factory=MoveFactory(time_warp=time_warp), 
-                                         leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp)),
+            "outbottom" : MoveTransition(
+                delay,
+                old=old,
+                factory=MoveFactory(time_warp=time_warp), 
+                leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp)),
             }
 
         for k, v in moves.iteritems():

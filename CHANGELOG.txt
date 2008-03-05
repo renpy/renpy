@@ -1,10 +1,29 @@
 New in Ren'Py 6.6.1
 -------------------
 
+The various styles used by the say statement are now indexed with
+"rollback" when rollback has occured. This makes it possible to indicate
+to the user that they're in rollback mode.
+
+
 Added a new _preferences.afm_enable preference. Setting this to False
 will disable auto-forward mode, while setting it to true will
 re-enable it. This allows the creating of a button that toggles
 auto-forward mode.
+
+
+The new renpy.pop_return() function pops a level off of the return
+stack. This allows for a multi-level return.
+
+
+MoveTransition now takes an old argument, which causes it to move the
+old image, rather than the new one. This lets one (if you use
+define.move_transitions to define a family of transitions with
+old=True) use ComposeTransition(dissolve, oldmove, move) to dissolve
+between two sliding images.
+
+
+Fixed a bug that prevented MultiPersistent from working.
 
 Fixed a bug that caused bilinear scaling to sometimes fail.
 

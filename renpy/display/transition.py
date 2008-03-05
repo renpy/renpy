@@ -680,7 +680,7 @@ def RevolveInOut(start, end, pos, delay, d, **kwargs):
     return renpy.display.layout.Revolve(start, end, delay, d, pos=pos, **kwargs)
     
 # TODO: Move isn't properly respecting positions when x < 0.
-def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None):
+def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False):
     """
     This transition attempts to find images that have changed
     position, and moves them from the old position to the new
@@ -706,6 +706,8 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
     if leave_factory is None:
         leave_factory = default_leave_factory
+
+    use_old = old
         
     def merge_slide(old, new):
 
@@ -713,18 +715,24 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
         # insert a move from the old position to the new position, if
         # a move occured.
 
+            
         if (not isinstance(new, renpy.display.layout.MultiBox)
             or (new.layers is None and new.layer_name is None)):
-        
+
+            if use_old:
+                child = old
+            else:
+                child = new
+
             if position(old) != position(new):
 
                 return factory(position(old),
                                position(new),
                                delay,
-                               new,
+                               child,
                                )
             else:
-                return new
+                return child
 
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.

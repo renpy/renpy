@@ -1108,3 +1108,8 @@ def load_module(name, **kwargs):
     renpy.game.contexts.pop()
 
     renpy.config.locked = old_locked
+
+def pop_return():
+    renpy.game.context().pop_dynamic()
+    renpy.game.context().lookup_return(pop=True)
+    

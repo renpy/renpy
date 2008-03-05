@@ -339,13 +339,17 @@ class _MultiPersistent(object):
         self.__dict__.update(state)
 
     def __getattr__(self, name):
+
+        if name.startswith("__") and name.endswith("__"):
+            raise AttributeError()
+        
         return None
 
     def save(self):
         
         fn = self._filename
         f = file(fn + ".new", "wb")
-        f.write(dumps(self))
+        dump(self, f)
         f.close()
 
         try:

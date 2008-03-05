@@ -96,6 +96,13 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                 renpy.ui.text(who, **who_args)
 
     def merge_style(style, properties):
+
+        if isinstance(style, basestring):
+            style = getattr(renpy.store.style, style)
+
+        if renpy.exports.roll_forward_info() is not None:
+            style = style["rollback"]
+            
         rv = dict(style=style)
         rv.update(properties)
         return rv
@@ -163,7 +170,8 @@ def display_say(show_function,
                 cb_args,
                 with_none,
                 callback,
-                type):
+                type,
+                checkpoint=True):
 
     ctc = renpy.easy.displayable(ctc)
     
@@ -293,7 +301,8 @@ def display_say(show_function,
     if interact:
 
         if not no_wait:
-            renpy.exports.checkpoint(True)
+            if checkpoint:
+                renpy.exports.checkpoint(True)
         else:
             renpy.game.after_rollback = after_rollback
             
