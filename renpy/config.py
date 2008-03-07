@@ -359,6 +359,9 @@ say_menu_text_filter = None
 # Used to replace one label with another.
 label_overrides = { }
 
+# Called to get the extra_info for an auto_save.
+auto_save_extra_info = None
+
 del renpy
 del sets
 

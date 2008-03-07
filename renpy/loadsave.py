@@ -288,12 +288,17 @@ def autosave_thread():
     cycle_saves("auto-", renpy.config.autosave_slots)
     
     renpy.display.core.cpu_idle.wait()
+    if renpy.config.auto_save_extra_info:
+        extra_info = auto_save_extra_info()
+    else:
+        extra_info = ""
 
+    
     try:
         try:
             
             renpy.exports.take_screenshot()
-            save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait)
+            save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait, extra_info=extra_info)
             autosave_counter = 0
             
         except SaveAbort:

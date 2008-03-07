@@ -325,3 +325,8 @@ label load_screen:
             
             
             
+init python hide:
+    def auto_save_extra_info():
+        return save_name
+    config.auto_save_extra_info = auto_save_extra_info
+    

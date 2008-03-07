@@ -23,6 +23,12 @@ old=True) use ComposeTransition(dissolve, oldmove, move) to dissolve
 between two sliding images.
 
 
+config.auto_save_extra_info now lets you specify the extra_info that
+will be included as part of auto-saves. It defaults to a function that
+returns save_name, so the save_name will now be included as part of
+auto-saves.
+
+
 Fixed a bug that caused memory corruption when faced with an audio
 frame that was not a multiple of 8 samples (16 bytes) long. 
 
@@ -34,6 +40,8 @@ Fixed a bug that caused weird (often unrelated-seeming) problems with
 ImageDissolves.
 
 Fixed a bug that cause large memory leaks.
+
+
 
 New in Ren'Py 6.6.0
 -------------------
