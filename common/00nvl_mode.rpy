@@ -57,6 +57,9 @@ init -1100 python:
 
     # nvlmode: The position of the CTC indicator used at the end of an NVL page.
     config.nvl_page_ctc_position = "nestled"
+
+    # Should we used paged rollback?
+    config.nvl_paged_rollback = False
     
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
@@ -145,12 +148,25 @@ init -1100 python:
             store.nvl_list.append((who, what, kwargs))
 
         def do_display(self, who, what, **display_args):
+
+            page = self.clear or nvl_clear_next()
             
-            if config.nvl_page_ctc and (self.clear or nvl_clear_next()):
+            if config.nvl_page_ctc and page:
                 display_args["ctc"] = config.nvl_page_ctc
                 display_args["ctc_position"] = config.nvl_page_ctc_position
-            
+
+            if config.nvl_paged_rollback:
+                if page:
+                    checkpoint = True
+                else:
+                    if renpy.roll_forward_info():
+                        return
+                    checkpoint = False
+            else:
+                checkpoint = True
+                
             renpy.display_say(nvl_show_core,
+                              checkpoint=checkpoint,
                               **display_args)
             
         def do_done(self, who, what):
@@ -173,6 +189,7 @@ init -1100 python:
 
                 
     def nvl_clear():
+
         store.nvl_list = [ ]
 
     # Run clear at the start of the game.
