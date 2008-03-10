@@ -289,11 +289,10 @@ def autosave_thread():
     
     renpy.display.core.cpu_idle.wait()
     if renpy.config.auto_save_extra_info:
-        extra_info = auto_save_extra_info()
+        extra_info = renpy.config.auto_save_extra_info()
     else:
         extra_info = ""
-
-    
+        
     try:
         try:
             
@@ -328,7 +327,7 @@ def autosave():
 
     if autosave_counter < renpy.config.autosave_frequency:
         return
-
+    
     autosave_in_progress = True
     threading.Thread(target=autosave_thread).start()
     

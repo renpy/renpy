@@ -11,8 +11,8 @@ to display entire pages of rollback at a time. For this to work,
 page-ends need to be predictable, which generally means nvl clear
 statements should immediately follow nvl-mode dialogue. (As opposed to
 occuring only after a page has finished.) This doesn't work well when
-mixing ADV and NVL modes, as the idea of a page isn't well-defined in that
-case.
+mixing ADV and NVL modes, as the idea of a page isn't well-defined in
+that case.
 
 
 Added a new _preferences.afm_enable preference. Setting this to False

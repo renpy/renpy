@@ -708,13 +708,12 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
         leave_factory = default_leave_factory
 
     use_old = old
-        
+    
     def merge_slide(old, new):
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
         # a move occured.
-
             
         if (not isinstance(new, renpy.display.layout.MultiBox)
             or (new.layers is None and new.layer_name is None)):
@@ -823,7 +822,12 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
             # In both.
             if new_tag == old_tag:
 
-                move = factory(position(old_d), position(new_d), delay, new_d)
+                if use_old:
+                    child = old_d
+                else:
+                    child = new_d
+                
+                move = factory(position(old_d), position(new_d), delay, child)
                 if move is None:
                     continue
 
