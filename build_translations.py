@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+1#!/usr/bin/env python
 
 import glob
 import re
@@ -34,9 +34,6 @@ def process(fn):
     for m in re.finditer(r"\bu\'(\\'|[^'])+\'", data):
         tl(fn, m.group(0))
 
-
-
-
 if __name__ == "__main__":
 
     # out = file("extras/translations.rpy", "w")
@@ -47,5 +44,5 @@ if __name__ == "__main__":
     print >>out, ""
     print >>out, "init:"
 
-    for fn in glob.glob("common/*.rpy"):
+    for fn in glob.glob("common/*.rpy") + glob.glob("common/_layout/*.rpym") + glob.glob("common/_compat/*.rpym"):
         process(fn)

@@ -723,7 +723,8 @@ def style_hierarchy():
 
     def recurse(p, depth):
         for s in sorted(children.get(p, []), key=lambda i : i.name):
-            rv.append((depth, "style." + s.name[0], style_help[s]))
+            if s in style_help:
+                rv.append((depth, "style." + s.name[0], style_help[s]))
             recurse(s, depth + 1)
 
     recurse(None, 0)

@@ -116,10 +116,10 @@ init python:
         rv = [ ]
 
         if config.has_autosave:
-            rv.append("Auto")
+            rv.append(u"Auto")
 
         if config.has_quicksave:
-            rv.append("Quick")
+            rv.append(u"Quick")
 
         for i in range(1, config.file_quick_access_pages + 1):
             rv.append(str(i))
@@ -137,7 +137,7 @@ init python:
         if config.has_autosave:
             if page == 0:
                 for i in range(1, per_page + 1):
-                    rv.append(("auto-" + str(i), "a" + str(i), True))
+                    rv.append(("auto-" + str(i), _(u"a") + str(i), True))
 
                 return rv
             else:
@@ -146,7 +146,7 @@ init python:
         if config.has_quicksave:
             if page == 0:
                 for i in range(1, per_page + 1):
-                    rv.append(("quick-" + str(i), "q" + str(i), True))
+                    rv.append(("quick-" + str(i), _(u"q") + str(i), True))
 
                 return rv
             else:

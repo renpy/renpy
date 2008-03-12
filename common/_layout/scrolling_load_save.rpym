@@ -108,11 +108,11 @@ init python:
 
         if config.has_quicksave:
             for i in range(1, config.load_save_quick_slots + 1):
-                slots.append(('quick-'+ str(i), 'q' + str(i)))
+                slots.append(('quick-'+ str(i), _(u'q') + str(i)))
 
         if config.has_autosave:
             for i in range(1, config.load_save_auto_slots + 1):
-                slots.append(('auto-' + str(i), 'a' + str(i)))
+                slots.append(('auto-' + str(i), _(u'a') + str(i)))
 
         ui.frame(style=style.file_picker_frame)
         ui.side(['c', 'r'], style=style.file_picker_side)

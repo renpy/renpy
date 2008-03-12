@@ -1074,6 +1074,10 @@ class Text(renpy.display.core.Displayable):
                 if i == "w":
                     # Automatically closes.
                     continue
+
+                elif i == "nw":
+                    # Automatically closes.
+                    continue
                     
                 elif i.startswith("w="):
                     # Automatically closes.

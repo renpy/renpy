@@ -107,6 +107,25 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         rv.update(properties)
         return rv
 
+    def style_args(d):
+
+        if not "style" in d:
+            return
+
+        style = d["style"]
+
+        if isinstance(style, basestring):
+            style = getattr(renpy.store.style, style)
+        
+        if renpy.exports.roll_forward_info() is not None:
+            style = style["rollback"]
+
+        d["style"] = style
+
+
+    style_args(who_args)
+    style_args(what_args)
+        
     if two_window:
 
         # Opens say_two_window_vbox.

@@ -38,6 +38,10 @@ returns save_name, so the save_name will now be included as part of
 auto-saves.
 
 
+Somewhat improved the performance when large numbers of displayables
+are on the screen at once.
+
+
 Fixed a bug that caused memory corruption when faced with an audio
 frame that was not a multiple of 8 samples (16 bytes) long. 
 
@@ -50,7 +54,9 @@ ImageDissolves.
 
 Fixed a bug that cause large memory leaks.
 
+Fixed a bug with the {nw} text tag.
 
+Fixed a bug in the style inspector.
 
 New in Ren'Py 6.6.0
 -------------------
