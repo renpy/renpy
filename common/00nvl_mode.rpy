@@ -150,7 +150,7 @@ init -1100 python:
         def do_display(self, who, what, **display_args):
 
             page = self.clear or nvl_clear_next()
-            
+
             if config.nvl_page_ctc and page:
                 display_args["ctc"] = config.nvl_page_ctc
                 display_args["ctc_position"] = config.nvl_page_ctc_position
@@ -159,7 +159,7 @@ init -1100 python:
                 if page:
                     checkpoint = True
                 else:
-                    if renpy.roll_forward_info():
+                    if renpy.in_rollback():
                         return
                     checkpoint = False
             else:

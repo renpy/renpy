@@ -563,6 +563,7 @@ class Style(object):
             
         self.indexed = None
         self.cache = None
+        self.updates = None
         self.properties = [ ]
 
         if help is not None:

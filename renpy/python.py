@@ -687,6 +687,12 @@ class RollbackLog(renpy.object.Object):
             if not i.purge_unreachable(reachable, wait):
                 break
 
+    def in_rollback(self):
+        if self.forward:
+            return True
+        else:
+            return False
+            
     def forward_info(self):
         """
         Returns the current forward info, if any.

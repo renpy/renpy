@@ -100,7 +100,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         if isinstance(style, basestring):
             style = getattr(renpy.store.style, style)
 
-        if renpy.exports.roll_forward_info() is not None:
+        if renpy.exports.in_rollback():
             style = style["rollback"]
             
         rv = dict(style=style)
@@ -110,21 +110,25 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     def style_args(d):
 
         if not "style" in d:
-            return
+            return d
 
+        if not renpy.exports.in_rollback():
+            return d
+            
+        d = d.copy()
+        
         style = d["style"]
 
         if isinstance(style, basestring):
-            style = getattr(renpy.store.style, style)
-        
-        if renpy.exports.roll_forward_info() is not None:
+            style = getattr(renpy.store.style, style)        
             style = style["rollback"]
 
         d["style"] = style
 
-
-    style_args(who_args)
-    style_args(what_args)
+        return d
+    
+    who_args = style_args(who_args)
+    what_args = style_args(what_args)
         
     if two_window:
 

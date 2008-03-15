@@ -59,6 +59,9 @@ images = { }
 def roll_forward_info():
     return renpy.game.log.forward_info()
 
+def in_rollback():
+    return renpy.game.log.in_rollback()
+
 def checkpoint(data=None):
     """
     This creates a checkpoint that the user can rollback to. The

@@ -38,6 +38,10 @@ returns save_name, so the save_name will now be included as part of
 auto-saves.
 
 
+renpy.in_rollback lets you query if Ren'Py is currently in rollback 
+mode.
+
+
 Somewhat improved the performance when large numbers of displayables
 are on the screen at once.
 
