@@ -66,8 +66,15 @@ init -1100 python:
     
     def nvl_show_core():
 
-        ui.window(style='nvl_window')
-        ui.vbox(style='nvl_vbox')
+        if renpy.in_rollback():
+            nvl_window = style.nvl_window['rollback']
+            nvl_vbox = style.nvl_vbox['rollback']
+        else:
+            nvl_window = style.nvl_window
+            nvl_vbox = style.nvl_vbox
+        
+        ui.window(style=nvl_window)
+        ui.vbox(style=nvl_vbox)
 
         rv = None
 
