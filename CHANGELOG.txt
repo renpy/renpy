@@ -1,3 +1,7 @@
+Now, the nvl_window style also gets indexed by "rollback" when in
+rollback is occuring.
+
+
 New in Ren'Py 6.6.1
 -------------------
 
