@@ -551,7 +551,7 @@ label _return:
 
     $ renpy.transition(config.exit_transition)
 
-    return False
+    return
 
 label _confirm_quit:
     call _enter_menu from _call__enter_menu_3

@@ -1,6 +1,10 @@
 Now, the nvl_window style also gets indexed by "rollback" when in
 rollback is occuring.
 
+Fixed a crash when right-clicking at a yes/no screen, and a crash when
+using NVL-mode and jump.
+
+
 
 New in Ren'Py 6.6.1
 -------------------

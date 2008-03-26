@@ -189,7 +189,7 @@ class Node(object):
         self.filename, self.linenumber  = loc
 
         self.name = None
-
+        
     def diff_info(self):
         """
         Returns a tuple of diff info about ourself. This is used to
@@ -903,7 +903,6 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
-
         if self.arguments:
 
             args = [ ]
@@ -1100,6 +1099,7 @@ class Jump(Node):
 
     # We don't care what our next node is.
     def chain(self, next):
+        self.next = None
         return
 
     def execute(self):
