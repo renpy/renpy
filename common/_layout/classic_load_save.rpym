@@ -261,7 +261,7 @@ init python:
 
                     _render_new_slot(offset, name, clicked)
                 else:
-                    if ro:
+                    if save and ro:
                         clicked = None
 
                     extra_info, screenshot, mtime = save_info[filename]
