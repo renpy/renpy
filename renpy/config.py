@@ -282,6 +282,9 @@ log = None
 # Lint hooks.
 lint_hooks = [ ]
 
+# Hyperlink styler.
+hyperlink_styler = None
+
 # Hyperlink callback.
 hyperlink_callback = None
 

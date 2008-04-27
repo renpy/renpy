@@ -1,8 +1,20 @@
+New in Ren'Py 6.6.2
+-------------------
+
+The new config.hyperlink_styler variable allows the style of
+hyperlinks to be changed based on the argument to the hyperlink.
+
+
 Now, the nvl_window style also gets indexed by "rollback" when in
 rollback is occuring.
 
+
 Fixed a crash when right-clicking at a yes/no screen, and a crash when
 using NVL-mode and jump.
+
+
+The use of tab to toggle skipping is now disabled while inside the
+game and main menus.
 
 
 

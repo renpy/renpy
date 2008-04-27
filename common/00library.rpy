@@ -121,6 +121,12 @@ init -1180 python hide:
         else:
             renpy.call_in_new_context('_game_menu')
 
+    def keymap_toggle_skipping():
+        if renpy.context()._menu:
+            return
+
+        toggle_skipping()
+            
     def toggle_skipping():
 
         if not config.skipping:
@@ -159,7 +165,7 @@ init -1180 python hide:
         screenshot = screenshot,
         toggle_fullscreen = renpy.toggle_fullscreen,
         toggle_music = renpy.toggle_music,
-        toggle_skip = toggle_skipping,
+        toggle_skip = keymap_toggle_skipping,
         fast_skip = fast_skip,
         game_menu = invoke_game_menu,
         hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
@@ -197,6 +203,9 @@ init -1180 python hide:
     config.overlay_functions.append(skip_indicator)
 
 
+    def hyperlink_styler(target):
+        return style.hyperlink_text
+
     def hyperlink_function(target):
         if target.startswith("http:"):
             try:
@@ -207,6 +216,7 @@ init -1180 python hide:
         else:
             renpy.call_in_new_context(target)
 
+    config.hyperlink_styler = hyperlink_styler
     config.hyperlink_callback = hyperlink_function
         
 

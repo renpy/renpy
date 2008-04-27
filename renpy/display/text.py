@@ -1095,7 +1095,8 @@ class Text(renpy.display.core.Displayable):
 
                     # TODO: check to see if we need to be focused.
 
-                    hls = renpy.style.style_map["hyperlink_text"]
+                    target = m.group(1)
+                    hls = renpy.config.hyperlink_styler(target)
 
                     old_prefix = hls.prefix
 
@@ -1121,7 +1122,7 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].hyperlink = link
                     tsl[-1].update()
 
-                    self.laidout_hyperlinks.append(m.group(1))
+                    self.laidout_hyperlinks.append(target)
                     
                     hls.set_prefix(old_prefix)
 

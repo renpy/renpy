@@ -1664,6 +1664,7 @@ class Viewport(Container):
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
+        child = renpy.easy.displayable(child)
         self.add(child)
 
         if xadjustment is None:
