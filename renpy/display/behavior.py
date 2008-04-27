@@ -137,6 +137,10 @@ def skipping(ev):
     This handles setting skipping in response to the press of one of the
     CONTROL keys. The library handles skipping in response to TAB.
     """
+
+    if not renpy.config.allow_skipping:
+        return
+
     
     if map_event(ev, "skip"):
         renpy.config.skipping = "slow"
@@ -294,12 +298,6 @@ class SayBehavior(renpy.display.layout.Null):
                         raise renpy.display.core.IgnoreEvent()
 
                 return True
-                    
-                
-
-        # if map_event(ev, "rollforward"):
-        #    if renpy.game.context().seen_current(False):
-        #         return True
             
         return None
     

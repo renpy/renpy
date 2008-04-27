@@ -1,6 +1,12 @@
 New in Ren'Py 6.6.2
 -------------------
 
+The config.main_menu and config.game_menu variables can now optionally
+take 4- and 5-component tuples, respectively. In both cases, the new 
+last component is a python expression that must be true for the button
+to be shown.
+
+
 The new config.hyperlink_styler variable allows the style of
 hyperlinks to be changed based on the argument to the hyperlink.
 
@@ -12,11 +18,11 @@ rollback is occuring.
 Fixed a crash when right-clicking at a yes/no screen, and a crash when
 using NVL-mode and jump.
 
-
 The use of tab to toggle skipping is now disabled while inside the
 game and main menus.
 
-
+Pressing control will no longer cause transitions to end when
+config.allow_skipping is False.
 
 New in Ren'Py 6.6.1
 -------------------

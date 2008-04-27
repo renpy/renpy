@@ -31,8 +31,17 @@ label main_menu_screen:
 
         inner_open = False
         
-        for i, (label, clicked, enabled) in enumerate(config.main_menu):
+        for i, e in enumerate(config.main_menu):
+            
+            if len(e) == 3:
+                label, clicked, enabled = e
+                shown = "True"
+            else:
+                label, clicked, enabled, shown = e
 
+            if not eval(shown):
+                continue
+            
             if i % config.main_menu_per_group == 0:
                 if inner_open:
                     ui.close()

@@ -28,8 +28,17 @@ init python:
         ui.frame(style='gm_nav_frame')
         ui.vbox(focus='gm_nav', style='gm_nav_box')
 
-        for key, label, clicked, enabled in config.game_menu:
+        for e in config.game_menu:
 
+            if len(e) == 4:
+                 key, label, clicked, enabled = e
+                 shown = "True"
+            else:
+                 key, label, clicked, enabled, shown = e
+
+            if not eval(shown):
+                continue
+                 
             layout.button(label,
                           "gm_nav",
                           selected=(screen==key),

@@ -34,8 +34,17 @@ init python:
 
         box_open = False
         
-        for i, (key, label, clicked, enabled) in enumerate(config.game_menu):
+        for i, e in enumerate(config.game_menu):
 
+            if len(e) == 4:
+                 key, label, clicked, enabled = e
+                 shown = "True"
+            else:
+                 key, label, clicked, enabled, shown = e
+
+            if not eval(shown):
+                continue
+            
             if i % config.navigation_per_group == 0:
                 if box_open:
                     ui.close()

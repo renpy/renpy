@@ -29,8 +29,17 @@ label main_menu_screen:
         ui.frame(style='mm_menu_frame')
         ui.vbox(style='mm_menu_frame_box')
 
-        for label, clicked, enabled in config.main_menu:
+        for e in config.main_menu:
 
+            if len(e) == 3:
+                label, clicked, enabled = e
+                shown = "True"
+            else:
+                label, clicked, enabled, shown = e
+
+            if not eval(shown):
+                continue
+            
             # This checks to see if clicked is a string. If so, we want clicked
             # to jump us out of the current context.
             if isinstance(clicked, basestring):
