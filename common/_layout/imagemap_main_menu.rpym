@@ -1,0 +1,50 @@
+init python:
+
+    layout.provides('main_menu')
+    
+    # The ground image.
+    config.main_menu_ground = None
+
+    # The selected image.
+    config.main_menu_selected = None
+    
+    # The hotspots. Each hotspot is defined by a tuple giving:
+    # - The x-coordinate of the left side.
+    # - The y-coordinate of the top side.
+    # - The x-coordinate of the right side.
+    # - The y-coordinate of the bottoms side.
+    # - Either the (untranslated) name of the main menu button this hotspot
+    #   is equivalent to, or, a label in the program to jump to when this
+    #   hotspot is clicked.
+    config.main_menu_hotspots = [ ]
+    
+label main_menu_screen:
+
+    python hide:
+        
+        # Ignore right-click while at the main menu.
+        ui.keymap(game_menu=ui.returns(None))
+        
+        # Show the background.
+        ui.window(style='mm_root')
+        ui.null()
+
+        rv = renpy.imagemap(
+            config.main_menu_ground,
+            config.main_menu_selected,
+            config.main_menu_hotspots)
+
+        for e in config.main_menu:
+            name = e[0]
+            act = e[1]
+
+            if name == rv:
+                if isinstance(act, basestring):
+                    act = ui.jumpsoutofcontext(act)
+                act()
+        else:
+            ui.jumpsoutofcontext(rv)()
+
+
+            
+    
