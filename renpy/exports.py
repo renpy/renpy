@@ -763,7 +763,7 @@ def module_version():
 
     return renpy.display.module.version
 
-def transition(trans, layer=None, always=False):
+def transition(trans, layer=None, always=False, force=False):
     """
     Sets the transition that will be used for the next
     interaction. This is useful when the next interaction doesn't take
@@ -780,7 +780,7 @@ def transition(trans, layer=None, always=False):
     if trans is None:
         renpy.game.interface.with_none()
     else:
-        renpy.game.interface.set_transition(trans, layer)
+        renpy.game.interface.set_transition(trans, layer, force=force)
 
 def get_transition(layer=None):
     return renpy.game.interface.transition.get(layer, None)

@@ -61,8 +61,10 @@ init -1180 python:
             renpy.context_nesting_level() and
             not renpy.count_displayables_in_layer('transient')):
 
-            narrator("", interact=False)
-
+            # narrator("", interact=False)
+            ui.window(style=style.window["empty"])
+            ui.null()
+            
         return trans
 
     config.with_callback = _default_with_callback
@@ -431,6 +433,9 @@ init -1180 python:
     # it is shown.
     config.end_splash_transition = None
 
+    # Transition that's used after the game is loaded.
+    config.after_load_transition = None
+    
     # basics: True if autosave should be used.
     config.has_autosave = True
 
@@ -591,6 +596,9 @@ init -1180 python hide:
 label _after_load:
     $ renpy.context()._menu = False
 
+    if config.after_load_transition:
+        $ renpy.transition(config.after_load_transition, force=True)
+    
     if renpy.has_label("after_load"):
         jump expression "after_load"
     else:

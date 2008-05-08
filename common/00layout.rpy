@@ -285,3 +285,12 @@ init -1105 python hide:
     @layout
     def scrolling_load_save():
         renpy.load_module("_layout/scrolling_load_save")
+
+
+    @layout
+    def imagemap_main_menu(ground, selected, hotspots):
+        renpy.load_module("_layout/imagemap_main_menu")
+
+        config.main_menu_ground = ground
+        config.main_menu_selected = selected
+        config.main_menu_hotspots = hotspots

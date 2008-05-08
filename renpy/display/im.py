@@ -129,8 +129,6 @@ class Cache(object):
 
             
         else:
-            if renpy.config.debug_image_cache:
-                print "IC Adding", image
 
             ce = CacheEntry(image, image.load())
             self.total_cache_size += ce.size
@@ -140,7 +138,7 @@ class Cache(object):
             renpy.display.render.mutated_surface(ce.surf)
 
             if renpy.config.debug_image_cache:
-                print "IC Added", ce.what
+                print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit())
 
             new = True
 

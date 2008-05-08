@@ -219,6 +219,9 @@ init -1 python hide:
     ## Used when entering the main menu after the game has ended.
     config.end_game_transition = fade
 
+    ## Used when a game is loaded.
+    config.after_load_transition = dissolve
+    
 
     #########################################
     ## Default values of Preferences.

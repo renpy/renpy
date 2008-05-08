@@ -992,12 +992,17 @@ class Interface(object):
     @ivar screenshot: A screenshot, or None if no screenshot has been
     taken.
 
-    @ivar old_scene: The last thing that was displayed to the screen, not
-    counting underlays.
+    @ivar old_scene: The last thing that was displayed to the screen.
 
     @ivar transition: A map from layer name to the transition that will
     be applied the next time interact restarts.
 
+    @ivar transition_time: A map from layer name to the time the transition
+    involving that layer started.
+
+    @ivar transition_from: A map from layer name to the scene that we're
+    transitioning from on that layer.
+    
     @ivar suppress_transition: If True, then the next transition will not
     happen.
 
@@ -1033,8 +1038,10 @@ class Interface(object):
         self.display = Display(self)
         self.profile_time = get_time()
         self.screenshot = None
-        self.old_scene = None
+        self.old_scene = { }
         self.transition = { }
+        self.transition_time = { }
+        self.transition_from = { }
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -1044,7 +1051,8 @@ class Interface(object):
         self.mouse = 'default'
         self.timeout_time = None
         self.last_event = None
-
+        self.current_context = None
+        
         # Should we reset the display?
         self.display_reset = False
         
@@ -1061,6 +1069,7 @@ class Interface(object):
         # Properties for each layer.
         self.layer_properties = { }
 
+        
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1077,6 +1086,11 @@ class Interface(object):
             else:
                 self.layer_properties[layer] = dict()
                 
+
+        # A stack giving the values of self.transition and self.transition_time
+        # for contexts outside the current one. This is used to restore those
+        # in the case where nothing has changed in the new context.
+        self.transition_info_stack = [ ]
                 
                 
     def take_screenshot(self, scale):
@@ -1111,7 +1125,7 @@ class Interface(object):
         if renpy.config.with_callback:
             trans = renpy.config.with_callback(trans, paired)
 
-        if not trans:
+        if (not trans) or self.suppress_transition:
             self.with_none()
             return False
         else:
@@ -1140,14 +1154,24 @@ class Interface(object):
         scene_lists = renpy.game.context().scene_lists
         scene_lists.replace_transient()
 
-    def set_transition(self, transition, layer=None):
+    def set_transition(self, transition, layer=None, force=False):
         """
         Sets the transition that will be performed as part of the next
         interaction.
         """
 
-        self.transition[layer] = transition
+        if not self.old_scene:
+            return
 
+        if not layer in self.old_scene:
+            return
+        
+        if self.suppress_transition and not force:
+            return
+
+        self.transition_from[layer] = self.old_scene[layer]
+        self.transition[layer] = transition
+        
 
     def event_peek(self):
         """
@@ -1193,15 +1217,14 @@ class Interface(object):
             self.last_event = rv
             return rv
 
-        # We load at most one image per wait.
-        if renpy.display.im.cache.needs_preload():
+        while renpy.display.im.cache.needs_preload():
             ev = pygame.event.poll()
             if ev.type != NOEVENT:
                 self.last_event = ev
                 return ev
 
             renpy.display.im.cache.preload()
-
+            
         try:
             cpu_idle.set()            
             ev = pygame.event.wait()
@@ -1221,9 +1244,16 @@ class Interface(object):
         rv = { }
 
         for layer in renpy.config.layers + renpy.config.top_layers:
-
             rv[layer] = scene_lists.make_layer(layer, self.layer_properties[layer])
-            
+
+        root = renpy.display.layout.MultiBox(layout='fixed')
+        root.layers = { }
+
+        for layer in renpy.config.layers:
+            root.layers[layer] = rv[layer]
+            root.add(rv[layer])
+        rv[None] = root
+             
         return rv
             
 
@@ -1258,9 +1288,33 @@ class Interface(object):
                 scene_lists = renpy.game.context().scene_lists
                 scene_lists.replace_transient()
 
+            self.reset_transitions()                
             self.restart_interaction = True
         
 
+    def reset_transitions(self):
+        """
+        This resets everything we know about transitions.
+        """
+        
+        self.transition = { }
+        self.transition_time = { }
+        self.transition_from = { }
+        
+        # Reset the stack, since a transition actually occured.
+        self.transition_info_stack = []
+
+    def new_context(self):
+        self.transition_info_stack.append((self.transition, self.transition_time, self.transition_from))
+        self.transition = { }
+        self.transition_time = { }
+        self.transition_from = { }
+        
+    def kill_context(self):
+        if self.transition_info_stack:
+            self.transition, self.transition_time, self.transition_from = self.transition_info_stack.pop()
+        
+        
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -1285,15 +1339,19 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
         
-        suppress_overlay = suppress_overlay or renpy.store.suppress_overlay
-        
-        self.suppress_transition = self.suppress_transition or renpy.config.skipping
+        suppress_overlay = suppress_overlay or renpy.store.suppress_overlay        
+        suppress_transition = renpy.config.skipping
 
+        # The global one.
+        self.suppress_transition = False
+            
         ## Safety condition, prevents deadlocks.
         if trans_pause:
             if not self.transition:
                 return False, None
-            if self.suppress_transition:
+            if None not in self.transition:
+                return False, None
+            if suppress_transition:
                 return False, None
             if not self.old_scene:
                 return False, None
@@ -1377,16 +1435,17 @@ class Interface(object):
             focus_roots.append(scene_layer)
 
             if (self.transition.get(layer, None) and
-                self.old_scene and
-                not self.suppress_transition):
+                 not suppress_transition):
 
-                trans = self.transition[layer](old_widget=self.old_scene[layer],
+                trans = self.transition[layer](old_widget=self.transition_from[layer],
                                                new_widget=scene_layer)
-
+                                               
                 if not isinstance(trans, Displayable):
                     raise Exception("Expected transition to be a displayable, not a %r" % trans)
 
-                where.add(trans)
+                transition_time = self.transition_time.get(layer, None)
+                
+                where.add(trans, transition_time, transition_time)
                 where.layers[layer] = trans
                 
             else:
@@ -1399,24 +1458,17 @@ class Interface(object):
                 
         # Add layers_root to root_widget, perhaps through a transition.
         if (None in self.transition and
-            self.old_scene and
-            not self.suppress_transition):
+            not suppress_transition):
 
-            # Compute what the old root should be.
-            old_root = renpy.display.layout.MultiBox(layout='fixed')
-            old_root.layers = { }
-
-            for layer in renpy.config.layers:
-                old_root.layers[layer] = self.old_scene[layer]
-                old_root.add(self.old_scene[layer])
-
-            trans = self.transition[None](old_widget=old_root,
+            trans = self.transition[None](old_widget=self.transition_from[None],
                                           new_widget=layers_root)
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
             
-            root_widget.add(trans)
+            transition_time = self.transition_time.get(None, None)
+
+            root_widget.add(trans, transition_time, transition_time)
 
             if trans_pause:
                 sb = renpy.display.behavior.SayBehavior()
@@ -1430,7 +1482,6 @@ class Interface(object):
         else:
             root_widget.add(layers_root)
 
-
         # Add top_layers to the root_widget.
         for layer in renpy.config.top_layers:
             add_layer(root_widget, layer)
@@ -1441,9 +1492,6 @@ class Interface(object):
         # Now, update various things regarding scenes and transitions,
         # so we are ready for a new interaction or a restart.
         self.old_scene = scene
-        self.transition = { }
-        self.suppress_transition = False
-            
 
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.
@@ -1517,7 +1565,9 @@ class Interface(object):
 
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
-
+                        for k in self.transition:
+                            self.transition_time[k] = self.interact_time
+                        
                     if first_pass and self.last_event:
                         x, y = pygame.mouse.get_pos()
                         x -= self.display.screen_xoffset

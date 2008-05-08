@@ -800,9 +800,9 @@ class RollbackLog(renpy.object.Object):
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
             
-        # Disable the next transition, as it's pointless.
+        # Disable the next transition, as it's pointless. (Only when not used with a label.)
         renpy.game.interface.suppress_transition = True
-
+            
         # If necessary, reset the RNG.
         if force:
             rng.reset()

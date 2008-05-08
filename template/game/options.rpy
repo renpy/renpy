@@ -30,6 +30,7 @@ init -1 python hide:
     
     ## This enables the use of an in-game menu that is made out of
     ## buttons.
+
     layout.button_menu()
 
     #########################################
@@ -41,6 +42,7 @@ init -1 python hide:
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
+
     theme.roundrect(
 
         ## The color of an idle widget face.
@@ -189,31 +191,43 @@ init -1 python hide:
 
     # config.main_menu_music = "main_menu_theme.ogg"
 
+
     #########################################
     ## Transitions.
 
     ## Used when entering the game menu from the game.
+
     config.enter_transition = None
 
     ## Used when exiting the game menu to the game.
+
     config.exit_transition = None
 
     ## Used between screens of the game menu.
+
     config.intra_transition = None
 
     ## Used when entering the game menu from the main menu.
+
     config.main_game_transition = None
 
     ## Used when returning to the main menu from the game.
+
     config.game_main_transition = None
 
     ## Used when entering the main menu from the splashscreen.
+
     config.end_splash_transition = None
 
     ## Used when entering the main menu after the game has ended.
+
     config.end_game_transition = None
 
+    ## Used when a game is loaded.
 
+    config.after_load_transition = None
+
+    
     #########################################
     ## Default values of Preferences.
 
@@ -222,8 +236,10 @@ init -1 python hide:
     ## game/saves/persistent
 
     ## Should we start in fullscreen mode?
+
     config.default_fullscreen = False
 
     ## The default text speed in characters per second. 0 is infinite.
+
     config.default_text_cps = 0
 

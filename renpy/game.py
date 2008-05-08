@@ -237,10 +237,14 @@ def invoke_in_new_context(callable, *args, **kwargs):
     contexts.append(context)
 
     try:
+        if interface:
+            interface.new_context()
         return callable(*args, **kwargs)
     finally:
+        if interface:
+            interface.kill_context()
         contexts.pop()
-
+        
 def call_in_new_context(label, *args, **kwargs):
     """
     This code creates a new context, and starts executing code from
@@ -267,14 +271,21 @@ def call_in_new_context(label, *args, **kwargs):
         renpy.store._kwargs = None
     
     try:
-        context.goto_label(label)
-        context.run()
+        try:
+            if interface:
+                interface.new_context()
+            
+            context.goto_label(label)
+            context.run()
 
-        rv = renpy.store._return        
-        context.pop_all_dynamic()
-        contexts.pop()
+            rv = renpy.store._return        
+            context.pop_all_dynamic()
+            contexts.pop()
 
-        return rv
+            return rv
+        finally:
+            if interface:
+                interface.kill_context()
         
     except renpy.game.JumpOutException, e:        
 
