@@ -129,6 +129,7 @@ init -1090 python:
     style.default.bold = False
     style.default.italic = False
     style.default.underline = False
+    style.default.strikethrough = False
     style.default.drop_shadow = None
     style.default.drop_shadow_color = (0, 0, 0, 255)
     style.default.minwidth = 0

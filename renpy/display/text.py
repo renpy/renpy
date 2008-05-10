@@ -42,6 +42,8 @@ text_tags = dict(
     color=True,
     size=True,
     nw=False,
+    s=True,
+    st=True,
     )
 
 # This contains a map from (fn, size, bold, italics, underline) to the
@@ -359,14 +361,25 @@ class TextStyle(object):
             
         font = self.f
 
+
         if isinstance(font, SFont):
             rv = font.render(text, antialias, color, black_color)
-
+            
+            if self.strikethrough:
+                sw, sh = rv.get_size()
+                soh = max(sh / 10, 1) 
+                rv.subsurface((0, sh / 2, sw, soh)).fill(color) 
+            
         else:
             r, g, b, a = color
             color = (r, g, b, 255)
 
             surf = font.render(text, antialias, color)
+
+            if self.strikethrough:
+                sw, sh = surf.get_size()
+                soh = max(sh / 10, 1) 
+                surf.subsurface((0, sh / 2, sw, soh)).fill(color) 
 
             if a != 255 and renpy.display.module.can_linmap:
 
@@ -1004,6 +1017,7 @@ class Text(renpy.display.core.Displayable):
 
        return self.children
 
+    
     def layout(self, width, time):
         """
         This lays out the text of this widget. It sets self.laidout,
@@ -1024,13 +1038,16 @@ class Text(renpy.display.core.Displayable):
         # to text_layout.
         triples = [ ]
 
-        # The default style. (Duplicated in {a})
+        # text style list - a stack of text styles.
         tsl = [ TextStyle() ]
+
+        # The default style. (Duplicated in {a}, {st})
         tsl[-1].font = self.style.font
         tsl[-1].size = self.style.size
         tsl[-1].bold = self.style.bold
         tsl[-1].italic = self.style.italic
         tsl[-1].underline = self.style.underline
+        tsl[-1].strikethrough = self.style.strikethrough
         tsl[-1].color = None
         tsl[-1].black_color = None
         tsl[-1].hyperlink = None
@@ -1117,6 +1134,7 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].bold = hls.bold
                     tsl[-1].italic = hls.italic
                     tsl[-1].underline = hls.underline
+                    tsl[-1].strikethrough = hls.strikethrough
                     tsl[-1].color = hls.color
                     tsl[-1].black_color = hls.black_color
                     tsl[-1].hyperlink = link
@@ -1143,18 +1161,39 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].underline = True
                     tsl[-1].update()
 
+                elif i == "s":
+                    tsl[-1].strikethrough = True
+                    tsl[-1].update()
+
                 elif i == "plain":
                     tsl[-1].bold = False
                     tsl[-1].italic = False
                     tsl[-1].underline = False
                     tsl[-1].update()
 
+                elif i[0] == "=":
+                    style = getattr(renpy.store.style, i[1:])
+
+                    tsl[-1].font = style.font
+                    tsl[-1].size = style.size
+                    tsl[-1].bold = style.bold
+                    tsl[-1].italic = style.italic
+                    tsl[-1].underline = style.underline
+                    tsl[-1].strikethrough = style.strikethrough
+                    tsl[-1].color = style.color
+                    tsl[-1].black_color = style.black_color
+                    tsl[-1].update()
+
+
                 elif i.startswith("font"):
+
                     m = re.match(r'font=(.*)', i)
 
                     if not m:
                         raise Exception('Font tag %s could not be parsed.' % i)
 
+
+                    
                     tsl[-1].font = m.group(1)
                     tsl[-1].update()
 
@@ -1377,6 +1416,7 @@ class Text(renpy.display.core.Displayable):
                         return False
 
                 surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at)
+                
 
                 actual_y = y + max_ascent - ts.get_ascent()
 

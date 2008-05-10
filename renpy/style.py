@@ -119,6 +119,7 @@ style_properties = dict(
     slow_cps = None,
     slow_cps_multiplier = None,
     spacing = None,
+    strikethrough = None,
     subtitle_width = None,
     text_y_fudge = None,
     text_align = None,

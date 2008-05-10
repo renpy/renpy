@@ -5,6 +5,12 @@ The new layout.imagemap_main_menu function makes it easy to use
 imagemaps to define the main menu.
 
 
+The new {s} text tag causes text to be struck-through. The new 
+{=style_name} text tag cause text to be rendered in the given style
+(for example, {=foo}text{/=foo} causes text to be rendered in the foo 
+style.
+
+
 The config.main_menu and config.game_menu variables can now optionally
 take 4- and 5-component tuples, respectively. In both cases, the new 
 last component is a python expression that must be true for the button
@@ -26,6 +32,14 @@ hyperlinks to be changed based on the argument to the hyperlink.
 Now, the nvl_window style also gets indexed by "rollback" when in
 rollback is occuring.
 
+
+The JPEG library has been recompiled with optimization enabled, which
+should allow for somewhat faster image loading.
+
+
+Fixed windows font-scanning code. Updated to the pygame 1.8 version of
+the unix font-scanning code, which actually stands a chance of working
+on a modern Linux system.
 
 Fixed a crash when right-clicking at a yes/no screen, and a crash when
 using NVL-mode and jump.

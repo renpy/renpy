@@ -42,6 +42,10 @@ init:
                              window_xmargin=20,
                              window_ymargin=30)
 
+
+    # The pink style, which we use as a custom text tag.
+    $ style.pink = Style(style.default)
+    $ style.pink.color = "#ffc0c0"
     
 label demo_text:
 
@@ -49,7 +53,7 @@ label demo_text:
 
     e "Text tags let us control the appearance of text that is shown to the user."
 
-    e "Text tags can make text {b}bold{/b}, {i}italic{/i}, or {u}underlined{/u}."
+    e "Text tags can make text {b}bold{/b}, {i}italic{/i}, {s}struckthrough{/s}, or {u}underlined{/u}."
 
     e "They can make the font size {size=+12}bigger{/size} or {size=-8}smaller{/size}."
 
@@ -61,16 +65,17 @@ label demo_text:
 
     with flashbulb
     extend " when we reach the end of a block of text, in slow text mode."
-
     
     e "They let you include images inside text{image=exclamation.png} Neat {image=exclamation.png}"
 
     e "They can even change the {color=#f00}color{/color} {color=#ff0}of{/color} {color=#0f0}the{/color} {color=#0ff}text{/color}."
 
-    e "There are also bold, italic, and underline style properties, which can be styled onto any text."
+    e "There are also bold, italic, strikethrough, and underline style properties, which can be styled onto any text."
 
     e "{a=define_hyperlink}Hyperlinks{/a} let buttons be defined using text tags."
 
+    e "You can define your own text tags, {=pink}that use a style you define.{/=pink}"
+    
     e "If you find yourself using text tags on every line, you should probably look at style properties instead."
 
     e "Used with care, text tags can enhance {b}your{/b} game."
