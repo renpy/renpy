@@ -1317,12 +1317,23 @@ class Interface(object):
 
         # The global one.
         self.suppress_transition = False
+
+        # Figure out transitions.
+        for k in self.transition:
+            if k not in self.old_scene:
+                continue
             
+            self.ongoing_transition[k] = self.transition[k]            
+            self.transition_from[k] = self.old_scene[k]
+            self.transition_time[k] = None
+
+        self.transition.clear()
+                
         ## Safety condition, prevents deadlocks.
         if trans_pause:
-            if not self.transition:
+            if not self.ongoing_transition:
                 return False, None
-            if None not in self.transition:
+            if None not in self.ongoing_transition:
                 return False, None
             if suppress_transition:
                 return False, None
@@ -1398,16 +1409,6 @@ class Interface(object):
             for w in scene.itervalues():
                 w.predict(renpy.display.im.cache.get)
 
-        for k in self.transition:
-            if k not in self.old_scene:
-                continue
-            
-            self.ongoing_transition[k] = self.transition[k]            
-            self.transition_from[k] = self.old_scene[k]
-            self.transition_time[k] = None
-
-        self.transition.clear()
-                
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
