@@ -149,11 +149,7 @@ init python:
         ui.hbox() # "HP" from bar
         ui.text("HP", size=20)
         ui.bar(maxhp, hp,
-               xmaximum=150,
-               left_bar=Frame(im.Twocolor("_roundrect/rrslider_full.png", "#fff", "#fff"), 12, 0),
-               right_bar=Frame(im.Twocolor("_roundrect/rrslider_empty.png", "#fff", "#fff"), 12, 0),
-               thumb=None,
-               thumb_shadow=None)
+               xmaximum=150)
 
         ui.close()
         ui.close()
