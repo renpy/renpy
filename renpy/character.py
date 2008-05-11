@@ -556,7 +556,7 @@ class ADVCharacter(object):
 
         return self.do_predict(who, what)
             
-def Character(name, kind=None, **properties):
+def Character(name=NotSet, kind=None, **properties):
     if kind is None:
         kind = renpy.store.adv
 

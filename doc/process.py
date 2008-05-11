@@ -6,7 +6,10 @@ import os.path
 # import xml.etree.ElementTree as elementtree
 # sys.modules['elementtree'] = elementtree
 
-from elementtree.ElementTree import ElementTree, Element, SubElement, tostring, fromstring
+# from elementtree.ElementTree import ElementTree, Element, SubElement, tostring, fromstring
+# from elementtidy import TidyHTMLTreeBuilder
+
+from xml.etree.ElementTree import ElementTree, Element, SubElement, tostring, fromstring
 from elementtidy import TidyHTMLTreeBuilder
 
 # Removes everyhing we don't care about from the wikipages.
@@ -49,9 +52,14 @@ def process(src, dst, nav):
 
     if dst.startswith("./"):
         base = ""
-    
-    tree = TidyHTMLTreeBuilder.parse(src)
 
+    # tree = TidyHTMLTreeBuilder.parse(src)
+
+    
+    code = file(src).read()
+    code = code.replace("&nbsp;", u"\u00a0".encode("utf-8"))
+    tree = fromstring(code)
+        
     XHTML = "{http://www.w3.org/1999/xhtml}"
 
     for elem in tree.getiterator():
@@ -138,6 +146,8 @@ def process_dir(src, dst, nav):
 
         if fn.endswith(".1"):
             continue
+
+        print src + "/" + fn
         
         process(src + "/" + fn, dst + "/" + fn + ".html", nav)
 

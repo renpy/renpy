@@ -1416,7 +1416,6 @@ class Text(renpy.display.core.Displayable):
                         return False
 
                 surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at)
-                
 
                 actual_y = y + max_ascent - ts.get_ascent()
 

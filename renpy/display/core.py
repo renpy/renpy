@@ -1476,7 +1476,7 @@ class Interface(object):
                 focus_roots.append(sb)
 
                 pb = renpy.display.behavior.PauseBehavior(trans.delay)
-                root_widget.add(pb)
+                root_widget.add(pb, transition_time, transition_time)
                 focus_roots.append(pb)
                 
         else:

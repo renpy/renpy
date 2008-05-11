@@ -13,7 +13,7 @@ init:
             ("demo_multimedia", "Music and Sound", "5.6.3"),
             ("demo_imageops", "Image Operations", "6.5.0"),
             ("demo_ui", "User Interaction", "6.5.0"),
-            ("demo_text", "Fonts and Text Tags", "6.2.0"),
+            ("demo_text", "Fonts and Text Tags", "6.6.2"),
             ("demo_character", "Character Objects", "6.2.0"), 
             ("demo_advanced", "Advanced Features", "6.2.0"),
             ]

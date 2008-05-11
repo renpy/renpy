@@ -22,7 +22,7 @@ transition that occurs after a game has been loaded. [doc]
 
 
 Calling renpy.restart_interaction() will no longer cause ongoing
-transitions to be terminated. [test, doc]
+transitions to be terminated.
 
 
 The new config.hyperlink_styler variable allows the style of
@@ -36,6 +36,9 @@ rollback is occuring.
 The JPEG library has been recompiled with optimization enabled, which
 should allow for somewhat faster image loading.
 
+
+Fixed a series of issues that made _window_during_transitions interact
+poorly with click-to-continue.
 
 Fixed windows font-scanning code. Updated to the pygame 1.8 version of
 the unix font-scanning code, which actually stands a chance of working

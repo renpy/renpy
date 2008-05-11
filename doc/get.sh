@@ -16,4 +16,4 @@ cp `find www.renpy.org -name \*.png -type f` images
 # cp `find www.renpy.org -name \*.jpg -type f` images
 
 rm -Rf reference tutorials
-python2.4 process.py
+python2.5 process.py
