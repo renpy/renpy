@@ -18,7 +18,7 @@ to be shown.
 
 
 The config.after_load_transition variable can be used to specify a
-transition that occurs after a game has been loaded. [doc]
+transition that occurs after a game has been loaded. 
 
 
 Calling renpy.restart_interaction() will no longer cause ongoing

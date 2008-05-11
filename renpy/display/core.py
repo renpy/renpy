@@ -1040,6 +1040,7 @@ class Interface(object):
         self.screenshot = None
         self.old_scene = { }
         self.transition = { }
+        self.ongoing_transition = { }
         self.transition_time = { }
         self.transition_from = { }
         self.suppress_transition = False
@@ -1160,16 +1161,9 @@ class Interface(object):
         interaction.
         """
 
-        if not self.old_scene:
-            return
-
-        if not layer in self.old_scene:
-            return
-        
         if self.suppress_transition and not force:
             return
 
-        self.transition_from[layer] = self.old_scene[layer]
         self.transition[layer] = transition
         
 
@@ -1288,32 +1282,11 @@ class Interface(object):
                 scene_lists = renpy.game.context().scene_lists
                 scene_lists.replace_transient()
 
-            self.reset_transitions()                
+            self.ongoing_transition = { }
+            self.transition_time = { }
+            self.transition_from = { }
+                
             self.restart_interaction = True
-        
-
-    def reset_transitions(self):
-        """
-        This resets everything we know about transitions.
-        """
-        
-        self.transition = { }
-        self.transition_time = { }
-        self.transition_from = { }
-        
-        # Reset the stack, since a transition actually occured.
-        self.transition_info_stack = []
-
-    def new_context(self):
-        self.transition_info_stack.append((self.transition, self.transition_time, self.transition_from))
-        self.transition = { }
-        self.transition_time = { }
-        self.transition_from = { }
-        
-    def kill_context(self):
-        if self.transition_info_stack:
-            self.transition, self.transition_time, self.transition_from = self.transition_info_stack.pop()
-        
         
     def interact_core(self,
                       show_mouse=True,
@@ -1425,6 +1398,16 @@ class Interface(object):
             for w in scene.itervalues():
                 w.predict(renpy.display.im.cache.get)
 
+        for k in self.transition:
+            if k not in self.old_scene:
+                continue
+            
+            self.ongoing_transition[k] = self.transition[k]            
+            self.transition_from[k] = self.old_scene[k]
+            self.transition_time[k] = None
+
+        self.transition.clear()
+                
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
@@ -1434,11 +1417,12 @@ class Interface(object):
             scene_layer = scene[layer]
             focus_roots.append(scene_layer)
 
-            if (self.transition.get(layer, None) and
+            if (self.ongoing_transition.get(layer, None) and
                  not suppress_transition):
 
-                trans = self.transition[layer](old_widget=self.transition_from[layer],
-                                               new_widget=scene_layer)
+                trans = self.ongoing_transition[layer](
+                    old_widget=self.transition_from[layer],
+                    new_widget=scene_layer)
                                                
                 if not isinstance(trans, Displayable):
                     raise Exception("Expected transition to be a displayable, not a %r" % trans)
@@ -1457,11 +1441,12 @@ class Interface(object):
             add_layer(layers_root, layer)
                 
         # Add layers_root to root_widget, perhaps through a transition.
-        if (None in self.transition and
+        if (None in self.ongoing_transition and
             not suppress_transition):
 
-            trans = self.transition[None](old_widget=self.transition_from[None],
-                                          new_widget=layers_root)
+            trans = self.ongoing_transition[None](
+                old_widget=self.transition_from[None],
+                new_widget=layers_root)
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
@@ -1555,6 +1540,12 @@ class Interface(object):
 
                     self.display.show(root_widget, suppress_blit)
                     
+                    if first_pass:
+                        scene_lists.set_times(self.interact_time)
+                        for k, v in self.transition_time.iteritems():
+                            if v is None:
+                                self.transition_time[k] = self.interact_time
+
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
@@ -1563,10 +1554,6 @@ class Interface(object):
                         print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                         print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
-                    if first_pass:
-                        scene_lists.set_times(self.interact_time)
-                        for k in self.transition:
-                            self.transition_time[k] = self.interact_time
                         
                     if first_pass and self.last_event:
                         x, y = pygame.mouse.get_pos()

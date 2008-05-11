@@ -62,7 +62,7 @@ init -1180 python:
             not renpy.count_displayables_in_layer('transient')):
 
             # narrator("", interact=False)
-            ui.window(style=style.window["empty"])
+            ui.window(style=style.say_window["empty"])
             ui.null()
             
         return trans
@@ -98,6 +98,20 @@ init -1180 python:
     # Are the windows currently hidden?
     _windows_hidden = False
 
+init -1180 python:
+
+    def toggle_skipping():
+
+        if not config.skipping:
+            config.skipping = "slow"
+        else:
+            config.skipping = None
+
+        if renpy.context()._menu:
+            renpy.jump("_noisy_return")
+        else:            
+            renpy.restart_interaction()
+    
 init -1180 python hide:
 
     # Called to make a screenshot happen.
@@ -129,17 +143,6 @@ init -1180 python hide:
 
         toggle_skipping()
             
-    def toggle_skipping():
-
-        if not config.skipping:
-            config.skipping = "slow"
-        else:
-            config.skipping = None
-
-        if renpy.context()._menu:
-            renpy.jump("_noisy_return")
-        else:            
-            renpy.restart_interaction()
 
     def fast_skip():
         if config.fast_skipping or config.developer:

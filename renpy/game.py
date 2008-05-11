@@ -237,12 +237,8 @@ def invoke_in_new_context(callable, *args, **kwargs):
     contexts.append(context)
 
     try:
-        if interface:
-            interface.new_context()
         return callable(*args, **kwargs)
     finally:
-        if interface:
-            interface.kill_context()
         contexts.pop()
         
 def call_in_new_context(label, *args, **kwargs):
@@ -271,21 +267,15 @@ def call_in_new_context(label, *args, **kwargs):
         renpy.store._kwargs = None
     
     try:
-        try:
-            if interface:
-                interface.new_context()
             
-            context.goto_label(label)
-            context.run()
+        context.goto_label(label)
+        context.run()
 
-            rv = renpy.store._return        
-            context.pop_all_dynamic()
-            contexts.pop()
+        rv = renpy.store._return        
+        context.pop_all_dynamic()
+        contexts.pop()
 
-            return rv
-        finally:
-            if interface:
-                interface.kill_context()
+        return rv
         
     except renpy.game.JumpOutException, e:        
 
