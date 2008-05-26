@@ -127,6 +127,7 @@ class Container(renpy.display.core.Displayable):
         offsets = self.offsets
         
         for i in xrange(len(self.children)-1, -1, -1):
+
             d = children[i]
             xo, yo = offsets[i]
 
@@ -382,7 +383,7 @@ class MultiBox(Container):
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
         self.anim_times.append(anim_time)
-
+        
     def append_scene_list(self, l):
         for tag, zo, start, anim, d in l:
             self.add(d, start, anim)
@@ -423,7 +424,7 @@ class MultiBox(Container):
             
             rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
-        
+
             for child, start, anim in zip(self.children, self.start_times, self.anim_times):
 
                 cst = t - start
@@ -806,8 +807,7 @@ class Motion(Container):
 
         super(Motion, self).__init__(style=style, **properties)
 
-        self.child = child 
-        self.children = [ child ]
+        self.add(child)
         self.function = function
         self.period = period
         self.repeat = repeat
@@ -833,7 +833,6 @@ class Motion(Container):
             t = at
         else:
             t = st
-
 
         if self.delay and t >= self.delay:
             t = self.delay            
@@ -1022,7 +1021,8 @@ class Revolver(object):
         self.around = around
         self.cor = cor
         self.pos = pos
-        self.child = child
+
+        self.add(child)
         
     def __call__(self, t, (w, h, cw, ch)):
 
@@ -1141,8 +1141,9 @@ class Zoom(renpy.display.core.Displayable):
         self.start = start
         self.end = end
         self.time = time
-        self.child = child            
         self.done = 0.0
+
+        self.add(child)
         
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
@@ -1284,7 +1285,8 @@ class FactorZoom(renpy.display.core.Displayable):
         self.start = start
         self.end = end
         self.time = time
-        self.child = child                    
+
+        self.add(child)
         
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
@@ -1477,7 +1479,7 @@ class IgnoresEvents(renpy.display.core.Displayable):
 
     def __init__(self, child):
         super(IgnoresEvents, self).__init__(style='default')
-        self.child = renpy.easy.displayable(child)
+        self.add(renpy.easy.displayable(child))
     
     def visit(self):
         return [ self.child ]
@@ -1523,7 +1525,7 @@ class RotoZoom(renpy.display.core.Displayable):
         self.zoom_end = zoom_end
         self.zoom_delay = zoom_delay
 
-        self.child = renpy.easy.displayable(child)
+        self.add(renpy.easy.displayable(child))
         
         self.rot_repeat = rot_repeat
         self.zoom_repeat = zoom_repeat

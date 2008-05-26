@@ -1,3 +1,7 @@
+Fixed a bug that could cause crashing under certain combinations of
+layouts and transitions.
+
+
 New in Ren'Py 6.6.2
 -------------------
 

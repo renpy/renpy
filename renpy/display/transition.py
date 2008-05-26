@@ -53,6 +53,7 @@ class Transition(renpy.display.core.Displayable):
         self.events = True
         
     def event(self, ev, x, y, st):
+
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.new_widget.event(ev, x, y, st)
         else:
@@ -110,7 +111,7 @@ class MultipleTransition(Transition):
     """
     
     def __init__(self, args, old_widget=None, new_widget=None):
-
+        
         if len(args) % 2 != 1 or len(args) < 3:
             raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
 
@@ -146,7 +147,7 @@ class MultipleTransition(Transition):
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
 
     def render(self, width, height, st, at):
-
+        
         while True:
             trans = self.transitions[0]
             stoff = st - self.time_offset
@@ -160,11 +161,12 @@ class MultipleTransition(Transition):
             self.time_offset += trans.delay
             self.transitions.pop(0)
 
+            
         if len(self.transitions) == 1:
             self.events = True
-
+            
         self.event_target = trans
-
+        
         surf = renpy.display.render.render(trans, width, height, stoff, at)
         width, height = surf.get_size()
         rv = renpy.display.render.Render(width, height)
@@ -326,7 +328,7 @@ class Dissolve(Transition):
 
 
     def render(self, width, height, st, at):
-
+        
         if st >= self.time or not renpy.display.module.can_blend:
             self.events = True
             return render(self.new_widget, width, height, st, at)
