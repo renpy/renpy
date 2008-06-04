@@ -981,8 +981,8 @@ class Render(object):
             return False
         
         for xo, yo, source in self.blittables:
-            xx = x - xo
-            yy = y - yo
+            xx = int(x - xo)
+            yy = int(y - yo)
 
             if xx < 0 or yy < 0:
                 continue
