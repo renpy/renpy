@@ -73,7 +73,7 @@ def reached(obj, reachable, wait):
 
     try:
        # Treat as iterable
-        if not isinstance(i, basestring):
+        if not isinstance(obj, basestring):
             for v in obj:
                 reached(v, reachable, wait)
     except:
@@ -644,7 +644,7 @@ class RollbackLog(renpy.object.Object):
         for k, (ref, roll) in self.mutated.iteritems():
 
             obj = ref()
-            if not obj:
+            if obj is None:
                 continue
 
             self.current.objects.append((obj, roll))

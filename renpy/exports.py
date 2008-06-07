@@ -1070,7 +1070,11 @@ def error(msg):
     
 # User-defined Displayable stuff.
 
-Displayable = renpy.display.core.Displayable
+# Displayable = renpy.display.core.Displayable
+
+class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject):
+    pass
+
 Render = renpy.display.render.Render
 render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent

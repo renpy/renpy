@@ -1,3 +1,13 @@
+
+Change renpy.Displayable so that subclasses of it participate in 
+rollback.
+
+Fixed two bugs that could cause incorrect saving in the presence of 
+empty lists and dictionaries.
+
+Fixed a bug that could cause crashing due to non-integer blitting of
+renders.
+
 Fixed a bug that could cause crashing under certain combinations of
 layouts and transitions.
 
