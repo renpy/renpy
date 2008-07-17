@@ -640,9 +640,16 @@ label _start:
         
     $ renpy.block_rollback()
 
+    python hide:
+        for i in range(0, 7):
+            renpy.music.stop(channel=i)
+            renpy.sound.stop(channel=i)
+    
     if config.main_menu_music:
         $ renpy.music.play(config.main_menu_music, if_changed=True)
-
+    else:
+        $ renpy.music.stop()
+        
     # Clean out any residual scene from the splashscreen.
     scene black
 

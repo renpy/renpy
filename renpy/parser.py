@@ -665,7 +665,7 @@ class Lexer(object):
 
             self.pos += 1
 
-        self.error("reached eol when expecting '%s'." % delim)
+        self.error("reached end of line when expecting '%s'." % delim)
 
     def python_expression(self):
         """

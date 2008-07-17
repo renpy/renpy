@@ -25,6 +25,8 @@
 import pygame
 import renpy
 import textwrap
+import select
+import sys
 
 class ReportError(object):
 
@@ -51,7 +53,17 @@ class ReportError(object):
             
         pygame.display.flip()
 
+        pygame.time.set_timer(pygame.USEREVENT + 1, 50)
+
         while True:
+
+            # Allow restart by hitting stdin on newline.
+            p = select.poll()
+            p.register(sys.stdin, select.POLLIN)
+            if p.poll(0):
+                sys.stdin.readline()
+                return True
+
             ev = pygame.event.wait()
 
             if ev.type == pygame.MOUSEBUTTONUP:

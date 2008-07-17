@@ -50,6 +50,9 @@ init python:
     # True to suppress the display of thumbnails.
     config.disable_thumbnails = False
 
+    # The default thumbnail to use when no file exists.
+    config.load_save_empty_thumbnail = None
+    
     # How we format time in a file entry.
     config.time_format = "%b %d, %H:%M"
 
@@ -100,8 +103,12 @@ init python:
         ui.hbox(style=style.file_picker_entry_box[index])
 
         if not config.disable_thumbnails:
-            ui.null(width=config.thumbnail_width,
-                    height=config.thumbnail_height)
+
+            if config.load_save_empty_thumbnail:
+                ui.add(config.load_save_empty_thumbnail)
+            else:
+                ui.null(width=config.thumbnail_width,
+                        height=config.thumbnail_height)
         
         ui.text(name + ". ", style=style.file_picker_old[index])
 

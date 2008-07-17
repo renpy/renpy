@@ -195,7 +195,23 @@ label _style_hierarchy:
         
     jump _developer_screen
     
+
+init 1050 python:
+    
+    if renpy.game.options.remote:
             
-                      
-                      
+        config.window_title = "Preview: " + config.window_title
+        
+        class Remote(renpy.Displayable):
+            
+            def render(self, width, height, st, at):
+                return renpy.Render(0, 0)
+                            
+            def event(self, ev, x, y, st):
+                renpy.remote.remote()
+                renpy.timeout(.05)
+                
+        config.underlay.append(Remote())
+        del Remote
+        
         

@@ -124,6 +124,9 @@ def bootstrap(renpy_base):
     op.add_option('--warp', dest='warp', default=None,
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
+    op.add_option('--remote', dest='remote', action='store_true',
+                  help="If True, allows Ren'Py to be fed commands on stdin.")
+
     options, args = op.parse_args()
 
     if options.trace:
@@ -194,7 +197,6 @@ def bootstrap(renpy_base):
         print renpy.version
         sys.exit(0)
 
-
     keep_running = True
     report_error = None
 
@@ -228,18 +230,15 @@ def bootstrap(renpy_base):
                 keep_running = True
             else:
                 keep_running = False
-            
         
         except Exception, e:
             report_exception(e)
 
-            if renpy.game.init_phase and report_error and report_error.report('an exception'):
+            if report_error and report_error.report('an exception'):
                 renpy.reload_all()
                 keep_running = True
             else:
                 keep_running = False
-            
-
             
     if options.leak:
         memory_profile()

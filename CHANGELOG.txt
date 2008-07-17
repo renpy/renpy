@@ -1,3 +1,22 @@
+Ren'Py will now error out quicker if you give it None when it's expecting
+a displayable. This makes it more likely the correct line will be 
+reported when a problem occurs. [todo].
+
+
+Added a new remote-control mode, that allows Ren'Py to be commanded to
+perform a number of things, by sending the appropriate command to 
+stdin. This is useful for editor integration, as it allows for 
+warping to an appropriate line.
+
+
+Music and sound-effects are now stopped when returning to the main 
+menu, save for channel 7. The music on channel 7 is only stopped if
+it is not the same as the config.main_menu_music, otherwise, it is 
+allowed to continue playing.
+
+
+Allow a thumbnail to be used with classic load-save.
+
 
 Change renpy.Displayable so that subclasses of it participate in 
 rollback.

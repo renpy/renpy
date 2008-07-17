@@ -71,6 +71,8 @@ def run(restart=False):
     if renpy.game.options.warp:
         label = renpy.warp.warp(renpy.game.options.warp)
 
+        renpy.game.options.warp = None
+
         if not label:
             raise Exception("Could not find line to warp to.")
 
@@ -78,8 +80,6 @@ def run(restart=False):
 
         if game.script.has_label('after_warp'):
             game.context().call('after_warp')
-
-        renpy.game.options.warp = None
 
     # Run the game.
     while True:

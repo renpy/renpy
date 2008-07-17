@@ -715,9 +715,18 @@ class Display(object):
                 renpy.display.scale.image_load_unscaled(
                     renpy.loader.load(renpy.config.window_icon),
                     renpy.config.window_icon))
+
+        # If a window exists of the right size and flags, use it. Otherwise,
+        # make our own window.
+        old_window = pygame.display.get_surface()
+        if ((old_window is not None) and 
+            (old_window.get_size() == (width, height)) and
+            (old_window.get_flags() & FULLSCREEN == fsflag)):
             
-        # The window we display things in.
-        self.window = pygame.display.set_mode((width, height), fsflag, 32)
+            self.window = old_window
+                    
+        else:
+            self.window = pygame.display.set_mode((width, height), fsflag, 32)
 
         # Window title.
         pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))

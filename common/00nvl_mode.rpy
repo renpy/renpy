@@ -204,10 +204,6 @@ init -1100 python:
 
     def nvl_menu(items):
 
-        # Clear out the previous scene list, as we will need to redraw
-        # it.
-        renpy.with_statement(None)
-
         if nvl_list is None:
             store.nvl_list = [ ]
 
