@@ -77,7 +77,7 @@ init:
 
         def button(text, hover_text=None, clicked=None, hovered=None, selected=False):
             if hover_text:
-                def hovered(hover_text=hover_text):
+                def hovered(hover_text=_(hover_text)):
                     if store.message != hover_text:
                         store.message = hover_text
                         renpy.restart_interaction()
@@ -88,7 +88,7 @@ init:
                 
 
         def prompt(name, message, cancel, default='', hint=''):
-            store.message = hint
+            store.message = _(hint)
 
             # Creating the project.
             title(name)
@@ -151,16 +151,16 @@ init:
                 if pages >= 1:
 
                     if page < pages:
-                        button("Next Page", "Go to the next page of projects.", clicked=ui.returns(("page", page + 1)))
+                        button(u"Next Page", u"Go to the next page of projects.", clicked=ui.returns(("page", page + 1)))
                     else:
-                        button("Next Page")
+                        button(u"Next Page")
 
                     if page > 0:
-                        button("Previous Page", "Go to the previous page of projects.", clicked=ui.returns(("page", page - 1)))
+                        button(u"Previous Page", u"Go to the previous page of projects.", clicked=ui.returns(("page", page - 1)))
                     else:
-                        button("Previous Page")
+                        button(u"Previous Page")
 
-                button("Cancel", "Return to the top menu.", ui.jumps(cancel))
+                button(u"Cancel", u"Return to the top menu.", ui.jumps(cancel))
                         
                 ui.close()
 
@@ -279,8 +279,8 @@ init:
             import sys
             import os.path
 
-            store.message = "Lint in progress."
-            title("Lint")
+            store.message = u"Lint in progress."
+            title(u"Lint")
             ui.pausebehavior(0)
             interact()
 
@@ -328,7 +328,7 @@ label start:
 label main:
 
     python:
-        store.message = "What do you want to do?"
+        store.message = u"What do you want to do?"
 
 label top_menu:
     
@@ -341,54 +341,54 @@ label top_menu:
 
             mid()
 
-            label("This Project")
+            label(u"This Project")
 
             if not game_proc or game_proc.poll() is not None:
                 clicked = ui.jumps("launch")
             else:
                 clicked = None
 
-            button("Launch",
-                   "Starts the project running.",
+            button(u"Launch",
+                   u"Starts the project running.",
                    clicked=clicked)
 
 
             if config.editor:
-                button("Edit Script",
-                       "Edits the script files.",
+                button(u"Edit Script",
+                       u"Edits the script files.",
                        clicked=ui.jumps("edit"))
 
 
-            button("Change Theme",
-                   "Changes the color theme of the project.",
+            button(u"Change Theme",
+                   u"Changes the color theme of the project.",
                    ifrw("choose_theme"))
                 
-            button("Game Directory",
-                   "Opens the game directory.",
+            button(u"Game Directory",
+                   u"Opens the game directory.",
                    clicked=ui.jumps("game_directory"))
 
 
 
-            button("Tools",
-                   "Shows the tools menu.",
+            button(u"Tools",
+                   u"Shows the tools menu.",
                    clicked=ui.jumps("tools"))
 
             spacer()
 
-            label("Change Project")
+            label(u"Change Project")
 
-            button("Select Project",
-                   "Select a project to work with.",
+            button(u"Select Project",
+                   u"Select a project to work with.",
                    clicked=ui.jumps("select_project"))
 
-            button("New Project",
-                   "Create a new project from a template.",
+            button(u"New Project",
+                   u"Create a new project from a template.",
                    clicked=ui.jumps("new"))
 
             ui.close()
 
             bottom()
-            button("Quit", "Quit the Ren'Py Launcher.", clicked=ui.jumps("confirm_quit"))
+            button(u"Quit", u"Quit the Ren'Py Launcher.", clicked=ui.jumps("confirm_quit"))
             ui.close()
 
 
@@ -405,7 +405,7 @@ label select_project:
 
         choices = [ (p.name, p.info["description"], p, None, False) for p in projects if not p.info.get("template") ]
 
-        store.project = paged_menu("Select a Project", choices, "Please select a project.")
+        store.project = paged_menu(u"Select a Project", choices, u"Please select a project.")
 
         persistent.project = store.project.name
 
@@ -425,7 +425,7 @@ label launch:
         else:
             proc = renpy.subprocess.Popen([sys.executable, sys.argv[0], project.path])
 
-        store.message = project.title + " has been launched."
+        store.message = _(u"%s has been launched.") % project.title 
 
         store.game_proc = proc
         
@@ -456,7 +456,7 @@ label edit:
             
         renpy.launch_editor(files)
         
-        store.message = "Launched editor with %d script files." % len(files)
+        store.message = _(u"Launched editor with %d script files.") % len(files)
 
     jump top_menu
 
@@ -470,7 +470,7 @@ label game_directory:
         
         gamedir = os.path.normpath(project.gamedir)
 
-        store.message = "Opening game directory:\n%s" % gamedir
+        store.message = _(u"Opening game directory:\n%s") % gamedir
 
         if sys.platform == "win32":
             os.startfile(gamedir)
@@ -478,27 +478,27 @@ label game_directory:
             import renpy.subprocess as subprocess
             subprocess.Popen([ "open", gamedir ])
         else:
-            store.message = "Opening the game directory is not supported on this platform.\n%s" % gamedir
+            store.message = _(u"Opening the game directory is not supported on this platform.\n%s") % gamedir
 
     jump top_menu
                      
 
 label tools:
 
-    $ store.message = "Please choose a tool you want to use with this project."
+    $ store.message = u"Please choose a tool you want to use with this project."
 
 label tools_menu:
 
     python hide:
 
-        title("Tools: " + project.title)
+        title(_("Tools: %s") % project.title)
 
         mid()
 
-        label("Anytime")
+        label(u"Anytime")
 
-        button("Check Script (Lint)",
-               "Checks the game's script for likely errors. This should be run before releasing.",
+        button(u"Check Script (Lint)",
+               u"Checks the game's script for likely errors. This should be run before releasing.",
                clicked=ui.jumps("lint"))
 
         # button("Quick Backup",
@@ -507,27 +507,26 @@ label tools_menu:
 
         spacer()
 
-        label("Release Day")
+        label(u"Release Day")
 
-
-        button("Add From to Calls",
-               "Adds a from clause to each of the call statements in your script.", 
+        button(u"Add From to Calls",
+               u"Adds a from clause to each of the call statements in your script.", 
                clicked=ifrw("add_from_to_calls"))
         
-        button("Archive Files",
-               "Archive files found under the game and archived directories.",
+        button(u"Archive Files",
+               u"Archive files found under the game and archived directories.",
                clicked=ifrw("archive_files"))
                
-        button("Build Distributions",
-               "Build distributions for the platforms supported by Ren'Py.",
+        button(u"Build Distributions",
+               u"Build distributions for the platforms supported by Ren'Py.",
                clicked=ui.jumps("distribute"))
 
         ui.close()
 
         bottom()
 
-        button("Back",
-               "Goes back to the top menu.",
+        button(u"Back",
+               u"Goes back to the top menu.",
                clicked=ui.jumps("main"))
 
         ui.close()
@@ -539,7 +538,7 @@ label lint:
     python hide:
         lint()
 
-        store.message = "A lint report should appear shortly."
+        store.message = u"A lint report should appear shortly."
 
     jump tools_menu
         
@@ -554,7 +553,7 @@ label archive_files:
         import renpy.tools.archiver as archiver
 
         extensions = persistent.extensions or "png gif jpg"
-        extensions = prompt("Archiving Files", "Please enter a space separated list of the file extensions you want archived.", "tools", extensions)
+        extensions = prompt(u"Archiving Files", u"Please enter a space separated list of the file extensions you want archived.", "tools", extensions)
         if not extensions.strip():
             renpy.jumps("tools_menu")
         persistent.extensions = extensions    
@@ -562,8 +561,8 @@ label archive_files:
         
 
         # Tell the user we're archiving images.
-        title("Archiving Files")
-        store.message = "Please wait while we archive files."
+        title(u"Archiving Files")
+        store.message = u"Please wait while we archive files."
         ui.pausebehavior(0)
         interact()
 
@@ -637,7 +636,7 @@ label archive_files:
                 os.rename(fullfn, afn)
                 os.unlink(afn + ".old")
                 
-        store.message = "The files have been added to the archive, and moved into the archived directory."
+        store.message = u"The files have been added to the archive, and moved into the archived directory."
 
     jump tools_menu
 
@@ -649,8 +648,8 @@ label backup:
         import shutil
 
         # Tell the user we're archiving images.
-        title("Making Backup")
-        store.message = "Please wait while we make a backup."
+        title(u"Making Backup")
+        store.message = u"Please wait while we make a backup."
         ui.pausebehavior(0)
         interact()
 
@@ -671,7 +670,7 @@ label backup:
 
         shutil.copytree(project.path, bdir)
 
-        store.message = "The backup was placed into %s." % bdir
+        store.message = _(u"The backup was placed into %s.") % bdir
 
     jump tools_menu
                 
@@ -683,8 +682,8 @@ label add_from_to_calls:
         import time
         import shutil
 
-        title("Add From to Calls")
-        store.message = "Please wait while we add from clauses to call statements."
+        title(u"Add From to Calls")
+        store.message = u"Please wait while we add from clauses to call statements."
         ui.pausebehavior(0)
         interact()
 
@@ -692,13 +691,10 @@ label add_from_to_calls:
 
         add_from.add_from(project.gamedir, config.commondir)
 
-        store.message = "Done adding from clauses to call statements. You may want to remove the .bak files created."
+        store.message = u"Done adding from clauses to call statements. You may want to remove the .bak files created."
 
     jump tools_menu
                 
-    
-    
-        
         
 label confirm_quit:
     $ renpy.quit()

@@ -64,9 +64,6 @@ def add(w, make_current=False, once=False):
     
     w = renpy.easy.displayable(w)
 
-    if w is None:
-        raise Exception("Cannot add None with ui.add.")
-    
     global current
     global current_once
 

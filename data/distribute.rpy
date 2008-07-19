@@ -141,57 +141,57 @@ label distribute:
             mac = False
 
         if not (windows or mac or linux):
-            store.error("Can't Distribute", "Ren'Py is missing files required for distribution. Please download the full package from http://www.renpy.org/.", "tools_menu")
+            store.error(u"Can't Distribute", u"Ren'Py is missing files required for distribution. Please download the full package from {a=http://www.renpy.org/}www.renpy.org{/a}.", "tools_menu")
         
         lint()
 
         store.message = ""
 
-        title("Building Distributions")
+        title(_(u"Building Distributions"))
 
         mid()
-        text("I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nCheck {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")
+        text(u"I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nCheck {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")
         ui.close()
 
         bottom()
-        button("Yes", clicked=ui.returns(True))
-        button("No", clicked=ui.returns(False))
+        button(u"Yes", clicked=ui.returns(True))
+        button(u"No", clicked=ui.returns(False))
         ui.close()
 
         if not interact():
             renpy.jump("tools")
 
 
-        if not windows or not mac or not linux:
-            store.message = "The full version of Ren'Py can build for Windows, Mac, and Linux. Download it from www.renpy.org."
+        # if not windows or not mac or not linux:
+        #    store.message = "The full version of Ren'Py can build for Windows, Mac, and Linux. Download it from www.renpy.org."
             
-        title("Building Distributions")
+        title(u"Building Distributions")
 
         mid()
-        text("Distributions will be built for the following platforms:")
+        text(u"Distributions will be built for the following platforms:")
 
         spacer()
 
         if windows:
-            text("Windows 98+", style='launcher_input')
+            text(u"Windows 98+", style='launcher_input')
 
         if linux:
-            text("Linux x86", style='launcher_input')
+            text(u"Linux x86", style='launcher_input')
 
         if mac:
-            text("Mac OS X 10.4+", style='launcher_input')
+            text(u"Mac OS X 10.4+", style='launcher_input')
 
         spacer()
 
 
         # TODO: If missing platforms, prompt for a DL.
 
-        text("Is this okay?")
+        text(u"Is this okay?")
         ui.close()
 
         bottom()
-        button("Yes", clicked=ui.returns(True))
-        button("No", clicked=ui.returns(False))
+        button(u"Yes", clicked=ui.returns(True))
+        button(u"No", clicked=ui.returns(False))
         ui.close()
 
         if not interact():
@@ -201,27 +201,27 @@ label distribute:
         if persistent.build_project == project.name:
             default_name = persistent.build_name        
 
-        name = prompt("Building Distributions",
-                      "Please enter a base name for the directories making up this distribution.",
+        name = prompt(u"Building Distributions",
+                      u"Please enter a base name for the directories making up this distribution.",
                       "tools",
                       default_name,
-                      "This usually should include a name and version number, like 'moonlight_walks-1.0'.")
+                      u"This usually should include a name and version number, like 'moonlight_walks-1.0'.")
 
         name = name.strip()
 
         if not name:
-            store.error("Error", "The distribution name should not be empty.", "tools_menu")
+            store.error(u"Error", u"The distribution name should not be empty.", "tools_menu")
 
         try:
             name = name.encode("ascii")
         except:
-            store.error("Error", "Distribution names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way.", "tools_menu")
+            store.error(u"Error", u"Distribution names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way.", "tools_menu")
 
         persistent.build_project = project.name
         persistent.build_name = name
 
         ignore_extensions = persistent.ignore_extensions or "~ .bak"
-        ignore_extensions = prompt("Building Distributions", "Please enter a space separated list of the file extensions you do not want included in the distribution.", "tools", ignore_extensions)
+        ignore_extensions = prompt(u"Building Distributions", u"Please enter a space separated list of the file extensions you do not want included in the distribution.", "tools", ignore_extensions)
         persistent.ignore_extensions = ignore_extensions    
         store.ignore_extensions = [ i.strip() for i in ignore_extensions.strip().split() ]
 
@@ -278,10 +278,10 @@ label distribute:
             zf = zipfile.ZipFile(name + ".zip", "w", zipfile.ZIP_DEFLATED)
 
             progress_len = len(multi) + len(win_files)
-            store.message = "Be sure to announce your project at the Lemma Soft Forums."
+            store.message = u"Be sure to announce your project at the Lemma Soft Forums."
                                
             for i, (fn, an) in enumerate(multi + win_files):
-                progress("Building Windows", i, progress_len)
+                progress(u"Building Windows", i, progress_len)
 
                 if os.path.isdir(fn):
                     continue
@@ -319,11 +319,11 @@ label distribute:
             tf.dereference = True
 
             progress_len = len(multi) + len(linux_files)
-            store.message = "If appropriate, please submit your game to www.renai.us."
+            store.message = u"If appropriate, please submit your game to www.renai.us."
 
             for j, i in enumerate(multi + linux_files):
 
-                progress("Building Linux", j, progress_len)
+                progress(u"Building Linux", j, progress_len)
 
                 fn, an = i
 
@@ -363,11 +363,11 @@ label distribute:
             zf = zipfile.ZipFile(name + "-mac.zip", "w", zipfile.ZIP_DEFLATED)
 
             progress_len = len(multi) + len(mac_files)
-            store.message = "Thank you for choosing Ren'Py."
+            store.message = u"Thank you for choosing Ren'Py."
 
             for i, (fn, an) in enumerate(multi + mac_files):
 
-                progress("Building Mac OS X", i, progress_len)
+                progress(u"Building Mac OS X", i, progress_len)
 
                 if os.path.isdir(fn):
                     continue
@@ -396,20 +396,20 @@ label distribute:
 
         store.message = ""
 
-        title("Success")
+        title(u"Success")
 
         mid()
-        text("The distribution(s) have been built. Be sure to test them before release.")
+        text(u"The distribution(s) have been built. Be sure to test them before release.")
 
         spacer()
 
         if mac:
-            text("Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.")
+            text(u"Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.")
 
         ui.close()
 
         bottom()
-        button("Return", clicked=ui.returns(True))
+        button(u"Return", clicked=ui.returns(True))
         ui.close()
         
         interact()

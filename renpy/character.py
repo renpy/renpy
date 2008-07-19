@@ -196,7 +196,7 @@ def display_say(show_function,
                 type,
                 checkpoint=True):
 
-    ctc = renpy.easy.displayable(ctc)
+    ctc = renpy.easy.displayable_or_none(ctc)
     
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
@@ -404,8 +404,8 @@ class ADVCharacter(object):
             interact = d('interact'),
             slow = d('slow'),
             afm = d('afm'),
-            ctc = renpy.easy.displayable(d('ctc')),
-            ctc_pause = renpy.easy.displayable(d('ctc_pause')),
+            ctc = renpy.easy.displayable_or_none(d('ctc')),
+            ctc_pause = renpy.easy.displayable_or_none(d('ctc_pause')),
             ctc_position = d('ctc_position'),
             all_at_once = d('all_at_once'),
             with_none = d('with_none'),

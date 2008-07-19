@@ -10,31 +10,31 @@ label new:
         
         choices = [ (p.name, p.info["description"], p, None, False) for p in projects if p.info.get("template", None)]
 
-        template = paged_menu("Select a Template", choices, "Please select a project to use as a template for your project.")
+        template = paged_menu(u"Select a Template", choices, u"Please select a project to use as a template for your project.")
 
         # Choose project name.
         
-        name = prompt("Project Name", "Type the name of your new project, and press enter.\n", "main")
+        name = prompt(u"Project Name", u"Type the name of your new project, and press enter.\n", "main")
         name = name.strip()
 
         error = None
 
         if not name:
-            error = "Please enter a non-empty project name."
+            error = u"Please enter a non-empty project name."
         elif os.path.exists(name):
-            error = "A file or directory named '%s' already exists." % name
+            error = u"A file or directory named '%s' already exists." % name
         else:
             try:
                 name = name.encode("ascii")
             except:
-                error = "Project names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way."
+                error = u"Project names must be ASCII. This is because the ZIP file format does not support non-ASCII characters in a uniform way."
                 
         if error:
-            store.error("Error", error, "main")
+            store.error(u"Error", error, "main")
 
         # Tell the user we're creating the project.
-        title("Creating Project")
-        store.message = "Please wait while we create the project."
+        title(u"Creating Project")
+        store.message = u"Please wait while we create the project."
         ui.pausebehavior(0)
         interact()
                     
@@ -80,7 +80,7 @@ label choose_theme:
 
             choices.append((i, None, i, hovered, False))
 
-        color_theme = paged_menu("Select a Theme", choices, "Please select a color theme for your project. You can always change the colors later.", cancel='color_theme_cancel')
+        color_theme = paged_menu(u"Select a Theme", choices, u"Please select a color theme for your project. You can always change the colors later.", cancel='color_theme_cancel')
 
         # Restore default theme.
         renpy.style.restore(style_backup)
@@ -93,7 +93,7 @@ label choose_theme:
         import re
 
         if not os.path.exists(ofn):
-            error("Changing Theme", "The options file does not seem to exist.", "main")
+            error(u"Changing Theme", u"The options file does not seem to exist.", "main")
         
         inf = file(ofn, "rU")
         outf = file(ofn + ".new", "w")
@@ -135,7 +135,7 @@ label choose_theme:
             os.unlink(ofn + ".old")
             
         if not changed:
-            error("Changing Theme", "Could not modify options.rpy, perhaps it was edited too much.", "main")
+            error(u"Changing Theme", u"Could not modify options.rpy, perhaps it was edited too much.", "main")
         
     jump main
         

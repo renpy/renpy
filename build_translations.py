@@ -21,7 +21,7 @@ def tl(fn, s):
         print >>out
         seen_files.add(fn)
 
-    print >>out, "    $ library.translations[%r] = %r" % (s, s)
+    print >>out, "    config.translations[%r] = %r" % (s, s)
     seen_strings.add(s)
 
 def process(fn):
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     print >>out, "# This file contains a list of all of the phrases you can translate"
     print >>out, "# from the Ren'Py common code."
     print >>out, ""
-    print >>out, "init:"
+    print >>out, "init python:"
 
     for fn in glob.glob("common/*.rpy") + glob.glob("common/_layout/*.rpym") + glob.glob("common/_compat/*.rpym"):
         process(fn)

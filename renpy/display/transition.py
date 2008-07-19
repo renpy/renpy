@@ -214,7 +214,7 @@ def Fade(out_time, hold_time, in_time,
     dissolve = renpy.curry.curry(Dissolve)
     notrans = renpy.curry.curry(NoTransition)
 
-    widget = renpy.easy.displayable(widget)
+    widget = renpy.easy.displayable_or_none(widget)
     
     if color:
         widget = renpy.display.image.Solid(color)
