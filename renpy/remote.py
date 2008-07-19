@@ -38,6 +38,22 @@
 import renpy
 import sys
 import select
+import os
+
+# Safely reads a line, ignoring any buffering that might be going on.
+def read_line(f):
+    rv = ""
+
+    while True:
+        c = os.read(f.fileno(), 1)
+
+        if c == "\n":
+            return rv
+    
+        if c == "\r":
+            continue
+
+        rv += c
 
 def remote():
     
@@ -46,10 +62,9 @@ def remote():
     poll.register(sys.stdin, select.POLLIN)
     if not poll.poll(0):
         return
-
+    
     # Otherwise, read in the command.
-    cmd = sys.stdin.readline()
-    cmd = cmd[:-1]
+    cmd = read_line(sys.stdin)
     
     # Break it up into parts.
     if " " in cmd:

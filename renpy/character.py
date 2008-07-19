@@ -288,7 +288,7 @@ def display_say(show_function,
         # Now, re-run update on what_text.
         what_text.update(retokenize=False)
             
-        keep_interacting, pause_length = what_text.get_keep_pausing()
+        keep_interacting = what_text.keep_pausing
         no_wait |= what_text.no_wait
 
         if no_wait:
@@ -300,14 +300,11 @@ def display_say(show_function,
         if behavior and afm:
             behavior.set_afm_length(what_text.get_simple_length() - slow_start)
 
-
         if interact:
-            if pause_length is not None:
-                renpy.ui.pausebehavior(pause_length, True)
             
             rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
-            # This is only the case if the user has rolled forward, or
+            # This is only the case if the user has rolled forward, {nw} happens, or
             # maybe in some other obscure cases.
             if rv is False:
                 break 

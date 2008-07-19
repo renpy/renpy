@@ -217,6 +217,7 @@ def bootstrap(renpy_base):
             
         except renpy.game.UtterRestartException:
 
+            # Only works after a full restart.
             report_error = renpy.display.error.ReportError()
             
             # On an UtterRestart, reload Ren'Py.

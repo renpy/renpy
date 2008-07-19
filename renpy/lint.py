@@ -289,10 +289,10 @@ def check_jump(node):
 
 def check_call(node):
 
-    if not isinstance(node.next.name, basestring):
-        report(node, "The call does not have a from clause associated with it.")
-        add("You can add from clauses to calls automatically by running the add_from program.")
-        add("This is necessary to ensure saves can be loaded even when the script changes.")
+#     if not isinstance(node.next.name, basestring):
+#         report(node, "The call does not have a from clause associated with it.")
+#         add("You can add from clauses to calls automatically by running the add_from program.")
+#         add("This is necessary to ensure saves can be loaded even when the script changes.")
 
     if node.expression:
         return
@@ -397,7 +397,6 @@ def lint():
             check_say(node)
             say_count += 1
             say_words += len(node.what.split())
-
     
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)

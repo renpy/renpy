@@ -108,6 +108,8 @@ def warp(spec):
     # Sort the list of candidates, so they're orderd by linenumber.
     candidates.sort()
 
+    print candidates
+    
     # Pick the candidate immediately before (or on) the line.
     node = candidates[-1][1]
 

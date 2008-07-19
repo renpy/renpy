@@ -46,6 +46,8 @@ text_tags = dict(
     st=True,
     )
 
+text_tags[""] = True
+       
 # This contains a map from (fn, size, bold, italics, underline) to the
 # unloaded font object corresponding to that specification. 
 fonts = { }
@@ -205,7 +207,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     @param charset: The character set of the font. A string containing characters
     in the order in which they are found in the image.
     """
-    
+   
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
@@ -765,12 +767,14 @@ class Text(renpy.display.core.Displayable):
                'laidout_length', 'laidout_hyperlinks', 'width', 'tokens', 'children',
                'child_pos']
 
-    __version__ = 1
+    __version__ = 2
 
     def after_upgrade(version):
         if version <= 0:
             self.activated = None
-    
+        if version <= 1:
+            self.slow_done_time = None
+                    
     def after_setstate(self):
         self.update()
 
@@ -812,11 +816,14 @@ class Text(renpy.display.core.Displayable):
         self.slow_param = slow
         self.slow_done = slow_done
         self.slow_start = slow_start
+        # The time when slow_done was called.
+        self.slow_done_time = None
 
         self.laidout = None
         self.child_pos = [ ]
 
         self.tokens = None
+
         
         self.update(redraw=False)
 
@@ -836,7 +843,7 @@ class Text(renpy.display.core.Displayable):
 
         self.style = style
         self.update()
-        
+
     def update(self, redraw=True, retokenize=True):
         """
         This is called after this widget has been updated by
@@ -896,7 +903,7 @@ class Text(renpy.display.core.Displayable):
         if self.pause is not None:
             pause = self.pause
             new_tokens = [ ]
-            
+
             for i in self.tokens[0]:
                 new_tokens.append(i)
                 type, text = i
@@ -987,7 +994,13 @@ class Text(renpy.display.core.Displayable):
             raise renpy.display.core.IgnoreEvent()
 
         if self.no_wait_done:
-            return False
+            return False 
+
+        if self.slow_done_time and self.pause_length is not None:
+            if st > (self.slow_done_time + self.pause_length):
+                return True
+            else:
+                renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
         
         for child, xo, yo in self.child_pos:
             rv = child.event(ev, x - xo, y - yo, st)
@@ -1358,12 +1371,6 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def get_keep_pausing(self):
-        """
-        If true, we have text beyond the pause number indicated.
-        """
-
-        return self.keep_pausing, self.pause_length
 
     def get_laidout_length(self):
         """
@@ -1440,8 +1447,27 @@ class Text(renpy.display.core.Displayable):
             y = y + line_height + line_spacing
 
         return True
-            
 
+    def call_slow_done(self, st):
+        """
+        Called to call slow_done, and also to update slow_done_time.
+        """
+
+        self.slow = False
+        
+        if self.slow_done:
+            self.slow_done()
+            self.slow_done = None
+
+        self.slow_done_time = st
+        if self.pause_length:
+            renpy.game.interface.timeout(self.pause_length)
+        
+        if self.no_wait_once:
+            self.no_wait_done = True
+            renpy.game.interface.timeout(0)
+                
+        
     def render(self, width, height, st, at):
 
         if self.slow:
@@ -1486,16 +1512,7 @@ class Text(renpy.display.core.Displayable):
             length = start + int(st * speed)
         else:
             length = sys.maxint
-            self.slow = False
-
-            if self.slow_done:
-                self.slow_done()
-                self.slow_done = None
-
-            if self.no_wait_once:
-                self.no_wait_done = True
-                renpy.game.interface.timeout(0)
-
+            self.call_slow_done(st)
                 
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
@@ -1507,16 +1524,8 @@ class Text(renpy.display.core.Displayable):
 
         if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True):
             if self.slow:
-                self.slow = False
-                
-                if self.slow_done:
-                    self.slow_done()
-                    self.slow_done = None
+                self.call_slow_done(st)
 
-                if self.no_wait_once:
-                    self.no_wait_done = True
-                    renpy.game.interface.timeout(0)
-                
         if self.slow:
             renpy.display.render.redraw(self, 0)
 
@@ -1573,8 +1582,12 @@ def check_text_tags(s):
         if type != "tag":
             continue
 
+        # Strip off arguments for tags.
+        if text.find('=') != -1:
+            text = text[:text.find('=')]
+        
         # Closing tag.
-        if text[0] == '/':
+        if text and text[0] == '/':
             if not tag_stack:
                 return "Close text tag '%s' does not match an open text tag." % text
 
@@ -1584,10 +1597,6 @@ def check_text_tags(s):
             tag_stack.pop()
             continue
                 
-        # Strip off arguments for open tags.
-        if text.find('=') != -1:
-            text = text[:text.find('=')]
-        
         if text not in text_tags:
             return "Text tag '%s' is not known." % text
         

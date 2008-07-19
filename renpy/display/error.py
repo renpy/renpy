@@ -81,11 +81,3 @@ class ReportError(object):
 
             if ev.type == pygame.QUIT:
                 return False
-            
-        
-        
-        
-        
-        
-        
-        
