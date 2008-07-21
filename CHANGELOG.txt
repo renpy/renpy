@@ -1,6 +1,9 @@
+New in Ren'Py 6.6.3
+-------------------
+
 Ren'Py will now error out quicker if you give it None when it's expecting
 a displayable. This makes it more likely the correct line will be 
-reported when a problem occurs. [todo].
+reported when a problem occurs.
 
 
 Added a new remote-control mode, that allows Ren'Py to be commanded to

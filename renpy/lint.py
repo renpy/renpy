@@ -427,9 +427,9 @@ def lint():
     print "Statistics:"
     print
     print "The game contains", say_count, "screens of dialogue."
-    print "These screens contain a total of", say_words, "words."
+    print "These screens contain a total of", say_words, "words,"
     if say_count > 0:
-        print "For an average of %.1f words per screen." % (1.0 * say_words / say_count) 
+        print "for an average of %.1f words per screen." % (1.0 * say_words / say_count) 
     print "The game contains", menu_count, "menus."
     print
 
@@ -437,6 +437,5 @@ def lint():
         print "Remember to set config.developer to False before releasing."
         print
         
-    print "Lint is not a substitute for thorough testing."
-    print "Remember to update Ren'Py before releasing. New releases fix bugs and"
-    print "improve compatibility."
+    print "Lint is not a substitute for thorough testing. Remember to update Ren'Py"
+    print "before releasing. New releases fix bugs and improve compatibility."

@@ -989,18 +989,17 @@ class Text(renpy.display.core.Displayable):
         Space, Enter, or Click ends slow, if it's enabled.
         """
 
+        if (self.slow_done_time is not None) and (self.pause_length is not None):
+            if st > (self.slow_done_time + self.pause_length):
+                return True
+            else:
+                renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
         if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
 
         if self.no_wait_done:
             return False 
-
-        if self.slow_done_time and self.pause_length is not None:
-            if st > (self.slow_done_time + self.pause_length):
-                return True
-            else:
-                renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
         
         for child, xo, yo in self.child_pos:
             rv = child.event(ev, x - xo, y - yo, st)
@@ -1462,11 +1461,10 @@ class Text(renpy.display.core.Displayable):
         self.slow_done_time = st
         if self.pause_length:
             renpy.game.interface.timeout(self.pause_length)
-        
+            
         if self.no_wait_once:
             self.no_wait_done = True
             renpy.game.interface.timeout(0)
-                
         
     def render(self, width, height, st, at):
 

@@ -59,6 +59,8 @@ label demo_text:
 
     e "They let you pause{w} the display of the text, optionally with{p}line breaks."
 
+    e "They let you include images inside text{image=exclamation.png} Neat{image=exclamation.png}"
+
     e "We can pause the text for a short time, and have it auto-advance.{w=1} Just like that."
 
     eslow "We can even have the text auto-advance,{nw}"
@@ -66,8 +68,6 @@ label demo_text:
     with flashbulb
     extend " when we reach the end of a block of text, in slow text mode."
     
-    e "They let you include images inside text{image=exclamation.png} Neat {image=exclamation.png}"
-
     e "They can even change the {color=#f00}color{/color} {color=#ff0}of{/color} {color=#0f0}the{/color} {color=#0ff}text{/color}."
 
     e "There are also bold, italic, strikethrough, and underline style properties, which can be styled onto any text."

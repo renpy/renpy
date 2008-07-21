@@ -106,7 +106,7 @@ class Container(renpy.display.core.Displayable):
         """
 
         if child is None:
-            return
+            raise Exception("Trying to add None child to container.")
 
         self.children.append(child)
         self.offsets.append((0, 0))
@@ -224,6 +224,7 @@ class Position(Container):
         """
 
         super(Position, self).__init__(style=style, **properties)
+        child = renpy.easy.displayable(child)
         self.add(child)
 
     def render(self, width, height, st, at):
@@ -638,7 +639,9 @@ class Window(Container):
     def __init__(self, child, style='window', **properties):
 
         super(Window, self).__init__(style=style, **properties)
-        self.add(child)
+        child = renpy.easy.displayable_or_none(child)
+        if child is not None:
+            self.add(child)
 
     def visit(self):
         return [ self.style.background ] + self.children
@@ -797,7 +800,7 @@ class Motion(Container):
         seconds.
         """
 
-        child = renpy.easy.displayable(child)
+        child = renpy.easy.displayable_or_none(child)
 
         if child is None:
             child = new_widget
@@ -807,7 +810,9 @@ class Motion(Container):
 
         super(Motion, self).__init__(style=style, **properties)
 
-        self.add(child)
+        if child is not None:
+            self.add(child)
+
         self.function = function
         self.period = period
         self.repeat = repeat
@@ -1021,8 +1026,7 @@ class Revolver(object):
         self.around = around
         self.cor = cor
         self.pos = pos
-
-        self.add(child)
+        self.child = child
         
     def __call__(self, t, (w, h, cw, ch)):
 
@@ -1142,8 +1146,8 @@ class Zoom(renpy.display.core.Displayable):
         self.end = end
         self.time = time
         self.done = 0.0
-
-        self.add(child)
+        self.child = child
+        
         
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
@@ -1286,8 +1290,8 @@ class FactorZoom(renpy.display.core.Displayable):
         self.end = end
         self.time = time
 
-        self.add(child)
-        
+        self.child = child 
+
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
         else:
@@ -1479,7 +1483,7 @@ class IgnoresEvents(renpy.display.core.Displayable):
 
     def __init__(self, child):
         super(IgnoresEvents, self).__init__(style='default')
-        self.add(renpy.easy.displayable(child))
+        self.child = renpy.easy.displayable(child)
     
     def visit(self):
         return [ self.child ]
@@ -1525,7 +1529,7 @@ class RotoZoom(renpy.display.core.Displayable):
         self.zoom_end = zoom_end
         self.zoom_delay = zoom_delay
 
-        self.add(renpy.easy.displayable(child))
+        self.child = renpy.easy.displayable(child)
         
         self.rot_repeat = rot_repeat
         self.zoom_repeat = zoom_repeat
@@ -1666,8 +1670,9 @@ class Viewport(Container):
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
-        child = renpy.easy.displayable(child)
-        self.add(child)
+        child = renpy.easy.displayable_or_none(child)
+        if child is not None:
+            self.add(child)
 
         if xadjustment is None:
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
