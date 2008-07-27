@@ -1,3 +1,7 @@
+Improved the numerical stability of interpolation. This fixes a
+problem where moves could wiggle from side to side for no good 
+reason.
+
 New in Ren'Py 6.6.3
 -------------------
 

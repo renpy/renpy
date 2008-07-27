@@ -218,6 +218,7 @@ def display_say(show_function,
 
     callback = renpy.config.all_character_callbacks + callback 
 
+    
     # Call the begin callback.
     for c in callback:
         c("begin", interact=interact, type=type, **cb_args)

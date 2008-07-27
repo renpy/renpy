@@ -914,7 +914,7 @@ class Interpolate(object):
             if c is not None and isinstance(b, float):
                 b = int(b * c)
             
-            rv = (1.0 - t) * a + t * b
+            rv = a + t * (b - a)
             
             if isinstance(a, int) and isinstance(b, int):
                 return int(rv)
