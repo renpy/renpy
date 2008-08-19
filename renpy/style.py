@@ -345,7 +345,7 @@ def expand_properties(properties):
 
 # This builds the style. 
 def build_style(style):
-
+    
     if style.cache is not None:
         return
 
@@ -353,18 +353,26 @@ def build_style(style):
 
     if style.parent is not None:
 
+        debug = style.name == ('item_body', 'title2')
+
         name = style.parent
 
         left_base = None
-        down_base = [ ]
-
+        # down_base = [ ]
+        
         while True:
             first = name[0]
             rest = name[1:]
 
+            if rest:
+                down_base = [ style_map[first] ]
+            else:
+                down_base = [ ]
+            
             while first:
 
                 left_base = style_parts[first].get(rest, None)
+
                 if left_base:
                     break
 
@@ -376,7 +384,6 @@ def build_style(style):
                 break
 
             name = name[:-1]
-            down_base = [ ]
 
         for ss in down_base:
             if ss.updates:

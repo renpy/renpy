@@ -119,18 +119,25 @@ class Cache(object):
 
         if not image.cache:
             surf = image.load()
+            surf = surf.convert_alpha()
+                
             renpy.display.render.mutated_surface(surf)
             return surf
-            
 
         if image in self.cache:
             ce = self.cache[image]
             new = False
 
+            # This doesn't matter, so set it to False.
+            has_alpha = False
             
         else:
 
-            ce = CacheEntry(image, image.load())
+            surf = image.load()
+            has_alpha = surf.get_masks()[3]
+            surf = surf.convert_alpha()
+            
+            ce = CacheEntry(image, surf)
             self.total_cache_size += ce.size
             self.cache[image] = ce
 
@@ -142,12 +149,11 @@ class Cache(object):
 
             new = True
 
-
         # Move it into the current generation.
         if ce.time != self.time:
             ce.time = self.time
             self.size_of_current_generation += ce.size
-
+        
         # RLE detection. (ce.size is used to check that we're not
         # 0 pixels big.)
         if new and id(ce.surf) not in rle_cache and ce.size:
@@ -156,7 +162,7 @@ class Cache(object):
 
             # If we don't know if the image is RLE or not, guess.
             # Only do so if the image has an alpha channel.
-            if rle is None and surf.get_masks()[3]:
+            if rle is None and has_alpha:
                 sw, sh = surf.get_size()
 
                 for i in range(0, 10):
@@ -166,7 +172,7 @@ class Cache(object):
                         break
 
             if rle:
-                rle_surf = ce.surf.convert_alpha()
+                rle_surf = ce.surf
                 rle_surf.set_alpha(255, RLEACCEL)
                 rle_cache[id(ce.surf)] = rle_surf
                 renpy.display.render.mutated_surface(ce.surf)
@@ -370,11 +376,6 @@ class Image(ImageBase):
                 surf = renpy.display.scale.image_load_unscaled(renpy.loader.load(self.filename), self.filename)
             else:
                 surf = pygame.image.load(renpy.loader.load(self.filename), self.filename)
-
-            if surf.get_masks()[3] or surf.get_colorkey():
-                surf = surf.convert_alpha()
-            else:
-                surf = surf.convert()   
 
             return surf
 

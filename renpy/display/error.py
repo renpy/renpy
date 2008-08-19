@@ -27,6 +27,10 @@ import renpy
 import textwrap
 import select
 import sys
+import os
+import os.path
+
+commandfile = "command.%d.txt" % os.getpid()
 
 class ReportError(object):
 
@@ -57,11 +61,7 @@ class ReportError(object):
 
         while True:
 
-            # Allow restart by hitting stdin on newline.
-            p = select.poll()
-            p.register(sys.stdin, select.POLLIN)
-            if p.poll(0):
-                sys.stdin.readline()
+            if os.path.exists(commandfile):
                 return True
 
             ev = pygame.event.wait()

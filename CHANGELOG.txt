@@ -1,6 +1,13 @@
+Using stdin for the remote control didn't work on Windows, and could
+lead to errors in some cases. Instead, the remote control mode now 
+uses a file, which gets deleted after processing the command.
+
 Improved the numerical stability of interpolation. This fixes a
 problem where moves could wiggle from side to side for no good 
 reason.
+
+Fixed a bug that prevented im.AlphaMask and ImageDissolve from working
+with some images.
 
 New in Ren'Py 6.6.3
 -------------------

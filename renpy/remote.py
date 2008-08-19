@@ -39,32 +39,19 @@ import renpy
 import sys
 import select
 import os
+import os.path
 
-# Safely reads a line, ignoring any buffering that might be going on.
-def read_line(f):
-    rv = ""
-
-    while True:
-        c = os.read(f.fileno(), 1)
-
-        if c == "\n":
-            return rv
-    
-        if c == "\r":
-            continue
-
-        rv += c
+commandfile = "command.%d.txt" % os.getpid()
 
 def remote():
     
-    # Check to see if there's a command pending. If not, exit.
-    poll = select.poll()
-    poll.register(sys.stdin, select.POLLIN)
-    if not poll.poll(0):
-        return
-    
-    # Otherwise, read in the command.
-    cmd = read_line(sys.stdin)
+    if not os.path.exists(commandfile):
+        return 
+
+    cmd = file(commandfile, "r").readline()
+    cmd = cmd.replace("\n", "").replace("\r", "")
+
+    os.unlink(commandfile)
     
     # Break it up into parts.
     if " " in cmd:
