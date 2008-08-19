@@ -1,3 +1,7 @@
+The \ character is now the universal quote character. One can use \%
+to prevent % from performing interpolation, and \{ to prevent { from 
+starting a text tag.
+
 Using stdin for the remote control didn't work on Windows, and could
 lead to errors in some cases. Instead, the remote control mode now 
 uses a file, which gets deleted after processing the command.
@@ -8,6 +12,10 @@ reason.
 
 Fixed a bug that prevented im.AlphaMask and ImageDissolve from working
 with some images.
+
+Fixed a bug where style inheritance did not work properly.
+
+
 
 New in Ren'Py 6.6.3
 -------------------

@@ -353,8 +353,6 @@ def build_style(style):
 
     if style.parent is not None:
 
-        debug = style.name == ('item_body', 'title2')
-
         name = style.parent
 
         left_base = None
