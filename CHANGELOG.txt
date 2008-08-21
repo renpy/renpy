@@ -10,8 +10,12 @@ Improved the numerical stability of interpolation. This fixes a
 problem where moves could wiggle from side to side for no good 
 reason.
 
+Fixed a bug that made image prediction fail when a hide statement was
+encountered.
+
 Fixed a bug that prevented im.AlphaMask and ImageDissolve from working
-with some images.
+with some images. Also improved the quality of im.AlphaMask, which was
+incorrectly blending fractional alphas with black.
 
 Fixed a bug where style inheritance did not work properly.
 

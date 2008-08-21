@@ -172,7 +172,10 @@ class Cache(object):
                         break
 
             if rle:
-                rle_surf = ce.surf
+
+                # We must copy the surface, so we have a RLE-specific version.
+                rle_surf = ce.surf.convert_alpha()
+
                 rle_surf.set_alpha(255, RLEACCEL)
                 rle_cache[id(ce.surf)] = rle_surf
                 renpy.display.render.mutated_surface(ce.surf)
@@ -1243,12 +1246,12 @@ class AlphaMask(ImageBase):
         if basesurf.get_size() != masksurf.get_size():
             raise Exception("AlphaMask surfaces must be the same size.")
 
-        rv = pygame.Surface(basesurf.get_size(), 0, renpy.game.interface.display.sample_surface)
-        # rv.fill((0, 255, 0, 0))
-        
-        if renpy.display.module.can_imageblend and 1:
-            renpy.display.module.imageblend(rv, basesurf, rv, masksurf, identity)
+        # Used to copy the surface.
+        rv = basesurf.convert_alpha()
 
+        if renpy.display.module.can_munge:
+            renpy.display.module.alpha_munge(masksurf, rv, identity)
+            
         return rv
             
     def predict_files(self):

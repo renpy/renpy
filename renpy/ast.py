@@ -806,7 +806,9 @@ class Hide(Node):
             tag = name[0]
             
         renpy.game.context().predict_info.images.predict_hide(tag, layer)
-                
+
+        return [ ]
+        
     def execute(self):
 
         if len(self.imspec) == 3:
