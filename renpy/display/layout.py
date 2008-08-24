@@ -1110,6 +1110,7 @@ class Zoom(renpy.display.core.Displayable):
     def __init__(self, size, start, end, time, child,
                  after_child=None, time_warp=None,
                  bilinear=True, opaque=True,
+                 anim_timebase=False,
                  **properties):
         """
         @param size: The size that the rectangle is scaled to, a
@@ -1160,15 +1161,21 @@ class Zoom(renpy.display.core.Displayable):
         self.time_warp = time_warp
         self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
         self.opaque = opaque
-
+        self.anim_timebase = anim_timebase
+        
 
     def visit(self):
         return [ self.child, self.after_child ]
 
     def render(self, width, height, st, at):
 
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+        
         if self.time:
-            done = min(st / self.time, 1.0)
+            done = min(t / self.time, 1.0)
         else:
             done = 1.0
 
@@ -1262,6 +1269,7 @@ class FactorZoom(renpy.display.core.Displayable):
     def __init__(self, start, end, time, child,
                  after_child=None, time_warp=None,
                  bilinear=True, opaque=True,
+                 anim_timebase=False,
                  **properties):
         """
         @param start: The start scaling factor.
@@ -1306,14 +1314,20 @@ class FactorZoom(renpy.display.core.Displayable):
         self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
         self.opaque = opaque
         self.done = 0.0
+        self.anim_timebase = anim_timebase
         
     def visit(self):
         return [ self.child, self.after_child ]
 
     def render(self, width, height, st, at):
 
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+        
         if self.time:
-            done = min(st / self.time, 1.0)
+            done = min(t / self.time, 1.0)
         else:
             done = 1.0
 
