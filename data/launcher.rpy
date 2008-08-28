@@ -33,6 +33,12 @@ init:
 
         style.hyperlink_text.color = "#0ff"
 
+        def quote(c):
+            n = ord(c)
+            if 0x20 <= n <= 0x7f:
+                return c
+            else:
+                return "\\x%02x" % n
         
         def ifrw(label):
             if project.info.get("ro", False):
@@ -470,8 +476,6 @@ label game_directory:
         
         gamedir = os.path.normpath(project.gamedir)
 
-        store.message = _(u"Opening game directory:\n%s") % gamedir
-
         if sys.platform == "win32":
             os.startfile(gamedir)
         elif platform.mac_ver()[0]:
@@ -480,6 +484,10 @@ label game_directory:
         else:
             store.message = _(u"Opening the game directory is not supported on this platform.\n%s") % gamedir
 
+        gamedir = "".join(quote(i) for i in gamedir)
+        
+        store.message = _(u"Opening game directory:\n%s") % gamedir
+            
     jump top_menu
                      
 
