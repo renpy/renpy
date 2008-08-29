@@ -4,9 +4,22 @@
 
 # Set up a default theme.
 init python:
-    theme.ancient()
-    config.developer = True
+    register_stat("Strength", "strength", 10, 100)
+    register_stat("Intelligence", "intelligence", 10, 100)
 
+    dp_period("Morning", "morning_act")
+    dp_choice("Attend Class", "class")
+    dp_choice("Cut Class", "cut")
+
+    dp_period("Afternoon", "afternoon_act")
+    dp_choice("Study", "study")
+    dp_choice("Hang Out", "hang")
+
+    dp_period("Evening", "evening_act")
+    dp_choice("Exercise", "exercise")
+    dp_choice("Play Games", "play")
+
+    
 # This is the entry point into the game.
 label start:
 
@@ -16,13 +29,6 @@ label start:
     # Initialize the default values of some of the variables used in
     # the game.
     $ day = 0
-
-    # Initialize the statistics used by the game.
-    $ strength = Stat('Strength', 10, 100)
-    $ intelligence = Stat('Intelligence', 10, 100)
-
-    # Pick the stats to show to the user.
-    $ shown_stats = [ strength, intelligence ]
 
     # Show a default background.
     scene black
@@ -68,10 +74,11 @@ label day:
     $ evening_act = None
 
     # Now, we call the day planner, which may set the act variables
-    # to new values. 
-    call day_planner from _call_day_planner_1
+    # to new values. We call it with a list of periods that we want
+    # to compute the values for.
+    call day_planner(["Morning", "Afternoon", "Evening"])
 
-
+    
     # We process each of the three periods of the day, in turn.
 label morning:
 
@@ -83,8 +90,11 @@ label morning:
     $ period = "morning"
     $ act = morning_act
 
+    # Ensure that the stats are in the proper range.
+    $ normalize_stats()
+    
     # Execute the events for the morning.
-    call events_run_period from _call_events_run_period_1
+    call events_run_period
 
     # That's it for the morning, so we fall through to the
     # afternoon.
@@ -104,7 +114,9 @@ label afternoon:
     $ period = "afternoon"
     $ act = afternoon_act
 
-    call events_run_period from _call_events_run_period_2
+    $ normalize_stats()
+    
+    call events_run_period
 
 
 label evening:
@@ -118,7 +130,9 @@ label evening:
     $ period = "evening"
     $ act = evening_act
 
-    call events_run_period from _call_events_run_period_3
+    $ normalize_stats()
+    
+    call events_run_period
 
 
 label night:
@@ -132,7 +146,7 @@ label night:
     "It's getting late, so I decide to go to sleep."
 
     # We call events_end_day to let it know that the day is done.
-    call events_end_day from _call_events_end_day_1
+    call events_end_day
 
     # And we jump back to day to start the next day. This goes
     # on forever, until an event ends the game.
@@ -141,14 +155,12 @@ label night:
 
 # This is a callback that is called by the day planner. One of the
 # uses of this is to show the statistics to the user.
-
 label dp_callback:
 
     # Add in a line of dialogue asking the question that's on
     # everybody's mind.
     $ narrator("What should I do today?", interact=False)
-
-    call stats_show from call_stats_show_1
+    $ display_stats()
 
     return
 

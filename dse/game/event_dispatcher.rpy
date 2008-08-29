@@ -224,18 +224,12 @@ init -100:
             else:
                 return False
 
-# This should be called when the game starts. It inits the various
-# data structures used by the events.
-label events_init:
+    def __events_init():
+        store.events_executed = { }
+        store.events_executed_yesterday = { }
 
-    # Stores the events that have been executed.
-    $ events_executed = { }
-
-    # Stores the events that have been executed before today.
-    # (Where today is ended by a call to events_end_day.)
-    $ events_executed_yesterday = { }
-
-    return
+    config.start_callbacks.append(__events_init)
+        
 
 # This should called at the end of a (game) day, to let things
 # like depends_yesterday to work.
@@ -323,11 +317,8 @@ label events_skip_period:
         
 init 100:
     python hide:
-        
-        # Sort all events on priority. Schwartzian transform time.
-        all_events = [ (i.priority, i) for i in all_events ]
-        all_events.sort()        
-        store.all_events = [ b for a, b in all_events ]
+        # Sort all events on priority.
+        all_events.sort(key=lambda i : i.priority)
 
     python hide:
 

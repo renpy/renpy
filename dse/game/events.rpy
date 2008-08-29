@@ -9,6 +9,7 @@ init:
     $ gg = Character('Glasses Girl', color=(192, 255, 192, 255))
     $ sg = Character('Sporty Girl', color=(255, 255, 192, 255))
     $ bg = Character('Both Girls')
+    $ narrator = Character(' ')
     
 # First up, we define some simple events for the various actions, that
 # are run only if no higher-priority event is about to occur.
@@ -46,7 +47,7 @@ label class_bad:
 label cut1:
 
     "I cut class, and spend the morning goofing off instead."
-    $ intelligence.value -= 10
+    $ intelligence -= 10
 
     return
 
@@ -61,7 +62,7 @@ label study:
     "I head on down to the library, and start reading about the topics
      I should have been reading about in class."
 
-    $ intelligence.value += 10
+    $ intelligence += 10
     return
 
 label hang:
@@ -76,7 +77,7 @@ label exercise:
     "I decide to go out for a run through the town, to keep myself in
      shape."
 
-    $ strength.value += 10
+    $ strength += 10
     return
 
 label play:
@@ -84,7 +85,7 @@ label play:
     "I pop a DVD into my video game console, and spend the evening
      rolling small cities up into balls."
 
-    $ strength.value -= 10
+    $ strength -= 10
     return
 
 
@@ -216,7 +217,7 @@ label gg_studying:
     "I decide not to disturb her, and instead start reading my own
      book."
 
-    $ intelligence.value += 10
+    $ intelligence += 10
 
     return
 
@@ -271,7 +272,7 @@ label gg_smiling:
     "I decide not to disturb her, and instead start reading my own
      book."
 
-    $ intelligence.value += 10
+    $ intelligence += 10
 
     return
 
@@ -483,7 +484,7 @@ label cantcatchme:
     "She pulls out past me, and disappears into the distance. One day
      I'll catch up to her."
 
-    $ strength.value += 10
+    $ strength += 10
 
     return
 
@@ -527,7 +528,7 @@ label caughtme:
 
     "I nod a third time, and we take off, running side by side."
 
-    $ strength.value += 10
+    $ strength += 10
 
     return
 
@@ -542,7 +543,7 @@ label together:
     "Still, I can keep up with her for the rest of the run. And that's
      not bad."
 
-    $ strength.value += 10
+    $ strength += 10
 
     return
 
@@ -561,7 +562,7 @@ label apart:
     "She's right, of course, and I redouble my efforts to try to keep
      up with her."
 
-    $ strength.value += 10
+    $ strength += 10
     return
 
 label pothole:

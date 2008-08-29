@@ -3,150 +3,134 @@
 # change many of the variables or styles defined here from
 # other files.
 
-init -100:
+init -100 python:
 
-    python:
+    # The frame containing the day planner.
+    style.dp_frame = Style(style.frame)
+    style.dp_vbox = Style(style.vbox)
+    style.dp_hbox = Style(style.hbox)
 
-        # A window placed behind the day planner (empty).
-        style.create('dp_window', 'frame')
-        style.dp_window.ypos = 120
-        style.dp_window.yanchor = 'top'
+    # The frame and vbox containing a single choice.
+    style.dp_choices = Style(style.default)
+    style.dp_choices_vbox = Style(style.vbox) 
+    style.dp_choices.xalign = 0.5
+    
+    # Buttons.
+    style.dp_choice_button = Style(style.button)
+    style.dp_choice_button_text = Style(style.button_text)
 
-        # The grid containing the three choices in the day planner.
-        style.create('dp_grid', 'default')
-        style.dp_grid.xfill = True
+    style.dp_done_button = Style(style.button)
+    style.dp_done_button_text = Style(style.button_text)
+
+    # Labels.
+    style.dp_label = Style(style.label)
+    style.dp_label_text = Style(style.label_text)
+
+    # The title of the done button.
+    dp_done_title = "Done Planning"
+
+    # A map from period name to the information we know about that
+    # period.
+    __periods = { }
+
+    # The period we're updating.
+    __period = None
+    
+    class __Period(object):
+
+        def __init__(self, name, var):
+            self.name = name
+            self.var = var
+            self.acts = [ ]
+
+    def dp_period(name, var):
+        __periods[name] = store.__period = __Period(name, var)
+
+    __None = object()
         
-        # Windows containing the groups of choices in the day planner.
-        style.create('dp_choice', 'default')
-        style.dp_choice.xalign = 0.5
-        style.dp_choice.xanchor = 0.5
+    def dp_choice(name, value=__None, enable="True", show="True"):
 
-        # Action buttons.
-        style.create('dp_button', 'button')
-        style.create('dp_button_text', 'button_text')
+        if not __period:
+            raise Exception("Choices must be part of a defined period.")
 
-        style.dp_button.xalign = 0.5
+        if value is __None:
+            value = name
         
-        style.create('dp_done_button', 'button')
-        style.create('dp_done_button_text', 'button_text')
+        __period.acts.append((name, value, enable, show))
 
-        style.dp_done_button.xalign = 0.5
-        style.dp_done_button.ypos = 0.95
-        style.dp_done_button.yanchor = 1.0
+    def __set_noncurried(var, value):
+        setattr(store, var, value)
+        return True
         
-        # Labels.
-        style.create('dp_label', 'label')
-        style.create('dp_label_text', 'label_text')
-        style.dp_label.xalign = 0.5
-        style.dp_label_text.text_align = 0.5
-
-        # The amount of padding between the label and the action
-        # in a choice.
-        dp_padding = 12 
-
-        # The amount of padding between the choices and done.
-        dp_done_padding = 32
-
-        # The title of the done button.
-        dp_done_title = "Done Planning Day"
-
-    python:
-
-        # A list of the periods of the day that are present in the
-        # day planner. This can be changed at runtime.
-        dp_period_names = [ "Morning", "Afternoon", "Evening" ]
-
-        # A list of variables that will take the selected choices
-        # for each of the periods named above.
-        dp_period_vars = [ "morning_act",
-                           "afternoon_act",
-                           "evening_act", ]
-
-        # A map from the period names to a list of the activities
-        # available for that period. This may be conputed before
-        # each call to day_planner. Each entry is a tuple, where
-        # the first element is the name shown to the user, and the
-        # second is the name assigned to the variable for that
-        # period.
-        dp_period_acts = {        
-            'Morning': [
-            ( 'Attend Class', "class" ),
-            ( 'Cut Class', "cut"),
-            ],
-            
-            'Afternoon': [
-            ( 'Study', "study" ),
-            ( 'Hang Out', "hang" ),
-            ],
-            
-            'Evening' : [
-            ( 'Exercise', "exercise" ),
-            ( 'Play Games', "play" ),
-            ],
-            }
-
+    __set = renpy.curry(__set_noncurried)
         
 
-# We assume that the various period variables have been assigned
-# default values by this point.
-label day_planner:
-
-    call dp_callback from _call_dp_callback_1
+label day_planner(periods):
 
     python hide:
-
         renpy.choice_for_skipping()
+    
+label day_planner_repeat:
 
-        ui.window(style='dp_window')
-        ui.vbox(dp_done_padding)
+    call dp_callback
+    
+    python hide:
+    
+        ui.window(style=style.dp_frame)
+        ui.vbox(style=style.dp_vbox)
+        ui.hbox(style=style.dp_hbox)
 
-        ui.grid(len(dp_period_names), 1, xfill=True, style='dp_grid')
-
-        # True iff every period has a valid value.
         can_continue = True
 
-        for period, var in zip(dp_period_names, dp_period_vars):
+        for p in periods:
 
-            ui.window(style='dp_choice')
-            ui.vbox()
+            if p not in __periods:
+                raise Exception("Period %r was never defined." % p)
 
-            layout.label(period, "dp")
+            ui.window(style=style.dp_choices)
+            ui.vbox(style=style.dp_choices_vbox)
             
-            ui.null(height=dp_padding)
+            p = __periods[p]
+            v = getattr(store, p.var)
 
-            valid_value = False
+            layout.label(p.name, "dp")
 
-            for label, value in dp_period_acts[period]:
+            valid_choice = False
+            
+            for name, value, enable, show in p.acts:
+                show = eval(show)
+                enable = eval(enable)
 
-                def clicked(var=var, value=value):
-                    setattr(store, var, value)
-                    return True
+                selected = (v == value)
+                
+                if show:
+                    layout.button(
+                        name, 
+                        "dp_choice",
+                        clicked=__set(p.var, value),
+                        selected=selected,
+                        enabled=enable,
+                        )
 
-                valid_value |= getattr(store, var) == value
+                if show and enable and selected:
+                    valid_choice = True
 
-                layout.button(label, "dp",
-                              selected = getattr(store, var) == value,
-                              clicked=clicked)
-
-            can_continue &= valid_value
+            if not valid_choice:
+                can_continue = False
 
             ui.close()
+                    
+        ui.close() # hbox.
 
-        ui.close()
+        layout.button(
+            dp_done_title,
+            "dp_done",
+            clicked=ui.returns(False),
+            enabled=can_continue)
 
-        if can_continue:
-            clicked = lambda : False
-        else:
-            clicked = None
-            
-        layout.button(dp_done_title, "dp_done",
-                      clicked = clicked )
+        ui.close() # vbox
 
-        ui.close()
-
-        
     if ui.interact():
-        jump day_planner
-
-    return 
-
+        jump day_planner_repeat
+    else:
+        return
