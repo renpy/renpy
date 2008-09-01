@@ -23,9 +23,6 @@ init python:
 # This is the entry point into the game.
 label start:
 
-    # Required to initialize the event engine.
-    call events_init from _call_events_init_1
-
     # Initialize the default values of some of the variables used in
     # the game.
     $ day = 0

@@ -72,7 +72,8 @@ label day_planner(periods):
     
 label day_planner_repeat:
 
-    call dp_callback
+    if renpy.has_label("dp_callback"):
+        call dp_callback
     
     python hide:
     

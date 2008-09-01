@@ -1580,8 +1580,15 @@ class RotoZoom(renpy.display.core.Displayable):
         else:
             zoom_time = st
 
-        rot_time /= self.rot_delay
-        zoom_time /= self.zoom_delay
+        if self.rot_delay == 0:
+            rot_time = 1.0
+        else:
+            rot_time /= self.rot_delay
+
+        if self.zoom_delay == 0:
+            zoom_time = 1.0
+        else:
+            zoom_time /= self.zoom_delay
 
         if self.rot_repeat:
             rot_time %= 1.0

@@ -445,6 +445,9 @@ init -1180 python:
     # basics: True if quicksave has been enabled.
     config.has_quicksave = False
 
+    # A list of layers to clear when entering the main and game menus.
+    config.clear_layers = [ ]
+    
     # The screen that we go to when entering the game menu.
     _game_menu_screen = None
     
@@ -480,7 +483,7 @@ init 1180 python:
         config.autosave_frequency = None
             
 label _enter_menu:
-    python:
+    python hide:
         renpy.movie_stop()
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
@@ -495,6 +498,9 @@ label _enter_menu:
         store.suppress_overlay = True
         ui.clear()
 
+        for i in config.clear_layers:
+            renpy.scene(layer=i)
+        
     return
     
 # Factored this all into one place, to make our lives a bit easier.

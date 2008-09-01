@@ -2,13 +2,24 @@ The \ character is now the universal quote character. One can use \%
 to prevent % from performing interpolation, and \{ to prevent { from 
 starting a text tag.
 
+
 Using stdin for the remote control didn't work on Windows, and could
 lead to errors in some cases. Instead, the remote control mode now 
 uses a file, which gets deleted after processing the command.
 
+
 Improved the numerical stability of interpolation. This fixes a
 problem where moves could wiggle from side to side for no good 
 reason.
+
+
+The archiver will now cowardly refuse to archive .ttf files. This is 
+because reading those files out of an archive will crash on windows.
+
+
+The new config.clear_layers variable allows layers to be cleared out
+when entering the game and main menus.
+
 
 Fixed a bug that made image prediction fail when a hide statement was
 encountered.
@@ -19,7 +30,7 @@ incorrectly blending fractional alphas with black.
 
 Fixed a bug where style inheritance did not work properly.
 
-
+Fixed a bug where the launcher could choke when launching non-English gamedirs. 
 
 New in Ren'Py 6.6.3
 -------------------

@@ -84,7 +84,7 @@ def munge_filename(fn):
     rv = os.path.basename(fn)
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
-    return "__" + rv + "__"
+    return "_m1_" + rv + "__"
 
 def list_logical_lines(filename):
     """
@@ -215,7 +215,7 @@ def list_logical_lines(filename):
                 continue
 
             m = lllword.match(data, pos)
-
+            
             word = m.group(0)
             rest = m.group(1)
 

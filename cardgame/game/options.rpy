@@ -23,7 +23,7 @@ init -1 python hide:
     ## This controls the title of the window, when Ren'Py is
     ## running in a window.
 
-    config.window_title = u"DSE Demo Game"
+    config.window_title = u"A Ren'Py Game"
 
     #########################################
     # Layouts
@@ -56,7 +56,7 @@ init -1 python hide:
 
         ## The color of the text in a selected widget. (For
         ## example, the current value of a preference.)
-        widget_selected = "#ffd080",
+        widget_selected = "#ffffc8",
 
         ## The color of a disabled widget face. 
         disabled = "#404040",
@@ -89,10 +89,6 @@ init -1 python hide:
         ## do so below.            
         )
 
-    theme.outline_bars(
-        inside="#fff",
-        idle="#003c78",
-        hover="#0050a0")
 
     #########################################
     ## These settings let you customize the window containing the

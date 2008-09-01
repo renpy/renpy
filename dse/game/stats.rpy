@@ -53,7 +53,7 @@ init -100 python:
         ui.window(style=style.stats_frame)
         ui.vbox(style=style.stats_vbox)
             
-        layout.label("Statistics:", "stats")
+        layout.label("Statistics", "stats")
         
         for s in __dse_stats:
             v = getattr(store, s.var)

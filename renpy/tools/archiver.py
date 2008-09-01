@@ -71,6 +71,9 @@ def archive(prefix, files):
 
     for fullfn, shortfn in files:
 
+        if shortfn.lower().endswith(".ttf"):
+            continue
+        
         shortfn = shortfn.replace("\\", "/")
 
         index[shortfn] = [ ]
