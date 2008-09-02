@@ -33,7 +33,6 @@ init python:
         SPADE = 1
         HEART = 2
         DIAMOND = 3
-
         
         def __init__(self):
 
