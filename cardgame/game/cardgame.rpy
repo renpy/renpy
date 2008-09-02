@@ -60,7 +60,7 @@ init python:
     
     class Table(renpy.Displayable):
 
-        def __init__(self, back=None, base=None, springback=0.1, rotate=0.1, can_drag=__default_can_drag, doubleclick=.2, **kwargs):
+        def __init__(self, back=None, base=None, springback=0.1, rotate=0.1, can_drag=__default_can_drag, doubleclick=.33, **kwargs):
 
             renpy.Displayable.__init__(self, **kwargs)
             
@@ -96,13 +96,16 @@ init python:
             self.doubleclick = doubleclick
 
             # The last click event.
-            self.last_event = None
+            self.last_event = CardEvent()
             
             # The card that has been clicked.
             self.click_card = None
 
+            # The stack that has been clicked.
+            self.click_stack = None
+            
             # The list of cards that are being dragged.
-            self.drag_cards = None
+            self.drag_cards = [ ]
             
             # Are we dragging the cards?
             self.dragging = False
@@ -196,12 +199,19 @@ init python:
             
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
 
-                if self.click_card:
+                if self.click_stack:
                     return
-                
+
+                stack = None
                 card = None
                 
                 for s in self.stacks:
+
+                    sx, sy, sw, sh = s.rect
+                    if sx <= x and sy <= y and sx + sw > x and sy + sh > y:
+                        stack = s
+
+
                     for c in s.cards[-s.show:]:
                         if c.rect is None:
                             continue
@@ -209,23 +219,27 @@ init python:
                         cx, cy, cw, ch = c.rect
                         if cx <= x and cy <= y and cx + cw > x and cy + ch > y:
                             card = c
-
-                if card is None:
+                            stack = c.stack
+                            
+                if stack is None:
                     return
 
                 # Don't let the user grab a moving card.
-                xoffset, yoffset = card.offset.offset()
-                if xoffset or yoffset:
-                    return
-                
+                if card is not None:
+                    xoffset, yoffset = card.offset.offset()
+                    if xoffset or yoffset:
+                        return
+                    
                 # Move the stack containing the card to the front.
-                self.stacks.remove(card.stack)
-                self.stacks.append(card.stack)
+                self.stacks.remove(stack)
+                self.stacks.append(stack)
                 
-                if card.stack.click or card.stack.drag:
+                if stack.click or stack.drag:
                     self.click_card = card
+                    self.click_stack = stack
 
-                if not self.can_drag(self, card.stack, card.value):
+                
+                if card is None or not self.can_drag(self, card.stack, card.value):
                     self.drag_cards = [ ]
                 elif card.stack.drag == DRAG_CARD:
                     self.drag_cards = [ card ]
@@ -255,10 +269,7 @@ init python:
 
             if ev.type == pygame.MOUSEMOTION or (ev.type == pygame.MOUSEBUTTONUP and ev.button == 1):
 
-                if not self.click_card:
-                    return
-
-                if x != self.click_x or y != self.click_y:
+                if abs(x - self.click_x) > 2 or abs(y - self.click_y) > 2:
                     self.dragging = True
 
                 dx = x - self.click_x
@@ -316,11 +327,9 @@ init python:
                 if self.dragging:
                     if dststack is not None and self.drag_cards:
 
-                        print "YYY"
-
                         evt = CardEvent()
                         evt.type = "drag"
-                        evt.stack = self.click_card.stack
+                        evt.stack = self.click_stack
                         evt.card = self.click_card.value
                         evt.drag_cards = [c.value for c in self.drag_cards]
                         evt.drop_stack = dststack
@@ -329,36 +338,42 @@ init python:
                         evt.time = st
                             
                 else:
-                    if self.click_card.stack.click:                    
+
+                    if self.click_stack.click:                    
+
                         evt = CardEvent()
                         evt.type = "click"
-                        evt.stack = self.click_card.stack
-                        evt.card = self.click_card.value
+                        evt.stack = self.click_stack
+                        if self.click_card:
+                            evt.card = self.click_card.value
+                        else:
+                            evt.card = None
+
                         evt.time = st
 
-                        if (self.last_click is not None
-                            and evt.type == "click"
-                            and self.last_event.type == "click"
+                        if (evt.type == self.last_event.type
+                            and evt.stack == self.last_event.stack
                             and evt.card == self.last_event.card
                             and evt.time < self.last_event.time + self.doubleclick):
 
                             evt.type = "doubleclick"
 
+                if evt is not None:
+                    self.last_event = evt
                         
                 for c in self.drag_cards:
                     c.springback()
                     
                 self.click_card = None
+                self.click_stack = None
                 self.drag_cards = [ ]
 
-                print "XXX", evt
-                
                 return evt
 
     class CardEvent(object):
 
         def __init__(self):
-            self.event = None
+            self.type = None
             self.stack = None
             self.card = None
             self.drag_cards = None
@@ -428,6 +443,9 @@ init python:
             card.stack = self
             self.cards.insert(index, card)
 
+            self.table.stacks.remove(self)
+            self.table.stacks.append(self)
+            
             card.springback()
             
         def append(self, card):
@@ -447,9 +465,13 @@ init python:
                 return None
                 
             card = self.cards[-1]
-            self.remove(card)
+            self.remove(card.value)
             return card.value
 
+        def shuffle(self):
+            renpy.random.shuffle(self.cards)
+            renpy.redraw(self.table, 0)
+            
         def __len__(self):
             return len(self.cards)
 
@@ -522,16 +544,8 @@ init python:
         # Returns the base x and y placement of this card.
         def place(self):
             s = self.stack
-            cards = s.cards[-s.show:]
-
-            index = 0
-
-            for c in cards:
-                if c is self:
-                    break
-                index += 1
-            else:
-                index = 0
+            offset = max(len(s.cards) - s.show, 0)
+            index = max(s.cards.index(self) - offset, 0)
 
             return (s.x + s.xoff * index, s.y + s.yoff * index)
 
@@ -588,20 +602,20 @@ init python:
             x = cx + cw / 2
             y = cy + ch / 2
 
-            px, py = card.place()
+            self.startx = x
+            self.starty = y
 
-            self.startx = x - px
-            self.starty = y - py
-            
         def offset(self):
 
             t = (self.table.st - self.start) / self.table.springback
             t = min(t, 1.0)
-
+            
             if t < 1.0:
                 renpy.redraw(self.table, 0)
 
-            return int(self.startx * (1.0 - t)), int(self.starty * (1.0 - t))
+            px, py = self.card.place() 
+                
+            return int((self.startx - px) * (1.0 - t)), int((self.starty - py) * (1.0 - t))
 
 
     class __Fixed(object):
