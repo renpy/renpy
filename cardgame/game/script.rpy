@@ -25,5 +25,8 @@ label start:
         k.show()
 
         while True:
-            k.interact()
+            if k.interact():
+                break
+
+    "Congratulations!"
     

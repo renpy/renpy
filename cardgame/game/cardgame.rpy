@@ -95,6 +95,9 @@ init python:
             # double-click.
             self.doubleclick = doubleclick
 
+            # Are we sensitive to input? [doc]
+            self.sensitive = True
+            
             # The last click event.
             self.last_event = CardEvent()
             
@@ -158,7 +161,7 @@ init python:
         def remove_marker(self, card, marker):
             self.get_card(card).markers.remove(marker)
             renpy.redraw(self, 0)
-            
+
         # Called to create a new card.
         def card(self, value, face, back=None):
             self.cards[value] = __Card(self, value, face, back)
@@ -196,6 +199,9 @@ init python:
         def event(self, ev, x, y, st):
 
             self.st = st
+
+            if not self.sensitive:
+                return
             
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
 
