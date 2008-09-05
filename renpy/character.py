@@ -414,7 +414,6 @@ class ADVCharacter(object):
             type = d('type'),
         )
 
-
         if kind:
             self.who_args = kind.who_args.copy()
             self.what_args = kind.what_args.copy()

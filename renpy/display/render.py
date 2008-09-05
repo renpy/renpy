@@ -148,6 +148,10 @@ def render(d, width, height, st, at):
 # A list of (when, widget) for redraws.
 redraw_queue = [ ]
 
+# The set of dead displayables.
+dead_displayables = set()
+
+
 def process_redraws():
     """
     Processes pending redraws. Returns True if a redraw is needed.
@@ -157,7 +161,6 @@ def process_redraws():
     redraw_queue.sort()
 
     i = 0
-    dead_widgets = set()
     now = renpy.display.core.get_time()
 
     for when, widget in redraw_queue:
@@ -167,18 +170,23 @@ def process_redraws():
 
         i += 1
 
-        dead_widgets.add(widget)
+        dead_displayables.add(widget)
 
-    if not dead_widgets:
+    if i:
+        redraw_queue = redraw_queue[i:]
+        
+    if dead_displayables:
+        return True
+    else:
         return False
-
-    redraw_queue = redraw_queue[i:]
+    
+def kill_redraws():
 
     for (widget, width, height), render in old_renders.items():
-        if widget in dead_widgets:
+        if widget in dead_displayables:
             render.kill()
-    
-    return True
+
+    dead_displayables.clear()
 
 def redraw_time():
     """
@@ -1001,7 +1009,7 @@ class Render(object):
         return False
                 
     def main_displayables_at_point(self, x, y, layers, depth=None):
-        
+
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return [ ]
 
@@ -1018,7 +1026,7 @@ class Render(object):
 
         for xo, yo, child in self.main_child_renders:
             rv.extend(child.main_displayables_at_point(x - xo, y - yo, layers, depth))
-
+            
         return rv
             
         

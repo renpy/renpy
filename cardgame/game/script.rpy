@@ -21,7 +21,7 @@ label start:
     scene bg green
     
     python:
-        k = Klondike()
+        k = Klondike(1)
         k.show()
 
         while True:

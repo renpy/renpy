@@ -350,18 +350,22 @@ def build_style(style):
         return
 
     updates = [ ]
-
+    
     if style.parent is not None:
-
+        
         name = style.parent
 
+        # The left base is the style that shares the most indexes with
+        # style.parent, while being one of the parents of style.parent.
         left_base = None
-        # down_base = [ ]
-        
+
         while True:
             first = name[0]
             rest = name[1:]
 
+            # The down bases inherit from the parents of the unindexd
+            # style, but don't have as many components.
+            
             if rest:
                 down_base = [ style_map[first] ]
             else:
@@ -392,6 +396,10 @@ def build_style(style):
                 updates.extend(ss.updates)
 
             for j in rest:
+
+                if ss.indexed is None:
+                    break
+                
                 ss = ss.indexed.get(j, None)
 
                 if ss is None:
@@ -406,10 +414,35 @@ def build_style(style):
             build_style(left_base)
 
         cache = left_base.cache
-                
+        
     else:
         cache = [ None ] * property_numbers
 
+    # Now, factor in the style that we're indexed off of.
+    if style.name is not None and len(style.name) > 1:
+
+        ss = style_map[style.name[0]]
+
+        if ss.cache is None:
+            build_style(ss)
+
+        updates.extend(ss.updates)
+        
+        for i in style.name[1:-1]:
+            if (ss.indexed is None) or (i not in ss.indexed):
+                break
+
+            ss = ss.indexed[i]
+            
+            if ss.cache is None:
+                build_style(ss)
+
+            updates.extend(ss.updates)
+            
+
+        
+            
+        
     style.updates = my_updates = [ ]
         
     for p in style.properties:
@@ -634,7 +667,7 @@ class Style(object):
 
         name = self.name + (index,)
         
-        s = Style(self.parent, name=name, heavy=not styles_built)
+        s = Style(self.parent + (index,), name=name, heavy=not styles_built)
 
         if not styles_built:
             self.indexed[index] = s

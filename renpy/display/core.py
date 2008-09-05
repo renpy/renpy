@@ -1542,6 +1542,9 @@ class Interface(object):
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
 
+                    # Clean out the redraws, if we have to.
+                    renpy.display.render.kill_redraws()
+                    
                     # Draw the screen.
                     self.frame_time = get_time()
 
@@ -1577,12 +1580,12 @@ class Interface(object):
                     pygame.time.set_timer(REDRAW, 0)
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
-
-
+                    
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
                     self.display.update_mouse()
                     
+
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction:                    
                     return True, None
@@ -1747,7 +1750,7 @@ class Interface(object):
 
                     if rv is not None:
                         break
-
+                    
                     # Handle displayable inspector.
                     if renpy.config.inspector and renpy.display.behavior.inspector(ev):
                         l = self.display.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.overlay_layers)

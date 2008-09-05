@@ -34,7 +34,7 @@ init python:
         HEART = 2
         DIAMOND = 3
         
-        def __init__(self):
+        def __init__(self, deal=3):
 
             # Constants that let us easily change where the game is
             # located.
@@ -44,11 +44,14 @@ init python:
             ROW_SPACING = 120
             CARD_XSPACING = 20
             CARD_YSPACING = 30
+
+            # Store the parameters.
+            self.deal = deal
             
             # Create the table, stock, and waste.
             self.table = t = Table(base="card/base.png", back="card/back.png")
             self.stock = t.stack(LEFT, TOP, xoff=0, yoff=0, click=True)
-            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_BOTTOM, show=3)
+            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_BOTTOM, show=self.deal)
 
             # The 4 foundation stacks.
             self.foundations = [ ]
@@ -175,7 +178,7 @@ init python:
             # If there are cards in the stock, dispense up to three3
             # of them.
             if self.stock:
-                for i in range(0, 3):
+                for i in range(0, self.deal):
                     if self.stock:
                         c = self.stock[-1]
                         self.table.set_faceup(c, True)
@@ -211,7 +214,7 @@ init python:
                     self.stock_click(evt)
 
             elif evt.type == "doubleclick":
-                if evt.stack in self.tableau:
+                if evt.stack in self.tableau or evt.stack == self.waste:
                     self.tableau_doubleclick(evt)
 
             # Check to see if any of the foundations has less than

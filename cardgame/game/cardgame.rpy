@@ -275,7 +275,7 @@ init python:
 
             if ev.type == pygame.MOUSEMOTION or (ev.type == pygame.MOUSEBUTTONUP and ev.button == 1):
 
-                if abs(x - self.click_x) > 2 or abs(y - self.click_y) > 2:
+                if abs(x - self.click_x) > 4 or abs(y - self.click_y) > 4:
                     self.dragging = True
 
                 dx = x - self.click_x
@@ -664,8 +664,3 @@ init python:
         
         def rotate_limit(self):
             return self.end_rotate
-
-        
-                
-            
-            

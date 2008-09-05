@@ -21,6 +21,9 @@ The new config.clear_layers variable allows layers to be cleared out
 when entering the game and main menus.
 
 
+Fixed style inheritance, which in some cases wouldn't pick up the
+style inherited from.
+
 Fixed a bug that made image prediction fail when a hide statement was
 encountered.
 
@@ -30,7 +33,11 @@ incorrectly blending fractional alphas with black.
 
 Fixed a bug where style inheritance did not work properly.
 
-Fixed a bug where the launcher could choke when launching non-English gamedirs. 
+Fixed a bug where the launcher could choke when launching non-English
+gamedirs.
+
+Fixed a bug that prevented the style inspector from working on animated
+screens.
 
 New in Ren'Py 6.6.3
 -------------------
