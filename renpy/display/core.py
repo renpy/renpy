@@ -859,7 +859,7 @@ class Display(object):
             visible = False
         else:
             visible = renpy.store.mouse_visible
-
+            
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:
 
@@ -888,6 +888,9 @@ class Display(object):
 
         pos = pygame.mouse.get_pos()
 
+        if not renpy.game.interface.focused:
+            pos = None
+            
         if (pos == self.mouse_location and
             show_mouse and
             info == self.mouse_info):
@@ -898,8 +901,8 @@ class Display(object):
 
         if self.mouse_location:
             updates.append(self.hide_mouse())
-
-        if visible and pos:
+            
+        if visible and pos and renpy.game.interface.focused:
             updates.append(self.show_mouse(pos, info))
             
         return updates
@@ -1076,6 +1079,10 @@ class Interface(object):
 
         self.time_event = pygame.event.Event(TIMEEVENT)
 
+        # Are we focused?
+        self.focused = True
+
+        
         # Properties for each layer.
         self.layer_properties = { }
 
@@ -1372,7 +1379,6 @@ class Interface(object):
         
         # Clear some events.
         pygame.event.clear((MOUSEMOTION, PERIODIC,
-                            MOUSEBUTTONUP, MOUSEBUTTONDOWN,
                             TIMEEVENT, REDRAW))
 
         # Add a single TIMEEVENT to the queue.
@@ -1683,7 +1689,7 @@ class Interface(object):
 
                         if ev2 and ev2.type not in (NOEVENT, PERIODIC, REDRAW, QUIT):
                             ev = self.event_poll()
-
+                            
                     # Handle redraw timeouts.
                     if ev.type == REDRAW:
                         old_redraw_time = None
@@ -1713,7 +1719,7 @@ class Interface(object):
 
                     # Handle skipping.
                     renpy.display.behavior.skipping(ev)
-
+                    
                     # Handle quit specially for now.
                     if ev.type == QUIT:
                         if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
@@ -1730,12 +1736,16 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
+                    # Handle focus notifications.
+                    if ev.type == ACTIVEEVENT:
+                        if ev.state == 1:
+                            self.focused = ev.gain
 
                     # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
                     x -= self.display.screen_xoffset
                     y -= self.display.screen_yoffset
-
+                    
                     self.event_time = end_time = get_time()
 
 

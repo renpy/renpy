@@ -294,3 +294,17 @@ init -1105 python hide:
         config.main_menu_ground = ground
         config.main_menu_selected = selected
         config.main_menu_hotspots = hotspots
+
+    @layout
+    def imagemap_navigation(ground, idle, hover, selected_idle, selected_hover,
+                            hotspots):
+
+        renpy.load_module("_layout/imagemap_navigation")
+        
+        config.navigation_ground = ground
+        config.navigation_idle = idle
+        config.navigation_hover = hover
+        config.navigation_selected_idle = selected_idle
+        config.navigation_selected_hover = selected_hover
+        config.navigation_hotspots = hotspots
+        

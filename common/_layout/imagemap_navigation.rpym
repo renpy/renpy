@@ -1,0 +1,82 @@
+init python:
+
+    layout.provides('navigation')
+    
+    # The ground image.
+    config.navigation_ground = None
+
+    # The idle image.
+    config.navigation_idle = None
+
+    # The hover image.
+    config.navigation_hover = None
+
+    # The selected idle image.
+    config.navigation_selected_idle = None
+
+    # The selected hover image.
+    config.navigation_selected_hover = None
+
+    # The hotspots. Each hotspot is defined by a tuple giving:
+    # - The x-coordinate of the left side.
+    # - The y-coordinate of the top side.
+    # - The x-coordinate of the right side.
+    # - The y-coordinate of the bottoms side.
+    # - The name of the game menu button this is equivalent to.
+    config.navigation_hotspots = None
+
+    def _navigation(screen=None):
+
+        # Display the game menu background
+        ui.window(style=style.gm_root[screen])
+        ui.null()
+
+        if screen is None:
+            return
+
+        # A map from button name to game menu information.
+        gm = dict()
+        
+        for e in config.game_menu:
+            screen_ = e[0]
+            name_ = e[1]
+            act = e[2]
+            enable = e[3]
+
+            gm[name_] = (screen_, act, enable)
+
+        ui.fixed(style='imagemap')
+        ui.image(config.navigation_ground)
+            
+        for (x0, y0, x1, y1, name) in config.navigation_hotspots:
+
+            if name not in gm:
+                raise Exception("%r was used in a game menu hotspot, but isn't the name of a game menu button." % name)
+
+            screen_, act, enable = gm[name]
+
+            if not eval(enable):
+                continue
+            
+            if screen_ == screen:
+                idle = config.navigation_selected_idle
+                hover = config.navigation_selected_hover
+            else:
+                idle = config.navigation_idle
+                hover = config.navigation_hover
+            
+            ui.imagebutton(
+                LiveCrop((x0, y0, x1-x0, y1-y0), idle),
+                LiveCrop((x0, y0, x1-x0, y1-y0), hover),
+                clicked=act,
+                style='imagemap_button',
+                xpos=x0,
+                ypos=y0,
+                xanchor=0,
+                yanchor=0,
+                focus_mask=True,
+                )
+
+        ui.close()
+
+    layout.navigation = _navigation

@@ -15,7 +15,7 @@ init python:
     style.gm_nav_frame.ypos = 0.95
     style.gm_nav_frame.yanchor = 1.0
     
-    def navigation(screen=None):
+    def _navigation(screen=None):
 
         # Display the game menu background
         ui.window(style=style.gm_root[screen])
@@ -47,4 +47,4 @@ init python:
 
         ui.close()
 
-    layout.navigation = navigation
+    layout.navigation = _navigation

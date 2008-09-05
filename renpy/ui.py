@@ -202,11 +202,9 @@ def frame(**properties):
 
 
 
-def keymousebehavior():
-    """
-    As of 4.8, this does nothing, but is retained for compatability.
-    """
 
+# As of 4.8, this does nothing, but is retained for compatability.
+def keymousebehavior():
     return
 
 def keymap(**kwargs):
@@ -278,19 +276,29 @@ def image(im, **properties):
 
     return add(renpy.display.im.image(im, loose=True, **properties))
 
-def imagemap(ground, selected, hotspots, unselected=None,
-             style='imagemap', button_style='imagemap_button',
+def imagemap(ground,
+             selected,
+             hotspots,
+             unselected=None,
+             style='imagemap',
+             button_style='imagemap_button',
              **properties):
 
     rv = fixed(style=style, **properties)
 
-    if not unselected:
+    if unselected is None:
         unselected = ground
 
+    if disabled is None:
+        disabled = ground
+        
     image(ground)
 
     for x0, y0, x1, y1, result in hotspots:
 
+        if result is None:
+            continue
+            
         imagebutton(renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), unselected),
                     renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), selected),
                     clicked=returns(result),

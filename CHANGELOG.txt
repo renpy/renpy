@@ -1,3 +1,14 @@
+New in Ren'Py 6.6.4
+-------------------
+
+The new layout.imagemap_navigation layout lets one use an imagemap to 
+define the game menu navigation.
+
+Software-drawn mouse cursors are now hidden when the mouse leaves the
+window. Previously, the mouse cursor would be kept around in the same
+place until the mouse re-entered the window.
+
+
 The \ character is now the universal quote character. One can use \%
 to prevent % from performing interpolation, and \{ to prevent { from 
 starting a text tag.

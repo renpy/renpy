@@ -7,7 +7,7 @@ init python:
 
     # The selected image.
     config.main_menu_selected = None
-    
+
     # The hotspots. Each hotspot is defined by a tuple giving:
     # - The x-coordinate of the left side.
     # - The y-coordinate of the top side.
@@ -28,7 +28,7 @@ label main_menu_screen:
         # Show the background.
         ui.window(style='mm_root')
         ui.null()
-
+        
         rv = renpy.imagemap(
             config.main_menu_ground,
             config.main_menu_selected,
@@ -37,8 +37,10 @@ label main_menu_screen:
         for e in config.main_menu:
             name = e[0]
             act = e[1]
-
+            enable = e[2]
+            
             if name == rv:
+
                 if isinstance(act, basestring):
                     act = ui.jumpsoutofcontext(act)
                 act()
