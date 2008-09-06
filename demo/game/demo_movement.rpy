@@ -14,8 +14,16 @@ init:
         At("logo.png", SizeZoom((100, 300), (300, 100), 1, opaque=False)), 1,
         At("logo.png", SizeZoom((300, 100), (100, 300), 1, opaque=False)), 1,
         )
-    
-    
+
+# Defines a spline motion.
+init python:
+    spline = SplineMotion([
+        ((-0.042, 0.523,),),
+        ((0.768, 0.296,), (0.082, 0.507,), (0.772, 0.573,),),
+        ((0.292, 0.304,), (0.766, 0.112,), (0.296, 0.123,),),
+        ((1.152, 0.509,), (0.288, 0.555,), (1.076, 0.499,),),
+        ], 3.0, anchors=(0.5, 0.5))
+ 
 label demo_movement:
 
     
@@ -61,6 +69,14 @@ label demo_movement:
 
     scene bg whitehouse
     with dissolve
+
+    # spline is defined near the top of this file.
+    show logo base at spline
+
+    e "SplineMotion allows for more complex movements to be defined."
+
+    hide logo base
+    
     scene bg whitehouse at Zoom((800, 600), (0, 0, 800, 600), (225, 150, 400, 300), 1.0)
 
     e "We can zoom into images..."

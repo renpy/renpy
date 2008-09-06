@@ -273,7 +273,7 @@ init python:
     # Nicely formats nested tuples and floats.
     def format(v):
         if isinstance(v, tuple):
-            return "(" + ", ".join(format(i) for i in v) + ")"
+            return "(" + ", ".join(format(i) for i in v) + ",)"
         else:
             return "%.3f" % v
             
@@ -323,7 +323,7 @@ label write:
         f.write("    spline = SplineMotion([\n")
         for t in se.relative_spline():
             f.write("        %s,\n" % format(t))
-        f.write("        ], %.1f, anchors=(0.5, 0.5))\n" % se.delay)
+        f.write("        ], %.1f, anchors=(0.5, 0.5), repeat=False)\n" % se.delay)
         f.close()
 
         print file("splinedata.rpy").read()
