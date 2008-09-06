@@ -8,6 +8,12 @@ init:
 
     # Defines the magic circle image.
     image magic_circle = "magic.png"
+
+    # Defines an image that zooms between various sizes.
+    image logo sizezoom = Animation(
+        At("logo.png", SizeZoom((100, 300), (300, 100), 1, opaque=False)), 1,
+        At("logo.png", SizeZoom((300, 100), (100, 300), 1, opaque=False)), 1,
+        )
     
     
 label demo_movement:
@@ -72,12 +78,23 @@ label demo_movement:
 
     e "... and zoom {i}them{/i} out again."
 
-    show eileen happy
+    show eileen happy at left
+    # logo sizezoom is defined at the top of this file.
+    show logo sizezoom at Position(xalign=.75, yalign=.4) 
+    with moveinright
+
+    e "We can scale images to arbitrary sizes."
+
+    show eileen happy at center
+    hide logo sizezoom
+    with moveoutright
+
+    with Pause(.5)
     
-    $ renpy.layer_at_list([ Zoom((800, 600), (0, 0, 800, 600), (200, 0, 400, 300), .5)])
-    with Pause(.5)
-    $ renpy.layer_at_list([ Zoom((800, 600), (200, 0, 400, 300), (0, 0, 800, 600), .5)])
-    with Pause(.5)
+    $ renpy.layer_at_list([ Zoom((800, 600), (0, 0, 800, 600), (200, 0, 400, 300), 1)])
+    with Pause(1)
+    $ renpy.layer_at_list([ Zoom((800, 600), (200, 0, 400, 300), (0, 0, 800, 600), 1)])
+    with Pause(1)
     $ renpy.layer_at_list([ ])
 
     e "We can apply motions to a layer as a whole."

@@ -1,8 +1,14 @@
 New in Ren'Py 6.6.4
 -------------------
 
+The new SizeZoom motion function allows displayables to be scaled to a 
+specific size. Along with SizeZoom, the Zoom and FactorZoom functions get 
+a new repeat argument that makes the zooms repeat.
+
+
 The new layout.imagemap_navigation layout lets one use an imagemap to 
 define the game menu navigation.
+
 
 Software-drawn mouse cursors are now hidden when the mouse leaves the
 window. Previously, the mouse cursor would be kept around in the same

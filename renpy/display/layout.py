@@ -1111,6 +1111,7 @@ class Zoom(renpy.display.core.Displayable):
                  after_child=None, time_warp=None,
                  bilinear=True, opaque=True,
                  anim_timebase=False,
+                 repeat=False,
                  **properties):
         """
         @param size: The size that the rectangle is scaled to, a
@@ -1148,7 +1149,7 @@ class Zoom(renpy.display.core.Displayable):
         self.time = time
         self.done = 0.0
         self.child = child
-        
+        self.repeat = repeat
         
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
@@ -1179,6 +1180,9 @@ class Zoom(renpy.display.core.Displayable):
         else:
             done = 1.0
 
+        if self.repeat:
+            done = done % 1.0
+            
         self.done = done
 
         if self.after_child and done == 1.0:
@@ -1270,27 +1274,8 @@ class FactorZoom(renpy.display.core.Displayable):
                  after_child=None, time_warp=None,
                  bilinear=True, opaque=True,
                  anim_timebase=False,
+                 repeat=False,
                  **properties):
-        """
-        @param start: The start scaling factor.
-
-        @param end: The end scaling factor.
-
-        @param time: The amount of time it will take to
-        from the start to the end scaling factors.
-
-        @param child: The child displayable.
-
-        @param after_child: If present, a second child
-        widget. This displayable will be rendered after the zoom
-        completes. Use this to snap to a sharp displayable after
-        the zoom is done.
-
-        @param time_warp: If not None, this is a function that takes a
-        fraction of the period (between 0.0 and 1.0), and returns a
-        new fraction of the period. Use this to warp time, applying
-        acceleration and deceleration to motions.
-        """
 
         super(FactorZoom, self).__init__(**properties)
 
@@ -1299,9 +1284,9 @@ class FactorZoom(renpy.display.core.Displayable):
         self.start = start
         self.end = end
         self.time = time
-
         self.child = child 
-
+        self.repeat = repeat
+        
         if after_child:
             self.after_child = renpy.easy.displayable(after_child)
         else:
@@ -1331,6 +1316,9 @@ class FactorZoom(renpy.display.core.Displayable):
         else:
             done = 1.0
 
+        if self.repeat:
+            done = done % 1.0
+            
         self.done = done
             
         if self.after_child and done == 1.0:
@@ -1359,11 +1347,95 @@ class FactorZoom(renpy.display.core.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-        if self.done == 1.0:
-            return self.child.event(ev, x, y, st)
+        if self.done == 1.0 and self.after_child:
+            return self.after_child.event(ev, x, y, st)
         else:
             return None
 
+class SizeZoom(renpy.display.core.Displayable):
+
+    def __init__(self, start, end, time, child,
+                 after_child=None, time_warp=None,
+                 bilinear=True, opaque=True,
+                 anim_timebase=False,
+                 repeat=False,
+                 **properties):
+
+        super(SizeZoom, self).__init__(**properties)
+
+        child = renpy.easy.displayable(child)
+
+        self.start = start
+        self.end = end
+        self.time = time        
+        self.child = child 
+        self.repeat = repeat
+        
+        if after_child:
+            self.after_child = renpy.easy.displayable(after_child)
+        else:
+            if self.end == (1.0, 1.0):
+                self.after_child = child
+            else:
+                self.after_child = None
+        
+        self.time_warp = time_warp
+        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.opaque = opaque
+        self.done = 0.0
+        self.anim_timebase = anim_timebase
+        
+    def visit(self):
+        return [ self.child, self.after_child ]
+
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+        
+        if self.time:
+            done = min(t / self.time, 1.0)
+        else:
+            done = 1.0
+
+        if self.repeat:
+            done = done % 1.0
+            
+        self.done = done
+            
+        if self.after_child and done == 1.0:
+            self.child = self.after_child
+            return renpy.display.render.render(self.after_child, width, height, st, at)
+
+        if self.time_warp:
+            done = self.time_warp(done)
+
+        rend = renpy.display.render.render(self.child, width, height, st, at)
+        surf = rend.pygame_surface()
+
+        sx, sy = self.start
+        ex, ey = self.end
+
+        neww = int(sx + (ex - sx) * done)
+        newh = int(sy + (ey - sy) * done)
+        oldw, oldh = surf.get_size()
+
+        rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
+        
+        if done < 1.0:
+            renpy.display.render.redraw(self, 0)
+
+        self.done = done
+            
+        return rv
+
+    def event(self, ev, x, y, st):
+        if self.done == 1.0 and self.after_child:
+            return self.after_child.event(ev, x, y, st)
+        else:
+            return None
 
         
 def dynamic_displayable_compat(st, at, expr):
