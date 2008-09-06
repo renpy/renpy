@@ -60,6 +60,9 @@ init -1100 python:
 
     # Should we used paged rollback?
     config.nvl_paged_rollback = False
+
+    # A hook that delta wanted, that is called instead of renpy.show_display_say
+    config.nvl_show_display_say = renpy.show_display_say
     
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
@@ -83,7 +86,7 @@ init -1100 python:
                 continue
 
             who, what, kw = i                
-            rv = renpy.show_display_say(who, what, **kw)
+            rv = config.nvl_show_display_say(who, what, **kw)
 
         ui.close()
         return rv
