@@ -289,9 +289,6 @@ def imagemap(ground,
     if unselected is None:
         unselected = ground
 
-    if disabled is None:
-        disabled = ground
-        
     image(ground)
 
     for x0, y0, x1, y1, result in hotspots:

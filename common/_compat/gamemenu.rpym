@@ -439,7 +439,7 @@ init python:
            return _yesno_prompt(screen, u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
 
         if renpy.invoke_in_new_context(prompt):
-            renpy.full_restart(reason='main_menu')
+            renpy.full_restart(transition=config.game_main_transition)
         else:
             return
         

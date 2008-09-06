@@ -17,7 +17,6 @@ init -1150 python:
         (u"Quit", ui.jumps("_quit"), "True")
         ]
 
-    
     config.game_menu = [
         ( None, u"Return", ui.jumps("_return"), 'True'),
         ( "preferences", u"Preferences", _intra_jumps("preferences_screen", "intra_transition"), 'True' ),
@@ -35,7 +34,7 @@ label _quit_prompt:
 
 label _main_menu_prompt:
     if layout.yesno_prompt(None, u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."):
-        $ renpy.full_restart(reason='main_menu')
+        $ renpy.full_restart(transition=config.game_main_transition)
     else:
         return
 

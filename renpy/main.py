@@ -39,7 +39,7 @@ def save_persistent():
             raise
         
 
-def run(restart=False):
+def run(restart):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
@@ -302,7 +302,7 @@ def main():
             try:
                 run(restart)
             finally:
-                restart = "end_game"
+                restart = (renpy.config.end_game_transition, "_invoke_main_menu")
                 save_persistent()
                 
         except game.QuitException, e:
