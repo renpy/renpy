@@ -8,14 +8,14 @@ init:
             ("demo_basics", "Basic Scripting", "5.6.3"),
             ("demo_experience", "User Experience", "5.6.3"), 
             ("demo_transitions", "Transitions", "5.6.6"),
-            ("demo_movement", "Positions and Movement", "6.6.4"),
+            ("demo_movement", "Positions and Movement", "6.7.0"),
             ("demo_animation", "Animation", "6.2.0"),
             ("demo_multimedia", "Music and Sound", "5.6.3"),
             ("demo_imageops", "Image Operations", "6.5.0"),
             ("demo_ui", "User Interaction", "6.5.0"),
             ("demo_text", "Fonts and Text Tags", "6.6.2"),
             ("demo_character", "Character Objects", "6.2.0"), 
-            ("demo_advanced", "Advanced Features", "6.2.0"),
+            ("demo_advanced", "Advanced Features", "6.7.0"),
             ]
 
         # Update above with this!
@@ -23,7 +23,8 @@ init:
             ("demo_layers", "Layers & Advanced Show", "5.6.5"),
             ("demo_nvlmode", "NVL Mode", "6.4.0"),
             ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
-            ("demo_minigame", "Minigame Support", "6.3.2"),
+            ("demo_minigame", "Minigames", "6.3.2"),
+            ("demo_persistent", "Persistent Data", "6.7.0"),
             ]
         
         def demos_show(demos_info, nevermind):

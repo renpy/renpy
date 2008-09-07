@@ -43,12 +43,17 @@ def path_to_saves(gamedir):
 
     if platform.mac_ver()[0]:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
+        return os.path.expanduser(rv)
     elif sys.platform == "win32":
-        rv = "~/RenPy/" + renpy.config.save_directory
+        if 'APPDATA' in os.environ:
+            return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
+        else:
+            rv = "/RenPy/" + renpy.config.save_directory
+            return os.path.expanduser(rv)
     else:
         rv = "~/.renpy/" + renpy.config.save_directory
+        return os.path.expanduser(rv)
 
-    return os.path.expanduser(rv)
         
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
