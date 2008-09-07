@@ -179,7 +179,6 @@ class Script(object):
         self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
 
         return initcode
-
         
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.

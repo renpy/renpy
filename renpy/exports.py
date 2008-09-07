@@ -1094,11 +1094,18 @@ def scry():
 def munged_filename():
     return renpy.parser.munge_filename(get_filename_line()[0])
 
+loaded_modules = set()
+
 def load_module(name, **kwargs):
 
     if not renpy.game.init_phase:
         raise Exception("Module loading is only allowed in init code.")
 
+    if name in loaded_modules:
+        return
+
+    loaded_modules.add(name)
+    
     old_locked = renpy.config.locked
     renpy.config.locked = False
     

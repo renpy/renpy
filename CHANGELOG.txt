@@ -1,13 +1,15 @@
 New in Ren'Py 6.6.4
 -------------------
 
+The new layout.imagemap_navigation, layout.imagemap_preferences,
+layout.imagemap_load_save, and layout.imagemap_yesno_prompt, layout
+allow one to use imagemaps to define the vast majority of the game
+menu. 
+
+
 The new SizeZoom motion function allows displayables to be scaled to a 
 specific size. Along with SizeZoom, the Zoom and FactorZoom functions get 
 a new repeat argument that makes the zooms repeat.
-
-
-The new layout.imagemap_navigation layout lets one use an imagemap to 
-define the game menu navigation.
 
 
 The renpy.full_restart function now takes an argument that lets one

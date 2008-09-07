@@ -307,4 +307,39 @@ init -1105 python hide:
         config.navigation_selected_idle = selected_idle
         config.navigation_selected_hover = selected_hover
         config.navigation_hotspots = hotspots
+
+    @layout
+    def imagemap_preferences(ground, idle, hover, selected_idle, selected_hover,
+                            hotspots):
+
+        renpy.load_module("_layout/imagemap_preferences")
         
+        config.preferences_ground = ground
+        config.preferences_idle = idle
+        config.preferences_hover = hover
+        config.preferences_selected_idle = selected_idle
+        config.preferences_selected_hover = selected_hover
+        config.preferences_hotspots = hotspots
+
+    @layout
+    def imagemap_yesno_prompt(ground, idle, hover, hotspots):
+
+        renpy.load_module("_layout/imagemap_yesno_prompt")
+        
+        config.yesno_prompt_ground = ground
+        config.yesno_prompt_idle = idle
+        config.yesno_prompt_hover = hover
+        config.yesno_prompt_hotspots = hotspots
+        
+    @layout
+    def imagemap_load_save(ground, idle, hover, selected_idle, selected_hover,
+                           hotspots):
+
+        renpy.load_module("_layout/imagemap_load_save")
+        
+        config.load_save_ground = ground
+        config.load_save_idle = idle
+        config.load_save_hover = hover
+        config.load_save_selected_idle = selected_idle
+        config.load_save_selected_hover = selected_hover
+        config.load_save_hotspots = hotspots

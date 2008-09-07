@@ -1,0 +1,79 @@
+init python:
+    
+    class _ImageMapper(object):
+
+        def __init__(self, ground, idle, hover, selected_idle, selected_hover, hotspots):
+
+            self.idle = idle
+            self.hover = hover
+            self.selected_idle = selected_idle
+            self.selected_hover = selected_hover
+            
+            self.hotspots = { }
+            for (x1, y1, x2, y2, name) in hotspots:
+                self.hotspots[name] = (x1, y1, x2, y2)
+
+            ui.fixed(style='imagemap')
+            ui.image(ground)
+            
+
+        def button(self, name, clicked, selected):
+
+            if name not in self.hotspots:
+                return None
+
+            x1, y1, x2, y2 = self.hotspots[name]
+
+            if clicked is None:
+                return (x1, y1, x2, y2)
+            
+            if selected:
+                idle = self.selected_idle
+                hover = self.selected_hover
+            else:
+                idle = self.idle
+                hover = self.selected_hover
+
+            ui.imagebutton(
+                LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), idle),
+                LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), hover),
+                xpos=x1,
+                ypos=y1,
+                xanchor=0,
+                yanchor=0,
+                clicked=clicked,
+                focus_mask=True,
+                style='imagemap_button',
+                )
+
+            return (x1, y1, x2, y2)
+
+            
+        def bar(self, name, range, value, changed):
+
+            if name not in self.hotspots:
+                return
+
+            x1, y1, x2, y2 = self.hotspots[name]
+
+            ui.bar(
+                range,
+                value,
+                changed=changed,
+                left_gutter=0,
+                right_gutter=0,
+                left_bar=LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), self.selected_idle),
+                right_bar=LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), self.idle),
+                hover_left_bar=LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), self.selected_hover),
+                hover_right_bar=LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), self.hover),
+                bar_resizing=False,
+                xpos=x1,
+                ypos=y1,
+                xmaximum=(x2-x1),
+                ymaximum=(y2-y1),
+                thumb=None,
+                thumb_shadow=None,
+                thumb_offset=0)
+            
+        def close(self):
+            ui.close()
