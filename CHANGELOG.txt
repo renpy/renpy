@@ -1,15 +1,39 @@
-New in Ren'Py 6.6.4
+New in Ren'Py 6.7.0
 -------------------
 
 The new layout.imagemap_navigation, layout.imagemap_preferences,
-layout.imagemap_load_save, and layout.imagemap_yesno_prompt, layout
-allow one to use imagemaps to define the vast majority of the game
-menu. 
+layout.imagemap_load_save, and layout.imagemap_yesno_prompt layouts
+allow one to use imagemaps to define the game menu. Together with the
+existing layout.imagemap_main_menu, the entire interface can now be themed
+with imagemaps. (except for the rarely-used joystick preferences)
+
+
+The new SplineMotion motion function, contributed by Aenakume, allows
+motions to be specified using linear, quadratic, or cubic
+splines. This allows complex non-linear motions to be specified. A
+spline editor can be downloaded from: 
+http://www.renpy.org/wiki/renpy/Spline_Editor
 
 
 The new SizeZoom motion function allows displayables to be scaled to a 
 specific size. Along with SizeZoom, the Zoom and FactorZoom functions get 
 a new repeat argument that makes the zooms repeat.
+
+
+If the new config.save_directory variable is set, Ren'Py will now try
+to save games and persistent data underneath the user's home
+directory. The precise directory saved to varies by platform:
+
+* Windows: %APPDATA%/RenPy/<save_directory>
+* Mac OS X: ~/Library/RenPy/<save_directory>
+* Linux/Other: ~/.renpy/<save_directory>
+
+Newly-created projects will have config.save_directory set to a value
+based on the project name.
+
+Since finding the save directory is now more difficult, the launcher
+has gained an option that allows the user to easily delete a game's
+persistent data.
 
 
 The renpy.full_restart function now takes an argument that lets one

@@ -204,7 +204,14 @@ init -1 python hide:
     config.enter_transition = dissolve
     config.exit_transition = dissolve
 
-
+    #########################################
+    ## This is the name of the directory where the game's data is
+    ## stored. (It needs to be set early, before any other init code
+    ## is run, so the persisten information can be found by the init code.)
+python early:
+    config.save_directory = "the_question-1220806307"
+        
+init -1 python hide:
     ## Note: The following two options are only evaluated the first time
     ## a game is run. To have them run a second time, delete
     ## game/saves/persistent

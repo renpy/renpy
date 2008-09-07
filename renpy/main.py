@@ -176,12 +176,6 @@ def main():
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
-    # Find the save directory.
-    renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir)
-
-    if renpy.game.options.savedir:
-        renpy.config.savedir = renpy.game.options.savedir
-    
     # Initialize the store.
     renpy.store.store = renpy.store
 
@@ -194,12 +188,28 @@ def main():
     
     renpy.game.exception_info = 'After loading the script.'
 
+    # Find the save directory.
+    if renpy.config.savedir is None:
+        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir)
+
+    if renpy.game.options.savedir:
+        renpy.config.savedir = renpy.game.options.savedir
+    
     # Make the save directory.
     try:
         os.makedirs(renpy.config.savedir)
     except:
         pass
 
+    # Perhaps delete the persistent data and exit.
+    if renpy.game.options.rmpersistent:
+        try:
+            os.unlink(renpy.config.savedir + "/persistent")
+        except:
+            pass
+
+        return
+    
     # Unserialize the persistent data.
     try:
         f = file(renpy.config.savedir + "/persistent", "rb")

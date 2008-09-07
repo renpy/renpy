@@ -221,8 +221,15 @@ init -1 python hide:
 
     ## Used when a game is loaded.
     config.after_load_transition = dissolve
-    
 
+    #########################################
+    ## This is the name of the directory where the game's data is
+    ## stored. (It needs to be set early, before any other init code
+    ## is run, so the persisten information can be found by the init code.)
+python early:
+    config.save_directory = "demo-1220806207"
+
+init -1 python hide:    
     #########################################
     ## Default values of Preferences.
 
@@ -235,3 +242,8 @@ init -1 python hide:
 
     ## The default text speed in characters per second. 0 is infinite.
     config.default_text_cps = 0
+
+      
+
+
+    

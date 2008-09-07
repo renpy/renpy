@@ -1,3 +1,6 @@
+python early:
+    config.save_directory = "launcher-1"
+
 init:
 
     python:
@@ -303,6 +306,23 @@ init:
 
             renpy.launch_editor([ "lint.txt" ],transient=1)
 
+        def rmpersistent():
+            
+            import renpy.subprocess as subprocess
+            import sys
+            import os.path
+
+            store.message = u"Deleting persistent data."
+            title(u"Delete Persistent")
+            ui.pausebehavior(0)
+            interact()
+
+            if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
+                proc = subprocess.Popen([config.renpy_base + "/console.exe", "--rmpersistent", project.path])
+            else:
+                proc = subprocess.Popen([sys.executable, sys.argv[0], "--rmpersistent", project.path])
+
+            proc.wait()
 
 label main_menu:
     return
@@ -509,6 +529,11 @@ label tools_menu:
                u"Checks the game's script for likely errors. This should be run before releasing.",
                clicked=ui.jumps("lint"))
 
+
+        button(u"Delete Persistent",
+               u"Deletes the game's persistent data.",
+               clicked=ui.jumps("rmpersistent"))
+        
         # button("Quick Backup",
         #       "Makes a backup copy of the project. You also need to make backups somewhere other then this computer.",
         #       clicked=ui.jumps("backup"))
@@ -699,7 +724,15 @@ label add_from_to_calls:
 
         add_from.add_from(project.gamedir, config.commondir)
 
-        store.message = u"Done adding from clauses to call statements. You may want to remove the .bak files created."
+        store.message = _(u"Done adding from clauses to call statements. You may want to remove the .bak files created.")
+
+    jump tools_menu
+
+label rmpersistent:
+
+    python hide:
+        rmpersistent()
+        store.message = _(u"Done deleting persistent data.")
 
     jump tools_menu
                 

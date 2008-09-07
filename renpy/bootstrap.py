@@ -125,7 +125,10 @@ def bootstrap(renpy_base):
                   help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
     op.add_option('--remote', dest='remote', action='store_true',
-                  help="If True, allows Ren'Py to be fed commands on stdin.")
+                  help="Allows Ren'Py to be fed commands on stdin.")
+
+    op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
+                  help="Deletes the persistent data, and exits.")
 
     options, args = op.parse_args()
 

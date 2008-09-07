@@ -365,6 +365,10 @@ label_overrides = { }
 # Called to get the extra_info for an auto_save.
 auto_save_extra_info = None
 
+# The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
+# game-specific data is saved.
+save_directory = None
+
 del renpy
 del sets
 

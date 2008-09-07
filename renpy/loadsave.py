@@ -33,8 +33,11 @@ import os
 import os.path
 import re
 import threading
+import sys
+import platform
 
 import renpy
+
 
 # Dump that choses which pickle to use:
 def dump(o, f):
@@ -367,17 +370,30 @@ def MultiPersistent(name):
     if not renpy.game.init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
     
-    if os.name == 'nt':
-        fn = os.path.expanduser("~/RenPy/Persistent")
-    else:
-        fn = os.path.expanduser("~/.renpy/persistent")
+    if sys.platform == 'win32':
+        files = [ os.path.expanduser("~/RenPy/Persistent") ]
 
+        if 'APPDATA' in os.environ:
+            files.append(os.environ['APPDATA'] + "/RenPy/persistent")
+            
+    elif platform.mac_ver()[0]:
+        files = [ os.path.expanduser("~/.renpy/persistent"),
+                  os.path.expanduser("~/Library/RenPy/persistent") ]
+    else:
+        files = [ os.path.expanduser("~/.renpy/persistent") ]
+
+    # Make the new persistent directory, why not?
     try:
-        os.makedirs(fn)
+        os.makedirs(files[-1])
     except:
         pass
 
-    fn = fn + "/" + name
+    # Find the first file that actually exists. Otherwise, use the last
+    # file.
+    for fn in files:
+        fn = fn + "/" + name
+        if os.path.exists(fn):
+            break
 
     try:
         rv = loads(file(fn).read())

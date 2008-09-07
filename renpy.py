@@ -24,6 +24,7 @@
 import os
 import os.path
 import sys
+import platform
 
 # Functions to be customized by distributors. ################################
 
@@ -35,8 +36,20 @@ def path_to_common(renpy_base):
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
-    return gamedir + "/saves"
+    import renpy
 
+    if not renpy.config.save_directory:
+        return gamedir + "/saves"
+
+    if platform.mac_ver()[0]:
+        rv = "~/Library/RenPy/" + renpy.config.save_directory
+    elif sys.platform == "win32":
+        rv = "~/RenPy/" + renpy.config.save_directory
+    else:
+        rv = "~/.renpy/" + renpy.config.save_directory
+
+    return os.path.expanduser(rv)
+        
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
 def path_to_renpy_base():

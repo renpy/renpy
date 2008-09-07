@@ -4,7 +4,8 @@ label new:
 
         import os
         import os.path
-
+        import time
+        
 
         # Select a template.
         
@@ -51,6 +52,12 @@ label new:
             if os.path.exists(name + "/" + i):
                 os.unlink(name + "/" + i)
 
+        # Change the save directory.
+        options = file(name + "/game/options.rpy").read()
+        save_dir = "%s-%d" % (name, time.time())
+        options = options.replace("template-1220804310", save_dir)
+        file(name + "/game/options.rpy", "w").write(options)
+                
         persistent.project = name
 
     call find_project from _call_find_project_2
