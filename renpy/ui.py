@@ -254,9 +254,14 @@ def menu(menuitems,
                 def clicked(val=val):
                     return val
 
-            button = getattr(renpy.game.style, button)[label]
-            text = getattr(renpy.game.style, text)[label]
-                
+            if isinstance(button, basestring):
+                button = getattr(renpy.game.style, button)
+            if isinstance(text, basestring):
+                text = getattr(renpy.game.style, text)
+
+            button = button[label]
+            text = text[label]
+            
             renpy.ui.textbutton(label,
                                 style=button,
                                 text_style=text,

@@ -54,6 +54,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      two_window_vbox_properties={},
                      who_window_properties={},
                      say_vbox_properties={},
+                     variant=None,
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -100,6 +101,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         if isinstance(style, basestring):
             style = getattr(renpy.store.style, style)
 
+        if variant is not None:
+            style = style[variant]
+            
         if renpy.exports.in_rollback():
             style = style["rollback"]
             
@@ -112,7 +116,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         if not "style" in d:
             return d
 
-        if not renpy.exports.in_rollback():
+        in_rollback = renpy.exports.in_rollback()
+        
+        if (not in_rollback) and (not variant):
             return d
             
         d = d.copy()
@@ -121,7 +127,12 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
         if isinstance(style, basestring):
             style = getattr(renpy.store.style, style)        
-            style = style["rollback"]
+
+            if variant is not None:
+                style = style[variant]
+
+            if in_rollback:
+                style = style["rollback"]
 
         d["style"] = style
 
@@ -129,7 +140,8 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     
     who_args = style_args(who_args)
     what_args = style_args(what_args)
-        
+    window_args = style_args(window_args)
+    
     if two_window:
 
         # Opens say_two_window_vbox.

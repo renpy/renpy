@@ -36,6 +36,11 @@ has gained an option that allows the user to easily delete a game's
 persistent data.
 
 
+A new variable, nvl_variant, allows one to change the styles used by
+nvl-mode. or example, if nvl_variant is set to "foo", then
+style.nvl_window["foo"] will be used instead of style.nvl_window.
+
+
 The renpy.full_restart function now takes an argument that lets one
 specify the label that will be restarted to. By calling
 renpy.full_restart(label="start"), one can start a new game.

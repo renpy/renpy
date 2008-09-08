@@ -4,7 +4,6 @@
 # Declarations of characters and images used throughout the game can be found
 # in demo_basics.rpy. Options can be set in options.rpy.
 
-
 # The game starts here.
 label start:
 

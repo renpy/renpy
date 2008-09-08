@@ -66,15 +66,25 @@ init -1100 python:
     
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
+
+    # If set, then all of the nvl-specific style get indexed with this.
+    nvl_variant = None
+
+    # Returns the appropriate variant style.
+    def __s(s):
+        if nvl_variant:
+            return s[nvl_variant]
+        else:
+            return s
     
     def nvl_show_core():
 
         if renpy.in_rollback():
-            nvl_window = style.nvl_window['rollback']
-            nvl_vbox = style.nvl_vbox['rollback']
+            nvl_window = __s(style.nvl_window)['rollback']
+            nvl_vbox = __s(style.nvl_vbox)['rollback']
         else:
-            nvl_window = style.nvl_window
-            nvl_vbox = style.nvl_vbox
+            nvl_window = __s(style.nvl_window)
+            nvl_vbox = __s(style.nvl_vbox)
         
         ui.window(style=nvl_window)
         ui.vbox(style=nvl_vbox)
@@ -86,7 +96,7 @@ init -1100 python:
                 continue
 
             who, what, kw = i                
-            rv = config.nvl_show_display_say(who, what, **kw)
+            rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
 
         ui.close()
         return rv
@@ -196,7 +206,6 @@ init -1100 python:
         type='nvl',
         clear=False,
         kind=adv)
-
                 
     def nvl_clear():
 
@@ -210,8 +219,8 @@ init -1100 python:
         if nvl_list is None:
             store.nvl_list = [ ]
 
-        ui.window(style='nvl_window')
-        ui.vbox(style='nvl_vbox')
+        ui.window(style=__s(style.nvl_window))
+        ui.vbox(style=__s(style.nvl_vbox))
 
         for i in nvl_list:
             if not i:
@@ -221,11 +230,11 @@ init -1100 python:
             rv = renpy.show_display_say(who, what, **kw)
 
         renpy.display_menu(items, interact=False,
-                           window_style='nvl_menu_window',
-                           choice_style='nvl_menu_choice',
-                           choice_chosen_style='nvl_menu_choice_chosen',
-                           choice_button_style='nvl_menu_choice_button',
-                           choice_chosen_button_style='nvl_menu_choice_chosen_button',
+                           window_style=__s(style.nvl_menu_window),
+                           choice_style=__s(style.nvl_menu_choice),
+                           choice_chosen_style=__s(style.nvl_menu_choice_chosen),
+                           choice_button_style=__s(style.nvl_menu_choice_button),
+                           choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
                            )
 
         ui.close()

@@ -363,7 +363,7 @@ class _MultiPersistent(object):
             os.rename(fn + ".new", fn)
         except:
             os.unlink(fn)
-            os.rename(fm + ".new", fn)
+            os.rename(fn + ".new", fn)
             
 def MultiPersistent(name):
 
