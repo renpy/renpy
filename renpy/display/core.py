@@ -730,14 +730,13 @@ class Display(object):
 
         # Window title.
         pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
-
-
+        
         # Sample surface that all surfaces are created based on.
         sample = pygame.Surface((10, 10))
         self.sample_surface = sample.convert_alpha()
 
         pygame.event.set_grab(False)
-
+        
         # Load the mouse image, if any.
         if renpy.config.mouse:
             self.mouse = True
@@ -1732,22 +1731,22 @@ class Interface(object):
                     # Merge mousemotion events.
                     if ev.type == MOUSEMOTION:
                         evs = pygame.event.get([MOUSEMOTION])
-
                         if len(evs):
                             ev = evs[-1]
 
+                        self.focused = True
+                            
                     # Handle focus notifications.
                     if ev.type == ACTIVEEVENT:
-                        if ev.state == 1:
+                        if ev.state & 1:
                             self.focused = ev.gain
-
+                            
                     # x, y = getattr(ev, 'pos', (0, 0))
                     x, y = pygame.mouse.get_pos()
                     x -= self.display.screen_xoffset
                     y -= self.display.screen_yoffset
                     
                     self.event_time = end_time = get_time()
-
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)

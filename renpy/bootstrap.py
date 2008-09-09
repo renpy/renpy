@@ -188,7 +188,7 @@ def bootstrap(renpy_base):
         os.environ['SDL_VIDEODRIVER'] = 'windib'
 
     # Show the presplash.
-    if not options.lint and not options.compile and not options.version:
+    if not options.lint and not options.compile and not options.version and not options.rmpersistent:
         import renpy.display.presplash
         renpy.display.presplash.start(gamedir)
         

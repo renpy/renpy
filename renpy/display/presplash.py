@@ -66,24 +66,28 @@ def start(_gamedir):
         pass
 
     pygame.display.init()
-
+    
     img = pygame.image.load(gamedir + "/presplash.png")
     screen = pygame.display.set_mode(img.get_size(), pygame.constants.NOFRAME)
     screen.blit(img, (0, 0))
     pygame.display.update()
-
+    
 
 # Called just before we initialize the display for real, to
 # hide the splash, and terminate window centering.
 def end():
-
     global active
 
     if not active:
         return
-
+    
     active = False
 
+    import renpy    
+    if not renpy.config.mouse:
+        pygame.quit()
+    
     del os.environ['SDL_VIDEO_CENTERED']
-    pygame.display.quit()
+    
+
     
