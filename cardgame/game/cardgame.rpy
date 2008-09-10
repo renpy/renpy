@@ -1,26 +1,26 @@
 # cardgame.rpy - Cardgame support for Ren'Py
-# Copyright (C) 2008 Tom Rothamel <pytom@bishoujo.us>
+# Copyright (C) 2008 PyTom <pytom@bishoujo.us>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This software may be distributed in modified or unmodified form,
+# provided:
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# (1) This complete license notice is retained.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# For the purposes of the GPL, the copyrighted work consists of all
-# script files that run in the same engine as this file, and any other
-# file loaded from those scripts, without being selected by the
-# user. (This includes image, font, music, movie, and sound files.)
+# (2) This software and all software and data files distributed
+# alongside this software and intended to be loaded in the same
+# memory space may be redistributed without requirement for
+# payment, notification, or other forms of compensation.
 #
-# Commercial licenses for this code are available, please contact
-# pytom@bishoujo.us for information.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# Commercial licensing for this software is available, please
+# contact pytom@bishoujo.us for information.
 
 init python:
 
@@ -53,7 +53,6 @@ init python:
             return 0
 
         return (minright - maxleft) * (minbottom - maxtop)
-
 
     def __default_can_drag(table, stack, card):
         return table.get_faceup(card)
@@ -122,6 +121,10 @@ init python:
 
         # This shows the table on the given layer.
         def show(self, layer='master'):
+
+            for v in self.cards.itervalues():
+                v.offset = __Fixed(0, 0)
+
             ui.layer(layer)
             ui.add(self)
             ui.close()
@@ -132,6 +135,10 @@ init python:
             ui.remove(self)
             ui.close()
 
+        # This controls sensitivity.
+        def set_sensitive(self, value):
+            self.sensitive = value
+            
         def get_card(self, value):
             if value not in self.cards:
                 raise Exception("No card has the value %r." % value)
@@ -202,6 +209,11 @@ init python:
 
             if not self.sensitive:
                 return
+
+            grabbed = renpy.display.focus.get_grab()
+
+            if (grabbed is not None) and (grabbed is not self):
+                return
             
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
 
@@ -230,6 +242,9 @@ init python:
                 if stack is None:
                     return
 
+                # Grab the display.
+                renpy.display.focus.set_grab(self)
+                
                 # Don't let the user grab a moving card.
                 if card is not None:
                     xoffset, yoffset = card.offset.offset()
@@ -243,7 +258,6 @@ init python:
                 if stack.click or stack.drag:
                     self.click_card = card
                     self.click_stack = stack
-
                 
                 if card is None or not self.can_drag(self, card.stack, card.value):
                     self.drag_cards = [ ]
@@ -271,11 +285,11 @@ init python:
                 
                 renpy.redraw(self, 0)
                 
-                return None
+                raise renpy.IgnoreEvent()
 
             if ev.type == pygame.MOUSEMOTION or (ev.type == pygame.MOUSEBUTTONUP and ev.button == 1):
 
-                if abs(x - self.click_x) > 4 or abs(y - self.click_y) > 4:
+                if abs(x - self.click_x) > 7 or abs(y - self.click_y) > 7:
                     self.dragging = True
 
                 dx = x - self.click_x
@@ -326,7 +340,13 @@ init python:
 
                 renpy.redraw(self, 0)
 
+                if ev.type == pygame.MOUSEMOTION:
+                    raise renpy.IgnoreEvent()
+
             if ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
+
+                # Ungrab the display.
+                renpy.display.focus.set_grab(None)
 
                 evt = None
 
@@ -374,8 +394,12 @@ init python:
                 self.click_stack = None
                 self.drag_cards = [ ]
 
-                return evt
+                if evt is not None: 
+                    return evt
+                else:
+                    raise renpy.IgnoreEvent()
 
+                
     class CardEvent(object):
 
         def __init__(self):

@@ -23,7 +23,7 @@ init -1 python hide:
     ## This controls the title of the window, when Ren'Py is
     ## running in a window.
 
-    config.window_title = u"A Ren'Py Game"
+    config.window_title = u"Ren'Py Cardgame Demo"
 
     #########################################
     # Layouts
@@ -46,29 +46,29 @@ init -1 python hide:
     theme.roundrect(
 
         ## The color of an idle widget face.
-        widget = "#003c78",
+        widget = "#7AA27B",
 
         ## The color of a focused widget face.
-        widget_hover = "#0050a0",
+        widget_hover = "#A3C7A3",
 
         ## The color of the text in a widget.
-        widget_text = "#c8ffff",
+        widget_text = "#CDE0CE",
 
         ## The color of the text in a selected widget. (For
         ## example, the current value of a preference.)
-        widget_selected = "#ffffc8",
+        widget_selected = "#ffffff",
 
         ## The color of a disabled widget face. 
-        disabled = "#404040",
+        disabled = "#426143",
 
         ## The color of disabled widget text.
-        disabled_text = "#c8c8c8",
+        disabled_text = "#819981",
 
         ## The color of informational labels.
         label = "#ffffff",
 
         ## The color of a frame containing widgets.
-        frame = "#6496c8",
+        frame = "#245536",
 
         ## If this is True, the in-game window is rounded. If False,
         ## the in-game window is square.
@@ -77,12 +77,12 @@ init -1 python hide:
         ## The background of the main menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
-        mm_root = "#dcebff",
+        mm_root = "mainmenu.jpg",
 
         ## The background of the game menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
-        gm_root = "#dcebff",
+        gm_root = "table.jpg",
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
@@ -197,35 +197,35 @@ init -1 python hide:
 
     ## Used when entering the game menu from the game.
 
-    config.enter_transition = None
+    config.enter_transition = dissolve
 
     ## Used when exiting the game menu to the game.
 
-    config.exit_transition = None
+    config.exit_transition = dissolve
 
     ## Used between screens of the game menu.
 
-    config.intra_transition = None
+    config.intra_transition = dissolve
 
     ## Used when entering the game menu from the main menu.
 
-    config.main_game_transition = None
+    config.main_game_transition = dissolve
 
     ## Used when returning to the main menu from the game.
 
-    config.game_main_transition = None
+    config.game_main_transition = dissolve
 
     ## Used when entering the main menu from the splashscreen.
 
-    config.end_splash_transition = None
+    config.end_splash_transition = dissolve
 
     ## Used when entering the main menu after the game has ended.
 
-    config.end_game_transition = None
+    config.end_game_transition = fade
 
     ## Used when a game is loaded.
 
-    config.after_load_transition = None
+    config.after_load_transition = dissolve
 
     
     #########################################
@@ -243,3 +243,5 @@ init -1 python hide:
 
     config.default_text_cps = 0
 
+    config.save_directory = "cardgame-11754"
+    

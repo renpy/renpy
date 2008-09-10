@@ -1,26 +1,26 @@
-# klondike.rpy - Klondike Solitaire for the Ren'Py Cardgame Engine.
-# Copyright (C) 2008 Tom Rothamel <pytom@bishoujo.us>
+# klondike.rpy - Klondike Solitaire
+# Copyright (C) 2008 PyTom <pytom@bishoujo.us>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This software may be distributed in modified or unmodified form,
+# provided:
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# (1) This complete license notice is retained.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# For the purposes of the GPL, the copyrighted work consists of all
-# script files that run in the same engine as this file, and any other
-# file loaded from those scripts, without being selected by the
-# user. (This includes image, font, music, movie, and sound files.)
+# (2) This software and all software and data files distributed
+# alongside this software and intended to be loaded in the same
+# memory space may be redistributed without requirement for
+# payment, notification, or other forms of compensation.
 #
-# Commercial licenses for this code are available, please contact
-# pytom@bishoujo.us for information.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# Commercial licensing for this software is available, please
+# contact pytom@bishoujo.us for information.
 
 init python:
 
@@ -51,7 +51,7 @@ init python:
             # Create the table, stock, and waste.
             self.table = t = Table(base="card/base.png", back="card/back.png")
             self.stock = t.stack(LEFT, TOP, xoff=0, yoff=0, click=True)
-            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_BOTTOM, show=self.deal)
+            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_BOTTOM, show=self.deal, click=True)
 
             # The 4 foundation stacks.
             self.foundations = [ ]
@@ -81,6 +81,12 @@ init python:
                     c = self.stock.deal()
                     self.tableau[j].append(c)                    
 
+            # Ensure that the bottom of each tableau is faceup.
+            for i in range(0, 7):
+                if self.tableau[i]:
+                    self.table.set_faceup(self.tableau[i][-1], True)
+
+
         # This figures out the image filename for a given suit and rank.
         def card_num(self, suit, rank):
             ranks = [ None, 1, 49, 45, 41, 37, 33, 29, 25, 21, 17, 13, 9, 5 ]
@@ -91,7 +97,7 @@ init python:
 
         def hide(self):
             self.table.hide()
-
+            
         def tableau_drag(self, evt):
 
             card = evt.drag_cards[0]
@@ -145,6 +151,7 @@ init python:
                     evt.drop_stack.append(evt.drag_cards[0])
                     
         def tableau_doubleclick(self, evt):
+
             # Make sure that there's at least one card in the stack.
             if not evt.stack:
                 return
@@ -192,36 +199,128 @@ init python:
                     self.stock.append(c)
             
         def interact(self):
- 
-            # Ensure that the bottom of each tableau is faceup.
-            for i in range(0, 7):
-                if self.tableau[i]:
-                    self.table.set_faceup(self.tableau[i][-1], True)
 
             evt = ui.interact()
 
+            rv = "continue"
+            
             # Check the various events, and dispatch them to the methods
             # that handle them.
             if evt.type == "drag":
                 if evt.drop_stack in self.tableau:
                     self.tableau_drag(evt)
-
+                    rv = "tableau_drag"
+                    
                 elif evt.drop_stack in self.foundations:
                     self.foundation_drag(evt)
-
+                    rv = "foundation_drag"
+                    
             elif evt.type == "click":
                 if evt.stack == self.stock:
                     self.stock_click(evt)
-
+                    rv = "stock_click"
+                    
             elif evt.type == "doubleclick":
-                if evt.stack in self.tableau or evt.stack == self.waste:
+                if (evt.stack in self.tableau) or (evt.stack is self.waste):
                     self.tableau_doubleclick(evt)
+                    rv = "stock_doubleclick"
+                    
+            # Ensure that the bottom card in each tableau is faceup.
+            for i in range(0, 7):
+                if self.tableau[i]:
+                    self.table.set_faceup(self.tableau[i][-1], True)
 
             # Check to see if any of the foundations has less than
             # 13 cards in it. If it does, return False. Otherwise,
             # return True.
             for i in self.foundations:
                 if len(i) != 13:
-                    return False
+                    return rv
 
-            return True
+            return "win"
+
+        # Sets things as sensitive (or not).
+        def set_sensitive(self, value):
+            self.table.set_sensitive(value)
+        
+        # Utility functions.
+
+        # Is it okay to drag the over card onto under, where under is
+        # part of a tableau.
+        def can_hint(self, under, over):
+            usuit, urank = under
+            osuit, orank = over
+
+            if orank == 1:
+                return False
+            
+            ublack = (usuit == self.SPADE) or (usuit == self.CLUB)
+            oblack = (osuit == self.SPADE) or (osuit == self.CLUB)
+
+            if (oblack != ublack) and (orank == urank - 1):
+                return True
+
+        # Returns the first faceup card in the stack.
+        def first_faceup(self, s):
+            for c in s:
+                if self.table.get_faceup(c):
+                    return c
+
+        # This tries to find a reasonable hint, and returns it as a
+        # pair of cardnames.
+        def hint(self):
+
+            for i in self.tableau:
+                if not i:
+                    continue
+
+                over = self.first_faceup(i)
+
+                for j in self.tableau:
+                    if not j or i is j:
+                        continue
+
+                    under = j[-1]
+
+                    if self.can_hint(under, over):
+                        return (under, over)
+
+            if self.waste:
+
+                over = self.waste[-1]
+
+                for j in self.tableau:
+                    if not j:
+                        continue
+
+                    under = j[-1]
+
+                    if self.can_hint(under, over):
+                        return (under, over)
+                
+            return None, None
+            
+        def card_name(self, c):
+            suit, rank = c
+
+            return  [
+                "INVALID",
+                "Ace",
+                "Two",
+                "Three",
+                "four",
+                "Five",
+                "Six",
+                "Seven",
+                "Eight",
+                "Nine",
+                "Ten",
+                "Jack",
+                "Queen",
+                "Ace" ][rank] + " of " + [
+                "Clubs",
+                "Spades",
+                "Hearts",
+                "Diamonds" ][suit]
+                     
+                    
