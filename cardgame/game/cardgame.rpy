@@ -28,9 +28,9 @@ init python:
     
     DRAG_NONE = 0
     DRAG_CARD = 1
-    DRAG_BELOW = 2
+    DRAG_ABOVE = 2
     DRAG_STACK = 3
-    DRAG_BOTTOM = 4
+    DRAG_TOP = 4
 
     # Returns the overlap of the area between the two
     # rectangles.
@@ -355,6 +355,7 @@ init python:
 
                         evt = CardEvent()
                         evt.type = "drag"
+                        evt.table = self
                         evt.stack = self.click_stack
                         evt.card = self.click_card.value
                         evt.drag_cards = [c.value for c in self.drag_cards]
@@ -369,6 +370,7 @@ init python:
 
                         evt = CardEvent()
                         evt.type = "click"
+                        evt.table = self
                         evt.stack = self.click_stack
                         if self.click_card:
                             evt.card = self.click_card.value

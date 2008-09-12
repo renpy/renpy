@@ -51,18 +51,18 @@ init python:
             # Create the table, stock, and waste.
             self.table = t = Table(base="card/base.png", back="card/back.png")
             self.stock = t.stack(LEFT, TOP, xoff=0, yoff=0, click=True)
-            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_BOTTOM, show=self.deal, click=True)
+            self.waste = t.stack(LEFT + COL_SPACING, TOP, xoff=CARD_XSPACING, drag=DRAG_TOP, show=self.deal, click=True)
 
             # The 4 foundation stacks.
             self.foundations = [ ]
             for i in range(0, 4):
-                s = t.stack(LEFT + COL_SPACING * (i + 3), TOP, xoff=0, yoff=0, drag=DRAG_BOTTOM, drop=True)
+                s = t.stack(LEFT + COL_SPACING * (i + 3), TOP, xoff=0, yoff=0, drag=DRAG_TOP, drop=True)
                 self.foundations.append(s)
 
             # The 7 tableau stacks.
             self.tableau = [ ]
             for i in range(0, 7):
-                s = t.stack(LEFT + COL_SPACING * i, TOP + ROW_SPACING, xoff=0, yoff=CARD_YSPACING, drag=DRAG_BELOW, click=True, drop=True)
+                s = t.stack(LEFT + COL_SPACING * i, TOP + ROW_SPACING, xoff=0, yoff=CARD_YSPACING, drag=DRAG_ABOVE, click=True, drop=True)
                 self.tableau.append(s)
 
             # Create the stock and shuffle it.

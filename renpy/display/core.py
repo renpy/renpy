@@ -1332,7 +1332,7 @@ class Interface(object):
 
         # The global one.
         self.suppress_transition = False
-
+        
         # Figure out transitions.
         for k in self.transition:
             if k not in self.old_scene:
@@ -1341,9 +1341,14 @@ class Interface(object):
             self.ongoing_transition[k] = self.transition[k]            
             self.transition_from[k] = self.old_scene[k]
             self.transition_time[k] = None
-
+                    
         self.transition.clear()
-                
+
+        if suppress_transition:
+            self.ongoing_transition.clear()
+            self.transition_from.clear()
+            self.transition_time.clear()
+        
         ## Safety condition, prevents deadlocks.
         if trans_pause:
             if not self.ongoing_transition:

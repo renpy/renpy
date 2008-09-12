@@ -31,7 +31,6 @@ version = "Ren'Py 6.7.0b"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 
-
 def import_all():
 
     import renpy.game
