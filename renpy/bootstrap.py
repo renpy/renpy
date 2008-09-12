@@ -130,8 +130,15 @@ def bootstrap(renpy_base):
     op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
                   help="Deletes the persistent data, and exits.")
 
+    op.add_option('--presplash', dest='presplash', default=None,
+                  help="Used internally to display the presplash screen.")
+                  
     options, args = op.parse_args()
 
+    if options.presplash:
+        import renpy.display.presplash
+        renpy.display.presplash.show(options.presplash)
+    
     if options.trace:
         enable_trace(options.trace)
     
