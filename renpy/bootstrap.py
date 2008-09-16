@@ -77,7 +77,20 @@ def enable_trace(level):
 
 def mac_start(fn):
     os.system("open " + fn)
-    
+
+# This code fixes a bug in subprocess.Popen.__del__
+def popen_del(self, _deadstate=sys.maxint):
+    if not self._child_created:
+        return
+    self.poll(_deadstate=_deadstate)
+
+    try:
+        import subprocess
+        if self.returncode is None and subprocess._active is not None:
+            subprocess._active.append(self)
+    except:
+        pass
+            
 def bootstrap(renpy_base):
 
     global renpy
@@ -201,14 +214,13 @@ def bootstrap(renpy_base):
         import renpy.display.presplash
         renpy.display.presplash.start(gamedir)
 
-    # This is a hack that makes garbage collection go in the right order,
-    # hopefully.
+    # Fix an exception thrown by garbage collection.
     import subprocess
-    subprocess.Popen.__sys = sys
+    subprocess.Popen.__del__ = popen_del
 
     # If we're on a mac, install our own os.start.
     if sys.platform == "darwin":
-        os.startfile == mac_start
+        os.startfile = mac_start
         
     # Load up all of Ren'Py, in the right order.
     import renpy
