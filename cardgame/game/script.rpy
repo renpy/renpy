@@ -42,15 +42,19 @@ label quick_continue:
     
     while True:
 
-        $ ui.textbutton("Give Up", ui.jumps("giveup"), xalign=.02, yalign=.98)
+        python:
         
-        $ k.set_sensitive(True)
-        $ event = k.interact()
+            ui.textbutton("Give Up", ui.jumps("giveup"), xalign=.02, yalign=.98)
+            k.set_sensitive(True)
+            event = k.interact()
 
+            if event:
+                renpy.checkpoint()
+            
         if event == "win":
             jump win
 
-        if event == "tableau_drag" or event == "stock_click" or event == "foundation_drag":
+        if event == "tableau_drag" or event == "stock_click":
             $ hint_count -= 1
             if hint_count <= 0:
                 jump hint
@@ -91,14 +95,12 @@ label newgame:
     menu:    
         e "Would you like to try again?"
 
-        "No":
+        "Yes":
+            pass
 
+        "No":
             e "Well, I hope to see you again soon."
             return 
-
-        "Yes":
-
-            pass
 
     e "Okay, here we go!"
     
@@ -115,6 +117,9 @@ label newgame:
 label hint:
 
     $ under, over = k.hint()
+
+    $ print under, over
+
     if under is None:
         jump quick_continue
         

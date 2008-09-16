@@ -112,7 +112,7 @@ init python:
                     for i in cards:
                         stack.append(i)
 
-                return
+                return "tableau_drag"
 
             # Otherwise, the stack has a bottom card.
             bottom = stack[-1]
@@ -129,11 +129,15 @@ init python:
                 for i in cards:
                     stack.append(i)
 
+                return "tableau_drag"
+
+            return False
+                    
         def foundation_drag(self, evt):
 
             # We can only drag one card at a time to a foundation.
             if len(evt.drag_cards) != 1:
-                return
+                return False
 
             suit, rank = evt.drag_cards[0]
 
@@ -144,17 +148,21 @@ init python:
                 dsuit, drank = evt.drop_stack[-1]
                 if suit == dsuit and rank == drank + 1:
                     evt.drop_stack.append(evt.drag_cards[0])
-
+                    return "foundation_drag"
+                    
             # Otherwise, make sure we're dropping an ace.
             else:
                 if rank == 1:
                     evt.drop_stack.append(evt.drag_cards[0])
-                    
+                    return "foundation_drag"
+
+            return False
+                
         def tableau_doubleclick(self, evt):
 
             # Make sure that there's at least one card in the stack.
             if not evt.stack:
-                return
+                return False
 
             # The bottom card in the stack.
             card = evt.stack[-1]
@@ -167,7 +175,7 @@ init python:
                     if not i:
                         i.append(card)
                         break
-                return
+                return "foundation_drag"
 
             # Otherwise, see if there's a foundation where we can put
             # the card.
@@ -178,7 +186,9 @@ init python:
                 fsuit, frank = i[-1]
                 if suit == fsuit and rank == frank + 1:
                     i.append(card)
-                    break
+                    return "foundation_drag"
+
+            return False
         
         def stock_click(self, evt):
 
@@ -191,39 +201,39 @@ init python:
                         self.table.set_faceup(c, True)
                         self.waste.append(c)
 
+                return "stock_click"
+                        
             # Otherwise, move the contents of the waste to the stock.
             else:
                 while self.waste:
                     c = self.waste[-1]
                     self.table.set_faceup(c, False)
                     self.stock.append(c)
-            
+
+                return "stock_click"
+
+                    
         def interact(self):
 
             evt = ui.interact()
-
-            rv = "continue"
+            rv = False
             
             # Check the various events, and dispatch them to the methods
             # that handle them.
             if evt.type == "drag":
                 if evt.drop_stack in self.tableau:
-                    self.tableau_drag(evt)
-                    rv = "tableau_drag"
+                    rv = self.tableau_drag(evt)
                     
                 elif evt.drop_stack in self.foundations:
-                    self.foundation_drag(evt)
-                    rv = "foundation_drag"
+                    rv = self.foundation_drag(evt)
                     
             elif evt.type == "click":
                 if evt.stack == self.stock:
-                    self.stock_click(evt)
-                    rv = "stock_click"
+                    rv = self.stock_click(evt)
                     
             elif evt.type == "doubleclick":
                 if (evt.stack in self.tableau) or (evt.stack is self.waste):
-                    self.tableau_doubleclick(evt)
-                    rv = "stock_doubleclick"
+                    rv = self.tableau_doubleclick(evt)
                     
             # Ensure that the bottom card in each tableau is faceup.
             for i in range(0, 7):
@@ -317,7 +327,7 @@ init python:
                 "Ten",
                 "Jack",
                 "Queen",
-                "Ace" ][rank] + " of " + [
+                "King" ][rank] + " of " + [
                 "Clubs",
                 "Spades",
                 "Hearts",

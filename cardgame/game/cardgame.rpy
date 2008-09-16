@@ -181,7 +181,12 @@ init python:
             
             self.stacks.append(rv)
             return rv
-            
+
+        # Force a redraw on each interaction.
+        def per_interact(self):
+            renpy.redraw(self, 0)
+
+        
         def render(self, width, height, st, at):
 
             self.st = st
@@ -263,14 +268,14 @@ init python:
                     self.drag_cards = [ ]
                 elif card.stack.drag == DRAG_CARD:
                     self.drag_cards = [ card ]
-                elif card.stack.drag == DRAG_BELOW:
+                elif card.stack.drag == DRAG_ABOVE:
                     self.drag_cards = [ ]
                     for c in card.stack.cards:
                         if c is card or self.drag_cards:
                             self.drag_cards.append(c)
                 elif card.stack.drag == DRAG_STACK:
                     self.drag_cards = list(card.stack.cards)
-                elif card.stack.drag == DRAG_BOTTOM:
+                elif card.stack.drag == DRAG_TOP:
                     if card.stack.cards[-1] is card:
                         self.drag_cards = [ card ]
                     else:
