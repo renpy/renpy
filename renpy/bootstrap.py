@@ -75,7 +75,9 @@ def enable_trace(level):
  
     sys.settrace(trace_function)
 
-
+def mac_start(fn):
+    os.system("open " + fn)
+    
 def bootstrap(renpy_base):
 
     global renpy
@@ -198,6 +200,15 @@ def bootstrap(renpy_base):
     if not options.lint and not options.compile and not options.version and not options.rmpersistent:
         import renpy.display.presplash
         renpy.display.presplash.start(gamedir)
+
+    # This is a hack that makes garbage collection go in the right order,
+    # hopefully.
+    import subprocess
+    subprocess.Popen.__sys = sys
+
+    # If we're on a mac, install our own os.start.
+    if sys.platform == "darwin":
+        os.startfile == mac_start
         
     # Load up all of Ren'Py, in the right order.
     import renpy

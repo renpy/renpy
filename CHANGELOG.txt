@@ -1,3 +1,17 @@
+New in Ren'Py 6.7.1
+-------------------
+
+Ren'Py now ships with jEdit as its default text editor.
+
+
+The Macintosh application is now universal, including both i386 and
+ppc binaries. This means it should run faster on newer intel systems.
+
+
+Ren'Py will now use Launch Services to report errors that occur on the
+Macintosh.
+
+
 New in Ren'Py 6.7.0
 -------------------
 

@@ -1,37 +1,25 @@
-
 # This file contains logic for detecting an editor, and for selecting
 # the default editor.
 
 init:
     python hide:
-        import os.path
+        import os
         import sys
-        import platform
-        
 
         if not config.editor:
-             
+
+            editor = config.renpy_base + "/jedit/jedit.jar"
+            editor = renpy.shell_escape(editor)
+
             if sys.platform == 'win32':
-                editor = config.renpy_base + "/editor/scite.exe"
-
-                if os.path.exists(editor):
-                    editor = renpy.shell_escape(editor)
-                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s" -goto:%(line)d'
-                    config.editor_transient = config.editor+' -revert:'
-
-            elif platform.mac_ver()[0]:
-                config.editor = "open -t '%(allfiles)s'"
-
+                config.editor = 'javaw.exe -jar "' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
+                config.editor_transient = 'javaw.exe -jar "' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
             else:
-                editor = config.renpy_base + "/editor/scite"
+                config.editor = "java -jar '" + editor + "' -reuseview '%(filename)s'  +line:%(line)d '%(otherfiles)s'"
+                config.editor_transient = "java -jar '" + editor + "' -newplainview '%(filename)s' +line:%(line)d '%(otherfiles)s'"
             
-                if os.path.exists(editor):
-                    editor = renpy.shell_escape(editor)
-                    config.editor = "'" + editor + "' '%(allfiles)s' '-open:%(filename)s' -goto:%(line)d"
-                    config.editor_transient = config.editor+' -revert:'
-
-            if config.editor:
-                os.environ['RENPY_EDITOR'] = config.editor
-            if config.editor_transient:
-                os.environ['RENPY_EDITOR_TRANSIENT'] = config.editor_transient
+        if config.editor:
+            os.environ['RENPY_EDITOR'] = config.editor
+        if config.editor_transient:
+            os.environ['RENPY_EDITOR_TRANSIENT'] = config.editor_transient
                 

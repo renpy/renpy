@@ -927,13 +927,16 @@ def launch_editor(filenames, line=1, transient=0):
 
     allfiles = join.join(filenames)
     otherfiles = join.join(filenames[1:])
-                                
+
+    
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     if transient and (renpy.config.editor_transient is not None):
         cmd = renpy.config.editor_transient % subs
     else:
         cmd = renpy.config.editor % subs
 
+    print cmd
+        
     try:
         return subprocess.Popen(cmd, shell=shell)
     except:
