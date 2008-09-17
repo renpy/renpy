@@ -90,16 +90,18 @@ def archive(prefix, files):
             offset += len(padding)
 
             data = datafile.read()
-
+            
             if not data:
                 break
 
             dlen = len(data)
+            start = data[:16]
+            rest = data[16:]
+            
+            archivef.write(rest)
 
-            archivef.write(data)
-
-            index[shortfn].append((offset ^ key, dlen ^ key))
-            offset += dlen
+            index[shortfn].append((offset ^ key, dlen ^ key, start))
+            offset += len(rest)
                       
         datafile.close()
 

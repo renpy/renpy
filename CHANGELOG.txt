@@ -12,6 +12,12 @@ Ren'Py will now use Launch Services to report errors that occur on the
 Macintosh.
 
 
+The definitions of config.editor and config.editor_transient have been
+changed. While it's simplified, older values may no longer
+work. Please read the documentation for details of the new syntax.
+
+
+
 New in Ren'Py 6.7.0
 -------------------
 

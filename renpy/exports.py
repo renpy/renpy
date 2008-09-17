@@ -889,14 +889,13 @@ def get_filename_line():
     return n.filename, n.linenumber
 
 def shell_escape(s):
-    import sys
-    import re
-
-    if hasattr(sys, "winver"):
-        return s.replace("\\", "\\\\").replace("\"", "\\\"")
-    else:
-        return s.replace("\\", "\\\\").replace("'", "\\'")
-
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\'", "\\\'")
+    s = s.replace("\"", "\\\"")
+    s = s.replace("\$", "\\\$")
+    s = s.replace("\%", "\\\%")
+    s = s.replace("\`", "\\\`")
+    return s
 
 def launch_editor(filenames, line=1, transient=0):
     """
@@ -914,20 +913,21 @@ def launch_editor(filenames, line=1, transient=0):
     if not len(filenames):
         return
 
-    if hasattr(sys, "winver"):
-        shell = False
-        join = '" "'
-    else:
-        shell = True
-        join = "' '"
-
+    # join = '" "'
+    shell = True
+    
+#     if hasattr(sys, "winver"):
+#         shell = False
+#         # join = '" "'
+#     else:
+#         shell = True
+#         # join = "' '"
 
     filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
-    allfiles = join.join(filenames)
-    otherfiles = join.join(filenames[1:])
-
+    allfiles =  '" "'.join(filenames)
+    otherfiles = '" "'.join(filenames[1:])
     
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     if transient and (renpy.config.editor_transient is not None):
@@ -935,8 +935,8 @@ def launch_editor(filenames, line=1, transient=0):
     else:
         cmd = renpy.config.editor % subs
 
-    print cmd
-        
+    cmd = cmd.replace('""', '')
+
     try:
         return subprocess.Popen(cmd, shell=shell)
     except:

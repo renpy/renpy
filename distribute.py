@@ -132,11 +132,13 @@ def main():
     # files.extend(tree("dse"))
     files.extend(tree("the_question"))
 
-    editor = tree("editor")
-    editor.remove("editor/scite.exe")
-    files.append("editor/scite.exe")
-    more_files.extend(editor)
+#     editor = tree("editor")
+#     editor.remove("editor/scite.exe")
+#     files.append("editor/scite.exe")
+#     more_files.extend(editor)
 
+    files.extend(tree("jedit"))
+    
     # files.extend(tree("extras"))
     more_files.extend(tree("lib"))
 

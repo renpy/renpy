@@ -71,8 +71,12 @@ def index_archives():
                 # Deobfuscate the index.
 
                 for k in index.keys():
-                    index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
 
+                    if len(index[k][0]) == 2:
+                        index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
+                    else:
+                        index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
+                        
                 archives.append((prefix, index))
                 
                 f.close()
@@ -136,36 +140,55 @@ def listdirfiles():
 
 class SubFile(object):
 
-    def __init__(self, f, base, length):
+    def __init__(self, f, base, length, start):
         self.f = f
         self.base = base
         self.offset = 0
         self.length = length
-
-        self.f.seek(self.offset + self.base)
+        self.start = start
+        
+        self.f.seek(self.base)
 
     def read(self, length=None):
 
-        maxlength  = self.length - self.offset
+        maxlength = self.length - self.offset
+
         if length is not None:
             length = min(length, maxlength)
         else:
             length = maxlength
 
-        rv = self.f.read(length)
+        rv1 = self.start[self.offset:self.offset + length]
+        length -= len(rv1)
+        self.offset += len(rv1)
         
-        self.offset += len(rv)
+        rv2 = self.f.read(length)        
+        self.offset += len(rv2)
 
-        return rv
+        return rv1 + rv2
 
     def readline(self, length=None):
 
-        maxlength  = self.length - self.offset
+        maxlength = self.length - self.offset
         if length is not None:
             length = min(length, maxlength)
         else:
             length = maxlength
 
+        # If we're in the start, then read the line ourselves.
+        if self.offset < len(self.start):
+            rv = ''
+
+            while length:
+                c = self.read(1)
+                rv += c
+                if c == '\n':
+                    break
+                length -= 1
+
+            return rv
+                
+        # Otherwise, let the system read the line all at once.
         rv = self.f.readline(length)
 
         self.offset += len(rv)
@@ -217,7 +240,11 @@ class SubFile(object):
         elif whence == 2:
             self.offset = self.length + offset
 
-        self.f.seek(self.offset + self.base)
+        offset = self.offset - len(self.start)
+        if offset < 0:
+            offset = 0
+            
+        self.f.seek(offset + self.base)
 
     def tell(self):
         return self.offset
@@ -257,8 +284,15 @@ def load(name):
 
         # Direct path.
         if len(index[name]) == 1:
-            offset, dlen = index[name][0]
-            rv = SubFile(f, offset, dlen)
+
+            t = index[name][0]
+            if len(t) == 2:
+                offset, dlen = t
+                start = ''
+            else:
+                offset, dlen, start = t
+
+            rv = SubFile(f, offset, dlen, start)
 
         # Compatability path.
         else:

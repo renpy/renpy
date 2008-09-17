@@ -15,8 +15,8 @@ init:
                 config.editor = 'javaw.exe -jar "' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
                 config.editor_transient = 'javaw.exe -jar "' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
             else:
-                config.editor = "java -jar '" + editor + "' -reuseview '%(filename)s'  +line:%(line)d '%(otherfiles)s'"
-                config.editor_transient = "java -jar '" + editor + "' -newplainview '%(filename)s' +line:%(line)d '%(otherfiles)s'"
+                config.editor = 'java -jar "' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
+                config.editor_transient = 'java -jar "' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
             
         if config.editor:
             os.environ['RENPY_EDITOR'] = config.editor
