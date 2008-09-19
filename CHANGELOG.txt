@@ -17,6 +17,10 @@ changed. While it's simplified, older values may no longer
 work. Please read the documentation for details of the new syntax.
 
 
+The new _window_subtitle variable allows a portion of the window
+caption to be varied depending on the game circumstances. The new
+config.menu_window_subtitle 
+
 
 New in Ren'Py 6.7.0
 -------------------
