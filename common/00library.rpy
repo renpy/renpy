@@ -447,6 +447,9 @@ init -1180 python:
 
     # A list of layers to clear when entering the main and game menus.
     config.clear_layers = [ ]
+
+    # The _window_subtitle used inside menus.
+    config.menu_window_subtitle = ''
     
     # The screen that we go to when entering the game menu.
     _game_menu_screen = None
@@ -492,7 +495,10 @@ label _enter_menu:
         # This may be changed, if we are already in the main menu.
         renpy.context().main_menu = False
         renpy.context_dynamic("main_menu")
+        renpy.context_dynamic("_window_subtitle")
+
         store.main_menu = False
+        store._window_subtitle = config.menu_window_subtitle
         
         store.mouse_visible = True
         store.suppress_overlay = True
@@ -648,9 +654,10 @@ label _start:
 
     python hide:
         for i in range(0, 7):
-            renpy.music.stop(channel=i)
-            renpy.sound.stop(channel=i)
-    
+            # renpy.music.stop(channel=i)
+            # renpy.sound.stop(channel=i)
+            pass
+            
     if config.main_menu_music:
         $ renpy.music.play(config.main_menu_music, if_changed=True)
     else:

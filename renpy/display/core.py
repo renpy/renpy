@@ -106,8 +106,6 @@ class Displayable(renpy.object.Object):
                 continue
 
             i.find_focusable(callback, focus_name)
-            
-
 
     def focus(self, default=False):
         """
@@ -127,8 +125,6 @@ class Displayable(renpy.object.Object):
 
         if not self.activated:
             self.set_style_prefix(self.role + "idle_")
-
-
 
     def is_focused(self):
         return renpy.game.context().scene_lists.focused is self
@@ -646,6 +642,9 @@ class Display(object):
 
     @ivar next_frame: The time when the next frame should be drawn. In
     ms returned from pygame.time.get_ticks().
+
+    @ivar window_caption: The current window caption.
+
     """
 
 
@@ -729,7 +728,8 @@ class Display(object):
             self.window = pygame.display.set_mode((width, height), fsflag, 32)
 
         # Window title.
-        pygame.display.set_caption(renpy.config.window_title.encode("utf-8"))
+        self.window_caption = None
+        self.set_window_caption()
         
         # Sample surface that all surfaces are created based on.
         sample = pygame.Surface((10, 10))
@@ -765,6 +765,14 @@ class Display(object):
         
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+    def set_window_caption(self):
+        caption = renpy.config.window_title + renpy.store._window_subtitle
+        if caption == self.window_caption:
+            return
+
+        self.window_caption = caption
+        pygame.display.set_caption(caption.encode("utf-8"))
 
     def can_redraw(self, first_pass):
         """
@@ -1375,6 +1383,9 @@ class Interface(object):
         for i in renpy.config.interact_callbacks:
             i()
 
+        # Set the window caption.
+        self.display.set_window_caption()
+            
         # Tick time forward.
         renpy.display.im.cache.tick()
 

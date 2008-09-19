@@ -38,6 +38,9 @@ _return = None
 _args = None
 _kwargs = None
 
+# The window subtitle.
+_window_subtitle = ''
+
 # config.
 _config = renpy.config
 
