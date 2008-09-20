@@ -8,6 +8,7 @@ import tarfile
 import time
 import zlib
 import compileall
+import shutil
 
 zlib.Z_DEFAULT_COMPRESSION = 9
 
@@ -31,13 +32,17 @@ def tarup(filename, prefix, files):
     tf = tarfile.open(filename, "w:bz2")
     tf.dereference = True
 
-    print
+    sys.stdout.write(filename)
+    sys.stdout.flush()
 
     for fn in files:
-        print fn
+        sys.stdout.write(".")
+        sys.stdout.flush()
         
         tf.add(fn, prefix + "/" + fn, False)
 
+    sys.stdout.write("\n")
+        
     tf.close()
     
 
@@ -46,11 +51,12 @@ def zipup(filename, prefix, files):
 
     zf = zipfile.ZipFile(filename, "w")
 
-    print
+    sys.stdout.write(filename)
+    sys.stdout.flush()
 
     for fn in files:
-
-        print fn
+        sys.stdout.write(".")
+        sys.stdout.flush()
 
         zi = zipfile.ZipInfo(prefix + "/" + fn)
 
@@ -64,6 +70,9 @@ def zipup(filename, prefix, files):
         zf.writestr(zi, data(fn))
         
     zf.close()
+
+    sys.stdout.write("\n")
+    sys.stdout.flush()
     
     
 
@@ -126,7 +135,7 @@ def main():
     files.append("CHANGELOG.txt")
     files.append("LICENSE.txt")
     files.extend(tree("common"))
-    files.append("console.exe")
+    more_files.append("console.exe")
     files.extend(tree("data"))
     files.extend(tree("demo"))
     # files.extend(tree("dse"))
@@ -137,7 +146,7 @@ def main():
 #     files.append("editor/scite.exe")
 #     more_files.extend(editor)
 
-    files.extend(tree("jedit"))
+    more_files.extend(tree("jedit"))
     
     # files.extend(tree("extras"))
     more_files.extend(tree("lib"))
@@ -171,20 +180,20 @@ def main():
         ]
 
     for i in module_files:
-        more_files.append('module/' + i)
+        files.append('module/' + i)
 
-    files.append('python25.dll')
-    files.append('msvcr71.dll')
+    more_files.append('python25.dll')
+    more_files.append('msvcr71.dll')
     files.extend(tree('renpy'))
     more_files.extend(tree('renpy.app'))
-    files.append('renpy.code')
-    files.append('renpy.exe')
+    more_files.append('renpy.code')
+    more_files.append('renpy.exe')
     files.append('renpy.py')
 
     more_files.append('renpy.sh')
 
     files.extend(tree('template'))
-    files.extend(tree('tools'))
+    # files.extend(tree('tools'))
 
     files.append('doc/index.html')
     files.append('doc/common.css')
@@ -201,11 +210,24 @@ def main():
 
     # zipup("dists/" + prefix + "-win32.zip", prefix, files)
     # print "----"
-    zipup("dists/" + prefix + "-full.zip", prefix, files + more_files)
+    zipup("dists/" + prefix + "-sdk.zip", prefix, files + more_files)
     print "----"
-    tarup("dists/" + prefix + "-full.tar.bz2", prefix, files + more_files)
+    tarup("dists/" + prefix + "-sdk.tar.bz2", prefix, files + more_files)
+    tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
 
-    
+    # Make the 7zip.
+    os.chdir("dists")
+    os.system("unzip " + prefix + "-sdk.zip")
+
+    try:
+        os.unlink(prefix + "-sdk.7z")
+    except:
+        pass
+
+    os.system("7z a " + prefix + "-sdk.7z " + prefix)
+    os.system("cat ../7z.sfx " + prefix + "-sdk.7z > " + prefix + "-sdk.7z.exe""")
+    shutil.rmtree(prefix)
+    os.unlink(prefix + "-sdk.7z")
     
     print
     print "Did you remember to rebuild the exe after the last change?"
