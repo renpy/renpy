@@ -132,9 +132,11 @@ else:
     can_pixellate = False
 
     def scale(s, size):
-
-        return pygame.transform.scale(s, size)
-
+        renpy.display.render.blit_lock.acquire()        
+        rv = pygame.transform.scale(s, size)
+        renpy.display.render.blit_lock.release()
+        return rv
+        
 # def slow_endian_order(shifts, masks, r, g, b, a):
 
 #     has_alpha = masks[3]

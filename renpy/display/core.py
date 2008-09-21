@@ -1234,13 +1234,13 @@ class Interface(object):
             self.last_event = rv
             return rv
 
-        while renpy.display.im.cache.needs_preload():
-            ev = pygame.event.poll()
-            if ev.type != NOEVENT:
-                self.last_event = ev
-                return ev
+#         while renpy.display.im.cache.needs_preload():
+#             ev = pygame.event.poll()
+#             if ev.type != NOEVENT:
+#                 self.last_event = ev
+#                 return ev
 
-            renpy.display.im.cache.preload()
+#             renpy.display.im.cache.preload()
             
         try:
             cpu_idle.set()            
@@ -1282,6 +1282,9 @@ class Interface(object):
 
         # These things can be done once per interaction.
 
+        import time
+        start = time.time()
+        
         preloads = self.preloads
         self.preloads = [ ]
 
@@ -1310,7 +1313,7 @@ class Interface(object):
             self.transition_from = { }
                 
             self.restart_interaction = True
-        
+            
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -1614,23 +1617,24 @@ class Interface(object):
                 # Determine if we need a redraw.
                 needs_redraw = needs_redraw or renpy.display.render.process_redraws()
 
+                # Predict images, if we haven't done so already.
+                if not did_prediction and not self.event_peek():                    
+                    if not renpy.config.load_before_transition:
+                        root_widget.predict(renpy.display.im.cache.preload_image)
+
+                    for w in preloads:
+                        w.predict(renpy.display.im.cache.preload_image)
+
+                    renpy.game.context().predict(renpy.display.im.cache.preload_image)
+                    renpy.display.im.cache.preload()
+                    did_prediction = True
+
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
                 if needs_redraw and not self.event_peek():
                     if renpy.config.profile:
                         self.profile_time = get_time()
                     continue
-
-                # Predict images, if we haven't done so already.
-                if not did_prediction and not self.event_peek():
-                    root_widget.predict(renpy.display.im.cache.preload_image)
-
-                    for w in preloads:
-                        w.predict(renpy.display.im.cache.preload_image)
-
-                    renpy.game.context().predict(renpy.display.im.cache.preload_image)
-                    did_prediction = True
-
 
                 try:
 
@@ -1811,6 +1815,9 @@ class Interface(object):
             for i in renpy.config.overlay_layers:
                 scene_lists.clear(i)
 
+            # Stop ongoing preloading.
+            renpy.display.im.cache.end_tick()
+                
             # We no longer disable periodic between interactions.
             # pygame.time.set_timer(PERIODIC, 0)
 

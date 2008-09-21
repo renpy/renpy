@@ -18,7 +18,7 @@ init -1180 python:
     
     # The minimum version of the module we work with. Don't change
     # this unless you know what you're doing.
-    config.module_version = 6002001
+    config.module_version = 6007001
 
     # Should we warn the user if the module is missing or has a bad
     # version?

@@ -445,7 +445,8 @@ label launch:
         import renpy.subprocess
         import sys
         import os.path
-
+        import os
+        
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
             proc = renpy.subprocess.Popen([sys.argv[0], project.path])
         else:

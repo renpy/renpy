@@ -12,14 +12,21 @@ Ren'Py will now use Launch Services to report errors that occur on the
 Macintosh.
 
 
+The new _window_subtitle variable allows a portion of the window
+caption to be varied depending on the game circumstances. The new
+config.menu_window_subtitle 
+
+
+Image preloading now takes place in a separate thread. This allows
+image loading to proceed even while animations are playing on the
+screen.
+
+
 The definitions of config.editor and config.editor_transient have been
 changed. While it's simplified, older values may no longer
 work. Please read the documentation for details of the new syntax.
 
 
-The new _window_subtitle variable allows a portion of the window
-caption to be varied depending on the game circumstances. The new
-config.menu_window_subtitle 
 
 
 New in Ren'Py 6.7.0

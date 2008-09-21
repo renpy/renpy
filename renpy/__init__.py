@@ -103,6 +103,9 @@ def reload_all():
     import sys
     sys.meta_path.pop()
 
+    # Shut down the cache thread.
+    renpy.display.im.cache.quit()
+    
     for i in sys.modules.keys():
         if i.startswith("renpy") and i != "renpy" and i != "renpy.bootstrap":
             del sys.modules[i]

@@ -86,9 +86,9 @@ import pygame
 
 PygameSurface = pygame.Surface
 
-# Update this in library.rpy as well!
+# Update this in 00library.rpy as well!
 def version():
-    return 6002001
+    return 6007001
 
 def save_png(surf, file, compress=-1):
 
@@ -112,16 +112,16 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
     if pydst.get_bitsize() != pysrc.get_bitsize():
         raise Exception("pixellate requires both surfaces have the same bitsize.")
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     if pysrc.get_bitsize() == 32:
         pixellate32_core(pysrc, pydst, avgwidth, avgheight, outwidth, outheight)
     else:
         pixellate24_core(pysrc, pydst, avgwidth, avgheight, outwidth, outheight)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
 
 # Please note that r, g, b, and a are not necessarily red, green, blue
@@ -145,16 +145,16 @@ def map(pysrc, pydst, r, g, b, a):
     if pydst.get_size() != pysrc.get_size():
         raise Exception("map requires both surfaces have the same size.")
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     if pysrc.get_bitsize() == 32:
         map32_core(pysrc, pydst, r, g, b, a)
     else:
         map24_core(pysrc, pydst, r, g, b)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
 # Please note that r, g, b, and a are not necessarily red, green, blue
 # and alpha. Instead, they are the first through fourth byte of data.
@@ -177,16 +177,16 @@ def linmap(pysrc, pydst, r, g, b, a):
     if pydst.get_size() != pysrc.get_size():
         raise Exception("map requires both surfaces have the same size.")
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     if pysrc.get_bitsize() == 32:
         linmap32_core(pysrc, pydst, r, g, b, a)
     else:
         linmap24_core(pysrc, pydst, r, g, b)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
 
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
@@ -212,13 +212,13 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
     else:
         bytes = 4
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     alphamunge_core(pysrc, pydst, bytes, srcchan, dstchan, amap)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
     
 
@@ -296,8 +296,8 @@ def bilinear(pysrc, pydst,
     if dest_width is None or dest_height is None:
         dest_width, dest_height = pydst.get_size()
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     if pysrc.get_bitsize() == 32:
         scale32_core(pysrc, pydst,
@@ -310,8 +310,8 @@ def bilinear(pysrc, pydst,
                      dest_xoff, dest_yoff, dest_width, dest_height)
 
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
 
 def check(surf):
@@ -329,16 +329,16 @@ def transform(pysrc, pydst,
     check(pysrc)
     check(pydst)
     
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
 
     transform32_core(pysrc, pydst,
                      corner_x, corner_y,
                      xdx, ydx,
                      xdy, ydy)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
 
 def blend(pysrca, pysrcb, pydst, alpha):
@@ -347,15 +347,15 @@ def blend(pysrca, pysrcb, pydst, alpha):
     check(pysrcb)
     check(pydst)
     
-    pysrca.lock()
-    pysrcb.lock()
-    pydst.lock()
+    # pysrca.lock()
+    # pysrcb.lock()
+    # pydst.lock()
 
     blend32_core(pysrca, pysrcb, pydst, alpha)
 
-    pydst.unlock()
-    pysrcb.unlock()
-    pysrca.unlock()
+    # pydst.unlock()
+    # pysrcb.unlock()
+    # pysrca.unlock()
 
 def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
     check(pysrca)
@@ -363,17 +363,17 @@ def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
     check(pydst)
     check(pyimg)
     
-    pysrca.lock()
-    pysrcb.lock()
-    pydst.lock()
-    pyimg.lock()
+    # pysrca.lock()
+    # pysrcb.lock()
+    # pydst.lock()
+    # pyimg.lock()
 
     imageblend32_core(pysrca, pysrcb, pydst, pyimg, aoff, amap)
     
-    pyimg.unlock()
-    pydst.unlock()
-    pysrcb.unlock()
-    pysrca.unlock()
+    # pyimg.unlock()
+    # pydst.unlock()
+    # pysrcb.unlock()
+    # pysrca.unlock()
 
 def colormatrix(pysrc, pydst,
                 c00, c01, c02, c03, c04,
@@ -384,8 +384,8 @@ def colormatrix(pysrc, pydst,
     check(pysrc)
     check(pydst)
 
-    pysrc.lock()
-    pydst.lock()
+    # pysrc.lock()
+    # pydst.lock()
     
     colormatrix32_core(pysrc, pydst,
                        c00, c01, c02, c03, c04,
@@ -393,8 +393,8 @@ def colormatrix(pysrc, pydst,
                        c20, c21, c22, c23, c24,
                        c30, c31, c32, c33, c34)
 
-    pydst.unlock()
-    pysrc.unlock()
+    # pydst.unlock()
+    # pysrc.unlock()
 
     
 # Be sure to update scale.py when adding something new here!

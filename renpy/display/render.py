@@ -34,7 +34,13 @@ except:
 import time
 import renpy
 import pygame
+import threading
 from pygame.constants import *
+
+# We grab the blit lock each time it is necessary to blit
+# something. This allows call to the pygame.transform functions to
+# disable blitting, should it prove necessary.
+blit_lock = threading.Condition()
 
 # We only cache a single solid... but that should be enough to handle
 # some important cases, like button and window backgrounds.
@@ -757,7 +763,10 @@ class Render(object):
                 if winblit:
                     what = cacheget(id(what), what)
 
+                blit_lock.acquire()
                 dest.blit(what, (x, y))
+                blit_lock.release()
+
                 continue
 
             

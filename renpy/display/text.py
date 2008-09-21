@@ -83,8 +83,6 @@ class SFont(object):
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
         self.surf = surf
 
-        surf.lock()
-
         sw, sh = surf.get_size()
         height = sh - 1
         self.height = height
@@ -129,8 +127,6 @@ class SFont(object):
 
 
             i += 1
-
-        surf.unlock()
 
     def size(self, text):
         w = 0

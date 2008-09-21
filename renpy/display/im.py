@@ -28,6 +28,7 @@ import random
 import math
 import zipfile
 import cStringIO
+import threading
 
 import pygame
 from pygame.constants import *
@@ -75,14 +76,49 @@ class Cache(object):
         # The total size of everything in the cache.
         self.total_cache_size = 0
 
+        # A lock that must be held when updating the above.
+        self.lock = threading.Condition()
+
+        # Is the preload_thread alive?
+        self.keep_preloading = True
+
+        # The preload thread.
+        self.preload_thread = threading.Thread(target=self.preload_thread_main)
+        self.preload_thread.setDaemon(True)
+        self.preload_thread.start()
+        
+    def quit(self):
+        self.lock.acquire()
+        self.keep_preloading = False
+        self.lock.notify()
+        self.lock.release()
+
+        self.preload_thread.wait()
+        
+        
     # Returns the maximum size of the cache, after which we start
     # tossing things out.
     def cache_limit(self):
         return renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
 
+    # Clears out the cache.
+    def clear(self):
+        self.lock.acquire()
+
+        self.cache = { }
+        self.preloads = [ ]
+        self.first_preload_in_tick = True
+        self.size_of_current_generation = 0
+        self.total_cache_size = 0
+
+        self.lock.release()
+    
     # Increments time, and clears the list of images to be
     # preloaded.
     def tick(self):
+
+        self.lock.acquire()
+
         self.time += 1
         self.preloads = [ ]
         self.first_preload_in_tick = True
@@ -91,6 +127,14 @@ class Cache(object):
         if renpy.config.debug_image_cache:
             print "IC ----"
 
+        self.lock.release()
+
+    # The preload thread can deal with this update, so we don't need
+    # to lock things. 
+    def end_tick(self):
+        self.preloads = [ ]
+
+        
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, image):
         if renpy.config.debug_image_cache:
@@ -101,13 +145,11 @@ class Cache(object):
                 print "IC Can't preload non image: ", image
             else:
                 return
-            
+        
+        self.lock.acquire()
         self.preloads.append(image)
-
-    # Do we need to preload an image?
-    def needs_preload(self):
-        return (self.preloads and True) or self.first_preload_in_tick
-
+        self.lock.release()
+        
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
@@ -124,15 +166,25 @@ class Cache(object):
             renpy.display.render.mutated_surface(surf)
             return surf
 
+        ce = None
+        
+        # First try to grab the image out of the cache without locking it.
         if image in self.cache:
             ce = self.cache[image]
-            new = False
 
-            # This doesn't matter, so set it to False.
-            has_alpha = False
+        # Now, grab the cache and try again. This deals with the case where the image
+        # was already in the middle of preloading.            
+        if ce is None:
+
+            self.lock.acquire()
+            ce = self.cache.get(image, None)
+
+            if ce is not None:
+                self.cache.release()                
+
+        # Otherwise, we keep the lock, and load the image ourselves.
+        if ce is None:
             
-        else:
-
             surf = image.load()
             has_alpha = surf.get_masks()[3]
             surf = surf.convert_alpha()
@@ -147,42 +199,46 @@ class Cache(object):
             if renpy.config.debug_image_cache:
                 print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit())
 
-            new = True
+            # RLE detection. (ce.size is used to check that we're not
+            # 0 pixels big.)
+            if id(ce.surf) not in rle_cache and ce.size:
+                rle = image.rle
+                surf = ce.surf
 
-        # Move it into the current generation.
+                # If we don't know if the image is RLE or not, guess.
+                # Only do so if the image has an alpha channel.
+                if rle is None and has_alpha:
+                    sw, sh = surf.get_size()
+
+                    for i in range(0, 10):
+                        if surf.get_at((random.randint(0, sw-1),
+                                        random.randint(0, sh-1)))[3] == 0:
+                            rle = True
+                            break
+
+                if rle:
+
+                    # We must copy the surface, so we have a RLE-specific version.
+                    rle_surf = ce.surf.convert_alpha()
+
+                    rle_surf.set_alpha(255, RLEACCEL)
+                    rle_cache[id(ce.surf)] = rle_surf
+                    renpy.display.render.mutated_surface(ce.surf)
+                    if renpy.config.debug_image_cache:
+                        print "Added to rle cache:", image
+
+            self.lock.release()
+                        
+        # Move it into the current generation. This isn't protected by
+        # a lock, so in certain circumstances we could have an
+        # inaccurate size. But that's pretty unlikely, as the
+        # preloading thread should never run at the same time as an
+        # actual load from the normal thread.
+            
         if ce.time != self.time:
             ce.time = self.time
             self.size_of_current_generation += ce.size
-        
-        # RLE detection. (ce.size is used to check that we're not
-        # 0 pixels big.)
-        if new and id(ce.surf) not in rle_cache and ce.size:
-            rle = image.rle
-            surf = ce.surf
-
-            # If we don't know if the image is RLE or not, guess.
-            # Only do so if the image has an alpha channel.
-            if rle is None and has_alpha:
-                sw, sh = surf.get_size()
-
-                for i in range(0, 10):
-                    if surf.get_at((random.randint(0, sw-1),
-                                    random.randint(0, sh-1)))[3] == 0:
-                        rle = True
-                        break
-
-            if rle:
-
-                # We must copy the surface, so we have a RLE-specific version.
-                rle_surf = ce.surf.convert_alpha()
-
-                rle_surf.set_alpha(255, RLEACCEL)
-                rle_cache[id(ce.surf)] = rle_surf
-                renpy.display.render.mutated_surface(ce.surf)
-                if renpy.config.debug_image_cache:
-                    print "Added to rle cache:", image
-
-
+                            
         # Done... return the surface.
         return ce.surf
 
@@ -240,6 +296,8 @@ class Cache(object):
     # This actually performs preloading.
     def preload(self):
 
+        self.lock.acquire()
+        
         if self.first_preload_in_tick:
             self.first_preload_in_tick = False
 
@@ -259,26 +317,44 @@ class Cache(object):
             # Clean out the cache.
             self.cleanout()
 
-            # Return after doing said triage.
-            return
+            # Notify the preload thread that it might have some work to do.
+            self.lock.notify()
+            
+        self.lock.release()
 
-        # Otherwise, new_preloads contains things that aren't in the
-        # cache already. So load one of them into the cache, maybe.
+    def preload_thread_main(self):
 
-        cache_limit = self.cache_limit()
+        while self.keep_preloading:
+            
+            self.lock.acquire()
+            self.lock.wait()
+            self.lock.release()
 
-        # If the size of the current generation is bigger than the
-        # total cache size, stop preloading.
-        if self.size_of_current_generation > cache_limit:
-            self.preloads = [ ]
-            return
+            while self.preloads and self.keep_preloading:
+        
+                # Otherwise, new_preloads contains things that aren't in the
+                # cache already. So load one of them into the cache, maybe.
 
-        # Otherwise, preload the next image.
-        image = self.preloads.pop(0)
-        self.get(image)
+                cache_limit = self.cache_limit()
 
-        # And, we're done.
-        self.cleanout()
+                # If the size of the current generation is bigger than the
+                # total cache size, stop preloading.
+                if self.size_of_current_generation > cache_limit:
+                    self.preloads = [ ]
+                    break
+                
+                # Otherwise, preload the next image.
+                self.lock.acquire()
+
+                try:
+                    image = self.preloads.pop(0)                    
+                    self.get(image)
+                except:
+                    pass
+                    
+                # And, we're done.
+                self.cleanout()
+                self.lock.release()
 
         
 cache = Cache()
@@ -291,8 +367,7 @@ def free_memory():
     Frees some memory.
     """
 
-    global cache
-    cache = Cache()
+    cache.clear()
     rle_cache.clear()
 
 
@@ -343,6 +418,7 @@ class ImageBase(renpy.display.core.Displayable):
         
     def render(self, w, h, st, at):
         im = cache.get(self)
+        
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)
         rv.blit(im, (0, 0))
@@ -692,11 +768,13 @@ class Scale(ImageBase):
             surf = cache.get(self.image)
             rv = pygame.Surface((self.width, self.height), 0, surf)
             renpy.display.module.bilinear_scale(surf, rv)
-            return rv
 
         else:
-            return pygame.transform.scale(cache.get(self.image),
-                                          (self.width, self.height))
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.scale(cache.get(self.image), (self.width, self.height))
+            renpy.display.render.blit_lock.release()
+            
+        return rv
 
     def predict_files(self):
         return self.image.predict_files()
@@ -730,10 +808,10 @@ class Flip(ImageBase):
 
     def load(self):
 
-        
+        renpy.display.render.blit_lock.acquire()
+        rv = pygame.transform.flip(cache.get(self.image), self.horizontal, self.vertical)
+        renpy.display.render.blit_lock.release()
 
-        rv = pygame.transform.flip(cache.get(self.image),
-                                   self.horizontal, self.vertical)
         return rv
 
     def predict_files(self):
@@ -767,8 +845,10 @@ class Rotozoom(ImageBase):
 
     def load(self):
 
-        rv = pygame.transform.rotozoom(cache.get(self.image),
-                                       self.angle, self.zoom)
+        renpy.display.render.blit_lock.acquire()
+        rv = pygame.transform.rotozoom(cache.get(self.image), self.angle, self.zoom)
+        renpy.display.render.blit_lock.release()
+
         return rv
 
     def predict_files(self):

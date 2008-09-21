@@ -1257,8 +1257,10 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
                                                 0, 0, neww, newh)
         else:
 
+            renpy.display.render.blit_lock.acquire()
             scalesurf = pygame.transform.scale(surf, (neww, newh))
-
+            renpy.display.render.blit_lock.release()
+            
         renpy.display.render.mutated_surface(scalesurf)
 
         rv = renpy.display.render.Render(neww, newh)
