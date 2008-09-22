@@ -497,3 +497,37 @@ else:
 
         _renpy.imageblend = imageblend
 
+
+    def draw_scale(o):
+        if isinstance(o, int):
+            return int(math.ceil(o * factor))
+        elif isinstance(o, float):
+            return o * factor        
+        elif isinstance(o, tuple):
+            return tuple(draw_scale(i) for i in o)
+        elif isinstance(o, list):
+            return tuple(draw_scale(i) for i in o)
+        elif isinstance(o, dict):
+            return dict((k, draw_scale(v)) for k, v in o.iteritems())
+        else:
+            return None
+
+    def draw_wrap(f):
+        def newf(surf, color, *args, **kwargs):
+            f(surf.surface, color, *draw_scale(args), **draw_scale(kwargs))
+        return newf
+
+    def arc_wrap(f):
+        def newf(surf, color, Rect, start_angle, stop_angle, width=1):
+            f(surf.surface, color, draw_scale(Rect), start_angle, stop_angle, draw_scale(width))
+        return newf
+    
+    pygame.draw.rect = draw_wrap(pygame.draw.rect)
+    pygame.draw.polygon = draw_wrap(pygame.draw.polygon)
+    pygame.draw.circle = draw_wrap(pygame.draw.circle)
+    pygame.draw.ellipse = draw_wrap(pygame.draw.ellipse)
+    pygame.draw.arc = arc_wrap(pygame.draw.arc)
+    pygame.draw.line = draw_wrap(pygame.draw.line)
+    pygame.draw.lines = draw_wrap(pygame.draw.lines)
+    pygame.draw.aaline = draw_wrap(pygame.draw.aaline)
+    pygame.draw.aalines = draw_wrap(pygame.draw.aalines)

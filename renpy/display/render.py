@@ -1037,7 +1037,15 @@ class Render(object):
             rv.extend(child.main_displayables_at_point(x - xo, y - yo, layers, depth))
             
         return rv
-            
+
+    def canvas(self):
+        surf = pygame.Surface((self.width, self.height), 0, renpy.game.interface.display.sample_surface)
+        mutated_surface(surf)
+
+        self.blit(surf, (0, 0))
+
+        return Canvas(surf)
+        
         
 # Determine if a surface is fullscreen or not.
 def is_fullscreen(surf, x, y, wh):
@@ -1077,3 +1085,89 @@ def is_fullscreen(surf, x, y, wh):
     surf.fullscreen[xywh] = False
     return False
 
+
+class Canvas(object):
+
+    def __init__(self, surf):
+        self.surf = surf
+        
+    def rect(self, color, rect, width=0):
+        blit_lock.acquire()
+        pygame.draw.rect(self.surf,
+                            renpy.easy.color(color),
+                            rect,
+                            width)
+        blit_lock.release()
+
+    def polygon(self, color, pointlist, width=0):
+        blit_lock.acquire()
+        pygame.draw.polygon(self.surf,
+                            renpy.easy.color(color),
+                            pointlist,
+                            width)
+        blit_lock.release()
+
+    def circle(self, color, pos, radius, width=0):
+        blit_lock.acquire()
+        pygame.draw.circle(self.surf,
+                           renpy.easy.color(color),
+                           pos,
+                           radius,
+                           width)
+        blit_lock.release()
+
+    def ellipse(self, color, rect, width=0):
+        blit_lock.acquire()
+        pygame.draw.ellipse(self.surf,
+                           renpy.easy.color(color),
+                           rect,
+                           width)
+        blit_lock.release()
+
+
+    def arc(self, color, rect, start_angle, stop_angle, width=1):
+        blit_lock.acquire()
+        pygame.draw.arc(self.surf,
+                        renpy.easy.color(color),
+                        rect,
+                        start_angle,
+                        stop_angle,
+                        width)
+        blit_lock.release()
+
+
+    def line(self, color, start_pos, end_pos, width=1):
+        blit_lock.acquire()
+        pygame.draw.line(self.surf,
+                         renpy.easy.color(color),
+                         start_pos,
+                         end_pos,
+                         width)
+        blit_lock.release()
+
+    def lines(self, color, closed, pointlist, width=1):
+        blit_lock.acquire()
+        pygame.draw.lines(self.surf,
+                         renpy.easy.color(color),
+                         closed,
+                         pointlist,
+                         width)
+        blit_lock.release()
+    
+    def aaline(self, color, startpos, endpos, blend=1):
+        blit_lock.acquire()
+        pygame.draw.aaline(self.surf,
+                         renpy.easy.color(color),
+                         startpos,
+                         endpos,
+                         blend)
+        blit_lock.release()
+
+    def aalines(self, color, closed, pointlist, blend=1):
+        blit_lock.acquire()
+        pygame.draw.aalines(self.surf,
+                         renpy.easy.color(color),
+                         closed,
+                         pointlist,
+                         blend)
+        blit_lock.release()

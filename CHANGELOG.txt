@@ -5,11 +5,15 @@ Ren'Py now ships with jEdit as its default text editor.
 
 
 The Macintosh application is now universal, including both i386 and
-ppc binaries. This means it should run faster on newer intel systems.
+ppc binaries. This means it should run faster on newer Intel systems.
 
 
 Ren'Py will now use Launch Services to report errors that occur on the
 Macintosh.
+
+
+User-defined displayables can now use a canvas to draw lines, polygons, arcs,
+and ellipses on the screen.
 
 
 The new _window_subtitle variable allows a portion of the window
@@ -22,10 +26,13 @@ image loading to proceed even while animations are playing on the
 screen.
 
 
+A new button in the launcher now provides easy access to the local
+copy of the Ren'Py documentation.
+
+
 The definitions of config.editor and config.editor_transient have been
 changed. While it's simplified, older values may no longer
 work. Please read the documentation for details of the new syntax.
-
 
 
 

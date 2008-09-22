@@ -414,6 +414,7 @@ label top_menu:
             ui.close()
 
             bottom()
+            button(u"Documentation", u"Read Ren'Py tutorials and manuals.", clicked=ui.jumps("documentation"))
             button(u"Quit", u"Quit the Ren'Py Launcher.", clicked=ui.jumps("confirm_quit"))
             ui.close()
 
@@ -741,3 +742,10 @@ label rmpersistent:
 label confirm_quit:
     $ renpy.quit()
     
+label documentation:
+    python hide:
+        import webbrowser
+        webbrowser.open_new("file:///" + config.renpy_base + "/doc/index.html")
+        store.message = _(u"Now showing the Ren'Py documentation in your web browser.")
+
+    jump top_menu

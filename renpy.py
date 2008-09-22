@@ -68,8 +68,8 @@ def path_to_renpy_base():
 ##############################################################################
 
 # The version of the Mac Launcher and py4renpy that we use.
-macos_version = (6, 3, 2)
-linux_version = (6, 3, 2)
+macos_version = (6, 7, 1)
+linux_version = (6, 7, 1)
 
 if __name__ == "__main__":
 

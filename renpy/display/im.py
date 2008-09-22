@@ -93,7 +93,7 @@ class Cache(object):
         self.lock.notify()
         self.lock.release()
 
-        self.preload_thread.wait()
+        self.preload_thread.join()
         
         
     # Returns the maximum size of the cache, after which we start

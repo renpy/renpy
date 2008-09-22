@@ -27,7 +27,7 @@
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in data/script_version.rpy, too!
 # Also check to see if we have to update renpy.py.
-version = "Ren'Py 6.7.0c"
+version = "Ren'Py 6.7.1a"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 
@@ -99,13 +99,13 @@ def import_all():
 # This reloads all modules.
 def reload_all():
 
+    # Shut down the cache thread.
+    display.im.cache.quit()
+    
     # Cleans out the RenpyImporter.
     import sys
     sys.meta_path.pop()
 
-    # Shut down the cache thread.
-    renpy.display.im.cache.quit()
-    
     for i in sys.modules.keys():
         if i.startswith("renpy") and i != "renpy" and i != "renpy.bootstrap":
             del sys.modules[i]
