@@ -1,7 +1,8 @@
 New in Ren'Py 6.7.1
 -------------------
 
-Ren'Py now ships with jEdit as its default text editor.
+Ren'Py now ships with jEdit as its default text editor. This means Java
+1.5 or later is now required to edit scripts.
 
 
 The Macintosh application is now universal, including both i386 and
@@ -18,7 +19,8 @@ and ellipses on the screen.
 
 The new _window_subtitle variable allows a portion of the window
 caption to be varied depending on the game circumstances. The new
-config.menu_window_subtitle 
+config.menu_window_subtitle variable controls the value of _window_subtitle 
+when in a menu.
 
 
 Image preloading now takes place in a separate thread. This allows

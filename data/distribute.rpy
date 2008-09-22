@@ -38,8 +38,8 @@ init python:
         return False
 
     def tree(src, dest,
-             exclude_suffix=[ ".pyc", ".pyo", "~", ".bak" ],
-             exclude_prefix=[ "." ],
+             exclude_suffix=[ ".pyc", "~", ".bak" ],
+             exclude_prefix=[ ".", '#' ],
              exclude=ignored_files,
              exclude_func=None,
              ):

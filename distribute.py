@@ -96,7 +96,7 @@ def tree(root):
             if f[-1] == '~' or f[0] == '.':
                 continue
 
-            if f.endswith(".bak") or f.endswith(".pyc") or f.endswith(".pyo"):
+            if f.endswith(".bak") or f.endswith(".pyc"):
                 continue
 
             if f == "semantic.cache":
