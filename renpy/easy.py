@@ -33,7 +33,7 @@ def color(c):
     if isinstance(c, basestring):
         return renpy.display.text.color(c)
 
-    raise Exception("Not a color: %r" % c)
+    raise Exception("Not a color: %r" % (c,))
 
 def displayable_or_none(d):
 
