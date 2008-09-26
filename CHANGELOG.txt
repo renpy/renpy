@@ -48,6 +48,12 @@ what to archive. This makes it easier to break the files up into
 multiple archives, in a single game.
 
 
+The launcher will no longer include directories beginning with a dot
+(like .svn and .bzr) when copying the template directory to create a
+new project.
+
+
+
 New in Ren'Py 6.7.0
 -------------------
 
