@@ -37,6 +37,16 @@ changed. While it's simplified, older values may no longer
 work. Please read the documentation for details of the new syntax.
 
 
+Ren'Py now limits the framerate to 60 frames per second, which should
+improve smoothness on fast enough machines.
+
+
+Ren'Py now scans the game directory for all .rpa files, and adds them
+to config.archives automatically. In addition, the archiver tool now
+prompts for the name of archives, and uses filename patterns to decide
+what to archive. This makes it easier to break the files up into
+multiple archives, in a single game.
+
 
 New in Ren'Py 6.7.0
 -------------------

@@ -587,13 +587,20 @@ label archive_files:
 
         import renpy.tools.archiver as archiver
 
-        extensions = persistent.extensions or "png gif jpg"
-        extensions = prompt(u"Archiving Files", u"Please enter a space separated list of the file extensions you want archived.", "tools", extensions)
+        extensions = persistent.archive_extensions or "*.png *.gif *.jpg"
+        extensions = prompt(u"Archiving Files", u"Please enter a space separated list of the file patterns you want archived.", "tools", extensions)
         if not extensions.strip():
             renpy.jumps("tools_menu")
-        persistent.extensions = extensions    
+        persistent.archive_extensions = extensions    
         extensions = [ i.strip() for i in extensions.strip().split() ]
-        
+
+
+        base = persistent.archive_base or "data"
+        base = prompt(u"Archiving Files", u"Please enter the name of the archive file, without the .rpa extension.", "tools", base)
+        base = base.strip()
+        if not base:
+            renpy.jumps("tools_menu")
+        persistent.archive_base = base 
 
         # Tell the user we're archiving images.
         title(u"Archiving Files")
@@ -606,9 +613,11 @@ label archive_files:
         archived = project.path + "/archived"
 
         files = [ ]
-        prefix = gamedir + "/data"
+        prefix = gamedir + "/" + base
 
         def should_archive(fn, extensions=extensions):
+            import fnmatch
+            
             fn = fn.lower()
 
             if fn[0] == ".":
@@ -618,7 +627,7 @@ label archive_files:
                 return False
             
             for e in extensions:
-                if fn.endswith(e):
+                if fnmatch.fnmatch(fn, e):
                     return True
 
             return False

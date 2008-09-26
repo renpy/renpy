@@ -145,26 +145,13 @@ def main():
 
         
     # The basename is the final component of the path to the gamedir.
+    for i in os.listdir(renpy.config.gamedir):
 
-    basename = renpy.config.gamedir
-    if basename[-1] == '/':
-        basename = basename[:-1]
-    basename = os.path.basename(basename)
-
-    # Look for an archived game.
-    renpy.config.archives = [ ]
-
-    for i in basename, "game", "data":
-
-        if i in renpy.config.archives:
+        if not i.endswith(".rpa"):
             continue
-        
-        try:
-            renpy.loader.transfn(i + ".rpa")
-            renpy.config.archives.append(i)
-            continue
-        except:
-            continue
+
+        i = i[:-4]
+        renpy.config.archives.append(i)
 
     # Note the profile option.
     if renpy.game.options.profile:

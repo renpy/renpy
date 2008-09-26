@@ -190,7 +190,7 @@ def bootstrap(renpy_base):
             if prefix == ' ' or prefix == '_':
                 gamedirs.append(game_name)
 
-        gamedirs.extend([ 'game', 'data',])
+        gamedirs.extend([ 'game', 'data', 'launcher'])
 
         for i in gamedirs:
 

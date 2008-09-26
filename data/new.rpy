@@ -47,11 +47,18 @@ label new:
 
         unlink = template.info.get("unlink", [ ])
         unlink += [ 'launcherinfo.py' ]
-
+        
         for i in unlink:
             if os.path.exists(name + "/" + i):
                 os.unlink(name + "/" + i)
 
+        for dir, dirs, files in os.walk(name):
+            for d in list(dirs):
+                if d.startswith("."):
+                    dirs.remove(d)
+                    dn = dir + "/" + d
+                    shutil.rmtree(dn)
+                
         # Change the save directory.
         options = file(name + "/game/options.rpy").read()
         save_dir = "%s-%d" % (name, time.time())
