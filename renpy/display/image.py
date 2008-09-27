@@ -65,7 +65,6 @@ class UncachedImage(renpy.display.core.Displayable):
 
         return rv
 
-
 class ImageReference(renpy.display.core.Displayable):
     """
     ImageReference objects are used to reference images by their name,

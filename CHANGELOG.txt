@@ -48,6 +48,10 @@ what to archive. This makes it easier to break the files up into
 multiple archives, in a single game.
 
 
+The new renpy.copy_images function copies images with one prefix to a
+second prefix.
+
+
 The launcher will no longer include directories beginning with a dot
 (like .svn and .bzr) when copying the template directory to create a
 new project.

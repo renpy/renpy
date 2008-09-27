@@ -135,6 +135,22 @@ def image(name, img):
     img = renpy.easy.displayable(img)
 
     images[name] = img
+
+def copy_images(old, new):
+    if not isinstance(old, tuple):
+        old = tuple(old.split())
+
+    if not isinstance(new, tuple):
+        new = tuple(new.split())
+
+    lenold = len(old)
+        
+    for k in list(images.keys()):
+        if len(k) < lenold:
+            continue
+        
+        if k[:lenold] == old:
+            images[new + k[lenold:]] = images[k]
     
 def showing(name, layer='master'):
     """
