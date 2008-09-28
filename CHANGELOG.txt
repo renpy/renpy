@@ -57,6 +57,11 @@ The launcher will no longer include directories beginning with a dot
 new project.
 
 
+This version includes a refresh of the character art included with
+"The Question". The new art is by Deji, and the full-color version of 
+the art is available from http://wiki.renai.us/.
+
+
 
 New in Ren'Py 6.7.0
 -------------------
