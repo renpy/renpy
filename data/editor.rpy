@@ -4,11 +4,12 @@
 init:
     python hide:
         import os
+        import os.path
         import sys
 
         if not config.editor:
 
-            editor = config.renpy_base + "/jedit/jedit.jar"
+            editor = os.path.normpath(config.renpy_base + "/jedit/jedit.jar")
             editor = renpy.shell_escape(editor)
 
             if sys.platform == 'win32':

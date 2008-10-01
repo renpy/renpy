@@ -906,7 +906,7 @@ def get_filename_line():
 
 def shell_escape(s):
     s = s.replace("\\", "\\\\")
-    s = s.replace("\'", "\\\'")
+    # s = s.replace("\'", "\\\'")
     s = s.replace("\"", "\\\"")
     s = s.replace("\$", "\\\$")
     s = s.replace("\%", "\\\%")
