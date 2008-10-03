@@ -28,7 +28,7 @@ if not os.path.isdir(install):
     sys.exit(-1)
 
 # Default compile arguements for everybody.
-include_dirs = [ install + "/include", install + "/include/SDL" ]
+include_dirs = [ install + "/include", install + "/include/SDL", install + "/include/freetype2", install + "/include/pygame"]
 library_dirs = [ install + "/lib" ]
 extra_compile_args = [ "-O3", "-funroll-loops", "-ffast-math" ]
 extra_link_args = [ ]
@@ -74,6 +74,18 @@ rpe = distutils.core.Extension(
     )
 
 extensions.append(rpe)
+
+renpy_font = distutils.core.Extension(
+    "_renpy_font",
+    [ "renpy_ttf.c", "renpy_font.c"],
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
+    extra_compile_args=extra_compile_args,
+    extra_link_args=extra_link_args,
+    libraries=sdl_libraries + ['freetype'],
+    )
+
+extensions.append(renpy_font)
 
 psse = distutils.core.Extension(
     "pysdlsound.sound",
