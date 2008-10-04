@@ -1,8 +1,8 @@
 New in Ren'Py 6.8.0
 -------------------
 
-NEEDS RECOMPILE ON ALL PLATFORMS.
-
+Added support for one or more outlines around text. This allows the
+sort of text effects one sees in modern subtitles.
 
 
 

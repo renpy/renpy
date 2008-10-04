@@ -72,6 +72,18 @@ def none_is_null(d):
     else:
         return renpy.easy.displayable(d)
 
+# This expands the outlines list.
+def expand_outlines(l):
+    rv = [ ]
+
+    for i in l:
+        if len(i) == 2:
+            rv.append((i[0], renpy.easy.color(i[1]), 0, 0))
+        else:
+            rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
+
+    return rv
+    
 # A map of properties that we know about. The properties may take a
 # function that is called to convert the argument to something more
 # useful.
@@ -110,6 +122,7 @@ style_properties = dict(
     line_spacing = None,
     mouse = None,
     min_width = None,
+    outlines = expand_outlines,
     rest_indent = None,
     right_margin = None,
     right_padding = None,

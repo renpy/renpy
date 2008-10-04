@@ -218,7 +218,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
 
 
 
-def load_ttf(fn, size, bold, italics, underline):
+def load_ttf(fn, size, bold, italics, underline, expand):
 
     try:
         rv = pygame.font.Font(renpy.loader.load(fn), size)
@@ -249,31 +249,36 @@ def load_ttf(fn, size, bold, italics, underline):
             rv = pygame.font.SysFont(fn, size, bold, italics)
 
     rv.set_underline(underline)
+
+    try:
+        rv.set_expand(expand)
+    except AttributeError:
+        pass
+    
     return rv
     
 
-# TODO: Something sane if the font file can't be found.
-def get_font(fn, size, bold=False, italics=False, underline=False):
-    from renpy.loader import transfn
+def get_font(origfn, size, origbold=False, origitalics=False, underline=False, expand=0):
 
-    if (fn, bold, italics) in renpy.config.font_replacement_map:
-        fn, bold, italics = renpy.config.font_replacement_map[fn, bold, italics]
+    rv = font_cache.get((origfn, size, origbold, origitalics, underline, expand), None)
+    if rv is not None:
+        return rv
 
-    if (fn, size, bold, italics, underline) in font_cache:
-        return font_cache[(fn, size, bold, italics, underline)]
+    t = (origfn, origbold, origitalics)
+    fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
     rv = fonts.get((fn, size, bold, italics, underline), None)
     if rv is not None:
         rv.load()
     else:
         try:
-            rv = load_ttf(fn, size, bold, italics, underline)
+            rv = load_ttf(fn, size, bold, italics, underline, expand)
         except:
             if renpy.config.debug:
                 raise
             raise Exception("Could not find font: %r" % ((fn, size, bold, italics, underline), ))
 
-    font_cache[(fn, size, bold, italics, underline)] = rv
+    font_cache[(origfn, size, origbold, origitalics, underline, expand)] = rv
 
     return rv
 
@@ -338,7 +343,7 @@ class TextStyle(object):
         self.wcache = { }
         
     def update(self):
-        self.f = get_font(self.font, self.size, self.bold, self.italic, self.underline)
+        self.f = get_font(self.font, self.size, self.bold, self.italic, self.underline, 0)
 
     def get_font(self):
         return self.f
@@ -357,15 +362,17 @@ class TextStyle(object):
     def sizes(self, text):
         return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
-    def render(self, text, antialias, color, black_color, use_colors, time, at):
+    def render(self, text, antialias, color, black_color, use_colors, time, at, expand):
 
         if use_colors:
             color = self.color or color
             black_color = self.black_color or black_color
+
+        if expand:
+            font = get_font(self.font, self.size, self.bold, self.italic, self.underline, expand)
+        else:
+            font = self.f
             
-        font = self.f
-
-
         if isinstance(font, SFont):
             rv = font.render(text, antialias, color, black_color)
             
@@ -1389,7 +1396,7 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, offsets, color, black_color, user_colors, length, time, at, child_pos, add_focus):
+    def render_pass(self, r, xo, yo, color, black_color, user_colors, length, time, at, child_pos, add_focus, expand):
         """
         Renders the text to r at the offsets. Color is the base color,
         and user_colors controls if the user can override those colors.
@@ -1423,20 +1430,18 @@ class Text(renpy.display.core.Displayable):
                     else:
                         return False
 
-                surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at)
+                surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at, expand)
 
                 actual_y = y + max_ascent - ts.get_ascent()
 
-                for xo, yo in offsets:
+                if surf:
+                    r.blit(surf, (x + xo, actual_y + yo))
 
-                    if surf:
-                        r.blit(surf, (x + xo, actual_y + yo))
+                if add_focus and ts.hyperlink is not None:
+                    r.add_focus(self, ts.hyperlink, x + xo, y + yo, sw, sh)
 
-                    if add_focus and ts.hyperlink is not None:
-                        r.add_focus(self, ts.hyperlink, x + xo, y + yo, sw, sh)
-                        
-                    if not isinstance(text, (str, unicode)):
-                        child_pos.append((text, x + xo, actual_y + yo))
+                if not isinstance(text, (str, unicode)):
+                    child_pos.append((text, x + xo, actual_y + yo))
                 
                 x = x + sw
 
@@ -1486,7 +1491,8 @@ class Text(renpy.display.core.Displayable):
 
                 
         dslist = self.style.drop_shadow
-
+        outlines = self.style.outlines
+        
         if dslist is None:
             dslist = [ ]
         elif not isinstance(dslist, list):
@@ -1503,6 +1509,12 @@ class Text(renpy.display.core.Displayable):
             maxdsx = max(maxdsx, dsx)
             maxdsy = max(maxdsy, dsy)
 
+        for expand, color, dsx, dsy in outlines:
+            mindsx = min(mindsx, dsx)
+            mindsy = min(mindsy, dsy)
+            maxdsx = max(maxdsx, dsx)
+            maxdsy = max(maxdsy, dsy)
+            
         # minds{x,y} are negative (or 0), maxds{x,y} are positive (or 0).
             
         self.layout(width + mindsx - maxdsx, st)
@@ -1516,13 +1528,15 @@ class Text(renpy.display.core.Displayable):
                 
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
-        if dslist:
-            dsoffsets = [ (dsxo - mindsx, dsyo - mindsy) for dsxo, dsyo in dslist ]
-            self.render_pass(rv, dsoffsets, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False)
+        for dsxo, dsyo in dslist:
+            self.render_pass(rv, dsxo - mindsx, dsyo - mindsy, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False, 0)
 
+        for expand, color, dsxo, dsyo in outlines:
+            self.render_pass(rv, dsxo - mindsx - expand, dsyo - mindsy - expand, color, color, False, length, st, at, [ ], False, expand)
+             
         self.child_pos = [ ]
 
-        if self.render_pass(rv, [ (-mindsx, -mindsy) ], self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True):
+        if self.render_pass(rv, -mindsx, -mindsy, self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True, 0):
             if self.slow:
                 self.call_slow_done(st)
 
