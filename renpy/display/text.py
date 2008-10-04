@@ -22,6 +22,8 @@
 import pygame
 from pygame.constants import *
 
+import xml.etree.ElementTree as etree
+
 try:
     import _renpy_font
     pygame.font = _renpy_font

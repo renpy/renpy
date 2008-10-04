@@ -1,8 +1,18 @@
 New in Ren'Py 6.8.0
 -------------------
 
-Added support for one or more outlines around text. This allows the
-sort of text effects one sees in modern subtitles.
+Ren'Py now includes its own font-handling library, derived from
+pygame.font/SDL_ttf, which it uses in place of them when
+possible. This gives two advantages:
+
+* Outlined text is now possible. The new outlines style property
+allows you to specify one or more outlines, including offset
+ones. This allows for several fairly complicated text effects, similar
+to what you'd see in modern subtitles. [demo]
+
+* We believe the bug preventing fonts from being archived has been
+fixed. It should now be possible to include a font in an archive, and
+have that work. The archiver has been modified to allow this.
 
 
 

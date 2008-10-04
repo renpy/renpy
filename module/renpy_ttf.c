@@ -482,9 +482,10 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
             cached->maxx += (int)ceil(font->glyph_italics);
         }
 
-        // Blah!
+        /* Adjust sizes for expand. */
         cached->maxx += font->expand;
-
+        cached->maxy += font->expand;
+        
         cached->stored |= CACHED_METRICS;
     }
 
@@ -505,7 +506,7 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
             shear.yy = 1 << 16;
 
             FT_Outline_Transform( outline, &shear );
-        }
+       }
 
         error = FT_Get_Glyph(glyph, &realglyph);
         if (error) {
@@ -540,7 +541,6 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
 
         memcpy( dst, src, sizeof( *dst ) );
         
-        
         /* FT_Render_Glyph() and .fon fonts always generate a
          * two-color (black and white) glyphslot surface, even
          * when rendered in ft_render_mode_normal.  This is probably
@@ -563,9 +563,6 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
             dst->width += bump;
         }
 
-        dst->pitch += font->expand;
-        dst->pitch += font->expand;
-        
         if (dst->rows != 0) {
             dst->buffer = (unsigned char *)malloc( dst->pitch * dst->rows );
             if( !dst->buffer ) {
@@ -803,8 +800,6 @@ int RENPY_TTF_GlyphMetrics(RENPY_TTF_Font *font, Uint16 ch,
         if( font->style & RENPY_TTF_STYLE_BOLD ) {
             *maxx += font->glyph_overhang;
         }
-
-        *maxx += font->expand;        
     }
     if ( miny ) {
         *miny = font->current->miny;
@@ -989,6 +984,7 @@ int RENPY_TTF_SizeUNICODE(RENPY_TTF_Font *font, const Uint16 *text, int *w, int 
         *h = font->height;
 #endif
     }
+        
     return status;
 }
 
@@ -1072,8 +1068,8 @@ SDL_Surface *RENPY_TTF_RenderUNICODE_Solid(RENPY_TTF_Font *font,
         RENPY_TTF_SetError( "Text has zero width" );
         return NULL;
     }
-    height = font->height;
-
+    height = font->height + font->expand;
+    
     /* Create the target surface */
     textbuf = SDL_AllocSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
     if( textbuf == NULL ) {
@@ -1332,7 +1328,7 @@ SDL_Surface* RENPY_TTF_RenderUNICODE_Shaded( RENPY_TTF_Font* font,
         RENPY_TTF_SetError("Text has zero width");
         return NULL;
     }
-    height = font->height;
+    height = font->height + font->expand;
 
     /* Create the target surface */
     textbuf = SDL_AllocSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
@@ -1592,7 +1588,7 @@ SDL_Surface *RENPY_TTF_RenderUNICODE_Blended(RENPY_TTF_Font *font,
         RENPY_TTF_SetError("Text has zero width");
         return(NULL);
     }
-    height = font->height;
+    height = font->height + font->expand;
 
     textbuf = SDL_AllocSurface(SDL_SWSURFACE, width, height, 32,
                                0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);

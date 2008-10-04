@@ -659,9 +659,9 @@ static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
         else
         {
             fclose(test);
-            Py_BEGIN_ALLOW_THREADS
+            // Py_BEGIN_ALLOW_THREADS
                 font = RENPY_TTF_OpenFont(filename, fontsize);
-            Py_END_ALLOW_THREADS
+            // Py_END_ALLOW_THREADS
 		}
     }
     if (!font)
@@ -673,9 +673,9 @@ static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
             Py_DECREF(fileobj);
             return -1;
         }
-        Py_BEGIN_ALLOW_THREADS
+        // Py_BEGIN_ALLOW_THREADS
             font = RENPY_TTF_OpenFontIndexRW(rw, 1, fontsize, 0);
-        Py_END_ALLOW_THREADS
+        // Py_END_ALLOW_THREADS
 #else
             Py_DECREF(fileobj);
         RAISE(PyExc_NotImplementedError, "nonstring fonts require SDL_ttf-2.0.6");
