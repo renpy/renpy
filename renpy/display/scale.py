@@ -26,6 +26,11 @@ import math
 import pygame
 import renpy
 
+try:
+    import _renpy_font as font_module
+except ImportError:
+    import pygame.font as font_module
+
 # This needs to be done before we mess too hard with pygame.
 try:
     import _renpy
@@ -314,7 +319,7 @@ else:
     # Ignoring scale2x and chop. The former due to a pending api change,
     # the latter due to general uselessness.
         
-    PygameFont = pygame.font.Font
+    PygameFont = font_module.Font
 
     class Font(object):
 
@@ -364,7 +369,7 @@ else:
         # Anything involving the parents of subsurfaces.
         # get_pitch, get_shifts, get_losses
                 
-    pygame.font.Font = Font
+    font_module.Font = Font
 
     old_image_save = pygame.image.save
 

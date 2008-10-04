@@ -177,6 +177,9 @@ def main():
         "winmixer.pyx",
         "IMG_savepng.c",
         "IMG_savepng.h",
+        "renpy_font.c",
+        "renpy_ttf.c",
+        "renpy_ttf.h",
         ]
 
     for i in module_files:

@@ -43,6 +43,8 @@
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include FT_TRUETYPE_IDS_H
+#include FT_STROKER_H
+#include FT_BITMAP_H
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -111,8 +113,11 @@ struct _RENPY_TTF_Font {
     /* For non-scalable formats, we must remember which font index size */
     int font_size_family;
 
-    
+    // How much bigger than the default should we render text?
+    int expand;
 
+    // The stroker.
+    FT_Stroker stroker;
 };
 
 /* The FreeType font engine/library */
@@ -338,6 +343,8 @@ RENPY_TTF_Font* RENPY_TTF_OpenFontIndexRW( SDL_RWops *src, int freesrc, int ptsi
         font->underline_height = 1;
     }
 
+    font->expand = 0;
+    
 #ifdef DEBUG_FONTS
     printf("Font metrics:\n");
     printf("\tascent = %d, descent = %d\n",
@@ -355,6 +362,8 @@ RENPY_TTF_Font* RENPY_TTF_OpenFontIndexRW( SDL_RWops *src, int freesrc, int ptsi
     font->glyph_italics = 0.207f;
     font->glyph_italics *= font->height;
 
+    font->stroker = NULL;
+    
     return font;
 }
 
@@ -417,7 +426,8 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
     FT_GlyphSlot glyph;
     FT_Glyph_Metrics* metrics;
     FT_Outline* outline;
-
+    FT_Glyph realglyph;
+    
     if ( !font || !font->face ) {
         return FT_Err_Invalid_Handle;
     }
@@ -438,6 +448,7 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
     metrics = &glyph->metrics;
     outline = &glyph->outline;
 
+    
     /* Get the glyph metrics if desired */
     if ( (want & CACHED_METRICS) && !(cached->stored & CACHED_METRICS) ) {
         if ( FT_IS_SCALABLE( face ) ) {
@@ -470,6 +481,10 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
         if( font->style & RENPY_TTF_STYLE_ITALIC ) {
             cached->maxx += (int)ceil(font->glyph_italics);
         }
+
+        // Blah!
+        cached->maxx += font->expand;
+
         cached->stored |= CACHED_METRICS;
     }
 
@@ -492,25 +507,40 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
             FT_Outline_Transform( outline, &shear );
         }
 
+        error = FT_Get_Glyph(glyph, &realglyph);
+        if (error) {
+            return error;
+        }
+        
+        /* Perhaps stroke the glyph. */
+        if (font->stroker) {
+            /* FT_Glyph_Stroke(&realglyph, font->stroker, 1); */
+            FT_Glyph_StrokeBorder(&realglyph, font->stroker, 0, 1);
+        }
+
+        
         /* Render the glyph */
         if ( mono ) {
-            error = FT_Render_Glyph( glyph, ft_render_mode_mono );
+            error = FT_Glyph_To_Bitmap( &realglyph, ft_render_mode_mono, 0, 1);
         } else {
-            error = FT_Render_Glyph( glyph, ft_render_mode_normal );
+            error = FT_Glyph_To_Bitmap( &realglyph, ft_render_mode_normal, 0, 1);
         }
+
         if( error ) {
             return error;
         }
-
+        
         /* Copy over information to cache */
-        src = &glyph->bitmap;
+        src = &((FT_BitmapGlyph) realglyph)->bitmap;
         if ( mono ) {
             dst = &cached->bitmap;
         } else {
             dst = &cached->pixmap;
         }
-        memcpy( dst, src, sizeof( *dst ) );
 
+        memcpy( dst, src, sizeof( *dst ) );
+        
+        
         /* FT_Render_Glyph() and .fon fonts always generate a
          * two-color (black and white) glyphslot surface, even
          * when rendered in ft_render_mode_normal.  This is probably
@@ -533,6 +563,9 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
             dst->width += bump;
         }
 
+        dst->pitch += font->expand;
+        dst->pitch += font->expand;
+        
         if (dst->rows != 0) {
             dst->buffer = (unsigned char *)malloc( dst->pitch * dst->rows );
             if( !dst->buffer ) {
@@ -619,6 +652,9 @@ static FT_Error Load_Glyph( RENPY_TTF_Font* font, Uint16 ch, c_glyph* cached, in
                 }
             }
         }
+
+        /* Free the new glyph. */
+        FT_Done_Glyph(realglyph);
 
         /* Mark that we rendered this format */
         if ( mono ) {
@@ -767,6 +803,8 @@ int RENPY_TTF_GlyphMetrics(RENPY_TTF_Font *font, Uint16 ch,
         if( font->style & RENPY_TTF_STYLE_BOLD ) {
             *maxx += font->glyph_overhang;
         }
+
+        *maxx += font->expand;        
     }
     if ( miny ) {
         *miny = font->current->miny;
@@ -938,6 +976,8 @@ int RENPY_TTF_SizeUNICODE(RENPY_TTF_Font *font, const Uint16 *text, int *w, int 
         prev_index = glyph->index;
     }
 
+    maxx += font->expand;
+    
     /* Fill the bounds rectangle */
     if ( w ) {
         *w = (maxx - minx);
@@ -1744,4 +1784,17 @@ void RENPY_TTF_Quit( void )
 int RENPY_TTF_WasInit( void )
 {
     return RENPY_TTF_initialized;
+}
+
+void RENPY_TTF_SetExpand(RENPY_TTF_Font *font, float expand) {
+
+    if (expand == 0) return;
+
+    font->expand = expand * 2;
+    
+    FT_Stroker_New(library, &font->stroker);
+    FT_Stroker_Set( font->stroker, expand * 64,
+                    FT_STROKER_LINECAP_ROUND,
+                    FT_STROKER_LINEJOIN_ROUND,
+                    0 ); 
 }

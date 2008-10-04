@@ -221,6 +221,8 @@ extern DECLSPEC void SDLCALL RENPY_TTF_Quit(void);
 /* Check if the TTF engine is initialized */
 extern DECLSPEC int SDLCALL RENPY_TTF_WasInit(void);
 
+extern DECLSPEC void SDLCALL RENPY_TTF_SetExpand(RENPY_TTF_Font *, float);
+
 /* We'll use SDL for reporting errors */
 #define RENPY_TTF_SetError	SDL_SetError
 #define RENPY_TTF_GetError	SDL_GetError

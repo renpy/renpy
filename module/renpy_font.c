@@ -1,23 +1,23 @@
 /*
-    pygame - Python Game Library
-    Copyright (C) 2000-2001  Pete Shinners
+  pygame - Python Game Library
+  Copyright (C) 2000-2001  Pete Shinners
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Library General Public
+  License as published by the Free Software Foundation; either
+  version 2 of the License, or (at your option) any later version.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU Library General Public
+  License along with this library; if not, write to the Free
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-    Pete Shinners
-    pete@shinners.org
+  Pete Shinners
+  pete@shinners.org
 */
 
 
@@ -32,9 +32,9 @@
 #include "renpy_ttf.h"
 
 typedef struct {
-  PyObject_HEAD
-  RENPY_TTF_Font* font;
-  PyObject* weakreflist;
+    PyObject_HEAD
+    RENPY_TTF_Font* font;
+    PyObject* weakreflist;
 } PyFontObject;
 #define PyFont_AsFont(x) (((PyFontObject*)x)->font)
 
@@ -46,19 +46,19 @@ static char* pkgdatamodule_name = "pygame.pkgdata";
 static char* resourcefunc_name = "getResource";
 
 static PyObject *font_resource(char *filename) {
-	PyObject* load_basicfunc = NULL;
-	PyObject* pkgdatamodule = NULL;
-	PyObject* resourcefunc = NULL;
-	PyObject* result = NULL;
+    PyObject* load_basicfunc = NULL;
+    PyObject* pkgdatamodule = NULL;
+    PyObject* resourcefunc = NULL;
+    PyObject* result = NULL;
 
-	pkgdatamodule = PyImport_ImportModule(pkgdatamodule_name);
-	if (!pkgdatamodule) goto font_resource_end;
+    pkgdatamodule = PyImport_ImportModule(pkgdatamodule_name);
+    if (!pkgdatamodule) goto font_resource_end;
 
-	resourcefunc = PyObject_GetAttrString(pkgdatamodule, resourcefunc_name);
-	if (!resourcefunc) goto font_resource_end;
+    resourcefunc = PyObject_GetAttrString(pkgdatamodule, resourcefunc_name);
+    if (!resourcefunc) goto font_resource_end;
 
-	result = PyObject_CallFunction(resourcefunc, "s", filename);
-	if (!result) goto font_resource_end;
+    result = PyObject_CallFunction(resourcefunc, "s", filename);
+    if (!result) goto font_resource_end;
 
     if (PyFile_Check(result)) {
         PyObject *tmp = PyFile_Name(result);
@@ -68,42 +68,42 @@ static PyObject *font_resource(char *filename) {
     }
 
 font_resource_end:
-	Py_XDECREF(pkgdatamodule);
-	Py_XDECREF(resourcefunc);
-	Py_XDECREF(load_basicfunc);
-	return result;
+    Py_XDECREF(pkgdatamodule);
+    Py_XDECREF(resourcefunc);
+    Py_XDECREF(load_basicfunc);
+    return result;
 }
 
 
 static void font_autoquit(void)
 {
-	if(font_initialized)
-	{
-		font_initialized = 0;
-		RENPY_TTF_Quit();
-	}
+    if(font_initialized)
+    {
+        font_initialized = 0;
+        RENPY_TTF_Quit();
+    }
 }
 
 
 static PyObject* font_autoinit(PyObject* self, PyObject* arg)
 {
-	if(!PyArg_ParseTuple(arg, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(arg, ""))
+        return NULL;
 
-	if(!font_initialized)
-	{
-		PyGame_RegisterQuit(font_autoquit);
+    if(!font_initialized)
+    {
+        PyGame_RegisterQuit(font_autoquit);
 
-		if(RENPY_TTF_Init())
-			return PyInt_FromLong(0);
-		font_initialized = 1;
+        if(RENPY_TTF_Init())
+            return PyInt_FromLong(0);
+        font_initialized = 1;
 
-	}
-	return PyInt_FromLong(font_initialized);
+    }
+    return PyInt_FromLong(font_initialized);
 }
 
 
-    /*DOC*/ static char doc_quit[] =
+/*DOC*/ static char doc_quit[] =
     /*DOC*/    "pygame.font.quit() -> none\n"
     /*DOC*/    "uninitialize the font module\n"
     /*DOC*/    "\n"
@@ -113,16 +113,16 @@ static PyObject* font_autoinit(PyObject* self, PyObject* arg)
 
 static PyObject* fontmodule_quit(PyObject* self, PyObject* arg)
 {
-	if(!PyArg_ParseTuple(arg, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(arg, ""))
+        return NULL;
 
-	font_autoquit();
+    font_autoquit();
 
-	RETURN_NONE
-}
+    RETURN_NONE
+        }
 
 
-    /*DOC*/ static char doc_init[] =
+/*DOC*/ static char doc_init[] =
     /*DOC*/    "pygame.font.init() -> None\n"
     /*DOC*/    "initialize the display module\n"
     /*DOC*/    "\n"
@@ -133,24 +133,24 @@ static PyObject* fontmodule_quit(PyObject* self, PyObject* arg)
 
 static PyObject* fontmodule_init(PyObject* self, PyObject* arg)
 {
-	PyObject* result;
-	int istrue;
+    PyObject* result;
+    int istrue;
 
-	if(!PyArg_ParseTuple(arg, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(arg, ""))
+        return NULL;
 
-	result = font_autoinit(self, arg);
-	istrue = PyObject_IsTrue(result);
-	Py_DECREF(result);
-	if(!istrue)
-		return RAISE(PyExc_SDLError, SDL_GetError());
+    result = font_autoinit(self, arg);
+    istrue = PyObject_IsTrue(result);
+    Py_DECREF(result);
+    if(!istrue)
+        return RAISE(PyExc_SDLError, SDL_GetError());
 
-	RETURN_NONE
-}
+    RETURN_NONE
+        }
 
 
 
-    /*DOC*/ static char doc_get_init[] =
+/*DOC*/ static char doc_get_init[] =
     /*DOC*/    "pygame.font.get_init() -> bool\n"
     /*DOC*/    "get status of font module initialization\n"
     /*DOC*/    "\n"
@@ -159,10 +159,10 @@ static PyObject* fontmodule_init(PyObject* self, PyObject* arg)
 
 static PyObject* get_init(PyObject* self, PyObject* arg)
 {
-	if(!PyArg_ParseTuple(arg, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(arg, ""))
+        return NULL;
 
-	return PyInt_FromLong(font_initialized);
+    return PyInt_FromLong(font_initialized);
 }
 
 
@@ -171,7 +171,7 @@ static PyObject* get_init(PyObject* self, PyObject* arg)
 
 /* font object methods */
 
-    /*DOC*/ static char doc_font_get_height[] =
+/*DOC*/ static char doc_font_get_height[] =
     /*DOC*/    "Font.get_height() -> int\n"
     /*DOC*/    "average height of font glyph\n"
     /*DOC*/    "\n"
@@ -180,17 +180,17 @@ static PyObject* get_init(PyObject* self, PyObject* arg)
 
 static PyObject* font_get_height(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong(RENPY_TTF_FontHeight(font));
+    return PyInt_FromLong(RENPY_TTF_FontHeight(font));
 }
 
 
 
-    /*DOC*/ static char doc_font_get_descent[] =
+/*DOC*/ static char doc_font_get_descent[] =
     /*DOC*/    "Font.get_descent() -> int\n"
     /*DOC*/    "gets the font descent\n"
     /*DOC*/    "\n"
@@ -201,17 +201,17 @@ static PyObject* font_get_height(PyObject* self, PyObject* args)
 
 static PyObject* font_get_descent(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong(RENPY_TTF_FontDescent(font));
+    return PyInt_FromLong(RENPY_TTF_FontDescent(font));
 }
 
 
 
-    /*DOC*/ static char doc_font_get_ascent[] =
+/*DOC*/ static char doc_font_get_ascent[] =
     /*DOC*/    "Font.get_ascent() -> int\n"
     /*DOC*/    "gets the font ascent\n"
     /*DOC*/    "\n"
@@ -221,17 +221,17 @@ static PyObject* font_get_descent(PyObject* self, PyObject* args)
 
 static PyObject* font_get_ascent(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong(RENPY_TTF_FontAscent(font));
+    return PyInt_FromLong(RENPY_TTF_FontAscent(font));
 }
 
 
 
-    /*DOC*/ static char doc_font_get_linesize[] =
+/*DOC*/ static char doc_font_get_linesize[] =
     /*DOC*/    "Font.get_linesize() -> int\n"
     /*DOC*/    "gets the font recommended linesize\n"
     /*DOC*/    "\n"
@@ -242,17 +242,17 @@ static PyObject* font_get_ascent(PyObject* self, PyObject* args)
 
 static PyObject* font_get_linesize(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong(RENPY_TTF_FontLineSkip(font));
+    return PyInt_FromLong(RENPY_TTF_FontLineSkip(font));
 }
 
 
 
-    /*DOC*/ static char doc_font_get_bold[] =
+/*DOC*/ static char doc_font_get_bold[] =
     /*DOC*/    "Font.get_bold() -> bool\n"
     /*DOC*/    "status of the bold attribute\n"
     /*DOC*/    "\n"
@@ -261,17 +261,17 @@ static PyObject* font_get_linesize(PyObject* self, PyObject* args)
 
 static PyObject* font_get_bold(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_BOLD) != 0);
+    return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_BOLD) != 0);
 }
 
 
 
-    /*DOC*/ static char doc_font_set_bold[] =
+/*DOC*/ static char doc_font_set_bold[] =
     /*DOC*/    "Font.set_bold(bool) -> None\n"
     /*DOC*/    "assign the bold attribute\n"
     /*DOC*/    "\n"
@@ -281,25 +281,25 @@ static PyObject* font_get_bold(PyObject* self, PyObject* args)
 
 static PyObject* font_set_bold(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
-	int style, val;
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    int style, val;
 
-	if(!PyArg_ParseTuple(args, "i", &val))
-		return NULL;
+    if(!PyArg_ParseTuple(args, "i", &val))
+        return NULL;
 
-	style = RENPY_TTF_GetFontStyle(font);
-	if(val)
-		style |= RENPY_TTF_STYLE_BOLD;
-	else
-		style &= ~RENPY_TTF_STYLE_BOLD;
-	RENPY_TTF_SetFontStyle(font, style);
+    style = RENPY_TTF_GetFontStyle(font);
+    if(val)
+        style |= RENPY_TTF_STYLE_BOLD;
+    else
+        style &= ~RENPY_TTF_STYLE_BOLD;
+    RENPY_TTF_SetFontStyle(font, style);
 
-	RETURN_NONE
-}
+    RETURN_NONE
+        }
 
 
 
-    /*DOC*/ static char doc_font_get_italic[] =
+/*DOC*/ static char doc_font_get_italic[] =
     /*DOC*/    "Font.get_italic() -> bool\n"
     /*DOC*/    "status of the italic attribute\n"
     /*DOC*/    "\n"
@@ -308,17 +308,17 @@ static PyObject* font_set_bold(PyObject* self, PyObject* args)
 
 static PyObject* font_get_italic(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_ITALIC) != 0);
+    return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_ITALIC) != 0);
 }
 
 
 
-    /*DOC*/ static char doc_font_set_italic[] =
+/*DOC*/ static char doc_font_set_italic[] =
     /*DOC*/    "Font.set_italic(bool) -> None\n"
     /*DOC*/    "assign the italic attribute\n"
     /*DOC*/    "\n"
@@ -327,25 +327,25 @@ static PyObject* font_get_italic(PyObject* self, PyObject* args)
 
 static PyObject* font_set_italic(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
-	int style, val;
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    int style, val;
 
-	if(!PyArg_ParseTuple(args, "i", &val))
-		return NULL;
+    if(!PyArg_ParseTuple(args, "i", &val))
+        return NULL;
 
-	style = RENPY_TTF_GetFontStyle(font);
-	if(val)
-		style |= RENPY_TTF_STYLE_ITALIC;
-	else
-		style &= ~RENPY_TTF_STYLE_ITALIC;
-	RENPY_TTF_SetFontStyle(font, style);
+    style = RENPY_TTF_GetFontStyle(font);
+    if(val)
+        style |= RENPY_TTF_STYLE_ITALIC;
+    else
+        style &= ~RENPY_TTF_STYLE_ITALIC;
+    RENPY_TTF_SetFontStyle(font, style);
 
-	RETURN_NONE
-}
+    RETURN_NONE
+        }
 
 
 
-    /*DOC*/ static char doc_font_get_underline[] =
+/*DOC*/ static char doc_font_get_underline[] =
     /*DOC*/    "Font.get_underline() -> bool\n"
     /*DOC*/    "status of the underline attribute\n"
     /*DOC*/    "\n"
@@ -354,17 +354,17 @@ static PyObject* font_set_italic(PyObject* self, PyObject* args)
 
 static PyObject* font_get_underline(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
 
-	return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_UNDERLINE) != 0);
+    return PyInt_FromLong((RENPY_TTF_GetFontStyle(font)&RENPY_TTF_STYLE_UNDERLINE) != 0);
 }
 
 
 
-    /*DOC*/ static char doc_font_set_underline[] =
+/*DOC*/ static char doc_font_set_underline[] =
     /*DOC*/    "Font.set_underline(bool) -> None\n"
     /*DOC*/    "assign the underline attribute\n"
     /*DOC*/    "\n"
@@ -373,25 +373,25 @@ static PyObject* font_get_underline(PyObject* self, PyObject* args)
 
 static PyObject* font_set_underline(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
-	int style, val;
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    int style, val;
 
-	if(!PyArg_ParseTuple(args, "i", &val))
-		return NULL;
+    if(!PyArg_ParseTuple(args, "i", &val))
+        return NULL;
 
-	style = RENPY_TTF_GetFontStyle(font);
-	if(val)
-		style |= RENPY_TTF_STYLE_UNDERLINE;
-	else
-		style &= ~RENPY_TTF_STYLE_UNDERLINE;
-	RENPY_TTF_SetFontStyle(font, style);
+    style = RENPY_TTF_GetFontStyle(font);
+    if(val)
+        style |= RENPY_TTF_STYLE_UNDERLINE;
+    else
+        style &= ~RENPY_TTF_STYLE_UNDERLINE;
+    RENPY_TTF_SetFontStyle(font, style);
 
-	RETURN_NONE
-}
+    RETURN_NONE
+        }
 
 
 
-    /*DOC*/ static char doc_font_render[] =
+/*DOC*/ static char doc_font_render[] =
     /*DOC*/    "Font.render(text, antialias, fore_RGBA, [back_RGBA]) -> Surface\n"
     /*DOC*/    "render text to a new image\n"
     /*DOC*/    "\n"
@@ -414,100 +414,100 @@ static PyObject* font_set_underline(PyObject* self, PyObject* args)
 
 static PyObject* font_render(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
-	int aa;
-	PyObject* text, *final;
-	PyObject* fg_rgba_obj, *bg_rgba_obj = NULL;
-	Uint8 rgba[4];
-	SDL_Surface* surf;
-	SDL_Color foreg, backg;
-	if(!PyArg_ParseTuple(args, "OiO|O", &text, &aa, &fg_rgba_obj, &bg_rgba_obj))
-		return NULL;
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    int aa;
+    PyObject* text, *final;
+    PyObject* fg_rgba_obj, *bg_rgba_obj = NULL;
+    Uint8 rgba[4];
+    SDL_Surface* surf;
+    SDL_Color foreg, backg;
+    if(!PyArg_ParseTuple(args, "OiO|O", &text, &aa, &fg_rgba_obj, &bg_rgba_obj))
+        return NULL;
 
-	if(!RGBAFromObj(fg_rgba_obj, rgba))
-		return RAISE(PyExc_TypeError, "Invalid foreground RGBA argument");
-	foreg.r = rgba[0]; foreg.g = rgba[1]; foreg.b = rgba[2];
-	if(bg_rgba_obj)
-	{
-		if(!RGBAFromObj(bg_rgba_obj, rgba))
-			return RAISE(PyExc_TypeError, "Invalid background RGBA argument");
-		backg.r = rgba[0];
-                backg.g = rgba[1];
-                backg.b = rgba[2];
-                backg.unused = 0;
-	} else {
-		backg.r = 0;
-                backg.g = 0;
-                backg.b = 0;
-                backg.unused = 0;
+    if(!RGBAFromObj(fg_rgba_obj, rgba))
+        return RAISE(PyExc_TypeError, "Invalid foreground RGBA argument");
+    foreg.r = rgba[0]; foreg.g = rgba[1]; foreg.b = rgba[2];
+    if(bg_rgba_obj)
+    {
+        if(!RGBAFromObj(bg_rgba_obj, rgba))
+            return RAISE(PyExc_TypeError, "Invalid background RGBA argument");
+        backg.r = rgba[0];
+        backg.g = rgba[1];
+        backg.b = rgba[2];
+        backg.unused = 0;
+    } else {
+        backg.r = 0;
+        backg.g = 0;
+        backg.b = 0;
+        backg.unused = 0;
+    }
+
+
+    if(!PyObject_IsTrue(text))
+    {
+        int height = RENPY_TTF_FontHeight(font);
+        surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 1, height, 32, 0xff<<16, 0xff<<8, 0xff, 0);
+        if(bg_rgba_obj)
+        {
+            Uint32 c = SDL_MapRGB(surf->format, backg.r, backg.g, backg.b);
+            SDL_FillRect(surf, NULL, c);
         }
+        else
+            SDL_SetColorKey(surf, SDL_SRCCOLORKEY, 0);
+    }
+    else if(PyUnicode_Check(text))
+    {
+        PyObject* strob = PyEval_CallMethod(text, "encode", "(s)", "utf-8");
+        char *string = PyString_AsString(strob);
 
+        if(aa)
+        {
+            if(!bg_rgba_obj)
+                surf = RENPY_TTF_RenderUTF8_Blended(font, string, foreg);
+            else
+                surf = RENPY_TTF_RenderUTF8_Shaded(font, string, foreg, backg);
+        }
+        else
+            surf = RENPY_TTF_RenderUTF8_Solid(font, string, foreg);
 
-	if(!PyObject_IsTrue(text))
-	{
-		int height = RENPY_TTF_FontHeight(font);
-		surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 1, height, 32, 0xff<<16, 0xff<<8, 0xff, 0);
-		if(bg_rgba_obj)
-		{
-			Uint32 c = SDL_MapRGB(surf->format, backg.r, backg.g, backg.b);
-			SDL_FillRect(surf, NULL, c);
-		}
-		else
-			SDL_SetColorKey(surf, SDL_SRCCOLORKEY, 0);
-	}
-	else if(PyUnicode_Check(text))
-	{
-		PyObject* strob = PyEval_CallMethod(text, "encode", "(s)", "utf-8");
-		char *string = PyString_AsString(strob);
+        Py_DECREF(strob);
+    }
+    else if(PyString_Check(text))
+    {
+        char* string = PyString_AsString(text);
+        if(aa)
+        {
+            if(!bg_rgba_obj)
+                surf = RENPY_TTF_RenderText_Blended(font, string, foreg);
+            else
+                surf = RENPY_TTF_RenderText_Shaded(font, string, foreg, backg);
+        }
+        else
+            surf = RENPY_TTF_RenderText_Solid(font, string, foreg);
+    }
+    else
+        return RAISE(PyExc_TypeError, "text must be a string or unicode");
 
-		if(aa)
-		{
-			if(!bg_rgba_obj)
-				surf = RENPY_TTF_RenderUTF8_Blended(font, string, foreg);
-			else
-				surf = RENPY_TTF_RenderUTF8_Shaded(font, string, foreg, backg);
-		}
-		else
-			surf = RENPY_TTF_RenderUTF8_Solid(font, string, foreg);
+    if(!surf)
+        return RAISE(PyExc_SDLError, "SDL_ttf render failed");
 
-		Py_DECREF(strob);
-	}
-	else if(PyString_Check(text))
-	{
-		char* string = PyString_AsString(text);
-		if(aa)
-		{
-			if(!bg_rgba_obj)
-				surf = RENPY_TTF_RenderText_Blended(font, string, foreg);
-			else
-				surf = RENPY_TTF_RenderText_Shaded(font, string, foreg, backg);
-		}
-		else
-			surf = RENPY_TTF_RenderText_Solid(font, string, foreg);
-	}
-	else
-		return RAISE(PyExc_TypeError, "text must be a string or unicode");
+    if(!aa && bg_rgba_obj) /*turn off transparancy*/
+    {
+        SDL_SetColorKey(surf, 0, 0);
+        surf->format->palette->colors[0].r = backg.r;
+        surf->format->palette->colors[0].g = backg.g;
+        surf->format->palette->colors[0].b = backg.b;
+    }
 
-	if(!surf)
-		return RAISE(PyExc_SDLError, "SDL_ttf render failed");
-
-	if(!aa && bg_rgba_obj) /*turn off transparancy*/
-	{
-		SDL_SetColorKey(surf, 0, 0);
-		surf->format->palette->colors[0].r = backg.r;
-		surf->format->palette->colors[0].g = backg.g;
-		surf->format->palette->colors[0].b = backg.b;
-	}
-
-	final = PySurface_New(surf);
-	if(!final)
-		SDL_FreeSurface(surf);
-	return final;
+    final = PySurface_New(surf);
+    if(!final)
+        SDL_FreeSurface(surf);
+    return final;
 }
 
 
 
-    /*DOC*/ static char doc_font_size[] =
+/*DOC*/ static char doc_font_size[] =
     /*DOC*/    "Font.size(text) -> width, height\n"
     /*DOC*/    "size of rendered text\n"
     /*DOC*/    "\n"
@@ -518,53 +518,68 @@ static PyObject* font_render(PyObject* self, PyObject* args)
 
 static PyObject* font_size(PyObject* self, PyObject* args)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
-	int w, h;
-	PyObject* text;
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    int w, h;
+    PyObject* text;
 
-	if(!PyArg_ParseTuple(args, "O", &text))
-		return NULL;
+    if(!PyArg_ParseTuple(args, "O", &text))
+        return NULL;
 
-	if(PyUnicode_Check(text))
-	{
-		PyObject* strob = PyEval_CallMethod(text, "encode", "(s)", "utf-8");
-		char *string = PyString_AsString(strob);
+    if(PyUnicode_Check(text))
+    {
+        PyObject* strob = PyEval_CallMethod(text, "encode", "(s)", "utf-8");
+        char *string = PyString_AsString(strob);
 
-		RENPY_TTF_SizeUTF8(font, string, &w, &h);
+        RENPY_TTF_SizeUTF8(font, string, &w, &h);
 
-		Py_DECREF(strob);
-	}
-	else if(PyString_Check(text))
-	{
-		char* string = PyString_AsString(text);
-		RENPY_TTF_SizeText(font, string, &w, &h);
-	}
-	else
-		return RAISE(PyExc_TypeError, "text must be a string or unicode");
+        Py_DECREF(strob);
+    }
+    else if(PyString_Check(text))
+    {
+        char* string = PyString_AsString(text);
+        RENPY_TTF_SizeText(font, string, &w, &h);
+    }
+    else
+        return RAISE(PyExc_TypeError, "text must be a string or unicode");
 
-	return Py_BuildValue("(ii)", w, h);
+    return Py_BuildValue("(ii)", w, h);
+}
+
+static PyObject* font_set_expand(PyObject* self, PyObject* args)
+{
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
+    float expand;
+    
+    if(!PyArg_ParseTuple(args, "f", &expand))
+        return NULL;
+
+    RENPY_TTF_SetExpand(font, expand);
+
+    RETURN_NONE;
 }
 
 
 
 static PyMethodDef font_methods[] =
 {
-	{ "get_height", font_get_height, 1, doc_font_get_height },
-	{ "get_descent", font_get_descent, 1, doc_font_get_descent },
-	{ "get_ascent", font_get_ascent, 1, doc_font_get_ascent },
-	{ "get_linesize", font_get_linesize, 1, doc_font_get_linesize },
+    { "get_height", font_get_height, 1, doc_font_get_height },
+    { "get_descent", font_get_descent, 1, doc_font_get_descent },
+    { "get_ascent", font_get_ascent, 1, doc_font_get_ascent },
+    { "get_linesize", font_get_linesize, 1, doc_font_get_linesize },
 
-	{ "get_bold", font_get_bold, 1, doc_font_get_bold },
-	{ "set_bold", font_set_bold, 1, doc_font_set_bold },
-	{ "get_italic", font_get_italic, 1, doc_font_get_italic },
-	{ "set_italic", font_set_italic, 1, doc_font_set_italic },
-	{ "get_underline", font_get_underline, 1, doc_font_get_underline },
-	{ "set_underline", font_set_underline, 1, doc_font_set_underline },
+    { "get_bold", font_get_bold, 1, doc_font_get_bold },
+    { "set_bold", font_set_bold, 1, doc_font_set_bold },
+    { "get_italic", font_get_italic, 1, doc_font_get_italic },
+    { "set_italic", font_set_italic, 1, doc_font_set_italic },
+    { "get_underline", font_get_underline, 1, doc_font_get_underline },
+    { "set_underline", font_set_underline, 1, doc_font_set_underline },
 
-	{ "render", font_render, 1, doc_font_render },
-	{ "size", font_size, 1, doc_font_size },
+    { "render", font_render, 1, doc_font_render },
+    { "size", font_size, 1, doc_font_size },
 
-	{ NULL, NULL }
+    { "set_expand", font_set_expand, 1, ""},
+    
+    { NULL, NULL }
 };
 
 
@@ -573,113 +588,113 @@ static PyMethodDef font_methods[] =
 
 static void font_dealloc(PyFontObject* self)
 {
-	RENPY_TTF_Font* font = PyFont_AsFont(self);
+    RENPY_TTF_Font* font = PyFont_AsFont(self);
 
-	if(font && font_initialized)
-		RENPY_TTF_CloseFont(font);
+    if(font && font_initialized)
+        RENPY_TTF_CloseFont(font);
 
-	if(self->weakreflist)
-		PyObject_ClearWeakRefs((PyObject*)self);
-	self->ob_type->tp_free((PyObject*)self);
+    if(self->weakreflist)
+        PyObject_ClearWeakRefs((PyObject*)self);
+    self->ob_type->tp_free((PyObject*)self);
 }
 
 
 static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
 {
-	int fontsize;
-	RENPY_TTF_Font* font = NULL;
-	PyObject* fileobj;
+    int fontsize;
+    RENPY_TTF_Font* font = NULL;
+    PyObject* fileobj;
 	
-	self->font = NULL;
-	if(!PyArg_ParseTuple(args, "Oi", &fileobj, &fontsize))
-		return -1;
+    self->font = NULL;
+    if(!PyArg_ParseTuple(args, "Oi|iff", &fileobj, &fontsize))
+        return -1;
 
-	if(!font_initialized)
-	{
-		RAISE(PyExc_SDLError, "font not initialized");
-		return -1;
-	}
+    if(!font_initialized)
+    {
+        RAISE(PyExc_SDLError, "font not initialized");
+        return -1;
+    }
 
-	Py_INCREF(fileobj);
+    Py_INCREF(fileobj);
 
-	if(fontsize <= 1)
-		fontsize = 1;
+    if(fontsize <= 1)
+        fontsize = 1;
 
-	if(fileobj == Py_None) {
-		Py_DECREF(fileobj);
-		fileobj = font_resource(font_defaultname);
-		if(!fileobj)
-		{
-			RAISE(PyExc_RuntimeError, "default font not found");
-			return -1;
+    if(fileobj == Py_None) {
+        Py_DECREF(fileobj);
+        fileobj = font_resource(font_defaultname);
+        if(!fileobj)
+        {
+            RAISE(PyExc_RuntimeError, "default font not found");
+            return -1;
+        }
+        fontsize = (int)(fontsize * .6875);
+        if(fontsize <= 1)
+            fontsize = 1;
+    }
+
+    if(PyString_Check(fileobj) || PyUnicode_Check(fileobj))
+    {
+        FILE* test;
+        char* filename = PyString_AsString(fileobj);
+        Py_DECREF(fileobj);
+        fileobj = NULL;
+
+        if(!filename)
+            return -1;
+
+        /*check if it is a valid file, else SDL_ttf segfaults*/
+        test = fopen(filename, "rb");
+        if(!test)
+        {
+            if (!strcmp(filename, font_defaultname))
+            {
+                fileobj = font_resource(font_defaultname);
+            }
+            if (!fileobj) {
+                PyErr_SetString(PyExc_IOError, "unable to read font filename");
+                return -1;
+            }
+        }
+        else
+        {
+            fclose(test);
+            Py_BEGIN_ALLOW_THREADS
+                font = RENPY_TTF_OpenFont(filename, fontsize);
+            Py_END_ALLOW_THREADS
 		}
-		fontsize = (int)(fontsize * .6875);
-		if(fontsize <= 1)
-			fontsize = 1;
-	}
-
-	if(PyString_Check(fileobj) || PyUnicode_Check(fileobj))
-	{
-		FILE* test;
-		char* filename = PyString_AsString(fileobj);
-		Py_DECREF(fileobj);
-		fileobj = NULL;
-
-		if(!filename)
-			return -1;
-
-		/*check if it is a valid file, else SDL_ttf segfaults*/
-		test = fopen(filename, "rb");
-		if(!test)
-		{
-			if (!strcmp(filename, font_defaultname))
-			{
-				fileobj = font_resource(font_defaultname);
-			}
-			if (!fileobj) {
-				PyErr_SetString(PyExc_IOError, "unable to read font filename");
-				return -1;
-			}
-		}
-		else
-		{
-			fclose(test);
-			Py_BEGIN_ALLOW_THREADS
-			font = RENPY_TTF_OpenFont(filename, fontsize);
-			Py_END_ALLOW_THREADS
-		}
-	}
-	if (!font)
-	{
+    }
+    if (!font)
+    {
 #ifdef RENPY_TTF_MAJOR_VERSION
-		SDL_RWops *rw;
-		rw = RWopsFromPython(fileobj);
-		if (!rw) {
-			Py_DECREF(fileobj);
-			return -1;
-		}
-		Py_BEGIN_ALLOW_THREADS
-		font = RENPY_TTF_OpenFontIndexRW(rw, 1, fontsize, 0);
-		Py_END_ALLOW_THREADS
+        SDL_RWops *rw;
+        rw = RWopsFromPython(fileobj);
+        if (!rw) {
+            Py_DECREF(fileobj);
+            return -1;
+        }
+        Py_BEGIN_ALLOW_THREADS
+            font = RENPY_TTF_OpenFontIndexRW(rw, 1, fontsize, 0);
+        Py_END_ALLOW_THREADS
 #else
-		Py_DECREF(fileobj);
-		RAISE(PyExc_NotImplementedError, "nonstring fonts require SDL_ttf-2.0.6");
-		return -1;
+            Py_DECREF(fileobj);
+        RAISE(PyExc_NotImplementedError, "nonstring fonts require SDL_ttf-2.0.6");
+        return -1;
 #endif
-	}
+    }
 
-	if(!font)
-	{
-		RAISE(PyExc_RuntimeError, SDL_GetError());
-		return -1;
-	}
+    if(!font)
+    {
+        RAISE(PyExc_RuntimeError, SDL_GetError());
+        return -1;
+    }
 
-	self->font = font;
-	return 0;
+    self->font = font;
+    return 0;
 }
 
 
-    /*DOC*/ static char doc_Font_MODULE[] =
+/*DOC*/ static char doc_Font_MODULE[] =
     /*DOC*/    "The font object is created only from pygame.font.Font(). Once a\n"
     /*DOC*/    "font is created it's size and TTF file cannot be changed. The\n"
     /*DOC*/    "Font objects are mainly used to render() text into a new Surface.\n"
@@ -693,51 +708,51 @@ static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
 
 static PyTypeObject PyFont_Type =
 {
-	PyObject_HEAD_INIT(NULL)
-	0,
-	"pygame.font.Font",
-	sizeof(PyFontObject),
-	0,
-	(destructor)font_dealloc,
-	0,
-	0, /*getattr*/
-	0,
-	0,
-	0,
-	0,
-	NULL,
-	0,
-	(hashfunc)NULL,
-	(ternaryfunc)NULL,
-	(reprfunc)NULL,
-	0L,0L,0L,
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
-	doc_Font_MODULE, /* Documentation string */
-	0,					/* tp_traverse */
-	0,					/* tp_clear */
-	0,					/* tp_richcompare */
-	offsetof(PyFontObject, weakreflist),    /* tp_weaklistoffset */
-	0,					/* tp_iter */
-	0,					/* tp_iternext */
-	font_methods,			        /* tp_methods */
-	0,				        /* tp_members */
-	0,				        /* tp_getset */
-	0,					/* tp_base */
-	0,					/* tp_dict */
-	0,					/* tp_descr_get */
-	0,					/* tp_descr_set */
-	0,					/* tp_dictoffset */
-	(initproc)font_init,			/* tp_init */
-	0,					/* tp_alloc */
-	0,	                /* tp_new */
+    PyObject_HEAD_INIT(NULL)
+    0,
+    "pygame.font.Font",
+    sizeof(PyFontObject),
+    0,
+    (destructor)font_dealloc,
+    0,
+    0, /*getattr*/
+    0,
+    0,
+    0,
+    0,
+    NULL,
+    0,
+    (hashfunc)NULL,
+    (ternaryfunc)NULL,
+    (reprfunc)NULL,
+    0L,0L,0L,
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+    doc_Font_MODULE, /* Documentation string */
+    0,					/* tp_traverse */
+    0,					/* tp_clear */
+    0,					/* tp_richcompare */
+    offsetof(PyFontObject, weakreflist),    /* tp_weaklistoffset */
+    0,					/* tp_iter */
+    0,					/* tp_iternext */
+    font_methods,			        /* tp_methods */
+    0,				        /* tp_members */
+    0,				        /* tp_getset */
+    0,					/* tp_base */
+    0,					/* tp_dict */
+    0,					/* tp_descr_get */
+    0,					/* tp_descr_set */
+    0,					/* tp_dictoffset */
+    (initproc)font_init,			/* tp_init */
+    0,					/* tp_alloc */
+    0,	                /* tp_new */
 };
 
-	//PyType_GenericNew,	                /* tp_new */
+//PyType_GenericNew,	                /* tp_new */
 
 
 /*font module methods*/
 
-    /*DOC*/ static char doc_get_default_font[] =
+/*DOC*/ static char doc_get_default_font[] =
     /*DOC*/    "pygame.font.get_default_font() -> string\n"
     /*DOC*/    "get the name of the default font\n"
     /*DOC*/    "\n"
@@ -746,16 +761,16 @@ static PyTypeObject PyFont_Type =
 
 static PyObject* get_default_font(PyObject* self, PyObject* args)
 {
-	if(!PyArg_ParseTuple(args, ""))
-		return NULL;
-	return PyString_FromString(font_defaultname);
+    if(!PyArg_ParseTuple(args, ""))
+        return NULL;
+    return PyString_FromString(font_defaultname);
 }
 
 
 
 /*font module methods*/
 #if 0
-    /*DOC*/ static char doc_Font[] =
+/*DOC*/ static char doc_Font[] =
     /*DOC*/    "pygame.font.Font(file, size) -> Font\n"
     /*DOC*/    "create a new font object\n"
     /*DOC*/    "\n"
@@ -773,33 +788,33 @@ static PyObject* get_default_font(PyObject* self, PyObject* args)
 
 static PyMethodDef font_builtins[] =
 {
-	{ "__PYGAMEinit__", font_autoinit, 1, doc_init },
-	{ "init", fontmodule_init, 1, doc_init },
-	{ "quit", fontmodule_quit, 1, doc_quit },
-	{ "get_init", get_init, 1, doc_get_init },
-	{ "get_default_font", get_default_font, 1, doc_get_default_font },
-	{ NULL, NULL }
+    { "__PYGAMEinit__", font_autoinit, 1, doc_init },
+    { "init", fontmodule_init, 1, doc_init },
+    { "quit", fontmodule_quit, 1, doc_quit },
+    { "get_init", get_init, 1, doc_get_init },
+    { "get_default_font", get_default_font, 1, doc_get_default_font },
+    { NULL, NULL }
 };
 
 
 
 static PyObject* PyFont_New(RENPY_TTF_Font* font)
 {
-	PyFontObject* fontobj;
+    PyFontObject* fontobj;
 
-	if(!font)
-		return RAISE(PyExc_RuntimeError, "unable to load font.");
-	fontobj = (PyFontObject *)PyFont_Type.tp_new(&PyFont_Type, NULL, NULL);
+    if(!font)
+        return RAISE(PyExc_RuntimeError, "unable to load font.");
+    fontobj = (PyFontObject *)PyFont_Type.tp_new(&PyFont_Type, NULL, NULL);
 
-	if(fontobj)
-		fontobj->font = font;
+    if(fontobj)
+        fontobj->font = font;
 
-	return (PyObject*)fontobj;
+    return (PyObject*)fontobj;
 }
 
 
 
-    /*DOC*/ static char doc_pygame_font_MODULE[] =
+/*DOC*/ static char doc_pygame_font_MODULE[] =
     /*DOC*/    "The font module allows for rendering TrueType fonts into a new\n"
     /*DOC*/    "Surface object. This module is optional and requires SDL_ttf as a\n"
     /*DOC*/    "dependency. You may want to check for pygame.font to import and\n"
@@ -824,20 +839,20 @@ void init_renpy_font(void)
     if (PyType_Ready(&PyFont_Type) < 0)
         return;
 
-	/* create the module */
-		PyFont_Type.ob_type = &PyType_Type;
-		PyFont_Type.tp_new = &PyType_GenericNew;
+    /* create the module */
+    PyFont_Type.ob_type = &PyType_Type;
+    PyFont_Type.tp_new = &PyType_GenericNew;
 
-	module = Py_InitModule3("_renpy_font", font_builtins, doc_pygame_font_MODULE);
-	self_module = module;
+    module = Py_InitModule3("_renpy_font", font_builtins, doc_pygame_font_MODULE);
+    self_module = module;
 
-	Py_INCREF((PyObject*)&PyFont_Type);
-	PyModule_AddObject(module, "FontType", (PyObject *)&PyFont_Type);
-	Py_INCREF((PyObject*)&PyFont_Type);
-	PyModule_AddObject(module, "Font", (PyObject *)&PyFont_Type);
+    Py_INCREF((PyObject*)&PyFont_Type);
+    PyModule_AddObject(module, "FontType", (PyObject *)&PyFont_Type);
+    Py_INCREF((PyObject*)&PyFont_Type);
+    PyModule_AddObject(module, "Font", (PyObject *)&PyFont_Type);
 
-        import_pygame_base();
-        import_pygame_surface();
-        import_pygame_rwobject();
+    import_pygame_base();
+    import_pygame_surface();
+    import_pygame_rwobject();
 }
 

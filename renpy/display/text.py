@@ -22,6 +22,12 @@
 import pygame
 from pygame.constants import *
 
+try:
+    import _renpy_font
+    pygame.font = _renpy_font
+except:
+    pass
+
 import re
 import renpy
 import sys
