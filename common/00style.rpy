@@ -134,7 +134,8 @@ init -1090 python:
     style.default.drop_shadow_color = (0, 0, 0, 255)
     style.default.outlines = [ ]
     style.default.minwidth = 0
-    style.default.textalign = 0
+    style.default.text_align = 0
+    style.default.justify = False
     style.default.text_y_fudge = 0
     style.default.first_indent = 0
     style.default.rest_indent = 0

@@ -115,6 +115,7 @@ style_properties = dict(
     foreground = renpy.easy.displayable_or_none,
     sound = None,
     italic = None,
+    justify = None,
     language = None,
     layout = None,
     left_margin = None,

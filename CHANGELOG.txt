@@ -10,10 +10,15 @@ allows you to specify one or more outlines, including offset
 ones. This allows for several fairly complicated text effects, similar
 to what you'd see in modern subtitles. [demo]
 
-* We believe the bug preventing fonts from being archived has been
+* The bug preventing fonts from being archived has probably been
 fixed. It should now be possible to include a font in an archive, and
-have that work. The archiver has been modified to allow this.
+have that work. The archiver has been modified to allow ttf files to
+be archived again.
 
+
+There is now a new justify style property, that causes lines of text
+to have additional whitespace inserted between words so that the left
+and right margins are even, except on the last line of a paragraph.
 
 
 New in Ren'Py 6.7.1

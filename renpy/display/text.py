@@ -454,7 +454,23 @@ class WidgetStyle(object):
     def length(self, text):
         return 1
 
+class SpacerStyle(object):
 
+    def update(self):
+        pass
+    
+    # The actual size is computed at render time.
+    def sizes(self, ignored):
+        return (0, 0)
+
+    def get_ascent(self):
+        return 0
+
+    def get_width(self, text):
+        return 0
+
+    def length(self, text):
+        return 0
     
 # The line breaking algorithm for western languages.    
 western_text_regexp = re.compile(ur"""(?x)
@@ -606,6 +622,9 @@ def greedy_text_layout(triples, width, style):
     
     lines = [ ]
     line = [ ]
+    
+    # Is this the last line in a paragraph?
+    lines_last = [ ]    
 
     target = width - style.first_indent
     
@@ -615,7 +634,8 @@ def greedy_text_layout(triples, width, style):
 
         if type == "newline":
             lines.append(line)
-            line = [ triple ]
+            lines_last.append(True) 
+            line = [ ]
             target = width - style.rest_indent
 
             continue
@@ -629,20 +649,22 @@ def greedy_text_layout(triples, width, style):
         else:
             if layout_width(line + [ triple ]) > target:
                 lines.append(line)
+                lines_last.append(False)
                 line = [ triple ]
                 target = width - style.rest_indent
             else:
                 line.append(triple)
                 
     lines.append(line)
-
+    lines_last.append(True)
+    
     # Remove trailing whitespace, except on the last line, where it
     # might be intentional.
     for l in lines[:-1]:
         if l and l[-1][0] == "space":
             l.pop()
 
-    return lines
+    return lines, lines_last
 
 
 def subtitle_text_layout_core(triples, width, style, soft, n):
@@ -651,7 +673,7 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
 
     lines = [ ]
     line = [ ]
-
+    
     target = width
 
     total = soft * n
@@ -740,7 +762,8 @@ def subtitle_text_layout(triples, width, style):
 
 
     # Deal with each paragraph separately.
-    rrv = [ ] # Real return value.
+    lines = [ ]
+    lines_last = [ ]
         
     for triples in pars:
 
@@ -755,10 +778,13 @@ def subtitle_text_layout(triples, width, style):
             if len(rv) == i:
                 break
             i += 1
-
-        rrv.extend(rv)
             
-    return rrv
+        lines.extend(rv)
+        for i in range(len(lines) - 1):
+            lines_last.append(False)
+        lines_last.append(True)
+                
+    return lines, lines_last
 
 def text_layout(triples, width, style):
 
@@ -775,8 +801,8 @@ class Text(renpy.display.core.Displayable):
 
     nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
                'laidout_width', 'laidout_height', 'laidout_start',
-               'laidout_length', 'laidout_hyperlinks', 'width', 'tokens', 'children',
-               'child_pos']
+               'laidout_length', 'laidout_hyperlinks', 'laidout_lines_last',
+               'width', 'tokens', 'children', 'child_pos']
 
     __version__ = 2
 
@@ -1272,7 +1298,6 @@ class Text(renpy.display.core.Displayable):
                 raise Exception("Unknown text token kind %s." % kind)
 
             if kind == "widget":
-
                 wstyle = WidgetStyle(tsl[-1], i, width, time)
                 triples.append(("word", wstyle, i))
                             
@@ -1284,9 +1309,8 @@ class Text(renpy.display.core.Displayable):
 
         # Give text_layout a list of triples, get back a list of lists of
         # triples, one per line.
-        linetriples = renpy.config.text_layout(triples, width, self.style)
-
-
+        linetriples, lines_last = renpy.config.text_layout(triples, width, self.style)
+        
         # Now, we need to go through these lines, to generate the data
         # we need to render text.
 
@@ -1297,12 +1321,16 @@ class Text(renpy.display.core.Displayable):
         self.laidout_start = 0
         self.laidout_width = self.style.min_width
         self.laidout_height = 0
-
+        self.laidout_lines_last = lines_last
+        
         # Add something to empty lines.
         for l in linetriples:
             if not l:
                 l.append(('word', tsl[-1], ' '))
 
+
+        justify = self.style.justify
+                
         for l in linetriples:
 
             line = [ ]
@@ -1319,7 +1347,7 @@ class Text(renpy.display.core.Displayable):
                     self.laidout_length += len(i)
                 except:
                     self.laidout_length += ts.length(i)
-
+                    
                 if ts is not oldts:
                     if oldts is not None:
                         line.append((oldts, cur))
@@ -1329,6 +1357,12 @@ class Text(renpy.display.core.Displayable):
                 else:
                     cur += i
 
+                if justify and kind == "space":
+                    if cur:
+                        line.append((oldts, cur))
+                        cur = ""
+                    line.append((SpacerStyle(), ""))
+                    
             if oldts:
                 line.append((oldts, cur))
 
@@ -1412,18 +1446,39 @@ class Text(renpy.display.core.Displayable):
         rest_indent = self.style.rest_indent
         antialias = self.style.antialias
         line_spacing = self.style.line_spacing
-        
-        for line, line_height, line_width in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths):
-            x = indent + self.style.text_align * (self.laidout_width - line_width)
+        text_align = self.style.text_align
+        justify = self.style.justify
+
+        lines = len(self.laidout)
+            
+        for line, line_height, line_width, last in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths, self.laidout_lines_last):
+            if justify and not last:
+                empty_space = (self.laidout_width - line_width - indent)
+                x = indent
+            else:
+                empty_space = 0
+                x = indent + text_align * (self.laidout_width - line_width)
+                
             indent = rest_indent
-
+                
             max_ascent = 0
-
+            spacers = 0
+                
             for ts, text in line:
                 max_ascent = max(ts.get_ascent(), max_ascent)
 
-            for ts, text in line:
+                if isinstance(ts, SpacerStyle):
+                    spacers += 1
                 
+            for ts, text in line:
+
+                if isinstance(ts, SpacerStyle):
+                    space = empty_space / spacers
+                    x += space
+                    empty_space -= space
+                    spacers -= 1
+                    continue
+                    
                 length -= ts.length(text)
 
                 if length < 0:
