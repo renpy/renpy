@@ -443,7 +443,7 @@ class Script(object):
         if self.bytecode_dirty:
             try:
                 data = (BYTECODE_VERSION, self.bytecode_newcache)
-                f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "w")
+                f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "wb")
                 f.write(dumps(data, 2).encode("zlib"))
                 f.close()
             except:

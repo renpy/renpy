@@ -1,6 +1,12 @@
 New in Ren'Py 6.8.0
 -------------------
 
+Several of the libraries underlying Ren'Py have been updated. Pygame
+has been updated to version 1.8.1, while Freetype is now at version
+2.3.7. This allows us to integrate some of the new features provided
+by these libraries.
+
+
 Ren'Py now includes its own font-handling library, derived from
 pygame.font/SDL_ttf, which it uses in place of them when
 possible. This gives two advantages:
@@ -20,6 +26,10 @@ There is now a new justify style property, that causes lines of text
 to have additional whitespace inserted between words so that the left
 and right margins are even, except on the last line of a paragraph.
 
+
+On Mac OS X, Ren'Py will not change the application icon unless
+config.window_icon is set. More specifically, it will default to the
+launcher icon rather than a generic pygame icon.
 
 New in Ren'Py 6.7.1
 -------------------

@@ -118,8 +118,8 @@ static PyObject* fontmodule_quit(PyObject* self, PyObject* arg)
 
     font_autoquit();
 
-    RETURN_NONE
-        }
+    Py_RETURN_NONE;
+}
 
 
 /*DOC*/ static char doc_init[] =
@@ -145,8 +145,8 @@ static PyObject* fontmodule_init(PyObject* self, PyObject* arg)
     if(!istrue)
         return RAISE(PyExc_SDLError, SDL_GetError());
 
-    RETURN_NONE
-        }
+    Py_RETURN_NONE;
+}
 
 
 
@@ -294,8 +294,8 @@ static PyObject* font_set_bold(PyObject* self, PyObject* args)
         style &= ~RENPY_TTF_STYLE_BOLD;
     RENPY_TTF_SetFontStyle(font, style);
 
-    RETURN_NONE
-        }
+    Py_RETURN_NONE;
+}
 
 
 
@@ -340,8 +340,8 @@ static PyObject* font_set_italic(PyObject* self, PyObject* args)
         style &= ~RENPY_TTF_STYLE_ITALIC;
     RENPY_TTF_SetFontStyle(font, style);
 
-    RETURN_NONE
-        }
+    Py_RETURN_NONE;
+}
 
 
 
@@ -386,8 +386,8 @@ static PyObject* font_set_underline(PyObject* self, PyObject* args)
         style &= ~RENPY_TTF_STYLE_UNDERLINE;
     RENPY_TTF_SetFontStyle(font, style);
 
-    RETURN_NONE
-        }
+    Py_RETURN_NONE;
+}
 
 
 
@@ -555,7 +555,7 @@ static PyObject* font_set_expand(PyObject* self, PyObject* args)
 
     RENPY_TTF_SetExpand(font, expand);
 
-    RETURN_NONE;
+    Py_RETURN_NONE;
 }
 
 
