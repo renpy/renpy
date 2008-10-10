@@ -185,8 +185,11 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
     if what is None:
         what = name
+    elif isinstance(what, basestring):
+        what = tuple(what.split())
 
     img = renpy.display.image.ImageReference(what, style='image_placement')
+
     for i in at_list:
         img = i(img)
 
@@ -196,6 +199,13 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     if tag:
         name = (tag,) + name[1:]
     
+    if not img.find_target() and renpy.config.missing_show:
+        if renpy.config.missing_show(name, what, layer):
+            return
+
+    if renpy.config.missing_hide:
+        renpy.config.missing_hide(name, layer)
+
     sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name)
     
 
@@ -220,6 +230,9 @@ def hide(name, layer='master'):
     sls = scene_lists()
     key = name[0]
     sls.remove(layer, key)
+
+    if renpy.config.missing_hide:
+        renpy.config.missing_hide(name, layer)
     
 
 def scene(layer='master'):
@@ -231,7 +244,9 @@ def scene(layer='master'):
 
     sls = scene_lists()
     sls.clear(layer)
-    
+
+    if renpy.config.missing_scene:
+        renpy.config.missing_scene(layer)
         
 def watch(expression, style='default', **properties):
     """

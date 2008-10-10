@@ -214,4 +214,73 @@ init 1050 python:
         config.underlay.append(Remote())
         del Remote
         
+
+    if config.developer:
+
+        # This is used to indicate that a scene has just occured,
+        # and so if the next thing is a missing_show, we should
+        # blank the screen.
+        __missing_scene = False
+
+        # This returns the __missing dictionary from the current
+        # context object.
+        def __missing():
+            try:
+                return renpy.context().__missing
+            except AttributeError:
+                rv = dict()
+                renpy.context().__missing = rv
+                return rv
         
+        def __missing_show(name, what, layer):
+            if layer != 'master':
+                return False
+
+            global __missing_scene
+            if __missing_scene:
+                renpy.show(name, what="black")
+            __missing_scene = False
+                
+            what = " ".join(what).replace("{", "{{")
+            __missing()[name[0]] = what
+            return True
+
+        def __missing_hide(name, layer):
+            if layer != 'master':
+                return False
+
+            global __missing_scene
+            __missing_scene = False
+
+            __missing().pop(name[0], None)
+            return True
+            
+        def __missing_scene(layer):
+            if layer != 'master':
+                return False
+
+            global __missing_scene
+            __missing_scene = True
+            __missing().clear()
+
+            return True
+            
+        def __missing_overlay():
+            missing = __missing()
+
+            if not missing:
+                return
+
+            ui.vbox(xalign=0.5, yalign=0.0)
+            ui.text(_("Undefined Images"), xalign=0.5)
+
+            for what in sorted(missing.values()):
+                ui.text(what, xalign=0.5)
+
+            ui.close()
+
+                
+        config.missing_scene = __missing_scene
+        config.missing_show = __missing_show
+        config.missing_hide = __missing_hide
+        config.overlay_functions.append(__missing_overlay)

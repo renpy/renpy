@@ -31,6 +31,15 @@ On Mac OS X, Ren'Py will not change the application icon unless
 config.window_icon is set. More specifically, it will default to the
 launcher icon rather than a generic pygame icon.
 
+
+When config.developer is set and an undefined image is used in a show
+or scene statement, a list of undefined images will appear centered at
+the top of the screen. A black screen will be show instead of any missing
+background. This makes it easier to write a script before all images are
+present.
+
+
+
 New in Ren'Py 6.7.1
 -------------------
 

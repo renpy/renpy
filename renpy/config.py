@@ -369,6 +369,11 @@ auto_save_extra_info = None
 # game-specific data is saved.
 save_directory = None
 
+# These are used to deal with the case where a picture is missing.
+missing_scene = None
+missing_show = None
+missing_hide = None
+
 del renpy
 del sets
 

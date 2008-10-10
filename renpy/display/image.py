@@ -92,7 +92,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
-            return
+            return True
         
         if not isinstance(name, tuple):
             name = tuple(name.split())
@@ -120,15 +120,16 @@ class ImageReference(renpy.display.core.Displayable):
 
                     error(str(e))
 
-                return
+                return True
 
             else:
                 parameters.insert(0, name[-1])
                 name = name[:-1]
 
         error("Image '%s' not found." % ' '.join(self.name))
+        return False
         
-
+        
     def event(self, ev, x, y, st):
         if not self.target:
             self.find_target()
