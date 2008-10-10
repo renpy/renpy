@@ -9,6 +9,8 @@ init python:
     import sys
     import zlib
 
+    import pefile
+    
     # Returns true if a file or directory should not be included in
     # the distribution
 
@@ -16,7 +18,9 @@ init python:
                      "launcherinfo.py",
                      "traceback.txt",
                      "errors.txt",
-                     "completion.lua",)
+                     "completion.lua",
+                     "icon.ico",
+                     "icon.icns")
 
     def ignored(fn):
         if fn[0] == ".":
@@ -173,7 +177,7 @@ label distribute:
         spacer()
 
         if windows:
-            text(u"Windows 98+", style='launcher_input')
+            text(u"Windows 2000+", style='launcher_input')
 
         if linux:
             text(u"Linux x86", style='launcher_input')
@@ -275,6 +279,13 @@ label distribute:
                 ( config.renpy_base + "/msvcr71.dll", "msvcr71.dll" ),
                 ]
 
+            win_data = { }
+            if os.path.exists(project.path + "/icon.ico"):
+                win_data[config.renpy_base + "/renpy.exe"] = pefile.change_icons(
+                    config.renpy_base + "/renpy.exe",
+                    project.path + "/icon.ico",
+                    )
+            
             zf = zipfile.ZipFile(name + ".zip", "w", zipfile.ZIP_DEFLATED)
 
             progress_len = len(multi) + len(win_files)
@@ -296,6 +307,8 @@ label distribute:
                 zi.external_attr = long(0100666) << 16 
                 data = file(fn, "rb").read()
 
+                data = win_data.get(fn, data)
+                
                 zf.writestr(zi, data)
 
 
@@ -360,6 +373,18 @@ label distribute:
             mac_files = tree(config.renpy_base + "/renpy.app",
                              project.name + ".app")
 
+            mac_files = [ (fn, an.replace("Ren'Py Launcher", project.name)) for (fn, an) in mac_files ]
+
+            # Data replacement for macintosh.
+            mac_data = { }
+            
+            info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", project.name)
+            mac_data[config.renpy_base + "/renpy.app/Contents/Info.plist"] = info_plist
+
+            if os.path.exists(project.path + "/icon.icns"):
+                icon_data = file(project.path + "/icon.icns", "rb").read()
+                mac_data[config.renpy_base + "/renpy.app/Contents/Resources/launcher.icns"] = icon_data
+            
             zf = zipfile.ZipFile(name + "-mac.zip", "w", zipfile.ZIP_DEFLATED)
 
             progress_len = len(multi) + len(mac_files)
@@ -371,7 +396,6 @@ label distribute:
 
                 if os.path.isdir(fn):
                     continue
-
                 
                 zi = zipfile.ZipInfo(name + "-mac/" + an)
                 
@@ -387,6 +411,7 @@ label distribute:
                     zi.external_attr = long(0100666) << 16 
                     data = file(fn, "rb").read()
 
+                data = mac_data.get(fn, data)                    
                 zf.writestr(zi, data)
 
             zf.close()

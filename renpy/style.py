@@ -489,13 +489,12 @@ def build_styles():
     styles_built = True
 
 def rebuild():
+    global style_pending
+    global styles_built
 
     if not styles_built:
         return
     
-    global style_pending
-    global styles_built
-
     styles_pending = [ j for i in style_parts.values() for j in i.values() ]
     styles_built = False
     

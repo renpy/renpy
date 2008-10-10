@@ -34,6 +34,8 @@ def extra_imports():
     import encodings.string_escape
     import encodings.raw_unicode_escape
     import encodings.mbcs
+    import encodings.utf_16_be
+    import encodings.utf_16_le
     import math
     import glob
     import pickle
