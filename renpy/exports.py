@@ -1090,6 +1090,12 @@ def easy_displayable(d, none=False):
     else:
         return renpy.easy.displayable_or_none(d)
 
+def quit_event():
+    renpy.game.interface.quit_event()
+
+def iconify():
+    renpy.game.interface.display.iconify()
+    
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

@@ -174,6 +174,8 @@ keymap = dict(
     reload_game = [ 'R' ],
     inspector = [ 'I' ],
     developer = [ 'D' ],
+    quit = [ 'alt_q', 'alt_K_F4' ],
+    iconify = [ 'alt_h' ],
     
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

@@ -60,6 +60,14 @@ The new renpy.easy_displayable method can be used by user-defined
 displayables to convert strings into Solid or Image displayables.
 
 
+Alt-f4 and Alt-q now trigger the quit event, as if you pressed the
+quit button on the top of the window. The first press brings up the 
+quit prompt, and a second press forcibly terminates the game. Alt
+is mapped to Command on the Mac, so Command-q now works on Macintosh.
+
+Alt/Command-h hides (iconifies) the window.
+
+
 
 New in Ren'Py 6.7.1
 -------------------

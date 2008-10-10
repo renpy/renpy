@@ -178,6 +178,8 @@ init -1180 python hide:
         dump_styles = dump_styles,
         reload_game = reload_game,
         developer = renpy.curried_call_in_new_context("_developer"),
+        quit = renpy.quit_event,
+        iconify = renpy.iconify,
         )
 
     config.underlay = [ km ]

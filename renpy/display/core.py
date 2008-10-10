@@ -774,6 +774,9 @@ class Display(object):
         self.window_caption = caption
         pygame.display.set_caption(caption.encode("utf-8"))
 
+    def iconify(self):
+        pygame.display.iconify()
+        
     def can_redraw(self, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
@@ -1272,7 +1275,19 @@ class Interface(object):
         rv[None] = root
              
         return rv
-            
+
+
+    def quit_event(self):
+        """
+        This is called to handle the user invoking a quit.
+        """
+        
+        if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
+            self.quick_quit = True
+            renpy.game.call_in_new_context("_confirm_quit")
+            self.quick_quit = False
+        else:                
+            raise renpy.game.QuitException()
 
     def interact(self, clear=True, **kwargs):
         """
@@ -1741,12 +1756,7 @@ class Interface(object):
                     
                     # Handle quit specially for now.
                     if ev.type == QUIT:
-                        if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
-                            self.quick_quit = True
-                            renpy.game.call_in_new_context("_confirm_quit")
-                            self.quick_quit = False
-                        else:                
-                            raise renpy.game.QuitException()
+                        self.quit_event()
 
                     # Merge mousemotion events.
                     if ev.type == MOUSEMOTION:
