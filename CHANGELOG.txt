@@ -39,6 +39,16 @@ background. This makes it easier to write a script before all images are
 present.
 
 
+The newly-documented Style.set_parent method lets you change the
+parent of a style. The new style.rebuild function allows styles to be
+rebuilt even after the game has begun running, with some
+caveats. (Changes are not persisted, for one thing.)
+
+
+The new renpy.easy_displayable method can be used by user-defined
+displayables to convert strings into Solid or Image displayables.
+
+
 
 New in Ren'Py 6.7.1
 -------------------

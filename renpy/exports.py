@@ -1084,6 +1084,12 @@ def free_memory():
     renpy.display.text.free_memory()
     renpy.display.render.free_memory()
 
+def easy_displayable(d, none=False):
+    if none:
+        return renpy.easy.displayable(d)
+    else:
+        return renpy.easy.displayable_or_none(d)
+
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)

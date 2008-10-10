@@ -306,6 +306,9 @@ class StyleManager(object):
 
         s = Style(parent, { }, heavy=True, help=description)
         setattr(self, name, s)
+
+    def rebuild(self):
+        renpy.style.rebuild()
         
     def exists(self, name):
         """
@@ -487,6 +490,9 @@ def build_styles():
 
 def rebuild():
 
+    if not styles_built:
+        return
+    
     global style_pending
     global styles_built
 
