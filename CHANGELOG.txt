@@ -27,9 +27,20 @@ to have additional whitespace inserted between words so that the left
 and right margins are even, except on the last line of a paragraph.
 
 
+If the file icon.ico is present in the base directory, it will be used
+as the icon of the windows exe when building the windows
+distribution. Similarly, the file icon.icns will be used as the icon
+of the Macintosh application. (Note that .icns is a different file format 
+from .ico.)
+
+
 On Mac OS X, Ren'Py will not change the application icon unless
 config.window_icon is set. More specifically, it will default to the
 launcher icon rather than a generic pygame icon.
+
+
+The Macintosh application will now show the name of the game in the 
+menu bar, rather than "Ren'Py Launcher".
 
 
 When config.developer is set and an undefined image is used in a show
