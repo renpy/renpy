@@ -111,16 +111,35 @@ init -1180 python:
             renpy.jump("_noisy_return")
         else:            
             renpy.restart_interaction()
+
+    config.help = None
+            
+    def _help():
+        if not config.help:
+            return
+
+        if renpy.has_label(config.help):
+            renpy.call_in_new_context(config.help)
+            return
+
+        _preferences.fullscreen = False
+        
+        import webbrowser
+        webbrowser.open_new("file:///" + config.basedir + "/" + config.help)
+        
     
 init -1180 python hide:
 
     # Called to make a screenshot happen.
     def screenshot():
         import os.path
+        import os
 
+        pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
+        
         i = 1
         while True:
-            fn = "screenshot%04d.png" % i
+            fn = pattern % i
             if not os.path.exists(fn):
                 break
             i += 1
@@ -143,7 +162,6 @@ init -1180 python hide:
 
         toggle_skipping()
             
-
     def fast_skip():
         if config.fast_skipping or config.developer:
             config.skipping = "fast"
@@ -163,7 +181,7 @@ init -1180 python hide:
 
         filename, line = renpy.get_filename_line()
         renpy.launch_editor([ filename ], line)
-
+        
     # The default keymap.
     km = renpy.Keymap(
         rollback = renpy.rollback,
@@ -180,6 +198,7 @@ init -1180 python hide:
         developer = renpy.curried_call_in_new_context("_developer"),
         quit = renpy.quit_event,
         iconify = renpy.iconify,
+        help = _help,
         )
 
     config.underlay = [ km ]

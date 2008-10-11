@@ -1,12 +1,6 @@
 New in Ren'Py 6.8.0
 -------------------
 
-Several of the libraries underlying Ren'Py have been updated. Pygame
-has been updated to version 1.8.1, while Freetype is now at version
-2.3.7. This allows us to integrate some of the new features provided
-by these libraries.
-
-
 Ren'Py now includes its own font-handling library, derived from
 pygame.font/SDL_ttf, which it uses in place of them when
 possible. This gives two advantages:
@@ -27,6 +21,11 @@ to have additional whitespace inserted between words so that the left
 and right margins are even, except on the last line of a paragraph.
 
 
+Newly-created games will have a Help option on the main and game
+menus. This is controlled by the config.help variable. By default 
+the help system shows the README.html file in the game's base directory.
+
+
 If the file icon.ico is present in the base directory, it will be used
 as the icon of the windows exe when building the windows
 distribution. Similarly, the file icon.icns will be used as the icon
@@ -41,6 +40,10 @@ launcher icon rather than a generic pygame icon.
 
 The Macintosh application will now show the name of the game in the 
 menu bar, rather than "Ren'Py Launcher".
+
+
+The "Continue Game" option on the main menu has been renamed "Load
+Game", for consistency with the game menu.
 
 
 When config.developer is set and an undefined image is used in a show
@@ -60,13 +63,21 @@ The new renpy.easy_displayable method can be used by user-defined
 displayables to convert strings into Solid or Image displayables.
 
 
-Alt-f4 and Alt-q now trigger the quit event, as if you pressed the
+Alt-F4 and Command-Q now trigger the quit event, as if you pressed the
 quit button on the top of the window. The first press brings up the 
-quit prompt, and a second press forcibly terminates the game. Alt
-is mapped to Command on the Mac, so Command-q now works on Macintosh.
+quit prompt, and a second press forcibly terminates the game. 
 
-Alt/Command-h hides (iconifies) the window.
+Alt-H and Command-H hide (iconify) the window.
 
+
+The new RENPY_SCREENSHOT_PATTERN environment variable lets you
+configure the name of screenshot files. Ren'Py can now write out
+screenshots as JPGs, as well as PNGs.
+
+
+Several of the libraries underlying Ren'Py have been updated. Pygame
+has been updated to version 1.8.1, while Freetype is now at version
+2.3.7.
 
 
 New in Ren'Py 6.7.1

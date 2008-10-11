@@ -84,6 +84,12 @@ def compile_event(key, keydown):
     else:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
+    if part[0] == "meta":
+        part.pop(0)
+        rv += " and (ev.mod & %d)" % pygame.KMOD_META
+    else:
+        rv += " and not (ev.mod & %d)" % pygame.KMOD_META
+
     if part[0] == "shift":
         part.pop(0)
         rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT

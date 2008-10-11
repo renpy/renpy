@@ -32,6 +32,11 @@ import time
 import cStringIO
 import threading
 
+try:
+    import pygame.macosx
+except:
+    pass
+
 # Is the cpu idle enough to do other things?
 cpu_idle = threading.Event()
 cpu_idle.clear()
@@ -658,6 +663,9 @@ class Display(object):
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
+        if pygame.version.vernum < (1, 8, 1):
+            raise Exception("Ren'Py requires pygame 1.8.1 to run.")
+        
         try:
             pygame.macosx.init()
         except:
@@ -979,12 +987,7 @@ class Display(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        if filename.endswith(".png"):
-            f = file(filename, "wb")
-            renpy.display.module.save_png(self.window, f)
-            f.close()
-        else:
-            pygame.image.save(self.window, filename)
+        pygame.image.save(self.window, filename)
 
     def screenshot(self, scale):
         """

@@ -12,9 +12,10 @@ init -1150 python:
 
     config.main_menu = [
         (u"Start Game", "start", "True"),
-        (u"Continue Game", _intra_jumps("load_screen", "main_game_transition"), "True"),
+        (u"Load Game", _intra_jumps("load_screen", "main_game_transition"), "True"),
         (u"Preferences", _intra_jumps("preferences_screen", "main_game_transition"), "True"),
-        (u"Quit", ui.jumps("_quit"), "True")
+        (u"Help", _help, "True", "config.help"),
+        (u"Quit", ui.jumps("_quit"), "True"),
         ]
 
     config.game_menu = [
@@ -23,6 +24,7 @@ init -1150 python:
         ( "save", u"Save Game", _intra_jumps("save_screen", "intra_transition"), 'not main_menu' ),
         ( "load", u"Load Game", _intra_jumps("load_screen", "intra_transition"), 'True'),
         ( None, u"Main Menu", ui.callsinnewcontext("_main_menu_prompt"), 'not main_menu' ),
+        ( "help", u"Help", _help, "True", "config.help"),
         ( None, u"Quit", ui.callsinnewcontext("_quit_prompt"), 'True' ),
         ]
 

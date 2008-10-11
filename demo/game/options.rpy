@@ -194,7 +194,21 @@ init -1 python hide:
 
     # config.main_menu_music = "main_menu_theme.ogg"
 
+    
+    #########################################
+    ## Help.
 
+    ## This lets you configure the help option on the Ren'Py menus.
+    ## It may be:
+    ## - A label in the script, in which case that label is called to
+    ##   show help to the user.
+    ## - A file name relative to the base directory, which is opened in a
+    ##   web browser. The filename may be followed by an # to specifiy an
+    ##   anchor inside an html file.
+    ## - None, to disable help.   
+    config.help = "README.html#renpy_help"
+
+    
     #########################################
     ## Transitions.
 
