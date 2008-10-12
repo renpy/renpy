@@ -480,14 +480,6 @@ init -1110 python hide:
         style.gm_root.background = "#e9d8bc"
 
 
-    theme.outline_drop_shadow = [
-        (0, -2),
-        (-1, -1), (0, -1), (1, -1),
-        (-2, 0), (-1, 0), (1, 0), (2, 0),
-        (-1, 1), (0, 1), (1, 1),
-        (0, 2)
-        ]
-
     @theme
     def outline_frames():
         theme.clear_frames()
@@ -507,12 +499,11 @@ init -1110 python hide:
         
         style.button_text.size = text_size
         style.button_text.color = inside
-        style.button_text.drop_shadow = theme.outline_drop_shadow
-        style.button_text.drop_shadow_color = idle
-        style.button_text.hover_drop_shadow_color = hover
-        style.button_text.selected_drop_shadow_color = selected
-        style.button_text.selected_hover_drop_shadow_color = hover
-        style.button_text.insensitive_drop_shadow_color = insensitive
+        style.button_text.outlines = [ (2, idle) ]
+        style.button_text.hover_outlines = [ (2, hover) ]
+        style.button_text.selected_outlines = [ (2, selected) ]
+        style.button_text.selected_hover_outlines = [ (2, hover) ]
+        style.button_text.insensitive_outlines = [ (2, insensitive) ]
         
 
     @theme
@@ -534,12 +525,12 @@ init -1110 python hide:
         
         style.large_button_text.size = text_size
         style.large_button_text.color = inside
-        style.large_button_text.drop_shadow = theme.outline_drop_shadow
-        style.large_button_text.drop_shadow_color = idle
-        style.large_button_text.hover_drop_shadow_color = hover
-        style.large_button_text.selected_drop_shadow_color = selected
-        style.large_button_text.selected_hover_drop_shadow_color = hover
-        style.large_button_text.insensitive_drop_shadow_color = insensitive
+
+        style.large_button_text.outlines = [ (2, idle) ]
+        style.large_button_text.hover_outlines = [ (2, hover) ]
+        style.large_button_text.selected_outlines = [ (2, selected) ]
+        style.large_button_text.selected_hover_outlines = [ (2, hover) ]
+        style.large_button_text.insensitive_outlines = [ (2, insensitive) ]
         
     @theme
     def outline_prompts(
@@ -550,8 +541,7 @@ init -1110 python hide:
         theme.clear_prompts()
         
         style.prompt_text.color = inside
-        style.prompt_text.drop_shadow = theme.outline_drop_shadow
-        style.prompt_text.drop_shadow_color = prompt
+        style.prompt_text.outlines = [ (2, prompt) ]
         style.prompt_text.size = text_size
         
     @theme
@@ -563,8 +553,7 @@ init -1110 python hide:
         theme.clear_labels()
         
         style.label_text.color = inside
-        style.label_text.drop_shadow = theme.outline_drop_shadow
-        style.label_text.drop_shadow_color = label
+        style.label_text.outlines = [ (2, label) ]
         style.label_text.size = text_size
         
     @theme
@@ -622,8 +611,6 @@ init -1110 python hide:
         style.vscrollbar.hover_bottom_bar = Frame(color("vbar", hover), 0, 0)
         style.vscrollbar.hover_thumb = Frame(color("circle", hover), 0, 7)
 
-
-        
     @theme
     def outline(
         inside="#fff",

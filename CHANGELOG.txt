@@ -8,12 +8,12 @@ possible. This gives two advantages:
 * Outlined text is now possible. The new outlines style property
 allows you to specify one or more outlines, including offset
 ones. This allows for several fairly complicated text effects, similar
-to what you'd see in modern subtitles. [demo]
+to what you'd see in modern subtitles.
 
 * The bug preventing fonts from being archived has probably been
 fixed. It should now be possible to include a font in an archive, and
 have that work. The archiver has been modified to allow ttf files to
-be archived again.
+be archived again. Please report any bugs/crashes that occur.
 
 
 There is now a new justify style property, that causes lines of text

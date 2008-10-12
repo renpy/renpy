@@ -232,7 +232,7 @@ init 1050 python:
                 renpy.context().__missing = rv
                 return rv
         
-        def __missing_show(name, what, layer):
+        def __missing_show_callback(name, what, layer):
             if layer != 'master':
                 return False
 
@@ -245,7 +245,7 @@ init 1050 python:
             __missing()[name[0]] = what
             return True
 
-        def __missing_hide(name, layer):
+        def __missing_hide_callback(name, layer):
             if layer != 'master':
                 return False
 
@@ -255,7 +255,7 @@ init 1050 python:
             __missing().pop(name[0], None)
             return True
             
-        def __missing_scene(layer):
+        def __missing_scene_callback(layer):
             if layer != 'master':
                 return False
 
@@ -280,7 +280,7 @@ init 1050 python:
             ui.close()
 
                 
-        config.missing_scene = __missing_scene
-        config.missing_show = __missing_show
-        config.missing_hide = __missing_hide
+        config.missing_scene = __missing_scene_callback
+        config.missing_show = __missing_show_callback
+        config.missing_hide = __missing_hide_callback
         config.overlay_functions.append(__missing_overlay)

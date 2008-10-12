@@ -273,6 +273,7 @@ init:
                 contents.sort()
 
                 for dd in contents:
+
                     dir = d + "/" + dd
 
                     if os.path.isdir(dir):

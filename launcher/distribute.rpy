@@ -378,7 +378,8 @@ label distribute:
             # Data replacement for macintosh.
             mac_data = { }
             
-            info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", project.name)
+            quoted_name = project.name.replace("&", "&amp;").replace("<", "&lt;")                                               
+            info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", quoted_name)
             mac_data[config.renpy_base + "/renpy.app/Contents/Info.plist"] = info_plist
 
             if os.path.exists(project.path + "/icon.icns"):

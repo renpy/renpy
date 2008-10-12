@@ -28,16 +28,12 @@
 _file = file
 
 import renpy
-
-# Many of these shouldn't be used directly.
-# from renpy.display.layout import *
-from renpy.display.text import ParameterizedText, register_sfont
+from renpy.display.text import ParameterizedText
+from renpy.display.font import register_sfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
-# from renpy.display.image import *
 
 from renpy.curry import curry
-# from renpy.display.audio import music_start, music_stop
 from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
@@ -188,7 +184,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     elif isinstance(what, basestring):
         what = tuple(what.split())
 
-    img = renpy.display.image.ImageReference(what, style='image_placement')
+    base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
     for i in at_list:
         img = i(img)
@@ -199,7 +195,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     if tag:
         name = (tag,) + name[1:]
     
-    if not img.find_target() and renpy.config.missing_show:
+    if not base.find_target() and renpy.config.missing_show:
         if renpy.config.missing_show(name, what, layer):
             return
 
@@ -1081,7 +1077,7 @@ def layer_at_list(at_list, layer='master'):
 def free_memory():
     force_full_redraw()
     renpy.display.im.free_memory()
-    renpy.display.text.free_memory()
+    renpy.display.font.free_memory()
     renpy.display.render.free_memory()
 
 def easy_displayable(d, none=False):

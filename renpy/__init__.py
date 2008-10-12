@@ -59,7 +59,8 @@ def import_all():
     import renpy.display.module
     import renpy.display.render # Most display stuff depends on this.
     import renpy.display.core # object
-    import renpy.display.text # core
+    import renpy.display.font
+    import renpy.display.text # core, font
     import renpy.display.layout # core
     import renpy.display.behavior # layout
     import renpy.display.transition # core, layout

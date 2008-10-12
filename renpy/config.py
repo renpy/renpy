@@ -176,7 +176,7 @@ keymap = dict(
     developer = [ 'D' ],
     quit = [ 'meta_q', 'alt_K_F4' ],
     iconify = [ 'meta_h' ],
-    help = [ 'K_F1', 'meta_?' ],
+    help = [ 'K_F1', 'meta_shift_/' ],
     
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

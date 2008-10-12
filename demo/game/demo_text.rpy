@@ -2,41 +2,41 @@
 # capabilities of Ren'Py.
 
 init:
-    python:
+    # Register an sfont.
+    $ renpy.register_sfont('new_sfont', 22,
+                           filename="new_sfont.png",
+                           spacewidth=6)
 
-        # This imports in the asfont22 module, which contains a list of
-        # kerning pairs.
-        import asfont22
+    # Declare a character that uses the sfont.
+    $ esfont = Character("Eileen",
+                         color="#c8ffc8",
+                         what_font="new_sfont")
 
-        # Register the sfont contained in asfont22 as "subfont".
-        renpy.register_sfont('subfont', 22,
-                             filename="asfont22.png",
-                             kerns=asfont22.kerns,
-                             spacewidth=4)
-
-    # Declare some characters that speak in the subfont.
-
-    # Just use the subfont.
-    $ esub = Character("Eileen",
-                       color="#c8ffc8",
-                       what_font="subfont",
-                       what_black_color="#282")
-
+    # Slow text.
     $ eslow = Character("Eileen",
                         color="#c8ffc8",
                         what_slow_cps=20)
-                       
+
+    # Outlined text.
+    $ eoutline = Character("Eileen",
+                           color="#c8ffc8",
+                           what_outlines=[ (1, "#282") ])
+    
     # Use it in subtitle mode.
     $ esubtitle = Character(None,
-                            what_font="subfont",
-                            what_black_color="#282",
+                            what_size=28,
+                            what_outlines=[(3, "#0008", 2, 2), (3, "#282", 0, 0)],
                             what_layout="subtitle",
                             what_xalign=0.5,
                             what_text_align=0.5,
                             window_background=None,
                             window_yminimum=0,
-                            show_say_vbox_properties=dict(xalign=0.5))
+                            window_xfill=False,
+                            window_xalign=0.5)
 
+
+    # This is used to show the defintion text, by the hyperlink demostration
+    # code.
     $ definition = Character(None,
                              window_yfill=True,
                              window_xmargin=20,
@@ -48,7 +48,7 @@ init:
     $ style.pink.color = "#ffc0c0"
     
 label demo_text:
-
+    
     e "Ren'Py gives you quite a bit of control over how text appears."
 
     e "Text tags let us control the appearance of text that is shown to the user."
@@ -86,13 +86,23 @@ label demo_text:
 
     e "And we want to give you all the power you need."
 
-    esub "For even more control, Ren'Py supports SFonts, image files containing font information."
+    e "There are a couple of text adjustements that don't corrrespond to text tags."
+
+    eoutline "The outlines setting lets you put outlines around the text."
+
+    eoutline "You can have more than one outline, and each has its own color and offset."
+
+    esubtitle "Here, we have two outlines around the white text."
+
+    esubtitle "The bottom one is a translucent black that's offset a little, while the top one is green."
     
-    esub "SFonts let you use fonts you otherwise couldn't, and apply special effects to fonts... like I'm doing now, applying an outline to the font."
+    esubtitle "By hiding the window and adjusting the layout method, we are able to create reasonable subtitles."
 
-    esubtitle "Finally, you can adjust the line breaking algorithm. The subtitle line-breaking algorithm tries to make lines even in length."
-
-    esubtitle "Along with sfonts and the ability to change the text window, this lets us render reasonable subtitles."
+    esubtitle "This might be an interesting look for a game."
+        
+    esfont "For even more control, Ren'Py supports SFonts, image files containing font information."
+    
+    esfont "SFonts let you use fonts you otherwise couldn't, and apply special effects to fonts using your favorite image editor."
 
     e "Well, that's it for fonts and text tags."
 
