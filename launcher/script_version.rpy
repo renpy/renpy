@@ -1,3 +1,3 @@
-init -50:
-    $ config.script_version = (6, 7, 1)
+init -999:
+    $ config.script_version = (6, 8, 0)
     

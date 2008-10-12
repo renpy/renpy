@@ -125,7 +125,7 @@ def main():
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
     
     # Compile the various games
-    for i in [ 'demo/game', 'data', 'template/game', 'the_question/game' ]:
+    for i in [ 'demo/game', 'launcher', 'template/game', 'the_question/game' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
@@ -136,7 +136,7 @@ def main():
     files.append("LICENSE.txt")
     files.extend(tree("common"))
     more_files.append("console.exe")
-    files.extend(tree("data"))
+    files.extend(tree("launcher"))
     files.extend(tree("demo"))
     # files.extend(tree("dse"))
     files.extend(tree("the_question"))
