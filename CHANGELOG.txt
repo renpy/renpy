@@ -91,8 +91,9 @@ The presplash code now looks for presplash.jpg in the game directory
 if presplash.png is not found.
 
 
-Custom mice should now be properly hidden when leaving the window on
-the mac platform.
+Custom mouse cursors should now be properly hidden when the mouse
+leaves the window. Previously, this failed to work on the Mac OS X
+platform.
 
 
 The launcher has been moved into the launcher/ directory. This really
