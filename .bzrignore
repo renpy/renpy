@@ -1,0 +1,11 @@
+build
+dist
+dists
+renpy.app
+**/*.rpyc
+**/*.rpyb
+**/*.rpymc
+_renpy.c
+nativemidi.c
+sound.c
+winmixer.c
