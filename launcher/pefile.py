@@ -13,13 +13,21 @@ RESOURCE_BASE=0x3400
 # to.
 RESOURCE_VIRTUAL=0x6000
 
+# The offset of the field that tells us with the alignment need be.
+ALIGNMENT_FIELD = 0x138
+
 # Locations in the file where we need to patch in the resource
 # segment length.
-RESOURCE_LENGTH_PATCHES = [ 0x018c ]
+RESOURCE_LENGTH_PATCHES = [ 0x018c, 0x278 ]
 
 # Locations in the file where we need to patch in the padded
 # resource segment length.
 RESOURCE_PADDED_PATCHES = [ 0x280 ]
+
+# Locations in the file where we need to patch in the change in the
+# size of the resource segement (and hence the change in the file's
+# total size.)
+SIZE_DELTA_PATCHES = [ 0x150 ]
 
 # A location in the file that will be checked to be sure it matches
 # RESOURCE_BASE.
@@ -249,8 +257,11 @@ def change_icons(oldexe, icofn):
     rsrc = repack_dict(resources, 0)
     rsrc_len = len(rsrc)
 
-    if len(rsrc) % 0x1000:
-        pad = 0x1000 - (len(rsrc) % 0x1000)
+    pe.seek(ALIGNMENT_FIELD)
+    alignment = pe.u32()
+    
+    if len(rsrc) % alignment:
+        pad = alignment - (len(rsrc) % alignment)
         padding = "RENPYVNE" * (pad / 8 + 1)
         padding = padding[:pad]
         rsrc += padding
@@ -261,8 +272,15 @@ def change_icons(oldexe, icofn):
         pe.set_u32(addr, rsrc_len)
 
     for addr in RESOURCE_PADDED_PATCHES:
+        pe.seek(addr)
+        size_delta = padded_len - pe.u32()
         pe.set_u32(addr, padded_len)
 
+    for addr in SIZE_DELTA_PATCHES:
+        pe.seek(addr)
+        pe.set_u32(addr, pe.u32() + size_delta)
+
+        
     return pe.tostring()[:RESOURCE_BASE] + rsrc
     
 if __name__ == "__main__":
