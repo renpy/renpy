@@ -80,6 +80,10 @@ has been updated to version 1.8.1, while Freetype is now at version
 2.3.7.
 
 
+The presplash code now looks for presplash.jpg in the game directory
+if presplash.png is not found.
+
+
 The launcher has been moved into the launcher/ directory. This really
 shouldn't matter much, but may affect packaging and translation.
 

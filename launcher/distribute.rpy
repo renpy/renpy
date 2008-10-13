@@ -18,7 +18,6 @@ init python:
                      "launcherinfo.py",
                      "traceback.txt",
                      "errors.txt",
-                     "completion.lua",
                      "icon.ico",
                      "icon.icns")
 

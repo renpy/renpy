@@ -34,12 +34,15 @@ def start(gamedir):
     import os.path
 
     global proc
-    
-    fn = gamedir + "/presplash.png"
-    
-    if not os.path.exists(fn):
+
+    filenames = [ "/presplash.png", "/presplash.jpg" ]
+    for fn in filenames:
+        fn = gamedir + fn
+        if os.path.exists(fn):
+            break
+    else:
         return
-        
+    
     import subprocess
     import sys
 

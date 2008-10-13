@@ -626,6 +626,8 @@ label archive_files:
 
             if fn == "presplash.png":
                 return False
+            if fn == "presplash.jpg":
+                return False
             
             for e in extensions:
                 if fnmatch.fnmatch(fn, e):
