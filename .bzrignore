@@ -9,3 +9,7 @@ _renpy.c
 nativemidi.c
 sound.c
 winmixer.c
+jedit
+lint.txt
+renpy.code
+traceback.txt
