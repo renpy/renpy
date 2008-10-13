@@ -91,6 +91,10 @@ The presplash code now looks for presplash.jpg in the game directory
 if presplash.png is not found.
 
 
+Custom mice should now be properly hidden when leaving the window on
+the mac platform.
+
+
 The launcher has been moved into the launcher/ directory. This really
 shouldn't matter much, but may affect packaging and translation.
 

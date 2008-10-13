@@ -32,6 +32,8 @@ import time
 import cStringIO
 import threading
 
+on_windows = (sys.platform == 'win32')
+
 try:
     import pygame.macosx
 except:
@@ -40,8 +42,6 @@ except:
 # Is the cpu idle enough to do other things?
 cpu_idle = threading.Event()
 cpu_idle.clear()
-
-
 
 TIMEEVENT = USEREVENT + 1
 PERIODIC = USEREVENT + 2
@@ -1767,7 +1767,8 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                        self.focused = True
+                        if on_windows:
+                            self.focused = True
                             
                     # Handle focus notifications.
                     if ev.type == ACTIVEEVENT:
