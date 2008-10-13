@@ -624,6 +624,15 @@ class Bar(renpy.display.core.Displayable):
         value = self.adjustment.value
         page = self.adjustment.page
 
+        if range <= 0:
+            if self.style.unscrollable == "hide":
+                self.hidden = True
+                return renpy.display.render.Render(width, height)
+            elif self.style.unscrollable == "insensitive":
+                self.set_style_prefix("insensitive_")
+
+        self.hidden = False
+        
         if self.style.bar_invert ^ self.style.bar_vertical:
             value = range - value
 
@@ -718,11 +727,14 @@ class Bar(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
 
         if not self.focusable:
-            return
+            return None
 
         if not self.is_focused():
-            return
+            return None
 
+        if self.hidden:
+            return None
+        
         range = self.adjustment.range
         old_value = self.adjustment.value
         value = old_value

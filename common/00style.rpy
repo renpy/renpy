@@ -187,6 +187,7 @@ init -1090 python:
     style.default.left_gutter = 0
     style.default.right_gutter = 0
     style.default.thumb_offset = 0
+    style.default.unscrollable = None
     
     # Misc.
     style.default.activate_sound = None

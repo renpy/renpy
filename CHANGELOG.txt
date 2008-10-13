@@ -59,6 +59,13 @@ rebuilt even after the game has begun running, with some
 caveats. (Changes are not persisted, for one thing.)
 
 
+The new unscrollable style property allows one to choose how
+unscrollbable scrollbars are displays. None keeps the current
+behavior, which shows the bar normally. If set to "insensitive", the
+bar becomes insensitive, while if set to "hide", the bar is not 
+drawn at all.
+
+
 The new renpy.easy_displayable method can be used by user-defined
 displayables to convert strings into Solid or Image displayables.
 

@@ -94,6 +94,7 @@ style_properties = dict(
     background = renpy.easy.displayable_or_none,
     bar_invert = None,
     bar_resizing = None,
+    unscrollable = None,
     bar_vertical = None,
     black_color = renpy.easy.color,
     bold = None,
