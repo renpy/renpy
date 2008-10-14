@@ -917,12 +917,40 @@ def get_filename_line():
 
 def shell_escape(s):
     s = s.replace("\\", "\\\\")
-    # s = s.replace("\'", "\\\'")
     s = s.replace("\"", "\\\"")
-    s = s.replace("\$", "\\\$")
-    s = s.replace("\%", "\\\%")
-    s = s.replace("\`", "\\\`")
     return s
+
+def split_args(s):
+
+    rv = [ ]
+    word = ""
+    quoted = False
+        
+    i = 0
+    while i < len(s):
+        c = s[i]
+        i += 1
+
+        if not quoted and c == ' ' and word:
+            if word:
+                rv.append(word)
+                word = ""
+            continue
+            
+        if c == '"':
+            quoted = not quoted
+            continue
+
+        if c == '\\':
+            c = s[i]
+            i += 1
+
+        word += c
+
+    if word:
+        rv.append(word)
+
+    return rv
 
 def launch_editor(filenames, line=1, transient=0):
     """
@@ -940,16 +968,8 @@ def launch_editor(filenames, line=1, transient=0):
     if not len(filenames):
         return
 
-    # join = '" "'
     shell = True
     
-#     if hasattr(sys, "winver"):
-#         shell = False
-#         # join = '" "'
-#     else:
-#         shell = True
-#         # join = "' '"
-
     filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
@@ -965,11 +985,12 @@ def launch_editor(filenames, line=1, transient=0):
     cmd = cmd.replace('""', '')
 
     try:
-        return subprocess.Popen(cmd, shell=shell)
+        subprocess.Popen(split_args(cmd))
+        return True
     except:
         if renpy.config.debug:
             raise
-        return None
+        return False
 
 # A file that log logs to.
 logfile = None

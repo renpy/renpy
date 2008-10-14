@@ -18,7 +18,8 @@ def main():
     setup(name="RenPy",
           windows=[ dict(script="renpy.py",
                          dest_base="renpy",
-                         icon_resources=[ (1, "newicon.ico") ] ) ],
+                         icon_resources=[ (1, "newicon.ico") ] ),
+                    ],
 
           console=[ dict(script="renpy.py", dest_base="console") ],
 

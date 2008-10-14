@@ -13,18 +13,18 @@ init:
              
             if platform.mac_ver()[0]:
                 config.editor = "open -t '%(allfiles)s'"
-
             else:
                 
                 if sys.platform == 'win32':
                     editor = config.renpy_base + "/editor/scite.exe"
                 else:
                     editor = config.renpy_base + "/editor/scite"
+
+                editor = os.path.normpath(editor)
+                editor = renpy.shell_escape(editor)
                 
-                if os.path.exists(editor):
-                    editor = renpy.shell_escape(editor)
-                    config.editor = '"' + editor + '" "%(allfiles)s" "-open:%(filename)s" -goto:%(line)d'
-                    config.editor_transient = config.editor+' -revert:'
+                config.editor = '"' + editor + '" "%(allfiles)s" -goto:%(line)d'
+                config.editor_transient = config.editor+' -revert:'
 
             if config.editor:
                 os.environ['RENPY_EDITOR'] = config.editor
