@@ -53,9 +53,10 @@ Game", for consistency with the game menu.
 
 When config.developer is set and an undefined image is used in a show
 or scene statement, a list of undefined images will appear centered at
-the top of the screen. A black screen will be show instead of any missing
-background. This makes it easier to write a script before all images are
-present.
+the top of the screen. A black screen (configurable with
+config.missing_background) will be shown instead of any missing
+background. This makes it easier to write a script before all images
+are present.
 
 
 The newly-documented Style.set_parent method lets you change the
