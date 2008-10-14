@@ -1249,6 +1249,9 @@ class Text(renpy.display.core.Displayable):
 
                 surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at, expand)
 
+                if expand:
+                    (sw, sh) = ts.sizes(text)
+                    
                 actual_y = y + max_ascent - ts.get_ascent()
 
                 if surf:
@@ -1327,10 +1330,10 @@ class Text(renpy.display.core.Displayable):
             maxdsy = max(maxdsy, dsy)
 
         for expand, color, dsx, dsy in outlines:
-            mindsx = min(mindsx, dsx)
-            mindsy = min(mindsy, dsy)
-            maxdsx = max(maxdsx, dsx)
-            maxdsy = max(maxdsy, dsy)
+            mindsx = min(mindsx, dsx - expand)
+            mindsy = min(mindsy, dsy - expand)
+            maxdsx = max(maxdsx, dsx + expand)
+            maxdsy = max(maxdsy, dsy + expand)
             
         # minds{x,y} are negative (or 0), maxds{x,y} are positive (or 0).
             

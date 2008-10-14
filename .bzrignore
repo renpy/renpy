@@ -13,3 +13,12 @@ jedit
 lint.txt
 renpy.code
 traceback.txt
+doc/common.css
+doc/images
+doc/index.html
+doc/monobook.css
+doc/monobook2.css
+doc/reference
+doc/shared.css
+doc/tutorials
+doc/www.renpy.org
