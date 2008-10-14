@@ -36,6 +36,13 @@ init:
 
         style.hyperlink_text.color = "#0ff"
 
+        config.underlay = [
+            renpy.Keymap(
+                quit = renpy.quit_event,
+                iconify = renpy.iconify,
+                )
+            ]
+        
         def quote(c):
             n = ord(c)
             if 0x20 <= n <= 0x7f:
@@ -58,7 +65,7 @@ init:
             ui.add(DynamicDisplayable("Text(_(store.message), size=14, color='#fff', xpos=100, ypos=375, xmaximum=240)"))
             ui.text(renpy.version(), xalign=0, yalign=1.0, size=12, color='#000')
             
-            return ui.interact(suppress_underlay=True)
+            return ui.interact()
 
         def title(name):
             ui.window(style='mm_root')

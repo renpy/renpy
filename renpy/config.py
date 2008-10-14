@@ -175,7 +175,7 @@ keymap = dict(
     inspector = [ 'I' ],
     developer = [ 'D' ],
     quit = [ 'meta_q', 'alt_K_F4' ],
-    iconify = [ 'meta_h' ],
+    iconify = [ 'meta_m', 'alt_m' ],
     help = [ 'K_F1', 'meta_shift_/' ],
     
     # Say.

@@ -718,10 +718,16 @@ class Display(object):
             
         # Window icon.
         if renpy.config.window_icon:
-            pygame.display.set_icon(
-                renpy.display.scale.image_load_unscaled(
-                    renpy.loader.load(renpy.config.window_icon),
-                    renpy.config.window_icon))
+
+            im = renpy.display.scale.image_load_unscaled(
+                renpy.loader.load(renpy.config.window_icon),
+                renpy.config.window_icon)
+
+            if on_windows and im.get_width() > 32:
+                im = renpy.display.scale.real_bilinear(im, (32, 32))
+
+            pygame.display.set_icon(im)
+                
 
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.

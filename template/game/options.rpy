@@ -200,10 +200,9 @@ init -1 python hide:
     ## - A label in the script, in which case that label is called to
     ##   show help to the user.
     ## - A file name relative to the base directory, which is opened in a
-    ##   web browser. The filename may be followed by an # to specifiy an
-    ##   anchor inside an html file.
+    ##   web browser.
     ## - None, to disable help.   
-    config.help = "README.html#renpy_help"
+    config.help = "README.html"
 
 
     #########################################

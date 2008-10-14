@@ -74,7 +74,7 @@ Alt-F4 and Command-Q now trigger the quit event, as if you pressed the
 quit button on the top of the window. The first press brings up the 
 quit prompt, and a second press forcibly terminates the game. 
 
-Alt-H and Command-H hide (iconify) the window.
+Alt-M and Command-M iconify the window.
 
 
 The new RENPY_SCREENSHOT_PATTERN environment variable lets you
@@ -89,6 +89,10 @@ has been updated to version 1.8.1, while Freetype is now at version
 
 The presplash code now looks for presplash.jpg in the game directory
 if presplash.png is not found.
+
+
+On Windows, config.window_icon will be scaled to 32x32 if it is wider
+than 32 pixels. This allows the same icon to be used across platforms.
 
 
 Custom mouse cursors should now be properly hidden when the mouse

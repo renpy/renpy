@@ -182,7 +182,8 @@ init -1180 python hide:
         filename, line = renpy.get_filename_line()
         renpy.launch_editor([ filename ], line)
         
-    # The default keymap.
+    # The default keymap. We might also want to put some of this into
+    # the launcher.
     km = renpy.Keymap(
         rollback = renpy.rollback,
         screenshot = screenshot,
