@@ -21,6 +21,11 @@ to have additional whitespace inserted between words so that the left
 and right margins are even, except on the last line of a paragraph.
 
 
+Ren'Py now supports the MudgeFont image-based file format. The new
+{{funcref|renpy.register_mudgefont}} function is used to register a
+MudgeFont.
+
+
 Newly-created games will have a Help option on the main and game
 menus. This is controlled by the config.help variable. By default 
 the help system shows the README.html file in the game's base directory.

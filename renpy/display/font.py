@@ -49,8 +49,11 @@ class ImageFont(object):
             return (0, self.height)
         
         for a, b in zip(text, text[1:]):
-            w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
-
+            try:
+                w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+            except KeyError:
+                raise Exception("Character %r not found in %s." % (a, type(self).__name__))
+                
         w += self.sizes[text[-1]]
 
         return (w, self.height)
@@ -121,7 +124,6 @@ class SFont(ImageFont):
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
-        self.surf = surf
 
         sw, sh = surf.get_size()
         height = sh
@@ -168,34 +170,91 @@ class SFont(ImageFont):
 
             i += 1
 
+
+class MudgeFont(ImageFont):
+
+    def __init__(self,
+                 filename,
+                 xml,
+                 spacewidth,
+                 default_kern,
+                 kerns):
+
+        self.filename = filename
+        self.xml = xml
+        self.spacewidth = spacewidth
+        self.default_kern = default_kern
+        self.kerns = kerns
+
+    def load(self):
+
+        # Map from character to subsurface.
+        self.chars = { }
+
+        # Map from character to width, height.
+        self.sizes = { }
+
+        # Load in the image.
+        surf = renpy.display.im.Image(self.filename).load(unscaled=True)
+        self.surf = surf
+
+        # Parse the xml file.
+        tree = etree.fromstring(renpy.loader.load(self.xml).read())
+
+        height = 0
+        
+        # Find each character.
+        for e in tree.findall("char"):
+
+            char = int(e.attrib["id"])
+            if char < 0:
+                continue
+
+            c = unichr(char)
+            x = int(e.attrib["x"])
+            y = int(e.attrib["y"])
+            w = int(e.attrib["width"])
+            h = int(e.attrib["height"])
+
+            ss = surf.subsurface((x, y, w, h))
+            ss = renpy.display.scale.surface_scale(ss)
+                
+            self.chars[c] = ss
+            self.sizes[c] = w
+
+            height = max(height, h)
+        
+        self.height = height
+
+        # Create space characters.
+        if u' ' not in self.chars:
+            self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
+            self.sizes[u' '] = self.spacewidth
+
+        if u'\u00a0' not in self.chars:
+            self.chars[u'\u00a0'] = self.chars[u' ']
+            self.sizes[u'\u00a0'] = self.sizes[u' ']
+
+            
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, spacewidth=10, default_kern=0, kerns={},
                    charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
-    """
-    This registers an SFont with the given details. Please note that
-    size, bold, italic, and underline are all advisory (used for matching), and
-    do not change the appearance of the font.
 
-    @param name: The name of the font being registered.
-    @param size: The size of the font being registered.
-    @param bold: The boldness of the font being registered.
-    @param italics: The italicness of the font being registered.
-    @param underline: The underline of the font being registered.
-
-    @param filename: The file containing the sfont image.
-    @param spacewidth: The width of a space character.
-    @param default_kern: The default kern spacing between characters.
-    @param kerns: A map from two-character strings to the kern that should
-    be used between those characters.
-    @param charset: The character set of the font. A string containing characters
-    in the order in which they are found in the image.
-    """
-   
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
     sf = SFont(filename, spacewidth, default_kern, kerns, charset)
     fonts[(name, size, bold, italics, underline)] = sf
+
+
+def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False, 
+                   filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
+   
+    if name is None or size is None or filename is None:
+        raise Exception("When registering a Mudge Font, the font name, font size, filename, and xmlfilename are required.")
+
+    mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
+    fonts[(name, size, bold, italics, underline)] = mf
 
 
 
