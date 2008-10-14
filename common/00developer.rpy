@@ -196,6 +196,9 @@ label _style_hierarchy:
     jump _developer_screen
     
 
+init -1050 python:
+    config.missing_background = "black"
+    
 init 1050 python:
     
     if renpy.game.options.remote:
@@ -238,7 +241,7 @@ init 1050 python:
 
             global __missing_scene
             if __missing_scene:
-                renpy.show(name, what="black")
+                renpy.show(name, what=config.missing_background)
             __missing_scene = False
                 
             what = " ".join(what).replace("{", "{{")
