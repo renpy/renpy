@@ -40,9 +40,61 @@ fonts = { }
 # loaded font object corresponding to that specification.
 font_cache = { }
 
-
 class ImageFont(object):
-    pass
+
+    def size(self, text):
+        w = 0
+
+        if not text:
+            return (0, self.height)
+        
+        for a, b in zip(text, text[1:]):
+            w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+
+        w += self.sizes[text[-1]]
+
+        return (w, self.height)
+            
+    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
+        surf = pygame.Surface(self.size(text), 0,
+                              renpy.game.interface.display.sample_surface)
+
+        if not text:
+            return surf
+
+        x = 0
+        y = 0
+        
+        for a, b in zip(text, text[1:]):
+            surf.blit(self.chars[a], (x, y))
+            x += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+
+        surf.blit(self.chars[text[-1]], (x, y))
+
+        if renpy.config.recolor_sfonts and \
+               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
+               renpy.display.module.can_twomap:
+
+            newsurf = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            renpy.display.module.twomap(surf, newsurf, color, black_color)
+            renpy.display.render.mutated_surface(newsurf)
+
+            surf = newsurf
+
+        return surf
+
+    def get_linesize(self):
+        return self.height 
+
+    def get_height(self):
+        return self.height
+
+    def get_ascent(self):
+        return self.height
+
+    def get_descent(self):
+        return 0
+
 
 class SFont(ImageFont):
 
@@ -115,59 +167,6 @@ class SFont(ImageFont):
 
 
             i += 1
-
-    def size(self, text):
-        w = 0
-
-        if not text:
-            return (0, self.height)
-        
-        for a, b in zip(text, text[1:]):
-            w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
-
-        w += self.sizes[text[-1]]
-
-        return (w, self.height)
-            
-    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
-        surf = pygame.Surface(self.size(text), 0,
-                              renpy.game.interface.display.sample_surface)
-
-        if not text:
-            return surf
-
-        x = 0
-        y = 0
-        
-        for a, b in zip(text, text[1:]):
-            surf.blit(self.chars[a], (x, y))
-            x += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
-
-        surf.blit(self.chars[text[-1]], (x, y))
-
-        if renpy.config.recolor_sfonts and \
-               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
-               renpy.display.module.can_twomap:
-
-            newsurf = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
-            renpy.display.module.twomap(surf, newsurf, color, black_color)
-            renpy.display.render.mutated_surface(newsurf)
-
-            surf = newsurf
-
-        return surf
-
-    def get_linesize(self):
-        return self.height 
-
-    def get_height(self):
-        return self.height
-
-    def get_ascent(self):
-        return self.height
-
-    def get_descent(self):
-        return 0
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, spacewidth=10, default_kern=0, kerns={},

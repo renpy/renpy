@@ -22,7 +22,7 @@ init python:
         style.prefs_column.box_spacing = 5
         style.prefs_frame.top_margin = 5
         
-        style.prefs_left.xpos = 100
+        style.prefs_left.xpos = 110
         style.prefs_center.xpos = 320
         style.prefs_right.xpos = 530
 
