@@ -72,6 +72,7 @@ init:
             ui.null()
 
             ui.frame(xminimum=350, yminimum=370)
+            ui.viewport(child_size=(2000, None), draggable=True, ymaximum=34)
             _label_factory(name, "launcher_title", size=28)
             
             # ui.text(name, xpos=4, ypos=4, size=30, color="#559")
@@ -100,7 +101,7 @@ init:
                         
             # ui.button(clicked=clicked, hovered=hovered)
             # ui.text(text, style="button_text")
-            _button_factory(text, 'launcher', clicked=clicked, hovered=hovered, selected=selected)
+            _button_factory(text, 'launcher', clicked=clicked, hovered=hovered, selected=selected, xmaximum=200)
                 
 
         def prompt(name, message, cancel, default='', hint=''):
@@ -158,6 +159,8 @@ init:
                 mid(focus="paged_menu")
 
                 for name, desc, ret, hovered, selected in choices[page * per_page:(page + 1) * per_page]:
+                    if len(name) > 19:
+                        name = name[:18] + u"\u2026"
                     button(name, desc, clicked=ui.returns(("return", ret)), hovered=hovered, selected=selected)
                     
                 ui.close()
@@ -490,7 +493,8 @@ label edit:
                 files.remove(i)
                 files.insert(0, i)
             
-        renpy.launch_editor(files)
+        if not renpy.launch_editor(files):
+            error(u"Error", u"Launching the editor failed. You may need Java, which can be downloaded for free from {a=http://www.java.com}java.com{/a}.", "start")
         
         store.message = _(u"Launched editor with %d script files.") % len(files)
 
