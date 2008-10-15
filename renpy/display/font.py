@@ -42,6 +42,21 @@ font_cache = { }
 
 class ImageFont(object):
 
+    # ImageFonts are expected to have the following fields defined by
+    # a subclass:
+
+    # Font global:
+    # height - The line height, the height of each character cell.
+    # kerns - The kern between wach pair of characters.
+    # default_kern - The default kern.
+    # baseline - The y offset of the font baseline.
+
+    # Per-character:
+    # width - The width of each character.
+    # advance - The advance of each character.
+    # offsets - The x and y offsets of each character.
+    # chars - A map from a character to the surface containing that character.
+    
     def size(self, text):
         w = 0
 
@@ -50,11 +65,11 @@ class ImageFont(object):
         
         for a, b in zip(text, text[1:]):
             try:
-                w += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+                w += self.advance[a] + self.kerns.get(a + b, self.default_kern)
             except KeyError:
                 raise Exception("Character %r not found in %s." % (a, type(self).__name__))
                 
-        w += self.sizes[text[-1]]
+        w += self.width[text[-1]]
 
         return (w, self.height)
             
@@ -69,10 +84,12 @@ class ImageFont(object):
         y = 0
         
         for a, b in zip(text, text[1:]):
-            surf.blit(self.chars[a], (x, y))
-            x += self.sizes[a] + self.kerns.get(a + b, self.default_kern)
+            xoff, yoff = self.offsets[a]
+            surf.blit(self.chars[a], (x + xoff, y + yoff))
+            x += self.advance[a] + self.kerns.get(a + b, self.default_kern)
 
-        surf.blit(self.chars[text[-1]], (x, y))
+        xoff, yoff = self.offsets[text[-1]]
+        surf.blit(self.chars[text[-1]], (x + xoff, y + yoff))
 
         if renpy.config.recolor_sfonts and \
                (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
@@ -87,17 +104,17 @@ class ImageFont(object):
         return surf
 
     def get_linesize(self):
-        return self.height 
+        return self.height + 10
 
     def get_height(self):
         return self.height
 
     def get_ascent(self):
-        return self.height
+        return self.baseline
 
+        
     def get_descent(self):
-        return 0
-
+        return -(self.height - self.baseline)
 
 class SFont(ImageFont):
 
@@ -116,25 +133,30 @@ class SFont(ImageFont):
 
     def load(self):
 
-        # Map from character to subsurface.
         self.chars = { }
-
-        # Map from character to width, height.
-        self.sizes = { }
-
+        self.width = { }
+        self.advance = { }
+        self.offsets = { }
+        
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         sw, sh = surf.get_size()
         height = sh
         self.height = height
-
+        self.baseline = height
+        
         # Create space characters.
         self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
-        self.sizes[u' '] = self.spacewidth
-        self.chars[u'\u00a0'] = self.chars[u' ']
-        self.sizes[u'\u00a0'] = self.sizes[u' ']
+        self.width[u' '] = self.spacewidth
+        self.advance[u' '] = self.spacewidth
+        self.offsets[u' '] = (0, 0)
 
+        self.chars[u'\u00a0'] = self.chars[u' ']
+        self.width[u'\u00a0'] = self.width[u' ']
+        self.advance[u'\u00a0'] = self.advance[u' ']
+        self.offsets[u'\u00a0'] = self.offsets[u' ']
+        
         # The color key used to separate characters.
         i = 0
         while True:
@@ -165,8 +187,9 @@ class SFont(ImageFont):
                 ss = renpy.display.scale.surface_scale(ss)
                 
                 self.chars[c] = ss
-                self.sizes[c] = i - start
-
+                self.width[c] = i - start
+                self.advance[c] = i - start
+                self.offsets[c] = (0, 0)
 
             i += 1
 
@@ -188,15 +211,13 @@ class MudgeFont(ImageFont):
 
     def load(self):
 
-        # Map from character to subsurface.
         self.chars = { }
-
-        # Map from character to width, height.
-        self.sizes = { }
-
+        self.width = { }
+        self.advance = { }
+        self.offsets = { }
+        
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
-        self.surf = surf
 
         # Parse the xml file.
         tree = etree.fromstring(renpy.loader.load(self.xml).read())
@@ -220,21 +241,110 @@ class MudgeFont(ImageFont):
             ss = renpy.display.scale.surface_scale(ss)
                 
             self.chars[c] = ss
-            self.sizes[c] = w
-
+            self.width[c] = w
+            self.advance[c] = w
+            self.offsets[c] = (0, 0)
+                        
             height = max(height, h)
         
         self.height = height
-
+        self.baseline = height
+        
         # Create space characters.
         if u' ' not in self.chars:
             self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
-            self.sizes[u' '] = self.spacewidth
-
+            self.width[u' '] = self.spacewidth
+            self.advance[u' '] = self.spacewidth
+            self.offsets[u' '] = (0, 0)
+            
+            
         if u'\u00a0' not in self.chars:
             self.chars[u'\u00a0'] = self.chars[u' ']
-            self.sizes[u'\u00a0'] = self.sizes[u' ']
+            self.width[u'\u00a0'] = self.width[u' ']
+            self.advance[u'\u00a0'] = self.advance[u' ']
+            self.offsets[u'\u00a0'] = self.offsets[u' ']
 
+def parse_bmfont_line(l):
+    w = ""
+    line = [ ]
+    
+    quote = False
+    
+    for c in l:
+        if c == "\r" or c == "\n":
+            continue
+        
+        if c == " " and not quote:
+            if w:
+                line.append(w)
+                w = ""
+            continue
+
+        if c == "\"":
+            quote = not quote
+            continue
+
+        w += c
+
+    if w:
+        line.append(w)
+
+    map = dict(i.split("=", 1) for i in line[1:])
+    return line[0], map
+            
+class BMFont(ImageFont):
+
+    def __init__(self, filename):
+        self.filename = filename
+
+    def load(self):
+
+        self.chars = { }
+        self.width = { }
+        self.advance = { }
+        self.offsets = { }
+        self.kerns = { }
+        self.default_kern = 0
+        
+        pages = { }
+
+        f = renpy.loader.load(self.filename)
+        for l in f:
+
+            kind, args = parse_bmfont_line(l)
+            
+            if kind == "common":
+                self.height = int(args["lineHeight"])
+                self.baseline = int(args["base"])
+            elif kind == "page":
+                pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
+            elif kind == "char":
+                c = unichr(int(args["id"]))
+                x = int(args["x"])
+                y = int(args["y"])
+                w = int(args["width"])
+                h = int(args["height"])
+                xo = int(args["xoffset"])
+                yo = int(args["yoffset"])
+                xadvance = int(args["xadvance"])
+                page = int(args["page"])
+
+                ss = pages[page].subsurface((x, y, w, h))
+                ss = renpy.display.scale.surface_scale(ss)
+
+                self.chars[c] = ss
+                self.width[c] = w + xo
+                self.advance[c] = xadvance
+                self.offsets[c] = (xo, yo)
+                
+        f.close()
+        
+        if u'\u00a0' not in self.chars:
+            self.chars[u'\u00a0'] = self.chars[u' ']
+            self.width[u'\u00a0'] = self.width[u' ']
+            self.advance[u'\u00a0'] = self.advance[u' ']
+            self.offsets[u'\u00a0'] = self.offsets[u' ']
+            
             
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, spacewidth=10, default_kern=0, kerns={},
@@ -250,13 +360,17 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
 def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
    
-    if name is None or size is None or filename is None:
-        raise Exception("When registering a Mudge Font, the font name, font size, filename, and xmlfilename are required.")
+    if name is None or size is None or filename is None or xml is None:
+        raise Exception("When registering a Mudge Font, the font name, font size, filename, and xml filename are required.")
 
     mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
     fonts[(name, size, bold, italics, underline)] = mf
 
+def register_bmfont(name=None, size=None, bold=False, italics=False, underline=False, 
+                    filename=None):
 
+    bmf = BMFont(filename)
+    fonts[(name, size, bold, italics, underline)] = bmf
 
 def load_ttf(fn, size, bold, italics, underline, expand):
 

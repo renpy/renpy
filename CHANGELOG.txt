@@ -21,9 +21,10 @@ to have additional whitespace inserted between words so that the left
 and right margins are even, except on the last line of a paragraph.
 
 
-Ren'Py now supports the MudgeFont image-based file format. The new
-renpy.register_mudgefont function is used to register a
-MudgeFont.
+Ren'Py now supports the MudgeFont and BMFont image-based font file
+formats. The new renpy.register_mudgefont function is used to register
+a MudgeFont, and the renpy.register_bmfon function is used to register
+a BMFont.
 
 
 Newly-created games will have a Help option on the main and game

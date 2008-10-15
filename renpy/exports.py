@@ -29,7 +29,7 @@ _file = file
 
 import renpy
 from renpy.display.text import ParameterizedText
-from renpy.display.font import register_sfont, register_mudgefont
+from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
 
