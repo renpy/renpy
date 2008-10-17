@@ -98,6 +98,8 @@ init python:
                     dfn = destdir + "/" + fn
                 else:
                     dfn = fn
+
+                dfn = dfn.replace("\\", "/")
                     
                 rv.append((sfn, dfn))
 
@@ -280,7 +282,7 @@ label distribute:
 
             win_data = { }
             if os.path.exists(project.path + "/icon.ico"):
-                win_data[config.renpy_base + "/renpy.exe"] = pefile.change_icons(
+                win_data[project.name + ".exe"] = pefile.change_icons(
                     config.renpy_base + "/renpy.exe",
                     project.path + "/icon.ico",
                     )
@@ -306,7 +308,7 @@ label distribute:
                 zi.external_attr = long(0100666) << 16 
                 data = file(fn, "rb").read()
 
-                data = win_data.get(fn, data)
+                data = win_data.get(an, data)
                 
                 zf.writestr(zi, data)
 
@@ -379,11 +381,11 @@ label distribute:
             
             quoted_name = project.name.replace("&", "&amp;").replace("<", "&lt;")                                               
             info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", quoted_name)
-            mac_data[config.renpy_base + "/renpy.app/Contents/Info.plist"] = info_plist
+            mac_data[project.name + ".app/Contents/Info.plist"] = info_plist
 
             if os.path.exists(project.path + "/icon.icns"):
                 icon_data = file(project.path + "/icon.icns", "rb").read()
-                mac_data[config.renpy_base + "/renpy.app/Contents/Resources/launcher.icns"] = icon_data
+                mac_data[project.name + ".app/Contents/Resources/launcher.icns"] = icon_data
             
             zf = zipfile.ZipFile(name + "-mac.zip", "w", zipfile.ZIP_DEFLATED)
 
@@ -411,7 +413,7 @@ label distribute:
                     zi.external_attr = long(0100666) << 16 
                     data = file(fn, "rb").read()
 
-                data = mac_data.get(fn, data)                    
+                data = mac_data.get(an, data)                    
                 zf.writestr(zi, data)
 
             zf.close()
