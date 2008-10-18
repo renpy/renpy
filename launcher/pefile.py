@@ -1,4 +1,3 @@
-
 # http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html
 # Contains a reasonable description of the format.
 
@@ -27,7 +26,7 @@ RESOURCE_PADDED_PATCHES = [ 0x280 ]
 # Locations in the file where we need to patch in the change in the
 # size of the resource segement (and hence the change in the file's
 # total size.)
-SIZE_DELTA_PATCHES = [ 0x150 ]
+SIZE_DELTA_PATCHES = [ 0x120, 0x150 ]
 
 # A location in the file that will be checked to be sure it matches
 # RESOURCE_BASE.
@@ -144,9 +143,10 @@ def parse_directory(offset):
 ##############################################################################
 # This utility function displays the tree of resources that have been loaded.
 def show_resources(d, prefix):
-
+    import md5
+    
     if not isinstance(d, dict):
-        print prefix, "Codepage", d[0], "length", len(d[1])
+        print prefix, "Codepage", d[0], "length", len(d[1]), "md5", md5.new(d[1]).hexdigest()
         return
         
     for k in d:
@@ -184,9 +184,10 @@ def repack_dict(o, offset):
             offset += len(packed)
             rest += packed
 
-            pad = 8 - (offset % 8)
-            offset += pad
-            rest += "RENPYVNE"[:pad]
+            if offset % 16:
+                pad = 16 - (offset % 16)
+                offset += pad
+                rest += "RENPYVNERENPYVNE"[:pad]
             
         addr = offset
         if isinstance(value, dict):
@@ -202,13 +203,13 @@ def repack_dict(o, offset):
         offset += len(packed)
         rest += packed
 
-        if offset % 8:        
-            pad = 8 - (offset % 8)
+        if offset % 16:        
+            pad = 16 - (offset % 16)
             offset += pad
-            rest += "RENPYVNE"[:pad]
+            rest += "RENPYVNERENPYVNE"[:pad]
         
     return rv + rest
-        
+
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
 # use in the resources of an exe file.
@@ -232,8 +233,17 @@ def load_icon(fn):
         size = f.u32()
         offset = f.u32()
 
+        oldaddr = f.addr
+
+        # If the compression type is the default, set the image size to 0.
+        f.seek(offset + 16)
+        if not f.u32():
+            f.set_u32(offset + 20, 0)
+        
         rv[i + 1] = { 0 : (1252, f.substring(offset, size)) }
 
+        f.seek(oldaddr)
+        
     return rv
 
 
@@ -251,7 +261,10 @@ def change_icons(oldexe, icofn):
 
     resources = parse_directory(0)
     # show_resources(resources, "")
+
     resources[3] = load_icon(icofn)
+
+    # print "----------------------------------------------------------------------"
     # show_resources(resources, "")
     
     rsrc = repack_dict(resources, 0)
