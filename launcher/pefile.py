@@ -27,7 +27,7 @@ RESOURCE_PADDED_PATCHES = [ 0x280 ]
 # Locations in the file where we need to patch in the change in the
 # size of the resource segement (and hence the change in the file's
 # total size.)
-SIZE_DELTA_PATCHES = [ 0x120, 0x150 ]
+SIZE_DELTA_PATCHES = [ 0x150 ]
 
 # A location in the file that will be checked to be sure it matches
 # RESOURCE_BASE.
@@ -156,58 +156,83 @@ def show_resources(d, prefix):
 ##############################################################################
 # These functions repack the resources into a new resource segment. Here,
 # the offset is relative to the start of the resource segment.
+
+class Packer(object):
+
+    def pack(self, d):
+        self.data = ""
+        self.data_offset = 0
+
+        self.entries = ""
+        self.entries_offset = 0
         
-def repack_name(s):
-    l = len(s)
-    s = s.encode("utf-16le")
-    return struct.pack("<H", l) + s + "\0\0"
+        head = self.pack_dict(d, 0)
 
-def repack_tuple(o, offset):
-    codepage, data = o
-    # print "REPACK OFFSET IS", offset
-    return struct.pack("<IIII", offset + 16 + RESOURCE_VIRTUAL, len(data), codepage, 0) + data
+        self.data = ""
+        self.data_offset = len(head) + len(self.entries)
 
-def repack_dict(o, offset):
-    name_entries = sorted((a, b) for a, b in o.iteritems() if isinstance(a, unicode))
-    id_entries = sorted((a, b) for a, b in o.iteritems() if isinstance(a, int))
+        self.entries = ""
+        self.entries_offset = len(head)
 
-    rv = struct.pack("<IIHHHH", 0, 0, 4, 0, len(name_entries), len(id_entries))
+        return self.pack_dict(d, 0) + self.entries + self.data
 
-    offset += len(rv) + (len(name_entries) + len(id_entries)) * 8
 
-    rest = ""
+        
+    def pack_name(self, s):
+        rv = self.data_offset + len(self.data)
+
+        l = len(s)
+        s = s.encode("utf-16le")
+        self.data += struct.pack("<H", l) + s + "\0\0"
+        
+        return rv
+
+    def pack_tuple(self, t):
+        codepage, data = t
+
+        rv = len(self.entries) + self.entries_offset        
+
+        if len(self.data) % 2:
+            self.data += "P"
+
+        daddr = len(self.data) + self.data_offset
+        
+        self.entries += struct.pack("<IIII", daddr + RESOURCE_VIRTUAL, len(data), codepage, 0)
+        self.data += data
+
+        # if len(self.data) % 1 == 1:
+        #    self.data += 'P'
+        
+        return rv
     
-    for (name, value) in name_entries + id_entries:
-        if isinstance(name, unicode):
-            packed = repack_name(name)
-            name = 0x80000000 | offset
-            offset += len(packed)
-            rest += packed
-
-            pad = 8 - (offset % 8)
-            offset += pad
-            rest += "RENPYVNE"[:pad]
-            
-        addr = offset
-        if isinstance(value, dict):
-            addr = addr | 0x80000000
-            
-        rv += struct.pack("<II", name, addr)
-
-        if isinstance(value, dict):
-            packed = repack_dict(value, offset)
-        elif isinstance(value, tuple):
-            packed = repack_tuple(value, offset)
-
-        offset += len(packed)
-        rest += packed
-
-        if offset % 8:        
-            pad = 8 - (offset % 8)
-            offset += pad
-            rest += "RENPYVNE"[:pad]
         
-    return rv + rest
+        
+    
+    def pack_dict(self, d, offset):
+        name_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, unicode))
+        id_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, int))
+        
+        rv = struct.pack("<IIHHHH", 0, 0, 4, 0, len(name_entries), len(id_entries))
+        
+        offset += len(rv) + (len(name_entries) + len(id_entries)) * 8
+        
+        rest = ""
+        
+        for (name, value) in name_entries + id_entries:
+            if isinstance(name, unicode):
+                name = 0x80000000 | self.pack_name(name)
+
+            if isinstance(value, dict):
+                addr = offset | 0x80000000
+                packed = self.pack_dict(value, offset)
+                offset += len(packed)
+                rest += packed
+            else:
+                addr = self.pack_tuple(value)
+                
+            rv += struct.pack("<II", name, addr)
+
+        return rv + rest
         
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
@@ -221,6 +246,9 @@ def load_icon(fn):
     count = f.u16()
 
     rv = { }
+    rv[3] = { }
+
+    group = struct.pack("HHH", 0, 1, count)    
     
     for i in range(count):
         width = f.u8()
@@ -237,9 +265,15 @@ def load_icon(fn):
         if not f.u32():
             f.set_u32(offset + 20, 0)
             
-        rv[i + 1] = { 0 : (1252, f.substring(offset, size)) }
+        rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
 
+
+        group += struct.pack("BBBBHHIH", width, height, colors, reserved,
+                             planes, bpp, size, i + 1)
+        
         f.seek(addr)
+
+    rv[14] = { 1 : { 0 : (1252, group) } }
         
     return rv
 
@@ -257,22 +291,22 @@ def change_icons(oldexe, icofn):
         raise Exception("RESOURCE_BASE is no longer correct. Please check all relocations.")
 
     resources = parse_directory(0)
-    # show_resources(resources, "")
-    resources[3] = load_icon(icofn)
-    # show_resources(resources, "")
+#    show_resources(resources, "")
+    resources.update(load_icon(icofn))
+#    show_resources(resources, "")
     
-    rsrc = repack_dict(resources, 0)
+    rsrc = Packer().pack(resources)
     rsrc_len = len(rsrc)
 
     pe.seek(ALIGNMENT_FIELD)
     alignment = pe.u32()
-    
+
     if len(rsrc) % alignment:
         pad = alignment - (len(rsrc) % alignment)
         padding = "RENPYVNE" * (pad / 8 + 1)
         padding = padding[:pad]
         rsrc += padding
-
+        
     padded_len = len(rsrc)
 
     for addr in RESOURCE_LENGTH_PATCHES:
