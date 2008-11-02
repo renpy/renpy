@@ -80,6 +80,11 @@ cdef extern from "renpy.h":
                             float, float, float, float, float,
                             float, float, float, float, float,
                             float, float, float, float, float)
+
+    void staticgray_core(object, object,
+                         int, int, int, int, int, char *)
+
+    void PyErr_Clear()
     
 
 import pygame
@@ -286,7 +291,7 @@ def bilinear(pysrc, pydst,
 
     if pysrc.get_bitsize() not in (24, 32):
         raise Exception("bilinear requires a 24 or 32 bit surface.")
-
+    
     if pydst.get_bitsize() != pysrc.get_bitsize():
         raise Exception("bilinear requires both surfaces have the same bitsize.")
 
@@ -396,6 +401,11 @@ def colormatrix(pysrc, pydst,
     # pydst.unlock()
     # pysrc.unlock()
 
+
+def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
+    PyErr_Clear()
+    staticgray_core(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap)
+    
     
 # Be sure to update scale.py when adding something new here!
     

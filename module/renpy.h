@@ -104,5 +104,9 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
                         float c20, float c21, float c22, float c23, float c24,
                         float c30, float c31, float c32, float c33, float c34);
 
+void staticgray_core(
+    PyObject *pysrc, PyObject *pydst,
+    int rmul, int gmul, int bmul, int amul, int shift,
+    char *vmap);
 
 #endif 

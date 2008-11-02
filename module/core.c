@@ -1555,3 +1555,46 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
     Py_END_ALLOW_THREADS
 }
 
+void staticgray_core(PyObject *pysrc, PyObject *pydst,
+                     int rmul, int gmul, int bmul, int amul, int shift, char *vmap) {
+    
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int srcpitch, dstpitch;
+    unsigned short dstw, dsth;
+    unsigned short x, y;
+
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+    
+    Py_BEGIN_ALLOW_THREADS;
+
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+
+    dstw = dst->w;
+    dsth = dst->h;
+
+    for (y = 0; y < dsth; y++) {
+        unsigned char *s = &srcpixels[y * srcpitch];
+        unsigned char *d = &dstpixels[y * dstpitch];
+
+        for (x = 0; x < dstw; x++) {
+            int sum = 0;
+
+            sum += *s++ * rmul;
+            sum += *s++ * gmul;
+            sum += *s++ * bmul;
+            sum += *s++ * amul;
+            *d++ = (unsigned char) vmap[sum >> shift];
+        }
+    }
+
+    Py_END_ALLOW_THREADS;
+}
