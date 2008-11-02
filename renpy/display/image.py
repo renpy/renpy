@@ -49,7 +49,7 @@ class UncachedImage(renpy.display.core.Displayable):
         super(UncachedImage, self).__init__(style=style, **properties)
 
         self.surf = pygame.image.load(file, hint)
-        self.surf = self.surf.convert_alpha()
+        self.surf = self.surf.convert_alpha(renpy.game.interface.display.window)
 
         if scale:
             renpy.display.render.blit_lock.acquire()

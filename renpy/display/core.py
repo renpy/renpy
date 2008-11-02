@@ -746,8 +746,8 @@ class Display(object):
         self.set_window_caption()
         
         # Sample surface that all surfaces are created based on.
-        sample = pygame.Surface((10, 10))
-        self.sample_surface = sample.convert_alpha()
+        sample = pygame.Surface((10, 10), 0, self.window)
+        self.sample_surface = sample.convert_alpha(self.window)
 
         pygame.event.set_grab(False)
         

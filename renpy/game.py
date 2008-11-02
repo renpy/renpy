@@ -79,6 +79,9 @@ seen_ever = { }
 # True if we're in the first interaction after a rollback.
 after_rollback = False
 
+# Code that's run after the init code.
+post_init = [ ]
+
 # The class that's used to hold the persistent data.
 class Persistent(object):
 

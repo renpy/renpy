@@ -1056,7 +1056,7 @@ def is_fullscreen(surf, x, y, wh):
     # Check that this surface is on the screen.
     if (x > 0) or (y > 0) or (sw + x < w) or (sh + y < h):
         return False
-        
+    
     if surf.__class__ is pygame.Surface:
 
         if (surf.get_masks()[3] == 0 and

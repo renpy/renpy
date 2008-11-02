@@ -567,7 +567,7 @@ class Blink(renpy.display.core.Displayable):
             oldsurf = rend.pygame_surface()
 
             if not (oldsurf.get_masks()[3]):
-                oldsurf = oldsurf.convert_alpha()
+                oldsurf = oldsurf.convert_alpha(renpy.game.interface.display.window)
 
             newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
 

@@ -115,11 +115,8 @@ if version >= 4008002:
 
         dx, dy = size
 
-        if s.get_flags() & SRCALPHA:
-            d = pygame.Surface((dx, dy), SRCALPHA)
-        else:
-            d = pygame.Surface((dx, dy), 0)
-            
+        d = pygame.Surface(size, s.get_flags(), s)
+
         if can_bilinear_scale:
             bilinear_scale(s, d)
         else:
@@ -353,7 +350,7 @@ if version >= 5006000:
             nsw = max(sw / 2, dw)
             nsh = max(sh / 2, dh)
 
-            nsrc = pygame.Surface((nsw, nsh), src.get_flags())
+            nsrc = pygame.Surface((nsw, nsh), src.get_flags(), src)
             _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
             sx = 0
             sy = 0

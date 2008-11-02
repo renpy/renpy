@@ -258,6 +258,10 @@ def main():
 
     # Save the bytecode in a cache.
     renpy.game.script.save_bytecode()
+
+    # Run the post init code, if any.
+    for i in renpy.game.post_init:
+        i()
     
     # Rebuild the various style caches.
     renpy.style.build_styles()

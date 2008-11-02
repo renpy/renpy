@@ -157,7 +157,7 @@ class TextStyle(object):
             if a != 255 and renpy.display.module.can_linmap:
 
                 if not surf.get_masks()[3]:
-                    surf = surf.convert_alpha()
+                    surf = surf.convert_alpha(renpy.game.interface.display.window)
 
                 rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 

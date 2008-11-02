@@ -161,7 +161,7 @@ class Cache(object):
 
         if not image.cache:
             surf = image.load()
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
                 
             renpy.display.render.mutated_surface(surf)
             return surf
@@ -187,7 +187,7 @@ class Cache(object):
             
             surf = image.load()
             has_alpha = surf.get_masks()[3]
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
             
             ce = CacheEntry(image, surf)
             self.total_cache_size += ce.size
@@ -219,7 +219,7 @@ class Cache(object):
                 if rle:
 
                     # We must copy the surface, so we have a RLE-specific version.
-                    rle_surf = ce.surf.convert_alpha()
+                    rle_surf = ce.surf.convert_alpha(renpy.game.interface.display.window)
 
                     rle_surf.set_alpha(255, RLEACCEL)
                     rle_cache[id(ce.surf)] = rle_surf
@@ -938,7 +938,7 @@ class Map(ImageBase):
             return surf
 
         if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 
@@ -983,7 +983,7 @@ class Twocolor(ImageBase):
             return surf
 
         if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 
@@ -1026,7 +1026,7 @@ class Recolor(ImageBase):
             return surf
 
         if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 
@@ -1065,7 +1065,7 @@ class MatrixColor(ImageBase):
             return surf
 
         if not (surf.get_masks()[3]):
-            surf = surf.convert_alpha()
+            surf = surf.convert_alpha(renpy.game.interface.display.window)
 
         rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
 
@@ -1327,7 +1327,7 @@ class AlphaMask(ImageBase):
             raise Exception("AlphaMask surfaces must be the same size.")
 
         # Used to copy the surface.
-        rv = basesurf.convert_alpha()
+        rv = basesurf.convert_alpha(renpy.game.interface.display.window)
 
         if renpy.display.module.can_munge:
             renpy.display.module.alpha_munge(masksurf, rv, identity)
