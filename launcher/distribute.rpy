@@ -383,6 +383,10 @@ label distribute:
             info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", quoted_name)
             mac_data[project.name + ".app/Contents/Info.plist"] = info_plist
 
+            quoted_name = project.name.replace("\"", "\\\"")
+            launcher_py = file(config.renpy_base + "/renpy.app/Contents/Resources/launcher.py", "rb").read().replace("Ren'Py Launcher", quoted_name)
+            mac_data[project.name + ".app/Contents/Resources/launcher.py"] = launcher_py
+
             if os.path.exists(project.path + "/icon.icns"):
                 icon_data = file(project.path + "/icon.icns", "rb").read()
                 mac_data[project.name + ".app/Contents/Resources/launcher.icns"] = icon_data

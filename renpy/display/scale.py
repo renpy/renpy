@@ -39,13 +39,18 @@ except ImportError:
     
 factor = 1.0
 
-if 'RENPY_SCALE_FACTOR' in os.environ:
-    factor = float(os.environ['RENPY_SCALE_FACTOR'])
+if ('RENPY_SCALE_FACTOR' in os.environ) or ('RENPY_SCALE_WIDTH' in os.environ):
+    enable_scaling = True
+else:
+    enable_scaling = False
 
-if factor == 1.0:
+if not enable_scaling:
 
     # The public api other modules use.
 
+    def init():
+        return
+            
     # Gets the real pygame surface.
     def real(s):
         return s
@@ -79,7 +84,22 @@ if factor == 1.0:
     
 else:
 
-    print "Using scale factor of %f." % factor
+
+    def init():    
+        global factor
+
+        if 'RENPY_SCALE_FACTOR' in os.environ:
+            factor = float(os.environ['RENPY_SCALE_FACTOR'])
+        elif 'RENPY_SCALE_WIDTH' in os.environ:
+            width = float(os.environ['RENPY_SCALE_WIDTH'])
+            if width < renpy.config.screen_width:            
+                factor = float(os.environ['RENPY_SCALE_WIDTH']) / renpy.config.screen_width
+            else:
+                factor = 1.0
+        else:
+            factor = 1.0
+
+        print "Using scale factor of %f." % factor
     
     def real(s):
         return s.surface
@@ -170,9 +190,13 @@ else:
                 self.surface.blit(s.surface, v2p(destpos), v2p(sourcerect))
 
         def convert(self, *args):
+            if args:
+                args = (args[0].surface,)            
             return Surface(self.surface.convert(*args), wh=self.get_size())
 
         def convert_alpha(self, *args):
+            if args:
+                args = (args[0].surface,)            
             return Surface(self.surface.convert_alpha(*args), wh=self.get_size())
 
         def copy(self):

@@ -671,8 +671,11 @@ class Display(object):
         except:
             pass
 
+        renpy.display.scale.init()
+
         pygame.display.init()
         pygame.font.init()
+
         renpy.audio.audio.init()
         renpy.display.joystick.init()
 

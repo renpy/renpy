@@ -1,3 +1,13 @@
+New in Ren'Py 7.8.1
+-------------------
+
+Added support for the iRex iLiad ebook reader platform.
+
+
+Added support for the RENPY_SCALE_WIDTH environment variable, which
+allows the game to be scaled to a specific width, if it's larger.
+
+
 New in Ren'Py 6.8.0
 -------------------
 
