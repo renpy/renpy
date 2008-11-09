@@ -43,14 +43,19 @@ def start(gamedir):
     else:
         return
     
-    import subprocess
-    import sys
 
-    if sys.argv[0].lower().endswith(".exe"):
-        proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    else:
-        proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        
+    try:    
+        import subprocess
+        import sys
+
+        if sys.argv[0].lower().endswith(".exe"):
+            proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        else:
+            proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    except:
+        pass
+            
+            
 # Called just before we initialize the display for real, to
 # hide the splash, and terminate window centering.
 def end():
