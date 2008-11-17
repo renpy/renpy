@@ -363,7 +363,8 @@ class Lexer(object):
 
         self.filename, self.number, self.text, self.subblock = self.block[self.line]
         self.pos = 0
-
+        self.word_cache_pos = -1
+        
         return True
 
     def match_regexp(self, regexp):
@@ -409,14 +410,19 @@ class Lexer(object):
         return self.match_regexp(regexp) 
         
 
-    def keyword(self, regexp):
+    def keyword(self, word):
         """
         Matches a keyword at the current position. A keyword is a word
         that is surrounded by things that aren't words, like
         whitespace. (This prevents a keyword from matching a prefix.)
         """
 
-        return self.match(regexp + r'\b')
+        oldpos = self.pos
+        if self.word() == word:
+            return word
+
+        self.pos = oldpos
+        return ''
 
 
     def error(self, msg):
@@ -546,8 +552,17 @@ class Lexer(object):
         """
         Parses a name, which may be a keyword or not.
         """
+
+        if self.pos == self.word_cache_pos:
+            self.pos = self.word_cache_newpos
+            return self.word_cache
+
+        self.word_cache_pos = self.pos 
+        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        self.word_cache = rv
+        self.word_cache_newpos = self.pos
         
-        return self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        return rv
         
     
     def name(self):
@@ -556,8 +571,6 @@ class Lexer(object):
         """        
 
         oldpos = self.pos
-
-        # rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
         rv = self.word()
         
         if rv in self.keywords:
@@ -773,7 +786,8 @@ class Lexer(object):
         """
 
         self.filename, self.number, self.text, self.subblock, self.pos = state 
-
+        self.word_cache_pos = -1
+        
     def get_location(self):
         """
         Returns a (filename, line number) tuple representing the current
@@ -1559,6 +1573,20 @@ def parse_statement(l):
         
     l.revert(state)
 
+    # Try parsing as the default statement.
+    if () in renpy.statements.registry:
+        text = l.text
+        l.expect_noblock('default statement')
+        l.advance()
+
+        renpy.exports.push_error_handler(l.error)
+        try:
+            rv = ast.UserStatement(loc, text)
+        finally:
+            renpy.exports.pop_error_handler()
+
+        return rv
+    
     # The one and two arguement say statements are ambiguous in terms
     # of lookahead. So we first try parsing as a one-argument, then a
     # two-argument.

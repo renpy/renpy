@@ -207,7 +207,7 @@ class Cache(object):
 
                 # If we don't know if the image is RLE or not, guess.
                 # Only do so if the image has an alpha channel.
-                if rle is None and has_alpha:
+                if rle is None and has_alpha and not renpy.game.less_memory:
                     sw, sh = surf.get_size()
 
                     for i in range(0, 10):

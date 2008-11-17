@@ -82,6 +82,13 @@ after_rollback = False
 # Code that's run after the init code.
 post_init = [ ]
 
+# Should we attempt to run in a mode that uses less memory?
+less_memory = False
+
+# Should we attempt to run in a mode that minimizes the number
+# of screen updates?
+less_updates = False
+
 # The class that's used to hold the persistent data.
 class Persistent(object):
 

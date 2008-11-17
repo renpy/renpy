@@ -275,6 +275,10 @@ def main():
     # Make a clean copy of the store.
     game.clean_store = renpy.store.__dict__.copy()
 
+    # Check some environment variables.
+    renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
+    renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
+    
     if renpy.game.options.compile:
         return
 

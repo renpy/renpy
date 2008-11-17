@@ -7,6 +7,17 @@ Added support for the iRex iLiad ebook reader platform.
 Added support for the RENPY_SCALE_WIDTH environment variable, which
 allows the game to be scaled to a specific width, if it's larger.
 
+Added support for the RENPY_LESS_MEMORY environment variable, which
+reduces the amount of memory used by Ren'Py in exchanged for reduced
+speed.
+
+Added support for the RENPY_LESS_UPDATES environment variable, which
+tries to reduce the number of screen updates to one per interaction.
+
+
+A user-defined statement can now be used as the default
+statement. This allows you to replace the say statement with an
+alternate of your own devising.
 
 New in Ren'Py 6.8.0
 -------------------

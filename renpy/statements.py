@@ -28,7 +28,11 @@ import renpy
 registry = { }
 
 def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None):
-    name = tuple(name.split())
+
+    if name == "":
+        name = ()
+    else:
+        name = tuple(name.split())
     
     if registry.get(name) is not None:
         renpy.exports.error("The statement '%s' has already been registered." % (" ".join(name)))
