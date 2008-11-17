@@ -108,7 +108,7 @@ def reload_all():
     import sys
     sys.meta_path.pop()
 
-    blacklist = [ "renpy", "renpy.bootstrap", "renpy.display.iliad", "renpy.display.scale" ]
+    blacklist = [ "renpy", "renpy.bootstrap", "renpy.display", "renpy.display.iliad", "renpy.display.scale" ]
 
     
     for i in sys.modules.keys():
