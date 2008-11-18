@@ -38,10 +38,13 @@ import time
 # Hide maybe valid.
 # Expressions can compile.
 
+# The node the report will be about:
+report_node = None
+
 # Reports a message to the user.
-def report(node, msg, *args):
-    if node:
-        out = u"%s:%d " % (renpy.parser.unicode_filename(node.filename), node.linenumber)     
+def report(msg, *args):
+    if report_node:
+        out = u"%s:%d " % (renpy.parser.unicode_filename(report_node.filename), report_node.linenumber)     
     else:
         out = ""
         
@@ -60,28 +63,28 @@ def add(msg):
 
 
 # Trys to evaluate an expression, announcing an error if it fails.
-def try_eval(node, where, expr, additional=None):
+def try_eval(where, expr, additional=None):
 
     try:
         renpy.python.py_eval(expr)
     except:
-        report(node, "Could not evaluate '%s', in %s.", expr, where)
+        report( "Could not evaluate '%s', in %s.", expr, where)
         if additional:
             add(additional)
 
 # Returns True of the expression can be compiled as python, False
 # otherwise.
-def try_compile(node, where, expr):
+def try_compile(where, expr):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
     except:
-        report(node, "'%s' could not be compiled as a python expression, %s.", expr, where)
+        report("'%s' could not be compiled as a python expression, %s.", expr, where)
         
 
 # This reports an error if we're sure that the image with the given name
 # does not exist.
-def image_exists(node, name, expression, tag):
+def image_exists(name, expression, tag):
 
     # Add the tag to the set of known tags.
     tag = tag or name[0]
@@ -99,19 +102,19 @@ def image_exists(node, name, expression, tag):
 
         name.pop()
 
-    report(node, "The image named '%s' was not declared.", names)
+    report("The image named '%s' was not declared.", names)
 
 # Only check each file once.
 check_file_cache = { }
 
-def check_file(node, what, fn):
+def check_file(what, fn):
     if fn in check_file_cache:
         return True
 
     check_file_cache[fn] = True
 
     if not renpy.loader.loadable(fn):
-        report(node, "%s uses file '%s', which is not loadable.", what.capitalize(), fn)
+        report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         return
 
     try:
@@ -122,11 +125,11 @@ def check_file(node, what, fn):
     if renpy.loader.transfn(fn) and \
            fn.lower() in filenames and \
            fn != filenames[fn.lower()]:
-        report(node, "Filename case mismatch for %s. '%s' was used in the script, but '%s' was found on disk.", what, fn, filenames[fn.lower()])
+        report("Filename case mismatch for %s. '%s' was used in the script, but '%s' was found on disk.", what, fn, filenames[fn.lower()])
 
         add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")
 
-def check_displayable(node, what, d):
+def check_displayable(what, d):
 
     files = [ ]
 
@@ -136,7 +139,7 @@ def check_displayable(node, what, d):
     d.predict(files_callback)
 
     for fn in files:
-        check_file(node, what, fn)
+        check_file(what, fn)
     
         
 # Lints ast.Image nodes.
@@ -144,7 +147,7 @@ def check_image(node):
 
     name = " ".join(node.imgname)
     
-    check_displayable(node, 'image %s' % name, renpy.exports.images[node.imgname])
+    check_displayable('image %s' % name, renpy.exports.images[node.imgname])
 
 def imspec(t):
     if len(t) == 3:
@@ -165,12 +168,12 @@ def check_show(node):
     name, expression, tag, at_list, layer, zorder, behind = imspec(node.imspec)
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report(node, "Uses layer '%s', which is not in config.layers.", layer)
+        report("Uses layer '%s', which is not in config.layers.", layer)
 
-    image_exists(node, name, expression, tag)
+    image_exists(name, expression, tag)
 
     for i in at_list:
-        try_eval(node, "the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
+        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
         
 
 # Lints ast.Hide.
@@ -182,21 +185,21 @@ def check_hide(node):
     tag = tag or name[0]
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report(node, "Uses layer '%s', which is not in config.layers.", layer)
+        report("Uses layer '%s', which is not in config.layers.", layer)
 
     if tag not in image_prefixes:
-        report(node, "The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
+        report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
 
     # for i in at_list:
     #    try_eval(node, "at list of hide statment", i)
         
 def check_with(node):
-    try_eval(node, "a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
+    try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
 def check_user(node):
 
     def error(msg):
-        report(node, "%s", msg)
+        report("%s", msg)
 
     renpy.exports.push_error_handler(error)
     try:
@@ -207,12 +210,14 @@ def check_user(node):
     try:
         node.get_next()
     except:
-        report(node, "Didn't properly report what the next statement should be.")
+        report("Didn't properly report what the next statement should be.")
+
+check_text_tags = renpy.display.text.check_text_tags
         
-def text_checks(node, s):
+def text_checks(s):
     msg = renpy.display.text.check_text_tags(s)
     if msg:
-        report(node, "%s (in %s)", msg, repr(s)[1:])
+        report("%s (in %s)", msg, repr(s)[1:])
 
     if "%" in s:
         
@@ -239,7 +244,7 @@ def text_checks(node, s):
                 elif c in "diouxXeEfFgGcrs%":
                     state = 0
                 else:
-                    report(node, "Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    report("Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
                     state = 0
                     
             # In a mapping key.
@@ -249,35 +254,31 @@ def text_checks(node, s):
                     state = 1
 
         if state != 0:
-            report(node, "Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
-                    
-                    
-                
-
+            report("Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
         
 def check_say(node):
 
     if node.who:
-        try_eval(node, "the who part of a say statement", node.who, "Perhaps you forgot to declare a character?")
+        try_eval("the who part of a say statement", node.who, "Perhaps you forgot to declare a character?")
         
     if node.with_:
-        try_eval(node, "the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
+        try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
 
-    text_checks(node, node.what)
+    text_checks(node.what)
         
 def check_menu(node):
 
     if node.with_:
-        try_eval(node, "the with clause of a menu statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
+        try_eval("the with clause of a menu statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
 
     if not [ (l, c, b) for l, c, b in node.items if b ]:
-        report(node, "The menu does not contain any selectable choices.")
+        report("The menu does not contain any selectable choices.")
 
     for l, c, b in node.items:
         if c:
-            try_compile(node, "in the if clause of a menuitem", c)
+            try_compile("in the if clause of a menuitem", c)
 
-        text_checks(node, l)
+        text_checks(l)
 
 def check_jump(node):
 
@@ -285,7 +286,7 @@ def check_jump(node):
         return
 
     if not renpy.game.script.has_label(node.target):
-        report(node, "The jump is to nonexistent label '%s'.", node.target)
+        report("The jump is to nonexistent label '%s'.", node.target)
 
 def check_call(node):
 
@@ -298,15 +299,15 @@ def check_call(node):
         return
 
     if not renpy.game.script.has_label(node.label):
-        report(node, "The call is to nonexistent label '%s'.", node.label)
+        report("The call is to nonexistent label '%s'.", node.label)
 
 def check_while(node):
-    try_compile(node, "in the condition of the while statement", node.condition)
+    try_compile("in the condition of the while statement", node.condition)
 
 def check_if(node):
 
     for condition, block in node.entries:
-        try_compile(node, "in a condition of the if statement", condition)
+        try_compile("in a condition of the if statement", condition)
 
 def check_style(name, s):
 
@@ -321,7 +322,7 @@ def check_style(name, s):
             
             # Treat font specially.
             if k.endswith("font"):
-                check_file(None, name, v)
+                check_file(name, v)
 
             e = renpy.style.expansions[k]
 
@@ -332,7 +333,7 @@ def check_style(name, s):
                 break
                 
             if isinstance(v, renpy.display.core.Displayable):
-                check_displayable(None, kname, v) 
+                check_displayable(kname, v) 
     
 
 def check_styles():
@@ -344,12 +345,11 @@ def lint():
     The master lint function, that's responsible for staging all of the
     other checks.
     """
-
+    
     renpy.game.lint = True
     
     print codecs.BOM_UTF8
     print unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8")
-
 
     # This is used to support the check_image.
     global filenames
@@ -375,9 +375,13 @@ def lint():
     say_words = 0
     say_count = 0
     menu_count = 0
- 
+
+    global report_node
+    
     for fn, ln, node in all_stmts:
 
+        report_node = node
+        
         if isinstance(node, renpy.ast.Image):
             check_image(node)
 
@@ -417,6 +421,8 @@ def lint():
         elif isinstance(node, renpy.ast.UserStatement):
             check_user(node)
 
+    report_node = None
+            
     check_styles()
             
     for f in renpy.config.lint_hooks:

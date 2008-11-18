@@ -128,6 +128,7 @@ Text = renpy.display.text.Text
 ParameterizedText = renpy.display.text.ParameterizedText
 
 # Currying things.
+Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
 Pan = renpy.curry.curry(renpy.display.layout.Pan)
 Move = renpy.curry.curry(renpy.display.layout.Move)

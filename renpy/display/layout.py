@@ -2052,6 +2052,71 @@ class Side(Container):
 
         return rv
         
+class Alpha(renpy.display.core.Displayable):
+    def __init__(self, start, end, time, child=None, repeat=False, bounce=False,
+                 anim_timebase=False, time_warp=None, **properties):
+
+        super(Alpha, self).__init__(**properties)
+
+        self.start = start
+        self.end = end
+        self.time = time
+        self.child = renpy.easy.displayable(child)
+        self.repeat = repeat
+        self.anim_timebase = anim_timebase
+        self.time_warp = time_warp
+        
+    def visit(self):
+        return [ self.child ]
+
+    def render(self, height, width, st, at):
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+        
+        if self.time:
+            done = min(t / self.time, 1.0)
+        else:
+            done = 1.0
+
+        if self.repeat:
+            done = done % 1.0
+            renpy.display.render.redraw(self, 0)
+        elif done != 1.0:
+            renpy.display.render.redraw(self, 0)
+            
+        if self.time_warp:
+            done = self.time_warp(done)
+
+        alpha = self.start + done * (self.end - self.start)
+            
+        rend = renpy.display.render.render(self.child, height, width, st, at)
+
+        if not renpy.display.module.can_linmap:
+            return rend
+
+        w, h = rend.get_size()
+        rv = renpy.display.render.Render(w, h)
+
+        oldsurf = rend.pygame_surface()
+
+        if not (oldsurf.get_masks()[3]):
+            oldsurf = oldsurf.convert_alpha(renpy.game.interface.display.window)
+
+        newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
+
+
+        renpy.display.module.linmap(oldsurf, newsurf,
+                                    256, 256, 256, int(alpha * 256.0))
+
+        renpy.display.render.mutated_surface(newsurf)
+
+        rv.blit(newsurf, (0, 0))
+
+        rv.depends_on(rend)
+
+        return rv
         
 
             
