@@ -1,4 +1,4 @@
-New in Ren'Py 7.8.1
+New in Ren'Py 6.8.1
 -------------------
 
 The new Alpha function can be used to change the alpha level of a
@@ -27,6 +27,11 @@ making them officially supported.
 A user-defined statement can now be used as the default
 statement. This allows you to replace the say statement with an
 alternate of your own devising.
+
+
+Fixed a bug that occured when space characters were inserted
+immediately after a newline.
+
 
 New in Ren'Py 6.8.0
 -------------------

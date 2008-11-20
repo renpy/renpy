@@ -387,6 +387,8 @@ def greedy_text_layout(triples, width, style):
     lines_last = [ ]    
 
     target = width - style.first_indent
+
+    after_newline = True
     
     for triple in triples:
 
@@ -398,15 +400,20 @@ def greedy_text_layout(triples, width, style):
             line = [ ]
             target = width - style.rest_indent
 
+            after_newline = True
+            
             continue
 
         if type == "space":
-            if not line and lines:
+            if not line and not after_newline:
                 continue
             line.append(triple)
             continue
 
         else:
+
+            after_newline = False
+            
             if layout_width(line + [ triple ]) > target:
                 lines.append(line)
                 lines_last.append(False)
