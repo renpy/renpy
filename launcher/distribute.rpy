@@ -13,15 +13,25 @@ init python:
     
     # Returns true if a file or directory should not be included in
     # the distribution
-
+    
     ignored_files = ("thumbs.db",
                      "launcherinfo.py",
                      "traceback.txt",
                      "errors.txt",
                      "icon.ico",
-                     "icon.icns")
+                     "icon.icns"
 
-    def ignored(fn):
+                     )
+
+
+    root_ignored_files = (
+        "renpy.code",
+        "python25.dll",
+        "msvcr71.dll",                     
+        "lib",
+        )
+    
+    def ignored(fn, dir, dest):
         if fn[0] == ".":
             return True
 
@@ -38,6 +48,13 @@ init python:
         if fn == "archived":
             return True
 
+        if dir == dest:
+            if fn.endswith(".py") or fn.endswith(".sh") or fn.endswith(".app"):
+                return True
+
+            if fn in root_ignored_files:
+                return True
+            
         return False
 
     def tree(src, dest,
@@ -89,7 +106,7 @@ init python:
 
             for fn in files:
 
-                if not include(fn):
+                if not include(fn, destdir, dest):
                     continue
 
                 sfn = srcdir + "/" + fn
@@ -103,7 +120,7 @@ init python:
                     
                 rv.append((sfn, dfn))
 
-            dirs[:] = [ i for i in dirs if include(i) ]
+            dirs[:] = [ i for i in dirs if include(i, destdir, dest) ]
 
         return rv
 
@@ -139,6 +156,11 @@ label distribute:
             linux = True
         else:
             linux = False
+
+        if os.path.exists(config.renpy_base + "/lib/linux-iliad"):
+            iliad = True
+        else:
+            iliad = False
 
         if os.path.exists(config.renpy_base + "/renpy.app"):
             mac = True
@@ -253,20 +275,22 @@ label distribute:
         
         shortgamedir = project.gamedir[len(project.path)+1:]
 
-        for i in store.ignore_extensions:
-            if "script_version.rpy".endswith(i):
-                break
-        else:
-            multi.append((config.gamedir + "/script_version.rpy",
-                          shortgamedir + "/script_version.rpy"))
 
-        for i in store.ignore_extensions:
-            if "script_version.rpyc".endswith(i):
-                break
-        else:
-            multi.append((config.gamedir + "/script_version.rpyc",
-                          shortgamedir + "/script_version.rpyc"))
-       
+        def add_script_version(fn):
+
+            for a, b in multi:
+                if b == shortgamedir + "/" + fn:
+                    return
+
+            for i in store.ignore_extensions:
+                if fn.endswith(i):
+                    return 
+
+            multi.append((config.gamedir + "/" + fn, shortgamedir + "/" + fn))
+
+        add_script_version("script_version.rpy")
+        add_script_version("script_version.rpyc")
+            
         # renpy.py
         multi.append((config.renpy_base + "/renpy.py",
                       project.name + ".py"))
@@ -320,7 +344,7 @@ label distribute:
         if linux:
 
             linux_files = [
-                (config.renpy_base + "/lib", "lib"),
+                (config.renpy_base + "/lib/linux", "lib/linux"),
                 (config.renpy_base + "/renpy.sh", project.name + ".sh"),
                 (config.renpy_base + "/lib/python", "lib/python"),
                 ]
@@ -368,6 +392,52 @@ label distribute:
                     tf.addfile(info)
 
             tf.close()
+
+
+        # iLiad Tar Bz2
+        if iliad:
+
+            iliad_files = [
+                (config.renpy_base + "/lib", "lib"),
+                (config.renpy_base + "/renpy.sh", project.name + ".sh"),
+                (config.renpy_base + "/lib/python", "lib/python"),
+                ]
+                
+
+            linux_files.extend(tree(config.renpy_base + "/lib/linux-iliad", "lib/linux-iliad"))
+
+            linux_data = { }
+
+            progress_len = len(multi) + len(iliad_files)
+            store.message = u"We thank Hixbooks for sponsoring iLiad support."
+
+            for i, (fn, an) in enumerate(multi + iliad_files):
+
+                progress(u"Building iLiad", i, progress_len)
+
+                if os.path.isdir(fn):
+                    continue
+                
+                zi = zipfile.ZipInfo(name + "-iliad/" + an)
+                
+                s = os.stat(fn)
+                zi.date_time = time.gmtime(s.st_mtime)[:6]
+                zi.compress_type = zipfile.ZIP_DEFLATED
+                zi.create_system = 3
+
+                for ext in [ ".sh", ".so", "python", "python.real" ]:
+                    if os.path.dirname.endswith(ext):
+                        zi.external_attr = long(0100777) << 16 
+                        data = file(fn, "rb").read()
+                        break
+                else:
+                    zi.external_attr = long(0100666) << 16 
+                    data = file(fn, "rb").read()
+
+                data = linux_data.get(an, data)                    
+                zf.writestr(zi, data)
+
+            zf.close()
 
         if mac:
 
