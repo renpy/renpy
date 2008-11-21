@@ -20,7 +20,6 @@ init python:
                      "errors.txt",
                      "icon.ico",
                      "icon.icns"
-
                      )
 
 
@@ -72,7 +71,7 @@ init python:
             dest = dest[:-1]
 
         # What should we include?
-        def include(fn):
+        def include(fn, destdir, dest):
             for i in exclude_suffix:
                 if fn.endswith(i):
                     return False
@@ -85,7 +84,7 @@ init python:
                 if i == fn.lower():
                     return False
 
-            if exclude_func and exclude_func(fn):
+            if exclude_func and exclude_func(fn, destdir, dest):
                 return False
 
             return True
@@ -166,8 +165,8 @@ label distribute:
             mac = True
         else:
             mac = False
-
-        if not (windows or mac or linux):
+            
+        if not (windows or mac or linux or iliad):
             store.error(u"Can't Distribute", u"Ren'Py is missing files required for distribution. Please download the full package from {a=http://www.renpy.org/}www.renpy.org{/a}.", "tools_menu")
         
         lint()
@@ -205,6 +204,9 @@ label distribute:
         if linux:
             text(u"Linux x86", style='launcher_input')
 
+        if iliad:
+            text(u"iLiad", style='launcher_input')
+                        
         if mac:
             text(u"Mac OS X 10.4+", style='launcher_input')
 
@@ -276,7 +278,7 @@ label distribute:
         shortgamedir = project.gamedir[len(project.path)+1:]
 
 
-        def add_script_version(fn):
+        def add_script_version(fn, multi=multi, shortgamedir=shortgamedir):
 
             for a, b in multi:
                 if b == shortgamedir + "/" + fn:
@@ -344,7 +346,7 @@ label distribute:
         if linux:
 
             linux_files = [
-                (config.renpy_base + "/lib/linux", "lib/linux"),
+                (config.renpy_base + "/lib/linux-x86", "lib/linux-x86"),
                 (config.renpy_base + "/renpy.sh", project.name + ".sh"),
                 (config.renpy_base + "/lib/python", "lib/python"),
                 ]
@@ -399,14 +401,20 @@ label distribute:
 
             iliad_files = [
                 (config.renpy_base + "/lib", "lib"),
-                (config.renpy_base + "/renpy.sh", project.name + ".sh"),
+                (config.renpy_base + "/renpy-iliad.sh", project.name + "-iliad.sh"),
                 (config.renpy_base + "/lib/python", "lib/python"),
+                (config.renpy_base + "/manifest.xml", "manifest.xml"),
                 ]
                 
+            iliad_files.extend(tree(config.renpy_base + "/lib/linux-iliad", "lib/linux-iliad"))
 
-            linux_files.extend(tree(config.renpy_base + "/lib/linux-iliad", "lib/linux-iliad"))
+            iliad_data = { }
 
-            linux_data = { }
+            manifest = file(config.renpy_base + "/manifest.xml", "r").read()
+            manifest = manifest.replace("GAMENAME", project.name)
+            iliad_data["manifest.xml"] = manifest
+            
+            zf = zipfile.ZipFile(name + "-iLiad.zip", "w", zipfile.ZIP_DEFLATED)
 
             progress_len = len(multi) + len(iliad_files)
             store.message = u"We thank Hixbooks for sponsoring iLiad support."
@@ -426,7 +434,7 @@ label distribute:
                 zi.create_system = 3
 
                 for ext in [ ".sh", ".so", "python", "python.real" ]:
-                    if os.path.dirname.endswith(ext):
+                    if fn.endswith(ext):
                         zi.external_attr = long(0100777) << 16 
                         data = file(fn, "rb").read()
                         break
@@ -434,7 +442,7 @@ label distribute:
                     zi.external_attr = long(0100666) << 16 
                     data = file(fn, "rb").read()
 
-                data = linux_data.get(an, data)                    
+                data = iliad_data.get(an, data)                    
                 zf.writestr(zi, data)
 
             zf.close()
