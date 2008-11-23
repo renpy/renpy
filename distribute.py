@@ -150,6 +150,7 @@ def main():
     
     # files.extend(tree("extras"))
     more_files.extend(tree("lib"))
+    more_files.extend(tree("lib/linux-x86"))
 
     module_files = [
         "lib/pysdlsound/linmixer.py",
