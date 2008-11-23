@@ -885,7 +885,7 @@ class Display(object):
         if self.mouse_event_time + renpy.config.mouse_hide_time < get_time():
             visible = False
         else:
-            visible = renpy.store.mouse_visible
+            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
             
         # Deal with a hardware mouse, the easy way.
         if not self.mouse:
@@ -1366,7 +1366,7 @@ class Interface(object):
         """
         
         suppress_overlay = suppress_overlay or renpy.store.suppress_overlay        
-        suppress_transition = renpy.config.skipping
+        suppress_transition = renpy.config.skipping or renpy.game.less_updates
 
         # The global one.
         self.suppress_transition = False

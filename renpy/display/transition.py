@@ -62,6 +62,19 @@ class Transition(renpy.display.core.Displayable):
     def visit(self):
         return [ self.new_widget, self.old_widget ]
 
+def null_render(d, width, height, st, at):
+
+    d.events = True
+    surf = renpy.display.render.render(d.new_widget,
+                                       width,
+                                       height,
+                                       st, at)
+
+    rv = renpy.display.render.Render(surf.width, surf.height)
+    rv.blit(surf, (0, 0))
+    
+    return rv
+    
 class NoTransition(Transition):
     """
     This is a transition that doesn't do anything, and simply displays
@@ -78,19 +91,7 @@ class NoTransition(Transition):
         self.events = True
 
     def render(self, width, height, st, at):
-
-        surf = renpy.display.render.render(self.new_widget,
-                                           width,
-                                           height,
-                                           st, at)
-
-        width = min(surf.width, width)
-        height = min(surf.height, height)
-        
-        rv = renpy.display.render.Render(width, height)
-        rv.blit(surf, (0, 0))
-
-        return rv
+        return null_render(self, width, height, st, at)
 
 
 class MultipleTransition(Transition):
@@ -147,7 +148,10 @@ class MultipleTransition(Transition):
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
 
     def render(self, width, height, st, at):
-        
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+
         while True:
             trans = self.transitions[0]
             stoff = st - self.time_offset
@@ -263,6 +267,9 @@ class Pixellate(Transition):
 
     def render(self, width, height, st, at):
 
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+
         if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st, at)
@@ -328,6 +335,9 @@ class Dissolve(Transition):
 
 
     def render(self, width, height, st, at):
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
         
         if st >= self.time or not renpy.display.module.can_blend:
             self.events = True
@@ -580,6 +590,9 @@ class CropMove(Transition):
             self.top = old_widget
 
     def render(self, width, height, st, at):
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
 
         time = 1.0 * st / self.time
 
@@ -1029,6 +1042,9 @@ class ImageDissolve(Transition):
         return super(ImageDissolve, self).visit() + [ self.image ]
 
     def render(self, width, height, st, at):
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
 
         if st >= self.time or not renpy.display.module.can_imageblend:
             self.events = True

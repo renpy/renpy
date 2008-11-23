@@ -1316,6 +1316,8 @@ class Text(renpy.display.core.Displayable):
             if speed:
                 speed *= self.style.slow_cps_multiplier
 
+        if renpy.game.less_updates:
+            speed = None
                 
         dslist = self.style.drop_shadow
         outlines = self.style.outlines

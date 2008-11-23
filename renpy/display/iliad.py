@@ -37,12 +37,16 @@ if address is not None:
 
     busy_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     busy_socket.connect((address, 50071))
+
+    pagebar_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    pagebar_socket.connect((address, 50073))
     
     pygame_Surface = pygame.Surface
     pygame_display_set_mode = pygame.display.set_mode
     pygame_display_update = pygame.display.update
     pygame_display_get_surface = pygame.display.get_surface
-
+    pygame_event_wait = pygame.event.wait
+    
     window = None
     surface = None
 
@@ -56,6 +60,9 @@ if address is not None:
         window = pygame_display_set_mode(size, 0, 8)
         surface = pygame_Surface(size, 0, 32)
 
+        # ccPbReset
+        pagebar_socket.send("17,200")
+        
         return surface
         
     pygame.display.set_mode = set_mode
@@ -69,9 +76,14 @@ if address is not None:
         _renpy.staticgray(surface, window, 44, 127, 84, 0, 8, ramp)
         pygame_display_update()
         dm_socket.send("!0,3,0")
-        busy_socket.send("0,0")
         
     pygame.display.update = update
+
+    def wait():
+        busy_socket.send("0,0")
+        return pygame_event_wait()
+
+    pygame.event.wait = wait
     
     os.environ["SDL_VIDEO_X11_WMCLASS"] = "sh"
 

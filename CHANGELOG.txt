@@ -1,12 +1,7 @@
 New in Ren'Py 6.8.1
 -------------------
 
-The new Alpha function can be used to change the alpha level of a
-displayable. (im.Alpha can only be used with other image
-manipulators.)
-
-
-Added support for the iRex iLiad ebook reader platform. This required
+Added support for the iRex iLiad ebook reader platform.  This required
 adding the following features, which may prove useful for other
 platforms:
 
@@ -20,6 +15,23 @@ speed.
 Added support for the RENPY_LESS_UPDATES environment variable, which
 tries to reduce the number of screen updates to one per interaction.
 
+Added support for the RENPY_LESS_MOUSE environment variable, which 
+prevents the mouse from being shown.
+
+The iLiad support was sponsored by Hixbooks.
+
+
+It is now possible to rebuild the distribution of a game by unzipping 
+it underneath the Ren'Py directory, selecting it as a project, and 
+building the distributions. This makes it easy to upgrade the version
+of Ren'Py used by a game, or to build a version of it that works on
+your favorite platform.
+
+
+The new Alpha function can be used to change the alpha level of a
+displayable. (im.Alpha can only be used with other image
+manipulators.)
+
 
 User-defined statements are now documented in the reference manual,
 making them officially supported.
@@ -31,6 +43,8 @@ alternate of your own devising.
 
 Fixed a bug that occured when space characters were inserted
 immediately after a newline.
+
+Fixed a problem displaying a presplash image on the mac platform.
 
 
 New in Ren'Py 6.8.0

@@ -279,7 +279,8 @@ class SMAnimation(renpy.display.core.Displayable):
 
             im = renpy.display.render.render(self.edge_cache, width, height, t - self.edge_start, at)
 
-            renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
+            if not renpy.game.less_updates:
+                renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
 
 
         iw, ih = im.get_size()
@@ -450,7 +451,8 @@ class TransitionAnimation(renpy.display.core.Displayable):
             
         for image, prev, delay, trans in zip(self.images, self.prev_images, self.delays, self.transitions):
             if t < delay:
-                renpy.display.render.redraw(self, delay - t)
+                if not renpy.game.less_updates:
+                    renpy.display.render.redraw(self, delay - t)
 
                 if trans and orig_t >= self.delays[0]:
                     image = trans(old_widget=prev, new_widget=image)
@@ -562,6 +564,9 @@ class Blink(renpy.display.core.Displayable):
         w, h = rend.get_size()
         rv = renpy.display.render.Render(w, h)
 
+        if renpy.game.less_updates:
+            alpha = 1.0
+            
         if alpha:
 
             oldsurf = rend.pygame_surface()
@@ -582,7 +587,9 @@ class Blink(renpy.display.core.Displayable):
             rv.blit(newsurf, (0, 0))
 
         rv.depends_on(rend)
-        renpy.display.render.redraw(self, delay)
+
+        if not renpy.game.less_updates:
+            renpy.display.render.redraw(self, delay)
 
         return rv
 

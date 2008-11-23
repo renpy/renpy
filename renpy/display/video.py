@@ -76,6 +76,9 @@ def movie_start_fullscreen(filename, loops=0):
     @param loops: The number of additional times the movie should be looped. -1 to loop it forever.
     """
 
+    if renpy.game.less_updates:
+        return
+    
     movie_stop()
     renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, True)
 
@@ -91,10 +94,16 @@ def movie_start_displayable(filename, size, loops=0):
     @param loops: The number of additional times the movie should be looped. -1 to loop it forever.
     """
 
+    if renpy.game.less_updates:
+        return
+
     movie_stop()
     renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, False, size)
     
 def movie_length(filename):
+    if renpy.game.less_updates:
+        return 0
+
     m = pygame.movie.Movie(renpy.loader.load(filename))
     return m.get_length()
     
@@ -105,6 +114,9 @@ def interact():
     and therefore nothing else should be drawn on the screen, or False
     otherwise.
     """
+
+    if renpy.game.less_updates:
+        return False
 
     try:
 
@@ -192,7 +204,9 @@ class Movie(renpy.display.layout.Null):
         super(Movie, self).__init__(style=style, **properties)
 
     def render(self, width, height, st, at):
-        renpy.display.render.redraw(self, self.frame_time - st % self.frame_time)
+
+        if not renpy.game.less_updates:
+            renpy.display.render.redraw(self, self.frame_time - st % self.frame_time)
 
         if surface:
             renpy.display.render.mutated_surface(surface)

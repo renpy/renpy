@@ -839,7 +839,15 @@ class Motion(Container):
         else:
             t = st
 
-        if self.delay and t >= self.delay:
+
+        if renpy.game.less_updates:
+            if self.delay:
+                t = self.delay
+                if self.repeat:
+                    t = t % self.period
+            else:
+                t = self.period                    
+        elif self.delay and t >= self.delay:
             t = self.delay            
             if self.repeat:
                 t = t % self.period
@@ -1182,6 +1190,9 @@ class Zoom(renpy.display.core.Displayable):
 
         if self.repeat:
             done = done % 1.0
+
+        if renpy.game.less_updates:
+            done = 1.0
             
         self.done = done
 
@@ -1205,7 +1216,7 @@ class Zoom(renpy.display.core.Displayable):
 
         rv = zoom_core(rend, surf, rect, self.size[0], self.size[1], self.bilinear, self.opaque)
 
-        if done < 1.0:
+        if self.done < 1.0:
             renpy.display.render.redraw(self, 0)
 
         return rv
@@ -1321,6 +1332,9 @@ class FactorZoom(renpy.display.core.Displayable):
         if self.repeat:
             done = done % 1.0
             
+        if renpy.game.less_updates:
+            done = 1.0
+
         self.done = done
             
         if self.after_child and done == 1.0:
@@ -1341,10 +1355,8 @@ class FactorZoom(renpy.display.core.Displayable):
 
         rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
         
-        if done < 1.0:
+        if self.done < 1.0:
             renpy.display.render.redraw(self, 0)
-
-        self.done = done
             
         return rv
 
@@ -1405,6 +1417,9 @@ class SizeZoom(renpy.display.core.Displayable):
         if self.repeat:
             done = done % 1.0
             
+        if renpy.game.less_updates:
+            done = 1.0
+
         self.done = done
             
         if self.after_child and done == 1.0:
@@ -1426,11 +1441,9 @@ class SizeZoom(renpy.display.core.Displayable):
 
         rv = zoom_core(rend, surf, (0, 0, oldw, oldh), neww, newh, self.bilinear, self.opaque)
         
-        if done < 1.0:
+        if self.done < 1.0:
             renpy.display.render.redraw(self, 0)
 
-        self.done = done
-            
         return rv
 
     def event(self, ev, x, y, st):
@@ -1678,12 +1691,16 @@ class RotoZoom(renpy.display.core.Displayable):
             zoom_time *= 2
             zoom_time = min(zoom_time, 2.0 - zoom_time)
 
+        if renpy.game.less_updates:
+            rot_time = 1.0
+            zoom_time = 1.0
+            
         if rot_time <= 1.0 or zoom_time <= 1.0:
             renpy.display.render.redraw(self, 0)
 
         rot_time = min(rot_time, 1.0)
         zoom_time = min(zoom_time, 1.0)
-            
+        
         if self.rot_time_warp:
             rot_time = self.rot_time_warp(rot_time)
 
@@ -2080,7 +2097,9 @@ class Alpha(renpy.display.core.Displayable):
         else:
             done = 1.0
 
-        if self.repeat:
+        if renpy.game.less_updates:
+            done = 1.0
+        elif self.repeat:
             done = done % 1.0
             renpy.display.render.redraw(self, 0)
         elif done != 1.0:

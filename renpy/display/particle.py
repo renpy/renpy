@@ -49,6 +49,11 @@ class Particles(renpy.display.core.Displayable):
         
     def render(self, w, h, st, at):
 
+        rv = renpy.display.render.Render(w, h)
+
+        if renpy.game.less_updates:
+            return rv
+                
         if st < self.old_st:
             self.particles = [ ]
 
@@ -58,12 +63,12 @@ class Particles(renpy.display.core.Displayable):
         if particles is None:
             particles = [ ]
 
+
         newparts = self.factory.create(self.particles, at)
 
         if newparts is not None:
             particles.extend(newparts)
 
-        rv = renpy.display.render.Render(w, h)
 
         liveparts = [ ]
 

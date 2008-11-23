@@ -24,10 +24,16 @@ init python:
 
 
     root_ignored_files = (
+        "common",
+        "renpy",
         "renpy.code",
+        "python23.dll",
+        "python24.dll",
         "python25.dll",
         "msvcr71.dll",                     
         "lib",
+        "iliad-icon.png",
+        "manifest.xml"
         )
     
     def ignored(fn, dir, dest):
@@ -401,9 +407,10 @@ label distribute:
 
             iliad_files = [
                 (config.renpy_base + "/lib", "lib"),
-                (config.renpy_base + "/renpy-iliad.sh", project.name + "-iliad.sh"),
+                (config.renpy_base + "/renpy-iliad.sh", project.name + ".sh"),
                 (config.renpy_base + "/lib/python", "lib/python"),
                 (config.renpy_base + "/manifest.xml", "manifest.xml"),
+                (config.renpy_base + "/iliad-icon.png", "iliad-icon.png"),
                 ]
                 
             iliad_files.extend(tree(config.renpy_base + "/lib/linux-iliad", "lib/linux-iliad"))
@@ -426,7 +433,7 @@ label distribute:
                 if os.path.isdir(fn):
                     continue
                 
-                zi = zipfile.ZipInfo(name + "-iliad/" + an)
+                zi = zipfile.ZipInfo(project.name + "/" + an)
                 
                 s = os.stat(fn)
                 zi.date_time = time.gmtime(s.st_mtime)[:6]

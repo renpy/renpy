@@ -89,6 +89,9 @@ less_memory = False
 # of screen updates?
 less_updates = False
 
+# Should we never show the mouse?
+less_mouse = False
+
 # The class that's used to hold the persistent data.
 class Persistent(object):
 

@@ -277,6 +277,7 @@ def main():
 
     # Check some environment variables.
     renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
+    renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
     renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
     
     if renpy.game.options.compile:
