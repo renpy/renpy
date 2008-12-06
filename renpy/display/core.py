@@ -1479,7 +1479,7 @@ class Interface(object):
             focus_roots.append(scene_layer)
 
             if (self.ongoing_transition.get(layer, None) and
-                 not suppress_transition):
+                not suppress_transition):
 
                 trans = self.ongoing_transition[layer](
                     old_widget=self.transition_from[layer],
@@ -1505,8 +1505,20 @@ class Interface(object):
         if (None in self.ongoing_transition and
             not suppress_transition):
 
+            old_root = renpy.display.layout.MultiBox(layout='fixed')
+            old_root.layers = { }
+
+            for layer in renpy.config.layers:
+                if layer in renpy.config.overlay_layers:
+                    d = scene[layer]
+                else:                
+                    d = self.transition_from[None].layers[layer]
+
+                old_root.layers[layer] = d
+                old_root.add(d)
+            
             trans = self.ongoing_transition[None](
-                old_widget=self.transition_from[None],
+                old_widget=old_root,
                 new_widget=layers_root)
 
             if not isinstance(trans, Displayable):

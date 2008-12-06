@@ -1,3 +1,15 @@
+New in Ren'Py ?????
+-------------------
+
+Changed the behavior of overlays during transitions. Now, both the old and 
+new screens will use the new overlay. Previously, the overlay was cleared
+out during a transition, which didn't work well.
+
+
+Fixed a divide by zero error that occured when Alpha was used for 0
+seconds.
+
+
 New in Ren'Py 6.8.1
 -------------------
 

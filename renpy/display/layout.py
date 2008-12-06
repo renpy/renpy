@@ -859,8 +859,11 @@ class Motion(Container):
                 t = self.period
             else:
                 renpy.display.render.redraw(self, 0)
-                
-        t /= self.period
+
+        if self.period > 0:
+            t /= self.period
+        else:
+            t = 1
 
         if self.time_warp:
             t = self.time_warp(t)
