@@ -375,9 +375,7 @@ if version >= 5006006:
 
     can_transform = True
     transform = _renpy.transform
-
 else:
-
     can_transform = False
 
 

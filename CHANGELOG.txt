@@ -1,5 +1,10 @@
-New in Ren'Py ?????
+New in Ren'Py 6.9.0
 -------------------
+
+Improved RotoZoom. It's now both more accurate and faster. On Intel computers,
+it is now accelerated using MMX instructions.
+[TODO: Recompile everything.]
+
 
 Changed the behavior of overlays during transitions. Now, both the old and 
 new screens will use the new overlay. Previously, the overlay was cleared

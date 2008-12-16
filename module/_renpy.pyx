@@ -69,7 +69,7 @@ cdef extern from "renpy.h":
                       float, float, float, float)
 
     void transform32_core(object, object,
-                          float, float, float, float, float, float)
+                          float, float, float, float, float, float, int)
 
     void blend32_core(object, object, object, int)
 
@@ -340,7 +340,8 @@ def transform(pysrc, pydst,
     transform32_core(pysrc, pydst,
                      corner_x, corner_y,
                      xdx, ydx,
-                     xdy, ydy)
+                     xdy, ydy,
+                     pysrc.get_shifts()[3])
 
     # pydst.unlock()
     # pysrc.unlock()

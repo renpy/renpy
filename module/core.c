@@ -960,13 +960,17 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     Py_END_ALLOW_THREADS
 }
 
+#define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
+                
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
-void transform32_core(PyObject *pysrc, PyObject *pydst,
-                      float corner_x, float corner_y,
-                      float xdx, float ydx,
-                      float xdy, float ydy) {
+void transform32_std(PyObject *pysrc, PyObject *pydst,
+                     float corner_x, float corner_y,
+                     float xdx, float ydx,
+                     float xdy, float ydy,
+                     int ashift
+    ) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -1006,9 +1010,8 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 2) * 256;
-    float fsh = (srch - 2) * 256;
-    
+    float fsw = (srcw - 1) * 256;
+    float fsh = (srch - 1) * 256;
     
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
@@ -1039,7 +1042,6 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
             minx = fmaxf(minx, fminf(d1, d2)); 
             maxx = fminf(maxx, fmaxf(d1, d2)); 
-//            printf("ZZZ2 %f %f\n", d1, d2);
         } else if ( lsy < 0 || lsy >= fsh) {
             continue;
         }
@@ -1048,108 +1050,292 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
             continue;
         }
 
-//        printf("CCC %f %f\n", minx, maxx); 
-        
         minx = ceil(minx);
         maxx = floor(maxx);
 
-//        printf("CCC2 %f %f\n", minx, maxx); 
-//        printf("XXX %f %f %f %f\n", lsx / 256, xdx / 256, lsy / 256, ydx/256);
-
-        
-        // printf("%f %f\n", minx, maxx);
-        
-        // printf("Minx at: %f %f\n", (lsx + xdx * minx) / 256, (lsy + ydx * minx) / 256);
-
-        
         unsigned char *d = dstpixels + dstpitch * y;
         unsigned char *dend = d + 4 * (int) maxx;
         d += 4 * (int) minx;
 
-        sx += minx * xdx;
-        sy += minx * ydx;
+        sx = lsx + minx * xdx;
+        sy = lsy + minx * ydx;
                 
-        
-        while (d <= dend) {
+        int sxi = (int) sx;
+        int syi = (int) sy;
+        int xdxi = (int) xdx;
+        int ydxi = (int) ydx;
 
-            int px, py, sxi, syi;
-            sxi = ((int) sx);
-            syi = ((int) sy);                
+        while (d <= dend) {
+            int px, py;
             px = sxi >> 8;
             py = syi >> 8;
+                
+            unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
+            int yfrac = syi & 0xff; // ((short) sy) & 0xff;
+            int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
 
-            /* These bounds are checked analytically, hence the if (1)
-             * { */
+            unsigned int pal = *(unsigned int *) sp;
+            unsigned int pbl = *(unsigned int *) (sp + 4);
+            sp += srcpitch;
+            unsigned int pcl = *(unsigned int *) sp;
+            unsigned int pdl = *(unsigned int *) (sp + 4);
+
+            unsigned int pah = (pal >> 8) & 0xff00ff;
+            unsigned int pbh = (pbl >> 8) & 0xff00ff;
+            unsigned int pch = (pcl >> 8) & 0xff00ff;
+            unsigned int pdh = (pdl >> 8) & 0xff00ff;
+
+            pal &= 0xff00ff;
+            pbl &= 0xff00ff;
+            pcl &= 0xff00ff;
+            pdl &= 0xff00ff;
+
+            unsigned int rh = I(I(pah, pch, yfrac), I(pbh, pdh, yfrac), xfrac);
+            unsigned int rl = I(I(pal, pcl, yfrac), I(pbl, pdl, yfrac), xfrac);
+
+            unsigned int alpha = (((rh << 8) | rl) >> ashift) & 0xff;
+
+            unsigned int dl = * (unsigned int *) d;
+            unsigned int dh = (dl >> 8) & 0xff00ff;
+            dl &= 0xff00ff;
+
+            dl = I(dl, rl, alpha);
+            dh = I(dh, rh, alpha);
             
-            // if (0 <= px && px < srcw - 1 && 0 <= py && py < srch - 1) {
-            if (1) {
-                
-                unsigned char *sp = srcpixels + py * srcpitch + px * 4;
+            * (unsigned int *) d = (dh << 8) | dl;
 
-                // unsigned char *s1p = s0p + srcpitch;
-                
-                int s1frac = syi & 0xff; // ((short) sy) & 0xff;
-                int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
-
-#define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
-                
-                unsigned int rl, rh;
-
-                unsigned int pal = *(unsigned int *) sp;
-                unsigned int pbl = *(unsigned int *) (sp + 4);
-                sp += srcpitch;
-                unsigned int pcl = *(unsigned int *) sp;
-                unsigned int pdl = *(unsigned int *) (sp + 4);
-
-                unsigned int pah = (pal >> 8) & 0xff00ff;
-                unsigned int pbh = (pbl >> 8) & 0xff00ff;
-                unsigned int pch = (pcl >> 8) & 0xff00ff;
-                unsigned int pdh = (pdl >> 8) & 0xff00ff;
-
-                pal &= 0xff00ff;
-                pbl &= 0xff00ff;
-                pcl &= 0xff00ff;
-                pdl &= 0xff00ff;
-
-                // if (y == 10)
-                // printf("%x %x %x %x\n", pah, pbh, pch, pdh);
-                
-
-                rh = I(I(pah, pch, s1frac), I(pbh, pdh, s1frac), xfrac);
-                rl = I(I(pal, pcl, s1frac), I(pbl, pdl, s1frac), xfrac);
-                // rl = 0;
-
-                // if (y == 10) 
-                // printf("%x\n", rh);
-                
-                * (unsigned int *) d = (rh << 8) | rl;
-
-                d += 4;
-                
-
-            } else {
-                // This code can't execute.
-
-                printf("Failed x %f (%d, %d)\n", minx, px, py);
- 
-                *d++ = 0;
-                *d++ = 0;
-                *d++ = 0;
-                *d++ = 0;                
-
-            }
-            
-            sx += xdx;
-            sy += ydx;
-            // minx++;
+            d += 4;
+            sxi += xdxi;
+            syi += ydxi;
         }
     }
 
     Py_END_ALLOW_THREADS
 }
 
+/****************************************************************************/
+/* A similar concept to rotozoom, but implemented differently, so we
+   can limit the target area. */
+void transform32_mmx(PyObject *pysrc, PyObject *pydst,
+                      float corner_x, float corner_y,
+                      float xdx, float ydx,
+                      float xdy, float ydy,
+                      int ashift
+    ) {
 
+    SDL_Surface *src;
+    SDL_Surface *dst;
+    
+    int y;
+    int srcpitch, dstpitch;
+                               
+    int srcw, srch;
+    int dstw, dsth;
+    
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    float lsx, lsy; // The position of the current line in the source.
+    float sx, sy; // The position of the current pixel in the source.
+    
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+        
+    Py_BEGIN_ALLOW_THREADS
+        
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+    srcpitch = src->pitch;
+    dstpitch = dst->pitch;
+    srcw = src->w;
+    dstw = dst->w;
+    srch = src->h;
+    dsth = dst->h;
+
+    // Due to mmx.
+    ashift *= 2;
+
+    lsx = corner_x * 256;
+    lsy = corner_y * 256;
+
+    xdx *= 256;
+    ydx *= 256;
+    xdy *= 256;
+    ydy *= 256;
+
+    // Scaled subtracted srcw and srch.
+    float fsw = (srcw - 1) * 256;
+    float fsh = (srch - 1) * 256;
+        
+    for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
+
+        float minx = 0;
+        float maxx = dstw - 1;
+
+        if (xdx != 0) {
+            float d1 = -lsx / xdx;
+            float d2 = (fsw - lsx) / xdx;
+
+            minx = fmaxf(minx, fminf(d1, d2)); 
+            maxx = fminf(maxx, fmaxf(d1, d2)); 
+            
+        } else if ( lsx < 0 || lsx >= fsw) {
+            continue;
+        }
+
+        if (ydx != 0) {
+            float d1 = -lsy / ydx;
+            float d2 = (fsh - lsy) / ydx;
+
+            minx = fmaxf(minx, fminf(d1, d2)); 
+            maxx = fminf(maxx, fmaxf(d1, d2)); 
+        } else if ( lsy < 0 || lsy >= fsh) {
+            continue;
+        }
+
+        if (minx > maxx) {
+            continue;
+        }
+        
+        minx = ceil(minx);
+        maxx = floor(maxx);
+        
+        unsigned char *d = dstpixels + dstpitch * y;
+        unsigned char *dend = d + 4 * (int) maxx;
+        d += 4 * (int) minx;
+
+        sx = lsx + minx * xdx;
+        sy = lsy + minx * ydx;
+                
+        // No floating point allowed between here and the end of the
+        // while loop.
+
+        int sxi = (int) sx;
+        int syi = (int) sy;
+        int xdxi = (int) xdx;
+        int ydxi = (int) ydx;
+
+        // 0 -> mm7
+        pxor_r2r(mm7, mm7);
+
+        // ashift -> mm0
+        movd_m2r(ashift, mm0);
+
+        
+        while (d <= dend) {
+
+            int px, py;
+            px = sxi >> 8;
+            py = syi >> 8;
+
+            unsigned char *sp = srcpixels + py * srcpitch + px * 4;
+                
+            int yfrac = syi & 0xff; // ((short) sy) & 0xff;
+            int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
+
+            // Load in the 4 bytes.
+            movd_m2r(*(unsigned int *) sp, mm1);
+            movd_m2r(*(unsigned int *) (sp + 4), mm2);
+            sp += srcpitch;
+            movd_m2r(*(unsigned int *) sp, mm3);
+            movd_m2r(*(unsigned int *) (sp + 4), mm4);
+
+            punpcklbw_r2r(mm7, mm1);            
+            punpcklbw_r2r(mm7, mm2);            
+            punpcklbw_r2r(mm7, mm3);            
+            punpcklbw_r2r(mm7, mm4);
+            
+            // Put xfrac in mm5, yfrac in m6
+            pxor_r2r(mm5, mm5);
+            pxor_r2r(mm6, mm6);
+            movd_m2r(xfrac, mm5);
+            movd_m2r(yfrac, mm6);
+            punpcklwd_r2r(mm5, mm5);
+            punpcklwd_r2r(mm6, mm6);
+            punpckldq_r2r(mm5, mm5); /* 0X0X0X0X -> mm5 */                
+            punpckldq_r2r(mm6, mm6); /* 0Y0Y0Y0Y -> mm6 */
+            
+            // Interpolate between a and b.
+            // Interpolate between c and d.
+            psubw_r2r(mm1, mm2);
+            psubw_r2r(mm3, mm4);
+            pmullw_r2r(mm5, mm2);
+            pmullw_r2r(mm5, mm4);
+            psrlw_i2r(8, mm2);
+            psrlw_i2r(8, mm4);
+            paddb_r2r(mm2, mm1); /* mm1 contains I(a, b, xfrac); */
+            paddb_r2r(mm4, mm3); /* mm3 contains I(c, d, xfrac); */
+
+            // Interpolate between ab and cd.
+            psubw_r2r(mm1, mm3);
+            pmullw_r2r(mm6, mm3);
+            psrlw_i2r(8, mm3);
+            paddb_r2r(mm3, mm1); /* mm1 contains I(ab, cd, yfrac) */
+            
+            // Store the result.
+            // packuswb_r2r(mm7, mm1);
+            // movd_r2m(mm1, *(unsigned int *)d);
+
+            // Alpha blend with dest.
+            movq_r2r(mm1, mm3);
+            psrlq_r2r(mm0, mm3); /* 000000AA -> m3 */
+            punpcklwd_r2r(mm3, mm3); /* 0000AAAA -> m3 */
+            movd_m2r(*(unsigned int *)d, mm2);
+            punpcklwd_r2r(mm3, mm3); /* AAAAAAAA -> m3 */
+            punpcklbw_r2r(mm7, mm2); /* a -> m2 */
+            psubw_r2r(mm2, mm1); /* b - a -> m1 */
+            pmullw_r2r(mm3, mm1); 
+            psrlw_i2r(8, mm1); /* alpha * (b-a) -> m1 */
+            paddb_r2r(mm2, mm1); /* a + alpha*(b-a) -> mm1 */
+
+            // Store the result.
+            packuswb_r2r(mm7, mm1);
+            movd_r2m(mm1, *(unsigned int *)d);
+            
+            d += 4;
+            sxi += xdxi;
+            syi += ydxi;
+        }
+
+        emms();
+
+    }
+
+    Py_END_ALLOW_THREADS
+}
+
+void transform32_core(PyObject *pysrc, PyObject *pydst,
+                      float corner_x, float corner_y,
+                      float xdx, float ydx,
+                      float xdy, float ydy,
+                      int ashift) {
+    
+#ifdef GCC_MMX
+    static int checked_mmx = 0;
+    static int has_mmx = 0;
+
+    if (! checked_mmx) {
+        has_mmx = SDL_HasMMX();
+        checked_mmx = 1;
+    }
+
+    if (has_mmx) {
+        transform32_mmx(pysrc, pydst, corner_x, corner_y,
+                        xdx, ydx, xdy, ydy, ashift);
+        return;
+    }
+    
+#endif
+    
+    transform32_std(pysrc, pydst, corner_x, corner_y,
+                    xdx, ydx, xdy, ydy, ashift);
+
+}
+                     
+
+
+                     
 void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
                       int alpha) {
 

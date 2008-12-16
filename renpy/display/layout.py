@@ -1622,7 +1622,7 @@ class RotoZoom(renpy.display.core.Displayable):
                  rot_bounce=False, zoom_bounce=False,
                  rot_anim_timebase=False, zoom_anim_timebase=False,
                  rot_time_warp=None, zoom_time_warp=None,
-                 opaque=True,
+                 opaque=False,
                  **properties):
 
         super(RotoZoom, self).__init__(**properties)
@@ -1649,7 +1649,7 @@ class RotoZoom(renpy.display.core.Displayable):
         self.rot_time_warp = rot_time_warp
         self.zoom_time_warp = zoom_time_warp
 
-        self.opaque = False
+        self.opaque = opaque
 
     def visit(self):
         return [ self.child ]
@@ -1721,42 +1721,35 @@ class RotoZoom(renpy.display.core.Displayable):
 
         cw, ch = child_rend.get_size()
 
-        # We shrink the size by one, since we can't access these pixels.
-        cw -= 1
-        ch -= 1
-
         # Figure out the size of the target.
         dw = math.hypot(cw, ch) * zoom
         dh = dw
-        
-        # Figure out the various components of the rotation.
+
+        # We shrink the size by one, since we can't access these pixels.
+        # cw -= 1
+        # ch -= 1
+
+         # Figure out the various components of the rotation.
+
         xdx = math.cos(angle) / zoom
-        xdy = - math.sin(angle) / zoom
-        ydx = math.sin(angle) / zoom
-        ydy = math.cos(angle) / zoom
+        xdy = -math.sin(angle) / zoom
+        ydx = -xdy # math.sin(angle) / zoom
+        ydy = xdx # math.cos(angle) / zoom
 
         def draw(dest, xo, yo):
             
-            if not self.opaque:
-                target = pygame.Surface(dest.get_size(), 0,
-                                        renpy.game.interface.display.sample_surface)
-            else:
-                target = dest
-            
-            dulcx = -dw / 2 - xo
-            dulcy = -dh / 2 - yo
+            target = dest
+                                            
+            dulcx = -dw / 2.0
+            dulcy = -dh / 2.0
 
-            culcx = cw / 2 + xdx * dulcx + xdy * dulcy
-            culcy = ch / 2 + ydx * dulcx + ydy * dulcy
+            culcx = cw / 2.0 + xdx * dulcx + xdy * dulcy
+            culcy = ch / 2.0 + ydx * dulcx + ydy * dulcy
 
             renpy.display.module.transform(surf, target,
                                            culcx, culcy,
                                            xdx, ydx, xdy, ydy)
 
-            if not self.opaque:
-                dest.blit(target, (0, 0))
-
-            
         return renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
         
 
