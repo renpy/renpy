@@ -69,7 +69,8 @@ cdef extern from "renpy.h":
                       float, float, float, float)
 
     void transform32_core(object, object,
-                          float, float, float, float, float, float, int)
+                          float, float, float, float, float, float,
+                          int, float)
 
     void blend32_core(object, object, object, int)
 
@@ -329,7 +330,7 @@ def check(surf):
     
 def transform(pysrc, pydst,
               corner_x, corner_y,
-              xdx, ydx, xdy, ydy):
+              xdx, ydx, xdy, ydy, a=1.0):
 
     check(pysrc)
     check(pydst)
@@ -341,7 +342,7 @@ def transform(pysrc, pydst,
                      corner_x, corner_y,
                      xdx, ydx,
                      xdy, ydy,
-                     pysrc.get_shifts()[3])
+                     pysrc.get_shifts()[3], a)
 
     # pydst.unlock()
     # pysrc.unlock()

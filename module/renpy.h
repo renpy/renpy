@@ -87,8 +87,7 @@ void transform32_core(PyObject *pysrc,
                       float, float,
                       float, float,
                       float, float,
-                      int
-    );
+                      int, float);
 
 void blend32_core(PyObject *pysrca,
                   PyObject *pysrcb,

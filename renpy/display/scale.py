@@ -502,11 +502,11 @@ else:
         old_transform = _renpy.transform
 
         def transform(pysrc, pydst, corner_x, corner_y,
-                      xdx, ydx, xdy, ydy):
+                      xdx, ydx, xdy, ydy, a=1.0):
             
             old_transform(pysrc.surface, pydst.surface,
                           corner_x * factor, corner_y * factor,
-                          xdx, ydx, xdy, ydy)
+                          xdx, ydx, xdy, ydy, a)
             
         _renpy.transform = transform
             

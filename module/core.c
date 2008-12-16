@@ -969,8 +969,7 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
                      float corner_x, float corner_y,
                      float xdx, float ydx,
                      float xdy, float ydy,
-                     int ashift
-    ) {
+                     int ashift, float a) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -990,7 +989,7 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     dst = PySurface_AsSurface(pydst);
         
     Py_BEGIN_ALLOW_THREADS
-
+        
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -1000,6 +999,8 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
+    unsigned int amul = (int) (a * 256);
+    
     lsx = corner_x * 256;
     lsy = corner_y * 256;
 
@@ -1012,7 +1013,7 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     // Scaled subtracted srcw and srch.
     float fsw = (srcw - 1) * 256;
     float fsh = (srch - 1) * 256;
-    
+
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
         sx = lsx;
@@ -1095,7 +1096,8 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
             unsigned int rl = I(I(pal, pcl, yfrac), I(pbl, pdl, yfrac), xfrac);
 
             unsigned int alpha = (((rh << 8) | rl) >> ashift) & 0xff;
-
+            alpha = (alpha * amul) >> 8;
+            
             unsigned int dl = * (unsigned int *) d;
             unsigned int dh = (dl >> 8) & 0xff00ff;
             dl &= 0xff00ff;
@@ -1114,15 +1116,17 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     Py_END_ALLOW_THREADS
 }
 
+#ifdef GCC_MMX
+
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
 void transform32_mmx(PyObject *pysrc, PyObject *pydst,
-                      float corner_x, float corner_y,
-                      float xdx, float ydx,
-                      float xdy, float ydy,
-                      int ashift
-    ) {
+                     float corner_x, float corner_y,
+                     float xdx, float ydx,
+                     float xdy, float ydy,
+                     int ashift,
+                     float a) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -1156,6 +1160,9 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
     // Due to mmx.
     ashift *= 2;
 
+    // Compute the coloring multiplier.
+    unsigned int amul = (unsigned int) (a * 256);
+    
     lsx = corner_x * 256;
     lsy = corner_y * 256;
 
@@ -1222,6 +1229,8 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
         // ashift -> mm0
         movd_m2r(ashift, mm0);
 
+        // amul -> mm4
+        movd_m2r(amul, mm4);
         
         while (d <= dend) {
 
@@ -1234,18 +1243,6 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
             int yfrac = syi & 0xff; // ((short) sy) & 0xff;
             int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
 
-            // Load in the 4 bytes.
-            movd_m2r(*(unsigned int *) sp, mm1);
-            movd_m2r(*(unsigned int *) (sp + 4), mm2);
-            sp += srcpitch;
-            movd_m2r(*(unsigned int *) sp, mm3);
-            movd_m2r(*(unsigned int *) (sp + 4), mm4);
-
-            punpcklbw_r2r(mm7, mm1);            
-            punpcklbw_r2r(mm7, mm2);            
-            punpcklbw_r2r(mm7, mm3);            
-            punpcklbw_r2r(mm7, mm4);
-            
             // Put xfrac in mm5, yfrac in m6
             pxor_r2r(mm5, mm5);
             pxor_r2r(mm6, mm6);
@@ -1256,22 +1253,37 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
             punpckldq_r2r(mm5, mm5); /* 0X0X0X0X -> mm5 */                
             punpckldq_r2r(mm6, mm6); /* 0Y0Y0Y0Y -> mm6 */
             
+            // Load in the 4 bytes.
+            movd_m2r(*(unsigned int *) sp, mm1);
+            movd_m2r(*(unsigned int *) (sp + 4), mm2);
+            punpcklbw_r2r(mm7, mm1);            
+            punpcklbw_r2r(mm7, mm2);            
+
             // Interpolate between a and b.
-            // Interpolate between c and d.
             psubw_r2r(mm1, mm2);
-            psubw_r2r(mm3, mm4);
             pmullw_r2r(mm5, mm2);
-            pmullw_r2r(mm5, mm4);
             psrlw_i2r(8, mm2);
-            psrlw_i2r(8, mm4);
             paddb_r2r(mm2, mm1); /* mm1 contains I(a, b, xfrac); */
-            paddb_r2r(mm4, mm3); /* mm3 contains I(c, d, xfrac); */
+
+            sp += srcpitch;
+            movd_m2r(*(unsigned int *) sp, mm3);
+            movd_m2r(*(unsigned int *) (sp + 4), mm2);
+
+            punpcklbw_r2r(mm7, mm3);            
+            punpcklbw_r2r(mm7, mm2);
+            
+            // Interpolate between c and d.
+            psubw_r2r(mm3, mm2);
+            pmullw_r2r(mm5, mm2);
+            psrlw_i2r(8, mm2);
+            paddb_r2r(mm2, mm3); /* mm3 contains I(c, d, xfrac); */
 
             // Interpolate between ab and cd.
             psubw_r2r(mm1, mm3);
             pmullw_r2r(mm6, mm3);
             psrlw_i2r(8, mm3);
             paddb_r2r(mm3, mm1); /* mm1 contains I(ab, cd, yfrac) */
+
             
             // Store the result.
             // packuswb_r2r(mm7, mm1);
@@ -1280,6 +1292,10 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
             // Alpha blend with dest.
             movq_r2r(mm1, mm3);
             psrlq_r2r(mm0, mm3); /* 000000AA -> m3 */
+
+            pmullw_r2r(mm4, mm3); // Alpha adjustment.
+            psrlw_i2r(8, mm3);
+
             punpcklwd_r2r(mm3, mm3); /* 0000AAAA -> m3 */
             movd_m2r(*(unsigned int *)d, mm2);
             punpcklwd_r2r(mm3, mm3); /* AAAAAAAA -> m3 */
@@ -1305,11 +1321,14 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
     Py_END_ALLOW_THREADS
 }
 
+#endif
+
 void transform32_core(PyObject *pysrc, PyObject *pydst,
                       float corner_x, float corner_y,
                       float xdx, float ydx,
                       float xdy, float ydy,
-                      int ashift) {
+                      int ashift,
+                      float a) {
     
 #ifdef GCC_MMX
     static int checked_mmx = 0;
@@ -1322,14 +1341,14 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
     if (has_mmx) {
         transform32_mmx(pysrc, pydst, corner_x, corner_y,
-                        xdx, ydx, xdy, ydy, ashift);
+                        xdx, ydx, xdy, ydy, ashift, a);
         return;
     }
     
 #endif
     
     transform32_std(pysrc, pydst, corner_x, corner_y,
-                    xdx, ydx, xdy, ydy, ashift);
+                    xdx, ydx, xdy, ydy, ashift, a);
 
 }
                      

@@ -185,12 +185,11 @@ else:
 # numbers so that it doesn't yield a warning, and so that it works on
 # 32 and 64 bit platforms.
 if sys.byteorder == 'big':
-    bo24 = { 255 : 2, 65280 : 1, 16711680 : 0, }
     bo32 = { 255 : 3, 65280 : 2, 16711680 : 1, 4278190080 : 0, -16777216 : 0, }
 else:
-    bo24 = { 255 : 0, 65280 : 1, 16711680 : 2, }
     bo32 = { 255 : 0, 65280 : 1, 16711680 : 2, 4278190080 : 3, -16777216 : 3, }
 
+bo_cache = None
 
 def byte_offset(src):
     """
@@ -199,20 +198,22 @@ def byte_offset(src):
     the surface. If a component doesn't exist, None is returned.
     """
 
-    if src.get_bytesize() == 3:
-        bo = bo24
-    else:
-        bo = bo32
-
-    return [ bo.get(i, None) for i in src.get_masks() ]
-
+    global bo_cache
+    
+    if bo_cache is None:
+        bo_cache = [ bo32[i] for i in src.get_masks() ]
+        
+    return bo_cache
 
 def endian_order(src, r, g, b, a):
-    rv = [ a ] * 4
 
-    for i, index_i in zip((r, g, b, a), byte_offset(src)):
-        if index_i is not None:
-            rv[index_i] = i
+    if bo_cache is None:
+        byte_offset(src)
+
+    rv = [ a, a, a, a ]
+
+    for i, index_i in zip((r, g, b, a), bo_cache):
+        rv[index_i] = i
 
     return rv
 
@@ -374,7 +375,9 @@ else:
 if version >= 5006006:
 
     can_transform = True
+
     transform = _renpy.transform
+            
 else:
     can_transform = False
 
