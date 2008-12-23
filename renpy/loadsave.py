@@ -277,19 +277,19 @@ def cycle_saves(name, count):
         
 
 # Flag that lets us know if an autosave is in progress.
-autosave_in_progress = False
+autosave_not_running = threading.Event()
+autosave_not_running.set()
 
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
         
-def autosave_thread():
+def autosave_thread(take_screenshot):
 
-    global autosave_in_progress
     global autosave_counter
     
     renpy.display.core.cpu_idle.wait()
     cycle_saves("auto-", renpy.config.autosave_slots)
-    
+
     renpy.display.core.cpu_idle.wait()
     if renpy.config.auto_save_extra_info:
         extra_info = renpy.config.auto_save_extra_info()
@@ -298,8 +298,8 @@ def autosave_thread():
         
     try:
         try:
-            
-            renpy.exports.take_screenshot()
+            if take_screenshot:
+                renpy.exports.take_screenshot()
             save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait, extra_info=extra_info)
             autosave_counter = 0
             
@@ -307,17 +307,18 @@ def autosave_thread():
             pass
 
     finally:
-        autosave_in_progress = False
+        autosave_not_running.set()
+        
     
 
 def autosave():
     global autosave_counter
-    global autosave_in_progress
     
     if not renpy.config.autosave_frequency:
         return 
-    
-    if autosave_in_progress:
+
+    # That is, autosave is running.
+    if not autosave_not_running.isSet():
         return
 
     if renpy.config.skipping:
@@ -330,9 +331,18 @@ def autosave():
 
     if autosave_counter < renpy.config.autosave_frequency:
         return
+
+    force_autosave(True)
+
+# This assumes a screenshot has already been taken.
+def force_autosave(take_screenshot=False):
+
+    # That is, autosave is running.
+    if not autosave_not_running.isSet():
+        return
     
-    autosave_in_progress = True
-    threading.Thread(target=autosave_thread).start()
+    autosave_not_running.clear()
+    threading.Thread(target=autosave_thread, args=(take_screenshot,)).start()
     
     
 class _MultiPersistent(object):

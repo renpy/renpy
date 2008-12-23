@@ -54,6 +54,7 @@ def extra_imports():
     import webbrowser
     import pygame.locals
     import pygame.color
+    import pygame.colordict
     
     
 trace_file = None

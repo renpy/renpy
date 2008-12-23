@@ -696,29 +696,39 @@ class Display(object):
             fullscreen = False
             self.fullscreen = renpy.game.preferences.fullscreen
 
-#         if fullscreen == "16:9":
-#             fsratio = 16.0 / 9.0
-#         elif fullscreen == "16:10":
-#             fsratio = 16.0 / 10.0
-#         elif fullscreen: # 4:3 mode.
-#             fsratio = 4.0 / 3.0
-#         else:
-#             fsratio = None
-
-        if fullscreen:
-            fsflag = FULLSCREEN
-#             width = int(max(renpy.config.screen_width, renpy.config.screen_height * fsratio))
-#             height = int(max(renpy.config.screen_height, renpy.config.screen_width / fsratio))
-#             self.screen_xoffset = (width - renpy.config.screen_width) / 2
-#             self.screen_yoffset = (height - renpy.config.screen_height) / 2            
-        else:
-            fsflag = 0
 
         width = renpy.config.screen_width
         height = renpy.config.screen_height
         self.screen_xoffset = 0
         self.screen_yoffset = 0
-            
+        fsflag = 0
+
+        if fullscreen == "wide" or fullscreen == "narrow":
+            for w, h in pygame.display.list_modes():
+                ratio = 1.0 * w / h
+                if ratio >= 2:
+                    continue
+
+                if fullscreen == "wide":
+                    if ratio < 1.5:
+                        continue
+
+                elif fullscreen == "narrow":
+                    if ratio >= 1.5:
+                        continue
+
+                if w < renpy.config.screen_width or h < renpy.config.screen_height:
+                    continue
+                
+                fsflag = FULLSCREEN
+                width = w
+                height = h
+                self.screen_xoffset = (width - renpy.config.screen_width) / 2
+                self.screen_yoffset = (height - renpy.config.screen_height) / 2
+
+        elif fullscreen:
+            fsflag = FULLSCREEN
+              
         # Window icon.
         if renpy.config.window_icon:
 
@@ -1544,6 +1554,9 @@ class Interface(object):
         for layer in renpy.config.top_layers:
             add_layer(root_widget, layer)
 
+        # Clean out the registered adjustments.
+        renpy.display.behavior.adj_registered.clear()
+            
         # Call per-interaction code for all widgets.
         root_widget.visit_all(lambda i : i.per_interact())
         

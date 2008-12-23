@@ -22,7 +22,11 @@
 import renpy
 import pygame
 
-from pygame.font import *
+try:
+    import _renpy_font
+    pygame.font = _renpy_font
+except:
+    pass
 
 def Font(filename, size):
     """

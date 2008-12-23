@@ -29,6 +29,8 @@ init -1150 python:
         ]
 
 label _quit_prompt:
+    $ renpy.loadsave.force_autosave()
+
     if layout.yesno_prompt(None, u"Are you sure you want to quit?"):
         jump _quit
     else:

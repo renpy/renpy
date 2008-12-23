@@ -11,6 +11,10 @@ new screens will use the new overlay. Previously, the overlay was cleared
 out during a transition, which didn't work well.
 
 
+Ren'Py now autosaves when entering the quit prompt, and will not actually 
+quit until this autosave is complete. 
+
+
 Fixed a divide by zero error that occured when Alpha was used for 0
 seconds.
 

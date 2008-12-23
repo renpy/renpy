@@ -20,8 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # The version of renpygame we're dealing with.
-renpygame_version = 1001
+renpygame_version = 1002
 
+import sys
 import pygame
 
 Overlay = pygame.Overlay
@@ -56,8 +57,6 @@ def quit():
 
 def register_quit(callback):
     quit_callbacks.insert(0, callback)
-    
-    
 
 # Importing the other modules.
 import renpygame.color
@@ -80,3 +79,4 @@ import renpygame.transform
 
 # Needs to be from renpygame, so we get the right constant.
 from renpygame.constants import *
+

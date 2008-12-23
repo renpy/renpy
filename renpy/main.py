@@ -315,3 +315,6 @@ def main():
             break
         except game.FullRestartException, e:
             restart = e.reason
+
+    renpy.display.core.cpu_idle.set()
+    renpy.loadsave.autosave_not_running.wait()
