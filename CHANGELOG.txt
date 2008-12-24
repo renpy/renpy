@@ -6,9 +6,16 @@ it is now accelerated using MMX instructions.
 [TODO: Recompile everything.]
 
 
+Added a new renpy.sound.set_pan function. This allows sound and music 
+to be smoothly panned over time.
+
+
 Changed the behavior of overlays during transitions. Now, both the old and 
 new screens will use the new overlay. Previously, the overlay was cleared
 out during a transition, which didn't work well.
+
+
+Calling theme.roundrect() no longer implies layout.button_menu(). 
 
 
 Ren'Py now autosaves when entering the quit prompt, and will not actually 

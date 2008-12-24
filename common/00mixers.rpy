@@ -41,6 +41,7 @@ init 1130:
         else:
             for i, m in enumerate(mixers):
                 renpy.sound.set_mixer(i, m, default=True)
+                renpy.sound.set_pan(0, 0, channel=i)
                 if m == 'music':
                     renpy.music.set_music(i, True, default=True)
                 else:

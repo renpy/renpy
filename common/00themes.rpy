@@ -298,13 +298,19 @@ init -1110 python hide:
         
         # Compat for the old roundrect theme.
         window = None,
-        button_menu = True,
+        button_menu = None,
         rounded_window = True,
         outline_bars = False,
 
         mm_root = None,
         gm_root = None):
 
+        if button_menu is None:
+            if config.script_version < (6, 9, 0):
+                button_menu = True
+            else:
+                button_menu = False
+        
         layout.defaults()
         
         if config.screen_width <= 640:

@@ -150,6 +150,22 @@ def set_volume(volume, channel=0):
     except:
         if renpy.config.debug_sound:
             raise
+
+def set_pan(pan, delay, channel=0):
+    """
+    Sets the volume of this channel, as a fraction of the volume of the
+    mixer controlling the channel.
+
+    This volume is not persisted or rolled-back, as are volumes set with
+    renpy.music.set_volume for music channels.
+    """
+
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        c.set_pan(pan, delay)
+    except:
+        if renpy.config.debug_sound:
+            raise
     
 def is_playing(channel=0):
     """

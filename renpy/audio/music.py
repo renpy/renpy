@@ -33,22 +33,8 @@ music_set = [ ]
 unique = time.time()
 serial = 0
 
-class AttrDict(object):
 
-    def __init__(self, attr):
-        self.attr = attr
-
-    def __getitem__(self, item):
-        info = renpy.game.context().info
-        return getattr(info, self.attr + str(item))
-
-    def __setitem__(self, item, value):
-        info = renpy.game.context().info
-        setattr(info, self.attr + str(item), value)
-        
-    def get(self, item, default=None):
-        info = renpy.game.context().info
-        return getattr(info, self.attr + str(item), default)
+AttrDict = renpy.audio.audio.AttrDict
 
 _music_last_filenames = AttrDict('_music_last_filenames')
 _music_last_tight = AttrDict('_music_last_tight')

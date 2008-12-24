@@ -27,6 +27,7 @@
 import renpy
 import os
 import atexit
+import time
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -205,6 +206,28 @@ class Midi(object):
 # A singleton Midi object that manages hardware midi playback.
 midi = Midi()
 
+
+# This is a dictionary that accesses attributes of the info object.
+class AttrDict(object):
+
+    def __init__(self, attr):
+        self.attr = attr
+
+    def __getitem__(self, item):
+        info = renpy.game.context().info
+        return getattr(info, self.attr + str(item))
+
+    def __setitem__(self, item, value):
+        info = renpy.game.context().info
+        setattr(info, self.attr + str(item), value)
+        
+    def get(self, item, default=None):
+        info = renpy.game.context().info
+        return getattr(info, self.attr + str(item), default)
+
+_pan_time = AttrDict("_pan_time")
+_pan = AttrDict("_pan")
+    
 class QueueEntry(object):
     """
     A queue entry object.
@@ -263,6 +286,12 @@ class Channel(object):
         # The callback that is called if the queue becomes empty.
         self.callback = None
 
+        # The time this channel was last panned.
+        self.pan_time = None
+
+        # The delay the next pan should have.
+        self.pan_delay = 0
+        
     def periodic(self):
         """
         This is the periodic call that causes this channel to load new stuff
@@ -416,10 +445,15 @@ class Channel(object):
 
     def interact(self):
         """
-        Called (mostly) once per interaction. Calls the queue callback
-        if it's becoming empty.
+        Called (mostly) once per interaction.
         """
 
+        if pcm_ok and self.pan_time != _pan_time.get(self.number):
+            self.pan_time = _pan_time.get(self.number)
+            pss.set_pan(self.number, _pan.get(self.number, 0.0), self.pan_delay)
+
+        self.pan_delay = 0
+            
         if not self.queue and self.callback:
             self.callback()
 
@@ -453,6 +487,9 @@ class Channel(object):
             qe = QueueEntry(filename, int(fadein * 1000), tight)
             self.queue.append(qe)
 
+            # Only fade the first thing in.
+            fadein = 0
+            
         if loop:
             self.loop = list(filenames)
         else:
@@ -484,7 +521,16 @@ class Channel(object):
         else:
             return pss.get_pos(self.number)
 
-            
+
+    def set_pan(self, pan, delay):
+        now = time.time()
+        _pan_time[self.number] = now
+        _pan[self.number] = pan
+
+        if pcm_ok:
+            self.pan_delay = delay
+
+        
 # The number of channels we support.
 NUM_CHANNELS = 8
 
@@ -642,7 +688,6 @@ def periodic():
 
                 if vol != 0:
                     anything_playing = True
-
             if not anything_playing:
                 disable_mixer()
                 return
@@ -699,7 +744,7 @@ def periodic():
     except:
         if renpy.config.debug_sound:
             raise
-
+        
 def interact():
     """
     Called at least once per interaction.

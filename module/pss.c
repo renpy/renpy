@@ -145,6 +145,15 @@ struct Channel {
     /* The event posted to the queue when we finish a track. */
     int event;
 
+    /* The pan being applied to the current channel. */
+    float pan_start;
+    float pan_end;
+
+    /* The length of the current pan, in samples. */
+    unsigned int pan_length;
+
+    /* The number of samples we've finished in the current pan. */
+    unsigned int pan_done;
 };
 
 /*
@@ -157,6 +166,23 @@ struct Channel channels[NUM_CHANNELS];
  */
 SDL_AudioSpec audio_spec;
 
+
+static float interpolate_pan(struct Channel *c) {
+    float done;
+    
+    if (c->pan_done > c->pan_length) {
+        c->pan_length = 0;
+    }
+
+    if (c->pan_length == 0) {
+        return c->pan_end;
+    }
+
+    done = 1.0 * c->pan_done / c->pan_length;
+
+    return c->pan_start + done * (c->pan_end - c->pan_start);
+    
+}
 
 static int ms_to_bytes(int ms) {
     return ((long long) ms) * audio_spec.freq * audio_spec.channels * 2 / 1000;
@@ -235,6 +261,7 @@ static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
     }    
 }
 
+
 // Mixes the audio, while performing fading.
 static void fade_mixaudio(struct Channel *c,
                           Uint8 *dst, Uint8 *src, int length) {
@@ -290,6 +317,48 @@ static void post_event(struct Channel *c) {
     SDL_PushEvent(&e);
 }
 
+static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
+    int i;
+    short *sample = (short *) stream;
+    length /= 4;
+
+    float pan;
+    int left = 256;
+    int right = 256;
+    
+    
+    for (i = 0; i < length; i++) {
+
+        if ((i & 0x1f) == 0) {
+            pan = interpolate_pan(c);
+
+            // If the pan is even, skip 32 samples and call it a day.
+            if (pan == 0.0) {
+                i += 31;
+                c->pan_done += 32;
+                continue;
+            }
+
+            if (pan < 0) {
+                left = 256;
+                right = (int) (256 * (1.0 + pan));
+            } else {
+                left = (int) (256 * (1.0 - pan));
+                right = 256;
+            }
+        }
+
+
+        *sample = (short) ((*sample * left) >> 8);
+        sample++;
+        *sample = (short) ((*sample * right) >> 8);
+        sample++;
+
+        c->pan_done += 1;
+    }
+    
+}
+
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
     
@@ -316,7 +385,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 if (c->stop_bytes != -1)
                     bytes = min(c->stop_bytes, bytes);
-
+                
+                pan_audio(c, &( ((Uint8*) c->playing->buffer) [c->last]),
+                          bytes);
+                
                 fade_mixaudio(c, &stream[mixed],
                               &( ((Uint8*) c->playing->buffer) [c->last]),
                               bytes);
@@ -805,6 +877,7 @@ void PSS_set_volume(int channel, float volume) {
 }
 
 
+
 float PSS_get_volume(int channel) {
 
     float rv;
@@ -826,6 +899,32 @@ float PSS_get_volume(int channel) {
     
     error(SUCCESS);    
     return rv;
+}
+
+/*
+ * This sets the pan of the channel... independent volumes for the
+ * left and right channels.
+ */
+void PSS_set_pan(int channel, float pan, float delay) {
+    struct Channel *c;
+    BEGIN();
+    
+    if (check_channel(channel)) {
+        return;
+    }
+
+    c = &channels[channel];
+
+    ENTER();
+    
+    c->pan_start = interpolate_pan(c);
+    c->pan_end = pan;
+    c->pan_length = (int) (audio_spec.freq * delay);
+    c->pan_done = 0;
+    
+    EXIT();
+    
+    error(SUCCESS);    
 }
 
 
@@ -886,6 +985,11 @@ void PSS_init(int freq, int stereo, int samples) {
         channels[i].volume = SDL_MIX_MAXVOLUME;        
         channels[i].paused = 1;
         channels[i].event = 0;
+        channels[i].pan_start = 0.0;
+        channels[i].pan_end = 0.0;
+        channels[i].pan_length = 0;
+        channels[i].pan_done = 0;
+            
     }
 
     SDL_PauseAudio(0);

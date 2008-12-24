@@ -43,6 +43,7 @@ void PSS_set_endevent(int channel, int event);
 int PSS_get_pos(int channel);
 void PSS_set_volume(int channel, float volume);
 float PSS_get_volume(int channel);
+void PSS_set_pan(int channel, float pan, float delay);
 void PSS_init(int freq, int stereo, int samples);
 void PSS_quit(void);
 const char *PSS_get_error(void);
