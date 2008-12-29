@@ -765,13 +765,55 @@ class Scale(ImageBase):
     def load(self):
 
         if self.bilinear:
-            surf = cache.get(self.image)
-            rv = pygame.Surface((self.width, self.height), 0, surf)
-            renpy.display.module.bilinear_scale(surf, rv)
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.smoothscale(cache.get(self.image), (self.width, self.height))
+            renpy.display.render.blit_lock.release()
 
         else:
             renpy.display.render.blit_lock.acquire()
             rv = pygame.transform.scale(cache.get(self.image), (self.width, self.height))
+            renpy.display.render.blit_lock.release()
+            
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+class FactorScale(ImageBase):
+    """
+    This is the same, but it takes a factor rather than an absolute scale
+    size.
+    """
+
+    def __init__(self, im, width, height=None, bilinear=True, **properties):
+
+        if height is None:
+            height = width
+        
+        im = image(im)
+        super(Scale, self).__init__(im, width, height, bilinear, **properties)
+
+        self.image = im
+        self.width = width
+        self.height = height
+        self.bilinear = bilinear
+
+    def load(self):
+
+        surf = cache.get(self.image)
+        width, height = surf.get_size()
+
+        width = int(width * self.width)
+        height = int(height * self.height)
+        
+        if self.bilinear:
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.smoothscale(surf, (width, height))
+            renpy.display.render.blit_lock.release()
+
+        else:
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.scale(cache.get(surf, (width, height))
             renpy.display.render.blit_lock.release()
             
         return rv

@@ -6,13 +6,31 @@ it is now accelerated using MMX instructions.
 [TODO: Recompile everything.]
 
 
+The new im.FactorScale image manipulator allows images to be scaled by
+a specified factor at preload time. This is generally faster than doing the
+equivalent scaling at display time with FactorZoom. [add to demo]
+
+
 Added a new renpy.sound.set_pan function. This allows sound and music 
 to be smoothly panned over time.
 
 
-Changed the behavior of overlays during transitions. Now, both the old and 
-new screens will use the new overlay. Previously, the overlay was cleared
-out during a transition, which didn't work well.
+There have been a couple of places where properly documented functions
+have superseded semi-documented calls into the Ren'Py internals:
+
+The renpy.game_menu and ui.gamemenus functions are now the preferred ways
+of getting access to the game menu.
+
+The ui.jumps function now takes a transition argument, allowing it to subsume
+the undocumented _intra_jumps.
+
+
+
+Changed the behavior of overlays during transitions. Now, both the old
+and new screens will use the new overlay. Previously, the overlay was
+cleared out during a transition, which didn't work well, as (for
+example) a dissolve would cause the overlay to blink out and then
+dissolve back in again.
 
 
 Calling theme.roundrect() no longer implies layout.button_menu(). 

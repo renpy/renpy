@@ -394,12 +394,17 @@ def _returns(v):
 returns = renpy.curry.curry(_returns)
 
 
-def _jumps(label):
+def _jumps(label, transition=None):
 
-    raise renpy.game.JumpException(label)
+    if isinstance(transition, basestring):
+        transition = getattr(renpy.config, transition)
+
+    if transition is not None:
+        renpy.exports.transition(transition)
+    
+    raise renpy.exports.jump(label)
 
 jumps = renpy.curry.curry(_jumps)
-
 
 def _jumpsoutofcontext(label):
 
@@ -412,3 +417,7 @@ def callsinnewcontext(*args, **kwargs):
 
 def invokesinnewcontext(*args, **kwargs):
     return renpy.exports.curried_invoke_in_new_context(*args, **kwargs)
+
+def gamemenus(*args):
+    return callsinnewcontext("_game_menu", *args)
+

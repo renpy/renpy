@@ -1193,3 +1193,8 @@ def pop_return():
     renpy.game.context().pop_dynamic()
     renpy.game.context().lookup_return(pop=True)
     
+def game_menu(screen=None):
+    if screen is None:
+        call_in_new_context("_game_menu")
+    else:
+        call_in_new_context("_game_menu", screen)
