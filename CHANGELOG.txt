@@ -25,6 +25,13 @@ The ui.jumps function now takes a transition argument, allowing it to subsume
 the undocumented _intra_jumps.
 
 
+Ren'Py now looks for the file environment.txt in the directory
+containing Ren'Py itself. If it finds it, it loads the file as a
+python file, and uses it to set the default values of environment
+variables. This allows things like the editor or the scale factor to
+be set even on platforms that don't make it easy to change environment
+variables globally.
+
 
 Changed the behavior of overlays during transitions. Now, both the old
 and new screens will use the new overlay. Previously, the overlay was

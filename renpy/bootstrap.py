@@ -98,6 +98,14 @@ def bootstrap(renpy_base):
 
     global renpy
 
+    # If environment.txt exists, load it into the os.environ dictionary.
+    if os.path.exists(renpy_base + "/environment.txt"):
+        evars = { }
+        execfile(renpy_base + "/environment.txt", evars)
+        for k, v in evars.iteritems():
+            if k not in os.environ:
+                os.environ[k] = str(v)
+    
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 
