@@ -1006,8 +1006,9 @@ class Display(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        pygame.image.save(self.window, filename)
+        renpy.display.scale.image_save_unscaled(self.window, filename)
 
+        
     def screenshot(self, scale):
         """
         Returns a pygame Surface that is a screenshot of the current

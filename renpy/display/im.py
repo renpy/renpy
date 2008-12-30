@@ -813,7 +813,7 @@ class FactorScale(ImageBase):
 
         else:
             renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.scale(cache.get(surf, (width, height))
+            rv = pygame.transform.scale(surf, (width, height))
             renpy.display.render.blit_lock.release()
             
         return rv

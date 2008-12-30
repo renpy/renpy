@@ -66,8 +66,6 @@ if not enable_scaling:
         
     # Does pygame.transform.scale.
     def real_transform_scale(surf, size):
-        import pygame
-
         global real_transform_scale
         real_transform_scale = pygame.transform.scale
 
@@ -75,12 +73,15 @@ if not enable_scaling:
 
     # Loads an image, without scaling it.
     def image_load_unscaled(f, hint):
-        import pygame
         return pygame.image.load(f, hint)
 
     # Scales down a surface.
     def surface_scale(full):
         return full
+
+    # Saves an image without rescaling.
+    def image_save_unscaled(surf, dest):
+        pygame.image.save(surf, dest)
     
 else:
 
@@ -149,6 +150,13 @@ else:
 
         return tuple([ int(i / factor) for i in n ])
 
+    # Proxies a function call from a PygameSurface to a surface.
+    def proxy(name):
+        func = getattr(PygameSurface, name)
+        def rv(self, *args, **kwargs):
+            return func(self.surface, *args, **kwargs)
+        
+    
     class Surface(object):
 
         def __init__(self, what, flags=0, sample=None, wh=None):
@@ -214,6 +222,26 @@ else:
             
             return self.surface.get_at((min(x, w - 1), min(y, h - 1)))
 
+
+        get_colorkey = proxy("get_colorkey")
+        set_colorkey = proxy("set_colorkey")
+        get_alpha = proxy("get_alpha")
+        set_alpha = proxy("set_alpha")
+        get_locked = proxy("get_locked")
+        get_locks = proxy("get_locks")
+        map_rgb = proxy("map_rgb")
+        unmap_rgb = proxy("unmap_rgb")
+        get_bytesize = proxy("get_bytesize")
+        get_bitsize = proxy("get_bitsize")
+        get_flags = proxy("get_flags")
+        get_pitch = proxy("get_pitch")
+        get_masks = proxy("get_masks")
+        set_masks = proxy("set_masks")
+        get_shifts = proxy("get_shifts")
+        set_shifts = proxy("set_shifts")
+        get_losses = proxy("get_losses")
+        
+        
         def get_bytesize(self):
             return self.surface.get_bytesize()
 
@@ -245,6 +273,9 @@ else:
         def subsurface(self, rect):
             return Surface(self.surface.subsurface(v2p(rect)), wh=rect[2:])
 
+        def mustlock(self):
+            return False
+        
         def lock(self):
             pass
 
@@ -257,6 +288,15 @@ else:
         def get_locked(self):
             return False
 
+        def get_rect(self, **kwargs):
+            rv = self.surface.get_rect()
+            rv.size = p2v(rv.size)
+            rv.topleft = p2v(rv.topleft)
+            for k, v in kwargs.iteritems():
+                setattr(rv, k, v)
+
+            return rv
+            
         
         
     pygame.Surface = Surface
@@ -403,6 +443,9 @@ else:
 
     pygame.image.save = image_save
 
+    def image_save_unscaled(surf, dest):
+        old_image_save(surf.surface, dest)
+    
     old_mouse_get_pos = pygame.mouse.get_pos
 
     def mouse_get_pos():
