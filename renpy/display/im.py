@@ -621,11 +621,16 @@ class FrameImage(ImageBase):
         
         xb = renpy.display.scale.scale(self.xborder)
         yb = renpy.display.scale.scale(self.yborder)
-        
+
         sw, sh = source.get_size()
         dw, dh = dest.get_size()
-    
 
+        if xb * 2 >= sw:
+            xb = sw / 2 - 1
+
+        if yb * 2 >= sh:
+            yb = sh / 2 - 1
+        
         def draw(x0, x1, y0, y1):
 
             # Compute the coordinates of the left, right, top, and
