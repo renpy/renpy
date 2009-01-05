@@ -65,7 +65,7 @@ py_modules = [ 'pysdlsound.__init__' ]
 
 rpe = distutils.core.Extension(
     "_renpy",
-    [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c" ],
+    [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
