@@ -73,8 +73,10 @@ if not enable_scaling:
 
     # Loads an image, without scaling it.
     def image_load_unscaled(f, hint):
-        return pygame.image.load(f, hint)
-
+        rv = pygame.image.load(f, hint)
+        rv = rv.convert_alpha()
+        return rv
+        
     # Scales down a surface.
     def surface_scale(full):
         return full

@@ -729,19 +729,6 @@ class Display(object):
         elif fullscreen:
             fsflag = FULLSCREEN
               
-        # Window icon.
-        if renpy.config.window_icon:
-
-            im = renpy.display.scale.image_load_unscaled(
-                renpy.loader.load(renpy.config.window_icon),
-                renpy.config.window_icon)
-
-            if on_windows and im.get_width() > 32:
-                im = renpy.display.scale.real_bilinear(im, (32, 32))
-
-            pygame.display.set_icon(im)
-                
-
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.
         old_window = pygame.display.get_surface()
@@ -754,6 +741,18 @@ class Display(object):
         else:
             self.window = pygame.display.set_mode((width, height), fsflag, 32)
 
+        # Window icon.
+        if renpy.config.window_icon:
+
+            im = renpy.display.scale.image_load_unscaled(
+                renpy.loader.load(renpy.config.window_icon),
+                renpy.config.window_icon)
+
+            if on_windows and im.get_width() > 32:
+                im = renpy.display.scale.real_bilinear(im, (32, 32))
+
+            pygame.display.set_icon(im)
+                
         # Window title.
         self.window_caption = None
         self.set_window_caption()
