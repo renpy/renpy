@@ -479,7 +479,7 @@ class Image(ImageBase):
                 if im is not None:
                     return im.predict_files()
 
-            return [ ]
+            return [ self.filename ]
 
 class ZipFileImage(ImageBase):
 

@@ -110,4 +110,9 @@ void staticgray_core(
     int rmul, int gmul, int bmul, int amul, int shift,
     char *vmap);
 
+int subpixel32(
+    PyObject *pysrc, PyObject *pydst,
+    float xoffset, float yoffset, int ashift);
+
+
 #endif 

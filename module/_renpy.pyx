@@ -85,6 +85,8 @@ cdef extern from "renpy.h":
     void staticgray_core(object, object,
                          int, int, int, int, int, char *)
 
+    int subpixel32(object, object, float, float, int)
+    
     void PyErr_Clear()
     
 
@@ -407,6 +409,13 @@ def colormatrix(pysrc, pydst,
 def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
     PyErr_Clear()
     staticgray_core(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap)
+
+
+def subpixel(pysrc, pydst, xoffset, yoffset, shift):
+    if subpixel32(pysrc, pydst, xoffset, yoffset, shift):
+        return
+
+    pydst.blit(pysrc, (int(xoffset), int(yoffset)))
     
     
 # Be sure to update scale.py when adding something new here!

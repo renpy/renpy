@@ -57,7 +57,7 @@ interface = None
 init_phase = True
 
 # Are we inside lint?
-lint = True
+lint = False
 
 # The RollbackLog that keeps track of changes to the game state
 # and to the store.

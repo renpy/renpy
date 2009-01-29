@@ -516,10 +516,11 @@ label game_directory:
             import renpy.subprocess as subprocess
             subprocess.Popen([ "open", gamedir ])
         else:
-            store.message = _(u"Opening the game directory is not supported on this platform.\n%s") % gamedir
+            import renpy.subprocess as subprocess
+            subprocess.Popen([ "xdg-open", gamedir ])
+            
 
-        gamedir = "".join(quote(i) for i in gamedir)
-        
+        gamedir = "".join(quote(i) for i in gamedir)        
         store.message = _(u"Opening game directory:\n%s") % gamedir
             
     jump top_menu

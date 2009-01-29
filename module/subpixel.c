@@ -25,7 +25,7 @@
  * mm4 - old row 0
  * mm5 - old row 1
  * mm6 - (256 - xfrac)
- * mm7 - (256 - yfrac)
+ * mm7 - (256 - yfrac) (or alpha-multiply)
  */
 
 
@@ -75,43 +75,59 @@
 #ifdef GCC_MMX
 
 
-#define MMX_INTERP(dest)   \
-    movd_m2r((dest), mm2); \
-    punpcklbw_r2r(mm0, mm0); \
-    punpcklbw_r2r(mm1, mm1); \
-    punpcklbw_r2r(mm2, mm2); \
-    \
-    psubw_r2r(mm0, mm4); \
-    psubw_r2r(mm1, mm4); \
-    pmullw_r2r(mm6, mm4); \
-    pmullw_r2r(mm6, mm5); \
-    psrlw_i2r(8, mm4);  \
-    psrlw_i2r(8, mm5); \
-    paddw_r2r(mm0, mm4); \
-    paddw_r2r(mm1, mm5); \
-    \
-    psubw_r2r(mm5, mm4); \
-    pmullw_r2r(mm7, mm4); \
-    psrlw_i2r(8, mm4); \
-    paddw_r2r(mm5, mm4); \
-    \
-    movq_r2r(mm4, mm5); \
-    psrlq_r2r(mm3, mm5); \
-    punpcklwd_r2r(mm5, mm5); \
-    psubw_r2r(mm2, mm4); \
-    punpcklwd_r2r(mm5, mm5); \
-    pmullw_r2r(mm5, mm4); \
-    psrlw_i2r(8, mm4); \
-    paddw_r2r(mm2, mm4);   \
-    packuswb_r2r(mm4, mm4); \
-    movd_r2m(mm4, (dest)); \
-    movq_r2r(mm0, mm4); \
+#define dp(s, r)            \
+    movq_r2m(r, scratch); \
+    printf(s, scratch);
+
+// This expects the two old pixels to be arranged like:
+// mm4 mm0
+// mm5 mm1
+// alpha shift in mm3
+// (256 - xfrac) in mm6
+// (256 - yfrac) in mm7
+// It does the bilinear interpolation, and leaves the result
+// in mm4.
+#define MMX_INTERP(dest)                        \
+    pxor_r2r(mm2, mm2);                         \
+    punpcklbw_r2r(mm2, mm0);                    \
+    punpcklbw_r2r(mm2, mm1);                    \
+                                                \
+    psubw_r2r(mm0, mm4);                        \
+    psubw_r2r(mm1, mm5);                        \
+    pmullw_r2r(mm6, mm4);                       \
+    pmullw_r2r(mm6, mm5);                       \
+    psrlw_i2r(8, mm4);                          \
+    psrlw_i2r(8, mm5);                          \
+    paddb_r2r(mm0, mm4);                        \
+    paddb_r2r(mm1, mm5);                        \
+    /* p0 in mm4, p1 in mm5 */                  \
+                                                \
+    psubw_r2r(mm5, mm4);                        \
+    pmullw_r2r(mm7, mm4);                       \
+    psrlw_i2r(8, mm4);                          \
+    paddb_r2r(mm5, mm4);                        \
+    /* p in mm4 */                              \
+                                                \
+    pxor_r2r(mm5, mm5);                         \
+    movd_m2r((dest), mm2);                      \
+    punpcklbw_r2r(mm5, mm2);                    \
+                                                \
+    movq_r2r(mm4, mm5);                         \
+    psrlq_r2r(mm3, mm5);                        \
+    punpcklwd_r2r(mm5, mm5);                    \
+    punpcklwd_r2r(mm5, mm5);                    \
+    psubw_r2r(mm2, mm4);                        \
+    pmullw_r2r(mm5, mm4);                       \
+    psrlw_i2r(8, mm4);                          \
+    paddb_r2r(mm2, mm4);                        \
+    packuswb_r2r(mm4, mm4);                     \
+    movd_r2m(mm4, (dest));                      \
+    movq_r2r(mm0, mm4);                         \
     movq_r2r(mm1, mm5);
 
 #define min(x, y) ( ((x) < (y)) ? (x) : (y) )
 
-
-/* This blits pysrc intp pydst such that the upper-right corner of
+/* This blits pysrc into pydst such that the upper-right corner of
    pysrc is at xo, yo relative to pydst. */
 int subpixel32(PyObject *pysrc, PyObject *pydst,
                float xoffset, float yoffset, int ashift) {
@@ -131,11 +147,19 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     int draw_finalx;
     int normal_pixels;
 
+    int inverted_alpha_mask;
+
+    unsigned int pixel;
+    unsigned int blankpixel;
+    
     unsigned char *s0;
     unsigned char *s1;
     unsigned char *d;
     unsigned char *dend;
 
+
+    long long scratch;
+    
     if (!SDL_HasMMX()) {
         return 0;
     }
@@ -154,17 +178,19 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
+    inverted_alpha_mask = ~(0xff << ashift);
+    
     // Due to mmx.
     ashift *= 2;
 
     xo = (int) floor(xoffset);
     yo = (int) floor(yoffset);
-    xfrac = (int) ((xoffset - xo) * 256);
-    yfrac = (int) ((yoffset - yo) * 256);
+    xfrac = (int) ((xoffset - xo) * 255);
+    yfrac = (int) ((yoffset - yo) * 255);
 
-   // Due to the way the interpolator works.
-    xfrac = 256 - xfrac;
-    yfrac = 256 - yfrac;
+    // Due to the way the interpolator works.
+    // xfrac = 256 - xfrac;
+    // yfrac = 256 - yfrac;
 
     if (xo < 0) {
         sx = -xo - 1;
@@ -188,54 +214,72 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         draw_finalx = 0;
     }
 
+    // Load up the mmx registers.
+    movd_m2r(xfrac, mm6);
+    punpcklwd_r2r(mm6, mm6);
+    punpckldq_r2r(mm6, mm6);
+
+    movd_m2r(yfrac, mm7);
+    punpcklwd_r2r(mm7, mm7);
+    punpckldq_r2r(mm7, mm7);
+
+    movd_m2r(ashift, mm3);
+    
     if (xo >= dstw) {
         goto done;
     }
     
-    // Draw the first line.
+    // Draw the first line, when sy == -1.
 
-    if (yo >= dsth) {
-        goto done;
-    }
-
-    s1 = srcpixels + sx * 4;
+    if (sy == -1) {
     
-    if (yo == -1) {
-
-        pxor_r2r(mm4, mm4);
-        
-        if (xo < 0) {
-            pxor_r2r(mm5, mm5);
-        } else {
-            movd_m2r(* (unsigned int *) s1, mm5);
+        if (yo >= dsth) {
+            goto done;
         }
 
-        s1 += 4;
-    }
+        s1 = srcpixels + sx * 4;
+    
+        if (sx < 0) {
+            pixel = (* (unsigned int *) (s1 + 4)) & inverted_alpha_mask;            
+        } else {
+            pixel = * (unsigned int *) s1;
+        }
+
+        blankpixel = pixel & inverted_alpha_mask;
         
-    d = dstpixels + xo * 4 + yo * srcpitch;
-    dend = d + normal_pixels * 4;
-
-    while (d != dend) {
-        pxor_r2r(mm4, mm4);
-        movd_m2r(* (unsigned int *) s1, mm5);        
-        MMX_INTERP(* (unsigned int *) d);
-        d += 4;
+        movd_m2r(blankpixel, mm4);
+        movd_m2r(pixel, mm5);
+        
         s1 += 4;
-    }
+        
+        d = dstpixels + xo * 4 + yo * dstpitch;
+        dend = d + normal_pixels * 4;
 
-    if (draw_finalx) {
-        pxor_r2r(mm4, mm4);
-        pxor_r2r(mm5, mm5);
-        MMX_INTERP(* (unsigned int *) d);
-    }
+        while (d != dend) {
+            pixel = * (unsigned int *) s1;
+            blankpixel = pixel & inverted_alpha_mask;
+            movd_m2r(blankpixel, mm0);
+            movd_m2r(pixel, mm1);        
+            MMX_INTERP(* (unsigned int *) d);
+            d += 4;
+            s1 += 4;
 
-    sy += 1;
-    yo += 1;
+        }
+
+        if (draw_finalx) {
+            s1 -= 4;
+            movd_m2r(blankpixel, mm0);
+            movd_m2r(blankpixel, mm1);
+            MMX_INTERP(* (unsigned int *) d);
+        }
+
+        sy += 1;
+        yo += 1;
+    }
 
     // Draw the second and later lines..
 
-    while (sy < srch) {
+    while (sy < srch - 1) {
 
         if (yo >= dsth) {
             goto done;
@@ -244,43 +288,49 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         s0 = srcpixels + sx * 4 + (srcpitch * sy);
         s1 = srcpixels + sx * 4 + (srcpitch * (sy + 1));
         
-        if (yo == -1) {
+        if (sx < 0) {
+            blankpixel = (* (unsigned int *) (s0 + 4)) & inverted_alpha_mask;
+            movd_m2r(blankpixel, mm4);
 
-        
-            if (xo < 0) {
-                pxor_r2r(mm4, mm4);
-                pxor_r2r(mm5, mm5);
-            } else {
-                movd_m2r(* (unsigned int *) s0, mm4);
-                movd_m2r(* (unsigned int *) s1, mm5);
-            }
+            blankpixel = (* (unsigned int *) (s1 + 4)) & inverted_alpha_mask;
+            movd_m2r(blankpixel, mm5);
 
-            s0 += 4;
-            s1 += 4;
+        } else {
+            movd_m2r(* (unsigned int *) s0, mm4);
+            movd_m2r(* (unsigned int *) s1, mm5);
         }
+
+        s0 += 4;
+        s1 += 4;
         
-        d = dstpixels + xo * 4 + yo * srcpitch;
+        d = dstpixels + xo * 4 + yo * dstpitch;
         dend = d + normal_pixels * 4;
 
         while (d != dend) {
-            movd_m2r(* (unsigned int *) s0, mm4);        
-            movd_m2r(* (unsigned int *) s1, mm5);        
+            movd_m2r(* (unsigned int *) s0, mm0);        
+            movd_m2r(* (unsigned int *) s1, mm1);        
             MMX_INTERP(* (unsigned int *) d);
+
             d += 4;
             s0 += 4;
             s1 += 4;
         }
 
         if (draw_finalx) {
-            pxor_r2r(mm4, mm4);
-            pxor_r2r(mm5, mm5);
+            s0 -= 4;
+            s1 -= 4;
+
+            blankpixel = (* (unsigned int *) s0) & inverted_alpha_mask;
+            movd_m2r(blankpixel, mm0);
+            blankpixel = (* (unsigned int *) s1) & inverted_alpha_mask;
+            movd_m2r(blankpixel, mm1);
             MMX_INTERP(* (unsigned int *) d);
         }
 
         yo += 1;
         sy += 1;
-    }
 
+    }
 
     // The final part, where we handle the bottom line of the source surface.
     
@@ -289,39 +339,46 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     }
 
     s0 = srcpixels + sx * 4 + (srcpitch * sy);
-        
-    if (yo == -1) {
-        
-        if (xo < 0) {
-            pxor_r2r(mm4, mm4);
-            pxor_r2r(mm5, mm5);
-        } else {
-            movd_m2r(* (unsigned int *) s0, mm4);
-            pxor_r2r(mm5, mm5);
-        }
 
-        s0 += 4;
-    }
+    if (sx < 0) {
+        pixel = * (unsigned int *) (s0 + 4);
+        blankpixel = pixel & inverted_alpha_mask;
         
-    d = dstpixels + xo * 4 + yo * srcpitch;
+        movd_m2r(blankpixel, mm4);
+        movd_m2r(blankpixel, mm5);
+    } else {
+        pixel = * (unsigned int *) s0;
+        blankpixel = pixel & inverted_alpha_mask;
+        
+        movd_m2r(pixel, mm4);
+        movd_m2r(blankpixel, mm5);
+    }
+
+    s0 += 4;
+        
+    d = dstpixels + xo * 4 + yo * dstpitch;
     dend = d + normal_pixels * 4;
 
     while (d != dend) {
-        movd_m2r(* (unsigned int *) s0, mm4);        
-        pxor_r2r(mm5, mm5);
+        pixel = * (unsigned int *) s0;
+        blankpixel = pixel & inverted_alpha_mask;
+        
+        movd_m2r(pixel, mm0);        
+        movd_m2r(blankpixel, mm1);
         MMX_INTERP(* (unsigned int *) d);
         d += 4;
         s0 += 4;
     }
 
     if (draw_finalx) {
-        pxor_r2r(mm4, mm4);
-        pxor_r2r(mm5, mm5);
+        movd_m2r(blankpixel, mm0);
+        movd_m2r(blankpixel, mm1);
         MMX_INTERP(* (unsigned int *) d);
     }
 
+    
 done:
-        
+
     // Reset the MMX unit and call it a night.
     emms();
 
@@ -336,7 +393,7 @@ done:
 
 /* On a non-mmx platform, return 0 to let the pyrex code handle it. */
 
-void subpixel32(PyObject *pysrc, PyObject *pydst,
+int subpixel32(PyObject *pysrc, PyObject *pydst,
                 float xoffset, float yoffset, int ashift) {
     return 0;
 }
