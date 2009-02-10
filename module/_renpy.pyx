@@ -96,7 +96,7 @@ PygameSurface = pygame.Surface
 
 # Update this in 00library.rpy as well!
 def version():
-    return 6007001
+    return 6009000
 
 def save_png(surf, file, compress=-1):
 
@@ -411,7 +411,10 @@ def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
     staticgray_core(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap)
 
 
-def subpixel(pysrc, pydst, xoffset, yoffset, shift):
+def subpixel(pysrc, pydst, xoffset, yoffset):
+
+    ashift = pysrc.get_shifts()[3]
+
     if subpixel32(pysrc, pydst, xoffset, yoffset, shift):
         return
 

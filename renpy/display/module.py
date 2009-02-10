@@ -134,53 +134,8 @@ else:
         renpy.display.render.blit_lock.release()
         return rv
         
-# def slow_endian_order(shifts, masks, r, g, b, a):
 
-#     has_alpha = masks[3]
-
-#     if not has_alpha:
-
-#         l = zip(shifts, (r, g, b))
-#         l.sort()
-
-#         if sys.byteorder == 'big':
-#             l.reverse()
-
-#         return [ j for i, j in l] + [ a ]
-
-    
-#     l = zip(shifts, (r, g, b, a))
-#     l.sort()
-
-#     if sys.byteorder == 'big':
-#         l.reverse()
-
-#     return [ j for i, j in l]
-
-    
-# endian_order_cache = { }
-
-
-# def endian_order(src, r, g, b, a):
-#     """
-#     Returns the four arguments, in endian-order.
-#     """
-
-#     shifts = src.get_shifts()
-
-#     try:
-#         func = endian_order_cache[shifts]
-
-#     except KeyError:
-#         masks = src.get_masks()
-#         order = slow_endian_order(shifts, masks, 'r', 'g', 'b', 'a')
-#         func = eval( "lambda r, g, b, a : (" + ", ".join(order) + ")")
-#         endian_order_cache[shifts] = func
-
-#     return func(r, g, b, a)
-        
-
-# Okay, what we have here are a pair of tables mapping masks to byte offsets
+# What we have here are a pair of tables mapping masks to byte offsets
 # for 24 and 32 bpp modes. We represent 0xff000000 as positive and negative
 # numbers so that it doesn't yield a warning, and so that it works on
 # 32 and 64 bit platforms.
@@ -429,3 +384,14 @@ if version >= 6002001:
 
 else:
     can_colormatrix = False
+
+
+if version >= 6009000:
+    subpixel = _renpy.subpixel
+else:
+    def subpixel(src, dst, x, y):
+        renpy.display.render.blit_lock.acquire()
+        dst.blit(src, (int(x), int(y)))
+
+        
+    
