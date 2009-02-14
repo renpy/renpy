@@ -27,7 +27,7 @@ from pygame.constants import *
 
 class Focus(object):
 
-    def __init__(self, widget, arg, x, y, w, h, mx, my, mask):
+    def __init__(self, widget, arg, x, y, w, h):
 
         self.widget = widget
         self.arg = arg
@@ -35,9 +35,6 @@ class Focus(object):
         self.y = y
         self.w = w
         self.h = h
-        self.mx = mx
-        self.my = my
-        self.mask = mask
 
     def copy(self):
         return Focus(
@@ -46,16 +43,16 @@ class Focus(object):
             self.x,
             self.y,
             self.w,
-            self.h,
-            self.mx,
-            self.my,
-            self.mask)
+            self.h)
 
 # The current focus argument.
 argument = None
     
 # The widget currently grabbing the input, if any.
 grab = None
+
+# The default focus for the current screen.
+default_focus = None
 
 # Sets the currently focused widget.
 def set_focused(widget, arg):
@@ -86,10 +83,20 @@ def get_grab():
 focus_list = [ ]
 
 # This takes in a focus list from the rendering system.
-def take_focuses(fl):
+def take_focuses():
     global focus_list
-    focus_list = fl
+    focus_list = [ ]
 
+    renpy.display.render.take_focuses(focus_list)
+
+    global default_focus
+    default_focus = None
+    
+    for f in focus_list:
+        if f.x is None:
+            default_focus = f
+            
+    
 # This is called before each interaction. It's purpose is to choose
 # the widget that is focused, and to mark it as focused and all of
 # the other widgets as unfocused.
@@ -203,28 +210,12 @@ def mouse_handler(ev, x, y, default=False):
     if ev.type not in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
         return
 
-    newfocus = None
-    default_focus = None
+    new_focus = renpy.display.render.focus_at_point(x, y)
+    
+    if new_focus is None:
+        new_focus = default_focus
 
-    for f in focus_list:
-
-        if f.x is None:
-            default_focus = f
-            continue
-
-        if f.mx is not None:
-            if f.mask.is_opaque(x - f.mx, y - f.my):
-                newfocus = f
-
-            continue
-            
-        if f.x <= x <= f.x + f.w and f.y <= y <= f.y + f.h:
-            newfocus = f
-
-    if newfocus is None:
-        newfocus = default_focus
-
-    return change_focus(newfocus, default=default)
+    return change_focus(new_focus, default=default)
 
 
 # This focuses an extreme widget, which is one of the widgets that's
@@ -339,7 +330,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     # Find the current focus.
     for f in focus_list:
-        if f.widget == current:
+        if f.widget is current and f.arg == argument:
             from_focus = f
             break
     else:

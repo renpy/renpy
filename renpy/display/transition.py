@@ -243,6 +243,11 @@ class Pixellate(Transition):
     steps in each direction.
     """
 
+    nosave = [ 'surface', 'surface_size' ]
+                   
+    surface = None
+    surface_size = None
+    
     def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
 
         time = float(time)
@@ -257,9 +262,6 @@ class Pixellate(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-
-        self.surface = None
-        self.surface_size = None
 
         self.events = False
 
@@ -298,12 +300,8 @@ class Pixellate(Transition):
 
         rv = renpy.display.render.Render(rdr.width, rdr.height)
         rv.blit(self.surface, (0, 0))
-
-        if self.events:
-            rv.focuses.extend(rdr.focuses)
-
-        # renpy.display.render.redraw(self, self.quantum - st % self.quantum)
-
+        rv.depends_on(rdr)
+        
         renpy.display.render.redraw(self, 0)
 
         return rv
@@ -384,8 +382,7 @@ class Dissolve(Transition):
         else:
             rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
 
-        rv.focuses.extend(top.focuses)        
-        rv.depends_on(top)
+        rv.depends_on(top, True)
         rv.depends_on(bottom)
         return rv
 
@@ -1099,8 +1096,7 @@ class ImageDissolve(Transition):
         else:
             rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
 
-        rv.focuses.extend(top.focuses)        
-        rv.depends_on(top)
+        rv.depends_on(top, True)
         rv.depends_on(bottom)
         return rv
 

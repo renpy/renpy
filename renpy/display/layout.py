@@ -1599,8 +1599,7 @@ class IgnoresEvents(renpy.display.core.Displayable):
         cw, ch = cr.get_size()
 
         rv = renpy.display.render.Render(cw, ch)
-        rv.blit(cr, (0, 0))
-        rv.focuses = [ ]
+        rv.blit(cr, (0, 0), focus=False)
 
         return rv
 

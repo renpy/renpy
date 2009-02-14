@@ -63,7 +63,7 @@ init -100 python:
             if name:
                 layout.label(s.name, "stat")
             else:
-                ui.nul()
+                ui.null()
 
             if value and max:
                 layout.label("%d/%d" % (v, s.max), "stat_value")

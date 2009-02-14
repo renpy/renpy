@@ -956,32 +956,28 @@ class Display(object):
         
     def show(self, root_widget, suppress_blit):
         """
-        Draws the current transient screen list to the screen.
-        
-        @returns A list of offsets corresponding to each widget,
-        relative to the screen.
+        Draws the screen.
         """
-
-#         if self.next_draw < pygame.time.get_ticks():
-#             self.next_draw = pygame.time.get_ticks()
-
-#         pygame.time.delay(self.next_draw - pygame.time.get_ticks())
-
-#         self.next_draw += 1000 / 30
+        
+#         surftree = renpy.display.render.render_screen(
+#             root_widget,
+#             renpy.config.screen_width,
+#             renpy.config.screen_height,
+#             0)
 
         surftree = renpy.display.render.render_screen(
             root_widget,
             renpy.config.screen_width,
             renpy.config.screen_height,
-            0)
-
+            )
+        
         if not suppress_blit:
 
             updates = [ ]
 
             updates.extend(self.draw_mouse(False))
 
-            damage = renpy.display.render.screen_blit(surftree, self.full_redraw, self.screen_xoffset, self.screen_yoffset)
+            damage = renpy.display.render.draw_screen(self.screen_xoffset, self.screen_yoffset)
 
             if damage:
                 updates.extend(damage)
@@ -990,14 +986,14 @@ class Display(object):
 
             updates.extend(self.draw_mouse(True))
             pygame.display.update(updates)
-
+            
         else:
             self.full_redraw = True
-            
+
+        renpy.display.render.kill_old_screen()
+        renpy.display.focus.take_focuses()
+        
         self.suppressed_blit = suppress_blit
-
-        renpy.display.focus.take_focuses(surftree.focuses)
-
         self.surftree = surftree
         
     def save_screenshot(self, filename):
@@ -1619,7 +1615,7 @@ class Interface(object):
                     suppress_blit = renpy.display.video.interact()
 
                     # Clean out the redraws, if we have to.
-                    renpy.display.render.kill_redraws()
+                    # renpy.display.render.kill_redraws()
                     
                     # Draw the screen.
                     self.frame_time = get_time()
