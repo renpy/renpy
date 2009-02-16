@@ -162,6 +162,7 @@ MultiPersistent = renpy.loadsave.MultiPersistent
 
 Style = renpy.style.Style
 
+absolute = renpy.display.core.absolute
 
 def layout(cls, doc, nargs=0, **extra_kwargs):
 

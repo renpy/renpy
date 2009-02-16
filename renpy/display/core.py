@@ -69,15 +69,12 @@ class IgnoreEvent(Exception):
 
     pass
 
+class absolute(float):
+    """
+    This represents an absolute float coordinate.
+    """
+    __slots__ = [ ]
 
-# Names for anchors.
-anchors = dict(
-    left=0.0,
-    right=1.0,
-    center=0.5,
-    top=0.0,
-    bottom=1.0,
-    )
 
 class Displayable(renpy.object.Object):
     """
@@ -274,7 +271,7 @@ class Displayable(renpy.object.Object):
         self.render().
         """
         
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel  = self.get_placement()
 
         if xpos is None:
             xpos = 0
@@ -291,40 +288,39 @@ class Displayable(renpy.object.Object):
         if xoff is None:
             xoff = xpos
 
+        if type(xoff) is float:
+            xoff = xoff * width
 
-        if isinstance(xoff, float):
-            xoff = int(xoff * width)
-
-        if isinstance(xanchor, int):
+        if type(xanchor) is float:
+            xoff -= sw * xanchor
+        else:
             xoff -= xanchor
-        else:            
-            xanchor = anchors.get(xanchor, xanchor)
-            xoff -= int(sw * xanchor)
 
         xoff += x
 
         # y
-
         if yoff is None:
             yoff = ypos
 
-        if isinstance(yoff, float):
-            yoff = int(yoff * height)
+        if type(yoff) is float:
+            yoff = yoff * height
 
-        if isinstance(yanchor, int):
+        if type(yanchor) is float:
+            yoff -= sh * yanchor
+        if absolute or isinstance(yanchor, int):
             yoff -= yanchor
-        else:            
-            yanchor = anchors.get(yanchor, yanchor)
-            yoff -= int(sh * yanchor)
 
         yoff += y
 
         # Add in offsets.
         xoff += xoffset
         yoff += yoffset
-        
-        dest.blit(surf, (xoff, yoff), main=main)
 
+        if subpixel:
+            dest.subpixel_blit(surf, (xoff, yoff), main=main)
+        else:
+            dest.blit(surf, (xoff, yoff), main=main)
+            
         return xoff, yoff
 
 class ImagePredictInfo(renpy.object.Object):
@@ -1254,14 +1250,6 @@ class Interface(object):
             self.pushed_event = None
             self.last_event = rv
             return rv
-
-#         while renpy.display.im.cache.needs_preload():
-#             ev = pygame.event.poll()
-#             if ev.type != NOEVENT:
-#                 self.last_event = ev
-#                 return ev
-
-#             renpy.display.im.cache.preload()
             
         try:
             cpu_idle.set()            

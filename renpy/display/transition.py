@@ -628,7 +628,7 @@ class CropMove(Transition):
 # Utility function used by MoveTransition et al.
 def position(d):
 
-    xpos, ypos, xanchor, yanchor, xoffset, yoffset = d.get_placement()
+    xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = d.get_placement()
 
     if xpos is None:
         xpos = 0
@@ -640,7 +640,7 @@ def position(d):
         yanchor = 0
 
     return xpos, ypos, xanchor, yanchor
-        
+
 # These are used by MoveTransition.
 def MoveFactory(pos1, pos2, delay, d, **kwargs):
     if pos1 == pos2:

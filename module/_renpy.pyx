@@ -411,9 +411,7 @@ def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
     staticgray_core(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap)
 
 
-def subpixel(pysrc, pydst, xoffset, yoffset):
-
-    ashift = pysrc.get_shifts()[3]
+def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
     if subpixel32(pysrc, pydst, xoffset, yoffset, shift):
         return

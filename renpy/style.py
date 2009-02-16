@@ -83,6 +83,22 @@ def expand_outlines(l):
             rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
 
     return rv
+
+# Names for anchors.
+anchors = dict(
+    left=0.0,
+    right=1.0,
+    center=0.5,
+    top=0.0,
+    bottom=1.0,
+    )
+
+def expand_anchor(v):
+    """
+    Turns an anchor into a number.
+    """
+
+    return anchors.get(v, v)
     
 # A map of properties that we know about. The properties may take a
 # function that is called to convert the argument to something more
@@ -136,6 +152,7 @@ style_properties = dict(
     spacing = None,
     strikethrough = None,
     subtitle_width = None,
+    subpixel = None,
     text_y_fudge = None,
     text_align = None,
     thumb = none_is_null,
@@ -145,13 +162,13 @@ style_properties = dict(
     top_margin = None,
     top_padding = None,
     underline = None,
-    xanchor = None,
+    xanchor = expand_anchor,
     xfill = None,
     xmaximum = None,
     xminimum = None,
     xoffset = None,
     xpos = None,
-    yanchor = None,
+    yanchor = expand_anchor,
     yfill = None,
     ymaximum = None,
     yminimum = None,
@@ -226,7 +243,7 @@ def init():
             for p in prefixes + [ '' ]:
                 expansions[r + p + k] = [ a for b in substitutes[k] for a in expansions[r + p + b] ]
 
-    for i in ('xpos', 'xanchor', 'xoffset', 'ypos', 'yanchor', 'yoffset'):
+    for i in ('xpos', 'xanchor', 'xoffset', 'ypos', 'yanchor', 'yoffset', 'subpixel'):
         globals()["prop_" + i] = property_number[i]
                 
             
@@ -706,6 +723,7 @@ class Style(object):
             c[o + prop_yanchor],
             c[o + prop_xoffset],
             c[o + prop_yoffset],
+            c[o + prop_subpixel],
             )
     
 

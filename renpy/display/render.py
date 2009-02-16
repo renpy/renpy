@@ -23,6 +23,7 @@ import collections
 import time
 import pygame
 import threading
+import math
 
 import renpy
 
@@ -262,7 +263,7 @@ def draw(dest, what, xo, yo, screen):
     `screen` - True if this is a blit to the screen, False otherwise.    
     """
 
-    if isinstance(what, pygame.Surface):
+    if not isinstance(what, Render):
 
         # Pixel-Aligned blit.
         if isinstance(xo, int) and isinstance(yo, int):
@@ -275,8 +276,7 @@ def draw(dest, what, xo, yo, screen):
             
         # Subpixel blit.
         else:
-            print "Subpixel blit"
-            renpy.display.module.subpixel(dest, what, xo, yo)
+            renpy.display.module.subpixel(what, dest, xo, yo)
 
         return
 
@@ -338,11 +338,81 @@ def draw(dest, what, xo, yo, screen):
         xo = 0
         yo = 0
         
-    # TODO: Deal with alpha and transforms, as necessary.
+
+    # Deal with alpha and transforms by passing them off to draw_transformed.
+    if what.alpha != 1 or what.forward:
+        for child, cxo, cyo, focus, main in what.visible_children:
+            draw_transformed(dest, child, xo + cxo, yo + cyo,
+                             what.alpha, what.forward, what.reverse)
+        return
         
     for child, cxo, cyo, focus, main in what.visible_children:
         draw(dest, child, xo + cxo, yo + cyo, screen)
-    
+
+def draw_transformed(dest, what, xo, yo, alpha, forward, reverse):
+
+    if not isinstance(what, Render):
+
+        if not renpy.display.module.can_alpha_transform:
+            return
+        
+        # Figure out where the other corner of the transformed surface
+        # is on the screen.
+        sw, sh = what.get_size()
+        dw, dh = dest.get_size()
+        
+        x0, y0 = 0, 0
+        x1, y1 = reverse.transform(sw, 0)
+        x2, y2 = reverse.transform(sw, sh)
+        x3, y3 = reverse.transform(0, sh)
+
+        minx = math.floor(min(x0, x1, x2, x3)) + xo
+        maxx = math.ceil(max(x0, x1, x2, x3)) + xo
+        miny = math.floor(min(y0, y1, y2, y3)) + yo
+        maxy = math.ceil(max(y0, y1, y2, y3)) + yo
+
+        if minx < 0:
+            minx = 0
+        if miny < 0:
+            miny = 0
+
+        if maxx > dw:
+            maxx = dw
+        if maxy > dh:
+            maxy = dh
+
+        cx, cy = forward.transform(minx - xo, miny - yo)
+
+        dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
+        renpy.display.module.alpha_transform(
+            what, dest,
+            cx, cy,
+            forward.xdx, forward.ydx,
+            forward.xdy, forward.ydy,
+            alpha)
+
+        return
+
+    if what.clipping:
+        raise Exception("Clipping a transformed surface is not supported.")
+
+    if what.draw_func:
+        raise Exception("Using a draw_func on a transformed surface is not supported.")
+
+    for child, cxo, cyo, focus, main in what.visible_children:
+
+        cxo, cyo = reverse.transform(cxo, cyo)
+
+        if what.forward:
+            child_forward = forward * what.forward
+            child_reverse = what.reverse * reverse
+        else:
+            child_forward = forward
+            child_reverse = reverse
+            
+        draw_transformed(dest, child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
+
+        
 class Render(object):
 
     def __init__(self, width, height, draw_func=None, layer_name=None, opaque=None):
@@ -435,6 +505,8 @@ class Render(object):
 
         If `focus` is true, then focuses are added from the child to the
         parent.
+
+        This will only blit on integer pixel boundaries.
         """
 
         xo = int(xo)
@@ -444,7 +516,28 @@ class Render(object):
         if isinstance(source, Render):
             source.parents.add(self)
             source.refcount += 1
-    
+
+    def subpixel_blit(self, source, (xo, yo), focus=True, main=True):
+        """
+        Blits `source` (a Render or Surface) to this Render, offset by
+        xo and yo.
+
+        If `focus` is true, then focuses are added from the child to the
+        parent.
+
+        This blits at fractional pixel boundaries.
+        """
+
+        xo = float(xo)
+        yo = float(yo)
+        
+        self.children.append((source, xo, yo, focus, main))
+        if isinstance(source, Render):
+            source.parents.add(self)
+            source.refcount += 1
+
+
+            
     def get_size(self):
         """
         Returns the size of this Render, a mostly ficticious value
@@ -703,8 +796,9 @@ class Render(object):
             return rv
 
         if depth is not None:
-            rv.append((depth, self.width, self.height, self.render_of))
-            depth += 1
+            for d in self.render_of:
+                rv.append((depth, self.width, self.height, d))
+                depth += 1
         elif self.layer_name in layers:
             depth = 0
 

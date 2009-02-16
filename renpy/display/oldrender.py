@@ -989,7 +989,7 @@ class Render(object):
 
         if mask is not None and mask is not self:
             self.depends_on(mask)
-                
+        
         self.focuses.append(renpy.display.focus.Focus(widget, arg, x, y, w, h, mx, my, mask))
 
     # Determines if the pixel at x, y is opaque or not.

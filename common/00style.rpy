@@ -166,7 +166,8 @@ init -1090 python:
     style.default.ymaximum = None
     style.default.xoffset = 0
     style.default.yoffset = 0
-
+    style.default.subpixel = False
+    
     # Sound properties.
     style.default.sound = None
 

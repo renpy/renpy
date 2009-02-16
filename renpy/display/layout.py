@@ -242,21 +242,37 @@ class Position(Container):
 
     def get_placement(self):
     
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset = self.child.get_placement()
-            
-        if self.style.xpos is not None:
-            xpos = self.style.xpos
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.child.get_placement()
 
-        if self.style.ypos is not None:
-            ypos = self.style.ypos
+        v = self.style.xpos
+        if v is not None:
+            xpos = v
 
-        if self.style.xanchor is not None:
-            xanchor = self.style.xanchor
+        v = self.style.ypos
+        if v is not None:
+            ypos = v
 
-        if self.style.yanchor is not None:
-            yanchor = self.style.yanchor
+        v = self.style.xanchor
+        if v is not None:
+            xanchor = v
 
-        return xpos, ypos, xanchor, yanchor, xoffset, yoffset
+        v = self.style.yanchor
+        if v is not None:
+            yanchor = v
+
+        v = self.style.xoffset
+        if v is not None:
+            xoffset = v
+
+        v = self.style.yoffset
+        if v is not None:
+            yoffset = v
+
+        v = self.style.subpixel
+        if v is not None:
+            subpixel = v
+
+        return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
     
 class Grid(Container):
@@ -830,7 +846,7 @@ class Motion(Container):
         if self.position is None:
             return super(Motion, self).get_placement()
         else:
-            return self.position + (self.style.xoffset, self.style.yoffset)
+            return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
                 
     def render(self, width, height, st, at):
 
@@ -919,19 +935,16 @@ class Interpolate(object):
 
         def interp(a, b, c):
 
-            if c is not None and isinstance(a, float):
-                a = int(a * c)
-
-            if c is not None and isinstance(b, float):
-                b = int(b * c)
-            
+            if c is not None:
+                if type(a) is float:
+                    a = renpy.display.core.absolute(a * c)
+                if type(b) is float:
+                    b = renpy.display.core.absolute(b * c)
+                            
             rv = a + t * (b - a)
             
-            if isinstance(a, int) and isinstance(b, int):
-                return int(rv)
-            else:
-                return rv
-
+            return type(a)(rv)
+            
         return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
 
 

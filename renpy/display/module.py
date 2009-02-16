@@ -32,7 +32,7 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < 5006000:
+    if version < 6009000:
         print >>sys.stderr, "The _renpy module was found, but is out of date.\nPlease read module/README.txt for more information."
         
 except:
@@ -328,25 +328,19 @@ else:
     
 
 if version >= 5006006:
-
     can_transform = True
-
     transform = _renpy.transform
-            
 else:
     can_transform = False
 
 
     
 if version >= 6001000:
-
-    # Note: Blend requires all surfaces to be the same size.
-    
+    # Note: Blend requires all surfaces to be the same size.    
     can_blend = True
     blend = _renpy.blend
 
 else:
-
     can_blend = False
 
 
@@ -387,11 +381,20 @@ else:
 
 
 if version >= 6009000:
-    subpixel = _renpy.subpixel
+    def subpixel(src, dst, x, y):
+        shift = renpy.game.interface.display.sample_surface.get_shifts()[3]
+        _renpy.subpixel(src, dst, x, y, shift)
+
 else:
     def subpixel(src, dst, x, y):
         renpy.display.render.blit_lock.acquire()
         dst.blit(src, (int(x), int(y)))
+        renpy.display.render.blit_lock.release()
 
+if version >= 6009000:
+    can_alpha_transform = True
+    alpha_transform = _renpy.transform
+else:
+    can_alpha_transform = False
         
     
