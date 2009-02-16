@@ -320,6 +320,9 @@ def draw(dest, what, xo, yo, screen):
     # Deal with clipping, if necessary.
     if what.clipping:
 
+        xo = int(xo)
+        yo = int(yo)
+        
         width = what.width
         height = what.height
         

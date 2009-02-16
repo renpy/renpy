@@ -1,8 +1,40 @@
 New in Ren'Py 6.9.0
 -------------------
 
-Improved RotoZoom. It's now both more accurate and faster. On Intel computers,
-it is now accelerated using MMX instructions.
+This release features a rewritten rendering system. The rendering
+subsystem is what manages drawing to the screen. There have been
+several major improvements:
+
+* The render system has been simplified. Although still complex, it's 
+  now easier to understand than the old system, while also being
+  naturally a bit faster.
+
+* That being said, the render system now focuses more on framerate
+  consistency than raw speed. 
+
+* The render system now supports subpixel drawing, drawing images at
+  locations that are not integer pixel boundaries. This is enabled by
+  setting the subpixel style property to True for a displayable. (It 
+  makes the most sense to do this for Move and Pan, and less sense to
+  do this for non-moving displayables.) 
+
+* The render system supports specifying subpixel placement of
+  displayables. This is done using the new absolute type. (A
+  floating-point position is still interpreted as a fraction of the
+  area in which the displayable is placed.)
+
+* The render system supports a rotate-zoom-alpha mode, in which allows
+  a displayable to be rotated, zoomed, and have its alpha
+  changed. When this mode is used, the cost remains constant, even
+  when multiple transformations are composed. Currently, this is only
+  used by Transform and ui.transform.
+
+* The render system supports rotating and scaling focusable objects.
+
+
+Improved the transform routine used by RotoZoom and Transform. It's
+now both more accurate and faster. On Intel computers, it is now
+accelerated using MMX instructions.  
 [TODO: Recompile everything.]
 
 
