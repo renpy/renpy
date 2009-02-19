@@ -1011,8 +1011,8 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
 
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 1) * 256;
-    float fsh = (srch - 1) * 256;
+    float fsw = (srcw - 2) * 256;
+    float fsh = (srch - 2) * 256;
 
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
