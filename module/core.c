@@ -1172,8 +1172,8 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
     ydy *= 256;
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 1) * 256;
-    float fsh = (srch - 1) * 256;
+    float fsw = (srcw - 2) * 256;
+    float fsh = (srch - 2) * 256;
         
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 

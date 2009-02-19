@@ -26,7 +26,7 @@ import pygame
 from pygame.constants import *
 
 import renpy
-from renpy.display.render import render
+from renpy.display.render import render, IDENTITY, Matrix2D
 import time
 import math
 
@@ -135,27 +135,6 @@ class Container(renpy.display.core.Displayable):
             if rv is not None:
                 return rv
                 
-        return None
-
-    def child_at_point(self, x, y):
-        """
-        Returns the index of the child of this widge that is being
-        rendered at the given coordinates. Return None if the
-        coordinates are not in any child widget.
-        """
-
-        for i, ((xo, yo), (w, h)) in enumerate(zip(self.offsets, self.sizes)):
-            xrel = x - xo
-            yrel = y - yo
-
-            if xrel < 0 or yrel < 0:
-                continue
-
-            if xrel >= w or yrel >= h:
-                continue
-
-            return i
-
         return None
 
     def visit(self):
@@ -1722,8 +1701,9 @@ class RotoZoom(renpy.display.core.Displayable):
         if self.zoom_time_warp:
             zoom_time = self.zoom_time_warp(zoom_time)
 
-        angle = self.rot_start + (self.rot_end - self.rot_start) * rot_time
-        zoom = self.zoom_start + (self.zoom_end - self.zoom_start) * zoom_time
+            
+        angle = self.rot_start + (1.0 * self.rot_end - self.rot_start) * rot_time
+        zoom = self.zoom_start + (1.0 * self.zoom_end - self.zoom_start) * zoom_time
         angle = -angle * math.pi / 180
 
         zoom = max(zoom, 0.001) 
@@ -1938,7 +1918,7 @@ class Side(Container):
 
     possible_positions = set([ 'tl', 't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'c'])
 
-    def after_setatate(self):
+    def after_setstate(self):
         self.sized = False
     
     def __init__(self, positions, style='default', **properties):
@@ -2146,4 +2126,142 @@ class Alpha(renpy.display.core.Displayable):
         return rv
         
 
+class Transform(Container):
+
+    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1, style='transform', **kwargs):
+
+        super(Transform, self).__init__(style=style, **kwargs)
+
+        self.function = function
+
+        child = renpy.easy.displayable(child)
+
+        # Taken from the style by default.
+        self.add(child)
+        self.xpos = None
+        self.ypos = None
+        self.xanchor = None
+        self.yanchor = None        
+
+        # Taken from parameters.
+        self.alpha = alpha
+        self.rotate = rotate
+        self.zoom = zoom
+        self.xzoom = xzoom
+        self.yzoom = yzoom
+
+        # This is the matrix transforming our coordinates into child coordinates.
+        self.forward = None
+
+    def render(self, width, height, st, at):
+
+        if self.function is not None:
+            fr = self.function(self, st, at)
+            renpy.display.render.redraw(self, fr)
+        
+        cr = render(self.child, width, height, st, at)
+        cw, ch = cr.get_size()
+
+        forward = IDENTITY
+        reverse = IDENTITY
+        xo = yo = 0
+        
+        # Rotation first.
+        if self.rotate is not None:
+
+            width = height = math.hypot(cw, ch)
             
+            angle = -self.rotate * math.pi / 180
+        
+            xdx = math.cos(angle)
+            xdy = -math.sin(angle)
+            ydx = -xdy 
+            ydy = xdx 
+
+            forward = Matrix2D(xdx, xdy, ydx, ydy)
+
+            xdx = math.cos(-angle)
+            xdy = -math.sin(-angle)
+            ydx = -xdy 
+            ydy = xdx 
+
+            reverse = Matrix2D(xdx, xdy, ydx, ydy)
+
+            xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
+            xo += width / 2.0
+            yo += height / 2.0
+
+        if self.zoom != 1 or self.xzoom != 1 or self.yzoom != None:
+            xzoom = self.zoom * self.xzoom
+            yzoom = self.zoom * self.yzoom
+
+            forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+            reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
+
+            width *= xzoom
+            height *= yzoom
+            xo *= xzoom
+            yo *= yzoom
+
+        rv = renpy.display.render.Render(width, height)
+
+        if forward is not IDENTITY:
+            rv.forward = forward
+            rv.reverse = reverse
+            
+        self.forward = forward
+
+        rv.alpha = self.alpha
+        
+        rv.subpixel_blit(cr, (xo, yo), main=True)
+
+        self.offsets = [ (xo, yo) ]
+        self.sizes = [ (cw, ch) ]
+        
+        return rv
+
+    def event(self, ev, x, y, st):
+
+        children = self.children
+        offsets = self.offsets
+        
+        for i in xrange(len(self.children)-1, -1, -1):
+
+            d = children[i]
+            xo, yo = offsets[i]
+
+            cx = x - xo
+            cy = y - yo
+
+            # Transform screen coordinates to child coordinates.
+            cx, cy = self.forward.transform(cx, cy)
+            
+            rv = d.event(ev, cx, cy, st)    
+            if rv is not None:
+                return rv
+                
+        return None
+            
+    def __call__(self, child):
+        self.add(child)
+        
+    def get_position(self):
+        xpos = self.xpos
+        if xpos is None:
+            xpos = self.style.xpos
+
+        ypos = self.ypos
+        if ypos is None:
+            ypos = self.style.ypos
+
+        xanchor = self.xanchor
+        if xanchor is None:
+            xanchor = self.style.xanchor
+
+        yanchor = self.yanchor
+        if yanchor is None:
+            yanchor = self.style.yanchor
+
+        return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.style.subpixel
+
+        

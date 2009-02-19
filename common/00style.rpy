@@ -68,6 +68,7 @@ init -1200 python hide:
     style.hyperlink_text = Style(style.default, help='hyperlinked text')
 
     style.viewport = Style(style.default, help='default style of viewports')
+    style.transform = Style(style.default, help='default style of transforms')
     
     style.list = Style(style.default)
     style.list_box = Style(style.vbox)
@@ -264,6 +265,9 @@ init -1090 python:
     # Viewport
     style.viewport.clipping = True
 
+    # Transform
+    style.transform.subpixel = True
+    
     # Menu windows.
     style.mm_root.background = "#000"
     style.mm_root.xfill = True

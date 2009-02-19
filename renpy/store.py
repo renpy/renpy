@@ -118,6 +118,7 @@ Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
+Transform = renpy.display.layout.Transform
 
 Animation = anim.Animation
 Movie = renpy.display.video.Movie

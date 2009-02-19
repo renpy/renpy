@@ -283,6 +283,9 @@ def draw(dest, what, xo, yo, screen):
     # Deal with draw functions.
     if what.draw_func:
 
+        xo = int(xo)
+        yo = int(yo)
+
         dw, dh = dest.get_size()
         
         if xo >= 0:
@@ -319,9 +322,6 @@ def draw(dest, what, xo, yo, screen):
 
     # Deal with clipping, if necessary.
     if what.clipping:
-
-        xo = int(xo)
-        yo = int(yo)
         
         width = what.width
         height = what.height
@@ -369,10 +369,10 @@ def draw_transformed(dest, what, xo, yo, alpha, forward, reverse):
         x2, y2 = reverse.transform(sw, sh)
         x3, y3 = reverse.transform(0, sh)
 
-        minx = math.floor(min(x0, x1, x2, x3)) + xo
-        maxx = math.ceil(max(x0, x1, x2, x3)) + xo
-        miny = math.floor(min(y0, y1, y2, y3)) + yo
-        maxy = math.ceil(max(y0, y1, y2, y3)) + yo
+        minx = math.floor(min(x0, x1, x2, x3) + xo)
+        maxx = math.ceil(max(x0, x1, x2, x3) + xo)
+        miny = math.floor(min(y0, y1, y2, y3) + yo)
+        maxy = math.ceil(max(y0, y1, y2, y3) + yo)
 
         if minx < 0:
             minx = 0
@@ -385,7 +385,7 @@ def draw_transformed(dest, what, xo, yo, alpha, forward, reverse):
             maxy = dh
 
         cx, cy = forward.transform(minx - xo, miny - yo)
-
+                
         dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
         renpy.display.module.alpha_transform(
             what, dest,
@@ -582,9 +582,6 @@ class Render(object):
                 else:
                     rv = child
 
-        if rv:
-            print "Reused pygame_surface."
-                    
         # Otherwise, draw the current surface.
         if rv is None:
 
