@@ -1134,17 +1134,6 @@ def pop_error_handler():
 def error(msg):
     _error_handlers[-1](msg)
     
-# User-defined Displayable stuff.
-
-# Displayable = renpy.display.core.Displayable
-
-class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject):
-    pass
-
-Render = renpy.display.render.Render
-render = renpy.display.render.render
-IgnoreEvent = renpy.display.core.IgnoreEvent
-redraw = renpy.display.render.redraw
 
 def timeout(seconds):
     renpy.game.interface.timeout(seconds)
@@ -1156,6 +1145,8 @@ def scry():
 
 def munged_filename():
     return renpy.parser.munge_filename(get_filename_line()[0])
+
+# Module loading stuff.
 
 loaded_modules = set()
 
@@ -1198,3 +1189,19 @@ def game_menu(screen=None):
         call_in_new_context("_game_menu")
     else:
         call_in_new_context("_game_menu", screen)
+
+
+# User-Defined Displayable stuff.
+
+Render = renpy.display.render.Render
+render = renpy.display.render.render
+IgnoreEvent = renpy.display.core.IgnoreEvent
+redraw = renpy.display.render.redraw
+
+class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject):
+    pass
+
+class Container(renpy.display.core.Displayable, renpy.python.RevertableObject):
+    _list_type = renpy.python.RevertableList
+
+    

@@ -82,11 +82,15 @@ class Container(renpy.display.core.Displayable):
 
     """
 
+    # We indirect all list creation through this, so that we can
+    # use RevertableLists if we want.
+    _list_type = list
+
     def __init__(self, *args, **properties):
 
-        self.children = []
+        self.children = self._list_type()
         self.child = None
-        self.offsets = []
+        self.offsets = self._list_type()
 
         for i in args:
             self.add(i)
@@ -98,26 +102,57 @@ class Container(renpy.display.core.Displayable):
 
         for i in self.children:
             i.set_style_prefix(prefix)
-
             
-    def add(self, child):
+    def add(self, d):
         """
         Adds a child to this container.
         """
 
-        if child is None:
-            raise Exception("Trying to add None child to container.")
-
+        child = renpy.easy.displayable(d)
+        
         self.children.append(child)
-        self.offsets.append((0, 0))
         self.child = child
+        self.offsets = self._list_type()
 
+    def remove(self, d):
+        """
+        Removes the first instance of child from this container. May
+        not work with all containers.
+        """
+
+        for i, c in enumerate(self.children):
+            if c is d:
+                break
+        else:
+            return
+
+        self.children.pop(i)
+        self.offsets = self.list_type()
+
+        if self.children:
+            self.child = self.children[-1]
+        else:
+            self.child = None
+        
+        
+    def update(self):
+        """
+        This should be called if a child is added to this
+        displayable outside of the render function.
+        """
+
+        renpy.display.render.invalidate(self)
+
+        
     def render(self, width, height, st, at):
 
-        rv = render(self.child, width, height, st, at)
-        self.children = [ self.child ]
-        self.offsets = [ (0, 0) ]
-        self.sizes = [ rv.get_size() ]
+        rv = Render(width, height)
+        self.offsets = self.list_type()
+        
+        for c in self.children:
+            cr = render(c, width, height, st, at)
+            offset = c.place(rv, 0, 0, width, height, cr)
+            self.offsets.append(offset)
 
         return rv
 
@@ -126,7 +161,7 @@ class Container(renpy.display.core.Displayable):
         children = self.children
         offsets = self.offsets
         
-        for i in xrange(len(self.children)-1, -1, -1):
+        for i in xrange(len(offsets) - 1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
@@ -203,7 +238,6 @@ class Position(Container):
         """
 
         super(Position, self).__init__(style=style, **properties)
-        child = renpy.easy.displayable(child)
         self.add(child)
 
     def render(self, width, height, st, at):
@@ -212,7 +246,6 @@ class Position(Container):
         cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
-        self.sizes = [ (cw, ch) ]
 
         rv = renpy.display.render.Render(surf.width, surf.height)
         rv.blit(surf, (0, 0))
@@ -314,12 +347,12 @@ class Grid(Container):
             renheight = (height - (rows - 1) * padding) / rows
         
         renders = [ render(i, renwidth, renheight, st, at) for i in self.children ]
-        self.sizes = [ i.get_size() for i in renders ]
+        sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
         cheight = 0
 
-        for w, h in self.sizes:
+        for w, h in sizes:
             cwidth = max(cwidth, w)
             cheight = max(cheight, h)
 
@@ -363,7 +396,9 @@ class MultiBox(Container):
         super(MultiBox, self).__init__(style=style, **properties)
 
         self.default_layout = layout
-        
+
+        # The start and animation times for children of this
+        # box.
         self.start_times = [ ]
         self.anim_times = [ ]
 
@@ -373,8 +408,7 @@ class MultiBox(Container):
 
         # The scene list for this widget.
         self.scene_list = None
-        
-        
+
     def add(self, widget, start_time=None, anim_time=None):
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
@@ -416,7 +450,6 @@ class MultiBox(Container):
         if layout == "fixed":
 
             self.offsets = [ ]
-            self.sizes = [ ]
             
             rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
@@ -429,11 +462,9 @@ class MultiBox(Container):
                 surf = render(child, width, height, cst, cat)
 
                 if surf:
-                    self.sizes.append(surf.get_size())
                     offset = child.place(rv, 0, 0, width, height, surf)
                     self.offsets.append(offset)
                 else:
-                    self.sizes.append((0, 0))
                     self.offsets.append((0, 0))
 
             return rv
@@ -449,7 +480,6 @@ class MultiBox(Container):
             spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
             self.offsets = [ ]
-            self.sizes = [ ]
 
             surfaces = [ ]
             xoffsets = [ ]
@@ -476,7 +506,6 @@ class MultiBox(Container):
                 myheight = max(sh, myheight)
 
                 surfaces.append(surf)
-                self.sizes.append((sw, sh))
 
 
             if self.style.yfill:
@@ -511,7 +540,6 @@ class MultiBox(Container):
             spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
     
             self.offsets = [ ]
-            self.sizes = [ ]
 
             surfaces = [ ]
             yoffsets = [ ]
@@ -539,7 +567,6 @@ class MultiBox(Container):
                 mywidth = max(sw, mywidth)
 
                 surfaces.append(surf)
-                self.sizes.append((sw, sh))
 
             if self.style.xfill:
                 mywidth = width
@@ -634,7 +661,6 @@ class Window(Container):
     def __init__(self, child, style='window', **properties):
 
         super(Window, self).__init__(style=style, **properties)
-        child = renpy.easy.displayable_or_none(child)
         if child is not None:
             self.add(child)
 
@@ -734,7 +760,6 @@ class Window(Container):
             style.foreground.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
         self.offsets = [ offsets ]
-        self.sizes = [ (sw, sh) ]
 
         self.window_size = width, height
 
@@ -794,8 +819,6 @@ class Motion(Container):
         transition, the motion is applied to the new_widget for delay
         seconds.
         """
-
-        child = renpy.easy.displayable_or_none(child)
 
         if child is None:
             child = new_widget
@@ -886,7 +909,6 @@ class Motion(Container):
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
 
-        self.sizes = [ child.get_size() ]
         self.offsets = [ (0, 0) ]
 
         return rv
@@ -1572,24 +1594,17 @@ def ShowingSwitch(*args, **kwargs):
         condargs.append(d)
 
     return ConditionSwitch(*condargs, **kwargs)
-    
-    
-    
 
-        
+
 class IgnoresEvents(renpy.display.core.Displayable):
 
     def __init__(self, child):
         super(IgnoresEvents, self).__init__(style='default')
-        self.child = renpy.easy.displayable(child)
+        self.add(child)
     
-    def visit(self):
-        return [ self.child ]
-
     def render(self, w, h, st, at):
         cr = renpy.display.render.render(self.child, w, h, st, at)
         cw, ch = cr.get_size()
-
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(cr, (0, 0), focus=False)
 
@@ -1772,7 +1787,6 @@ class Viewport(Container):
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
-        child = renpy.easy.displayable_or_none(child)
         if child is not None:
             self.add(child)
 
@@ -1843,7 +1857,6 @@ class Viewport(Container):
         cyo = -int(self.yadjustment.value)
 
         self.offsets = [ (cxo, cyo) ]
-        self.sizes = [ (cw, ch) ]
 
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
@@ -1910,9 +1923,7 @@ class Viewport(Container):
 def LiveCrop(rect, child, **properties):
     x, y, w, h = rect
 
-    child = renpy.easy.displayable(child)    
     return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
-
 
 class Side(Container):
 
@@ -1935,7 +1946,6 @@ class Side(Container):
         self.positions = tuple(positions)
         self.sized = False
         
-
     def render(self, width, height, st, at):
 
         pos_d = { }
@@ -2010,7 +2020,6 @@ class Side(Container):
         # Now, place everything onto the render.
         
         self.offsets = [ None ] * len(self.children)
-        self.sizes = [ None ] * len(self.children)
 
         lefts = self.left_space
         rights = self.right_space
@@ -2032,7 +2041,6 @@ class Side(Container):
             d = pos_d[pos]
             i = pos_i[pos]
             rend = render(d, w, h, st, at)
-            self.sizes[i] = rend.get_size()
             self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
             
         col1 = 0
@@ -2134,8 +2142,6 @@ class Transform(Container):
 
         self.function = function
 
-        child = renpy.easy.displayable(child)
-
         # Taken from the style by default.
         self.add(child)
         self.xpos = None
@@ -2216,7 +2222,6 @@ class Transform(Container):
         rv.subpixel_blit(cr, (xo, yo), main=True)
 
         self.offsets = [ (xo, yo) ]
-        self.sizes = [ (cw, ch) ]
         
         return rv
 
@@ -2263,5 +2268,8 @@ class Transform(Container):
             yanchor = self.style.yanchor
 
         return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.style.subpixel
+
+    def update(self):
+        renpy.display.render.invalidate(self)
 
         

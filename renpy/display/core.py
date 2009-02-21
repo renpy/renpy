@@ -955,12 +955,6 @@ class Display(object):
         Draws the screen.
         """
         
-#         surftree = renpy.display.render.render_screen(
-#             root_widget,
-#             renpy.config.screen_width,
-#             renpy.config.screen_height,
-#             0)
-
         surftree = renpy.display.render.render_screen(
             root_widget,
             renpy.config.screen_width,

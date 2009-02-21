@@ -63,12 +63,14 @@ def render_screen(root, width, height):
     
     global old_screen_render
     global screen_render
+    global invalidated
     
     old_screen_render = screen_render
     
     rv = render(root, width, height, 0, 0)
-
     screen_render = rv
+
+    invalidated = False
     
     return rv
 
@@ -114,6 +116,7 @@ def focus_at_point(x, y):
     else:
         d, arg = cf
         return renpy.display.focus.Focus(d, arg, None, None, None, None)
+
     
 def render(d, width, height, st, at):
     """
@@ -160,7 +163,27 @@ def render(d, width, height, st, at):
     render_cache[d][wh] = rv
     render_cache[d][orig_wh] = rv
     return rv
+
+
+# This is true if something has been invalidated, and a redraw needs
+# to occur. It's automatically cleared to False at the end of each
+# redraw.
+invalidated = False
+
+def invalidate(d):
+    """
+    Removes d from the render cache. If we're not in a redraw, triggers
+    a redraw to start.
+    """
+
+    global invalidated
     
+    if d in render_cache:
+        for v in render_cache[d].values():
+            v.kill_cache()
+
+        invalidated = True
+            
 def process_redraws():
     """
     Called to determine if any redraws are pending. Returns true if we
@@ -171,7 +194,7 @@ def process_redraws():
     
     now = renpy.display.core.get_time()
 
-    rv = False
+    rv = invalidated
     
     while redraw_queue:
         when, d = redraw_queue[0]
@@ -192,7 +215,8 @@ def process_redraws():
             rv = True
 
     return rv
-        
+
+
 def redraw_time():
     """
     Returns the time at which the next redraw is scheduled.
@@ -881,7 +905,7 @@ class Render(object):
                 if cx >= cw or cy >= ch:
                     return False
                 
-                if not source.get_masks()[3] or source.get_at((cx, cy))[3]:
+                if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True
 
         return False
