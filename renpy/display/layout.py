@@ -2143,7 +2143,9 @@ class Transform(Container):
         self.function = function
 
         # Taken from the style by default.
-        self.add(child)
+        if child is not None:
+            self.add(child)
+
         self.xpos = None
         self.ypos = None
         self.xanchor = None
@@ -2176,7 +2178,6 @@ class Transform(Container):
         if self.rotate is not None:
 
             width = height = math.hypot(cw, ch)
-            
             angle = -self.rotate * math.pi / 180
         
             xdx = math.cos(angle)

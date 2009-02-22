@@ -31,11 +31,18 @@ several major improvements:
 
 * The render system supports rotating and scaling focusable objects.
 
-
 Improved the transform routine used by RotoZoom and Transform. It's
 now both more accurate and faster. On Intel computers, it is now
 accelerated using MMX instructions.  
 [TODO: Recompile everything.]
+
+
+The new ui.autobar function makes it easy to make a bar that 
+varies between two values over time.
+
+
+The new renpy.Container class can be subclassed to create a user-defined 
+displayable thatr contains other displayables, like Transforms.
 
 
 The new im.FactorScale image manipulator allows images to be scaled by

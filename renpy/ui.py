@@ -375,16 +375,33 @@ def bar(*args, **properties):
     return add(renpy.display.behavior.Bar(range, value, width, height,
                                           **properties))
 
+def _autobar_interpolate(range, start, end, time, st, at, **properties):
+
+    if st > time:
+        t = 1.0
+        redraw = None
+    else:
+        t = st / time
+        redraw = 0
+        
+    value = type(start)(start + t * (end - start))
+    return renpy.display.behavior.Bar(range, value, None, None, **properties), redraw
+
+autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
+
+def autobar(range, start, end, time, **properties):
+    return add(renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties)))
+
+def transform(**properties):
+    return add(renpy.display.layout.Transform(**properties), True, True)
+
 def viewport(**properties):
     return add(renpy.display.layout.Viewport(**properties), True, True)
 
-
 def conditional(condition):
-
     return add(renpy.display.behavior.Conditional(condition), True, True)
 
 def timer(delay, function, repeat=False, args=(), kwargs={}):
-
     return add(renpy.display.behavior.Timer(delay, function, repeat=repeat, args=args, kwargs=kwargs))
 
 def _returns(v):
