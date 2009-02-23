@@ -50,8 +50,13 @@ a specified factor at preload time. This is generally faster than doing the
 equivalent scaling at display time with FactorZoom. [add to demo]
 
 
-Added a new renpy.sound.set_pan function. This allows sound and music 
-to be smoothly panned over time.
+The new renpy.sound.set_pan function allows sound and music to be
+smoothly panned over time.
+
+
+The new config.label_callback variable allows a function to be called
+whenever control reaches a label. It can distinguish between jumps to
+that label and control falling through.
 
 
 There have been a couple of places where properly documented functions

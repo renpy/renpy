@@ -65,13 +65,17 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 1
+    __version__ = 2
 
     def after_upgrade(self, version):
         if version < 1:
             self.predict_info = PredictInfo()
             self.scene_lists.image_predict_info = self.predict_info.images
-    
+
+        if version < 2:
+            self.abnormal = False
+            self.last_abnormal = False
+            
     def __init__(self, rollback, context=None):
 
         self.current = None
@@ -87,7 +91,18 @@ class Context(renpy.object.Object):
         self.runtime = 0
         self.info = renpy.python.RevertableObject()
         self.seen = False
-                
+
+        # True if there has just been an abnormal transfer of control,
+        # like the start of a context, a jump, or a call. (Returns are
+        # considered to be normal.)
+        #
+        # Set directly by ast.Call and ast.Jump.
+        self.abnormal = True
+
+        # True if the last statement caused an abnormal transfer of
+        # control.
+        self.last_abnormal = False
+        
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
@@ -183,13 +198,16 @@ class Context(renpy.object.Object):
         looks up the node given in self.current, and executes from there.
         """
 
-        
+        self.abnormal = True
+                
         if node is None:
             node = renpy.game.script.lookup(self.current)
 
         while node:
             self.current = node.name
-
+            self.last_abnormal = self.abnormal
+            self.abnormal = False
+            
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 
@@ -199,7 +217,8 @@ class Context(renpy.object.Object):
                 node = node.execute()
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
-
+                self.abnormal = True
+                
             if self.seen:
                 renpy.game.seen_ever[self.current] = True
                 renpy.game.seen_session[self.current] = True

@@ -760,7 +760,6 @@ def jump_out_of_context(label):
 
     raise renpy.game.JumpOutException(label)
 
-
 def screenshot(filename):
     """
     Saves a screenshot in the named filename.

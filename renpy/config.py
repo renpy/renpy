@@ -25,7 +25,6 @@
 
 # This will be deleted by the end of this file.
 import renpy
-import sets
 import os
 
 # Can we add more config variables?
@@ -377,8 +376,10 @@ missing_scene = None
 missing_show = None
 missing_hide = None
 
+# This is called when control is transferred to a label.
+label_callback = None
+
 del renpy
-del sets
 
 def init():
     import renpy

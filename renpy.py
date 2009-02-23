@@ -48,7 +48,7 @@ def path_to_saves(gamedir):
         if 'APPDATA' in os.environ:
             return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
         else:
-            rv = "/RenPy/" + renpy.config.save_directory
+            rv = "~/RenPy/" + renpy.config.save_directory
             return os.path.expanduser(rv)
     else:
         rv = "~/.renpy/" + renpy.config.save_directory

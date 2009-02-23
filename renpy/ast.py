@@ -464,6 +464,9 @@ class Label(Node):
             if (args is not None) or (kwargs is not None):
                 raise Exception("Arguments supplied, but label does not take parameters.")
             else:
+                if renpy.config.label_callback:
+                    renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
+
                 return self.next
         else:
             if args is None:
@@ -522,6 +525,9 @@ class Label(Node):
         renpy.store._args = None
         renpy.store._kwargs = None
 
+        if renpy.config.label_callback:
+            renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
+        
         return self.next
 
 class Python(Node):
@@ -936,8 +942,9 @@ class Call(Node):
             renpy.store._args = tuple(args)
             renpy.store._kwargs = kwargs
                     
-            
+        
         rv = renpy.game.context().call(label, return_site=self.next.name)
+        renpy.game.context().abnormal = True
         return rv
         
         
@@ -1110,7 +1117,9 @@ class Jump(Node):
         if self.expression:
             target = renpy.python.py_eval(target)
 
-        return renpy.game.script.lookup(target)
+        rv = renpy.game.script.lookup(target)
+        renpy.game.context().abnormal = True
+        return rv
 
     def predict(self, callback):
 
