@@ -77,6 +77,10 @@ be set even on platforms that don't make it easy to change environment
 variables globally.
 
 
+The reporting of parse errors involving missing quotes has been
+improved.
+
+
 Changed the behavior of overlays during transitions. Now, both the old
 and new screens will use the new overlay. Previously, the overlay was
 cleared out during a transition, which didn't work well, as (for

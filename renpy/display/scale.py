@@ -556,6 +556,14 @@ else:
         _renpy.transform = transform
             
 
+        old_subpixel = _renpy.subpixel
+        
+        def subpixel(pysrc, pydst, x, y, shift):
+            return old_subpixel(pysrc.surface, pydst.surface, x * factor, y * factor, shift)
+
+        _renpy.subpixel = subpixel
+
+        
         old_blend = _renpy.blend
 
         def blend(pysrca, pysrcb, pydst, alpha):

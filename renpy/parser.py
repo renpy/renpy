@@ -36,14 +36,46 @@ parse_errors = [ ]
 
 class ParseError(Exception):
 
-    def __init__(self, filename, number, msg, line=None, pos=None):
+    def __init__(self, filename, number, msg, line=None, pos=None, first=False):
         message = u"On line %d of %s: %s" % (number, unicode_filename(filename), msg)
 
-        if line is not None:
-            message += "\n" + line.encode('unicode_escape')
+        if line:
+            lines = line.split('\n')
 
-        if pos is not None:
-            message += "\n" + " " * pos + "^"
+            if len(lines) > 1:                
+                open_string = None
+                i = 0
+                
+                while i < len(lines[0]):
+                    c = lines[0][i]
+
+                    if c == "\\":
+                        i += 1
+                    elif c == open_string:
+                        open_string = None
+                    elif open_string:
+                        pass
+                    elif c == '`' or c == '\'' or c == '"':
+                        open_string = c
+
+                    i += 1
+
+                if open_string:
+                    message += "\n(Perhaps you left out a %s at the end of the first line.)" % open_string
+                    
+            for l in lines:
+                message += "\n" + l.encode('utf-8')
+
+                if pos is not None:
+                    if pos <= len(l):
+                        message += "\n" + " " * pos + "^"
+                        pos = None
+                    else:
+                        pos -= len(l)
+
+                if first:
+                    break
+                
 
         self.message = message
 
@@ -228,8 +260,8 @@ def list_logical_lines(filename):
             # print repr(data[pos:])
 
 
-    if not line == "":
-        raise ParseError(filename, start_number, "is not terminated with a newline (check quotes and parenthesis).")
+    if not line == "":        
+        raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
 
     return rv
 
@@ -1659,9 +1691,13 @@ def parse(fn):
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
-    lines = list_logical_lines(fn)
-    nested = group_logical_lines(lines)
-
+    try:
+        lines = list_logical_lines(fn)
+        nested = group_logical_lines(lines)
+    except ParseError, e:
+        parse_errors.append(e.message)
+        return None
+        
     l = Lexer(nested)
 
     rv = parse_block(l)
