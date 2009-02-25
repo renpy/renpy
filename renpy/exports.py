@@ -972,8 +972,8 @@ def launch_editor(filenames, line=1, transient=0):
     filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
-    allfiles =  '" "'.join(filenames)
-    otherfiles = '" "'.join(filenames[1:])
+    allfiles = config.editor_file_separator.join(filenames)
+    otherfiles = config.editor_file_separator.join(filenames[1:])
     
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     if transient and (renpy.config.editor_transient is not None):

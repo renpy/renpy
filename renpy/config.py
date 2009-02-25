@@ -275,6 +275,9 @@ editor = os.environ.get('RENPY_EDITOR', None)
 # for example, to display traceback.txt.
 editor_transient = os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 
+# The separator used between files in the text editor.
+editor_file_separator = os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
+
 # Enable developer mode?
 developer = False
 
