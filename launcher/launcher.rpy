@@ -231,7 +231,16 @@ init:
                 title = re.sub(r'\s+\S', upper, title)
                 self.title = title
 
+            def save(self):
+                import os
 
+                f = file(self.path + "/" + "launcherinfo.py.new", "w")
+                for k, v in self.info.iteritems():
+                    f.write("%s = %r\n" % (k, v))
+                f.close()
+
+                os.rename(self.path + "/launcherinfo.py.new", self.path + "/launcherinfo.py")
+                
         def load_project(dir, name):
             import os.path
 
@@ -251,7 +260,6 @@ init:
 
             info = dict()
             info["description"] = desc
-            info["ignored"] = ignored
             
             if os.path.exists(dir + "/launcherinfo.py"):
                 source = file(dir + "/launcherinfo.py", "rU").read().decode("utf8")
@@ -261,6 +269,8 @@ init:
 
                 exec source in info
 
+                del info["__builtins__"]
+                
             store.projects.append(Project(name, dir, gamedir, info))
                 
         def load_projects():
@@ -600,21 +610,23 @@ label archive_files:
 
         import renpy.tools.archiver as archiver
 
-        extensions = persistent.archive_extensions or "*.png *.gif *.jpg"
+        extensions = project.info.get('archive_extensions', "*.png *.gif *.jpg")
         extensions = prompt(u"Archiving Files", u"Please enter a space separated list of the file patterns you want archived.", "tools", extensions)
         if not extensions.strip():
             renpy.jumps("tools_menu")
-        persistent.archive_extensions = extensions    
+        project.info['archive_extensions'] = extensions    
         extensions = [ i.strip() for i in extensions.strip().split() ]
 
 
-        base = persistent.archive_base or "data"
+        base = project.info.get('archive_base', "data")
         base = prompt(u"Archiving Files", u"Please enter the name of the archive file, without the .rpa extension.", "tools", base)
         base = base.strip()
         if not base:
             renpy.jumps("tools_menu")
-        persistent.archive_base = base 
+        project.info['archive_base'] = base 
 
+        project.save()
+        
         # Tell the user we're archiving images.
         title(u"Archiving Files")
         store.message = u"Please wait while we archive files."

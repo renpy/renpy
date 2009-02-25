@@ -66,7 +66,7 @@ init python:
              exclude_suffix=[ ".pyc", "~", ".bak" ],
              exclude_prefix=[ ".", '#' ],
              exclude=ignored_files,
-             exclude_func=None,
+             exclude_func=ignored,
              ):
 
         # Get rid of trailing slashes.
@@ -232,9 +232,7 @@ label distribute:
         if not interact():
             renpy.jump("tools")
 
-        default_name = project.name
-        if persistent.build_project == project.name:
-            default_name = persistent.build_name        
+        default_name = project.info.get('distribution_base', project.name)
 
         name = prompt(u"Building Distributions",
                       u"Please enter a base name for the directories making up this distribution.",
@@ -252,14 +250,14 @@ label distribute:
         except:
             store.error(u"Error", u"Distribution names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way.", "tools_menu")
 
-        persistent.build_project = project.name
-        persistent.build_name = name
+        project.info['distribution_base'] = name
 
-        ignore_extensions = persistent.ignore_extensions or "~ .bak"
+        ignore_extensions = project.info.get('ignore_extensions', "~ .bak")
         ignore_extensions = prompt(u"Building Distributions", u"Please enter a space separated list of the file extensions you do not want included in the distribution.", "tools", ignore_extensions)
-        persistent.ignore_extensions = ignore_extensions    
         store.ignore_extensions = [ i.strip() for i in ignore_extensions.strip().split() ]
+        project.info['ignore_extensions'] = ignore_extensions    
 
+        project.save_info()
         
         # Figure out the files that will make up the distribution.
 
@@ -278,8 +276,7 @@ label distribute:
         multi.extend(tree(project.path, '',
                           exclude_suffix = [ ],
                           exclude_prefix = [ ],
-                          exclude=[ ],
-                          exclude_func = project.info["ignored"]))
+                          exclude=[ ]))
         
         shortgamedir = project.gamedir[len(project.path)+1:]
 
