@@ -37,6 +37,23 @@ accelerated using MMX instructions.
 [TODO: Recompile everything.]
 
 
+The image statement now implicitly places itself inside an init block
+if it's not inside an init block to begin with. The code:
+
+image bg world = "world.jpg"
+
+is now equivalent to:
+
+init 990:
+    image bg world = "world.jpg"
+
+
+When compiling python blocks containing strings with a unicode
+character in them, Ren'Py will automatically prepend a u to any string
+that's missing it. This should make life easier for users of non-ASCII
+languages.
+
+
 The new ui.autobar function makes it easy to make a bar that 
 varies between two values over time.
 

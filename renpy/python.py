@@ -33,10 +33,12 @@ import marshal
 import random
 import types
 import weakref
+import re
 import sets
 import sys
 
 import renpy
+
 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
@@ -167,6 +169,31 @@ def set_filename(filename, offset, tree):
         worklist.extend(node.getChildNodes())
 
 
+def make_unicode(m):
+    """
+    If the string s contains a unicode character, make it into a
+    unicode string.
+    """
+
+    s = m.group(0)
+
+    if "\\u" not in s:
+        return s
+    
+    prefix = m.group(1)
+    sep = m.group(2)
+    body = m.group(3)
+
+    if "u" not in prefix and "U" not in prefix:
+        prefix = 'u' + prefix
+
+    rv = prefix + sep + body + sep
+    return rv
+    
+
+string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
+
+
 def py_compile(source, mode, filename='<none>', lineno=1):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -185,10 +212,14 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
-    
+
+    orig_source = source
     source = source.replace("\r", "")
     source = source.encode('raw_unicode_escape')
 
+    if "\\u" in source:
+        source = string_re.sub(make_unicode, source)
+    
     try:
         tree = parse(source, mode)
     except SyntaxError, e:
@@ -197,8 +228,8 @@ def py_compile(source, mode, filename='<none>', lineno=1):
             msg = "Syntax error on line %d of %s" % (e.lineno + lineno - 1, filename)
 
             if len(source) < 128:
-                msg += ":\n    " + source
-            
+                msg += ":\n    " + orig_source
+
             raise Exception(msg)
         else:
             raise

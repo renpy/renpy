@@ -34,7 +34,7 @@ extra_compile_args = [ "-O3", "-funroll-loops", "-ffast-math" ]
 extra_link_args = [ ]
 png_libraries = [ 'png', "z" ]
 sdl_libraries = [ 'SDL' ]
-sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'speex', 'stdc++', ]
+sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'stdc++', ]
 
 # The following turn on optional modules.
 nativemidi = None

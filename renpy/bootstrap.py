@@ -319,10 +319,12 @@ def report_exception(e):
     type, value, tb = sys.exc_info()
 
     def safe_utf8(e):
-        try:
-            return unicode(e).encode("utf-8")
-        except:
-            return str(e)
+        m = e.message
+        
+        if isinstance(m, unicode):
+            return m.encode("utf-8")
+        else:
+            return str(m)
 
     # Outside of the file.
     traceback.print_tb(tb, None, sys.stdout)

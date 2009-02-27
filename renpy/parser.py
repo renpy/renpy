@@ -64,7 +64,7 @@ class ParseError(Exception):
                     message += "\n(Perhaps you left out a %s at the end of the first line.)" % open_string
                     
             for l in lines:
-                message += "\n" + l.encode('utf-8')
+                message += "\n" + l
 
                 if pos is not None:
                     if pos <= len(l):
@@ -75,7 +75,6 @@ class ParseError(Exception):
 
                 if first:
                     break
-                
 
         self.message = message
 
@@ -259,7 +258,7 @@ def list_logical_lines(filename):
 
             # print repr(data[pos:])
 
-
+            
     if not line == "":        
         raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
 
@@ -1487,17 +1486,20 @@ def parse_statement(l):
     ### Image statement.
     if l.keyword('image'):
 
-        if not l.init:
-            l.error('image statements may only appear in init blocks.')
         
         name = parse_image_name(l)
         l.require('=')
         expr = l.rest()
 
+        rv = ast.Image(loc, name, expr)
+
+        if not l.init:
+            rv = ast.Init(loc, [ rv ], 990)        
+        
         l.expect_noblock('image statement')
         l.advance()
 
-        return ast.Image(loc, name, expr)
+        return rv
 
     ### One-line python statement.
     if l.match(r'\$'):
