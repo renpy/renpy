@@ -34,7 +34,6 @@ several major improvements:
 Improved the transform routine used by RotoZoom and Transform. It's
 now both more accurate and faster. On Intel computers, it is now
 accelerated using MMX instructions.  
-[TODO: Recompile everything.]
 
 
 The image statement now implicitly places itself inside an init block

@@ -62,6 +62,15 @@ label demo_movement:
 
     e "Move can repeat a movement, and even have it bounce back and forth, like I'm doing now."
 
+
+    show eileen happy at Move((.25, 1.0, 0.0, 1.0),
+                              (.75, 1.0, 1.0, 1.0),
+                              10.0, repeat=True, bounce=True, subpixel=True)
+
+    with dissolve
+
+    e "Our subpixel mode allows slow moves, of less than a few pixels a second, to be very accurate."
+       
     scene bg onememorial at Pan((0, 800), (0, 0), 10.0)
     with dissolve
 
