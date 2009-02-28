@@ -1270,6 +1270,8 @@ im.matrix(%f, %f, %f, %f, %f.
     def contrast(c):
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5) 
 
+    contrast = staticmethod(contrast)
+    
 
     # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
     def hue(h):

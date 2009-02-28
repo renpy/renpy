@@ -857,7 +857,6 @@ class Motion(Container):
         else:
             t = st
 
-
         if renpy.game.less_updates:
             if self.delay:
                 t = self.delay
@@ -2136,9 +2135,15 @@ class Alpha(renpy.display.core.Displayable):
 
 class Transform(Container):
 
-    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1, style='transform', **kwargs):
+    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1, **kwargs):
 
-        super(Transform, self).__init__(style=style, **kwargs)
+        # NOTE: When adding new parameters here, be sure they're
+        # also used in called.
+        
+        self.kwargs = kwargs
+        self.kwargs.setdefault('style', 'transform')
+        
+        super(Transform, self).__init__(**self.kwargs)
 
         self.function = function
 
@@ -2165,7 +2170,9 @@ class Transform(Container):
 
         if self.function is not None:
             fr = self.function(self, st, at)
-            renpy.display.render.redraw(self, fr)
+
+            if fr is not None:
+                renpy.display.render.redraw(self, fr)
         
         cr = render(self.child, width, height, st, at)
         cw, ch = cr.get_size()
@@ -2249,9 +2256,17 @@ class Transform(Container):
         return None
             
     def __call__(self, child):
-        self.add(child)
+        return Transform(
+            child=child,
+            function=self.function,
+            alpha=self.alpha,
+            rotate=self.rotate,
+            zoom=self.zoom,
+            xzoom=self.xzoom,
+            yzoom=self.yzoom,
+            **self.kwargs)
         
-    def get_position(self):
+    def get_placement(self):
         xpos = self.xpos
         if xpos is None:
             xpos = self.style.xpos

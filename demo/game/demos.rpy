@@ -15,7 +15,7 @@ init:
             ("demo_ui", "User Interaction", "6.5.0"),
             ("demo_text", "Fonts and Text Tags", "6.8.0"),
             ("demo_character", "Character Objects", "6.2.0"), 
-            ("demo_advanced", "Advanced Features", "6.7.0"),
+            ("demo_advanced", "Advanced Features", "6.9.0"),
             ]
 
         # Update above with this!
@@ -25,6 +25,7 @@ init:
             ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
             ("demo_minigame", "Minigames", "6.3.2"),
             ("demo_persistent", "Persistent Data", "6.7.0"),
+            ("demo_transform", "Transform", "6.9.0"),
             ]
         
         def demos_show(demos_info, nevermind):
