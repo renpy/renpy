@@ -63,7 +63,7 @@ displayable thatr contains other displayables, like Transforms.
 
 The new im.FactorScale image manipulator allows images to be scaled by
 a specified factor at preload time. This is generally faster than doing the
-equivalent scaling at display time with FactorZoom. [add to demo]
+equivalent scaling at display time with FactorZoom.
 
 
 The new renpy.sound.set_pan function allows sound and music to be
