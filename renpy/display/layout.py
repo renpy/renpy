@@ -1595,7 +1595,7 @@ def ShowingSwitch(*args, **kwargs):
     return ConditionSwitch(*condargs, **kwargs)
 
 
-class IgnoresEvents(renpy.display.core.Displayable):
+class IgnoresEvents(Container):
 
     def __init__(self, child):
         super(IgnoresEvents, self).__init__(style='default')

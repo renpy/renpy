@@ -235,7 +235,7 @@ def main():
     
     print
     print "Did you remember to rebuild the exe after the last change?"
-    print "Did you run me with renpython -O?"
+    print "Did you run me with renpython -OO?"
     print "Was ming using the right crt?"
     
 if __name__ == "__main__":

@@ -1032,7 +1032,6 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
             minx = fmaxf(minx, fminf(d1, d2)); 
             maxx = fminf(maxx, fmaxf(d1, d2)); 
             
-//            printf("ZZZ1 %f %f\n", d1, d2);
         } else if ( lsx < 0 || lsx >= fsw) {
             continue;
         }
@@ -1121,7 +1120,7 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
-void transform32_mmx(PyObject *pysrc, PyObject *pydst,
+int transform32_mmx(PyObject *pysrc, PyObject *pydst,
                      float corner_x, float corner_y,
                      float xdx, float ydx,
                      float xdy, float ydy,
@@ -1142,7 +1141,10 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
     float lsx, lsy; // The position of the current line in the source.
     float sx, sy; // The position of the current pixel in the source.
-    
+    unsigned int px, py;
+    unsigned int sxi, syi;
+    unsigned int xdxi, ydxi;
+        
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
@@ -1174,7 +1176,7 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
     // Scaled subtracted srcw and srch.
     float fsw = (srcw - 2) * 256;
     float fsh = (srch - 2) * 256;
-        
+
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
         float minx = 0;
@@ -1212,16 +1214,16 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
         unsigned char *dend = d + 4 * (int) maxx;
         d += 4 * (int) minx;
 
-        sx = lsx + minx * xdx;
-        sy = lsy + minx * ydx;
-                
+        sx = (lsx + minx * xdx);
+        sy = (lsy + minx * ydx);
+            
+        sxi = (unsigned int) sx;
+        syi = (unsigned int) sy;
+        xdxi = (int) xdx;
+        ydxi = (int) ydx;
+
         // No floating point allowed between here and the end of the
         // while loop.
-
-        int sxi = (int) sx;
-        int syi = (int) sy;
-        int xdxi = (int) xdx;
-        int ydxi = (int) ydx;
 
         // 0 -> mm7
         pxor_r2r(mm7, mm7);
@@ -1234,14 +1236,13 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
         
         while (d <= dend) {
 
-            int px, py;
             px = sxi >> 8;
             py = syi >> 8;
 
             unsigned char *sp = srcpixels + py * srcpitch + px * 4;
-                
-            int yfrac = syi & 0xff; // ((short) sy) & 0xff;
-            int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
+
+            unsigned int yfrac = syi & 0xff; // ((short) sy) & 0xff;
+            unsigned int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
 
             // Put xfrac in mm5, yfrac in m6
             pxor_r2r(mm5, mm5);
@@ -1315,10 +1316,14 @@ void transform32_mmx(PyObject *pysrc, PyObject *pydst,
         }
 
         emms();
-
     }
 
     Py_END_ALLOW_THREADS
+
+
+        // This is bogus, and only serves to ensure that the FPU
+        // computes these variables at the right times.
+        return sxi + syi + xdxi + ydxi;
 }
 
 #endif

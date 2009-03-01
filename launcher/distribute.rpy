@@ -36,7 +36,7 @@ init python:
         "manifest.xml"
         )
     
-    def ignored(fn, dir, dest):
+    def ignored(fn, dir, dest, root):
         if fn[0] == ".":
             return True
 
@@ -53,7 +53,7 @@ init python:
         if fn == "archived":
             return True
 
-        if dir == dest:
+        if root and dir == dest:
             if fn.endswith(".py") or fn.endswith(".sh") or fn.endswith(".app"):
                 return True
 
@@ -67,6 +67,7 @@ init python:
              exclude_prefix=[ ".", '#' ],
              exclude=ignored_files,
              exclude_func=ignored,
+             root=False,
              ):
 
         # Get rid of trailing slashes.
@@ -90,7 +91,7 @@ init python:
                 if i == fn.lower():
                     return False
 
-            if exclude_func and exclude_func(fn, destdir, dest):
+            if exclude_func and exclude_func(fn, destdir, dest, root):
                 return False
 
             return True
@@ -257,7 +258,7 @@ label distribute:
         store.ignore_extensions = [ i.strip() for i in ignore_extensions.strip().split() ]
         project.info['ignore_extensions'] = ignore_extensions    
 
-        project.save_info()
+        project.save()
         
         # Figure out the files that will make up the distribution.
 
@@ -276,7 +277,8 @@ label distribute:
         multi.extend(tree(project.path, '',
                           exclude_suffix = [ ],
                           exclude_prefix = [ ],
-                          exclude=[ ]))
+                          exclude=[ ],
+                          root=True))
         
         shortgamedir = project.gamedir[len(project.path)+1:]
 
@@ -356,7 +358,6 @@ label distribute:
                 
 
             linux_files.extend(tree(config.renpy_base + "/lib/linux-x86", "lib/linux-x86"))
-
 
             tf = tarfile.open(name + "-linux-x86.tar.bz2", "w:bz2")
             tf.dereference = True

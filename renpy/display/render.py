@@ -411,6 +411,7 @@ def draw_transformed(dest, what, xo, yo, alpha, forward, reverse):
         cx, cy = forward.transform(minx - xo, miny - yo)
                 
         dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
+
         renpy.display.module.alpha_transform(
             what, dest,
             cx, cy,
@@ -691,13 +692,16 @@ class Render(object):
 
         self.dead = True
 
-        for c, xo, yo, focus, main  in self.children:
+        for c, xo, yo, focus, main in self.children:
 
             if not isinstance(c, Render):
                 continue
-            
-            c.parents.remove(self)
+
+            # We could be added to c.parents twice, but we'll only show
+            # up once. (But twice in the refcount.) 
+            c.parents.discard(self)
             c.refcount -= 1
+            
             if c.refcount == 0:
                 c.kill()
                 

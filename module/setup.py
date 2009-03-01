@@ -30,7 +30,8 @@ if not os.path.isdir(install):
 # Default compile arguements for everybody.
 include_dirs = [ install + "/include", install + "/include/SDL", install + "/include/freetype2", install + "/include/pygame"]
 library_dirs = [ install + "/lib" ]
-extra_compile_args = [ "-O3", "-funroll-loops", "-ffast-math" ]
+# Fast math breaks on windows. :-(
+extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
 extra_link_args = [ ]
 png_libraries = [ 'png', "z" ]
 sdl_libraries = [ 'SDL' ]

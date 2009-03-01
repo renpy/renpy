@@ -59,6 +59,9 @@ def main():
         if fn in seen:
             continue
 
+        if fn == "SDL_mixer.dll":
+            continue
+        
         seen[fn] = True
 
         zfnew.writestr(fn, zfold.read(fn))
