@@ -239,8 +239,13 @@ init:
                     f.write("%s = %r\n" % (k, v))
                 f.close()
 
-                os.rename(self.path + "/launcherinfo.py.new", self.path + "/launcherinfo.py")
-                
+                try:
+                    os.rename(self.path + "/launcherinfo.py.new", self.path + "/launcherinfo.py")
+                except:
+                    os.unlink(self.path + "/launcherinfo.py")
+                    os.rename(self.path + "/launcherinfo.py.new", self.path + "/launcherinfo.py")
+                    
+                    
         def load_project(dir, name):
             import os.path
 
