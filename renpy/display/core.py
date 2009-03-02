@@ -289,13 +289,16 @@ class Displayable(renpy.object.Object):
             xoff = xpos
 
         if type(xoff) is float:
-            xoff = xoff * width
+            xoff_mul = width
+        else:
+            xoff_mul = 1
 
         if type(xanchor) is float:
-            xoff -= sw * xanchor
+            xanchor_mul = sw
         else:
-            xoff -= xanchor
+            xanchor_mul = 1
 
+        xoff = xoff * xoff_mul - xanchor * xanchor_mul
         xoff += x
 
         # y
@@ -303,13 +306,16 @@ class Displayable(renpy.object.Object):
             yoff = ypos
 
         if type(yoff) is float:
-            yoff = yoff * height
+            yoff_mul = height
+        else:
+            yoff_mul = 1
 
         if type(yanchor) is float:
-            yoff -= sh * yanchor
-        if absolute or isinstance(yanchor, int):
-            yoff -= yanchor
+            yanchor_mul = sh
+        else:
+            yanchor_mul = 1
 
+        yoff = yoff * yoff_mul - yanchor * yanchor_mul            
         yoff += y
 
         # Add in offsets.
