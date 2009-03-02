@@ -147,6 +147,11 @@ def render(d, width, height, st, at):
         else:
             height = min(ymaximum, height)
 
+    if width < 0:
+        width = 0
+    if height < 0:
+        height = 0
+            
     wh = (width, height)
             
     rv = render_cache[d].get(wh, None)
