@@ -735,7 +735,7 @@ class Window(Container):
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.background:
-            bw = width  - cxmargin
+            bw = width - cxmargin
             bh = height - cymargin
 
             back = render(style.background, bw, bh, st, at)
@@ -937,13 +937,13 @@ class Interpolate(object):
 
             if c is not None:
                 if type(a) is float:
-                    a = renpy.display.core.absolute(a * c)
+                    a = a * c
                 if type(b) is float:
-                    b = renpy.display.core.absolute(b * c)
+                    b = b * c
                             
             rv = a + t * (b - a)
             
-            return type(a)(rv)
+            return renpy.display.core.absolute(rv)
             
         return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
 

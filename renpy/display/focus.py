@@ -45,6 +45,16 @@ class Focus(object):
             self.w,
             self.h)
 
+    def __repr__(self):
+        return "<Focus: %r %r (%r, %r, %r, %r)>" % (
+            self.widget,
+            self.arg,
+            self.x,
+            self.y,
+            self.w,
+            self.h)
+            
+    
 # The current focus argument.
 argument = None
     
@@ -355,6 +365,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
     new_focus_dist = (65536.0 * renpy.config.focus_crossrange_penalty) ** 2
 
     for f in focus_list:
+
         if f is from_focus:
             continue
 
@@ -364,7 +375,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
         if not condition(from_focus, f):
             continue
-
+        
         tx0 = f.x + f.w * to_x0
         ty0 = f.y + f.h * to_y0
         tx1 = f.x + f.w * to_x1

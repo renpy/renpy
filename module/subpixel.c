@@ -79,6 +79,13 @@
     movq_r2m(r, scratch); \
     printf(s, scratch);
 
+// This expands registers 4 and 5, which are initialized below.
+#define MMX_EXPAND()                            \
+    pxor_r2r(mm2, mm2);                         \
+    punpcklbw_r2r(mm2, mm4);                    \
+    punpcklbw_r2r(mm2, mm5);                    
+    
+
 // This expects the two old pixels to be arranged like:
 // mm4 mm0
 // mm5 mm1
@@ -159,7 +166,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
 
 
     long long scratch;
-    
+
     if (!SDL_HasMMX()) {
         return 0;
     }
@@ -207,7 +214,8 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     }
 
     // Figure out how many pixels we need to draw on each line.
-    normal_pixels = min(srcw - sy - 1, dstw - xo);
+    normal_pixels = min(srcw - sx - 1, dstw - xo);
+
     if (normal_pixels < dstw - xo) {
         draw_finalx = 1;
     } else {
@@ -228,11 +236,11 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     if (xo >= dstw) {
         goto done;
     }
-    
+
     // Draw the first line, when sy == -1.
 
     if (sy == -1) {
-    
+        
         if (yo >= dsth) {
             goto done;
         }
@@ -249,7 +257,8 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         
         movd_m2r(blankpixel, mm4);
         movd_m2r(pixel, mm5);
-        
+
+        MMX_EXPAND();
         s1 += 4;
         
         d = dstpixels + xo * 4 + yo * dstpitch;
@@ -300,17 +309,21 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
             movd_m2r(* (unsigned int *) s1, mm5);
         }
 
+        MMX_EXPAND();
+        
         s0 += 4;
         s1 += 4;
         
         d = dstpixels + xo * 4 + yo * dstpitch;
         dend = d + normal_pixels * 4;
 
+        unsigned char *dp = d;
+        
         while (d != dend) {
             movd_m2r(* (unsigned int *) s0, mm0);        
             movd_m2r(* (unsigned int *) s1, mm1);        
             MMX_INTERP(* (unsigned int *) d);
-
+            
             d += 4;
             s0 += 4;
             s1 += 4;
@@ -354,6 +367,8 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         movd_m2r(blankpixel, mm5);
     }
 
+    MMX_EXPAND();
+    
     s0 += 4;
         
     d = dstpixels + xo * 4 + yo * dstpitch;

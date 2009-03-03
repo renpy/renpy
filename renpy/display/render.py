@@ -568,8 +568,6 @@ class Render(object):
         if isinstance(source, Render):
             source.parents.add(self)
             source.refcount += 1
-
-
             
     def get_size(self):
         """
@@ -757,7 +755,7 @@ class Render(object):
             maxx = max(x1, x2) + x
             maxy = max(y1, y2) + y
 
-            focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx, maxy)) 
+            focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny)) 
 
         for child, xo, yo, focus, main in self.children:
             if not focus or not isinstance(child, Render):
@@ -919,6 +917,15 @@ class Render(object):
 
         return False
 
+    def fill(self, color):
+        """
+        Fills this Render with the given color.
+        """
+
+        color = renpy.easy.color(color)
+        solid = renpy.display.im.SolidImage(color, self.width, self.height)
+        surf = render(solid, self.width, self.height, 0, 0)
+        self.blit(solid, (0, 0), focus=False, main=False)
                 
     def canvas(self):
         """

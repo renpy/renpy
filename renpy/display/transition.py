@@ -692,7 +692,7 @@ def RevolveInOut(start, end, pos, delay, d, **kwargs):
     return renpy.display.layout.Revolve(start, end, delay, d, pos=pos, **kwargs)
     
 # TODO: Move isn't properly respecting positions when x < 0.
-def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False):
+def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):
     """
     This transition attempts to find images that have changed
     position, and moves them from the old position to the new
@@ -758,10 +758,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
                 f = new.layers[layer]
 
-                if isinstance(f, renpy.display.layout.MultiBox) \
-                        and f.scene_list is not None \
-                        and layer not in renpy.config.overlay_layers:
-
+                if (isinstance(f, renpy.display.layout.MultiBox) 
+                    and layer in layers
+                    and f.scene_list is not None 
+                    and layer not in renpy.config.overlay_layers):
+                        
                     f = merge_slide(old.layers[layer], new.layers[layer])
 
                 rv.layers[layer] = f
