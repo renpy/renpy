@@ -925,7 +925,7 @@ class Render(object):
         color = renpy.easy.color(color)
         solid = renpy.display.im.SolidImage(color, self.width, self.height)
         surf = render(solid, self.width, self.height, 0, 0)
-        self.blit(solid, (0, 0), focus=False, main=False)
+        self.blit(surf, (0, 0), focus=False, main=False)
                 
     def canvas(self):
         """

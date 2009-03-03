@@ -362,6 +362,7 @@ def report_exception(e):
         print >>f
 
         print >>f, renpy.game.exception_info
+        report_tb(f, tb)
 
         print >>f
         print >>f, "Ren'Py Version:", renpy.version

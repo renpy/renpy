@@ -104,6 +104,12 @@ example) a dissolve would cause the overlay to blink out and then
 dissolve back in again.
 
 
+MoveTransition and define.move_transitions have been changed to take 
+a layers argument, giving the list of layers the transition applies
+to. By default, this is only the master layer, which is a change in
+their behavior.
+
+
 Calling theme.roundrect() no longer implies layout.button_menu(). 
 
 

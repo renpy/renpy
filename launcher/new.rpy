@@ -57,7 +57,7 @@ label new:
                 if d.startswith("."):
                     dirs.remove(d)
                     dn = dir + "/" + d
-                    shutil.rmtree(dn)
+                    shutil.rmtree(dn, True)
                 
         # Change the save directory.
         options = file(name + "/game/options.rpy").read()
