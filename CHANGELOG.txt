@@ -121,12 +121,7 @@ Fixed a divide by zero error that occured when Alpha was used for 0
 seconds.
 
 
-The sound libraries have been upgraded:
-
-* libvorbis is now at 1.2.0 
-* SDL_sound is now a development version, which includes the mpg123
-decoder.  According to the release announcment: ". Unlike mpglib, this
-decoder seems to play mp3s that were recorded after 1999, too. :-)"
+Libvorbis has been upgraded to version 1.2.0.
 
 
 To reduce distribution size, OGG Speex support was dropped.
