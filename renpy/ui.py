@@ -384,7 +384,7 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties):
         t = st / time
         redraw = 0
         
-    value = type(start)(start + t * (end - start))
+    value = start + t * (end - start)
     return renpy.display.behavior.Bar(range, value, None, None, **properties), redraw
 
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
