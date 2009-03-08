@@ -486,35 +486,49 @@ def draw(dest, clip, what, xo, yo, screen):
     # Deal with clipping, if necessary.
     if what.clipping:
         
-        width = what.width
-        height = what.height
-        
-        if xo < 0:
-            width = width + xo
-            xo = 0
-        if yo < 0:
-            height = height + yo
-            yo = 0
-
         if clip:
-            dx0, dy0, dx1, dy1 = clip
-            dw = dx1 - dx0
-            dh = dy1 - dy0
+            cx0, cy0, cx1, cy1 = clip
+
+            cx0 = max(cx0, xo)
+            cy0 = max(cy0, yo)
+            cx1 = min(cx1, xo + what.width)
+            cy1 = min(cy1, yo + what.height)
+
+            if cx0 > cx1 or cy0 > cy1:
+                return
+            
+            clip = (cx0, cy0, cx1, cy1)
+
         else:
+
+            # After this code, x and y are the coordinates of the subsurface
+            # relative to the destination. xo and yo are the offset of the
+            # upper-left corner relative to the subsurface.
+            
+            if xo >= 0:
+                x = xo
+                xo = 0
+            else:
+                x = 0
+                # xo = xo 
+
+            if yo >= 0:
+                y = yo
+                yo = 0
+            else:
+                y = 0
+                # yo = yo 
+
             dw, dh = dest.get_size()
 
-        width = min(dw - xo, width)
-        height = min(dh - yo, height) 
+            width = min(dw - x, what.width + xo)
+            height = min(dh - y, what.height + yo)
 
-        if clip:
-            x0, y0, x1, y1 = clip
-            clip = (x0 + xo, y0 + yo, width, height)
-        else:
-            dest = dest.subsurface((xo, yo, width, height))
-            xo = 0
-            yo = 0
+            if width < 0 or height < 0:
+                return
+            
+            dest = dest.subsurface((x, y, width, height))
         
-
     # Deal with alpha and transforms by passing them off to draw_transformed.
     if what.alpha != 1 or what.forward:
         for child, cxo, cyo, focus, main in what.visible_children:
@@ -639,6 +653,9 @@ def draw_screen(xoffset, yoffset, full_redraw):
 
     cliprect, updates = clipper.compute(full_redraw)
 
+    # print "CR", cliprect
+    # print "UD", updates
+    
     if cliprect is None:
         return [ ]
 

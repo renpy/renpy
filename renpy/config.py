@@ -262,7 +262,7 @@ font_replacement_map = { }
 with_callback = None
 
 # The framerate limit, in frames per second.
-framerate = 60
+framerate = 100
 
 # The number of frames that Ren'Py has shown.
 frames = 0

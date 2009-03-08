@@ -22,7 +22,7 @@ label demo_multimedia:
     # This plays a sound effect.
     play sound "18005551212.ogg"
 
-    e "We can also play up to eight channels of sound effects on top of the music."
+    e "We can play two channels of sound effects on top of the music."
 
     e "Voice support is included as part of Ren'Py, although we don't yet have a demonstration."
 

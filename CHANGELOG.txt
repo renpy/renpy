@@ -117,6 +117,10 @@ Ren'Py now autosaves when entering the quit prompt, and will not actually
 quit until this autosave is complete. 
 
 
+The default framerate limit has been raised to 100fps. This make
+tearing less noticable than on a 60hz screen.
+
+
 Fixed a divide by zero error that occured when Alpha was used for 0
 seconds.
 
