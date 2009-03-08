@@ -188,7 +188,7 @@ class Cache(object):
             surf = image.load()
             has_alpha = surf.get_masks()[3]
             surf = surf.convert_alpha(renpy.game.interface.display.window)
-            
+
             ce = CacheEntry(image, surf)
             self.total_cache_size += ce.size
             self.cache[image] = ce
@@ -202,26 +202,27 @@ class Cache(object):
             # RLE detection. (ce.size is used to check that we're not
             # 0 pixels big.)
             if id(ce.surf) not in rle_cache and ce.size:
-                rle = image.rle
+                rle = not renpy.game.less_memory
+                # rle = image.rle
                 surf = ce.surf
 
-                # If we don't know if the image is RLE or not, guess.
-                # Only do so if the image has an alpha channel.
-                if rle is None and has_alpha and not renpy.game.less_memory:
-                    sw, sh = surf.get_size()
+#                 # If we don't know if the image is RLE or not, guess.
+#                 # Only do so if the image has an alpha channel.
+#                 if rle is None and has_alpha and not renpy.game.less_memory:
+#                     sw, sh = surf.get_size()
 
-                    for i in range(0, 10):
-                        if surf.get_at((random.randint(0, sw-1),
-                                        random.randint(0, sh-1)))[3] == 0:
-                            rle = True
-                            break
-
+#                     for i in range(0, 10):
+#                         if surf.get_at((random.randint(0, sw-1),
+#                                         random.randint(0, sh-1)))[3] == 0:
+#                             rle = True
+#                             break
+                
                 if rle:
-
+                    
                     # We must copy the surface, so we have a RLE-specific version.
                     rle_surf = ce.surf.convert_alpha(renpy.game.interface.display.window)
-
                     rle_surf.set_alpha(255, RLEACCEL)
+
                     rle_cache[id(ce.surf)] = rle_surf
                     renpy.display.render.mutated_surface(ce.surf)
                     if renpy.config.debug_image_cache:

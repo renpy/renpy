@@ -257,6 +257,8 @@ def bootstrap(renpy_base):
             keep_running = False
 
         except KeyboardInterrupt:
+            import traceback
+            traceback.print_exc()
             break
             
         except renpy.game.UtterRestartException:

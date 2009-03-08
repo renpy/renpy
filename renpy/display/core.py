@@ -818,7 +818,7 @@ class Display(object):
         next_frame = self.next_frame
         now = pygame.time.get_ticks()
 
-        frametime = 1000 / framerate
+        frametime = 1000.0 / framerate
 
         # Handle timer rollover.
         if next_frame > now + frametime:
@@ -829,10 +829,10 @@ class Display(object):
             return False
             
         # Otherwise, it is. Schedule the next frame.
-        if next_frame + frametime < now:
-            next_frame = now + frametime
-        else:
-            next_frame += frametime
+        # if next_frame + frametime < now:
+        next_frame = now + frametime
+        # else:
+        #    next_frame += frametime
 
         self.next_frame = next_frame
 
@@ -973,7 +973,7 @@ class Display(object):
 
             updates.extend(self.draw_mouse(False))
 
-            damage = renpy.display.render.draw_screen(self.screen_xoffset, self.screen_yoffset)
+            damage = renpy.display.render.draw_screen(self.screen_xoffset, self.screen_yoffset, self.full_redraw)
 
             if damage:
                 updates.extend(damage)
@@ -1105,7 +1105,6 @@ class Interface(object):
 
         # Are we focused?
         self.focused = True
-
         
         # Properties for each layer.
         self.layer_properties = { }
