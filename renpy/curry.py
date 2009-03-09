@@ -59,3 +59,13 @@ def curry(fn):
     """
     
     return Curry(Curry, fn)
+
+def partial(function, *args, **kwargs):
+    """
+    Stores the arguments and keyword arguments of function, and
+    returns something that, when called, calls the function with
+    a combination of the supplied arguments and the arguments of
+    the second call.
+    """
+
+    return Curry(function, *args, **kwargs)
