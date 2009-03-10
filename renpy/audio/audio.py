@@ -80,7 +80,6 @@ if mix:
             old_midi = mix.get_midi()
             mixer_enabled = True
             
-            
     def disable_mixer():
         global mixer_enabled
         
@@ -529,6 +528,8 @@ class Channel(object):
 
         if pcm_ok:
             self.pan_delay = delay
+            self.pan_time = _pan_time.get(self.number)
+            pss.set_pan(self.number, _pan.get(self.number, 0.0), self.pan_delay)
 
         
 # The number of channels we support.
