@@ -213,6 +213,10 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         sy = -1;
     }
 
+    if (sx >= srcw - 1 || sy >= srch - 1) {
+        goto done;
+    }
+    
     // Figure out how many pixels we need to draw on each line.
     normal_pixels = min(srcw - sx - 1, dstw - xo);
 
