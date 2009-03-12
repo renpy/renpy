@@ -7,7 +7,7 @@ import sys
 import array
 
 # The starting point of the resource segment in the file.
-RESOURCE_BASE=0x3400
+RESOURCE_BASE=0x3600
 
 # The virtual memory location the resource segment is loaded
 # to.
@@ -16,13 +16,16 @@ RESOURCE_VIRTUAL=0x6000
 # The offset of the field that tells us with the alignment need be.
 ALIGNMENT_FIELD = 0x138
 
+# The start of the .rsrc segment header.
+RSRC_HEADER = 0x268
+
 # Locations in the file where we need to patch in the resource
 # segment length.
-RESOURCE_LENGTH_PATCHES = [ 0x018c, 0x278 ]
+RESOURCE_LENGTH_PATCHES = [ 0x018c, RSRC_HEADER + 0x8 ]
 
 # Locations in the file where we need to patch in the padded
 # resource segment length.
-RESOURCE_PADDED_PATCHES = [ 0x280 ]
+RESOURCE_PADDED_PATCHES = [ RSRC_HEADER + 0x10 ]
 
 # Locations in the file where we need to patch in the change in the
 # size of the resource segement (and hence the change in the file's
@@ -31,7 +34,11 @@ SIZE_DELTA_PATCHES = [ 0x150 ]
 
 # A location in the file that will be checked to be sure it matches
 # RESOURCE_BASE.
-CHECK_ADDRESS = 0x284
+CHECK_ADDRESS = RSRC_HEADER + 0x14
+
+# A location in the file that will be checked to make sure it matches
+# RESOURCE_VIRTUAL
+CHECK_ADDRESS2 = RSRC_HEADER + 0xc
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
@@ -285,10 +292,14 @@ def change_icons(oldexe, icofn):
     global pe
     pe = BinFile(oldexe)
 
-    # Check that RESOURCE_BASE is still valid.
+    # Check that RESOURCE_BASE and RESOURCE_VIRTUAL are still valid.
     pe.seek(CHECK_ADDRESS)
     if pe.u32() != RESOURCE_BASE:
-        raise Exception("RESOURCE_BASE is no longer correct. Please check all relocations.")
+        raise Exception("RESOURCE_BASE is no longer correct. Please check all relocations.") 
+
+    pe.seek(CHECK_ADDRESS2)
+    if pe.u32() != RESOURCE_VIRTUAL:
+        raise Exception("RESOURCE_VIRTUAL is no longer correct. Please check all relocations.")
 
     resources = parse_directory(0)
 #    show_resources(resources, "")
