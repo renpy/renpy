@@ -14,14 +14,14 @@ RESOURCE_BASE=0x3600
 RESOURCE_VIRTUAL=0x6000
 
 # The offset of the field that tells us with the alignment need be.
-ALIGNMENT_FIELD = 0x138
+ALIGNMENT_FIELD = 0x130
 
 # The start of the .rsrc segment header.
 RSRC_HEADER = 0x268
 
 # Locations in the file where we need to patch in the resource
 # segment length.
-RESOURCE_LENGTH_PATCHES = [ 0x018c, RSRC_HEADER + 0x8 ]
+RESOURCE_LENGTH_PATCHES = [ 0x0184, RSRC_HEADER + 0x8 ]
 
 # Locations in the file where we need to patch in the padded
 # resource segment length.
@@ -30,7 +30,7 @@ RESOURCE_PADDED_PATCHES = [ RSRC_HEADER + 0x10 ]
 # Locations in the file where we need to patch in the change in the
 # size of the resource segement (and hence the change in the file's
 # total size.)
-SIZE_DELTA_PATCHES = [ 0x150 ]
+SIZE_DELTA_PATCHES = [ 0x148 ]
 
 # A location in the file that will be checked to be sure it matches
 # RESOURCE_BASE.
