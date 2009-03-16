@@ -714,7 +714,9 @@ def take_focuses(focuses):
     Adds a list of rectangular focus regions to the focuses list.
     """
 
-    screen_render.take_focuses(IDENTITY, 0, 0, focuses)
+    screen_render.take_focuses(
+        0, 0, screen_render.width, screen_render.height,
+        IDENTITY, 0, 0, focuses)
 
 def focus_at_point(x, y):
     """
@@ -1031,11 +1033,16 @@ class Render(object):
 
         self.focuses.append((d, arg, x, y, w, h, mx, my, mask))
 
-    def take_focuses(self, reverse, x, y, focuses):
+    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
         """
-        This adds to focuses Focuse objects corresponding to the focuses
+        This adds to focuses Focus objects corresponding to the focuses
         added to this object and its children, transformed into screen
         coordinates.
+
+        `cminx`, `cminy`, `cmaxx`, `cmaxy` - The clipping rectangle.
+        `reverse` - The transform from render to screen coordinates.
+        `x`, `y` - The offset of the upper-left corner of the render.
+        `focuses` - The list of focuses to add to.
         """
         
         if self.reverse:
@@ -1055,23 +1062,41 @@ class Render(object):
             maxx = max(x1, x2) + x
             maxy = max(y1, y2) + y
 
+            minx = max(minx, cminx)
+            miny = max(miny, cminy)
+            maxx = min(maxx, cmaxx)
+            maxy = min(maxy, cmaxy)
+
+            if minx >= maxx or miny >= maxy:
+                continue
+            
             focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny)) 
+
+        if self.clipping:
+            cminx = max(cminx, x)
+            cminy = max(cminy, y)
+            cmaxx = min(cmaxx, x + self.width)
+            cmaxy = min(cmaxx, x + self.height)
 
         for child, xo, yo, focus, main in self.children:
             if not focus or not isinstance(child, Render):
                 continue
 
             xo, yo = reverse.transform(xo, yo)
-            child.take_focuses(reverse, x + xo, y + yo, focuses)
+            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x + xo, y + yo, focuses)
 
         for child in self.pass_focuses:
-            child.take_focuses(reverse, x, y, focuses)
+            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
         
     def focus_at_point(self, x, y):
         """
         This returns the focus of this object at the given point.
         """
 
+        if self.clipping:
+            if x < 0 or x >= self.width or y < 0 or y >= self.height:
+                return None
+        
         rv = None
         
         for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
