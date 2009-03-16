@@ -398,16 +398,10 @@ def memory_profile():
     objs = gc.get_objects()
 
     c = { } # count
-    dead_renders = 0
 
     for i in objs:
         t = type(i)
         c[t] = c.get(t, 0) + 1
-
-        if isinstance(i, renpy.display.render.Render):
-            if i.dead:
-                dead_renders += 1
-            
 
     results = [ (count, ty) for ty, count in c.iteritems() ]
     results.sort()
@@ -415,6 +409,3 @@ def memory_profile():
     for count, ty in results:
         print count, str(ty)
 
-    if dead_renders:
-        print
-        print "*** found", dead_renders, "dead Renders. ***"

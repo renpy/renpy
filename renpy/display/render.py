@@ -32,6 +32,9 @@ import renpy
 # disable blitting, should it prove necessary.
 blit_lock = threading.Condition()
 
+# The number of living renders. (That is, the number that have been
+# constructed, but not had kill() called.
+render_count = 0
 
 # This is a dictionary containing all the renders that we know of. It's a
 # map from displayable to dictionaries containing the render of that
@@ -53,8 +56,29 @@ def free_memory():
     Frees memory used by the render system.
     """
 
+    global screen_render
+    
+    if screen_render:
+        screen_render.refcount -= 1
+        screen_render.kill()
+        screen_render = None
+    
     render_cache.clear()
+    
+def check_at_shutdown():
+    """
+    This is called at shutdown time to check that everything went okay.
+    The big thing it checks for is memory leaks.
+    """
+    
+    if not renpy.config.developer:
+        return
 
+    free_memory()
+    if render_count != 0:
+        raise Exception("Render count is %d at shutdown. This probably indicates a memory leak bug in Ren'Py." % render_count)
+    
+    
 def render(d, width, height, st, at):
     """
     Causes the displayable `d` to be rendered in an area of size
@@ -634,7 +658,8 @@ def render_screen(root, width, height):
     
     rv = render(root, width, height, 0, 0)
     screen_render = rv
-
+    screen_render.refcount += 1
+    
     invalidated = False
     
     return rv
@@ -673,9 +698,14 @@ def kill_old_screen():
 
     global old_screen_render
     
-    if old_screen_render is None or old_screen_render is screen_render:
+    if old_screen_render is None:
         return
 
+    old_screen_render.refcount -= 1
+    
+    if old_screen_render is screen_render:
+        return
+        
     old_screen_render.kill()
     old_screen_render = None
     
@@ -707,8 +737,6 @@ def mutated_surface(surf):
 
     for i in clippers:
         i.mutated.add(id(surf))
-    
-
         
 class Render(object):
 
@@ -721,6 +749,9 @@ class Render(object):
         layer.
         """
 
+        global render_count
+        render_count += 1
+        
         self.width = width
         self.height = height
 
@@ -916,9 +947,10 @@ class Render(object):
         a surface, and then blit that surface into another render.
         """
 
-        self.depends_on_set.add(source)
-        source.depends_on_us.add(self)
-        source.refcount += 1
+        if source not in self.depends_on_set:
+            self.depends_on_set.add(source)
+            source.depends_on_us.add(self)
+            source.refcount += 1
 
         if focus:
             self.pass_focuses.append(source)
@@ -959,6 +991,9 @@ class Render(object):
 
         self.dead = True
 
+        global render_count
+        render_count -= 1
+        
         for c, xo, yo, focus, main in self.children:
 
             if not isinstance(c, Render):
@@ -975,6 +1010,7 @@ class Render(object):
         for c in self.depends_on_set:
             c.depends_on_us.remove(self)
             c.refcount -= 1
+
             if c.refcount == 0:
                 c.kill()
 

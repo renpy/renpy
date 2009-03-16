@@ -316,5 +316,7 @@ def main():
         except game.FullRestartException, e:
             restart = e.reason
 
+    # This is stuff we do on a normal, non-error return.
     renpy.display.core.cpu_idle.set()
+    renpy.display.render.check_at_shutdown()
     renpy.loadsave.autosave_not_running.wait()

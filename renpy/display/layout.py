@@ -1756,7 +1756,9 @@ class RotoZoom(renpy.display.core.Displayable):
                                            culcx, culcy,
                                            xdx, ydx, xdy, ydy)
 
-        return renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
+        rv = renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
+        rv.depends_on(child_rend)
+        return rv
         
 
 class Viewport(Container):
