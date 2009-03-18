@@ -567,25 +567,22 @@ class Blink(renpy.display.core.Displayable):
         if renpy.game.less_updates:
             alpha = 1.0
             
-        if alpha:
+        oldsurf = rend.pygame_surface()
 
-            oldsurf = rend.pygame_surface()
+        if not (oldsurf.get_masks()[3]):
+            oldsurf = oldsurf.convert_alpha(renpy.game.interface.display.window)
 
-            if not (oldsurf.get_masks()[3]):
-                oldsurf = oldsurf.convert_alpha(renpy.game.interface.display.window)
+        newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
 
-            newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
+        # amap = renpy.display.im.ramp(0, int(alpha * 255.0))
+        # identity = renpy.display.im.identity
 
-            # amap = renpy.display.im.ramp(0, int(alpha * 255.0))
-            # identity = renpy.display.im.identity
+        renpy.display.module.linmap(oldsurf, newsurf,
+                                    256, 256, 256, int(alpha * 256.0))
 
-            renpy.display.module.linmap(oldsurf, newsurf,
-                                        256, 256, 256, int(alpha * 256.0))
+        renpy.display.render.mutated_surface(newsurf)
 
-            renpy.display.render.mutated_surface(newsurf)
-
-            rv.blit(newsurf, (0, 0))
-
+        rv.blit(newsurf, (0, 0))
         rv.depends_on(rend)
 
         if not renpy.game.less_updates:

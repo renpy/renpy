@@ -1989,8 +1989,10 @@ class Side(Container):
                     return owidth, oheight
                 
                 rend = render(pos_d[pos], width, height, st, at)
-                return max(owidth, rend.width), max(oheight, rend.height)
-
+                rv = max(owidth, rend.width), max(oheight, rend.height)
+                rend.kill()
+                return rv
+                
             cwidth, cheight = sizeit('c', width, height, 0, 0)
             cwidth, top = sizeit('t', cwidth, height, cwidth, top)
             cwidth, bottom = sizeit('b', cwidth, height, cwidth, bottom)

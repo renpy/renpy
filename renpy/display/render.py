@@ -741,7 +741,7 @@ def mutated_surface(surf):
         i.mutated.add(id(surf))
         
 class Render(object):
-
+    
     def __init__(self, width, height, draw_func=None, layer_name=None, opaque=None):
         """
         Creates a new render corresponding to the given widget with
