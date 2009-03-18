@@ -1218,7 +1218,7 @@ class Render(object):
         """
         Determine if the pixel at x and y is opaque or not.
         """
-        
+
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return False
 
@@ -1230,13 +1230,13 @@ class Render(object):
                 cx, cy = self.forward.transform(cx, cy)
 
             if isinstance(child, Render):
-                if child.is_pixel_opaque(x, y):
+                if child.is_pixel_opaque(cx, cy):
                     return True
             else:
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
-                
+
                 if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True
 
