@@ -306,7 +306,7 @@ init -1110 python hide:
         gm_root = None):
 
         if button_menu is None:
-            if config.script_version < (6, 9, 0):
+            if (config.script_version is not None) and (config.script_version < (6, 9, 0)):
                 button_menu = True
             else:
                 button_menu = False

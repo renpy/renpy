@@ -18,7 +18,7 @@ init -1105 python:
     
     # This takes care of actually displaying button menus.
     def _display_button_menu(menuitems):
-
+        
         narration = [ s for s, i in menuitems if i is None and s ]
         menuitems = [ (s, i) for s, i in menuitems if i is not None or not s ]
 
