@@ -341,6 +341,10 @@ class Clipper(object):
 
             w = x1 - x0
             h = y1 - y0
+
+            if w <= 0 or h <= 0:
+                continue
+
             area = w * h
 
             if area >= sa:
@@ -361,8 +365,9 @@ class Clipper(object):
         while sized:
             area, x0, y0, x1, y1 = sized.pop()
 
+            
             merged = False
-
+            
             if nca + area >= sa:
                 return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
 
@@ -403,6 +408,7 @@ class Clipper(object):
         updates = [ (x0, y0, x1 - x0, y1 - y0) ]
 
         for ix0, iy0, ix1, iy1 in noncont:
+
             ix0 = int(ix0)
             iy0 = int(iy0)
             ix1 = int(math.ceil(ix1))
@@ -415,6 +421,7 @@ class Clipper(object):
 
             updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
 
+            
         return (x0, y0, x1 - x0, y1 - y0), updates
             
 clippers = [ Clipper() ]        
@@ -678,9 +685,6 @@ def draw_screen(xoffset, yoffset, full_redraw):
 
     cliprect, updates = clipper.compute(full_redraw)
 
-    # print "CR", cliprect
-    # print "UD", updates
-    
     if cliprect is None:
         return [ ]
 
@@ -991,6 +995,9 @@ class Render(object):
         if self.dead:
             return
 
+        if self.refcount > 0:
+            return
+        
         self.dead = True
 
         global render_count
