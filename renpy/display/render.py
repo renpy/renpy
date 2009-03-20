@@ -398,6 +398,9 @@ class Clipper(object):
                 noncont.append((x0, y0, x1, y1))
                 nca += area
 
+        if not noncont:
+            return None, [ ]
+                
         x0, y0, x1, y1 = noncont.pop()
         x0 = int(x0)
         y0 = int(y0)
