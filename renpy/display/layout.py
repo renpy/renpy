@@ -1743,11 +1743,11 @@ class RotoZoom(renpy.display.core.Displayable):
         ydy = xdx # math.cos(angle) / zoom
 
         def draw(dest, xo, yo):
-            
+
             target = dest
                                             
-            dulcx = -dw / 2.0
-            dulcy = -dh / 2.0
+            dulcx = -dw / 2.0 - xo
+            dulcy = -dh / 2.0 - yo
 
             culcx = cw / 2.0 + xdx * dulcx + xdy * dulcy
             culcy = ch / 2.0 + ydx * dulcx + ydy * dulcy
