@@ -14,7 +14,7 @@ except:
 
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
-install = os.environ.get("RENPY_DEPS_INSTALL", "/home/tom/ab/deps/install")
+install = os.environ.get("RENPY_DEPS_INSTALL", "/does/not/exist")
 
 # Check to see if that's the case.
 if not os.path.isdir(install):
@@ -27,31 +27,49 @@ if not os.path.isdir(install):
     print "re-run this script."
     sys.exit(-1)
 
+ffmpeg = os.environ.get("FFMPEG_BUILD_PATH", "/does/not/exist")
+
+if not os.path.isdir(install):
+    print "The FFMPEG build path:"
+    print
+    print ffmpeg
+    print
+    print "does not exist. Please set FFMPEG_BUILD_PATH to the correct"
+    print "location and re-run this script."
+    sys.exit(-1)
+
+    
 # Default compile arguements for everybody.
-include_dirs = [ install + "/include", install + "/include/SDL", install + "/include/freetype2", install + "/include/pygame"]
+include_dirs = [ install + "/include",
+                 install + "/include/SDL",
+                 install + "/include/freetype2",
+                 install + "/include/pygame",
+                 ffmpeg]
+
 library_dirs = [ install + "/lib" ]
+
 # Fast math breaks on windows. :-(
-extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
+# extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
+extra_compile_args = [ "-O0", "-ggdb" ]
+
 extra_link_args = [ ]
+
 png_libraries = [ 'png', "z" ]
 sdl_libraries = [ 'SDL' ]
-sound_libraries = [ 'SDL_sound', 'smpeg', 'vorbisfile', 'vorbis', 'ogg', 'modplug', 'stdc++', ]
+sound_libraries = [ "avcodec", "avformat", "avutil" ]
+
 
 # The following turn on optional modules.
-nativemidi = None
 winmixer = None
 linmixer = None
 
 # Detect win32.
 if platform.win32_ver()[0]:
-    nativemidi = [ 'nativemidi.c', 'native_midi_win32.c', 'native_midi_common.c', 'rwobject.c' ]
-    nativemidi_libs = [ 'winmm', 'SDL' ]
     extra_compile_args.append("-fno-strict-aliasing")
     winmixer = True
 
 # Detect mac.
 if platform.mac_ver()[0]:
-    nativemidi = [ 'nativemidi.c', 'native_midi_mac.c', 'native_midi_common.c', 'rwobject.c' ]
     nativemidi_libs = [ 'SDL' ]
 
 # Detect OSS.
@@ -83,14 +101,14 @@ renpy_font = distutils.core.Extension(
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries + ['freetype'],
+    libraries=sdl_libraries + [ 'freetype' ],
     )
 
 extensions.append(renpy_font)
 
 psse = distutils.core.Extension(
     "pysdlsound.sound",
-    [ "pss.c", "rwobject.c", "sound.c" ],
+    [ "pss.c", "rwobject.c", "sound.c", "ffdecode.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
@@ -99,19 +117,6 @@ psse = distutils.core.Extension(
     )
 
 extensions.append(psse)
-
-if nativemidi:
-    nme = distutils.core.Extension(
-        "pysdlsound.nativemidi",
-        nativemidi,
-        include_dirs=include_dirs,
-        library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args,
-        libraries=nativemidi_libs,
-        extra_link_args=extra_link_args,
-        )
-
-    extensions.append(nme)
 
 if winmixer:
     wme = distutils.core.Extension(
@@ -125,20 +130,9 @@ if winmixer:
 if linmixer:
     py_modules.append('pysdlsound.linmixer')
 
-
-# ffplay = distutils.core.Extension(
-#     "renpy_ffplay",
-#     ["renpy_ffplay.c", "ffplay_module.c"],
-#     include_dirs = [ install + '/include/SDL', install + '/include/ffmpeg', install + '/include' ],
-#     library_dirs = [ install + '/lib' ],
-#     libraries = [ 'avcodec', 'avformat', 'avcodec', 'avutil', 'vorbis', 'vorbisenc', 'ogg', 'SDL', 'z', 'm', ],
-#     )
-
-# extensions.append(ffplay)
-
 distutils.core.setup(
     name = "renpy_module",
-    version = "5.5.0",
+    version = "6.9.1",
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },

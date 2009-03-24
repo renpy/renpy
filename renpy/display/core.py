@@ -43,10 +43,11 @@ except:
 cpu_idle = threading.Event()
 cpu_idle.clear()
 
-TIMEEVENT = USEREVENT + 1
-PERIODIC = USEREVENT + 2
-JOYEVENT = USEREVENT + 3
-REDRAW = USEREVENT + 4
+# Need to be +4, so we don't interfere with FFMPEG's events.
+TIMEEVENT = USEREVENT + 4
+PERIODIC = USEREVENT + 5
+JOYEVENT = USEREVENT + 6
+REDRAW = USEREVENT + 7
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50

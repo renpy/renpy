@@ -1,5 +1,6 @@
+
 /*
-Copyright 2005 PyTom <pytom@bishoujo.us>
+Copyright 2005-2009 PyTom <pytom@bishoujo.us>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation files
@@ -24,9 +25,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pss.h"
 #include <Python.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_sound.h>
 #include <stdio.h>
 
+/* Declarations of ffdecode functions. */
+struct VideoState;
+
+struct VideoState *ffpy_stream_open(SDL_RWops *, const char *);
+void ffpy_stream_close(struct VideoState *is);
+void ffpy_alloc_event(struct VideoState *vs, PyObject *surface);
+void ffpy_refresh_event(struct VideoState *vs);
+void ffpy_init(int rate);
+int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len);
+
+    
 /* The current Python. */
 PyInterpreterState* interp;
 PyThreadState* thread = NULL;
@@ -52,6 +63,10 @@ static void decref(PyObject *ref) {
 }
 
 /* Locking on entry from python... */
+// #define BEGIN() PyThreadState *_save;
+// #define ENTER() { printf("Locking by %s.\n", __FUNCTION__); _save = PyEval_SaveThread(); SDL_LockAudio(); printf("Lock by %s\n", __FUNCTION__);  }
+// #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); printf("Release by %s\n", __FUNCTION__); }
+
 #define BEGIN() PyThreadState *_save;
 #define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
 #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
@@ -59,9 +74,6 @@ static void decref(PyObject *ref) {
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
-
-/* The number of channels we support. */
-#define NUM_CHANNELS 8
 
 /* Various error codes. */
 #define SUCCESS 0
@@ -86,7 +98,7 @@ struct Channel {
 
     /* The currently playing sample, NULL if this sample isn't playing
        anything. */
-    Sound_Sample *playing;
+    struct VideoState *playing;
 
     /* The name of the playing music. */
     PyObject *playing_name;
@@ -98,8 +110,11 @@ struct Channel {
     int playing_tight;
     
     /* The queued up sample. */
-    Sound_Sample *queued;    
+    struct VideoState *queued;    
 
+    /* A sample that's dying, and needs to be deallocated. */
+    struct VideoState *dying;
+    
     /* The name of the queued up sample. */
     PyObject *queued_name;
 
@@ -114,12 +129,6 @@ struct Channel {
     
     /* The volume of the channel. */
     int volume;
-
-    /* The number of decoded bytes in the buffer. */
-    int decoded;
-
-    /* The offset into the buffer that we last stopped at. */
-    int last;
 
     /* The position (in bytes) that this channel has queued to. */
     int pos;
@@ -157,9 +166,14 @@ struct Channel {
 };
 
 /*
+ * The number of channels the system knows about.
+ */
+int num_channels = 0;
+
+/*
  * All of the channels that the system knows about.
  */
-struct Channel channels[NUM_CHANNELS];
+struct Channel *channels = NULL;
 
 /*
  * The spec of the audio that is playing.
@@ -197,8 +211,6 @@ static void start_sample(struct Channel* c, int reset_fade) {
 
     if (!c) return;
 
-    c->decoded = 0;
-    c->last = 0;
     c->pos = 0;
 
     if (reset_fade) {
@@ -213,30 +225,14 @@ static void start_sample(struct Channel* c, int reset_fade) {
 
             c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
             c->fade_step_len &= ~0x7; // Even sample.
-
         }
 
         c->stop_bytes = -1;
     } 
 }
 
-
-/* static void update_pause(void) { */
-/*     int i; */
-/*     int pause = 1; */
-    
-/*     for (i = 0; i < NUM_CHANNELS; i++) { */
-/*         if (channels[i].playing) { */
-/*             pause = 0; */
-/*             break; */
-/*         } */
-/*     } */
-
-/*     SDL_PauseAudio(pause); */
-/* } */
-
-static void free_sample(Sound_Sample *ss) {
-    Sound_FreeSample(ss);
+static void free_sample(struct VideoState *ss) {
+    ffpy_stream_close(ss);
 }
 
 // Actually mixes the audio.
@@ -361,11 +357,16 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
-    
-    for (channel = 0; channel < NUM_CHANNELS; channel++) {
 
+    printf("Entering sound callback. foo\n");
+    
+    for (channel = 0; channel < num_channels; channel++) {
+
+        
         int mixed = 0;
         struct Channel *c = &channels[channel];
+
+        printf("Channel %d playing %p queued %p\n", channel, c->playing, c->queued);
 
         if (! c->playing) {
             continue;
@@ -377,24 +378,26 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
         while (mixed < length && c->playing) {
             int mixleft = length - mixed;
-            int bufleft = c->decoded - c->last;
+            Uint8 buffer[mixleft];
 
+            // Decode some amount of data.
+
+            printf("Decode.");
+            int bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
+            printf("Decoded %d\n", bytes);
+            
+            
             // We have some data in the buffer.
-            if (c->stop_bytes && bufleft) {
-                int bytes = min(bufleft, mixleft);
-
+            if (c->stop_bytes && bytes) {
+            
                 if (c->stop_bytes != -1)
                     bytes = min(c->stop_bytes, bytes);
                 
-                pan_audio(c, &( ((Uint8*) c->playing->buffer) [c->last]),
-                          bytes);
+                pan_audio(c, buffer, bytes);
                 
-                fade_mixaudio(c, &stream[mixed],
-                              &( ((Uint8*) c->playing->buffer) [c->last]),
-                              bytes);
+                fade_mixaudio(c, &stream[mixed], buffer, bytes);
 
                 mixed += bytes;
-                c->last += bytes;
                 
                 if (c->stop_bytes != -1)
                     c->stop_bytes -= bytes;
@@ -407,13 +410,16 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             // Otherwise, no data is left in the buffer. Check why,
             // and act accordingly.
 
-            // EOF or ERROR -- Skip to the next sample.
-            if (c->stop_bytes == 0 || c->playing->flags & (SOUND_SAMPLEFLAG_ERROR | SOUND_SAMPLEFLAG_EOF)) {
+            // Skip to the next sample.
+            if (c->stop_bytes == 0 || bytes == 0) {
+
+                printf("Restarting.\n");
+
                 int old_tight = c->playing_tight;
 
                 post_event(c);
 
-                free_sample(c->playing);
+                c->dying = c->playing;
                 decref(c->playing_name);
 
                 c->playing = c->queued;
@@ -427,31 +433,58 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->queued_tight = 0;
                 
                 start_sample(c, ! old_tight);
-/*                 update_pause(); */
                 
                 continue;                
             }
-
-            // If we're here, we're simply out of data in the
-            // buffer. Decode some.
-
-            c->decoded = Sound_Decode(c->playing);
-            c->last = 0;
         }
+
+        printf("Finished channel %d\n", channel);
     }
+
+    printf("Leaving sound callback.\n");
+    
+
 }
 
 /*
  * Checks that the given channel is in range. Returns 0 if it is,
- * sets an error and returns -1 if it is not.
+ * sets an error and returns -1 if it is not. Allocates channels
+ * that don't already exist.
  */
 static int check_channel(int c) {
-    if (c < 0 || c >= NUM_CHANNELS) {
+    int i;
+
+    printf("Check channel %d %d\n", c, num_channels);
+    
+    if (c < 0) {
         error(PSS_ERROR);
         error_msg = "Channel number out of range.";
         return -1;
     }
 
+    if (c >= num_channels) {
+        channels = realloc(channels, sizeof(struct Channel) * (c + 1));
+    
+        for (i = num_channels; i <= c; i++) {
+
+            printf("Allocating channel %d\n", i);
+
+            channels[i].playing = NULL;
+            channels[i].queued = NULL;
+            channels[i].dying = NULL;
+            channels[i].volume = SDL_MIX_MAXVOLUME;        
+            channels[i].paused = 1;
+            channels[i].event = 0;
+            channels[i].pan_start = 0.0;
+            channels[i].pan_end = 0.0;
+            channels[i].pan_length = 0;
+            channels[i].pan_done = 0;
+        }
+
+        num_channels = c + 1;
+    }
+
+    
     return 0;
 }
 
@@ -460,15 +493,12 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-static Sound_Sample *load_sample(SDL_RWops *rw, const char *ext) {
-    Sound_AudioInfo ai;
-    Sound_Sample *rv;
-    
-    ai.format = audio_spec.format;
-    ai.channels = audio_spec.channels;
-    ai.rate = audio_spec.freq;
+struct VideoState *load_sample(SDL_RWops *rw, const char *ext) {
+    struct VideoState *rv;
 
-    rv = Sound_NewSample(rw, ext, &ai, audio_spec.samples * audio_spec.channels * 2);
+    printf("Stream open.\n");
+    
+    rv = ffpy_stream_open(rw, ext);
     return rv;
 }
 
@@ -791,7 +821,7 @@ void PSS_unpause_all(void) {
 
     ENTER();
 
-    for (i = 0; i < NUM_CHANNELS; i++) {
+    for (i = 0; i < num_channels; i++) {
         channels[i].paused = 0;
     }
 
@@ -933,7 +963,6 @@ void PSS_set_pan(int channel, float pan, float delay) {
  * sample buffer size.
  */
 void PSS_init(int freq, int stereo, int samples) {
-    int i;
 
     if (initialized) {
         return;
@@ -969,31 +998,10 @@ void PSS_init(int freq, int stereo, int samples) {
         return;
     }
 
-    if (! Sound_Init()) {
-        SDL_CloseAudio();
-        error(SOUND_ERROR);
-        return;
-    }
-
-    /*
-     * Initialize the channels.
-     */
-
-    for (i = 0; i < NUM_CHANNELS; i++) {
-        channels[i].playing = NULL;
-        channels[i].queued = NULL;
-        channels[i].volume = SDL_MIX_MAXVOLUME;        
-        channels[i].paused = 1;
-        channels[i].event = 0;
-        channels[i].pan_start = 0.0;
-        channels[i].pan_end = 0.0;
-        channels[i].pan_length = 0;
-        channels[i].pan_done = 0;
-            
-    }
-
     SDL_PauseAudio(0);
     
+    ffpy_init(audio_spec.freq);
+
     initialized = 1;
 
     error(SUCCESS);
@@ -1012,13 +1020,13 @@ void PSS_quit() {
     SDL_PauseAudio(1);
     EXIT();
 
-    for (i = 0; i < NUM_CHANNELS; i++) {
+    for (i = 0; i < num_channels; i++) {
         PSS_stop(i);
     }
 
-    Sound_Quit();
     SDL_CloseAudio();
 
+    num_channels = 0;
     initialized = 0;
     error(SUCCESS);
 }
@@ -1035,7 +1043,7 @@ const char *PSS_get_error() {
     case SDL_ERROR:
         return SDL_GetError();
     case SOUND_ERROR:
-        return Sound_GetError();
+        return "Some sort of ffmpeg error.";
     case PSS_ERROR:
         return error_msg;
     default:

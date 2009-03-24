@@ -403,6 +403,8 @@ class Channel(object):
 
                 else:
 
+                    print "Opening, queue depth", depth, "channel", self.number
+                    
                     if depth == 0:
                         pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
                     else:
