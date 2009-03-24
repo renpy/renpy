@@ -29,7 +29,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 SDL_RWops* RWopsFromPythonThreaded(PyObject* obj);
 
-
 void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadeout, int tight, int paused);
 void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadeout, int tight);
 void PSS_stop(int channel);
@@ -46,6 +45,11 @@ float PSS_get_volume(int channel);
 void PSS_set_pan(int channel, float pan, float delay);
 void PSS_init(int freq, int stereo, int samples);
 void PSS_quit(void);
+
+void PSS_periodic(void);
+void PSS_alloc_event(PyObject *surface);
+void PSS_refresh_event(void);
+
 const char *PSS_get_error(void);
 
 #endif

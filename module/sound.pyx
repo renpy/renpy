@@ -42,6 +42,11 @@ cdef extern from "pss.h":
     void PSS_set_pan(int channel, float left, float right)
     void PSS_init(int freq, int stereo, int samples)
     void PSS_quit()
+
+    void PSS_periodic()
+    void PSS_alloc_event(object)
+    void PSS_refresh()
+    
     char *PSS_get_error()
 
 def _extension(s):
@@ -149,6 +154,15 @@ def init(freq, stereo, samples):
 def quit():
     PSS_quit()
 
+def periodic():
+    PSS_periodic()
+
+def alloc_event(surf):
+    PSS_alloc_event(surf)
+
+def refresh_event(surf):
+    PSS_refresh_event()
+        
 def check_version(version):
-    if version < 2 or version > 3:
+    if version < 2 or version > 4:
         raise Exception("pysdlsound version mismatch.")

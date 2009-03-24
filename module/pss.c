@@ -358,15 +358,11 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
 
-    printf("Entering sound callback. foo\n");
-    
     for (channel = 0; channel < num_channels; channel++) {
 
         
         int mixed = 0;
         struct Channel *c = &channels[channel];
-
-        printf("Channel %d playing %p queued %p\n", channel, c->playing, c->queued);
 
         if (! c->playing) {
             continue;
@@ -382,10 +378,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
             // Decode some amount of data.
 
-            printf("Decode.");
             int bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
-            printf("Decoded %d\n", bytes);
-            
             
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
@@ -413,8 +406,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             // Skip to the next sample.
             if (c->stop_bytes == 0 || bytes == 0) {
 
-                printf("Restarting.\n");
-
                 int old_tight = c->playing_tight;
 
                 post_event(c);
@@ -438,12 +429,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             }
         }
 
-        printf("Finished channel %d\n", channel);
     }
-
-    printf("Leaving sound callback.\n");
-    
-
 }
 
 /*
@@ -454,8 +440,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 static int check_channel(int c) {
     int i;
 
-    printf("Check channel %d %d\n", c, num_channels);
-    
     if (c < 0) {
         error(PSS_ERROR);
         error_msg = "Channel number out of range.";
@@ -1031,6 +1015,38 @@ void PSS_quit() {
     error(SUCCESS);
 }
 
+/* This must be called frequently, to take care of deallocating dead
+ * streams. */
+void PSS_periodic() {
+    int i;
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].dying) {
+            ffpy_stream_close(channels[i].dying);
+            channels[i].dying = NULL;
+        }
+    }
+}
+
+/* This should be called in response to an FF_ALLOC_EVENT, with a pygame
+ * surface to display the movie on. */
+void PSS_alloc_event(PyObject *surface) {
+    int i;
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].playing) {
+            ffpy_alloc_event(channels[i].playing, surface);
+        }
+    }
+}
+
+/* This should be called in response to a FF_REFRESH_EVENT */
+void PSS_refresh_event(void) {
+    int i;
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].playing) {
+            ffpy_refresh_event(channels[i].playing);
+        }
+    }
+}
 
 /*
  * Returns the error message string if an error has occured, or
