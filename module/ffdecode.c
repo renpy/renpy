@@ -1436,7 +1436,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
 {
     AVPacket *pkt = &is->audio_pkt;
     AVCodecContext *dec= is->audio_st->codec;
-    int n, len1, data_size;
+    int len1, data_size;
     double pts;
 
     for(;;) {
@@ -1457,14 +1457,10 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             if (data_size <= 0)
                 continue;
 
-            printf("IN %d %d\n", dec->channels, dec->sample_rate);
-            
             if (!is->reformat_ctx &&
                 (1 || dec->channels != 2
                  || dec->sample_rate != audio_sample_rate
                  || dec->sample_fmt != SAMPLE_FMT_S16)) {
-
-                printf("Audio Resample Init\n");
 
                 is->reformat_ctx = av_audio_resample_init(
                     2,
@@ -1488,21 +1484,8 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 int len = data_size / (av_get_bits_per_sample_format(dec->sample_fmt) / 8);
                 len /= dec->channels;
 
-                int i;
-                
-                printf("Data size before: %d %d\n", data_size, len);
-
                 data_size = audio_resample(is->reformat_ctx, (short *) is->audio_buf2, (short *) is->audio_buf1, len);
                 data_size *= 4; // 2 channels of 16-bit samples
-                // data_size *= 2 / dec->channels; // # of channels
-                
-                printf("Data size after: %d\n", data_size);
-
-                /* for (i = 0; i < data_size; i++) { */
-                /*     printf("%02x ", is->audio_buf2[i]); */
-                /* } */
-                /* printf("OUT\n"); */
-                
                 
                 is->audio_buf = is->audio_buf2;                
             } else {
@@ -1574,8 +1557,6 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
     // is true.
     while (1) {
         if (is->finished) {
-            printf("Quick return.\n");
-
             return 0;
         }
 
@@ -1593,8 +1574,6 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
         if (is->audio_buf_index >= is->audio_buf_size) {
            audio_size = audio_decode_frame(is, &pts);
            if (audio_size < 0) {
-
-               printf("XXXXX\n");
 
 /* Nothing left to decode, break. */
               break;
@@ -1620,8 +1599,6 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
 
         rv += len1;
     }
-
-    printf("Returning %d\n", rv);
     
     return rv;
 }
@@ -1637,8 +1614,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     if (stream_index < 0 || stream_index >= ic->nb_streams)
         return -1;
     enc = ic->streams[stream_index]->codec;
-
-    printf("XXX opening stream\n");
     
     /* prepare audio output */
     if (enc->codec_type == CODEC_TYPE_AUDIO) {
@@ -1669,10 +1644,7 @@ static int stream_component_open(VideoState *is, int stream_index)
         return -1;
     }
         
-    SDL_LockMutex(codec_mutex);
-    fprintf(stderr, "avcodec_open %p\n", codec_mutex);
     err = avcodec_open(enc, codec);
-    SDL_UnlockMutex(codec_mutex);
     
     if (err < 0) {
         return -1;
@@ -1724,7 +1696,6 @@ static int stream_component_open(VideoState *is, int stream_index)
         break;
     }
     return 0;
-    printf("XXX done opening stream\n");
 }
 
 static void stream_component_close(VideoState *is, int stream_index)
@@ -1780,7 +1751,7 @@ static void stream_component_close(VideoState *is, int stream_index)
     SDL_LockMutex(codec_mutex);
     avcodec_close(enc);
     SDL_UnlockMutex(codec_mutex);
-
+    
     switch(enc->codec_type) {
     case CODEC_TYPE_AUDIO:
         is->audio_st = NULL;
@@ -1822,6 +1793,7 @@ static int decode_thread(void *arg)
     AVInputFormat *fmt = NULL;
     ByteIOContext *pb;
     int signalled_start = 0;
+    int codecs_locked = 0;
     
     // url_set_interrupt_cb(decode_interrupt_cb);
     
@@ -1845,6 +1817,9 @@ static int decode_thread(void *arg)
     ap->pix_fmt = frame_pix_fmt;
 
     pb = is->io_context = rwops_open(is->rwops);
+
+    codecs_locked = 1;
+    SDL_LockMutex(codec_mutex);
 
     if (!fmt) {
         for(probe_size= PROBE_BUF_MIN; probe_size<=PROBE_BUF_MAX && !fmt; probe_size<<=1){
@@ -1942,21 +1917,16 @@ static int decode_thread(void *arg)
         }
     }
     
-    if (show_status || 1) {
+    if (show_status) {
         dump_format(ic, 0, is->filename, 0);
         dump_stream_info(ic);
     }
-
-
-    printf("Opening componentc\n");
 
 /* open the streams */
     if (audio_index >= 0) {
         stream_component_open(is, audio_index);
     }
 
-    printf("Audio!\n");
-    
     if (video_index >= 0) {
         stream_component_open(is, video_index);
         /* add the refresh timer to draw the picture */
@@ -1964,8 +1934,6 @@ static int decode_thread(void *arg)
     } else {
         is->show_audio = 0;
     }
-
-    printf("Video!\n");
     
     if (subtitle_index >= 0) {
         stream_component_open(is, subtitle_index);
@@ -1978,10 +1946,11 @@ static int decode_thread(void *arg)
         ret = -1;
         goto fail;
     }
-
-    printf("Started!\n");
     
     is->started = 1;
+
+    SDL_UnlockMutex(codec_mutex);
+    codecs_locked = 0;
     
     for(;;) {
         if (is->abort_request)
@@ -2076,16 +2045,15 @@ static int decode_thread(void *arg)
 
     ret = 0;
 
-    printf ("I didn't...");
-
 fail:
-
-    printf("...fail!\n");
     
     is->finished = 1;
 
-    
-    
+    if (codecs_locked) {
+        SDL_UnlockMutex(codec_mutex);
+        codecs_locked = 0;
+    }
+        
     /* close each stream */
     if (is->audio_stream >= 0)
         stream_component_close(is, is->audio_stream);
@@ -2120,8 +2088,6 @@ fail:
 
 VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
 {
-    printf("Opening: %s\n", filename);
-
 
     VideoState *is;
 

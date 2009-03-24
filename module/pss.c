@@ -451,8 +451,6 @@ static int check_channel(int c) {
     
         for (i = num_channels; i <= c; i++) {
 
-            printf("Allocating channel %d\n", i);
-
             channels[i].playing = NULL;
             channels[i].queued = NULL;
             channels[i].dying = NULL;
@@ -478,10 +476,7 @@ static int check_channel(int c) {
  * failure.
  */
 struct VideoState *load_sample(SDL_RWops *rw, const char *ext) {
-    struct VideoState *rv;
-
-    printf("Stream open.\n");
-    
+    struct VideoState *rv;    
     rv = ffpy_stream_open(rw, ext);
     return rv;
 }
