@@ -147,7 +147,7 @@ def render(d, width, height, st, at):
     render_cache[d][orig_wh] = rv
 
     old_parentless.discard(rv)
-    new_parentless.append(rv)
+    new_parentless.add(rv)
 
     return rv
 
@@ -884,7 +884,7 @@ class Render(object):
             source.parents.add(self)
             source.refcount += 1
 
-        new_parentless.discard(rv)
+        new_parentless.discard(source)
             
     def subpixel_blit(self, source, (xo, yo), focus=True, main=True):
         """
@@ -905,7 +905,7 @@ class Render(object):
             source.parents.add(self)
             source.refcount += 1
 
-        new_parentless.discard(rv)
+        new_parentless.discard(source)
             
     def get_size(self):
         """
@@ -998,7 +998,7 @@ class Render(object):
         if focus:
             self.pass_focuses.append(source)
 
-        new_parentless.discard(rv)
+        new_parentless.discard(source)
             
     def kill_cache(self):
         """
@@ -1077,7 +1077,8 @@ class Render(object):
         this focus is assumed to be the singular full-screen focus.
         """
 
-        self.depends_on(mask)        
+        if mask is not None:
+            self.depends_on(mask)        
         self.focuses.append((d, arg, x, y, w, h, mx, my, mask))
 
     def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
