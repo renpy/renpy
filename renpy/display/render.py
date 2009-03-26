@@ -51,18 +51,35 @@ screen_render = None
 # so that we can kill it when we render the next screen.
 old_screen_render = None
 
+# Two sets of renders that have no parents, for the new and old frames.
+# Renders get added to these sets, and then removed when added to something.
+# If they're in old_parentless at the end of a render, they get killed. 
+new_parentless = set()
+old_parentless = set()
+
 def free_memory():
     """
     Frees memory used by the render system.
     """
 
     global screen_render
+    global old_parentless
+    global new_parentless
     
     if screen_render:
         screen_render.refcount -= 1
         screen_render.kill()
         screen_render = None
-    
+
+    for i in new_parentless:
+        i.kill()
+
+    for i in old_parentless:
+        i.kill()
+
+    old_parentless = set()
+    new_parentless = set()
+        
     render_cache.clear()
     
 def check_at_shutdown():
@@ -128,6 +145,10 @@ def render(d, width, height, st, at):
 
     render_cache[d][wh] = rv
     render_cache[d][orig_wh] = rv
+
+    old_parentless.discard(rv)
+    new_parentless.append(rv)
+
     return rv
 
 
@@ -703,6 +724,8 @@ def kill_old_screen():
     Kills the old screen if it's different from the current screen.
     """
 
+    global old_parentless
+    global new_parentless
     global old_screen_render
     
     if old_screen_render is None:
@@ -715,6 +738,13 @@ def kill_old_screen():
         
     old_screen_render.kill()
     old_screen_render = None
+
+    for i in old_parentless:
+        i.kill()
+
+    old_parentless = new_parentless
+    new_parentless = set()
+
     
 def take_focuses(focuses):
     """
@@ -854,6 +884,8 @@ class Render(object):
             source.parents.add(self)
             source.refcount += 1
 
+        new_parentless.discard(rv)
+            
     def subpixel_blit(self, source, (xo, yo), focus=True, main=True):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
@@ -872,6 +904,8 @@ class Render(object):
         if isinstance(source, Render):
             source.parents.add(self)
             source.refcount += 1
+
+        new_parentless.discard(rv)
             
     def get_size(self):
         """
@@ -964,6 +998,8 @@ class Render(object):
         if focus:
             self.pass_focuses.append(source)
 
+        new_parentless.discard(rv)
+            
     def kill_cache(self):
         """
         Removes this render and its transitive parents from the cache.
@@ -1041,6 +1077,7 @@ class Render(object):
         this focus is assumed to be the singular full-screen focus.
         """
 
+        self.depends_on(mask)        
         self.focuses.append((d, arg, x, y, w, h, mx, my, mask))
 
     def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):

@@ -1013,11 +1013,16 @@ void PSS_quit() {
 /* This must be called frequently, to take care of deallocating dead
  * streams. */
 void PSS_periodic() {
+    BEGIN();
+
     int i;
+
     for (i = 0; i < num_channels; i++) {
         if (channels[i].dying) {
+            ENTER();
             ffpy_stream_close(channels[i].dying);
             channels[i].dying = NULL;
+            EXIT();
         }
     }
 }

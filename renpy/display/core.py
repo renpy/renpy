@@ -1732,7 +1732,6 @@ class Interface(object):
 
                     if renpy.config.profile:
                         self.profile_time = get_time()
-
                     
                     # Try to merge an TIMEEVENT with the next event.
                     if ev.type == TIMEEVENT:
@@ -1762,7 +1761,10 @@ class Interface(object):
                         renpy.audio.audio.periodic()
                         continue
 
-                    
+                    # Handle ffdecode events.
+                    if renpy.audio.audio.event(ev):
+                        continue
+                                            
                     # This checks the event to see if it's a mouse event,
                     # and updates the mouse event timer as appropriate.
                     self.display.mouse_event(ev)
