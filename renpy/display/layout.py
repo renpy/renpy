@@ -2179,7 +2179,7 @@ class Transform(Container):
                 renpy.display.render.redraw(self, fr)
         
         cr = render(self.child, width, height, st, at)
-        cw, ch = cr.get_size()
+        width, height = cr.get_size()
 
         forward = IDENTITY
         reverse = IDENTITY
