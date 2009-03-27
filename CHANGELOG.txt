@@ -1,3 +1,14 @@
+New in Ren'Py 6.9.1
+-------------------
+
+im.Grayscale and im.Sepia now take properties, so they can be
+positioned.
+
+
+Fixed a bug that caused Transform to produce an incorrectly-sized
+render.
+
+
 New in Ren'Py 6.9.0
 -------------------
 

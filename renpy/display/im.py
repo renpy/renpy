@@ -1291,14 +1291,16 @@ im.matrix(%f, %f, %f, %f, %f.
             )
 
     hue = staticmethod(hue)
-
     
-def Grayscale(im, desat=(0.2126, 0.7152, 0.0722)):
-    return MatrixColor(im, matrix.saturation(0.0, desat))
 
-def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722)):
-    return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]))
+def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
+    return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
+
+
+def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties):
+    return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
     
+
 def Color(im, color):
     """
     This recolors the supplied image, mapping colors such that black is
