@@ -1,3 +1,0 @@
-#!/bin/sh
-export PYTHONPATH=`dirname $0`/..
-exec python $0.py "$@"
