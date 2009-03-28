@@ -788,7 +788,7 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, add_sizes=False, style='default', **properties):
+    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, add_sizes=False, style='motion', **properties):
         """
         @param child: The child displayable.
 
@@ -949,7 +949,7 @@ class Interpolate(object):
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
-        anim_timebase=False, style='default', time_warp=None, **properties):
+        anim_timebase=False, style='motion', time_warp=None, **properties):
     """
     This is used to pan over a child displayable, which is almost
     always an image. It works by interpolating the placement of the
@@ -998,7 +998,7 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
-         anim_timebase=False, style='default', time_warp=None, **properties):
+         anim_timebase=False, style='motion', time_warp=None, **properties):
     """
     This is used to pan over a child displayable relative to
     the containing area. It works by interpolating the placement of the
@@ -1136,6 +1136,7 @@ class Zoom(renpy.display.core.Displayable):
                  bilinear=True, opaque=True,
                  anim_timebase=False,
                  repeat=False,
+                 style='motion',
                  **properties):
         """
         @param size: The size that the rectangle is scaled to, a
@@ -1163,7 +1164,7 @@ class Zoom(renpy.display.core.Displayable):
         acceleration and deceleration to motions.
         """
 
-        super(Zoom, self).__init__(**properties)
+        super(Zoom, self).__init__(style=style, **properties)
 
         child = renpy.easy.displayable(child)
 
@@ -1304,9 +1305,10 @@ class FactorZoom(renpy.display.core.Displayable):
                  bilinear=True, opaque=True,
                  anim_timebase=False,
                  repeat=False,
+                 style='motion',
                  **properties):
 
-        super(FactorZoom, self).__init__(**properties)
+        super(FactorZoom, self).__init__(style=style, **properties)
 
         child = renpy.easy.displayable(child)
 
@@ -1389,9 +1391,10 @@ class SizeZoom(renpy.display.core.Displayable):
                  bilinear=True, opaque=True,
                  anim_timebase=False,
                  repeat=False,
+                 style='motion',
                  **properties):
 
-        super(SizeZoom, self).__init__(**properties)
+        super(SizeZoom, self).__init__(style=style, **properties)
 
         child = renpy.easy.displayable(child)
 
@@ -1628,9 +1631,10 @@ class RotoZoom(renpy.display.core.Displayable):
                  rot_anim_timebase=False, zoom_anim_timebase=False,
                  rot_time_warp=None, zoom_time_warp=None,
                  opaque=False,
+                 style='motion',
                  **properties):
 
-        super(RotoZoom, self).__init__(**properties)
+        super(RotoZoom, self).__init__(style='style', **properties)
 
         self.rot_start = rot_start
         self.rot_end = rot_end

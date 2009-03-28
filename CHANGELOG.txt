@@ -1,6 +1,12 @@
 New in Ren'Py 6.9.1
 -------------------
 
+The Motion (including Move and Pan), Zoom, RotoZoom, and FactorZoom
+displayables now use the style.motion style, which now has xanchor and
+yanchor both set to 0. This gives these movements the same semantics
+when used inside an image clause as they have outside one.
+
+
 im.Grayscale and im.Sepia now take properties, so they can be
 positioned.
 

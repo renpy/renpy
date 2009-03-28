@@ -54,6 +54,9 @@ init 1210 python hide::
     if compat(6, 2, 0):
         config.reject_backslash = False
 
+    if compat(6, 9, 0):
+        style.motion.clear()
+        
     if "Fullscreen" in config.translations:
         fs = _("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")

@@ -33,6 +33,7 @@ init -1200 python hide:
     style.image_placement = Style(style.default, help='default placement of images on the screen')
     style.image = Style(style.default, help="default style of images")
 
+    style.motion = Style(style.default, help="default style of motions and zooms.")
     style.animation = Style(style.default, help="default style of animations.")
 
     style.say_label = Style(style.default, help='the name of the character speaking dialogue.')
@@ -68,7 +69,7 @@ init -1200 python hide:
     style.hyperlink_text = Style(style.default, help='hyperlinked text')
 
     style.viewport = Style(style.default, help='default style of viewports')
-    style.transform = Style(style.default, help='default style of transforms')
+    style.transform = Style(style.motion, help='default style of transforms')
     
     style.list = Style(style.default)
     style.list_box = Style(style.vbox)
@@ -199,6 +200,10 @@ init -1090 python:
     style.hbox.box_layout = 'horizontal'
     style.vbox.box_layout = 'vertical'
 
+    # Motions, zooms, rotozooms, and transforms.
+    style.motion.xanchor = 0
+    style.motion.yanchor = 0
+    
     # Windows.
     style.window.background = Solid((0, 0, 0, 192))
     style.window.xpadding = 6
