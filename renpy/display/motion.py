@@ -909,7 +909,7 @@ class RotoZoom(renpy.display.core.Displayable):
                  style='motion',
                  **properties):
 
-        super(RotoZoom, self).__init__(style='style', **properties)
+        super(RotoZoom, self).__init__(style=style, **properties)
 
         self.rot_start = rot_start
         self.rot_end = rot_end
