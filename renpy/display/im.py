@@ -764,8 +764,8 @@ class Scale(ImageBase):
         super(Scale, self).__init__(im, width, height, bilinear, **properties)
 
         self.image = im
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
         self.bilinear = bilinear
 
     def load(self):
@@ -797,7 +797,7 @@ class FactorScale(ImageBase):
             height = width
         
         im = image(im)
-        super(Scale, self).__init__(im, width, height, bilinear, **properties)
+        super(FactorScale, self).__init__(im, width, height, bilinear, **properties)
 
         self.image = im
         self.width = width
@@ -811,7 +811,7 @@ class FactorScale(ImageBase):
 
         width = int(width * self.width)
         height = int(height * self.height)
-        
+
         if self.bilinear:
             renpy.display.render.blit_lock.acquire()
             rv = pygame.transform.smoothscale(surf, (width, height))

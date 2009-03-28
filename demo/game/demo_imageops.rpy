@@ -6,6 +6,8 @@ init:
     image logo crop = im.Crop("logo.png", 0, 0, 100, 307)
 
     image logo scale = im.Scale("logo.png", 100, 150) 
+
+    image logo factorscale = im.FactorScale("logo.png", 1.5, 1.5)
     
     image logo composite = im.Composite((200, 407),
                                         (0, 0), "logo.png",
@@ -101,8 +103,13 @@ label demo_imageops:
     show logo scale at logopos
     with dissolve
 
-    e "The im.Scale operation lets us change the size of images."
+    e "The im.Scale operation lets us scale an image to a particular size."
 
+    show logo factorscale at logopos
+    with dissolve
+    
+    e "im.FactorScale lets us do the same thing, except to a factor of the original size."    
+    
     show logo green at logopos
     with dissolve
 
