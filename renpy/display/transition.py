@@ -646,7 +646,7 @@ def MoveFactory(pos1, pos2, delay, d, **kwargs):
     if pos1 == pos2:
         return d
 
-    return renpy.display.layout.Move(pos1, pos2, delay, d, **kwargs)
+    return renpy.display.motion.Move(pos1, pos2, delay, d, **kwargs)
 
 def default_enter_factory(pos, delay, d):
     return d
@@ -663,7 +663,7 @@ def MoveIn(pos, pos1, delay, d, **kwargs):
         return a
 
     pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
-    return renpy.display.layout.Move(pos, pos1, delay, d, **kwargs)
+    return renpy.display.motion.Move(pos, pos1, delay, d, **kwargs)
 
 def MoveOut(pos, pos1, delay, d, **kwargs):
 
@@ -673,13 +673,13 @@ def MoveOut(pos, pos1, delay, d, **kwargs):
         return a
 
     pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
-    return renpy.display.layout.Move(pos1, pos, delay, d, **kwargs)
+    return renpy.display.motion.Move(pos1, pos, delay, d, **kwargs)
 
 def ZoomInOut(start, end, pos, delay, d, **kwargs):
 
     xpos, ypos, xanchor, yanchor = pos
 
-    FactorZoom = renpy.display.layout.FactorZoom
+    FactorZoom = renpy.display.motion.FactorZoom
     
     if end == 1.0:
         return FactorZoom(start, end, delay, d, after_child=d, opaque=False,
@@ -689,7 +689,7 @@ def ZoomInOut(start, end, pos, delay, d, **kwargs):
                           xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor, **kwargs)
 
 def RevolveInOut(start, end, pos, delay, d, **kwargs):
-    return renpy.display.layout.Revolve(start, end, delay, d, pos=pos, **kwargs)
+    return renpy.display.motion.Revolve(start, end, delay, d, pos=pos, **kwargs)
     
 # TODO: Move isn't properly respecting positions when x < 0.
 def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):

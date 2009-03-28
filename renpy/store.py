@@ -118,7 +118,8 @@ Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
-Transform = renpy.display.layout.Transform
+
+Transform = renpy.display.motion.Transform
 
 Animation = anim.Animation
 Movie = renpy.display.video.Movie
@@ -131,14 +132,14 @@ ParameterizedText = renpy.display.text.ParameterizedText
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
-Pan = renpy.curry.curry(renpy.display.layout.Pan)
-Move = renpy.curry.curry(renpy.display.layout.Move)
-Motion = renpy.curry.curry(renpy.display.layout.Motion)
-Revolve = renpy.curry.curry(renpy.display.layout.Revolve)
-Zoom = renpy.curry.curry(renpy.display.layout.Zoom)
-RotoZoom = renpy.curry.curry(renpy.display.layout.RotoZoom)
-FactorZoom = renpy.curry.curry(renpy.display.layout.FactorZoom)
-SizeZoom = renpy.curry.curry(renpy.display.layout.SizeZoom)
+Pan = renpy.curry.curry(renpy.display.motion.Pan)
+Move = renpy.curry.curry(renpy.display.motion.Move)
+Motion = renpy.curry.curry(renpy.display.motion.Motion)
+Revolve = renpy.curry.curry(renpy.display.motion.Revolve)
+Zoom = renpy.curry.curry(renpy.display.motion.Zoom)
+RotoZoom = renpy.curry.curry(renpy.display.motion.RotoZoom)
+FactorZoom = renpy.curry.curry(renpy.display.motion.FactorZoom)
+SizeZoom = renpy.curry.curry(renpy.display.motion.SizeZoom)
 Fade = renpy.curry.curry(renpy.display.transition.Fade)
 Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)

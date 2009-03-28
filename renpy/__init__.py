@@ -63,6 +63,7 @@ def import_all():
     import renpy.display.font
     import renpy.display.text # core, font
     import renpy.display.layout # core
+    import renpy.display.motion # layout
     import renpy.display.behavior # layout
     import renpy.display.transition # core, layout
     import renpy.display.im
