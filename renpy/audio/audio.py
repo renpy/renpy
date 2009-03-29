@@ -404,7 +404,10 @@ class Channel(object):
         if not pcm_ok:
             return
 
-        pss.fadeout(self.number, int(secs * 1000))
+        if secs == 0:
+            pss.stop(self.number)
+        else:            
+            pss.fadeout(self.number, int(secs * 1000))
 
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=False):
@@ -465,7 +468,7 @@ all_channels = [ ]
 # A map from channel name to Channel object.
 channels = { }
 
-def register_channel(name, loop=True):
+def register_channel(name, mixer=None, loop=True):
     c = Channel(name, loop)
     all_channels.append(c)
     channels[name] = c
@@ -667,8 +670,8 @@ def interact():
 
             c.interact()
 
-            if _music_volumes.get(i, 1.0) != c.chan_volume:
-                c.set_volume(_music_volumes.get(i, 1.0))
+            # if _music_volumes.get(i, 1.0) != c.chan_volume:
+            #    c.set_volume(_music_volumes.get(i, 1.0))
 
             ctx = c.context
                 
@@ -707,13 +710,22 @@ def event(ev):
     be pushing it to another module for further handling.
     """
 
+    if not pcm_ok:
+        return False
+
+    
     if ev.type == ALLOC_EVENT:
-        pss.alloc_event(pygame.display.get_surface())
+        if renpy.display.video.fullscreen or not renpy.display.video.surface:
+            pss.alloc_event(pygame.display.get_surface())
+        else:
+            pss.alloc_event(renpy.display.video.surface)
+            
         return True
 
     if ev.type == REFRESH_EVENT:
-        pss.refresh_event()
-
+        if renpy.audio.music.get_playing("movie"):
+            pss.refresh_event()
+            
         # Return False, as a Movie should get this to know when to
         # redraw itself.
         return False

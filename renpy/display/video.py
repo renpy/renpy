@@ -24,197 +24,114 @@ from renpy.display.render import render
 import pygame
 import sys # for maxint
 
-class MovieInfo(object):
+# True if the movie that is currently displaying is in fullscreen mode,
+# False if it's a smaller size.
+fullscreen = False
 
-    def __init__(self, filename, loops, fullscreen, size=None):
-        self.filename = filename
-        self.loops = loops + 1
-        self.fullscreen = fullscreen
-        self.size = size
+# The size of a Movie object that hasn't had an explicit size set.
+default_size = (400, 300)
 
-# The movie that is currently playing, if any.
-movie = None
-
-# If the movie is running in a widget, this is the surface corresponding
-# to that widget.
+# The surface to display the movie on, if not fullscreen.
 surface = None
 
-# The current movie info.
-current_info = None
-
-# The number of loops the current movie has made.
-loops = 0
 
 def movie_stop(clear=True):
     """
-    This stops the currently playing movie.
+    Stops the currently playing movie.
     """
+    
+    renpy.audio.music.stop(channel='movie')
 
-    global movie
-    global loops
+def movie_start(filename, size=None, loops=0):
+    """
+    This starts a movie playing. 
+    """
+    
+    if renpy.game.less_updates:
+        return
 
-    if movie:
-        movie.stop()
-        movie = None
-        surface = None
-        loops = 0
+    global default_size
+    
+    if size is not None:
+        default_size = size
+    
+    filename = [ filename ]
+
+    if loops == -1:
+        loop = True
+    else:
+        loop = False
+        filename = filename * loops
+    
+    renpy.audio.music.play(filename, channel='movie', loop=loop)
         
-        renpy.audio.audio.init()
+movie_start_fullscreen = movie_start
+movie_start_displayable = movie_start
 
-    if clear:
-        renpy.game.context().scene_lists.movie = None
-
-
-def movie_start_fullscreen(filename, loops=0):
+def early_interact():
     """
-    This starts a MPEG-1 movie playing in fullscreen mode. While the movie is
-    playing (that is, until the next call to movie_stop), interactions will
-    not display anything on the screen.
-
-    @param filename: The filename of the MPEG-1 move that we're playing.
-
-    @param loops: The number of additional times the movie should be looped. -1 to loop it forever.
+    Called early in the interact process, to clear out the fullscreen
+    flag.
     """
 
-    if renpy.game.less_updates:
-        return
-    
-    movie_stop()
-    renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, True)
+    global fullscreen
+    fullscreen = True
 
-def movie_start_displayable(filename, size, loops=0):
-    """
-    This starts a MPEG-1 movie playing in displayable mode. One or more Movie()
-    widgets must be displayed if the movie is to be shown to the user.
 
-    @param filename: The filename of the MPEG-1 move that we're playing.
-
-    @param size: A tuple containing the size of the movie on the screen. For example, (640, 480).
-
-    @param loops: The number of additional times the movie should be looped. -1 to loop it forever.
-    """
-
-    if renpy.game.less_updates:
-        return
-
-    movie_stop()
-    renpy.game.context().scene_lists.movie = MovieInfo(filename, loops, False, size)
-    
-def movie_length(filename):
-    if renpy.game.less_updates:
-        return 0
-
-    m = pygame.movie.Movie(renpy.loader.load(filename))
-    return m.get_length()
-    
 def interact():
     """
-    This is called at the start of an interaction. It starts the required
-    movie playing, if it's necessary. It returns True if the movie is fullscreen
-    and therefore nothing else should be drawn on the screen, or False
-    otherwise.
+    This is called each time the screen is redrawn. It helps us decide if
+    the movie should be displayed fullscreen or not.
     """
 
-    if renpy.game.less_updates:
+    playing = renpy.audio.music.get_playing("movie")
+    
+    if fullscreen and renpy.audio.music.get_playing("movie"):
+        return True
+    else:
         return False
 
-    try:
-
-        global movie
-        global surface
-        global current_info
-        global loops
     
-        info = renpy.game.context().scene_lists.movie
-
-        # Has the info changed? If so, stop the movie.
-        if info is not current_info:
-            movie_stop(False)
-            current_info = info
-
-        # No movie to play.
-        if not info:
-            return False
-
-        # Movie not playing, start it up.
-        if not movie:            
-
-            # Needed so we get movie sound.
-            renpy.audio.audio.quit()
-
-            m = pygame.movie.Movie(renpy.loader.load(info.filename))
-
-            if info.fullscreen:
-                s = None
-
-                m.set_display(pygame.display.get_surface(),
-                              (renpy.game.interface.display.screen_xoffset, 0,
-                               renpy.config.screen_width,
-                               renpy.config.screen_height))
-
-            else:
-                s = pygame.Surface(info.size, 0, renpy.game.interface.display.window)
-                m.set_display(s, (0, 0) + info.size)
-
-            movie = m
-            surface = s
-
-            renpy.display.render.redraw(None, 1.0/48)
-            
-        if not movie.get_busy():
-            if not info.loops or loops < info.loops:
-                movie.rewind()
-                movie.play()
-                loops += 1
-                renpy.display.render.redraw(None, 1.0/48)
-            else:
-                movie_stop()
-        else:
-            renpy.display.render.redraw(None, 1.0/48)
-                
-
-        # Movie is playing (by now).
-        return info.fullscreen
-
-    except:
-        movie_stop()
-        
-        if renpy.config.debug_sound:
-            raise
-        else:
-            renpy.audio.audio.init()
-            return False
-
-
-class Movie(renpy.display.layout.Null):
+class Movie(renpy.display.core.Displayable):
     """
-    This is a displayable that displays the current movie. In general,
-    a movie should be playing whenever this is on the screen.
-    That movie should have been started using movie_start_displayable
-    before this is shown on the screen, and hidden before this is
-    removed.
+    This is a displayable that shows the current movie.
     """
 
-    def __init__(self, fps=24, style='default', **properties):
+    def __init__(self, fps=24, size=None, **properties):
         """
         @param fps: The framerate that the movie should be shown at.
         """
+        super(Movie, self).__init__(**properties)
+        self.size = size
 
-        self.frame_time = 1.0 / fps
-        super(Movie, self).__init__(style=style, **properties)
-
+        
     def render(self, width, height, st, at):
 
-        if not renpy.game.less_updates:
-            renpy.display.render.redraw(self, self.frame_time - st % self.frame_time)
-
-        if surface:
-            renpy.display.render.mutated_surface(surface)
-            
-            w, h = surface.get_size()
-            rv = renpy.display.render.Render(w, h)
-            rv.blit(surface, (0, 0))
-            return rv
-        else:
-            return super(Movie, self).render(width, height, st, at)
+        global surface
         
+        size = self.size
+        
+        if size is None:
+            size = self.size = default_size
+
+        if surface is None or surface.get_size() != size:
+            surface = pygame.Surface(size, 0, renpy.game.interface.display.sample_surface)
+
+        width, height = size
+        rv = renpy.display.render.Render(width, height)
+
+        if renpy.audio.music.get_playing("music"):
+            rv.blit(surface, (0, 0))
+            
+        return rv
+            
+    def event(self, ev, x, y, st):
+        if ev.type == renpy.audio.audio.REFRESH_EVENT:
+            renpy.display.render.mutated_surface(surface)
+            renpy.display.render.redraw(self, 0)
+
+    def per_interact(self):
+        global fullscreen
+        fullscreen = False
+        
+            

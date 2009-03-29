@@ -381,7 +381,7 @@ class SceneLists(renpy.object.Object):
     things to the user. 
     """
 
-    __version__ = 1
+    __version__ = 2
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -399,7 +399,6 @@ class SceneLists(renpy.object.Object):
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
-                
 
     def __init__(self, oldsl, ipi):
 
@@ -427,7 +426,6 @@ class SceneLists(renpy.object.Object):
 
             self.replace_transient()
 
-            self.movie = oldsl.movie
             self.focused = None
             
         else:
@@ -437,7 +435,6 @@ class SceneLists(renpy.object.Object):
                 self.layer_at_list[i] = (None, [ ])
                 
             self.music = None
-            self.movie = None
             self.focused = None
 
     def replace_transient(self):
@@ -967,7 +964,7 @@ class Display(object):
             renpy.config.screen_width,
             renpy.config.screen_height,
             )
-        
+
         if not suppress_blit:
 
             updates = [ ]
@@ -1540,7 +1537,11 @@ class Interface(object):
 
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
-            
+
+        # Clean up some movie-related things.
+        renpy.display.video.early_interact()
+
+        
         # Call per-interaction code for all widgets.
         root_widget.visit_all(lambda i : i.per_interact())
         

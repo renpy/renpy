@@ -450,9 +450,11 @@ static int check_channel(int c) {
         channels = realloc(channels, sizeof(struct Channel) * (c + 1));
     
         for (i = num_channels; i <= c; i++) {
-
+         
             channels[i].playing = NULL;
             channels[i].queued = NULL;
+            channels[i].playing_name = NULL;
+            channels[i].queued_name = NULL;
             channels[i].dying = NULL;
             channels[i].volume = SDL_MIX_MAXVOLUME;        
             channels[i].paused = 1;

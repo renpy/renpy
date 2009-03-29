@@ -18,9 +18,11 @@ init -1130 python hide:
     for i in xrange(0, 8):
         renpy.music.register_channel(i)
 
+    renpy.music.register_channel("movie", "music", False)
+        
     # Set up default names for some of the channels.
     renpy.music.alias_channel(0, "sound")
-    renpy.music.alias_channel(1, "music")
+    renpy.music.alias_channel(7, "music")
         
 init 1130:
 
