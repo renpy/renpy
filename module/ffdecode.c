@@ -238,17 +238,22 @@ static int audio_sample_rate;
 /* ByteIOContext <-> SDL_RWops mapping. */
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
     SDL_RWops *rw = (SDL_RWops *) opaque;    
-    return rw->read(rw, buf, 1, buf_size);
+    int rv = rw->read(rw, buf, 1, buf_size);
+    return rv;
+
 }
 
 static int rwops_write(void *opaque, uint8_t *buf, int buf_size) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;
-    return rw->write(rw, buf, 1, buf_size);
+    /* SDL_RWops *rw = (SDL_RWops *) opaque; */
+    /* return rw->write(rw, buf, 1, buf_size); */
+    printf("Writing to an SDL_rwops is a really bad idea.\n");
+    return -1;
 }
 
 static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
-    return rw->seek(rw, offset, whence);
+    int64_t rv = rw->seek(rw, (int) offset, whence);
+    return rv;
 }
 
 #define RWOPS_BUFFER 65536
@@ -1852,7 +1857,7 @@ static int decode_thread(void *arg)
         goto fail;
     }
         
-    // err = av_open_input_file(&ic, "/tmp/Bombers_of_WW1.ogg", is->iformat, 0, ap);
+    // err = av_open_input_file(&ic, "/home/tom/ab/renpy/testing/game/stellvia.avi", is->iformat, 0, ap);
     
     err = av_open_input_stream(
         &ic,

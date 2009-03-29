@@ -381,10 +381,10 @@ class Channel(object):
         
         if pcm_ok:
 
-            if self.pan_time != self.channel.pan_time:
-                self.pan_time = self.channel.pan_time
+            if self.pan_time != self.context.pan_time:
+                self.pan_time = self.context.pan_time
                 pss.set_pan(self.number,
-                            self.channel.pan,
+                            self.context.pan,
                             self.pan_delay)
                 
         self.pan_delay = 0
@@ -452,8 +452,8 @@ class Channel(object):
 
     def set_pan(self, pan, delay):
         now = time.time()
-        self.channel.pan_time = now
-        self.channel.pan = pan
+        self.context.pan_time = now
+        self.context.pan = pan
 
         if pcm_ok:
             self.pan_delay = delay
@@ -476,7 +476,7 @@ def register_channel(name, mixer=None, loop=True):
     
 def alias_channel(name, newname):
     c = get_channel(name)
-    channels[newname] = name
+    channels[newname] = c
 
     
 def get_channel(name):

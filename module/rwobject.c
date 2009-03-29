@@ -310,9 +310,10 @@ static int rw_seek_th(SDL_RWops* context, int offset, int whence)
 	{
 		result = PyObject_CallFunction(helper->seek, "ii", offset, whence);
 		if(!result) {
-                        PyThreadState_Swap(oldstate);
-                        PyEval_ReleaseLock();
-			return -1;
+                    PyErr_Clear();
+                    PyThreadState_Swap(oldstate);
+                    PyEval_ReleaseLock();
+                    return -1;
                 }
 
 		Py_DECREF(result);
