@@ -49,12 +49,6 @@ cdef extern from "pss.h":
     
     char *PSS_get_error()
 
-def _extension(s):
-    i = s.rfind('.')
-    if i == -1:
-        return s
-    return s[i+1:]
-    
 def check_error():
     e = PSS_get_error();
     if e:
@@ -78,9 +72,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
     else:
         tight = 0
 
-    ext = _extension(name)
-
-    PSS_play(channel, rw, ext, name, fadein, tight, pause)
+    PSS_play(channel, rw, name, name, fadein, tight, pause)
     check_error()
 
 def queue(channel, file, name, fadein=0, tight=False):
@@ -93,9 +85,7 @@ def queue(channel, file, name, fadein=0, tight=False):
     else:
         tight = 0
 
-    ext = _extension(name)
-
-    PSS_queue(channel, rw, ext, name, fadein, tight)
+    PSS_queue(channel, rw, name, name, fadein, tight)
     check_error()
 
 def stop(channel):

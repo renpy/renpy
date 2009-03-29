@@ -65,7 +65,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 2
+    __version__ = 3
 
     def after_upgrade(self, version):
         if version < 1:
@@ -75,6 +75,10 @@ class Context(renpy.object.Object):
         if version < 2:
             self.abnormal = False
             self.last_abnormal = False
+
+        if version < 3:
+            self.music = { }
+            
             
     def __init__(self, rollback, context=None):
 
@@ -102,11 +106,18 @@ class Context(renpy.object.Object):
         # True if the last statement caused an abnormal transfer of
         # control.
         self.last_abnormal = False
+
+        # A map from the name of a music channel to the MusicContext
+        # object corresponding to that channel.
+        self.music = renpy.python.RevertableDict()
         
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
+
             vars(self.info).update(vars(context.info))            
+            self.music.update(context.music)
+
             self.predict_info = PredictInfo(context.predict_info)
         else:
             oldsl = None

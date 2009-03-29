@@ -105,6 +105,7 @@ def reached_vars(store, reachable, wait):
     
     for c in renpy.game.contexts:
         reached(c.info, reachable, wait)
+        reached(c.music, reachable, wait)
         for d in c.dynamic_stack:
             for v in d.itervalues():
                 reached(v, reachable, wait)

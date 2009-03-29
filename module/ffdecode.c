@@ -74,6 +74,7 @@ typedef struct PacketQueue {
     int nb_packets;
     int size;
     int abort_request;
+    int end_request;
     SDL_mutex *mutex;
     SDL_cond *cond;
 } PacketQueue;
@@ -171,6 +172,11 @@ typedef struct VideoState {
     int pictq_size, pictq_rindex, pictq_windex;
     SDL_mutex *pictq_mutex;
     SDL_cond *pictq_cond;
+
+    
+    // These are used to notify the parse thread when it's time to die.
+    SDL_mutex *quit_mutex;
+    SDL_cond *quit_cond;
 
     //    QETimer *video_timer;
     SDL_RWops *rwops;
@@ -370,6 +376,9 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block)
         } else if (!block) {
             ret = 0;
             break;
+        } else if (q->end_request) {
+            ret = -1;
+            break;            
         } else {
             SDL_CondWait(q->cond, q->mutex);
         }
@@ -1566,28 +1575,25 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
         
         SDL_Delay(10);
     }
-
     
     is->audio_callback_time = av_gettime();
     
     while (len > 0) {
         if (is->audio_buf_index >= is->audio_buf_size) {
-           audio_size = audio_decode_frame(is, &pts);
-           if (audio_size < 0) {
+            audio_size = audio_decode_frame(is, &pts);
+            if (audio_size < 0) {
+                
+                /* Nothing left to decode, break. */
+                break;
 
-/* Nothing left to decode, break. */
-              break;
-           } else {
-               
-               /* if (is->show_audio) */
-               /*     update_sample_display(is, (int16_t *)is->audio_buf, audio_size); */
-
-               audio_size = synchronize_audio(is, (int16_t *)is->audio_buf, audio_size,
+            } else {
+ 
+                audio_size = synchronize_audio(is, (int16_t *)is->audio_buf, audio_size,
                                               pts);
 
-               is->audio_buf_size = audio_size;
-           }
-           is->audio_buf_index = 0;
+                is->audio_buf_size = audio_size;
+            }
+            is->audio_buf_index = 0;
         }
         len1 = is->audio_buf_size - is->audio_buf_index;
         if (len1 > len)
@@ -1857,14 +1863,14 @@ static int decode_thread(void *arg)
 
     // printf("Format name: %s\n", fmt->name);
     
+    is->ic = ic;
+
     if (err < 0) {
         fprintf(stderr, "stream open error: %d\n", err);
         // print_error(is->filename, err);
         ret = -1;
         goto fail;
     }
-
-    is->ic = ic;
 
     if(genpts)
         ic->flags |= AVFMT_FLAG_GENPTS;
@@ -1953,81 +1959,74 @@ static int decode_thread(void *arg)
     codecs_locked = 0;
     
     for(;;) {
-        if (is->abort_request)
+
+        if (is->abort_request) {
             break;
-        if (is->paused != is->last_paused) {
-            is->last_paused = is->paused;
-            if (is->paused)
-                av_read_pause(ic);
-            else
-                av_read_play(ic);
         }
+            
+        /* if (is->paused != is->last_paused) { */
+        /*     is->last_paused = is->paused; */
+        /*     if (is->paused) */
+        /*         av_read_pause(ic); */
+        /*     else */
+        /*         av_read_play(ic); */
+        /* } */
 
-        if (is->seek_req) {
-            int stream_index= -1;
-            int64_t seek_target= is->seek_pos;
+        /* if (is->seek_req) { */
+        /*     int stream_index= -1; */
+        /*     int64_t seek_target= is->seek_pos; */
 
-            if     (is->   video_stream >= 0) stream_index= is->   video_stream;
-            else if(is->   audio_stream >= 0) stream_index= is->   audio_stream;
-            else if(is->subtitle_stream >= 0) stream_index= is->subtitle_stream;
+        /*     if     (is->   video_stream >= 0) stream_index= is->   video_stream; */
+        /*     else if(is->   audio_stream >= 0) stream_index= is->   audio_stream; */
+        /*     else if(is->subtitle_stream >= 0) stream_index= is->subtitle_stream; */
 
-            if(stream_index>=0){
-                seek_target= av_rescale_q(seek_target, AV_TIME_BASE_Q, ic->streams[stream_index]->time_base);
-            }
+        /*     if(stream_index>=0){ */
+        /*         seek_target= av_rescale_q(seek_target, AV_TIME_BASE_Q, ic->streams[stream_index]->time_base); */
+        /*     } */
 
-            ret = av_seek_frame(is->ic, stream_index, seek_target, is->seek_flags);
-            if (ret < 0) {
-                fprintf(stderr, "%s: error while seeking\n", is->ic->filename);
-            }else{
-                if (is->audio_stream >= 0) {
-                    packet_queue_flush(&is->audioq);
-                    packet_queue_put(&is->audioq, &flush_pkt);
-                }
-                if (is->subtitle_stream >= 0) {
-                    packet_queue_flush(&is->subtitleq);
-                    packet_queue_put(&is->subtitleq, &flush_pkt);
-                }
-                if (is->video_stream >= 0) {
-                    packet_queue_flush(&is->videoq);
-                    packet_queue_put(&is->videoq, &flush_pkt);
-                }
-            }
-            is->seek_req = 0;
-        }
+        /*     ret = av_seek_frame(is->ic, stream_index, seek_target, is->seek_flags); */
+        /*     if (ret < 0) { */
+        /*         fprintf(stderr, "%s: error while seeking\n", is->ic->filename); */
+        /*     }else{ */
+        /*         if (is->audio_stream >= 0) { */
+        /*             packet_queue_flush(&is->audioq); */
+        /*             packet_queue_put(&is->audioq, &flush_pkt); */
+        /*         } */
+        /*         if (is->subtitle_stream >= 0) { */
+        /*             packet_queue_flush(&is->subtitleq); */
+        /*             packet_queue_put(&is->subtitleq, &flush_pkt); */
+        /*         } */
+        /*         if (is->video_stream >= 0) { */
+        /*             packet_queue_flush(&is->videoq); */
+        /*             packet_queue_put(&is->videoq, &flush_pkt); */
+        /*         } */
+        /*     } */
+        /*     is->seek_req = 0; */
+        /* } */
 
         /* if the queue are full, no need to read more */
         if (is->audioq.size > MAX_AUDIOQ_SIZE ||
             is->videoq.size > MAX_VIDEOQ_SIZE ||
             is->subtitleq.size > MAX_SUBTITLEQ_SIZE) {
-            /* wait 10 ms */
-            SDL_Delay(10);
+            
+            /* wait 10 ms - or wait for quit notify.*/
+            SDL_LockMutex(is->quit_mutex);
+            SDL_CondWaitTimeout(is->quit_cond, is->quit_mutex, 10);
+            SDL_UnlockMutex(is->quit_mutex);
+
             continue;
         }
+
         if(url_feof(ic->pb)) {
-
-
-            /* av_init_packet(pkt); */
-            /* pkt->data=NULL; */
-            /* pkt->size=0; */
-            /* pkt->stream_index= is->video_stream; */
-            /* packet_queue_put(&is->videoq, pkt); */
-
-            if (is->audioq.size == 0 && is->videoq.size == 0) {
-                 is->abort_request = 1;                
-            } else {
-                SDL_Delay(10);
-            }
-
-            continue;
+            goto eof;
         }
+
         ret = av_read_frame(ic, pkt);
         if (ret < 0) {
-            if (ret != AVERROR_EOF && url_ferror(ic->pb) == 0) {
-                SDL_Delay(100); /* wait for user event */
-                continue;
-            } else
-                break;
+            // Treat errors like end of stream.
+            goto eof;
         }
+        
         if (pkt->stream_index == is->audio_stream) {
             packet_queue_put(&is->audioq, pkt);
         } else if (pkt->stream_index == is->video_stream) {
@@ -2038,18 +2037,32 @@ static int decode_thread(void *arg)
             av_free_packet(pkt);
         }
     }
-    /* wait until the end */
-    while (!is->abort_request) {
-        SDL_Delay(100);
+
+eof:
+    
+    /* Request the end of the audio queue when we have no more
+       bytes to decode. */
+    if (is->audio_st) {
+        SDL_LockMutex(is->audioq.mutex);
+        is->audioq.end_request = 1;
+        SDL_CondSignal(is->audioq.cond);
+        SDL_UnlockMutex(is->audioq.mutex);
     }
+    
+    /* wait until we're notified it's safe to abort. */
+    SDL_LockMutex(is->quit_mutex);
+    while (!is->abort_request) {
+        SDL_CondWait(is->quit_cond, is->quit_mutex);
+    }
+    SDL_UnlockMutex(is->quit_mutex);
 
     ret = 0;
 
 fail:
-    
+
     is->finished = 1;
 
-    if (codecs_locked) {
+   if (codecs_locked) {
         SDL_UnlockMutex(codec_mutex);
         codecs_locked = 0;
     }
@@ -2071,17 +2084,10 @@ fail:
     is->video_stream = -1;
     is->subtitle_stream = -1;
 
+    av_free(is->io_context->buffer);
+    av_free(is->io_context);
     rwops_close(is->rwops);
 
-#if 0
-    if (ret != 0) {
-        SDL_Event event;
-
-        event.type = FF_QUIT_EVENT;
-        event.user.data1 = is;
-        SDL_PushEvent(&event);
-    }
-#endif
     
     return 0;
 }
@@ -2111,6 +2117,9 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
 
     is->av_sync_type = av_sync_type;
 
+    is->quit_mutex = SDL_CreateMutex();
+    is->quit_cond = SDL_CreateCond();
+    
     is->parse_tid = SDL_CreateThread(decode_thread, is);
 
     if (!is->parse_tid) {
@@ -2125,8 +2134,11 @@ void ffpy_stream_close(VideoState *is)
 {
     VideoPicture *vp;
     int i;
-    /* XXX: use a special url_shutdown call to abort parse cleanly */
+
     is->abort_request = 1;
+    SDL_LockMutex(is->quit_mutex);
+    SDL_CondSignal(is->quit_cond);
+    SDL_UnlockMutex(is->quit_mutex);
     SDL_WaitThread(is->parse_tid, NULL);
 
     /* free all pictures */
@@ -2142,11 +2154,12 @@ void ffpy_stream_close(VideoState *is)
     SDL_DestroyCond(is->pictq_cond);
     SDL_DestroyMutex(is->subpq_mutex);
     SDL_DestroyCond(is->subpq_cond);
-
+    SDL_DestroyMutex(is->quit_mutex);
+    SDL_DestroyCond(is->quit_cond);
+    
     free(is->filename);
     av_free(is);
 }
-
 
 void ffpy_alloc_event(VideoState *vs, PyObject *surface) {
     alloc_picture(vs, surface);

@@ -36,7 +36,6 @@ import time
 disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
 pss = None
-nativemidi = None
 mix = None
 
 if 'pss' not in disable:
@@ -46,14 +45,6 @@ if 'pss' not in disable:
         atexit.register(pss.quit)
     except:
         pss = None
-
-if 'nativemidi' not in disable:
-    try:
-        import nativemidi as nativemidi
-        atexit.register(nativemidi.stop)
-    except:
-        pass
-
 
 if 'mix' not in disable:
     try:
@@ -101,18 +92,21 @@ if mix:
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
 
-# This is True if we were able to succesfully enable native midi.
-midi_ok = None
-
 # True if we are managing the mixers ourselves.
 mix_ok = None
 
-def ismidi(s):
+unique = time.time()
+serial = 0
+
+def get_serial():
     """
-    Returns true if s is the filename of a midi file.
+    Gets a globally unique serial number for each music change.
     """
     
-    return (midi_ok or renpy.config.reject_midi) and s is not None and s.endswith(".mid")
+    global serial
+    serial += 1
+    return (unique, serial)
+
 
 def load(fn):
     """
@@ -122,113 +116,7 @@ def load(fn):
     rv = renpy.loader.load(fn)
     return rv
 
-class Midi(object):
-    """
-    This is the object that manages the native midi playback. It ensures
-    that only one channel can play midi at a time, and it keeps track
-    of what's playing at any given time.
-    """
 
-    def __init__(self):
-
-        # The filename of the music that is currently playing through
-        # native midi.
-        self.playing = None
-
-        # The natural volume of the music that is playing through
-        # native midi.
-        self.volume = 1.0
-
-    def play(self, f, filename):
-
-        # Native midi must work for us to do anything.
-        if not midi_ok:
-            return
-
-        # If the midi channel is still busy, then ignore this request
-        # to play something new.
-        if self.playing:
-            return
-
-        # Otherwise, immediately play this midi file,
-        # replacing whatever is already playing.
-
-        try:
-            nativemidi.play(f)
-            self.playing = filename
-        except:
-            self.playing = None
-            if renpy.config.debug_sound:
-                raise
-
-    def busy(self):
-        """
-        Is midi busy?
-        """
-        
-        return self.playing is not None
-        
-    def periodic(self):
-        """
-        The 20hz callback that checks on the status of midi. This should 
-        be called before the updates for the various channel objects, below.
-        """
-
-        if not midi_ok:
-            return
-
-        if self.playing and not nativemidi.busy():
-            self.playing = None
-
-        # Eventually... add nativemidi fade code here.
-
-    def stop(self):
-        """
-        Called to stop the native midi subsystem from playing music.
-        """
-
-        if not midi_ok:
-            return
-
-        nativemidi.stop()
-        self.playing = None
-
-    def set_volume(self, volume):
-
-        if midi_ok:
-            nativemidi.set_volume(volume)            
-
-        self.volume = volume
-
-    def get_pos(self):
-
-        return nativemidi.get_pos()
-
-# A singleton Midi object that manages hardware midi playback.
-midi = Midi()
-
-
-# This is a dictionary that accesses attributes of the info object.
-class AttrDict(object):
-
-    def __init__(self, attr):
-        self.attr = attr
-
-    def __getitem__(self, item):
-        info = renpy.game.context().info
-        return getattr(info, self.attr + str(item))
-
-    def __setitem__(self, item, value):
-        info = renpy.game.context().info
-        setattr(info, self.attr + str(item), value)
-        
-    def get(self, item, default=None):
-        info = renpy.game.context().info
-        return getattr(info, self.attr + str(item), default)
-
-_pan_time = AttrDict("_pan_time")
-_pan = AttrDict("_pan")
-    
 class QueueEntry(object):
     """
     A queue entry object.
@@ -240,11 +128,56 @@ class QueueEntry(object):
         self.tight = tight
 
 
-class Channel(object):
+class MusicContext(renpy.python.RevertableObject):
+    """
+    This stores information about the music in a game. This object
+    participates in rollback, so when the user goes back in time, all
+    the values get reverted as well.
+    """
 
-    def __init__(self, number):
-        # The number of this channel.
-        self.number = number
+    __version__ = 0
+
+    def __init__(self):
+
+        # The time this channel was last ordered panned.
+        self.pan_time = None
+
+        # The pan this channel was ordered to.
+        self.pan = 0
+
+        # The time the channel was ordered last changed.
+        self.last_changed = 0
+
+        # Was the last change tight?
+        self.last_tight = False
+
+        # What were the filenames we were ordered to loop last?
+        self.last_filenames = [ ]
+
+        
+        
+
+        
+# The next channel number to be assigned.
+next_channel_number = 0
+        
+class Channel(object):
+    """
+    This stores information about the currently-playing music.
+    """
+    
+    def __init__(self, name, default_loop):
+
+        # The name assigned to this channel. This is used to look up
+        # information about the channel in the MusicContext object.
+        self.name = name
+
+        
+        # The number this channel has been assigned, or None if we've yet
+        # to assign a number to the channel. We only assign a channel
+        # number when there's an operation on the channel other than
+        # setting the mixer.
+        self._number = None
 
         # The name of the mixer this channel uses. Set below, as there's
         # no good default.
@@ -267,10 +200,6 @@ class Channel(object):
         # Are we playing anything at all?
         self.playing = False
 
-        # If True, then this channel is playing midi. If False, it's
-        # playing PCM instead.
-        self.playing_midi = False
-
         # If True, we'll wait for this channel to stop before
         # loading in more music from the queue. (This is necessary to
         # do a synchro-start.)
@@ -280,9 +209,8 @@ class Channel(object):
         # once all channels are ready.
         self.synchro_start = False
 
-        # If we're a music channel, the time the music in this channel was
-        # last changed.
-        self.music_last_changed = 0
+        # The time the music in this channel was last changed.
+        self.last_changed = 0
 
         # The callback that is called if the queue becomes empty.
         self.callback = None
@@ -292,7 +220,53 @@ class Channel(object):
 
         # The delay the next pan should have.
         self.pan_delay = 0
+
+
+        if default_loop is None:
+            # By default, should we loop the music?
+            self.default_loop = True
+
+            # Was this set explicitly?
+            self.default_loop_set = False
+
+        else:
+            self.default_loop = default_loop
+            self.default_loop_set = True
         
+
+    def get_number(self):
+        """
+        Returns the number of this channel, allocating a number if that
+        proves necessary.
+        """
+        global next_channel_number
+        
+        rv = self._number
+        if rv is None:
+            rv = self._number = next_channel_number
+            next_channel_number += 1
+        
+        return rv
+
+    number = property(get_number)
+
+    def get_context(self):
+        """
+        Returns the MusicContext corresponding to this channel, taken from
+        the context object. Allocates a MusicContext if none exists.
+        """
+
+        mcd = renpy.game.context().music
+
+        rv = mcd.get(self.name)
+        if rv is None:
+           rv = mcd[self.name] = MusicContext();
+
+        return rv
+
+    context = property(get_context)
+        
+    
     def periodic(self):
         """
         This is the periodic call that causes this channel to load new stuff
@@ -305,16 +279,9 @@ class Channel(object):
 
         if self.playing and force_stop:
 
-            if self.playing_midi:
-                midi.stop()
-                self.playing = False
-                self.wait_stop = False
-                self.playing_midi = False
-
-            else:
-                pss.stop(self.number)
-                self.playing = False
-                self.wait_stop = False
+            pss.stop(self.number)
+            self.playing = False
+            self.wait_stop = False
 
         if force_stop:
             if self.loop:
@@ -322,36 +289,23 @@ class Channel(object):
             else:
                 self.queue = [ ]
             return
-
-        # If we're playing midi, and the midi device is busy, return.
-        # Otherwise, it's stopped, so we can stop waiting.
-        if self.playing_midi:
-            if midi.busy():
-                return
-            else:
-                self.playing = False
-                self.wait_stop = False
-                self.playing_midi = False
-
-
+        
         # Should we do the callback?
         do_callback = False
 
+        # This has been modified so we only queue a single sound file
+        # per call, to prevent memory leaks with really short sound
+        # files. So this loop will only execute once, in practice.
         while True:
 
             depth = pss.queue_depth(self.number)
 
-            if depth == 0 and not self.playing_midi:
+            if depth == 0:
                 self.wait_stop = False
                 self.playing = False
 
             # Need to check this, so we don't do pointless work.
             if not self.queue:
-                break
-
-            # If we're still playing midi, then we can't queue
-            # anything up, so bail out now.
-            if self.playing_midi:
                 break
 
             # If the pcm_queue is full, then we can't queue
@@ -371,14 +325,6 @@ class Channel(object):
             # Otherwise, we might be able to enqueue something.
             topq = self.queue[0]
 
-            # We can only play midi if we're not playing PCM.
-            if ismidi(topq.filename):
-                if depth != 0:
-                    break
-
-            # if 0 <= self.get_pos() <= 1000:
-            #    break
-            
             # At this point, we've decided to try to play
             # top. So let's see how far we can get.
 
@@ -388,31 +334,12 @@ class Channel(object):
             try:
                 topf = load(topq.filename)
 
-                if ismidi(topq.filename):
-
-                    if renpy.config.reject_midi:
-                        raise Exception("Midi files are no longer supported.")
-                    
-                    # If someone else is playing midi, then raise
-                    # an error to that effect.
-                    if midi.busy():
-                        raise Exception("We can only play one midi at a time.")
-
-                    # Play midi.
-                    midi.play(topf, topq.filename)
-                    self.playing = True
-                    self.playing_midi = True
-
+                if depth == 0:
+                    pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
                 else:
+                    pss.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight)
 
-                    print "Opening, queue depth", depth, "channel", self.number
-                    
-                    if depth == 0:
-                        pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
-                    else:
-                        pss.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight)
-
-                    self.playing = True
+                self.playing = True
 
             except:
                 if renpy.config.debug_sound:
@@ -427,7 +354,9 @@ class Channel(object):
             else:
                 do_callback = True
 
-        # TODO: Queue empty callback.
+            break
+                
+        # Queue empty callback.
         if do_callback and self.callback:
             self.callback()
 
@@ -442,19 +371,22 @@ class Channel(object):
 
         if not pcm_ok:
             return
-
-        if not self.playing_midi:
-            pss.dequeue(self.number, even_tight)
+        
+        pss.dequeue(self.number, even_tight)
 
     def interact(self):
         """
         Called (mostly) once per interaction.
         """
+        
+        if pcm_ok:
 
-        if pcm_ok and self.pan_time != _pan_time.get(self.number):
-            self.pan_time = _pan_time.get(self.number)
-            pss.set_pan(self.number, _pan.get(self.number, 0.0), self.pan_delay)
-
+            if self.pan_time != self.channel.pan_time:
+                self.pan_time = self.channel.pan_time
+                pss.set_pan(self.number,
+                            self.channel.pan,
+                            self.pan_delay)
+                
         self.pan_delay = 0
             
         if not self.queue and self.callback:
@@ -472,10 +404,7 @@ class Channel(object):
         if not pcm_ok:
             return
 
-        if self.playing_midi:
-            midi.stop()
-        else:
-            pss.fadeout(self.number, int(secs * 1000))
+        pss.fadeout(self.number, int(secs * 1000))
 
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=False):
@@ -506,10 +435,7 @@ class Channel(object):
         if not pcm_ok:
             return None
 
-        if self.playing_midi:
-            return midi.playing
-        else:
-            return pss.playing_name(self.number)
+        return pss.playing_name(self.number)
 
     def set_volume(self, volume):
         self.chan_volume = volume
@@ -519,16 +445,12 @@ class Channel(object):
         if not pcm_ok:
             return -1
         
-        if self.playing_midi:
-            return midi.get_pos()
-        else:
-            return pss.get_pos(self.number)
-
+        return pss.get_pos(self.number)
 
     def set_pan(self, pan, delay):
         now = time.time()
-        _pan_time[self.number] = now
-        _pan[self.number] = pan
+        self.channel.pan_time = now
+        self.channel.pan = pan
 
         if pcm_ok:
             self.pan_delay = delay
@@ -536,28 +458,40 @@ class Channel(object):
             pss.set_pan(self.number, _pan.get(self.number, 0.0), self.pan_delay)
 
         
-# The number of channels we support.
-NUM_CHANNELS = 8
 
-# A list of channels.
-channels = [ Channel(i) for i in range(NUM_CHANNELS) ]
-    
-def get_channel(number):
-    if not 0 <= number < NUM_CHANNELS:
-        raise Exception("Channel number %d out of bounds." % channel)
+# A list of channels we know about.
+all_channels = [ ]
 
-    return channels[number]
+# A map from channel name to Channel object.
+channels = { }
+
+def register_channel(name, loop=True):
+    c = Channel(name, loop)
+    all_channels.append(c)
+    channels[name] = c
+
     
+def alias_channel(name, newname):
+    c = get_channel(name)
+    channels[newname] = name
+
+    
+def get_channel(name):
+
+    rv = channels.get(name)
+    if rv is None:
+        raise Exception("Audio channel %r is unknown." % name)
+        
+    return rv
+
 
 def init():
 
     global pcm_ok
-    global midi_ok
     global mix_ok
 
     if not renpy.config.sound:
         pcm_ok = False
-        midi_ok = False
         mix_ok = False
         return
 
@@ -575,23 +509,10 @@ def init():
                 raise
             pcm_ok = False
 
-    if renpy.config.reject_midi:
-        midi_ok = False
-            
-    if midi_ok is None and nativemidi:
-
-        try:
-            nativemidi.init()
-            midi_ok = True
-        except:
-            if renpy.config.debug_sound:
-                raise
-            midi_ok = False
-
     # Find all of the mixers in the game.
     mixers = [ ]
 
-    for c in channels:
+    for c in all_channels:
         if c.mixer not in mixers:
             mixers.append(c.mixer)
 
@@ -600,7 +521,6 @@ def init():
     if mix and not 'RENPY_NOMIXER' in os.environ and mix.get_wave() is not None:
         default_volume = mix.get_wave()
         mix_ok = True
-
     
     for m in mixers:
         renpy.game.preferences.volumes.setdefault(m, default_volume)
@@ -616,7 +536,7 @@ def quit():
     if not pcm_ok:
         return
     
-    for c in channels:
+    for c in all_channels:
         c.dequeue()
         c.fadeout(0)
         
@@ -629,15 +549,12 @@ def quit():
         
     pss.quit()
     
-    pcm_ok = None    
-    midi_ok = None
+    pcm_ok = None
     mix_ok = None
  
 # The last-set pcm volume.
 pcm_volume = None
 
-# The last-set midi volume.
-midi_volume = None
 
 def periodic():
     """
@@ -648,24 +565,21 @@ def periodic():
     """
 
     global pcm_volume
-    global midi_volume
 
     if not pcm_ok:
         return False
 
     try:
 
-        for c in channels:
+        for c in all_channels:
             c.periodic()
-
-        midi.periodic()
 
         pss.periodic()
         
         # Perform a synchro-start if necessary.
         need_ss = False
 
-        for c in channels:
+        for c in all_channels:
             
             if c.synchro_start and c.wait_stop:
                 need_ss = False
@@ -677,7 +591,7 @@ def periodic():
         if need_ss:
             pss.unpause_all()
 
-            for c in channels:
+            for c in all_channels:
                 c.synchro_start = False
 
         # Now, consider adjusting the volume of the channel. 
@@ -695,6 +609,7 @@ def periodic():
 
                 if vol != 0:
                     anything_playing = True
+
             if not anything_playing:
                 disable_mixer()
                 return
@@ -711,46 +626,33 @@ def periodic():
                 mix.set_wave(max_volume)
                 pcm_volume = max_volume
 
-            for c in channels:
-
-                # if not c.playing:
-                #    continue
+            for c in all_channels:
 
                 vol = c.chan_volume * volumes[c.mixer]
 
-                if c.playing_midi:
-                    if midi_volume != vol:
-                        # mix.set_midi(vol)
-                        midi.set_volume(vol)
-                        midi_volume = vol
-                else:
-                    vol /= max_volume
+                vol /= max_volume
 
-                    if c.actual_volume != vol:
-                        pss.set_volume(c.number, vol)
-                        c.actual_volume = vol
+                if c.actual_volume != vol:
+                    pss.set_volume(c.number, vol)
+                    c.actual_volume = vol
 
         else:
 
-            for c in channels:
+            for c in all_channels:
 
                 if not c.playing:
                     continue
 
                 vol = c.chan_volume * volumes[c.mixer]
 
-                if c.playing_midi:
-                    if vol != midi_volume:
-                        midi.set_volume(vol)
-                        midi_volume = vol
-                else:
-                    if vol != c.actual_volume:
-                        pss.set_volume(c.number, vol)
-                        c.actual_volume = vol
-
+                if vol != c.actual_volume:
+                    pss.set_volume(c.number, vol)
+                    c.actual_volume = vol
+                    
     except:
         if renpy.config.debug_sound:
             raise
+
         
 def interact():
     """
@@ -761,14 +663,37 @@ def interact():
         return
 
     try:
-        for c in channels:
+        for c in all_channels:
+
             c.interact()
+
+            if _music_volumes.get(i, 1.0) != c.chan_volume:
+                c.set_volume(_music_volumes.get(i, 1.0))
+
+            ctx = c.context
+                
+            # If we're in the same music change, then do nothing with the
+            # music.
+            if c.last_changed == ctx.last_changed:
+                continue
+
+            filenames = ctx.last_filenames
+            tight = ctx.last_tight
+
+            c.dequeue()
+            
+            if not filenames or c.get_playing() not in filenames:
+                c.fadeout(renpy.config.fade_music)
+
+            if filenames:
+                c.enqueue(filenames, loop=True, synchro_start=True, tight=tight)
+
+            c.last_changed = ctx.last_changed
 
     except:
         if renpy.config.debug_sound:
             raise
 
-    renpy.audio.music.interact()
     periodic()
 
 

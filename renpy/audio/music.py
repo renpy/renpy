@@ -30,34 +30,10 @@ music_channels = [ ]
 # A list of channels for which set_music has been called, either way.
 music_set = [ ]
 
-unique = time.time()
-serial = 0
+from renpy.audio.audio import get_channel, get_serial
 
-
-AttrDict = renpy.audio.audio.AttrDict
-
-_music_last_filenames = AttrDict('_music_last_filenames')
-_music_last_tight = AttrDict('_music_last_tight')
-_music_last_changed = AttrDict('_music_last_changed')
-_music_volumes = AttrDict('_music_volumes')
-
-
-def get_serial():
-    """
-    Gets a globally unique serial number for each music change.
-    """
-    
-    global serial
-    serial += 1
-    return (unique, serial)
-
-    
-def get_channel(channel):
-    if not channel in music_channels:
-        raise Exception("Channel %d is not a music channel." % channel)
-    
-    c = renpy.audio.audio.get_channel(channel)
-    return c
+# Part of the public api:
+from renpy.audio.audio import register_channel, alias_channel
 
 def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fadein=0, tight=False, if_changed=False):
     """
@@ -92,7 +68,8 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
 
     try:        
         c = get_channel(channel)
-
+        ctx = c.context
+        
         c.dequeue()
 
         if fadeout is None:
@@ -106,15 +83,15 @@ def play(filenames, channel=7, loop=True, fadeout=None, synchro_start=False, fad
         c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight)
         
         t = get_serial()
-        _music_last_changed[channel] = t
-        c.music_last_changed = t
+        ctx.last_changed = t
+        c.last_changed = t
 
         if loop:
-            _music_last_filenames[channel] = filenames            
-            _music_last_tight[channel] = tight            
+            ctx.last_filenames = filenames            
+            ctx.last_tight = tight            
         else:
-            _music_last_filenames[channel] = None
-            _music_last_tight[channel] = False
+            ctx.last_filenames = None
+            ctx.last_tight = False
         
     except:
         if renpy.config.debug_sound:
@@ -153,23 +130,25 @@ def queue(filenames, channel=7, loop=True, clear_queue=True, fadein=0, tight=Fal
         filenames = [ filenames ]
 
     try:        
-        c = get_channel(channel)
 
+        c = get_channel(channel)
+        ctx = c.context
+        
         if clear_queue:
             c.dequeue(True)
 
         c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
         
         t = get_serial()
-        _music_last_changed[channel] = t
-        c.music_last_changed = t
+        ctx.last_changed = t
+        c.last_changed = t
 
         if loop:
-            _music_last_filenames[channel] = filenames
-            _music_last_tight[channel] = tight
+            ctx.last_filenames = filenames
+            ctx.last_tight = tight
         else:
-            _music_last_filenames[channel] = None
-            _music_last_tight[channel] = False
+            ctx.last_filenames = None
+            ctx.last_tight = False
         
     except:
         if renpy.config.debug_sound:
@@ -187,7 +166,8 @@ def stop(channel=7, fadeout=None):
 
     try:        
         c = get_channel(channel)
-
+        ctx = c.context
+        
         c.dequeue()
 
         if fadeout is None:
@@ -196,31 +176,10 @@ def stop(channel=7, fadeout=None):
         c.fadeout(fadeout)        
         
         t = get_serial()
-        _music_last_changed[channel] = t
-        c.music_last_changed = t
-        _music_last_filenames[channel] = None
-        _music_last_tight[channel] = False
-        
-    except:
-        if renpy.config.debug_sound:
-            raise
-
-
-def set_volume(volume, channel=7):
-    """
-    This sets the volume of the given channel. The volume is a number
-    between 0 and 1.0, and is interpreted as a fraction of the mixer
-    volume for the channel.
-
-    This value is persisted, and takes effect immediately. It also
-    participates in rollback.
-    """
-
-    try:        
-        c = get_channel(channel)
-
-        c.set_volume(volume)
-        _music_volumes[channel] = volume
+        ctx.last_changed = t
+        c.last_changed = t
+        ctx.last_filenames = None
+        ctx.last_tight = False
         
     except:
         if renpy.config.debug_sound:
@@ -229,31 +188,17 @@ def set_volume(volume, channel=7):
     
 def set_music(channel, flag, default=False):
     """
-    This should be called to indicate if the given channel should be
-    treated as a music channel. If the flag is True, the channel will
-    be treated as a music channel, if False, the channel will be
-    treated as a sound effects channel. Please note that this will not
-    change the mixer controlling the channel. Use
-    renpy.sound.set_mixer to do that.
-
-    By default, channels 3-7 are considered music channels.
+    Determines if channel will loop by default.
     """
 
-    if not 0 <= channel < renpy.audio.audio.NUM_CHANNELS:
-        raise Exception("Not a music channel.")
+    c = get_channel(channel)
 
-    if default and channel in music_set:
+    if default and c.default_loop_set:
         return
 
-    music_set.append(channel)
+    c.default_loop = Flag
+    c.default_loop_set = True
     
-    if flag:
-        if channel not in music_channels:
-            music_channels.append(channel)
-    else:
-        if channel in music_channels:
-            music_channels.remove(channel)
-
 def get_delay(time, channel=7):
     """
     Returns the number of seconds left until the given time in the
@@ -262,7 +207,6 @@ def get_delay(time, channel=7):
 
     try:
         c = renpy.audio.audio.get_channel(channel)
-
         t = c.get_pos()
 
         if not t or t < 0:
@@ -281,8 +225,7 @@ def get_delay(time, channel=7):
             
 def get_playing(channel=7):
     """
-    Returns the number of seconds left until the given time in the
-    music.
+    Returns true if the given channel is playing.
     """
 
     try:
@@ -294,44 +237,7 @@ def get_playing(channel=7):
             raise
 
         return None
-            
-    
 
-def interact():
-    """
-    This is the music change logic that is called at least once per
-    interaction.
-    """
-
-    try:
-
-        for i in music_channels:
-            c = renpy.audio.audio.get_channel(i)
-
-            if _music_volumes.get(i, 1.0) != c.chan_volume:
-                c.set_volume(_music_volumes.get(i, 1.0))
-
-            # If we're in the same music change, then do nothing with the
-            # music.
-            if c.music_last_changed == _music_last_changed.get(i, 0):
-                continue
-
-            filenames = _music_last_filenames.get(i, None)
-            tight = _music_last_tight.get(i, False)
-
-            c.dequeue()
-            
-            if not filenames or c.get_playing() not in filenames:
-                c.fadeout(renpy.config.fade_music)
-
-            if filenames:
-                c.enqueue(filenames, loop=True, synchro_start=True, tight=tight)
-
-            c.music_last_changed = _music_last_changed.get(i, 0) 
-        
-    except:
-        if renpy.config.debug_sound:
-            raise
 
 # Music change logic:
 
