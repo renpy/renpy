@@ -55,7 +55,7 @@ extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
 extra_link_args = [ ]
 
 sdl_libraries = [ 'SDL' ]
-sound_libraries = [ "avcodec", "avformat", "avutil" ]
+sound_libraries = [ "avformat", "avcodec", "avutil", "z" ]
 
 
 # The following turn on optional modules.
