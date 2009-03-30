@@ -49,12 +49,11 @@ include_dirs = [ install + "/include",
 library_dirs = [ install + "/lib" ]
 
 # Fast math breaks on windows. :-(
-# extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
-extra_compile_args = [ "-O0", "-ggdb" ]
+extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
+# extra_compile_args = [ "-O0", "-ggdb" ]
 
 extra_link_args = [ ]
 
-png_libraries = [ 'png', "z" ]
 sdl_libraries = [ 'SDL' ]
 sound_libraries = [ "avcodec", "avformat", "avutil" ]
 
@@ -84,12 +83,12 @@ py_modules = [ 'pysdlsound.__init__' ]
 
 rpe = distutils.core.Extension(
     "_renpy",
-    [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
+    [ "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries + png_libraries,
+    libraries=sdl_libraries,
     )
 
 extensions.append(rpe)
