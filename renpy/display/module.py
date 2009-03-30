@@ -187,15 +187,9 @@ if version >= 5005000:
                          src, dst,
                          *endian_order(dst, rmap, gmap, bmap, amap))
 
-
-    save_png = _renpy.save_png
-
 else:
 
     can_linmap = False
-
-    def save_png(surf, file):
-        return
     
 
 if version >= 4008005:
