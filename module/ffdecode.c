@@ -40,7 +40,7 @@
 
 #undef exit
 
-//#define DEBUG_SYNC
+// #define DEBUG_SYNC
 
 #define MAX_VIDEOQ_SIZE (5 * 256 * 1024)
 #define MAX_AUDIOQ_SIZE (5 * 16 * 1024)
@@ -238,6 +238,7 @@ static int audio_sample_rate;
 /* ByteIOContext <-> SDL_RWops mapping. */
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
     SDL_RWops *rw = (SDL_RWops *) opaque;    
+
     int rv = rw->read(rw, buf, 1, buf_size);
     return rv;
 
@@ -252,6 +253,11 @@ static int rwops_write(void *opaque, uint8_t *buf, int buf_size) {
 
 static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
+
+    if (whence == 65536) {
+        return -1;
+    }
+
     int64_t rv = rw->seek(rw, (int) offset, whence);
     return rv;
 }
@@ -1188,7 +1194,6 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
             dst_pix_fmt, sws_flags, NULL, NULL, NULL);
         if (img_convert_ctx == NULL) {
             fprintf(stderr, "Cannot initialize the conversion context\n");
-            exit(1);
         }
         sws_scale(img_convert_ctx, src_frame->data, src_frame->linesize,
                   0, is->video_st->codec->height, pict.data, pict.linesize);
@@ -1857,8 +1862,8 @@ static int decode_thread(void *arg)
         goto fail;
     }
         
-    // err = av_open_input_file(&ic, "/home/tom/ab/renpy/testing/game/stellvia.avi", is->iformat, 0, ap);
-    
+    // err = av_open_input_file(&ic, "test.mkv", is->iformat, 0, ap);
+
     err = av_open_input_stream(
         &ic,
         is->io_context,
@@ -1881,6 +1886,7 @@ static int decode_thread(void *arg)
         ic->flags |= AVFMT_FLAG_GENPTS;
 
     err = av_find_stream_info(ic);
+
     if (err < 0) {
         fprintf(stderr, "could not find codec parameters\n");
         ret = -1;
@@ -1927,8 +1933,9 @@ static int decode_thread(void *arg)
             break;
         }
     }
+
     
-    if (show_status) {
+    if (show_status || 1) {
         dump_format(ic, 0, is->filename, 0);
         dump_stream_info(ic);
     }
@@ -2099,7 +2106,6 @@ fail:
 
 VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
 {
-
     VideoState *is;
 
     is = av_mallocz(sizeof(VideoState));

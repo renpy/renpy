@@ -49,8 +49,8 @@ include_dirs = [ install + "/include",
 library_dirs = [ install + "/lib" ]
 
 # Fast math breaks on windows. :-(
-extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
-# extra_compile_args = [ "-O0", "-ggdb" ]
+# extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
+extra_compile_args = [ "-O0", "-ggdb" ]
 
 extra_link_args = [ ]
 
