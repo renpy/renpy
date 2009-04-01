@@ -34,7 +34,7 @@ struct VideoState *ffpy_stream_open(SDL_RWops *, const char *);
 void ffpy_stream_close(struct VideoState *is);
 void ffpy_alloc_event(struct VideoState *vs, PyObject *surface);
 void ffpy_refresh_event(struct VideoState *vs);
-void ffpy_init(int rate);
+void ffpy_init(int rate, int status);
 int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len);
 
     
@@ -943,7 +943,7 @@ void PSS_set_pan(int channel, float pan, float delay) {
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void PSS_init(int freq, int stereo, int samples) {
+void PSS_init(int freq, int stereo, int samples, int status) {
 
     if (initialized) {
         return;
@@ -981,7 +981,7 @@ void PSS_init(int freq, int stereo, int samples) {
 
     SDL_PauseAudio(0);
     
-    ffpy_init(audio_spec.freq);
+    ffpy_init(audio_spec.freq, status);
 
     initialized = 1;
 

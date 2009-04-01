@@ -40,7 +40,7 @@ cdef extern from "pss.h":
     void PSS_set_volume(int channel, float volume)
     float PSS_get_volume(int channel)
     void PSS_set_pan(int channel, float left, float right)
-    void PSS_init(int freq, int stereo, int samples)
+    void PSS_init(int freq, int stereo, int samples, int status)
     void PSS_quit()
 
     void PSS_periodic()
@@ -137,8 +137,13 @@ def set_end_event(channel, event):
 def get_volume(channel):
     return PSS_get_volume(channel)
 
-def init(freq, stereo, samples):
-    PSS_init(freq, stereo, samples)
+def init(freq, stereo, samples, status=False):
+    if status:
+        status = 1
+    else:
+        status = 0
+
+    PSS_init(freq, stereo, samples, status)
     check_error()
 
 def quit():

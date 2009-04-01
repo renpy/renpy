@@ -963,6 +963,8 @@ static void video_refresh_timer(void *opaque)
 
     SubPicture *sp, *sp2;
 
+    double delay;
+    
     if (is->video_st) {
         if (is->pictq_size == 0) {
             /* if no picture, need to wait */
@@ -975,56 +977,60 @@ static void video_refresh_timer(void *opaque)
             is->video_current_pts = vp->pts;
             is->video_current_pts_time = av_gettime();
 
+            delay = compute_frame_delay(vp->pts, is);
+
             /* launch timer for next picture */
-            schedule_refresh(is, (int)(compute_frame_delay(vp->pts, is) * 1000 + 0.5));
+            schedule_refresh(is, (int)(delay * 1000 + 0.5));
 
-            if(is->subtitle_st) {
-                if (is->subtitle_stream_changed) {
-                    SDL_LockMutex(is->subpq_mutex);
+            /* if(is->subtitle_st) { */
+            /*     if (is->subtitle_stream_changed) { */
+            /*         SDL_LockMutex(is->subpq_mutex); */
 
-                    while (is->subpq_size) {
-                        free_subpicture(&is->subpq[is->subpq_rindex]);
+            /*         while (is->subpq_size) { */
+            /*             free_subpicture(&is->subpq[is->subpq_rindex]); */
 
-                        /* update queue size and signal for next picture */
-                        if (++is->subpq_rindex == SUBPICTURE_QUEUE_SIZE)
-                            is->subpq_rindex = 0;
+            /*             /\* update queue size and signal for next picture *\/ */
+            /*             if (++is->subpq_rindex == SUBPICTURE_QUEUE_SIZE) */
+            /*                 is->subpq_rindex = 0; */
 
-                        is->subpq_size--;
-                    }
-                    is->subtitle_stream_changed = 0;
+            /*             is->subpq_size--; */
+            /*         } */
+            /*         is->subtitle_stream_changed = 0; */
 
-                    SDL_CondSignal(is->subpq_cond);
-                    SDL_UnlockMutex(is->subpq_mutex);
-                } else {
-                    if (is->subpq_size > 0) {
-                        sp = &is->subpq[is->subpq_rindex];
+            /*         SDL_CondSignal(is->subpq_cond); */
+            /*         SDL_UnlockMutex(is->subpq_mutex); */
+            /*     } else { */
+            /*         if (is->subpq_size > 0) { */
+            /*             sp = &is->subpq[is->subpq_rindex]; */
 
-                        if (is->subpq_size > 1)
-                            sp2 = &is->subpq[(is->subpq_rindex + 1) % SUBPICTURE_QUEUE_SIZE];
-                        else
-                            sp2 = NULL;
+            /*             if (is->subpq_size > 1) */
+            /*                 sp2 = &is->subpq[(is->subpq_rindex + 1) % SUBPICTURE_QUEUE_SIZE]; */
+            /*             else */
+            /*                 sp2 = NULL; */
 
-                        if ((is->video_current_pts > (sp->pts + ((float) sp->sub.end_display_time / 1000)))
-                                || (sp2 && is->video_current_pts > (sp2->pts + ((float) sp2->sub.start_display_time / 1000))))
-                        {
-                            free_subpicture(sp);
+            /*             if ((is->video_current_pts > (sp->pts + ((float) sp->sub.end_display_time / 1000))) */
+            /*                     || (sp2 && is->video_current_pts > (sp2->pts + ((float) sp2->sub.start_display_time / 1000)))) */
+            /*             { */
+            /*                 free_subpicture(sp); */
 
-                            /* update queue size and signal for next picture */
-                            if (++is->subpq_rindex == SUBPICTURE_QUEUE_SIZE)
-                                is->subpq_rindex = 0;
+            /*                 /\* update queue size and signal for next picture *\/ */
+            /*                 if (++is->subpq_rindex == SUBPICTURE_QUEUE_SIZE) */
+            /*                     is->subpq_rindex = 0; */
 
-                            SDL_LockMutex(is->subpq_mutex);
-                            is->subpq_size--;
-                            SDL_CondSignal(is->subpq_cond);
-                            SDL_UnlockMutex(is->subpq_mutex);
-                        }
-                    }
-                }
-            }
+            /*                 SDL_LockMutex(is->subpq_mutex); */
+            /*                 is->subpq_size--; */
+            /*                 SDL_CondSignal(is->subpq_cond); */
+            /*                 SDL_UnlockMutex(is->subpq_mutex); */
+            /*             } */
+            /*         } */
+            /*     } */
+            /* } */
 
             /* display picture */
-            video_display(is);
-
+            if (delay > 0.010) {
+                video_display(is);
+            }
+                
             /* update queue size and signal for next picture */
             if (++is->pictq_rindex == VIDEO_PICTURE_QUEUE_SIZE)
                 is->pictq_rindex = 0;
@@ -1935,7 +1941,7 @@ static int decode_thread(void *arg)
     }
 
     
-    if (show_status || 1) {
+    if (show_status) {
         dump_format(ic, 0, is->filename, 0);
         dump_stream_info(ic);
     }
@@ -2183,13 +2189,16 @@ void ffpy_refresh_event(VideoState *vs) {
 int ffpy_did_init = 0;
 
 /* Called from the main */
-void ffpy_init(int rate) {
+void ffpy_init(int rate, int status) {
+
     if (ffpy_did_init) {
         return;
     }
 
     ffpy_did_init = 1;
 
+    show_status = status;
+    
     audio_sample_rate = rate;
     
     /* register all codecs, demux and protocols */
