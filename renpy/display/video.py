@@ -115,19 +115,23 @@ class Movie(renpy.display.core.Displayable):
             size = self.size = default_size
 
         if surface is None or surface.get_size() != size:
-            surface = pygame.Surface(size, 0, renpy.game.interface.display.sample_surface)
-
+            surface = pygame.Surface(size, 0, renpy.game.interface.display.window)
+            surface.fill((0, 0, 0, 255))
+            
+            
         width, height = size
         rv = renpy.display.render.Render(width, height)
 
-        if renpy.audio.music.get_playing("music"):
+        if renpy.audio.music.get_playing("movie"):
+            renpy.display.render.mutated_surface(surface)
             rv.blit(surface, (0, 0))
             
         return rv
             
     def event(self, ev, x, y, st):
+        
+
         if ev.type == renpy.audio.audio.REFRESH_EVENT:
-            renpy.display.render.mutated_surface(surface)
             renpy.display.render.redraw(self, 0)
 
     def per_interact(self):

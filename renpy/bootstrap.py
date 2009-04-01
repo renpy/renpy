@@ -42,7 +42,6 @@ def extra_imports():
     import platform
     import pysdlsound
     import pysdlsound.sound
-    import pysdlsound.nativemidi
     import pysdlsound.winmixer
     import pysdlsound.linmixer
     import difflib

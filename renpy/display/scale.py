@@ -458,15 +458,6 @@ else:
 
     if _renpy is not None:
 
-        old_save_png = _renpy.save_png
-        
-        def save_png(surf, dest, compress=-1):
-            surf = old_transform_scale(surf.surface, surf.get_size())
-            old_save_png(surf, dest, compress=compress)
-
-        _renpy.save_png = save_png
-
-
         old_pixellate = _renpy.pixellate
 
         def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):

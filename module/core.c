@@ -1,6 +1,5 @@
 #include "renpy.h"
 #include <pygame/pygame.h>
-#include "IMG_savepng.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -19,15 +18,6 @@
 void core_init() {
     import_pygame_base();
     import_pygame_surface();
-}
-
-void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
-    SDL_Surface *surf;
-    
-    surf = PySurface_AsSurface(pysurf);
-
-    /* Can't release GIL, since we're not using threaded RWops. */
-    IMG_SavePNG_RW(rw, surf, compress);
 }
 
 

@@ -115,6 +115,12 @@ def munge_filename(fn):
     rv = os.path.basename(fn)
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
+
+    def munge_char(m):
+        return hex(ord(m.group(0)))
+
+    rv = re.sub(r'[^a-zA-Z0-9_]', munge_char, rv)
+
     return "_m1_" + rv + "__"
 
 def list_logical_lines(filename):
