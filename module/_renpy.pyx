@@ -29,6 +29,8 @@ cdef extern from "renpy.h":
 
     void core_init()
 
+    void save_png_core(object, SDL_RWops *, int)
+    
     void pixellate32_core(object, object, int, int, int, int)
     void pixellate24_core(object, object, int, int, int, int)
 
@@ -97,12 +99,13 @@ def version():
     return 6009000
 
 def save_png(surf, file, compress=-1):
-    """Superceded in modern versions of pygame, but kept so that older
-    games don't crash."""
 
-    return
+    if not isinstance(surf, PygameSurface):
+        raise Exception("save_png requires a pygame Surface as its first argument.")
 
+    save_png_core(surf, RWopsFromPython(file), compress)
 
+    
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
     if not isinstance(pysrc, PygameSurface):

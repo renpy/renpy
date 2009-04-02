@@ -56,7 +56,7 @@ extra_link_args = [ ]
 
 sdl_libraries = [ 'SDL' ]
 sound_libraries = [ "avformat", "avcodec", "avutil", "z" ]
-
+png_libraries = [ 'png', "z" ]
 
 # The following turn on optional modules.
 winmixer = None
@@ -83,12 +83,12 @@ py_modules = [ 'pysdlsound.__init__' ]
 
 rpe = distutils.core.Extension(
     "_renpy",
-    [ "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
+    [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries,
+    libraries=sdl_libraries + png_libraries,
     )
 
 extensions.append(rpe)

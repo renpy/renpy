@@ -160,7 +160,7 @@ def save(filename, extra_info='',
     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
 
     # Screenshot.
-    zf.writestr("screenshot.tga", renpy.game.interface.get_screenshot())
+    zf.writestr("screenshot.png", renpy.game.interface.get_screenshot())
 
     # Extra info.
     zf.writestr("extra_info", extra_info.encode("utf-8"))
@@ -180,15 +180,25 @@ def scan_saved_game(name):
     
         zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
 
-        # Fail early if screenshot.tga doesn't exist.
-        zf.getinfo('screenshot.tga')
-        
+        try:
+            png = False
+            zf.getinfo('screenshot.tga')
+        except:
+            png = True
+            zf.getinfo('screenshot.png')
+            
+            
         extra_info = zf.read("extra_info").decode("utf-8")
         zf.close()
        
         mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
-        screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.tga", mtime)
-        
+
+        if png:
+            screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.png", mtime)
+        else:
+            screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.tga", mtime)
+            
+            
         return extra_info, screenshot, mtime
     except:
         return None

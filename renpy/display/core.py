@@ -1007,7 +1007,7 @@ class Display(object):
         surf = renpy.display.module.scale(self.window, scale)
         
         sio = cStringIO.StringIO()
-        pygame.image.save(surf, sio)
+        renpy.display.module.save_png(surf, sio, 0)
         rv = sio.getvalue()
         sio.close()
         
