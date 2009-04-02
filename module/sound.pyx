@@ -39,7 +39,8 @@ cdef extern from "pss.h":
     void PSS_set_endevent(int channel, int event)
     void PSS_set_volume(int channel, float volume)
     float PSS_get_volume(int channel)
-    void PSS_set_pan(int channel, float left, float right)
+    void PSS_set_pan(int channel, float pan, float delay)
+    void PSS_set_secondary_volume(int channel, float vol2, float delay)
     void PSS_init(int freq, int stereo, int samples, int status)
     void PSS_quit()
 
@@ -128,6 +129,10 @@ def set_volume(channel, volume):
 
 def set_pan(channel, pan, delay):
     PSS_set_pan(channel, pan, delay)
+    check_error()
+
+def set_secondary_volume(channel, volume, delay):
+    PSS_set_secondary_volume(channel, volume, delay)
     check_error()
 
 def set_end_event(channel, event):

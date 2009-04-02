@@ -145,6 +145,12 @@ class MusicContext(renpy.python.RevertableObject):
         # The pan this channel was ordered to.
         self.pan = 0
 
+        # The time the secondary volume was last ordered changed.
+        self.secondary_volume_time = None
+        
+        # The secondary volume.
+        self.secondary_volume = 1.0
+        
         # The time the channel was ordered last changed.
         self.last_changed = 0
 
@@ -171,7 +177,6 @@ class Channel(object):
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
         self.name = name
-
         
         # The number this channel has been assigned, or None if we've yet
         # to assign a number to the channel. We only assign a channel
@@ -218,9 +223,8 @@ class Channel(object):
         # The time this channel was last panned.
         self.pan_time = None
 
-        # The delay the next pan should have.
-        self.pan_delay = 0
-
+        # The time the secondary volume of this channel was last set.
+        self.secondary_volume_time = None
 
         if default_loop is None:
             # By default, should we loop the music?
@@ -385,7 +389,14 @@ class Channel(object):
                 self.pan_time = self.context.pan_time
                 pss.set_pan(self.number,
                             self.context.pan,
-                            self.pan_delay)
+                            0)
+
+
+            if self.secondary_volume_time != self.context.secondary_volume_time:
+                self.secondary_volume_time = self.context.secondary_volume_time
+                pss.set_secondary_volume(self.number,
+                                         self.context.secondary_volume,
+                                         0)
                 
         self.pan_delay = 0
             
@@ -451,16 +462,22 @@ class Channel(object):
         return pss.get_pos(self.number)
 
     def set_pan(self, pan, delay):
-        now = time.time()
+        now = get_serial()
         self.context.pan_time = now
         self.context.pan = pan
 
         if pcm_ok:
-            self.pan_delay = delay
-            self.pan_time = _pan_time.get(self.number)
-            pss.set_pan(self.number, _pan.get(self.number, 0.0), self.pan_delay)
+            self.pan_time = self.context.pan_time
+            pss.set_pan(self.number, self.context.pan, delay)
 
-        
+    def set_secondary_volume(self, volume, delay):
+        now = get_serial()
+        self.context.secondary_volume_time = now
+        self.context.secondary_volume = volume
+
+        if pcm_ok:
+            self.secondary_volume_time = self.context.secondary_volume_time
+            pss.set_secondary_volume(self.number, self.context.secondary_volume, delay)
 
 # A list of channels we know about.
 all_channels = [ ]
@@ -470,6 +487,7 @@ channels = { }
 
 def register_channel(name, mixer=None, loop=True):
     c = Channel(name, loop)
+    c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
 
@@ -477,7 +495,6 @@ def register_channel(name, mixer=None, loop=True):
 def alias_channel(name, newname):
     c = get_channel(name)
     channels[newname] = c
-
     
 def get_channel(name):
 
@@ -486,7 +503,6 @@ def get_channel(name):
         raise Exception("Audio channel %r is unknown." % name)
         
     return rv
-
 
 def init():
 

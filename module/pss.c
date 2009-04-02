@@ -163,6 +163,14 @@ struct Channel {
 
     /* The number of samples we've finished in the current pan. */
     unsigned int pan_done;
+
+
+    /* These are used like in pan, above. Unlike the volume parameter,
+       the voulme set here is persisted between sessions. */
+    float vol2_start;
+    float vol2_end;
+    unsigned int vol2_length;
+    unsigned int vol2_done;
 };
 
 /*
@@ -183,7 +191,7 @@ SDL_AudioSpec audio_spec;
 
 static float interpolate_pan(struct Channel *c) {
     float done;
-    
+
     if (c->pan_done > c->pan_length) {
         c->pan_length = 0;
     }
@@ -196,6 +204,22 @@ static float interpolate_pan(struct Channel *c) {
 
     return c->pan_start + done * (c->pan_end - c->pan_start);
     
+}
+
+static float interpolate_vol2(struct Channel *c) {
+    float done;
+
+    if (c->vol2_done > c->vol2_length) {
+        c->vol2_length = 0;
+    }
+
+    if (c->vol2_length == 0) {
+        return c->vol2_end;
+    }
+
+    done = 1.0 * c->vol2_done / c->vol2_length;
+
+    return c->vol2_start + done * (c->vol2_end - c->vol2_start);
 }
 
 static int ms_to_bytes(int ms) {
@@ -313,12 +337,14 @@ static void post_event(struct Channel *c) {
     SDL_PushEvent(&e);
 }
 
+/* This handels panning and vol2 manipulations. */
 static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
     int i;
     short *sample = (short *) stream;
     length /= 4;
 
     float pan;
+    float vol2;
     int left = 256;
     int right = 256;
     
@@ -327,20 +353,25 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 
         if ((i & 0x1f) == 0) {
             pan = interpolate_pan(c);
-
-            // If the pan is even, skip 32 samples and call it a day.
-            if (pan == 0.0) {
+            vol2 = interpolate_vol2(c);
+            
+            // If nothing to do, skip 32 samples.
+            if (pan == 0.0 && vol2 == 1.0) {
                 i += 31;
                 c->pan_done += 32;
+                c->vol2_done += 32;
+                sample += 32 * 2;
                 continue;
             }
 
+            vol2 *= 256.0;
+
             if (pan < 0) {
-                left = 256;
-                right = (int) (256 * (1.0 + pan));
+                left = (int) vol2;
+                right = (int) (vol2 * (1.0 + pan));
             } else {
-                left = (int) (256 * (1.0 - pan));
-                right = 256;
+                left = (int) (vol2 * (1.0 - pan));
+                right = (int) vol2;
             }
         }
 
@@ -351,6 +382,7 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
         sample++;
 
         c->pan_done += 1;
+        c->vol2_done += 1;
     }
     
 }
@@ -387,7 +419,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                     bytes = min(c->stop_bytes, bytes);
                 
                 pan_audio(c, buffer, bytes);
-                
                 fade_mixaudio(c, &stream[mixed], buffer, bytes);
 
                 mixed += bytes;
@@ -463,11 +494,14 @@ static int check_channel(int c) {
             channels[i].pan_end = 0.0;
             channels[i].pan_length = 0;
             channels[i].pan_done = 0;
+            channels[i].vol2_start = 1.0;
+            channels[i].vol2_end = 1.0;
+            channels[i].vol2_length = 0;
+            channels[i].vol2_done = 0;
         }
 
         num_channels = c + 1;
     }
-
     
     return 0;
 }
@@ -932,6 +966,31 @@ void PSS_set_pan(int channel, float pan, float delay) {
     c->pan_end = pan;
     c->pan_length = (int) (audio_spec.freq * delay);
     c->pan_done = 0;
+    
+    EXIT();
+    
+    error(SUCCESS);    
+}
+
+/*
+ * This sets the secondary volume of the channel.
+ */
+void PSS_set_secondary_volume(int channel, float vol2, float delay) {
+    struct Channel *c;
+    BEGIN();
+    
+    if (check_channel(channel)) {
+        return;
+    }
+
+    c = &channels[channel];
+
+    ENTER();
+
+    c->vol2_start = interpolate_vol2(c);
+    c->vol2_end = vol2;
+    c->vol2_length = (int) (audio_spec.freq * delay);
+    c->vol2_done = 0;
     
     EXIT();
     
