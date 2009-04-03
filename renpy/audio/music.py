@@ -74,6 +74,9 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         c = get_channel(channel)
         ctx = c.context
         
+        if loop is None:
+            loop = c.default_loop
+
         c.dequeue()
 
         if fadeout is None:
@@ -90,9 +93,6 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         ctx.last_changed = t
         c.last_changed = t
 
-        if loop is None:
-            loop = c.default_loop
-        
         if loop:
             ctx.last_filenames = filenames            
             ctx.last_tight = tight            
@@ -141,6 +141,9 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         c = get_channel(channel)
         ctx = c.context
         
+        if loop is None:
+            loop = c.default_loop
+        
         if clear_queue:
             c.dequeue(True)
 
@@ -150,9 +153,6 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         ctx.last_changed = t
         c.last_changed = t
 
-        if loop is None:
-            loop = c.default_loop
-        
         if loop:
             ctx.last_filenames = filenames
             ctx.last_tight = tight
@@ -206,7 +206,7 @@ def set_music(channel, flag, default=False):
     if default and c.default_loop_set:
         return
 
-    c.default_loop = Flag
+    c.default_loop = flag
     c.default_loop_set = True
     
 def get_delay(time, channel="music"):

@@ -229,7 +229,6 @@ class Channel(object):
         if default_loop is None:
             # By default, should we loop the music?
             self.default_loop = True
-
             # Was this set explicitly?
             self.default_loop_set = False
 
@@ -351,14 +350,14 @@ class Channel(object):
                 else:
                     return
 
-            if self.loop and not self.queue:
-                for i in self.loop:
-                    newq = QueueEntry(i, 0, topq.tight)                    
-                    self.queue.append(newq)
-            else:
-                do_callback = True
-
             break
+
+        if self.loop and not self.queue:
+            for i in self.loop:
+                newq = QueueEntry(i, 0, topq.tight)                    
+                self.queue.append(newq)
+        else:
+            do_callback = True
                 
         # Queue empty callback.
         if do_callback and self.callback:
@@ -435,7 +434,7 @@ class Channel(object):
 
             # Only fade the first thing in.
             fadein = 0
-            
+
         if loop:
             self.loop = list(filenames)
         else:
@@ -485,7 +484,7 @@ all_channels = [ ]
 # A map from channel name to Channel object.
 channels = { }
 
-def register_channel(name, mixer=None, loop=True):
+def register_channel(name, mixer=None, loop=None):
     c = Channel(name, loop)
     c.mixer = mixer
     all_channels.append(c)

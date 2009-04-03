@@ -214,8 +214,10 @@ def saybehavior(*args, **kwargs):
     return add(renpy.display.behavior.SayBehavior(*args, **kwargs))
 
 def pausebehavior(delay, result=False):
-
     return add(renpy.display.behavior.PauseBehavior(delay, result))
+
+def soundstopbehavior(channel, result=False):
+    return add(renpy.display.behavior.SoundStopBehavior(channel, result))
 
 def menu(menuitems,
          style = 'menu',

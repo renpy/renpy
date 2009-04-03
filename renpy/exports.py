@@ -609,18 +609,14 @@ def movie_cutscene(filename, delay=None, loops=0):
     Returns True if the movie was terminated by the user, or False if the
     given delay elapsed uninterrupted.
     """
-
+    
     movie_start_fullscreen(filename, loops=loops)
 
     renpy.ui.saybehavior()
 
-    if delay is None:
-        if loops < 0:
-            delay = -1
-        else:
-            delay = renpy.display.video.movie_length(filename) * (loops + 1)
-
-    if delay >= 0:
+    if delay is None or delay < 0:
+        renpy.ui.soundstopbehavior("movie")
+    else:
         renpy.ui.pausebehavior(delay, False)
 
     if renpy.game.log.forward:

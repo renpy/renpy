@@ -224,6 +224,27 @@ class PauseBehavior(renpy.display.layout.Null):
 
         renpy.game.interface.timeout(self.delay - st)
 
+class SoundStopBehavior(renpy.display.layout.Null):
+    """
+    This is a class implementing the sound stop behavior,
+    which is to return False when a sound is no longer playing
+    on the named channel.
+    """
+
+    def __init__(self, channel, result=False):
+        super(SoundStopBehavior, self).__init__()
+
+        self.channel = channel
+        self.result = result 
+
+
+    def event(self, ev, x, y, st):
+
+        if not renpy.display.music.get_playing(self.channel):
+            return self.result
+
+        renpy.game.interface.timeout(.025)
+
 class SayBehavior(renpy.display.layout.Null):
     """
     This is a class that implements the say behavior,
@@ -305,6 +326,7 @@ class SayBehavior(renpy.display.layout.Null):
                 return True
             
         return None
+
     
 class Button(renpy.display.layout.Window):
 
