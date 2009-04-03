@@ -591,7 +591,7 @@ def pause(delay=None, music=None, with_none=None, hard=False):
     return rv
 
 
-def movie_cutscene(filename, delay=None, loops=0):
+def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
     This displays an MPEG-1 cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
@@ -609,9 +609,12 @@ def movie_cutscene(filename, delay=None, loops=0):
     Returns True if the movie was terminated by the user, or False if the
     given delay elapsed uninterrupted.
     """
+
+    if stop_music:
+        renpy.audio.audio.set_force_stop("music", True)
     
     movie_start_fullscreen(filename, loops=loops)
-
+    
     renpy.ui.saybehavior()
 
     if delay is None or delay < 0:
@@ -629,10 +632,13 @@ def movie_cutscene(filename, delay=None, loops=0):
                            show_mouse=False,
                            roll_forward=roll_forward)
 
-    # We don't want to put a checkpoint here, as we can't roll back from
-    # here.
-    
+    # We don't want to put a checkpoint here, as we can't roll back while
+    # playing a cutscene.
+
     movie_stop()
+
+    if stop_music:
+        renpy.audio.audio.set_force_stop("music", False)
 
     return rv
         

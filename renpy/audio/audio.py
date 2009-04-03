@@ -135,6 +135,8 @@ class MusicContext(renpy.python.RevertableObject):
     the values get reverted as well.
     """
 
+    force_stop = False
+    
     __version__ = 0
 
     def __init__(self):
@@ -160,7 +162,8 @@ class MusicContext(renpy.python.RevertableObject):
         # What were the filenames we were ordered to loop last?
         self.last_filenames = [ ]
 
-        
+        # Should we force stop this channel?
+        self.force_stop = False
         
 
         
@@ -278,7 +281,7 @@ class Channel(object):
 
         # This should be set from something that checks to see if our
         # mixer is muted.
-        force_stop = renpy.game.preferences.mute[self.mixer]
+        force_stop = self.context.force_stop or renpy.game.preferences.mute[self.mixer] 
 
         if self.playing and force_stop:
 
@@ -484,12 +487,12 @@ all_channels = [ ]
 # A map from channel name to Channel object.
 channels = { }
 
+
 def register_channel(name, mixer=None, loop=None):
     c = Channel(name, loop)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
-
     
 def alias_channel(name, newname):
     c = get_channel(name)
@@ -502,6 +505,9 @@ def get_channel(name):
         raise Exception("Audio channel %r is unknown." % name)
         
     return rv
+
+def set_force_stop(name, value):
+    get_channel(name).context.force_stop = value
 
 def init():
 

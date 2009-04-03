@@ -61,8 +61,8 @@ def movie_start(filename, size=None, loops=0):
         loop = True
     else:
         loop = False
-        filename = filename * loops
-    
+        filename = filename * (loops + 1)
+
     renpy.audio.music.play(filename, channel='movie', loop=loop)
         
 movie_start_fullscreen = movie_start

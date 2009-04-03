@@ -239,8 +239,8 @@ class SoundStopBehavior(renpy.display.layout.Null):
 
 
     def event(self, ev, x, y, st):
-
-        if not renpy.display.music.get_playing(self.channel):
+        
+        if not renpy.audio.music.get_playing(self.channel):
             return self.result
 
         renpy.game.interface.timeout(.025)

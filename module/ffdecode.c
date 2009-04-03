@@ -2044,7 +2044,7 @@ static int decode_thread(void *arg)
             // Treat errors like end of stream.
             goto eof;
         }
-        
+
         if (pkt->stream_index == is->audio_stream) {
             packet_queue_put(&is->audioq, pkt);
         } else if (pkt->stream_index == is->video_stream) {
@@ -2066,7 +2066,7 @@ eof:
         SDL_CondSignal(is->audioq.cond);
         SDL_UnlockMutex(is->audioq.mutex);
     }
-    
+
     /* wait until we're notified it's safe to abort. */
     SDL_LockMutex(is->quit_mutex);
     while (!is->abort_request) {
@@ -2105,7 +2105,6 @@ fail:
     av_free(is->io_context->buffer);
     av_free(is->io_context);
     rwops_close(is->rwops);
-
     
     return 0;
 }
