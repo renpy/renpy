@@ -44,6 +44,8 @@ label main_menu_screen:
                 if isinstance(act, basestring):
                     act = ui.jumpsoutofcontext(act)
                 act()
+
+                break
         else:
             ui.jumpsoutofcontext(rv)()
 

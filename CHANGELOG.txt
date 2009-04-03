@@ -1,6 +1,29 @@
 New in Ren'Py 6.9.1
 -------------------
 
+The music and video playback code has been completely rewritten. The
+new implementation uses the ffmpeg library. It includes the following
+features:
+
+* Support for ogg, mp3, mp2, wav, and flac audio.
+
+* Support for theora, mpeg4 part 2 (including DivX and Xvid), mpeg2,
+  and mpeg1 video.
+
+* Support for an arbitrary number of named channels, replacing the
+  previous eight numbered channels.
+
+* The play, queue, and stop statements now take a channel name as the
+  second argument, which makes using user-defined channels easier. 
+
+* Audio files are now automatically converted to the output sampling
+  rate (by default, 44100hz). This prevents the problems that would
+  previously crop up when playing audio sampled at other rates.
+
+As part of this rewrite, we have eliminated support for mod formats,
+as they are not supported by ffmpeg.
+
+
 The Motion (including Move and Pan), Zoom, RotoZoom, and FactorZoom
 displayables now use the style.motion style, which now has xanchor and
 yanchor both set to 0. This gives these movements the same semantics
@@ -10,6 +33,18 @@ when used inside an image clause as they have outside one.
 im.Grayscale and im.Sepia now take properties, so they can be
 positioned.
 
+
+Improved the render management code, so there should no longer be any
+leaks reported during shutdown.
+
+
+Fixed a bug that caused layout.imagemap_main_menu to call a label even
+though there was a button with the same name.
+
+Fixed a bug that prevented Zoom from working in non-bilinear mode.
+
+Fixed a bug that could cause buttons not not consume events when using
+an imagemap main menu.
 
 Fixed a bug that caused Transform to produce an incorrectly-sized
 render.
