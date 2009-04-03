@@ -49,6 +49,12 @@ an imagemap main menu.
 Fixed a bug that caused Transform to produce an incorrectly-sized
 render.
 
+Fixed a bug that could cause crashing when rolling back to a Zoom with
+an after_child.
+
+Fixed a bug that could cause segfaults when saving overly-complicated
+images.
+
 
 New in Ren'Py 6.9.0
 -------------------

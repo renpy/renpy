@@ -638,7 +638,6 @@ class Zoom(renpy.display.core.Displayable):
         self.done = done
 
         if self.after_child and done == 1.0:
-            self.child = self.after_child
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
         if self.time_warp:
@@ -780,7 +779,6 @@ class FactorZoom(renpy.display.core.Displayable):
         self.done = done
             
         if self.after_child and done == 1.0:
-            self.child = self.after_child
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
         if self.time_warp:
@@ -866,7 +864,6 @@ class SizeZoom(renpy.display.core.Displayable):
         self.done = done
             
         if self.after_child and done == 1.0:
-            self.child = self.after_child
             return renpy.display.render.render(self.after_child, width, height, st, at)
 
         if self.time_warp:
