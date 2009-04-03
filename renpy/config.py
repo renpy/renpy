@@ -164,7 +164,7 @@ keymap = dict(
     # disabled.
     rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
     screenshot = [ 's' ],
-    toggle_fullscreen = [ 'f' ],
+    toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
     hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
@@ -173,7 +173,7 @@ keymap = dict(
     reload_game = [ 'R' ],
     inspector = [ 'I' ],
     developer = [ 'D' ],
-    quit = [ 'meta_q', 'alt_K_F4' ],
+    quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
     iconify = [ 'meta_m', 'alt_m' ],
     help = [ 'K_F1', 'meta_shift_/' ],
     
