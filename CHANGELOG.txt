@@ -54,6 +54,10 @@ Improved the render management code, so there should no longer be any
 leaks reported during shutdown.
 
 
+Deal with the case where a bmfont has a negative offset for the first
+character in a string.
+
+
 Fixed a bug that caused layout.imagemap_main_menu to call a label even
 though there was a button with the same name.
 

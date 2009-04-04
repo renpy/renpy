@@ -80,7 +80,10 @@ class ImageFont(object):
         if not text:
             return surf
 
-        x = 0
+        # Compensate for the offset of the first character, when determining
+        # the initial position.
+        xoff, yoff =  self.offsets[text[0]]
+        x = -xoff
         y = 0
         
         for a, b in zip(text, text[1:]):
