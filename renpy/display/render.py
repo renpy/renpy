@@ -65,7 +65,7 @@ def free_memory():
     global screen_render
     global old_parentless
     global new_parentless
-    
+
     if screen_render:
         screen_render.refcount -= 1
         screen_render.kill()
@@ -81,7 +81,8 @@ def free_memory():
     new_parentless = set()
         
     render_cache.clear()
-    
+
+
 def check_at_shutdown():
     """
     This is called at shutdown time to check that everything went okay.
@@ -94,8 +95,7 @@ def check_at_shutdown():
     free_memory()
     if render_count != 0:
         raise Exception("Render count is %d at shutdown. This probably indicates a memory leak bug in Ren'Py." % render_count)
-    
-    
+        
 def render(d, width, height, st, at):
     """
     Causes the displayable `d` to be rendered in an area of size
@@ -790,7 +790,7 @@ class Render(object):
 
         global render_count
         render_count += 1
-        
+
         self.width = width
         self.height = height
 
@@ -876,6 +876,9 @@ class Render(object):
         This will only blit on integer pixel boundaries.
         """
 
+        if source is self:
+            raise Exception("Blitting to self.")
+        
         xo = int(xo)
         yo = int(yo)
         
@@ -990,6 +993,9 @@ class Render(object):
         a surface, and then blit that surface into another render.
         """
 
+        if source is self:
+            raise Exception("Render depends on itself.")
+        
         if source not in self.depends_on_set:
             self.depends_on_set.add(source)
             source.depends_on_us.add(self)
@@ -999,7 +1005,8 @@ class Render(object):
             self.pass_focuses.append(source)
 
         new_parentless.discard(source)
-            
+
+        
     def kill_cache(self):
         """
         Removes this render and its transitive parents from the cache.
@@ -1038,15 +1045,15 @@ class Render(object):
             return
         
         self.dead = True
-
+            
         global render_count
         render_count -= 1
-        
+
         for c, xo, yo, focus, main in self.children:
 
             if not isinstance(c, Render):
                 continue
-
+            
             # We could be added to c.parents twice, but we'll only show
             # up once. (But twice in the refcount.) 
             c.parents.discard(self)
@@ -1077,8 +1084,9 @@ class Render(object):
         this focus is assumed to be the singular full-screen focus.
         """
 
-        if mask is not None:
-            self.depends_on(mask)        
+        if mask is not None and mask is not self:
+            self.depends_on(mask)
+            
         self.focuses.append((d, arg, x, y, w, h, mx, my, mask))
 
     def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
@@ -1314,7 +1322,7 @@ class Render(object):
         self.blit(surf, (0, 0))
 
         return Canvas(surf)
-    
+
         
 class Canvas(object):
 

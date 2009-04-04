@@ -10,6 +10,8 @@ init:
 
 label demo_nvlmode:
 
+    window hide
+    
     nvl clear
     nvl show dissolve
 
@@ -72,6 +74,7 @@ label demo_nvlmode:
     $ menu = renpy.display_menu
 
     nvl hide dissolve
+    window show
     
     return
         

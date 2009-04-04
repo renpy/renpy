@@ -223,6 +223,8 @@ label demo_minigame:
 
     e "Now, why don't we play some pong?"
 
+    window hide None
+    
 label demo_minigame_pong:
 
     # Put up the pong background, in the usual fashion.
@@ -232,11 +234,13 @@ label demo_minigame_pong:
     python:
         ui.add(PongDisplayable())
         winner = ui.interact(suppress_overlay=True, suppress_underlay=True)
-
     
     scene bg washington
     show eileen vhappy
-        
+
+    window show None
+
+    
     if winner == "eileen":
     
         e "I win!"

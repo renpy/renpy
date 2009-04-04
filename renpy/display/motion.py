@@ -84,6 +84,9 @@ class Transform(Container):
         # Rotation first.
         if self.rotate is not None:
 
+            cw = width
+            ch = height
+            
             width = height = math.hypot(cw, ch)
             angle = -self.rotate * math.pi / 180
         

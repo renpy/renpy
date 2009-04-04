@@ -78,7 +78,11 @@ init -1100 python:
             return s
     
     def nvl_show_core():
+        print "NVL Show"
+        import inspect
+        print inspect.stack()
 
+        
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
             nvl_vbox = __s(style.nvl_vbox)['rollback']
@@ -214,7 +218,6 @@ init -1100 python:
         kind=adv)
                 
     def nvl_clear():
-
         store.nvl_list = [ ]
 
     # Run clear at the start of the game.
@@ -225,6 +228,10 @@ init -1100 python:
         if nvl_list is None:
             store.nvl_list = [ ]
 
+        ui.layer("transient")
+        ui.clear()
+        ui.close()
+            
         ui.window(style=__s(style.nvl_window))
         ui.vbox(style=__s(style.nvl_vbox))
 
