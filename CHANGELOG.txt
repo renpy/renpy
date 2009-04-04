@@ -35,6 +35,10 @@ used, rather than forcing them to be transparent to allow the
 navigation to show through.
 
 
+The define.move_transitions function can now pass keyword arguments to
+the moves it creates. The most useful thing with this is to pass
+subpixel=True, in order to create subpixel move transitions.
+
 
 The Motion (including Move and Pan), Zoom, RotoZoom, and FactorZoom
 displayables now use the style.motion style, which now has xanchor and

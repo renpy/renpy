@@ -62,69 +62,69 @@ init -1110 python:
         return .5 - math.cos(math.pi * x) / 2.0
 
     # This defines a family of move transitions.
-    def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ]):
+    def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
         moves = {
             "" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs)),
 
             "inright" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp, **kwargs)),
 
             "inleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp, **kwargs)),
 
             "intop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp, **kwargs)),
 
             "inbottom" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
+                enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp, **kwargs)),
 
             "outright" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp, **kwargs)),
 
             "outleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp, **kwargs)),
 
             "outtop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp, **kwargs)),
 
             "outbottom" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp), 
-                leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp)),
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
             }
 
         for k, v in moves.iteritems():
