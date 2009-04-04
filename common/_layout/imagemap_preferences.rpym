@@ -39,9 +39,8 @@ init python:
 
     def __show_preferences():
 
-        layout.navigation("prefs")
-        
         ime = _ImageMapper(
+            "prefs",
             config.preferences_ground,
             config.preferences_idle,
             config.preferences_hover,

@@ -17,9 +17,8 @@ init python hide:
     def yesno_prompt(screen, message):
         renpy.transition(config.intra_transition)
 
-        layout.navigation(screen)
-
         ime = _ImageMapper(
+            screen,
             config.yesno_prompt_ground,
             config.yesno_prompt_idle,
             config.yesno_prompt_hover,

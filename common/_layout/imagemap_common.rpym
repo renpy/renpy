@@ -2,7 +2,7 @@ init python:
     
     class _ImageMapper(object):
 
-        def __init__(self, ground, idle, hover, selected_idle, selected_hover, hotspots):
+        def __init__(self, screen, ground, idle, hover, selected_idle, selected_hover, hotspots):
 
             self.idle = idle
             self.hover = hover
@@ -13,10 +13,29 @@ init python:
             for (x1, y1, x2, y2, name) in hotspots:
                 self.hotspots[name] = (x1, y1, x2, y2)
 
+            # Display the layout navigation only if there are no
+            # game menu buttons defined. 
+            for i in config.game_menu:
+                if i[1] in self.hotspots:
+                    break
+            else:
+                layout.navigation(screen)
+                
             ui.fixed(style='imagemap')
             ui.image(ground)
             
+            # Display any navigation buttons that exist.
+            for e in config.game_menu:
+                screen_ = e[0]
+                name = e[1]
+                act = e[2]
+                enable = e[3]
 
+                if not eval(enable):
+                    continue
+
+                self.button(name, act, screen == screen_)
+                
         def button(self, name, clicked, selected):
 
             if name not in self.hotspots:
@@ -32,8 +51,8 @@ init python:
                 hover = self.selected_hover
             else:
                 idle = self.idle
-                hover = self.selected_hover
-
+                hover = self.hover
+                
             ui.imagebutton(
                 LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), idle),
                 LiveCrop((x1, y1, (x2 - x1), (y2 - y1)), hover),

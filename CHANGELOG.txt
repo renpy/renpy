@@ -23,6 +23,18 @@ features:
 As part of this rewrite, we have eliminated support for mod formats,
 as they are not supported by ffmpeg.
 
+Please read the reference manual documentation for Audio and Movies to
+learn the new interface.
+
+
+Hotspots for the game menu buttons can be defined as part of
+layout.imagemap_load_save, layout.imagemap_preferences, and
+layout.imagemap_yesno_prompt. Doing so prevents layout.navigation from
+being called for that screen. It also allows opaque imagemaps to be
+used, rather than forcing them to be transparent to allow the
+navigation to show through.
+
+
 
 The Motion (including Move and Pan), Zoom, RotoZoom, and FactorZoom
 displayables now use the style.motion style, which now has xanchor and

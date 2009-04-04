@@ -233,10 +233,8 @@ init python:
 
             __scratch.file_picker_page = fpp
 
-            # Show navigation
-            layout.navigation(screen)
-
             ime = _ImageMapper(
+                screen,
                 config.load_save_ground,
                 config.load_save_idle,
                 config.load_save_hover,

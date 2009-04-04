@@ -39,7 +39,7 @@ def movie_stop(clear=True):
     """
     Stops the currently playing movie.
     """
-    
+
     renpy.audio.music.stop(channel='movie')
 
 def movie_start(filename, size=None, loops=0):
