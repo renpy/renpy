@@ -164,7 +164,6 @@ python early hide:
         
         renpy.music.queue(eval(p["file"]), channel=channel)
 
-
     renpy.statements.register('queue music',
                               parse=parse_queue_music,
                               execute=execute_queue_music,
@@ -254,6 +253,75 @@ python early hide:
                               parse=parse_stop_music,
                               execute=execute_stop_sound)
 
+
+    # Generic play/queue/stop statements. These take a channel name as
+    # the second thing.
+
+    def parse_play_generic(l, parse_play_music=parse_play_music):
+        channel = l.name()
+
+        if channel is None:
+            renpy.error('play requires a channel')
+
+        rv = parse_play_music(l)
+        if rv["channel"] is None:
+            rv["channel"] = repr(channel)
+
+        return rv
+
+    def parse_queue_generic(l, parse_queue_music=parse_queue_music):
+        channel = l.name()
+
+        if channel is None:
+            renpy.error('queue requires a channel')
+
+        rv = parse_queue_music(l)
+        if rv["channel"] is None:
+            rv["channel"] = repr(channel)
+
+        return rv
+
+    def parse_stop_generic(l, parse_stop_music=parse_stop_music):
+        channel = l.name()
+
+        if channel is None:
+            renpy.error('stop requires a channel')
+
+        rv = parse_stop_music(l)
+        if rv["channel"] is None:
+            rv["channel"] = repr(channel)
+
+        return rv
+
+    def lint_play_generic(p, lint_play_music=lint_play_music):
+        channel = eval(p["channel"])
+        
+        if not renpy.music.channel_defined(channel):
+            renpy.error("channel %r is not defined" % channel)
+
+        lint_play_music(p)
+
+    def lint_stop_generic(p):
+        channel = eval(p["channel"])
+        
+        if not renpy.music.channel_defined(channel):
+            renpy.error("channel %r is not defined" % channel)
+
+    renpy.statements.register('play',
+                              parse=parse_play_generic,
+                              execute=execute_play_music,
+                              predict=predict_play_music,
+                              lint=lint_play_generic)
+    
+    renpy.statements.register('queue',
+                              parse=parse_queue_generic,
+                              execute=execute_queue_music,
+                              lint=lint_play_generic)
+            
+    renpy.statements.register('stop',
+                              parse=parse_stop_generic,
+                              execute=execute_stop_music,
+                              lint=lint_stop_generic)
     
                               
 init -1200 python:

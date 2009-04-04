@@ -23,7 +23,8 @@ init -1130 python hide:
     # Set up default names for some of the channels.
     renpy.music.alias_channel(0, "sound")
     renpy.music.alias_channel(7, "music")
-        
+    renpy.music.alias_channel(2, "voice")
+    
 init 1130:
 
     python hide:

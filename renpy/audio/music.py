@@ -321,7 +321,16 @@ def set_mixer(channel, mixer, default=False):
         if renpy.config.debug_sound:
             raise
 
+def channel_defined(channel):
+    """
+    Returns True if the channel exists, or False otherwise.
+    """
 
+    try:        
+        c = renpy.audio.audio.get_channel(channel)
+        return True
+    except:
+        return False
         
 
 # Music change logic:
