@@ -168,6 +168,8 @@ def showing(name, layer='master'):
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ]):
     "Documented in wiki as renpy.show."
 
+    if renpy.game.init_phase:
+        raise Exception("Show may not run while in init phase.")
     
     if not isinstance(name, tuple):
         name = tuple(name.split())
@@ -220,6 +222,9 @@ def hide(name, layer='master'):
     @param layer: The layer this operates on.
     """
 
+    if renpy.game.init_phase:
+        raise Exception("Hide may not run while in init phase.")
+
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
@@ -237,6 +242,9 @@ def scene(layer='master'):
     the scene statment, but only to clear out the layer. If you want
     to then add something new, call renpy.show after this.
     """
+
+    if renpy.game.init_phase:
+        raise Exception("Scene may not run while in init phase.")
 
     sls = scene_lists()
     sls.clear(layer)
@@ -485,7 +493,7 @@ def say(who, what, interact=True):
     or a string, it is passed directly to display_say. Otherwise, the
     say method is called on the who object with what as a parameter.
     """
-
+    
     # Interpolate variables.
     what = what % tag_quoting_dict
 
@@ -657,6 +665,9 @@ def with_statement(trans, paired=None, always=False, clear=True):
 
     @param always: Always perform the transition.
     """
+
+    if renpy.game.init_phase:
+        raise Exception("With statements may not run while in init phase.")
 
     if renpy.config.skipping:
         trans = None

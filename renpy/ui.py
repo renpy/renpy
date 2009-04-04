@@ -30,8 +30,9 @@ import sets
 
 import renpy
 
-# The current widget. (Should never become None.)
-current = 'transient'
+# The current widget. None at init time, otherwise either a layer name
+# or a displayable.
+current = None
 
 # A stack of current widgets and/or layers.
 current_stack = [ ]
@@ -42,8 +43,18 @@ current_once = False
 # A stack of open ui.ats.
 at_stack = [ ]
 
+# Called at the end of the init phase.
+def _ready():
+    global current
+    current = 'transient'
+
+renpy.game.post_init.append(_ready)
+    
 def interact(type='misc', **kwargs):
     # Docs in wiki.
+
+    if current is None:
+        raise Exception("Interaction not allowed during init phase.")
     
     if renpy.config.skipping == "fast":
         renpy.config.skipping = None
@@ -61,11 +72,14 @@ def interact(type='misc', **kwargs):
     return rv
 
 def add(w, make_current=False, once=False):
-    
+
     w = renpy.easy.displayable(w)
 
     global current
     global current_once
+
+    if current is None:
+        raise Exception("Interaction not allowed during init phase.")
 
     atw = w 
     
@@ -91,6 +105,9 @@ def add(w, make_current=False, once=False):
 
 def remove(d):
     
+    if current is None:
+        raise Exception("Interaction not allowed during init phase.")
+
     if not isinstance(current, basestring):
         raise Exception("ui.remove only works directly on a layer.")
 
@@ -102,6 +119,9 @@ def at(a):
 
 def clear():
 
+    if current is None:
+        raise Exception("Interaction not allowed during init phase.")
+
     if isinstance(current, basestring):
         renpy.game.context(-1).scene_lists.clear(current)
     else:
@@ -112,6 +132,9 @@ def layer(name):
 
     global current_once
     global current
+    
+    if current is None:
+        raise Exception("Interaction not allowed during init phase.")
 
     if not isinstance(current, str):
         raise Exception("Opening a layer while a widget is open is not allowed.")

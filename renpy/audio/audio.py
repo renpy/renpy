@@ -489,12 +489,18 @@ channels = { }
 
 
 def register_channel(name, mixer=None, loop=None):
+    if not renpy.game.init_phase:
+        raise Exception("Can't register channel outside of init phase.")
+
     c = Channel(name, loop)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
     
 def alias_channel(name, newname):
+    if not renpy.game.init_phase:
+        raise Exception("Can't alias channel outside of init phase.")
+
     c = get_channel(name)
     channels[newname] = c
     

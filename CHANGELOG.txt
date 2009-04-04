@@ -80,6 +80,9 @@ Deal with the case where a bmfont has a negative offset for the first
 character in a string.
 
 
+Added diagnostics for when statements are run in the init phase.
+
+
 Fixed a bug that caused layout.imagemap_main_menu to call a label even
 though there was a button with the same name.
 

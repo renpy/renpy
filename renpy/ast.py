@@ -159,8 +159,6 @@ class Scry(object):
             return self._next.scry()
 
     
-
-    
 class Node(object):
     """
     A node in the abstract syntax tree of the program.
