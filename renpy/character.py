@@ -169,6 +169,8 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     if side_image:
         renpy.ui.image(side_image)
 
+    renpy.exports.shown_window()
+        
     return rv
 
 

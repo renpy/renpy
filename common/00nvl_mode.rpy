@@ -99,8 +99,14 @@ init -1100 python:
             rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
 
         ui.close()
+
+        renpy.shown_window()
+        
         return rv
 
+    def nvl_window():
+        nvl_show_core()
+    
     def nvl_show(with_):
         nvl_show_core()
         renpy.with_statement(with_)

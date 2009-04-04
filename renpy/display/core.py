@@ -1107,6 +1107,8 @@ class Interface(object):
         # Properties for each layer.
         self.layer_properties = { }
 
+        # Have we shown the window this interaction?
+        self.shown_window = False
         
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
@@ -1157,6 +1159,16 @@ class Interface(object):
 
         self.screenshot = None
 
+    def show_window(self):
+
+        if not renpy.store._window:
+            return
+
+        if self.shown_window:
+            return
+
+        if renpy.config.empty_window:
+            renpy.config.empty_window()
 
     def do_with(self, trans, paired, clear=False):
         
@@ -1178,6 +1190,8 @@ class Interface(object):
         Implements the with None command, which sets the scene we will
         be transitioning from.
         """
+
+        self.show_window()
         
         scene_lists = renpy.game.context().scene_lists
 
@@ -1191,7 +1205,8 @@ class Interface(object):
 
         scene_lists = renpy.game.context().scene_lists
         scene_lists.replace_transient()
-
+        self.shown_window = False
+        
     def set_transition(self, transition, layer=None, force=False):
         """
         Sets the transition that will be performed as part of the next
@@ -1292,12 +1307,16 @@ class Interface(object):
         else:                
             raise renpy.game.QuitException()
 
-    def interact(self, clear=True, **kwargs):
+    def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
         """
 
+        # Show a missing window.
+        if not suppress_window:
+            self.show_window()
+        
         # These things can be done once per interaction.
 
         import time
@@ -1331,6 +1350,8 @@ class Interface(object):
             self.transition_from = { }
                 
             self.restart_interaction = True
+
+            self.shown_window = False
             
     def interact_core(self,
                       show_mouse=True,

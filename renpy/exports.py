@@ -1191,7 +1191,23 @@ def game_menu(screen=None):
     else:
         call_in_new_context("_game_menu", screen)
 
+def shown_window():
+    renpy.game.interface.shown_window = True
 
+def get_placement(d):
+    o = renpy.store.object()
+    p = d.get_placement()
+
+    o.xpos = d[0]
+    o.ypos = d[1]
+    o.xanchor = d[2]
+    o.yanchor = d[3]
+    o.xoffset = d[4]
+    o.yoffset = d[5]
+    o.subpixel = d[6]
+
+    return o
+    
 # User-Defined Displayable stuff.
 
 Render = renpy.display.render.Render

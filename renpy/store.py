@@ -38,6 +38,9 @@ _return = None
 _args = None
 _kwargs = None
 
+# Should the in-game window be shown?
+_window = False
+
 # The window subtitle.
 _window_subtitle = ''
 

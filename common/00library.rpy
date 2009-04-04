@@ -69,6 +69,12 @@ init -1180 python:
 
     config.with_callback = _default_with_callback
 
+
+    def _default_empty_window():
+        store.narrator("", interact=False)
+
+    config.empty_window = _default_empty_window
+        
     style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
     style.skip_indicator.xpos = 10
     style.skip_indicator.ypos = 10
@@ -284,7 +290,7 @@ label _hide_windows:
     python:
         _windows_hidden = True
         ui.saybehavior(dismiss=['dismiss', 'hide_windows'])
-        ui.interact(suppress_overlay=True)
+        ui.interact(suppress_overlay=True, suppress_window=True)
         _windows_hidden = False
 
     return
@@ -518,9 +524,11 @@ label _enter_menu:
         renpy.context().main_menu = False
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
-
+        renpy.context_dynamic("_window")
+        
         store.main_menu = False
         store._window_subtitle = config.menu_window_subtitle
+        store._window = False
         
         store.mouse_visible = True
         store.suppress_overlay = True

@@ -27,6 +27,24 @@ Please read the reference manual documentation for Audio and Movies to
 learn the new interface.
 
 
+The new window statement allows one to control if an empty window is
+shown when no character is speaking. Specifically, the
+
+window show [transition]
+
+statement shows the window, and the 
+
+window hide [transition]
+
+statement hides it. Both can take an optional
+transition. config.empty_window is responsible for displaying the
+window, while config.window_show_transition and
+config.window_hide_transition are default transitions. The state of
+the window can be determined by testing _window. The
+renpy.shown_window function can be called to suppress displaying the
+empty window, and is called automatically when characters speak.
+
+
 Hotspots for the game menu buttons can be defined as part of
 layout.imagemap_load_save, layout.imagemap_preferences, and
 layout.imagemap_yesno_prompt. Doing so prevents layout.navigation from
@@ -48,6 +66,10 @@ when used inside an image clause as they have outside one.
 
 im.Grayscale and im.Sepia now take properties, so they can be
 positioned.
+
+
+The new renpy.get_placement function returns information about the
+placement of displayables.
 
 
 Improved the render management code, so there should no longer be any
@@ -4352,4 +4374,3 @@ controls which transitions are performed.
 
 Added a Pan function which can be used in an at clause. This allows us
 to pan over a background image.
-

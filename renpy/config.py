@@ -382,6 +382,9 @@ missing_hide = None
 # This is called when control is transferred to a label.
 label_callback = None
 
+# A function that is called when the window needs to be shown.
+empty_window = None
+
 del renpy
 
 def init():
