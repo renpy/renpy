@@ -13,6 +13,8 @@ label start:
 
     # Start the background music playing.
     play music "mozart.ogg"
+
+    window show
     
     e "Hi, and welcome to the Ren'Py demo game."
 

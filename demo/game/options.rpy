@@ -235,6 +235,12 @@ init -1 python hide:
     ## Used when a game is loaded.
     config.after_load_transition = dissolve
 
+    ## Used when the window is shown.
+    config.window_show_transition = Dissolve(.25)
+
+    ## Used when the window is hidden.
+    config.window_hide_transition = Dissolve(.25)
+    
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code

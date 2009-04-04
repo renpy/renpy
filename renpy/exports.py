@@ -290,10 +290,12 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.ui.close()
 
+    renpy.exports.shown_window()
+        
     roll_forward = renpy.exports.roll_forward_info()
     if not isinstance(roll_forward, basestring):
         roll_forward = None
-    
+
     rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
     

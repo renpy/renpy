@@ -90,7 +90,9 @@ init:
                     button(face, editing == i, ("edit", i), xminimum=250)
 
                 ui.null(height=20)
-                ui.textbutton("Continue", clicked=ui.returns(("done", True)), xminimum=250)
+                ui.textbutton("Continue",
+                              clicked=ui.returns(("done", True)),
+                              xminimum=250)
                 ui.null(height=20)
                 ui.close()
 
@@ -98,28 +100,30 @@ init:
                 # Choice window.
                 if editing:
                     ui.frame(xpos=300,
-                              ypos=200,
-                              xanchor='left',
-                              yanchor='top',
-                              xfill=False,
-                              xminimum=500
-                              )
+                             ypos=200,
+                             xanchor='left',
+                             yanchor='top',
+                             xfill=False,
+                             xminimum=500,
+                             xmargin = 10                             
+                             )
                 
                     ui.vbox()
                     ui.text("What will you do in the %s?" % editing.lower())
                     ui.null(height=20)
 
                     for i in choices:
-                        button(i, plan[editing] == i, ("set", i),
-                               xpos=0, xanchor='left')
+                        button(i,
+                               plan[editing] == i,
+                               ("set", i),
+                               xpos=0,
+                               xanchor='left',
+                               xminimum=250)
 
                     ui.close()
 
                 # Window at the bottom.
-                ui.window()
-                ui.vbox()
-                ui.text("To get to the next screen, click the 'Continue' button.")
-                ui.close()
+                e("To get to the next screen, click the 'Continue' button.", interact=False)
 
                 type, value = ui.interact()
 
@@ -199,6 +203,8 @@ label demo_ui:
     
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"
 
+    window hide None
+    
     # This is an imagemap. It consists of two images, and a list of
     # hotspots. For each hotspot we give the coordinates of the left,
     # top, right, and bottom sides, and the value to return if it is
@@ -215,6 +221,8 @@ label demo_ui:
     # result variable. We can use an if statement to vary what
     # happens based on the user's choice.
 
+    window show None
+    
     if result == "swimming":
 
         e "You chose swimming."
@@ -242,6 +250,8 @@ label demo_ui:
     e "We also support viewports, that allow us to display things that are bigger then the screen."
 
     e "This viewport can be adjusted by dragging, by the mouse wheel, and by the scrollbars."
+
+    window hide
     
     show eileen happy at right
     with move
@@ -262,15 +272,23 @@ label demo_ui:
 
     show eileen happy at center
     with move
-        
+
+    window show
+    
     e "While these constructs are probably enough for most visual novels, dating simulations may be more complicated."
 
     e "The ui functions allow you to create quite complicated interfaces."
 
     e "For example, try the following scheduling and stats screen, which could be used by a stat-based dating simulation."
 
+    hide eileen
+    with dissolve
+    
     $ day_planner()
 
+    show eileen happy
+    with dissolve
+    
     e "For a better implementation of this, take a look at the dating sim engine (DSE) that ships with Ren'Py."
 
     call fight("Eileen", 10, 99, pname=povname) from _call_fight_1

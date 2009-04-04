@@ -344,7 +344,7 @@ python early hide:
             trans = eval(p)
         else:
             trans = config.window_show_transition
-        
+            
         renpy.with_statement(None)
         store._window = True
         renpy.with_statement(trans)
@@ -352,7 +352,7 @@ python early hide:
     def execute_window_hide(p):
         if not _window:
             return
-
+        
         if p is not None:
             trans = eval(p)
         else:

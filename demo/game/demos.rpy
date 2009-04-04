@@ -64,7 +64,7 @@ label demos:
 
     # Is this the first time through the demo?
     $ demo_first_time = True
-    
+
     show eileen happy at left
     with move
 
