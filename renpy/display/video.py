@@ -37,7 +37,7 @@ surface = None
 
 def movie_stop(clear=True, only_fullscreen=False):
     """
-    Stops the currently playing movie. (Only if fullscreen.)
+    Stops the currently playing movie.
     """
 
     if (not fullscreen) and only_fullscreen:

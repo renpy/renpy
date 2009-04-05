@@ -1575,6 +1575,7 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
 {
     int audio_size, len1;
     double pts;
+
     int rv = 0;
 
     // Check to see if we've finished decoding, or we haven't
@@ -1596,7 +1597,9 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
     
     while (len > 0) {
         if (is->audio_buf_index >= is->audio_buf_size) {
+
             audio_size = audio_decode_frame(is, &pts);
+
             if (audio_size < 0) {
                 
                 /* Nothing left to decode, break. */

@@ -259,26 +259,27 @@ static void free_sample(struct VideoState *ss) {
     ffpy_stream_close(ss);
 }
 
+#define MAX_SHORT (32767)
+#define MIN_SHORT (-32768)
+
 // Actually mixes the audio.
 static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
- 
-    // SDL_MixAudio may not work when length % 16 != 0.
-    if ((length & 0x0f) == 0) {
-        SDL_MixAudio(dst, src, length, volume);
-    } else {
+    int i;
+    short *sdst = (short *) dst;
+    short *ssrc = (short *) src;
 
-        int newlength = length + 16 - (length & 0xf);
-        Uint8 newsrc[newlength];
-        Uint8 newdst[newlength];
-        
-        memcpy(newsrc, src, length);
-        memcpy(newdst, dst, length);
+    for (i = 0; i < length / 2; i++) {
+        int sound = *sdst + (volume * *ssrc) / SDL_MIX_MAXVOLUME;
+        if (sound > MAX_SHORT) {
+            sound = MAX_SHORT;
+        }
+        if (sound < MIN_SHORT) {
+            sound = MIN_SHORT;
+        }
 
-        // Mix the audio once.
-        SDL_MixAudio(newdst, newsrc, newlength, volume);
-
-        memcpy(dst, newdst, length);
-    }    
+        *sdst++ = (short) sound;
+        ssrc++;        
+    }
 }
 
 
@@ -287,7 +288,7 @@ static void fade_mixaudio(struct Channel *c,
                           Uint8 *dst, Uint8 *src, int length) {
 
     while (length) {
-
+        
         // No fade case.
         if (c->fade_step_len == 0) {
             mixaudio(dst, src, length, c->volume);
@@ -297,8 +298,9 @@ static void fade_mixaudio(struct Channel *c,
         // Fading, but we have some space left in the current step.
         if (c->fade_off < c->fade_step_len) {
             int l = min(c->fade_step_len - c->fade_off, length);
-            mixaudio(dst, src, l, c->fade_vol);
 
+            mixaudio(dst, src, l, c->fade_vol);
+            
             length -= l;
             dst += l;
             src += l;
@@ -322,7 +324,7 @@ static void fade_mixaudio(struct Channel *c,
             c->fade_step_len = 0;
         }
     }
-
+    
     return;
 }
 
@@ -414,10 +416,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
-            
+                
                 if (c->stop_bytes != -1)
                     bytes = min(c->stop_bytes, bytes);
-                
+
                 pan_audio(c, buffer, bytes);
                 fade_mixaudio(c, &stream[mixed], buffer, bytes);
 
