@@ -2204,6 +2204,8 @@ void ffpy_init(int rate, int status) {
     avcodec_register_all();
     av_register_all();
 
+    av_log_set_level(AV_LOG_ERROR);
+    
     av_init_packet(&flush_pkt);
     flush_pkt.data = (unsigned char *) "FLUSH";
 

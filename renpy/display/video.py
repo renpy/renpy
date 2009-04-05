@@ -35,13 +35,17 @@ default_size = (400, 300)
 surface = None
 
 
-def movie_stop(clear=True):
+def movie_stop(clear=True, only_fullscreen=False):
     """
-    Stops the currently playing movie.
+    Stops the currently playing movie. (Only if fullscreen.)
     """
+
+    if (not fullscreen) and only_fullscreen:
+        return
 
     renpy.audio.music.stop(channel='movie')
 
+    
 def movie_start(filename, size=None, loops=0):
     """
     This starts a movie playing. 

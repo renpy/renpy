@@ -13,18 +13,23 @@ features:
 * Support for an arbitrary number of named channels, replacing the
   previous eight numbered channels.
 
-* The play, queue, and stop statements now take a channel name as the
-  second argument, which makes using user-defined channels easier. 
-
 * Audio files are now automatically converted to the output sampling
   rate (by default, 44100hz). This prevents the problems that would
   previously crop up when playing audio sampled at other rates.
+
+* The play, queue, and stop statements now take a channel name as the
+  second argument, which makes using user-defined channels easier. 
 
 As part of this rewrite, we have eliminated support for mod formats,
 as they are not supported by ffmpeg.
 
 Please read the reference manual documentation for Audio and Movies to
 learn the new interface.
+
+The new code requires some changes in the saved data. As a result,
+loading a file saved with a prior version of Ren'Py may lead to a lack
+of music until the next track is played.
+
 
 
 The new window statement allows one to control if an empty window is
@@ -80,7 +85,8 @@ Deal with the case where a bmfont has a negative offset for the first
 character in a string.
 
 
-Added diagnostics for when statements are run in the init phase.
+Added more verbose diagnostics when illegal statements are run in the
+init phase.
 
 
 Fixed a bug that caused layout.imagemap_main_menu to call a label even

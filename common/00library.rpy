@@ -515,7 +515,7 @@ init 1180 python:
             
 label _enter_menu:
     python hide:
-        renpy.movie_stop()
+        renpy.movie_stop(only_fullscreen=True)
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
         renpy.context()._menu = True
