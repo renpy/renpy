@@ -262,7 +262,9 @@ init -1 python hide:
     ## The default text speed in characters per second. 0 is infinite.
     config.default_text_cps = 0
 
-      
+    config.window_icon = "logo.png"
+    config.windows_icon = "logo32.png"
+    
 
 
     

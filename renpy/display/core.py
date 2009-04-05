@@ -681,6 +681,35 @@ class Display(object):
 
         init_time()
         
+        # Window icon.
+
+        icon = renpy.config.window_icon
+
+        if on_windows and renpy.config.windows_icon:
+            icon = renpy.config.windows_icon
+            
+        if icon:
+
+            im = renpy.display.scale.image_load_unscaled(
+                renpy.loader.load(icon),
+                icon,
+                convert=False,
+                )
+
+            # Convert the aspect ratio to be square.
+            iw, ih = im.get_size()
+            if iw != ih:
+                imax = max(iw, ih)
+                square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA)
+                square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
+                im = square_im
+
+            
+            if on_windows and im.get_size() != (32, 32):
+                im = renpy.display.scale.real_bilinear(im, (32, 32))
+                
+            pygame.display.set_icon(im)
+
         # Setup screen.
         fullscreen = renpy.game.preferences.fullscreen
 
@@ -741,18 +770,8 @@ class Display(object):
         else:
             self.window = pygame.display.set_mode((width, height), fsflag, 32)
 
-        # Window icon.
-        if renpy.config.window_icon:
-
-            im = renpy.display.scale.image_load_unscaled(
-                renpy.loader.load(renpy.config.window_icon),
-                renpy.config.window_icon)
-
-            if on_windows and im.get_width() > 32:
-                im = renpy.display.scale.real_bilinear(im, (32, 32))
-
-            pygame.display.set_icon(im)
                 
+
         # Window title.
         self.window_caption = None
         self.set_window_caption()

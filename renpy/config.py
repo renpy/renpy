@@ -39,6 +39,9 @@ window_title = "A Ren'Py Game"
 # An image file containing the window icon image.
 window_icon = None
 
+# The same, but only used on MS windows.
+windows_icon = None
+
 # The width and height of the drawable area of the screen.
 screen_width = 800
 screen_height = 600

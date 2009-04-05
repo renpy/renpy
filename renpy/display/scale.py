@@ -26,6 +26,9 @@ import math
 import pygame
 import renpy
 
+    
+PygameSurface = pygame.Surface
+
 try:
     import _renpy_font as font_module
 except ImportError:
@@ -72,9 +75,12 @@ if not enable_scaling:
         return real_transform_scale(surf, size)
 
     # Loads an image, without scaling it.
-    def image_load_unscaled(f, hint):
+    def image_load_unscaled(f, hint, convert=True):
         rv = pygame.image.load(f, hint)
-        rv = rv.convert_alpha()
+
+        if convert:
+            rv = rv.convert_alpha()
+            
         return rv
         
     # Scales down a surface.
@@ -121,14 +127,14 @@ else:
     def real_transform_scale(surf, size):
         return old_transform_scale(surf, size)
 
-    def image_load_unscaled(f, hint):
-        return old_image_load(f, hint)
-
+    def image_load_unscaled(f, hint, convert=True):
+        rv = old_image_load(f, hint)
+        if convert:
+            rv = rv.convert_alpha()
+        return rv
+        
     def surface_scale(full):
         return Surface(old_transform_scale(full, v2p(full.get_size())), wh=full.get_size())
-
-    
-    PygameSurface = pygame.Surface
 
     # Project a tuple from virtual to physical coordinates.
     def v2p(n):

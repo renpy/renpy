@@ -110,7 +110,6 @@ def reload_all():
     sys.meta_path.pop()
 
     blacklist = [ "renpy", "renpy.bootstrap", "renpy.display", "renpy.display.iliad", "renpy.display.scale" ]
-
     
     for i in sys.modules.keys():
         if i.startswith("renpy") and i not in blacklist:
