@@ -1,4 +1,5 @@
-Copyright 2004-2009 PyTom <pytom@bishoujo.us>
+Ren'Py itself is covered by the terms of the following (MIT) license:
+
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation files
@@ -19,9 +20,6 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
----
-
-(The above is the MIT License)
 
 Please see each individual source file for a list of copyright
 holders. The pictures of Eileen in the demo are Copyright 2006
@@ -34,25 +32,20 @@ launchers may contain code taken from the following projects:
     * Pygame (LGPL)
     * SDL (LGPL)
     * SDL_image (LGPL)
-    * SDL_sound (LGPL)
     * SDL_ttf (LGPL)
     * SDL_mixer (LGPL)
     * Freetype (LGPL)
+    * ffmpeg (LGPL)
     * jpeg (JPEG License)
-    * libmodplug (Public Domain)
-    * libogg (Xiph.org License)
     * libpng (PNG license)
-    * libvorbis (Xiph.org License)
-    * smpeg (LGPL)
-    * speex (Xiph.org License)
-    * zlib (Zlib License) 
+    * zlib (Zlib License)
     * bzip2 (Bzip2 License)
     * pyobjc (MIT License)
 
-The Linux launcher may also include code from:
+The Linux build may also include code from:
 
     * directfb (LGPL)
-    * svgalib (LGPL) 
+    * svgalib (LGPL)
 
 For the purpose of LGPL compliance, the source code to all LGPL
 software we depend on is either in the Ren'Py package (available from
@@ -61,9 +54,13 @@ http://www.renpy.org/), or in the renpy-deps package
 by including a copy of this license with every copy of Ren'Py you
 distribute, and referring to it in your project's README file.
 
+The default Ren'Py build distributes Ren'Py alongside jEdit, which is
+licensed under the GNU GPL. The source code to jEdit is distributed as
+part of the renpy-deps package (http://www.renpy.org/dl/lgpl/).
+
 
 GNU Lesser General Public License
----------------------------------
+=================================
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
@@ -575,7 +572,7 @@ That's all there is to it!
 
 
 Python License
---------------
+==============
 
 1. This LICENSE AGREEMENT is between the Python Software Foundation
 ("PSF"), and the Individual or Organization ("Licensee") accessing and
@@ -625,7 +622,7 @@ Agreement.
 
 
 Jpeg License
-------------
+============
 
 In plain English:
 
@@ -674,39 +671,8 @@ commercial products, provided that all warranty or liability claims are
 assumed by the product vendor.
 
 
-Xiph.org License
-----------------
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-- Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-- Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-- Neither the name of the Xiph.org Foundation nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION
-OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
 PNG License
------------
+===========
 
 The PNG Reference Library is supplied "AS IS".  The Contributing Authors
 and Group 42, Inc. disclaim all warranties, expressed or implied,
@@ -734,9 +700,8 @@ supporting the PNG file format in commercial products.  If you use this
 source code in a product, acknowledgment is not required but would be
 appreciated.
 
-
 Zlib License
-------------
+============
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -754,8 +719,9 @@ Zlib License
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+
 Bzip2 License
--------------
+=============
 
 This program, "bzip2", the associated library "libbzip2", and all
 documentation, are copyright (C) 1996-2005 Julian R Seward.  All
