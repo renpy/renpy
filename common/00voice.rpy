@@ -52,7 +52,7 @@ init -1120:
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
         def voice_interact():
-
+            
             if not config.has_voice:
                 return
             

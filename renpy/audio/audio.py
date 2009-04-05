@@ -135,8 +135,6 @@ class MusicContext(renpy.python.RevertableObject):
     the values get reverted as well.
     """
 
-    force_stop = False
-    
     __version__ = 0
 
     def __init__(self):
@@ -165,7 +163,15 @@ class MusicContext(renpy.python.RevertableObject):
         # Should we force stop this channel?
         self.force_stop = False
         
+    def copy(self):
+        """
+        Returns a shallow copy of this context.
+        """
 
+        rv = MusicContext()
+        rv.__dict__.update(self.__dict__)
+
+        return rv
         
 # The next channel number to be assigned.
 next_channel_number = 0

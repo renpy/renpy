@@ -1949,7 +1949,13 @@ static int decode_thread(void *arg)
         dump_stream_info(ic);
     }
 
-/* open the streams */
+    if (audio_index < 0) {
+        printf("%s does not have an audio stream.\n", is->filename);
+        ret = -1;
+        goto fail;
+    }
+
+    /* open the streams */
     if (audio_index >= 0) {
         stream_component_open(is, audio_index);
     }
@@ -1973,6 +1979,7 @@ static int decode_thread(void *arg)
         ret = -1;
         goto fail;
     }
+
     
     is->started = 1;
 

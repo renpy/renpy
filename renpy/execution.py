@@ -116,8 +116,10 @@ class Context(renpy.object.Object):
             self.runtime = context.runtime
 
             vars(self.info).update(vars(context.info))            
-            self.music.update(context.music)
 
+            for k, v in context.music.iteritems():
+                self.music[k] = v.copy()
+                
             self.predict_info = PredictInfo(context.predict_info)
         else:
             oldsl = None

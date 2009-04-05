@@ -31,6 +31,9 @@ fullscreen = False
 # The size of a Movie object that hasn't had an explicit size set.
 default_size = (400, 300)
 
+# The file we allocated the surface for.
+surface_file = None
+
 # The surface to display the movie on, if not fullscreen.
 surface = None
 
@@ -112,28 +115,30 @@ class Movie(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
 
         global surface
+        global surface_file
         
         size = self.size
         
         if size is None:
-            size = self.size = default_size
+            size = default_size
 
-        if surface is None or surface.get_size() != size:
-            surface = pygame.Surface(size, 0, renpy.game.interface.display.window)
-            surface.fill((0, 0, 0, 255))
+        playing = renpy.audio.music.get_playing("movie")
             
+        if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
+            surface = pygame.Surface(size, 0, renpy.game.interface.display.window)
+            surface_file = playing
+            surface.fill((0, 0, 0, 255))
             
         width, height = size
         rv = renpy.display.render.Render(width, height)
 
-        if renpy.audio.music.get_playing("movie"):
+        if playing is not None:
             renpy.display.render.mutated_surface(surface)
             rv.blit(surface, (0, 0))
             
         return rv
             
     def event(self, ev, x, y, st):
-        
 
         if ev.type == renpy.audio.audio.REFRESH_EVENT:
             renpy.display.render.redraw(self, 0)
