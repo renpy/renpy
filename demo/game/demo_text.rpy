@@ -92,6 +92,8 @@ label demo_text:
 
     eoutline "You can have more than one outline, and each has its own color and offset."
 
+    window hide
+    
     esubtitle "Here, we have two outlines around the white text."
 
     esubtitle "The bottom one is a translucent black that's offset a little, while the top one is green."
@@ -99,7 +101,9 @@ label demo_text:
     esubtitle "By hiding the window and adjusting the layout method, we are able to create reasonable subtitles."
 
     esubtitle "This might be an interesting look for a game."
-        
+
+    window show
+    
     esfont "For even more control, Ren'Py supports SFonts, image files containing font information."
     
     esfont "SFonts let you use fonts you otherwise couldn't, and apply special effects to fonts using your favorite image editor."

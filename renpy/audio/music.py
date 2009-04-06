@@ -107,7 +107,6 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         if renpy.config.debug_sound:
             raise
     
-    
 
 def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tight=False):
     """

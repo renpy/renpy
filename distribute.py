@@ -87,11 +87,7 @@ def tree(root):
 
         if ".svn" in dirs:
             dirs.remove(".svn")
-        else:
-            if not root == "lib":
-                print "Note:", dirname, "not in subversion."
-            
-
+        
         for f in filenames:
             if f[-1] == '~' or f[0] == '.':
                 continue

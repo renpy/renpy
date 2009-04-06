@@ -41,7 +41,6 @@ icons
 iliad-icon.png
 iliad-work
 kuroi
-/lib
 lsprofcalltree.py
 manifest.xml
 mediatest
@@ -54,3 +53,4 @@ renpygame-1.2.zip
 speedtest
 styles.txt
 renpygame-demo/game/saves
+./lib
