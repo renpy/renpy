@@ -78,10 +78,6 @@ init -1100 python:
             return s
     
     def nvl_show_core():
-        print "NVL Show"
-        import inspect
-        print inspect.stack()
-
         
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
