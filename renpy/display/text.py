@@ -122,6 +122,7 @@ class TextStyle(object):
         return rv
 
     def sizes(self, text):
+
         return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
     def render(self, text, antialias, color, black_color, use_colors, time, at, expand):
@@ -167,6 +168,7 @@ class TextStyle(object):
                 rv = surf
 
         renpy.display.render.mutated_surface(rv)
+
         return rv, rv.get_size()
 
     def length(self, text):
@@ -343,28 +345,35 @@ def input_tokenizer(l, style, pauses=None):
     return rv
 
 
-def layout_width(triples):
+def layout_width(triples, justify=False):
     """
-    Returns the width of the given list of triples. Cache
-    should be a dictionary, which is used to cache results.
+    Returns the width of the given list of triples. 
     """
 
     rv = 0
 
     curts = None
-    cur = None
-            
+    cur = ""
+    
     for type, ts, i in triples:
         if ts is not curts:
-            if curts:
+            if cur:
                 rv += curts.get_width(cur)
+                
             curts = ts
             cur = i
+
+        elif justify and type == "space":
+            cur += i
+            rv += curts.get_width(cur)
+            cur = ""
+
         else:
             cur += i
 
     if curts:
         rv += curts.get_width(cur)
+
     return rv
     
 
@@ -379,6 +388,7 @@ def greedy_text_layout(triples, width, style):
 
     @param style: The style of the text widget.
     """
+
     
     lines = [ ]
     line = [ ]
@@ -388,6 +398,8 @@ def greedy_text_layout(triples, width, style):
 
     target = width - style.first_indent
 
+    justify = style.justify
+    
     after_newline = True
     
     for triple in triples:
@@ -414,14 +426,15 @@ def greedy_text_layout(triples, width, style):
 
             after_newline = False
             
-            if layout_width(line + [ triple ]) > target:
+            if layout_width(line + [ triple ], justify) > target:
+
                 lines.append(line)
                 lines_last.append(False)
                 line = [ triple ]
                 target = width - style.rest_indent
             else:
                 line.append(triple)
-                
+
     lines.append(line)
     lines_last.append(True)
     
@@ -434,7 +447,7 @@ def greedy_text_layout(triples, width, style):
     return lines, lines_last
 
 
-def subtitle_text_layout_core(triples, width, style, soft, n):
+def subtitle_text_layout_core(triples, width, style, soft, n, justify):
 
     sizecache = { }
 
@@ -458,7 +471,7 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
 
         else:
 
-            lw = layout_width(line + [ triple ])
+            lw = layout_width(line + [ triple ], justify)
 
             if lw > target or type == "newline":
 
@@ -468,7 +481,7 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
                     if line and line[-1][0] == "space":
                         line.pop()
 
-                    total -= layout_width(line)
+                    total -= layout_width(line, justify)
                     linesoft = total / n
                 else:
                     linesoft = soft
@@ -513,6 +526,8 @@ def subtitle_text_layout_core(triples, width, style, soft, n):
 
 def subtitle_text_layout(triples, width, style):
 
+    justify = style.justify
+    
     softwidth = style.subtitle_width
     if isinstance(softwidth, float):
         softwidth = int(softwidth * width)
@@ -534,14 +549,14 @@ def subtitle_text_layout(triples, width, style):
         
     for triples in pars:
 
-        sumwidths = layout_width(triples)
+        sumwidths = layout_width(triples, justify)
 
         i = 1
         while sumwidths / i > min(width, softwidth):
             i += 1
 
         while True:
-            rv = subtitle_text_layout_core(triples, width, style, sumwidths / i, i)
+            rv = subtitle_text_layout_core(triples, width, style, sumwidths / i, i, justify)
             if len(rv) == i:
                 break
             i += 1

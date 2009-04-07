@@ -58,10 +58,12 @@ class ImageFont(object):
     # chars - A map from a character to the surface containing that character.
     
     def size(self, text):
-        w = 0
 
         if not text:
             return (0, self.height)
+
+        xoff, _ = self.offsets[text[0]]
+        w = -xoff
         
         for a, b in zip(text, text[1:]):
             try:
@@ -74,18 +76,16 @@ class ImageFont(object):
         return (w, self.height)
             
     def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
-        surf = pygame.Surface(self.size(text), 0,
-                              renpy.game.interface.display.sample_surface)
 
         if not text:
             return surf
 
-        # Compensate for the offset of the first character, when determining
-        # the initial position.
-        xoff, yoff =  self.offsets[text[0]]
+        xoff, _ = self.offsets[text[0]]
         x = -xoff
         y = 0
-        
+
+        surf = pygame.Surface(self.size(text), 0,
+                              renpy.game.interface.display.sample_surface)
         for a, b in zip(text, text[1:]):
             xoff, yoff = self.offsets[a]
             surf.blit(self.chars[a], (x + xoff, y + yoff))
