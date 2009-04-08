@@ -47,69 +47,97 @@ if ('RENPY_SCALE_FACTOR' in os.environ) or ('RENPY_SCALE_WIDTH' in os.environ):
 else:
     enable_scaling = False
 
-if not enable_scaling:
-
-    # The public api other modules use.
-
-    def init():
-        return
-            
-    # Gets the real pygame surface.
-    def real(s):
-        return s
-
-    # Scales the number, n.
-    def scale(n):
-        return n
-
-    def real_bilinear(src, size):
-        rv = pygame.Surface(size, 0, src)
-        renpy.display.module.bilinear_scale(src, rv)
-        return rv
-        
-    # Does pygame.transform.scale.
-    def real_transform_scale(surf, size):
-        global real_transform_scale
-        real_transform_scale = pygame.transform.scale
-
-        return real_transform_scale(surf, size)
-
-    # Loads an image, without scaling it.
-    def image_load_unscaled(f, hint, convert=True):
-        rv = pygame.image.load(f, hint)
-
-        if convert:
-            rv = rv.convert_alpha()
-            
-        return rv
-        
-    # Scales down a surface.
-    def surface_scale(full):
-        return full
-
-    # Saves an image without rescaling.
-    def image_save_unscaled(surf, dest):
-        pygame.image.save(surf, dest)
+##############################################################################
+# The scaling API that's used if we don't enable scaling.
     
-else:
+
+def init():
+    return
+
+# Gets the real pygame surface.
+def real(s):
+    return s
+
+# Scales the number, n.
+def scale(n):
+    return n
+
+def real_bilinear(src, size):
+    rv = pygame.Surface(size, 0, src)
+    renpy.display.module.bilinear_scale(src, rv)
+    return rv
+
+# Does pygame.transform.scale.
+def real_transform_scale(surf, size):
+    global real_transform_scale
+    real_transform_scale = pygame.transform.scale
+
+    return real_transform_scale(surf, size)
+
+# Loads an image, without scaling it.
+def image_load_unscaled(f, hint, convert=True):
+    rv = pygame.image.load(f, hint)
+
+    if convert:
+        rv = rv.convert_alpha()
+
+    return rv
+
+# Scales down a surface.
+def surface_scale(full):
+    return full
+
+# Saves an image without rescaling.
+def image_save_unscaled(surf, dest):
+    pygame.image.save(surf, dest)
 
 
-    def init():    
-        global factor
+    
+def init():    
+    global factor
 
-        if 'RENPY_SCALE_FACTOR' in os.environ:
-            factor = float(os.environ['RENPY_SCALE_FACTOR'])
-        elif 'RENPY_SCALE_WIDTH' in os.environ:
-            width = float(os.environ['RENPY_SCALE_WIDTH'])
-            if width < renpy.config.screen_width:            
-                factor = float(os.environ['RENPY_SCALE_WIDTH']) / renpy.config.screen_width
-            else:
-                factor = 1.0
+    if 'RENPY_SCALE_FACTOR' in os.environ:
+        factor = float(os.environ['RENPY_SCALE_FACTOR'])
+    elif 'RENPY_SCALE_WIDTH' in os.environ:
+        width = float(os.environ['RENPY_SCALE_WIDTH'])
+        if width < renpy.config.screen_width:            
+            factor = float(os.environ['RENPY_SCALE_WIDTH']) / renpy.config.screen_width
         else:
             factor = 1.0
 
+    else:
+
+        # Automatically scale to screen if too small.
+        
+        info = pygame.display.Info()
+
+        factor = min(1.0,
+                     1.0 * info.current_w / renpy.config.screen_width,
+                     1.0 * info.current_h / renpy.config.screen_height)
+
+        if factor <= 0:
+            factor = 1.0
+        
+
+    if factor != 1.0:
         print "Using scale factor of %f." % factor
+        load_scaling()
     
+
+scaling_loaded = False
+    
+# The virtual screen scaling creates.
+screen = None
+
+def load_scaling():
+
+    global scaling_loaded
+
+    if scaling_loaded:
+        return
+
+    scaling_loaded = True
+
     def real(s):
         return s.surface
 
@@ -164,7 +192,6 @@ else:
         def rv(self, *args, **kwargs):
             return func(self.surface, *args, **kwargs)
         
-    
     class Surface(object):
 
         def __init__(self, what, flags=0, sample=None, wh=None):
@@ -304,14 +331,8 @@ else:
                 setattr(rv, k, v)
 
             return rv
-            
-        
         
     pygame.Surface = Surface
-
-
-    # Our pygame screen.
-    screen = None
 
     old_set_mode = pygame.display.set_mode
 
@@ -619,3 +640,10 @@ else:
     pygame.draw.lines = draw_wrap(pygame.draw.lines)
     pygame.draw.aaline = draw_wrap(pygame.draw.aaline)
     pygame.draw.aalines = draw_wrap(pygame.draw.aalines)
+
+
+    # Now, put everything from this function's namespace into the
+    # module namespace.
+
+    globals().update(locals())
+    reload(renpy.display.module)

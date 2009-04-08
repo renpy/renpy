@@ -748,9 +748,11 @@ def event(ev):
     
     if ev.type == ALLOC_EVENT:
         if renpy.display.video.fullscreen or not renpy.display.video.surface:
-            pss.alloc_event(pygame.display.get_surface())
+            surf = pygame.display.get_surface()
         else:
-            pss.alloc_event(renpy.display.video.surface)
+            surf = renpy.display.video.surface
+
+        pss.alloc_event(renpy.display.scale.real(surf))
             
         return True
 
