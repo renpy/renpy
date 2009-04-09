@@ -1035,7 +1035,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
     audio_spec.callback = callback;
     audio_spec.userdata = NULL;
 
-    if (SDL_OpenAudio(&audio_spec, NULL)) {
+    if (SDL_OpenAudio(&audio_spec, &audio_spec)) {
         error(SDL_ERROR);
         return;
     }

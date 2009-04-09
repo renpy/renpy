@@ -143,6 +143,7 @@ typedef struct VideoState {
 
     // AVAudioConvert *reformat_ctx;
     ReSampleContext *reformat_ctx;
+    int resample_frac;
     
     int show_audio; /* if true, display audio samples */
     int16_t sample_array[SAMPLE_ARRAY_SIZE];
@@ -196,6 +197,12 @@ typedef struct VideoState {
 
     // Do we need to have a picture allocated?
     int needs_alloc;
+
+    // The audio duration.
+    unsigned int audio_duration;
+
+    // The amount of audio we've played, in samples.
+    unsigned int audio_played;
     
 } VideoState;
 
@@ -1483,14 +1490,13 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 continue;
 
             if (!is->reformat_ctx &&
-                (1 || dec->channels != 2
-                 || dec->sample_rate != audio_sample_rate
-                 || dec->sample_fmt != SAMPLE_FMT_S16)) {
+                (dec->channels != 2 || dec->sample_fmt != SAMPLE_FMT_S16)) {
 
                 is->reformat_ctx = av_audio_resample_init(
                     2,
                     dec->channels,
-                    audio_sample_rate,
+                    // audio_sample_rate,
+                    dec->sample_rate,
                     dec->sample_rate,
                     SAMPLE_FMT_S16,
                     dec->sample_fmt,
@@ -1506,16 +1512,82 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             
 
             if (is->reformat_ctx) {
+                
                 int len = data_size / (av_get_bits_per_sample_format(dec->sample_fmt) / 8);
                 len /= dec->channels;
 
-                data_size = audio_resample(is->reformat_ctx, (short *) is->audio_buf2, (short *) is->audio_buf1, len);
-                data_size *= 4; // 2 channels of 16-bit samples
-                
+                len = audio_resample(is->reformat_ctx, (short *) is->audio_buf2, (short *) is->audio_buf1, len);
+
+                data_size = len * 4;
                 is->audio_buf = is->audio_buf2;                
             } else {
                 is->audio_buf = is->audio_buf1;
             }
+
+            if (dec->sample_rate != audio_sample_rate) {
+                short *in;
+                short *out;
+                int outpos;
+                int in_per_out;
+                int inpos;
+
+                int len = data_size / 4;
+                
+                if (is->audio_buf == is->audio_buf1) {
+                    in = (short *) is->audio_buf1;
+                    out = (short *) is->audio_buf2;
+                } else {
+                    in = (short *) is->audio_buf2;
+                    out = (short *) is->audio_buf1;
+                }
+
+                // Pad the buffer a bit. We pad with the difference
+                // between the last sample and the one before it,
+                // which seems reasonable.
+                in[2 * len] = 2 * in[2 * len - 2] - in[2 * len - 4];
+                in[2 * len + 1] = 2 * in[2 * len - 1] - in[2 * len - 3];
+                                
+                // The number of bytes of input consumed per output
+                // sample. Scaled by 1 << 14.                
+                in_per_out = (dec->sample_rate << 14) / audio_sample_rate;
+
+                len *= (1 << 14);
+
+                // The positions in the input. Scaled by 1 << 14.
+                inpos = is->resample_frac;
+
+                // The position in the output. Unscaled.
+                outpos = 0;
+
+                // While we still have samples.
+                while (inpos < len) {
+                    short a;
+                    short b;
+
+                    // Compute position and fraction.
+                    int pos = inpos >> 14;
+                    int frac = inpos & ((1 << 14) - 1);
+
+                    // Interpolate the two channels.
+                    a = in[2 * pos];
+                    b = in[2 * pos + 2];
+                    out[2 * outpos] = a + (((b - a) * frac) >> 14);
+
+                    a = in[2 * pos + 1];
+                    b = in[2 * pos + 3];
+                    out[2 * outpos + 1] = a + (((b - a) * frac) >> 14);
+
+                    outpos++;
+                    inpos += in_per_out;                    
+                }
+
+                // Store the fraction.
+                is->resample_frac = inpos & ((1 << 14) - 1);
+
+                data_size = outpos * 4;
+                is->audio_buf = (uint8_t *) out;                
+            }
+
 
             /* if no pts, then compute it */
             pts = is->audio_clock;
@@ -1533,6 +1605,22 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 last_clock = is->audio_clock;
             }
 #endif
+
+
+            // Deal with a reduced duration, like in an ogg file.
+
+            if (is->audio_duration) {
+                int len = data_size / 4;
+                int maxlen = is->audio_duration - is->audio_played;
+                
+                if (len > maxlen) {
+                    len = maxlen;
+                }
+
+                is->audio_played += len;
+                data_size = len * 4;
+            }
+                
             return data_size;
         }
 
@@ -1980,9 +2068,19 @@ static int decode_thread(void *arg)
         goto fail;
     }
 
-    
     is->started = 1;
 
+    // Compute the number of samples we need to play back.
+    {
+        long long duration = ((long long) is->ic->duration) * audio_sample_rate;
+        is->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
+
+        if (show_status) {
+            printf("Duration of '%s' is %d samples.\n", is->filename, is->audio_duration);
+        }
+    }
+
+    
     SDL_UnlockMutex(codec_mutex);
     codecs_locked = 0;
     
@@ -2214,8 +2312,12 @@ void ffpy_init(int rate, int status) {
     avcodec_register_all();
     av_register_all();
 
-    av_log_set_level(AV_LOG_ERROR);
-    
+    if (status) {
+        av_log_set_level(AV_LOG_INFO);
+    } else {
+        av_log_set_level(AV_LOG_DEBUG);
+    }
+        
     av_init_packet(&flush_pkt);
     flush_pkt.data = (unsigned char *) "FLUSH";
 

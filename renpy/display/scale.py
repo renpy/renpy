@@ -107,18 +107,20 @@ def init():
 
     else:
 
+        factor = 1.0
+        
         # Automatically scale to screen if too small.
         
-        info = pygame.display.Info()
+#         info = pygame.display.Info()
 
-        factor = min(1.0,
-                     1.0 * info.current_w / renpy.config.screen_width,
-                     1.0 * info.current_h / renpy.config.screen_height)
+#         factor = min(1.0,
+#                      1.0 * info.current_w / renpy.config.screen_width,
+#                      1.0 * info.current_h / renpy.config.screen_height)
 
-        if factor <= 0:
-            factor = 1.0
+#         if factor <= 0:
+#             factor = 1.0
+
         
-
     if factor != 1.0:
         print "Using scale factor of %f." % factor
         load_scaling()
@@ -168,7 +170,7 @@ def load_scaling():
     def v2p(n):
         if n is None:
             return None
-
+        
         return tuple([ int(i * factor) for i in n ])
 
     # Similar, but include an extra pixel to deal with rounding.

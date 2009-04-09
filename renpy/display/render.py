@@ -611,10 +611,10 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         else:
             dw, dh = dest.get_size()
         
-        x0, y0 = 0, 0
-        x1, y1 = reverse.transform(sw, 0)
+        x0, y0 = 0.0, 0.0
+        x1, y1 = reverse.transform(sw, 0.0)
         x2, y2 = reverse.transform(sw, sh)
-        x3, y3 = reverse.transform(0, sh)
+        x3, y3 = reverse.transform(0.0, sh)
 
         minx = math.floor(min(x0, x1, x2, x3) + xo)
         maxx = math.ceil(max(x0, x1, x2, x3) + xo)
@@ -631,6 +631,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if maxy > dh:
             maxy = dh
 
+        if minx > dw or miny > dh:
+            return
+            
         cx, cy = forward.transform(minx - xo, miny - yo)
 
         if clip:
