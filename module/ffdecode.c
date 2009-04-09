@@ -2315,7 +2315,7 @@ void ffpy_init(int rate, int status) {
     if (status) {
         av_log_set_level(AV_LOG_INFO);
     } else {
-        av_log_set_level(AV_LOG_DEBUG);
+        av_log_set_level(AV_LOG_ERROR);
     }
         
     av_init_packet(&flush_pkt);
