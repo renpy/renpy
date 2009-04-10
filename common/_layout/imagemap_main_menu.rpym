@@ -49,6 +49,7 @@ label main_menu_screen:
         else:
             ui.jumpsoutofcontext(rv)()
 
-
+    jump main_menu_screen
+            
             
     
