@@ -62,6 +62,10 @@ There is a new config.windows_icon variable, that lets one set the
 window icon for Windows separately from Mac OS X and Linux.
 
 
+Ren'Py now automatically scales itself down when it detects that the
+game window is too large for the screen.
+
+
 The define.move_transitions function can now pass keyword arguments to
 the moves it creates. The most useful thing with this is to pass
 subpixel=True, in order to create subpixel move transitions.
