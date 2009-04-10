@@ -39,21 +39,17 @@ try:
     import _renpy
 except ImportError:
     _renpy = None
-    
+
+# The factor we're scaling by.
 factor = 1.0
 
-if ('RENPY_SCALE_FACTOR' in os.environ) or ('RENPY_SCALE_WIDTH' in os.environ):
-    enable_scaling = True
-else:
-    enable_scaling = False
+# Should we scale fast or scale good-looking?
+scale_fast = False
+
 
 ##############################################################################
 # The scaling API that's used if we don't enable scaling.
     
-
-def init():
-    return
-
 # Gets the real pygame surface.
 def real(s):
     return s
@@ -93,9 +89,11 @@ def image_save_unscaled(surf, dest):
 
 
     
+    
 def init():    
     global factor
-
+    global scale_fast
+    
     if 'RENPY_SCALE_FACTOR' in os.environ:
         factor = float(os.environ['RENPY_SCALE_FACTOR'])
     elif 'RENPY_SCALE_WIDTH' in os.environ:
@@ -107,24 +105,26 @@ def init():
 
     else:
 
-        factor = 1.0
-        
         # Automatically scale to screen if too small.
         
-#         info = pygame.display.Info()
+        info = pygame.display.Info()
 
-#         factor = min(1.0,
-#                      1.0 * info.current_w / renpy.config.screen_width,
-#                      1.0 * info.current_h / renpy.config.screen_height)
+        factor = min(1.0,
+                     1.0 * info.current_w / renpy.config.screen_width,
+                     1.0 * info.current_h / renpy.config.screen_height)
 
-#         if factor <= 0:
-#             factor = 1.0
-
+        if factor <= 0:
+            factor = 1.0
         
     if factor != 1.0:
         print "Using scale factor of %f." % factor
         load_scaling()
-    
+
+    if 'RENPY_SCALE_FAST' in os.environ:
+        scale_fast = True
+    else:
+        scale_fast = False
+        
 
 scaling_loaded = False
     
@@ -164,7 +164,13 @@ def load_scaling():
         return rv
         
     def surface_scale(full):
-        return Surface(old_transform_scale(full, v2p(full.get_size())), wh=full.get_size())
+
+        if scale_fast:
+            scaled = old_transform_scale(full, v2p(full.get_size()))
+        else:
+            scaled = old_transform_smoothscale(full, v2p(full.get_size()))
+
+        return Surface(scaled, wh=full.get_size())
 
     # Project a tuple from virtual to physical coordinates.
     def v2p(n):
@@ -224,15 +230,68 @@ def load_scaling():
                     
                 self.surface = PygameSurface((w, h), flags, sample)
 
+
+            self.virtx = 0
+            self.virty = 0
+            self.physx = 0
+            self.physy = 0
+
+            
+        def transform_pos(self, (x, y)):
+            """
+            Converts a virtual position into a physical one.
+            """
+
+            x0 = x + self.virtx
+            y0 = y + self.virty
+
+            x0 *= factor
+            y0 *= factor
+
+            x0 = int(x0)            
+            y0 = int(y0)            
+            
+            return (x0 - self.physx, y0 - self.physy)
+
+        def transform_rect(self, (x, y, w, h)):
+            """
+            Converts a virtual rectangle into a physical one.
+            """
+
+            x0 = x + self.virtx
+            y0 = y + self.virty
+            x1 = x0 + w
+            y1 = y0 + h
+
+            x0 *= factor
+            y0 *= factor
+            x1 *= factor
+            y1 *= factor
+
+            x0 = int(x0)            
+            y0 = int(y0)            
+            x1 = int(x1)
+            y1 = int(y1)
+            
+            rv = (x0 - self.physx, y0 - self.physy, x1 - x0, y1 - y0)
+
+            return rv
+            
+            
         def __repr__(self):
             return "<scale.Surface %r %r>" % (self.get_size(), self.surface)
 
         def blit(self, s, destpos, sourcerect=None):
 
             if sourcerect is None:
-                self.surface.blit(s.surface, v2p(destpos))
+                self.surface.blit(
+                    s.surface,
+                    self.transform_pos(destpos))
             else:
-                self.surface.blit(s.surface, v2p(destpos), v2p(sourcerect))
+                self.surface.blit(
+                    s.surface,
+                    self.transform_pos(destpos),
+                    self.transform_rect(sourcerect))
 
         def convert(self, *args):
             if args:
@@ -254,7 +313,7 @@ def load_scaling():
             return self.surface.get_alpha()
 
         def get_at(self, pos):
-            x, y = v2p(pos)
+            x, y = self.transform_pos(pos)
             w, h = self.surface.get_size()
             
             return self.surface.get_at((min(x, w - 1), min(y, h - 1)))
@@ -285,9 +344,6 @@ def load_scaling():
         def get_bitsize(self):
             return self.surface.get_bitsize()
         
-        def get_clip(self):
-            return p2v(self.surface.get_clip())
-
         def get_colorkey(self):
             return self.surface.get_colorkey()
 
@@ -303,13 +359,23 @@ def load_scaling():
         def set_alpha(self, alpha, flags):
             self.surface.set_alpha(alpha, flags)
 
-        def set_clip(self, rect):
-            self.surface.set_clip(v2pplus(rect))
-            pass
-
         def subsurface(self, rect):
-            return Surface(self.surface.subsurface(v2p(rect)), wh=rect[2:])
 
+            prect = self.transform_rect(rect)
+            surf = self.surface.subsurface(prect)
+
+            rv = Surface(surf, wh=rect[2:])
+
+            vx, vy, vw, vh = rect
+            px, py, pw, ph = prect
+
+            rv.virtx = vx + self.virtx
+            rv.virty = vy + self.virty
+            rv.physx = px + self.physx
+            rv.physy = py + self.physy
+
+            return rv
+            
         def mustlock(self):
             return False
         
@@ -371,7 +437,6 @@ def load_scaling():
     pygame.display.get_surface = get_surface
 
     old_image_load = pygame.image.load
-    old_transform_scale = pygame.transform.scale
 
     def image_load(*args, **kwargs):
 
@@ -379,6 +444,8 @@ def load_scaling():
         return surface_scale(full)
 
     pygame.image.load = image_load
+
+    old_transform_scale = pygame.transform.scale
 
     def transform_scale(surf, size):
 
@@ -388,6 +455,17 @@ def load_scaling():
         return rv
 
     pygame.transform.scale = transform_scale
+
+    old_transform_smoothscale = pygame.transform.smoothscale
+
+    def transform_smoothscale(surf, size, dest=None):
+
+        rv = old_transform_smoothscale(surf.surface, v2p(size), dest.surface)
+        rv = Surface(rv, wh=size)
+
+        return rv
+
+    pygame.transform.smoothscale = transform_smoothscale
 
     old_transform_flip = pygame.transform.flip
 
