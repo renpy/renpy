@@ -423,8 +423,9 @@ class Button(renpy.display.layout.Window):
 
             self.activated = True
             self.style.set_prefix(self.role + 'activate_')
-            
-            renpy.audio.sound.play(self.style.sound)
+
+            if self.style.sound:
+                renpy.audio.music.play(self.style.sound, channel="sound")
                     
             rv = self.clicked()
 

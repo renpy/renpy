@@ -119,7 +119,8 @@ class Displayable(renpy.object.Object):
             self.set_style_prefix(self.role + "hover_")
         
         if not default and not self.activated:
-            renpy.audio.sound.play(self.style.sound)
+            if self.style.sound:
+                renpy.audio.music.play(self.style.sound, channel="sound")
 
     def unfocus(self):
         """
