@@ -44,7 +44,8 @@ include_dirs = [ install + "/include",
                  install + "/include/SDL",
                  install + "/include/freetype2",
                  install + "/include/pygame",
-                 ffmpeg]
+                 ffmpeg,
+                 ]
 
 library_dirs = [ install + "/lib" ]
 

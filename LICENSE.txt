@@ -35,7 +35,7 @@ launchers may contain code taken from the following projects:
     * SDL_ttf (LGPL)
     * SDL_mixer (LGPL)
     * Freetype (LGPL)
-    * ffmpeg (LGPL)
+    * FFmpeg (LGPL)
     * jpeg (JPEG License)
     * libpng (PNG license)
     * zlib (Zlib License)
