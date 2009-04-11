@@ -27,7 +27,7 @@
 #include <Python.h>
 #include <stdio.h>
 #include <string.h>
-#include "pygame.h"
+#include <pygame/pygame.h>
 #include "structmember.h"
 #include "renpy_ttf.h"
 

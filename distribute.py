@@ -228,6 +228,7 @@ def main():
     print "Did you remember to rebuild the exe after the last change?"
     print "Did you run me with renpython -OO?"
     print "Was ming using the right crt?"
+    print "Did you update renpy.py and launcher/script_version.rpy?"
     
 if __name__ == "__main__":
     main()

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-
 import distutils.core
 import os
 import os.path
@@ -12,46 +10,118 @@ try:
 except:
     pass
 
+
+# These control the level of optimization versus debugging.
+extra_compile_args = [ "-O3", "-funroll-loops" ]
+# extra_compile_args = [ "-O0", "-ggdb" ]
+
+
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
-install = os.environ.get("RENPY_DEPS_INSTALL", "/does/not/exist")
+install = os.environ.get("RENPY_DEPS_INSTALL", None)
 
-# Check to see if that's the case.
-if not os.path.isdir(install):
-    print "The Ren'Py dependencies install directory:"
-    print
-    print install
-    print
-    print "does not exist. Please set RENPY_DEPS_INSTALL to the correct"
-    print "location of the Ren'Py dependencies install directory, and "
-    print "re-run this script."
+if install is None:
+    print """
+The RENPY_DEPS_INSTALL environment variable has not been set. This
+should be set to a double-colon-delimited list of places where the
+Ren'Py dependencies can be found. (To use system libraries, this can
+be set to a system directory, like /usr.)
+"""
     sys.exit(-1)
 
-ffmpeg = os.environ.get("FFMPEG_BUILD_PATH", "/does/not/exist")
+install = install.split("::")
 
-if not os.path.isdir(install):
-    print "The FFMPEG build path:"
-    print
-    print ffmpeg
-    print
-    print "does not exist. Please set FFMPEG_BUILD_PATH to the correct"
-    print "location and re-run this script."
-    sys.exit(-1)
+include_dirs = [ ]
+library_dirs = [ ]
 
+def add_include(prefix, file):
+    """
+    Search for prefix/file underneath <i> and <i>/include, for each of the
+    directories <i> in install. When found, puts the directory it was found
+    in into include_dirs.
+    """
+
+    checked = [ ]
+    for i in install:
+
+        dir = os.path.join(i, prefix)
+        fn = os.path.join(dir, file)
+        fn = os.path.normpath(fn)
+        checked.append(fn)
+        if os.path.exists(fn):
+            break
+
+        dir = os.path.join(i, "include", prefix)
+        fn = os.path.join(dir, file)
+        fn = os.path.normpath(fn)
+        checked.append(fn)
+
+        if os.path.exists(fn):
+            break
+        
+    else:
+
+        print "Could not find include %s." % file
+        print "The paths searched were:"
+        for i in checked:
+            print "-", i
+        sys.exit(-1)
+
+    dir = os.path.normpath(dir)
+        
+    print "Found %s in %s." % (file, dir)
+        
+    if dir not in include_dirs:
+        include_dirs.append(dir)
+
+def add_library(name):
+    """
+    This looks for a library named name in the <i> and <i>/lib, for all
+    <i> in install. When found, it adds it to library_dirs.
+    """
+
+    checked = [ ]
     
-# Default compile arguements for everybody.
-include_dirs = [ install + "/include",
-                 install + "/include/SDL",
-                 install + "/include/freetype2",
-                 install + "/include/pygame",
-                 ffmpeg,
-                 ]
+    for i in install:
+        for d in ('', 'lib'):
+            for suffix in (".so", ".dylib", ".a"):
 
-library_dirs = [ install + "/lib" ]
+                dir = os.path.join(i, d)
+                fn = os.path.join(dir, name + suffix)
+                checked.append(fn)
+                
+                if os.path.exists(fn):
+                    print "Found %s." % fn
 
-# Fast math breaks on windows. :-(
-extra_compile_args = [ "-O3", "-funroll-loops" ] # , "-ffast-math" ]
-# extra_compile_args = [ "-O0", "-ggdb" ]
+                    if dir not in library_dirs:
+                        library_dirs.append(dir)
+                    return
+
+    print "Couldn't find library %s." % name
+    print "The paths searched were:"
+    for i in checked:
+        print "-", i
+    sys.exit(-1)
+        
+add_include("", "zlib.h")
+add_include("", "png.h")
+add_include("SDL", "SDL.h")
+add_include("", "ft2build.h")
+add_include("freetype2", "freetype/freetype.h")
+add_include("", "libavutil/avstring.h")
+add_include("", "libavformat/avformat.h")
+add_include("", "libavcodec/avcodec.h")
+add_include("", "libswscale/swscale.h")
+
+add_library("libSDL")
+add_library("libz")
+add_library("libpng")
+add_library("libavformat")
+add_library("libavcodec")
+add_library("libavutil")
+add_library("libfreetype")
+            
+
 
 extra_link_args = [ ]
 
@@ -67,10 +137,6 @@ linmixer = None
 if platform.win32_ver()[0]:
     extra_compile_args.append("-fno-strict-aliasing")
     winmixer = True
-
-# Detect mac.
-if platform.mac_ver()[0]:
-    nativemidi_libs = [ 'SDL' ]
 
 # Detect OSS.
 try:
