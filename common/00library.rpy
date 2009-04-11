@@ -607,7 +607,7 @@ label _return:
 
     if renpy.context().main_menu:
         $ renpy.transition(config.game_main_transition)
-        jump _main_menu
+        jump _main_menu_screen
 
     $ renpy.transition(config.exit_transition)
 
@@ -704,14 +704,14 @@ label _start:
         
 label _invoke_main_menu:
         
-    $ renpy.call_in_new_context("_enter_main_menu")
+    $ renpy.call_in_new_context("_main_menu")
 
     # If the main menu returns, then start the game.
     jump start
 
 # At this point, we've been switched into a new context. So we
 # initialize it.
-label _enter_main_menu:
+label _main_menu(_main_menu_screen="_main_menu_screen"):
 
     call _enter_menu from _call__enter_menu_1
 
@@ -721,9 +721,11 @@ label _enter_main_menu:
 
         renpy.context().main_menu = True
         store.main_menu = True
+
+    jump expression _main_menu_screen
         
 # This is called to show the main menu to the user.
-label _main_menu:    
+label _main_menu_screen:    
 
     # Let the user completely override the main menu. (But please note
     # it still lives in the menu context, rather than the game context.)
