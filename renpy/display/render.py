@@ -177,29 +177,42 @@ def process_redraws():
     need to redraw the screen now, false otherwise.
     """
 
+    global redraw_queue
+    
     redraw_queue.sort()
-    
+
     now = renpy.display.core.get_time()
-
     rv = invalidated
+
+    new_redraw_queue = [ ]
+    seen = set()
     
-    while redraw_queue:
-        when, d = redraw_queue[0]
+    for t in redraw_queue:
+        when, d = t
 
-        if when > now:
-            break
+        if d in seen:
+            continue
 
-        redraw_queue.pop(0)
+        seen.add(d)
 
-        # Remove this displayable and all its parents from the
-        # render cache. But don't kill them yet, as that will kill the
-        # children that we want to reuse.
+        if d not in render_cache:
+            continue
         
-        if d in render_cache:
+        if when <= now:
+            # Remove this displayable and all its parents from the
+            # render cache. But don't kill them yet, as that will kill the
+            # children that we want to reuse.
+     
             for v in render_cache[d].values():
                 v.kill_cache()
 
             rv = True
+
+        else:
+            new_redraw_queue.append(t)
+
+        redraw_queue = new_redraw_queue
+            
 
     return rv
 
@@ -222,7 +235,7 @@ def redraw(d, when):
 
     if not renpy.game.interface:
         return
-    
+
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
     
 
