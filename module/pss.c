@@ -1,4 +1,3 @@
-
 /*
 Copyright 2005-2009 PyTom <pytom@bishoujo.us>
 
@@ -247,8 +246,12 @@ static void start_sample(struct Channel* c, int reset_fade) {
             c->fade_off = 0;
             c->fade_vol = 0;
 
-            c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
-            c->fade_step_len &= ~0x7; // Even sample.
+            if (fade_steps) {
+                c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
+                c->fade_step_len &= ~0x7; // Even sample.
+            } else {
+                c->fade_step_len = 0;
+            }
         }
 
         c->stop_bytes = -1;
@@ -786,14 +789,20 @@ void PSS_fadeout(int channel, int ms) {
         return;
     }
 
+
+        
     fade_steps = c->volume;
     c->fade_delta = -1;
     c->fade_off = 0;
     c->fade_vol = c->volume;
 
-    c->fade_step_len = ms_to_bytes(ms) / fade_steps;
-    c->fade_step_len &= ~0x7; // Even sample.
-
+    if (fade_steps) {
+        c->fade_step_len = ms_to_bytes(ms) / fade_steps;
+        c->fade_step_len &= ~0x7; // Even sample.
+    } else {
+        c->fade_step_len = 0;
+    }
+        
     c->stop_bytes = ms_to_bytes(ms);
     c->queued_tight = 0;
 

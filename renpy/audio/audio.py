@@ -181,7 +181,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
     
-    def __init__(self, name, default_loop):
+    def __init__(self, name, default_loop, stop_on_mute):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -235,6 +235,9 @@ class Channel(object):
         # The time the secondary volume of this channel was last set.
         self.secondary_volume_time = None
 
+        # Should we stop playing on mute?
+        self.stop_on_mute = stop_on_mute
+        
         if default_loop is None:
             # By default, should we loop the music?
             self.default_loop = True
@@ -287,10 +290,9 @@ class Channel(object):
 
         # This should be set from something that checks to see if our
         # mixer is muted.
-        force_stop = self.context.force_stop or renpy.game.preferences.mute[self.mixer] 
+        force_stop = self.context.force_stop or (renpy.game.preferences.mute[self.mixer] and self.stop_on_mute)
 
         if self.playing and force_stop:
-
             pss.stop(self.number)
             self.playing = False
             self.wait_stop = False
@@ -494,11 +496,11 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True):
     if not renpy.game.init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    c = Channel(name, loop)
+    c = Channel(name, loop, stop_on_mute)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
@@ -634,7 +636,7 @@ def periodic():
 
         max_volume = -1.0
         volumes = renpy.game.preferences.volumes
-        
+
         if mix_ok:
 
             anything_playing = False
@@ -646,28 +648,26 @@ def periodic():
                 if vol != 0:
                     anything_playing = True
 
-            if not anything_playing:
-                disable_mixer()
-                return
-
-            enable_mixer()
-                
             if max_volume == -1.0:
                 return
 
-            if max_volume == 0.0:
-                return
+            if not anything_playing:
+                disable_mixer()
+                pcm_volume = -1.0
+            else:
+                enable_mixer()
+                
+                if max_volume != pcm_volume:    
+                    mix.set_wave(max_volume)
+                    pcm_volume = max_volume
 
-            if max_volume != pcm_volume:    
-                mix.set_wave(max_volume)
-                pcm_volume = max_volume
 
             for c in all_channels:
 
                 vol = c.chan_volume * volumes[c.mixer]
 
                 vol /= max_volume
-
+                
                 if c.actual_volume != vol:
                     pss.set_volume(c.number, vol)
                     c.actual_volume = vol
@@ -675,9 +675,6 @@ def periodic():
         else:
 
             for c in all_channels:
-
-                if not c.playing:
-                    continue
 
                 vol = c.chan_volume * volumes[c.mixer]
 
