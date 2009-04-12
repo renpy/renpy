@@ -108,14 +108,20 @@ def image_exists(name, expression, tag):
 check_file_cache = { }
 
 def check_file(what, fn):
-    if fn in check_file_cache:
-        return True
 
-    check_file_cache[fn] = True
+    present = check_file_cache.get(fn, None)
+    if present is True:
+        return
+    if present is False:
+        report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
+        return
 
     if not renpy.loader.loadable(fn):
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
+        check_file_cache[fn] = False
         return
+
+    check_file_cache[fn] = True
 
     try:
        renpy.loader.transfn(fn)
