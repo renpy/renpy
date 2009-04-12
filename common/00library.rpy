@@ -682,12 +682,6 @@ label _start:
         
     $ renpy.block_rollback()
 
-    python hide:
-        for i in range(0, 7):
-            # renpy.music.stop(channel=i)
-            # renpy.sound.stop(channel=i)
-            pass
-            
     if config.main_menu_music:
         $ renpy.music.play(config.main_menu_music, if_changed=True)
     else:
@@ -703,9 +697,13 @@ label _start:
         jump expression _restart[1]
         
 label _invoke_main_menu:
-        
-    $ renpy.call_in_new_context("_main_menu")
 
+    if _restart:
+        $ renpy.call_in_new_context(_restart[2])
+    else:
+        $ renpy.call_in_new_context("_main_menu")
+        
+        
     # If the main menu returns, then start the game.
     jump start
 

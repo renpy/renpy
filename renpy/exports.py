@@ -734,7 +734,7 @@ def take_screenshot(scale=None):
     
     renpy.game.interface.take_screenshot(scale)
 
-def full_restart(transition=False, label="_invoke_main_menu"):
+def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu"):
     """
     This causes a full restart of Ren'Py. 
     """
@@ -742,7 +742,7 @@ def full_restart(transition=False, label="_invoke_main_menu"):
     if transition is False:
         transition = renpy.config.end_game_transition
     
-    raise renpy.game.FullRestartException((transition, label))
+    raise renpy.game.FullRestartException((transition, label, target))
 
 def utter_restart():
     """
