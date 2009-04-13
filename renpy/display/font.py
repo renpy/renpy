@@ -78,7 +78,8 @@ class ImageFont(object):
     def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
 
         if not text:
-            return surf
+            return pygame.Surface((0, self.height), 0,
+                                  renpy.game.interface.display.sample_surface)
 
         xoff, _ = self.offsets[text[0]]
         x = -xoff
