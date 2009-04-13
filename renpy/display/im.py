@@ -770,15 +770,20 @@ class Scale(ImageBase):
 
     def load(self):
 
+        child = cache.get(self.image)
+        
         if self.bilinear:
-            renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.smoothscale(cache.get(self.image), (self.width, self.height))
-            renpy.display.render.blit_lock.release()
-
+            try:
+                renpy.display.render.blit_lock.acquire()
+                rv = pygame.transform.smoothscale(child, (self.width, self.height))
+            finally:
+                renpy.display.render.blit_lock.release()
         else:
-            renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.scale(cache.get(self.image), (self.width, self.height))
-            renpy.display.render.blit_lock.release()
+            try:
+                renpy.display.render.blit_lock.acquire()
+                rv = pygame.transform.scale(child, (self.width, self.height))
+            finally:
+                renpy.display.render.blit_lock.release()
             
         return rv
 
@@ -813,14 +818,18 @@ class FactorScale(ImageBase):
         height = int(height * self.height)
 
         if self.bilinear:
-            renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.smoothscale(surf, (width, height))
-            renpy.display.render.blit_lock.release()
+            try:
+                renpy.display.render.blit_lock.acquire()
+                rv = pygame.transform.smoothscale(surf, (width, height))
+            finally:
+                renpy.display.render.blit_lock.release()
 
         else:
-            renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.scale(surf, (width, height))
-            renpy.display.render.blit_lock.release()
+            try:
+                renpy.display.render.blit_lock.acquire()
+                rv = pygame.transform.scale(surf, (width, height))
+            finally:
+                renpy.display.render.blit_lock.release()
             
         return rv
 
@@ -856,9 +865,13 @@ class Flip(ImageBase):
 
     def load(self):
 
-        renpy.display.render.blit_lock.acquire()
-        rv = pygame.transform.flip(cache.get(self.image), self.horizontal, self.vertical)
-        renpy.display.render.blit_lock.release()
+        child = cache.get(self.image)
+        
+        try:
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.flip(child, self.horizontal, self.vertical)
+        finally:
+            renpy.display.render.blit_lock.release()
 
         return rv
 
@@ -893,9 +906,13 @@ class Rotozoom(ImageBase):
 
     def load(self):
 
-        renpy.display.render.blit_lock.acquire()
-        rv = pygame.transform.rotozoom(cache.get(self.image), self.angle, self.zoom)
-        renpy.display.render.blit_lock.release()
+        child = cache.get(self.image)
+        
+        try:
+            renpy.display.render.blit_lock.acquire()
+            rv = pygame.transform.rotozoom(child, self.angle, self.zoom)
+        finally:
+            renpy.display.render.blit_lock.release()
 
         return rv
 

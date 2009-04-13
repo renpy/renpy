@@ -222,6 +222,8 @@ def load_scaling():
         func = getattr(PygameSurface, name)
         def rv(self, *args, **kwargs):
             return func(self.surface, *args, **kwargs)
+
+        return rv
         
     class Surface(object):
 
@@ -489,7 +491,11 @@ def load_scaling():
 
     def transform_smoothscale(surf, size, dest=None):
 
-        rv = old_transform_smoothscale(surf.surface, v2p(size), dest.surface)
+        if dest is not None:
+            rv = old_transform_smoothscale(surf.surface, v2p(size), dest.surface)
+        else:
+            rv = old_transform_smoothscale(surf.surface, v2p(size))
+            
         rv = Surface(rv, wh=size)
 
         return rv
@@ -564,13 +570,9 @@ def load_scaling():
         def get_descent(self):
             return int(self.font.get_descent() / factor)
 
-        # Ignored:
-        #
-        # set_at
-        # Anything involving palettes.
-        # Anything involving the parents of subsurfaces.
-        # get_pitch, get_shifts, get_losses
-                
+        def set_expand(self, value):
+            self.font.set_expand(value * factor)
+        
     font_module.Font = Font
 
     old_image_save = pygame.image.save
@@ -718,6 +720,14 @@ def load_scaling():
 
         _renpy.imageblend = imageblend
 
+        old_colormatrix = _renpy.colormatrix
+
+        def colormatrix(src, dst, *args):
+            src, dst = same_size(src.surface, dst.surface)
+            old_colormatrix(src, dst, *args)
+
+        _renpy.colormatrix = colormatrix
+        
 
     def draw_scale(o):
         if isinstance(o, int):

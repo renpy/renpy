@@ -383,6 +383,7 @@ else:
 
 if version >= 6009000:
     def subpixel(src, dst, x, y):
+
         shift = renpy.game.interface.display.sample_surface.get_shifts()[3]
         _renpy.subpixel(src, dst, x, y, shift)
 
