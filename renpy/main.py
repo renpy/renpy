@@ -307,7 +307,7 @@ def main():
             try:
                 run(restart)
             finally:
-                restart = (renpy.config.end_game_transition, "_invoke_main_menu")
+                restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                 save_persistent()
                 
         except game.QuitException, e:

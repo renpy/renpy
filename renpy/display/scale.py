@@ -143,6 +143,29 @@ def load_scaling():
     def real(s):
         return s.surface
 
+
+    def same_size(*args):
+        """
+        If all the surfaces in args are the same size, return them all
+        unchanged. Otherwise, compute smallest width and height, and
+        take subsurfaces of anythign bigger.
+        """
+
+        w = min(i.get_width() for i in args)
+        h = min(i.get_height() for i in args)
+
+        size = (w, h)
+        
+        rv = [ ]
+        
+        for i in args:
+            if i.get_size() != size:
+                i = i.subsurface((0, 0) + size)
+
+            rv.append(i)
+        
+        return rv
+    
     def scale(n):
         if n is None:
             return n
@@ -217,7 +240,10 @@ def load_scaling():
             else:
 
                 w, h = what
-                self.width, self.height = w, h
+                w = int(w)
+                h = int(h)
+                self.width = w
+                self.height = h
 
                 w = int(w * factor)
                 h = int(h * factor)
@@ -229,8 +255,7 @@ def load_scaling():
                     sample = sample.surface
                     
                 self.surface = PygameSurface((w, h), flags, sample)
-
-
+                              
             self.virtx = 0
             self.virty = 0
             self.physx = 0
@@ -363,7 +388,7 @@ def load_scaling():
 
             prect = self.transform_rect(rect)
             surf = self.surface.subsurface(prect)
-
+            
             rv = Surface(surf, wh=rect[2:])
 
             vx, vy, vw, vh = rect
@@ -441,6 +466,10 @@ def load_scaling():
     def image_load(*args, **kwargs):
 
         full = old_image_load(*args, **kwargs)
+
+        if full.get_bitsize() < 24:
+            full = full.convert() # Less than 24 bits means no alpha.
+            
         return surface_scale(full)
 
     pygame.image.load = image_load
@@ -595,7 +624,8 @@ def load_scaling():
         old_map = _renpy.map
 
         def map(pysrc, pydst, r, g, b, a):
-            old_map(pysrc.surface, pydst.surface, r, g, b, a)
+            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+            old_map(pysrc, pydst, r, g, b, a)
 
         _renpy.map = map
 
@@ -603,7 +633,8 @@ def load_scaling():
         old_linmap = _renpy.linmap
 
         def linmap(pysrc, pydst, r, g, b, a):
-            old_linmap(pysrc.surface, pydst.surface, r, g, b, a)
+            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+            old_linmap(pysrc, pydst, r, g, b, a)
 
         _renpy.linmap = linmap
 
@@ -645,8 +676,8 @@ def load_scaling():
         
 
         def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
-            old_alpha_munge(pysrc.surface, pydst.surface,
-                            srcchan, dstchan, amap)
+            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+            old_alpha_munge(pysrc, pydst, srcchan, dstchan, amap)
 
         _renpy.alpha_munge = alpha_munge
 
@@ -674,15 +705,16 @@ def load_scaling():
         old_blend = _renpy.blend
 
         def blend(pysrca, pysrcb, pydst, alpha):
-            old_blend(pysrca.surface, pysrcb.surface, pydst.surface, alpha)
+            pysrca, pysrcb, pydst = same_size(pysrca.surface, pysrcb.surface, pydst.surface)
+            old_blend(pysrca, pysrcb, pydst, alpha)
 
         _renpy.blend = blend
         
         old_imageblend = _renpy.imageblend
 
         def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
-            old_imageblend(pysrca.surface, pysrcb.surface, pydst.surface,
-                           pyimg.surface, aoff, amap)
+            pysrca, pysrcb, pydst, pyimg = same_size(pysrca.surface, pysrcb.surface, pydst.surface, pyimg.surface)
+            old_imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap)
 
         _renpy.imageblend = imageblend
 
