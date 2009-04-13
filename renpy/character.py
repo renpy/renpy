@@ -214,7 +214,7 @@ def display_say(show_function,
     
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
-    if renpy.config.skipping == "fast":
+    if interact and renpy.config.skipping == "fast":
 
         # Clears out transients.
         renpy.exports.with_statement(None)
