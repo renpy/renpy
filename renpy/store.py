@@ -44,8 +44,12 @@ _window = False
 # The window subtitle.
 _window_subtitle = ''
 
+# Should rollback be allowed?
+_rollback = True
+
 # config.
 _config = renpy.config
+
 
 class _Config(object):
 

@@ -67,7 +67,8 @@ def checkpoint(data=None):
     statement.
     """
 
-    renpy.game.log.checkpoint(data)
+    if renpy.store._rollback:
+        renpy.game.log.checkpoint(data)
 
 def block_rollback():
     """
@@ -684,6 +685,9 @@ def rollback():
     Rolls the state of the game back to the last checkpoint.
     """
 
+    if not renpy.store._rollback:
+        return
+    
     if not renpy.game.context().rollback:
         return
     
