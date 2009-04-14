@@ -97,6 +97,14 @@ Added more verbose diagnostics when illegal statements are run in the
 init phase.
 
 
+Added _rollback, which controls if rollback is enabled.
+
+
+Added a target parameter to renpy.full_restart, which allows the main
+menu screen to be selected after a restart.
+
+
+
 Fixed a bug that caused layout.imagemap_main_menu to call a label even
 though there was a button with the same name.
 
