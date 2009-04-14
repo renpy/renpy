@@ -49,6 +49,8 @@ label start:
     
     e "We look forward to seeing what you can make with this! Good luck!"
 
+    window hide
+
     # Returning from the top level quits the game.
     return
 
