@@ -181,7 +181,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
     
-    def __init__(self, name, default_loop, stop_on_mute):
+    def __init__(self, name, default_loop, stop_on_mute, tight):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -237,6 +237,9 @@ class Channel(object):
 
         # Should we stop playing on mute?
         self.stop_on_mute = stop_on_mute
+
+        # Is this channel tight?
+        self.tight = tight
         
         if default_loop is None:
             # By default, should we loop the music?
@@ -431,13 +434,16 @@ class Channel(object):
             pss.fadeout(self.number, int(secs * 1000))
 
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=False):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
 
         for filename in filenames:
             renpy.game.persistent._seen_audio[filename] = True
         
         if not pcm_ok:
             return
+
+        if tight is None:
+            tight = self.tight
 
         for filename in filenames:
             qe = QueueEntry(filename, int(fadein * 1000), tight)
@@ -496,11 +502,11 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False):
     if not renpy.game.init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    c = Channel(name, loop, stop_on_mute)
+    c = Channel(name, loop, stop_on_mute, tight)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
