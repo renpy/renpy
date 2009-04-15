@@ -67,7 +67,6 @@ def real_bilinear(src, size):
 def real_transform_scale(surf, size):
     global real_transform_scale
     real_transform_scale = pygame.transform.scale
-
     return real_transform_scale(surf, size)
 
 # Loads an image, without scaling it.
@@ -88,6 +87,50 @@ def image_save_unscaled(surf, dest):
     pygame.image.save(surf, dest)
 
 
+if _renpy:
+    real_renpy_pixellate = _renpy.pixellate
+    real_renpy_bilinear = _renpy.bilinear
+
+    def real_smoothscale(src, size, dest=None):
+        """
+        This scales src up or down to size. This uses both the pixellate
+        and the bilinear operations to handle the scaling.
+        """
+
+        width, height = size
+        srcwidth, srcheight = src.get_size()
+        iwidth, iheight = srcwidth, srcheight
+
+        if dest is None:
+            dest = PygameSurface(size, src.get_flags(), src)
+
+        if width == 0 or height == 0:
+            return dest
+            
+        xshrink = 1
+        yshrink = 1
+
+        while iwidth >= width * 2:
+            xshrink *= 2
+            iwidth /= 2
+
+        while iheight >= height * 2:
+            yshrink *= 2
+            iheight /= 2
+
+        if iwidth != srcwidth or iheight != srcheight:
+            inter = PygameSurface((iwidth, iheight), src.get_flags(), src)
+            real_renpy_pixellate(src, inter, xshrink, yshrink, 1, 1)
+            src = inter
+
+        real_renpy_bilinear(src, dest)
+
+        return dest
+    
+else:
+    real_smoothscale = pygame.transform.smoothscale
+    
+smoothscale = real_smoothscale
     
     
 def init():    
@@ -191,7 +234,7 @@ def load_scaling():
         if scale_fast:
             scaled = old_transform_scale(full, v2p(full.get_size()))
         else:
-            scaled = old_transform_smoothscale(full, v2p(full.get_size()))
+            scaled = real_smoothscale(full, v2p(full.get_size()))
 
         return Surface(scaled, wh=full.get_size())
 
@@ -469,11 +512,14 @@ def load_scaling():
 
         full = old_image_load(*args, **kwargs)
 
-        if full.get_bitsize() < 24:
-            full = full.convert() # Less than 24 bits means no alpha.
-            
+        if full.get_masks()[3] == 0:
+            full = full.convert()
+        else:
+            full = full.convert_alpha()
+
         return surface_scale(full)
 
+            
     pygame.image.load = image_load
 
     old_transform_scale = pygame.transform.scale
@@ -526,7 +572,7 @@ def load_scaling():
 
     # Ignoring scale2x and chop. The former due to a pending api change,
     # the latter due to general uselessness.
-        
+    
     PygameFont = font_module.Font
 
     class Font(object):
@@ -763,7 +809,19 @@ def load_scaling():
     pygame.draw.aaline = draw_wrap(pygame.draw.aaline)
     pygame.draw.aalines = draw_wrap(pygame.draw.aalines)
 
+    # Smoothscale:
 
+    def smoothscale(surf, size, dest=None):
+        if dest is not None:
+            dest = dest.surface
+
+        rv = real_smoothscale(surf.surface, v2p(size), dest)
+
+        if rv is None:
+            return rv
+        else:
+            return Surface(rv, wh=size)
+    
     # Now, put everything from this function's namespace into the
     # module namespace.
 

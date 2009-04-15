@@ -775,7 +775,7 @@ class Scale(ImageBase):
         if self.bilinear:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = pygame.transform.smoothscale(child, (self.width, self.height))
+                rv = renpy.display.scale.smoothscale(child, (self.width, self.height))
             finally:
                 renpy.display.render.blit_lock.release()
         else:
@@ -820,7 +820,7 @@ class FactorScale(ImageBase):
         if self.bilinear:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = pygame.transform.smoothscale(surf, (width, height))
+                rv = renpy.display.scale.smoothscale(surf, (width, height))
             finally:
                 renpy.display.render.blit_lock.release()
 

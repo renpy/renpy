@@ -1024,7 +1024,7 @@ class Display(object):
         contents of the window.
         """
 
-        surf = renpy.display.module.scale(self.window, scale)
+        surf = renpy.display.scale.smoothscale(self.window, scale)
         
         sio = cStringIO.StringIO()
         renpy.display.module.save_png(surf, sio, 0)
