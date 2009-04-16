@@ -1278,7 +1278,7 @@ class Render(object):
                             vc = [ ]
                             rv = True
                     else:
-                        if not source.get_masks()[3]:
+                        if not child.get_masks()[3]:
                             vc = [ ]
                             rv = True
             

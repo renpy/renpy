@@ -687,7 +687,7 @@ class FrameImage(ImageBase):
                     tilew, tileh = srcsize
                     dstw, dsth = dstsize
 
-                    surf2 = pygame.Surface(dstsize, 0, surf)
+                    surf2 = renpy.display.scale.PygameSurface(dstsize, 0, surf)
 
                     for y in range(0, dsth, tileh):
                         for x in range(0, dstw, tilew):
@@ -707,6 +707,7 @@ class FrameImage(ImageBase):
             # Blit.
             dest.blit(surf, (dx0, dy0))
 
+
         # Top row.
         draw(0, xb, 0, yb)
         draw(xb, -xb, 0, yb)
@@ -721,7 +722,7 @@ class FrameImage(ImageBase):
         draw(0, xb, -yb, 0)
         draw(xb, -xb, -yb, 0)
         draw(-xb, 0, -yb, 0)
-        
+
         # And, finish up.
         return rv
 

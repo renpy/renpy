@@ -1000,18 +1000,18 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
 
     unsigned int amul = (int) (a * 256);
     
-    lsx = corner_x * 256;
-    lsy = corner_y * 256;
+    lsx = corner_x * 65536;
+    lsy = corner_y * 65536;
 
-    xdx *= 256;
-    ydx *= 256;
-    xdy *= 256;
-    ydy *= 256;
+    xdx *= 65536;
+    ydx *= 65536;
+    xdy *= 65536;
+    ydy *= 65536;
 
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 2) * 256;
-    float fsh = (srch - 2) * 256;
+    float fsw = (srcw - 1) * 65536 - 1;
+    float fsh = (srch - 1) * 65536 - 1;
 
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
@@ -1058,7 +1058,7 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
 
         sx = lsx + minx * xdx;
         sy = lsy + minx * ydx;
-                
+
         int sxi = (int) sx;
         int syi = (int) sy;
         int xdxi = (int) xdx;
@@ -1066,13 +1066,13 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
 
         while (d <= dend) {
             int px, py;
-            px = sxi >> 8;
-            py = syi >> 8;
+            px = sxi >> 16;
+            py = syi >> 16;
                 
             unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
-            int yfrac = syi & 0xff; // ((short) sy) & 0xff;
-            int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
+            int yfrac = (syi >> 8) & 0xff; // ((short) sy) & 0xff;
+            int xfrac = (sxi >> 8) & 0xff; // ((short) sx) & 0xff;
 
             unsigned int pal = *(unsigned int *) sp;
             unsigned int pbl = *(unsigned int *) (sp + 4);
@@ -1164,17 +1164,17 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     // Compute the coloring multiplier.
     unsigned int amul = (unsigned int) (a * 256);
     
-    lsx = corner_x * 256;
-    lsy = corner_y * 256;
+    lsx = corner_x * 65536;
+    lsy = corner_y * 65536;
 
-    xdx *= 256;
-    ydx *= 256;
-    xdy *= 256;
-    ydy *= 256;
+    xdx *= 65536;
+    ydx *= 65536;
+    xdy *= 65536;
+    ydy *= 65536;
 
     // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 2) * 256;
-    float fsh = (srch - 2) * 256;
+    float fsw = (srcw - 1) * 65536 - 1;
+    float fsh = (srch - 1) * 65536 - 1;
 
     for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
 
@@ -1235,13 +1235,13 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
         
         while (d <= dend) {
 
-            px = sxi >> 8;
-            py = syi >> 8;
+            px = sxi >> 16;
+            py = syi >> 16;
 
             unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
-            unsigned int yfrac = syi & 0xff; // ((short) sy) & 0xff;
-            unsigned int xfrac = sxi & 0xff; // ((short) sx) & 0xff;
+            unsigned int yfrac = (syi >> 8) & 0xff; // ((short) sy) & 0xff;
+            unsigned int xfrac = (sxi >> 8) & 0xff; // ((short) sx) & 0xff;
 
             // Put xfrac in mm5, yfrac in m6
             pxor_r2r(mm5, mm5);

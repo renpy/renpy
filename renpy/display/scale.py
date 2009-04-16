@@ -89,7 +89,7 @@ def image_save_unscaled(surf, dest):
 
 if _renpy:
     real_renpy_pixellate = _renpy.pixellate
-    real_renpy_bilinear = _renpy.bilinear
+    real_renpy_transform = _renpy.transform
 
     def real_smoothscale(src, size, dest=None):
         """
@@ -123,7 +123,11 @@ if _renpy:
             real_renpy_pixellate(src, inter, xshrink, yshrink, 1, 1)
             src = inter
 
-        real_renpy_bilinear(src, dest)
+        real_renpy_transform(src, dest,
+                             0, 0,
+                             1.0 * iwidth / width , 0,                             
+                             0, 1.0 * iheight / height,
+                             )
 
         return dest
     
@@ -511,11 +515,7 @@ def load_scaling():
     def image_load(*args, **kwargs):
 
         full = old_image_load(*args, **kwargs)
-
-        if full.get_masks()[3] == 0:
-            full = full.convert()
-        else:
-            full = full.convert_alpha()
+        full = full.convert_alpha()
 
         return surface_scale(full)
 
