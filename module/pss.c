@@ -111,9 +111,6 @@ struct Channel {
     /* The queued up sample. */
     struct VideoState *queued;    
 
-    /* A sample that's dying, and needs to be deallocated. */
-    struct VideoState *dying;
-    
     /* The name of the queued up sample. */
     PyObject *queued_name;
 
@@ -171,6 +168,13 @@ struct Channel {
     unsigned int vol2_length;
     unsigned int vol2_done;
 };
+
+struct Dying {
+    struct VideoState *stream;
+    struct Dying *next;
+};
+
+static struct Dying *dying = NULL;
 
 /*
  * The number of channels the system knows about.
@@ -443,10 +447,15 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             if (c->stop_bytes == 0 || bytes == 0) {
 
                 int old_tight = c->playing_tight;
-
+                struct Dying *d;
+                
                 post_event(c);
 
-                c->dying = c->playing;
+                d = malloc(sizeof(struct Dying));
+                d->next = dying;
+                d->stream = c->playing;
+                dying = d;
+                
                 decref(c->playing_name);
 
                 c->playing = c->queued;
@@ -491,7 +500,6 @@ static int check_channel(int c) {
             channels[i].queued = NULL;
             channels[i].playing_name = NULL;
             channels[i].queued_name = NULL;
-            channels[i].dying = NULL;
             channels[i].volume = SDL_MIX_MAXVOLUME;        
             channels[i].paused = 1;
             channels[i].event = 0;
@@ -1089,14 +1097,20 @@ void PSS_periodic() {
 
     int i;
 
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].dying) {
-            ENTER();
-            ffpy_stream_close(channels[i].dying);
-            channels[i].dying = NULL;
-            EXIT();
-        }
+    if (!dying) {
+        return;
     }
+
+    ENTER();
+    
+    while (dying) {
+        struct Dying *d = dying;
+        ffpy_stream_close(d->stream);
+        dying = d->next;
+        free(d);
+    }
+    
+    EXIT();
 }
 
 /* This should be called in response to an FF_ALLOC_EVENT, with a pygame

@@ -340,14 +340,18 @@ class Channel(object):
                 break
 
             # Otherwise, we might be able to enqueue something.
-            topq = self.queue[0]
+            topq = self.queue.pop(0)
 
-            # At this point, we've decided to try to play
-            # top. So let's see how far we can get.
+            # Blacklist of old file formats we used to support, but we now
+            # ignore.
+            lfn = topq.filename.lower()
+            for i in (".mod", ".xm", ".mid", ".midi"):
+                if lfn.endswith(i):
+                    topq = None
 
-            # Update the queue
-            self.queue = self.queue[1:]
-
+            if not topq:
+                continue
+            
             try:
                 topf = load(topq.filename)
 
