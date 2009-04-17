@@ -1020,11 +1020,12 @@ class Display(object):
         
     def screenshot(self, scale):
         """
-        Returns a pygame Surface that is a screenshot of the current
-        contents of the window.
+        Returns a string containing the contents of the window, as a PNG.
         """
 
-        surf = renpy.display.scale.smoothscale(self.window, scale)
+        surf = self.window.convert_alpha()
+        surf = renpy.display.scale.smoothscale(surf, scale)
+        surf = surf.convert()
         
         sio = cStringIO.StringIO()
         renpy.display.module.save_png(surf, sio, 0)
