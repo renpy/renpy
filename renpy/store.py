@@ -64,7 +64,7 @@ class _Config(object):
         cvars = vars(_config)
 
         if name not in cvars:
-            raise Exception('%s.%s is not a known configuration variable.' % (self._name, name))
+            raise Exception('config.%s is not a known configuration variable.' % (name))
 
         return cvars[name]
 
@@ -72,7 +72,7 @@ class _Config(object):
         cvars = vars(_config)
 
         if name not in cvars and renpy.config.locked:
-            raise Exception('%s.%s is not a known configuration variable.' % (self._name, name))
+            raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
             renpy.store._set_script_version(value)
