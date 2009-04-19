@@ -694,16 +694,15 @@ class Display(object):
             im = renpy.display.scale.image_load_unscaled(
                 renpy.loader.load(icon),
                 icon,
-                convert=True,
+                convert=False,
                 )
 
             # Convert the aspect ratio to be square.
             iw, ih = im.get_size()
-            if iw != ih:
-                imax = max(iw, ih)
-                square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA)
-                square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
-                im = square_im
+            imax = max(iw, ih)
+            square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA)
+            square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
+            im = square_im
 
             if on_windows and im.get_size() != (32, 32):
                 im = renpy.display.scale.real_smoothscale(im, (32, 32))
