@@ -13,6 +13,9 @@ init -1210 python:
         if version <= (6, 5, 0):
             layout.compat()
 
+        if version <= (6, 9, 1):
+            store.library = store.config
+            
 init 1210 python hide::
 
     # This returns true if the script_version is <= the

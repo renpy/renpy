@@ -53,9 +53,6 @@ _config = renpy.config
 
 class _Config(object):
 
-    def __init__(self, name):
-        vars(self)["_name"] = name
-    
     def register(self, name, default, cat=None, help=None):
         setattr(self, name, default)
         _config.help.append((cat, name, help))
@@ -85,8 +82,7 @@ class _Config(object):
         else:
             delattr(renpy.config, name)
         
-config = _Config("config")
-library = _Config("library")
+config = _Config()
 
 _list = list
 _dict = dict
