@@ -692,6 +692,7 @@ def rollback():
         return
     
     if renpy.config.rollback_enabled:
+        renpy.config.skipping = None
         renpy.game.log.complete()
         renpy.game.log.rollback(1)
 
