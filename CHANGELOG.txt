@@ -1,3 +1,11 @@
+New in Ren'Py 6.9.2
+-------------------
+
+
+The library alias for config has been removed.
+
+
+
 New in Ren'Py 6.9.1
 -------------------
 
