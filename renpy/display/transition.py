@@ -286,7 +286,7 @@ class Pixellate(Transition):
 
         rdr = render(visible, width, height, st, at)
 
-        surf = rdr.pygame_surface()
+        surf = rdr.pygame_surface(False)
         
         if surf.get_size() != self.surface_size:
             self.surface_size = surf.get_size()
@@ -347,15 +347,15 @@ class Dissolve(Transition):
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
-
-        bottom_surface = bottom.pygame_surface()
-        top_surface = top.pygame_surface()
+        
+        bottom_surface = bottom.pygame_surface(self.alpha)
+        top_surface = top.pygame_surface(self.alpha)
 
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
 
         def draw(dest, x, y):
-
+            
             dw, dh = dest.get_size()
 
             w = min(dw, width + x)
@@ -369,6 +369,7 @@ class Dissolve(Transition):
                 top_surface.subsurface((-x, -y, w, h)),
                 dest.subsurface((0, 0, w, h)),
                 alpha)
+
 
         if self.alpha:
 
@@ -1063,8 +1064,8 @@ class ImageDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
         
-        bottom_surface = bottom.pygame_surface()
-        top_surface = top.pygame_surface()
+        bottom_surface = bottom.pygame_surface(self.alpha)
+        top_surface = top.pygame_surface(self.alpha)
 
         iw, ih = image.get_size()
 
