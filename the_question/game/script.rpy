@@ -190,7 +190,7 @@ label marry:
     s "I know. So, will you marry me?"
     m "Ummm, of course I will. I've actually been meaning to ask you, but since you brought it up..."
     s "I know, but you are so indecisive, that I thought I'd take the initiative. "
-    m "I guess... It's all all about asking the right question... at the right time."
+    m "I guess... It's all about asking the right question... at the right time."
     
     show sylvie2 giggle
     
