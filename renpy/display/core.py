@@ -700,7 +700,7 @@ class Display(object):
             # Convert the aspect ratio to be square.
             iw, ih = im.get_size()
             imax = max(iw, ih)
-            square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA)
+            square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA, depth=32)
             square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
             im = square_im
 
