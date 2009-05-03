@@ -813,6 +813,9 @@ class Text(renpy.display.core.Displayable):
                 return True
             else:
                 renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
+
+
+
         if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
@@ -1300,6 +1303,9 @@ class Text(renpy.display.core.Displayable):
         """
         Called to call slow_done, and also to update slow_done_time.
         """
+
+        if not self.slow:
+            return
 
         self.slow = False
         
