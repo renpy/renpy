@@ -1013,8 +1013,14 @@ class Display(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        renpy.display.scale.image_save_unscaled(self.window, filename)
-
+        try:
+            renpy.display.scale.image_save_unscaled(self.window, filename)
+        except:
+            if renpy.config.debug:
+                raise
+            pass
+        
+            
         
     def screenshot(self, scale):
         """
