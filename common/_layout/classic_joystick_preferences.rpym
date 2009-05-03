@@ -28,8 +28,6 @@ init python:
     style.js_prefs_button.xminimum = 0.5
     style.js_prefs_box.box_first_spacing = 10
     
-
-    
     config.joystick_keys = [
         (u'Left', 'joy_left'),
         (u'Right', 'joy_right'),
@@ -42,8 +40,6 @@ init python:
         (u'Hide Text', 'joy_hide'),
         (u'Menu', 'joy_menu'),
         ]
-
-    
     
     def _joystick_select_binding():
 
@@ -55,8 +51,8 @@ init python:
             layout.button(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=my_clicked, index=label)
     
     def _joystick_get_binding():
-        ui.add(renpy.display.joystick.JoyBehavior())
         ui.saybehavior()
+        ui.add(renpy.display.joystick.JoyBehavior())
 
     def _joystick_take_binding(binding, key):
 
