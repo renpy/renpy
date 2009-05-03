@@ -58,7 +58,7 @@ def roll_forward_info():
 def in_rollback():
     return renpy.game.log.in_rollback()
 
-def checkpoint(data=None):
+def checkpoint(data=None, keep_rollback=False):
     """
     This creates a checkpoint that the user can rollback to. The
     checkpoint is placed at the statement after the last statement
@@ -68,7 +68,7 @@ def checkpoint(data=None):
     """
 
     if renpy.store._rollback:
-        renpy.game.log.checkpoint(data)
+        renpy.game.log.checkpoint(data, keep_rollback=keep_rollback)
 
 def block_rollback():
     """
@@ -590,7 +590,7 @@ def pause(delay=None, music=None, with_none=None, hard=False):
         roll_forward = None
     
     rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward)
-    renpy.exports.checkpoint(rv)
+    renpy.exports.checkpoint(rv, keep_rollback=True)
 
 
     if with_none is None:

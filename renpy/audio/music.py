@@ -185,8 +185,6 @@ def stop(channel="music", fadeout=None):
     try:        
         c = get_channel(channel)
         ctx = c.context
-        
-        c.dequeue()
 
         if fadeout is None:
             fadeout = renpy.config.fade_music

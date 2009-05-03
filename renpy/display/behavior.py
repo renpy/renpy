@@ -187,9 +187,7 @@ class Keymap(renpy.display.layout.Null):
 
 class RollForward(renpy.display.layout.Null):
     """
-    This is a behavior that maps keys to functions that are called when
-    the key is pressed. The keys are specified by giving the appropriate
-    k_constant from pygame.constants, or the unicode for the key.
+    This behavior implements rollforward.
     """
 
     def __init__(self, value):
@@ -202,6 +200,7 @@ class RollForward(renpy.display.layout.Null):
         if map_event(ev, "rollforward"):
             renpy.game.interface.suppress_transition = True
             renpy.game.after_rollback = True
+            renpy.game.log.rolled_forward = True
             return self.value
 
 class PauseBehavior(renpy.display.layout.Null):

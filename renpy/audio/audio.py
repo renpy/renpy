@@ -240,6 +240,11 @@ class Channel(object):
 
         # Is this channel tight?
         self.tight = tight
+
+        # The number of items in the queue that should be kept
+        # on queue clear.
+        self.keep_queue = 0
+
         
         if default_loop is None:
             # By default, should we loop the music?
@@ -383,22 +388,27 @@ class Channel(object):
 
     def dequeue(self, even_tight=False):
         """
-        Clears any queued music. Doesn't stop the playing music, if
-        any, but will prevent looping from occuring.
+        Clears the queued music.
+
+        If the first item in the queue has not been started, then it is
+        left in the queue unless all is given.
         """
-
-        self.queue = [ ]
+            
+        self.queue = self.queue[self.keep_queue:]
         self.loop = [ ]
-
+            
         if not pcm_ok:
             return
-        
-        pss.dequeue(self.number, even_tight)
+
+        if self.keep_queue == 0:
+            pss.dequeue(self.number, even_tight)
 
     def interact(self):
         """
         Called (mostly) once per interaction.
         """
+
+        self.keep_queue = 0
         
         if pcm_ok:
 
@@ -427,6 +437,7 @@ class Channel(object):
         of seconds. Also clears any queued music.
         """
 
+        self.keep_queue = 0
         self.dequeue()
 
         if not pcm_ok:
@@ -449,6 +460,8 @@ class Channel(object):
         if tight is None:
             tight = self.tight
 
+        self.keep_queue += 1
+            
         for filename in filenames:
             qe = QueueEntry(filename, int(fadein * 1000), tight)
             self.queue.append(qe)

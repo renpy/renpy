@@ -76,7 +76,7 @@ seen_session = { }
 # The set of statements we've ever seen.
 seen_ever = { }
 
-# True if we're in the first interaction after a rollback.
+# True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
 # Code that's run after the init code.

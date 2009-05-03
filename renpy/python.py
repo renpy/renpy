@@ -601,13 +601,19 @@ class RollbackLog(renpy.object.Object):
         self.ever_been_changed = { }
         self.rollback_limit = 0
         self.forward = [ ]
+
+        # Did we just do a roll forward?
+        self.rolled_forward = False
+
         
         # Reset the RNG on the creation of a new game.
         rng.reset()
 
     def after_setstate(self):
         self.mutated = { }
-
+        self.rolled_forward = False
+        
+        
     def begin(self):
         """
         Called before a node begins executing, to indicate that the
@@ -639,6 +645,8 @@ class RollbackLog(renpy.object.Object):
         # save code.
         global mutate_flag
         mutate_flag = True
+
+        self.rolled_forward = False
         
     def complete(self):
         """
@@ -738,7 +746,7 @@ class RollbackLog(renpy.object.Object):
         return None
             
 
-    def checkpoint(self, data=None):
+    def checkpoint(self, data=None, keep_rollback=False):
         """
         Called to indicate that this is a checkpoint, which means
         that the user may want to rollback to just before this
@@ -760,7 +768,10 @@ class RollbackLog(renpy.object.Object):
                 # Otherwise, clear the forward stack.
                 fwd_name, fwd_data = self.forward[0]
 
-                if (self.current.context.current == fwd_name and data == fwd_data):
+                if (self.current.context.current == fwd_name
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -768,8 +779,6 @@ class RollbackLog(renpy.object.Object):
             # Log the data in case we roll back again.
             self.current.forward = data
 
-            
-        
     def block(self):
         """
         Called to indicate that the user should not be able to rollback
