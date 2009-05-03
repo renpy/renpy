@@ -393,8 +393,8 @@ class Channel(object):
         If the first item in the queue has not been started, then it is
         left in the queue unless all is given.
         """
-            
-        self.queue = self.queue[self.keep_queue:]
+
+        self.queue = self.queue[:self.keep_queue]
         self.loop = [ ]
             
         if not pcm_ok:

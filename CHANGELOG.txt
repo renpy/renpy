@@ -1,8 +1,37 @@
 New in Ren'Py 6.9.2
 -------------------
 
+The semantics for play and queue have changed slightly. Now, when a
+play statement is followed by one or more queue statements, the first 
+file in each play or queue statement will be played. For example:
+
+play music "a.ogg"
+queue music "b.ogg"
+queue music "c.ogg"
+
+will play "a.ogg", "b.ogg", and then loop "c.ogg". This change also
+applies to renpy.music.play and renpy.music.queue.
+
+
+Rollback was changed so that doing anything other than a roll-forward
+while in rollback mode exits rollback immediately.
+
 
 The library alias for config has been removed.
+
+
+Fixed a regression that caused dissolves to be terribly slow.
+
+Fixed a bug that caused Ren'Py to crash when playing music on Windows
+when Data Execution Prevention was enabled. DEP is enabled by default
+on 64-bit Windows Vista.
+
+Fixed a bug that caused Ren'Py to crash when a window icon was used on
+a computer with a 16-bit or 8-bit screen depth.
+
+Fixed a bug that caused ui.sizer to malfunction.
+
+Fixed a repeated word in "The Question".
 
 
 
