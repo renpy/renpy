@@ -36,6 +36,8 @@ Fixed a repeated word in "The Question".
 Fixed a bug that could cause it to take two tries to define a joystick 
 button.
 
+
+
 New in Ren'Py 6.9.1
 -------------------
 
