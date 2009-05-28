@@ -676,7 +676,7 @@ class FrameImage(ImageBase):
 
             # Compute sizes.
             srcsize = (sx1 - sx0, sy1 - sy0)
-            dstsize = (dx1 - dx0, dy1 - dy0)
+            dstsize = (int(dx1 - dx0), int(dy1 - dy0))
 
             # Get a subsurface.
             surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
