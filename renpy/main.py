@@ -136,7 +136,7 @@ def main():
         renpy.config.commondir = commondir
     else:
         renpy.config.commondir = None
-
+        
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath:
         for fn in os.listdir(dir):

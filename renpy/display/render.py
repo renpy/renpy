@@ -105,7 +105,9 @@ def render(d, width, height, st, at):
     to be redrawn.
     """
 
-    orig_wh = (width, height)
+    ft = renpy.game.interface.frame_time 
+    
+    orig_wh = (width, height, ft-st, ft-at)
     rv = render_cache[d].get(orig_wh, None)
     if rv is not None:
         return rv
@@ -131,7 +133,7 @@ def render(d, width, height, st, at):
     if height < 0:
         height = 0
             
-    wh = (width, height)
+    wh = (width, height, ft-st, ft-at)
             
     rv = render_cache[d].get(wh, None)
     if rv is not None:

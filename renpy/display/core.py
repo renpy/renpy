@@ -497,7 +497,7 @@ class SceneLists(renpy.object.Object):
 
         if key and name:
             self.image_predict_info.images[layer][key] = name
-                
+
         l = self.layers[layer]
 
         at = None
