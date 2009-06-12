@@ -1,3 +1,11 @@
+New in Ren'Py 6.10
+------------------
+
+The new ui.detached function allows one to use the ui functions to
+define displayables without adding them to a layer.
+
+
+
 New in Ren'Py 6.9.2
 -------------------
 

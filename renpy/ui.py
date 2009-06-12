@@ -30,8 +30,8 @@ import sets
 
 import renpy
 
-# The current widget. None at init time, otherwise either a layer name
-# or a displayable.
+# The current widget. None if we have none, otherwise either a layer
+# name or a displayable.
 current = None
 
 # A stack of current widgets and/or layers.
@@ -78,9 +78,6 @@ def add(w, make_current=False, once=False):
     global current
     global current_once
 
-    if current is None:
-        raise Exception("Interaction not allowed during init phase.")
-
     atw = w 
     
     while at_stack:
@@ -88,6 +85,8 @@ def add(w, make_current=False, once=False):
     
     if isinstance(current, str):
         renpy.game.context(-1).scene_lists.add(current, atw)
+    elif current is None:
+        pass
     else:
         current.add(atw)
 
@@ -104,9 +103,6 @@ def add(w, make_current=False, once=False):
     return w
 
 def remove(d):
-    
-    if current is None:
-        raise Exception("Interaction not allowed during init phase.")
 
     if not isinstance(current, basestring):
         raise Exception("ui.remove only works directly on a layer.")
@@ -119,23 +115,24 @@ def at(a):
 
 def clear():
 
-    if current is None:
-        raise Exception("Interaction not allowed during init phase.")
-
     if isinstance(current, basestring):
         renpy.game.context(-1).scene_lists.clear(current)
     else:
         raise Exception("ui.clear cannot be called when a widget is open.")
-    
 
+def detached():
+    global current_once
+    global current
+
+    current_stack.append(current)
+    current_once = True
+    current = None
+    
 def layer(name):
 
     global current_once
     global current
     
-    if current is None:
-        raise Exception("Interaction not allowed during init phase.")
-
     if not isinstance(current, str):
         raise Exception("Opening a layer while a widget is open is not allowed.")
 
