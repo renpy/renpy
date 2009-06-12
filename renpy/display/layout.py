@@ -426,7 +426,7 @@ class MultiBox(Container):
     def render(self, width, height, st, at):
 
         # Do we need to adjust the child times due to our being a layer?
-        if self.layer_name:
+        if self.layer_name or (self.layers is not None):
             adjust_times = True
         else:
             adjust_times = False
@@ -464,7 +464,6 @@ class MultiBox(Container):
             csts = [ st ] * len(self.children)
             cats = [ at ] * len(self.children)
             
-                
         if layout == "fixed":
 
             self.offsets = [ ]
