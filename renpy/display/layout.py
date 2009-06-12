@@ -425,17 +425,23 @@ class MultiBox(Container):
         
     def render(self, width, height, st, at):
 
-        t = renpy.game.interface.frame_time
-
+        # Do we need to adjust the child times due to our being a layer?
+        if self.layer_name:
+            adjust_times = True
+        else:
+            adjust_times = False
+                    
         if self.first:
-        
-            it = renpy.game.interface.interact_time
-
-            self.start_times = [ i or it for i in self.start_times ]
-            self.anim_times = [ i or it for i in self.anim_times ]
 
             self.first = False
+
+            if adjust_times:
             
+                it = renpy.game.interface.interact_time
+                
+                self.start_times = [ i or it for i in self.start_times ]
+                self.anim_times = [ i or it for i in self.anim_times ]
+                            
             layout = self.style.box_layout
 
             if layout is None:
@@ -446,6 +452,18 @@ class MultiBox(Container):
         else:
             layout = self.layout
 
+
+        # Handle time adjustment, store the results in csts and cats.
+        if adjust_times:            
+            t = renpy.game.interface.frame_time
+
+            csts = [ t - start for start in self.start_times ]
+            cats = [ t - anim for anim in self.anim_times ]
+
+        else:
+            csts = [ st ] * len(self.children)
+            cats = [ at ] * len(self.children)
+            
                 
         if layout == "fixed":
 
@@ -454,11 +472,8 @@ class MultiBox(Container):
             rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
 
-            for child, start, anim in zip(self.children, self.start_times, self.anim_times):
-
-                cst = t - start
-                cat = t - anim
-
+            for child, cst, cat in zip(self.children, csts, cats):
+                
                 surf = render(child, width, height, cst, cat)
 
                 if surf:
@@ -491,10 +506,10 @@ class MultiBox(Container):
 
             padding = 0
 
-            for i, padding, start, anim in zip(self.children, spacings, self.start_times, self.anim_times):
-
+            for i, padding, cst, cat in zip(self.children, spacings, csts, cats):
+                
                 xoffsets.append(xo)
-                surf = render(i, remwidth, height, t - start, t - anim)
+                surf = render(i, remwidth, height, cst, cat)
 
                 sw, sh = surf.get_size()
 
@@ -551,11 +566,11 @@ class MultiBox(Container):
 
             padding = 0
 
-            for i, padding, start, anim in zip(self.children, spacings, self.start_times, self.anim_times):
+            for i, padding, cst, cat in zip(self.children, spacings, csts, cats):
 
                 yoffsets.append(yo)
 
-                surf = render(i, width, remheight, t - start, t - anim)
+                surf = render(i, width, remheight, cst, cat)
 
                 sw, sh = surf.get_size()
 

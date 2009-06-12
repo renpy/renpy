@@ -5,6 +5,13 @@ The new ui.detached function allows one to use the ui functions to
 define displayables without adding them to a layer.
 
 
+Fixed a problem that prevented animations from displaying correctly
+when the animation was displayed more than once.
+
+Fixed a problem that could cause children of the various
+MultiBox-based displayables (Fixed, HBox, VBox, and LiveComposite) to
+display animations incorrectly.
+
 
 New in Ren'Py 6.9.2
 -------------------
