@@ -1,6 +1,10 @@
 init python:
     import os
     import os.path
+    import sys
+    import platform
+    import subprocess
+    
 
     ZWSP = u"\u200B"
 
@@ -20,7 +24,20 @@ init python:
                 
             renpy.game.interface.timeout(.25)
 
-    
+    def quote_char(c):
+        n = ord(c)
+        if 0x20 <= n <= 0x7f:
+            return c
+        else:
+            return "\\x%02x" % n
+
+    # Quotes an arbitrary string (without knowing the encoding) for display.
+    def quote(s):
+        s ="".join(quote_char(i) for i in s)
+        s = s.replace("/", "/" + ZWSP)
+        s = s.replace("\\", "\\" + ZWSP)
+        return s
+        
     class Project(object):
 
         def __init__(self, path):
@@ -119,13 +136,9 @@ label select_project:
 
         for i in projects:
 
-            path = i.path
-            path = path.replace("/", "/" + ZWSP)
-            path = path.replace("\\", "\\" + ZWSP)
-
             button(i.name,
                    curried_select_project(i),
-                   path)
+                   quote(i.path))
 
         ui.close() # vbox            
         ui.close() # scrolled
@@ -136,18 +149,33 @@ label select_project:
 label launch:
     
     python hide:
-        import renpy.subprocess
-        import sys
-        import os.path
-        import os
+
         
-        if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
-            proc = renpy.subprocess.Popen([sys.argv[0], project.path])
+        if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
+            proc = subprocess.Popen([sys.argv[0], project.path])
         else:
-            proc = renpy.subprocess.Popen([sys.executable, sys.argv[0], project.path])
+            proc = subprocess.Popen([sys.executable, sys.argv[0], project.path])
 
         set_tooltip(_("%s has been launched.") % project.name.capitalize())
 
         store.game_proc = proc
 
+    jump top
+
+
+label game_directory:
+
+    python hide:
+        gamedir = os.path.normpath(os.path.join(project.path, "game"))
+
+        if sys.platform == "win32":
+            os.startfile(gamedir)
+        elif platform.mac_ver()[0]:
+            subprocess.Popen([ "open", gamedir ])
+        else:
+            subprocess.Popen([ "xdg-open", gamedir ])
+
+        gamedir = quote(gamedir)
+        set_tooltip(_(u"Opening game directory:\n%s") % gamedir)
+            
     jump top
