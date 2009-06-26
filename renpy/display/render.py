@@ -737,7 +737,7 @@ def draw_screen(xoffset, yoffset, full_redraw):
 
     dest = pygame.display.get_surface().subsurface(cliprect)
     draw(dest, None, screen_render, -x, -y, True)
-    
+
     return updates
 
 def kill_old_screen():
