@@ -149,7 +149,6 @@ label select_project:
 label launch:
     
     python hide:
-
         
         if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
             proc = subprocess.Popen([sys.argv[0], project.path])
@@ -179,3 +178,84 @@ label game_directory:
         set_tooltip(_(u"Opening game directory:\n%s") % gamedir)
             
     jump top
+
+
+label edit:
+
+    python hide:
+        
+        files = [ project.gamedir + "/" + i for i in os.listdir(project.gamedir) if i.endswith(".rpy") if not i[0] == "."]
+        files.sort()
+
+        for i in files[:]:
+            if i.endswith("options.rpy"):
+                files.remove(i)
+                files.insert(0, i)
+
+        for i in files[:]:
+            if i.endswith("script.rpy"):
+                files.remove(i)
+                files.insert(0, i)
+
+        if not files:
+            error(_("No files to edit."))
+                
+        if not renpy.launch_editor(files):
+            error(_(u"Launching the editor failed. You may need Java, which can be downloaded for free from {a=http://www.java.com}java.com{/a}."))
+        
+        set_tooltip(_(u"Launched editor with %d script files.") % len(files))
+
+    jump top
+
+    
+label lint:
+
+    python hide:
+
+        set_tooltip("")
+        
+        info("Lint", "Lint in progress.")
+
+        lf = file("lint.txt", "w+")
+
+        if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
+            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf)
+        else:
+            proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
+
+        proc.wait()
+
+        lf.close()
+
+        renpy.launch_editor([ "lint.txt" ], transient=1)
+
+    return
+
+
+label call_lint:
+    call lint
+
+    python:
+        set_tooltip(_("Lint complete."))
+
+    jump top
+
+
+label delete_persistent:
+
+    python hide:
+        set_tooltip("")
+    
+        info(_("Delete Persistent"), _("Deleting persistent data."))
+    
+        if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
+            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--rmpersistent", project.path])
+        else:
+            proc = subprocess.Popen([sys.executable, sys.argv[0], "--rmpersistent", project.path])
+        
+        proc.wait()
+
+        set_tooltip(_("Persistent data has been deleted."))
+
+    jump top
+                    

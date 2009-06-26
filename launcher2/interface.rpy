@@ -5,9 +5,13 @@ init python:
     # Settings.
     config.developer = True
     
-    # Style customizations
-    style.window.yminimum = 60
-    style.window.left_padding = 60
+    # Style customizations. These need to be in a function so that we can
+    # change them when we're choosing a theme.
+    def customize_styles():
+        style.window.yminimum = 60
+        style.window.left_padding = 60
+
+    customize_styles()
         
     tooltip = "Welcome!"
 
@@ -38,7 +42,7 @@ init python:
          Display a screen. This should be called before any code that
          draws to the screen.
          """
-        
+
         ui.add(Solid("#fff"))
         
         ui.window(yalign=1.0)
@@ -70,22 +74,29 @@ init python:
         
         ui.text(s, size=15, color="#333", font="DejaVuSerif.ttf", justify=True)
         
-    def button(s, clicked=None, subtitle=""):
+    def button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
         """
          Displays a button with caption `s`.
          """
 
+        if hovered is None:
+            hovered = tooltips(subtitle)
+
+        if unhovered is None:
+            unhovered = untooltips(subtitle)
+        
         ui.button(style="default", clicked=clicked,
-                  hovered=tooltips(subtitle), unhovered=untooltips(subtitle),
+                  hovered=hovered, unhovered=unhovered,
                   top_padding=3, bottom_padding=3)
 
         ui.text(s, style="default", size=20,
                 color="#06c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
         
-    def scrolled(cancel, **kwargs):
+    def scrolled(cancel, yadj=None):
 
-        yadj = ui.adjustment()
+        if yadj is None:
+            yadj = ui.adjustment()
 
         ui.side(['r', 'b', 'c'])
 
@@ -102,3 +113,36 @@ init python:
         ui.viewport(yadjustment=yadj, mousewheel=True)
 
         # Left up to the user to close.
+
+    def error(message, target="top"):
+        """
+         Displays an error to the user, and lets him click to return to
+         `target`.
+         """
+        
+        screen()
+        
+        ui.vbox()
+        title(_("Error"))
+        text(message)
+        button(_("Cancel"), ui.jumps(target))
+        ui.close()
+
+        interact()
+
+    def info(t, message):
+        """
+         Displays an informational message to the user.
+         """
+
+        ui.pausebehavior(0)
+
+        screen()
+        
+        ui.vbox()
+        title(t)
+        text(message)
+        ui.close()
+
+        interact()
+        

@@ -39,12 +39,12 @@ label top:
                _("Opens the project's game directory."))
         
         button(_("Check Script (Lint)"),
-               ui.jumps("lint"),
+               ui.jumps("call_lint"),
                _("Checks the script of the project for likely errors."))
 
 
-        button(_("Change Theme"),
-               ui.jumps("change_theme"),
+        button(_("Choose Theme"),
+               ui.jumps("choose_theme"),
                _("Changes the theme used by the project."))
         
         button(_("Delete Persistent"),
@@ -103,5 +103,15 @@ label top:
         interact()
 
     # ProcessBehavior can return True, which sends us here.
+    jump top
+
+
+label documentation:
+
+    python hide:
+        import webbrowser
+        webbrowser.open_new("file:///" + config.renpy_base + "/doc/index.html")
+        set_tooltip(_(u"Now showing the Ren'Py documentation in your web browser."))
+
     jump top
 
