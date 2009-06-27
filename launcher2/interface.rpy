@@ -119,6 +119,8 @@ init python:
          Displays an error to the user, and lets him click to return to
          `target`.
          """
+
+        set_tooltip("")
         
         screen()
         

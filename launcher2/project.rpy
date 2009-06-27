@@ -5,7 +5,6 @@ init python:
     import platform
     import subprocess
     
-
     ZWSP = u"\u200B"
 
     game_proc = None
@@ -47,6 +46,9 @@ init python:
             # The full path to the project.
             self.path = path
 
+            # The path to the game directory, for convenience.
+            self.gamedir = os.path.join(path, "game")
+            
         def __repr__(self):
             return "<Project %r>" % (self.path)
 
@@ -76,8 +78,8 @@ init python:
 
             if not os.path.isdir(d):
                 continue
-            
-            for pd in os.listdir(d):
+
+            for pd in sorted(os.listdir(d), key=lambda a : a.lower()):
                 path = os.path.join(d, pd)
 
                 if not os.path.isdir(path):
@@ -89,7 +91,7 @@ init python:
                     continue
 
                 rv.append(Project(path))
-
+                
         return rv
     
 
@@ -165,7 +167,7 @@ label launch:
 label game_directory:
 
     python hide:
-        gamedir = os.path.normpath(os.path.join(project.path, "game"))
+        gamedir = os.path.normpath(project.gamedir)
 
         if sys.platform == "win32":
             os.startfile(gamedir)
