@@ -46,6 +46,8 @@ init python:
         "so",
         "dylib",
         ".sh",
+        "python",
+        "python.real",
         )
     
 
@@ -133,7 +135,7 @@ init python:
          """
 
         files.sort(key=lambda a : a[1])
-        
+       
         zf = zipfile.ZipFile(filename + ".zip", "w", zipfile.ZIP_DEFLATED)
         progress_len = len(files)
 
@@ -152,7 +154,8 @@ init python:
 
             for i in executable_extensions:
                 if os.path.dirname(fn).endswith(i) or fn.endswith(i):
-                    zi.external_attr = long(0100777) << 16 
+                    zi.external_attr = long(0100777) << 16
+                    break
             else:
                 zi.external_attr = long(0100666) << 16 
 
@@ -165,7 +168,42 @@ init python:
 
         zf.close()
         
+    def make_tar(filename, files):
+        """
+         Makes a tarfile, as above.
+         """
+        
+        files.sort(key=lambda a : a[1])
+        
+        tf = tarfile.open(filename + ".tar.bz2", "w:bz2")
+        tf.dereference = True
 
+        for j, (fn, an) in enumerate(files):
+
+            info = tf.gettarinfo(fn, filename + an)
+
+            perms = 0666
+            
+            if info.isdir():
+                perms = 0777
+
+            for i in executable_extensions:
+                if fn.endswith(i):
+                    perms = 0777
+
+            info.mode = perms
+            info.uid = 1000
+            info.gid = 1000
+            info.uname = "renpy"
+            info.gname = "renpy"
+
+            if info.isreg():
+                tf.addfile(info, file(fn, "rb"))
+            else:
+                tf.addfile(info)
+
+        tf.close()
+        
     
     def dist_exists(fn):
         """
@@ -395,7 +433,7 @@ label distribute:
             linux_files.append((rb + "renpy.sh", "/" + executable_name + ".sh"))
             linux_files.append((rb + "lib", "/lib"))
             linux_files.append((rb + "lib/python", "/lib/python"))
-            linux_files.append(tree(rb + "lib/linux-x86", "/lib/linux-x86"))
+            linux_files.extend(tree(rb + "lib/linux-x86", "/lib/linux-x86"))
 
             # Warning: The tar.bz2 builder doesn't support file_data.
 
@@ -434,6 +472,46 @@ label distribute:
                 base_name + "-win32",
                 multi_files + win_files,
                 file_data)
+
+        if build_linux:
+            make_tar(
+                base_name + "-linux-x86",
+                multi_files + linux_files)
+                
+
+        if build_mac:
+
+            # Reorganize the files so all the non application files live inside
+            # the application. If there's documentation involved, then it
+            # lives in both places.
+            macapp_files = [ ]
+
+            for fn, an in multi_files + mac_files:
+                if not an.startswith("/" + executable_name + ".app"):
+                    new_an = "/" + executable_name + ".app/Contents/Resources/autorun" + an
+                    macapp_files.append((fn, new_an))
+
+                    if an.rindex('/') == 0:
+                        for i in documentation_extensions:
+                            if fn.endswith(i):
+                                macapp_files.append((fn, an))
+                                break
+                else:
+                    macapp_files.append((fn, an))
+                        
                     
+            make_zip(
+                base_name + "-mac",
+                macapp_files,
+                file_data)
+
+            
+        if build_all:
+            make_zip(
+                base_name + "-all",
+                multi_files + win_files + linux_files + mac_files,
+                file_data)
+            
+            
     jump top
         
