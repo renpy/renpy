@@ -63,9 +63,47 @@ init python:
             persistent.project_path = self.path
             project = self
             game_proc = None
+
+            # Load the informatrion dictionary.
+            info = dict()
+            launcherinfo = os.path.join(self.path, "launcherinfo.py")
+            
+            if os.path.exists(launcherinfo):
+                source = file(launcherinfo, "rU").read().decode("utf8")
+                if source[0] == u'\ufeff':
+                    source = source[1:]
+                source = source.encode("raw_unicode_escape")
+
+                exec source in info
+
+                del info["__builtins__"]
+
+            self.info = info
+            
+        def save(self):
+            """
+             Saves the info dictionary into the launcherinfo file.
+             """
+
+            launcherinfo = os.path.join(self.path, "launcherinfo.py")
+
+            f = file(launcherinfo + ".new", "w")
+            for k, v in self.info.iteritems():
+                f.write("%s = %r\n" % (k, v))
+            f.close()
+
+            try:
+                os.rename(launcherinfo + ".new", launcherinfo)
+            except:
+                os.unlink(launcherinfo)
+                os.rename(launcherinfo + ".new", launcherinfo)
+
             
             
     def scan_projects():
+        """
+         Scans for projects. Returns a list of Project objects.
+         """
         
         rv = [ ]
         
@@ -96,7 +134,10 @@ init python:
     
 
     def choose_default_project():
-
+        """
+         Chooses the default project, based on the persistent information.
+         """
+        
         project = None
         projects = scan_projects()
 

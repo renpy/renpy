@@ -92,6 +92,46 @@ init python:
         ui.text(s, style="default", size=20,
                 color="#06c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
+
+    def small_button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
+        """
+         Displays a button with caption `s`.
+         """
+
+        if hovered is None:
+            hovered = tooltips(subtitle)
+
+        if unhovered is None:
+            unhovered = untooltips(subtitle)
+        
+        ui.button(style="default", clicked=clicked,
+                  hovered=hovered, unhovered=unhovered,
+                  top_padding=0, bottom_padding=0)
+
+        ui.text(s, style="default", size=15,
+                color="#06c", hover_color="00c", insensitive_color="#aaa",
+                font="DejaVuSerif.ttf", minwidth=250)
+
+    def toggle_button(s, checked, clicked=None, subtitle=""):
+        """
+         Displays a button with caption `s`.
+         """
+        
+        hovered = tooltips(subtitle)
+        unhovered = untooltips(subtitle)
+
+        if checked:
+            s = "[x] " + s
+        else:
+            s = "[ ] " + s
+        
+        ui.button(style="default", clicked=clicked,
+                  hovered=hovered, unhovered=unhovered,
+                  top_padding=0, bottom_padding=0)
+
+        ui.text(s, style="default", size=15,
+                color="#06c", hover_color="00c", insensitive_color="#aaa",
+                font="DejaVuSerif.ttf", minwidth=250)
         
     def scrolled(cancel, yadj=None):
 
@@ -127,14 +167,21 @@ init python:
         ui.vbox()
         title(_("Error"))
         text(message)
-        button(_("Cancel"), ui.jumps(target))
+
+        if target is None:
+            clicked = ui.returns(True)
+        else:
+            clicked = ui.jumps(target)
+        
+        button(_("Cancel"), clicked)
         ui.close()
 
         interact()
 
     def info(t, message):
         """
-         Displays an informational message to the user.
+         Displays an informational message to the user, and immediately
+         returns.
          """
 
         ui.pausebehavior(0)
@@ -147,4 +194,67 @@ init python:
         ui.close()
 
         interact()
+        
+    def yesno(t, message):
+        """
+         Asks a yes/no question of the user.
+         """
+
+        set_tooltip("")
+        
+        screen()
+
+        ui.vbox()
+        title(t)
+        text(message)
+        button(_("Yes"), ui.returns(True), "")
+        button(_("No"), ui.returns(False), "")
+        ui.close()
+
+        return interact()
+         
+    def text_variable(t, value, returns, tooltip=""):
+
+        text(t)
+        small_button(value, ui.returns(returns), tooltip)
+        ui.null(height=5)
+
+    def input(t, prompt, value):
+
+        set_tooltip(_("Press enter when done."))
+
+        while True:
+        
+            screen()
+            ui.vbox()
+
+            title(t)
+            text(prompt)
+            ui.null(height=10)
+            ui.input(value, size=20, color="#00c")
+            ui.close()
+
+            value = interact()
+            value = value.strip()
+            
+            if not value:
+                error(
+                    _("The string cannot be empty. Please enter some text."),
+                    None)
+
+                continue
+                
+            try:
+                value = value.encode("ascii")
+            except:
+                error(
+                    _("Non-ASCII filenames are not allowed. This is because Zip files cannot reliably represent non-ASCII filenames."),
+                    None)
+
+                continue
+                
+            break
+            
+        return value
+                
         
