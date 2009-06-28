@@ -2,6 +2,9 @@
 
 init python:
 
+    import time
+
+    
     # Settings.
     config.developer = True
     
@@ -11,6 +14,13 @@ init python:
         style.window.yminimum = 60
         style.window.left_padding = 60
 
+        style.hyperlink_text.color = "#06c"
+        style.hyperlink_text.hover_color = "#00c"
+        style.hyperlink_text.size = 15
+        style.hyperlink_text.underline = False
+        style.hyperlink_text.font = "DejaVuSerif.ttf"
+        
+        
     customize_styles()
         
     tooltip = "Welcome!"
@@ -79,11 +89,12 @@ init python:
          Displays a button with caption `s`.
          """
 
-        if hovered is None:
-            hovered = tooltips(subtitle)
-
-        if unhovered is None:
-            unhovered = untooltips(subtitle)
+        if subtitle is not None:
+            if hovered is None:
+                hovered = tooltips(subtitle)
+                
+            if unhovered is None:
+                unhovered = untooltips(subtitle)
         
         ui.button(style="default", clicked=clicked,
                   hovered=hovered, unhovered=unhovered,
@@ -168,12 +179,14 @@ init python:
         title(_("Error"))
         text(message)
 
+        ui.null(height=20)
+        
         if target is None:
             clicked = ui.returns(True)
         else:
             clicked = ui.jumps(target)
         
-        button(_("Cancel"), clicked)
+        button(_("Return"), clicked, None)
         ui.close()
 
         interact()
@@ -256,5 +269,42 @@ init python:
             break
             
         return value
-                
+
+    # The time progress was last updated. We only update the progress
+    # every 10th of a second, so that we don't waste time doing
+    # such updates.
+    progress_time = 0
+
+
+    def progress(what, limit, amount):
+        """
+         Show progress to the user.
+         """
         
+        global progress_time
+        
+        t = time.time()
+        if t < progress_time + .1:
+            return
+
+        progress_time = t
+
+        set_tooltip(_("Processed %d of %d files.") % (amount + 1, limit))
+        
+        ui.pausebehavior(0)
+
+        screen()
+
+        ui.vbox(xfill=True)
+
+        title(what)
+        ui.null(height=20)
+        ui.bar(limit, amount, xmaximum=300, xalign=0.5)
+
+        ui.close()
+        interact()
+        
+        
+        
+        
+    

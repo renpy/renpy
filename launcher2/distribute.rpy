@@ -127,7 +127,7 @@ init python:
 
         return rv
 
-    def make_zip(filename, files, file_data):
+    def make_zip(t, filename, files, file_data):
         """
          This creates `filename`.zip, containing `files`, placed in the
          `filename` directory. `file_data` is a map from source file to
@@ -141,11 +141,12 @@ init python:
 
         for i, (fn, an) in enumerate(files):
 
+            progress(t, progress_len, i)
+            
             if os.path.isdir(fn):
                 continue
 
             zi = zipfile.ZipInfo(filename + an)
-
             
             s = os.stat(fn)
             zi.date_time = time.gmtime(s.st_mtime)[:6]
@@ -168,17 +169,20 @@ init python:
 
         zf.close()
         
-    def make_tar(filename, files):
+    def make_tar(t, filename, files):
         """
          Makes a tarfile, as above.
          """
         
         files.sort(key=lambda a : a[1])
+        progress_len = len(files)
         
         tf = tarfile.open(filename + ".tar.bz2", "w:bz2")
         tf.dereference = True
 
         for j, (fn, an) in enumerate(files):
+
+            progress(t, progress_len, j)
 
             info = tf.gettarinfo(fn, filename + an)
 
@@ -282,7 +286,7 @@ label distribute:
                               _("Tar.Bz2 distribution for the Linux x86 platform."))
 
             if has_mac:
-                toggle_button(_("Macintosh Universal Application"), build_mac, ui.returns("build_mac"),
+                toggle_button(_("Macintosh Universal"), build_mac, ui.returns("build_mac"),
                               _("Single application distribution for the Macintosh x86 and ppc platforms."))
 
             if has_all:
@@ -293,7 +297,7 @@ label distribute:
             ui.null(height=15)
             
             button(_("Build"), ui.returns("build"), _("Start building the distributions."))
-            button(_("Cancel"), ui.jumps("top", ""), "")
+            button(_("Cancel"), ui.jumps("top"), "")
 
             ui.close()
 
@@ -469,12 +473,14 @@ label distribute:
 
         if build_windows:
             make_zip(
+                _("Building Windows..."),
                 base_name + "-win32",
                 multi_files + win_files,
                 file_data)
 
         if build_linux:
             make_tar(
+                _("Building Linux..."),
                 base_name + "-linux-x86",
                 multi_files + linux_files)
                 
@@ -501,6 +507,7 @@ label distribute:
                         
                     
             make_zip(
+                _("Building Macintosh..."),
                 base_name + "-mac",
                 macapp_files,
                 file_data)
@@ -508,10 +515,25 @@ label distribute:
             
         if build_all:
             make_zip(
+                _("Building Combined..."),
                 base_name + "-all",
                 multi_files + win_files + linux_files + mac_files,
                 file_data)
-            
-            
-    jump top
+
+        # Report success to the user.
+        set_tooltip("Thank you for choosing Ren'Py.")
+
+        screen()
+        ui.vbox()
+        
+        title(_("Success"))
+        text(_("The distributions have been built. Be sure to test them before release.\n\nNote that unpacking and repacking the Macintosh, Linux, or Combined distributions on Windows is not supported.\n\nPlease announce your release at the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}, so we can add it to the Ren'Py web site."))
+
+        ui.null(height=20)
+
+        button(_("Return"), ui.jumps("top"), None)
+        
+        ui.close()
+        interact()
+
         

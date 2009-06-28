@@ -86,7 +86,6 @@ init -1 python hide:
     ## Ren'Py.
 
     ## Set this to False if the game does not have any sound effects.
-
     config.sound = False
 
 python early:
@@ -110,5 +109,7 @@ init -1 python hide:
 
     #########################################
     ## More customizations can go here.
+
+    config.has_autosave = False
     
     

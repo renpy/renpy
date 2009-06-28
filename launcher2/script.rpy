@@ -4,7 +4,6 @@ label main_menu:
 label start:
     python:
         choose_default_project()
-
     
     jump top
 
@@ -115,3 +114,7 @@ label documentation:
 
     jump top
 
+
+label confirm_quit:
+    $ renpy.quit()
+    
