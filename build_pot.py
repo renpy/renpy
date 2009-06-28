@@ -4,6 +4,7 @@ import collections
 import glob
 import re
 import sys
+import time
 
 # A map from string to filename, line number where the string is found.
 strings = collections.defaultdict(list)
@@ -53,6 +54,25 @@ if __name__ == "__main__":
 
     converse.sort()
 
+    print """\
+# Ren'Py Visual Novel Engine
+# Copyright (C) 2009 PyTom <pytom@bishoujo.us>
+# This file is distributed under the same license as the Ren'Py package.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mainline\\n"
+"Report-Msgid-Bugs-To: PyTom <pytom@bishoujo.us>\\n"
+"POT-Creation-Date: %s\\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n"
+"Language-Team: LANGUAGE <LL@li.org>\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+""" % time.strftime("%Y-%m-%d %H:%M%z")
+    
     for v, k in converse:
         print
         print "#:", v
