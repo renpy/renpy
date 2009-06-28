@@ -79,7 +79,7 @@ label top:
         ui.grid(2, 2, transpose=True)
         
         button(_("Project Directory"),
-               ui.jumps("Project directory"),
+               None,
                _("Select the directory in which the project can be found."))
 
         button(_("Select Editor"),

@@ -135,9 +135,11 @@ init python:
          """
 
         files.sort(key=lambda a : a[1])
-       
-        zf = zipfile.ZipFile(filename + ".zip", "w", zipfile.ZIP_DEFLATED)
         progress_len = len(files)
+
+        fn = os.path.join(os.path.dirname(project.path), filename)
+        
+        zf = zipfile.ZipFile(fn + ".zip", "w", zipfile.ZIP_DEFLATED)
 
         for i, (fn, an) in enumerate(files):
 
@@ -177,7 +179,9 @@ init python:
         files.sort(key=lambda a : a[1])
         progress_len = len(files)
         
-        tf = tarfile.open(filename + ".tar.bz2", "w:bz2")
+        fn = os.path.join(os.path.dirname(project.path), filename)
+
+        tf = tarfile.open(fn + ".tar.bz2", "w:bz2")
         tf.dereference = True
 
         for j, (fn, an) in enumerate(files):
@@ -361,11 +365,7 @@ label distribute:
         documentation_extensions = [ i.strip() for i in documentation_extensions.split() ]
         
         # Scan for the files we want to include in the various distributions.
-        
-        info(
-            _("Building Distributions"),
-            _("Scanning directories to determine which files to include."),
-            )
+        info(_("Scanning..."), "")
 
         # Files included in the various distributions.
         multi_files = [ ]
@@ -521,7 +521,7 @@ label distribute:
                 file_data)
 
         # Report success to the user.
-        set_tooltip("Thank you for choosing Ren'Py.")
+        set_tooltip(_("Thank you for choosing Ren'Py."))
 
         screen()
         ui.vbox()
