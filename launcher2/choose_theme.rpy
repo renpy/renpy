@@ -152,9 +152,9 @@ init python:
         else:
             os.unlink(filename + ".new")
 
-            error(_("Could not modify options.rpy. Perhaps it was changed too much."))
+            error(_(u"Could not modify options.rpy. Perhaps it was changed too much."))
             
-        set_tooltip(_("Theme changed to %s.") % name)
+        set_tooltip(_(u"Theme changed to %s.") % name)
         renpy.jump("top")
 
     curried_switch_theme = renpy.curry(switch_theme)
@@ -205,10 +205,10 @@ init python:
         
         ui.hbox(style=style.prefs_pref_choicebox)
         
-        layout.label(_("Display"), "prefs")
-        layout.button(_("Window"), "prefs", clicked=does_nothing, selected=True)
-        layout.button(_("Fullscreen"), "prefs", clicked=does_nothing, selected=False)
-        layout.button(_("Planetarium"), "prefs", clicked=None, selected=False)
+        layout.label(_(u"Display"), "prefs")
+        layout.button(_(u"Window"), "prefs", clicked=does_nothing, selected=True)
+        layout.button(_(u"Fullscreen"), "prefs", clicked=does_nothing, selected=False)
+        layout.button(_(u"Planetarium"), "prefs", clicked=None, selected=False)
 
         ui.close()
         ui.close()
@@ -242,7 +242,7 @@ label choose_theme:
 
     python:
         if not os.path.exists(os.path.join(project.gamedir, "options.rpy")):
-            error(_("The options.rpy file does not exist in the game directory, so this launcher cannot change the theme."))
+            error(_(u"The options.rpy file does not exist in the game directory, so this launcher cannot change the theme."))
 
         current_theme = None
         theme_adjustment = ui.adjustment()
@@ -251,11 +251,11 @@ label repeat_choose_theme:
 
     python hide:
         
-        tip = _("Themes control the basic look of interface elements. You'll be able to pick a color scheme next.")
+        tip = _(u"Themes control the basic look of interface elements. You'll be able to pick a color scheme next.")
 
         screen()
         ui.vbox()
-        title(_("Choose Theme"))
+        title(_(u"Choose Theme"))
 
         ui.grid(2, 1, padding=10, xfill=True)
 
@@ -293,14 +293,14 @@ label repeat_choose_color_scheme:
 
     python hide:
 
-        tip = _("Please choose a color scheme for your project.")
+        tip = _(u"Please choose a color scheme for your project.")
 
         themes = [ k for k,v in theme_data.iteritems() if v["theme"] == theme_function ]
         themes.sort()
 
         screen()
         ui.vbox()
-        title(_("Choose Color Scheme"))
+        title(_(u"Choose Color Scheme"))
 
         ui.grid(2, 1, padding=10, xfill=True)
 

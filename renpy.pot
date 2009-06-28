@@ -1,0 +1,860 @@
+
+#: common/00developer.rpy:18
+#, python-format
+msgid "Developer Menu"
+msgstr ""
+
+#: common/00developer.rpy:190 common/00developer.rpy:78
+#, python-format
+msgid "Return to the developer menu"
+msgstr ""
+
+#: common/00library.rpy:221
+#, python-format
+msgid "Skip Mode"
+msgstr ""
+
+#: common/00library.rpy:224
+#, python-format
+msgid "Fast Skip Mode"
+msgstr ""
+
+#: common/00library.rpy:307
+#, python-format
+msgid "While Ren'Py games may be playable without the renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/."
+msgstr ""
+
+#: common/00library.rpy:310
+#, python-format
+msgid "renpy module not found."
+msgstr ""
+
+#: common/00library.rpy:311
+#, python-format
+msgid "The renpy module could not be loaded on your system."
+msgstr ""
+
+#: common/00library.rpy:313
+#, python-format
+msgid "Old renpy module found."
+msgstr ""
+
+#: common/00library.rpy:314
+#, python-format
+msgid "An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d."
+msgstr ""
+
+#: common/00library.rpy:498
+#, python-format
+msgid "Please click to continue."
+msgstr ""
+
+#: common/00menus.rpy:14 common/_compat/mainmenu.rpym:7
+#, python-format
+msgid "Start Game"
+msgstr ""
+
+#: common/00menus.rpy:15 common/00menus.rpy:25 common/_compat/gamemenu.rpym:13
+#, python-format
+msgid "Load Game"
+msgstr ""
+
+#: common/00menus.rpy:16 common/00menus.rpy:23 common/_compat/gamemenu.rpym:11 common/_compat/mainmenu.rpym:9
+#, python-format
+msgid "Preferences"
+msgstr ""
+
+#: common/00menus.rpy:17 common/00menus.rpy:27
+#, python-format
+msgid "Help"
+msgstr ""
+
+#: common/00menus.rpy:18 common/00menus.rpy:28 common/_compat/gamemenu.rpym:15 common/_compat/mainmenu.rpym:10
+#, python-format
+msgid "Quit"
+msgstr ""
+
+#: common/00menus.rpy:22 common/_compat/gamemenu.rpym:9 launcher2/archiver.rpy:170 launcher2/distribute.rpy:534 launcher2/interface.rpy:189
+#, python-format
+msgid "Return"
+msgstr ""
+
+#: common/00menus.rpy:24 common/_compat/gamemenu.rpym:12
+#, python-format
+msgid "Save Game"
+msgstr ""
+
+#: common/00menus.rpy:26 common/_compat/gamemenu.rpym:14
+#, python-format
+msgid "Main Menu"
+msgstr ""
+
+#: common/00menus.rpy:34 common/_compat/gamemenu.rpym:427
+#, python-format
+msgid "Are you sure you want to quit?"
+msgstr ""
+
+#: common/00menus.rpy:40 common/_compat/gamemenu.rpym:439
+#, python-format
+msgid "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:10 common/_layout/classic_preferences.rpym:65 common/_layout/classic_preferences_common.rpym:339 common/_layout/one_column_preferences.rpym:52 common/_layout/two_column_preferences.rpym:59
+#, python-format
+msgid "Begin Skipping"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:177 common/_layout/classic_load_save.rpym:115 common/_layout/imagemap_load_save.rpym:95 common/_layout/scrolling_load_save.rpym:171
+#, python-format
+msgid "Empty Slot."
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:334 common/_layout/classic_load_save.rpym:250
+#, python-format
+msgid "Previous"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:341 common/_layout/classic_load_save.rpym:257
+#, python-format
+msgid "Next"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:412 common/_layout/classic_yesno_prompt.rpym:46 launcher2/interface.rpy:223
+#, python-format
+msgid "Yes"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:413 common/_layout/classic_yesno_prompt.rpym:47 launcher2/interface.rpy:224
+#, python-format
+msgid "No"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:464 common/_layout/classic_load_save.rpym:328 common/_layout/imagemap_load_save.rpym:325 common/_layout/scrolling_load_save.rpym:214
+#, python-format
+msgid "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:478 common/_layout/classic_load_save.rpym:314 common/_layout/imagemap_load_save.rpym:312 common/_layout/scrolling_load_save.rpym:200
+#, python-format
+msgid "Are you sure you want to overwrite your save?"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:494
+#, python-format
+msgid "The error message was:"
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:496
+#, python-format
+msgid "You may want to try saving in a different slot, or playing for a while and trying again later."
+msgstr ""
+
+#: common/_compat/gamemenu.rpym:498
+#, python-format
+msgid "Save Failed."
+msgstr ""
+
+#: common/_compat/mainmenu.rpym:8
+#, python-format
+msgid "Continue Game"
+msgstr ""
+
+#: common/_compat/preferences.rpym:225 common/_layout/classic_preferences_common.rpym:179 common/_layout/classic_preferences_common.rpym:190 launcher2/choose_theme.rpy:228
+#, python-format
+msgid "Test"
+msgstr ""
+
+#: common/_compat/preferences.rpym:34 common/_layout/classic_joystick_preferences.rpym:32
+#, python-format
+msgid "Left"
+msgstr ""
+
+#: common/_compat/preferences.rpym:35 common/_layout/classic_joystick_preferences.rpym:33
+#, python-format
+msgid "Right"
+msgstr ""
+
+#: common/_compat/preferences.rpym:36 common/_layout/classic_joystick_preferences.rpym:34
+#, python-format
+msgid "Up"
+msgstr ""
+
+#: common/_compat/preferences.rpym:37 common/_layout/classic_joystick_preferences.rpym:35
+#, python-format
+msgid "Down"
+msgstr ""
+
+#: common/_compat/preferences.rpym:377 common/_compat/preferences.rpym:428 common/_layout/classic_joystick_preferences.rpym:51 common/_layout/classic_joystick_preferences.rpym:93
+#, python-format
+msgid "Not Assigned"
+msgstr ""
+
+#: common/_compat/preferences.rpym:38 common/_layout/classic_joystick_preferences.rpym:36
+#, python-format
+msgid "Select/Dismiss"
+msgstr ""
+
+#: common/_compat/preferences.rpym:39 common/_layout/classic_joystick_preferences.rpym:37
+#, python-format
+msgid "Rollback"
+msgstr ""
+
+#: common/_compat/preferences.rpym:40 common/_layout/classic_joystick_preferences.rpym:38
+#, python-format
+msgid "Hold to Skip"
+msgstr ""
+
+#: common/_compat/preferences.rpym:408 common/_layout/classic_joystick_preferences.rpym:73
+#, python-format
+msgid "Joystick Mapping"
+msgstr ""
+
+#: common/_compat/preferences.rpym:409 common/_layout/classic_joystick_preferences.rpym:74
+#, python-format
+msgid "Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping."
+msgstr ""
+
+#: common/_compat/preferences.rpym:41 common/_layout/classic_joystick_preferences.rpym:39
+#, python-format
+msgid "Toggle Skip"
+msgstr ""
+
+#: common/_compat/preferences.rpym:42 common/_layout/classic_joystick_preferences.rpym:40
+#, python-format
+msgid "Hide Text"
+msgstr ""
+
+#: common/_compat/preferences.rpym:43 common/_layout/classic_joystick_preferences.rpym:41
+#, python-format
+msgid "Menu"
+msgstr ""
+
+#: common/_compat/preferences.rpym:482 common/_compat/preferences.rpym:557 common/_layout/classic_preferences.rpym:57 common/_layout/classic_preferences_common.rpym:321 common/_layout/one_column_preferences.rpym:49 common/_layout/two_column_preferences.rpym:56 launcher2/choose_theme.rpy:208
+#, python-format
+msgid "Display"
+msgstr ""
+
+#: common/_compat/preferences.rpym:483 common/_layout/classic_preferences_common.rpym:322 launcher2/choose_theme.rpy:209
+#, python-format
+msgid "Window"
+msgstr ""
+
+#: common/_compat/preferences.rpym:484 common/_layout/classic_preferences_common.rpym:323 launcher2/choose_theme.rpy:210
+#, python-format
+msgid "Fullscreen"
+msgstr ""
+
+#: common/_compat/preferences.rpym:487 common/_compat/preferences.rpym:558 common/_layout/classic_preferences.rpym:58 common/_layout/classic_preferences_common.rpym:326 common/_layout/one_column_preferences.rpym:50 common/_layout/two_column_preferences.rpym:57
+#, python-format
+msgid "Transitions"
+msgstr ""
+
+#: common/_compat/preferences.rpym:488 common/_layout/classic_preferences_common.rpym:327
+#, python-format
+msgid "All"
+msgstr ""
+
+#: common/_compat/preferences.rpym:489 common/_layout/classic_preferences_common.rpym:328
+#, python-format
+msgid "Some"
+msgstr ""
+
+#: common/_compat/preferences.rpym:490 common/_layout/classic_preferences_common.rpym:329
+#, python-format
+msgid "None"
+msgstr ""
+
+#: common/_compat/preferences.rpym:495 common/_compat/preferences.rpym:563 common/_layout/classic_preferences.rpym:64 common/_layout/classic_preferences_common.rpym:334 common/_layout/one_column_preferences.rpym:51 common/_layout/two_column_preferences.rpym:58
+#, python-format
+msgid "Skip"
+msgstr ""
+
+#: common/_compat/preferences.rpym:496 common/_layout/classic_preferences_common.rpym:335
+#, python-format
+msgid "Seen Messages"
+msgstr ""
+
+#: common/_compat/preferences.rpym:497 common/_layout/classic_preferences_common.rpym:336
+#, python-format
+msgid "All Messages"
+msgstr ""
+
+#: common/_compat/preferences.rpym:504 common/_compat/preferences.rpym:564 common/_layout/classic_preferences.rpym:66 common/_layout/classic_preferences_common.rpym:345 common/_layout/one_column_preferences.rpym:53 common/_layout/two_column_preferences.rpym:60
+#, python-format
+msgid "After Choices"
+msgstr ""
+
+#: common/_compat/preferences.rpym:505 common/_layout/classic_preferences_common.rpym:346
+#, python-format
+msgid "Stop Skipping"
+msgstr ""
+
+#: common/_compat/preferences.rpym:506 common/_layout/classic_preferences_common.rpym:347
+#, python-format
+msgid "Keep Skipping"
+msgstr ""
+
+#: common/_compat/preferences.rpym:526 common/_compat/preferences.rpym:565 common/_layout/classic_preferences.rpym:59 common/_layout/classic_preferences_common.rpym:352 common/_layout/one_column_preferences.rpym:54 common/_layout/two_column_preferences.rpym:61
+#, python-format
+msgid "Text Speed"
+msgstr ""
+
+#: common/_compat/preferences.rpym:544 common/_compat/preferences.rpym:566 common/_layout/classic_preferences.rpym:67 common/_layout/classic_preferences_common.rpym:353 common/_layout/one_column_preferences.rpym:55 common/_layout/two_column_preferences.rpym:62
+#, python-format
+msgid "Auto-Forward Time"
+msgstr ""
+
+#: common/_compat/preferences.rpym:549 common/_compat/preferences.rpym:570 common/_layout/classic_preferences.rpym:71 common/_layout/classic_preferences_common.rpym:357 common/_layout/one_column_preferences.rpym:56 common/_layout/two_column_preferences.rpym:66
+#, python-format
+msgid "Music Volume"
+msgstr ""
+
+#: common/_compat/preferences.rpym:550 common/_compat/preferences.rpym:571 common/_layout/classic_preferences.rpym:72 common/_layout/classic_preferences_common.rpym:360 common/_layout/one_column_preferences.rpym:57 common/_layout/two_column_preferences.rpym:67
+#, python-format
+msgid "Sound Volume"
+msgstr ""
+
+#: common/_compat/preferences.rpym:552 common/_compat/preferences.rpym:559 common/_layout/classic_preferences.rpym:60 common/_layout/classic_preferences_common.rpym:370 common/_layout/one_column_preferences.rpym:59 common/_layout/two_column_preferences.rpym:69
+#, python-format
+msgid "Joystick..."
+msgstr ""
+
+#: common/_compat/preferences.rpym:554 common/_compat/preferences.rpym:575
+#, python-format
+msgid "Joystick Configuration"
+msgstr ""
+
+#: common/_compat/preferences.rpym:580 common/_layout/classic_preferences.rpym:73 common/_layout/classic_preferences_common.rpym:364 common/_layout/one_column_preferences.rpym:58 common/_layout/two_column_preferences.rpym:68
+#, python-format
+msgid "Voice Volume"
+msgstr ""
+
+#: common/_layout/classic_load_save.rpym:126
+#, python-format
+msgid "Auto"
+msgstr ""
+
+#: common/_layout/classic_load_save.rpym:129
+#, python-format
+msgid "Quick"
+msgstr ""
+
+#: launcher2/archiver.rpy:135
+#, python-format
+msgid "The patterns did not match any files, so no archive was created."
+msgstr ""
+
+#: launcher2/archiver.rpy:138
+#, python-format
+msgid "Archiving Files..."
+msgstr ""
+
+#: launcher2/archiver.rpy:165 launcher2/distribute.rpy:529
+#, python-format
+msgid "Success"
+msgstr ""
+
+#: launcher2/archiver.rpy:166
+#, python-format
+msgid "The files have been added to the archive, and moved into the \"archived\" directory. Future runs of the archiver will archive files in both the \"game\" and \"archived\" directories."
+msgstr ""
+
+#: launcher2/archiver.rpy:30
+#, python-format
+msgid "Archive Name:"
+msgstr ""
+
+#: launcher2/archiver.rpy:31
+#, python-format
+msgid "The name of the archive to create."
+msgstr ""
+
+#: launcher2/archiver.rpy:33
+#, python-format
+msgid "Include Patterns:"
+msgstr ""
+
+#: launcher2/archiver.rpy:34
+#, python-format
+msgid "Files matching these patterns are included in the archive."
+msgstr ""
+
+#: launcher2/archiver.rpy:36
+#, python-format
+msgid "Exclude Patterns:"
+msgstr ""
+
+#: launcher2/archiver.rpy:37
+#, python-format
+msgid "Files matching these patterns are excluded from the archive."
+msgstr ""
+
+#: launcher2/archiver.rpy:41
+#, python-format
+msgid "Archive"
+msgstr ""
+
+#: launcher2/archiver.rpy:41
+#, python-format
+msgid "Build the archive."
+msgstr ""
+
+#: launcher2/archiver.rpy:42 launcher2/distribute.rpy:304 launcher2/interface.rpy:159
+#, python-format
+msgid "Cancel"
+msgstr ""
+
+#: launcher2/archiver.rpy:50
+#, python-format
+msgid "Archive Name"
+msgstr ""
+
+#: launcher2/archiver.rpy:51
+#, python-format
+msgid "The name of the archive file to create, without the .rpa extension.\n\nThe \"data\" archive is loaded automatically. Other archives must be added to config.archives."
+msgstr ""
+
+#: launcher2/archiver.rpy:56 launcher2/archiver.rpy:62
+#, python-format
+msgid "Include Patterns"
+msgstr ""
+
+#: launcher2/archiver.rpy:57
+#, python-format
+msgid "This is a space-separated list of file patterns. Files matching these patterns are added to the archive.\n\nAsterisks (*) can be used as a wildcard."
+msgstr ""
+
+#: launcher2/archiver.rpy:63
+#, python-format
+msgid "This is a space-separated list of file patterns. Files matching these patterns are excluded from the archive. If a file is matched by both an exclude and include pattern, the exclude takes precedence.\n\nAsterisks (*) can be used as a wildcard."
+msgstr ""
+
+#: launcher2/archiver.rpy:98
+#, python-format
+msgid "Scanning Files..."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:155
+#, python-format
+msgid "Could not modify options.rpy. Perhaps it was changed too much."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:157
+#, python-format
+msgid "Theme changed to %s."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:211
+#, python-format
+msgid "Planetarium"
+msgstr ""
+
+#: launcher2/choose_theme.rpy:245
+#, python-format
+msgid "The options.rpy file does not exist in the game directory, so this launcher cannot change the theme."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:254
+#, python-format
+msgid "Themes control the basic look of interface elements. You'll be able to pick a color scheme next."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:258 launcher2/script.rpy:45
+#, python-format
+msgid "Choose Theme"
+msgstr ""
+
+#: launcher2/choose_theme.rpy:296
+#, python-format
+msgid "Please choose a color scheme for your project."
+msgstr ""
+
+#: launcher2/choose_theme.rpy:303
+#, python-format
+msgid "Choose Color Scheme"
+msgstr ""
+
+#: launcher2/distribute.rpy:270
+#, python-format
+msgid "Base Name:"
+msgstr ""
+
+#: launcher2/distribute.rpy:271
+#, python-format
+msgid "Used to generate the names of directories and archive files."
+msgstr ""
+
+#: launcher2/distribute.rpy:273
+#, python-format
+msgid "Executable Name:"
+msgstr ""
+
+#: launcher2/distribute.rpy:274
+#, python-format
+msgid "Used to generate the names of executables and runnable programs."
+msgstr ""
+
+#: launcher2/distribute.rpy:276
+#, python-format
+msgid "Ignore Extensions:"
+msgstr ""
+
+#: launcher2/distribute.rpy:277
+#, python-format
+msgid "Files with these extensions will not be included in the distributions."
+msgstr ""
+
+#: launcher2/distribute.rpy:279
+#, python-format
+msgid "Documentation Extensions:"
+msgstr ""
+
+#: launcher2/distribute.rpy:280
+#, python-format
+msgid "Files with these extensions will be treated as documentation, when building the Macintosh application."
+msgstr ""
+
+#: launcher2/distribute.rpy:282
+#, python-format
+msgid "Distributions to Build:"
+msgstr ""
+
+#: launcher2/distribute.rpy:285
+#, python-format
+msgid "Windows x86"
+msgstr ""
+
+#: launcher2/distribute.rpy:286
+#, python-format
+msgid "Zip distribution for the 32-bit Windows platform."
+msgstr ""
+
+#: launcher2/distribute.rpy:289
+#, python-format
+msgid "Linux x86"
+msgstr ""
+
+#: launcher2/distribute.rpy:290
+#, python-format
+msgid "Tar.Bz2 distribution for the Linux x86 platform."
+msgstr ""
+
+#: launcher2/distribute.rpy:293
+#, python-format
+msgid "Macintosh Universal"
+msgstr ""
+
+#: launcher2/distribute.rpy:294
+#, python-format
+msgid "Single application distribution for the Macintosh x86 and ppc platforms."
+msgstr ""
+
+#: launcher2/distribute.rpy:297
+#, python-format
+msgid "Windows/Linux/Mac Combined"
+msgstr ""
+
+#: launcher2/distribute.rpy:298
+#, python-format
+msgid "Zip distribution for the Windows x86, Linux x86, Macintosh x86 and Macintosh ppc platforms."
+msgstr ""
+
+#: launcher2/distribute.rpy:303
+#, python-format
+msgid "Build"
+msgstr ""
+
+#: launcher2/distribute.rpy:303
+#, python-format
+msgid "Start building the distributions."
+msgstr ""
+
+#: launcher2/distribute.rpy:321
+#, python-format
+msgid "Base Name"
+msgstr ""
+
+#: launcher2/distribute.rpy:322
+#, python-format
+msgid "Please enter in the base name for your distribution. This name is used to generate the names of directories and archive files. Usually, this is the name of your game, plus a version number, like \"moonlight-1.0\"."
+msgstr ""
+
+#: launcher2/distribute.rpy:328
+#, python-format
+msgid "Executable Name"
+msgstr ""
+
+#: launcher2/distribute.rpy:329
+#, python-format
+msgid "Please enter a name for the executables in your distribution. This should not include an extension, as that will be added automatically."
+msgstr ""
+
+#: launcher2/distribute.rpy:335
+#, python-format
+msgid "Ignore Extensions"
+msgstr ""
+
+#: launcher2/distribute.rpy:336
+#, python-format
+msgid "Please enter a space-separated list of file extensions. Files with these extensions will not be included in the built distributions."
+msgstr ""
+
+#: launcher2/distribute.rpy:342
+#, python-format
+msgid "Documentation Extensions"
+msgstr ""
+
+#: launcher2/distribute.rpy:343
+#, python-format
+msgid "Please enter a space separated list of documentation extensions. Files in the base directory with these extensions will have a second copy stored outside of the Macintosh application."
+msgstr ""
+
+#: launcher2/distribute.rpy:368
+#, python-format
+msgid "Scanning..."
+msgstr ""
+
+#: launcher2/distribute.rpy:476
+#, python-format
+msgid "Building Windows..."
+msgstr ""
+
+#: launcher2/distribute.rpy:483
+#, python-format
+msgid "Building Linux..."
+msgstr ""
+
+#: launcher2/distribute.rpy:510
+#, python-format
+msgid "Building Macintosh..."
+msgstr ""
+
+#: launcher2/distribute.rpy:518
+#, python-format
+msgid "Building Combined..."
+msgstr ""
+
+#: launcher2/distribute.rpy:524
+#, python-format
+msgid "Thank you for choosing Ren'Py."
+msgstr ""
+
+#: launcher2/distribute.rpy:530
+#, python-format
+msgid "The distributions have been built. Be sure to test them before release.\n\nNote that unpacking and repacking the Macintosh, Linux, or Combined distributions on Windows is not supported.\n\nPlease announce your release at the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}, so we can add it to the Ren'Py web site."
+msgstr ""
+
+#: launcher2/interface.rpy:179
+#, python-format
+msgid "Error"
+msgstr ""
+
+#: launcher2/interface.rpy:237
+#, python-format
+msgid "Press enter when done."
+msgstr ""
+
+#: launcher2/interface.rpy:255
+#, python-format
+msgid "The string cannot be empty. Please enter some text."
+msgstr ""
+
+#: launcher2/interface.rpy:26
+#, python-format
+msgid "Welcome!"
+msgstr ""
+
+#: launcher2/interface.rpy:264
+#, python-format
+msgid "Non-ASCII filenames are not allowed. This is because Zip files cannot reliably represent non-ASCII filenames."
+msgstr ""
+
+#: launcher2/interface.rpy:292
+#, python-format
+msgid "Processed %d of %d files."
+msgstr ""
+
+#: launcher2/options.rpy:26
+#, python-format
+msgid "%s Launcher"
+msgstr ""
+
+#: launcher2/project.rpy:173 launcher2/script.rpy:67
+#, python-format
+msgid "Select Project"
+msgstr ""
+
+#: launcher2/project.rpy:201
+#, python-format
+msgid "%s has been launched."
+msgstr ""
+
+#: launcher2/project.rpy:221
+#, python-format
+msgid "Opening game directory:\n%s"
+msgstr ""
+
+#: launcher2/project.rpy:244
+#, python-format
+msgid "No files to edit."
+msgstr ""
+
+#: launcher2/project.rpy:247
+#, python-format
+msgid "Launching the editor failed. You may need Java, which can be downloaded for free from {a=http://www.java.com}java.com{/a}."
+msgstr ""
+
+#: launcher2/project.rpy:249
+#, python-format
+msgid "Launched editor with %d script files."
+msgstr ""
+
+#: launcher2/project.rpy:282
+#, python-format
+msgid "Lint complete."
+msgstr ""
+
+#: launcher2/project.rpy:292
+#, python-format
+msgid "Deleting persistent data."
+msgstr ""
+
+#: launcher2/project.rpy:292 launcher2/script.rpy:49
+#, python-format
+msgid "Delete Persistent"
+msgstr ""
+
+#: launcher2/project.rpy:301
+#, python-format
+msgid "Persistent data has been deleted."
+msgstr ""
+
+#: launcher2/script.rpy:113
+#, python-format
+msgid "Now showing the Ren'Py documentation in your web browser."
+msgstr ""
+
+#: launcher2/script.rpy:28
+#, python-format
+msgid "Launch"
+msgstr ""
+
+#: launcher2/script.rpy:30
+#, python-format
+msgid "Launches the project."
+msgstr ""
+
+#: launcher2/script.rpy:32
+#, python-format
+msgid "Edit Script"
+msgstr ""
+
+#: launcher2/script.rpy:34
+#, python-format
+msgid "Edits the script of the project."
+msgstr ""
+
+#: launcher2/script.rpy:36
+#, python-format
+msgid "Game Directory"
+msgstr ""
+
+#: launcher2/script.rpy:38
+#, python-format
+msgid "Opens the project's game directory."
+msgstr ""
+
+#: launcher2/script.rpy:40
+#, python-format
+msgid "Check Script (Lint)"
+msgstr ""
+
+#: launcher2/script.rpy:42
+#, python-format
+msgid "Checks the script of the project for likely errors."
+msgstr ""
+
+#: launcher2/script.rpy:47
+#, python-format
+msgid "Changes the theme used by the project."
+msgstr ""
+
+#: launcher2/script.rpy:51
+#, python-format
+msgid "Deletes the persistent data associated with the project."
+msgstr ""
+
+#: launcher2/script.rpy:53
+#, python-format
+msgid "Archive Files"
+msgstr ""
+
+#: launcher2/script.rpy:55
+#, python-format
+msgid "Archives files found in the game and archived directories."
+msgstr ""
+
+#: launcher2/script.rpy:57
+#, python-format
+msgid "Build Distributions"
+msgstr ""
+
+#: launcher2/script.rpy:59
+#, python-format
+msgid "Builds distributions of the project."
+msgstr ""
+
+#: launcher2/script.rpy:69
+#, python-format
+msgid "Select a project to work with."
+msgstr ""
+
+#: launcher2/script.rpy:71
+#, python-format
+msgid "New Project"
+msgstr ""
+
+#: launcher2/script.rpy:73
+#, python-format
+msgid "Create a new project."
+msgstr ""
+
+#: launcher2/script.rpy:81
+#, python-format
+msgid "Project Directory"
+msgstr ""
+
+#: launcher2/script.rpy:83
+#, python-format
+msgid "Select the directory in which the project can be found."
+msgstr ""
+
+#: launcher2/script.rpy:85
+#, python-format
+msgid "Select Editor"
+msgstr ""
+
+#: launcher2/script.rpy:87
+#, python-format
+msgid "Select the text editor to use."
+msgstr ""
+
+#: launcher2/script.rpy:89
+#, python-format
+msgid "Add-ons"
+msgstr ""
+
+#: launcher2/script.rpy:91
+#, python-format
+msgid "Download additional components for use with Ren'Py."
+msgstr ""
+
+#: launcher2/script.rpy:93
+#, python-format
+msgid "Ren'Py Help"
+msgstr ""
+
+#: launcher2/script.rpy:95
+#, python-format
+msgid "Open the Ren'Py documentation in a web browser."
+msgstr ""

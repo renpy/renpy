@@ -23,7 +23,7 @@ init python:
         
     customize_styles()
         
-    tooltip = "Welcome!"
+    tooltip = _(u"Welcome!")
 
     def show_tooltip(st, at):
         return Text(tooltip, color="#fff", size=14), None
@@ -156,7 +156,7 @@ init python:
         if cancel:
             ui.vbox()
             ui.null(height=12)
-            button(_("Cancel"), clicked=ui.jumps(cancel))
+            button(_(u"Cancel"), clicked=ui.jumps(cancel))
             ui.close()
         else:
             ui.null()               
@@ -176,7 +176,7 @@ init python:
         screen()
         
         ui.vbox()
-        title(_("Error"))
+        title(_(u"Error"))
         text(message)
 
         ui.null(height=20)
@@ -186,7 +186,7 @@ init python:
         else:
             clicked = ui.jumps(target)
         
-        button(_("Return"), clicked, None)
+        button(_(u"Return"), clicked, None)
         ui.close()
 
         interact()
@@ -220,8 +220,8 @@ init python:
         ui.vbox()
         title(t)
         text(message)
-        button(_("Yes"), ui.returns(True), "")
-        button(_("No"), ui.returns(False), "")
+        button(_(u"Yes"), ui.returns(True), "")
+        button(_(u"No"), ui.returns(False), "")
         ui.close()
 
         return interact()
@@ -234,7 +234,7 @@ init python:
 
     def input(t, prompt, value):
 
-        set_tooltip(_("Press enter when done."))
+        set_tooltip(_(u"Press enter when done."))
 
         while True:
         
@@ -252,7 +252,7 @@ init python:
             
             if not value:
                 error(
-                    _("The string cannot be empty. Please enter some text."),
+                    _(u"The string cannot be empty. Please enter some text."),
                     None)
 
                 continue
@@ -261,7 +261,7 @@ init python:
                 value = value.encode("ascii")
             except:
                 error(
-                    _("Non-ASCII filenames are not allowed. This is because Zip files cannot reliably represent non-ASCII filenames."),
+                    _(u"Non-ASCII filenames are not allowed. This is because Zip files cannot reliably represent non-ASCII filenames."),
                     None)
 
                 continue
@@ -289,7 +289,7 @@ init python:
 
         progress_time = t
 
-        set_tooltip(_("Processed %d of %d files.") % (amount + 1, limit))
+        set_tooltip(_(u"Processed %d of %d files.") % (amount + 1, limit))
         
         ui.pausebehavior(0)
 

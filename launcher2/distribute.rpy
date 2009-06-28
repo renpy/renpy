@@ -267,41 +267,41 @@ label distribute:
 
             title("Building Distributions")
 
-            text_variable(_("Base Name:"), base_name, "base_name",
-                          _("Used to generate the names of directories and archive files."))
+            text_variable(_(u"Base Name:"), base_name, "base_name",
+                          _(u"Used to generate the names of directories and archive files."))
 
-            text_variable(_("Executable Name:"), executable_name, "executable_name",
-                          _("Used to generate the names of executables and runnable programs."))
+            text_variable(_(u"Executable Name:"), executable_name, "executable_name",
+                          _(u"Used to generate the names of executables and runnable programs."))
 
-            text_variable(_("Ignore Extensions:"), ignore_extensions, "ignore_extensions",
-                          _("Files with these extensions will not be included in the distributions."))
+            text_variable(_(u"Ignore Extensions:"), ignore_extensions, "ignore_extensions",
+                          _(u"Files with these extensions will not be included in the distributions."))
 
-            text_variable(_("Documentation Extensions:"), documentation_extensions, "documentation_extensions",
-                          _("Files with these extensions will be treated as documentation, when building the Macintosh application."))
+            text_variable(_(u"Documentation Extensions:"), documentation_extensions, "documentation_extensions",
+                          _(u"Files with these extensions will be treated as documentation, when building the Macintosh application."))
 
-            text(_("Distributions to Build:"))
+            text(_(u"Distributions to Build:"))
 
             if has_windows:
-                toggle_button(_("Windows x86"), build_windows, ui.returns("build_windows"),
-                              _("Zip distribution for the 32-bit Windows platform."))
+                toggle_button(_(u"Windows x86"), build_windows, ui.returns("build_windows"),
+                              _(u"Zip distribution for the 32-bit Windows platform."))
 
             if has_linux:
-                toggle_button(_("Linux x86"), build_linux, ui.returns("build_linux"),
-                              _("Tar.Bz2 distribution for the Linux x86 platform."))
+                toggle_button(_(u"Linux x86"), build_linux, ui.returns("build_linux"),
+                              _(u"Tar.Bz2 distribution for the Linux x86 platform."))
 
             if has_mac:
-                toggle_button(_("Macintosh Universal"), build_mac, ui.returns("build_mac"),
-                              _("Single application distribution for the Macintosh x86 and ppc platforms."))
+                toggle_button(_(u"Macintosh Universal"), build_mac, ui.returns("build_mac"),
+                              _(u"Single application distribution for the Macintosh x86 and ppc platforms."))
 
             if has_all:
-                toggle_button(_("Windows/Linux/Mac Combined"), build_all, ui.returns("build_all"),
-                              _("Zip distribution for the Windows x86, Linux x86, Macintosh x86 and Macintosh ppc platforms."))
+                toggle_button(_(u"Windows/Linux/Mac Combined"), build_all, ui.returns("build_all"),
+                              _(u"Zip distribution for the Windows x86, Linux x86, Macintosh x86 and Macintosh ppc platforms."))
                 
 
             ui.null(height=15)
             
-            button(_("Build"), ui.returns("build"), _("Start building the distributions."))
-            button(_("Cancel"), ui.jumps("top"), "")
+            button(_(u"Build"), ui.returns("build"), _(u"Start building the distributions."))
+            button(_(u"Cancel"), ui.jumps("top"), "")
 
             ui.close()
 
@@ -318,29 +318,29 @@ label distribute:
             elif act == "base_name":
 
                 base_name = input(
-                    _("Base Name"),
-                    _("Please enter in the base name for your distribution. This name is used to generate the names of directories and archive files. Usually, this is the name of your game, plus a version number, like \"moonlight-1.0\"."),
+                    _(u"Base Name"),
+                    _(u"Please enter in the base name for your distribution. This name is used to generate the names of directories and archive files. Usually, this is the name of your game, plus a version number, like \"moonlight-1.0\"."),
                     base_name)
 
             elif act == "executable_name":
                 
                 executable_name = input(
-                    _("Executable Name"),
-                    _("Please enter a name for the executables in your distribution. This should not include an extension, as that will be added automatically."),
+                    _(u"Executable Name"),
+                    _(u"Please enter a name for the executables in your distribution. This should not include an extension, as that will be added automatically."),
                     executable_name)
             
             elif act == "ignore_extensions":
 
                 ignore_extensions = input(
-                    _("Ignore Extensions"),
-                    _("Please enter a space-separated list of file extensions. Files with these extensions will not be included in the built distributions."),
+                    _(u"Ignore Extensions"),
+                    _(u"Please enter a space-separated list of file extensions. Files with these extensions will not be included in the built distributions."),
                     ignore_extensions)
 
             elif act == "documentation_extensions":
 
                 documentation_extensions = input(
-                    _("Documentation Extensions"),
-                    _("Please enter a space separated list of documentation extensions. Files in the base directory with these extensions will have a second copy stored outside of the Macintosh application."),
+                    _(u"Documentation Extensions"),
+                    _(u"Please enter a space separated list of documentation extensions. Files in the base directory with these extensions will have a second copy stored outside of the Macintosh application."),
                     documentation_extensions)
                 
             elif act == "build":
@@ -365,7 +365,7 @@ label distribute:
         documentation_extensions = [ i.strip() for i in documentation_extensions.split() ]
         
         # Scan for the files we want to include in the various distributions.
-        info(_("Scanning..."), "")
+        info(_(u"Scanning..."), "")
 
         # Files included in the various distributions.
         multi_files = [ ]
@@ -473,14 +473,14 @@ label distribute:
 
         if build_windows:
             make_zip(
-                _("Building Windows..."),
+                _(u"Building Windows..."),
                 base_name + "-win32",
                 multi_files + win_files,
                 file_data)
 
         if build_linux:
             make_tar(
-                _("Building Linux..."),
+                _(u"Building Linux..."),
                 base_name + "-linux-x86",
                 multi_files + linux_files)
                 
@@ -507,7 +507,7 @@ label distribute:
                         
                     
             make_zip(
-                _("Building Macintosh..."),
+                _(u"Building Macintosh..."),
                 base_name + "-mac",
                 macapp_files,
                 file_data)
@@ -515,23 +515,23 @@ label distribute:
             
         if build_all:
             make_zip(
-                _("Building Combined..."),
+                _(u"Building Combined..."),
                 base_name + "-all",
                 multi_files + win_files + linux_files + mac_files,
                 file_data)
 
         # Report success to the user.
-        set_tooltip(_("Thank you for choosing Ren'Py."))
+        set_tooltip(_(u"Thank you for choosing Ren'Py."))
 
         screen()
         ui.vbox()
         
-        title(_("Success"))
-        text(_("The distributions have been built. Be sure to test them before release.\n\nNote that unpacking and repacking the Macintosh, Linux, or Combined distributions on Windows is not supported.\n\nPlease announce your release at the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}, so we can add it to the Ren'Py web site."))
+        title(_(u"Success"))
+        text(_(u"The distributions have been built. Be sure to test them before release.\n\nNote that unpacking and repacking the Macintosh, Linux, or Combined distributions on Windows is not supported.\n\nPlease announce your release at the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}, so we can add it to the Ren'Py web site."))
 
         ui.null(height=20)
 
-        button(_("Return"), ui.jumps("top"), None)
+        button(_(u"Return"), ui.jumps("top"), None)
         
         ui.close()
         interact()

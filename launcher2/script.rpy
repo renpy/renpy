@@ -25,38 +25,38 @@ label top:
 
         ui.grid(2, 4, transpose=True)
         
-        button(_("Launch"),
+        button(_(u"Launch"),
                launch,
-               _("Launches the project."))
+               _(u"Launches the project."))
 
-        button(_("Edit Script"),
+        button(_(u"Edit Script"),
                ui.jumps("edit_script"),
-               _("Edits the script of the project."))
+               _(u"Edits the script of the project."))
 
-        button(_("Game Directory"),
+        button(_(u"Game Directory"),
                ui.jumps("game_directory"),
-               _("Opens the project's game directory."))
+               _(u"Opens the project's game directory."))
         
-        button(_("Check Script (Lint)"),
+        button(_(u"Check Script (Lint)"),
                ui.jumps("call_lint"),
-               _("Checks the script of the project for likely errors."))
+               _(u"Checks the script of the project for likely errors."))
 
 
-        button(_("Choose Theme"),
+        button(_(u"Choose Theme"),
                ui.jumps("choose_theme"),
-               _("Changes the theme used by the project."))
+               _(u"Changes the theme used by the project."))
         
-        button(_("Delete Persistent"),
+        button(_(u"Delete Persistent"),
                ui.jumps("delete_persistent"),
-               _("Deletes the persistent data associated with the project."))
+               _(u"Deletes the persistent data associated with the project."))
         
-        button(_("Archive Files"),
+        button(_(u"Archive Files"),
                ui.jumps("archiver"),
-               _("Archives files found in the game and archived directories."))
+               _(u"Archives files found in the game and archived directories."))
 
-        button(_("Build Distributions"),
+        button(_(u"Build Distributions"),
                ui.jumps("distribute"),
-               _("Builds distributions of the project."))
+               _(u"Builds distributions of the project."))
                
         ui.close()
 
@@ -64,13 +64,13 @@ label top:
         
         ui.grid(2, 1, transpose=True)
         
-        button(_("Select Project"),
+        button(_(u"Select Project"),
                ui.jumps("select_project"),
-               _("Select a project to work with."))
+               _(u"Select a project to work with."))
 
-        button(_("New Project"),
+        button(_(u"New Project"),
                ui.jumps("new_project"),
-               _("Create a new project."))
+               _(u"Create a new project."))
 
         ui.close()
 
@@ -78,21 +78,21 @@ label top:
 
         ui.grid(2, 2, transpose=True)
         
-        button(_("Project Directory"),
+        button(_(u"Project Directory"),
                None,
-               _("Select the directory in which the project can be found."))
+               _(u"Select the directory in which the project can be found."))
 
-        button(_("Select Editor"),
+        button(_(u"Select Editor"),
                ui.jumps("select_editor"),
-               _("Select the text editor to use."))
+               _(u"Select the text editor to use."))
 
-        button(_("Add-ons"),
+        button(_(u"Add-ons"),
                ui.jumps("addons"),
-               _("Download additional components for use with Ren'Py."))
+               _(u"Download additional components for use with Ren'Py."))
 
-        button(_("Ren'Py Help"),
+        button(_(u"Ren'Py Help"),
                ui.jumps("documentation"),
-               _("Open the Ren'Py documentation in a web browser."))
+               _(u"Open the Ren'Py documentation in a web browser."))
 
 
 

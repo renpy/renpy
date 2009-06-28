@@ -170,7 +170,7 @@ label select_project:
 
         ui.vbox()
 
-        title(_("Select Project"))
+        title(_(u"Select Project"))
         scrolled("top")
 
         ui.vbox()
@@ -198,7 +198,7 @@ label launch:
         else:
             proc = subprocess.Popen([sys.executable, sys.argv[0], project.path])
 
-        set_tooltip(_("%s has been launched.") % project.name.capitalize())
+        set_tooltip(_(u"%s has been launched.") % project.name.capitalize())
 
         store.game_proc = proc
 
@@ -241,7 +241,7 @@ label edit:
                 files.insert(0, i)
 
         if not files:
-            error(_("No files to edit."))
+            error(_(u"No files to edit."))
                 
         if not renpy.launch_editor(files):
             error(_(u"Launching the editor failed. You may need Java, which can be downloaded for free from {a=http://www.java.com}java.com{/a}."))
@@ -279,7 +279,7 @@ label call_lint:
     call lint
 
     python:
-        set_tooltip(_("Lint complete."))
+        set_tooltip(_(u"Lint complete."))
 
     jump top
 
@@ -289,7 +289,7 @@ label delete_persistent:
     python hide:
         set_tooltip("")
     
-        info(_("Delete Persistent"), _("Deleting persistent data."))
+        info(_(u"Delete Persistent"), _(u"Deleting persistent data."))
     
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
             proc = subprocess.Popen([config.renpy_base + "/console.exe", "--rmpersistent", project.path])
@@ -298,7 +298,7 @@ label delete_persistent:
         
         proc.wait()
 
-        set_tooltip(_("Persistent data has been deleted."))
+        set_tooltip(_(u"Persistent data has been deleted."))
 
     jump top
                     

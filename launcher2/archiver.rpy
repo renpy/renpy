@@ -27,19 +27,19 @@ label archiver:
 
             ui.null(height=15)
             
-            text_variable(_("Archive Name:"), name, "name",
-                          _("The name of the archive to create."))
+            text_variable(_(u"Archive Name:"), name, "name",
+                          _(u"The name of the archive to create."))
 
-            text_variable(_("Include Patterns:"), include, "include",
-                          _("Files matching these patterns are included in the archive."))
+            text_variable(_(u"Include Patterns:"), include, "include",
+                          _(u"Files matching these patterns are included in the archive."))
 
-            text_variable(_("Exclude Patterns:"), exclude, "exclude",
-                          _("Files matching these patterns are excluded from the archive."))
+            text_variable(_(u"Exclude Patterns:"), exclude, "exclude",
+                          _(u"Files matching these patterns are excluded from the archive."))
 
             ui.null(height=15)
 
-            button(_("Archive"), ui.returns("archive"), _("Build the archive."))
-            button(_("Cancel"), ui.jumps("top"), "")
+            button(_(u"Archive"), ui.returns("archive"), _(u"Build the archive."))
+            button(_(u"Cancel"), ui.jumps("top"), "")
 
             ui.close()
 
@@ -47,20 +47,20 @@ label archiver:
 
             if act == "name":
                 name = input(
-                    _("Archive Name"),
-                    _("The name of the archive file to create, without the .rpa extension.\n\nThe \"data\" archive is loaded automatically. Other archives must be added to config.archives."),
+                    _(u"Archive Name"),
+                    _(u"The name of the archive file to create, without the .rpa extension.\n\nThe \"data\" archive is loaded automatically. Other archives must be added to config.archives."),
                     name)
                        
             elif act == "include":
                 include = input(
-                    _("Include Patterns"),
-                    _("This is a space-separated list of file patterns. Files matching these patterns are added to the archive.\n\nAsterisks (*) can be used as a wildcard."),
+                    _(u"Include Patterns"),
+                    _(u"This is a space-separated list of file patterns. Files matching these patterns are added to the archive.\n\nAsterisks (*) can be used as a wildcard."),
                     include)
 
             elif act == "exclude":
                 exclude = input(
-                    _("Include Patterns"),
-                    _("This is a space-separated list of file patterns. Files matching these patterns are excluded from the archive. If a file is matched by both an exclude and include pattern, the exclude takes precedence.\n\nAsterisks (*) can be used as a wildcard."),
+                    _(u"Include Patterns"),
+                    _(u"This is a space-separated list of file patterns. Files matching these patterns are excluded from the archive. If a file is matched by both an exclude and include pattern, the exclude takes precedence.\n\nAsterisks (*) can be used as a wildcard."),
                     exclude)
 
             elif act == "archive":
@@ -95,7 +95,7 @@ label archiver:
         set_tooltip("")
         
         info(
-            _("Scanning Files..."),
+            _(u"Scanning Files..."),
             "")
         
         for bdir in (gamedir, archived):
@@ -132,10 +132,10 @@ label archiver:
                     archived_files.add(shortfn)
 
         if not files:
-            error(_("The patterns did not match any files, so no archive was created."))
+            error(_(u"The patterns did not match any files, so no archive was created."))
                     
         # Actually archiving files.
-        info(_("Archiving Files..."), "")
+        info(_(u"Archiving Files..."), "")
                     
         archiver.archive(prefix, files)
 
@@ -162,12 +162,12 @@ label archiver:
         screen()
         ui.vbox()
         
-        title(_("Success"))
-        text(_("The files have been added to the archive, and moved into the \"archived\" directory. Future runs of the archiver will archive files in both the \"game\" and \"archived\" directories."))
+        title(_(u"Success"))
+        text(_(u"The files have been added to the archive, and moved into the \"archived\" directory. Future runs of the archiver will archive files in both the \"game\" and \"archived\" directories."))
 
         ui.null(height=20)
 
-        button(_("Return"), ui.jumps("top"), None)
+        button(_(u"Return"), ui.jumps("top"), None)
         
         ui.close()
         interact()
