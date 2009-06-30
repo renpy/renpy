@@ -57,12 +57,12 @@ label top:
         button(_(u"Build Distributions"),
                ui.jumps("distribute"),
                _(u"Builds distributions of the project."))
-               
+        
         ui.close()
 
-        title("Change Project")
+        title(_(u"Ren'Py"))
         
-        ui.grid(2, 1, transpose=True)
+        ui.grid(2, 2, transpose=True)
         
         button(_(u"Select Project"),
                ui.jumps("select_project"),
@@ -72,23 +72,9 @@ label top:
                ui.jumps("new_project"),
                _(u"Create a new project."))
 
-        ui.close()
-
-        title("Options & Help")
-
-        ui.grid(2, 2, transpose=True)
-        
-        button(_(u"Project Directory"),
-               None,
-               _(u"Select the directory in which the project can be found."))
-
-        button(_(u"Select Editor"),
-               ui.jumps("select_editor"),
-               _(u"Select the text editor to use."))
-
-        button(_(u"Add-ons"),
-               ui.jumps("addons"),
-               _(u"Download additional components for use with Ren'Py."))
+        button(_(u"Options"),
+               ui.jumps("options"),
+               _(u"Change Ren'Py launcher options."))
 
         button(_(u"Ren'Py Help"),
                ui.jumps("documentation"),

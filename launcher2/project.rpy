@@ -7,6 +7,10 @@ init python:
     
     ZWSP = u"\u200B"
 
+    # The directory containing game projects.
+    persistent.projects_path = os.path.dirname(config.renpy_base)
+    
+    # The process of the running game.
     game_proc = None
     
     class ProcessBehavior(renpy.display.layout.Null):

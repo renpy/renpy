@@ -84,7 +84,7 @@ init python:
         
         ui.text(s, size=15, color="#333", font="DejaVuSerif.ttf", justify=True)
         
-    def button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
+    def button(s, clicked=None, subtitle="", hovered=None, unhovered=None, size=20):
         """
          Displays a button with caption `s`.
          """
@@ -100,7 +100,7 @@ init python:
                   hovered=hovered, unhovered=unhovered,
                   top_padding=3, bottom_padding=3)
 
-        ui.text(s, style="default", size=20,
+        ui.text(s, style="default", size=size,
                 color="#06c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
 
@@ -232,7 +232,7 @@ init python:
         small_button(value, ui.returns(returns), tooltip)
         ui.null(height=5)
 
-    def input(t, prompt, value):
+    def input(t, prompt, value, cancel=None):
 
         set_tooltip(_(u"Press enter when done."))
 
@@ -245,6 +245,11 @@ init python:
             text(prompt)
             ui.null(height=10)
             ui.input(value, size=20, color="#00c")
+
+            if cancel is not None:
+                ui.null(height=20)
+                button(_(u"Cancel"), ui.jumps(cancel), "")
+
             ui.close()
 
             value = interact()
