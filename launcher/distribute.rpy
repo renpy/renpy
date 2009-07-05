@@ -1,28 +1,28 @@
 # This file contains the code needed to build a Ren'Py distribution.
 
 init python:
-    import zipfile
-    import tarfile
     import os
     import os.path
+    import zipfile
+    import tarfile
     import time
     import sys
     import zlib
+    zlib.Z_DEFAULT_COMPRESSION = 9
 
     import pefile
     
-    # Returns true if a file or directory should not be included in
-    # the distribution
-    
-    ignored_files = ("thumbs.db",
-                     "launcherinfo.py",
-                     "traceback.txt",
-                     "errors.txt",
-                     "icon.ico",
-                     "icon.icns"
-                     )
+    # These are files that are ignored wherever they are found in a
+    # distribution.
+    ignored_files = (
+        "thumbs.db",
+        "traceback.txt",
+        "errors.txt",
+        "saves"
+        )
 
-
+    # These are files (and directories) that are ignored when found in
+    # the root directory of the distribution.
     root_ignored_files = (
         "common",
         "renpy",
@@ -33,52 +33,50 @@ init python:
         "msvcr71.dll",                     
         "lib",
         "iliad-icon.png",
-        "manifest.xml"
+        "manifest.xml",
+        "icon.ico",
+        "icon.icns",
+        "launcherinfo.py",
+        "archived",
+        )
+
+    # Extensions that should be made executable.
+    executable_extensions = (
+        "MacOS",
+        "so",
+        "dylib",
+        ".sh",
+        "python",
+        "python.real",
         )
     
-    def ignored(fn, dir, dest, root):
-        if fn[0] == ".":
-            return True
 
-        for i in store.ignore_extensions:
-            if fn.endswith(i):
-                return True
+    def tree(
+        src,
+        dest,
+        exclude_suffix=[ ".pyc", "~", ".bak" ],
+        exclude_prefix=[ "#", "." ],
+        exclude_files = set(ignored_files),
+        root_exclude_suffix = [ ".py", ".sh", ".app" ],
+        root_exclude_files = set(root_ignored_files),
+        root=False):
 
-        if fn.lower() in ignored_files:
-            return True
+        """
+         Returns a list of source-filename, destination-filename pairs.
+         """
 
-        if fn == "saves":
-            return True
+        if dest[0] != "/":
+            raise Exception("Destination must begin with /: %r" % dest)
 
-        if fn == "archived":
-            return True
+        src = src.rstrip('/')
+        dest = dest.rstrip('/')
 
-        if root and dir == dest:
-            if fn.endswith(".py") or fn.endswith(".sh") or fn.endswith(".app"):
-                return True
+        def include(fn, is_root):
+            """
+             Returns True if the file should be included in the list of
+             files we are copying.
+             """
 
-            if fn in root_ignored_files:
-                return True
-            
-        return False
-
-    def tree(src, dest,
-             exclude_suffix=[ ".pyc", "~", ".bak" ],
-             exclude_prefix=[ ".", '#' ],
-             exclude=ignored_files,
-             exclude_func=ignored,
-             root=False,
-             ):
-
-        # Get rid of trailing slashes.
-        if src[-1] == "/":
-            src = src[:-1]
-
-        if dest and dest[-1] == "/":
-            dest = dest[:-1]
-
-        # What should we include?
-        def include(fn, destdir, dest):
             for i in exclude_suffix:
                 if fn.endswith(i):
                     return False
@@ -87,448 +85,455 @@ init python:
                 if fn.startswith(i):
                     return False
 
-            for i in exclude:
-                if i == fn.lower():
+            if fn in exclude_files:
+                return False
+
+            if not root or not is_root:
+                return True
+
+            for i in root_exclude_suffix:
+                if fn.endswith(i):
                     return False
 
-            if exclude_func and exclude_func(fn, destdir, dest, root):
+            if fn in root_exclude_files:
                 return False
 
             return True
-
-
+        
         rv = [ ]
-
+        
         # Walk the tree, including what is necessary.
         for srcdir, dirs, files in os.walk(src):
 
-            if dest:
-                destdir = dest + srcdir[len(src):]
-            else:
-                destdir = srcdir[len(src) + 1:]
-
-            if destdir:
-                rv.append((srcdir, destdir))
+            is_root = (srcdir == src)
+            
+            srcdir += "/"
+            destdir = dest + srcdir[len(src):]
+            destdir.replace("\\", "/")
+            
+            rv.append((srcdir, destdir))
 
             for fn in files:
-
-                if not include(fn, destdir, dest):
+                
+                if not include(fn, is_root):
                     continue
 
-                sfn = srcdir + "/" + fn
-
-                if destdir:
-                    dfn = destdir + "/" + fn
-                else:
-                    dfn = fn
-
-                dfn = dfn.replace("\\", "/")
+                sfn = srcdir + fn
+                dfn = destdir + fn
                     
                 rv.append((sfn, dfn))
 
-            dirs[:] = [ i for i in dirs if include(i, destdir, dest) ]
+            dirs[:] = [ i for i in dirs if include(i, is_root) ]
 
         return rv
 
+    def make_zip(t, filename, files, file_data):
+        """
+         This creates `filename`.zip, containing `files`, placed in the
+         `filename` directory. `file_data` is a map from source file to
+         replacement data.
+         """
+
+        files.sort(key=lambda a : a[1])
+        progress_len = len(files)
+
+        fn = os.path.join(os.path.dirname(project.path), filename)
         
+        zf = zipfile.ZipFile(fn + ".zip", "w", zipfile.ZIP_DEFLATED)
+
+        for i, (fn, an) in enumerate(files):
+
+            progress(t, progress_len, i)
+            
+            if os.path.isdir(fn):
+                continue
+
+            zi = zipfile.ZipInfo(filename + an)
+            
+            s = os.stat(fn)
+            zi.date_time = time.gmtime(s.st_mtime)[:6]
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.create_system = 3
+
+            for i in executable_extensions:
+                if os.path.dirname(fn).endswith(i) or fn.endswith(i):
+                    zi.external_attr = long(0100777) << 16
+                    break
+            else:
+                zi.external_attr = long(0100666) << 16 
+
+            if fn in file_data:
+                data = file_data[fn]
+            else:
+                data = file(fn, "rb").read()
+
+            zf.writestr(zi, data)
+
+        zf.close()
+        
+    def make_tar(t, filename, files):
+        """
+         Makes a tarfile, as above.
+         """
+        
+        files.sort(key=lambda a : a[1])
+        progress_len = len(files)
+        
+        fn = os.path.join(os.path.dirname(project.path), filename)
+
+        tf = tarfile.open(fn + ".tar.bz2", "w:bz2")
+        tf.dereference = True
+
+        for j, (fn, an) in enumerate(files):
+
+            progress(t, progress_len, j)
+
+            info = tf.gettarinfo(fn, filename + an)
+
+            perms = 0666
+            
+            if info.isdir():
+                perms = 0777
+
+            for i in executable_extensions:
+                if fn.endswith(i):
+                    perms = 0777
+
+            info.mode = perms
+            info.uid = 1000
+            info.gid = 1000
+            info.uname = "renpy"
+            info.gname = "renpy"
+
+            if info.isreg():
+                tf.addfile(info, file(fn, "rb"))
+            else:
+                tf.addfile(info)
+
+        tf.close()
+        
+    
+    def dist_exists(fn):
+        """
+         Returns true if the given file exists in the renpy directory.
+         """
+        
+        return os.path.exists(os.path.join(config.renpy_base, fn))
+
+
 label distribute:
 
+    # call lint
+
+    # if not yesno("Building Distributions", 
+    #              "I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nPlease also check {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?"):
+
+    #     jump top
+
     python hide:
-        zlib.Z_DEFAULT_COMPRESSION = 9
 
-        store.progress_time = 0
+        # Do we have the files?
+        has_windows = dist_exists("renpy.exe")
+        has_linux = dist_exists("lib/linux-x86")
+        has_mac = dist_exists("renpy.app")
+        has_all = has_windows and has_mac and has_linux
 
-        def progress(tit, n, m, time=time):
+        # Should we build these distributions?
+        build_windows = has_windows and project.info.get("build_windows", has_windows)
+        build_linux = has_linux and project.info.get("build_linux", has_linux)
+        build_mac = has_mac and project.info.get("build_mac", has_mac)
+        build_all = has_all and project.info.get("build_all", False)
+
+        # The base name of the distribution.
+        base_name = project.info.get("distribution_base", project.name)
+
+        # The executable name.
+        executable_name = project.info.get("executable_name", project.name)
+
+        # Extensions to exclude.
+        ignore_extensions = project.info.get("ignore_extensions", "~ .bak")
+
+        # Documentation extensions.
+        documentation_extensions = project.info.get("documentation_extensions", "txt html")
+                
+        # Prompt the user for all of the above.
+
+        while True:
+        
+            set_tooltip("")
+            screen()
             
-            if time.time() < store.progress_time + .1:
-                return
+            ui.vbox()
 
-            title(tit)
+            title("Building Distributions")
 
-            mid(message)
-            ui.bar(m, n, xmaximum=200, xalign=0.5)
+            text_variable(_(u"Base Name:"), base_name, "base_name",
+                          _(u"Used to generate the names of directories and archive files."))
+
+            text_variable(_(u"Executable Name:"), executable_name, "executable_name",
+                          _(u"Used to generate the names of executables and runnable programs."))
+
+            text_variable(_(u"Ignore Extensions:"), ignore_extensions, "ignore_extensions",
+                          _(u"Files with these extensions will not be included in the distributions."))
+
+            text_variable(_(u"Documentation Extensions:"), documentation_extensions, "documentation_extensions",
+                          _(u"Files with these extensions will be treated as documentation, when building the Macintosh application."))
+
+            text(_(u"Distributions to Build:"))
+
+            if has_windows:
+                toggle_button(_(u"Windows x86"), build_windows, ui.returns("build_windows"),
+                              _(u"Zip distribution for the 32-bit Windows platform."))
+
+            if has_linux:
+                toggle_button(_(u"Linux x86"), build_linux, ui.returns("build_linux"),
+                              _(u"Tar.Bz2 distribution for the Linux x86 platform."))
+
+            if has_mac:
+                toggle_button(_(u"Macintosh Universal"), build_mac, ui.returns("build_mac"),
+                              _(u"Single application distribution for the Macintosh x86 and ppc platforms."))
+
+            if has_all:
+                toggle_button(_(u"Windows/Linux/Mac Combined"), build_all, ui.returns("build_all"),
+                              _(u"Zip distribution for the Windows x86, Linux x86, Macintosh x86 and Macintosh ppc platforms."))
+                
+
+            ui.null(height=15)
+            
+            button(_(u"Build"), ui.returns("build"), _(u"Start building the distributions."))
+            button(_(u"Cancel"), ui.jumps("top"), "")
+
             ui.close()
 
-            ui.pausebehavior(0)
-            interact()
+            act = interact()
+
+            if act == "build_windows":
+                build_windows = not build_windows
+            elif act == "build_linux":
+                build_linux = not build_linux
+            elif act == "build_mac":
+                build_mac = not build_mac
+            elif act == "build_all":
+                build_all = not build_all
+            elif act == "base_name":
+
+                base_name = input(
+                    _(u"Base Name"),
+                    _(u"Please enter in the base name for your distribution. This name is used to generate the names of directories and archive files. Usually, this is the name of your game, plus a version number, like \"moonlight-1.0\"."),
+                    base_name)
+
+            elif act == "executable_name":
+                
+                executable_name = input(
+                    _(u"Executable Name"),
+                    _(u"Please enter a name for the executables in your distribution. This should not include an extension, as that will be added automatically."),
+                    executable_name)
             
-        # Check to see which platforms we can build on.
-        if os.path.exists(config.renpy_base + "/renpy.exe"):
-            windows = True
-        else:
-            windows = False
+            elif act == "ignore_extensions":
 
-        if os.path.exists(config.renpy_base + "/lib/linux-x86"):
-            linux = True
-        else:
-            linux = False
+                ignore_extensions = input(
+                    _(u"Ignore Extensions"),
+                    _(u"Please enter a space-separated list of file extensions. Files with these extensions will not be included in the built distributions."),
+                    ignore_extensions)
 
-        if os.path.exists(config.renpy_base + "/lib/linux-iliad"):
-            iliad = True
-        else:
-            iliad = False
+            elif act == "documentation_extensions":
 
-        if os.path.exists(config.renpy_base + "/renpy.app"):
-            mac = True
-        else:
-            mac = False
-            
-        if not (windows or mac or linux or iliad):
-            store.error(u"Can't Distribute", u"Ren'Py is missing files required for distribution. Please download the full package from {a=http://www.renpy.org/}www.renpy.org{/a}.", "tools_menu")
-        
-        lint()
+                documentation_extensions = input(
+                    _(u"Documentation Extensions"),
+                    _(u"Please enter a space separated list of documentation extensions. Files in the base directory with these extensions will have a second copy stored outside of the Macintosh application."),
+                    documentation_extensions)
+                
+            elif act == "build":
+                break
 
-        store.message = ""
+        # Store the user-selected options in info, and save info.
 
-        title(_(u"Building Distributions"))
+        project.info["distribution_base"] = base_name
+        project.info["executable_name"] = executable_name
+        project.info["ignore_extensions"] = ignore_extensions
+        project.info["documentation_extensions"] = documentation_extensions
 
-        mid()
-        text(u"I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nCheck {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")
-        ui.close()
-
-        bottom()
-        button(u"Yes", clicked=ui.returns(True))
-        button(u"No", clicked=ui.returns(False))
-        ui.close()
-
-        if not interact():
-            renpy.jump("tools")
-
-
-        # if not windows or not mac or not linux:
-        #    store.message = "The full version of Ren'Py can build for Windows, Mac, and Linux. Download it from www.renpy.org."
-            
-        title(u"Building Distributions")
-
-        mid()
-        text(u"Distributions will be built for the following platforms:")
-
-        spacer()
-
-        if windows:
-            text(u"Windows 2000+", style='launcher_input')
-
-        if linux:
-            text(u"Linux x86", style='launcher_input')
-
-        if iliad:
-            text(u"iLiad", style='launcher_input')
-                        
-        if mac:
-            text(u"Mac OS X 10.4+", style='launcher_input')
-
-        spacer()
-
-
-        # TODO: If missing platforms, prompt for a DL.
-
-        text(u"Is this okay?")
-        ui.close()
-
-        bottom()
-        button(u"Yes", clicked=ui.returns(True))
-        button(u"No", clicked=ui.returns(False))
-        ui.close()
-
-        if not interact():
-            renpy.jump("tools")
-
-        default_name = project.info.get('distribution_base', project.name)
-
-        name = prompt(u"Building Distributions",
-                      u"Please enter a base name for the directories making up this distribution.",
-                      "tools",
-                      default_name,
-                      u"This usually should include a name and version number, like 'moonlight_walks-1.0'.")
-
-        name = name.strip()
-
-        if not name:
-            store.error(u"Error", u"The distribution name should not be empty.", "tools_menu")
-
-        try:
-            name = name.encode("ascii")
-        except:
-            store.error(u"Error", u"Distribution names must be ASCII. This is because archive file formats do not support non-ASCII characters in a uniform way.", "tools_menu")
-
-        project.info['distribution_base'] = name
-
-        ignore_extensions = project.info.get('ignore_extensions', "~ .bak")
-        ignore_extensions = prompt(u"Building Distributions", u"Please enter a space separated list of the file extensions you do not want included in the distribution.", "tools", ignore_extensions)
-        store.ignore_extensions = [ i.strip() for i in ignore_extensions.strip().split() ]
-        project.info['ignore_extensions'] = ignore_extensions    
+        project.info["build_windows"] = build_windows
+        project.info["build_linux"] = build_linux
+        project.info["build_mac"] = build_mac
+        project.info["build_all"] = build_all
 
         project.save()
+
+        # Convert some of these to more useful formats.
+        ignore_extensions = [ i.strip() for i in ignore_extensions.split() ]
+        documentation_extensions = [ i.strip() for i in documentation_extensions.split() ]
         
-        # Figure out the files that will make up the distribution.
+        # Scan for the files we want to include in the various distributions.
+        info(_(u"Scanning..."), "")
 
-        multi = [ ]
+        # Files included in the various distributions.
+        multi_files = [ ]
+        win_files = [ ]
+        linux_files = [ ]
+        mac_files = [ ]
 
-        # This finds the files and directories in the tree, and includes
-        # them in the result.
-
-                
-        # renpy and common directories.
-        multi.extend(tree(config.renpy_base + "/renpy", "renpy"))
-        multi.append((config.renpy_base + "/LICENSE.txt", "renpy/LICENSE.txt"))
-        multi.extend(tree(config.commondir, "common"))
+        # A map from source file name to replacement data to be placed in
+        # that file.
+        file_data = { }
         
-        # Include the project.
-        multi.extend(tree(project.path, '',
-                          exclude_suffix = [ ],
-                          exclude_prefix = [ ],
-                          exclude=[ ],
-                          root=True))
         
-        shortgamedir = project.gamedir[len(project.path)+1:]
+        ######################################################################
+        # Multi files.
 
+        rb = config.renpy_base + "/"
+        
+        # Project files.
+        multi_files.extend(tree(project.path, "/", root=True, exclude_suffix=ignore_extensions))
+        multi_files.append((rb + "renpy.py",  "/" + executable_name + ".py"))
+        
+        # Renpy files.
+        multi_files.extend(tree(rb + "common", "/common"))
+        multi_files.extend(tree(rb + "renpy", "/renpy"))
+        multi_files.append((rb + "LICENSE.txt", "/renpy/LICENSE.txt"))
+        
+        def add_script_version(fn, ignore_extensions=ignore_extensions, multi_files=multi_files, rb=rb):
+            """
+             Add a script_version file if it does not already exist, and if the
+             extension is allowed by the game.
+             """
 
-        def add_script_version(fn, multi=multi, shortgamedir=shortgamedir):
-
-            for a, b in multi:
-                if b == shortgamedir + "/" + fn:
+            for a, b in multi_files:
+                if b == "/game/" + fn:
                     return
 
-            for i in store.ignore_extensions:
+            for i in ignore_extensions:
                 if fn.endswith(i):
-                    return 
+                    return
 
-            multi.append((config.gamedir + "/" + fn, shortgamedir + "/" + fn))
+            multi_files.append((rb + "launcher/" + fn, "/game/" + fn))
 
         add_script_version("script_version.rpy")
         add_script_version("script_version.rpyc")
-            
-        # renpy.py
-        multi.append((config.renpy_base + "/renpy.py",
-                      project.name + ".py"))
 
-        # Windows Zip
-        if windows:
-            win_files = [
-                ( config.renpy_base + "/renpy.exe", project.name + ".exe"),
-                ( config.renpy_base + "/renpy.code", "renpy.code" ),
-                ( config.renpy_base + "/python25.dll", "python25.dll" ),
-                ( config.renpy_base + "/msvcr71.dll", "msvcr71.dll" ),
-                ]
+        
+        ######################################################################
+        # Windows files.
 
-            win_data = { }
+        if build_windows or build_all:
+
+            win_files.append((rb + "renpy.exe", "/" + executable_name + ".exe"))
+            win_files.append((rb + "renpy.code", "/renpy.code"))
+            win_files.append((rb + "python25.dll", "/python25.dll"))
+            win_files.append((rb + "msvcr71.dll", "/msvcr71.dll"))
+
             if os.path.exists(project.path + "/icon.ico"):
-                win_data[project.name + ".exe"] = pefile.change_icons(
-                    config.renpy_base + "/renpy.exe",
+                file_data[rb + "renpy.exe"] = pefile.change_icons(
+                    rb + "renpy.exe",
                     project.path + "/icon.ico",
                     )
+
+                
+        ######################################################################
+        # Linux files.
+        
+        if build_linux or build_all:
+
+            linux_files.append((rb + "renpy.sh", "/" + executable_name + ".sh"))
+            linux_files.append((rb + "lib", "/lib"))
+            linux_files.append((rb + "lib/python", "/lib/python"))
+            linux_files.extend(tree(rb + "lib/linux-x86", "/lib/linux-x86"))
+
+            # Warning: The tar.bz2 builder doesn't support file_data.
+
             
-            zf = zipfile.ZipFile(name + ".zip", "w", zipfile.ZIP_DEFLATED)
+        ######################################################################
+        # Mac (non-app) files.
+        
+        if build_mac or build_all:
+            mac_files = tree(rb + "renpy.app",
+                             "/" + executable_name + ".app")
 
-            progress_len = len(multi) + len(win_files)
-            store.message = u"Be sure to announce your project at the Lemma Soft Forums."
-                               
-            for i, (fn, an) in enumerate(multi + win_files):
-                progress(u"Building Windows", i, progress_len)
+            # Rename executable.
+            mac_files = [ (fn, an.replace("Ren'Py Launcher", executable_name)) for (fn, an) in mac_files ]
 
-                if os.path.isdir(fn):
-                    continue
-                
-                zi = zipfile.ZipInfo(name + "/" + an)
+            # Plist file.
+            quoted_name = executable_name.replace("&", "&amp;").replace("<", "&lt;")                                               
+            info_plist = file(rb + "renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", quoted_name)
+            file_data[rb + "renpy.app/Contents/Info.plist"] = info_plist
 
-                s = os.stat(fn)
-                zi.date_time = time.gmtime(s.st_mtime)[:6]
-                zi.compress_type = zipfile.ZIP_DEFLATED
-                zi.create_system = 3
+            # Launcher script.
+            quoted_name = executable_name.replace("\"", "\\\"")
+            launcher_py = file(rb + "renpy.app/Contents/Resources/launcher.py", "rb").read().replace("Ren'Py Launcher", quoted_name)
+            file_data[rb + "renpy.app/Contents/Resources/launcher.py"] = launcher_py
 
-                zi.external_attr = long(0100666) << 16 
-                data = file(fn, "rb").read()
-
-                data = win_data.get(an, data)
-                
-                zf.writestr(zi, data)
-
-
-            zf.close()
-
-
-        # Linux Tar Bz2
-        if linux:
-
-            linux_files = [
-                (config.renpy_base + "/lib/linux-x86", "lib/linux-x86"),
-                (config.renpy_base + "/renpy.sh", project.name + ".sh"),
-                (config.renpy_base + "/lib/python", "lib/python"),
-                ]
-                
-
-            linux_files.extend(tree(config.renpy_base + "/lib/linux-x86", "lib/linux-x86"))
-
-            tf = tarfile.open(name + "-linux-x86.tar.bz2", "w:bz2")
-            tf.dereference = True
-
-            progress_len = len(multi) + len(linux_files)
-            store.message = u"If appropriate, please submit your game to www.renai.us."
-
-            for j, i in enumerate(multi + linux_files):
-
-                progress(u"Building Linux", j, progress_len)
-
-                fn, an = i
-
-                info = tf.gettarinfo(fn, name + "-linux-x86/" + an)
-
-                if info.isdir():
-                    perms = 0777
-                elif info.name.endswith(".sh"):
-                    perms = 0777
-                elif info.name.endswith(".so"):
-                    perms = 0777
-                elif info.name.endswith("python"):
-                    perms = 0777
-                elif info.name.endswith("python.real"):
-                    perms = 0777
-                else:
-                    perms = 0666
-
-                info.mode = perms
-                info.uid = 1000
-                info.gid = 1000
-                info.uname = "renpy"
-                info.gname = "renpy"
-
-                if info.isreg():
-                    tf.addfile(info, file(fn, "rb"))
-                else:
-                    tf.addfile(info)
-
-            tf.close()
-
-
-        # iLiad Tar Bz2
-        if iliad:
-
-            iliad_files = [
-                (config.renpy_base + "/lib", "lib"),
-                (config.renpy_base + "/renpy-iliad.sh", project.name + ".sh"),
-                (config.renpy_base + "/lib/python", "lib/python"),
-                (config.renpy_base + "/manifest.xml", "manifest.xml"),
-                (config.renpy_base + "/iliad-icon.png", "iliad-icon.png"),
-                ]
-                
-            iliad_files.extend(tree(config.renpy_base + "/lib/linux-iliad", "lib/linux-iliad"))
-
-            iliad_data = { }
-
-            manifest = file(config.renpy_base + "/manifest.xml", "r").read()
-            manifest = manifest.replace("GAMENAME", project.name)
-            iliad_data["manifest.xml"] = manifest
-            
-            zf = zipfile.ZipFile(name + "-iLiad.zip", "w", zipfile.ZIP_DEFLATED)
-
-            progress_len = len(multi) + len(iliad_files)
-            store.message = u"We thank Hixbooks for sponsoring iLiad support."
-
-            for i, (fn, an) in enumerate(multi + iliad_files):
-
-                progress(u"Building iLiad", i, progress_len)
-
-                if os.path.isdir(fn):
-                    continue
-                
-                zi = zipfile.ZipInfo(project.name + "/" + an)
-                
-                s = os.stat(fn)
-                zi.date_time = time.gmtime(s.st_mtime)[:6]
-                zi.compress_type = zipfile.ZIP_DEFLATED
-                zi.create_system = 3
-
-                for ext in [ ".sh", ".so", "python", "python.real" ]:
-                    if fn.endswith(ext):
-                        zi.external_attr = long(0100777) << 16 
-                        data = file(fn, "rb").read()
-                        break
-                else:
-                    zi.external_attr = long(0100666) << 16 
-                    data = file(fn, "rb").read()
-
-                data = iliad_data.get(an, data)                    
-                zf.writestr(zi, data)
-
-            zf.close()
-
-        if mac:
-
-            mac_files = tree(config.renpy_base + "/renpy.app",
-                             project.name + ".app")
-
-            mac_files = [ (fn, an.replace("Ren'Py Launcher", project.name)) for (fn, an) in mac_files ]
-
-            # Data replacement for macintosh.
-            mac_data = { }
-            
-            quoted_name = project.name.replace("&", "&amp;").replace("<", "&lt;")                                               
-            info_plist = file(config.renpy_base + "/renpy.app/Contents/Info.plist", "rb").read().replace("Ren'Py Launcher", quoted_name)
-            mac_data[project.name + ".app/Contents/Info.plist"] = info_plist
-
-            quoted_name = project.name.replace("\"", "\\\"")
-            launcher_py = file(config.renpy_base + "/renpy.app/Contents/Resources/launcher.py", "rb").read().replace("Ren'Py Launcher", quoted_name)
-            mac_data[project.name + ".app/Contents/Resources/launcher.py"] = launcher_py
-
+            # Icon file.
             if os.path.exists(project.path + "/icon.icns"):
                 icon_data = file(project.path + "/icon.icns", "rb").read()
-                mac_data[project.name + ".app/Contents/Resources/launcher.icns"] = icon_data
-            
-            zf = zipfile.ZipFile(name + "-mac.zip", "w", zipfile.ZIP_DEFLATED)
+                file_data[rb + "renpy.app/Contents/Resources/launcher.icns"] = icon_data
 
-            progress_len = len(multi) + len(mac_files)
-            store.message = u"Thank you for choosing Ren'Py."
 
-            for i, (fn, an) in enumerate(multi + mac_files):
+        ######################################################################
+        # Now, build the various distributions.
 
-                progress(u"Building Mac OS X", i, progress_len)
+        if build_windows:
+            make_zip(
+                _(u"Building Windows..."),
+                base_name + "-win32",
+                multi_files + win_files,
+                file_data)
 
-                if os.path.isdir(fn):
-                    continue
+        if build_linux:
+            make_tar(
+                _(u"Building Linux..."),
+                base_name + "-linux-x86",
+                multi_files + linux_files)
                 
-                zi = zipfile.ZipInfo(name + "-mac/" + an)
-                
-                s = os.stat(fn)
-                zi.date_time = time.gmtime(s.st_mtime)[:6]
-                zi.compress_type = zipfile.ZIP_DEFLATED
-                zi.create_system = 3
 
-                if os.path.dirname(fn).endswith("MacOS") or fn.endswith(".so") or fn.endswith(".dylib"):
-                    zi.external_attr = long(0100777) << 16 
-                    data = file(fn, "rb").read()
+        if build_mac:
+
+            # Reorganize the files so all the non application files live inside
+            # the application. If there's documentation involved, then it
+            # lives in both places.
+            macapp_files = [ ]
+
+            for fn, an in multi_files + mac_files:
+                if not an.startswith("/" + executable_name + ".app"):
+                    new_an = "/" + executable_name + ".app/Contents/Resources/autorun" + an
+                    macapp_files.append((fn, new_an))
+
+                    if an.rindex('/') == 0:
+                        for i in documentation_extensions:
+                            if fn.endswith(i):
+                                macapp_files.append((fn, an))
+                                break
                 else:
-                    zi.external_attr = long(0100666) << 16 
-                    data = file(fn, "rb").read()
+                    macapp_files.append((fn, an))
+                        
+                    
+            make_zip(
+                _(u"Building Macintosh..."),
+                base_name + "-mac",
+                macapp_files,
+                file_data)
 
-                data = mac_data.get(an, data)                    
-                zf.writestr(zi, data)
+            
+        if build_all:
+            make_zip(
+                _(u"Building Combined..."),
+                base_name + "-all",
+                multi_files + win_files + linux_files + mac_files,
+                file_data)
 
-            zf.close()
+        # Report success to the user.
+        set_tooltip(_(u"Thank you for choosing Ren'Py."))
 
-                
-        # Announce Success
-
-        store.message = ""
-
-        title(u"Success")
-
-        mid()
-        text(u"The distribution(s) have been built. Be sure to test them before release.")
-
-        spacer()
-
-        if mac:
-            text(u"Note that unpacking and repacking Mac zips and Linux tarballs on Windows isn't supported.")
-
-        ui.close()
-
-        bottom()
-        button(u"Return", clicked=ui.returns(True))
-        ui.close()
+        screen()
+        ui.vbox()
         
+        title(_(u"Success"))
+        text(_(u"The distributions have been built. Be sure to test them before release.\n\nNote that unpacking and repacking the Macintosh, Linux, or Combined distributions on Windows is not supported.\n\nPlease announce your release at the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}, so we can add it to the Ren'Py web site."))
+
+        ui.null(height=20)
+
+        button(_(u"Return"), ui.jumps("top"), None)
+        
+        ui.close()
         interact()
 
-        
-    jump tools
-               
         
