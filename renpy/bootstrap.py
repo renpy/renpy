@@ -54,7 +54,8 @@ def extra_imports():
     import pygame.locals
     import pygame.color
     import pygame.colordict
-    
+    import posixpath
+
     
 trace_file = None
 trace_local = None
