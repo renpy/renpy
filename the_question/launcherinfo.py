@@ -6,4 +6,4 @@ build_windows = True
 distribution_base = 'the_question-1.0'
 ignore_extensions = '~ .bak'
 build_linux = True
-build_all = True
+build_all = False

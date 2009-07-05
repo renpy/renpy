@@ -132,9 +132,9 @@ init python:
         unhovered = untooltips(subtitle)
 
         if checked:
-            s = "[x] " + s
+            s = u"\u25a3 " + s
         else:
-            s = "[ ] " + s
+            s = u"\u25a1 " + s
         
         ui.button(style="default", clicked=clicked,
                   hovered=hovered, unhovered=unhovered,
@@ -151,7 +151,7 @@ init python:
 
         ui.side(['r', 'b', 'c'])
 
-        ui.bar(adjustment=yadj, style='vscrollbar')
+        ui.bar(adjustment=yadj, style='lscrollbar')
         
         if cancel:
             ui.vbox()
@@ -304,7 +304,7 @@ init python:
 
         title(what)
         ui.null(height=20)
-        ui.bar(limit, amount, xmaximum=300, xalign=0.5)
+        ui.bar(limit, amount, xmaximum=300, xalign=0.5, style='lbar')
 
         ui.close()
         interact()

@@ -4,7 +4,9 @@ label main_menu:
 label start:
     python:
         choose_default_project()
-    
+        scan_editors()
+        setup_editor()
+        
     jump top
 
 label top:
@@ -62,7 +64,7 @@ label top:
 
         title(_(u"Ren'Py"))
         
-        ui.grid(2, 2, transpose=True)
+        ui.grid(2, 3, transpose=True)
         
         button(_(u"Select Project"),
                ui.jumps("select_project"),
@@ -72,6 +74,10 @@ label top:
                ui.jumps("new_project"),
                _(u"Create a new project."))
 
+        button(_(u"Quit"),
+               renpy.quit,
+               _(u"Causes the launcher to exit."))
+        
         button(_(u"Options"),
                ui.jumps("options"),
                _(u"Change Ren'Py launcher options."))
@@ -80,7 +86,7 @@ label top:
                ui.jumps("documentation"),
                _(u"Open the Ren'Py documentation in a web browser."))
 
-
+        ui.null()
 
         ui.close()
         ui.close()

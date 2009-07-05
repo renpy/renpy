@@ -227,10 +227,13 @@ label game_directory:
     jump top
 
 
-label edit:
+label edit_script:
 
     python hide:
-        
+
+        if not config.editor:
+            error(_(u"No editor has been selected."))
+                    
         files = [ project.gamedir + "/" + i for i in os.listdir(project.gamedir) if i.endswith(".rpy") if not i[0] == "."]
         files.sort()
 
@@ -248,7 +251,7 @@ label edit:
             error(_(u"No files to edit."))
                 
         if not renpy.launch_editor(files):
-            error(_(u"Launching the editor failed. You may need Java, which can be downloaded for free from {a=http://www.java.com}java.com{/a}."))
+            error(_(u"Launching the editor failed."))
         
         set_tooltip(_(u"Launched editor with %d script files.") % len(files))
 

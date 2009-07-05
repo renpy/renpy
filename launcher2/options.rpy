@@ -81,6 +81,18 @@ init -1 python hide:
         ## do so below.            
         )
 
+    theme.outline_bars(
+        inside="#6496c8",
+        idle="#06c",
+        hover="#00c")
+
+    # Copy the bar styles used by the launcher, so the theme
+    # selector can't change them.
+    style.lbar = Style(style.default)
+    style.lbar.take(style.bar)
+    style.lscrollbar = Style(style.default)
+    style.lscrollbar.take(style.vscrollbar)
+
     #########################################
     ## These settings let you change some of the sounds that are used by
     ## Ren'Py.
