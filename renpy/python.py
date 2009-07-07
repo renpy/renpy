@@ -305,7 +305,6 @@ class RevertableList(list):
     __getslice__ = wrapper(list.__getslice__)
     __mul__ = wrapper(list.__mul__)
 
-    # TODO: Handle __iter__ (or not).
     def get_rollback(self):
         return self[:]
 
@@ -536,6 +535,7 @@ class Rollback(renpy.object.Object):
         for o, rb in self.objects:
             if id(o) in reachable:
                 new_objects.append((o, rb))
+                reached(rb, reachable, wait)
             else:
                 if renpy.config.debug:
                     print "Removing unreachable:", o
