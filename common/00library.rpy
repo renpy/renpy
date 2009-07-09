@@ -71,7 +71,10 @@ init -1180 python:
 
 
     def _default_empty_window():
-        store.narrator("", interact=False)
+        if renpy.last_interact_type() == "nvl":
+            nvl_show_core()
+        else:
+            store.narrator("", interact=False)
 
     config.empty_window = _default_empty_window
         
