@@ -1150,9 +1150,7 @@ class Interface(object):
                     clipping = True,
                     )
 
-                print w, h
-                
-            else:
+                    else:
                 self.layer_properties[layer] = dict()
                 
 
