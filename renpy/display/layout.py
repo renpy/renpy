@@ -430,7 +430,15 @@ class MultiBox(Container):
             adjust_times = True
         else:
             adjust_times = False
-                    
+
+        xminimum = self.style.xminimum
+        if xminimum is not None:
+            width = max(width, scale(xminimum, width))
+
+        yminimum = self.style.yminimum
+        if yminimum is not None:
+            height = max(height, scale(yminimum, height))
+            
         if self.first:
 
             self.first = False
@@ -470,7 +478,6 @@ class MultiBox(Container):
             
             rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
-
             for child, cst, cat in zip(self.children, csts, cats):
                 
                 surf = render(child, width, height, cst, cat)
@@ -480,7 +487,7 @@ class MultiBox(Container):
                     self.offsets.append(offset)
                 else:
                     self.offsets.append((0, 0))
-
+                    
             return rv
                     
         if layout == "horizontal":

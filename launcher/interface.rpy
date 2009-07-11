@@ -14,7 +14,7 @@ init python:
         style.window.yminimum = 60
         style.window.left_padding = 60
 
-        style.hyperlink_text.color = "#06c"
+        style.hyperlink_text.color = "#03c"
         style.hyperlink_text.hover_color = "#00c"
         style.hyperlink_text.size = 15
         style.hyperlink_text.underline = False
@@ -101,7 +101,7 @@ init python:
                   top_padding=3, bottom_padding=3)
 
         ui.text(s, style="default", size=size,
-                color="#06c", hover_color="00c", insensitive_color="#aaa",
+                color="#03c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
 
     def small_button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
@@ -120,7 +120,7 @@ init python:
                   top_padding=0, bottom_padding=0)
 
         ui.text(s, style="default", size=15,
-                color="#06c", hover_color="00c", insensitive_color="#aaa",
+                color="#03c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
 
     def toggle_button(s, checked, clicked=None, subtitle=""):
@@ -141,7 +141,7 @@ init python:
                   top_padding=0, bottom_padding=0)
 
         ui.text(s, style="default", size=15,
-                color="#06c", hover_color="00c", insensitive_color="#aaa",
+                color="#03c", hover_color="00c", insensitive_color="#aaa",
                 font="DejaVuSerif.ttf", minwidth=250)
         
     def scrolled(cancel, yadj=None):

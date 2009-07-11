@@ -143,7 +143,7 @@ def render(d, width, height, st, at):
     rv.render_of.append(d)
 
     if style.clipping:
-        rv = rv.subsurface((0, 0, width, height), focus=True)
+        rv = rv.subsurface((0, 0, rv.width, rv.height), focus=True)
         rv.render_of.append(d)
 
     render_cache[d][wh] = rv

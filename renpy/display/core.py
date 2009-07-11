@@ -1145,9 +1145,13 @@ class Interface(object):
                     yanchor = 0,
                     xmaximum = w,
                     ymaximum = h,
+                    xminimum = w,
+                    yminimum = h,
                     clipping = True,
                     )
 
+                print w, h
+                
             else:
                 self.layer_properties[layer] = dict()
                 

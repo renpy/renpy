@@ -1,9 +1,21 @@
-New in Ren'Py 6.10
+New in Ren'Py 6.9.3
 ------------------
+
+[ New Launcher ]
+
 
 The new ui.detached function allows one to use the ui functions to
 define displayables without adding them to a layer.
 
+
+
+Allow config.layer_clipping to specify layers that are larger than the
+screen.
+
+
+Fixed a long-standing problem that could cause Rollback to operate
+incorrectly with object that were unreachable at the time of the
+Rollback.
 
 Fixed a problem that prevented animations from displaying correctly
 when the animation was displayed more than once.
