@@ -14,6 +14,12 @@ label options:
                       _(u"Change the default text editor."))
 
         ui.null(height=15)
+
+        button(_(u"Projects Directory"),
+               ui.jumps("options_cpd"),
+               _(u"Select the directory Ren'Py searches for projects."))
+
+        ui.null(height=15)
         
         button(_(u"Return"), ui.jumps("top"), "")
 
@@ -27,6 +33,7 @@ label options:
 
     jump options
         
-
-                      
-                                                       
+label options_cpd:
+    call choose_projects_directory
+    jump options
+    

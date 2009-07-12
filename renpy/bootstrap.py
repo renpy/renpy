@@ -55,7 +55,9 @@ def extra_imports():
     import pygame.color
     import pygame.colordict
     import posixpath
-
+    import ctypes
+    import ctypes.wintypes
+    import EasyDialogs
     
 trace_file = None
 trace_local = None

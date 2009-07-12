@@ -6,6 +6,9 @@ init python:
     
 label new_project:
 
+    if persistent.projects_directory is None:
+        call choose_projects_directory
+
     python hide:
 
         name = input(
@@ -15,7 +18,7 @@ label new_project:
 
         name = name.strip()
 
-        path = os.path.join(persistent.projects_path, name)
+        path = os.path.join(persistent.projects_directory, name)
 
         set_tooltip("")
         

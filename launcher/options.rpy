@@ -124,4 +124,6 @@ init -1 python hide:
 
     config.has_autosave = False
     
+    config.window_icon = "logo.png"
+    config.windows_icon = "logo32.png"
     

@@ -71,7 +71,10 @@ init python:
         editor_versions.clear()
         editor_descriptions.clear()
         
-        for d in [ config.renpy_base, persistent.projects_path ]:
+        for d in [ config.renpy_base, persistent.projects_directory ]:
+            if d is None:
+                continue
+            
             for ef in glob.glob(d + "/*/*.editor.py"):
                 scan_editor(ef)
 

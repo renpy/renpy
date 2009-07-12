@@ -7,9 +7,6 @@ init python:
     
     ZWSP = u"\u200B"
 
-    # The directory containing game projects.
-    persistent.projects_path = os.path.dirname(config.renpy_base)
-    
     # The process of the running game.
     game_proc = None
     
@@ -168,6 +165,9 @@ init python:
         
 label select_project:
 
+    if persistent.projects_directory is None:
+        call choose_projects_directory
+   
     python:
 
         screen()
