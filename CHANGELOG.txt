@@ -8,6 +8,12 @@ The new ui.detached function allows one to use the ui functions to
 define displayables without adding them to a layer.
 
 
+Ren'Py will now search for a directory named "Ren'Py Data" in the
+directories above your Ren'Py installation. If found, save data will
+be placed in that directory, rather than the system-specific default
+location. This should help make it easier to develop Ren'Py games when
+using a USB drive.
+
 
 Allow config.layer_clipping to specify layers that are larger than the
 screen.

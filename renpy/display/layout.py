@@ -127,7 +127,7 @@ class Container(renpy.display.core.Displayable):
             return
 
         self.children.pop(i)
-        self.offsets = self.list_type()
+        self.offsets = self._list_type()
 
         if self.children:
             self.child = self.children[-1]
@@ -147,7 +147,7 @@ class Container(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
 
         rv = Render(width, height)
-        self.offsets = self.list_type()
+        self.offsets = self._list_type()
         
         for c in self.children:
             cr = render(c, width, height, st, at)
@@ -156,6 +156,7 @@ class Container(renpy.display.core.Displayable):
 
         return rv
 
+    
     def event(self, ev, x, y, st):
 
         children = self.children
@@ -172,6 +173,7 @@ class Container(renpy.display.core.Displayable):
                 
         return None
 
+    
     def visit(self):
         return self.children
     
