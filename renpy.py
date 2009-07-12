@@ -37,10 +37,24 @@ def path_to_common(renpy_base):
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
     import renpy
-
+    
     if not renpy.config.save_directory:
         return gamedir + "/saves"
 
+    # Search the path above Ren'Py for a directory named "Ren'Py Data".
+    # If it exists, then use that for our save directory.
+    path = renpy.config.renpy_base
+
+    while True:
+        if os.path.isdir(path + "/Ren'Py Data"):
+            return path + "/Ren'Py Data/" + renpy.config.save_directory
+
+        newpath = os.path.dirname(path)
+        if path == newpath:
+            break
+        path = newpath
+
+    # Otherwise, put the saves in a standard place.
     if platform.mac_ver()[0]:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
