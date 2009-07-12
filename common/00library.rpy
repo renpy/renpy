@@ -129,10 +129,13 @@ init -1180 python:
             return
 
         _preferences.fullscreen = False
-        
-        import webbrowser
-        webbrowser.open_new("file:///" + config.basedir + "/" + config.help)
-        
+
+        try:
+            import webbrowser
+            webbrowser.open_new("file:///" + config.basedir + "/" + config.help)
+        except:
+            pass
+            
     
 init -1180 python hide:
 
@@ -140,18 +143,36 @@ init -1180 python hide:
     def screenshot():
         import os.path
         import os
-
-        pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
+        import __main__
         
+        pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
+
+        # Pick the directory to save into.
+        dest = config.renpy_base.rstrip("/")
+        
+        # Guess if we're an OSX App.
+        if dest.endswith("/Contents/Resources/autorun"):
+            # Go up 4 directories.
+            dest = os.path.dirname(dest)
+            dest = os.path.dirname(dest)
+            dest = os.path.dirname(dest)
+            dest = os.path.dirname(dest)
+
+        # Try to pick a filename.
         i = 1
         while True:
-            fn = pattern % i
+            fn = dest + "/" + pattern % i
             if not os.path.exists(fn):
                 break
             i += 1
 
-        renpy.screenshot(fn)
-
+        try:
+            renpy.screenshot(fn)
+        except:
+            import traceback
+            traceback.print_exc()
+        
+            
     def dump_styles():
         if config.developer:
             renpy.style.write_text("styles.txt")

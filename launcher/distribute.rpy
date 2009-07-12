@@ -57,6 +57,7 @@ init python:
         exclude_suffix=[ ".pyc", "~", ".bak" ],
         exclude_prefix=[ "#", "." ],
         exclude_files = set(ignored_files),
+        root_exclude_prefix = [ ],
         root_exclude_suffix = [ ".py", ".sh", ".app" ],
         root_exclude_files = set(root_ignored_files),
         root=False):
@@ -93,6 +94,10 @@ init python:
 
             for i in root_exclude_suffix:
                 if fn.endswith(i):
+                    return False
+
+            for i in root_exclude_prefix:
+                if fn.startswith(i):
                     return False
 
             if fn in root_exclude_files:
