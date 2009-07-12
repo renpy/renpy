@@ -297,25 +297,6 @@ label _hide_windows:
 
     
 # This code here handles check for the correct version of the Ren'Py module.
-
-label _check_module:
-
-    if not config.module_warning:
-        return
-
-    python hide:
-        module_info = _(u"While Ren'Py games may be playable without the renpy module, some features may be disabled. For more information, read the module/README.txt file or go to http://www.bishoujo.us/renpy/.")
-
-        if renpy.module_version() == 0:
-            _show_exception(_(u"renpy module not found."),
-                            _(u"The renpy module could not be loaded on your system.") + "\n\n" + module_info)
-        elif renpy.module_version() < config.module_version:
-            _show_exception(_(u"Old renpy module found."),
-                            _(u"An old version (%d) of the Ren'Py module was found on your system, while this game requires version %d.") % (renpy.module_version(), config.module_version) + "\n\n" + module_info)
-
-    return
-    
-
                          
 label _save_reload_game:
     python hide:
@@ -660,7 +641,7 @@ label _start:
         for i in config.start_callbacks:
             i()
     
-    call _check_module from _call__check_module_1
+    # call _check_module from _call__check_module_1
     call _load_reload_game from _call__load_reload_game_1
 
     scene black
