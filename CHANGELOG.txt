@@ -15,6 +15,11 @@ location. This should help make it easier to develop Ren'Py games when
 using a USB drive.
 
 
+The save location for screenshots has now been standardized. It is now
+the directory containing the executable used to start Ren'Py, be it a
+.exe, .py, .sh, or .app. (The latter is handled specially.)
+
+
 Allow config.layer_clipping to specify layers that are larger than the
 screen.
 

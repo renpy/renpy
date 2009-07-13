@@ -40,7 +40,7 @@ init python:
     def __show_preferences():
 
         ime = _ImageMapper(
-            "prefs",
+            "preferences",
             config.preferences_ground,
             config.preferences_idle,
             config.preferences_hover,
