@@ -21,9 +21,9 @@ label archiver:
             screen()
             ui.vbox()
             
-            title("Archiver")
+            title(_(u"Archiver"))
 
-            text("The archiver allows you to obfuscate your game by including files in an archive file.")
+            text(_(u"The archiver allows you to obfuscate your game by including files in an archive file."))
 
             ui.null(height=15)
             

@@ -270,7 +270,7 @@ label distribute:
             
             ui.vbox()
 
-            title("Building Distributions")
+            title(_(u"Building Distributions"))
 
             text_variable(_(u"Base Name:"), base_name, "base_name",
                           _(u"Used to generate the names of directories and archive files."))

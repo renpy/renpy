@@ -264,7 +264,7 @@ label lint:
 
         set_tooltip("")
         
-        info("Lint", "Lint in progress.")
+        info(_(u"Lint"), _(u"Lint in progress."))
 
         lf = file("lint.txt", "w+")
 

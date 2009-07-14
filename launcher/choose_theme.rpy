@@ -217,7 +217,7 @@ init python:
         ui.window(style=style.prefs_pref_frame)
         ui.vbox(style=style.prefs_pref_box)
 
-        layout.label("Music Volume", "prefs")
+        layout.label(_(u"Music Volume"), "prefs")
         ui.vbox(style=style.prefs_volume_box)
 
         ui.bar(128,
@@ -225,7 +225,7 @@ init python:
                changed=does_nothing,
                style=style.prefs_volume_slider)
 
-        layout.button(u"Test", "soundtest", clicked=does_nothing)
+        layout.button(_(u"Test"), "soundtest", clicked=does_nothing)
 
         ui.close()
         ui.close()
