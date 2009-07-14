@@ -1,5 +1,5 @@
 New in Ren'Py 6.9.3
-------------------
+-------------------
 
 [ New Launcher ]
 
@@ -22,6 +22,10 @@ the directory containing the executable used to start Ren'Py, be it a
 
 Allow config.layer_clipping to specify layers that are larger than the
 screen.
+
+
+This distribution include a new NVL-mode tutorial, teaching people how
+to make NVL-mode games.
 
 
 Fixed a long-standing problem that could cause Rollback to operate

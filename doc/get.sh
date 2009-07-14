@@ -12,8 +12,8 @@ rm -Rf images
 mkdir -p images
 cp `find www.renpy.org -name \*.png -type f` images
 
-# No jpgs yet.
-# cp `find www.renpy.org -name \*.jpg -type f` images
+No jpgs yet.
+cp `find www.renpy.org -name \*.jpg -type f` images
 
 rm -Rf reference tutorials
 python2.5 process.py
