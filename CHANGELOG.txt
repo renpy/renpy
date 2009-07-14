@@ -1,7 +1,24 @@
 New in Ren'Py 6.9.3
 -------------------
 
-[ New Launcher ]
+This release includes Launcher2, a near-total rewrite of the Ren'Py
+launcher. Among the more important changes are:
+
+* The launcher now supports a project directory. It is no longer
+necessary to move projects around when upgrading Ren'Py.
+
+* The launcher has support for selecting the editor to use. While we
+ship with jEdit support, other editors can be downloaded from the
+Ren'Py web site.
+
+* When building distributions, the launcher now allows the user to
+choose which distributions are built.
+
+* The Macintosh distribution now places all non-documentation files
+inside a single application.
+
+* There is a new combined distribution, which includes support for
+Windows, Linux, and Macintosh in a single zip file.
 
 
 The new ui.detached function allows one to use the ui functions to

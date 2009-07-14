@@ -228,12 +228,12 @@ init python:
 
 label distribute:
 
-    # call lint
+    call lint
 
-    # if not yesno("Building Distributions", 
-    #              "I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nPlease also check {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?"):
+    if not yesno(_(u"Building Distributions"), 
+                 _(u"I've just performed a lint on your project. If it contains errors, you should say no and fix them.\nPlease also check {a=http://www.renpy.org/wiki/renpy/Download_Ren'Py}www.renpy.org{/a} to see if updates or fixes are available.\n\nDo you want to continue?")):
 
-    #     jump top
+        jump top
 
     python hide:
 
