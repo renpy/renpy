@@ -130,8 +130,11 @@ init python:
 
             dirs[:] = [ i for i in dirs if include(i, is_root) ]
 
+        rv = [ (a.replace("\\", "/"), b.replace("\\", "/")) for a, b in rv ]
+                                                            
         return rv
 
+    
     def make_zip(t, filename, files, file_data):
         """
          This creates `filename`.zip, containing `files`, placed in the
@@ -386,8 +389,11 @@ label distribute:
         ######################################################################
         # Multi files.
 
-        rb = config.renpy_base + "/"
-        
+        rb = config.renpy_base.replace("\\", "/") + "/"
+
+          
+
+               
         # Project files.
         multi_files.extend(tree(project.path, "/", root=True, exclude_suffix=ignore_extensions))
         multi_files.append((rb + "renpy.py",  "/" + executable_name + ".py"))
@@ -509,7 +515,6 @@ label distribute:
                                 break
                 else:
                     macapp_files.append((fn, an))
-                        
                     
             make_zip(
                 _(u"Building Macintosh..."),
