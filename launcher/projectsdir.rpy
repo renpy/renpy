@@ -1,7 +1,8 @@
 init python:
 
+    import os
     import subprocess
-    
+
     try:
         import EasyDialogs
     except ImportError:
@@ -37,8 +38,12 @@ label choose_projects_directory:
 
             try:
 
+                env = os.environ.copy()
+                if 'RENPY_OLD_LD_LIBRARY_PATH' in env:
+                    env['LD_LIBRARY_PATH'] = env['RENPY_OLD_LD_LIBRARY_PATH']
+                
                 zen = subprocess.Popen([ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + path ],
-                                       stdout=subprocess.PIPE)
+                                       env=env, stdout=subprocess.PIPE)
 
                 choice = zen.stdout.read()        
                 zen.wait()
