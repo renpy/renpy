@@ -269,7 +269,8 @@ label lint:
         lf = file("lint.txt", "w+")
 
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf)
+            CREATE_NO_WINDOW=0x08000000
+            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf, creationflags=CREATE_NO_WINDOW)
         else:
             proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
 
