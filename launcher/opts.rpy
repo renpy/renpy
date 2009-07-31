@@ -9,8 +9,11 @@ label options:
 
         title(_(u"Launcher Options"))
 
+        editor = persistent.editor
+        if not set_editor:
+            editor = _(u"Using RENPY_EDITOR")
         
-        text_variable(_("Text Editor"), persistent.editor, "editor",
+        text_variable(_("Text Editor"), editor, "editor",
                       _(u"Change the default text editor."))
 
         ui.null(height=15)

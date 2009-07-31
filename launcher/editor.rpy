@@ -26,7 +26,12 @@ init python:
     # Should we set up the editor? How about the transient editor?
     set_editor = "RENPY_EDITOR" not in os.environ
     set_editor_transient = "RENPY_EDITOR_TRANSIENT" not in os.environ
-    
+
+    if set_editor and not set_editor_transient:
+        config.editor_transient = config.editor
+        os.environ['RENPY_EDITOR_TRANSIENT'] = config.editor
+        set_editor_transient = False
+
     def scan_editor(ef):
         """
          Scans a single editor file to get the meta-information. If it
@@ -84,6 +89,9 @@ init python:
          Sets the system up to respect the value containined in
          persistent.editor.
          """
+
+        if not set_editor:
+            return
         
         ef = None
         
@@ -100,7 +108,7 @@ init python:
             "persistent" : persistent,
             "base" : os.path.dirname(ef),
             }
-
+        
         execfile(ef, ctx, ctx)
 
         if set_editor:
