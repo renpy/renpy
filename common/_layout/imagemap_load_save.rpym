@@ -289,7 +289,7 @@ init python:
 
             ime.close()
                 
-            result = ui.interact()
+            result = ui.interact(mouse="gamemenu")
             type, value = result
 
             if type == "return":

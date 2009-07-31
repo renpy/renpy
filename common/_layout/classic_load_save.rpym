@@ -291,7 +291,7 @@ init python:
             ui.close() # slots
             ui.close() # whole thing
 
-            result = ui.interact()
+            result = ui.interact(mouse="gamemenu")
             type, value = result
 
             if type == "return":

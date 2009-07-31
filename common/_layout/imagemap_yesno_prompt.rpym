@@ -33,7 +33,7 @@ init python hide:
         
         layout.prompt(message, "yesno")
 
-        rv = ui.interact()
+        rv = ui.interact(mouse="gamemenu")
         renpy.transition(config.intra_transition)
         return rv
 

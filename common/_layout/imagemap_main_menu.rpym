@@ -32,7 +32,8 @@ label main_menu_screen:
         rv = renpy.imagemap(
             config.main_menu_ground,
             config.main_menu_selected,
-            config.main_menu_hotspots)
+            config.main_menu_hotspots,
+            mouse="mainmenu")
 
         for e in config.main_menu:
             name = e[0]

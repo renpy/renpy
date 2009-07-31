@@ -41,6 +41,10 @@ Allow config.layer_clipping to specify layers that are larger than the
 screen.
 
 
+The various layouts now change the mouse to the gamemenu or mainmenu
+mouse, as appropriate.
+
+
 This distribution include a new NVL-mode tutorial, teaching people how
 to make NVL-mode games.
 

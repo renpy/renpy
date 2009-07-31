@@ -49,7 +49,7 @@ init python hide:
         ui.close()
         ui.close()
 
-        rv = ui.interact()
+        rv = ui.interact(mouse="gamemenu")
         renpy.transition(config.intra_transition)
         return rv
 

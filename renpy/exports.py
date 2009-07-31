@@ -509,7 +509,7 @@ def say(who, what, interact=True):
 
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
-             style='imagemap', with_none=None, **properties):
+             style='imagemap', mouse='imagemap', with_none=None, **properties):
     """
     Displays an imagemap. An image map consists of two images and a
     list of hotspots that are defined on that image. When the user
@@ -552,7 +552,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     
     rv = renpy.ui.interact(suppress_overlay=(not overlays),
                            type='imagemap',
-                           mouse='imagemap',
+                           mouse=mouse,
                            roll_forward=roll_forward)
 
     renpy.exports.checkpoint(rv)

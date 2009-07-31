@@ -54,7 +54,7 @@ init python:
 
         ui.close()
 
-        ui.interact()
+        ui.interact(mouse="gamemenu")
 
     class _Preference(object):
         """

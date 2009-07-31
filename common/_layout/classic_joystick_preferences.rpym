@@ -75,7 +75,7 @@ init python:
                 ui.close()
 
                 _joystick_get_binding()
-                binding = ui.interact()
+                binding = ui.interact(mouse="gamemenu")
                 _joystick_take_binding(binding, key)
                 
                 return True
@@ -100,7 +100,7 @@ label joystick_preferences_screen:
         python:
             layout.navigation("joystick_preferences")
             _joystick_preferences()
-            ui.interact()
+            ui.interact(mouse="gamemenu")
 
             
         

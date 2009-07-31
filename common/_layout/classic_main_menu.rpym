@@ -50,7 +50,7 @@ label main_menu_screen:
 
         ui.close()
 
-        ui.interact()
+        ui.interact(mouse="mainmenu")
         
     return
             

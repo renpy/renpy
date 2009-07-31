@@ -182,7 +182,7 @@ init python:
         ui.add(DynamicDisplayable(_file_picker_thumbnail))
 
         try:
-            rv = ui.interact()
+            rv = ui.interact(mouse="gamemenu")
         finally:
             __session.scrollbar_position = adj.value
             __session.thumbnail = None

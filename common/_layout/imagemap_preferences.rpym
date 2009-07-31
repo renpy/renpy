@@ -127,7 +127,7 @@ init python:
         ime.bar("Voice Volume", 128, int(_preferences.get_volume('voice') * 128), set_voice)
 
         ime.close()
-        ui.interact()
+        ui.interact(mouse="gamemenu")
         
 label preferences_screen:
 

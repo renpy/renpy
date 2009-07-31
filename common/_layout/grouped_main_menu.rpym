@@ -62,7 +62,7 @@ label main_menu_screen:
             
         ui.close() # outer box
 
-        ui.interact()
+        ui.interact(mouse="mainmenu")
         
     return
             
