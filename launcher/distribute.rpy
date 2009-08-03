@@ -368,6 +368,11 @@ label distribute:
 
         project.save()
 
+        base_name = base_name.encode("utf-8")
+        executable_name = executable_name.encode("utf-8")
+        ignore_extensions = ignore_extensions.encode("utf-8")
+        documentation_extensions = documentation_extensions.encode("utf-8")
+                
         # Convert some of these to more useful formats.
         ignore_extensions = [ i.strip() for i in ignore_extensions.split() ]
         documentation_extensions = [ i.strip() for i in documentation_extensions.split() ]
