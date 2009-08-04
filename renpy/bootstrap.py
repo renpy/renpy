@@ -100,6 +100,8 @@ def bootstrap(renpy_base):
 
     global renpy
 
+    os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
+    
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
