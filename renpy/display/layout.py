@@ -621,7 +621,7 @@ class MultiBox(Container):
         for i, (xo, yo), t in children_offsets: 
 
             if t is None:
-                cst = 0
+                cst = st
             else:
                 cst = renpy.game.interface.event_time - t
 
