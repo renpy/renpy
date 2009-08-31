@@ -1,6 +1,3 @@
-init -1 python:
-    style_backup = renpy.style.backup()
-
 init python:
 
     import codecs

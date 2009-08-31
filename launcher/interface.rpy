@@ -1,12 +1,50 @@
 # This file contains the various components of the launcher interface.
 
-init python:
+init -11 python:
+    style.launcher_base = Style(style.default)
+
+    style.launcher_text = Style(style.launcher_base)
+    style.launcher_text.size = 15
+    style.launcher_text.color = "#333"
+    style.launcher_text.justify = True
+    
+    style.launcher_title = Style(style.launcher_base)
+    style.launcher_title.size = 26
+    style.launcher_title.color = "#333"
+
+    style.launcher_button_text = Style(style.launcher_base)
+    style.launcher_button_text.size = 20
+    style.launcher_button_text.color = "#03c"
+    style.launcher_button_text.hover_color = "#088"
+    style.launcher_button_text.insensitive_color = "#aaa"
+    style.launcher_button_text.minwidth = 250
+
+    style.launcher_small_button_text = Style(style.launcher_button_text)
+    style.launcher_small_button_text.size = 15
+
+    style.launcher_tooltip = Style(style.default)
+    style.launcher_tooltip.color = "#fff"
+    style.launcher_tooltip.size = 14
+
+
+init 11 python hide:
+
+    props = { }
+    for i in style.default.properties:
+        props.update(i)
+
+    if props["font"] == "DejaVuSans.ttf":
+        style.launcher_base.setdefault(font="DejaVuSerif.ttf")
+
+init 11 python:
 
     import time
 
-    
     # Settings.
     config.developer = True
+
+    # Make backup of styles.
+    style_backup = renpy.style.backup()
     
     # Style customizations. These need to be in a function so that we can
     # change them when we're choosing a theme.
@@ -18,9 +56,7 @@ init python:
         style.hyperlink_text.hover_color = "#00c"
         style.hyperlink_text.size = 15
         style.hyperlink_text.underline = False
-        style.hyperlink_text.font = "DejaVuSerif.ttf"
-        
-        
+                
     customize_styles()
         
     tooltip = _(u"Welcome!")
@@ -75,16 +111,16 @@ init python:
          """
 
         ui.window(style="default", bottom_margin=4, top_margin=12)
-        ui.text(s, size=26, color="#333", font="DejaVuSerif.ttf")
+        ui.text(s, style="launcher_title")
                 
     def text(s):
         """
          Display text on the screen.
          """
         
-        ui.text(s, size=15, color="#333", font="DejaVuSerif.ttf", justify=True)
+        ui.text(s, style="launcher_text")
         
-    def button(s, clicked=None, subtitle="", hovered=None, unhovered=None, size=20):
+    def button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
         """
          Displays a button with caption `s`.
          """
@@ -100,9 +136,7 @@ init python:
                   hovered=hovered, unhovered=unhovered,
                   top_padding=3, bottom_padding=3)
 
-        ui.text(s, style="default", size=size,
-                color="#03c", hover_color="00c", insensitive_color="#aaa",
-                font="DejaVuSerif.ttf", minwidth=250)
+        ui.text(s, style="launcher_button_text")
 
     def small_button(s, clicked=None, subtitle="", hovered=None, unhovered=None):
         """
@@ -119,9 +153,7 @@ init python:
                   hovered=hovered, unhovered=unhovered,
                   top_padding=0, bottom_padding=0)
 
-        ui.text(s, style="default", size=15,
-                color="#03c", hover_color="00c", insensitive_color="#aaa",
-                font="DejaVuSerif.ttf", minwidth=250)
+        ui.text(s, style="launcher_small_button_text")
 
     def toggle_button(s, checked, clicked=None, subtitle=""):
         """
@@ -132,17 +164,15 @@ init python:
         unhovered = untooltips(subtitle)
 
         if checked:
-            s = u"\u25a3 " + s
+            s = u"{font=DejaVuSans.ttf}\u25a3{/font} " + s
         else:
-            s = u"\u25a1 " + s
+            s = u"{font=DejaVuSans.ttf}\u25a1{/font} " + s
         
         ui.button(style="default", clicked=clicked,
                   hovered=hovered, unhovered=unhovered,
                   top_padding=0, bottom_padding=0)
 
-        ui.text(s, style="default", size=15,
-                color="#03c", hover_color="00c", insensitive_color="#aaa",
-                font="DejaVuSerif.ttf", minwidth=250)
+        ui.text(s, style="launcher_small_button_text")
         
     def scrolled(cancel, yadj=None):
 
