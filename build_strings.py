@@ -1,4 +1,4 @@
-1#!/usr/bin/env python
+#!/usr/bin/env python
 
 import collections
 import glob
@@ -73,7 +73,7 @@ init python:
         # print "#:", v
         # print "#, python-format"
 
-        print >>f, "        %r," % unicode(k)
+        print >>f, "        u\"%s\"," % unicode(k)
 
     print >>f, """\
     ]
