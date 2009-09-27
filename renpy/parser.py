@@ -25,7 +25,6 @@
 import codecs
 import re
 import os
-import os.path
 import sets
 
 import renpy
@@ -577,14 +576,6 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
 
-    def integer(self):
-        """
-        Tries to parse an integer. Returns a string containing the
-        integer, or None.
-        """
-
-        return self.match(r'(\+|\-)?\d+')
-
     def word(self):
         """
         Parses a name, which may be a keyword or not.
@@ -833,7 +824,7 @@ class Lexer(object):
 
         return self.filename, self.number
 
-    def require(self, thing):
+    def require(self, thing, name=None):
         """
         Tries to parse thing, and reports an error if it cannot be done.
 
@@ -843,10 +834,10 @@ class Lexer(object):
         """
 
         if isinstance(thing, str):
-            name = thing
+            name = name or thing
             rv = self.match(thing)            
         else:
-            name = thing.im_func.func_name
+            name = name or thing.im_func.func_name
             rv = thing()
 
         if rv is None:
@@ -1036,7 +1027,7 @@ def parse_with(l, node):
              node,
              ast.With(loc, expr) ]
 
-    
+
     
 def parse_menu(stmtl, loc):
 
