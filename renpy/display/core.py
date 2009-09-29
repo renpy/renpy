@@ -110,6 +110,7 @@ class Displayable(renpy.object.Object):
 
             i.find_focusable(callback, focus_name)
 
+            
     def focus(self, default=False):
         """
         Called to indicate that this widget has the focus.

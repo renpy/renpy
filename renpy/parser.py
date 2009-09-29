@@ -25,7 +25,6 @@
 import codecs
 import re
 import os
-import os.path
 import sets
 
 import renpy
@@ -577,14 +576,6 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
 
-    def integer(self):
-        """
-        Tries to parse an integer. Returns a string containing the
-        integer, or None.
-        """
-
-        return self.match(r'(\+|\-)?\d+')
-
     def word(self):
         """
         Parses a name, which may be a keyword or not.
@@ -833,7 +824,7 @@ class Lexer(object):
 
         return self.filename, self.number
 
-    def require(self, thing):
+    def require(self, thing, name=None):
         """
         Tries to parse thing, and reports an error if it cannot be done.
 
@@ -843,10 +834,10 @@ class Lexer(object):
         """
 
         if isinstance(thing, str):
-            name = thing
+            name = name or thing
             rv = self.match(thing)            
         else:
-            name = thing.im_func.func_name
+            name = name or thing.im_func.func_name
             rv = thing()
 
         if rv is None:
@@ -1036,7 +1027,7 @@ def parse_with(l, node):
              node,
              ast.With(loc, expr) ]
 
-    
+
     
 def parse_menu(stmtl, loc):
 
@@ -1492,21 +1483,45 @@ def parse_statement(l):
     ### Image statement.
     if l.keyword('image'):
 
-        
         name = parse_image_name(l)
-        l.require('=')
-        expr = l.rest()
 
-        rv = ast.Image(loc, name, expr)
+        if l.match(':'):
+            l.expect_eol()
+            expr = None
+            atl = renpy.atl.parse_atl(l.subblock_lexer())
+        else:            
+            l.require('=')
+            expr = l.rest()
+            atl = None
+            l.expect_noblock('image statement')
+
+        rv = ast.Image(loc, name, expr, atl)
 
         if not l.init:
             rv = ast.Init(loc, [ rv ], 990)        
         
-        l.expect_noblock('image statement')
         l.advance()
 
         return rv
 
+    ### Transform statement.
+    if l.keyword('transform'):
+
+        name = l.require(l.name)
+        l.require(':')
+        l.expect_eol()
+
+        atl = renpy.atl.parse_atl(l.subblock_lexer())
+        
+        rv = ast.Transform(loc, name, atl)
+
+        if not l.init:
+            rv = ast.Init(loc, [ rv ], 989)        
+        
+        l.advance()
+
+        return rv
+    
     ### One-line python statement.
     if l.match(r'\$'):
         python_code = l.rest()

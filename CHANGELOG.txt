@@ -1,3 +1,11 @@
+New in Ren'Py 6.10.0
+--------------------
+
+Fixed a bug that could cause problems with sound playback. [Rebuild
+for all plats.]
+
+Fixed a bug that prevented {w=1} from working.
+
 New in Ren'Py 6.9.3
 -------------------
 

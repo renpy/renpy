@@ -600,9 +600,10 @@ class Image(Node):
     __slots__ = [
         'imgname',
         'code',
+        'atl',
         ]
 
-    def __init__(self, loc, name, expr):
+    def __init__(self, loc, name, expr=None, atl=None):
         """
         @param name: The name of the image being defined.
 
@@ -613,19 +614,59 @@ class Image(Node):
         super(Image, self).__init__(loc)
         
         self.imgname = name
-        self.code = PyCode(expr, loc=loc, mode='eval')
 
+        if expr:
+            self.code = PyCode(expr, loc=loc, mode='eval')
+            self.atl = None
+        else:
+            self.code = None
+            self.atl = atl
+            
     def diff_info(self): 
         return (Image, tuple(self.imgname))
 
     def get_pycode(self):
-        return [ self.code ]
-
+        if self.code:            
+            return [ self.code ]
+        else:
+            return [ ]
+        
     def execute(self):
+
+        # Note: We should always check that self.code is None before
+        # accessing self.atl, as self.atl may not always exist.
+
         
         img = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.exports.image(self.imgname, img)
 
+        return self.next
+
+class Transform(Node):
+
+    __slots__ = [
+
+        # The name of the transform.
+        'name',
+
+        # The block of ATL associated with the transform.
+        'atl',
+        ]
+
+    def __init__(self, loc, name, atl=None):
+
+        super(Transform, self).__init__(loc)
+        
+        self.name = name
+        self.atl = atl
+            
+    def diff_info(self): 
+        return (Transform, self.name)
+
+    def execute(self):
+        
+        # Pass.
+        
         return self.next
 
 
