@@ -28,7 +28,6 @@ interpolators = { }
 def register_atl_interpolator(name, f, arity):
     interpolators[name] = (f, arity)
 
-
 # An example interpolator. (This is used internally when no interpolator
 # is otherwise specified.)
 def pause(duration, start, end, t):
@@ -41,53 +40,16 @@ register_atl_interpolator("pause", pause, 1)
     
 # A map from the name of a property to the function that sets that
 # property on a Transform object.
-properties = { }
+properties_registry = { }
 
-def register_atl_property(name, f):
-    properties[name] = f
+def register_atl_property(name, getter, setter):
+    properties_registry[name] = (getter, setter)
 
-
-# This represents a Raw ATL block.
-class RawBlock(renpy.object.Object):
-
-    def __init__(self):
-
-        # A list of RawStatements in this block.
-        self.statements = [ ]
-
-
-    def compile(self):
-        return Block(self.statements)
-
-
-class Block(renpy.object.Object):
-    def __init__(self, statements):
-        statements = [ i.compile() for i in statements ]
-
-        # A list of statements in the block.
-        self.statements = statements
-
-
-
-    # These need to live in an ATLTransform, or some superclass
-    # thereof.
     
-    # If we have a single interpolator as a child, then this is a
-    # list of properties set by that Interpolation.
-    # self.properties = None
-    
-    # If we have a single interpolator as a child, than this is the
-    # arity of that interpolator.
-    # self.arity = None
-        
-    # TODO: Go through and build up the times list.
-
-    # TODO: If we have a single interpolator, and it has
-    # objects with a single arity, note that.
-
-
-# This is intended to be subclassed by ATLTransform 
-class TransformBase(object):
+# This is intended to be subclassed by ATLTransform. It takes care of
+# managing ATL execution, which allows ATLTransform itself to not care
+# much about the contents of this file.
+class TransformBase(renpy.object.Object):
 
     def __init__(self, atl):
 
@@ -105,7 +67,12 @@ class TransformBase(object):
         # Interpolation.
         self.arity = None
 
+        # The state of the statement we are executing.
+        self.state = None
 
+        # Are we done?
+        self.done = False
+        
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
     def compile(self):
@@ -121,15 +88,131 @@ class TransformBase(object):
                 self.properties = interp.properties[:]
                 self.arity = len(self.properties[0][1])
 
-            
+    def execute(self, st, event):
+        if self.done:
+            return
+
+        if not self.block:
+            self.compile()
         
+        action, arg = self.block.execute(self, st, self.state, event)
+
+        if action == "continue":
+            self.state = arg
+            return
+        else:
+            self.done = True
+
+
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
     pass
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
-    pass
+
+
+    # trans is the transform we're working on.
+    # st is the time since this statement started executing.
+    # state is the state stored by this statement, or None if
+    # we've just started executing this statement.
+    # event is an event we're triggering.
+    #
+    # "continue", state - Causes this statement to execute again,
+    # with the given state passed in the second time around.
+    #
+    # "next", timeleft - Causes the next statement to execute, with
+    # timeleft being the amount of time left after this statement
+    # finished.
+    #
+    # "repeat", (count, timeleft) - Causes the repeat behavior to occur.
+    #
+    # As the Repeat statement can only appear in a block, only Block
+    # needs to deal with the repeat behavior.
+    def execute(self, trans, st, state, event):
+        raise Exception("Not implemented.")
+        
+# This represents a Raw ATL block.
+class RawBlock(RawStatement):
+
+    def __init__(self):
+
+        # A list of RawStatements in this block.
+        self.statements = [ ]
+
+    def compile(self):
+        return Block(self.statements)
+
+    
+# A compiled ATL block. 
+class Block(Statement):
+    def __init__(self, statements):
+        statements = [ i.compile() for i in statements ]
+
+        # A list of statements in the block.
+        self.statements = statements
+
+    def execute(self, trans, st, state, event):
+
+        # Unpack the state.
+        if state is not None:
+            index, start, repeats, child_state = state
+        else:
+            index, start, repeats, child_state = 0, 0, 0, None
+        
+        for i in range(0, 64):
+
+            # If we've hit the last statement, it's the end of
+            # this block.
+            if index >= len(self.statements):
+                return "next", st - start
+            
+            try:
+                # Find the statement and try to run it.
+                stmt = self.statements[index]
+                action, arg = stmt.execute(trans, st - start, child_state, event)
+
+                # On continue, persist our state.
+                if action == "continue":
+                    return "continue", (index, start, repeats, arg)
+
+                # On next, advance to the next statement in the block.
+                elif action == "next":
+                    index += 1
+                    start = st - arg
+                    child_state = None
+
+                # On repeat, either terminate the block, or go to
+                # the first statement.
+                elif action== "repeat":
+                    count, arg = arg
+
+                    repeats += 1
+
+                    if repeats >= count:
+                        return "next", arg
+                    else:
+                        index = 0
+                        start = st - arg
+                        child_state = None
+
+            except:
+                # If an exception occurs when dealing with a statment,
+                # advance to the next statement.
+                
+                if renpy.config.debug:
+                    raise
+
+                index += 1
+                start = st
+                child_state = None
+
+        else:
+
+            if renpy.config.developer or renpy.config.debug:
+                raise Exception("ATL Block probably in infinite loop.")
+
+            return "continue", (index, st, repeats, child_state)
 
 
 # This can become one of four things:
@@ -198,7 +281,7 @@ class RawMultipurpose(RawStatement):
         properties = [ ]
 
         for i, exprs in self.properties:
-            pfunc = properties.get(i, None)
+            pfunc = properties_registry.get(i, None)
             if pfunc is None:
                 raise Exception("ATL Property %s is unknown at runtime." % i)
 
@@ -207,7 +290,7 @@ class RawMultipurpose(RawStatement):
 
             values = [ renpy.python.py_eval(i) for i in exprs ]
 
-            properties.append((pfunc, values))
+            properties.append((i, values))
 
         for expr, with_ in self.expressions:
             try:
@@ -239,6 +322,21 @@ class Child(Statement):
         self.child = child
         self.transition = transition
 
+    def execute(self, trans, st, state, event):
+        old_child = trans.raw_child
+
+        if old_child is not None and self.transition is not None:
+            trans.child = self.transition(old_widget=old_child,
+                                          new_widget=self.child)
+        else:
+            trans.child = self.child
+
+        trans.raw_child = self.child
+
+        return "next", st
+    
+        
+        
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
@@ -246,6 +344,34 @@ class Interpolation(Statement):
         self.function = function
         self.duration = duration
         self.properties = properties
+
+    def execute(self, trans, st, state, event):
+
+        if self.duration:
+            complete = min(1.0, st / self.duration)
+        else:
+            complete = 1.0
+
+        if state is None:
+
+            state = { }
+            
+            for k in self.properties:
+                getter = properties_registry[k][0]
+                state[k] = getter(trans)
+
+        for k, v in self.properties.iteritems():
+            setter = properties_registry[k][1]
+            value = self.function(complete, state[k], *v)
+            setter(trans, value)
+
+        if st > self.duration:
+            return "next", st - self.duration
+        else:
+            return "continue", state
+        
+        
+                
         
 # This parses an ATL block.
 def parse_atl(l):
@@ -292,7 +418,7 @@ def parse_atl(l):
                 
                 prop = l.name()
                 
-                if prop in renpy.atl.properties:
+                if prop in properties_registry:
                     exprs = [ ]
                     
                     for i in range(arity):
