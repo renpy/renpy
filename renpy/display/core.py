@@ -325,6 +325,7 @@ class Displayable(renpy.object.Object):
         xoff += xoffset
         yoff += yoffset
 
+
         if subpixel:
             dest.subpixel_blit(surf, (xoff, yoff), main=main)
         else:

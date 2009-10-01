@@ -73,7 +73,7 @@ class Transform(Container):
 
             if fr is not None:
                 renpy.display.render.redraw(self, fr)
-        
+                
         cr = render(self.child, width, height, st, at)
         width, height = cr.get_size()
 
@@ -129,7 +129,7 @@ class Transform(Container):
         self.forward = forward
 
         rv.alpha = self.alpha
-        
+
         rv.subpixel_blit(cr, (xo, yo), main=True)
 
         self.offsets = [ (xo, yo) ]
@@ -191,9 +191,33 @@ class Transform(Container):
     def update(self):
         renpy.display.render.invalidate(self)
 
+class ATLTransform(Transform, renpy.atl.TransformBase):
+    
+    def __init__(self, atl, *args, **kwargs):
+        renpy.atl.TransformBase.__init__(self, atl)
+        Transform.__init__(self, *args, **kwargs)
 
-      
+        self.raw_child = self.child
+        
+    def render(self, width, height, st, at):
+        pause = self.execute(st, None)
 
+        if pause is not None:
+            renpy.display.render.redraw(self, pause)
+
+        return Transform.render(self, width, height, st, at)
+
+    def __call__(self, child=None):
+        return ATLTransform(
+            atl=self.block,
+            child=child or self.child,
+            alpha=self.alpha,
+            rotate=self.rotate,
+            zoom=self.zoom,
+            xzoom=self.xzoom,
+            yzoom=self.yzoom,
+            **self.kwargs)
+        
 class Motion(Container):
     """
     This is used to move a child displayable around the screen. It

@@ -30,8 +30,8 @@ def register_atl_interpolator(name, f, arity):
 
 # An example interpolator. (This is used internally when no interpolator
 # is otherwise specified.)
-def pause(duration, start, end, t):
-    if t < duration:
+def pause(t, start, end):
+    if t < 1.0:
         return start
     else:
         return end
@@ -95,22 +95,21 @@ class TransformBase(renpy.object.Object):
         if not self.block:
             self.compile()
         
-        action, arg = self.block.execute(self, st, self.state, event)
+        action, arg, pause = self.block.execute(self, st, self.state, event)
 
         if action == "continue":
             self.state = arg
-            return
         else:
             self.done = True
 
-
+        return pause
+            
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
     pass
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
-
 
     # trans is the transform we're working on.
     # st is the time since this statement started executing.
@@ -159,38 +158,44 @@ class Block(Statement):
             index, start, repeats, child_state = state
         else:
             index, start, repeats, child_state = 0, 0, 0, None
-        
+
+        # The maximum pause we allow.
+        max_pause = 1000
+            
         for i in range(0, 64):
 
             # If we've hit the last statement, it's the end of
             # this block.
             if index >= len(self.statements):
-                return "next", st - start
+                return "next", st - start, None
             
             try:
+                
                 # Find the statement and try to run it.
                 stmt = self.statements[index]
-                action, arg = stmt.execute(trans, st - start, child_state, event)
+                print "run stmt", stmt
+                action, arg, pause = stmt.execute(trans, st - start, child_state, event)
+                print "post run stmt", stmt
 
                 # On continue, persist our state.
                 if action == "continue":
-                    return "continue", (index, start, repeats, arg)
+                    return "continue", (index, start, repeats, arg), min(max_pause, pause)
 
                 # On next, advance to the next statement in the block.
                 elif action == "next":
                     index += 1
                     start = st - arg
                     child_state = None
-
+                    
                 # On repeat, either terminate the block, or go to
                 # the first statement.
-                elif action== "repeat":
+                elif action == "repeat":
                     count, arg = arg
 
                     repeats += 1
 
                     if repeats >= count:
-                        return "next", arg
+                        return "next", arg, None
                     else:
                         index = 0
                         start = st - arg
@@ -200,9 +205,11 @@ class Block(Statement):
                 # If an exception occurs when dealing with a statment,
                 # advance to the next statement.
                 
-                if renpy.config.debug:
-                    raise
+                # if renpy.config.debug:
+                #     raise
 
+                raise
+                
                 index += 1
                 start = st
                 child_state = None
@@ -212,7 +219,7 @@ class Block(Statement):
             if renpy.config.developer or renpy.config.debug:
                 raise Exception("ATL Block probably in infinite loop.")
 
-            return "continue", (index, st, repeats, child_state)
+            return "continue", (index, st, repeats, child_state), 0
 
 
 # This can become one of four things:
@@ -230,14 +237,13 @@ class RawMultipurpose(RawStatement):
 
     def __init__(self):
         self.interpolator = None
-        self.duration = 0
-
+        self.duration = None
         self.properties = [ ]
         self.expressions = [ ]
         
     def add_interpolator(self, name, duration):
         self.interpolator = name
-        self.duration = 0
+        self.duration = duration
         
     def add_property(self, name, exprs):
         self.properties.append((name, exprs))
@@ -280,17 +286,17 @@ class RawMultipurpose(RawStatement):
 
         properties = [ ]
 
-        for i, exprs in self.properties:
-            pfunc = properties_registry.get(i, None)
+        for name, exprs in self.properties:
+            pfunc = properties_registry.get(name, None)
             if pfunc is None:
-                raise Exception("ATL Property %s is unknown at runtime." % i)
+                raise Exception("ATL Property %s is unknown at runtime." % name)
 
             if len(exprs) != arity:
-                raise Exception("ATL Property %s has incorrect number of expressions at runtime." % i)
+                raise Exception("ATL Property %s has incorrect number of expressions at runtime." % name)
 
             values = [ renpy.python.py_eval(i) for i in exprs ]
 
-            properties.append((i, values))
+            properties.append((name, values))
 
         for expr, with_ in self.expressions:
             try:
@@ -311,7 +317,8 @@ class RawMultipurpose(RawStatement):
 
             properties.extend(value.properties)
 
-        return Interpolation(ifunc, self.duration, properties)
+        duration = renpy.python.py_eval(self.duration)
+        return Interpolation(ifunc, duration, properties)
             
             
             
@@ -319,12 +326,13 @@ class RawMultipurpose(RawStatement):
 class Child(Statement):
 
     def __init__(self, child, transition):
-        self.child = child
+        self.child = renpy.easy.displayable(child)
         self.transition = transition
 
     def execute(self, trans, st, state, event):
+                    
         old_child = trans.raw_child
-
+        
         if old_child is not None and self.transition is not None:
             trans.child = self.transition(old_widget=old_child,
                                           new_widget=self.child)
@@ -333,7 +341,7 @@ class Child(Statement):
 
         trans.raw_child = self.child
 
-        return "next", st
+        return "next", st, None
     
         
         
@@ -356,21 +364,25 @@ class Interpolation(Statement):
 
             state = { }
             
-            for k in self.properties:
+            for k, v in self.properties:
                 getter = properties_registry[k][0]
                 state[k] = getter(trans)
 
-        for k, v in self.properties.iteritems():
+        for k, v in self.properties:
             setter = properties_registry[k][1]
             value = self.function(complete, state[k], *v)
+
+            print "Setting", k, value
+            
             setter(trans, value)
 
         if st > self.duration:
-            return "next", st - self.duration
+            return "next", st - self.duration, None
         else:
-            return "continue", state
-        
-        
+            if not self.properties:
+                return "continue", state, self.duration - st
+            else:            
+                return "continue", state, 0
                 
         
 # This parses an ATL block.
@@ -399,14 +411,17 @@ def parse_atl(l):
 
             # First, look for an interpolator. If we see one, use
             # it. Otherwise, use the default interpolator.
+            cp = l.checkpoint()
             clause = l.name()
 
             if clause in renpy.atl.interpolators:
                 duration = l.require(l.simple_expression)
                 func, arity = interpolators[clause]
             else:
+                l.revert(cp)
+
                 clause, arity = None, 1
-                duration = 0
+                duration = "0"
                 
             rm.add_interpolator(clause, duration)
 
@@ -417,7 +432,7 @@ def parse_atl(l):
                 cp = l.checkpoint()
                 
                 prop = l.name()
-                
+
                 if prop in properties_registry:
                     exprs = [ ]
                     
@@ -453,3 +468,5 @@ def parse_atl(l):
             continue
 
         l.require(",", "comma or end of line")
+
+    return block
