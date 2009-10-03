@@ -203,6 +203,8 @@ init -1090 python:
     # Motions, zooms, rotozooms, and transforms.
     style.motion.xanchor = 0
     style.motion.yanchor = 0
+    style.motion.xpos = 0
+    style.motion.ypos = 0
     
     # Windows.
     style.window.background = Solid((0, 0, 0, 192))

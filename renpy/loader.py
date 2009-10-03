@@ -161,11 +161,14 @@ class SubFile(object):
         rv1 = self.start[self.offset:self.offset + length]
         length -= len(rv1)
         self.offset += len(rv1)
-        
-        rv2 = self.f.read(length)        
-        self.offset += len(rv2)
 
-        return rv1 + rv2
+        if length:
+            rv2 = self.f.read(length)        
+            self.offset += len(rv2)
+        else:
+            rv2 = ""
+
+        return (rv1 + rv2)
 
     def readline(self, length=None):
 
@@ -234,13 +237,18 @@ class SubFile(object):
     def seek(self, offset, whence=0):
 
         if whence == 0:
-            self.offset = offset
+            offset = offset
         elif whence == 1:
-            self.offset = self.offset + offset
+            offset = self.offset + offset
         elif whence == 2:
-            self.offset = self.length + offset
+            offset = self.length + offset
 
-        offset = self.offset - len(self.start)
+        if offset > self.length:
+            offset = self.length
+
+        self.offset = offset
+            
+        offset = offset - len(self.start)
         if offset < 0:
             offset = 0
             

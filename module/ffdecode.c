@@ -270,16 +270,14 @@ static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
     return rv;
 }
 
-// #define RWOPS_BUFFER 65536
+#define RWOPS_BUFFER 65536
 
 static ByteIOContext *rwops_open(SDL_RWops *rw) {
 
-    // unsigned char *buffer = av_malloc(RWOPS_BUFFER);
+    unsigned char *buffer = av_malloc(RWOPS_BUFFER);
     ByteIOContext *rv = av_alloc_put_byte(
-        // buffer,
-        // RWOPS_BUFFER,
-        NULL,
-        0,
+        buffer,
+        RWOPS_BUFFER,
         0,
         rw,
         rwops_read,
