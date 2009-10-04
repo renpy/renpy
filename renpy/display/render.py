@@ -720,7 +720,7 @@ def draw_screen(xoffset, yoffset, full_redraw):
     """
     Draws the render produced by render_screen to the screen.
     """
-
+    
     screen_render.is_opaque()
 
     clip = (xoffset, yoffset, xoffset + screen_render.width, yoffset + screen_render.height)

@@ -157,7 +157,12 @@ class TransformBase(renpy.object.Object):
     def predict(self, callback):
         self.atl.predict(self.context, callback)
         
+    def visit(self):
+        if not self.block:
+            self.compile()
 
+        return self.block.visit()
+        
     
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
@@ -202,6 +207,10 @@ class Statement(renpy.object.Object):
     # or None if there's no need to call execute ever again.
     def execute(self, trans, st, state, event):
         raise Exception("Not implemented.")
+
+    # Return a list of displayable children.
+    def visit(self):
+        return [ ]
         
 # This represents a Raw ATL block.
 class RawBlock(RawStatement):
@@ -342,6 +351,8 @@ class Block(Statement):
 
             return action, arg, pause
 
+    def visit(self):
+        return [ j for i in self.statements for j in i.visit() ]
             
 # This can become one of four things:
 #
@@ -483,6 +494,9 @@ class Child(Statement):
         trans.raw_child = self.child
 
         return "next", st, None
+
+    def visit(self):
+        return [ self.child ]
     
         
 # This causes interpolation to occur.
@@ -596,6 +610,10 @@ class Parallel(Statement):
         else:
             return "next", min(left), None
 
+    def visit(self):
+        return [ j for i in self.blocks for j in i.visit() ]
+
+
 # The choice statement.
 
 class RawChoice(RawStatement):
@@ -641,6 +659,9 @@ class Choice(Statement):
             return "continue", (choice, arg), pause
         else:
             return action, arg, None
+
+    def visit(self):
+        return [ j for i in self.choices for j in i[1].visit() ]
 
         
 # The Time statement.
@@ -738,6 +759,12 @@ class On(Statement):
 
                 return "event", (name, arg), None
 
+    def visit(self):
+        return [ j for i in self.handlers.itervalues() for j in i.visit() ]
+
+
+# Event statement.
+            
 class RawEvent(RawStatement):
 
     def __init__(self, name):
@@ -746,6 +773,7 @@ class RawEvent(RawStatement):
     def compile(self, ctx):
         return Event(self.name)
 
+    
 class Event(Statement):
 
     def __init__(self, name):
