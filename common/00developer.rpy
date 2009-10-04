@@ -24,6 +24,7 @@ label _developer_screen:
         layout.button("Variable Viewer", None, clicked=ui.jumps("_debugger_screen"), size_group=sg)
         layout.button("Theme Test", None, clicked=ui.jumps("_theme_test"), size_group=sg)
         layout.button("Style Hierarchy", None, clicked=ui.jumps("_style_hierarchy"), size_group=sg)
+        layout.button("FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
         
         ui.close()
         ui.interact()
@@ -287,3 +288,39 @@ init 1050 python:
         config.missing_show = __missing_show_callback
         config.missing_hide = __missing_hide_callback
         config.overlay_functions.append(__missing_overlay)
+
+init -1050 python:
+
+    class __FPSMeter(object):
+
+        def __init__(self):
+            self.last_frames = None
+            self.last_time = None
+
+        def __call__(self, st, at):
+
+            if self.last_time is not None:
+                frames = config.frames - self.last_frames
+                time = st - self.last_time
+
+                text = "FPS: %.1f" % (frames / time)
+
+            else:
+                text = "FPS: --.-"
+
+            self.last_frames = config.frames
+            self.last_time = st
+
+            return Text(text, xalign=1.0), .5
+    
+label _fps_meter:
+
+    python hide:
+        def fps_overlay():
+            ui.add(DynamicDisplayable(__FPSMeter()))
+        
+        # We normally don't want to change this at runtime... but here
+        # it's okay, because we don't want to save the FPS meter anyway.
+        config.overlay_functions.append(fps_overlay)
+
+    return

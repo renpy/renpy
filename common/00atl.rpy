@@ -83,3 +83,52 @@ python early hide:
         trans.ypos = value
         trans.yanchor = value
     
+    # Rotation
+
+    @atl_getter
+    def rotate(trans):
+        if trans.rotate is not None:
+            return trans.rotate
+        else:
+            return 0
+
+    @atl_setter
+    def rotate(trans, value):
+        trans.rotate = value
+
+
+    # Zoom
+
+    @atl_getter
+    def zoom(trans):
+        return trans.zoom
+
+    @atl_setter
+    def zoom(trans, value):
+        trans.zoom = value
+        
+    @atl_getter
+    def xzoom(trans):
+        return trans.xzoom
+
+    @atl_setter
+    def xzoom(trans, value):
+        trans.xzoom = value
+
+    @atl_getter
+    def yzoom(trans):
+        return trans.yzoom
+
+    @atl_setter
+    def yzoom(trans, value):
+        trans.yzoom = value
+
+    # Alpha
+
+    @atl_getter
+    def alpha(trans):
+        return trans.alpha
+
+    @atl_setter
+    def alpha(trans, value):
+        trans.alpha = value

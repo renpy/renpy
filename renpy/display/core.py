@@ -1256,6 +1256,8 @@ class Interface(object):
         ev = pygame.event.poll()
 
         if ev.type == NOEVENT:
+            # Seems to prevent the CPU from speeding up.
+            time.sleep(0.001)
             return None
 
         self.pushed_event = ev

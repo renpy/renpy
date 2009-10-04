@@ -1,8 +1,16 @@
 New in Ren'Py 6.10.0
 --------------------
 
-Fixed a bug that could cause problems with sound playback. [Rebuild
-for all plats.]
+
+Added a FPS meter to the Developer (shift+D) menu.
+
+
+Added a .001s sleep for frames that are framerate-limited. This should
+prevent Ren'Py from consuming all CPU unless the game is CPU-bound.
+
+
+Fixed a bug with archive files that could cause crashing in some 
+circumstances.
 
 Fixed a bug that prevented {w=1} from working.
 
