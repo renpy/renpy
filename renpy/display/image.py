@@ -74,7 +74,8 @@ class ImageReference(renpy.display.core.Displayable):
 
     nosave = [ 'target' ]
     target = None
-
+    param_target = None
+    
     def __init__(self, name, **properties):
         """
         @param name: A tuple of strings, the name of the image. Or else
@@ -86,7 +87,10 @@ class ImageReference(renpy.display.core.Displayable):
         self.name = name
 
     def find_target(self):
-        import renpy.exports as exports
+
+        if self.param_target:
+            self.target = self.param_target
+            return None
 
         name = self.name
 
@@ -109,11 +113,14 @@ class ImageReference(renpy.display.core.Displayable):
         # Scan through, searching for an image (defined with an
         # input statement) that is a prefix of the given name.
         while name:
-            if name in exports.images:
-                target = exports.images[name]
+            if name in renpy.exports.images:
+                target = renpy.exports.images[name]
 
                 try:
                     self.target = target.parameterize(name, parameters)
+                    if self.target is not target:
+                        self.param_target = self.target
+
                 except Exception, e:
                     if renpy.config.debug:
                         raise

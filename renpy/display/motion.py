@@ -193,13 +193,14 @@ class Transform(Container):
 
 class ATLTransform(Transform, renpy.atl.TransformBase):
     
-    def __init__(self, atl, *args, **kwargs):
-        renpy.atl.TransformBase.__init__(self, atl)
-        Transform.__init__(self, *args, **kwargs)
+    def __init__(self, atl, context={}, child=None, **kwargs):
+        renpy.atl.TransformBase.__init__(self, atl, context)
+        Transform.__init__(self, child=child, **kwargs)
 
         self.raw_child = self.child
         
     def render(self, width, height, st, at):
+
         pause = self.execute(st, None)
 
         if pause is not None:
@@ -207,17 +208,28 @@ class ATLTransform(Transform, renpy.atl.TransformBase):
 
         return Transform.render(self, width, height, st, at)
 
-    def __call__(self, child=None):
-        return ATLTransform(
-            atl=self.block,
-            child=child or self.child,
-            alpha=self.alpha,
-            rotate=self.rotate,
-            zoom=self.zoom,
-            xzoom=self.xzoom,
-            yzoom=self.yzoom,
-            **self.kwargs)
+    def __call__(self, child=None, new_widget=None, old_widget=None, **kwargs):
+
+        child = child or self.child
+        kwargs["child"] = child
+        kwargs["new"] = new_widget
+        kwargs["old"] = old_widget
         
+        return ATLTransform(
+            atl=self.atl,
+            child=child,
+            context=kwargs)
+
+    def parameterize(self, name, parameters):
+        if parameters:
+            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
+                            (' '.join(name), ' '.join(parameters)))
+
+        # Note the call here.
+        return self()
+        
+    
+    
 class Motion(Container):
     """
     This is used to move a child displayable around the screen. It

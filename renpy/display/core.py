@@ -143,9 +143,6 @@ class Displayable(renpy.object.Object):
         if prefix == self.style.prefix:
             return
         
-        # if prefix == self.style_prefix:
-        #    return
-
         self.style.set_prefix(prefix)
         renpy.display.render.redraw(self, 0)
 

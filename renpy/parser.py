@@ -1512,6 +1512,8 @@ def parse_statement(l):
         l.expect_eol()
 
         atl = renpy.atl.parse_atl(l.subblock_lexer())
+
+        print "ATL Is", atl
         
         rv = ast.Transform(loc, name, atl)
 

@@ -82,15 +82,15 @@ def interpolate(func, t, *args):
         return type(args[-1])(rv)
     
 
-# This is the context used when compiling an ATL statement. In the future,
-# we'll be able to use this to get access to named parameters passed to
-# the statement.
+# This is the context used when compiling an ATL statement. It stores the
+# scopes that are used to evaluate the various expressions in the statement,
+# and has a method to do the evaluation and return a result.
 class Context(object):
-    def __init__(self):
-        pass
+    def __init__(self, context):
+        self.context = context
 
     def eval(self, expr):
-        return renpy.python.py_eval(expr)
+        return eval(expr, renpy.store.__dict__, self.context)
     
     
 # This is intended to be subclassed by ATLTransform. It takes care of
@@ -98,11 +98,14 @@ class Context(object):
 # much about the contents of this file.
 class TransformBase(renpy.object.Object):
 
-    def __init__(self, atl):
+    def __init__(self, atl, context):
 
         # The raw code that makes up this ATL statement.
         self.atl = atl
 
+        # The context in which execution occurs.
+        self.context = Context(context)
+        
         # The code after it has been compiled into a block.
         self.block = None
 
@@ -123,9 +126,7 @@ class TransformBase(renpy.object.Object):
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
     def compile(self):
-        ctx = Context()
-
-        self.block = self.atl.compile(ctx)
+        self.block = self.atl.compile(self.context)
 
         if len(self.block.statements) == 1 \
                 and isinstance(self.block.statements[0], Interpolation):
