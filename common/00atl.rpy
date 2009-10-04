@@ -15,24 +15,33 @@ python early hide:
 
     @atl_getter
     def xpos(trans):
-        return trans.xpos
-
+        if trans.xpos is not None:
+            return trans.xpos
+        else:
+            return 0
+        
     @atl_setter
     def xpos(trans, value):
         trans.xpos = value
 
     @atl_getter
     def xanchor(trans):
-        return trans.xanchor
-
+        if trans.xanchor is not None:
+            return trans.xanchor
+        else:
+            return 0
+        
     @atl_setter
     def xanchor(trans, value):
         trans.xanchor = value
 
     @atl_getter
     def xalign(trans):
-        return float(trans.xpos)
-
+        if trans.xpos is not None:
+            return float(trans.xpos)
+        else:
+            return 0.0
+        
     @atl_setter
     def xalign(trans, value):
         trans.xpos = value
@@ -42,30 +51,35 @@ python early hide:
             
     @atl_getter
     def ypos(trans):
-        return trans.ypos
-
+        if trans.ypos is not None:
+            return trans.ypos
+        else:
+            return 0
+        
     @atl_setter
     def ypos(trans, value):
         trans.ypos = value
-
+        
     @atl_getter
     def yanchor(trans):
-        return trans.yanchor
-
+        if trans.yanchor is not None:        
+            return trans.yanchor
+        else:
+            return 0
+    
     @atl_setter
     def yanchor(trans, value):
         trans.yanchor = value
 
     @atl_getter
     def yalign(trans):
-        return float(trans.ypos)
+        if trans.ypos is not None:
+            return float(trans.ypos)
+        else:
+            return 0.0
 
     @atl_setter
     def yalign(trans, value):
         trans.ypos = value
         trans.yanchor = value
-        
-        
-    
-
     

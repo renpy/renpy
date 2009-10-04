@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
+import random
 
 # A map from the name of an interpolator, to a tuple containing the
 # interpolator function, and the number of non-time arguments it takes.
@@ -452,8 +453,6 @@ class Repeat(Statement):
 class RawParallel(RawStatement):
 
     def __init__(self, block):
-
-        self.block = block
         self.blocks = [ block ]
 
     def compile(self, ctx):
@@ -496,6 +495,48 @@ class Parallel(Statement):
         else:
             return "next", min(left), None
 
+# The choice statement.
+
+class RawChoice(RawStatement):
+
+    def __init__(self, chance, block):
+        self.blocks = [ (chance, block) ]
+
+    def compile(self, ctx):
+        return Choice([ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.blocks])
+
+class Choice(Statement):
+
+    def __init__(self, choices):
+        self.choices = choices
+
+    def execute(self, trans, st, state, event):
+        
+        if state is None:
+
+            total = 0
+            for chance, choice in self.choices:
+                total += chance
+
+            n = random.uniform(0, total)
+
+            for chance, choice in self.choices:
+                if n < chance:
+                    break
+                n -= chance
+
+            cstate = None
+
+        else:
+            choice, cstate = state
+
+        action, arg, pause = choice.execute(trans, st, cstate, event)
+
+        if action == "continue":
+            return "continue", (choice, arg), pause
+        else:
+            return "next", arg, None
+        
 
 # This parses an ATL block.
 def parse_atl(l):
@@ -510,7 +551,6 @@ def parse_atl(l):
 
             repeats = l.simple_expression()
             statements.append(RawRepeat(repeats))
-
 
         elif l.keyword('block'):
             l.require(':')
@@ -527,6 +567,17 @@ def parse_atl(l):
             
             block = parse_atl(l.subblock_lexer())
             statements.append(RawParallel(block))
+
+        elif l.keyword('choice'):
+
+            chance = l.require(l.simple_expression)
+
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('parallel')
+            
+            block = parse_atl(l.subblock_lexer())
+            statements.append(RawChoice(chance, block))
             
         else:
             # If we can't assign it it a statement more specifically,
@@ -605,8 +656,13 @@ def parse_atl(l):
     old = None
 
     for new in statements:
+
         if isinstance(old, RawParallel) and isinstance(new, RawParallel):
-            old.blocks.append(new.block)
+            old.blocks.extend(new.blocks)
+            continue
+
+        elif isinstance(old, RawChoice) and isinstance(new, RawChoice):
+            old.blocks.extend(new.blocks)
             continue
 
         merged.append(new)
