@@ -153,10 +153,24 @@ class TransformBase(renpy.object.Object):
             self.done = True
 
         return pause
-            
+
+    def predict(self, callback):
+        self.atl.predict(self.context, callback)
+        
+
+    
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
-    pass
+
+    # Compiles this RawStatement into a Statement, by using ctx to
+    # evaluate expressions as necessary.
+    def compile(self, ctx):
+        raise Exception("Compile not implemented.")
+
+    # Predicts the images used by this statement.
+    def predict(self, ctx, callback):
+        return
+    
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
@@ -167,17 +181,25 @@ class Statement(renpy.object.Object):
     # we've just started executing this statement.
     # event is an event we're triggering.
     #
-    # "continue", state - Causes this statement to execute again,
-    # with the given state passed in the second time around.
+    # "continue", state, pause - Causes this statement to execute
+    # again, with the given state passed in the second time around.
     #
-    # "next", timeleft - Causes the next statement to execute, with
-    # timeleft being the amount of time left after this statement
+    # 
+    # "next", timeleft, pause - Causes the next statement to execute,
+    # with timeleft being the amount of time left after this statement
     # finished.
     #
-    # "repeat", (count, timeleft) - Causes the repeat behavior to occur.
+    # "event", (name, timeleft), pause - Causes an event to be reported,
+    # and control to head up to the event handler.
+    #
+    # "repeat", (count, timeleft), pause - Causes the repeat behavior
+    # to occur.
     #
     # As the Repeat statement can only appear in a block, only Block
     # needs to deal with the repeat behavior.
+    #
+    # Pause is the amount of time until execute should be called again,
+    # or None if there's no need to call execute ever again.
     def execute(self, trans, st, state, event):
         raise Exception("Not implemented.")
         
@@ -193,6 +215,10 @@ class RawBlock(RawStatement):
         statements = [ i.compile(ctx) for i in self.statements ]
         return Block(statements)
 
+    def predict(self, ctx, callback):
+        for i in self.statements:
+            i.predict(ctx, callback)
+    
     
 # A compiled ATL block. 
 class Block(Statement):
@@ -260,6 +286,9 @@ class Block(Statement):
                             
                         action, arg, pause =  "continue", (index, start, repeats, times, arg), min(max_pause, pause)
                         break
+
+                    elif action == "event":
+                        return action, arg, pause
                     
                     # On next, advance to the next statement in the block.
                     elif action == "next":
@@ -411,7 +440,28 @@ class RawMultipurpose(RawStatement):
         duration = ctx.eval(self.duration)
         return Interpolation(ifunc, duration, properties)
             
+    def predict(self, ctx, callback):
+
+        for i, j in self.expressions:
             
+            try:
+                i = ctx.eval(i)
+            except:
+                continue
+
+            if isinstance(i, TransformBase):
+                i.atl.predict(ctx, callback)
+                return
+
+            try:
+                i = renpy.easy.displayable(i)
+            except:
+                continue
+
+            if isinstance(i, renpy.display.core.Displayable):
+                i.predict(callback)
+
+                
             
 # This changes the child of this statement, optionally with a transition.
 class Child(Statement):
@@ -503,6 +553,10 @@ class RawParallel(RawStatement):
     def compile(self, ctx):
         return Parallel([i.compile(ctx) for i in self.blocks])
 
+    def predict(self, ctx, callback):
+        for i in self.blocks:
+            i.predict(ctx, callback)
+    
         
 class Parallel(Statement):
 
@@ -534,7 +588,9 @@ class Parallel(Statement):
                 newstate.append((i, arg))
             elif action == "next":
                 left.append(arg)
-
+            elif action == "event":
+                return action, arg, pause
+                
         if newstate:
             return "continue", newstate, min(pauses)
         else:
@@ -545,10 +601,14 @@ class Parallel(Statement):
 class RawChoice(RawStatement):
 
     def __init__(self, chance, block):
-        self.blocks = [ (chance, block) ]
+        self.choices = [ (chance, block) ]
 
     def compile(self, ctx):
-        return Choice([ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.blocks])
+        return Choice([ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
+
+    def predict(self, ctx, callback):
+        for i, j in self.choices:
+            j.predict(ctx, callback)
 
 class Choice(Statement):
 
@@ -580,7 +640,7 @@ class Choice(Statement):
         if action == "continue":
             return "continue", (choice, arg), pause
         else:
-            return "next", arg, None
+            return action, arg, None
 
         
 # The Time statement.
@@ -602,6 +662,99 @@ class Time(Statement):
         return "continue", None, None
         
 
+# The On statement.
+
+class RawOn(RawStatement):
+
+    def __init__(self, name, block):
+        self.handlers = { name : block }
+
+    def compile(self, ctx):
+        handlers = { }
+
+        for k, v in self.handlers.iteritems():
+            handlers[k] = v.compile(ctx)
+
+        return On(handlers)
+
+    def predict(self, ctx, callback):
+        for i in self.handlers.itervalues():
+            i.predict(ctx, callback)
+
+class On(Statement):
+
+    def __init__(self, handlers):
+        self.handlers = handlers
+    
+    def execute(self, trans, st, state, event):
+
+        # If it's our first time through, start in the start state.
+        if state is None:
+            state = ("start", st, None)
+
+        # If we have an external event, and we have a handler for it,
+        # handle it.
+        if event in self.handlers:
+            state = (event, st, None)
+
+        name, start, cstate = state
+
+        while True:
+
+            # If we don't have a handler, return until we change event.
+            if name not in self.handlers:
+                return "continue", (name, start, cstate), None
+            
+            action, arg, pause = self.handlers[name].execute(trans, st - start, cstate, event)
+
+            # If we get a continue, save our state.
+            if action == "continue":
+                return "continue", (name, start, arg), pause
+
+            # If we get a next, then try going to the default
+            # event, unless we're already in default, in which case we
+            # go to None.
+            elif action == "next":
+                if name == "default":
+                    name = None
+                else:
+                    name = "default"
+
+                start = st - arg
+                cstate = None
+
+                continue
+
+            # If we get an event, then either handle it if we can, or
+            # pass it up the stack if we can't.
+            elif action == "event":
+
+                name, arg = arg
+
+                if name in self.handlers:
+                    start = st - arg
+                    cstate = None
+                    continue
+
+                return "event", (name, arg), None
+
+class RawEvent(RawStatement):
+
+    def __init__(self, name):
+        self.name = name
+
+    def compile(self, ctx):
+        return Event(self.name)
+
+class Event(Statement):
+
+    def __init__(self, name):
+        self.name = name
+
+    def execute(self, trans, st, state, event):
+        return "event", (self.name, st), None
+    
+    
 # This parses an ATL block.
 def parse_atl(l):
 
@@ -645,11 +798,28 @@ def parse_atl(l):
             block = parse_atl(l.subblock_lexer())
             statements.append(RawChoice(chance, block))
 
+        elif l.keyword('on'):
+
+            name = l.require(l.name)
+
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('on')
+            
+            block = parse_atl(l.subblock_lexer())
+            statements.append(RawOn(name, block))
+
         elif l.keyword('time'):
             time = l.require(l.simple_expression)
             l.expect_noblock('time')
 
             statements.append(RawTime(time))
+
+        elif l.keyword('event'):
+            name = l.require(l.name)
+            l.expect_noblock('event')
+
+            statements.append(RawEvent(name))
 
         elif l.keyword('pass'):
             l.expect_noblock('pass')
@@ -742,13 +912,18 @@ def parse_atl(l):
             continue
 
         elif isinstance(old, RawChoice) and isinstance(new, RawChoice):
-            old.blocks.extend(new.blocks)
+            old.choices.extend(new.choices)
             continue
 
+        elif isinstance(old, RawOn) and isinstance(new, RawOn):
+            old.handlers.update(new.handlers)
+            continue
+
+        # None is a pause statement, which gets skipped, but also
+        # prevents things from combining.
         elif new is None:
             old = new
             continue
-        
         
         merged.append(new)
         old = new

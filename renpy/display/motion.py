@@ -191,7 +191,7 @@ class Transform(Container):
     def update(self):
         renpy.display.render.invalidate(self)
 
-class ATLTransform(Transform, renpy.atl.TransformBase):
+class ATLTransform(renpy.atl.TransformBase, Transform):
     
     def __init__(self, atl, context={}, child=None, **kwargs):
         renpy.atl.TransformBase.__init__(self, atl, context)
@@ -227,8 +227,7 @@ class ATLTransform(Transform, renpy.atl.TransformBase):
 
         # Note the call here.
         return self()
-        
-    
+
     
 class Motion(Container):
     """
