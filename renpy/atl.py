@@ -634,11 +634,13 @@ def parse_atl(l):
 
         elif l.keyword('choice'):
 
-            chance = l.require(l.simple_expression)
+            chance = l.simple_expression()
+            if not chance:
+                chance = "1.0"
 
             l.require(':')
             l.expect_eol()
-            l.expect_block('parallel')
+            l.expect_block('choice')
             
             block = parse_atl(l.subblock_lexer())
             statements.append(RawChoice(chance, block))
@@ -648,8 +650,13 @@ def parse_atl(l):
             l.expect_noblock('time')
 
             statements.append(RawTime(time))
-                        
+
+        elif l.keyword('pass'):
+            l.expect_noblock('pass')
+            statements.append(None)
+            
         else:
+
             # If we can't assign it it a statement more specifically,
             # we try to parse it into a RawMultipurpose. That will
             # then be turned into another statement, as appropriate.
@@ -711,8 +718,11 @@ def parse_atl(l):
 
                 rm.add_expression(expr, with_expr)
 
+            l.expect_noblock('ATL')
+                
             statements.append(rm)
-    
+            
+            
         if l.eol():
             l.advance()
             continue
@@ -735,6 +745,11 @@ def parse_atl(l):
             old.blocks.extend(new.blocks)
             continue
 
+        elif new is None:
+            old = new
+            continue
+        
+        
         merged.append(new)
         old = new
 

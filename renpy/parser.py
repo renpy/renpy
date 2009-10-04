@@ -1513,8 +1513,6 @@ def parse_statement(l):
 
         atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-        print "ATL Is", atl
-        
         rv = ast.Transform(loc, name, atl)
 
         if not l.init:
