@@ -200,75 +200,119 @@ class Block(Statement):
         # A list of statements in the block.
         self.statements = statements
 
+        # The start times of various statements.
+        self.times = [ ]
+        
+        for i, s in enumerate(statements):
+            if isinstance(s, Time):
+                self.times.append((s.time, i + 1))
+
+        self.times.sort()
+        
     def execute(self, trans, st, state, event):
 
         # Unpack the state.
         if state is not None:
-            index, start, repeats, child_state = state
+            index, start, repeats, times, child_state = state
         else:
-            index, start, repeats, child_state = 0, 0, 0, None
+            index, start, repeats, times, child_state = 0, 0, 0, self.times[:], None
 
-        # The maximum pause we allow.
-        max_pause = 1000
-            
-        for i in range(0, 64):
+        # What we might be returning.
+        action = "continue"
+        arg = None
+        pause = None
+        
+        while action == "continue":
 
-            # If we've hit the last statement, it's the end of
-            # this block.
-            if index >= len(self.statements):
-                return "next", st - start, None
-            
-            try:
-                
-                # Find the statement and try to run it.
-                stmt = self.statements[index]
-                action, arg, pause = stmt.execute(trans, st - start, child_state, event)
+            # Target is the time we're willing to execute to.
+            # Max_pause is how long we'll wait before executing again.
 
-                # On continue, persist our state.
-                if action == "continue":
-                    return "continue", (index, start, repeats, arg), min(max_pause, pause)
+            # If we have times queued up, then use them to inform target
+            # and time.
+            if times:
+                time, tindex = times[0]
+                target = min(time, st)
+                max_pause = time - target
 
-                # On next, advance to the next statement in the block.
-                elif action == "next":
-                    index += 1
-                    start = st - arg
-                    child_state = None
+            # Otherwise, take the defaults.
+            else:
+                target = st
+                max_pause = 1000
+
+            for i in range(0, 64):
+
+                # If we've hit the last statement, it's the end of
+                # this block.
+                if index >= len(self.statements):
+                    return "next", target - start, None
+
+                try:
+
+                   # Find the statement and try to run it.
+                    stmt = self.statements[index]
+                    action, arg, pause = stmt.execute(trans, target - start, child_state, event)
+
+                    # On continue, persist our state.
+                    if action == "continue":
+                        if pause is None:
+                            pause = max_pause
+                            
+                        action, arg, pause =  "continue", (index, start, repeats, times, arg), min(max_pause, pause)
+                        break
                     
-                # On repeat, either terminate the block, or go to
-                # the first statement.
-                elif action == "repeat":
-                    count, arg = arg
-
-                    repeats += 1
-
-                    if count is not None and repeats >= count:
-                        return "next", arg, None
-                    else:
-                        index = 0
-                        start = st - arg
+                    # On next, advance to the next statement in the block.
+                    elif action == "next":
+                        index += 1
+                        start = target - arg
                         child_state = None
 
-            except:
-                # If an exception occurs when dealing with a statment,
-                # advance to the next statement.
-                
-                # if renpy.config.debug:
-                #     raise
+                    # On repeat, either terminate the block, or go to
+                    # the first statement.
+                    elif action == "repeat":
+                        count, arg = arg
+                        repeats += 1
 
-                raise
-                
-                index += 1
-                start = st
-                child_state = None
+                        if count is not None and repeats >= count:
+                            return "next", arg, None
+                        else:
+                            index = 0
+                            start = target - arg
+                            child_state = None
 
-        else:
+                except:
+                    # If an exception occurs when dealing with a statment,
+                    # advance to the next statement.
 
-            if renpy.config.developer or renpy.config.debug:
-                raise Exception("ATL Block probably in infinite loop.")
+                    # if renpy.config.debug:
+                    #     raise
 
-            return "continue", (index, st, repeats, child_state), 0
+                    raise
 
+                    index += 1
+                    start = target
+                    child_state = None
 
+            else:
+
+                if renpy.config.debug:
+                    raise Exception("ATL Block probably in infinite loop.")
+
+                return "continue", (index, st, repeats, times, child_state), 0
+
+            if self.times:
+                time, tindex = times[0]
+                if time <= target:
+                    times.pop(0)
+                    
+                    index = tindex
+                    start = time
+                    child_state = None
+
+                    continue
+
+            return action, arg, pause
+
+            
 # This can become one of four things:
 #
 # - A pause.
@@ -536,6 +580,25 @@ class Choice(Statement):
             return "continue", (choice, arg), pause
         else:
             return "next", arg, None
+
+        
+# The Time statement.
+
+class RawTime(RawStatement):
+
+    def __init__(self, time):
+        self.time = time
+
+    def compile(self, ctx):
+        return Time(ctx.eval(self.time))
+
+class Time(Statement):
+
+    def __init__(self, time):
+        self.time = time
+
+    def execute(self, trans, st, state, event):
+        return "continue", None, None
         
 
 # This parses an ATL block.
@@ -578,7 +641,13 @@ def parse_atl(l):
             
             block = parse_atl(l.subblock_lexer())
             statements.append(RawChoice(chance, block))
-            
+
+        elif l.keyword('time'):
+            time = l.require(l.simple_expression)
+            l.expect_noblock('time')
+
+            statements.append(RawTime(time))
+                        
         else:
             # If we can't assign it it a statement more specifically,
             # we try to parse it into a RawMultipurpose. That will
