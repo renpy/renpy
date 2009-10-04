@@ -33,6 +33,8 @@ import renpy.ui as ui
 import renpy.display.im as im
 import renpy.display.anim as anim
 
+from renpy.atl import atl_interpolator, atl_getter, atl_setter
+
 # Used by the call/return mechanism.
 _return = None
 _args = None
@@ -49,7 +51,6 @@ _rollback = True
 
 # config.
 _config = renpy.config
-
 
 class _Config(object):
 

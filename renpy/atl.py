@@ -25,26 +25,72 @@ import renpy
 # interpolator function, and the number of non-time arguments it takes.
 interpolators = { }
 
-def register_atl_interpolator(name, f, arity):
+def atl_interpolator(f):
+    name = f.func_name
+    arity = f.func_code.co_argcount - 2
+
+    if arity <= 0:
+        raise Exception("Interpolator does not have correct arity.")
+    
     interpolators[name] = (f, arity)
 
 # An example interpolator. (This is used internally when no interpolator
 # is otherwise specified.)
+@atl_interpolator
 def pause(t, start, end):
     if t < 1.0:
         return start
     else:
         return end
 
-register_atl_interpolator("pause", pause, 1)
+# A map from property name to the getter function.
+getters = { }
+
+# A map from property name to the setter function.
+setters = { }
+
+def atl_getter(f):
+    name = f.func_name
+    getters[name] = f
+
+def atl_setter(f):
+    name = f.func_name
+    setters[name] = f
     
-# A map from the name of a property to the function that sets that
-# property on a Transform object.
-properties_registry = { }
 
-def register_atl_property(name, getter, setter):
-    properties_registry[name] = (getter, setter)
+def interpolate(func, t, *args):
+    """
+    Use func to interpolate the arguments. This recursively deals with
+    tuples, etc.
+    """
 
+    # Recurse into tuples.
+    if isinstance(args[0], tuple):
+        return tuple(interpolate(func, t, *i) for i in zip(*args))
+
+    # Deal with strings.
+    elif isinstance(args[0], (str, unicode)):
+        if t >= 1.0:
+            return args[-1]
+        else:
+            return args[0]
+
+    # Interpolate everything else.
+    else:
+        rv = func(t, *args)
+        return type(args[-1])(rv)
+    
+
+# This is the context used when compiling an ATL statement. In the future,
+# we'll be able to use this to get access to named parameters passed to
+# the statement.
+class Context(object):
+    def __init__(self):
+        pass
+
+    def eval(self, expr):
+        return renpy.python.py_eval(expr)
+    
     
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
@@ -76,7 +122,9 @@ class TransformBase(renpy.object.Object):
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
     def compile(self):
-        self.block = self.atl.compile()
+        ctx = Context()
+
+        self.block = self.atl.compile(ctx)
 
         if len(self.block.statements) == 1 \
                 and isinstance(self.block.statements[0], Interpolation):
@@ -90,7 +138,7 @@ class TransformBase(renpy.object.Object):
 
     def execute(self, st, event):
         if self.done:
-            return
+            return None
 
         if not self.block:
             self.compile()
@@ -134,19 +182,19 @@ class Statement(renpy.object.Object):
 # This represents a Raw ATL block.
 class RawBlock(RawStatement):
 
-    def __init__(self):
+    def __init__(self, statements):
 
         # A list of RawStatements in this block.
-        self.statements = [ ]
+        self.statements = statements
 
-    def compile(self):
-        return Block(self.statements)
+    def compile(self, ctx):
+        statements = [ i.compile(ctx) for i in self.statements ]
+        return Block(statements)
 
     
 # A compiled ATL block. 
 class Block(Statement):
     def __init__(self, statements):
-        statements = [ i.compile() for i in statements ]
 
         # A list of statements in the block.
         self.statements = statements
@@ -173,9 +221,7 @@ class Block(Statement):
                 
                 # Find the statement and try to run it.
                 stmt = self.statements[index]
-                print "run stmt", stmt
                 action, arg, pause = stmt.execute(trans, st - start, child_state, event)
-                print "post run stmt", stmt
 
                 # On continue, persist our state.
                 if action == "continue":
@@ -194,7 +240,7 @@ class Block(Statement):
 
                     repeats += 1
 
-                    if repeats >= count:
+                    if count is not None and repeats >= count:
                         return "next", arg, None
                     else:
                         index = 0
@@ -251,7 +297,7 @@ class RawMultipurpose(RawStatement):
     def add_expression(self, expr, with_clause):
         self.expressions.append((expr, with_clause))
 
-    def compile(self):
+    def compile(self, ctx):
 
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
@@ -260,9 +306,9 @@ class RawMultipurpose(RawStatement):
 
             expr, withexpr = self.expressions[0]
 
-            child = renpy.python.py_eval(expr)
+            child = ctx.eval(expr)
             if withexpr:
-                transition = renpy.python.py_eval(withexpr)
+                transition = ctx.eval(withexpr)
             else:
                 transition = None
 
@@ -287,20 +333,19 @@ class RawMultipurpose(RawStatement):
         properties = [ ]
 
         for name, exprs in self.properties:
-            pfunc = properties_registry.get(name, None)
-            if pfunc is None:
+            if name not in getters:
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             if len(exprs) != arity:
                 raise Exception("ATL Property %s has incorrect number of expressions at runtime." % name)
 
-            values = [ renpy.python.py_eval(i) for i in exprs ]
+            values = [ ctx.eval(i) for i in exprs ]
 
             properties.append((name, values))
 
         for expr, with_ in self.expressions:
             try:
-                value = renpy.python.py_eval(expr)
+                value = ctx.eval(expr)
             except:
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
@@ -317,7 +362,7 @@ class RawMultipurpose(RawStatement):
 
             properties.extend(value.properties)
 
-        duration = renpy.python.py_eval(self.duration)
+        duration = ctx.eval(self.duration)
         return Interpolation(ifunc, duration, properties)
             
             
@@ -344,7 +389,6 @@ class Child(Statement):
         return "next", st, None
     
         
-        
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
@@ -365,16 +409,11 @@ class Interpolation(Statement):
             state = { }
             
             for k, v in self.properties:
-                getter = properties_registry[k][0]
-                state[k] = getter(trans)
+                state[k] = getters[k](trans)
 
         for k, v in self.properties:
-            setter = properties_registry[k][1]
-            value = self.function(complete, state[k], *v)
-
-            print "Setting", k, value
-            
-            setter(trans, value)
+            value = interpolate(self.function, complete, state[k], *v)
+            setters[k](trans, value)
 
         if st > self.duration:
             return "next", st - self.duration, None
@@ -383,21 +422,112 @@ class Interpolation(Statement):
                 return "continue", state, self.duration - st
             else:            
                 return "continue", state, 0
-                
+
+
+# Implementation of the repeat statement.
+class RawRepeat(RawStatement):
+
+    def __init__(self, repeats):
+        self.repeats = repeats
+
+    def compile(self, ctx):
+        repeats = self.repeats
+
+        if repeats is not None:
+            repeats = ctx.eval(repeats)
+            
+        return Repeat(repeats)
+
+class Repeat(Statement):
+
+    def __init__(self, repeats):
+        self.repeats = repeats
+
+    def execute(self, trans, st, state, event):
+        return "repeat", (self.repeats, st), 0
+
+
+# Parallel statement.
+
+class RawParallel(RawStatement):
+
+    def __init__(self, block):
+
+        self.block = block
+        self.blocks = [ block ]
+
+    def compile(self, ctx):
+        return Parallel([i.compile(ctx) for i in self.blocks])
+
         
+class Parallel(Statement):
+
+    def __init__(self, blocks):
+        self.blocks = blocks
+
+    def execute(self, trans, st, state, event):
+
+        if state is None:
+            state = [ (i, None) for i in self.blocks ]
+
+        # The amount of time left after finishing this block.
+        left = [ ]
+
+        # The duration of the pause.
+        pauses = [ ]
+
+        # The new state structure.
+        newstate = [ ]
+        
+        for i, istate in state:
+            
+            action, arg, pause = i.execute(trans, st, istate, event)
+
+            if pause is not None:
+                pauses.append(pause)
+
+            if action == "continue":
+                newstate.append((i, arg))
+            elif action == "next":
+                left.append(arg)
+
+        if newstate:
+            return "continue", newstate, min(pauses)
+        else:
+            return "next", min(left), None
+
+
 # This parses an ATL block.
 def parse_atl(l):
 
     l.advance()
     
-    # The ATL block we're parsing.
-    block = RawBlock()
-    
+    statements = [ ]
+
     while not l.eob:
 
-        if False:
-            pass
+        if l.keyword('repeat'):
 
+            repeats = l.simple_expression()
+            statements.append(RawRepeat(repeats))
+
+
+        elif l.keyword('block'):
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('block')
+
+            block = parse_atl(l.subblock_lexer())            
+            statements.append(block)
+
+        elif l.keyword('parallel'):
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('parallel')
+            
+            block = parse_atl(l.subblock_lexer())
+            statements.append(RawParallel(block))
+            
         else:
             # If we can't assign it it a statement more specifically,
             # we try to parse it into a RawMultipurpose. That will
@@ -433,7 +563,7 @@ def parse_atl(l):
                 
                 prop = l.name()
 
-                if prop in properties_registry:
+                if prop in getters:
                     exprs = [ ]
                     
                     for i in range(arity):
@@ -460,13 +590,26 @@ def parse_atl(l):
 
                 rm.add_expression(expr, with_expr)
 
-            block.statements.append(rm)
-
-                
+            statements.append(rm)
+    
         if l.eol():
             l.advance()
             continue
 
         l.require(",", "comma or end of line")
 
-    return block
+        
+    # Merge together statements that need to be merged together.
+
+    merged = [ ]
+    old = None
+
+    for new in statements:
+        if isinstance(old, RawParallel) and isinstance(new, RawParallel):
+            old.blocks.append(new.block)
+            continue
+
+        merged.append(new)
+        old = new
+
+    return RawBlock(merged)

@@ -639,7 +639,6 @@ class Image(Node):
         if self.code is not None:
             img = renpy.python.py_eval_bytecode(self.code.bytecode)
         else:
-            print "XXX", self.atl, self.code
             img = renpy.display.motion.ATLTransform(self.atl)
 
         renpy.exports.image(self.imgname, img)
