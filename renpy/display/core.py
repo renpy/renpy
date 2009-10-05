@@ -1126,6 +1126,7 @@ class Interface(object):
         self.timeout_time = None
         self.last_event = None
         self.current_context = None
+        self.roll_forward = None
         
         # Should we reset the display?
         self.display_reset = False
@@ -1419,6 +1420,8 @@ class Interface(object):
         @param suppress_overlay: This suppresses the display of the overlay.
         @param suppress_underlay: This suppresses the display of the underlay.
         """
+        
+        self.roll_forward = roll_forward
         
         suppress_overlay = suppress_overlay or renpy.store.suppress_overlay        
         suppress_transition = renpy.config.skipping or renpy.game.less_updates

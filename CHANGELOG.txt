@@ -1,6 +1,25 @@
 New in Ren'Py 6.10.0
 --------------------
 
+
+When an image is shown, Ren'Py checks to see if there was a previous
+image with that tag, and if that image used a transform. If this is
+true, Ren'Py does two things:
+
+# If the new image is not a transform, it wraps it in a transform.
+# The transform is initialized to have the properties of the old transform.
+
+The generally has the effect of "remembering" the position of images
+shown on the screen. In some cases, this memory effect may override a
+position encoded into an image. In that case, the image must be hidden
+and shown again.
+
+
+The default positions (left, right, center, truecenter, offscreenleft,
+and offscreenright) are now defined as transforms. This means that showing
+an image at such a position will cause the position to be remembered.
+
+
 Added a FPS meter to the Developer (shift+D) menu.
 
 Added a .001s sleep for frames that are framerate-limited. This should

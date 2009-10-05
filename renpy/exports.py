@@ -1238,5 +1238,6 @@ class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject)
 
 class Container(renpy.display.core.Displayable, renpy.python.RevertableObject):
     _list_type = renpy.python.RevertableList
-
     
+def get_roll_forward():
+    return renpy.game.interface.shown_window
