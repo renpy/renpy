@@ -138,10 +138,12 @@ class TransformBase(renpy.object.Object):
                 self.properties = interp.properties[:]
                 self.arity = len(self.properties[0][1])
 
-    def execute(self, st, event):
+    def execute(self, trans, st, at):
         if self.done:
             return None
 
+        event = None
+        
         if not self.block:
             self.compile()
         

@@ -185,7 +185,6 @@ class Node(object):
         """
 
         self.filename, self.linenumber  = loc
-
         self.name = None
         
     def diff_info(self):
@@ -681,12 +680,14 @@ def predict_imspec(imspec, callback, scene=False):
     in imspec.
     """
 
-    if len(imspec) == 3:
-        name, at_list, layer = imspec
+    if len(imspec) == 7:
+        name, expression, tag, at_list, layer, zorder, behind = imspec
+
     elif len(imspec) == 6:
         name, expression, tag, at_list, layer, zorder = imspec
-    elif len(imspec) == 7:
-        name, expression, tag, at_list, layer, zorder, behind = imspec
+
+    elif len(imspec) == 3:
+        name, at_list, layer = imspec
         
         
     if expression:
@@ -712,19 +713,21 @@ def predict_imspec(imspec, callback, scene=False):
         
     img.predict(callback)
             
-def show_imspec(imspec):
+def show_imspec(imspec, atl=None):
 
-    if len(imspec) == 3:
+    if len(imspec) == 7:
+        name, expression, tag, at_list, layer, zorder, behind = imspec
+        
+    elif len(imspec) == 6:
+        name, expression, tag, at_list, layer, zorder = imspec
+        behind = [ ]
+        
+    elif len(imspec) == 3:
         name, at_list, layer = imspec
         expression = None
         tag = None
         zorder = None
         behind = [ ]
-    elif len(imspec) == 6:
-        name, expression, tag, at_list, layer, zorder = imspec
-        behind = [ ]
-    elif len(imspec) == 7:
-        name, expression, tag, at_list, layer, zorder, behind = imspec
         
     if zorder is not None:
         zorder = renpy.python.py_eval(zorder)
@@ -737,17 +740,23 @@ def show_imspec(imspec):
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-
-    renpy.config.show(name, at_list=at_list, layer=layer,
-                      what=expression, zorder=zorder, tag=tag, behind=behind)
+    renpy.config.show(name,
+                      at_list=at_list,
+                      layer=layer,
+                      what=expression,
+                      zorder=zorder,
+                      tag=tag,
+                      behind=behind,
+                      atl=atl)
 
 class Show(Node):
 
     __slots__ = [
         'imspec',
+        'atl',
         ]
 
-    def __init__(self, loc, imspec):
+    def __init__(self, loc, imspec, atl=None):
         """
         @param imspec: A triple consisting of an image name (itself a
         tuple of strings), a list of at expressions, and a layer.
@@ -756,13 +765,14 @@ class Show(Node):
         super(Show, self).__init__(loc)
 
         self.imspec = imspec
-
+        self.atl = atl
+        
     def diff_info(self): 
         return (Show, tuple(self.imspec[0]))
 
     def execute(self):
 
-        show_imspec(self.imspec)
+        show_imspec(self.imspec, atl=getattr(self, "atl", None))
 
         return self.next
 
@@ -776,9 +786,10 @@ class Scene(Node):
     __slots__ = [
         'imspec',
         'layer',
+        'atl',
         ]
 
-    def __init__(self, loc, imgspec, layer):
+    def __init__(self, loc, imgspec, layer, atl=None):
         """
         @param imspec: A triple consisting of an image name (itself a
         tuple of strings), a list of at expressions, and a layer, or
@@ -789,6 +800,7 @@ class Scene(Node):
 
         self.imspec = imgspec
         self.layer = layer
+        self.atl = atl
 
     def diff_info(self): 
 
@@ -804,14 +816,11 @@ class Scene(Node):
         renpy.config.scene(self.layer)
 
         if self.imspec:
-
-            show_imspec(self.imspec)
+            show_imspec(self.imspec, atl=getattr(self, "atl", None))
 
         return self.next
         
     def predict(self, callback):
-
-        
         
         if self.imspec:
             predict_imspec(self.imspec, callback, scene=True)

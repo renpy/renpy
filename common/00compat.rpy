@@ -15,6 +15,18 @@ init -1210 python:
 
         if version <= (6, 9, 1):
             store.library = store.config
+
+        if version <= (6, 9, 3):
+
+            # Before 6.10, these were positions, rather than transforms.
+            store.left = Position(xalign=0.0)
+            store.center = Position(xalign=0.5)
+            store.truecenter = Position(xalign=0.5, yalign=0.5)
+            store.right = Position(xalign=1.0)
+            store.offscreenleft = Position(xpos=0.0, xanchor=1.0)
+            store.offscreenright = Position(xpos=1.0, xanchor=0.0)
+
+            
             
 init 1210 python hide::
 

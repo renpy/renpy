@@ -35,6 +35,9 @@ from renpy.display.layout import Container
 
 class Transform(Container):
 
+    # Compatibility with old versions of the class.
+    active = False
+    
     def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1, **kwargs):
 
         # NOTE: When adding new parameters here, be sure they're
@@ -66,6 +69,21 @@ class Transform(Container):
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
 
+        # Have we called the function at least once?
+        self.active = False
+        
+    def take_state(self, t):
+        self.xpos = t.xpos
+        self.ypos = t.ypos
+        self.xanchor = t.xanchor
+        self.yanchor = t.yanchor
+
+        self.alpha = t.alpha
+        self.rotate = t.rotate
+        self.zoom = t.zoom
+        self.xzoom = t.xzoom
+        self.yzoom = t.yzoom
+        
     def render(self, width, height, st, at):
 
         if self.function is not None:
@@ -73,6 +91,8 @@ class Transform(Container):
 
             if fr is not None:
                 renpy.display.render.redraw(self, fr)
+
+        self.active = True
                 
         cr = render(self.child, width, height, st, at)
         width, height = cr.get_size()
@@ -170,6 +190,16 @@ class Transform(Container):
             **self.kwargs)
         
     def get_placement(self):
+
+        if not self.active:
+            if self.function is not None:
+                fr = self.function(self, 0, 0)
+
+                if fr is not None:
+                    renpy.display.render.redraw(self, fr)
+
+        self.active = True
+
         xpos = self.xpos
         if xpos is None:
             xpos = self.style.xpos
@@ -191,23 +221,15 @@ class Transform(Container):
     def update(self):
         renpy.display.render.invalidate(self)
 
+        
 class ATLTransform(renpy.atl.TransformBase, Transform):
     
     def __init__(self, atl, context={}, child=None, **kwargs):
         renpy.atl.TransformBase.__init__(self, atl, context)
-        Transform.__init__(self, child=child, **kwargs)
+        Transform.__init__(self, child=child, function=self.execute, **kwargs)
 
         self.raw_child = self.child
         
-    def render(self, width, height, st, at):
-
-        pause = self.execute(st, None)
-
-        if pause is not None:
-            renpy.display.render.redraw(self, pause)
-
-        return Transform.render(self, width, height, st, at)
-
     def __call__(self, child=None, new_widget=None, old_widget=None, **kwargs):
 
         child = child or self.child

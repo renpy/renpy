@@ -466,7 +466,7 @@ class SceneLists(renpy.object.Object):
 
         return True
 
-    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None):
+    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None, atl=None):
         """
         This is called to add something to a layer. Layer is
         the name of the layer that we need to add the thing to,
@@ -502,6 +502,9 @@ class SceneLists(renpy.object.Object):
         at = None
         st = None
 
+        if atl:
+            thing = renpy.display.motion.ATLTransform(atl, child=thing)
+        
         if key is not None:
             for index, (k, zo, st, at, d) in enumerate(l):
                 if k == key:
@@ -510,9 +513,21 @@ class SceneLists(renpy.object.Object):
                 index = None
                 at = None
 
+                
             st = None
 
             if index is not None:
+
+                old_thing = l[index][4]
+                
+                # If the old thing was a transform, make sure the new thing
+                # is a transform, and then take the transform state.
+                if isinstance(old_thing, renpy.display.motion.Transform):
+                    if not isinstance(thing, renpy.display.motion.Transform):
+                        thing = renpy.display.motion.Transform(child=thing)
+
+                    thing.take_state(old_thing)
+                    
                 if zorder == zo:                
                     l[index] = (key, zorder, st, at, thing)
                     return

@@ -1006,6 +1006,8 @@ def parse_image_specifier(l):
     if layer is None:
         layer = 'master'
 
+    
+        
     return image_name, expression, tag, at_list, layer, zorder, behind
 
 def parse_with(l, node):
@@ -1429,7 +1431,6 @@ def parse_statement(l):
 
     ### Scene statement.
     if l.keyword('scene'):
-        l.expect_noblock('scene statement')
 
         if l.keyword('onlayer'):
             layer = l.require(l.name)
@@ -1442,7 +1443,13 @@ def parse_statement(l):
             return ast.Scene(loc, None, layer)
 
         imspec = parse_image_specifier(l)
-        rv = parse_with(l, ast.Scene(loc, imspec, imspec[4]))
+        stmt = ast.Scene(loc, imspec, imspec[4])
+        rv = parse_with(l, stmt)
+
+        if l.match(':'):
+            stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
+        else:
+            l.expect_noblock('scene statement')
 
         l.expect_eol()
         l.advance()
@@ -1452,10 +1459,15 @@ def parse_statement(l):
     ### Show statement.
     if l.keyword('show'):
         imspec = parse_image_specifier(l)
-        rv = parse_with(l, ast.Show(loc, imspec))
+        stmt = ast.Show(loc, imspec)
+        rv = parse_with(l, stmt)
 
+        if l.match(':'):
+            stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
+        else:
+            l.expect_noblock('show statement')
+        
         l.expect_eol()
-        l.expect_noblock('show statement')
         l.advance()
 
         return rv

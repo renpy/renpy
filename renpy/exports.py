@@ -166,7 +166,7 @@ def showing(name, layer='master'):
 
     return renpy.game.context().predict_info.images.showing(layer, name)
 
-def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ]):
+def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None):
     "Documented in wiki as renpy.show."
 
     if renpy.game.init_phase:
@@ -205,7 +205,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name)
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl)
     
 
 def hide(name, layer='master'):

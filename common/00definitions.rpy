@@ -3,24 +3,37 @@
 # directory so that it's easy for an updated version of all of these
 # definitions.
 
+init -1110:
+    # These are positions that can be used inside at clauses. We set
+    # them up here so that they can be used throughout the program.
+    transform left:
+        xpos 0.0 xanchor 0.0 ypos 1.0 yanchor 1.0
+
+    transform right:
+        xpos 1.0 xanchor 1.0 ypos 1.0 yanchor 1.0
+
+    transform center:
+        xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
+
+    transform truecenter:
+        xpos 0.5 xanchor 0.5 ypos 0.5 yanchor 0.5
+        
+    # Offscreen positions for use with the move transition. Images at
+    # these positions are still shown (and consume
+    # resources)... remember to hide the image after the transition.    
+    transform offscreenleft:
+        xpos 0.0 xanchor 1.0 ypos 1.0 yanchor 1.0
+
+    transform offscreenright:
+        xpos 0.0 xanchor 1.0 ypos 1.0 yanchor 1.0
+
+
 init -1110 python:
 
     _define = define = object()
         
     # Positions ##############################################################
 
-    # These are positions that can be used inside at clauses. We set
-    # them up here so that they can be used throughout the program.
-    left = Position(xalign=0.0)
-    center = Position(xalign=0.5)
-    truecenter = Position(xalign=0.5, yalign=0.5)
-    right = Position(xalign=1.0)
-
-    # Offscreen positions for use with the move transition. Images at
-    # these positions are still shown (and consume
-    # resources)... remember to hide the image after the transition.    
-    offscreenleft = Position(xpos=0.0, xanchor=1.0)
-    offscreenright = Position(xpos=1.0, xanchor=0.0)
 
     # Transitions ############################################################
 
