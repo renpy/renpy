@@ -20,6 +20,15 @@ and offscreenright) are now defined as transforms. This means that showing
 an image at such a position will cause the position to be remembered.
 
 
+Ren'Py now allows games to be deleted. To do this, select a save game
+(either with the keyboard, or by hovering the mouse over it), and hit
+delete.
+
+
+Buttons now take a keymap argument, which specifies an alternate 
+keymap that is used when the button is focused.
+
+
 Added a FPS meter to the Developer (shift+D) menu.
 
 Added a .001s sleep for frames that are framerate-limited. This should
@@ -38,6 +47,8 @@ Fixed a bug with archive files that could cause crashing in some
 circumstances.
 
 Fixed a bug that prevented {w=1} from working.
+
+Fixed a bug that prevented style.rebuild from working.
 
 
 New in Ren'Py 6.9.3

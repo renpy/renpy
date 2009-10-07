@@ -23,7 +23,6 @@ init:
 
 # The game starts here.
 label start:
-
     $ bl_game = False
     
     play music "illurock.ogg"

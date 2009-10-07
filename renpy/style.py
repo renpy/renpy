@@ -377,7 +377,6 @@ def expand_properties(properties):
     return rv
 
 
-
 # This builds the style. 
 def build_style(style):
     
@@ -473,10 +472,6 @@ def build_style(style):
                 build_style(ss)
 
             updates.extend(ss.updates)
-            
-
-        
-            
         
     style.updates = my_updates = [ ]
         
@@ -506,8 +501,9 @@ def build_styles():
     styles_pending = None
     styles_built = True
 
+
 def rebuild():
-    global style_pending
+    global styles_pending
     global styles_built
 
     if renpy.game.init_phase:
@@ -518,9 +514,10 @@ def rebuild():
     
     for i in styles_pending:
         i.cache = None
-        
+
     build_styles()
 
+    
 def backup():
     rv = { }
     
@@ -529,7 +526,8 @@ def backup():
             rv[first, rest] = (v.parent, v.properties[:])
 
     return rv
-        
+
+
 def restore(o):
     global styles_built
     global styles_pending
@@ -541,6 +539,7 @@ def restore(o):
         style_parts[first][rest].set_parent(parent)
         style_parts[first][rest].properties = properties[:]
         styles_pending.append(style_parts[first][rest])
+
 
 def style_metaclass(name, bases, attrs):
 
