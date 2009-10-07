@@ -451,7 +451,7 @@ class RawMultipurpose(RawStatement):
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
-        return Interpolation(ifunc, duration, properties)
+        return Interpolation(interpolator, duration, properties)
             
     def predict(self, ctx, callback):
 
@@ -511,6 +511,8 @@ class Interpolation(Statement):
 
     def execute(self, trans, st, state, event):
 
+        function = interpolators[self.function][0]
+        
         if self.duration:
             complete = min(1.0, st / self.duration)
         else:
@@ -524,7 +526,7 @@ class Interpolation(Statement):
                 state[k] = getters[k](trans)
 
         for k, v in self.properties:
-            value = interpolate(self.function, complete, state[k], *v)
+            value = interpolate(function, complete, state[k], *v)
             setters[k](trans, value)
 
         if st > self.duration:
