@@ -414,6 +414,10 @@ class Button(renpy.display.layout.Window):
             
     def event(self, ev, x, y, st):
 
+        rv = super(Button, self).event(ev, x, y, st)
+        if rv is not None:
+            return rv
+        
         # If not focused, ignore all events.
         if not self.is_focused():
             return None
@@ -452,37 +456,103 @@ def TextButton(text, style='button', text_style='button_text',
     text = renpy.display.text.Text(text, style=text_style)
     return Button(text, style=style, clicked=clicked, **properties)
 
+
+# This is used for an input that takes its focus from a button. 
+class HoveredProxy(object):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def __call__(self):
+        self.a()
+        if self.b:
+            return self.b()
+    
                 
 class Input(renpy.display.text.Text):
     """
     This is a Displayable that takes text as input.
     """
 
+    changed = None
+    prefix = ""
+    suffix = ""
+    
     def __init__(self, default, length=None,
                  style='input_text',
                  allow=None,
                  exclude=None,
+                 prefix="",
+                 suffix="",
+                 changed=None,
+                 button=None,
                  **properties):
 
-        super(Input, self).__init__(default.replace("{", "{{") + "_", style=style, **properties)
+        super(Input, self).__init__("", style=style, **properties)
 
         self.content = unicode(default)
         self.length = length
 
         self.allow = allow
         self.exclude = exclude
+        self.prefix = prefix
+        self.suffix = suffix
 
+        self.changed = changed
+
+        self.editable = True
+        
+        self.caret = renpy.display.image.Solid(None, xmaximum=1, style=style)
+
+        if button:
+            self.editable = False
+            button.hovered = HoveredProxy(self.enable, button.hovered)
+            button.unhovered = HoveredProxy(self.disable, button.unhovered)
+        
+        self.update_text(self.content, self.editable)
+        
+    def update_text(self, content, editable):
+
+        if content != self.content or editable != self.editable:
+            renpy.display.render.redraw(self, 0)
+                                            
+        if content != self.content:
+            self.content = content
+
+            if self.changed:
+                self.change(content)
+                
+        self.editable = editable
+                                            
+        if editable:
+            self.set_text([self.prefix, content.replace("{", "{{"), self.suffix, self.caret])
+        else:
+            self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+
+    def enable(self):
+        self.update_text(self.content, True)
+
+    def disable(self):
+        self.update_text(self.content, False)
+            
     def event(self, ev, x, y, st):
 
+        if not self.editable:
+            return None
+        
         if map_event(ev, "input_backspace"):
-            if self.content:
-                self.content = self.content[:-1]
 
-            self.set_text(self.content.replace("{", "{{") + "_")
+            old_content = self.content
+
+            if self.content:
+                content = self.content[:-1]
+                self.update_text(content, self.editable)
+                                            
             renpy.display.render.redraw(self, 0)
 
         elif map_event(ev, "input_enter"):
-            return self.content
+            if not self.changed:
+                return self.content
 
         elif ev.type == KEYDOWN and ev.unicode:
             if ord(ev.unicode[0]) < 32:
@@ -497,10 +567,9 @@ class Input(renpy.display.text.Text):
             if self.exclude and ev.unicode in self.exclude:
                 raise renpy.display.core.IgnoreEvent()
 
-            self.content += ev.unicode
+            content = self.content + ev.unicode
 
-            self.set_text(self.content.replace("{", "{{") + "_")
-            renpy.display.render.redraw(self, 0)
+            self.update_text(content, self.editable)
 
             raise renpy.display.core.IgnoreEvent()
 

@@ -190,11 +190,17 @@ class Solid(renpy.display.core.Displayable):
         """
         
         super(Solid, self).__init__(**properties)
-        self.color = renpy.easy.color(color)
 
+        if color is not None:
+            self.color = renpy.easy.color(color)
+        else:
+            self.color = None
+            
     def render(self, width, height, st, at):
 
-        si = renpy.display.im.SolidImage(self.color,
+        color = self.color or self.style.color
+        
+        si = renpy.display.im.SolidImage(color,
                                          width,
                                          height)
 

@@ -26,6 +26,14 @@ Added a .001s sleep for frames that are framerate-limited. This should
 prevent Ren'Py from consuming all CPU unless the game is CPU-bound.
 
 
+Added the renpy.get_roll_forward function, which is the infrastructure
+needed to create a button that lets the user roll forward.
+
+
+Ren'Py is now built using SDL-1.2.13. On Linux systems with pulseaudio
+support, it will use pulseaudio for audio output.
+
+
 Fixed a bug with archive files that could cause crashing in some 
 circumstances.
 
