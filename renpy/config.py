@@ -216,6 +216,9 @@ keymap = dict(
     bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
     bar_decrease = [ 'K_LEFT', 'joy_left' ],
     bar_increase = [ 'K_RIGHT', 'joy_right' ],
+
+    # Delete a save.
+    save_delete = [ 'K_DELETE' ],
     )
 
 # Should we try to support joysticks?

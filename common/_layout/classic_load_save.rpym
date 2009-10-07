@@ -73,7 +73,9 @@ init python:
         
         ui.button(style=style.file_picker_entry[index],
                   clicked=clicked,
-                  role=("selected_" if newest else ""))
+                  role=("selected_" if newest else ""),
+                  keymap={ "save_delete" : ui.returns(("unlink", name)) }
+                  )
 
         ui.hbox(style=style.file_picker_entry_box[index])
 
@@ -193,36 +195,45 @@ init python:
     # the list of save files.
     def _file_picker(screen, save):
 
-        # The number of slots in a page.
-        file_page_length = config.file_page_cols * config.file_page_rows
-
-        saved_games = renpy.list_saved_games(regexp=r'(auto-|quick-)?[0-9]+')
-
-        newest = None
-        newest_mtime = None
-        save_info = { }
-
-        for fn, extra_info, screenshot, mtime in saved_games:
-            screenshot = _file_picker_process_screenshot(screenshot)
-            save_info[fn] = (extra_info, screenshot, mtime)
-
-            if not fn.startswith("auto-") and mtime > newest_mtime:
-                newest = fn
-                newest_mtime = mtime
-
-        # The index of the first entry in the page.
-        fpp = __scratch.file_picker_page
-
-        if fpp is None:
-
-            if newest:
-                fpp = _file_picker_file_page(newest)
-            else:
-                fpp = _file_picker_file_page("1")
-
-
+        # Should we update the list of saved games?
+        update = True
+        
         while True:
 
+
+            if update:
+
+                update = False
+
+                # The number of slots in a page.
+                file_page_length = config.file_page_cols * config.file_page_rows
+
+                # The list of saved games.
+                saved_games = renpy.list_saved_games(regexp=r'(auto-|quick-)?[0-9]+')
+
+                # Figure out which game is the newest and so on.
+                newest = None
+                newest_mtime = None
+                save_info = { }
+
+                for fn, extra_info, screenshot, mtime in saved_games:
+                    screenshot = _file_picker_process_screenshot(screenshot)
+                    save_info[fn] = (extra_info, screenshot, mtime)
+
+                    if not fn.startswith("auto-") and mtime > newest_mtime:
+                        newest = fn
+                        newest_mtime = mtime
+
+                # The index of the first entry in the page.
+                fpp = __scratch.file_picker_page
+
+                if fpp is None:
+                    if newest:
+                        fpp = _file_picker_file_page(newest)
+                    else:
+                        fpp = _file_picker_file_page("1")
+
+            
             if fpp < 0:
                 fpp = 0
 
@@ -294,6 +305,11 @@ init python:
             result = ui.interact(mouse="gamemenu")
             type, value = result
 
+            if type == "unlink":
+                if layout.yesno_prompt("save", u"Are you sure you want to delete this save?"):
+                    renpy.unlink_save(value)
+                    update = True
+                    
             if type == "return":
                 return value
 

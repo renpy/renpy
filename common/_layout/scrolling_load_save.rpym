@@ -69,125 +69,134 @@ init python:
             
     def _file_picker(screen):
 
-        @renpy.curry
-        def hovered(thumbnail):
-            if __session.thumbnail is not thumbnail:
-                __session.thumbnail = thumbnail
-                renpy.restart_interaction()
+        while True:
 
-        @renpy.curry
-        def unhovered(thumbnail):
-            if __session.thumbnail is thumbnail:
-                __session.thumbnail = None
-                renpy.restart_interaction()
+            @renpy.curry
+            def hovered(thumbnail):
+                if __session.thumbnail is not thumbnail:
+                    __session.thumbnail = thumbnail
+                    renpy.restart_interaction()
 
-        __session.thumbnail = None
-        
-        layout.navigation(screen)
-        
-        newest = None
-        newest_time = None
+            @renpy.curry
+            def unhovered(thumbnail):
+                if __session.thumbnail is thumbnail:
+                    __session.thumbnail = None
+                    renpy.restart_interaction()
 
-        info = { }
-        
-        for name, extra_info, thumbnail, time in renpy.list_saved_games():
-
-            info[name] = (extra_info, thumbnail, time)
-        
-            if not name[0] in "0123456789":
-                continue
-
-            if time > newest_time:
-                newest = name
-                newest_time = time
-
-        slots = [ ]
-                
-        for i in range(1, config.load_save_slots + 1):
-            slots.append((str(i), str(i)))
-
-        if config.has_quicksave:
-            for i in range(1, config.load_save_quick_slots + 1):
-                slots.append(('quick-'+ str(i), _(u'q') + str(i)))
-
-        if config.has_autosave:
-            for i in range(1, config.load_save_auto_slots + 1):
-                slots.append(('auto-' + str(i), _(u'a') + str(i)))
-
-        ui.frame(style=style.file_picker_frame)
-        ui.side(['c', 'r'], style=style.file_picker_side)
-
-        
-        
-        if __session.scrollbar_position is None:
-            if newest is None:
-                yoffset = 0
-            else:
-                yoffset = 1.0 * (int(newest) - 1) / len(slots)
-            value = 0
-
-        else:
-            value = __session.scrollbar_position
-            yoffset = None
-
-        adj = ui.adjustment(value=value)
-        ui.viewport(yadjustment=adj, offsets=(0, yoffset), style=style.file_picker_viewport, mousewheel=True)
-
-        ui.vbox(style=style.file_picker_box, focus=renpy.time.time())
-
-        
-        for i, (fn, n) in enumerate(slots):
-
-            clicked = ui.returns(fn)
-
-            if screen == "save" and fn.startswith("auto-"):
-                clicked = None
-
-            if screen == "load" and fn not in info:
-                clicked = None
-                
-            if fn in info:
-                extra_info, thumbnail, time = info[fn]
-
-                ui.button(style=style.file_picker_entry[i],
-                          clicked=clicked,
-                          hovered=hovered(thumbnail),
-                          unhovered=unhovered(thumbnail),
-                          role = "selected_" if (fn == newest) else "")
-                
-                s = config.file_entry_format % dict(
-                    time=renpy.time.strftime(
-                        config.time_format,
-                        renpy.time.localtime(time)),
-                    save_name=extra_info)
-                
-                ui.text(n + ". " + s, style=style.file_picker_text[i])
-            
-            else:
-                ui.button(style=style.file_picker_entry[i],
-                          clicked=clicked,
-                          role = "selected_" if (fn == newest) else "")
-
-                ui.text(n + ". " + _(u"Empty Slot."),
-                        style=style.file_picker_text[i])
-
-        ui.close() # vbox/viewport
-        
-        ui.bar(adjustment=adj, style=style.file_picker_scrollbar)
-        
-        ui.close() # side/window
-
-        # Thumbnail.
-        ui.frame(style=style.thumbnail_frame)
-        ui.add(DynamicDisplayable(_file_picker_thumbnail))
-
-        try:
-            rv = ui.interact(mouse="gamemenu")
-        finally:
-            __session.scrollbar_position = adj.value
             __session.thumbnail = None
 
-        return rv
+            layout.navigation(screen)
+
+            newest = None
+            newest_time = None
+
+            info = { }
+
+            for name, extra_info, thumbnail, time in renpy.list_saved_games():
+
+                info[name] = (extra_info, thumbnail, time)
+
+                if not name[0] in "0123456789":
+                    continue
+
+                if time > newest_time:
+                    newest = name
+                    newest_time = time
+
+            slots = [ ]
+
+            for i in range(1, config.load_save_slots + 1):
+                slots.append((str(i), str(i)))
+
+            if config.has_quicksave:
+                for i in range(1, config.load_save_quick_slots + 1):
+                    slots.append(('quick-'+ str(i), _(u'q') + str(i)))
+
+            if config.has_autosave:
+                for i in range(1, config.load_save_auto_slots + 1):
+                    slots.append(('auto-' + str(i), _(u'a') + str(i)))
+
+            ui.frame(style=style.file_picker_frame)
+            ui.side(['c', 'r'], style=style.file_picker_side)
+
+
+
+            if __session.scrollbar_position is None:
+                if newest is None:
+                    yoffset = 0
+                else:
+                    yoffset = 1.0 * (int(newest) - 1) / len(slots)
+                value = 0
+
+            else:
+                value = __session.scrollbar_position
+                yoffset = None
+
+            adj = ui.adjustment(value=value)
+            ui.viewport(yadjustment=adj, offsets=(0, yoffset), style=style.file_picker_viewport, mousewheel=True)
+
+            ui.vbox(style=style.file_picker_box, focus=renpy.time.time())
+
+
+            for i, (fn, n) in enumerate(slots):
+
+                clicked = ui.returns(("select", fn))
+
+                if screen == "save" and fn.startswith("auto-"):
+                    clicked = None
+
+                if screen == "load" and fn not in info:
+                    clicked = None
+
+                if fn in info:
+                    extra_info, thumbnail, time = info[fn]
+
+                    ui.button(style=style.file_picker_entry[i],
+                              clicked=clicked,
+                              hovered=hovered(thumbnail),
+                              unhovered=unhovered(thumbnail),
+                              role = "selected_" if (fn == newest) else "",
+                              keymap = { "save_delete" : ui.returns(("unlink", fn)) },
+                              )
+
+                    s = config.file_entry_format % dict(
+                        time=renpy.time.strftime(
+                            config.time_format,
+                            renpy.time.localtime(time)),
+                        save_name=extra_info)
+
+                    ui.text(n + ". " + s, style=style.file_picker_text[i])
+
+                else:
+                    ui.button(style=style.file_picker_entry[i],
+                              clicked=clicked,
+                              role = "selected_" if (fn == newest) else "")
+
+                    ui.text(n + ". " + _(u"Empty Slot."),
+                            style=style.file_picker_text[i])
+
+            ui.close() # vbox/viewport
+
+            ui.bar(adjustment=adj, style=style.file_picker_scrollbar)
+
+            ui.close() # side/window
+
+            # Thumbnail.
+            ui.frame(style=style.thumbnail_frame)
+            ui.add(DynamicDisplayable(_file_picker_thumbnail))
+
+            try:
+                action, arg = ui.interact(mouse="gamemenu")
+            finally:
+                __session.scrollbar_position = adj.value
+                __session.thumbnail = None
+
+            if action == "select":
+                return arg
+
+            elif action == "unlink":
+                if layout.yesno_prompt("save", u"Are you sure you want to delete this save?"):
+                    renpy.unlink_save(arg)
         
         
 label save_screen:

@@ -330,9 +330,11 @@ class SayBehavior(renpy.display.layout.Null):
     
 class Button(renpy.display.layout.Window):
 
+    keymap = { }
+    
     def __init__(self, child, style='button', clicked=None,
                  hovered=None, unhovered=None, role='',
-                 time_policy=None, 
+                 time_policy=None, keymap={},
                  **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
@@ -343,7 +345,8 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.focusable = clicked is not None
         self.role = role
-
+        self.keymap = keymap
+        
         self.time_policy_data = None
         
         
@@ -414,6 +417,7 @@ class Button(renpy.display.layout.Window):
             
     def event(self, ev, x, y, st):
 
+        # If we have a child, try passing the event to it.
         rv = super(Button, self).event(ev, x, y, st)
         if rv is not None:
             return rv
@@ -421,7 +425,17 @@ class Button(renpy.display.layout.Window):
         # If not focused, ignore all events.
         if not self.is_focused():
             return None
-        
+
+        # Check the keymap.
+        for name, action in self.keymap.iteritems():
+            if map_event(ev, name):
+                rv = action()
+                
+                if rv is not None:
+                    return rv
+                
+                raise renpy.display.core.IgnoreEvent()
+
         # If clicked, 
         if map_event(ev, "button_select") and self.clicked:
 

@@ -36,7 +36,7 @@ init python:
 
                 self.button(name, act, screen == screen_)
                 
-        def button(self, name, clicked, selected):
+        def button(self, name, clicked, selected, keymap={}):
 
             if name not in self.hotspots:
                 return None
@@ -63,6 +63,7 @@ init python:
                 clicked=clicked,
                 focus_mask=True,
                 style='imagemap_button',
+                keymap=keymap,
                 )
 
             return (x1, y1, x2, y2)
