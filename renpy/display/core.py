@@ -49,6 +49,9 @@ PERIODIC = USEREVENT + 5
 JOYEVENT = USEREVENT + 6
 REDRAW = USEREVENT + 7
 
+ALL_EVENTS = range(0, REDRAW + 1)
+
+
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
@@ -1665,7 +1668,9 @@ class Interface(object):
                     self.force_redraw = False
 
                 # Redraw the screen.
-                if needs_redraw and self.display.can_redraw(first_pass):
+                if (needs_redraw and
+                    (first_pass or not pygame.event.peek(ALL_EVENTS)) and 
+                    self.display.can_redraw(first_pass)):
                     
                     # If we have a movie, start showing it.
                     suppress_blit = renpy.display.video.interact()
@@ -1863,8 +1868,7 @@ class Interface(object):
                         if ev.state & 1:
                             self.focused = ev.gain
                             
-                    # x, y = getattr(ev, 'pos', (0, 0))
-                    x, y = pygame.mouse.get_pos()
+                    x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
                     x -= self.display.screen_xoffset
                     y -= self.display.screen_yoffset
                     
