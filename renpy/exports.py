@@ -417,6 +417,8 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
     renpy.ui.window(style=window_style)
     renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True, **kwargs)
 
+    renpy.exports.shown_window()
+
     # Log the chosen choice.
     for label, val in items:
         if val:
