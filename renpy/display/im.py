@@ -740,10 +740,7 @@ class SolidImage(ImageBase):
 
     def load(self):
 
-        if self.color[3] != 255:
-            sample = renpy.game.interface.display.sample_surface
-        else:
-            sample = renpy.game.interface.display.window
+        sample = renpy.game.interface.display.sample_surface
         
         rv = pygame.Surface((self.width, self.height), 0,
                             sample)
