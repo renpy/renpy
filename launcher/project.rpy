@@ -110,7 +110,7 @@ init python:
         
         project_dirs = [ config.renpy_base ]
 
-        if persistent.projects_directory:
+        if persistent.projects_directory and persistent.projects_directory not in project_dirs:
             project_dirs.append(persistent.projects_directory)
 
         for d in project_dirs:
