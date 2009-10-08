@@ -548,6 +548,17 @@ def subtitle_text_layout(triples, width, style):
     lines_last = [ ]
         
     for triples in pars:
+        x = 0
+        newtriples = []
+        while x<len(triples):
+            triplewidth = layout_width([triples[x],],justify)
+            if triplewidth<=width or triples[x][0]!='word':
+                newtriples.append(triples[x])
+            else:
+                for char in triples[x][2]:
+                    newtriples.append(('word',triples[x][1],char))
+            x+=1
+        triples = newtriples
 
         sumwidths = layout_width(triples, justify)
 
