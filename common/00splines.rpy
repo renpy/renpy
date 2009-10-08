@@ -63,15 +63,19 @@ init -1080 python:
    
         def init_values(self, sizes):
             def to_abs_(value, size):
-                if isinstance(value, float):
+                if type(value) ==  float:
                     return value * size
                 else:
                     return value
      
             def coord_(c):
+
+                if len(c) == 2:
+                    c = c + (0, 0)
+
                 return ( to_abs_(c[0], sizes[0]) - to_abs_(c[2], sizes[2]),
                          to_abs_(c[1], sizes[1]) - to_abs_(c[3], sizes[3]) )
-     
+
             for p in self.points:
                 for i in range(1, len(p)):
                     p[i] = coord_(p[i])
@@ -122,8 +126,8 @@ init -1080 python:
                 t3 = t**3
          
                 result = [ t_ppp * start[i] + t_pp * self.points[segment][2][i] + t_p * self.points[segment][3][i] + t3 * end[i] for i in 0,1 ]
-     
-            return ( int(result[0]), int(result[1]), 0, 0 )
+
+            return ( absolute(result[0]), absolute(result[1]), 0, 0 )
 
     def SplineMotion(points, time, child=None, anchors=(0.5, 0.5), repeat=False, bounce=False, anim_timebase=False, style='default', time_warp=None, **properties):
         return Motion(_SplineInterpolator(points, anchors), time, child, repeat=repeat, bounce=bounce, anim_timebase=anim_timebase, style=style, time_warp=time_warp, add_sizes=True, **properties)
