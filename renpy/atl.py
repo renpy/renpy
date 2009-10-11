@@ -22,6 +22,18 @@
 import renpy
 import random
 
+def compiling(loc):
+    file, number = loc
+
+    renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
+
+def executing(loc):
+    file, number = loc
+    
+    renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
+
+
+
 # A map from the name of an interpolator, to a tuple containing the
 # interpolator function, and the number of non-time arguments it takes.
 interpolators = { }
@@ -126,6 +138,9 @@ class TransformBase(renpy.object.Object):
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
     def compile(self):
+
+        old_exception_info = renpy.game.exception_info
+        
         self.block = self.atl.compile(self.context)
 
         if len(self.block.statements) == 1 \
@@ -134,10 +149,12 @@ class TransformBase(renpy.object.Object):
             interp = self.block.statements[0]
 
             if interp.duration == 0 and interp.properties:
-            
+
                 self.properties = interp.properties[:]
                 self.arity = len(self.properties[0][1])
 
+        renpy.game.exception_info = old_exception_info
+                    
     def execute(self, trans, st, at):
         if self.done:
             return None
@@ -147,7 +164,11 @@ class TransformBase(renpy.object.Object):
         if not self.block:
             self.compile()
         
+        old_exception_info = renpy.game.exception_info
+
         action, arg, pause = self.block.execute(self, st, self.state, event)
+
+        renpy.game.exception_info = old_exception_info
 
         if action == "continue":
             self.state = arg
@@ -217,14 +238,19 @@ class Statement(renpy.object.Object):
 # This represents a Raw ATL block.
 class RawBlock(RawStatement):
 
-    def __init__(self, statements):
+    def __init__(self, loc, statements):
 
+        self.loc = loc
+        
         # A list of RawStatements in this block.
         self.statements = statements
 
     def compile(self, ctx):
+        compiling(self.loc)
+
         statements = [ i.compile(ctx) for i in self.statements ]
-        return Block(statements)
+
+        return Block(self.loc, statements)
 
     def predict(self, ctx, callback):
         for i in self.statements:
@@ -233,8 +259,10 @@ class RawBlock(RawStatement):
     
 # A compiled ATL block. 
 class Block(Statement):
-    def __init__(self, statements):
+    def __init__(self, loc, statements):
 
+        self.loc = loc
+        
         # A list of statements in the block.
         self.statements = statements
 
@@ -249,6 +277,8 @@ class Block(Statement):
         
     def execute(self, trans, st, state, event):
 
+        executing(self.loc)
+        
         # Unpack the state.
         if state is not None:
             index, start, repeats, times, child_state = state
@@ -369,7 +399,10 @@ class Block(Statement):
 # values of the variables here.
 class RawMultipurpose(RawStatement):
 
-    def __init__(self):
+    def __init__(self, loc):
+
+        self.loc = loc
+        
         self.interpolator = None
         self.duration = None
         self.properties = [ ]
@@ -387,6 +420,8 @@ class RawMultipurpose(RawStatement):
 
     def compile(self, ctx):
 
+        compiling(self.loc)
+        
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
@@ -401,14 +436,16 @@ class RawMultipurpose(RawStatement):
                 transition = None
 
             if isinstance(child, (int, float)):
-                return Interpolation(pause, child, [ ])
+                return Interpolation(self.loc, pause, child, [ ])
                 
             if isinstance(child, TransformBase):
                 child.compile()
                 return child.block
 
             else:
-                return Child(child, transition)
+                return Child(self.loc, child, transition)
+
+        compiling(self.loc)
 
         # Otherwise, we probably have an interpolation statement.
         interpolator = self.interpolator or "pause"
@@ -451,7 +488,7 @@ class RawMultipurpose(RawStatement):
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
-        return Interpolation(interpolator, duration, properties)
+        return Interpolation(self.loc, interpolator, duration, properties)
             
     def predict(self, ctx, callback):
 
@@ -479,12 +516,16 @@ class RawMultipurpose(RawStatement):
 # This changes the child of this statement, optionally with a transition.
 class Child(Statement):
 
-    def __init__(self, child, transition):
+    def __init__(self, loc, child, transition):
+        self.loc = loc
+
         self.child = renpy.easy.displayable(child)
         self.transition = transition
 
     def execute(self, trans, st, state, event):
-                    
+
+        executing(self.loc)
+        
         old_child = trans.raw_child
         
         if old_child is not None and self.transition is not None:
@@ -504,13 +545,16 @@ class Child(Statement):
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
-    def __init__(self, function, duration, properties):
+    def __init__(self, loc, function, duration, properties):
+        self.loc = loc
         self.function = function
         self.duration = duration
         self.properties = properties
 
     def execute(self, trans, st, state, event):
 
+        executing(self.loc)
+        
         function = interpolators[self.function][0]
         
         if self.duration:
@@ -541,20 +585,25 @@ class Interpolation(Statement):
 # Implementation of the repeat statement.
 class RawRepeat(RawStatement):
 
-    def __init__(self, repeats):
+    def __init__(loc, self, repeats):
+        self.loc = loc
         self.repeats = repeats
 
     def compile(self, ctx):
+
+        compiling(self.loc)
+
         repeats = self.repeats
 
         if repeats is not None:
             repeats = ctx.eval(repeats)
             
-        return Repeat(repeats)
+        return Repeat(self.loc, repeats)
 
 class Repeat(Statement):
 
-    def __init__(self, repeats):
+    def __init__(self, loc, repeats):
+        self.loc = loc
         self.repeats = repeats
 
     def execute(self, trans, st, state, event):
@@ -565,11 +614,12 @@ class Repeat(Statement):
 
 class RawParallel(RawStatement):
 
-    def __init__(self, block):
+    def __init__(self, loc, block):
+        self.loc = loc
         self.blocks = [ block ]
 
     def compile(self, ctx):
-        return Parallel([i.compile(ctx) for i in self.blocks])
+        return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
     def predict(self, ctx, callback):
         for i in self.blocks:
@@ -578,11 +628,14 @@ class RawParallel(RawStatement):
         
 class Parallel(Statement):
 
-    def __init__(self, blocks):
+    def __init__(self, loc, blocks):
+        self.loc = loc
         self.blocks = blocks
 
     def execute(self, trans, st, state, event):
 
+        executing(self.loc)
+        
         if state is None:
             state = [ (i, None) for i in self.blocks ]
 
@@ -622,11 +675,13 @@ class Parallel(Statement):
 
 class RawChoice(RawStatement):
 
-    def __init__(self, chance, block):
+    def __init__(self, loc, chance, block):
+        self.loc = loc
         self.choices = [ (chance, block) ]
 
     def compile(self, ctx):
-        return Choice([ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
+        compiling(self.loc)
+        return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
     def predict(self, ctx, callback):
         for i, j in self.choices:
@@ -634,10 +689,13 @@ class RawChoice(RawStatement):
 
 class Choice(Statement):
 
-    def __init__(self, choices):
+    def __init__(self, loc, choices):
+        self.loc = loc
         self.choices = choices
 
     def execute(self, trans, st, state, event):
+
+        executing(self.loc)
         
         if state is None:
 
@@ -672,15 +730,18 @@ class Choice(Statement):
 
 class RawTime(RawStatement):
 
-    def __init__(self, time):
+    def __init__(self, loc, time):
+        self.loc = loc
         self.time = time
 
     def compile(self, ctx):
-        return Time(ctx.eval(self.time))
+        compiling(self.loc)
+        return Time(self.loc, ctx.eval(self.time))
 
 class Time(Statement):
 
-    def __init__(self, time):
+    def __init__(self, loc, time):
+        self.loc = loc
         self.time = time
 
     def execute(self, trans, st, state, event):
@@ -691,16 +752,19 @@ class Time(Statement):
 
 class RawOn(RawStatement):
 
-    def __init__(self, name, block):
+    def __init__(self, loc, name, block):
         self.handlers = { name : block }
 
     def compile(self, ctx):
+
+        compiling(self.loc)
+
         handlers = { }
 
         for k, v in self.handlers.iteritems():
             handlers[k] = v.compile(ctx)
 
-        return On(handlers)
+        return On(self.loc, handlers)
 
     def predict(self, ctx, callback):
         for i in self.handlers.itervalues():
@@ -708,11 +772,14 @@ class RawOn(RawStatement):
 
 class On(Statement):
 
-    def __init__(self, handlers):
+    def __init__(self, loc, handlers):
+        self.loc = loc
         self.handlers = handlers
     
     def execute(self, trans, st, state, event):
 
+        executing(self.loc)
+        
         # If it's our first time through, start in the start state.
         if state is None:
             state = ("start", st, None)
@@ -771,16 +838,18 @@ class On(Statement):
             
 class RawEvent(RawStatement):
 
-    def __init__(self, name):
+    def __init__(self, loc, name):
+        self.loc = loc
         self.name = name
 
     def compile(self, ctx):
-        return Event(self.name)
+        return Event(self.loc, self.name)
 
     
 class Event(Statement):
 
-    def __init__(self, name):
+    def __init__(self, loc, name):
+        self.loc = loc
         self.name = name
 
     def execute(self, trans, st, state, event):
@@ -791,15 +860,18 @@ class Event(Statement):
 def parse_atl(l):
 
     l.advance()
-    
+    block_loc = l.get_location()
+
     statements = [ ]
 
     while not l.eob:
 
+        loc = l.get_location()
+        
         if l.keyword('repeat'):
 
             repeats = l.simple_expression()
-            statements.append(RawRepeat(repeats))
+            statements.append(RawRepeat(loc, repeats))
 
         elif l.keyword('block'):
             l.require(':')
@@ -815,7 +887,7 @@ def parse_atl(l):
             l.expect_block('parallel')
             
             block = parse_atl(l.subblock_lexer())
-            statements.append(RawParallel(block))
+            statements.append(RawParallel(loc, block))
 
         elif l.keyword('choice'):
 
@@ -828,7 +900,7 @@ def parse_atl(l):
             l.expect_block('choice')
             
             block = parse_atl(l.subblock_lexer())
-            statements.append(RawChoice(chance, block))
+            statements.append(RawChoice(loc, chance, block))
 
         elif l.keyword('on'):
 
@@ -839,19 +911,19 @@ def parse_atl(l):
             l.expect_block('on')
             
             block = parse_atl(l.subblock_lexer())
-            statements.append(RawOn(name, block))
+            statements.append(RawOn(loc, name, block))
 
         elif l.keyword('time'):
             time = l.require(l.simple_expression)
             l.expect_noblock('time')
 
-            statements.append(RawTime(time))
+            statements.append(RawTime(loc, time))
 
         elif l.keyword('event'):
             name = l.require(l.name)
             l.expect_noblock('event')
 
-            statements.append(RawEvent(name))
+            statements.append(RawEvent(loc, name))
 
         elif l.keyword('pass'):
             l.expect_noblock('pass')
@@ -864,7 +936,7 @@ def parse_atl(l):
             # then be turned into another statement, as appropriate.
             
             # The RawMultipurpose we add things to.
-            rm = renpy.atl.RawMultipurpose()
+            rm = renpy.atl.RawMultipurpose(loc)
 
             # The arity of that statement.
             arity = None
@@ -960,4 +1032,4 @@ def parse_atl(l):
         merged.append(new)
         old = new
 
-    return RawBlock(merged)
+    return RawBlock(block_loc, merged)
