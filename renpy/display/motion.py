@@ -221,6 +221,25 @@ class Transform(Container):
     def update(self):
         renpy.display.render.invalidate(self)
 
+    # These update various properties.
+    def get_xalign(self):
+        return self.xpos 
+
+    def set_xalign(self, v):
+        self.xpos = v
+        self.xanchor = v
+
+    xalign = property(get_xalign, set_xalign)
+
+    def get_yalign(self):
+        return self.ypos 
+
+    def set_yalign(self, v):
+        self.ypos = v
+        self.yanchor = v
+
+    yalign = property(get_yalign, set_yalign)
+    
         
 class ATLTransform(renpy.atl.TransformBase, Transform):
     

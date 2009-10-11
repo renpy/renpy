@@ -33,65 +33,67 @@ def executing(loc):
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
 
+# A map from the name of a time warp function to the function itself.
+warpers = { }
 
-# A map from the name of an interpolator, to a tuple containing the
-# interpolator function, and the number of non-time arguments it takes.
-interpolators = { }
-
-def atl_interpolator(f):
+def atl_warper(f):
     name = f.func_name
-    arity = f.func_code.co_argcount - 2
-
-    if arity <= 0:
-        raise Exception("Interpolator does not have correct arity.")
+    warpers[name] = f
+    return f
     
-    interpolators[name] = (f, arity)
-
-# An example interpolator. (This is used internally when no interpolator
-# is otherwise specified.)
-@atl_interpolator
-def pause(t, start, end):
+# The pause warper is used internally when no other warper is
+# specified.
+@atl_warper
+def pause(t):
     if t < 1.0:
-        return start
+        return 0.0
     else:
-        return end
+        return 1.0
 
-# A map from property name to the getter function.
-getters = { }
+# A dictionary giving property names and the corresponding default
+# values.
+PROPERTIES = {
+    "xpos" : 0,
+    "ypos" : 0,
+    "xanchor" : 0.0,
+    "yanchor" : 0.0,
+    "xalign" : 0.0,
+    "yalign" : 0.0,
+    "rotate" : 0,
+    "xzoom" : 1,
+    "yzoom" : 1,
+    "zoom" : 1,
+    "alpha" : 1.0,
+    }
 
-# A map from property name to the setter function.
-setters = { }
+# Get a property, and then turn it into its default value if the
+# property is None.
+def get_property(trans, name):
+    p = getattr(trans, name)
+    if p is None:
+        return PROPERTIES[name]
+    else:
+        return p
 
-def atl_getter(f):
-    name = f.func_name
-    getters[name] = f
-
-def atl_setter(f):
-    name = f.func_name
-    setters[name] = f
-    
-
-def interpolate(func, t, *args):
+def interpolate(t, a, b):
     """
-    Use func to interpolate the arguments. This recursively deals with
-    tuples, etc.
+    Linearly interpolate the arguments. 
     """
 
     # Recurse into tuples.
-    if isinstance(args[0], tuple):
-        return tuple(interpolate(func, t, *i) for i in zip(*args))
+    if isinstance(b, tuple):
+        return tuple(interpolate(t, i, j) for i, j in zip(a, b))
 
     # Deal with strings.
-    elif isinstance(args[0], (str, unicode)):
+    elif isinstance(b, (str, unicode)):
         if t >= 1.0:
-            return args[-1]
+            return a
         else:
-            return args[0]
+            return b
 
     # Interpolate everything else.
     else:
-        rv = func(t, *args)
-        return type(args[-1])(rv)
+        return type(b)(a + t * (b - a))
     
 
 # This is the context used when compiling an ATL statement. It stores the
@@ -125,10 +127,6 @@ class TransformBase(renpy.object.Object):
         # Interpolation.
         self.properties = None
 
-        # The arity of the block, if it contains only an
-        # Interpolation.
-        self.arity = None
-
         # The state of the statement we are executing.
         self.state = None
 
@@ -149,9 +147,7 @@ class TransformBase(renpy.object.Object):
             interp = self.block.statements[0]
 
             if interp.duration == 0 and interp.properties:
-
                 self.properties = interp.properties[:]
-                self.arity = len(self.properties[0][1])
 
         renpy.game.exception_info = old_exception_info
                     
@@ -403,13 +399,13 @@ class RawMultipurpose(RawStatement):
 
         self.loc = loc
         
-        self.interpolator = None
+        self.warper = None
         self.duration = None
         self.properties = [ ]
         self.expressions = [ ]
         
-    def add_interpolator(self, name, duration):
-        self.interpolator = name
+    def add_warper(self, name, duration):
+        self.warper = name
         self.duration = duration
         
     def add_property(self, name, exprs):
@@ -425,7 +421,7 @@ class RawMultipurpose(RawStatement):
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
-        if self.interpolator is None and not self.properties and len(self.expressions) == 1:
+        if self.warper is None and not self.properties and len(self.expressions) == 1:
 
             expr, withexpr = self.expressions[0]
 
@@ -436,7 +432,7 @@ class RawMultipurpose(RawStatement):
                 transition = None
 
             if isinstance(child, (int, float)):
-                return Interpolation(self.loc, pause, child, [ ])
+                return Interpolation(self.loc, "pause", child, [ ])
                 
             if isinstance(child, TransformBase):
                 child.compile()
@@ -448,25 +444,19 @@ class RawMultipurpose(RawStatement):
         compiling(self.loc)
 
         # Otherwise, we probably have an interpolation statement.
-        interpolator = self.interpolator or "pause"
+        warper = self.warper or "pause"
 
-        if interpolator not in interpolators:
-            raise Exception("ATL Interpolator %s is unknown at runtime." % interpolator)
-
-        ifunc, arity = interpolators[interpolator]
+        if warper not in warpers:
+            raise Exception("ATL Warper %s is unknown at runtime." % warper)
 
         properties = [ ]
 
-        for name, exprs in self.properties:
-            if name not in getters:
-                raise Exception("ATL Property %s is unknown at runtime." % name)
+        for name, expr in self.properties:
+            if name not in PROPERTIES:
+                raise Exception("ATL Property %s is unknown at runtime." % property)
 
-            if len(exprs) != arity:
-                raise Exception("ATL Property %s has incorrect number of expressions at runtime." % name)
-
-            values = [ ctx.eval(i) for i in exprs ]
-
-            properties.append((name, values))
+            value = ctx.eval(expr)
+            properties.append((name, value))
 
         for expr, with_ in self.expressions:
             try:
@@ -482,13 +472,11 @@ class RawMultipurpose(RawStatement):
             if value.properties is None:
                 raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
 
-            if value.arity != arity:
-                raise Exception("ATL transform %r contains properties with the wrong number of arguments." % expr)
 
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
-        return Interpolation(self.loc, interpolator, duration, properties)
+        return Interpolation(self.loc, warper, duration, properties)
             
     def predict(self, ctx, callback):
 
@@ -545,9 +533,9 @@ class Child(Statement):
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
-    def __init__(self, loc, function, duration, properties):
+    def __init__(self, loc, warper, duration, properties):
         self.loc = loc
-        self.function = function
+        self.warper = warper
         self.duration = duration
         self.properties = properties
 
@@ -555,23 +543,25 @@ class Interpolation(Statement):
 
         executing(self.loc)
         
-        function = interpolators[self.function][0]
+        warper = warpers[self.warper]
         
         if self.duration:
             complete = min(1.0, st / self.duration)
         else:
             complete = 1.0
 
+        complete = warper(complete)
+            
         if state is None:
 
             state = { }
             
             for k, v in self.properties:
-                state[k] = getters[k](trans)
+                state[k] = get_property(trans, k)
 
         for k, v in self.properties:
-            value = interpolate(function, complete, state[k], *v)
-            setters[k](trans, value)
+            value = interpolate(complete, state[k], v)
+            setattr(trans, k, value)
 
         if st > self.duration:
             return "next", st - self.duration, None
@@ -938,24 +928,19 @@ def parse_atl(l):
             # The RawMultipurpose we add things to.
             rm = renpy.atl.RawMultipurpose(loc)
 
-            # The arity of that statement.
-            arity = None
-
-            # First, look for an interpolator. If we see one, use
-            # it. Otherwise, use the default interpolator.
+            # First, look for a warper.
             cp = l.checkpoint()
-            clause = l.name()
+            warper = l.name()
 
-            if clause in renpy.atl.interpolators:
+            if warper in warpers:
                 duration = l.require(l.simple_expression)
-                func, arity = interpolators[clause]
             else:
                 l.revert(cp)
 
-                clause, arity = None, 1
+                warper = None
                 duration = "0"
                 
-            rm.add_interpolator(clause, duration)
+            rm.add_warper(warper, duration)
 
             # Now, look for properties and simple_expressions.
             while True:
@@ -965,16 +950,13 @@ def parse_atl(l):
                 
                 prop = l.name()
 
-                if prop in getters:
-                    exprs = [ ]
-                    
-                    for i in range(arity):
-                        exprs.append(l.require(l.simple_expression))
-
-                    rm.add_property(prop, exprs)
-
+                if prop in PROPERTIES:
+                    expr = l.require(l.simple_expression)
+                    rm.add_property(prop, expr)
                     continue
 
+                # TODO: parse revolve and spline. 
+                
                 # Otherwise, try to parse it as a simple expressoon,
                 # with an optional with clause.
 
