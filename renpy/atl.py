@@ -52,34 +52,34 @@ def pause(t):
 
 # A dictionary giving property names and the corresponding default
 # values.
-PROPERTIES = {
-    "xpos" : 0,
-    "ypos" : 0,
-    "xanchor" : 0.0,
-    "yanchor" : 0.0,
-    "xalign" : 0.0,
-    "yalign" : 0.0,
-    "rotate" : 0,
-    "xzoom" : 1,
-    "yzoom" : 1,
-    "zoom" : 1,
-    "alpha" : 1.0,
-    }
-
-# Get a property, and then turn it into its default value if the
-# property is None.
-def get_property(trans, name):
-    p = getattr(trans, name)
-    if p is None:
-        return PROPERTIES[name]
-    else:
-        return p
+PROPERTIES = set([
+    "xpos",
+    "ypos",
+    "xanchor",
+    "yanchor",
+    "xalign",
+    "yalign",
+    "rotate",
+    "xzoom",
+    "yzoom",
+    "zoom",
+    "alpha",
+    "around",
+    "angle",
+    "radius",
+    "alignaround",
+    "alignangle",
+    "alignradius",
+    ])
 
 def interpolate(t, a, b):
     """
     Linearly interpolate the arguments. 
     """
 
+    if t >= 1.0:
+        return b
+    
     # Recurse into tuples.
     if isinstance(b, tuple):
         return tuple(interpolate(t, i, j) for i, j in zip(a, b))
@@ -128,7 +128,7 @@ class TransformBase(renpy.object.Object):
         self.properties = None
 
         # The state of the statement we are executing.
-        self.state = None
+        self.atl_state = None
 
         # Are we done?
         self.done = False
@@ -162,12 +162,12 @@ class TransformBase(renpy.object.Object):
         
         old_exception_info = renpy.game.exception_info
 
-        action, arg, pause = self.block.execute(self, st, self.state, event)
+        action, arg, pause = self.block.execute(trans.state, st, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
 
         if action == "continue":
-            self.state = arg
+            self.atl_state = arg
         else:
             self.done = True
 
@@ -321,7 +321,7 @@ class Block(Statement):
                         if pause is None:
                             pause = max_pause
                             
-                        action, arg, pause =  "continue", (index, start, repeats, times, arg), min(max_pause, pause)
+                        action, arg, pause = "continue", (index, start, repeats, times, arg), min(max_pause, pause)
                         break
 
                     elif action == "event":
@@ -403,6 +403,8 @@ class RawMultipurpose(RawStatement):
         self.duration = None
         self.properties = [ ]
         self.expressions = [ ]
+        self.revolution = None
+        self.circles = "0"
         
     def add_warper(self, name, duration):
         self.warper = name
@@ -414,6 +416,12 @@ class RawMultipurpose(RawStatement):
     def add_expression(self, expr, with_clause):
         self.expressions.append((expr, with_clause))
 
+    def add_revolution(self, revolution):
+        self.revolution = revolution
+        
+    def add_circles(self, circles):
+        self.circles = circles
+        
     def compile(self, ctx):
 
         compiling(self.loc)
@@ -476,7 +484,9 @@ class RawMultipurpose(RawStatement):
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
-        return Interpolation(self.loc, warper, duration, properties)
+        circles = ctx.eval(self.circles)
+
+        return Interpolation(self.loc, warper, duration, properties, self.revolution, circles)
             
     def predict(self, ctx, callback):
 
@@ -533,12 +543,18 @@ class Child(Statement):
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
-    def __init__(self, loc, warper, duration, properties):
+    def __init__(self, loc, warper, duration, properties, revolution, circles):
         self.loc = loc
         self.warper = warper
         self.duration = duration
         self.properties = properties
 
+        # The direction we revolve in: cw, ccw, or None.
+        self.revolution = revolution
+
+        # The number of complete circles we make.
+        self.circles = circles
+        
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
@@ -551,22 +567,87 @@ class Interpolation(Statement):
             complete = 1.0
 
         complete = warper(complete)
-            
+
         if state is None:
 
-            state = { }
-            
-            for k, v in self.properties:
-                state[k] = get_property(trans, k)
+            # Create a new transform state, and apply the property
+            # changes to it.
+            newtrans = renpy.display.motion.TransformState()
+            newtrans.take_state(trans)
 
-        for k, v in self.properties:
-            value = interpolate(complete, state[k], v)
+            for k, v in self.properties:
+                setattr(newtrans, k, v)
+
+            # Now, the things we change linearly are in the difference
+            # between the new and old states.
+            linear = trans.diff(newtrans)
+            revolution = None
+            splines = [ ]
+            
+            # Clockwise revolution.
+            if self.revolution is not None:
+
+                # Remove various irrelevant motions.
+                for i in [ 'xpos', 'ypos',
+                           'xanchor', 'yanchor',
+                           'xaround', 'yaround',
+                           'xanchoraround', 'yanchoraround',
+                           ]:
+
+                    linear.pop(i, None)
+
+                if newtrans.xaround is not None:
+
+                    # Ensure we rotate around the new point.
+                    trans.xaround = newtrans.xaround
+                    trans.yaround = newtrans.yaround
+                    trans.xanchoraround = newtrans.xanchoraround
+                    trans.yanchoraround = newtrans.yanchoraround
+
+                    # Get the start and end angles and radii.
+                    startangle = trans.angle
+                    endangle = newtrans.angle
+                    startradius = trans.radius
+                    endradius = newtrans.radius
+
+                    # Make sure the revolution is in the appropriate direction,
+                    # and contains an appropriate number of circles.
+
+                    if self.revolution == "clockwise":
+                        if endangle < startangle:
+                            startangle -= 360
+
+                        startangle -= self.circles * 360
+
+                    elif self.revolution == "counterclockwise":
+                        if endangle > startangle:
+                            startangle += 360
+
+                        startangle += self.circles * 360
+                        
+                    # Store the revolution.
+                    revolution = (startangle, endangle, startradius, endradius)
+            
+            state = (linear, revolution, splines)
+
+        else:
+            linear, revolution, splines = state
+
+        # Linearly interpolate between the things in linear.
+        for k, (old, new) in linear.iteritems():
+            value = interpolate(complete, old, new)
             setattr(trans, k, value)
 
-        if st > self.duration:
+        # Handle the revolution.
+        if revolution is not None:
+            startangle, endangle, startradius, endradius = revolution
+            trans.angle = interpolate(complete, startangle, endangle)
+            trans.radius = interpolate(complete, startradius, endradius)
+            
+        if st >= self.duration:
             return "next", st - self.duration, None
         else:
-            if not self.properties:
+            if not self.properties and not self.revolution:
                 return "continue", state, self.duration - st
             else:            
                 return "continue", state, 0
@@ -575,7 +656,7 @@ class Interpolation(Statement):
 # Implementation of the repeat statement.
 class RawRepeat(RawStatement):
 
-    def __init__(loc, self, repeats):
+    def __init__(self, loc, repeats):
         self.loc = loc
         self.repeats = repeats
 
@@ -945,6 +1026,19 @@ def parse_atl(l):
             # Now, look for properties and simple_expressions.
             while True:
 
+                # Parse revolution keywords.
+                if l.keyword('clockwise'):
+                    rm.add_revolution('clockwise')
+                    continue
+
+                if l.keyword('counterclockwise'):
+                    rm.add_revolution('counterclockwise')
+                    continue
+
+                if l.keyword('circles'):
+                    expr = l.require(l.simple_expression)
+                    rm.add_circles(expr)
+
                 # Try to parse a property. 
                 cp = l.checkpoint()
                 
@@ -954,9 +1048,7 @@ def parse_atl(l):
                     expr = l.require(l.simple_expression)
                     rm.add_property(prop, expr)
                     continue
-
-                # TODO: parse revolve and spline. 
-                
+                    
                 # Otherwise, try to parse it as a simple expressoon,
                 # with an optional with clause.
 
