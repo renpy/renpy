@@ -401,11 +401,10 @@ class ATLTransform(renpy.atl.TransformBase, Transform):
         kwargs["child"] = child
         kwargs["new"] = new_widget
         kwargs["old"] = old_widget
-        
+
         rv = ATLTransform(
             atl=self.atl,
             child=child,
-            function=self.function,
             context=kwargs)
 
         rv.take_state(self)
