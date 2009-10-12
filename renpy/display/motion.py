@@ -32,13 +32,176 @@ import renpy
 from renpy.display.render import render, IDENTITY, Matrix2D
 from renpy.display.layout import Container
 
+# Convert a position from cartesian to polar coordinates.
+def cartesian_to_polar(x, y, xaround, yaround):
+    dx = x - xaround
+    dy = y - yaround
+
+    radius = math.hypot(dx, dy)
+    angle = math.atan2(dx, -dy) / math.pi * 180
+
+    if angle < 0:
+        angle += 360
+    
+    return angle, radius
+    
+def polar_to_cartesian(angle, radius, xaround, yaround):
+
+    angle = angle * math.pi / 180
+    
+    dx = radius * math.sin(angle)
+    dy = -radius * math.cos(angle)
+    
+    x = type(xaround)(xaround + dx)
+    y = type(yaround)(yaround + dy)
+    
+    return x, y
+
+
+class TransformState(renpy.object.Object):
+
+    def __init__(self):
+        self.alpha = 1
+        self.rotate = None
+        self.zoom = 1
+        self.xzoom = 1
+        self.yzoom = 1
+        
+        self.xpos = 0
+        self.ypos = 0
+        self.xanchor = 0
+        self.yanchor = 0
+
+        self.xaround = 0.0
+        self.yaround = 0.0
+        self.xanchoraround = 0.0
+        self.yanchoraround = 0.0
+        
+    def take_state(self, ts):
+        self.__dict__.update(ts.__dict__)
+       
+    # Returns a dict, with p -> (old, new) where p is a property that
+    # has changed between this object and the new object.
+    def diff(self, ts):
+
+        rv = { }
+        
+        for k, old in self.__dict__.iteritems():
+            new = ts.__dict__[k]
+
+            if old != new:
+                rv[k] = (old, new)
+
+        return rv
+                
+        
+    # These update various properties.
+    def get_xalign(self):
+        return self.xpos 
+
+    def set_xalign(self, v):
+        self.xpos = v
+        self.xanchor = v
+
+    xalign = property(get_xalign, set_xalign)
+
+    def get_yalign(self):
+        return self.ypos 
+
+    def set_yalign(self, v):
+        self.ypos = v
+        self.yanchor = v
+
+    yalign = property(get_yalign, set_yalign)
+
+    def get_around(self):
+        return (self.xaround, self.yaround)
+    
+    def set_around(self, value):
+        self.xaround, self.yaround = value
+        self.xanchoraround, self.yanchoraround = None, None
+
+    def set_alignaround(self, value):
+        self.xaround, self.yaround = value
+        self.xanchoraround, self.yanchoraround = value
+
+    around = property(get_around, set_around)
+    alignaround = property(get_around, set_alignaround)
+        
+    def get_angle(self):
+        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        return angle
+
+    def get_radius(self):
+        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        return radius
+
+    def set_angle(self, value):
+        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        angle = value
+        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+
+        if self.xanchoraround:
+            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+        
+    def set_radius(self, value):
+        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        radius = value
+        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+
+        if self.xanchoraround:
+            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+
+        
+    angle = property(get_angle, set_angle)
+    radius = property(get_radius, set_radius)
+        
+         
+class Proxy(object):
+    """
+    This class proxies a field from the transform to its state.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        return getattr(instance.state, self.name)
+
+    def __set__(self, instance, value):
+        return setattr(instance.state, self.name, value)
+    
 
 class Transform(Container):
 
+    # Proxying things over to our state.
+    alpha = Proxy("alpha")
+    rotate = Proxy("rotate")
+    zoom = Proxy("zoom")
+    xzoom = Proxy("xzoom")
+    yzoom = Proxy("yzoom")
+
+    xpos = Proxy("xpos")
+    ypos = Proxy("ypos")
+    xanchor = Proxy("xanchor")
+    yanchor = Proxy("yanchor")
+
+
+    xalign = Proxy("xalign")
+    yalign = Proxy("yalign")
+
+    around = Proxy("around")
+    around = Proxy("alignaround")
+    angle = Proxy("angle")
+    radius = Proxy("radius")
+
+    
     # Compatibility with old versions of the class.
     active = False
     
-    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1, **kwargs):
+    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1,
+                 xpos=0, ypos=0, xanchor=0, yanchor=0, xalign=None, yalign=None,
+                 **kwargs):
 
         # NOTE: When adding new parameters here, be sure they're
         # also used in called.
@@ -54,17 +217,26 @@ class Transform(Container):
         if child is not None:
             self.add(child)
 
-        self.xpos = None
-        self.ypos = None
-        self.xanchor = None
-        self.yanchor = None        
+        if xalign is not None:
+            xpos = xalign
+            xanchor = xalign
 
-        # Taken from parameters.
-        self.alpha = alpha
-        self.rotate = rotate
-        self.zoom = zoom
-        self.xzoom = xzoom
-        self.yzoom = yzoom
+        if yalign is not None:
+            ypos = yalign
+            yanchor = yalign
+
+        self.state = TransformState()
+            
+        self.state.alpha = alpha
+        self.state.rotate = rotate
+        self.state.zoom = zoom
+        self.state.xzoom = xzoom
+        self.state.yzoom = yzoom
+
+        self.state.xpos = xpos
+        self.state.ypos = ypos
+        self.state.xanchor = xanchor
+        self.state.yanchor = yanchor     
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -73,16 +245,7 @@ class Transform(Container):
         self.active = False
         
     def take_state(self, t):
-        self.xpos = t.xpos
-        self.ypos = t.ypos
-        self.xanchor = t.xanchor
-        self.yanchor = t.yanchor
-
-        self.alpha = t.alpha
-        self.rotate = t.rotate
-        self.zoom = t.zoom
-        self.xzoom = t.xzoom
-        self.yzoom = t.yzoom
+        self.state.take_state(t.state)
         
     def render(self, width, height, st, at):
 
@@ -102,13 +265,13 @@ class Transform(Container):
         xo = yo = 0
         
         # Rotation first.
-        if self.rotate is not None:
+        if self.state.rotate is not None:
 
             cw = width
             ch = height
             
             width = height = math.hypot(cw, ch)
-            angle = -self.rotate * math.pi / 180
+            angle = -self.state.rotate * math.pi / 180
         
             xdx = math.cos(angle)
             xdy = -math.sin(angle)
@@ -128,9 +291,12 @@ class Transform(Container):
             xo += width / 2.0
             yo += height / 2.0
 
-        if self.zoom != 1 or self.xzoom != 1 or self.yzoom != None:
-            xzoom = self.zoom * self.xzoom
-            yzoom = self.zoom * self.yzoom
+            
+        xzoom = self.state.zoom * self.state.xzoom
+        yzoom = self.state.zoom * self.state.yzoom
+
+
+        if xzoom != 1 or yzoom != 1:
 
             forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
             reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
@@ -148,7 +314,7 @@ class Transform(Container):
             
         self.forward = forward
 
-        rv.alpha = self.alpha
+        rv.alpha = self.state.alpha
 
         rv.subpixel_blit(cr, (xo, yo), main=True)
 
@@ -179,15 +345,14 @@ class Transform(Container):
         return None
             
     def __call__(self, child):
-        return Transform(
+        rv = Transform(
             child=child,
             function=self.function,
-            alpha=self.alpha,
-            rotate=self.rotate,
-            zoom=self.zoom,
-            xzoom=self.xzoom,
-            yzoom=self.yzoom,
             **self.kwargs)
+
+        rv.take_state(self)
+
+        return rv
         
     def get_placement(self):
 
@@ -199,20 +364,20 @@ class Transform(Container):
                     renpy.display.render.redraw(self, fr)
 
         self.active = True
-
-        xpos = self.xpos
+        
+        xpos = self.state.xpos
         if xpos is None:
             xpos = self.style.xpos
 
-        ypos = self.ypos
+        ypos = self.state.ypos
         if ypos is None:
             ypos = self.style.ypos
 
-        xanchor = self.xanchor
+        xanchor = self.state.xanchor
         if xanchor is None:
             xanchor = self.style.xanchor
 
-        yanchor = self.yanchor
+        yanchor = self.state.yanchor
         if yanchor is None:
             yanchor = self.style.yanchor
 
@@ -220,25 +385,6 @@ class Transform(Container):
 
     def update(self):
         renpy.display.render.invalidate(self)
-
-    # These update various properties.
-    def get_xalign(self):
-        return self.xpos 
-
-    def set_xalign(self, v):
-        self.xpos = v
-        self.xanchor = v
-
-    xalign = property(get_xalign, set_xalign)
-
-    def get_yalign(self):
-        return self.ypos 
-
-    def set_yalign(self, v):
-        self.ypos = v
-        self.yanchor = v
-
-    yalign = property(get_yalign, set_yalign)
     
         
 class ATLTransform(renpy.atl.TransformBase, Transform):
@@ -256,11 +402,15 @@ class ATLTransform(renpy.atl.TransformBase, Transform):
         kwargs["new"] = new_widget
         kwargs["old"] = old_widget
         
-        return ATLTransform(
+        rv = ATLTransform(
             atl=self.atl,
             child=child,
+            function=self.function,
             context=kwargs)
 
+        rv.take_state(self)
+        return rv
+        
     def parameterize(self, name, parameters):
         if parameters:
             raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
