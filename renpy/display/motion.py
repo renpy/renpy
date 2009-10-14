@@ -151,10 +151,17 @@ class TransformState(renpy.object.Object):
 
         if self.xanchoraround:
             self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
-
         
     angle = property(get_angle, set_angle)
     radius = property(get_radius, set_radius)
+
+    def get_pos(self):
+        return self.xpos, self.ypos
+
+    def set_pos(self, value):
+        self.xpos, self.ypos = value
+
+    pos = property(get_pos, set_pos)
         
          
 class Proxy(object):
@@ -186,7 +193,6 @@ class Transform(Container):
     xanchor = Proxy("xanchor")
     yanchor = Proxy("yanchor")
 
-
     xalign = Proxy("xalign")
     yalign = Proxy("yalign")
 
@@ -195,6 +201,8 @@ class Transform(Container):
     angle = Proxy("angle")
     radius = Proxy("radius")
 
+    pos = Proxy("pos")
+    
     
     # Compatibility with old versions of the class.
     active = False

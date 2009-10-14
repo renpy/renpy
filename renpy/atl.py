@@ -53,23 +53,24 @@ def pause(t):
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = set([
-    "xpos",
-    "ypos",
-    "xanchor",
-    "yanchor",
-    "xalign",
-    "yalign",
-    "rotate",
-    "xzoom",
-    "yzoom",
-    "zoom",
-    "alpha",
-    "around",
-    "angle",
-    "radius",
-    "alignaround",
-    "alignangle",
-    "alignradius",
+        "pos",
+        "xpos",
+        "ypos",
+        "xanchor",
+        "yanchor",
+        "xalign",
+        "yalign",
+        "rotate",
+        "xzoom",
+        "yzoom",
+        "zoom",
+        "alpha",
+        "around",
+        "angle",
+        "radius",
+        "alignaround",
+        "alignangle",
+        "alignradius",
     ])
 
 def interpolate(t, a, b):
@@ -94,6 +95,39 @@ def interpolate(t, a, b):
     # Interpolate everything else.
     else:
         return type(b)(a + t * (b - a))
+
+# Interpolate the value of a spline. This code is based on Aenakume's code,
+# from 00splines.rpy.
+def interpolate_spline(t, spline):
+
+    if isinstance(spline[-1], tuple):
+        return tuple(interpolate_spline(t, i) for i in zip(*spline))
+        
+    if len(spline) == 2:
+        t_p = 1.0 - t        
+
+        rv = t_p * spline[0] + t * spline[-1]
+
+    elif len(spline) == 3:
+        t_pp = (1.0 - t)**2
+        t_p = 2 * t * (1.0 - t)
+        t2 = t**2
+        
+        rv = t_pp * spline[0] + t_p * spline[1] + t2 * spline[2]
+
+    elif len(spline) == 4:
+
+        t_ppp = (1.0 - t)**3
+        t_pp = 3 * t * (1.0 - t)**2
+        t_p = 3 * t**2 * (1.0 - t)
+        t3 = t**3
+        
+        rv = t_ppp * spline[0] + t_pp * spline[1] + t_p * spline[2] + t3 * spline[3]
+
+    else:
+        raise Exception("ATL can't interpolate splines of length %d." % len(spline))
+
+    return type(spline[-1])(rv)
     
 
 # This is the context used when compiling an ATL statement. It stores the
@@ -403,6 +437,7 @@ class RawMultipurpose(RawStatement):
         self.duration = None
         self.properties = [ ]
         self.expressions = [ ]
+        self.splines = [ ]
         self.revolution = None
         self.circles = "0"
         
@@ -421,6 +456,9 @@ class RawMultipurpose(RawStatement):
         
     def add_circles(self, circles):
         self.circles = circles
+
+    def add_spline(self, name, exprs):
+        self.splines.append((name, exprs))
         
     def compile(self, ctx):
 
@@ -429,7 +467,10 @@ class RawMultipurpose(RawStatement):
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
-        if self.warper is None and not self.properties and len(self.expressions) == 1:
+        if (self.warper is None and
+            not self.properties and
+            not self.splines and
+            len(self.expressions) == 1):
 
             expr, withexpr = self.expressions[0]
 
@@ -466,6 +507,16 @@ class RawMultipurpose(RawStatement):
             value = ctx.eval(expr)
             properties.append((name, value))
 
+        splines = [ ]
+            
+        for name, exprs in self.splines:
+            if name not in PROPERTIES:
+                raise Exception("ATL Property %s is unknown at runtime." % property)
+
+            values = [ ctx.eval(i) for i in exprs ]
+
+            splines.append((name, values))
+            
         for expr, with_ in self.expressions:
             try:
                 value = ctx.eval(expr)
@@ -486,7 +537,7 @@ class RawMultipurpose(RawStatement):
         duration = ctx.eval(self.duration)
         circles = ctx.eval(self.circles)
 
-        return Interpolation(self.loc, warper, duration, properties, self.revolution, circles)
+        return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
             
     def predict(self, ctx, callback):
 
@@ -543,12 +594,13 @@ class Child(Statement):
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
-    def __init__(self, loc, warper, duration, properties, revolution, circles):
+    def __init__(self, loc, warper, duration, properties, revolution, circles, splines):
         self.loc = loc
         self.warper = warper
         self.duration = duration
         self.properties = properties
-
+        self.splines = splines
+        
         # The direction we revolve in: cw, ccw, or None.
         self.revolution = revolution
 
@@ -627,12 +679,16 @@ class Interpolation(Statement):
                         
                     # Store the revolution.
                     revolution = (startangle, endangle, startradius, endradius)
-            
+
+            # Figure out the splines.
+            for name, values in self.splines:
+                splines.append((name, [ getattr(trans, name) ] + values))
+                    
             state = (linear, revolution, splines)
 
         else:
             linear, revolution, splines = state
-
+            
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new)
@@ -643,11 +699,16 @@ class Interpolation(Statement):
             startangle, endangle, startradius, endradius = revolution
             trans.angle = interpolate(complete, startangle, endangle)
             trans.radius = interpolate(complete, startradius, endradius)
+
+        # Handle any splines we might have.
+        for name, values in splines:
+            value = interpolate_spline(complete, values)
+            setattr(trans, name, value)
             
         if st >= self.duration:
             return "next", st - self.duration, None
         else:
-            if not self.properties and not self.revolution:
+            if not self.properties and not self.revolution and not self.splines:
                 return "continue", state, self.duration - st
             else:            
                 return "continue", state, 0
@@ -1046,7 +1107,21 @@ def parse_atl(l):
 
                 if prop in PROPERTIES:
                     expr = l.require(l.simple_expression)
-                    rm.add_property(prop, expr)
+
+                    # We either have a property or a spline. It's the
+                    # presence of knots that determine which one it is.
+
+                    knots = [ ]
+                    
+                    while l.keyword('knot'):
+                        knots.append(l.require(l.simple_expression))
+
+                    if knots:
+                        knots.append(expr)
+                        rm.add_spline(prop, knots)
+                    else:
+                        rm.add_property(prop, expr)
+
                     continue
                     
                 # Otherwise, try to parse it as a simple expressoon,
