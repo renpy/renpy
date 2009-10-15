@@ -76,6 +76,11 @@ class TransformState(renpy.object.Object):
         self.yaround = 0.0
         self.xanchoraround = 0.0
         self.yanchoraround = 0.0
+
+        self.subpixel = False
+
+        self.crop = None
+        self.size = None
         
     def take_state(self, ts):
         self.__dict__.update(ts.__dict__)
@@ -181,6 +186,8 @@ class Proxy(object):
 
 class Transform(Container):
 
+    __version__ = 1
+    
     # Proxying things over to our state.
     alpha = Proxy("alpha")
     rotate = Proxy("rotate")
@@ -202,7 +209,27 @@ class Transform(Container):
     radius = Proxy("radius")
 
     pos = Proxy("pos")
+
+    crop = Proxy("crop")
+    size = Proxy("size")
     
+
+    def after_upgrade(version):
+
+        if version < 1:
+            self.active = False
+            self.state = TransformState()
+
+            self.state.xpos = self.xpos or 0
+            self.state.ypos = self.ypos or 0
+            self.state.xanchor = self.xanchor or 0
+            self.state.yanchor = self.yanchor or 0
+            self.state.alpha = self.alpha
+            self.state.rotate = self.rotate
+            self.state.zoom = self.zoom
+            self.state.xzoom = self.xzoom
+            self.state.yzoom = self.yzoom
+            
     
     # Compatibility with old versions of the class.
     active = False
@@ -266,12 +293,25 @@ class Transform(Container):
         self.active = True
                 
         cr = render(self.child, width, height, st, at)
+
+        # Handle cropping.
+        if self.state.crop:
+            cr = cr.subsurface(self.state.crop)
+
         width, height = cr.get_size()
 
         forward = IDENTITY
         reverse = IDENTITY
         xo = yo = 0
-        
+
+        # Handle size.
+        if self.state.size:
+            nw, nh = self.state.size
+            xzoom = 1.0 * nw / width
+            yzoom = 1.0 * nh / height
+            forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+            reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
+
         # Rotation first.
         if self.state.rotate is not None:
 
@@ -286,14 +326,14 @@ class Transform(Container):
             ydx = -xdy 
             ydy = xdx 
 
-            forward = Matrix2D(xdx, xdy, ydx, ydy)
+            forward = forward * Matrix2D(xdx, xdy, ydx, ydy)
 
             xdx = math.cos(-angle)
             xdy = -math.sin(-angle)
             ydx = -xdy 
             ydy = xdx 
 
-            reverse = Matrix2D(xdx, xdy, ydx, ydy)
+            reverse = Matrix2D(xdx, xdy, ydx, ydy) * reverse
 
             xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
             xo += width / 2.0
@@ -389,7 +429,7 @@ class Transform(Container):
         if yanchor is None:
             yanchor = self.style.yanchor
 
-        return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.style.subpixel
+        return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.state.subpixel
 
     def update(self):
         renpy.display.render.invalidate(self)

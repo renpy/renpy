@@ -461,7 +461,7 @@ class Clipper(object):
 
             updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
 
-            
+
         return (x0, y0, x1 - x0, y1 - y0), updates
             
 clippers = [ Clipper() ]        
@@ -623,9 +623,11 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         # is on the screen.
         sw, sh = what.get_size()
         if clip:
+
             dx0, dy0, dx1, dy1 = clip
             dw = dx1 - dx0
             dh = dy1 - dy0
+
         else:
             dw, dh = dest.get_size()
         
@@ -639,6 +641,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         miny = math.floor(min(y0, y1, y2, y3) + yo)
         maxy = math.ceil(max(y0, y1, y2, y3) + yo)
 
+        
         if minx < 0:
             minx = 0
         if miny < 0:
@@ -655,8 +658,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         cx, cy = forward.transform(minx - xo, miny - yo)
 
         if clip:
+
             dest.blits.append(
-                (minx, miny, maxx, maxy, clip, what,
+                (minx, miny, maxx + dx0, maxy + dy0, clip, what,
                  (cx, cy,
                   forward.xdx, forward.ydx,
                   forward.xdy, forward.ydy,
@@ -676,8 +680,63 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         return
 
     if what.clipping:
-        raise Exception("Clipping a transformed surface is not supported.")
 
+        if reverse.xdy or reverse.ydx:        
+            draw_transformed(dest, clip, what.pygame_surface(True), xo, yo, alpha, forward, reverse)
+            return
+            
+
+            # raise Exception("Non-axis-aligned clipping is not supported.")
+
+
+        
+        width = what.width * reverse.xdx
+        height = what.height * reverse.ydy
+
+        if clip:
+            cx0, cy0, cx1, cy1 = clip
+
+            cx0 = max(cx0, xo)
+            cy0 = max(cy0, yo)
+            cx1 = min(cx1, xo + width)
+            cy1 = min(cy1, yo + height)
+
+            if cx0 > cx1 or cy0 > cy1:
+                return
+            
+            clip = (cx0, cy0, cx1, cy1)
+
+        else:
+
+            # After this code, x and y are the coordinates of the subsurface
+            # relative to the destination. xo and yo are the offset of the
+            # upper-left corner relative to the subsurface.
+            
+            if xo >= 0:
+                x = xo
+                xo = 0
+            else:
+                x = 0
+                # xo = xo 
+
+            if yo >= 0:
+                y = yo
+                yo = 0
+            else:
+                y = 0
+                # yo = yo 
+
+            dw, dh = dest.get_size()
+
+            width = min(dw - x, width + xo)
+            height = min(dh - y, height + yo)
+
+            if width < 0 or height < 0:
+                return
+
+            dest = dest.subsurface((x, y, width, height))
+        
+        
     if what.draw_func:
         raise Exception("Using a draw_func on a transformed surface is not supported.")
 
@@ -693,7 +752,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             child_reverse = reverse
             
         draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
-
 
 
 def render_screen(root, width, height):

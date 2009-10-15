@@ -66,12 +66,12 @@ PROPERTIES = set([
         "zoom",
         "alpha",
         "around",
+        "alignaround",
         "angle",
         "radius",
-        "alignaround",
-        "alignangle",
-        "alignradius",
-    ])
+        "crop",
+        "size",
+        ])
 
 def interpolate(t, a, b):
     """
