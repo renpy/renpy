@@ -80,7 +80,10 @@ class TransformState(renpy.object.Object):
         self.subpixel = False
 
         self.crop = None
+        self.corner1 = None
+        self.corner2 = None
         self.size = None
+
         
     def take_state(self, ts):
         self.__dict__.update(ts.__dict__)
@@ -168,7 +171,9 @@ class TransformState(renpy.object.Object):
 
     pos = property(get_pos, set_pos)
         
-         
+        
+
+    
 class Proxy(object):
     """
     This class proxies a field from the transform to its state.
@@ -211,8 +216,9 @@ class Transform(Container):
     pos = Proxy("pos")
 
     crop = Proxy("crop")
+    corner1 = Proxy("corner1")
+    corner2 = Proxy("corner2")
     size = Proxy("size")
-    
 
     def after_upgrade(version):
 
@@ -248,7 +254,6 @@ class Transform(Container):
 
         self.function = function
 
-        # Taken from the style by default.
         if child is not None:
             self.add(child)
 
@@ -294,12 +299,25 @@ class Transform(Container):
                 
         cr = render(self.child, width, height, st, at)
 
+        # Compute the crop.
+        crop = self.state.crop
+        if crop is None and self.state.corner1 and self.state.corner2:
+            x1, y1 = self.state.corner1
+            x2, y2 = self.state.corner2
+
+            minx = min(x1, x2)
+            maxx = max(x1, x2)
+            miny = min(y1, y2)
+            maxy = max(y1, y2)
+
+            crop = (minx, miny, maxx - minx, maxy - miny)
+            
         # Handle cropping.
-        if self.state.crop:
-            cr = cr.subsurface(self.state.crop)
+        if crop:
+            cr = cr.subsurface(crop)
 
         width, height = cr.get_size()
-
+        
         forward = IDENTITY
         reverse = IDENTITY
         xo = yo = 0
@@ -364,8 +382,11 @@ class Transform(Container):
 
         rv.alpha = self.state.alpha
 
-        rv.subpixel_blit(cr, (xo, yo), main=True)
-
+        if self.state.subpixel:
+            rv.subpixel_blit(cr, (xo, yo), main=True)
+        else:
+            rv.blit(cr, (xo, yo), main=True)
+            
         self.offsets = [ (xo, yo) ]
         
         return rv
@@ -433,11 +454,11 @@ class Transform(Container):
 
     def update(self):
         renpy.display.render.invalidate(self)
-    
+
         
 class ATLTransform(renpy.atl.TransformBase, Transform):
     
-    def __init__(self, atl, context={}, child=None, **kwargs):
+    def __init__(self, atl, child=None,context={},  **kwargs):
         renpy.atl.TransformBase.__init__(self, atl, context)
         Transform.__init__(self, child=child, function=self.execute, **kwargs)
 
@@ -449,7 +470,7 @@ class ATLTransform(renpy.atl.TransformBase, Transform):
         kwargs["child"] = child
         kwargs["new"] = new_widget
         kwargs["old"] = old_widget
-
+        
         rv = ATLTransform(
             atl=self.atl,
             child=child,

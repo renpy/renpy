@@ -666,7 +666,7 @@ class Transform(Node):
         return (Transform, self.name)
 
     def execute(self):
-                
+
         trans = renpy.display.motion.ATLTransform(self.atl)
         setattr(renpy.store, self.name, trans)
                 

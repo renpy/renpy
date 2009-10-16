@@ -396,6 +396,9 @@ class Button(renpy.display.layout.Window):
         if self.activated:
             return None
 
+        if not default:
+            self.transform_event = "hover"
+        
         if self.hovered and not default:
             return self.hovered()
 
@@ -405,6 +408,8 @@ class Button(renpy.display.layout.Window):
 
         if self.activated:
             return None
+
+        self.transform_event = "idle"
         
         if self.unhovered:
             self.unhovered()

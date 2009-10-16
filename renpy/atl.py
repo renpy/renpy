@@ -189,7 +189,11 @@ class TransformBase(renpy.object.Object):
         if self.done:
             return None
 
-        event = None
+        event = self.child.transform_event
+
+        if event is not None:
+            self.child.transform_event = None
+            self.transform_event = event
         
         if not self.block:
             self.compile()
@@ -214,7 +218,7 @@ class TransformBase(renpy.object.Object):
         if not self.block:
             self.compile()
 
-        return self.block.visit()
+        return self.children + self.block.visit()
         
     
 # The base class for raw ATL statements.
@@ -885,6 +889,7 @@ class Time(Statement):
 class RawOn(RawStatement):
 
     def __init__(self, loc, name, block):
+        self.loc = loc
         self.handlers = { name : block }
 
     def compile(self, ctx):

@@ -833,7 +833,7 @@ def take_focuses(focuses):
     screen_render.take_focuses(
         0, 0, screen_render.width, screen_render.height,
         IDENTITY, 0, 0, focuses)
-
+    
 def focus_at_point(x, y):
     """
     Returns a focus object corresponding to the uppermost displayable

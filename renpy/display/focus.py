@@ -169,10 +169,9 @@ def before_interact(roots):
     for f, n in fwn:
         if f is not current:
             f.unfocus()
-
+            
     if current:
         current.focus(default=True)
-
     
 
 # This changes the focus to be the widget contained inside the new

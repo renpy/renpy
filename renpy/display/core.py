@@ -94,6 +94,9 @@ class Displayable(renpy.object.Object):
     focusable = False
     full_focus_name = None
     role = ''
+
+    # The event we'll pass on to our parent transform.
+    transform_event = None
     
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties, heavy=True)
@@ -209,7 +212,7 @@ class Displayable(renpy.object.Object):
 
         while worklist:
             d = worklist.pop(0)
-
+            
             if d is None:
                 continue
 
