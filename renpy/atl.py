@@ -71,6 +71,9 @@ PROPERTIES = set([
         "radius",
         "crop",
         "size",
+        "corner1",
+        "corner2",
+        "subpixel",
         ])
 
 def interpolate(t, a, b):

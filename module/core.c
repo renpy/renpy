@@ -960,15 +960,17 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 }
 
 #define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
-                
+#define EPSILON (1.0 / 2048.0)
+
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
-void transform32_std(PyObject *pysrc, PyObject *pydst,
+int transform32_std(PyObject *pysrc, PyObject *pydst,
                      float corner_x, float corner_y,
                      float xdx, float ydx,
                      float xdy, float ydy,
-                     int ashift, float a) {
+                     int ashift,
+                     float a) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -978,12 +980,13 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     int srcw, srch;
     int dstw, dsth;
     
+    // The x and y source pixel coordinates, times 65536. And their
+    // delta-per-dest-x-pixel.
+    int sxi, syi, dsxi, dsyi;
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    float lsx, lsy; // The position of the current line in the source.
-    float sx, sy; // The position of the current pixel in the source.
-    
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
@@ -998,81 +1001,102 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
-    unsigned int amul = (int) (a * 256);
-    
-    lsx = corner_x * 65536;
-    lsy = corner_y * 65536;
+    // Compute the coloring multiplier.
+    unsigned int amul = (unsigned int) (a * 256);
 
-    xdx *= 65536;
-    ydx *= 65536;
-    xdy *= 65536;
-    ydy *= 65536;
+    // Compute the maximum x and y coordinates.
+    float maxsx = srcw - 1 - EPSILON;
+    float maxsy = srch - 1 - EPSILON;
 
+    // If a delta is too even, subtract epsilon (towards 0) from it.
+    if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
+        xdx -= (xdx / fabs(xdx)) * EPSILON;
+    }
+    if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
+        xdy -= (xdy / fabs(xdy)) * EPSILON;
+    }
+    if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
+        ydx -= (ydx / fabs(ydx)) * EPSILON;
+    }
+    if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
+        ydy -= (ydy / fabs(ydy)) * EPSILON;
+    }
 
-    // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 1) * 65536 - 1;
-    float fsh = (srch - 1) * 65536 - 1;
-
-    for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
-
-        sx = lsx;
-        sy = lsy;
+    // Loop through every line.
+    for (y = 0; y < dsth; y++) {
         
-        // unsigned char *d = dstpixels + dstpitch * y;
-        // unsigned char *dend = d + 4 * dstw;
+        // The source coordinates of the leftmost pixel in the line.
+        float leftsx = corner_x + y * xdy;
+        float leftsy = corner_y + y * ydy;
 
+        // Min and max x-extent to draw on the current line.
         float minx = 0;
         float maxx = dstw - 1;
 
-        if (xdx != 0) {
-            float d1 = -lsx / xdx;
-            float d2 = (fsw - lsx) / xdx;
+        // Figure out the x-extent based on xdx.
+        if (xdx) {
+            float x1 = (0.0 - leftsx) / xdx;
+            float x2 = (maxsx - leftsx) / xdx;
 
-            minx = fmaxf(minx, fminf(d1, d2)); 
-            maxx = fminf(maxx, fmaxf(d1, d2)); 
+            if (x1 < x2) {
+                minx = fmaxf(x1, minx);
+                maxx = fminf(x2, maxx);                
+            } else {
+                minx = fmaxf(x2, minx);
+                maxx = fminf(x1, maxx);                
+            }
+
+        } else {
+            if (leftsx < 0 || leftsx > maxsx) {
+               continue;
+            }
+        }
+
+        // Figure out the x-extent based on ydx.
+        if (ydx) {
+            float x1 = (0.0 - leftsy) / ydx;
+            float x2 = (maxsy - leftsy) / ydx;
+
+            if (x1 < x2) {
+                minx = fmaxf(x1, minx);
+                maxx = fminf(x2, maxx);                
+            } else {
+                minx = fmaxf(x2, minx);
+                maxx = fminf(x1, maxx);                
+            }
             
-        } else if ( lsx < 0 || lsx >= fsw) {
-            continue;
+        } else {
+            if (leftsy < 0 || leftsy > maxsy) {
+                continue;
+            }
         }
-
-        if (ydx != 0) {
-            float d1 = -lsy / ydx;
-            float d2 = (fsh - lsy) / ydx;
-
-            minx = fmaxf(minx, fminf(d1, d2)); 
-            maxx = fminf(maxx, fmaxf(d1, d2)); 
-        } else if ( lsy < 0 || lsy >= fsh) {
-            continue;
-        }
-
-        if (minx > maxx) {
-            continue;
-        }
-
+                
         minx = ceil(minx);
         maxx = floor(maxx);
-
+        
+        
+        // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;
         unsigned char *dend = d + 4 * (int) maxx;
+
+        // Advance start of line by 4.
         d += 4 * (int) minx;
 
-        sx = lsx + minx * xdx;
-        sy = lsy + minx * ydx;
-
-        int sxi = (int) sx;
-        int syi = (int) sy;
-        int xdxi = (int) xdx;
-        int ydxi = (int) ydx;
+        // Starting coordinates and deltas.
+        sxi = (int) ((leftsx + minx * xdx) * 65536); 
+        syi = (int) ((leftsy + minx * ydx) * 65536);
+        dsxi = (int) (xdx * 65536);
+        dsyi = (int) (ydx * 65536);
 
         while (d <= dend) {
-            int px, py;
-            px = sxi >> 16;
-            py = syi >> 16;
-                
+
+            int px = sxi >> 16;
+            int py = syi >> 16;
+
             unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
-            int yfrac = (syi >> 8) & 0xff; // ((short) sy) & 0xff;
-            int xfrac = (sxi >> 8) & 0xff; // ((short) sx) & 0xff;
+            unsigned int yfrac = (syi >> 8) & 0xff; // ((short) sy) & 0xff;
+            unsigned int xfrac = (sxi >> 8) & 0xff; // ((short) sx) & 0xff;
 
             unsigned int pal = *(unsigned int *) sp;
             unsigned int pbl = *(unsigned int *) (sp + 4);
@@ -1104,15 +1128,23 @@ void transform32_std(PyObject *pysrc, PyObject *pydst,
             dh = I(dh, rh, alpha);
             
             * (unsigned int *) d = (dh << 8) | dl;
-
+            
             d += 4;
-            sxi += xdxi;
-            syi += ydxi;
+            sxi += dsxi;
+            syi += dsyi;
         }
+
     }
 
-    Py_END_ALLOW_THREADS
+    Py_END_ALLOW_THREADS;
+
+
+    // This is bogus, and only serves to ensure that the FPU
+    // computes these variables at the right times.
+    return sxi + syi + dsxi + dsyi;
 }
+
+
 
 #ifdef GCC_MMX
 
@@ -1131,19 +1163,16 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     
     int y;
     int srcpitch, dstpitch;
-                               
     int srcw, srch;
     int dstw, dsth;
     
+    // The x and y source pixel coordinates, times 65536. And their
+    // delta-per-dest-x-pixel.
+    int sxi, syi, dsxi, dsyi;
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    float lsx, lsy; // The position of the current line in the source.
-    float sx, sy; // The position of the current pixel in the source.
-    unsigned int px, py;
-    unsigned int sxi, syi;
-    unsigned int xdxi, ydxi;
-        
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
         
@@ -1163,63 +1192,90 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
     // Compute the coloring multiplier.
     unsigned int amul = (unsigned int) (a * 256);
-    
-    lsx = corner_x * 65536;
-    lsy = corner_y * 65536;
 
-    xdx *= 65536;
-    ydx *= 65536;
-    xdy *= 65536;
-    ydy *= 65536;
+    // Compute the maximum x and y coordinates.
+    float maxsx = srcw - 1 - EPSILON;
+    float maxsy = srch - 1 - EPSILON;
 
-    // Scaled subtracted srcw and srch.
-    float fsw = (srcw - 1) * 65536 - 1;
-    float fsh = (srch - 1) * 65536 - 1;
+    // If a delta is too even, subtract epsilon (towards 0) from it.
+    if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
+        xdx -= (xdx / fabs(xdx)) * EPSILON;
+    }
+    if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
+        xdy -= (xdy / fabs(xdy)) * EPSILON;
+    }
+    if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
+        ydx -= (ydx / fabs(ydx)) * EPSILON;
+    }
+    if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
+        ydy -= (ydy / fabs(ydy)) * EPSILON;
+    }
 
-    for (y = 0; y < dsth; y++, lsx += xdy, lsy += ydy) {
+    // Loop through every line.
+    for (y = 0; y < dsth; y++) {
+        
+        // The source coordinates of the leftmost pixel in the line.
+        float leftsx = corner_x + y * xdy;
+        float leftsy = corner_y + y * ydy;
 
+        // Min and max x-extent to draw on the current line.
         float minx = 0;
         float maxx = dstw - 1;
 
-        if (xdx != 0) {
-            float d1 = -lsx / xdx;
-            float d2 = (fsw - lsx) / xdx;
+        // Figure out the x-extent based on xdx.
+        if (xdx) {
+            float x1 = (0.0 - leftsx) / xdx;
+            float x2 = (maxsx - leftsx) / xdx;
 
-            minx = fmaxf(minx, fminf(d1, d2)); 
-            maxx = fminf(maxx, fmaxf(d1, d2)); 
+            if (x1 < x2) {
+                minx = fmaxf(x1, minx);
+                maxx = fminf(x2, maxx);                
+            } else {
+                minx = fmaxf(x2, minx);
+                maxx = fminf(x1, maxx);                
+            }
+
+        } else {
+            if (leftsx < 0 || leftsx > maxsx) {
+               continue;
+            }
+        }
+
+        // Figure out the x-extent based on ydx.
+        if (ydx) {
+            float x1 = (0.0 - leftsy) / ydx;
+            float x2 = (maxsy - leftsy) / ydx;
+
+            if (x1 < x2) {
+                minx = fmaxf(x1, minx);
+                maxx = fminf(x2, maxx);                
+            } else {
+                minx = fmaxf(x2, minx);
+                maxx = fminf(x1, maxx);                
+            }
             
-        } else if ( lsx < 0 || lsx >= fsw) {
-            continue;
+        } else {
+            if (leftsy < 0 || leftsy > maxsy) {
+                continue;
+            }
         }
-
-        if (ydx != 0) {
-            float d1 = -lsy / ydx;
-            float d2 = (fsh - lsy) / ydx;
-
-            minx = fmaxf(minx, fminf(d1, d2)); 
-            maxx = fminf(maxx, fmaxf(d1, d2)); 
-        } else if ( lsy < 0 || lsy >= fsh) {
-            continue;
-        }
-
-        if (minx > maxx) {
-            continue;
-        }
-        
+                
         minx = ceil(minx);
         maxx = floor(maxx);
         
+        
+        // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;
         unsigned char *dend = d + 4 * (int) maxx;
+
+        // Advance start of line by 4.
         d += 4 * (int) minx;
 
-        sx = (lsx + minx * xdx);
-        sy = (lsy + minx * ydx);
-            
-        sxi = (unsigned int) sx;
-        syi = (unsigned int) sy;
-        xdxi = (int) xdx;
-        ydxi = (int) ydx;
+        // Starting coordinates and deltas.
+        sxi = (int) ((leftsx + minx * xdx) * 65536); 
+        syi = (int) ((leftsy + minx * ydx) * 65536);
+        dsxi = (int) (xdx * 65536);
+        dsyi = (int) (ydx * 65536);
 
         // No floating point allowed between here and the end of the
         // while loop.
@@ -1235,8 +1291,8 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
         
         while (d <= dend) {
 
-            px = sxi >> 16;
-            py = syi >> 16;
+            int px = sxi >> 16;
+            int py = syi >> 16;
 
             unsigned char *sp = srcpixels + py * srcpitch + px * 4;
 
@@ -1310,19 +1366,19 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
             movd_r2m(mm1, *(unsigned int *)d);
             
             d += 4;
-            sxi += xdxi;
-            syi += ydxi;
+            sxi += dsxi;
+            syi += dsyi;
         }
 
         emms();
     }
 
-    Py_END_ALLOW_THREADS
+    Py_END_ALLOW_THREADS;
 
 
-        // This is bogus, and only serves to ensure that the FPU
-        // computes these variables at the right times.
-        return sxi + syi + xdxi + ydxi;
+    // This is bogus, and only serves to ensure that the FPU
+    // computes these variables at the right times.
+    return sxi + syi + dsxi + dsyi;
 }
 
 #endif
