@@ -1,10 +1,6 @@
-# Entry point for the developer console.
-label _developer:
 
-    if not config.developer:
-        return
-
-    call _enter_menu from _call__enter_menu_4
+# This file contains the developer screen, which contains tools that might
+# be of interest to people making Ren'Py games.
 
 label _developer_screen:
 
@@ -369,11 +365,13 @@ init python:
                 w = maxx - minx
                 h = maxy - miny
 
-                sr = renpy.render(Solid("#0ff4"), w, h, st, at)
-                rv.blit(sr, (minx, miny))
+                if w and h:
 
-                text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                text.append("Cropping rectangle: %r" % ((minx, miny, w, h),))
+                    sr = renpy.render(Solid("#0ff4"), w, h, st, at)
+                    rv.blit(sr, (minx, miny))
+
+                    text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
+                    text.append("Cropping rectangle: %r" % ((minx, miny, w, h),))
                 
             if self.mouse:
                 mx, my = self.mouse

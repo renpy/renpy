@@ -784,3 +784,20 @@ init 1180 python hide:
     if config.automatic_images:
         create_automatic_images()
 
+
+# Load the developer screen, if necessary.
+init 1180 python hide:
+
+    if config.developer:
+        renpy.load_module("_developer")
+
+# Entry point for the developer screen. The rest of it is loaded from
+# _developer.rpym
+label _developer:
+
+    if not config.developer:
+        return
+
+    call _enter_menu from _call__enter_menu_4
+
+    jump expression "_developer_screen"
