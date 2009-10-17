@@ -20,6 +20,11 @@ and offscreenright) are now defined as transforms. This means that showing
 an image at such a position will cause the position to be remembered.
 
 
+The displayable code has been adjusted to consider strings that do not
+contain at least one dot as image references. Now, one can write
+"eileen happy" to refer to an image with that name. [doc]
+
+
 A pause statement has been added to Ren'Py. [doc]
 
 

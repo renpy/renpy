@@ -46,9 +46,11 @@ def displayable_or_none(d):
     if isinstance(d, basestring):
         if d[0] == '#':
             return renpy.store.Solid(d)
-        else:
+        elif "." in d:
             return renpy.store.Image(d)
-
+        else:
+            return renpy.store.ImageReference(tuple(d.split()))
+            
     # We assume the user knows what he's doing in this case.
     if hasattr(d, 'parameterize'):
         return d
@@ -66,8 +68,10 @@ def displayable(d):
     if isinstance(d, basestring):
         if d[0] == '#':
             return renpy.store.Solid(d)
-        else:
+        elif "." in d:
             return renpy.store.Image(d)
+        else:
+            return renpy.store.ImageReference(tuple(d.split()))
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, 'parameterize'):

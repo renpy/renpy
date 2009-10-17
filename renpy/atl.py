@@ -192,18 +192,21 @@ class TransformBase(renpy.object.Object):
         if self.done:
             return None
 
-        event = self.child.transform_event
+        event = None
 
-        if event is not None:
-            self.child.transform_event = None
-            self.transform_event = event
+        if self.child:
+            event = self.child.transform_event
+
+            if event is not None:
+                self.child.transform_event = None
+                self.transform_event = event
         
         if not self.block:
             self.compile()
         
         old_exception_info = renpy.game.exception_info
 
-        action, arg, pause = self.block.execute(trans.state, st, self.atl_state, event)
+        action, arg, pause = self.block.execute(trans, st, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
 
@@ -631,15 +634,15 @@ class Interpolation(Statement):
 
             # Create a new transform state, and apply the property
             # changes to it.
-            newtrans = renpy.display.motion.TransformState()
-            newtrans.take_state(trans)
+            newts = renpy.display.motion.TransformState()
+            newts.take_state(trans.state)
 
             for k, v in self.properties:
-                setattr(newtrans, k, v)
+                setattr(newts, k, v)
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
-            linear = trans.diff(newtrans)
+            linear = trans.state.diff(newts)
             revolution = None
             splines = [ ]
             
@@ -655,19 +658,19 @@ class Interpolation(Statement):
 
                     linear.pop(i, None)
 
-                if newtrans.xaround is not None:
+                if newts.xaround is not None:
 
                     # Ensure we rotate around the new point.
-                    trans.xaround = newtrans.xaround
-                    trans.yaround = newtrans.yaround
-                    trans.xanchoraround = newtrans.xanchoraround
-                    trans.yanchoraround = newtrans.yanchoraround
+                    trans.state.xaround = newts.xaround
+                    trans.state.yaround = newts.yaround
+                    trans.state.xanchoraround = newts.xanchoraround
+                    trans.state.yanchoraround = newts.yanchoraround
 
                     # Get the start and end angles and radii.
-                    startangle = trans.angle
-                    endangle = newtrans.angle
-                    startradius = trans.radius
-                    endradius = newtrans.radius
+                    startangle = trans.state.angle
+                    endangle = newts.angle
+                    startradius = trans.state.radius
+                    endradius = newts.radius
 
                     # Make sure the revolution is in the appropriate direction,
                     # and contains an appropriate number of circles.
@@ -689,7 +692,7 @@ class Interpolation(Statement):
 
             # Figure out the splines.
             for name, values in self.splines:
-                splines.append((name, [ getattr(trans, name) ] + values))
+                splines.append((name, [ getattr(trans.state, name) ] + values))
                     
             state = (linear, revolution, splines)
 
@@ -699,18 +702,18 @@ class Interpolation(Statement):
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new)
-            setattr(trans, k, value)
+            setattr(trans.state, k, value)
 
         # Handle the revolution.
         if revolution is not None:
             startangle, endangle, startradius, endradius = revolution
-            trans.angle = interpolate(complete, startangle, endangle)
-            trans.radius = interpolate(complete, startradius, endradius)
+            trans.state.angle = interpolate(complete, startangle, endangle)
+            trans.state.radius = interpolate(complete, startradius, endradius)
 
         # Handle any splines we might have.
         for name, values in splines:
             value = interpolate_spline(complete, values)
-            setattr(trans, name, value)
+            setattr(trans.state, name, value)
             
         if st >= self.duration:
             return "next", st - self.duration, None
