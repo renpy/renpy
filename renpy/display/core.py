@@ -97,6 +97,9 @@ class Displayable(renpy.object.Object):
 
     # The event we'll pass on to our parent transform.
     transform_event = None
+
+    # Can we change our look in response to transform_events?
+    transform_event_responder = False
     
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties, heavy=True)
@@ -335,6 +338,15 @@ class Displayable(renpy.object.Object):
             dest.blit(surf, (xoff, yoff), main=main)
             
         return xoff, yoff
+
+    def set_transform_event(self, event):
+        if event == self.transform_event:
+            return
+
+        self.transform_event = event
+        if self.transform_event_responder:
+            renpy.display.render.redraw(self, 0)
+
 
 class ImagePredictInfo(renpy.object.Object):
     """

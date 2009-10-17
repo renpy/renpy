@@ -396,12 +396,16 @@ class Button(renpy.display.layout.Window):
         if self.activated:
             return None
 
-        if not default:
-            self.transform_event = "hover"
-        
+        rv = None
+            
         if self.hovered and not default:
-            return self.hovered()
+            rv = self.hovered()
 
+        self.set_transform_event("hover")
+        self.child.set_transform_event("hover")
+
+        return rv
+        
 
     def unfocus(self):
         super(Button, self).unfocus()
@@ -409,11 +413,13 @@ class Button(renpy.display.layout.Window):
         if self.activated:
             return None
 
-        self.transform_event = "idle"
-        
         if self.unhovered:
             self.unhovered()
 
+        self.set_transform_event("idle")
+        self.child.set_transform_event("idle")
+
+            
     def per_interact(self):
         if not self.clicked:
             self.set_style_prefix(self.role + "insensitive_")
@@ -833,8 +839,18 @@ class Bar(renpy.display.core.Displayable):
             rv.add_focus(self, None, 0, 0, width, height)
 
         return rv
+
     
-      
+    def focus(self, default=False):
+        super(Bar, self).focus(default)
+        self.set_transform_event("hover")
+
+        
+    def unfocus(self):
+        super(Bar, self).unfocus()
+        self.set_transform_event("idle")
+        
+    
     def event(self, ev, x, y, st):
 
         if not self.focusable:
@@ -910,7 +926,8 @@ class Bar(renpy.display.core.Displayable):
             return self.adjustment.change(value)
 
         return None
-     
+
+
 class Conditional(renpy.display.layout.Container):
     """
     This class renders its child if and only if the condition is

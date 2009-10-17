@@ -169,6 +169,16 @@ class TransformBase(renpy.object.Object):
 
         # Are we done?
         self.done = False
+
+        # The transform event we are going to process.
+        self.transform_event = None
+
+        # The transform event we last processed.
+        self.last_transform_event = None
+
+        # The child transform event we last processed.
+        self.last_child_transform_event = None
+        
         
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
@@ -192,18 +202,26 @@ class TransformBase(renpy.object.Object):
         if self.done:
             return None
 
-        event = None
-
-        if self.child:
-            event = self.child.transform_event
-
-            if event is not None:
-                self.child.transform_event = None
-                self.transform_event = event
         
         if not self.block:
             self.compile()
-        
+
+
+        # Propagate transform_events from children.
+        if self.child:
+            if self.child.transform_event != self.last_child_transform_event:
+                print "Child event is", self.child.transform_event
+
+                self.last_child_transform_event = self.child.transform_event
+                self.transform_event = self.child.transform_event
+
+        # Notice transform events.
+        if self.transform_event != self.last_transform_event:
+            event = self.transform_event
+            self.last_transform_event = self.transform_event
+        else:
+            event = None
+            
         old_exception_info = renpy.game.exception_info
 
         action, arg, pause = self.block.execute(trans, st, self.atl_state, event)

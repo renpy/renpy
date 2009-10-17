@@ -192,6 +192,7 @@ class Proxy(object):
 class Transform(Container):
 
     __version__ = 1
+    transform_event_responder = True
     
     # Proxying things over to our state.
     alpha = Proxy("alpha")

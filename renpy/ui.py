@@ -73,11 +73,12 @@ def interact(type='misc', **kwargs):
 
 def add(w, make_current=False, once=False):
 
-    w = renpy.easy.displayable(w)
-
     global current
     global current_once
 
+    w = renpy.easy.displayable(w)
+    w = w.parameterize('displayable', [ ])
+    
     atw = w 
     
     while at_stack:
