@@ -391,6 +391,9 @@ label_callback = None
 # A function that is called when the window needs to be shown.
 empty_window = None
 
+# A list of functions that are called when the window is shown.
+window_overlay_functions = [ ]
+
 del renpy
 
 def init():

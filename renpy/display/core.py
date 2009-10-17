@@ -1503,6 +1503,10 @@ class Interface(object):
             for i in renpy.config.overlay_functions:
                 i()
 
+        if self.shown_window:
+            for i in renpy.config.window_overlay_functions:
+                i()
+                
         renpy.ui.close()
 
         # The root widget of everything that is displayed on the screen.
