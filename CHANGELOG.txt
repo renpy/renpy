@@ -40,6 +40,10 @@ cause Ren'Py to automatically define images for appropriately-named
 image files found in the archives and game directory.
 
 
+The play and queue statements now take optional loop and noloop
+modifiers, which force looping (or lack of looping) on that channel. [doc]
+
+
 Ren'Py now allows games to be deleted. To do this, select a save game
 (either with the keyboard, or by hovering the mouse over it), and hit
 delete.
