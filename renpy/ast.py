@@ -668,10 +668,10 @@ class Transform(Node):
     def execute(self):
 
         trans = renpy.display.motion.ATLTransform(self.atl)
+        renpy.exports.definitions[self.name] = (self.filename, self.linenumber, "transform")
         setattr(renpy.store, self.name, trans)
                 
         return self.next
-
 
     
 def predict_imspec(imspec, callback, scene=False):
@@ -712,7 +712,8 @@ def predict_imspec(imspec, callback, scene=False):
     renpy.game.context().predict_info.images.predict_show(tag or name, layer)
         
     img.predict(callback)
-            
+
+    
 def show_imspec(imspec, atl=None):
 
     if len(imspec) == 7:
@@ -827,6 +828,7 @@ class Scene(Node):
 
         return [ self.next ]
 
+    
 class Hide(Node):
 
     __slots__ = [
@@ -883,13 +885,13 @@ class Hide(Node):
 
         return self.next
 
+    
 class With(Node):
 
     __slots__ = [
         'expr',
         'paired',
         ]
-
 
     def __setstate__(self, state):
         self.paired = None
@@ -933,7 +935,6 @@ class With(Node):
                 
         return [ self.next ]
         
-    
         
 class Call(Node):
 
@@ -1010,7 +1011,8 @@ class Call(Node):
         rv = Node.scry(self)
         rv._next = None
         return rv
-    
+
+
 class Return(Node):
 
     __slots__ = [ 'expression']
@@ -1053,6 +1055,7 @@ class Return(Node):
         rv = Node.scry(self)
         rv._next = None
         return rv
+
     
 class Menu(Node):
 
@@ -1061,7 +1064,6 @@ class Menu(Node):
         'set',
         'with_',
         ]
-
 
     def __init__(self, loc, items, set, with_):
         super(Menu, self).__init__(loc)
@@ -1140,6 +1142,7 @@ class Menu(Node):
     
 setattr(Menu, "with", Menu.with_)
 
+
 # Goto is considered harmful. So we decided to name it "jump"
 # instead. 
 class Jump(Node):
@@ -1188,7 +1191,8 @@ class Jump(Node):
             rv._next = renpy.game.script.lookup(self.target)
             
         return rv
-    
+
+
 # GNDN
 class Pass(Node):
 
@@ -1199,6 +1203,7 @@ class Pass(Node):
 
     def execute(self):
         return self.next
+
 
 class While(Node):
 
@@ -1286,6 +1291,7 @@ class If(Node):
         rv._next = None
         return rv
 
+
 class UserStatement(Node):
 
     __slots__ = [ 'line', 'parsed' ]
@@ -1337,3 +1343,41 @@ class UserStatement(Node):
         return rv
                             
             
+class Define(Node):
+
+    __slots__ = [
+        'name',
+        'code',
+        ]
+
+    def __init__(self, loc, name, expr):
+        """
+        @param name: The name of the image being defined.
+
+        @param expr: An expression yielding a Displayable that is
+        assigned to the image.
+        """
+
+        super(Define, self).__init__(loc)
+        
+        self.name = name
+        self.code = PyCode(expr, loc=loc, mode='eval')
+            
+    def diff_info(self): 
+        return (Define, tuple(self.name))
+
+    def get_pycode(self):
+        if self.code:            
+            return [ self.code ]
+        else:
+            return [ ]
+        
+    def execute(self):
+
+        value = renpy.python.py_eval_bytecode(self.code.bytecode)
+
+        renpy.exports.definitions[self.name] = (self.filename, self.linenumber, "define")
+
+        setattr(renpy.store, self.name, value)    
+        
+        return self.next

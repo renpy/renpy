@@ -50,6 +50,9 @@ Fixed a bug that prevented {w=1} from working.
 
 Fixed a bug that prevented style.rebuild from working.
 
+Fixed a potential segfault bug with certain transforms, zooms, and
+rotations.
+
 
 New in Ren'Py 6.9.3
 -------------------

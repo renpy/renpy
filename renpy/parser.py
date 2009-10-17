@@ -1516,9 +1516,39 @@ def parse_statement(l):
 
         return rv
 
+    ### Define statement.
+    if l.keyword('define'):
+
+        priority = l.integer()
+        if priority:
+            priority = int(priority)
+        else:
+            priority = 0
+        
+        name = l.require(l.name)
+        l.require('=')
+        expr = l.rest()
+
+        l.expect_noblock('define statement')
+
+        rv = ast.Define(loc, name, expr)
+
+        if not l.init:
+           rv = ast.Init(loc, [ rv ], priority)        
+        
+        l.advance()
+
+        return rv
+
     ### Transform statement.
     if l.keyword('transform'):
-
+        
+        priority = l.integer()
+        if priority:
+            priority = int(priority)
+        else:
+            priority = 0
+        
         name = l.require(l.name)
         l.require(':')
         l.expect_eol()
@@ -1528,7 +1558,7 @@ def parse_statement(l):
         rv = ast.Transform(loc, name, atl)
 
         if not l.init:
-            rv = ast.Init(loc, [ rv ], 989)        
+            rv = ast.Init(loc, [ rv ], priority)        
         
         l.advance()
 

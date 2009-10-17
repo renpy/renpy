@@ -1244,3 +1244,7 @@ class Container(renpy.display.core.Displayable, renpy.python.RevertableObject):
     
 def get_roll_forward():
     return renpy.game.interface.shown_window
+
+# This is a map from a definition to the place where it was
+# defined.
+definitions = { }
