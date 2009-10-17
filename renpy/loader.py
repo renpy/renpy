@@ -30,7 +30,6 @@ import codecs
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpb will break.
-
 archives = [ ]
 
 # The value of renpy.config.archives the last time index_archives was

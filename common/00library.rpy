@@ -49,6 +49,9 @@ init -1180 python:
     # preference when the game is first run.
     config.default_text_cps = None        
 
+    # Should we automatically define images?
+    config.automatic_images = None
+
     # This is updated to give the user an idea of where a save is
     # taking place.
     save_name = ''
@@ -741,3 +744,43 @@ label _main_menu_screen:
         jump expression "_library_main_menu"
         
     return
+
+init 1180 python hide:
+    
+    def create_automatic_images():
+    
+        seps = config.automatic_images
+
+        if seps is True:
+            seps = [ ' ', '/', '_' ]
+            
+        for dir, fn in renpy.loader.listdirfiles():
+
+            if fn.startswith("_"):
+                continue
+
+            # Only .png and .jpg
+            if not fn.lower().endswith(".png") and not fn.lower().endswith(".jpg"):
+                continue
+
+            # Strip the extension, replace slashes.
+            shortfn = fn[:-4].replace("\\", "/")
+            
+            # Determine the name.
+            name = ( shortfn, )
+            for sep in seps:
+                name = tuple(j for i in name for j in i.split(sep))
+                
+            # Only names of 2 components or more.
+            if len(name) < 2:
+                continue
+            
+            # Reject if it already exists.
+            if name in renpy.exports.images:
+                continue
+
+            renpy.image(name, fn)
+
+    if config.automatic_images:
+        create_automatic_images()
+

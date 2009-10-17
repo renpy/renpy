@@ -20,15 +20,24 @@ and offscreenright) are now defined as transforms. This means that showing
 an image at such a position will cause the position to be remembered.
 
 
+A pause statement has been added to Ren'Py. [doc]
+
+
 Ren'Py now has a define statement, which combines into a single
 statement running code at init time, and assigning it to a
 variable. Ren'Py keeps track of these definitions, which may in the 
-future make it easier for editors to determine where something is defined.
+future make it easier for editors to determine where something is
+defined. [doc]
 
 
 The new config.window_overlay_functions variable contains a list of
 functions that should be called only when once the dialogue window has
 been shown.
+
+
+The new config.automatic_images variable, when set correctly, will
+cause Ren'Py to automatically define images for appropriately-named
+image files found in the archives and game directory.
 
 
 Ren'Py now allows games to be deleted. To do this, select a save game
