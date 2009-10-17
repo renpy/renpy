@@ -324,7 +324,9 @@ python early hide:
                               lint=lint_stop_generic)
 
 
-    # The "window show" and "window hide" statements.
+    ##########################################################################
+    # "window show" and "window hide" statements.
+
     def parse_window(l):
         p = l.simple_expression()
         if not l.eol():
@@ -371,7 +373,39 @@ python early hide:
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window)
+
+    ##########################################################################
+    # Pause statement.
+    
+    def parse_pause(l):
+
+        delay = l.simple_expression()
+
+        if not l.eol():
+            renpy.error("expected end of line.")
+
+        return { "delay" : delay }
+
+    def lint_pause(p):
+
+        if p["delay"]:
+            _try_eval(p["delay"], 'pause statement')
             
+    def execute_pause(p):
+
+        if p["delay"]:
+            delay = eval(p["delay"])
+            renpy.with_statement(Pause(delay))
+        else:
+            renpy.pause()
+
+
+    renpy.statements.register('pause',
+                              parse=parse_pause,
+                              lint=lint_pause,
+                              execute=execute_pause)
+            
+    
                               
 init -1200 python:
 
