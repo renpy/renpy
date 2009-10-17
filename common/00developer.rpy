@@ -19,12 +19,13 @@ label _developer_screen:
 
         sg = "developer_menu"
 
-        layout.button("Return", None, clicked=ui.returns(True), size_group=sg)
-        layout.button("Reload Game (Shift+R)", None, clicked=ui.callsinnewcontext("_save_reload_game"), size_group=sg)
-        layout.button("Variable Viewer", None, clicked=ui.jumps("_debugger_screen"), size_group=sg)
-        layout.button("Theme Test", None, clicked=ui.jumps("_theme_test"), size_group=sg)
-        layout.button("Style Hierarchy", None, clicked=ui.jumps("_style_hierarchy"), size_group=sg)
-        layout.button("FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
+        layout.button(u"Return", None, clicked=ui.returns(True), size_group=sg)
+        layout.button(u"Reload Game (Shift+R)", None, clicked=ui.callsinnewcontext("_save_reload_game"), size_group=sg)
+        layout.button(u"Variable Viewer", None, clicked=ui.jumps("_debugger_screen"), size_group=sg)
+        layout.button(u"Theme Test", None, clicked=ui.jumps("_theme_test"), size_group=sg)
+        layout.button(u"Style Hierarchy", None, clicked=ui.jumps("_style_hierarchy"), size_group=sg)
+        layout.button(u"FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
+        layout.button(u"Image Location Picker", None, clicked=ui.jumps("_image_location_picker"), size_group=sg)
         
         ui.close()
         ui.interact()
@@ -321,6 +322,150 @@ label _fps_meter:
         
         # We normally don't want to change this at runtime... but here
         # it's okay, because we don't want to save the FPS meter anyway.
+        #
+        # Do as I say, not as I do.
         config.overlay_functions.append(fps_overlay)
 
     return
+
+init python:
+    
+    # This is a displayable that can keep track of the mouse coordinates,
+    # and show them to the user.
+    class __ImageLocationPicker(renpy.Displayable):
+
+        def __init__(self, fn, **kwargs):
+            super(__ImageLocationPicker, self).__init__(**kwargs)
+            
+            self.child = Image(fn)
+
+            self.mouse = None
+            self.point1 = None
+            self.point2 = None
+            
+        def render(self, width, height, st, at):
+            rv = renpy.Render(width, height)
+
+            cr = renpy.render(self.child, width, height, st, at)
+            rv.blit(cr, (0, 0))
+
+            text = [ ]
+            
+
+            if self.point1 and self.point2 and not self.point1 == self.point2:
+                x1, y1 = self.point1
+                x2, y2 = self.point2
+
+                x1 = min(x1, cr.width)
+                x2 = min(x2, cr.width)
+                y1 = min(y1, cr.height)
+                y2 = min(y2, cr.height)
+                
+                minx = min(x1, x2)
+                miny = min(y1, y2)
+                maxx = max(x1, x2)
+                maxy = max(y1, y2)
+                
+                w = maxx - minx
+                h = maxy - miny
+
+                sr = renpy.render(Solid("#0ff4"), w, h, st, at)
+                rv.blit(sr, (minx, miny))
+
+                text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
+                text.append("Cropping rectangle: %r" % ((minx, miny, w, h),))
+                
+            if self.mouse:
+                mx, my = self.mouse
+                if mx < cr.width and my < cr.height:
+                    text.append(_("Mouse position: %r") % (self.mouse,))
+                    
+            text.append(_("Right-click or escape to quit."))
+                
+            td = Text("\n".join(text), size=14, color="#fff", outlines=[ (1, "#000", 0, 0 ) ])
+            tr = renpy.render(td, width, height, st, at)
+
+            rv.blit(tr, (0, height - tr.height))
+            
+            return rv
+
+        def event(self, ev, x, y, st):
+            import pygame
+
+            self.mouse = (x, y)
+            renpy.redraw(self, 0)
+
+            if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+                self.point1 = (x, y)
+                self.point2 = (x, y)
+
+            elif ev.type == pygame.MOUSEMOTION and ev.buttons[0]:
+                self.point2 = (x, y)
+                
+            elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
+                self.point2 = (x, y)
+                
+
+label _image_location_picker:
+
+    scene black
+    
+    python hide:
+
+        image_files = [
+            fn
+            for dir, fn in renpy.loader.listdirfiles()
+            if fn.lower().endswith(".jpg") or fn.lower().endswith(".png")
+            if not fn[0] == "_"
+            ]
+
+        image_files.sort()
+        
+        
+        xadjustment = ui.adjustment()
+        yadjustment = ui.adjustment()
+
+        
+        while True:
+
+            ui.frame()
+            ui.vbox()
+
+            layout.label(u"Image Location Picker", None)
+
+            ui.textbutton(_(u"Done"), clicked=ui.returns(False), size_group="files")
+            
+            ui.side(['c', 'b', 'r'], spacing=5)
+            vp = ui.viewport(xadjustment=xadjustment, yadjustment=yadjustment, mousewheel=True)
+
+            ui.vbox()
+
+            for fn in image_files:
+                ui.button(clicked=ui.returns(fn), size_group="files", xminimum=1.0)
+                ui.text(fn, style="button_text", xalign=0.0)
+                
+            ui.close()
+
+            ui.bar(adjustment=xadjustment, style='scrollbar')
+            ui.bar(adjustment=yadjustment, style='vscrollbar')
+            ui.close()
+
+            ui.close()
+            
+            rv = ui.interact()
+
+            if rv is False:
+                renpy.jump("_developer_screen")
+
+            # Now, allow the user to pick the image.
+
+            ui.keymap(game_menu=ui.returns(True))
+            ui.add(__ImageLocationPicker(rv))
+            ui.interact()
+
+                
+
+        # ...
+
+        renpy.jump("_image_location_picker")
+        

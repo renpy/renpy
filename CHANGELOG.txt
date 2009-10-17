@@ -58,6 +58,12 @@ Buttons now take a keymap argument, which specifies an alternate
 keymap that is used when the button is focused.
 
 
+Added the Image Location Picker to the Developer (shift+D) menu. This
+tool lets the user pick an image, and then pick locations that
+image. It display the mouse coordinates, imagemap rectangle, and
+cropping rectangle. [doc]
+
+
 Added a FPS meter to the Developer (shift+D) menu.
 
 Added a .001s sleep for frames that are framerate-limited. This should
