@@ -773,35 +773,42 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
         # Otherwise, we recompute the scene list for the two widgets, merging
         # as appropriate.
 
-        def tag_d(sle):
+        # Wraps the displayable found in SLE so that the various timebases
+        # are maintained.
+        def wrap(sle):
+            key, zorder, st, at, d = sle
+            return renpy.display.layout.AdjustTimes(d, st, at)
+        
+        def tag(sle):
             if sle[0] is None:
                 tag = sle[4]
             else:
                 tag = sle[0]
 
-            return tag, sle[4]
+            return tag
 
         def merge(sle, d):
             return (sle[0], sle[1], 0, sle[3], d)
         
         # A list of tags on the new layer.
-        new_tags = { }
+        new_tags = set()
 
         # The scene list we're creating.
         rv_sl = [ ]
 
         # The new scene list we're copying from.
         new_scene_list = new.scene_list[:]
-        
+
         for new_sle in new.scene_list:
-            new_tag, new_d = tag_d(new_sle)
+            new_tag = tag(new_sle)
             
             if new_tag is not None:
-                new_tags[new_tag] = new_d
+                new_tags.add(new_tag)
 
         for old_sle in old.scene_list:
-            old_tag, old_d = tag_d(old_sle)
-
+            old_tag = tag(old_sle)
+            old_d = wrap(old_sle)
+            
             # In old, not in new.
             if old_tag not in new_tags:
 
@@ -817,10 +824,10 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
             # In new, not in old.
             while new_scene_list:
                 new_sle = (new_scene_list.pop(0))                
-                new_tag, new_d = tag_d(new_sle)
-
-                if new_tag in new_tags:
-                    del new_tags[new_tag]
+                new_tag = tag(new_sle)
+                new_d = wrap(new_sle)
+                
+                new_tags.discard(new_tag)
                 
                 if new_tag == old_tag:
                     break
@@ -850,10 +857,8 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
         # scene list.
         while new_scene_list:
             new_sle = (new_scene_list.pop(0))                
-            new_tag, new_d = tag_d(new_sle)
-
-            if new_tag in new_tags:
-                del new_tags[new_tag]
+            new_tag = tag(new_sle)
+            new_d = wrap(new_sle)
 
             move = enter_factory(position(new_d), delay, new_d)
             if move is None:
@@ -861,8 +866,6 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
 
             rv_sl.append(merge(new_sle, move))
             continue
-
-        
 
         layer = new.layer_name
         rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **renpy.game.interface.layer_properties[layer])

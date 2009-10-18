@@ -60,7 +60,7 @@ keymap that is used when the button is focused.
 
 Added the Image Location Picker to the Developer (shift+D) menu. This
 tool lets the user pick an image, and then pick locations that
-image. It display the mouse coordinates, imagemap rectangle, and
+image. It displays the mouse coordinates, imagemap rectangle, and
 cropping rectangle. [doc]
 
 
@@ -72,6 +72,10 @@ prevent Ren'Py from consuming all CPU unless the game is CPU-bound.
 
 Added the renpy.get_roll_forward function, which is the infrastructure
 needed to create a button that lets the user roll forward.
+
+
+Changed MoveTransition to preserve the timebases of the thing being moved
+in all circumstances.
 
 
 Ren'Py is now built using SDL-1.2.13. On Linux systems with pulseaudio

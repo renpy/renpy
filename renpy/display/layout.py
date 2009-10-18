@@ -1314,6 +1314,38 @@ class Alpha(renpy.display.core.Displayable):
 
         return rv
         
-
-
         
+class AdjustTimes(Container):
+
+    def __init__(self, child, start_time, anim_time):
+        super(AdjustTimes, self).__init__(style='default')
+
+        self.start_time = start_time
+        self.anim_time = anim_time
+
+        self.add(child)
+    
+    def render(self, w, h, st, at):
+
+        if self.start_time is None:
+            self.start_time = renpy.game.interface.frame_time
+
+        if self.anim_time is None:
+            self.anim_time = renpy.game.interface.frame_time
+
+        st = renpy.game.interface.frame_time - self.start_time
+        at = renpy.game.interface.frame_time - self.anim_time       
+            
+        cr = renpy.display.render.render(self.child, w, h, st, at)
+        cw, ch = cr.get_size()
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(cr, (0, 0))
+
+        self.offsets = [ (0, 0) ]
+        
+        return rv
+
+    def get_placement(self):
+        return self.child.get_placement()
+
+
