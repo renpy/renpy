@@ -31,13 +31,13 @@ init -1150 python:
 label _quit_prompt:
     $ renpy.loadsave.force_autosave()
 
-    if layout.yesno_prompt(None, u"Are you sure you want to quit?"):
+    if layout.yesno_prompt(None, layout.QUIT):
         jump _quit
     else:
         return
 
 label _main_menu_prompt:
-    if layout.yesno_prompt(None, u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."):
+    if layout.yesno_prompt(None, layout.MAIN_MENU):
         $ renpy.full_restart(transition=config.game_main_transition)
     else:
         return

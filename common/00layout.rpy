@@ -322,7 +322,7 @@ init -1105 python hide:
         config.preferences_hotspots = hotspots
 
     @layout
-    def imagemap_yesno_prompt(ground, idle, hover, hotspots):
+    def imagemap_yesno_prompt(ground, idle, hover, hotspots, prompt_images={ }):
 
         renpy.load_module("_layout/imagemap_yesno_prompt")
         
@@ -330,6 +330,7 @@ init -1105 python hide:
         config.yesno_prompt_idle = idle
         config.yesno_prompt_hover = hover
         config.yesno_prompt_hotspots = hotspots
+        config.yesno_prompt_prompt_images = prompt_images
         
     @layout
     def imagemap_load_save(ground, idle, hover, selected_idle, selected_hover,
@@ -343,3 +344,11 @@ init -1105 python hide:
         config.load_save_selected_idle = selected_idle
         config.load_save_selected_hover = selected_hover
         config.load_save_hotspots = hotspots
+    
+
+    layout.ARE_YOU_SURE = u"Are you sure?"
+    layout.DELETE_SAVE = u"Are you sure you want to delete this save?"
+    layout.OVERWRITE_SAVE = u"Are you sure you want to overwrite your save?"
+    layout.LOADING = u"Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    layout.QUIT = u"Are you sure you want to quit?"
+    layout.MAIN_MENU = u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."

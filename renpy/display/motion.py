@@ -297,7 +297,10 @@ class Transform(Container):
                 renpy.display.render.redraw(self, fr)
 
         self.active = True
-                
+
+        if self.state.size:
+            width, height = self.state.size
+        
         cr = render(self.child, width, height, st, at)
 
         # Compute the crop.

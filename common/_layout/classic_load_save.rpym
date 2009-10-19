@@ -306,7 +306,7 @@ init python:
             type, value = result
 
             if type == "unlink":
-                if layout.yesno_prompt("save", u"Are you sure you want to delete this save?"):
+                if layout.yesno_prompt(screen, layout.DELETE_SAVE):
                     renpy.unlink_save(value)
                     update = True
                     
@@ -327,7 +327,7 @@ label save_screen:
             fn = _file_picker("save", True)
 
             if renpy.can_load(fn):
-                if not layout.yesno_prompt("save", u"Are you sure you want to overwrite your save?"):
+                if not layout.yesno_prompt("save", layout.OVERWRITE_SAVE):
                     continue
 
             renpy.save(fn, extra_info=store.save_name)
@@ -341,7 +341,7 @@ label load_screen:
             fn = _file_picker("load", False)
             
             if _load_prompt:
-                if not layout.yesno_prompt("load",  u"Loading will lose unsaved progress.\nAre you sure you want to do this?"):
+                if not layout.yesno_prompt("load", layout.LOADING):
                     continue
 
             renpy.load(fn)

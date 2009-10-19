@@ -401,8 +401,8 @@ class Button(renpy.display.layout.Window):
         if self.hovered and not default:
             rv = self.hovered()
 
-        self.set_transform_event("hover")
-        self.child.set_transform_event("hover")
+        self.set_transform_event(self.role + "hover")
+        self.child.set_transform_event(self.role + "hover")
 
         return rv
         
@@ -416,8 +416,8 @@ class Button(renpy.display.layout.Window):
         if self.unhovered:
             self.unhovered()
 
-        self.set_transform_event("idle")
-        self.child.set_transform_event("idle")
+        self.set_transform_event(self.role + "idle")
+        self.child.set_transform_event(self.role + "idle")
 
             
     def per_interact(self):
