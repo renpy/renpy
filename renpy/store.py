@@ -159,8 +159,8 @@ Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
 
 # Misc.
-ADVCharacter = renpy.character.ADVCharacter
-Character = renpy.character.Character
+ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
+Speaker = Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
 MultiPersistent = renpy.loadsave.MultiPersistent
 

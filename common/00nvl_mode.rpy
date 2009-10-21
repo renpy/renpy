@@ -255,6 +255,8 @@ init -1100 python:
 
         return rv
 
+    NVLSpeaker = NVLCharacter
+    
     config.nvl_adv_transition = None
     config.adv_nvl_transition = None
 
