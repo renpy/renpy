@@ -950,11 +950,16 @@ def py_eval(source, globals=None, locals=None):
     return eval(py_compile(source, 'eval'), globals, locals)
 
 
+
 # Code for pickling bound methods.
 
 def method_pickle(method):
     name = method.im_func.__name__
-    obj = method.im_class
+
+    obj = method.im_self
+
+    if obj is None:
+        obj = method.im_class
 
     return method_unpickle, (obj, name)
 

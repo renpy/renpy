@@ -210,8 +210,6 @@ class TransformBase(renpy.object.Object):
         # Propagate transform_events from children.
         if self.child:
             if self.child.transform_event != self.last_child_transform_event:
-                print "Child event is", self.child.transform_event
-
                 self.last_child_transform_event = self.child.transform_event
                 self.transform_event = self.child.transform_event
 
@@ -363,9 +361,12 @@ class Block(Statement):
             # Otherwise, take the defaults.
             else:
                 target = st
-                max_pause = 1000
+                max_pause = 15
 
-            for i in range(0, 64):
+            for i in range(0, 1000):
+
+                if child_state is None and target - start > 60:
+                    start = target - 60
 
                 # If we've hit the last statement, it's the end of
                 # this block.
@@ -426,7 +427,8 @@ class Block(Statement):
                 if renpy.config.debug:
                     raise Exception("ATL Block probably in infinite loop.")
 
-                return "continue", (index, st, repeats, times, child_state), 0
+                # As good an error recovery as any.
+                return "next", 0, None
 
             if self.times:
                 time, tindex = times[0]
