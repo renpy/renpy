@@ -269,7 +269,7 @@ class Transform(Container):
             yanchor = yalign
 
         self.state = TransformState()
-            
+        
         self.state.alpha = alpha
         self.state.rotate = rotate
         self.state.zoom = zoom
@@ -293,22 +293,42 @@ class Transform(Container):
         # True if it's okay for us to hide.
         self.hide_response = True
 
+        
     def take_state(self, t):
+        """
+        Takes the transformation state from object t into this object.
+        """
+        
         self.state.take_state(t.state)
 
+    def take_execution_state(self, t):
+        """
+        Takes the execution state from object t into this object. This is
+        overridden by renpy.atl.TransformBase.
+        """
+
+        return 
+        
 
     def hide(self, st, at):
-        self.hide_request = True
-        self.hide_response = True
-
-        if self.function is not None:
-            self.function(self, st, at)
-
-        if not self.hide_response:            
-            renpy.display.render.redraw(self, 0)
-
-        return self.hide_response
         
+        if not self.hide_request:
+            d = self()
+            d.take_execution_state(self)
+        else:
+            d = self
+            
+        d.hide_request = True
+        d.hide_response = True
+
+        if d.function is not None:
+            d.function(d, st, at)
+
+        if not d.hide_response:            
+            renpy.display.render.redraw(d, 0)
+            return d
+
+    
     def render(self, width, height, st, at):
 
         if self.function is not None:
@@ -439,12 +459,16 @@ class Transform(Container):
                 
         return None
             
-    def __call__(self, child):
+    def __call__(self, child=None):
+
+        if child is None:
+            child = self.child
+        
         rv = Transform(
             child=child,
             function=self.function,
             **self.kwargs)
-
+        
         rv.take_state(self)
 
         return rv

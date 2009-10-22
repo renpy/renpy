@@ -354,11 +354,12 @@ class Displayable(renpy.object.Object):
 
     def hide(self, st, at):
         """
-        Returns True if this displayable is ready to be hidden, or
-        False if it wants to still be shown for a while.
+        Returns None if this displayable is ready to be hidden, or
+        a replacement displayable if it doesn't want to be hidden
+        quite yet.
         """
                 
-        return True
+        return None
             
 
 class ImagePredictInfo(renpy.object.Object):
@@ -478,7 +479,7 @@ class SceneLists(renpy.object.Object):
         """
 
         for i in renpy.config.transient_layers:
-            self.clear(i)
+            self.clear(i, True)
             
     def transient_is_empty(self):
         """
@@ -611,9 +612,15 @@ class SceneLists(renpy.object.Object):
             if k == thing or d is thing:
 
                 # Should we keep this around while hiding it?
-                if k and st and at and not d.hide(now - st, now - at):
-                    k = "hide$" + k
-                    newl.append((k, zo, st, at, d))
+                if k:
+                    st = st or now
+                    at = at or now
+
+                    d = d.hide(now - st, now - at)
+
+                    if d is not None:
+                        k = "hide$" + k
+                        newl.append((k, zo, st, at, d))
 
                 continue
 
@@ -625,9 +632,12 @@ class SceneLists(renpy.object.Object):
         self.image_predict_info.images[layer].pop(thing, None)
             
 
-    def clear(self, layer):
+    def clear(self, layer, hide=False):
         """
         Clears the named layer, making it empty.
+
+        If hide is True, then objects are hidden. Otherwise, they are
+        totally wiped out.
         """
 
         now = get_time()
@@ -639,9 +649,16 @@ class SceneLists(renpy.object.Object):
             k, zo, st, at, d = i
 
             # Should we keep this around while hiding it?
-            if k and st and at and not d.hide(now - st, now - at):
-                k = "hide$" + k
-                newl.append((k, zo, st, at, d))
+            if hide and k:
+
+                st = st or now
+                at = at or now
+
+                d = d.hide(now - st, now - at)
+
+                if d is not None:
+                    k = "hide$" + k
+                    newl.append((k, zo, st, at, d))
 
                 continue
 
@@ -717,8 +734,12 @@ class SceneLists(renpy.object.Object):
                 name, zo, st, at, d = i
 
                 if name and name.startswith("hide$") and st and at:
-                    if d.hide(now - st, now - at):
+                    d = d.hide(now - st, now - at)
+
+                    if d is None:
                         continue
+                    
+                    i = (name, zo, st, at, d)
 
                 newl.append(i)
 

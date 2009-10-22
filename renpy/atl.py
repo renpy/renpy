@@ -164,7 +164,9 @@ class TransformBase(renpy.object.Object):
         # Interpolation.
         self.properties = None
 
-        # The state of the statement we are executing.
+        # The state of the statement we are executing. As this can be
+        # shared between more than one object (in the case of a hide),
+        # the data must not be altered.
         self.atl_state = None
 
         # Are we done?
@@ -178,11 +180,27 @@ class TransformBase(renpy.object.Object):
 
         # The child transform event we last processed.
         self.last_child_transform_event = None
-        
-    # Compiles self.atl into self.block, and then update the rest of
-    # the variables.
-    def compile(self):
 
+    def take_execution_state(self, t):
+        """
+        Updates self to begin executing from the same point as t. This
+        requires that t.atl is self.atl.
+        """
+
+        self.done = t.done
+        self.block = t.block
+        self.atl_state = t.atl_state
+        self.transform_event = t.transform_event
+        self.last_transform_event = t.last_transform_event
+        self.last_child_transform_event = t.last_child_transform_event
+        
+
+    def compile(self):
+        """
+        Compiles the ATL code into a block. As necessary, updates the
+        properties.
+        """
+        
         old_exception_info = renpy.game.exception_info
         
         self.block = self.atl.compile(self.context)
@@ -196,8 +214,10 @@ class TransformBase(renpy.object.Object):
                 self.properties = interp.properties[:]
 
         renpy.game.exception_info = old_exception_info
-                    
+
+        
     def execute(self, trans, st, at):
+
         if self.done:
             return None
 
@@ -227,6 +247,9 @@ class TransformBase(renpy.object.Object):
 
         renpy.game.exception_info = old_exception_info
 
+
+        # print "Executing", self, self.state, self.xpos, self.ypos
+        
         if action == "continue":
             self.atl_state = arg
         else:
@@ -234,9 +257,11 @@ class TransformBase(renpy.object.Object):
 
         return pause
 
+    
     def predict(self, callback):
         self.atl.predict(self.context, callback)
-                     
+
+        
     def visit(self):
         if not self.block:
             self.compile()
@@ -944,17 +969,26 @@ class On(Statement):
 
         executing(self.loc)
         
+
         # If it's our first time through, start in the start state.
         if state is None:
-            state = ("show", st, None)
+            name, start, cstate = ("show", st, None)
+        else:
+            name, start, cstate = state
+
 
         # If we have an external event, and we have a handler for it,
         # handle it.
         if event in self.handlers:
-            state = (event, st, None)
 
-        name, start, cstate = state
+            # Do not allow people to abort the hide handler with another
+            # event.
+            if name != "hide":
+                name = event
+                start = st
+                cstate = None
 
+                
         while True:
 
             # If we don't have a handler, return until we change event.
@@ -976,7 +1010,7 @@ class On(Statement):
             # event, unless we're already in default, in which case we
             # go to None.
             elif action == "next":
-                if name == "default":
+                if name == "default" or name == "hide":
                     name = None
                 else:
                     name = "default"
