@@ -1107,6 +1107,12 @@ def parse_atl(l):
             # The RawMultipurpose we add things to.
             rm = renpy.atl.RawMultipurpose(loc)
 
+            # Is the last clause an expression?
+            last_expression = False
+
+            # Is this clause an expression?
+            this_expression = False
+            
             # First, look for a warper.
             cp = l.checkpoint()
             warper = l.name()
@@ -1124,6 +1130,13 @@ def parse_atl(l):
             # Now, look for properties and simple_expressions.
             while True:
 
+                # Update expression status.
+                last_expression = this_expression
+                this_expression = False
+
+                if l.keyword('pass'):
+                    continue
+                
                 # Parse revolution keywords.
                 if l.keyword('clockwise'):
                     rm.add_revolution('clockwise')
@@ -1171,6 +1184,11 @@ def parse_atl(l):
                 if not expr:
                     break
 
+                if last_expression:
+                    l.error('ATL statement contains two expressions in a row; is one of them a misspelled property? If not, separate them with pass.')
+
+                this_expression = True
+                    
                 if l.keyword("with"):
                     with_expr = l.require(l.simple_expression)
                 else:

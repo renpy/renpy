@@ -310,7 +310,7 @@ class Transform(Container):
         return self.hide_response
         
     def render(self, width, height, st, at):
-        
+
         if self.function is not None:
 
             fr = self.function(self, st, at)
