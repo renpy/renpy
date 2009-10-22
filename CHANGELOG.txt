@@ -28,6 +28,15 @@ contain at least one dot as image references. Now, one can write
 A pause statement has been added to Ren'Py. [doc]
 
 
+The layout.imagemap_yesno_prompt now supports a prompt_images
+argument, which is can be used to specify images to replace the
+text of a yes/no prompt.
+
+
+The new ui.tag function allows one to specify the image tag of a UI
+widget. This can have positive interactions with transforms.
+
+
 Ren'Py now has a define statement, which combines into a single
 statement running code at init time, and assigning it to a
 variable. Ren'Py keeps track of these definitions, which may in the 
@@ -56,11 +65,6 @@ delete.
 
 Buttons now take a keymap argument, which specifies an alternate 
 keymap that is used when the button is focused.
-
-
-The layout.imagemap_yesno_prompt now supports a prompt_images
-argument, which is can be used to specify images to replace the
-text of a yes/no prompt.
 
 
 Added the Image Location Picker to the Developer (shift+D) menu. This

@@ -439,6 +439,9 @@ class Transform(Container):
 
     def event(self, ev, x, y, st):
 
+        if self.hide_request:
+            return None
+        
         children = self.children
         offsets = self.offsets
         

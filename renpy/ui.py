@@ -71,11 +71,20 @@ def interact(type='misc', **kwargs):
     renpy.game.context().info._last_interact_type = type
     return rv
 
+
+# The name of the next thing that will be added to the current layer.
+add_tag = None
+
+def tag(name):
+    global add_tag
+    add_tag = name
+
 def add(w, make_current=False, once=False):
 
     global current
     global current_once
-
+    global add_tag
+    
     w = renpy.easy.displayable(w)
     w = w.parameterize('displayable', [ ])
     
@@ -85,12 +94,14 @@ def add(w, make_current=False, once=False):
         atw = at_stack.pop()(atw)
     
     if isinstance(current, str):
-        renpy.game.context(-1).scene_lists.add(current, atw)
+        renpy.game.context(-1).scene_lists.add(current, atw, key=add_tag)
     elif current is None:
         pass
     else:
         current.add(atw)
 
+    add_tag = None
+        
     if current_once:
         current_once = False
         close()
