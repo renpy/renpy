@@ -179,7 +179,6 @@ class TransformBase(renpy.object.Object):
         # The child transform event we last processed.
         self.last_child_transform_event = None
         
-        
     # Compiles self.atl into self.block, and then update the rest of
     # the variables.
     def compile(self):
@@ -202,10 +201,8 @@ class TransformBase(renpy.object.Object):
         if self.done:
             return None
 
-        
         if not self.block:
             self.compile()
-
 
         # Propagate transform_events from children.
         if self.child:
@@ -213,6 +210,10 @@ class TransformBase(renpy.object.Object):
                 self.last_child_transform_event = self.child.transform_event
                 self.transform_event = self.child.transform_event
 
+        # Hide request.
+        if trans.hide_request:
+            self.transform_event = "hide"
+            
         # Notice transform events.
         if self.transform_event != self.last_transform_event:
             event = self.transform_event
@@ -235,7 +236,7 @@ class TransformBase(renpy.object.Object):
 
     def predict(self, callback):
         self.atl.predict(self.context, callback)
-        
+                     
     def visit(self):
         if not self.block:
             self.compile()
@@ -945,7 +946,7 @@ class On(Statement):
         
         # If it's our first time through, start in the start state.
         if state is None:
-            state = ("start", st, None)
+            state = ("show", st, None)
 
         # If we have an external event, and we have a handler for it,
         # handle it.
@@ -964,6 +965,11 @@ class On(Statement):
 
             # If we get a continue, save our state.
             if action == "continue":
+
+                # If it comes from a hide block, indicate that.
+                if name == "hide":
+                    trans.hide_response = False
+
                 return "continue", (name, start, arg), pause
 
             # If we get a next, then try going to the default
@@ -1067,7 +1073,7 @@ def parse_atl(l):
 
         elif l.keyword('on'):
 
-            name = l.require(l.name)
+            name = l.require(l.word)
 
             l.require(':')
             l.expect_eol()
@@ -1083,7 +1089,7 @@ def parse_atl(l):
             statements.append(RawTime(loc, time))
 
         elif l.keyword('event'):
-            name = l.require(l.name)
+            name = l.require(l.word)
             l.expect_noblock('event')
 
             statements.append(RawEvent(loc, name))

@@ -82,6 +82,7 @@ class _Config(object):
             delattr(renpy.config, name)
         
 config = _Config()
+library = config
 
 _list = list
 _dict = dict

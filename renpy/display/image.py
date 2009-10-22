@@ -135,8 +135,22 @@ class ImageReference(renpy.display.core.Displayable):
 
         error("Image '%s' not found." % ' '.join(self.name))
         return False
+
+
+    def hide(self, st, at):
+        if not self.target:
+            self.find_target()
+
+        return self.target.hide(st, at)
+
+    def set_transform_event(self, event):
+        if not self.target:
+            self.find_target()
+
+        return self.target.set_transform_event(event)
         
-        
+    
+    
     def event(self, ev, x, y, st):
         if not self.target:
             self.find_target()

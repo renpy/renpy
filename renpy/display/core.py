@@ -31,6 +31,7 @@ import os
 import time
 import cStringIO
 import threading
+import collections
 
 on_windows = (sys.platform == 'win32')
 
@@ -340,6 +341,10 @@ class Displayable(renpy.object.Object):
         return xoff, yoff
 
     def set_transform_event(self, event):
+        """
+        Sets the transform event of this displayable to event.
+        """
+
         if event == self.transform_event:
             return
 
@@ -347,6 +352,14 @@ class Displayable(renpy.object.Object):
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 
+    def hide(self, st, at):
+        """
+        Returns True if this displayable is ready to be hidden, or
+        False if it wants to still be shown for a while.
+        """
+                
+        return True
+            
 
 class ImagePredictInfo(renpy.object.Object):
     """
@@ -418,6 +431,7 @@ class SceneLists(renpy.object.Object):
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
+                
     def __init__(self, oldsl, ipi):
 
         # A map from layer name -> list of
@@ -427,7 +441,7 @@ class SceneLists(renpy.object.Object):
         self.layer_at_list = { }
         
         self.image_predict_info = ipi
-        
+
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
@@ -464,10 +478,7 @@ class SceneLists(renpy.object.Object):
         """
 
         for i in renpy.config.transient_layers:
-            self.layers[i] = [ ]
-            self.at_list[i].clear()
-            self.image_predict_info.images[i].clear()
-            self.layer_at_list[i] = (None, [ ])
+            self.clear(i)
             
     def transient_is_empty(self):
         """
@@ -522,11 +533,23 @@ class SceneLists(renpy.object.Object):
 
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
-        
+
+
         if key is not None:
+
+            hidekey = "hide$" + key
+            
             for index, (k, zo, st, at, d) in enumerate(l):
                 if k == key:
                     break
+
+                # If we're adding something with the same name as something
+                # that's hiding, remove the hiding thing. 
+                if k == hidekey:
+                    l.pop(index)
+                    index = None
+                    at = None
+                
             else:
                 index = None
                 at = None
@@ -578,8 +601,25 @@ class SceneLists(renpy.object.Object):
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
         
         l = self.layers[layer]
-        l = [ (k, zo, st, at, d) for k, zo, st, at, d in l if k != thing if d is not thing ]
-        self.layers[layer] = l
+        newl = [ ]
+
+        now = get_time()
+        
+        for i in l:
+            k, zo, st, at, d = i
+
+            if k == thing or d is thing:
+
+                # Should we keep this around while hiding it?
+                if k and st and at and not d.hide(now - st, now - at):
+                    k = "hide$" + k
+                    newl.append((k, zo, st, at, d))
+
+                continue
+
+            newl.append(i)
+
+        self.layers[layer] = newl
 
         self.at_list[layer].pop(thing, None)
         self.image_predict_info.images[layer].pop(thing, None)
@@ -590,10 +630,22 @@ class SceneLists(renpy.object.Object):
         Clears the named layer, making it empty.
         """
 
-        if layer not in self.layers is None:
-            raise Exception("Trying to clear non-existent layer '%s'." % layer)
+        now = get_time()
+        
+        l = self.layers[layer]
+        newl = [ ]
 
-        self.layers[layer] = [ ]
+        for i in l:
+            k, zo, st, at, d = i
+
+            # Should we keep this around while hiding it?
+            if k and st and at and not d.hide(now - st, now - at):
+                k = "hide$" + k
+                newl.append((k, zo, st, at, d))
+
+                continue
+
+        self.layers[layer] = newl
         self.at_list[layer].clear()
         self.image_predict_info.images[layer].clear()
         self.layer_at_list[layer] = (None, [ ])
@@ -618,7 +670,7 @@ class SceneLists(renpy.object.Object):
                 ll.append((k, zo, st or time, at or time, d))
 
             l[:] = ll
-            
+
 
     def showing(self, layer, name):
         """
@@ -648,6 +700,33 @@ class SceneLists(renpy.object.Object):
 
         rv.layer_name = layer
         return rv
+
+    def remove_hidden(self):
+        """
+        Goes through all of the layers, and removes things that are
+        hidden and are no longer being kept alive by their hide
+        methods.
+        """
+
+        now = get_time()
+        
+        for l in self.layers:
+            newl = [ ]
+
+            for i in self.layers[l]:
+                name, zo, st, at, d = i
+
+                if name and name.startswith("hide$") and st and at:
+                    if d.hide(now - st, now - at):
+                        continue
+
+                newl.append(i)
+
+            self.layers[l] = newl
+
+            
+        
+    
     
 
 class Display(object):
@@ -1508,6 +1587,8 @@ class Interface(object):
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
 
+        scene_lists.remove_hidden()
+        
         # Figure out what the overlay layer should look like.
         renpy.ui.layer("overlay")
 

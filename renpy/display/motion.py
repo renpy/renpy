@@ -236,6 +236,11 @@ class Transform(Container):
             self.state.zoom = self.zoom
             self.state.xzoom = self.xzoom
             self.state.yzoom = self.yzoom
+
+            self.hide_request = False
+            self.hide_response = True
+            self.last_st = 0
+            self.last_at = 0
             
     
     # Compatibility with old versions of the class.
@@ -245,9 +250,6 @@ class Transform(Container):
                  xpos=0, ypos=0, xanchor=0, yanchor=0, xalign=None, yalign=None,
                  **kwargs):
 
-        # NOTE: When adding new parameters here, be sure they're
-        # also used in called.
-        
         self.kwargs = kwargs
         self.kwargs.setdefault('style', 'transform')
         
@@ -284,12 +286,31 @@ class Transform(Container):
 
         # Have we called the function at least once?
         self.active = False
+
+        # Have we been requested to hide?
+        self.hide_request = False
         
+        # True if it's okay for us to hide.
+        self.hide_response = True
+
     def take_state(self, t):
         self.state.take_state(t.state)
+
+
+    def hide(self, st, at):
+        self.hide_request = True
+        self.hide_response = True
+
+        if self.function is not None:
+            self.function(self, st, at)
+
+        if not self.hide_response:            
+            renpy.display.render.redraw(self, 0)
+
+        return self.hide_response
         
     def render(self, width, height, st, at):
-
+        
         if self.function is not None:
 
             fr = self.function(self, st, at)

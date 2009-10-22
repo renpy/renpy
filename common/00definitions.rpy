@@ -25,7 +25,7 @@ init -1110:
         xpos 0.0 xanchor 1.0 ypos 1.0 yanchor 1.0
 
     transform offscreenright:
-        xpos 0.0 xanchor 1.0 ypos 1.0 yanchor 1.0
+        xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
 
 init -1110 python:
