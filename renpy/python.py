@@ -220,13 +220,19 @@ def py_compile(source, mode, filename='<none>', lineno=1):
 
     if "\\u" in source:
         source = string_re.sub(make_unicode, source)
-    
+        
+    if mode == "exec":
+        source = "from __future__ import with_statement\n" + source
+        line_offset = 2
+    else:
+        line_offset = 1
+        
     try:
         tree = parse(source, mode)
     except SyntaxError, e:
         
         if e.lineno is not None:
-            msg = "Syntax error on line %d of %s" % (e.lineno + lineno - 1, filename)
+            msg = "Syntax error on line %d of %s" % (e.lineno + lineno - line_offset, filename)
 
             if len(source) < 128:
                 msg += ":\n    " + orig_source
@@ -238,10 +244,10 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     recursively_replace(tree, wrap_node)
 
     if mode == 'exec':
-        set_filename(filename, lineno - 1, tree)
+        set_filename(filename, lineno - line_offset, tree)
         cg = ModuleCodeGenerator(tree)
     else:
-        set_filename(filename, lineno - 1, tree)
+        set_filename(filename, lineno - line_offset, tree)
         cg = ExpressionCodeGenerator(tree)
 
     return cg.getCode()

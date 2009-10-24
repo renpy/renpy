@@ -70,9 +70,6 @@ label demos:
 
 label demo_repeat:
     
-    # Hide the editor button.
-    $ show_editor_button = False
-    
     python hide:
 
         if demo_first_time:
@@ -84,9 +81,6 @@ label demo_repeat:
             
         demos_show(demos_main, "That's enough for now.")
         
-    # Show the editor button.
-    $ show_editor_button = True
-
     # If the result is False, then the user clicked the "Enough for
     # now" button, and we should return to the main script.
     if result == False:

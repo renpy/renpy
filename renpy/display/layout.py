@@ -177,6 +177,29 @@ class Container(renpy.display.core.Displayable):
     def visit(self):
         return self.children
     
+    # These interact with the ui functions to allow use as a context
+    # manager.
+
+    def __enter__(self):
+
+        if renpy.ui.current is self and not renpy.ui.current_once:
+            return self
+
+        raise Exception("%r cannot be used as a context manager.", type(self).__name__)
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        if exc_type:
+            return False
+
+        if renpy.ui.current is not self:
+            raise Exception("Widget %r left open at end of block.")
+
+        renpy.ui.close()
+        return False
+
+        
     
 
 def LiveComposite(size, *args, **properties):

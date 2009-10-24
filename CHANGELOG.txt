@@ -54,6 +54,13 @@ cause Ren'Py to automatically define images for appropriately-named
 image files found in the archives and game directory.
 
 
+Python blocks are now compiled in a mode that allows the python "with"
+statement. Container displayables now support the context manager
+protocol, automatically closing at the end of a with block. (Note
+that the python with statement postdates the Ren'Py with statement,
+and has totally different semantics.)
+
+
 The play and queue statements now take optional loop and noloop
 modifiers, which force looping (or lack of looping) on that channel. [doc]
 
