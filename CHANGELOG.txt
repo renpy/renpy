@@ -62,7 +62,9 @@ and has totally different semantics.)
 
 
 The play and queue statements now take optional loop and noloop
-modifiers, which force looping (or lack of looping) on that channel. [doc]
+modifiers, which force looping (or lack of looping) on that channel.
+The play statement takes an if_changed modifier, which prevents a song
+from being restarted if it is already playing on the channel. [doc]
 
 
 Ren'Py now allows games to be deleted. To do this, select a save game

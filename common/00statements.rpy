@@ -68,6 +68,7 @@ python early hide:
         fadein = "0"
         channel = None
         loop = None
+        if_changed = False
         
         while True:
 
@@ -102,6 +103,10 @@ python early hide:
             if l.keyword('noloop'):
                 loop = False
                 continue
+
+            if l.keyword('if_changed'):
+                if_changed = True
+                continue
             
             renpy.error('could not parse statement.')
 
@@ -109,7 +114,8 @@ python early hide:
                     fadeout=fadeout,
                     fadein=fadein,
                     channel=channel,
-                    loop=loop)
+                    loop=loop,
+                    if_changed=if_changed)
 
     def execute_play_music(p):
 
@@ -122,7 +128,8 @@ python early hide:
                          fadeout=eval(p["fadeout"]),
                          fadein=eval(p["fadein"]),
                          channel=channel,
-                         loop=p.get("loop", None))
+                         loop=p.get("loop", None),
+                         if_changed=p.get("if_changed", False))
 
     def predict_play_music(p):
         return [ ]
