@@ -964,6 +964,9 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
+        rv = renpy.game.context().call(label, return_site=self.next.name)
+        renpy.game.context().abnormal = True
+
         if self.arguments:
 
             args = [ ]
@@ -996,8 +999,6 @@ class Call(Node):
             renpy.store._kwargs = kwargs
                     
         
-        rv = renpy.game.context().call(label, return_site=self.next.name)
-        renpy.game.context().abnormal = True
         return rv
         
         

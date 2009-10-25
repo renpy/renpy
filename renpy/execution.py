@@ -264,6 +264,10 @@ class Context(renpy.object.Object):
         self.dynamic_stack.append({ })
         self.current = label
 
+        self.make_dynamic([ "_args", "_kwargs" ])
+        renpy.store._args = None
+        renpy.store._kwargs = None
+        
         return renpy.game.script.lookup(label)
 
     def lookup_return(self, pop=True):
