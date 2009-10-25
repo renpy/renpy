@@ -330,7 +330,7 @@ init -1105 python hide:
         config.yesno_prompt_idle = idle
         config.yesno_prompt_hover = hover
         config.yesno_prompt_hotspots = hotspots
-        config.yesno_prompt_prompt_images = prompt_images
+        config.yesno_prompt_message_images = prompt_images
         
     @layout
     def imagemap_load_save(ground, idle, hover, selected_idle, selected_hover,
