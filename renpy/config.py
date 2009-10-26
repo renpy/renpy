@@ -394,6 +394,9 @@ empty_window = None
 # A list of functions that are called when the window is shown.
 window_overlay_functions = [ ]
 
+# Do we support right-to-left languages?
+rtl = False
+
 del renpy
 
 def init():

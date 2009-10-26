@@ -614,6 +614,10 @@ def draw(dest, clip, what, xo, yo, screen):
 
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
+    if forward is None:
+        forward = IDENTITY
+        reverse = IDENTITY
+    
     if not isinstance(what, Render):
 
         if not renpy.display.module.can_alpha_transform:

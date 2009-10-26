@@ -4,15 +4,14 @@
 init python:
 
     tutorials = [
-        ("tutorial_playing", "Playing Games", "6.10.0"),
-        ("tutorial_dialogue", "Writing Dialogue", "6.10.0"),
+        ("tutorial_playing", "User Experience", "6.10.0"),
+        ("tutorial_quickstart", "Quickstart", "6.10.0"),
         ("tutorial_images", "Adding Images", "6.10.0"),
         ("tutorial_music", "Music and Sound Effects", "6.10.0"),
         ("tutorial_menus", "In-Game Menus", "6.10.0"),
         ("tutorial_python", "Python Control", "6.10.0"),
         ("tutorial_positions", "Screen Positions", "6.10.0"),
         ("tutorial_atl", "Animation and Transformation", "6.10.0"),
-
         # ("demo_basics", "Basic Scripting", "5.6.3"),
         # ("demo_experience", "User Experience", "5.6.3"), 
         ("demo_transitions", "Transitions", "5.6.6"),
@@ -31,7 +30,7 @@ init python:
         ("demo_persistent", "Persistent Data", "6.7.0"),
         ("demo_transform", "Transform", "6.9.0"),
         ]
-
+    
     def tutorials_show(adjustment):
 
         renpy.choice_for_skipping()
@@ -72,8 +71,10 @@ init python:
 
 
 # The game starts here.
+#begin start
 label start:
 
+    #end start
     scene bg washington
     show eileen vhappy
     with dissolve
@@ -82,20 +83,18 @@ label start:
     play music "mozart.ogg"
 
     window show
-    
+
     e "Hi! My name is Eileen, and I'd like to welcome you to the Ren'Py tutorial. You've come at a very interesting time."
 
     show eileen happy
     
     e "We're hard at work making Ren'Py 7, and that means we'll be turning the old Ren'Py demo game into the new tutorial."
-
+    
     e "What we have now is a bit of a mix of the two. But please check it out, to see what Ren'Py is capable of."
-
 
     $ tutorials_adjustment = ui.adjustment()
     $ tutorials_first_time = True
     
-
     while True:
         show eileen happy at left
         with move

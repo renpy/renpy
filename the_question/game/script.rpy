@@ -1,24 +1,22 @@
-init:
+# Declare images used by this game.
+image bg lecturehall = "lecturehall.jpg"
+image bg uni = "uni.jpg"
+image bg meadow = "meadow.jpg"
+image bg club = "club.jpg"
 
-    # Declare images used by this game.
-    image bg lecturehall = "lecturehall.jpg"
-    image bg uni = "uni.jpg"
-    image bg meadow = "meadow.jpg"
-    image bg club = "club.jpg"
-    
-    image sylvie normal = "sylvie_normal.png"
-    image sylvie giggle = "sylvie_giggle.png"
-    image sylvie smile = "sylvie_smile.png"
-    image sylvie surprised = "sylvie_surprised.png"    
+image sylvie normal = "sylvie_normal.png"
+image sylvie giggle = "sylvie_giggle.png"
+image sylvie smile = "sylvie_smile.png"
+image sylvie surprised = "sylvie_surprised.png"    
 
-    image sylvie2 normal = "sylvie2_normal.png"
-    image sylvie2 giggle = "sylvie2_giggle.png"
-    image sylvie2 smile = "sylvie2_smile.png"  
-    image sylvie2 surprised = "sylvie2_surprised.png"    
+image sylvie2 normal = "sylvie2_normal.png"
+image sylvie2 giggle = "sylvie2_giggle.png"
+image sylvie2 smile = "sylvie2_smile.png"  
+image sylvie2 surprised = "sylvie2_surprised.png"    
 
-    # Declare characters used by this game.
-    $ s = Character('Sylvie', color="#c8ffc8")
-    $ m = Character('Me', color="#c8c8ff")
+# Declare characters used by this game.
+define s = Character('Sylvie', color="#c8ffc8")
+define m = Character('Me', color="#c8c8ff")
 
 
 # The game starts here.

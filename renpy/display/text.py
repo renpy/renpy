@@ -26,6 +26,11 @@ import re
 import renpy
 import sys
 
+try:
+    from renpybidi import log2vis, WRTL, RTL, ON
+except ImportError:
+    pass
+    
 get_font = renpy.display.font.get_font
 ImageFont = renpy.display.font.ImageFont
 
@@ -354,10 +359,16 @@ def layout_width(triples, justify=False):
 
     curts = None
     cur = ""
+
+    rtl = renpy.config.rtl
     
     for type, ts, i in triples:
         if ts is not curts:
             if cur:
+
+                if rtl:
+                    cur, dir = log2vis(cur, ON)
+
                 rv += curts.get_width(cur)
                 
             curts = ts
@@ -365,6 +376,10 @@ def layout_width(triples, justify=False):
 
         elif justify and type == "space":
             cur += i
+
+            if rtl:
+                cur, dir = log2vis(cur, ON)
+
             rv += curts.get_width(cur)
             cur = ""
 
@@ -372,6 +387,9 @@ def layout_width(triples, justify=False):
             cur += i
 
     if curts:
+        if rtl:
+            cur, dir = log2vis(cur, ON)
+
         rv += curts.get_width(cur)
 
     return rv
@@ -1160,6 +1178,25 @@ class Text(renpy.display.core.Displayable):
             if oldts:
                 line.append((oldts, cur))
 
+                
+            if renpy.config.rtl:
+
+                rtl_line = [ ]
+                
+                # RTL direction.
+                line_direction = ON
+
+                for ts, i in line:
+                    if isinstance(ts, TextStyle):
+                        i, line_direction = log2vis(i, line_direction)
+
+                    rtl_line.append((ts, i))
+
+                if line_direction == RTL or line_direction == WRTL:
+                    rtl_line.reverse()
+
+                line = rtl_line
+                
             width = 0
             height = 0
 

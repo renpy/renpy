@@ -42,6 +42,7 @@ class ReportError(object):
         
     # In the report method, Ren'Py may be in an ill-defined state.
     def report(self, error_type):
+        import os.path
         import pygame
         pygame.display.init()
 

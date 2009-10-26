@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 import distutils.core
 import os
@@ -121,7 +122,7 @@ add_library("libavformat")
 add_library("libavcodec")
 add_library("libavutil")
 add_library("libfreetype")
-            
+add_library("libfribidi")            
 
 
 extra_link_args = [ ]
@@ -197,6 +198,18 @@ if winmixer:
 if linmixer:
     py_modules.append('pysdlsound.linmixer')
 
+
+renpybidi = distutils.core.Extension(
+    "renpybidi",
+    ["renpybidi.c", "renpybidicore.c"],
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
+    libraries=['fribidi'],
+    )
+
+extensions.append(renpybidi)
+
+    
 distutils.core.setup(
     name = "renpy_module",
     version = "6.9.1",
