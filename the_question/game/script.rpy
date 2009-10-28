@@ -18,7 +18,6 @@ image sylvie2 surprised = "sylvie2_surprised.png"
 define s = Character('Sylvie', color="#c8ffc8")
 define m = Character('Me', color="#c8c8ff")
 
-
 # The game starts here.
 label start:
     $ bl_game = False

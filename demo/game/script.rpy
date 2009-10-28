@@ -5,8 +5,9 @@ init python:
 
     tutorials = [
         ("tutorial_playing", "User Experience", "6.10.0"),
-        ("tutorial_quickstart", "Quickstart", "6.10.0"),
+        ("tutorial_dialogue", "Writing Dialogue", "6.10.0"),
         ("tutorial_images", "Adding Images", "6.10.0"),
+        ("tutorial_transitions", "Transitions", "6.10.0"),
         ("tutorial_music", "Music and Sound Effects", "6.10.0"),
         ("tutorial_menus", "In-Game Menus", "6.10.0"),
         ("tutorial_python", "Python Control", "6.10.0"),
