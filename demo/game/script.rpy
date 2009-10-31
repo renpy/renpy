@@ -81,7 +81,7 @@ label start:
     with dissolve
 
     # Start the background music playing.
-    play music "mozart.ogg"
+    play music "happy_alley.ogg"
 
     window show
 

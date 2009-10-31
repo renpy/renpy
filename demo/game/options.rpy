@@ -188,7 +188,7 @@ init -1 python hide:
 
     ## A sample sound that can be played to check the sound volume.
 
-    config.sample_sound = "18005551212.ogg"
+    config.sample_sound = "tower_clock.ogg"
 
     ## Music that is played while the user is at the main menu.
 
