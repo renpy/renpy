@@ -194,6 +194,7 @@ keymap = dict(
     focus_down = [ 'K_DOWN', 'joy_down' ],
         
     # Button.
+    button_ignore = [ 'mousedown_1' ],
     button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
 
     # Input.

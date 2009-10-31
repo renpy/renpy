@@ -11,14 +11,6 @@
 
 transform example_transform:
     ypos 450 yanchor 1.0 xpos 0 xanchor 0
-    alpha 0
-    on hover:
-        linear .25 alpha 1.0
-    on idle:
-        linear .25 alpha .25
-    on hide:
-        linear .25 alpha 0
-        
 
 
 init python:
@@ -60,12 +52,9 @@ init python:
             code = "\n".join(lines)
 
             ct = Text(code, size=14, color="#000")
-            vp = Viewport(ct, ymaximum=120, draggable=True, mousewheel=True)
-            b = Button(vp,
-                       clicked=ui.returns(None),
-                       background = "#fffc",
-                       )
-            return example_transform(b)
+            vp = Viewport(ct, child_size=(2000, 2000), ymaximum=120, draggable=True, mousewheel=True)
+            w = Window(vp, background = "#fffc", right_padding=0, bottom_padding=0, yminimum=0)
+            return example_transform(w)
 
 image example = __Example()
         
@@ -82,12 +71,6 @@ init python hide:
         if i.endswith(".rpy"):
             files.append(os.path.join(config.gamedir, i))
 
-    d = os.path.join(config.gamedir, "../../the_question/game")
-    for i in os.listdir(d):
-        if i.endswith(".rpy"):
-            files.append(os.path.join(d, i))
-        
-            
     for fn in files:
 
         f = file(fn, "r")
@@ -101,7 +84,6 @@ init python hide:
             m = re.match("\s*#begin (\w+)", l)
             if m:
                 example = m.group(1)
-                print example, fn
 
                 if example in examples:
                     raise Exception("Example %r is defined in two places.", example)

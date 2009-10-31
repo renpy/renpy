@@ -19,7 +19,8 @@ label tutorial_dialogue:
 
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
 
-    show example1
+    show example example1
+    with dissolve
     
 #begin example1
     e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."  
@@ -53,7 +54,7 @@ label tutorial_dialogue:
     
     scene bg washington 
     show eileen happy
-    show example start tutorial1
+    show example start dialogue1
     with dissolve
 
     e "I'll show you the code for that example."
@@ -373,9 +374,94 @@ label tutorial_music:
 
     return
 
+label tutorial_menus:
 
+    e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
     
+    e "Do you think your game will use menus?"
+
+#begin menu1
+    menu:
+        "Yes, I do.":
+            jump choice1_yes
+
+        "No, I don't.":
+            jump choice1_no
+
+label choice1_yes:
+
+    $ menu_flag = True
     
+    e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
+
+    jump choice1_done
+
+label choice1_no:
+
+    $ menu_flag = False
+    
+    e "Games without menus are called kinetic novels, and there are dozens of them available to play."
+
+    jump choice1_done
+    
+label choice1_done:
+
+    # ... the game continues here.
+#end menu1
+
+    show example menu1
+    with dissolve
+    
+    e "Here, you can see the code for that menu."
+
+    e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which each line must contain a choice in quotes."
+
+    e "The choices must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
+
+    e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
+
+    e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice2_done."
+
+    e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
+
+    e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
+
+    e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
+
+    e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag."
+
+    hide example menu1
+    with dissolve
+
+#begin menu2
+    if menu_flag:
+        
+        e "For example, I remembered that you plan to use menus in your game."
+
+    else:
+
+        e "For example, I remembered that you're planning to make a kinetic novel, without menus."
+#end menu2
+
+    show example menu2
+    with dissolve
+
+    e "Here's an example that shows how we can test a flag, and do different things based on if it is true or false."
+
+    hide example menu2
+    with dissolve
+
+    e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
+
+    e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
+
+    e "We look forward to seeing what you make with it."
+
+    return
+    
+        
+    
+
     
     
     

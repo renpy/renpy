@@ -142,6 +142,10 @@ class Displayable(renpy.object.Object):
             self.set_style_prefix(self.role + "idle_")
 
     def is_focused(self):
+
+        if renpy.display.focus.grab and renpy.display.focus.grab is not self:
+            return
+
         return renpy.game.context().scene_lists.focused is self
 
     def set_style_prefix(self, prefix):
