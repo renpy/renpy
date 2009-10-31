@@ -1,3 +1,7 @@
+init python:
+    tutorial_path = config.renpy_base + "/tutorial"
+    tutorial_exists = os.path.isdir(tutorial_path)
+
 label main_menu:
     return
 
@@ -86,7 +90,17 @@ label top:
                ui.jumps("documentation"),
                _(u"Open the Ren'Py documentation in a web browser."))
 
-        ui.null()
+        if tutorial_exists:
+        
+            button(_(u"Tutorial Game"),
+                   ui.jumps("launch_tutorial"),
+                   _(u"Launches the Ren'Py tutorial game."))
+
+        else:
+
+            ui.null()
+            
+        
 
         ui.close()
         ui.close()

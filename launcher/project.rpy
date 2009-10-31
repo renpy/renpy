@@ -148,7 +148,7 @@ init python:
                 return
 
         for i in projects:
-            if i.name == "demo":
+            if i.name == "tutorial":
                 i.select()
                 return
 
@@ -193,6 +193,21 @@ label select_project:
 
         interact()
 
+label launch_tutorial:
+    
+
+    python hide:
+    
+        if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
+            proc = subprocess.Popen([sys.argv[0], tutorial_path])
+        else:
+            proc = subprocess.Popen([sys.executable, sys.argv[0], tutorial_path])
+
+        set_tooltip(_(u"Tutorial game has been launched."))
+
+    jump top
+        
+        
 label launch:
     
     python hide:
