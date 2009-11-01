@@ -20,7 +20,6 @@ label tutorial_dialogue:
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
 
     show example example1
-    with dissolve
     
 #begin example1
     e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."  
@@ -29,7 +28,6 @@ label tutorial_dialogue:
 #end example1
 
     hide example
-    with dissolve
     
     e "To create a new project, you can click New Project in the Ren'Py launcher."
 
@@ -54,8 +52,9 @@ label tutorial_dialogue:
     
     scene bg washington 
     show eileen happy
-    show example start dialogue1
     with dissolve
+
+    show example start dialogue1
 
     e "I'll show you the code for that example."
 
@@ -76,8 +75,9 @@ label tutorial_dialogue:
     
     scene bg washington 
     show eileen happy
-    show example start dialogue1
     with dissolve
+
+    show example start dialogue1
 
     e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
 
@@ -88,8 +88,9 @@ label tutorial_dialogue:
 
     scene bg washington 
     show eileen happy
-    show example start dialogue1
     with dissolve
+
+    show example start dialogue1
     
     e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
 
@@ -111,7 +112,6 @@ label tutorial_dialogue:
     e "To solve these problems, Ren'Py lets you define Characters."
 
     show example characters
-    with dissolve
     
     e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
 
@@ -124,7 +124,6 @@ label tutorial_dialogue:
     e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
     
     hide example
-    with dissolve
 
     e "Now that we have a character defined, we can use it to say dialogue."
 
@@ -139,8 +138,9 @@ label tutorial_dialogue:
     
     scene bg washington 
     show eileen happy
-    show example characters start dialogue dialogue2
     with dissolve
+
+    show example characters start dialogue dialogue2
 
     e "Here's the full game, including the two new lines of dialogue, which use Characters."
     
@@ -150,7 +150,7 @@ label tutorial_dialogue:
 
     e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
     
-    hide example with dissolve
+    hide example
 
     e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
 
@@ -169,7 +169,6 @@ label tutorial_images:
     e "All of the image files we'll be using here are in the game directory, under the tutorial directory, under the Ren'Py directory."
 
     show example images
-    with dissolve
 
     e "Here are the some sample image definitions. They should be placed the start of the file, without any indentation."
 
@@ -182,7 +181,6 @@ label tutorial_images:
     e "A string giving an image name is only one of the dozens of kinds of displayable that Ren'Py supports."
 
     hide example
-    with dissolve
 
     e "Let's see what those look like in the game."
 
@@ -200,8 +198,9 @@ label tutorial_images:
 
     scene bg washington
     show eileen happy
-    show example start images1
     with dissolve
+
+    show example start images1
 
     e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
 
@@ -220,7 +219,6 @@ label tutorial_images:
     #end showbehind
 
     show example showbehind
-    with dissolve
     
     e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
 
@@ -231,7 +229,6 @@ label tutorial_images:
     #end hide1
 
     show example hide1
-    with dissolve
         
     e "Finally, there's the hide statement, which hides the image with the given tag."
 
@@ -240,7 +237,6 @@ label tutorial_images:
     e "The main use is for when a character or prop leaves before the scene is over."
 
     hide example
-    with dissolve
 
     return
 
@@ -268,7 +264,6 @@ label tutorial_transitions:
     #end trans1
 
     show example trans1
-    with dissolve
     
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
@@ -279,7 +274,6 @@ label tutorial_transitions:
     e "In this case, each transition takes half a second."
 
     show example slowdissolve
-    with dissolve
     
     e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
 

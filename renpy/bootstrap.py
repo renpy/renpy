@@ -325,7 +325,7 @@ def report_exception(e):
     type, value, tb = sys.exc_info()
 
     def safe_utf8(e):
-        m = e.message
+        m = unicode(e)
         
         if isinstance(m, unicode):
             return m.encode("utf-8")

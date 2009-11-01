@@ -65,7 +65,7 @@ class ReportError(object):
 
         while True:
 
-            if os.path.exists(commandfile):
+            if commandfile and os.path.exists(commandfile):
                 return True
 
             ev = pygame.event.wait()
