@@ -28,6 +28,13 @@ contain at least one dot as image references. Now, one can write
 A pause statement has been added to Ren'Py. [doc]
 
 
+The new config.auto_load variable allows you to specify a save file
+that is automatically loaded when Ren'Py starts. For example, setting
+this to "1" loads the game in save slot 1. This is intended for use by
+developers, so they can easily return to a point in the game after 
+restarting Ren'Py.
+
+
 The layout.imagemap_yesno_prompt now supports a prompt_images
 argument, which is can be used to specify images to replace the
 text of a yes/no prompt.

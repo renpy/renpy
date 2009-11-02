@@ -52,6 +52,9 @@ init -1180 python:
     # Should we automatically define images?
     config.automatic_images = None
 
+    # A save to automatically load, if it exists.
+    config.auto_load = None
+    
     # This is updated to give the user an idea of where a save is
     # taking place.
     save_name = ''
@@ -665,9 +668,11 @@ label _start:
         for i in config.start_callbacks:
             i()
     
-    # call _check_module from _call__check_module_1
     call _load_reload_game from _call__load_reload_game_1
 
+    if not _restart and config.auto_load and renpy.can_load(config.auto_load):
+        $ renpy.load(config.auto_load)
+    
     scene black
 
     if not _restart:
