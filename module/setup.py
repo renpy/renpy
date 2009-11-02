@@ -17,7 +17,6 @@ extra_compile_args = [ "-O3", "-funroll-loops" ]
 # extra_compile_args = [ "-O0", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
 
-
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
 install = os.environ.get("RENPY_DEPS_INSTALL", None)

@@ -243,10 +243,14 @@ class TransformBase(renpy.object.Object):
             
         old_exception_info = renpy.game.exception_info
 
-        action, arg, pause = self.block.execute(trans, st, self.atl_state, event)
+        if self.atl.animation:
+            timebase = at
+        else:
+            timebase = st
+        
+        action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
-
 
         # print "Executing", self, self.state, self.xpos, self.ypos
         
@@ -316,17 +320,22 @@ class Statement(renpy.object.Object):
     # Return a list of displayable children.
     def visit(self):
         return [ ]
-        
+
 # This represents a Raw ATL block.
 class RawBlock(RawStatement):
 
-    def __init__(self, loc, statements):
+    # Should we use the animation timebase or the showing timebase?
+    animation = False
+
+    def __init__(self, loc, statements, animation):
 
         self.loc = loc
         
         # A list of RawStatements in this block.
         self.statements = statements
-
+        
+        self.animation = animation
+        
     def compile(self, ctx):
         compiling(self.loc)
 
@@ -363,9 +372,9 @@ class Block(Statement):
         
         # Unpack the state.
         if state is not None:
-            index, start, repeats, times, child_state = state
+            index, start, loop_start, repeats, times, child_state = state
         else:
-            index, start, repeats, times, child_state = 0, 0, 0, self.times[:], None
+            index, start, loop_start, repeats, times, child_state = 0, 0, 0, 0, self.times[:], None
 
         # What we might be returning.
         action = "continue"
@@ -389,10 +398,7 @@ class Block(Statement):
                 target = st
                 max_pause = 15
 
-            for i in range(0, 1000):
-
-                if child_state is None and target - start > 60:
-                    start = target - 60
+            while True:
 
                 # If we've hit the last statement, it's the end of
                 # this block.
@@ -410,7 +416,7 @@ class Block(Statement):
                         if pause is None:
                             pause = max_pause
                             
-                        action, arg, pause = "continue", (index, start, repeats, times, arg), min(max_pause, pause)
+                        action, arg, pause = "continue", (index, start, loop_start, repeats, times, arg), min(max_pause, pause)
                         break
 
                     elif action == "event":
@@ -425,36 +431,41 @@ class Block(Statement):
                     # On repeat, either terminate the block, or go to
                     # the first statement.
                     elif action == "repeat":
-                        count, arg = arg
-                        repeats += 1
 
-                        if count is not None and repeats >= count:
-                            return "next", arg, None
-                        else:
-                            index = 0
-                            start = target - arg
-                            child_state = None
+                        count, arg = arg
+                        loop_end = target - arg
+                        duration = loop_end - loop_start
+
+                        # Figure how many durations can occur between the
+                        # start of the loop and now.
+                        new_repeats = int((target - loop_start) / duration)
+                        
+                        if duration <= 0:
+                            raise Exception("ATL appears to be in an infinite loop.")
+
+                        if count is not None:
+                            if repeats + new_repeats >= count:
+                                new_repeats = count - repeats
+                                loop_start += new_repeats * duration
+                                return "next", target - loop_start, None
+
+                        repeats += new_repeats
+                        loop_start = loop_start + new_repeats * duration
+                        start = loop_start
+                        index = 0
+                        child_state = None
 
                 except:
                     # If an exception occurs when dealing with a statment,
                     # advance to the next statement.
 
-                    # if renpy.config.debug:
-                    #     raise
-
-                    raise
+                    if renpy.config.debug:
+                        raise
 
                     index += 1
                     start = target
                     child_state = None
 
-            else:
-
-                if renpy.config.debug:
-                    raise Exception("ATL Block probably in infinite loop.")
-
-                # As good an error recovery as any.
-                return "next", 0, None
 
             if self.times:
                 time, tindex = times[0]
@@ -972,7 +983,7 @@ class On(Statement):
 
         # If it's our first time through, start in the start state.
         if state is None:
-            name, start, cstate = ("show", st, None)
+            name, start, cstate = ("replace", st, None)
         else:
             name, start, cstate = state
 
@@ -987,7 +998,6 @@ class On(Statement):
                 name = event
                 start = st
                 cstate = None
-
                 
         while True:
 
@@ -1027,7 +1037,7 @@ class On(Statement):
                 name, arg = arg
 
                 if name in self.handlers:
-                    start = st - arg
+                    start = max(st - arg, st - 30)
                     cstate = None
                     continue
 
@@ -1067,6 +1077,8 @@ def parse_atl(l):
 
     statements = [ ]
 
+    animation = False
+    
     while not l.eob:
 
         loc = l.get_location()
@@ -1131,6 +1143,10 @@ def parse_atl(l):
         elif l.keyword('pass'):
             l.expect_noblock('pass')
             statements.append(None)
+
+        elif l.keyword('animation'):
+            l.expect_noblock('animation')
+            animation = True
             
         else:
 
@@ -1270,4 +1286,4 @@ def parse_atl(l):
         merged.append(new)
         old = new
 
-    return RawBlock(block_loc, merged)
+    return RawBlock(block_loc, merged, animation)

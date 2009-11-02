@@ -94,6 +94,7 @@ def check_at_shutdown():
         return
 
     free_memory()
+
     if render_count != 0:
         raise Exception("Render count is %d at shutdown. This probably indicates a memory leak bug in Ren'Py." % render_count)
         
@@ -947,6 +948,16 @@ class Render(object):
         self.surface = None
         self.alpha_surface = None
 
+    def __repr__(self):
+
+        if self.dead:
+            dead = "dead"
+        else:
+            dead = "live"
+        
+        return "<Render %x %s of %r>" % (id(self), dead, self.render_of)
+
+        
     def blit(self, source, (xo, yo), focus=True, main=True):
         """
         Blits `source` (a Render or Surface) to this Render, offset by

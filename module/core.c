@@ -960,7 +960,7 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 }
 
 #define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
-#define EPSILON (1.0 / 2048.0)
+#define EPSILON (1.0 / 256.0)
 
 /****************************************************************************/
 /* A similar concept to rotozoom, but implemented differently, so we
@@ -1005,8 +1005,8 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    float maxsx = srcw - 1 - EPSILON;
-    float maxsy = srch - 1 - EPSILON;
+    double maxsx = srcw - 1 - EPSILON;
+    double maxsy = srch - 1 - EPSILON;
 
     // If a delta is too even, subtract epsilon (towards 0) from it.
     if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
@@ -1026,24 +1026,24 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     for (y = 0; y < dsth; y++) {
         
         // The source coordinates of the leftmost pixel in the line.
-        float leftsx = corner_x + y * xdy;
-        float leftsy = corner_y + y * ydy;
+        double leftsx = corner_x + y * xdy;
+        double leftsy = corner_y + y * ydy;
 
         // Min and max x-extent to draw on the current line.
-        float minx = 0;
-        float maxx = dstw - 1;
+        double minx = 0;
+        double maxx = dstw - 1;
 
         // Figure out the x-extent based on xdx.
         if (xdx) {
-            float x1 = (0.0 - leftsx) / xdx;
-            float x2 = (maxsx - leftsx) / xdx;
+            double x1 = (0.0 - leftsx) / xdx;
+            double x2 = (maxsx - leftsx) / xdx;
 
             if (x1 < x2) {
-                minx = fmaxf(x1, minx);
-                maxx = fminf(x2, maxx);                
+                minx = fmax(x1, minx);
+                maxx = fmin(x2, maxx);                
             } else {
-                minx = fmaxf(x2, minx);
-                maxx = fminf(x1, maxx);                
+                minx = fmax(x2, minx);
+                maxx = fmin(x1, maxx);                
             }
 
         } else {
@@ -1054,15 +1054,15 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
         // Figure out the x-extent based on ydx.
         if (ydx) {
-            float x1 = (0.0 - leftsy) / ydx;
-            float x2 = (maxsy - leftsy) / ydx;
+            double x1 = (0.0 - leftsy) / ydx;
+            double x2 = (maxsy - leftsy) / ydx;
 
             if (x1 < x2) {
-                minx = fmaxf(x1, minx);
-                maxx = fminf(x2, maxx);                
+                minx = fmax(x1, minx);
+                maxx = fmin(x2, maxx);                
             } else {
-                minx = fmaxf(x2, minx);
-                maxx = fminf(x1, maxx);                
+                minx = fmax(x2, minx);
+                maxx = fmin(x1, maxx);                
             }
             
         } else {
@@ -1073,7 +1073,10 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
                 
         minx = ceil(minx);
         maxx = floor(maxx);
-        
+
+        if (minx >= maxx) {
+            continue;
+        }
         
         // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;
@@ -1194,8 +1197,8 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    float maxsx = srcw - 1 - EPSILON;
-    float maxsy = srch - 1 - EPSILON;
+    double maxsx = srcw - 1 - EPSILON;
+    double maxsy = srch - 1 - EPSILON;
 
     // If a delta is too even, subtract epsilon (towards 0) from it.
     if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
@@ -1215,24 +1218,24 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     for (y = 0; y < dsth; y++) {
         
         // The source coordinates of the leftmost pixel in the line.
-        float leftsx = corner_x + y * xdy;
-        float leftsy = corner_y + y * ydy;
+        double leftsx = corner_x + y * xdy;
+        double leftsy = corner_y + y * ydy;
 
         // Min and max x-extent to draw on the current line.
-        float minx = 0;
-        float maxx = dstw - 1;
+        double minx = 0;
+        double maxx = dstw - 1;
 
         // Figure out the x-extent based on xdx.
         if (xdx) {
-            float x1 = (0.0 - leftsx) / xdx;
-            float x2 = (maxsx - leftsx) / xdx;
+            double x1 = (0.0 - leftsx) / xdx;
+            double x2 = (maxsx - leftsx) / xdx;
 
             if (x1 < x2) {
-                minx = fmaxf(x1, minx);
-                maxx = fminf(x2, maxx);                
+                minx = fmax(x1, minx);
+                maxx = fmin(x2, maxx);                
             } else {
-                minx = fmaxf(x2, minx);
-                maxx = fminf(x1, maxx);                
+                minx = fmax(x2, minx);
+                maxx = fmin(x1, maxx);                
             }
 
         } else {
@@ -1243,15 +1246,15 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
         // Figure out the x-extent based on ydx.
         if (ydx) {
-            float x1 = (0.0 - leftsy) / ydx;
-            float x2 = (maxsy - leftsy) / ydx;
+            double x1 = (0.0 - leftsy) / ydx;
+            double x2 = (maxsy - leftsy) / ydx;
 
             if (x1 < x2) {
-                minx = fmaxf(x1, minx);
-                maxx = fminf(x2, maxx);                
+                minx = fmax(x1, minx);
+                maxx = fmin(x2, maxx);                
             } else {
-                minx = fmaxf(x2, minx);
-                maxx = fminf(x1, maxx);                
+                minx = fmax(x2, minx);
+                maxx = fmin(x1, maxx);                
             }
             
         } else {
@@ -1259,10 +1262,13 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
                 continue;
             }
         }
-                
+
         minx = ceil(minx);
         maxx = floor(maxx);
-        
+
+        if (minx >= maxx) {
+            continue;
+        }
         
         // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;

@@ -12,6 +12,9 @@
 transform example_transform:
     ypos 450 yanchor 1.0 xpos 0 xanchor 0
 
+    on replace:
+        crop (0, 0, 800, 120)
+            
     on show:
         crop (0, 0, 800, 0)
         linear .5 crop (0, 0, 800, 120)
@@ -145,7 +148,6 @@ init python:
                 last_blank = not i
 
                 i = regex.sub(self.colorize, i)
-                print i
                 
                 lines.append(i)
             

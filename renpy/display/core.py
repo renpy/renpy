@@ -590,8 +590,9 @@ class SceneLists(renpy.object.Object):
         else:
             index = len(l)
 
+        thing.set_transform_event("show")
         l.insert(index, (key, zorder, st, at, thing))
-
+        
     def remove(self, layer, thing):
         """
         Thing is either a key or a displayable. This iterates through the
