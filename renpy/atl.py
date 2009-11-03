@@ -643,13 +643,14 @@ class Child(Statement):
         executing(self.loc)
         
         old_child = trans.raw_child
-        
+
         if old_child is not None and self.transition is not None:
-            trans.child = self.transition(old_widget=old_child,
+            child = self.transition(old_widget=old_child,
                                           new_widget=self.child)
         else:
-            trans.child = self.child
+            child = self.child
 
+        trans.set_child(child)
         trans.raw_child = self.child
 
         return "next", st, None
@@ -760,7 +761,7 @@ class Interpolation(Statement):
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new)
             setattr(trans.state, k, value)
-
+            
         # Handle the revolution.
         if revolution is not None:
             startangle, endangle, startradius, endradius = revolution
@@ -983,7 +984,7 @@ class On(Statement):
 
         # If it's our first time through, start in the start state.
         if state is None:
-            name, start, cstate = ("replace", st, None)
+            name, start, cstate = ("start", st, None)
         else:
             name, start, cstate = state
 

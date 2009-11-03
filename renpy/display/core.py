@@ -364,7 +364,12 @@ class Displayable(renpy.object.Object):
         """
                 
         return None
-            
+
+    def show(self):
+        """
+        Called when the displayable is added to a scene list.
+        """
+    
 
 class ImagePredictInfo(renpy.object.Object):
     """
@@ -574,6 +579,9 @@ class SceneLists(renpy.object.Object):
 
                     thing.take_state(old_thing)
                     
+                thing.set_transform_event("replace")
+                thing.show() 
+                    
                 if zorder == zo:                
                     l[index] = (key, zorder, st, at, thing)
                     return
@@ -591,6 +599,7 @@ class SceneLists(renpy.object.Object):
             index = len(l)
 
         thing.set_transform_event("show")
+        thing.show()
         l.insert(index, (key, zorder, st, at, thing))
         
     def remove(self, layer, thing):

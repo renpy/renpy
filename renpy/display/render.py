@@ -775,7 +775,7 @@ def render_screen(root, width, height):
     screen_render.refcount += 1
     
     invalidated = False
-    
+
     return rv
 
 def draw_screen(xoffset, yoffset, full_redraw):

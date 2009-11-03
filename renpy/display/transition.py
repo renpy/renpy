@@ -363,14 +363,13 @@ class Dissolve(Transition):
 
             if w <= 0 or h <= 0:
                 return
-            
+
             renpy.display.module.blend(
                 bottom_surface.subsurface((-x, -y, w, h)),
                 top_surface.subsurface((-x, -y, w, h)),
                 dest.subsurface((0, 0, w, h)),
                 alpha)
-
-
+            
         if self.alpha:
 
             rv = renpy.display.render.Render(width, height)

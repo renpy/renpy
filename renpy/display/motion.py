@@ -191,7 +191,7 @@ class Proxy(object):
 
 class Transform(Container):
 
-    __version__ = 1
+    __version__ = 2
     transform_event_responder = True
     
     # Proxying things over to our state.
@@ -221,7 +221,7 @@ class Transform(Container):
     corner2 = Proxy("corner2")
     size = Proxy("size")
 
-    def after_upgrade(version):
+    def after_upgrade(self, version):
 
         if version < 1:
             self.active = False
@@ -239,9 +239,12 @@ class Transform(Container):
 
             self.hide_request = False
             self.hide_response = True
-            self.last_st = 0
-            self.last_at = 0
-            
+
+        if version < 2:
+            self.st = 0
+            self.at = 0
+            self.child_st_base = 0
+
     
     # Compatibility with old versions of the class.
     active = False
@@ -293,6 +296,10 @@ class Transform(Container):
         # True if it's okay for us to hide.
         self.hide_response = True
 
+        self.st = 0
+        self.at = 0
+        self.child_st_base = 0
+        
         
     def take_state(self, t):
         """
@@ -328,8 +335,15 @@ class Transform(Container):
             renpy.display.render.redraw(d, 0)
             return d
 
+    def set_child(self, child):
+        self.child = child
+        self.child_st_base = self.st
+        
     
     def render(self, width, height, st, at):
+
+        self.st = st
+        self.at = at
 
         if self.function is not None:
 
@@ -342,9 +356,9 @@ class Transform(Container):
 
         if self.state.size:
             width, height = self.state.size
-        
-        cr = render(self.child, width, height, st, at)
 
+        cr = render(self.child, width, height, st - self.child_st_base, at)
+                
         # Compute the crop.
         crop = self.state.crop
         if crop is None and self.state.corner1 and self.state.corner2:
@@ -508,6 +522,13 @@ class Transform(Container):
     def update(self):
         renpy.display.render.invalidate(self)
 
+    def parameterize(self, name, parameters):
+        if parameters:
+            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
+                            (' '.join(name), ' '.join(parameters)))
+
+        # Note the call here.
+        return self()
         
 class ATLTransform(renpy.atl.TransformBase, Transform):
     
@@ -530,16 +551,12 @@ class ATLTransform(renpy.atl.TransformBase, Transform):
             context=kwargs)
 
         rv.take_state(self)
+
         return rv
-        
-    def parameterize(self, name, parameters):
-        if parameters:
-            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
-                            (' '.join(name), ' '.join(parameters)))
 
-        # Note the call here.
-        return self()
-
+    def show(self):
+        self.execute(self, 0, 0)
+    
     
 class Motion(Container):
     """
