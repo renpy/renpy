@@ -232,7 +232,7 @@ def LiveComposite(size, *args, **properties):
 
     width, height = size
 
-    rv = Fixed(xmaximum=width, ymaximum=height, **properties)
+    rv = Fixed(xmaximum=width, ymaximum=height, xminimum=width, yminimum=height, **properties)
 
     if len(args) % 2 != 0:
         raise Exception("LiveComposite requires an odd number of arguments.")
