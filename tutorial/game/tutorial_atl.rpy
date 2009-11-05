@@ -274,9 +274,9 @@ label tutorial_atl:
 
     e "We call this a Transform, and it's what ATL, Ren'Py's Animation and Transformation Language, is for."
 
-    # Gratuitous Rock concert.
+    "[Gratuituous Rock Concert Coming Soon]"
 
-    e "That was a lot of work, and before we can do that, we'll need to start with the basics of using ATL."
+    e "That was a lot of work, and before you can do that, we'll need to start with the basics of using ATL."
 
     e "There are currently three places where ATL can be used in Ren'Py."
 
@@ -502,8 +502,7 @@ label tutorial_atl:
     #end atl_alpha
     with dissolve
 
-
-    e "The alpha property allows you to vary the opacity of a displayable. This can make it appear and disappear."
+    e "The alpha property allows us to vary the opacity of a displayable. This can make it appear and disappear."
 
     show logo base at reset
     show example atl_rotate
@@ -517,7 +516,7 @@ label tutorial_atl:
     #end atl_rotate
     with dissolve
 
-    e "The rotate property lets you rotate a displayable."
+    e "The rotate property lets us rotate a displayable."
 
     e "Since rotation can change the size, usually you'll want to set xanchor and yanchor to 0.5 when positioning a rotated displayable."
 
@@ -546,14 +545,94 @@ label tutorial_atl:
 
     e "When used together, they can be used to focus in on specific parts of an image."
 
-    hide example
-    
     show bg washington at reset
     with dissolve
+    hide example
+    
+    e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
 
+    show example atl_include
     
+    #begin atl_include
+    show eileen happy:
+        right
+        pause 1.25
+        left
+        pause 1.25
+        repeat
+    #end atl_include
+    with dissolve
+    
+    e "When we create an ATL transform using the transform statement, we can use that transform as an ATL statement."
 
+    e "Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
+
+    show eileen happy at center
+    show logo base behind eileen
+    with dissolve
+    show example atl_blocktime
     
+    #begin atl_blocktime
+    show logo base:
+        block:
+            linear 1.0 xalign 1.0
+            linear 1.0 xalign 0.0
+            repeat
+        time 11.5
+        linear .5 xalign 1.0
+    #end atl_blocktime
+        
+    e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
+
+    e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
+
+    e "So this code will bounce the image back and forth for eleven and a half seconds, and then move back to the right side of the screen."
+
+    show example atl_parallel
+
+    #begin atl_parallel
+    show logo base:
+        parallel:
+            linear 1.0 xalign 0.0
+            linear 1.0 xalign 1.0
+            repeat
+        parallel:
+            linear 1.3 yalign 1.0
+            linear 1.3 yalign 0.0
+            repeat            
+    #end atl_parallel
+
+    e "The parallel statement lets us run two blocks of ATL code at the same time."
+
+    e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
+
+    show logo base:
+        yalign 0.0
+        xalign 0.0
+
+    show example atl_choice
+        
+    #begin atl_choice
+    show logo base:
+        choice:
+            linear 1.0 xalign 0.0
+        choice:
+            linear 1.0 xalign 1.0
+        repeat
+    #end atl_choice
+
+    e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
+
+    hide logo base
+    with dissolve
+    hide example
     
+    e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual."
+
+    show eileen vhappy
+    
+    e "But for now, just remember that when it comes to animating and transforming, ATL is the hot new thing."
+
+    show eileen happy
         
     return

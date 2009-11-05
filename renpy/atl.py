@@ -467,7 +467,7 @@ class Block(Statement):
                     child_state = None
 
 
-            if self.times:
+            if times:
                 time, tindex = times[0]
                 if time <= target:
                     times.pop(0)

@@ -759,7 +759,7 @@ class Window(Container):
         cypadding = top_padding + bottom_padding
 
         child = self.get_child()
-        
+
         # Render the child.
         surf = render(child,
                       width  - cxmargin - cxpadding,

@@ -117,12 +117,8 @@ init python:
 
             if m.group("comment"):
                 return "{color=#600}" + m.group(0) + "{/color}"
-                
-            
-            
             
             return m.group(0)
-                        
 
         
         def parameterize(self, name, args):
@@ -152,11 +148,11 @@ init python:
                 lines.append(i)
             
             # Join them into a single string.
-            code = "\n".join(lines)
+            code = "\n".join(lines) + "\n "
 
             ct = Text(code, size=16, color="#000")
             vp = Viewport(ct, child_size=(2000, 2000), ymaximum=120, draggable=True, mousewheel=True)
-            w = Window(vp, background = "#fffc", right_padding=0, bottom_padding=0, yminimum=0)
+            w = Window(vp, background = "#fffc", top_padding=0, right_padding=0, bottom_padding=0, yminimum=0)
             return example_transform(w)
 
 image example = __Example()
