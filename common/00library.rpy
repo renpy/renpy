@@ -336,6 +336,8 @@ label _save_reload_game:
         renpy.pause(0)
         renpy.save("reload", "reload save game")
 
+        renpy.music.stop()
+        
         persistent._reload_save = "reload"
         
         ui.add(Solid((0, 0, 0, 255)))

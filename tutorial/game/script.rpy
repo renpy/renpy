@@ -1,6 +1,18 @@
 ﻿# This file contains the script for the Ren'Py demo game. Execution starts at
 # the start label.
 
+# Here we define the backgrounds that are used.
+image bg washington = "washington.jpg"
+image bg whitehouse = "whitehouse.jpg"
+
+# And this is the character art we use.
+image eileen happy = "eileen_happy.png"
+image eileen vhappy = "eileen_vhappy.png"
+image eileen concerned = "eileen_concerned.png"
+
+# Now, we declare the characters.
+define e = Character('Eileen', color="#c8ffc8")
+
 init python:
 
     tutorials = [
@@ -12,12 +24,8 @@ init python:
         ("tutorial_menus", "In-Game Menus and Python", "6.10.0"),
         ("tutorial_positions", "Screen Positions", "6.10.0"),
         ("tutorial_atl", "Animation and Transformation", "6.10.0"),
-        # ("demo_basics", "Basic Scripting", "5.6.3"),
-        # ("demo_experience", "User Experience", "5.6.3"), 
+        ("tutorial_video", "Video Playback", "6.10.0"),
         ("demo_transitions", "Transition Gallery", "5.6.6"),
-        # ("demo_movement", "Positions and Movement", "6.9.0"),
-        # ("demo_animation", "Animation", "6.2.0"),
-        ("demo_multimedia", "Music, Sound, and Video", "6.9.1"),
         ("demo_imageops", "Image Operations", "6.5.0"),
         ("demo_ui", "User Interaction", "6.5.0"),
         ("demo_text", "Fonts and Text Tags", "6.8.0"),
@@ -124,8 +132,10 @@ label end:
     e "If you'd like to see a full Ren'Py game, go to the launcher and choose \"Select Project\", then \"the_question\"."
     
     e "You can download new versions of Ren'Py from {a=http://www.renpy.org/}http://www.renpy.org/{/a}. For help and discussion, check out the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
-    
-    e "We'd like to thank Piroshki for contributing character art, and Jake for the magic circle."
+
+    e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
+
+    e "The background music is \"Happy Alley\" by Kevin MacLeod, of {a=http://incompetech.com}incompetech.com{/a}."
     
     show eileen vhappy 
     
