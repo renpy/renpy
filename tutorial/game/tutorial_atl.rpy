@@ -1,5 +1,6 @@
 image logo blue = "logosolid.png"
 image magic = "magic.png"
+image bg band = "band.jpg"
 
 image pos:
     "target1.png"
@@ -362,7 +363,7 @@ label tutorial_atl:
     
     e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
 
-    show bg whitehouse
+    show bg washington
     with dissolve
     
     hide example
@@ -429,9 +430,29 @@ label tutorial_atl:
         
     e "We've already seen the position properties. Along with xalign and yalign, we also support the xpos, ypos, xanchor, and yanchor properties."
 
-    show logo base at reset
-    show example atl_zoom
+    hide eileen
+    show example atl_pan
+    hide logo base
+    show bg band:
+        xpos 0 ypos -222
+    with dissolve
 
+    #begin atl_pan
+    show bg band:
+        xpos 0 ypos -222
+        linear 5.0 xpos -435 ypos 0
+    #end atl_pan
+    
+    e "We can perform a pan by using xpos and ypos to position images off of the screen."
+
+    e "This usually means giving them negative positions."
+
+    show bg washington at reset
+    show eileen happy at right behind example
+    show logo base at reset behind example
+    show example atl_zoom
+    with dissolve
+    
     #begin atl_zoom
     show logo base:
         zoom 1.0
@@ -441,7 +462,7 @@ label tutorial_atl:
     #end atl_zoom
     with dissolve
 
-    e "The zoom property lets us scale the image by a factor, making it bigger and smaller. For best results, zoom should always be greater than 0.5."
+    e "The zoom property lets us scale the displayable by a factor, making it bigger and smaller. For best results, zoom should always be greater than 0.5."
 
     show logo base at reset
     show example atl_xyzoom
@@ -455,8 +476,84 @@ label tutorial_atl:
     #end atl_xyzoom
     with dissolve
     
-    e "The xzoom and yzoom properties allow images to be scaled in the X and Y directions independently."
+    e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
 
-    "..."
+    show logo base at reset
+    show example atl_xyzoom
+
+    #begin atl_size
+    show logo base:
+        size (300, 450)
+    #end atl_size
+    with dissolve
     
+    e "The size property can be used to set a size, in pixels, that the displayable is scaled to."
+
+    
+    show logo base at reset
+    show example atl_alpha
+    
+    #begin atl_alpha
+    show logo base:
+        alpha 1.0
+        linear 1.0 alpha 0.0
+        linear 1.0 alpha 1.0
+        repeat
+    #end atl_alpha
+    with dissolve
+
+
+    e "The alpha property allows you to vary the opacity of a displayable. This can make it appear and disappear."
+
+    show logo base at reset
+    show example atl_rotate
+    
+    #begin atl_rotate
+    show logo base:
+        xpos 0.5 ypos 0.5 xanchor 0.5 yanchor 0.5
+        rotate 0
+        linear 4.0 rotate 360
+        repeat
+    #end atl_rotate
+    with dissolve
+
+    e "The rotate property lets you rotate a displayable."
+
+    e "Since rotation can change the size, usually you'll want to set xanchor and yanchor to 0.5 when positioning a rotated displayable."
+
+    show logo base at reset
+    show example atl_rotate
+    
+    #begin atl_cropsize
+    show logo base:
+        crop (0, 0, 100, 307)
+    #end atl_cropsize
+    with dissolve
+
+    e "The crop property crops a rectangle out of a displayable, showing only part of it."
+
+    hide logo base
+    show example atl_cropsize2
+    with dissolve
+    
+    #begin atl_cropsize2    
+    show bg washington:
+        crop (0, 0, 800, 600)
+        size (800, 600)
+
+        linear 4.0 crop (350, 300, 400, 300)
+    #end atl_cropsize2
+
+    e "When used together, they can be used to focus in on specific parts of an image."
+
+    hide example
+    
+    show bg washington at reset
+    with dissolve
+
+    
+
+    
+    
+        
     return

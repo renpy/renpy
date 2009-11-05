@@ -271,6 +271,11 @@ def load(name):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
+    if renpy.config.file_open_callback:
+        rv = renpy.config.file_open_callback(name)
+        if rv is not None:
+            return rv
+    
     # Look for the file directly.
     if not renpy.config.force_archives:
 

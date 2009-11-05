@@ -398,6 +398,9 @@ window_overlay_functions = [ ]
 # Do we support right-to-left languages?
 rtl = False
 
+# A callback for file opening.
+file_open_callback = None
+
 del renpy
 
 def init():

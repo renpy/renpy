@@ -383,13 +383,15 @@ class Transform(Container):
         xo = yo = 0
 
         # Handle size.
-        if self.state.size:
+        if self.state.size and self.state.size != (width, height):
             nw, nh = self.state.size
             xzoom = 1.0 * nw / width
             yzoom = 1.0 * nh / height
             forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
             reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
 
+            width, height = self.state.size
+            
         # Rotation first.
         if self.state.rotate is not None:
 

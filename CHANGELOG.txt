@@ -95,6 +95,10 @@ Added a .001s sleep for frames that are framerate-limited. This should
 prevent Ren'Py from consuming all CPU unless the game is CPU-bound.
 
 
+Added config.file_open_callback, which allows Ren'Py to load files
+from user-definable archive types.
+
+
 Added the renpy.get_roll_forward function, which is the infrastructure
 needed to create a button that lets the user roll forward.
 
