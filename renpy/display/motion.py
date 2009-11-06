@@ -191,7 +191,7 @@ class Proxy(object):
 
 class Transform(Container):
 
-    __version__ = 2
+    __version__ = 3
     transform_event_responder = True
     
     # Proxying things over to our state.
@@ -243,8 +243,12 @@ class Transform(Container):
         if version < 2:
             self.st = 0
             self.at = 0
-            self.child_st_base = 0
 
+        if version < 3:
+            self.st_offset = 0
+            self.at_offset = 0
+            self.child_st_base = 0
+            
     
     # Compatibility with old versions of the class.
     active = False
@@ -298,6 +302,9 @@ class Transform(Container):
 
         self.st = 0
         self.at = 0
+        self.st_offset = 0
+        self.at_offset = 0
+
         self.child_st_base = 0
         
         
@@ -324,7 +331,9 @@ class Transform(Container):
             d.take_execution_state(self)
         else:
             d = self
-            
+
+        d.st_offset = self.st_offset
+        d.at_offset = self.at_offset            
         d.hide_request = True
         d.hide_response = True
 
@@ -342,9 +351,16 @@ class Transform(Container):
     
     def render(self, width, height, st, at):
 
-        self.st = st
-        self.at = at
+        # Preserve the illusion of linear time.
+        if st == 0:
+            self.st_offset = self.st
+        if at == 0:
+            self.at_offset = self.at
 
+        self.st = st = st + self.st_offset
+        self.at = at = at + self.at_offset
+
+        # If we have to, call the function that updates this transform.        
         if self.function is not None:
 
             fr = self.function(self, st, at)
