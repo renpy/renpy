@@ -1,6 +1,27 @@
 New in Ren'Py 6.10.0
 --------------------
 
+The demo game is in the process of being converted into a new tutorial
+game, which shows recommended Ren'Py code examples rather than
+requiring the user to learn from the game itself's source code.
+
+
+Ren'Py now supports an Animation and Transformation language
+(ATL). This provides a convenient syntax for animating an image, or
+transforming it by positioning it, rotating it, zooming it, and
+adjusting its opacity.
+
+To a large extent, ATL supersedes the Animation, TransitionAnimation,
+anim.SMAnimation, anim.Blink, Zoom, FactorZoom, RotoZoom, SizeZoom,
+LiveCrop, Move, Pan, Position, Motion, and Revolve functions, and
+perhaps others. As it allows properties to be scripted, ATL is more
+powerful that all of these functons. (For example, many of these
+functions can only do relatively simple repeats, while ATL allows
+complex patters to be easily specified.)
+
+ATL can be used in the new transform statement, and new variants of
+the image, scene, and show statements.
+
 
 When an image is shown, Ren'Py checks to see if there was a previous
 image with that tag, and if that image used a transform. If this is
@@ -16,16 +37,16 @@ and shown again.
 
 
 The default positions (left, right, center, truecenter, offscreenleft,
-and offscreenright) are now defined as transforms. This means that showing
+and offscreenright) are now defined as ATL transforms. This means that showing
 an image at such a position will cause the position to be remembered.
 
 
 The displayable code has been adjusted to consider strings that do not
 contain at least one dot as image references. Now, one can write
-"eileen happy" to refer to an image with that name. [doc]
+"eileen happy" to refer to an image with that name.
 
 
-A pause statement has been added to Ren'Py. [doc]
+A pause statement has been added to Ren'Py. 
 
 
 The new config.auto_load variable allows you to specify a save file
@@ -48,7 +69,7 @@ Ren'Py now has a define statement, which combines into a single
 statement running code at init time, and assigning it to a
 variable. Ren'Py keeps track of these definitions, which may in the 
 future make it easier for editors to determine where something is
-defined. [doc]
+defined.
 
 
 The new config.window_overlay_functions variable contains a list of
@@ -86,7 +107,7 @@ keymap that is used when the button is focused.
 Added the Image Location Picker to the Developer (shift+D) menu. This
 tool lets the user pick an image, and then pick locations that
 image. It displays the mouse coordinates, imagemap rectangle, and
-cropping rectangle. [doc]
+cropping rectangle.
 
 
 Added a FPS meter to the Developer (shift+D) menu.

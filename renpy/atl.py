@@ -56,8 +56,10 @@ PROPERTIES = set([
         "pos",
         "xpos",
         "ypos",
+        "anchor"
         "xanchor",
         "yanchor",
+        "align",
         "xalign",
         "yalign",
         "rotate",

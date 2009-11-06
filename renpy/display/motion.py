@@ -170,8 +170,25 @@ class TransformState(renpy.object.Object):
         self.xpos, self.ypos = value
 
     pos = property(get_pos, set_pos)
+
+    def get_anchor(self):
+        return self.xanchor, self.yanchor
+
+    def set_anchor(self, value):
+        self.xanchor, self.yanchor = value
+
+    anchor = property(get_anchor, set_anchor)
+
+    def get_align(self):
+        return self.xpos, self.ypos
+
+    def set_align(self, value):
+        self.xanchor, self.yanchor = value
+        self.xpos, self.ypos = value
+
+    align = property(get_align, set_align)
         
-        
+    
 
     
 class Proxy(object):
@@ -215,7 +232,9 @@ class Transform(Container):
     radius = Proxy("radius")
 
     pos = Proxy("pos")
-
+    anchor = Proxy("anchor")
+    align = Proxy("align")
+    
     crop = Proxy("crop")
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")

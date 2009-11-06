@@ -365,6 +365,7 @@ class Lexer(object):
         'with',
         'while',
         'zorder',
+        'transform',
         ])
         
 
