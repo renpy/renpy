@@ -41,6 +41,18 @@ and offscreenright) are now defined as ATL transforms. This means that showing
 an image at such a position will cause the position to be remembered.
 
 
+Support for Arabic and Hebrew has been added to Ren'Py. To enable this
+support, config.rtl needs to be set to True. It may also be necessary
+to set various style properties to do a credible job of right-to-left 
+layout.)
+
+
+The freetype library has been updated, and we have added support for
+the use of TrueType collections. Using a name of 0@font.ttc will get
+the first font in the collection, 1@font.ttc will get the second font,
+and so on.
+
+
 The displayable code has been adjusted to consider strings that do not
 contain at least one dot as image references. Now, one can write
 "eileen happy" to refer to an image with that name.
@@ -95,9 +107,9 @@ The play statement takes an if_changed modifier, which prevents a song
 from being restarted if it is already playing on the channel. [doc]
 
 
-Ren'Py now allows games to be deleted. To do this, select a save game
-(either with the keyboard, or by hovering the mouse over it), and hit
-delete.
+Ren'Py now allows save games to be deleted. To do this, select a save
+game (either with the keyboard, or by hovering the mouse over it), and
+hit delete.
 
 
 Buttons now take a keymap argument, which specifies an alternate 

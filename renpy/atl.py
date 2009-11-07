@@ -56,7 +56,7 @@ PROPERTIES = set([
         "pos",
         "xpos",
         "ypos",
-        "anchor"
+        "anchor",
         "xanchor",
         "yanchor",
         "align",
@@ -1209,6 +1209,7 @@ def parse_atl(l):
                 prop = l.name()
 
                 if prop in PROPERTIES:
+
                     expr = l.require(l.simple_expression)
 
                     # We either have a property or a spline. It's the

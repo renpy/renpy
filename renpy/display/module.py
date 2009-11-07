@@ -32,18 +32,15 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < 6009000:
-        print >>sys.stderr, "The _renpy module was found, but is out of date.\nPlease read module/README.txt for more information."
+    if version < (6, 10, 0):
+        print >>sys.stderr, "The _renpy module was found, but is out of date."
+        print >>sys.stderr, "Trying to run anyway, but you should expect errors."
         
 except:
-    # If for any reason we can't import the module, we have a version
-    # number of 0.
-
     print >>sys.stderr, "The _renpy module was not found. Please read module/README.txt for"
     print >>sys.stderr, "more information."
 
-    version = 0
-
+    sys.exit(-1)
 
 def convert_and_call(function, src, dst, *args):
     """

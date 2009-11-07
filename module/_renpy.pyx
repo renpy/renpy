@@ -94,9 +94,8 @@ import pygame
 
 PygameSurface = pygame.Surface
 
-# Update this in 00library.rpy as well!
 def version():
-    return 6009000
+    return (6, 10, 0)
 
 def save_png(surf, file, compress=-1):
 

@@ -317,7 +317,7 @@ def load(name):
             
         return rv
 
-    raise Exception("Couldn't find file '%s'." % name)
+    raise IOError("Couldn't find file '%s'." % name)
 
 def loadable(name):
     """

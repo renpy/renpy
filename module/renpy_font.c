@@ -601,12 +601,13 @@ static void font_dealloc(PyFontObject* self)
 
 static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
 {
+    int index = 0;
     int fontsize;
     RENPY_TTF_Font* font = NULL;
     PyObject* fileobj;
 	
     self->font = NULL;
-    if(!PyArg_ParseTuple(args, "Oi|iff", &fileobj, &fontsize))
+    if(!PyArg_ParseTuple(args, "Oi|i", &fileobj, &fontsize, &index))
         return -1;
 
     if(!font_initialized)
@@ -674,7 +675,7 @@ static int font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
             return -1;
         }
         // Py_BEGIN_ALLOW_THREADS
-            font = RENPY_TTF_OpenFontIndexRW(rw, 1, fontsize, 0);
+            font = RENPY_TTF_OpenFontIndexRW(rw, 1, fontsize, index);
         // Py_END_ALLOW_THREADS
 #else
             Py_DECREF(fileobj);

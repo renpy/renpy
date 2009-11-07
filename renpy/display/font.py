@@ -24,12 +24,9 @@ from pygame.constants import *
 
 import xml.etree.ElementTree as etree
 
-try:
-    import _renpy_font
-    pygame.font = _renpy_font
-except:
-    pass
-
+import _renpy_font
+pygame.font = _renpy_font
+    
 import renpy
 
 # This contains a map from (fn, size, bold, italics, underline) to the
@@ -378,11 +375,22 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
 
 def load_ttf(fn, size, bold, italics, underline, expand):
 
+    # Figure out the font index.
+    index = 0
+
+    if "@" in fn:
+        index, fn = fn.split("@", 1)
+        index = int(index)
+    
     try:
-        rv = pygame.font.Font(renpy.loader.load(fn), size)
+        f = renpy.loader.load(fn)
+        rv = _renpy_font.Font(f, size, index)
+
         rv.set_bold(bold)
         rv.set_italic(italics)
-    except:
+
+    except IOError:
+        
         # Let's try to find the font on our own.
         fonts = [ i.strip().lower() for i in fn.split(",") ]
 
@@ -394,7 +402,7 @@ def load_ttf(fn, size, bold, italics, underline, expand):
             for flags, ffn in v.iteritems():
                 for i in fonts:
                     if ffn.lower().endswith(i):
-                        rv = pygame.font.Font(ffn, size)
+                        rv = _renpy_font.Font(ffn, size, index)
                         rv.set_bold(bold)
                         rv.set_italic(italics)
                         break
@@ -404,7 +412,7 @@ def load_ttf(fn, size, bold, italics, underline, expand):
                 break
         else:
             # Let pygame try to find the font for us.
-            rv = pygame.font.SysFont(fn, size, bold, italics)
+            rv = pygame.sysfont.SysFont(fn, size, bold, italics)
 
     rv.set_underline(underline)
 
@@ -432,9 +440,8 @@ def get_font(origfn, size, origbold=False, origitalics=False, underline=False, e
         try:
             rv = load_ttf(fn, size, bold, italics, underline, expand)
         except:
-            if renpy.config.debug:
-                raise
-            raise Exception("Could not find font: %r" % ((fn, size, bold, italics, underline), ))
+            renpy.game.exception_info = "Finding font: %r" % ((fn, size, bold, italics, underline),)
+            raise
 
     font_cache[(origfn, size, origbold, origitalics, underline, expand)] = rv
 
