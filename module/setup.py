@@ -115,13 +115,13 @@ add_include("", "libavcodec/avcodec.h")
 add_include("", "libswscale/swscale.h")
 
 add_library("libSDL")
-add_library("libz")
 add_library("libpng")
 add_library("libavformat")
 add_library("libavcodec")
 add_library("libavutil")
 add_library("libfreetype")
 add_library("libfribidi")            
+add_library("libz")
 
 
 extra_link_args = [ ]
@@ -168,7 +168,7 @@ renpy_font = distutils.core.Extension(
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries + [ 'freetype' ],
+    libraries=sdl_libraries + [ 'freetype', 'z' ],
     )
 
 extensions.append(renpy_font)

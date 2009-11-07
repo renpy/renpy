@@ -1,7 +1,9 @@
 #include <Python.h>
-#include <alloca.h>
 #include <fribidi/fribidi.h>
 
+/* This is easier than trying to figure out the header that alloca is */
+/* defined in. */
+void *alloca(size_t size);
 
 PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     char *src;
@@ -10,8 +12,6 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     int unisize;
     FriBidiChar *dstuni;
     char *dst;
-    
-
     
     int i;
     

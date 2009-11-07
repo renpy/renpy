@@ -3,8 +3,12 @@ init python:
 
     TRANSLATION_STRINGS = [
 
-        u"Developer Menu",
-        u"Return to the developer menu",
+        u"Are you sure?",
+        u"Are you sure you want to delete this save?",
+        u"Are you sure you want to overwrite your save?",
+        u"Loading will lose unsaved progress.\nAre you sure you want to do this?",
+        u"Are you sure you want to quit?",
+        u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress.",
         u"Skip Mode",
         u"Fast Skip Mode",
         u"Please click to continue.",
@@ -16,16 +20,12 @@ init python:
         u"Return",
         u"Save Game",
         u"Main Menu",
-        u"Are you sure you want to quit?",
-        u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress.",
         u"Begin Skipping",
         u"Empty Slot.",
         u"Previous",
         u"Next",
         u"Yes",
         u"No",
-        u"Loading will lose unsaved progress.\nAre you sure you want to do this?",
-        u"Are you sure you want to overwrite your save?",
         u"The error message was:",
         u"You may want to try saving in a different slot, or playing for a while and trying again later.",
         u"Save Failed.",
@@ -152,6 +152,7 @@ init python:
         u"Projects Directory",
         u"Select the directory Ren'Py searches for projects.",
         u"Select Project",
+        u"Tutorial game has been launched.",
         u"%s has been launched.",
         u"Opening game directory:\n%s",
         u"No editor has been selected.",
@@ -190,5 +191,7 @@ init python:
         u"Change Ren'Py launcher options.",
         u"Ren'Py Help",
         u"Open the Ren'Py documentation in a web browser.",
+        u"Tutorial Game",
+        u"Launches the Ren'Py tutorial game.",
     ]
 
