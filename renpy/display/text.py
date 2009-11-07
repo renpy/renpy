@@ -20,16 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
-from pygame.constants import *
+# from pygame.constants import *
 
 import re
 import renpy
 import sys
 
-try:
-    from renpybidi import log2vis, WRTL, RTL, ON
-except ImportError:
-    pass
+from _renpybidi import log2vis, WRTL, RTL, ON
     
 get_font = renpy.display.font.get_font
 ImageFont = renpy.display.font.ImageFont
@@ -617,7 +614,7 @@ class Text(renpy.display.core.Displayable):
 
     __version__ = 2
 
-    def after_upgrade(version):
+    def after_upgrade(self, version):
         if version <= 0:
             self.activated = None
         if version <= 1:
@@ -1256,7 +1253,6 @@ class Text(renpy.display.core.Displayable):
         """
 
         if not self.laidout:
-            import sys
             return sys.maxint
 
         return self.laidout_length

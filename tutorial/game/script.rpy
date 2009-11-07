@@ -30,7 +30,6 @@ init python:
         ("demo_ui", "User Interaction", "6.5.0"),
         ("demo_text", "Fonts and Text Tags", "6.8.0"),
         ("demo_character", "Character Objects", "6.2.0"), 
-        ("demo_advanced", "Advanced Features", "6.9.0"),
         ("demo_layers", "Layers & Advanced Show", "5.6.5"),
         ("demo_nvlmode", "NVL Mode", "6.4.0"),
         ("demo_dynamic", "Dynamic Displayables", "5.6.3"),

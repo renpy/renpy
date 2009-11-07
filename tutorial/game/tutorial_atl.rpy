@@ -108,7 +108,7 @@ label tutorial_positions:
     show pos:
         linear .5 xpos 0.0 ypos 0.0
         
-    e "The origin is the upper-left corner of the screen. That's where the x position (xpos) and the y position (ypos) are 0."
+    e "The origin is the upper-left corner of the screen. That's where the x position (xpos) and the y position (ypos) are both zero."
 
     show pos:
         ypos 0.0
@@ -206,7 +206,7 @@ label tutorial_positions:
     show anchor:
         linear .5 xpos 600 ypos 400
         
-    e "We then line them up, so that both the position an anchor are at the same point on the screen."
+    e "We then line them up, so that both the position and anchor are at the same point on the screen."
 
 
     show anchor:
@@ -216,7 +216,7 @@ label tutorial_positions:
     show logo blue:
         linear .5 xpos 0 ypos 0
         
-    e "When we place the both in the upper-left corner, the image moves to the upper-left corner of the screen."    
+    e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."    
 
     show anchor:
         linear .5 xpos 0.5 ypos 0.5
@@ -290,7 +290,7 @@ label tutorial_atl:
 
     e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
 
-    # show example atl_show
+    show example atl_motion
 
     e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
 
@@ -428,7 +428,7 @@ label tutorial_atl:
         
     show example atl_motion
         
-    e "We've already seen the position properties. Along with xalign and yalign, we also support the xpos, ypos, xanchor, and yanchor properties."
+    e "We've already seen the position properties. Along with xalign and yalign, we support the xpos, ypos, xanchor, and yanchor properties."
 
     hide eileen
     show example atl_pan

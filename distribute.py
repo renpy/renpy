@@ -121,7 +121,7 @@ def main():
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
     
     # Compile the various games
-    for i in [ 'demo/game', 'launcher', 'template/game', 'the_question/game' ]:
+    for i in [ 'tutorial/game', 'launcher', 'template/game', 'the_question/game' ]:
         os.system("./renpy.sh --compile --game " + i)
     
 
@@ -133,7 +133,7 @@ def main():
     files.extend(tree("common"))
     more_files.append("console.exe")
     files.extend(tree("launcher"))
-    files.extend(tree("demo"))
+    files.extend(tree("tutorial"))
     # files.extend(tree("dse"))
     files.extend(tree("the_question"))
 
@@ -172,6 +172,9 @@ def main():
         "subpixel.c",
         "winmixer.c",
         "winmixer.pyx",
+        "_renpybidi.c",
+        "renpybidicore.c",
+        "_renpybidi.pyx",
         ]
 
     for i in module_files:

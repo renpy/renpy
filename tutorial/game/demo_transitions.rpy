@@ -110,7 +110,7 @@ label demo_simple_transitions:
 
     show eileen happy at right
     with move
-    show eileen happy
+    show eileen happy at center
     with move
 
     e "The 'move' transition finds images that have changed placement, and slides them to their new place. It's an easy way to get motion in your game."

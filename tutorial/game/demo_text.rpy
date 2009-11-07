@@ -68,9 +68,9 @@ label demo_text:
     with flashbulb
     extend " when we reach the end of a block of text, in slow text mode."
     
-    e "They can even change the {color=#f00}color{/color} {color=#ff0}of{/color} {color=#0f0}the{/color} {color=#0ff}text{/color}."
+    e "They can change the {color=#f00}color{/color} {color=#ff0}of{/color} {color=#0f0}the{/color} {color=#0ff}text{/color}."
 
-    e "There are also bold, italic, strikethrough, and underline style properties, which can be styled onto any text."
+    # e "There are also bold, italic, strikethrough, and underline style properties, which can be styled onto any text."
 
     e "{a=define_hyperlink}Hyperlinks{/a} let buttons be defined using text tags."
 
@@ -86,7 +86,7 @@ label demo_text:
 
     e "And we want to give you all the power you need."
 
-    e "There are a couple of text adjustements that don't corrrespond to text tags."
+    e "There are a couple of text adjustments that don't corrrespond to text tags."
 
     eoutline "The outlines setting lets you put outlines around the text."
 

@@ -131,18 +131,18 @@ label tutorial_dialogue:
     with dissolve
 
     #begin dialogue2
-    l "Why are you trying to put words into my mouth? And who are you calling it?"
+    l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
 
-    l "What's more, what are you going to do about the impending Grue problem? Are you just going to leave us here?"
+    l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
     #end dialogue2
     
     scene bg washington 
     show eileen happy
     with dissolve
 
-    show example characters start dialogue dialogue2
+    show example characters start dialogue1 dialogue2
 
-    e "Here's the full game, including the two new lines of dialogue, which use Characters."
+    e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
     
     e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
 
@@ -210,9 +210,9 @@ label tutorial_images:
 
     e "If there was already an image with the same tag, the new image is used to replace the old one."
 
-    e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background."
+    e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
 
-    e "The show statement also has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
+    e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
 
     #begin showbehind
     show logo base at logopos behind eileen
@@ -250,7 +250,7 @@ label tutorial_transitions:
     scene bg washington
     show eileen happy
 
-    e "To help take some of edge off changes in image, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
+    e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
 
     #begin trans1
     scene bg whitehouse
@@ -267,7 +267,7 @@ label tutorial_transitions:
     
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
-    e "It uses the new with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
+    e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
 
     e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
 
@@ -292,9 +292,8 @@ label tutorial_transitions:
     e "Once a transition has been given a short name, we can use it in our game."
 
     hide example
-    with dissolve
 
-    e "Ren'Py also defines some transitions for you, like dissolve and move. You can also define dozens more."
+    e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
 
     e "If you're interested, check out the Transitions Gallery section of the tutorial."
 
@@ -406,7 +405,7 @@ label choice1_done:
     show example menu1
     with dissolve
     
-    e "Here, you can see the code for that menu."
+    e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
 
     e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which each line must contain a choice in quotes."
 
@@ -422,28 +421,26 @@ label choice1_done:
 
     e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
 
-    e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag."
+    e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
 
     hide example menu1
-    with dissolve
+    pause .25
 
 #begin menu2
     if menu_flag:
         
-        e "For example, I remembered that you plan to use menus in your game."
+        e "For example, I remember that you plan to use menus in your game."
 
     else:
 
-        e "For example, I remembered that you're planning to make a kinetic novel, without menus."
+        e "For example, I remember that you're planning to make a kinetic novel, without menus."
 #end menu2
 
     show example menu2
-    with dissolve
 
-    e "Here's an example that shows how we can test a flag, and do different things based on if it is true or false."
+    e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
     hide example menu2
-    with dissolve
 
     e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
 

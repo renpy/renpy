@@ -55,7 +55,7 @@ init:
             # Recomputes the position of the ball, handles bounces, and
             # draws the screen.
             def render(self, width, height, st, at):
-
+                
                 # The Render object we'll be drawing into.
                 r = renpy.Render(width, height)
                 
@@ -172,7 +172,7 @@ init:
                 # Ask that we be re-rendered ASAP, so we can show the next
                 # frame.
                 renpy.redraw(self, 0)
-
+                
                 # Return the Render object.
                 return r
                 

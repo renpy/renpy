@@ -190,7 +190,7 @@ def process_redraws():
 
     new_redraw_queue = [ ]
     seen = set()
-    
+
     for t in redraw_queue:
         when, d = t
 
@@ -206,7 +206,7 @@ def process_redraws():
             # Remove this displayable and all its parents from the
             # render cache. But don't kill them yet, as that will kill the
             # children that we want to reuse.
-     
+
             for v in render_cache[d].values():
                 v.kill_cache()
 
@@ -216,8 +216,8 @@ def process_redraws():
             new_redraw_queue.append(t)
 
         redraw_queue = new_redraw_queue
-            
 
+        
     return rv
 
 
@@ -763,7 +763,7 @@ def render_screen(root, width, height):
     Renders `root` (a displayable) as the root of a screen with the given
     `width` and `height`.
     """
-    
+
     global old_screen_render
     global screen_render
     global invalidated

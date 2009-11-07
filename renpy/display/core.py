@@ -50,8 +50,8 @@ PERIODIC = USEREVENT + 5
 JOYEVENT = USEREVENT + 6
 REDRAW = USEREVENT + 7
 
-ALL_EVENTS = range(0, REDRAW + 1)
-
+# All events except for TIMEEVENT.
+ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT ]
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -1920,7 +1920,6 @@ class Interface(object):
                             if self.timeout_time != old_timeout_time:
                                 # Always set to at least 1ms.
                                 pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
-
                                 old_timeout_time = self.timeout_time
 
                     # Handle autosaving, as necessary.

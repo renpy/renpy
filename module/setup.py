@@ -199,8 +199,8 @@ if linmixer:
 
 
 renpybidi = distutils.core.Extension(
-    "renpybidi",
-    ["renpybidi.c", "renpybidicore.c"],
+    "_renpybidi",
+    ["_renpybidi.c", "renpybidicore.c"],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     libraries=['fribidi'],
