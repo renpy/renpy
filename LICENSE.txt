@@ -22,8 +22,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 Please see each individual source file for a list of copyright
-holders. The pictures of Eileen in the demo are Copyright 2006
-Piroshki, under the same terms.
+holders. The artwork in the demo is released by various copyright
+holders, under the same terms.
+
 
 The Ren'Py module, the Ren'Py windows binaries, and the various Ren'Py
 launchers may contain code taken from the following projects:
@@ -36,6 +37,7 @@ launchers may contain code taken from the following projects:
     * SDL_mixer (LGPL)
     * Freetype (LGPL)
     * FFmpeg (LGPL)
+    * Fribidi (LGPL)
     * jpeg (JPEG License)
     * libpng (PNG license)
     * zlib (Zlib License)

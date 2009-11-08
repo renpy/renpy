@@ -50,8 +50,8 @@ PERIODIC = USEREVENT + 5
 JOYEVENT = USEREVENT + 6
 REDRAW = USEREVENT + 7
 
-# All events except for TIMEEVENT.
-ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT ]
+# All events except for TIMEEVENT and REDRAW
+ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
