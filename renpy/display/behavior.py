@@ -528,8 +528,13 @@ class Input(renpy.display.text.Text):
         self.changed = changed
 
         self.editable = True
-        
-        self.caret = renpy.display.image.Solid(None, xmaximum=1, style=style)
+
+        caretprops = { 'color' : None}
+        for i in properties:
+            if i.endswith("color"):
+                caretprops[i] = properties[i]
+
+        self.caret = renpy.display.image.Solid(xmaximum=1, style=style, **caretprops)
 
         if button:
             self.editable = False
