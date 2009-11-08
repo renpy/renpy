@@ -15,9 +15,9 @@ To a large extent, ATL supersedes the Animation, TransitionAnimation,
 anim.SMAnimation, anim.Blink, Zoom, FactorZoom, RotoZoom, SizeZoom,
 LiveCrop, Move, Pan, Position, Motion, and Revolve functions, and
 perhaps others. As it allows properties to be scripted, ATL is more
-powerful that all of these functons. (For example, many of these
+powerful that all of these functions. (For example, many of these
 functions can only do relatively simple repeats, while ATL allows
-complex patters to be easily specified.)
+complex patterns to be easily specified.)
 
 ATL can be used in the new transform statement, and new variants of
 the image, scene, and show statements.

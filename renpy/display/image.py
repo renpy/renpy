@@ -196,7 +196,6 @@ class Solid(renpy.display.core.Displayable):
     color. A Solid expands to fill all the space allocated to it,
     making it suitable for use as a background.
     """
-
     def __init__(self, color, **properties):
         """
         @param color: An RGBA tuple, giving the color that the display

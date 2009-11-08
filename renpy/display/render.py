@@ -112,7 +112,7 @@ def render(d, width, height, st, at):
     rv = render_cache[d].get(orig_wh, None)
     if rv is not None:
         return rv
-    
+
     style = d.style
     xmaximum = style.xmaximum
     ymaximum = style.ymaximum

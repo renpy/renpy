@@ -508,13 +508,16 @@ def rebuild():
 
     if renpy.game.init_phase:
         return
+
+    if styles_pending is None:
+        styles_pending = [ ]
     
-    styles_pending = [ j for i in style_parts.values() for j in i.values() ]
+    styles_pending += [ j for i in style_parts.values() for j in i.values() ]
     styles_built = False
     
     for i in styles_pending:
         i.cache = None
-
+        
     build_styles()
 
     
