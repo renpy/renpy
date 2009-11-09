@@ -145,14 +145,22 @@ class Context(object):
     def eval(self, expr):
         return eval(expr, renpy.store.__dict__, self.context)
     
-    
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
 class TransformBase(renpy.object.Object):
 
-    def __init__(self, atl, context):
+    # Compatibility with older saves.
+    parameters = renpy.ast.ParameterInfo([ ], [ ], None, None) 
+    
+    def __init__(self, atl, context, parameters):
 
+        if parameters is None:
+            parameters = TransformBase.parameters
+        
+        # The parameters that we take.
+        self.parameters = parameters
+        
         # The raw code that makes up this ATL statement.
         self.atl = atl
 
@@ -195,13 +203,73 @@ class TransformBase(renpy.object.Object):
         self.transform_event = t.transform_event
         self.last_transform_event = t.last_transform_event
         self.last_child_transform_event = t.last_child_transform_event
-        
 
+    def __call__(self, *args, **kwargs):
+
+        context = self.context.context.copy()
+
+        for k, v in self.parameters.parameters:
+            if v is not None:
+                context[k] = renpy.python.py_eval(v)
+
+        positional = list(self.parameters.positional)
+        args = list(args)
+        
+        # If we require no more positional arguments, then take a child as
+        # our argument.
+        child = self.child
+
+        if not positional and args:
+            child = args[0]
+            args.pop(0)
+            
+        # Handle positional arguments.
+        while positional and args:
+            name = positional.pop(0)
+            value = args.pop(0)
+
+            if name in kwargs:
+                raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
+
+            context[name] = value
+
+        if args:
+            raise Exception("Too many arguments passed to ATL transform.")
+
+        # Handle keyword arguments.
+        for k, v in kwargs.iteritems():
+
+            if k in positional:
+                positional.remove(k)
+                context[k] = v
+            elif k in context:
+                context[k] = v
+            else:
+                raise Exception('Parameter %r is not known by ATL Transform.' % k)
+
+        # Create a new ATL Transform.
+        parameters = renpy.ast.ParameterInfo({}, positional, None, None)
+            
+        rv = renpy.display.motion.ATLTransform(
+            atl=self.atl,
+            child=child,
+            style=self.style_arg,
+            context=context,
+            parameters=parameters)
+
+        rv.take_state(self)
+
+        return rv
+
+    
     def compile(self):
         """
         Compiles the ATL code into a block. As necessary, updates the
         properties.
         """
+
+        if self.parameters.positional:
+            raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
         
         old_exception_info = renpy.game.exception_info
         

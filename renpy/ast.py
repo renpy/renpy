@@ -644,32 +644,45 @@ class Image(Node):
 
         return self.next
 
+
+    
 class Transform(Node):
 
     __slots__ = [
 
         # The name of the transform.
-        'name',
+        'varname',
 
         # The block of ATL associated with the transform.
         'atl',
+
+        # The parameters associated with the transform, if any.
+        'parameters',        
         ]
 
-    def __init__(self, loc, name, atl=None):
+    default_parameters = ParameterInfo([ ], [ ], None, None)
+    
+    def __init__(self, loc, name, atl=None, parameters=default_parameters):
 
         super(Transform, self).__init__(loc)
         
-        self.name = name
+        self.varname = name
         self.atl = atl
-            
+        self.parameters = parameters
+        
     def diff_info(self): 
-        return (Transform, self.name)
+        return (Transform, self.varname)
 
     def execute(self):
 
-        trans = renpy.display.motion.ATLTransform(self.atl)
-        renpy.exports.definitions[self.name] = (self.filename, self.linenumber, "transform")
-        setattr(renpy.store, self.name, trans)
+        parameters = getattr(self, "parameters", None)
+
+        if parameters is None:
+            parameters = Transform.default_parameters
+
+        trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
+        renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "transform"))
+        setattr(renpy.store, self.varname, trans)
                 
         return self.next
 
@@ -1347,7 +1360,7 @@ class UserStatement(Node):
 class Define(Node):
 
     __slots__ = [
-        'name',
+        'varname',
         'code',
         ]
 
@@ -1361,11 +1374,11 @@ class Define(Node):
 
         super(Define, self).__init__(loc)
         
-        self.name = name
+        self.varname = name
         self.code = PyCode(expr, loc=loc, mode='eval')
             
     def diff_info(self): 
-        return (Define, tuple(self.name))
+        return (Define, tuple(self.varname))
 
     def get_pycode(self):
         if self.code:            
@@ -1376,9 +1389,7 @@ class Define(Node):
     def execute(self):
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
-
-        renpy.exports.definitions[self.name] = (self.filename, self.linenumber, "define")
-
-        setattr(renpy.store, self.name, value)    
+        renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "define"))
+        setattr(renpy.store, self.varname, value)    
         
         return self.next

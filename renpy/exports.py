@@ -49,6 +49,8 @@ import renpy.audio.music as music
 import time
 import sets
 
+import collections
+
 # This is a map from image name to a Displayable object corresponding
 # to that image name.
 images = { }
@@ -1247,4 +1249,4 @@ def get_roll_forward():
 
 # This is a map from a definition to the place where it was
 # defined.
-definitions = { }
+definitions = collections.defaultdict(list)

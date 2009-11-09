@@ -41,8 +41,8 @@ def import_all():
     # Adds in the Ren'Py loader.
     import renpy.loader
 
-    import renpy.atl
     import renpy.ast
+    import renpy.atl
     import renpy.curry
     import renpy.easy
     import renpy.execution

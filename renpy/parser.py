@@ -1551,12 +1551,17 @@ def parse_statement(l):
             priority = 0
         
         name = l.require(l.name)
+        parameters = parse_parameters(l)
+
+        if parameters and (parameters.extrakw or parameters.extrapos):
+            l.error('transform statement does not take a variable number of parameters')
+
         l.require(':')
         l.expect_eol()
 
         atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-        rv = ast.Transform(loc, name, atl)
+        rv = ast.Transform(loc, name, atl, parameters)
 
         if not l.init:
             rv = ast.Init(loc, [ rv ], priority)        

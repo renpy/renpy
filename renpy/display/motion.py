@@ -267,45 +267,30 @@ class Transform(Container):
             self.st_offset = 0
             self.at_offset = 0
             self.child_st_base = 0
-            
+
+        if version < 4:
+            self.style_arg = 'transform'
     
     # Compatibility with old versions of the class.
     active = False
     
-    def __init__(self, child=None, function=None, alpha=1, rotate=None, zoom=1, xzoom=1, yzoom=1,
-                 xpos=0, ypos=0, xanchor=0, yanchor=0, xalign=None, yalign=None,
-                 **kwargs):
+    def __init__(self, child=None, function=None, style='transform', **kwargs):
 
         self.kwargs = kwargs
-        self.kwargs.setdefault('style', 'transform')
+        self.style_arg = style
         
-        super(Transform, self).__init__(**self.kwargs)
+        super(Transform, self).__init__(style=style)
 
         self.function = function
 
         if child is not None:
             self.add(child)
 
-        if xalign is not None:
-            xpos = xalign
-            xanchor = xalign
-
-        if yalign is not None:
-            ypos = yalign
-            yanchor = yalign
-
         self.state = TransformState()
-        
-        self.state.alpha = alpha
-        self.state.rotate = rotate
-        self.state.zoom = zoom
-        self.state.xzoom = xzoom
-        self.state.yzoom = yzoom
 
-        self.state.xpos = xpos
-        self.state.ypos = ypos
-        self.state.xanchor = xanchor
-        self.state.yanchor = yanchor     
+        # Apply the keyword arguments.
+        for k, v in kwargs.iteritems():
+            setattr(self.state, k, v)
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -334,6 +319,10 @@ class Transform(Container):
         
         self.state.take_state(t.state)
 
+        # Apply the keyword arguments.
+        for k, v in self.kwargs.iteritems():
+            setattr(self.state, k, v)
+
     def take_execution_state(self, t):
         """
         Takes the execution state from object t into this object. This is
@@ -341,12 +330,13 @@ class Transform(Container):
         """
 
         return 
-        
 
     def hide(self, st, at):
         
         if not self.hide_request:
             d = self()
+            d.kwargs = { }
+            d.take_state(self)
             d.take_execution_state(self)
         else:
             d = self
@@ -366,7 +356,6 @@ class Transform(Container):
     def set_child(self, child):
         self.child = child
         self.child_st_base = self.st
-        
     
     def render(self, width, height, st, at):
 
@@ -392,6 +381,9 @@ class Transform(Container):
         if self.state.size:
             width, height = self.state.size
 
+        if self.child is None:
+            raise Exception("Transform does not have a child.")
+            
         cr = render(self.child, width, height, st - self.child_st_base, at)
                 
         # Compute the crop.
@@ -513,7 +505,7 @@ class Transform(Container):
                 
         return None
             
-    def __call__(self, child=None):
+    def __call__(self, child=None, take_state=True):
 
         if child is None:
             child = self.child
@@ -521,6 +513,7 @@ class Transform(Container):
         rv = Transform(
             child=child,
             function=self.function,
+            style=self.style_arg,
             **self.kwargs)
         
         rv.take_state(self)
@@ -569,28 +562,12 @@ class Transform(Container):
         
 class ATLTransform(renpy.atl.TransformBase, Transform):
     
-    def __init__(self, atl, child=None,context={},  **kwargs):
-        renpy.atl.TransformBase.__init__(self, atl, context)
-        Transform.__init__(self, child=child, function=self.execute, **kwargs)
+    def __init__(self, atl, child=None, context={}, parameters=None, style='transform'):
+        renpy.atl.TransformBase.__init__(self, atl, context, parameters)
+        Transform.__init__(self, child=child, function=self.execute, style=style)
 
         self.raw_child = self.child
         
-    def __call__(self, child=None, new_widget=None, old_widget=None, **kwargs):
-
-        child = child or self.child
-        kwargs["child"] = child
-        kwargs["new"] = new_widget
-        kwargs["old"] = old_widget
-        
-        rv = ATLTransform(
-            atl=self.atl,
-            child=child,
-            context=kwargs)
-
-        rv.take_state(self)
-
-        return rv
-
     def show(self):
         self.execute(self, 0, 0)
     

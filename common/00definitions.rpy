@@ -153,8 +153,6 @@ init -1110 python:
     zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     zoomout = MoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
     zoominout = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
-
-
     
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.
