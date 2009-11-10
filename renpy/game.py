@@ -253,6 +253,10 @@ def invoke_in_new_context(callable, *args, **kwargs):
         return callable(*args, **kwargs)
     finally:
         contexts.pop()
+
+        if interface.restart_interaction:
+            contexts[-1].scene_lists.focused = None
+
         
 def call_in_new_context(label, *args, **kwargs):
     """
@@ -296,3 +300,8 @@ def call_in_new_context(label, *args, **kwargs):
         contexts.pop()
         raise renpy.game.JumpException(e.args[0])
 
+    finally:
+        if interface.restart_interaction:
+            contexts[-1].scene_lists.focused = None
+    
+        
