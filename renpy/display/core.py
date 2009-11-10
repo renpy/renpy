@@ -544,7 +544,6 @@ class SceneLists(renpy.object.Object):
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
 
-
         if key is not None:
 
             hidekey = "hide$" + key
@@ -1719,9 +1718,10 @@ class Interface(object):
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
+
+            trans.show()
             
             transition_time = self.transition_time.get(None, None)
-
             root_widget.add(trans, transition_time, transition_time)
 
             if trans_pause:

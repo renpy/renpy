@@ -84,6 +84,7 @@ class TransformState(renpy.object.Object):
         self.corner2 = None
         self.size = None
 
+        self.delay = 0
         
     def take_state(self, ts):
         self.__dict__.update(ts.__dict__)
@@ -240,6 +241,8 @@ class Transform(Container):
     corner2 = Proxy("corner2")
     size = Proxy("size")
 
+    delay = Proxy("delay")
+    
     def after_upgrade(self, version):
 
         if version < 1:
@@ -560,10 +563,10 @@ class Transform(Container):
         # Note the call here.
         return self()
         
-class ATLTransform(renpy.atl.TransformBase, Transform):
+class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
     def __init__(self, atl, child=None, context={}, parameters=None, style='transform'):
-        renpy.atl.TransformBase.__init__(self, atl, context, parameters)
+        renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
         Transform.__init__(self, child=child, function=self.execute, style=style)
 
         self.raw_child = self.child

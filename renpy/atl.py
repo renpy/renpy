@@ -148,16 +148,16 @@ class Context(object):
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
-class TransformBase(renpy.object.Object):
+class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
     parameters = renpy.ast.ParameterInfo([ ], [ ], None, None) 
     
     def __init__(self, atl, context, parameters):
-
-        if parameters is None:
-            parameters = TransformBase.parameters
         
+        if parameters is None:
+            parameters = ATLTransformBase.parameters
+
         # The parameters that we take.
         self.parameters = parameters
         
@@ -215,14 +215,11 @@ class TransformBase(renpy.object.Object):
         positional = list(self.parameters.positional)
         args = list(args)
         
-        # If we require no more positional arguments, then take a child as
-        # our argument.
         child = self.child
 
         if not positional and args:
-            child = args[0]
-            args.pop(0)
-            
+            child = args.pop(0)
+        
         # Handle positional arguments.
         while positional and args:
             name = positional.pop(0)
@@ -244,12 +241,14 @@ class TransformBase(renpy.object.Object):
                 context[k] = v
             elif k in context:
                 context[k] = v
+            elif k == 'child':
+                child = v
             else:
                 raise Exception('Parameter %r is not known by ATL Transform.' % k)
 
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({}, positional, None, None)
-            
+
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
@@ -620,7 +619,7 @@ class RawMultipurpose(RawStatement):
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ])
                 
-            if isinstance(child, TransformBase):
+            if isinstance(child, ATLTransformBase):
                 child.compile()
                 return child.block
 
@@ -660,7 +659,7 @@ class RawMultipurpose(RawStatement):
             except:
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
-            if not isinstance(value, TransformBase):
+            if not isinstance(value, ATLTransformBase):
                 raise Exception("Expression %r is not an ATL transform, and so cannot be included in an ATL interpolation." % expr)
 
             value.compile()
@@ -685,7 +684,7 @@ class RawMultipurpose(RawStatement):
             except:
                 continue
 
-            if isinstance(i, TransformBase):
+            if isinstance(i, ATLTransformBase):
                 i.atl.predict(ctx, callback)
                 return
 
@@ -697,8 +696,22 @@ class RawMultipurpose(RawStatement):
             if isinstance(i, renpy.display.core.Displayable):
                 i.predict(callback)
 
-                
-            
+# This allows us to have multiple children, inside a Fixed.
+class RawChild(RawStatement):
+
+    def __init__(self, loc, child):
+        self.loc = loc
+        self.children = [ child ]
+
+    def compile(self, ctx):
+        box = renpy.display.layout.MultiBox(layout='fixed')
+
+        for i in self.children:
+            box.add(renpy.display.motion.ATLTransform(i, context=ctx.context))
+
+        return Child(self.loc, box, None)
+
+    
 # This changes the child of this statement, optionally with a transition.
 class Child(Statement):
 
@@ -1167,6 +1180,14 @@ def parse_atl(l):
             block = parse_atl(l.subblock_lexer())            
             statements.append(block)
 
+        elif l.keyword('child'):
+            l.require(':')
+            l.expect_eol()
+            l.expect_block('child')
+
+            block = parse_atl(l.subblock_lexer())            
+            statements.append(RawChild(loc, block))
+
         elif l.keyword('parallel'):
             l.require(':')
             l.expect_eol()
@@ -1343,6 +1364,10 @@ def parse_atl(l):
 
         elif isinstance(old, RawChoice) and isinstance(new, RawChoice):
             old.choices.extend(new.choices)
+            continue
+
+        elif isinstance(old, RawChild) and isinstance(new, RawChild):
+            old.children.extend(new.children)
             continue
 
         elif isinstance(old, RawOn) and isinstance(new, RawOn):

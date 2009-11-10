@@ -193,7 +193,10 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
     for i in at_list:
-        img = i(img)
+        if isinstance(i, renpy.display.motion.Transform):
+            img = i(child=img)
+        else:
+            img = i(img)
 
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[name] = True
