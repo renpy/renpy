@@ -722,7 +722,11 @@ class SceneLists(renpy.object.Object):
 
         if at_list:
             for a in at_list:
-                rv = a(rv)
+                
+                if isinstance(a, renpy.display.motion.Transform):
+                    rv = a(child=rv)
+                else:
+                    rv = a(rv)
 
                 f = renpy.display.layout.MultiBox(layout='fixed')
                 f.add(rv, time, time)
