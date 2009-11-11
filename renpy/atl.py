@@ -76,6 +76,7 @@ PROPERTIES = set([
         "corner1",
         "corner2",
         "subpixel",
+        "delay",
         ])
 
 def interpolate(t, a, b):
@@ -1180,10 +1181,10 @@ def parse_atl(l):
             block = parse_atl(l.subblock_lexer())            
             statements.append(block)
 
-        elif l.keyword('child'):
+        elif l.keyword('contains'):
             l.require(':')
             l.expect_eol()
-            l.expect_block('child')
+            l.expect_block('contains')
 
             block = parse_atl(l.subblock_lexer())            
             statements.append(RawChild(loc, block))
