@@ -403,7 +403,7 @@ class Button(renpy.display.layout.Window):
 
         self.set_transform_event(self.role + "hover")
         self.child.set_transform_event(self.role + "hover")
-
+        
         return rv
         
 
@@ -418,11 +418,11 @@ class Button(renpy.display.layout.Window):
 
         self.set_transform_event(self.role + "idle")
         self.child.set_transform_event(self.role + "idle")
-
+        
             
     def per_interact(self):
         if not self.clicked:
-            self.set_style_prefix(self.role + "insensitive_")
+            self.set_style_prefix(self.role + "insensitive_", True)
 
         super(Button, self).per_interact()
             
@@ -466,14 +466,19 @@ class Button(renpy.display.layout.Window):
                 self.activated = False
 
                 if self.is_focused():
-                    self.set_style_prefix(self.role + "hover_")
+                    self.set_style_prefix(self.role + "hover_", True)
                 else:
-                    self.set_style_prefix(self.role + "idle_")
+                    self.set_style_prefix(self.role + "idle_", True)
                     
                 raise renpy.display.core.IgnoreEvent()
                     
         return None
 
+
+    def set_style_prefix(self, prefix, root):
+        if root:
+            super(Button, self).set_style_prefix(prefix, root)
+    
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -753,7 +758,7 @@ class Bar(renpy.display.core.Displayable):
                 self.hidden = True
                 return renpy.display.render.Render(width, height)
             elif self.style.unscrollable == "insensitive":
-                self.set_style_prefix("insensitive_")
+                self.set_style_prefix("insensitive_", True)
 
         self.hidden = False
         

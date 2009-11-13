@@ -97,11 +97,11 @@ class Container(renpy.display.core.Displayable):
 
         super(Container, self).__init__(**properties)
 
-    def set_style_prefix(self, prefix):
-        super(Container, self).set_style_prefix(prefix)
+    def set_style_prefix(self, prefix, root):
+        super(Container, self).set_style_prefix(prefix, root)
 
         for i in self.children:
-            i.set_style_prefix(prefix)
+            i.set_style_prefix(prefix, False)
             
     def add(self, d):
         """

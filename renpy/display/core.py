@@ -127,7 +127,7 @@ class Displayable(renpy.object.Object):
         """
 
         if not self.activated:
-            self.set_style_prefix(self.role + "hover_")
+            self.set_style_prefix(self.role + "hover_", True)
         
         if not default and not self.activated:
             if self.style.sound:
@@ -139,7 +139,7 @@ class Displayable(renpy.object.Object):
         """
 
         if not self.activated:
-            self.set_style_prefix(self.role + "idle_")
+            self.set_style_prefix(self.role + "idle_", True)
 
     def is_focused(self):
 
@@ -148,10 +148,13 @@ class Displayable(renpy.object.Object):
 
         return renpy.game.context().scene_lists.focused is self
 
-    def set_style_prefix(self, prefix):
+    def set_style_prefix(self, prefix, root):
         """
         Called to set the style prefix of this widget and its child
         widgets, if any.
+
+        `root` - True if this is the root of a style tree, False if this
+        hass been passed on to a child.
         """
 
         if prefix == self.style.prefix:
