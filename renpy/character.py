@@ -54,6 +54,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      two_window_vbox_properties={},
                      who_window_properties={},
                      say_vbox_properties={},
+                     transform=None,
                      variant=None,
                      **kwargs):
     """
@@ -141,6 +142,10 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     who_args = style_args(who_args)
     what_args = style_args(what_args)
     window_args = style_args(window_args)
+
+    # Apply the transform.
+    if transform:
+        renpy.ui.at(transform)
     
     if two_window:
 
