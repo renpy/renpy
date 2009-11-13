@@ -615,6 +615,10 @@ def draw(dest, clip, what, xo, yo, screen):
 
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
+    # If our alpha has hit 0, don't do anything.
+    if alpha <= 0.003: # (1 / 256)
+        return
+    
     if forward is None:
         forward = IDENTITY
         reverse = IDENTITY
