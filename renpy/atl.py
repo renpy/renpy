@@ -618,7 +618,7 @@ class RawMultipurpose(RawStatement):
                 transition = None
 
             if isinstance(child, (int, float)):
-                return Interpolation(self.loc, "pause", child, [ ])
+                return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
                 
             if isinstance(child, ATLTransformBase):
                 child.compile()
