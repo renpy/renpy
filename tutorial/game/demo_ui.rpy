@@ -261,7 +261,7 @@ label demo_ui:
         ui.side(('c', 'b', 'r'), xpos=100, ypos=50, spacing=5)
         
         vp = ui.viewport(draggable=True, mousewheel=True, xmaximum=400, ymaximum=400)
-        ui.image("mainmenu.jpg")
+        ui.image("concert2.jpg")
         ui.bar(adjustment=vp.xadjustment, style='scrollbar')
         ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
 

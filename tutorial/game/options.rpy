@@ -88,7 +88,7 @@ init -1 python hide:
     # For the demo, we use the nicer-looking bars from the outline
     # theme.
     theme.outline_bars(
-        inside="#6496c8",
+        inside="#8cf",
         idle="#003c78",
         hover="#0050a0")
 
