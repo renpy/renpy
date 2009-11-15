@@ -120,6 +120,8 @@ init python:
             
             return m.group(0)
 
+        def predict(self, callback):
+            return
         
         def parameterize(self, name, args):
 

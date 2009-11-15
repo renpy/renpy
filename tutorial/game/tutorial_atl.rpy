@@ -382,7 +382,7 @@ label tutorial_atl:
     
     e "But first, let's have... a Gratuitous Rock Concert!"
 
-    play music "happyalley.ogg" fadeout 1.0
+    play music "happy_alley.ogg" fadeout 1.0
 
     scene bg washington
     show eileen happy
