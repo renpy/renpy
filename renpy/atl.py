@@ -697,6 +697,19 @@ class RawMultipurpose(RawStatement):
             if isinstance(i, renpy.display.core.Displayable):
                 i.predict(callback)
 
+# This lets us have an ATL transform as our child.
+class RawContainsExpr(RawStatement):
+
+    def __init__(self, loc, expr):
+        self.loc = loc
+        self.expression = expr
+
+    def compile(self, ctx):
+        compiling(self.loc)
+        child = ctx.eval(self.expression)
+        return Child(self.loc, child, None)
+
+
 # This allows us to have multiple children, inside a Fixed.
 class RawChild(RawStatement):
 
@@ -1182,12 +1195,22 @@ def parse_atl(l):
             statements.append(block)
 
         elif l.keyword('contains'):
-            l.require(':')
-            l.expect_eol()
-            l.expect_block('contains')
 
-            block = parse_atl(l.subblock_lexer())            
-            statements.append(RawChild(loc, block))
+            expr = l.simple_expression()
+
+            if expr:
+
+                l.expect_noblock('contains expression')
+                statements.append(RawContainsExpr(loc, expr))
+
+            else:
+
+                l.require(':')
+                l.expect_eol()
+                l.expect_block('contains')
+
+                block = parse_atl(l.subblock_lexer())            
+                statements.append(RawChild(loc, block))
 
         elif l.keyword('parallel'):
             l.require(':')
