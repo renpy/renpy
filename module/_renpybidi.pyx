@@ -1,19 +1,19 @@
 cdef extern from "fribidi/fribidi.h":
-    int FRIBIDI_PAR_LTR
-    int FRIBIDI_PAR_WLTR
-    int FRIBIDI_PAR_ON
-    int FRIBIDI_PAR_WRTL
-    int FRIBIDI_PAR_RTL
+    int FRIBIDI_TYPE_LTR
+    int FRIBIDI_TYPE_ON
+    int FRIBIDI_TYPE_RTL
+    int FRIBIDI_TYPE_WR
+    int FRIBIDI_TYPE_WL
     
 cdef extern object renpybidi_log2vis(object, int *)
 
-LTR = FRIBIDI_PAR_LTR
-WLTR = FRIBIDI_PAR_WLTR
-ON = FRIBIDI_PAR_ON
-WRTL = FRIBIDI_PAR_WRTL
-RTL = FRIBIDI_PAR_RTL
+WLTR = FRIBIDI_TYPE_WL
+LTR = FRIBIDI_TYPE_LTR
+ON = FRIBIDI_TYPE_ON
+RTL = FRIBIDI_TYPE_RTL
+WRTL = FRIBIDI_TYPE_WR
 
-def log2vis(s, int direction=FRIBIDI_PAR_ON):
+def log2vis(s, int direction=FRIBIDI_TYPE_ON):
        
     s = s.encode("utf8")
     s = renpybidi_log2vis(s, &direction)

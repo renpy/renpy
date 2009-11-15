@@ -75,7 +75,7 @@ def add_include(prefix, file):
     if dir not in include_dirs:
         include_dirs.append(dir)
 
-def add_library(name):
+def add_library(name, optional=False):
     """
     This looks for a library named name in the <i> and <i>/lib, for all
     <i> in install. When found, it adds it to library_dirs.
@@ -96,8 +96,11 @@ def add_library(name):
 
                     if dir not in library_dirs:
                         library_dirs.append(dir)
-                    return
+                    return True
 
+    if optional:
+        return False
+                
     print "Couldn't find library %s." % name
     print "The paths searched were:"
     for i in checked:
@@ -119,16 +122,19 @@ add_library("libpng")
 add_library("libavformat")
 add_library("libavcodec")
 add_library("libavutil")
+has_swscale = add_library("libswscale", True)
 add_library("libfreetype")
 add_library("libfribidi")            
 add_library("libz")
 
-
 extra_link_args = [ ]
 
 sdl_libraries = [ 'SDL' ]
-sound_libraries = [ "avformat", "avcodec", "avutil", "z" ]
 png_libraries = [ 'png', "z" ]
+
+sound_libraries = [ "avformat", "avcodec", "avutil", "z" ]
+if has_swscale:
+    sound_libraries.insert(0, "swscale")
 
 # The following turn on optional modules.
 winmixer = None
@@ -211,7 +217,7 @@ extensions.append(renpybidi)
     
 distutils.core.setup(
     name = "renpy_module",
-    version = "6.9.1",
+    version = "6.9.3",
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },

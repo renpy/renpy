@@ -13,8 +13,6 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     FriBidiChar *dstuni;
     char *dst;
     
-    int i;
-    
     src = PyString_AsString(s);
 
     if (src == NULL) {

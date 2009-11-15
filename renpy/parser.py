@@ -25,7 +25,6 @@
 import codecs
 import re
 import os
-import sets
 
 import renpy
 import renpy.ast as ast
@@ -344,7 +343,7 @@ class Lexer(object):
 
     # A list of keywords which should not be parsed as names, because
     # there is a huge chance of confusion.
-    keywords = sets.Set([
+    keywords = set([
         'as',
         'at',
         'behind',
@@ -1156,7 +1155,7 @@ def parse_parameters(l):
 
     add_positional = True
 
-    names = sets.Set()
+    names = set()
     
     if not l.match(r'\('):
         return None

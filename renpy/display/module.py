@@ -75,62 +75,51 @@ def convert_and_call(function, src, dst, *args):
         dst.blit(target, (0, 0))
 
 
-if version >= 4008002:
 
-    can_pixellate = True
+can_pixellate = True
 
-    def pixellate(src, dst, avgwidth, avgheight, outwidth, outheight):
-        """
-        This pixellates the source surface. First, every pixel in the
-        source surface is projected onto a virtual surface, such that
-        the average value of every avgwidth x avgheight pixels becomes
-        one virtual pixel. It then gets projected back onto the
-        destination surface at a ratio of one virtual pixel to every
-        outwidth x outheight destination pixels.
+def pixellate(src, dst, avgwidth, avgheight, outwidth, outheight):
+    """
+    This pixellates the source surface. First, every pixel in the
+    source surface is projected onto a virtual surface, such that
+    the average value of every avgwidth x avgheight pixels becomes
+    one virtual pixel. It then gets projected back onto the
+    destination surface at a ratio of one virtual pixel to every
+    outwidth x outheight destination pixels.
 
-        If either src or dst is not a 24 or 32 bit surface, they are
-        converted... but that may be a significant performance hit.
-        
-        The two surfaces must either have the same alpha or no alpha.
-        """
+    If either src or dst is not a 24 or 32 bit surface, they are
+    converted... but that may be a significant performance hit.
 
-        convert_and_call(_renpy.pixellate,
-                         src, dst,
-                         avgwidth, avgheight,
-                         outwidth, outheight)
+    The two surfaces must either have the same alpha or no alpha.
+    """
 
-    
-    def scale(s, size):
-        """
-        Scales down the supplied pygame surface by the given X and Y
-        factors.
+    convert_and_call(_renpy.pixellate,
+                     src, dst,
+                     avgwidth, avgheight,
+                     outwidth, outheight)
 
-        Always works, but may not be high quality.
-        """
 
-        width, height = s.get_size()
+def scale(s, size):
+    """
+    Scales down the supplied pygame surface by the given X and Y
+    factors.
 
-        dx, dy = size
+    Always works, but may not be high quality.
+    """
 
-        d = pygame.Surface(size, s.get_flags(), s)
+    width, height = s.get_size()
 
-        if can_bilinear_scale:
-            bilinear_scale(s, d)
-        else:
-            pixellate(s, d, width / dx, height / dy, 1, 1)
+    dx, dy = size
 
-        return d
+    d = pygame.Surface(size, s.get_flags(), s)
 
-else:
+    if can_bilinear_scale:
+        bilinear_scale(s, d)
+    else:
+        pixellate(s, d, width / dx, height / dy, 1, 1)
 
-    can_pixellate = False
+    return d
 
-    def scale(s, size):
-        renpy.display.render.blit_lock.acquire()        
-        rv = pygame.transform.scale(s, size)
-        renpy.display.render.blit_lock.release()
-        return rv
-        
 
 # What we have here are a pair of tables mapping masks to byte offsets
 # for 24 and 32 bpp modes. We represent 0xff000000 as positive and negative
@@ -170,230 +159,158 @@ def endian_order(src, r, g, b, a):
     return rv
 
 
-if version >= 5005000:
 
-    can_linmap = True
+can_linmap = True
 
-    def linmap(src, dst, rmap, gmap, bmap, amap):
-        """
-        This maps the colors between two surfaces. The various map
-        parameters should be fixed-point integers, with 1.0 == 256.
-        """
-        
-        convert_and_call(_renpy.linmap,
-                         src, dst,
-                         *endian_order(dst, rmap, gmap, bmap, amap))
+def linmap(src, dst, rmap, gmap, bmap, amap):
+    """
+    This maps the colors between two surfaces. The various map
+    parameters should be fixed-point integers, with 1.0 == 256.
+    """
+
+    convert_and_call(_renpy.linmap,
+                     src, dst,
+                     *endian_order(dst, rmap, gmap, bmap, amap))
 
 
-    save_png = _renpy.save_png
+save_png = _renpy.save_png
 
-        
-else:
+can_map = True
 
-    can_linmap = False
-    
-    def save_png(surf, file, compress=-1):
+def map(src, dst, rmap, gmap, bmap, amap):
+    """
+    This maps the colors between two surfaces. The various map
+    parameters must be 256 character long strings, with the value
+    of a character at a given offset being what a particular pixel
+    component value is mapped to.
+    """
+
+    convert_and_call(_renpy.map,
+                     src, dst,
+                     *endian_order(dst, rmap, gmap, bmap, amap))
+
+
+
+can_twomap = True
+
+def twomap(src, dst, white, black):
+    """
+    Given colors for white and black, linearly maps things
+    appropriately, taking the alpha channel from white.
+    """
+
+    wr = white[0]
+    wg = white[1]
+    wb = white[2]
+    wa = white[3]
+
+    br = black[0]
+    bg = black[1]
+    bb = black[2]
+
+    ramp = renpy.display.im.ramp
+
+    if can_linmap and br == 0 and bg == 0 and bb == 0:
+        linmap(src, dst,
+               wr + 1,
+               wg + 1,
+               wb + 1,
+               wa + 1)
+    else:
+        map(src, dst,
+            ramp(br, wr),
+            ramp(bg, wg),
+            ramp(bb, wb),
+            ramp(0, wa))
+
+
+can_munge = True
+
+def alpha_munge(src, dst, amap):
+    """
+    This samples the red channel from src, maps it through amap, and
+    place it into the alpha channel of amap.
+    """
+
+    if src.get_size() != dst.get_size():
         return
 
+    red = byte_offset(src)[0]
+    alpha = byte_offset(dst)[3]
 
-if version >= 4008005:
-
-    can_map = True
-
-    def map(src, dst, rmap, gmap, bmap, amap):
-        """
-        This maps the colors between two surfaces. The various map
-        parameters must be 256 character long strings, with the value
-        of a character at a given offset being what a particular pixel
-        component value is mapped to.
-        """
-
-        convert_and_call(_renpy.map,
-                         src, dst,
-                         *endian_order(dst, rmap, gmap, bmap, amap))
+    if red is not None and alpha is not None:
+        _renpy.alpha_munge(src, dst, red, alpha, amap)        
 
 
-else:
+can_bilinear_scale = True
 
-    can_map = False
+def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
 
+    if sw is None:
+        sw, sh = src.get_size()
+    if dw is None:
+        dw, dh = dst.get_size()
 
-if can_map or can_linmap:
+    while True:
 
-    can_twomap = True
+        if sw <= dw * 2 and sh <= dh * 2:
+            break
 
-    def twomap(src, dst, white, black):
-        """
-        Given colors for white and black, linearly maps things
-        appropriately, taking the alpha channel from white.
-        """
+        nsw = max(sw / 2, dw)
+        nsh = max(sh / 2, dh)
 
-        wr = white[0]
-        wg = white[1]
-        wb = white[2]
-        wa = white[3]
- 
-        br = black[0]
-        bg = black[1]
-        bb = black[2]
+        nsrc = pygame.Surface((nsw, nsh), src.get_flags(), src)
+        _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
+        sx = 0
+        sy = 0
+        sw = nsw
+        sh = nsh
+        src = nsrc
 
-        ramp = renpy.display.im.ramp
-
-        if can_linmap and br == 0 and bg == 0 and bb == 0:
-            linmap(src, dst,
-                   wr + 1,
-                   wg + 1,
-                   wb + 1,
-                   wa + 1)
-        else:
-            map(src, dst,
-                ramp(br, wr),
-                ramp(bg, wg),
-                ramp(bb, wb),
-                ramp(0, wa))
-
-else:
-
-    can_twomap = False
-    
-
-if version >= 4008007:
-
-    can_munge = True
-
-    def alpha_munge(src, dst, amap):
-        """
-        This samples the red channel from src, maps it through amap, and
-        place it into the alpha channel of amap.
-        """
-
-        if src.get_size() != dst.get_size():
-            return
-
-        red = byte_offset(src)[0]
-        alpha = byte_offset(dst)[3]
-
-        if red is not None and alpha is not None:
-            _renpy.alpha_munge(src, dst, red, alpha, amap)        
-
-else:
-
-    can_munge = False
-
-    def alpha_munge(src, dst, amap):
-        return
-
-
-
-if version >= 5006000:
-
-    can_bilinear_scale = True
-
-    def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
-
-        if sw is None:
-            sw, sh = src.get_size()
-        if dw is None:
-            dw, dh = dst.get_size()
-            
-        while True:
-
-            if sw <= dw * 2 and sh <= dh * 2:
-                break
-
-            nsw = max(sw / 2, dw)
-            nsh = max(sh / 2, dh)
-
-            nsrc = pygame.Surface((nsw, nsh), src.get_flags(), src)
-            _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
-            sx = 0
-            sy = 0
-            sw = nsw
-            sh = nsh
-            src = nsrc
-
-        _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh)
+    _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh)
         
 
-    
-else:
-
-    can_bilinear_scale = False
-
-    def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
-        return
-
-    
-
-if version >= 5006006:
-    can_transform = True
-    transform = _renpy.transform
-else:
-    can_transform = False
+can_transform = True
+transform = _renpy.transform
 
 
     
-if version >= 6001000:
-    # Note: Blend requires all surfaces to be the same size.    
-    can_blend = True
-    blend = _renpy.blend
+# Note: Blend requires all surfaces to be the same size.    
+can_blend = True
+blend = _renpy.blend
 
-else:
-    can_blend = False
-
-
-if version >= 6001000:
-
-    # Note: Blend requires all surfaces to be the same size.
     
-    can_imageblend = True
+can_imageblend = True
 
-    def imageblend(a, b, dst, img, amap):        
-        red = byte_offset(img)[0]
-        _renpy.imageblend(a, b, dst, img, red, amap)
-
-else:
-
-    can_imageblend = False
-
-if version >= 6002001:
-
-    can_colormatrix = True
-
-    def colormatrix(src, dst, matrix):
-        c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
-        offs = byte_offset(src)
-
-        o = [ None ] * 4
-        for i in range(0, 4):
-            o[offs[i]] = i
-        
-        _renpy.colormatrix(src, dst,
-                           c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],    
-                           c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],    
-                           c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],    
-                           c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
-
-else:
-    can_colormatrix = False
+def imageblend(a, b, dst, img, amap):        
+    red = byte_offset(img)[0]
+    _renpy.imageblend(a, b, dst, img, red, amap)
 
 
-if version >= 6009000:
-    def subpixel(src, dst, x, y):
 
-        shift = renpy.game.interface.display.sample_surface.get_shifts()[3]
-        _renpy.subpixel(src, dst, x, y, shift)
+can_colormatrix = True
 
-else:
-    def subpixel(src, dst, x, y):
-        renpy.display.render.blit_lock.acquire()
-        dst.blit(src, (int(x), int(y)))
-        renpy.display.render.blit_lock.release()
+def colormatrix(src, dst, matrix):
+    c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
+    offs = byte_offset(src)
 
-if version >= 6009000:
-    can_alpha_transform = True
-    alpha_transform = _renpy.transform
-else:
-    can_alpha_transform = False
+    o = [ None ] * 4
+    for i in range(0, 4):
+        o[offs[i]] = i
+
+    _renpy.colormatrix(src, dst,
+                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],    
+                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],    
+                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],    
+                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
+
+
+def subpixel(src, dst, x, y):
+
+    shift = renpy.game.interface.display.sample_surface.get_shifts()[3]
+    _renpy.subpixel(src, dst, x, y, shift)
+
+can_alpha_transform = True
+alpha_transform = _renpy.transform
         
     
