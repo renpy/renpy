@@ -23,7 +23,7 @@ init -1 python hide:
     ## This controls the title of the window, when Ren'Py is
     ## running in a window.
 
-    config.window_title = u"The Ren'Py Demo Game"
+    config.window_title = u"The Ren'Py Tutorial Game"
 
     ## This enables the use of an in-game menu that is made out of
     ## buttons.
@@ -69,7 +69,7 @@ init -1 python hide:
         ## The background of the main menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
-        mm_root = "mainmenu.jpg",
+        mm_root = "main_menu",
 
         ## The background of the game menu. This can be a color
         ## beginning with '#', or an image filename. The latter
@@ -264,4 +264,24 @@ init -1 python hide:
 
     config.window_icon = "logo.png"
     config.windows_icon = "logo32.png"
+    
+# This is the main menu image we use.
+image main_menu:
+    contains:
+        "#000"
+
+    contains:
+        "concert2.jpg"
+        size (800, 509)
+
+    contains:
+        Text("Ren'Py 6.10.0 \"You Ain't Seen Nothing Yet\"", size=18)
+        yalign .98
+        xalign .02
+    
+# Demo game specific customizations.
+init python:
+    style.mm_menu_frame.yalign = .98
+    style.mm_menu_frame.xalign = .98
+
     

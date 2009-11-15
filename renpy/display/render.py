@@ -746,7 +746,10 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         
         
     if what.draw_func:
-        raise Exception("Using a draw_func on a transformed surface is not supported.")
+        child = what.pygame_surface(True)
+        draw_transformed(dest, clip, child, xo, yo, alpha, forward, reverse)
+        
+        # raise Exception("Using a draw_func on a transformed surface is not supported.")
 
     for child, cxo, cyo, focus, main in what.visible_children:
 

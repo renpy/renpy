@@ -134,7 +134,7 @@ label end:
 
     e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
 
-    e "The background music is \"Happy Alley\" by Kevin MacLeod, of {a=http://incompetech.com}incompetech.com{/a}."
+    e "The background music is \"Happy Alley\" by Kevin MacLeod. The concert music is by Alessio."
     
     show eileen vhappy 
     
