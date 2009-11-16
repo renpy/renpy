@@ -50,36 +50,49 @@ def pause(t):
     else:
         return 1.0
 
+position = object()
+    
 # A dictionary giving property names and the corresponding default
 # values.
-PROPERTIES = set([
-        "pos",
-        "xpos",
-        "ypos",
-        "anchor",
-        "xanchor",
-        "yanchor",
-        "align",
-        "xalign",
-        "yalign",
-        "rotate",
-        "xzoom",
-        "yzoom",
-        "zoom",
-        "alpha",
-        "around",
-        "alignaround",
-        "angle",
-        "radius",
-        "crop",
-        "size",
-        "corner1",
-        "corner2",
-        "subpixel",
-        "delay",
-        ])
+PROPERTIES = {
+        "pos" : (position, position),
+        "xpos" : position,
+        "ypos" : position,
+        "anchor" : (position, position),
+        "xanchor" : position,
+        "yanchor" : position,
+        "align" : (float, float),
+        "xalign" : float,
+        "yalign" : float,
+        "rotate" : float,
+        "xzoom" : float,
+        "yzoom" : float,
+        "zoom" : float,
+        "alpha" : float,
+        "around" : (position, position),
+        "alignaround" : (float, float),
+        "angle" : float,
+        "radius" : float,
+        "crop" : (float, float, float, float),
+        "size" : (int, int),
+        "corner1" : (float, float),
+        "corner2" : (float, float),
+        "subpixel" : bool,
+        "delay" : float,
+        }
 
-def interpolate(t, a, b):
+def correct_type(v, b, ty):
+    """
+    Corrects the type of v to match ty. b is used to inform the match.
+    """
+
+    if ty is position:
+        return type(b)(v)
+    else:
+        return ty(v)
+
+
+def interpolate(t, a, b, type):
     """
     Linearly interpolate the arguments. 
     """
@@ -89,9 +102,9 @@ def interpolate(t, a, b):
     
     # Recurse into tuples.
     if isinstance(b, tuple):
-        return tuple(interpolate(t, i, j) for i, j in zip(a, b))
+        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
-    # Deal with strings.
+    # Deal with strings or booleans.
     elif isinstance(b, (str, unicode)):
         if t >= 1.0:
             return a
@@ -100,7 +113,7 @@ def interpolate(t, a, b):
 
     # Interpolate everything else.
     else:
-        return type(b)(a + t * (b - a))
+        return correct_type(a + t * (b - a), b, type)
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
@@ -133,7 +146,7 @@ def interpolate_spline(t, spline):
     else:
         raise Exception("ATL can't interpolate splines of length %d." % len(spline))
 
-    return type(spline[-1])(rv)
+    return correct_type(rv, spline[-1], position)
     
 
 # This is the context used when compiling an ATL statement. It stores the
@@ -864,7 +877,7 @@ class Interpolation(Statement):
             
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
-            value = interpolate(complete, old, new)
+            value = interpolate(complete, old, new, PROPERTIES[k])
             setattr(trans.state, k, value)
             
         # Handle the revolution.
