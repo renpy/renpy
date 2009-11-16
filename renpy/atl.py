@@ -566,6 +566,8 @@ class Block(Statement):
 # values of the variables here.
 class RawMultipurpose(RawStatement):
 
+    warp_function = None
+    
     def __init__(self, loc):
 
         self.loc = loc
@@ -578,9 +580,10 @@ class RawMultipurpose(RawStatement):
         self.revolution = None
         self.circles = "0"
         
-    def add_warper(self, name, duration):
+    def add_warper(self, name, duration, warp_function):
         self.warper = name
         self.duration = duration
+        self.warp_function = warp_function
         
     def add_property(self, name, exprs):
         self.properties.append((name, exprs))
@@ -605,6 +608,7 @@ class RawMultipurpose(RawStatement):
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
         if (self.warper is None and
+            self.warp_function is None and
             not self.properties and
             not self.splines and
             len(self.expressions) == 1):
@@ -630,10 +634,14 @@ class RawMultipurpose(RawStatement):
         compiling(self.loc)
 
         # Otherwise, we probably have an interpolation statement.
-        warper = self.warper or "pause"
 
-        if warper not in warpers:
-            raise Exception("ATL Warper %s is unknown at runtime." % warper)
+        if self.warp_function:
+            warper = ctx.eval(self.warp_function)
+        else:            
+            warper = self.warper or "pause"
+
+            if warper not in warpers:
+                raise Exception("ATL Warper %s is unknown at runtime." % warper)
 
         properties = [ ]
 
@@ -776,7 +784,7 @@ class Interpolation(Statement):
 
         executing(self.loc)
         
-        warper = warpers[self.warper]
+        warper = warpers.get(self.warper, self.warper)
         
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1283,15 +1291,25 @@ def parse_atl(l):
             cp = l.checkpoint()
             warper = l.name()
 
+            
             if warper in warpers:
                 duration = l.require(l.simple_expression)
+                warp_function = None
+
+            elif warper == "warp":
+                
+                warper = None
+                warp_function = l.require(l.simple_expression)
+                duration = l.require(l.simple_expression)
+                
             else:
                 l.revert(cp)
 
                 warper = None
+                warp_function = None
                 duration = "0"
                 
-            rm.add_warper(warper, duration)
+            rm.add_warper(warper, duration, warp_function)
 
             # Now, look for properties and simple_expressions.
             while True:
