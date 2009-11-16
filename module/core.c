@@ -960,6 +960,9 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 }
 
 #define I(a, b, mul) ((((((b - a) * mul)) >> 8) + a) & 0xff00ff)
+
+/** This appears to limit the expansion, such that 1/x yields a max
+    expansion of lg x */
 #define EPSILON (1.0 / 256.0)
 
 /****************************************************************************/

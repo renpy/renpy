@@ -362,6 +362,9 @@ class Transform(Container):
     
     def render(self, width, height, st, at):
 
+        # Should we perform clipping?
+        clipping = False
+        
         # Preserve the illusion of linear time.
         if st == 0:
             self.st_offset = self.st
@@ -388,8 +391,13 @@ class Transform(Container):
             raise Exception("Transform does not have a child.")
             
         cr = render(self.child, width, height, st - self.child_st_base, at)
-                
-        # Compute the crop.
+        width, height = cr.get_size()
+        
+        forward = IDENTITY
+        reverse = IDENTITY
+        xo = yo = 0
+
+        # Cropping.
         crop = self.state.crop
         if crop is None and self.state.corner1 and self.state.corner2:
             x1, y1 = self.state.corner1
@@ -401,18 +409,24 @@ class Transform(Container):
             maxy = max(y1, y2)
 
             crop = (minx, miny, maxx - minx, maxy - miny)
-            
-        # Handle cropping.
+
         if crop:
-            cr = cr.subsurface(crop)
 
-        width, height = cr.get_size()
-        
-        forward = IDENTITY
-        reverse = IDENTITY
-        xo = yo = 0
+            negative_xo, negative_yo, width, height = crop
+            xo = -negative_xo
+            yo = -negative_yo
+            
+            clipping = True
 
-        # Handle size.
+            if self.state.rotate:
+                clipcr = renpy.display.render.Render(width, height)
+                clipcr.subpixel_blit(cr, (xo, yo))
+                clipcr.clipping = clipping
+                xo = yo = 0
+                cr = clipcr
+                clipping = False
+                
+        # Size.
         if self.state.size and self.state.size != (width, height):
             nw, nh = self.state.size
             xzoom = 1.0 * nw / width
@@ -420,11 +434,15 @@ class Transform(Container):
             forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
             reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
 
-            width, height = self.state.size
+            xo = xo * xzoom
+            yo = yo * yzoom
             
-        # Rotation first.
-        if self.state.rotate is not None:
+            width, height = self.state.size
 
+        
+        # Rotation.
+        if self.state.rotate is not None:
+            
             cw = width
             ch = height
             
@@ -474,6 +492,8 @@ class Transform(Container):
 
         rv.alpha = self.state.alpha
 
+        rv.clipping = clipping
+        
         if self.state.subpixel:
             rv.subpixel_blit(cr, (xo, yo), main=True)
         else:
