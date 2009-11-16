@@ -268,7 +268,7 @@ class ATLTransformBase(renpy.object.Object):
         properties.
         """
 
-        if self.parameters.positional:
+        if self.parameters.positional and self.parameters.positional[0][1] is None:
             raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
         
         old_exception_info = renpy.game.exception_info
