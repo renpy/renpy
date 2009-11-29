@@ -186,8 +186,6 @@ class Cache(object):
         if ce is None:
             
             surf = image.load()
-            has_alpha = surf.get_masks()[3]
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
 
             ce = CacheEntry(image, surf)
             self.total_cache_size += ce.size
@@ -205,26 +203,16 @@ class Cache(object):
                 rle = not renpy.game.less_memory
                 # rle = image.rle
                 surf = ce.surf
-
-#                 # If we don't know if the image is RLE or not, guess.
-#                 # Only do so if the image has an alpha channel.
-#                 if rle is None and has_alpha and not renpy.game.less_memory:
-#                     sw, sh = surf.get_size()
-
-#                     for i in range(0, 10):
-#                         if surf.get_at((random.randint(0, sw-1),
-#                                         random.randint(0, sh-1)))[3] == 0:
-#                             rle = True
-#                             break
                 
                 if rle:
                     
                     # We must copy the surface, so we have a RLE-specific version.
-                    rle_surf = ce.surf.convert_alpha(renpy.game.interface.display.window)
+                    rle_surf = renpy.display.pgrender.copy_surface(ce.surf)
                     rle_surf.set_alpha(255, RLEACCEL)
+                    renpy.display.render.mutated_surface(rle_surf)
 
                     rle_cache[id(ce.surf)] = rle_surf
-                    renpy.display.render.mutated_surface(ce.surf)
+
                     if renpy.config.debug_image_cache:
                         print "Added to rle cache:", image
 
@@ -453,9 +441,9 @@ class Image(ImageBase):
         try:
 
             if unscaled:
-                surf = renpy.display.scale.image_load_unscaled(renpy.loader.load(self.filename), self.filename)
+                surf = renpy.display.pgrender.load_image_unscaled(renpy.loader.load(self.filename), self.filename)
             else:
-                surf = pygame.image.load(renpy.loader.load(self.filename), self.filename)
+                surf = renpy.display.pgrender.load_image(renpy.loader.load(self.filename), self.filename)
 
             return surf
 
@@ -493,7 +481,7 @@ class ZipFileImage(ImageBase):
     def load(self):
         zf = zipfile.ZipFile(self.zipfilename, 'r')
         sio = cStringIO.StringIO(zf.read(self.filename))
-        rv = pygame.image.load(sio, self.filename)
+        rv = renpy.display.pgrender.load_image(sio, self.filename)
         zf.close()
 
         return rv
@@ -542,8 +530,7 @@ class Composite(ImageBase):
         else:
             size = cache.get(self.images[0]).get_size()
 
-        rv = pygame.Surface(size, 0,
-                            renpy.game.interface.display.sample_surface)
+        rv = renpy.display.pgrender.surface(size, True)
 
         for pos, im in zip(self.positions, self.images):
             rv.blit(cache.get(im), pos)
@@ -610,9 +597,7 @@ class FrameImage(ImageBase):
         dw = self.width
         dh = self.height
 
-        dest = pygame.Surface((dw, dh), 0,
-                              renpy.game.interface.display.sample_surface)
-        
+        dest = renpy.display.pgrender.surface((dw, dh), True)
         rv = dest
 
         source = cache.get(self.image)
@@ -687,12 +672,11 @@ class FrameImage(ImageBase):
                     tilew, tileh = srcsize
                     dstw, dsth = dstsize
 
-                    surf2 = renpy.display.scale.PygameSurface(dstsize, 0, surf)
+                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize)
 
                     for y in range(0, dsth, tileh):
                         for x in range(0, dstw, tilew):
                             surf2.blit(surf, (x, y))
-
 
                     surf = surf2 
 
@@ -740,10 +724,7 @@ class SolidImage(ImageBase):
 
     def load(self):
 
-        sample = renpy.game.interface.display.sample_surface
-        
-        rv = pygame.Surface((self.width, self.height), 0,
-                            sample)
+        rv = renpy.display.pgrender.surface((self.width, self.height), True)
         rv.fill(self.color)
 
         return rv  
@@ -855,8 +836,6 @@ class Flip(ImageBase):
         im = image(im)
         super(Flip, self).__init__(im, horizontal, vertical, **properties)
 
-    
-
         self.image = im
         self.horizontal = horizontal
         self.vertical = vertical
@@ -908,7 +887,7 @@ class Rotozoom(ImageBase):
         
         try:
             renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.rotozoom(child, self.angle, self.zoom)
+            rv = renypy.display.pgrender.rotozoom(child, self.angle, self.zoom)
         finally:
             renpy.display.render.blit_lock.release()
 
@@ -1000,10 +979,7 @@ class Map(ImageBase):
         if not renpy.display.module.can_map:
             return surf
 
-        if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
-
-        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.map(surf, rv,
                                  self.rmap, self.gmap, self.bmap, self.amap)
@@ -1045,10 +1021,7 @@ class Twocolor(ImageBase):
         if not renpy.display.module.can_twomap:
             return surf
 
-        if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
-
-        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.twomap(surf, rv,
                                     self.white, self.black)
@@ -1088,10 +1061,7 @@ class Recolor(ImageBase):
         if not renpy.display.module.can_linmap:
             return surf
 
-        if self.force_alpha and not (surf.get_masks()[3]):
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
-
-        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.linmap(surf, rv,
                                     self.rmul, self.gmul, self.bmul, self.amul)
@@ -1127,10 +1097,7 @@ class MatrixColor(ImageBase):
         if not renpy.display.module.can_colormatrix:
             return surf
 
-        if not (surf.get_masks()[3]):
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
-
-        rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.colormatrix(surf, rv, self.matrix)
         
@@ -1363,10 +1330,10 @@ class Tile(ImageBase):
 
         surf = cache.get(self.image)
 
+        rv = renpy.display.pgrender.surface(size, True)
+
         width, height = size
         sw, sh = surf.get_size()
-
-        rv = pygame.Surface(size, 0, surf)
 
         for y in range(0, height, sh):
             for x in range(0, width, sw):
@@ -1394,7 +1361,7 @@ class AlphaMask(ImageBase):
             raise Exception("AlphaMask surfaces must be the same size.")
 
         # Used to copy the surface.
-        rv = basesurf.convert_alpha(renpy.game.interface.display.window)
+        rv = renpy.display.pgrender.copy_surface(basesurf)
 
         if renpy.display.module.can_munge:
             renpy.display.module.alpha_munge(masksurf, rv, identity)
@@ -1431,8 +1398,7 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, renpy.display.image.ImageReference):
         arg.find_target()
         return image(arg.target, loose=loose, **properties)
-        
-    
+            
     elif isinstance(arg, basestring):
         return Image(arg, **properties)
 
@@ -1452,7 +1418,8 @@ def image(arg, loose=False, **properties):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")
-    
+
+
 def load_image(fn):
     """
     This loads an image from the given filename, using the cache.

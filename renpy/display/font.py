@@ -75,15 +75,14 @@ class ImageFont(object):
     def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
 
         if not text:
-            return pygame.Surface((0, self.height), 0,
-                                  renpy.game.interface.display.sample_surface)
+            return renpy.display.pgrender.surface((0, self.height), True)
 
         xoff, _ = self.offsets[text[0]]
         x = -xoff
         y = 0
 
-        surf = pygame.Surface(self.size(text), 0,
-                              renpy.game.interface.display.sample_surface)
+        surf = renpy.display.pgrender.surface(self.size(text), True)
+
         for a, b in zip(text, text[1:]):
             xoff, yoff = self.offsets[a]
             surf.blit(self.chars[a], (x + xoff, y + yoff))
@@ -96,12 +95,12 @@ class ImageFont(object):
                (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
                renpy.display.module.can_twomap:
 
-            newsurf = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
+            newsurf = renpy.display.pgrender.surface(surf.get_size(), True)
             renpy.display.module.twomap(surf, newsurf, color, black_color)
-            renpy.display.render.mutated_surface(newsurf)
 
             surf = newsurf
 
+        renpy.display.render.mutated_surface(surf)
         return surf
 
     def get_linesize(self):
@@ -148,7 +147,7 @@ class SFont(ImageFont):
         self.baseline = height
         
         # Create space characters.
-        self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
+        self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
         self.width[u' '] = self.spacewidth
         self.advance[u' '] = self.spacewidth
         self.offsets[u' '] = (0, 0)
@@ -253,7 +252,7 @@ class MudgeFont(ImageFont):
         
         # Create space characters.
         if u' ' not in self.chars:
-            self.chars[u' '] = pygame.Surface((self.spacewidth, height), 0, surf)
+            self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
             self.width[u' '] = self.spacewidth
             self.advance[u' '] = self.spacewidth
             self.offsets[u' '] = (0, 0)

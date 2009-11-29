@@ -26,7 +26,6 @@ import math
 import pygame
 import renpy
 
-    
 PygameSurface = pygame.Surface
 
 try:
@@ -195,7 +194,7 @@ def load_scaling():
         """
         If all the surfaces in args are the same size, return them all
         unchanged. Otherwise, compute smallest width and height, and
-        take subsurfaces of anythign bigger.
+        take subsurfaces of anything bigger.
         """
 
         w = min(i.get_width() for i in args)
@@ -559,7 +558,7 @@ def load_scaling():
     old_transform_rotate = pygame.transform.rotate
 
     def transform_rotate(surf, angle):
-        return Surface(old_transform_flip(surf.surface, angle))
+        return Surface(transform_rotate(surf.surface, angle))
 
     pygame.transform.rotate = transform_rotate
     

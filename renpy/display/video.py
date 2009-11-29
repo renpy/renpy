@@ -125,7 +125,7 @@ class Movie(renpy.display.core.Displayable):
         playing = renpy.audio.music.get_playing("movie")
             
         if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
-            surface = pygame.Surface(size, 0, renpy.game.interface.display.window)
+            surface = renpy.display.pgrender.surface(size, False)
             surface_file = playing
             surface.fill((0, 0, 0, 255))
             

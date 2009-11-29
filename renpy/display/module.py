@@ -51,29 +51,13 @@ def convert_and_call(function, src, dst, *args):
     same format, they are converted and then converted back.
     """
 
+    # Now that all surfaces are 32bpp, this function doesn't do much
+    # of anything anymore.
+    
     if (dst.get_masks()[3] != 0) != (src.get_masks()[3] != 0):
         raise Exception("Surface alphas do not match.")
 
-    dstsize = dst.get_bitsize()
-
-    if dst.get_bitsize() in (24, 32):
-        target = dst
-    else:
-        if dst.get_masks()[3]:
-            target = pygame.Surface(dst.get_size(), SRCALPHA, 32)
-        else:
-            target = pygame.Surface(dst.get_size(), 0, 24)
-
-    if src.get_bitsize() == target.get_bitsize():
-        source = src
-    else:
-        source = src.convert(target)
-
-    function(source, target, *args)
-    
-    if target is not dst:
-        dst.blit(target, (0, 0))
-
+    function(src, dst, *args)
 
 
 can_pixellate = True
@@ -108,10 +92,9 @@ def scale(s, size):
     """
 
     width, height = s.get_size()
-
     dx, dy = size
 
-    d = pygame.Surface(size, s.get_flags(), s)
+    d = renpy.display.pgrender.surface(size, True)
 
     if can_bilinear_scale:
         bilinear_scale(s, d)
@@ -259,8 +242,10 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
         nsw = max(sw / 2, dw)
         nsh = max(sh / 2, dh)
 
-        nsrc = pygame.Surface((nsw, nsh), src.get_flags(), src)
+        nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
+
         _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
+
         sx = 0
         sy = 0
         sw = nsw
@@ -278,14 +263,13 @@ transform = _renpy.transform
 # Note: Blend requires all surfaces to be the same size.    
 can_blend = True
 blend = _renpy.blend
-
     
 can_imageblend = True
+
 
 def imageblend(a, b, dst, img, amap):        
     red = byte_offset(img)[0]
     _renpy.imageblend(a, b, dst, img, red, amap)
-
 
 
 can_colormatrix = True
@@ -307,7 +291,7 @@ def colormatrix(src, dst, matrix):
 
 def subpixel(src, dst, x, y):
 
-    shift = renpy.game.interface.display.sample_surface.get_shifts()[3]
+    shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)
 
 can_alpha_transform = True

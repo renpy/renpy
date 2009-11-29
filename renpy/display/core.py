@@ -577,8 +577,9 @@ class SceneLists(renpy.object.Object):
                 # is a transform, and then take the transform state.
                 if isinstance(old_thing, renpy.display.motion.Transform):
                     if not isinstance(thing, renpy.display.motion.Transform):
+                        print "Wrapped in transform.", thing
                         thing = renpy.display.motion.Transform(child=thing)
-
+                        
                     thing.take_state(old_thing)
                     
                 thing.set_transform_event("replace")
@@ -765,11 +766,9 @@ class SceneLists(renpy.object.Object):
 
             self.layers[l] = newl
 
-            
-        
-    
-    
 
+
+            
 class Display(object):
     """
     This is responsible for managing the display window.
@@ -777,10 +776,6 @@ class Display(object):
     @ivar interface: The interface corresponding to this display.
 
     @ivar window: The window that is being presented to the user.
-
-    @ivar sample_surface: A sample surface that is optimized for fast
-    blitting to the window, with alpha. Used to create other surfaces
-    from.
 
     @ivar fullscreen: Is the window in fullscreen mode?
 
@@ -852,7 +847,7 @@ class Display(object):
             # Convert the aspect ratio to be square.
             iw, ih = im.get_size()
             imax = max(iw, ih)
-            square_im = renpy.display.scale.PygameSurface((imax, imax), pygame.SRCALPHA, depth=32)
+            square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
             square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
             im = square_im
 
@@ -919,18 +914,12 @@ class Display(object):
             self.window = old_window
                     
         else:
-            self.window = pygame.display.set_mode((width, height), fsflag, 32)
-
-                
+            self.window = renpy.display.pgrender.set_mode((width, height), fsflag, 32)
 
         # Window title.
         self.window_caption = None
         self.set_window_caption()
         
-        # Sample surface that all surfaces are created based on.
-        sample = pygame.Surface((10, 10), 0, self.window)
-        self.sample_surface = sample.convert_alpha(self.window)
-
         pygame.event.set_grab(False)
         
         # Load the mouse image, if any.
@@ -1030,7 +1019,7 @@ class Display(object):
         by = my - myo
 
         self.mouse_backing_pos = (bx, by)
-        self.mouse_backing = pygame.Surface((mw, mh), self.window.get_flags(), self.window)
+        self.mouse_backing = renpy.display.pgrender.surface((mw, mh), False)
         self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
 
         self.window.blit(mouse, (bx, by))

@@ -151,23 +151,15 @@ class TextStyle(object):
             color = (r, g, b, 255)
 
             surf = font.render(text, antialias, color)
-
+            rv = renpy.display.pgrender.copy_surface(surf)
+            
             if self.strikethrough:
                 sw, sh = surf.get_size()
                 soh = max(sh / 10, 1) 
-                surf.subsurface((0, sh / 2, sw, soh)).fill(color) 
+                rv.subsurface((0, sh / 2, sw, soh)).fill(color) 
 
             if a != 255 and renpy.display.module.can_linmap:
-
-                if not surf.get_masks()[3]:
-                    surf = surf.convert_alpha(renpy.game.interface.display.window)
-
-                rv = pygame.Surface(surf.get_size(), surf.get_flags(), surf)
-
-                renpy.display.module.linmap(surf, rv, 256, 256, 256, a + 1)
-            
-            else:
-                rv = surf
+                renpy.display.module.linmap(rv, rv, 256, 256, 256, a + 1)
 
         renpy.display.render.mutated_surface(rv)
 

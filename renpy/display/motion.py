@@ -1105,7 +1105,7 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
         if bilinear:
             sx, sy, sw, sh = rect
 
-            scalesurf = pygame.Surface((neww, newh), surf.get_flags(), surf)
+            scalesurf = renpy.display.pgrender.surface((neww, newh), True)
 
             renpy.display.module.bilinear_scale(surf, scalesurf,
                                                 sx, sy, sw, sh,

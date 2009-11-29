@@ -1312,28 +1312,10 @@ class Alpha(renpy.display.core.Displayable):
             
         rend = renpy.display.render.render(self.child, height, width, st, at)
 
-        if not renpy.display.module.can_linmap:
-            return rend
-
         w, h = rend.get_size()
         rv = renpy.display.render.Render(w, h)
-
-        oldsurf = rend.pygame_surface()
-
-        if not (oldsurf.get_masks()[3]):
-            oldsurf = oldsurf.convert_alpha(renpy.game.interface.display.window)
-
-        newsurf = pygame.Surface(oldsurf.get_size(), oldsurf.get_flags(), oldsurf)
-
-
-        renpy.display.module.linmap(oldsurf, newsurf,
-                                    256, 256, 256, int(alpha * 256.0))
-
-        renpy.display.render.mutated_surface(newsurf)
-
-        rv.blit(newsurf, (0, 0))
-
-        rv.depends_on(rend)
+        rv.blit(rend, (0, 0))
+        rv.alpha = alpha
 
         return rv
         

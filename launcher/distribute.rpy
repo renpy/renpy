@@ -159,7 +159,7 @@ init python:
             zi = zipfile.ZipInfo(filename + an)
 
             s = os.stat(fn)
-            zi.date_time = time.gmtime(s.st_mtime)[:6]
+            zi.date_time = time.gmtime(s.st_mtime)[:6]                            
             zi.compress_type = zipfile.ZIP_DEFLATED
             zi.create_system = 3
 
