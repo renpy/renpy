@@ -25,6 +25,7 @@ import os
 import os.path
 import sys
 import platform
+import warnings
 
 # Functions to be customized by distributors. ################################
 
@@ -81,9 +82,9 @@ def path_to_renpy_base():
 
 ##############################################################################
 
-# The version of the Mac Launcher and py4renpy that we use.
-macos_version = (6, 10, 0)
-linux_version = (6, 10, 0)
+# The version of the Mac Launcher and py4renpy that we require.
+macos_version = (6, 10, 1)
+linux_version = (6, 10, 1)
 
 if __name__ == "__main__":
 
@@ -116,6 +117,9 @@ if __name__ == "__main__":
     if os.path.exists(renpy_base + "/renpy.zip"):
         sys.path.append(renpy_base + "/renpy.zip")
 
+    # Ignore warnings that happen.
+    warnings.simplefilter("ignore", DeprecationWarning)
+        
         
     # Start Ren'Py proper.
     try:
