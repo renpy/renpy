@@ -247,9 +247,6 @@ class Pixellate(Transition):
 
         time = float(time)
 
-        if not renpy.display.module.can_pixellate:
-            time = 0
-
         super(Pixellate, self).__init__(time, **properties)
 
         self.time = time
@@ -330,7 +327,7 @@ class Dissolve(Transition):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
         
-        if st >= self.time or not renpy.display.module.can_blend:
+        if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
@@ -545,7 +542,7 @@ class ImageDissolve(Transition):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
-        if st >= self.time or not renpy.display.module.can_imageblend:
+        if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st, at)
 

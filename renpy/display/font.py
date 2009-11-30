@@ -92,8 +92,7 @@ class ImageFont(object):
         surf.blit(self.chars[text[-1]], (x + xoff, y + yoff))
 
         if renpy.config.recolor_sfonts and \
-               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255) ) and \
-               renpy.display.module.can_twomap:
+               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255)):
 
             newsurf = renpy.display.pgrender.surface(surf.get_size(), True)
             renpy.display.module.twomap(surf, newsurf, color, black_color)

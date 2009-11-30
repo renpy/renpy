@@ -70,7 +70,7 @@ cdef extern from "renpy.h":
 
     void transform32_core(object, object,
                           float, float, float, float, float, float,
-                          int, float)
+                          int, float, int)
 
     void blend32_core(object, object, object, int)
 
@@ -95,7 +95,7 @@ import pygame
 PygameSurface = pygame.Surface
 
 def version():
-    return (6, 10, 0)
+    return (6, 10, 1)
 
 def save_png(surf, file, compress=-1):
 
@@ -331,7 +331,7 @@ def check(surf):
     
 def transform(pysrc, pydst,
               corner_x, corner_y,
-              xdx, ydx, xdy, ydy, a=1.0):
+              xdx, ydx, xdy, ydy, a=1.0, precise=0):
 
     check(pysrc)
     check(pydst)
@@ -343,7 +343,7 @@ def transform(pysrc, pydst,
                      corner_x, corner_y,
                      xdx, ydx,
                      xdy, ydy,
-                     pysrc.get_shifts()[3], a)
+                     pysrc.get_shifts()[3], a, precise)
 
     # pydst.unlock()
     # pysrc.unlock()

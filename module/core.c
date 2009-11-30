@@ -969,11 +969,13 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
 int transform32_std(PyObject *pysrc, PyObject *pydst,
-                     float corner_x, float corner_y,
-                     float xdx, float ydx,
-                     float xdy, float ydy,
-                     int ashift,
-                     float a) {
+                    float corner_x, float corner_y,
+                    float xdx, float ydx,
+                    float xdy, float ydy,
+                    int ashift,
+                    float a,
+                    int precise
+    ) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -985,7 +987,7 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     
     // The x and y source pixel coordinates, times 65536. And their
     // delta-per-dest-x-pixel.
-    int sxi, syi, dsxi, dsyi;
+    int sxi = 0, syi = 0, dsxi = 0, dsyi = 0;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -1008,23 +1010,31 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    double maxsx = srcw - 1 - EPSILON;
-    double maxsy = srch - 1 - EPSILON;
+    double maxsx = srcw - 1;
+    double maxsy = srch - 1;
+    
+    // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
+    // that 1px border that allows us to be precise.
+    if (! precise) {
+        maxsx -= EPSILON;
+        maxsy -= EPSILON;
+    
+        // If a delta is too even, subtract epsilon (towards 0) from it.
+        if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
+            xdx -= (xdx / fabs(xdx)) * EPSILON;
+        }
+        if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
+            xdy -= (xdy / fabs(xdy)) * EPSILON;
+        }
+        if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
+            ydx -= (ydx / fabs(ydx)) * EPSILON;
+        }
+        if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
+            ydy -= (ydy / fabs(ydy)) * EPSILON;
+        }
+    }
 
-    // If a delta is too even, subtract epsilon (towards 0) from it.
-    if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
-        xdx -= (xdx / fabs(xdx)) * EPSILON;
-    }
-    if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
-        xdy -= (xdy / fabs(xdy)) * EPSILON;
-    }
-    if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
-        ydx -= (ydx / fabs(ydx)) * EPSILON;
-    }
-    if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
-        ydy -= (ydy / fabs(ydy)) * EPSILON;
-    }
-
+    
     // Loop through every line.
     for (y = 0; y < dsth; y++) {
         
@@ -1158,11 +1168,13 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 /* A similar concept to rotozoom, but implemented differently, so we
    can limit the target area. */
 int transform32_mmx(PyObject *pysrc, PyObject *pydst,
-                     float corner_x, float corner_y,
-                     float xdx, float ydx,
-                     float xdy, float ydy,
-                     int ashift,
-                     float a) {
+                    float corner_x, float corner_y,
+                    float xdx, float ydx,
+                    float xdy, float ydy,
+                    int ashift,
+                    float a,
+                    int precise
+    ) {
 
     SDL_Surface *src;
     SDL_Surface *dst;
@@ -1174,7 +1186,7 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     
     // The x and y source pixel coordinates, times 65536. And their
     // delta-per-dest-x-pixel.
-    int sxi, syi, dsxi, dsyi;
+    int sxi = 0, syi = 0, dsxi = 0, dsyi = 0;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -1200,23 +1212,31 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    double maxsx = srcw - 1 - EPSILON;
-    double maxsy = srch - 1 - EPSILON;
+    double maxsx = srcw - 1;
+    double maxsy = srch - 1;
+    
+    // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
+    // that 1px border that allows us to be precise.
+    if (! precise) {
+        maxsx -= EPSILON;
+        maxsy -= EPSILON;
+    
+        // If a delta is too even, subtract epsilon (towards 0) from it.
+        if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
+            xdx -= (xdx / fabs(xdx)) * EPSILON;
+        }
+        if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
+            xdy -= (xdy / fabs(xdy)) * EPSILON;
+        }
+        if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
+            ydx -= (ydx / fabs(ydx)) * EPSILON;
+        }
+        if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
+            ydy -= (ydy / fabs(ydy)) * EPSILON;
+        }
+    }
 
-    // If a delta is too even, subtract epsilon (towards 0) from it.
-    if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
-        xdx -= (xdx / fabs(xdx)) * EPSILON;
-    }
-    if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
-        xdy -= (xdy / fabs(xdy)) * EPSILON;
-    }
-    if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
-        ydx -= (ydx / fabs(ydx)) * EPSILON;
-    }
-    if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
-        ydy -= (ydy / fabs(ydy)) * EPSILON;
-    }
-
+    
     // Loop through every line.
     for (y = 0; y < dsth; y++) {
         
@@ -1397,7 +1417,9 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
                       float xdx, float ydx,
                       float xdy, float ydy,
                       int ashift,
-                      float a) {
+                      float a,
+                      int precise
+    ) {
     
 #ifdef GCC_MMX
     static int checked_mmx = 0;
@@ -1410,14 +1432,14 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
 
     if (has_mmx) {
         transform32_mmx(pysrc, pydst, corner_x, corner_y,
-                        xdx, ydx, xdy, ydy, ashift, a);
+                        xdx, ydx, xdy, ydy, ashift, a, precise);
         return;
     }
     
 #endif
     
     transform32_std(pysrc, pydst, corner_x, corner_y,
-                    xdx, ydx, xdy, ydy, ashift, a);
+                    xdx, ydx, xdy, ydy, ashift, a, precise);
 
 }
                      

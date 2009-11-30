@@ -681,7 +681,7 @@ class FrameImage(ImageBase):
                     surf = surf2 
 
                 else:
-                    if self.bilinear and renpy.display.module.can_bilinear_scale:
+                    if self.bilinear:
                         surf2 = renpy.display.scale.real_bilinear(surf, dstsize)
                     else:
                         surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
@@ -736,8 +736,6 @@ class Scale(ImageBase):
     """
 
     def __init__(self, im, width, height, bilinear=True, **properties):
-
-        bilinear = bilinear and renpy.display.module.can_bilinear_scale
 
         im = image(im)
         super(Scale, self).__init__(im, width, height, bilinear, **properties)
@@ -976,9 +974,6 @@ class Map(ImageBase):
 
         surf = cache.get(self.image)
 
-        if not renpy.display.module.can_map:
-            return surf
-
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.map(surf, rv,
@@ -1018,9 +1013,6 @@ class Twocolor(ImageBase):
 
         surf = cache.get(self.image)
 
-        if not renpy.display.module.can_twomap:
-            return surf
-
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.twomap(surf, rv,
@@ -1058,9 +1050,6 @@ class Recolor(ImageBase):
 
         surf = cache.get(self.image)
 
-        if not renpy.display.module.can_linmap:
-            return surf
-
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.linmap(surf, rv,
@@ -1093,9 +1082,6 @@ class MatrixColor(ImageBase):
     def load(self):
 
         surf = cache.get(self.image)
-
-        if not renpy.display.module.can_colormatrix:
-            return surf
 
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
@@ -1362,9 +1348,7 @@ class AlphaMask(ImageBase):
 
         # Used to copy the surface.
         rv = renpy.display.pgrender.copy_surface(basesurf)
-
-        if renpy.display.module.can_munge:
-            renpy.display.module.alpha_munge(masksurf, rv, identity)
+        renpy.display.module.alpha_munge(masksurf, rv, identity)
             
         return rv
             

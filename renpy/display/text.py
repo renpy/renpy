@@ -158,7 +158,7 @@ class TextStyle(object):
                 soh = max(sh / 10, 1) 
                 rv.subsurface((0, sh / 2, sw, soh)).fill(color) 
 
-            if a != 255 and renpy.display.module.can_linmap:
+            if a != 255:
                 renpy.display.module.linmap(rv, rv, 256, 256, 256, a + 1)
 
         renpy.display.render.mutated_surface(rv)

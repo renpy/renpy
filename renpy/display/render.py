@@ -624,9 +624,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
     
     if not isinstance(what, Render):
 
-        if not renpy.display.module.can_alpha_transform:
-            return
-        
         # Figure out where the other corner of the transformed surface
         # is on the screen.
         sw, sh = what.get_size()
@@ -677,12 +674,12 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         else:
             dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
             
-            renpy.display.module.alpha_transform(
+            renpy.display.module.transform(
                 what, dest,
                 cx, cy,
                 forward.xdx, forward.ydx,
                 forward.xdy, forward.ydy,
-                alpha)
+                alpha, True)
 
         return
 

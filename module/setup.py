@@ -217,7 +217,7 @@ extensions.append(renpybidi)
     
 distutils.core.setup(
     name = "renpy_module",
-    version = "6.9.3",
+    version = "6.10.1",
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },

@@ -1013,7 +1013,7 @@ class Zoom(renpy.display.core.Displayable):
                 self.after_child = None
         
         self.time_warp = time_warp
-        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.bilinear = bilinear
         self.opaque = opaque
         self.anim_timebase = anim_timebase
         
@@ -1154,7 +1154,7 @@ class FactorZoom(renpy.display.core.Displayable):
                 self.after_child = None
         
         self.time_warp = time_warp
-        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.bilinear = bilinear
         self.opaque = opaque
         self.done = 0.0
         self.anim_timebase = anim_timebase
@@ -1239,7 +1239,7 @@ class SizeZoom(renpy.display.core.Displayable):
                 self.after_child = None
         
         self.time_warp = time_warp
-        self.bilinear = bilinear and renpy.display.module.can_bilinear_scale
+        self.bilinear = bilinear
         self.opaque = opaque
         self.done = 0.0
         self.anim_timebase = anim_timebase
@@ -1341,10 +1341,6 @@ class RotoZoom(renpy.display.core.Displayable):
         
     def render(self, w, h, st, at):
 
-        if not renpy.display.module.can_transform:
-            rv = renpy.display.render.Render(1, 1)
-            return rv
-        
         if self.rot_anim_timebase:
             rot_time = at
         else:
@@ -1433,8 +1429,9 @@ class RotoZoom(renpy.display.core.Displayable):
             culcy = ch / 2.0 + ydx * dulcx + ydy * dulcy
 
             renpy.display.module.transform(surf, target,
-                                           culcx, culcy,
-                                           xdx, ydx, xdy, ydy)
+                                            culcx, culcy,
+                                            xdx, ydx, xdy, ydy,
+                                            1.0, True)
 
         rv = renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
         rv.depends_on(child_rend)

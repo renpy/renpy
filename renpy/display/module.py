@@ -32,7 +32,7 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < (6, 10, 0):
+    if version < (6, 10, 1):
         print >>sys.stderr, "The _renpy module was found, but is out of date."
         print >>sys.stderr, "Trying to run anyway, but you should expect errors."
         
@@ -59,8 +59,6 @@ def convert_and_call(function, src, dst, *args):
 
     function(src, dst, *args)
 
-
-can_pixellate = True
 
 def pixellate(src, dst, avgwidth, avgheight, outwidth, outheight):
     """
@@ -96,11 +94,8 @@ def scale(s, size):
 
     d = renpy.display.pgrender.surface(size, True)
 
-    if can_bilinear_scale:
-        bilinear_scale(s, d)
-    else:
-        pixellate(s, d, width / dx, height / dy, 1, 1)
-
+    bilinear_scale(s, d)
+    
     return d
 
 
@@ -143,8 +138,6 @@ def endian_order(src, r, g, b, a):
 
 
 
-can_linmap = True
-
 def linmap(src, dst, rmap, gmap, bmap, amap):
     """
     This maps the colors between two surfaces. The various map
@@ -157,8 +150,6 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 
 
 save_png = _renpy.save_png
-
-can_map = True
 
 def map(src, dst, rmap, gmap, bmap, amap):
     """
@@ -173,8 +164,6 @@ def map(src, dst, rmap, gmap, bmap, amap):
                      *endian_order(dst, rmap, gmap, bmap, amap))
 
 
-
-can_twomap = True
 
 def twomap(src, dst, white, black):
     """
@@ -193,7 +182,7 @@ def twomap(src, dst, white, black):
 
     ramp = renpy.display.im.ramp
 
-    if can_linmap and br == 0 and bg == 0 and bb == 0:
+    if br == 0 and bg == 0 and bb == 0:
         linmap(src, dst,
                wr + 1,
                wg + 1,
@@ -206,8 +195,6 @@ def twomap(src, dst, white, black):
             ramp(bb, wb),
             ramp(0, wa))
 
-
-can_munge = True
 
 def alpha_munge(src, dst, amap):
     """
@@ -224,8 +211,6 @@ def alpha_munge(src, dst, amap):
     if red is not None and alpha is not None:
         _renpy.alpha_munge(src, dst, red, alpha, amap)        
 
-
-can_bilinear_scale = True
 
 def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
 
@@ -255,24 +240,15 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
     _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh)
         
 
-can_transform = True
 transform = _renpy.transform
-
-
     
 # Note: Blend requires all surfaces to be the same size.    
-can_blend = True
 blend = _renpy.blend
     
-can_imageblend = True
-
-
 def imageblend(a, b, dst, img, amap):        
     red = byte_offset(img)[0]
     _renpy.imageblend(a, b, dst, img, red, amap)
 
-
-can_colormatrix = True
 
 def colormatrix(src, dst, matrix):
     c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
@@ -294,7 +270,4 @@ def subpixel(src, dst, x, y):
     shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)
 
-can_alpha_transform = True
-alpha_transform = _renpy.transform
-        
     
