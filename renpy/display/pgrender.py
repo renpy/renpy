@@ -73,7 +73,11 @@ def copy_surface(surf):
     """
     
     rv = surface(surf.get_size(), True)
+
+    renpy.display.render.blit_lock.acquire()
     rv.blit(surf, (0, 0))
+    renpy.display.render.blit_lock.release()
+
     return rv
 
 copy_surface_unscaled = copy_surface
