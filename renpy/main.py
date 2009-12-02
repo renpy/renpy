@@ -25,7 +25,7 @@ import os
 import sys
 import time
 import zipfile
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+from cPickle import loads, dumps
 import __main__
 
 def save_persistent():
@@ -49,9 +49,6 @@ def run(restart):
     store = renpy.store.__dict__
     store.clear()
     store.update(renpy.game.clean_store)
-
-    # Note that this is a restart.
-    renpy.store._restart = restart
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -87,6 +84,10 @@ def run(restart):
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")
 
+        # Note if this is a restart.
+        renpy.store._restart = restart
+        restart = None
+        
         # We run until we get an exception.
         try:
             game.context().run()
@@ -96,6 +97,7 @@ def run(restart):
         # We get this when the context has changed, and so we go and
         # start running from the new context.
         except game.RestartException, e:
+
             renpy.game.contexts = e.contexts
 
             label = e.label
@@ -314,8 +316,9 @@ def main():
             break
         except game.FullRestartException, e:
             restart = e.reason
-
+        finally:
+            renpy.display.core.cpu_idle.set()
+            renpy.loadsave.autosave_not_running.wait()
+            
     # This is stuff we do on a normal, non-error return.
-    renpy.display.core.cpu_idle.set()
     renpy.display.render.check_at_shutdown()
-    renpy.loadsave.autosave_not_running.wait()

@@ -702,18 +702,24 @@ label _start:
     # Clean out any residual scene from the splashscreen.
     scene black
 
-    if _restart is None:
-        $ renpy.transition(config.end_splash_transition)
-    else:
-        $ renpy.transition(_restart[0])
-        jump expression _restart[1]
+
+    # This has to be python, to deal with a case where _restart may
+    # change across a shift-reload.
+    python:
+        if _restart is None:
+            renpy.transition(config.end_splash_transition)
+        else:
+            renpy.transition(_restart[0])
+            renpy.jump(_restart[1])
         
 label _invoke_main_menu:
 
-    if _restart:
-        $ renpy.call_in_new_context(_restart[2])
-    else:
-        $ renpy.call_in_new_context("_main_menu")
+    # Again, this has to be python.
+    python:
+        if _restart:
+            renpy.call_in_new_context(_restart[2])
+        else:
+            renpy.call_in_new_context("_main_menu")
         
         
     # If the main menu returns, then start the game.

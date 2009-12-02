@@ -106,12 +106,17 @@ def reload_all():
 
     # Shut down the cache thread.
     display.im.cache.quit()
-    
+        
     # Cleans out the RenpyImporter.
     import sys
     sys.meta_path.pop()
 
-    blacklist = [ "renpy", "renpy.bootstrap", "renpy.display", "renpy.display.iliad", "renpy.display.scale" ]
+    blacklist = [ "renpy",
+                  "renpy.bootstrap",
+                  "renpy.display",
+                  "renpy.display.iliad",
+                  "renpy.display.pgrender",
+                  "renpy.display.scale" ]
     
     for i in sys.modules.keys():
         if i.startswith("renpy") and i not in blacklist:

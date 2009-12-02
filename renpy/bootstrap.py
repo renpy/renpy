@@ -266,7 +266,7 @@ def bootstrap(renpy_base):
             break
             
         except renpy.game.UtterRestartException:
-
+            
             # Only works after a full restart.
             report_error = renpy.display.error.ReportError()
             
@@ -294,6 +294,8 @@ def bootstrap(renpy_base):
     if options.leak:
         memory_profile()
 
+    renpy.display.im.cache.quit()
+    
     sys.exit(0)
 
 

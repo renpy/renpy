@@ -83,11 +83,14 @@ class Cache(object):
         self.keep_preloading = True
 
         # The preload thread.
-        self.preload_thread = threading.Thread(target=self.preload_thread_main)
+        self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
         self.preload_thread.setDaemon(True)
         self.preload_thread.start()
         
     def quit(self):
+        if not self.preload_thread.isAlive():
+            return
+
         self.lock.acquire()
         self.keep_preloading = False
         self.lock.notify()

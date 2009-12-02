@@ -176,7 +176,7 @@ class Context(renpy.object.Object):
         Pops all levels of the dynamic stack. Called when we jump
         out of a context.
         """
-        
+
         while self.dynamic_stack:
             self.pop_dynamic()
                 

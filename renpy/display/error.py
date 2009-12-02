@@ -69,7 +69,7 @@ class ReportError(object):
                 return True
 
             ev = pygame.event.wait()
-
+            
             if ev.type == pygame.MOUSEBUTTONUP:
 
                 if ev.button == 1:
