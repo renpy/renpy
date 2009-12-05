@@ -232,6 +232,7 @@ def main():
     print "Did you run me with renpython -OO?"
     print "Was ming using the right crt?"
     print "Did you update renpy.py and launcher/script_version.rpy?"
+    print "Did you run with a RENPY_SCALE_FACTOR?"
     
 if __name__ == "__main__":
     main()

@@ -5,10 +5,6 @@ renpy.app
 **/*.rpyc
 **/*.rpyb
 **/*.rpymc
-_renpy.c
-nativemidi.c
-sound.c
-winmixer.c
 jedit
 lint.txt
 renpy.code
