@@ -113,6 +113,9 @@ def interpolate(t, a, b, type):
 
     # Interpolate everything else.
     else:
+        if a is None:
+            a = 0
+            
         return correct_type(a + t * (b - a), b, type)
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
