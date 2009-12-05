@@ -1095,7 +1095,8 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
 
             renpy.display.module.bilinear_scale(surf, dest,
                                                 sx, sy, sw, sh,
-                                                -x, -y, neww, newh)
+                                                -x, -y, neww, newh,
+                                                precise=1)
             
         rv = renpy.display.render.Render(neww, newh, draw_func=draw, opaque=True)
         
@@ -1109,7 +1110,8 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
 
             renpy.display.module.bilinear_scale(surf, scalesurf,
                                                 sx, sy, sw, sh,
-                                                0, 0, neww, newh)
+                                                0, 0, neww, newh,
+                                                precise=1)
         else:
 
             renpy.display.render.blit_lock.acquire()

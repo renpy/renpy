@@ -212,7 +212,7 @@ def alpha_munge(src, dst, amap):
         _renpy.alpha_munge(src, dst, red, alpha, amap)        
 
 
-def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None):
+def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None, precise=0):
 
     if sw is None:
         sw, sh = src.get_size()
@@ -229,7 +229,7 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 
-        _renpy.bilinear(src, nsrc, sx, sy, sw, sh)
+        _renpy.bilinear(src, nsrc, sx, sy, sw, sh, precise=precise)
 
         sx = 0
         sy = 0
@@ -237,7 +237,7 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
         sh = nsh
         src = nsrc
 
-    _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh)
+    _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh, precise=precise)
         
 
 transform = _renpy.transform

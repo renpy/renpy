@@ -31,10 +31,7 @@ PygameSurface = pygame.Surface
 import _renpy_font
 
 # This needs to be done before we mess too hard with pygame.
-try:
-    import _renpy
-except ImportError:
-    _renpy = None
+import _renpy
 
 # The factor we're scaling by.
 factor = 1.0
@@ -82,53 +79,49 @@ def surface_scale(full):
 def image_save_unscaled(surf, dest):
     pygame.image.save(surf, dest)
 
+real_renpy_pixellate = _renpy.pixellate
+real_renpy_transform = _renpy.transform
 
-if _renpy:
-    real_renpy_pixellate = _renpy.pixellate
-    real_renpy_transform = _renpy.transform
+def real_smoothscale(src, size, dest=None):
+    """
+    This scales src up or down to size. This uses both the pixellate
+    and the transform operations to handle the scaling.
+    """
 
-    def real_smoothscale(src, size, dest=None):
-        """
-        This scales src up or down to size. This uses both the pixellate
-        and the bilinear operations to handle the scaling.
-        """
+    width, height = size
+    srcwidth, srcheight = src.get_size()
+    iwidth, iheight = srcwidth, srcheight
 
-        width, height = size
-        srcwidth, srcheight = src.get_size()
-        iwidth, iheight = srcwidth, srcheight
+    if dest is None:
+        dest = PygameSurface(size, src.get_flags(), src)
 
-        if dest is None:
-            dest = PygameSurface(size, src.get_flags(), src)
-
-        if width == 0 or height == 0:
-            return dest
-            
-        xshrink = 1
-        yshrink = 1
-
-        while iwidth >= width * 2:
-            xshrink *= 2
-            iwidth /= 2
-
-        while iheight >= height * 2:
-            yshrink *= 2
-            iheight /= 2
-
-        if iwidth != srcwidth or iheight != srcheight:
-            inter = PygameSurface((iwidth, iheight), src.get_flags(), src)
-            real_renpy_pixellate(src, inter, xshrink, yshrink, 1, 1)
-            src = inter
-
-        real_renpy_transform(src, dest,
-                             0, 0,
-                             1.0 * iwidth / width , 0,                             
-                             0, 1.0 * iheight / height,
-                             )
-
+    if width == 0 or height == 0:
         return dest
-    
-else:
-    real_smoothscale = pygame.transform.smoothscale
+
+    xshrink = 1
+    yshrink = 1
+
+    while iwidth >= width * 2:
+        xshrink *= 2
+        iwidth /= 2
+
+    while iheight >= height * 2:
+        yshrink *= 2
+        iheight /= 2
+
+    if iwidth != srcwidth or iheight != srcheight:
+        inter = PygameSurface((iwidth, iheight), src.get_flags(), src)
+        real_renpy_pixellate(src, inter, xshrink, yshrink, 1, 1)
+        src = inter
+
+    real_renpy_transform(src, dest,
+                         0, 0,
+                         1.0 * iwidth / width , 0,                             
+                         0, 1.0 * iheight / height,
+                         precise=1,
+                         )
+
+    return dest
     
 smoothscale = real_smoothscale
     
@@ -727,7 +720,8 @@ def load_scaling():
         old_bilinear = _renpy.bilinear
         def bilinear(pysrc, pydst, source_xoff=0.0, source_yoff=0.0,
                      source_width=None, source_height=None,
-                     dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None):
+                     dest_xoff=0.0, dest_yoff=0.0, dest_width=None,
+                     dest_height=None, precise=0):
 
             def f(n):
                 if n is None:
@@ -752,7 +746,8 @@ def load_scaling():
                          dest_xoff=dest_xoff,
                          dest_yoff=dest_yoff,
                          dest_width=dest_width,
-                         dest_height=dest_height)
+                         dest_height=dest_height,
+                         precise=precise)
 
         _renpy.bilinear = bilinear
             

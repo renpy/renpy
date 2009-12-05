@@ -773,7 +773,9 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
                   float source_xoff, float source_yoff,
                   float source_width, float source_height,
                   float dest_xoff, float dest_yoff,
-                  float dest_width, float dest_height) {
+                  float dest_width, float dest_height,
+                  int precise
+    ) {
 
 
     SDL_Surface *src;
@@ -803,9 +805,25 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     srch = src->h;
     dsth = dst->h;
 
-    xdelta = 255.0 * (source_width - 1) / dest_width;
-    ydelta = 255.0 * (source_height - 1) / dest_height;
+    if (precise) {
 
+        if (dest_width > 1) {
+            xdelta = 256.0 * (source_width - 1) / (dest_width - 1);
+        } else {
+            xdelta = 0;
+        }
+
+        if (dest_height > 1) {
+            ydelta = 256.0 * (source_height - 1) / (dest_height - 1);
+        } else {
+            ydelta = 0;
+        }
+        
+    } else {
+        xdelta = 255.0 * (source_width - 1) / dest_width;
+        ydelta = 255.0 * (source_height - 1) / dest_height;
+    }
+        
     for (y = 0; y < dsth; y++) {
 
         unsigned char *s0;
@@ -821,14 +839,14 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
         d = dstpixels + dstpitch * y;
         dend = d + 4 * dstw; // bpp
 
-        sline = source_yoff * 255 + (y + dest_yoff) * ydelta;
+        sline = source_yoff * 256 + (y + dest_yoff) * ydelta;
         s1frac = (int) sline & 255;
         s0frac = 256 - s1frac;
 
         s0 = srcpixels + (sline >> 8) * srcpitch;
         s1 = s0 + srcpitch;
 
-        scol = source_xoff * 255 + dest_xoff * xdelta;
+        scol = source_xoff * 256 + dest_xoff * xdelta;
 
         while (d < dend) {
 

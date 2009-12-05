@@ -62,7 +62,8 @@ cdef extern from "renpy.h":
 
     void scale32_core(object, object,
                       float, float, float, float,
-                      float, float, float, float)
+                      float, float, float, float,
+                      int)
 
     void scale24_core(object, object,
                       float, float, float, float,
@@ -283,7 +284,8 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
 def bilinear(pysrc, pydst,
              source_xoff=0.0, source_yoff=0.0, source_width=None, source_height=None,
-             dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None):
+             dest_xoff=0.0, dest_yoff=0.0, dest_width=None, dest_height=None,
+             precise=0):
 
     if not isinstance(pysrc, PygameSurface):
         raise Exception("bilinear requires a pygame Surface as its first argument.")
@@ -309,7 +311,7 @@ def bilinear(pysrc, pydst,
     if pysrc.get_bitsize() == 32:
         scale32_core(pysrc, pydst,
                      source_xoff, source_yoff, source_width, source_height,
-                     dest_xoff, dest_yoff, dest_width, dest_height)
+                     dest_xoff, dest_yoff, dest_width, dest_height, precise)
 
     else:
         scale24_core(pysrc, pydst,
