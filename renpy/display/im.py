@@ -183,13 +183,17 @@ class Cache(object):
             ce = self.cache.get(image, None)
 
             if ce is not None:
-                self.cache.release()                
+                self.cache.release()
 
         # Otherwise, we keep the lock, and load the image ourselves.
         if ce is None:
-            
-            surf = image.load()
 
+            try:
+                surf = image.load()
+            except:
+                self.lock.release()
+                raise
+                
             ce = CacheEntry(image, surf)
             self.total_cache_size += ce.size
             self.cache[image] = ce
