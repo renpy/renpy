@@ -795,7 +795,6 @@ class Text(renpy.display.core.Displayable):
 
             for kind, i in tliter:
 
-
                 if kind == "tag" and i.startswith("image="):
 
                     m = re.match(r'image=(.*)', i)
@@ -803,7 +802,7 @@ class Text(renpy.display.core.Displayable):
                     if not m:
                         raise Exception('Image tag %s could not be parsed.' % i)
 
-                    i = renpy.display.im.image(m.group(1))
+                    i = renpy.easy.displayable(m.group(1))
                     ntl.append(("widget", i))
                     self.children.append(i)
 
