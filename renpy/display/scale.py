@@ -28,10 +28,7 @@ import renpy
 
 PygameSurface = pygame.Surface
 
-try:
-    import _renpy_font as font_module
-except ImportError:
-    import pygame.font as font_module
+import _renpy_font
 
 # This needs to be done before we mess too hard with pygame.
 try:
@@ -572,12 +569,12 @@ def load_scaling():
     # Ignoring scale2x and chop. The former due to a pending api change,
     # the latter due to general uselessness.
     
-    PygameFont = font_module.Font
+    PygameFont = _renpy_font.Font
 
     class Font(object):
 
-        def __init__(self, o, size):
-            self.font = PygameFont(o, int(size * factor))
+        def __init__(self, o, size, index):
+            self.font = PygameFont(o, int(size * factor), index)
 
         def render(self, *args):
             return Surface(self.font.render(*args))
@@ -618,7 +615,7 @@ def load_scaling():
         def set_expand(self, value):
             self.font.set_expand(value * factor)
         
-    font_module.Font = Font
+    _renpy_font.Font = Font
 
     old_image_save = pygame.image.save
 
@@ -638,6 +635,47 @@ def load_scaling():
 
     pygame.mouse.get_pos = mouse_get_pos
 
+    def scale_event(ev):
+        if ev.type == pygame.MOUSEMOTION:
+            return pygame.event.Event(ev.type, pos=p2v(ev.pos), rel=p2v(ev.rel), buttons=ev.buttons)
+        elif ev.type == pygame.MOUSEBUTTONUP or ev.type == pygame.MOUSEBUTTONDOWN:
+            return pygame.event.Event(ev.type, pos=p2v(ev.pos), button=ev.button)
+        else:
+            return ev
+
+    old_event_poll = pygame.event.poll
+
+    def event_poll():
+        ev = old_event_poll()
+        return scale_event(ev)
+
+    pygame.event.poll = event_poll
+
+    old_event_wait = pygame.event.wait
+
+    def event_wait():
+        ev = old_event_wait()
+        return scale_event(ev)
+
+    pygame.event.wait = event_wait
+
+    old_event_get = pygame.event.get
+
+    def event_get(*args):
+        rv = old_event_get(*args)
+
+        if rv:
+            rv[-1] = scale_event(rv[-1])
+
+        return rv
+
+    pygame.event.get = event_get
+
+
+        
+         
+
+    
 
     if _renpy is not None:
         

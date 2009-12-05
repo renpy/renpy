@@ -5,6 +5,9 @@ The image text tag can now take any textual image representation. So
 something like {image=eileen happy} is legal, if odd.
 
 
+Fixed a bug that caused Ren'Py to fail when scaling was enabled.
+
+
 Fixed a bug that could prevent files from being loaded if Ren'Py was
 run from a path that contains non-ascii characters. (Even in directories
 that were not part of the Ren'Py distribution.)
