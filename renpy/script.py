@@ -178,6 +178,9 @@ class Script(object):
 
         self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
 
+        if renpy.parser.report_parse_errors():
+            raise SystemExit(-1)
+        
         return initcode
         
     def assign_names(self, stmts, fn):

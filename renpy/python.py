@@ -758,10 +758,14 @@ class RollbackLog(renpy.object.Object):
         that the user may want to rollback to just before this
         node.
         """
-
+        
         if self.current.checkpoint:
             return
-            
+
+        # Only allow checkpoints in the top-level context.
+        if len(renpy.game.contexts) > 1:
+            return
+        
         if self.rollback_limit < renpy.config.hard_rollback_limit: 
             self.rollback_limit += 1
 
