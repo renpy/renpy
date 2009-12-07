@@ -95,7 +95,7 @@ def add(w, make_current=False, once=False):
         if isinstance(atf, renpy.display.motion.Transform):
             atw = atf(child=atw)
         else:
-            atq = atf(atw)
+            atw = atf(atw)
     
     if isinstance(current, str):
         renpy.game.context(-1).scene_lists.add(current, atw, key=add_tag)
