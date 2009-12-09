@@ -513,7 +513,7 @@ def load_scaling():
     
     
     def transform_flip(surf, xbool, ybool):
-        new_surf = pgrender.transform_flip_unscaled(surf.surface, xbool, ybool) 
+        new_surf = pgrender.flip_unscaled(surf.surface, xbool, ybool) 
         return ScaledSurface(new_surf, wh=surf.get_size())
 
     pgrender.flip = transform_flip
