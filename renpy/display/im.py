@@ -163,9 +163,7 @@ class Cache(object):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
 
         if not image.cache:
-            surf = image.load()
-            surf = surf.convert_alpha(renpy.game.interface.display.window)
-                
+            surf = image.load()                
             renpy.display.render.mutated_surface(surf)
             return surf
 
@@ -765,7 +763,7 @@ class Scale(ImageBase):
         else:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = pygame.transform.scale(child, (self.width, self.height))
+                rv = renpy.display.pgrender.transform_scale(child, (self.width, self.height))
             finally:
                 renpy.display.render.blit_lock.release()
             
@@ -811,7 +809,7 @@ class FactorScale(ImageBase):
         else:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = pygame.transform.scale(surf, (width, height))
+                rv = renpy.display.pgrender.transform_scale(surf, (width, height))
             finally:
                 renpy.display.render.blit_lock.release()
             
@@ -845,22 +843,23 @@ class Flip(ImageBase):
         self.horizontal = horizontal
         self.vertical = vertical
 
+        
     def load(self):
 
         child = cache.get(self.image)
         
         try:
             renpy.display.render.blit_lock.acquire()
-            rv = pygame.transform.flip(child, self.horizontal, self.vertical)
+            rv = renpy.display.pgrender.flip(child, self.horizontal, self.vertical)
         finally:
             renpy.display.render.blit_lock.release()
 
         return rv
 
+    
     def predict_files(self):
         return self.image.predict_files()
 
-    
     
 
 class Rotozoom(ImageBase):

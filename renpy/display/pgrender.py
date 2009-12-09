@@ -24,6 +24,19 @@
 import pygame
 import renpy
 
+# This class is used to make a copy of a pygame module's functions. We
+# can then access those functions, and be relatively sure that those
+# have not changed.
+class ModuleProxy(object):
+    def __init__(self, module):
+        self.__dict__.update(module.__dict__)
+
+opygame = ModuleProxy(pygame)
+opygame.display = ModuleProxy(pygame.display)
+opygame.transform = ModuleProxy(pygame.transform)
+opygame.image = ModuleProxy(pygame.image)
+
+
 # Sample surfaces, with and without alpha.
 sample_alpha = None
 sample_noalpha = None
@@ -37,15 +50,30 @@ def set_mode(resolution, flags=0, depth=0):
     global sample_alpha
     global sample_noalpha
     
-    rv = pygame.display.set_mode(resolution, flags, depth)
+    rv = opygame.display.set_mode(resolution, flags, depth)
 
-    s = pygame.Surface((10, 10))
+    s = opygame.Surface((10, 10))
     sample_alpha = s.convert_alpha(rv)
     sample_noalpha = s.convert(rv)
 
     return rv
     
 set_mode_unscaled = set_mode
+
+class Surface(opygame.Surface):
+    """
+    This allows us to wrap around pygame's surface, to change
+    its mode, as necessary.
+    """
+
+    def convert_alpha(self, surface=None):
+        return copy_surface_unscaled(self, True)
+
+    def convert(self, surface=None):
+        return copy_surface(self, False)
+
+    def copy(self):
+        return copy_surface(self, self)
     
 
 def surface((width, height), alpha):
@@ -56,23 +84,26 @@ def surface((width, height), alpha):
     `alpha` - True if the new surface should have an alpha channel.
     """
 
+    if isinstance(alpha, opygame.Surface):
+        alpha = alpha.get_masks()[3]
+    
     if alpha:
         sample = sample_alpha
     else:
         sample = sample_noalpha
             
-    surf = pygame.Surface((width + 2, height + 2), 0, sample)
+    surf = Surface((width + 2, height + 2), 0, sample)
     return surf.subsurface((1, 1, width, height))
 
 surface_unscaled = surface
 
 
-def copy_surface(surf):
+def copy_surface(surf, alpha=True):
     """
-    Creates a copy of the surface. The copy will have an alpha channel.
+    Creates a copy of the surface.
     """
     
-    rv = surface(surf.get_size(), True)
+    rv = surface_unscaled(surf.get_size(), alpha)
 
     renpy.display.render.blit_lock.acquire()
     rv.blit(surf, (0, 0))
@@ -86,8 +117,8 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 def load_image(f, filename):
-    surf = pygame.image.load(f, filename)
-    return copy_surface(surf)
+    surf = opygame.image.load(f, filename)
+    return copy_surface_unscaled(surf)
 
 load_image_unscaled = load_image
 
@@ -95,17 +126,32 @@ load_image_unscaled = load_image
 # Wrapper around functions we use from pygame.surface.
 
 def flip(surf, horizontal, vertical):
-    surf = pygame.transform.flip(surf, horizontal, vertical)
-    return copy_surface(surf)
+    surf = opygame.transform.flip(surf, horizontal, vertical)
+    return copy_surface_unscaled(surf)
 
 flip_unscaled = flip
 
 
 def rotozoom(surf, angle, zoom):
 
-    surf = pygame.transform.rotozoom(surf, angle, zoom)
-    return copy_surface(surf)
+    surf = opygame.transform.rotozoom(surf, angle, zoom)
+    return copy_surface_unscaled(surf)
 
 rotozoom_unscaled = rotozoom
+
+
+def transform_scale(surf, size):
+    surf = opygame.transform.scale(surf, size)
+    return copy_surface_unscaled(surf, surf)
+
+transform_scale_unscaled = transform_scale
+
+
+def transform_rotate(surf, angle):
+    surf = opygame.transform.rotate(surf, angle)
+    return copy_surface(surf)
+
+transform_rotate_unscaled = transform_rotate
+
 
 

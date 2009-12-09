@@ -1168,9 +1168,9 @@ class Display(object):
         Returns a string containing the contents of the window, as a PNG.
         """
 
-        surf = self.window.convert_alpha()
+        surf = renpy.display.pgrender.copy_surface(self.window, True)
         surf = renpy.display.scale.smoothscale(surf, scale)
-        surf = surf.convert()
+        surf = renpy.display.pgrender.copy_surface(surf, False)
         
         sio = cStringIO.StringIO()
         renpy.display.module.save_png(surf, sio, 0)

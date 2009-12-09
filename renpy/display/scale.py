@@ -25,13 +25,15 @@ import os
 import math
 import pygame
 import renpy
+import renpy.display.pgrender as pgrender
 
+# These need to be here before we mess with Pygame.
+import _renpy_font
+import _renpy
+
+# Store this before we change it.
 PygameSurface = pygame.Surface
 
-import _renpy_font
-
-# This needs to be done before we mess too hard with pygame.
-import _renpy
 
 # The factor we're scaling by.
 factor = 1.0
@@ -52,32 +54,26 @@ def scale(n):
     return n
 
 def real_bilinear(src, size):
-    rv = pygame.Surface(size, 0, src)
+    rv = pgrender.surface_unscaled(size, src)
     renpy.display.module.bilinear_scale(src, rv)
     return rv
 
 # Does pygame.transform.scale.
 def real_transform_scale(surf, size):
-    global real_transform_scale
-    real_transform_scale = pygame.transform.scale
-    return real_transform_scale(surf, size)
+    return pgrender.transform_scale_unscaled(surf, size)
 
 # Loads an image, without scaling it.
 def image_load_unscaled(f, hint, convert=True):
-    rv = pygame.image.load(f, hint)
-
-    if convert:
-        rv = rv.convert_alpha()
-
+    rv = pgrender.load_image_unscaled(f, hint)
     return rv
-
-# Scales down a surface.
-def surface_scale(full):
-    return full
 
 # Saves an image without rescaling.
 def image_save_unscaled(surf, dest):
     pygame.image.save(surf, dest)
+
+# Scales down a surface.
+def surface_scale(full):
+    return full
 
 real_renpy_pixellate = _renpy.pixellate
 real_renpy_transform = _renpy.transform
@@ -93,7 +89,7 @@ def real_smoothscale(src, size, dest=None):
     iwidth, iheight = srcwidth, srcheight
 
     if dest is None:
-        dest = PygameSurface(size, src.get_flags(), src)
+        dest = pgrender.surface_unscaled(size, src)
 
     if width == 0 or height == 0:
         return dest
@@ -110,7 +106,7 @@ def real_smoothscale(src, size, dest=None):
         iheight /= 2
 
     if iwidth != srcwidth or iheight != srcheight:
-        inter = PygameSurface((iwidth, iheight), src.get_flags(), src)
+        inter = pgrender.surface_unscaled((iwidth, iheight), src)
         real_renpy_pixellate(src, inter, xshrink, yshrink, 1, 1)
         src = inter
 
@@ -179,7 +175,7 @@ def load_scaling():
     def real(s):
         return s.surface
 
-
+    
     def same_size(*args):
         """
         If all the surfaces in args are the same size, return them all
@@ -201,6 +197,7 @@ def load_scaling():
             rv.append(i)
         
         return rv
+
     
     def scale(n):
         if n is None:
@@ -208,29 +205,17 @@ def load_scaling():
 
         return int(n * factor)
 
-    def real_bilinear(src, size):
-        rv = PygameSurface(size, 0, src)
-        old_bilinear(src, rv)
-        return rv
-        
-    def real_transform_scale(surf, size):
-        return old_transform_scale(surf, size)
-
-    def image_load_unscaled(f, hint, convert=True):
-        rv = old_image_load(f, hint)
-        if convert:
-            rv = rv.convert_alpha()
-        return rv
-        
+    
     def surface_scale(full):
 
         if scale_fast:
-            scaled = old_transform_scale(full, v2p(full.get_size()))
+            scaled = real_transform_scale(full, v2p(full.get_size()))
         else:
             scaled = real_smoothscale(full, v2p(full.get_size()))
 
-        return Surface(scaled, wh=full.get_size())
+            return ScaledSurface(scaled, wh=full.get_size())
 
+        
     # Project a tuple from virtual to physical coordinates.
     def v2p(n):
         if n is None:
@@ -238,6 +223,7 @@ def load_scaling():
         
         return tuple([ int(i * factor) for i in n ])
 
+    
     # Similar, but include an extra pixel to deal with rounding.
     def v2pplus(n):
 
@@ -246,6 +232,7 @@ def load_scaling():
 
         return tuple([ int(i * factor) + k for i, k in zip(n, (0, 0, 1, 1)) ])
 
+    
     # Project a tuple from physical to virtual coordinates.
     def p2v(n):
         if n is None:
@@ -253,17 +240,37 @@ def load_scaling():
 
         return tuple([ int(i / factor) for i in n ])
 
-    # Proxies a function call from a PygameSurface to a surface.
+    
+    def set_mode((w, h), flags, bpp):
+
+        global screen
+
+        width = int(w * factor)
+        height = int(h * factor)
+
+        real_screen = pgrender.set_mode_unscaled((width, height), flags, bpp)
+        screen = ScaledSurface(real_screen, wh=(w, h))
+
+        return screen
+
+    pgrender.set_mode = set_mode
+    pygame.display.set_mode = set_mode
+    
+
+    # Proxies a function call from a Surface to a pygame surface.
     def proxy(name):
         func = getattr(PygameSurface, name)
         def rv(self, *args, **kwargs):
             return func(self.surface, *args, **kwargs)
 
         return rv
-        
-    class Surface(object):
 
-        def __init__(self, what, flags=0, sample=None, wh=None):
+
+    # When scaling is enabled, objects of this class are returned from
+    # pgrender.surface instead of pygame surfaces.
+    class ScaledSurface(object):
+
+        def __init__(self, what, alpha=True, wh=None):
 
             if isinstance(what, PygameSurface):
                 self.surface = what
@@ -286,20 +293,14 @@ def load_scaling():
                 w = int(w * factor)
                 h = int(h * factor)
                 
-                if sample is None:
-                    sample = screen
-
-                if not isinstance(sample, PygameSurface):
-                    sample = sample.surface
-                    
-                self.surface = PygameSurface((w, h), flags, sample)
+                self.surface = pgrender.surface_unscaled((w, h), alpha)
                               
             self.virtx = 0
             self.virty = 0
             self.physx = 0
             self.physy = 0
 
-            
+        
         def transform_pos(self, (x, y)):
             """
             Converts a virtual position into a physical one.
@@ -316,6 +317,7 @@ def load_scaling():
             
             return (x0 - self.physx, y0 - self.physy)
 
+        
         def transform_rect(self, (x, y, w, h)):
             """
             Converts a virtual rectangle into a physical one.
@@ -342,8 +344,9 @@ def load_scaling():
             
             
         def __repr__(self):
-            return "<scale.Surface %r %r>" % (self.get_size(), self.surface)
+            return "<ScaledSurface %r %r>" % (self.get_size(), self.surface)
 
+        
         def blit(self, s, destpos, sourcerect=None):
 
             if sourcerect is None:
@@ -356,25 +359,19 @@ def load_scaling():
                     self.transform_pos(destpos),
                     self.transform_rect(sourcerect))
 
-        def convert(self, *args):
-            if args:
-                args = (args[0].surface,)            
-            return Surface(self.surface.convert(*args), wh=self.get_size())
-
-        def convert_alpha(self, *args):
-            if args:
-                args = (args[0].surface,)            
-            return Surface(self.surface.convert_alpha(*args), wh=self.get_size())
 
         def copy(self):
-            return Surface(self.surface.copy(), wh=self.get_size())
+            return ScaledSurface(self.surface.copy(), wh=self.get_size())
 
+        
         def fill(self, color):
             self.surface.fill(color)
 
+            
         def get_alpha(self):
             return self.surface.get_alpha()
 
+        
         def get_at(self, pos):
             x, y = self.transform_pos(pos)
             w, h = self.surface.get_size()
@@ -382,19 +379,13 @@ def load_scaling():
             return self.surface.get_at((min(x, w - 1), min(y, h - 1)))
 
 
-        get_colorkey = proxy("get_colorkey")
         set_colorkey = proxy("set_colorkey")
         get_alpha = proxy("get_alpha")
-        set_alpha = proxy("set_alpha")
         get_locked = proxy("get_locked")
         get_locks = proxy("get_locks")
         map_rgb = proxy("map_rgb")
         unmap_rgb = proxy("unmap_rgb")
-        get_bytesize = proxy("get_bytesize")
-        get_bitsize = proxy("get_bitsize")
-        get_flags = proxy("get_flags")
         get_pitch = proxy("get_pitch")
-        get_masks = proxy("get_masks")
         set_masks = proxy("set_masks")
         get_shifts = proxy("get_shifts")
         set_shifts = proxy("set_shifts")
@@ -418,7 +409,7 @@ def load_scaling():
 
         def get_size(self):
             return (self.width, self.height)
-
+        
         def set_alpha(self, alpha, flags):
             self.surface.set_alpha(alpha, flags)
 
@@ -427,7 +418,7 @@ def load_scaling():
             prect = self.transform_rect(rect)
             surf = self.surface.subsurface(prect)
             
-            rv = Surface(surf, wh=rect[2:])
+            rv = ScaledSurface(surf, wh=rect[2:])
 
             vx, vy, vw, vh = rect
             px, py, pw, ph = prect
@@ -448,9 +439,6 @@ def load_scaling():
         def unlock(self):
             pass
 
-        def mustlock(self):
-            return False
-
         def get_locked(self):
             return False
 
@@ -463,23 +451,27 @@ def load_scaling():
 
             return rv
         
-    pygame.Surface = Surface
+    pgrender.surface = ScaledSurface
 
-    old_set_mode = pygame.display.set_mode
 
-    def set_mode((w, h), flags, bpp):
+    def copy_surface(surf, alpha=True):
+        # We don't need to unbox alpha, since all relevant methods
+        # are proxied.
 
-        global screen
+        new_surf = pgrender.copy_surface_unscaled(surf.surface, alpha)
+        return ScaledSurface(new_surf, wh=(surf.width, surf.height))
 
-        width = int(w * factor)
-        height = int(h * factor)
+    pgrender.copy_surface = copy_surface
+    
+    
 
-        screen = Surface(old_set_mode((width, height), flags, bpp), wh=(w, h))
+    def pygame_surface(size, flags, sample):
+        return ScaledSurface(size, sample)
 
-        return screen
-
-    pygame.display.set_mode = set_mode
-
+    pygame.Surface = pygame_surface
+    
+    
+    
     old_update = pygame.display.update
 
     def update(rects=None):
@@ -494,71 +486,58 @@ def load_scaling():
 
     pygame.display.update = update
 
+    
     def get_surface():
         return screen
 
     pygame.display.get_surface = get_surface
 
-    old_image_load = pygame.image.load
-
-    def image_load(*args, **kwargs):
-
-        full = old_image_load(*args, **kwargs)
-        full = full.convert_alpha()
-
+    
+    def load_image(f, filename):
+        full = pgrender.load_image_unscaled(f, filename)
         return surface_scale(full)
 
-            
-    pygame.image.load = image_load
-
-    old_transform_scale = pygame.transform.scale
+    pgrender.load_image = load_image
+    pygame.image.load = load_image
+    
 
     def transform_scale(surf, size):
 
-        rv = old_transform_scale(surf.surface, v2p(size))
-        rv = Surface(rv, wh=size)
+        rv = pgrender.transform_scale_unscaled(surf.surface, v2p(size))
+        rv = ScaledSurface(rv, wh=size)
 
         return rv
 
+    pgrender.transform_scale = transform_scale
     pygame.transform.scale = transform_scale
-
-    old_transform_smoothscale = pygame.transform.smoothscale
-
-    def transform_smoothscale(surf, size, dest=None):
-
-        if dest is not None:
-            rv = old_transform_smoothscale(surf.surface, v2p(size), dest.surface)
-        else:
-            rv = old_transform_smoothscale(surf.surface, v2p(size))
-            
-        rv = Surface(rv, wh=size)
-
-        return rv
-
-    pygame.transform.smoothscale = transform_smoothscale
-
-    old_transform_flip = pygame.transform.flip
-
+    
+    
     def transform_flip(surf, xbool, ybool):
-        return Surface(old_transform_flip(surf.surface, xbool, ybool),
-                       wh=surf.get_size())
+        new_surf = pgrender.transform_flip_unscaled(surf.surface, xbool, ybool) 
+        return ScaledSurface(new_surf, wh=surf.get_size())
 
+    pgrender.flip = transform_flip
     pygame.transform.flip = transform_flip
+    
 
-    old_transform_rotate = pygame.transform.rotate
-
+    
     def transform_rotate(surf, angle):
-        return Surface(transform_rotate(surf.surface, angle))
+        new_surf = pgrender.transform_rotate_unscaled(surf.surface, angle)
+        return ScaledSurface(new_surf)
 
+    pgrender.transform_rotate = transform_rotate
     pygame.transform.rotate = transform_rotate
     
-    old_transform_rotozoom = pygame.transform.rotozoom
 
-    def transform_rotozoom(surf, angle, scale):
-        return Surface(old_transform_flip(surf.surface, angle, scale))
+    
+    def rotozoom(surf, angle, scale):
+        new_surf = pgrender.rotozoom(surf.surface, angle, scale)
+        return ScaledSurface(new_surf)
 
-    pygame.transform.rotozoom = transform_rotozoom
+    pgrender.rotozoom = rotozoom
+    pygame.transform.rotozoom = rotozoom
 
+    
     # Ignoring scale2x and chop. The former due to a pending api change,
     # the latter due to general uselessness.
     
@@ -570,7 +549,7 @@ def load_scaling():
             self.font = PygameFont(o, int(size * factor), index)
 
         def render(self, *args):
-            return Surface(self.font.render(*args))
+            return ScaledSurface(self.font.render(*args))
 
         def size(self, text):
             return p2v(self.font.size(text))
@@ -610,16 +589,19 @@ def load_scaling():
         
     _renpy_font.Font = Font
 
+    
     old_image_save = pygame.image.save
 
     def image_save(surf, dest):
-        surf = old_transform_scale(surf.surface, surf.get_size())
+        surf = pgrender.transform_scale_unscaled(surf.surface, surf.get_size())
         old_image_save(surf, dest)
 
     pygame.image.save = image_save
 
+    
     def image_save_unscaled(surf, dest):
         old_image_save(surf.surface, dest)
+
     
     old_mouse_get_pos = pygame.mouse.get_pos
 
@@ -628,6 +610,7 @@ def load_scaling():
 
     pygame.mouse.get_pos = mouse_get_pos
 
+    
     def scale_event(ev):
         if ev.type == pygame.MOUSEMOTION:
             return pygame.event.Event(ev.type, pos=p2v(ev.pos), rel=p2v(ev.rel), buttons=ev.buttons)
@@ -636,13 +619,15 @@ def load_scaling():
         else:
             return ev
 
-    old_event_poll = pygame.event.poll
 
+    old_event_poll = pygame.event.poll
+    
     def event_poll():
         ev = old_event_poll()
         return scale_event(ev)
 
     pygame.event.poll = event_poll
+
 
     old_event_wait = pygame.event.wait
 
@@ -651,6 +636,7 @@ def load_scaling():
         return scale_event(ev)
 
     pygame.event.wait = event_wait
+
 
     old_event_get = pygame.event.get
 
@@ -666,145 +652,140 @@ def load_scaling():
 
 
         
-         
+    old_save_png = _renpy.save_png
+
+    def save_png(surf, dest, compress=-1):
+        surf = pgrender.transform_scale_unscaled(surf.surface, surf.get_size())
+        old_save_png(surf, dest, compress=compress)
+
+    _renpy.save_png = save_png
+
+
+    old_pixellate = _renpy.pixellate
+
+    def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
+        ow = max(int(outwidth * factor), 1)
+        oh = max(int(outheight * factor), 1)
+
+        owf = 1.0 * ow / outwidth
+        ohf = 1.0 * oh / outheight
+
+        old_pixellate(pysrc.surface, pydst.surface,
+                      max(avgwidth * owf, 1),
+                      max(avgheight * ohf, 1),
+                      ow, oh)
+
+    _renpy.pixellate = pixellate
+
+
+    old_map = _renpy.map
+
+    def map(pysrc, pydst, r, g, b, a):
+        pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+        old_map(pysrc, pydst, r, g, b, a)
+
+    _renpy.map = map
+
+
+    old_linmap = _renpy.linmap
+
+    def linmap(pysrc, pydst, r, g, b, a):
+        pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+        old_linmap(pysrc, pydst, r, g, b, a)
+
+    _renpy.linmap = linmap
+
+
+    old_bilinear = _renpy.bilinear
+    
+    def bilinear(pysrc, pydst, source_xoff=0.0, source_yoff=0.0,
+                 source_width=None, source_height=None,
+                 dest_xoff=0.0, dest_yoff=0.0, dest_width=None,
+                 dest_height=None, precise=0):
+
+        def f(n):
+            if n is None:
+                return n
+            return n * factor
+
+        source_xoff = f(source_xoff)
+        source_yoff = f(source_yoff)
+        source_width = f(source_width)
+        source_height = f(source_height)
+
+        dest_xoff = f(dest_xoff)
+        dest_yoff = f(dest_yoff)
+        dest_width = f(dest_width)
+        dest_height = f(dest_height)
+
+        old_bilinear(pysrc.surface, pydst.surface,
+                     source_xoff=source_xoff,
+                     source_yoff=source_yoff,
+                     source_width=source_width,
+                     source_height=source_height,
+                     dest_xoff=dest_xoff,
+                     dest_yoff=dest_yoff,
+                     dest_width=dest_width,
+                     dest_height=dest_height,
+                     precise=precise)
+
+    _renpy.bilinear = bilinear
+
+
+    old_alpha_munge = _renpy.alpha_munge
+
+    def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
+        pysrc, pydst = same_size(pysrc.surface, pydst.surface)
+        old_alpha_munge(pysrc, pydst, srcchan, dstchan, amap)
+
+    _renpy.alpha_munge = alpha_munge
+
+
+    old_transform = _renpy.transform
+
+    def transform(pysrc, pydst, corner_x, corner_y,
+                  xdx, ydx, xdy, ydy, a=1.0, precise=0):
+
+        old_transform(pysrc.surface, pydst.surface,
+                      corner_x * factor, corner_y * factor,
+                      xdx, ydx, xdy, ydy, a, precise)
+
+    _renpy.transform = transform
+
+
+    old_subpixel = _renpy.subpixel
+
+    def subpixel(pysrc, pydst, x, y, shift):
+        return old_subpixel(pysrc.surface, pydst.surface, x * factor, y * factor, shift)
+
+    _renpy.subpixel = subpixel
+
+
+    old_blend = _renpy.blend
+
+    def blend(pysrca, pysrcb, pydst, alpha):
+        pysrca, pysrcb, pydst = same_size(pysrca.surface, pysrcb.surface, pydst.surface)
+        old_blend(pysrca, pysrcb, pydst, alpha)
+
+    _renpy.blend = blend
 
     
+    old_imageblend = _renpy.imageblend
 
-    if _renpy is not None:
-        
-        old_save_png = _renpy.save_png
-        
-        def save_png(surf, dest, compress=-1):
-            surf = old_transform_scale(surf.surface, surf.get_size())
-            old_save_png(surf, dest, compress=compress)
+    def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
+        pysrca, pysrcb, pydst, pyimg = same_size(pysrca.surface, pysrcb.surface, pydst.surface, pyimg.surface)
+        old_imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap)
 
-        _renpy.save_png = save_png
+    _renpy.imageblend = imageblend
 
-        
-        old_pixellate = _renpy.pixellate
+    
+    old_colormatrix = _renpy.colormatrix
 
-        def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
-            ow = max(int(outwidth * factor), 1)
-            oh = max(int(outheight * factor), 1)
+    def colormatrix(src, dst, *args):
+        src, dst = same_size(src.surface, dst.surface)
+        old_colormatrix(src, dst, *args)
 
-            owf = 1.0 * ow / outwidth
-            ohf = 1.0 * oh / outheight
-
-            
-            old_pixellate(pysrc.surface, pydst.surface,
-                          max(avgwidth * owf, 1),
-                          max(avgheight * ohf, 1),
-                          ow, oh)
-
-        _renpy.pixellate = pixellate
-            
-
-        old_map = _renpy.map
-
-        def map(pysrc, pydst, r, g, b, a):
-            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
-            old_map(pysrc, pydst, r, g, b, a)
-
-        _renpy.map = map
-
-
-        old_linmap = _renpy.linmap
-
-        def linmap(pysrc, pydst, r, g, b, a):
-            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
-            old_linmap(pysrc, pydst, r, g, b, a)
-
-        _renpy.linmap = linmap
-
-
-        old_bilinear = _renpy.bilinear
-        def bilinear(pysrc, pydst, source_xoff=0.0, source_yoff=0.0,
-                     source_width=None, source_height=None,
-                     dest_xoff=0.0, dest_yoff=0.0, dest_width=None,
-                     dest_height=None, precise=0):
-
-            def f(n):
-                if n is None:
-                    return n
-                return n * factor
-            
-            source_xoff = f(source_xoff)
-            source_yoff = f(source_yoff)
-            source_width = f(source_width)
-            source_height = f(source_height)
-
-            dest_xoff = f(dest_xoff)
-            dest_yoff = f(dest_yoff)
-            dest_width = f(dest_width)
-            dest_height = f(dest_height)
-
-            old_bilinear(pysrc.surface, pydst.surface,
-                         source_xoff=source_xoff,
-                         source_yoff=source_yoff,
-                         source_width=source_width,
-                         source_height=source_height,
-                         dest_xoff=dest_xoff,
-                         dest_yoff=dest_yoff,
-                         dest_width=dest_width,
-                         dest_height=dest_height,
-                         precise=precise)
-
-        _renpy.bilinear = bilinear
-            
-
-        old_alpha_munge = _renpy.alpha_munge
-        
-
-        def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
-            pysrc, pydst = same_size(pysrc.surface, pydst.surface)
-            old_alpha_munge(pysrc, pydst, srcchan, dstchan, amap)
-
-        _renpy.alpha_munge = alpha_munge
-
-
-        old_transform = _renpy.transform
-
-        def transform(pysrc, pydst, corner_x, corner_y,
-                      xdx, ydx, xdy, ydy, a=1.0):
-            
-            old_transform(pysrc.surface, pydst.surface,
-                          corner_x * factor, corner_y * factor,
-                          xdx, ydx, xdy, ydy, a)
-            
-        _renpy.transform = transform
-            
-
-        old_subpixel = _renpy.subpixel
-        
-        def subpixel(pysrc, pydst, x, y, shift):
-            return old_subpixel(pysrc.surface, pydst.surface, x * factor, y * factor, shift)
-
-        _renpy.subpixel = subpixel
-
-        
-        old_blend = _renpy.blend
-
-        def blend(pysrca, pysrcb, pydst, alpha):
-            pysrca, pysrcb, pydst = same_size(pysrca.surface, pysrcb.surface, pydst.surface)
-            old_blend(pysrca, pysrcb, pydst, alpha)
-
-        _renpy.blend = blend
-        
-        old_imageblend = _renpy.imageblend
-
-        def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
-            pysrca, pysrcb, pydst, pyimg = same_size(pysrca.surface, pysrcb.surface, pydst.surface, pyimg.surface)
-            old_imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap)
-
-        _renpy.imageblend = imageblend
-
-        old_colormatrix = _renpy.colormatrix
-
-        def colormatrix(src, dst, *args):
-            src, dst = same_size(src.surface, dst.surface)
-            old_colormatrix(src, dst, *args)
-
-        _renpy.colormatrix = colormatrix
+    _renpy.colormatrix = colormatrix
         
 
     def draw_scale(o):
@@ -821,15 +802,18 @@ def load_scaling():
         else:
             return None
 
+        
     def draw_wrap(f):
         def newf(surf, color, *args, **kwargs):
             f(surf.surface, color, *draw_scale(args), **draw_scale(kwargs))
         return newf
 
+    
     def arc_wrap(f):
         def newf(surf, color, Rect, start_angle, stop_angle, width=1):
             f(surf.surface, color, draw_scale(Rect), start_angle, stop_angle, draw_scale(width))
         return newf
+
     
     pygame.draw.rect = draw_wrap(pygame.draw.rect)
     pygame.draw.polygon = draw_wrap(pygame.draw.polygon)
@@ -852,7 +836,7 @@ def load_scaling():
         if rv is None:
             return rv
         else:
-            return Surface(rv, wh=size)
+            return ScaledSurface(rv, wh=size)
     
     # Now, put everything from this function's namespace into the
     # module namespace.

@@ -22,11 +22,7 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
-import time
 import math
-
-import pygame
-from pygame.constants import *
 
 import renpy
 from renpy.display.render import render, IDENTITY, Matrix2D
@@ -1115,7 +1111,7 @@ def zoom_core(rend, surf, rect, neww, newh, bilinear, opaque):
         else:
 
             renpy.display.render.blit_lock.acquire()
-            scalesurf = pygame.transform.scale(surf.subsurface(rect), (neww, newh))
+            scalesurf = renpy.display.pgrender.transform_scale(surf.subsurface(rect), (neww, newh))
             renpy.display.render.blit_lock.release()
             
         renpy.display.render.mutated_surface(scalesurf)
