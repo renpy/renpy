@@ -61,6 +61,10 @@ PROPERTIES = {
         "anchor" : (position, position),
         "xanchor" : position,
         "yanchor" : position,
+        "xaround" : position,
+        "yaround" : position,
+        "xanchoraround" : float,
+        "yanchoraround" : float,
         "align" : (float, float),
         "xalign" : float,
         "yalign" : float,
@@ -104,12 +108,12 @@ def interpolate(t, a, b, type):
     if isinstance(b, tuple):
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
-    # Deal with strings or booleans.
-    elif isinstance(b, (str, unicode)):
+    # Deal with booleans, nones, etc.
+    elif b is None or isinstance(b, bool):
         if t >= 1.0:
-            return a
-        else:
             return b
+        else:
+            return a
 
     # Interpolate everything else.
     else:
@@ -491,67 +495,54 @@ class Block(Statement):
                 if index >= len(self.statements):
                     return "next", target - start, None
 
-                try:
 
-                   # Find the statement and try to run it.
-                    stmt = self.statements[index]
-                    action, arg, pause = stmt.execute(trans, target - start, child_state, event)
+               # Find the statement and try to run it.
+                stmt = self.statements[index]
+                action, arg, pause = stmt.execute(trans, target - start, child_state, event)
 
-                    # On continue, persist our state.
-                    if action == "continue":
-                        if pause is None:
-                            pause = max_pause
-                            
-                        action, arg, pause = "continue", (index, start, loop_start, repeats, times, arg), min(max_pause, pause)
-                        break
+                # On continue, persist our state.
+                if action == "continue":
+                    if pause is None:
+                        pause = max_pause
 
-                    elif action == "event":
-                        return action, arg, pause
-                    
-                    # On next, advance to the next statement in the block.
-                    elif action == "next":
-                        index += 1
-                        start = target - arg
-                        child_state = None
+                    action, arg, pause = "continue", (index, start, loop_start, repeats, times, arg), min(max_pause, pause)
+                    break
 
-                    # On repeat, either terminate the block, or go to
-                    # the first statement.
-                    elif action == "repeat":
+                elif action == "event":
+                    return action, arg, pause
 
-                        count, arg = arg
-                        loop_end = target - arg
-                        duration = loop_end - loop_start
-
-                        # Figure how many durations can occur between the
-                        # start of the loop and now.
-                        new_repeats = int((target - loop_start) / duration)
-                        
-                        if duration <= 0:
-                            raise Exception("ATL appears to be in an infinite loop.")
-
-                        if count is not None:
-                            if repeats + new_repeats >= count:
-                                new_repeats = count - repeats
-                                loop_start += new_repeats * duration
-                                return "next", target - loop_start, None
-
-                        repeats += new_repeats
-                        loop_start = loop_start + new_repeats * duration
-                        start = loop_start
-                        index = 0
-                        child_state = None
-
-                except:
-                    # If an exception occurs when dealing with a statment,
-                    # advance to the next statement.
-
-                    if renpy.config.debug:
-                        raise
-
+                # On next, advance to the next statement in the block.
+                elif action == "next":
                     index += 1
-                    start = target
+                    start = target - arg
                     child_state = None
 
+                # On repeat, either terminate the block, or go to
+                # the first statement.
+                elif action == "repeat":
+
+                    count, arg = arg
+                    loop_end = target - arg
+                    duration = loop_end - loop_start
+
+                    # Figure how many durations can occur between the
+                    # start of the loop and now.
+                    new_repeats = int((target - loop_start) / duration)
+
+                    if duration <= 0:
+                        raise Exception("ATL appears to be in an infinite loop.")
+
+                    if count is not None:
+                        if repeats + new_repeats >= count:
+                            new_repeats = count - repeats
+                            loop_start += new_repeats * duration
+                            return "next", target - loop_start, None
+
+                    repeats += new_repeats
+                    loop_start = loop_start + new_repeats * duration
+                    start = loop_start
+                    index = 0
+                    child_state = None
 
             if times:
                 time, tindex = times[0]
@@ -822,6 +813,7 @@ class Interpolation(Statement):
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
+
             revolution = None
             splines = [ ]
             
@@ -881,13 +873,13 @@ class Interpolation(Statement):
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new, PROPERTIES[k])
-            setattr(trans.state, k, value)
+            setattr(trans.state, k, value)            
             
         # Handle the revolution.
         if revolution is not None:
             startangle, endangle, startradius, endradius = revolution
-            trans.state.angle = interpolate(complete, startangle, endangle)
-            trans.state.radius = interpolate(complete, startradius, endradius)
+            trans.state.angle = interpolate(complete, startangle, endangle, float)
+            trans.state.radius = interpolate(complete, startradius, endradius, float)
 
         # Handle any splines we might have.
         for name, values in splines:

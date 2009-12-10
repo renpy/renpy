@@ -561,7 +561,8 @@ class Blink(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(w, h)
 
         rv.blit(rend, (0, 0))
- 
+        rv.alpha = alpha
+        
         if not renpy.game.less_updates:
             renpy.display.render.redraw(self, delay)
 

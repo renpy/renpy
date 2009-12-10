@@ -129,7 +129,7 @@ class TransformState(renpy.object.Object):
     def set_alignaround(self, value):
         self.xaround, self.yaround = value
         self.xanchoraround, self.yanchoraround = value
-
+        
     around = property(get_around, set_around)
     alignaround = property(get_around, set_alignaround)
         
@@ -219,14 +219,19 @@ class Transform(Container):
     ypos = Proxy("ypos")
     xanchor = Proxy("xanchor")
     yanchor = Proxy("yanchor")
-
+    
     xalign = Proxy("xalign")
     yalign = Proxy("yalign")
 
     around = Proxy("around")
-    around = Proxy("alignaround")
+    alignaround = Proxy("alignaround")
     angle = Proxy("angle")
     radius = Proxy("radius")
+
+    xaround = Proxy("xaround")
+    yaround = Proxy("yaround")
+    xanchoraround = Proxy("xanchoraround")
+    yanchoraround = Proxy("yanchoraround")
 
     pos = Proxy("pos")
     anchor = Proxy("anchor")
