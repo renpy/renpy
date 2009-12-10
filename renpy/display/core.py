@@ -25,13 +25,11 @@
 import renpy
 
 import pygame
-from pygame.constants import *
 import sys
 import os
 import time
 import cStringIO
 import threading
-import collections
 
 on_windows = (sys.platform == 'win32')
 
@@ -45,10 +43,10 @@ cpu_idle = threading.Event()
 cpu_idle.clear()
 
 # Need to be +4, so we don't interfere with FFMPEG's events.
-TIMEEVENT = USEREVENT + 4
-PERIODIC = USEREVENT + 5
-JOYEVENT = USEREVENT + 6
-REDRAW = USEREVENT + 7
+TIMEEVENT = pygame.USEREVENT + 4
+PERIODIC = pygame.USEREVENT + 5
+JOYEVENT = pygame.USEREVENT + 6
+REDRAW = pygame.USEREVENT + 7
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
@@ -862,7 +860,7 @@ class Display(object):
         # If we're in fullscreen mode, and changing to another mode, go to
         # windowed mode first.
         s = pygame.display.get_surface()
-        if s and (s.get_flags() & FULLSCREEN):
+        if s and (s.get_flags() & pygame.FULLSCREEN):
             fullscreen = False
             
         self.fullscreen = fullscreen
@@ -895,21 +893,21 @@ class Display(object):
                 if w < renpy.config.screen_width or h < renpy.config.screen_height:
                     continue
                 
-                fsflag = FULLSCREEN
+                fsflag = pygame.FULLSCREEN
                 width = w
                 height = h
                 self.screen_xoffset = (width - renpy.config.screen_width) / 2
                 self.screen_yoffset = (height - renpy.config.screen_height) / 2
 
         elif fullscreen:
-            fsflag = FULLSCREEN
+            fsflag = pygame.FULLSCREEN
               
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.
         old_window = pygame.display.get_surface()
         if ((old_window is not None) and 
             (old_window.get_size() == (width, height)) and
-            (old_window.get_flags() & FULLSCREEN == fsflag)):
+            (old_window.get_flags() & pygame.FULLSCREEN == fsflag)):
             
             self.window = old_window
                     
@@ -1398,7 +1396,7 @@ class Interface(object):
 
         ev = pygame.event.poll()
 
-        if ev.type == NOEVENT:
+        if ev.type == pygame.NOEVENT:
             # Seems to prevent the CPU from speeding up.
             time.sleep(0.001)
             return None
@@ -1490,9 +1488,6 @@ class Interface(object):
         
         # These things can be done once per interaction.
 
-        import time
-        start = time.time()
-        
         preloads = self.preloads
         self.preloads = [ ]
 
@@ -1608,8 +1603,8 @@ class Interface(object):
         renpy.display.layout.size_groups.clear()
         
         # Clear some events.
-        pygame.event.clear((MOUSEMOTION, PERIODIC,
-                            TIMEEVENT, REDRAW))
+        pygame.event.clear((pygame.MOUSEMOTION, pygame.PERIODIC,
+                            pygame.TIMEEVENT, pygame.REDRAW))
 
         # Add a single TIMEEVENT to the queue.
         pygame.event.post(self.time_event)
@@ -1930,7 +1925,7 @@ class Interface(object):
                         else:
                             ev = self.event_wait()
 
-                    if ev.type == NOEVENT:
+                    if ev.type == pygame.NOEVENT:
                         continue
 
                     if renpy.config.profile:
@@ -1944,7 +1939,7 @@ class Interface(object):
 
                         ev2 = self.event_peek()
 
-                        if ev2 and ev2.type not in (NOEVENT, PERIODIC, REDRAW, QUIT):
+                        if ev2 and ev2.type not in (pygame.NOEVENT, pygame.PERIODIC, pygame.REDRAW, pygame.QUIT):
                             ev = self.event_poll()
                             
                     # Handle redraw timeouts.
@@ -1981,12 +1976,12 @@ class Interface(object):
                     renpy.display.behavior.skipping(ev)
                     
                     # Handle quit specially for now.
-                    if ev.type == QUIT:
+                    if ev.type == pygame.QUIT:
                         self.quit_event()
 
                     # Merge mousemotion events.
-                    if ev.type == MOUSEMOTION:
-                        evs = pygame.event.get([MOUSEMOTION])
+                    if ev.type == pygame.MOUSEMOTION:
+                        evs = pygame.event.get([pygame.MOUSEMOTION])
                         if len(evs):
                             ev = evs[-1]
 
@@ -1994,7 +1989,7 @@ class Interface(object):
                             self.focused = True
                             
                     # Handle focus notifications.
-                    if ev.type == ACTIVEEVENT:
+                    if ev.type == pygame.ACTIVEEVENT:
                         if ev.state & 1:
                             self.focused = ev.gain
                             
