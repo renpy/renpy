@@ -20,9 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
-from renpy.display.render import render
-import pygame
-import sys # for maxint
 
 # True if the movie that is currently displaying is in fullscreen mode,
 # False if it's a smaller size.
@@ -91,8 +88,6 @@ def interact():
     the movie should be displayed fullscreen or not.
     """
 
-    playing = renpy.audio.music.get_playing("movie")
-    
     if fullscreen and renpy.audio.music.get_playing("movie"):
         return True
     else:

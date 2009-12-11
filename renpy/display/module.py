@@ -23,8 +23,7 @@
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
 import renpy
-import pygame
-from pygame.constants import *
+import pygame; pygame # prevents pyflakes warning.
 
 import sys
 

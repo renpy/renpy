@@ -22,7 +22,6 @@
 # This file contains support for state-machine controlled animations.
 
 import renpy
-import pygame
 import random
 
 class State(object):

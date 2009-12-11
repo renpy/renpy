@@ -22,12 +22,9 @@
 # This file is responsible for joystick support in Ren'Py.
 
 import os
-
 import pygame
-from pygame.constants import *
 
 import renpy
-import sets
 
 # Do we have a joystick enabled?
 enabled = False
@@ -63,7 +60,7 @@ def event(ev):
     if not enabled:
         return ev
 
-    if ev.type == JOYAXISMOTION:
+    if ev.type == pygame.JOYAXISMOTION:
 
         if ev.value >= 0.5:
             state = "Positive"
@@ -95,12 +92,12 @@ def event(ev):
         return pygame.event.Event(renpy.display.core.JOYEVENT,
                                   press=press, release=release)
 
-    if ev.type == JOYBUTTONDOWN:
+    if ev.type == pygame.JOYBUTTONDOWN:
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
                                   press="Button %d.%d" % (ev.joy, ev.button),
                                   release=None)
-    if ev.type == JOYBUTTONUP:
+    if ev.type == pygame.JOYBUTTONUP:
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
                                   press=None,

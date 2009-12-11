@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame
-# from pygame.constants import *
-
 import re
 import renpy
 import sys
@@ -455,8 +452,6 @@ def greedy_text_layout(triples, width, style):
 
 
 def subtitle_text_layout_core(triples, width, style, soft, n, justify):
-
-    sizecache = { }
 
     lines = [ ]
     line = [ ]
@@ -904,10 +899,10 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout_hyperlinks = [ ]
         
-        if not self.text:
-            text = " "
-        else:
-            text = self.text
+        # if not self.text:
+        #     text = " "
+        # else:
+        #     text = self.text
 
         # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
 
@@ -1267,8 +1262,6 @@ class Text(renpy.display.core.Displayable):
         text_align = self.style.text_align
         justify = self.style.justify
 
-        lines = len(self.laidout)
-            
         for line, line_height, line_width, last in zip(self.laidout, self.laidout_lineheights, self.laidout_linewidths, self.laidout_lines_last):
             if justify and not last:
                 empty_space = (self.laidout_width - line_width - indent)

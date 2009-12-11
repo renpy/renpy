@@ -26,12 +26,11 @@
 # but are probably better than nothing.
 
 import sys
-import os
-import encodings.zlib_codec
+import encodings.zlib_codec; encodings.zlob_codec
 import random
 import glob
 
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+from cPickle import dumps, HIGHEST_PROTOCOL
 
 # The amount of padding we will add.
 padding_max = 64

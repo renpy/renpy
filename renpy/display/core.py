@@ -1088,7 +1088,7 @@ class Display(object):
         else:
             anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
 
-       info = anim[self.interface.ticks % len(anim)]
+        info = anim[self.interface.ticks % len(anim)]
 
         pos = pygame.mouse.get_pos()
 

@@ -24,14 +24,12 @@
 # cropping and scaling).
 
 import renpy
-import random
 import math
 import zipfile
 import cStringIO
 import threading
 
 import pygame
-from pygame.constants import *
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -213,7 +211,7 @@ class Cache(object):
                     
                     # We must copy the surface, so we have a RLE-specific version.
                     rle_surf = renpy.display.pgrender.copy_surface(ce.surf)
-                    rle_surf.set_alpha(255, RLEACCEL)
+                    rle_surf.set_alpha(255, pygame.RLEACCEL)
                     renpy.display.render.mutated_surface(rle_surf)
 
                     rle_cache[id(ce.surf)] = rle_surf
@@ -891,7 +889,7 @@ class Rotozoom(ImageBase):
         
         try:
             renpy.display.render.blit_lock.acquire()
-            rv = renypy.display.pgrender.rotozoom(child, self.angle, self.zoom)
+            rv = renpy.display.pgrender.rotozoom(child, self.angle, self.zoom)
         finally:
             renpy.display.render.blit_lock.release()
 

@@ -21,9 +21,8 @@
 
 # This file contains code to manage focus on the display.
 
-import renpy
 import pygame
-from pygame.constants import *
+import renpy
 
 class Focus(object):
 
@@ -216,7 +215,7 @@ def change_focus(newfocus, default=False):
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y, default=False):
 
-    if ev.type not in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+    if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
         return
 
     new_focus = renpy.display.render.focus_at_point(x, y)

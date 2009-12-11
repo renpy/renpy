@@ -21,7 +21,6 @@
 
 # The public API for music in games.
 
-import time
 import renpy
 
 # A list of music channels.
@@ -34,6 +33,7 @@ from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
 from renpy.audio.audio import register_channel, alias_channel
+register_channel; alias_channel
 
 def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False):
     """
@@ -333,7 +333,7 @@ def channel_defined(channel):
     """
 
     try:        
-        c = renpy.audio.audio.get_channel(channel)
+        renpy.audio.audio.get_channel(channel)
         return True
     except:
         return False

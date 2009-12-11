@@ -24,9 +24,6 @@
 
 import pygame
 import renpy
-import textwrap
-import select
-import sys
 import os
 import os.path
 

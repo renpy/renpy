@@ -37,8 +37,6 @@
 
 import renpy
 from renpy.display.render import render
-import pygame
-from pygame.constants import *
 
 
 class Transition(renpy.display.core.Displayable):

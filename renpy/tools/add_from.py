@@ -24,10 +24,8 @@
 # This program adds froms to every unqualified call found in the game
 # directory. It's not perfect, but it's better than nothing.
 
-import sys
 import os
 import re
-import glob
 
 def find_labels(fn, labels):
 

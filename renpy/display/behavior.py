@@ -26,7 +26,6 @@ import renpy
 from renpy.display.render import render
 
 import pygame
-from pygame.constants import *
 
 def compile_event(key, keydown):
     """
@@ -579,8 +578,6 @@ class Input(renpy.display.text.Text):
         
         if map_event(ev, "input_backspace"):
 
-            old_content = self.content
-
             if self.content:
                 content = self.content[:-1]
                 self.update_text(content, self.editable)
@@ -591,7 +588,7 @@ class Input(renpy.display.text.Text):
             if not self.changed:
                 return self.content
 
-        elif ev.type == KEYDOWN and ev.unicode:
+        elif ev.type == pygame.KEYDOWN and ev.unicode:
             if ord(ev.unicode[0]) < 32:
                 return None
                 
@@ -701,7 +698,7 @@ class Bar(renpy.display.core.Displayable):
 
     __version__ = 1
 
-    def after_upgrade(version):
+    def after_upgrade(self, version):
 
         if version < 1:
             self.adjustment = Adjustment(self.range, self.value, changed=self.changed)
@@ -898,7 +895,7 @@ class Bar(renpy.display.core.Displayable):
             if map_event(ev, "bar_increase"):
                 value += self.adjustment.step
 
-            if ev.type in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+            if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
                 if self.style.bar_vertical:
 

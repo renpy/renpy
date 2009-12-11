@@ -22,13 +22,9 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
-import pygame
-from pygame.constants import *
-
 import renpy
-from renpy.display.render import render, Render, IDENTITY, Matrix2D
-import time
-import math
+from renpy.display.render import render, Render
+
 
 def scale(num, base):
     """

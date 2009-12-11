@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
         # Check for mac compatibility.
         if "mac_version" in globals():
-            mac_version(macos_version)
+            globals()["mac_version"](macos_version)
 
         # Check py4renpy compatibility.
         try:

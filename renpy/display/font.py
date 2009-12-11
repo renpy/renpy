@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
-from pygame.constants import *
 
 import xml.etree.ElementTree as etree
 

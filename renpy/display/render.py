@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import collections
-import time
 import pygame
 import threading
 import math
@@ -922,11 +921,11 @@ class Render(object):
         self.refcount = 0
 
         # The operation we're performing.
-        operation = BLIT
+        self.operation = BLIT
 
         # If the operation is one of the DISSOLVES, this controls the
         # amount of the new image we'll be using.
-        dissolve = 0.0
+        self.dissolve = 0.0
         
         # These are Matrix2D objects used to transform the children of
         # this render. If None, then no transformation is done. Otherwise,

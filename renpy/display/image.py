@@ -26,8 +26,6 @@
 import renpy
 from renpy.display.render import render, Render
 
-import pygame
-from pygame.constants import *
 
 Image = renpy.display.im.image
 

@@ -26,10 +26,10 @@
 
 import renpy
 
+import time
 import pygame
 import os
 import atexit
-import time
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -48,15 +48,18 @@ if 'pss' not in disable:
 
 if 'mix' not in disable:
     try:
-        import winmixer as mix
+        import winmixer as mix; mix
     except:
         try:
-            import linmixer as mix
+            import linmixer as mix; mix
         except:
             pass
 
 # Save the mixer, and restore it at exit.
 
+old_wave = None
+old_midi = None
+        
 if mix:
 
     mixer_enabled = False
