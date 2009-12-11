@@ -50,6 +50,9 @@ _rollback = True
 # config.
 _config = renpy.config
 
+# The special character used for name-only dialogue.
+name_only = None
+
 class _Config(object):
 
     def register(self, name, default, cat=None, help=None):
@@ -179,7 +182,7 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
         kwargs = extra_kwargs.copy()
         kwargs.update(properties)
 
-        rv = cls(**kwargs)
+        rv = cls(*conargs, **kwargs)
         for i in kids:
             rv.add(renpy.easy.displayable(i))
 
@@ -287,4 +290,17 @@ def say(who, what, interact=True):
     who = Character(who, kind=name_only)
     who(what, interact=interact)
 
+
 __name__ = 'store'
+
+import sys
+sys.modules['store'] = sys.modules['renpy.store']
+
+def public_api():
+    ui
+    im
+    object
+    range
+    sorted
+    
+del public_api

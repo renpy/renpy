@@ -405,5 +405,5 @@ del renpy
 
 def init():
     import renpy
-    global properties
+    global style_properties
     style_properties = renpy.style.style_properties

@@ -25,7 +25,6 @@
 
 import renpy
 import sets
-import os.path
 
 def warp(spec):
     """

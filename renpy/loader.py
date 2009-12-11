@@ -26,7 +26,6 @@ from pickle import loads
 from cStringIO import StringIO
 import sys
 import types
-import codecs
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpb will break.

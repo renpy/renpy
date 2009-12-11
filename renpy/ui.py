@@ -289,8 +289,7 @@ def menu(menuitems,
                     chosen.add(label)
                     return val
             else:
-                def clicked(val=val):
-                    return val
+                clicked = renpy.ui.returns(val)
 
             if isinstance(button, basestring):
                 button = getattr(renpy.game.style, button)

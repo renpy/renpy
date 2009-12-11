@@ -31,6 +31,16 @@ prefixes = [ 'hover_', 'idle_', 'insensitive_', 'activate_', ]
 # A map from prefix to priority and alternates.
 prefix_subs = { }
 
+# These allow quick access to important properties.
+prop_xpos = None
+prop_ypos = None
+prop_xanchor = None
+prop_yanchor = None
+prop_xoffset = None
+prop_yoffset = None
+prop_subpixel = None
+
+
 def register_prefix(prefix, prio, addprefixes=[]):
 
     for r in roles:
@@ -547,25 +557,25 @@ def restore(o):
 def style_metaclass(name, bases, attrs):
 
     for k in expansions.iterkeys():
-        def setter(self, v,  k=k):
+        def setter_a(self, v,  k=k):
             self.setattr(k, v)
 
-        def deleter(self, k=k):
+        def deleter_a(self, k=k):
             self.delattr(k)
 
-        attrs[k] = property(None, setter, deleter)
+        attrs[k] = property(None, setter_a, deleter_a)
     
     for k, number in property_number.iteritems():
-        def getter(self, number=number):
+        def getter_b(self, number=number):
             return self.cache[self.offset + number]
 
-        def setter(self, v,  k=k):
+        def setter_b(self, v,  k=k):
             self.setattr(k, v)
 
-        def deleter(self, k=k):
+        def deleter_b(self, k=k):
             self.delattr(k)
 
-        attrs[k] = property(getter, setter, deleter)
+        attrs[k] = property(getter_b, setter_b, deleter_b)
 
     return type(name, bases, attrs)
 
@@ -743,9 +753,6 @@ def write_text(filename):
 
     styles = style_map.items()
     styles.sort()
-
-
-    style_props = { }
 
     for name, sty in styles:
 

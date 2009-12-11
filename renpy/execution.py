@@ -23,7 +23,7 @@
 # renpy object, as well as the context object.
 
 import renpy
-import copy
+
 
 class Delete(object):
     pass

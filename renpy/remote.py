@@ -36,8 +36,6 @@
 # Empty lines are ignored. (This lets us clear out outstanding errors.)
 
 import renpy
-import sys
-import select
 import os
 import os.path
 

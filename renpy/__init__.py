@@ -103,9 +103,11 @@ def import_all():
 
 # This reloads all modules.
 def reload_all():
-
+    
+    import renpy
+    
     # Shut down the cache thread.
-    display.im.cache.quit()
+    renpy.display.im.cache.quit()
         
     # Cleans out the RenpyImporter.
     import sys

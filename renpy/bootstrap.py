@@ -26,7 +26,7 @@ import sys
 
 # Extra things used for distribution.
 def extra_imports():
-    import datetime
+    import datetime; datetime
     import encodings.ascii
     import encodings.utf_8
     import encodings.zlib_codec
@@ -35,29 +35,29 @@ def extra_imports():
     import encodings.raw_unicode_escape
     import encodings.mbcs
     import encodings.utf_16_be
-    import encodings.utf_16_le
-    import math
-    import glob
-    import pickle
-    import platform
+    import encodings.utf_16_le; encodings.utf_16_le
+    import math; math
+    import glob; glob
+    import pickle; pickle
+    import platform; platform
     import pysdlsound
     import pysdlsound.sound
     import pysdlsound.winmixer
-    import pysdlsound.linmixer
-    import difflib
-    import shutil
+    import pysdlsound.linmixer; pysdlsound.linmixer
+    import difflib; difflib
+    import shutil; shutil
     import renpy.tools.archiver
-    import renpy.tools.add_from
-    import tarfile
-    import bz2
-    import webbrowser
+    import renpy.tools.add_from; renpy.tools.add_from
+    import tarfile; tarfile
+    import bz2; bz2
+    import webbrowser; webbrowser
     import pygame.locals
     import pygame.color
-    import pygame.colordict
-    import posixpath
+    import pygame.colordict; pygame.colordict
+    import posixpath; posixpath
     import ctypes
-    import ctypes.wintypes
-    import EasyDialogs
+    import ctypes.wintypes; ctypes.wintypes
+    import EasyDialogs; EasyDialogs
     
 trace_file = None
 trace_local = None
@@ -313,6 +313,8 @@ def report_tb(out, tb):
         elif 'self' in f.f_locals:
             obj = f.f_locals['self']
 
+            import renpy
+            
             if isinstance(obj, renpy.execution.Context):
                 obj.report_tb(out)
 
@@ -393,8 +395,6 @@ def report_exception(e):
 
 
 def memory_profile():
-
-    import renpy
 
     print "Memory Profile"
     print

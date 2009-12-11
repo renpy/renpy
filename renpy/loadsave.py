@@ -28,7 +28,6 @@ import StringIO
 import cStringIO
 
 import zipfile
-import time
 import os
 import os.path
 import re

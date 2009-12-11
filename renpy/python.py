@@ -31,11 +31,9 @@ import compiler.ast as ast
 
 import marshal
 import random
-import types
 import weakref
 import re
 import sets
-import sys
 
 import renpy
 
@@ -410,7 +408,6 @@ class RevertableSet(sets.Set):
 class RevertableObject(object):
 
     def __setattr__(self, attr, value):
-        import sys
         object.__setattr__(self, attr, value)
 
     def __delattr__(self, attr):

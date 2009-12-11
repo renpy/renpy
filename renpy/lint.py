@@ -20,11 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
-import sys
 import codecs
 import os
 import os.path
 import time
+
+image_prefixes = None
+filenames = None
 
 # Things to check in lint.
 #
