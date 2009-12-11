@@ -423,7 +423,7 @@ class SceneLists(renpy.object.Object):
     things to the user. 
     """
 
-    __version__ = 2
+    __version__ = 3
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -442,15 +442,21 @@ class SceneLists(renpy.object.Object):
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
+        if version < 3:
+            self.shown_window = False 
+                
                 
     def __init__(self, oldsl, ipi):
 
+        # Has a window been shown as part of these scene lists?
+        self.shown_window = False
+
+        
         # A map from layer name -> list of
         # (key, zorder, show time, animation time, displayable) 
         self.layers = { }
         self.at_list = { }
         self.layer_at_list = { }
-        
         self.image_predict_info = ipi
 
         if oldsl:
@@ -765,7 +771,6 @@ class SceneLists(renpy.object.Object):
             self.layers[l] = newl
 
 
-
             
 class Display(object):
     """
@@ -797,7 +802,6 @@ class Display(object):
     @ivar window_caption: The current window caption.
 
     """
-
 
     def __init__(self, interface):
 
@@ -949,6 +953,7 @@ class Display(object):
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
+        
     def set_window_caption(self):
         caption = renpy.config.window_title + renpy.store._window_subtitle
         if caption == self.window_caption:
@@ -957,8 +962,10 @@ class Display(object):
         self.window_caption = caption
         pygame.display.set_caption(caption.encode("utf-8"))
 
+        
     def iconify(self):
         pygame.display.iconify()
+
         
     def can_redraw(self, first_pass):
         """
@@ -993,11 +1000,13 @@ class Display(object):
 
         return True
 
+    
     def mouse_event(self, ev):
 
         if ev.type == pygame.MOUSEMOTION or pygame.MOUSEBUTTONDOWN or pygame.MOUSEBUTTONUP:
             self.mouse_event_time = get_time()
-         
+
+            
     def show_mouse(self, pos, info):
         """
         Actually shows the mouse.
@@ -1024,6 +1033,7 @@ class Display(object):
 
         return bx, by, mw, mh
 
+    
     def hide_mouse(self):
         """
         Actually hides the mouse.
@@ -1040,6 +1050,7 @@ class Display(object):
 
         return rv
 
+    
     def draw_mouse(self, show_mouse=True):
         """
         This draws the mouse to the screen, if necessary. It uses the
@@ -1077,7 +1088,7 @@ class Display(object):
         else:
             anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
 
-        info = anim[self.interface.ticks % len(anim)]
+       info = anim[self.interface.ticks % len(anim)]
 
         pos = pygame.mouse.get_pos()
 
@@ -1100,6 +1111,7 @@ class Display(object):
             
         return updates
 
+    
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
@@ -1146,6 +1158,7 @@ class Display(object):
         
         self.suppressed_blit = suppress_blit
         self.surftree = surftree
+
         
     def save_screenshot(self, filename):
         """
@@ -1158,7 +1171,6 @@ class Display(object):
             if renpy.config.debug:
                 raise
             pass
-        
             
         
     def screenshot(self, scale):
@@ -1308,6 +1320,7 @@ class Interface(object):
 
         self.screenshot = self.display.screenshot(scale)
 
+        
     def get_screenshot(self):
         """
         Gets the current screenshot, as a string. Returns None if there isn't
@@ -1319,6 +1332,7 @@ class Interface(object):
 
         return self.screenshot
 
+    
     def lose_screenshot(self):
         """
         This deallocates the saved screenshot.
@@ -1326,17 +1340,19 @@ class Interface(object):
 
         self.screenshot = None
 
+        
     def show_window(self):
 
         if not renpy.store._window:
             return
 
-        if self.shown_window:
+        if renpy.game.context().scene_lists.shown_window:
             return
 
         if renpy.config.empty_window:
             renpy.config.empty_window()
 
+            
     def do_with(self, trans, paired, clear=False):
         
         if renpy.config.with_callback:
@@ -1358,21 +1374,21 @@ class Interface(object):
         be transitioning from.
         """
 
+        # Show the window, if that's necessary.
         self.show_window()
-        
+
+        # Compute the overlay.
+        self.compute_overlay()
+
         scene_lists = renpy.game.context().scene_lists
 
-        old_old_scene = self.old_scene
-
+        # Compute the scene.
         self.old_scene = self.compute_scene(scene_lists)        
 
-        if renpy.config.overlay_during_with and old_old_scene:
-            for i in renpy.config.overlay_layers:
-                self.old_scene[i] = old_old_scene[i]
-
-        scene_lists = renpy.game.context().scene_lists
+        # Get rid of transient things.
         scene_lists.replace_transient()
-        self.shown_window = False
+        scene_lists.shown_window = False
+
         
     def set_transition(self, transition, layer=None, force=False):
         """
@@ -1441,7 +1457,25 @@ class Interface(object):
         self.last_event = ev
         return ev
 
+    
+    def compute_overlay(self):
 
+        if renpy.store.suppress_overlay:
+            return
+        
+        # Figure out what the overlay layer should look like.
+        renpy.ui.layer("overlay")
+
+        for i in renpy.config.overlay_functions:
+            i()
+
+        if renpy.game.context().scene_lists.shown_window:
+            for i in renpy.config.window_overlay_functions:
+                i()
+                
+        renpy.ui.close()
+        
+    
     def compute_scene(self, scene_lists):
         """
         This converts scene lists into a dictionary mapping layer
@@ -1476,6 +1510,7 @@ class Interface(object):
         else:                
             raise renpy.game.QuitException()
 
+        
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -1486,6 +1521,7 @@ class Interface(object):
         if not suppress_window:
             self.show_window()
         
+
         # These things can be done once per interaction.
 
         preloads = self.preloads
@@ -1493,7 +1529,7 @@ class Interface(object):
 
         try:
             renpy.game.after_rollback = False
-            
+
             for i in renpy.config.start_interact_callbacks:
                 i()
 
@@ -1517,8 +1553,10 @@ class Interface(object):
                 
             self.restart_interaction = True
 
-            self.shown_window = False
+            renpy.game.context().scene_lists.shown_window = False
             
+
+    
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -1545,7 +1583,6 @@ class Interface(object):
         
         self.roll_forward = roll_forward
         
-        suppress_overlay = suppress_overlay or renpy.store.suppress_overlay        
         suppress_transition = renpy.config.skipping or renpy.game.less_updates
 
         # The global one.
@@ -1603,8 +1640,10 @@ class Interface(object):
         renpy.display.layout.size_groups.clear()
         
         # Clear some events.
-        pygame.event.clear((pygame.MOUSEMOTION, pygame.PERIODIC,
-                            pygame.TIMEEVENT, pygame.REDRAW))
+        pygame.event.clear((pygame.MOUSEMOTION,
+                            PERIODIC,
+                            TIMEEVENT,
+                            REDRAW))
 
         # Add a single TIMEEVENT to the queue.
         pygame.event.post(self.time_event)
@@ -1612,20 +1651,12 @@ class Interface(object):
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
 
+        # Remove the now-hidden things.
         scene_lists.remove_hidden()
-        
-        # Figure out what the overlay layer should look like.
-        renpy.ui.layer("overlay")
 
+        # Compute the overlay.
         if not suppress_overlay:
-            for i in renpy.config.overlay_functions:
-                i()
-
-        if self.shown_window:
-            for i in renpy.config.window_overlay_functions:
-                i()
-                
-        renpy.ui.close()
+            self.compute_overlay()
 
         # The root widget of everything that is displayed on the screen.
         root_widget = renpy.display.layout.MultiBox(layout='fixed') 
@@ -1695,11 +1726,7 @@ class Interface(object):
             old_root.layers = { }
 
             for layer in renpy.config.layers:
-                if layer in renpy.config.overlay_layers:
-                    d = scene[layer]
-                else:                
-                    d = self.transition_from[None].layers[layer]
-
+                d = self.transition_from[None].layers[layer]
                 old_root.layers[layer] = d
                 old_root.add(d)
             
@@ -1939,7 +1966,7 @@ class Interface(object):
 
                         ev2 = self.event_peek()
 
-                        if ev2 and ev2.type not in (pygame.NOEVENT, pygame.PERIODIC, pygame.REDRAW, pygame.QUIT):
+                        if ev2 and ev2.type not in (pygame.NOEVENT, PERIODIC, REDRAW, pygame.QUIT):
                             ev = self.event_poll()
                             
                     # Handle redraw timeouts.

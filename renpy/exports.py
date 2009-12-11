@@ -46,8 +46,29 @@ from renpy.character import show_display_say, predict_show_display_say, display_
 import renpy.audio.sound as sound
 import renpy.audio.music as music
 
-import time
-import sets
+
+def public_api():
+    """
+    This does nothing, except to make the pyflakes warnings about
+    unused imports go away.
+    """
+    ParameterizedText
+    register_sfont, register_mudgefont, register_bmfont
+    Keymap
+    Minigame
+    curry, partial
+    play
+    movie_start_fullscreen, movie_start_displayable, movie_stop
+    load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+    eval
+    random
+    atl_warper
+    show_display_say, predict_show_display_say, display_say
+    sound
+    music
+
+del public_api
+
 
 import collections
 
@@ -985,7 +1006,6 @@ def launch_editor(filenames, line=1, transient=0):
     statement.
     """
 
-    import sys
     import renpy.subprocess as subprocess
     import os.path
 
@@ -995,13 +1015,11 @@ def launch_editor(filenames, line=1, transient=0):
     if not len(filenames):
         return
 
-    shell = True
-    
     filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
-    allfiles = config.editor_file_separator.join(filenames)
-    otherfiles = config.editor_file_separator.join(filenames[1:])
+    allfiles = renpy.config.editor_file_separator.join(filenames)
+    otherfiles = renpy.config.editor_file_separator.join(filenames[1:])
     
     subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
     if transient and (renpy.config.editor_transient is not None):
@@ -1067,7 +1085,10 @@ def do_reshow_say(who, what, interact=False):
 curried_do_reshow_say = curry(do_reshow_say)
     
 def get_reshow_say(**kwargs):
-    return curried_do_reshow_say(store._last_say_who, store._last_say_what, **kwargs)
+    return curried_do_reshow_say(
+        renpy.store._last_say_who,
+        renpy.store._last_say_what,
+        **kwargs)
 
 def reshow_say(**kwargs):
     get_reshow_say()(**kwargs)
@@ -1109,7 +1130,7 @@ def image_size(im):
         raise Exception("renpy.image_size expects it's argument to be an image.")
 
     surf = im.load()
-    return im.get_size()
+    return surf.get_size()
 
 def get_at_list(name, layer='master'):
     if isinstance(name, basestring):
@@ -1218,19 +1239,19 @@ def game_menu(screen=None):
         call_in_new_context("_game_menu", screen)
 
 def shown_window():
-    renpy.game.interface.shown_window = True
+    renpy.game.context().scene_lists.shown_window = True
 
 def get_placement(d):
     o = renpy.store.object()
     p = d.get_placement()
 
-    o.xpos = d[0]
-    o.ypos = d[1]
-    o.xanchor = d[2]
-    o.yanchor = d[3]
-    o.xoffset = d[4]
-    o.yoffset = d[5]
-    o.subpixel = d[6]
+    o.xpos = p[0]
+    o.ypos = p[1]
+    o.xanchor = p[2]
+    o.yanchor = p[3]
+    o.xoffset = p[4]
+    o.yoffset = p[5]
+    o.subpixel = p[6]
 
     return o
     
