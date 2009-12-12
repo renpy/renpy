@@ -1182,6 +1182,33 @@ class Event(Statement):
     def execute(self, trans, st, state, event):
         return "event", (self.name, st), None
     
+
+class RawFunction(RawStatement):
+
+    def __init__(self, loc, expr):
+        self.loc = loc
+        self.expr = expr
+
+    def compile(self, ctx):
+        compiling(self.loc)
+        return Function(self.loc, ctx.eval(self.expr))
+
+class Function(Statement):
+    
+    def __init__(self, loc, function):
+        self.loc = loc
+        self.function = function
+
+    def execute(self, trans, st, state, event):
+        fr = self.function(trans, st, trans.at)
+        
+        if fr is not None:
+            return "continue", None, fr
+        else:
+            return "next", 0, None
+
+        
+    
     
 # This parses an ATL block.
 def parse_atl(l):
@@ -1265,6 +1292,12 @@ def parse_atl(l):
             l.expect_noblock('time')
 
             statements.append(RawTime(loc, time))
+
+        elif l.keyword('function'):
+            expr = l.require(l.simple_expression)
+            l.expect_noblock('function')
+
+            statements.append(RawFunction(loc, expr))
 
         elif l.keyword('event'):
             name = l.require(l.word)

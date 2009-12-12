@@ -1,6 +1,10 @@
 New in Ren'Py 6.10.0
 --------------------
 
+ATL now has a "function" statement, which allows an ATL transform to
+use the same functions that are supplied to Transform.
+
+
 The overlay semantics were changed such that transitions apply to overlays
 in the same way they apply to everything else. (So, for example, dissolves
 will apply to overlays.)
