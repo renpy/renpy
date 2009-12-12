@@ -370,7 +370,17 @@ class Displayable(renpy.object.Object):
         """
         Called when the displayable is added to a scene list.
         """
-    
+
+    def get_parameterized(self):
+        """
+        If this is a ImageReference to a parameterized image, return
+        the get_parameterized() of the parameterized image. Otherwise,
+        return this displayable.
+        """
+
+        return self
+        
+        
 
 class ImagePredictInfo(renpy.object.Object):
     """
@@ -512,6 +522,24 @@ class SceneLists(renpy.object.Object):
 
         return True
 
+    def transform_state(self, old_thing, new_thing):
+        """
+        If the old thing is a transform, then move the state of that transform
+        to the new thing.
+        """
+
+        old_transform = old_thing.get_parameterized()
+        if not isinstance(old_transform, renpy.display.motion.Transform):
+            return new_thing
+
+        new_transform = new_thing.get_parameterized()
+        if not isinstance(new_transform, renpy.display.motion.Transform):
+            new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
+        
+        new_transform.take_state(old_thing)
+        return new_thing
+
+                        
     def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None, atl=None):
         """
         This is called to add something to a layer. Layer is
@@ -579,12 +607,9 @@ class SceneLists(renpy.object.Object):
                 
                 # If the old thing was a transform, make sure the new thing
                 # is a transform, and then take the transform state.
-                if isinstance(old_thing, renpy.display.motion.Transform):
-                    if not isinstance(thing, renpy.display.motion.Transform):
-                        print "Wrapped in transform.", thing
-                        thing = renpy.display.motion.Transform(child=thing)
-                        
-                    thing.take_state(old_thing)
+
+                thing = self.transform_state(old_thing, thing)
+                
                     
                 thing.set_transform_event("replace")
                 thing.show() 

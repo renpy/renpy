@@ -215,7 +215,6 @@ def display_say(show_function,
                 type,
                 checkpoint=True):
 
-    ctc = renpy.easy.displayable_or_none(ctc)
     
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
@@ -292,7 +291,12 @@ def display_say(show_function,
             what_ctc = ctc_pause
         else:
             what_ctc = ctc
-        
+            
+        what_ctc = renpy.easy.displayable_or_none(what_ctc)
+
+        if what_ctc is not None:
+            what_ctc = ctc.parameterize(('ctc',), ())
+
         # This object is called when the slow text is done.
         slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args)
         

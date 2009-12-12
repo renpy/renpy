@@ -83,6 +83,12 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
+    def get_parameterized(self):
+        if self.param_target:
+            return self.param_target.get_parameterized()
+
+        return self
+        
     def find_target(self):
 
         if self.param_target:
