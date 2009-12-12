@@ -4,13 +4,20 @@ init python:
 
         def __init__(self, screen, ground, idle, hover, selected_idle, selected_hover, hotspots):
 
-            self.idle = idle
-            self.hover = hover
-            self.selected_idle = selected_idle
-            self.selected_hover = selected_hover
+            # If the argument is a dict, look up the screen in that dict, and
+            # return the result. Otherwise, just return the result.
+            def maybe_screen(a):
+                if isinstance(a, dict):
+                    return a[screen]
+                return a
+            
+            self.idle = maybe_screen(idle)
+            self.hover = maybe_screen(hover)
+            self.selected_idle = maybe_screen(selected_idle)
+            self.selected_hover = maybe_screen(selected_hover)
             
             self.hotspots = { }
-            for (x1, y1, x2, y2, name) in hotspots:
+            for (x1, y1, x2, y2, name) in maybe_screen(hotspots):
                 self.hotspots[name] = (x1, y1, x2, y2)
 
             # Display the layout navigation only if there are no
