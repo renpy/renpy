@@ -10,6 +10,8 @@ init python:
                 if isinstance(a, dict):
                     return a[screen]
                 return a
+
+            ground = maybe_screen(ground)
             
             self.idle = maybe_screen(idle)
             self.hover = maybe_screen(hover)
