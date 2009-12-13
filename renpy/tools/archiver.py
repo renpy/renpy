@@ -26,7 +26,7 @@
 # but are probably better than nothing.
 
 import sys
-import encodings.zlib_codec; encodings.zlob_codec
+import encodings.zlib_codec; encodings.zlib_codec
 import random
 import glob
 

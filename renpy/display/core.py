@@ -536,7 +536,7 @@ class SceneLists(renpy.object.Object):
         if not isinstance(new_transform, renpy.display.motion.Transform):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
         
-        new_transform.take_state(old_thing)
+        new_transform.take_state(old_transform)
         return new_thing
 
                         
