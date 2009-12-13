@@ -288,13 +288,14 @@ init -1105 python hide:
 
 
     @layout
-    def imagemap_main_menu(ground, selected, hotspots):
+    def imagemap_main_menu(ground, selected, hotspots, idle=None, variant=None):
         renpy.load_module("_layout/imagemap_main_menu")
 
-        config.main_menu_ground = ground
-        config.main_menu_selected = selected
-        config.main_menu_hotspots = hotspots
-
+        config.main_menu_ground[variant] = ground
+        config.main_menu_selected[variant] = selected
+        config.main_menu_hotspots[variant] = hotspots
+        config.main_menu_idle[variant] = idle
+        
     @layout
     def imagemap_navigation(ground, idle, hover, selected_idle, selected_hover,
                             hotspots):
@@ -334,16 +335,16 @@ init -1105 python hide:
         
     @layout
     def imagemap_load_save(ground, idle, hover, selected_idle, selected_hover,
-                           hotspots):
+                           hotspots, variant=None):
 
         renpy.load_module("_layout/imagemap_load_save")
         
-        config.load_save_ground = ground
-        config.load_save_idle = idle
-        config.load_save_hover = hover
-        config.load_save_selected_idle = selected_idle
-        config.load_save_selected_hover = selected_hover
-        config.load_save_hotspots = hotspots
+        config.load_save_ground[variant] = ground
+        config.load_save_idle[variant] = idle
+        config.load_save_hover[variant] = hover
+        config.load_save_selected_idle[variant] = selected_idle
+        config.load_save_selected_hover[variant] = selected_hover
+        config.load_save_hotspots[variant] = hotspots
     
 
     layout.ARE_YOU_SURE = u"Are you sure?"

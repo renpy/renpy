@@ -2,54 +2,65 @@ init python:
     
     class _ImageMapper(object):
 
-        def __init__(self, screen, ground, idle, hover, selected_idle, selected_hover, hotspots):
+        def __init__(self, screen, ground, idle, hover, selected_idle, selected_hover, hotspots, navigation=True, variant=None):
 
             # If the argument is a dict, look up the screen in that dict, and
             # return the result. Otherwise, just return the result.
-            def maybe_screen(a):
+            def maybe_variant(a):
                 if isinstance(a, dict):
-                    return a[screen]
+                    if variant in a:
+                        return a[variant]
+                    else:                        
+                        return a[None]
                 return a
 
-            ground = maybe_screen(ground)
+            ground = maybe_variant(ground)
             
-            self.idle = maybe_screen(idle)
-            self.hover = maybe_screen(hover)
-            self.selected_idle = maybe_screen(selected_idle)
-            self.selected_hover = maybe_screen(selected_hover)
+            self.idle = maybe_variant(idle) or ground
+            self.hover = maybe_variant(hover) or self.idle 
+            self.selected_idle = maybe_variant(selected_idle) or self.idle
+            self.selected_hover = maybe_variant(selected_hover) or self.hover
             
             self.hotspots = { }
-            for (x1, y1, x2, y2, name) in maybe_screen(hotspots):
+            for (x1, y1, x2, y2, name) in maybe_variant(hotspots):
                 self.hotspots[name] = (x1, y1, x2, y2)
 
-            # Display the layout navigation only if there are no
-            # game menu buttons defined. 
-            for i in config.game_menu:
-                if i[1] in self.hotspots:
-                    break
-            else:
-                layout.navigation(screen)
+            self.remaining_hotspots = set(self.hotspots.keys())
                 
+            if navigation:
+
+                # Display the layout navigation only if there are no
+                # game menu buttons defined. 
+                for i in config.game_menu:
+                    if i[1] in self.hotspots:
+                        break
+                else:
+                    layout.navigation(screen)
+
             ui.fixed(style='imagemap')
             ui.image(ground)
+
+            if navigation:
             
-            # Display any navigation buttons that exist.
-            for e in config.game_menu:
-                screen_ = e[0]
-                name = e[1]
-                act = e[2]
-                enable = e[3]
+                # Display any navigation buttons that exist.
+                for e in config.game_menu:
+                    screen_ = e[0]
+                    name = e[1]
+                    act = e[2]
+                    enable = e[3]
 
-                if not eval(enable):
-                    continue
+                    if not eval(enable):
+                        continue
 
-                self.button(name, act, screen == screen_)
+                    self.button(name, act, screen == screen_)
                 
         def button(self, name, clicked, selected, keymap={}):
 
             if name not in self.hotspots:
                 return None
 
+            self.remaining_hotspots.discard(name)
+            
             x1, y1, x2, y2 = self.hotspots[name]
 
             if clicked is None:
@@ -83,6 +94,8 @@ init python:
             if name not in self.hotspots:
                 return
 
+            self.remaining_hotspots.discard(name)
+
             x1, y1, x2, y2 = self.hotspots[name]
 
             ui.bar(
@@ -103,6 +116,9 @@ init python:
                 thumb=None,
                 thumb_shadow=None,
                 thumb_offset=0)
+
+        def nothing(self, name):
+            self.remaining_hotspots.discard(name)
             
         def close(self):
             ui.close()

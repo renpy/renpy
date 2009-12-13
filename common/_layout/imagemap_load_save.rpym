@@ -4,19 +4,19 @@ init python:
     renpy.load_module("_layout/imagemap_common")
     
     # The ground image.
-    config.load_save_ground = None
+    config.load_save_ground = { }
 
     # The idle image.
-    config.load_save_idle = None
+    config.load_save_idle = { }
 
     # The hover image.
-    config.load_save_hover = None
+    config.load_save_hover = { }
 
     # The selected idle image.
-    config.load_save_selected_idle = None
+    config.load_save_selected_idle = { }
 
     # The selected hover image.
-    config.load_save_selected_hover = None
+    config.load_save_selected_hover = { }
 
     # The hotspots. Each hotspot is defined by a tuple giving:
     # - The x-coordinate of the left side.
@@ -24,7 +24,7 @@ init python:
     # - The x-coordinate of the right side.
     # - The y-coordinate of the bottoms side.
     # - The name of the button or slider this is equivalent to.
-    config.load_save_hotspots = None
+    config.load_save_hotspots = { }
     
     # Define styles
     style.file_picker_text = Style(style.large_button_text, help="text inside a file picker entry")
@@ -159,8 +159,13 @@ init python:
 
         hotspots = set()
 
-        for (x1, y1, x2, y2, name) in config.load_save_hotspots:
-            hotspots.add(name)
+        if isinstance(config.load_save_hotspots, dict):
+            for d in config.load_save_hotspots.values():
+                for (x1, y1, x2, y2, name) in d:
+                    hotspots.add(name)
+        else:
+            for (x1, y1, x2, y2, name) in config.load_save_hotspots:
+                hotspots.add(name)
 
         __scratch.has_autosave = ("page_auto" in hotspots)
         __scratch.has_quicksave = ("page_quick" in hotspots)
@@ -249,7 +254,8 @@ init python:
                 config.load_save_hover,
                 config.load_save_selected_idle,
                 config.load_save_selected_hover,
-                config.load_save_hotspots)
+                config.load_save_hotspots,
+                variant=screen)
                 
 
             def tb(enabled, label, clicked, selected):

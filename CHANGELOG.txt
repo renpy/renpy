@@ -1,13 +1,21 @@
-New in Ren'Py 6.10.0
+New in Ren'Py 6.10.1
 --------------------
+
+Images and other surfaces are now created with a 1px transparent border
+around them. This change allows transform to work correctly with a 1:1
+scale, where as previously Ren'Py would blur the image slightly, while
+trying to ensure it never accessed a pixel outside of the original 
+image bounds.
+
 
 ATL now has a "function" statement, which allows an ATL transform to
 use the same functions that are supplied to Transform.
 
 
-The layout.imagemap_load_save function can now take dictionaries for
-each of its arguments. This allows separate values of the arguments to
-be specified for load and save.
+The layout.imagemap_main_menu and layout.imagemap_load_save functions 
+now allow one to define variant screens. This allows one to select an 
+imagemap main menu screen to use, or to define different screens for
+loading and saving.
 
 
 The overlay semantics were changed such that transitions apply to overlays
@@ -19,14 +27,30 @@ The image text tag can now take any textual image representation. So
 something like {image=eileen happy} is legal, if odd.
 
 
-Fixed a bug that prevented Ren'Py from interpolating image rotation 
-before image rotation was specified.
+The following numbered bugs were fixed:
 
-Fixed a bug that caused Ren'Py to fail when scaling was enabled.
+lp:366412 - Ren'Py could crash on shift+R at the main menu, under some circumstances.
 
-Fixed a bug that could prevent files from being loaded if Ren'Py was
-run from a path that contains non-ascii characters. (Even in directories
-that were not part of the Ren'Py distribution.)
+lp:485631 - The transfer of state from a transfrom to a transform  supplied as part of an image didn't work.
+
+lp:487688 - non-ASCII characters didn't display in the window title bar.
+
+lp:487701 - Ren'Py didn't work when in a directory containing non-ASCII characters.
+
+lp:488814 - Scaling to the same size could blur an image.
+
+lp:489212 - Interpolation didn't work when the starting value was None.
+
+lp:493062 - One could roll back into an imagemap main menu.
+
+lp:494779 - The window shown state wasn't being tracked correctly.
+
+lp:494820 - Error handling in ATL hid too many error messages.
+
+A major bug that caused Ren'Py to fail as scaling was enabled was fixed.
+
+A number of minor bugs revealed by pyflakes were fixed.
+
 
 
 New in Ren'Py 6.10.0
