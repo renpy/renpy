@@ -275,7 +275,7 @@ image main_menu:
         size (800, 509)
 
     contains:
-        Text("Ren'Py 6.10.0 \"You Ain't Seen Nothing Yet\"", size=18)
+        Text("Ren'Py 6.10.1 \"I Can See Clearly Now\"", size=18)
         yalign .98
         xalign .02
     
