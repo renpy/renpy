@@ -180,6 +180,7 @@ init python hide:
         
         for l in f:
 
+            l = l.decode("utf-8")
             l = l.rstrip()
             
             m = re.match("\s*#begin (\w+)", l)
