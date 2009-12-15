@@ -40,6 +40,7 @@ if __name__ == "__main__":
 
     files += glob.glob("launcher/*.rpy")
     files += glob.glob("common/*.rpy")
+    files += glob.glob("common/*.rpym")
     files += glob.glob("common/_layout/*.rpym")
     files += glob.glob("common/_compat/*.rpym")
 
