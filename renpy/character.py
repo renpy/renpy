@@ -213,7 +213,8 @@ def display_say(show_function,
                 with_none,
                 callback,
                 type,
-                checkpoint=True):
+                checkpoint=True,
+                ctc_timedpause=None):
 
     
     # If we're in fast skipping mode, don't bother with say
@@ -288,14 +289,17 @@ def display_say(show_function,
         # Update the properties of the what_text widget.
 
         if pause is not None and pause < what_text.pauses:
-            what_ctc = ctc_pause
+            if what_text.pause_lengths[pause] is not None:
+                what_ctc = ctc_timedpause or ctc_pause
+            else:
+                what_ctc = ctc_pause
         else:
             what_ctc = ctc
             
         what_ctc = renpy.easy.displayable_or_none(what_ctc)
 
         if what_ctc is not None:
-            what_ctc = ctc.parameterize(('ctc',), ())
+            what_ctc = what_ctc.parameterize(('ctc',), ())
 
         # This object is called when the slow text is done.
         slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args)
@@ -430,6 +434,7 @@ class ADVCharacter(object):
             afm = d('afm'),
             ctc = renpy.easy.displayable_or_none(d('ctc')),
             ctc_pause = renpy.easy.displayable_or_none(d('ctc_pause')),
+            ctc_timedpause = renpy.easy.displayable_or_none(d('ctc_timedpause')),
             ctc_position = d('ctc_position'),
             all_at_once = d('all_at_once'),
             with_none = d('with_none'),

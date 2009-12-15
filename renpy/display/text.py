@@ -656,6 +656,8 @@ class Text(renpy.display.core.Displayable):
 
         self.tokens = None
 
+        # The duration of each pause, or None if the pause is infinite.
+        self.pause_lengths = [ ]
         
         self.update(redraw=False)
 
@@ -709,24 +711,44 @@ class Text(renpy.display.core.Displayable):
         self.no_wait_done = False
 
         self.pauses = 0
+        self.pause_lengths = [ ]
         
         for i in self.tokens[0]:
             type, text = i
             
             if type == "tag":
-                if text == "p" or text.startswith("p="):
-                    new_tokens.append(("tag", 'w' + text[1:]))
+                if text == "p":
+                    new_tokens.append(("tag", 'w'))
                     new_tokens.append(("newline", "\n"))
                     self.pauses += 1
+                    self.pause_lengths.append(None)
+
                     continue
+
+                elif text.startswith("p="):
+                    new_tokens.append(("tag", 'w=' + text[2:]))
+                    new_tokens.append(("newline", "\n"))
+                    self.pauses += 1
+                    self.pause_lengths.append(float(text[2:]))
+
+                    continue
+
                 elif text == "nw":
                     self.no_wait = True
+
                 elif text == "fast":
                     self.no_wait = False
                     fasts += 1
                     self.pauses = 0
-                elif text == "w" or text.startswith("w="):
+                    self.pause_lengths = [ ]
+                    
+                elif text == "w":
                     self.pauses += 1
+                    self.pause_lengths.append(None)
+
+                elif text.startswith("w="):
+                    self.pauses += 1
+                    self.pause_lengths.append(float(text[2:]))
                     
             new_tokens.append(i)
 
