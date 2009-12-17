@@ -46,6 +46,8 @@ from renpy.character import show_display_say, predict_show_display_say, display_
 import renpy.audio.sound as sound
 import renpy.audio.music as music
 
+import time
+
 
 def public_api():
     """
@@ -66,7 +68,8 @@ def public_api():
     show_display_say, predict_show_display_say, display_say
     sound
     music
-
+    time
+    
 del public_api
 
 
