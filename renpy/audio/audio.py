@@ -782,7 +782,7 @@ def event(ev):
     if ev.type == REFRESH_EVENT:
         if renpy.audio.music.get_playing("movie"):
             pss.refresh_event()
-            
+
         # Return False, as a Movie should get this to know when to
         # redraw itself.
         return False

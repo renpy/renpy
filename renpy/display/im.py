@@ -675,7 +675,7 @@ class FrameImage(ImageBase):
                     tilew, tileh = srcsize
                     dstw, dsth = dstsize
 
-                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize)
+                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize, surf)
 
                     for y in range(0, dsth, tileh):
                         for x in range(0, dstw, tilew):
