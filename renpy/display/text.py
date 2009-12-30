@@ -128,7 +128,6 @@ class TextStyle(object):
         return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
     def render(self, text, antialias, color, black_color, use_colors, time, at, expand, use_cache):
-
         
         if use_colors:
             color = self.color or color
@@ -169,7 +168,7 @@ class TextStyle(object):
 
         renpy.display.render.mutated_surface(rv)
         
-        if use_cache:
+        if use_cache and not renpy.game.less_memory:
             self.scache[key] = (rv, rv.get_size())
         
         return rv, rv.get_size()
@@ -1443,10 +1442,6 @@ class Text(renpy.display.core.Displayable):
 
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
-
-        import time
-        start = time.time()
-        
         for dsxo, dsyo in dslist:
             self.render_pass(rv, dsxo - mindsx, dsyo - mindsy, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False, 0)
 
@@ -1459,8 +1454,6 @@ class Text(renpy.display.core.Displayable):
             if self.slow:
                 self.call_slow_done(st)
 
-        print "XXX", length, time.time() - start
-                
         if self.slow:
             renpy.display.render.redraw(self, 0)
 
