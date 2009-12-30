@@ -102,6 +102,9 @@ class TextStyle(object):
 
         # Width cache.
         self.wcache = { }
+
+        # Surface cache.
+        self.scache = { }
         
     def update(self):
         self.f = get_font(self.font, self.size, self.bold, self.italic, self.underline, 0)
@@ -124,12 +127,18 @@ class TextStyle(object):
 
         return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
 
-    def render(self, text, antialias, color, black_color, use_colors, time, at, expand):
+    def render(self, text, antialias, color, black_color, use_colors, time, at, expand, use_cache):
 
+        
         if use_colors:
             color = self.color or color
             black_color = self.black_color or black_color
 
+        key = (text, antialias, color, black_color, expand)
+        
+        if use_cache and key in self.scache:
+            return self.scache[key]
+            
         if expand:
             font = get_font(self.font, self.size, self.bold, self.italic, self.underline, expand)
         else:
@@ -159,7 +168,10 @@ class TextStyle(object):
                 renpy.display.module.linmap(rv, rv, 256, 256, 256, a + 1)
 
         renpy.display.render.mutated_surface(rv)
-
+        
+        if use_cache:
+            self.scache[key] = (rv, rv.get_size())
+        
         return rv, rv.get_size()
 
     def length(self, text):
@@ -196,7 +208,7 @@ class WidgetStyle(object):
     def sizes(self, widget):
         return self.width, self.height
 
-    def render(self, widget, antialias, color, black_color, foreground, st, at, expand):
+    def render(self, widget, antialias, color, black_color, foreground, st, at, expand, use_cache):
 
         # If in the foreground
         if foreground:
@@ -1314,13 +1326,18 @@ class Text(renpy.display.core.Displayable):
                     
                 length -= ts.length(text)
 
+                # Should we cache the rendered text?
+                use_cache = True
+                
                 if length < 0:
+                    use_cache = False
+                    
                     if isinstance(text, (str, unicode)):
                         text = text[:length]
                     else:
                         return False
 
-                surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at, expand)
+                surf, (sw, sh) = ts.render(text, antialias, color, black_color, user_colors, time, at, expand, use_cache)
 
                 if expand:
                     (sw, sh) = ts.sizes(text)
@@ -1423,9 +1440,13 @@ class Text(renpy.display.core.Displayable):
         else:
             length = sys.maxint
             self.call_slow_done(st)
-                
+
         rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
 
+
+        import time
+        start = time.time()
+        
         for dsxo, dsyo in dslist:
             self.render_pass(rv, dsxo - mindsx, dsyo - mindsy, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False, 0)
 
@@ -1438,6 +1459,8 @@ class Text(renpy.display.core.Displayable):
             if self.slow:
                 self.call_slow_done(st)
 
+        print "XXX", length, time.time() - start
+                
         if self.slow:
             renpy.display.render.redraw(self, 0)
 

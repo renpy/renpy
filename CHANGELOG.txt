@@ -1,3 +1,18 @@
+New in Ren'Py 6.10.2
+--------------------
+
+Ren'Py now caches the individual words of text that are rendered. This
+can lead to a speedup in text display when there are many words of
+text on the screen, and that text is re-displayed, as is the case
+where the text text speed is not the maximum. This is especially 
+beneficial for eastasian languages, where every character is treated
+as a word.
+
+
+The following numbered bugs were fixed:
+
+lp:501351 - Displaying a Frame() with tile=True crashes
+
 New in Ren'Py 6.10.1
 --------------------
 
