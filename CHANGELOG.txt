@@ -9,9 +9,19 @@ beneficial for eastasian languages, where every character is treated
 as a word.
 
 
+Ren'Py will now ignore music files that do not exist. Previously, it
+could loop trying to play them. (This would increase CPU usage, rather
+than causing a crash.)
+
+
+A bug was fixed that caused Pixellate to crash.
+
+
 The following numbered bugs were fixed:
 
 lp:501351 - Displaying a Frame() with tile=True crashes
+
+
 
 New in Ren'Py 6.10.1
 --------------------

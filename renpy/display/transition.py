@@ -279,7 +279,7 @@ class Pixellate(Transition):
         surf = rdr.pygame_surface(False)
         size = surf.get_size()
 
-        newsurf = renpy.display.pgrender.surface(size, False)
+        newsurf = renpy.display.pgrender.surface(size, surf)
 
         px = 2 ** step
 
