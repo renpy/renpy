@@ -371,6 +371,12 @@ class Channel(object):
                 self.playing = True
 
             except:
+
+                # If playing failed, remove topq.filename from self.loop
+                # so we don't keep trying.
+                while topq.filename in self.loop:
+                    self.loop.remove(topq.filename)
+
                 if renpy.config.debug_sound:
                     raise
                 else:
