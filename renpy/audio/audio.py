@@ -286,7 +286,7 @@ class Channel(object):
 
         rv = mcd.get(self.name)
         if rv is None:
-           rv = mcd[self.name] = MusicContext();
+            rv = mcd[self.name] = MusicContext()
 
         return rv
 
@@ -433,8 +433,6 @@ class Channel(object):
                 pss.set_secondary_volume(self.number,
                                          self.context.secondary_volume,
                                          0)
-                
-        self.pan_delay = 0
             
         if not self.queue and self.callback:
             self.callback()

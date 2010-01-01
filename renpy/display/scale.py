@@ -381,7 +381,6 @@ def load_scaling():
 
         set_colorkey = proxy("set_colorkey")
         get_alpha = proxy("get_alpha")
-        get_locked = proxy("get_locked")
         get_locks = proxy("get_locks")
         map_rgb = proxy("map_rgb")
         unmap_rgb = proxy("unmap_rgb")

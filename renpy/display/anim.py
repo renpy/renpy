@@ -76,7 +76,7 @@ class State(object):
     def motion_copy(self, child):
 
         if self.image is not None:
-            child = self.mage
+            child = self.image
 
         return State(self.name, child, *self.atlist)
     

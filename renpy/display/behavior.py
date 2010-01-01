@@ -556,7 +556,7 @@ class Input(renpy.display.text.Text):
             self.content = content
 
             if self.changed:
-                self.change(content)
+                self.changed(content)
                 
         self.editable = editable
                                             

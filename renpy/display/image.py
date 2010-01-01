@@ -46,7 +46,7 @@ class UncachedImage(renpy.display.core.Displayable):
 
         super(UncachedImage, self).__init__(style=style, **properties)
 
-        self.surf = renpy.display.pgrender.image_load(file, hint)
+        self.surf = renpy.display.pgrender.load_image(file, hint)
 
         if scale:
             renpy.display.render.blit_lock.acquire()

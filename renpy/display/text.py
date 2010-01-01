@@ -670,6 +670,9 @@ class Text(renpy.display.core.Displayable):
         # The duration of each pause, or None if the pause is infinite.
         self.pause_lengths = [ ]
         
+        # The width we've been laid out for.
+        self.width = -1
+
         self.update(redraw=False)
 
 
@@ -889,10 +892,10 @@ class Text(renpy.display.core.Displayable):
             
             
     def visit(self):
-       if self.tokens is None:
+        if self.tokens is None:
             self.update()
 
-       return self.children
+        return self.children
 
     
     def layout(self, width, time):

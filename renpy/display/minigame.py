@@ -73,7 +73,7 @@ class Minigame(renpy.display.core.Displayable):
 
         if rv is None:
 
-            font = renpy.display.text.get_font(font, size, bold=bold, italics=italics, underline=underline)
+            font = renpy.display.text.get_font(font, size, bold, italics, underline)
             rv = font.render(text, antialias, color)
             self.mutated_surface(rv)
 

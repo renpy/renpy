@@ -179,7 +179,7 @@ class Cache(object):
             ce = self.cache.get(image, None)
 
             if ce is not None:
-                self.cache.release()
+                self.lock.release()
 
         # Otherwise, we keep the lock, and load the image ourselves.
         if ce is None:
@@ -1251,9 +1251,9 @@ im.matrix(%f, %f, %f, %f, %f.
         h = h * math.pi / 180
         cosVal = math.cos(h)
         sinVal = math.sin(h)
-        lumR = 0.213;
-        lumG = 0.715;
-        lumB = 0.072;
+        lumR = 0.213
+        lumG = 0.715
+        lumB = 0.072
         return matrix(
             lumR+cosVal*(1-lumR)+sinVal*(-lumR),lumG+cosVal*(-lumG)+sinVal*(-lumG),lumB+cosVal*(-lumB)+sinVal*(1-lumB),0,0,
             lumR+cosVal*(-lumR)+sinVal*(0.143),lumG+cosVal*(1-lumG)+sinVal*(0.140),lumB+cosVal*(-lumB)+sinVal*(-0.283),0,0,
