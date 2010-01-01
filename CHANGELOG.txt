@@ -14,7 +14,7 @@ could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)
 
 
-A bug was fixed that caused Pixellate to crash.
+Fixed a bug that caused pixellate to crash.
 
 
 The following numbered bugs were fixed:

@@ -175,6 +175,8 @@ class ATLTransformBase(renpy.object.Object):
     parameters = renpy.ast.ParameterInfo([ ], [ ], None, None) 
     
     def __init__(self, atl, context, parameters):
+
+        super(ATLTransformBase, self).__init__()
         
         if parameters is None:
             parameters = ATLTransformBase.parameters
@@ -366,6 +368,10 @@ class ATLTransformBase(renpy.object.Object):
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
 
+    def __init__(self, loc):
+        super(RawStatement, self).__init__()
+        self.loc = loc
+        
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
     def compile(self, ctx):
@@ -378,6 +384,10 @@ class RawStatement(renpy.object.Object):
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
+
+    def __init__(self, loc):
+        super(Statement, self).__init__()
+        self.loc = loc
 
     # trans is the transform we're working on.
     # st is the time since this statement started executing.
@@ -419,7 +429,7 @@ class RawBlock(RawStatement):
 
     def __init__(self, loc, statements, animation):
 
-        self.loc = loc
+        super(RawBlock, self).__init__(loc)
         
         # A list of RawStatements in this block.
         self.statements = statements
@@ -442,7 +452,7 @@ class RawBlock(RawStatement):
 class Block(Statement):
     def __init__(self, loc, statements):
 
-        self.loc = loc
+        super(Block, self).__init__(loc)
         
         # A list of statements in the block.
         self.statements = statements
@@ -577,7 +587,7 @@ class RawMultipurpose(RawStatement):
     
     def __init__(self, loc):
 
-        self.loc = loc
+        super(RawMultipurpose, self).__init__(loc)
         
         self.warper = None
         self.duration = None
@@ -716,7 +726,9 @@ class RawMultipurpose(RawStatement):
 class RawContainsExpr(RawStatement):
 
     def __init__(self, loc, expr):
-        self.loc = loc
+
+        super(RawContainsExpr, self).__init__(loc)
+
         self.expression = expr
 
     def compile(self, ctx):
@@ -729,7 +741,9 @@ class RawContainsExpr(RawStatement):
 class RawChild(RawStatement):
 
     def __init__(self, loc, child):
-        self.loc = loc
+
+        super(RawChild, self).__init__(loc)
+
         self.children = [ child ]
 
     def compile(self, ctx):
@@ -745,8 +759,9 @@ class RawChild(RawStatement):
 class Child(Statement):
 
     def __init__(self, loc, child, transition):
-        self.loc = loc
 
+        super(Child, self).__init__(loc)
+        
         self.child = renpy.easy.displayable(child)
         self.transition = transition
 
@@ -775,7 +790,9 @@ class Child(Statement):
 class Interpolation(Statement):
 
     def __init__(self, loc, warper, duration, properties, revolution, circles, splines):
-        self.loc = loc
+
+        super(Interpolation, self).__init__(loc)
+
         self.warper = warper
         self.duration = duration
         self.properties = properties
@@ -899,7 +916,9 @@ class Interpolation(Statement):
 class RawRepeat(RawStatement):
 
     def __init__(self, loc, repeats):
-        self.loc = loc
+
+        super(RawRepeat, self).__init__(loc)
+
         self.repeats = repeats
 
     def compile(self, ctx):
@@ -916,7 +935,9 @@ class RawRepeat(RawStatement):
 class Repeat(Statement):
 
     def __init__(self, loc, repeats):
-        self.loc = loc
+
+        super(Repeat, self).__init__(loc)
+
         self.repeats = repeats
 
     def execute(self, trans, st, state, event):
@@ -928,7 +949,8 @@ class Repeat(Statement):
 class RawParallel(RawStatement):
 
     def __init__(self, loc, block):
-        self.loc = loc
+
+        super(RawParallel, self).__init__(loc)
         self.blocks = [ block ]
 
     def compile(self, ctx):
@@ -940,9 +962,9 @@ class RawParallel(RawStatement):
     
         
 class Parallel(Statement):
-
+    
     def __init__(self, loc, blocks):
-        self.loc = loc
+        super(Parallel, self).__init__(loc)
         self.blocks = blocks
 
     def execute(self, trans, st, state, event):
@@ -989,7 +1011,8 @@ class Parallel(Statement):
 class RawChoice(RawStatement):
 
     def __init__(self, loc, chance, block):
-        self.loc = loc
+        super(RawChoice, self).__init__(loc)
+
         self.choices = [ (chance, block) ]
 
     def compile(self, ctx):
@@ -1003,7 +1026,9 @@ class RawChoice(RawStatement):
 class Choice(Statement):
 
     def __init__(self, loc, choices):
-        self.loc = loc
+
+        super(Choice, self).__init__(loc)
+
         self.choices = choices
 
     def execute(self, trans, st, state, event):
@@ -1044,7 +1069,8 @@ class Choice(Statement):
 class RawTime(RawStatement):
 
     def __init__(self, loc, time):
-        self.loc = loc
+
+        super(RawTime, self).__init__(loc)
         self.time = time
 
     def compile(self, ctx):
@@ -1054,7 +1080,8 @@ class RawTime(RawStatement):
 class Time(Statement):
 
     def __init__(self, loc, time):
-        self.loc = loc
+        super(Time, self).__init__(loc)
+
         self.time = time
 
     def execute(self, trans, st, state, event):
@@ -1066,7 +1093,8 @@ class Time(Statement):
 class RawOn(RawStatement):
 
     def __init__(self, loc, name, block):
-        self.loc = loc
+        super(RawOn, self).__init__(loc)
+
         self.handlers = { name : block }
 
     def compile(self, ctx):
@@ -1087,13 +1115,13 @@ class RawOn(RawStatement):
 class On(Statement):
 
     def __init__(self, loc, handlers):
-        self.loc = loc
+        super(On, self).__init__(loc)
+
         self.handlers = handlers
     
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
 
         # If it's our first time through, start in the start state.
         if state is None:
@@ -1166,7 +1194,8 @@ class On(Statement):
 class RawEvent(RawStatement):
 
     def __init__(self, loc, name):
-        self.loc = loc
+        super(RawEvent, self).__init__(loc)
+
         self.name = name
 
     def compile(self, ctx):
@@ -1176,7 +1205,8 @@ class RawEvent(RawStatement):
 class Event(Statement):
 
     def __init__(self, loc, name):
-        self.loc = loc
+        super(Event, self).__init__(loc)
+
         self.name = name
 
     def execute(self, trans, st, state, event):
@@ -1186,7 +1216,8 @@ class Event(Statement):
 class RawFunction(RawStatement):
 
     def __init__(self, loc, expr):
-        self.loc = loc
+        super(RawFunction, self).__init__(loc)
+
         self.expr = expr
 
     def compile(self, ctx):
@@ -1196,7 +1227,8 @@ class RawFunction(RawStatement):
 class Function(Statement):
     
     def __init__(self, loc, function):
-        self.loc = loc
+        super(Function, self).__init__(loc)
+
         self.function = function
 
     def execute(self, trans, st, state, event):

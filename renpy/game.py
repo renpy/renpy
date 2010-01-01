@@ -42,6 +42,9 @@ searchpath = [ ]
 # The options that were read off the command line.
 options = None
 
+# The game's script.
+script = None
+
 # A shallow copy of the store dictionary made at the end of the init
 # phase. If a key in here points to the same value here as it does in
 # the store, it is not saved.

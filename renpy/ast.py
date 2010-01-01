@@ -186,6 +186,7 @@ class Node(object):
 
         self.filename, self.linenumber  = loc
         self.name = None
+        self.next = None
         
     def diff_info(self):
         """
