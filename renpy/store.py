@@ -83,7 +83,10 @@ class _Config(object):
             raise Exception('Deleting configuration variables is not supported.')
         else:
             delattr(renpy.config, name)
-        
+
+# The styles object.
+style = None
+            
 config = _Config()
 library = config
 
@@ -291,7 +294,14 @@ def say(who, what, interact=True):
     who = Character(who, kind=name_only)
     who(what, interact=interact)
 
+# The default narrator.
+narrator = None
 
+# Used by renpy.reshow_say.
+_last_say_who = None
+_last_say_what = None
+
+    
 __name__ = 'store'
 
 import sys

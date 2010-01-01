@@ -36,6 +36,8 @@ class PredictInfo(renpy.object.Object):
 
     def __init__(self, pi=None):
 
+        super(PredictInfo, self).__init__()
+        
         if pi:
             self.images = renpy.display.core.ImagePredictInfo(pi.images)
         else:
@@ -82,6 +84,8 @@ class Context(renpy.object.Object):
             
     def __init__(self, rollback, context=None):
 
+        super(Context, self).__init__()
+        
         self.current = None
         self.call_location_stack = [ ]
         self.return_stack = [ ]
@@ -253,7 +257,7 @@ class Context(renpy.object.Object):
         """
 
         if not self.current:
-            raise "Context not capable of executing Ren'Py code."
+            raise Exception("Context not capable of executing Ren'Py code.")
 
         if return_site is None:
             return_site = self.current
@@ -345,8 +349,7 @@ class Context(renpy.object.Object):
                     print "While predicting images."
 
                 # We accept that sometimes prediction won't work.
-                pass
-            
+                    
         self.predict_info = old_predict_info
 
             

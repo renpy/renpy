@@ -81,6 +81,15 @@ class ParseError(Exception):
     def __unicode__(self):
         return self.message
     
+# Something to hold the expected line number.
+class LineNumberHolder(object):
+    """
+    Holds the expected line number.
+    """
+    
+    def __init__(self):
+        self.line = 0
+
 def unicode_filename(fn):
     """
     Converts the supplied filename to unicode.
@@ -377,7 +386,16 @@ class Lexer(object):
         self.eob = False
         
         self.line = -1
-        
+
+        # These are set by advance.
+        self.filename = ""
+        self.text = ""
+        self.number = 0
+        self.subblock = [ ]
+        self.pos = 0
+        self.word_cache_pos = -1
+        self.word_cache_newpos = -1
+        self.word_cache = ""
 
     def advance(self):
         """
@@ -716,12 +734,12 @@ class Lexer(object):
         extending to a colon.
         """
 
-        rv = self.delimited_python(':')
+        pe = self.delimited_python(':')
 
-        if not rv:
+        if not pe:
             self.error("expected python_expression")
 
-        rv = renpy.ast.PyExpr(rv.strip(), rv.filename, rv.linenumber)
+        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber)
 
         return rv
         
@@ -867,10 +885,7 @@ class Lexer(object):
 
         rv = [ ]
 
-        # Something to hold the expected line number.
-        class Object(object):
-            pass
-        o = Object()
+        o = LineNumberHolder()
         o.line = self.number
 
         def process(block, indent):
@@ -1211,7 +1226,7 @@ def parse_parameters(l):
             parameters.append((name, default))
 
             if add_positional:
-               positional.append(name) 
+                positional.append(name) 
 
         if l.match(r'\)'):
             break
@@ -1534,7 +1549,7 @@ def parse_statement(l):
         rv = ast.Define(loc, name, expr)
 
         if not l.init:
-           rv = ast.Init(loc, [ rv ], priority)        
+            rv = ast.Init(loc, [ rv ], priority)        
         
         l.advance()
 

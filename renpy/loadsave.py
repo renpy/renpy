@@ -407,6 +407,8 @@ def MultiPersistent(name):
     except:
         pass
 
+    fn = "" # prevent a warning from happening.
+
     # Find the first file that actually exists. Otherwise, use the last
     # file.
     for fn in files:

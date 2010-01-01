@@ -42,7 +42,8 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
         rv.append(renpy.game.style.say_who_window.background)
 
     if image:
-        rv.append(renpy.display.im.image(who, True))
+        if image != "<Dynamic>":
+            rv.append(renpy.display.im.image(who, True))
 
     if side_image:
         rv.append(renpy.display.im.image(side_image, True))
@@ -570,9 +571,6 @@ class ADVCharacter(object):
         
         
     def predict(self, what):
-
-        if self.dynamic and self.image:
-            return [ ]
 
         if self.dynamic:
             who = "<Dynamic>"

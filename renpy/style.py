@@ -647,6 +647,7 @@ class Style(object):
         else:
             self.name = ( name, )
 
+        self.parent = None
         self.set_parent(parent)
             
         self.indexed = None

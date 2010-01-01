@@ -85,6 +85,10 @@ class PyExpr(unicode):
         'linenumber'
         ]
 
+    def __init__(self, s, filename, linenumber):
+        self.filename = filename
+        self.linenumber = linenumber
+    
     def __new__(cls, s, filename, linenumber):
         self = unicode.__new__(cls, s)
         self.filename = filename

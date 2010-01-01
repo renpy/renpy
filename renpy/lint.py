@@ -126,7 +126,7 @@ def check_file(what, fn):
     check_file_cache[fn] = True
 
     try:
-       renpy.loader.transfn(fn)
+        renpy.loader.transfn(fn)
     except:
         return
 

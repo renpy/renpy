@@ -106,6 +106,11 @@ class Script(object):
         self.all_stmts = [ ]
         self.all_pycode = [ ]
 
+        # Bytecode caches.
+        self.bytecode_oldcache = { }
+        self.bytecode_newcache = { }
+        self.bytecode_dirty = False
+
         # Init the bytecode compiler.
         self.init_bytecode()
         
@@ -261,8 +266,7 @@ class Script(object):
                 data, stmts = loads(f.read().decode('zlib'))
             except:
                 raise
-                return None, None
-
+            
             if not isinstance(data, dict):
                 return None, None
 
@@ -387,10 +391,6 @@ class Script(object):
         """
         Init/Loads the bytecode cache.
         """
-
-        self.bytecode_oldcache = { }
-        self.bytecode_newcache = { }
-        self.bytecode_dirty = False
 
         # Load the oldcache.
         try:

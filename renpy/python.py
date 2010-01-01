@@ -309,6 +309,8 @@ class RevertableList(list):
     __getslice__ = wrapper(list.__getslice__)
     __mul__ = wrapper(list.__mul__)
 
+    del wrapper
+    
     def get_rollback(self):
         return self[:]
 
@@ -340,6 +342,8 @@ class RevertableDict(dict):
     values = list_wrapper(dict.values)
     items = list_wrapper(dict.items)
     
+    del list_wrapper
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)
@@ -370,8 +374,6 @@ class RevertableSet(sets.Set):
     symmetric_difference_update = mutator(sets.Set.symmetric_difference_update)
     union_update = mutator(sets.Set.union_update)
     update = mutator(sets.Set.update)
-
-    # TODO: Wrap all of the methods that can return normal sets.
 
     def wrapper(method):
         def newmethod(*args, **kwargs):
@@ -494,6 +496,9 @@ class Rollback(renpy.object.Object):
     """
 
     def __init__(self):
+
+        super(Rollback, self).__init__()
+
         self.context = renpy.game.contexts[0].rollback_copy()
         self.objects = [ ]
         self.store = [ ]
@@ -542,7 +547,8 @@ class Rollback(renpy.object.Object):
             else:
                 if renpy.config.debug:
                     print "Removing unreachable:", o
-                pass
+
+                    pass
                 
         self.objects = new_objects
 
@@ -598,16 +604,19 @@ class RollbackLog(renpy.object.Object):
     nosave = [ 'old_store', 'mutated' ]
 
     def __init__(self):
+
+        super(RollbackLog, self).__init__()
+
         self.log = [ ]
         self.current = None
         self.mutated = { }
         self.ever_been_changed = { }
         self.rollback_limit = 0
         self.forward = [ ]
-
+        self.old_store = { }
+        
         # Did we just do a roll forward?
         self.rolled_forward = False
-
         
         # Reset the RNG on the creation of a new game.
         rng.reset()

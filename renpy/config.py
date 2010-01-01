@@ -401,6 +401,18 @@ rtl = False
 # A callback for file opening.
 file_open_callback = None
 
+# The size of screenshot thumbnails. (Redefined in common/)
+thumbnail_width = None
+thumbnail_height = None
+
+# The end game transition.
+end_game_transition = None
+
+# Various directories.
+gamedir = None
+basedir = None
+renpy_base = None
+
 del renpy
 
 def init():
