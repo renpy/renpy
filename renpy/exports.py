@@ -1033,7 +1033,7 @@ def launch_editor(filenames, line=1, transient=0):
     cmd = cmd.replace('""', '')
 
     try:
-        subprocess.Popen(split_args(cmd))
+        subprocess.Popen(split_args(cmd)) # E1101
         return True
     except:
         if renpy.config.debug:
@@ -1244,19 +1244,22 @@ def game_menu(screen=None):
 def shown_window():
     renpy.game.context().scene_lists.shown_window = True
 
+class placement(renpy.store.object):
+    def __init__(self, p):
+        super(placement, self).__init__()
+
+        self.xpos = p[0]
+        self.ypos = p[1]
+        self.xanchor = p[2]
+        self.yanchor = p[3]
+        self.xoffset = p[4]
+        self.yoffset = p[5]
+        self.subpixel = p[6]
+
 def get_placement(d):
-    o = renpy.store.object()
     p = d.get_placement()
 
-    o.xpos = p[0]
-    o.ypos = p[1]
-    o.xanchor = p[2]
-    o.yanchor = p[3]
-    o.xoffset = p[4]
-    o.yoffset = p[5]
-    o.subpixel = p[6]
-
-    return o
+    return placement(p)
     
 # User-Defined Displayable stuff.
 

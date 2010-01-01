@@ -102,7 +102,7 @@ def add(w, make_current=False, once=False):
     elif current is None:
         pass
     else:
-        current.add(atw)
+        current.add(atw) # E1103
 
     add_tag = None
         

@@ -51,10 +51,10 @@ class Object(object):
         self.__dict__.update(new_dict)
         
         if version != self.__version__:
-            self.after_upgrade(version)
+            self.after_upgrade(version) # E1101
             
         if self.after_setstate:
-            self.after_setstate()
+            self.after_setstate() # E1102
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.

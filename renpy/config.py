@@ -416,6 +416,6 @@ renpy_base = None
 del renpy
 
 def init():
-    import renpy
+    import renpy # W0404
     global style_properties
     style_properties = renpy.style.style_properties

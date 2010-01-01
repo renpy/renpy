@@ -85,10 +85,6 @@ class PyExpr(unicode):
         'linenumber'
         ]
 
-    def __init__(self, s, filename, linenumber):
-        self.filename = filename
-        self.linenumber = linenumber
-    
     def __new__(cls, s, filename, linenumber):
         self = unicode.__new__(cls, s)
         self.filename = filename
@@ -96,7 +92,7 @@ class PyExpr(unicode):
         return self
 
     def __getnewargs__(self):
-        return (unicode(self), self.filename, self.linenumber)
+        return (unicode(self), self.filename, self.linenumber) # E1101
     
     
 class PyCode(object):
@@ -271,7 +267,7 @@ class Node(object):
         """
 
         rv = Scry()
-        rv._next = self.next
+        rv._next = self.next # W0201
         return rv
 
 def say_menu_with(expression, callback):
@@ -339,7 +335,7 @@ class Say(Node):
 
         what = self.what
         if renpy.config.say_menu_text_filter:
-            what = renpy.config.say_menu_text_filter(what)
+            what = renpy.config.say_menu_text_filter(what) # E1102
             
         say_menu_with(self.with_, renpy.game.interface.set_transition)
         renpy.exports.say(who, what, interact=getattr(self, 'interact', True))
@@ -377,11 +373,11 @@ class Say(Node):
 
     def scry(self):
         rv = Node.scry(self)
-        rv.interacts = True
+        rv.interacts = True # W0201
         return rv
     
 # Copy the descriptor.
-setattr(Say, "with", Say.with_)
+setattr(Say, "with", Say.with_) # E1101
 
 class Init(Node):
 
@@ -1159,7 +1155,7 @@ class Menu(Node):
         rv.interacts = True
         return rv
     
-setattr(Menu, "with", Menu.with_)
+setattr(Menu, "with", Menu.with_) # E1101
 
 
 # Goto is considered harmful. So we decided to name it "jump"

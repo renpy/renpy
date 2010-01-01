@@ -629,7 +629,7 @@ class Style(object):
             if isinstance(parent, basestring):
                 parent = ( parent, )
             if isinstance(parent, Style):
-                parent = parent.name
+                parent = parent.name # E1103
 
                 if parent is None:
                     raise Exception("The parent of a style must be a named style.")

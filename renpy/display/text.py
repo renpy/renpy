@@ -99,7 +99,20 @@ class TextStyle(object):
     def __init__(self, source=None):
         if source is not None:
             vars(self).update(vars(source))
+        else:
+            self.font = ""
+            self.size = 0
+            self.bold = False
+            self.italic = False
+            self.underline = False
+            self.strikethrough = False
+            self.color = None
+            self.black_color = None
+            self.hyperlink = None
 
+            # The cached font.
+        self.f = None
+            
         # Width cache.
         self.wcache = { }
 

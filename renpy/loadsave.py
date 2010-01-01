@@ -421,7 +421,7 @@ def MultiPersistent(name):
     except:
         rv = _MultiPersistent()
 
-    rv._filename = fn
+    rv._filename = fn # W0201
     return rv
 
 

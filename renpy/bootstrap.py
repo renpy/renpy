@@ -54,7 +54,7 @@ def extra_imports():
     import pygame.locals
     import pygame.color
     import pygame.colordict; pygame.colordict
-    import posixpath; posixpath
+    import posixpath; posixpath # W0403
     import ctypes
     import ctypes.wintypes; ctypes.wintypes
     import EasyDialogs; EasyDialogs
@@ -90,15 +90,15 @@ def popen_del(self, _deadstate=sys.maxint):
     self.poll(_deadstate=_deadstate)
 
     try:
-        import subprocess
-        if self.returncode is None and subprocess._active is not None:
-            subprocess._active.append(self)
+        import subprocess # W0403
+        if self.returncode is None and subprocess._active is not None: # E1101
+            subprocess._active.append(self) # E1101
     except:
         pass
             
 def bootstrap(renpy_base):
 
-    global renpy
+    global renpy # W0602
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
     
@@ -226,12 +226,12 @@ def bootstrap(renpy_base):
 
     # Show the presplash.
     if not options.lint and not options.compile and not options.version and not options.rmpersistent:
-        import renpy.display.presplash
+        import renpy.display.presplash # W0404
         renpy.display.presplash.start(gamedir)
 
     # Fix an exception thrown by garbage collection.
-    import subprocess
-    subprocess.Popen.__del__ = popen_del
+    import subprocess # W0403
+    subprocess.Popen.__del__ = popen_del # E1101
 
     # If we're on a mac, install our own os.start.
     if sys.platform == "darwin":

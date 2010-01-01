@@ -327,7 +327,7 @@ def display_say(show_function,
             c("show_done", interact=interact, type=type, **cb_args)
 
         if behavior and afm:
-            behavior.set_afm_length(what_text.get_simple_length() - slow_start)
+            behavior.set_afm_length(what_text.get_simple_length() - slow_start) # E1103
 
         if interact:
             

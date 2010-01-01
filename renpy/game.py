@@ -116,31 +116,31 @@ class Preferences(object):
     Stores preferences that will one day be persisted.
     """
     def reinit(self):
-        self.fullscreen = False
-        self.skip_unseen = False
-        self.text_cps = 0
-        self.afm_time = 0
-        self.afm_enable = True
+        self.fullscreen = False # W0201
+        self.skip_unseen = False # W0201
+        self.text_cps = 0 # W0201
+        self.afm_time = 0 # W0201
+        self.afm_enable = True # W0201
         
         
         # These will be going away soon.
-        self.sound = True
-        self.music = True
+        self.sound = True # W0201
+        self.music = True # W0201
 
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
         # 0 - No transitions.
-        self.transitions = 2
+        self.transitions = 2 # W0201
 
-        self.skip_after_choices = False
+        self.skip_after_choices = False # W0201
 
         # Mixer channel info.
-        self.volumes = { }
-        self.mute = { }
+        self.volumes = { } # W0201
+        self.mute = { } # W0201
 
         # Joystick mappings.
-        self.joymap = dict(
+        self.joymap = dict( # W0201
             joy_left="Axis 0.0 Negative",
             joy_right="Axis 0.0 Positive",
             joy_up="Axis 0.1 Negative",
@@ -174,7 +174,7 @@ class RestartException(Exception):
     been changed, and therefore execution needs to be restarted.
     """
 
-    def __init__(self, contexts, label):
+    def __init__(self, contexts, label): # W0231
         self.contexts = contexts
         self.label = label
     
@@ -184,7 +184,7 @@ class FullRestartException(Exception):
     destroying the store and config and so on.
     """
 
-    def __init__(self, reason="end_game"):
+    def __init__(self, reason="end_game"): # W0231
         self.reason = reason
 
     

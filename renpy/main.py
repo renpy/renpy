@@ -131,7 +131,7 @@ def main():
     renpy.config.searchpath = [ renpy.config.gamedir ]
 
     # Find the common directory.
-    commondir = __main__.path_to_common(renpy.config.renpy_base)
+    commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101
 
     if os.path.isdir(commondir):
         renpy.config.searchpath.append(commondir)
@@ -179,7 +179,7 @@ def main():
 
     # Find the save directory.
     if renpy.config.savedir is None:
-        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir)
+        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101
 
     if renpy.game.options.savedir:
         renpy.config.savedir = renpy.game.options.savedir

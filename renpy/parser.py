@@ -739,7 +739,7 @@ class Lexer(object):
         if not pe:
             self.error("expected python_expression")
 
-        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber)
+        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber) # E1101
 
         return rv
         
@@ -1825,7 +1825,7 @@ def report_parse_errors():
         if renpy.config.editor:
             renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
         else:
-            os.startfile('errors.txt')
+            os.startfile('errors.txt') # E1101
     except:
         pass
         

@@ -74,7 +74,7 @@ class _Config(object):
             raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value)
+            renpy.store._set_script_version(value) # E1101
         
         cvars[name] = value
 

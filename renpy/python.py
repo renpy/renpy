@@ -299,9 +299,9 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method):
-        def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs))
+    def wrapper(method): # E0213
+        def newmethod(*args, **kwargs): 
+            return RevertableList(method(*args, **kwargs)) # E1102
 
         return newmethod
 
@@ -332,9 +332,9 @@ class RevertableDict(dict):
     popitem = mutator(dict.popitem)
     setdefault = mutator(dict.setdefault)
 
-    def list_wrapper(method):
+    def list_wrapper(method): # E0213
         def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs))
+            return RevertableList(method(*args, **kwargs)) # E1102
 
         return newmethod
 
@@ -375,9 +375,9 @@ class RevertableSet(sets.Set):
     union_update = mutator(sets.Set.union_update)
     update = mutator(sets.Set.update)
 
-    def wrapper(method):
+    def wrapper(method): # E0213
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)
+            rv = method(*args, **kwargs) # E1102
             if isinstance(rv, sets.Set):
                 return RevertableSet(rv)
             else:
