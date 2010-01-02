@@ -142,6 +142,8 @@ class MusicContext(renpy.python.RevertableObject):
 
     def __init__(self):
 
+        super(MusicContext, self).__init__()
+        
         # The time this channel was last ordered panned.
         self.pan_time = None
 
@@ -393,7 +395,7 @@ class Channel(object):
                 
         # Queue empty callback.
         if do_callback and self.callback:
-            self.callback()
+            self.callback() # E1102
 
     def dequeue(self, even_tight=False):
         """
@@ -435,7 +437,7 @@ class Channel(object):
                                          0)
             
         if not self.queue and self.callback:
-            self.callback()
+            self.callback() # E1102
 
 
     def fadeout(self, secs):
@@ -598,7 +600,6 @@ def init():
 def quit():
 
     global pcm_ok
-    global midi_ok
     global mix_ok
 
     if not pcm_ok:

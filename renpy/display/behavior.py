@@ -616,6 +616,8 @@ adj_registered = { }
 class Adjustment(renpy.object.Object):
 
     def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None):
+        super(Adjustment, self).__init__()
+
         self._value = value
         self._range = range
         self._page = page
@@ -701,11 +703,11 @@ class Bar(renpy.display.core.Displayable):
     def after_upgrade(self, version):
 
         if version < 1:
-            self.adjustment = Adjustment(self.range, self.value, changed=self.changed)
+            self.adjustment = Adjustment(self.range, self.value, changed=self.changed) # E1101
             self.adjustment.register(self)
-            del self.range
-            del self.value
-            del self.changed
+            del self.range # E1101
+            del self.value # E1101 
+            del self.changed # E1101
     
     def __init__(self,
                  range=None,
@@ -733,6 +735,12 @@ class Bar(renpy.display.core.Displayable):
 
         self.adjustment = adjustment
         self.focusable = adjustment.adjustable
+
+        # These are set when we are first rendered.
+        self.thumb_dim = 0
+        self.height = 0
+        self.width = 0
+        self.hidden = False
         
     def visit(self):
         return [ self.style.fore_bar, self.style.aft_bar, self.style.thumb, self.style.thumb_shadow ]

@@ -122,7 +122,7 @@ class Container(renpy.display.core.Displayable):
         else:
             return
 
-        self.children.pop(i)
+        self.children.pop(i) # W0631
         self.offsets = self._list_type()
 
         if self.children:
@@ -430,7 +430,7 @@ class MultiBox(Container):
         # The scene list for this widget.
         self.scene_list = None
 
-    def add(self, widget, start_time=None, anim_time=None):
+    def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
         self.anim_times.append(anim_time)
@@ -476,7 +476,7 @@ class MultiBox(Container):
             if layout is None:
                 layout = self.default_layout
 
-            self.layout = layout
+            self.layout = layout # W0201
 
         else:
             layout = self.layout
@@ -656,6 +656,9 @@ def Fixed(**properties):
 class SizeGroup(renpy.object.Object):
 
     def __init__(self):
+
+        super(SizeGroup, self).__init__()
+        
         self.members = [ ]
         self._width = None
         self.computing_width = False
@@ -803,7 +806,7 @@ class Window(Container):
 
         self.offsets = [ offsets ]
 
-        self.window_size = width, height
+        self.window_size = width, height # W0201
 
         return rv
 
@@ -1076,7 +1079,7 @@ class Viewport(Container):
             self.xadjustment.change(self.xadjustment.value - dx)
             self.yadjustment.change(self.yadjustment.value - dy)
 
-            self.drag_position = (x, y)
+            self.drag_position = (x, y) # W0201
             
             if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
                 renpy.display.focus.set_grab(None)
@@ -1168,10 +1171,10 @@ class Side(Container):
                 else:
                     return 0, axis
                 
-            self.left_space, width = spacer('tl', 'l', 'bl', width)
-            self.right_space, width = spacer('tr', 'r', 'br', width)
-            self.top_space, height = spacer('tl', 't', 'tr', height)
-            self.bottom_space, height = spacer('bl', 'b', 'br', height)
+            self.left_space, width = spacer('tl', 'l', 'bl', width) # W0201
+            self.right_space, width = spacer('tr', 'r', 'br', width) # W0201
+            self.top_space, height = spacer('tl', 't', 'tr', height) # W0201
+            self.bottom_space, height = spacer('bl', 'b', 'br', height) # W0201
             
             # The sizes of the various borders.
             left = 0
@@ -1201,13 +1204,13 @@ class Side(Container):
             right, top = sizeit('tr', right, top, right, top)
             right, bottom = sizeit('br', right, bottom, right, bottom)
             
-            self.cwidth = cwidth
-            self.cheight = cheight
+            self.cwidth = cwidth # W0201
+            self.cheight = cheight # W0201
 
-            self.top = top
-            self.bottom = bottom
-            self.left = left
-            self.right = right
+            self.top = top # W0201
+            self.bottom = bottom # W0201
+            self.left = left # W0201
+            self.right = right # W0201
 
         else:
             cwidth = self.cwidth

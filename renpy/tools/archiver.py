@@ -26,7 +26,7 @@
 # but are probably better than nothing.
 
 import sys
-import encodings.zlib_codec; encodings.zlib_codec
+import encodings.zlib_codec; encodings.zlib_codec # E0601
 import random
 import glob
 
@@ -60,7 +60,7 @@ def archive(prefix, files):
 
     key = random.randint(0, 0x7ffffffe)
     
-    padding = "RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n"
+    padding = "RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n" # W0511
 
     archivef.write(padding)
     offset = len(padding)

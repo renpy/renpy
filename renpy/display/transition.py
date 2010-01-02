@@ -53,12 +53,12 @@ class Transition(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
-            return self.new_widget.event(ev, x, y, st)
+            return self.new_widget.event(ev, x, y, st) # E1101
         else:
             return None
 
     def visit(self):
-        return [ self.new_widget, self.old_widget ]
+        return [ self.new_widget, self.old_widget ] # E1101
 
 def null_render(d, width, height, st, at):
 
@@ -490,17 +490,6 @@ class ImageDissolve(Transition):
                     ramp += chr(255 * i / ramplen)
 
         ramp += '\xff' * 256
-
-        old = 0
-        for i in ramp:
-            i = ord(i)
-            if i < old:
-                self.can_fast = False
-                break
-
-            old = i
-        else:
-            self.can_fast = True
 
         if reverse:
             ramp = list(ramp)
@@ -1090,7 +1079,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
     # This calls merge_slide to actually do the merging.
 
     rv = merge_slide(old_widget, new_widget)
-    rv.delay = delay
+    rv.delay = delay # W0201
 
     return rv
 

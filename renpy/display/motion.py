@@ -56,7 +56,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 class TransformState(renpy.object.Object):
 
-    def __init__(self):
+    def __init__(self): # W0231
         self.alpha = 1
         self.rotate = None
         self.zoom = 1

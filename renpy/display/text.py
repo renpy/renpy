@@ -733,12 +733,12 @@ class Text(renpy.display.core.Displayable):
 
         new_tokens = [ ]
         fasts = 0
-        self.no_wait = False
-        self.no_wait_once = False
-        self.no_wait_done = False
 
-        self.pauses = 0
-        self.pause_lengths = [ ]
+        self.no_wait = False # W0201
+        self.no_wait_once = False # W0201
+        self.no_wait_done = False # W0201
+        self.pauses = 0 # W0201
+        self.pause_lengths = [ ] # W0201
         
         for i in self.tokens[0]:
             type, text = i
@@ -829,7 +829,7 @@ class Text(renpy.display.core.Displayable):
             
         # Postprocess the tokens list to create widgets, as necessary.
 
-        self.children = [ ]
+        self.children = [ ] # W0201
         newtokens = [ ]
         
         for tl in self.tokens:
@@ -946,7 +946,7 @@ class Text(renpy.display.core.Displayable):
         tsl[-1].hyperlink = None
         tsl[-1].update()
 
-        self.laidout_hyperlinks = [ ]
+        self.laidout_hyperlinks = [ ] # W0201
         
         # if not self.text:
         #     text = " "
@@ -1158,14 +1158,14 @@ class Text(renpy.display.core.Displayable):
         # Now, we need to go through these lines, to generate the data
         # we need to render text.
 
-        self.laidout = [ ]
-        self.laidout_lineheights = [ ]
-        self.laidout_linewidths = [ ]
-        self.laidout_length = 0
-        self.laidout_start = 0
-        self.laidout_width = self.style.min_width
-        self.laidout_height = 0
-        self.laidout_lines_last = lines_last
+        self.laidout = [ ] # W0201
+        self.laidout_lineheights = [ ] # W0201
+        self.laidout_linewidths = [ ] # W0201
+        self.laidout_length = 0 # W0201
+        self.laidout_start = 0 # W0201
+        self.laidout_width = self.style.min_width # W0201
+        self.laidout_height = 0 # W0201
+        self.laidout_lines_last = lines_last # W0201
         
         # Add something to empty lines.
         for l in linetriples:

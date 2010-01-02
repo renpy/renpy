@@ -123,6 +123,8 @@ class SFont(ImageFont):
                  kerns,
                  charset):
 
+        super(SFont, self).__init__()
+        
         self.filename = filename
         self.spacewidth = spacewidth
         self.default_kern = default_kern
@@ -131,18 +133,18 @@ class SFont(ImageFont):
 
     def load(self):
 
-        self.chars = { }
-        self.width = { }
-        self.advance = { }
-        self.offsets = { }
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
         
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         sw, sh = surf.get_size()
         height = sh
-        self.height = height
-        self.baseline = height
+        self.height = height # W0201
+        self.baseline = height # W0201
         
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -201,6 +203,8 @@ class MudgeFont(ImageFont):
                  default_kern,
                  kerns):
 
+        super(MudgeFont, self).__init__()
+        
         self.filename = filename
         self.xml = xml
         self.spacewidth = spacewidth
@@ -209,10 +213,10 @@ class MudgeFont(ImageFont):
 
     def load(self):
 
-        self.chars = { }
-        self.width = { }
-        self.advance = { }
-        self.offsets = { }
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
         
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
@@ -245,8 +249,8 @@ class MudgeFont(ImageFont):
                         
             height = max(height, h)
         
-        self.height = height
-        self.baseline = height
+        self.height = height # W0201
+        self.baseline = height # W0201
         
         # Create space characters.
         if u' ' not in self.chars:
@@ -293,16 +297,18 @@ def parse_bmfont_line(l):
 class BMFont(ImageFont):
 
     def __init__(self, filename):
+        super(BMFont, self).__init__()
+        
         self.filename = filename
 
     def load(self):
 
-        self.chars = { }
-        self.width = { }
-        self.advance = { }
-        self.offsets = { }
-        self.kerns = { }
-        self.default_kern = 0
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
+        self.kerns = { } # W0201
+        self.default_kern = 0 # W0201
         
         pages = { }
 
@@ -312,8 +318,8 @@ class BMFont(ImageFont):
             kind, args = parse_bmfont_line(l)
             
             if kind == "common":
-                self.height = int(args["lineHeight"])
-                self.baseline = int(args["base"])
+                self.height = int(args["lineHeight"]) # W0201
+                self.baseline = int(args["base"]) # W0201
             elif kind == "page":
                 pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
             elif kind == "char":

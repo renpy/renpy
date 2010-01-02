@@ -32,9 +32,9 @@ class ModuleProxy(object):
         self.__dict__.update(module.__dict__)
 
 opygame = ModuleProxy(pygame)
-opygame.display = ModuleProxy(pygame.display)
-opygame.transform = ModuleProxy(pygame.transform)
-opygame.image = ModuleProxy(pygame.image)
+opygame.display = ModuleProxy(pygame.display) # W0201
+opygame.transform = ModuleProxy(pygame.transform) # W0201
+opygame.image = ModuleProxy(pygame.image) # W0201
 
 
 # Sample surfaces, with and without alpha.
@@ -98,7 +98,7 @@ def surface((width, height), alpha):
         sample = opygame.Surface((2, 2), opygame.SRCALPHA, 32)
         
     surf = Surface((width + 2, height + 2), 0, sample)
-    return surf.subsurface((1, 1, width, height))
+    return surf.subsurface((1, 1, width, height)) # E1101
 
 surface_unscaled = surface
 

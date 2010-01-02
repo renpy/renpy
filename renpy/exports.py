@@ -508,7 +508,7 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator
+        who = renpy.store.narrator # E1101
 
     if isinstance(who, (str, unicode)):
         return renpy.store.predict_say(who, what)
@@ -531,7 +531,7 @@ def say(who, what, interact=True):
     what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator
+        who = renpy.store.narrator # E1101
 
     if isinstance(who, (str, unicode)):
         renpy.store.say(who, what, interact=interact)
@@ -1244,7 +1244,7 @@ def game_menu(screen=None):
 def shown_window():
     renpy.game.context().scene_lists.shown_window = True
 
-class placement(renpy.store.object):
+class placement(renpy.python.RevertableObject):
     def __init__(self, p):
         super(placement, self).__init__()
 

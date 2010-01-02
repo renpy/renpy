@@ -176,9 +176,6 @@ def before_interact(roots):
 # This changes the focus to be the widget contained inside the new
 # focus object.
 def change_focus(newfocus, default=False):
-
-    global argument
-
     rv = None
     
     if grab:

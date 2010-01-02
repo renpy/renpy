@@ -53,9 +53,9 @@ def start(gamedir):
         import sys
 
         if sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
     except:
         pass
             
@@ -92,7 +92,7 @@ def show(fn):
 
     pygame.display.init()
     
-    img = pygame.image.load(fn)
+    img = pygame.image.load(fn, fn)
     screen = pygame.display.set_mode(img.get_size(), pygame.constants.NOFRAME)
     screen.blit(img, (0, 0))
     pygame.display.update()

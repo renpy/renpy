@@ -124,7 +124,7 @@ class SnowBlossomFactory(object):
         self.init()
 
     def init(self):
-        self.starts = [ random.uniform(0, self.start) for i in range(0, self.count) ]
+        self.starts = [ random.uniform(0, self.start) for i in range(0, self.count) ] # W0201
         self.starts.append(self.start)
         self.starts.sort()
     

@@ -100,7 +100,7 @@ class Displayable(renpy.object.Object):
     # Can we change our look in response to transform_events?
     transform_event_responder = False
     
-    def __init__(self, focus=None, default=False, style='default', **properties):
+    def __init__(self, focus=None, default=False, style='default', **properties): # W0231
         self.style = renpy.style.Style(style, properties, heavy=True)
         self.focus_name = focus
         self.default = default
@@ -393,6 +393,8 @@ class ImagePredictInfo(renpy.object.Object):
     
     def __init__(self, ipi=None):
 
+        super(ImagePredictInfo, self).__init__()
+        
         # layer -> (tag -> image name)
         self.images = { }
 
@@ -458,9 +460,10 @@ class SceneLists(renpy.object.Object):
                 
     def __init__(self, oldsl, ipi):
 
+        super(SceneLists, self).__init__()
+        
         # Has a window been shown as part of these scene lists?
         self.shown_window = False
-
         
         # A map from layer name -> list of
         # (key, zorder, show time, animation time, displayable) 
@@ -609,12 +612,11 @@ class SceneLists(renpy.object.Object):
                 # is a transform, and then take the transform state.
 
                 thing = self.transform_state(old_thing, thing)
-                
                     
                 thing.set_transform_event("replace")
                 thing.show() 
                     
-                if zorder == zo:                
+                if zorder == zo: # W0631
                     l[index] = (key, zorder, st, at, thing)
                     return
                 else:
@@ -1335,7 +1337,10 @@ class Interface(object):
         # for contexts outside the current one. This is used to restore those
         # in the case where nothing has changed in the new context.
         self.transition_info_stack = [ ]
-                
+
+        # The time when the event was dispatched.
+        self.event_time = 0
+        
                 
     def take_screenshot(self, scale):
         """

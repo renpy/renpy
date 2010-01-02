@@ -40,7 +40,7 @@ class ReportError(object):
     # In the report method, Ren'Py may be in an ill-defined state.
     def report(self, error_type):
         import os.path
-        import pygame
+        import pygame # W0404
         pygame.display.init()
 
         msg = "Ren'Py has experienced " + error_type + ".\n"
@@ -56,7 +56,7 @@ class ReportError(object):
 
             y += self.font.get_linesize()
             
-        pygame.display.flip()
+        pygame.display.flip() # E1120
 
         pygame.time.set_timer(pygame.USEREVENT + 1, 50)
 

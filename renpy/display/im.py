@@ -440,7 +440,7 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def load(self, unscaled=False):
+    def load(self, unscaled=False): # W0221
         try:
 
             if unscaled:

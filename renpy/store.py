@@ -294,9 +294,6 @@ def say(who, what, interact=True):
     who = Character(who, kind=name_only)
     who(what, interact=interact)
 
-# The default narrator.
-narrator = None
-
 # Used by renpy.reshow_say.
 _last_say_who = None
 _last_say_what = None
