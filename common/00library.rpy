@@ -52,6 +52,9 @@ init -1180 python:
     # Should we automatically define images?
     config.automatic_images = None
 
+    # Prefixes to strip from automatic images.
+    config.automatic_images_strip = [ ]
+    
     # A save to automatically load, if it exists.
     config.auto_load = None
 
@@ -789,6 +792,15 @@ init 1180 python hide:
             name = ( shortfn, )
             for sep in seps:
                 name = tuple(j for i in name for j in i.split(sep))
+
+            # Strip name components.
+            while name:
+                for i in config.automatic_images_strip:
+                    if name[0] == i:
+                        name.pop(0)
+                        break
+                else:
+                    break
                 
             # Only names of 2 components or more.
             if len(name) < 2:
