@@ -9,6 +9,12 @@ beneficial for eastasian languages, where every character is treated
 as a word.
 
 
+The new config.menu_clear_layers variable allows layers to be cleared 
+when entering the game menu. This makes it easier for a layer to have 
+overlay-like things on it when in the game, but not when in the game
+menu.
+
+
 Ren'Py will now ignore music files that do not exist. Previously, it
 could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)

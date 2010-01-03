@@ -54,6 +54,9 @@ init -1180 python:
 
     # A save to automatically load, if it exists.
     config.auto_load = None
+
+    # Layers to clear when entering the menus.
+    config.menu_clear_layers = [ ]
     
     # This is updated to give the user an idea of where a save is
     # taking place.
@@ -528,6 +531,9 @@ label _enter_menu:
         renpy.movie_stop(only_fullscreen=True)
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
+        for i in config.menu_clear_layers:
+            renpy.scene(layer=i)
+        
         renpy.context()._menu = True
         
         # This may be changed, if we are already in the main menu.
