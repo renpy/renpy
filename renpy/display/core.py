@@ -1416,6 +1416,10 @@ class Interface(object):
         self.old_scene = self.compute_scene(scene_lists)        
 
         # Get rid of transient things.
+
+        for i in renpy.config.overlay_layers:
+            scene_lists.clear(i)
+
         scene_lists.replace_transient()
         scene_lists.shown_window = False
 

@@ -28,15 +28,14 @@ could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)
 
 
-
-Fixed a bug that caused pixellate to crash.
-
-
 The following numbered bugs were fixed:
 
-lp:501351 - Displaying a Frame() with tile=True crashes
+* lp:501351 - Displaying a Frame() with tile=True crashes
 
+In addition:
 
+* Fixed a bug that caused pixellate to crash.
+* Fixed a bug that caused the overlay to display twice in some cases.
 
 New in Ren'Py 6.10.1
 --------------------
