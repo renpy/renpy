@@ -80,6 +80,13 @@ class Cache(object):
         # Is the preload_thread alive?
         self.keep_preloading = True
 
+        # A list of images that want to be pinned into memory.
+        self.global_pins = [ ]
+        
+        # A map from image object to surface, only for objects that have
+        # been pinned into memory.
+        self.pin_cache = { }
+
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
         self.preload_thread.setDaemon(True)
@@ -106,6 +113,7 @@ class Cache(object):
     def clear(self):
         self.lock.acquire()
 
+        self.pin_cache = { }
         self.cache = { }
         self.preloads = [ ]
         self.first_preload_in_tick = True
@@ -147,9 +155,21 @@ class Cache(object):
             else:
                 return
         
-        self.lock.acquire()
         self.preloads.append(image)
-        self.lock.release()
+
+    # Called to report that a given image would like to be pinned into memory.
+    def pin_image(self, image):
+        if renpy.config.debug_image_cache:
+            print "IC Request Pin", image
+
+        if not isinstance(image, ImageBase):
+            if renpy.config.debug_image_cache:
+                print "IC Can't pin non image: ", image
+            else:
+                return
+
+        if image not in self.global_pins:            
+            self.global_pins.append(image)
         
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -183,9 +203,13 @@ class Cache(object):
 
         # Otherwise, we keep the lock, and load the image ourselves.
         if ce is None:
-
+            
             try:
-                surf = image.load()
+                if image in self.pin_cache:
+                    surf = self.pin_cache[image]
+                else:
+                    surf = image.load()
+
             except:
                 self.lock.release()
                 raise
@@ -203,23 +227,29 @@ class Cache(object):
             # RLE detection. (ce.size is used to check that we're not
             # 0 pixels big.)
             if id(ce.surf) not in rle_cache and ce.size:
+
                 rle = not renpy.game.less_memory
-                # rle = image.rle
-                surf = ce.surf
                 
                 if rle:
-                    
                     # We must copy the surface, so we have a RLE-specific version.
-                    rle_surf = renpy.display.pgrender.copy_surface(ce.surf)
-                    rle_surf.set_alpha(255, pygame.RLEACCEL)
+
+                    idsurf = id(ce.surf)
+                    
+                    if idsurf in pin_rle_cache:
+                        rle_surf = pin_rle_cache[idsurf]
+                    else:
+                        rle_surf = renpy.display.pgrender.copy_surface(ce.surf)
+                        rle_surf.set_alpha(255, pygame.RLEACCEL)
+
                     renpy.display.render.mutated_surface(rle_surf)
 
-                    rle_cache[id(ce.surf)] = rle_surf
+                    rle_cache[idsurf] = rle_surf
 
                     if renpy.config.debug_image_cache:
                         print "Added to rle cache:", image
-
+                        
             self.lock.release()
+
                         
         # Move it into the current generation. This isn't protected by
         # a lock, so in certain circumstances we could have an
@@ -230,10 +260,11 @@ class Cache(object):
         if ce.time != self.time:
             ce.time = self.time
             self.size_of_current_generation += ce.size
-                            
+
         # Done... return the surface.
         return ce.surf
 
+    
     # This kills off a given cache entry.
     def kill(self, ce):
 
@@ -348,11 +379,40 @@ class Cache(object):
                 self.cleanout()
                 self.lock.release()
 
-        
+            # If we have time, preload pinned images.
+            if self.keep_preloading and not renpy.game.less_memory:
+
+                # Compute the pin worklist.
+                pin_worklist = [ i for i in self.global_pins if i not in self.pin_cache ]
+
+                # For each image in the worklist...                
+                for image in pin_worklist:
+
+                    # If we have normal preloads, break out.
+                    if self.preloads:
+                        break
+
+                    # Otherwise, pin preload the image.
+                    if renpy.config.debug_image_cache:
+                        print "IC Pin Preload", image
+
+                    surf = image.load()
+                        
+                    self.pin_cache[image] = surf
+
+                    rle_surf = renpy.display.pgrender.copy_surface(surf)
+                    rle_surf.set_alpha(255, pygame.RLEACCEL)
+
+                    pin_rle_cache[id(surf)] = rle_surf
+
+
 cache = Cache()
 
 # A map from id(cached surface) to rle version of cached surface.
 rle_cache = { }
+
+# Same thing, for pinned surfaces.
+pin_rle_cache = { }
 
 def free_memory():
     """
@@ -361,7 +421,8 @@ def free_memory():
 
     cache.clear()
     rle_cache.clear()
-
+    pin_rle_cache.clear()
+    
 
 class ImageBase(renpy.display.core.Displayable):
     """

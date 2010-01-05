@@ -1277,6 +1277,11 @@ class Container(renpy.display.core.Displayable, renpy.python.RevertableObject):
 def get_roll_forward():
     return renpy.game.interface.shown_window
 
+def cache_pin(*args):
+    for i in args:
+        renpy.display.im.cache.pin_image(renpy.easy.displayable(i))
+    
+
 # This is a map from a definition to the place where it was
 # defined.
 definitions = collections.defaultdict(list)
