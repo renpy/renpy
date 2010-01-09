@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This extra contains a basic implementation of voice support. Right
 # now, voice is given its own toggle, and can either be turned on or
 # turned off. In the future, we'll probably provide some way of

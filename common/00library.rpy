@@ -1,7 +1,5 @@
-# Copyright 2004-2007 PyTom
-#
-# Please see the LICENSE.txt distributed with Ren'Py for permission to
-# copy and modify.
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
 
 # This file consists of renpy functions that aren't expected to be
 # touched by the user too much. We reserve the _ prefix for names

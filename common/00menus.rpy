@@ -1,7 +1,5 @@
-# Copyright 2008 PyTom
-#
-# Please see the LICENSE.txt distributed with Ren'Py for permission to
-# copy and modify.
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
 
 # Common stuff that's used by the various Ren'Py menus. This includes
 # the default definitions of config.main_menu and config.game_menu, as

@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This file contains warpers that are used by ATL. They need to be defined
 # early, so Ren'Py knows about them when parsing other files.
 

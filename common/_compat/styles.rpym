@@ -1,3 +1,6 @@
+# Copyright 2004-2008 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 init python hide:
 
     style.menu_button = Style(style.button, heavy=True, help='Buttons that are part of the main or game menus.')

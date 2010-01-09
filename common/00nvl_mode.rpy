@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This is an implementation of NVL-mode, which can be used to show
 # dialogue in a fullscreen way, like NVL-style games. Multiple lines
 # of dialogue are shown on the screen at once, whenever a line of

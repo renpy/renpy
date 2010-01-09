@@ -1,7 +1,5 @@
-# Copyright 2004-2008 PyTom
-#
-# Please see the LICENSE.txt distributed with Ren'Py for permission to
-# copy and modify.
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
 
 init -1110 python:
 

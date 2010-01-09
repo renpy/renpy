@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This file contains code that sets up the various mixers, based on how
 # the user sets config.has_music, .has_sound, and .has_voice.
 

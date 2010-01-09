@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This file contains code that creates a few new statements. We'll
 # also describe here the API for defining your own statements.
 #

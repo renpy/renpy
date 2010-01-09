@@ -1,3 +1,6 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This file contains a number of definitions of standard
 # locations and transitions. We've moved them into the common
 # directory so that it's easy for an updated version of all of these
