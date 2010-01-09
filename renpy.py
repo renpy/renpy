@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2007 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
