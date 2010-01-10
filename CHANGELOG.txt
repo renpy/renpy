@@ -16,7 +16,7 @@ menu.
 
 
 The new renpy.cache_pin function pins images into memory, loading them
-as soon as possible and keeping them loaded. [doc]
+as soon as possible and keeping them loaded. 
 
 
 The new config.automatic_images_strip variable can strip out prefixes
@@ -36,6 +36,8 @@ In addition:
 
 * Fixed a bug that caused pixellate to crash.
 * Fixed a bug that caused the overlay to display twice in some cases.
+
+
 
 New in Ren'Py 6.10.1
 --------------------
