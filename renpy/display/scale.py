@@ -292,6 +292,9 @@ def load_scaling():
 
                 w = int(w * factor)
                 h = int(h * factor)
+
+                if isinstance(alpha, ScaledSurface):
+                    alpha = alpha.surface
                 
                 self.surface = pgrender.surface_unscaled((w, h), alpha)
                               
