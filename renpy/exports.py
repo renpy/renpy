@@ -1278,8 +1278,37 @@ def get_roll_forward():
     return renpy.game.interface.shown_window
 
 def cache_pin(*args):
+    
+    new_pins = renpy.python.RevertableSet()
+
     for i in args:
-        renpy.display.im.cache.pin_image(renpy.easy.displayable(i))
+
+        im = renpy.easy.displayable(i)
+
+        if not isinstance(im, renpy.display.im.ImageBase):
+            raise Exception("Cannot pin non-image-manipulator %r" % im)
+
+        new_pins.add(im)
+
+    renpy.store._cache_pin_set = renpy.store._cache_pin_set | new_pins
+
+
+def cache_unpin(*args):
+    
+    new_pins = renpy.python.RevertableSet()
+
+    for i in args:
+
+        im = renpy.easy.displayable(i)
+
+        if not isinstance(im, renpy.display.im.ImageBase):
+            raise Exception("Cannot pin non-image-manipulator %r" % im)
+
+        new_pins.add(im)
+
+    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
+
+
     
 
 # This is a map from a definition to the place where it was

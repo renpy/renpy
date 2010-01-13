@@ -80,9 +80,6 @@ class Cache(object):
         # Is the preload_thread alive?
         self.keep_preloading = True
 
-        # A list of images that want to be pinned into memory.
-        self.global_pins = [ ]
-        
         # A map from image object to surface, only for objects that have
         # been pinned into memory.
         self.pin_cache = { }
@@ -156,20 +153,6 @@ class Cache(object):
                 return
         
         self.preloads.append(image)
-
-    # Called to report that a given image would like to be pinned into memory.
-    def pin_image(self, image):
-        if renpy.config.debug_image_cache:
-            print "IC Request Pin", image
-
-        if not isinstance(image, ImageBase):
-            if renpy.config.debug_image_cache:
-                print "IC Can't pin non image: ", image
-            else:
-                return
-
-        if image not in self.global_pins:            
-            self.global_pins.append(image)
         
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -371,7 +354,14 @@ class Cache(object):
 
                 try:
                     image = self.preloads.pop(0)                    
-                    self.get(image)
+
+                    if image not in preload_blacklist:
+
+                        try:
+                            self.get(image)
+                        except:
+                            preload_blacklist.add(image)
+                        
                 except:
                     pass
                     
@@ -382,12 +372,29 @@ class Cache(object):
             # If we have time, preload pinned images.
             if self.keep_preloading and not renpy.game.less_memory:
 
-                # Compute the pin worklist.
-                pin_worklist = [ i for i in self.global_pins if i not in self.pin_cache ]
+                workset = set(renpy.store._cache_pin_set)
 
+                # Remove things that are not in the workset from the pin cache,
+                # and remove things that are in the workset from pin cache.  
+                for i in self.pin_cache.keys():
+
+                    if i in workset:
+                        workset.remove(i)
+                    else:
+                        if renpy.config.debug_image_cache:
+                            print "IC Pin Clear", image
+
+                        del self.pin_cache[i]
+                        
+                        if i in pin_rle_cache:
+                            del pin_rle_cache[i]
+                            
                 # For each image in the worklist...                
-                for image in pin_worklist:
+                for image in workset:
 
+                    if image in preload_blacklist:
+                        continue
+                    
                     # If we have normal preloads, break out.
                     if self.preloads:
                         break
@@ -396,16 +403,20 @@ class Cache(object):
                     if renpy.config.debug_image_cache:
                         print "IC Pin Preload", image
 
-                    surf = image.load()
+                    try:
+                        surf = image.load()
+
+                        self.pin_cache[image] = surf
+
+                        rle_surf = renpy.display.pgrender.copy_surface(surf)
+                        rle_surf.set_alpha(255, pygame.RLEACCEL)
+
+                        pin_rle_cache[id(surf)] = rle_surf
+
+                    except:
+                        preload_blacklist.add(image)
+
                         
-                    self.pin_cache[image] = surf
-
-                    rle_surf = renpy.display.pgrender.copy_surface(surf)
-                    rle_surf.set_alpha(255, pygame.RLEACCEL)
-
-                    pin_rle_cache[id(surf)] = rle_surf
-
-
 cache = Cache()
 
 # A map from id(cached surface) to rle version of cached surface.
@@ -413,6 +424,9 @@ rle_cache = { }
 
 # Same thing, for pinned surfaces.
 pin_rle_cache = { }
+
+# Images that we tried, and failed, to preload.
+preload_blacklist = set()
 
 def free_memory():
     """

@@ -298,6 +298,8 @@ def say(who, what, interact=True):
 _last_say_who = None
 _last_say_what = None
 
+# Used to store the things pinned into the cache.
+_cache_pin_set = set()
     
 __name__ = 'store'
 

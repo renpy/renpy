@@ -62,6 +62,7 @@ def interact(type='misc', **kwargs):
     if current_stack:
         raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
 
+    
     if at_stack:
         raise Exception("ui.interact called with non-empty at stack.")
     
