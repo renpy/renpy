@@ -29,6 +29,13 @@ could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)
 
 
+Previously, it was impossible to pass an arguments list to a call
+expression. Now, we allow the pass keyword to be used to distinguish 
+the two, using code like:
+
+call expression foo pass (bar, baz)
+
+
 The following numbered bugs were fixed:
 
 * lp:501351 - Displaying a Frame() with tile=True crashes
@@ -38,7 +45,7 @@ In addition:
 
 * Fixed a bug that caused pixellate to crash.
 * Fixed a bug that caused the overlay to display twice in some cases.
-
+* Fix an infinite loop that could rarely occur when rolling back or saving.
 
 
 New in Ren'Py 6.10.1

@@ -1425,10 +1425,15 @@ def parse_statement(l):
         if l.keyword('expression'):
             expression = True
             target = l.require(l.simple_expression)
+
         else:
             expression = False            
             target = l.require(l.name)
 
+        # Optional pass, to let someone write:
+        # call expression foo pass (bar, baz)
+        l.keyword('pass')
+            
         arguments = parse_arguments(l)
             
         rv = [ ast.Call(loc, target, expression, arguments) ]
