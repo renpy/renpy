@@ -16,7 +16,8 @@ menu.
 
 
 The new renpy.cache_pin function pins images into memory, loading them
-as soon as possible and keeping them loaded. 
+as soon as possible and keeping them loaded. The renpy.cache_unpin function
+undoes this.
 
 
 The new config.automatic_images_strip variable can strip out prefixes
@@ -31,6 +32,7 @@ than causing a crash.)
 The following numbered bugs were fixed:
 
 * lp:501351 - Displaying a Frame() with tile=True crashes
+* lp:506322 - MoveTransition is not applied to overlay even when explicitly stated
 
 In addition:
 

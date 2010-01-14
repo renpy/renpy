@@ -961,9 +961,8 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
 
                 if (isinstance(f, renpy.display.layout.MultiBox) 
                     and layer in layers
-                    and f.scene_list is not None 
-                    and layer not in renpy.config.overlay_layers):
-                        
+                    and f.scene_list is not None):
+                    
                     f = merge_slide(old.layers[layer], new.layers[layer])
 
                 rv.layers[layer] = f
