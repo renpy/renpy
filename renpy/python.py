@@ -72,9 +72,9 @@ def reached(obj, reachable, wait):
         pass
 
     try:
-       # Treat as iterable
+        # Treat as iterable
         if not isinstance(obj, basestring):
-            for v in obj:
+            for v in obj.__iter__():
                 reached(v, reachable, wait)
     except:
         pass
