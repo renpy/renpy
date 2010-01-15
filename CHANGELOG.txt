@@ -36,6 +36,9 @@ the two, using code like:
 call expression foo pass (bar, baz)
 
 
+Ren'Py now builds zip files in distributions 64k at a time. 
+
+
 The following numbered bugs were fixed:
 
 * lp:501351 - Displaying a Frame() with tile=True crashes

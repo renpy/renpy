@@ -7,9 +7,12 @@ init python:
     import tarfile
     import time
     import sys
+    import struct
     import zlib
     zlib.Z_DEFAULT_COMPRESSION = 9
 
+    import binascii
+    
     import pefile
     
     # These are files that are ignored wherever they are found in a
@@ -147,7 +150,7 @@ init python:
 
         fn = os.path.join(os.path.dirname(project.path), filename)
         
-        zf = zipfile.ZipFile(fn + ".zip", "w", zipfile.ZIP_DEFLATED)
+        zf = MyZipFile(fn + ".zip", "w", zipfile.ZIP_DEFLATED)
 
         for i, (fn, an) in enumerate(files):
 
@@ -172,10 +175,9 @@ init python:
 
             if fn in file_data:
                 data = file_data[fn]
+                zf.writestr(zi, data)
             else:
-                data = file(fn, "rb").read()
-
-            zf.writestr(zi, data)
+                zf.write_file_with_zipinfo(fn, zi)
 
         zf.close()
         
@@ -552,3 +554,75 @@ label distribute:
         interact()
 
         
+init python:
+
+    class MyZipFile(zipfile.ZipFile):
+        """
+         Modified ZipFile class that can insert a file into the archive,
+         using a supplied ZipInfo object. Code comes from the writestr
+         and write methods of ZipFile.
+         """
+
+        
+        def write_file_with_zipinfo(self, filename, zinfo, compress_type=None):
+            """Put the bytes from filename into the archive under the name
+            arcname."""
+            st = os.stat(filename)
+
+            if compress_type is None:
+                zinfo.compress_type = self.compression
+            else:
+                zinfo.compress_type = compress_type
+
+            zinfo.file_size = st.st_size
+            zinfo.flag_bits = 0x00
+            zinfo.header_offset = self.fp.tell()    # Start of header bytes
+
+            self._writecheck(zinfo)
+            self._didModify = True
+
+            fp = open(filename, "rb")
+
+            # Must overwrite CRC and sizes with correct data later
+            zinfo.CRC = CRC = 0
+            zinfo.compress_size = compress_size = 0
+            zinfo.file_size = file_size = 0
+
+            self.fp.write(zinfo.FileHeader())
+
+            if zinfo.compress_type == zipfile.ZIP_DEFLATED:
+                cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
+                     zlib.DEFLATED, -15)
+            else:
+                cmpr = None
+            while 1:
+                buf = fp.read(1024 * 64)
+                if not buf:
+                    break
+                file_size = file_size + len(buf)
+                CRC = binascii.crc32(buf, CRC)
+                if cmpr:
+                    buf = cmpr.compress(buf)
+                    compress_size = compress_size + len(buf)
+                self.fp.write(buf)
+            fp.close()
+            if cmpr:
+                buf = cmpr.flush()
+                compress_size = compress_size + len(buf)
+                self.fp.write(buf)
+                zinfo.compress_size = compress_size
+            else:
+                zinfo.compress_size = file_size
+
+            zinfo.CRC = CRC
+            zinfo.file_size = file_size
+
+            # Seek backwards and write CRC and file sizes
+            position = self.fp.tell()       # Preserve current position in file
+            self.fp.seek(zinfo.header_offset + 14, 0)
+            self.fp.write(struct.pack("<lLL", zinfo.CRC, zinfo.compress_size,
+                  zinfo.file_size))
+
+            self.fp.seek(position, 0)
+            self.filelist.append(zinfo)
+            self.NameToInfo[zinfo.filename] = zinfo
