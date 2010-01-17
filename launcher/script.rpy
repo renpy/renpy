@@ -68,7 +68,7 @@ label top:
 
         title(_(u"Ren'Py"))
         
-        ui.grid(2, 3, transpose=True)
+        ui.grid(2, 4, transpose=True)
         
         button(_(u"Select Project"),
                ui.jumps("select_project"),
@@ -78,6 +78,10 @@ label top:
                ui.jumps("new_project"),
                _(u"Create a new project."))
 
+        button(_(u"Ren'Py Games List"),
+               ui.jumps("renpy_games_list"),
+               _(u"Visit the Ren'Py games list, at http://games.renpy.org."))
+        
         button(_(u"Quit"),
                renpy.quit,
                _(u"Causes the launcher to exit."))
@@ -99,7 +103,8 @@ label top:
         else:
 
             ui.null()
-            
+
+        ui.null()
         
 
         ui.close()
@@ -121,6 +126,14 @@ label documentation:
     jump top
 
 
+label renpy_games_list:
+    python hide:
+        import webbrowser
+        webbrowser.open_new("http://games.renpy.org")
+        set_tooltip(_(u"Now showing the Ren'Py Games List in your web browser."))
+
+    jump top
+        
 label confirm_quit:
     $ renpy.quit()
     
