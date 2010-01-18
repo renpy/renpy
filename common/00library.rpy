@@ -795,7 +795,7 @@ init 1180 python hide:
             while name:
                 for i in config.automatic_images_strip:
                     if name[0] == i:
-                        name.pop(0)
+                        name = name[1:]
                         break
                 else:
                     break
