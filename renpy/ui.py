@@ -327,6 +327,9 @@ def imagemap(ground,
              button_style='imagemap_button',
              **properties):
 
+    if isinstance(button_style, basestring):
+        button_style = getattr(renpy.game.style, button_style)
+    
     rv = fixed(style=style, **properties)
 
     if unselected is None:
@@ -342,7 +345,7 @@ def imagemap(ground,
         imagebutton(renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), unselected),
                     renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), selected),
                     clicked=returns(result),
-                    style=button_style,
+                    style=button_style[result],
                     xpos=x0,
                     xanchor=0,
                     ypos=y0,

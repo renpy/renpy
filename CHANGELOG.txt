@@ -24,6 +24,11 @@ The new config.automatic_images_strip variable can strip out prefixes
 when automatically defining images.
 
 
+It's now possible to assign style properties to individual imagemap
+buttons, by indexing style.imagemap_button. (So for example, one could 
+assign to style.imagemap_button["Start Game"].hover_sound .)
+
+
 Ren'Py will now ignore music files that do not exist. Previously, it
 could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)
