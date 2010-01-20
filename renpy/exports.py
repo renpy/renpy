@@ -1290,7 +1290,7 @@ def cache_pin(*args):
 
         new_pins.add(im)
 
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set | new_pins
+    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set 
 
 
 def cache_unpin(*args):
@@ -1302,7 +1302,7 @@ def cache_unpin(*args):
         im = renpy.easy.displayable(i)
 
         if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
+            raise Exception("Cannot unpin non-image-manipulator %r" % im)
 
         new_pins.add(im)
 

@@ -1,3 +1,4 @@
+
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -331,7 +332,7 @@ class Cache(object):
     def preload_thread_main(self):
 
         while self.keep_preloading:
-            
+
             self.lock.acquire()
             self.lock.wait()
             self.lock.release()
@@ -384,10 +385,14 @@ class Cache(object):
                         if renpy.config.debug_image_cache:
                             print "IC Pin Clear", image
 
+
+                        idsurf = id(self.pin_cache[i])
+                            
+                        if idsurf in pin_rle_cache:
+                            del pin_rle_cache[idsurf]
+
                         del self.pin_cache[i]
                         
-                        if i in pin_rle_cache:
-                            del pin_rle_cache[i]
                             
                 # For each image in the worklist...                
                 for image in workset:
@@ -417,8 +422,6 @@ class Cache(object):
                         preload_blacklist.add(image)
 
                         
-cache = Cache()
-
 # A map from id(cached surface) to rle version of cached surface.
 rle_cache = { }
 
@@ -427,6 +430,9 @@ pin_rle_cache = { }
 
 # Images that we tried, and failed, to preload.
 preload_blacklist = set()
+
+
+cache = Cache()
 
 def free_memory():
     """
