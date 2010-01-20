@@ -36,8 +36,12 @@ can be replayed.
 
 The launcher now accepts a RENPY_DEFAULT_PROJECTS_DIRECTORY, which sets
 the default for the projects directory, if it has not already been set 
-by the user. It also will report an error when trying to create a project
-in a directory that doesn't exist, or isn't writable.
+by the user. It also will report an error when creating a project fails,
+rather than producing a traceback.
+
+
+The launcher now links to the new Ren'Py Games List, at
+http://games.renpy.org/.
 
 
 Previously, it was impossible to pass an arguments list to a call
@@ -65,6 +69,7 @@ In addition:
 * Fixed a bug that caused pixellate to crash.
 * Fixed a bug that caused the overlay to display twice in some cases.
 * Fix an infinite loop that could rarely occur when rolling back or saving.
+
 
 
 New in Ren'Py 6.10.1
