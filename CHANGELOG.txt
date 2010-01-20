@@ -34,10 +34,10 @@ interaction. The new voice_can_replay function returns True if a voice
 can be replayed.
 
 
-Ren'Py will now ignore music files that do not exist. Previously, it
-could loop trying to play them. (This would increase CPU usage, rather
-than causing a crash.)
-
+The launcher now accepts a RENPY_DEFAULT_PROJECTS_DIRECTORY, which sets
+the default for the projects directory, if it has not already been set 
+by the user. It also will report an error when trying to create a project
+in a directory that doesn't exist, or isn't writable.
 
 
 Previously, it was impossible to pass an arguments list to a call
@@ -48,6 +48,11 @@ call expression foo pass (bar, baz)
 
 
 Ren'Py now builds zip files in distributions 64k at a time. 
+
+
+Ren'Py will now ignore music files that do not exist. Previously, it
+could loop trying to play them. (This would increase CPU usage, rather
+than causing a crash.)
 
 
 The following numbered bugs were fixed:

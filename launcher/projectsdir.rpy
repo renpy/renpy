@@ -26,7 +26,8 @@ label choose_projects_directory:
         
         if path is None:
             path = os.path.dirname(config.renpy_base)
-
+            path = os.environ.get("RENPY_DEFAULT_PROJECTS_DIRECTORY", path)
+            
 
         if EasyDialogs:
 

@@ -29,9 +29,12 @@ label new_project:
              _(u"Please wait while we create the project."))
 
         template = os.path.join(config.renpy_base, "template")
-        
-        shutil.copytree(template, path)
 
+        try:
+            shutil.copytree(template, path)
+        except OSError, e:
+            error(_(u"Could not create the project directory. The error was: %s") % unicode(e))
+            
         launcherinfo = os.path.join(path, "launcherinfo.py")
         if os.path.exists(launcherinfo):
             os.unlink(launcherinfo)
