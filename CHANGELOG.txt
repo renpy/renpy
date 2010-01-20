@@ -29,9 +29,15 @@ buttons, by indexing style.imagemap_button. (So for example, one could
 assign to style.imagemap_button["Start Game"].hover_sound .)
 
 
+The new voice_replay function replays the voice played on the current
+interaction. The new voice_can_replay function returns True if a voice
+can be replayed.
+
+
 Ren'Py will now ignore music files that do not exist. Previously, it
 could loop trying to play them. (This would increase CPU usage, rather
 than causing a crash.)
+
 
 
 Previously, it was impossible to pass an arguments list to a call

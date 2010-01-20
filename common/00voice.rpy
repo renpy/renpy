@@ -30,15 +30,17 @@ init -1120:
         _voice.play = None
         _voice.sustain = False
         _voice.seen_in_lint = False
-        
+
         # Call this to specify the voice file that will be played for
         # the user.
         def voice(file, **kwargs):
+
             if not config.has_voice:
                 return
             
             _voice.play = file
-
+            _last_voice_play = file 
+            
         # Call this to specify that the currently playing voice file
         # should be sustained through the current interaction.
         def voice_sustain(ignored="", **kwargs):
@@ -47,6 +49,14 @@ init -1120:
             
             _voice.sustain = True
 
+        # Call this to replay the last bit of voice.
+        def voice_replay():
+            renpy.sound.play(_last_voice_play, channel=2)
+
+        # Returns true if we can replay the voice.
+        def voice_can_replay():
+            return _last_voice_play != None
+            
     python hide:
 
         # basics: True if the game will have voice.
@@ -61,8 +71,10 @@ init -1120:
             
             if _voice.play and not config.skipping:
                 renpy.sound.play(_voice.play, channel=2)
+                store._last_voice_play = _voice.play        
             elif not _voice.sustain:
                 renpy.sound.stop(channel=2)
+                store._last_voice_play = _voice.play        
 
             _voice.play = None
             _voice.sustain = False
