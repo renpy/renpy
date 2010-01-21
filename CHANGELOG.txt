@@ -51,6 +51,11 @@ the two, using code like:
 call expression foo pass (bar, baz)
 
 
+Ren'Py will now not show the click-to-continue indicator when a
+character is called with interact=False, unless that character is also
+called with ctc_force=True.
+
+
 Ren'Py now builds zip files in distributions 64k at a time. 
 
 
