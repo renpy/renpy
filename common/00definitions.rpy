@@ -7,6 +7,10 @@
 # definitions.
 
 init -1110:
+
+    transform reset:
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
+   
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
     transform left:
@@ -30,6 +34,13 @@ init -1110:
     transform offscreenright:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
+    transform default:
+        reset
+        center
+
+    python:
+        config.default_transform = right
+        
 
 init -1110 python:
 
@@ -179,3 +190,7 @@ init 1110 python:
 
     if not hasattr(store, 'centered'):
         centered = Character(None, what_style="centered_text", window_style="centered_window")
+
+    # This is necessary to ensure that config.default_transform works.
+    if config.default_transform:
+        config.default_transform.show()

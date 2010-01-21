@@ -531,6 +531,9 @@ class SceneLists(renpy.object.Object):
         to the new thing.
         """
 
+        if old_thing is None:
+            return new_thing
+        
         old_transform = old_thing.get_parameterized()
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
@@ -543,7 +546,7 @@ class SceneLists(renpy.object.Object):
         return new_thing
 
                         
-    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None, atl=None):
+    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None, atl=None, default_transform=None):
         """
         This is called to add something to a layer. Layer is
         the name of the layer that we need to add the thing to,
@@ -632,6 +635,8 @@ class SceneLists(renpy.object.Object):
         else:
             index = len(l)
 
+        thing = self.transform_state(default_transform, thing)
+            
         thing.set_transform_event("show")
         thing.show()
         l.insert(index, (key, zorder, st, at, thing))

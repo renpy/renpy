@@ -1,3 +1,4 @@
+
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -407,6 +408,9 @@ thumbnail_height = None
 
 # The end game transition.
 end_game_transition = None
+
+# The default transform.
+default_transform = None
 
 # Various directories.
 gamedir = None
