@@ -215,7 +215,8 @@ def display_say(show_function,
                 callback,
                 type,
                 checkpoint=True,
-                ctc_timedpause=None):
+                ctc_timedpause=None,
+                ctc_force=False):
 
     
     # If we're in fast skipping mode, don't bother with say
@@ -296,6 +297,9 @@ def display_say(show_function,
                 what_ctc = ctc_pause
         else:
             what_ctc = ctc
+
+        if not (interact or ctc_force):
+            what_ctc = None
             
         what_ctc = renpy.easy.displayable_or_none(what_ctc)
 
