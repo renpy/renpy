@@ -39,7 +39,7 @@ init -1110:
         center
 
     python:
-        config.default_transform = right
+        config.default_transform = None
         
 
 init -1110 python:
