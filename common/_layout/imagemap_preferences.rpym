@@ -124,11 +124,14 @@ init python:
             _preferences.set_volume('sfx', v / 128.0)
         def set_voice(v):
             _preferences.set_volume('voice', v / 128.0)
-            
-        ime.bar("Music Volume", 128, int(_preferences.get_volume('music') * 128), set_music)
-        ime.bar("Sound Volume", 128, int(_preferences.get_volume('sfx') * 128), set_sound)
-        ime.bar("Voice Volume", 128, int(_preferences.get_volume('voice') * 128), set_voice)
 
+        if config.has_music:
+            ime.bar("Music Volume", 128, int(_preferences.get_volume('music') * 128), set_music)            
+        if config.has_sound:
+            ime.bar("Sound Volume", 128, int(_preferences.get_volume('sfx') * 128), set_sound)
+        if config.has_voice:
+            ime.bar("Voice Volume", 128, int(_preferences.get_volume('voice') * 128), set_voice)
+        
         ime.close()
         ui.interact(mouse="gamemenu")
         
