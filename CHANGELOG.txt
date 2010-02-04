@@ -1,3 +1,11 @@
+New in Ren'PY x.yy.z
+--------------------
+
+
+Rewrote MultipleTransition (which is used by Fade) to fix some
+problems it was exhibiting.
+
+
 New in Ren'Py 6.10.2
 --------------------
 
