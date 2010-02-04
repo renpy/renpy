@@ -147,14 +147,16 @@ class MultipleTransition(Transition):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
-        for i, trans in enumerate(self.transitions):
+        for trans in self.transitions[:-1]:
 
             if trans.delay > st:
                 break
 
             st -= trans.delay
+            
+        else:
 
-        if i == len(self.transitions) - 1:
+            trans = self.transitions[-1]
             self.events = True
             
         surf = renpy.display.render.render(trans, width, height, st, at)
