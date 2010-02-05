@@ -92,7 +92,7 @@ OPENGL_1_5 = False
 OPENGL_2_0 = False
 OPENGL_2_1 = False
 GL_ARB_IMAGING = False
-GL_ARB_MULTITEXTURE = False
+GL_ARB_MULTITEXTURE = True
 GL_ARB_WINDOW_POS = False
 GL_ARB_TRANSPOSE_MATRIX = False
 GL_ARB_MULTISAMPLE = False
@@ -102,7 +102,7 @@ GL_ARB_TEXTURE_BORDER_CLAMP = False
 GL_ARB_POINT_PARAMETERS = False
 GL_ARB_VERTEX_BLEND = False
 GL_ARB_MATRIX_PALETTE = False
-GL_ARB_TEXTURE_ENV_COMBINE = False
+GL_ARB_TEXTURE_ENV_COMBINE = True
 GL_ARB_TEXTURE_ENV_DOT3 = False
 GL_ARB_TEXTURE_MIRRORED_REPEAT = False
 GL_ARB_DEPTH_TEXTURE = False
@@ -112,10 +112,10 @@ GL_ARB_VERTEX_PROGRAM = False
 GL_ARB_FRAGMENT_PROGRAM = False
 GL_ARB_VERTEX_BUFFER_OBJECT = True
 GL_ARB_OCCLUSION_QUERY = False
-GL_ARB_SHADER_OBJECTS = False
-GL_ARB_VERTEX_SHADER = False
-GL_ARB_FRAGMENT_SHADER = False
-GL_ARB_SHADING_LANGUAGE_100 = False
+GL_ARB_SHADER_OBJECTS = True
+GL_ARB_VERTEX_SHADER = True
+GL_ARB_FRAGMENT_SHADER = True
+GL_ARB_SHADING_LANGUAGE_100 = True
 GL_ARB_POINT_SPRITE = False
 GL_ARB_DRAW_BUFFERS = False
 GL_ARB_TEXTURE_RECTANGLE = False
@@ -138,7 +138,7 @@ RELEASE_GIL = set()
 
 def generate_tegl():
     prefix = "gl"
-    headers = "#include <GL/glew.h>"
+    headers = "#include <GL/glew.h>\n"
 
     g = Builder(prefix,headers)
     declare = g.declare
@@ -1635,7 +1635,7 @@ def generate_tegl():
     constant("RGBA16")
     constant("CLIENT_PIXEL_STORE_BIT")
     constant("CLIENT_VERTEX_ARRAY_BIT")
-    constant("ALL_CLIENT_ATTRIB_BITS")
+    # constant("ALL_CLIENT_ATTRIB_BITS")
     constant("CLIENT_ALL_ATTRIB_BITS")
 
     if OPENGL_1_2:
