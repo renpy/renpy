@@ -37,8 +37,8 @@ VERSION = "0.1"
 # Module names (you can specify the same name to put gl and glu
 # functions in the same module).
 
-GL_MODULE_NAME = "tegl"
-GLU_MODULE_NAME = "tegl"
+GL_MODULE_NAME = "_renpy_tegl"
+GLU_MODULE_NAME = "_renpy_tegl"
 
 
 # Whether to export names of constants with the GL_ (or GLU_)

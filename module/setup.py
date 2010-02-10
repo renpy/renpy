@@ -4,6 +4,7 @@ import os
 import os.path
 import platform
 import sys
+import subprocess
 
 try:
     import bdist_mpkg
@@ -105,7 +106,26 @@ def add_library(name, optional=False):
     for i in checked:
         print "-", i
     sys.exit(-1)
-        
+
+def cython(fn):
+    """
+    Use cython to generate `fn`.c from `fn`.pyx, if necessary.
+    """
+
+    c = fn + ".c"
+    pyx = fn + ".pyx"
+
+    if not os.path.exists(pyx):
+        print pyx, "not in current directory, not running cython."
+        return
+
+    if os.path.exists(c) and os.path.getmtime(c) >= os.path.getmtime(pyx):
+        print pyx, "is not newer than", c
+        return
+
+    subprocess.call(["cython", pyx])
+    
+    
 add_include("", "zlib.h")
 add_include("", "png.h")
 add_include("SDL", "SDL.h")
@@ -115,6 +135,7 @@ add_include("", "libavutil/avstring.h")
 add_include("", "libavformat/avformat.h")
 add_include("", "libavcodec/avcodec.h")
 add_include("", "libswscale/swscale.h")
+add_include("", "GL/gl.h")
 
 add_library("libSDL")
 add_library("libpng")
@@ -125,6 +146,13 @@ has_swscale = add_library("libswscale", True)
 add_library("libfreetype")
 add_library("libfribidi")            
 add_library("libz")
+add_library("libGLEW")
+
+cython("_renpy")
+cython("_renpybidi")
+cython("_renpy_pysdlgl")
+cython("sound")
+cython("winmixer")
 
 extra_link_args = [ ]
 
@@ -154,7 +182,7 @@ except:
 extensions = [ ]
 py_modules = [ 'pysdlsound.__init__' ]
 
-rpe = distutils.core.Extension(
+extensions.append(distutils.core.Extension(
     "_renpy",
     [ "IMG_savepng.c", "core.c", "rwobject.c", "_renpy.c", "subpixel.c" ],
     include_dirs=include_dirs,
@@ -162,11 +190,9 @@ rpe = distutils.core.Extension(
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
     libraries=sdl_libraries + png_libraries,
-    )
+    ))
 
-extensions.append(rpe)
-
-renpy_font = distutils.core.Extension(
+extensions.append(distutils.core.Extension(
     "_renpy_font",
     [ "renpy_ttf.c", "renpy_font.c"],
     include_dirs=include_dirs,
@@ -174,11 +200,9 @@ renpy_font = distutils.core.Extension(
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
     libraries=sdl_libraries + [ 'freetype', 'z' ],
-    )
+    ))
 
-extensions.append(renpy_font)
-
-psse = distutils.core.Extension(
+extensions.append(distutils.core.Extension(
     "pysdlsound.sound",
     [ "pss.c", "rwobject.c", "sound.c", "ffdecode.c" ],
     include_dirs=include_dirs,
@@ -186,37 +210,43 @@ psse = distutils.core.Extension(
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
     libraries=sound_libraries + sdl_libraries,
-    )
+    ))
 
-extensions.append(psse)
 
 if winmixer:
-    wme = distutils.core.Extension(
+    extensions.append(distutils.core.Extension(
         "pysdlsound.winmixer",
         [ 'winmixer.c' ],
         libraries=['winmm'],
-        )
-
-    extensions.append(wme)
+        ))
 
 if linmixer:
     py_modules.append('pysdlsound.linmixer')
 
-
-renpybidi = distutils.core.Extension(
+extensions.append(distutils.core.Extension(
     "_renpybidi",
     ["_renpybidi.c", "renpybidicore.c"],
     include_dirs=include_dirs,
     library_dirs=library_dirs,
     libraries=['fribidi'],
-    )
+    ))
 
-extensions.append(renpybidi)
+extensions.append(distutils.core.Extension(
+    "_renpy_tegl",
+    ["_renpy_tegl.c"],
+    extra_compile_args=['-Wall'],
+    libraries=['GLEW']))
+        
+extensions.append(distutils.core.Extension(
+    "_renpy_pysdlgl",
+    ["_renpy_pysdlgl.c"],
+    extra_compile_args=['-Wall'],
+    include_dirs=['/usr/include/SDL'],
+    libraries=['GLEW']))
 
-    
 distutils.core.setup(
     name = "renpy_module",
-    version = "6.10.1",
+    version = "6.11.0",
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },
