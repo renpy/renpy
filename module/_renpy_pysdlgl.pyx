@@ -64,11 +64,11 @@ cdef extern from "GL/gl.h":
     
 def load_texture(
     object pysurf,
-    int width,
-    int height,
     int xoffset,
     int yoffset,
-    int replace):
+    int width,
+    int height,
+    int update):
     
     """
     This loads the supplied pygame surface into the numbered
@@ -85,8 +85,19 @@ def load_texture(
 
     glPixelStorei(GL_UNPACK_ROW_LENGTH, surf.pitch / 4)
 
-    if replace:
+    if update:
+        glTexSubImage2D(
+            GL_TEXTURE_2D,
+            0,
+            0,
+            0,
+            width,
+            height,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            pixels)
 
+    else:
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -98,17 +109,7 @@ def load_texture(
             GL_UNSIGNED_BYTE,
             pixels)
 
-    else:
-        glTexSubImage2D(
-            GL_TEXTURE_2D,
-            0,
-            0,
-            0,
-            width,
-            height,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            pixels)
+
 
         
     
