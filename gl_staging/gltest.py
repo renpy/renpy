@@ -5,7 +5,7 @@ import sys
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
-import surface
+import gltexture
 
 little_endian = (
     0x000000FF,
@@ -25,7 +25,7 @@ pygame.display.init()
 s = pygame.display.set_mode((800, 600), pygame.OPENGL|pygame.DOUBLEBUF)
 sample = pygame.Surface((10, 10), 0, 32, little_endian)
 
-surface.init(sample)
+gltexture.init(sample)
 
 def load_image(fn):
     im = pygame.image.load(fn, fn)
@@ -51,15 +51,15 @@ gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 gl.Enable(gl.TEXTURE_2D)
 
 im0 = load_image("washington.jpg")
-tg0 = surface.texture_grid_from_surface(im0)
+tg0 = gltexture.texture_grid_from_surface(im0)
 
 while True:
 
-    surface.draw_texgrid(tg0, 0, 0)
+    gltexture.draw_texgrid(tg0, 0, 0)
     pygame.display.flip()
     
     ev = pygame.event.wait()
 
-    if ev.type == pygame.KEYDOWN or ev.type == pygame.QUIT:
+    if ev.type == pygame.QUIT:
         break
     
