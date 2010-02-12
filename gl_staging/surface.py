@@ -11,6 +11,17 @@ SIDE = 126
 empty_surface = None
 
 
+def check_error():
+    """
+    This checks for an opengl error, and throws an exception if it occurs.
+    """
+
+    err = gl.GetError()
+    
+    if err:
+        raise Exception("GL Error: 0x%x" % err)
+    
+
 class Texture(object):
     """
     This object stores information about an OpenGL texture.
@@ -81,7 +92,7 @@ class Texture(object):
                     0,
                     SIDE + 2,
                     SIDE + 2, 
-                    1)
+                    0)
 
             self.loaded = True
 
@@ -101,16 +112,6 @@ class Texture(object):
         # Finally, load in the default math.
         self.xmul = self.xadd = self.ymul = self.yadd = 1.0 / (SIDE + 2)
 
-        
-    def transform(self, x, y):
-        """
-        Use this to transform pixel coordinates to texture coordinates.
-        """
-
-        x = self.xadd + x * self.xmul
-        y = self.yadd + y * self.ymul
-
-        return x, y
         
 # This is a list of unused Textures.
 free_textures = [ ]
@@ -187,19 +188,68 @@ def texture_grid_from_surface(surf):
 
         row = [ ]
         
-        for x in xrange(0, height, SIDE):
+        for x in xrange(0, width, SIDE):
             colwidth = min(width - x, SIDE)
 
             tex = alloc_texture()
+
             tex.load_surface(surf, x, y, colwidth, rowheight)
 
             row.append(tex)
-
+            
         rv.tiles.append(row)
-
 
     return rv
             
+def draw_texgrid(tg, sx, sy):
+    """
+    This draws the supplied texture grid at coordinates x, y on the
+    screen.
+
+    `sx`, `sy` - The screen coordinates at which the texture grid
+    should be drawn.
+    """
+    
+    y = 0
+    
+    for (texy, texh), row in zip(tg.rows, tg.tiles):
+        x = 0
+
+        for (texx, texw), tex in zip(tg.columns, row):
+
+            # These should be forward-transformed.
+            x0, y0 = x, y
+            x1, y1 = x + texw, y
+            x2, y2 = x, y + texh
+            x3, y3 = x + texw, y + texh
+
+            u0 = tex.xadd + tex.xmul * texx
+            u1 = tex.xadd + tex.xmul * (texx + texw)
+            v0 = tex.yadd + tex.ymul * texy
+            v1 = tex.yadd + tex.ymul * (texy + texh)
+
+            gl.Color4f(1.0, 1.0, 1.0, 1.0)
+            gl.BindTexture(gl.TEXTURE_2D, tex.number)
+            
+            gl.Begin(gl.TRIANGLE_STRIP)
+
+            gl.TexCoord2f(u0, v0)
+            gl.Vertex2f(x0, y0)
+
+            gl.TexCoord2f(u1, v0)
+            gl.Vertex2f(x1, y1)
+
+            gl.TexCoord2f(u0, v1)
+            gl.Vertex2f(x2, y2)
+
+            gl.TexCoord2f(u1, v1)
+            gl.Vertex2f(x3, y3)
+
+            gl.End()
+
+            x += texw
+
+        y += texh
 
 
 def init(sample):

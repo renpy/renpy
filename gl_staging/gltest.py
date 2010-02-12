@@ -42,7 +42,7 @@ gl.Clear(gl.COLOR_BUFFER_BIT)
 
 gl.MatrixMode(gl.PROJECTION)
 gl.LoadIdentity()
-gl.Ortho2D(0, 800, 800, 0)
+gl.Ortho2D(0, 800, 600, 0)
 gl.MatrixMode(gl.MODELVIEW)
 
 gl.Enable(gl.BLEND)
@@ -52,3 +52,14 @@ gl.Enable(gl.TEXTURE_2D)
 
 im0 = load_image("washington.jpg")
 tg0 = surface.texture_grid_from_surface(im0)
+
+while True:
+
+    surface.draw_texgrid(tg0, 0, 0)
+    pygame.display.flip()
+    
+    ev = pygame.event.wait()
+
+    if ev.type == pygame.KEYDOWN or ev.type == pygame.QUIT:
+        break
+    
