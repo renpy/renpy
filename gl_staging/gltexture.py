@@ -201,8 +201,8 @@ def texture_grid_from_surface(surf):
         rv.tiles.append(row)
 
     return rv
-            
-def draw_texgrid(tg, sx, sy):
+
+def draw_texgrid(tg, sx, sy, transform):
     """
     This draws the supplied texture grid at coordinates x, y on the
     screen.
@@ -210,7 +210,7 @@ def draw_texgrid(tg, sx, sy):
     `sx`, `sy` - The screen coordinates at which the texture grid
     should be drawn.
     """
-    
+
     y = 0
     
     for (texy, texh), row in zip(tg.rows, tg.tiles):
@@ -218,40 +218,61 @@ def draw_texgrid(tg, sx, sy):
 
         for (texx, texw), tex in zip(tg.columns, row):
 
-            # These should be forward-transformed.
-            x0, y0 = x, y
-            x1, y1 = x + texw, y
-            x2, y2 = x, y + texh
-            x3, y3 = x + texw, y + texh
-
-            u0 = tex.xadd + tex.xmul * texx
-            u1 = tex.xadd + tex.xmul * (texx + texw)
-            v0 = tex.yadd + tex.ymul * texy
-            v1 = tex.yadd + tex.ymul * (texy + texh)
-
-            gl.ActiveTextureARB(gl.TEXTURE0_ARB)
-            gl.BindTexture(gl.TEXTURE_2D, tex.number)
-
-            gl.Begin(gl.TRIANGLE_STRIP)
-
-            gl.Color4f(1.0, 1.0, 1.0, 1.0)
-
-            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v0)
-            gl.Vertex2f(x0, y0)
-
-            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v0)
-            gl.Vertex2f(x1, y1)
-
-            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v1)
-            gl.Vertex2f(x2, y2)
-
-            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v1)
-            gl.Vertex2f(x3, y3)
+            pysdlgl.draw_rectangle(
+                sx, sy,
+                x, y,
+                texw, texh, 
+                transform,
+                tex, texx, texy,
+                None, 0, 0,
+                None, 0, 0)
             
-            gl.End()
+            # # These should be forward-transformed.
+            # x0, y0 = x, y
+            # x1, y1 = x + texw, y
+            # x2, y2 = x, y + texh
+            # x3, y3 = x + texw, y + texh
+
+            # u0 = tex.xadd + tex.xmul * texx
+            # u1 = tex.xadd + tex.xmul * (texx + texw)
+            # v0 = tex.yadd + tex.ymul * texy
+            # v1 = tex.yadd + tex.ymul * (texy + texh)
+
+            # gl.ActiveTextureARB(gl.TEXTURE0_ARB)
+            # gl.BindTexture(gl.TEXTURE_2D, tex.number)
+
+            # gl.Begin(gl.TRIANGLE_STRIP)
+
+            # gl.Color4f(1.0, 1.0, 1.0, 1.0)
+
+            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u0, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u0, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u0, v0)
+            # gl.Vertex2f(x0, y0)
+
+            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u1, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u1, v0)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u1, v0)
+            # gl.Vertex2f(x1, y1)
+
+            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u0, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u0, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u0, v1)
+            # gl.Vertex2f(x2, y2)
+
+            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u1, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u1, v1)
+            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u1, v1)
+            # gl.Vertex2f(x3, y3)
+            
+            # gl.End()
 
             x += texw
-
+            
         y += texh
 
 

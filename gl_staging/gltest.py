@@ -52,12 +52,28 @@ tg0 = gltexture.texture_grid_from_surface(im0)
 
 environ = glenviron.FixedFunctionGLEnviron()
 
+start = time.time()
+
+class Transform(object):
+
+    def __init__(self):
+        self.xdx = 1
+        self.xdy = 0
+        self.ydx = 0
+        self.ydy = 1
+
+transform = Transform()
+        
+for i in xrange(5000):
+    environ.blit_environ()
+    gltexture.draw_texgrid(tg0, 0, 0, transform)
+    pygame.display.flip()
+
+end = time.time()
+print 5000.0 / (end - start)
+    
 while True:
 
-    environ.blit_environ()
-    gltexture.draw_texgrid(tg0, 0, 0)
-
-    pygame.display.flip()
     
     ev = pygame.event.wait()
 

@@ -53,7 +53,7 @@ class GLEnviron(object):
         raise Exception("Not implemented.")
         
         
-class FixedFunctionGLEnviron(object):
+class FixedFunctionGLEnviron(GLEnviron):
     """
     This is an OpenGL environment that uses the fixed-function pipeline.
 
@@ -66,6 +66,8 @@ class FixedFunctionGLEnviron(object):
         # The last blend environ used.
         self.last_environ = NONE
 
+        self.init_common()
+        
     def blit_environ(self):
 
         if self.last_environ != BLIT:
