@@ -1,6 +1,7 @@
 import pygame
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
+import sys
 
 # The size of the side of a texture, not including the 1-pixel
 # border on all sides.
@@ -228,23 +229,25 @@ def draw_texgrid(tg, sx, sy):
             v0 = tex.yadd + tex.ymul * texy
             v1 = tex.yadd + tex.ymul * (texy + texh)
 
-            gl.Color4f(1.0, 1.0, 1.0, 1.0)
+            gl.ActiveTextureARB(gl.TEXTURE0_ARB)
             gl.BindTexture(gl.TEXTURE_2D, tex.number)
-            
+
             gl.Begin(gl.TRIANGLE_STRIP)
 
-            gl.TexCoord2f(u0, v0)
+            gl.Color4f(1.0, 1.0, 1.0, 1.0)
+
+            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v0)
             gl.Vertex2f(x0, y0)
 
-            gl.TexCoord2f(u1, v0)
+            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v0)
             gl.Vertex2f(x1, y1)
 
-            gl.TexCoord2f(u0, v1)
+            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v1)
             gl.Vertex2f(x2, y2)
 
-            gl.TexCoord2f(u1, v1)
+            gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v1)
             gl.Vertex2f(x3, y3)
-
+            
             gl.End()
 
             x += texw

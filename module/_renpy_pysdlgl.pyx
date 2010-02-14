@@ -10,7 +10,7 @@ cdef extern from "pygame/pygame.h":
     SDL_Surface *PySurface_AsSurface(object)
 
     
-cdef extern from "GL/gl.h":
+cdef extern from "GL/glew.h":
     ctypedef unsigned int    GLenum
     ctypedef unsigned char   GLboolean
     ctypedef unsigned int    GLbitfield
@@ -27,6 +27,10 @@ cdef extern from "GL/gl.h":
     ctypedef double          GLdouble
     ctypedef double          GLclampd
 
+
+    GLenum GLEW_OK
+    GLenum glewInit()    
+    GLubyte *glewGetErrorString(GLenum)
 
     int GL_UNPACK_ROW_LENGTH
      
@@ -60,7 +64,11 @@ cdef extern from "GL/gl.h":
         int format,
         int type,
         void *pixels)
-     
+
+def init_glew():
+    err = glewInit()
+    if err != GLEW_OK:
+        raise Exception("Glew init failed: %s" % <char *> glewGetErrorString(err))
     
 def load_texture(
     object pysurf,

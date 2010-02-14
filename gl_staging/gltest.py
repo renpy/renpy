@@ -6,6 +6,7 @@ import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
 import gltexture
+import glenviron
 
 little_endian = (
     0x000000FF,
@@ -25,6 +26,8 @@ pygame.display.init()
 s = pygame.display.set_mode((800, 600), pygame.OPENGL|pygame.DOUBLEBUF)
 sample = pygame.Surface((10, 10), 0, 32, little_endian)
 
+pysdlgl.init_glew()
+
 gltexture.init(sample)
 
 def load_image(fn):
@@ -36,8 +39,7 @@ def load_image(fn):
 
     return im2.subsurface((1, 1, w, h))
 
-
-gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+gl.ClearColor(0.0, 0.0, 0.0, 0.0)
 gl.Clear(gl.COLOR_BUFFER_BIT)
 
 gl.MatrixMode(gl.PROJECTION)
@@ -45,17 +47,16 @@ gl.LoadIdentity()
 gl.Ortho2D(0, 800, 600, 0)
 gl.MatrixMode(gl.MODELVIEW)
 
-gl.Enable(gl.BLEND)
-gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-
-gl.Enable(gl.TEXTURE_2D)
-
 im0 = load_image("washington.jpg")
 tg0 = gltexture.texture_grid_from_surface(im0)
 
+environ = glenviron.FixedFunctionGLEnviron()
+
 while True:
 
+    environ.blit_environ()
     gltexture.draw_texgrid(tg0, 0, 0)
+
     pygame.display.flip()
     
     ev = pygame.event.wait()
