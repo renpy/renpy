@@ -21,7 +21,6 @@ class GLEnviron(object):
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
-    
     def blit_environ(self):
         """
         Set up a normal blit environment. The texture to be blitted should
@@ -116,7 +115,7 @@ class FixedFunctionGLEnviron(GLEnviron):
         gl.TexEnvi(gl.TEXTURE_ENV, gl.OPERAND2_ALPHA_ARB, alpha_source2)
 
         gl.TexEnvf(gl.TEXTURE_ENV, gl.RGB_SCALE_ARB, color_scale)
-        gl.TexEnvf(gl.TEXTURE_ENV, gl.ALPHA_SCALE_ARB, alpha_scale)
+        gl.TexEnvf(gl.TEXTURE_ENV, gl.ALPHA_SCALE, alpha_scale)
 
         
     def blit_environ(self):
@@ -154,8 +153,10 @@ class FixedFunctionGLEnviron(GLEnviron):
             self.combine_mode(gl.TEXTURE2_ARB,
                               color_function=gl.MODULATE,
                               alpha_function=gl.MODULATE,
-                              color_source1=gl.PRIMARY_COLOR_ARB,
-                              alpha_source1=gl.PRIMARY_COLOR_ARB)
+                              color_arg1=gl.PRIMARY_COLOR_ARB,
+                              color_source1=gl.SRC_ALPHA,
+                              alpha_arg1=gl.PRIMARY_COLOR_ARB,
+                              alpha_source1=gl.SRC_ALPHA)
             
             # Disable texture unit 3.
             self.disable(gl.TEXTURE3_ARB)

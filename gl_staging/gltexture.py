@@ -82,6 +82,7 @@ class Texture(object):
         gl.BindTexture(gl.TEXTURE_2D, self.number)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    
 
         # If we haven't initalized the texture yet, and we're
         # smaller than it, load in the empty texture.
@@ -207,13 +208,69 @@ def texture_grid_from_surface(surf):
         
     return rv
 
+
+def align_axes(*args):
+    """
+    This takes n axes, each a list consisting of (offset, size, index)
+    tuples. It returns a list of n lists. For each of the n lists, the
+    ith element will be the same size. The indexes will appear in the
+    same order they did in the original list.
+
+    This is used to combine the grids of two or more texgrids into a
+    single grid.
+    """
+
+    # The lists we're building.
+    rv = [ [] for i in args ]
+
+    # The index of the current element, for each member of args.
+    cur = [ 0 for i in args ]
+
+    # The parts of the current element.
+    offset = [ i[0][0] for i in args ]
+    size = [ i[0][1] for i in args ]
+    index = [ i[0][2] for i in args ]
+
+    # Cache it here to save function calls.
+    nargs = len(args)
+
+    loop = True
+    
+    while loop:
+
+        # Figure out the minimum size.
+        minsize = min(size)
+
+        for i in xrange(nargs):
+
+            # Create an entry of minsize.
+            rv[i].append((offset[i], minsize, index[i]))
+
+            # Adjust the offset and size.
+            offset[i] += minsize
+            size[i] -= minsize
+                       
+            # If the size fell to 0, then load the next element from
+            # the arguments into offset, size, index. If we can't
+            # we're done.
+            if size[i] == 0:
+                cur[i] += 1
+                
+                if cur[i] >= len(args[i]):
+                    loop = False
+                else:
+                    offset[i], size[i], index[i] = args[i][cur[i]]
+
+    return rv
+            
+
 def blit(textures, transform, alpha, environ):
     """
     This draws the supplied textures to the screen.
 
     `texture` is a list of (tg, sx, sy) tuples, where `tg` is a
     texture grid, and (`sx`, `sy`) is the offset from the upper-left
-    corner of the screen, in (fractional) This.
+    corner of the screen, in (fractional) pixels.
 
     `transform` is the transform to apply to the texgrid, when going from
     texgrid coordinates to screen coordinates.
@@ -244,11 +301,69 @@ def blit(textures, transform, alpha, environ):
                     tex, texx, texy,
                     None, 0, 0,
                     None, 0, 0)
-
+                
                 x += texw
 
             y += texh
 
+
+def blend(textures, transform, alpha, environ, fraction):
+    """
+    This blends two textures to the screen.
+
+    `textures` is a list of (tg, sx, sy) tuples, where `tg` is a
+    texture grid, and (`sx`, `sy`) is the offset from the upper-left
+    corner of the screen, in (fractional) pixels.
+
+    `transform` is the transform to apply to the texgrid, when going from
+    texgrid coordinates to screen coordinates.
+
+    `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
+
+    `environ` is the GLEnviron used.
+    
+    `fraction` is the fraction of the second texture to show.
+    """
+
+    environ.blend_environ(fraction)
+    gl.Color4f(1.0, 1.0, 1.0, alpha)
+
+    # The two textures must start at the same sx, sy coordinates.
+    tg0, sx, sy = textures[0]
+    tg1, sx, sy = textures[1]
+
+    y = 0
+
+    rows0, rows1 = align_axes(tg0.rows, tg1.rows)
+    cols0, cols1 = align_axes(tg0.columns, tg1.columns)
+    
+    # t0 = texture 0, t1 = texture 1.
+    # x, y - index into the texture.
+    # w, h - width and height to draw.
+    # ri, ci - row index, column index in tiles.
+    for (t0y, t0h, t0ri), (t1y, t1h, t1ri) in zip(rows0, rows1):
+        x = 0
+
+        for (t0x, t0w, t0ci), (t1x, t1w, t1ci) in zip(cols0, cols1):
+            
+            t0 = tg0.tiles[t0ri][t0ci]
+            t1 = tg1.tiles[t1ri][t1ci]
+            
+            pysdlgl.draw_rectangle(
+                sx, sy,
+                x, y,
+                t0w, t0h, 
+                transform,
+                t0, t0x, t0y,
+                t1, t1x, t1y,
+                None, 0, 0)
+
+            x += t0w
+
+        y += t0h
+
+
+            
 
 def init(sample):
     """

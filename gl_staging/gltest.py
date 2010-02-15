@@ -50,6 +50,9 @@ gl.MatrixMode(gl.MODELVIEW)
 im0 = load_image("washington.jpg")
 tg0 = gltexture.texture_grid_from_surface(im0)
 
+im1 = load_image("whitehouse.jpg")
+tg1 = gltexture.texture_grid_from_surface(im1)
+
 environ = glenviron.FixedFunctionGLEnviron()
 
 start = time.time()
@@ -63,9 +66,13 @@ class Transform(object):
         self.ydy = 1
 
 transform = Transform()
-        
+
 for i in xrange(5000):
-    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+    if sys.argv[1] == "blend":
+        gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, i / 5000.0)
+    else:
+        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+
     pygame.display.flip()
 
 end = time.time()

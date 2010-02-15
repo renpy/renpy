@@ -9935,7 +9935,6 @@ PyMethodDef module_methods[] = {
 };
 
 PyMODINIT_FUNC init_renpy_tegl(void) {
-    GLenum err;
     PyObject* mod = Py_InitModule("_renpy_tegl", module_methods);
 
     PyModule_AddIntConstant(mod,"FALSE",GL_FALSE);

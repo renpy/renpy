@@ -3230,7 +3230,6 @@ PyMethodDef module_methods[] = {
 };
 
 PyMODINIT_FUNC init%(modname)s(void) {
-    GLenum err;
     PyObject* mod = Py_InitModule("%(modname)s", module_methods);
 
 %(constants)s
