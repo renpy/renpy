@@ -137,9 +137,6 @@ def alloc_texture():
     rv.incref()
     return rv
 
-
-
-
         
 class TextureGrid(object):
     """
@@ -156,16 +153,18 @@ class TextureGrid(object):
         # For each row of tiles, a tuple giving:
         # - The y offset within the texture.
         # - The height of the row.
+        # - The rowindex in tiles.
         self.rows = [ ]
 
         # For each column of tiles, a tuple giving.
         # - The x offset within the texture.
         # - The width of the column.
+        # - The colindex in tiles.
         self.columns = [ ]
 
         # The actual grid of texture titles, a list of lists of
-        # textures. The outer list represents the rows, the inner
-        # lists columns.
+        # textures. This is looked up by looking up rowindex and
+        # colindex.
         self.tiles = [ ]
     
     
@@ -178,14 +177,18 @@ def texture_grid_from_surface(surf):
 
     rv = TextureGrid(width, height)
 
+    colindex = 0
+    rowindex = 0
+    
     # Fill in the widths.
     for x in xrange(0, width, SIDE):
-        rv.columns.append((0, min(width - x, SIDE)))
-
+        rv.columns.append((0, min(width - x, SIDE), colindex))
+        colindex += 1
+        
     # Fill in the heights, and at the same time, load the textures.
     for y in xrange(0, height, SIDE):
         rowheight = min(height - y, SIDE)
-        rv.rows.append((0, rowheight))
+        rv.rows.append((0, rowheight, rowindex))
 
         row = [ ]
         
@@ -200,80 +203,51 @@ def texture_grid_from_surface(surf):
             
         rv.tiles.append(row)
 
+        rowindex += 1
+        
     return rv
 
-def draw_texgrid(tg, sx, sy, transform):
+def blit(textures, transform, alpha, environ):
     """
-    This draws the supplied texture grid at coordinates x, y on the
-    screen.
+    This draws the supplied textures to the screen.
 
-    `sx`, `sy` - The screen coordinates at which the texture grid
-    should be drawn.
+    `texture` is a list of (tg, sx, sy) tuples, where `tg` is a
+    texture grid, and (`sx`, `sy`) is the offset from the upper-left
+    corner of the screen, in (fractional) This.
+
+    `transform` is the transform to apply to the texgrid, when going from
+    texgrid coordinates to screen coordinates.
+
+    `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
+
+    `environ` is the GLEnviron used.
     """
 
-    y = 0
+    environ.blit_environ()
+    gl.Color4f(1.0, 1.0, 1.0, alpha)
     
-    for (texy, texh), row in zip(tg.rows, tg.tiles):
-        x = 0
+    for tg, sx, sy in textures:
+        y = 0
 
-        for (texx, texw), tex in zip(tg.columns, row):
+        for texy, texh, rowindex in tg.rows:
+            x = 0
 
-            pysdlgl.draw_rectangle(
-                sx, sy,
-                x, y,
-                texw, texh, 
-                transform,
-                tex, texx, texy,
-                None, 0, 0,
-                None, 0, 0)
-            
-            # # These should be forward-transformed.
-            # x0, y0 = x, y
-            # x1, y1 = x + texw, y
-            # x2, y2 = x, y + texh
-            # x3, y3 = x + texw, y + texh
+            for texx, texw, colindex in tg.columns:
 
-            # u0 = tex.xadd + tex.xmul * texx
-            # u1 = tex.xadd + tex.xmul * (texx + texw)
-            # v0 = tex.yadd + tex.ymul * texy
-            # v1 = tex.yadd + tex.ymul * (texy + texh)
+                tex = tg.tiles[rowindex][colindex]
+                
+                pysdlgl.draw_rectangle(
+                    sx, sy,
+                    x, y,
+                    texw, texh, 
+                    transform,
+                    tex, texx, texy,
+                    None, 0, 0,
+                    None, 0, 0)
 
-            # gl.ActiveTextureARB(gl.TEXTURE0_ARB)
-            # gl.BindTexture(gl.TEXTURE_2D, tex.number)
+                x += texw
 
-            # gl.Begin(gl.TRIANGLE_STRIP)
-
-            # gl.Color4f(1.0, 1.0, 1.0, 1.0)
-
-            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u0, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u0, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u0, v0)
-            # gl.Vertex2f(x0, y0)
-
-            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u1, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u1, v0)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u1, v0)
-            # gl.Vertex2f(x1, y1)
-
-            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u0, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u0, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u0, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u0, v1)
-            # gl.Vertex2f(x2, y2)
-
-            # gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, u1, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, u1, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, u1, v1)
-            # gl.MultiTexCoord2fARB(gl.TEXTURE3_ARB, u1, v1)
-            # gl.Vertex2f(x3, y3)
-            
-            # gl.End()
-
-            x += texw
-            
-        y += texh
+            y += texh
 
 
 def init(sample):

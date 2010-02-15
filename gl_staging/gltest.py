@@ -65,8 +65,7 @@ class Transform(object):
 transform = Transform()
         
 for i in xrange(5000):
-    environ.blit_environ()
-    gltexture.draw_texgrid(tg0, 0, 0, transform)
+    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
     pygame.display.flip()
 
 end = time.time()
