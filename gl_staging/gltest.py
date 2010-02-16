@@ -2,6 +2,7 @@ import pygame
 import time
 import sys
 
+import _renpy
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
@@ -53,6 +54,17 @@ tg0 = gltexture.texture_grid_from_surface(im0)
 im1 = load_image("whitehouse.jpg")
 tg1 = gltexture.texture_grid_from_surface(im1)
 
+im2 = load_image("id_circleiris.png")
+# im2 = load_image("id_teleport.png")
+_renpy.colormatrix(
+   im2, im2,
+   1, 0, 0, 0, 0,
+   1, 0, 0, 0, 0,
+   1, 0, 0, 0, 0,
+   1, 0, 0, 0, 0,
+   )
+tg2 = gltexture.texture_grid_from_surface(im2)
+
 environ = glenviron.FixedFunctionGLEnviron()
 
 start = time.time()
@@ -67,16 +79,20 @@ class Transform(object):
 
 transform = Transform()
 
-for i in xrange(5000):
+FRAMES = 2000
+
+for i in xrange(FRAMES):
     if sys.argv[1] == "blend":
-        gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, i / 5000.0)
+        gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+    elif sys.argv[1] == "imageblend":
+        gltexture.imageblend([ (tg2, 0, 0), (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES, int(sys.argv[2]))
     else:
         gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
 
     pygame.display.flip()
 
 end = time.time()
-print 5000.0 / (end - start)
+print 1.0 * FRAMES / (end - start)
     
 while True:
 

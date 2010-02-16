@@ -3,6 +3,16 @@ import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 import sys
 
+
+# TODO:
+# - Texgrid Subsurface/size/etc.
+# - Load/Manage Alpha Textures.
+# - Imagemap Blend
+# - Texgrid from drawing on screen.
+# - Shader Environment.
+# - Integrate w/ Ren'Py
+
+
 # The size of the side of a texture, not including the 1-pixel
 # border on all sides.
 SIDE = 126
@@ -10,7 +20,6 @@ SIDE = 126
 # An empty texture we can use to initialize a texture to the right size.
 # This is (SIDE + 2, SIDE + 2) in size.
 empty_surface = None
-
 
 def check_error():
     """
@@ -357,6 +366,68 @@ def blend(textures, transform, alpha, environ, fraction):
                 t0, t0x, t0y,
                 t1, t1x, t1y,
                 None, 0, 0)
+
+            x += t0w
+
+        y += t0h
+
+
+def imageblend(textures, transform, alpha, environ, fraction, ramp):
+    """
+    This uses texture 0 to control the blending of tetures 1 and 2 to
+    the screen.
+
+    `textures` is a list of (tg, sx, sy) tuples, where `tg` is a
+    texture grid, and (`sx`, `sy`) is the offset from the upper-left
+    corner of the screen, in (fractional) pixels.
+
+    `transform` is the transform to apply to the texgrid, when going from
+    texgrid coordinates to screen coordinates.
+
+    `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
+
+    `environ` is the GLEnviron used.
+    
+    `fraction` is the fraction of the second texture to show.
+
+    `ramp` is the length of the blending ramp to use.
+
+    """
+
+    environ.imageblend_environ(fraction, ramp)
+    gl.Color4f(1.0, 1.0, 1.0, alpha)
+
+    # The three textures must start at the same sx, sy coordinates.
+    tg0, sx, sy = textures[0]
+    tg1, sx, sy = textures[1]
+    tg2, sx, sy = textures[2]
+
+    y = 0
+
+    rows0, rows1, rows2 = align_axes(tg0.rows, tg1.rows, tg2.rows)
+    cols0, cols1, cols2 = align_axes(tg0.columns, tg1.columns, tg2.columns)
+    
+    # t0 = texture 0, t1 = texture 1.
+    # x, y - index into the texture.
+    # w, h - width and height to draw.
+    # ri, ci - row index, column index in tiles.
+    for (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in zip(rows0, rows1, rows2):
+        x = 0
+
+        for (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in zip(cols0, cols1, cols2):
+            
+            t0 = tg0.tiles[t0ri][t0ci]
+            t1 = tg1.tiles[t1ri][t1ci]
+            t2 = tg2.tiles[t2ri][t2ci]
+            
+            pysdlgl.draw_rectangle(
+                sx, sy,
+                x, y,
+                t0w, t0h, 
+                transform,
+                t0, t0x, t0y,
+                t1, t1x, t1y,
+                t2, t2x, t2y)
 
             x += t0w
 
