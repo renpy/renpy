@@ -6,19 +6,18 @@ import sys
 
 # TODO:
 # - Texgrid Subsurface/size/etc.
-# - Load/Manage Alpha Textures.
-# - Imagemap Blend
 # - Texgrid from drawing on screen.
 # - Shader Environment.
 # - Integrate w/ Ren'Py
 
+# The maximum size of a texture.
+MAX_SIZE = 512
 
-# The size of the side of a texture, not including the 1-pixel
-# border on all sides.
-SIDE = 126
+# Possible sizes for a texture.
+SIZES = [ 512, 256, 128, 64 ]
 
 # An empty texture we can use to initialize a texture to the right size.
-# This is (SIDE + 2, SIDE + 2) in size.
+# This is MAX_SIZE * 2 in size. 
 empty_surface = None
 
 def check_error():
@@ -37,8 +36,12 @@ class Texture(object):
     This object stores information about an OpenGL texture.
     """
 
-    def __init__(self, number):
+    def __init__(self, number, width, height):
 
+
+        # The width and height of this texture.
+        self.width = width
+        self.height = height
         
         # The number of the OpenGL texture this texture object
         # represents.
@@ -75,7 +78,7 @@ class Texture(object):
 
         self.refcount -= 1
         if not self.refcount:
-            free_textures.append(self)
+            free_textures[self.width, self.height].append(self)
 
             
     def load_surface(self, surf, x, y, w, h):
@@ -83,26 +86,20 @@ class Texture(object):
         Loads a pygame surface into this texture rectangle.
         """
 
-        x = x - 1
-        y = y - 1
-        w = w + 2
-        h = h + 2
-
         gl.BindTexture(gl.TEXTURE_2D, self.number)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-    
 
         # If we haven't initalized the texture yet, and we're
         # smaller than it, load in the empty texture.
-        if w < SIDE or h < SIDE:
+        if w < self.width or h < self.height:
             if not self.loaded:
                 pysdlgl.load_texture(
                     empty_surface,
                     0,
                     0,
-                    SIDE + 2,
-                    SIDE + 2, 
+                    self.width,
+                    self.height,
                     0)
 
             self.loaded = True
@@ -115,34 +112,46 @@ class Texture(object):
             w,
             h,
             self.loaded)
-
+        
         # Needs to be here twice, since we may not go through the w < SIDE
         # h < SIDE thing all the time.
         self.loaded = True
 
         # Finally, load in the default math.
-        self.xmul = self.xadd = self.ymul = self.yadd = 1.0 / (SIDE + 2)
+        self.xadd = self.yadd = 0
+        self.xmul = 1.0 / self.width
+        self.ymul = 1.0 / self.height
+
 
         
-# This is a list of unused Textures.
-free_textures = [ ]
+# This is a map from texture sizes to a list of free textures of that
+# size.
+free_textures = { }
+
+# Initialize free_textures.        
+for height in SIZES:
+    for width in SIZES:
+        free_textures[width, height] = [ ]
+
 
 # This allocates a texture, either from the free list, or by asking
 # gl.
-def alloc_texture():
+def alloc_texture(width, height):
     """
     Allocate a texture, either from the freelist or by asking GL. The
     returned texture has a reference count of 1.
     """
-    
-    if free_textures:
-        rv = free_textures.pop(0)
 
+    l = free_textures[width, height]
+
+    if l:
+        rv = l.pop()
+    
     else:
         texnums = [ 0 ]
         gl.GenTextures(1, texnums)
 
-        rv = Texture(texnums[0])
+        rv = Texture(texnums[0], width, height)
 
     rv.incref()
     return rv
@@ -176,8 +185,87 @@ class TextureGrid(object):
         # textures. This is looked up by looking up rowindex and
         # colindex.
         self.tiles = [ ]
+
+
+# This is a cache from (width, size) to the results of compute_tiling.
+tiling_cache = { }
+        
+def compute_tiling(width, max_size=MAX_SIZE):
+    """
+    This computes a tiling for an image with the given width (or
+    height). It takes a width as an argument, and returns two lists.
+
+    The first is a list of (offset, width, index) tuples, as are used
+    in TextureGrid to determine how to blit an image to the screen.
+
+    The second is a list of (offset, copy-width, total-width) tuples
+    that are used to create the tiles.
+
+    While we're thinking about this as if it's working horizontally
+    (x, width, etc), it 
+    """
+
+    # Check the cache.
+    key = (width, max_size)
+    if key in tiling_cache:
+        return tiling_cache[key]
     
+    # width is the remaining width, not including any borders
+    # required.
+
+    # The x-offset, relative to the left side of the surface.
+    x = 0
+
+    # The list of row tuples.
+    row = [ ]
+
+    # The list of tile tuples.
+    tiles = [ ]
+
+    # The index into the row.
+    row_index = 0 
     
+    while width:
+
+        # The size of the left border of this tile.
+        if x == 0:
+            left_border = 0
+        else:
+            left_border = 1
+
+        # Figure out the texture size to use.
+        for size in SIZES:
+            if size > max_size:
+                continue
+
+            # Ensure each texture is at least 2/3rds full. (Except the
+            # smallest.)
+            if size * .66 <= width + left_border:
+                break
+
+        # Figure out if we want to use a border.
+        if size < width + left_border:
+            right_border = 1
+        else:
+            right_border = 0
+            
+        # The number of pixels to display to the user from this tile.
+        row_size = min(width, size - left_border - right_border)
+
+        #Add to the results. 
+        row.append((left_border, row_size, row_index))
+        tiles.append((x - left_border, row_size + left_border + right_border, size))
+                   
+        # Update the counters.
+        row_index += 1
+        x += row_size
+        width -= row_size
+
+    tiling_cache[key] = (row, tiles)
+        
+    return row, tiles
+
+
 def texture_grid_from_surface(surf):    
     """
     This takes a Surface and turns it into a TextureGrid.
@@ -187,33 +275,20 @@ def texture_grid_from_surface(surf):
 
     rv = TextureGrid(width, height)
 
-    colindex = 0
-    rowindex = 0
-    
-    # Fill in the widths.
-    for x in xrange(0, width, SIDE):
-        rv.columns.append((0, min(width - x, SIDE), colindex))
-        colindex += 1
-        
-    # Fill in the heights, and at the same time, load the textures.
-    for y in xrange(0, height, SIDE):
-        rowheight = min(height - y, SIDE)
-        rv.rows.append((0, rowheight, rowindex))
+    rv.columns, texcolumns = compute_tiling(width)
+    rv.rows, texrows = compute_tiling(height)
 
+    for y, height, texheight in texrows:
         row = [ ]
-        
-        for x in xrange(0, width, SIDE):
-            colwidth = min(width - x, SIDE)
-
-            tex = alloc_texture()
-
-            tex.load_surface(surf, x, y, colwidth, rowheight)
-
+            
+        for x, width, texwidth in texcolumns:
+            
+            tex = alloc_texture(texwidth, texheight)
+            tex.load_surface(surf, x, y, width, height)
+            
             row.append(tex)
             
         rv.tiles.append(row)
-
-        rowindex += 1
         
     return rv
 
@@ -444,7 +519,5 @@ def init(sample):
         
     # Create the empty surface.
     global empty_surface
-    empty_surface = pygame.Surface((SIDE + 2, SIDE + 2), 0, sample)
+    empty_surface = pygame.Surface((MAX_SIZE, MAX_SIZE), 0, sample)
     
-    
-        

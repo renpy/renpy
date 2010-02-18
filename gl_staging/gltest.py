@@ -79,11 +79,13 @@ class Transform(object):
 
 transform = Transform()
 
-FRAMES = 2000
+FRAMES = 5000
 
 for i in xrange(FRAMES):
     if sys.argv[1] == "blend":
         gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+    elif sys.argv[1] == "halfblend":
+        gltexture.blend([ (tg0, -400, 0), (tg1, -400, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
     elif sys.argv[1] == "imageblend":
         gltexture.imageblend([ (tg2, 0, 0), (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES, int(sys.argv[2]))
     else:
@@ -101,4 +103,5 @@ while True:
 
     if ev.type == pygame.QUIT:
         break
-    
+
+    break
