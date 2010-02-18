@@ -135,7 +135,7 @@ add_include("", "libavutil/avstring.h")
 add_include("", "libavformat/avformat.h")
 add_include("", "libavcodec/avcodec.h")
 add_include("", "libswscale/swscale.h")
-add_include("", "GL/gl.h")
+add_include("", "GL/glew.h")
 
 add_library("libSDL")
 add_library("libpng")
@@ -234,14 +234,17 @@ extensions.append(distutils.core.Extension(
 extensions.append(distutils.core.Extension(
     "_renpy_tegl",
     ["_renpy_tegl.c"],
-    extra_compile_args=['-Wall'],
+    extra_compile_args=extra_compile_args,
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
     libraries=['GLEW']))
         
 extensions.append(distutils.core.Extension(
     "_renpy_pysdlgl",
     ["_renpy_pysdlgl.c"],
-    extra_compile_args=['-Wall'],
-    include_dirs=['/usr/include/SDL'],
+    extra_compile_args=extra_compile_args,
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
     libraries=['GLEW']))
 
 distutils.core.setup(

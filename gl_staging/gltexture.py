@@ -1,8 +1,6 @@
 import pygame
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
-import sys
-
 
 # TODO:
 # - Texgrid Subsurface/size/etc.
@@ -11,10 +9,10 @@ import sys
 # - Integrate w/ Ren'Py
 
 # The maximum size of a texture.
-MAX_SIZE = 512
+MAX_SIZE = 1024
 
 # Possible sizes for a texture.
-SIZES = [ 512, 256, 128, 64 ]
+SIZES = [ 1024, 512, 256, 128, 64 ]
 
 # An empty texture we can use to initialize a texture to the right size.
 # This is MAX_SIZE * 2 in size. 
@@ -90,9 +88,11 @@ class Texture(object):
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
+        
         # If we haven't initalized the texture yet, and we're
         # smaller than it, load in the empty texture.
         if w < self.width or h < self.height:
+
             if not self.loaded:
                 pysdlgl.load_texture(
                     empty_surface,
@@ -146,13 +146,13 @@ def alloc_texture(width, height):
 
     if l:
         rv = l.pop()
-    
+        
     else:
         texnums = [ 0 ]
         gl.GenTextures(1, texnums)
 
         rv = Texture(texnums[0], width, height)
-
+        
     rv.incref()
     return rv
 
@@ -186,6 +186,16 @@ class TextureGrid(object):
         # colindex.
         self.tiles = [ ]
 
+    def __del__(self):
+        """
+        On delete, drop the tiles' refcounts.
+        """
+
+        for i in self.tiles:
+            for j in i:
+                if j:
+                    j.decref()
+        
 
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }
@@ -243,6 +253,8 @@ def compute_tiling(width, max_size=MAX_SIZE):
             if size * .66 <= width + left_border:
                 break
 
+        size = 1024
+            
         # Figure out if we want to use a border.
         if size < width + left_border:
             right_border = 1

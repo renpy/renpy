@@ -147,10 +147,12 @@ class FixedFunctionGLEnviron(GLEnviron):
         if self.last_environ != BLIT:
 
             # Set unit 0 to modulate.
+
             self.combine_mode(gl.TEXTURE0_ARB,
                               color_function=gl.MODULATE,
                               alpha_function=gl.MODULATE)
-            
+
+
             # Disable units 1, 2 and 3.
             self.disable(gl.TEXTURE1_ARB)
             self.disable(gl.TEXTURE2_ARB)

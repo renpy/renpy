@@ -40,6 +40,8 @@ cdef extern from "GL/glew.h":
 
     int GL_TEXTURE_2D
     int GL_RGBA
+    int GL_BGRA
+    int GL_ALPHA
     int GL_UNSIGNED_BYTE
           
     void glTexImage2D(
@@ -80,6 +82,7 @@ cdef extern from "GL/glew.h":
     
 def init_glew():
     err = glewInit()
+
     if err != GLEW_OK:
         raise Exception("Glew init failed: %s" % <char *> glewGetErrorString(err))
 
@@ -115,10 +118,10 @@ def load_texture(
             0,
             width,
             height,
-            GL_RGBA,
+            GL_BGRA,
             GL_UNSIGNED_BYTE,
             pixels)
-
+        
     else:
         glTexImage2D(
             GL_TEXTURE_2D,
@@ -127,7 +130,7 @@ def load_texture(
             width,
             height,
             0,
-            GL_RGBA,
+            GL_BGRA,
             GL_UNSIGNED_BYTE,
             pixels)
 
@@ -176,7 +179,6 @@ def draw_rectangle(
     cdef float x3 = (x + w) * xdx + (y + h) * xdy + sx
     cdef float y3 = (x + w) * ydx + (y + h) * ydy + sy
 
-    
     # Compute the texture coordinates, and set up the textures.
     cdef float xadd, yadd, xmul, ymul
 

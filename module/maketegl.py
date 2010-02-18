@@ -38,7 +38,7 @@ VERSION = "0.1"
 # functions in the same module).
 
 GL_MODULE_NAME = "_renpy_tegl"
-GLU_MODULE_NAME = "_renpy_tegl"
+GLU_MODULE_NAME = None # "_renpy_tegl"
 
 
 # Whether to export names of constants with the GL_ (or GLU_)
@@ -3417,17 +3417,20 @@ def main():
             flo.write(_filetemplate % s)
         finally:
             flo.close()
-        s = { 'functions': '\n'.join(teglu.functions),
-              'methoddefs': ',\n    '.join(teglu.methoddefs),
-              'constants': '\n'.join(teglu.constants),
-              'headers': teglu.headers,
-              'modname': GLU_MODULE_NAME }
-        filename = "%s.c" % GLU_MODULE_NAME
-        flo = open(filename,"w")
-        try:
-            flo.write(_filetemplate % s)
-        finally:
-            flo.close()
+
+        if GLU_MODULE_NAME:
+
+            s = { 'functions': '\n'.join(teglu.functions),
+                  'methoddefs': ',\n    '.join(teglu.methoddefs),
+                  'constants': '\n'.join(teglu.constants),
+                  'headers': teglu.headers,
+                  'modname': GLU_MODULE_NAME }
+            filename = "%s.c" % GLU_MODULE_NAME
+            flo = open(filename,"w")
+            try:
+                flo.write(_filetemplate % s)
+            finally:
+                flo.close()
 
 
 if __name__ == '__main__':

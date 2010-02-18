@@ -9,26 +9,38 @@ import _renpy_pysdlgl as pysdlgl
 import gltexture
 import glenviron
 
-little_endian = (
-    0x000000FF,
-    0x0000FF00,
-    0x00FF0000,
-    0xFF000000)
+# These are the pixel formats for big- and little-endian platforms.
 
-big_endian = (
-    0xFF000000,
-    0x00FF0000,
-    0x0000FF00,
-    0x000000FF
-    )
+if sys.byteorder == 'little':
 
+    masks = (
+        0x00FF0000,
+        0x0000FF00,
+        0x000000FF,
+        -16777216) # 0xFF000000, but that's not representable as a short int.
+else:
+
+    masks = (
+        0x0000FF00,
+        0x00FF0000,
+        -16777216,
+        0x000000FF)
+
+try:
+    import pygame.macosx
+    pygame.macosx.init()
+except:
+    pass
+    
 pygame.display.init()
 
+
+
 s = pygame.display.set_mode((800, 600), pygame.OPENGL|pygame.DOUBLEBUF)
-sample = pygame.Surface((10, 10), 0, 32, little_endian)
+sample = pygame.Surface((10, 10), 0, 32, masks)
+
 
 pysdlgl.init_glew()
-
 gltexture.init(sample)
 
 def load_image(fn):
@@ -43,9 +55,11 @@ def load_image(fn):
 gl.ClearColor(0.0, 0.0, 0.0, 0.0)
 gl.Clear(gl.COLOR_BUFFER_BIT)
 
+
 gl.MatrixMode(gl.PROJECTION)
 gl.LoadIdentity()
-gl.Ortho2D(0, 800, 600, 0)
+# gl.Ortho2D(0, 800, 600, 0)
+gl.Ortho(0.0, 800.0, 600.0, 0.0, -1.0, 1.0)
 gl.MatrixMode(gl.MODELVIEW)
 
 im0 = load_image("washington.jpg")
@@ -79,7 +93,7 @@ class Transform(object):
 
 transform = Transform()
 
-FRAMES = 5000
+FRAMES = 1500
 
 for i in xrange(FRAMES):
     if sys.argv[1] == "blend":
@@ -88,6 +102,9 @@ for i in xrange(FRAMES):
         gltexture.blend([ (tg0, -400, 0), (tg1, -400, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
     elif sys.argv[1] == "imageblend":
         gltexture.imageblend([ (tg2, 0, 0), (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES, int(sys.argv[2]))
+    elif sys.argv[1] == "newtexblit":
+        tg0 = gltexture.texture_grid_from_surface(im0)
+        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
     else:
         gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
 
@@ -104,4 +121,4 @@ while True:
     if ev.type == pygame.QUIT:
         break
 
-    break
+
