@@ -131,7 +131,7 @@ def load_texture(
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RGBA8,
+            GL_RGBA,
             width,
             height,
             0,

@@ -85,7 +85,6 @@ class Texture(object):
         gl.BindTexture(gl.TEXTURE_2D, self.number)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
         gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-
         
         # If we haven't initalized the texture yet, and we're
         # smaller than it, load in the empty texture.
@@ -122,10 +121,24 @@ class Texture(object):
 
     def render_to(self, x, y, draw_func):
 
-        glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func, self.loaded)
-        
-        self.loaded = True
-            
+        if not self.loaded:
+
+            gl.BindTexture(gl.TEXTURE_2D, self.number)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+            pysdlgl.load_texture(
+                None,
+                0,
+                0,
+                self.width,
+                self.height,
+                0)
+
+            self.loaded = True
+         
+        glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func)
+
         self.xadd = 0
         self.yadd = 0
         self.xmul = 1.0 / self.width

@@ -286,13 +286,12 @@ class Rtt(object):
 
         raise Exception("Not implemented.")
 
-    def render(self, texture, x, y, w, h, draw_func, replace):
+    def render(self, texture, x, y, w, h, draw_func):
         """
         This function is called to trigger a rendering to a texture.
         `x`, `y`, `w`, and `h` specify the location and dimensions of
         the sub-image to render to the texture. `draw_func` is called
-        to render the texture. `replace` should be True to replace an
-        existing texture, or False to allocate a new one.
+        to render the texture.
         """
 
         raise Exception("Not implemented.")
@@ -319,13 +318,12 @@ class CopyRtt(object):
         RTT mode.
         """
 
-    def render(self, texture, x, y, w, h, draw_func, replace):
+    def render(self, texture, x, y, w, h, draw_func):
         """
         This function is called to trigger a rendering to a texture.
         `x`, `y`, `w`, and `h` specify the location and dimensions of
         the sub-image to render to the texture. `draw_func` is called
-        to render the texture. `replace` should be True to replace an
-        existing texture, or False to allocate a new one.
+        to render the texture.
         """
 
         gl.Viewport(0, 0, w, h)
@@ -338,31 +336,16 @@ class CopyRtt(object):
         draw_func()
         
         gl.BindTexture(gl.TEXTURE_2D, texture)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
-        if replace:
-
-            gl.CopyTexSubImage2D(
-                gl.TEXTURE_2D,
-                0,
-                0,
-                0,
-                0,
-                0,
-                w,
-                h)
-
-        else:
-            gl.CopyTexImage2D(
-                gl.TEXTURE_2D,
-                0,
-                gl.RGBA,
-                0,
-                0,
-                w,
-                h,
-                0)
+        gl.CopyTexSubImage2D(
+            gl.TEXTURE_2D,
+            0,
+            0,
+            0,
+            0,
+            0,
+            w,
+            h)        
             
 
     def end(self):
@@ -371,6 +354,81 @@ class CopyRtt(object):
         """
 
 
+class FramebufferRtt(object):
+    """
+    This class uses the framebuffer object to do RTT.
+    """
+
+    def __init__(self):
+
+        # This maps a texture to the framebuffer object that
+        # can write to that texture.
+        self.texture_to_fbo = { }
+        
+    def get_fbo(self, texture):
+
+        if texture in self.texture_to_fbo:
+            return self.texture_to_fbo[texture]
+
+        fbos = [ 0 ]
+        gl.GenFramebuffersEXT(1, fbos)
+        fbo = fbos[0]
+
+        gl.BindFramebufferEXT(gl.FRAMEBUFFER_EXT, fbo)
+
+        gl.FramebufferTexture2DEXT(
+           gl.FRAMEBUFFER_EXT,
+           gl.COLOR_ATTACHMENT0_EXT,
+           gl.TEXTURE_2D,
+           texture,
+           0)
+
+        self.texture_to_fbo[texture] = fbo
+        return fbo
+        
+    
+    def begin(self):
+        """
+        This function should be called when a Render-to-texture
+        session begins. It's responsible for setting the GPU to
+        RTT mode.
+        """
+        
+    def render(self, texture, x, y, w, h, draw_func):
+        """
+        This function is called to trigger a rendering to a texture.
+        `x`, `y`, `w`, and `h` specify the location and dimensions of
+        the sub-image to render to the texture. `draw_func` is called
+        to render the texture. 
+        """
+
+        fbo = self.get_fbo(texture)
+        
+        gl.BindFramebufferEXT(gl.FRAMEBUFFER_EXT, fbo)
+
+        gl.Viewport(0, 0, w, h)
+        
+        gl.MatrixMode(gl.PROJECTION)
+        gl.LoadIdentity()
+        gl.Ortho(x, x + w, y, y + h, -1, 1)
+        gl.MatrixMode(gl.MODELVIEW)
+
+        draw_func()
+
+
+    def end(self):
+        """
+        This is called when a Render-to-texture session ends.
+        """
+
+        gl.BindFramebufferEXT(gl.FRAMEBUFFER_EXT, 0)
+
+    def __del__(self):
+
+        # Get rid of all of the framebuffer objects we've registered.
+        for i in self.texture_to_fbo.itervalues():
+            gl.DeleteFramebuffersEXT(1, [ i ])
+        
 def init():
 
     global environ
@@ -380,4 +438,6 @@ def init():
     environ = FixedFunctionEnviron()
 
     # The render-to-texture implementation to use.
-    rtt = CopyRtt()
+    rtt = FramebufferRtt()
+    # rtt = CopyRtt()
+    
