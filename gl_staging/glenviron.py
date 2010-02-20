@@ -10,18 +10,9 @@ BLIT = 1
 BLEND = 2
 IMAGEBLEND = 3
 
-class GLEnviron(object):
+class Environ(object):
 
-    def init_common(self):
-        """
-        Code that is, for now, common to the different environments, and
-        doesn't need to be changed over the course of execution.
-        """
-
-        gl.Enable(gl.BLEND)
-        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-
-    def blit_environ(self):
+    def blit(self):
         """
         Set up a normal blit environment. The texture to be blitted should
         be TEXTURE0.
@@ -29,7 +20,7 @@ class GLEnviron(object):
 
         raise Exception("Not implemented.")
 
-    def blend_environ(self, fraction):
+    def blend(self, fraction):
         """
         Set up an environment that blends from TEXTURE0 to TEXTURE1.
 
@@ -39,7 +30,7 @@ class GLEnviron(object):
         raise Exception("Not implemented.")
 
 
-    def imageblend_environ(self, fraction, ramp):
+    def imageblend(self, fraction, ramp):
         """
         Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
         The controlling image is TEXTURE0.
@@ -51,7 +42,7 @@ class GLEnviron(object):
         raise Exception("Not implemented.")
         
         
-class FixedFunctionGLEnviron(GLEnviron):
+class FixedFunctionEnviron(Environ):
     """
     This is an OpenGL environment that uses the fixed-function pipeline.
 
@@ -62,15 +53,13 @@ class FixedFunctionGLEnviron(GLEnviron):
     def __init__(self):
         
         # The last blend environ used.
-        self.last_environ = NONE
+        self.last = NONE
 
         # The last ramp length asked for.
         self.last_ramp = -1
 
         # The last ramplen actually used.
         self.last_ramplen = -1
-        
-        self.init_common()
 
         # A table that maps ramp lengths to the setup of the fixed-function
         # units.        
@@ -142,9 +131,9 @@ class FixedFunctionGLEnviron(GLEnviron):
         gl.TexEnvf(gl.TEXTURE_ENV, gl.ALPHA_SCALE, alpha_scale)
 
         
-    def blit_environ(self):
+    def blit(self):
 
-        if self.last_environ != BLIT:
+        if self.last != BLIT:
 
             # Set unit 0 to modulate.
 
@@ -158,11 +147,11 @@ class FixedFunctionGLEnviron(GLEnviron):
             self.disable(gl.TEXTURE2_ARB)
             self.disable(gl.TEXTURE3_ARB)
             
-            self.last_environ = BLIT
+            self.last = BLIT
         
-    def blend_environ(self, fraction):
+    def blend(self, fraction):
 
-        if self.last_environ != BLEND:
+        if self.last != BLEND:
 
             # Get texture 0.
             self.combine_mode(gl.TEXTURE0_ARB,
@@ -192,16 +181,16 @@ class FixedFunctionGLEnviron(GLEnviron):
             # Disable texture unit 3.
             self.disable(gl.TEXTURE3_ARB)
             
-            self.last_environ = BLEND
+            self.last = BLEND
                             
         gl.ActiveTextureARB(gl.TEXTURE1_ARB)
         gl.TexEnvfv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_COLOR, (fraction, fraction, fraction, fraction))
 
         
         
-    def imageblend_environ(self, fraction, ramp):
+    def imageblend(self, fraction, ramp):
 
-        if self.last_environ != IMAGEBLEND or self.last_ramp != ramp:
+        if self.last != IMAGEBLEND or self.last_ramp != ramp:
 
             # Figure out the details of the ramp.
             for i in self.ramp_setup:
@@ -260,7 +249,7 @@ class FixedFunctionGLEnviron(GLEnviron):
                               alpha_arg0=gl.PREVIOUS_ARB,
                               alpha_arg1=gl.PRIMARY_COLOR_ARB)
             
-            self.last_environ = IMAGEBLEND
+            self.last = IMAGEBLEND
             self.last_ramp = ramp
             self.last_ramplen = ramplen
 
@@ -281,11 +270,109 @@ class FixedFunctionGLEnviron(GLEnviron):
         gl.TexEnvi(gl.TEXTURE_ENV, gl.COMBINE_RGB_ARB, function)
         gl.TexEnvi(gl.TEXTURE_ENV, gl.COMBINE_ALPHA_ARB, function)
         gl.TexEnvfv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_COLOR, (offset, offset, offset, offset))
+
+# The environ to use.
+environ = FixedFunctionEnviron()
         
                               
-                
+class Rtt(object):
+    """
+    Subclasses of this class handle rendering to a texture.
+    """
+
+    def begin(self):
+        """
+        This function should be called when a Render-to-texture
+        session begins. It's responsible for setting the GPU to
+        RTT mode.
+        """
+
+        raise Exception("Not implemented.")
+
+    def render(self, texture, x, y, w, h, draw_func, replace):
+        """
+        This function is called to trigger a rendering to a texture.
+        `x`, `y`, `w`, and `h` specify the location and dimensions of
+        the sub-image to render to the texture. `draw_func` is called
+        to render the texture. `replace` should be True to replace an
+        existing texture, or False to allocate a new one.
+        """
+
+        raise Exception("Not implemented.")
+
+    def end(self):
+        """
+        This is called when a Render-to-texture session ends.
+        """
+
+        raise Exception("Not implemented.")
+
+
+
+class CopyRtt(object):
+    """
+    This class uses texture copying to implement Render-to-texture.
+    """
+
+    
+    def begin(self):
+        """
+        This function should be called when a Render-to-texture
+        session begins. It's responsible for setting the GPU to
+        RTT mode.
+        """
+
+    def render(self, texture, x, y, w, h, draw_func, replace):
+        """
+        This function is called to trigger a rendering to a texture.
+        `x`, `y`, `w`, and `h` specify the location and dimensions of
+        the sub-image to render to the texture. `draw_func` is called
+        to render the texture. `replace` should be True to replace an
+        existing texture, or False to allocate a new one.
+        """
+
+        gl.Viewport(0, 0, w, h)
+        
+        gl.MatrixMode(gl.PROJECTION)
+        gl.LoadIdentity()
+        gl.Ortho(x, x + w, y, y + h, -1, 1)
+        gl.MatrixMode(gl.MODELVIEW)
+
+        draw_func()
+        
+        gl.BindTexture(gl.TEXTURE_2D, texture)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+        if replace:
+
+            gl.CopyTexSubImage2D(
+                gl.TEXTURE_2D,
+                0,
+                0,
+                0,
+                0,
+                0,
+                w,
+                h)
+
+        else:
+            gl.CopyTexImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                0,
+                0,
+                w,
+                h,
+                0)
             
-        
-        
-        
-        
+
+    def end(self):
+        """
+        This is called when a Render-to-texture session ends.
+        """
+
+    
+# The render-to-texture implementation to use.
+rtt = CopyRtt()

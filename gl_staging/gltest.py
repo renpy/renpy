@@ -7,7 +7,6 @@ import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
 import gltexture
-import glenviron
 
 # These are the pixel formats for big- and little-endian platforms.
 
@@ -88,8 +87,6 @@ tg2 = gltexture.texture_grid_from_surface(im2)
 im3 = load_image("eileen_happy.png")
 tg3 = gltexture.texture_grid_from_surface(im3)
 
-environ = glenviron.FixedFunctionGLEnviron()
-
 class Transform(object):
 
     def __init__(self):
@@ -99,6 +96,10 @@ class Transform(object):
         self.ydy = 1
 
 gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+gl.Enable(gl.BLEND)
+gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
+
 
 transform = Transform()
 
@@ -108,12 +109,12 @@ start = time.time()
 setup_screen()
 
 def draw_func():
-    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
-    gltexture.blit([ (tg3, 0, 0) ], transform, 1.0, environ)
+    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
+    gltexture.blit([ (tg3, 0, 0) ], transform, 1.0)
         
 def draw_func2():
-    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
-    gltexture.blit([ (tg3, 400, 0) ], transform, 1.0, environ)
+    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
+    gltexture.blit([ (tg3, 400, 0) ], transform, 1.0)
         
 
 pygame.display.flip()
@@ -124,24 +125,24 @@ for i in xrange(FRAMES):
     if sys.argv[1] == "cttblit":
         tg4 = gltexture.texture_grid_from_drawing(800, 600, draw_func)
         setup_screen()
-        gltexture.blit([ (tg4, 0, 0) ], transform, 1.0, environ)
+        gltexture.blit([ (tg4, 0, 0) ], transform, 1.0)
     elif sys.argv[1] == "cttblend":
         tg4 = gltexture.texture_grid_from_drawing(800, 600, draw_func)
         tg5 = gltexture.texture_grid_from_drawing(800, 600, draw_func2)
         setup_screen()
-        gltexture.blend([ (tg4, 0, 0), (tg5, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+        gltexture.blend([ (tg4, 0, 0), (tg5, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES)
 
     elif sys.argv[1] == "blend":
-        gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+        gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES)
     elif sys.argv[1] == "halfblend":
-        gltexture.blend([ (tg0, -400, 0), (tg1, -400, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+        gltexture.blend([ (tg0, -400, 0), (tg1, -400, 0) ], transform, 1.0, 1.0 * i / FRAMES)
     elif sys.argv[1] == "imageblend":
-        gltexture.imageblend([ (tg2, 0, 0), (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES, int(sys.argv[2]))
+        gltexture.imageblend([ (tg2, 0, 0), (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES, int(sys.argv[2]))
     elif sys.argv[1] == "newtexblit":
         tg0 = gltexture.texture_grid_from_surface(im0)
-        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
     else:
-        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+        gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
 
     pygame.display.flip()
 

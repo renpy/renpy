@@ -2,6 +2,8 @@ import pygame
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
+import glenviron
+
 # TODO:
 # - Texgrid Subsurface/size/etc.
 # - Texgrid from drawing on screen.
@@ -118,35 +120,10 @@ class Texture(object):
         self.xmul = 1.0 / self.width
         self.ymul = 1.0 / self.height
 
-    def copy_screen(self):
+    def render_to(self, x, y, draw_func):
 
-        gl.BindTexture(gl.TEXTURE_2D, self.number)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-
-        if self.loaded:
-            gl.CopyTexSubImage2D(
-                gl.TEXTURE_2D,
-                0,
-                0,
-                0,
-                0,
-                0,
-                self.width,
-                self.height,
-                )
-
-        else:
-            gl.CopyTexImage2D(
-                gl.TEXTURE_2D,
-                0,
-                gl.RGBA,
-                0,
-                0,
-                self.width,
-                self.height,
-                0)
-
+        glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func, self.loaded)
+        
         self.loaded = True
             
         self.xadd = 0
@@ -340,6 +317,8 @@ def texture_grid_from_drawing(width, height, draw_func):
     draw_func to draw to the screen.
     """
 
+    glenviron.rtt.begin()
+    
     rv = TextureGrid(width, height)
 
     rv.columns, texcolumns = compute_tiling(width)
@@ -349,24 +328,15 @@ def texture_grid_from_drawing(width, height, draw_func):
         row = [ ]
             
         for x, width, texwidth in texcolumns:
-
-            gl.Viewport(0, 0, texwidth, texheight)
-
-            gl.MatrixMode(gl.PROJECTION)
-            gl.LoadIdentity()
-            gl.Ortho(x, x + texwidth, y, y + texheight, -1, 1)
-            gl.MatrixMode(gl.MODELVIEW)
-
-            gl.Clear(gl.COLOR_BUFFER_BIT)
-
-            draw_func()
             
             tex = alloc_texture(texwidth, texheight)
-            tex.copy_screen()
+            tex.render_to(x, y, draw_func)
             
             row.append(tex)
             
         rv.tiles.append(row)
+
+    glenviron.rtt.end()
         
     return rv
 
@@ -428,7 +398,7 @@ def align_axes(*args):
     return rv
             
 
-def blit(textures, transform, alpha, environ):
+def blit(textures, transform, alpha):
     """
     This draws the supplied textures to the screen.
 
@@ -440,11 +410,9 @@ def blit(textures, transform, alpha, environ):
     texgrid coordinates to screen coordinates.
 
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
-
-    `environ` is the GLEnviron used.
     """
 
-    environ.blit_environ()
+    glenviron.environ.blit()
     gl.Color4f(1.0, 1.0, 1.0, alpha)
     
     for tg, sx, sy in textures:
@@ -471,7 +439,7 @@ def blit(textures, transform, alpha, environ):
             y += texh
 
 
-def blend(textures, transform, alpha, environ, fraction):
+def blend(textures, transform, alpha, fraction):
     """
     This blends two textures to the screen.
 
@@ -484,12 +452,10 @@ def blend(textures, transform, alpha, environ, fraction):
 
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
 
-    `environ` is the GLEnviron used.
-    
     `fraction` is the fraction of the second texture to show.
     """
 
-    environ.blend_environ(fraction)
+    glenviron.environ.blend(fraction)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
 
     # The two textures must start at the same sx, sy coordinates.
@@ -527,7 +493,7 @@ def blend(textures, transform, alpha, environ, fraction):
         y += t0h
 
 
-def imageblend(textures, transform, alpha, environ, fraction, ramp):
+def imageblend(textures, transform, alpha, fraction, ramp):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -541,15 +507,13 @@ def imageblend(textures, transform, alpha, environ, fraction, ramp):
 
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
 
-    `environ` is the GLEnviron used.
-    
     `fraction` is the fraction of the second texture to show.
 
     `ramp` is the length of the blending ramp to use.
 
     """
 
-    environ.imageblend_environ(fraction, ramp)
+    glenviron.environ.imageblend(fraction, ramp)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
 
     # The three textures must start at the same sx, sy coordinates.
@@ -588,8 +552,6 @@ def imageblend(textures, transform, alpha, environ, fraction, ramp):
 
         y += t0h
 
-
-            
 
 def init(sample):
     """
