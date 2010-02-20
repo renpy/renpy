@@ -9,14 +9,10 @@ import _renpy_pysdlgl as pysdlgl
 # - Integrate w/ Ren'Py
 
 # The maximum size of a texture.
-MAX_SIZE = 1024
+MAX_SIZE = 512
 
 # Possible sizes for a texture.
-SIZES = [ 1024, 512, 256, 128, 64 ]
-
-# An empty texture we can use to initialize a texture to the right size.
-# This is MAX_SIZE * 2 in size. 
-empty_surface = None
+SIZES = [ 512, 256, 128, 64 ]
 
 def check_error():
     """
@@ -95,7 +91,7 @@ class Texture(object):
 
             if not self.loaded:
                 pysdlgl.load_texture(
-                    empty_surface,
+                    None,
                     0,
                     0,
                     self.width,
@@ -122,6 +118,41 @@ class Texture(object):
         self.xmul = 1.0 / self.width
         self.ymul = 1.0 / self.height
 
+    def copy_screen(self):
+
+        gl.BindTexture(gl.TEXTURE_2D, self.number)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+        if self.loaded:
+            gl.CopyTexSubImage2D(
+                gl.TEXTURE_2D,
+                0,
+                0,
+                0,
+                0,
+                0,
+                self.width,
+                self.height,
+                )
+
+        else:
+            gl.CopyTexImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                0,
+                0,
+                self.width,
+                self.height,
+                0)
+
+        self.loaded = True
+            
+        self.xadd = 0
+        self.yadd = 0
+        self.xmul = 1.0 / self.width
+        self.ymul = 1.0 / self.height
 
         
 # This is a map from texture sizes to a list of free textures of that
@@ -252,8 +283,6 @@ def compute_tiling(width, max_size=MAX_SIZE):
             # smallest.)
             if size * .66 <= width + left_border:
                 break
-
-        size = 1024
             
         # Figure out if we want to use a border.
         if size < width + left_border:
@@ -303,6 +332,45 @@ def texture_grid_from_surface(surf):
         rv.tiles.append(row)
         
     return rv
+
+
+def texture_grid_from_drawing(width, height, draw_func):    
+    """
+    This creates a texture grid of `width` by `height` by using
+    draw_func to draw to the screen.
+    """
+
+    rv = TextureGrid(width, height)
+
+    rv.columns, texcolumns = compute_tiling(width)
+    rv.rows, texrows = compute_tiling(height)
+
+    for y, height, texheight in texrows:
+        row = [ ]
+            
+        for x, width, texwidth in texcolumns:
+
+            gl.Viewport(0, 0, texwidth, texheight)
+
+            gl.MatrixMode(gl.PROJECTION)
+            gl.LoadIdentity()
+            gl.Ortho(x, x + texwidth, y, y + texheight, -1, 1)
+            gl.MatrixMode(gl.MODELVIEW)
+
+            gl.Clear(gl.COLOR_BUFFER_BIT)
+
+            draw_func()
+            
+            tex = alloc_texture(texwidth, texheight)
+            tex.copy_screen()
+            
+            row.append(tex)
+            
+        rv.tiles.append(row)
+        
+    return rv
+
+
 
 
 def align_axes(*args):
@@ -528,8 +596,6 @@ def init(sample):
     Initialize this module. This must be called after pygame has been
     initialized.
     """
-        
-    # Create the empty surface.
-    global empty_surface
-    empty_surface = pygame.Surface((MAX_SIZE, MAX_SIZE), 0, sample)
+
+    pass
     

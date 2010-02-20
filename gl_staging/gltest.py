@@ -34,9 +34,10 @@ except:
     
 pygame.display.init()
 
+WIDTH = 800
+HEIGHT = 600
 
-
-s = pygame.display.set_mode((800, 600), pygame.OPENGL|pygame.DOUBLEBUF)
+s = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL|pygame.DOUBLEBUF)
 sample = pygame.Surface((10, 10), 0, 32, masks)
 
 
@@ -47,20 +48,25 @@ def load_image(fn):
     im = pygame.image.load(fn, fn)
     w, h = im.get_size()
     
-    im2 = pygame.Surface((w + 2, h + 2), 0, sample)
-    im2.blit(im, (1, 1))
+    # im2 = pygame.Surface((w + 2, h + 2), 0, sample)
+    # im2.blit(im, (1, 1))
+    im2 = pygame.Surface((w + 0, h + 0), 0, sample)
+    im2.blit(im, (0, 0))
 
-    return im2.subsurface((1, 1, w, h))
+    # return im2.subsurface((1, 1, w, h))
+    return im2
+    
 
-gl.ClearColor(0.0, 0.0, 0.0, 0.0)
-gl.Clear(gl.COLOR_BUFFER_BIT)
+def setup_screen():
+    gl.Viewport(0, 0, WIDTH, HEIGHT)
+
+    gl.MatrixMode(gl.PROJECTION)
+    gl.LoadIdentity()
+    gl.Ortho(0.0, 800.0, 600.0, 0.0, -1.0, 1.0)
+    gl.MatrixMode(gl.MODELVIEW)
 
 
-gl.MatrixMode(gl.PROJECTION)
-gl.LoadIdentity()
-# gl.Ortho2D(0, 800, 600, 0)
-gl.Ortho(0.0, 800.0, 600.0, 0.0, -1.0, 1.0)
-gl.MatrixMode(gl.MODELVIEW)
+
 
 im0 = load_image("washington.jpg")
 tg0 = gltexture.texture_grid_from_surface(im0)
@@ -79,9 +85,10 @@ _renpy.colormatrix(
    )
 tg2 = gltexture.texture_grid_from_surface(im2)
 
-environ = glenviron.FixedFunctionGLEnviron()
+im3 = load_image("eileen_happy.png")
+tg3 = gltexture.texture_grid_from_surface(im3)
 
-start = time.time()
+environ = glenviron.FixedFunctionGLEnviron()
 
 class Transform(object):
 
@@ -91,12 +98,40 @@ class Transform(object):
         self.ydx = 0
         self.ydy = 1
 
+gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+
 transform = Transform()
 
 FRAMES = 1500
+start = time.time()
+
+setup_screen()
+
+def draw_func():
+    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+    gltexture.blit([ (tg3, 0, 0) ], transform, 1.0, environ)
+        
+def draw_func2():
+    gltexture.blit([ (tg0, 0, 0) ], transform, 1.0, environ)
+    gltexture.blit([ (tg3, 400, 0) ], transform, 1.0, environ)
+        
+
+pygame.display.flip()
+
+gl.Clear(gl.COLOR_BUFFER_BIT)
 
 for i in xrange(FRAMES):
-    if sys.argv[1] == "blend":
+    if sys.argv[1] == "cttblit":
+        tg4 = gltexture.texture_grid_from_drawing(800, 600, draw_func)
+        setup_screen()
+        gltexture.blit([ (tg4, 0, 0) ], transform, 1.0, environ)
+    elif sys.argv[1] == "cttblend":
+        tg4 = gltexture.texture_grid_from_drawing(800, 600, draw_func)
+        tg5 = gltexture.texture_grid_from_drawing(800, 600, draw_func2)
+        setup_screen()
+        gltexture.blend([ (tg4, 0, 0), (tg5, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
+
+    elif sys.argv[1] == "blend":
         gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
     elif sys.argv[1] == "halfblend":
         gltexture.blend([ (tg0, -400, 0), (tg1, -400, 0) ], transform, 1.0, environ, 1.0 * i / FRAMES)
@@ -122,3 +157,4 @@ while True:
         break
 
 
+    break

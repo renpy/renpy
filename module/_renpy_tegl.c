@@ -643,7 +643,6 @@ static PyObject* teglOrtho(PyObject* self, PyObject* args) {
     double val3;
     double val4;
     double val5;
-
     if (PyTuple_GET_SIZE(args) != 6) {
         PyErr_SetString(PyExc_ValueError,ARGCOUNT);
         return 0;
@@ -8739,6 +8738,371 @@ static PyObject* teglGetAttribLocationARB(PyObject* self, PyObject* args) {
     return PyInt_FromLong(r);
 }
 
+static PyObject* teglIsRenderbufferEXT(PyObject* self, PyObject* obj) {
+    unsigned long val;
+    int r;
+    val = PyInt_AsUnsignedLongMask(obj);
+    if (val == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    r = glIsRenderbufferEXT(val);
+    return PyBool_FromLong(r);
+}
+
+static PyObject* teglBindRenderbufferEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glBindRenderbufferEXT(val0,val1);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglDeleteRenderbuffersEXT(PyObject* self, PyObject* args) {
+    long val0;
+    GLuint val1[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsLong(PyTuple_GET_ITEM(args,0));
+    if (val0 == -1 && PyErr_Occurred()) return 0;
+    p = PyTuple_GET_ITEM(args,1);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        unsigned long t;
+        int fail;
+        q = PySequence_GetItem(p,j);
+        if (!q) return 0;
+        t = PyInt_AsUnsignedLongMask(q);
+        fail = (t == (unsigned long)(-1) && PyErr_Occurred());
+        Py_DECREF(q);
+        if (fail) return 0;
+        val1[j] = t;
+    }
+    glDeleteRenderbuffersEXT(val0,val1);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglGenRenderbuffersEXT(PyObject* self, PyObject* args) {
+    long val0;
+    GLuint val1[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsLong(PyTuple_GET_ITEM(args,0));
+    if (val0 == -1 && PyErr_Occurred()) return 0;
+    glGenRenderbuffersEXT(val0,val1);
+    p = PyTuple_GET_ITEM(args,1);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        int status;
+        q = PyLong_FromUnsignedLong(val1[j]);
+        if (!q) return 0;
+        status = PySequence_SetItem(p,j,q);
+        Py_DECREF(q);
+        if (status == -1) return 0;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglRenderbufferStorageEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    long val2;
+    long val3;
+    if (PyTuple_GET_SIZE(args) != 4) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsLong(PyTuple_GET_ITEM(args,2));
+    if (val2 == -1 && PyErr_Occurred()) return 0;
+    val3 = PyInt_AsLong(PyTuple_GET_ITEM(args,3));
+    if (val3 == -1 && PyErr_Occurred()) return 0;
+    glRenderbufferStorageEXT(val0,val1,val2,val3);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglGetRenderbufferParameterivEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    GLint val2[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 3) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glGetRenderbufferParameterivEXT(val0,val1,val2);
+    p = PyTuple_GET_ITEM(args,2);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        int status;
+        q = PyInt_FromLong(val2[j]);
+        if (!q) return 0;
+        status = PySequence_SetItem(p,j,q);
+        Py_DECREF(q);
+        if (status == -1) return 0;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglIsFramebufferEXT(PyObject* self, PyObject* obj) {
+    unsigned long val;
+    int r;
+    val = PyInt_AsUnsignedLongMask(obj);
+    if (val == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    r = glIsFramebufferEXT(val);
+    return PyBool_FromLong(r);
+}
+
+static PyObject* teglBindFramebufferEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glBindFramebufferEXT(val0,val1);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglDeleteFramebuffersEXT(PyObject* self, PyObject* args) {
+    long val0;
+    GLuint val1[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsLong(PyTuple_GET_ITEM(args,0));
+    if (val0 == -1 && PyErr_Occurred()) return 0;
+    p = PyTuple_GET_ITEM(args,1);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        unsigned long t;
+        int fail;
+        q = PySequence_GetItem(p,j);
+        if (!q) return 0;
+        t = PyInt_AsUnsignedLongMask(q);
+        fail = (t == (unsigned long)(-1) && PyErr_Occurred());
+        Py_DECREF(q);
+        if (fail) return 0;
+        val1[j] = t;
+    }
+    glDeleteFramebuffersEXT(val0,val1);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglGenFramebuffersEXT(PyObject* self, PyObject* args) {
+    long val0;
+    GLuint val1[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 2) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsLong(PyTuple_GET_ITEM(args,0));
+    if (val0 == -1 && PyErr_Occurred()) return 0;
+    glGenFramebuffersEXT(val0,val1);
+    p = PyTuple_GET_ITEM(args,1);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        int status;
+        q = PyLong_FromUnsignedLong(val1[j]);
+        if (!q) return 0;
+        status = PySequence_SetItem(p,j,q);
+        Py_DECREF(q);
+        if (status == -1) return 0;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglCheckFramebufferStatusEXT(PyObject* self, PyObject* obj) {
+    unsigned long val;
+    unsigned long r;
+    val = PyInt_AsUnsignedLongMask(obj);
+    if (val == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    r = glCheckFramebufferStatusEXT(val);
+    return PyLong_FromUnsignedLong(r);
+}
+
+static PyObject* teglFramebufferTexture1DEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned long val3;
+    long val4;
+    if (PyTuple_GET_SIZE(args) != 5) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,2));
+    if (val2 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val3 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,3));
+    if (val3 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val4 = PyInt_AsLong(PyTuple_GET_ITEM(args,4));
+    if (val4 == -1 && PyErr_Occurred()) return 0;
+    glFramebufferTexture1DEXT(val0,val1,val2,val3,val4);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglFramebufferTexture2DEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned long val3;
+    long val4;
+    if (PyTuple_GET_SIZE(args) != 5) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,2));
+    if (val2 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val3 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,3));
+    if (val3 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val4 = PyInt_AsLong(PyTuple_GET_ITEM(args,4));
+    if (val4 == -1 && PyErr_Occurred()) return 0;
+    glFramebufferTexture2DEXT(val0,val1,val2,val3,val4);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglFramebufferTexture3DEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned long val3;
+    long val4;
+    long val5;
+    if (PyTuple_GET_SIZE(args) != 6) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,2));
+    if (val2 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val3 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,3));
+    if (val3 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val4 = PyInt_AsLong(PyTuple_GET_ITEM(args,4));
+    if (val4 == -1 && PyErr_Occurred()) return 0;
+    val5 = PyInt_AsLong(PyTuple_GET_ITEM(args,5));
+    if (val5 == -1 && PyErr_Occurred()) return 0;
+    glFramebufferTexture3DEXT(val0,val1,val2,val3,val4,val5);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglFramebufferRenderbufferEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned long val3;
+    if (PyTuple_GET_SIZE(args) != 4) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,2));
+    if (val2 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val3 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,3));
+    if (val3 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glFramebufferRenderbufferEXT(val0,val1,val2,val3);
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglGetFramebufferAttachmentParameterivEXT(PyObject* self, PyObject* args) {
+    unsigned long val0;
+    unsigned long val1;
+    unsigned long val2;
+    GLint val3[1];
+    PyObject* p;
+    Py_ssize_t j,n;
+    if (PyTuple_GET_SIZE(args) != 4) {
+        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
+        return 0;
+    }
+    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
+    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val1 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,1));
+    if (val1 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    val2 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,2));
+    if (val2 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glGetFramebufferAttachmentParameterivEXT(val0,val1,val2,val3);
+    p = PyTuple_GET_ITEM(args,3);
+    n = PySequence_Size(p);
+    if (n == -1) return 0;
+    if (n > 1) n = 1;
+    for (j = 0; j < n; j++) {
+        PyObject* q;
+        int status;
+        q = PyInt_FromLong(val3[j]);
+        if (!q) return 0;
+        status = PySequence_SetItem(p,j,q);
+        Py_DECREF(q);
+        if (status == -1) return 0;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject* teglGenerateMipmapEXT(PyObject* self, PyObject* obj) {
+    unsigned long val;
+    val = PyInt_AsUnsignedLongMask(obj);
+    if (val == (unsigned long)(-1) && PyErr_Occurred()) return 0;
+    glGenerateMipmapEXT(val);
+    Py_RETURN_NONE;
+}
+
 
 PyMethodDef module_methods[] = {
     { "ClearIndex", (PyCFunction)teglClearIndex, METH_O },
@@ -9161,6 +9525,23 @@ PyMethodDef module_methods[] = {
     { "BindAttribLocationARB", (PyCFunction)teglBindAttribLocationARB, METH_VARARGS },
     { "GetActiveAttribARB", (PyCFunction)teglGetActiveAttribARB, METH_VARARGS },
     { "GetAttribLocationARB", (PyCFunction)teglGetAttribLocationARB, METH_VARARGS },
+    { "IsRenderbufferEXT", (PyCFunction)teglIsRenderbufferEXT, METH_O },
+    { "BindRenderbufferEXT", (PyCFunction)teglBindRenderbufferEXT, METH_VARARGS },
+    { "DeleteRenderbuffersEXT", (PyCFunction)teglDeleteRenderbuffersEXT, METH_VARARGS },
+    { "GenRenderbuffersEXT", (PyCFunction)teglGenRenderbuffersEXT, METH_VARARGS },
+    { "RenderbufferStorageEXT", (PyCFunction)teglRenderbufferStorageEXT, METH_VARARGS },
+    { "GetRenderbufferParameterivEXT", (PyCFunction)teglGetRenderbufferParameterivEXT, METH_VARARGS },
+    { "IsFramebufferEXT", (PyCFunction)teglIsFramebufferEXT, METH_O },
+    { "BindFramebufferEXT", (PyCFunction)teglBindFramebufferEXT, METH_VARARGS },
+    { "DeleteFramebuffersEXT", (PyCFunction)teglDeleteFramebuffersEXT, METH_VARARGS },
+    { "GenFramebuffersEXT", (PyCFunction)teglGenFramebuffersEXT, METH_VARARGS },
+    { "CheckFramebufferStatusEXT", (PyCFunction)teglCheckFramebufferStatusEXT, METH_O },
+    { "FramebufferTexture1DEXT", (PyCFunction)teglFramebufferTexture1DEXT, METH_VARARGS },
+    { "FramebufferTexture2DEXT", (PyCFunction)teglFramebufferTexture2DEXT, METH_VARARGS },
+    { "FramebufferTexture3DEXT", (PyCFunction)teglFramebufferTexture3DEXT, METH_VARARGS },
+    { "FramebufferRenderbufferEXT", (PyCFunction)teglFramebufferRenderbufferEXT, METH_VARARGS },
+    { "GetFramebufferAttachmentParameterivEXT", (PyCFunction)teglGetFramebufferAttachmentParameterivEXT, METH_VARARGS },
+    { "GenerateMipmapEXT", (PyCFunction)teglGenerateMipmapEXT, METH_O },
     { 0 }   /* Sentinel */
 };
 
@@ -9828,4 +10209,54 @@ PyMODINIT_FUNC init_renpy_tegl(void) {
     PyModule_AddIntConstant(mod,"MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB",GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB);
     PyModule_AddIntConstant(mod,"FRAGMENT_SHADER_DERIVATIVE_HINT_ARB",GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB);
     PyModule_AddIntConstant(mod,"SHADING_LANGUAGE_VERSION_ARB",GL_SHADING_LANGUAGE_VERSION_ARB);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_EXT",GL_FRAMEBUFFER_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_EXT",GL_RENDERBUFFER_EXT);
+    PyModule_AddIntConstant(mod,"STENCIL_INDEX1_EXT",GL_STENCIL_INDEX1_EXT);
+    PyModule_AddIntConstant(mod,"STENCIL_INDEX4_EXT",GL_STENCIL_INDEX4_EXT);
+    PyModule_AddIntConstant(mod,"STENCIL_INDEX8_EXT",GL_STENCIL_INDEX8_EXT);
+    PyModule_AddIntConstant(mod,"STENCIL_INDEX16_EXT",GL_STENCIL_INDEX16_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_WIDTH_EXT",GL_RENDERBUFFER_WIDTH_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_HEIGHT_EXT",GL_RENDERBUFFER_HEIGHT_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_INTERNAL_FORMAT_EXT",GL_RENDERBUFFER_INTERNAL_FORMAT_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_RED_SIZE_EXT",GL_RENDERBUFFER_RED_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_GREEN_SIZE_EXT",GL_RENDERBUFFER_GREEN_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_BLUE_SIZE_EXT",GL_RENDERBUFFER_BLUE_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_ALPHA_SIZE_EXT",GL_RENDERBUFFER_ALPHA_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_DEPTH_SIZE_EXT",GL_RENDERBUFFER_DEPTH_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_STENCIL_SIZE_EXT",GL_RENDERBUFFER_STENCIL_SIZE_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT",GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT",GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_EXT",GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_EXT",GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT",GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT0_EXT",GL_COLOR_ATTACHMENT0_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT1_EXT",GL_COLOR_ATTACHMENT1_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT2_EXT",GL_COLOR_ATTACHMENT2_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT3_EXT",GL_COLOR_ATTACHMENT3_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT4_EXT",GL_COLOR_ATTACHMENT4_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT5_EXT",GL_COLOR_ATTACHMENT5_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT6_EXT",GL_COLOR_ATTACHMENT6_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT7_EXT",GL_COLOR_ATTACHMENT7_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT8_EXT",GL_COLOR_ATTACHMENT8_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT9_EXT",GL_COLOR_ATTACHMENT9_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT10_EXT",GL_COLOR_ATTACHMENT10_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT11_EXT",GL_COLOR_ATTACHMENT11_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT12_EXT",GL_COLOR_ATTACHMENT12_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT13_EXT",GL_COLOR_ATTACHMENT13_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT14_EXT",GL_COLOR_ATTACHMENT14_EXT);
+    PyModule_AddIntConstant(mod,"COLOR_ATTACHMENT15_EXT",GL_COLOR_ATTACHMENT15_EXT);
+    PyModule_AddIntConstant(mod,"DEPTH_ATTACHMENT_EXT",GL_DEPTH_ATTACHMENT_EXT);
+    PyModule_AddIntConstant(mod,"STENCIL_ATTACHMENT_EXT",GL_STENCIL_ATTACHMENT_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_COMPLETE_EXT",GL_FRAMEBUFFER_COMPLETE_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT",GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT",GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT",GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_FORMATS_EXT",GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT",GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT",GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_UNSUPPORTED_EXT",GL_FRAMEBUFFER_UNSUPPORTED_EXT);
+    PyModule_AddIntConstant(mod,"FRAMEBUFFER_BINDING_EXT",GL_FRAMEBUFFER_BINDING_EXT);
+    PyModule_AddIntConstant(mod,"RENDERBUFFER_BINDING_EXT",GL_RENDERBUFFER_BINDING_EXT);
+    PyModule_AddIntConstant(mod,"MAX_COLOR_ATTACHMENTS_EXT",GL_MAX_COLOR_ATTACHMENTS_EXT);
+    PyModule_AddIntConstant(mod,"MAX_RENDERBUFFER_SIZE_EXT",GL_MAX_RENDERBUFFER_SIZE_EXT);
 }

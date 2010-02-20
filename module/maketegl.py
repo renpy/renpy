@@ -124,6 +124,7 @@ GL_ARB_HALF_FLOAT_PIXEL = False
 GL_ARB_TEXTURE_FLOAT = False
 GL_ARB_PIXEL_BUFFER_OBJECT = False
 
+GL_EXT_FRAMEBUFFER_OBJECT = True
 
 # Specify names of functions to release GIL for
 
@@ -2510,6 +2511,79 @@ def generate_tegl():
         constant("PIXEL_PACK_BUFFER_BINDING_ARB")
         constant("PIXEL_UNPACK_BUFFER_BINDING_ARB")
 
+
+    if GL_EXT_FRAMEBUFFER_OBJECT:
+        declare(GLboolean,"IsRenderbufferEXT", GLuint)
+        declare("BindRenderbufferEXT", GLenum, GLuint)
+        declare("DeleteRenderbuffersEXT", GLsizei, GLuint[1])
+        declare("GenRenderbuffersEXT", GLsizei, GLuint[1].asreturn())
+        declare("RenderbufferStorageEXT", GLenum, GLenum, GLsizei, GLsizei)
+        declare("GetRenderbufferParameterivEXT", GLenum, GLenum, GLint[1].asreturn())
+        declare(GLboolean, "IsFramebufferEXT", GLuint)
+        declare("BindFramebufferEXT", GLenum, GLuint)
+        declare("DeleteFramebuffersEXT", GLsizei, GLuint[1])
+        declare("GenFramebuffersEXT", GLsizei, GLuint[1].asreturn())
+        declare(GLenum, "CheckFramebufferStatusEXT", GLenum)
+        declare("FramebufferTexture1DEXT", GLenum, GLenum, GLenum, GLuint, GLint)
+        declare("FramebufferTexture2DEXT", GLenum, GLenum, GLenum, GLuint, GLint)
+        declare("FramebufferTexture3DEXT", GLenum, GLenum, GLenum, GLuint, GLint, GLint)
+        declare("FramebufferRenderbufferEXT", GLenum, GLenum, GLenum, GLuint)
+        declare("GetFramebufferAttachmentParameterivEXT", GLenum, GLenum, GLenum, GLint[1].asreturn())
+        declare("GenerateMipmapEXT", GLenum)
+        constant("FRAMEBUFFER_EXT")
+        constant("RENDERBUFFER_EXT")
+        constant("STENCIL_INDEX1_EXT")
+        constant("STENCIL_INDEX4_EXT")
+        constant("STENCIL_INDEX8_EXT")
+        constant("STENCIL_INDEX16_EXT")
+        constant("RENDERBUFFER_WIDTH_EXT")
+        constant("RENDERBUFFER_HEIGHT_EXT")
+        constant("RENDERBUFFER_INTERNAL_FORMAT_EXT")
+        constant("RENDERBUFFER_RED_SIZE_EXT")
+        constant("RENDERBUFFER_GREEN_SIZE_EXT")
+        constant("RENDERBUFFER_BLUE_SIZE_EXT")
+        constant("RENDERBUFFER_ALPHA_SIZE_EXT")
+        constant("RENDERBUFFER_DEPTH_SIZE_EXT")
+        constant("RENDERBUFFER_STENCIL_SIZE_EXT")
+        constant("FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT")
+        constant("FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT")
+        constant("FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_EXT")
+        constant("FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_EXT")
+        constant("FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT")
+        constant("COLOR_ATTACHMENT0_EXT")
+        constant("COLOR_ATTACHMENT1_EXT")
+        constant("COLOR_ATTACHMENT2_EXT")
+        constant("COLOR_ATTACHMENT3_EXT")
+        constant("COLOR_ATTACHMENT4_EXT")
+        constant("COLOR_ATTACHMENT5_EXT")
+        constant("COLOR_ATTACHMENT6_EXT")
+        constant("COLOR_ATTACHMENT7_EXT")
+        constant("COLOR_ATTACHMENT8_EXT")
+        constant("COLOR_ATTACHMENT9_EXT")
+        constant("COLOR_ATTACHMENT10_EXT")
+        constant("COLOR_ATTACHMENT11_EXT")
+        constant("COLOR_ATTACHMENT12_EXT")
+        constant("COLOR_ATTACHMENT13_EXT")
+        constant("COLOR_ATTACHMENT14_EXT")
+        constant("COLOR_ATTACHMENT15_EXT")
+        constant("DEPTH_ATTACHMENT_EXT")
+        constant("STENCIL_ATTACHMENT_EXT")
+        constant("FRAMEBUFFER_COMPLETE_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_FORMATS_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT")
+        constant("FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT")
+        constant("FRAMEBUFFER_UNSUPPORTED_EXT")
+        constant("FRAMEBUFFER_BINDING_EXT")
+        constant("RENDERBUFFER_BINDING_EXT")
+        constant("MAX_COLOR_ATTACHMENTS_EXT")
+        constant("MAX_RENDERBUFFER_SIZE_EXT")
+
+
+        
+        
     # -------- Return the builder --------
 
     return g

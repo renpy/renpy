@@ -39,6 +39,7 @@ cdef extern from "GL/glew.h":
         GLint param)
 
     int GL_TEXTURE_2D
+    int GL_RGBA8
     int GL_RGBA
     int GL_BGRA
     int GL_ALPHA
@@ -101,14 +102,18 @@ def load_texture(
     and at position (xoffset, yoffset) relative to the containing
     image. 
     """
+    cdef unsigned char *pixels = NULL
+    cdef SDL_Surface *surf
     
-    cdef SDL_Surface *surf = PySurface_AsSurface(pysurf)
-    cdef unsigned char *pixels = <unsigned char *> surf.pixels
+    if pysurf is not None:
+    
+        surf = PySurface_AsSurface(pysurf)
+        pixels = <unsigned char *> surf.pixels
 
-    pixels += yoffset * surf.pitch
-    pixels += xoffset * 4
+        pixels += yoffset * surf.pitch
+        pixels += xoffset * 4
 
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, surf.pitch / 4)
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, surf.pitch / 4)
 
     if update:
         glTexSubImage2D(
@@ -126,7 +131,7 @@ def load_texture(
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RGBA,
+            GL_RGBA8,
             width,
             height,
             0,
