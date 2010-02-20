@@ -271,9 +271,6 @@ class FixedFunctionEnviron(Environ):
         gl.TexEnvi(gl.TEXTURE_ENV, gl.COMBINE_ALPHA_ARB, function)
         gl.TexEnvfv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_COLOR, (offset, offset, offset, offset))
 
-# The environ to use.
-environ = FixedFunctionEnviron()
-        
                               
 class Rtt(object):
     """
@@ -373,6 +370,14 @@ class CopyRtt(object):
         This is called when a Render-to-texture session ends.
         """
 
+
+def init():
+
+    global environ
+    global rtt
     
-# The render-to-texture implementation to use.
-rtt = CopyRtt()
+    # The environ to use.
+    environ = FixedFunctionEnviron()
+
+    # The render-to-texture implementation to use.
+    rtt = CopyRtt()

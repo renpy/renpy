@@ -7,6 +7,7 @@ import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
 import gltexture
+import glenviron
 
 # These are the pixel formats for big- and little-endian platforms.
 
@@ -41,7 +42,7 @@ sample = pygame.Surface((10, 10), 0, 32, masks)
 
 
 pysdlgl.init_glew()
-gltexture.init(sample)
+glenviron.init()
 
 def load_image(fn):
     im = pygame.image.load(fn, fn)

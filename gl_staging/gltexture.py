@@ -553,11 +553,3 @@ def imageblend(textures, transform, alpha, fraction, ramp):
         y += t0h
 
 
-def init(sample):
-    """
-    Initialize this module. This must be called after pygame has been
-    initialized.
-    """
-
-    pass
-    
