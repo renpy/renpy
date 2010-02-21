@@ -280,37 +280,90 @@ class ShaderEnviron(object):
     """
 
     def __init__(self):
-        pass
-    
-    
+
+        self.blit_program = glshader.blit_program()
+        self.blit_tex0_uniform = gl.GetUniformLocationARB(
+            self.blit_program,
+            "tex0")
+
+        self.blend_program = glshader.blend_program()
+        self.blend_done_uniform = gl.GetUniformLocationARB(
+            self.blend_program,
+            "done")
+        self.blend_tex0_uniform = gl.GetUniformLocationARB(
+            self.blend_program,
+            "tex0")
+        self.blend_tex1_uniform = gl.GetUniformLocationARB(
+            self.blend_program,
+            "tex1")
+
+        self.imageblend_program = glshader.imageblend_program()
+        self.imageblend_tex0_uniform = gl.GetUniformLocationARB(
+            self.imageblend_program,
+            "tex0")
+        self.imageblend_tex1_uniform = gl.GetUniformLocationARB(
+            self.imageblend_program,
+            "tex1")
+        self.imageblend_tex2_uniform = gl.GetUniformLocationARB(
+            self.imageblend_program,
+            "tex2")
+        self.imageblend_offset_uniform = gl.GetUniformLocationARB(
+            self.imageblend_program,
+            "offset")
+        self.imageblend_multiplier_uniform = gl.GetUniformLocationARB(
+            self.imageblend_program,
+            "multiplier")
+
+        self.last = NONE
+        
+
     def blit(self):
-        """
-        Set up a normal blit environment. The texture to be blitted should
-        be TEXTURE0.
-        """
 
-        raise Exception("Not implemented.")
+        if self.last != BLIT:
 
+            gl.UseProgramObjectARB(self.blit_program)
+            gl.Uniform1iARB(self.blit_tex0_uniform, 0)
+            
+            self.last = BLIT
+        
     def blend(self, fraction):
-        """
-        Set up an environment that blends from TEXTURE0 to TEXTURE1.
 
-        `fraction` is the fraction of the blend complete.
-        """
+        if self.last != BLEND:
 
-        raise Exception("Not implemented.")
+            gl.UseProgramObjectARB(self.blend_program)
+            gl.Uniform1iARB(self.blend_tex0_uniform, 0)
+            gl.Uniform1iARB(self.blend_tex1_uniform, 1)
+            
+            self.last = BLEND
 
-
+        gl.Uniform1fARB(self.blend_done_uniform, fraction)
+        
+        
     def imageblend(self, fraction, ramp):
-        """
-        Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
-        The controlling image is TEXTURE0.
 
-        `fraction` is the fraction of the blend complete.
-        `ramp` is the length of the ramp.
-        """
+        if self.last != IMAGEBLEND:
+            gl.UseProgramObjectARB(self.imageblend_program)
 
-        raise Exception("Not implemented.")
+            # Permute the texture units so they match the way the
+            # fixed-function system uses them.
+            gl.Uniform1iARB(self.imageblend_tex0_uniform, 1)
+            gl.Uniform1iARB(self.imageblend_tex1_uniform, 2)
+            gl.Uniform1iARB(self.imageblend_tex2_uniform, 0)
+
+            self.last = IMAGEBLEND
+
+        # Prevent a DBZ if the user gives us a 0 ramp.
+        if ramp < 1:
+            ramp = 1
+            
+        # Compute the offset to apply to the alpha.            
+        start = -1.0
+        end = ramp / 256.0        
+        offset = start + ( end - start) * fraction
+
+        # Setup the multiplier and the offset.
+        gl.Uniform1fARB(self.imageblend_multiplier_uniform, 256.0 / ramp)
+        gl.Uniform1fARB(self.imageblend_offset_uniform, offset)
 
 
 
@@ -477,8 +530,9 @@ def init():
     global rtt
     
     # The environ to use.
-    environ = FixedFunctionEnviron()
-
+    # environ = FixedFunctionEnviron()
+    environ = ShaderEnviron()
+    
     # The render-to-texture implementation to use.
     rtt = FramebufferRtt()
     # rtt = CopyRtt()

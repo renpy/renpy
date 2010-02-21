@@ -41,7 +41,8 @@ IMAGEBLEND_SHADER = """
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 uniform sampler2D tex2;
-uniform float done;
+uniform float offset;
+uniform float multiplier;
         
 void main()
 {
@@ -49,7 +50,9 @@ void main()
     vec4 color1 = texture2D(tex1, gl_TexCoord[1].st);
     vec4 color2 = texture2D(tex2, gl_TexCoord[2].st);
 
-    float a = clamp((color2.a + done) * 64.0, 0.0, 1.0);
+    float a = clamp((color2.a + offset) * multiplier, 0.0, 1.0);
+
+     
 
     gl_FragColor = mix(color0, color1, a);
 }
@@ -60,8 +63,6 @@ def check_status(handle, type):
     Checks the status of a shader or program. If it fails, then an
     exception is raised.
     """
-
-    
     
     status = [ 0 ]    
     gl.GetObjectParameterivARB(handle, type, status)
@@ -112,9 +113,11 @@ def compile_program(vertex, fragment):
 
     check_status(program, gl.OBJECT_LINK_STATUS_ARB)
 
+    gl.UseProgramObjectARB(program)
+    
     gl.DeleteObjectARB(vertex_shader)
     gl.DeleteObjectARB(fragment_shader)
-
+    
     return program
 
 

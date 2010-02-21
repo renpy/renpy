@@ -105,7 +105,7 @@ gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 transform = Transform()
 
-FRAMES = 1500
+FRAMES = 1000
 start = time.time()
 
 setup_screen()
@@ -118,9 +118,6 @@ def draw_func2():
     gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
     gltexture.blit([ (tg3, 400, 0) ], transform, 1.0)
         
-
-pygame.display.flip()
-
 gl.Clear(gl.COLOR_BUFFER_BIT)
 
 for i in xrange(FRAMES):
@@ -133,6 +130,11 @@ for i in xrange(FRAMES):
         tg5 = gltexture.texture_grid_from_drawing(800, 600, draw_func2)
         setup_screen()
         gltexture.blend([ (tg4, 0, 0), (tg5, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES)
+    elif sys.argv[1] == "cttimageblend":
+        tg4 = gltexture.texture_grid_from_drawing(800, 600, draw_func)
+        tg5 = gltexture.texture_grid_from_drawing(800, 600, draw_func2)
+        setup_screen()
+        gltexture.imageblend([ (tg2, 0, 0), (tg4, 0, 0), (tg5, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES, int(sys.argv[2]))
 
     elif sys.argv[1] == "blend":
         gltexture.blend([ (tg0, 0, 0), (tg1, 0, 0) ], transform, 1.0, 1.0 * i / FRAMES)
@@ -152,7 +154,6 @@ end = time.time()
 print 1.0 * FRAMES / (end - start)
     
 while True:
-
     
     ev = pygame.event.wait()
 
