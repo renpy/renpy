@@ -44,6 +44,7 @@ sample = pygame.Surface((10, 10), 0, 32, masks)
 pysdlgl.init_glew()
 glenviron.init()
 
+
 def load_image(fn):
     im = pygame.image.load(fn, fn)
     w, h = im.get_size()

@@ -3,6 +3,8 @@
 
 import _renpy_tegl as gl
 
+import glshader
+
 # Constants, that are used to store the last kind of blend a class was
 # used for. (So we can avoid changing the GL state unnecessarily.)
 NONE = 0
@@ -272,6 +274,46 @@ class FixedFunctionEnviron(Environ):
         gl.TexEnvfv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_COLOR, (offset, offset, offset, offset))
 
                               
+class ShaderEnviron(object):
+    """
+    This is an environment that uses shaders.
+    """
+
+    def __init__(self):
+        pass
+    
+    
+    def blit(self):
+        """
+        Set up a normal blit environment. The texture to be blitted should
+        be TEXTURE0.
+        """
+
+        raise Exception("Not implemented.")
+
+    def blend(self, fraction):
+        """
+        Set up an environment that blends from TEXTURE0 to TEXTURE1.
+
+        `fraction` is the fraction of the blend complete.
+        """
+
+        raise Exception("Not implemented.")
+
+
+    def imageblend(self, fraction, ramp):
+        """
+        Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
+        The controlling image is TEXTURE0.
+
+        `fraction` is the fraction of the blend complete.
+        `ramp` is the length of the ramp.
+        """
+
+        raise Exception("Not implemented.")
+
+
+
 class Rtt(object):
     """
     Subclasses of this class handle rendering to a texture.

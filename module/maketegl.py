@@ -3340,6 +3340,7 @@ static PyObject* teglShaderSource(PyObject* self, PyObject* args) {
             "glShaderSource currently supports only one string");
         return 0;
     }
+
     {
         PyObject* q;
         int fail;
@@ -3349,6 +3350,8 @@ static PyObject* teglShaderSource(PyObject* self, PyObject* args) {
         Py_DECREF(q);
         if (fail) return 0;
     }    
+
+
     p = PyTuple_GET_ITEM(args,3);
     n = PySequence_Size(p);
     if (n == -1) return 0;
@@ -3363,11 +3366,12 @@ static PyObject* teglShaderSource(PyObject* self, PyObject* args) {
         int fail;
         q = PySequence_GetItem(p,0);
         if (!q) return 0;
-        val3[0] = PyInt_AsLong(p);
+        val3[0] = PyInt_AsLong(q); /* Tom - needed to change from p to q. */
         fail = (val3[0] == -1 && PyErr_Occurred());
         Py_DECREF(q);
         if (fail) return 0;
     }    
+
     glShaderSource(val0,val1,(const char**)val2,(const int*)val3);
     Py_RETURN_NONE;
 }
