@@ -52,30 +52,15 @@ class Texture(object):
         self.ymul = 0
         self.yadd = 0
 
-        # A reference count giving the number of TextureGrids that
-        # refer to this texture. When this falls to 0, the texture
-        # can be placed back into the pool.
-        self.refcount = 0
 
-        
-    def incref(self):
-        """
-        Increases the reference count of this texture.
-        """
+    def __del__(self):
 
-        self.refcount += 1
-
-        
-    def decref(self):
-        """
-        Decreases the reference count of this texture by 1. If it
-        falls to 0, puts the texture back on the freelist.
-        """
-
-        self.refcount -= 1
-        if not self.refcount:
+        # The test needs to be here so we don't try to append during
+        # interpreter shutdown.
+        if free_textures:
             free_textures[self.width, self.height].append(self)
 
+        
             
     def load_surface(self, surf, x, y, w, h):
         """
@@ -174,10 +159,66 @@ def alloc_texture(width, height):
 
         rv = Texture(texnums[0], width, height)
         
-    rv.incref()
     return rv
 
-        
+
+def compute_subrow(row, offset, width):
+    """
+    Given a row (or column), this computes a subrow starting at the given
+    offset and having the given width.
+
+    It returns two list. The first is a list of (offset, width,
+    output-tile) tuples. The second is a list of integers, giving the
+    input tile corresponding to each output tile.
+    """
+
+    # An iterator over row.
+    rowi = iter(row)
+
+    # The output row and the output tile list. 
+    outrow = [ ]
+    tiles = [ ]
+
+    # The output tile index.
+    outtile = 0
+    
+    try:
+        ioff, iwidth, itile = rowi.next()
+
+        # Consume the offset.
+        while True:
+            if offset < iwidth:
+                ioff += offset
+                iwidth -= offset
+                break
+
+            
+            offset -= iwidth
+            ioff, iwidth, itile = rowi.next()
+
+        # Consume the width.
+        while True:
+            
+            if width < iwidth:
+                outrow.append((ioff, width, outtile))
+                tiles.append(itile)
+                outtile += 1
+                break
+
+            outrow.append((ioff, iwidth, outtile))
+            tiles.append(itile)
+            outtile += 1
+
+            width -= iwidth
+            
+            ioff, iwidth, itile = rowi.next()
+
+    except StopIteration:
+        pass
+
+    return outrow, tiles
+
+
 class TextureGrid(object):
     """
     This represents one or more textures that cover a rectangular
@@ -207,16 +248,26 @@ class TextureGrid(object):
         # colindex.
         self.tiles = [ ]
 
-    def __del__(self):
+    def subsurface(self, (x, y, w, h)):
         """
-        On delete, drop the tiles' refcounts.
+        This produces a texture grid containing a rectangle "cut out"
+        of this texture grid.
         """
 
-        for i in self.tiles:
-            for j in i:
-                if j:
-                    j.decref()
+        rv = TextureGrid(width, height)
         
+        rv.rows, rowtiles = compute_subrow(self.rows, y, h)
+        rv.columns, coltiles = compute_subrow(self.columns, x, w)
+
+        for i in rowtiles:
+            row = [ ]
+            for j in coltiles:
+                row.append(self.tiles[i][j])
+
+            rv.tiles.append(row)
+
+        return rv
+
 
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }

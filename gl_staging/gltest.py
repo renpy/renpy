@@ -34,12 +34,12 @@ except:
     
 pygame.display.init()
 
-WIDTH = 800
-HEIGHT = 600
-
-s = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL|pygame.DOUBLEBUF)
+s = pygame.display.set_mode((800, 600), pygame.OPENGL|pygame.DOUBLEBUF)
 sample = pygame.Surface((10, 10), 0, 32, masks)
 
+
+WIDTH, HEIGHT = s.get_size()
+print WIDTH, HEIGHT
 
 pysdlgl.init_glew()
 glenviron.init()
@@ -71,6 +71,8 @@ def setup_screen():
 
 im0 = load_image("washington.jpg")
 tg0 = gltexture.texture_grid_from_surface(im0)
+tg0s = tg0.subsurface((100, 100, 600, 400))
+
 
 im1 = load_image("whitehouse.jpg")
 tg1 = gltexture.texture_grid_from_surface(im1)
@@ -145,6 +147,8 @@ for i in xrange(FRAMES):
     elif sys.argv[1] == "newtexblit":
         tg0 = gltexture.texture_grid_from_surface(im0)
         gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
+    elif sys.argv[1] == "ssblit":
+        gltexture.blit([ (tg0s, 0, 0) ], transform, 1.0)
     else:
         gltexture.blit([ (tg0, 0, 0) ], transform, 1.0)
 
@@ -161,4 +165,4 @@ while True:
         break
 
 
-    break
+    # break
