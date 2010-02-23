@@ -817,7 +817,7 @@ def screenshot(filename):
     Saves a screenshot in the named filename.
     """
     
-    renpy.game.interface.display.save_screenshot(filename)
+    renpy.display.draw.save_screenshot(filename)
     
 def windows():
     """
@@ -1076,7 +1076,7 @@ def force_full_redraw():
     to redraw the screen directly.
     """
 
-    renpy.game.interface.display.full_redraw = True
+    renpy.game.interface.full_redraw = True
 
 def do_reshow_say(who, what, interact=False):
     
@@ -1162,7 +1162,7 @@ def quit_event():
     renpy.game.interface.quit_event()
 
 def iconify():
-    renpy.game.interface.display.iconify()
+    renpy.game.interface.iconify()
     
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context

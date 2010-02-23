@@ -803,424 +803,6 @@ class SceneLists(renpy.object.Object):
             self.layers[l] = newl
 
 
-            
-class Display(object):
-    """
-    This is responsible for managing the display window.
-
-    @ivar interface: The interface corresponding to this display.
-
-    @ivar window: The window that is being presented to the user.
-
-    @ivar fullscreen: Is the window in fullscreen mode?
-
-    @ivar mouse: The mouse image, if we have one, or None if
-    we do not have one.    
-
-    @ivar mouse_location: The mouse location the last time it was
-    drawn, or None if it wasn't drawn the last time around.
-
-    @ivar mouse_backing: A backing store image holding the background
-    that goes behind the mouse.
-
-    @ivar mouse_backing_pos: The position of the upper-left hand
-    corner of the backing pos, relative to the window.
-
-    @ivar full_redraw: Force a full redraw.
-
-    @ivar next_frame: The time when the next frame should be drawn. In
-    ms returned from pygame.time.get_ticks().
-
-    @ivar window_caption: The current window caption.
-
-    """
-
-    def __init__(self, interface):
-
-        self.interface = interface
-
-        # Ensure that we kill off the presplash.
-        renpy.display.presplash.end()
-
-        # Ensure that we kill off the movie when changing screen res.
-        renpy.display.video.movie_stop(clear=False)
-
-        if pygame.version.vernum < (1, 8, 1):
-            raise Exception("Ren'Py requires pygame 1.8.1 to run.")
-        
-        try:
-            pygame.macosx.init()
-        except:
-            pass
-
-        pygame.display.init()
-        pygame.font.init()
-
-        renpy.display.scale.init()
-
-        renpy.audio.audio.init()
-        renpy.display.joystick.init()
-
-        init_time()
-        
-        # Window icon.
-
-        icon = renpy.config.window_icon
-
-        if on_windows and renpy.config.windows_icon:
-            icon = renpy.config.windows_icon
-            
-        if icon:
-
-            im = renpy.display.scale.image_load_unscaled(
-                renpy.loader.load(icon),
-                icon,
-                convert=False,
-                )
-
-            # Convert the aspect ratio to be square.
-            iw, ih = im.get_size()
-            imax = max(iw, ih)
-            square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
-            square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
-            im = square_im
-
-            if on_windows and im.get_size() != (32, 32):
-                im = renpy.display.scale.real_smoothscale(im, (32, 32))
-                
-            pygame.display.set_icon(im)
-
-        # Setup screen.
-        fullscreen = renpy.game.preferences.fullscreen
-
-        # If we're in fullscreen mode, and changing to another mode, go to
-        # windowed mode first.
-        s = pygame.display.get_surface()
-        if s and (s.get_flags() & pygame.FULLSCREEN):
-            fullscreen = False
-            
-        self.fullscreen = fullscreen
-
-        if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
-            fullscreen = False
-            self.fullscreen = renpy.game.preferences.fullscreen
-
-
-        width = renpy.config.screen_width
-        height = renpy.config.screen_height
-        self.screen_xoffset = 0
-        self.screen_yoffset = 0
-        fsflag = 0
-
-        if fullscreen == "wide" or fullscreen == "narrow":
-            for w, h in pygame.display.list_modes():
-                ratio = 1.0 * w / h
-                if ratio >= 2:
-                    continue
-
-                if fullscreen == "wide":
-                    if ratio < 1.5:
-                        continue
-
-                elif fullscreen == "narrow":
-                    if ratio >= 1.5:
-                        continue
-
-                if w < renpy.config.screen_width or h < renpy.config.screen_height:
-                    continue
-                
-                fsflag = pygame.FULLSCREEN
-                width = w
-                height = h
-                self.screen_xoffset = (width - renpy.config.screen_width) / 2
-                self.screen_yoffset = (height - renpy.config.screen_height) / 2
-
-        elif fullscreen:
-            fsflag = pygame.FULLSCREEN
-              
-        # If a window exists of the right size and flags, use it. Otherwise,
-        # make our own window.
-        old_window = pygame.display.get_surface()
-        if ((old_window is not None) and 
-            (old_window.get_size() == (width, height)) and
-            (old_window.get_flags() & pygame.FULLSCREEN == fsflag)):
-            
-            self.window = old_window
-                    
-        else:
-            self.window = renpy.display.pgrender.set_mode((width, height), fsflag, 32)
-
-        # Window title.
-        self.window_caption = None
-        self.set_window_caption()
-        
-        pygame.event.set_grab(False)
-        
-        # Load the mouse image, if any.
-        if renpy.config.mouse:
-            self.mouse = True
-            pygame.mouse.set_visible(False)
-        else:
-            self.mouse = None
-            pygame.mouse.set_visible(True)
-
-        self.mouse_location = None
-        self.mouse_backing = None
-        self.mouse_backing_pos = None
-        self.mouse_info = None
-
-        self.mouse_event_time = get_time()
-        
-        # Used for HW mouse.
-        self.mouse_old_visible = None
-        
-        self.suppressed_blit = False
-        self.full_redraw = True
-
-        self.next_frame = 0
-
-        # A tree of surfaces from the last time the screen was rendered.
-        self.surftree = None
-        
-        # Setup periodic event.
-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
-        
-    def set_window_caption(self):
-        caption = renpy.config.window_title + renpy.store._window_subtitle
-        if caption == self.window_caption:
-            return
-
-        self.window_caption = caption
-        pygame.display.set_caption(caption.encode("utf-8"))
-
-        
-    def iconify(self):
-        pygame.display.iconify()
-
-        
-    def can_redraw(self, first_pass):
-        """
-        Uses the framerate to determine if we can and should redraw.
-        """
-        
-        framerate = renpy.config.framerate
-
-        if framerate is None:
-            return True
-        
-        next_frame = self.next_frame
-        now = pygame.time.get_ticks()
-
-        frametime = 1000.0 / framerate
-
-        # Handle timer rollover.
-        if next_frame > now + frametime:
-            next_frame = now
-
-        # It's not yet time for the next frame.
-        if now < next_frame and not first_pass:            
-            return False
-            
-        # Otherwise, it is. Schedule the next frame.
-        # if next_frame + frametime < now:
-        next_frame = now + frametime
-        # else:
-        #    next_frame += frametime
-
-        self.next_frame = next_frame
-
-        return True
-
-    
-    def mouse_event(self, ev):
-
-        if ev.type == pygame.MOUSEMOTION or pygame.MOUSEBUTTONDOWN or pygame.MOUSEBUTTONUP:
-            self.mouse_event_time = get_time()
-
-            
-    def show_mouse(self, pos, info):
-        """
-        Actually shows the mouse.
-        """
-
-        self.mouse_location = pos
-        self.mouse_info = info
-
-        img, mxo, myo = info
-        
-        mouse = renpy.display.im.load_image(img)
-
-        mx, my = pos
-        mw, mh = mouse.get_size()
-
-        bx = mx - mxo
-        by = my - myo
-
-        self.mouse_backing_pos = (bx, by)
-        self.mouse_backing = renpy.display.pgrender.surface((mw, mh), False)
-        self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
-
-        self.window.blit(mouse, (bx, by))
-
-        return bx, by, mw, mh
-
-    
-    def hide_mouse(self):
-        """
-        Actually hides the mouse.
-        """
-
-        size = self.mouse_backing.get_size()
-        self.window.blit(self.mouse_backing, self.mouse_backing_pos)
-
-        rv = self.mouse_backing_pos + size
-
-        self.mouse_backing = None
-        self.mouse_backing_pos = None
-        self.mouse_location = None 
-
-        return rv
-
-    
-    def draw_mouse(self, show_mouse=True):
-        """
-        This draws the mouse to the screen, if necessary. It uses the
-        buffer to minimize the amount of the screen that needs to be
-        drawn, and only redraws if the mouse has actually been moved.
-        """
-
-        # Figure out if the mouse visibility algorithm is hiding the mouse.
-        if self.mouse_event_time + renpy.config.mouse_hide_time < get_time():
-            visible = False
-        else:
-            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
-            
-        # Deal with a hardware mouse, the easy way.
-        if not self.mouse:
-
-            if self.mouse_old_visible != visible:
-                pygame.mouse.set_visible(visible)
-                self.mouse_old_visible = visible
-            
-            return [ ]
-
-        # The rest of this is for the software mouse.
-        
-        if self.suppressed_blit:
-            return [ ]
-
-        visible = show_mouse and visible
-        
-        mouse_kind = renpy.display.focus.get_mouse() or self.interface.mouse 
-        
-        # Figure out the mouse animation.
-        if mouse_kind in renpy.config.mouse:
-            anim = renpy.config.mouse[mouse_kind]
-        else:
-            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
-
-        info = anim[self.interface.ticks % len(anim)]
-
-        pos = pygame.mouse.get_pos()
-
-        if not renpy.game.interface.focused:
-            pos = None
-            
-        if (pos == self.mouse_location and
-            show_mouse and
-            info == self.mouse_info):
-            
-            return [ ]
-
-        updates = [ ]
-
-        if self.mouse_location:
-            updates.append(self.hide_mouse())
-            
-        if visible and pos and renpy.game.interface.focused:
-            updates.append(self.show_mouse(pos, info))
-            
-        return updates
-
-    
-    def update_mouse(self):
-        """
-        Draws the mouse, and then updates the screen.
-        """
-        
-        updates = self.draw_mouse()
-
-        if updates:
-            pygame.display.update(updates)
-        
-        
-    def show(self, root_widget, suppress_blit):
-        """
-        Draws the screen.
-        """
-        
-        surftree = renpy.display.render.render_screen(
-            root_widget,
-            renpy.config.screen_width,
-            renpy.config.screen_height,
-            )
-
-        if not suppress_blit:
-
-            updates = [ ]
-
-            updates.extend(self.draw_mouse(False))
-
-            damage = renpy.display.render.draw_screen(self.screen_xoffset, self.screen_yoffset, self.full_redraw)
-
-            if damage:
-                updates.extend(damage)
-
-            self.full_redraw = False
-
-            updates.extend(self.draw_mouse(True))
-            pygame.display.update(updates)
-            
-        else:
-            self.full_redraw = True
-
-        renpy.display.render.kill_old_screen()
-        renpy.display.focus.take_focuses()
-        
-        self.suppressed_blit = suppress_blit
-        self.surftree = surftree
-
-        
-    def save_screenshot(self, filename):
-        """
-        Saves a full-size screenshot in the given filename.
-        """
-
-        try:
-            renpy.display.scale.image_save_unscaled(self.window, filename)
-        except:
-            if renpy.config.debug:
-                raise
-            pass
-            
-        
-    def screenshot(self, scale):
-        """
-        Returns a string containing the contents of the window, as a PNG.
-        """
-
-        surf = renpy.display.pgrender.copy_surface(self.window, True)
-        surf = renpy.display.scale.smoothscale(surf, scale)
-        surf = renpy.display.pgrender.copy_surface(surf, False)
-        
-        sio = cStringIO.StringIO()
-        renpy.display.module.save_png(surf, sio, 0)
-        rv = sio.getvalue()
-        sio.close()
-        
-        return rv
-    
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -1273,12 +855,9 @@ class Interface(object):
     @ivar event_time: The time of the current event.
 
     @ivar timeout_time: The time at which the timeout will occur.
-    
     """
 
     def __init__(self):
-        self.display = Display(self)
-        self.profile_time = get_time()
         self.screenshot = None
         self.old_scene = { }
         self.transition = { }
@@ -1296,9 +875,6 @@ class Interface(object):
         self.last_event = None
         self.current_context = None
         self.roll_forward = None
-        
-        # Should we reset the display?
-        self.display_reset = False
         
         # Things to be preloaded.
         self.preloads = [ ]
@@ -1345,15 +921,160 @@ class Interface(object):
 
         # The time when the event was dispatched.
         self.event_time = 0
+
+        # Ensure that we kill off the presplash.
+        renpy.display.presplash.end()
+
+        # Initialize pygame.
+        if pygame.version.vernum < (1, 8, 1):
+            raise Exception("Ren'Py requires pygame 1.8.1 to run.")
         
+        try:
+            pygame.macosx.init()
+        except:
+            pass
+
+        pygame.display.init()
+        pygame.font.init()
+        renpy.audio.audio.init()
+        renpy.display.joystick.init()
+       
+        # Init timing.
+        init_time()
+        self.profile_time = get_time()
+
+        # The current window caption.
+        self.window_caption = None
+
+        # Setup.
+        self.set_window_caption()
+        self.set_icon()
+        
+        # Setup the video mode.
+        self.set_mode()
+        
+        # Setup periodic event.
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+        pygame.event.set_grab(False)
+
+    
+    def set_icon(self):
+        """
+        This is called to set up the window icon.
+        """
+
+        # Window icon.
+        icon = renpy.config.window_icon
+
+        if on_windows and renpy.config.windows_icon:
+            icon = renpy.config.windows_icon
+            
+        if icon:
+
+            im = renpy.display.scale.image_load_unscaled(
+                renpy.loader.load(icon),
+                icon,
+                convert=False,
+                )
+
+            # Convert the aspect ratio to be square.
+            iw, ih = im.get_size()
+            imax = max(iw, ih)
+            square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
+            square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
+            im = square_im
+
+            if on_windows and im.get_size() != (32, 32):
+                im = renpy.display.scale.real_smoothscale(im, (32, 32))
                 
+            pygame.display.set_icon(im)
+
+            
+    def set_window_caption(self):
+        caption = renpy.config.window_title + renpy.store._window_subtitle
+        if caption == self.window_caption:
+            return
+
+        self.window_caption = caption
+        pygame.display.set_caption(caption.encode("utf-8"))
+        
+    def iconify(self):
+        pygame.display.iconify()
+        
+    def set_mode(self, physical_size=None):
+        """
+        This sets the video mode. It also picks the draw object.
+        """
+
+        # Ensure that we kill off the movie when changing screen res.
+        renpy.display.video.movie_stop(clear=False)
+
+        virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
+
+        if physical_size is None:
+            physical_size = (renpy.config.screen_width, renpy.config.screen_height)
+        
+        # Setup screen.
+        fullscreen = renpy.game.preferences.fullscreen
+
+        # If we're in fullscreen mode, and changing to another mode, go to
+        # windowed mode first.
+        s = pygame.display.get_surface()
+        if s and (s.get_flags() & pygame.FULLSCREEN):
+            fullscreen = False
+            
+        self.fullscreen = fullscreen
+
+        if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
+            fullscreen = False
+            self.fullscreen = renpy.game.preferences.fullscreen
+        
+        if renpy.display.draw:
+            draws = [ lambda : renpy.display.draw ]
+        else:
+            draws = [
+                # renpy.display.gldraw.GLDraw,
+                renpy.display.swdraw.SWDraw,
+                ]
+
+        for i in draws:
+            draw = i()
+            
+            if draw.set_mode(virtual_size, physical_size, fullscreen):
+                renpy.display.draw = draw
+                break
+
+        else:
+            
+            # Ensure we don't get stuck in fullscreen.
+            renpy.game.preferences.fullscreen = False
+            raise Exception("Could not set video mode.")
+        
+
+    def draw_screen(self, root_widget, fullscreen_video):
+
+        surftree = renpy.display.render.render_screen(
+            root_widget,
+            renpy.config.screen_width,
+            renpy.config.screen_height,
+            )
+
+        renpy.display.draw.draw_screen(surftree, fullscreen_video)
+        
+        renpy.display.render.kill_old_screen()
+        renpy.display.focus.take_focuses()
+
+        self.surftree = surftree
+
+        
     def take_screenshot(self, scale):
         """
         This takes a screenshot of the current screen, and stores it so
         that it can gotten using get_screenshot()
         """
 
-        self.screenshot = self.display.screenshot(scale)
+        self.screenshot = renpy.display.draw.screenshot(scale)
 
         
     def get_screenshot(self):
@@ -1560,7 +1281,6 @@ class Interface(object):
         if not suppress_window:
             self.show_window()
         
-
         # These things can be done once per interaction.
 
         preloads = self.preloads
@@ -1670,7 +1390,7 @@ class Interface(object):
             i()
 
         # Set the window caption.
-        self.display.set_window_caption()
+        self.set_window_caption()
             
         # Tick time forward.
         renpy.display.im.cache.tick()
@@ -1848,11 +1568,10 @@ class Interface(object):
 
             while rv is None:
 
-                # Check for a change in fullscreen preference, or a triggered display reset.
-                if self.display.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
-                    self.display = Display(self)
+                # Check for a change in fullscreen preference.                
+                if self.fullscreen != renpy.game.preferences.fullscreen:
+                    self.set_mode()
                     needs_redraw = True
-                    self.display_reset = False
 
                 # Check for a forced redraw.
                 if self.force_redraw:
@@ -1862,10 +1581,10 @@ class Interface(object):
                 # Redraw the screen.
                 if (needs_redraw and
                     (first_pass or not pygame.event.peek(ALL_EVENTS)) and 
-                    self.display.can_redraw(first_pass)):
+                    renpy.display.draw.can_redraw(first_pass)):
                     
                     # If we have a movie, start showing it.
-                    suppress_blit = renpy.display.video.interact()
+                    fullscreen_video = renpy.display.video.interact()
 
                     # Clean out the redraws, if we have to.
                     # renpy.display.render.kill_redraws()
@@ -1876,8 +1595,8 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
-                    self.display.show(root_widget, suppress_blit)
-                    
+                    self.draw_screen(root_widget, fullscreen_video)
+                        
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
                         for k, v in self.transition_time.iteritems():
@@ -1895,8 +1614,8 @@ class Interface(object):
                         
                     if first_pass and self.last_event:
                         x, y = pygame.mouse.get_pos()
-                        x -= self.display.screen_xoffset
-                        y -= self.display.screen_yoffset
+                        # x -= self.display.screen_xoffset
+                        # y -= self.display.screen_yoffset
                         renpy.display.focus.mouse_handler(self.last_event, x, y, default=False)
 
                     needs_redraw = False
@@ -1908,7 +1627,7 @@ class Interface(object):
                     
                 # Draw the mouse, if it needs drawing.
                 if show_mouse:
-                    self.display.update_mouse()
+                    renpy.display.draw.update_mouse()
                     
 
                 # See if we want to restart the interaction entirely.
@@ -2031,7 +1750,7 @@ class Interface(object):
                                             
                     # This checks the event to see if it's a mouse event,
                     # and updates the mouse event timer as appropriate.
-                    self.display.mouse_event(ev)
+                    renpy.display.draw.mouse_event(ev)
                     
                     # This can set the event to None, to ignore it.
                     ev = renpy.display.joystick.event(ev)
@@ -2060,8 +1779,8 @@ class Interface(object):
                             self.focused = ev.gain
                             
                     x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-                    x -= self.display.screen_xoffset
-                    y -= self.display.screen_yoffset
+                    # x -= self.display.screen_xoffset
+                    # y -= self.display.screen_yoffset
                     
                     self.event_time = end_time = get_time()
 
@@ -2079,7 +1798,7 @@ class Interface(object):
                     
                     # Handle displayable inspector.
                     if renpy.config.inspector and renpy.display.behavior.inspector(ev):
-                        l = self.display.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.overlay_layers)
+                        l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.overlay_layers)
                         renpy.game.invoke_in_new_context(renpy.config.inspector, l)
                         
             

@@ -57,8 +57,20 @@ def set_mode(resolution, flags=0, depth=0):
     sample_noalpha = s.convert(rv)
 
     return rv
-    
+
 set_mode_unscaled = set_mode
+
+def set_sample_masks(masks):
+    """
+    This rebuilds the sample surfaces, to ones that use the given
+    masks.
+    """
+
+    global sample_alpha
+    global sample_noalpha
+
+    sample_alpha = sample_noalpha = opygame.Surface((10, 10), 0, 32, masks)
+    
 
 class Surface(opygame.Surface):
     """

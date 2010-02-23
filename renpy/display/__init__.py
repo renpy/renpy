@@ -19,4 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file intentionally left blank.
+# The draw object through which all drawing is routed. This object
+# contains all of the distinction between the software and GL
+# renderers.
+draw = None

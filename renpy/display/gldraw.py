@@ -1,3 +1,5 @@
+import renpy
+
 import pygame
 import os
 import sys
@@ -38,9 +40,6 @@ class GLDraw(object):
         # The screen.
         self.window = None
         
-        # The sample surface.
-        self.sample_surface = None
-
         # The OpenGL logfile.
         # TODO: Compute the path a bit better.
         try:
@@ -142,7 +141,8 @@ class GLDraw(object):
 
             return True
 
-
+        # Pick a texture environment subsystem.
+        
         if use_subsystem(
             "RENPY_GL_ENVIRON",
             "shader",
@@ -173,6 +173,8 @@ class GLDraw(object):
             self.log("Can't find a workable environment.")
             return False
 
+        # Pick a Render-to-texture subsystem.
+        
         if use_subsystem(
             "RENPY_GL_RTT",
             "shader",
@@ -185,13 +187,9 @@ class GLDraw(object):
 
             self.log("Using copy RTT.")
             self.rtt = glenviron.CopyRtt()
+
+        # Do additional setup needed.
+            
+        renpy.display.pgrender.set_sample_masks(MASKS)
             
         return True
-            
-
-if __name__ == "__main__":
-    draw = GLDraw()
-
-    pygame.init()
-    
-    print draw.set_mode((800, 600), (800, 600), False)
