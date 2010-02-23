@@ -1,9 +1,18 @@
-New in Ren'PY x.yy.z
+New in Ren'PY 6.10.3
 --------------------
 
+The following numbered bugs were fixed:
+
+* lp:526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)
+
+
+Renamed the internal show and hide methods of Displayable, so those
+names can once again be used by user-defined displayables.
 
 Rewrote MultipleTransition (which is used by Fade) to fix some
 problems it was exhibiting.
+
+
 
 
 New in Ren'Py 6.10.2

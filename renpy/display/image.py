@@ -83,7 +83,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
-    def get_parameterized(self):
+    def _get_parameterized(self):
         if self.param_target:
             return self.param_target.get_parameterized()
 
@@ -140,11 +140,11 @@ class ImageReference(renpy.display.core.Displayable):
         return False
 
 
-    def hide(self, st, at):
+    def _hide(self, st, at):
         if not self.target:
             self.find_target()
 
-        return self.target.hide(st, at)
+        return self.target._hide(st, at)
 
     def set_transform_event(self, event):
         if not self.target:
