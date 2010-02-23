@@ -133,11 +133,8 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
-
         super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
 
-        self.event_target = None
-        self.time_offset = 0
         self.new_widget = self.transitions[-1]
         self.events = False
 
@@ -150,32 +147,25 @@ class MultipleTransition(Transition):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
-        while True:
-            trans = self.transitions[0]
-            stoff = st - self.time_offset
+        for trans in self.transitions[:-1]:
 
-            if stoff < trans.delay:
+            if trans.delay > st:
                 break
 
-            if len(self.transitions) == 1:
-                break
-
-            self.time_offset += trans.delay
-            self.transitions.pop(0)
-
+            st -= trans.delay
             
-        if len(self.transitions) == 1:
+        else:
+
+            trans = self.transitions[-1]
             self.events = True
             
-        self.event_target = trans
-        
-        surf = renpy.display.render.render(trans, width, height, stoff, at)
+        surf = renpy.display.render.render(trans, width, height, st, at)
         width, height = surf.get_size()
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (0, 0))
         
-        if stoff > 0:
-            renpy.display.render.redraw(self, stoff)
+        if st < trans.delay:
+            renpy.display.render.redraw(self, trans.delay - st)
 
         return rv
             

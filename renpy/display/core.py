@@ -357,7 +357,7 @@ class Displayable(renpy.object.Object):
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 
-    def hide(self, st, at):
+    def _hide(self, st, at):
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
@@ -366,12 +366,12 @@ class Displayable(renpy.object.Object):
                 
         return None
 
-    def show(self):
+    def _show(self):
         """
         Called when the displayable is added to a scene list.
         """
 
-    def get_parameterized(self):
+    def _get_parameterized(self):
         """
         If this is a ImageReference to a parameterized image, return
         the get_parameterized() of the parameterized image. Otherwise,
@@ -617,7 +617,7 @@ class SceneLists(renpy.object.Object):
                 thing = self.transform_state(old_thing, thing)
                     
                 thing.set_transform_event("replace")
-                thing.show() 
+                thing._show() 
                     
                 if zorder == zo: # W0631
                     l[index] = (key, zorder, st, at, thing)
@@ -638,7 +638,7 @@ class SceneLists(renpy.object.Object):
         thing = self.transform_state(default_transform, thing)
             
         thing.set_transform_event("show")
-        thing.show()
+        thing._show()
         l.insert(index, (key, zorder, st, at, thing))
         
     def remove(self, layer, thing):
@@ -669,7 +669,7 @@ class SceneLists(renpy.object.Object):
                     st = st or now
                     at = at or now
 
-                    d = d.hide(now - st, now - at)
+                    d = d._hide(now - st, now - at)
 
                     if d is not None:
                         k = "hide$" + k
@@ -707,7 +707,7 @@ class SceneLists(renpy.object.Object):
                 st = st or now
                 at = at or now
 
-                d = d.hide(now - st, now - at)
+                d = d._hide(now - st, now - at)
 
                 if d is not None:
                     k = "hide$" + k
@@ -791,7 +791,7 @@ class SceneLists(renpy.object.Object):
                 name, zo, st, at, d = i
 
                 if name and name.startswith("hide$") and st and at:
-                    d = d.hide(now - st, now - at)
+                    d = d._hide(now - st, now - at)
 
                     if d is None:
                         continue
@@ -1496,7 +1496,7 @@ class Interface(object):
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
 
-            trans.show()
+            trans._show()
             
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)

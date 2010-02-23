@@ -335,7 +335,7 @@ class Transform(Container):
 
         return 
 
-    def hide(self, st, at):
+    def _hide(self, st, at):
         
         if not self.hide_request:
             d = self()
@@ -592,7 +592,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.raw_child = self.child
         
-    def show(self):
+    def _show(self):
         self.execute(self, 0, 0)
     
     

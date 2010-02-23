@@ -561,7 +561,7 @@ class Rollback(renpy.object.Object):
         Rollback was first created.
         """
 
-        for obj, roll in self.objects:
+        for obj, roll in reversed(self.objects):
             obj.rollback(roll)
 
         for t in self.store:
@@ -681,26 +681,48 @@ class RollbackLog(renpy.object.Object):
                 store.append((k, v))
                 self.ever_been_changed[k] = True
 
-        for k in new_store:
-            if k not in self.old_store:
-                store.append((k, ))
-                self.ever_been_changed[k] = True
+        for i in range(4):
 
+            try:
+            
+                for k in new_store:
+                    if k not in self.old_store:
+                        store.append((k, ))
+                        self.ever_been_changed[k] = True
+
+                break
+                        
+            except RuntimeError:
+                # This can occur when new_store is updated as we're
+                # iterating over it.
+                pass
+                        
+                        
         self.current.store = store
 
         # Update the list of mutated objects, and what we need to do
         # to restore them.
         
-        self.current.objects = [ ]
-        
-        for k, (ref, roll) in self.mutated.iteritems():
+        for i in range(4):
 
-            obj = ref()
-            if obj is None:
-                continue
+            self.current.objects = [ ]
 
-            self.current.objects.append((obj, roll))
+            try:
+                for k, (ref, roll) in self.mutated.iteritems():
 
+                    obj = ref()
+                    if obj is None:
+                        continue
+
+                    self.current.objects.append((obj, roll))
+
+                break
+
+            except RuntimeError:
+                # This can occur when self.mutated is changed as we're
+                # iterating over it.
+                pass
+                    
     def get_roots(self):
         """
         Return a map giving the current roots of the store. This is a

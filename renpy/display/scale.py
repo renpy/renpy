@@ -533,7 +533,7 @@ def load_scaling():
 
     
     def rotozoom(surf, angle, scale):
-        new_surf = pgrender.rotozoom(surf.surface, angle, scale)
+        new_surf = pgrender.rotozoom_unscaled(surf.surface, angle, scale)
         return ScaledSurface(new_surf)
 
     pgrender.rotozoom = rotozoom
