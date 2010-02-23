@@ -524,16 +524,3 @@ class FramebufferRtt(object):
         for i in self.texture_to_fbo.itervalues():
             gl.DeleteFramebuffersEXT(1, [ i ])
         
-def init():
-
-    global environ
-    global rtt
-    
-    # The environ to use.
-    # environ = FixedFunctionEnviron()
-    environ = ShaderEnviron()
-    
-    # The render-to-texture implementation to use.
-    rtt = FramebufferRtt()
-    # rtt = CopyRtt()
-    

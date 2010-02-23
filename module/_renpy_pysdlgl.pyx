@@ -80,6 +80,8 @@ cdef extern from "GL/glew.h":
     void glActiveTextureARB(GLenum)
     void glBindTexture(GLenum, GLuint texture)
 
+    GLubyte  *glGetString(GLenum)
+    
     
 def init_glew():
     err = glewInit()
@@ -287,3 +289,5 @@ def draw_rectangle(
     glEnd()
 
 
+def get_string(name):
+    return <char *> glGetString(name)

@@ -42,6 +42,12 @@ WIDTH, HEIGHT = s.get_size()
 print WIDTH, HEIGHT
 
 pysdlgl.init_glew()
+
+
+for i in pysdlgl.get_string(gl.EXTENSIONS).split(" "):
+    print i
+
+
 glenviron.init()
 
 
