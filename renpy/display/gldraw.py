@@ -1,3 +1,8 @@
+# IMPORTANT NOTE: The drawing code should handle cases where a surface is
+# added to a Render (instead of a TextureGrid) by uploading that surface to
+# the graphics card.
+
+
 import renpy
 
 import pygame

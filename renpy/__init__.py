@@ -62,14 +62,6 @@ def import_all():
     import renpy.display.module
     import renpy.display.render # Most display stuff depends on this.
 
-    import renpy.display.swdraw
-    
-    # GL has to load before core. (Does it?)
-    import renpy.display.glshader
-    import renpy.display.glenviron
-    import renpy.display.gltexture
-    import renpy.display.gldraw
-    
     import renpy.display.core # object
     import renpy.display.font
     import renpy.display.text # core, font
@@ -86,6 +78,14 @@ def import_all():
     import renpy.display.joystick
     import renpy.display.minigame
     import renpy.display.error
+    
+    import renpy.display.swdraw
+    
+    # GL has to load before core. (Does it?)
+    import renpy.display.glshader
+    import renpy.display.glenviron
+    import renpy.display.gltexture
+    import renpy.display.gldraw
     
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 

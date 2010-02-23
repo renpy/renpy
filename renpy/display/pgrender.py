@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This module deals with pygame-specific rendering tasks.
+# This module wraps the pygame surface class (and associated functions).
 
 import pygame
 import renpy
@@ -78,6 +78,11 @@ class Surface(opygame.Surface):
     its mode, as necessary.
     """
 
+    opaque = False
+    
+    def is_opaque(self):
+        return self.opaque
+    
     def convert_alpha(self, surface=None):
         return copy_surface_unscaled(self, True)
 
