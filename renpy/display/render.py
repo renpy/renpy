@@ -22,7 +22,6 @@
 import collections
 import pygame
 import threading
-import math
 import renpy
 
 
@@ -95,7 +94,8 @@ def check_at_shutdown():
 
     if render_count != 0:
         raise Exception("Render count is %d at shutdown. This probably indicates a memory leak bug in Ren'Py." % render_count)
-        
+
+    
 def render(d, width, height, st, at):
     """
     Causes the displayable `d` to be rendered in an area of size
@@ -172,7 +172,8 @@ def invalidate(d):
             v.kill_cache()
 
         invalidated = True
-            
+
+        
 def process_redraws():
     """
     Called to determine if any redraws are pending. Returns true if we
@@ -346,26 +347,9 @@ def render_screen(root, width, height):
     return rv
 
 # Possible operations that can be done as part of a render.
-
-# Blit the children one on top of another.
 BLIT = 0
-
-# Dissolve between the first and second children, using the dissolve
-# parameter. The children need to be opaque.
-OPAQUE_DISSOLVE = 1
-
-# Dissolve between the first and second children, using the dissolve
-# parameter.
-ALPHA_DISSOLVE = 2
-
-# Dissolve between the first and second children, using the third child
-# as a mask image. The children need to be opaque.
-OPAQUE_IMAGE_DISSOLVE = 3
-
-# Dissolve between the first and second children, using the third child
-# as a mask image.
-ALPHA_IMAGE_DISSOLVE = 4
-        
+DISSOLVE = 1
+IMAGEDISSOLVE = 2
         
 class Render(object):
     
@@ -403,12 +387,17 @@ class Render(object):
         # len(self.parents) + len(self.depends_on_us)
         self.refcount = 0
 
-        # The operation we're performing.
+        # The operation we're performing. (BLIT, DISSOLVE, OR IMAGE_DISSOLVE)
         self.operation = BLIT
 
-        # If the operation is one of the DISSOLVES, this controls the
-        # amount of the new image we'll be using.
-        self.dissolve = 0.0
+        # The fraction of the operation that is complete.
+        self.operation_complete = 0.0
+
+        # Should the dissolve operations preserve alpha?
+        self.operation_alpha = False
+        
+        # The ramp length used by the imagedissolve operations.
+        self.operation_ramplen = 0
         
         # These are Matrix2D objects used to transform the children of
         # this render. If None, then no transformation is done. Otherwise,

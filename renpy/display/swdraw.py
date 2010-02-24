@@ -3,8 +3,8 @@ import pygame
 import cStringIO
 import math
 
-blit_lock = renpy.display.render.blit_lock
-IDENTITY = renpy.display.render.IDENTITY
+from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE
+
 
 class Clipper(object):
     """
@@ -205,7 +205,80 @@ class Clipper(object):
         return (x0, y0, x1 - x0, y1 - y0), updates
             
 clippers = [ Clipper() ]        
+
+
+def draw_special(what, dest, x, y):
+    """
+    This handles the special drawing operations, such as dissolve and
+    image dissolve. `x` and `y` are the offsets of the thing to be drawn
+    relative to the destination rectangle, and are always negative.
+    """
+
+    dw, dh = dest.get_size()
+
+    w = min(dw, what.width + x)
+    h = min(dh, what.height + y)
+
+    if w <= 0 or h <= 0:
+        return
+    
+    if what.operation == DISSOLVE:
+
+        bottom = what.children[0][0].render_to_texture(what.operation_alpha)
+        top = what.children[1][0].render_to_texture(what.operation_alpha)
+
+        if what.operation_alpha:
+            target = renpy.display.pgrender.surface((w, h), True)
+        else:
+            target = dest.subsurface((0, 0, w, h))
         
+        renpy.display.module.blend(
+            bottom.subsurface((-x, -y, w, h)),
+            top.subsurface((-x, -y, w, h)),
+            target,
+            what.operation_complete)
+
+        if what.operation_alpha:
+            dest.blit(target, (0, 0))
+
+    elif what.operation == IMAGEDISSOLVE:
+
+        image = what.children[0][0].render_to_texture(what.operation_alpha)
+        bottom = what.children[1][0].render_to_texture(what.operation_alpha)
+        top = what.children[2][0].render_to_texture(what.operation_alpha)
+
+        if what.operation_alpha:
+            target = renpy.display.pgrender.surface((w, h), True)
+        else:
+            target = dest.subsurface((0, 0, w, h))
+
+        ramplen = what.operation_ramplen
+            
+        ramp = "\x00" * 256
+
+        for i in xrange(0, ramplen):
+            ramp += ord(255 * i / ramplen)
+
+        ramp += "\xff" * 256
+
+        step = int( what.operation_complete * (256 + ramplen) )
+        ramp = ramp[step:step+256]
+            
+        renpy.display.module.imageblend(
+            bottom.subsurface((-x, -y, w, h)),
+            top.subsurface((-x, -y, w, h)),
+            target,
+            image.subsurface((-x, -y, w, h)),
+            ramp)
+
+        if what.operation_alpha:
+            dest.blit(target, (0, 0))
+        
+
+    else:
+        raise Exception("Unknown operation: %d" % what.operation)
+
+
 def draw(dest, clip, what, xo, yo, screen):
     """
     This is the simple draw routine, which only works when alpha is 1.0
@@ -249,7 +322,7 @@ def draw(dest, clip, what, xo, yo, screen):
         return
 
     # Deal with draw functions.
-    if what.draw_func:
+    if what.operation != BLIT:
 
         xo = int(xo)
         yo = int(yo)
@@ -292,8 +365,10 @@ def draw(dest, clip, what, xo, yo, screen):
             dest.forced.add((subx, suby, subx + subw, suby + subh, clip))
         else:
             newdest = dest.subsurface((subx, suby, subw, subh))
-            what.draw_func(newdest, newx, newy)
+            # what.draw_func(newdest, newx, newy)
+            draw_special(what, newdest, newx, newy)
 
+            
         return
 
     # Deal with clipping, if necessary.

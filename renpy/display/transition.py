@@ -19,17 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains code contributed by Brian Turcotte, the copyright
-# assignment follows:
-#
-# Copyright for nonlinear ramp code added to ImageDissolve is hereby
-# assigned to PyTom <pytom@bishoujo.us>.
-# 
-# And feel free to change, improve, fold, spindle, or mutilate it,
-# obviously.
-# 
-# Cheers, Brian Turcotte (shaja).
-
 # NOTE:
 # Transitions need to be able to work even when old_widget and new_widget
 # are None, at least to the point of making it through __init__. This is
@@ -59,6 +48,7 @@ class Transition(renpy.display.core.Displayable):
 
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
+
 
 def null_render(d, width, height, st, at):
 
@@ -322,47 +312,23 @@ class Dissolve(Transition):
         if st < self.time:
             renpy.display.render.redraw(self, 0)
 
-        alpha = min(255, int(255 * st / self.time))
+        complete = min(255, int(255 * st / self.time))
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
         
-        bottom_surface = bottom.pygame_surface(self.alpha)
-        top_surface = top.pygame_surface(self.alpha)
-
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
 
-        def draw(dest, x, y):
-            
-            dw, dh = dest.get_size()
+        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
 
-            w = min(dw, width + x)
-            h = min(dh, height + y)
-
-            if w <= 0 or h <= 0:
-                return
-
-            renpy.display.module.blend(
-                bottom_surface.subsurface((-x, -y, w, h)),
-                top_surface.subsurface((-x, -y, w, h)),
-                dest.subsurface((0, 0, w, h)),
-                alpha)
-            
-        if self.alpha:
-
-            surf = renpy.display.pgrender.surface((width, height), True)
-            draw(surf, 0, 0)
-            renpy.display.render.mutated_surface(surf)
-
-            rv = renpy.display.render.Render(width, height)
-            rv.blit(surf, (0, 0))
-
-        else:
-            rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
-
-        rv.depends_on(top, True)
-        rv.depends_on(bottom)
+        rv.operation = renpy.display.render.DISSOLVE        
+        rv.operation_alpha = self.alpha
+        rv.operation_complete = complete
+                
+        rv.blit(bottom, (0, 0), focus=False, main=False)
+        rv.blit(top, (0, 0), focus=True, main=True)
+        
         return rv
 
 
@@ -370,38 +336,6 @@ class ImageDissolve(Transition):
     """
     This dissolves the old scene into the new scene, using an image
     to control the dissolve process.
-
-    A list of values is used to control this mapping. This list of
-    values consists 256 fully transparent values, a ramp (of a
-    specified number of steps) from full transparency to full opacity,
-    and 256 fully opaque values. A 256 entry window is slid over this
-    list, and the values found within are used to map the red channel
-    of the image onto the opacity of the new scene.
-
-    Basically, this means that while pixels come in first, black last,
-    and the ramp controls the sharpness of the transition.
-    
-    @param image: The image that will be used to control this
-    transition. The image should be the same size as the scene being
-    dissolved.
-
-    @param time: The amount of time the dissolve will take.
-
-    @param ramplen: The number of pixels of ramp to use. This defaults
-    to 8.
-
-    @param ramptype: Type of alpha ramp. Possible types are: linear, cube,
-    dcube, mcube. Default is linear. Non-linear types must have
-    ramplen >= 8. "cube": Ease in, sharp out. "dcube": Sharp in, sharp out.
-    "mcube": Ease in, ease out.
-
-    @param ramp: If given, this is expected to be a sequence of
-    integers in the range 0 to 255. This sequence explicitly gives the
-    ramp to be used. If given, this overrides ramplen and ramptype.
-
-    @param reverse: This reverses the ramp and the direction of the window
-    slide. When True, black pixels dissolve in first, and while pixels come
-    in last.    
     """
 
     __version__ = 1
@@ -410,110 +344,44 @@ class ImageDissolve(Transition):
         if version < 1:
             self.alpha = False
     
-    def generate_ramp(self, ramplen, ramptype, explicit_ramp, reverse):
-        """
-        Precomputes the ramp.
-        """
+    def __init__(
+        self,
+        image,
+        time,
+        ramplen=8,
+        ramptype='linear',
+        ramp=None,
+        reverse=False,
+        alpha=False,
+        old_widget=None,
+        new_widget=None,
+        **properties):
 
-        ramp = '\x00' * 256
-
-        if explicit_ramp is not None:
-
-            for i in explicit_ramp:
-                ramp += chr(i)
-
-        else:
-
-            if ramptype == 'cube':
-                # make sure ramplen is big enough, to avoid div-by-0 errors
-                # Not much point in nonlinear if the size is that small, anyway
-                if ramplen >= 8:
-                    table = []
-                    for i in range(ramplen):
-                        table.append(i * i * i)
-                    scale = max(table) / 255.0
-                    for i in range(ramplen):
-                        #print i, table[i], table[i] / scale
-                        ramp += chr(int(table[i] / scale))
-                else:
-                    ramptype = 'linear'
-
-            elif ramptype == 'dcube':
-                if ramplen >= 8:
-                    table = []
-                    for i in range(ramplen / 2 - ramplen, ramplen / 2):
-                        table.append(i * i * i)
-                    adj = abs(min(table))
-                    for i in range(len(table)):
-                        table[i] += adj
-                    scale = max(table) / 255.0
-                    #print "scale:", scale
-                    for i in range(ramplen):
-                        #print i, table[i], table[i] / scale
-                        ramp += chr(int(table[i] / scale))
-                else:
-                    ramptype = 'linear'
-
-            elif ramptype == 'mcube':
-                if ramplen >= 8:
-                    ramplen = (ramplen / 2) * 2 # make sure it's even
-                    table = []
-                    for i in range(ramplen / 2):
-                        table.append(i * i * i)
-                    adj = table[-1]
-                    tmptable = []
-                    for i in table:
-                        tmptable.append(i)
-                    for i in range(1, len(table) + 1):
-                        tmptable.append(abs(table[len(table) - i] - adj) + adj)
-                    table = tmptable
-                    scale = max(table) / 255.0
-                    #print "scale:", scale
-                    for i in range(ramplen):
-                        #print i, table[i], table[i] / scale
-                        ramp += chr(int(table[i] / scale))
-                else:
-                    ramptype = 'linear'
-
-            if ramptype == 'linear':
-                for i in range(ramplen):
-                    ramp += chr(255 * i / ramplen)
-
-        ramp += '\xff' * 256
-
-        if reverse:
-            ramp = list(ramp)
-            ramp.reverse()
-            ramp = ''.join(ramp)
-
-        return ramp
+        # ramptype and ramp are now unused, but are kept for compatbility with
+        # older code.
         
-        
-    def __init__(self, image, time, ramplen=8, ramptype='linear', ramp=None, reverse=False, alpha=False,
-                 old_widget=None, new_widget=None, **properties):
-
         super(ImageDissolve, self).__init__(time, **properties)
 
-        self.time = time
         self.old_widget = old_widget
         self.new_widget = new_widget
         self.events = False
         self.alpha = alpha
-        
+
+        # TODO: Preprocess the image, including the reverse step iff
+        # necessary.
         self.image = renpy.display.im.image(image)
 
         if ramp is not None:
             ramplen = len(ramp)
 
-        self.ramp = self.generate_ramp(ramplen, ramptype, ramp, reverse)
-        
-        self.steps = ramplen + 256
-        self.reverse = reverse
+        # The length of the 
+        self.ramplen = max(ramplen, 1)
 
 
     def visit(self):
         return super(ImageDissolve, self).visit() + [ self.image ]
 
+    
     def render(self, width, height, st, at):
 
         if renpy.game.less_updates:
@@ -523,58 +391,27 @@ class ImageDissolve(Transition):
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
-        image = renpy.display.im.cache.get(self.image)
-
         if st < self.time:
             renpy.display.render.redraw(self, 0)
 
-        step = int(self.steps * st / self.time)
-
-        if self.reverse:
-            step = self.steps - step
-
-        ramp = self.ramp[step:step+256]
-
-
+        image = render(self.image, width, height, st, at)
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
         
-        bottom_surface = bottom.pygame_surface(self.alpha)
-        top_surface = top.pygame_surface(self.alpha)
+        width = min(bottom.width, top.width, image.width)
+        height = min(bottom.height, top.height, image.height)
 
-        iw, ih = image.get_size()
+        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
 
-        width = min(bottom.width, top.width, iw)
-        height = min(bottom.height, top.height, ih)
-            
-        def draw(dest, x, y):
+        rv.operation = renpy.display.render.IMAGEDISSOLVE
+        rv.operation_alpha = self.alpha
+        rv.operation_complete = st / self.delay
+        rv.operation_ramplen = self.ramplen
 
-            dw, dh = dest.get_size()
-
-            w = min(dw, width + x)
-            h = min(dh, height + y)
-
-            renpy.display.module.imageblend(
-                bottom_surface.subsurface((-x, -y, w, h)),
-                top_surface.subsurface((-x, -y, w, h)),
-                dest.subsurface((0, 0, w, h)),
-                image.subsurface((-x, -y, w, h)),
-                ramp)
-
-        if self.alpha:
-
-            surf = renpy.display.pgrender.surface((width, height), True)
-            draw(surf, 0, 0)
-            renpy.display.render.mutated_surface(surf)
-
-            rv = renpy.display.render.Render(width, height)
-            rv.blit(surf, (0, 0))
-
-        else:
-            rv = renpy.display.render.Render(width, height, draw_func=draw, opaque=True)
-
-        rv.depends_on(top, True)
-        rv.depends_on(bottom)
+        rv.blit(image, (0, 0), focus=False, main=False)
+        rv.blit(bottom, (0, 0), focus=False, main=False)
+        rv.blit(top, (0, 0), focus=True, main=True)
+        
         return rv
 
 
