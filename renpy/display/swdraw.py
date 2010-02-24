@@ -5,7 +5,6 @@ import math
 
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE
 
-
 class Clipper(object):
     """
     This is used to calculate the clipping rectangle and update rectangles
@@ -257,7 +256,7 @@ def draw_special(what, dest, x, y):
         ramp = "\x00" * 256
 
         for i in xrange(0, ramplen):
-            ramp += ord(255 * i / ramplen)
+            ramp += chr(255 * i / ramplen)
 
         ramp += "\xff" * 256
 

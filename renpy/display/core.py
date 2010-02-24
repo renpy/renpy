@@ -534,11 +534,11 @@ class SceneLists(renpy.object.Object):
         if old_thing is None:
             return new_thing
         
-        old_transform = old_thing.get_parameterized()
+        old_transform = old_thing._get_parameterized()
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
 
-        new_transform = new_thing.get_parameterized()
+        new_transform = new_thing._get_parameterized()
         if not isinstance(new_transform, renpy.display.motion.Transform):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
         

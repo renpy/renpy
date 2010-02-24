@@ -309,9 +309,6 @@ class Dissolve(Transition):
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
-        if st < self.time:
-            renpy.display.render.redraw(self, 0)
-
         complete = min(255, int(255 * st / self.time))
 
         bottom = render(self.old_widget, width, height, st, at)
@@ -328,7 +325,9 @@ class Dissolve(Transition):
                 
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
-        
+
+        renpy.display.render.redraw(self, 0)
+
         return rv
 
 
@@ -366,10 +365,26 @@ class ImageDissolve(Transition):
         self.new_widget = new_widget
         self.events = False
         self.alpha = alpha
+        
+        if not reverse:
 
-        # TODO: Preprocess the image, including the reverse step iff
-        # necessary.
-        self.image = renpy.display.im.image(image)
+            # Copies red -> all.
+            matrix = renpy.display.im.matrix(
+                1, 0, 0, 0, 0,
+                1, 0, 0, 0, 0,
+                1, 0, 0, 0, 0,
+                1, 0, 0, 0, 0)
+
+        else:
+
+            # Copies 1-red -> all.
+            matrix = renpy.display.im.matrix(
+                -1, 0, 0, 0, 1,
+                -1, 0, 0, 0, 1,
+                -1, 0, 0, 0, 1,
+                -1, 0, 0, 0, 1)
+
+        self.image = renpy.display.im.MatrixColor(image, matrix)
 
         if ramp is not None:
             ramplen = len(ramp)
@@ -387,12 +402,9 @@ class ImageDissolve(Transition):
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
-        if st >= self.time:
+        if st >= self.delay:
             self.events = True
             return render(self.new_widget, width, height, st, at)
-
-        if st < self.time:
-            renpy.display.render.redraw(self, 0)
 
         image = render(self.image, width, height, st, at)
         bottom = render(self.old_widget, width, height, st, at)
@@ -412,6 +424,8 @@ class ImageDissolve(Transition):
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
         
+        renpy.display.render.redraw(self, 0)
+
         return rv
 
 
