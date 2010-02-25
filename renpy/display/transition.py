@@ -254,21 +254,14 @@ class Pixellate(Transition):
             visible = self.new_widget
             self.events = True
 
+
         rdr = render(visible, width, height, st, at)
-
-        surf = rdr.pygame_surface(False)
-        size = surf.get_size()
-
-        newsurf = renpy.display.pgrender.surface(size, surf)
-
-        px = 2 ** step
-
-        renpy.display.module.pixellate(surf, newsurf, px, px, px, px)
-        renpy.display.render.mutated_surface(newsurf)
-
         rv = renpy.display.render.Render(rdr.width, rdr.height)
-        rv.blit(newsurf, (0, 0))
-        rv.depends_on(rdr)
+
+        rv.blit(rdr, (0, 0))
+
+        rv.operation = renpy.display.render.PIXELLATE
+        rv.operation_parameter =  2 ** step
         
         renpy.display.render.redraw(self, 0)
 

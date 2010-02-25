@@ -350,7 +350,8 @@ def render_screen(root, width, height):
 BLIT = 0
 DISSOLVE = 1
 IMAGEDISSOLVE = 2
-        
+PIXELLATE = 3
+
 class Render(object):
     
     def __init__(self, width, height, draw_func=None, layer_name=None, opaque=None):

@@ -3,7 +3,7 @@ import pygame
 import cStringIO
 import math
 
-from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE
+from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
 class Clipper(object):
     """
@@ -251,7 +251,7 @@ def draw_special(what, dest, x, y):
         else:
             target = dest.subsurface((0, 0, w, h))
 
-        ramplen = what.operation_ramplen
+        ramplen = what.operation_parameter
             
         ramp = "\x00" * 256
 
@@ -272,7 +272,21 @@ def draw_special(what, dest, x, y):
 
         if what.operation_alpha:
             dest.blit(target, (0, 0))
+
+    elif what.operation == PIXELLATE:
+
+        surf = what.children[0][0].render_to_texture(False)
+
+        px = what.operation_parameter
+
+        renpy.display.module.pixellate(
+            surf.subsurface((-x, -y, w, h)),
+            dest.subsurface((0, 0, w, h)),
+            px, px, px, px)
+
         
+        
+            
 
     else:
         raise Exception("Unknown operation: %d" % what.operation)
