@@ -397,8 +397,8 @@ class Render(object):
         # Should the dissolve operations preserve alpha?
         self.operation_alpha = False
         
-        # The ramp length used by the imagedissolve operations.
-        self.operation_ramplen = 0
+        # The parameter to the operation. 
+        self.operation_parameter = 0
         
         # These are Matrix2D objects used to transform the children of
         # this render. If None, then no transformation is done. Otherwise,
