@@ -1142,14 +1142,24 @@ class SizeZoom(ZoomCommon):
 
 class RotoZoom(renpy.display.core.Displayable):
 
+    transform = None
+    
     def __init__(self,
-                 rot_start, rot_end, rot_delay,
-                 zoom_start, zoom_end, zoom_delay,
+                 rot_start,
+                 rot_end,
+                 rot_delay,
+                 zoom_start,
+                 zoom_end,
+                 zoom_delay,
                  child,
-                 rot_repeat=False, zoom_repeat=False,
-                 rot_bounce=False, zoom_bounce=False,
-                 rot_anim_timebase=False, zoom_anim_timebase=False,
-                 rot_time_warp=None, zoom_time_warp=None,
+                 rot_repeat=False,
+                 zoom_repeat=False,
+                 rot_bounce=False,
+                 zoom_bounce=False,
+                 rot_anim_timebase=False,
+                 zoom_anim_timebase=False,
+                 rot_time_warp=None,
+                 zoom_time_warp=None,
                  opaque=False,
                  style='motion',
                  **properties):
@@ -1180,10 +1190,12 @@ class RotoZoom(renpy.display.core.Displayable):
 
         self.opaque = opaque
 
+        
     def visit(self):
         return [ self.child ]
-        
-    def render(self, w, h, st, at):
+
+    
+    def render(self, width, height, st, at):
 
         if self.rot_anim_timebase:
             rot_time = at
@@ -1223,9 +1235,6 @@ class RotoZoom(renpy.display.core.Displayable):
             rot_time = 1.0
             zoom_time = 1.0
             
-        if rot_time <= 1.0 or zoom_time <= 1.0:
-            renpy.display.render.redraw(self, 0)
-
         rot_time = min(rot_time, 1.0)
         zoom_time = min(zoom_time, 1.0)
         
@@ -1238,47 +1247,21 @@ class RotoZoom(renpy.display.core.Displayable):
             
         angle = self.rot_start + (1.0 * self.rot_end - self.rot_start) * rot_time
         zoom = self.zoom_start + (1.0 * self.zoom_end - self.zoom_start) * zoom_time
-        angle = -angle * math.pi / 180
+        # angle = -angle * math.pi / 180
 
         zoom = max(zoom, 0.001) 
         
-        child_rend = renpy.display.render.render(self.child, w, h, st, at)
-        surf = child_rend.pygame_surface(True)
+        if self.transform is None:
+            self.transform = Transform(self.child)
+            
+        self.transform.rotate = angle
+        self.transform.zoom = zoom
 
-        cw, ch = child_rend.get_size()
+        rv = renpy.display.render.render(self.transform, width, height, st, at)
+        
+        if rot_time <= 1.0 or zoom_time <= 1.0:
+            renpy.display.render.redraw(self.transform, 0)
 
-        # Figure out the size of the target.
-        dw = math.hypot(cw, ch) * zoom
-        dh = dw
-
-        # We shrink the size by one, since we can't access these pixels.
-        # cw -= 1
-        # ch -= 1
-
-         # Figure out the various components of the rotation.
-
-        xdx = math.cos(angle) / zoom
-        xdy = -math.sin(angle) / zoom
-        ydx = -xdy # math.sin(angle) / zoom
-        ydy = xdx # math.cos(angle) / zoom
-
-        def draw(dest, xo, yo):
-
-            target = dest
-                                            
-            dulcx = -dw / 2.0 - xo
-            dulcy = -dh / 2.0 - yo
-
-            culcx = cw / 2.0 + xdx * dulcx + xdy * dulcy
-            culcy = ch / 2.0 + ydx * dulcx + ydy * dulcy
-
-            renpy.display.module.transform(surf, target,
-                                            culcx, culcy,
-                                            xdx, ydx, xdy, ydy,
-                                            1.0, True)
-
-        rv = renpy.display.render.Render(dw, dh, draw_func=draw, opaque=self.opaque)
-        rv.depends_on(child_rend)
         return rv
 
 
