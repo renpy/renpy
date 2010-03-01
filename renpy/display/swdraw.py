@@ -5,6 +5,9 @@ import math
 
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
+# A map from id(cached surface) to rle version of cached surface.
+rle_cache = { }
+
 class Clipper(object):
     """
     This is used to calculate the clipping rectangle and update rectangles
@@ -312,7 +315,7 @@ def draw(dest, clip, what, xo, yo, screen):
         # Pixel-Aligned blit.
         if isinstance(xo, int) and isinstance(yo, int):
             if screen:
-                what = renpy.display.im.rle_cache.get(id(what), what)
+                what = rle_cache.get(id(what), what)
 
             if clip:
                 w, h = what.get_size()
@@ -892,6 +895,7 @@ class SWDraw(object):
         
         self.suppressed_blit = fullscreen_video
 
+        
     def render_to_texture(self, render, alpha):
         rv = renpy.display.pgrender.surface((render.width, render.height), alpha)
         draw(rv, None, render, 0, 0, False)
@@ -906,3 +910,46 @@ class SWDraw(object):
 
         for i in clippers:
             i.mutated.add(id(surf))
+
+            
+    def load_texture(self, surf):
+        """
+        Creates a texture from the surface. In the software implementation,
+        the only difference between a texture and a surface is that a texture
+        is in the RLE cache.
+        """
+
+        if renpy.game.less_memory:
+            return surf
+        
+        idsurf = id(surf)
+        
+        rle_surf = renpy.display.pgrender.copy_surface(surf)
+        rle_surf.set_alpha(255, pygame.RLEACCEL)
+        self.mutated_surface(rle_surf)
+
+        rle_cache[idsurf] = rle_surf
+        
+        return surf
+        
+        
+    def unload_texture(self, surf):
+        """
+        Unloads a texture.
+        """
+
+        idsurf = id(surf)
+        if idsurf in rle_cache:
+            del rle_cache[idsurf]
+            
+
+    def free_memory(self):
+        """
+        Frees up memory.
+        """
+
+        rle_cache.clear()
+        
+        
+        
+            

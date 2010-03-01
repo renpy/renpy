@@ -89,6 +89,7 @@ class Cache(object):
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
         self.preload_thread.setDaemon(True)
         self.preload_thread.start()
+
         
     def quit(self):
         if not self.preload_thread.isAlive():
@@ -107,6 +108,7 @@ class Cache(object):
     def cache_limit(self):
         return renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
 
+    
     # Clears out the cache.
     def clear(self):
         self.lock.acquire()
@@ -208,32 +210,15 @@ class Cache(object):
             if renpy.config.debug_image_cache:
                 print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit())
 
-            # RLE detection. (ce.size is used to check that we're not
-            # 0 pixels big.)
-            if id(ce.surf) not in rle_cache and ce.size:
+            # Create the texture.
+            idsurf = id(ce.surf)
+            
+            if idsurf in texture_pin_cache:
+                texture_cache[idsurf] = texture_pin_cache[idsurf]
+            else:
+                texture_cache[idsurf] = renpy.display.draw.load_texture(ce.surf)
 
-                rle = not renpy.game.less_memory
-                
-                if rle:
-                    # We must copy the surface, so we have a RLE-specific version.
-
-                    idsurf = id(ce.surf)
-                    
-                    if idsurf in pin_rle_cache:
-                        rle_surf = pin_rle_cache[idsurf]
-                    else:
-                        rle_surf = renpy.display.pgrender.copy_surface(ce.surf)
-                        rle_surf.set_alpha(255, pygame.RLEACCEL)
-
-                    renpy.display.render.mutated_surface(rle_surf)
-
-                    rle_cache[idsurf] = rle_surf
-
-                    if renpy.config.debug_image_cache:
-                        print "Added to rle cache:", image
-                        
             self.lock.release()
-
                         
         # Move it into the current generation. This isn't protected by
         # a lock, so in certain circumstances we could have an
@@ -259,8 +244,14 @@ class Cache(object):
         self.total_cache_size -= ce.size
         del self.cache[ce.what]
 
-        if id(ce.surf) in rle_cache:
-            del rle_cache[id(ce.surf)]
+        idsurf = id(ce.surf)
+        
+        if idsurf in texture_cache:
+
+            if idsurf not in texture_pin_cache:            
+                renpy.display.draw.unload_texture(ce.surf)
+
+            del texture_cache[idsurf]
 
         if renpy.config.debug_image_cache:
             print "IC Removed", ce.what
@@ -386,11 +377,15 @@ class Cache(object):
                             print "IC Pin Clear", image
 
 
-                        idsurf = id(self.pin_cache[i])
-                            
-                        if idsurf in pin_rle_cache:
-                            del pin_rle_cache[idsurf]
+                        surf = self.pin_cache[i]
+                        idsurf = id(surf)
 
+                        if idsurf in texture_pin_cache:
+                            if idsurf not in texture_cache:
+                                renpy.display.draw.unload_texture(surf)
+                            
+                            del texture_pin_cache[idsurf]
+                            
                         del self.pin_cache[i]
                         
                             
@@ -410,28 +405,32 @@ class Cache(object):
 
                     try:
                         surf = image.load()
-
+                        
                         self.pin_cache[image] = surf
 
                         rle_surf = renpy.display.pgrender.copy_surface(surf)
                         rle_surf.set_alpha(255, pygame.RLEACCEL)
 
-                        pin_rle_cache[id(surf)] = rle_surf
+                        idsurf = id(surf)
+                        if idsurf in texture_cache:
+                            texture_pin_cache[idsurf] = texture_cache[idsurf]
+                        else:
+                            texture_pin_cache[idsurf] = renpy.display.draw.load_texture(surf)
 
                     except:
                         preload_blacklist.add(image)
 
-                        
-# A map from id(cached surface) to rle version of cached surface.
-rle_cache = { }
 
-# Same thing, for pinned surfaces.
-pin_rle_cache = { }
+# A map from id(surf) to texture.
+texture_cache = { }
+
+# A map from id(surf) to texture, for pinned textures.
+texture_pin_cache = { }
 
 # Images that we tried, and failed, to preload.
 preload_blacklist = set()
 
-
+# The cache object.
 cache = Cache()
 
 def free_memory():
@@ -440,8 +439,11 @@ def free_memory():
     """
 
     cache.clear()
-    rle_cache.clear()
-    pin_rle_cache.clear()
+
+    texture_cache.clear()
+    texture_pin_cache.clear()
+
+    renpy.display.draw.free_memory()
     
 
 class ImageBase(renpy.display.core.Displayable):
@@ -491,10 +493,12 @@ class ImageBase(renpy.display.core.Displayable):
         
     def render(self, w, h, st, at):
         im = cache.get(self)
+
+        texture = texture_cache[id(im)]
         
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)
-        rv.blit(im, (0, 0))
+        rv.blit(texture, (0, 0))
         return rv
 
     def predict_one(self, callback):
