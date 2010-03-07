@@ -1,4 +1,4 @@
-import pygame
+import pygame; pygame # other modules might depend on pygame.
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
@@ -43,17 +43,27 @@ class Texture(object):
         # represents.
         self.number = number
 
-        # True if the texture has been loaded at least once.
-        self.loaded = False
-            
+        # True if the texture has been created inside the GPU.
+        self.created = False
+
         # These are used to map an index into texture coordinates.
         self.xmul = 0
         self.xadd = 0
         self.ymul = 0
         self.yadd = 0
 
+        # These contain information about an associated pygame
+        # surface. They allow us to defer loading until it's
+        # actually needed.
+        self.surface = None
+        self.surface_rect = None
+        
 
     def __del__(self):
+
+        # Release the surface.
+        self.surface = None
+        self.surface_rect = None
 
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
@@ -67,46 +77,70 @@ class Texture(object):
         Loads a pygame surface into this texture rectangle.
         """
 
-        gl.BindTexture(gl.TEXTURE_2D, self.number)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-        
-        # If we haven't initalized the texture yet, and we're
-        # smaller than it, load in the empty texture.
-        if w < self.width or h < self.height:
+        # This just queues the surface up for loading. The actual loading
+        # occurs when the texture is first needed. This ensures that the
+        # texture loading only occurs in the GL thread.
 
-            if not self.loaded:
-                pysdlgl.load_texture(
-                    None,
-                    0,
-                    0,
-                    self.width,
-                    self.height,
-                    0)
+        self.surface = surf
+        self.surface_rect = surf
 
-            self.loaded = True
 
-        # Otherwise, either load or replace the texture.
-        pysdlgl.load_texture(
-            surf,
-            x,
-            y,
-            w,
-            h,
-            self.loaded)
-        
-        # Needs to be here twice, since we may not go through the w < SIDE
-        # h < SIDE thing all the time.
-        self.loaded = True
+    def make_ready(self):
+        """
+        Makes the texture ready for use.
+        """
 
-        # Finally, load in the default math.
-        self.xadd = self.yadd = 0
-        self.xmul = 1.0 / self.width
-        self.ymul = 1.0 / self.height
+        if self.surface:
 
+            surf = self.surface
+            x, y, w, h = self.surface_rect 
+
+            
+            gl.BindTexture(gl.TEXTURE_2D, self.number)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+            # If we haven't initalized the texture yet, and we're
+            # smaller than it, load in the empty texture.
+            if w < self.width or h < self.height:
+
+                if not self.created:
+                    pysdlgl.load_texture(
+                        None,
+                        0,
+                        0,
+                        self.width,
+                        self.height,
+                        0)
+
+                self.created = True
+
+            # Otherwise, either load or replace the texture.
+            pysdlgl.load_texture(
+                surf,
+                x,
+                y,
+                w,
+                h,
+                self.created)
+
+            # Needs to be here twice, since we may not go through the w < SIDE
+            # h < SIDE thing all the time.
+            self.created = True
+
+            # Finally, load in the default math.
+            self.xadd = self.yadd = 0
+            self.xmul = 1.0 / self.width
+            self.ymul = 1.0 / self.height
+
+            # We don't need to be loaded anymore.
+            self.surface = None
+            self.surface_rect = None
+
+    
     def render_to(self, x, y, draw_func):
 
-        if not self.loaded:
+        if not self.created:
 
             gl.BindTexture(gl.TEXTURE_2D, self.number)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -120,7 +154,7 @@ class Texture(object):
                 self.height,
                 0)
 
-            self.loaded = True
+            self.created= True
          
         glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func)
 
@@ -248,6 +282,10 @@ class TextureGrid(object):
         # colindex.
         self.tiles = [ ]
 
+        # Is this texture grid ready?
+        self.ready = False
+        
+        
     def subsurface(self, (x, y, w, h)):
         """
         This produces a texture grid containing a rectangle "cut out"
@@ -267,6 +305,21 @@ class TextureGrid(object):
             rv.tiles.append(row)
 
         return rv
+
+
+    def make_ready(self):
+        """
+        Makes ready all the tile-textures in this texture grid.
+        """
+
+        if self.ready:
+            return
+        
+        for row in self.tiles:
+            for t in row:
+                t.make_ready()
+
+        self.ready = True
 
 
 # This is a cache from (width, size) to the results of compute_tiling.
@@ -476,6 +529,9 @@ def blit(textures, transform, alpha):
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
     """
 
+    for t in textures:
+        t.make_ready()
+    
     glenviron.environ.blit()
     gl.Color4f(1.0, 1.0, 1.0, alpha)
     
@@ -518,6 +574,9 @@ def blend(textures, transform, alpha, fraction):
 
     `fraction` is the fraction of the second texture to show.
     """
+
+    for t in textures:
+        t.make_ready()
 
     glenviron.environ.blend(fraction)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
@@ -576,6 +635,9 @@ def imageblend(textures, transform, alpha, fraction, ramp):
     `ramp` is the length of the blending ramp to use.
 
     """
+
+    for t in textures:
+        t.make_ready()
 
     glenviron.environ.imageblend(fraction, ramp)
     gl.Color4f(1.0, 1.0, 1.0, alpha)

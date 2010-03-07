@@ -2,6 +2,9 @@
 # added to a Render (instead of a TextureGrid) by uploading that surface to
 # the graphics card.
 
+# IMPORTANT NOTE: This code should fail gracefully-ish if _renpy_tegl can't be
+# imported.
+
 
 import renpy
 
@@ -76,8 +79,8 @@ class GLDraw(object):
         working for some reason.
         """
 
-        # TODO: Log the Ren'Py version.
-
+        self.log(renpy.version)
+        
         self.virtual_size = virtual_size
 
         try:
@@ -198,3 +201,32 @@ class GLDraw(object):
         renpy.display.pgrender.set_sample_masks(MASKS)
             
         return True
+
+
+    def should_redraw(self, needs_redraw, first_pass):
+        # GL does redraws as fast as possible, and lets Sync-to-vblank
+        # handle slowing us down.
+
+        return True
+
+    def mutated_surface(self, surf):
+        # There's no reason to care about surface mutation.
+
+        return
+
+    def load_texture(self, surf, transient=False):
+        # Turn a surface into a texture grid.
+
+        # TODO: Queue a texture for loading up when needed, or when
+        # we have idle time. We need to be sure that texture loads
+        # only occur in the main thread.
+        
+        return gltexture.texture_grid_from_surface(surf)
+
+    def unload_texture(self, surf):
+        # Texture grids die automatically, we don't have to do anything
+        # particularly special.
+        
+        return
+
+        

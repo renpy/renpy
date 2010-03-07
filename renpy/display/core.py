@@ -1034,7 +1034,7 @@ class Interface(object):
             draws = [ lambda : renpy.display.draw ]
         else:
             draws = [
-                # renpy.display.gldraw.GLDraw,
+                renpy.display.gldraw.GLDraw,
                 renpy.display.swdraw.SWDraw,
                 ]
 
@@ -1579,9 +1579,11 @@ class Interface(object):
                     self.force_redraw = False
 
                 # Redraw the screen.
-                if (needs_redraw and
-                    (first_pass or not pygame.event.peek(ALL_EVENTS)) and 
-                    renpy.display.draw.can_redraw(first_pass)):
+
+
+
+                if ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
+                    renpy.display.draw.should_redraw(needs_redraw, first_pass)):
                     
                     # If we have a movie, start showing it.
                     fullscreen_video = renpy.display.video.interact()

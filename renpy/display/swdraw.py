@@ -832,10 +832,13 @@ class SWDraw(object):
         
         return rv
     
-    def can_redraw(self, first_pass):
+    def should_redraw(self, needs_redraw, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
         """
+
+        if not needs_redraw:
+            return False
         
         framerate = renpy.config.framerate
 
