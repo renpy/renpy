@@ -912,16 +912,22 @@ class SWDraw(object):
             i.mutated.add(id(surf))
 
             
-    def load_texture(self, surf):
+    def load_texture(self, surf, transient=False):
         """
         Creates a texture from the surface. In the software implementation,
         the only difference between a texture and a surface is that a texture
         is in the RLE cache.
+
+        If transient is True, the texture will not be cached, and unload_texture
+        need not be called.
         """
 
-        if renpy.game.less_memory:
+        if transient:
             return surf
         
+        if renpy.game.less_memory:
+            return surf
+
         idsurf = id(surf)
         
         rle_surf = renpy.display.pgrender.copy_surface(surf)

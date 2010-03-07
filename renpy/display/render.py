@@ -463,7 +463,7 @@ class Render(object):
         return "<Render %x %s of %r>" % (id(self), dead, self.render_of)
 
         
-    def blit(self, source, (xo, yo), focus=True, main=True):
+    def blit(self, source, (xo, yo), focus=True, main=True, index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -479,8 +479,13 @@ class Render(object):
         
         xo = int(xo)
         yo = int(yo)
-        
-        self.children.append((source, xo, yo, focus, main))
+
+        if index is None:
+            self.children.append((source, xo, yo, focus, main))
+        else:
+            self.children.insert(index, (source, xo, yo, focus, main))
+            
+            
         if isinstance(source, Render):
             source.parents.add(self)
             source.refcount += 1
@@ -488,7 +493,7 @@ class Render(object):
         new_parentless.discard(source)
 
         
-    def subpixel_blit(self, source, (xo, yo), focus=True, main=True):
+    def subpixel_blit(self, source, (xo, yo), focus=True, main=True, index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -502,7 +507,11 @@ class Render(object):
         xo = float(xo)
         yo = float(yo)
         
-        self.children.append((source, xo, yo, focus, main))
+        if index is None:
+            self.children.append((source, xo, yo, focus, main))
+        else:
+            self.children.insert(index, (source, xo, yo, focus, main))
+                        
         if isinstance(source, Render):
             source.parents.add(self)
             source.refcount += 1

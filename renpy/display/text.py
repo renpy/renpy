@@ -49,7 +49,8 @@ text_tags = dict(
     )
 
 text_tags[""] = True
-       
+
+
 def color(s):
     """
     This function converts a hexcode into a color/alpha tuple. Leading
@@ -89,6 +90,7 @@ def color(s):
         raise Exception("Argument to color() must be 3, 4, 6, or 8 hex digits long.")
 
     return (r, g, b, a)
+
 
 class TextStyle(object):
     """
@@ -188,6 +190,7 @@ class TextStyle(object):
 
     def length(self, text):
         return len(text)
+
     
 class WidgetStyle(object):
     """
@@ -1294,9 +1297,9 @@ class Text(renpy.display.core.Displayable):
 
             
 
-    def render_pass(self, r, xo, yo, color, black_color, user_colors, length, time, at, child_pos, add_focus, expand):
+    def render_pass(self, dest_render, dest_surface, xo, yo, color, black_color, user_colors, length, time, at, child_pos, add_focus, expand):
         """
-        Renders the text to r at the offsets. Color is the base color,
+        Renders the text at the offsets. Color is the base color,
         and user_colors controls if the user can override those colors.
 
         Returns True if all characters were rendered, or False if a
@@ -1360,10 +1363,13 @@ class Text(renpy.display.core.Displayable):
                 actual_y = y + max_ascent - ts.get_ascent()
 
                 if surf:
-                    r.blit(surf, (x + xo, actual_y + yo))
-
+                    if isinstance(surf, renpy.display.render.Render):
+                        dest_render.blit(surf, (x + xo, actual_y + yo))
+                    else:
+                        dest_surface.blit(surf, (x + xo, actual_y + yo))
+                        
                 if add_focus and ts.hyperlink is not None:
-                    r.add_focus(self, ts.hyperlink, x + xo, y + yo, sw, sh)
+                    dest_render.add_focus(self, ts.hyperlink, x + xo, y + yo, sw, sh)
 
                 if not isinstance(text, (str, unicode)):
                     child_pos.append((text, x + xo, actual_y + yo))
@@ -1455,21 +1461,28 @@ class Text(renpy.display.core.Displayable):
         else:
             length = sys.maxint
             self.call_slow_done(st)
+            
+        final_width = self.laidout_width - mindsx + maxdsx
+        final_height = self.laidout_height - mindsy + maxdsy
 
-        rv = renpy.display.render.Render(self.laidout_width - mindsx + maxdsx, self.laidout_height - mindsy + maxdsy)
-
+        rv = renpy.display.render.Render(final_width, final_height)
+        surf = renpy.display.pgrender.surface((final_width, final_height), True)
+        
         for dsxo, dsyo in dslist:
-            self.render_pass(rv, dsxo - mindsx, dsyo - mindsy, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False, 0)
+            self.render_pass(rv, surf, dsxo - mindsx, dsyo - mindsy, self.style.drop_shadow_color, self.style.drop_shadow_color, False, length, st, at, [ ], False, 0)
 
         for expand, color, dsxo, dsyo in outlines:
-            self.render_pass(rv, dsxo - mindsx - expand, dsyo - mindsy - expand, color, color, False, length, st, at, [ ], False, expand)
+            self.render_pass(rv, surf, dsxo - mindsx - expand, dsyo - mindsy - expand, color, color, False, length, st, at, [ ], False, expand)
              
         self.child_pos = [ ]
 
-        if self.render_pass(rv, -mindsx, -mindsy, self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True, 0):
+        if self.render_pass(rv, surf, -mindsx, -mindsy, self.style.color, self.style.black_color, True, length, st, at, self.child_pos, True, 0):
             if self.slow:
                 self.call_slow_done(st)
 
+        tex = renpy.display.draw.load_texture(surf, transient=True)
+        rv.blit(tex, (0, 0), index=0)
+                
         if self.slow:
             renpy.display.render.redraw(self, 0)
 
