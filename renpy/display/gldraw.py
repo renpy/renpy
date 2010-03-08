@@ -10,7 +10,6 @@ import renpy
 import pygame
 import os
 import sys
-import math
 
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
@@ -250,11 +249,10 @@ class GLDraw(object):
         gl.MatrixMode(gl.MODELVIEW)
 
         gl.Clear(gl.COLOR_BUFFER_BIT)
-        
+
         self.draw_transformed(surftree, 0, 0, 1.0, forward, reverse)
 
         pygame.display.flip()
-        
 
         
     def draw_transformed(self, what, xo, yo, alpha, forward, reverse):

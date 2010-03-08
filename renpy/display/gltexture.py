@@ -32,7 +32,7 @@ class Texture(object):
     This object stores information about an OpenGL texture.
     """
 
-    def __init__(self, number, width, height):
+    def __init__(self, width, height):
 
 
         # The width and height of this texture.
@@ -41,7 +41,7 @@ class Texture(object):
         
         # The number of the OpenGL texture this texture object
         # represents.
-        self.number = number
+        self.number = None
 
         # True if the texture has been created inside the GPU.
         self.created = False
@@ -92,6 +92,8 @@ class Texture(object):
 
         if self.surface:
 
+            self.allocate()
+            
             surf = self.surface
             x, y, w, h = self.surface_rect 
 
@@ -137,11 +139,13 @@ class Texture(object):
             self.surface = None
             self.surface_rect = None
 
-    
+            
     def render_to(self, x, y, draw_func):
 
         if not self.created:
 
+            self.allocate()
+            
             gl.BindTexture(gl.TEXTURE_2D, self.number)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
@@ -154,7 +158,7 @@ class Texture(object):
                 self.height,
                 0)
 
-            self.created= True
+            self.created = True
          
         glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func)
 
@@ -163,6 +167,19 @@ class Texture(object):
         self.xmul = 1.0 / self.width
         self.ymul = 1.0 / self.height
 
+    def allocate(self):
+        """
+        This allocates a texture number, if necessary.
+        """
+
+        if self.number is not None:
+            return
+        
+        texnums = [ 0 ]
+        gl.GenTextures(1, texnums)
+        self.number = texnums[0]
+        
+        
         
 # This is a map from texture sizes to a list of free textures of that
 # size.
@@ -181,17 +198,13 @@ def alloc_texture(width, height):
     Allocate a texture, either from the freelist or by asking GL. The
     returned texture has a reference count of 1.
     """
-
+    
     l = free_textures[width, height]
 
     if l:
         rv = l.pop()
-        
-    else:
-        texnums = [ 0 ]
-        gl.GenTextures(1, texnums)
-
-        rv = Texture(texnums[0], width, height)
+    else:        
+        rv = Texture(width, height)
         
     return rv
 
@@ -544,7 +557,7 @@ def blit(textures, transform, alpha, environ):
             for texx, texw, colindex in tg.columns:
 
                 tex = tg.tiles[rowindex][colindex]
-                
+
                 pysdlgl.draw_rectangle(
                     sx, sy,
                     x, y,
@@ -553,7 +566,7 @@ def blit(textures, transform, alpha, environ):
                     tex, texx, texy,
                     None, 0, 0,
                     None, 0, 0)
-                
+
                 x += texw
 
             y += texh
