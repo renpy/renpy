@@ -815,6 +815,7 @@ class SWDraw(object):
             if renpy.config.debug:
                 raise
             pass
+
         
     def screenshot(self, scale):
         """

@@ -5,12 +5,12 @@
 # IMPORTANT NOTE: This code should fail gracefully-ish if _renpy_tegl can't be
 # imported.
 
-
 import renpy
 
 import pygame
 import os
 import sys
+import math
 
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
@@ -31,7 +31,7 @@ else:
         -16777216,
         0x000000FF)
 
-
+    
 class GLDraw(object):
 
     def __init__(self):
@@ -99,6 +99,11 @@ class GLDraw(object):
 
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
+        # Set some default settings.
+        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+        gl.Enable(gl.BLEND)
+        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        
         if not self.did_init:
             return self.init()
         else:
@@ -197,7 +202,6 @@ class GLDraw(object):
             self.rtt = glenviron.CopyRtt()
 
         # Do additional setup needed.
-            
         renpy.display.pgrender.set_sample_masks(MASKS)
             
         return True
@@ -217,10 +221,6 @@ class GLDraw(object):
     def load_texture(self, surf, transient=False):
         # Turn a surface into a texture grid.
 
-        # TODO: Queue a texture for loading up when needed, or when
-        # we have idle time. We need to be sure that texture loads
-        # only occur in the main thread.
-        
         return gltexture.texture_grid_from_surface(surf)
 
     def unload_texture(self, surf):
@@ -230,3 +230,104 @@ class GLDraw(object):
         return
 
         
+    def draw_screen(self, surftree, fullscreen_video):
+        """
+        Draws the screen.
+        """
+
+        forward = reverse = renpy.display.render.IDENTITY
+
+        surftree.is_opaque()
+
+        # TODO: Clipping.
+        # TODO: Work out the actual viewport width and height.
+        
+        gl.Viewport(0, 0, self.physical_size[0], self.physical_size[1])
+
+        gl.MatrixMode(gl.PROJECTION)
+        gl.LoadIdentity()
+        gl.Ortho(0.0, self.virtual_size[0], self.virtual_size[1], 0.0, -1.0, 1.0)
+        gl.MatrixMode(gl.MODELVIEW)
+
+        gl.Clear(gl.COLOR_BUFFER_BIT)
+        
+        self.draw_transformed(surftree, 0, 0, 1.0, forward, reverse)
+
+        pygame.display.flip()
+        
+
+        
+    def draw_transformed(self, what, xo, yo, alpha, forward, reverse):
+
+        # If our alpha has hit 0, don't do anything.
+        if alpha <= 0.003: # (1 / 256)
+            return
+
+        if isinstance(what, gltexture.TextureGrid):
+
+            gltexture.blit(
+                [ (what, xo, yo) ],
+                forward,
+                alpha,
+                self.environ)
+
+            return
+
+        if not isinstance(what, renpy.display.render.Render):
+            raise Exception("Unknown drawing type. " + repr(what))
+
+        # TODO: Implement other draw modes here.
+
+        # TODO: Deal with clipping.
+
+        for child, cxo, cyo, focus, main in what.visible_children:
+
+            cxo, cyo = reverse.transform(cxo, cyo)
+
+            if what.forward:
+                child_forward = forward * what.forward
+                child_reverse = what.reverse * reverse
+            else:
+                child_forward = forward
+                child_reverse = reverse
+
+            self.draw_transformed(child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
+
+
+    def update_mouse(self):
+        # The draw routine updates the mouse.
+
+        return
+
+
+    def mouse_event(self, ev):
+
+        if ev.type == pygame.MOUSEMOTION or \
+                ev.type == pygame.MOUSEBUTTONDOWN or \
+                ev.type == pygame.MOUSEBUTTONUP:
+            
+            pass
+
+
+
+        
+    def save_screenshot(self, filename):
+        """
+        Saves a full-size screenshot in the given filename.
+        """
+
+        return
+
+
+    def screenshot(self, scale):
+        """
+        Returns a string containing the contents of the window, as a PNG.
+        """
+
+        return
+
+    def free_memory(self):
+        pass
+
+    
+    

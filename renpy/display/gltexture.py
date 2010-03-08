@@ -82,7 +82,7 @@ class Texture(object):
         # texture loading only occurs in the GL thread.
 
         self.surface = surf
-        self.surface_rect = surf
+        self.surface_rect = (x, y, w, h)
 
 
     def make_ready(self):
@@ -515,7 +515,7 @@ def align_axes(*args):
     return rv
             
 
-def blit(textures, transform, alpha):
+def blit(textures, transform, alpha, environ):
     """
     This draws the supplied textures to the screen.
 
@@ -530,9 +530,9 @@ def blit(textures, transform, alpha):
     """
 
     for t in textures:
-        t.make_ready()
+        t[0].make_ready()
     
-    glenviron.environ.blit()
+    environ.blit()
     gl.Color4f(1.0, 1.0, 1.0, alpha)
     
     for tg, sx, sy in textures:
@@ -559,7 +559,7 @@ def blit(textures, transform, alpha):
             y += texh
 
 
-def blend(textures, transform, alpha, fraction):
+def blend(textures, transform, alpha, fraction, environ):
     """
     This blends two textures to the screen.
 
@@ -576,9 +576,9 @@ def blend(textures, transform, alpha, fraction):
     """
 
     for t in textures:
-        t.make_ready()
+        t[0].make_ready()
 
-    glenviron.environ.blend(fraction)
+    environ.blend(fraction)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
 
     # The two textures must start at the same sx, sy coordinates.
@@ -616,7 +616,7 @@ def blend(textures, transform, alpha, fraction):
         y += t0h
 
 
-def imageblend(textures, transform, alpha, fraction, ramp):
+def imageblend(textures, transform, alpha, fraction, ramp, environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -637,9 +637,9 @@ def imageblend(textures, transform, alpha, fraction, ramp):
     """
 
     for t in textures:
-        t.make_ready()
+        t[0].make_ready()
 
-    glenviron.environ.imageblend(fraction, ramp)
+    environ.imageblend(fraction, ramp)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
 
     # The three textures must start at the same sx, sy coordinates.

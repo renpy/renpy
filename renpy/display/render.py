@@ -400,13 +400,12 @@ class Render(object):
         # The parameter to the operation. 
         self.operation_parameter = 0
         
-        # These are Matrix2D objects used to transform the children of
-        # this render. If None, then no transformation is done. Otherwise,
-        # they should be the inverse of each other. Forward is used to
-        # project from render coordinates to child coordinates,
-        # while reverse is used to project from render coordinates to
-        # child coordinates.
-        #
+
+        # Forward is used to transform from screen coordinates to child
+        # coordinates.
+        # Reverse is used to transform from child coordinates to screen
+        # coordinates.
+        # 
         # For performance reasons, these aren't used to transform the
         # x and y offsets found in self.children. Those offsets should
         # be of the (0, 0) point in the child coordinate space.
