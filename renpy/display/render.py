@@ -264,6 +264,9 @@ class Matrix2D(object):
             other.ydx * self.xdx + other.ydy * self.ydx,
             other.ydx * self.xdy + other.ydy * self.ydy)
 
+    def __repr__(self):
+        return "Matrix2D(xdx=%f, xdy=%f, ydx=%f, ydy=%f)" % (self.xdx, self.xdy, self.ydx, self.ydy)
+    
 IDENTITY = Matrix2D(1, 0, 0, 1)
 
 def kill_old_screen():

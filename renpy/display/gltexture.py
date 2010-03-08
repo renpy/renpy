@@ -534,7 +534,7 @@ def blit(textures, transform, alpha, environ):
     
     environ.blit()
     gl.Color4f(1.0, 1.0, 1.0, alpha)
-    
+
     for tg, sx, sy in textures:
         y = 0
 

@@ -488,7 +488,7 @@ class Transform(Container):
         if forward is not IDENTITY:
             rv.forward = forward
             rv.reverse = reverse
-            
+
         self.forward = forward
 
         rv.alpha = self.state.alpha

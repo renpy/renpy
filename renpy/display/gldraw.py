@@ -267,7 +267,7 @@ class GLDraw(object):
 
             gltexture.blit(
                 [ (what, xo, yo) ],
-                forward,
+                reverse,
                 alpha,
                 self.environ)
 
