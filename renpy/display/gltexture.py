@@ -140,7 +140,7 @@ class Texture(object):
             self.surface_rect = None
 
             
-    def render_to(self, x, y, draw_func):
+    def render_to(self, x, y, draw_func, rtt):
 
         if not self.created:
 
@@ -160,7 +160,7 @@ class Texture(object):
 
             self.created = True
          
-        glenviron.rtt.render(self.number, x, y, self.width, self.height, draw_func)
+        rtt.render(self.number, x, y, self.width, self.height, draw_func)
 
         self.xadd = 0
         self.yadd = 0
@@ -297,6 +297,9 @@ class TextureGrid(object):
 
         # Is this texture grid ready?
         self.ready = False
+
+    def get_size(self):
+        return self.width, self.height
         
         
     def subsurface(self, (x, y, w, h)):
@@ -441,13 +444,13 @@ def texture_grid_from_surface(surf):
     return rv
 
 
-def texture_grid_from_drawing(width, height, draw_func):    
+def texture_grid_from_drawing(width, height, draw_func, rtt):    
     """
     This creates a texture grid of `width` by `height` by using
     draw_func to draw to the screen.
     """
 
-    glenviron.rtt.begin()
+    rtt.begin()
     
     rv = TextureGrid(width, height)
 
@@ -460,13 +463,13 @@ def texture_grid_from_drawing(width, height, draw_func):
         for x, width, texwidth in texcolumns:
             
             tex = alloc_texture(texwidth, texheight)
-            tex.render_to(x, y, draw_func)
+            tex.render_to(x, y, draw_func, rtt)
             
             row.append(tex)
             
         rv.tiles.append(row)
 
-    glenviron.rtt.end()
+    rtt.end()
         
     return rv
 

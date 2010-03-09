@@ -99,7 +99,6 @@ class GLDraw(object):
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
         # Set some default settings.
-        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
         gl.Enable(gl.CLIP_PLANE0)
@@ -282,7 +281,10 @@ class GLDraw(object):
         gl.Ortho(0.0, self.virtual_size[0], self.virtual_size[1], 0.0, -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
 
+        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Clear(gl.COLOR_BUFFER_BIT)
+
+        self.draw_render_textures(surftree, forward, reverse)
         
         self.undefine_clip()
 
@@ -292,6 +294,39 @@ class GLDraw(object):
 
         pygame.display.flip()
 
+
+    def draw_render_textures(self, what, forward, reverse):
+        """
+        This is responsible for rendering things to textures,
+        as necessary.
+        """
+
+        if not isinstance(what, renpy.display.render.Render):
+            return
+        
+        render_what = False
+
+        if what.clipping:
+            if forward.xdy != 0 or forward.ydx != 0:
+                render_what = True
+                forward = reverse = renpy.display.render.IDENTITY
+        
+        
+        for child, cxo, cyo, focus, main in what.visible_children:
+
+            if what.forward:
+                child_forward = forward * what.forward
+                child_reverse = what.reverse * reverse
+            else:
+                child_forward = forward
+                child_reverse = reverse
+
+            self.draw_render_textures(child, child_forward, child_reverse)
+                    
+        if render_what:
+            what.render_to_texture(True)
+
+            
         
     def draw_transformed(self, what, clip, xo, yo, alpha, forward, reverse):
 
@@ -319,9 +354,12 @@ class GLDraw(object):
         # Compute clipping.
         if what.clipping:
 
+            # Non-aligned clipping uses RTT.
             if forward.ydx != 0 or forward.xdy != 0:
-                raise Exception("TODO: Implement non-aligned clipping.")
-
+                tex = what.render_to_texture(True)
+                self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
+                return
+                
             minx, miny, maxx, maxy = clip
 
             # Figure out the transformed width and height of this
@@ -350,6 +388,29 @@ class GLDraw(object):
             self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
 
 
+    def render_to_texture(self, what, alpha):
+
+        forward = reverse = renpy.display.render.IDENTITY
+
+        def draw_func():
+
+            if alpha:
+                gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+            else:
+                gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+                
+            gl.Clear(gl.COLOR_BUFFER_BIT)
+            self.undefine_clip()
+        
+            clip = (0, 0, what.width, what.height)
+        
+            self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+
+        what.is_opaque()
+
+        gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
+            
+            
     def update_mouse(self):
         # The draw routine updates the mouse.
 
