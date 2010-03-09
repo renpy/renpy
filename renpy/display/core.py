@@ -1174,7 +1174,9 @@ class Interface(object):
 
         if ev.type == pygame.NOEVENT:
             # Seems to prevent the CPU from speeding up.
-            time.sleep(0.001)
+
+            # TODO: Make this only happen for software rendering.
+            # time.sleep(0.001)
             return None
 
         self.pushed_event = ev

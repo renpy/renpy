@@ -102,6 +102,10 @@ class GLDraw(object):
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        gl.Enable(gl.CLIP_PLANE0)
+        gl.Enable(gl.CLIP_PLANE1)
+        gl.Enable(gl.CLIP_PLANE2)
+        gl.Enable(gl.CLIP_PLANE3)
         
         if not self.did_init:
             return self.init()
@@ -130,7 +134,7 @@ class GLDraw(object):
         for i in sorted(extensions):
             self.log("    %s", i)
         
-        def use_subsystem(self, envvar, envval, *req_ext):
+        def use_subsystem(envvar, envval, *req_ext):
             """
             Decides if we should used a particular subsystem, based on
             environment variables and/or extensions. If the `envvar`
@@ -189,7 +193,7 @@ class GLDraw(object):
         
         if use_subsystem(
             "RENPY_GL_RTT",
-            "shader",
+            "fbo",
             "GL_EXT_framebuffer_object"):
 
             self.log("Using framebuffer_object RTT.")
@@ -228,6 +232,36 @@ class GLDraw(object):
         
         return
 
+    # private
+    def undefine_clip(self):
+        """
+        This makes the clipping undefined. It needs to be called when the
+        various matrices change, to ensure that the next call to set_clip
+        will re-set-up the clipping. Note that it does not remove the
+        clipping, but rather merely causes set_clip to change it.
+        """
+
+        self.clip_cache = None
+    
+
+    # private
+    def set_clip(self, minx, miny, maxx, maxy):
+
+        clip = (minx, miny, maxx, maxy)
+
+        if self.clip_cache == clip:
+            return
+
+        self.clip_cache = clip
+        
+        # OpenGL clipping works by only allowing coordinates where:
+        # a*x + b*y + c*z + d >= 0. 
+        
+        gl.ClipPlane(gl.CLIP_PLANE0, [1.0, 0.0, 0.0, -minx])
+        gl.ClipPlane(gl.CLIP_PLANE1, [0.0, 1.0, 0.0, -miny])
+        gl.ClipPlane(gl.CLIP_PLANE2, [-1.0, 0.0, 0.0, maxx])
+        gl.ClipPlane(gl.CLIP_PLANE3, [0.0, -1.0, 0.0, maxy])
+        
         
     def draw_screen(self, surftree, fullscreen_video):
         """
@@ -249,7 +283,11 @@ class GLDraw(object):
         gl.MatrixMode(gl.MODELVIEW)
 
         gl.Clear(gl.COLOR_BUFFER_BIT)
-
+        
+        self.undefine_clip()
+        
+        self.set_clip(10, 10, 790, 590)
+                
         self.draw_transformed(surftree, 0, 0, 1.0, forward, reverse)
 
         pygame.display.flip()
@@ -276,6 +314,8 @@ class GLDraw(object):
 
         # TODO: Implement other draw modes here.
 
+
+        
         # TODO: Deal with clipping.
 
         for child, cxo, cyo, focus, main in what.visible_children:
