@@ -245,14 +245,14 @@ class GLDraw(object):
     
 
     # private
-    def set_clip(self, minx, miny, maxx, maxy):
-
-        clip = (minx, miny, maxx, maxy)
+    def set_clip(self, clip):
 
         if self.clip_cache == clip:
             return
 
         self.clip_cache = clip
+
+        minx, miny, maxx, maxy = clip
         
         # OpenGL clipping works by only allowing coordinates where:
         # a*x + b*y + c*z + d >= 0. 
@@ -285,15 +285,15 @@ class GLDraw(object):
         gl.Clear(gl.COLOR_BUFFER_BIT)
         
         self.undefine_clip()
+
+        clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
         
-        self.set_clip(10, 10, 790, 590)
-                
-        self.draw_transformed(surftree, 0, 0, 1.0, forward, reverse)
+        self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
         pygame.display.flip()
 
         
-    def draw_transformed(self, what, xo, yo, alpha, forward, reverse):
+    def draw_transformed(self, what, clip, xo, yo, alpha, forward, reverse):
 
         # If our alpha has hit 0, don't do anything.
         if alpha <= 0.003: # (1 / 256)
@@ -301,6 +301,8 @@ class GLDraw(object):
 
         if isinstance(what, gltexture.TextureGrid):
 
+            self.set_clip(clip)
+            
             gltexture.blit(
                 [ (what, xo, yo) ],
                 reverse,
@@ -314,10 +316,26 @@ class GLDraw(object):
 
         # TODO: Implement other draw modes here.
 
+        # Compute clipping.
+        if what.clipping:
 
+            if forward.ydx != 0 or forward.xdy != 0:
+                raise Exception("TODO: Implement non-aligned clipping.")
+
+            minx, miny, maxx, maxy = clip
+
+            # Figure out the transformed width and height of this
+            # surface.
+            tw, th = reverse.transform(what.width, what.height)
+            
+            minx = max(minx, min(xo, xo + tw))
+            maxx = min(maxx, max(xo, xo + tw))
+            miny = max(miny, min(yo, yo + th))
+            maxy = min(maxy, max(yo, yo + th))
+
+            clip = (minx, miny, maxx, maxy)
+            
         
-        # TODO: Deal with clipping.
-
         for child, cxo, cyo, focus, main in what.visible_children:
 
             cxo, cyo = reverse.transform(cxo, cyo)
@@ -329,7 +347,7 @@ class GLDraw(object):
                 child_forward = forward
                 child_reverse = reverse
 
-            self.draw_transformed(child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
+            self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
 
 
     def update_mouse(self):
@@ -345,8 +363,6 @@ class GLDraw(object):
                 ev.type == pygame.MOUSEBUTTONUP:
             
             pass
-
-
 
         
     def save_screenshot(self, filename):
