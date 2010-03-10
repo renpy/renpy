@@ -302,7 +302,7 @@ class Dissolve(Transition):
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
-        complete = min(255, int(255 * st / self.time))
+        complete = min(1.0, st / self.time)
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)

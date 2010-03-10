@@ -538,7 +538,7 @@ class Render(object):
 
         `alpha` is a hint that controls if the surface should have
         alpha or not.
-        """
+        """        
 
         if alpha:
             if self.alpha_surface is not None:

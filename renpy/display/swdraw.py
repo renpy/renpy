@@ -238,7 +238,7 @@ def draw_special(what, dest, x, y):
             bottom.subsurface((-x, -y, w, h)),
             top.subsurface((-x, -y, w, h)),
             target,
-            what.operation_complete)
+            int(what.operation_complete * 255))
 
         if what.operation_alpha:
             dest.blit(target, (0, 0))

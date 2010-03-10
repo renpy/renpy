@@ -6,6 +6,8 @@
 # imported.
 
 import renpy
+from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
+
 
 import pygame
 import os
@@ -60,6 +62,10 @@ class GLDraw(object):
         # The physical size of the window we got.
         self.physical_size = None
 
+        # Should we draw? This is for debugging purposes, to help
+        # catch glitches.
+        self.should_draw = True
+        
         
     def log(self, msg, *args):
         """
@@ -267,10 +273,12 @@ class GLDraw(object):
         Draws the screen.
         """
 
-        forward = reverse = renpy.display.render.IDENTITY
+        forward = reverse = IDENTITY
 
         surftree.is_opaque()
 
+        self.draw_render_textures(surftree, forward, reverse)
+        
         # TODO: Clipping.
         # TODO: Work out the actual viewport width and height.
         
@@ -280,20 +288,19 @@ class GLDraw(object):
         gl.LoadIdentity()
         gl.Ortho(0.0, self.virtual_size[0], self.virtual_size[1], 0.0, -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
-
+        
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Clear(gl.COLOR_BUFFER_BIT)
 
-        self.draw_render_textures(surftree, forward, reverse)
-        
-        self.undefine_clip()
-
         clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
-        
-        self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
-        pygame.display.flip()
+        if self.should_draw:
 
+            self.undefine_clip()
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
+
+            pygame.display.flip()
+            
 
     def draw_render_textures(self, what, forward, reverse):
         """
@@ -309,7 +316,7 @@ class GLDraw(object):
         if what.clipping:
             if forward.xdy != 0 or forward.ydx != 0:
                 render_what = True
-                forward = reverse = renpy.display.render.IDENTITY
+                forward = reverse = IDENTITY
         
         
         for child, cxo, cyo, focus, main in what.visible_children:
@@ -322,7 +329,10 @@ class GLDraw(object):
                 child_reverse = reverse
 
             self.draw_render_textures(child, child_forward, child_reverse)
-                    
+
+            if what.operation == DISSOLVE or what.operation == IMAGEDISSOLVE:
+                child.render_to_texture(what.operation_alpha)
+                
         if render_what:
             what.render_to_texture(True)
 
@@ -339,7 +349,9 @@ class GLDraw(object):
             self.set_clip(clip)
             
             gltexture.blit(
-                [ (what, xo, yo) ],
+                what,
+                xo,
+                yo,
                 reverse,
                 alpha,
                 self.environ)
@@ -351,6 +363,22 @@ class GLDraw(object):
 
         # TODO: Implement other draw modes here.
 
+        if what.operation == DISSOLVE:
+
+            self.set_clip(clip)
+            
+            gltexture.blend(
+                what.children[0][0].render_to_texture(what.operation_alpha),
+                what.children[1][0].render_to_texture(what.operation_alpha),
+                xo,
+                yo,
+                reverse,
+                alpha,
+                what.operation_complete,
+                self.environ)
+
+            return
+        
         # Compute clipping.
         if what.clipping:
 
@@ -390,9 +418,16 @@ class GLDraw(object):
 
     def render_to_texture(self, what, alpha):
 
-        forward = reverse = renpy.display.render.IDENTITY
+        forward = reverse = IDENTITY
 
         def draw_func():
+
+            gl.Enable(gl.BLEND)
+            gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+            gl.Enable(gl.CLIP_PLANE0)
+            gl.Enable(gl.CLIP_PLANE1)
+            gl.Enable(gl.CLIP_PLANE2)
+            gl.Enable(gl.CLIP_PLANE3)
 
             if alpha:
                 gl.ClearColor(0.0, 0.0, 0.0, 0.0)
@@ -408,8 +443,9 @@ class GLDraw(object):
 
         what.is_opaque()
 
-        gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
-            
+        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
+        return rv
+        
             
     def update_mouse(self):
         # The draw routine updates the mouse.

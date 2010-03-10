@@ -531,13 +531,10 @@ def align_axes(*args):
     return rv
             
 
-def blit(textures, transform, alpha, environ):
+def blit(tg, sx, sy, transform, alpha, environ):
     """
-    This draws the supplied textures to the screen.
-
-    `texture` is a list of (tg, sx, sy) tuples, where `tg` is a
-    texture grid, and (`sx`, `sy`) is the offset from the upper-left
-    corner of the screen, in (fractional) pixels.
+    This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
+    the upper-left corner of the screen.
 
     `transform` is the transform to apply to the texgrid, when going from
     texgrid coordinates to screen coordinates.
@@ -545,44 +542,42 @@ def blit(textures, transform, alpha, environ):
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
     """
 
-    for t in textures:
-        t[0].make_ready()
+    tg.make_ready()
     
     environ.blit()
     gl.Color4f(1.0, 1.0, 1.0, alpha)
 
-    for tg, sx, sy in textures:
-        y = 0
+    y = 0
 
-        for texy, texh, rowindex in tg.rows:
-            x = 0
+    for texy, texh, rowindex in tg.rows:
+        x = 0
 
-            for texx, texw, colindex in tg.columns:
+        for texx, texw, colindex in tg.columns:
 
-                tex = tg.tiles[rowindex][colindex]
+            tex = tg.tiles[rowindex][colindex]
 
-                pysdlgl.draw_rectangle(
-                    sx, sy,
-                    x, y,
-                    texw, texh, 
-                    transform,
-                    tex, texx, texy,
-                    None, 0, 0,
-                    None, 0, 0)
+            pysdlgl.draw_rectangle(
+                sx, sy,
+                x, y,
+                texw, texh, 
+                transform,
+                tex, texx, texy,
+                None, 0, 0,
+                None, 0, 0)
 
-                x += texw
+            x += texw
 
-            y += texh
+        y += texh
 
 
-def blend(textures, transform, alpha, fraction, environ):
+def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
     """
-    This blends two textures to the screen.
+    Blends two textures to the screen.
 
-    `textures` is a list of (tg, sx, sy) tuples, where `tg` is a
-    texture grid, and (`sx`, `sy`) is the offset from the upper-left
-    corner of the screen, in (fractional) pixels.
-
+    `tg0` and `tg1` are the texture.
+    
+    `sx` and `sy` are the offsets from the upper-left corner of the screen.
+        
     `transform` is the transform to apply to the texgrid, when going from
     texgrid coordinates to screen coordinates.
 
@@ -591,15 +586,11 @@ def blend(textures, transform, alpha, fraction, environ):
     `fraction` is the fraction of the second texture to show.
     """
 
-    for t in textures:
-        t[0].make_ready()
-
+    tg0.make_ready()
+    tg1.make_ready()
+    
     environ.blend(fraction)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
-
-    # The two textures must start at the same sx, sy coordinates.
-    tg0, sx, sy = textures[0]
-    tg1, sx, sy = textures[1]
 
     y = 0
 
@@ -632,14 +623,14 @@ def blend(textures, transform, alpha, fraction, environ):
         y += t0h
 
 
-def imageblend(textures, transform, alpha, fraction, ramp, environ):
+def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
 
-    `textures` is a list of (tg, sx, sy) tuples, where `tg` is a
-    texture grid, and (`sx`, `sy`) is the offset from the upper-left
-    corner of the screen, in (fractional) pixels.
+    `tg0`, `tg1`, and `tg2` are the textures. 
+    
+    `sx` and `sy` are the offsets from the upper-left corner of the screen.
 
     `transform` is the transform to apply to the texgrid, when going from
     texgrid coordinates to screen coordinates.
@@ -652,16 +643,12 @@ def imageblend(textures, transform, alpha, fraction, ramp, environ):
 
     """
 
-    for t in textures:
-        t[0].make_ready()
-
+    tg0.make_ready()
+    tg1.make_ready()
+    tg2.make_ready()
+    
     environ.imageblend(fraction, ramp)
     gl.Color4f(1.0, 1.0, 1.0, alpha)
-
-    # The three textures must start at the same sx, sy coordinates.
-    tg0, sx, sy = textures[0]
-    tg1, sx, sy = textures[1]
-    tg2, sx, sy = textures[2]
 
     y = 0
 
@@ -669,7 +656,7 @@ def imageblend(textures, transform, alpha, fraction, ramp, environ):
     cols0, cols1, cols2 = align_axes(tg0.columns, tg1.columns, tg2.columns)
     
     # t0 = texture 0, t1 = texture 1.
-    # x, y - index into the texture.
+    # x, y - index into the texture.                       
     # w, h - width and height to draw.
     # ri, ci - row index, column index in tiles.
     for (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in zip(rows0, rows1, rows2):
