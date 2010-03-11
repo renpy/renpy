@@ -100,32 +100,77 @@ def init_glew():
         raise Exception("Glew init failed: %s" % <char *> glewGetErrorString(err))
 
     
-def load_texture(
+def premultiply(
     object pysurf,
-    int xoffset,
-    int yoffset,
-    int width,
-    int height,
-    int update):
+    int x,
+    int y,
+    int w,
+    int h):
     
     """
-    This loads the supplied pygame surface into the numbered
-    texture. The created texture will be of size (width, height),
-    and at position (xoffset, yoffset) relative to the containing
-    image. 
+    Creates a string containing the premultiplied image data for
+    for the (x, y, w, h) box inside pysurf.
     """
+
+    # Allocate an uninitialized string.
+    cdef unsigned char *null = NULL
+    rv = null[:w*h*4]
+    
+    # Out is where we put the output.
+    cdef unsigned char *out = rv
+    
+    # The pixels in the source image.
     cdef unsigned char *pixels = NULL
     cdef SDL_Surface *surf
-    
-    if pysurf is not None:
-    
-        surf = PySurface_AsSurface(pysurf)
-        pixels = <unsigned char *> surf.pixels
 
-        pixels += yoffset * surf.pitch
-        pixels += xoffset * 4
+    # Pointer to the current pixel.
+    cdef unsigned char *p
 
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, surf.pitch / 4)
+    # Pointer to the current output pixel.
+    cdef unsigned char *op
+    
+    # Pointer to the row end.
+    cdef unsigned char *pend
+
+    # alpha value.
+    cdef unsigned int a
+    
+    
+    surf = PySurface_AsSurface(pysurf)
+    pixels = <unsigned char *> surf.pixels
+
+    pixels += y * surf.pitch
+    pixels += x * 4
+
+    op = out
+    
+    for y from 0 <= y < h:
+        p = pixels + y * surf.pitch
+        pend = p + w * 4
+
+        while p < pend:
+            a = p[3]
+
+            op[0] = p[0] * a / 255
+            op[1] = p[1] * a / 255
+            op[2] = p[2] * a / 255
+            op[3] = a
+            
+            p += 4
+            op += 4
+
+    return rv
+
+
+def load_premultiplied(data, width, height, update):
+
+    cdef char *pixels
+
+    if data:
+        pixels = data
+    else:
+        pixels = NULL
+    
 
     if update:
         glTexSubImage2D(
@@ -150,7 +195,6 @@ def load_texture(
             GL_BGRA,
             GL_UNSIGNED_BYTE,
             pixels)
-
 
 
 def store_framebuffer(

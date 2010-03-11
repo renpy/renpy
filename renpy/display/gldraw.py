@@ -106,7 +106,7 @@ class GLDraw(object):
 
         # Set some default settings.
         gl.Enable(gl.BLEND)
-        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
         gl.Enable(gl.CLIP_PLANE0)
         gl.Enable(gl.CLIP_PLANE1)
         gl.Enable(gl.CLIP_PLANE2)
@@ -421,13 +421,6 @@ class GLDraw(object):
         forward = reverse = IDENTITY
 
         def draw_func():
-
-            gl.Enable(gl.BLEND)
-            gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-            gl.Enable(gl.CLIP_PLANE0)
-            gl.Enable(gl.CLIP_PLANE1)
-            gl.Enable(gl.CLIP_PLANE2)
-            gl.Enable(gl.CLIP_PLANE3)
 
             if alpha:
                 gl.ClearColor(0.0, 0.0, 0.0, 0.0)
