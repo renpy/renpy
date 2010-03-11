@@ -52,18 +52,19 @@ class Texture(object):
         self.ymul = 0
         self.yadd = 0
 
-        # These contain information about an associated pygame
-        # surface. They allow us to defer loading until it's
-        # actually needed.
-        self.surface = None
-        self.surface_rect = None
+        # These contained the premultiplied (but not GPU-loaded)
+        # surface. They allow us to defer loading until the surface is
+        # needed.
+
+        self.premult = None
+        self.premult_size = None
         
 
     def __del__(self):
 
         # Release the surface.
-        self.surface = None
-        self.surface_rect = None
+        self.premult = None
+        self.premult_size = None
 
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
@@ -81,8 +82,8 @@ class Texture(object):
         # occurs when the texture is first needed. This ensures that the
         # texture loading only occurs in the GL thread.
 
-        self.surface = surf
-        self.surface_rect = (x, y, w, h)
+        self.premult = pysdlgl.premultiply(surf, x, y, w, h)
+        self.premult_size = (w, h)
 
 
     def make_ready(self):
@@ -90,14 +91,12 @@ class Texture(object):
         Makes the texture ready for use.
         """
 
-        if self.surface:
+        if self.premult:
 
             self.allocate()
             
-            surf = self.surface
-            x, y, w, h = self.surface_rect 
+            w, h = self.premult_size
 
-            
             gl.BindTexture(gl.TEXTURE_2D, self.number)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
@@ -107,10 +106,8 @@ class Texture(object):
             if w < self.width or h < self.height:
 
                 if not self.created:
-                    pysdlgl.load_texture(
+                    pysdlgl.load_premultiplied(
                         None,
-                        0,
-                        0,
                         self.width,
                         self.height,
                         0)
@@ -118,10 +115,8 @@ class Texture(object):
                 self.created = True
 
             # Otherwise, either load or replace the texture.
-            pysdlgl.load_texture(
-                surf,
-                x,
-                y,
+            pysdlgl.load_premultiplied(
+                self.premult,
                 w,
                 h,
                 self.created)
@@ -136,8 +131,8 @@ class Texture(object):
             self.ymul = 1.0 / self.height
 
             # We don't need to be loaded anymore.
-            self.surface = None
-            self.surface_rect = None
+            self.premult = None
+            self.premult_size = None
 
             
     def render_to(self, x, y, draw_func, rtt):
@@ -150,10 +145,8 @@ class Texture(object):
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
-            pysdlgl.load_texture(
+            pysdlgl.load_premultiplied(
                 None,
-                0,
-                0,
                 self.width,
                 self.height,
                 0)
