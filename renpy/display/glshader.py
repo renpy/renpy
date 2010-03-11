@@ -10,6 +10,8 @@ void main() {
     gl_TexCoord[2] = gl_MultiTexCoord2;
     gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex;
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_FrontColor = gl_Color;
+    gl_BackColor = gl_Color;
 }
 """
 
@@ -20,7 +22,7 @@ void main()
 {
     vec4 color0 = texture2D(tex0, gl_TexCoord[0].st);
 
-    gl_FragColor = color0;
+    gl_FragColor = color0 * gl_Color;
 }
 """
 
@@ -34,7 +36,7 @@ void main()
     vec4 color0 = texture2D(tex0, gl_TexCoord[0].st);
     vec4 color1 = texture2D(tex1, gl_TexCoord[1].st);
 
-    gl_FragColor = mix(color0, color1, done);
+    gl_FragColor = mix(color0, color1, done) * gl_Color;
 }
 """
 
@@ -55,7 +57,7 @@ void main()
 
      
 
-    gl_FragColor = mix(color0, color1, a);
+    gl_FragColor = mix(color0, color1, a) * gl_Color;
 }
 """
 

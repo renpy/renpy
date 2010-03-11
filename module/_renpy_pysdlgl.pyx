@@ -33,6 +33,7 @@ cdef extern from "GL/glew.h":
     GLubyte *glewGetErrorString(GLenum)
 
     int GL_UNPACK_ROW_LENGTH
+    int GL_PACK_ROW_LENGTH
      
     void glPixelStorei(
         GLint pname,
@@ -81,6 +82,15 @@ cdef extern from "GL/glew.h":
     void glBindTexture(GLenum, GLuint texture)
 
     GLubyte  *glGetString(GLenum)
+
+    void glReadPixels(
+        GLint,
+        GLint,
+        GLsizei,
+        GLsizei,
+        GLenum,
+        GLenum,
+        void *)
     
     
 def init_glew():
@@ -142,6 +152,35 @@ def load_texture(
             pixels)
 
 
+
+def store_framebuffer(
+    object pysurf,
+    ):
+    
+    """
+    This loads the supplied pygame surface into the numbered
+    texture. The created texture will be of size (width, height),
+    and at position (xoffset, yoffset) relative to the containing
+    image. 
+    """
+    cdef unsigned char *pixels = NULL
+    cdef SDL_Surface *surf
+        
+    surf = PySurface_AsSurface(pysurf)
+    pixels = <unsigned char *> surf.pixels
+
+    glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
+
+    glReadPixels(
+        0,
+        0,
+        surf.w,
+        surf.h,
+        GL_BGRA,
+        GL_UNSIGNED_BYTE,
+        pixels)
+
+    
 def draw_rectangle(
     float sx,
     float sy,
