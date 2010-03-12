@@ -392,10 +392,16 @@ def compute_tiling(width, max_size=MAX_SIZE):
             right_border = 1
         else:
             right_border = 0
+
             
         # The number of pixels to display to the user from this tile.
         row_size = min(width, size - left_border - right_border)
 
+        # Ensure we have an extra pixel to our right, so we don't
+        # get garbage.
+        if row_size + left_border != size:
+            right_border = 1
+        
         #Add to the results. 
         row.append((left_border, row_size, row_index))
         tiles.append((x - left_border, row_size + left_border + right_border, size))
