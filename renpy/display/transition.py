@@ -361,20 +361,20 @@ class ImageDissolve(Transition):
         
         if not reverse:
 
-            # Copies red -> all.
+            # Copies red -> alpha
             matrix = renpy.display.im.matrix(
-                1, 0, 0, 0, 0,
-                1, 0, 0, 0, 0,
-                1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1,
+                0, 0, 0, 0, 1,
+                0, 0, 0, 0, 1,
                 1, 0, 0, 0, 0)
 
         else:
 
-            # Copies 1-red -> all.
+            # Copies 1-red -> alpha
             matrix = renpy.display.im.matrix(
-                -1, 0, 0, 0, 1,
-                -1, 0, 0, 0, 1,
-                -1, 0, 0, 0, 1,
+                0, 0, 0, 0, 1,
+                0, 0, 0, 0, 1,
+                0, 0, 0, 0, 1,
                 -1, 0, 0, 0, 1)
 
         self.image = renpy.display.im.MatrixColor(image, matrix)
@@ -382,7 +382,7 @@ class ImageDissolve(Transition):
         if ramp is not None:
             ramplen = len(ramp)
 
-        # The length of the 
+        # The length of the ramp.
         self.ramplen = max(ramplen, 1)
 
 
@@ -411,7 +411,7 @@ class ImageDissolve(Transition):
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = self.alpha
         rv.operation_complete = st / self.delay
-        rv.operation_ramplen = self.ramplen
+        rv.operation_parameter = self.ramplen
 
         rv.blit(image, (0, 0), focus=False, main=False)
         rv.blit(bottom, (0, 0), focus=False, main=False)

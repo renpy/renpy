@@ -55,8 +55,6 @@ void main()
 
     float a = clamp((color2.a + offset) * multiplier, 0.0, 1.0);
 
-     
-
     gl_FragColor = mix(color0, color1, a) * gl_Color;
 }
 """

@@ -378,6 +378,24 @@ class GLDraw(object):
                 self.environ)
 
             return
+
+        elif what.operation == IMAGEDISSOLVE:
+
+            self.set_clip(clip)
+
+            gltexture.imageblend(
+                what.children[0][0].render_to_texture(what.operation_alpha),
+                what.children[1][0].render_to_texture(what.operation_alpha),
+                what.children[2][0].render_to_texture(what.operation_alpha),
+                xo,
+                yo,
+                reverse,
+                alpha,
+                what.operation_complete,
+                what.operation_parameter,
+                self.environ)
+
+            return
         
         # Compute clipping.
         if what.clipping:

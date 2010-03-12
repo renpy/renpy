@@ -245,8 +245,8 @@ transform = _renpy.transform
 blend = _renpy.blend
     
 def imageblend(a, b, dst, img, amap):        
-    red = byte_offset(img)[0]
-    _renpy.imageblend(a, b, dst, img, red, amap)
+    alpha = byte_offset(img)[3]
+    _renpy.imageblend(a, b, dst, img, alpha, amap)
 
 
 def colormatrix(src, dst, matrix):
