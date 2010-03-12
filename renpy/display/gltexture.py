@@ -544,7 +544,7 @@ def blit(tg, sx, sy, transform, alpha, environ):
     tg.make_ready()
     
     environ.blit()
-    gl.Color4f(1.0, 1.0, 1.0, alpha)
+    gl.Color4f(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -589,7 +589,7 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
     tg1.make_ready()
     
     environ.blend(fraction)
-    gl.Color4f(1.0, 1.0, 1.0, alpha)
+    gl.Color4f(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -647,7 +647,7 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
     tg2.make_ready()
     
     environ.imageblend(fraction, ramp)
-    gl.Color4f(1.0, 1.0, 1.0, alpha)
+    gl.Color4f(alpha, alpha, alpha, alpha)
 
     y = 0
 

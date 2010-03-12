@@ -1001,6 +1001,23 @@ class Interface(object):
         
     def iconify(self):
         pygame.display.iconify()
+
+    def get_draw_constructors(self):
+        """
+        Figures out the list of draw constructors to try.
+        """
+        
+        draws = {
+                "gl" : renpy.display.gldraw.GLDraw,
+                "sw" : renpy.display.swdraw.SWDraw,
+                }
+
+        
+        dl = os.environ.get("RENPY_DRAW", "gl,sw").split(",")
+
+        rv = [ draws.get(i, None) for i in dl ]
+        return [ i for i in rv if i is not None ]
+        
         
     def set_mode(self, physical_size=None):
         """
@@ -1033,12 +1050,10 @@ class Interface(object):
         if renpy.display.draw:
             draws = [ lambda : renpy.display.draw ]
         else:
-            draws = [
-                renpy.display.gldraw.GLDraw,
-                renpy.display.swdraw.SWDraw,
-                ]
+            draws = self.get_draw_constructors()
 
         for i in draws:
+
             draw = i()
             
             if draw.set_mode(virtual_size, physical_size, fullscreen):
