@@ -2,8 +2,6 @@ import pygame; pygame # other modules might depend on pygame.
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
 
-import glenviron
-
 # TODO:
 # - Texgrid Subsurface/size/etc.
 # - Texgrid from drawing on screen.
@@ -184,6 +182,9 @@ for height in SIZES:
         free_textures[width, height] = [ ]
 
 
+# The total size (in bytes) of all the textures that have been allocated.
+total_texture_size = 0
+
 # This allocates a texture, either from the free list, or by asking
 # gl.
 def alloc_texture(width, height):
@@ -191,6 +192,9 @@ def alloc_texture(width, height):
     Allocate a texture, either from the freelist or by asking GL. The
     returned texture has a reference count of 1.
     """
+
+    global total_texture_size
+
     
     l = free_textures[width, height]
 
@@ -198,6 +202,7 @@ def alloc_texture(width, height):
         rv = l.pop()
     else:        
         rv = Texture(width, height)
+        total_texture_size += width * height * 4        
         
     return rv
 
