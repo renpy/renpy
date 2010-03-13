@@ -90,7 +90,12 @@ class GLDraw(object):
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
-                        
+
+
+        # Handle swap control.
+        vsync = os.environ.get("RENPY_GL_VSYNC", "1")
+        pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
+        
         try:
             if fullscreen:
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
