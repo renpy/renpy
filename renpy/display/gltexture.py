@@ -377,11 +377,8 @@ def compute_tiling(width, max_size=MAX_SIZE):
     while width:
 
         # The size of the left border of this tile.
-        if x == 0:
-            left_border = 0
-        else:
-            left_border = 1
-
+        left_border = 1
+                    
         # Figure out the texture size to use.
         for size in SIZES:
             if size > max_size:
