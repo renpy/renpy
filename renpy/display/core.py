@@ -1767,10 +1767,6 @@ class Interface(object):
                     if renpy.audio.audio.event(ev):
                         continue
                                             
-                    # This checks the event to see if it's a mouse event,
-                    # and updates the mouse event timer as appropriate.
-                    renpy.display.draw.mouse_event(ev)
-                    
                     # This can set the event to None, to ignore it.
                     ev = renpy.display.joystick.event(ev)
                     if not ev:
@@ -1782,7 +1778,18 @@ class Interface(object):
                     # Handle quit specially for now.
                     if ev.type == pygame.QUIT:
                         self.quit_event()
+                        continue
+                        
+                    # Handle videoresize.
+                    if ev.type == pygame.VIDEORESIZE:
+                        evs = pygame.event.get([pygame.MOUSEMOTION])
+                        if len(evs):
+                            ev = evs[-1]
 
+                        self.set_mode((ev.w, ev.h))
+
+                        continue
+                        
                     # Merge mousemotion events.
                     if ev.type == pygame.MOUSEMOTION:
                         evs = pygame.event.get([pygame.MOUSEMOTION])
@@ -1796,11 +1803,11 @@ class Interface(object):
                     if ev.type == pygame.ACTIVEEVENT:
                         if ev.state & 1:
                             self.focused = ev.gain
+
+                    # This returns the event location. It also updates the
+                    # mouse state as necessary.
+                    x, y = renpy.display.draw.mouse_event(ev)
                             
-                    x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-                    # x -= self.display.screen_xoffset
-                    # y -= self.display.screen_yoffset
-                    
                     self.event_time = end_time = get_time()
 
                     # Handle the event normally.

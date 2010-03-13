@@ -88,12 +88,14 @@ class GLDraw(object):
         
         self.virtual_size = virtual_size
 
+        vwidth, vheight = virtual_size
+        pwidth, pheight = physical_size
+                        
         try:
-        
             if fullscreen:
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
             else:
-                self.window = pygame.display.set_mode(physical_size, pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)        
+                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)        
 
         except pygame.error, e:
             self.log("Could not get pygame screen: %r", e)
@@ -101,9 +103,25 @@ class GLDraw(object):
             return False
 
         self.physical_size = self.window.get_size()
-
+        pwidth, pheight = self.physical_size
+        
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
+        # Figure out the virtual box.
+        physical_ar = 1.0 * pwidth / pheight
+        virtual_ar = 1.0 * vwidth / vheight
+        
+        x_padding = vwidth * max(0, physical_ar - virtual_ar)
+        y_padding = vheight * max(0, (1.0 / physical_ar) - (1.0 / virtual_ar))
+
+        
+        self.virtual_box = (
+            -x_padding / 2.0,
+            -y_padding / 2.0,
+             vwidth + x_padding / 2.0,
+             vheight + y_padding / 2.0)
+
+        
         # Set some default settings.
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
@@ -279,14 +297,12 @@ class GLDraw(object):
 
         self.draw_render_textures(surftree, forward, reverse)
         
-        # TODO: Clipping.
-        # TODO: Work out the actual viewport width and height.
-        
         gl.Viewport(0, 0, self.physical_size[0], self.physical_size[1])
 
         gl.MatrixMode(gl.PROJECTION)
         gl.LoadIdentity()
-        gl.Ortho(0.0, self.virtual_size[0], self.virtual_size[1], 0.0, -1.0, 1.0)
+
+        gl.Ortho(self.virtual_box[0], self.virtual_box[2], self.virtual_box[3], self.virtual_box[1], -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
         
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
@@ -472,6 +488,31 @@ class GLDraw(object):
             
             pass
 
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+
+        # Screen sizes.
+        pw, ph = self.physical_size
+        vw, vh = self.virtual_size
+        vx0, vy0, vx1, vy1 = self.virtual_box
+        
+        # Translate to fractional screen.
+        x = 1.0 * x / pw
+        y = 1.0 * y / ph
+
+        # Translate to virtual size.
+        x = vx0 + (vx1 - vx0) * x
+        y = vy0 + (vy1 - vy0) * y
+
+        x = int(x)
+        y = int(y)
+
+        x = max(0, x)
+        x = min(vw, x)
+        y = max(0, y)
+        y = min(vh, y)
+
+        return x, y
+        
         
     def save_screenshot(self, filename):
         """

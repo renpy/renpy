@@ -802,6 +802,12 @@ class SWDraw(object):
                 ev.type == pygame.MOUSEBUTTONUP:
             
             self.mouse_event_time = renpy.display.core.get_time()
+
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+
+        return x, y
+        
+        
             
         
     def save_screenshot(self, filename):
