@@ -450,10 +450,14 @@ class Render(object):
         # Should children be clipped to a rectangle?
         self.clipping = False
 
-        # Caches of this render, rendered as a surface.
+        # Caches of the texture created by rendering this surface.
         self.surface = None
         self.alpha_surface = None
 
+        # Cache of the texture created by rendering this surface at half size.
+        # (This is set in gldraw.)
+        self.half_cache = None
+        
         
     def __repr__(self):
 

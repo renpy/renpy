@@ -57,7 +57,10 @@ class Texture(object):
         self.premult = None
         self.premult_size = None
         
-
+        # True if we're in NEAREST mode. False if we're in LINEAR mode.
+        self.nearest = False
+    
+        
     def __del__(self):
 
         # Release the surface.
@@ -83,6 +86,36 @@ class Texture(object):
         self.premult = pysdlgl.premultiply(surf, x, y, w, h)
         self.premult_size = (w, h)
 
+        
+    def make_nearest(self):
+        """
+        Causes this texture to be rendered in nearest-neighbor mode.
+        """
+
+        if self.nearest:
+            return
+
+        gl.BindTexture(gl.TEXTURE_2D, self.number)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+        
+        self.nearest = True
+
+        
+    def make_linear(self):
+        """
+        Causes this texture to be rendered in linear interpolation mode.
+        """
+
+        if not self.nearest:
+            return
+
+        gl.BindTexture(gl.TEXTURE_2D, self.number)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        
+        self.nearest = False
+        
 
     def make_ready(self):
         """
@@ -99,6 +132,8 @@ class Texture(object):
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
+            self.nearest = False
+            
             # If we haven't initalized the texture yet, and we're
             # smaller than it, load in the empty texture.
             if w < self.width or h < self.height:
@@ -143,6 +178,8 @@ class Texture(object):
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
+            self.nearest = False
+            
             pysdlgl.load_premultiplied(
                 None,
                 self.width,
@@ -293,13 +330,15 @@ class TextureGrid(object):
         # colindex.
         self.tiles = [ ]
 
-        # Is this texture grid ready?
-        self.ready = False
+        # If it exists, a TextureGrid that is half the size of this
+        # one.
+        self.half_cache = None
 
+        
     def get_size(self):
         return self.width, self.height
-        
-        
+
+    
     def subsurface(self, (x, y, w, h)):
         """
         This produces a texture grid containing a rectangle "cut out"
@@ -321,20 +360,21 @@ class TextureGrid(object):
         return rv
 
 
-    def make_ready(self):
+    def make_ready(self, nearest=False):
         """
         Makes ready all the tile-textures in this texture grid.
         """
 
-        if self.ready:
-            return
-        
         for row in self.tiles:
             for t in row:
                 t.make_ready()
 
-        self.ready = True
-
+                if nearest:
+                    t.make_nearest()
+                else:
+                    t.make_linear()
+        
+        
 
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }
@@ -532,7 +572,7 @@ def align_axes(*args):
     return rv
             
 
-def blit(tg, sx, sy, transform, alpha, environ):
+def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -543,7 +583,7 @@ def blit(tg, sx, sy, transform, alpha, environ):
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
     """
 
-    tg.make_ready()
+    tg.make_ready(nearest)
     
     environ.blit()
     gl.Color4f(alpha, alpha, alpha, alpha)

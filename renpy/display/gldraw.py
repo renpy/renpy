@@ -353,6 +353,16 @@ class GLDraw(object):
 
             if what.operation == DISSOLVE or what.operation == IMAGEDISSOLVE:
                 child.render_to_texture(what.operation_alpha)
+
+            if what.operation == PIXELLATE:
+                p = what.operation_parameter
+                pc = child
+                
+                while p > 1:
+                    p /= 2
+                    pc = self.get_half(pc)
+                    
+                    
                 
         if render_what:
             what.render_to_texture(True)
@@ -417,7 +427,35 @@ class GLDraw(object):
                 self.environ)
 
             return
-        
+
+
+        if what.operation == PIXELLATE:
+            self.set_clip(clip)
+
+            p = what.operation_parameter
+            pc = what.children[0][0]
+            
+            while p > 1:
+                p /= 2
+                pc = self.get_half(pc)
+
+
+            reverse *= renpy.display.render.Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
+                
+            # TODO: Make this switch us to nearest-neighbor mode.
+            gltexture.blit(
+                pc,
+                xo,
+                yo,
+                reverse,
+                alpha,
+                self.environ,
+                nearest=True)
+
+            return
+            
+
+                
         # Compute clipping.
         if what.clipping:
 
@@ -477,6 +515,43 @@ class GLDraw(object):
 
         rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
         return rv
+        
+
+
+    def get_half(self, what):
+        """
+        Gets a texture grid that's half the size of what..
+        """
+
+        if what.half_cache:
+            return what.half_cache
+
+        reverse = renpy.display.render.Matrix2D(0.5, 0, 0, .5)
+        forward = renpy.display.render.Matrix2D(2.0, 0, 0, 2.0)
+
+        width = max(what.width / 2, 1)
+        height = max(what.height / 2, 1)
+
+        def draw_func():
+            
+            gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+                
+            gl.Clear(gl.COLOR_BUFFER_BIT)
+            self.undefine_clip()
+
+            clip = (0, 0, width, height)
+            
+            self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+
+        if isinstance(what, renpy.display.render.Render):
+            what.is_opaque()
+
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt)
+
+        what.half_cache = rv
+
+        return rv
+
         
             
     def update_mouse(self):
