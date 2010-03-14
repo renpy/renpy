@@ -808,36 +808,13 @@ class SWDraw(object):
         return x, y
         
         
-            
-        
-    def save_screenshot(self, filename):
+
+    def screenshot(self):
         """
-        Saves a full-size screenshot in the given filename.
+        Returns a pygame surface containing a screenshot.
         """
 
-        try:
-            renpy.display.scale.image_save_unscaled(self.window, filename)
-        except:
-            if renpy.config.debug:
-                raise
-            pass
-
-        
-    def screenshot(self, scale):
-        """
-        Returns a string containing the contents of the window, as a PNG.
-        """
-
-        surf = renpy.display.pgrender.copy_surface(self.window, True)
-        surf = renpy.display.scale.smoothscale(surf, scale)
-        surf = renpy.display.pgrender.copy_surface(surf, False)
-        
-        sio = cStringIO.StringIO()
-        renpy.display.module.save_png(surf, sio, 0)
-        rv = sio.getvalue()
-        sio.close()
-        
-        return rv
+        return self.window
     
     def should_redraw(self, needs_redraw, first_pass):
         """

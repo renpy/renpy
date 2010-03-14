@@ -366,10 +366,14 @@ def load_scaling():
         def copy(self):
             return ScaledSurface(self.surface.copy(), wh=self.get_size())
 
+        def convert(self):
+            return ScaledSurface(self.surface.convert(), wh=self.get_size())
+
+        def convert_alpha(self):
+            return ScaledSurface(self.surface.convert_alpha(), wh=self.get_size())
         
         def fill(self, color):
             self.surface.fill(color)
-
             
         def get_alpha(self):
             return self.surface.get_alpha()

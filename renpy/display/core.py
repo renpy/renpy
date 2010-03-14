@@ -1090,9 +1090,36 @@ class Interface(object):
         This takes a screenshot of the current screen, and stores it so
         that it can gotten using get_screenshot()
         """
+        
+        window = renpy.display.draw.screenshot()
 
-        self.screenshot = renpy.display.draw.screenshot(scale)
+        surf = renpy.display.pgrender.copy_surface(window, True)
+        surf = renpy.display.scale.smoothscale(surf, scale)
+        surf = surf.convert()
+        
+        sio = cStringIO.StringIO()
+        renpy.display.module.save_png(surf, sio, 0)
+        self.screenshot = sio.getvalue()
+        sio.close()
+        
+        
+    def save_screenshot(self, filename):
+        """
+        Saves a full-size screenshot in the given filename.
+        """
 
+        window = renpy.display.draw.screenshot()
+        
+        try:
+            renpy.display.scale.image_save_unscaled(window, filename)
+        except:
+            if renpy.config.debug:
+                raise
+            pass
+
+
+
+        
         
     def get_screenshot(self):
         """

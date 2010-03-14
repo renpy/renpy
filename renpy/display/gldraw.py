@@ -334,7 +334,11 @@ class GLDraw(object):
             self.undefine_clip()
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
+            # Release the CPU while we're waiting for things to actually
+            # draw to the screen.
+            renpy.display.core.cpu_idle.set()
             pygame.display.flip()
+            renpy.display.core.cpu_idle.clear()
             
 
     def draw_render_textures(self, what, forward, reverse):
@@ -607,22 +611,13 @@ class GLDraw(object):
 
         return x, y
         
+
+    def screenshot(self):
+        rv = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        pysdlgl.store_framebuffer(rv)
+        rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
+        return rv
         
-    def save_screenshot(self, filename):
-        """
-        Saves a full-size screenshot in the given filename.
-        """
-
-        return
-
-
-    def screenshot(self, scale):
-        """
-        Returns a string containing the contents of the window, as a PNG.
-        """
-
-        return
-
     def free_memory(self):
         gltexture.dealloc_textures()
     
