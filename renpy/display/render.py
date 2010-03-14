@@ -310,7 +310,10 @@ def focus_at_point(x, y):
     Returns a focus object corresponding to the uppermost displayable
     at point, or None if nothing focusable is at point.
     """
-        
+
+    if screen_render is None:
+        return None
+    
     cf = screen_render.focus_at_point(x, y)
     if cf is None:
         return None

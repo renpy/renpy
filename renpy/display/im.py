@@ -85,6 +85,15 @@ class Cache(object):
         # been pinned into memory.
         self.pin_cache = { }
 
+        # A map from id(surf) to texture.
+        self.texture_cache = { }
+
+        # A map from id(surf) to texture, for pinned textures.
+        self.texture_pin_cache = { }
+
+        # Images that we tried, and failed, to preload.
+        self.preload_blacklist = set()
+
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
         self.preload_thread.setDaemon(True)
@@ -213,10 +222,10 @@ class Cache(object):
             # Create the texture.
             idsurf = id(ce.surf)
             
-            if idsurf in texture_pin_cache:
-                texture_cache[idsurf] = texture_pin_cache[idsurf]
+            if idsurf in self.texture_pin_cache:
+                self.texture_cache[idsurf] = self.texture_pin_cache[idsurf]
             else:
-                texture_cache[idsurf] = renpy.display.draw.load_texture(ce.surf)
+                self.texture_cache[idsurf] = renpy.display.draw.load_texture(ce.surf)
 
             self.lock.release()
                         
@@ -246,12 +255,12 @@ class Cache(object):
 
         idsurf = id(ce.surf)
         
-        if idsurf in texture_cache:
+        if idsurf in self.texture_cache:
 
-            if idsurf not in texture_pin_cache:            
+            if idsurf not in self.texture_pin_cache:            
                 renpy.display.draw.unload_texture(ce.surf)
 
-            del texture_cache[idsurf]
+            del self.texture_cache[idsurf]
 
         if renpy.config.debug_image_cache:
             print "IC Removed", ce.what
@@ -347,12 +356,12 @@ class Cache(object):
                 try:
                     image = self.preloads.pop(0)                    
 
-                    if image not in preload_blacklist:
+                    if image not in self.preload_blacklist:
 
                         try:
                             self.get(image)
                         except:
-                            preload_blacklist.add(image)
+                            self.preload_blacklist.add(image)
                         
                 except:
                     pass
@@ -380,11 +389,11 @@ class Cache(object):
                         surf = self.pin_cache[i]
                         idsurf = id(surf)
 
-                        if idsurf in texture_pin_cache:
-                            if idsurf not in texture_cache:
+                        if idsurf in self.texture_pin_cache:
+                            if idsurf not in self.texture_cache:
                                 renpy.display.draw.unload_texture(surf)
                             
-                            del texture_pin_cache[idsurf]
+                            del self.texture_pin_cache[idsurf]
                             
                         del self.pin_cache[i]
                         
@@ -392,7 +401,7 @@ class Cache(object):
                 # For each image in the worklist...                
                 for image in workset:
 
-                    if image in preload_blacklist:
+                    if image in self.preload_blacklist:
                         continue
                     
                     # If we have normal preloads, break out.
@@ -412,23 +421,34 @@ class Cache(object):
                         rle_surf.set_alpha(255, pygame.RLEACCEL)
 
                         idsurf = id(surf)
-                        if idsurf in texture_cache:
-                            texture_pin_cache[idsurf] = texture_cache[idsurf]
+                        if idsurf in self.texture_cache:
+                            self.texture_pin_cache[idsurf] = self.texture_cache[idsurf]
                         else:
-                            texture_pin_cache[idsurf] = renpy.display.draw.load_texture(surf)
+                            self.texture_pin_cache[idsurf] = renpy.display.draw.load_texture(surf)
 
                     except:
-                        preload_blacklist.add(image)
+                        self.preload_blacklist.add(image)
 
 
-# A map from id(surf) to texture.
-texture_cache = { }
+    def rebuild_textures(self):
 
-# A map from id(surf) to texture, for pinned textures.
-texture_pin_cache = { }
+        self.texture_pin_cache.clear()
+        self.texture_cache.clear()
+        
+        cache_set = set(i.surf for i in self.cache.itervalues())
+        pin_set = set(i.surf for i in self.pin_cache.itervalues())
 
-# Images that we tried, and failed, to preload.
-preload_blacklist = set()
+        for surf in cache_set | pin_set:
+            idsurf = id(surf)
+            tex = renpy.display.draw.load_texture(surf)
+
+            
+            if surf in cache_set:
+                self.texture_cache[idsurf] = tex
+
+            if surf in pin_set:
+                self.texture_pin_cache[idsurf] = tex
+                        
 
 # The cache object.
 cache = Cache()
@@ -438,12 +458,17 @@ def free_memory():
     Frees some memory.
     """
 
+    renpy.display.draw.free_memory()
     cache.clear()
 
-    texture_cache.clear()
-    texture_pin_cache.clear()
+def rebuild_textures():
+    """
+    Called to force all of the textures to be regenerated. It assumes the
+    textures have been force unloaded before it's called.
+    """
 
-    renpy.display.draw.free_memory()
+    renpy.display.render.free_memory()
+    cache.rebuild_textures()
     
 
 class ImageBase(renpy.display.core.Displayable):
@@ -494,7 +519,7 @@ class ImageBase(renpy.display.core.Displayable):
     def render(self, w, h, st, at):
         im = cache.get(self)
 
-        texture = texture_cache[id(im)]
+        texture = cache.texture_cache[id(im)]
         
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)

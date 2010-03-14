@@ -1065,6 +1065,8 @@ class Interface(object):
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
             raise Exception("Could not set video mode.")
+
+        self.force_redraw = True
         
 
     def draw_screen(self, root_widget, fullscreen_video):
@@ -1597,8 +1599,6 @@ class Interface(object):
 
                 # Redraw the screen.
 
-
-
                 if ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
                     renpy.display.draw.should_redraw(needs_redraw, first_pass)):
                     
@@ -1782,7 +1782,7 @@ class Interface(object):
                         
                     # Handle videoresize.
                     if ev.type == pygame.VIDEORESIZE:
-                        evs = pygame.event.get([pygame.MOUSEMOTION])
+                        evs = pygame.event.get([pygame.VIDEORESIZE])
                         if len(evs):
                             ev = evs[-1]
 

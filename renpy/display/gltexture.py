@@ -25,6 +25,14 @@ def check_error():
         raise Exception("GL Error: 0x%x" % err)
     
 
+# The generation of texture we're in. This is bumped by when when we
+# clear out all the texture numbers.
+texture_generation = 1
+
+# A list of texture number allocated in this generation.
+texture_numbers = [ ]
+
+    
 class Texture(object):
     """
     This object stores information about an OpenGL texture.
@@ -39,6 +47,7 @@ class Texture(object):
         
         # The number of the OpenGL texture this texture object
         # represents.
+        self.generation = 0
         self.number = None
 
         # True if the texture has been created inside the GPU.
@@ -122,9 +131,9 @@ class Texture(object):
         Makes the texture ready for use.
         """
 
-        if self.premult:
+        self.allocate()
 
-            self.allocate()
+        if self.premult:
             
             w, h = self.premult_size
 
@@ -170,9 +179,9 @@ class Texture(object):
             
     def render_to(self, x, y, draw_func, rtt):
 
+        self.allocate()
+        
         if not self.created:
-
-            self.allocate()
             
             gl.BindTexture(gl.TEXTURE_2D, self.number)
             gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -195,19 +204,24 @@ class Texture(object):
         self.xmul = 1.0 / self.width
         self.ymul = 1.0 / self.height
 
+        
     def allocate(self):
         """
         This allocates a texture number, if necessary.
         """
 
-        if self.number is not None:
+        if self.generation == texture_generation:
             return
-        
+
         texnums = [ 0 ]
         gl.GenTextures(1, texnums)
+        
+        self.generation = texture_generation
         self.number = texnums[0]
+        self.created = False
         
-        
+        texture_numbers.append(texnums[0])
+
         
 # This is a map from texture sizes to a list of free textures of that
 # size.
@@ -242,6 +256,17 @@ def alloc_texture(width, height):
         total_texture_size += width * height * 4        
         
     return rv
+
+
+def dealloc_textures():
+    global texture_generation
+    global texture_numbers
+
+    for t in texture_numbers:
+        gl.DeleteTextures(1, [ t ])
+
+    texture_generation += 1
+    texture_numbers = [ ]
 
 
 def compute_subrow(row, offset, width):

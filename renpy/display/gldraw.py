@@ -84,13 +84,19 @@ class GLDraw(object):
         working for some reason.
         """
 
+        if self.rtt:
+            self.rtt.deinit()
+        if self.environ:
+            self.environ.deinit()
+        
+        gltexture.dealloc_textures()
+        
         self.log(renpy.version)
         
         self.virtual_size = virtual_size
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
-
 
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
@@ -107,8 +113,8 @@ class GLDraw(object):
 
             return False
 
-        self.physical_size = self.window.get_size()
-        pwidth, pheight = self.physical_size
+        pwidth, pheight = self.window.get_size()
+        self.physical_size = (pwidth, pheight)
         
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
@@ -134,11 +140,19 @@ class GLDraw(object):
         gl.Enable(gl.CLIP_PLANE1)
         gl.Enable(gl.CLIP_PLANE2)
         gl.Enable(gl.CLIP_PLANE3)
-        
+
         if not self.did_init:
-            return self.init()
-        else:
-            return True
+            if not self.init():
+                return False
+
+        self.did_init = True
+
+        self.environ.init()
+        self.rtt.init()
+        renpy.display.im.rebuild_textures()
+            
+
+        return True
 
 
     def init(self):
@@ -610,7 +624,5 @@ class GLDraw(object):
         return
 
     def free_memory(self):
-        pass
-
-    
+        gltexture.dealloc_textures()
     

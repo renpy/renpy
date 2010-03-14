@@ -52,7 +52,7 @@ class FixedFunctionEnviron(Environ):
     work.
     """
 
-    def __init__(self):
+    def init(self):
         
         # The last blend environ used.
         self.last = NONE
@@ -80,7 +80,13 @@ class FixedFunctionEnviron(Environ):
             (8, 4.0, gl.ADD, 4.0),
             ]
             
-        
+
+    def deinit(self):
+        """
+        Called before changing the GL context.
+        """
+
+        return
 
     def disable(self, unit):
         """
@@ -279,7 +285,7 @@ class ShaderEnviron(object):
     This is an environment that uses shaders.
     """
 
-    def __init__(self):
+    def init(self):
 
         self.blit_program = glshader.blit_program()
         self.blit_tex0_uniform = gl.GetUniformLocationARB(
@@ -316,6 +322,17 @@ class ShaderEnviron(object):
 
         self.last = NONE
         
+
+    def deinit(self):
+        """
+        Called before changing the GL context.
+        """
+
+        gl.DeleteObjectARB(self.blit_program)
+        gl.DeleteObjectARB(self.blend_program)
+        gl.DeleteObjectARB(self.imageblend_program)
+        
+        return
 
     def blit(self):
 
@@ -405,7 +422,17 @@ class CopyRtt(object):
     This class uses texture copying to implement Render-to-texture.
     """
 
+    def init(self):
+        pass
     
+    
+    def deinit(self):
+        """
+        Called before changing the GL context.
+        """
+
+        return
+
     def begin(self):
         """
         This function should be called when a Render-to-texture
@@ -454,12 +481,23 @@ class FramebufferRtt(object):
     This class uses the framebuffer object to do RTT.
     """
 
-    def __init__(self):
+    def init(self):
 
         # This maps a texture to the framebuffer object that
         # can write to that texture.
         self.texture_to_fbo = { }
         
+    def deinit(self):
+        """
+        Called before changing the GL context.
+        """
+
+        for i in self.texture_to_fbo.itervalues():
+            gl.DeleteFramebuffersEXT(1, [ i ])
+
+        self.texture_to_fbo.clear()
+            
+
     def get_fbo(self, texture):
 
         if texture in self.texture_to_fbo:
@@ -518,9 +556,3 @@ class FramebufferRtt(object):
 
         gl.BindFramebufferEXT(gl.FRAMEBUFFER_EXT, 0)
 
-    def __del__(self):
-
-        # Get rid of all of the framebuffer objects we've registered.
-        for i in self.texture_to_fbo.itervalues():
-            gl.DeleteFramebuffersEXT(1, [ i ])
-        
