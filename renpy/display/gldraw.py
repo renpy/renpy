@@ -66,6 +66,11 @@ class GLDraw(object):
         # catch glitches.
         self.should_draw = True
         
+        # Is the mouse currently visible?
+        self.mouse_old_visible = True
+
+        # The time of the last mouse event.
+        self.mouse_event_time = renpy.display.core.get_time()
         
     def log(self, msg, *args):
         """
@@ -610,7 +615,69 @@ class GLDraw(object):
         y = min(vh, y)
 
         return x, y
+
+
+    def draw_mouse(self, show_mouse=True):
+        """
+        This draws the mouse to the screen, if necessary. It uses the
+        buffer to minimize the amount of the screen that needs to be
+        drawn, and only redraws if the mouse has actually been moved.
+        """
+
+        # Figure out if the mouse visibility algorithm is hiding the mouse.
+        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
+            visible = False
+        else:
+            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
+            
+        # Deal with a hardware mouse, the easy way.
+        if not renpy.config.mouse:
+
+            if self.mouse_old_visible != visible:
+                pygame.mouse.set_visible(visible)
+                self.mouse_old_visible = visible
+            
+            return [ ]
+
+        # The rest of this is for the software mouse.
         
+        if self.suppressed_blit:
+            return [ ]
+
+        visible = show_mouse and visible
+        
+        mouse_kind = renpy.display.focus.get_mouse() or self.interface.mouse 
+        
+        # Figure out the mouse animation.
+        if mouse_kind in renpy.config.mouse:
+            anim = renpy.config.mouse[mouse_kind]
+        else:
+            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
+
+        info = anim[self.interface.ticks % len(anim)]
+
+        pos = pygame.mouse.get_pos()
+
+        if not renpy.game.interface.focused:
+            pos = None
+            
+        if (pos == self.mouse_location and
+            show_mouse and
+            info == self.mouse_info):
+            
+            return [ ]
+
+        updates = [ ]
+
+        if self.mouse_location:
+            updates.append(self.hide_mouse())
+            
+        if visible and pos and renpy.game.interface.focused:
+            updates.append(self.show_mouse(pos, info))
+            
+        return updates
+
+    
 
     def screenshot(self):
         rv = renpy.display.pgrender.surface_unscaled(self.physical_size, False)

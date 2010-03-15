@@ -922,6 +922,12 @@ class Interface(object):
         # The time when the event was dispatched.
         self.event_time = 0
 
+        # The time we saw the last mouse event.
+        self.mouse_event_time = None
+
+        # Should we show the mouse?
+        self.show_mouse = True
+        
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
 
@@ -942,7 +948,8 @@ class Interface(object):
         # Init timing.
         init_time()
         self.profile_time = get_time()
-
+        self.mouse_event_time = get_time()
+        
         # The current window caption.
         self.window_caption = None
 
@@ -1116,9 +1123,6 @@ class Interface(object):
             if renpy.config.debug:
                 raise
             pass
-
-
-
         
         
     def get_screenshot(self):
@@ -1361,6 +1365,40 @@ class Interface(object):
             renpy.game.context().scene_lists.shown_window = False
             
 
+    def get_mouse_info(self):
+        # Figure out if the mouse visibility algorithm is hiding the mouse.
+        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
+            visible = False
+        else:
+            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
+            
+        visible = visible and renpy.game.interface.focused and self.show_mouse
+
+        # If not visible, hide the mouse.
+        if not visible:
+            return False, 0, 0, None
+        
+        # Deal with a hardware mouse, the easy way.
+        if not renpy.config.mouse:
+            return True, 0, 0, None
+
+        # Deal with the mouse going offscreen.
+        if not self.focused:
+            return False, 0, 0, None
+        
+        mouse_kind = renpy.display.focus.get_mouse() or self.mouse 
+        
+        # Figure out the mouse animation.
+        if mouse_kind in renpy.config.mouse:
+            anim = renpy.config.mouse[mouse_kind]
+        else:
+            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
+
+        img, x, y = anim[self.ticks % len(anim)]
+        tex = renpy.display.im.load_image(img)
+
+        return False, x, y, tex
+            
     
     def interact_core(self,
                       show_mouse=True,
@@ -1387,6 +1425,7 @@ class Interface(object):
         """
         
         self.roll_forward = roll_forward
+        self.show_mouse = show_mouse
         
         suppress_transition = renpy.config.skipping or renpy.game.less_updates
 
@@ -1672,10 +1711,8 @@ class Interface(object):
                     old_redraw_time = None
                     
                 # Draw the mouse, if it needs drawing.
-                if show_mouse:
-                    renpy.display.draw.update_mouse()
+                renpy.display.draw.update_mouse()
                     
-
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction:                    
                     return True, None
@@ -1816,7 +1853,14 @@ class Interface(object):
                         self.set_mode((ev.w, ev.h))
 
                         continue
-                        
+
+                    if ev.type == pygame.MOUSEMOTION or \
+                            ev.type == pygame.MOUSEBUTTONDOWN or \
+                            ev.type == pygame.MOUSEBUTTONUP:
+            
+                        self.mouse_event_time = renpy.display.core.get_time()
+
+                    
                     # Merge mousemotion events.
                     if ev.type == pygame.MOUSEMOTION:
                         evs = pygame.event.get([pygame.MOUSEMOTION])

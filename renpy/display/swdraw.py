@@ -642,11 +642,9 @@ class SWDraw(object):
         # Is the mouse currently visible?
         self.mouse_old_visible = True
 
-        # The time of the last mouse event.
-        self.mouse_event_time = renpy.display.core.get_time()
-
         # Scaling?
         renpy.display.scale.init()
+
         
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
@@ -687,12 +685,10 @@ class SWDraw(object):
         self.mouse_location = pos
         self.mouse_info = info
 
-        img, mxo, myo = info
+        mxo, myo, tex = info
         
-        mouse = renpy.display.im.load_image(img)
-
         mx, my = pos
-        mw, mh = mouse.get_size()
+        mw, mh = tex.get_size()
 
         bx = mx - mxo
         by = my - myo
@@ -701,7 +697,7 @@ class SWDraw(object):
         self.mouse_backing = renpy.display.pgrender.surface((mw, mh), False)
         self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
 
-        self.window.blit(mouse, (bx, by))
+        self.window.blit(tex, (bx, by))
 
         return bx, by, mw, mh
 
@@ -710,7 +706,7 @@ class SWDraw(object):
         """
         Actually hides the mouse.
         """
-
+        
         size = self.mouse_backing.get_size()
         self.window.blit(self.mouse_backing, self.mouse_backing_pos)
 
@@ -723,54 +719,31 @@ class SWDraw(object):
         return rv
 
     # private
-    def draw_mouse(self, show_mouse=True):
+    def draw_mouse(self, show_mouse):
         """
         This draws the mouse to the screen, if necessary. It uses the
         buffer to minimize the amount of the screen that needs to be
         drawn, and only redraws if the mouse has actually been moved.
         """
 
-        # Figure out if the mouse visibility algorithm is hiding the mouse.
-        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
-            visible = False
-        else:
-            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
+        hardware, x, y, tex = renpy.game.interface.get_mouse_info()
+        
+        if self.mouse_old_visible != hardware:
+            pygame.mouse.set_visible(hardware)
+            self.mouse_old_visible = hardware
             
-        # Deal with a hardware mouse, the easy way.
-        if not renpy.config.mouse:
-
-            if self.mouse_old_visible != visible:
-                pygame.mouse.set_visible(visible)
-                self.mouse_old_visible = visible
-            
-            return [ ]
-
         # The rest of this is for the software mouse.
         
         if self.suppressed_blit:
             return [ ]
 
-        visible = show_mouse and visible
-        
-        mouse_kind = renpy.display.focus.get_mouse() or self.interface.mouse 
-        
-        # Figure out the mouse animation.
-        if mouse_kind in renpy.config.mouse:
-            anim = renpy.config.mouse[mouse_kind]
-        else:
-            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
+        if not show_mouse:
+            tex = None
 
-        info = anim[self.interface.ticks % len(anim)]
-
+        info = (x, y, tex)
         pos = pygame.mouse.get_pos()
-
-        if not renpy.game.interface.focused:
-            pos = None
             
-        if (pos == self.mouse_location and
-            show_mouse and
-            info == self.mouse_info):
-            
+        if (pos == self.mouse_location and tex and info == self.mouse_info):
             return [ ]
 
         updates = [ ]
@@ -778,7 +751,7 @@ class SWDraw(object):
         if self.mouse_location:
             updates.append(self.hide_mouse())
             
-        if visible and pos and renpy.game.interface.focused:
+        if tex and pos and renpy.game.interface.focused:
             updates.append(self.show_mouse(pos, info))
             
         return updates
@@ -789,22 +762,14 @@ class SWDraw(object):
         Draws the mouse, and then updates the screen.
         """
         
-        updates = self.draw_mouse()
+        updates = self.draw_mouse(True)
 
         if updates:
             pygame.display.update(updates)
 
     
-    def mouse_event(self, ev):
-
-        if ev.type == pygame.MOUSEMOTION or \
-                ev.type == pygame.MOUSEBUTTONDOWN or \
-                ev.type == pygame.MOUSEBUTTONUP:
-            
-            self.mouse_event_time = renpy.display.core.get_time()
-
+    def mouse_event(self, ev):        
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-
         return x, y
         
         

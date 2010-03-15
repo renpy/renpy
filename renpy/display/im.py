@@ -1523,4 +1523,5 @@ def load_image(fn):
     This loads an image from the given filename, using the cache.
     """
 
-    return cache.get(image(fn))
+    surf = cache.get(image(fn))
+    return renpy.display.draw.load_texture(surf)
