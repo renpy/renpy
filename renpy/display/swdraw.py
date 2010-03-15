@@ -640,7 +640,7 @@ class SWDraw(object):
         self.mouse_info = None
 
         # Is the mouse currently visible?
-        self.mouse_old_visible = True
+        self.mouse_old_visible = None
 
         # Scaling?
         renpy.display.scale.init()

@@ -67,7 +67,7 @@ class GLDraw(object):
         self.should_draw = True
         
         # Is the mouse currently visible?
-        self.mouse_old_visible = True
+        self.mouse_old_visible = None
 
         # The time of the last mouse event.
         self.mouse_event_time = renpy.display.core.get_time()
@@ -325,7 +325,6 @@ class GLDraw(object):
 
         gl.MatrixMode(gl.PROJECTION)
         gl.LoadIdentity()
-
         gl.Ortho(self.virtual_box[0], self.virtual_box[2], self.virtual_box[3], self.virtual_box[1], -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
         
@@ -339,6 +338,8 @@ class GLDraw(object):
             self.undefine_clip()
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
+            self.draw_mouse()
+            
             # Release the CPU while we're waiting for things to actually
             # draw to the screen.
             renpy.display.core.cpu_idle.set()
@@ -578,18 +579,13 @@ class GLDraw(object):
         
             
     def update_mouse(self):
-        # The draw routine updates the mouse.
+        # The draw routine updates the mouse. There's no need to
+        # redraw it event-by-event.
 
         return
 
 
     def mouse_event(self, ev):
-
-        if ev.type == pygame.MOUSEMOTION or \
-                ev.type == pygame.MOUSEBUTTONDOWN or \
-                ev.type == pygame.MOUSEBUTTONUP:
-            
-            pass
 
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
 
@@ -616,68 +612,40 @@ class GLDraw(object):
 
         return x, y
 
-
-    def draw_mouse(self, show_mouse=True):
-        """
-        This draws the mouse to the screen, if necessary. It uses the
-        buffer to minimize the amount of the screen that needs to be
-        drawn, and only redraws if the mouse has actually been moved.
-        """
-
-        # Figure out if the mouse visibility algorithm is hiding the mouse.
-        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
-            visible = False
-        else:
-            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
-            
-        # Deal with a hardware mouse, the easy way.
-        if not renpy.config.mouse:
-
-            if self.mouse_old_visible != visible:
-                pygame.mouse.set_visible(visible)
-                self.mouse_old_visible = visible
-            
-            return [ ]
-
-        # The rest of this is for the software mouse.
-        
-        if self.suppressed_blit:
-            return [ ]
-
-        visible = show_mouse and visible
-        
-        mouse_kind = renpy.display.focus.get_mouse() or self.interface.mouse 
-        
-        # Figure out the mouse animation.
-        if mouse_kind in renpy.config.mouse:
-            anim = renpy.config.mouse[mouse_kind]
-        else:
-            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
-
-        info = anim[self.interface.ticks % len(anim)]
-
-        pos = pygame.mouse.get_pos()
-
-        if not renpy.game.interface.focused:
-            pos = None
-            
-        if (pos == self.mouse_location and
-            show_mouse and
-            info == self.mouse_info):
-            
-            return [ ]
-
-        updates = [ ]
-
-        if self.mouse_location:
-            updates.append(self.hide_mouse())
-            
-        if visible and pos and renpy.game.interface.focused:
-            updates.append(self.show_mouse(pos, info))
-            
-        return updates
-
     
+    # Private.
+    def draw_mouse(self):
+        
+        hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
+        
+        if self.mouse_old_visible != hardware:
+            pygame.mouse.set_visible(hardware)
+            self.mouse_old_visible = hardware
+
+        if not tex:
+            return
+
+        x, y = pygame.mouse.get_pos()
+        x -= mx
+        y -= my
+        
+        pw, ph = self.physical_size
+        
+        gl.MatrixMode(gl.PROJECTION)
+        gl.LoadIdentity()
+        gl.Ortho(0, pw, ph, 0, -1.0, 1.0)
+        gl.MatrixMode(gl.MODELVIEW)
+
+        self.undefine_clip()
+        self.set_clip((0, 0, pw, ph))
+        
+        gltexture.blit(
+            tex,
+            x,
+            y,
+            IDENTITY,
+            1.0,
+            self.environ)
 
     def screenshot(self):
         rv = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
