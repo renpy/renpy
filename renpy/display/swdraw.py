@@ -1,12 +1,12 @@
 import renpy
 import pygame
-import cStringIO
 import math
+import weakref
 
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
-# A map from id(cached surface) to rle version of cached surface.
-rle_cache = { }
+# A map from cached surface to rle version of cached surface.
+rle_cache = weakref.WeakKeyDictionary()
 
 class Clipper(object):
     """
@@ -315,7 +315,7 @@ def draw(dest, clip, what, xo, yo, screen):
         # Pixel-Aligned blit.
         if isinstance(xo, int) and isinstance(yo, int):
             if screen:
-                what = rle_cache.get(id(what), what)
+                what = rle_cache.get(what, what)
 
             if clip:
                 w, h = what.get_size()
@@ -642,9 +642,12 @@ class SWDraw(object):
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
+        # This is used to cache the surface->texture operation.
+        self.texture_cache = weakref.WeakKeyDictionary()
+        
         # Scaling?
         renpy.display.scale.init()
-
+        
         
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
@@ -869,38 +872,24 @@ class SWDraw(object):
         Creates a texture from the surface. In the software implementation,
         the only difference between a texture and a surface is that a texture
         is in the RLE cache.
-
-        If transient is True, the texture will not be cached, and unload_texture
-        need not be called.
         """
 
         if transient:
             return surf
-        
+
         if renpy.game.less_memory:
             return surf
 
-        idsurf = id(surf)
-        
-        rle_surf = renpy.display.pgrender.copy_surface(surf)
-        rle_surf.set_alpha(255, pygame.RLEACCEL)
-        self.mutated_surface(rle_surf)
+        if surf not in rle_cache:
+            rle_surf = renpy.display.pgrender.copy_surface(surf)
+            rle_surf.set_alpha(255, pygame.RLEACCEL)
+            self.mutated_surface(rle_surf)
 
-        rle_cache[idsurf] = rle_surf
+            rle_cache[surf] = rle_surf
         
         return surf
         
         
-    def unload_texture(self, surf):
-        """
-        Unloads a texture.
-        """
-
-        idsurf = id(surf)
-        if idsurf in rle_cache:
-            del rle_cache[idsurf]
-            
-
     def free_memory(self):
         """
         Frees up memory.

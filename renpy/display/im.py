@@ -1,4 +1,3 @@
-
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -29,8 +28,6 @@ import math
 import zipfile
 import cStringIO
 import threading
-
-import pygame
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -84,12 +81,6 @@ class Cache(object):
         # A map from image object to surface, only for objects that have
         # been pinned into memory.
         self.pin_cache = { }
-
-        # A map from id(surf) to texture.
-        self.texture_cache = { }
-
-        # A map from id(surf) to texture, for pinned textures.
-        self.texture_pin_cache = { }
 
         # Images that we tried, and failed, to preload.
         self.preload_blacklist = set()
@@ -219,13 +210,7 @@ class Cache(object):
             if renpy.config.debug_image_cache:
                 print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit())
 
-            # Create the texture.
-            idsurf = id(ce.surf)
-            
-            if idsurf in self.texture_pin_cache:
-                self.texture_cache[idsurf] = self.texture_pin_cache[idsurf]
-            else:
-                self.texture_cache[idsurf] = renpy.display.draw.load_texture(ce.surf)
+            renpy.display.draw.load_texture(ce.surf)
 
             self.lock.release()
                         
@@ -252,15 +237,6 @@ class Cache(object):
 
         self.total_cache_size -= ce.size
         del self.cache[ce.what]
-
-        idsurf = id(ce.surf)
-        
-        if idsurf in self.texture_cache:
-
-            if idsurf not in self.texture_pin_cache:            
-                renpy.display.draw.unload_texture(ce.surf)
-
-            del self.texture_cache[idsurf]
 
         if renpy.config.debug_image_cache:
             print "IC Removed", ce.what
@@ -385,16 +361,8 @@ class Cache(object):
                         if renpy.config.debug_image_cache:
                             print "IC Pin Clear", image
 
-
                         surf = self.pin_cache[i]
-                        idsurf = id(surf)
 
-                        if idsurf in self.texture_pin_cache:
-                            if idsurf not in self.texture_cache:
-                                renpy.display.draw.unload_texture(surf)
-                            
-                            del self.texture_pin_cache[idsurf]
-                            
                         del self.pin_cache[i]
                         
                             
@@ -414,41 +382,12 @@ class Cache(object):
 
                     try:
                         surf = image.load()
-                        
                         self.pin_cache[image] = surf
-
-                        rle_surf = renpy.display.pgrender.copy_surface(surf)
-                        rle_surf.set_alpha(255, pygame.RLEACCEL)
-
-                        idsurf = id(surf)
-                        if idsurf in self.texture_cache:
-                            self.texture_pin_cache[idsurf] = self.texture_cache[idsurf]
-                        else:
-                            self.texture_pin_cache[idsurf] = renpy.display.draw.load_texture(surf)
-
+                        renpy.display.draw.load_texture(surf)
+                        
                     except:
                         self.preload_blacklist.add(image)
 
-
-    def rebuild_textures(self):
-
-        self.texture_pin_cache.clear()
-        self.texture_cache.clear()
-        
-        cache_set = set(i.surf for i in self.cache.itervalues())
-        pin_set = set(i.surf for i in self.pin_cache.itervalues())
-
-        for surf in cache_set | pin_set:
-            idsurf = id(surf)
-            tex = renpy.display.draw.load_texture(surf)
-
-            
-            if surf in cache_set:
-                self.texture_cache[idsurf] = tex
-
-            if surf in pin_set:
-                self.texture_pin_cache[idsurf] = tex
-                        
 
 # The cache object.
 cache = Cache()
@@ -461,15 +400,6 @@ def free_memory():
     renpy.display.draw.free_memory()
     cache.clear()
 
-def rebuild_textures():
-    """
-    Called to force all of the textures to be regenerated. It assumes the
-    textures have been force unloaded before it's called.
-    """
-
-    renpy.display.render.free_memory()
-    cache.rebuild_textures()
-    
 
 class ImageBase(renpy.display.core.Displayable):
     """
@@ -518,9 +448,8 @@ class ImageBase(renpy.display.core.Displayable):
         
     def render(self, w, h, st, at):
         im = cache.get(self)
+        texture = renpy.display.draw.load_texture(im)
 
-        texture = cache.texture_cache[id(im)]
-        
         w, h = im.get_size()
         rv = renpy.display.render.Render(w, h)
         rv.blit(texture, (0, 0))

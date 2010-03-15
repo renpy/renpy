@@ -12,6 +12,7 @@ from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 import pygame
 import os
 import sys
+import weakref
 
 import _renpy_tegl as gl
 import _renpy_pysdlgl as pysdlgl
@@ -71,6 +72,9 @@ class GLDraw(object):
 
         # The time of the last mouse event.
         self.mouse_event_time = renpy.display.core.get_time()
+
+        # This is used to cache the surface->texture operation.
+        self.texture_cache = weakref.WeakKeyDictionary()
         
     def log(self, msg, *args):
         """
@@ -154,9 +158,11 @@ class GLDraw(object):
 
         self.environ.init()
         self.rtt.init()
-        renpy.display.im.rebuild_textures()
-            
 
+        # This should get rid of all of the cached textures.
+        renpy.display.render.free_memory()
+        self.texture_cache.clear()
+        
         return True
 
 
@@ -271,13 +277,13 @@ class GLDraw(object):
     def load_texture(self, surf, transient=False):
         # Turn a surface into a texture grid.
 
-        return gltexture.texture_grid_from_surface(surf)
+        rv = self.texture_cache.get(surf, None)
 
-    def unload_texture(self, surf):
-        # Texture grids die automatically, we don't have to do anything
-        # particularly special.
-        
-        return
+        if rv is None:
+            rv = gltexture.texture_grid_from_surface(surf)
+            self.texture_cache[surf] = rv
+
+        return rv
 
     # private
     def undefine_clip(self):
@@ -654,5 +660,7 @@ class GLDraw(object):
         return rv
         
     def free_memory(self):
+        self.surface_texture_cache.clear()
         gltexture.dealloc_textures()
-    
+
+        
