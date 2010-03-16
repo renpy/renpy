@@ -1,7 +1,3 @@
-# IMPORTANT NOTE: The drawing code should handle cases where a surface is
-# added to a Render (instead of a TextureGrid) by uploading that surface to
-# the graphics card.
-
 # IMPORTANT NOTE: This code should fail gracefully-ish if _renpy_tegl can't be
 # imported.
 
@@ -63,10 +59,6 @@ class GLDraw(object):
         # The physical size of the window we got.
         self.physical_size = None
 
-        # Should we draw? This is for debugging purposes, to help
-        # catch glitches.
-        self.should_draw = True
-        
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
@@ -75,6 +67,9 @@ class GLDraw(object):
 
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
+
+        # This is a fullscreen surface used for video playback.
+        self.fullscreen_surface = None
         
     def log(self, msg, *args):
         """
@@ -162,6 +157,9 @@ class GLDraw(object):
         # This should get rid of all of the cached textures.
         renpy.display.render.free_memory()
         self.texture_cache.clear()
+
+        # Allocate a fullscreen surface for video playback.
+        self.fullscreen_surface = renpy.display.pgrender.surface(self.virtual_size, False)
         
         return True
 
@@ -258,6 +256,7 @@ class GLDraw(object):
             self.rtt = glenviron.CopyRtt()
 
         # Do additional setup needed.
+
         renpy.display.pgrender.set_sample_masks(MASKS)
             
         return True
@@ -270,9 +269,8 @@ class GLDraw(object):
         return True
 
     def mutated_surface(self, surf):
-        # There's no reason to care about surface mutation.
-
-        return
+        if surf in self.texture_cache:
+            del self.texture_cache[surf]
 
     def load_texture(self, surf, transient=False):
         # Turn a surface into a texture grid.
@@ -339,18 +337,24 @@ class GLDraw(object):
 
         clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
 
-        if self.should_draw:
+        self.undefine_clip()
 
-            self.undefine_clip()
+        if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
+
+            tex = self.load_texture(self.fullscreen_surface)
+            self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)
+            
+        else:
+            
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
-            self.draw_mouse()
-            
-            # Release the CPU while we're waiting for things to actually
-            # draw to the screen.
-            renpy.display.core.cpu_idle.set()
-            pygame.display.flip()
-            renpy.display.core.cpu_idle.clear()
+        self.draw_mouse()
+
+        # Release the CPU while we're waiting for things to actually
+        # draw to the screen.
+        renpy.display.core.cpu_idle.set()
+        pygame.display.flip()
+        renpy.display.core.cpu_idle.clear()
             
 
     def draw_render_textures(self, what, forward, reverse):
@@ -422,6 +426,11 @@ class GLDraw(object):
         if not isinstance(what, renpy.display.render.Render):
             raise Exception("Unknown drawing type. " + repr(what))
 
+        if isinstance(what, renpy.display.pgrender.Surface):
+            tex = self.load_texture(what)
+            self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
+            return
+            
         # TODO: Implement other draw modes here.
 
         if what.operation == DISSOLVE:

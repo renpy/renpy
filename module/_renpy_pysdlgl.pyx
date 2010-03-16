@@ -112,6 +112,17 @@ def premultiply(
     for the (x, y, w, h) box inside pysurf.
     """
 
+    # Adjust the alpha if we have an alpha-free image.
+    cdef unsigned char alpha_and
+    cdef unsigned char alpha_or
+    
+    if pysurf.get_masks()[3]:
+        alpha_and = 255
+        alpha_or = 0
+    else:
+        alpha_and = 0
+        alpha_or = 255
+
     # Allocate an uninitialized string.
     cdef unsigned char *null = NULL
     rv = null[:w*h*4]
@@ -149,7 +160,7 @@ def premultiply(
         pend = p + w * 4
 
         while p < pend:
-            a = p[3]
+            a = (p[3] & alpha_and) | alpha_or
 
             op[0] = p[0] * a / 255
             op[1] = p[1] * a / 255

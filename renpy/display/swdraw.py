@@ -644,6 +644,9 @@ class SWDraw(object):
 
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
+
+        # This is used to display video to the screen.
+        self.fullscreen_surface = None
         
         # Scaling?
         renpy.display.scale.init()
@@ -676,6 +679,9 @@ class SWDraw(object):
         # Should we redraw the screen from scratch?
         self.full_redraw = True
 
+        # The surface used to display fullscreen video.
+        self.fullscreen_surface = renpy.display.scale.real(self.window)
+        
         return True
         
 
@@ -866,6 +872,9 @@ class SWDraw(object):
         for i in clippers:
             i.mutated.add(id(surf))
 
+        if surf in rle_cache:
+            del rle_cache[surf]
+            
             
     def load_texture(self, surf, transient=False):
         """
@@ -888,7 +897,7 @@ class SWDraw(object):
             rle_cache[surf] = rle_surf
         
         return surf
-        
+
         
     def free_memory(self):
         """

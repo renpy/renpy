@@ -785,6 +785,7 @@ static void video_image_display(VideoState *is)
         rect.y = is->ytop  + y;
         rect.w = width;
         rect.h = height;
+
         SDL_DisplayYUVOverlay(vp->bmp, &rect);
     } else {
 #if 0
@@ -1125,7 +1126,7 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
         is->video_st->codec->height,
         SDL_YV12_OVERLAY,
         surf);
-    
+
     vp->width = is->video_st->codec->width;
     vp->height = is->video_st->codec->height;
 

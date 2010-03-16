@@ -129,7 +129,9 @@ class Movie(renpy.display.core.Displayable):
 
         if playing is not None:
             renpy.display.render.mutated_surface(surface)
-            rv.blit(surface, (0, 0))
+            tex = renpy.display.draw.load_texture(surface)
+
+            rv.blit(tex, (0, 0))
             
         return rv
             

@@ -69,7 +69,12 @@ def set_sample_masks(masks):
     global sample_alpha
     global sample_noalpha
 
-    sample_alpha = sample_noalpha = opygame.Surface((10, 10), 0, 32, masks)
+
+    
+    sample_alpha = opygame.Surface((10, 10), 0, 32, masks)
+    sample_noalpha = opygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
+
+
     
 
 class Surface(opygame.Surface):
