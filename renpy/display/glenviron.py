@@ -1,7 +1,12 @@
 # This file contains the code required to set up (and change) OpenGL texture
 # environments to implement various effects.
 
-import _renpy_tegl as gl
+try:
+    import _renpy_tegl as gl; gl
+    import _renpy_pysdlgl as pysdlgl; pysdlgl
+except ImportError:
+    gl = None
+    pysdlgl = None
 
 import glshader
 

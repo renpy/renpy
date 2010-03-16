@@ -1257,7 +1257,7 @@ class Interface(object):
             self.pushed_event = None
             self.last_event = rv
             return rv
-            
+
         try:
             cpu_idle.set()            
             ev = pygame.event.wait()
@@ -1792,7 +1792,7 @@ class Interface(object):
                             ev = self.event_poll()
                         else:
                             ev = self.event_wait()
-
+                        
                     if ev.type == pygame.NOEVENT:
                         continue
 

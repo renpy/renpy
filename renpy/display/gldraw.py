@@ -1,6 +1,3 @@
-# IMPORTANT NOTE: This code should fail gracefully-ish if _renpy_tegl can't be
-# imported.
-
 import renpy
 from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
@@ -10,9 +7,13 @@ import os
 import sys
 import weakref
 
-import _renpy_tegl as gl
-import _renpy_pysdlgl as pysdlgl
-
+try:
+    import _renpy_tegl as gl; gl
+    import _renpy_pysdlgl as pysdlgl; pysdlgl
+except ImportError:
+    gl = None
+    pysdlgl = None
+    
 import gltexture
 import glenviron
 
@@ -88,6 +89,10 @@ class GLDraw(object):
         working for some reason.
         """
 
+        # If GL can't be loaded, give up.
+        if not gl:
+            return False
+        
         if self.rtt:
             self.rtt.deinit()
         if self.environ:
@@ -430,9 +435,9 @@ class GLDraw(object):
             tex = self.load_texture(what)
             self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
             return
-            
-        # TODO: Implement other draw modes here.
 
+        # Other draw modes.
+        
         if what.operation == DISSOLVE:
 
             self.set_clip(clip)
@@ -481,7 +486,6 @@ class GLDraw(object):
 
             reverse *= renpy.display.render.Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
                 
-            # TODO: Make this switch us to nearest-neighbor mode.
             gltexture.blit(
                 pc,
                 xo,

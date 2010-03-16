@@ -1,7 +1,13 @@
 # This file contains GLSL shader code, and code to load shaders.
 
 import array
-import _renpy_tegl as gl
+
+try:
+    import _renpy_tegl as gl; gl
+    import _renpy_pysdlgl as pysdlgl; pysdlgl
+except ImportError:
+    gl = None
+    pysdlgl = None
 
 VERTEX_SHADER = """
 void main() {

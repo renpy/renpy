@@ -1,12 +1,12 @@
 import pygame; pygame # other modules might depend on pygame.
-import _renpy_tegl as gl
-import _renpy_pysdlgl as pysdlgl
 
-# TODO:
-# - Texgrid Subsurface/size/etc.
-# - Texgrid from drawing on screen.
-# - Shader Environment.
-# - Integrate w/ Ren'Py
+try:
+    import _renpy_tegl as gl; gl
+    import _renpy_pysdlgl as pysdlgl; pysdlgl
+except ImportError:
+    gl = None
+    pysdlgl = None
+
 
 # The maximum size of a texture.
 MAX_SIZE = 512

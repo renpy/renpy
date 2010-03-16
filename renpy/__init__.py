@@ -81,7 +81,6 @@ def import_all():
     
     import renpy.display.swdraw
     
-    # GL has to load before core. (Does it?)
     import renpy.display.glshader
     import renpy.display.glenviron
     import renpy.display.gltexture
