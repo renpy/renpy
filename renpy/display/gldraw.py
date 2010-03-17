@@ -25,6 +25,7 @@ from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
 import pygame
 import os
+import os.path
 import sys
 import weakref
 
@@ -69,11 +70,13 @@ class GLDraw(object):
         self.window = None
         
         # The OpenGL logfile.
-        # TODO: Compute the path a bit better.
         try:
-            self.log_file = file("opengl.txt", "w")
+            self.log_file = file(os.path.join(renpy.config.renpy_base, "opengl.txt"), "w")
         except:
-            self.log_file = None
+            try:
+                self.log_file = file(os.path.join(renpy.config.savedir, "opengl.txt"), "w")
+            except:
+                self.log_file = None
             
         # The virtual size of the screen, as requested by the game.
         self.virtual_size = None
