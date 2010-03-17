@@ -23,6 +23,7 @@ import renpy
 import pygame
 import math
 import weakref
+import time
 
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
@@ -935,3 +936,10 @@ class SWDraw(object):
 
         return
             
+    def event_peek_sleep(self):
+        """
+        Wait a little bit so the CPU doesn't speed up.
+        """
+
+        time.sleep(.001)
+        

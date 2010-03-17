@@ -708,5 +708,7 @@ class GLDraw(object):
     def free_memory(self):
         self.texture_cache.clear()
         gltexture.dealloc_textures()
-
-        
+       
+    def event_peek_sleep(self):
+        # No sleep required, as the vsync slows us down.
+        return
