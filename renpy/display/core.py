@@ -927,6 +927,9 @@ class Interface(object):
 
         # Should we show the mouse?
         self.show_mouse = True
+
+        # Should we reset the display?
+        self.display_reset = False
         
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
@@ -1031,6 +1034,8 @@ class Interface(object):
         This sets the video mode. It also picks the draw object.
         """
 
+        self.display_reset = False
+        
         # Ensure that we kill off the movie when changing screen res.
         renpy.display.video.movie_stop(clear=False)
 
@@ -1654,7 +1659,7 @@ class Interface(object):
             while rv is None:
 
                 # Check for a change in fullscreen preference.                
-                if self.fullscreen != renpy.game.preferences.fullscreen:
+                if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
                     self.set_mode()
                     needs_redraw = True
 
