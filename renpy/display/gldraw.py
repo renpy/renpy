@@ -93,13 +93,9 @@ class GLDraw(object):
         if not gl:
             return False
         
-        if self.rtt:
-            self.rtt.deinit()
-        if self.environ:
-            self.environ.deinit()
-        
-        gltexture.dealloc_textures()
-        
+        if self.did_init:
+            self.deinit()
+
         self.log(renpy.version)
         
         self.virtual_size = virtual_size
@@ -159,15 +155,28 @@ class GLDraw(object):
         self.environ.init()
         self.rtt.init()
 
-        # This should get rid of all of the cached textures.
-        renpy.display.render.free_memory()
-        self.texture_cache.clear()
-
         # Allocate a fullscreen surface for video playback.
         self.fullscreen_surface = renpy.display.pgrender.surface(self.virtual_size, False)
         
         return True
 
+    def deinit(self):
+        """
+        De-initializes the system in preparation for a
+        restart. Flushes out all the textures while it's at it.
+        """
+    
+        # This should get rid of all of the cached textures.
+        renpy.display.render.free_memory()
+        self.texture_cache.clear()
+
+        gltexture.dealloc_textures()
+        
+        if self.rtt:
+            self.rtt.deinit()
+        if self.environ:
+            self.environ.deinit()
+        
 
     def init(self):
         """

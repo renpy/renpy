@@ -1,3 +1,4 @@
+import collections
 import pygame; pygame # other modules might depend on pygame.
 
 try:
@@ -25,13 +26,8 @@ def check_error():
         raise Exception("GL Error: 0x%x" % err)
     
 
-# The generation of texture we're in. This is bumped by when when we
-# clear out all the texture numbers.
-texture_generation = 1
-
-# A list of texture number allocated in this generation.
+# A list of texture number allocated.
 texture_numbers = [ ]
-
     
 class Texture(object):
     """
@@ -68,7 +64,11 @@ class Texture(object):
         
         # True if we're in NEAREST mode. False if we're in LINEAR mode.
         self.nearest = False
-    
+
+        # The free list we should be put on, or None if we're already on
+        # a free list.
+        self.free_list = None
+        
         
     def __del__(self):
 
@@ -78,9 +78,9 @@ class Texture(object):
 
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
-        if free_textures:
-            free_textures[self.width, self.height].append(self)
-
+        if self.free_list:
+            self.free_list.append(self)
+            self.free_list = None
         
             
     def load_surface(self, surf, x, y, w, h):
@@ -210,13 +210,12 @@ class Texture(object):
         This allocates a texture number, if necessary.
         """
 
-        if self.generation == texture_generation:
+        if self.number is not None:
             return
-
+        
         texnums = [ 0 ]
         gl.GenTextures(1, texnums)
         
-        self.generation = texture_generation
         self.number = texnums[0]
         self.created = False
         
@@ -225,14 +224,9 @@ class Texture(object):
         
 # This is a map from texture sizes to a list of free textures of that
 # size.
-free_textures = { }
+free_textures = collections.defaultdict(list)
 
-# Initialize free_textures.        
-for height in SIZES:
-    for width in SIZES:
-        free_textures[width, height] = [ ]
-
-
+        
 # The total size (in bytes) of all the textures that have been allocated.
 total_texture_size = 0
 
@@ -254,19 +248,20 @@ def alloc_texture(width, height):
     else:        
         rv = Texture(width, height)
         total_texture_size += width * height * 4        
+
+    rv.free_list = l
         
     return rv
 
 
 def dealloc_textures():
-    global texture_generation
     global texture_numbers
-
+    
     for t in texture_numbers:
         gl.DeleteTextures(1, [ t ])
 
-    texture_generation += 1
     texture_numbers = [ ]
+    free_textures.clear()
 
 
 def compute_subrow(row, offset, width):

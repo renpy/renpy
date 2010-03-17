@@ -907,5 +907,10 @@ class SWDraw(object):
         rle_cache.clear()
         
         
-        
+    def deinit(self):
+        """
+        De-initializes the drawing system.
+        """
+
+        return
             

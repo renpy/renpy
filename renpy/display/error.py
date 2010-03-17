@@ -34,36 +34,41 @@ class ReportError(object):
     # In the init method, Ren'Py is functioning reasonably normally.
     def __init__(self):
         self.font = renpy.display.text.get_font(renpy.store.style.default.font, 14, False, False, False)
-        self.flags = pygame.display.get_surface().get_flags()
-        self.size = pygame.display.get_surface().get_size()
+        # self.flags = pygame.display.get_surface().get_flags()
+        # self.size = pygame.display.get_surface().get_size()
+
+        self.size = (renpy.config.screen_width, renpy.config.screen_height)
         
     # In the report method, Ren'Py may be in an ill-defined state.
     def report(self, error_type):
         import os.path
         import pygame # W0404
-        pygame.display.init()
 
+        pygame.display.init()
+        pygame.display.set_caption("Ren'Py Error - left-click reloads, right-click quits")
+        
         msg = "Ren'Py has experienced " + error_type + ".\n"
         msg += "Left-click or space reloads, right-click or escape exits."
 
-        screen = pygame.display.set_mode(self.size, self.flags, 32)
-        screen.fill((0, 0, 0, 255))
+        screen = pygame.display.set_mode(self.size, 0, 32)
             
-        y = 2
-        for l in msg.split('\n'):        
-            surf = self.font.render(l, True, (255, 255, 255, 255), (0, 0, 0, 255))
-            screen.blit(surf, (2, y))
-
-            y += self.font.get_linesize()
-            
-        pygame.display.flip() # E1120
-
         pygame.time.set_timer(pygame.USEREVENT + 1, 50)
 
         while True:
 
             if commandfile and os.path.exists(commandfile):
                 return True
+
+            screen.fill((0, 0, 0, 255))
+            
+            y = 2
+            for l in msg.split('\n'):        
+                surf = self.font.render(l, True, (255, 255, 255, 255), (0, 0, 0, 255))
+                screen.blit(surf, (2, y))
+
+                y += self.font.get_linesize()
+                        
+            pygame.display.flip() # E1120
 
             ev = pygame.event.wait()
             

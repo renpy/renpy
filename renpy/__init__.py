@@ -135,5 +135,7 @@ def reload_all():
     import gc
     gc.collect()
 
+    renpy.display.draw = None
+    
     import_all()
 

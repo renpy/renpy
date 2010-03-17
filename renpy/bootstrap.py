@@ -266,6 +266,9 @@ def bootstrap(renpy_base):
             break
             
         except renpy.game.UtterRestartException:
+
+            if renpy.display.draw:
+                renpy.display.draw.deinit()
             
             # Only works after a full restart.
             report_error = renpy.display.error.ReportError()
