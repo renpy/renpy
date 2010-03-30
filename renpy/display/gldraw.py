@@ -39,17 +39,24 @@ except ImportError:
 import gltexture
 import glenviron
 
+# Sometimes, 0xff000000 is not representable as a short int.
+if 0xff000000 >= sys.maxint:
+    BIGMASK = -16777216
+else:
+    BIGMASK = 0xFF000000
+
+# BGRA.
 if sys.byteorder == 'little':
     MASKS = (
         0x00FF0000,
         0x0000FF00,
         0x000000FF,
-        -16777216) # 0xFF000000, but that's not representable as a short int.
+        BIGMASK) 
 else:
     MASKS = (
         0x0000FF00,
         0x00FF0000,
-        -16777216,
+        BIGMASK,
         0x000000FF)
 
     
