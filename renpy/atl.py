@@ -85,6 +85,7 @@ PROPERTIES = {
         "delay" : float,
         }
 
+
 def correct_type(v, b, ty):
     """
     Corrects the type of v to match ty. b is used to inform the match.
@@ -1224,6 +1225,7 @@ class RawFunction(RawStatement):
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 
+    
 class Function(Statement):
     
     def __init__(self, loc, function):
@@ -1238,8 +1240,6 @@ class Function(Statement):
             return "continue", None, fr
         else:
             return "next", 0, None
-
-        
     
     
 # This parses an ATL block.

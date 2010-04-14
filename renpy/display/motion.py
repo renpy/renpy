@@ -56,6 +56,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 class TransformState(renpy.object.Object):
 
+        
     def __init__(self): # W0231
         self.alpha = 1
         self.rotate = None
@@ -275,8 +276,23 @@ class Transform(Container):
         if version < 4:
             self.style_arg = 'transform'
     
+    DEFAULT_ARGUMENTS = {
+            "selected_activate" : { },
+            "selected_hover" : { },
+            "selected_idle" : { },
+            "selected_insensitive" : { },
+            "activate" : { },
+            "hover" : { },
+            "idle" : { },
+            "insensitive" : { },
+            "" : { },
+            }
+
     # Compatibility with old versions of the class.
     active = False
+    children = False
+    arguments = DEFAULT_ARGUMENTS
+
     
     def __init__(self, child=None, function=None, style='transform', **kwargs):
 
@@ -292,6 +308,25 @@ class Transform(Container):
 
         self.state = TransformState()
 
+        self.arguments = dict((k, {}) for k in self.DEFAULT_ARGUMENTS)
+        
+        # Split up the keyword arguments.
+        for k, v in kwargs.iteritems():
+            if "_" in k:
+                prefix, prop = k.rsplit("_", 1)
+            else:
+                prefix = ""
+                prop = k
+
+            if prefix not in self.arguments:
+                raise Exception("Unknown transform property prefix: %r" % prefix)
+
+            if prop not in renpy.atl.PROPERTIES:
+                raise Exception("Unknown transform property: %r")
+            
+            self.arguments[prefix][prop] = v
+
+            
         # Apply the keyword arguments.
         for k, v in kwargs.iteritems():
             setattr(self.state, k, v)
@@ -314,6 +349,26 @@ class Transform(Container):
         self.at_offset = 0
 
         self.child_st_base = 0
+
+
+    # The default function chooses entries from self.arguments that match
+    # the style prefix, and applies them to the state.
+    def default_function(self, state, st, at):
+
+        prefix = self.style.prefix.strip("_")
+        prefixes = [ ]
+
+        while prefix:
+            prefixes.insert(0, prefix)
+            _, _, prefix = prefix.partition("_")
+
+        prefixes.insert(0, "")
+
+        for i in prefixes:
+            for k, v in self.arguments[i].iteritems():
+                setattr(state, k, v)
+            
+        return None
         
         
     def take_state(self, t):
@@ -323,10 +378,10 @@ class Transform(Container):
         
         self.state.take_state(t.state)
 
-        # Apply the keyword arguments.
-        for k, v in self.kwargs.iteritems():
-            setattr(self.state, k, v)
+        # The arguments will be applied when the default function is
+        # called.
 
+            
     def take_execution_state(self, t):
         """
         Takes the execution state from object t into this object. This is
@@ -335,6 +390,7 @@ class Transform(Container):
 
         return 
 
+    
     def _hide(self, st, at):
         
         if not self.hide_request:
@@ -357,10 +413,12 @@ class Transform(Container):
             renpy.display.render.redraw(d, 0)
             return d
 
+        
     def set_child(self, child):
         self.child = child
         self.child_st_base = self.st
-    
+
+        
     def render(self, width, height, st, at):
 
         # Should we perform clipping?
@@ -377,11 +435,13 @@ class Transform(Container):
 
         # If we have to, call the function that updates this transform.        
         if self.function is not None:
-
             fr = self.function(self, st, at)
+        else:
+            fr = self.default_function(self, st, at)
 
-            if fr is not None:
-                renpy.display.render.redraw(self, fr)
+            
+        if fr is not None:
+            renpy.display.render.redraw(self, fr)
 
         self.active = True
 
@@ -472,7 +532,6 @@ class Transform(Container):
         xzoom = self.state.zoom * self.state.xzoom
         yzoom = self.state.zoom * self.state.yzoom
 
-
         if xzoom != 1 or yzoom != 1:
 
             forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
@@ -504,6 +563,7 @@ class Transform(Container):
         
         return rv
 
+    
     def event(self, ev, x, y, st):
 
         if self.hide_request:
@@ -528,7 +588,8 @@ class Transform(Container):
                 return rv
                 
         return None
-            
+
+    
     def __call__(self, child=None, take_state=True):
 
         if child is None:
@@ -543,7 +604,8 @@ class Transform(Container):
         rv.take_state(self)
 
         return rv
-        
+
+    
     def get_placement(self):
 
         if not self.active:
@@ -573,9 +635,11 @@ class Transform(Container):
 
         return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.state.subpixel
 
+    
     def update(self):
         renpy.display.render.invalidate(self)
 
+        
     def parameterize(self, name, parameters):
         if parameters:
             raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
@@ -583,7 +647,8 @@ class Transform(Container):
 
         # Note the call here.
         return self()
-        
+
+    
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
     def __init__(self, atl, child=None, context={}, parameters=None, style='transform'):

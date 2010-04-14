@@ -1,5 +1,11 @@
-New in Ren'PY 6.10.3
---------------------
+New in Ren'Py 6.11
+------------------
+
+Transform (and ui.transform) have been changed so that their arguments
+can now be prefixed with a style prefix. One can write
+ui.transform(idle_rotate=30, hover_rotate=90) and have it work. [doc]
+
+
 
 The following numbered bugs were fixed:
 
