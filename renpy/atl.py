@@ -83,6 +83,9 @@ PROPERTIES = {
         "corner2" : (float, float),
         "subpixel" : bool,
         "delay" : float,
+        "xoffset" : int,
+        "yoffset" : int,
+        "offset" : (int, int),
         }
 
 

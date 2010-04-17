@@ -30,6 +30,10 @@ from renpy.display.layout import Container
 
 # Convert a position from cartesian to polar coordinates.
 def cartesian_to_polar(x, y, xaround, yaround):
+    """
+    Converts cartesian coordinates to polar coordinates.
+    """
+
     dx = x - xaround
     dy = y - yaround
 
@@ -42,7 +46,10 @@ def cartesian_to_polar(x, y, xaround, yaround):
     return angle, radius
     
 def polar_to_cartesian(angle, radius, xaround, yaround):
-
+    """
+    Converts polart coordinates to cartesian coordinates.
+    """
+    
     angle = angle * math.pi / 180
     
     dx = radius * math.sin(angle)
@@ -53,10 +60,28 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
     
     return x, y
 
+def first_not_none(*args):
+    """
+    Returns the first argument that is not None.
+    """
+
+    for i in args:
+        if i is not None:
+            return i
+    return i
+
 
 class TransformState(renpy.object.Object):
 
-        
+    xoffset = None
+    yoffset = None
+    default_xpos = None
+    default_ypos = None
+    default_xanchor = None
+    default_yanchor = None
+    default_xoffset = None
+    default_yoffset = None
+    
     def __init__(self): # W0231
         self.alpha = 1
         self.rotate = None
@@ -64,11 +89,14 @@ class TransformState(renpy.object.Object):
         self.xzoom = 1
         self.yzoom = 1
         
-        self.xpos = 0
-        self.ypos = 0
-        self.xanchor = 0
-        self.yanchor = 0
+        self.xpos = None
+        self.ypos = None
+        self.xanchor = None
+        self.yanchor = None
+        self.xoffset = None
+        self.yoffset = None
 
+        
         self.xaround = 0.0
         self.yaround = 0.0
         self.xanchoraround = 0.0
@@ -82,24 +110,108 @@ class TransformState(renpy.object.Object):
         self.size = None
 
         self.delay = 0
+
+        # Note: When adding a new property, we need to add it to:
+        # - take_state
+        # - diff
+        # - renpy.atl.PROPERTIES
+
+        
+        # Default values for various properties, taken from our
+        # parent.
+        self.default_xpos = None
+        self.default_ypos = None
+        self.default_xanchor = None
+        self.default_yanchor = None
+        self.default_xoffset = None
+        self.default_yoffset = None
+
         
     def take_state(self, ts):
-        self.__dict__.update(ts.__dict__)
+
+        self.alpha = ts.alpha
+        self.rotate = ts.rotate
+        self.zoom = ts.zoom
+        self.xzoom = ts.xzoom
+        self.yzoom = ts.yzoom
+        
+        self.xaround = ts.xaround
+        self.yaround = ts.yaround
+        self.xanchoraround = ts.xanchoraround
+        self.yanchoraround = ts.yanchoraround
+
+        self.subpixel = ts.subpixel
+
+        self.crop = ts.crop
+        self.corner1 = ts.corner1
+        self.corner2 = ts.corner2
+        self.size = ts.size
+
+        # Take the computed position properties, not the
+        # raw ones.
+        (self.default_xpos,
+         self.default_ypos,         
+         self.default_xanchor,
+         self.default_yanchor,
+         self.default_xoffset,
+         self.default_yoffset,
+         self.subpixel) = ts.get_placement()
        
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
-    def diff(self, ts):
+    def diff(self, newts):
 
         rv = { }
+
+        def diff2(prop, new, old):
+            if new != old:
+                rv[prop] = (old, new)
+
+        def diff4(prop, new, default_new, old, default_old):
+            if new is None:
+                new = default_new
+
+            if old is None:
+                old = default_old
+
+            if new != old:
+                rv[prop] = (old, new)
+
+        diff2("alpha", newts.alpha, self.alpha)
+        diff2("rotate", newts.rotate, self.rotate)
+        diff2("zoom", newts.zoom, self.zoom)
+        diff2("xzoom", newts.xzoom, self.xzoom)
+        diff2("yzoom", newts.yzoom, self.yzoom)
         
-        for k, old in self.__dict__.iteritems():
-            new = ts.__dict__[k]
+        diff2("xaround", newts.xaround, self.xaround)
+        diff2("yaround", newts.yaround, self.yaround)
+        diff2("xanchoraround", newts.xanchoraround, self.xanchoraround)
+        diff2("yanchoraround", newts.yanchoraround, self.yanchoraround)
 
-            if old != new:
-                rv[k] = (old, new)
+        diff2("subpixel", newts.subpixel, self.subpixel)
 
+        diff2("crop", newts.crop, self.crop)
+        diff2("corner1", newts.corner1, self.corner1)
+        diff2("corner2", newts.corner2, self.corner2)
+        diff2("size", newts.size, self.size)
+
+        diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
+        diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
+        diff4("xoffset", newts.xoffset, newts.default_xoffset, self.xoffset, self.default_xoffset)
+        
         return rv
-                
+
+    def get_placement(self):
+        return (
+            first_not_none(self.xpos, self.default_xpos),
+            first_not_none(self.xpos, self.default_xpos),
+            first_not_none(self.xanchor, self.default_xanchor),
+            first_not_none(self.xanchor, self.default_xanchor),
+            first_not_none(self.xoffset, self.default_xoffset),            
+            first_not_none(self.xoffset, self.default_xoffset),
+            self.subpixel,
+            )
+            
         
     # These update various properties.
     def get_xalign(self):
@@ -135,15 +247,21 @@ class TransformState(renpy.object.Object):
     alignaround = property(get_around, set_alignaround)
         
     def get_angle(self):
-        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        xpos = first_not_none(self.xpos, self.default_xpos, 0)
+        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return angle
 
     def get_radius(self):
-        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        xpos = first_not_none(self.xpos, self.default_xpos, 0)
+        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return radius
 
     def set_angle(self, value):
-        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        xpos = first_not_none(self.xpos, self.default_xpos, 0)
+        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         angle = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
@@ -151,7 +269,9 @@ class TransformState(renpy.object.Object):
             self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
         
     def set_radius(self, value):
-        angle, radius = cartesian_to_polar(self.xpos, self.ypos, self.xaround, self.yaround)
+        xpos = first_not_none(self.xpos, self.default_xpos, 0)
+        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         radius = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
@@ -185,8 +305,14 @@ class TransformState(renpy.object.Object):
         self.xpos, self.ypos = value
 
     align = property(get_align, set_align)
-        
-    
+
+    def get_offset(self):
+        return self.xoffset, self.yoffset
+
+    def set_offset(self, value):
+        self.xoffset, self.yoffset = value
+
+    offset = property(get_offset, set_offset)
 
     
 class Proxy(object):
@@ -244,6 +370,10 @@ class Transform(Container):
     size = Proxy("size")
 
     delay = Proxy("delay")
+
+    xoffset = Proxy("xoffset")
+    yoffset = Proxy("yoffset")
+    offset = Proxy("offset")
     
     def after_upgrade(self, version):
 
@@ -292,7 +422,6 @@ class Transform(Container):
     active = False
     children = False
     arguments = DEFAULT_ARGUMENTS
-
     
     def __init__(self, child=None, function=None, style='transform', **kwargs):
 
@@ -433,12 +562,12 @@ class Transform(Container):
         self.st = st = st + self.st_offset
         self.at = at = at + self.at_offset
 
+
         # If we have to, call the function that updates this transform.        
         if self.function is not None:
             fr = self.function(self, st, at)
         else:
             fr = self.default_function(self, st, at)
-
             
         if fr is not None:
             renpy.display.render.redraw(self, fr)
@@ -451,6 +580,26 @@ class Transform(Container):
         if self.child is None:
             raise Exception("Transform does not have a child.")
             
+        # Use non-None elements of the child placement as defaults.
+        cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+
+        if cxpos is not None:
+            self.state.default_xpos = cxpos
+        if cxanchor is not None:
+            self.state.default_xanchor = cxanchor
+        if cxoffset is not None:
+            self.state.default_xoffset = cxoffset
+        if cypos is not None:
+            self.state.default_ypos = cypos
+        if cyanchor is not None:
+            self.state.default_yanchor = cyanchor
+        if cyoffset is not None:
+            self.state.default_yoffset = cyoffset
+
+        self.state.subpixel |= csubpixel
+
+
+        # Render the child.
         cr = render(self.child, width, height, st - self.child_st_base, at)
         width, height = cr.get_size()
         
@@ -617,24 +766,8 @@ class Transform(Container):
 
         self.active = True
         
-        xpos = self.state.xpos
-        if xpos is None:
-            xpos = self.style.xpos
-
-        ypos = self.state.ypos
-        if ypos is None:
-            ypos = self.style.ypos
-
-        xanchor = self.state.xanchor
-        if xanchor is None:
-            xanchor = self.style.xanchor
-
-        yanchor = self.state.yanchor
-        if yanchor is None:
-            yanchor = self.style.yanchor
-
-        return xpos, ypos, xanchor, yanchor, self.style.xoffset, self.style.yoffset, self.state.subpixel
-
+        return self.state.get_placement()
+        
     
     def update(self):
         renpy.display.render.invalidate(self)

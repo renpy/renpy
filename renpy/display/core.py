@@ -286,7 +286,7 @@ class Displayable(renpy.object.Object):
         self.render().
         """
         
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel  = self.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.get_placement()
 
         if xpos is None:
             xpos = 0
@@ -296,7 +296,11 @@ class Displayable(renpy.object.Object):
             xanchor = 0
         if yanchor is None:
             yanchor = 0
-
+        if xoffset is None:
+            xoffset = 0
+        if yoffset is None:
+            yoffset = 0
+            
         sw, sh = surf.get_size()
 
         # x
@@ -336,7 +340,6 @@ class Displayable(renpy.object.Object):
         # Add in offsets.
         xoff += xoffset
         yoff += yoffset
-
 
         if subpixel:
             dest.subpixel_blit(surf, (xoff, yoff), main=main)
