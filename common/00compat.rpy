@@ -29,6 +29,15 @@ init -1210 python:
             store.offscreenleft = Position(xpos=0.0, xanchor=1.0)
             store.offscreenright = Position(xpos=1.0, xanchor=0.0)
 
+        if version <= (6, 10, 2):
+            # Before 6.11, we used the image placement to handle
+            # the location of things on the screen.            
+            style.image_placement.xpos = 0.5
+            style.image_placement.ypos = 1.0
+            style.image_placement.xanchor = 0.5
+            style.image_placement.yanchor = 1.0
+
+            config.default_transform = None
             
             
 init 1210 python hide::

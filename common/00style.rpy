@@ -213,15 +213,8 @@ init -1090 python:
     style.window.xfill = True
     style.window.yfill = False
     style.window.yminimum = 150 # Includes margins and padding.
-
     style.window.xalign = 0.5
     style.window.yalign = 1.0
-
-    # Image placement.
-    style.image_placement.xpos = 0.5
-    style.image_placement.ypos = 1.0
-    style.image_placement.xanchor = 0.5
-    style.image_placement.yanchor = 1.0
 
     # Dialogue
     style.say_label.bold = True

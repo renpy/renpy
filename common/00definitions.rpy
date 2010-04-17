@@ -39,16 +39,13 @@ init -1110:
         center
 
     python:
-        config.default_transform = None
+        config.default_transform = default
         
 
 init -1110 python:
 
     _define = define = object()
         
-    # Positions ##############################################################
-
-
     # Transitions ############################################################
 
     # Simple transitions.
@@ -193,4 +190,4 @@ init 1110 python:
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:
-        config.default_transform.show()
+        config.default_transform._show()

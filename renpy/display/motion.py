@@ -547,6 +547,47 @@ class Transform(Container):
         self.child = child
         self.child_st_base = self.st
 
+
+    def update_state(self):
+        """
+        This updates the state to that at self.st, self.at.
+        """
+
+        # If we have to, call the function that updates this transform.        
+        if self.function is not None:
+            fr = self.function(self, self.st, self.at)
+        else:
+            fr = self.default_function(self, self.st, self.at)
+
+        # Order a redraw, if necessary.
+        if fr is not None:
+            renpy.display.render.redraw(self, fr)
+
+        self.active = True
+
+        if self.state.size:
+            width, height = self.state.size
+
+        # Use non-None elements of the child placement as defaults.
+        if self.child is not None:
+            
+            cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+
+            if cxpos is not None:
+                self.state.default_xpos = cxpos
+            if cxanchor is not None:
+                self.state.default_xanchor = cxanchor
+            if cxoffset is not None:
+                self.state.default_xoffset = cxoffset
+            if cypos is not None:
+                self.state.default_ypos = cypos
+            if cyanchor is not None:
+                self.state.default_yanchor = cyanchor
+            if cyoffset is not None:
+                self.state.default_yoffset = cyoffset
+
+            self.state.subpixel |= csubpixel
+        
         
     def render(self, width, height, st, at):
 
@@ -562,44 +603,13 @@ class Transform(Container):
         self.st = st = st + self.st_offset
         self.at = at = at + self.at_offset
 
-
-        # If we have to, call the function that updates this transform.        
-        if self.function is not None:
-            fr = self.function(self, st, at)
-        else:
-            fr = self.default_function(self, st, at)
-            
-        if fr is not None:
-            renpy.display.render.redraw(self, fr)
-
-        self.active = True
-
-        if self.state.size:
-            width, height = self.state.size
-
+        # Update the state.
+        self.update_state()
+        
+        # Render the child.
         if self.child is None:
             raise Exception("Transform does not have a child.")
             
-        # Use non-None elements of the child placement as defaults.
-        cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
-
-        if cxpos is not None:
-            self.state.default_xpos = cxpos
-        if cxanchor is not None:
-            self.state.default_xanchor = cxanchor
-        if cxoffset is not None:
-            self.state.default_xoffset = cxoffset
-        if cypos is not None:
-            self.state.default_ypos = cypos
-        if cyanchor is not None:
-            self.state.default_yanchor = cyanchor
-        if cyoffset is not None:
-            self.state.default_yoffset = cyoffset
-
-        self.state.subpixel |= csubpixel
-
-
-        # Render the child.
         cr = render(self.child, width, height, st - self.child_st_base, at)
         width, height = cr.get_size()
         
@@ -648,7 +658,6 @@ class Transform(Container):
             yo = yo * yzoom
             
             width, height = self.state.size
-
         
         # Rotation.
         if self.state.rotate is not None:
@@ -676,7 +685,6 @@ class Transform(Container):
             xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
             xo += width / 2.0
             yo += height / 2.0
-
             
         xzoom = self.state.zoom * self.state.xzoom
         yzoom = self.state.zoom * self.state.yzoom
@@ -758,21 +766,15 @@ class Transform(Container):
     def get_placement(self):
 
         if not self.active:
-            if self.function is not None:
-                fr = self.function(self, 0, 0)
-
-                if fr is not None:
-                    renpy.display.render.redraw(self, fr)
-
-        self.active = True
+            self.update_state()
         
         return self.state.get_placement()
-        
-    
+            
+
     def update(self):
         renpy.display.render.invalidate(self)
-
         
+
     def parameterize(self, name, parameters):
         if parameters:
             raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
@@ -781,6 +783,11 @@ class Transform(Container):
         # Note the call here.
         return self()
 
+    
+    def _show(self):
+        self.update_state()
+        
+    
     
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
@@ -791,6 +798,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         self.raw_child = self.child
         
     def _show(self):
+        super(ATLTransform, self)._show()
         self.execute(self, 0, 0)
     
     
