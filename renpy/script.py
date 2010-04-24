@@ -425,14 +425,29 @@ class Script(object):
                 old_ei = renpy.game.exception_info
                 renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.location[1], i.location[0])
 
-                if i.mode == 'exec':
-                    code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
-                elif i.mode == 'eval':
-                    code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                try:
+                
+                    if i.mode == 'exec':
+                        code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                    elif i.mode == 'eval':
+                        code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
 
+                except SyntaxError, e:
+
+                    pem = renpy.parser.ParseError(
+                        filename = e.filename,
+                        number = e.lineno,
+                        msg = e.msg,
+                        line = e.text,
+                        pos = e.offset)
+
+                    renpy.parser.parse_errors.append(pem.message)
+                    
+                    continue
+
+                        
                 renpy.game.exception_info = old_ei
                 codes[magic] = code
-
 
             i.source = None
             i.bytecode = code

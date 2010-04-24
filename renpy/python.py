@@ -23,11 +23,8 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-
-from compiler import parse
-from compiler.pycodegen import ModuleCodeGenerator, ExpressionCodeGenerator
-# from compiler.misc import set_filename
-import compiler.ast as ast
+# Import the python ast module, not ours.
+ast = __import__("ast", { })
 
 import marshal
 import random
@@ -111,48 +108,47 @@ def reached_vars(store, reachable, wait):
 
 ##### Code that replaces literals will calls to magic constructors.
 
-def wrap_node(n):
-    """
-    Replaces literal lists and dictionaries, and list comprehensions,
-    with calls to the appropriate Ren'Py constructors.
-    """
+class WrapNode(ast.NodeTransformer):
 
-    if isinstance(n, (ast.List, ast.ListComp)):
-        n = ast.CallFunc(node=ast.Name('__renpy__list__'),
-                         args=[ n ],
-                         star_args=None,
-                         dstar_args=None,
-                         )
+    def visit_ListComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__list__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
 
-    elif isinstance(n, ast.Dict):
-        n = ast.CallFunc(node=ast.Name('__renpy__dict__'),
-                         args=[ n ],
-                         star_args=None,
-                         dstar_args=None,
-                         )
+    def visit_List(self, n):
+        if not isinstance(n.ctx, ast.Load):
+            return self.generic_visit(n)
 
-    return n
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__list__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
 
+    def visit_Dict(self, n):
 
-def recursively_replace(o, func):
-    """
-    Walks through a compiler AST, calling the supplied function when a
-    node is encountered, and replacing the node with the return value.
-    """
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__dict__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
 
-    if isinstance(o, list):
-        return [ recursively_replace(i, func) for i in o ]
+wrap_node = WrapNode()                
 
-    if isinstance(o, tuple):
-        return tuple([ recursively_replace(i, func) for i in o ])
-
-    if isinstance(o, ast.Node):
-        for k in vars(o):
-            setattr(o, k, recursively_replace(getattr(o, k), func))
-
-        return func(o)
-
-    return o
 
 def set_filename(filename, offset, tree):
     """Set the filename attribute to filename on every node in tree"""
@@ -219,40 +215,31 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     if "\\u" in source:
         source = string_re.sub(make_unicode, source)
         
-    if mode == "exec":
-        source = "from __future__ import with_statement\n" + source
-        line_offset = 2
-    else:
-        line_offset = 1
-        
     try:
-        tree = parse(source, mode)
-    except SyntaxError, e:
+        line_offset = lineno - 1
+
+        tree = ast.parse(source, filename, mode)
+
+        tree = wrap_node.visit(tree)
+
+        ast.fix_missing_locations(tree)
+        ast.increment_lineno(tree, lineno - 1)
+
+        line_offset = 0
         
+        return compile(tree, filename, mode)
+
+    except SyntaxError, e:
+
         if e.lineno is not None:
-            msg = "Syntax error on line %d of %s" % (e.lineno + lineno - line_offset, filename)
+            e.lineno += line_offset
 
-            if len(source) < 128:
-                msg += ":\n    " + orig_source
-
-            raise Exception(msg)
-        else:
-            raise
-    
-    recursively_replace(tree, wrap_node)
-
-    if mode == 'exec':
-        set_filename(filename, lineno - line_offset, tree)
-        cg = ModuleCodeGenerator(tree)
-    else:
-        set_filename(filename, lineno - line_offset, tree)
-        cg = ExpressionCodeGenerator(tree)
-
-    return cg.getCode()
+        raise e
 
 def py_compile_exec_bytecode(source, **kwargs):
     code = py_compile(source, 'exec', **kwargs)
     return marshal.dumps(code)
+
 
 def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()

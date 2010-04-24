@@ -6,6 +6,10 @@ can now be prefixed with a style prefix. One can write
 ui.transform(idle_rotate=30, hover_rotate=90) and have it work. [doc]
 
 
+The python compiler has been rewritten to use the python ast module.
+This should both improve performance, and improve error handling for
+python syntax. 
+
 
 The following numbered bugs were fixed:
 

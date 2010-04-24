@@ -275,7 +275,7 @@ init -1110 python hide:
         style.vscrollbar.hover_left_bar = img("rrvscrollbar", widget_hover, 0, 12)
         style.vscrollbar.hover_right_bar = img("rrvscrollbar", widget_hover, 0, 12)
         style.vscrollbar.hover_thumb = img("rrvscrollbar_thumb", widget_hover, None, None)
-
+        
     @theme
     def roundrect(
         widget = (0, 60, 120, 255),
@@ -286,10 +286,7 @@ init -1110 python hide:
         disabled_text = (200, 200, 200, 255),
         label = (255, 255, 255, 255),
         frame = (100, 150, 200, 255),
-        window = (0, 0, 0, 192),
-        mm_root = Solid((220, 235, 255, 255)),
-        gm_root = Solid((220, 235, 255, 255)),
-        
+
         text_size=None,
         small_text_size=None,
         less_rounded = False,        
@@ -299,7 +296,6 @@ init -1110 python hide:
         button_menu = None,
         rounded_window = True,
         outline_bars = False,
-
         mm_root = None,
         gm_root = None):
 
