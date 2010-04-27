@@ -1673,10 +1673,25 @@ def parse_statement(l):
 
         return ast.Init(loc, block, priority)
 
-    # Try parsing as a user-statement. If that doesn't work, revert and
-    # try as a say.
 
     state = l.checkpoint()
+
+    if l.keyword('screen'):
+
+        # Roll back the state, so we can start parsing the
+        # screen language statement.
+        l.revert(state)
+        
+        renpy.screenlang.parse_screen(l)
+
+        # TODO: Figure out what to do with a screen once we've parsed
+        # it.
+        
+        raise NotImplemented
+
+    
+    # Try parsing as a user-statement. If that doesn't work, revert and
+    # try as a say.
 
     word = l.word()
     if (word,) in renpy.statements.registry:
