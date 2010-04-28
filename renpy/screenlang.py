@@ -321,7 +321,9 @@ class FunctionStatement(object):
 styles = [ ]
 for i in renpy.style.style_properties:
     styles.append(Style(i, Expression))
-    
+for i in renpy.style.substitutes:
+    styles.append(Style(i, Expression))
+
 
 def pass_function():
     pass

@@ -109,7 +109,8 @@ def expand_anchor(v):
     """
 
     return anchors.get(v, v)
-    
+
+
 # A map of properties that we know about. The properties may take a
 # function that is called to convert the argument to something more
 # useful.
@@ -186,27 +187,95 @@ style_properties = dict(
     ypos = None,
     )
 
+
+def index_0(a):
+    return a[0]
+def index_1(a):
+    return a[1]
+def index_2(a):
+    return a[2]
+def index_3(a):
+    return a[3]
+def always_true(a):
+    return True
+def always_0(a):
+    return 0
+
 substitutes = dict(
-    xmargin = [ 'left_margin', 'right_margin' ],
-    ymargin = [ 'top_margin', 'bottom_margin' ],
-    xalign = [ 'xpos', 'xanchor' ],
-    yalign = [ 'ypos', 'yanchor' ],
-    xpadding = [ 'left_padding', 'right_padding' ],
-    ypadding = [ 'top_padding', 'bottom_padding' ],
-    minwidth = [ 'min_width' ],
-    textalign = [ 'text_align' ],
-    slow_speed = [ 'slow_cps' ],
+    xmargin = [
+        ('left_margin', None),
+        ('right_margin', None)
+        ],
+
+    ymargin = [
+        ('top_margin', None),
+        ('bottom_margin', None),
+        ],
+
+    xalign = [
+        ('xpos', None),
+        ('xanchor', None),
+        ],
+
+    yalign = [
+        ('ypos', None),
+        ('yanchor', None),
+        ],
+
+    xpadding = [
+        ('left_padding', None),
+        ('right_padding', None),
+        ],
+    
+    ypadding = [
+        ('top_padding', None),
+        ('bottom_padding', None),
+        ],
+    
+    minwidth = [ ('min_width', None) ],
+    textalign = [ ('text_align', None) ],
+    slow_speed = [ ('slow_cps', None) ],
     enable_hover = [ ],
-    left_gutter = [ 'fore_gutter' ],
-    right_gutter = [ 'aft_gutter' ], 
-    top_gutter = [ 'fore_gutter' ],
-    bottom_gutter = [ 'aft_gutter' ],
-    left_bar = [ 'fore_bar' ],
-    right_bar = [ 'aft_bar'],
-    top_bar = [ 'fore_bar' ],
-    bottom_bar = [ 'aft_bar'],
-    box_spacing = [ 'spacing' ],
-    box_first_spacing = [ 'first_spacing' ],
+    left_gutter = [ ('fore_gutter', None) ],
+    right_gutter = [ ('aft_gutter', None) ], 
+    top_gutter = [ ('fore_gutter', None) ],
+    bottom_gutter = [ ('aft_gutter', None) ],
+    left_bar = [ ('fore_bar', none_is_null) ],
+    right_bar = [ ('aft_bar', none_is_null) ],
+    top_bar = [ ('fore_bar', none_is_null) ],
+    bottom_bar = [ ('aft_bar', none_is_null) ],
+    box_spacing = [ ( 'spacing', None ) ],
+    box_first_spacing = [ ( 'first_spacing', None) ],
+
+    pos = [
+        ('xpos', index_0),
+        ('ypos', index_1),
+        ],
+    
+    anchor = [
+        ('xanchor', index_0),
+        ('yanchor', index_1),
+        ],
+    
+    align = [
+        ('xpos', index_0),
+        ('ypos', index_1),
+        ('xanchor', index_0),
+        ('yanchor', index_1),
+        ],
+    
+    area = [
+        ('xpos', index_0),
+        ('ypos', index_1),
+        ('xanchor', always_0),
+        ('yanchor', always_0),
+        ('xfill', always_true),
+        ('yfill', always_true),
+        ('xmaximum', index_2),
+        ('ymaximum', index_3),
+        ('xminimum', index_2),
+        ('yminimum', index_3),
+        ],        
     )
 
 # Map from property to number.
@@ -247,12 +316,20 @@ def init():
             func = style_properties[prop]
             expansions[prefix + prop] = [ (prio, propn + prefix_offset[a], func) for a in alts ]
 
-    # Expand out substitutes.
-    for k in substitutes.keys():
-        for r in roles:
-            for p in prefixes + [ '' ]:
-                expansions[r + p + k] = [ a for b in substitutes[k] for a in expansions[r + p + b] ]
 
+    # Expand out substitutes.
+    for prefix, (prio, alts) in prefix_subs.iteritems():
+
+        for virtual_prop, replacements in substitutes.iteritems():
+            expansions[prefix + virtual_prop] = [ ]
+
+            for real_prop, function in replacements:
+                propn = property_number[real_prop]
+                
+                for a in alts:
+                    expansions[prefix + virtual_prop].append((prio, propn + prefix_offset[a], function))
+
+    # Cache mappings for position properties.
     for i in ('xpos', 'xanchor', 'xoffset', 'ypos', 'yanchor', 'yoffset', 'subpixel'):
         globals()["prop_" + i] = property_number[i]
                 
@@ -564,7 +641,8 @@ def style_metaclass(name, bases, attrs):
             self.delattr(k)
 
         attrs[k] = property(None, setter_a, deleter_a)
-    
+
+
     for k, number in property_number.iteritems():
         def getter_b(self, number=number):
             return self.cache[self.offset + number]
