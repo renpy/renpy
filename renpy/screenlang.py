@@ -319,11 +319,108 @@ class FunctionStatement(object):
 
 # Used to allow statements to take styles.
 styles = [ ]
-for i in renpy.style.style_properties:
-    styles.append(Style(i, Expression))
-for i in renpy.style.substitutes:
-    styles.append(Style(i, Expression))
 
+position_styles = [ Style(i, Expression) for i in [
+        "anchor",
+        "xanchor",
+        "yanchor",
+        "pos",
+        "xpos",
+        "ypos",
+        "align",
+        "xalign",
+        "yalign",
+        "xoffset",
+        "yoffset",
+        "area",
+        ] ]
+
+text_styles = [ Style(i, Expression) for i in [
+        "antialias",
+        "black_color",
+        "bold",
+        "color",
+        "drop_shadow",
+        "drop_shadow_color",
+        "first_indent",
+        "font",
+        "size",
+        "italic",
+        "justify",
+        "language",
+        "layout",
+        "line_spacing",
+        "minwidth",
+        "min_width",
+        "outlines",
+        "rest_indent",
+        "slow_cps",
+        "slow_cps_multiplier",
+        "slow_abortable",
+        "text_align",
+        "text_y_fudge",
+        "underline",
+        "xmaximum",
+        "ymaximum",
+        "xminimum",
+        "yminimum",
+        "xfill",
+        "yfill",
+        "clipping",
+        ] ]
+
+window_styles = [ Style(i, Expression) for i in [
+        "background",
+        "foreground",
+        "left_margin",
+        "right_margin",
+        "bottom_margin",
+        "top_margin",
+        "xmargin",
+        "ymargin",
+        "left_padding",
+        "right_padding",
+        "top_padding",
+        "bottom_padding",
+        "xpadding",
+        "ypadding",
+        "side_group",
+        ] ]
+
+button_properties = [ Style(i, Expression) for i in [
+        "sound",
+        "focus_mask",
+        "focus_rect",
+        "time_policy",
+        "child",
+        "mouse",
+        ] ]
+
+bar_properties = [ Style(i, Expression) for i in [
+        "bar_vertical",
+        "bar_invert"
+        "bar_resizing",
+        "left_gutter",
+        "right_gutter",
+        "top_gutter",
+        "bottom_gutter",
+        "left_bar",
+        "right_bar",
+        "top_bar",
+        "bottom_bar",
+        "thumb",
+        "thumb_shadow",
+        "unscrollable",
+        ] ]
+
+box_properties = [ Style(i, Expression) for i in [
+        "box_layout",
+        "spacing",
+        "first_spacing",
+        ] ]
+
+
+    
 
 def pass_function():
     pass

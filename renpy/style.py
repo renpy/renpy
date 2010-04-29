@@ -256,6 +256,12 @@ substitutes = dict(
         ('xanchor', index_0),
         ('yanchor', index_1),
         ],
+
+    # Conflicts w/ a variable used in the Style implementation.    
+    # offset = [
+    #     ('xoffset', index_0),
+    #     ('yoffset', index_1),
+    #     ],
     
     align = [
         ('xpos', index_0),
@@ -738,9 +744,6 @@ class Style(object):
         
         if properties:
             self.properties.append(properties)
-            
-            # for prio, prop, val in expand_properties(properties):
-            #    self.properties[prop] = val
 
         if heavy:
             if styles_built:

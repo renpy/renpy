@@ -30,38 +30,128 @@ import sets
 
 import renpy
 
-# The current widget. None if we have none, otherwise either a layer
-# name or a displayable.
-current = None
+# Things we can add to. These have two methods: add is called with the
+# widget we're adding. close is called when the thing is ready to be
+# closed.
 
-# A stack of current widgets and/or layers.
-current_stack = [ ]
+class Addable(object):
+    def get_layer(self):
+        return Exception("Operation can only be performed on a layer.")
 
-# True if the current widget should be used at most once.
-current_once = False
+class Layer(Addable):
+    def __init__(self, name):
+        self.name = name
+
+    def add(self, d, key):
+        renpy.game.context(-1).scene_lists.add(self.name, d, key=key)
+
+    def close(self, d):
+        stack.pop()
+
+        if d and d != self.name:
+            raise Exception("ui.close closed layer %s, not the expected %r." % (self.name, d))
+        
+    def get_layer(self):
+        return self.name
+
+        
+class Many(Addable):
+    """
+    A widget that takes many children.
+    """
+
+    def __init__(self, displayable):
+        self.displayable = displayable
+
+    def add(self, d, key):
+        self.displayable.add(d)
+
+    def close(self, d):
+        stack.pop()
+
+        if d and d != self.name:
+            raise Exception("ui.close closed %r, not the expected %r." % (self.displayable, d))
+
+class One(Addable):
+    """
+    A widget that expects exactly one child.
+    """
+    
+    def __init__(self, displayable):
+        self.displayable = displayable
+
+    def add(self, d, key):
+        self.displayable.add(d)
+        stack.pop()
+        
+    def close(self, d):
+        raise Exception("Widget expects a child.")
+
+class Detached(Addable):
+    """
+    Used to indicate a widget is detached from the stack.
+    """
+
+    def add(self, d, key):
+        stack.pop()
+
+    def close(self, d):
+        raise Exception("Detached expects to be given a child.")
+    
+class ChildOrFixed(Addable):
+    """
+    If one widget is added, then it is added directly to our
+    parent. Otherwise, a fixed is added to our parent, and all
+    the widgets are added to that.
+    """
+
+    def __init__(self):
+        self.queue = [ ]
+
+    def add(self, d, key):
+        self.queue.append(d)
+
+    def close(self, d):
+        stack.pop()
+
+        if len(self.queue) == 1:
+            add(self.queue[0])
+        else:
+            for i in self.queue:
+                add(i)
+
+        if d is not None:
+            raise Exception("Did not expect to close %r." % d)
+            
+    
+# A stack of things we can add to.
+stack = None
 
 # A stack of open ui.ats.
 at_stack = [ ]
 
+# The tag for the displayble being added to the layer.
+add_tag = None
+
+
 # Called at the end of the init phase.
 def _ready():
-    global current
-    current = 'transient'
+    global stack
+    stack = [ Layer('master') ]
 
 renpy.game.post_init.append(_ready)
     
 def interact(type='misc', **kwargs):
     # Docs in wiki.
 
-    if current is None:
+    if stack is None:
         raise Exception("Interaction not allowed during init phase.")
     
     if renpy.config.skipping == "fast":
         renpy.config.skipping = None
 
-    if current_stack:
+    if len(stack) != 1:
         raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
-
     
     if at_stack:
         raise Exception("ui.interact called with non-empty at stack.")
@@ -72,15 +162,21 @@ def interact(type='misc', **kwargs):
     renpy.game.context().info._last_interact_type = type
     return rv
 
-
-# The name of the next thing that will be added to the current layer.
-add_tag = None
-
 def tag(name):
     global add_tag
     add_tag = name
 
-def add(w, make_current=False, once=False):
+def child_fixed():
+    """
+    Causes the current widget to be given child-fixed semantics. This
+    means that we will queue up children added to it. If there is one
+    child, that child will be added to the widget directly. Otherwise,
+    a fixed will be created, and the children will be added to that.
+    """
+
+    stack.append(ChildOrFixed())
+    
+def add(w, many=False, one=False):
 
     global current
     global current_once
@@ -97,90 +193,46 @@ def add(w, make_current=False, once=False):
             atw = atf(child=atw)
         else:
             atw = atf(atw)
-    
-    if isinstance(current, str):
-        renpy.game.context(-1).scene_lists.add(current, atw, key=add_tag)
-    elif current is None:
-        pass
-    else:
-        current.add(atw) # E1103
 
-    add_tag = None
+    stack[-1].add(atw, add_tag)
+
+    if one:
+        stack.append(One(w))
+    elif many:
+        stack.append(Many(w))
         
-    if current_once:
-        current_once = False
-        close()
-
-    current_once = once
-
-    if make_current:
-        current_stack.append(current)
-        current = w
-
+    add_tag = None
+    
     return w
 
 def remove(d):
-
-    if not isinstance(current, basestring):
-        raise Exception("ui.remove only works directly on a layer.")
-
-    renpy.game.context(-1).scene_lists.remove(current, d)
+    layer = stack[-1].get_layer()
+    renpy.game.context(-1).scene_lists.remove(layer, d)
     
-
 def at(a):
     at_stack.append(a)
 
 def clear():
-
-    if isinstance(current, basestring):
-        renpy.game.context(-1).scene_lists.clear(current)
-    else:
-        raise Exception("ui.clear cannot be called when a widget is open.")
+    layer = stack[-1].get_layer()
+    renpy.game.context(-1).scene_lists.clear(layer)
 
 def detached():
-    global current_once
-    global current
-
-    current_stack.append(current)
-    current_once = True
-    current = None
+    stack.append(Detached())
     
 def layer(name):
-
-    global current_once
-    global current
+    stack.append(Layer(name))
     
-    if not isinstance(current, str):
-        raise Exception("Opening a layer while a widget is open is not allowed.")
-
-    if name not in renpy.config.layers and name not in renpy.config.top_layers:
-        raise Exception("'%s' is not a known layer." % name)
-
-    current_stack.append(current)
-    current_once = False
-    current = name
 
 def close(d=None):
 
-    global current
+    stack[-1].close(d)
 
-    if not current_stack:
-        raise Exception("ui.close() called to close the last open layer or widget.")
-
-    if current_once:
-        raise Exception("ui.close() called when expecting a widget.")
-
-    if d is not None and d is not current:
-        raise Exception("ui.close() closed %r, not expected %r." % (current, d))
+    if not stack:
+        raise Exception("ui.close() called when no layer or widget is open.")
     
-    current = current_stack.pop()
-
 def reopen(w, clear):
 
-    global current
-    
-    current_stack.append(current)
-    current = w
+    stack.append(Many(w))
 
     if clear:
         w.children[:] = [ ]
@@ -218,27 +270,20 @@ def side(positions, **properties):
 
     return rv
 
-    
-
 def sizer(maxwidth=None, maxheight=None, **properties):
     
     return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),
                True, True)
 
-
 def window(**properties):
 
     return add(renpy.display.layout.Window(None, **properties), True, True)
-
 
 def frame(**properties):
 
     properties.setdefault('style', 'frame')
 
     return add(renpy.display.layout.Window(None, **properties), True, True)
-
-
-
 
 # As of 4.8, this does nothing, but is retained for compatability.
 def keymousebehavior():
@@ -357,7 +402,6 @@ def imagemap(ground,
 
     return rv
                                             
-
 def button(clicked=None, **properties):
 
     return add(renpy.display.behavior.Button(None, clicked=clicked,
@@ -368,7 +412,6 @@ def textbutton(text, clicked=None, text_style='button_text', **properties):
     return add(renpy.display.behavior.TextButton(text, clicked=clicked,
                                                  text_style=text_style,
                                                  **properties))
-
 def imagebutton(idle_image,
                 hover_image,
                 insensitive_image = None,
@@ -381,7 +424,6 @@ def imagebutton(idle_image,
                 style='image_button',
                 image_style=None,
                 **properties):
-
     
     return add(renpy.display.image.ImageButton(
             idle_image,
@@ -415,7 +457,6 @@ def bar(*args, **properties):
 
     return add(renpy.display.behavior.Bar(range, value, width, height,
                                           **properties))
-
 def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
     if st > time:
@@ -451,7 +492,6 @@ def _returns(v):
 
 returns = renpy.curry.curry(_returns)
 
-
 def _jumps(label, transition=None):
 
     if isinstance(transition, basestring):
@@ -478,4 +518,3 @@ def invokesinnewcontext(*args, **kwargs):
 
 def gamemenus(*args):
     return callsinnewcontext("_game_menu", *args)
-
