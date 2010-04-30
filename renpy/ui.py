@@ -26,8 +26,7 @@
 
 # All functions in the is file should be documented in the wiki.
 
-import sets
-
+import sys
 import renpy
 
 # Things we can add to. These have two methods: add is called with the
@@ -137,7 +136,7 @@ add_tag = None
 # Called at the end of the init phase.
 def _ready():
     global stack
-    stack = [ Layer('master') ]
+    stack = [ Layer('transient') ]
 
 renpy.game.post_init.append(_ready)
     
@@ -176,35 +175,6 @@ def child_fixed():
 
     stack.append(ChildOrFixed())
     
-def add(w, many=False, one=False):
-
-    global current
-    global current_once
-    global add_tag
-    
-    w = renpy.easy.displayable(w)
-    w = w.parameterize('displayable', [ ])
-    
-    atw = w 
-    
-    while at_stack:
-        atf = at_stack.pop()
-        if isinstance(atf, renpy.display.motion.Transform):
-            atw = atf(child=atw)
-        else:
-            atw = atf(atw)
-
-    stack[-1].add(atw, add_tag)
-
-    if one:
-        stack.append(One(w))
-    elif many:
-        stack.append(Many(w))
-        
-    add_tag = None
-    
-    return w
-
 def remove(d):
     layer = stack[-1].get_layer()
     renpy.game.context(-1).scene_lists.remove(layer, d)
@@ -222,7 +192,6 @@ def detached():
 def layer(name):
     stack.append(Layer(name))
     
-
 def close(d=None):
 
     stack[-1].close(d)
@@ -237,71 +206,133 @@ def reopen(w, clear):
     if clear:
         w.children[:] = [ ]
 
-def null(**properties):
+def context_enter(w):
+    if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w:
+        return
 
-    return add(renpy.display.layout.Null(**properties))
+    raise Exception("%r cannot be used as a context manager.", type(w).__name__)
 
-def text(label, **properties):
+def context_exit(w):
+    close(w)
+        
+class Wrapper(renpy.object.Object):
 
-    return add(renpy.display.text.Text(label, **properties))
-
-def hbox(spacing=None, style='hbox', **properties):
-
-    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="horizontal", style=style, **properties), True)
-
-def vbox(spacing=None, style='vbox', **properties):
-
-    return add(renpy.display.layout.MultiBox(spacing=spacing, layout="vertical", style=style, **properties), True)
-
-def grid(cols, rows, padding=0, transpose=False, **properties):
-
-    return add(renpy.display.layout.Grid(cols, rows, padding, transpose=transpose, **properties), True)
-
-def fixed(**properties):
-
-    rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
-    add(rv, True)
-
-    return rv
-
-def side(positions, **properties):
-    rv = renpy.display.layout.Side(positions, **properties)
-    add(rv, True)
-
-    return rv
-
-def sizer(maxwidth=None, maxheight=None, **properties):
+    def __reduce__(self):
+        return self.name
     
-    return add(renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties),
-               True, True)
+    def __init__(self, function, one=False, many=False, **kwargs):
 
-def window(**properties):
+        # The name assigned to this wrapper. This is used to serialize us correctly.
+        self.name = None
 
-    return add(renpy.display.layout.Window(None, **properties), True, True)
+        # The function to call.
+        self.function = function
 
-def frame(**properties):
+        # Should we add one or many things to this wrapper?
+        self.one = one
+        self.many = many
+        
+        # Default keyword arguments to the function.
+        self.kwargs = kwargs
 
-    properties.setdefault('style', 'frame')
+    def __call__(self, *args, **kwargs):
 
-    return add(renpy.display.layout.Window(None, **properties), True, True)
+        global add_tag
 
-# As of 4.8, this does nothing, but is retained for compatability.
-def keymousebehavior():
-    return
+        # Pull out the special kwargs, id and at.
+        if "id" in kwargs:
+            id = kwargs.pop("id")
+        else:
+            id = None
+            
+        if "at" in kwargs:
+            at_list = kwargs.pop("at") + at_stack
+        else:
+            at_list = [ ]
+            
+        # Figure out the keyword arguments, based on the parameters.
+        keyword = self.kwargs.copy()
+        keyword.update(kwargs)
 
-def keymap(**kwargs):
-    return add(renpy.display.behavior.Keymap(**kwargs))
+        if id is not None:
+            keyword.update(renpy.store._widget_properties.get(id, { }))
 
-def saybehavior(*args, **kwargs):
-    return add(renpy.display.behavior.SayBehavior(*args, **kwargs))
+        try:
+            w = self.function(*args, **keyword)
 
-def pausebehavior(delay, result=False):
-    return add(renpy.display.behavior.PauseBehavior(delay, result))
+        # We want to rewrite the type error so that it mentions our name,
+        # so the user gcan figure out WTF is going on.
+        except TypeError:
+            etype, e, tb = sys.exc_info(); etype
 
-def soundstopbehavior(channel, result=False):
-    return add(renpy.display.behavior.SoundStopBehavior(channel, result))
+            if tb.tb_next is None:
+                e.args = (e.args[0].replace("__init__", "ui." + self.name), )
 
-def menu(menuitems,
+            del tb # Important! Prevents memory leaks via our frame.
+            raise
+            
+        w = renpy.easy.displayable(w)
+        w = w.parameterize('displayable', [ ])
+
+        # Wrap the displayable based on the at_list and at_stack.
+        atw = w 
+
+        while at_stack:
+            at_list.append(at_stack.pop())
+        
+        for atf in at_list:
+            if isinstance(atf, renpy.display.motion.Transform):
+                atw = atf(child=atw)
+            else:
+                atw = atf(atw)
+
+        # Add to the stack.
+        stack[-1].add(atw, add_tag)
+
+        # Update the stack, as necessary.
+        if self.one:
+            stack.append(One(w))
+        elif self.many:
+            stack.append(Many(w))
+
+        # If we have an id, record the displayable.
+        if id is not None and renpy.store._widget_by_id is not None:
+            renpy.store._widget_by_id[id] = w
+
+        # Clear out the add_tag and 
+        add_tag = None
+
+        return w
+
+
+##############################################################################
+# Widget functions.
+        
+def _add(d):
+    return d
+
+add = Wrapper(_add)
+null = Wrapper(renpy.display.layout.Null)
+text = Wrapper(renpy.display.text.Text)
+hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
+vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
+fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", many=True)
+grid = Wrapper(renpy.display.layout.Grid, many=True)
+side = Wrapper(renpy.display.layout.Side, many=True)
+
+def _sizer(maxwidth=None, maxheight=None, **properties):
+    return renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties)
+
+sizer = Wrapper(_sizer, one=True)
+window = Wrapper(renpy.display.layout.Window, one=True, child=None)
+frame = Wrapper(renpy.display.layout.Window, style='frame', one=True, child=None)
+
+keymap = Wrapper(renpy.display.behavior.Keymap)
+saybehavior = Wrapper(renpy.display.behavior.SayBehavior)
+pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
+soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
+
+def _menu(menuitems,
          style = 'menu',
          caption_style='menu_caption',
          choice_style='menu_choice',
@@ -326,7 +357,7 @@ def menu(menuitems,
             button = choice_button_style
                         
             if location:
-                chosen = renpy.game.persistent._chosen.setdefault(location, sets.Set())
+                chosen = renpy.game.persistent._chosen.setdefault(location, set)
                 if label in chosen:
                     text = choice_chosen_style
                     button = choice_chosen_button_style
@@ -354,23 +385,21 @@ def menu(menuitems,
 
     renpy.ui.close()
 
-    # return add(renpy.display.behavior.Menu(menuitems, **properties))
+menu = Wrapper(_menu)
+input = Wrapper(renpy.display.behavior.Input, exclude='{}')
 
-def input(default, length=None, allow=None, exclude='{}', **properties):
+def _image(im, **properties):
+    return renpy.display.im.image(im, loose=True, **properties)
 
-    return add(renpy.display.behavior.Input(default, length=length, allow=allow, exclude=exclude, **properties))
+image = Wrapper(_image)
 
-def image(im, **properties):
-
-    return add(renpy.display.im.image(im, loose=True, **properties))
-
-def imagemap(ground,
-             selected,
-             hotspots,
-             unselected=None,
-             style='imagemap',
-             button_style='imagemap_button',
-             **properties):
+def _imagemap_compat(ground,
+                     selected,
+                     hotspots,
+                     unselected=None,
+                     style='imagemap',
+                     button_style='imagemap_button',
+                     **properties):
 
     if isinstance(button_style, basestring):
         button_style = getattr(renpy.game.style, button_style)
@@ -401,47 +430,30 @@ def imagemap(ground,
     close()
 
     return rv
-                                            
-def button(clicked=None, **properties):
 
-    return add(renpy.display.behavior.Button(None, clicked=clicked,
-                                      **properties), True, True)
+imagemap_compat = Wrapper(_imagemap_compat)
 
-def textbutton(text, clicked=None, text_style='button_text', **properties):
+def _button(clicked=None, _image_button=False, **properties):
+    # TODO: Deal with role and enabled automatically, if we can.
 
-    return add(renpy.display.behavior.TextButton(text, clicked=clicked,
-                                                 text_style=text_style,
-                                                 **properties))
-def imagebutton(idle_image,
-                hover_image,
-                insensitive_image = None,
-                activate_image = None,
-                selected_idle_image = None,
-                selected_hover_image = None,
-                selected_insensitive_image = None,
-                selected_activate_image = None,    
-                clicked=None,
-                style='image_button',
-                image_style=None,
-                **properties):
-    
-    return add(renpy.display.image.ImageButton(
-            idle_image,
-            hover_image,
-            insensitive_image = insensitive_image,
-            activate_image = activate_image,
-            selected_idle_image = selected_idle_image,
-            selected_hover_image = selected_hover_image,
-            selected_insensitive_image = selected_insensitive_image,
-            selected_activate_image = selected_activate_image,    
-            clicked=clicked,
-            style=style,
-            **properties))
+    if _image_button:
+        rv = renpy.display.image.ImageButton(clicked=clicked, **properties)
+    else:
+        rv = renpy.display.behavior.Button(None, clicked=clicked, **properties)
+
+    return rv
+            
+button = Wrapper(_button, one=True)
+imagebutton = Wrapper(_button, _image_button=True)
+
+def textbutton(text, text_style='button_text', **kwargs):
+    renpy.ui.button(**kwargs)
+    renpy.ui.text(text, style=text_style)
 
 def adjustment(range=1, value=0, step=None, page=0, changed=None):
     return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed)
 
-def bar(*args, **properties):
+def _bar(*args, **properties):
 
     if len(args) == 4:
         width, height, range, value = args
@@ -455,8 +467,15 @@ def bar(*args, **properties):
         width = None
         height = None
 
-    return add(renpy.display.behavior.Bar(range, value, width, height,
-                                          **properties))
+    return renpy.display.behavior.Bar(range, value, width, height, **properties)
+
+bar = Wrapper(_bar, style='bar')
+vbar = Wrapper(_bar, style='vbar')
+slider = Wrapper(_bar, style='slider')
+vslider = Wrapper(_bar, style='vslider')
+scrollbar = Wrapper(_bar, style='scrollbar')
+vscrollbar = Wrapper(_bar, style='vscrollbar')
+
 def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
     if st > time:
@@ -471,20 +490,18 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
 
-def autobar(range, start, end, time, **properties):
-    return add(renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties)))
+def _autobar(range, start, end, time, **properties):
+    return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
 
-def transform(**properties):
-    return add(renpy.display.layout.Transform(**properties), True, True)
+autobar = Wrapper(_autobar)
+transform = Wrapper(renpy.display.motion.Transform, one=True)
+viewport = Wrapper(renpy.display.layout.Viewport, one=True)
+conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
+timer = Wrapper(renpy.display.behavior.Timer)
 
-def viewport(**properties):
-    return add(renpy.display.layout.Viewport(**properties), True, True)
 
-def conditional(condition):
-    return add(renpy.display.behavior.Conditional(condition), True, True)
-
-def timer(delay, function, repeat=False, args=(), kwargs={}):
-    return add(renpy.display.behavior.Timer(delay, function, repeat=repeat, args=args, kwargs=kwargs))
+##############################################################################
+# Curried functions, for use in clicked, hovered, and unhovered.
 
 def _returns(v):
 
@@ -518,3 +535,12 @@ def invokesinnewcontext(*args, **kwargs):
 
 def gamemenus(*args):
     return callsinnewcontext("_game_menu", *args)
+
+##############################################################################
+# Postamble
+
+# Update the wrappers to have names.
+k, v = None, None
+for k, v in globals().iteritems():
+    if isinstance(v, Wrapper):
+        v.name = k

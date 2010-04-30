@@ -198,17 +198,21 @@ class TransformState(renpy.object.Object):
         diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
         diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
         diff4("xoffset", newts.xoffset, newts.default_xoffset, self.xoffset, self.default_xoffset)
+
+        diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
+        diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
+        diff4("yoffset", newts.yoffset, newts.default_yoffset, self.yoffset, self.default_yoffset)
         
         return rv
 
     def get_placement(self):
         return (
             first_not_none(self.xpos, self.default_xpos),
-            first_not_none(self.xpos, self.default_xpos),
+            first_not_none(self.ypos, self.default_ypos),
             first_not_none(self.xanchor, self.default_xanchor),
-            first_not_none(self.xanchor, self.default_xanchor),
+            first_not_none(self.yanchor, self.default_yanchor),
             first_not_none(self.xoffset, self.default_xoffset),            
-            first_not_none(self.xoffset, self.default_xoffset),
+            first_not_none(self.yoffset, self.default_yoffset),
             self.subpixel,
             )
             
