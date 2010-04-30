@@ -575,8 +575,8 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     takes the value from config.implicit_with_none.
     """
 
-    renpy.ui.imagemap(ground, selected, hotspots, unselected=unselected,
-                      style=style, **properties)
+    renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected,
+                             style=style, **properties)
 
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [ result for x0, y0, x1, y1, result in hotspots]:

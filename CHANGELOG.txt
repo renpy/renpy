@@ -11,6 +11,20 @@ This should both improve performance, and improve error handling for
 python syntax. 
 
 
+Added support for composite style properties, that allow several style
+properties to be set using a single parameter. The new composite style
+properties are:
+
+* pos - takes a pair, and uses it to set xpos and ypos.
+* anchor - takes a pair, and uses it to set xanchor and yanchor.
+* align - takes a pair, and uses it to set xalign and yalign. (And
+  hence xpos, ypos, xanchor, and yanchor.)
+* area - take (x, y, height, width) pair, and tries to set properties
+  such that the displayable will be placed inside the rectangle. This 
+  sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum,
+  xmaximum, and ymaximum properties.
+
+
 The following numbered bugs were fixed:
 
 * lp:526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)

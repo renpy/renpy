@@ -53,6 +53,10 @@ _config = renpy.config
 # The special character used for name-only dialogue.
 name_only = None
 
+# Used by the ui functions.
+_widget_by_id = None
+_widget_properties = { }
+
 class _Config(object):
 
     def register(self, name, default, cat=None, help=None):

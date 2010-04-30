@@ -178,23 +178,14 @@ class Container(renpy.display.core.Displayable):
 
     def __enter__(self):
 
-        if renpy.ui.current is self and not renpy.ui.current_once:
-            return self
-
-        raise Exception("%r cannot be used as a context manager.", type(self).__name__)
-
+        renpy.ui.context_enter(self)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
 
-        if exc_type:
-            return False
-
-        if renpy.ui.current is not self:
-            raise Exception("Widget %r left open at end of block.")
-
-        renpy.ui.close()
+        renpy.ui.context_exit(self)
         return False
-
+        
         
     
 

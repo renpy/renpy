@@ -123,7 +123,7 @@ def render(d, width, height, st, at):
 
     if ymaximum is not None:
         if isinstance(ymaximum, float):
-            width = int(height * ymaximum)
+            height = int(height * ymaximum)
         else:
             height = min(ymaximum, height)
 
