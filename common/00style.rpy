@@ -58,7 +58,8 @@ init -1200 python hide:
     style.centered_text = Style(style.default, help='centered text')
 
     style.imagemap = Style(style.image_placement, help='default style of imagemaps')
-    style.hotspot = Style(style.default, help='default style of buttons inside imagemaps')
+    style.hotspot = Style(style.default, help='default style of hotspots inside imagemaps')
+    style.hotbar = Style(style.default, help='default style of hotbars inside imagemaps')
     style.imagemap_button = style.hotspot
     
     style.image_button = Style(style.default, help='default style of image buttons')

@@ -559,7 +559,7 @@ class Imagemap(object):
         self.insensitive = insensitive
         self.idle = idle
         self.selected_idle = selected_idle
-        self.hover = selected_hover
+        self.hover = hover
         self.selected_hover = selected_hover
 
 def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, style='imagemap', **properties):
@@ -580,11 +580,11 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
 
 
     ground = pick(ground, "ground", None)
-    insensitive = pick(insensitive, "insensitive", ground)
     idle = pick(idle, "idle", ground)
     selected_idle = pick(selected_idle, "selected_idle", idle)
     hover = pick(hover, "hover", ground)
     selected_hover = pick(selected_hover, "selected_hover", hover)
+    insensitive = pick(insensitive, "insensitive", idle)
 
     imagemap_stack.append(
         Imagemap(
@@ -645,7 +645,55 @@ def _hotspot(spot, clicked=None, **properties):
 
 hotspot = Wrapper(_hotspot, style="hotspot")
 
+def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
+    if adjustment is None and range is not None and value is not None:
+        adjustment = renpy.ui.adjustment(range=range, value=value)
+        
+    if adjustment is None:
+        raise Exception("hotbar requires either an adjustment or a range and value.")
 
+    if not imagemap_stack:
+        raise Exception("hotbar expects an imagemap to be defined.")
+
+    imagemap = imagemap_stack[-1]
+
+    x, y, w, h = spot
+
+    properties.setdefault("xpos", x)
+    properties.setdefault("ypos", y)
+    properties.setdefault("xanchor", 0)
+    properties.setdefault("yanchor", 0)
+
+    fore_bar=renpy.display.layout.LiveCrop(spot, imagemap.selected_idle)
+    aft_bar=renpy.display.layout.LiveCrop(spot, imagemap.idle)
+    hover_fore_bar=renpy.display.layout.LiveCrop(spot, imagemap.selected_hover)
+    hover_aft_bar=renpy.display.layout.LiveCrop(spot, imagemap.hover)
+
+    
+    if h > w:
+        properties.setdefault("bar_vertical", True)
+        properties.setdefault("bar_invert", True)
+
+        fore_bar, aft_bar = aft_bar, fore_bar
+        hover_fore_bar, hover_aft_bar = hover_aft_bar, hover_fore_bar
+        
+    return renpy.display.behavior.Bar(
+            adjustment=adjustment,
+            fore_bar=fore_bar,
+            aft_bar=aft_bar,
+            hover_fore_bar=hover_fore_bar,
+            hover_aft_bar=hover_aft_bar,
+            fore_gutter=0,
+            aft_gutter=0,
+            bar_resizing=False,
+            thumb=None,
+            thumb_shadow=None,
+            thumb_offset=0,
+            xmaximum=w,
+            ymaximum=h,
+            **properties)
+
+hotbar = Wrapper(_hotbar, style="hotbar")
     
 
 ##############################################################################

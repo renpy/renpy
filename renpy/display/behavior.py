@@ -615,6 +615,8 @@ adj_registered = { }
 # position of content.
 class Adjustment(renpy.object.Object):
 
+    changed = None
+    
     def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None):
         super(Adjustment, self).__init__()
 
@@ -622,7 +624,7 @@ class Adjustment(renpy.object.Object):
         self._range = range
         self._page = page
         self._step = step
-        self.changed = changed
+        self.changed = changed or self.changed
         self.adjustable = changed or adjustable
         self.ranged = ranged
         
