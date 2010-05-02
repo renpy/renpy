@@ -318,21 +318,29 @@ def load(name):
 
     raise IOError("Couldn't find file '%s'." % name)
 
+loadable_cache = { }
+
 def loadable(name):
     """
     Returns True if the name is loadable with load, False if it is not.
     """
 
+    if name in loadable_cache:
+        return loadable_cache[name]
+    
     try:
         transfn(name)
+        loadable_cache[name] = True
         return True
     except:
         pass
 
     for prefix, index in archives:
         if name in index:
+            loadable_cache[name] = True
             return True
 
+    loadable_cache[name] = False
     return False
     
 

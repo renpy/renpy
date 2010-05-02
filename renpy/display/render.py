@@ -906,9 +906,11 @@ class Render(object):
                 if cx >= cw or cy >= ch:
                     return False
 
-                if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
-                    return True
+                # if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
+                #     return True
+                return True
 
+                
         return False
 
     

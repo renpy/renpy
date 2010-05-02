@@ -29,6 +29,28 @@
 import sys
 import renpy
 
+
+##############################################################################
+# Special classes that can be subclassed from the outside.
+
+class Action(renpy.object.Object):
+    """
+    This can be passed to the clicked method of a button or hotspot. It is
+    called when the action is selected. The other methods determine if the
+    action should be displayed insensitive or disabled.
+    """
+
+    def get_sensitive(self):
+        return False
+
+    def get_selected(self):
+        return False
+
+    def __call__(self):
+        return None
+    
+
+##############################################################################
 # Things we can add to. These have two methods: add is called with the
 # widget we're adding. close is called when the thing is ready to be
 # closed.
@@ -59,15 +81,19 @@ class Many(Addable):
     A widget that takes many children.
     """
 
-    def __init__(self, displayable):
+    def __init__(self, displayable, imagemap):
         self.displayable = displayable
-
+        self.imagemap = False
+        
     def add(self, d, key):
         self.displayable.add(d)
 
     def close(self, d):
         stack.pop()
 
+        if self.imagemap:
+            imagemap_stack.pop()
+        
         if d and d != self.name:
             raise Exception("ui.close closed %r, not the expected %r." % (self.displayable, d))
 
@@ -121,8 +147,7 @@ class ChildOrFixed(Addable):
 
         if d is not None:
             raise Exception("Did not expect to close %r." % d)
-            
-    
+
 # A stack of things we can add to.
 stack = None
 
@@ -132,6 +157,9 @@ at_stack = [ ]
 # The tag for the displayble being added to the layer.
 add_tag = None
 
+# A stack of Imagemap objects.
+imagemap_stack = [ ]
+            
 
 # Called at the end of the init phase.
 def _ready():
@@ -220,7 +248,7 @@ class Wrapper(renpy.object.Object):
     def __reduce__(self):
         return self.name
     
-    def __init__(self, function, one=False, many=False, **kwargs):
+    def __init__(self, function, one=False, many=False, imagemap=False, **kwargs):
 
         # The name assigned to this wrapper. This is used to serialize us correctly.
         self.name = None
@@ -230,7 +258,8 @@ class Wrapper(renpy.object.Object):
 
         # Should we add one or many things to this wrapper?
         self.one = one
-        self.many = many
+        self.many = many or imagemap
+        self.imagemap = imagemap
         
         # Default keyword arguments to the function.
         self.kwargs = kwargs
@@ -293,7 +322,7 @@ class Wrapper(renpy.object.Object):
         if self.one:
             stack.append(One(w))
         elif self.many:
-            stack.append(Many(w))
+            stack.append(Many(w, self.imagemap))
 
         # If we have an id, record the displayable.
         if id is not None and renpy.store._widget_by_id is not None:
@@ -332,7 +361,7 @@ saybehavior = Wrapper(renpy.display.behavior.SayBehavior)
 pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
 soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
-def _menu(menuitems,
+def menu(menuitems,
          style = 'menu',
          caption_style='menu_caption',
          choice_style='menu_choice',
@@ -382,10 +411,9 @@ def _menu(menuitems,
                                 clicked=clicked,
                                 focus=focus,
                                 default=default)
-
-    renpy.ui.close()
-
-menu = Wrapper(_menu)
+            
+    close()
+    
 input = Wrapper(renpy.display.behavior.Input, exclude='{}')
 
 def _image(im, **properties):
@@ -393,18 +421,18 @@ def _image(im, **properties):
 
 image = Wrapper(_image)
 
-def _imagemap_compat(ground,
-                     selected,
-                     hotspots,
-                     unselected=None,
-                     style='imagemap',
-                     button_style='imagemap_button',
-                     **properties):
+def imagemap_compat(ground,
+                    selected,
+                    hotspots,
+                    unselected=None,
+                    style='imagemap',
+                    button_style='imagemap_button',
+                    **properties):
 
     if isinstance(button_style, basestring):
         button_style = getattr(renpy.game.style, button_style)
-    
-    rv = fixed(style=style, **properties)
+
+    fixed(style=style, **properties)
 
     if unselected is None:
         unselected = ground
@@ -429,26 +457,45 @@ def _imagemap_compat(ground,
 
     close()
 
-    return rv
-
-imagemap_compat = Wrapper(_imagemap_compat)
-
-def _button(clicked=None, _image_button=False, **properties):
+def _button(clicked=None, **properties):
     # TODO: Deal with role and enabled automatically, if we can.
 
-    if _image_button:
-        rv = renpy.display.image.ImageButton(clicked=clicked, **properties)
-    else:
-        rv = renpy.display.behavior.Button(None, clicked=clicked, **properties)
-
+    rv = renpy.display.behavior.Button(None, clicked=clicked, **properties)
     return rv
-            
+
 button = Wrapper(_button, one=True)
-imagebutton = Wrapper(_button, _image_button=True)
+
+def _imagebutton(idle_image,
+                 hover_image,
+                 insensitive_image = None,
+                 activate_image = None,
+                 selected_idle_image = None,
+                 selected_hover_image = None,
+                 selected_insensitive_image = None,
+                 selected_activate_image = None,    
+                 clicked=None,
+                 style='image_button',
+                 image_style=None,
+                 **properties):
+    
+    return renpy.display.image.ImageButton(
+            idle_image,
+            hover_image,
+            insensitive_image = insensitive_image,
+            activate_image = activate_image,
+            selected_idle_image = selected_idle_image,
+            selected_hover_image = selected_hover_image,
+            selected_insensitive_image = selected_insensitive_image,
+            selected_activate_image = selected_activate_image,    
+            clicked=clicked,
+            style=style,
+            **properties)
+    
+imagebutton = Wrapper(_imagebutton)
 
 def textbutton(text, text_style='button_text', **kwargs):
-    renpy.ui.button(**kwargs)
-    renpy.ui.text(text, style=text_style)
+    button(**kwargs)
+    text(text, style=text_style)
 
 def adjustment(range=1, value=0, step=None, page=0, changed=None):
     return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed)
@@ -499,6 +546,107 @@ viewport = Wrapper(renpy.display.layout.Viewport, one=True)
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer)
 
+
+##############################################################################
+# New-style imagemap related functions.
+
+class Imagemap(object):
+    """
+    Stores information about the images used by an imagemap.
+    """
+
+    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover):
+        self.insensitive = insensitive
+        self.idle = idle
+        self.selected_idle = selected_idle
+        self.hover = selected_hover
+        self.selected_hover = selected_hover
+
+def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, style='imagemap', **properties):
+
+    def pick(variable, name, other):
+        if variable:
+            return variable
+
+        if auto:
+            fn = auto % name
+            if renpy.loader.loadable(fn):
+                return fn
+
+        if other is not None:
+            return other
+
+        raise Exception("Could not find a %s image for imagemap." % name)
+
+
+    ground = pick(ground, "ground", None)
+    insensitive = pick(insensitive, "insensitive", ground)
+    idle = pick(idle, "idle", ground)
+    selected_idle = pick(selected_idle, "selected_idle", idle)
+    hover = pick(hover, "hover", ground)
+    selected_hover = pick(selected_hover, "selected_hover", hover)
+
+    imagemap_stack.append(
+        Imagemap(
+            insensitive,
+            idle,
+            selected_idle,
+            hover,
+            selected_hover))
+
+    rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
+
+    if ground:
+        rv.add(renpy.easy.displayable(ground))
+        
+    return rv
+    
+imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
+
+def _hotspot(spot, clicked=None, **properties):
+
+    if not imagemap_stack:
+        raise Exception("hotspot expects an imagemap to be defined.")
+
+    imagemap = imagemap_stack[-1]
+
+    x, y, w, h = spot
+
+    idle = imagemap.idle
+    hover = imagemap.hover
+    role = ""
+        
+    if isinstance(clicked, Action):
+
+        if not clicked.get_sensitive():
+            clicked = None
+            idle = imagemap.insensitive
+            hover = imagemap.insensitive
+
+        elif clicked.get_selected():
+            idle = imagemap.selected_idle
+            hover = imagemap.selected_hover
+            role = "selected_"
+
+    idle = renpy.display.layout.LiveCrop(spot, idle)
+    hover = renpy.display.layout.LiveCrop(spot, hover)
+            
+    properties.setdefault("xpos", x)
+    properties.setdefault("xanchor", 0)
+    properties.setdefault("ypos", y)
+    properties.setdefault("yanchor", 0)
+            
+    return renpy.display.image.ImageButton(
+        idle,
+        hover,
+        clicked=clicked,
+        role=role,
+        **properties)
+
+hotspot = Wrapper(_hotspot, style="hotspot")
+
+
+    
 
 ##############################################################################
 # Curried functions, for use in clicked, hovered, and unhovered.
