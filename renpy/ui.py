@@ -386,7 +386,13 @@ def menu(menuitems,
             button = choice_button_style
                         
             if location:
-                chosen = renpy.game.persistent._chosen.setdefault(location, set)
+                chosen_dict = renpy.game.persistent._chosen
+
+                if location not in chosen_dict or not isinstance(chosen_dict[location], set):
+                    chosen_dict[location] = set()
+
+                chosen = chosen_dict[location]
+                
                 if label in chosen:
                     text = choice_chosen_style
                     button = choice_chosen_button_style
@@ -493,9 +499,9 @@ def _imagebutton(idle_image,
     
 imagebutton = Wrapper(_imagebutton)
 
-def textbutton(text, text_style='button_text', **kwargs):
+def textbutton(label, text_style='button_text', **kwargs):
     button(**kwargs)
-    text(text, style=text_style)
+    text(label, style=text_style)
 
 def adjustment(range=1, value=0, step=None, page=0, changed=None):
     return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed)

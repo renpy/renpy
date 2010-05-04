@@ -37,7 +37,9 @@ init -1210 python:
             style.image_placement.xanchor = 0.5
             style.image_placement.yanchor = 1.0
 
+            config.transform_uses_child_position = False
             config.default_transform = None
+            config.start_scene_black = True
             
             
 init 1210 python hide::

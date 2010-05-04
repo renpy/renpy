@@ -58,6 +58,9 @@ init -1180 python:
 
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
+
+    # Should we start the game with scene black or just scene?
+    config.start_scene_black = False
     
     # This is updated to give the user an idea of where a save is
     # taking place.
@@ -681,9 +684,12 @@ label _start:
 
     if not _restart and config.auto_load and renpy.can_load(config.auto_load):
         $ renpy.load(config.auto_load)
-    
-    scene black
 
+    if config.start_scene_black:        
+        scene black
+    else:
+        scene
+        
     if not _restart:
         $ ui.pausebehavior(0)
         $ ui.interact(suppress_underlay=True, suppress_overlay=True)
@@ -707,7 +713,10 @@ label _start:
         $ renpy.music.stop()
         
     # Clean out any residual scene from the splashscreen.
-    scene black
+    if config.start_scene_black:
+        scene black
+    else:
+        scene
 
 
     # This has to be python, to deal with a case where _restart may

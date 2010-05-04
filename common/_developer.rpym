@@ -1,6 +1,5 @@
-
-# This file contains the developer screen, which contains tools that might
-# be of interest to people making Ren'Py games.
+# This file contains code that helps support the development of Ren'Py
+# games.
 
 label _developer_screen:
 
@@ -466,4 +465,8 @@ label _image_location_picker:
         # ...
 
         renpy.jump("_image_location_picker")
-        
+
+
+init python:
+    config.underlay.append(im.Tile("_transparent_tile.png"))
+    

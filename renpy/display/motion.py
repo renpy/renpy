@@ -156,7 +156,8 @@ class TransformState(renpy.object.Object):
          self.default_xoffset,
          self.default_yoffset,
          self.subpixel) = ts.get_placement()
-       
+
+        
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
     def diff(self, newts):
@@ -573,7 +574,7 @@ class Transform(Container):
             width, height = self.state.size
 
         # Use non-None elements of the child placement as defaults.
-        if self.child is not None:
+        if self.child is not None and renpy.config.transform_uses_child_position:
             
             cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
 

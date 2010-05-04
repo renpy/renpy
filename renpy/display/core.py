@@ -64,6 +64,19 @@ def init_time():
 def get_time():
     return time_base + pygame.time.get_ticks() / 1000.0
 
+
+def displayable_by_tag(layer, tag):
+    """
+    Get the displayable on the given layer with the given tag.
+    """
+
+    for i in renpy.game.context().scene_lists.layers[layer]:
+        if i[0] == tag:
+            return i[-1]
+
+    return None
+    
+
 class IgnoreEvent(Exception):
     """
     Exception that is raised when we want to ignore an event, but
@@ -288,6 +301,7 @@ class Displayable(renpy.object.Object):
         
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.get_placement()
 
+        
         if xpos is None:
             xpos = 0
         if ypos is None:
@@ -346,6 +360,7 @@ class Displayable(renpy.object.Object):
         else:
             dest.blit(surf, (xoff, yoff), main=main)
             
+
         return xoff, yoff
 
     def set_transform_event(self, event):

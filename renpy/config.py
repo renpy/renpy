@@ -412,6 +412,9 @@ end_game_transition = None
 # The default transform.
 default_transform = None
 
+# Should we use the child position?
+transform_uses_child_position = True
+
 # Various directories.
 gamedir = None
 basedir = None
