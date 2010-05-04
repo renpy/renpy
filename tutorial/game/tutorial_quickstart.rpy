@@ -154,7 +154,7 @@ label tutorial_dialogue:
 
     e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
 
-    e "Hopefully, by alllowing the use of short names for characters, we've succeded."
+    e "Hopefully, by allowing the use of short names for characters, we've succeeded."
     
     return
 
