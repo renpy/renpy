@@ -672,7 +672,7 @@ def periodic():
 
             anything_playing = False
             
-            for c in channels:
+            for c in all_channels:
                 vol = c.chan_volume * volumes[c.mixer]
                 max_volume = max(max_volume, vol)
 

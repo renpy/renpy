@@ -94,7 +94,7 @@ class Many(Addable):
         if self.imagemap:
             imagemap_stack.pop()
         
-        if d and d != self.name:
+        if d and d != self.displayable:
             raise Exception("ui.close closed %r, not the expected %r." % (self.displayable, d))
 
 class One(Addable):

@@ -1,14 +1,28 @@
 New in Ren'Py 6.11
 ------------------
 
+The behavior of transforms has been changed. Previously, when an outer
+transform contained an inner transform, the position properties of the
+inner transform were completely ignored. Now, the properties from the
+inner transform will be used unless they are overridden by the outer
+transform. This makes it possible to use transforms to independently
+handle the vertical and horizontal motion of an object.
+
+The new config.default_transform variable allows a transform to
+specify the initial transform properties of an image that does not
+have a more specific transform applied to it. Its default value is
+center, a transform that shows the image at the center-bottom of the
+screen. [doc]
+
+This can lead to a behavior change. When an image is shown, and then
+shown transforms, the transform will be initialized to the bottom
+center of the screen, not the top-left. The reset transform can be
+used to reset the position to the top-left.
+
+
 Transform (and ui.transform) have been changed so that their arguments
 can now be prefixed with a style prefix. One can write
 ui.transform(idle_rotate=30, hover_rotate=90) and have it work. [doc]
-
-
-The python compiler has been rewritten to use the python ast module.
-This should both improve performance, and improve error handling for
-python syntax. 
 
 
 Added support for composite style properties, that allow several style
@@ -23,6 +37,11 @@ properties are:
   such that the displayable will be placed inside the rectangle. This 
   sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum,
   xmaximum, and ymaximum properties.
+
+
+The python compiler has been rewritten to use the python ast module.
+This should both improve performance, and improve error handling for
+python syntax. 
 
 
 The following numbered bugs were fixed:

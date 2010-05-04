@@ -653,7 +653,8 @@ class SceneLists(renpy.object.Object):
         else:
             index = len(l)
 
-        thing = self.transform_state(default_transform, thing)
+        if not isinstance(thing, renpy.display.motion.Transform):
+            thing = self.transform_state(default_transform, thing)
             
         thing.set_transform_event("show")
         thing._show()
