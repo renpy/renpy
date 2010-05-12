@@ -193,7 +193,7 @@ def tag(name):
     global add_tag
     add_tag = name
 
-def child_fixed():
+def child_or_fixed():
     """
     Causes the current widget to be given child-fixed semantics. This
     means that we will queue up children added to it. If there is one
@@ -471,27 +471,51 @@ def _button(clicked=None, **properties):
 
 button = Wrapper(_button, one=True)
 
-def _imagebutton(idle_image,
-                 hover_image,
+def _imagebutton(idle_image = None,
+                 hover_image = None,                 
                  insensitive_image = None,
                  activate_image = None,
                  selected_idle_image = None,
                  selected_hover_image = None,
                  selected_insensitive_image = None,
                  selected_activate_image = None,    
+                 idle=None,
+                 hover=None,
+                 insensitive=None,
+                 selected_idle=None,
+                 selected_hover=None,
+                 selected_insensitive=None,
                  clicked=None,
                  style='image_button',
                  image_style=None,
+                 auto=None,
                  **properties):
+
+    def choice(a, b, name):
+        if a:
+            return a
+        if b:
+            return b
+        if auto is not None:
+            return auto % name
+
+        return auto
+    
+    idle = choice(idle, idle_image, "idle")
+    hover = choice(hover, hover_image, "hover")
+    insensitive = choice(insensitive, insensitive_image, "insensitive")
+    selected_idle = choice(selected_idle, selected_idle_image, "selected_idle")
+    selected_hover = choice(selected_hover, selected_hover_image, "selected_hover")
+    selected_insensitive = choice(selected_insensitive, selected_insensitive_image, "selected_insensitive")
     
     return renpy.display.image.ImageButton(
-            idle_image,
-            hover_image,
-            insensitive_image = insensitive_image,
+            idle,
+            hover,
+            insensitive_image = insensitive,
             activate_image = activate_image,
-            selected_idle_image = selected_idle_image,
-            selected_hover_image = selected_hover_image,
-            selected_insensitive_image = selected_insensitive_image,
+            selected_idle_image = selected_idle,
+            selected_hover_image = selected_hover,
+            selected_insensitive_image = selected_insensitive,
             selected_activate_image = selected_activate_image,    
             clicked=clicked,
             style=style,

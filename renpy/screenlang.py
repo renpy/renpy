@@ -114,9 +114,12 @@ class Expression(Type):
     def evaluate(self, state):
         return eval(state)
     
-
+    
 ##############################################################################
 # Parsing.
+
+# The parser that things are being added to.
+parser = None
 
 class Positional(object):
     """
@@ -128,6 +131,9 @@ class Positional(object):
         self.type = type
         self.help = help
 
+        if parser:
+            parser.add(self)
+        
 class Keyword(object):
     """
     This represents an optional keyword parameter to a function.
@@ -138,6 +144,9 @@ class Keyword(object):
         self.type = type
         self.help = help
         self.style = False
+
+        if parser:
+            parser.add(self)
         
 class Style(object):
     """
@@ -149,42 +158,27 @@ class Style(object):
         self.type = type
         self.help = help
         self.style = True
-        
+
+        if parser:
+            parser.add(self)
+
+
 class Parser(object):
-    """
-    This represents a parser.
-    """
-        
-class FunctionStatementParser(Parser):
-    """
-    This is responsible for parsing function statements.
-    """
 
-    def __init__(self, name, function, close_function=None, pass_children=False):
+    def __init__(self, name):
 
-        # The name of this statement. Also, the keyword that introduces
-        # this statement.
+        # The name of this object.
         self.name = name
         
-        # Functions that are called when this statement runs.
-        self.function = function
-        self.close_function = close_function
-
-        # True if the children should be passed into the function as an
-        # argument. False if they should be run.
-        self.pass_children = pass_children
-        
         # The positional arguments, keyword arguments, and child
-        # statements.
+        # statements of this statement.
         self.positional = [ ]
         self.keyword = { }
         self.children = { }
 
-        # A list of keyword arguments and styles. Used to generate
-        # help.
-        self.original_keyword = [ ]
-        
-        
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
+
     def add(self, i):
         """
         Adds a clause to this parser.
@@ -200,18 +194,56 @@ class FunctionStatementParser(Parser):
             self.positional.append(i)
 
         elif isinstance(i, Keyword):
-            self.original_keyword.append(i)
             self.keyword[i.name] = i                
 
         elif isinstance(i, Style):
-            self.original_keyword.append(i)
-
             for j in renpy.style.prefix_subs:
                 self.keyword[j + i.name] = i
 
-        elif isinstance(i, Parser):
+        elif isinstance(i, FunctionStatementParser):
             self.children[i.name] = i
 
+    def parse_statement(self, l):
+        word = l.word()
+        if word and word in self.children:
+            c = self.children[word].parse(l)
+            return c
+        else:            
+            return None
+        
+            
+# A singleton value.
+many = object()
+    
+class FunctionStatementParser(Parser):
+    """
+    This is responsible for parsing function statements.
+    """
+
+    def __init__(self, name, function, nchildren=0, pass_children=False):
+
+        super(FunctionStatementParser, self).__init__(name)
+        
+        # Functions that are called when this statement runs.
+        self.function = function
+
+        # The number of children we have.
+        self.nchildren = nchildren
+        
+        # True if the children should be passed into the function as an
+        # argument. False if they should be run.
+        self.pass_children = pass_children
+
+        # Add us to the appropriate lists.
+        global parser
+        parser = self
+
+        all_statements.append(self)
+
+        if nchildren != 0:
+            childbearing_statements.append(self)
+                
+        
             
     def parse(self, l):
         """
@@ -223,7 +255,6 @@ class FunctionStatementParser(Parser):
         positional = [ ]
         keyword = { }
         children = [ ]
-
 
         # Parses a keyword argument from the lexer.
         def parse_keyword(l):
@@ -270,24 +301,23 @@ class FunctionStatementParser(Parser):
 
                 state = l.checkpoint()
 
-                word = l.word()
-                if word and word in self.children:
-                    c = self.children[word].parse(l)
+                c = self.parse_statement(l)
+                if c is not None:
                     children.append(c)
                     continue
-
+                
                 l.revert(state)
 
                 while not l.eol():
                     parse_keyword(l)
 
-        return FunctionStatement(self.function, self.close_function, positional, keyword, children, self.pass_children)
+        return FunctionStatement(self.function, self.nchildren, positional, keyword, children, self.pass_children)
                     
 
 class FunctionStatement(object):
-    def __init__(self, function, close_function, positional, keyword, children, pass_children):
+    def __init__(self, function, nchildren, positional, keyword, children, pass_children):
         self.function = function
-        self.close_function = close_function
+        self.nchildren = nchildren
         self.positional = positional
         self.keyword = keyword
         self.children = children
@@ -304,12 +334,17 @@ class FunctionStatement(object):
 
         rv = self.function(*positional, **keyword)
 
+
         if not self.pass_children:
+
+            if self.nchildren == 1:
+                renpy.ui.child_or_fixed()
+            
             for i in self.children:
                 i.evaluate()
 
-        if self.close_function:
-            self.close_function()
+            if self.nchildren != 0:
+                renpy.ui.close() 
             
         return rv
         
@@ -320,7 +355,11 @@ class FunctionStatement(object):
 # Used to allow statements to take styles.
 styles = [ ]
 
-position_styles = [ Style(i, Expression) for i in [
+# All statements defined, and statements that take children.
+all_statements = [ ]
+childbearing_statements = [ ]
+
+position_properties = [ Style(i, Expression) for i in [
         "anchor",
         "xanchor",
         "yanchor",
@@ -335,7 +374,7 @@ position_styles = [ Style(i, Expression) for i in [
         "area",
         ] ]
 
-text_styles = [ Style(i, Expression) for i in [
+text_properties = [ Style(i, Expression) for i in [
         "antialias",
         "black_color",
         "bold",
@@ -369,7 +408,7 @@ text_styles = [ Style(i, Expression) for i in [
         "clipping",
         ] ]
 
-window_styles = [ Style(i, Expression) for i in [
+window_properties = [ Style(i, Expression) for i in [
         "background",
         "foreground",
         "left_margin",
@@ -419,17 +458,196 @@ box_properties = [ Style(i, Expression) for i in [
         "first_spacing",
         ] ]
 
+ui_properties = [
+    Keyword("at"),
+    Keyword("id"),
+    Keyword("style"),
+    ]
+
+
+def add(thing):
+    parser.add(thing)
+
 
     
+##############################################################################
+# UI statements.
+
+FunctionStatementParser("null", renpy.ui.null, many)
+Keyword("width")
+Keyword("height")
+add(ui_properties)
+add(position_properties)
+
+
+FunctionStatementParser("text", renpy.ui.text, 0)
+Positional("text")
+Keyword("slow")
+add(ui_properties)
+add(position_properties)
+add(text_properties)
+
+FunctionStatementParser("hbox", renpy.ui.hbox, many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+FunctionStatementParser("vbox", renpy.ui.hbox, many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+FunctionStatementParser("fixed", renpy.ui.hbox, many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+FunctionStatementParser("grid", renpy.ui.grid, many)
+Positional("cols")
+Positional("rows")
+Keyword("transpose")
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+FunctionStatementParser("side", renpy.ui.side, many)
+Positional("positions")
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+# Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
+
+for name in [ "window", "frame" ]:
+    FunctionStatementParser(name, getattr(renpy.ui, name), 1)
+    add(ui_properties)
+    add(position_properties)
+    add(window_properties)
+
+# Omit keymap in favor of key.
+# Omit behaviors.
+# Omit menu as being too high-level.
+
+FunctionStatementParser("input", renpy.ui.input, 0)
+Positional("default")
+Keyword("length")
+Keyword("allow")
+Keyword("exclude")
+Keyword("prefix")
+Keyword("suffix")
+Keyword("changed")
+add(ui_properties)
+add(position_properties)
+add(button_properties)
+
+FunctionStatementParser("add", renpy.ui.image, 0)
+Positional("im")
+
+FunctionStatementParser("image", renpy.ui.image, 0)
+Positional("im")
+
+# Omit imagemap_compat for being too high level (and obsolete).
+
+FunctionStatementParser("button", renpy.ui.button, 1)
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+add(button_properties)
+
+FunctionStatementParser("imagebutton", renpy.ui.imagebutton, 0)
+Keyword("auto")
+Keyword("idle")
+Keyword("hover")
+Keyword("insensitive")
+Keyword("selected_idle")
+Keyword("selected_hover")
+Keyword("selected_insensitive")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+Keyword("image_style")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+add(button_properties)
+
+FunctionStatementParser("textbutton", renpy.ui.textbutton, 0)
+Positional("label")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+Keyword("text_style")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+add(button_properties)
+
+for name in [ "bar", "vbar", "slider", "vslider", "scrollbar", "vscrollbar" ]:
+    FunctionStatementParser(name, getattr(renpy.ui, name), 0)    
+    Keyword("adjustment")
+    add(ui_properties)
+    add(position_properties)
+    add(bar_properties)
+    
+# Omit autobar. (behavior)
+# Omit transform. (replaced by at)
+
+FunctionStatementParser("viewport", renpy.ui.viewport, 1)
+Keyword("child_size")
+Keyword("mousewheel")
+Keyword("draggable")
+add(ui_properties)
+add(position_properties)
+
+# Omit conditional. (behavior)
+# Omit timer. (behavior)
+
+FunctionStatementParser("imagemap", renpy.ui.imagemap, many)
+Keyword("ground")
+Keyword("hover")
+Keyword("insensitive")
+Keyword("idle")
+Keyword("selected_hover")
+Keyword("selected_idle")
+Keyword("auto")
+add(ui_properties)
+add(position_properties)
+
+FunctionStatementParser("hotspot", renpy.ui.hotspot, 1)
+Positional("spot")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(button_properties)
+
+FunctionStatementParser("hotbar", renpy.ui.hotbar, 0)
+Positional("spot")
+Keyword("adjustment")
+add(ui_properties)
+add(position_properties)
+add(bar_properties)
+
+# TODO: need to add the key statement.
+    
+##############################################################################
+# Control-flow statements.
 
 def pass_function():
     pass
 
-pass_stmt = FunctionStatementParser("pass", pass_function)
+FunctionStatementParser("pass", pass_function, 0)
 
-statements = [
-    pass_stmt,
-    ]
+
+##############################################################################
+# Add all_statements to the statements that take children.
+
+for i in childbearing_statements:
+    i.add(all_statements)
 
 
 ##############################################################################
@@ -438,12 +656,10 @@ statements = [
 def screen_function(priority, name, children=[]):
     print "Creating new screen: priority", priority, "name", name
 
-screen_stmt = FunctionStatementParser("screen", screen_function)
-screen_stmt.add(Positional("priority", OptionalIntegerLiteral, "If this screen statement is not inside an init block, and a name is given, it is placed into an init block with this priority. Defaults to 0."))
-screen_stmt.add(Positional("name", Name, "The name of the screen being defined."))
-
-screen_stmt.add(statements)
-
+screen_stmt = FunctionStatementParser("screen", screen_function, pass_children=True)
+Positional("priority", OptionalIntegerLiteral)
+Positional("name", Name)
+add(all_statements)
 
 
 def parse_screen(l):

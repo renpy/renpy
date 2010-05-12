@@ -509,7 +509,9 @@ class Input(renpy.display.text.Text):
     prefix = ""
     suffix = ""
     
-    def __init__(self, default, length=None,
+    def __init__(self,
+                 default="",
+                 length=None,
                  style='input_text',
                  allow=None,
                  exclude=None,

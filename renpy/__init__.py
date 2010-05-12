@@ -92,9 +92,9 @@ def import_all():
     import renpy.audio.music
     import renpy.audio.sound
 
+    import renpy.ui
     import renpy.screenlang
     import renpy.sl
-    import renpy.ui
 
     import renpy.lint
     import renpy.warp
