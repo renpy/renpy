@@ -427,8 +427,9 @@ class MultiBox(Container):
         self.anim_times.append(anim_time)
         
     def append_scene_list(self, l):
-        for tag, zo, start, anim, d in l:
-            self.add(d, start, anim)
+
+        for sle in l:
+            self.add(sle.displayable, sle.show_time, sle.animation_time)
 
         if self.scene_list is None:
             self.scene_list = [ ]

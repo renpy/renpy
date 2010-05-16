@@ -329,6 +329,9 @@ class ATLTransformBase(renpy.object.Object):
         # Hide request.
         if trans.hide_request:
             self.transform_event = "hide"
+
+        if trans.replaced_request:
+            self.transform_event = "replaced"
             
         # Notice transform events.
         if self.transform_event != self.last_transform_event:
@@ -1157,9 +1160,10 @@ class On(Statement):
             if action == "continue":
 
                 # If it comes from a hide block, indicate that.
-                if name == "hide":
+                if name == "hide" or name == "replaced":
                     trans.hide_response = False
-
+                    trans.replaced_response = False
+                    
                 return "continue", (name, start, arg), pause
 
             # If we get a next, then try going to the default

@@ -337,7 +337,7 @@ class Proxy(object):
 
 class Transform(Container):
 
-    __version__ = 3
+    __version__ = 5
     transform_event_responder = True
     
     # Proxying things over to our state.
@@ -410,7 +410,11 @@ class Transform(Container):
 
         if version < 4:
             self.style_arg = 'transform'
-    
+
+        if version < 5:
+            self.replaced_request = False
+            self.replaced_response = True
+            
     DEFAULT_ARGUMENTS = {
             "selected_activate" : { },
             "selected_hover" : { },
@@ -477,6 +481,12 @@ class Transform(Container):
         # True if it's okay for us to hide.
         self.hide_response = True
 
+        # Have we been requested to replaced?
+        self.replaced_request = False
+
+        # True if it's okay for us to replaced.
+        self.replaced_response = True
+        
         self.st = 0
         self.at = 0
         self.st_offset = 0
@@ -525,9 +535,9 @@ class Transform(Container):
         return 
 
     
-    def _hide(self, st, at):
-        
-        if not self.hide_request:
+    def _hide(self, st, at, kind):
+
+        if not (self.hide_request or self.replaced_request):
             d = self()
             d.kwargs = { }
             d.take_state(self)
@@ -537,21 +547,28 @@ class Transform(Container):
 
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset            
-        d.hide_request = True
-        d.hide_response = True
 
+        if kind == "hide":
+            d.hide_request = True
+        else:
+            d.replaced_request = True
+
+        d.hide_response = True
+        d.replaced_response = True
+            
         if d.function is not None:
             d.function(d, st, at)
 
-        if not d.hide_response:            
+        if (not d.hide_response) or (not d.replaced_response):
             renpy.display.render.redraw(d, 0)
             return d
+
+        return None
 
         
     def set_child(self, child):
         self.child = child
         self.child_st_base = self.st
-
 
     def update_state(self):
         """

@@ -810,19 +810,16 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
         # Wraps the displayable found in SLE so that the various timebases
         # are maintained.
         def wrap(sle):
-            key, zorder, st, at, d = sle
-            return renpy.display.layout.AdjustTimes(d, st, at)
+            return renpy.display.layout.AdjustTimes(sle.displayable, sle.show_time, sle.animation_time)
         
         def tag(sle):
-            if sle[0] is None:
-                tag = sle[4]
-            else:
-                tag = sle[0]
-
-            return tag
+            return sle.tag or sle.displayable
 
         def merge(sle, d):
-            return (sle[0], sle[1], 0, sle[3], d)
+            rv = sle.copy()
+            rv.show_time = 0
+            rv.displayable = d
+            return rv
         
         # A list of tags on the new layer.
         new_tags = set()

@@ -77,6 +77,7 @@ def import_all():
     import renpy.display.particle
     import renpy.display.joystick
     import renpy.display.minigame
+    import renpy.display.screen
     import renpy.display.error
     
     import renpy.display.swdraw
@@ -94,7 +95,6 @@ def import_all():
 
     import renpy.ui
     import renpy.screenlang
-    import renpy.sl
 
     import renpy.lint
     import renpy.warp

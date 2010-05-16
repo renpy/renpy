@@ -140,11 +140,11 @@ class ImageReference(renpy.display.core.Displayable):
         return False
 
 
-    def _hide(self, st, at):
+    def _hide(self, st, at, kind):
         if not self.target:
             self.find_target()
 
-        return self.target._hide(st, at)
+        return self.target._hide(st, at, kind)
 
     def set_transform_event(self, event):
         if not self.target:

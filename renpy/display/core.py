@@ -375,11 +375,11 @@ class Displayable(renpy.object.Object):
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 
-    def _hide(self, st, at):
+    def _hide(self, st, at, kind):
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
-        quite yet.
+        quite yet. Kind is either "hide" or "replaced".
         """
                 
         return None
@@ -447,13 +447,55 @@ class ImagePredictInfo(renpy.object.Object):
         self.images[layer].pop(tag, None)
     
 
+class SceneListEntry(renpy.object.Object):
+    """
+    Represents a scene list entry. Since this was replacing a tuple,
+    it should be treated as immutable after its initial creation.
+    """
+    
+    def __init__(self, tag, zorder, show_time, animation_time, displayable):
+        self.tag = tag
+        self.zorder = zorder
+        self.show_time = show_time
+        self.animation_time = animation_time
+        self.displayable = displayable
+
+    def __iter__(self):
+        return iter((self.tag, self.zorder, self.show_time, self.animation_time, self.displayable))
+
+    def __getitem__(self, index):
+        return (self.tag, self.zorder, self.show_time, self.animation_time, self.displayable)[index]
+    
+    def __repr__(self):
+        return "<SLE: %r %r>" % (self.tag, self.displayable)
+    
+    def copy(self):
+        return SceneListEntry(
+            self.tag,
+            self.zorder,
+            self.show_time,
+            self.animation_time,
+            self.displayable)
+            
+    def update_time(self, time):
+
+        rv = self
+        
+        if self.show_time is None or self.animation_time is None:
+            rv = self.copy()
+            rv.show_time = rv.show_time or time
+            rv.animation_time = rv.animation_time or time
+
+        return rv
+    
+    
 class SceneLists(renpy.object.Object):
     """
     This stores the current scene lists that are being used to display
     things to the user. 
     """
 
-    __version__ = 3
+    __version__ = 4
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -474,7 +516,11 @@ class SceneLists(renpy.object.Object):
 
         if version < 3:
             self.shown_window = False 
-                
+
+        if version < 4:
+            for k in self.layers:
+                self.layers[k] = [ SceneListEntry(*i) for i in self.layers[k] ]
+            
                 
     def __init__(self, oldsl, ipi):
 
@@ -483,9 +529,9 @@ class SceneLists(renpy.object.Object):
         # Has a window been shown as part of these scene lists?
         self.shown_window = False
         
-        # A map from layer name -> list of
-        # (key, zorder, show time, animation time, displayable) 
+        # A map from layer name -> list(SceneListEntry)
         self.layers = { }
+        
         self.at_list = { }
         self.layer_at_list = { }
         self.image_predict_info = ipi
@@ -563,26 +609,57 @@ class SceneLists(renpy.object.Object):
         new_transform.take_state(old_transform)
         return new_thing
 
+
+    def find_index(self, layer, tag, zorder, behind):
+        """
+        This finds the spot in the named layer where we should insert the
+        displayable. It returns two things: an index at which the new thing
+        should be added, and an index at which the old thing should be hidden.
+        (Note that the indexes are relative to the current state of the list,
+        which may change on an add or remove.)
+        """
+
+        add_index = None
+        remove_index = None
+
+
+        for i, sle in enumerate(self.layers[layer]):
+
+            if add_index is None:
+            
+                if sle.zorder == zorder:
+                    if sle.tag and (sle.tag == tag or sle.tag in behind):
+                        add_index = i
                         
-    def add(self, layer, thing, key=None, zorder=0, behind=[ ], at_list=[ ], name=None, atl=None, default_transform=None):
-        """
-        This is called to add something to a layer. Layer is
-        the name of the layer that we need to add the thing to,
-        one of 'master' or 'transient'. Key is an optional key. Zorder
-        is a place in the zorder to add the thing. Behind is a list of keys
-        this thing must be placed below, within the zorder.
+                elif sle.zorder > zorder:
+                    add_index = i
 
-        If key is provided, and there exists something in the selected
-        layer with the given key, and the same zorder, that entry from
-        the layer is replaced with the supplied displayable. If the
-        same key exists, but a different zorder, the thing with the
-        old key is removed.
+                    
+            if remove_index is None:
+                if (sle.tag and sle.tag == tag) or sle.displayable == tag:
+                    remove_index = i
 
-        Otherwise, the displayable is placed in the given zorder, behind all
-        keys listed in behind. If no keys are listed in behind, the
-        displayable is placed at the end of the zorder.
-        """
+            
+        if add_index is None:
+            add_index = len(self.layers[layer])
+        
+        return add_index, remove_index
+    
 
+    def add(self,
+            layer,
+            thing,
+            key=None,
+            zorder=0,
+            behind=[ ],
+            at_list=[ ],
+            name=None,
+            atl=None,
+            default_transform=None):
+
+
+        print "add", layer, thing, key
+        
         if not isinstance(thing, Displayable):
             raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
         
@@ -590,6 +667,7 @@ class SceneLists(renpy.object.Object):
             raise Exception("Trying to add something to non-existent layer '%s'." % layer)
 
         if key:
+            self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
 
         if key and name:
@@ -597,69 +675,79 @@ class SceneLists(renpy.object.Object):
 
         l = self.layers[layer]
 
-        at = None
-        st = None
-
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
-
-        if key is not None:
-
-            hidekey = "hide$" + key
-            
-            for index, (k, zo, st, at, d) in enumerate(l):
-                if k == key:
-                    break
-
-                # If we're adding something with the same name as something
-                # that's hiding, remove the hiding thing. 
-                if k == hidekey:
-                    l.pop(index)
-                    index = None
-                    at = None
-                
-            else:
-                index = None
-                at = None
-
-                
-            st = None
-
-            if index is not None:
-
-                old_thing = l[index][4]
-                
-                # If the old thing was a transform, make sure the new thing
-                # is a transform, and then take the transform state.
-
-                thing = self.transform_state(old_thing, thing)
-                    
-                thing.set_transform_event("replace")
-                thing._show() 
-                    
-                if zorder == zo: # W0631
-                    l[index] = (key, zorder, st, at, thing)
-                    return
-                else:
-                    l.pop(index)
-
-        index = 0
-        for index, (behind_key, zo, ignore_st, ignore_at, ignore_thing) in enumerate(l):
-            if zo == zorder and behind_key in behind:
-                break
-
-            if zo > zorder:
-                break
-        else:
-            index = len(l)
 
         if not isinstance(thing, renpy.display.motion.Transform):
             thing = self.transform_state(default_transform, thing)
             
-        thing.set_transform_event("show")
-        thing._show()
-        l.insert(index, (key, zorder, st, at, thing))
+        add_index, remove_index = self.find_index(layer, key, zorder, behind)
         
+        at = None
+        st = None
+
+        if remove_index is not None:
+
+            at = l[remove_index].animation_time            
+            thing = self.transform_state(l[remove_index].displayable, thing)
+            thing.set_transform_event("replace")
+            thing._show() 
+            
+        else:
+            
+            thing.set_transform_event("show")
+            thing._show()
+
+
+        sle = SceneListEntry(key, zorder, st, at, thing)
+        l.insert(add_index, sle)
+
+        if remove_index: 
+            if add_index <= remove_index:
+                remove_index += 1
+
+            self.hide_or_replace(layer, remove_index, "replaced")
+
+    def hide_or_replace(self, layer, index, prefix):
+        """
+        Hides or replaces the scene list entry at the given
+        index. `prefix` is a prefix that is used if the entry
+        decides it doesn't want to be hidden quite yet.
+        """
+
+        
+        if index is None:
+            return
+        
+        l = self.layers[layer]
+        oldsle = l[index]
+
+        now = get_time()
+
+        st = oldsle.show_time or now
+        at = oldsle.animation_time or now
+
+        if oldsle.tag:
+        
+            d = oldsle.displayable._hide(now - st, now - at, prefix)
+            
+            if d is not None:
+                
+                sle = SceneListEntry(
+                    prefix + "$" + oldsle.tag,
+                    oldsle.zorder,
+                    st,
+                    at,
+                    d)
+
+                l[index] = sle
+
+                return
+
+        l.pop(index)
+                    
+                    
+            
     def remove(self, layer, thing):
         """
         Thing is either a key or a displayable. This iterates through the
@@ -672,37 +760,17 @@ class SceneLists(renpy.object.Object):
 
         if layer not in self.layers:
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
-        
-        l = self.layers[layer]
-        newl = [ ]
 
-        now = get_time()
-        
-        for i in l:
-            k, zo, st, at, d = i
+        add_index, remove_index = self.find_index(layer, thing, 0, [ ])
 
-            if k == thing or d is thing:
+        if remove_index is not None:
+            key = self.layers[layer][remove_index].key
 
-                # Should we keep this around while hiding it?
-                if k:
-                    st = st or now
-                    at = at or now
-
-                    d = d._hide(now - st, now - at)
-
-                    if d is not None:
-                        k = "hide$" + k
-                        newl.append((k, zo, st, at, d))
-
-                continue
-
-            newl.append(i)
-
-        self.layers[layer] = newl
-
-        self.at_list[layer].pop(thing, None)
-        self.image_predict_info.images[layer].pop(thing, None)
+            if key:
+                self.image_predict_info.images[layer].pop(key, None)
+                self.at_list[layer].pop(key, None)
             
+            self.hide_or_replace(layer, remove_index, "hide")
 
     def clear(self, layer, hide=False):
         """
@@ -712,29 +780,17 @@ class SceneLists(renpy.object.Object):
         totally wiped out.
         """
 
-        now = get_time()
-        
-        l = self.layers[layer]
-        newl = [ ]
 
-        for i in l:
-            k, zo, st, at, d = i
+        if not hide:
+            self.layers[layer] = [ ]
 
-            # Should we keep this around while hiding it?
-            if hide and k:
+        else:
 
-                st = st or now
-                at = at or now
+            # Have to iterate in reverse order, since otherwise
+            # the indexes might change.
+            for i in reversed(xrange(len(self.layers[layer]))):
+                self.hide_or_replace(layer, i, hide)
 
-                d = d._hide(now - st, now - at)
-
-                if d is not None:
-                    k = "hide$" + k
-                    newl.append((k, zo, st, at, d))
-
-                continue
-
-        self.layers[layer] = newl
         self.at_list[layer].clear()
         self.image_predict_info.images[layer].clear()
         self.layer_at_list[layer] = (None, [ ])
@@ -751,16 +807,9 @@ class SceneLists(renpy.object.Object):
         for l, (t, list) in self.layer_at_list.items():
             self.layer_at_list[l] = (t or time, list)
         
-        for l in self.layers.values():
-            ll = [ ]
-
-            for i in range(0, len(l)):
-                k, zo, st, at, d = l[i]
-                ll.append((k, zo, st or time, at or time, d))
-
-            l[:] = ll
-
-
+        for l, ll in self.layers.iteritems():
+            self.layers[l] = [ i.update_time(time) for i in ll ]
+            
     def showing(self, layer, name):
         """
         Returns true if something with the prefix of the given name
@@ -794,6 +843,18 @@ class SceneLists(renpy.object.Object):
         rv.layer_name = layer
         return rv
 
+    def remove_hide_replaced(self, layer, tag):
+        """
+        Removes things that are hiding or replaced, that have the given
+        tag.
+        """
+
+        hide_tag = "hide$" + tag
+        replaced_tag = "replaced$" + tag
+
+        l = self.layers[layer]
+        self.layers[layer] = [ i for i in l if i.tag != hide_tag and i.tag != replaced_tag ]
+        
     def remove_hidden(self):
         """
         Goes through all of the layers, and removes things that are
@@ -806,20 +867,23 @@ class SceneLists(renpy.object.Object):
         for l in self.layers:
             newl = [ ]
 
-            for i in self.layers[l]:
-                name, zo, st, at, d = i
+            for sle in self.layers[l]:
 
-                if name and name.startswith("hide$") and st and at:
-                    d = d._hide(now - st, now - at)
+                if sle.tag:
 
-                    if d is None:
-                        continue
-                    
-                    i = (name, zo, st, at, d)
+                    if sle.tag.startswith("hide$"):
+                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "hide")
+                        if not d:
+                            continue
 
-                newl.append(i)
-
-            self.layers[l] = newl
+                    elif sle.tag.startswith("replaced$"):
+                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "replaced")
+                        if not d:
+                            continue
+                        
+                newl.append(sle)
+                        
+            self.layers[l] = newl  
 
 
 class Interface(object):
