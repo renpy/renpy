@@ -206,6 +206,10 @@ def child_or_fixed():
 def remove(d):
     layer = stack[-1].get_layer()
     renpy.game.context(-1).scene_lists.remove(layer, d)
+
+def remove_above(d):
+    layer = stack[-1].get_layer()
+    renpy.game.context(-1).scene_lists.remove_above(layer, d)
     
 def at(a):
     at_stack.append(a)

@@ -531,9 +531,15 @@ class SceneLists(renpy.object.Object):
         
         # A map from layer name -> list(SceneListEntry)
         self.layers = { }
-        
+
+        # A map from layer name -> tag -> at_list associated with that tag.
         self.at_list = { }
+
+        # A map from layer to (star time, at_list), where the at list has
+        # been applied to the layer as a whole.
         self.layer_at_list = { }
+
+        # Represents the current stare of image_prediction.
         self.image_predict_info = ipi
 
         if oldsl:
@@ -656,9 +662,32 @@ class SceneLists(renpy.object.Object):
             name=None,
             atl=None,
             default_transform=None):
+        """
+        Adds something to this scene list. Some of these names are quite a bit
+        out of date.
 
+        `thing` - The displayable to add.
 
-        print "add", layer, thing, key
+        `key` - A string giving the tag associated with this thing.
+
+        `zorder` - Where to place this thing in the zorder, an integer
+        A greater value means closer to the user.
+
+        `behind` - A list of tags to place the thing behind.
+
+        `at_list` - The at_list associated with this
+        displayable. Counterintunitively, this is not actually
+        applied, but merely stored for future use.
+
+        `name` - The full name of the image being displayed. This is used for
+        image lookup.
+
+        `atl` - If not None, an atl block applied to the thing. (This actually is
+        applied here.)
+
+        `default_transform` - The default transform that is used to initialized
+        the values in the other transforms.        
+        """
         
         if not isinstance(thing, Displayable):
             raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
@@ -745,8 +774,25 @@ class SceneLists(renpy.object.Object):
                 return
 
         l.pop(index)
-                    
-                    
+
+    def remove_above(self, layer, thing):
+        """
+        Removes everything on the layer that is closer to the user
+        than thing, which may be either a tag or a displayable. Thing must
+        be displayed, or everything will be removed.
+        """
+        
+        for i in reversed(xrange(len(self.layers[layer]))):
+
+            sle = self.layers[layer][i]
+
+            if sle.tag == thing or sle.displayable == thing:
+                break
+
+            if sle.tag and "$" in sle.tag:
+                continue
+
+            self.hide_or_replace(layer, i, "hide")
             
     def remove(self, layer, thing):
         """
