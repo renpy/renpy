@@ -1740,7 +1740,6 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
-        
         # Call per-interaction code for all widgets.
         root_widget.visit_all(lambda i : i.per_interact())
         

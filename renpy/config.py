@@ -132,7 +132,7 @@ fade_music = 0.0
 sticky_positions = False
 
 # A list of all of the layers that we know about.
-layers = [ 'master', 'transient', 'overlay' ]
+layers = [ 'master', 'transient', 'screens', 'overlay' ]
 
 # A list of layers that should be cleared when we replace
 # transients.

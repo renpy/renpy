@@ -41,7 +41,7 @@ class Action(renpy.object.Object):
     """
 
     def get_sensitive(self):
-        return False
+        return True
 
     def get_selected(self):
         return False
@@ -246,7 +246,23 @@ def context_enter(w):
 
 def context_exit(w):
     close(w)
-        
+
+
+# A map from id to the displayable with that id. This is updated when
+# widgets are created, if not None.
+widget_by_id = None
+
+# A map from id to the transform with that id. This is updated when
+# widgets are created, if not None.
+transform_by_id = None
+
+# A map from id to the old transform with the id. This should be updated
+# before widgets are created.
+old_transform_by_id = None
+
+# A map from id to the properties of the widget with that id.
+widget_properties = None
+    
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
@@ -287,8 +303,8 @@ class Wrapper(renpy.object.Object):
         keyword = self.kwargs.copy()
         keyword.update(kwargs)
 
-        if id is not None:
-            keyword.update(renpy.store._widget_properties.get(id, { }))
+        if id is not None and widget_properties is not None:
+            keyword.update(widget_properties.get(id, { }))
 
         try:
             w = self.function(*args, **keyword)
@@ -328,15 +344,53 @@ class Wrapper(renpy.object.Object):
         elif self.many:
             stack.append(Many(w, self.imagemap))
 
-        # If we have an id, record the displayable.
-        if id is not None and renpy.store._widget_by_id is not None:
-            renpy.store._widget_by_id[id] = w
+        # If we have an id, record the displayable, the transform,
+        # and maybe take the state from a previous transform.
+        if id is not None:
 
-        # Clear out the add_tag and 
+            if widget_by_id is not None:
+               widget_by_id[id] = w
+
+               if isinstance(atw, renpy.display.motion.Transform):
+                   if transform_by_id is not None:
+                       transform_by_id[id] = atw
+
+                   if old_transform_by_id is not None:
+                       oldt = old_transform_by_id.get(id, None)
+
+                       if oldt is not None:
+                           atw.take_state(oldt)
+
+        # Clear out the add_tag.
         add_tag = None
 
         return w
 
+##############################################################################
+# Button support functions
+def is_selected(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return any(is_selected(i) for i in clicked)
+
+    elif isinstance(clicked, Action):
+        return clicked.get_selected()
+
+    else:
+        return False
+
+def is_sensitive(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return all(is_sensitive(i) for i in clicked)
+
+    elif isinstance(clicked, Action):
+        return clicked.get_sensitive()
+
+    else:
+        return True
+
+    
 
 ##############################################################################
 # Widget functions.
@@ -467,10 +521,15 @@ def imagemap_compat(ground,
 
     close()
 
-def _button(clicked=None, **properties):
+def _button(clicked=None, role='', **properties):
     # TODO: Deal with role and enabled automatically, if we can.
 
-    rv = renpy.display.behavior.Button(None, clicked=clicked, **properties)
+    if not is_sensitive(clicked):
+        clicked = None
+    elif is_selected(clicked):
+        role = 'selected_'
+        
+    rv = renpy.display.behavior.Button(None, clicked=clicked, role=role, **properties)
     return rv
 
 button = Wrapper(_button, one=True)
@@ -650,17 +709,13 @@ def _hotspot(spot, clicked=None, **properties):
     hover = imagemap.hover
     role = ""
         
-    if isinstance(clicked, Action):
+    if not is_sensitive(clicked):
+        clicked = None
 
-        if not clicked.get_sensitive():
-            clicked = None
-            idle = imagemap.insensitive
-            hover = imagemap.insensitive
-
-        elif clicked.get_selected():
-            idle = imagemap.selected_idle
-            hover = imagemap.selected_hover
-            role = "selected_"
+    elif is_selected(clicked):
+        idle = imagemap.selected_idle
+        hover = imagemap.selected_hover
+        role = "selected_"
 
     idle = renpy.display.layout.LiveCrop(spot, idle)
     hover = renpy.display.layout.LiveCrop(spot, hover)

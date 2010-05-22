@@ -113,6 +113,8 @@ from renpy.python import revertable_sorted as sorted
 
 eval = renpy.python.py_eval
 
+
+
 # Displayables.
 Bar = renpy.display.behavior.Bar
 Button = renpy.display.behavior.Button
@@ -174,6 +176,8 @@ ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
 MultiPersistent = renpy.loadsave.MultiPersistent
+
+Action = renpy.ui.Action
 
 Style = renpy.style.Style
 

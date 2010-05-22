@@ -326,6 +326,27 @@ class SayBehavior(renpy.display.layout.Null):
 
         return None
 
+def run(var, *args, **kwargs):
+    """
+    Runs a variable. This is done by calling all the functions, and
+    iterating over the lists and tuples.
+    """
+    
+    if var is None:
+        return None
+
+    if isinstance(var, (list, tuple)):
+        rv = None
+
+        for i in var:
+            new_rv = i(*args)
+
+            if new_rv is not None:
+                rv = new_rv
+
+        return rv
+
+    return var(*args)
     
 class Button(renpy.display.layout.Window):
 
@@ -396,9 +417,9 @@ class Button(renpy.display.layout.Window):
             return None
 
         rv = None
-            
-        if self.hovered and not default:
-            rv = self.hovered()
+
+        if not default:
+            rv = run(self.hovered)
 
         self.set_transform_event(self.role + "hover")
         self.child.set_transform_event(self.role + "hover")
@@ -412,8 +433,7 @@ class Button(renpy.display.layout.Window):
         if self.activated:
             return None
 
-        if self.unhovered:
-            self.unhovered()
+        run(self.unhovered)
 
         self.set_transform_event(self.role + "idle")
         self.child.set_transform_event(self.role + "idle")
@@ -439,10 +459,7 @@ class Button(renpy.display.layout.Window):
         # Check the keymap.
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
-                rv = action()
-                
-                if rv is not None:
-                    return rv
+                return run(action)
                 
         # Ignore as appropriate:
         if map_event(ev, "button_ignore") and self.clicked:
@@ -457,7 +474,7 @@ class Button(renpy.display.layout.Window):
             if self.style.sound:
                 renpy.audio.music.play(self.style.sound, channel="sound")
                     
-            rv = self.clicked()
+            rv = run(self.clicked)
 
             if rv is not None:
                 return rv
