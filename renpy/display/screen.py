@@ -83,6 +83,9 @@ class Screen(renpy.display.layout.Container):
     def __reduce__(self):
         return (unreduce_screen, (self.name, self.kwargs, self.widget_properties))
 
+    def _get_parameterized(self):
+        return self.child
+    
     def visit(self):
         return [ self.child ]
 

@@ -295,7 +295,11 @@ class Wrapper(renpy.object.Object):
             id = None
             
         if "at" in kwargs:
-            at_list = kwargs.pop("at") + at_stack
+            at_list = kwargs.pop("at")
+
+            if not isinstance(at_list, list):
+                at_list = [ at_list ]
+
         else:
             at_list = [ ]
             
