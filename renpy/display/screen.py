@@ -84,6 +84,7 @@ class Screen(renpy.display.layout.Container):
         return [ self.child ]
 
     def per_interact(self):
+        renpy.display.render.redraw(self, 0)
         self.update()
 
     def include(self, _name=(), **kwargs):
@@ -98,7 +99,6 @@ class Screen(renpy.display.layout.Container):
         self.function(**self.scope)
                 
     def update(self):
-
 
         renpy.ui.widget_by_id = { }
         renpy.ui.transform_by_id = { }

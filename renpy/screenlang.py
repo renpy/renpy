@@ -680,6 +680,82 @@ class Include(renpy.object.Object):
 
 IncludeParser("include")
         
+class IfParser(Parser):
+
+    def __init__(self, name):
+        super(IfParser, self).__init__(name)
+        childbearing_statements.append(self)
+
+    def parse_children(self, l):
+        l.expect_block('if')
+
+        l = l.subblock_lexer()
+
+        rv = [ ]
+
+        while l.advance():
+            c = self.parse_statement(l)
+            if c is None:
+                l.error('Expected screen language statement.')
+
+            rv.append(c)
+
+        return rv
+        
+    def parse(self, l):
+
+        options = [ ]
+        
+        condition = l.require(l.python_expression)
+        l.require(':')
+        l.expect_eol()
+        options.append((condition, self.parse_children(l)))
+
+        while l.advance():
+
+            state = l.checkpoint()
+
+            if l.keyword("elif"):
+                condition = l.require(l.python_expression)
+                is_else = False
+            elif l.keyword("else"):
+                condition = "True"
+                is_else = True
+            else:
+                l.revert(state)
+                break
+            
+            l.require(':')
+            l.expect_eol()
+            options.append((condition, self.parse_children(l)))
+
+            if is_else:
+                break
+
+        return If(options)
+
+
+class If(renpy.object.Object):
+
+    def __init__(self, options):
+        self.options = options
+
+    def evaluate(self, name, scope):
+
+        # Find the first true condition.
+        for i, (condition, children) in enumerate(self.options):
+            if eval(condition, renpy.store.__dict__, scope):
+                break
+        else:
+            return
+
+        # For each child in that condition, evaluate it.
+        for j, child in enumerate(children):
+            child.evaluate(name + (i, j), scope)
+
+IfParser("if")
+        
+        
 
 ##############################################################################
 # Add all_statements to the statements that take children.
