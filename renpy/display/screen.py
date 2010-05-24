@@ -53,9 +53,9 @@ class Screen(renpy.display.layout.Container):
         # The layer this screen is shown on.
         self.layer = layer
         
-        # Keyword arguments given to this screen the last time it was
-        # shown.
-        self.kwargs = { }
+        # The scope associated with this statement. This is passed in
+        # as keyword arguments to the displayable.
+        self.scope = { }
 
         # Widget properties given to this screen the last time it was
         # shown.
@@ -75,7 +75,7 @@ class Screen(renpy.display.layout.Container):
         self.needs_update = True
         
     def __reduce__(self):
-        return (unreduce_screen, (self.name, self.kwargs, self.widget_properties))
+        return (unreduce_screen, (self.name, self.scope, self.widget_properties))
 
     def _get_parameterized(self):
         return self.child
@@ -86,7 +86,19 @@ class Screen(renpy.display.layout.Container):
     def per_interact(self):
         self.update()
 
+    def include(self, _name=(), **kwargs):
+        """
+        This handles the case where this screen is included from another
+        screen, in the screen language.
+        """
+
+        self.scope = kwargs
+        self.scope["_scope"] = self.scope
+        self.scope["_name"] = _name
+        self.function(**self.scope)
+                
     def update(self):
+
 
         renpy.ui.widget_by_id = { }
         renpy.ui.transform_by_id = { }
@@ -95,8 +107,9 @@ class Screen(renpy.display.layout.Container):
         
         renpy.ui.detached()
         self.child = renpy.ui.fixed()
-        
-        self.function(**self.kwargs)
+
+        self.scope["_scope"] = self.scope
+        self.function(**self.scope)
         
         renpy.ui.close()
 
@@ -150,14 +163,14 @@ class Screen(renpy.display.layout.Container):
 # A map from screen name to screen object.
 screens = { }
 
-def unreduce_screen(name, kwargs, widget_properties):
+def unreduce_screen(name, scope, widget_properties):
     """
     Used to unpickle a screen, replacing it with the current
     definition of that screen.
     """
 
     rv = screens[name]
-    rv.kwargs = kwargs
+    rv.scope = scope
     rv.widget_properties = widget_properties
 
     return rv
@@ -170,7 +183,7 @@ def get_screen(name):
         name = tuple(name.split())
 
     if not name in screens:
-        raise Exception("Screen %r is not known." % name)
+        raise Exception("Screen %r is not known." % (name,) )
 
     return screens[name]
     
@@ -179,3 +192,6 @@ def show_screen(name, **kwargs):
     
 def hide_screen(name):
     get_screen(name).hide()
+
+def include_screen(name, **kwargs):
+    get_screen(name).include(**kwargs)

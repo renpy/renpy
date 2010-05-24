@@ -165,6 +165,8 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
+        all_statements.append(self)
+
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.name)
 
@@ -189,7 +191,7 @@ class Parser(object):
             for j in renpy.style.prefix_subs:
                 self.keyword[j + i.name] = i
 
-        elif isinstance(i, FunctionStatementParser):
+        elif isinstance(i, Parser):
             self.children[i.name] = i
 
     def parse_statement(self, l):
@@ -226,8 +228,6 @@ class FunctionStatementParser(Parser):
         # Add us to the appropriate lists.
         global parser
         parser = self
-
-        all_statements.append(self)
 
         if nchildren != 0:
             childbearing_statements.append(self)
@@ -299,9 +299,8 @@ class FunctionStatementParser(Parser):
                     parse_keyword(l)
 
         return FunctionStatement(self.function, self.nchildren, positional, keyword, children, self.unevaluated)
-                    
 
-class FunctionStatement(object):
+class FunctionStatement(renpy.object.Object):
     def __init__(self, function, nchildren, positional, keyword, children, unevaluated):
         self.function = function
         self.nchildren = nchildren
@@ -479,12 +478,12 @@ add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-FunctionStatementParser("vbox", renpy.ui.hbox, many)
+FunctionStatementParser("vbox", renpy.ui.vbox, many)
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-FunctionStatementParser("fixed", renpy.ui.hbox, many)
+FunctionStatementParser("fixed", renpy.ui.fixed, many)
 add(ui_properties)
 add(position_properties)
 add(box_properties)
@@ -630,12 +629,63 @@ def pass_function():
 FunctionStatementParser("pass", pass_function, 0)
 
 
+class IncludeParser(Parser):
+
+    def __init__(self, name):
+        super(IncludeParser, self).__init__(name)
+        childbearing_statements.append(self)
+        
+    def parse(self, l):
+
+        name = ( l.require(l.name), )
+
+        while True:
+            n = l.name()
+            if n is None:
+                break
+
+            name = name + (n, )
+
+        args = renpy.parser.parse_arguments(l)
+
+        for k, v in args.arguments:
+            if k is None:
+                l.error('The include statement only takes keyword arguments.')
+
+        if args.extrapos:
+            l.error('The include statement only takes keyword arguments.')
+
+        return Include(name, args)
+
+class Include(renpy.object.Object):
+
+    def __init__(self, screen, args):
+        self.screen = screen
+        self.args = args
+
+    def evaluate(self, name, scope):
+
+        kwargs = { }
+        
+        # Args are optional.
+        if self.args:
+
+            if self.args.extrakw:
+                kwargs = eval(self.args.extrakw, renpy.store.__dict__, scope)
+                
+            for k, v in self.args.arguments:
+                kwargs[k] = eval(v, renpy.store.__dict__, scope)
+
+        renpy.display.screen.include_screen(self.screen, _name=name, **kwargs)
+
+IncludeParser("include")
+        
+
 ##############################################################################
 # Add all_statements to the statements that take children.
 
 for i in childbearing_statements:
     i.add(all_statements)
-
 
 ##############################################################################
 # Definition of the screen statement.
@@ -645,10 +695,10 @@ class ScreenFunction(renpy.object.Object):
     def __init__(self, children):
         self.children = children
 
-    def __call__(self, **scope):
+    def __call__(self, _name=(), _scope=None, **kwargs):
 
         for i, child in enumerate(self.children):
-            child.evaluate((i,), scope)
+            child.evaluate(_name + (i,), _scope)
     
 def screen_function(positional, keyword, children):
     scope = { }
@@ -666,8 +716,6 @@ def screen_function(positional, keyword, children):
         layer = 'screens'
 
     function = ScreenFunction(children)
-
-    print "In sf!"
     
     return {
         "name" : name,
@@ -687,6 +735,6 @@ def parse_screen(l):
     Parses the screen statement.
     """
 
-    return screen_stmt.parse(l).evaluate({})
+    return screen_stmt.parse(l).evaluate((), {})
     
         
