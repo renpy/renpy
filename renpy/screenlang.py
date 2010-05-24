@@ -61,7 +61,7 @@ class Type(renpy.object.Object):
         return l.require(l.simple_expression)
             
 
-    def evaluate(self, state):
+    def evaluate(self, state, scope):
         """
         This is called at runtime with the result of parse, and is
         responsible for returning an actual value. It can also raise
@@ -71,48 +71,37 @@ class Type(renpy.object.Object):
 
         raise NotImplemented
 
-    def get_value(self):
-        return self.evaluate(self.state)
-    
-    
-class IntegerLiteral(Type):
-    def parse(self, l):
-        return l.require(l.integer)
+    def get_value(self, scope):
+        return self.evaluate(self.state, scope)
 
-    def evaluate(self, state):
-        return state
-
-class OptionalIntegerLiteral(Type):
-    def parse(self, l):
-        return l.integer()
-
-    def evaluate(self, state):
-        return state
-    
 class Name(Type):
     def parse(self, l):
         return l.require(l.name)
 
-    def evaluate(self, state):
+    def evaluate(self, state, scope):
         return state
 
-class NameList(Type):
+class ImageName(Type):
     def parse(self, l):
         rv = [ ]
 
         rv.append(l.require(l.name))
 
-        while l.match(r','):
-            rv.append(l.require(l.name))
+        while True:
+            n = l.name()
+            if n is None:
+                break
 
-        return rv
+            rv.append(n)
+        
+        return tuple(rv)
 
-    def evaluate(self, state):
+    def evaluate(self, state, scope):
         return state
-
+    
 class Expression(Type):
-    def evaluate(self, state):
-        return eval(state)
+    def evaluate(self, state, scope):
+        return eval(state, renpy.store.__dict__, scope)
     
     
 ##############################################################################
@@ -220,7 +209,7 @@ class FunctionStatementParser(Parser):
     This is responsible for parsing function statements.
     """
 
-    def __init__(self, name, function, nchildren=0, pass_children=False):
+    def __init__(self, name, function, nchildren=0, unevaluated=False):
 
         super(FunctionStatementParser, self).__init__(name)
         
@@ -230,9 +219,9 @@ class FunctionStatementParser(Parser):
         # The number of children we have.
         self.nchildren = nchildren
         
-        # True if the children should be passed into the function as an
-        # argument. False if they should be run.
-        self.pass_children = pass_children
+        # True if we should evaluate arguments and children. False
+        # if we should just pass them into our child.
+        self.unevaluated = unevaluated
 
         # Add us to the appropriate lists.
         global parser
@@ -242,8 +231,6 @@ class FunctionStatementParser(Parser):
 
         if nchildren != 0:
             childbearing_statements.append(self)
-                
-        
             
     def parse(self, l):
         """
@@ -311,40 +298,40 @@ class FunctionStatementParser(Parser):
                 while not l.eol():
                     parse_keyword(l)
 
-        return FunctionStatement(self.function, self.nchildren, positional, keyword, children, self.pass_children)
+        return FunctionStatement(self.function, self.nchildren, positional, keyword, children, self.unevaluated)
                     
 
 class FunctionStatement(object):
-    def __init__(self, function, nchildren, positional, keyword, children, pass_children):
+    def __init__(self, function, nchildren, positional, keyword, children, unevaluated):
         self.function = function
         self.nchildren = nchildren
         self.positional = positional
         self.keyword = keyword
         self.children = children
-        self.pass_children = pass_children
+        self.unevaluated = unevaluated
 
                 
-    def evaluate(self):
+    def evaluate(self, name, scope):
 
-        positional = [ i.get_value() for i in self.positional ]
-        keyword = dict((k, v.get_value()) for k, v in self.keyword.iteritems())
+        if self.unevaluated:
+            return self.function(self.positional, self.keyword, self.children)
+                
+        positional = [ i.get_value(scope) for i in self.positional ]
+        keyword = dict((k, v.get_value(scope)) for k, v in self.keyword.iteritems())
 
-        if self.pass_children:
-            keyword['children'] = self.children
-
+        if "id" not in keyword:
+            keyword["id"] = name
+            
         rv = self.function(*positional, **keyword)
 
+        if self.nchildren == 1:
+            renpy.ui.child_or_fixed()
 
-        if not self.pass_children:
+        for i, child in enumerate(self.children):
+            child.evaluate(name + (i, ), scope)
 
-            if self.nchildren == 1:
-                renpy.ui.child_or_fixed()
-            
-            for i in self.children:
-                i.evaluate()
-
-            if self.nchildren != 0:
-                renpy.ui.close() 
+        if self.nchildren != 0:
+            renpy.ui.close() 
             
         return rv
         
@@ -653,20 +640,53 @@ for i in childbearing_statements:
 ##############################################################################
 # Definition of the screen statement.
 
-def screen_function(priority, name, children=[]):
-    print "Creating new screen: priority", priority, "name", name
+class ScreenFunction(renpy.object.Object):
 
-screen_stmt = FunctionStatementParser("screen", screen_function, pass_children=True)
-Positional("priority", OptionalIntegerLiteral)
-Positional("name", Name)
+    def __init__(self, children):
+        self.children = children
+
+    def __call__(self, **scope):
+
+        for i, child in enumerate(self.children):
+            child.evaluate((i,), scope)
+    
+def screen_function(positional, keyword, children):
+    scope = { }
+
+    name = positional[0].get_value(scope)
+
+    if "modal" in keyword:
+        modal = keyword.pop("modal").get_value(scope)
+    else:
+        modal = True
+
+    if "layer" in keyword:
+        layer = keyword.pop("modal").get_value(scope)
+    else:
+        layer = 'screens'
+
+    function = ScreenFunction(children)
+
+    print "In sf!"
+    
+    return {
+        "name" : name,
+        "function" : function,
+        "modal" : modal,
+        "layer" : layer,
+        }
+    
+screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
+Positional("name", ImageName)
+Keyword("modal", Expression)
+Keyword("layer", Expression)
 add(all_statements)
-
 
 def parse_screen(l):
     """
     Parses the screen statement.
     """
 
-    return screen_stmt.parse(l).evaluate()
+    return screen_stmt.parse(l).evaluate({})
     
         

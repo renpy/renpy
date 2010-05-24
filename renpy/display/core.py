@@ -810,11 +810,11 @@ class SceneLists(renpy.object.Object):
         add_index, remove_index = self.find_index(layer, thing, 0, [ ])
 
         if remove_index is not None:
-            key = self.layers[layer][remove_index].key
+            tag = self.layers[layer][remove_index].tag
 
-            if key:
-                self.image_predict_info.images[layer].pop(key, None)
-                self.at_list[layer].pop(key, None)
+            if tag:
+                self.image_predict_info.images[layer].pop(tag, None)
+                self.at_list[layer].pop(tag, None)
             
             self.hide_or_replace(layer, remove_index, "hide")
 

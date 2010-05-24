@@ -1394,3 +1394,29 @@ class Define(Node):
         setattr(renpy.store, self.varname, value)    
         
         return self.next
+
+
+class Screen(Node):
+
+    __slots__ = [
+        'kwargs',
+        ]
+
+    def __init__(self, loc, kwargs):
+        """
+        @param name: The name of the image being defined.
+
+        @param expr: An expression yielding a Displayable that is
+        assigned to the image.
+        """
+
+        super(Screen, self).__init__(loc)
+        
+        self.kwargs = kwargs
+            
+    def diff_info(self): 
+        return (Screen, self.kwargs["name"])
+        
+    def execute(self):
+        renpy.display.screen.define_screen(**self.kwargs)
+        return self.next

@@ -31,7 +31,6 @@ class Screen(renpy.display.layout.Container):
                  name,
                  function,
                  predict_function=None,
-                 implicit_fixed=True,
                  modal=True,
                  layer='screens'):
 
@@ -50,11 +49,6 @@ class Screen(renpy.display.layout.Container):
         # The function that is called to predict the images that
         # will be used by the screen.
         self.predict_function = predict_function
-
-        # True if the screen should be placed inside an implicit
-        # ui.fixed. False if it will create and return the fixed
-        # itself.
-        self.implicit_fixed = implicit_fixed
 
         # The layer this screen is shown on.
         self.layer = layer
@@ -99,20 +93,14 @@ class Screen(renpy.display.layout.Container):
         renpy.ui.old_transform_by_id = self.transforms
         renpy.ui.widget_properties = self.widget_properties
         
-        if self.implicit_fixed:
-            renpy.ui.detached()
-            child = renpy.ui.fixed()
+        renpy.ui.detached()
+        self.child = renpy.ui.fixed()
+        
+        self.function(**self.kwargs)
+        
+        renpy.ui.close()
 
-            self.function()
-
-            renpy.ui.close()
-
-        else:
-
-            child = self.function(**self.kwargs)
-
-        self.child = child
-        child.visit_all(lambda c : c.per_interact())
+        self.child.visit_all(lambda c : c.per_interact())
 
         rv = renpy.ui.widget_by_id
         self.widgets = renpy.ui.widget_by_id

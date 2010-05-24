@@ -1677,15 +1677,17 @@ def parse_statement(l):
 
     if l.keyword('screen'):
 
-        renpy.screenlang.parse_screen(l)
-
-        # TODO: Figure out what to do with a screen once we've parsed
-        # it.
-
+        # The guts of screen language parsing is in screenlang.py. It
+        # assumes we ate the "screen" keyword before it's called.
+        kwargs = renpy.screenlang.parse_screen(l)
         l.advance()
+
+        rv = ast.Screen(loc, kwargs)
+
+        if not l.init:
+            rv = ast.Init(loc, [ rv ], 0)        
         
-        
-        return ast.Pass(loc)
+        return rv
 
     state = l.checkpoint()
     
