@@ -357,6 +357,8 @@ position_properties = [ Style(i, Expression) for i in [
         "yalign",
         "xoffset",
         "yoffset",
+        "xmaximum",
+        "ymaximum",
         "area",
         ] ]
 
