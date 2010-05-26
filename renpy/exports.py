@@ -32,7 +32,7 @@ from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
-from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen
+from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen, current_screen, get_current_screen
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -71,8 +71,8 @@ def public_api():
     music
     time
     define_screen, show_screen, hide_screen, include_screen
-
-    
+    current_screen, get_current_screen
+        
 del public_api
 
 import collections

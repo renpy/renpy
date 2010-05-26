@@ -73,6 +73,9 @@ class Screen(renpy.display.layout.Container):
 
         # Do we need to be updated?
         self.needs_update = True
+
+        # Are we modal? (A modal screen ignores screens under it.)
+        self.modal = False
         
     def __reduce__(self):
         return (unreduce_screen, (self.name, self.scope, self.widget_properties))
@@ -100,6 +103,10 @@ class Screen(renpy.display.layout.Container):
                 
     def update(self):
 
+        global _current_screen
+        old_screen = _current_screen
+        _current_screen = self.name
+        
         renpy.ui.widget_by_id = { }
         renpy.ui.transform_by_id = { }
         renpy.ui.old_transform_by_id = self.transforms
@@ -124,6 +131,8 @@ class Screen(renpy.display.layout.Container):
         renpy.ui.old_transform_by_id = None
         renpy.ui.widget_properties = None
 
+        _current_screen = old_screen
+
         return rv
        
     def render(self, w, h, st, at):
@@ -133,8 +142,18 @@ class Screen(renpy.display.layout.Container):
         return self.child.get_placement()
 
     def event(self, ev, x, y, st):
-        return self.child.event(ev, x, y, st)
 
+        global _current_screen
+        old_screen = _current_screen
+        _current_screen = self.name
+        
+        rv = self.child.event(ev, x, y, st)
+
+        _current_screen = old_screen
+        
+        if rv is not None:
+            return rv
+        
         if self.modal:
             raise renpy.display.core.IgnoreEvents()
         
@@ -143,7 +162,7 @@ class Screen(renpy.display.layout.Container):
         self.widgets = None
         self.transforms = { }
         self.widget_properties = widget_properties
-        self.kwargs = kwargs
+        self.scope = kwargs
 
         self.update()
 
@@ -160,6 +179,10 @@ class Screen(renpy.display.layout.Container):
         renpy.exports.hide(self.name, layer=self.layer)
 
 
+# The name of the screen that is currently being displayed, or
+# None if no screen is being currently displayed.
+_current_screen = None
+        
 # A map from screen name to screen object.
 screens = { }
 
@@ -186,7 +209,13 @@ def get_screen(name):
         raise Exception("Screen %r is not known." % (name,) )
 
     return screens[name]
-    
+
+def has_screen(name):
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    return name in screens
+
 def show_screen(name, **kwargs):
     get_screen(name).show(**kwargs)
     
@@ -195,3 +224,17 @@ def hide_screen(name):
 
 def include_screen(name, **kwargs):
     get_screen(name).include(**kwargs)
+
+def current_screen():
+    return _current_screen
+
+def get_current_screen():
+    return get_screen(current_screen)
+
+def get_widget(screen, name):
+    rv = get_screen(screen).widgets.get(name, None)
+
+    if rv is None:
+        raise Exception("There is no widget with id %r in screen %r." % (name, screen))
+        
+    return rv

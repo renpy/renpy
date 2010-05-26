@@ -57,6 +57,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      say_vbox_properties={},
                      transform=None,
                      variant=None,
+                     screen=None,
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -144,6 +145,24 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     what_args = style_args(what_args)
     window_args = style_args(window_args)
 
+    if screen and renpy.display.screen.has_screen(screen):
+        widget_properties = {
+            "window" : window_args,
+            "what" : what_args,
+            "who" : who_args,
+            }
+
+        renpy.display.screen.show_screen(
+            screen,
+            widget_properties=widget_properties,
+            who=who,
+            what=what)
+
+        renpy.exports.shown_window()
+
+        return renpy.display.screen.get_widget(screen, "what")
+        
+        
     # Apply the transform.
     if transform:
         renpy.ui.at(transform)
@@ -431,7 +450,8 @@ class ADVCharacter(object):
 
         self.condition = v('condition')
         self.dynamic = v('dynamic')
-
+        self.screen = v('screen')
+        
 
         self.display_args = dict(
             interact = d('interact'),
@@ -507,10 +527,15 @@ class ADVCharacter(object):
             who_args=self.who_args,
             what_args=self.what_args,
             window_args=self.window_args,
+            screen=self.screen,
             **self.show_args)
 
     # This is called after the last interaction is done.
     def do_done(self, who, what):
+
+        if self.screen and renpy.display.screen.has_screen(self.screen):
+            renpy.display.screen.hide_screen(self.screen)
+
         return
     
     # This is called when an extend occurs, before the usual add/show

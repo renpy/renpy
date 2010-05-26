@@ -288,7 +288,8 @@ adv = ADVCharacter(None,
                    who_style='say_label',
                    what_style='say_dialogue',
                    window_style='say_window',
-
+                   screen='say',
+                   
                    kind=False)
 
 def predict_say(who, what):
