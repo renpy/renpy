@@ -151,8 +151,6 @@ class ImageReference(renpy.display.core.Displayable):
             self.find_target()
 
         return self.target.set_transform_event(event)
-        
-    
     
     def event(self, ev, x, y, st):
         if not self.target:

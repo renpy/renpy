@@ -114,7 +114,8 @@ class Screen(renpy.display.layout.Container):
         
         renpy.ui.detached()
         self.child = renpy.ui.fixed()
-
+        self.children = [ self.child ]
+        
         self.scope["_scope"] = self.scope
         self.function(**self.scope)
         

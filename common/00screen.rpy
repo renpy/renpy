@@ -105,10 +105,10 @@ init python:
             return getattr(self.object, self.var)
                
     def ToggleVariable(var):
-        return SetField(store, var)
+        return ToggleField(store, var)
 
     def TogglePreference(var):
-        return SetField(_preferences, var)
+        return ToggleField(_preferences, var)
 
     
     

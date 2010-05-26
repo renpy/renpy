@@ -169,6 +169,13 @@ class Container(renpy.display.core.Displayable):
                 
         return None
 
+    def set_transform_event(self, event):
+        super(Container, self).set_transform_event(event)
+
+        for i in self.children:
+            i.set_transform_event(event)
+            
+    
     
     def visit(self):
         return self.children
