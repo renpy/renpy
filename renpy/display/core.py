@@ -605,7 +605,7 @@ class SceneLists(renpy.object.Object):
             return new_thing
 
         # Don't bother wrapping screens, as they can't be transformed.
-        if isinstance(new_thing, renpy.display.screen.Screen):
+        if isinstance(new_thing, renpy.display.screen.ScreenDisplayable):
             return new_thing
         
         old_transform = old_thing._get_parameterized()
@@ -934,6 +934,31 @@ class SceneLists(renpy.object.Object):
                         
             self.layers[l] = newl  
 
+    def get_displayable_by_tag(self, layer, tag):
+        """
+        Returns the displayable on the layer with the given tag, or None
+        if no such displayable exists. Note that this will usually return
+        a Transform.
+        """
+
+        if layer not in self.layers:
+            raise Exception("Unknown layer %r." % layer)
+
+        for sle in self.layers[layer]:
+            if sle.tag == tag:
+                return sle.displayable
+
+        return None
+
+    
+def scene_lists(index=-1):
+    """
+    Returns either the current scenelists object, or the one for the
+    context at the given index.
+    """
+
+    return renpy.game.context(index).scene_lists
+   
 
 class Interface(object):
     """

@@ -788,32 +788,23 @@ def screen_function(positional, keyword, children):
     else:
         modal = True
 
-    if "layer" in keyword:
-        layer = keyword.pop("layer").get_value(scope)
-    else:
-        layer = 'screens'
-
     if "zorder" in keyword:
         zorder = keyword.pop("zorder").get_value(scope)
     else:
         zorder = 0
 
-        
-        
     function = ScreenFunction(children)
     
     return {
         "name" : name,
         "function" : function,
         "modal" : modal,
-        "layer" : layer,
         "zorder" : zorder,
         }
     
 screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
 Positional("name", ImageName)
 Keyword("modal", Expression)
-Keyword("layer", Name)
 Keyword("zorder", Expression)
 add(all_statements)
 

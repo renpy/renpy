@@ -21,10 +21,10 @@
 
 import renpy
 
-class Screen(renpy.display.layout.Container):
+class Screen(renpy.object.Object):
     """
-    A screen is a collection of widgets that are displayed together. This
-    class is responsible for managing the display of a screen.
+    A screen is a collection of widgets that are displayed together.
+    This class stores information about the screen.
     """
 
     def __init__(self,
@@ -32,12 +32,9 @@ class Screen(renpy.display.layout.Container):
                  function,
                  predict_function=None,
                  modal=True,
-                 layer='screens',
                  zorder=0,
                  hide_delay=0):
-
-        super(Screen, self).__init__()
-
+    
         # The name of this screen.
         if isinstance(name, basestring):
             name = tuple(name.split())
@@ -52,16 +49,49 @@ class Screen(renpy.display.layout.Container):
         # will be used by the screen.
         self.predict_function = predict_function
 
-        # The layer this screen is shown on.
+        # Are we modal? (A modal screen ignores screens under it.)
+        self.modal = False
+
+        # Our zorder.
+        self.zorder = zorder
+
+    # TODO: Finish refactoring.
+        
+        
+    # def hide(self):
+    #     renpy.exports.hide(self.name, layer=self.layer)
+
+class ScreenDisplayable(renpy.display.layout.Container):
+    """
+    A screen is a collection of widgets that are displayed together. This
+    class is responsible for managing the display of a screen.
+    """
+
+    no_save = [ 'screen' ]
+
+    def after_setstate(self):
+        self.screen = screens[self.screen_name]
+        
+    def __init__(self, screen, tag, layer, widget_properties={}, scope={}):
+
+        super(ScreenDisplayable, self).__init__()
+
+        # The screen, and it's name. (The name is used to look up the
+        # screen on save.)
+        self.screen = screen
+        self.screen_name = screen.name
+
+        # The tag this and layer screen was displayed with.
+        self.tag = tag
         self.layer = layer
         
         # The scope associated with this statement. This is passed in
         # as keyword arguments to the displayable.
-        self.scope = { }
-
+        self.scope = renpy.python.RevertableDict(scope)
+        
         # Widget properties given to this screen the last time it was
         # shown.
-        self.widget_properties = { }
+        self.widget_properties = widget_properties
         
         # The child associated with this screen.
         self.child = None
@@ -73,14 +103,7 @@ class Screen(renpy.display.layout.Container):
         # figured that out yet.
         self.widgets = None
 
-        # Are we modal? (A modal screen ignores screens under it.)
-        self.modal = False
-
-        # Our zorder.
-        self.zorder = zorder
-        
-    def __reduce__(self):
-        return (unreduce_screen, (self.name, self.scope, self.widget_properties))
+        self.update()
 
     def _get_parameterized(self):
         return self.child
@@ -92,20 +115,9 @@ class Screen(renpy.display.layout.Container):
         renpy.display.render.redraw(self, 0)
         self.update()
 
-    def include(self, _name=(), **kwargs):
-        """
-        This handles the case where this screen is included from another
-        screen, in the screen language.
-        """
-
-        self.scope = kwargs
-        self.scope["_scope"] = self.scope
-        self.scope["_name"] = _name
-        self.function(**self.scope)
-
     def set_transform_event(self, event):
-        super(Screen, self).set_transform_event(event)
-
+        super(ScreenDisplayable, self).set_transform_event(event)
+        
         for i in self.child.children:
             i.set_transform_event(event)
 
@@ -126,7 +138,7 @@ class Screen(renpy.display.layout.Container):
 
         global _current_screen
         old_screen = _current_screen
-        _current_screen = self.name
+        _current_screen = self.screen
         
         renpy.ui.widget_by_id = { }
         renpy.ui.transform_by_id = { }
@@ -138,7 +150,7 @@ class Screen(renpy.display.layout.Container):
         self.children = [ self.child ]
         
         self.scope["_scope"] = self.scope
-        self.function(**self.scope)
+        self.screen.function(**self.scope)
         
         renpy.ui.close()
 
@@ -167,7 +179,7 @@ class Screen(renpy.display.layout.Container):
 
         global _current_screen
         old_screen = _current_screen
-        _current_screen = self.name
+        _current_screen = self
         
         rv = self.child.event(ev, x, y, st)
 
@@ -176,25 +188,9 @@ class Screen(renpy.display.layout.Container):
         if rv is not None:
             return rv
         
-        if self.modal:
+        if self.screen.modal:
             raise renpy.display.core.IgnoreEvents()
         
-    def show(self, widget_properties={ }, **kwargs):
-
-        self.widgets = None
-        self.transforms = { }
-        self.widget_properties = widget_properties
-        self.scope = kwargs
-
-        self.update()
-
-        # Show this screen on the screens layer.
-        if not renpy.exports.showing(self.name, layer=self.layer):
-            renpy.exports.show(self.name, layer=self.layer, what=self, zorder=self.zorder)
-
-        
-    def hide(self):
-        renpy.exports.hide(self.name, layer=self.layer)
 
 
 # The name of the screen that is currently being displayed, or
@@ -204,55 +200,83 @@ _current_screen = None
 # A map from screen name to screen object.
 screens = { }
 
-def unreduce_screen(name, scope, widget_properties):
-    """
-    Used to unpickle a screen, replacing it with the current
-    definition of that screen.
-    """
-
-    rv = screens[name]
-    rv.scope = scope
-    rv.widget_properties = widget_properties
-
-    return rv
-
 def define_screen(*args, **kwargs):
     Screen(*args, **kwargs)
+    
+def get_screen(tag, layer):
+    """
+    Returns the ScreenDisplayable with the given tag, on the given layer.
+    """
 
-def get_screen(name):
-    if not isinstance(name, tuple):
-        name = tuple(name.split())
+    tag = tag.split()[0]
+    sl = renpy.exports.scene_lists()
 
-    if not name in screens:
-        raise Exception("Screen %r is not known." % (name,) )
+    sd = sl.get_displayable_by_tag(layer, tag)
 
-    return screens[name]
+    if not isinstance(sd, ScreenDisplayable):
+        raise Exception("A screen with the tag %r was not found on layer %r." % (tag, layer))
+    
+    return sd
 
 def has_screen(name):
+    """
+    Returns true if a screen with the given name exists.
+    """
+
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
     return name in screens
 
-def show_screen(name, **kwargs):
-    get_screen(name).show(**kwargs)
-    
-def hide_screen(name):
-    get_screen(name).hide()
 
-def include_screen(name, **kwargs):
-    get_screen(name).include(**kwargs)
+def show_screen(name, layer='screens', tag=None, widget_properties={}, **kwargs):
+    """
+    Shows the named screen.
+    """
+    
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    if tag is None:
+        tag = name[0]
+
+    if not name in screens:
+        raise Exception("Screen %r is not known.\n", (name,))
+
+    screen = screens[name]
+
+    d = ScreenDisplayable(screen, tag, layer, widget_properties, kwargs)    
+    renpy.exports.show(name, tag=tag, what=d, layer=layer, zorder=screen.zorder)
+
+def hide_screen(tag, layer='screens'):
+
+    tag = tag.split()[0]
+    
+    # TODO: Defer hide.
+    renpy.exports.hide(tag, layer=layer)
+
+def include_screen(name, _name=(), **kwargs):
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+    
+    if name not in screens:
+        raise Exception("Screen %r is not known." % name)
+
+    screen = screens[name]
+    
+    scope = kwargs
+    scope["_scope"] = scope
+    scope["_name"] = _name
+    screen.function(**scope)
 
 def current_screen():
     return _current_screen
 
-def get_current_screen():
-    return get_screen(current_screen)
-
-def get_widget(screen, name):
-    rv = get_screen(screen).widgets.get(name, None)
+def get_widget(name, widget_name, layer='screens'):
+    rv = get_screen(name, layer).widgets.get(widget_name, None)
 
     if rv is None:
-        raise Exception("There is no widget with id %r in screen %r." % (name, screen))
+        raise Exception("There is no widget with id %r in screen %r." % (widget_name, name))
         
     return rv
