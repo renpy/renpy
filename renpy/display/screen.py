@@ -33,6 +33,7 @@ class Screen(renpy.display.layout.Container):
                  predict_function=None,
                  modal=True,
                  layer='screens',
+                 zorder=0,
                  hide_delay=0):
 
         super(Screen, self).__init__()
@@ -72,11 +73,11 @@ class Screen(renpy.display.layout.Container):
         # figured that out yet.
         self.widgets = None
 
-        # Do we need to be updated?
-        self.needs_update = True
-
         # Are we modal? (A modal screen ignores screens under it.)
         self.modal = False
+
+        # Our zorder.
+        self.zorder = zorder
         
     def __reduce__(self):
         return (unreduce_screen, (self.name, self.scope, self.widget_properties))
@@ -188,12 +189,8 @@ class Screen(renpy.display.layout.Container):
         self.update()
 
         # Show this screen on the screens layer.
-        renpy.exports.show(self.name, layer=self.layer, what=self)
-
-        # Remove everything above 
-        renpy.ui.layer(self.layer)
-        renpy.ui.remove_above(self.name[0])
-        renpy.ui.close()
+        if not renpy.exports.showing(self.name, layer=self.layer):
+            renpy.exports.show(self.name, layer=self.layer, what=self, zorder=self.zorder)
 
         
     def hide(self):

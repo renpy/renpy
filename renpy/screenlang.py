@@ -247,7 +247,7 @@ class FunctionStatementParser(Parser):
         def parse_keyword(l):
             name = l.word()
 
-            if not Name:
+            if name is None:
                 l.error('expected a keyword argument, colon, or end of line.')
             
             if name not in self.keyword:
@@ -789,10 +789,17 @@ def screen_function(positional, keyword, children):
         modal = True
 
     if "layer" in keyword:
-        layer = keyword.pop("modal").get_value(scope)
+        layer = keyword.pop("layer").get_value(scope)
     else:
         layer = 'screens'
 
+    if "zorder" in keyword:
+        zorder = keyword.pop("zorder").get_value(scope)
+    else:
+        zorder = 0
+
+        
+        
     function = ScreenFunction(children)
     
     return {
@@ -800,12 +807,14 @@ def screen_function(positional, keyword, children):
         "function" : function,
         "modal" : modal,
         "layer" : layer,
+        "zorder" : zorder,
         }
     
 screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
 Positional("name", ImageName)
 Keyword("modal", Expression)
-Keyword("layer", Expression)
+Keyword("layer", Name)
+Keyword("zorder", Expression)
 add(all_statements)
 
 def parse_screen(l):
