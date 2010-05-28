@@ -216,8 +216,15 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     elif isinstance(what, basestring):
         what = tuple(what.split())
 
-    base = img = renpy.display.image.ImageReference(what, style='image_placement')
-
+    if isinstance(what, renpy.display.core.Displayable):
+        base = img = what
+    else:
+        base = img = renpy.display.image.ImageReference(what, style='image_placement')
+        
+        if not base.find_target() and renpy.config.missing_show:
+            if renpy.config.missing_show(name, what, layer):
+                return
+        
     for i in at_list:
         if isinstance(i, renpy.display.motion.Transform):
             img = i(child=img)
@@ -230,9 +237,6 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     if tag:
         name = (tag,) + name[1:]
     
-    if not base.find_target() and renpy.config.missing_show:
-        if renpy.config.missing_show(name, what, layer):
-            return
 
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)

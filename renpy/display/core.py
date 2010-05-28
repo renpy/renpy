@@ -603,6 +603,10 @@ class SceneLists(renpy.object.Object):
 
         if old_thing is None:
             return new_thing
+
+        # Don't bother wrapping screens, as they can't be transformed.
+        if isinstance(new_thing, renpy.display.screen.Screen):
+            return new_thing
         
         old_transform = old_thing._get_parameterized()
         if not isinstance(old_transform, renpy.display.motion.Transform):
@@ -726,7 +730,6 @@ class SceneLists(renpy.object.Object):
             
             thing.set_transform_event("show")
             thing._show()
-
 
         sle = SceneListEntry(key, zorder, st, at, thing)
         l.insert(add_index, sle)

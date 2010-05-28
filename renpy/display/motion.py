@@ -532,6 +532,9 @@ class Transform(Container):
         overridden by renpy.atl.TransformBase.
         """
 
+        self.hide_request = t.hide_request
+        self.replaced_request = t.replaced_request
+        
         return 
 
     

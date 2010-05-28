@@ -224,6 +224,11 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
+        super(ATLTransformBase, self).take_execution_state(t)
+        
+        if t.atl is not self.atl:
+            return
+        
         self.done = t.done
         self.block = t.block
         self.atl_state = t.atl_state

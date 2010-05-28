@@ -32,7 +32,8 @@ class Screen(renpy.display.layout.Container):
                  function,
                  predict_function=None,
                  modal=True,
-                 layer='screens'):
+                 layer='screens',
+                 hide_delay=0):
 
         super(Screen, self).__init__()
 
@@ -100,7 +101,26 @@ class Screen(renpy.display.layout.Container):
         self.scope["_scope"] = self.scope
         self.scope["_name"] = _name
         self.function(**self.scope)
-                
+
+    def set_transform_event(self, event):
+        super(Screen, self).set_transform_event(event)
+
+        for i in self.child.children:
+            i.set_transform_event(event)
+
+    def _hide(self, st, at, kind):        
+
+        rv = None
+
+        for i in self.transforms:
+            c = self.transforms[i]._hide(st, at, kind)
+
+            if c is not None:
+                self.transforms[i] = c
+                rv = self
+
+        return rv
+    
     def update(self):
 
         global _current_screen
