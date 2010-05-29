@@ -55,12 +55,6 @@ class Screen(renpy.object.Object):
         # Our zorder.
         self.zorder = zorder
 
-    # TODO: Finish refactoring.
-        
-        
-    # def hide(self):
-    #     renpy.exports.hide(self.name, layer=self.layer)
-
 class ScreenDisplayable(renpy.display.layout.Container):
     """
     A screen is a collection of widgets that are displayed together. This
@@ -96,12 +90,18 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The child associated with this screen.
         self.child = None
 
-        # The transforms used to display the screen.
-        self.transforms = { }
-
         # The widgets used to display the screen. None if we haven't
         # figured that out yet.
         self.widgets = None
+        
+        old_screen = get_screen(tag, layer)
+        
+        # The transforms that surround the widgets.
+        if old_screen:
+            self.transforms = old_screen.transforms
+        else:            
+            self.transforms = { }
+
 
         self.update()
 
@@ -213,8 +213,6 @@ def get_screen(tag, layer):
 
     sd = sl.get_displayable_by_tag(layer, tag)
 
-    if not isinstance(sd, ScreenDisplayable):
-        raise Exception("A screen with the tag %r was not found on layer %r." % (tag, layer))
     
     return sd
 
@@ -229,7 +227,7 @@ def has_screen(name):
     return name in screens
 
 
-def show_screen(name, layer='screens', tag=None, widget_properties={}, **kwargs):
+def show_screen(name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
     """
     Shows the named screen.
     """
@@ -237,16 +235,16 @@ def show_screen(name, layer='screens', tag=None, widget_properties={}, **kwargs)
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    if tag is None:
-        tag = name[0]
+    if _tag is None:
+        _tag = name[0]
 
     if not name in screens:
         raise Exception("Screen %r is not known.\n", (name,))
 
     screen = screens[name]
 
-    d = ScreenDisplayable(screen, tag, layer, widget_properties, kwargs)    
-    renpy.exports.show(name, tag=tag, what=d, layer=layer, zorder=screen.zorder)
+    d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
+    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder)
 
 def hide_screen(tag, layer='screens'):
 
@@ -274,7 +272,13 @@ def current_screen():
     return _current_screen
 
 def get_widget(name, widget_name, layer='screens'):
-    rv = get_screen(name, layer).widgets.get(widget_name, None)
+
+    screen = get_screen(name, layer)
+
+    if not isinstance(screen, ScreenDisplayable):
+        raise Exception("A screen with the tag %r was not found on layer %r." % (name, layer))
+
+    rv = screen.widgets.get(widget_name, None)
 
     if rv is None:
         raise Exception("There is no widget with id %r in screen %r." % (widget_name, name))

@@ -520,7 +520,8 @@ class SceneLists(renpy.object.Object):
         if version < 4:
             for k in self.layers:
                 self.layers[k] = [ SceneListEntry(*i) for i in self.layers[k] ]
-            
+
+            self.additional_transient = [ ]
                 
     def __init__(self, oldsl, ipi):
 
@@ -542,6 +543,11 @@ class SceneLists(renpy.object.Object):
         # Represents the current stare of image_prediction.
         self.image_predict_info = ipi
 
+        # A list of (layer, tag) pairs that are considered to be
+        # transient.
+        self.additional_transient = [ ]
+
+        
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
@@ -579,6 +585,11 @@ class SceneLists(renpy.object.Object):
 
         for i in renpy.config.transient_layers:
             self.clear(i, True)
+
+        for layer, tag in self.additional_transient:
+            self.remove(layer, tag)
+
+        self.additional_transient = [ ]
             
     def transient_is_empty(self):
         """
@@ -665,7 +676,8 @@ class SceneLists(renpy.object.Object):
             at_list=[ ],
             name=None,
             atl=None,
-            default_transform=None):
+            default_transform=None,
+            transient=False):
         """
         Adds something to this scene list. Some of these names are quite a bit
         out of date.
@@ -706,6 +718,9 @@ class SceneLists(renpy.object.Object):
         if key and name:
             self.image_predict_info.images[layer][key] = name
 
+        if transient:
+            self.additional_transient.append((layer, key))
+            
         l = self.layers[layer]
 
         if atl:
@@ -746,7 +761,6 @@ class SceneLists(renpy.object.Object):
         index. `prefix` is a prefix that is used if the entry
         decides it doesn't want to be hidden quite yet.
         """
-
         
         if index is None:
             return

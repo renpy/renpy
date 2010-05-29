@@ -152,9 +152,18 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
             "who" : who_args,
             }
 
+        tag = screen
+        index = 0
+        
+        while renpy.display.showing(tag):
+            index += 1
+            tag = "%s%d" % (screen, index)
+        
         renpy.display.screen.show_screen(
             screen,
-            widget_properties=widget_properties,
+            _widget_properties=widget_properties,
+            _transient=True,
+            _tag = tag,
             who=who,
             what=what)
 
@@ -532,10 +541,6 @@ class ADVCharacter(object):
 
     # This is called after the last interaction is done.
     def do_done(self, who, what):
-
-        if self.screen and renpy.display.screen.has_screen(self.screen):
-            renpy.display.screen.hide_screen(self.screen)
-
         return
     
     # This is called when an extend occurs, before the usual add/show
