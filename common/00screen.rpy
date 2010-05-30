@@ -27,11 +27,12 @@ init python:
             renpy.jump(label)
                     
     class Show(Action):
-        def __init__(self, screen):
+        def __init__(self, screen, **kwargs):
             self.screen = screen
+            self.kwargs = kwargs
 
         def __call__(self):
-            renpy.show_screen(self.screen)
+            renpy.show_screen(self.screen, **self.kwargs)
             renpy.restart_interaction()
             
         def get_selected(self):

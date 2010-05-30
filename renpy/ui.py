@@ -424,6 +424,15 @@ saybehavior = Wrapper(renpy.display.behavior.SayBehavior)
 pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
 soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
+def _key(key, action=None):
+
+    if action is None:
+        raise Exception("Action is required in ui.key.")
+    
+    return renpy.display.behavior.Keymap(**{ key : action})
+
+key = Wrapper(_key)
+
 def menu(menuitems,
          style = 'menu',
          caption_style='menu_caption',

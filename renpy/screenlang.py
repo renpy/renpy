@@ -512,7 +512,14 @@ for name in [ "window", "frame" ]:
     add(position_properties)
     add(window_properties)
 
-# Omit keymap in favor of key.
+FunctionStatementParser("key", renpy.ui.key, 0)
+Positional("key")
+Keyword("action")
+
+FunctionStatementParser("timer", renpy.ui.timer, 0)
+Positional("key")
+Keyword("action")
+
 # Omit behaviors.
 # Omit menu as being too high-level.
 
@@ -620,7 +627,13 @@ add(ui_properties)
 add(position_properties)
 add(bar_properties)
 
-# TODO: need to add the key statement.
+
+FunctionStatementParser("transform", renpy.ui.transform, 1)
+for i in renpy.atl.PROPERTIES:
+    Style(i)
+
+
+
     
 ##############################################################################
 # Control-flow statements.

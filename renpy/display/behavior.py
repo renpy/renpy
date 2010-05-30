@@ -1004,21 +1004,41 @@ class Conditional(renpy.display.layout.Container):
             
 class Timer(renpy.display.layout.Null):
 
-    def __init__(self, delay, function, repeat=False, args=(), kwargs={}):
+    started = False
+    
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}):
         super(Timer, self).__init__()
 
+        if action is None:
+            raise Exception("A timer must have an action supplied.")
+        
         if delay <= 0:
             raise Exception("A timer's delay must be > 0.")
 
+        # The delay.
         self.delay = delay
-        self.function = function
+
+        # Should we repeat the event?
         self.repeat = repeat
-        self.next_event = delay
+
+        # The time the next event should occur.
+        self.next_event = None
+
+        # The function and its arguments.
+        self.function = action
         self.args = args
         self.kwargs = kwargs
+
+        # Did we start the timer?
+        self.started = False
+
         
     def event(self, ev, x, y, st):
 
+        if not self.started:
+            self.started = True
+            self.next_event = st + self.delay
+        
         if self.next_event is None:
             return
         
