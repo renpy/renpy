@@ -3,28 +3,19 @@
 init python:
     
     class Return(Action):
-        def __init__(self, value=True, hide=True):
+        def __init__(self, value=True):
             self.value = value
-            self.hide = hide
 
         def __call__(self):
-            if hide:
-                renpy.hide_screen(renpy.current_screen())
-
             return self.value
 
     class Jump(Action):
 
         def __init__(self, label, hide=True):
             self.label = label
-            self.hide = hide
 
         def __call__(self):
-            
-            if hide:
-                renpy.hide_screen(renpy.current_screen())
-
-            renpy.jump(label)
+            renpy.jump(self.label)
                     
     class Show(Action):
         def __init__(self, screen, **kwargs):

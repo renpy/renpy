@@ -360,6 +360,7 @@ class Lexer(object):
         'expression',
         'hide',
         'if',
+        'in',
         'image',
         'init',
         'jump',

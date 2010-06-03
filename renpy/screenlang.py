@@ -201,6 +201,24 @@ class Parser(object):
             return c
         else:            
             return None
+
+
+    def parse_children(self, stmt, l):
+        l.expect_block(stmt)
+
+        l = l.subblock_lexer()
+
+        rv = [ ]
+
+        while l.advance():
+            c = self.parse_statement(l)
+            if c is None:
+                l.error('Expected screen language statement.')
+
+            rv.append(c)
+
+        return rv
+        
         
             
 # A singleton value.
@@ -701,22 +719,6 @@ class IfParser(Parser):
         super(IfParser, self).__init__(name)
         childbearing_statements.append(self)
 
-    def parse_children(self, l):
-        l.expect_block('if')
-
-        l = l.subblock_lexer()
-
-        rv = [ ]
-
-        while l.advance():
-            c = self.parse_statement(l)
-            if c is None:
-                l.error('Expected screen language statement.')
-
-            rv.append(c)
-
-        return rv
-        
     def parse(self, l):
 
         options = [ ]
@@ -724,7 +726,7 @@ class IfParser(Parser):
         condition = l.require(l.python_expression)
         l.require(':')
         l.expect_eol()
-        options.append((condition, self.parse_children(l)))
+        options.append((condition, self.parse_children('if', l)))
 
         while l.advance():
 
@@ -742,7 +744,7 @@ class IfParser(Parser):
             
             l.require(':')
             l.expect_eol()
-            options.append((condition, self.parse_children(l)))
+            options.append((condition, self.parse_children('if', l)))
 
             if is_else:
                 break
@@ -769,9 +771,98 @@ class If(renpy.object.Object):
             child.evaluate(name + (i, j), scope)
 
 IfParser("if")
-        
-        
 
+
+class ForParser(Parser):
+        
+    def __init__(self, name):
+        super(ForParser, self).__init__(name)
+        childbearing_statements.append(self)
+
+    def parse_tuple_pattern(self, l):
+
+        is_tuple = False
+        pattern = [ ]
+        
+        while True:
+
+            if l.match(r"\("):
+                p = self.parse_tuple_pattern(l)
+            else:
+                p = l.name()
+
+            if not p:
+                break
+
+            pattern.append(p)
+
+            if l.match(r","):
+                is_tuple = True
+            else:
+                break
+
+        if not pattern:
+            l.error("Expected tuple pattern.")
+
+        if not is_tuple:
+            return pattern[0]
+        else:
+            return tuple(pattern)
+        
+    def parse(self, l):
+
+        pattern = self.parse_tuple_pattern(l)
+
+        l.require('in')
+
+        expression = l.require(l.python_expression)
+        l.require(':')
+        l.expect_eol()
+
+        
+        children = self.parse_children('for', l)
+
+        return For(pattern, expression, children)
+
+    
+class For(renpy.object.Object):
+
+    def __init__(self, pattern, expression, children):
+        self.pattern = pattern
+        self.expression = expression
+        self.children = children
+
+    def evaluate(self, name, scope):
+
+        def match(pattern, item, scope):
+
+            if isinstance(pattern, tuple):
+
+                try:                    
+                    if len(pattern) != len(item):
+                        raise Exception("Value %r does not match for loop pattern.")
+                except TypeError:
+                    raise Exception("Value %r doesn't have a length.", item)
+                    
+                for a, b in zip(pattern, item):
+                    match(a, b, scope)
+
+                return
+
+            scope[pattern] = item
+
+
+        iterable = eval(self.expression, renpy.store.__dict__, scope)
+
+        for i, item in enumerate(iterable):
+            match(self.pattern, item, scope)
+
+            for j, child in enumerate(self.children):
+                child.evaluate(name + (i, j), scope)
+            
+ForParser("for")            
+
+        
 ##############################################################################
 # Add all_statements to the statements that take children.
 
