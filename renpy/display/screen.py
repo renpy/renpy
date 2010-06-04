@@ -102,6 +102,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         else:            
             self.transforms = { }
 
+        # The current transform event, and the last transform event to
+        # be processed.
+        self.current_transform_event = None
 
         self.update()
 
@@ -121,6 +124,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         for i in self.child.children:
             i.set_transform_event(event)
 
+        self.current_transform_event = event
+            
     def _hide(self, st, at, kind):        
 
         rv = None
@@ -132,14 +137,18 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 self.transforms[i] = c
                 rv = self
 
+        self.current_transform_event = kind
+        self.update()
+        
         return rv
     
     def update(self):
-
+        
         global _current_screen
         old_screen = _current_screen
-        _current_screen = self.screen
-        
+        _current_screen = self
+
+            
         renpy.ui.widget_by_id = { }
         renpy.ui.transform_by_id = { }
         renpy.ui.old_transform_by_id = self.transforms
@@ -166,6 +175,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         renpy.ui.widget_properties = None
 
         _current_screen = old_screen
+
+        self.current_transform_event = None
 
         return rv
        

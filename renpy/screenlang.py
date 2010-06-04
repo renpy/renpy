@@ -81,6 +81,13 @@ class Name(Type):
     def evaluate(self, state, scope):
         return state
 
+class Word(Type):
+    def parse(self, l):
+        return l.require(l.word)
+
+    def evaluate(self, state, scope):
+        return state
+
 class ImageName(Type):
     def parse(self, l):
         rv = [ ]
@@ -862,7 +869,22 @@ class For(renpy.object.Object):
             
 ForParser("for")            
 
-        
+
+def on_function(event, action=[], id=None):
+    if renpy.display.screen.current_screen().current_transform_event != event:
+        return
+
+    if isinstance(action, (list, tuple)):
+        for i in action:
+            i()
+    else:
+        action()
+
+FunctionStatementParser("on", on_function, 0)
+Positional("event", Word)
+Positional("action")
+
+
 ##############################################################################
 # Add all_statements to the statements that take children.
 
@@ -886,25 +908,19 @@ def screen_function(positional, keyword, children):
     scope = { }
 
     name = positional[0].get_value(scope)
-
-    if "modal" in keyword:
-        modal = keyword.pop("modal").get_value(scope)
-    else:
-        modal = True
-
-    if "zorder" in keyword:
-        zorder = keyword.pop("zorder").get_value(scope)
-    else:
-        zorder = 0
-
     function = ScreenFunction(children)
-    
-    return {
+
+
+    values = {
         "name" : name,
         "function" : function,
-        "modal" : modal,
-        "zorder" : zorder,
         }
+
+    for k, v in keyword.iteritems():
+        values[k] = v.get_value(scope)
+
+    return values
+
     
 screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
 Positional("name", ImageName)
