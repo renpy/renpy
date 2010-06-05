@@ -605,9 +605,11 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-for name in [ "bar", "vbar", "slider", "vslider", "scrollbar", "vscrollbar" ]:
+for name in [ "bar", "vbar" ]:
     FunctionStatementParser(name, getattr(renpy.ui, name), 0)    
     Keyword("adjustment")
+    Keyword("range")
+    Keyword("value")
     add(ui_properties)
     add(position_properties)
     add(bar_properties)
@@ -648,6 +650,8 @@ add(button_properties)
 FunctionStatementParser("hotbar", renpy.ui.hotbar, 0)
 Positional("spot")
 Keyword("adjustment")
+Keyword("range")
+Keyword("value")
 add(ui_properties)
 add(position_properties)
 add(bar_properties)
@@ -656,8 +660,6 @@ add(bar_properties)
 FunctionStatementParser("transform", renpy.ui.transform, 1)
 for i in renpy.atl.PROPERTIES:
     Style(i)
-
-
 
     
 ##############################################################################

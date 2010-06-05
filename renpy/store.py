@@ -178,6 +178,7 @@ DynamicCharacter = renpy.character.DynamicCharacter
 MultiPersistent = renpy.loadsave.MultiPersistent
 
 Action = renpy.ui.Action
+BarValue = renpy.ui.BarValue
 
 Style = renpy.style.Style
 

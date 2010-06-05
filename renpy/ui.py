@@ -47,9 +47,19 @@ class Action(renpy.object.Object):
         return False
 
     def __call__(self):
-        return None
+        raise NotImplemented
     
+class BarValue(renpy.object.Object):
+    """
+    This can be passed to the value method of bar and hotbar.
+    """
+    
+    def __call__(self):
+        raise NotImplemented
 
+    def get_style(self):
+        return "bar"
+    
 ##############################################################################
 # Things we can add to. These have two methods: add is called with the
 # widget we're adding. close is called when the thing is ready to be
@@ -604,8 +614,8 @@ def textbutton(label, text_style='button_text', **kwargs):
     button(**kwargs)
     text(label, style=text_style)
 
-def adjustment(range=1, value=0, step=None, page=0, changed=None):
-    return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed)
+def adjustment(range=1, value=0, step=None, page=0, changed=None, adjustable=False):
+    return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed, adjustable=adjustable)
 
 def _bar(*args, **properties):
 
@@ -621,14 +631,44 @@ def _bar(*args, **properties):
         width = None
         height = None
 
+    if "width" in properties:
+        width = properties.pop("width")
+
+    if "height" in properties:
+        height  = properties.pop("height")
+
+    if "range" in properties:
+        range = properties.pop("range")
+         
+    if "value" in properties:
+        value = properties.pop("value")
+
+    style_prefix = properties.pop("style_prefix")
+    style = properties["style"]
+    
+    if isinstance(value, BarValue):
+        properties["adjustment"] = value()
+
+        if style is None:
+            style = style_prefix + value.get_style()
+
+        value = None
+
+    else:
+
+        if style is None:
+            style = style_prefix + "bar"
+
+    properties["style"] = style
+            
     return renpy.display.behavior.Bar(range, value, width, height, **properties)
 
-bar = Wrapper(_bar, style='bar')
-vbar = Wrapper(_bar, style='vbar')
-slider = Wrapper(_bar, style='slider')
-vslider = Wrapper(_bar, style='vslider')
-scrollbar = Wrapper(_bar, style='scrollbar')
-vscrollbar = Wrapper(_bar, style='vscrollbar')
+bar = Wrapper(_bar, style=None, style_prefix='')
+vbar = Wrapper(_bar, style=None, style_prefix='v')
+slider = Wrapper(_bar, style='slider', style_prefix='')
+vslider = Wrapper(_bar, style='vslider', style_prefix='v')
+scrollbar = Wrapper(_bar, style='scrollbar', style_prefix='')
+vscrollbar = Wrapper(_bar, style='vscrollbar', style_prefix='v')
 
 def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
@@ -749,6 +789,12 @@ def _hotspot(spot, clicked=None, **properties):
 hotspot = Wrapper(_hotspot, style="hotspot")
 
 def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
+
+    if isinstance(value, BarValue):
+        adjustment = value()
+        range = None
+        value = None
+
     if adjustment is None and range is not None and value is not None:
         adjustment = renpy.ui.adjustment(range=range, value=value)
         

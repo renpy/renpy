@@ -105,3 +105,14 @@ init python:
     
     
     
+# BarValues
+
+    class StaticValue(BarValue):
+        def __init__(self, value=0.0, range=1.0):
+            self.value = value
+            self.range = range
+
+        def __call__(self):
+            return ui.adjustment(value=self.value, range=self.range, adjustable=False)
+
+    
