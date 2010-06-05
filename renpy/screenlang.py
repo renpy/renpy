@@ -20,6 +20,19 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
+import contextlib
+
+@contextlib.contextmanager
+def location(loc):
+    file, number = loc
+
+    old_ei = renpy.game.exception_info
+
+    renpy.game.exception_info = "Executing screen code at %s:%d" % (file, number)
+    yield
+    renpy.game.exception_info = old_ei
+    
+    
 
 ##############################################################################
 # Data types.
@@ -263,6 +276,8 @@ class FunctionStatementParser(Parser):
         FunctionStatement object.
         """
 
+        loc = l.get_location()
+        
         # These are used to store the various arguments as they come in.        
         positional = [ ]
         keyword = { }
@@ -323,10 +338,11 @@ class FunctionStatementParser(Parser):
                 while not l.eol():
                     parse_keyword(l)
 
-        return FunctionStatement(self.function, self.nchildren, positional, keyword, children, self.unevaluated)
+        return FunctionStatement(loc, self.function, self.nchildren, positional, keyword, children, self.unevaluated)
 
 class FunctionStatement(renpy.object.Object):
-    def __init__(self, function, nchildren, positional, keyword, children, unevaluated):
+    def __init__(self, loc, function, nchildren, positional, keyword, children, unevaluated):
+        self.location = loc
         self.function = function
         self.nchildren = nchildren
         self.positional = positional
@@ -337,27 +353,29 @@ class FunctionStatement(renpy.object.Object):
                 
     def evaluate(self, name, scope):
 
-        if self.unevaluated:
-            return self.function(self.positional, self.keyword, self.children)
-                
-        positional = [ i.get_value(scope) for i in self.positional ]
-        keyword = dict((k, v.get_value(scope)) for k, v in self.keyword.iteritems())
+        with location(self.location):
 
-        if "id" not in keyword:
-            keyword["id"] = name
-            
-        rv = self.function(*positional, **keyword)
+            if self.unevaluated:
+                return self.function(self.positional, self.keyword, self.children)
 
-        if self.nchildren == 1:
-            renpy.ui.child_or_fixed()
+            positional = [ i.get_value(scope) for i in self.positional ]
+            keyword = dict((k, v.get_value(scope)) for k, v in self.keyword.iteritems())
 
-        for i, child in enumerate(self.children):
-            child.evaluate(name + (i, ), scope)
+            if "id" not in keyword:
+                keyword["id"] = name
 
-        if self.nchildren != 0:
-            renpy.ui.close() 
-            
-        return rv
+            rv = self.function(*positional, **keyword)
+
+            if self.nchildren == 1:
+                renpy.ui.child_or_fixed()
+
+            for i, child in enumerate(self.children):
+                child.evaluate(name + (i, ), scope)
+
+            if self.nchildren != 0:
+                renpy.ui.close() 
+
+            return rv
         
 
 ##############################################################################
@@ -679,6 +697,8 @@ class IncludeParser(Parser):
         
     def parse(self, l):
 
+        loc = l.get_location()
+        
         name = ( l.require(l.name), )
 
         while True:
@@ -697,28 +717,32 @@ class IncludeParser(Parser):
         if args.extrapos:
             l.error('The include statement only takes keyword arguments.')
 
-        return Include(name, args)
+        return Include(loc, name, args)
 
+    
 class Include(renpy.object.Object):
 
-    def __init__(self, screen, args):
+    def __init__(self, loc, screen, args):
+        self.location = loc
         self.screen = screen
         self.args = args
 
     def evaluate(self, name, scope):
 
-        kwargs = { }
-        
-        # Args are optional.
-        if self.args:
+        with location(self.location):
 
-            if self.args.extrakw:
-                kwargs = eval(self.args.extrakw, renpy.store.__dict__, scope)
-                
-            for k, v in self.args.arguments:
-                kwargs[k] = eval(v, renpy.store.__dict__, scope)
+            kwargs = { }
 
-        renpy.display.screen.include_screen(self.screen, _name=name, **kwargs)
+            # Args are optional.
+            if self.args:
+
+                if self.args.extrakw:
+                    kwargs = eval(self.args.extrakw, renpy.store.__dict__, scope)
+
+                for k, v in self.args.arguments:
+                    kwargs[k] = eval(v, renpy.store.__dict__, scope)
+
+            renpy.display.screen.include_screen(self.screen, _name=name, **kwargs)
 
 IncludeParser("include")
         
@@ -730,17 +754,20 @@ class IfParser(Parser):
 
     def parse(self, l):
 
+        
         options = [ ]
         
+        loc = l.get_location()
         condition = l.require(l.python_expression)
         l.require(':')
         l.expect_eol()
-        options.append((condition, self.parse_children('if', l)))
+        options.append((loc, condition, self.parse_children('if', l)))
 
         while l.advance():
 
             state = l.checkpoint()
-
+            loc = l.get_location()
+            
             if l.keyword("elif"):
                 condition = l.require(l.python_expression)
                 is_else = False
@@ -753,7 +780,7 @@ class IfParser(Parser):
             
             l.require(':')
             l.expect_eol()
-            options.append((condition, self.parse_children('if', l)))
+            options.append((loc, condition, self.parse_children('if', l)))
 
             if is_else:
                 break
@@ -769,9 +796,10 @@ class If(renpy.object.Object):
     def evaluate(self, name, scope):
 
         # Find the first true condition.
-        for i, (condition, children) in enumerate(self.options):
-            if eval(condition, renpy.store.__dict__, scope):
-                break
+        for i, (loc, condition, children) in enumerate(self.options):
+            with location(loc):
+                if eval(loc, condition, renpy.store.__dict__, scope):
+                    break
         else:
             return
 
@@ -820,6 +848,7 @@ class ForParser(Parser):
         
     def parse(self, l):
 
+        loc = l.get_location()
         pattern = self.parse_tuple_pattern(l)
 
         l.require('in')
@@ -831,12 +860,13 @@ class ForParser(Parser):
         
         children = self.parse_children('for', l)
 
-        return For(pattern, expression, children)
+        return For(loc, pattern, expression, children)
 
     
 class For(renpy.object.Object):
 
-    def __init__(self, pattern, expression, children):
+    def __init__(self, loc, pattern, expression, children):
+        self.location = loc
         self.pattern = pattern
         self.expression = expression
         self.children = children
@@ -860,14 +890,15 @@ class For(renpy.object.Object):
 
             scope[pattern] = item
 
+        with location(self.location):
 
-        iterable = eval(self.expression, renpy.store.__dict__, scope)
+            iterable = eval(self.expression, renpy.store.__dict__, scope)
 
-        for i, item in enumerate(iterable):
-            match(self.pattern, item, scope)
+            for i, item in enumerate(iterable):
+                match(self.pattern, item, scope)
 
-            for j, child in enumerate(self.children):
-                child.evaluate(name + (i, j), scope)
+                for j, child in enumerate(self.children):
+                    child.evaluate(name + (i, j), scope)
             
 ForParser("for")            
 
@@ -911,7 +942,6 @@ def screen_function(positional, keyword, children):
 
     name = positional[0].get_value(scope)
     function = ScreenFunction(children)
-
 
     values = {
         "name" : name,
