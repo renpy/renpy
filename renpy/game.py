@@ -148,10 +148,10 @@ class Preferences(object):
             joy_dismiss="Button 0.0")
 
     def set_volume(self, mixer, volume):
-        if volume == 0:
-            self.mute[mixer] = True
-        else:
-            self.mute[mixer] = False
+        # if volume == 0:
+        #     self.mute[mixer] = True
+        # else:
+        #     self.mute[mixer] = False
 
         self.volumes[mixer] = volume
 

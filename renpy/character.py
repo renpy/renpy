@@ -155,14 +155,14 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         tag = screen
         index = 0
         
-        while renpy.display.showing(tag):
+        while renpy.exports.showing(tag):
             index += 1
             tag = "%s%d" % (screen, index)
         
         renpy.display.screen.show_screen(
             screen,
             _widget_properties=widget_properties,
-            _transient=True,
+            _transient = True,
             _tag = tag,
             who=who,
             what=what)
