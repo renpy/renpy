@@ -32,7 +32,7 @@ from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
-from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen, current_screen
+from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen, current_screen, has_screen
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -70,7 +70,7 @@ def public_api():
     sound
     music
     time
-    define_screen, show_screen, hide_screen, include_screen
+    define_screen, show_screen, hide_screen, include_screen, has_screen
     current_screen
         
 del public_api
@@ -444,8 +444,12 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
                                random.choice(choices))
 
     # Show the menu.
-    renpy.ui.window(style=window_style)
-    renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True, **kwargs)
+    if has_screen("choice"):
+        show_screen("choice", items=items, _transient=True)
+
+    else:
+        renpy.ui.window(style=window_style)
+        renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True, **kwargs)
 
     renpy.exports.shown_window()
 
@@ -1309,8 +1313,11 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
-    
-
 # This is a map from a definition to the place where it was
 # defined.
 definitions = collections.defaultdict(list)
+
+def run_screen(screen_name, **kwargs):
+    show_screen(screen_name, _transient=True)
+    return renpy.ui.interact()
+        

@@ -455,6 +455,8 @@ window_properties = [ Style(i, Expression) for i in [
         "xpadding",
         "ypadding",
         "side_group",
+        "xminimum",
+        "yminimum",
         ] ]
 
 button_properties = [ Style(i, Expression) for i in [
