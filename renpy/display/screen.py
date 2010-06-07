@@ -33,13 +33,15 @@ class Screen(renpy.object.Object):
                  predict_function=None,
                  modal=True,
                  zorder=0,
-                 hide_delay=0):
+                 hide_delay=0,
+                 tag=None):
     
         # The name of this screen.
         if isinstance(name, basestring):
             name = tuple(name.split())
-                
+
         self.name = name
+        
         screens[name] = self
         
         # The function that is called to display this screen.
@@ -55,6 +57,9 @@ class Screen(renpy.object.Object):
         # Our zorder.
         self.zorder = zorder
 
+        # The tag associated with the screen.
+        self.tag = tag or name[0]
+        
 class ScreenDisplayable(renpy.display.layout.Container):
     """
     A screen is a collection of widgets that are displayed together. This
@@ -216,7 +221,8 @@ def define_screen(*args, **kwargs):
     
 def get_screen(tag, layer):
     """
-    Returns the ScreenDisplayable with the given tag, on the given layer.
+    Returns the ScreenDisplayable with the given tag or name, on the
+    given layer.
     """
 
     tag = tag.split()[0]
@@ -224,7 +230,9 @@ def get_screen(tag, layer):
 
     sd = sl.get_displayable_by_tag(layer, tag)
 
-    
+    if sd is None:
+        sd = sl.get_displayable_by_name(layer, tag)
+        
     return sd
 
 def has_screen(name):
@@ -246,13 +254,13 @@ def show_screen(name, _layer='screens', _tag=None, _widget_properties={}, _trans
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    if _tag is None:
-        _tag = name[0]
-
     if not name in screens:
         raise Exception("Screen %r is not known.\n", (name,))
 
     screen = screens[name]
+
+    if _tag is None:
+        _tag = screen.tag
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder, transient=_transient)

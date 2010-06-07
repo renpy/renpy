@@ -56,6 +56,21 @@ init -1105 python hide:
             joystick_preferences=layout.classic_joystick_preferences,
             )
 
+        if renpy.has_screen("main_menu"):
+            defaults["main_menu"] = layout.screen_main_menu
+
+        if renpy.has_screen("load") and renpy.has_screen("save"):
+            defaults["main_menu"] = layout.screen_load_save
+
+        if renpy.has_screen("yesno"):
+            defaults["yesno_prompt"] = layout.screen_yesno_prompt
+
+        if renpy.has_screen("preferences"):
+            default["preferences"] = layout.screen_preferences
+
+        if renpy.has_screen("joystick_preferences"):
+            default["joystick_preferences"] = layout.screen_joystick_preferences
+        
         for k, v in defaults.iteritems():
             if k not in layout.provided:
                 v()
@@ -343,7 +358,11 @@ init -1105 python hide:
         config.load_save_selected_idle[variant] = selected_idle
         config.load_save_selected_hover[variant] = selected_hover
         config.load_save_hotspots[variant] = hotspots
-    
+
+    @layout
+    def screen_main_menu():
+        renpy.load_module("_layout/screen_main_menu")
+        
 
     layout.ARE_YOU_SURE = u"Are you sure?"
     layout.DELETE_SAVE = u"Are you sure you want to delete this save?"
@@ -351,3 +370,6 @@ init -1105 python hide:
     layout.LOADING = u"Loading will lose unsaved progress.\nAre you sure you want to do this?"
     layout.QUIT = u"Are you sure you want to quit?"
     layout.MAIN_MENU = u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+
+
+    

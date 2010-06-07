@@ -582,8 +582,13 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
     
     call _enter_game_menu from _call__enter_game_menu_0
 
+    
     if renpy.has_label("game_menu"):
         jump expression "game_menu"
+
+    if renpy.has_screen(_game_menu_screen):
+        $ renpy.run_screen(_game_menu_screen)
+        jump _noisy_return
         
     jump expression _game_menu_screen
 
@@ -765,11 +770,11 @@ label _main_menu_screen:
         jump expression "main_menu"
 
     # New name.
-    if renpy.has_label("main_menu_screen"):
+    elif renpy.has_label("main_menu_screen"):
         jump expression "main_menu_screen"
 
     # Compatibility name.
-    if renpy.has_label("_library_main_menu"):
+    elif renpy.has_label("_library_main_menu"):
         jump expression "_library_main_menu"
         
     return

@@ -87,12 +87,12 @@ class Type(renpy.object.Object):
     def get_value(self, scope):
         return self.evaluate(self.state, scope)
 
-class Name(Type):
-    def parse(self, l):
-        return l.require(l.name)
+# class Name(Type):
+#     def parse(self, l):
+#         return l.require(l.word)
 
-    def evaluate(self, state, scope):
-        return state
+#     def evaluate(self, state, scope):
+#         return state
 
 class Word(Type):
     def parse(self, l):
@@ -105,10 +105,10 @@ class ImageName(Type):
     def parse(self, l):
         rv = [ ]
 
-        rv.append(l.require(l.name))
+        rv.append(l.require(l.word))
 
         while True:
-            n = l.name()
+            n = l.word()
             if n is None:
                 break
 
@@ -701,14 +701,7 @@ class IncludeParser(Parser):
 
         loc = l.get_location()
         
-        name = ( l.require(l.name), )
-
-        while True:
-            n = l.name()
-            if n is None:
-                break
-
-            name = name + (n, )
+        name = l.require(l.word)
 
         args = renpy.parser.parse_arguments(l)
 
@@ -957,9 +950,10 @@ def screen_function(positional, keyword, children):
 
     
 screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
-Positional("name", ImageName)
+Positional("name", Word)
 Keyword("modal", Expression)
 Keyword("zorder", Expression)
+Keyword("tag", Word)
 add(all_statements)
 
 def parse_screen(l):

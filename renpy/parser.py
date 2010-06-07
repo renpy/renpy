@@ -1686,7 +1686,7 @@ def parse_statement(l):
         rv = ast.Screen(loc, kwargs)
 
         if not l.init:
-            rv = ast.Init(loc, [ rv ], 0)        
+            rv = ast.Init(loc, [ rv ], -500)        
         
         return rv
 

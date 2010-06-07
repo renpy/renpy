@@ -70,13 +70,8 @@ def displayable_by_tag(layer, tag):
     Get the displayable on the given layer with the given tag.
     """
 
-    for i in renpy.game.context().scene_lists.layers[layer]:
-        if i[0] == tag:
-            return i[-1]
-
-    return None
+    return renpy.game.context().scene_lists.get_displayable_by_tag(layer, tag)
     
-
 class IgnoreEvent(Exception):
     """
     Exception that is raised when we want to ignore an event, but
@@ -453,13 +448,14 @@ class SceneListEntry(renpy.object.Object):
     it should be treated as immutable after its initial creation.
     """
     
-    def __init__(self, tag, zorder, show_time, animation_time, displayable):
+    def __init__(self, tag, zorder, show_time, animation_time, displayable, name):
         self.tag = tag
         self.zorder = zorder
         self.show_time = show_time
         self.animation_time = animation_time
         self.displayable = displayable
-
+        self.name = name
+        
     def __iter__(self):
         return iter((self.tag, self.zorder, self.show_time, self.animation_time, self.displayable))
 
@@ -475,7 +471,8 @@ class SceneListEntry(renpy.object.Object):
             self.zorder,
             self.show_time,
             self.animation_time,
-            self.displayable)
+            self.displayable,
+            self.name)
             
     def update_time(self, time):
 
@@ -519,7 +516,7 @@ class SceneLists(renpy.object.Object):
 
         if version < 4:
             for k in self.layers:
-                self.layers[k] = [ SceneListEntry(*i) for i in self.layers[k] ]
+                self.layers[k] = [ SceneListEntry(*(i + (None,)) ) for i in self.layers[k] ]
 
             self.additional_transient = [ ]
                 
@@ -746,7 +743,7 @@ class SceneLists(renpy.object.Object):
             thing.set_transform_event("show")
             thing._show()
 
-        sle = SceneListEntry(key, zorder, st, at, thing)
+        sle = SceneListEntry(key, zorder, st, at, thing, name)
         l.insert(add_index, sle)
 
         if remove_index: 
@@ -784,7 +781,8 @@ class SceneLists(renpy.object.Object):
                     oldsle.zorder,
                     st,
                     at,
-                    d)
+                    d,
+                    None)
 
                 l[index] = sle
 
@@ -960,6 +958,22 @@ class SceneLists(renpy.object.Object):
 
         for sle in self.layers[layer]:
             if sle.tag == tag:
+                return sle.displayable
+
+        return None
+
+    def get_displayable_by_name(self, layer, name):
+        """
+        Returns the displayable on the layer with the given tag, or None
+        if no such displayable exists. Note that this will usually return
+        a Transform.
+        """
+
+        if layer not in self.layers:
+            raise Exception("Unknown layer %r." % layer)
+
+        for sle in self.layers[layer]:
+            if sle.name == name:
                 return sle.displayable
 
         return None

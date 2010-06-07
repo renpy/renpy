@@ -15,6 +15,9 @@ init -1140 python:
         def __call__(self):
             return self.value
 
+        # TODO: Figure out how this should work @ the main menu.
+
+        
     class Jump(Action):
         """
          Causes control to transfer to the given label. This can be used in
@@ -27,7 +30,8 @@ init -1140 python:
 
         def __call__(self):
             renpy.jump(self.label)
-                    
+
+            
     class Show(Action):
         """
          This causes another screen to be shown. `screen` is a string
@@ -46,6 +50,11 @@ init -1140 python:
         def get_selected(self):
             return renpy.showing(self.screen)
 
+
+    def ShowTransient(screen, **kwargs):
+        return Show(screen, _transient=True, **kwargs)
+        
+        
     class Hide(Action):
         """
          This causes the screen named `screen` to be hidden, if it is shown. 
@@ -57,6 +66,98 @@ init -1140 python:
         def __call__(self):
             renpy.hide_screen(self.screen)
             renpy.restart_interaction()
+
+            
+    ##########################################################################
+    # Menu-related actions.
+
+    class ShowMenu(Action):
+        """
+         Causes us to enter the game menu, if we're not there already. If we
+         are in the game menu, then this shows the screen, or if no screen
+         is defined, jumps to the label.
+
+         `screen` is either a screen or a label. Useful calls include:
+
+         * ShowMenu("load_screen")
+         * ShowMenu("save_screen")
+         * ShowMenu("preferences_screen")
+
+         This can also be used to show user-defined menu screens. For
+         example, if one has a "menu stats" screen defined, one can
+         show it as part of the game menu using:
+
+         * ShowMenu("menu stats")
+         """
+
+        def __init__(self, screen):
+            self.screen = screen
+
+        def __call__(self):
+            
+            # Ugly. We have different code depending on if we're in the
+            # game menu or not.
+            if renpy.context()._menu:
+
+                if renpy.has_screen(self.screen):
+                    renpy.game.show_screen(self.screen)
+
+                elif renpy.has_label(self.screen):
+                    renpy.jump(self.screen)
+
+                else:
+                    raise Exception("%r is not a screen or a label." % self.screen)
+
+            else:
+                renpy.calls_in_new_context(self.screen)
+
+        def get_selected(self):
+            return renpy.showing(self.screen)
+
+            
+    class Start(Action):
+        """
+         Causes Ren'Py to jump out of the menu context to the named
+         label. The main use of this is to start a new game from the
+         main menu. Common uses are:
+
+         * Start() - Start at the start label.
+         * Start("foo") - Start at the "foo" label.
+         """
+        
+        def __init__(self, label="start"):
+            self.label = label
+
+        def __call__(self):
+            renpy.jump_out_of_context(self.label)
+
+            
+    class MainMenu(Action):
+        """
+         Causes Ren'Py to return to the main menu.
+         """
+
+        def __init__(self, confirm=True):
+            self.confirm = confirm
+        
+        def __call__(self):
+            # TODO: confirm
+
+            renpy.full_restart()
+
+        def get_sensitive(self):
+            return not getattr(renpy.context(), "main_menu", True)
+
+
+    class Quit(Action):
+        
+        def __init__(self, confirm=True):
+            self.confirm = True
+
+        def __call__(self):
+            # TODO: Confirm
+
+            renpy.quit()
             
             
         
@@ -93,7 +194,8 @@ init -1140 python:
 
         def get_selected(self):
             return getattr(self.object, self.field) == self.value
-                
+
+        
     def SetVariable(variable, value):
         """
          Causes the variable to be set to the given value.
@@ -101,6 +203,7 @@ init -1140 python:
 
         return SetField(store, variable, value)
 
+    
     def SetPreference(variable, value):
         """
          Causes the preference variable to be set to the given value. Useful
@@ -148,7 +251,8 @@ init -1140 python:
 
         def get_selected(self):
             return getattr(self.object, self.field)
-               
+
+        
     def ToggleVariable(variable):
         """
          Toggles a variable.
@@ -156,6 +260,7 @@ init -1140 python:
 
         return ToggleField(store, variable)
 
+    
     def TogglePreference(variable):
         """
          Toggles a preference variable. Useful invocations include:
@@ -168,6 +273,7 @@ init -1140 python:
 
         return ToggleField(_preferences, variable)
 
+    
     def ToggleSkipping():
         """
          Toggles skipping.
@@ -175,10 +281,7 @@ init -1140 python:
 
         return ToggleField(config, "skipping")
 
-    ##########################################################################
-    # Menu-related actions.
 
-    # TODO
     
 
     ##########################################################################
@@ -222,7 +325,8 @@ init -1140 python:
 
         def get_style(self):
             return "slider"
-            
+
+        
     def PreferenceValue(variable):
         """
          The value of a preference. There are two variables that can be used:
@@ -243,7 +347,6 @@ init -1140 python:
         """
          The value of a mixer.
          """
-
         
         def __init__(self, mixer):
             self.mixer = mixer
