@@ -74,42 +74,52 @@ init -1140 python:
     class ShowMenu(Action):
         """
          Causes us to enter the game menu, if we're not there already. If we
-         are in the game menu, then this shows the screen, or if no screen
-         is defined, jumps to the label.
+         are in the game menu, then this shows a screen or jumps to a label.
 
-         `screen` is either a screen or a label. Useful calls include:
+         `screen` is usually the name of a screen, which is shown using
+         the screen mechanism. If the screen doesn't exist, then "_screen"
+         is appended to it, and that label is jumped to.
 
-         * ShowMenu("load_screen")
-         * ShowMenu("save_screen")
-         * ShowMenu("preferences_screen")
+         * ShowMenu("load")
+         * ShowMenu("save")
+         * ShowMenu("preferences")
 
          This can also be used to show user-defined menu screens. For
-         example, if one has a "menu stats" screen defined, one can
+         example, if one has a "stats" screen defined, one can
          show it as part of the game menu using:
 
-         * ShowMenu("menu stats")
+         * ShowMenu("stats")
+
+         ShowMenu without an argument will enter the game menu at the
+         default screen, taken from _game_menu_screen.
+         
          """
 
-        def __init__(self, screen):
+        def __init__(self, screen=None):
             self.screen = screen
 
         def __call__(self):
+
+            orig_screen = screen = self.screen or store._game_menu_screen
+
+            if not (renpy.has_screen(screen) or renpy.has_label(screen)):
+                screen = screen + "_screen"
             
             # Ugly. We have different code depending on if we're in the
             # game menu or not.
             if renpy.context()._menu:
 
-                if renpy.has_screen(self.screen):
-                    renpy.game.show_screen(self.screen)
+                if renpy.has_screen(screen):
+                    renpy.game.show_screen(screen)
 
-                elif renpy.has_label(self.screen):
-                    renpy.jump(self.screen)
+                elif renpy.has_label(screen):
+                    renpy.jump(screen)
 
                 else:
-                    raise Exception("%r is not a screen or a label." % self.screen)
+                    raise Exception("%r is not a screen or a label." % orig_screen)
 
             else:
-                renpy.calls_in_new_context(self.screen)
+                renpy.calls_in_new_context("_game_menu", _game_menu_screen=screen)
 
         def get_selected(self):
             return renpy.showing(self.screen)
