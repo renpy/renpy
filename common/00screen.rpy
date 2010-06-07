@@ -110,8 +110,9 @@ init -1140 python:
             if renpy.context()._menu:
 
                 if renpy.has_screen(screen):
-                    renpy.game.show_screen(screen)
-
+                    renpy.show_screen(screen)
+                    renpy.restart_interaction()
+                    
                 elif renpy.has_label(screen):
                     renpy.jump(screen)
 
@@ -327,7 +328,7 @@ init -1140 python:
         def changed(self, value):
             setattr(self.object, self.field, value)
             
-        def __call__(self, object):
+        def __call__(self):
             return ui.adjustment(
                 range=self.range,
                 value=getattr(self.object, self.field),
@@ -362,12 +363,12 @@ init -1140 python:
             self.mixer = mixer
 
         def set_mixer(self, value):
-            _preferences.set_mixer(self.mixer, value)
+            _preferences.set_volume(self.mixer, value)
             
         def __call__(self):
             return ui.adjustment(
                 range=1.0,
-                value=_preferences.get_mixer(self.mixer),
+                value=_preferences.get_volume(self.mixer),
                 changed=self.set_mixer)
 
         def get_style(self):

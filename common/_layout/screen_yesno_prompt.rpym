@@ -1,0 +1,11 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
+init python hide:
+
+    layout.provides('yesno_prompt')
+
+    def yesno_prompt(screen, message):
+        return renpy.run_screen('yesno_prompt', message=message)
+
+    layout.yesno_prompt = yesno_prompt

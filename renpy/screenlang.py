@@ -705,12 +705,14 @@ class IncludeParser(Parser):
 
         args = renpy.parser.parse_arguments(l)
 
-        for k, v in args.arguments:
-            if k is None:
-                l.error('The include statement only takes keyword arguments.')
+        if args:
 
-        if args.extrapos:
-            l.error('The include statement only takes keyword arguments.')
+            for k, v in args.arguments:
+                if k is None:
+                    l.error('The include statement only takes keyword arguments.')
+
+            if args.extrapos:
+                l.error('The include statement only takes keyword arguments.')
 
         return Include(loc, name, args)
 

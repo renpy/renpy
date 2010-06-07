@@ -463,7 +463,7 @@ class SceneListEntry(renpy.object.Object):
         return (self.tag, self.zorder, self.show_time, self.animation_time, self.displayable)[index]
     
     def __repr__(self):
-        return "<SLE: %r %r>" % (self.tag, self.displayable)
+        return "<SLE: %r %r %r>" % (self.tag, self.name, self.displayable)
     
     def copy(self):
         return SceneListEntry(
@@ -727,7 +727,7 @@ class SceneLists(renpy.object.Object):
             thing = self.transform_state(default_transform, thing)
             
         add_index, remove_index = self.find_index(layer, key, zorder, behind)
-        
+
         at = None
         st = None
 
@@ -746,7 +746,7 @@ class SceneLists(renpy.object.Object):
         sle = SceneListEntry(key, zorder, st, at, thing, name)
         l.insert(add_index, sle)
 
-        if remove_index: 
+        if remove_index is not None: 
             if add_index <= remove_index:
                 remove_index += 1
 
@@ -758,7 +758,7 @@ class SceneLists(renpy.object.Object):
         index. `prefix` is a prefix that is used if the entry
         decides it doesn't want to be hidden quite yet.
         """
-        
+
         if index is None:
             return
         

@@ -1,0 +1,13 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
+init python:
+
+    layout.provides('main_menu')
+
+label main_menu_screen:
+
+    $ renpy.run_screen("main_menu")
+    
+    return
+

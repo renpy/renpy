@@ -189,7 +189,7 @@ def showing(name, layer='master'):
 
     return renpy.game.context().predict_info.images.showing(layer, name)
 
-def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False):
+def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     "Documented in wiki as renpy.show."
 
     if renpy.game.init_phase:
@@ -228,7 +228,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[name] = True
 
-    if tag:
+    if tag and munge_name:
         name = (tag,) + name[1:]
     
 

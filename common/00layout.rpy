@@ -60,16 +60,16 @@ init -1105 python hide:
             defaults["main_menu"] = layout.screen_main_menu
 
         if renpy.has_screen("load") and renpy.has_screen("save"):
-            defaults["main_menu"] = layout.screen_load_save
+            defaults["load_save"] = layout.screen_load_save
 
         if renpy.has_screen("yesno"):
             defaults["yesno_prompt"] = layout.screen_yesno_prompt
 
         if renpy.has_screen("preferences"):
-            default["preferences"] = layout.screen_preferences
+            defaults["preferences"] = layout.screen_preferences
 
         if renpy.has_screen("joystick_preferences"):
-            default["joystick_preferences"] = layout.screen_joystick_preferences
+            defaults["joystick_preferences"] = layout.screen_joystick_preferences
         
         for k, v in defaults.iteritems():
             if k not in layout.provided:
@@ -363,7 +363,22 @@ init -1105 python hide:
     def screen_main_menu():
         renpy.load_module("_layout/screen_main_menu")
         
-
+    @layout
+    def screen_load_save():
+        renpy.load_module("_layout/screen_load_save")
+        
+    @layout
+    def screen_preferences():
+        renpy.load_module("_layout/screen_preferences")
+        
+    @layout
+    def screen_joystick_preferences():
+        renpy.load_module("_layout/screen_joystick_preferences")
+        
+    @layout
+    def screen_yesno_prompt():
+        renpy.load_module("_layout/screen_yesno_prompt")
+    
     layout.ARE_YOU_SURE = u"Are you sure?"
     layout.DELETE_SAVE = u"Are you sure you want to delete this save?"
     layout.OVERWRITE_SAVE = u"Are you sure you want to overwrite your save?"

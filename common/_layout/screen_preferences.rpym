@@ -1,0 +1,14 @@
+# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
+init python:
+
+    layout.provides('preferences')
+
+label preferences_screen:
+
+    $ renpy.run_screen('preferences')
+    jump _noisy_return
+    
+
+

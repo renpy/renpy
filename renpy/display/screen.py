@@ -263,7 +263,7 @@ def show_screen(name, _layer='screens', _tag=None, _widget_properties={}, _trans
         _tag = screen.tag
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
-    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder, transient=_transient)
+    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder, transient=_transient, munge_name=False)
 
 def hide_screen(tag, layer='screens'):
 
