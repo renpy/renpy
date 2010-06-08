@@ -46,6 +46,9 @@ class Action(renpy.object.Object):
     def get_selected(self):
         return False
 
+    def periodic(self):
+        return
+    
     def __call__(self):
         raise NotImplemented
     

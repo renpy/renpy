@@ -347,7 +347,24 @@ def run(var, *args, **kwargs):
         return rv
 
     return var(*args)
+
+def run_periodic(var):
+
+    if isinstance(var, (list, tuple)):
+        rv = None
+
+        for i in var:
+            v = run_periodic(i)
+
+            if rv is None or v < rv:
+                rv = v
+
+        return rv
+            
+    if isinstance(var, renpy.ui.Action):
+        return var.periodic()
     
+
 class Button(renpy.display.layout.Window):
 
     keymap = { }
@@ -447,6 +464,12 @@ class Button(renpy.display.layout.Window):
             
     def event(self, ev, x, y, st):
 
+        # Call self.clicked.periodic()
+        timeout = run_periodic(self.clicked)
+
+        if timeout is not None:
+            renpy.game.interface.timeout(timeout)
+        
         # If we have a child, try passing the event to it.
         rv = super(Button, self).event(ev, x, y, st)
         if rv is not None:

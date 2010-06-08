@@ -457,7 +457,6 @@ class Channel(object):
         else:            
             pss.fadeout(self.number, int(secs * 1000))
 
-
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
 
         for filename in filenames:
@@ -493,6 +492,7 @@ class Channel(object):
 
         return pss.playing_name(self.number)
 
+        
     def set_volume(self, volume):
         self.chan_volume = volume
             

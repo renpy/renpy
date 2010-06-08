@@ -288,8 +288,53 @@ init -1140 python:
 
         return ToggleField(store, variable)
 
-    
 
+    ##########################################################################
+    # Sound actions.
+
+    class Play(Action):
+        def __init__(self, channel, file, **kwargs):
+            self.channel = channel
+            self.file = file
+            self.kwargs = kwargs
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            renpy.music.play(self.file, channel=self.channel, **self.kwargs)
+            renpy.restart_interaction()
+            
+        def get_selected(self):
+            return renpy.music.get_playing(self.channel) == self.file            
+
+        def periodic(self):
+            if self.selected != self.get_selected():
+                renpy.restart_interaction()
+
+            return .1
+
+        
+    class Queue(Action):
+        def __init__(self, channel, file, **kwargs):
+            self.channel = channel
+            self.file = file
+            self.kwargs = kwargs
+
+        def __call__(self):
+            renpy.music.queue(self.file, channel=self.channel, **self.kwargs)
+            renpy.restart_interaction()
+
+            
+    class Stop(Action):
+        def __init__(self, channel, **kwargs):
+            self.channel = channel
+            self.kwargs = kwargs
+
+        def __call__(self):
+            renpy.music.stop(channel=self.channel, **self.kwargs)
+            renpy.restart_interaction()
+
+        
+    
     ##########################################################################
     # BarValues
 
@@ -367,9 +412,10 @@ init -1140 python:
 
         def get_style(self):
             return "slider"
+
         
     ##########################################################################
-    # BarValues
+    # Preference constructor.
 
     def Preference(name, value=None):
         """
