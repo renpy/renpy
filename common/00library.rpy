@@ -681,6 +681,7 @@ label _start:
 
     python hide:
         renpy.context()._menu = False
+        renpy.context()._main_menu = False
         
         for i in config.start_callbacks:
             i()

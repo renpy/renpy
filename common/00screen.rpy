@@ -22,7 +22,7 @@ init -1140 python:
 
         def __call__(self):
 
-            if main_menu:
+            if renpy.context()._main_menu:
                 ShowMenu("main_menu")()
             else:
                 return self.value
@@ -81,7 +81,7 @@ init -1140 python:
     ##########################################################################
     # Menu-related actions.
 
-    config.show_menu_enable = { "save" : "not main_menu" }
+    config.show_menu_enable = { "save" : "not renpy.context()._main_menu" }
 
             
     class ShowMenu(Action):
@@ -177,7 +177,7 @@ init -1140 python:
             renpy.full_restart()
 
         def get_sensitive(self):
-            return not main_menu
+            return not renpy.context()._main_menu
         
 
 
@@ -206,7 +206,7 @@ init -1140 python:
             return config.skipping
                 
         def get_sensitive(self):
-            return config.allow_skipping and (not main_menu)
+            return config.allow_skipping and (not renpy.context()._main_menu)
         
     def AutoForward(Action):
         return Preference("auto-forward")
