@@ -1,6 +1,9 @@
 New in Ren'Py 6.11
 ------------------
 
+TODO: Document config.screen_layers.
+
+
 The behavior of transforms has been changed. Previously, when an outer
 transform contained an inner transform, the position properties of the
 inner transform were completely ignored. Now, the properties from the

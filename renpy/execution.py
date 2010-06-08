@@ -133,6 +133,10 @@ class Context(renpy.object.Object):
         
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay" ])
         self.dynamic_stack.append({ })
+
+        for i in renpy.config.screen_layers:
+            self.scene_lists.clear(layer=i)
+            
         
     def make_dynamic(self, names, context=False):
         """

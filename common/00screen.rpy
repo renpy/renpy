@@ -1,6 +1,14 @@
 # Screen system support.
 
 init -1140 python:
+
+
+    def __yesno_prompt(message):
+        if renpy.has_screen("yesno_prompt"):
+            return renpy.run_screen("yesno_prompt")
+        else:
+            return renpy.invoke_in_new_context(layout.yesno_prompt, None, message)
+
     
     class Return(Action):
         """
@@ -115,7 +123,7 @@ init -1140 python:
             if renpy.context()._menu:
 
                 if renpy.has_screen(screen):
-                    renpy.show_screen(screen)
+                    renpy.show_screen(screen, _transient=True)
                     renpy.restart_interaction()
                     
                 elif renpy.has_label(screen):
@@ -163,7 +171,8 @@ init -1140 python:
             self.confirm = confirm
         
         def __call__(self):
-            # TODO: confirm
+            if self.confirm and (not __yesno_prompt(layout.MAIN_MENU)):
+                return
 
             renpy.full_restart()
 
@@ -178,8 +187,10 @@ init -1140 python:
             self.confirm = True
 
         def __call__(self):
-            # TODO: Confirm
 
+            if self.confirm and (not __yesno_prompt(layout.QUIT)):
+                return
+            
             renpy.quit()
 
     class Skip(Action):

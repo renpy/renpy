@@ -841,7 +841,6 @@ class SceneLists(renpy.object.Object):
         totally wiped out.
         """
 
-
         if not hide:
             self.layers[layer] = [ ]
 

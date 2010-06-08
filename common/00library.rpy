@@ -57,7 +57,7 @@ init -1180 python:
     config.auto_load = None
 
     # Layers to clear when entering the menus.
-    config.menu_clear_layers = [ 'screens' ]
+    config.menu_clear_layers = [ ]
 
     # Should we start the game with scene black or just scene?
     config.start_scene_black = False
