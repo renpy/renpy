@@ -13,11 +13,13 @@ init -1140 python:
             self.value = value
 
         def __call__(self):
-            return self.value
 
-        # TODO: Figure out how this should work @ the main menu.
+            if main_menu:
+                ShowMenu("main_menu")()
+            else:
+                return self.value
 
-        
+    
     class Jump(Action):
         """
          Causes control to transfer to the given label. This can be used in
@@ -71,6 +73,9 @@ init -1140 python:
     ##########################################################################
     # Menu-related actions.
 
+    config.show_menu_enable = { "save" : "not main_menu" }
+
+            
     class ShowMenu(Action):
         """
          Causes us to enter the game menu, if we're not there already. If we
@@ -125,6 +130,12 @@ init -1140 python:
         def get_selected(self):
             return renpy.showing(self.screen)
 
+        def get_sensitive(self):
+            if self.screen in config.show_menu_enable:
+                return eval(config.show_menu_enable[self.screen])
+            else:
+                return True
+        
             
     class Start(Action):
         """
@@ -157,7 +168,8 @@ init -1140 python:
             renpy.full_restart()
 
         def get_sensitive(self):
-            return not getattr(renpy.context(), "main_menu", True)
+            return not main_menu
+        
 
 
     class Quit(Action):
@@ -169,24 +181,29 @@ init -1140 python:
             # TODO: Confirm
 
             renpy.quit()
-            
-            
+
+    class Skip(Action):
+
+        def __call__(self):
+            if renpy.context()._menu:
+                renpy.jump("_return_skipping")
+            else:
+                config.skipping = not config.skipping
+                renpy.restart_interaction()
+
+        def get_selected(self):
+            return config.skipping
+                
+        def get_sensitive(self):
+            return config.allow_skipping and (not main_menu)
+        
+    def AutoForward(Action):
+        return Preference("auto-forward")
+    
         
     ##########################################################################
     # Functions that set variables or fields.
 
-    # class Set(Action):
-    #     def __init__(self, var, value):
-    #         self.var = var
-    #         self.value = value
-
-    #     def __call__(self)
-    #         renpy.get_current_screen().scope[self.var] = self.value
-    #         renpy.restart_interaction()
-
-    #     def get_selected(self):
-    #         return renpy.get_current_screen().scope[self.var] == self.value
-        
     class SetField(Action):
         """
          Causes the a field on an object to be set to a given value.
@@ -215,53 +232,42 @@ init -1140 python:
         return SetField(store, variable, value)
 
     
-    def SetPreference(variable, value):
-        """
-         Causes the preference variable to be set to the given value. Useful
-         invocations include:
-
-         * SetPreference("afm_enable", True) - Enable auto-forward mode.
-         * SetPreference("afm_enable", False) - Disable auto-forward mode.
-         * SetPreference("fullscreen", True) - Fullscreen mode.
-         * SetPreference("fullscreen", False) - Windowed mode.
-         * SetPreference("skip_after_choices", True) - Keep skipping after a choice.
-         * SetPreference("skip_after_choices", False) - Do not skip after choices.
-         * SetPreference("skip_unseen", True) - Skip unseen text.
-         * SetPreference("skip_unseen", False) - Do not skip unseen text.
-         * SetPreference("transitions", 2) - Show all transitions.
-         * SetPreference("transitions", 0) - Do not show transitions.
-         """
-         
-        return SetField(_preferences, variable, value)
-
-    
-    # class Toggle(Action):
-    #     def __init__(self, var):
-    #         self.var = var
-
-    #     def __call__(self)
-    #         renpy.get_current_screen().scope[self.var] = not renpy.get_current_screen().scope[self.var]
-    #         renpy.restart_interaction()
-
-    #     def get_selected(self):
-    #         return renpy.get_current_screen().scope[self.var]
-        
     class ToggleField(Action):
         """
          Toggles a field on an object. Toggling means to invert the boolean
          value of that field when the action is performed.
          """
         
-        def __init__(self, object, field):
+        def __init__(self, object, field, true_value=None, false_value=None):
             self.object = object
             self.field = field
+            self.true_value = true_value
+            self.false_value = false_value
         
         def __call__(self):
-            setattr(self.object, self.field, not getattr(self.object, self.field))
+            value = getattr(self.object, self.field)
+
+            if self.true_value is not None:
+                value = (value == self.true_value)
+
+            value = not value
+
+            if self.true_value is not None:
+                if value:
+                    value = self.true_value
+                else:
+                    value = self.false_value
+                    
+            setattr(self.object, self.field, value)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return getattr(self.object, self.field)
+            rv = getattr(self.object, self.field)
+
+            if self.true_value is not None:
+                rv = (rv == self.true_value)
+
+            return rv
 
         
     def ToggleVariable(variable):
@@ -270,28 +276,6 @@ init -1140 python:
          """
 
         return ToggleField(store, variable)
-
-    
-    def TogglePreference(variable):
-        """
-         Toggles a preference variable. Useful invocations include:
-
-         * TogglePreference("afm_enable") - Toggle auto-forward mode.
-         * TogglePreference("fullscreen") - Toggle full-screen mode.
-         * TogglePreference("skip_after_choices") - Toggle skipping after choices.
-         * TogglePreference("skip_unseen") - Toggle skipping unseen text.
-         """
-
-        return ToggleField(_preferences, variable)
-
-    
-    def ToggleSkipping():
-        """
-         Toggles skipping.
-         """
-
-        return ToggleField(config, "skipping")
-
 
     
 
@@ -312,47 +296,46 @@ init -1140 python:
 
     # Need some sort of animated value?
 
-    # PreferenceValue
-    # MixerValue
-
     class FieldValue(BarValue):
         """
          The value of a field on an object.
          """
         
-        def __init__(self, object, field, range):
+        def __init__(self, object, field, range, max_is_zero=False, style="bar"):
             self.object = object
             self.field = field
             self.range = range
-
+            self.max_is_zero = max_is_zero
+            self.style = style
+            
         def changed(self, value):
+
+            if self.max_is_zero:
+                if value == 0:
+                    value = self.range
+                else:
+                    value = value + 1
+            
             setattr(self.object, self.field, value)
             
         def __call__(self):
+
+            value = getattr(self.object, self.field)
+            
+            if self.max_is_zero:
+                if value == 0:
+                    value = self.range
+                else:
+                    value = value - 1
+                        
             return ui.adjustment(
                 range=self.range,
-                value=getattr(self.object, self.field),
+                value=value,
                 changed=self.changed)
 
         def get_style(self):
-            return "slider"
+            return self.style
 
-        
-    def PreferenceValue(variable):
-        """
-         The value of a preference. There are two variables that can be used:
-
-         * PreferenceValue("text_cps") - Adjust the text speed.
-         * PreferenceValue("afm_time") - Adjust the auto-forward speed.
-         """
-
-        if variable == "text_cps":
-            return FieldValue(_preferences, "text_cps", 200)
-        elif variable == "afm_time":
-            return FieldValue(_preferences, "afm_time", 40)
-        else:
-            raise Exception("Unknown variable %r in PreferenceValue." % variable)
-        
         
     class MixerValue(BarValue):
         """
@@ -373,4 +356,156 @@ init -1140 python:
 
         def get_style(self):
             return "slider"
+        
+    ##########################################################################
+    # BarValues
+
+    def Preference(name, value=None):
+        """
+         This constructs the approprate action or value from a preference.
+         The preference name should be the name given in the standard
+         menus, while the value should be either the name of a choice,
+         "toggle" to cycle through choices, a specific value, or left off
+         in the case of buttons.
+
+         Actions that can be used with buttons and hotspots are:
+
+         * Preference("display", "fullscreen") - displays in fullscreen mode.
+         * Preference("display", "window") - displays in windowed mode.
+         * Preference("display", "toggle") - toggle display mode.
+
+         * Preference("transitions", "all") - show all transitions.
+         * Preference("transitions", "none") - do not show transitions.
+         * Preference("transitions", "toggle") - toggle transitions.
+
+         * Preference("text speed", 0) - make test appear instantaneously.
+         * Preference("text speed", 142) - set text speed to 142 characters per second.
+
+         * Preference("joystick") - Show the joystick preferences.
+
+         * Preference("skip", "seen") - Only skip seen messages.
+         * Preference("skip", "all") - Skip unseen messages.
+         * Preference("skip", "toggle") - Toggle skipping.
+
+         * Preference("begin skipping") - Starts skipping.
+
+         * Preference("after choices", "skip") - Skip after choices.
+         * Preference("after choices", "stop") - Stop skipping after choices.
+         * Preference("after choices", "toggle") - Toggle skipping after choices.
+
+         * Preference("auto-forward time", 0) - Set the auto-forward time to infinite.
+         * Preference("auto-forward time", 10) - Set the auto-forward time (unit is seconds per 250 characters).
+
+         * Preference("auto-forward", "enable") - Enable auto-forward mode.
+         * Preference("auto-forward", "disable") - Disable auto-forward mode.
+         * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
+         
+         Values that can be used with bars are:
+
+         * Preference("text speed")
+         * Preference("auto-forward time")
+         * Preference("music volume")
+         * Preference("sound volume")
+         * Preference("voice volume")                  
+         """
+
+        name = name.lower()
+
+        if isinstance(value, basestring):
+            value = value.lower()
+
+        if name == "display":
+            if value == "fullscreen":
+                return SetField(_preferences, "fullscreen", True)
+            elif value == "window":
+                return SetField(_preferences, "fullscreen", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "fullscreen")
+
+        elif name == "transitions":
+
+            if value == "all":
+                return SetField(_preferences, "transitions", 2)
+            elif value == "some":
+                return SetField(_preferences, "transitions", 1)
+            elif value == "none":
+                return SetField(_preferences, "transitions", 0)
+            elif value == "toggle":
+                return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+
+        elif name == "text speed":
+            
+            if value is None:
+                return FieldValue(_preferences, "text_cps", range=200, max_is_zero=True, style="slider")
+            elif isinstance(value, int):
+                return SetField(_preferences, "text_cps", value)
+
+        elif name == "joystick" or name == "joystick...":
+
+            return ShowMenu("joystick_preferences")
+
+        elif name == "skip":
+            
+            if value == "all messages" or value == "all":
+                return SetField(_preferences, "skip_unseen", True)
+            elif value == "seen messages" or value == "seen":
+                return SetField(_preferences, "skip_unseen", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "skip_unseen")
+
+        elif name == "skip":
+            
+            if value == "all messages" or value == "all":
+                return SetField(_preferences, "skip_unseen", True)
+            elif value == "seen messages" or value == "seen":
+                return SetField(_preferences, "skip_unseen", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "skip_unseen")
+
+        elif name == "begin skipping":
+
+            return Skip()
+
+        elif name == "after choices":
+            
+            if value == "keep skipping" or value == "keep" or value == "skip":
+                return SetField(_preferences, "skip_after_choices", True)
+            elif value == "stop skipping" or value == "stop":
+                return SetField(_preferences, "skip_after_choices", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "skip_after_choices")
+            
+        elif name == "auto-forward time":
+
+            if value is None:
+                return FieldValue(_preferences, "afm_time", range=40, max_is_zero=True, style="slider")
+            elif isinstance(value, int):
+                return SetField(_preferences, "afm_time", value)
+
+        elif name == "auto-forward":
+
+            if value == "enable":
+                return SetField(_preferences, "afm_enable", True)
+            elif value == "disable":
+                return SetField(_preferences, "afm_enable", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "afm_enable")
+            
+        elif name == "music volume":
+
+            if value is None:
+                return MixerValue('music')
+
+        elif name == "sound volume":
+
+            if value is None:
+                return MixerValue('sfx')
+
+        elif name == "voice volume":
+
+            if value is None:
+                return MixerValue('voice')
+
+            
+                                  
         
