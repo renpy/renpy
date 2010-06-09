@@ -582,6 +582,8 @@ add(button_properties)
 
 FunctionStatementParser("add", renpy.ui.image, 0)
 Positional("im")
+Keyword("at")
+Keyword("id")
 
 FunctionStatementParser("image", renpy.ui.image, 0)
 Positional("im")
@@ -658,7 +660,7 @@ Keyword("auto")
 add(ui_properties)
 add(position_properties)
 
-FunctionStatementParser("hotspot", renpy.ui.hotspot, 1)
+FunctionStatementParser("hotspot", renpy.ui.hotspot_with_child, 1)
 Positional("spot")
 Keyword("clicked")
 Keyword("hovered")

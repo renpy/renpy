@@ -155,9 +155,13 @@ class ChildOrFixed(Addable):
         if len(self.queue) == 1:
             add(self.queue[0])
         else:
+            fixed()
+
             for i in self.queue:
                 add(i)
 
+            close()
+                
         if d is not None:
             raise Exception("Did not expect to close %r." % d)
 
@@ -549,7 +553,6 @@ def imagemap_compat(ground,
     close()
 
 def _button(clicked=None, role='', **properties):
-    # TODO: Deal with role and enabled automatically, if we can.
 
     if not is_sensitive(clicked):
         clicked = None
@@ -753,7 +756,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
 
-def _hotspot(spot, clicked=None, **properties):
+def _hotspot(spot, clicked=None, style='imagemap_button', **properties):
 
     if not imagemap_stack:
         raise Exception("hotspot expects an imagemap to be defined.")
@@ -781,15 +784,25 @@ def _hotspot(spot, clicked=None, **properties):
     properties.setdefault("xanchor", 0)
     properties.setdefault("ypos", y)
     properties.setdefault("yanchor", 0)
-            
-    return renpy.display.image.ImageButton(
-        idle,
-        hover,
+    properties.setdefault("xminimum", w)
+    properties.setdefault("xmaximum", w)
+    properties.setdefault("yminimum", h)
+    properties.setdefault("ymaximum", h)
+    
+    return renpy.display.behavior.Button(
+        None,
+        idle_background=idle,
+        hover_background=hover,
         clicked=clicked,
         role=role,
+        style=style,
         **properties)
 
-hotspot = Wrapper(_hotspot, style="hotspot")
+hotspot_with_child = Wrapper(_hotspot, style="hotspot", one=True)
+
+def hotspot(*args, **kwargs):
+    hotspot_with_child(*args, **kwargs)
+    null()
 
 def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
 

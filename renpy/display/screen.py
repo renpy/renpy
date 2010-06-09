@@ -219,7 +219,7 @@ screens = { }
 def define_screen(*args, **kwargs):
     Screen(*args, **kwargs)
     
-def get_screen(tag, layer):
+def get_screen(tag, layer="screens"):
     """
     Returns the ScreenDisplayable with the given tag or name, on the
     given layer.
@@ -232,7 +232,7 @@ def get_screen(tag, layer):
 
     if sd is None:
         sd = sl.get_displayable_by_name(layer, tag)
-        
+
     return sd
 
 def has_screen(name):
@@ -246,10 +246,12 @@ def has_screen(name):
     return name in screens
 
 
-def show_screen(name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
+def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
     """
     Shows the named screen.
     """
+
+    name = _screen_name
     
     if not isinstance(name, tuple):
         name = tuple(name.split())
@@ -272,8 +274,10 @@ def hide_screen(tag, layer='screens'):
     # TODO: Defer hide.
     renpy.exports.hide(tag, layer=layer)
 
-def include_screen(name, _name=(), **kwargs):
+def include_screen(_screen_name, _name=(), **kwargs):
 
+    name = _screen_name
+    
     if not isinstance(name, tuple):
         name = tuple(name.split())
     

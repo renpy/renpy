@@ -3,7 +3,7 @@
 
 init python:
 
-    layout.provides('preferences')
+    layout.provides('load_save')
 
 label load_screen:
 

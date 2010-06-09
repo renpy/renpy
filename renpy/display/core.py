@@ -1320,9 +1320,13 @@ class Interface(object):
         a current screenshot.
         """
 
-        if not self.screenshot:
-            raise Exception("Trying to write a screenshot that hasn't been taken.")
+        rv = self.screenshot
 
+        if not rv:
+            self.take_screenshot()
+            rv = self.screenshot()
+            self.lose_screenshot()
+        
         return self.screenshot
 
     

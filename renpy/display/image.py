@@ -26,41 +26,15 @@
 import renpy
 from renpy.display.render import render, Render
 
-
 Image = renpy.display.im.image
+
 
 def wrap_render(child, w, h, st, at):
     rend = render(child, w, h, st, at)
     rv = Render(rend.width, rend.height)
     rv.blit(rend, (0, 0))
     return rv
-            
 
-class UncachedImage(renpy.display.core.Displayable):
-    """
-    An image that is loaded immediately and not cached.
-    """
-
-    def __init__(self, file, hint=None, scale=None, style='image_placement',
-                 **properties):
-
-        super(UncachedImage, self).__init__(style=style, **properties)
-
-        self.surf = renpy.display.pgrender.load_image(file, hint)
-
-        if scale:
-            renpy.display.render.blit_lock.acquire()
-            self.surf = renpy.display.pgrender.transform_scale(self.surf, scale)
-            renpy.display.render.blit_lock.release()
-            
-        renpy.display.render.mutated_surface(self.surf)
-
-    def render(self, w, h, st, at):
-        sw, sh = self.surf.get_size()
-        rv = renpy.display.render.Render(sw, sh)
-        rv.blit(self.surf, (0, 0))
-
-        return rv
 
 class ImageReference(renpy.display.core.Displayable):
     """
@@ -279,7 +253,8 @@ class Frame(renpy.display.core.Displayable):
 
     def visit(self):
         return [ self.image ]
-                
+
+
 class ImageButton(renpy.display.behavior.Button):
     """
     Used to implement the guts of an image button.

@@ -37,6 +37,9 @@ import platform
 
 import renpy
 
+# This is used to cache information about saved games.
+cache = { }
+
 
 # Dump that choses which pickle to use:
 def dump(o, f):
@@ -137,6 +140,8 @@ def save(filename, extra_info='',
     renpy.take_screenshot) before this is called.
     """
 
+    cache.pop(filename, None)
+    
     filename = filename + savegame_suffix
 
     try:
@@ -164,7 +169,6 @@ def save(filename, extra_info='',
     # Extra info.
     zf.writestr("extra_info", extra_info.encode("utf-8"))
 
-
     # The actual game.
     zf.writestr("log", logf.getvalue())
 
@@ -174,6 +178,9 @@ def save(filename, extra_info='',
 
 def scan_saved_game(name):
 
+    if name in cache:
+        return cache[name]
+            
     try:
         f = name + savegame_suffix
     
@@ -196,11 +203,14 @@ def scan_saved_game(name):
             screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.png", mtime)
         else:
             screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.tga", mtime)
-            
-            
-        return extra_info, screenshot, mtime
+                    
+        rv = extra_info, screenshot, mtime
+
     except:
-        return None
+        rv = None
+
+    cache[name] = rv
+    return rv
     
     
 
@@ -269,11 +279,15 @@ def rename_save(old, new):
     os.rename(renpy.config.savedir + "/" + old + savegame_suffix, 
               renpy.config.savedir + "/" + new + savegame_suffix)
     
+    cache.pop(old, None)
+    cache.pop(new, None)
 
 def unlink_save(filename):
     if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
         os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
 
+    cache.pop(filename, None)
+        
 
 def cycle_saves(name, count):
 
@@ -343,6 +357,7 @@ def autosave():
 
     force_autosave(True)
 
+
 # This assumes a screenshot has already been taken.
 def force_autosave(take_screenshot=False):
 
@@ -383,7 +398,8 @@ class _MultiPersistent(object):
         except:
             os.unlink(fn)
             os.rename(fn + ".new", fn)
-            
+
+
 def MultiPersistent(name):
 
     if not renpy.game.init_phase:

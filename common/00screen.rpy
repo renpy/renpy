@@ -413,7 +413,277 @@ init -1140 python:
         def get_style(self):
             return "slider"
 
+
+    ##########################################################################
+    # File functions
+
+    if persistent._file_page is None:
+        persistent._file_page = "1"
+
+    def __filename(name, page=None):
+
+        if page is None:
+            page = persistent._file_page
+            
+
+        return str(page) + "-" + str(name)
+
+    def FileLoadable(name, page=None):
+        """
+         Returns True if the file is loadable, and False otherwise.
+         """
+
+        if renpy.scan_saved_game(__filename(name, page)):
+            return True
+        else:
+            return False
+    
+    def FileScreenshot(name, empty=None, page=None):
+        """
+         Returns the screenshot associated with the given file. If the
+         file is not loadable, then empty is returned, unless it's None,
+         in which case, a Null displayable is created.
+
+         The return value is a displayable.
+         """
+
+        save_data = renpy.scan_saved_game(__filename(name, page))
+
+        if save_data is None:
+            if empty is not None:
+                return empty
+            else:
+                return Null(config.thumbnail_width, config.thumbnail_height)
+
+        extra_info, displayable, save_time = save_data
+
+        return displayable
+
+            
+    def FileTime(name, format="%b %d, %H:%M", empty="", page=None):
+        """
+         Returns the time the file was saved, formatted according
+         to the supplied format. If the file is not fiound, `empty` is
+         returned.
+
+         The return value is a string.
+         """
         
+        save_data = renpy.scan_saved_game(__filename(name, page))
+
+        if save_data is None:
+            return empty
+
+        import time
+
+        extra_info, displayable, save_time = save_data
+        
+        return time.strftime(format, time.localtime(save_time))
+
+    def FileSaveName(name, empty="", page=None):
+        """
+         Return the save_name that was in effect when the file was saved,
+         or `empty` if the file does not exist.
+         """
+
+        save_data = renpy.scan_saved_game(__filename(name, page))
+
+        if save_data is None:
+            return empty
+
+        extra_info, displayable, save_time = save_data
+        
+        return extra_info
+
+
+    class FileSave(Action):
+        """
+         Saves the file in slot `name`. `confirm` determines if we prompt when
+         overwriting a file.
+         """
+
+        def __init__(self, name, confirm=True, page=None):
+            self.name = name
+            self.confirm = confirm
+            self.page = page
+            
+        def __call__(self):
+            
+            fn = __filename(self.name, self.page)
+            
+            if renpy.scan_saved_game(fn):
+                if self.confirm and (not __yesno_prompt(layout.OVERWRITE_SAVE)):
+                    return
+
+            if self.get_sensitive():
+                renpy.save(fn, extra_info=save_name)
+                renpy.restart_interaction()
+
+        def get_sensitive(self):
+            if renpy.context()._main_menu:
+                return False
+            elif persistent._file_page == "auto":
+                return False
+            else:
+                return True
+
+    class FileLoad(Action):
+        """
+         Loads the file in slot `name`. `confirm` determines if we prompt when
+         the load will end a game.
+         """
+
+        
+        def __init__(self, name, confirm=True, page=None):
+            self.name = name
+            self.confirm = confirm
+            self.page = page
+            
+        def __call__(self):
+
+            fn = __filename(self.name, self.page)
+            
+            if not renpy.context()._main_menu:
+                if self.confirm and (not __yesno_prompt(layout.LOADING)):
+                    return
+
+            if self.get_sensitive():
+                renpy.load(fn)
+
+        def get_sensitive(self):
+            return renpy.scan_saved_game(__filename(self.name, self.page))
+
+
+    class FileDelete(Action):
+        """
+         Deletes the file in slot `name`. `confirm` determines if we prompt
+         for confirmation before deleting the file.
+         """
+        
+        def __init__(self, name, confirm=True, page=None):
+            self.name = name
+            self.confirm = confirm
+            self.page = page
+            
+        def __call__(self):
+
+            fn = __filename(self.name, self.page)
+            
+            if renpy.scan_saved_game(fn):
+                if self.confirm and (not __yesno_prompt(layout.DELETE_SAVE)):
+                    return
+
+                renpy.unlink_save(fn)
+
+        def get_sensitive(self):
+            return renpy.scan_saved_game(__filename(self.name, self.page))
+
+    def FileAction(name, page=None):
+        """
+         "Does the right thing" with `name`. This means loading it if the
+         load screen is showing, and saving to it otherwise.
+         """
+        
+        if renpy.current_screen().screen_name[0] == "load":
+            return FileLoad(name, page)
+        else:
+            return FileSave(name, page)
+         
+
+    class FilePage(Action):
+        """
+         Sets the file page to `page`, which should be one of "auto", "quick",
+         or an integer.
+         """
+        
+        def __init__(self, page):
+            self.page = str(page)
+
+        def __call__(self):
+            persistent._file_page = self.page
+            renpy.restart_interaction()
+
+        def get_sensitive(self):
+            if self.page == "auto" and not config.has_autosave:
+                return False
+            elif self.page == "quicksave" and not config.has_quicksave:
+                return False
+            else:
+                return True
+
+        def get_selected(self):
+            return self.page == persistent._file_page
+                
+            
+    class FilePageNext(Action):
+        """
+         Goes to the next file page. (It's always possible to get to the
+         next file page.)
+         """
+
+        def __init__(self):
+
+            page = persistent._file_page
+
+            if page == "auto":
+                if config.has_quicksave:
+                    page = "quick"
+                else:
+                    page = "1"
+
+            elif page == "quick":
+                page = "1"
+
+            else:
+                page = str(int(page) + 1)
+
+            self.page = page
+                
+        def __call__(self):
+            persistent._file_page = self.page
+            renpy.restart_interaction()
+
+
+    class FilePagePrevious(Action):
+        """
+         Goes to the previous file page, if possible.
+         """
+
+
+        def __init__(self):
+
+            page = persistent._file_page
+        
+            if page == "auto":
+                page = None
+
+            elif page == "quick":
+                if config.has_autosave:
+                    page = "auto"
+                else:
+                    page = None
+
+            elif page == "1":
+                if config.has_quicksave:
+                    page = "quick"
+                elif config.has_autosave:
+                    page = "auto"
+                else:
+                    page = None
+
+            else:
+                page = str(int(page) - 1)
+
+            self.page = page
+                
+        def __call__(self):
+            persistent._file_page = self.page
+            renpy.restart_interaction()
+
+        def get_sensitive(self):
+            return self.page
+        
+            
     ##########################################################################
     # Preference constructor.
 

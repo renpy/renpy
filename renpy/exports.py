@@ -32,7 +32,7 @@ from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
-from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen, current_screen, has_screen
+from renpy.display.screen import define_screen, show_screen, hide_screen, include_screen, current_screen, has_screen, get_screen
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -71,7 +71,7 @@ def public_api():
     music
     time
     define_screen, show_screen, hide_screen, include_screen, has_screen
-    current_screen
+    current_screen, get_screen
         
 del public_api
 
@@ -1317,7 +1317,7 @@ def cache_unpin(*args):
 # defined.
 definitions = collections.defaultdict(list)
 
-def run_screen(screen_name, **kwargs):
-    show_screen(screen_name, _transient=True)
+def run_screen(_screen_name, **kwargs):
+    show_screen(_screen_name, _transient=True)
     return renpy.ui.interact()
         
