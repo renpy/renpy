@@ -42,6 +42,11 @@ properties are:
   xmaximum, and ymaximum properties.
 
 
+ui.add can now take transform properties as keyword arguments. If at least
+one transform property is present, ui.add will create a transform that
+wraps the displayable it's adding to the screen. [doc]
+
+
 The python compiler has been rewritten to use the python ast module.
 This should both improve performance, and improve error handling for
 python syntax. 

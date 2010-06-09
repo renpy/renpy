@@ -637,7 +637,6 @@ for name in [ "bar", "vbar" ]:
     add(bar_properties)
     
 # Omit autobar. (behavior)
-# Omit transform. (replaced by at)
 
 FunctionStatementParser("viewport", renpy.ui.viewport, 1)
 Keyword("child_size")
@@ -647,7 +646,6 @@ add(ui_properties)
 add(position_properties)
 
 # Omit conditional. (behavior)
-# Omit timer. (behavior)
 
 FunctionStatementParser("imagemap", renpy.ui.imagemap, many)
 Keyword("ground")
@@ -680,10 +678,19 @@ add(bar_properties)
 
 
 FunctionStatementParser("transform", renpy.ui.transform, 1)
+Keyword("at")
+Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-    
+FunctionStatementParser("add", renpy.ui.image, 0)
+Positional("im")
+Keyword("at")
+Keyword("id")
+for i in renpy.atl.PROPERTIES:
+    Style(i)
+
+
 ##############################################################################
 # Control-flow statements.
 

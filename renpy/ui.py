@@ -417,8 +417,13 @@ def is_sensitive(clicked):
 ##############################################################################
 # Widget functions.
         
-def _add(d):
-    return d
+def _add(d, **kwargs):
+    rv = d
+
+    if kwargs:
+        rv = renpy.display.motion.Transform(child=d, **kwargs)
+
+    return rv
 
 add = Wrapper(_add)
 null = Wrapper(renpy.display.layout.Null)
