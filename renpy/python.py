@@ -208,7 +208,6 @@ def py_compile(source, mode, filename='<none>', lineno=1):
         filename = source.filename
         lineno = source.linenumber
 
-    orig_source = source
     source = source.replace("\r", "")
     source = source.encode('raw_unicode_escape')
 

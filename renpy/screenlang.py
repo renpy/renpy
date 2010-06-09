@@ -215,7 +215,7 @@ class Parser(object):
             self.children[i.name] = i
 
     def parse_statement(self, l):
-        word = l.word()
+        word = l.word() or l.match(r'\$')
         if word and word in self.children:
             c = self.children[word].parse(l)
             return c
@@ -693,10 +693,10 @@ def pass_function():
 FunctionStatementParser("pass", pass_function, 0)
 
 
-class IncludeParser(Parser):
+class UseParser(Parser):
 
     def __init__(self, name):
-        super(IncludeParser, self).__init__(name)
+        super(UseParser, self).__init__(name)
         childbearing_statements.append(self)
         
     def parse(self, l):
@@ -711,15 +711,15 @@ class IncludeParser(Parser):
 
             for k, v in args.arguments:
                 if k is None:
-                    l.error('The include statement only takes keyword arguments.')
+                    l.error('The use statement only takes keyword arguments.')
 
             if args.extrapos:
-                l.error('The include statement only takes keyword arguments.')
+                l.error('The use statement only takes keyword arguments.')
 
-        return Include(loc, name, args)
+        return Use(loc, name, args)
 
     
-class Include(renpy.object.Object):
+class Use(renpy.object.Object):
 
     def __init__(self, loc, screen, args):
         self.location = loc
@@ -730,7 +730,7 @@ class Include(renpy.object.Object):
 
         with location(self.location):
 
-            kwargs = { }
+            kwargs = scope.copy()
 
             # Args are optional.
             if self.args:
@@ -743,8 +743,9 @@ class Include(renpy.object.Object):
 
             renpy.display.screen.include_screen(self.screen, _name=name, **kwargs)
 
-IncludeParser("include")
-        
+UseParser("use")
+
+
 class IfParser(Parser):
 
     def __init__(self, name):
@@ -915,6 +916,51 @@ def on_function(event, action=[], id=None):
 FunctionStatementParser("on", on_function, 0)
 Positional("event", Word)
 Positional("action")
+
+
+class PythonParser(Parser):
+        
+    def __init__(self, name, one_line):
+        super(PythonParser, self).__init__(name)
+
+        self.one_line = one_line
+
+    def parse(self, l):
+        loc = l.get_location()
+
+        if self.one_line:
+            python_code = l.rest()
+            l.expect_noblock('one-line python statement')
+        else:
+            l.require(':')
+            l.expect_block('python block')
+
+            python_code = l.python_block()
+
+        return Python(loc, python_code)
+
+    
+class Python(renpy.object.Object):
+    
+    def __init__(self, loc, python_code):
+        self.location = loc
+        self.source = python_code
+        self.code = None
+
+        # This checks the code, but let's not keep it around quite yet.
+        renpy.python.py_compile(self.source, 'exec', filename=self.location[0], lineno=self.location[1])
+        
+    def evaluate(self, name, scope):
+        scope["_name"] = name
+
+        if self.code is None:
+            self.code = renpy.python.py_compile(self.source, 'exec', filename=self.location[0], lineno=self.location[1])
+
+        exec self.code in renpy.store.__dict__, scope
+
+# This is used to parse one-line python blocks.
+PythonParser("$", True)
+PythonParser("python", False)
 
 
 ##############################################################################
