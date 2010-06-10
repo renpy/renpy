@@ -1318,6 +1318,6 @@ def cache_unpin(*args):
 definitions = collections.defaultdict(list)
 
 def run_screen(_screen_name, **kwargs):
-    show_screen(_screen_name, _transient=True)
+    show_screen(_screen_name, _transient=True, **kwargs)
     return renpy.ui.interact()
         

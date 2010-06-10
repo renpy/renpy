@@ -7,7 +7,9 @@ init python:
 
 label joystick_preferences_screen:
 
-    $ renpy.run_screen('joystick_preferences')
+    $ renpy.show_screen('joystick_preferences')
+    $ ui.interact()
+
     jump _noisy_return
     
 

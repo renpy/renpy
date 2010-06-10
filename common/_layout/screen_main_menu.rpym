@@ -6,8 +6,9 @@ init python:
     layout.provides('main_menu')
 
 label main_menu_screen:
-
-    $ renpy.run_screen("main_menu")
+    
+    $ renpy.show_screen("main_menu")
+    $ ui.interact()
     
     return
 

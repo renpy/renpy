@@ -7,7 +7,9 @@ init python:
 
 label preferences_screen:
 
-    $ renpy.run_screen('preferences')
+    $ renpy.show_screen('preferences')
+    $ ui.interact()
+    
     jump _noisy_return
     
 

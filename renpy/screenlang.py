@@ -739,6 +739,8 @@ class Use(renpy.object.Object):
 
             kwargs = scope.copy()
 
+            kwargs["_name"] = name
+            
             # Args are optional.
             if self.args:
 
@@ -748,7 +750,7 @@ class Use(renpy.object.Object):
                 for k, v in self.args.arguments:
                     kwargs[k] = eval(v, renpy.store.__dict__, scope)
 
-            renpy.display.screen.include_screen(self.screen, _name=name, **kwargs)
+            renpy.display.screen.include_screen(self.screen, **kwargs)
 
 UseParser("use")
 
@@ -805,7 +807,7 @@ class If(renpy.object.Object):
         # Find the first true condition.
         for i, (loc, condition, children) in enumerate(self.options):
             with location(loc):
-                if eval(loc, condition, renpy.store.__dict__, scope):
+                if eval(condition, renpy.store.__dict__, scope):
                     break
         else:
             return

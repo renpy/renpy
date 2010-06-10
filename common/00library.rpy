@@ -587,7 +587,8 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
-        $ renpy.run_screen(_game_menu_screen)
+        $ renpy.show_screen(_game_menu_screen)
+        $ ui.interact()
         jump _noisy_return
         
     jump expression _game_menu_screen

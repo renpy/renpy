@@ -7,11 +7,13 @@ init python:
 
 label load_screen:
 
-    $ renpy.run_screen('load')
+    $ renpy.show_screen('load')
+    $ ui.interact()
     jump _noisy_return
 
 label save_screen:
 
-    $ renpy.run_screen('save')
+    $ renpy.show_screen('save')
+    $ ui.interact()
     jump _noisy_return
 

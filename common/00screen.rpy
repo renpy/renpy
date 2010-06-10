@@ -5,7 +5,7 @@ init -1140 python:
 
     def __yesno_prompt(message):
         if renpy.has_screen("yesno_prompt"):
-            return renpy.run_screen("yesno_prompt")
+                return renpy.run_screen("yesno_prompt", message=message)
         else:
             return renpy.invoke_in_new_context(layout.yesno_prompt, None, message)
 
@@ -127,6 +127,7 @@ init -1140 python:
                     renpy.restart_interaction()
                     
                 elif renpy.has_label(screen):
+                    renpy.scene(layer='screens')
                     renpy.jump(screen)
 
                 else:
