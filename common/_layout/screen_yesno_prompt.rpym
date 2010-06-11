@@ -6,6 +6,19 @@ init python hide:
     layout.provides('yesno_prompt')
 
     def yesno_prompt(screen, message):
-        return renpy.run_screen('yesno_prompt', message=message)
+        i = 0
+
+        while True:
+            tag = "yesno_prompt%d" % i
+            if not renpy.showing(tag):
+                break
+
+            i += 1
+
+        renpy.show_screen('yesno_prompt', _tag = tag, message=message)
+        rv = ui.interact()
+        renpy.hide_screen(tag)
+
+        return rv
 
     layout.yesno_prompt = yesno_prompt

@@ -411,7 +411,6 @@ init 1180 python:
             ui.text("Style Inspector")
             ui.text("")
 
-
             if not l:
                 ui.text("Nothing to inspect.")
             

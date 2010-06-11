@@ -5,7 +5,7 @@ init -1140 python:
 
     def __yesno_prompt(message):
         if renpy.has_screen("yesno_prompt"):
-                return renpy.run_screen("yesno_prompt", message=message)
+            return layout.yesno_prompt(None, message)
         else:
             return renpy.invoke_in_new_context(layout.yesno_prompt, None, message)
 
@@ -62,6 +62,11 @@ init -1140 python:
 
 
     def ShowTransient(screen, **kwargs):
+        """
+         Shows a transient screen. A transient screen will be hidden when
+         the current screen returns.
+         """
+
         return Show(screen, _transient=True, **kwargs)
         
         
@@ -77,6 +82,14 @@ init -1140 python:
             renpy.hide_screen(self.screen)
             renpy.restart_interaction()
 
+    def CallInNewContext(label, *args, **kwargs):
+        """
+         Calls the label in a new context.
+         """
+        
+        return ui.callsinnewcontext(label, *args, **kwargs)
+        
+            
             
     ##########################################################################
     # Menu-related actions.
@@ -113,6 +126,9 @@ init -1140 python:
 
         def __call__(self):
 
+            if not self.get_sensitive():
+                return
+            
             orig_screen = screen = self.screen or store._game_menu_screen
 
             if not (renpy.has_screen(screen) or renpy.has_label(screen)):
@@ -172,6 +188,10 @@ init -1140 python:
             self.confirm = confirm
         
         def __call__(self):
+
+            if not self.get_sensitive():
+                return
+
             if self.confirm and (not __yesno_prompt(layout.MAIN_MENU)):
                 return
 
@@ -194,9 +214,13 @@ init -1140 python:
             
             renpy.quit()
 
+            
     class Skip(Action):
 
         def __call__(self):
+            if not self.get_sensitive():
+                return
+
             if renpy.context()._menu:
                 renpy.jump("_return_skipping")
             else:
@@ -509,6 +533,9 @@ init -1140 python:
             self.page = page
             
         def __call__(self):
+
+            if not self.get_sensitive():
+                return
             
             fn = __filename(self.name, self.page)
             
@@ -542,6 +569,9 @@ init -1140 python:
             
         def __call__(self):
 
+            if not self.get_sensitive():
+                return
+            
             fn = __filename(self.name, self.page)
             
             if not renpy.context()._main_menu:
@@ -579,6 +609,7 @@ init -1140 python:
         def get_sensitive(self):
             return renpy.scan_saved_game(__filename(self.name, self.page))
 
+        
     def FileAction(name, page=None):
         """
          "Does the right thing" with `name`. This means loading it if the
@@ -601,6 +632,9 @@ init -1140 python:
             self.page = str(page)
 
         def __call__(self):
+            if not self.get_sensitive():
+                return
+
             persistent._file_page = self.page
             renpy.restart_interaction()
 
@@ -641,6 +675,9 @@ init -1140 python:
             self.page = page
                 
         def __call__(self):
+            if not self.get_sensitive():
+                return
+
             persistent._file_page = self.page
             renpy.restart_interaction()
 
@@ -678,6 +715,9 @@ init -1140 python:
             self.page = page
                 
         def __call__(self):
+            if not self.get_sensitive():
+                return
+
             persistent._file_page = self.page
             renpy.restart_interaction()
 
