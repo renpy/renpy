@@ -134,7 +134,7 @@ init -1140 python:
                     raise Exception("%r is not a screen or a label." % orig_screen)
 
             else:
-                renpy.calls_in_new_context("_game_menu", _game_menu_screen=screen)
+                renpy.call_in_new_context("_game_menu", _game_menu_screen=screen)
 
         def get_selected(self):
             return renpy.showing(self.screen)
@@ -834,6 +834,7 @@ init -1140 python:
             if value is None:
                 return MixerValue('voice')
 
-            
-                                  
+    
+    # What we do on a quit, by default.
+    config.quit_action = ShowMenu("_confirm_quit")
         

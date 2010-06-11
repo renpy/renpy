@@ -1014,9 +1014,6 @@ class Interface(object):
     @ivar suppress_transition: If True, then the next transition will not
     happen.
 
-    @ivar quick_quit: If true, a click on the delete button will
-    cause an immediate quit.
-
     @ivar force_redraw: If True, a redraw is forced.
 
     @ivar restart_interaction: If True, the current interaction will
@@ -1066,8 +1063,12 @@ class Interface(object):
         # The time at which this draw occurs.
         self.frame_time = 0
 
+        # The time when this interaction occured.
         self.interact_time = None
 
+        # The time we last tried to quit.
+        self.quit_time = 0
+        
         self.time_event = pygame.event.Event(TIMEEVENT)
 
         # Are we focused?
@@ -1503,12 +1504,14 @@ class Interface(object):
         """
         This is called to handle the user invoking a quit.
         """
-        
-        if renpy.game.script.has_label("_confirm_quit") and not self.quick_quit:
-            self.quick_quit = True
-            renpy.game.call_in_new_context("_confirm_quit")
-            self.quick_quit = False
-        else:                
+
+        if self.quit_time > (time.time() - 3.0):
+            raise renpy.game.QuitException()
+
+        if renpy.config.quit_action is not None:
+            self.quit_time = time.time()
+            renpy.display.behavior.run(renpy.config.quit_action)
+        else:
             raise renpy.game.QuitException()
 
         

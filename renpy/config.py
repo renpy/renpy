@@ -419,6 +419,9 @@ default_transform = None
 # Should we use the child position?
 transform_uses_child_position = True
 
+# The action to use when it's time to quit.
+quit_action = None
+
 # Various directories.
 gamedir = None
 basedir = None
