@@ -88,7 +88,16 @@ init -1140 python:
          """
         
         return ui.callsinnewcontext(label, *args, **kwargs)
+
+    def Screenshot(Action):
+        """
+         Takes a screenshot.
+         """
         
+        def __call__(self):
+            _screenshot()
+            
+    
             
             
     ##########################################################################

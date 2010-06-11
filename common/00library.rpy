@@ -149,11 +149,8 @@ init -1180 python:
         except:
             pass
             
-    
-init -1180 python hide:
-
     # Called to make a screenshot happen.
-    def screenshot():
+    def _screenshot():
         import os.path
         import os
         import __main__
@@ -184,8 +181,10 @@ init -1180 python hide:
         except:
             import traceback
             traceback.print_exc()
-        
-            
+
+    
+init -1180 python hide:
+
     def dump_styles():
         if config.developer:
             renpy.style.write_text("styles.txt")
@@ -232,7 +231,7 @@ init -1180 python hide:
     # the launcher.
     km = renpy.Keymap(
         rollback = renpy.rollback,
-        screenshot = screenshot,
+        screenshot = _screenshot,
         toggle_fullscreen = renpy.toggle_fullscreen,
         toggle_music = renpy.toggle_music,
         toggle_skip = keymap_toggle_skipping,
