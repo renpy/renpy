@@ -190,11 +190,17 @@ init -1180 python hide:
         if config.developer:
             renpy.style.write_text("styles.txt")
 
+    # This is run when entering the game menu.
+    config.game_menu_action = None
+            
     def invoke_game_menu():
         if renpy.context()._menu:
             renpy.jump("_noisy_return")
         else:
-            renpy.call_in_new_context('_game_menu')
+            if config.game_menu_action:
+                renpy.display.behavior.run(config.game_menu_action)
+            else:            
+                renpy.call_in_new_context('_game_menu')
 
     def keymap_toggle_skipping():
         if renpy.context()._menu:

@@ -47,6 +47,12 @@ one transform property is present, ui.add will create a transform that
 wraps the displayable it's adding to the screen. [doc]
 
 
+config.quit_action allows one to specify an action that is run when
+the quit button (in the corner of the window) is pressed.
+config.game_menu_action allows one to specify an action that is run
+when entering the game menu. [doc]
+
+
 The python compiler has been rewritten to use the python ast module.
 This should both improve performance, and improve error handling for
 python syntax. 
