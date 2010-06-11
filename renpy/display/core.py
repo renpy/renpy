@@ -1306,6 +1306,9 @@ class Interface(object):
         """
 
         window = renpy.display.draw.screenshot()
+
+        if renpy.config.screenshot_crop:
+            window = window.subsurface(renpy.config.screenshot_crop)
         
         try:
             renpy.display.scale.image_save_unscaled(window, filename)

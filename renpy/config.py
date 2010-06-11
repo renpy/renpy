@@ -422,6 +422,10 @@ transform_uses_child_position = True
 # The action to use when it's time to quit.
 quit_action = None
 
+# If not None, a rectangle giving the area of the screen to crop the
+# screenshots to.
+screenshot_crop = None
+
 # Various directories.
 gamedir = None
 basedir = None

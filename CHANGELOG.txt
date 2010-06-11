@@ -53,6 +53,10 @@ config.game_menu_action allows one to specify an action that is run
 when entering the game menu. [doc]
 
 
+The config.screenshot_crop configuration variable controls the area of
+the screen that it stored when the user presses the screenshot key. [doc]
+
+
 The python compiler has been rewritten to use the python ast module.
 This should both improve performance, and improve error handling for
 python syntax. 
