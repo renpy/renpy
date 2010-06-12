@@ -111,6 +111,7 @@ class GLDraw(object):
         if self.log_file is not None:
             self.log_file.write(msg % args)
             self.log_file.write("\n")
+            self.log_file.flush()
             
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
@@ -127,6 +128,7 @@ class GLDraw(object):
         if self.did_init:
             self.deinit()
 
+        self.log("")
         self.log(renpy.version)
         
         self.virtual_size = virtual_size
@@ -140,9 +142,13 @@ class GLDraw(object):
         
         try:
             if fullscreen:
+                self.log("fullscreen mode.")
+                pygame.display.quit()
+                pygame.display.init()
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
             else:
-                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)        
+                self.log("windowed mode.")
+                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             self.log("Could not get pygame screen: %r", e)

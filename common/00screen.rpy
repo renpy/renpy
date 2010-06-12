@@ -82,6 +82,7 @@ init -1140 python:
             renpy.hide_screen(self.screen)
             renpy.restart_interaction()
 
+            
     def CallInNewContext(label, *args, **kwargs):
         """
          Calls the label in a new context.
@@ -89,6 +90,7 @@ init -1140 python:
         
         return ui.callsinnewcontext(label, *args, **kwargs)
 
+    
     def Screenshot(Action):
         """
          Takes a screenshot.
@@ -97,9 +99,7 @@ init -1140 python:
         def __call__(self):
             _screenshot()
             
-    
-            
-            
+                
     ##########################################################################
     # Menu-related actions.
 
