@@ -59,7 +59,7 @@ class Screen(renpy.object.Object):
 
         # The tag associated with the screen.
         self.tag = tag or name[0]
-        
+
 class ScreenDisplayable(renpy.display.layout.Container):
     """
     A screen is a collection of widgets that are displayed together. This
@@ -88,24 +88,31 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # as keyword arguments to the displayable.
         self.scope = renpy.python.RevertableDict(scope)
         
+        # The child associated with this screen.
+        self.child = None
+
         # Widget properties given to this screen the last time it was
         # shown.
         self.widget_properties = widget_properties
         
-        # The child associated with this screen.
-        self.child = None
 
-        # The widgets used to display the screen. None if we haven't
-        # figured that out yet.
-        self.widgets = None
-        
         old_screen = get_screen(tag, layer)
         
-        # The transforms that surround the widgets.
+        # A map from name to the widget with that name. 
+        self.widgets = { }
+
+        # A map from name to the transform with that name. (This is
+        # taken from the old version of the screen, if it exists.
         if old_screen:
             self.transforms = old_screen.transforms
         else:            
             self.transforms = { }
+
+        # What widgets and transforms were the last time this screen was
+        # updated. Used to communicate with the ui module, and only
+        # valid during an update - not used at other times.
+        self.old_widgets = None
+        self.old_transforms = None
 
         # The current transform event, and the last transform event to
         # be processed.
@@ -148,16 +155,21 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return rv
     
     def update(self):
-        
+
+        # Update _current_screen
         global _current_screen
         old_screen = _current_screen
         _current_screen = self
 
-            
-        renpy.ui.widget_by_id = { }
-        renpy.ui.transform_by_id = { }
-        renpy.ui.old_transform_by_id = self.transforms
-        renpy.ui.widget_properties = self.widget_properties
+        # Cycle widgets and transforms.
+        self.old_widgets = self.widgets
+        self.old_transforms = self.transforms
+        self.widgets = { }
+        self.transforms = { }
+        
+        # Render the child.
+        old_ui_screen = renpy.ui.screen
+        renpy.ui.screen = self
         
         renpy.ui.detached()
         self.child = renpy.ui.fixed()
@@ -168,22 +180,20 @@ class ScreenDisplayable(renpy.display.layout.Container):
         
         renpy.ui.close()
 
+        renpy.ui.screen = old_ui_screen
+        
+        # Visit all the children, to get them started.
         self.child.visit_all(lambda c : c.per_interact())
 
-        rv = renpy.ui.widget_by_id
-        self.widgets = renpy.ui.widget_by_id
-        self.transforms = renpy.ui.transform_by_id
-        
-        renpy.ui.widget_by_id = None
-        renpy.ui.transform_by_id = None 
-        renpy.ui.old_transform_by_id = None
-        renpy.ui.widget_properties = None
+        # Finish up.
+        self.old_widgets = None
+        self.old_transforms = None
 
         _current_screen = old_screen
 
         self.current_transform_event = None
 
-        return rv
+        return self.widgets
        
     def render(self, w, h, st, at):
         return renpy.display.render.render(self.child, w, h, st, at)

@@ -393,6 +393,12 @@ class Displayable(renpy.object.Object):
 
         return self
         
+    def _replaces(self, old):
+        """
+        This is used when the displayable replaces an old displayable
+        with the same name, in a screen. It should migrate over any
+        information that was changed by the user, or changed over time.
+        """
         
 
 class ImagePredictInfo(renpy.object.Object):

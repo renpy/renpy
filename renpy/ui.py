@@ -265,20 +265,10 @@ def context_exit(w):
     close(w)
 
 
-# A map from id to the displayable with that id. This is updated when
-# widgets are created, if not None.
-widget_by_id = None
-
-# A map from id to the transform with that id. This is updated when
-# widgets are created, if not None.
-transform_by_id = None
-
-# A map from id to the old transform with the id. This should be updated
-# before widgets are created.
-old_transform_by_id = None
-
-# A map from id to the properties of the widget with that id.
-widget_properties = None
+# The screen we're using as we add widgets. None if there isn't a
+# screen.
+screen = None
+    
     
 class Wrapper(renpy.object.Object):
 
@@ -324,8 +314,8 @@ class Wrapper(renpy.object.Object):
         keyword = self.kwargs.copy()
         keyword.update(kwargs)
 
-        if id is not None and widget_properties is not None:
-            keyword.update(widget_properties.get(id, { }))
+        if id is not None and screen is not None:
+            keyword.update(screen.widget_properties.get(id, { }))
 
         try:
             w = self.function(*args, **keyword)
@@ -367,21 +357,22 @@ class Wrapper(renpy.object.Object):
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
-        if id is not None:
+        if id is not None and screen is not None:
+            screen.widgets[id] = w
 
-            if widget_by_id is not None:
-               widget_by_id[id] = w
+            oldw = screen.old_widgets.get(id, None)
 
-               if isinstance(atw, renpy.display.motion.Transform):
-                   if transform_by_id is not None:
-                       transform_by_id[id] = atw
+            if type(oldw) == type(w):
+                w._replaces(oldw)
+            
+            if isinstance(atw, renpy.display.motion.Transform):
+                screen.transforms[id] = atw
 
-                   if old_transform_by_id is not None:
-                       oldt = old_transform_by_id.get(id, None)
+                oldt = screen.old_transforms.get(id, None)
 
-                       if oldt is not None:
-                           atw.take_state(oldt)
-                           atw.take_execution_state(oldt)
+                if oldt is not None:
+                    atw.take_state(oldt)
+                    atw.take_execution_state(oldt)
                            
         # Clear out the add_tag.
         add_tag = None
