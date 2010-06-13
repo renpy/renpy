@@ -85,6 +85,7 @@ class TransformState(renpy.object.Object):
     def __init__(self): # W0231
         self.alpha = 1
         self.rotate = None
+        self.rotate_pad = True
         self.zoom = 1
         self.xzoom = 1
         self.yzoom = 1
@@ -115,7 +116,7 @@ class TransformState(renpy.object.Object):
         # - take_state
         # - diff
         # - renpy.atl.PROPERTIES
-
+        # - Proxies in Transform
         
         # Default values for various properties, taken from our
         # parent.
@@ -131,6 +132,7 @@ class TransformState(renpy.object.Object):
 
         self.alpha = ts.alpha
         self.rotate = ts.rotate
+        self.rotate_pad = ts.rotate_pad
         self.zoom = ts.zoom
         self.xzoom = ts.xzoom
         self.yzoom = ts.yzoom
@@ -180,6 +182,7 @@ class TransformState(renpy.object.Object):
 
         diff2("alpha", newts.alpha, self.alpha)
         diff2("rotate", newts.rotate, self.rotate)
+        diff2("rotate_pad", newts.rotate_pad, self.rotate_pad)
         diff2("zoom", newts.zoom, self.zoom)
         diff2("xzoom", newts.xzoom, self.xzoom)
         diff2("yzoom", newts.yzoom, self.yzoom)
@@ -343,6 +346,7 @@ class Transform(Container):
     # Proxying things over to our state.
     alpha = Proxy("alpha")
     rotate = Proxy("rotate")
+    rotate_pad = Proxy("rotate_pad")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -690,7 +694,6 @@ class Transform(Container):
             cw = width
             ch = height
             
-            width = height = math.hypot(cw, ch)
             angle = -self.state.rotate * math.pi / 180
         
             xdx = math.cos(angle)
@@ -707,7 +710,20 @@ class Transform(Container):
 
             reverse = Matrix2D(xdx, xdy, ydx, ydy) * reverse
 
-            xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
+            if self.state.rotate_pad:
+                width = height = math.hypot(cw, ch)
+                xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
+
+            else:
+
+                xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
+                x2, y2 = reverse.transform(-cw / 2.0, ch / 2.0)
+                x3, y3 = reverse.transform(cw / 2.0, ch / 2.0)
+                x4, y4 = reverse.transform(cw / 2.0, -ch / 2.0)
+
+                width = max(xo, x2, x3, x4) - min(xo, x2, x3, x4) 
+                height = max(yo, y2, y3, y4) - min(yo, y2, y3, y4) 
+
             xo += width / 2.0
             yo += height / 2.0
             
