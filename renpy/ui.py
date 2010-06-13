@@ -548,8 +548,11 @@ def imagemap_compat(ground,
 
     close()
 
-def _button(clicked=None, role='', **properties):
+def _button(clicked=None, action=None, role='', **properties):
 
+    if action is not None:
+        clicked = action
+    
     if not is_sensitive(clicked):
         clicked = None
     elif is_selected(clicked):
@@ -575,11 +578,15 @@ def _imagebutton(idle_image = None,
                  selected_hover=None,
                  selected_insensitive=None,
                  clicked=None,
+                 action=None,
                  style='image_button',
                  image_style=None,
                  auto=None,
                  **properties):
 
+    if action is not None:
+        clicked = action
+    
     def choice(a, b, name):
         if a:
             return a
@@ -752,11 +759,14 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
 
-def _hotspot(spot, clicked=None, style='imagemap_button', **properties):
+def _hotspot(spot, clicked=None, action=None, style='imagemap_button', **properties):
 
     if not imagemap_stack:
         raise Exception("hotspot expects an imagemap to be defined.")
 
+    if action is not None:
+        clicked = action
+    
     imagemap = imagemap_stack[-1]
 
     x, y, w, h = spot
