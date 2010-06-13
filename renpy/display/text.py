@@ -626,14 +626,18 @@ class Text(renpy.display.core.Displayable):
                'laidout_length', 'laidout_hyperlinks', 'laidout_lines_last',
                'width', 'tokens', 'children', 'child_pos']
 
-    __version__ = 2
+    __version__ = 3
 
     def after_upgrade(self, version):
-        if version <= 0:
+        if version < 1:
             self.activated = None
-        if version <= 1:
+
+        if version < 2:
             self.slow_done_time = None
-                    
+
+        if version < 3:
+            self.ctc = None
+            
     def after_setstate(self):
         self.update()
 
@@ -689,9 +693,33 @@ class Text(renpy.display.core.Displayable):
         # The width we've been laid out for.
         self.width = -1
 
+        # The displayable that was added to us to supporte nestled ctc.
+        self.ctc = None
+        
         self.update(redraw=False)
 
 
+    def set_ctc(self, ctc):
+        """
+        Sets the nestled CTC indicator of this text.
+        """
+
+        self.ctc = ctc
+
+        self.tokens.append([ ("widget", ctc) ])
+        self.update(retokenize=False, redraw=False)
+                
+    def _replaces(self, old):
+        self.slow = old.slow
+        self.slow_param = old.slow_param
+        self.slow_start = old.slow_start
+        self.slow_done = old.slow_done
+        self.slow_done_time = old.slow_done_time
+        self.pause = old.pause
+
+        if old.ctc is not None:
+            self.set_ctc(old.ctc)
+        
     def set_text(self, new_text):
         """
         Changes the text display by this object to new_text.

@@ -588,6 +588,10 @@ class Input(renpy.display.text.Text):
             button.unhovered = HoveredProxy(self.disable, button.unhovered)
         
         self.update_text(self.content, self.editable)
+
+    def _replaces(self, old):
+        super(Input, self)._replaces(old)
+        self.update_text(old.content, old.editable)
         
     def update_text(self, content, editable):
 
@@ -1055,6 +1059,9 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
+    def _replaces(self, old):
+        self.started = old.started
+        self.next_event = old.next_event
         
     def event(self, ev, x, y, st):
 

@@ -886,4 +886,10 @@ init -1140 python:
     
     # What we do on a quit, by default.
     config.quit_action = ShowMenu("_confirm_quit")
-        
+
+    
+# This is used to ensure a fixed click-to-continue indicator is shown on
+# its own layer.
+screen _ctc:
+    add ctc
+    

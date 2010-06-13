@@ -948,8 +948,6 @@ class IgnoresEvents(Container):
     # Ignores events.
     def event(self, ev, x, y, st):
         return None
-    
-
         
 
 class Viewport(Container):
@@ -1002,6 +1000,10 @@ class Viewport(Container):
         self.width = 0
         self.height = 0
 
+    def _replaces(self, old):
+        self.xadjustment.value = old.xadjustment.value
+        self.yadjustment.value = old.yadjustment.value
+        
     def per_interact(self):
         self.xadjustment.register(self)
         self.yadjustment.register(self)

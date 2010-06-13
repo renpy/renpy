@@ -221,7 +221,7 @@ class SlowDone(object):
     def __call__(self):
         
         if self.ctc and self.ctc_position == "fixed":
-            renpy.ui.add(self.ctc)
+            renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -342,13 +342,10 @@ def display_say(show_function,
         what_text.slow_done = slow_done
         what_text.slow_start = slow_start
         what_text.pause = pause
-
+        
         if what_ctc and ctc_position == "nestled":
-            what_text.tokens.append([ ("widget", what_ctc) ])
+            what_text.set_ctc(what_ctc)
 
-        # Now, re-run update on what_text.
-        what_text.update(retokenize=False)
-            
         keep_interacting = what_text.keep_pausing
         no_wait |= what_text.no_wait
 
