@@ -33,10 +33,10 @@ savegame_suffix = "-LT1.save"
 
 def import_all():
 
-    import renpy.game
-
     # Should probably be early, as we will add it as a base to serialized things.
     import renpy.object 
+
+    import renpy.game
 
     # Adds in the Ren'Py loader.
     import renpy.loader

@@ -91,15 +91,38 @@ init -1140 python:
         return ui.callsinnewcontext(label, *args, **kwargs)
 
     
-    def Screenshot(Action):
+    class Screenshot(Action):
         """
          Takes a screenshot.
          """
         
         def __call__(self):
             _screenshot()
-            
-                
+
+
+    class InvertSelected(Action):
+        """
+         This inverts the selection state of the provided action, while
+         proxying over all of the other methods.
+         """
+
+        def __init__(self, action):
+            self.action = action
+
+        def __call__(self):
+            return self.action.__call__()
+
+        def get_selected(self):
+            return not self.action.get_selected()
+        
+        def get_sensitive(self):
+            return self.action.get_sensitive()
+
+        def periodic(self):
+            return self.action.periodic()
+        
+        
+         
     ##########################################################################
     # Menu-related actions.
 
@@ -277,6 +300,24 @@ init -1140 python:
         return SetField(store, variable, value)
 
     
+    class SetDict(Action):
+        """
+         Causes key in dict to be set to value.
+         """
+
+        def __init__(self, dict, key, value):
+            self.dict = dict
+            self.key = key
+            self.value = value
+
+        def __call__(self):
+            self.dict[self.key] = self.value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return self.dict[self.key] == self.value
+
+    
     class ToggleField(Action):
         """
          Toggles a field on an object. Toggling means to invert the boolean
@@ -314,13 +355,51 @@ init -1140 python:
 
             return rv
 
-        
+
     def ToggleVariable(variable):
         """
          Toggles a variable.
          """
 
         return ToggleField(store, variable)
+
+    
+    class ToggleDict(Action):
+        """
+         Toggles a key in a dictionary. Toggling means to invert the boolean
+         value of that field when the action is performed.
+         """
+        
+        def __init__(self, dict, key, true_value=None, false_value=None):
+            self.dict = dict
+            self.key = key
+            self.true_value = true_value
+            self.false_value = false_value
+        
+        def __call__(self):
+            value = self.dict[self.key]
+
+            if self.true_value is not None:
+                value = (value == self.true_value)
+
+            value = not value
+
+            if self.true_value is not None:
+                if value:
+                    value = self.true_value
+                else:
+                    value = self.false_value
+
+            self.dict[self.key] = value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            rv = self.dict[self.key]
+
+            if self.true_value is not None:
+                rv = (rv == self.true_value)
+
+            return rv
 
 
     ##########################################################################
@@ -735,7 +814,7 @@ init -1140 python:
         
             
     ##########################################################################
-    # Preference constructor.
+    # Preferences Constructor
 
     def Preference(name, value=None):
         """
@@ -776,6 +855,18 @@ init -1140 python:
          * Preference("auto-forward", "enable") - Enable auto-forward mode.
          * Preference("auto-forward", "disable") - Disable auto-forward mode.
          * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
+
+         * Preference("music mute", "enable") - Mute the music mixer.
+         * Preference("music mute", "disable") - Un-mute the music mixer.
+         * Preference("music mute", "toggle") - Toggle music mute.
+
+         * Preference("sound mute", "enable") - Mute the sound mixer.
+         * Preference("sound mute", "disable") - Un-mute the sound mixer.
+         * Preference("sound mute", "toggle") - Toggle sound mute.
+
+         * Preference("voice mute", "enable") - Mute the voice mixer.
+         * Preference("voice mute", "disable") - Un-mute the voice mixer.
+         * Preference("voice mute", "toggle") - Toggle voice  mute.
          
          Values that can be used with bars are:
 
@@ -883,7 +974,37 @@ init -1140 python:
             if value is None:
                 return MixerValue('voice')
 
-    
+        elif name == "music mute":
+
+            if value == "enable":
+                return SetDict(_preferences.mute, "music", True)
+            elif value == "disable":
+                return SetDict(_preferences.mute, "music", False)
+            elif value == "toggle":
+                return ToggleDict(_preferences.mute, "music")
+
+        elif name == "sound mute":
+
+            if value == "enable":
+                return SetDict(_preferences.mute, "sfx", True)
+            elif value == "disable":
+                return SetDict(_preferences.mute, "sfx", False)
+            elif value == "toggle":
+                return ToggleDict(_preferences.mute, "sfx")
+
+        elif name == "voice mute":
+
+            if value == "enable":
+                return SetDict(_preferences.mute, "voice", True)
+            elif value == "disable":
+                return SetDict(_preferences.mute, "voice", False)
+            elif value == "toggle":
+                return ToggleDict(_preferences.mute, "voice")
+
+        else:
+            raise Exception("Preference(%r, %r) is unknown." % (name , value))
+
+
     # What we do on a quit, by default.
     config.quit_action = ShowMenu("_confirm_quit")
 

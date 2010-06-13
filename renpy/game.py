@@ -111,22 +111,26 @@ class Persistent(object):
 # The persistent data that's kept from session to session
 persistent = None
 
-class Preferences(object):
+class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    def reinit(self):
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.mute_volumes = 0
+
+    def __init__(self):
         self.fullscreen = False # W0201
         self.skip_unseen = False # W0201
         self.text_cps = 0 # W0201
         self.afm_time = 0 # W0201
         self.afm_enable = True # W0201
         
-        
         # These will be going away soon.
         self.sound = True # W0201
         self.music = True # W0201
-
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
@@ -136,7 +140,12 @@ class Preferences(object):
         self.skip_after_choices = False # W0201
 
         # Mixer channel info.
+
+        # A map from channel name to the current volume (between 0 and 1).
         self.volumes = { } # W0201
+
+        # True if the channel should not play music. False
+        # otherwise. (Not used anymore.)
         self.mute = { } # W0201
 
         # Joystick mappings.
@@ -148,23 +157,17 @@ class Preferences(object):
             joy_dismiss="Button 0.0")
 
     def set_volume(self, mixer, volume):
-        # if volume == 0:
-        #     self.mute[mixer] = True
-        # else:
-        #     self.mute[mixer] = False
-
         self.volumes[mixer] = volume
 
     def get_volume(self, mixer):
         return self.volumes[mixer]
         
-    def __setstate__(self, state):
-        self.reinit()
-        vars(self).update(state)
+    def set_mute(self, mixer, mute):
+        self.mute[mixer] = mute
 
-    def __init__(self):
-        self.reinit()
-
+    def get_mute(self, mixer):
+        return self.mute[mixer]
+    
 # The current preferences.
 preferences = None
 
