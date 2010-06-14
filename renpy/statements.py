@@ -27,16 +27,12 @@ import renpy
 # statements to dictionaries giving the methods used for that statement.
 registry = { }
 
+parsers = renpy.parser.ParseTrie()
+
 def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None):
 
-    if name == "":
-        name = ()
-    else:
-        name = tuple(name.split())
+    name = tuple(name.split())
     
-    if registry.get(name) is not None:
-        renpy.exports.error("The statement '%s' has already been registered." % (" ".join(name)))
-
     registry[name] = dict(parse=parse,
                           lint=lint,
                           execute=execute,
@@ -44,14 +40,29 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
                           next=next,
                           scry=scry)
 
-    while True:
-        name = name[:-1]
-        if not name:
-            break
+    # The function that is called to create an ast.UserStatement.
+    def parse_user_statement(l, loc):
+        renpy.exports.push_error_handler(l.error)
 
-        if name not in registry:
-            registry[name] = None
-        
+        try:
+            rv = renpy.ast.UserStatement(loc, l.text)
+            l.expect_noblock(" ".join(name) + " statement.")
+            l.advance()
+        finally:
+            renpy.exports.pop_error_handler()
+
+        return rv
+            
+    renpy.parser.statements.add(name, parse_user_statement)
+
+    
+    # The function that is called to get our parse data.
+    def parse_data(l):
+        return (name, registry[name]["parse"](l))
+    
+    parsers.add(name, parse_data)
+
+
 def parse(node, line):
 
     block = [ (node.filename, node.linenumber, line, [ ]) ]
@@ -61,29 +72,11 @@ def parse(node, line):
     renpy.exports.push_error_handler(l.error)
     try:
 
-        name = ()
+        pf = parsers.parse(l)
+        if pf is None:
+            l.error("Could not find user-defined statement at runtime.")
 
-        while True:
-
-            cpt = l.checkpoint()
-            word = l.word()
-
-            if word is None:
-                break
-
-            newname = name + (word,)
-            if newname not in registry:
-                break
-
-            name = newname
-
-        l.revert(cpt)
-
-        if registry[name] is None:
-            renpy.exports.error("'%s' is the prefix of a statement, but not a statement." % (" ".join(name)))
-            return None
-
-        return ( name, registry[name]["parse"](l) )
+        return pf(l)
 
     finally:
         renpy.exports.pop_error_handler()

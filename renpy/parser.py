@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # This module contains the parser for the Ren'Py script language. It's
-# called when parsing is necessary, and creats an AST from the script.
+# called when parsing is necessary, and creates an AST from the script.
 
 import codecs
 import re
@@ -352,30 +352,35 @@ class Lexer(object):
 
     # A list of keywords which should not be parsed as names, because
     # there is a huge chance of confusion.
+    #
+    # Note: We need to be careful with what's in here, because thse
+    # are banned in simple_expressions, where we might want to use
+    # some of them.
     keywords = set([
-        'as',
-        'at',
-        'behind',
-        'call',
-        'expression',
-        'hide',
-        'if',
-        'in',
-        'image',
-        'init',
-        'jump',
-        'menu',
-        'onlayer',
-        'python',
-        'return',
-        'scene',
-        'set',
-        'show',
-        'with',
-        'while',
-        'zorder',
-        'transform',
-        ])
+            '$',
+            'as',
+            'at',
+            'behind',
+            'call',
+            'expression',
+            'hide',
+            'if',
+            'in',
+            'image',
+            'init',
+            'jump',
+            'menu',
+            'onlayer',
+            'python',
+            'return',
+            'scene',
+            'set',
+            'show',
+            'with',
+            'while',
+            'zorder',
+            'transform',
+            ])
         
 
     def __init__(self, block, init=False):
@@ -605,7 +610,7 @@ class Lexer(object):
             return self.word_cache
 
         self.word_cache_pos = self.pos 
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd\$][0-9a-zA-Z_\u00a0-\ufffd\$]*')
         self.word_cache = rv
         self.word_cache_newpos = self.pos
         
@@ -1045,7 +1050,6 @@ def parse_with(l, node):
              node,
              ast.With(loc, expr) ]
 
-
     
 def parse_menu(stmtl, loc):
 
@@ -1162,6 +1166,7 @@ def parse_menu(stmtl, loc):
 
     return rv
 
+
 def parse_parameters(l):
 
     parameters = [ ]
@@ -1236,6 +1241,7 @@ def parse_parameters(l):
 
     return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw)
 
+
 def parse_arguments(l):
     """
     Parse a list of arguments, if one is present.
@@ -1284,30 +1290,90 @@ def parse_arguments(l):
         l.require(r',')
 
     return renpy.ast.ArgumentInfo(arguments, extrapos, extrakw)
-    
+
+
+##############################################################################
+# The parse trie.
+
+class ParseTrie(object):
+    """
+    This is a trie of words, that's used to pick a parser function.
+    """
+
+    def __init__(self):
+        self.default = None
+        self.words = { }
         
-    
+    def add(self, name, function):
 
-def parse_statement(l):
+        if not name:
+            self.default = function
+            return
+
+        first = name[0]
+        rest = name[1:]
+
+        if first not in self.words:
+            self.words[first] = ParseTrie()
+
+        self.words[first].add(rest, function)
+
+    def parse(self, l):
+        old_pos = l.pos
+
+        word = l.word()
+
+        if not word in self.words:
+            l.pos = old_pos
+            return self.default
+
+        return self.words[word].parse(l)
+
+        
+# The root of the parse trie.
+statements = ParseTrie()
+
+
+def statement(keywords):
     """
-    This parses a Ren'Py statement. l is expected to be a Ren'Py lexer
-    that has been advanced to a logical line. This function will
-    advance l beyond the last logical line making up the current
-    statement, and will return an AST object representing this
-    statement, or a list of AST objects representing this statement.
+    A function decorator used to declare a statement. Keywords is a string
+    giving the keywords that precede the statement.
     """
 
-    # Store the current location.
-    loc = l.get_location()
+    keywords = keywords.split()
     
-    ### If statement
-    if l.keyword('if'):
-        entries = [ ]
+    def wrap(f):
+        statements.add(keywords, f)
+        return f
+
+    return wrap
+    
+    
+##############################################################################
+# Statement functions.
+
+@statement("if")
+def if_statement(l, loc):
+
+    entries = [ ]
+
+    condition = l.require(l.python_expression)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('if statement')
+
+    block = parse_block(l.subblock_lexer())
+
+    entries.append((condition, block))
+
+    l.advance()
+
+    while l.keyword('elif'):
 
         condition = l.require(l.python_expression)
         l.require(':')
         l.expect_eol()
-        l.expect_block('if statement')
+        l.expect_block('elif clause')
 
         block = parse_block(l.subblock_lexer())
 
@@ -1315,298 +1381,333 @@ def parse_statement(l):
 
         l.advance()
 
-        while l.keyword('elif'):
-
-            condition = l.require(l.python_expression)
-            l.require(':')
-            l.expect_eol()
-            l.expect_block('elif clause')
-
-            block = parse_block(l.subblock_lexer())
-            
-            entries.append((condition, block))
-            
-            l.advance()
-
-        if l.keyword('else'):
-            l.require(':')
-            l.expect_eol()
-            l.expect_block('else clause')
-            
-            block = parse_block(l.subblock_lexer())
-            
-            entries.append(('True', block))
-            
-            l.advance()
-
-        return ast.If(loc, entries)
-
-    if l.keyword('elif'):
-        l.error('elif clause must be associated with an if statement.')
-
     if l.keyword('else'):
-        l.error('else clause must be associated with an if statement.')
-        
-
-    ### While statement
-    if l.keyword('while'):
-        condition = l.require(l.python_expression)
         l.require(':')
         l.expect_eol()
-        l.expect_block('while statement')
+        l.expect_block('else clause')
+
         block = parse_block(l.subblock_lexer())
-        l.advance()
 
-        return ast.While(loc, condition, block)
-        
-
-    ### Pass statement
-    if l.keyword('pass'):
-        l.expect_noblock('pass statement')
-        l.expect_eol()
-        l.advance()
-
-        return ast.Pass(loc)
-
-    
-    ### Menu statement.
-    if l.keyword('menu'):
-        l.expect_block('menu statement')
-        label = l.name()
-        l.require(':')
-        l.expect_eol()
-
-        menu = parse_menu(l, loc)
+        entries.append(('True', block))
 
         l.advance()
 
-        rv = [ ]
+    return ast.If(loc, entries)
 
-        if label:
-            rv.append(ast.Label(loc, label, [], None))
 
-        rv.extend(menu)
+@statement("while")
+def while_statement(l, loc):
+    condition = l.require(l.python_expression)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('while statement')
+    block = parse_block(l.subblock_lexer())
+    l.advance()
 
-        return rv
-        
-    ### Return statement.
-    if l.keyword('return'):
-        l.expect_noblock('return statement')
-
-        rest = l.rest()
-        if not rest:
-            rest = None
-
-        l.expect_eol()
-        l.advance()
-
-        return ast.Return(loc, rest)
-
-    ### Jump statement
-    if l.keyword('jump'):
-        l.expect_noblock('jump statement')
-
-        if l.keyword('expression'):
-            expression = True
-            target = l.require(l.simple_expression)
-        else:
-            expression = False            
-            target = l.require(l.name)
-
-        l.expect_eol()
-        l.advance()
-
-        return ast.Jump(loc, target, expression)
+    return ast.While(loc, condition, block)
     
 
-    ### Call/From statement.
-    if l.keyword('call'):
-        l.expect_noblock('call statment')
+@statement("pass")
+def pass_statement(l, loc):
+    l.expect_noblock('pass statement')
+    l.expect_eol()
+    l.advance()
 
-        if l.keyword('expression'):
-            expression = True
-            target = l.require(l.simple_expression)
+    return ast.Pass(loc)
 
-        else:
-            expression = False            
-            target = l.require(l.name)
 
-        # Optional pass, to let someone write:
-        # call expression foo pass (bar, baz)
-        l.keyword('pass')
-            
-        arguments = parse_arguments(l)
-            
-        rv = [ ast.Call(loc, target, expression, arguments) ]
+@statement("menu")
+def menu_statement(l, loc):
+    l.expect_block('menu statement')
+    label = l.name()
+    l.require(':')
+    l.expect_eol()
 
-        if l.keyword('from'):
-            name = l.require(l.name)
-            rv.append(ast.Label(loc, name, [], None))
-        else:
-            rv.append(ast.Pass(loc))
+    menu = parse_menu(l, loc)
 
-        l.expect_eol()
-        l.advance()
+    l.advance()
 
-        return rv
+    rv = [ ]
 
-    ### Scene statement.
-    if l.keyword('scene'):
+    if label:
+        rv.append(ast.Label(loc, label, [], None))
 
-        if l.keyword('onlayer'):
-            layer = l.require(l.name)
-        else:
-            layer = "master"
+    rv.extend(menu)
 
-        # Empty.
-        if l.eol():
-            l.advance()
-            return ast.Scene(loc, None, layer)
+    return rv
 
-        imspec = parse_image_specifier(l)
-        stmt = ast.Scene(loc, imspec, imspec[4])
-        rv = parse_with(l, stmt)
 
-        if l.match(':'):
-            stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
-        else:
-            l.expect_noblock('scene statement')
+@statement("return")
+def return_statement(l, loc):
+    l.expect_noblock('return statement')
 
-        l.expect_eol()
-        l.advance()
+    rest = l.rest()
+    if not rest:
+        rest = None
 
-        return rv
+    l.expect_eol()
+    l.advance()
 
-    ### Show statement.
-    if l.keyword('show'):
-        imspec = parse_image_specifier(l)
-        stmt = ast.Show(loc, imspec)
-        rv = parse_with(l, stmt)
-
-        if l.match(':'):
-            stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
-        else:
-            l.expect_noblock('show statement')
-        
-        l.expect_eol()
-        l.advance()
-
-        return rv
-        
-    ### Hide statement.
-    if l.keyword('hide'):
-        imspec = parse_image_specifier(l)
-        rv = parse_with(l, ast.Hide(loc, imspec))
-
-        l.expect_eol()
-        l.expect_noblock('hide statement')
-        l.advance()
-
-        return rv
-        
-    ### With statement.
-    if l.keyword('with'):
-        expr = l.require(l.simple_expression)
-        l.expect_eol()
-        l.expect_noblock('with statement')
-        l.advance()
-
-        return ast.With(loc, expr)
+    return ast.Return(loc, rest)
     
-    ### Image statement.
-    if l.keyword('image'):
 
-        name = parse_image_name(l)
+@statement("jump")
+def jump_statement(l, loc):
+    l.expect_noblock('jump statement')
 
-        if l.match(':'):
-            l.expect_eol()
-            expr = None
-            atl = renpy.atl.parse_atl(l.subblock_lexer())
-        else:            
-            l.require('=')
-            expr = l.rest()
-            atl = None
-            l.expect_noblock('image statement')
+    if l.keyword('expression'):
+        expression = True
+        target = l.require(l.simple_expression)
+    else:
+        expression = False            
+        target = l.require(l.name)
 
-        rv = ast.Image(loc, name, expr, atl)
+    l.expect_eol()
+    l.advance()
 
-        if not l.init:
-            rv = ast.Init(loc, [ rv ], 990)        
-        
-        l.advance()
+    return ast.Jump(loc, target, expression)
 
-        return rv
 
-    ### Define statement.
-    if l.keyword('define'):
+@statement("call")
+def call_statement(l, loc):
+    l.expect_noblock('call statment')
 
-        priority = l.integer()
-        if priority:
-            priority = int(priority)
-        else:
-            priority = 0
-        
+    if l.keyword('expression'):
+        expression = True
+        target = l.require(l.simple_expression)
+
+    else:
+        expression = False            
+        target = l.require(l.name)
+
+    # Optional pass, to let someone write:
+    # call expression foo pass (bar, baz)
+    l.keyword('pass')
+
+    arguments = parse_arguments(l)
+
+    rv = [ ast.Call(loc, target, expression, arguments) ]
+
+    if l.keyword('from'):
         name = l.require(l.name)
+        rv.append(ast.Label(loc, name, [], None))
+    else:
+        rv.append(ast.Pass(loc))
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+    
+
+@statement("scene")
+def scene_statement(l, loc):
+    if l.keyword('onlayer'):
+        layer = l.require(l.name)
+    else:
+        layer = "master"
+
+    # Empty.
+    if l.eol():
+        l.advance()
+        return ast.Scene(loc, None, layer)
+
+    imspec = parse_image_specifier(l)
+    stmt = ast.Scene(loc, imspec, imspec[4])
+    rv = parse_with(l, stmt)
+
+    if l.match(':'):
+        stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
+    else:
+        l.expect_noblock('scene statement')
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+    
+
+@statement("show")
+def show_statement(l, loc):
+    imspec = parse_image_specifier(l)
+    stmt = ast.Show(loc, imspec)
+    rv = parse_with(l, stmt)
+
+    if l.match(':'):
+        stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())            
+    else:
+        l.expect_noblock('show statement')
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+
+
+@statement("hide")
+def hide_statement(l, loc):
+    imspec = parse_image_specifier(l)
+    rv = parse_with(l, ast.Hide(loc, imspec))
+
+    l.expect_eol()
+    l.expect_noblock('hide statement')
+    l.advance()
+
+    return rv 
+
+
+@statement("with")
+def with_statement(l, loc):
+    expr = l.require(l.simple_expression)
+    l.expect_eol()
+    l.expect_noblock('with statement')
+    l.advance()
+
+    return ast.With(loc, expr)
+    
+
+@statement("image")
+def image_statement(l, loc):
+    name = parse_image_name(l)
+
+    if l.match(':'):
+        l.expect_eol()
+        expr = None
+        atl = renpy.atl.parse_atl(l.subblock_lexer())
+    else:            
         l.require('=')
         expr = l.rest()
+        atl = None
+        l.expect_noblock('image statement')
 
-        l.expect_noblock('define statement')
+    rv = ast.Image(loc, name, expr, atl)
 
-        rv = ast.Define(loc, name, expr)
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], 990)        
 
-        if not l.init:
-            rv = ast.Init(loc, [ rv ], priority)        
-        
-        l.advance()
+    l.advance()
 
-        return rv
+    return rv
 
-    ### Transform statement.
-    if l.keyword('transform'):
-        
-        priority = l.integer()
-        if priority:
-            priority = int(priority)
-        else:
-            priority = 0
-        
-        name = l.require(l.name)
-        parameters = parse_parameters(l)
 
-        if parameters and (parameters.extrakw or parameters.extrapos):
-            l.error('transform statement does not take a variable number of parameters')
+@statement("define")
+def define_statement(l, loc):
 
-        l.require(':')
-        l.expect_eol()
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
 
-        atl = renpy.atl.parse_atl(l.subblock_lexer())
+    name = l.require(l.name)
+    l.require('=')
+    expr = l.rest()
 
-        rv = ast.Transform(loc, name, atl, parameters)
+    l.expect_noblock('define statement')
 
-        if not l.init:
-            rv = ast.Init(loc, [ rv ], priority)        
-        
-        l.advance()
+    rv = ast.Define(loc, name, expr)
 
-        return rv
-    
-    ### One-line python statement.
-    if l.match(r'\$'):
-        python_code = l.rest()
-        l.expect_noblock('one-line python statement')
-        l.advance()
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority)        
 
-        return ast.Python(loc, python_code)
+    l.advance()
 
-    ### Python block.
+    return rv
+
+
+@statement("transform")
+def transform_statement(l, loc):
+
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
+
+    name = l.require(l.name)
+    parameters = parse_parameters(l)
+
+    if parameters and (parameters.extrakw or parameters.extrapos):
+        l.error('transform statement does not take a variable number of parameters')
+
+    l.require(':')
+    l.expect_eol()
+
+    atl = renpy.atl.parse_atl(l.subblock_lexer())
+
+    rv = ast.Transform(loc, name, atl, parameters)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority)        
+
+    l.advance()
+
+    return rv
+
+
+@statement("$")
+def one_line_python(l, loc):
+    python_code = l.rest()
+    l.expect_noblock('one-line python statement')
+    l.advance()
+
+    return ast.Python(loc, python_code)
+
+
+@statement("python")
+def python_statement(l, loc):
+    hide = False
+    early = False
+
+    if l.keyword('early'):
+        early = True
+
+    if l.keyword('hide'):
+        hide = True
+
+    l.require(':')
+    l.expect_block('python block')
+
+    python_code = l.python_block()
+
+    l.advance()
+
+    if early:
+        return ast.EarlyPython(loc, python_code, hide)
+    else:
+        return ast.Python(loc, python_code, hide)
+
+
+@statement("label")
+def label_statement(l, loc):
+    name = l.require(l.name)
+
+    parameters = parse_parameters(l)
+
+    l.require(':')
+    l.expect_eol()
+
+    # Optional block here. It's empty if no block is associated with
+    # this statement.
+    block = parse_block(l.subblock_lexer())
+
+    l.advance()
+    return ast.Label(loc, name, block, parameters)
+
+
+@statement("init")
+def init_statement(l, loc):
+
+    p = l.integer()
+
+    if p:
+        priority = int(p)
+    else:
+        priority = 0
+
     if l.keyword('python'):
 
         hide = False
-        early = False
-
-        if l.keyword('early'):
-            early = True
-        
         if l.keyword('hide'):
             hide = True
 
@@ -1616,122 +1717,43 @@ def parse_statement(l):
         python_code = l.python_block()
 
         l.advance()
+        block = [ ast.Python(loc, python_code, hide) ]
 
-        if early:
-            return ast.EarlyPython(loc, python_code, hide)
-        else:
-            return ast.Python(loc, python_code, hide)
-
-    ### Label Statement
-    if l.keyword('label'):
-        name = l.require(l.name)
-
-        parameters = parse_parameters(l)
-
+    else:
         l.require(':')
+
         l.expect_eol()
+        l.expect_block('init statement')
 
-        # Optional block here. It's empty if no block is associated with
-        # this statement.
-        block = parse_block(l.subblock_lexer())
+        block = parse_block(l.subblock_lexer(True))
 
         l.advance()
-        return ast.Label(loc, name, block, parameters)
 
-    ### Init Statement
-    if l.keyword('init'):
-
-        p = l.integer()
-
-        if p:
-            priority = int(p)
-        else:
-            priority = 0
-
-        if l.keyword('python'):
-
-            hide = False
-            if l.keyword('hide'):
-                hide = True
-
-            l.require(':')
-            l.expect_block('python block')
-
-            python_code = l.python_block()
-
-            l.advance()
-            block = [ ast.Python(loc, python_code, hide) ]
-
-        else:
-            l.require(':')
-
-            l.expect_eol()
-            l.expect_block('init statement')
-
-            block = parse_block(l.subblock_lexer(True))
-
-            l.advance()
-
-        return ast.Init(loc, block, priority)
+    return ast.Init(loc, block, priority)
 
 
+@statement("screen")
+def screen_statement(l, loc):
+    
+    # The guts of screen language parsing is in screenlang.py. It
+    # assumes we ate the "screen" keyword before it's called.
+    kwargs = renpy.screenlang.parse_screen(l)
+    l.advance()
 
-    if l.keyword('screen'):
+    rv = ast.Screen(loc, kwargs)
 
-        # The guts of screen language parsing is in screenlang.py. It
-        # assumes we ate the "screen" keyword before it's called.
-        kwargs = renpy.screenlang.parse_screen(l)
-        l.advance()
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], -500)        
 
-        rv = ast.Screen(loc, kwargs)
+    return rv
+    
 
-        if not l.init:
-            rv = ast.Init(loc, [ rv ], -500)        
-        
-        return rv
-
+@statement("")
+def say_statement(l, loc):
+    
     state = l.checkpoint()
-    
-    # Try parsing as a user-statement. If that doesn't work, revert and
-    # try as a say.
 
-    word = l.word()
-    if (word,) in renpy.statements.registry:
-        text = l.text
-
-        l.expect_noblock(word + ' statement')
-        l.advance()
-
-        renpy.exports.push_error_handler(l.error)
-        try:
-            rv = ast.UserStatement(loc, text)
-        finally:
-            renpy.exports.pop_error_handler()
-
-        return rv
-        
-    l.revert(state)
-
-    # Try parsing as the default statement.
-    if () in renpy.statements.registry:
-        text = l.text
-        l.expect_noblock('default statement')
-        l.advance()
-
-        renpy.exports.push_error_handler(l.error)
-        try:
-            rv = ast.UserStatement(loc, text)
-        finally:
-            renpy.exports.pop_error_handler()
-
-        return rv
-    
-    # The one and two arguement say statements are ambiguous in terms
-    # of lookahead. So we first try parsing as a one-argument, then a
-    # two-argument.
-
-    # We're using the checkpoint from above.
-
+    # Try for a single-argument say statement.
     what = l.string()
 
     if l.keyword('with'):
@@ -1762,7 +1784,33 @@ def parse_statement(l):
         l.advance()
         return ast.Say(loc, who, what, with_)
 
+    # This reports a parse error for any bad statement.
     l.error('expected statement.')
+
+
+##############################################################################
+# Functions called to parse things.
+
+def parse_statement(l):
+    """
+    This parses a Ren'Py statement. l is expected to be a Ren'Py lexer
+    that has been advanced to a logical line. This function will
+    advance l beyond the last logical line making up the current
+    statement, and will return an AST object representing this
+    statement, or a list of AST objects representing this statement.
+    """
+
+    # Store the current location.
+    loc = l.get_location()
+    
+    pf = statements.parse(l)
+
+    if pf is None:
+        l.error("expected statement.")
+
+    return pf(l, loc)
+    
+
 
 def parse_block(l):
     """
