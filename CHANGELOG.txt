@@ -68,6 +68,11 @@ appended to filenames provided to the registered channel,
 respectively.
 
 
+The distribution code has been moved into launcher/distribute.py. This
+file can be run from the command line to build distributions in shell
+scripts and other automated processes.
+
+
 The python compiler has been rewritten to use the python ast module.
 This should both improve performance, and improve error handling for
 python syntax. 

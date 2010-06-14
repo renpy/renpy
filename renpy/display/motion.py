@@ -94,9 +94,8 @@ class TransformState(renpy.object.Object):
         self.ypos = None
         self.xanchor = None
         self.yanchor = None
-        self.xoffset = None
-        self.yoffset = None
-
+        self.xoffset = 0
+        self.yoffset = 0
         
         self.xaround = 0.0
         self.yaround = 0.0
@@ -124,9 +123,6 @@ class TransformState(renpy.object.Object):
         self.default_ypos = None
         self.default_xanchor = None
         self.default_yanchor = None
-        self.default_xoffset = None
-        self.default_yoffset = None
-
         
     def take_state(self, ts):
 
@@ -155,8 +151,8 @@ class TransformState(renpy.object.Object):
          self.default_ypos,         
          self.default_xanchor,
          self.default_yanchor,
-         self.default_xoffset,
-         self.default_yoffset,
+         self.xoffset,
+         self.yoffset,
          self.subpixel) = ts.get_placement()
 
         
@@ -201,26 +197,25 @@ class TransformState(renpy.object.Object):
 
         diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
         diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
-        diff4("xoffset", newts.xoffset, newts.default_xoffset, self.xoffset, self.default_xoffset)
+        diff2("xoffset", newts.xoffset, self.xoffset)
 
         diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
         diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
-        diff4("yoffset", newts.yoffset, newts.default_yoffset, self.yoffset, self.default_yoffset)
+        diff2("yoffset", newts.yoffset, self.yoffset)
         
         return rv
 
-    def get_placement(self):
+    def get_placement(self, cxoffset=0, cyoffset=0):
         return (
             first_not_none(self.xpos, self.default_xpos),
             first_not_none(self.ypos, self.default_ypos),
             first_not_none(self.xanchor, self.default_xanchor),
             first_not_none(self.yanchor, self.default_yanchor),
-            first_not_none(self.xoffset, self.default_xoffset),            
-            first_not_none(self.yoffset, self.default_yoffset),
+            self.xoffset + cxoffset,
+            self.yoffset + cyoffset,
             self.subpixel,
             )
-            
-        
+                    
     # These update various properties.
     def get_xalign(self):
         return self.xpos 
@@ -606,14 +601,10 @@ class Transform(Container):
                 self.state.default_xpos = cxpos
             if cxanchor is not None:
                 self.state.default_xanchor = cxanchor
-            if cxoffset is not None:
-                self.state.default_xoffset = cxoffset
             if cypos is not None:
                 self.state.default_ypos = cypos
             if cyanchor is not None:
                 self.state.default_yanchor = cyanchor
-            if cyoffset is not None:
-                self.state.default_yoffset = cyoffset
 
             self.state.subpixel |= csubpixel
         
@@ -808,8 +799,13 @@ class Transform(Container):
 
         if not self.active:
             self.update_state()
+
+        cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+
+        cxoffset = cxoffset or 0
+        cyoffset = cyoffset or 0 
         
-        return self.state.get_placement()
+        return self.state.get_placement(cxoffset, cyoffset)
             
 
     def update(self):
