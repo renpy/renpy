@@ -125,7 +125,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 7
+            channel = "music"
         
         renpy.music.play(eval(p["file"]),
                          fadeout=eval(p["fadeout"]),
@@ -191,7 +191,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 7
+            channel = "music"
         
         renpy.music.queue(
             eval(p["file"]),
@@ -229,7 +229,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 7
+            channel = "music"
         
         renpy.music.stop(fadeout=eval(p["fadeout"]), channel=channel)
 
@@ -246,7 +246,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 0
+            channel = "sound"
 
         fadeout = eval(p["fadeout"]) or 0
             
@@ -264,7 +264,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 0
+            channel = "sound"
 
         renpy.sound.queue(eval(p["file"]), channel=channel)
 
@@ -278,7 +278,7 @@ python early hide:
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
-            channel = 0
+            channel = "sound"
 
         fadeout = eval(p["fadeout"]) or 0
 

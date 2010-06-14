@@ -51,7 +51,7 @@ init -1120:
 
         # Call this to replay the last bit of voice.
         def voice_replay():
-            renpy.sound.play(_last_voice_play, channel=2)
+            renpy.sound.play(_last_voice_play, channel="voice")
 
         # Returns true if we can replay the voice.
         def voice_can_replay():
@@ -70,10 +70,10 @@ init -1120:
                 return
             
             if _voice.play and not config.skipping:
-                renpy.sound.play(_voice.play, channel=2)
+                renpy.sound.play(_voice.play, channel="voice")
                 store._last_voice_play = _voice.play        
             elif not _voice.sustain:
-                renpy.sound.stop(channel=2)
+                renpy.sound.stop(channel="voice")
                 store._last_voice_play = _voice.play        
 
             _voice.play = None
@@ -83,7 +83,7 @@ init -1120:
         config.say_sustain_callbacks.append(voice_sustain)
 
         def voice_afm_callback():
-            return not renpy.sound.is_playing(channel=2)
+            return not renpy.sound.is_playing(channel="voice")
 
         config.afm_callback = voice_afm_callback
                        

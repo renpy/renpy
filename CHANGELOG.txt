@@ -62,6 +62,12 @@ The config.screenshot_crop configuration variable controls the area of
 the screen that it stored when the user presses the screenshot key. [doc]
 
 
+The renpy.music.register_channel method now has two additional
+parameters, file_prefix and file_suffix. These are prepended and
+appended to filenames provided to the registered channel,
+respectively.
+
+
 The python compiler has been rewritten to use the python ast module.
 This should both improve performance, and improve error handling for
 python syntax. 

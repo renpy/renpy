@@ -47,6 +47,12 @@ init -1180 python:
     # preference when the game is first run.
     config.default_text_cps = None        
 
+    # If not None, the default value of afm_time
+    config.default_afm_time = None
+
+    # If not None, the default value of afm_enable
+    config.default_afm_enable = None
+    
     # Should we automatically define images?
     config.automatic_images = None
 
@@ -399,6 +405,13 @@ init 1180 python:
         if config.default_text_cps is not None:
             _preferences.text_cps = config.default_text_cps
 
+        if config.default_afm_time is not None:
+            _preferences.default_afm_time = config.default_afm_time
+
+        if config.default_afm_enable is not None:
+            _preferences.default_afm_enable = config.default_afm_enable
+            
+            
     if config.developer:
 
         def _inspector(l):

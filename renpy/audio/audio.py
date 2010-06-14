@@ -186,7 +186,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
     
-    def __init__(self, name, default_loop, stop_on_mute, tight):
+    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -250,6 +250,9 @@ class Channel(object):
         # on queue clear.
         self.keep_queue = 0
 
+        # A prefix and suffix that are used to create the full filenames.
+        self.file_prefix = file_prefix
+        self.file_suffix = file_suffix
         
         if default_loop is None:
             # By default, should we loop the music?
@@ -354,7 +357,7 @@ class Channel(object):
 
             # Blacklist of old file formats we used to support, but we now
             # ignore.
-            lfn = topq.filename.lower()
+            lfn = topq.filename.lower() + self.file_suffix.lower()
             for i in (".mod", ".xm", ".mid", ".midi"):
                 if lfn.endswith(i):
                     topq = None
@@ -363,7 +366,7 @@ class Channel(object):
                 continue
             
             try:
-                topf = load(topq.filename)
+                topf = load(self.file_prefix + topq.filename + self.file_suffix)
 
                 if depth == 0:
                     pss.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
@@ -528,14 +531,15 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix=""):
     if not renpy.game.init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    c = Channel(name, loop, stop_on_mute, tight)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
+
     
 def alias_channel(name, newname):
     if not renpy.game.init_phase:
@@ -543,6 +547,7 @@ def alias_channel(name, newname):
 
     c = get_channel(name)
     channels[newname] = c
+
     
 def get_channel(name):
 
