@@ -439,7 +439,6 @@ python early hide:
                               parse=parse_pause,
                               lint=lint_pause,
                               execute=execute_pause)
-            
     
                               
 init -1200 python:
@@ -452,4 +451,97 @@ init -1200 python:
             return eval(e)
         except:
             renpy.error('unable to evaluate %s %r' % (what, e))
+    
+##############################################################################
+# Screen-related statements.
+
+python early hide:
+
+    def parse_show_call_screen(l):
+
+        # Parse a name.
+        name = l.require(l.name)
+
+        # Parse a parameter list. (name -> expression string)
+        parameters = { }
+        
+        if l.match(r"\("):
+
+            while True:
+                pname = l.name()
+                if not pname:
+                    break
+
+                l.require(r"=")
+
+                expr = l.delimited_python(",)")
+
+                if not expr:
+                    l.error("expected expression.")
+
+                parameters[pname] = expr
+
+                if not l.match(r','):
+                    break
+
+            l.require(r'\)')
+            l.expect_eol()
+            
+        return dict(name=name, parameters=parameters)
+
+    def parse_hide_screen(l):
+        name = l.require(l.name)
+
+        l.expect_eol()
+
+        return dict(name=name)
+        
+    def execute_show_screen(p):
+
+        name = p["name"]
+        parameters = p["parameters"]
+
+        kwargs = { }
+
+        for k, v in parameters.iteritems():
+            kwargs[k] = eval(v)
+
+        renpy.show_screen(name, **kwargs)
+
+    def execute_call_screen(p):
+        name = p["name"]
+        parameters = p["parameters"]
+
+        kwargs = { }
+
+        for k, v in parameters.iteritems():
+            kwargs[k] = eval(v)
+
+        renpy.call_screen(name, **kwargs)
+
+    def execute_hide_screen(p):
+        name = p["name"]
+        renpy.hide_screen(name)
+        
+    def lint_screen(p):
+        name = p["name"]
+        if not renpy.has_screen(name):
+            renpy.error("Screen %s does not exist." % name)
+
+        
+    renpy.statements.register("show screen",
+                              parse=parse_show_call_screen,
+                              execute=execute_show_screen,
+                              lint=lint_screen)
+
+    renpy.statements.register("call screen",
+                              parse=parse_show_call_screen,
+                              execute=execute_call_screen,
+                              lint=lint_screen)
+
+    renpy.statements.register("hide screen",
+                              parse=parse_hide_screen,
+                              execute=execute_hide_screen)
+
+            
     

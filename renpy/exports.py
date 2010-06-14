@@ -1317,7 +1317,7 @@ def cache_unpin(*args):
 # defined.
 definitions = collections.defaultdict(list)
 
-def run_screen(_screen_name, **kwargs):
+def call_screen(_screen_name, **kwargs):
     show_screen(_screen_name, _transient=True, **kwargs)
     return renpy.ui.interact()
         
