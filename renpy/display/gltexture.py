@@ -387,7 +387,7 @@ class TextureGrid(object):
         """
 
         rv = TextureGrid(w, h)
-        
+
         rv.rows, rowtiles = compute_subrow(self.rows, y, h)
         rv.columns, coltiles = compute_subrow(self.columns, x, w)
 

@@ -517,7 +517,7 @@ python early hide:
         for k, v in parameters.iteritems():
             kwargs[k] = eval(v)
 
-        renpy.call_screen(name, **kwargs)
+        store._return = renpy.call_screen(name, **kwargs)
 
     def execute_hide_screen(p):
         name = p["name"]

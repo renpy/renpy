@@ -465,7 +465,7 @@ class GLDraw(object):
         if isinstance(what, gltexture.TextureGrid):
 
             self.set_clip(clip)
-            
+
             gltexture.blit(
                 what,
                 xo,
@@ -615,9 +615,9 @@ class GLDraw(object):
 
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
-        
+
         what = what.subsurface((x, y, 1, 1))
-                
+        
         forward = reverse = IDENTITY
 
         gl.Viewport(0, 0, 1, 1)
@@ -640,6 +640,8 @@ class GLDraw(object):
 
         gl.ReadPixels(0, 0, 1, 1, gl.ALPHA, gl.BYTE, a)
 
+        what.kill()
+        
         return a[0]
         
 

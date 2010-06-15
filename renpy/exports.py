@@ -1327,5 +1327,19 @@ definitions = collections.defaultdict(list)
 
 def call_screen(_screen_name, **kwargs):
     show_screen(_screen_name, _transient=True, **kwargs)
-    return renpy.ui.interact()
+
+    roll_forward = renpy.exports.roll_forward_info()
+    rv = None
+    
+    try:
+        rv = renpy.ui.interact(roll_forward=roll_forward)
+        return rv
+    
+    finally:
         
+        renpy.exports.checkpoint(rv)
+
+        with_none = renpy.config.implicit_with_none
+        if with_none:
+            renpy.game.interface.do_with(None, None)
+    

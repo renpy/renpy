@@ -352,6 +352,42 @@ def render_screen(root, width, height):
     
     return rv
 
+def compute_subrect((sx, sy), (sw, sh), (cx, cy, cw, ch)):
+    """
+    Computes a sub-rectangle. Takes the source x and y, the source width
+    and height, and the clipping rectangle. Returns status, offset, crop.
+    """
+    
+    # The coordinates of the upper-left corner of the source
+    # rectangle inside the clipping rectange.
+    ulx = sx - cx
+    uly = sy - cy
+
+    if ulx < 0:
+        ox = 0
+        sx = -ulx
+    else:
+        ox = ulx
+        sx = 0
+
+    if uly < 0:
+        oy = 0
+        sy = -uly
+    else:
+        oy = uly
+        sy = 0
+
+    if ox > cw or oy > ch:
+        return False, (0, 0), (0, 0, 0, 0)
+
+    sw = min(sw - sx, cw - ox)
+    sh = min(sh - sy, ch - oy)
+
+    return True, (ox, oy), (sx, sy, sw, sh)
+
+
+
+
 # Possible operations that can be done as part of a render.
 BLIT = 0
 DISSOLVE = 1
@@ -597,12 +633,64 @@ class Render(object):
         the focuses are copied from this render to the child.
         """
 
-        x, y, w, h = rect
+        (x, y, w, h) = rect
         rv = Render(w, h)
-        rv.clipping = True
-        rv.blit(self, (-x, -y), focus=focus)
 
+
+        # This doesn't actually make a subsurface, as we can't easily do
+        # so for non-rectangle-aligned renders.
+        if (self.reverse is not None) and (self.reverse is not IDENTITY):
+            rv.clipping = True
+            rv.blit(self, (-x, -y), focus=focus, main=True)            
+            return rv
+
+        # This is the path that executes for rectangle-aligned surfaces,
+        # making an actual subsurface.
+        
+        for child, cx, cy, cfocus, cmain in self.children:
+            state, offset, crop = compute_subrect((cx, cy), child.get_size(), rect)
+
+            if not state:
+                continue
+
+            if isinstance(child, Render):
+                child = child.subsurface(crop, focus=focus)
+            else:
+                child = child.subsurface(crop)
+                renpy.display.draw.mutated_surface(child)
+                
+            rv.blit(child, offset, focus=cfocus, main=cmain)
+
+        if focus:
+
+            for (d, arg, xo, yo, fw, fh, mx, my, mask) in self.focuses:
+
+                status, offset, crop = compute_subrect(
+                    (xo, yo), (fw, fh), rect)
+
+                if not status:
+                    continue
+
+                (xo, yo) = offset
+                (ignored1, ignored2, fw, fh) = crop
+
+                if mx is not None:
+
+                    status, offset, crop = compute_subrect(
+                        (mx, my), mask.get_size(), rect)
+
+                    if not status:
+                        mx = None
+                        my = None
+                        mask = None
+                    else:
+                        mx, my = offset
+                        mask = mask.subsurface(crop)
+
+                rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
+     
         return rv
+    
         
     def depends_on(self, source, focus=False):
         """
