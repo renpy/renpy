@@ -571,7 +571,7 @@ Keyword("action")
 # Omit menu as being too high-level.
 
 FunctionStatementParser("input", renpy.ui.input, 0)
-Positional("default")
+Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")

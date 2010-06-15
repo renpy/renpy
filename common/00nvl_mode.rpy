@@ -109,12 +109,12 @@ init -1100 python:
             widget_properties[window_id] = kwargs["window_args"]
 
             dialogue.append((who, what, who_id, what_id, window_id))
-
+        
         renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
-        return renpy.get_widget(screen_name, "what")
-    
-         
 
+        renpy.shown_window()
+
+        return renpy.get_widget(screen_name, "what")
         
     def nvl_show_core():
 

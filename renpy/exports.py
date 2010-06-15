@@ -321,13 +321,21 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     takes the value from config.implicit_with_none.
     """
 
-    renpy.ui.window(style='input_window')
-    renpy.ui.vbox()
+    if has_screen("input"):
+        widget_properties = { }
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude)
 
-    renpy.ui.text(prompt, style='input_prompt')
-    renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
+        show_screen("input", _transient=True, _widget_properties=widget_properties, prompt=prompt)
 
-    renpy.ui.close()
+    else:
+
+        renpy.ui.window(style='input_window')
+        renpy.ui.vbox()
+
+        renpy.ui.text(prompt, style='input_prompt')
+        renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
+
+        renpy.ui.close()
 
     renpy.exports.shown_window()
         
