@@ -3,13 +3,30 @@
 init -1140 python:
 
 
-    def __yesno_prompt(message):
+    def __yesno_prompt(message, yes=None, no=None):
         if renpy.has_screen("yesno_prompt"):
-            return layout.yesno_prompt(None, message)
-        else:
-            return renpy.invoke_in_new_context(layout.yesno_prompt, None, message)
 
-    
+            yes_action = [ Hide("yesno_prompt") ]
+            no_action = [ Hide("yesno_prompt") ]
+
+            if yes is not None:
+                yes_action.append(yes)
+            if no is not None:
+                no_action.append(no)
+            
+            renpy.display.show_screen(
+                "yesno_prompt", 
+                message=message,
+                yes_action=yes_action,
+                no_action=no_action)
+        
+        if renpy.invoke_in_new_context(layout.yesno_prompt, None, message):
+            if yes is not None:
+                yes()
+        else:
+            if no is not None:
+                no()
+                
     class Return(Action):
         """
          Causes the current interaction to return the supplied value. This is
@@ -224,10 +241,10 @@ init -1140 python:
             if not self.get_sensitive():
                 return
 
-            if self.confirm and (not __yesno_prompt(layout.MAIN_MENU)):
-                return
-
-            renpy.full_restart()
+            if self.confirm:
+                __yesno_prompt(layout.MAIN_MENU, MainMenu(False))
+            else:
+                renpy.full_restart()
 
         def get_sensitive(self):
             return not renpy.context()._main_menu
@@ -241,10 +258,10 @@ init -1140 python:
 
         def __call__(self):
 
-            if self.confirm and (not __yesno_prompt(layout.QUIT)):
-                return
-            
-            renpy.quit()
+            if self.confirm:
+                __yesno_prompt(layout.QUIT, Quit(False))
+            else:            
+                renpy.quit()
 
             
     class Skip(Action):
@@ -626,14 +643,14 @@ init -1140 python:
                 return
             
             fn = __filename(self.name, self.page)
-            
-            if renpy.scan_saved_game(fn):
-                if self.confirm and (not __yesno_prompt(layout.OVERWRITE_SAVE)):
-                    return
 
-            if self.get_sensitive():
-                renpy.save(fn, extra_info=save_name)
-                renpy.restart_interaction()
+            if renpy.scan_saved_game(fn):
+                if self.confirm:
+                    __yesno_prompt(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.page))
+                    return
+                
+            renpy.save(fn, extra_info=save_name)
+            renpy.restart_interaction()
 
         def get_sensitive(self):
             if renpy.context()._main_menu:
@@ -663,11 +680,11 @@ init -1140 python:
             fn = __filename(self.name, self.page)
             
             if not renpy.context()._main_menu:
-                if self.confirm and (not __yesno_prompt(layout.LOADING)):
+                if self.confirm:
+                    __yesno_prompt(layout.LOADING, FileLoad(self.name, False, self.page))
                     return
 
-            if self.get_sensitive():
-                renpy.load(fn)
+            renpy.load(fn)
 
         def get_sensitive(self):
             return renpy.scan_saved_game(__filename(self.name, self.page))
@@ -686,13 +703,16 @@ init -1140 python:
             
         def __call__(self):
 
+            if not self.get_sensitive():
+                return
+            
             fn = __filename(self.name, self.page)
             
-            if renpy.scan_saved_game(fn):
-                if self.confirm and (not __yesno_prompt(layout.DELETE_SAVE)):
-                    return
+            if self.confirm:
+                __yesno_prompt(layout.DELETE_SAVE, FileDelete(self.name, False, self.page))
+                return
 
-                renpy.unlink_save(fn)
+            renpy.unlink_save(fn)
 
         def get_sensitive(self):
             return renpy.scan_saved_game(__filename(self.name, self.page))
@@ -811,6 +831,14 @@ init -1140 python:
 
         def get_sensitive(self):
             return self.page
+
+    class FileTakeScreenshot(Action):
+        """
+         Take a screenshot to be used when the game is saved.
+         """
+
+        def __call__(self):
+            renpy.take_screenshot()
         
             
     ##########################################################################
