@@ -28,6 +28,7 @@ import os
 import os.path
 import sys
 import weakref
+import array
 
 try:
     import _renpy_tegl as gl; gl
@@ -139,7 +140,8 @@ class GLDraw(object):
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
-        
+        pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+                
         try:
             if fullscreen:
                 self.log("fullscreen mode.")
@@ -606,6 +608,40 @@ class GLDraw(object):
         return rv
         
 
+    def is_pixel_opaque(self, what, x, y):
+        """
+        Returns true if the pixel is not 100% transparent.
+        """
+
+        if x < 0 or y < 0 or x >= what.width or y >= what.height:
+            return 0
+        
+        what = what.subsurface((x, y, 1, 1))
+                
+        forward = reverse = IDENTITY
+
+        gl.Viewport(0, 0, 1, 1)
+        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+        
+        gl.Clear(gl.COLOR_BUFFER_BIT)
+
+        gl.MatrixMode(gl.PROJECTION)
+        gl.LoadIdentity()
+        gl.Ortho(0, 1, 0, 1, -1, 1)
+        gl.MatrixMode(gl.MODELVIEW)
+
+        self.undefine_clip()
+        
+        clip = (0, 0, 1, 1)
+        
+        self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+
+        a = array.array('b', (0,))
+
+        gl.ReadPixels(0, 0, 1, 1, gl.ALPHA, gl.BYTE, a)
+
+        return a[0]
+        
 
     def get_half(self, what):
         """

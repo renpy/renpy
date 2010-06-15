@@ -308,11 +308,7 @@ def draw_special(what, dest, x, y):
             surf.subsurface((-x, -y, w, h)),
             dest.subsurface((0, 0, w, h)),
             px, px, px, px)
-
-        
-        
-            
-
+    
     else:
         raise Exception("Unknown operation: %d" % what.operation)
 
@@ -884,7 +880,36 @@ class SWDraw(object):
         draw(rv, None, render, 0, 0, False)
 
         return rv
-        
+
+    def is_pixel_opaque(self, what, x, y):
+
+        if x < 0 or y < 0 or x >= what.width or y >= what.height:
+            return 0
+
+        for (child, xo, yo, focus, main) in what.visible_children:
+            cx = x - xo
+            cy = y - yo
+
+            if what.forward:
+                cx, cy = what.forward.transform(cx, cy)
+
+
+            if isinstance(child, renpy.display.render.Render):
+                if self.is_pixel_opaque(child, x, y):
+                    return True
+
+            else:
+                cw, ch = child.get_size()
+                if cx >= cw or cy >= ch:
+                    return False
+
+                if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
+                    return True
+
+        return False
+                
+            
+                
 
     def mutated_surface(self, surf):
         """
