@@ -79,8 +79,48 @@ init -1100 python:
             return s[nvl_variant]
         else:
             return s
+
+    def nvl_show_screen(screen_name, **scope):
+        """
+         Shows an nvl-mode screen. Returns the "who" widget.
+         """
+
+        widget_properties = { }
+        dialogue = [ ]
+        
+        for i, entry in enumerate(nvl_list):
+            if not entry:
+                continue
+
+            who, what, kwargs = entry
+
+            if i == len(nvl_list) - 1:
+                who_id = "who"
+                what_id = "what"
+                window_id = "window"
+
+            else:
+                who_id = "who%d" % i
+                what_id = "what%d" % i
+                window_id = "window%d" % i
+                
+            widget_properties[who_id] = kwargs["who_args"]
+            widget_properties[what_id] = kwargs["what_args"]
+            widget_properties[window_id] = kwargs["window_args"]
+
+            dialogue.append((who, what, who_id, what_id, window_id))
+
+        renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
+        return renpy.get_widget(screen_name, "what")
     
+         
+
+        
     def nvl_show_core():
+
+        # Screen version.
+        if renpy.has_screen("nvl"):
+            return nvl_show_screen("nvl")
         
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
@@ -227,29 +267,37 @@ init -1100 python:
         if nvl_list is None:
             store.nvl_list = [ ]
 
-        ui.layer("transient")
-        ui.clear()
-        ui.close()
-            
-        ui.window(style=__s(style.nvl_window))
-        ui.vbox(style=__s(style.nvl_vbox))
+        if renpy.has_screen("nvl_menu"):
 
-        for i in nvl_list:
-            if not i:
-                continue
+            # Screen version.
+            nvl_show_screen("nvl_menu", items=items)
 
-            who, what, kw = i            
-            rv = renpy.show_display_say(who, what, **kw)
+        else:
 
-        renpy.display_menu(items, interact=False,
-                           window_style=__s(style.nvl_menu_window),
-                           choice_style=__s(style.nvl_menu_choice),
-                           choice_chosen_style=__s(style.nvl_menu_choice_chosen),
-                           choice_button_style=__s(style.nvl_menu_choice_button),
-                           choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
-                           )
+            # Traditional version.
+            ui.layer("transient")
+            ui.clear()
+            ui.close()
 
-        ui.close()
+            ui.window(style=__s(style.nvl_window))
+            ui.vbox(style=__s(style.nvl_vbox))
+
+            for i in nvl_list:
+                if not i:
+                    continue
+
+                who, what, kw = i            
+                rv = renpy.show_display_say(who, what, **kw)
+
+            renpy.display_menu(items, interact=False,
+                               window_style=__s(style.nvl_menu_window),
+                               choice_style=__s(style.nvl_menu_choice),
+                               choice_chosen_style=__s(style.nvl_menu_choice_chosen),
+                               choice_button_style=__s(style.nvl_menu_choice_button),
+                               choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                               )
+
+            ui.close()
 
         roll_forward = renpy.roll_forward_info()
 

@@ -311,9 +311,5 @@ def get_widget(name, widget_name, layer='screens'):
     if not isinstance(screen, ScreenDisplayable):
         raise Exception("A screen with the tag %r was not found on layer %r." % (name, layer))
 
-    rv = screen.widgets.get(widget_name, None)
-
-    if rv is None:
-        raise Exception("There is no widget with id %r in screen %r." % (widget_name, name))
-        
+    rv = screen.widgets.get(widget_name, None)        
     return rv
