@@ -543,13 +543,11 @@ Positional("rows")
 Keyword("transpose")
 add(ui_properties)
 add(position_properties)
-add(box_properties)
 
 FunctionStatementParser("side", renpy.ui.side, many)
 Positional("positions")
 add(ui_properties)
 add(position_properties)
-add(box_properties)
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
@@ -564,8 +562,9 @@ Positional("key")
 Keyword("action")
 
 FunctionStatementParser("timer", renpy.ui.timer, 0)
-Positional("key")
+Positional("delay")
 Keyword("action")
+Keyword("repeat")
 
 # Omit behaviors.
 # Omit menu as being too high-level.
@@ -580,12 +579,7 @@ Keyword("suffix")
 Keyword("changed")
 add(ui_properties)
 add(position_properties)
-add(button_properties)
-
-FunctionStatementParser("add", renpy.ui.image, 0)
-Positional("im")
-Keyword("at")
-Keyword("id")
+add(text_properties)
 
 FunctionStatementParser("image", renpy.ui.image, 0)
 Positional("im")
@@ -609,7 +603,6 @@ Keyword("hover")
 Keyword("insensitive")
 Keyword("selected_idle")
 Keyword("selected_hover")
-Keyword("selected_insensitive")
 Keyword("action")
 Keyword("clicked")
 Keyword("hovered")
@@ -637,6 +630,7 @@ for name in [ "bar", "vbar" ]:
     Keyword("adjustment")
     Keyword("range")
     Keyword("value")
+    Keyword("changed")
     add(ui_properties)
     add(position_properties)
     add(bar_properties)
@@ -671,6 +665,7 @@ Keyword("hovered")
 Keyword("unhovered")
 add(ui_properties)
 add(position_properties)
+add(window_properties)
 add(button_properties)
 
 FunctionStatementParser("hotbar", renpy.ui.hotbar, 0)
