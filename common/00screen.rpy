@@ -2,7 +2,6 @@
 
 init -1140 python:
 
-
     def __yesno_prompt(message, yes=None, no=None):
         if renpy.has_screen("yesno_prompt"):
 
@@ -29,9 +28,13 @@ init -1140 python:
                 
     class Return(Action):
         """
+         :doc: control_action
+         
          Causes the current interaction to return the supplied value. This is
          often used with menus and imagemaps, to select what the return value
          of the interaction is.
+
+         When in a menu, this returns from the menu.
          """
 
         def __init__(self, value=True):
@@ -47,6 +50,8 @@ init -1140 python:
     
     class Jump(Action):
         """
+         :doc: control_action
+         
          Causes control to transfer to the given label. This can be used in
          conjunction with renpy.run_screen to define an imagemap that jumps
          to a label when run.
@@ -61,6 +66,8 @@ init -1140 python:
             
     class Show(Action):
         """
+         :doc: control_action
+         
          This causes another screen to be shown. `screen` is a string
          giving the name of the screen. The keyword arguments are
          passed to the screen being shown.
@@ -80,8 +87,10 @@ init -1140 python:
 
     def ShowTransient(screen, **kwargs):
         """
+         :doc: control_action
+
          Shows a transient screen. A transient screen will be hidden when
-         the current screen returns.
+         the current interaction completes.
          """
 
         return Show(screen, _transient=True, **kwargs)
@@ -89,6 +98,8 @@ init -1140 python:
         
     class Hide(Action):
         """
+         :doc: control_action
+         
          This causes the screen named `screen` to be hidden, if it is shown. 
          """
          
@@ -99,17 +110,11 @@ init -1140 python:
             renpy.hide_screen(self.screen)
             renpy.restart_interaction()
 
-            
-    def CallInNewContext(label, *args, **kwargs):
-        """
-         Calls the label in a new context.
-         """
-        
-        return ui.callsinnewcontext(label, *args, **kwargs)
-
-    
+                
     class Screenshot(Action):
         """
+         :doc: other_action
+         
          Takes a screenshot.
          """
         
@@ -119,6 +124,8 @@ init -1140 python:
 
     class InvertSelected(Action):
         """
+         :doc: other_action
+         
          This inverts the selection state of the provided action, while
          proxying over all of the other methods.
          """
@@ -135,8 +142,8 @@ init -1140 python:
         def get_sensitive(self):
             return self.action.get_sensitive()
 
-        def periodic(self):
-            return self.action.periodic()
+        def periodic(self, st):
+            return self.action.periodic(st)
         
         
          
@@ -148,6 +155,8 @@ init -1140 python:
             
     class ShowMenu(Action):
         """
+         :doc: menu_action
+
          Causes us to enter the game menu, if we're not there already. If we
          are in the game menu, then this shows a screen or jumps to a label.
 
@@ -213,6 +222,8 @@ init -1140 python:
             
     class Start(Action):
         """
+         :doc: menu_action
+         
          Causes Ren'Py to jump out of the menu context to the named
          label. The main use of this is to start a new game from the
          main menu. Common uses are:
@@ -230,7 +241,14 @@ init -1140 python:
             
     class MainMenu(Action):
         """
+         :doc: menu_action
+
          Causes Ren'Py to return to the main menu.
+
+         `confirm`
+              If true, causes Ren'Py to ask the user if he wishes to
+              return to the main menu, rather than returning
+              directly.
          """
 
         def __init__(self, confirm=True):
@@ -252,6 +270,15 @@ init -1140 python:
 
 
     class Quit(Action):
+        """
+         :doc: menu_action
+
+         Quits the game.
+
+         `confirm`
+              If true, prompts the user if he wants to quit, rather
+              than quitting directly.
+         """
         
         def __init__(self, confirm=True):
             self.confirm = True
@@ -265,7 +292,14 @@ init -1140 python:
 
             
     class Skip(Action):
+        """
+         :doc: other_action
 
+         Causes the game to begin skipping. If the game is in a menu
+         context, then this returns to the game. Otherwise, it just
+         enables skipping.
+         """
+                
         def __call__(self):
             if not self.get_sensitive():
                 return
@@ -291,6 +325,8 @@ init -1140 python:
 
     class SetField(Action):
         """
+         :doc: data_action
+
          Causes the a field on an object to be set to a given value.
          `object` is the object, `field` is a string giving the name of the
          field to set, and `value` is the value to set it to.
@@ -311,7 +347,9 @@ init -1140 python:
         
     def SetVariable(variable, value):
         """
-         Causes the variable to be set to the given value.
+         :doc: data_action
+
+         Causes `variable` to be set to `value`.
          """
 
         return SetField(store, variable, value)
@@ -319,7 +357,9 @@ init -1140 python:
     
     class SetDict(Action):
         """
-         Causes key in dict to be set to value.
+         :doc: data_action
+
+         Causes the value of `key` in `dict` to be set to `value`.
          """
 
         def __init__(self, dict, key, value):
@@ -337,8 +377,15 @@ init -1140 python:
     
     class ToggleField(Action):
         """
-         Toggles a field on an object. Toggling means to invert the boolean
+         :doc: data_action
+
+         Toggles `field` on `object`. Toggling means to invert the boolean
          value of that field when the action is performed.
+
+         `true_value`
+             If not None, then this is the true value we use.
+         `false_value`
+             If not None, then this is the false value we use. 
          """
         
         def __init__(self, object, field, true_value=None, false_value=None):
@@ -373,18 +420,32 @@ init -1140 python:
             return rv
 
 
-    def ToggleVariable(variable):
+    def ToggleVariable(variable, true_value=None, false_value=None):
         """
-         Toggles a variable.
+         :doc: data_action
+
+         Toggles `variable`.
+
+         `true_value`
+             If not None, then this is the true value we use.
+         `false_value`
+             If not None, then this is the false value we use. 
          """
 
-        return ToggleField(store, variable)
+        return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
     
     class ToggleDict(Action):
         """
-         Toggles a key in a dictionary. Toggling means to invert the boolean
-         value of that field when the action is performed.
+         :doc: data_action
+
+         Toggles the value of `key` in `dict`. Toggling means to invert the
+         value when the action is performed.
+
+         `true_value`
+             If not None, then this is the true value we use.
+         `false_value`
+             If not None, then this is the false value we use. 
          """
         
         def __init__(self, dict, key, true_value=None, false_value=None):
@@ -420,9 +481,22 @@ init -1140 python:
 
 
     ##########################################################################
-    # Sound actions.
+    # Audio actions.
 
     class Play(Action):
+        """
+         :doc: audio_action
+         
+         Causes an audio file to be played on a given channel.
+         
+         `channel`
+             The channel to play the sound on.
+         `file`
+             The file to play.
+
+         Any keyword arguments are passed to :func:`renpy.music.play`
+         """
+             
         def __init__(self, channel, file, **kwargs):
             self.channel = channel
             self.file = file
@@ -444,6 +518,19 @@ init -1140 python:
 
         
     class Queue(Action):
+        """
+         :doc: audio_action
+
+         Causes an audio file to be queued on a given channel.
+
+         `channel`
+             The channel to play the sound on.
+         `file`
+             The file to play.
+
+         Any keyword arguments are passed to :func:`renpy.music.queue`
+         """
+
         def __init__(self, channel, file, **kwargs):
             self.channel = channel
             self.file = file
@@ -455,6 +542,19 @@ init -1140 python:
 
             
     class Stop(Action):
+        """
+         :doc: audio_action
+
+         Causes an audio channel to be stopped.
+
+         `channel`
+             The channel to play the sound on.
+         `file`
+             The file to play.
+
+         Any keyword arguments are passed to :func:`renpy.music.play`
+         """
+
         def __init__(self, channel, **kwargs):
             self.channel = channel
             self.kwargs = kwargs
@@ -470,21 +570,115 @@ init -1140 python:
 
     class StaticValue(BarValue):
         """
-         A statically-supplied value.
+         :doc: value
+
+         This allows a value to be specified statically.
+
+         `value`
+              The value itself, a number.
+
+         `range`
+              The range of the value.
          """
 
         def __init__(self, value=0.0, range=1.0):
             self.value = value
             self.range = range
 
-        def __call__(self):
+        def get_adjustment(self):
             return ui.adjustment(value=self.value, range=self.range, adjustable=False)
 
-    # Need some sort of animated value?
+    class AnimatedValue(BarValue):
+        """
+         :doc: value
+
+         This animates a value, taking `delay` seconds to vary the value from
+         `old_value` to `value`.
+
+         `value`
+             The value itself, a number.
+
+         `range`
+             The range of the value, a number.
+
+         `delay`
+             The time it takes to animate the value, in seconds. Defaults
+             to 1.0.
+         
+         `old_value`
+             The old value. If this is None, then the value is taken from the
+             AnimatedValue we replaced, if any. Otherwise, it is initialized
+             to `value`.
+         """
+
+        def __init__(self, value=0.0, range=1.0, delay=1.0, old_value=None):
+            if old_value == None:
+                old_value = value
+
+            self.value = value
+            self.range = range
+            self.delay = delay
+            self.old_value = old_value
+            self.start_time = None
+
+            self.adjustment = None
+            
+        def get_adjustment(self):
+            self.adjustment = ui.adjustment(value=self.value, range=self.range, adjustable=False)
+            return self.adjustment
+            
+        def periodic(self, st):
+
+            if self.start_time is None:
+                self.start_time = st
+            
+            if self.value == self.old_value:
+                return
+
+            fraction = st - (self.start_time) / self.delay
+            fraction = min(1.0, fraction)
+
+            value = self.old_value + fraction * (self.value - self.old_value)
+
+            self.adjustment.change(value)
+
+            if fraction != 1.0:
+                return 0
+
+        def replaces(self, other):
+
+            if not isinstance(other, AnimatedValue):
+                return
+
+            if self.value == other.value:
+                self.start_time = other.start_time
+                self.old_value = other.old_value
+            else:
+                self.old_value = other.value
+                self.start_time = None
 
     class FieldValue(BarValue):
         """
-         The value of a field on an object.
+         :doc: value
+         
+         A value that allows the user to adjust the value of a field
+         on an object.
+
+         `object`
+             The object.
+         `field`
+             The field, a string.
+         `range`
+             The range to adjust over.
+         `max_is_zero`
+             If True, then when the field is zero, the value of the
+             bar will be range, and all other values will be shifted
+             down by 1. This works both ways - when the bar is set to
+             the maximum, the field is set to 0.
+
+             This is used internally, for some preferences.
+         `style`
+             The styles of the bar created.
          """
         
         def __init__(self, object, field, range, max_is_zero=False, style="bar"):
@@ -504,7 +698,7 @@ init -1140 python:
             
             setattr(self.object, self.field, value)
             
-        def __call__(self):
+        def get_adjustment(self):
 
             value = getattr(self.object, self.field)
             
@@ -520,12 +714,19 @@ init -1140 python:
                 changed=self.changed)
 
         def get_style(self):
-            return self.style
+            return self.style, "v" + self.style
 
         
     class MixerValue(BarValue):
         """
-         The value of a mixer.
+         :doc: value
+
+         The value of an audio mixer.
+
+         `mixer`
+             The name of the mixer to adjust. This is usually one of
+             "music", "sfx", or "voice", but user code can create new
+             mixers.
          """
         
         def __init__(self, mixer):
@@ -534,14 +735,14 @@ init -1140 python:
         def set_mixer(self, value):
             _preferences.set_volume(self.mixer, value)
             
-        def __call__(self):
+        def get_adjustment(self):
             return ui.adjustment(
                 range=1.0,
                 value=_preferences.get_volume(self.mixer),
                 changed=self.set_mixer)
 
         def get_style(self):
-            return "slider"
+            return "slider", "vslider"
 
 
     ##########################################################################
@@ -560,7 +761,10 @@ init -1140 python:
 
     def FileLoadable(name, page=None):
         """
-         Returns True if the file is loadable, and False otherwise.
+         :doc: file_action_function
+
+         This is a function that returns true
+         if the file is loadable, and false otherwise.
          """
 
         if renpy.scan_saved_game(__filename(name, page)):
@@ -570,8 +774,10 @@ init -1140 python:
     
     def FileScreenshot(name, empty=None, page=None):
         """
+         :doc: file_action_function
+                  
          Returns the screenshot associated with the given file. If the
-         file is not loadable, then empty is returned, unless it's None,
+         file is not loadable, then `empty` is returned, unless it's None,
          in which case, a Null displayable is created.
 
          The return value is a displayable.
@@ -592,8 +798,10 @@ init -1140 python:
             
     def FileTime(name, format="%b %d, %H:%M", empty="", page=None):
         """
+         :doc: file_action_function 
+         
          Returns the time the file was saved, formatted according
-         to the supplied format. If the file is not fiound, `empty` is
+         to the supplied `format`. If the file is not found, `empty` is
          returned.
 
          The return value is a string.
@@ -612,6 +820,8 @@ init -1140 python:
 
     def FileSaveName(name, empty="", page=None):
         """
+         :doc: file_action_function
+         
          Return the save_name that was in effect when the file was saved,
          or `empty` if the file does not exist.
          """
@@ -628,8 +838,12 @@ init -1140 python:
 
     class FileSave(Action):
         """
-         Saves the file in slot `name`. `confirm` determines if we prompt when
-         overwriting a file.
+         :doc: file_action
+
+         Saves the file.
+
+         `confirm`
+             If true, then we will prompt before overwriting a file.
          """
 
         def __init__(self, name, confirm=True, page=None):
@@ -662,10 +876,13 @@ init -1140 python:
 
     class FileLoad(Action):
         """
-         Loads the file in slot `name`. `confirm` determines if we prompt when
-         the load will end a game.
-         """
+         :doc: file_action
 
+         Loads the file.
+
+         `confirm`
+             If true, prompt if loading the file will end the game.
+         """
         
         def __init__(self, name, confirm=True, page=None):
             self.name = name
@@ -692,8 +909,12 @@ init -1140 python:
 
     class FileDelete(Action):
         """
-         Deletes the file in slot `name`. `confirm` determines if we prompt
-         for confirmation before deleting the file.
+         :doc: file_action
+
+         Deletes the file.
+
+         `confirm`
+             If true, prompts before deleting a file.
          """
         
         def __init__(self, name, confirm=True, page=None):
@@ -720,7 +941,9 @@ init -1140 python:
         
     def FileAction(name, page=None):
         """
-         "Does the right thing" with `name`. This means loading it if the
+         :doc: file_action
+
+         "Does the right thing" with the file. This means loading it if the
          load screen is showing, and saving to it otherwise.
          """
         
@@ -732,6 +955,8 @@ init -1140 python:
 
     class FilePage(Action):
         """
+         :doc: file_action
+
          Sets the file page to `page`, which should be one of "auto", "quick",
          or an integer.
          """
@@ -760,6 +985,8 @@ init -1140 python:
             
     class FilePageNext(Action):
         """
+         :doc: file_action
+
          Goes to the next file page. (It's always possible to get to the
          next file page.)
          """
@@ -792,9 +1019,10 @@ init -1140 python:
 
     class FilePagePrevious(Action):
         """
+         :doc: file_action
+
          Goes to the previous file page, if possible.
          """
-
 
         def __init__(self):
 
@@ -834,7 +1062,11 @@ init -1140 python:
 
     class FileTakeScreenshot(Action):
         """
-         Take a screenshot to be used when the game is saved.
+         :doc: file_action
+
+         Take a screenshot to be used when the game is saved. This can
+         be used to ensure that the screenshot is accurate, by taking
+         a pictue of the screen before a file save screen is shown.
          """
 
         def __call__(self):
@@ -846,6 +1078,8 @@ init -1140 python:
 
     def Preference(name, value=None):
         """
+         :doc: preference_action
+         
          This constructs the approprate action or value from a preference.
          The preference name should be the name given in the standard
          menus, while the value should be either the name of a choice,

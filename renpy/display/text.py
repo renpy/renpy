@@ -643,7 +643,7 @@ class Text(renpy.display.core.Displayable):
 
     def __init__(self, text, slow=None, slow_done=None,
                  slow_start=0, pause=None, tokenized=False,
-                 style='default', **properties):
+                 style='default', replaces=None, **properties):
         """
         @param text: The text that will be displayed on the screen.
 
@@ -698,6 +698,16 @@ class Text(renpy.display.core.Displayable):
         
         self.update(redraw=False)
 
+        if isinstance(replaces, Text):
+            self.slow = replaces.slow
+            self.slow_param = replaces.slow_param
+            self.slow_start = replaces.slow_start
+            self.slow_done = replaces.slow_done
+            self.slow_done_time = replaces.slow_done_time
+            self.pause = replaces.pause
+
+            if replaces.ctc is not None:
+                self.set_ctc(replaces.ctc)
 
     def set_ctc(self, ctc):
         """
@@ -709,16 +719,6 @@ class Text(renpy.display.core.Displayable):
         self.tokens.append([ ("widget", ctc) ])
         self.update(retokenize=False, redraw=False)
                 
-    def _replaces(self, old):
-        self.slow = old.slow
-        self.slow_param = old.slow_param
-        self.slow_start = old.slow_start
-        self.slow_done = old.slow_done
-        self.slow_done_time = old.slow_done_time
-        self.pause = old.pause
-
-        if old.ctc is not None:
-            self.set_ctc(old.ctc)
         
     def set_text(self, new_text):
         """

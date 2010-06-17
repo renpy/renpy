@@ -46,22 +46,29 @@ class Action(renpy.object.Object):
     def get_selected(self):
         return False
 
-    def periodic(self):
+    def periodic(self, st):
         return
     
     def __call__(self):
-        raise NotImplemented
+        raise NotImplemented()
     
 class BarValue(renpy.object.Object):
     """
     This can be passed to the value method of bar and hotbar.
     """
+
+    def replaces(self, other):
+        return
+
+    def periodic(self, st):
+        return
     
-    def __call__(self):
-        raise NotImplemented
+    def get_adjustment(self):
+        raise NotImplemented()
 
     def get_style(self):
-        return "bar"
+        return "bar", "vbar"
+
     
 ##############################################################################
 # Things we can add to. These have two methods: add is called with the
@@ -275,7 +282,7 @@ class Wrapper(renpy.object.Object):
     def __reduce__(self):
         return self.name
     
-    def __init__(self, function, one=False, many=False, imagemap=False, **kwargs):
+    def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, **kwargs):
 
         # The name assigned to this wrapper. This is used to serialize us correctly.
         self.name = None
@@ -287,6 +294,10 @@ class Wrapper(renpy.object.Object):
         self.one = one
         self.many = many or imagemap
         self.imagemap = imagemap
+
+        # Should the function be given the replaces parameter,
+        # specifiying the displayable it replaced?
+        self.replaces = replaces
         
         # Default keyword arguments to the function.
         self.kwargs = kwargs
@@ -312,10 +323,13 @@ class Wrapper(renpy.object.Object):
             
         # Figure out the keyword arguments, based on the parameters.
         keyword = self.kwargs.copy()
-        keyword.update(kwargs)
 
         if id is not None and screen is not None:
             keyword.update(screen.widget_properties.get(id, { }))
+            if self.replaces:
+                keyword["replaces"] = screen.old_widgets.get(id, None)
+            
+        keyword.update(kwargs)
 
         try:
             w = self.function(*args, **keyword)
@@ -360,11 +374,6 @@ class Wrapper(renpy.object.Object):
         if id is not None and screen is not None:
             screen.widgets[id] = w
 
-            oldw = screen.old_widgets.get(id, None)
-
-            if type(oldw) == type(w):
-                w._replaces(oldw)
-            
             if isinstance(atw, renpy.display.motion.Transform):
                 screen.transforms[id] = atw
 
@@ -418,7 +427,7 @@ def _add(d, **kwargs):
 
 add = Wrapper(_add)
 null = Wrapper(renpy.display.layout.Null)
-text = Wrapper(renpy.display.text.Text)
+text = Wrapper(renpy.display.text.Text, replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
 vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
 fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", many=True)
@@ -505,7 +514,7 @@ def menu(menuitems,
             
     close()
     
-input = Wrapper(renpy.display.behavior.Input, exclude='{}')
+input = Wrapper(renpy.display.behavior.Input, exclude='{}', replaces=True)
 
 def _image(im, **properties):
     return renpy.display.im.image(im, loose=True, **properties)
@@ -548,20 +557,7 @@ def imagemap_compat(ground,
 
     close()
 
-def _button(clicked=None, action=None, role='', **properties):
-
-    if action is not None:
-        clicked = action
-    
-    if not is_sensitive(clicked):
-        clicked = None
-    elif is_selected(clicked):
-        role = 'selected_'
-        
-    rv = renpy.display.behavior.Button(None, clicked=clicked, role=role, **properties)
-    return rv
-
-button = Wrapper(_button, one=True)
+button = Wrapper(renpy.display.behavior.Button, one=True)
 
 def _imagebutton(idle_image = None,
                  hover_image = None,                 
@@ -577,16 +573,11 @@ def _imagebutton(idle_image = None,
                  selected_idle=None,
                  selected_hover=None,
                  selected_insensitive=None,
-                 clicked=None,
-                 action=None,
                  style='image_button',
                  image_style=None,
                  auto=None,
                  **properties):
 
-    if action is not None:
-        clicked = action
-    
     def choice(a, b, name):
         if a:
             return a
@@ -613,7 +604,6 @@ def _imagebutton(idle_image = None,
             selected_hover_image = selected_hover,
             selected_insensitive_image = selected_insensitive,
             selected_activate_image = selected_activate_image,    
-            clicked=clicked,
             style=style,
             **properties)
     
@@ -623,8 +613,7 @@ def textbutton(label, text_style='button_text', **kwargs):
     button(**kwargs)
     text(label, style=text_style)
 
-def adjustment(range=1, value=0, step=None, page=0, changed=None, adjustable=False):
-    return renpy.display.behavior.Adjustment(range=range, value=value, step=step, page=page, changed=changed, adjustable=adjustable)
+adjustment = renpy.display.behavior.Adjustment
 
 def _bar(*args, **properties):
 
@@ -652,32 +641,14 @@ def _bar(*args, **properties):
     if "value" in properties:
         value = properties.pop("value")
 
-    style_prefix = properties.pop("style_prefix")
-    style = properties["style"]
-    
-    if isinstance(value, BarValue):
-        properties["adjustment"] = value()
-
-        if style is None:
-            style = style_prefix + value.get_style()
-
-        value = None
-
-    else:
-
-        if style is None:
-            style = style_prefix + "bar"
-
-    properties["style"] = style
-            
     return renpy.display.behavior.Bar(range, value, width, height, **properties)
 
-bar = Wrapper(_bar, style=None, style_prefix='')
-vbar = Wrapper(_bar, style=None, style_prefix='v')
-slider = Wrapper(_bar, style='slider', style_prefix='')
-vslider = Wrapper(_bar, style='vslider', style_prefix='v')
-scrollbar = Wrapper(_bar, style='scrollbar', style_prefix='')
-vscrollbar = Wrapper(_bar, style='vscrollbar', style_prefix='v')
+bar = Wrapper(_bar, style=None, vertical=False, replaces=True)
+vbar = Wrapper(_bar, style=None, vertical=True, replaces=True)
+slider = Wrapper(_bar, style='slider', replaces=True)
+vslider = Wrapper(_bar, style='vslider', replaces=True)
+scrollbar = Wrapper(_bar, style='scrollbar', replaces=True)
+vscrollbar = Wrapper(_bar, style='vscrollbar', replaces=True)
 
 def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
@@ -698,9 +669,9 @@ def _autobar(range, start, end, time, **properties):
 
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True)
-viewport = Wrapper(renpy.display.layout.Viewport, one=True)
+viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True)
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
-timer = Wrapper(renpy.display.behavior.Timer)
+timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
 
 
 ##############################################################################
@@ -759,30 +730,18 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
 
-def _hotspot(spot, clicked=None, action=None, style='imagemap_button', **properties):
+def _hotspot(spot, style='imagemap_button', **properties):
 
     if not imagemap_stack:
         raise Exception("hotspot expects an imagemap to be defined.")
 
-    if action is not None:
-        clicked = action
-    
     imagemap = imagemap_stack[-1]
 
     x, y, w, h = spot
 
     idle = imagemap.idle
     hover = imagemap.hover
-    role = ""
         
-    if not is_sensitive(clicked):
-        clicked = None
-
-    elif is_selected(clicked):
-        idle = imagemap.selected_idle
-        hover = imagemap.selected_hover
-        role = "selected_"
-
     idle = renpy.display.layout.LiveCrop(spot, idle)
     hover = renpy.display.layout.LiveCrop(spot, hover)
             
@@ -799,8 +758,6 @@ def _hotspot(spot, clicked=None, action=None, style='imagemap_button', **propert
         None,
         idle_background=idle,
         hover_background=hover,
-        clicked=clicked,
-        role=role,
         style=style,
         **properties)
 

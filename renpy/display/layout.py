@@ -814,6 +814,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.child = None
 
     def __init__(self, function, *args, **kwargs):
+
         super(DynamicDisplayable, self).__init__()
         self.child = None
 
@@ -930,8 +931,8 @@ def ShowingSwitch(*args, **kwargs):
 
 class IgnoresEvents(Container):
 
-    def __init__(self, child):
-        super(IgnoresEvents, self).__init__(style='default')
+    def __init__(self, child, **properties):
+        super(IgnoresEvents, self).__init__(**properties)
         self.add(child)
     
     def render(self, w, h, st, at):
@@ -974,6 +975,7 @@ class Viewport(Container):
                  mousewheel=False,
                  draggable=False,
                  style='viewport',
+                 replaces=None,
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
@@ -990,6 +992,10 @@ class Viewport(Container):
         else:
             self.yadjustment = yadjustment
             
+        if isinstance(replaces, Viewport):
+            self.xadjustment.value = replaces.xadjustment.value
+            self.yadjustment.value = replaces.yadjustment.value
+
         self.set_adjustments = set_adjustments
         
         self.child_width, self.child_height = child_size
@@ -1000,9 +1006,6 @@ class Viewport(Container):
         self.width = 0
         self.height = 0
 
-    def _replaces(self, old):
-        self.xadjustment.value = old.xadjustment.value
-        self.yadjustment.value = old.yadjustment.value
         
     def per_interact(self):
         self.xadjustment.register(self)
@@ -1314,8 +1317,8 @@ class Alpha(renpy.display.core.Displayable):
         
 class AdjustTimes(Container):
 
-    def __init__(self, child, start_time, anim_time):
-        super(AdjustTimes, self).__init__(style='default')
+    def __init__(self, child, start_time, anim_time, **properties):
+        super(AdjustTimes, self).__init__(**properties)
 
         self.start_time = start_time
         self.anim_time = anim_time

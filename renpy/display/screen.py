@@ -31,9 +31,8 @@ class Screen(renpy.object.Object):
                  name,
                  function,
                  predict_function=None,
-                 modal=True,
+                 modal=False,
                  zorder=0,
-                 hide_delay=0,
                  tag=None):
     
         # The name of this screen.
@@ -52,13 +51,14 @@ class Screen(renpy.object.Object):
         self.predict_function = predict_function
 
         # Are we modal? (A modal screen ignores screens under it.)
-        self.modal = False
+        self.modal = modal
 
         # Our zorder.
         self.zorder = zorder
 
         # The tag associated with the screen.
         self.tag = tag or name[0]
+
 
 class ScreenDisplayable(renpy.display.layout.Container):
     """
@@ -71,9 +71,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def after_setstate(self):
         self.screen = screens[self.screen_name]
         
-    def __init__(self, screen, tag, layer, widget_properties={}, scope={}):
+    def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
-        super(ScreenDisplayable, self).__init__()
+        super(ScreenDisplayable, self).__init__(**properties)
 
         # The screen, and it's name. (The name is used to look up the
         # screen on save.)
@@ -227,12 +227,46 @@ _current_screen = None
 screens = { }
 
 def define_screen(*args, **kwargs):
+    """
+    :doc: screens
+    :args: (name, function, modal=True, zorder=0, tag=None)
+
+    Defines a screen with `name`, which should be a string.
+
+    `function`
+        The function that is called to display the screen. The
+        function is called with the screen scope as keyword
+        arguments. It should ignore additional keyword arguments.
+
+        The function should call the ui functions to add things to the
+        screen.
+
+    `modal`
+        Determines if this screen is modal. A modal screen
+        prevents screens underneath it from receiving input events.
+
+    `zorder`
+        Controls the order in which screens are displayed. A screen
+        with a greater zorder number is displayed above screens with a
+        lesser zorder number.
+
+    `tag`
+        The tag associated with this screen. When the screen is shown,
+        it replaces any other screen with the same tag. The tag
+        defaults to the name of the screen.
+    """
+
     Screen(*args, **kwargs)
+
+
     
 def get_screen(tag, layer="screens"):
     """
-    Returns the ScreenDisplayable with the given tag or name, on the
-    given layer.
+    :doc: screens
+    
+    Returns the ScreenDisplayable with the given `tag`, on
+    `layer`. If no displayable with the tag is not found, it is
+    interpreted as screen name. If it's still not found, None is returned. 
     """
 
     tag = tag.split()[0]
@@ -258,7 +292,30 @@ def has_screen(name):
 
 def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
     """
+    :doc: screens
+    
+    The programmatic equivalent of the show screen statement.
+
     Shows the named screen.
+
+    `_screen_name`
+        The name of the  screen to show.
+    `_layer`
+        The layer to show the screen on.
+    `_tag`
+        The tag to show the screen with. If not specified, defaults to
+        the tag associated with the screen. It that's not specified,
+        defaults to the name of the screen.,
+    `_widget_properties`
+        A map from the id of a widget to a property name -> property
+        value map. When a widget with that id is shown by the screen,
+        the specified properties are added to it.
+    `_transient`
+        If true, the screen will be automatically hidden at the end of
+        the current interaction.
+
+    Keyword arguments not beginning with underscore (_) are used to
+    initialize the screen's scope.       
     """
 
     name = _screen_name
@@ -278,10 +335,16 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder, transient=_transient, munge_name=False)
 
 def hide_screen(tag, layer='screens'):
+    """
+    :doc: screens
 
+    The programmatic equivalent of the hide screen statement.
+    
+    Hides the screen with `tag` on `layer`.
+    """
+    
     tag = tag.split()[0]
     
-    # TODO: Defer hide.
     renpy.exports.hide(tag, layer=layer)
 
 def include_screen(_screen_name, _name=(), **kwargs):
@@ -304,12 +367,19 @@ def include_screen(_screen_name, _name=(), **kwargs):
 def current_screen():
     return _current_screen
 
-def get_widget(name, widget_name, layer='screens'):
+def get_widget(screen, id, layer='screens'):
+    """
+    :doc: screens
 
-    screen = get_screen(name, layer)
+    From the `screen` on `layer`, returns the widget with
+    `id`. Returns None if the screen doesn't exist, or there is no
+    widget with that id on the screen.
+    """
+    
+    screen = get_screen(screen, layer)
 
     if not isinstance(screen, ScreenDisplayable):
-        raise Exception("A screen with the tag %r was not found on layer %r." % (name, layer))
+       return None
 
-    rv = screen.widgets.get(widget_name, None)        
+    rv = screen.widgets.get(id, None)        
     return rv

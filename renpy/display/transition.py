@@ -99,7 +99,7 @@ class MultipleTransition(Transition):
     and the last will be True.
     """
     
-    def __init__(self, args, old_widget=None, new_widget=None):
+    def __init__(self, args, old_widget=None, new_widget=None, **properties):
         
         if len(args) % 2 != 1 or len(args) < 3:
             raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
@@ -123,7 +123,7 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
-        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]))
+        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]), **properties)
 
         self.new_widget = self.transitions[-1]
         self.events = False

@@ -168,7 +168,7 @@ class Keymap(renpy.display.layout.Null):
     k_constant from pygame.constants, or the unicode for the key.
     """
 
-    def __init__(self, **keymap):
+    def __init__(self, replaces=None, **keymap):
         super(Keymap, self).__init__(style='default')
         self.keymap = keymap
 
@@ -189,8 +189,8 @@ class RollForward(renpy.display.layout.Null):
     This behavior implements rollforward.
     """
 
-    def __init__(self, value):
-        super(RollForward, self).__init__(style='default')
+    def __init__(self, value, **properties):
+        super(RollForward, self).__init__(**properties)
         self.value = value
 
         
@@ -208,8 +208,8 @@ class PauseBehavior(renpy.display.layout.Null):
     return a value after a certain amount of time has elapsed.
     """
 
-    def __init__(self, delay, result=False):
-        super(PauseBehavior, self).__init__()
+    def __init__(self, delay, result=False, **properties):
+        super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result 
@@ -229,8 +229,8 @@ class SoundStopBehavior(renpy.display.layout.Null):
     on the named channel.
     """
 
-    def __init__(self, channel, result=False):
-        super(SoundStopBehavior, self).__init__()
+    def __init__(self, channel, result=False, **properties):
+        super(SoundStopBehavior, self).__init__(**properties)
 
         self.channel = channel
         self.result = result 
@@ -326,6 +326,9 @@ class SayBehavior(renpy.display.layout.Null):
 
         return None
 
+##############################################################################
+# Button support.
+    
 def run(var, *args, **kwargs):
     """
     Runs a variable. This is done by calling all the functions, and
@@ -348,13 +351,14 @@ def run(var, *args, **kwargs):
 
     return var(*args)
 
-def run_periodic(var):
+
+def run_periodic(var, st):
 
     if isinstance(var, (list, tuple)):
         rv = None
 
         for i in var:
-            v = run_periodic(i)
+            v = run_periodic(i, st)
 
             if rv is None or v < rv:
                 rv = v
@@ -362,20 +366,65 @@ def run_periodic(var):
         return rv
             
     if isinstance(var, renpy.ui.Action):
-        return var.periodic()
-    
+        return var.periodic(st)
 
+    
+def is_selected(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return any(is_selected(i) for i in clicked)
+
+    elif isinstance(clicked, renpy.ui.Action):
+        return clicked.get_selected()
+    else:
+        return False
+
+    
+def is_sensitive(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return all(is_sensitive(i) for i in clicked)
+
+    elif isinstance(clicked, renpy.ui.Action):
+        return clicked.get_sensitive()
+    else:
+        return True
+
+
+##############################################################################
+# Button
+    
 class Button(renpy.display.layout.Window):
 
     keymap = { }
+    action = None
     
-    def __init__(self, child, style='button', clicked=None,
-                 hovered=None, unhovered=None, role='',
+    def __init__(self, child=None, style='button', clicked=None,
+                 hovered=None, unhovered=None, action=None, role='',
                  time_policy=None, keymap={},
                  **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
 
+        if isinstance(clicked, renpy.ui.Action):
+            action = clicked
+        
+        if action is not None:
+            clicked = action
+
+            if not is_sensitive(action):
+                clicked = None
+            
+        if role is None:
+            if self.action:
+                if is_selected(self.action):
+                    role = 'selected_'
+                else:
+                    role = ''
+            else:
+                role = ''
+
+        self.action = action
         self.activated = False
         self.clicked = clicked
         self.hovered = hovered
@@ -464,8 +513,8 @@ class Button(renpy.display.layout.Window):
             
     def event(self, ev, x, y, st):
 
-        # Call self.clicked.periodic()
-        timeout = run_periodic(self.clicked)
+        # Call self.action.periodic()
+        timeout = run_periodic(self.action, st)
 
         if timeout is not None:
             renpy.game.interface.timeout(timeout)
@@ -559,9 +608,10 @@ class Input(renpy.display.text.Text):
                  suffix="",
                  changed=None,
                  button=None,
+                 replaces=None,
                  **properties):
 
-        super(Input, self).__init__("", style=style, **properties)
+        super(Input, self).__init__("", style=style, replaces=replaces, **properties)
 
         self.content = unicode(default)
         self.length = length
@@ -586,13 +636,14 @@ class Input(renpy.display.text.Text):
             self.editable = False
             button.hovered = HoveredProxy(self.enable, button.hovered)
             button.unhovered = HoveredProxy(self.disable, button.unhovered)
-        
+
+        if isinstance(replaces, Input):
+            self.content = replaces.content
+            self.editable = replaces.editable
+
         self.update_text(self.content, self.editable)
 
-    def _replaces(self, old):
-        super(Input, self)._replaces(old)
-        self.update_text(old.content, old.editable)
-        
+
     def update_text(self, content, editable):
 
         if content != self.content or editable != self.editable:
@@ -663,7 +714,7 @@ class Adjustment(renpy.object.Object):
 
     changed = None
     
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None):
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None, periodic=None):
         super(Adjustment, self).__init__()
 
         self._value = value
@@ -746,8 +797,8 @@ class Bar(renpy.display.core.Displayable):
     to clicks on that value.
     """
 
-    __version__ = 1
-
+    __version__ = 2
+    
     def after_upgrade(self, version):
 
         if version < 1:
@@ -756,7 +807,10 @@ class Bar(renpy.display.core.Displayable):
             del self.range # E1101
             del self.value # E1101 
             del self.changed # E1101
-    
+
+        if version < 2:
+            self.value = None
+            
     def __init__(self,
                  range=None,
                  value=None,
@@ -767,12 +821,37 @@ class Bar(renpy.display.core.Displayable):
                  step=None,
                  page=None,
                  bar=None,
-                 style='bar',
+                 style=None,
+                 vertical=False,
+                 replaces=None,
                  **properties):
 
-        if adjustment is None:
-            adjustment = Adjustment(range, value, step=step, page=page, changed=changed, adjustable=False)
+        self.value = None
         
+        if adjustment is None:
+            if isinstance(value, renpy.ui.BarValue):
+
+                if isinstance(replaces, Bar):
+                    value.replaces(replaces.value)
+
+                self.value = value
+                adjustment = value.get_adjustment()
+                renpy.game.interface.timeout(0)
+            else:                 
+                adjustment = Adjustment(range, value, step=step, page=page, changed=changed, adjustable=False)
+
+        if style is None:
+            if self.value is not None:
+                if vertical:
+                    style = self.value.get_style()[1]
+                else:
+                    style = self.value.get_style()[0]                
+        else:
+            if vertical:
+                style = 'vbar'
+            else:
+                style = 'bar'
+                
         if width is not None:
             properties['xmaximum'] = width
 
@@ -798,10 +877,16 @@ class Bar(renpy.display.core.Displayable):
     
     def render(self, width, height, st, at):
 
+        # Handle redrawing.
+        if self.value is not None:
+            redraw = self.value.periodic(st)
+
+            if redraw is not None:
+                renpy.display.render.redraw(self, redraw)
+        
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-
         range = self.adjustment.range
         value = self.adjustment.value
         page = self.adjustment.page
@@ -926,6 +1011,7 @@ class Bar(renpy.display.core.Displayable):
 
         if self.hidden:
             return None
+
         
         range = self.adjustment.range
         old_value = self.adjustment.value
@@ -1002,8 +1088,8 @@ class Conditional(renpy.display.layout.Container):
     way, as that would break rollback.
     """
 
-    def __init__(self, condition, *args):
-        super(Conditional, self).__init__(*args)
+    def __init__(self, condition, *args, **properties):
+        super(Conditional, self).__init__(*args, **properties)
 
         self.condition = condition
         self.null = renpy.display.layout.Null()
@@ -1033,8 +1119,8 @@ class Timer(renpy.display.layout.Null):
 
     started = False
     
-    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}):
-        super(Timer, self).__init__()
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, **properties):
+        super(Timer, self).__init__(**properties)
 
         if action is None:
             raise Exception("A timer must have an action supplied.")
@@ -1059,10 +1145,11 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
-    def _replaces(self, old):
-        self.started = old.started
-        self.next_event = old.next_event
-        
+        if replaces is not None:
+            self.started = replaces.started
+            self.next_event = replaces.next_event
+
+    
     def event(self, ev, x, y, st):
 
         if not self.started:

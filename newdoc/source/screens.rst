@@ -713,7 +713,7 @@ Imagemap Statements
 ===================
 
 A convenient way of creating a screen, especially for those who think
-visually, is to create an imagemap. When creating an imagemap, the
+visually is to create an imagemap. When creating an imagemap, the
 imagemap statement is used to specify up to six images. The hotspot
 and hotbar images are used to carve rectangular areas out of the
 image, and apply actions and values to those areas.
@@ -852,9 +852,165 @@ The screen language includes control statements for conditional
 execution, iteration, including other screens, executing actions when
 events occur, and executing arbitrary python code.
 
+For
+---
+
+The for statement is similar to the Python for statment, except that
+it does not support the else clause. It supports assignment to
+(optionally nested) tuple patterns, as well as variables. 
+
+::
+
+    $ numerals = [ 'I', 'II', 'III', 'IV', 'V' ]
+
+    screen five_buttons:
+        vbox:
+            for i, numeral in enumerate(numerals):
+                textbutton numeral action Return(i + 1)
 
 
-..
-    do imagemaps.
-    do control statements.
-    
+If
+--
+
+The screen language is the same as the Python/Ren'Py if statement. It
+supports the if, elif, and else clauses.
+
+::
+
+    screen skipping_indicator:
+        if config.skipping:
+             text "Skipping."
+        else:
+             text "Not Skipping."
+                
+On
+--
+
+The on statement allows the screen to execute an action when an event
+occurs. It takes one parameter, the name of an event. This should be
+one of:
+
+* show
+* hide
+* replace
+* replaced
+
+It then takes an action property, giving an action to run if the event
+occurs.
+
+::
+
+    screen preferences:
+        frame:
+            hbox:
+                text "Display"
+                textbutton "Fullscreen" action Preferences("display", "fullscreen")
+                textbutton "Window" action Preferences("display", "window")
+                
+        on show action Show("navigation")
+        on hide action Hide("navigation")
+
+
+Use
+---
+
+The use statement allows a screen to include another. The use
+statement takes the name of the screen to use. This can optionally be
+followed by a keyword argument list, in parenthesis.
+
+The scope of the included code includes the scope of the current
+statement's code, updated by assinging the parameters their new
+values.
+
+::
+
+    screen file_slot:
+        button:
+            action FileAction(slot)
+
+            hbox:
+                add FileScreenshot(slot)
+                vbox:
+                    text FileTime(slot, empty="Empty Slot.")
+                    text FileSaveName(slot)
+                    
+
+     screen save:
+         grid 2 5:
+             for i in range(1, 11):
+                  use file_slot(slot=i)
+                  
+Python
+------
+
+The screen language also includes single-line and multiple-line python
+statements, which can execute python code. This code runs in the scope
+of the statement.
+
+::
+
+    screen python_screen:
+        python:
+            test_name = "Test %d" % test_number
+
+        text test_name
+
+        $ test_label = "test_%d" % test_label
+
+        textbutton "Run Test" action Jump(test_label)
+        
+        
+Screen Statements
+=================
+
+In addition to the screen statement, there are three Ren'Py script
+language statements that involve screens.
+
+Two of these statements take a keyword argument list. This is a python
+argument list, in parenthesis, consisting of only keyword
+arguments. Positional arguments, extra positional arguments (*), and
+extra keyword arguments (**) are not allowed.
+
+Show Screen
+-----------
+
+The show screen statement causes a screen to be shown. It takes an
+screen name, and an optional argument list. If present, the arguments
+are used to intialize the scope of the screen.
+
+Screens shown in this way are displayed until they are explicitly
+hidden. This allows them to be used for overlay purposes.
+
+::
+
+    show screen overlay_screen
+    show screen clock_screen(hour=11, minute=30)
+
+Hide Screen
+-----------
+
+The hide screen statement is used to hide a screen that is currently
+being shown. If the screen is not being shown, nothing happens.
+
+::
+
+    hide screen overlay_screen
+    hide screen clock
+
+
+Call Screen
+-----------
+
+The call screen statement shows a screen, and then hides it again at
+the end of the current interaction. If the screen returns a value,
+then the value is placed in `_return`.
+
+This can be used to display an imagemap. The imagemap can place a
+value into the `_return` variable using the :actref:`Return` action,
+or can jump to a label using the :actref:`Jump` action.
+
+::
+
+   call screen my_imagemap
+
+   

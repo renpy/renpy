@@ -431,12 +431,20 @@ class Transform(Container):
     children = False
     arguments = DEFAULT_ARGUMENTS
     
-    def __init__(self, child=None, function=None, style='transform', **kwargs):
+    def __init__(self,
+                 child=None,
+                 function=None,
+
+                 style='transform',
+                 focus=None,
+                 default=False,
+                
+                 **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
         
-        super(Transform, self).__init__(style=style)
+        super(Transform, self).__init__(style=style, focus=focus, default=default)
 
         self.function = function
 
@@ -828,9 +836,9 @@ class Transform(Container):
     
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
-    def __init__(self, atl, child=None, context={}, parameters=None, style='transform'):
+    def __init__(self, atl, child=None, context={}, parameters=None, **properties):
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
-        Transform.__init__(self, child=child, function=self.execute, style=style)
+        Transform.__init__(self, child=child, function=self.execute, **properties)
 
         self.raw_child = self.child
         

@@ -1326,6 +1326,19 @@ def cache_unpin(*args):
 definitions = collections.defaultdict(list)
 
 def call_screen(_screen_name, **kwargs):
+    """
+    :doc: screens
+
+    The programmatic equivalent of the show screen statement.
+    
+    This shows `_screen_name` as a screen, then causes an interaction
+    to occur. The screen is hidden at the end of the interaction, and
+    the result of the interaction is returned.
+
+    Keyword arguments not beginning with _ are passed to the scope of
+    the screen.
+    """
+   
     show_screen(_screen_name, _transient=True, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
