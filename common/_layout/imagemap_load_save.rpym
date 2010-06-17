@@ -151,8 +151,11 @@ init python:
             else:
                 base += 1
 
-        return base + int((int(filename) - 1) / per_page)
-
+        try:
+            return base + int((int(filename) - 1) / per_page)
+        except:
+            return base
+        
     # Processes a screenshot.
     def _file_picker_process_screenshot(s):
         return s

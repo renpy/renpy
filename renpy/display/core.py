@@ -542,16 +542,16 @@ class SceneLists(renpy.object.Object):
         # A list of (layer, tag) pairs that are considered to be
         # transient.
         self.additional_transient = [ ]
-
         
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
+
                 try:
                     self.layers[i] = oldsl.layers[i][:]
                 except KeyError:
                     self.layers[i] = [ ]
-
+                    
                 self.at_list[i] = oldsl.at_list[i].copy()
                 self.layer_at_list[i] = oldsl.layer_at_list[i]
                 
@@ -1716,7 +1716,6 @@ class Interface(object):
                 rfw = renpy.display.behavior.RollForward(roll_forward)
                 root_widget.add(rfw)
                 focus_roots.append(rfw)
-                
                 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)

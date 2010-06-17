@@ -252,7 +252,7 @@ def invoke_in_new_context(callable, *args, **kwargs):
     inside an interaction.
     """
 
-    context = renpy.execution.Context(False, contexts[-1])
+    context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
 
     try:
@@ -275,7 +275,7 @@ def call_in_new_context(label, *args, **kwargs):
     inside an interaction.
     """
 
-    context = renpy.execution.Context(False, contexts[-1])
+    context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
 
     

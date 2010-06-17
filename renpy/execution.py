@@ -82,8 +82,12 @@ class Context(renpy.object.Object):
             self.music = { }
             
             
-    def __init__(self, rollback, context=None):
-
+    def __init__(self, rollback, context=None, clear=False):
+        """
+        `clear`
+            True if we should clear out the context_clear_layers.
+            """
+        
         super(Context, self).__init__()
         
         self.current = None
@@ -134,8 +138,9 @@ class Context(renpy.object.Object):
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay" ])
         self.dynamic_stack.append({ })
 
-        for i in renpy.config.context_clear_layers:
-            self.scene_lists.clear(layer=i)
+        if clear:
+            for i in renpy.config.context_clear_layers:
+                self.scene_lists.clear(layer=i)
             
         
     def make_dynamic(self, names, context=False):

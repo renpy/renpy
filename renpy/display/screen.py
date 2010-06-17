@@ -94,7 +94,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Widget properties given to this screen the last time it was
         # shown.
         self.widget_properties = widget_properties
-        
 
         old_screen = get_screen(tag, layer)
         
@@ -155,7 +154,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return rv
     
     def update(self):
-
+        
         # Update _current_screen
         global _current_screen
         old_screen = _current_screen
