@@ -711,18 +711,80 @@ adj_registered = { }
 # This class contains information about an adjustment that can change the
 # position of content.
 class Adjustment(renpy.object.Object):
+    """
+    :doc: ui
+    :name: ui.adjustment class
 
-    changed = None
+    Adjustment objects represent a value that can be adjusted by a bar
+    or viewport. They contain information about the value, the range
+    of the value, and how to adjust the value in small steps and large
+    pages.
+
     
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=True, ranged=None, periodic=None):
+    """
+    
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None):
+        """
+        The following parameters correspond to fields or properties on
+        the adjustment object:
+
+        `range`
+            The range of the adjustment, a number.
+
+        `value`
+            The value of the adjustment, a number.
+            
+        `step`
+            The step size of the adjustment, a number. If None, then
+            defaults to 1/10th of a page, if set. Otherwise, defaults
+            to the 1/20th of the range.
+
+           This is used when scrolling a viewport with the mouse wheel.
+            
+        `page`
+            The page size of the adjustment. If None, this is set
+            automatically by a viewport. If never set, defaults to 1/10th
+            of the range.
+
+            It's can be used when clicking on a scrollbar.
+
+         The following parameters control the behavior of the adjustment.
+
+         `adjustable`
+              If True, this adjustment can be changed by a bar. If False,
+              it can't.
+
+              It defaults to being adjustable if a `changed` function
+              is given or if the adjustment is associated with a viewport,
+              and not adjustable otherwise.
+
+         `changed`
+             This function is called with the new value when the value of
+             the adjustment changes.
+
+         `ranged`
+             This function is called with the adjustment object when
+             the range of the adjustment is set by a viewport.
+
+         .. method:: change(value)
+
+             Changes the value of the adjustment to `value`, updating
+             any bars and viewports that use the adjustment.
+         """
+
+
         super(Adjustment, self).__init__()
 
+        if adjustable is None:
+            if changed:
+                adjustable = True
+        
         self._value = value
         self._range = range
         self._page = page
         self._step = step
-        self.changed = changed or self.changed
-        self.adjustable = changed or adjustable
+        self.changed = changed
+        self.adjustable = adjustable
         self.ranged = ranged
         
     def get_value(self):

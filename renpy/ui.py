@@ -235,8 +235,16 @@ def remove_above(d):
     layer = stack[-1].get_layer()
     renpy.game.context(-1).scene_lists.remove_above(layer, d)
     
-def at(a):
-    at_stack.append(a)
+def at(transform):
+    """
+    :doc: ui
+    
+    Specifieds a transform that is applied to the next displayable to
+    be created. This is largely obsolete, as all UI functions now take
+    an `at` argument.
+    """
+    
+    at_stack.append(transform)
 
 def clear():
     layer = stack[-1].get_layer()
@@ -246,9 +254,24 @@ def detached():
     stack.append(Detached())
     
 def layer(name):
+    """
+    :doc: ui
+
+    Adds displayables to the layer named `name`. The later must be
+    closed with :func:`ui.close`.
+    """
+
     stack.append(Layer(name))
     
 def close(d=None):
+    """
+    :doc: ui
+    :args: ()
+
+    Closes a displayable created with by a UI function. When a
+    displayable is closed, we add new displayables to its parent,
+    or to the layer if no displayable is open.
+    """
 
     stack[-1].close(d)
 

@@ -47,7 +47,7 @@ def scan(name, o):
         if m:
             if name != m.group(1):
                 return
-
+            continue
         
         lines.append(l)
 
@@ -63,6 +63,12 @@ def scan(name, o):
             if not init:
                 return
 
+            init_doc = inspect.getdoc(init)
+            if init_doc:
+                doc += "\n\n"
+                doc += init_doc
+                
+            
             try:
                 args = inspect.getargspec(init)
             except:

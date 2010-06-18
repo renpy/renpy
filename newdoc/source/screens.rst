@@ -187,7 +187,7 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a Value object,
+    The current value of the bar. This can be either a BarValue object,
     or a number.
 
 `range`
@@ -1006,8 +1006,8 @@ the end of the current interaction. If the screen returns a value,
 then the value is placed in `_return`.
 
 This can be used to display an imagemap. The imagemap can place a
-value into the `_return` variable using the :actref:`Return` action,
-or can jump to a label using the :actref:`Jump` action.
+value into the `_return` variable using the :func:`Return` action,
+or can jump to a label using the :func:`Jump` action.
 
 ::
 

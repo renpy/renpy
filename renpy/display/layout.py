@@ -996,6 +996,12 @@ class Viewport(Container):
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.value = replaces.yadjustment.value
 
+        if self.xadjustment.adjustable is None:
+            self.xadjustment.adjustable = True
+
+        if self.yadjustment.adjustable is None:
+            self.yadjustment.adjustable = True
+            
         self.set_adjustments = set_adjustments
         
         self.child_width, self.child_height = child_size
