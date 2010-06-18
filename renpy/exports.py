@@ -453,7 +453,8 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
 
     # Show the menu.
     if has_screen("choice"):
-        show_screen("choice", items=items, _transient=True)
+        item_actions = [ (label, renpy.ui.returns(val)) for (label, val) in items if label is not None ]
+        show_screen("choice", items=item_actions, _transient=True)
 
     else:
         renpy.ui.window(style=window_style)

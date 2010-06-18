@@ -111,7 +111,6 @@ init -1100 python:
             dialogue.append((who, what, who_id, what_id, window_id))
         
         renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
-
         renpy.shown_window()
 
         return renpy.get_widget(screen_name, "what")
@@ -267,10 +266,10 @@ init -1100 python:
         if nvl_list is None:
             store.nvl_list = [ ]
 
-        if renpy.has_screen("nvl_menu"):
+        if renpy.has_screen("nvl_choice"):
 
             # Screen version.
-            nvl_show_screen("nvl_menu", items=items)
+            nvl_show_screen("nvl_choice", items=items)
 
         else:
 
