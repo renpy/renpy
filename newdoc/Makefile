@@ -131,4 +131,5 @@ doctest:
 
 upload:
 	rsync -a build/html tom@onegeek.org:/home/tom/WWW.renpyorg/doc
+	rsync -a build/latex tom@onegeek.org:/home/tom/WWW.renpyorg/doc
 	

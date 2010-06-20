@@ -142,7 +142,10 @@ class Positional(object):
 
         if parser:
             parser.add(self)
-        
+
+# Used to generate the documentation
+all_keyword_names = set()
+            
 class Keyword(object):
     """
     This represents an optional keyword parameter to a function.
@@ -154,6 +157,8 @@ class Keyword(object):
         self.help = help
         self.style = False
 
+        all_keyword_names.add(self.name) 
+       
         if parser:
             parser.add(self)
         
@@ -167,6 +172,9 @@ class Style(object):
         self.type = type
         self.help = help
         self.style = True
+
+        for j in renpy.style.prefix_subs:
+            all_keyword_names.add(j + self.name)
 
         if parser:
             parser.add(self)
