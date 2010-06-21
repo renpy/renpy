@@ -908,11 +908,11 @@ class Bar(renpy.display.core.Displayable):
                     style = self.value.get_style()[1]
                 else:
                     style = self.value.get_style()[0]                
-        else:
-            if vertical:
-                style = 'vbar'
             else:
-                style = 'bar'
+                if vertical:
+                    style = 'vbar'
+                else:
+                    style = 'bar'
                 
         if width is not None:
             properties['xmaximum'] = width
