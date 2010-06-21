@@ -26,7 +26,22 @@ class RenPyLexer(PythonLexer):
             else:
                 yield index, token, value
 
+import re
+import sphinx.addnodes
+import docutils.nodes
+
+def parse_var_node(env, sig, signode):
+    m = re.match(r'(\S+)(.*)', sig)
+
+
+    signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
+    signode += docutils.nodes.Text(m.group(2), m.group(2))
+
+    return m.group(1)
+        
+
+
 def setup(app):
     app.add_description_unit('property', 'propref')
     app.add_lexer('renpy', RenPyLexer())
-    
+    app.add_object_type("var", "var", parse_node=parse_var_node)

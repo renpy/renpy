@@ -67,7 +67,7 @@ div.related ul li a {
     margin: 0;
     padding: 0 5px 0 5px;
     line-height: 1.75em;
-    color: #EE9816;
+    color: #c08000 ;
 }
 
 div.related ul li a:hover {
@@ -111,20 +111,6 @@ div.sphinxsidebar ul ul {
     margin-left: 20px;
 }
 
-div.footer {
-    background-color: #E3EFF1;
-    color: #86989B;
-    padding: 3px 8px 3px 0;
-    clear: both;
-    font-size: 0.8em;
-    text-align: right;
-}
-
-div.footer a {
-    color: #86989B;
-    text-decoration: underline;
-}
-
 /* -- body styles ----------------------------------------------------------- */
 
 p {    
@@ -132,7 +118,7 @@ p {
 }
 
 a {
-    color: #CA7900;
+    color: #c08000;
     text-decoration: none;
 }
 

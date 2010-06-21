@@ -1,7 +1,8 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
-Contents:
+Customizing Ren'Py
+------------------
 
 .. toctree::
    :maxdepth: 2
@@ -9,6 +10,14 @@ Contents:
    screens
    screen_actions
    screen_special
+   config
+
+Python and Ren'Py
+-----------------
+   
+.. toctree::
+   :maxdepth: 2
+
    screen_python
    
    
