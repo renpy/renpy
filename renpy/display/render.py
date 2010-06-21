@@ -688,7 +688,9 @@ class Render(object):
                         mask = mask.subsurface(crop)
 
                 rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
-     
+
+        rv.depends_on(self)
+                
         return rv
     
         
