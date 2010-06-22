@@ -374,8 +374,11 @@ def get_widget(screen, id, layer='screens'):
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
     """
-    
-    screen = get_screen(screen, layer)
+
+    if screen is None:
+        screen = current_screen()
+    else:    
+        screen = get_screen(screen, layer)
 
     if not isinstance(screen, ScreenDisplayable):
        return None

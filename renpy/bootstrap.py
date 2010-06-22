@@ -59,6 +59,7 @@ def extra_imports():
     import ctypes.wintypes; ctypes.wintypes
     import EasyDialogs; EasyDialogs
     import argparse; argparse
+    import compiler; compiler
     
 trace_file = None
 trace_local = None

@@ -411,6 +411,7 @@ position_properties = [ Style(i, Expression) for i in [
         "xmaximum",
         "ymaximum",
         "area",
+        "size",        
         ] ]
 
 text_properties = [ Style(i, Expression) for i in [
@@ -516,7 +517,7 @@ def add(thing):
 ##############################################################################
 # UI statements.
 
-FunctionStatementParser("null", renpy.ui.null, many)
+FunctionStatementParser("null", renpy.ui.null, 0)
 Keyword("width")
 Keyword("height")
 add(ui_properties)
@@ -649,6 +650,8 @@ FunctionStatementParser("viewport", renpy.ui.viewport, 1)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
+Keyword("xadjustment")
+Keyword("yadjustment")
 add(ui_properties)
 add(position_properties)
 

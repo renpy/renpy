@@ -29,6 +29,7 @@ import os.path
 import sys
 import weakref
 import array
+import sys
 
 try:
     import _renpy_tegl as gl; gl
@@ -40,13 +41,12 @@ except ImportError:
 import gltexture
 import glenviron
 
-# Sometimes, 0xff000000 is not representable as a short int.
-# if 0xff000000 >= sys.maxint:
-#     BIGMASK = -16777216
-# else:
-#     BIGMASK = 0xFF000000
-
-BIGMASK = 0xFF000000
+# Mac can't deal with a big mask, so we get the equivalent
+# negative integer.
+if sys.platform == 'darwin':
+    BIGMASK = ~0x00FFFFFF
+else:
+    BIGMASK = 0xFF000000
 
 # BGRA.
 if sys.byteorder == 'little':

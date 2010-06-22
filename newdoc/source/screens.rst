@@ -531,8 +531,9 @@ Side
 ----
 
 This positions displayables in the corners or center of a grid. It
-takes a single parameter, a list of places to place its children. Each
-component of this list should be one of:
+takes a single parameter, string containing a space-separated list of
+places to place its children. Each component of this list should be
+one of:
 
     'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br'
 
@@ -555,7 +556,7 @@ the same number of children as there are entries in the places list.
 ::
 
     screen side_test:
-         side [ 'c', 'tl', 'br' ]:
+         side "c tl br":
               text "Center"
               text "Top-Left"
               text "Bottom-Right"
@@ -684,6 +685,57 @@ UI displayable children are added to the box.
              text "Top."
              text "Bottom."
 
+
+Viewport
+--------
+
+A viewport is area of the screen that can be scrolled by dragging,
+with the mouse wheel, or with scrollbars. It can be used to display
+part of something that is bigger than the screen. It takes the
+following properties:
+
+`child_size`
+    The size that is offered to the child for rendering. An (`xsize`,
+    `ysize`) tuple. This can usually be omitted, when the child can
+    compute it's own size. If either component is None, the child's
+    size is used.
+`mousewheel`
+    If True, the mouse wheel can be used to scroll the viewport.
+`draggable`
+    If True, dragging the mouse will scroll the viewport.
+`xadjustment`
+    The :func:`ui.adjustment` used for the x-axis of the
+    viewport. When omitted, a new adjustment is created.
+`yadjustment`
+    The :func:`ui.adjustment` used for the y-axis of the
+    viewport. When omitted, a new adjustment is created.
+
+In addition, it takes the following groups of style properties:
+
+* Common properties.
+* Positions style properties.
+
+It takes one child. If zero, two, or more children are supplied, then
+a fixed is created to contain them.
+
+To make a viewport scrollable, it's often best to assign an id to it,
+and then use :func:`XScrollValue` and :func:`YScrollValue` with that
+id.
+
+::
+
+    screen viewport_example:
+        side "c b r":
+             area (100, 100, 600, 400)
+         
+             viewport id "vp":
+                 draggable True
+                 
+                 add "washington.jpg"
+
+             bar value XScrollValue("vp")
+             vbar value YScrollValue("vp")
+             
 Window
 ------
 

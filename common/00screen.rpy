@@ -744,7 +744,50 @@ init -1140 python:
         def get_style(self):
             return "slider", "vslider"
 
+    class XScrollValue(BarValue):
+        """
+         :doc: value
 
+         The value of an adjustment that horizontally scrolls the the viewport with the
+         given id, on the current screen. The viewport must be defined
+         before a bar with this value is.
+         """
+
+        def __init__(self, viewport):
+            self.viewport = viewport
+
+        def get_adjustment(self):
+            w = renpy.get_widget(None, self.viewport)
+            if not isinstance(w, Viewport):
+                raise Exception("The displayable with id %r is not declared, or not a viewport.")
+
+            return w.xadjustment
+
+        def get_style(self):
+            return "scrollbar", "vscrollbar"
+
+    class YScrollValue(BarValue):
+        """
+         :doc: value
+
+         The value of an adjustment that vertically scrolls the the viewport with the
+         given id, on the current screen. The viewport must be defined
+         before a bar with this value is.
+         """
+
+        def __init__(self, viewport):
+            self.viewport = viewport
+
+        def get_adjustment(self):
+            w = renpy.get_widget(None, self.viewport)
+            if not isinstance(w, Viewport):
+                raise Exception("The displayable with id %r is not declared, or not a viewport.")
+
+            return w.yadjustment
+
+        def get_style(self):
+            return "scrollbar", "vscrollbar"
+         
     ##########################################################################
     # File functions
 

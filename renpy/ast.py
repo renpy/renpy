@@ -29,6 +29,7 @@
 import renpy
 import re
 import time
+import sys
 
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):

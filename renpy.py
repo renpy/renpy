@@ -86,6 +86,14 @@ def path_to_renpy_base():
 macos_version = (6, 10, 1)
 linux_version = (6, 10, 1)
 
+# Doing the version check this way also doubles as an import of ast,
+# which helps py2exe et al.
+try:
+    import ast; ast
+except:
+    print "Ren'Py requires at least python 2.6."
+    sys.exit(0)
+    
 if __name__ == "__main__":
 
     if not 'RENPY_NO_VERSION_CHECK' in os.environ:

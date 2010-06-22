@@ -37,45 +37,35 @@ init python:
         ("demo_persistent", "Persistent Data", "6.7.0"),
         ("demo_transform", "Transform", "6.9.0"),
         ]
-    
-    def tutorials_show(adjustment):
 
-        renpy.choice_for_skipping()
+screen tutorials:
 
-        with ui.side(['c', 'r'], xpos=250, ypos=40):
-
-            ui.viewport(xmaximum=530, ymaximum=400, yadjustment=adjustment, mousewheel=True)
-            with ui.vbox():
+    side "c r":
+        area (250, 40, 548, 400)
         
+        viewport:
+            yadjustment adj
+            mousewheel True
+            
+            vbox:
                 for label, name, ver in tutorials:
-                    ui.button(style='button',
-                              clicked=ui.returns(label),
-                              xminimum=530,
-                              left_padding=20)
-                    ui.hbox()
-                    ui.text(name, style='button_text', size=22, minwidth=420)
-                    ui.text(ver, style='button_text', size=22)
-                    ui.close()
+                    button:
+                        action Return(label)
+                        left_padding 20
+                        xfill True
+                        
+                        hbox:
+                            text name style "button_text" min_width 420
+                            text ver style "button_text"
+                            
+                null height 20
 
-                ui.text(" ")
-
-                ui.button(style='button',
-                          clicked=ui.returns(False),
-                          xminimum=530,
-                          left_padding=20)
-
-                ui.text("That's enough for now.", style='button_text', size=22, minwidth=450)
-
-            ui.bar(adjustment=adjustment, style='vscrollbar')
+                textbutton "That's enough for now.":
+                    xfill True
+                    action Return(False) 
+                
+        bar adjustment adj style "vscrollbar" 
         
-        
-        rfd = renpy.roll_forward_info()        
-        result = ui.interact(roll_forward=rfd)
-        renpy.checkpoint(result)
-
-        return result
-        
-
 
 # The game starts here.
 #begin start
@@ -112,16 +102,16 @@ label start:
             $ e("Is there anything else you'd like to see?", interact=False) 
 
         $ tutorials_first_time = False
+
+        call screen tutorials(adj=tutorials_adjustment)
         
-        $ result = tutorials_show(tutorials_adjustment)
-            
         show eileen happy at center
         with move
 
-        if result is False:
+        if _return is False:
             jump end
 
-        call expression result
+        call expression _return
         
             
 label end:
