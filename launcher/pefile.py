@@ -7,17 +7,17 @@ import sys
 import array
 
 # The starting point of the resource segment in the file.
-RESOURCE_BASE=0x3600
+RESOURCE_BASE=0x3c00
 
 # The virtual memory location the resource segment is loaded
 # to.
-RESOURCE_VIRTUAL=0x6000
+RESOURCE_VIRTUAL=0x7000
 
 # The offset of the field that tells us with the alignment need be.
 ALIGNMENT_FIELD = 0x130
 
 # The start of the .rsrc segment header.
-RSRC_HEADER = 0x268
+RSRC_HEADER = 0x260
 
 # Locations in the file where we need to patch in the resource
 # segment length.
@@ -98,6 +98,9 @@ class BinFile(object):
 # These functions parse data out of the file. In these functions, offset is
 # relative to the start of the file.
 
+# The pefile.
+pe = None
+        
 # This parses a data block out of the resources.
 def parse_data(offset):
     pe.seek(RESOURCE_BASE + offset)
@@ -294,12 +297,14 @@ def change_icons(oldexe, icofn):
 
     # Check that RESOURCE_BASE and RESOURCE_VIRTUAL are still valid.
     pe.seek(CHECK_ADDRESS)
-    if pe.u32() != RESOURCE_BASE:
-        raise Exception("RESOURCE_BASE is no longer correct. Please check all relocations.") 
+    read_addr = pe.u32()
+    if read_addr != RESOURCE_BASE:
+        raise Exception("RESOURCE_BASE is no longer correct. Please check all relocations. 0x%x" % read_addr) 
 
     pe.seek(CHECK_ADDRESS2)
-    if pe.u32() != RESOURCE_VIRTUAL:
-        raise Exception("RESOURCE_VIRTUAL is no longer correct. Please check all relocations.")
+    read_addr = pe.u32()
+    if read_addr != RESOURCE_VIRTUAL:
+        raise Exception("RESOURCE_VIRTUAL is no longer correct. Please check all relocations. 0x%x" % read_addr)
 
     resources = parse_directory(0)
 #    show_resources(resources, "")

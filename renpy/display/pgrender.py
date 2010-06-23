@@ -90,8 +90,6 @@ def set_bgra_masks():
     # Create the sample surface.
     sample_alpha = opygame.Surface((10, 10), 0, 32, masks)
     sample_noalpha = opygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
-
-
     
 
 class Surface(opygame.Surface):
