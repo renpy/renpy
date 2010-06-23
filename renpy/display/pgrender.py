@@ -21,6 +21,7 @@
 
 # This module wraps the pygame surface class (and associated functions).
 
+import sys
 import pygame
 import renpy
 
@@ -60,17 +61,33 @@ def set_mode(resolution, flags=0, depth=0):
 
 set_mode_unscaled = set_mode
 
-def set_sample_masks(masks):
+def set_bgra_masks():
     """
     This rebuilds the sample surfaces, to ones that use the given
     masks.
     """
 
+    # Annoyingly, the value for the big mask seems to vary from
+    # platform to platform. So we read it out of a surface.
+    
     global sample_alpha
     global sample_noalpha
 
+    # Create a sample surface.
+    s = opygame.Surface((10, 10), 0, 32)
+    sample_alpha = s.convert_alpha()
 
-    
+    # Sort the compoents by absolute value.
+    masks = list(sample_alpha.get_masks())
+    masks.sort(key=lambda a : abs(a))
+
+    # Choose the masks.
+    if sys.byteorder == 'little':
+        masks = ( masks[2], masks[1], masks[0], masks[3] )
+    else:
+        masks = ( masks[1], masks[2], masks[3], masks[0] )
+
+    # Create the sample surface.
     sample_alpha = opygame.Surface((10, 10), 0, 32, masks)
     sample_noalpha = opygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
 

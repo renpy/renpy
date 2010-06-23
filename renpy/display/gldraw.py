@@ -26,10 +26,8 @@ from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 import pygame
 import os
 import os.path
-import sys
 import weakref
 import array
-import sys
 
 try:
     import _renpy_tegl as gl; gl
@@ -40,28 +38,6 @@ except ImportError:
     
 import gltexture
 import glenviron
-
-# Mac can't deal with a big mask, so we get the equivalent
-# negative integer.
-if sys.platform == 'darwin':
-    BIGMASK = ~0x00FFFFFF
-else:
-    BIGMASK = 0xFF000000
-
-# BGRA.
-if sys.byteorder == 'little':
-    MASKS = (
-        0x00FF0000,
-        0x0000FF00,
-        0x000000FF,
-        BIGMASK) 
-else:
-    MASKS = (
-        0x0000FF00,
-        0x00FF0000,
-        BIGMASK,
-        0x000000FF)
-
     
 class GLDraw(object):
 
@@ -312,7 +288,7 @@ class GLDraw(object):
 
         # Do additional setup needed.
 
-        renpy.display.pgrender.set_sample_masks(MASKS)
+        renpy.display.pgrender.set_bgra_masks()
             
         return True
 

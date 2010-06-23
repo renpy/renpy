@@ -146,7 +146,10 @@ has_swscale = add_library("libswscale", True)
 add_library("libfreetype")
 add_library("libfribidi")            
 add_library("libz")
-add_library("libGLEW")
+
+has_libglew = add_library("libGLEW", True)
+has_libglew32 = add_library("libglew32", True)
+
 
 cython("_renpy")
 cython("_renpybidi")
@@ -231,21 +234,27 @@ extensions.append(distutils.core.Extension(
     libraries=['fribidi'],
     ))
 
+if has_libglew:
+    glew_libs = [ 'GLEW' ]
+else:
+    glew_libs = [ 'glew32', "opengl32" ]
+
+
 extensions.append(distutils.core.Extension(
     "_renpy_tegl",
     ["_renpy_tegl.c"],
     extra_compile_args=extra_compile_args,
     include_dirs=include_dirs,
     library_dirs=library_dirs,
-    libraries=['GLEW']))
-        
+    libraries=glew_libs))
+
 extensions.append(distutils.core.Extension(
     "_renpy_pysdlgl",
     ["_renpy_pysdlgl.c"],
     extra_compile_args=extra_compile_args,
     include_dirs=include_dirs,
     library_dirs=library_dirs,
-    libraries=['GLEW']))
+    libraries=glew_libs))
 
 distutils.core.setup(
     name = "renpy_module",
