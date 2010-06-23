@@ -72,7 +72,7 @@ def main():
     zfnew.close()
 
     shutil.copy("c:/Python26/Microsoft.VC90.CRT.manifest", "dist/Microsoft.VC90.CRT.manifest")
-    shutil.copy("c:/Python26/msvcr90.dll", "msvcr90.dll")
+    shutil.copy("c:/Python26/msvcr90.dll", "dist/msvcr90.dll")
     
 try:
     main()
