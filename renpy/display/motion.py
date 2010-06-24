@@ -167,13 +167,17 @@ class TransformState(renpy.object.Object):
 
         def diff4(prop, new, default_new, old, default_old):
             if new is None:
-                new = default_new
-
+                new_value = default_new
+            else:
+                new_value = new
+                
             if old is None:
-                old = default_old
-
-            if new != old:
-                rv[prop] = (old, new)
+                old_value = default_old
+            else:
+                old_value = old
+                
+            if new_value != new or new_value != old_value:
+                rv[prop] = (old_value, new_value)
 
         diff2("alpha", newts.alpha, self.alpha)
         diff2("rotate", newts.rotate, self.rotate)

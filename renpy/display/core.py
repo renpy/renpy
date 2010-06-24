@@ -1887,8 +1887,10 @@ class Interface(object):
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile :
                         new_time = get_time()
-                        print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
-                        print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
+
+                        if new_time - self.profile_time > .02:
+                            print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
+                            print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 
                         
                     if first_pass and self.last_event:
