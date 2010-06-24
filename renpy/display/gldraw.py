@@ -750,4 +750,5 @@ class GLDraw(object):
         gltexture.dealloc_textures()
        
     def event_peek_sleep(self):
-        time.sleep(.0001)
+        pass
+        

@@ -96,7 +96,10 @@ def correct_type(v, b, ty):
     """
 
     if ty is position:
-        return type(b)(v)
+        if v is None:
+            return None
+        else:
+            return type(b)(v)
     else:
         return ty(v)
 

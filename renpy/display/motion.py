@@ -154,7 +154,6 @@ class TransformState(renpy.object.Object):
          self.xoffset,
          self.yoffset,
          self.subpixel) = ts.get_placement()
-
         
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
@@ -541,6 +540,11 @@ class Transform(Container):
 
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
+
+        self.state.xpos = t.state.xpos
+        self.state.ypos = t.state.ypos
+        self.state.xanchor = t.state.xanchor
+        self.state.yanchor = t.state.yanchor
         
         return 
 
@@ -574,7 +578,6 @@ class Transform(Container):
             return d
 
         return None
-
         
     def set_child(self, child):
         self.child = child

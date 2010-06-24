@@ -154,7 +154,14 @@ init python:
 
             ct = Text(code, size=16, color="#000")
             vp = Viewport(ct, child_size=(2000, 2000), ymaximum=120, draggable=True, mousewheel=True)
-            w = Window(vp, background = "#fffc", top_padding=0, right_padding=0, bottom_padding=0, yminimum=0)
+            w = Window(vp,
+                       background = "#fffc",
+                       top_padding=0,
+                       right_padding=0,
+                       bottom_padding=0,
+                       yminimum=0,
+                       )
+
             return example_transform(w)
 
 image example = __Example()
