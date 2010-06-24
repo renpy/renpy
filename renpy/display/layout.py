@@ -1001,7 +1001,7 @@ class Viewport(Container):
 
         if self.yadjustment.adjustable is None:
             self.yadjustment.adjustable = True
-            
+
         self.set_adjustments = set_adjustments
         
         self.child_width, self.child_height = child_size

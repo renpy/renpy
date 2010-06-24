@@ -923,8 +923,8 @@ class Bar(renpy.display.core.Displayable):
         super(Bar, self).__init__(style=style, **properties)
 
         self.adjustment = adjustment
-        self.focusable = adjustment.adjustable
-
+        self.focusable = True
+        
         # These are set when we are first rendered.
         self.thumb_dim = 0
         self.height = 0
@@ -935,6 +935,7 @@ class Bar(renpy.display.core.Displayable):
         return [ self.style.fore_bar, self.style.aft_bar, self.style.thumb, self.style.thumb_shadow ]
 
     def per_interact(self):
+        self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
     
     def render(self, width, height, st, at):
@@ -1073,7 +1074,6 @@ class Bar(renpy.display.core.Displayable):
 
         if self.hidden:
             return None
-
         
         range = self.adjustment.range
         old_value = self.adjustment.value
