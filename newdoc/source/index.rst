@@ -1,12 +1,29 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
+We're in the process of rewriting Ren'Py's documentation. While what
+we have here is the most up-to-date documentation, it's also
+incomplete. To find out more about Ren'Py, please visit the Ren'Py
+home page:
+
+    http://www.renpy.org/
+
+
+The Ren'Py Language
+-------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   language_basics
+
+
 Customizing Ren'Py
 ------------------
 
 .. toctree::
    :maxdepth: 2
-
+   
    screens
    screen_actions
    screen_special

@@ -60,6 +60,8 @@ def extra_imports():
     import EasyDialogs; EasyDialogs
     import argparse; argparse
     import compiler; compiler
+    import textwrap; textwrap
+    import copy; copy
     
 trace_file = None
 trace_local = None
