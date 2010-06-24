@@ -31,7 +31,7 @@ init python:
     class Ball(object):
         def __init__(self, filename, x, y, function=None):
             
-            self.transform = Transform(child=filename, xpos=x, ypos=y, xanchor=0.5, yanchor=0.5, rotate=0, function=function)
+            self.transform = Transform(child=filename, xanchor=0.5, yanchor=0.5, rotate=0, function=function)
             self.x = x
             self.y = y
             
@@ -140,6 +140,7 @@ init python:
             i.transform.xpos = absolute(i.x)
             i.transform.ypos = absolute(i.y)
             i.transform.rotate = (i.drotate * st) % 360.0
+
             i.transform.update()
 
         return 0

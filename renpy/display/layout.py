@@ -857,8 +857,12 @@ class DynamicDisplayable(renpy.display.core.Displayable):
                 i.predict(callback)
         
     def get_placement(self):
+        if not self.child:
+            self.child, redraw = self.function(0, 0, *self.args, **self.kwargs)
+
         return self.child.get_placement()
 
+    
     def event(self, ev, x, y, st):
         if self.child:
             return self.child.event(ev, x, y, st)

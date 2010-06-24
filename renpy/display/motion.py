@@ -209,6 +209,7 @@ class TransformState(renpy.object.Object):
         return rv
 
     def get_placement(self, cxoffset=0, cyoffset=0):
+
         return (
             first_not_none(self.xpos, self.default_xpos),
             first_not_none(self.ypos, self.default_ypos),
@@ -602,14 +603,14 @@ class Transform(Container):
         if fr is not None:
             renpy.display.render.redraw(self, fr)
 
-        self.active = True
-
         if self.state.size:
             width, height = self.state.size
 
+        self.active = True
+
         # Use non-None elements of the child placement as defaults.
         if self.child is not None and renpy.config.transform_uses_child_position:
-            
+
             cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
 
             if cxpos is not None:
@@ -622,7 +623,10 @@ class Transform(Container):
                 self.state.default_yanchor = cyanchor
 
             self.state.subpixel |= csubpixel
-        
+
+
+    
+                
         
     def render(self, width, height, st, at):
 
@@ -814,14 +818,15 @@ class Transform(Container):
 
         if not self.active:
             self.update_state()
-
+            
         cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
 
         cxoffset = cxoffset or 0
         cyoffset = cyoffset or 0 
         
-        return self.state.get_placement(cxoffset, cyoffset)
-            
+        rv = self.state.get_placement(cxoffset, cyoffset)
+        return rv
+        
 
     def update(self):
         renpy.display.render.invalidate(self)
