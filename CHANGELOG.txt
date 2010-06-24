@@ -52,6 +52,10 @@ one transform property is present, ui.add will create a transform that
 wraps the displayable it's adding to the screen. [doc]
 
 
+The new LiveTile displayable tiles its child, without consuming a
+large amount of memory to do so. [doc]
+
+
 config.quit_action allows one to specify an action that is run when
 the quit button (in the corner of the window) is pressed.
 config.game_menu_action allows one to specify an action that is run

@@ -966,5 +966,5 @@ class SWDraw(object):
         Wait a little bit so the CPU doesn't speed up.
         """
 
-        time.sleep(.001)
+        time.sleep(.0001)
         

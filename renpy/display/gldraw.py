@@ -28,6 +28,7 @@ import os
 import os.path
 import weakref
 import array
+import time
 
 try:
     import _renpy_tegl as gl; gl
@@ -81,6 +82,10 @@ class GLDraw(object):
 
         # This is a fullscreen surface used for video playback.
         self.fullscreen_surface = None
+
+        # The time of the last redraw.
+        self.last_redraw_time = 0
+
         
     def log(self, msg, *args):
         """
@@ -294,10 +299,16 @@ class GLDraw(object):
 
 
     def should_redraw(self, needs_redraw, first_pass):
-        # GL does redraws as fast as possible, and lets Sync-to-vblank
-        # handle slowing us down.
-
-        return True
+        """
+        Redraw whenever the screen needs it, but at least once every
+        quarter-second. We rely on VSYNC to slow down our maximum
+        draw speed.
+        """
+                
+        if needs_redraw or first_pass or time.time() > self.last_redraw_time + .25:
+            return True
+        else:
+            return False
 
     def mutated_surface(self, surf):
         if surf in self.texture_cache:
@@ -739,5 +750,4 @@ class GLDraw(object):
         gltexture.dealloc_textures()
        
     def event_peek_sleep(self):
-        # No sleep required, as the vsync slows us down.
-        return
+        time.sleep(.0001)

@@ -78,6 +78,8 @@ init -1200 python hide:
     style.list_spacer = Style(style.default)    
     style.list_text = Style(style.default)
 
+    style.tile = Style(style.default, help='default style of tile')
+    
 # The base styles that can be customized by themes.
 
     style.frame = Style(style.default, help='base style for frames.')
@@ -290,7 +292,10 @@ init -1090 python:
     style.list_text.color = "#000"
     style.list_text.size = 14
     style.list_spacer.xminimum = 15
-       
+
+    # Tile
+    style.tile.clipping = True
+    
     
     ######################################################################
 

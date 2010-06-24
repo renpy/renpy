@@ -1011,7 +1011,6 @@ class Viewport(Container):
 
         self.width = 0
         self.height = 0
-
         
     def per_interact(self):
         self.xadjustment.register(self)
@@ -1355,3 +1354,29 @@ class AdjustTimes(Container):
         return self.child.get_placement()
 
 
+class LiveTile(Container):
+    """
+    :doc: displayable
+    
+    Tiles the `child` displayable until it fills the area allocated to
+    this displayable.
+    """
+    
+    def __init__(self, child, style='tile', **properties):
+        super(LiveTile, self).__init__(style=style, **properties)
+
+        self.add(child)
+
+    def render(self, width, height, st, at):
+
+        cr = renpy.display.render.render(self.child, width, height, st, at)
+        cw, ch = cr.get_size()
+        rv = renpy.display.render.Render(width, height)
+
+        for y in range(0, height, ch):
+            for x in range(0, width, cw):
+                rv.blit(cr, (x, y), focus=False)
+
+        return rv
+
+        
