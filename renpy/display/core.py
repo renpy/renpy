@@ -160,7 +160,7 @@ class Displayable(renpy.object.Object):
         widgets, if any.
 
         `root` - True if this is the root of a style tree, False if this
-        hass been passed on to a child.
+        has been passed on to a child.
         """
 
         if prefix == self.style.prefix:

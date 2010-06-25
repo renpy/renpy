@@ -434,7 +434,7 @@ class Button(renpy.display.layout.Window):
         self.keymap = keymap
         
         self.time_policy_data = None
-        
+
         
     def render(self, width, height, st, at):
 
@@ -508,6 +508,8 @@ class Button(renpy.display.layout.Window):
     def per_interact(self):
         if not self.clicked:
             self.set_style_prefix(self.role + "insensitive_", True)
+        else:
+            self.set_style_prefix(self.role + "idle_", True)
 
         super(Button, self).per_interact()
             

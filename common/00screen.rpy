@@ -887,14 +887,23 @@ init -1140 python:
 
          Saves the file.
 
+         The button with this slot is selected if it's marked as the
+         newest save file.
+         
          `confirm`
              If true, then we will prompt before overwriting a file.
+
+         `newest`
+             If true, then this file will be marked as the newest save
+             file when it's saved. (Set this to false for a quicksave,
+             for example.)
          """
 
-        def __init__(self, name, confirm=True, page=None):
+        def __init__(self, name, confirm=True, newest=True, page=None):
             self.name = name
             self.confirm = confirm
             self.page = page
+            self.newest = newest
             
         def __call__(self):
 
@@ -905,10 +914,14 @@ init -1140 python:
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
-                    __yesno_prompt(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.page))
+                    __yesno_prompt(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
                     return
                 
             renpy.save(fn, extra_info=save_name)
+
+            if self.newest:
+                persistent._file_newest = fn
+                
             renpy.restart_interaction()
 
         def get_sensitive(self):
@@ -919,6 +932,9 @@ init -1140 python:
             else:
                 return True
 
+        def get_selected(self):
+            return persistent._file_newest == __filename(self.name, self.page)
+            
     class FileLoad(Action):
         """
          :doc: file_action
@@ -951,6 +967,8 @@ init -1140 python:
         def get_sensitive(self):
             return renpy.scan_saved_game(__filename(self.name, self.page))
 
+        def get_selected(self):
+            return persistent._file_newest == __filename(self.name, self.page)
 
     class FileDelete(Action):
         """
@@ -982,6 +1000,9 @@ init -1140 python:
 
         def get_sensitive(self):
             return renpy.scan_saved_game(__filename(self.name, self.page))
+
+        def get_selected(self):
+            return persistent._file_newest == __filename(self.name, self.page)
 
         
     def FileAction(name, page=None):

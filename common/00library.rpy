@@ -598,7 +598,6 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
     $ renpy.play(config.enter_sound)
     
     call _enter_game_menu from _call__enter_game_menu_0
-
     
     if renpy.has_label("game_menu"):
         jump expression "game_menu"

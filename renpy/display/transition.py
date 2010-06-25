@@ -49,6 +49,10 @@ class Transition(renpy.display.core.Displayable):
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
 
+    def per_interact(self):
+        self.new_widget.per_interact()
+        self.old_widget.per_interact()
+    
 
 def null_render(d, width, height, st, at):
 
@@ -129,9 +133,12 @@ class MultipleTransition(Transition):
         self.events = False
 
     def visit(self):
-
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
 
+    def per_interact(self):
+        for i in self.visit():
+            i.per_interact()
+    
     def render(self, width, height, st, at):
 
         if renpy.game.less_updates:
@@ -160,10 +167,14 @@ class MultipleTransition(Transition):
         return rv
             
 
-def Fade(out_time, hold_time, in_time,
-         old_widget=None, new_widget=None,
+def Fade(out_time,
+         hold_time,
+         in_time,
+         old_widget=None,
+         new_widget=None,
          color=None,
          widget=None,
+         alpha=False,
          ):
 
     """
@@ -204,12 +215,12 @@ def Fade(out_time, hold_time, in_time,
     if not widget:
         widget = renpy.display.image.Solid((0, 0, 0, 255))
 
-    args = [ False, dissolve(out_time), widget ]
+    args = [ False, dissolve(out_time, alpha=alpha), widget ]
 
     if hold_time:
         args.extend([ notrans(hold_time), widget, ])
 
-    args.extend([dissolve(in_time), True ])
+    args.extend([dissolve(in_time, alpha=alpha), True ])
 
     return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
@@ -912,8 +923,6 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
     rv.delay = delay # W0201
 
     return rv
-
-            
 
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
     if before is not None:
