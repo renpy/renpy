@@ -259,7 +259,7 @@ def define_screen(*args, **kwargs):
 
 
     
-def get_screen(tag, layer="screens"):
+def get_screen(name, layer="screens"):
     """
     :doc: screens
     
@@ -268,14 +268,18 @@ def get_screen(tag, layer="screens"):
     interpreted as screen name. If it's still not found, None is returned. 
     """
 
-    tag = tag.split()[0]
+    if isinstance(name, basestring):
+        name = tuple(name.split())
+
+    tag = name[0]
+    
     sl = renpy.exports.scene_lists()
 
     sd = sl.get_displayable_by_tag(layer, tag)
 
     if sd is None:
-        sd = sl.get_displayable_by_name(layer, tag)
-
+        sd = sl.get_displayable_by_name(layer, name)
+        
     return sd
 
 def has_screen(name):

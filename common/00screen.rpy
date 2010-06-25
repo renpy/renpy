@@ -197,10 +197,12 @@ init -1140 python:
             if renpy.context()._menu:
 
                 if renpy.has_screen(screen):
+                    renpy.transition(config.intra_transition)
                     renpy.show_screen(screen, _transient=True)
                     renpy.restart_interaction()
                     
                 elif renpy.has_label(screen):
+                    renpy.transition(config.intra_transition)
                     renpy.scene(layer='screens')
                     renpy.jump(screen)
 
@@ -211,7 +213,7 @@ init -1140 python:
                 renpy.call_in_new_context("_game_menu", _game_menu_screen=screen)
 
         def get_selected(self):
-            return renpy.showing(self.screen)
+            return renpy.get_screen(self.screen)
 
         def get_sensitive(self):
             if self.screen in config.show_menu_enable:

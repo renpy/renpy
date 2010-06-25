@@ -400,7 +400,7 @@ class Button(renpy.display.layout.Window):
     action = None
     
     def __init__(self, child=None, style='button', clicked=None,
-                 hovered=None, unhovered=None, action=None, role='',
+                 hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={},
                  **properties):
 
@@ -416,8 +416,8 @@ class Button(renpy.display.layout.Window):
                 clicked = None
             
         if role is None:
-            if self.action:
-                if is_selected(self.action):
+            if action:
+                if is_selected(action):
                     role = 'selected_'
                 else:
                     role = ''

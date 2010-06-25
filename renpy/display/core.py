@@ -971,6 +971,7 @@ class SceneLists(renpy.object.Object):
             raise Exception("Unknown layer %r." % layer)
 
         for sle in self.layers[layer]:
+
             if sle.name == name:
                 return sle.displayable
 
