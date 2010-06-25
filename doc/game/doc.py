@@ -3,6 +3,7 @@ import re
 import collections
 import keyword
 import renpy
+import shutil
 
 # Keywords in the Ren'Py script language.
 KEYWORD1 = """\
@@ -100,6 +101,7 @@ def write_keywords():
 
     f.close()
 
+    shutil.copy("source/keywords.py", "../tutorial/game/keywords.py")
 
 
 # A map from filename to a list of lines that are supposed to go into
@@ -223,3 +225,4 @@ def write_line_buffer():
         
         f.close()
 
+        

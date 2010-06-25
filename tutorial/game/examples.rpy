@@ -25,78 +25,18 @@ transform example_transform:
 init python:
 
     import re
+    import keywords
     
-    KEYWORDS = """\
-                and
-                as
-                assert
-                break
-                class
-                continue
-                def
-                elif
-                else
-                except
-                exec
-                finally
-                for
-                from
-                global
-                if
-                import
-                in
-                is
-                lambda
-                not
-                or
-                pass
-                print
-                raise
-                return
-                try
-                while
-                with
-                yield
 
-                at
-                behind
-                call
-                expression
-                hide
-                image
-                init
-                jump
-                label
-                menu
-                onlayer
-                python
-                scene
-                set
-                show
-                play
-                queue
-                stop
-                sound
-                music
-                fadeout
-                fadein
-                loop
-                noloop
-                if_changed
-                voice
-                sustain
-                nvl
-                clear
-                window
-                pause
-                define
-                transform
-                """
-
-    KEYWORDS = [ i.strip() for i in KEYWORDS.split() ]
+    KEYWORDS = [ re.escape(i) for i in keywords.keywords ]
+    PROPERTIES = [ re.escape(i) for i in keywords.properties ]
     KWREGEX = r"|".join(KEYWORDS)
-
-    regex = r"(?P<keyword>\b(" + KWREGEX + r")\b)|(?P<string>\"([^\"]|\\.)*\")|(?P<comment>#.*)"
+    PRREGEX = r"|".join(PROPERTIES)
+    
+    regex = r"(?P<keyword>\b(" + KWREGEX + r")\b)" + \
+        r"|(?P<property>\b(" + PRREGEX + r")\b)" + \
+        r"|(?P<string>\"([^\"]|\\.)*\")" + \
+        r"|(?P<comment>#.*)"
     regex = re.compile(regex)
     
     # This maps from example name to the text of the fragment.    
@@ -114,6 +54,9 @@ init python:
 
             if m.group("keyword"):
                 return "{color=#840}" + m.group(0) + "{/color}"
+
+            if m.group("property"):
+                return "{color=#048}" + m.group(0) + "{/color}"
 
             if m.group("comment"):
                 return "{color=#600}" + m.group(0) + "{/color}"
