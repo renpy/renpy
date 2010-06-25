@@ -19,7 +19,7 @@ label _developer_screen:
         layout.button(u"Variable Viewer", None, clicked=ui.jumps("_debugger_screen"), size_group=sg)
         layout.button(u"Theme Test", None, clicked=ui.jumps("_theme_test"), size_group=sg)
         layout.button(u"Style Hierarchy", None, clicked=ui.jumps("_style_hierarchy"), size_group=sg)
-        layout.button(u"FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
+        # layout.button(u"FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
         layout.button(u"Image Location Picker", None, clicked=ui.jumps("_image_location_picker"), size_group=sg)
         
         ui.close()

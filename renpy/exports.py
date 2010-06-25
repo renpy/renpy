@@ -1357,3 +1357,28 @@ def call_screen(_screen_name, **kwargs):
         if with_none:
             renpy.game.interface.do_with(None, None)
     
+def list_files(common=False):
+    """
+    :doc: files
+
+    Lists the files in the game directory and archive files. Returns
+    a list of files, with / as the directory separator.
+
+    `common`
+        If true, files in the common directory are included in the
+        listing.
+    """
+
+    rv = [ ]
+    
+    for dir, fn in renpy.loader.listdirfiles():
+
+        if not common and dir == renpy.config.commondir:
+            continue
+
+        rv.append(fn)
+
+    return rv
+        
+     
+    

@@ -546,12 +546,12 @@ label tutorial_atl:
     show example atl_pan
     hide logo base
     show bg band:
-        xpos 0 ypos -222
+        xanchor 0 yanchor 0 xpos 0 ypos -222
     with dissolve
 
     #begin atl_pan
     show bg band:
-        xpos 0 ypos -222
+        xpos 0 ypos -222 xanchor 0 yanchor 0
         linear 5.0 xpos -435 ypos 0
     #end atl_pan
     
@@ -686,6 +686,7 @@ label tutorial_atl:
     
     #begin atl_blocktime
     show logo base:
+        xalign 0.0 yalign 0.0
         block:
             linear 1.0 xalign 1.0
             linear 1.0 xalign 0.0

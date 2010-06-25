@@ -72,6 +72,11 @@ appended to filenames provided to the registered channel,
 respectively.
 
 
+The new renpy.list_files method returns a list of files in the game
+directory and archives. This can be used to write your own automatic
+image loading method, among other things.
+
+
 The distribution code has been moved into launcher/distribute.py. This
 file can be run from the command line to build distributions in shell
 scripts and other automated processes.

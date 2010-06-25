@@ -622,11 +622,7 @@ class Transform(Container):
             if cyanchor is not None:
                 self.state.default_yanchor = cyanchor
 
-            self.state.subpixel |= csubpixel
-
-
-    
-                
+            self.state.subpixel |= csubpixel                
         
     def render(self, width, height, st, at):
 
