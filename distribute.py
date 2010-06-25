@@ -180,8 +180,9 @@ def main():
     for i in module_files:
         files.append('module/' + i)
 
-    more_files.append('python25.dll')
-    more_files.append('msvcr71.dll')
+    more_files.append('python26.dll')
+    more_files.append('msvcr90.dll')
+    more_files.append('Microsoft.VC90.CRT.manifest')
     files.extend(tree('renpy'))
     more_files.extend(tree('renpy.app'))
     more_files.append('renpy.code')
@@ -193,15 +194,17 @@ def main():
     files.extend(tree('template'))
     # files.extend(tree('tools'))
 
-    files.append('doc/index.html')
-    files.append('doc/common.css')
-    files.append('doc/docs.css')
-    files.append('doc/monobook.css')
-    files.append('doc/monobook2.css')
-    files.append('doc/shared.css')
-    files.extend(tree('doc/reference'))
-    files.extend(tree('doc/tutorials'))
-    files.extend(tree('doc/images'))
+    files.extend(tree('doc'))
+    
+    # files.append('doc/index.html')
+    # files.append('doc/common.css')
+    # files.append('doc/docs.css')
+    # files.append('doc/monobook.css')
+    # files.append('doc/monobook2.css')
+    # files.append('doc/shared.css')
+    # files.extend(tree('doc/reference'))
+    # files.extend(tree('doc/tutorials'))
+    # files.extend(tree('doc/images'))
     
     files.sort()
     more_files.sort()

@@ -312,13 +312,6 @@ def make_tar(t, filename, files):
     tf.close()
 
 
-def dist_exists(fn):
-    """
-     Returns true if the given file exists in the renpy directory.
-     """
-
-    return os.path.exists(os.path.join(renpy_base, fn))
-
 def distribute(
     _project_path,
     _renpy_base,
@@ -400,8 +393,9 @@ def distribute(
 
         win_files.append((rb + "renpy.exe", "/" + executable_name + ".exe"))
         win_files.append((rb + "renpy.code", "/renpy.code"))
-        win_files.append((rb + "python25.dll", "/python25.dll"))
-        win_files.append((rb + "msvcr71.dll", "/msvcr71.dll"))
+        win_files.append((rb + "python26.dll", "/python26.dll"))
+        win_files.append((rb + "msvcr90.dll", "/msvcr90.dll"))
+        win_files.append((rb + "Microsoft.VC90.CRT.manifest", "/Microsoft.VC90.CRT.manifest"))
 
         if os.path.exists(project_path + "/icon.ico"):
             file_data[rb + "renpy.exe"] = pefile.change_icons(
