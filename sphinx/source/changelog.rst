@@ -152,7 +152,8 @@ Other Changes
 * The following numbered bugs were fixed:
 
   * lp:526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)
-
+  * lp:595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)
+ 
 * Renamed the internal show and hide methods of Displayable, so those
   names can once again be used by user-defined displayables.
 
