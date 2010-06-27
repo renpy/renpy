@@ -139,6 +139,7 @@ h1 {
 h2 {
     margin-top: 1.5em;
     font-size: 1.4em;
+    color: #11557c;
 }
 
 h3 {
@@ -149,6 +150,7 @@ h3 {
 div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
     color: black!important;
 }
+
 
 h1 a.anchor, h2 a.anchor, h3 a.anchor, h4 a.anchor, h5 a.anchor, h6 a.anchor {
     display: none;

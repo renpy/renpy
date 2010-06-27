@@ -76,7 +76,7 @@ def parse_style_node(env, sig, signode):
 def setup(app):
     # app.add_description_unit('property', 'propref')
     app.add_lexer('renpy', RenPyLexer())
-    app.add_object_type("var", "var", parse_node=parse_var_node)
-    app.add_object_type("style-property", "propref", parse_node=parse_style_node)
-    app.add_object_type("transform-property", "tpref")
+    app.add_object_type("var", "var", "single: %s (variable)",  parse_node=parse_var_node)
+    app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
+    app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     
