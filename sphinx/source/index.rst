@@ -23,7 +23,8 @@ Customizing Ren'Py
 
 .. toctree::
    :maxdepth: 2
-   
+
+   style
    screens
    screen_actions
    screen_special

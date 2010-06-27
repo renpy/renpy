@@ -33,15 +33,40 @@ import docutils.nodes
 def parse_var_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
 
-
     signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
     signode += docutils.nodes.Text(m.group(2), m.group(2))
 
-    return m.group(1)
-        
+    ref = m.group(1)
+    return ref
 
+
+style_seen_ids = set()
+
+def parse_style_node(env, sig, signode):
+    m = re.match(r'(\S+)(.*)', sig)
+
+    name = m.group(1)
+    desc = m.group(2)
+    desc = " - " + desc
+
+    
+    
+    signode += sphinx.addnodes.desc_name(name, name)
+    signode += docutils.nodes.Text(desc, desc)
+
+    ref = m.group(1)
+
+    while ref in style_seen_ids:
+        print "duplicate id:", ref
+        ref = ref + "_alt"
+
+    style_seen_ids.add(ref)
+        
+    return ref
+        
 
 def setup(app):
     app.add_description_unit('property', 'propref')
     app.add_lexer('renpy', RenPyLexer())
     app.add_object_type("var", "var", parse_node=parse_var_node)
+    app.add_object_type("style-property", "propref", parse_node=parse_style_node)

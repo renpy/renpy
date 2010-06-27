@@ -411,7 +411,7 @@ position_properties = [ Style(i, Expression) for i in [
         "xmaximum",
         "ymaximum",
         "area",
-        "size",        
+        "clipping",
         ] ]
 
 text_properties = [ Style(i, Expression) for i in [
@@ -445,7 +445,6 @@ text_properties = [ Style(i, Expression) for i in [
         "yminimum",
         "xfill",
         "yfill",
-        "clipping",
         ] ]
 
 window_properties = [ Style(i, Expression) for i in [
@@ -463,7 +462,7 @@ window_properties = [ Style(i, Expression) for i in [
         "bottom_padding",
         "xpadding",
         "ypadding",
-        "side_group",
+        "size_group",
         "xminimum",
         "yminimum",
         "xfill",
@@ -472,10 +471,6 @@ window_properties = [ Style(i, Expression) for i in [
 
 button_properties = [ Style(i, Expression) for i in [
         "sound",
-        "focus_mask",
-        "focus_rect",
-        "time_policy",
-        "child",
         "mouse",
         ] ]
 
@@ -493,6 +488,8 @@ bar_properties = [ Style(i, Expression) for i in [
         "bottom_bar",
         "thumb",
         "thumb_shadow",
+        "thumb_offset",
+        "mouse",
         "unscrollable",
         ] ]
 
@@ -500,6 +497,8 @@ box_properties = [ Style(i, Expression) for i in [
         "box_layout",
         "spacing",
         "first_spacing",
+        "xfill",
+        "yfill",
         ] ]
 
 ui_properties = [

@@ -156,7 +156,7 @@ Ren'Py statements are made of a few basic
     
 :dfn:`String`
 
-    A string begins with a quote character (one of ", ', or `),
+    A string begins with a quote character (one of ", ', or \`),
     contains some sequence of characters, and ends with the same quote
     character.
 

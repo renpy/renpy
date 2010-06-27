@@ -205,8 +205,8 @@ One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
 * Common properties.
-* Position style properties.
-* Bar style properties.
+* :ref:`position-style-properties`
+* :ref:`bar-style-properties`
 
 This does not take children.
 

@@ -7,4 +7,6 @@ echo $DIR
 cd $DIR
 
 ../renpy.py .
-make html
+
+sphinx-build -a source build/html 
+
