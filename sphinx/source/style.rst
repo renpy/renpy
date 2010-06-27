@@ -149,8 +149,8 @@ the different kinds of value a style property can expect:
         
 
          
-Style Properties
-================
+List of All Style Properties
+============================
 
 The style properties control the look of the various displayables. Not
 all style properties apply to all displayables, so we've divided them

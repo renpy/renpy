@@ -103,17 +103,17 @@ common syntax.
 It takes one parameter, the name of the screen. This is a name, not an
 expression. It takes the following properties:
 
-modal
+`modal`
     If True, the screen is modal, meaning that it prevents the user
     from interacting with screens below it. Defaults to False.
 
-tag
+`tag`
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
     screens with the same tag. This can be used to ensure that only
     one screen of a menu is shown at a time.
 
-zorder
+`zorder`
     This controls how close to the user a screen is displayed. The
     larger the number, the closer the screen is displayed to the
     user. It defaults to 0.
@@ -135,6 +135,8 @@ The user interface statements create displayables and add them either
 to the screen, or to an enclosing displayable. They allow the user to
 display information, allow the user to interact with the game, or
 allow the game to react to various events.
+
+.. _common-properties:
 
 All user interface statements take the following common properties:
 
@@ -204,7 +206,7 @@ data. It takes the following properties:
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
-* Common properties.
+* :ref:`common-properties`
 * :ref:`position-style-properties`
 * :ref:`bar-style-properties`
 
@@ -237,10 +239,10 @@ action. A button takes no parameters, and the following properties.
 
 It also takes:
 
-* Common properties.
-* Position style properties.
-* Window style properties.
-* Button style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
+* :ref:`button-style-properties`
 
 It takes one children. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
@@ -259,9 +261,9 @@ properties. They can overlap if not positioned properly.
 The fixed statement takes no parameters, and the following groups of
 properties:
 
-* Common properties.
-* Position properties.
-* Box properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`box-style-properties`
 
 This takes any number of children, which are added to the fixed.
 
@@ -285,9 +287,9 @@ A frame is a window that contains a background that is intended for
 displaying user-interface elements like buttons, bars, and text. It
 takes the following groups of properties:
 
-* Common properties.
-* Position style properties.
-* Window properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
 
 It takes one child. If zero, two, or more children are supplied, then
 a fixed is created to contain them.
@@ -323,8 +325,8 @@ following property:
 
 It also takes:
 
-* Common properties.
-* Position style properties
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 This must be given columns * rows children. Giving it a different
 number of children is an error.
@@ -350,9 +352,9 @@ Hbox
 This displays its children side by side, in an invisible horizontal
 box. It takes no parameters, and the following groups of properties:
 
-* Common properties.
-* Position style properties.
-* Box style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`box-style-properties`
 
 UI displayable children are added to the box.
 
@@ -407,10 +409,10 @@ properties:
 
 It also takes:
 
-* Common properties.
-* Position style properties.
-* Window style properties.
-* Button style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
+* :ref:`button-style-properties`
 
 This takes no children.
 
@@ -459,9 +461,9 @@ interaction. This takes no parameters, and the following properties:
 
 It also takes:
 
-* Common properties.
-* Positions style properties.
-* Text style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`text-style-properties`
 
 This does not take any children.
 
@@ -513,8 +515,8 @@ the following properties:
 
 It also takes:
 
-* Common properties.
-* Position style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 It does not take children.
 
@@ -541,8 +543,8 @@ one of:
 
 A side takes the following property groups:
 
-* Common properties.
-* Position style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 When being rendered, this first sizes the corners, then the sides,
 then the center. The corners and sides are rendered with an available
@@ -567,9 +569,9 @@ Text
 The text statement displays text. It takes a single parameter, the
 text to display. It also takes the following groups of properties:
 
-* Common properties.
-* Position style properties.
-* Text style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`text-style-properties`
 
 It does not take children.
 
@@ -597,10 +599,10 @@ following properties:
 
 It also takes:
 
-* Common properties.
-* Position style properties.
-* Window style properties.
-* Button style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
+* :ref:`button-style-properties`
 
 It does not take children.
 
@@ -643,7 +645,7 @@ Transform
 Applies a transform to its child. This takes no parameters, and the
 following property groups :
 
-* Common properties.
+* :ref:`Common Properties <common-properties>`
 * Transform properties.
 
 This should take a single child.
@@ -672,9 +674,9 @@ This displays its children one above the other, in an invisible
 vertical box. It takes no parameters, and the following groups of
 properties:
 
-* Common properties.
-* Position style properties.
-* Box style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`box-style-properties`
 
 UI displayable children are added to the box.
 
@@ -712,8 +714,8 @@ following properties:
 
 In addition, it takes the following groups of style properties:
 
-* Common properties.
-* Positions style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 It takes one child. If zero, two, or more children are supplied, then
 a fixed is created to contain them.
@@ -743,9 +745,9 @@ A window is a window that contains a background that is intended for
 displaying in-game dialogue. It takes the following groups of
 properties:
 
-* Common properties.
-* Position style properties.
-* Window properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
 
 It takes one child. If zero, two, or more children are supplied, then
 a fixed is created to contain them.
@@ -833,8 +835,8 @@ parameters, and the following properties:
 
 It takes the following groups of properties:
 
-* Common properties.
-* Position style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 An imagemap creates a fixed, allowing any child to be added to it (not
 just hotspots and hotbars).
@@ -859,10 +861,8 @@ also takes the following properties:
 
 It also takes:
 
-* Common properties.
-* Position style properties.
-* Window style properties.
-* Button style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`button-style-properties`
 
 A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
@@ -891,9 +891,8 @@ also takes the following properties:
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
-* Common properties.
-* Position style properties.
-* Bar style properties.
+* :ref:`Common Properties <common-properties>`
+* :ref:`bar-style-properties`
 
 This does not take children.
 
