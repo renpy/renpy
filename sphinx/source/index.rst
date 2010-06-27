@@ -2,7 +2,7 @@ Welcome to Ren'Py's documentation!
 ==================================
 
 We're in the process of rewriting Ren'Py's documentation. While what
-we have here is the most up-to-date documentation, it's also
+we have here is the most up-to-date documentation, it's also very
 incomplete. To find out more about Ren'Py, please visit the Ren'Py
 home page:
 
@@ -16,7 +16,7 @@ The Ren'Py Language
    :maxdepth: 2
 
    language_basics
-
+   atl
 
 Customizing Ren'Py
 ------------------

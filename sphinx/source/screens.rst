@@ -170,9 +170,9 @@ Add
 ---
 
 Adds an image or other displayable to the screen. This optionally
-takes transform properties. If at least one transform property is
-given, a Transform is created to wrap the image, and the properties
-are given to the transform.
+takes :ref:`transform properties <transform-properties>`. If at least
+one transform property is given, a Transform is created to wrap the
+image, and the properties are given to the transform.
 
 This does not take any children.
 
@@ -646,7 +646,7 @@ Applies a transform to its child. This takes no parameters, and the
 following property groups :
 
 * :ref:`Common Properties <common-properties>`
-* Transform properties.
+* :ref:`Transform Properties <transform-properties>`
 
 This should take a single child.
 
