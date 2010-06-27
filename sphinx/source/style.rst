@@ -119,8 +119,9 @@ while the :propref:`color` property sets the color of text. ::
 Style Property Values
 =====================
 
-Each style property expects a specific kind of data. Here's a list of
-the different kinds of value a style property can expect:
+Each style property expects a specific kind of data. Many of these are
+standard python types, but a few are novel. Here are descriptions of
+the novel kinds of value a style property can expect.
 
 `position`
     Positions are used to specify locations relative to the upper-left
@@ -145,9 +146,30 @@ the different kinds of value a style property can expect:
         from the left or top side of the screen, when using
         subpixel-precise rendering.
 
-
+`displayable`
+    Any displayable.
         
+`color`
+    Colors in Ren'Py can be expressed as strings beginning with the
+    hash mark (#), followed by a hex triple or hex quadruple, with
+    each of the three or four elements consisting of a one or two
+    hexidecimal character color code.
 
+    In a triple, the components represent red, green, and blue. In a
+    quadruple, the components represent red, green, blue, and alpha.
+    For example:
+
+    * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
+    * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent
+      green color.
+
+    The color triples are the same as used in HTML.
+
+    Colors can also be represented as a 4-component tuple, with the 4
+    components being integers between 0 and 255. The components
+    correspond to red, green, blue, and alpha, in that order.
+
+    * ``(0, 0, 255, 255)`` represents an opaque blue color. 
          
 List of All Style Properties
 ============================
@@ -636,6 +658,105 @@ These are used for the horizontal and vertical box layouts.
     this box, in pixels. This overrides the spacing property.
 
    
-Customizing Styles
-------------------
 
+Creating New Named Styles
+=========================
+
+Named styles exists as fields on the global ``style`` object. To
+create a new style, create an instance of the Style class, and assign
+it to a field on the ``style`` object. ::
+
+    init python:
+         style.big_text = Style(style.default)
+         style.big_text.size = 42
+         
+Once created, a named style can be applied to displayables by
+supplying it's name, or the style object. ::
+
+    screen two_big_lines:
+         vbox:
+             text "This is Big Text!" style "big_text"
+             text "So is this." style style.big_text
+         
+.. class:: Style(parent)
+
+    Creates a new style object. Style properties can be assigned to
+    the fields of this object.
+
+    `parent`
+        The styles parent. This can be another style object, or a
+        string. 
+
+.. method:: clear()
+
+    This removes all style properties from this object. Values will be
+    inherited from this object's parent.
+
+.. method:: set_parent(parent)
+
+    Sets the parent of this style object to `parent`.
+
+.. method:: take(other)
+
+    This takes all style properties from `other`. `other` must be a
+    style object.
+
+
+Indexed Styles
+--------------
+
+Indexed styles are lightweight styles that can be used to customize
+the look of a displayable based on the data supplied to that
+displayable. An index style is created by indexing a style object with
+a string or integer. If an indexed style does not exist, indexing
+creates it. ::
+
+    init python:
+        style.button['Foo'].background = "#f00"
+        style.button['Bar'].background = "#00f"
+
+An index style is used by supplying the indexed style to a
+displayable. ::
+
+    screen indexed_style_test:
+        vbox:
+            textbutton "Foo" style style.button["Foo"]
+            textbutton "Bar" style style.button["Bar"]
+
+
+Style Inheritance
+-----------------
+
+When a property is not defined by a style, it is inherited from the
+style's parent. When indexing is involved, properties are inherited
+first from the unindexed form of the style, then from the indexed form
+of the parent, then the unindexed form of the parent, and so on.
+
+For example, when ``style.mm_button inherits`` from ``style.button``, which in
+turn inherits from ``style.default``, then the properties of
+``style.mm_button["Start Game"]`` are taken from:
+
+#. ``style.mm_button["Start Game"]``
+#. ``style.mm_button``
+#. ``style.button["Start Game"]``
+#. ``style.button``
+#. ``style.default["Start Game"]``
+#. ``style.default``
+
+With the property value taken from the lowest numbered style with the
+property defined.
+
+
+Other Style Functions
+---------------------
+
+.. function:: style.rebuild()
+
+   This causes named styles to be rebuilt, allowing styles to be
+   changed outside of init code.
+
+   .. warning::
+
+      Named styles are not saved as part of the per-game data. This
+      means that changes to them will not be persisted through a save
+      and load cycle.
