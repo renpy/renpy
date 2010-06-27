@@ -1,0 +1,81 @@
+Incompatible Changes
+====================
+
+This is a list of changes that may require intervention in the form of
+changes to scripts or your development environment. Our intent is that
+all other changes should not affect existing scripts.
+
+Note that setting :var:`config.script_version` will cause many of
+these changes to be reverted, at the cost of losing access to recent
+features.
+
+.. _incompatible-6.11.0:
+
+6.11.0
+------
+
+* The transform specified by the :var:`config.default_transform`
+  variable is used to initialize the transform properties of images
+  shown using the show and hide statements. The default value of this
+  transform sets :propref:`xpos` and :propref:`xanchor` to 0.5, and
+  :propref:`ypos` and :propref:`yanchor` to 1.0.
+
+  This represents a change in the default value of these style
+  properties, which were previously uninitialized and hence defaulted
+  to 0. 
+
+  By including the :var:`reset` transform in ATL transforms, these
+  properties can be reset back to 0. Alternatively, one can stop using
+  the default transform, and revert to the old behavior, using the
+  code::
+
+    init python:
+        style.image_placement.xpos = 0.5
+        style.image_placement.ypos = 1.0
+        style.image_placement.xanchor = 0.5
+        style.image_placement.yanchor = 1.0
+
+        config.default_transform = None
+
+* If a transform does not define one of the position properties
+  :propref:`xpos`, :propref:`ypos`, :propref:`xanchor`, or
+  :propref:`yanchor`, that property will be taken from the transform's
+  child, if the defines that property.
+
+  This makes it possible to have one transform control a displayable's
+  vertical motion, and the other control the horizontal. But this is
+  incompatible with previous behavior, and so can be disabled with the
+  :var:`config.transform_uses_child_position` variable. ::
+
+    init python:
+        config.transform_uses_child_position = False
+  
+.. _incompatible-6.10.1:
+
+6.10.0
+------
+
+* The default positions (left, right, center, truecenter,
+  offscreenleft, and offscreenright) are now defined as ATL
+  transforms. This means that showing an image at such a position will
+  cause the position to be remembered. If you do not want this
+  behavior, you need to redefine these positions, by adding the code::
+
+    define left = Position(xalign=0.0)
+    define center = Position(xalign=0.5)
+    define truecenter = Position(xalign=0.5, yalign=0.5)
+    define right = Position(xalign=1.0)
+    define offscreenleft = Position(xpos=0.0, xanchor=1.0)
+    define offscreenright = Position(xpos=1.0, xanchor=0.0)
+
+.. _incompatible-6.9.2: 
+    
+6.9.2 
+-----
+
+* To migrate your game from Ren'Py 6.9.2 or later, copy the directory
+  containing your game into your projects directory. You can choose a
+  projects directory by clicking "Options", "Projects Directory" in the
+  Launcher. Please see the
+  `Ren'Py 6.9.2 release notes <http://www.renpy.org/wiki/renpy/releases/6.9.2>`_
+  for information about migrating from older releases.

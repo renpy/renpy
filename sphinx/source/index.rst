@@ -38,4 +38,12 @@ Python and Ren'Py
 
    screen_python
    
-   
+Changes to Ren'Py
+-----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   changelog
+   incompatible
+   distributor
