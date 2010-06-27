@@ -687,19 +687,19 @@ supplying it's name, or the style object. ::
         The styles parent. This can be another style object, or a
         string. 
 
-.. method:: clear()
+    .. method:: clear()
 
-    This removes all style properties from this object. Values will be
-    inherited from this object's parent.
+        This removes all style properties from this object. Values will be
+        inherited from this object's parent.
 
-.. method:: set_parent(parent)
+    .. method:: set_parent(parent)
 
-    Sets the parent of this style object to `parent`.
+        Sets the parent of this style object to `parent`.
 
-.. method:: take(other)
+    .. method:: take(other)
 
-    This takes all style properties from `other`. `other` must be a
-    style object.
+        This takes all style properties from `other`. `other` must be a
+        style object.
 
 
 Indexed Styles

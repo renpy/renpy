@@ -152,7 +152,6 @@ Occasionally Used
     * lucy/mad.png, Ren'Py will define the image "lucy mad".
     * mary.png, Ren'Py will do nothing. (As the image does not have two components.)
 
-
 .. var:: config.automatic_images_strip = []
 
     A list of strings giving prefixes that are stripped out when
@@ -213,6 +212,14 @@ Occasionally Used
 
     Persistent data must be deleted for this to take effect.
 
+.. var:: config.default_transform = ...
+
+    When a displayable is shown using the show or scene statements,
+    the transform properties are taken from this transform and used to
+    initialize the values of the displayable's transform.
+
+    The default default transform is :var:`center`.
+    
 .. var:: config.empty_window = ...
 
     This is called when _window is True, and no window has been shown
@@ -302,7 +309,6 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
-
 .. var:: config.hyperlink_callback = ...
 
     A function that is called with the argument to a hyperlink (the
@@ -345,7 +351,6 @@ Occasionally Used
     The transition used when entering the game menu from the main
     menu, as is done when clicking "Load Game" or "Preferences".
 
-
 .. var:: config.main_menu = [ ... ]
 
     The default main menu, when not using screens. For more details,
@@ -364,7 +369,6 @@ Occasionally Used
 
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
-
 
 .. var:: config.misssing_background = "black"
 
@@ -410,10 +414,14 @@ Occasionally Used
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
-    return a list of displayables, which are added to the overlay
-    list. See the section on overlays for more.
+    use ui functions to add displayables to the overlay layer.
 
+.. var:: config.quit_action = ...
 
+    The action that is called when the user clicks the quit button on
+    a window. The default action prompts the user to see if he wants
+    to quit the game.
+    
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -434,12 +442,10 @@ Occasionally Used
 
     When using a load_save layout, a different default may be used. 
 
-
 .. var:: config.window_hide_transition = None
 
     The transition used by the window hide statement when no
     transition has been explicitly specified.
-
 
 .. var:: config.window_overlay_functions = []
 
@@ -518,6 +524,9 @@ Rarely or Internally Used
     A list of names of layers to clear when entering the main and game
     menus.
 
+.. var:: config.context_clear_layers = [ 'screens' ]
+
+    A list of layers that are cleared when entering a new context.
 
 .. var:: config.editor = None
 
@@ -778,6 +787,12 @@ Rarely or Internally Used
     config.show is used to show a new image. This should have the same
     signature as renpy.scene.
 
+.. var:: config.screenshot_crop = None
+
+    If not None, this should be a (`x`, `y`, `height`, `width`)
+    tuple. Screenshots are cropped to this rectangle before being
+    saved. 
+    
 .. var:: config.script_version = None
 
     If not None, this is interpreted as a script version. The library
@@ -841,6 +856,11 @@ Rarely or Internally Used
     layers. Transient layers are layers that are cleared after each
     interaction. "transient" should always be in this list.
 
+.. var:: config.transform_uses_child_position = True
+
+    If True, transforms will inherit position properties from their
+    child. If not, they won't.
+    
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a with

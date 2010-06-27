@@ -532,6 +532,42 @@ channels = { }
 
 
 def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix=""):
+    """
+    :doc: other
+
+    This registers a new audio channel named `name`. Audio can then be
+    played on the channel by supplying the channel name to the play or
+    queue statements.
+
+    `mixer`
+        The name of the mixer the channel uses. By default, Ren'Py
+        knows about the "music", "sfx", and "voice" mixers. Using
+        other names is possible, but may require changing the
+        preferences screens.
+
+    `loop`
+        If true, sounds on this channel loop by default.
+
+    `stop_on_mute`
+        If true, music on the channel is stopped when the channel is muted.
+        
+    `tight`
+        If true, sounds will loop even when fadeout is occuring. This should
+        be set to True for a sound effects or seamless music channel, and False
+        if the music fades out on its own.
+
+    `file_prefix`
+        A prefix that is prepended to the filenames of the sound files being
+        played on this channel.
+
+    `file_suffix`
+        A suffix that is appended to the filenames of the sound files being
+        played on this channel.
+    """
+
+    
+    
+
     if not renpy.game.init_phase:
         raise Exception("Can't register channel outside of init phase.")
 

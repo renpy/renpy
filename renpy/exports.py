@@ -1359,7 +1359,7 @@ def call_screen(_screen_name, **kwargs):
     
 def list_files(common=False):
     """
-    :doc: files
+    :doc: other
 
     Lists the files in the game directory and archive files. Returns
     a list of files, with / as the directory separator.

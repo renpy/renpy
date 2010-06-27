@@ -1360,10 +1360,13 @@ class AdjustTimes(Container):
 
 class LiveTile(Container):
     """
-    :doc: displayable
+    :doc: other
     
     Tiles the `child` displayable until it fills the area allocated to
     this displayable.
+
+    The size of the displayable can be set with the :propref:`xmaximum` and
+    :propref:`ymaximum` style properties.
     """
     
     def __init__(self, child, style='tile', **properties):

@@ -37,6 +37,7 @@ Python and Ren'Py
    :maxdepth: 2
 
    screen_python
+   other
    
 Changes to Ren'Py
 -----------------

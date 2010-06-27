@@ -8,10 +8,52 @@ Ren'Py 6.11.0
 OpenGL Support
 --------------
 
+Ren'Py will now take advantage of a computer's OpenGL hardware
+acceleration, if supported. This OpenGL support has several
+user-visible changes:
+
+* The window containing a Ren'Py game can be resized or maximized,
+  using standard window controls. When the window's aspect ratio does
+  not match the game's aspect ratio, black bars will be added.
+
+* Displaying in full-screen mode should not change the monitor's
+  resolution. This will prevent the game from being distorted when
+  displayed on a monitor with a different aspect ratio.
+
+* Unless disabled in the video driver configuration, Ren'Py will use
+  vertical blank synchronization, eliminating image tearing.
+
+* GPU rendering is used, which should make drawing the screen faster
+  in most circumstances.
+
+Software rendering is still supported, and Ren'Py will automatically
+fall back to software rendering if it detects an improperly configured
+video card.
+
+You can test that Ren'Py is in OpenGL mode by attempting to resize the
+window. If it's resizable, it's OpenGL, otherwise, software rendering
+is being used.
+
+  
 Screens and Screen Language
 ---------------------------
 
-TODO: Document config.screen_layers.
+This release introduces a new screen system, which allows one to use
+the new screen language to declaratively specify portions of the user
+interface. The screen language supersedes layouts, overlay functions,
+imagemaps, and most other means of customizing the out-of-game menus
+and the in-game screens.
+
+The previous way of customizing the behavior of the game menu, the
+layout system, had problems, especially when using imagemap
+layouts. Screens were single-purpose, and it would be difficult to
+(for example) load a quick-save game from the main menu, without
+extensive Python code.
+
+The screen system addresses this by providing a pool of functionality,
+in the form of Actions and BarValues. This makes it possible to pick
+and choose functionality, and add it to screens as is deemed
+necessary.
 
 Transform Changes
 -----------------
@@ -30,7 +72,7 @@ Transform Changes
   specify the initial transform properties of an image that does not
   have a more specific transform applied to it. Its default value is
   center, a transform that shows the image at the center-bottom of the
-  screen. [doc]
+  screen.
 
   This can lead to a behavior change. When an image is shown, and then
   shown transforms, the transform will be initialized to the bottom
@@ -45,7 +87,7 @@ Transform Changes
 * Added the rotate_pad transform property, which controls how
   Transform pads rotated displayables. When set to False, _not_ the
   default, it's now possible to rotate a (100, 50) displayable by 90
-  degrees, and have the result be (50, 100) in size.
+  degrees, and have the result be (50, 100) in size. [doc]
 
 Other Changes
 -------------
@@ -53,7 +95,6 @@ Other Changes
 * The Ren'Py documentation is in the process of being rewritten. This
   changelog is now being maintained as part of the Ren'Py
   documentation.
-
 
 * Added support for composite style properties, that allow several style
   properties to be set using a single parameter. The new composite style
@@ -72,25 +113,25 @@ Other Changes
 * ui.add can now take transform properties as keyword arguments. If at
   least one transform property is present, ui.add will create a
   transform that wraps the displayable it's adding to the
-  screen. [doc]
+  screen. 
 
-* The new LiveTile displayable tiles its child, without consuming a
-  large amount of memory to do so. [doc]
+* The new :func:`LiveTile` displayable tiles its child, without consuming a
+  large amount of memory to do so.
 
-* config.quit_action allows one to specify an action that is run when
+* :var:`config.quit_action` allows one to specify an action that is run when
   the quit button (in the corner of the window) is pressed.
   config.game_menu_action allows one to specify an action that is run
-  when entering the game menu. [doc]
+  when entering the game menu. 
 
-* The config.screenshot_crop configuration variable controls the area of
-  the screen that it stored when the user presses the screenshot key. [doc]
+* The :var:`config.screenshot_crop` configuration variable controls the area of
+  the screen that it stored when the user presses the screenshot key. 
 
-* The renpy.music.register_channel method now has two additional
+* The :func:`renpy.music.register_channel` method now has two additional
   parameters, file_prefix and file_suffix. These are prepended and
   appended to filenames provided to the registered channel,
   respectively.
   
-* The new renpy.list_files method returns a list of files in the game
+* The new :func:`renpy.list_files` method returns a list of files in the game
   directory and archives. This can be used to write your own automatic
   image loading method, among other things.
 
@@ -104,7 +145,9 @@ Other Changes
   
 * The python compiler has been rewritten to use the python ast module.
   This should both improve performance, and improve error handling for
-  python syntax. 
+  python syntax.
+
+  Because of this change, Ren'Py now ships with and requires Python 2.6.
 
 * The following numbered bugs were fixed:
 
