@@ -458,7 +458,6 @@ class ADVCharacter(object):
         self.dynamic = v('dynamic')
         self.screen = v('screen')
         
-
         self.display_args = dict(
             interact = d('interact'),
             slow = d('slow'),
@@ -609,7 +608,14 @@ class ADVCharacter(object):
             who = self.name
 
         return self.do_predict(who, what)
-            
+
+    def will_interact(self):
+
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+            return False
+
+        return self.display_args['interact']
+        
 def Character(name=NotSet, kind=None, **properties):
     if kind is None:
         kind = renpy.store.adv

@@ -29,7 +29,6 @@
 import renpy
 import re
 import time
-import sys
 
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):
@@ -374,7 +373,20 @@ class Say(Node):
 
     def scry(self):
         rv = Node.scry(self)
-        rv.interacts = True # W0201
+
+        if self.who is not None:
+            if self.who_fast:
+                who = getattr(renpy.store, self.who)
+            else:
+                who = renpy.python.py_eval(self.who)
+        else:
+            who = None
+
+        if self.interact:            
+            renpy.exports.scry_say(who, rv)
+        else:
+            rv.interacts = False
+            
         return rv
     
 # Copy the descriptor.

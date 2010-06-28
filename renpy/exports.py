@@ -531,7 +531,17 @@ def predict_say(who, what):
         return predict(what)
     else:
         return [ ]
+
+def scry_say(who, scry):
+    """
+    Called when scry is called on a say statement. Needs to set
+    the interacts field.
+    """
     
+    try:
+        scry.interacts = who.will_interact()
+    except:
+        scry.interacts = True
         
 def say(who, what, interact=True):
     """
@@ -1198,7 +1208,6 @@ def pop_error_handler():
 def error(msg):
     _error_handlers[-1](msg)
     
-
 def timeout(seconds):
     renpy.game.interface.timeout(seconds)
 
