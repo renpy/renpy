@@ -151,15 +151,22 @@ Other Changes
 
 * The following numbered bugs were fixed:
 
-  * lp:526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)
-  * lp:595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)
- 
-* Renamed the internal show and hide methods of Displayable, so those
-  names can once again be used by user-defined displayables.
+  * 520276 - ctc does not appear when cps interrupted
+  * 526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)
+  * 543785 - Launcher bug on select Projects Directory
+  * 583112 - rollback while a movie displayable is shown leaves a video frame onscreen
+  * 595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)
+  
+* The following other bugs were fixed:
+  
+  * Renamed the internal show and hide methods of Displayable, so those
+    names can once again be used by user-defined displayables.
 
-* Rewrote MultipleTransition (which is used by Fade) to fix some
-  problems it was exhibiting.
+  * Rewrote MultipleTransition (which is used by Fade) to fix some
+    problems it was exhibiting.
 
+  * Take the condition parameter to Character into account when determining
+    if an nvl clear occurs before the next interaction.
 
 
 

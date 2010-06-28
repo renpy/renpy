@@ -4,6 +4,11 @@ init python:
     import sys
     import platform
     import subprocess
+
+    # Set the projects directory to None if it no longer exists.
+    if persistent.projects_directory is not None:
+        if not os.path.isdir(persistent.projects_directory):
+            persistent.projects_directory = None
     
     ZWSP = u"\u200B"
 
