@@ -902,7 +902,7 @@ class Bar(renpy.display.core.Displayable):
                 adjustment = value.get_adjustment()
                 renpy.game.interface.timeout(0)
             else:                 
-                adjustment = Adjustment(range, value, step=step, page=page, changed=changed, adjustable=False)
+                adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
 
         if style is None:
             if self.value is not None:

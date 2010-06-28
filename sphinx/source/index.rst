@@ -39,8 +39,8 @@ Python and Ren'Py
    screen_python
    other
    
-Changes to Ren'Py
------------------
+Changes and License
+-------------------
 
 .. toctree::
    :maxdepth: 1
@@ -48,3 +48,4 @@ Changes to Ren'Py
    changelog
    incompatible
    distributor
+   license

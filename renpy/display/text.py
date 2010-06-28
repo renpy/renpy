@@ -907,7 +907,7 @@ class Text(renpy.display.core.Displayable):
                 renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
 
         if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
-            self.slow = False
+            self.call_slow_done(st)
             raise renpy.display.core.IgnoreEvent()
 
         if self.no_wait_done:
