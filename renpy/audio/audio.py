@@ -800,6 +800,16 @@ def interact():
 
     periodic()
 
+def rollback():
+    """
+    On rollback, we want to stop all the channels with non-empty sounds.
+    """
+
+    for c in all_channels:
+        if not c.loop:
+            c.fadeout(0)
+            
+    
 
 ALLOC_EVENT = pygame.USEREVENT
 REFRESH_EVENT = pygame.USEREVENT + 1

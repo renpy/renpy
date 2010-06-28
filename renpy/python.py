@@ -876,6 +876,9 @@ class RollbackLog(renpy.object.Object):
         # Flag that we're in the transition immediately after a rollback.
         renpy.game.after_rollback = True
 
+        # Stop the sounds.
+        renpy.audio.audio.rollback()
+        
         # Restart the game with the new state.
         raise renpy.game.RestartException(renpy.game.contexts[:], label)
 
