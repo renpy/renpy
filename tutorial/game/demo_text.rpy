@@ -86,7 +86,7 @@ label demo_text:
 
     e "And we want to give you all the power you need."
 
-    e "There are a couple of text adjustments that don't corrrespond to text tags."
+    e "There are a couple of text adjustments that don't correspond to text tags."
 
     eoutline "The outlines setting lets you put outlines around the text."
 
