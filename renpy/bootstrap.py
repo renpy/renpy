@@ -88,18 +88,9 @@ def mac_start(fn):
     os.system("open " + fn)
 
 # This code fixes a bug in subprocess.Popen.__del__
-def popen_del(self, _deadstate=sys.maxint):
-    if not self._child_created:
-        return
-    self.poll(_deadstate=_deadstate)
+def popen_del(self, *args, **kwargs):
+    return
 
-    try:
-        import subprocess # W0403
-        if self.returncode is None and subprocess._active is not None: # E1101
-            subprocess._active.append(self) # E1101
-    except:
-        pass
-            
 def bootstrap(renpy_base):
 
     global renpy # W0602
@@ -233,10 +224,6 @@ def bootstrap(renpy_base):
         import renpy.display.presplash # W0404
         renpy.display.presplash.start(gamedir)
 
-    # Fix an exception thrown by garbage collection.
-    import subprocess # W0403
-    subprocess.Popen.__del__ = popen_del # E1101
-
     # If we're on a mac, install our own os.start.
     if sys.platform == "darwin":
         os.startfile = mac_start
@@ -303,6 +290,11 @@ def bootstrap(renpy_base):
 
     renpy.display.im.cache.quit()
     
+    # Prevent subprocess from throwing errors while trying to run it's
+    # __del__ method during shutdown.
+    import subprocess # W0403
+    subprocess.Popen.__del__ = popen_del # E1101
+
     sys.exit(0)
 
 

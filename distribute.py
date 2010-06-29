@@ -175,6 +175,11 @@ def main():
         "_renpybidi.c",
         "renpybidicore.c",
         "_renpybidi.pyx",
+        "_renpy_pysdlgl.c",
+        "_renpy_pysdlgl.pyx",
+        "_renpy_tegl.c",
+        "maketegl.py",
+        "maketegl.txt",
         ]
 
     for i in module_files:

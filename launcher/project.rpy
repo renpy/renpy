@@ -225,7 +225,7 @@ label launch:
         set_tooltip(_(u"%s has been launched.") % project.name.capitalize())
 
         store.game_proc = proc
-
+        
     jump top
 
 

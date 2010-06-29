@@ -83,7 +83,7 @@ label top:
                _(u"Visit the Ren'Py games list, at http://games.renpy.org."))
         
         button(_(u"Quit"),
-               renpy.quit,
+               ui.jumps("launcher_quit"),
                _(u"Causes the launcher to exit."))
         
         button(_(u"Options"),
@@ -133,7 +133,8 @@ label renpy_games_list:
         set_tooltip(_(u"Now showing the Ren'Py Games List in your web browser."))
 
     jump top
-        
+
+label launcher_quit:
 label confirm_quit:
     $ renpy.quit()
     
