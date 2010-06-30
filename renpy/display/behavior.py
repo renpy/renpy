@@ -214,13 +214,20 @@ class PauseBehavior(renpy.display.layout.Null):
         self.delay = delay
         self.result = result 
 
-
     def event(self, ev, x, y, st):
 
-        if self.delay is not None and st >= self.delay:
-            return self.result
+        if st >= self.delay:
 
-        renpy.game.interface.timeout(self.delay - st)
+            # If we have been drawn since the timeout, simply return
+            # true. Otherwise, force a redraw, and return true when
+            # it comes back.
+            if renpy.game.interface.drawn_since(st - self.delay):
+                return self.result
+            else:
+                renpy.game.interface.force_redraw = True
+
+
+        renpy.game.interface.timeout(max(self.delay - st, 0))
 
 class SoundStopBehavior(renpy.display.layout.Null):
     """

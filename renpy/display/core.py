@@ -1595,8 +1595,15 @@ class Interface(object):
         tex = renpy.display.im.load_image(img)
 
         return False, x, y, tex
-            
-    
+
+    def drawn_since(self, seconds_ago):
+        """
+        Returns true if the screen has been drawn in the last `seconds_ago`,
+        and false otherwise.
+        """
+
+        return (get_time() - self.frame_time) <= seconds_ago
+        
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -1853,15 +1860,13 @@ class Interface(object):
                     self.set_mode()
                     needs_redraw = True
 
-                # Check for a forced redraw.
-                if self.force_redraw:
-                    needs_redraw = True
-                    self.force_redraw = False
-
                 # Redraw the screen.
 
-                if ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
-                    renpy.display.draw.should_redraw(needs_redraw, first_pass)):
+                if (self.force_redraw or
+                    ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
+                     renpy.display.draw.should_redraw(needs_redraw, first_pass))):
+
+                    self.force_redraw = False
                     
                     # If we have a movie, start showing it.
                     fullscreen_video = renpy.display.video.interact()
@@ -2143,8 +2148,6 @@ class Interface(object):
             # print "It took", frames, "frames."
 
     def timeout(self, offset):
-        if offset < 0:
-            return
 
         if self.timeout_time:
             self.timeout_time = min(self.event_time + offset, self.timeout_time)

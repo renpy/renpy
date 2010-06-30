@@ -301,11 +301,12 @@ class GLDraw(object):
     def should_redraw(self, needs_redraw, first_pass):
         """
         Redraw whenever the screen needs it, but at least once every
-        quarter-second. We rely on VSYNC to slow down our maximum
+        1/20 seconds. We rely on VSYNC to slow down our maximum
         draw speed.
         """
-                
-        if needs_redraw or first_pass or time.time() > self.last_redraw_time + .25:
+
+        if needs_redraw or first_pass or time.time() > self.last_redraw_time + .20:
+            self.last_redraw_time = time.time()
             return True
         else:
             return False
