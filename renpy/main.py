@@ -170,7 +170,7 @@ def main():
 
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
-    game.script = renpy.script.load_script()
+    renpy.script.load_script() # sets renpy.game.script.
 
     if renpy.parser.report_parse_errors():
         raise renpy.game.ParseErrorException()

@@ -46,84 +46,33 @@ class InvalidType(Exception):
 # Sentinel type used for classes that do not have a default type.
 NoDefault = object()
 
-class Type(renpy.object.Object):
-    """
-    Base class for types.
-    """
+# Types are functions from a lexer to a renpy.ast.PyCode object.
+def Word(l):
+    code = repr(l.require(l.word))
+    return renpy.ast.PyCode(code, mode='eval')
 
-    default = NoDefault
 
-    def __init__(self, l):
+def ImageName(l):
+    rv = [ ]
 
-        try:
-            self.state = self.parse(l)
-        except renpy.parser.ParseError:
-            if self.default:
-                self.state = self.default
-            else:
-                raise
-                
-    def parse(self, l):
-        """
-        The parse method is responsible for parsing an expression of the given
-        type. It returns some state, or raises InvalidType if it can't.
-        """
+    rv.append(l.require(l.word))
 
-        # Since most of the types are really wrappers around simple_expression,
-        # we default to that.
-        return l.require(l.simple_expression)
-            
+    while True:
+        n = l.word()
+        if n is None:
+            break
 
-    def evaluate(self, state, scope):
-        """
-        This is called at runtime with the result of parse, and is
-        responsible for returning an actual value. It can also raise
-        InvalidType if the expression does not return the appropriate
-        type.
-        """
+        rv.append(n)
 
-        raise NotImplemented
+    code = repr(tuple(rv))
+    return renpy.ast.PyCode(code, mode='eval')
 
-    def get_value(self, scope):
-        return self.evaluate(self.state, scope)
 
-# class Name(Type):
-#     def parse(self, l):
-#         return l.require(l.word)
+def Expression(l):
+    source = l.require(l.simple_expression)
+    return renpy.ast.PyCode(source, mode='eval')
 
-#     def evaluate(self, state, scope):
-#         return state
 
-class Word(Type):
-    def parse(self, l):
-        return l.require(l.word)
-
-    def evaluate(self, state, scope):
-        return state
-
-class ImageName(Type):
-    def parse(self, l):
-        rv = [ ]
-
-        rv.append(l.require(l.word))
-
-        while True:
-            n = l.word()
-            if n is None:
-                break
-
-            rv.append(n)
-        
-        return tuple(rv)
-
-    def evaluate(self, state, scope):
-        return state
-    
-class Expression(Type):
-    def evaluate(self, state, scope):
-        return eval(state, renpy.store.__dict__, scope)
-    
-    
 ##############################################################################
 # Parsing.
 
@@ -346,46 +295,60 @@ class FunctionStatementParser(Parser):
                 while not l.eol():
                     parse_keyword(l)
 
-        return FunctionStatement(loc, self.function, self.nchildren, positional, keyword, children, self.unevaluated)
+        if self.unevaluated:
+            return UnevaluatedFunctionStatement(loc, self.function, self.nchildren, positional, keyword, children)
+        else:
+            return FunctionStatement(loc, self.function, self.nchildren, positional, keyword, children)
+
 
 class FunctionStatement(renpy.object.Object):
-    def __init__(self, loc, function, nchildren, positional, keyword, children, unevaluated):
+    def __init__(self, loc, function, nchildren, positional, keyword, children):
         self.location = loc
         self.function = function
         self.nchildren = nchildren
         self.positional = positional
         self.keyword = keyword
         self.children = children
-        self.unevaluated = unevaluated
-
                 
     def evaluate(self, name, scope):
 
-        with location(self.location):
+        try:
+            peb = renpy.python.py_eval_bytecode
+            store = renpy.store.__dict__
+            sk = self.keyword
+            
+            positional = [ peb(i.bytecode, store, scope) for i in self.positional ]
+            keyword = dict((k, peb(sk[k].bytecode, store, scope)) for k in self.keyword)
 
-            if self.unevaluated:
-                return self.function(self.positional, self.keyword, self.children)
-
-            positional = [ i.get_value(scope) for i in self.positional ]
-            keyword = dict((k, v.get_value(scope)) for k, v in self.keyword.iteritems())
-
-            if "id" not in keyword:
-                keyword["id"] = name
-
+            keyword.setdefault("id", name)
+            
             rv = self.function(*positional, **keyword)
+                        
+            nchildren = self.nchildren
+            
+            if nchildren == 1:
+              renpy.ui.child_or_fixed()
 
-            if self.nchildren == 1:
-                renpy.ui.child_or_fixed()
-
-            for i, child in enumerate(self.children):
+            i = 0
+            for child in self.children:
+                i += 1                
                 child.evaluate(name + (i, ), scope)
 
-            if self.nchildren != 0:
-                renpy.ui.close() 
+            if nchildren:
+               renpy.ui.close() 
 
             return rv
         
+        except:
+            file, number = self.location
+            renpy.game.exception_info = "Executing screen code at %s:%d" % (file, number)
 
+            raise
+
+class UnevaluatedFunctionStatement(FunctionStatement):
+    def evaluate(self, name, scope):
+        return self.function(self.positional, self.keyword, self.children)
+        
 ##############################################################################
 # Definitions of screen language statements.
 
@@ -1003,9 +966,7 @@ class ScreenFunction(renpy.object.Object):
             child.evaluate(_name + (i,), _scope)
     
 def screen_function(positional, keyword, children):
-    scope = { }
-
-    name = positional[0].get_value(scope)
+    name = renpy.python.py_eval(positional[0].source)
     function = ScreenFunction(children)
 
     values = {
@@ -1014,7 +975,7 @@ def screen_function(positional, keyword, children):
         }
 
     for k, v in keyword.iteritems():
-        values[k] = v.get_value(scope)
+        values[k] = renpy.python.py_eval(v.source)
 
     return values
 

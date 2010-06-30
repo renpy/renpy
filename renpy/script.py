@@ -94,6 +94,10 @@ class Script(object):
         walking the various ASTs to initialize this Script object.
         """
 
+        # Set us up as renpy.game.script, so things can use us while
+        # we're loading.
+        renpy.game.script = self
+        
         # A key that's used to lock the script file, should that
         # prove necessary.
         self.key = renpy.game.options.lock
@@ -330,9 +334,6 @@ class Script(object):
             if init:
                 initcode.append(init)
 
-            # Add any PyCode to all_pycode.
-            self.all_pycode.extend(node.get_pycode())
-
             if isinstance(node, renpy.ast.EarlyPython):
                 early.append(node)
             
@@ -492,7 +493,6 @@ class Script(object):
         return label in self.namemap
 
 def load_script():
-    rv = Script()
-    return rv
+    Script()
     
 

@@ -960,9 +960,27 @@ def py_exec(source, hide=False, store=None):
 
     exec py_compile(source, 'exec') in store, locals
 
-def py_eval_bytecode(bytecode):
 
-    return eval(marshal.loads(bytecode), vars(renpy.store))
+# Used to cache the bytecode objects we create here.
+py_eval_bytecode_cache = { }
+    
+def py_eval_bytecode(bytecode, globals=None, locals=None):
+
+    idbc = id(bytecode)
+    bc = py_eval_bytecode_cache.get(idbc, None)
+
+    if bc is None:
+        bc = marshal.loads(bytecode)
+        py_eval_bytecode_cache[idbc] = bc
+        
+    if globals is None:
+        globals = renpy.store.__dict__
+
+    if locals is None:
+        locals = globals
+
+    return eval(bc, globals, locals)
+
 
 def py_eval(source, globals=None, locals=None):
     
@@ -975,7 +993,6 @@ def py_eval(source, globals=None, locals=None):
         locals = globals
     
     return eval(py_compile(source, 'eval'), globals, locals)
-
 
 
 # Code for pickling bound methods.

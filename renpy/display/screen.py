@@ -116,12 +116,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The current transform event, and the last transform event to
         # be processed.
         self.current_transform_event = None
-
-        self.update()
-
-    def _get_parameterized(self):
-        return self.child
-    
+        
     def visit(self):
         return [ self.child ]
 
@@ -130,11 +125,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.update()
 
     def set_transform_event(self, event):
-        super(ScreenDisplayable, self).set_transform_event(event)
-        
-        for i in self.child.children:
-            i.set_transform_event(event)
-
+        super(ScreenDisplayable, self).set_transform_event(event)        
         self.current_transform_event = event
             
     def _hide(self, st, at, kind):        
@@ -149,12 +140,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 rv = self
 
         self.current_transform_event = kind
-        self.update()
+        renpy.display.render.redraw(self, 0)
         
         return rv
     
     def update(self):
-        
+
         # Update _current_screen
         global _current_screen
         old_screen = _current_screen
@@ -180,6 +171,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         renpy.ui.close()
 
         renpy.ui.screen = old_ui_screen
+        _current_screen = old_screen
         
         # Visit all the children, to get them started.
         self.child.visit_all(lambda c : c.per_interact())
@@ -187,17 +179,26 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Finish up.
         self.old_widgets = None
         self.old_transforms = None
+        
+        if self.current_transform_event:
 
-        _current_screen = old_screen
+            for i in self.child.children:
+                i.set_transform_event(self.current_transform_event)
 
-        self.current_transform_event = None
-
+            self.current_transform_event = None
+        
         return self.widgets
        
     def render(self, w, h, st, at):
+        if not self.child:
+            self.update()
+
         return renpy.display.render.render(self.child, w, h, st, at)
 
     def get_placement(self):
+        if not self.child:
+            self.update()
+
         return self.child.get_placement()
 
     def event(self, ev, x, y, st):
@@ -291,7 +292,6 @@ def has_screen(name):
         name = tuple(name.split())
 
     return name in screens
-
 
 def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
     """
@@ -387,5 +387,8 @@ def get_widget(screen, id, layer='screens'):
     if not isinstance(screen, ScreenDisplayable):
        return None
 
+    if screen.child is None:
+        screen.update()
+    
     rv = screen.widgets.get(id, None)        
     return rv

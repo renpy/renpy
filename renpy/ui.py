@@ -299,7 +299,6 @@ def context_exit(w):
 # screen.
 screen = None
     
-    
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
@@ -330,29 +329,27 @@ class Wrapper(renpy.object.Object):
         global add_tag
 
         # Pull out the special kwargs, id and at.
-        if "id" in kwargs:
-            id = kwargs.pop("id")
-        else:
-            id = None
-            
-        if "at" in kwargs:
-            at_list = kwargs.pop("at")
 
-            if not isinstance(at_list, list):
-                at_list = [ at_list ]
+        id = kwargs.pop("id", None)
 
-        else:
-            at_list = [ ]
+        at_list = kwargs.pop("at", [ ])
+        if not isinstance(at_list, list):
+            at_list = [ at_list ]
             
         # Figure out the keyword arguments, based on the parameters.
-        keyword = self.kwargs.copy()
 
-        if id is not None and screen is not None:
-            keyword.update(screen.widget_properties.get(id, { }))
+        if self.kwargs:
+            keyword = self.kwargs.copy()
+            keyword.update(kwargs)
+        else:
+            keyword = kwargs
+
+        if screen:
+            if id in screen.widget_properties:
+                keyword.update(screen.widget_properties[id])
+
             if self.replaces:
                 keyword["replaces"] = screen.old_widgets.get(id, None)
-            
-        keyword.update(kwargs)
 
         try:
             w = self.function(*args, **keyword)
@@ -367,9 +364,6 @@ class Wrapper(renpy.object.Object):
 
             del tb # Important! Prevents memory leaks via our frame.
             raise
-            
-        w = renpy.easy.displayable(w)
-        w = w.parameterize('displayable', [ ])
 
         # Wrap the displayable based on the at_list and at_stack.
         atw = w 
@@ -383,7 +377,7 @@ class Wrapper(renpy.object.Object):
             else:
                 atw = atf(atw)
 
-        # Add to the stack.
+        # Add to the displayable at the bottom of the stack.
         stack[-1].add(atw, add_tag)
 
         # Update the stack, as necessary.
@@ -394,7 +388,7 @@ class Wrapper(renpy.object.Object):
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
-        if id is not None and screen is not None:
+        if screen and id is not None:
             screen.widgets[id] = w
 
             if isinstance(atw, renpy.display.motion.Transform):
@@ -405,7 +399,7 @@ class Wrapper(renpy.object.Object):
                 if oldt is not None:
                     atw.take_state(oldt)
                     atw.take_execution_state(oldt)
-                           
+
         # Clear out the add_tag.
         add_tag = None
 
@@ -441,14 +435,25 @@ def is_sensitive(clicked):
 # Widget functions.
         
 def _add(d, **kwargs):
+    d = renpy.easy.displayable(d)
+    d = d.parameterize('displayable', [ ])
+    
     rv = d
-
+    
     if kwargs:
         rv = renpy.display.motion.Transform(child=d, **kwargs)
 
     return rv
 
 add = Wrapper(_add)
+
+def _image(im, **properties):
+    d = renpy.display.im.image(im, loose=True, **properties)
+    d = d.parameterize('displayable', [ ])
+    return d
+    
+image = Wrapper(_image)
+
 null = Wrapper(renpy.display.layout.Null)
 text = Wrapper(renpy.display.text.Text, replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
@@ -538,11 +543,6 @@ def menu(menuitems,
     close()
     
 input = Wrapper(renpy.display.behavior.Input, exclude='{}', replaces=True)
-
-def _image(im, **properties):
-    return renpy.display.im.image(im, loose=True, **properties)
-
-image = Wrapper(_image)
 
 def imagemap_compat(ground,
                     selected,

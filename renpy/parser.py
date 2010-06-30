@@ -821,7 +821,7 @@ class Lexer(object):
             
             break
 
-        return self.text[start:self.pos]
+        return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
 
     def checkpoint(self):
         """

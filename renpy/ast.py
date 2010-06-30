@@ -82,7 +82,7 @@ class PyExpr(unicode):
 
     __slots__ = [ 
         'filename',
-        'linenumber'
+        'linenumber',
         ]
 
     def __new__(cls, s, filename, linenumber):
@@ -113,8 +113,13 @@ class PyCode(object):
     def __setstate__(self, state):
         (_, self.source, self.location, self.mode) = state
         self.bytecode = None
+        renpy.game.script.all_pycode.append(self)
         
     def __init__(self, source, loc=('<none>', 1), mode='exec'):
+
+        if isinstance(source, PyExpr):
+            loc = (source.filename, source.linenumber, source)
+
         # The source code.
         self.source = source
 
@@ -125,6 +130,8 @@ class PyCode(object):
 
         # This will be initialized later on, after we are serialized.
         self.bytecode = None
+
+        renpy.game.script.all_pycode.append(self)
 
 def chain_block(block, next):
     """
@@ -251,14 +258,6 @@ class Node(object):
             return [ self.next ]
         else:
             return [ ]
-
-    def get_pycode(self):
-        """
-        Returns a list of PyCode objects associated with this Node,
-        or None if no objects are associated with it.
-        """
-
-        return [ ]
 
     def scry(self):
         """
@@ -561,9 +560,6 @@ class Python(Node):
         self.hide = hide
         self.code = PyCode(python_code, loc=loc, mode='exec')
 
-    def get_pycode(self):
-        return [ self.code ]
-
     def diff_info(self):
         return (Python, self.code.source)
 
@@ -595,9 +591,6 @@ class EarlyPython(Node):
 
         self.hide = hide
         self.code = PyCode(python_code, loc=loc, mode='exec')
-
-    def get_pycode(self):
-        return [ self.code ]
 
     def diff_info(self):
         return (EarlyPython, self.code.source)
@@ -638,12 +631,6 @@ class Image(Node):
     def diff_info(self): 
         return (Image, tuple(self.imgname))
 
-    def get_pycode(self):
-        if self.code:            
-            return [ self.code ]
-        else:
-            return [ ]
-        
     def execute(self):
 
         # Note: We should always check that self.code is None before
@@ -1394,12 +1381,6 @@ class Define(Node):
     def diff_info(self): 
         return (Define, tuple(self.varname))
 
-    def get_pycode(self):
-        if self.code:            
-            return [ self.code ]
-        else:
-            return [ ]
-        
     def execute(self):
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
@@ -1429,7 +1410,7 @@ class Screen(Node):
             
     def diff_info(self): 
         return (Screen, self.kwargs["name"])
-        
+
     def execute(self):
         renpy.display.screen.define_screen(**self.kwargs)
         return self.next
