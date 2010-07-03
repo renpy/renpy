@@ -1737,10 +1737,13 @@ def screen_statement(l, loc):
     
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
-    kwargs = renpy.screenlang.parse_screen(l)
+    screen = renpy.screenlang.parse_screen(l)
     l.advance()
 
-    rv = ast.Screen(loc, kwargs)
+    if not screen:
+        return [ ]
+
+    rv = ast.Screen(loc, screen)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], -500)        

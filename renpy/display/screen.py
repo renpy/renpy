@@ -166,8 +166,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.children = [ self.child ]
         
         self.scope["_scope"] = self.scope
+        self.scope["_name"] = 0
+         
+        import time # REMOVE
+        start = time.time() # REMOVE
+
         self.screen.function(**self.scope)
-        
+
+        print time.time() - start # REMOVE
+         
         renpy.ui.close()
 
         renpy.ui.screen = old_ui_screen
@@ -350,8 +357,8 @@ def hide_screen(tag, layer='screens'):
     
     renpy.exports.hide(tag, layer=layer)
 
-def include_screen(_screen_name, _name=(), **kwargs):
-
+def use_screen(_screen_name, _name=(), **kwargs):
+    
     name = _screen_name
     
     if not isinstance(name, tuple):
@@ -362,7 +369,8 @@ def include_screen(_screen_name, _name=(), **kwargs):
 
     screen = screens[name]
     
-    scope = kwargs
+    scope = kwargs["_scope"].copy() or { }
+    scope.update(kwargs)
     scope["_scope"] = scope
     scope["_name"] = _name
     screen.function(**scope)

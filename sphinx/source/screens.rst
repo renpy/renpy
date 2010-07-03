@@ -938,13 +938,13 @@ On
 --
 
 The on statement allows the screen to execute an action when an event
-occurs. It takes one parameter, the name of an event. This should be
-one of:
+occurs. It takes one parameter, a string giving the name of an
+event. This should be one of:
 
-* show
-* hide
-* replace
-* replaced
+* ``"show"``
+* ``"hide"``
+* ``"replace"``
+* ``"replaced"``
 
 It then takes an action property, giving an action to run if the event
 occurs.
@@ -958,8 +958,8 @@ occurs.
                 textbutton "Fullscreen" action Preferences("display", "fullscreen")
                 textbutton "Window" action Preferences("display", "window")
                 
-        on show action Show("navigation")
-        on hide action Hide("navigation")
+        on "show" action Show("navigation")
+        on "hide" action Hide("navigation")
 
 
 Use

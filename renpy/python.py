@@ -204,6 +204,9 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     @param lineno: The line number of the first line of the source code.
     """
 
+    if isinstance(source, ast.Module):
+        return compile(source, filename, mode)
+            
     if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
@@ -936,16 +939,18 @@ class RollbackLog(renpy.object.Object):
 
         # We never make it this far.
 
-def py_exec_bytecode(bytecode, hide=False):
-
-    store = vars(renpy.store)
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None):
 
     if hide:
         locals = { }
-    else:
-        locals = store
 
-    exec marshal.loads(bytecode) in store, locals
+    if globals is None:
+        globals = renpy.store.__dict__
+
+    if locals is None:
+        locals = globals
+
+    exec bytecode in globals, locals
 
         
 def py_exec(source, hide=False, store=None):
@@ -961,25 +966,15 @@ def py_exec(source, hide=False, store=None):
     exec py_compile(source, 'exec') in store, locals
 
 
-# Used to cache the bytecode objects we create here.
-py_eval_bytecode_cache = { }
-    
 def py_eval_bytecode(bytecode, globals=None, locals=None):
 
-    idbc = id(bytecode)
-    bc = py_eval_bytecode_cache.get(idbc, None)
-
-    if bc is None:
-        bc = marshal.loads(bytecode)
-        py_eval_bytecode_cache[idbc] = bc
-        
     if globals is None:
         globals = renpy.store.__dict__
 
     if locals is None:
         locals = globals
 
-    return eval(bc, globals, locals)
+    return eval(bytecode, globals, locals)
 
 
 def py_eval(source, globals=None, locals=None):

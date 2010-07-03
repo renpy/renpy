@@ -1393,10 +1393,10 @@ class Define(Node):
 class Screen(Node):
 
     __slots__ = [
-        'kwargs',
+        'screen',
         ]
 
-    def __init__(self, loc, kwargs):
+    def __init__(self, loc, screen):
         """
         @param name: The name of the image being defined.
 
@@ -1406,11 +1406,11 @@ class Screen(Node):
 
         super(Screen, self).__init__(loc)
         
-        self.kwargs = kwargs
+        self.screen = screen
             
     def diff_info(self): 
-        return (Screen, self.kwargs["name"])
+        return (Screen, self.screen.name)
 
     def execute(self):
-        renpy.display.screen.define_screen(**self.kwargs)
+        self.screen.define()
         return self.next

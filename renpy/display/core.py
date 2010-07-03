@@ -2148,6 +2148,8 @@ class Interface(object):
             # print "It took", frames, "frames."
 
     def timeout(self, offset):
+        if offset < 0:
+            return
 
         if self.timeout_time:
             self.timeout_time = min(self.event_time + offset, self.timeout_time)

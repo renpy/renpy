@@ -22,56 +22,22 @@
 import renpy
 import contextlib
 
+# Grab the python versions of the parser and ast modules.
+ast = __import__("ast")
+
+new_variable_serial = 0
+
+# Returns the name of a new variable.
 @contextlib.contextmanager
-def location(loc):
-    file, number = loc
+def new_variable():
+    global new_variable_serial
 
-    old_ei = renpy.game.exception_info
-
-    renpy.game.exception_info = "Executing screen code at %s:%d" % (file, number)
-    yield
-    renpy.game.exception_info = old_ei
-    
+    new_variable_serial += 1
+    yield "_%d" % new_variable_serial
+    new_variable_serial -= 1
     
 
-##############################################################################
-# Data types.
-
-class InvalidType(Exception):
-    """
-    An exception that is thrown when we can't parse an object of
-    the expected type.
-    """
-
-# Sentinel type used for classes that do not have a default type.
-NoDefault = object()
-
-# Types are functions from a lexer to a renpy.ast.PyCode object.
-def Word(l):
-    code = repr(l.require(l.word))
-    return renpy.ast.PyCode(code, mode='eval')
-
-
-def ImageName(l):
-    rv = [ ]
-
-    rv.append(l.require(l.word))
-
-    while True:
-        n = l.word()
-        if n is None:
-            break
-
-        rv.append(n)
-
-    code = repr(tuple(rv))
-    return renpy.ast.PyCode(code, mode='eval')
-
-
-def Expression(l):
-    source = l.require(l.simple_expression)
-    return renpy.ast.PyCode(source, mode='eval')
-
+    
 
 ##############################################################################
 # Parsing.
@@ -84,10 +50,8 @@ class Positional(object):
     This represents a positional parameter to a function.
     """
 
-    def __init__(self, name, type=Expression, help=None):
+    def __init__(self, name):
         self.name = name
-        self.type = type
-        self.help = help
 
         if parser:
             parser.add(self)
@@ -100,10 +64,8 @@ class Keyword(object):
     This represents an optional keyword parameter to a function.
     """
     
-    def __init__(self, name, type=Expression, help=None):
+    def __init__(self, name):
         self.name = name
-        self.type = type
-        self.help = help
         self.style = False
 
         all_keyword_names.add(self.name) 
@@ -116,10 +78,8 @@ class Style(object):
     This represents a style parameter to a function.
     """
 
-    def __init__(self, name, type=Expression, help=None):
+    def __init__(self, name):
         self.name = name
-        self.type = type
-        self.help = help
         self.style = True
 
         for j in renpy.style.prefix_subs:
@@ -171,32 +131,84 @@ class Parser(object):
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
-    def parse_statement(self, l):
+    def parse_statement(self, l, name):
         word = l.word()
+
         if word and word in self.children:
-            c = self.children[word].parse(l)
+            c = self.children[word].parse(l, name)
             return c
         else:            
             return None
 
-
-    def parse_children(self, stmt, l):
+    def parse_children(self, stmt, l, name):
         l.expect_block(stmt)
 
         l = l.subblock_lexer()
 
         rv = [ ]
 
-        while l.advance():
-            c = self.parse_statement(l)
-            if c is None:
-                l.error('Expected screen language statement.')
+        with new_variable() as child_name:
 
-            rv.append(c)
+            count = 0
+            
+            while l.advance():
+
+                if len(l.block) != 1:
+                    rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count)))
+                else:
+                    child_name = name
+                    
+                c = self.parse_statement(l, child_name)
+                if c is None:
+                    l.error('Expected screen language statement.')
+
+                rv.extend(c)
+                count += 1
+                    
 
         return rv
+    
+    def parse_eval(self, expr, lineno=1):
+        """
+        Parses an expression for eval, and then strips off the module
+        and expr instances, and adjusts the line number.
+        """
         
-        
+        rv = ast.parse(expr, 'eval').body[0].value
+        ast.increment_lineno(rv, lineno-1)
+        return rv
+
+    def parse_exec(self, code, lineno=1):
+        """
+        Parses an expression for exec, then strips off the module and
+        adjusts the line number. Returns a list of statements.
+        """
+
+        rv = ast.parse(code, 'exec')
+        ast.increment_lineno(rv, lineno-1)
+
+        return rv.body
+
+    def parse_simple_expression(self, l):
+        lineno = l.number
+        expr = l.require(l.simple_expression)
+
+        return self.parse_eval(expr, lineno)
+
+    def parse(self, l, name):
+        """
+        This is expected to parse a function statement, and to return
+        a list of python ast statements.
+
+        `l` the lexer.
+
+        `name` the name of the variable containing the name of the
+        current statement.
+        """
+
+        raise NotImplemented()
+
+    
             
 # A singleton value.
 many = object()
@@ -227,19 +239,28 @@ class FunctionStatementParser(Parser):
         if nchildren != 0:
             childbearing_statements.append(self)
             
-    def parse(self, l):
-        """
-        Parses this statement (and the associated block) into a
-        FunctionStatement object.
-        """
+    def parse(self, l, name):
 
-        loc = l.get_location()
+        # The list of nodes this function returns.
+        rv = [ ]
+
+        # The line number of the current node.
+        lineno = l.number
         
-        # These are used to store the various arguments as they come in.        
-        positional = [ ]
-        keyword = { }
-        children = [ ]
+        func = self.parse_eval(self.function, lineno)        
 
+        call_node = ast.Call(
+            lineno=lineno,
+            col_offset=0, 
+            func=func,
+            args=[ ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None,
+            )
+
+        seen_keywords = set()
+        
         # Parses a keyword argument from the lexer.
         def parse_keyword(l):
             name = l.word()
@@ -250,16 +271,22 @@ class FunctionStatementParser(Parser):
             if name not in self.keyword:
                 l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
             
-            if name in keyword:
+            if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
 
-            keyword[name] = self.keyword[name].type(l)
-        
+            seen_keywords.add(name)
+
+            expr = self.parse_simple_expression(l)
+
+            call_node.keywords.append(
+                ast.keyword(arg=name, value=expr),
+                )
+                
         # We assume that the initial keyword has been parsed already,
         # so we start with the positional arguments.
 
         for i in self.positional:
-            positional.append(i.type(l))
+            call_node.args.append(self.parse_simple_expression(l))
 
         # Next, we allow keyword arguments on the starting line.
         while True:
@@ -276,78 +303,49 @@ class FunctionStatementParser(Parser):
 
             parse_keyword(l)
 
-        # If we have a block, then parse each line.
-        if block:
+        rv.append(ast.Expr(value=call_node))
 
-            l = l.subblock_lexer()
+        if self.nchildren == 1:
+            rv.extend(ast.parse("ui.child_or_fixed()", 'exec').body)        
 
-            while l.advance():
+        # The index of the child we're adding to this statement.
+        child_index = 0
 
-                state = l.checkpoint()
-
-                c = self.parse_statement(l)
-                if c is not None:
-                    children.append(c)
-                    continue
-                
-                l.revert(state)
-
-                while not l.eol():
-                    parse_keyword(l)
-
-        if self.unevaluated:
-            return UnevaluatedFunctionStatement(loc, self.function, self.nchildren, positional, keyword, children)
-        else:
-            return FunctionStatement(loc, self.function, self.nchildren, positional, keyword, children)
-
-
-class FunctionStatement(renpy.object.Object):
-    def __init__(self, loc, function, nchildren, positional, keyword, children):
-        self.location = loc
-        self.function = function
-        self.nchildren = nchildren
-        self.positional = positional
-        self.keyword = keyword
-        self.children = children
-                
-    def evaluate(self, name, scope):
-
-        try:
-            peb = renpy.python.py_eval_bytecode
-            store = renpy.store.__dict__
-            sk = self.keyword
-            
-            positional = [ peb(i.bytecode, store, scope) for i in self.positional ]
-            keyword = dict((k, peb(sk[k].bytecode, store, scope)) for k in self.keyword)
-
-            keyword.setdefault("id", name)
-            
-            rv = self.function(*positional, **keyword)
-                        
-            nchildren = self.nchildren
-            
-            if nchildren == 1:
-              renpy.ui.child_or_fixed()
-
-            i = 0
-            for child in self.children:
-                i += 1                
-                child.evaluate(name + (i, ), scope)
-
-            if nchildren:
-               renpy.ui.close() 
-
-            return rv
+        # The variable we store the child's name in.
+        with new_variable() as child_name:
         
-        except:
-            file, number = self.location
-            renpy.game.exception_info = "Executing screen code at %s:%d" % (file, number)
+            # If we have a block, then parse each line.
+            if block:
 
-            raise
+                l = l.subblock_lexer()
 
-class UnevaluatedFunctionStatement(FunctionStatement):
-    def evaluate(self, name, scope):
-        return self.function(self.positional, self.keyword, self.children)
+                while l.advance():
+
+                    state = l.checkpoint()
+
+                    c = self.parse_statement(l, child_name)
+                    if c is not None:
+
+                        rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
+                        rv.extend(c)
+
+                        child_index += 1
+
+                        continue
+
+                    l.revert(state)
+
+                    while not l.eol():
+                        parse_keyword(l)
+
+        if self.nchildren != 0:
+            rv.extend(self.parse_exec("ui.close()"))        
+
+        if "id" not in seen_keywords:
+            call_node.keywords.append(ast.keyword(arg="id", value=self.parse_eval(name)))
+            
+        return rv
+
         
 ##############################################################################
 # Definitions of screen language statements.
@@ -359,7 +357,7 @@ styles = [ ]
 all_statements = [ ]
 childbearing_statements = [ ]
 
-position_properties = [ Style(i, Expression) for i in [
+position_properties = [ Style(i) for i in [
         "anchor",
         "xanchor",
         "yanchor",
@@ -377,7 +375,7 @@ position_properties = [ Style(i, Expression) for i in [
         "clipping",
         ] ]
 
-text_properties = [ Style(i, Expression) for i in [
+text_properties = [ Style(i) for i in [
         "antialias",
         "black_color",
         "bold",
@@ -410,7 +408,7 @@ text_properties = [ Style(i, Expression) for i in [
         "yfill",
         ] ]
 
-window_properties = [ Style(i, Expression) for i in [
+window_properties = [ Style(i) for i in [
         "background",
         "foreground",
         "left_margin",
@@ -432,12 +430,12 @@ window_properties = [ Style(i, Expression) for i in [
         "yfill",
         ] ]
 
-button_properties = [ Style(i, Expression) for i in [
+button_properties = [ Style(i) for i in [
         "sound",
         "mouse",
         ] ]
 
-bar_properties = [ Style(i, Expression) for i in [
+bar_properties = [ Style(i) for i in [
         "bar_vertical",
         "bar_invert"
         "bar_resizing",
@@ -456,7 +454,7 @@ bar_properties = [ Style(i, Expression) for i in [
         "unscrollable",
         ] ]
 
-box_properties = [ Style(i, Expression) for i in [
+box_properties = [ Style(i) for i in [
         "box_layout",
         "spacing",
         "first_spacing",
@@ -474,48 +472,47 @@ ui_properties = [
 def add(thing):
     parser.add(thing)
 
-
     
 ##############################################################################
 # UI statements.
 
-FunctionStatementParser("null", renpy.ui.null, 0)
+FunctionStatementParser("null", "ui.null", 0)
 Keyword("width")
 Keyword("height")
 add(ui_properties)
 add(position_properties)
 
 
-FunctionStatementParser("text", renpy.ui.text, 0)
+FunctionStatementParser("text", "ui.text", 0)
 Positional("text")
 Keyword("slow")
 add(ui_properties)
 add(position_properties)
 add(text_properties)
 
-FunctionStatementParser("hbox", renpy.ui.hbox, many)
+FunctionStatementParser("hbox", "ui.hbox", many)
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-FunctionStatementParser("vbox", renpy.ui.vbox, many)
+FunctionStatementParser("vbox", "ui.vbox", many)
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-FunctionStatementParser("fixed", renpy.ui.fixed, many)
+FunctionStatementParser("fixed", "ui.fixed", many)
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-FunctionStatementParser("grid", renpy.ui.grid, many)
+FunctionStatementParser("grid", "ui.grid", many)
 Positional("cols")
 Positional("rows")
 Keyword("transpose")
 add(ui_properties)
 add(position_properties)
 
-FunctionStatementParser("side", renpy.ui.side, many)
+FunctionStatementParser("side", "ui.side", many)
 Positional("positions")
 add(ui_properties)
 add(position_properties)
@@ -523,16 +520,16 @@ add(position_properties)
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
 for name in [ "window", "frame" ]:
-    FunctionStatementParser(name, getattr(renpy.ui, name), 1)
+    FunctionStatementParser(name, "ui." + name, 1)
     add(ui_properties)
     add(position_properties)
     add(window_properties)
 
-FunctionStatementParser("key", renpy.ui.key, 0)
+FunctionStatementParser("key", "ui.key", 0)
 Positional("key")
 Keyword("action")
 
-FunctionStatementParser("timer", renpy.ui.timer, 0)
+FunctionStatementParser("timer", "ui.timer", 0)
 Positional("delay")
 Keyword("action")
 Keyword("repeat")
@@ -540,7 +537,7 @@ Keyword("repeat")
 # Omit behaviors.
 # Omit menu as being too high-level.
 
-FunctionStatementParser("input", renpy.ui.input, 0)
+FunctionStatementParser("input", "ui.input", 0)
 Keyword("default")
 Keyword("length")
 Keyword("allow")
@@ -552,12 +549,12 @@ add(ui_properties)
 add(position_properties)
 add(text_properties)
 
-FunctionStatementParser("image", renpy.ui.image, 0)
+FunctionStatementParser("image", "ui.image", 0)
 Positional("im")
 
 # Omit imagemap_compat for being too high level (and obsolete).
 
-FunctionStatementParser("button", renpy.ui.button, 1)
+FunctionStatementParser("button", "ui.button", 1)
 Keyword("action")
 Keyword("clicked")
 Keyword("hovered")
@@ -567,7 +564,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-FunctionStatementParser("imagebutton", renpy.ui.imagebutton, 0)
+FunctionStatementParser("imagebutton", "ui.imagebutton", 0)
 Keyword("auto")
 Keyword("idle")
 Keyword("hover")
@@ -584,7 +581,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-FunctionStatementParser("textbutton", renpy.ui.textbutton, 0)
+FunctionStatementParser("textbutton", "ui.textbutton", 0)
 Positional("label")
 Keyword("action")
 Keyword("clicked")
@@ -597,7 +594,7 @@ add(window_properties)
 add(button_properties)
 
 for name in [ "bar", "vbar" ]:
-    FunctionStatementParser(name, getattr(renpy.ui, name), 0)    
+    FunctionStatementParser(name, "ui." + name, 0)    
     Keyword("adjustment")
     Keyword("range")
     Keyword("value")
@@ -608,7 +605,7 @@ for name in [ "bar", "vbar" ]:
     
 # Omit autobar. (behavior)
 
-FunctionStatementParser("viewport", renpy.ui.viewport, 1)
+FunctionStatementParser("viewport", "ui.viewport", 1)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
@@ -619,7 +616,7 @@ add(position_properties)
 
 # Omit conditional. (behavior)
 
-FunctionStatementParser("imagemap", renpy.ui.imagemap, many)
+FunctionStatementParser("imagemap", "ui.imagemap", many)
 Keyword("ground")
 Keyword("hover")
 Keyword("insensitive")
@@ -630,7 +627,7 @@ Keyword("auto")
 add(ui_properties)
 add(position_properties)
 
-FunctionStatementParser("hotspot", renpy.ui.hotspot_with_child, 1)
+FunctionStatementParser("hotspot", "ui.hotspot_with_child", 1)
 Positional("spot")
 Keyword("action")
 Keyword("clicked")
@@ -641,7 +638,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-FunctionStatementParser("hotbar", renpy.ui.hotbar, 0)
+FunctionStatementParser("hotbar", "ui.hotbar", 0)
 Positional("spot")
 Keyword("adjustment")
 Keyword("range")
@@ -651,28 +648,38 @@ add(position_properties)
 add(bar_properties)
 
 
-FunctionStatementParser("transform", renpy.ui.transform, 1)
+FunctionStatementParser("transform", "ui.transform", 1)
 Keyword("at")
 Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-FunctionStatementParser("add", renpy.ui.image, 0)
+FunctionStatementParser("add", "ui.add", 0)
 Positional("im")
 Keyword("at")
 Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
+FunctionStatementParser("on", "ui.on", 0)
+Positional("event")
+Keyword("action")
+
+    
 
 ##############################################################################
 # Control-flow statements.
 
-def pass_function():
-    pass
+def PassParser(Parser):
 
-FunctionStatementParser("pass", pass_function, 0)
+    def __init__(self, name):
+        super(PassParser, self).__init__(name)
 
+    def parse(self, l, name):
+        return [ ast.Pass(lineno=l.number, col_offset=0) ]
+
+PassParser("pass")
+        
 
 class UseParser(Parser):
 
@@ -680,12 +687,14 @@ class UseParser(Parser):
         super(UseParser, self).__init__(name)
         childbearing_statements.append(self)
         
-    def parse(self, l):
+    def parse(self, l, name):
 
-        loc = l.get_location()
+        lineno = l.number
         
-        name = l.require(l.word)
+        target_name = l.require(l.word)
 
+        code = "renpy.use_screen(%r, _name=%s, _scope=_scope" % (target_name, name)
+        
         args = renpy.parser.parse_arguments(l)
 
         if args:
@@ -693,38 +702,18 @@ class UseParser(Parser):
             for k, v in args.arguments:
                 if k is None:
                     l.error('The use statement only takes keyword arguments.')
-
+                    
+                code += ", %s=(%s)" % (k, v)
+                    
             if args.extrapos:
                 l.error('The use statement only takes keyword arguments.')
 
-        return Use(loc, name, args)
+            if args.extrakw:
+                code += ", **(%s)" % args.extrakw
+                
+        code += ")"
 
-    
-class Use(renpy.object.Object):
-
-    def __init__(self, loc, screen, args):
-        self.location = loc
-        self.screen = screen
-        self.args = args
-
-    def evaluate(self, name, scope):
-
-        with location(self.location):
-
-            kwargs = scope.copy()
-
-            kwargs["_name"] = name
-            
-            # Args are optional.
-            if self.args:
-
-                if self.args.extrakw:
-                    kwargs = eval(self.args.extrakw, renpy.store.__dict__, scope)
-
-                for k, v in self.args.arguments:
-                    kwargs[k] = eval(v, renpy.store.__dict__, scope)
-
-            renpy.display.screen.include_screen(self.screen, **kwargs)
+        return self.parse_exec(code, lineno)
 
 UseParser("use")
 
@@ -735,60 +724,57 @@ class IfParser(Parser):
         super(IfParser, self).__init__(name)
         childbearing_statements.append(self)
 
-    def parse(self, l):
-
+    def parse(self, l, name):
         
-        options = [ ]
-        
-        loc = l.get_location()
-        condition = l.require(l.python_expression)
-        l.require(':')
-        l.expect_eol()
-        options.append((loc, condition, self.parse_children('if', l)))
+        with new_variable() as child_name:
 
-        while l.advance():
+            count = 0
+            
+            lineno = l.number
+            condition = self.parse_eval(l.require(l.python_expression), lineno)
 
-            state = l.checkpoint()
-            loc = l.get_location()
-            
-            if l.keyword("elif"):
-                condition = l.require(l.python_expression)
-                is_else = False
-            elif l.keyword("else"):
-                condition = "True"
-                is_else = True
-            else:
-                l.revert(state)
-                break
-            
             l.require(':')
             l.expect_eol()
-            options.append((loc, condition, self.parse_children('if', l)))
+            
+            body = self.parse_exec("%s = (%s, %d)" % (child_name, name, count))
+            body.extend(self.parse_children('if', l, child_name))
 
-            if is_else:
-                break
+            orelse = [ ]
+            
+            rv = ast.If(test=condition, body=body, orelse=orelse, lineno=lineno, col_offset=0)
 
-        return If(options)
+            count += 1
+            
+            while l.advance():
 
+                old_orelse = orelse
+                lineno = l.number
+                
+                state = l.checkpoint()
 
-class If(renpy.object.Object):
+                if l.keyword("elif"):
+                    condition = self.parse_eval(l.require(l.python_expression), lineno)
 
-    def __init__(self, options):
-        self.options = options
+                    body = self.parse_exec("%s = (%s, %d)" % (child_name, name, count))
+                    body.extend(self.parse_children('if', l, child_name))
 
-    def evaluate(self, name, scope):
+                    orelse = [ ]
+                    old_orelse.append(ast.If(test=condition, body=body, orelse=orelse, lineno=lineno, col_offset=0))
 
-        # Find the first true condition.
-        for i, (loc, condition, children) in enumerate(self.options):
-            with location(loc):
-                if eval(condition, renpy.store.__dict__, scope):
+                    count += 1
+
+                elif l.keyword("else"):
+
+                    old_orelse.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count)))
+                    old_orelse.extend(self.parse_children('if', l, child_name))
+
                     break
-        else:
-            return
+                    
+                else:
+                    l.revert(state)
+                    break
 
-        # For each child in that condition, evaluate it.
-        for j, child in enumerate(children):
-            child.evaluate(name + (i, j), scope)
+        return [ rv ]
 
 IfParser("if")
 
@@ -806,15 +792,17 @@ class ForParser(Parser):
         
         while True:
 
+            lineno = l.number
+                
             if l.match(r"\("):
                 p = self.parse_tuple_pattern(l)
             else:
-                p = l.name()
+                p = l.name().encode("latin-1")
 
             if not p:
                 break
 
-            pattern.append(p)
+            pattern.append(ast.Name(id=p, ctx=ast.Store(), lineno=lineno, col_offset=0))
 
             if l.match(r","):
                 is_tuple = True
@@ -827,78 +815,43 @@ class ForParser(Parser):
         if not is_tuple:
             return pattern[0]
         else:
-            return tuple(pattern)
+            return ast.Tuple(elts=pattern, ctx=ast.Store())
         
-    def parse(self, l):
+    def parse(self, l, name):
 
-        loc = l.get_location()
+        lineno = l.number
+
         pattern = self.parse_tuple_pattern(l)
 
         l.require('in')
 
-        expression = l.require(l.python_expression)
+        expression = self.parse_eval(l.require(l.python_expression), l.number)
+
+                
         l.require(':')
         l.expect_eol()
 
+        with new_variable() as counter_name:
         
-        children = self.parse_children('for', l)
+            with new_variable() as child_name:
 
-        return For(loc, pattern, expression, children)
+                children = self.parse_exec("%s = (%s, %s)" % (child_name, name, counter_name))
+                children.extend(self.parse_children('for', l, child_name))
+                children.extend(self.parse_exec("%s += 1" % counter_name, lineno))
+                
+            rv = self.parse_exec("%s = 0" % counter_name, lineno)
 
-    
-class For(renpy.object.Object):
+            rv.append(ast.For(
+                    target=pattern,
+                    iter=expression,
+                    body=children,
+                    orelse=[],
+                    lineno=lineno,
+                    col_offset=0))
 
-    def __init__(self, loc, pattern, expression, children):
-        self.location = loc
-        self.pattern = pattern
-        self.expression = expression
-        self.children = children
-
-    def evaluate(self, name, scope):
-
-        def match(pattern, item, scope):
-
-            if isinstance(pattern, tuple):
-
-                try:                    
-                    if len(pattern) != len(item):
-                        raise Exception("Value %r does not match for loop pattern.")
-                except TypeError:
-                    raise Exception("Value %r doesn't have a length.", item)
-                    
-                for a, b in zip(pattern, item):
-                    match(a, b, scope)
-
-                return
-
-            scope[pattern] = item
-
-        with location(self.location):
-
-            iterable = eval(self.expression, renpy.store.__dict__, scope)
-
-            for i, item in enumerate(iterable):
-                match(self.pattern, item, scope)
-
-                for j, child in enumerate(self.children):
-                    child.evaluate(name + (i, j), scope)
+        return rv
             
 ForParser("for")            
-
-
-def on_function(event, action=[], id=None):
-    if renpy.display.screen.current_screen().current_transform_event != event:
-        return
-
-    if isinstance(action, (list, tuple)):
-        for i in action:
-            i()
-    else:
-        action()
-
-FunctionStatementParser("on", on_function, 0)
-Positional("event", Word)
-Positional("action")
 
 
 class PythonParser(Parser):
@@ -908,8 +861,8 @@ class PythonParser(Parser):
 
         self.one_line = one_line
 
-    def parse(self, l):
-        loc = l.get_location()
+    def parse(self, l, name):
+        lineno = l.number
 
         if self.one_line:
             python_code = l.rest()
@@ -919,29 +872,10 @@ class PythonParser(Parser):
             l.expect_block('python block')
 
             python_code = l.python_block()
+            lineno += 1
+            
+        return self.parse_exec(python_code, lineno)
 
-        return Python(loc, python_code)
-
-    
-class Python(renpy.object.Object):
-    
-    def __init__(self, loc, python_code):
-        self.location = loc
-        self.source = python_code
-        self.code = None
-
-        # This checks the code, but let's not keep it around quite yet.
-        renpy.python.py_compile(self.source, 'exec', filename=self.location[0], lineno=self.location[1])
-        
-    def evaluate(self, name, scope):
-        scope["_name"] = name
-
-        if self.code is None:
-            self.code = renpy.python.py_compile(self.source, 'exec', filename=self.location[0], lineno=self.location[1])
-
-        exec self.code in renpy.store.__dict__, scope
-
-# This is used to parse one-line python blocks.
 PythonParser("$", True)
 PythonParser("python", False)
 
@@ -955,43 +889,166 @@ for i in childbearing_statements:
 ##############################################################################
 # Definition of the screen statement.
 
-class ScreenFunction(renpy.object.Object):
+# class ScreenFunction(renpy.object.Object):
 
-    def __init__(self, children):
-        self.children = children
+#     def __init__(self, children):
+#         self.children = children
 
-    def __call__(self, _name=(), _scope=None, **kwargs):
+#     def __call__(self, _name=(), _scope=None, **kwargs):
 
-        for i, child in enumerate(self.children):
-            child.evaluate(_name + (i,), _scope)
+#         for i, child in enumerate(self.children):
+#             child.evaluate(_name + (i,), _scope)
     
-def screen_function(positional, keyword, children):
-    name = renpy.python.py_eval(positional[0].source)
-    function = ScreenFunction(children)
+# def screen_function(positional, keyword, children):
+#     name = renpy.python.py_eval(positional[0].source)
+#     function = ScreenFunction(children)
 
-    values = {
-        "name" : name,
-        "function" : function,
-        }
+#     values = {
+#         "name" : name,
+#         "function" : function,
+#         }
 
-    for k, v in keyword.iteritems():
-        values[k] = renpy.python.py_eval(v.source)
+#     for k, v in keyword.iteritems():
+#         values[k] = renpy.python.py_eval(v.source)
 
-    return values
+#     return values
 
     
-screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
-Positional("name", Word)
-Keyword("modal", Expression)
-Keyword("zorder", Expression)
-Keyword("tag", Word)
-add(all_statements)
+# screen_stmt = FunctionStatementParser("screen", screen_function, unevaluated=True)
+# Positional("name", Word)
+# Keyword("modal", Expression)
+# Keyword("zorder", Expression)
+# Keyword("tag", Word)
+# add(all_statements)
+
+class ScreenLangScreen(renpy.object.Object):
+    """
+    This represents a screen defined in the screen language.
+    """
+
+    def __init__(self):
+
+        # The name of the screen.
+        self.name = name
+
+        # Should this screen be declared as modal?
+        self.modal = False
+
+        # The screen's zorder.
+        self.zorder = 0
+
+        # The screen's tag.
+        self.tag = None
+        
+        # The PyCode object containing the screen's code.
+        self.code = None
+        
+
+    def define(self):
+        """
+        Defines us as a screen.
+        """
+
+        renpy.display.screen.define_screen(
+            self.name,
+            self,
+            modal=self.modal,
+            zorder=self.zorder,
+            tag=self.tag)
+
+    def __call__(self, _scope=None, **kwargs):
+        renpy.python.py_exec_bytecode(self.code.bytecode, locals=_scope)
+        
+
+class ScreenParser(Parser):
+
+    def __init__(self):
+        super(ScreenParser, self).__init__("screen")
+
+        
+    def parse(self, l, name="_name"):
+
+        loc = l.get_location()
+        
+        screen = ScreenLangScreen()
+
+        def parse_keyword(l):
+            if l.match('modal'):
+                screen.modal = eval(l.require(l.simple_expression))
+                return True
+
+            if l.match('zorder'):
+                screen.zorder = eval(l.require(l.simple_expression))
+                return True
+
+            if l.match('tag'):
+                screen.tag = l.require(l.word)
+                return True
+
+            return False
+
+        
+        lineno = l.number
+        
+        screen.name = l.require(l.word)
+
+        while parse_keyword(l):
+            continue
+
+        l.require(':')
+        l.expect_eol()        
+        l.expect_block('screen statement')
+
+        l = l.subblock_lexer()
+
+        rv = [ ]
+        count = 0
+        
+        with new_variable() as child_name:
+
+            while l.advance():
+
+                if parse_keyword(l):
+                    while parse_keyword(l):
+                        continue
+
+                    l.expect_eol()
+                    continue
+
+                rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count), l.number))                
+
+                c = self.parse_statement(l, child_name)
+
+                if c is None:
+                    l.error('Expected a screen language statement.')
+                
+                rv.extend(c)
+
+        node = ast.Module(body=rv, lineno=lineno, col_offset=0)
+        ast.fix_missing_locations(node)
+        screen.code = renpy.ast.PyCode(node, loc, 'exec')
+        
+        return screen
+                
+screen_parser = ScreenParser()
+screen_parser.add(all_statements)
 
 def parse_screen(l):
     """
     Parses the screen statement.
     """
+    
+    print
+    print
+    
+    screen = screen_parser.parse(l)
 
-    return screen_stmt.parse(l).evaluate((), {})
+    import unparse
+    unparse.Unparser(screen.code.source)
+
+    return screen
+    
+    
+        
     
         

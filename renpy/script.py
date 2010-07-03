@@ -30,6 +30,7 @@ import imp
 import difflib
 import md5
 import time
+import marshal
 
 from cPickle import loads, dumps
 
@@ -445,14 +446,14 @@ class Script(object):
                     renpy.parser.parse_errors.append(pem.message)
                     
                     continue
-
                         
                 renpy.game.exception_info = old_ei
                 codes[magic] = code
 
             i.source = None
-            i.bytecode = code
+            i.bytecode = marshal.loads(code)
             self.bytecode_newcache[i.location] = codes
+
 
         self.all_pycode = [ ]
 

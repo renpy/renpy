@@ -884,6 +884,19 @@ def gamemenus(*args):
     return callsinnewcontext("_game_menu", *args)
 
 ##############################################################################
+# The on statement.
+def on(event, action=[], id=None):
+    if renpy.display.screen.current_screen().current_transform_event != event:
+        return
+
+    if isinstance(action, (list, tuple)):
+        for i in action:
+            i()
+    else:
+        action()
+
+
+##############################################################################
 # Postamble
 
 # Update the wrappers to have names.
