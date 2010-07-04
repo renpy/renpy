@@ -168,13 +168,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.scope["_scope"] = self.scope
         self.scope["_name"] = 0
          
-        import time # REMOVE
-        start = time.time() # REMOVE
-
         self.screen.function(**self.scope)
-
-        print time.time() - start # REMOVE
-         
+        
         renpy.ui.close()
 
         renpy.ui.screen = old_ui_screen

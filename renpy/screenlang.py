@@ -35,9 +35,32 @@ def new_variable():
     new_variable_serial += 1
     yield "_%d" % new_variable_serial
     new_variable_serial -= 1
+
+def increment_lineno(node, amount):
+    for node in ast.walk(node):
+        if hasattr(node, 'lineno'):
+            node.lineno += amount
+    
+class LineNumberNormalizer(ast.NodeVisitor):
+
+    def __init__(self):
+        self.last_line = 1
+    
+    def generic_visit(self, node):
+
+        if not hasattr(node, 'lineno'):
+            return
+        
+        self.last_line = max(self.last_line, node.lineno)
+        node.lineno = self.last_line
+
+        super(LineNumberNormalizer, self).generic_visit(node)
+        
+    
     
 
-    
+        
+            
 
 ##############################################################################
 # Parsing.
@@ -154,7 +177,7 @@ class Parser(object):
             while l.advance():
 
                 if len(l.block) != 1:
-                    rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count)))
+                    rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count), l.number))
                 else:
                     child_name = name
                     
@@ -168,24 +191,29 @@ class Parser(object):
 
         return rv
     
-    def parse_eval(self, expr, lineno=1):
+    def parse_eval(self, expr, lineno=None):
         """
         Parses an expression for eval, and then strips off the module
         and expr instances, and adjusts the line number.
         """
-        
+
         rv = ast.parse(expr, 'eval').body[0].value
-        ast.increment_lineno(rv, lineno-1)
+
+        if lineno is not None:
+            increment_lineno(rv, lineno-1)
+
         return rv
 
-    def parse_exec(self, code, lineno=1):
+    def parse_exec(self, code, lineno=None):
         """
         Parses an expression for exec, then strips off the module and
         adjusts the line number. Returns a list of statements.
         """
 
         rv = ast.parse(code, 'exec')
-        ast.increment_lineno(rv, lineno-1)
+
+        if lineno is not None:
+            increment_lineno(rv, lineno-1)
 
         return rv.body
 
@@ -306,7 +334,7 @@ class FunctionStatementParser(Parser):
         rv.append(ast.Expr(value=call_node))
 
         if self.nchildren == 1:
-            rv.extend(ast.parse("ui.child_or_fixed()", 'exec').body)        
+            rv.extend(self.parse_exec('ui.child_or_fixed()'))
 
         # The index of the child we're adding to this statement.
         child_index = 0
@@ -342,7 +370,7 @@ class FunctionStatementParser(Parser):
             rv.extend(self.parse_exec("ui.close()"))        
 
         if "id" not in seen_keywords:
-            call_node.keywords.append(ast.keyword(arg="id", value=self.parse_eval(name)))
+            call_node.keywords.append(ast.keyword(arg="id", value=self.parse_eval(name, lineno)))
             
         return rv
 
@@ -826,7 +854,6 @@ class ForParser(Parser):
         l.require('in')
 
         expression = self.parse_eval(l.require(l.python_expression), l.number)
-
                 
         l.require(':')
         l.expect_eol()
@@ -837,9 +864,9 @@ class ForParser(Parser):
 
                 children = self.parse_exec("%s = (%s, %s)" % (child_name, name, counter_name))
                 children.extend(self.parse_children('for', l, child_name))
-                children.extend(self.parse_exec("%s += 1" % counter_name, lineno))
+                children.extend(self.parse_exec("%s += 1" % counter_name))
                 
-            rv = self.parse_exec("%s = 0" % counter_name, lineno)
+            rv = self.parse_exec("%s = 0" % counter_name)
 
             rv.append(ast.For(
                     target=pattern,
@@ -964,12 +991,9 @@ class ScreenParser(Parser):
 
     def __init__(self):
         super(ScreenParser, self).__init__("screen")
-
         
     def parse(self, l, name="_name"):
 
-        loc = l.get_location()
-        
         screen = ScreenLangScreen()
 
         def parse_keyword(l):
@@ -1015,7 +1039,7 @@ class ScreenParser(Parser):
                     l.expect_eol()
                     continue
 
-                rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count), l.number))                
+                rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count), l.number))
 
                 c = self.parse_statement(l, child_name)
 
@@ -1026,8 +1050,10 @@ class ScreenParser(Parser):
 
         node = ast.Module(body=rv, lineno=lineno, col_offset=0)
         ast.fix_missing_locations(node)
-        screen.code = renpy.ast.PyCode(node, loc, 'exec')
-        
+        LineNumberNormalizer().visit(node)
+
+        screen.code = renpy.ast.PyCode(node, (l.get_location()[0], lineno), 'exec')
+
         return screen
                 
 screen_parser = ScreenParser()
@@ -1038,14 +1064,7 @@ def parse_screen(l):
     Parses the screen statement.
     """
     
-    print
-    print
-    
     screen = screen_parser.parse(l)
-
-    import unparse
-    unparse.Unparser(screen.code.source)
-
     return screen
     
     
