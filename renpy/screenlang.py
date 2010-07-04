@@ -25,6 +25,9 @@ import contextlib
 # Grab the python versions of the parser and ast modules.
 ast = __import__("ast")
 
+# The filename of the file we're parsing.
+filename = None
+
 new_variable_serial = 0
 
 # Returns the name of a new variable.
@@ -55,11 +58,6 @@ class LineNumberNormalizer(ast.NodeVisitor):
         node.lineno = self.last_line
 
         super(LineNumberNormalizer, self).generic_visit(node)
-        
-    
-    
-
-        
             
 
 ##############################################################################
@@ -191,29 +189,46 @@ class Parser(object):
 
         return rv
     
-    def parse_eval(self, expr, lineno=None):
+    def parse_eval(self, expr, lineno=1):
         """
         Parses an expression for eval, and then strips off the module
         and expr instances, and adjusts the line number.
         """
 
-        rv = ast.parse(expr, 'eval').body[0].value
-
-        if lineno is not None:
-            increment_lineno(rv, lineno-1)
+        try:
+            rv = ast.parse(expr, 'eval').body[0].value
+        except SyntaxError, e:            
+            raise renpy.parser.ParseError(
+                filename,
+                lineno + e[1][1] - 1,
+                "Syntax error while parsing python expression.",
+                e[1][3],
+                e[1][2])
+            
+        increment_lineno(rv, lineno-1)
 
         return rv
 
-    def parse_exec(self, code, lineno=None):
+    def parse_exec(self, code, lineno=1):
         """
         Parses an expression for exec, then strips off the module and
         adjusts the line number. Returns a list of statements.
         """
 
-        rv = ast.parse(code, 'exec')
+        try:
+            rv = ast.parse(code, 'exec')
+        except SyntaxError, e:
 
-        if lineno is not None:
-            increment_lineno(rv, lineno-1)
+            print repr(e)
+            
+            raise renpy.parser.ParseError(
+                filename,
+                lineno + e[1][1] - 1,
+                "Syntax error while parsing python code.",
+                e[1][3],
+                e[1][2])
+            
+        increment_lineno(rv, lineno-1)
 
         return rv.body
 
@@ -1063,11 +1078,10 @@ def parse_screen(l):
     """
     Parses the screen statement.
     """
+
+    global filename
+
+    filename = l.filename
     
     screen = screen_parser.parse(l)
     return screen
-    
-    
-        
-    
-        
