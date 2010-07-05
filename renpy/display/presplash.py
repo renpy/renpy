@@ -46,7 +46,6 @@ def start(gamedir):
             break
     else:
         return
-    
 
     try:    
         import subprocess

@@ -115,7 +115,7 @@ init -1100 python:
 
         return renpy.get_widget(screen_name, "what")
         
-    def nvl_show_core():
+    def nvl_show_core(who=None, what=None):
 
         # Screen version.
         if renpy.has_screen("nvl"):
@@ -233,12 +233,14 @@ init -1100 python:
             else:
                 checkpoint = True
                 
-            renpy.display_say(nvl_show_core,
-                              checkpoint=checkpoint,
-                              **display_args)
+            renpy.display_say(
+                who,
+                what,
+                nvl_show_core,
+                checkpoint=checkpoint,
+                **display_args)
             
         def do_done(self, who, what):
-            
             if self.clear:
                 nvl_clear()
 

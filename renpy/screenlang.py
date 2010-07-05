@@ -58,7 +58,7 @@ class LineNumberNormalizer(ast.NodeVisitor):
         node.lineno = self.last_line
 
         super(LineNumberNormalizer, self).generic_visit(node)
-            
+
 
 ##############################################################################
 # Parsing.
@@ -1009,6 +1009,7 @@ class ScreenParser(Parser):
         
     def parse(self, l, name="_name"):
 
+        location = l.get_location()
         screen = ScreenLangScreen()
 
         def parse_keyword(l):
@@ -1067,7 +1068,7 @@ class ScreenParser(Parser):
         ast.fix_missing_locations(node)
         LineNumberNormalizer().visit(node)
 
-        screen.code = renpy.ast.PyCode(node, (l.get_location()[0], lineno), 'exec')
+        screen.code = renpy.ast.PyCode(node, location, 'exec')
 
         return screen
                 

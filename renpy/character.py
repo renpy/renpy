@@ -22,6 +22,79 @@
 # The Character object (and friends).
 
 import renpy
+import re
+
+# This matches the dialogue-relevant text tags.
+TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
+
+class DialogueTextTags(object):
+    """
+    This object parses the text tags that only make sense in dialogue,
+    like {fast}, {p}, {w}, and {nw}.
+    """
+
+    def __init__(self, s):
+
+        # The text that we've accumulated, not including any tags.
+        self.text = ""
+
+        # The index in the produced string where each pause starts.
+        self.pause_start = [ 0 ]
+
+        # The index in the produced string where each pause ends.
+        self.pause_end = [ ]
+
+        # The time to delay for each pause. None to delay forever.
+        self.pause_delay = [ ]
+        
+        # True if we've encountered the no-wait tag.
+        self.no_wait = False
+        
+        i = iter(TAG_RE.split(s))
+
+        while True:
+        
+            try:
+                self.text += i.next()
+
+                quoted = i.next()
+                full_tag = i.next()
+                tag = i.next()
+                value = i.next()
+
+                if value is not None:
+                    value = float(value)
+                
+                if quoted is not None:
+                    self.text += quoted
+                    continue
+
+                if tag == "p" or tag == "w":
+                    self.pause_start.append(len(self.text))
+                    self.pause_end.append(len(self.text))
+                    self.pause_delay.append(value)
+
+                elif tag == "nw":
+                    self.no_wait = True
+
+                elif tag == "fast":
+                    self.pause_start = [ len(self.text) ]
+                    self.pause_end = [ ]
+                    self.pause_delay = [ ]
+                    self.no_wait = False
+
+                self.text += full_tag
+                
+            except StopIteration:
+                break
+
+        self.pause_end.append(len(self.text))
+
+        if self.no_wait:            
+            self.pause_delay.append(0)
+        else:
+            self.pause_delay.append(None)
+
 
 def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, **kwargs):
     """
@@ -210,13 +283,16 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
 
 class SlowDone(object):
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args):
+    delay = None
+
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
         self.interact = interact
         self.type = type
         self.cb_args = cb_args
+        self.delay = delay
         
     def __call__(self):
         
@@ -224,33 +300,40 @@ class SlowDone(object):
             renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
             renpy.exports.restart_interaction()
 
+        if self.delay is not None:
+            renpy.ui.pausebehavior(self.delay, True)
+            renpy.exports.restart_interaction()
+            
         for c in self.callback:
             c("slow_done", interact=self.interact, type=self.type, **self.cb_args)
 
             
 # This function takes care of repeatably showing the screen as part of
 # an interaction.
-def display_say(show_function,
-                interact,
-                slow,
-                afm,
-                ctc,
-                ctc_pause,
-                ctc_position,
-                all_at_once,
-                cb_args,
-                with_none,
-                callback,
-                type,
-                checkpoint=True,
-                ctc_timedpause=None,
-                ctc_force=False):
+def display_say(
+    who,
+    what,
+    show_function,
+    interact,
+    slow,
+    afm,
+    ctc,
+    ctc_pause,
+    ctc_position,
+    all_at_once,
+    cb_args,
+    with_none,
+    callback,
+    type,
+    checkpoint=True,
+    ctc_timedpause=None,
+    ctc_force=False):
 
     
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
     if interact and renpy.config.skipping == "fast":
-
+        
         # Clears out transients.
         renpy.exports.with_statement(None)
         return
@@ -266,7 +349,6 @@ def display_say(show_function,
         callback = [ callback ]
 
     callback = renpy.config.all_character_callbacks + callback 
-
     
     # Call the begin callback.
     for c in callback:
@@ -288,44 +370,54 @@ def display_say(show_function,
            renpy.game.context().seen_current(True))):    
         slow = False
 
+    # Figure out which pause we're on. (Or set the pause to None in
+    # order to put us in all-at-once mode.)
     if not interact:
         all_at_once = True
 
+    dtt = DialogueTextTags(what)
+
     if all_at_once:
-        pause = None
+        pause_start = [ 0 ]
+        pause_end = [ len(dtt.text) ]
+        pause_delay = [ dtt.pause_delay[-1] ]
     else:
-        pause = 0
+        pause_start = dtt.pause_start
+        pause_end = dtt.pause_end
+        pause_delay = dtt.pause_delay
 
-    # True if the {nw} tag was found in what_text.
-    no_wait = False
-
-    keep_interacting = True
-    slow_start = 0
         
-    while keep_interacting:
+    for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
 
+        last_pause = (i == len(pause_start) - 1)
+        
         # If we're going to do an interaction, then saybehavior needs
         # to be here.
         if interact:            
-            behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
+            behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)            
         else:
             behavior = None
 
+        # Run the show callback.
         for c in callback:
             c("show", interact=interact, type=type, **cb_args)
-            
-        what_text = show_function()
 
+        # Show the text.
+        what_text = show_function(who, dtt.text)
+
+        if not isinstance(what_text, renpy.display.text.Text):
+            raise Exception("The say screen (or show_function) must return a Text object.")
+                
         # Update the properties of the what_text widget.
 
-        if pause is not None and pause < what_text.pauses:
-            if what_text.pause_lengths[pause] is not None:
+        if last_pause:
+            what_ctc = ctc
+        else:
+            if delay is not None:
                 what_ctc = ctc_timedpause or ctc_pause
             else:
                 what_ctc = ctc_pause
-        else:
-            what_ctc = ctc
-
+            
         if not (interact or ctc_force):
             what_ctc = None
             
@@ -334,32 +426,28 @@ def display_say(show_function,
         if what_ctc is not None:
             what_ctc = what_ctc.parameterize(('ctc',), ())
 
+        if delay == 0:
+            what_ctc = None
+        
         # This object is called when the slow text is done.
-        slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args)
+        slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
         
         what_text.slow = slow
         what_text.slow_param = slow
         what_text.slow_done = slow_done
-        what_text.slow_start = slow_start
-        what_text.pause = pause
-        
+        what_text.slow_start = start
+        what_text.slow_end = end
+
         if what_ctc and ctc_position == "nestled":
             what_text.set_ctc(what_ctc)
 
-        keep_interacting = what_text.keep_pausing
-        no_wait |= what_text.no_wait
-
-        if no_wait:
-            slow_done.ctc = None
-        
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
 
         if behavior and afm:
-            behavior.set_afm_length(what_text.get_simple_length() - slow_start) # E1103
+            behavior.set_afm_length(end - start)
 
-        if interact:
-            
+        if interact:            
             rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
             # This is only the case if the user has rolled forward, {nw} happens, or
@@ -367,18 +455,14 @@ def display_say(show_function,
             if rv is False:
                 break 
 
-        slow_start = what_text.get_laidout_length()
-
-        if keep_interacting:
-            pause += 1
-
-            for i in renpy.config.say_sustain_callbacks:
-                i()
+            if not last_pause:
+                for i in renpy.config.say_sustain_callbacks:
+                    i()
     
     # Do the checkpoint and with None.
     if interact:
 
-        if not no_wait:
+        if not dtt.no_wait:
             if checkpoint:
                 renpy.exports.checkpoint(True)
         else:
@@ -518,13 +602,11 @@ class ADVCharacter(object):
     def copy(self, name=NotSet, **properties):
         return type(self)(name, kind=self, **properties)
 
-
     # This is called before the interaction. 
     def do_add(self, who, what):
         return
 
-    # A curried version of this is called to cause the interaction to
-    # occur.
+    # This is what shows the screen for a given interaction.
     def do_show(self, who, what):
         return self.show_function(
             who,
@@ -545,8 +627,10 @@ class ADVCharacter(object):
         return
 
     # This is called to actually do the displaying.
-    def do_display(self, who, what, **display_args):                
-        display_say(lambda : self.do_show(who, what),
+    def do_display(self, who, what, **display_args):
+        display_say(who,
+                    what,
+                    self.do_show,
                     **display_args)
         
     
@@ -598,8 +682,7 @@ class ADVCharacter(object):
             renpy.exports.log(who)
         renpy.exports.log(what)
         renpy.exports.log("")
-        
-        
+                
     def predict(self, what):
 
         if self.dynamic:
@@ -615,14 +698,15 @@ class ADVCharacter(object):
             return False
 
         return self.display_args['interact']
-        
+
+    
 def Character(name=NotSet, kind=None, **properties):
     if kind is None:
         kind = renpy.store.adv
 
     return type(kind)(name, kind=kind, **properties)
-    
-            
+
+
 def DynamicCharacter(name_expr, **properties):
     return Character(name_expr, dynamic=True, **properties)
 

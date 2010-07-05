@@ -621,11 +621,6 @@ class Text(renpy.display.core.Displayable):
     A displayable that can format and display text on the screen.
     """
 
-    nosave = [ 'laidout', 'laidout_lineheights', 'laidout_linewidths',
-               'laidout_width', 'laidout_height', 'laidout_start',
-               'laidout_length', 'laidout_hyperlinks', 'laidout_lines_last',
-               'width', 'tokens', 'children', 'child_pos']
-
     __version__ = 3
 
     def after_upgrade(self, version):
@@ -637,6 +632,8 @@ class Text(renpy.display.core.Displayable):
 
         if version < 3:
             self.ctc = None
+            self.slow_start = 0
+            self.slow_end = None
             
     def after_setstate(self):
         self.update()
@@ -662,13 +659,10 @@ class Text(renpy.display.core.Displayable):
         @param tokenized: True if the text is already tokenized.
 
         """
-
+        
         super(Text, self).__init__(style=style, **properties)
 
         self.text = text        
-        self.pause = pause
-        self.keep_pausing = False
-        self.pause_length = None
         self.tokenized = tokenized
 
         if slow or slow is None:
@@ -679,6 +673,8 @@ class Text(renpy.display.core.Displayable):
         self.slow_param = slow
         self.slow_done = slow_done
         self.slow_start = slow_start
+        self.slow_end = None
+
         # The time when slow_done was called.
         self.slow_done_time = None
 
@@ -687,177 +683,92 @@ class Text(renpy.display.core.Displayable):
 
         self.tokens = None
 
-        # The duration of each pause, or None if the pause is infinite.
-        self.pause_lengths = [ ]
-        
         # The width we've been laid out for.
         self.width = -1
 
         # The displayable that was added to us to supporte nestled ctc.
         self.ctc = None
-        
-        self.update(redraw=False)
 
         if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_param = replaces.slow_param
             self.slow_start = replaces.slow_start
+            self.slow_end = replaces.slow_end
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
-            self.pause = replaces.pause
+            self.ctc = replaces.ctc
+            
+        self.needs_update = True
 
-            if replaces.ctc is not None:
-                self.set_ctc(replaces.ctc)
-
+    def per_interact(self):
+        self.update()
+        
     def set_ctc(self, ctc):
         """
         Sets the nestled CTC indicator of this text.
         """
 
         self.ctc = ctc
-
-        self.tokens.append([ ("widget", ctc) ])
-        self.update(retokenize=False, redraw=False)
+        self.needs_update = True
+        renpy.display.render.redraw(self, 0)
                 
-        
     def set_text(self, new_text):
         """
         Changes the text display by this object to new_text.
         """
 
         self.text = new_text
-        self.update()
-
+        self.needs_update = True
+        renpy.display.render.redraw(self, 0)
+        
     def set_style(self, style):
         """
         Changes the style assocated with this object.
         """
 
         self.style = style
-        self.update()
-
-    def update(self, redraw=True, retokenize=True):
-        """
-        This is called after this widget has been updated by
-        set_text or set_style.
-        """        
-
         self.laidout = None
         self.child_pos = [ ]
         
-        if self.text:
-            text = self.text
-        else:
-            text = u" "
+    def update(self):
+        """
+        This is called to break this displayable up into tokens.
+        """        
+
+        if not self.needs_update:
+            return True
 
         # Annoyingly, we can't tokenize until styles get built.
         if not renpy.style.styles_built:
             return
 
-        if retokenize:
-
-            if not self.tokenized:
-                self.tokens = input_tokenizer(text, self.style)
-            else:
-                self.tokens = self.text
-
-
-        new_tokens = [ ]
-        fasts = 0
-
-        self.no_wait = False # W0201
-        self.no_wait_once = False # W0201
-        self.no_wait_done = False # W0201
-        self.pauses = 0 # W0201
-        self.pause_lengths = [ ] # W0201
+        self.needs_update = False
         
-        for i in self.tokens[0]:
-            type, text = i
-            
-            if type == "tag":
-                if text == "p":
-                    new_tokens.append(("tag", 'w'))
-                    new_tokens.append(("newline", "\n"))
-                    self.pauses += 1
-                    self.pause_lengths.append(None)
+        self.laidout = None
+        self.child_pos = [ ]        
 
-                    continue
+        if self.tokenized:
+            self.tokens = self.text
 
-                elif text.startswith("p="):
-                    new_tokens.append(("tag", 'w=' + text[2:]))
-                    new_tokens.append(("newline", "\n"))
-                    self.pauses += 1
-                    self.pause_lengths.append(float(text[2:]))
+        else:            
+            text = self.text
 
-                    continue
+            if self.slow_end is not None:
+                text = text[:self.slow_end]
 
-                elif text == "nw":
-                    self.no_wait = True
+            if not text:
+                text = " "
 
-                elif text == "fast":
-                    self.no_wait = False
-                    fasts += 1
-                    self.pauses = 0
-                    self.pause_lengths = [ ]
-                    
-                elif text == "w":
-                    self.pauses += 1
-                    self.pause_lengths.append(None)
+            # Exists and is not 0.
+            if self.slow_start:
+                text = text[:self.slow_start] + "{_start}" + text[self.slow_start:]
 
-                elif text.startswith("w="):
-                    self.pauses += 1
-                    self.pause_lengths.append(float(text[2:]))
-                    
-            new_tokens.append(i)
+            self.tokens = input_tokenizer(text, self.style)
 
-        self.tokens[0] = new_tokens
+        # Add the CTC indicator.
+        if self.ctc is not None:
+            self.tokens.append([ ("widget", self.ctc) ])
 
-        if self.pause is not None:
-            pause = self.pause
-            new_tokens = [ ]
-
-            for i in self.tokens[0]:
-                new_tokens.append(i)
-                type, text = i
-                
-                if type == "tag":
-                    if text == "fast":
-                        fasts -= 1
-
-                    if text == "nw":
-                        new_tokens.pop()
-
-                    # If we have a fast to go, then ignore keep_pausing.
-                    if fasts:
-                        continue
-
-                    if text == "nw":
-                        self.no_wait_once = True
-                        break
-                        
-                    elif text == "w":
-
-                        if pause == 0:                                            
-                            self.keep_pausing |= True
-                            self.pause_length = None
-                            break                    
-                        else:
-                            pause -= 1
-
-                    elif text[:2] == "w=":
-                        if pause == 0:
-                            self.keep_pausing |= True
-                            self.pause_length = float(text[2:])
-                            break                    
-                        else:
-                            pause -= 1
-
-            self.tokens[0] = new_tokens
-
-        if not self.slow:
-            self.no_wait = False
-            self.no_wait_once = False
-            
         # Postprocess the tokens list to create widgets, as necessary.
 
         self.children = [ ] # W0201
@@ -866,52 +777,33 @@ class Text(renpy.display.core.Displayable):
         for tl in self.tokens:
             ntl = [ ]
 
-            tliter = iter(tl)
+            for kind, i in tl:
+                
+                if kind == "tag":
+                    if i.startswith("image="):
+                        name = i[6:]
 
-            for kind, i in tliter:
+                        kind = "widget"
+                        i = renpy.easy.displayable(name)
 
-                if kind == "tag" and i.startswith("image="):
-
-                    m = re.match(r'image=(.*)', i)
-
-                    if not m:
-                        raise Exception('Image tag %s could not be parsed.' % i)
-
-                    i = renpy.easy.displayable(m.group(1))
-                    ntl.append(("widget", i))
+                if kind == "widget":
                     self.children.append(i)
 
-                else:
-                    if kind == "widget":
-                        self.children.append(i)
-                    
-                    ntl.append((kind, i))
+                ntl.append((kind, i))
 
             newtokens.append(ntl)
 
         self.tokens = newtokens
-                    
-        if redraw:
-            renpy.display.render.redraw(self, 0)
 
 
     def event(self, ev, x, y, st):
         """
         Space, Enter, or Click ends slow, if it's enabled.
         """
-
-        if (self.slow_done_time is not None) and (self.pause_length is not None):
-            if st > (self.slow_done_time + self.pause_length):
-                return True
-            else:
-                renpy.game.interface.timeout((self.slow_done_time + self.pause_length) - st)
-
+        
         if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
             self.call_slow_done(st)
             raise renpy.display.core.IgnoreEvent()
-
-        if self.no_wait_done:
-            return False 
         
         for child, xo, yo in self.child_pos:
             rv = child.event(ev, x - xo, y - yo, st)
@@ -933,14 +825,10 @@ class Text(renpy.display.core.Displayable):
             renpy.display.render.redraw(self, 0)
             
             return rv
-            
-            
+                        
     def visit(self):
-        if self.tokens is None:
-            self.update()
-
+        self.update()
         return self.children
-
     
     def layout(self, width, time):
         """
@@ -949,12 +837,11 @@ class Text(renpy.display.core.Displayable):
         self.laidout_height.
         """
 
+        self.update()
+        
         if self.laidout and self.width == width:
             return
 
-        if self.tokens is None:
-            self.update()
-        
         # Set this, so caching works.
         self.width = width
 
@@ -979,13 +866,6 @@ class Text(renpy.display.core.Displayable):
 
         self.laidout_hyperlinks = [ ] # W0201
         
-        # if not self.text:
-        #     text = " "
-        # else:
-        #     text = self.text
-
-        # for i in re.split(r'( |\{[^{}]+\}|\{\{|\n)', text):
-
         tokens = [ ]
         for l in self.tokens:
             tokens.extend(l)
@@ -1011,11 +891,15 @@ class Text(renpy.display.core.Displayable):
 
                     continue
 
-
-                if i == "w":
+                if i == "w" or i.startswith("w="):
                     # Automatically closes.
                     continue
 
+                elif i == "p" or i.startswith("p="):
+                    # Automatically closes.
+                    triples.append(("newline", tsl[-1], "\n"))
+                    continue
+                    
                 elif i == "nw":
                     # Automatically closes.
                     continue
@@ -1026,17 +910,17 @@ class Text(renpy.display.core.Displayable):
                     
                 elif i == "fast":
                     # Automatically closes.
+                    continue
+
+                elif i == "_start":
+                    # Automatically closes.
                     triples.append(("start", tsl[-1], ""))
                     continue
-                    
-                elif i.startswith("a="):
-                    m = re.match(r'a=(.*)', i)
-                    if not m:
-                        raise Exception('Hyperlink tag %s could not be parsed.' % i)
 
+                elif i.startswith("a="):
                     # TODO: check to see if we need to be focused.
 
-                    target = m.group(1)
+                    target = i[2:]
                     hls = renpy.config.hyperlink_styler(target)
 
                     old_prefix = hls.prefix
@@ -1108,20 +992,12 @@ class Text(renpy.display.core.Displayable):
                     tsl[-1].black_color = style.black_color
                     tsl[-1].update()
 
+                elif i.startswith("font="):
 
-                elif i.startswith("font"):
-
-                    m = re.match(r'font=(.*)', i)
-
-                    if not m:
-                        raise Exception('Font tag %s could not be parsed.' % i)
-
-
-                    
-                    tsl[-1].font = m.group(1)
+                    tsl[-1].font = i[5:]
                     tsl[-1].update()
 
-                elif i.startswith("size"):
+                elif i.startswith("size="):
 
                     m = re.match(r'size=(\+|-|)(\d+)', i)
 
@@ -1136,14 +1012,9 @@ class Text(renpy.display.core.Displayable):
                         tsl[-1].size = int(m.group(2))                    
                     tsl[-1].update()
 
-                elif i.startswith("color"):
+                elif i.startswith("color="):
 
-                    m = re.match(r'color=(\#?[a-fA-F0-9]+)', i)
-
-                    if not m:
-                        raise Exception('Color tag %s could not be parsed.' % i)
-
-                    tsl[-1].color = color(m.group(1))
+                    tsl[-1].color = color(i[6:])
                     tsl[-1].update()
                     
                 else:
@@ -1164,7 +1035,6 @@ class Text(renpy.display.core.Displayable):
 
             elif kind == "word":
                 triples.append(("word", tsl[-1], i))
-
 
             elif kind == "widget":
                 pass
@@ -1203,7 +1073,6 @@ class Text(renpy.display.core.Displayable):
             if not l:
                 l.append(('word', tsl[-1], ' '))
 
-
         justify = self.style.justify
                 
         for l in linetriples:
@@ -1240,7 +1109,6 @@ class Text(renpy.display.core.Displayable):
                     
             if oldts:
                 line.append((oldts, cur))
-
                 
             if renpy.config.rtl:
 
@@ -1283,47 +1151,6 @@ class Text(renpy.display.core.Displayable):
 
             # For the newline.
             self.laidout_length += 1
-
-
-    def get_simple_length(self):
-        """
-        Returns a simple length of the text in the first segment of
-        the tokens. Doesn't use the same algorithm as get_laidout_length,
-        so isn't suitable for slow_start.
-        """
-
-        rv = 0
-
-        for tl in self.tokens:
-            for type, text in tl:
-                if type == "newline":
-                    rv += len(text)
-                elif type == "word":
-                    rv += len(text)
-                elif type == "space":
-                    rv += len(text)
-                elif type == "widget":
-                    rv += 1
-                elif type == "tag" and text == "fast":
-                    rv = 0
-
-        return rv
-
-
-    def get_laidout_length(self):
-        """
-        The (reasonably arbitrary) length this text field was laidout
-        to. This can only be called after the text field was drawn
-        (that is, after it has been on the screen for an interaction
-        with the user. Otherwise, it returns sys.maxint.
-        """
-
-        if not self.laidout:
-            return sys.maxint
-
-        return self.laidout_length
-
-            
 
     def render_pass(self, dest_render, dest_surface, xo, yo, color, black_color, user_colors, length, time, at, child_pos, add_focus, expand):
         """
@@ -1428,13 +1255,7 @@ class Text(renpy.display.core.Displayable):
             self.slow_done = None
 
         self.slow_done_time = st
-        if self.pause_length:
-            renpy.game.interface.timeout(self.pause_length)
             
-        if self.no_wait_once:
-            self.no_wait_done = True
-            renpy.game.interface.timeout(0)
-        
     def render(self, width, height, st, at):
 
         if self.slow:
@@ -1484,7 +1305,7 @@ class Text(renpy.display.core.Displayable):
         self.layout(width + mindsx - maxdsx, st)
             
         if self.slow and speed:
-            start = max(self.slow_start, self.laidout_start)
+            start = self.laidout_start
             length = start + int(st * speed)
         else:
             length = sys.maxint

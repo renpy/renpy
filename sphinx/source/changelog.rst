@@ -109,7 +109,6 @@ Other Changes
     sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum,
     xmaximum, and ymaximum properties.
 
-
 * ui.add can now take transform properties as keyword arguments. If at
   least one transform property is present, ui.add will create a
   transform that wraps the displayable it's adding to the
@@ -135,6 +134,11 @@ Other Changes
   directory and archives. This can be used to write your own automatic
   image loading method, among other things.
 
+* The interaction between Character and Text has been rewritten to ensure
+  that text is only tokenized once. This required changing a few of the
+  methods on ADVCharacter and NVLCharacter, so code that inherits from
+  those classes should be checked.
+  
 * The distribution code has been moved into launcher/distribute.py. This
   file can be run from the command line to build distributions in shell
   scripts and other automated processes.
