@@ -145,20 +145,26 @@ class GLDraw(object):
         
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
-        # Figure out the virtual box.
+        pwidth = max(1, pwidth)
+        pheight = max(1, pheight)
+        
+        # Figure out the virtual box, which includes padding around
+        # the borders.
         physical_ar = 1.0 * pwidth / pheight
         virtual_ar = 1.0 * vwidth / vheight
-        
-        x_padding = vwidth * max(0, physical_ar - virtual_ar)
-        y_padding = vheight * max(0, (1.0 / physical_ar) - (1.0 / virtual_ar))
 
-        
+        if physical_ar >= virtual_ar:
+            x_padding = physical_ar * vheight - vwidth
+            y_padding = 0
+        else:
+            x_padding = 0
+            y_padding = ( 1.0 / physical_ar ) * vwidth - vheight
+                    
         self.virtual_box = (
             -x_padding / 2.0,
             -y_padding / 2.0,
              vwidth + x_padding / 2.0,
              vheight + y_padding / 2.0)
-
         
         # Set some default settings.
         gl.Enable(gl.BLEND)
