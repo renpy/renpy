@@ -383,12 +383,9 @@ class GLDraw(object):
         self.undefine_clip()
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-
             tex = self.load_texture(self.fullscreen_surface)
-            self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)
-            
+            self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)           
         else:
-            
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
 
         self.draw_mouse()
@@ -668,15 +665,12 @@ class GLDraw(object):
         what.half_cache = rv
 
         return rv
-
-        
             
     def update_mouse(self):
         # The draw routine updates the mouse. There's no need to
         # redraw it event-by-event.
 
         return
-
 
     def mouse_event(self, ev):
 

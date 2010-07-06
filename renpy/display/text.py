@@ -621,6 +621,10 @@ class Text(renpy.display.core.Displayable):
     A displayable that can format and display text on the screen.
     """
 
+    # This can keep around a reference to a Font, which prevents
+    # us from saving.
+    nosave = [ 'laidout' ]
+    
     __version__ = 3
 
     def after_upgrade(self, version):
@@ -636,7 +640,8 @@ class Text(renpy.display.core.Displayable):
             self.slow_end = None
             
     def after_setstate(self):
-        self.update()
+        self.laidout = None
+        self.needs_update = True
 
     def __init__(self, text, slow=None, slow_done=None,
                  slow_start=0, pause=None, tokenized=False,

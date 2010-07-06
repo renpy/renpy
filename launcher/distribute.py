@@ -9,7 +9,7 @@ import zlib
 zlib.Z_DEFAULT_COMPRESSION = 9
 
 import binascii
-import pefile
+import change_icon
 
 import argparse
 
@@ -398,7 +398,7 @@ def distribute(
         win_files.append((rb + "Microsoft.VC90.CRT.manifest", "/Microsoft.VC90.CRT.manifest"))
 
         if os.path.exists(project_path + "/icon.ico"):
-            file_data[rb + "renpy.exe"] = pefile.change_icons(
+            file_data[rb + "renpy.exe"] = change_icon.change_icons(
                 rb + "renpy.exe",
                 project_path + "/icon.ico",
                 )

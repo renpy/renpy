@@ -219,8 +219,9 @@ def main():
     zipup("dists/" + prefix + "-sdk.zip", prefix, files + more_files)
     print "----"
     tarup("dists/" + prefix + "-sdk.tar.bz2", prefix, files + more_files)
+    print "----"
     tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
-
+    print "----"
     # Make the 7zip.
     os.chdir("dists")
     os.system("unzip " + prefix + "-sdk.zip")

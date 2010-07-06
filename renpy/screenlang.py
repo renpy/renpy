@@ -840,7 +840,7 @@ class ForParser(Parser):
             if l.match(r"\("):
                 p = self.parse_tuple_pattern(l)
             else:
-                p = l.name().encode("latin-1")
+                p = l.name().encode("ascii")
 
             if not p:
                 break

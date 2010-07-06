@@ -840,6 +840,9 @@ def event(ev):
 
         renpy.display.draw.mutated_surface(surf)
             
+        if surf is renpy.display.draw.fullscreen_surface:
+            renpy.game.interface.force_redraw = True
+
         # Return False, as a Movie should get this to know when to
         # redraw itself.
         return False
