@@ -217,7 +217,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return rv
         
         if self.screen.modal:
-            raise renpy.display.core.IgnoreEvents()
+            raise renpy.display.core.IgnoreEvent()
         
 
 
