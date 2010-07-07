@@ -407,11 +407,15 @@ init 1180 python:
 
         if config.default_afm_time is not None:
             _preferences.default_afm_time = config.default_afm_time
+            
+    if config.default_afm_enable is not None:
+        _preferences.afm_enable = config.default_afm_enable
+        _preferences.using_afm_enable = True
+    else:
+        _preferences.afm_enable = True
+        _preferences.using_afm_enable = False
+    
 
-        if config.default_afm_enable is not None:
-            _preferences.default_afm_enable = config.default_afm_enable
-            
-            
     if config.developer:
 
         def _inspector(l):

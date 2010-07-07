@@ -308,6 +308,11 @@ class SayBehavior(renpy.display.layout.Null):
                     renpy.exports.restart_interaction()
                     raise renpy.display.core.IgnoreEvent()
 
+                if renpy.game.preferences.using_afm_enable and renpy.game.preferences.afm_enable:
+                    renpy.game.preferences.afm_enable = False
+                    renpy.exports.restart_interaction()
+                    raise renpy.display.core.IgnoreEvent()
+                
                 if self.allow_dismiss:
                     if not self.allow_dismiss():
                         raise renpy.display.core.IgnoreEvent()

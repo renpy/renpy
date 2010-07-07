@@ -115,12 +115,14 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 1
+    __version__ = 2
 
     def after_upgrade(self, version):
         if version < 1:
             self.mute_volumes = 0
-
+        if version < 2:
+            self.using_afm_enable = False
+            
     def __init__(self):
         self.fullscreen = False # W0201
         self.skip_unseen = False # W0201
