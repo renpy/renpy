@@ -138,11 +138,16 @@ class FixedFunctionEnviron(Environ):
                      alpha_source0=gl.SRC_ALPHA,
                      alpha_source1=gl.SRC_ALPHA,
                      alpha_source2=gl.SRC_ALPHA,
-                     alpha_scale=1.0):
+                     alpha_scale=1.0,
+                     enable=True):
 
         gl.ActiveTextureARB(unit)
-        gl.Enable(gl.TEXTURE_2D)
 
+        if enable:
+            gl.Enable(gl.TEXTURE_2D)
+        else:
+            gl.Disable(gl.TEXTURE_2D)
+            
         gl.TexEnvi(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.COMBINE_ARB)
         gl.TexEnvi(gl.TEXTURE_ENV, gl.COMBINE_RGB_ARB, color_function)
         gl.TexEnvi(gl.TEXTURE_ENV, gl.COMBINE_ALPHA_ARB, alpha_function)
@@ -210,7 +215,8 @@ class FixedFunctionEnviron(Environ):
                               color_arg1=gl.PRIMARY_COLOR_ARB,
                               alpha_function=gl.MODULATE,
                               alpha_arg0=gl.PREVIOUS_ARB,
-                              alpha_arg1=gl.PRIMARY_COLOR_ARB)
+                              alpha_arg1=gl.PRIMARY_COLOR_ARB,
+                              enable=False)
             
             # Disable texture unit 3.
             self.disable(gl.TEXTURE3_ARB)
@@ -281,7 +287,8 @@ class FixedFunctionEnviron(Environ):
                               color_arg1=gl.PRIMARY_COLOR_ARB,
                               alpha_function=gl.MODULATE,
                               alpha_arg0=gl.PREVIOUS_ARB,
-                              alpha_arg1=gl.PRIMARY_COLOR_ARB)
+                              alpha_arg1=gl.PRIMARY_COLOR_ARB,
+                              enable=False)
             
             self.last = IMAGEBLEND
             self.last_ramp = ramp
