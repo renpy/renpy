@@ -250,6 +250,17 @@ class GLDraw(object):
 
             return True
 
+        v = [ 0 ]
+        
+        gl.GetIntegerv(gl.MAX_TEXTURE_UNITS_ARB, v)
+
+        self.log("Number of texture units: %d", v[0])
+
+        if v[0] < 4:
+            self.log("Not enough texture units.")
+            return False
+            
+        
         # Pick a texture environment subsystem.
         
         if use_subsystem(
