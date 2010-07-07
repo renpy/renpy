@@ -39,7 +39,7 @@ except ImportError:
     
 import gltexture
 import glenviron
-    
+
 class GLDraw(object):
 
     def __init__(self):
@@ -74,9 +74,9 @@ class GLDraw(object):
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
-        # The time of the last mouse event.
-        self.mouse_event_time = renpy.display.core.get_time()
-
+        # The (x, y) and texture of the software mouse.
+        self.mouse_info = (0, 0, None)
+        
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -322,10 +322,26 @@ class GLDraw(object):
         draw speed.
         """
 
-        if needs_redraw or first_pass or time.time() > self.last_redraw_time + .20:
+        rv = False
+        
+        if needs_redraw: 
+            rv = True
+        elif first_pass:
+            rv = True
+        elif time.time() > self.last_redraw_time + .20:
+            rv = True
+
+        else:
+            # Redraw if the mouse moves.
+            mx, my, tex = self.mouse_info
+            if tex and (mx, my) != pygame.mouse.get_pos():
+                rv = True
+            
+        # Log the redraw time.
+        if rv:
             self.last_redraw_time = time.time()
             return True
-        else:
+        else:        
             return False
 
     def mutated_surface(self, surf):
@@ -715,7 +731,6 @@ class GLDraw(object):
         return x, y
 
     def mouse_event(self, ev):
-
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
         return self.translate_mouse(x, y)
 
@@ -728,15 +743,18 @@ class GLDraw(object):
     def draw_mouse(self):
         
         hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
+
+        self.mouse_info = (mx, my, tex)
         
         if self.mouse_old_visible != hardware:
             pygame.mouse.set_visible(hardware)
             self.mouse_old_visible = hardware
 
         if not tex:
-            return
-
+            return        
+        
         x, y = pygame.mouse.get_pos()
+
         x -= mx
         y -= my
         
