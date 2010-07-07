@@ -1256,7 +1256,9 @@ class Interface(object):
             if draw.set_mode(virtual_size, physical_size, fullscreen):
                 renpy.display.draw = draw
                 break
-
+            else:
+                pygame.display.quit()
+                pygame.display.init()
         else:
             
             # Ensure we don't get stuck in fullscreen.
