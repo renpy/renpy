@@ -1389,5 +1389,21 @@ def list_files(common=False):
 
     return rv
         
-     
+def get_renderer_info():
+    """
+    :doc: other
+
+    Returns a dictionary, giving information about the renderer Ren'Py is
+    currently using. The dictionary has one required key:
+
+    ``"renderer"``
+        One of ``"gl"`` or ``"sw"``, corresponding to the OpenGL and
+        software renderers, respectively.
+
+    Other, renderer-specific, keys may also exist. The dictionary should
+    be treated as immutable. This should only be called once the display
+    has been started (that is, after the init code is finished).
+    """
+
+    return renpy.display.draw.info
     

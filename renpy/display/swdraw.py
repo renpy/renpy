@@ -665,6 +665,9 @@ class SWDraw(object):
 
         # This is used to display video to the screen.
         self.fullscreen_surface = None
+
+        # Info.
+        self.info = { "renderer" : "sw" }
         
         # Scaling?
         renpy.display.scale.init()

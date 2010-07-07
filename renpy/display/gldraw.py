@@ -86,6 +86,9 @@ class GLDraw(object):
         # The time of the last redraw.
         self.last_redraw_time = 0
 
+        # Info.
+        self.info = { "renderer" : "gl" }
+        
         
     def log(self, msg, *args):
         """
@@ -271,6 +274,7 @@ class GLDraw(object):
 
             self.log("Using shader environment.")
             self.environ = glenviron.ShaderEnviron()
+            self.info["environ"] = "shader"
 
         elif use_subsystem(
             "RENPY_GL_ENVIRON",
@@ -280,6 +284,7 @@ class GLDraw(object):
 
             self.log("Using fixed-function environment (clause 1).")
             self.environ = glenviron.FixedFunctionEnviron()
+            self.info["environ"] = "fixed"
         
         elif use_subsystem(
             "RENPY_GL_ENVIRON",
@@ -288,7 +293,8 @@ class GLDraw(object):
 
             self.log("Using fixed-function environment (clause 2).")
             self.environ = glenviron.FixedFunctionEnviron()
-
+            self.info["environ"] = "fixed"
+            
         else:
             self.log("Can't find a workable environment.")
             return False
@@ -302,12 +308,14 @@ class GLDraw(object):
 
             self.log("Using framebuffer_object RTT.")
             self.rtt = glenviron.FramebufferRtt()
-        
+            self.info["rtt"] = "fbo"
+            
         else:
 
             self.log("Using copy RTT.")
             self.rtt = glenviron.CopyRtt()
-
+            self.info["rtt"] = "copy"
+            
         # Do additional setup needed.
 
         renpy.display.pgrender.set_bgra_masks()

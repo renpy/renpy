@@ -1208,7 +1208,7 @@ class Interface(object):
                 }
 
         
-        dl = os.environ.get("RENPY_DRAW", "gl,sw").split(",")
+        dl = os.environ.get("RENPY_RENDERER", "gl,sw").split(",")
 
         rv = [ draws.get(i, None) for i in dl ]
         return [ i for i in rv if i is not None ]
