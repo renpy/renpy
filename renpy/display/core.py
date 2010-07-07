@@ -1902,9 +1902,7 @@ class Interface(object):
 
                         
                     if first_pass and self.last_event:
-                        x, y = pygame.mouse.get_pos()
-                        # x -= self.display.screen_xoffset
-                        # y -= self.display.screen_yoffset
+                        x, y = renpy.display.draw.get_mouse_pos()
                         renpy.display.focus.mouse_handler(self.last_event, x, y, default=False)
 
                     needs_redraw = False

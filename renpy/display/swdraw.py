@@ -783,7 +783,6 @@ class SWDraw(object):
             
         return updates
 
-
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
@@ -793,14 +792,14 @@ class SWDraw(object):
 
         if updates:
             pygame.display.update(updates)
-
-    
+            
     def mouse_event(self, ev):        
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
         return x, y
         
-        
-
+    def get_mouse_pos(self):
+        return pygame.mouse.get_pos()
+    
     def screenshot(self):
         """
         Returns a pygame surface containing a screenshot.

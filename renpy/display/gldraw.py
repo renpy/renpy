@@ -689,10 +689,8 @@ class GLDraw(object):
 
         return
 
-    def mouse_event(self, ev):
-
-        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-
+    def translate_mouse(self, x, y):
+        
         # Screen sizes.
         pw, ph = self.physical_size
         vw, vh = self.virtual_size
@@ -716,6 +714,15 @@ class GLDraw(object):
 
         return x, y
 
+    def mouse_event(self, ev):
+
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+        return self.translate_mouse(x, y)
+
+    def get_mouse_pos(self):
+        x, y = pygame.mouse.get_pos()
+        return self.translate_mouse(x, y)
+    
     
     # Private.
     def draw_mouse(self):
