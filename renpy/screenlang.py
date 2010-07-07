@@ -636,6 +636,13 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
+FunctionStatementParser("label", "ui.label", 0)
+Positional("label")
+Keyword("text_style")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+
 for name in [ "bar", "vbar" ]:
     FunctionStatementParser(name, "ui." + name, 0)    
     Keyword("adjustment")

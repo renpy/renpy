@@ -500,6 +500,39 @@ It takes no children.
         key "p" action ShowMenu('preferences')
         key "s" action Screenshot()
 
+        
+Label
+-----
+
+Creates a window in the label style, and then places text inside that
+window. Together, this combination is used to label things inside a
+frame.
+
+It takes one positional argument, the text of the label. It takes
+the property:
+
+`text_style`
+    The name of the style to use for the button text. If not supplied,
+    and the `style` property is a string, then ``"_text"`` is appended
+    to that string to give the default text style.
+    
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+* :ref:`window-style-properties`
+
+It does not take children.
+
+::
+
+    screen display_preference:
+        frame:
+            vbox:
+                label "Display"
+                textbutton "Fullscreen" action Preference("display", "fullscreen")
+                textbutton "Window" action Preference("display", "window")
+            
 Null
 ----
 
@@ -597,6 +630,11 @@ following properties:
 `unhovered`
     An action to run when the button loses focus.
 
+`text_style`
+    The name of the style to use for the button text. If not supplied,
+    and the `style` property is a string, then ``"_text"`` is appended
+    to that string to give the default text style.
+    
 It also takes:
 
 * :ref:`Common Properties <common-properties>`

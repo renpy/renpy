@@ -632,8 +632,24 @@ def _imagebutton(idle_image = None,
     
 imagebutton = Wrapper(_imagebutton)
 
-def textbutton(label, text_style='button_text', **kwargs):
-    button(**kwargs)
+def textbutton(label, style='button', text_style=None, **kwargs):
+    if text_style is None:
+        if isinstance(style, basestring):
+            text_style = style + "_text"
+        else:
+            raise Exception("Couldn't determine text style.")
+
+    button(style=style, **kwargs)
+    text(label, style=text_style)
+
+def label(label, style='label', text_style=None, **kwargs):
+    if text_style is None:
+        if isinstance(style, basestring):
+            text_style = style + "_text"
+        else:
+            raise Exception("Couldn't determine text style.")
+
+    window(style=style, **kwargs)
     text(label, style=text_style)
 
 adjustment = renpy.display.behavior.Adjustment

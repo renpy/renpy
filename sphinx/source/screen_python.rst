@@ -79,6 +79,7 @@ The following UI functions do not take any children.
 * ui.imagebutton
 * ui.input
 * ui.key
+* ui.label
 * ui.null
 * ui.text
 * ui.textbutton
