@@ -322,3 +322,4 @@ def main():
             
     # This is stuff we do on a normal, non-error return.
     renpy.display.render.check_at_shutdown()
+

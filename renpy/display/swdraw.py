@@ -961,6 +961,8 @@ class SWDraw(object):
         De-initializes the drawing system.
         """
 
+        pygame.display.quit()
+        
         return
             
     def event_peek_sleep(self):

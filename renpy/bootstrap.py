@@ -290,6 +290,9 @@ def bootstrap(renpy_base):
 
     renpy.display.im.cache.quit()
     
+    if renpy.display.draw:
+        renpy.display.draw.deinit()
+
     # Prevent subprocess from throwing errors while trying to run it's
     # __del__ method during shutdown.
     import subprocess # W0403

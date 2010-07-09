@@ -29,7 +29,8 @@ except ImportError:
     gl = None
     pysdlgl = None
 
-
+import renpy
+    
 # The maximum size of a texture.
 MAX_SIZE = 512
 
@@ -536,8 +537,10 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
     
     rv = TextureGrid(width, height)
 
-    rv.columns, texcolumns = compute_tiling(width)
-    rv.rows, texrows = compute_tiling(height)
+    pwidth, pheight = renpy.display.draw.physical_size
+    
+    rv.columns, texcolumns = compute_tiling(width, pwidth)
+    rv.rows, texrows = compute_tiling(height, pheight)
 
     for y, height, texheight in texrows:
         row = [ ]

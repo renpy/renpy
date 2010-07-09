@@ -188,13 +188,16 @@ class GLDraw(object):
 
         # Allocate a fullscreen surface for video playback.
         self.fullscreen_surface = renpy.display.pgrender.surface(self.virtual_size, False)
+
+        # Prepare a mouse call.
+        self.mouse_old_visible = None
         
         return True
 
     def deinit(self):
         """
-        De-initializes the system in preparation for a
-        restart. Flushes out all the textures while it's at it.
+        De-initializes the system in preparation for a restart, or
+        quit. Flushes out all the textures while it's at it.
         """
     
         # This should get rid of all of the cached textures.
@@ -205,9 +208,13 @@ class GLDraw(object):
         
         if self.rtt:
             self.rtt.deinit()
+
         if self.environ:
             self.environ.deinit()
         
+        self.log("About to quit GL.")
+        pygame.display.quit()
+        self.log("Finished quit GL.")
 
     def init(self):
         """
@@ -304,7 +311,8 @@ class GLDraw(object):
         if use_subsystem(
             "RENPY_GL_RTT",
             "fbo",
-            "GL_EXT_framebuffer_object"):
+            "GL_EXT_framebuffer_object",
+            "RENPY_nonexistent_extension"):
 
             self.log("Using framebuffer_object RTT.")
             self.rtt = glenviron.FramebufferRtt()
