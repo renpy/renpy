@@ -415,6 +415,10 @@ class Script(object):
         # bytecode.
         for i in self.all_pycode:
 
+            i = i()
+            if i is None:
+                continue
+            
             codes = self.bytecode_oldcache.get(i.location, { })
 
             if magic in codes:

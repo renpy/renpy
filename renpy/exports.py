@@ -1147,6 +1147,16 @@ def file(fn):
     return renpy.loader.load(fn)
 
 def image_size(im):
+    """
+    :doc: other
+
+    Given an image manipulator, loads it and returns a (``width``,
+    ``height``) tuple giving its size.
+
+    This reads the image in from disk and decompresses it, without
+    using the image cache. This can be slow.
+    """
+    
     # Index the archives, if we haven't already.
     renpy.loader.index_archives()
 

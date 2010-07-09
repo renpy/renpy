@@ -29,6 +29,7 @@
 import renpy
 import re
 import time
+import weakref
 
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):
@@ -102,10 +103,8 @@ class PyCode(object):
         'location',
         'mode',
         'bytecode',
+        '__weakref__',
         ]
-
-    # All PyCodes known to the system.
-    extent = [ ]
 
     def __getstate__(self):
         return (1, self.source, self.location, self.mode)
@@ -113,7 +112,7 @@ class PyCode(object):
     def __setstate__(self, state):
         (_, self.source, self.location, self.mode) = state
         self.bytecode = None
-        renpy.game.script.all_pycode.append(self)
+        renpy.game.script.all_pycode.append(weakref.ref(self))
         
     def __init__(self, source, loc=('<none>', 1), mode='exec'):
 
@@ -131,7 +130,7 @@ class PyCode(object):
         # This will be initialized later on, after we are serialized.
         self.bytecode = None
 
-        renpy.game.script.all_pycode.append(self)
+        renpy.game.script.all_pycode.append(weakref.ref(self))
 
 def chain_block(block, next):
     """
