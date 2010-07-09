@@ -432,7 +432,7 @@ class GLDraw(object):
         self.undefine_clip()
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-            tex = self.load_texture(self.fullscreen_surface)
+            tex = self.load_texture(self.fullscreen_surface, transient=True)
             self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)           
         else:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)

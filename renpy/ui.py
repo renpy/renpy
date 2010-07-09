@@ -632,22 +632,39 @@ def _imagebutton(idle_image = None,
     
 imagebutton = Wrapper(_imagebutton)
 
-def textbutton(label, style='button', text_style=None, **kwargs):
-    if text_style is None:
-        if isinstance(style, basestring):
-            text_style = style + "_text"
-        else:
-            raise Exception("Couldn't determine text style.")
+def get_text_style(style, default):
+    if isinstance(style, basestring):
+        base = style
+        rest = ()
+    else:
+        print style
+        base = style.name[0]
+        rest = style.name[1:]
 
-    button(style=style, **kwargs)
+    base = base + "_text"
+
+    rv = renpy.style.style_map.get(base, None)
+
+    if rv is None:
+        rv = renpy.style.style_map['default']
+
+    for i in rest:
+        rv = rv[i]
+
+    return rv
+
+def textbutton(label, clicked=None, style='button', text_style=None, **kwargs):
+
+    if text_style is None:
+        text_style = get_text_style(style, 'button_text')
+
+    button(style=style, clicked=clicked, **kwargs)
     text(label, style=text_style)
 
 def label(label, style='label', text_style=None, **kwargs):
+
     if text_style is None:
-        if isinstance(style, basestring):
-            text_style = style + "_text"
-        else:
-            raise Exception("Couldn't determine text style.")
+        text_style = get_text_style(style, 'label_text')
 
     window(style=style, **kwargs)
     text(label, style=text_style)
