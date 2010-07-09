@@ -37,8 +37,6 @@ def play(filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False
                      fadein=fadein,
                      tight=tight,
                      loop=loop)
-    
-
 
 def queue(filename, channel="sound", clear_queue=True, fadein=0, tight=False, loop=False):
     renpy.audio.music.queue(filename,

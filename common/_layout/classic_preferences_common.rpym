@@ -133,7 +133,7 @@ init python:
         a channel.
         """
 
-        def __init__(self, name, mixer, enable='True', sound='None', channel=0):
+        def __init__(self, name, mixer, enable='True', sound='None', channel="sound"):
             """
             @param name: The name of this preference, as shown to the user.
 
@@ -360,15 +360,18 @@ init python hide:
     _VolumePreference(u"Music Volume",
                       'music',
                       'config.has_music')
+
     _VolumePreference(u"Sound Volume",
                       'sfx',
                       'config.has_sound',
-                      'config.sample_sound')
+                      'config.sample_sound',
+                      'sound')
+
     _VolumePreference(u'Voice Volume',
                       'voice',
                       'config.has_voice',
                       'config.sample_voice',
-                      2)
+                      'voice')
 
     _JumpPreference(u'Joystick...',
                     'joystick_preferences_screen',

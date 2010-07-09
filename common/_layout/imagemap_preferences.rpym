@@ -77,12 +77,12 @@ init python:
             ime.button("Joystick", ui.jumps("joystick_preferences_screen"), False)
 
         def play_sound():
-            renpy.sound.play(config.sample_sound)
+            renpy.music.play(config.sample_sound, channel="sound")
 
         ime.button("Sound Test", play_sound, False)
 
         def play_voice():
-            renpy.sound.play(config.sample_sound, channel=2)
+            renpy.music.play(config.sample_sound, channel="voice")
 
         ime.button("Voice Test", play_voice, False)
 
