@@ -173,7 +173,7 @@ class ChildOrFixed(Addable):
             raise Exception("Did not expect to close %r." % d)
 
 # A stack of things we can add to.
-stack = None
+stack = [ ]
 
 # A stack of open ui.ats.
 at_stack = [ ]
@@ -251,6 +251,13 @@ def clear():
     renpy.game.context(-1).scene_lists.clear(layer)
 
 def detached():
+    """
+    :doc: ui
+
+    Do not add the next displayable to any later or container. Use this if
+    you want to assign the result of a ui function to a variable.
+    """
+    
     stack.append(Detached())
     
 def layer(name):
@@ -378,8 +385,12 @@ class Wrapper(renpy.object.Object):
                 atw = atf(atw)
 
         # Add to the displayable at the bottom of the stack.
-        stack[-1].add(atw, add_tag)
 
+        if stack:
+            stack[-1].add(atw, add_tag)
+        else:
+            raise Exception("Can't add displayable during init phase.")
+            
         # Update the stack, as necessary.
         if self.one:
             stack.append(One(w))
