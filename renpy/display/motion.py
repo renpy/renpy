@@ -1328,7 +1328,7 @@ class ZoomCommon(renpy.display.core.Displayable):
 
     def event(self, ev, x, y, st):
 
-        if self.time:
+        if not self.time:
             done = 1.0
         else:
             done = min(st / self.time, 1.0)
