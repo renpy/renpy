@@ -277,7 +277,7 @@ class SayBehavior(renpy.display.layout.Null):
         self.allow_dismiss = allow_dismiss
         
     def set_afm_length(self, afm_length):
-        self.afm_length = afm_length
+        self.afm_length = max(afm_length, 1)
               
     def event(self, ev, x, y, st):
 
