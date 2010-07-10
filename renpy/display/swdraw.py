@@ -668,6 +668,9 @@ class SWDraw(object):
 
         # Info.
         self.info = { "renderer" : "sw" }
+
+        pygame.display.init()
+        renpy.display.interface.post_init()
         
         # Scaling?
         renpy.display.scale.init()
@@ -702,7 +705,13 @@ class SWDraw(object):
 
         # The surface used to display fullscreen video.
         self.fullscreen_surface = renpy.display.scale.real(self.window)
-        
+
+        # Reset this on a mode change.
+        self.mouse_location = None
+        self.mouse_backing = None
+        self.mouse_backing_pos = None
+        self.mouse_info = None
+
         return True
         
 

@@ -1128,7 +1128,6 @@ class Interface(object):
         except:
             pass
 
-        pygame.display.init()
         pygame.font.init()
         renpy.audio.audio.init()
         renpy.display.joystick.init()
@@ -1141,9 +1140,8 @@ class Interface(object):
         # The current window caption.
         self.window_caption = None
 
-        # Setup.
-        self.set_window_caption()
-        self.set_icon()
+        renpy.game.interface = self
+        renpy.display.interface = self
         
         # Setup the video mode.
         self.set_mode()
@@ -1153,6 +1151,10 @@ class Interface(object):
 
         pygame.event.set_grab(False)
 
+    def post_init(self):
+        # Setup.
+        self.set_window_caption()
+        self.set_icon()
     
     def set_icon(self):
         """
@@ -1258,7 +1260,7 @@ class Interface(object):
                 break
             else:
                 pygame.display.quit()
-                pygame.display.init()
+
         else:
             
             # Ensure we don't get stuck in fullscreen.

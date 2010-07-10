@@ -296,8 +296,7 @@ def main():
 
     # (Perhaps) Initialize graphics.
     if not game.interface:
-        game.interface = renpy.display.core.Interface()
-
+        renpy.display.core.Interface()
 
     # Start things running.
     restart = None

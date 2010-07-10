@@ -88,6 +88,9 @@ class GLDraw(object):
 
         # Info.
         self.info = { "renderer" : "gl" }
+
+        # Old value of fullscreen.
+        self.old_fullscreen = None
         
         
     def log(self, msg, *args):
@@ -104,7 +107,7 @@ class GLDraw(object):
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
-        can. It returns True if it was succesful, or False of OpenGL isn't
+        can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
 
@@ -115,6 +118,14 @@ class GLDraw(object):
         if self.did_init:
             self.deinit()
 
+        if fullscreen != self.old_fullscreen:
+            pygame.display.quit()
+            pygame.display.init()
+
+            renpy.display.interface.post_init()
+            
+            self.old_fullscreen = fullscreen
+            
         self.log("")
         self.log(renpy.version)
         
@@ -131,8 +142,6 @@ class GLDraw(object):
         try:
             if fullscreen:
                 self.log("fullscreen mode.")
-                pygame.display.quit()
-                pygame.display.init()
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
             else:
                 self.log("windowed mode.")

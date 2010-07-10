@@ -23,3 +23,6 @@
 # contains all of the distinction between the software and GL
 # renderers.
 draw = None
+
+# The interface object.
+interface = None
