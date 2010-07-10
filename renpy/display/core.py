@@ -1153,7 +1153,7 @@ class Interface(object):
 
     def post_init(self):
         # Setup.
-        self.set_window_caption()
+        self.set_window_caption(force=True)
         self.set_icon()
     
     def set_icon(self):
@@ -1188,9 +1188,9 @@ class Interface(object):
             pygame.display.set_icon(im)
 
             
-    def set_window_caption(self):
+    def set_window_caption(self, force=False):
         caption = renpy.config.window_title + renpy.store._window_subtitle
-        if caption == self.window_caption:
+        if not force and caption == self.window_caption:
             return
 
         self.window_caption = caption

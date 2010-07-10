@@ -965,9 +965,9 @@ class SWDraw(object):
         rle_cache.clear()
         
         
-    def deinit(self):
+    def quit(self):
         """
-        De-initializes the drawing system.
+        Shuts down the drawing system.
         """
 
         pygame.display.quit()

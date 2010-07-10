@@ -101,9 +101,12 @@ class Texture(object):
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
         if self.free_list is not None:
-            self.free_list.append(self)
-            self.free_list = None
-        
+            try:
+                self.free_list.append(self)
+                self.free_list = None
+            except TypeError:
+                pass # Let's not error on shutdown.
+                
             
     def load_surface(self, surf, x, y, w, h):
         """

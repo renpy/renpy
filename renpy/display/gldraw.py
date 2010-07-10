@@ -119,6 +119,7 @@ class GLDraw(object):
             self.deinit()
 
         if fullscreen != self.old_fullscreen:
+
             pygame.display.quit()
             pygame.display.init()
 
@@ -134,6 +135,11 @@ class GLDraw(object):
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
 
+        # Ensure we're always at least 256x256, so we have a shot at rendering
+        # textures.
+        pwidth = max(pwidth, 256)
+        pheight = max(pheight, 256)
+        
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
@@ -220,7 +226,9 @@ class GLDraw(object):
 
         if self.environ:
             self.environ.deinit()
-        
+
+    def quit(self):
+            
         self.log("About to quit GL.")
         pygame.display.quit()
         self.log("Finished quit GL.")

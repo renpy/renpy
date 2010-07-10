@@ -284,14 +284,17 @@ def bootstrap(renpy_base):
                 keep_running = True
             else:
                 keep_running = False
-            
+
+    if "RENPY_SHUTDOWN_TRACE" in os.environ:
+        enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
+                
     if options.leak:
         memory_profile()
 
     renpy.display.im.cache.quit()
     
     if renpy.display.draw:
-        renpy.display.draw.deinit()
+        renpy.display.draw.quit()
 
     # Prevent subprocess from throwing errors while trying to run it's
     # __del__ method during shutdown.
