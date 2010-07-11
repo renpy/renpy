@@ -195,7 +195,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     Lists, List Comprehensions, and Dictionaries are wrapped when
     appropriate.
 
-    @param source: The sourccode, as a string.
+    @param source: The source code, as a string.
 
     @param mode: 'exec' or 'eval'.
 
@@ -213,7 +213,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
 
     source = source.replace("\r", "")
     source = source.encode('raw_unicode_escape')
-
+        
     if "\\u" in source:
         source = string_re.sub(make_unicode, source)
         

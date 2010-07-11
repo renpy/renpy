@@ -610,7 +610,7 @@ class Lexer(object):
             return self.word_cache
 
         self.word_cache_pos = self.pos 
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd\$][0-9a-zA-Z_\u00a0-\ufffd\$]*')
+        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
         self.word_cache = rv
         self.word_cache_newpos = self.pos
         
@@ -1321,7 +1321,7 @@ class ParseTrie(object):
     def parse(self, l):
         old_pos = l.pos
 
-        word = l.word()
+        word = l.word() or l.match(r'\$')
 
         if not word in self.words:
             l.pos = old_pos

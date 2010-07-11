@@ -153,7 +153,7 @@ class Parser(object):
             self.children[i.name] = i
 
     def parse_statement(self, l, name):
-        word = l.word()
+        word = l.word() or l.match(r'\$')
 
         if word and word in self.children:
             c = self.children[word].parse(l, name)
