@@ -657,7 +657,7 @@ def get_text_style(style, default):
     rv = renpy.style.style_map.get(base, None)
 
     if rv is None:
-        rv = renpy.style.style_map['default']
+        rv = renpy.style.style_map[default]
 
     for i in rest:
         rv = rv[i]
