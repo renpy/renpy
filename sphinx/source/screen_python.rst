@@ -72,6 +72,9 @@ becomes: ::
 There are three groups of UI functions, corresponding to the number
 of children they take.
 
+.. When updating this list, be sure to update the documentation for
+   the layout statement in screens.rst as well.
+
 The following UI functions do not take any children.
 
 * ui.add
@@ -103,6 +106,7 @@ taking children until :func:`ui.close` is called.
 * ui.grid
 * ui.hbox
 * ui.side
+* ui.vbox
 * ui.imagemap
 
 There are a few UI functions that do not correspond to screen language

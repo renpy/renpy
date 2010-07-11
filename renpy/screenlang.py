@@ -152,15 +152,22 @@ class Parser(object):
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
-    def parse_statement(self, l, name):
+    def parse_statement(self, l, name, layout_mode=False):
         word = l.word() or l.match(r'\$')
 
         if word and word in self.children:
-            c = self.children[word].parse(l, name)
+            if layout_mode:
+                c = self.children[word].parse_layout(l, name)
+            else:
+                c = self.children[word].parse(l, name)
+                
             return c
         else:            
             return None
 
+    def parse_layout(self, l, name):
+        l.error("The %s statement cannot be used as a layout." % self.name)
+        
     def parse_children(self, stmt, l, name):
         l.expect_block(stmt)
 
@@ -281,14 +288,20 @@ class FunctionStatementParser(Parser):
 
         if nchildren != 0:
             childbearing_statements.append(self)
+
+    def parse_layout(self, l, name):
+        return self.parse(l, name, True)
             
-    def parse(self, l, name):
+    def parse(self, l, name, layout_mode=False):
 
         # The list of nodes this function returns.
         rv = [ ]
 
         # The line number of the current node.
         lineno = l.number
+        
+        if layout_mode and self.nchildren is not many:
+            l.error("The %s statement cannot be used as a layout." % self.name)
         
         func = self.parse_eval(self.function, lineno)        
 
@@ -303,14 +316,14 @@ class FunctionStatementParser(Parser):
             )
 
         seen_keywords = set()
-        
+
         # Parses a keyword argument from the lexer.
         def parse_keyword(l):
             name = l.word()
 
             if name is None:
                 l.error('expected a keyword argument, colon, or end of line.')
-            
+
             if name not in self.keyword:
                 l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
             
@@ -351,22 +364,49 @@ class FunctionStatementParser(Parser):
         if self.nchildren == 1:
             rv.extend(self.parse_exec('ui.child_or_fixed()'))
 
+        needs_close = (self.nchildren != 0)
+                   
         # The index of the child we're adding to this statement.
         child_index = 0
 
         # The variable we store the child's name in.
         with new_variable() as child_name:
-        
+
+            old_l = l
+            
             # If we have a block, then parse each line.
             if block:
 
                 l = l.subblock_lexer()
-
+                
                 while l.advance():
 
                     state = l.checkpoint()
 
+                    if l.keyword(r'layout'):
+                        if self.nchildren != 1:
+                            l.error("The %s statement does not take a layout." % self.name)
+
+                        if child_index != 0:
+                            l.error("The layout statement may not be given after a child has been supplied.")
+                            
+                        c = self.parse_statement(l, child_name, layout_mode=True)
+
+                        if c is None:
+                            l.error('Layout expects a child statement.')
+
+                        # Remove the call to child_or_fixed.
+                        rv.pop()
+                        
+                        rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
+                        rv.extend(c)
+
+                        needs_close = False
+                        
+                        continue
+                    
                     c = self.parse_statement(l, child_name)
+
                     if c is not None:
 
                         rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
@@ -381,7 +421,24 @@ class FunctionStatementParser(Parser):
                     while not l.eol():
                         parse_keyword(l)
 
-        if self.nchildren != 0:
+            l = old_l
+
+            if layout_mode:
+            
+                while l.advance():
+                    c = self.parse_statement(l, child_name)
+
+                    if c is not None:
+
+                        rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
+                        rv.extend(c)
+
+                        child_index += 1
+
+                    else:
+                        l.error("Expected a screen language statement.")
+                        
+        if needs_close:
             rv.extend(self.parse_exec("ui.close()"))        
 
         if "id" not in seen_keywords:

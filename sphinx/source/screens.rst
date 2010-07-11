@@ -215,12 +215,13 @@ This does not take children.
 ::
 
     screen volume_controls:
-         frame:
-             vbox:
-                  bar value Preference("sound volume")
-                  bar value Preference("music volume")
-                  bar value Preference("voice volume")
-
+        frame:
+            has vbox
+        
+            bar value Preference("sound volume")
+            bar value Preference("music volume")
+            bar value Preference("voice volume")
+            
 Button
 ------
 
@@ -471,10 +472,10 @@ This does not take any children.
 
     screen input_screen:
         window:
-            vbox:
-                spacing 10
-                text "Enter your name."
-                input default "Joseph P. Blow, ESQ."
+            has vbox
+
+            text "Enter your name."
+            input default "Joseph P. Blow, ESQ."
 
 Key
 ---
@@ -528,10 +529,11 @@ It does not take children.
 
     screen display_preference:
         frame:
-            vbox:
-                label "Display"
-                textbutton "Fullscreen" action Preference("display", "fullscreen")
-                textbutton "Window" action Preference("display", "window")
+            has vbox
+
+            label "Display"
+            textbutton "Fullscreen" action Preference("display", "fullscreen")
+            textbutton "Window" action Preference("display", "window")
             
 Null
 ----
@@ -699,10 +701,11 @@ as `bar`.
 
     screen volume_controls:
          frame:
-             hbox:
-                  vbar value Preference("sound volume")
-                  vbar value Preference("music volume")
-                  vbar value Preference("voice volume")
+             has hbox
+             
+             vbar value Preference("sound volume")
+             vbar value Preference("music volume")
+             vbar value Preference("voice volume")
 
 
 Vbox
@@ -934,6 +937,48 @@ function takes:
 
 This does not take children.
 
+Has Statement
+=============
+
+The has statment allows you to specify a container to use, instead of
+fixed, for statements that take only one child. The has statement
+may only be used inside a statement that takes one child. The keyword
+``has`` is followed (on the same line) by another statement, which
+must be a statement that creates a container displayable, one that
+takes more than one child.
+
+The has statement changes the way in which the block that contains
+it is parsed. Child displayables created in that block are added to
+the container, rather than the parent displayable. Keyword arguments
+to the parent displayable are not allowed after the has statement.
+
+The has statement can be supplied as a child of the following
+statements:
+
+* button
+* frame
+* window
+
+The has statement can be given the following statements as a
+container.
+
+* fixed
+* grid
+* hbox
+* side
+* vbox
+
+::
+
+   screen volume_controls:
+        frame:
+            has vbox
+        
+            bar value Preference("sound volume")
+            bar value Preference("music volume")
+            bar value Preference("voice volume")
+
+
 Control Statements
 ==================
 
@@ -991,10 +1036,11 @@ occurs.
 
     screen preferences:
         frame:
-            hbox:
-                text "Display"
-                textbutton "Fullscreen" action Preferences("display", "fullscreen")
-                textbutton "Window" action Preferences("display", "window")
+            has hbox
+            
+            text "Display"
+            textbutton "Fullscreen" action Preferences("display", "fullscreen")
+            textbutton "Window" action Preferences("display", "window")
                 
         on "show" action Show("navigation")
         on "hide" action Hide("navigation")
@@ -1017,11 +1063,12 @@ values.
         button:
             action FileAction(slot)
 
-            hbox:
-                add FileScreenshot(slot)
-                vbox:
-                    text FileTime(slot, empty="Empty Slot.")
-                    text FileSaveName(slot)
+            has hbox
+
+            add FileScreenshot(slot)
+            vbox:
+                text FileTime(slot, empty="Empty Slot.")
+                text FileSaveName(slot)
                     
 
      screen save:

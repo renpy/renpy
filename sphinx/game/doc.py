@@ -1,3 +1,4 @@
+
 import inspect
 import re
 import collections
@@ -80,6 +81,7 @@ hotbar
 transform
 add
 use
+has
 """
 
 
