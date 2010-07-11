@@ -110,7 +110,8 @@ class Script(object):
         self.namemap = { }
         self.all_stmts = [ ]
         self.all_pycode = [ ]
-
+        self.record_pycode = True
+        
         # Bytecode caches.
         self.bytecode_oldcache = { }
         self.bytecode_newcache = { }
@@ -246,11 +247,15 @@ class Script(object):
             # See if we have a corresponding .rpyc file. If so, then
             # we want to try to upgrade our .rpy file with it.
             try:
+                self.record_pycode = False
                 old_data, old_stmts = self.load_file_core(dir, fn + "c")
                 self.merge_names(old_stmts, stmts)
+                del old_data
                 del old_stmts
             except:
                 pass
+            finally:
+                self.record_pycode = True
 
             self.assign_names(stmts, fullfn)
 
@@ -286,11 +291,8 @@ class Script(object):
             return None, None
 
         return data, stmts
-
-
-
+    
     def load_file(self, dir, fn, initcode):
-
 
         # Actually do the loading.
         data, stmts = self.load_file_core(dir, fn)
@@ -415,10 +417,6 @@ class Script(object):
         # bytecode.
         for i in self.all_pycode:
 
-            i = i()
-            if i is None:
-                continue
-            
             codes = self.bytecode_oldcache.get(i.location, { })
 
             if magic in codes:
