@@ -562,7 +562,7 @@ label _enter_menu:
         renpy.context()._menu = True
         
         # This may be changed, if we are already in the main menu.
-        renpy.context().main_menu = False
+        renpy.context()._main_menu = False
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
         renpy.context_dynamic("_window")
@@ -777,7 +777,7 @@ label _main_menu(_main_menu_screen="_main_menu_screen"):
         renpy.dynamic("_load_prompt")
         _load_prompt = False
 
-        renpy.context().main_menu = True
+        renpy.context()._main_menu = True
         store.main_menu = True
 
     jump expression _main_menu_screen

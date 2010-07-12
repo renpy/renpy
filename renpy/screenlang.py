@@ -166,7 +166,7 @@ class Parser(object):
             return None
 
     def parse_layout(self, l, name):
-        l.error("The %s statement cannot be used as a layout." % self.name)
+        l.error("The %s statement cannot be used as a container for the has statement." % self.name)
         
     def parse_children(self, stmt, l, name):
         l.expect_block(stmt)
@@ -383,17 +383,17 @@ class FunctionStatementParser(Parser):
 
                     state = l.checkpoint()
 
-                    if l.keyword(r'layout'):
+                    if l.keyword(r'has'):
                         if self.nchildren != 1:
                             l.error("The %s statement does not take a layout." % self.name)
 
                         if child_index != 0:
-                            l.error("The layout statement may not be given after a child has been supplied.")
+                            l.error("The has statement may not be given after a child has been supplied.")
                             
                         c = self.parse_statement(l, child_name, layout_mode=True)
 
                         if c is None:
-                            l.error('Layout expects a child statement.')
+                            l.error('Has expects a child statement.')
 
                         # Remove the call to child_or_fixed.
                         rv.pop()
@@ -473,6 +473,8 @@ position_properties = [ Style(i) for i in [
         "ymaximum",
         "area",
         "clipping",
+        "xfill",
+        "yfill",
         ] ]
 
 text_properties = [ Style(i) for i in [
@@ -504,8 +506,6 @@ text_properties = [ Style(i) for i in [
         "ymaximum",
         "xminimum",
         "yminimum",
-        "xfill",
-        "yfill",
         ] ]
 
 window_properties = [ Style(i) for i in [
@@ -526,8 +526,6 @@ window_properties = [ Style(i) for i in [
         "size_group",
         "xminimum",
         "yminimum",
-        "xfill",
-        "yfill",
         ] ]
 
 button_properties = [ Style(i) for i in [
@@ -558,8 +556,6 @@ box_properties = [ Style(i) for i in [
         "box_layout",
         "spacing",
         "first_spacing",
-        "xfill",
-        "yfill",
         ] ]
 
 ui_properties = [

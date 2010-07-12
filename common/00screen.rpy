@@ -283,7 +283,7 @@ init -1140 python:
          """
         
         def __init__(self, confirm=True):
-            self.confirm = True
+            self.confirm = confirm
 
         def __call__(self):
 
