@@ -245,10 +245,12 @@ class GLDraw(object):
 
         # Init glew.
         pysdlgl.init_glew()
-        
+
+        renderer = pysdlgl.get_string(gl.RENDERER)
+
         # Log the GL version.
         self.log("Vendor: %r", pysdlgl.get_string(gl.VENDOR))
-        self.log("Renderer: %r", pysdlgl.get_string(gl.RENDERER))
+        self.log("Renderer: %r", renderer)
         self.log("Version: %r", pysdlgl.get_string(gl.VERSION))
         self.log("Video Info: %s", pygame.display.Info())
         
@@ -258,6 +260,10 @@ class GLDraw(object):
 
         for i in sorted(extensions):
             self.log("    %s", i)
+        
+        if renderer == "Mesa GLX Indirect":
+            self.log("Blacklisted renderer.")
+            return False
         
         def use_subsystem(envvar, envval, *req_ext):
             """
