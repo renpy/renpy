@@ -239,69 +239,72 @@ def bootstrap(renpy_base):
     keep_running = True
     report_error = None
 
-    while keep_running:
-        try:
-            renpy.game.options = options
+    try:
+        while keep_running:
+            try:
+                renpy.game.options = options
 
-            renpy.config.renpy_base = renpy_base
-            renpy.config.basedir = basedir
-            renpy.config.gamedir = gamedir
-            renpy.config.args = options.args
-            
-            renpy.main.main()
-            keep_running = False
+                renpy.config.renpy_base = renpy_base
+                renpy.config.basedir = basedir
+                renpy.config.gamedir = gamedir
+                renpy.config.args = options.args
 
-        except KeyboardInterrupt:
-            import traceback
-            traceback.print_exc()
-            break
-            
-        except renpy.game.UtterRestartException:
-
-            if renpy.display.draw:
-                renpy.display.draw.deinit()
-            
-            # Only works after a full restart.
-            report_error = renpy.display.error.ReportError()
-            
-            # On an UtterRestart, reload Ren'Py.
-            renpy.reload_all()
-            continue
-
-        except renpy.game.ParseErrorException:
-            
-            if report_error and report_error.report('a parse error'):
-                renpy.reload_all()
-                keep_running = True
-            else:
+                renpy.main.main()
                 keep_running = False
+
+            except KeyboardInterrupt:
+                import traceback
+                traceback.print_exc()
+                break
+
+            except renpy.game.UtterRestartException:
+
+                if renpy.display.draw:
+                    renpy.display.draw.deinit()
+
+                # Only works after a full restart.
+                report_error = renpy.display.error.ReportError()
+
+                # On an UtterRestart, reload Ren'Py.
+                renpy.reload_all()
+                continue
+
+            except renpy.game.ParseErrorException:
+
+                if report_error and report_error.report('a parse error'):
+                    renpy.reload_all()
+                    keep_running = True
+                else:
+                    keep_running = False
+
+            except Exception, e:
+                report_exception(e)
+
+                if report_error and report_error.report('an exception'):
+                    renpy.reload_all()
+                    keep_running = True
+                else:
+                    keep_running = False
+
+        sys.exit(0)
+
+    finally:
         
-        except Exception, e:
-            report_exception(e)
+        if "RENPY_SHUTDOWN_TRACE" in os.environ:
+            enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
 
-            if report_error and report_error.report('an exception'):
-                renpy.reload_all()
-                keep_running = True
-            else:
-                keep_running = False
+        renpy.display.im.cache.quit()
 
-    if "RENPY_SHUTDOWN_TRACE" in os.environ:
-        enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
-                
-    if options.leak:
-        memory_profile()
+        if renpy.display.draw:
+            renpy.display.draw.quit()
 
-    renpy.display.im.cache.quit()
-    
-    if renpy.display.draw:
-        renpy.display.draw.quit()
+        # Prevent subprocess from throwing errors while trying to run it's
+        # __del__ method during shutdown.
+        import subprocess # W0403
+        subprocess.Popen.__del__ = popen_del # E1101
 
-    # Prevent subprocess from throwing errors while trying to run it's
-    # __del__ method during shutdown.
-    import subprocess # W0403
-    subprocess.Popen.__del__ = popen_del # E1101
-
-    sys.exit(0)
+        if options.leak:
+            memory_profile()
 
 
 def report_tb(out, tb):

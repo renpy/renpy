@@ -228,7 +228,11 @@ class GLDraw(object):
             self.environ.deinit()
 
     def quit(self):
-            
+
+        self.log("Deallocating textures.")
+        gltexture.dealloc_textures()
+        self.log("Done deallocating textures.")
+        
         self.log("About to quit GL.")
         pygame.display.quit()
         self.log("Finished quit GL.")
@@ -246,7 +250,8 @@ class GLDraw(object):
         self.log("Vendor: %r", pysdlgl.get_string(gl.VENDOR))
         self.log("Renderer: %r", pysdlgl.get_string(gl.RENDERER))
         self.log("Version: %r", pysdlgl.get_string(gl.VERSION))
-
+        self.log("Video Info: %s", pygame.display.Info())
+        
         extensions = set(pysdlgl.get_string(gl.EXTENSIONS).split(" "))
 
         self.log("Extensions:")
