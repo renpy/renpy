@@ -137,8 +137,12 @@ def render(d, width, height, st, at):
     rv = render_cache[d].get(wh, None)
     if rv is not None:
         return rv
-    
+
     rv = d.render(width, height, st, at)
+
+    if rv is None:
+        print d.style.parent, d.style, d.style.box_layout, d.style.name
+
     rv.render_of.append(d)
 
     if style.clipping:

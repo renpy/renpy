@@ -29,7 +29,6 @@
 import sys
 import renpy
 
-
 ##############################################################################
 # Special classes that can be subclassed from the outside.
 
@@ -76,6 +75,9 @@ class BarValue(renpy.object.Object):
 # closed.
 
 class Addable(object):
+    # A group associates with this addable.
+    group = None
+
     def get_layer(self):
         return Exception("Operation can only be performed on a layer.")
 
@@ -101,9 +103,10 @@ class Many(Addable):
     A widget that takes many children.
     """
 
-    def __init__(self, displayable, imagemap):
+    def __init__(self, displayable, imagemap, group):
         self.displayable = displayable
         self.imagemap = False
+        self.group = group
         
     def add(self, d, key):
         self.displayable.add(d)
@@ -122,9 +125,10 @@ class One(Addable):
     A widget that expects exactly one child.
     """
     
-    def __init__(self, displayable):
+    def __init__(self, displayable, group):
         self.displayable = displayable
-
+        self.group = group
+        
     def add(self, d, key):
         self.displayable.add(d)
         stack.pop()
@@ -150,9 +154,10 @@ class ChildOrFixed(Addable):
     the widgets are added to that.
     """
 
-    def __init__(self):
+    def __init__(self, group):
         self.queue = [ ]
-
+        self.group = group
+        
     def add(self, d, key):
         self.queue.append(d)
 
@@ -225,7 +230,7 @@ def child_or_fixed():
     a fixed will be created, and the children will be added to that.
     """
 
-    stack.append(ChildOrFixed())
+    stack.append(ChildOrFixed(stack[-1].group))
     
 def remove(d):
     layer = stack[-1].get_layer()
@@ -301,7 +306,27 @@ def context_enter(w):
 def context_exit(w):
     close(w)
 
+NoGroupGiven = object()
+    
+def group_style(s, group):
+    """
+    Given a style name s, combine it with the group to create a new
+    style. If the style doesn't exist, create a new lightweight style.
+    """
+    
+    if group is NoGroupGiven:
+        group = stack[-1].group
 
+    if group is None:
+        return s
+    
+    new_style = group + "_" + s
+
+    if new_style not in renpy.style.style_map:
+        renpy.style.style_map[new_style] = renpy.style.Style(s, heavy=False, name=new_style)
+        
+    return new_style
+        
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
 screen = None
@@ -311,7 +336,7 @@ class Wrapper(renpy.object.Object):
     def __reduce__(self):
         return self.name
     
-    def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, **kwargs):
+    def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 
         # The name assigned to this wrapper. This is used to serialize us correctly.
         self.name = None
@@ -331,18 +356,30 @@ class Wrapper(renpy.object.Object):
         # Default keyword arguments to the function.
         self.kwargs = kwargs
 
+        # Default style (suffix).
+        self.style = style
+        
     def __call__(self, *args, **kwargs):
 
         global add_tag
 
-        # Pull out the special kwargs, id and at.
+        if not stack:
+            raise Exception("Can't add displayable during init phase.")
+        
+        # Pull out the special kwargs, id, at, and group.
 
         id = kwargs.pop("id", None)
 
         at_list = kwargs.pop("at", [ ])
         if not isinstance(at_list, list):
             at_list = [ at_list ]
-            
+
+        group = kwargs.pop("group", NoGroupGiven)
+
+        # Figure out our group.
+        if group is NoGroupGiven:
+            group = stack[-1].group
+        
         # Figure out the keyword arguments, based on the parameters.
 
         if self.kwargs:
@@ -358,6 +395,9 @@ class Wrapper(renpy.object.Object):
             if self.replaces:
                 keyword["replaces"] = screen.old_widgets.get(id, None)
 
+        if self.style and "style" not in keyword:
+            keyword["style"] = group_style(self.style, group)
+            
         try:
             w = self.function(*args, **keyword)
 
@@ -385,17 +425,13 @@ class Wrapper(renpy.object.Object):
                 atw = atf(atw)
 
         # Add to the displayable at the bottom of the stack.
-
-        if stack:
-            stack[-1].add(atw, add_tag)
-        else:
-            raise Exception("Can't add displayable during init phase.")
+        stack[-1].add(atw, add_tag)
             
         # Update the stack, as necessary.
         if self.one:
-            stack.append(One(w))
+            stack.append(One(w, group))
         elif self.many:
-            stack.append(Many(w, self.imagemap))
+            stack.append(Many(w, self.imagemap, group))
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
@@ -477,8 +513,8 @@ def _sizer(maxwidth=None, maxheight=None, **properties):
     return renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties)
 
 sizer = Wrapper(_sizer, one=True)
-window = Wrapper(renpy.display.layout.Window, one=True, child=None)
-frame = Wrapper(renpy.display.layout.Window, style='frame', one=True, child=None)
+window = Wrapper(renpy.display.layout.Window, style="window", one=True, child=None)
+frame = Wrapper(renpy.display.layout.Window, style="frame", one=True, child=None)
 
 keymap = Wrapper(renpy.display.behavior.Keymap)
 saybehavior = Wrapper(renpy.display.behavior.SayBehavior)
@@ -591,7 +627,7 @@ def imagemap_compat(ground,
 
     close()
 
-button = Wrapper(renpy.display.behavior.Button, one=True)
+button = Wrapper(renpy.display.behavior.Button, style='button', one=True)
 
 def _imagebutton(idle_image = None,
                  hover_image = None,                 
@@ -607,7 +643,6 @@ def _imagebutton(idle_image = None,
                  selected_idle=None,
                  selected_hover=None,
                  selected_insensitive=None,
-                 style='image_button',
                  image_style=None,
                  auto=None,
                  **properties):
@@ -638,17 +673,15 @@ def _imagebutton(idle_image = None,
             selected_hover_image = selected_hover,
             selected_insensitive_image = selected_insensitive,
             selected_activate_image = selected_activate_image,    
-            style=style,
             **properties)
     
-imagebutton = Wrapper(_imagebutton)
+imagebutton = Wrapper(_imagebutton, style="image_button")
 
 def get_text_style(style, default):
     if isinstance(style, basestring):
         base = style
         rest = ()
     else:
-        print style
         base = style.name[0]
         rest = style.name[1:]
 
@@ -664,19 +697,25 @@ def get_text_style(style, default):
 
     return rv
 
-def textbutton(label, clicked=None, style='button', text_style=None, **kwargs):
+def textbutton(label, clicked=None, style=None, text_style=None, **kwargs):
 
+    if style is None:
+        style = group_style('button', NoGroupGiven)
+    
     if text_style is None:
-        text_style = get_text_style(style, 'button_text')
-
+        text_style = get_text_style(style, group_style('button_text', NoGroupGiven))
+        
     button(style=style, clicked=clicked, **kwargs)
     text(label, style=text_style)
 
-def label(label, style='label', text_style=None, **kwargs):
+def label(label, style=None, text_style=None, **kwargs):
 
+    if style is None:
+        style = group_style('label', NoGroupGiven)
+    
     if text_style is None:
-        text_style = get_text_style(style, 'label_text')
-
+        text_style = get_text_style(style, group_style('label_text', NoGroupGiven))
+        
     window(style=style, **kwargs)
     text(label, style=text_style)
 
@@ -708,10 +747,22 @@ def _bar(*args, **properties):
     if "value" in properties:
         value = properties.pop("value")
 
+    if "style" not in properties:
+        if isinstance(value, BarValue):
+            if properties["vertical"]:
+                style = value.get_style()[1]
+            else:
+                style = value.get_style()[0]
+
+            if isinstance(style, basestring):
+                style = group_style(style, NoGroupGiven)
+                
+            properties["style"] = style
+        
     return renpy.display.behavior.Bar(range, value, width, height, **properties)
 
-bar = Wrapper(_bar, style=None, vertical=False, replaces=True)
-vbar = Wrapper(_bar, style=None, vertical=True, replaces=True)
+bar = Wrapper(_bar, vertical=False, replaces=True)
+vbar = Wrapper(_bar, vertical=True, replaces=True)
 slider = Wrapper(_bar, style='slider', replaces=True)
 vslider = Wrapper(_bar, style='vslider', replaces=True)
 scrollbar = Wrapper(_bar, style='scrollbar', replaces=True)
@@ -735,8 +786,8 @@ def _autobar(range, start, end, time, **properties):
     return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
 
 autobar = Wrapper(_autobar)
-transform = Wrapper(renpy.display.motion.Transform, one=True)
-viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True)
+transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
+viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
 

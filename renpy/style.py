@@ -592,7 +592,7 @@ def build_styles():
 
     global styles_pending
     global styles_built
-
+    
     for s in styles_pending:
         build_style(s)
 

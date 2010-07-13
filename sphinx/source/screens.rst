@@ -150,14 +150,26 @@ All user interface statements take the following common properties:
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the 
+    By default, the id is automatically-generated.
 
 `style`
     The name of the style applied to this displayable. This may be a
     string name, or a style object. The style gives default
     values for style properties.
 
+`group`
+    Group is used to provide a prefix to the style of a displayable,
+    for this displayable and all of its children (unless they have a
+    more specific group set).
 
+    For example, if a vbox has a group of ``"pref"``, then the vbox will
+    have the style ``"pref_vbox"``, unless a more specific style is
+    supplied to it. A button inside that vbox would default to the
+    style ``"pref_button"``.
+
+    Setting a group of ``None`` disables this behavior for a
+    displayable and all of its children.
+    
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
 associated with them, that determines when they apply. For example, if
