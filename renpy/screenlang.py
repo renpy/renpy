@@ -202,6 +202,9 @@ class Parser(object):
         and expr instances, and adjusts the line number.
         """
 
+        if isinstance(expr, unicode):
+            expr = renpy.python.escape_unicode(expr)
+        
         try:
             rv = ast.parse(expr, 'eval').body[0].value
         except SyntaxError, e:            
@@ -222,6 +225,9 @@ class Parser(object):
         adjusts the line number. Returns a list of statements.
         """
 
+        if isinstance(code, unicode):
+            code = renpy.python.escape_unicode(code)
+            
         try:
             rv = ast.parse(code, 'exec')
         except SyntaxError, e:

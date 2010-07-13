@@ -164,7 +164,7 @@ def set_filename(filename, offset, tree):
         worklist.extend(node.getChildNodes())
 
 
-def make_unicode(m):
+def unicode_sub(m):
     """
     If the string s contains a unicode character, make it into a
     unicode string.
@@ -188,6 +188,13 @@ def make_unicode(m):
 
 string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
 
+def escape_unicode(s):
+    s = s.encode("raw_unicode_escape")
+    
+    if "\\u" in s:
+        s = string_re.sub(unicode_sub, s)
+
+    return s
 
 def py_compile(source, mode, filename='<none>', lineno=1):
     """
@@ -212,10 +219,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
         lineno = source.linenumber
 
     source = source.replace("\r", "")
-    source = source.encode('raw_unicode_escape')
-        
-    if "\\u" in source:
-        source = string_re.sub(make_unicode, source)
+    source = escape_unicode(source)
         
     try:
         line_offset = lineno - 1
