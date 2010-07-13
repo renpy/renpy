@@ -146,6 +146,13 @@ Other Changes
 * When there are transparent areas on the screen, and
   :var:`config.developer` is true, the transparent areas are filled
   with a checkerboard pattern.
+
+* The new ``input``, ``side``, ``grid``, and ``fixed`` styles were created,
+  and the corresponding displayables use them by default. 
+
+* When a style is accessed at init-time, and doesn't exist, we divide it
+  into two parts at the first underscore. If the second part corresponds
+  to an existing style, we create a new style instead of causing an error.
   
 * The python compiler has been rewritten to use the python ast module.
   This should both improve performance, and improve error handling for

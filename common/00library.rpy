@@ -651,7 +651,7 @@ label _noisy_return:
 # Return to the game.
 label _return:
 
-    if renpy.context().main_menu:
+    if renpy.context()._main_menu:
         $ renpy.transition(config.game_main_transition)
         jump _main_menu_screen
 
@@ -685,6 +685,7 @@ init -1180 python hide:
 # after_load.
 label _after_load:
     $ renpy.context()._menu = False
+    $ renpy.context()._main_menu = False
 
     if config.after_load_transition:
         $ renpy.transition(config.after_load_transition, force=True)

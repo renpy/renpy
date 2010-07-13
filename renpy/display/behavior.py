@@ -615,7 +615,7 @@ class Input(renpy.display.text.Text):
     def __init__(self,
                  default="",
                  length=None,
-                 style='input_text',
+                 style='input',
                  allow=None,
                  exclude=None,
                  prefix="",

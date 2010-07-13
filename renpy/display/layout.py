@@ -307,7 +307,7 @@ class Grid(Container):
 
     def __init__(self, cols, rows, padding=None,
                  transpose=False,
-                 style='default', **properties):
+                 style='grid', **properties):
         """
         @param cols: The number of columns in this widget.
 
@@ -1138,7 +1138,7 @@ class Side(Container):
     def after_setstate(self):
         self.sized = False
     
-    def __init__(self, positions, style='default', **properties):
+    def __init__(self, positions, style='side', **properties):
 
         super(Side, self).__init__(style=style, **properties)
 

@@ -22,10 +22,14 @@ init -1200 python hide:
     # Style Declarations #################################################
 
     style.default = Style(None, help='root of style hierarchy')
+    style.text = Style(style.default, help='style of text')
 
+    style.fixed = Style(style.default, help='fixed layouts')
     style.hbox = Style(style.default, help='horizontal boxes')
     style.vbox = Style(style.default, help='vertical boxes')
-
+    style.grid = Style(style.default, help='grid layouts')
+    style.side = Style(style.default, help='side layouts')
+    
     style.window = Style(style.default, help='windows created with ui.window')
 
     style.image_placement = Style(style.default, help='default placement of images on the screen')
@@ -50,7 +54,8 @@ init -1200 python hide:
     style.menu_choice_chosen_button = Style(style.menu_choice_button, help='buttons containing chosen in-game menu choices')
     style.menu_window = Style(style.window, help='a window containing a menu')
 
-    style.input_text = Style(style.default, help='text of an input box')
+    style.input = Style(style.default, help='style of an input control')
+    style.input_text = Style(style.input, help='text of an input box')
     style.input_prompt = Style(style.default, help='prompt of an input box')
     style.input_window = Style(style.window, help='window of an input box')
 
@@ -235,7 +240,7 @@ init -1090 python:
     # Menus.
     style.menu_choice.idle_color = "#0ff"
     style.menu_choice.hover_color = "#ff0"
-    style.input_text.color = "#ff0"
+    style.input.color = "#ff0"
 
     # Styles used by centered.
     style.centered_window.xalign = 0.5

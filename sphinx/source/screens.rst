@@ -167,6 +167,9 @@ All user interface statements take the following common properties:
     supplied to it. A button inside that vbox would default to the
     style ``"pref_button"``.
 
+    Styles accessed in this way are automatically created, if they do
+    not exist. This prevents an error from being signalled.
+    
     Setting a group of ``None`` disables this behavior for a
     displayable and all of its children.
     

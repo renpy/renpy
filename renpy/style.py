@@ -384,14 +384,28 @@ def reset():
 class StyleManager(object):
     """
     This is the singleton object that is exported into the store
-    as style
+    as style.
     """
 
     def __getattr__(self, name):
         try:
             return style_map[name]
         except:
-            raise Exception('The style %s does not exist.' % name)
+            pass
+
+        # Automatically create styles, maybe.
+        if not styles_built:
+            
+            if "_" in name:
+                first, rest = name.split("_", 1)
+                if rest in style_map:
+                    s = Style(rest)
+                    self.__setattr__(name, s)                    
+                    return s
+                else:
+                    raise Exception("The style %s does not exist, and couldn't be auto-created because %s doesn't exist, either." % (name, rest))                
+                
+        raise Exception('The style %s does not exist.' % name)
 
     def __setattr__(self, name, value):
 
@@ -477,7 +491,7 @@ def expand_properties(properties):
 
 # This builds the style. 
 def build_style(style):
-    
+
     if style.cache is not None:
         return
 

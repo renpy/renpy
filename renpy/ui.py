@@ -400,14 +400,11 @@ class Wrapper(renpy.object.Object):
             
         try:
             w = self.function(*args, **keyword)
-
-        # We want to rewrite the type error so that it mentions our name,
-        # so the user gcan figure out WTF is going on.
-        except TypeError:
+        except TypeError, e:
             etype, e, tb = sys.exc_info(); etype
 
             if tb.tb_next is None:
-                e.args = (e.args[0].replace("__init__", "ui." + self.name), )
+                e.args = (e.args[0].replace("__call__", "ui." + self.name), )
 
             del tb # Important! Prevents memory leaks via our frame.
             raise
@@ -502,12 +499,12 @@ def _image(im, **properties):
 image = Wrapper(_image)
 
 null = Wrapper(renpy.display.layout.Null)
-text = Wrapper(renpy.display.text.Text, replaces=True)
+text = Wrapper(renpy.display.text.Text, style="text", replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
 vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
-fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", many=True)
-grid = Wrapper(renpy.display.layout.Grid, many=True)
-side = Wrapper(renpy.display.layout.Side, many=True)
+fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", style="fixed", many=True)
+grid = Wrapper(renpy.display.layout.Grid, style="grid", many=True)
+side = Wrapper(renpy.display.layout.Side, style="side", many=True)
 
 def _sizer(maxwidth=None, maxheight=None, **properties):
     return renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties)
@@ -589,7 +586,7 @@ def menu(menuitems,
             
     close()
     
-input = Wrapper(renpy.display.behavior.Input, exclude='{}', replaces=True)
+input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True)
 
 def imagemap_compat(ground,
                     selected,
