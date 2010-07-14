@@ -351,7 +351,14 @@ class GLDraw(object):
             self.log("Using copy RTT.")
             self.rtt = glenviron.CopyRtt()
             self.info["rtt"] = "copy"
-            
+
+        # Check for ctrl held down at startup - revert to software
+        # rendering if that's the case.
+        
+        if pygame.key.get_mods() & pygame.KMOD_CTRL:
+            self.log("Giving up on OpenGL, because CTRL is held down.")
+            return False
+        
         # Do additional setup needed.
 
         renpy.display.pgrender.set_bgra_masks()
