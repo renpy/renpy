@@ -824,24 +824,21 @@ def event(ev):
     if not pcm_ok:
         return False
 
-    
-    if renpy.display.video.fullscreen or not renpy.display.video.surface:
-        surf = renpy.display.draw.fullscreen_surface
-    else:
-        surf = renpy.display.video.surface
-
     if ev.type == ALLOC_EVENT:
+
+        if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
+            surf = renpy.display.draw.fullscreen_surface
+        else:
+            surf = renpy.display.video.surface
+
         pss.alloc_event(surf)           
         return True
 
-    if ev.type == REFRESH_EVENT:
+    elif ev.type == REFRESH_EVENT:
         if renpy.audio.music.get_playing("movie"):
             pss.refresh_event()
 
-        renpy.display.draw.mutated_surface(surf)
-            
-        if surf is renpy.display.draw.fullscreen_surface:
-            renpy.game.interface.force_redraw = True
+        renpy.game.interface.force_redraw = True
 
         # Return False, as a Movie should get this to know when to
         # redraw itself.

@@ -80,9 +80,6 @@ class GLDraw(object):
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
-        # This is a fullscreen surface used for video playback.
-        self.fullscreen_surface = None
-
         # The time of the last redraw.
         self.last_redraw_time = 0
 
@@ -91,7 +88,9 @@ class GLDraw(object):
 
         # Old value of fullscreen.
         self.old_fullscreen = None
-        
+
+        # We don't use a fullscreen surface.
+        self.fullscreen_surface = None
         
     def log(self, msg, *args):
         """
@@ -200,9 +199,6 @@ class GLDraw(object):
 
         self.environ.init()
         self.rtt.init()
-
-        # Allocate a fullscreen surface for video playback.
-        self.fullscreen_surface = renpy.display.pgrender.surface(self.virtual_size, False)
 
         # Prepare a mouse call.
         self.mouse_old_visible = None
@@ -369,7 +365,7 @@ class GLDraw(object):
     def should_redraw(self, needs_redraw, first_pass):
         """
         Redraw whenever the screen needs it, but at least once every
-        1/20 seconds. We rely on VSYNC to slow down our maximum
+        .2 seconds. We rely on VSYNC to slow down our maximum
         draw speed.
         """
 
@@ -467,7 +463,9 @@ class GLDraw(object):
         self.undefine_clip()
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-            tex = self.load_texture(self.fullscreen_surface, transient=True)
+            tex = renpy.display.video.get_movie_texture(self.virtual_size)
+
+            # self.load_texture(self.fullscreen_surface, transient=True)
             self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)           
         else:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)

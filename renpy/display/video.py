@@ -34,7 +34,6 @@ surface_file = None
 # The surface to display the movie on, if not fullscreen.
 surface = None
 
-
 def movie_stop(clear=True, only_fullscreen=False):
     """
     Stops the currently playing movie.
@@ -81,7 +80,6 @@ def early_interact():
     global fullscreen
     fullscreen = True
 
-
 def interact():
     """
     This is called each time the screen is redrawn. It helps us decide if
@@ -93,44 +91,57 @@ def interact():
     else:
         return False
 
+def get_movie_texture(size):
+    """
+    Gets a movie texture we can draw to the screen.
+    """
     
+    global surface
+    global surface_file
+
+    playing = renpy.audio.music.get_playing("movie")
+
+    if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
+        surface = renpy.display.pgrender.surface(size, False)
+        surface_file = playing
+        surface.fill((0, 0, 0, 255))
+
+    tex = None
+
+    if playing is not None:
+        renpy.display.render.mutated_surface(surface)
+        tex = renpy.display.draw.load_texture(surface)
+
+    return tex
+
+
 class Movie(renpy.display.core.Displayable):
     """
     This is a displayable that shows the current movie.
     """
 
+    fullscreen = False
+    
     def __init__(self, fps=24, size=None, **properties):
         """
         @param fps: The framerate that the movie should be shown at.
         """
         super(Movie, self).__init__(**properties)
         self.size = size
-
         
     def render(self, width, height, st, at):
-
-        global surface
-        global surface_file
         
         size = self.size
         
         if size is None:
             size = default_size
 
-        playing = renpy.audio.music.get_playing("movie")
-            
-        if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
-            surface = renpy.display.pgrender.surface(size, False)
-            surface_file = playing
-            surface.fill((0, 0, 0, 255))
-            
         width, height = size
-        rv = renpy.display.render.Render(width, height)
+        rv = renpy.display.render.Render(width, height, opaque=True)
+        
+        tex = get_movie_texture(size)
 
-        if playing is not None:
-            renpy.display.render.mutated_surface(surface)
-            tex = renpy.display.draw.load_texture(surface)
-
+        if tex is not None:
             rv.blit(tex, (0, 0))
             
         return rv
