@@ -413,7 +413,7 @@ class ImageDissolve(Transition):
         image = render(self.image, width, height, st, at)
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
-        
+
         width = min(bottom.width, top.width, image.width)
         height = min(bottom.height, top.height, image.height)
 

@@ -393,12 +393,9 @@ class ShaderEnviron(object):
 
         if self.last != IMAGEBLEND:
             gl.UseProgramObjectARB(self.imageblend_program)
-
-            # Permute the texture units so they match the way the
-            # fixed-function system uses them.
-            gl.Uniform1iARB(self.imageblend_tex0_uniform, 1)
-            gl.Uniform1iARB(self.imageblend_tex1_uniform, 2)
-            gl.Uniform1iARB(self.imageblend_tex2_uniform, 0)
+            gl.Uniform1iARB(self.imageblend_tex0_uniform, 0)
+            gl.Uniform1iARB(self.imageblend_tex1_uniform, 1)
+            gl.Uniform1iARB(self.imageblend_tex2_uniform, 2)
 
             self.last = IMAGEBLEND
 

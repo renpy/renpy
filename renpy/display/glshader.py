@@ -80,9 +80,9 @@ void main()
     vec4 color1 = texture2D(tex1, gl_TexCoord[1].st);
     vec4 color2 = texture2D(tex2, gl_TexCoord[2].st);
 
-    float a = clamp((color2.a + offset) * multiplier, 0.0, 1.0);
+    float a = clamp((color0.a + offset) * multiplier, 0.0, 1.0);
 
-    gl_FragColor = mix(color0, color1, a) * gl_Color;
+    gl_FragColor = mix(color1, color2, a) * gl_Color;
 }
 """
 

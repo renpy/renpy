@@ -751,11 +751,11 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
         x = 0
 
         for (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in zip(cols0, cols1, cols2):
-            
+
             t0 = tg0.tiles[t0ri][t0ci]
             t1 = tg1.tiles[t1ri][t1ci]
             t2 = tg2.tiles[t2ri][t2ci]
-            
+
             pysdlgl.draw_rectangle(
                 sx, sy,
                 x, y,
@@ -764,9 +764,153 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
                 t0, t0x, t0y,
                 t1, t1x, t1y,
                 t2, t2x, t2y)
-
+            
             x += t0w
-
+            
         y += t0h
 
 
+def draw_rectangle(
+    sx,
+    sy,
+    x,
+    y,
+    w,
+    h,
+    transform,
+    tex0, tex0x, tex0y,
+    tex1, tex1x, tex1y,
+    tex2, tex2x, tex2y):
+
+    """
+    This draws a rectangle (textured with up to four textures) to the
+    screen.
+    """
+
+    # Pull apart the transform.
+    xdx = transform.xdx
+    xdy = transform.xdy
+    ydx = transform.ydx
+    ydy = transform.ydy
+
+    # Transform the vertex coordinates to screen-space.
+    x0 = (x + 0) * xdx + (y + 0) * xdy + sx
+    y0 = (x + 0) * ydx + (y + 0) * ydy + sy
+
+    x1 = (x + w) * xdx + (y + 0) * xdy + sx
+    y1 = (x + w) * ydx + (y + 0) * ydy + sy
+
+    x2 = (x + 0) * xdx + (y + h) * xdy + sx
+    y2 = (x + 0) * ydx + (y + h) * ydy + sy
+
+    x3 = (x + w) * xdx + (y + h) * xdy + sx
+    y3 = (x + w) * ydx + (y + h) * ydy + sy
+
+    # Compute the texture coordinates, and set up the textures.
+
+    if tex0 is not None:
+
+        has_tex0 = 1
+
+        gl.ActiveTextureARB(gl.TEXTURE0_ARB)
+        gl.BindTexture(gl.TEXTURE_2D, tex0.number)
+        
+        xadd = tex0.xadd
+        yadd = tex0.yadd
+        xmul = tex0.xmul
+        ymul = tex0.ymul
+        
+        t0u0 = xadd + xmul * (tex0x + 0)
+        t0u1 = xadd + xmul * (tex0x + w)
+        t0v0 = yadd + ymul * (tex0y + 0)
+        t0v1 = yadd + ymul * (tex0y + h)
+
+    else:
+        has_tex0 = 0
+    
+    if tex1 is not None:
+
+        has_tex1 = 1
+
+        gl.ActiveTextureARB(gl.TEXTURE1_ARB)
+        gl.BindTexture(gl.TEXTURE_2D, tex1.number)
+        
+        xadd = tex1.xadd
+        yadd = tex1.yadd
+        xmul = tex1.xmul
+        ymul = tex1.ymul
+        
+        t1u0 = xadd + xmul * (tex1x + 0)
+        t1u1 = xadd + xmul * (tex1x + w)
+        t1v0 = yadd + ymul * (tex1y + 0)
+        t1v1 = yadd + ymul * (tex1y + h)
+
+    else:
+        has_tex1 = 0
+
+    if tex2 is not None:
+
+        has_tex2 = 1
+
+        gl.ActiveTextureARB(gl.TEXTURE2_ARB)
+        gl.BindTexture(gl.TEXTURE_2D, tex2.number)
+        
+        xadd = tex2.xadd
+        yadd = tex2.yadd
+        xmul = tex2.xmul
+        ymul = tex2.ymul
+        
+        t2u0 = xadd + xmul * (tex2x + 0)
+        t2u1 = xadd + xmul * (tex2x + w)
+        t2v0 = yadd + ymul * (tex2y + 0)
+        t2v1 = yadd + ymul * (tex2y + h)
+
+    else:
+        has_tex2 = 0
+
+    # Now, actually draw the textured rectangle.
+
+    gl.Begin(gl.TRIANGLE_STRIP)
+
+    if has_tex0:
+        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u0, t0v0)
+    if has_tex1:
+        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u0, t1v0)
+    if has_tex2:
+        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u0, t2v0)
+    gl.Vertex2f(x0, y0)
+
+    if has_tex0:
+        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u1, t0v0)
+    if has_tex1:
+        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u1, t1v0)
+    if has_tex2:
+        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u1, t2v0)
+    gl.Vertex2f(x1, y1)
+
+    if has_tex0:
+        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u0, t0v1)
+    if has_tex1:
+        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u0, t1v1)
+    if has_tex2:
+        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u0, t2v1)
+    gl.Vertex2f(x2, y2)
+
+    if has_tex0:
+        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u1, t0v1)
+    if has_tex1:
+        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u1, t1v1)
+    if has_tex2:
+        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u1, t2v1)
+    gl.Vertex2f(x3, y3)
+
+    gl.End()
+
+
+C_DRAW=True
+    
+if C_DRAW:
+    if pysdlgl:
+        draw_rectangle = pysdlgl.draw_rectangle
+else:
+    print "Warning: Draw not using C code."
