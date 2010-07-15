@@ -825,7 +825,7 @@ def event(ev):
         return False
 
     if ev.type == ALLOC_EVENT:
-
+        
         if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
             surf = renpy.display.draw.fullscreen_surface
         else:
@@ -835,6 +835,7 @@ def event(ev):
         return True
 
     elif ev.type == REFRESH_EVENT:
+
         if renpy.audio.music.get_playing("movie"):
             pss.refresh_event()
 

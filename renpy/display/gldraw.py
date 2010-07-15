@@ -351,8 +351,8 @@ class GLDraw(object):
         # Check for ctrl held down at startup - revert to software
         # rendering if that's the case.
         
-        if pygame.key.get_mods() & pygame.KMOD_CTRL:
-            self.log("Giving up on OpenGL, because CTRL is held down.")
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
+            self.log("Giving up on OpenGL, because SHIFT is held down.")
             return False
         
         # Do additional setup needed.

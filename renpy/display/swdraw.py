@@ -219,12 +219,11 @@ class Clipper(object):
             iy1 = int(math.ceil(iy1))
             
             x0 = min(x0, ix0)
-            y0 = min(y0, iy0)
+            y0 = min(y0, iy0)                   
             x1 = max(x1, ix1)
             y1 = max(y1, iy1)
 
             updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
-
 
         return (x0, y0, x1 - x0, y1 - y0), updates
             
@@ -918,10 +917,8 @@ class SWDraw(object):
                     return True
 
         return False
-                
-            
-                
 
+    
     def mutated_surface(self, surf):
         """
         Called to indicate that the given surface has changed.
@@ -964,6 +961,12 @@ class SWDraw(object):
 
         rle_cache.clear()
         
+    def deinit(self):
+        """
+        Called when we're restarted.
+        """
+
+        return
         
     def quit(self):
         """
