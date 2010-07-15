@@ -1365,7 +1365,7 @@ def call_screen(_screen_name, **kwargs):
     rv = None
     
     try:
-        rv = renpy.ui.interact(roll_forward=roll_forward)
+        rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
         return rv
     
     finally:
