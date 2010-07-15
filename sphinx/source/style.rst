@@ -254,6 +254,22 @@ layout.
 
     Specifies the maximum vertical size of the displayable in pixels.
 
+.. style-property:: xfill boolean
+
+    If true, the displayable will expand to fill all available
+    horizontal space. If not true, it will only be large enough to
+    contain its children. 
+
+    This only works for displayables that can change size.
+    
+.. style-property:: yfill boolean
+
+    If true, the displayable will expand to fill all available
+    horizontal space. If not true, it will only be large enough to
+    contain its children.
+
+    This only works for displayables that can change size.
+
 .. style-property:: area tuple of (int, int, int, int)
 
     The tuple is interpreted as (`xpos`, `ypos`, `width`,
@@ -501,18 +517,6 @@ buttons.
 .. style-property:: yminimum int
 
     Sets the minimum height of the window, in pixels. 
-
-.. style-property:: xfill boolean
-
-    If true, the window will expand to fill all available horizontal
-    space. If not true, it will only be large enough to contain its
-    child.
-
-.. style-property:: yfill boolean
-
-    If true, the window will expand to fill all available horizontal
-    space. If not true, it will only be large enough to contain its
-    child.
 
 
 .. _button-style-properties:

@@ -386,5 +386,48 @@ init -1105 python hide:
     layout.QUIT = u"Are you sure you want to quit?"
     layout.MAIN_MENU = u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
 
+    @layout
+    def yesno_screen(message, yes=None, no=None):
+        """
+         :doc: other
 
-    
+         This causes the a yes/no prompt screen with the given message
+         to be displayed. The screen will be hidden when the user hits
+         yes or no.
+
+         `message`
+             The message that will be displayed.
+
+         `yes`
+             An action that is run when the user chooses yes.
+
+         `no`
+             An action that is run when the user chooses no.
+         """
+
+
+        if renpy.has_screen("yesno_prompt"):
+
+            yes_action = [ Hide("yesno_prompt") ]
+            no_action = [ Hide("yesno_prompt") ]
+
+            if yes is not None:
+                yes_action.append(yes)
+            if no is not None:
+                no_action.append(no)
+            
+            renpy.display.show_screen(
+                "yesno_prompt", 
+                message=message,
+                yes_action=yes_action,
+                no_action=no_action)
+
+            return
+            
+        if renpy.invoke_in_new_context(layout.yesno_prompt, None, message):
+            if yes is not None:
+                yes()
+        else:
+            if no is not None:
+                no()
+                

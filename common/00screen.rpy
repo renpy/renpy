@@ -2,30 +2,6 @@
 
 init -1140 python:
 
-    def __yesno_prompt(message, yes=None, no=None):
-        if renpy.has_screen("yesno_prompt"):
-
-            yes_action = [ Hide("yesno_prompt") ]
-            no_action = [ Hide("yesno_prompt") ]
-
-            if yes is not None:
-                yes_action.append(yes)
-            if no is not None:
-                no_action.append(no)
-            
-            renpy.display.show_screen(
-                "yesno_prompt", 
-                message=message,
-                yes_action=yes_action,
-                no_action=no_action)
-        
-        if renpy.invoke_in_new_context(layout.yesno_prompt, None, message):
-            if yes is not None:
-                yes()
-        else:
-            if no is not None:
-                no()
-                
     class Return(Action):
         """
          :doc: control_action
@@ -262,7 +238,7 @@ init -1140 python:
                 return
 
             if self.confirm:
-                __yesno_prompt(layout.MAIN_MENU, MainMenu(False))
+                layout.yesno_screen(layout.MAIN_MENU, MainMenu(False))
             else:
                 renpy.full_restart()
 
@@ -288,7 +264,7 @@ init -1140 python:
         def __call__(self):
 
             if self.confirm:
-                __yesno_prompt(layout.QUIT, Quit(False))
+                layout.yesno_screen(layout.QUIT, Quit(False))
             else:            
                 renpy.quit()
 
@@ -914,7 +890,7 @@ init -1140 python:
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
-                    __yesno_prompt(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
+                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
                     return
                 
             renpy.save(fn, extra_info=save_name)
@@ -959,7 +935,7 @@ init -1140 python:
             
             if not renpy.context()._main_menu:
                 if self.confirm:
-                    __yesno_prompt(layout.LOADING, FileLoad(self.name, False, self.page))
+                    layout.yesno_screen(layout.LOADING, FileLoad(self.name, False, self.page))
                     return
 
             renpy.load(fn)
@@ -993,7 +969,7 @@ init -1140 python:
             fn = __filename(self.name, self.page)
             
             if self.confirm:
-                __yesno_prompt(layout.DELETE_SAVE, FileDelete(self.name, False, self.page))
+                layout.yesno_screen(layout.DELETE_SAVE, FileDelete(self.name, False, self.page))
                 return
 
             renpy.unlink_save(fn)
