@@ -8,7 +8,7 @@ label _developer_screen:
         ui.window(style=style.gm_root)
         ui.null()
         
-        ui.frame(xpos=10, ypos=10, style=style.menu_frame)
+        ui.frame(xalign=.025, yalign=.05, style=style.menu_frame)
         ui.vbox(box_first_spacing=10)
         layout.label(u"Developer Menu", None)
 
@@ -92,7 +92,7 @@ label _theme_test:
                 return ""
         
         toggle_var = True
-        adj = ui.adjustment(100, 25, page=25)
+        adj = ui.adjustment(100, 25, page=25, adjustable=True)
         
         while True:
 
