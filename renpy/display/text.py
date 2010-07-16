@@ -139,8 +139,8 @@ class TextStyle(object):
         return rv
 
     def sizes(self, text):
-
-        return self.get_width(text), self.f.get_ascent() - self.f.get_descent()
+        height = max(self.f.get_ascent() - self.f.get_descent(), self.f.get_height())
+        return self.get_width(text), height
 
     def render(self, text, antialias, color, black_color, use_colors, time, at, expand, use_cache):
         

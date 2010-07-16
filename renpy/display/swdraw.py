@@ -219,7 +219,7 @@ class Clipper(object):
             iy1 = int(math.ceil(iy1))
             
             x0 = min(x0, ix0)
-            y0 = min(y0, iy0)                   
+            y0 = min(y0, iy0)
             x1 = max(x1, ix1)
             y1 = max(y1, iy1)
 
