@@ -176,7 +176,7 @@ class TransformState(renpy.object.Object):
             else:
                 old_value = old
                 
-            if new_value != new or new_value != old_value:
+            if new_value != old_value:
                 rv[prop] = (old_value, new_value)
 
         diff2("alpha", newts.alpha, self.alpha)
@@ -199,6 +199,7 @@ class TransformState(renpy.object.Object):
         diff2("size", newts.size, self.size)
 
         diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
+
         diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
         diff2("xoffset", newts.xoffset, self.xoffset)
 
@@ -382,6 +383,8 @@ class Transform(Container):
     xoffset = Proxy("xoffset")
     yoffset = Proxy("yoffset")
     offset = Proxy("offset")
+
+    subpixel = Proxy("subpixel")
     
     def after_upgrade(self, version):
 

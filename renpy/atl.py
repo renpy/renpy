@@ -847,6 +847,12 @@ class Interpolation(Statement):
             # between the new and old states.
             linear = trans.state.diff(newts)
 
+            # Ensure that we set things, even if they don't actually
+            # change from the old state.
+            for k, v in self.properties:
+                if k not in linear:
+                    setattr(trans.state, k, v)
+            
             revolution = None
             splines = [ ]
             
@@ -906,6 +912,7 @@ class Interpolation(Statement):
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new, PROPERTIES[k])
+
             setattr(trans.state, k, value)            
             
         # Handle the revolution.
