@@ -113,6 +113,10 @@ class GLDraw(object):
         # If GL can't be loaded, give up.
         if not gl:
             return False
+
+        if not renpy.config.gl_enable:
+            self.log("GL Disabled.")
+            return False
         
         if self.did_init:
             self.deinit()
@@ -256,10 +260,6 @@ class GLDraw(object):
 
         for i in sorted(extensions):
             self.log("    %s", i)
-        
-        if renderer == "Mesa GLX Indirect":
-            self.log("Blacklisted renderer.")
-            return False
         
         def use_subsystem(envvar, envval, *req_ext):
             """

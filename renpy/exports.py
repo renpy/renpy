@@ -1417,3 +1417,10 @@ def get_renderer_info():
 
     return renpy.display.draw.info
     
+def display_reset():
+    """
+    Used internally. Causes the display to be restarted at the start of
+    the next interaction.
+    """
+    
+    renpy.display.interface.display_reset = True

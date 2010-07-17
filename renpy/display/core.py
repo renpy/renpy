@@ -1221,6 +1221,11 @@ class Interface(object):
         This sets the video mode. It also picks the draw object.
         """
 
+        if self.display_reset:
+            renpy.display.draw.deinit()
+            renpy.display.draw.quit()
+            renpy.display.draw = None
+            
         self.display_reset = False
         
         # Ensure that we kill off the movie when changing screen res.

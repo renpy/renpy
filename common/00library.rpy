@@ -706,7 +706,9 @@ label _start:
         
         for i in config.start_callbacks:
             i()
-    
+
+    call _gl_test
+            
     call _load_reload_game from _call__load_reload_game_1
 
     if not _restart and config.auto_load and renpy.can_load(config.auto_load):

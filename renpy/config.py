@@ -431,6 +431,9 @@ gamedir = None
 basedir = None
 renpy_base = None
 
+# Should we enable OpenGL mode?
+gl_enable = True
+
 del renpy
 
 def init():
