@@ -829,7 +829,7 @@ class Lexer(object):
         passed to revert to back the lexer up.
         """
 
-        return self.filename, self.number, self.text, self.subblock, self.pos
+        return self.line, self.filename, self.number, self.text, self.subblock, self.pos
 
     def revert(self, state):
         """
@@ -837,7 +837,7 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.filename, self.number, self.text, self.subblock, self.pos = state 
+        self.line, self.filename, self.number, self.text, self.subblock, self.pos = state 
         self.word_cache_pos = -1
         
     def get_location(self):

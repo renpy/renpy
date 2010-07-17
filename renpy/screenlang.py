@@ -232,8 +232,6 @@ class Parser(object):
             rv = ast.parse(code, 'exec')
         except SyntaxError, e:
 
-            print repr(e)
-            
             raise renpy.parser.ParseError(
                 filename,
                 lineno + e[1][1] - 1,
@@ -855,13 +853,13 @@ class IfParser(Parser):
 
             count += 1
             
-            while l.advance():
+            state = l.checkpoint()
 
+            while l.advance():
+                
                 old_orelse = orelse
                 lineno = l.number
                 
-                state = l.checkpoint()
-
                 if l.keyword("elif"):
                     condition = self.parse_eval(l.require(l.python_expression), lineno)
 
@@ -873,6 +871,8 @@ class IfParser(Parser):
 
                     count += 1
 
+                    state = l.checkpoint()
+
                 elif l.keyword("else"):
 
                     old_orelse.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, count)))
@@ -883,7 +883,7 @@ class IfParser(Parser):
                 else:
                     l.revert(state)
                     break
-
+                
         return [ rv ]
 
 IfParser("if")
