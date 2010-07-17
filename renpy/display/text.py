@@ -1316,7 +1316,7 @@ class Text(renpy.display.core.Displayable):
             length = sys.maxint
             self.call_slow_done(st)
             
-        final_width = self.laidout_width - mindsx + maxdsx
+        final_width = self.laidout_width - mindsx + maxdsx + max(self.style.first_indent, self.style.rest_indent)
         final_height = self.laidout_height - mindsy + maxdsy
 
         rv = renpy.display.render.Render(final_width, final_height)
