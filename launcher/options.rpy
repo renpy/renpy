@@ -100,6 +100,9 @@ init -1 python hide:
     ## Set this to False if the game does not have any sound effects.
     config.sound = False
 
+    # Disable opengl.
+    config.gl_enable = False
+    
 python early:
     config.save_directory = "launcher-2"
 
