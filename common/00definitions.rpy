@@ -35,8 +35,8 @@ init -1110:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
     transform default:
-        reset
-        center
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
+        xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
     python:
         config.default_transform = default
