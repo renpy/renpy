@@ -304,6 +304,12 @@ Occasionally Used
 
     If not None, a music file to play when at the game menu.
 
+.. var:: config.gl_test_image = "black"
+
+    The name of the image that is used when running the OpenGL
+    performance test. This image will be shown for 5 frames or .25
+    seconds, on startup. It will then be automatically hidden.
+        
 .. var:: config.has_autosave = True
 
     If true, the game will autosave. If false, no autosaving will
@@ -604,13 +610,20 @@ Rarely or Internally Used
     mechanisms. Your file-like object must implement at least the
     read, seek, tell, and close methods.
 
-
 .. var:: config.focus_crossrange_penalty = 1024
 
     This is the amount of penalty to apply to moves perpendicular to
     the selected direction of motion, when moving focus with the
     keyboard.
 
+.. var:: config.gl_enable = True
+
+    Set this to False to disable OpenGL acceleration. OpenGL acceleration
+    will automatically be disabled if it's determined that the system
+    cannot support it, so it usually isn't necessary to set this.
+
+    OpenGL can also be disabled by holding down shift at startup.
+    
 .. var:: config.hard_rollback_limit = 100
 
     This is the number of steps that Ren'Py will let the user
