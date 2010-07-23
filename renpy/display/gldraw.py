@@ -177,15 +177,31 @@ class GLDraw(object):
         if physical_ar >= virtual_ar:
             x_padding = physical_ar * vheight - vwidth
             y_padding = 0
+            px_padding = x_padding * pheight / vheight
+            py_padding = 0
         else:
             x_padding = 0
             y_padding = ( 1.0 / physical_ar ) * vwidth - vheight
-                    
+            px_padding = 0
+            py_padding = y_padding * pheight / vheight
+
+        # The location of the virtual screen on the physical screen, in
+        # virtual pixels.
         self.virtual_box = (
             -x_padding / 2.0,
             -y_padding / 2.0,
              vwidth + x_padding / 2.0,
              vheight + y_padding / 2.0)
+
+        # The location of the virtual screen on the physical screen, in
+        # physical pixels. (May not be 100% accurate, but it's good
+        # enough for screenshots.)
+        self.physical_box = (
+            int(px_padding / 2),
+            int(py_padding / 2),
+            pwidth - int(px_padding),
+            pheight - int(py_padding),
+            )
         
         # Set some default settings.
         gl.Enable(gl.BLEND)
@@ -826,8 +842,9 @@ class GLDraw(object):
             self.environ)
 
     def screenshot(self):
-        rv = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
-        pysdlgl.store_framebuffer(rv)
+        fb = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        pysdlgl.store_framebuffer(fb)
+        rv = fb.subsurface(self.physical_box)
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
         return rv
         
