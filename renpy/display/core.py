@@ -1149,8 +1149,18 @@ class Interface(object):
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
+        # Don't grab the screen.
         pygame.event.set_grab(False)
 
+        # Do we need a background screenshot?
+        self.bgscreenshot_needed = False
+
+        # Event used to signal background screenshot taken.
+        self.bgscreenshot_event = threading.Event()
+
+        # The background screenshot surface.
+        self.bgscreenshot_surface = None
+        
     def post_init(self):
         # Setup.
         self.set_window_caption(force=True)
@@ -1276,8 +1286,6 @@ class Interface(object):
         
 
     def draw_screen(self, root_widget, fullscreen_video):
-
-        
         
         surftree = renpy.display.render.render_screen(
             root_widget,
@@ -1292,15 +1300,29 @@ class Interface(object):
 
         self.surftree = surftree
 
-        
-    def take_screenshot(self, scale):
+
+    def take_screenshot(self, scale, background=False):
         """
         This takes a screenshot of the current screen, and stores it so
         that it can gotten using get_screenshot()
-        """
         
-        window = renpy.display.draw.screenshot()
+        `background`
+           If true, we're in a background thread. So queue the request
+           until it can be handled by the main thread.
+        """
 
+        if background:
+            self.bgscreenshot_event.clear()
+            self.bgscreenshot_needed = True
+            self.bgscreenshot_event.wait()
+
+            window = self.bgscreenshot_surface
+            self.bgscreenshot_surface = None
+
+        else:
+
+            window = renpy.display.draw.screenshot()
+        
         surf = renpy.display.pgrender.copy_surface(window, True)
         surf = renpy.display.scale.smoothscale(surf, scale)
         surf = surf.convert()
@@ -1464,6 +1486,14 @@ class Interface(object):
             self.last_event = rv
             return rv
 
+        # Handle a request for a background screenshot.
+        if self.bgscreenshot_needed:
+            self.bgscreenshot_needed = False
+
+            self.bgscreenshot_surface = renpy.display.draw.screenshot()
+
+            self.bgscreenshot_event.set()
+            
         try:
             cpu_idle.set()            
             ev = pygame.event.wait()

@@ -783,7 +783,7 @@ def get_all_labels():
     return renpy.python.RevertableSet(rv)
     
 
-def take_screenshot(scale=None):
+def take_screenshot(scale=None, background=False):
     """
     This causes a screenshot to be taken. This screenshot will be
     saved with a savegame when the game is saved.
@@ -792,7 +792,7 @@ def take_screenshot(scale=None):
     if scale is None:
         scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
     
-    renpy.game.interface.take_screenshot(scale)
+    renpy.game.interface.take_screenshot(scale, background=background)
 
 def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu"):
     """

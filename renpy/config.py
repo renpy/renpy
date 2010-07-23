@@ -347,7 +347,7 @@ all_character_callbacks = [ ]
 autosave_slots = 10
 
 # How often do we autosave. (Number of interactions, sort of.)
-autosave_frequency = 200
+autosave_frequency = int(os.environ.get("RENPY_AUTOSAVE_FREQUENCY", "200"))
 
 # The callback that is used by the scene statement.
 scene = renpy.exports.scene
@@ -435,6 +435,7 @@ renpy_base = None
 gl_enable = True
 
 del renpy
+del os
 
 def init():
     import renpy # W0404
