@@ -1152,7 +1152,7 @@ class Text(renpy.display.core.Displayable):
             self.laidout_linewidths.append(width)
             self.laidout_lineheights.append(height)
             self.laidout_width = max(width, self.laidout_width)
-            self.laidout_height += height + self.style.line_spacing
+            self.laidout_height += height + max(self.style.line_spacing, 0)
 
             # For the newline.
             self.laidout_length += 1
