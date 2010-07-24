@@ -993,7 +993,19 @@ def py_eval(source, globals=None, locals=None):
     
     return eval(py_compile(source, 'eval'), globals, locals)
 
+# This is used to proxy accesses to the store.
+class StoreProxy(object):
 
+    def __getattr__(self, k):
+        return getattr(renpy.store, k)
+
+    def __setattr__(self, k, v):
+        setattr(renpy.store, k, v)
+
+    def __delattr__(self, k):
+        delattr(renpy.store, k)
+
+        
 # Code for pickling bound methods.
 
 def method_pickle(method):
@@ -1012,3 +1024,5 @@ def method_unpickle(obj, name):
 import copy_reg
 import types
 copy_reg.pickle(types.MethodType, method_pickle, method_unpickle)
+
+

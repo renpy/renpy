@@ -166,7 +166,7 @@ def main():
     game.log = renpy.python.RollbackLog()
 
     # Initialize the store.
-    renpy.store.store = renpy.store
+    renpy.store.store = renpy.python.StoreProxy()
 
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
