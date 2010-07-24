@@ -22,7 +22,6 @@
 import renpy
 from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
-
 import pygame
 import os
 import os.path
@@ -39,6 +38,17 @@ except ImportError:
     
 import gltexture
 import glenviron
+
+# A list of cards that cause system/software crashes. There's no
+# reason to put merely slow or incapable cards here, only ones for
+# which GL operation is unsafe.
+#
+# 
+
+BLACKLIST = [
+    ("S3 Graphics DeltaChrome", "1.4 20.00"),
+    ]
+    
 
 class GLDraw(object):
 
@@ -263,15 +273,21 @@ class GLDraw(object):
         pysdlgl.init_glew()
 
         renderer = pysdlgl.get_string(gl.RENDERER)
+        version = pysdlgl.get_string(gl.VERSION)
 
         # Log the GL version.
         self.log("Vendor: %r", pysdlgl.get_string(gl.VENDOR))
         self.log("Renderer: %r", renderer)
-        self.log("Version: %r", pysdlgl.get_string(gl.VERSION))
+        self.log("Version: %r", version)
         self.log("Video Info: %s", pygame.display.Info())
-        
-        extensions = set(pysdlgl.get_string(gl.EXTENSIONS).split(" "))
 
+        for r, v in BLACKLIST:
+            if renderer == r and version.startswith(v):
+                self.log("Blacklisted renderer/version.")
+                return False
+                
+        extensions = set(pysdlgl.get_string(gl.EXTENSIONS).split(" "))
+        
         self.log("Extensions:")
 
         for i in sorted(extensions):
