@@ -186,7 +186,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
     
-    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix):
+    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -253,6 +253,9 @@ class Channel(object):
         # A prefix and suffix that are used to create the full filenames.
         self.file_prefix = file_prefix
         self.file_suffix = file_suffix
+
+        # Should we buffer upcoming music/video in the queue?
+        self.buffer_queue = buffer_queue
         
         if default_loop is None:
             # By default, should we loop the music?
@@ -343,6 +346,11 @@ class Channel(object):
             if depth >= 2:
                 break
 
+            # If we can't buffer things, and we're playing something
+            # give up here.
+            if not self.buffer_queue and depth >= 1:
+                break
+            
             # We can't queue anything if the depth is > 0 and we're
             # waiting for a synchro_start.
             if self.synchro_start and depth:
@@ -493,8 +501,18 @@ class Channel(object):
         if not pcm_ok:
             return None
 
-        return pss.playing_name(self.number)
+        rv = pss.playing_name(self.number)
 
+        if rv is None and self.queue:
+            rv = self.queue[0].filename
+
+        if rv is None and self.loop:
+            rv = self.loop[0]
+            
+        return rv
+
+    
+        
         
     def set_volume(self, volume):
         self.chan_volume = volume
@@ -531,7 +549,7 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix=""):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=False):
     """
     :doc: other
 
@@ -563,15 +581,16 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     `file_suffix`
         A suffix that is appended to the filenames of the sound files being
         played on this channel.
-    """
 
-    
-    
+    `buffer_queue`
+        Should we buffer the first second or so of a queued file? This should
+        be True for audio, and False for movie playback.
+    """
 
     if not renpy.game.init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue)
     c.mixer = mixer
     all_channels.append(c)
     channels[name] = c
