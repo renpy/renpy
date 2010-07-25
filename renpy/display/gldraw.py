@@ -182,8 +182,6 @@ class GLDraw(object):
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
 
-        print self.physical_size
-        
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
         pwidth = max(1, pwidth)
