@@ -416,12 +416,14 @@ init -1105 python hide:
             if no is not None:
                 no_action.append(no)
             
-            renpy.display.show_screen(
+            renpy.show_screen(
                 "yesno_prompt", 
                 message=message,
                 yes_action=yes_action,
                 no_action=no_action)
 
+            renpy.restart_interaction()
+            
             return
             
         if renpy.invoke_in_new_context(layout.yesno_prompt, None, message):

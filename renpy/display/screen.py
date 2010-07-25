@@ -116,6 +116,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The current transform event, and the last transform event to
         # be processed.
         self.current_transform_event = None
+
+        # Are we hiding?
+        self.hiding = False
         
     def visit(self):
         return [ self.child ]
@@ -130,6 +133,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             
     def _hide(self, st, at, kind):        
 
+        self.hiding = True
+        
         rv = None
 
         for i in self.transforms:
@@ -205,6 +210,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def event(self, ev, x, y, st):
 
+        if self.hiding:
+            return
+        
         global _current_screen
         old_screen = _current_screen
         _current_screen = self

@@ -41,7 +41,7 @@ ADV-mode dialogue. It is displayed with the following parameters:
 `what`
     The dialogue being said by the speaking character.
 
-It's expected declare displayables with the following ids:
+It's expected to declare displayables with the following ids:
 
 "who"
     A text displayable, displaying the name of the speaking
@@ -62,9 +62,16 @@ It's expected declare displayables with the following ids:
 
 ::
 
-   screen say:
-        # TODO
-    
+    screen say:
+
+        window id "window":
+            has vbox
+            
+            if who:
+                text who id "who"
+
+            text what id "what"
+
 
 Choice
 ------
@@ -81,13 +88,28 @@ with the menu statement. It is given the following parameter:
 ::
 
     screen choice:
-        # TODO
+
+        vbox:        
+            ypos .25
+            spacing 5
+
+            # Create one textbutton per label, action pair.
+            for label, action in items:
+                textbutton label:
+                    action action
+                    xmargin 50
+                    xfill True
 
 Input
 -----
 
-The ``input`` screen is used to display :func:`renpy.input`. It is not
-given any parameters, but is given one special id:
+The ``input`` screen is used to display :func:`renpy.input`. It is given one
+parameter:
+
+`prompt`
+    The prompt text supplied to renpy.input.
+
+It is expected to declare a displayable with the following id:
 
 "input"
     An input displayable, which must exist. This is given all the
@@ -96,7 +118,13 @@ given any parameters, but is given one special id:
 ::
 
     screen input:
-         # TODO
+
+        window:
+            has vbox
+
+            text prompt
+            input id "input"
+
 
 
 NVL
@@ -113,10 +141,6 @@ the following parameter:
     ids should be assigned to the who and what text displayables, and
     a window containing each unit of dialogue.
 
-::
-
-    screen nvl:
-        # TODO
 
 NVL_Choice
 ----------
@@ -160,18 +184,115 @@ begins.
 ::
 
     screen main_menu:
-        # TODO
+        # The background of the main menu.
+        window:
+            style "mm_root"
 
+        # The main menu buttons.
+        frame:
+            group "mm"
+            xalign .98
+            yalign .98
+
+            has vbox
+
+            textbutton _("Start Game") action Start()
+            textbutton _("Load Game") action ShowMenu("load")
+            textbutton _("Preferences") action ShowMenu("preferences")
+            textbutton _("Help") action Help()
+            textbutton _("Quit") action Quit(confirm=False)
+
+    init python:
+
+        # Make all the main menu buttons be the same size.
+        style.mm_button.size_group = "mm"
+
+Navigation
+----------
+
+The ``navigation`` screen isn't special to Ren'Py. But by convention,
+we place the game menu navigation in a screen named ``navigation``, and
+then use that screen from the save, load and preferences screens.
+
+::
+
+    screen navigation:
+
+        # The background of the game menu.
+        window:
+            style "gm_root"
+
+        # The various buttons.
+        frame:
+            group "gm_nav"
+            xalign .98
+            yalign .98
+
+            has vbox
+
+            textbutton _("Return") action Return()
+            textbutton _("Preferences") action ShowMenu("preferences")
+            textbutton _("Save Game") action ShowMenu("save")
+            textbutton _("Load Game") action ShowMenu("load")
+            textbutton _("Main Menu") action MainMenu()
+            textbutton _("Help") action Help()
+            textbutton _("Quit") action Quit()
+
+    init python:
+        style.gm_nav_button.size_group = "gm_nav"
+                
 Save
 ----
 
 The ``save`` screen is used to select a file in which to save the
-game.
+game. 
 
 ::
 
     screen save:
-        # TODO
+
+        # This ensures that any other menu screen is replaced.
+        modal menu
+
+        use navigation
+
+        frame:
+            has vbox
+
+            # The buttons at the top allow the user to pick a
+            # page of files.
+            hbox:
+                textbutton _("Previous") action FilePagePrevious()
+                textbutton _("Auto") action FilePage("auto")
+
+                for i in range(1, 9):
+                    textbutton str(i) action FilePage(i)
+
+                textbutton _("Next") action FilePageNext()
+
+            # Display a grid of file slots.
+            grid 2 5:
+                transpose True
+                xfill True
+
+                # Display ten file slots, numbered 1 - 10.
+                for i in range(1, 11):
+
+                    # Each file slot is a button.
+                    button:
+                        action FileAction(i)
+                        xfill True
+                        style "large_button"
+
+                        has hbox
+
+                        # Add the screenshot and the description to the
+                        # button.
+                        add FileScreenshot(i)
+                        text ( " %2d. " % i
+                               + FileTime(i, empty=_("Empty Slot."))
+                               + "\n"
+                               + FileSaveName(i)) style "large_button_text"
 
 Load
 ----
@@ -182,7 +303,49 @@ game.
 ::
 
     screen load:
-        # TODO
+
+        # This ensures that any other menu screen is replaced.
+        modal menu
+
+        use navigation
+
+        frame:
+            has vbox
+
+            # The buttons at the top allow the user to pick a
+            # page of files.
+            hbox:
+                textbutton _("Previous") action FilePagePrevious()
+                textbutton _("Auto") action FilePage("auto")
+
+                for i in range(1, 9):
+                    textbutton str(i) action FilePage(i)
+
+                textbutton _("Next") action FilePageNext()
+
+            # Display a grid of file slots.
+            grid 2 5:
+                transpose True
+                xfill True
+
+                # Display ten file slots, numbered 1 - 10.
+                for i in range(1, 11):
+
+                    # Each file slot is a button.
+                    button:
+                        action FileAction(i)
+                        xfill True
+                        style "large_button"
+
+                        has hbox
+
+                        # Add the screenshot and the description to the
+                        # button.
+                        add FileScreenshot(i)
+                        text ( " %2d. " % i
+                               + FileTime(i, empty=_("Empty Slot."))
+                               + "\n"
+                               + FileSaveName(i)) style "large_button_text"
         
 Preferences
 -----------
@@ -193,7 +356,120 @@ display of the game.
 ::
 
     screen preferences:
-        # TODO
+
+        tag menu
+
+        # Include the navigation.
+        use navigation
+
+        # Put the navigation columns in a three-wide grid.
+        grid 3 1:
+            group "prefs"
+            xfill True
+
+            # The left column.
+            vbox:
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Display")
+                    textbutton _("Window") action Preference("display", "window")
+                    textbutton _("Fullscreen") action Preference("display", "fullscreen")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Transitions")
+                    textbutton _("All") action Preference("transitions", "all")
+                    textbutton _("None") action Preference("transitions", "none")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Text Speed")
+                    bar value Preference("text speed")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    textbutton _("Joystick...") action ShowMenu("joystick_preferences")
+
+            vbox:
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Skip")
+                    textbutton _("Seen Messages") action Preference("skip", "seen")
+                    textbutton _("All Messages") action Preference("skip", "all")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    textbutton _("Begin Skipping") action Skip()
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("After Choices")
+                    textbutton _("Stop Skipping") action Preference("after choices", "stop")
+                    textbutton _("Keep Skipping") action Preference("after choices", "skip")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Auto-Forward Time")
+                    bar value Preference("auto-forward time")
+
+            vbox:
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Music Volume")
+                    bar value Preference("music volume")
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Sound Volume")
+                    bar value Preference("sound volume")
+                    textbutton "Test" action Play("sound", "sound_test.ogg") style "soundtest_button"
+
+                frame:
+                    group "pref"
+                    has vbox
+
+                    label _("Voice Volume")
+                    bar value Preference("voice volume")
+                    textbutton "Test" action Play("voice", "voice_test.ogg") style "soundtest_button"
+
+    init python:
+
+        style.pref_frame.xfill = True
+        style.pref_frame.xmargin = 5
+        style.pref_frame.top_margin = 5
+
+        style.pref_vbox.xfill = True
+
+        style.pref_button.size_group = "pref"
+        style.pref_button.xalign = 1.0
+
+        style.pref_slider.xmaximum = 192
+        style.pref_slider.xalign = 1.0
+
+        style.soundtest_button.xalign = 1.0
+
 
 Yesno_Prompt
 ------------
@@ -224,4 +500,30 @@ user. It takes the following parameters:
 ::
 
     screen yesno_prompt:
-        # TODO
+
+        modal True
+
+        window:
+            style "gm_root"
+
+        frame:
+            group "yesno_prompt"
+
+            xfill True
+            xmargin 50
+            ypadding 25
+            yalign .25
+
+            vbox:
+                xfill True
+                spacing 25
+
+                text _(message):
+                    text_align 0.5
+                    xalign 0.5
+
+                hbox:
+                    spacing 100
+                    xalign .5 
+                    textbutton _("Yes") action yes_action                
+                    textbutton _("No") action no_action

@@ -293,9 +293,35 @@ init -1140 python:
                 
         def get_sensitive(self):
             return config.allow_skipping and (not renpy.context()._main_menu)
+
+    class Help(Action):
+        """
+         :doc: other_action
+
+         Displays help.
+
+         `help`
+              If this is a string giving a label in the programe, then
+              that label is called in a new context when the button is
+              chosen. Otherwise, it should be a string giving a file
+              that is opened in a web browser. If None, the value of
+              config.help is used in the same wayt.
+         """
+
+        def __init__(self, help=None):
+            self.help = help
         
+        def __call__(self):
+            _help(self.help)
+                
     def AutoForward(Action):
-        return Preference("auto-forward")
+        """
+         :doc: other_action
+
+         Toggles auto-forward mode.
+         """
+         
+        return Preference("auto-forward", "toggle")
     
         
     ##########################################################################
@@ -488,7 +514,7 @@ init -1140 python:
         def get_selected(self):
             return renpy.music.get_playing(self.channel) == self.file            
 
-        def periodic(self):
+        def periodic(self, st):
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
 
@@ -892,7 +918,7 @@ init -1140 python:
                 if self.confirm:
                     layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
                     return
-                
+
             renpy.save(fn, extra_info=save_name)
 
             if self.newest:
@@ -990,9 +1016,9 @@ init -1140 python:
          """
         
         if renpy.current_screen().screen_name[0] == "load":
-            return FileLoad(name, page)
+            return FileLoad(name, page=page)
         else:
-            return FileSave(name, page)
+            return FileSave(name, page=page)
          
 
     class FilePage(Action):

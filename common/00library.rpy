@@ -139,19 +139,23 @@ init -1180 python:
 
     config.help = None
             
-    def _help():
-        if not config.help:
+    def _help(help=None):
+
+        if help is None:
+            help = config.help
+
+        if help is None:
             return
 
-        if renpy.has_label(config.help):
-            renpy.call_in_new_context(config.help)
+        if renpy.has_label(help):
+            renpy.call_in_new_context(help)
             return
 
         _preferences.fullscreen = False
 
         try:
             import webbrowser
-            webbrowser.open_new("file:///" + config.basedir + "/" + config.help)
+            webbrowser.open_new("file:///" + config.basedir + "/" + help)
         except:
             pass
             
