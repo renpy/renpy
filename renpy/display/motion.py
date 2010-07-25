@@ -528,6 +528,12 @@ class Transform(Container):
             
         return None
         
+    def set_transform_event(self, event):
+        if self.child is not None:
+            self.child.set_transform_event(event)
+        
+        super(Transform, self).set_transform_event(event)
+        
         
     def take_state(self, t):
         """
@@ -581,10 +587,17 @@ class Transform(Container):
         if d.function is not None:
             d.function(d, st, at)
 
+        new_child = d.child._hide(st, at, kind)
+
+        if new_child is not None:
+            d.child = new_child
+            d.hide_response = False
+            d.replaced_response = False
+                
         if (not d.hide_response) or (not d.replaced_response):
             renpy.display.render.redraw(d, 0)
             return d
-
+        
         return None
         
     def set_child(self, child):
