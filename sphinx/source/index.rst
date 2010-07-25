@@ -38,7 +38,15 @@ Python and Ren'Py
 
    screen_python
    other
-   
+
+End-User Documentation
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   display_problems
+
 Changes and License
 -------------------
 

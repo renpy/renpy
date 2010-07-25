@@ -1,0 +1,1 @@
+RENPY_RENDERER="sw"

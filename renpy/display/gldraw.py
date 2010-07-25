@@ -101,6 +101,9 @@ class GLDraw(object):
 
         # We don't use a fullscreen surface.
         self.fullscreen_surface = None
+
+        # The display info, from pygame.
+        self.display_info = None
         
     def log(self, msg, *args):
         """
@@ -136,6 +139,8 @@ class GLDraw(object):
             pygame.display.quit()
             pygame.display.init()
 
+            self.display_info = pygame.display.Info()
+            
             renpy.display.interface.post_init()
             
             self.old_fullscreen = fullscreen
@@ -152,12 +157,15 @@ class GLDraw(object):
         # textures.
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
+
+        pwidth = min(self.display_info.current_w, pwidth)
+        pheight = min(self.display_info.current_h, pheight)
         
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
         pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
-                
+
         try:
             if fullscreen:
                 self.log("fullscreen mode.")
@@ -173,6 +181,8 @@ class GLDraw(object):
 
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
+
+        print self.physical_size
         
         self.log("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
@@ -279,7 +289,7 @@ class GLDraw(object):
         self.log("Vendor: %r", pysdlgl.get_string(gl.VENDOR))
         self.log("Renderer: %r", renderer)
         self.log("Version: %r", version)
-        self.log("Video Info: %s", pygame.display.Info())
+        self.log("Display Info: %s", self.display_info)
 
         for r, v in BLACKLIST:
             if renderer == r and version.startswith(v):
