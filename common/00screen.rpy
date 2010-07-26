@@ -313,16 +313,7 @@ init -1140 python:
         
         def __call__(self):
             _help(self.help)
-                
-    def AutoForward(Action):
-        """
-         :doc: other_action
-
-         Toggles auto-forward mode.
-         """
-         
-        return Preference("auto-forward", "toggle")
-    
+                   
         
     ##########################################################################
     # Functions that set variables or fields.

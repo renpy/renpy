@@ -51,14 +51,19 @@ take the `name` and `page` arguments.
 
 `name`
     The name of the file to save to. This can be a string or an integer. It's
-    combined with a 
+    combined with the page to create the filename.
 
 `page`
-    The page that this action acts on. Thgis is one of "auto",
+    The page that this action acts on. This is one of "auto",
     "quick", or a positive integer. If None, the page is determined
     automatically, based on a persistent page number. 
 
 .. include:: inc/file_action
+
+Audio Actions
+-------------
+
+.. include:: inc/audio_action
 
 Other Actions
 -------------
