@@ -669,6 +669,10 @@ class Render(object):
 
             for (d, arg, xo, yo, fw, fh, mx, my, mask) in self.focuses:
 
+                if xo is None:
+                    rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
+                    continue
+                
                 status, offset, crop = compute_subrect(
                     (xo, yo), (fw, fh), rect)
 
