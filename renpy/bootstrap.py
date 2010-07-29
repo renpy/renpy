@@ -362,8 +362,7 @@ def report_exception(e):
 
         f.write(codecs.BOM_UTF8)
 
-        print >>f, "I'm sorry, but an exception occured while executing your Ren'Py"
-        print >>f, "script."
+        print >>f, "I'm sorry, but an uncaught exception occurred."
         print >>f
 
         print >>f, type.__name__ + ":", 
