@@ -172,6 +172,15 @@ All user interface statements take the following common properties:
     
     Setting a group of ``None`` disables this behavior for a
     displayable and all of its children.
+
+`focus`
+    Takes a string or integer, and gives a name to the displayable
+    for focus purposes. Ren'Py looks for structural similarity between
+    focus names when deciding with displayable to give focus to at the
+    start of an interaction. If a box is given a focus name, and the
+    third button in that box is focused at the end of an interaction,
+    the third button of a box with the same will be highlighted at
+    the start of the next interaction.
     
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
