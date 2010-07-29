@@ -48,6 +48,8 @@ def displayable_or_none(d):
             return renpy.store.Solid(d)
         elif "." in d:
             return renpy.store.Image(d)
+        elif not d:
+            raise Exception("Displayable cannot be an empty string.")
         else:
             return renpy.store.ImageReference(tuple(d.split()))
             
@@ -70,6 +72,8 @@ def displayable(d):
             return renpy.store.Solid(d)
         elif "." in d:
             return renpy.store.Image(d)
+        elif not d:
+            raise Exception("Displayable cannot be an empty string.")
         else:
             return renpy.store.ImageReference(tuple(d.split()))
 
