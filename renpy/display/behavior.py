@@ -505,13 +505,14 @@ class Button(renpy.display.layout.Window):
         return rv
         
 
-    def unfocus(self):
+    def unfocus(self, default=False):
         super(Button, self).unfocus()
 
         if self.activated:
             return None
 
-        run(self.unhovered)
+        if not default:
+            run(self.unhovered)
 
         self.set_transform_event(self.role + "idle")
         self.child.set_transform_event(self.role + "idle")
@@ -1073,7 +1074,7 @@ class Bar(renpy.display.core.Displayable):
         self.set_transform_event("hover")
 
         
-    def unfocus(self):
+    def unfocus(self, default=False):
         super(Bar, self).unfocus()
         self.set_transform_event("idle")
         

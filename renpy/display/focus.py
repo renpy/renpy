@@ -166,7 +166,7 @@ def before_interact(roots):
     # all other widgets as unfocused.
     for f, n in fwn:
         if f is not current:
-            f.unfocus()
+            f.unfocus(default=True)
 
     if current:
         current.focus(default=True)
@@ -192,7 +192,7 @@ def change_focus(newfocus, default=False):
         return rv
 
     if current is not None:
-        current.unfocus()
+        current.unfocus(default=default)
 
     current = widget
 

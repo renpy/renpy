@@ -1349,7 +1349,7 @@ class Text(renpy.display.core.Displayable):
         if renpy.config.hyperlink_focus:
             return renpy.config.hyperlink_focus(self.laidout_hyperlinks[renpy.display.focus.argument])
 
-    def unfocus(self):
+    def unfocus(self, default=False):
         self.laidout = None
         renpy.display.render.redraw(self, 0)
 

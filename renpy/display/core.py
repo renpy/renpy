@@ -139,7 +139,7 @@ class Displayable(renpy.object.Object):
             if self.style.sound:
                 renpy.audio.music.play(self.style.sound, channel="sound")
 
-    def unfocus(self):
+    def unfocus(self, default=False):
         """
         Called to indicate that this widget has become unfocused.
         """
