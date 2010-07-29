@@ -378,7 +378,7 @@ def display_say(
     dtt = DialogueTextTags(what)
 
     if all_at_once:
-        pause_start = [ 0 ]
+        pause_start = [ dtt.pause_start[0] ]
         pause_end = [ len(dtt.text) ]
         pause_delay = [ dtt.pause_delay[-1] ]
     else:
