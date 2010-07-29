@@ -1385,7 +1385,7 @@ class Interface(object):
 
         if renpy.config.empty_window:
             renpy.config.empty_window()
-
+            
             
     def do_with(self, trans, paired, clear=False):
         
