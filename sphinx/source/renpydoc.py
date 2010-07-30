@@ -14,6 +14,9 @@ class RenPyLexer(PythonLexer):
     def get_tokens_unprocessed(self, text):
         for index, token, value in PythonLexer.get_tokens_unprocessed(self, text):
 
+            if value.startswith("###"):
+                continue
+            
             if token == Token.Error and value == "$":
                 yield index, Token.Keyword, value
 

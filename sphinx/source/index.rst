@@ -9,6 +9,14 @@ home page:
     http://www.renpy.org/
 
 
+Getting Started
+---------------
+.. toctree::
+   :maxdepth: 1
+
+   quickstart
+
+    
 The Ren'Py Language
 -------------------
 

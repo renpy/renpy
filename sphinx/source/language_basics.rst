@@ -125,7 +125,7 @@ structure without overwhelming the script text.
 Elements of Statements
 ======================
 
-Ren'Py statements are made of a few basic 
+Ren'Py statements are made of a few basic parts.
 
 :dfn:`Keyword`
 
