@@ -32,6 +32,8 @@ import time
 try:
     import _renpy_tegl as gl; gl
     import _renpy_pysdlgl as pysdlgl; pysdlgl
+
+    gl.BGRA = 0x80E1 
 except ImportError:
     gl = None
     pysdlgl = None
@@ -104,6 +106,9 @@ class GLDraw(object):
 
         # The display info, from pygame.
         self.display_info = None
+
+        # The amount we're upscaling by.
+        self.upscale_factor = 1.0
         
     def log(self, msg, *args):
         """
@@ -502,6 +507,8 @@ class GLDraw(object):
 
         self.undefine_clip()
 
+        self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
+        
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             tex = renpy.display.video.get_movie_texture(self.virtual_size)
 
@@ -653,8 +660,6 @@ class GLDraw(object):
                 nearest=True)
 
             return
-            
-
                 
         # Compute clipping.
         if what.clipping:
@@ -713,7 +718,10 @@ class GLDraw(object):
 
         what.is_opaque()
 
+        self.upscale_factor = 1.0
+
         rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
+
         return rv
         
 
@@ -867,7 +875,7 @@ class GLDraw(object):
 
     def screenshot(self):
         fb = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
-        pysdlgl.store_framebuffer(fb)
+        pysdlgl.store_framebuffer(fb, gl.BGRA)
         rv = fb.subsurface(self.physical_box)
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
         return rv

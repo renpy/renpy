@@ -177,7 +177,8 @@ class Texture(object):
                         None,
                         self.width,
                         self.height,
-                        0)
+                        0,
+                        gl.BGRA)
 
                 self.created = True
 
@@ -186,7 +187,8 @@ class Texture(object):
                 self.premult,
                 w,
                 h,
-                self.created)
+                self.created,
+                gl.BGRA)
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
@@ -218,7 +220,8 @@ class Texture(object):
                 None,
                 self.width,
                 self.height,
-                0)
+                0,
+                gl.BGRA)
 
             self.created = True
          
@@ -562,8 +565,6 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
     return rv
 
 
-
-
 def align_axes(*args):
     """
     This takes n axes, each a list consisting of (offset, size, index)
@@ -619,6 +620,30 @@ def align_axes(*args):
     return rv
             
 
+def tex_offset_zip(l, *args):
+    """
+    Zips together l and *args, prepending a texture offset pair to
+    each tuple.
+    """
+
+    n = len(l)
+    
+    # Offsets are 0, 0 when we're not upscaling.
+    if renpy.display.draw.upscale_factor <= 1.0:
+        offsets = [ (0, 0) ] * n
+
+    else:
+        
+        offsets = [ ]
+
+        for i in range(n):
+            # The texture offset is half a pixel.
+            offsets.append((.5 if i == 0 else 0, -.5 if i == n-1 else 0))
+
+    return zip(offsets, l, *args)
+        
+    
+
 def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
@@ -637,21 +662,26 @@ def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
 
     y = 0
 
-    for texy, texh, rowindex in tg.rows:
+    for (toff_top, toff_bottom), (texy, texh, rowindex) in tex_offset_zip(tg.rows):
         x = 0
 
-        for texx, texw, colindex in tg.columns:
+        for (toff_left, toff_right), (texx, texw, colindex) in tex_offset_zip(tg.columns):
 
             tex = tg.tiles[rowindex][colindex]
 
-            pysdlgl.draw_rectangle(
+            draw_rectangle(
                 sx, sy,
                 x, y,
                 texw, texh, 
                 transform,
                 tex, texx, texy,
                 None, 0, 0,
-                None, 0, 0)
+                None, 0, 0,
+                toff_left,
+                toff_top,
+                toff_right,
+                toff_bottom,
+                )
 
             x += texw
 
@@ -689,22 +719,27 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
     # x, y - index into the texture.
     # w, h - width and height to draw.
     # ri, ci - row index, column index in tiles.
-    for (t0y, t0h, t0ri), (t1y, t1h, t1ri) in zip(rows0, rows1):
+    for (toff_top, toff_bottom), (t0y, t0h, t0ri), (t1y, t1h, t1ri) in tex_offset_zip(rows0, rows1):
         x = 0
 
-        for (t0x, t0w, t0ci), (t1x, t1w, t1ci) in zip(cols0, cols1):
+        for (toff_left, toff_right), (t0x, t0w, t0ci), (t1x, t1w, t1ci) in tex_offset_zip(cols0, cols1):
             
             t0 = tg0.tiles[t0ri][t0ci]
             t1 = tg1.tiles[t1ri][t1ci]
             
-            pysdlgl.draw_rectangle(
+            draw_rectangle(
                 sx, sy,
                 x, y,
                 t0w, t0h, 
                 transform,
                 t0, t0x, t0y,
                 t1, t1x, t1y,
-                None, 0, 0)
+                None, 0, 0,
+                toff_left,
+                toff_top,
+                toff_right,
+                toff_bottom,
+                )
 
             x += t0w
 
@@ -747,23 +782,28 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
     # x, y - index into the texture.                       
     # w, h - width and height to draw.
     # ri, ci - row index, column index in tiles.
-    for (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in zip(rows0, rows1, rows2):
+    for (toff_top, toff_bottom), (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in tex_offset_zip(rows0, rows1, rows2):
         x = 0
 
-        for (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in zip(cols0, cols1, cols2):
+        for (toff_left, toff_right), (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in tex_offset_zip(cols0, cols1, cols2):
 
             t0 = tg0.tiles[t0ri][t0ci]
             t1 = tg1.tiles[t1ri][t1ci]
             t2 = tg2.tiles[t2ri][t2ci]
 
-            pysdlgl.draw_rectangle(
+            draw_rectangle(
                 sx, sy,
                 x, y,
                 t0w, t0h, 
                 transform,
                 t0, t0x, t0y,
                 t1, t1x, t1y,
-                t2, t2x, t2y)
+                t2, t2x, t2y,
+                toff_left,
+                toff_top,
+                toff_right,
+                toff_bottom,
+                )
             
             x += t0w
             
@@ -780,13 +820,42 @@ def draw_rectangle(
     transform,
     tex0, tex0x, tex0y,
     tex1, tex1x, tex1y,
-    tex2, tex2x, tex2y):
+    tex2, tex2x, tex2y,
+    toff_left,
+    toff_top,
+    toff_right,
+    toff_bottom,
+    ):
 
     """
     This draws a rectangle (textured with up to four textures) to the
     screen.
+
+    Note that this is usually implemented in C code in the Ren'Py
+    module, and that this version is for debugging.
+    
+
+    `sx`, `sy`
+        The location in the untransformed screen coordinate of the
+        upper-left corner of the drawing region. (Think of this as an
+        offset that is applied to coordinates.)
+    `x`, `y`
+        The location in the transformed coordinates to draw the
+        upper-left corner of the texture.
+    `w`, `h`
+        The width and height of texture.
+    `tex0`
+        The texture to bind to texture unit 0.
+    `tex0x`, `tex0y`
+        The coordinates within that texture of the upper-left corner.
+    `tex1...`, `tex2...`
+        Same, but for the other two textures.
+    `toff_...`
+        Texture offset to apply to the given side of the texture.
     """
 
+    gl.Disable(gl.POLYGON_SMOOTH)
+    
     # Pull apart the transform.
     xdx = transform.xdx
     xdy = transform.xdy
@@ -820,10 +889,10 @@ def draw_rectangle(
         xmul = tex0.xmul
         ymul = tex0.ymul
         
-        t0u0 = xadd + xmul * (tex0x + 0)
-        t0u1 = xadd + xmul * (tex0x + w)
-        t0v0 = yadd + ymul * (tex0y + 0)
-        t0v1 = yadd + ymul * (tex0y + h)
+        t0u0 = xadd + xmul * (tex0x + 0 + toff_left)
+        t0u1 = xadd + xmul * (tex0x + w + toff_right)
+        t0v0 = yadd + ymul * (tex0y + 0 + toff_top)
+        t0v1 = yadd + ymul * (tex0y + h + toff_bottom)
 
     else:
         has_tex0 = 0
@@ -840,10 +909,10 @@ def draw_rectangle(
         xmul = tex1.xmul
         ymul = tex1.ymul
         
-        t1u0 = xadd + xmul * (tex1x + 0)
-        t1u1 = xadd + xmul * (tex1x + w)
-        t1v0 = yadd + ymul * (tex1y + 0)
-        t1v1 = yadd + ymul * (tex1y + h)
+        t1u0 = xadd + xmul * (tex1x + 0 + toff_left)
+        t1u1 = xadd + xmul * (tex1x + w + toff_right)
+        t1v0 = yadd + ymul * (tex1y + 0 + toff_top)
+        t1v1 = yadd + ymul * (tex1y + h + toff_bottom)
 
     else:
         has_tex1 = 0
@@ -860,10 +929,10 @@ def draw_rectangle(
         xmul = tex2.xmul
         ymul = tex2.ymul
         
-        t2u0 = xadd + xmul * (tex2x + 0)
-        t2u1 = xadd + xmul * (tex2x + w)
-        t2v0 = yadd + ymul * (tex2y + 0)
-        t2v1 = yadd + ymul * (tex2y + h)
+        t2u0 = xadd + xmul * (tex2x + 0 + toff_left)
+        t2u1 = xadd + xmul * (tex2x + w + toff_right)
+        t2v0 = yadd + ymul * (tex2y + 0 + toff_top)
+        t2v1 = yadd + ymul * (tex2y + h + toff_bottom)
 
     else:
         has_tex2 = 0
@@ -907,7 +976,7 @@ def draw_rectangle(
     gl.End()
 
 
-C_DRAW=True
+C_DRAW = True
     
 if C_DRAW:
     if pysdlgl:

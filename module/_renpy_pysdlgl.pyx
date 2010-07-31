@@ -173,7 +173,7 @@ def premultiply(
     return rv
 
 
-def load_premultiplied(data, width, height, update):
+def load_premultiplied(data, width, height, update, format):
 
     cdef char *pixels
 
@@ -191,7 +191,7 @@ def load_premultiplied(data, width, height, update):
             0,
             width,
             height,
-            GL_BGRA,
+            format,
             GL_UNSIGNED_BYTE,
             pixels)
         
@@ -203,13 +203,14 @@ def load_premultiplied(data, width, height, update):
             width,
             height,
             0,
-            GL_BGRA,
+            format,
             GL_UNSIGNED_BYTE,
             pixels)
 
 
 def store_framebuffer(
     object pysurf,
+    int format,
     ):
     
     """
@@ -231,7 +232,7 @@ def store_framebuffer(
         0,
         surf.w,
         surf.h,
-        GL_BGRA,
+        format,
         GL_UNSIGNED_BYTE,
         pixels)
 
@@ -246,7 +247,12 @@ def draw_rectangle(
     transform,
     tex0, int tex0x, int tex0y,
     tex1, int tex1x, int tex1y,
-    tex2, int tex2x, int tex2y):
+    tex2, int tex2x, int tex2y,
+    float toff_left,
+    float toff_top,
+    float toff_right,
+    float toff_bottom,
+    ):
 
     """
     This draws a rectangle (textured with up to four textures) to the
@@ -295,10 +301,10 @@ def draw_rectangle(
         xmul = tex0.xmul
         ymul = tex0.ymul
         
-        t0u0 = xadd + xmul * (tex0x + 0)
-        t0u1 = xadd + xmul * (tex0x + w)
-        t0v0 = yadd + ymul * (tex0y + 0)
-        t0v1 = yadd + ymul * (tex0y + h)
+        t0u0 = xadd + xmul * (tex0x + 0 + toff_left)
+        t0u1 = xadd + xmul * (tex0x + w + toff_right)
+        t0v0 = yadd + ymul * (tex0y + 0 + toff_top)
+        t0v1 = yadd + ymul * (tex0y + h + toff_bottom)
 
     else:
         has_tex0 = 0
@@ -315,10 +321,10 @@ def draw_rectangle(
         xmul = tex1.xmul
         ymul = tex1.ymul
         
-        t1u0 = xadd + xmul * (tex1x + 0)
-        t1u1 = xadd + xmul * (tex1x + w)
-        t1v0 = yadd + ymul * (tex1y + 0)
-        t1v1 = yadd + ymul * (tex1y + h)
+        t1u0 = xadd + xmul * (tex1x + 0 + toff_left)
+        t1u1 = xadd + xmul * (tex1x + w + toff_right)
+        t1v0 = yadd + ymul * (tex1y + 0 + toff_top)
+        t1v1 = yadd + ymul * (tex1y + h + toff_bottom)
 
     else:
         has_tex1 = 0
@@ -335,10 +341,10 @@ def draw_rectangle(
         xmul = tex2.xmul
         ymul = tex2.ymul
         
-        t2u0 = xadd + xmul * (tex2x + 0)
-        t2u1 = xadd + xmul * (tex2x + w)
-        t2v0 = yadd + ymul * (tex2y + 0)
-        t2v1 = yadd + ymul * (tex2y + h)
+        t2u0 = xadd + xmul * (tex2x + 0 + toff_left)
+        t2u1 = xadd + xmul * (tex2x + w + toff_right)
+        t2v0 = yadd + ymul * (tex2y + 0 + toff_top)
+        t2v1 = yadd + ymul * (tex2y + h + toff_bottom)
 
     else:
         has_tex2 = 0
