@@ -226,6 +226,12 @@ class GLDraw(object):
             pheight - int(py_padding),
             )
         
+        if not self.did_init:
+            if not self.init():
+                return False
+
+        self.did_init = True
+
         # Set some default settings.
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
@@ -233,12 +239,6 @@ class GLDraw(object):
         gl.Enable(gl.CLIP_PLANE1)
         gl.Enable(gl.CLIP_PLANE2)
         gl.Enable(gl.CLIP_PLANE3)
-
-        if not self.did_init:
-            if not self.init():
-                return False
-
-        self.did_init = True
 
         self.environ.init()
         self.rtt.init()
@@ -335,6 +335,10 @@ class GLDraw(object):
 
         self.log("Number of texture units: %d", v[0])
 
+        gl.GetIntegerv(gl.MAX_CLIP_PLANES, v)
+
+        self.log("Number of clipping planes: %d", v[0])
+        
         if v[0] < 4:
             self.log("Not enough texture units.")
             return False
@@ -500,12 +504,13 @@ class GLDraw(object):
         gl.Ortho(self.virtual_box[0], self.virtual_box[2], self.virtual_box[3], self.virtual_box[1], -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
         
+
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Clear(gl.COLOR_BUFFER_BIT)
 
-        clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
-
         self.undefine_clip()
+
+        clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
 
         self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
         
