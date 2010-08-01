@@ -513,7 +513,7 @@ class GLDraw(object):
         clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
 
         self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
-        
+
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             tex = renpy.display.video.get_movie_texture(self.virtual_size)
 

@@ -83,6 +83,10 @@ class Texture(object):
 
         self.premult = None
         self.premult_size = None
+        self.premult_left = None
+        self.premult_right = None
+        self.premult_top = None
+        self.premult_bottom = None
         
         # True if we're in NEAREST mode. False if we're in LINEAR mode.
         self.nearest = False
@@ -97,6 +101,10 @@ class Texture(object):
         # Release the surface.
         self.premult = None
         self.premult_size = None
+        self.premult_left = None
+        self.premult_right = None
+        self.premult_top = None
+        self.premult_bottom = None
 
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
@@ -108,7 +116,9 @@ class Texture(object):
                 pass # Let's not error on shutdown.
                 
             
-    def load_surface(self, surf, x, y, w, h):
+    def load_surface(self, surf, x, y, w, h,
+                     border_left, border_top, border_right, border_bottom):
+
         """
         Loads a pygame surface into this texture rectangle.
         """
@@ -116,8 +126,11 @@ class Texture(object):
         # This just queues the surface up for loading. The actual loading
         # occurs when the texture is first needed. This ensures that the
         # texture loading only occurs in the GL thread.
-
-        self.premult = pysdlgl.premultiply(surf, x, y, w, h)
+        
+        self.premult = pysdlgl.premultiply(
+            surf, x, y, w, h,
+            border_left, border_top, border_right, border_bottom)
+            
         self.premult_size = (w, h)
 
         
@@ -466,7 +479,9 @@ def compute_tiling(width, max_size=MAX_SIZE):
 
         # The size of the left border of this tile.
         left_border = 1
-                    
+        # The size of the right border of this tile.
+        right_border = 1
+        
         # Figure out the texture size to use.
         for size in SIZES:
             if size > max_size:
@@ -477,20 +492,8 @@ def compute_tiling(width, max_size=MAX_SIZE):
             if size * .66 <= width + left_border:
                 break
             
-        # Figure out if we want to use a border.
-        if size < width + left_border:
-            right_border = 1
-        else:
-            right_border = 0
-
-            
         # The number of pixels to display to the user from this tile.
         row_size = min(width, size - left_border - right_border)
-
-        # Ensure we have an extra pixel to our right, so we don't
-        # get garbage.
-        if row_size + left_border != size:
-            right_border = 1
         
         #Add to the results. 
         row.append((left_border, row_size, row_index))
@@ -506,6 +509,20 @@ def compute_tiling(width, max_size=MAX_SIZE):
     return row, tiles
 
 
+def first_last(l):
+    """
+    Iterates over list l. Yields (first, last, item) triples, where first
+    and last are true if the item is the first or last element in l,
+    respectively.
+    """
+
+    n = len(l)
+    
+    for i in range(n):
+        first = (i == 0)
+        last = (i == n - 1)
+        yield first, last, l[i]
+
 def texture_grid_from_surface(surf):    
     """
     This takes a Surface and turns it into a TextureGrid.
@@ -518,18 +535,19 @@ def texture_grid_from_surface(surf):
     rv.columns, texcolumns = compute_tiling(width)
     rv.rows, texrows = compute_tiling(height)
 
-    for y, height, texheight in texrows:
+    for border_top, border_bottom, (y, height, texheight) in first_last(texrows):
         row = [ ]
             
-        for x, width, texwidth in texcolumns:
+        for border_left, border_right, (x, width, texwidth) in first_last(texcolumns):
             
             tex = alloc_texture(texwidth, texheight)
-            tex.load_surface(surf, x, y, width, height)
+            tex.load_surface(surf, x, y, width, height,
+                             border_left, border_top, border_right, border_bottom)
             
             row.append(tex)
             
         rv.tiles.append(row)
-        
+
     return rv
 
 
@@ -620,30 +638,6 @@ def align_axes(*args):
     return rv
             
 
-def tex_offset_zip(l, *args):
-    """
-    Zips together l and *args, prepending a texture offset pair to
-    each tuple.
-    """
-
-    n = len(l)
-    
-    # Offsets are 0, 0 when we're not upscaling.
-    if renpy.display.draw.upscale_factor <= 1.0:
-        offsets = [ (0, 0) ] * n
-
-    else:
-        
-        offsets = [ ]
-
-        for i in range(n):
-            # The texture offset is half a pixel.
-            offsets.append((.5 if i == 0 else 0, -.5 if i == n-1 else 0))
-
-    return zip(offsets, l, *args)
-        
-    
-
 def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
@@ -662,10 +656,10 @@ def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
 
     y = 0
 
-    for (toff_top, toff_bottom), (texy, texh, rowindex) in tex_offset_zip(tg.rows):
+    for texy, texh, rowindex in tg.rows:
         x = 0
 
-        for (toff_left, toff_right), (texx, texw, colindex) in tex_offset_zip(tg.columns):
+        for texx, texw, colindex in tg.columns:
 
             tex = tg.tiles[rowindex][colindex]
 
@@ -677,10 +671,6 @@ def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
                 tex, texx, texy,
                 None, 0, 0,
                 None, 0, 0,
-                toff_left,
-                toff_top,
-                toff_right,
-                toff_bottom,
                 )
 
             x += texw
@@ -719,10 +709,10 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
     # x, y - index into the texture.
     # w, h - width and height to draw.
     # ri, ci - row index, column index in tiles.
-    for (toff_top, toff_bottom), (t0y, t0h, t0ri), (t1y, t1h, t1ri) in tex_offset_zip(rows0, rows1):
+    for (t0y, t0h, t0ri), (t1y, t1h, t1ri) in zip(rows0, rows1):
         x = 0
 
-        for (toff_left, toff_right), (t0x, t0w, t0ci), (t1x, t1w, t1ci) in tex_offset_zip(cols0, cols1):
+        for (t0x, t0w, t0ci), (t1x, t1w, t1ci) in zip(cols0, cols1):
             
             t0 = tg0.tiles[t0ri][t0ci]
             t1 = tg1.tiles[t1ri][t1ci]
@@ -735,10 +725,6 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
                 t0, t0x, t0y,
                 t1, t1x, t1y,
                 None, 0, 0,
-                toff_left,
-                toff_top,
-                toff_right,
-                toff_bottom,
                 )
 
             x += t0w
@@ -782,10 +768,10 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
     # x, y - index into the texture.                       
     # w, h - width and height to draw.
     # ri, ci - row index, column index in tiles.
-    for (toff_top, toff_bottom), (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in tex_offset_zip(rows0, rows1, rows2):
+    for (t0y, t0h, t0ri), (t1y, t1h, t1ri), (t2y, t2h, t2ri) in zip(rows0, rows1, rows2):
         x = 0
 
-        for (toff_left, toff_right), (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in tex_offset_zip(cols0, cols1, cols2):
+        for (t0x, t0w, t0ci), (t1x, t1w, t1ci), (t2x, t2w, t2ci) in zip(cols0, cols1, cols2):
 
             t0 = tg0.tiles[t0ri][t0ci]
             t1 = tg1.tiles[t1ri][t1ci]
@@ -799,10 +785,6 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
                 t0, t0x, t0y,
                 t1, t1x, t1y,
                 t2, t2x, t2y,
-                toff_left,
-                toff_top,
-                toff_right,
-                toff_bottom,
                 )
             
             x += t0w
@@ -820,12 +802,7 @@ def draw_rectangle(
     transform,
     tex0, tex0x, tex0y,
     tex1, tex1x, tex1y,
-    tex2, tex2x, tex2y,
-    toff_left,
-    toff_top,
-    toff_right,
-    toff_bottom,
-    ):
+    tex2, tex2x, tex2y):
 
     """
     This draws a rectangle (textured with up to four textures) to the
@@ -889,10 +866,10 @@ def draw_rectangle(
         xmul = tex0.xmul
         ymul = tex0.ymul
         
-        t0u0 = xadd + xmul * (tex0x + 0 + toff_left)
-        t0u1 = xadd + xmul * (tex0x + w + toff_right)
-        t0v0 = yadd + ymul * (tex0y + 0 + toff_top)
-        t0v1 = yadd + ymul * (tex0y + h + toff_bottom)
+        t0u0 = xadd + xmul * (tex0x + 0)
+        t0u1 = xadd + xmul * (tex0x + w)
+        t0v0 = yadd + ymul * (tex0y + 0)
+        t0v1 = yadd + ymul * (tex0y + h)
 
     else:
         has_tex0 = 0
@@ -909,10 +886,10 @@ def draw_rectangle(
         xmul = tex1.xmul
         ymul = tex1.ymul
         
-        t1u0 = xadd + xmul * (tex1x + 0 + toff_left)
-        t1u1 = xadd + xmul * (tex1x + w + toff_right)
-        t1v0 = yadd + ymul * (tex1y + 0 + toff_top)
-        t1v1 = yadd + ymul * (tex1y + h + toff_bottom)
+        t1u0 = xadd + xmul * (tex1x + 0)
+        t1u1 = xadd + xmul * (tex1x + w)
+        t1v0 = yadd + ymul * (tex1y + 0)
+        t1v1 = yadd + ymul * (tex1y + h)
 
     else:
         has_tex1 = 0
@@ -929,10 +906,10 @@ def draw_rectangle(
         xmul = tex2.xmul
         ymul = tex2.ymul
         
-        t2u0 = xadd + xmul * (tex2x + 0 + toff_left)
-        t2u1 = xadd + xmul * (tex2x + w + toff_right)
-        t2v0 = yadd + ymul * (tex2y + 0 + toff_top)
-        t2v1 = yadd + ymul * (tex2y + h + toff_bottom)
+        t2u0 = xadd + xmul * (tex2x + 0)
+        t2u1 = xadd + xmul * (tex2x + w)
+        t2v0 = yadd + ymul * (tex2y + 0)
+        t2v1 = yadd + ymul * (tex2y + h)
 
     else:
         has_tex2 = 0
@@ -975,8 +952,8 @@ def draw_rectangle(
 
     gl.End()
 
-
-C_DRAW = True
+    
+C_DRAW = False
     
 if C_DRAW:
     if pysdlgl:
