@@ -62,7 +62,7 @@ init -1105 python hide:
         if renpy.has_screen("load") and renpy.has_screen("save"):
             defaults["load_save"] = layout.screen_load_save
 
-        if renpy.has_screen("yesno"):
+        if renpy.has_screen("yesno_prompt"):
             defaults["yesno_prompt"] = layout.screen_yesno_prompt
 
         if renpy.has_screen("preferences"):
