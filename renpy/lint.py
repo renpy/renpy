@@ -24,6 +24,7 @@ import codecs
 import os
 import os.path
 import time
+import re
 
 image_prefixes = None
 filenames = None
@@ -67,21 +68,36 @@ def add(msg):
 # Trys to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
 
-    try:
-        renpy.python.py_eval(expr)
-    except:
-        report( "Could not evaluate '%s', in %s.", expr, where)
-        if additional:
-            add(additional)
+    # Make sure the expression compiles.
+    try_compile(where, expr)
+
+    # Simply look up the first component of the python expression, and
+    # see if it exists in the store.
+    m = re.match(r'\s*([a-zA-Z_]\w*)', expr)
+
+    if not m:
+        return
+    
+    if hasattr(renpy.store, m.group(1)):
+        return
+
+    if m.group(1) in __builtins__:
+        return
+
+    report( "Could not evaluate '%s', in %s.", expr, where)
+    if additional:
+        add(additional)
 
 # Returns True of the expression can be compiled as python, False
 # otherwise.
-def try_compile(where, expr):
+def try_compile(where, expr, additional=None):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
     except:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
+        if additional:
+            add(additional)
         
 
 # This reports an error if we're sure that the image with the given name
@@ -342,12 +358,44 @@ def check_style(name, s):
                 
             if isinstance(v, renpy.display.core.Displayable):
                 check_displayable(kname, v) 
+
+def check_label(node):
+
+    def add_arg(n):
+        if n is None:
+            return
+
+        if not hasattr(renpy.store, n):
+            setattr(renpy.store, n, None)
+            
+    pi = node.parameters
+
+    if pi is not None:
     
+        for i in pi.positional:
+            add_arg(i)
+        add_arg(pi.extrapos)
+        add_arg(pi.extrakw)
+                
 
 def check_styles():
     for name, s in renpy.style.style_map.iteritems():
         check_style("Style property style." + name, s)
-    
+
+def humanize(n):
+    s = str(n)
+
+    rv = []
+
+    for i, c in enumerate(reversed(s)):
+        if i and not (i % 3):
+            rv.insert(0, ',')
+
+        rv.insert(0, c)
+
+    return ''.join(rv)
+
+        
 def lint():
     """
     The master lint function, that's responsible for staging all of the
@@ -429,6 +477,9 @@ def lint():
         elif isinstance(node, renpy.ast.UserStatement):
             check_user(node)
 
+        elif isinstance(node, renpy.ast.Label):
+            check_label(node)
+            
     report_node = None
             
     check_styles()
@@ -440,11 +491,11 @@ def lint():
     print
     print "Statistics:"
     print
-    print "The game contains", say_count, "screens of dialogue."
-    print "These screens contain a total of", say_words, "words,"
+    print "The game contains", humanize(say_count), "screens of dialogue."
+    print "These screens contain a total of", humanize(say_words), "words,"
     if say_count > 0:
         print "for an average of %.1f words per screen." % (1.0 * say_words / say_count) 
-    print "The game contains", menu_count, "menus."
+    print "The game contains", humanize(menu_count), "menus."
     print
 
     if renpy.config.developer:
