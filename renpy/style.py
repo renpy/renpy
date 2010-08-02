@@ -867,7 +867,9 @@ def write_text(filename):
         else:
             print >>f
 
-        
+        if not sty.cache:
+            continue
+            
         inherited = [ True ] * property_numbers
             
         for p in sty.properties:
