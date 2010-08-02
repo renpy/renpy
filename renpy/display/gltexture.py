@@ -953,7 +953,7 @@ def draw_rectangle(
     gl.End()
 
     
-C_DRAW = False
+C_DRAW = True
     
 if C_DRAW:
     if pysdlgl:

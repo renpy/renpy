@@ -158,6 +158,12 @@ class GLDraw(object):
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
 
+        # On a restart, restore the size.
+        if renpy.display.gl_size is not None and not fullscreen:
+            pwidth, pheight = renpy.display.gl_size
+
+        renpy.display.gl_size = None
+        
         # Ensure we're always at least 256x256, so we have a shot at rendering
         # textures.
         pwidth = max(pwidth, 256)
@@ -268,6 +274,9 @@ class GLDraw(object):
 
     def quit(self):
 
+        if not self.old_fullscreen:
+            renpy.display.gl_size = self.physical_size
+        
         self.log("Deallocating textures.")
         gltexture.dealloc_textures()
         self.log("Done deallocating textures.")
@@ -276,6 +285,8 @@ class GLDraw(object):
         pygame.display.quit()
         self.log("Finished quit GL.")
 
+        
+        
     def init(self):
         """
         This does the first-time initialization of OpenGL, deciding

@@ -261,7 +261,8 @@ def bootstrap(renpy_base):
 
                 if renpy.display.draw:
                     renpy.display.draw.deinit()
-
+                    renpy.display.draw.quit()
+                    
                 # Only works after a full restart.
                 report_error = renpy.display.error.ReportError()
 
