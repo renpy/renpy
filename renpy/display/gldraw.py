@@ -114,6 +114,9 @@ class GLDraw(object):
 
         # The amount we're upscaling by.
         self.upscale_factor = 1.0
+
+        # The last time we set the hardware mouse.
+        self.mouse_old_time = 0.0
         
     def log(self, msg, *args):
         """
@@ -520,7 +523,6 @@ class GLDraw(object):
         gl.Ortho(self.virtual_box[0], self.virtual_box[2], self.virtual_box[3], self.virtual_box[1], -1.0, 1.0)
         gl.MatrixMode(gl.MODELVIEW)
         
-
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
         gl.Clear(gl.COLOR_BUFFER_BIT)
 
@@ -863,11 +865,12 @@ class GLDraw(object):
         hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
 
         self.mouse_info = (mx, my, tex)
-        
-        if self.mouse_old_visible != hardware:
+
+        if self.mouse_old_visible != hardware or self.mouse_old_time + 1.0 < time.time():
             pygame.mouse.set_visible(hardware)
             self.mouse_old_visible = hardware
-
+            self.mouse_old_time = time.time()
+            
         if not tex:
             return        
         
