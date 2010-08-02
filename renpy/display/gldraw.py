@@ -33,13 +33,18 @@ try:
     import _renpy_tegl as gl; gl
     import _renpy_pysdlgl as pysdlgl; pysdlgl
 
+    import renpy.display.gltexture
+    import renpy.display.glenviron
+    import renpy.display.glshader
+
+    import gltexture
+    import glenviron
+    
     gl.BGRA = 0x80E1 
 except ImportError:
     gl = None
     pysdlgl = None
     
-import gltexture
-import glenviron
 
 # A list of cards that cause system/software crashes. There's no
 # reason to put merely slow or incapable cards here, only ones for

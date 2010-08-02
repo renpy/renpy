@@ -81,10 +81,6 @@ def import_all():
     import renpy.display.error
     
     import renpy.display.swdraw
-    
-    import renpy.display.glshader
-    import renpy.display.glenviron
-    import renpy.display.gltexture
     import renpy.display.gldraw
     
     # Note: For windows to work, renpy.audio.audio needs to be after
