@@ -169,6 +169,17 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         if renpy.config.debug_sound:
             raise
 
+def playable(filename, channel="music"):
+    """
+    Return true if the given filename is playable on the channel. This
+    takes into account the prefix and suffix.
+    """
+
+    c = get_channel(channel)
+       
+    return renpy.loader.loadable(c.file_prefix + filename + c.file_suffix)
+    
+        
 def stop(channel="music", fadeout=None):
     """
     This stops the music that is currently playing, and dequeues all

@@ -137,19 +137,24 @@ python early hide:
     def predict_play_music(p):
         return [ ]
 
-    def lint_play_music(p):
+    def lint_play_music(p, channel="music"):
 
         file = _try_eval(p["file"], 'filename')
-        if p["channel"] is not None:
-            _try_eval(p["channel"], 'channel')
 
+        if p["channel"] is not None:
+            channel = _try_eval(p["channel"], 'channel')
+            
         if not isinstance(file, list):
             file = [ file ]
 
         for fn in file:
-            if isinstance(fn, basestring) and not renpy.loadable(fn):
-                renpy.error("%r is not loadable" % fn)
-    
+            if isinstance(fn, basestring):
+                try:
+                    if not renpy.music.playable(fn, channel):
+                        renpy.error("%r is not loadable" % fn)
+                except:
+                    pass
+                        
     renpy.statements.register('play music',
                               parse=parse_play_music,
                               execute=execute_play_music,
@@ -254,11 +259,14 @@ python early hide:
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
                          channel=channel)
-                       
+
+    def lint_play_sound(p):
+        return lint_play_music(p, channel="sound")
+        
     renpy.statements.register('play sound',
                               parse=parse_play_music,
                               execute=execute_play_sound,
-                              lint=lint_play_music)
+                              lint=lint_play_sound)
 
     def execute_queue_sound(p):
         if p["channel"] is not None:
@@ -334,7 +342,7 @@ python early hide:
         if not renpy.music.channel_defined(channel):
             renpy.error("channel %r is not defined" % channel)
 
-        lint_play_music(p)
+        lint_play_music(p, channel)
 
     def lint_stop_generic(p):
         channel = eval(p["channel"])
