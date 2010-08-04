@@ -595,10 +595,6 @@ class GLDraw(object):
         
     def draw_transformed(self, what, clip, xo, yo, alpha, forward, reverse):
 
-        # If our alpha has hit 0, don't do anything.
-        if alpha <= 0.003: # (1 / 256)
-            return
-
         if isinstance(what, gltexture.TextureGrid):
 
             self.set_clip(clip)
@@ -705,18 +701,23 @@ class GLDraw(object):
             clip = (minx, miny, maxx, maxy)
             
         
+        if what.forward and what.forward is not IDENTITY:
+            child_forward = forward * what.forward
+            child_reverse = what.reverse * reverse
+        else:
+            child_forward = forward
+            child_reverse = reverse
+
+        alpha = alpha * what.alpha
+            
+        # If our alpha has hit 0, don't do anything.
+        if alpha <= 0.003: # (1 / 256)
+            return
+
         for child, cxo, cyo, focus, main in what.visible_children:
 
             cxo, cyo = reverse.transform(cxo, cyo)
-
-            if what.forward:
-                child_forward = forward * what.forward
-                child_reverse = what.reverse * reverse
-            else:
-                child_forward = forward
-                child_reverse = reverse
-
-            self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
+            self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha, child_forward, child_reverse)
 
 
     def render_to_texture(self, what, alpha):
