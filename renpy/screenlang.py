@@ -566,7 +566,7 @@ ui_properties = [
     Keyword("at"),
     Keyword("id"),
     Keyword("style"),
-    Keyword("group"),
+    Keyword("style_group"),
     Keyword("focus"),
     ]
 

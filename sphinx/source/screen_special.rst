@@ -190,7 +190,7 @@ begins.
 
         # The main menu buttons.
         frame:
-            group "mm"
+            style_group "mm"
             xalign .98
             yalign .98
 
@@ -224,7 +224,7 @@ then use that screen from the save, load and preferences screens.
 
         # The various buttons.
         frame:
-            group "gm_nav"
+            style_group "gm_nav"
             xalign .98
             yalign .98
 
@@ -364,13 +364,13 @@ display of the game.
 
         # Put the navigation columns in a three-wide grid.
         grid 3 1:
-            group "prefs"
+            style_group "prefs"
             xfill True
 
             # The left column.
             vbox:
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Display")
@@ -378,7 +378,7 @@ display of the game.
                     textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Transitions")
@@ -386,14 +386,14 @@ display of the game.
                     textbutton _("None") action Preference("transitions", "none")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Text Speed")
                     bar value Preference("text speed")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     textbutton _("Joystick...") action ShowMenu("joystick_preferences")
@@ -401,7 +401,7 @@ display of the game.
             vbox:
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Skip")
@@ -409,13 +409,13 @@ display of the game.
                     textbutton _("All Messages") action Preference("skip", "all")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     textbutton _("Begin Skipping") action Skip()
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("After Choices")
@@ -423,7 +423,7 @@ display of the game.
                     textbutton _("Keep Skipping") action Preference("after choices", "skip")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Auto-Forward Time")
@@ -432,14 +432,14 @@ display of the game.
             vbox:
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Music Volume")
                     bar value Preference("music volume")
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Sound Volume")
@@ -447,7 +447,7 @@ display of the game.
                     textbutton "Test" action Play("sound", "sound_test.ogg") style "soundtest_button"
 
                 frame:
-                    group "pref"
+                    style_group "pref"
                     has vbox
 
                     label _("Voice Volume")
@@ -507,7 +507,7 @@ user. It takes the following parameters:
             style "gm_root"
 
         frame:
-            group "yesno_prompt"
+            style_group "yesno_prompt"
 
             xfill True
             xmargin 50

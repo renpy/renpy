@@ -75,8 +75,8 @@ class BarValue(renpy.object.Object):
 # closed.
 
 class Addable(object):
-    # A group associates with this addable.
-    group = None
+    # A style_group associates with this addable.
+    style_group = None
 
     def get_layer(self):
         return Exception("Operation can only be performed on a layer.")
@@ -103,10 +103,10 @@ class Many(Addable):
     A widget that takes many children.
     """
 
-    def __init__(self, displayable, imagemap, group):
+    def __init__(self, displayable, imagemap, style_group):
         self.displayable = displayable
         self.imagemap = False
-        self.group = group
+        self.style_group = style_group
         
     def add(self, d, key):
         self.displayable.add(d)
@@ -125,9 +125,9 @@ class One(Addable):
     A widget that expects exactly one child.
     """
     
-    def __init__(self, displayable, group):
+    def __init__(self, displayable, style_group):
         self.displayable = displayable
-        self.group = group
+        self.style_group = style_group
         
     def add(self, d, key):
         self.displayable.add(d)
@@ -154,9 +154,9 @@ class ChildOrFixed(Addable):
     the widgets are added to that.
     """
 
-    def __init__(self, group):
+    def __init__(self, style_group):
         self.queue = [ ]
-        self.group = group
+        self.style_group = style_group
         
     def add(self, d, key):
         self.queue.append(d)
@@ -230,7 +230,7 @@ def child_or_fixed():
     a fixed will be created, and the children will be added to that.
     """
 
-    stack.append(ChildOrFixed(stack[-1].group))
+    stack.append(ChildOrFixed(stack[-1].style_group))
     
 def remove(d):
     layer = stack[-1].get_layer()
@@ -306,21 +306,21 @@ def context_enter(w):
 def context_exit(w):
     close(w)
 
-NoGroupGiven = object()
+NoStyleGroupGiven = object()
     
-def group_style(s, group):
+def style_group_style(s, style_group):
     """
-    Given a style name s, combine it with the group to create a new
+    Given a style name s, combine it with the style_group to create a new
     style. If the style doesn't exist, create a new lightweight style.
     """
     
-    if group is NoGroupGiven:
-        group = stack[-1].group
+    if style_group is NoStyleGroupGiven:
+        style_group = stack[-1].style_group
 
-    if group is None:
+    if style_group is None:
         return s
     
-    new_style = group + "_" + s
+    new_style = style_group + "_" + s
 
     if new_style not in renpy.style.style_map:
         renpy.style.style_map[new_style] = renpy.style.Style(s, heavy=False, name=new_style)
@@ -366,7 +366,7 @@ class Wrapper(renpy.object.Object):
         if not stack:
             raise Exception("Can't add displayable during init phase.")
         
-        # Pull out the special kwargs, id, at, and group.
+        # Pull out the special kwargs, id, at, and style_group.
 
         id = kwargs.pop("id", None)
 
@@ -374,11 +374,11 @@ class Wrapper(renpy.object.Object):
         if not isinstance(at_list, list):
             at_list = [ at_list ]
 
-        group = kwargs.pop("group", NoGroupGiven)
+        style_group = kwargs.pop("style_group", NoStyleGroupGiven)
 
-        # Figure out our group.
-        if group is NoGroupGiven:
-            group = stack[-1].group
+        # Figure out our style_group.
+        if style_group is NoStyleGroupGiven:
+            style_group = stack[-1].style_group
         
         # Figure out the keyword arguments, based on the parameters.
 
@@ -396,7 +396,7 @@ class Wrapper(renpy.object.Object):
                 keyword["replaces"] = screen.old_widgets.get(id, None)
 
         if self.style and "style" not in keyword:
-            keyword["style"] = group_style(self.style, group)
+            keyword["style"] = style_group_style(self.style, style_group)
             
         try:
             w = self.function(*args, **keyword)
@@ -426,9 +426,9 @@ class Wrapper(renpy.object.Object):
             
         # Update the stack, as necessary.
         if self.one:
-            stack.append(One(w, group))
+            stack.append(One(w, style_group))
         elif self.many:
-            stack.append(Many(w, self.imagemap, group))
+            stack.append(Many(w, self.imagemap, style_group))
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
@@ -697,10 +697,10 @@ def get_text_style(style, default):
 def textbutton(label, clicked=None, style=None, text_style=None, **kwargs):
 
     if style is None:
-        style = group_style('button', NoGroupGiven)
+        style = style_group_style('button', NoStyleGroupGiven)
     
     if text_style is None:
-        text_style = get_text_style(style, group_style('button_text', NoGroupGiven))
+        text_style = get_text_style(style, style_group_style('button_text', NoStyleGroupGiven))
         
     button(style=style, clicked=clicked, **kwargs)
     text(label, style=text_style)
@@ -708,10 +708,10 @@ def textbutton(label, clicked=None, style=None, text_style=None, **kwargs):
 def label(label, style=None, text_style=None, **kwargs):
 
     if style is None:
-        style = group_style('label', NoGroupGiven)
+        style = style_group_style('label', NoStyleGroupGiven)
     
     if text_style is None:
-        text_style = get_text_style(style, group_style('label_text', NoGroupGiven))
+        text_style = get_text_style(style, style_group_style('label_text', NoStyleGroupGiven))
         
     window(style=style, **kwargs)
     text(label, style=text_style)
@@ -752,7 +752,7 @@ def _bar(*args, **properties):
                 style = value.get_style()[0]
 
             if isinstance(style, basestring):
-                style = group_style(style, NoGroupGiven)
+                style = style_group_style(style, NoStyleGroupGiven)
                 
             properties["style"] = style
         

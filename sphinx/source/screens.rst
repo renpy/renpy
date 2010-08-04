@@ -157,8 +157,8 @@ All user interface statements take the following common properties:
     string name, or a style object. The style gives default
     values for style properties.
 
-`group`
-    Group is used to provide a prefix to the style of a displayable,
+`style_group`
+    Style_group is used to provide a prefix to the style of a displayable,
     for this displayable and all of its children (unless they have a
     more specific group set).
 
