@@ -115,8 +115,6 @@ class GLDraw(object):
         # The amount we're upscaling by.
         self.upscale_factor = 1.0
 
-        # The last time we set the hardware mouse.
-        self.mouse_old_time = 0.0
         
     def log(self, msg, *args):
         """
@@ -866,10 +864,9 @@ class GLDraw(object):
 
         self.mouse_info = (mx, my, tex)
 
-        if self.mouse_old_visible != hardware or self.mouse_old_time + 1.0 < time.time():
+        if self.mouse_old_visible != hardware:
             pygame.mouse.set_visible(hardware)
             self.mouse_old_visible = hardware
-            self.mouse_old_time = time.time()
             
         if not tex:
             return        

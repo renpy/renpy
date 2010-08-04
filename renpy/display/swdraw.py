@@ -660,9 +660,6 @@ class SWDraw(object):
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
-        # The last time the mouse was visible.
-        self.mouse_old_time = 0.0
-        
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -770,10 +767,9 @@ class SWDraw(object):
 
         hardware, x, y, tex = renpy.game.interface.get_mouse_info()
         
-        if self.mouse_old_visible != hardware or self.mouse_old_time + 1.0 < time.time():
+        if self.mouse_old_visible != hardware:
             pygame.mouse.set_visible(hardware)
             self.mouse_old_visible = hardware
-            self.mouse_old_time = time.time()
 
         # The rest of this is for the software mouse.
         

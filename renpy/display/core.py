@@ -1283,6 +1283,9 @@ class Interface(object):
             raise Exception("Could not set video mode.")
 
         self.force_redraw = True
+
+        # Assume we have focus until told otherwise.
+        self.focused = True
         
 
     def draw_screen(self, root_widget, fullscreen_video):
@@ -1610,7 +1613,7 @@ class Interface(object):
         else:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
             
-        visible = visible and renpy.game.interface.focused and self.show_mouse
+        visible = visible and self.show_mouse
 
         # If not visible, hide the mouse.
         if not visible:
