@@ -36,7 +36,7 @@ Here's an example python screen:
 
             ui.close("return")
 
-         renpy.define_screen("say", say_screen)
+        renpy.define_screen("say", say_screen)
          
 
 

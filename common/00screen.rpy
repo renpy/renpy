@@ -121,7 +121,20 @@ init -1140 python:
         def periodic(self, st):
             return self.action.periodic(st)
         
-        
+    def If(expression, true=None, false=None):
+        """
+         :doc: other_action
+
+         This returns `true` if `expression` is true, and `false`
+         otherwise. Use this to select an action based on an expression.
+         Note that the default, None, can be used as an action that causes
+         a button to be disabled.
+         """
+         
+        if expression:
+            return true
+        else:
+            return false
          
     ##########################################################################
     # Menu-related actions.
