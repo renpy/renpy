@@ -172,7 +172,7 @@ keymap = dict(
     # disabled.
     rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
     screenshot = [ 's' ],
-    toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER' ],
+    toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
     toggle_music = [ 'm' ],
     game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
     hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
