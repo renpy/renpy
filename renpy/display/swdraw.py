@@ -247,9 +247,9 @@ def draw_special(what, dest, x, y):
     
     if what.operation == DISSOLVE:
 
-        bottom = what.children[0][0].render_to_texture(what.operation_alpha)
-        top = what.children[1][0].render_to_texture(what.operation_alpha)
-
+        bottom = what.children[0][0].render_to_texture(True)
+        top = what.children[1][0].render_to_texture(True)
+        
         if what.operation_alpha:
             target = renpy.display.pgrender.surface((w, h), True)
         else:
@@ -266,9 +266,9 @@ def draw_special(what, dest, x, y):
 
     elif what.operation == IMAGEDISSOLVE:
 
-        image = what.children[0][0].render_to_texture(what.operation_alpha)
-        bottom = what.children[1][0].render_to_texture(what.operation_alpha)
-        top = what.children[2][0].render_to_texture(what.operation_alpha)
+        image = what.children[0][0].render_to_texture(True)
+        bottom = what.children[1][0].render_to_texture(True)
+        top = what.children[2][0].render_to_texture(True)
 
         if what.operation_alpha:
             target = renpy.display.pgrender.surface((w, h), True)
