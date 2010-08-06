@@ -169,7 +169,7 @@ class GLDraw(object):
             pwidth, pheight = renpy.display.gl_size
 
         renpy.display.gl_size = None
-        
+
         # Ensure we're always at least 256x256, so we have a shot at rendering
         # textures.
         pwidth = max(pwidth, 256)
@@ -513,12 +513,13 @@ class GLDraw(object):
         surftree.is_opaque()
 
         self.draw_render_textures(surftree, forward, reverse)
-        
-        gl.Viewport(0, 0, self.physical_size[0], self.physical_size[1])
 
+        gl.Viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
+        
         gl.MatrixMode(gl.PROJECTION)
         gl.LoadIdentity()
-        gl.Ortho(self.virtual_box[0], self.virtual_box[2], self.virtual_box[3], self.virtual_box[1], -1.0, 1.0)
+        gl.Ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
+
         gl.MatrixMode(gl.MODELVIEW)
         
         gl.ClearColor(0.0, 0.0, 0.0, 0.0)
@@ -562,8 +563,7 @@ class GLDraw(object):
             if forward.xdy != 0 or forward.ydx != 0:
                 render_what = True
                 forward = reverse = IDENTITY
-        
-        
+                
         for child, cxo, cyo, focus, main in what.visible_children:
 
             if what.forward:
@@ -585,14 +585,10 @@ class GLDraw(object):
                 while p > 1:
                     p /= 2
                     pc = self.get_half(pc)
-                    
-                    
                 
         if render_what:
             what.render_to_texture(True)
 
-            
-        
     def draw_transformed(self, what, clip, xo, yo, alpha, forward, reverse):
 
         if isinstance(what, gltexture.TextureGrid):
