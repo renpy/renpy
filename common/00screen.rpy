@@ -192,7 +192,11 @@ init -1140 python:
                     
                 elif renpy.has_label(screen):
                     renpy.transition(config.intra_transition)
-                    renpy.scene(layer='screens')
+
+                    ui.layer("screens")
+                    ui.remove_above(None)
+                    ui.close()
+
                     renpy.jump(screen)
 
                 else:

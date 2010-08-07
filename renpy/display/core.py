@@ -800,8 +800,9 @@ class SceneLists(renpy.object.Object):
 
             sle = self.layers[layer][i]
 
-            if sle.tag == thing or sle.displayable == thing:
-                break
+            if thing:
+                if sle.tag == thing or sle.displayable == thing:
+                    break
 
             if sle.tag and "$" in sle.tag:
                 continue

@@ -132,9 +132,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.current_transform_event = event
             
     def _hide(self, st, at, kind):        
-
-        self.hiding = True
         
+        self.hiding = True
+
+        self.current_transform_event = kind
+        self.update()
+        
+        renpy.display.render.redraw(self, 0)
+                
         rv = None
 
         for i in self.transforms:
@@ -144,9 +149,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 self.transforms[i] = c
                 rv = self
 
-        self.current_transform_event = kind
-        renpy.display.render.redraw(self, 0)
-        
         return rv
     
     def update(self):
