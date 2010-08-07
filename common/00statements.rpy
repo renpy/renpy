@@ -260,7 +260,7 @@ python early hide:
                          fadein=eval(p["fadein"]),
                          channel=channel)
 
-    def lint_play_sound(p):
+    def lint_play_sound(p, lint_play_music=lint_play_music):
         return lint_play_music(p, channel="sound")
         
     renpy.statements.register('play sound',
