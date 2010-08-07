@@ -104,9 +104,10 @@ It takes one parameter, the name of the screen. This is a name, not an
 expression. It takes the following properties:
 
 `modal`
-    If True, the screen is modal, meaning that it prevents the user
-    from interacting with screens below it. Defaults to False.
-
+    If True, the screen is modal. A modal screen prevents the user
+    from interacting with displayables below it, except
+    for the default keymap.
+    
 `tag`
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
