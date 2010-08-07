@@ -218,8 +218,9 @@ class GLDraw(object):
             x_padding = 0
             y_padding = ( 1.0 / physical_ar ) * vwidth - vheight
             px_padding = 0
-            py_padding = y_padding * pheight / vheight
+            py_padding = y_padding * pwidth / vwidth
 
+            
         # The location of the virtual screen on the physical screen, in
         # virtual pixels.
         self.virtual_box = (
