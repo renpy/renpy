@@ -394,6 +394,14 @@ class Grid(Container):
 
         return rv
 
+class IgnoreLayers(Exception):
+    """
+    Raise this to have the event ignored by layers, but reach the
+    underlay.
+    """
+
+    pass
+    
 class MultiBox(Container):
 
     layer_name = None
@@ -628,16 +636,24 @@ class MultiBox(Container):
         children_offsets = zip(self.children, self.offsets, self.start_times)
         children_offsets.reverse()
 
-        for i, (xo, yo), t in children_offsets: 
+        try:
+        
+            for i, (xo, yo), t in children_offsets: 
 
-            if t is None:
-                cst = st
+                if t is None:
+                    cst = st
+                else:
+                    cst = renpy.game.interface.event_time - t
+
+                rv = i.event(ev, x - xo, y - yo, cst)    
+                if rv is not None:
+                    return rv
+
+        except IgnoreLayers:
+            if self.layers:
+                return None
             else:
-                cst = renpy.game.interface.event_time - t
-
-            rv = i.event(ev, x - xo, y - yo, cst)    
-            if rv is not None:
-                return rv
+                raise
                 
         return None
 

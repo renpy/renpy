@@ -202,8 +202,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if not self.child:
             self.update()
 
-        return renpy.display.render.render(self.child, w, h, st, at)
+        rv = renpy.display.render.render(self.child, w, h, st, at)
+        rv.modal = self.screen.modal
 
+        return rv
+        
     def get_placement(self):
         if not self.child:
             self.update()
@@ -227,7 +230,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return rv
         
         if self.screen.modal:
-            raise renpy.display.core.IgnoreEvent()
+            raise renpy.display.layout.IgnoreLayers() # renpy.display.core.IgnoreEvent()
         
 
 

@@ -308,6 +308,10 @@ def take_focuses(focuses):
     screen_render.take_focuses(
         0, 0, screen_render.width, screen_render.height,
         IDENTITY, 0, 0, focuses)
+
+# The result of focus_at_point for a modal render. This overrides any
+# specific focus from below us.
+Modal = object()
     
 def focus_at_point(x, y):
     """
@@ -319,7 +323,7 @@ def focus_at_point(x, y):
         return None
     
     cf = screen_render.focus_at_point(x, y)
-    if cf is None:
+    if cf is None or cf is Modal:
         return None
     else:
         d, arg = cf
@@ -446,7 +450,6 @@ class Render(object):
         # The parameter to the operation. 
         self.operation_parameter = 0
         
-
         # Forward is used to transform from screen coordinates to child
         # coordinates.
         # Reverse is used to transform from child coordinates to screen
@@ -500,6 +503,9 @@ class Render(object):
         # Cache of the texture created by rendering this surface at half size.
         # (This is set in gldraw.)
         self.half_cache = None
+
+        # Are we modal?
+        self.modal = False
         
         
     def __repr__(self):
@@ -816,7 +822,10 @@ class Render(object):
         `x`, `y` - The offset of the upper-left corner of the render.
         `focuses` - The list of focuses to add to.
         """
-        
+
+        if self.modal:
+            focuses[:] = [ ]
+            
         if self.reverse:
             reverse = reverse * self.reverse
 
@@ -909,6 +918,9 @@ class Render(object):
             if cf is not None:
                 rv = cf
 
+        if rv is None and self.modal:
+            rv = Modal
+                
         return rv
         
             
