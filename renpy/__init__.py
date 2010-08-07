@@ -27,7 +27,7 @@
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in launcher/script_version.rpy, too!
 # Also check to see if we have to update renpy.py.
-version = "Ren'Py 6.11.0g"
+version = "Ren'Py 6.11.0h"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 
