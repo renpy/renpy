@@ -90,7 +90,16 @@ init -1180 python:
 
 
     def _default_empty_window():
-        if renpy.last_interact_type() == "nvl":
+
+        who = _last_say_who
+
+        if who is not None:
+            who = eval(who)
+
+        if who is None:
+            who = narrator
+
+        if isinstance(who, NVLCharacter):
             nvl_show_core()
         else:
             store.narrator("", interact=False)
