@@ -850,7 +850,11 @@ The following events can triggered automatically:
 
 ``hide``
     Triggered when the transform is hidden using the hide
-    statement. 
+    statement or its python equivalent.
+
+    Note that this isn't triggered when the transform is eliminated
+    via the scene statement or exiting the context it exists in, such
+    as when exiting the game menu.
 
 ``replaced``
     Triggered when the transform is replaced by another. The image
