@@ -67,7 +67,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 3
+    __version__ = 4
 
     def after_upgrade(self, version):
         if version < 1:
@@ -80,7 +80,9 @@ class Context(renpy.object.Object):
 
         if version < 3:
             self.music = { }
-            
+
+        if version < 4:
+            self.interacting = False
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -118,6 +120,11 @@ class Context(renpy.object.Object):
         # A map from the name of a music channel to the MusicContext
         # object corresponding to that channel.
         self.music = renpy.python.RevertableDict()
+
+        # True if we're in the middle of a call to ui.interact. This
+        # will cause Ren'Py to generate an error if we call ui.interact
+        # again.
+        self.interacting = False
         
         if context:
             oldsl = context.scene_lists

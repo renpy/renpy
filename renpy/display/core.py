@@ -1569,6 +1569,13 @@ class Interface(object):
         keyword arguments are passed off to interact_core.
         """
 
+        context = renpy.game.context()
+        
+        if context.interacting:
+            raise Exception("Cannot start an interaction in the middle of an interaction, without creating a new context.")
+
+        context.interacting = True
+                
         # Show a missing window.
         if not suppress_window:
             self.show_window()
@@ -1593,6 +1600,8 @@ class Interface(object):
         
         finally:
 
+            context.interacting = False
+            
             # Clean out transient stuff at the end of an interaction.
             if clear:
                 scene_lists = renpy.game.context().scene_lists
