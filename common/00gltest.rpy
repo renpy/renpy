@@ -62,13 +62,18 @@ label _gl_test:
 
         if (not "RENPY_RENDERER" in os.environ) and (renpy.get_renderer_info()["renderer"] == "gl"):
 
-            renpy.pause(0)
+            for i in range(0, 2):
+            
+                renpy.pause(0)
 
-            renpy.transition(Dissolve(DELAY))            
-            ui.add(__GLTest(FRAMES, DELAY))
-            rv = ui.interact(suppress_overlay=True, suppress_underlay=False)
+                renpy.transition(Dissolve(DELAY))            
+                ui.add(__GLTest(FRAMES, DELAY))
+                rv = ui.interact(suppress_overlay=True, suppress_underlay=False)
 
-            if not rv:
+                if rv:
+                    break
+                
+            else:
                 config.gl_enable = False
                 renpy.display_reset()
                        
