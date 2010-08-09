@@ -252,7 +252,7 @@ game.
     screen save:
 
         # This ensures that any other menu screen is replaced.
-        modal menu
+        tag menu
 
         use navigation
 
@@ -305,7 +305,7 @@ game.
     screen load:
 
         # This ensures that any other menu screen is replaced.
-        modal menu
+        tag menu
 
         use navigation
 
