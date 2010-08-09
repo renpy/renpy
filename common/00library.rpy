@@ -216,7 +216,10 @@ init -1180 python hide:
             
     def invoke_game_menu():
         if renpy.context()._menu:
-            renpy.jump("_noisy_return")
+            if renpy.context()._main_menu:
+                return
+            else:
+                renpy.jump("_noisy_return")
         else:
             if config.game_menu_action:
                 renpy.display.behavior.run(config.game_menu_action)
