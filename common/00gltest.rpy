@@ -66,7 +66,7 @@ label _gl_test:
             
                 renpy.pause(0)
 
-                renpy.transition(Dissolve(DELAY))            
+                renpy.transition(Dissolve(DELAY), always=True, force=True)
                 ui.add(__GLTest(FRAMES, DELAY))
                 rv = ui.interact(suppress_overlay=True, suppress_underlay=False)
 

@@ -55,7 +55,26 @@ except ImportError:
 BLACKLIST = [
     ("S3 Graphics DeltaChrome", "1.4 20.00"),
     ]
+
+
+# The logfile we use.
+log_file = None
+
+def open_log_file():
+    global log_file
     
+    if log_file is not None:
+        return log_file
+
+    # The OpenGL logfile.
+    try:
+        log_file = file(os.path.join(renpy.config.renpy_base, "opengl.txt"), "w")
+    except:
+        try:
+            log_file = file(os.path.join(renpy.config.savedir, "opengl.txt"), "w")
+        except:
+            log_file = None
+            
 
 class GLDraw(object):
 
@@ -72,16 +91,7 @@ class GLDraw(object):
 
         # The screen.
         self.window = None
-        
-        # The OpenGL logfile.
-        try:
-            self.log_file = file(os.path.join(renpy.config.renpy_base, "opengl.txt"), "w")
-        except:
-            try:
-                self.log_file = file(os.path.join(renpy.config.savedir, "opengl.txt"), "w")
-            except:
-                self.log_file = None
-            
+         
         # The virtual size of the screen, as requested by the game.
         self.virtual_size = None
 
@@ -115,16 +125,18 @@ class GLDraw(object):
         # The amount we're upscaling by.
         self.upscale_factor = 1.0
 
+        open_log_file()
+        
         
     def log(self, msg, *args):
         """
         Logs a message to the logfile.
         """
 
-        if self.log_file is not None:
-            self.log_file.write(msg % args)
-            self.log_file.write("\n")
-            self.log_file.flush()
+        if log_file is not None:
+            log_file.write(msg % args)
+            log_file.write("\n")
+            log_file.flush()
             
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
