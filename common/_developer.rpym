@@ -369,8 +369,8 @@ init python:
                     sr = renpy.render(Solid("#0ff4"), w, h, st, at)
                     rv.blit(sr, (minx, miny))
 
-                    text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                    text.append("Cropping rectangle: %r" % ((minx, miny, w, h),))
+                    # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
+                    text.append("Rectangle: %r" % ((minx, miny, w, h),))
                 
             if self.mouse:
                 mx, my = self.mouse
