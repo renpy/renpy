@@ -1011,6 +1011,20 @@ The screen language includes control statements for conditional
 execution, iteration, including other screens, executing actions when
 events occur, and executing arbitrary python code.
 
+Default
+-------
+
+The default statement sets the default value of a variable, if it is not
+passed as an argument to the screen, or inherited from a screen that calls
+us using the use statement.
+
+::
+
+    screen message:
+         default message = "No message defined."
+         text message
+
+
 For
 ---
 
@@ -1031,8 +1045,8 @@ it does not support the else clause. It supports assignment to
 If
 --
 
-The screen language is the same as the Python/Ren'Py if statement. It
-supports the if, elif, and else clauses.
+The screen language if statement is the same as the Python/Ren'Py if
+statement. It supports the if, elif, and else clauses.
 
 ::
 

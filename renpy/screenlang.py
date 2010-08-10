@@ -788,7 +788,26 @@ def PassParser(Parser):
         return [ ast.Pass(lineno=l.number, col_offset=0) ]
 
 PassParser("pass")
+
+
+class DefaultParser(Parser):
+
+    def __init__(self, name):
+        super(DefaultParser, self).__init__(name)
+
+
+    def parse(self, l, name):
+
+        name = l.require(l.word)
+        l.require(r'=')
+        rest = l.rest()
+
+        code = "_scope.setdefault(%r, (%s))" % (name, rest)
+
+        return self.parse_exec(code, l.number)
         
+DefaultParser("default")        
+
 
 class UseParser(Parser):
 
