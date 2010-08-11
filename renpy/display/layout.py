@@ -333,9 +333,12 @@ class Grid(Container):
         cols = self.cols
         rows = self.rows
 
-        if len(self.children) != cols * rows:
-            raise Exception("Grid not completely full.")
-
+        if len(self.children) != cols * rows:            
+            if len(self.children) < cols * rows:
+                raise Exception("Grid not completely full.")
+            else:
+                raise Exception("Grid overfull.")
+            
         # If necessary, transpose the grid (kinda hacky, but it works here.)
         if self.transpose:
             self.transpose = False
