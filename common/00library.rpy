@@ -425,7 +425,7 @@ init 1180 python:
             _preferences.text_cps = config.default_text_cps
 
         if config.default_afm_time is not None:
-            _preferences.default_afm_time = config.default_afm_time
+            _preferences.afm_time = config.default_afm_time
             
     if config.default_afm_enable is not None:
         _preferences.afm_enable = config.default_afm_enable
