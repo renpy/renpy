@@ -1063,11 +1063,14 @@ init -1140 python:
         """
          :doc: file_action
 
-         Goes to the next file page. (It's always possible to get to the
-         next file page.)
+         Goes to the next file page.
+
+         `max`
+             If set, this should be an integer that gives the number of
+             the maximum file page we can go to.
          """
 
-        def __init__(self):
+        def __init__(self, max=None):
 
             page = persistent._file_page
 
@@ -1081,7 +1084,14 @@ init -1140 python:
                 page = "1"
 
             else:
-                page = str(int(page) + 1)
+                page = int(page) + 1
+
+                if max is not None:
+                    if page > max:
+                        page = None
+
+                if page is not None:
+                    page = str(page)
 
             self.page = page
                 
@@ -1092,6 +1102,9 @@ init -1140 python:
             persistent._file_page = self.page
             renpy.restart_interaction()
 
+        def get_sensitive(self):
+            return self.page is not None
+            
 
     class FilePagePrevious(Action):
         """

@@ -342,7 +342,7 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
         name = tuple(name.split())
 
     if not name in screens:
-        raise Exception("Screen %r is not known.\n", (name,))
+        raise Exception("Screen %s is not known.\n" % (name[0],))
 
     screen = screens[name]
 

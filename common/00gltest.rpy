@@ -72,6 +72,8 @@ label _gl_test:
 
                 if rv:
                     break
+
+                renpy.pause(.5)
                 
             else:
                 config.gl_enable = False
