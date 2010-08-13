@@ -34,3 +34,6 @@ gl_size = None
 # Should we give up on opengl? This is controlled by shift on initial
 # start.
 gl_giveup = None
+
+# The renderers we prefer to use.
+prefer_renderers = "gl,sw"

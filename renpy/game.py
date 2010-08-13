@@ -157,7 +157,7 @@ class Preferences(renpy.object.Object):
             joy_up="Axis 0.1 Negative",
             joy_down="Axis 0.1 Positive",
             joy_dismiss="Button 0.0")
-
+        
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume
 

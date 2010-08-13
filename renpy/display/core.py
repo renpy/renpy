@@ -1132,6 +1132,7 @@ class Interface(object):
         pygame.font.init()
         renpy.audio.audio.init()
         renpy.display.joystick.init()
+        pygame.display.init()
        
         # Init timing.
         init_time()
@@ -1144,9 +1145,19 @@ class Interface(object):
         renpy.game.interface = self
         renpy.display.interface = self
         
+        # Are we in safe mode, from holding down shift at start?
+        self.safe_mode = False
+        if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+            self.safe_mode = True
+
         # Setup the video mode.
         self.set_mode()
-        
+
+        # Double check, since at least on Linux, we can't set safe_mode until
+        # the window maps.
+        if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+            self.safe_mode = True
+            
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
@@ -1161,6 +1172,7 @@ class Interface(object):
 
         # The background screenshot surface.
         self.bgscreenshot_surface = None
+
         
     def post_init(self):
         # Setup.
@@ -1220,8 +1232,8 @@ class Interface(object):
                 "sw" : renpy.display.swdraw.SWDraw,
                 }
 
-        
-        dl = os.environ.get("RENPY_RENDERER", "gl,sw").split(",")
+        default = renpy.display.prefer_renderers        
+        dl = os.environ.get("RENPY_RENDERER", default).split(",")
 
         rv = [ draws.get(i, None) for i in dl ]
         return [ i for i in rv if i is not None ]

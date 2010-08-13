@@ -31,6 +31,10 @@ version = "Ren'Py 6.11.0i"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 
+# True if this is the first time we've started - even including
+# utter restarts.
+first_utter_start = True
+
 def import_all():
 
     # Should probably be early, as we will add it as a base to serialized things.

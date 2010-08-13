@@ -25,13 +25,9 @@ buggy graphics drivers, and so your first step to fixing them should
 be to check for an update to your graphics card drivers.
 
 If upgrading your video drivers does not fix the problem, you should
-disable OpenGL support.
+disable OpenGL support. To disable OpenGL support:
 
-* To temporarily disable OpenGL support (for the duration of a single
-  game session), start Ren'Py while holding down the ``shift``
-  key.
-
-* To permanently disable OpenGL support, download this
-  `environment.txt <_static/environment.txt>`_ file, and place it in the
-  directory with the .exe or .py file used to start Ren'Py.
+1. Hold down shift while starting Ren'Py.
+2. From the "Graphics Acceleration" menu that appears, choose "Prefer Software Renderer".
+3. Choose "Continue".
 

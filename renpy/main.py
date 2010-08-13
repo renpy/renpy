@@ -302,7 +302,8 @@ def main():
     restart = None
 
     renpy.game.exception_info = 'While running game code:'
-
+    renpy.first_utter_start = False
+    
     while True:
         try:
             try:

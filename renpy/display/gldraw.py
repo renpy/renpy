@@ -281,6 +281,7 @@ class GLDraw(object):
     
         # This should get rid of all of the cached textures.
         renpy.display.render.free_memory()
+        
         self.texture_cache.clear()
 
         gltexture.dealloc_textures()
@@ -427,22 +428,7 @@ class GLDraw(object):
             self.rtt = glenviron.CopyRtt()
             self.info["rtt"] = "copy"
 
-        # Check for ctrl held down at startup - revert to software
-        # rendering if that's the case.
-
-        if renpy.display.gl_giveup is None:            
-            if pygame.key.get_mods() & pygame.KMOD_SHIFT:
-                self.log("SHIFT is held down.")
-                renpy.display.gl_giveup = True
-            else:
-                renpy.display.gl_giveup = False
-
-        if renpy.display.gl_giveup:
-            self.log("Giving up on GL.")
-            return False
-        
         # Do additional setup needed.
-
         renpy.display.pgrender.set_bgra_masks()
             
         return True

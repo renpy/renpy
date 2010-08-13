@@ -726,6 +726,8 @@ label _start:
         for i in config.start_callbacks:
             i()
 
+    $ renpy.block_rollback()
+
     call _gl_test
             
     call _load_reload_game from _call__load_reload_game_1

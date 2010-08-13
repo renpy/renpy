@@ -967,6 +967,8 @@ class SWDraw(object):
         Called when we're restarted.
         """
 
+        renpy.display.render.free_memory()
+        
         return
         
     def quit(self):
