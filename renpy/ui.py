@@ -381,14 +381,16 @@ class Wrapper(renpy.object.Object):
             style_group = stack[-1].style_group
         
         # Figure out the keyword arguments, based on the parameters.
-
         if self.kwargs:
             keyword = self.kwargs.copy()
             keyword.update(kwargs)
         else:
             keyword = kwargs
 
-        if screen:
+        # Should we transfer data from an old version of this screen?
+        old_transfers = screen and screen.old_transfers
+
+        if old_transfers:
             if id in screen.widget_properties:
                 keyword.update(screen.widget_properties[id])
 
@@ -432,14 +434,14 @@ class Wrapper(renpy.object.Object):
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
-        if screen and id is not None:
+        if old_transfers and id is not None:
             screen.widgets[id] = w
 
             if isinstance(atw, renpy.display.motion.Transform):
                 screen.transforms[id] = atw
-
+                
                 oldt = screen.old_transforms.get(id, None)
-
+                
                 if oldt is not None:
                     atw.take_state(oldt)
                     atw.take_execution_state(oldt)

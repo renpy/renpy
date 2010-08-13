@@ -95,14 +95,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # shown.
         self.widget_properties = widget_properties
 
-        old_screen = get_screen(tag, layer)
-        
         # A map from name to the widget with that name. 
         self.widgets = { }
 
+        old_screen = get_screen(tag, layer)
+        
         # A map from name to the transform with that name. (This is
         # taken from the old version of the screen, if it exists.
-        if old_screen:
+        if old_screen is not None:
             self.transforms = old_screen.transforms
         else:            
             self.transforms = { }
@@ -113,13 +113,18 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = None
         self.old_transforms = None
 
+        # Should we transfer data from the old_screen? This becomes
+        # true once this screen finishes updating for the first time,
+        # and also while we're using something.
+        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name)
+
         # The current transform event, and the last transform event to
         # be processed.
         self.current_transform_event = None
 
         # Are we hiding?
         self.hiding = False
-        
+
     def visit(self):
         return [ self.child ]
 
@@ -188,6 +193,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Finish up.
         self.old_widgets = None
         self.old_transforms = None
+        self.old_transfers = True
         
         if self.current_transform_event:
 
@@ -199,6 +205,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return self.widgets
        
     def render(self, w, h, st, at):
+
         if not self.child:
             self.update()
 
@@ -375,14 +382,20 @@ def use_screen(_screen_name, _name=(), **kwargs):
     if name not in screens:
         raise Exception("Screen %r is not known." % name)
 
+    old_transfers = _current_screen.old_transfers
+    _current_screen.old_transfers = True
+    
     screen = screens[name]
     
     scope = kwargs["_scope"].copy() or { }
     scope.update(kwargs)
     scope["_scope"] = scope
-    scope["_name"] = _name
+    scope["_name"] = (_name, name)
+
     screen.function(**scope)
 
+    _current_screen.old_transfers = old_transfers
+    
 def current_screen():
     return _current_screen
 

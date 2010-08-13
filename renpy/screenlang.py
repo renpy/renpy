@@ -539,7 +539,7 @@ button_properties = [ Style(i) for i in [
 
 bar_properties = [ Style(i) for i in [
         "bar_vertical",
-        "bar_invert"
+        "bar_invert",
         "bar_resizing",
         "left_gutter",
         "right_gutter",
