@@ -210,7 +210,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.update()
 
         rv = renpy.display.render.render(self.child, w, h, st, at)
-        rv.modal = self.screen.modal
+        rv.modal = self.screen.modal and not self.hiding
 
         return rv
         
