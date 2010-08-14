@@ -390,10 +390,11 @@ class Wrapper(renpy.object.Object):
         # Should we transfer data from an old version of this screen?
         old_transfers = screen and screen.old_transfers
 
-        if old_transfers:
+        if screen:
             if id in screen.widget_properties:
                 keyword.update(screen.widget_properties[id])
 
+        if old_transfers:
             if self.replaces:
                 keyword["replaces"] = screen.old_widgets.get(id, None)
 
@@ -434,18 +435,20 @@ class Wrapper(renpy.object.Object):
 
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
-        if old_transfers and id is not None:
+        if screen and id is not None:
             screen.widgets[id] = w
 
             if isinstance(atw, renpy.display.motion.Transform):
                 screen.transforms[id] = atw
-                
-                oldt = screen.old_transforms.get(id, None)
-                
-                if oldt is not None:
-                    atw.take_state(oldt)
-                    atw.take_execution_state(oldt)
 
+                if old_transfers:
+                
+                    oldt = screen.old_transforms.get(id, None)
+                    
+                    if oldt is not None:
+                        atw.take_state(oldt)
+                        atw.take_execution_state(oldt)
+                    
         # Clear out the add_tag.
         add_tag = None
 
