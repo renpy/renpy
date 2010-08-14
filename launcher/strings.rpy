@@ -3,6 +3,11 @@ init python:
 
     TRANSLATION_STRINGS = [
 
+        u"Graphics Acceleration",
+        u"Automatically Choose",
+        u"Prefer Software Renderer",
+        u"Prefer OpenGL Renderer",
+        u"Continue",
         u"Are you sure?",
         u"Are you sure you want to delete this save?",
         u"Are you sure you want to overwrite your save?",

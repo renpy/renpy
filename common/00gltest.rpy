@@ -15,23 +15,23 @@ init -1024:
 
             has vbox
 
-            label _("Graphics Acceleration")
+            label _(u"Graphics Acceleration")
 
             null height 10
             
-            textbutton _("Automatically Choose"):
+            textbutton _(u"Automatically Choose"):
                 size_group "gl"
                 action SetField(persistent, "_gl_test", "auto")
-            textbutton _("Prefer Software Renderer"):
+            textbutton _(u"Prefer Software Renderer"):
                 size_group "gl"
                 action SetField(persistent, "_gl_test", "sw")
-            textbutton _("Prefer OpenGL Renderer"):
+            textbutton _(u"Prefer OpenGL Renderer"):
                 size_group "gl"
                 action SetField(persistent, "_gl_test", "gl")
 
             null height 10
 
-            textbutton _("Continue"):
+            textbutton _(u"Continue"):
                 size_group "gl"
                 action Return(True)
 
