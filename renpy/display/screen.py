@@ -122,6 +122,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # be processed.
         self.current_transform_event = None
 
+        # A dict-set of widgets (by id) that have been hidden from us.
+        self.hidden_widgets = { }
+        
         # Are we hiding?
         self.hiding = False
 
@@ -147,13 +150,16 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 
         rv = None
 
-        for i in self.transforms:
-            c = self.transforms[i]._hide(st, at, kind)
+        for i in list(self.transforms):
+            t = self.transforms[i]
+            c = t._hide(st, at, kind)
 
             if c is not None:
                 self.transforms[i] = c
                 rv = self
-
+            else:
+                self.hidden_widgets[i] = True
+                
         return rv
     
     def update(self):
@@ -225,8 +231,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return self.child.get_placement()
 
     def event(self, ev, x, y, st):
-
-        # print "Q", self.screen_name, self.hiding
         
         if self.hiding:
             return
@@ -243,12 +247,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return rv
         
         if self.screen.modal:
-
-#            print "Modality."
-
-            raise renpy.display.layout.IgnoreLayers() # renpy.display.core.IgnoreEvent()
-
-#        print "EV", self.screen_name
+            raise renpy.display.layout.IgnoreLayers()
 
 
 # The name of the screen that is currently being displayed, or

@@ -390,10 +390,16 @@ class Wrapper(renpy.object.Object):
         # Should we transfer data from an old version of this screen?
         old_transfers = screen and screen.old_transfers
 
+        # Should we add?
+        do_add = True
+        
         if screen:
             if id in screen.widget_properties:
                 keyword.update(screen.widget_properties[id])
 
+            if id in screen.hidden_widgets:
+                do_add = False
+                
         if old_transfers:
             if self.replaces:
                 keyword["replaces"] = screen.old_widgets.get(id, None)
@@ -425,7 +431,8 @@ class Wrapper(renpy.object.Object):
                 atw = atf(atw)
 
         # Add to the displayable at the bottom of the stack.
-        stack[-1].add(atw, add_tag)
+        if do_add:
+            stack[-1].add(atw, add_tag)
             
         # Update the stack, as necessary.
         if self.one:
