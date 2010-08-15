@@ -145,21 +145,28 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         self.current_transform_event = kind
         self.update()
-        
+
         renpy.display.render.redraw(self, 0)
                 
         rv = None
 
-        for i in list(self.transforms):
-            t = self.transforms[i]
-            c = t._hide(st, at, kind)
+        for i in list(self.widgets):
 
-            if c is not None:
-                self.transforms[i] = c
-                rv = self
+            t = self.transforms.get(i, None)
+            if t is not None:
+                c = t._hide(st, at, kind)
+
+                if c is not None:
+                    self.transforms[i] = c
+                    rv = self
+                else:
+                    self.hidden_widgets[i] = True
+                    self.child.remove(t)
             else:
+                d = self.widgets[i]
                 self.hidden_widgets[i] = True
-                
+                self.child.remove(d)
+
         return rv
     
     def update(self):

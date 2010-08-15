@@ -1150,11 +1150,17 @@ class ScreenParser(Parser):
                     l.error('Expected a screen language statement.')
                 
                 rv.extend(c)
-
+                count += 1
+                
         node = ast.Module(body=rv, lineno=lineno, col_offset=0)
         ast.fix_missing_locations(node)
         LineNumberNormalizer().visit(node)
-
+        
+        # import unparse
+        # print
+        # print screen.name, "-----------------------------------------"
+        # unparse.Unparser(node)
+        
         screen.code = renpy.ast.PyCode(node, location, 'exec')
 
         return screen
