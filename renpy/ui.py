@@ -134,7 +134,7 @@ class One(Addable):
         stack.pop()
         
     def close(self, d):
-        raise Exception("Widget expects a child.")
+        raise Exception("Widget %r expects a child." % self.displayable)
 
 class Detached(Addable):
     """

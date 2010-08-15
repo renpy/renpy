@@ -150,23 +150,44 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 
         rv = None
 
-        for i in list(self.widgets):
 
-            t = self.transforms.get(i, None)
-            if t is not None:
-                c = t._hide(st, at, kind)
+        # Compute the reverse of transforms and widgets.
+        reverse_transforms = dict((id(v), k) for k, v in self.transforms.iteritems())
+        reverse_widgets = dict((id(v), k) for k, v in self.widgets.iteritems())
 
+        
+        # Assumption: the only displayables that can keep us around
+        # are Transforms that handle hide.
+
+        # Iterate over our immediate children, trying to hide them.
+        for d in self.child.children:
+
+            id_d = id(d)
+
+            # If we have a transform, call its _hide method. If that comes
+            # back non-None, store the new transform, and keep us alive.
+            #
+            # Otherwise, remove the child.            
+            name = reverse_transforms.get(id_d, None)
+
+            if name is not None:
+                c = d._hide(st, at, kind)
                 if c is not None:
-                    self.transforms[i] = c
+                    self.transforms[name] = c
                     rv = self
                 else:
-                    self.hidden_widgets[i] = True
-                    self.child.remove(t)
-            else:
-                d = self.widgets[i]
-                self.hidden_widgets[i] = True
-                self.child.remove(d)
+                    self.hidden_widgets[name] = True
+                    self.child.remove(d)
 
+                continue
+
+            # Remove any non-transform children.
+            name = reverse_widgets.get(id_d, None)
+
+            if name is not None:
+                self.hidden_widgets[name] = True
+                self.child.remove(d)
+        
         return rv
     
     def update(self):
