@@ -376,10 +376,11 @@ def hide_screen(tag, layer='screens'):
     
     Hides the screen with `tag` on `layer`.
     """
-    
-    tag = tag.split()[0]
-    
-    renpy.exports.hide(tag, layer=layer)
+
+    screen = get_screen(tag, layer)
+
+    if screen is not None:
+        renpy.exports.hide(screen.tag, layer=layer)
 
 def use_screen(_screen_name, _name=(), **kwargs):
     
