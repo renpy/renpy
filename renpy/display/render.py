@@ -822,7 +822,7 @@ class Render(object):
         `x`, `y` - The offset of the upper-left corner of the render.
         `focuses` - The list of focuses to add to.
         """
-
+        
         if self.modal:
             focuses[:] = [ ]
             

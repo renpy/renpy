@@ -209,9 +209,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if not self.child:
             self.update()
 
-        rv = renpy.display.render.render(self.child, w, h, st, at)
-        rv.modal = self.screen.modal and not self.hiding
+        child = renpy.display.render.render(self.child, w, h, st, at)
 
+        rv = renpy.display.render.Render(w, h)
+
+        rv.blit(child, (0, 0), focus=not self.hiding, main=not self.hiding)
+        rv.modal = self.screen.modal and not self.hiding
+        
         return rv
         
     def get_placement(self):
@@ -222,6 +226,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def event(self, ev, x, y, st):
 
+        # print "Q", self.screen_name, self.hiding
+        
         if self.hiding:
             return
         
@@ -237,8 +243,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return rv
         
         if self.screen.modal:
+
+#            print "Modality."
+
             raise renpy.display.layout.IgnoreLayers() # renpy.display.core.IgnoreEvent()
-        
+
+#        print "EV", self.screen_name
 
 
 # The name of the screen that is currently being displayed, or
