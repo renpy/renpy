@@ -355,7 +355,7 @@ init -1140 python:
 
         def get_selected(self):
             return getattr(self.object, self.field) == self.value
-
+        
         
     def SetVariable(variable, value):
         """
@@ -771,7 +771,7 @@ init -1140 python:
         def get_adjustment(self):
             w = renpy.get_widget(None, self.viewport)
             if not isinstance(w, Viewport):
-                raise Exception("The displayable with id %r is not declared, or not a viewport.")
+                raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
             return w.xadjustment
 
@@ -793,7 +793,7 @@ init -1140 python:
         def get_adjustment(self):
             w = renpy.get_widget(None, self.viewport)
             if not isinstance(w, Viewport):
-                raise Exception("The displayable with id %r is not declared, or not a viewport.")
+                raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
             return w.yadjustment
 

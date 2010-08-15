@@ -1163,6 +1163,7 @@ class On(Statement):
                 name = event
                 start = st
                 cstate = None
+
                 
         while True:
 
@@ -1174,7 +1175,7 @@ class On(Statement):
 
             # If we get a continue, save our state.
             if action == "continue":
-
+                
                 # If it comes from a hide block, indicate that.
                 if name == "hide" or name == "replaced":
                     trans.hide_response = False
@@ -1186,7 +1187,7 @@ class On(Statement):
             # event, unless we're already in default, in which case we
             # go to None.
             elif action == "next":
-                if name == "default" or name == "hide":
+                if name == "default" or name == "hide" or name == "replaced":
                     name = None
                 else:
                     name = "default"

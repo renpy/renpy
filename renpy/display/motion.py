@@ -583,10 +583,10 @@ class Transform(Container):
 
         d.hide_response = True
         d.replaced_response = True
-            
+
         if d.function is not None:
             d.function(d, st, at)
-
+            
         new_child = d.child._hide(st, at, kind)
 
         if new_child is not None:

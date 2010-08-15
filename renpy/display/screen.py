@@ -140,7 +140,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.current_transform_event = event
             
     def _hide(self, st, at, kind):        
-        
+
         self.hiding = True
 
         self.current_transform_event = kind
@@ -160,7 +160,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # are Transforms that handle hide.
 
         # Iterate over our immediate children, trying to hide them.
-        for d in self.child.children:
+        for d in list(self.child.children):
 
             id_d = id(d)
 
@@ -172,13 +172,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             if name is not None:
                 c = d._hide(st, at, kind)
+
                 if c is not None:
                     self.transforms[name] = c
                     rv = self
                 else:
                     self.hidden_widgets[name] = True
                     self.child.remove(d)
-
+                    
                 continue
 
             # Remove any non-transform children.
@@ -187,7 +188,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             if name is not None:
                 self.hidden_widgets[name] = True
                 self.child.remove(d)
-        
+                
         return rv
     
     def update(self):
