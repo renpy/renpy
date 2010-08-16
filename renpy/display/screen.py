@@ -75,6 +75,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         super(ScreenDisplayable, self).__init__(**properties)
 
+        # Stasgh the properties, so we can re-create the screen.
+        self.properties = properties
+        
         # The screen, and it's name. (The name is used to look up the
         # screen on save.)
         self.screen = screen
@@ -144,26 +147,32 @@ class ScreenDisplayable(renpy.display.layout.Container):
             
     def _hide(self, st, at, kind):        
 
-        self.hiding = True
+        if self.hiding:
+            hid = self
+        else:
+            hid = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
+            hid.transforms = self.transforms.copy()
+            hid.widgets = self.widgets.copy()
+            hid.old_transfers = True
+            
+        hid.hiding = True
 
-        self.current_transform_event = kind
-        self.update()
+        hid.current_transform_event = kind
+        hid.update()
 
-        renpy.display.render.redraw(self, 0)
+        renpy.display.render.redraw(hid, 0)
                 
         rv = None
 
-
         # Compute the reverse of transforms and widgets.
-        reverse_transforms = dict((id(v), k) for k, v in self.transforms.iteritems())
-        reverse_widgets = dict((id(v), k) for k, v in self.widgets.iteritems())
-
+        reverse_transforms = dict((id(v), k) for k, v in hid.transforms.iteritems())
+        reverse_widgets = dict((id(v), k) for k, v in hid.widgets.iteritems())
         
         # Assumption: the only displayables that can keep us around
         # are Transforms that handle hide.
 
         # Iterate over our immediate children, trying to hide them.
-        for d in list(self.child.children):
+        for d in list(hid.child.children):
 
             id_d = id(d)
 
@@ -177,11 +186,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 c = d._hide(st, at, kind)
 
                 if c is not None:
-                    self.transforms[name] = c
-                    rv = self
+                    hid.transforms[name] = c
+                    rv = hid
                 else:
-                    self.hidden_widgets[name] = True
-                    self.child.remove(d)
+                    hid.hidden_widgets[name] = True
+                    hid.child.remove(d)
                     
                 continue
 
@@ -189,8 +198,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             name = reverse_widgets.get(id_d, None)
 
             if name is not None:
-                self.hidden_widgets[name] = True
-                self.child.remove(d)
+                hid.hidden_widgets[name] = True
+                hid.child.remove(d)
                 
         return rv
     
@@ -243,7 +252,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return self.widgets
        
     def render(self, w, h, st, at):
-
+        
         if not self.child:
             self.update()
 

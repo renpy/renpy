@@ -142,16 +142,23 @@ allow the game to react to various events.
 All user interface statements take the following common properties:
 
 `at`
-    A transform, or list of transforms, that are applied to this
-    displayable.
+    A transform, or list of transforms, that are used to wrap this
+    displayable. The show, hide, replace, and replaced external events
+    are delivered to a transform if and only if it is added directly
+    to the screen.
 
+    For example, if a vbox is wrapped in a transform, and added directly
+    to the screen, then events are delivered to that transform. But if
+    a transform wraps a textbutton that is added to the vbox, this
+    second transform is not given events.
+        
 `id`
     An identifier for the user-interface statement. When a screen is
     shown, property values can be supplied for the displayables with a
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the id is automatically-generated.
+    By default, the id is automatically-generated. 
 
 `style`
     The name of the style applied to this displayable. This may be a
