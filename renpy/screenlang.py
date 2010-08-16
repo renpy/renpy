@@ -1054,6 +1054,8 @@ class ScreenLangScreen(renpy.object.Object):
     """
     This represents a screen defined in the screen language.
     """
+    
+    __version__ = 1
 
     def __init__(self):
 
@@ -1061,10 +1063,10 @@ class ScreenLangScreen(renpy.object.Object):
         self.name = name
 
         # Should this screen be declared as modal?
-        self.modal = False
+        self.modal = "False"
 
         # The screen's zorder.
-        self.zorder = 0
+        self.zorder = "0"
 
         # The screen's tag.
         self.tag = None
@@ -1072,7 +1074,11 @@ class ScreenLangScreen(renpy.object.Object):
         # The PyCode object containing the screen's code.
         self.code = None
         
-
+    def after_upgrade(self, version):
+        if version < 1:
+            self.modal = "False"
+            self.zorder = "0"
+        
     def define(self):
         """
         Defines us as a screen.
@@ -1101,11 +1107,11 @@ class ScreenParser(Parser):
 
         def parse_keyword(l):
             if l.match('modal'):
-                screen.modal = eval(l.require(l.simple_expression))
+                screen.modal = l.require(l.simple_expression)
                 return True
 
             if l.match('zorder'):
-                screen.zorder = eval(l.require(l.simple_expression))
+                screen.zorder = l.require(l.simple_expression)
                 return True
 
             if l.match('tag'):

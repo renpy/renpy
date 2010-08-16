@@ -31,8 +31,8 @@ class Screen(renpy.object.Object):
                  name,
                  function,
                  predict_function=None,
-                 modal=False,
-                 zorder=0,
+                 modal="False",
+                 zorder="0",
                  tag=None):
     
         # The name of this screen.
@@ -50,10 +50,10 @@ class Screen(renpy.object.Object):
         # will be used by the screen.
         self.predict_function = predict_function
 
-        # Are we modal? (A modal screen ignores screens under it.)
+        # Expression: Are we modal? (A modal screen ignores screens under it.)
         self.modal = modal
 
-        # Our zorder.
+        # Expression: Our zorder.
         self.zorder = zorder
 
         # The tag associated with the screen.
@@ -131,6 +131,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Are we hiding?
         self.hiding = False
 
+        # Modal and zorder.
+        self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
+        self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
+        
     def __repr__(self):
         return "<ScreenDisplayable: %r>" % (self.screen_name,)
         
@@ -261,7 +265,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv = renpy.display.render.Render(w, h)
 
         rv.blit(child, (0, 0), focus=not self.hiding, main=not self.hiding)
-        rv.modal = self.screen.modal and not self.hiding
+        rv.modal = self.modal and not self.hiding
         
         return rv
         
@@ -287,7 +291,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if rv is not None:
             return rv
         
-        if self.screen.modal:
+        if self.modal:
             raise renpy.display.layout.IgnoreLayers()
 
 
@@ -301,7 +305,7 @@ screens = { }
 def define_screen(*args, **kwargs):
     """
     :doc: screens
-    :args: (name, function, modal=True, zorder=0, tag=None)
+    :args: (name, function, modal="True", zorder="0", tag=None)
 
     Defines a screen with `name`, which should be a string.
 
@@ -313,12 +317,14 @@ def define_screen(*args, **kwargs):
         The function should call the ui functions to add things to the
         screen.
 
-    `modal`
-        Determines if this screen is modal. A modal screen
-        prevents screens underneath it from receiving input events.
+    `modal`    
+        A string that, when evaluated, determines of the created
+        screen should be modal. A modal screen prevents screens
+        underneath it from receiving input events.
 
     `zorder`
-        Controls the order in which screens are displayed. A screen
+        A string that, when evaluated, should be an integer. The integer
+        controls the order in which screens are displayed. A screen
         with a greater zorder number is displayed above screens with a
         lesser zorder number.
 
@@ -327,7 +333,7 @@ def define_screen(*args, **kwargs):
         it replaces any other screen with the same tag. The tag
         defaults to the name of the screen.
     """
-
+    
     Screen(*args, **kwargs)
 
 
@@ -407,7 +413,7 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
         _tag = screen.tag
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
-    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=screen.zorder, transient=_transient, munge_name=False)
+    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 def hide_screen(tag, layer='screens'):
     """
