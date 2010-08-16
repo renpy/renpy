@@ -80,7 +80,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.screen = screen
         self.screen_name = screen.name
 
-        # The tag this and layer screen was displayed with.
+        # The tag and layer screen was displayed with.
         self.tag = tag
         self.layer = layer
         
@@ -128,6 +128,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Are we hiding?
         self.hiding = False
 
+    def __repr__(self):
+        return "<ScreenDisplayable: %r>" % (self.screen_name,)
+        
     def visit(self):
         return [ self.child ]
 

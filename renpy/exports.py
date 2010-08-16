@@ -881,10 +881,7 @@ def transition(trans, layer=None, always=False, force=False):
     if not always and not renpy.game.preferences.transitions:
         trans = None
 
-    if trans is None:
-        renpy.game.interface.with_none()
-    else:
-        renpy.game.interface.set_transition(trans, layer, force=force)
+    renpy.game.interface.set_transition(trans, layer, force=force)
 
 def get_transition(layer=None):
     return renpy.game.interface.transition.get(layer, None)

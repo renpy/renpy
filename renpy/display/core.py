@@ -731,14 +731,12 @@ class SceneLists(renpy.object.Object):
         st = None
 
         if remove_index is not None:
-
             at = l[remove_index].animation_time            
             thing = self.transform_state(l[remove_index].displayable, thing)
             thing.set_transform_event("replace")
-            thing._show() 
+            thing._show()
             
-        else:
-            
+        else:            
             thing.set_transform_event("show")
             thing._show()
 
@@ -1832,7 +1830,7 @@ class Interface(object):
             add_layer(layers_root, layer)
                 
         # Add layers_root to root_widget, perhaps through a transition.
-        if (None in self.ongoing_transition and
+        if (self.ongoing_transition.get(None, None) and
             not suppress_transition):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
@@ -1842,7 +1840,7 @@ class Interface(object):
                 d = self.transition_from[None].layers[layer]
                 old_root.layers[layer] = d
                 old_root.add(d)
-            
+
             trans = self.ongoing_transition[None](
                 old_widget=old_root,
                 new_widget=layers_root)

@@ -232,7 +232,7 @@ class ATLTransformBase(renpy.object.Object):
         
         if t.atl is not self.atl:
             return
-        
+
         self.done = t.done
         self.block = t.block
         self.atl_state = t.atl_state
@@ -334,7 +334,7 @@ class ATLTransformBase(renpy.object.Object):
             if self.child.transform_event != self.last_child_transform_event:
                 self.last_child_transform_event = self.child.transform_event
                 self.transform_event = self.child.transform_event
-
+                
         # Hide request.
         if trans.hide_request:
             self.transform_event = "hide"
@@ -355,7 +355,7 @@ class ATLTransformBase(renpy.object.Object):
             timebase = at
         else:
             timebase = st
-        
+
         action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
@@ -1151,7 +1151,6 @@ class On(Statement):
             name, start, cstate = ("start", st, None)
         else:
             name, start, cstate = state
-
 
         # If we have an external event, and we have a handler for it,
         # handle it.

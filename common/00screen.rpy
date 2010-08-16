@@ -180,12 +180,13 @@ init -1140 python:
 
             if not (renpy.has_screen(screen) or renpy.has_label(screen)):
                 screen = screen + "_screen"
-            
+                
             # Ugly. We have different code depending on if we're in the
             # game menu or not.
             if renpy.context()._menu:
 
                 if renpy.has_screen(screen):
+
                     renpy.transition(config.intra_transition)
                     renpy.show_screen(screen, _transient=True)
                     renpy.restart_interaction()
