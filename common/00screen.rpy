@@ -47,14 +47,21 @@ init -1140 python:
          This causes another screen to be shown. `screen` is a string
          giving the name of the screen. The keyword arguments are
          passed to the screen being shown.
+
+         If not None, `transition` is use to show the new screen.
          """
          
-        def __init__(self, screen, **kwargs):
+        def __init__(self, screen, transition=None, **kwargs):
             self.screen = screen
             self.kwargs = kwargs
-
+            self.transition = transition
+            
         def __call__(self):
             renpy.show_screen(self.screen, **self.kwargs)
+
+            if self.transition is not None:
+                renpy.transition(self.transition)
+
             renpy.restart_interaction()
             
         def get_selected(self):
@@ -77,13 +84,21 @@ init -1140 python:
          :doc: control_action
          
          This causes the screen named `screen` to be hidden, if it is shown. 
+
+         `transition`
+             If not None, a transition that occurs when hiding the screen.
          """
          
-        def __init__(self, screen):
+        def __init__(self, screen, transition=None):
             self.screen = screen
-
+            self.transition = transition
+            
         def __call__(self):
             renpy.hide_screen(self.screen)
+
+            if self.transition is not None:
+                renpy.transition(self.transition)
+            
             renpy.restart_interaction()
 
                 
@@ -98,6 +113,21 @@ init -1140 python:
             _screenshot()
 
 
+    class With(Action):
+        """
+         :doc: other_action
+
+         Causes `transition` to occur.
+         """
+
+        def __init__(self, transition):
+            self.transition = transition 
+            
+        def __call__(self):
+            renpy.transition(self.transition)
+            renpy.restart_interaction()
+
+            
     class InvertSelected(Action):
         """
          :doc: other_action
