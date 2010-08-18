@@ -112,7 +112,7 @@ expression. It takes the following properties:
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
     screens with the same tag. This can be used to ensure that only
-    one screen of a menu is shown at a time.
+    one screen of a menu is shown at a time, in the same context.
 
 `zorder`
     This controls how close to the user a screen is displayed. The
