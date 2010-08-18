@@ -646,7 +646,6 @@ class Render(object):
         (x, y, w, h) = rect
         rv = Render(w, h)
 
-
         # This doesn't actually make a subsurface, as we can't easily do
         # so for non-rectangle-aligned renders.
         if (self.reverse is not None) and (self.reverse is not IDENTITY):
@@ -704,7 +703,8 @@ class Render(object):
                 rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
 
         rv.depends_on(self)
-                
+        rv.alpha = self.alpha
+        
         return rv
     
         
