@@ -10,3 +10,4 @@ cd $DIR
 
 sphinx-build -a source build/html 
 
+echo Not uploading.
