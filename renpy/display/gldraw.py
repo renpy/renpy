@@ -233,13 +233,13 @@ class GLDraw(object):
             py_padding = y_padding * pwidth / vwidth
 
             
-        # The location of the virtual screen on the physical screen, in
-        # virtual pixels.
+        # The position of the physical screen, in virtual pixels.
+        # (x, y, w, h)
         self.virtual_box = (
             -x_padding / 2.0,
             -y_padding / 2.0,
-             vwidth + x_padding / 2.0,
-             vheight + y_padding / 2.0)
+             vwidth + x_padding,
+             vheight + y_padding)
 
         # The location of the virtual screen on the physical screen, in
         # physical pixels. (May not be 100% accurate, but it's good
@@ -831,15 +831,15 @@ class GLDraw(object):
         # Screen sizes.
         pw, ph = self.physical_size
         vw, vh = self.virtual_size
-        vx0, vy0, vx1, vy1 = self.virtual_box
+        vx, vy, vw, vh = self.virtual_box
         
         # Translate to fractional screen.
         x = 1.0 * x / pw
         y = 1.0 * y / ph
 
         # Translate to virtual size.
-        x = vx0 + (vx1 - vx0) * x
-        y = vy0 + (vy1 - vy0) * y
+        x = vx + vw * x
+        y = vy + vh * y
 
         x = int(x)
         y = int(y)
@@ -881,6 +881,8 @@ class GLDraw(object):
         
         pw, ph = self.physical_size
         
+        gl.Viewport(0, 0, pw, ph)
+
         gl.MatrixMode(gl.PROJECTION)
         gl.LoadIdentity()
         gl.Ortho(0, pw, ph, 0, -1.0, 1.0)
