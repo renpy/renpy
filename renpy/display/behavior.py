@@ -161,9 +161,77 @@ def inspector(ev):
     return map_event(ev, "inspector")
 
 
+##############################################################################
+# Utility functions for dealing with actions.
+    
+def run(var, *args, **kwargs):
+    """
+    Runs a variable. This is done by calling all the functions, and
+    iterating over the lists and tuples.
+    """
+    
+    if var is None:
+        return None
+
+    if isinstance(var, (list, tuple)):
+        rv = None
+
+        for i in var:
+            new_rv = i(*args)
+
+            if new_rv is not None:
+                rv = new_rv
+
+        return rv
+
+    return var(*args)
+
+
+def run_periodic(var, st):
+
+    if isinstance(var, (list, tuple)):
+        rv = None
+
+        for i in var:
+            v = run_periodic(i, st)
+
+            if rv is None or v < rv:
+                rv = v
+
+        return rv
+            
+    if isinstance(var, renpy.ui.Action):
+        return var.periodic(st)
+
+    
+def is_selected(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return any(is_selected(i) for i in clicked)
+
+    elif isinstance(clicked, renpy.ui.Action):
+        return clicked.get_selected()
+    else:
+        return False
+
+    
+def is_sensitive(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        return all(is_sensitive(i) for i in clicked)
+
+    elif isinstance(clicked, renpy.ui.Action):
+        return clicked.get_sensitive()
+    else:
+        return True
+
+
+##############################################################################
+# Special-Purpose Displayables
+
 class Keymap(renpy.display.layout.Null):
     """
-    This is a behavior that maps keys to functions that are called when
+    This is a behavior that maps keys to actions that are called when
     the key is pressed. The keys are specified by giving the appropriate
     k_constant from pygame.constants, or the unicode for the key.
     """
@@ -176,7 +244,8 @@ class Keymap(renpy.display.layout.Null):
 
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
-                rv = action()
+
+                rv = run(action)
                 
                 if rv is not None:
                     return rv
@@ -201,6 +270,7 @@ class RollForward(renpy.display.layout.Null):
             renpy.game.after_rollback = True
             renpy.game.log.rolled_forward = True
             return self.value
+
 
 class PauseBehavior(renpy.display.layout.Null):
     """
@@ -249,6 +319,7 @@ class SoundStopBehavior(renpy.display.layout.Null):
             return self.result
 
         renpy.game.interface.timeout(.025)
+
 
 class SayBehavior(renpy.display.layout.Null):
     """
@@ -337,70 +408,6 @@ class SayBehavior(renpy.display.layout.Null):
 
 
         return None
-
-##############################################################################
-# Button support.
-    
-def run(var, *args, **kwargs):
-    """
-    Runs a variable. This is done by calling all the functions, and
-    iterating over the lists and tuples.
-    """
-    
-    if var is None:
-        return None
-
-    if isinstance(var, (list, tuple)):
-        rv = None
-
-        for i in var:
-            new_rv = i(*args)
-
-            if new_rv is not None:
-                rv = new_rv
-
-        return rv
-
-    return var(*args)
-
-
-def run_periodic(var, st):
-
-    if isinstance(var, (list, tuple)):
-        rv = None
-
-        for i in var:
-            v = run_periodic(i, st)
-
-            if rv is None or v < rv:
-                rv = v
-
-        return rv
-            
-    if isinstance(var, renpy.ui.Action):
-        return var.periodic(st)
-
-    
-def is_selected(clicked):
-
-    if isinstance(clicked, (list, tuple)):
-        return any(is_selected(i) for i in clicked)
-
-    elif isinstance(clicked, renpy.ui.Action):
-        return clicked.get_selected()
-    else:
-        return False
-
-    
-def is_sensitive(clicked):
-
-    if isinstance(clicked, (list, tuple)):
-        return all(is_sensitive(i) for i in clicked)
-
-    elif isinstance(clicked, renpy.ui.Action):
-        return clicked.get_sensitive()
-    else:
-        return True
 
 
 ##############################################################################
