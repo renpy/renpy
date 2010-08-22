@@ -9,3 +9,6 @@ cd $DIR
 ../renpy.py .
 
 sphinx-build -a source ../doc
+
+echo Not uploading.
+

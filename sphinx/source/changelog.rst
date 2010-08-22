@@ -82,12 +82,12 @@ Transform Changes
 * Transform (and ui.transform) have been changed so that their
   arguments can now be prefixed with a style prefix. One can write
   ui.transform(idle_rotate=30, hover_rotate=90) and have it
-  work. [doc]
+  work. 
 
 * Added the rotate_pad transform property, which controls how
   Transform pads rotated displayables. When set to False, _not_ the
   default, it's now possible to rotate a (100, 50) displayable by 90
-  degrees, and have the result be (50, 100) in size. [doc]
+  degrees, and have the result be (50, 100) in size. 
 
 Other Changes
 -------------

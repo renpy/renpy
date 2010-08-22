@@ -30,10 +30,10 @@ class Screen(renpy.object.Object):
     def __init__(self,
                  name,
                  function,
-                 predict_function=None,
                  modal="False",
                  zorder="0",
-                 tag=None):
+                 tag=None,
+                 predict_function=None):
     
         # The name of this screen.
         if isinstance(name, basestring):
@@ -290,7 +290,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         
         if rv is not None:
             return rv
-        
+
         if self.modal:
             raise renpy.display.layout.IgnoreLayers()
 
@@ -305,7 +305,7 @@ screens = { }
 def define_screen(*args, **kwargs):
     """
     :doc: screens
-    :args: (name, function, modal="True", zorder="0", tag=None)
+    :args: (name, function, modal="False", zorder="0", tag=None)
 
     Defines a screen with `name`, which should be a string.
 
