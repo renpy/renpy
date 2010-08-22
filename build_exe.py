@@ -6,15 +6,29 @@ import py2exe
 import sys
 import zipfile
 import traceback
+import os
 
 # The pythonpath on my system.
 sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\bin')
 sys.path.insert(0, 'c:\\msys\\1.0\\newbuild\\install\\python')
 
+def move_from_dist(fn):
+    """
+    Moves the file `fn` from the dist directory to the main
+    directory. (This means we don't need symlinks on windows.)
+    """
+
+    if os.path.isdir(fn):
+        shutil.rmtree(fn)
+    elif os.path.exists(fn):
+        os.unlink(fn)
+
+    os.rename("dist/" + fn, fn)
+    
+
 def main():
 
-    sys.argv[1:] = [ 'py2exe', '--bundle', '2', '-a', '--dll-excludes', 'w9xpopen.exe', ]
-    # sys.argv[1:] = [ 'py2exe', '-a', '--dll-excludes', 'w9xpopen.exe', ]
+    sys.argv[1:] = [ 'py2exe', '-a', '--dll-excludes', 'w9xpopen.exe', ]
 
     setup(name="Ren'Py",
           windows=[ dict(script="renpy.py",
@@ -25,7 +39,7 @@ def main():
 
           console=[ dict(script="renpy.py", dest_base="console") ],
 
-          zipfile='renpy.code',
+          zipfile='lib/windows-x86/renpy.code',
 
           options={ 'py2exe' : { 'excludes' : [ 'doctest',
                                                 'pygame.macosx',
@@ -49,8 +63,8 @@ def main():
           )
 
 
-    zfold = zipfile.ZipFile("dist/renpy.code")
-    zfnew = zipfile.ZipFile("renpy.code", "w", zipfile.ZIP_STORED)
+    zfold = zipfile.ZipFile("dist/lib/windows-x86/renpy.code")
+    zfnew = zipfile.ZipFile("dist/lib/windows-x86/renpy.code.new", "w", zipfile.ZIP_STORED)
 
     seen = { }
 
@@ -71,8 +85,17 @@ def main():
     zfold.close()
     zfnew.close()
 
-    shutil.copy("c:/Python26/Microsoft.VC90.CRT.manifest", "dist/Microsoft.VC90.CRT.manifest")
-    shutil.copy("c:/Python26/msvcr90.dll", "dist/msvcr90.dll")
+    os.unlink("dist/lib/windows-x86/renpy.code")
+    os.rename("dist/lib/windows-x86/renpy.code.new", "dist/lib/windows-x86/renpy.code")
+
+    shutil.copy("c:/Python26/Microsoft.VC90.CRT.manifest", "Microsoft.VC90.CRT.manifest")
+    shutil.copy("c:/Python26/msvcr90.dll", "msvcr90.dll")
+
+    move_from_dist("lib/windows-x86")
+    move_from_dist("console.exe")
+    move_from_dist("python26.dll")
+    move_from_dist("renpy.exe")
+    
     
 try:
     main()
