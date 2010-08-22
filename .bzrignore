@@ -64,3 +64,5 @@ msvcr90.dll
 python26.dll
 renpy.exe
 lib/windows-x86
+sphinx/source/inc/*
+doc/*

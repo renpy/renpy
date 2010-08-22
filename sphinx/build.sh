@@ -8,5 +8,4 @@ cd $DIR
 
 ../renpy.py .
 
-sphinx-build -a source build/html 
-
+sphinx-build -a source ../doc

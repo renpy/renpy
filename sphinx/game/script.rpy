@@ -1,7 +1,7 @@
 init 1000000 python:
     import doc
 
-    doc.scan_section("", store)
+    doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
     doc.scan_section("renpy.music.", renpy.music)
     doc.scan_section("theme.", theme)

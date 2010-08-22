@@ -114,6 +114,8 @@ line_buffer = collections.defaultdict(list)
 
 def scan(name, o):
 
+    print "Scanning", name, o
+    
     # The type of object we're dealing with.
     doc_type = "function"
 
