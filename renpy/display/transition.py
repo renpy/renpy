@@ -435,10 +435,11 @@ class ImageDissolve(Transition):
 
 class AlphaDissolve(Transition):
     """
-    This transition uses a control image (almost always some sort of
-    animated transform) to transition from one screen to another. The
-    transform is evaluated. The new screen is used where the transform
-    is opaque, and the old image is used when it is transparent. 
+    This transition uses a control displayable (almost always some
+    sort of animated transform) to transition from one screen to
+    another. The transform is evaluated. The new screen is used where
+    the transform is opaque, and the old image is used when it is
+    transparent.
 
     `control`
         The control transform.
@@ -471,8 +472,8 @@ class AlphaDissolve(Transition):
         self.control = renpy.display.layout.Fixed()
         self.control.add(control)
         
-        self.old_widget = old_widget
-        self.new_widget = new_widget
+        self.old_widget = renpy.easy.displayable(old_widget)
+        self.new_widget = renpy.easy.displayable(new_widget)
         self.events = False
         
         self.alpha = alpha
@@ -510,10 +511,7 @@ class AlphaDissolve(Transition):
             rv.blit(top, (0, 0), focus=True, main=True)
             rv.blit(bottom, (0, 0), focus=False, main=False)
 
-        renpy.display.render.redraw(self, 0)
-
         return rv
-
     
 
 class CropMove(Transition):

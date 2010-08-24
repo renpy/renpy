@@ -232,6 +232,22 @@ Grid = layout(renpy.display.layout.Grid, """
 A layout that lays out displayables in a grid.
 """, nargs=2, layout='vertical')
 
+
+def AlphaBlend(control, old, new, alpha=False):
+    """
+    This transition uses a `control` displayable (almost always some sort of
+    animated transform) to transition from one displayable to another. The
+    transform is evaluated. The `new` displayable is used where the transform
+    is opaque, and the `old` displayable is used when it is transparent. 
+
+    `alpha`
+        If true, the image is composited with what's behind it. If false,
+        the default, the image is opaque and overwrites what's behind it.
+    """
+
+    return renpy.display.transition.AlphaDissolve(control, 0.0, old_widget=old, new_widget=new, alpha=alpha) 
+
+    
 del layout
         
 def At(disp, *at_list):
