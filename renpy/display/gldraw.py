@@ -571,6 +571,8 @@ class GLDraw(object):
             if forward.xdy != 0 or forward.ydx != 0:
                 render_what = True
                 forward = reverse = IDENTITY
+
+        first = True
                 
         for child, cxo, cyo, focus, main in what.visible_children:
 
@@ -583,9 +585,13 @@ class GLDraw(object):
 
             self.draw_render_textures(child, child_forward, child_reverse)
 
-            if what.operation == DISSOLVE or what.operation == IMAGEDISSOLVE:
+            if what.operation == DISSOLVE: 
                 child.render_to_texture(what.operation_alpha)
 
+            if what.operation == IMAGEDISSOLVE:
+                child.render_to_texture(first or what.operation_alpha)
+                first = False
+                
             if what.operation == PIXELLATE:
                 p = what.operation_parameter
                 pc = child
@@ -644,7 +650,7 @@ class GLDraw(object):
             self.set_clip(clip)
 
             gltexture.imageblend(
-                what.children[0][0].render_to_texture(what.operation_alpha),
+                what.children[0][0].render_to_texture(True),
                 what.children[1][0].render_to_texture(what.operation_alpha),
                 what.children[2][0].render_to_texture(what.operation_alpha),
                 xo,

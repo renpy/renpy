@@ -433,6 +433,89 @@ class ImageDissolve(Transition):
         return rv
 
 
+class AlphaDissolve(Transition):
+    """
+    This transition uses a control image (almost always some sort of
+    animated transform) to transition from one screen to another. The
+    transform is evaluated. The new screen is used where the transform
+    is opaque, and the old image is used when it is transparent. 
+
+    `control`
+        The control transform.
+
+    `delay`
+        The time the transition takes, before ending.
+
+    `alpha`
+        If true, the image is composited with what's behind it. If false,
+        the default, the image is opaque and overwrites what's behind it.
+
+    `reverse`
+        If true, the alpha channel is reversed. Opaque areas are taken
+        from the old image, while transparent areas are taken from the
+        new image.
+     """
+
+    def __init__(
+        self,
+        control,
+        delay=0.0,
+        old_widget=None,
+        new_widget=None,
+        alpha=False,
+        reverse=False,
+        **properties):
+
+        super(AlphaDissolve, self).__init__(delay, **properties)
+
+        self.control = renpy.display.layout.Fixed()
+        self.control.add(control)
+        
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+        
+        self.alpha = alpha
+        self.reverse = reverse
+        
+    def visit(self):
+        return super(AlphaDissolve, self).visit() + [ self.control ]
+    
+    def render(self, width, height, st, at):
+
+        if st >= self.delay:
+            self.events = True
+
+        bottom = render(self.old_widget, width, height, st, at)
+        top = render(self.new_widget, width, height, st, at)
+
+        width = min(bottom.width, top.width)
+        height = min(bottom.height, top.height)
+
+        control = render(self.control, width, height, st, at)
+
+        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
+
+        rv.operation = renpy.display.render.IMAGEDISSOLVE
+        rv.operation_alpha = self.alpha
+        rv.operation_complete = 8.0 / (256.0 + 8.0)
+        rv.operation_parameter = 8
+
+        rv.blit(control, (0, 0), focus=False, main=False)
+
+        if not self.reverse:
+            rv.blit(bottom, (0, 0), focus=False, main=False)
+            rv.blit(top, (0, 0), focus=True, main=True)
+        else:
+            rv.blit(top, (0, 0), focus=True, main=True)
+            rv.blit(bottom, (0, 0), focus=False, main=False)
+
+        renpy.display.render.redraw(self, 0)
+
+        return rv
+
+    
+
 class CropMove(Transition):
     """
     The CropMove transition works by placing the old and the new image
