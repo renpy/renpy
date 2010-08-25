@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+Ren'Py 6.11.1
+=============
+
+Add the :func:`AlphaBlend` displayable and the :func:`AlphaDissolve`
+transition. These take two displayables, and use the alpha channel of
+a third displayable to blend them together. (The third displayable is
+often an animation, allowing the effect to change over time.)
+
+
 Ren'Py 6.11.0
 =============
 
