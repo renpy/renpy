@@ -435,6 +435,8 @@ class ImageDissolve(Transition):
 
 class AlphaDissolve(Transition):
     """
+    :doc: other
+
     This transition uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to
     another. The transform is evaluated. The new screen is used where
@@ -499,8 +501,8 @@ class AlphaDissolve(Transition):
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = self.alpha
-        rv.operation_complete = 8.0 / (256.0 + 8.0)
-        rv.operation_parameter = 8
+        rv.operation_complete = 256.0 / (256.0 + 256.0)
+        rv.operation_parameter = 256.0
 
         rv.blit(control, (0, 0), focus=False, main=False)
 

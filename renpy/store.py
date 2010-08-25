@@ -235,6 +235,8 @@ A layout that lays out displayables in a grid.
 
 def AlphaBlend(control, old, new, alpha=False):
     """
+    :doc: other
+    
     This transition uses a `control` displayable (almost always some sort of
     animated transform) to transition from one displayable to another. The
     transform is evaluated. The `new` displayable is used where the transform
