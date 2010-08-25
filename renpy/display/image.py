@@ -28,13 +28,11 @@ from renpy.display.render import render, Render
 
 Image = renpy.display.im.image
 
-
 def wrap_render(child, w, h, st, at):
     rend = render(child, w, h, st, at)
     rv = Render(rend.width, rend.height)
     rv.blit(rend, (0, 0))
     return rv
-
 
 class ImageReference(renpy.display.core.Displayable):
     """
