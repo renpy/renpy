@@ -498,7 +498,8 @@ class SceneLists(renpy.object.Object):
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
-
+                self.layer_at_list[i] = (None, [ ])
+                
     def after_upgrade(self, version):
 
         if version < 1:
