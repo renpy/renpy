@@ -868,9 +868,15 @@ def _hotspot(spot, style='imagemap_button', **properties):
 
     idle = imagemap.idle
     hover = imagemap.hover
-        
+    selected_idle = imagemap.selected_idle
+    selected_hover = imagemap.selected_hover
+    insensitive = imagemap.insensitive
+    
     idle = renpy.display.layout.LiveCrop(spot, idle)
     hover = renpy.display.layout.LiveCrop(spot, hover)
+    selected_idle = renpy.display.layout.LiveCrop(spot, selected_idle)
+    selected_hover = renpy.display.layout.LiveCrop(spot, selected_hover)
+    insensitive = renpy.display.layout.LiveCrop(spot, insensitive)
             
     properties.setdefault("xpos", x)
     properties.setdefault("xanchor", 0)
@@ -884,7 +890,10 @@ def _hotspot(spot, style='imagemap_button', **properties):
     return renpy.display.behavior.Button(
         None,
         idle_background=idle,
+        selected_idle_background=selected_idle,
         hover_background=hover,
+        selected_hover_background=selected_hover,
+        insensitive_background=insensitive,
         style=style,
         **properties)
 
