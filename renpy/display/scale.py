@@ -172,9 +172,11 @@ def load_scaling():
 
     scaling_loaded = True
 
+    # Once we load scaling, GL mode won't work. So let's kill it off here.
+    renpy.config.gl_enable = False
+    
     def real(s):
         return s.surface
-
     
     def same_size(*args):
         """
@@ -492,10 +494,14 @@ def load_scaling():
 
     pygame.display.update = update
 
-    
+    old_get_surface = pygame.display.get_surface
+        
     def get_surface():
-        return screen
-
+        if old_get_surface():            
+            return screen
+        else:
+            return None
+        
     pygame.display.get_surface = get_surface
 
     
