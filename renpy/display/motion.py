@@ -751,10 +751,15 @@ class Transform(Container):
             
         xzoom = self.state.zoom * self.state.xzoom
         yzoom = self.state.zoom * self.state.yzoom
-
+        alpha = self.state.alpha
+        
         if xzoom != 1 or yzoom != 1:
 
-            forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+            if xzoom and yzoom:
+                forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+            else:
+                forward = Matrix2D(0, 0, 0, 0)
+                
             reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
 
             width *= xzoom
@@ -770,8 +775,7 @@ class Transform(Container):
 
         self.forward = forward
 
-        rv.alpha = self.state.alpha
-
+        rv.alpha = alpha
         rv.clipping = clipping
         
         if self.state.subpixel:

@@ -10,6 +10,12 @@ transition. These take two displayables, and use the alpha channel of
 a third displayable to blend them together. (The third displayable is
 often an animation, allowing the effect to change over time.)
 
+Transforms no longer cause a divide by zero exception when the zoom,
+xzoom, or yzoom properties are 0.
+
+Fixed a bug with scaling, that occured when switching between the
+scaled software and GL renderers.
+
 
 Ren'Py 6.11.0
 =============
