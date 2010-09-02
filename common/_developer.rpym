@@ -1,29 +1,34 @@
 # This file contains code that helps support the development of Ren'Py
 # games.
 
+screen _developer:
+    window style "gm_root"
+
+    frame:
+        style_group "_developer"
+
+        align (.025, .05)
+
+        has vbox:
+            first_spacing 10
+
+        label "Developer Menu"
+
+        textbutton _(u"Return") action Return()
+        textbutton _(u"Reload Game (Shift + R)") action ui.callsinnewcontext("_save_reload_game")
+        textbutton _(u"Variable Viewer") action Jump("_debugger_screen")
+        textbutton _(u"Theme Test") action Jump("_theme_test")
+        textbutton _(u"Style Hierarchy") action Jump("_style_hierarchy")
+        textbutton _(u"Image Location Picker") action Jump("_image_location_picker")
+        textbutton _(u"Filename List") action Jump("_filename_list")
+        
+init python hide:
+    style._developer_button = Style(style.button)
+    style._developer_button.size_group = "_developer"
+        
 label _developer_screen:
 
-    python hide:
-
-        ui.window(style=style.gm_root)
-        ui.null()
-        
-        ui.frame(xalign=.025, yalign=.05, style=style.menu_frame)
-        ui.vbox(box_first_spacing=10)
-        layout.label(u"Developer Menu", None)
-
-        sg = "developer_menu"
-
-        layout.button(u"Return", None, clicked=ui.returns(True), size_group=sg)
-        layout.button(u"Reload Game (Shift+R)", None, clicked=ui.callsinnewcontext("_save_reload_game"), size_group=sg)
-        layout.button(u"Variable Viewer", None, clicked=ui.jumps("_debugger_screen"), size_group=sg)
-        layout.button(u"Theme Test", None, clicked=ui.jumps("_theme_test"), size_group=sg)
-        layout.button(u"Style Hierarchy", None, clicked=ui.jumps("_style_hierarchy"), size_group=sg)
-        # layout.button(u"FPS Meter", None, clicked=ui.jumps("_fps_meter"), size_group=sg)
-        layout.button(u"Image Location Picker", None, clicked=ui.jumps("_image_location_picker"), size_group=sg)
-        
-        ui.close()
-        ui.interact()
+    call screen _developer
         
     return 
         
@@ -466,6 +471,30 @@ label _image_location_picker:
 
         renpy.jump("_image_location_picker")
 
+label _filename_list:
+
+    python hide:
+        import os
+        f = file("files.txt", "w")
+
+        for dirname, dirs, files in os.walk(config.gamedir):
+
+            dirs.sort()
+            files.sort()
+            
+            for fn in files:
+                fn = os.path.join(dirname, fn)
+                fn = fn[len(config.gamedir) + 1:]
+                print >>f, fn
+                print fn
+                
+        f.close()
+        
+        renpy.launch_editor(["files.txt"], transient=1)
+        
+    
+    jump _developer_screen
+        
 
 init python:
     config.underlay.append(im.Tile("_transparent_tile.png"))

@@ -13,6 +13,9 @@ often an animation, allowing the effect to change over time.)
 Transforms no longer cause a divide by zero exception when the zoom,
 xzoom, or yzoom properties are 0.
 
+The developer menu now includes a command that will list all the files
+in the game directory.
+
 Fixed a bug with scaling, that occured when switching between the
 scaled software and GL renderers.
 
