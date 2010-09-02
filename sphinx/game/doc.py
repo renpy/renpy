@@ -1,4 +1,3 @@
-
 import inspect
 import re
 import collections
@@ -122,7 +121,7 @@ def scan(name, o):
 
     # The formatted arguments.
     args = None
-    
+
     # Get the function's docstring.
     doc = inspect.getdoc(o)
 
@@ -158,7 +157,6 @@ def scan(name, o):
     if section is None:
         return
 
-
     if args is None:
     
         # Get the arguments.
@@ -177,9 +175,13 @@ def scan(name, o):
                 args = inspect.getargspec(init)
             except:
                 args = None
+
         elif inspect.isfunction(o):
             args = inspect.getargspec(o)
+
         else:
+            print "Warning: %s has section but not args." % name
+
             return
 
         # Format the arguments.

@@ -436,7 +436,8 @@ class ImageDissolve(Transition):
 class AlphaDissolve(Transition):
     """
     :doc: other
-
+    :args: (control, delay=0.0, alpha=False, reverse=False)
+    
     This transition uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to
     another. The transform is evaluated. The new screen is used where

@@ -26,13 +26,13 @@ class Curry(object):
     supplied to the call.
     """
     
-    # __doc__ = property(fget=lambda self : self.callable.__doc__)
 
     def __init__(self, callable, *args, **kwargs):
         self.callable = callable
         self.args = args
         self.kwargs = kwargs
-
+        self.__doc__ = getattr(self.callable, "__doc__", None)
+        
     def __call__(self, *args, **kwargs):
         return self.callable(*(self.args + args),
                              **dict(self.kwargs.items() + kwargs.items()))
@@ -58,8 +58,11 @@ def curry(fn):
     same thing as the function called once.
     """
     
-    return Curry(Curry, fn)
-
+    rv = Curry(Curry, fn)
+    rv.__doc__ = getattr(fn, "__doc__", None)
+    return rv
+    
+    
 def partial(function, *args, **kwargs):
     """
     Stores the arguments and keyword arguments of function, and
