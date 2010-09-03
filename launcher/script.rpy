@@ -108,22 +108,15 @@ label top:
 
             ui.null()
 
+        ui.null()
             
+
+        ui.close()
+        ui.close()
+        
         if update_allowed:
+            ui.key("U", Jump("update"))        
 
-            button(_(u"Update Ren'Py"),
-                   ui.jumps("update"),
-                   _(u"Updates Ren'Py to the latest version."))
-
-        else:
-
-            ui.null()
-            
-        
-
-        ui.close()
-        ui.close()
-        
         interact()
 
     # ProcessBehavior can return True, which sends us here.
