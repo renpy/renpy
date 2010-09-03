@@ -296,7 +296,7 @@ properties:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
-* :ref:`box-style-properties`
+* :ref:`fixed-style-properties`
 
 This takes any number of children, which are added to the fixed.
 
@@ -906,10 +906,16 @@ parameters, and the following properties:
     The image used when a hotspot is selected and focused, and
     for the full portion of focused hotbars.
 
+`alpha`
+    If true, the default, a hotspot only gains focus when the mouse is
+    in an area of the hover image that is opaque. If false, the hotspot
+    gains focus whenever the mouse is within its rectangular boundary.
+    
 It takes the following groups of properties:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
+* :ref:`fixed-style-properties`
 
 An imagemap creates a fixed, allowing any child to be added to it (not
 just hotspots and hotbars).

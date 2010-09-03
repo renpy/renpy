@@ -135,6 +135,7 @@ style_properties = dict(
     drop_shadow_color = renpy.easy.color,
     first_indent = None,
     first_spacing = None,
+    fit_first = None,
     focus_mask = None,
     focus_rect = None,
     font = None,

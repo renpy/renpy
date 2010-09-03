@@ -13,6 +13,16 @@ often an animation, allowing the effect to change over time.)
 Transforms no longer cause a divide by zero exception when the zoom,
 xzoom, or yzoom properties are 0.
 
+Imagemaps created using the screen language now only have a size equal
+to that of their ground image. (Previously, they took up the entire
+screen.) This change makes it easier to position an imagemap at a
+different location on screen, such as the bottom.
+
+Imagemaps now take an alpha argument. If true (the default), hotspots
+are only focused if the mouse is over a non-transparent part of the
+idle or hover image. If set to false, the hotspot is focused whenever
+the mouse is within its boundaries.
+
 The developer menu now includes a command that will list all the files
 in the game directory.
 

@@ -661,7 +661,19 @@ These are used for the horizontal and vertical box layouts.
     If not None, the spacing between the first and second members of
     this box, in pixels. This overrides the spacing property.
 
-   
+    
+.. _fixed-style-properties:
+    
+Fixed Style Properties
+----------------------
+
+These are used with the fixed layout.
+
+.. style-property:: fit_first bool
+
+   If true, then the size of the fixed layout is shrunk to be equal with
+   the size of the first item in the layout.
+
 
 Creating New Named Styles
 =========================

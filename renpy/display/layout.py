@@ -498,19 +498,34 @@ class MultiBox(Container):
         if layout == "fixed":
 
             self.offsets = [ ]
-            
-            rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
+            rv = None
+            
+            surfaces = [ ]
+            
             for child, cst, cat in zip(self.children, csts, cats):
                 
                 surf = render(child, width, height, cst, cat)
+                                
+                if rv is None:
+
+                    if self.style.fit_first:
+                        sw, sh = surf.get_size()
+                        width = min(width, sw)
+                        height = min(height, sh)
+
+                        
+                    rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                    
 
                 if surf:
                     offset = child.place(rv, 0, 0, width, height, surf)
                     self.offsets.append(offset)
                 else:
                     self.offsets.append((0, 0))
-                    
+
+            if rv is None:
+                rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                                        
+
             return rv
                     
         if layout == "horizontal":

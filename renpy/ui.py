@@ -809,14 +809,17 @@ class Imagemap(object):
     Stores information about the images used by an imagemap.
     """
 
-    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover):
+    alpha = True
+    
+    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, alpha):
         self.insensitive = insensitive
         self.idle = idle
         self.selected_idle = selected_idle
         self.hover = hover
         self.selected_hover = selected_hover
+        self.alpha = alpha
 
-def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, style='imagemap', **properties):
+def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, alpha=True, style='imagemap', **properties):
 
     def pick(variable, name, other):
         if variable:
@@ -846,8 +849,11 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
             idle,
             selected_idle,
             hover,
-            selected_hover))
+            selected_hover,
+            alpha))
 
+    properties.setdefault('fit_first', True)
+    
     rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
 
     if ground:
@@ -886,7 +892,14 @@ def _hotspot(spot, style='imagemap_button', **properties):
     properties.setdefault("xmaximum", w)
     properties.setdefault("yminimum", h)
     properties.setdefault("ymaximum", h)
-    
+
+    if imagemap.alpha:
+        focus_mask = True
+    else:
+        focus_mask = None
+
+    properties.setdefault("focus_mask", focus_mask)
+        
     return renpy.display.behavior.Button(
         None,
         idle_background=idle,

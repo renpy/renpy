@@ -560,6 +560,7 @@ box_properties = [ Style(i) for i in [
         "box_layout",
         "spacing",
         "first_spacing",
+        "fit_first",
         ] ]
 
 ui_properties = [
@@ -733,6 +734,7 @@ Keyword("idle")
 Keyword("selected_hover")
 Keyword("selected_idle")
 Keyword("auto")
+Keyword("alpha")
 add(ui_properties)
 add(position_properties)
 

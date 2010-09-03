@@ -1,5 +1,5 @@
 init python:
-    LAUNCHER_RPYS = set(['options.rpy', 'strings.rpy', 'transupdate.rpy', 'choose_theme.rpy', 'archiver.rpy', 'project.rpy', 'script_version.rpy', 'new.rpy', 'themes_data.rpy', 'opts.rpy', 'interface.rpy', 'projectsdir.rpy', 'distribute.rpy', 'script.rpy', 'editor.rpy'])
+    LAUNCHER_RPYS = set(['options.rpy', 'strings.rpy', 'transupdate.rpy', 'choose_theme.rpy', 'archiver.rpy', 'project.rpy', 'script_version.rpy', 'new.rpy', 'updater.rpy', 'themes_data.rpy', 'opts.rpy', 'interface.rpy', 'projectsdir.rpy', 'update_interface.rpy', 'distribute.rpy', 'script.rpy', 'editor.rpy'])
 
     TRANSLATION_STRINGS = [
 
@@ -69,14 +69,13 @@ init python:
         u"Joystick...",
         u"Joystick Configuration",
         u"Voice Volume",
-        u"Developer Menu",
-        u"Reload Game (Shift+R)",
-        u"Return to the developer menu",
+        u"Reload Game (Shift + R)",
         u"Variable Viewer",
+        u"Return to the developer menu",
         u"Theme Test",
         u"Style Hierarchy",
-        u"FPS Meter",
         u"Image Location Picker",
+        u"Filename List",
         u"Done",
         u"Auto",
         u"Quick",
@@ -178,7 +177,10 @@ init python:
         u"Choose Projects Directory",
         u"Please choose the directory containing your projects.",
         u"Could not run zenity. The projects directory has been set to the directory immediately above the directory containing Ren'Py.",
+        u"Tutorial Game",
         u"Launches the Ren'Py tutorial game.",
+        u"Update Ren'Py",
+        u"Updates Ren'Py to the latest version.",
         u"Now showing the Ren'Py documentation in your web browser.",
         u"Now showing the Ren'Py Games List in your web browser.",
         u"Launch",
@@ -205,6 +207,11 @@ init python:
         u"Change Ren'Py launcher options.",
         u"Ren'Py Help",
         u"Open the Ren'Py documentation in a web browser.",
-        u"Tutorial Game",
+        u"Retrieving catalog",
+        u"Checking files",
+        u"Making directories.",
+        u"Downloading updated files",
+        u"Renaming files",
+        u"Fixing permissions.",
     ]
 
