@@ -1466,6 +1466,21 @@ def mode(mode):
         modes.remove(mode)
     modes.insert(0, mode)
 
-    
-        
-   
+def notify(message):
+    """
+    :doc: other
+
+    Causes Ren'Py to display the `message` using the notify screen. By
+    default, this will cause the message to be dissolved in, displayed
+    for two seconds, and dissolved out again.
+
+    This is useful for actions that otherwise wouldn't produce feedback,
+    like screenshots or quicksaves.
+
+    Only one notification is displayed at a time. If a second notification
+    is displayed, the first notification is replaced.    
+    """
+
+    hide_screen('notify')
+    show_screen('notify', message=message)
+    restart_interaction()

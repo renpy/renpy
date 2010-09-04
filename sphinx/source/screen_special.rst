@@ -147,8 +147,7 @@ NVL_Choice
 
 The ``nvl_choice`` screen is used to display an NVL-mode menu. Its two
 parameters are a combination of those of the ``nvl`` and ``choice``
-screens. 
-
+screens. It is given the following parameters:
 
 `dialogue`
     This is a list of ( `who`, `what`, `who_id`, `what_id`,
@@ -165,6 +164,43 @@ screens.
     it is selected.
 
 
+Notify
+------
+
+The ``notify`` screen is used by :func:`renpy.notify` to display
+notifications to the user. It's generally used in conjunction with a
+transform to handle the entire task of notification. It's given a
+single parameter:
+
+`message`
+    The message to display.
+
+The default notify screen, and its associated transform, are::
+
+    screen notify:
+        zorder 100
+
+        text message at _notify_transform
+
+        # This controls how long it takes between when the screen is
+        # first shown, and when it begins hiding.
+        timer 3.25 action Hide('notify')
+
+    transform _notify_transform:
+        # These control the position.
+        xalign .02 yalign .015
+
+        # These control the actions on show and hide.
+        on show:
+            alpha 0
+            linear .25 alpha 1.0
+        on hide:
+            linear .5 alpha 0.0
+
+
+
+
+    
 Menu Screens
 ============
 

@@ -845,7 +845,7 @@ imagemap statement is used to specify up to six images. The hotspot
 and hotbar images are used to carve rectangular areas out of the
 image, and apply actions and values to those areas.
 
-Here's an example of a save screen that uses imagemaps.
+Here's an example of a preferences screen that uses imagemaps.
 
 ::
 

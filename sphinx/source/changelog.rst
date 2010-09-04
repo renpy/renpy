@@ -30,6 +30,10 @@ the mouse is within its boundaries.
 Added the :func:`renpy.focus_coordinates` function, which returns the
 coordinates of the currently focused displayable, when possible.
 
+The new :func:`renpy.notify` function and :func:`Notify` action make
+it simple to flash small status messages on the screen, such as might
+be used to notify the user of a completed quicksave or screenshot.
+
 The new :func:`HideInterface` action allows the interface to
 temporarily be hidden, as a screen language action.
 

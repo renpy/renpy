@@ -321,45 +321,17 @@ init -1100 python:
 
         old = old_modes[0]
 
-        print mode, old
-        
         if config.adv_nvl_transition:
             if mode == "nvl" or mode == "nvl_menu":
                 if old == "say" or old == "menu":
                     nvl_show(config.adv_nvl_transition)
-                    print "Ran show."
                     
         if config.nvl_adv_transition:
             if mode == "say" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
                     nvl_hide(config.nvl_adv_transition)
-                    print "Ran hide."
                     
     config.mode_callbacks.append(_nvl_adv_callback)
-    
-# init 1140 python:
-
-#     if config.nvl_adv_transition or config.adv_nvl_transition:
-
-#         def _nvl_adv_callback(event, interact, type, **kwargs):
-        
-#             if event != "begin" or not interact or renpy.get_transition():
-#                 return 
-            
-#             old_type = renpy.last_interact_type()
-
-#             if old_type == "say" and type == "nvl":
-#                 # We have an extra line in the nvl_list as we do this. So
-#                 # take it out for the duration of the nvl_show.
-#                 old_nvl_list = store.nvl_list
-#                 store.nvl_list = old_nvl_list[:-1]
-#                 nvl_show(config.adv_nvl_transition)
-#                 store.nvl_list = old_nvl_list
-#             elif old_type == "nvl" and type == "say":
-#                 nvl_hide(config.nvl_adv_transition)
-
-#         config.all_character_callbacks.insert(0, _nvl_adv_callback)
-
     
 python early hide:
 

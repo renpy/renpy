@@ -120,9 +120,8 @@ init -1140 python:
          """
 
         return ui.callsinnewcontext("_hide_windows")
-        
-            
 
+    
     class With(Action):
         """
          :doc: other_action
@@ -137,6 +136,20 @@ init -1140 python:
             renpy.transition(self.transition)
             renpy.restart_interaction()
 
+    class Notify(Action):
+        """
+         :doc: other_action
+
+         Displays `message` using :func:`renpy.notify`. 
+         """
+
+        def __init__(self, message):
+            self.message = message
+        
+        def __call__(self):
+            renpy.notify(self.message)
+            
+            
             
     class InvertSelected(Action):
         """
@@ -1406,3 +1419,25 @@ init -1140 python:
 screen _ctc:
     add ctc
     
+# These are used by renpy.notify.
+
+transform _notify_transform:
+    # These control the position.
+    xalign .02 yalign .015
+
+    # These control the actions on show and hide.
+    on show:
+        alpha 0
+        linear .25 alpha 1.0
+    on hide:
+        linear .5 alpha 0.0
+
+screen notify:
+    zorder 100
+
+    text message at _notify_transform
+
+    # This controls how long it takes between when the screen is
+    # first shown, and when it begins hiding.
+    timer 3.25 action Hide('notify')
+
