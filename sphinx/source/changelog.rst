@@ -10,8 +10,9 @@ transition. These take two displayables, and use the alpha channel of
 a third displayable to blend them together. (The third displayable is
 often an animation, allowing the effect to change over time.)
 
-Transforms no longer cause a divide by zero exception when the zoom,
-xzoom, or yzoom properties are 0.
+The new :ref:`modes` system allows one to invoke callbacks when
+switching from one type of interaction to another. This can be used,
+for example, to automatically hide the window before transitions.
 
 Imagemaps created using the screen language now only have a size equal
 to that of their ground image. (Previously, they took up the entire
@@ -25,6 +26,9 @@ the mouse is within its boundaries.
 
 The developer menu now includes a command that will list all the files
 in the game directory.
+
+Transforms no longer cause a divide by zero exception when the zoom,
+xzoom, or yzoom properties are 0.
 
 Fixed a bug with scaling, that occured when switching between the
 scaled software and GL renderers.

@@ -311,7 +311,7 @@ adv = ADVCharacter(None,
                    what_style='say_dialogue',
                    window_style='say_window',
                    screen='say',
-                   
+                   mode='say',
                    kind=False)
 
 def predict_say(who, what):

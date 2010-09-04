@@ -376,11 +376,19 @@ Occasionally Used
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
 
-.. var:: config.misssing_background = "black"
+.. var:: config.missing_background = "black"
 
     This is the background that is used when config.developer is True
     and an undefined image is used in a scene statement. This should
     be an image name (a string), not a displayable.
+
+.. var:: config.mode_callbacks = [ ... ]
+
+    A list of callbacks called when entering a mode. For more documentation,
+    see the section on :ref:`Modes`.
+
+    The default value includes a callback that implements :var:`config.adv_nvl_transition`
+    and :var:`config.nvl_adv_transition`.
     
 .. var:: config.mouse = None
 

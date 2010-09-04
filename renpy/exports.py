@@ -321,6 +321,8 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     takes the value from config.implicit_with_none.
     """
 
+    renpy.exports.mode('input')
+    
     if has_screen("input"):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude)
@@ -432,6 +434,9 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
     takes the value from config.implicit_with_none.
     """
 
+    if interact:
+        renpy.exports.mode('menu')
+    
     choice_for_skipping()
 
     # The possible choices in the menu.
@@ -561,8 +566,7 @@ def say(who, what, interact=True):
     else:
         who(what, interact=interact)
 
-
-
+        
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', mouse='imagemap', with_none=None, **properties):
     """
@@ -598,6 +602,8 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     takes the value from config.implicit_with_none.
     """
 
+    renpy.exports.mode('imagemap')
+    
     renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected,
                              style=style, **properties)
 
@@ -626,6 +632,8 @@ def pause(delay=None, music=None, with_none=None, hard=False):
     if renpy.config.skipping == "fast":
         return True
 
+    renpy.exports.mode('pause')
+    
     if music is not None:
         newdelay = renpy.audio.music.get_delay(music)
 
@@ -676,6 +684,8 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     given delay elapsed uninterrupted.
     """
 
+    renpy.exports.mode('movie')
+    
     if stop_music:
         renpy.audio.audio.set_force_stop("music", True)
     
@@ -731,6 +741,9 @@ def with_statement(trans, paired=None, always=False, clear=True):
     if not (renpy.game.preferences.transitions or always):
         trans = None
 
+    if trans is not None:
+        renpy.exports.mode('with')
+        
     return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 globals()["with"] = with_statement
@@ -1355,7 +1368,9 @@ def call_screen(_screen_name, **kwargs):
     Keyword arguments not beginning with _ are passed to the scope of
     the screen.
     """
-   
+
+    renpy.exports.mode('screen')
+    
     show_screen(_screen_name, _transient=True, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -1421,3 +1436,34 @@ def display_reset():
     """
     
     renpy.display.interface.display_reset = True
+
+def mode(mode):
+    """
+    :doc: modes
+
+    Causes Ren'Py to enter the named mode.
+    """
+
+    ctx = renpy.game.context()
+
+    if not ctx.use_modes:
+        return
+
+    modes = ctx.modes
+
+    try:
+        ctx.use_modes = False
+    
+        for c in renpy.config.mode_callbacks:
+            c(mode, modes)
+
+    finally:
+        ctx.use_modes = True            
+            
+    if mode in modes:
+        modes.remove(mode)
+    modes.insert(0, mode)
+
+    
+        
+   

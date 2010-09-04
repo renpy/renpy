@@ -434,6 +434,9 @@ renpy_base = None
 # Should we enable OpenGL mode?
 gl_enable = True
 
+# A list of callbacks that are called by renpy.mode.
+mode_callbacks = [ ]
+
 del renpy
 del os
 

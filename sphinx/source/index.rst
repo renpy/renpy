@@ -45,6 +45,7 @@ Python and Ren'Py
    :maxdepth: 2
 
    screen_python
+   modes
    other
 
 End-User Documentation

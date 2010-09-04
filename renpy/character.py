@@ -327,7 +327,8 @@ def display_say(
     type,
     checkpoint=True,
     ctc_timedpause=None,
-    ctc_force=False):
+    ctc_force=False,
+    mode='say'):
 
     
     # If we're in fast skipping mode, don't bother with say
@@ -338,6 +339,9 @@ def display_say(
         renpy.exports.with_statement(None)
         return
 
+    if interact:
+        renpy.exports.mode(mode)
+    
     # Figure out the callback(s) we want to use.
     if callback is None:
         if renpy.config.character_callback:
@@ -554,7 +558,8 @@ class ADVCharacter(object):
             with_none = d('with_none'),
             callback = d('callback'),
             type = d('type'),
-        )
+            mode = d('mode'),
+            )
 
         if kind:
             self.who_args = kind.who_args.copy()

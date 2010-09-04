@@ -67,7 +67,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 4
+    __version__ = 5
 
     def after_upgrade(self, version):
         if version < 1:
@@ -83,6 +83,10 @@ class Context(renpy.object.Object):
 
         if version < 4:
             self.interacting = False
+
+        if version < 5:
+            self.modes = [ ]
+            self.use_modes = True
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -148,7 +152,12 @@ class Context(renpy.object.Object):
         if clear:
             for i in renpy.config.context_clear_layers:
                 self.scene_lists.clear(layer=i)
-            
+
+        # A list of modes that the context has been in.
+        self.modes = renpy.python.RevertableList([ "start" ])
+        self.use_modes = True
+        
+                
         
     def make_dynamic(self, names, context=False):
         """

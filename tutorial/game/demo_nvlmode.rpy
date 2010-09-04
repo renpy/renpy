@@ -11,10 +11,9 @@ init:
 label demo_nvlmode:
 
     window hide
-    
     nvl clear
     nvl show dissolve
-
+    
     nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a file at the bottom of the screen."
 
     nvle "Ren'Py ships with a file, nvl_mode.rpy, that implements NVL-style games. You're seeing an example of NVL-mode at work."
@@ -74,7 +73,8 @@ label demo_nvlmode:
     $ menu = renpy.display_menu
 
     nvl hide dissolve
-    window show
+    $ _last_say_who = None
+    window show dissolve
     
     return
         
