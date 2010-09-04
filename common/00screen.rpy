@@ -112,6 +112,16 @@ init -1140 python:
         def __call__(self):
             _screenshot()
 
+    def HideInterface():
+        """
+         :doc other_action
+        
+         Causes the interface to be hidden until the user clicks.
+         """
+
+        return ui.callsinnewcontext("_hide_windows")
+        
+            
 
     class With(Action):
         """

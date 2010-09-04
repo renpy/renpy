@@ -5,6 +5,9 @@ Full Changelog
 Ren'Py 6.11.1
 =============
 
+New Features
+------------
+
 Add the :func:`AlphaBlend` displayable and the :func:`AlphaDissolve`
 transition. These take two displayables, and use the alpha channel of
 a third displayable to blend them together. (The third displayable is
@@ -24,11 +27,17 @@ are only focused if the mouse is over a non-transparent part of the
 idle or hover image. If set to false, the hotspot is focused whenever
 the mouse is within its boundaries.
 
-Added the :ref:`renpy.focus_coordinates` function, which returns the
+Added the :func:`renpy.focus_coordinates` function, which returns the
 coordinates of the currently focused displayable, when possible.
+
+The new :func:`HideInterface` action allows the interface to
+temporarily be hidden, as a screen language action.
 
 The developer menu now includes a command that will list all the files
 in the game directory.
+
+Fixes
+-----
 
 Transforms no longer cause a divide by zero exception when the zoom,
 xzoom, or yzoom properties are 0.
