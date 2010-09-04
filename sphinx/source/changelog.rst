@@ -24,6 +24,9 @@ are only focused if the mouse is over a non-transparent part of the
 idle or hover image. If set to false, the hotspot is focused whenever
 the mouse is within its boundaries.
 
+Added the :ref:`renpy.focus_coordinates` function, which returns the
+coordinates of the currently focused displayable, when possible.
+
 The developer menu now includes a command that will list all the files
 in the game directory.
 

@@ -104,7 +104,24 @@ def take_focuses():
     for f in focus_list:
         if f.x is None:
             default_focus = f
-            
+
+def focus_coordinates():
+    """
+    :doc: other
+
+    This attempts to find the coordinates of the currently-focused
+    displayable. If it can, it will return them as a (x, y, w, h)
+    tuple. If not, it will return a (None, None, None, None) tuple.
+    """
+
+    current = get_focused()
+    
+    for i in focus_list:
+        if i.widget == current and i.arg == argument:
+            return i.x, i.y, i.w, i.h
+
+    return None, None, None, None
+    
     
 # This is called before each interaction. It's purpose is to choose
 # the widget that is focused, and to mark it as focused and all of

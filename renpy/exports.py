@@ -33,6 +33,7 @@ from renpy.display.font import register_sfont, register_mudgefont, register_bmfo
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
+from renpy.display.focus import focus_coordinates
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -72,7 +73,8 @@ def public_api():
     time
     define_screen, show_screen, hide_screen, use_screen, has_screen
     current_screen, get_screen, get_widget
-        
+    focus_coordinates
+    
 del public_api
 
 import collections
