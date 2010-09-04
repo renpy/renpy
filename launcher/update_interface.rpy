@@ -2,15 +2,15 @@
 # assume that the user wants to update the prerelease channel, and the
 # base tag.
 
-init python:
-    if persistent.last_update is None:
-        persistent.last_update = "0"
-
 label update:
     
     python hide:
         import time
+        import os
         
+        version_fn = os.path.join(config.basedir, "lib", "bzr-version.txt")
+        old_version = file(version_fn, "rb").read()
+                 
         updater = Updater(config.basedir, 'http://update.renpy.org/update/prerelease', [ 'base' ])
 
         try:
@@ -28,11 +28,13 @@ label update:
             # If we've made it this far, the user has decided that he wants
             # to try an update.
 
-
             for what, amount, limit in updater.step():
                 progress(what, limit, amount)
 
-            persistent.last_update = version                
+            f = file(version_fn, "wb")
+            f.write(version)
+            f.close()
+            
             info("Update complete.", "The update has finished. Ren'Py will now restart.")
 
             if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
