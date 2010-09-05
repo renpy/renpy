@@ -43,6 +43,11 @@ in the game directory.
 Fixes
 -----
 
+Fixed several bugs with screen-language imagemaps.
+
+Fixed a bug (#626303) that was caused by an incorrect texture unit
+check.
+
 Transforms no longer cause a divide by zero exception when the zoom,
 xzoom, or yzoom properties are 0.
 

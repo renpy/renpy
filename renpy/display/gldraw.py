@@ -368,14 +368,14 @@ class GLDraw(object):
 
         self.log("Number of texture units: %d", v[0])
 
-        gl.GetIntegerv(gl.MAX_CLIP_PLANES, v)
-
-        self.log("Number of clipping planes: %d", v[0])
-        
         if v[0] < 4:
             self.log("Not enough texture units.")
             return False
             
+        gl.GetIntegerv(gl.MAX_CLIP_PLANES, v)
+
+        self.log("Number of clipping planes: %d", v[0])
+        
         
         # Pick a texture environment subsystem.
         

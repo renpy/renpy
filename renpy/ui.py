@@ -918,15 +918,7 @@ def hotspot(*args, **kwargs):
 
 def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
 
-    if isinstance(value, BarValue):
-        adjustment = value()
-        range = None
-        value = None
-
-    if adjustment is None and range is not None and value is not None:
-        adjustment = renpy.ui.adjustment(range=range, value=value)
-        
-    if adjustment is None:
+    if (adjustment is None) and (range is None) and (value is None):
         raise Exception("hotbar requires either an adjustment or a range and value.")
 
     if not imagemap_stack:
@@ -956,6 +948,8 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
         
     return renpy.display.behavior.Bar(
             adjustment=adjustment,
+            range=range,
+            value=value,            
             fore_bar=fore_bar,
             aft_bar=aft_bar,
             hover_fore_bar=hover_fore_bar,

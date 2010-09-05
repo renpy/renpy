@@ -220,6 +220,10 @@ begins.
 ::
 
     screen main_menu:
+
+        # This ensures that any other menu screen is replaced.
+        tag menu
+
         # The background of the main menu.
         window:
             style "mm_root"
