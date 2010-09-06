@@ -771,6 +771,16 @@ def position(d):
 
     return xpos, ypos, xanchor, yanchor
 
+def offsets(d):
+    
+    xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = d.get_placement()
+
+    if renpy.config.movetransition_respects_offsets:
+        return { 'xoffset' : xoffset, 'yoffset' : yoffset }
+    else:
+        return { }
+    
+    
 # These are used by MoveTransition.
 def MoveFactory(pos1, pos2, delay, d, **kwargs):
     if pos1 == pos2:
@@ -865,13 +875,17 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
             else:
                 child = new
 
-            if position(old) != position(new):
-
-                return factory(position(old),
-                               position(new),
+            old_pos = position(old)
+            new_pos = position(new)
+                
+            if old_pos != new_pos:
+                return factory(old_pos,
+                               new_pos,
                                delay,
                                child,
+                               **offsets(child)
                                )
+            
             else:
                 return child
 
@@ -938,7 +952,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
             # In old, not in new.
             if old_tag not in new_tags:
 
-                move = leave_factory(position(old_d), delay, old_d)
+                move = leave_factory(position(old_d), delay, old_d, **offsets(old_d))
                 if move is None:
                     continue
                 
@@ -958,7 +972,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
                 if new_tag == old_tag:
                     break
 
-                move = enter_factory(position(new_d), delay, new_d)
+                move = enter_factory(position(new_d), delay, new_d, **offsets(old_d))
                 if move is None:
                     continue
 
@@ -973,7 +987,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
                 else:
                     child = new_d
                 
-                move = factory(position(old_d), position(new_d), delay, child)
+                move = factory(position(old_d), position(new_d), delay, child, **offsets(child))
                 if move is None:
                     continue
 
@@ -986,7 +1000,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
             new_tag = tag(new_sle)
             new_d = wrap(new_sle)
 
-            move = enter_factory(position(new_d), delay, new_d)
+            move = enter_factory(position(new_d), delay, new_d, **offsets(new_d))
             if move is None:
                 continue
 

@@ -437,6 +437,9 @@ gl_enable = True
 # A list of callbacks that are called by renpy.mode.
 mode_callbacks = [ ]
 
+# Should MoveTransition take offsets into account?
+movetransition_respects_offsets = True
+
 del renpy
 del os
 

@@ -9,6 +9,19 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.11.1:
+
+6.11.1
+------
+
+MoveTransition has been modified to respect the xoffset and yoffset
+parameters of the displayables it is moving. The factory functions
+that are used for movement now take `xoffset` and `yoffset`
+parameters.  While the built-in movement factories take these
+parameters without problem, user-defined factories may need to
+be upgraded to use or ignore these additional parameters.
+
+
 .. _incompatible-6.11.0:
 
 6.11.0

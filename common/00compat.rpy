@@ -41,6 +41,9 @@ init -1210 python:
             config.default_transform = None
             config.start_scene_black = True
             
+        if version <= (6, 11, 0):
+            config.movetransition_respects_offsets = False
+
             
 init 1210 python hide::
 

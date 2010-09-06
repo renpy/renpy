@@ -43,6 +43,9 @@ in the game directory.
 Fixes
 -----
 
+:func:`MoveTransition` now respects the xoffset and yoffset
+parameters.
+
 Fixed several bugs with screen-language imagemaps.
 
 Fixed a bug (#626303) that was caused by an incorrect texture unit
