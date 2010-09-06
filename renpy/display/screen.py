@@ -148,7 +148,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def set_transform_event(self, event):
         super(ScreenDisplayable, self).set_transform_event(event)        
         self.current_transform_event = event
-            
+
+    def find_focusable(self, callback, focus_name):
+        if self.child and not self.hiding:
+            self.child.find_focusable(callback, focus_name)
+        
     def _hide(self, st, at, kind):        
 
         if self.hiding:

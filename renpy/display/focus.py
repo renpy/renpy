@@ -167,7 +167,7 @@ def before_interact(roots):
                 break
         else:
             current = None
-
+            
     # Otherwise, focus the default widget, or nothing.
     if current is None:
 
