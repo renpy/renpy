@@ -385,32 +385,38 @@ class GLDraw(object):
             "GL_ARB_vertex_shader",
             "GL_ARB_fragment_shader"):
 
-            self.log("Using shader environment.")
-            self.environ = glenviron.ShaderEnviron()
-            self.info["environ"] = "shader"
-
-        elif use_subsystem(
-            "RENPY_GL_ENVIRON",
-            "fixed",
-            "GL_ARB_texture_env_crossbar",
-            "GL_ARB_texture_env_combine"):
-
-            self.log("Using fixed-function environment (clause 1).")
-            self.environ = glenviron.FixedFunctionEnviron()
-            self.info["environ"] = "fixed"
-        
-        elif use_subsystem(
-            "RENPY_GL_ENVIRON",
-            "fixed",
-            "GL_NV_texture_env_combine4"):
-
-            self.log("Using fixed-function environment (clause 2).")
-            self.environ = glenviron.FixedFunctionEnviron()
-            self.info["environ"] = "fixed"
+            try:
+                self.log("Using shader environment.")
+                self.environ = glenviron.ShaderEnviron()
+                self.info["environ"] = "shader"
+            except Exception, e:
+                self.log("Initializing shader environment failed:")
+                self.log(str(e))
+                
+        if self.environ is None:
             
-        else:
-            self.log("Can't find a workable environment.")
-            return False
+            if use_subsystem(
+                "RENPY_GL_ENVIRON",
+                "fixed",
+                "GL_ARB_texture_env_crossbar",
+                "GL_ARB_texture_env_combine"):
+
+                self.log("Using fixed-function environment (clause 1).")
+                self.environ = glenviron.FixedFunctionEnviron()
+                self.info["environ"] = "fixed"
+
+            elif use_subsystem(
+                "RENPY_GL_ENVIRON",
+                "fixed",
+                "GL_NV_texture_env_combine4"):
+
+                self.log("Using fixed-function environment (clause 2).")
+                self.environ = glenviron.FixedFunctionEnviron()
+                self.info["environ"] = "fixed"
+
+            else:
+                self.log("Can't find a workable environment.")
+                return False
 
         # Pick a Render-to-texture subsystem.
         
