@@ -62,6 +62,8 @@ def extra_imports():
     import compiler; compiler
     import textwrap; textwrap
     import copy; copy
+    import urllib; urllib
+    import urllib2; urllib2
     
 trace_file = None
 trace_local = None
