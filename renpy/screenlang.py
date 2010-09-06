@@ -51,11 +51,9 @@ class LineNumberNormalizer(ast.NodeVisitor):
     
     def generic_visit(self, node):
 
-        if not hasattr(node, 'lineno'):
-            return
-        
-        self.last_line = max(self.last_line, node.lineno)
-        node.lineno = self.last_line
+        if hasattr(node, 'lineno'):
+            self.last_line = max(self.last_line, node.lineno)
+            node.lineno = self.last_line
 
         super(LineNumberNormalizer, self).generic_visit(node)
 
@@ -1163,6 +1161,14 @@ class ScreenParser(Parser):
         node = ast.Module(body=rv, lineno=lineno, col_offset=0)
         ast.fix_missing_locations(node)
         LineNumberNormalizer().visit(node)
+
+        # Various bits of debugging code:
+        
+        # print ast.dump(node, True, True)
+
+        # a = compile(node, 'foo', 'exec')
+        # import dis
+        # dis.dis(a)
         
         # import unparse
         # print
