@@ -115,7 +115,7 @@ init python:
             self.version, verbose_version = remote_version.split("\n", 1)
             self.version += " " + " ".join(sorted(self.tags))
 
-            if self.version == version:
+            if self.version.strip() == version.strip():
                 return None, verbose_version
             else:
                 return self.version, verbose_version

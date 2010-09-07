@@ -1,8 +1,4 @@
 init python:
-    # This can be changed by distributors to control if updating Ren'Py
-    # is allowed.
-    update_allowed = True
-
     tutorial_path = config.renpy_base + "/tutorial"
     tutorial_exists = os.path.isdir(tutorial_path)
 

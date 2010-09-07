@@ -3,14 +3,12 @@
 import sys
 sys.path.append('/home/tom/ab/keys/')
 
-import argparse
 import os
-import zlib
 import bz2
 import hashlib
 import public
 import private
-import time
+import shutil
 
 def sha(s):
     """
@@ -22,61 +20,67 @@ def sha(s):
     return hash.hexdigest()
 
 
-ap = argparse.ArgumentParser()
-ap.add_argument("root")
-args = ap.parse_args()
+def make_update(root, version):
 
-root = args.root
+    # A list of command strings.
+    commands = [ ]
 
-# A list of command strings.
-commands = [ ]
+    for dir, dirs, files in os.walk(root):
+        for fn in files:
+            fn = os.path.join(dir, fn)
 
-for dir, dirs, files in os.walk(root):
+            oldf = file(fn, "rb")
+            bzf = bz2.BZ2File(fn + ".bz2", "wb")
+            bzf.write(oldf.read())
+            bzf.close()
+            oldf.close()
 
-    for fn in dirs + files:
-
-        path = os.path.join(dir, fn)
-        relpath = os.path.relpath(path, root)
-
-        if relpath in [ "version", "catalog1.bz2" ]:
-            continue
-        
-        if os.path.isdir(path):
-            commands.append(('dir', "base", relpath))
-
-        elif relpath.endswith(".bz2"):
-
-            hash = sha(bz2.BZ2File(path, "r").read())
-            size = "%d" % (os.path.getsize(path))
-
-            commands.append(('file', hash, size, "base", relpath[:-4]))
-
-            if os.access(path, os.X_OK):
-                commands.append(('xbit', relpath[:-4]))
+            shutil.copymode(fn, fn + ".bz2")
+            os.unlink(fn)
             
-        else:
-            print "Unknown non-directory, non-bz2-file:", path
+    for dir, dirs, files in os.walk(root):
 
-out = bz2.BZ2File(os.path.join(root, "catalog1.bz2"), "w")
-hash = hashlib.sha256()
+        for fn in dirs + files:
 
-for i in commands:
+            path = os.path.join(dir, fn)
+            relpath = os.path.relpath(path, root)
 
-    line = "\t".join(i) + "\n"
-    hash.update(line)
-    out.write(line)
+            if relpath in [ "version", "catalog1.bz2" ]:
+                continue
 
-unsigned = int("01" + hash.hexdigest(), 16)
-signed = pow(unsigned, private.exponent, public.modulus)
+            if os.path.isdir(path):
+                commands.append(('dir', "base", relpath))
 
-out.write("-\n")
-out.write("signature\t%x\n" % signed)
+            elif relpath.endswith(".bz2"):
 
-out.close()
-            
-f = file(os.path.join(root, "version"), "w")
-f.write(str(int(time.time())))
-f.write("\n")
-f.write("Test Update.")
-f.close()
+                hash = sha(bz2.BZ2File(path, "r").read())
+                size = "%d" % (os.path.getsize(path))
+
+                commands.append(('file', hash, size, "base", relpath[:-4]))
+
+                if os.access(path, os.X_OK):
+                    commands.append(('xbit', relpath[:-4]))
+
+
+    out = bz2.BZ2File(os.path.join(root, "catalog1.bz2"), "w")
+    hash = hashlib.sha256()
+
+    for i in commands:
+
+        line = "\t".join(i) + "\n"
+        hash.update(line)
+        out.write(line)
+
+    unsigned = int("01" + hash.hexdigest(), 16)
+    signed = pow(unsigned, private.exponent, public.modulus)
+
+    out.write("-\n")
+    out.write("signature\t%x\n" % signed)
+    out.close()
+
+    f = file(os.path.join(root, "version"), "w")
+    f.write(version)
+    f.write("\n")
+    f.write("Ren'Py")
+    f.close()
 

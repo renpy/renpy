@@ -57,6 +57,8 @@ xzoom, or yzoom properties are 0.
 Fixed a bug with scaling, that occured when switching between the
 scaled software and GL renderers.
 
+Hidden screens are no longer considered when assigning default focus.
+
 
 Ren'Py 6.11.0
 =============

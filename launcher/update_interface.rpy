@@ -2,16 +2,19 @@
 # assume that the user wants to update the prerelease channel, and the
 # base tag.
 
+init python:
+    import os
+    import time
+    
+    version_fn = os.path.join(config.basedir, "lib", "update-version.txt")
+    update_allowed = os.path.exists(version_fn)
+
 label update:
     
     python hide:
-        import time
-        import os
         
-        version_fn = os.path.join(config.basedir, "lib", "bzr-version.txt")
-        old_version = file(version_fn, "rb").read()
-                 
-        updater = Updater(config.basedir, 'http://update.renpy.org/update/prerelease', [ 'base' ])
+        old_version = file(version_fn, "rb").read()                 
+        updater = Updater(config.basedir, 'http://update.renpy.org/renpy/updates/prerelease', [ 'base' ])
 
         try:
             # Check the version.

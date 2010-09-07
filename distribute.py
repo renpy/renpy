@@ -9,6 +9,8 @@ import time
 import zlib
 import compileall
 import shutil
+import subprocess
+import makeupdate
 
 zlib.Z_DEFAULT_COMPRESSION = 9
 
@@ -113,41 +115,45 @@ def main():
 
     prefix = sys.argv[1]
 
+    # Update the update-version.txt file.
+    p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
+    revno = p.stdout.read().strip()
+    p.wait()
+
+    f = file("lib/update-version.txt", "w")
+    f.write(revno + " base\n")
+    f.close()
+        
+
+    # Compile all the python files.
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
 
     os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
 
     # Chmod the mac app.
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
+
+    # Chmod down renpy.py, for now.
+    os.chmod("renpy.py", 0644)
     
     # Compile the various games
     for i in [ 'tutorial/game', 'launcher', 'template/game', 'the_question/game' ]:
         os.system("./renpy.sh --compile --game " + i)
     
-
     files = [ ]
     more_files = [ ]
 
     files.append("CHANGELOG.txt")
     files.append("LICENSE.txt")
     files.extend(tree("common"))
-    more_files.append("console.exe")
     files.extend(tree("launcher"))
     files.extend(tree("tutorial"))
-    # files.extend(tree("dse"))
     files.extend(tree("the_question"))
 
-#     editor = tree("editor")
-#     editor.remove("editor/scite.exe")
-#     files.append("editor/scite.exe")
-#     more_files.extend(editor)
-
     more_files.extend(tree("jedit"))
-    
-    # files.extend(tree("extras"))
     more_files.extend(tree("lib"))
     more_files.extend(tree("lib/linux-x86"))
-
+    
     module_files = [
         "lib/pysdlsound/linmixer.py",
         "lib/pysdlsound/__init__.py",
@@ -185,32 +191,20 @@ def main():
     for i in module_files:
         files.append('module/' + i)
 
+    files.extend(tree('renpy'))
+    files.append('renpy.py')
+
     more_files.append('python26.dll')
     more_files.append('msvcr90.dll')
     more_files.append('Microsoft.VC90.CRT.manifest')
-    files.extend(tree('renpy'))
     more_files.extend(tree('renpy.app'))
-    more_files.append('renpy.code')
-    more_files.append('renpy.exe')
-    files.append('renpy.py')
-
+    more_files.append('renpy.exe')   
+    more_files.append("console.exe")
     more_files.append('renpy.sh')
 
     files.extend(tree('template'))
-    # files.extend(tree('tools'))
-
     files.extend(tree('doc'))
-    
-    # files.append('doc/index.html')
-    # files.append('doc/common.css')
-    # files.append('doc/docs.css')
-    # files.append('doc/monobook.css')
-    # files.append('doc/monobook2.css')
-    # files.append('doc/shared.css')
-    # files.extend(tree('doc/reference'))
-    # files.extend(tree('doc/tutorials'))
-    # files.extend(tree('doc/images'))
-    
+
     files.sort()
     more_files.sort()
 
@@ -222,6 +216,7 @@ def main():
     print "----"
     tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
     print "----"
+
     # Make the 7zip.
     os.chdir("dists")
     os.system("unzip " + prefix + "-sdk.zip")
@@ -233,13 +228,23 @@ def main():
 
     os.system("7z a " + prefix + "-sdk.7z " + prefix)
     os.system("cat ../7z.sfx " + prefix + "-sdk.7z > " + prefix + "-sdk.7z.exe""")
-    shutil.rmtree(prefix)
     os.unlink(prefix + "-sdk.7z")
-    
+
+    os.chdir("..")
+
+    if os.path.exists("updates/prerelease"):
+        shutil.rmtree("updates/prerelease")
+
+    os.rename("dists/" + prefix, "updates/prerelease")
+    os.unlink("updates/prerelease/lib/update-version.txt")
+
+    makeupdate.make_update("updates/prerelease", revno)
+
+    os.chmod("renpy.py", 0755)
+
     print
     print "Did you remember to rebuild the exe after the last change?"
     print "Did you run me with renpython -OO?"
-    print "Was ming using the right crt?"
     print "Did you update renpy.py and launcher/script_version.rpy?"
     print "Did you run with a RENPY_SCALE_FACTOR?"
     
