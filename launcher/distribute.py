@@ -41,6 +41,7 @@ ignored_files = (
     "thumbs.db",
     "traceback.txt",
     "errors.txt",
+    "files.txt",
     "saves"
     )
 
@@ -146,7 +147,7 @@ class MyZipFile(zipfile.ZipFile):
 def tree(
     src,
     dest,
-    exclude_suffix=[ ".pyc", "~", ".bak" ],
+    exclude_suffix=[ ".pyc", "~", ".bak", ".old", ".new" ],
     exclude_prefix=[ "#", "." ],
     exclude_files = set(ignored_files),
     root_exclude_prefix = [ ],
@@ -392,10 +393,12 @@ def distribute(
     if build_windows or build_all:
 
         win_files.append((rb + "renpy.exe", "/" + executable_name + ".exe"))
-        win_files.append((rb + "renpy.code", "/renpy.code"))
         win_files.append((rb + "python26.dll", "/python26.dll"))
         win_files.append((rb + "msvcr90.dll", "/msvcr90.dll"))
         win_files.append((rb + "Microsoft.VC90.CRT.manifest", "/Microsoft.VC90.CRT.manifest"))
+
+        win_files.append((rb + "lib", "/lib"))
+        win_files.extend(tree(rb + "lib/windows-x86", "/lib/windows-x86"))
 
         if os.path.exists(project_path + "/icon.ico"):
             file_data[rb + "renpy.exe"] = change_icon.change_icons(

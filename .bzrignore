@@ -66,3 +66,4 @@ renpy.exe
 lib/windows-x86
 sphinx/source/inc/*
 doc/*
+updates/prerelease

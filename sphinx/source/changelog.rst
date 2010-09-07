@@ -40,6 +40,14 @@ temporarily be hidden, as a screen language action.
 The developer menu now includes a command that will list all the files
 in the game directory.
 
+The urllib and urllib2 modules from the Python standard library are
+now distributed as part of Ren'Py. These modules allow data to be
+retrieved from web servers.
+
+The launcher now includes an experimental updater, that makes it easier
+to update to the latest pre-release. Hitting shift+U at the launcher's
+main screen will cause Ren'Py to be updated.
+
 Fixes
 -----
 
