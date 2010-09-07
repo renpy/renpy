@@ -757,8 +757,8 @@ init -1140 python:
         def changed(self, value):
 
             if self.max_is_zero:
-                if value == 0:
-                    value = self.range
+                if value == self.range:
+                    value = 0
                 else:
                     value = value + 1
             

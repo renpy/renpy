@@ -1,4 +1,4 @@
-==============
+=============
 Full Changelog
 ==============
 
@@ -57,7 +57,7 @@ parameters.
 Fixed several bugs with screen-language imagemaps.
 
 Fixed a bug (#626303) that was caused by an incorrect texture unit
-check.
+check. Thanks to tmrwiz for the fix.
 
 Transforms no longer cause a divide by zero exception when the zoom,
 xzoom, or yzoom properties are 0.
@@ -66,6 +66,9 @@ Fixed a bug with scaling, that occured when switching between the
 scaled software and GL renderers.
 
 Hidden screens are no longer considered when assigning default focus.
+
+FieldValues with max_is_zero set to True now work properly. Thanks to
+SleepKirby for the fix.
 
 
 Ren'Py 6.11.0
