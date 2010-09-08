@@ -18,7 +18,7 @@ label update:
 
         try:
             # Check the version.
-            version, verbose_version = updater.check_version(persistent.last_update)
+            version, verbose_version = updater.check_version(old_version)
             
             if version is None:
                 info("No Update Needed", "Your version of Ren'Py is up to date.")

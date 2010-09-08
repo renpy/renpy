@@ -256,9 +256,11 @@ init python:
                     except:
                         raise UpdateException("Couldn't make directory %r." % dir)
 
+            complete = 0
+                    
             for name, hash, size in updated_files:
 
-                yield (u"Downloading updated files", complete_size, download_size)
+                yield (u"Downloading updated files", complete, len(updated_files))
 
                 if self.verify_hash(name + ".new", hash):
                     complete_size += size
@@ -270,7 +272,8 @@ init python:
                     raise UpdateException("Could not verify download of %r." % name)
 
                 complete_size += size
-
+                complete += 1
+                
             umask = os.umask(0)
             os.umask(umask)            
 
