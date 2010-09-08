@@ -221,6 +221,27 @@ init 11 python:
 
         interact()
 
+    def pauseinfo(t, message):
+        """
+         Displays an error to the user, and lets him click to return to
+         `target`.
+         """
+
+        set_tooltip("")
+        
+        screen()
+        
+        ui.vbox()
+        title(t)
+        text(message)
+
+        ui.null(height=20)
+        
+        button(_(u"Ok"), ui.returns(True), None)
+        ui.close()
+
+        interact()
+
     def info(t, message):
         """
          Displays an informational message to the user, and immediately

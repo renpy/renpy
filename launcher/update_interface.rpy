@@ -21,7 +21,7 @@ label update:
             version, verbose_version = updater.check_version(old_version)
             
             if version is None:
-                info("No Update Needed", "Your version of Ren'Py is up to date.")
+                pauseinfo("Up to date.", "Your version of Ren'Py is up to date.")
                 renpy.jump("top")
 
 
@@ -38,7 +38,7 @@ label update:
             f.write(version)
             f.close()
             
-            info("Update complete.", "The update has finished. Ren'Py will now restart.")
+            pauseinfo("Update complete.", "The update has finished. Ren'Py will now restart.")
 
             if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
                 proc = subprocess.Popen([sys.argv[0], config.basedir])
