@@ -16,7 +16,29 @@ init:
     image bg circleiris = "id_circleiris.png"
     image bg teleport = "id_teleport.png"
     
+    image alpha_control:
+        "spotlight.png"
 
+        xanchor .5
+        yanchor .5
+        
+        parallel:
+            zoom 0
+            linear .5 zoom .75
+            pause 2
+            linear 1.0 zoom 4.0
+            
+        parallel:
+            xpos 0.0 ypos .6
+            linear 1.5 xpos 1.0
+            linear 1.0 xpos .5 ypos .2
+
+        pause .5
+        repeat
+            
+    define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
+
+        
 label demo_transitions:
 
     e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
@@ -41,6 +63,9 @@ label demo_transitions:
 
             call demo_cropmove_transitions from _call_demo_cropmove_transitions_1
             
+        "AlphaDissolve Transitions":
+
+            call demo_alphadissolve
             
         ""
 
@@ -379,5 +404,43 @@ label demo_movetransition:
     with zoomin
 
     e "And that's all there is."
+    
+    return
+
+label demo_alphadissolve:
+
+    e "The AlphaDissolve transition lets you use one displayable to combine two others. For example..."
+
+    scene black
+    with dissolve
+    scene bg washington
+    show eileen happy at center
+    with alpha_example
+    
+    e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
+
+    scene
+    show alpha_control
+    
+    e "To be useful, the control displayable should be partially transparent."
+
+    e "During an AlphaDissolve, the old screen is used to fill the transparent areas of the image, while the new screen fills the opaque areas."
+
+    scene black
+        
+    e "For our spotlight example, the old screen is this all-black image."
+
+    scene bg washington
+    show eileen happy at center
+
+    e "The new screen is me just standing here."
+
+    scene black
+    with dissolve
+    scene bg washington
+    show eileen happy at center
+    with alpha_example
+        
+    e "By combining them using AlphaDissolve, we can build a complicated effect out of simpler parts."
     
     return

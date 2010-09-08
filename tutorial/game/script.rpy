@@ -25,7 +25,7 @@ init python:
         ("tutorial_positions", "Screen Positions", "6.10.0"),
         ("tutorial_atl", "Animation and Transformation", "6.10.0"),
         ("tutorial_video", "Video Playback", "6.10.0"),
-        ("demo_transitions", "Transition Gallery", "5.6.6"),
+        ("demo_transitions", "Transition Gallery", "6.11.1"),
         ("demo_imageops", "Image Operations", "6.5.0"),
         ("demo_ui", "User Interaction", "6.5.0"),
         ("demo_text", "Fonts and Text Tags", "6.8.0"),
