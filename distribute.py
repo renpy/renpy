@@ -89,7 +89,11 @@ def tree(root):
 
         if ".svn" in dirs:
             dirs.remove(".svn")
-        
+
+        if ".doctrees" in dirs:
+            dirs.remove(".doctrees")
+
+            
         for f in filenames:
             if f[-1] == '~' or f[0] == '.':
                 continue

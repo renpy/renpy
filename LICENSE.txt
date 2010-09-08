@@ -2,7 +2,7 @@
 License
 =======
 
-Ren'Py itself is covered by the terms of the following (MIT) license:
+Most of Ren'Py is covered by the terms of the following (MIT) license:
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation files
@@ -23,13 +23,15 @@ Ren'Py itself is covered by the terms of the following (MIT) license:
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+Portions of Ren'Py are derived from code that is copyright using the
+Lesser GNU Public License, so Ren'Py games must be distributed in a
+manner that satisfies the LGPL.
 
 Please see each individual source file for a list of copyright
 holders. The artwork in the demo is released by various copyright
 holders, under the same terms.
 
-The Ren'Py module, the Ren'Py windows binaries, and the various Ren'Py
-launchers may contain code taken from the following projects:
+Ren'Py binaries include code from the following projects:
 
 * Python (Python License)
 * Pygame (LGPL)
