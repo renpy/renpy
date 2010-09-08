@@ -11,6 +11,7 @@ import compileall
 import shutil
 import subprocess
 import makeupdate
+import time
 
 zlib.Z_DEFAULT_COMPRESSION = 9
 
@@ -121,14 +122,13 @@ def main():
 
     # Update the update-version.txt file.
     p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
-    revno = p.stdout.read().strip()
+    revno = p.stdout.read().strip() + "-" + str(time.time)
     p.wait()
 
     f = file("lib/update-version.txt", "w")
     f.write(revno + " base\n")
     f.close()
-        
-
+    
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
 

@@ -51,6 +51,9 @@ def make_update(root, version):
             if os.path.isdir(path):
                 commands.append(('dir', "base", relpath))
 
+            elif relpath.endswith(".rpyc.bz2"):
+                continue            
+                
             elif relpath.endswith(".bz2"):
 
                 hash = sha(bz2.BZ2File(path, "r").read())

@@ -54,9 +54,11 @@ init python:
             Gets the url as a string.
             """
 
+            url = self.remote + "/" + url
+            
             try:
-                url = urllib2.urlopen(self.remote + "/" + url, None, 5)
-                return url.read()
+                u = urllib2.urlopen(url, None, 5)
+                return u.read()
             except Exception, e:
                 raise UpdateException("Could not download %r: %r" % (url, e))
 
@@ -69,14 +71,16 @@ init python:
             bz = os.path.join(self.local, relative + ".new.bz2")
             new = os.path.join(self.local, relative + ".new")
 
+            url = self.remote + "/" + relative + ".bz2"
+            
             try:
-                url = urllib2.urlopen(self.remote + "/" + relative + ".bz2", None, 5)
+                u = urllib2.urlopen(url, None, 5)
 
                 f = file(bz, "wb")
-                f.write(url.read())
+                f.write(u.read())
                 f.close()
 
-                url.close()
+                u.close()
 
                 bzf = bz2.BZ2File(bz, "rb")
                 f = file(new, "wb")
