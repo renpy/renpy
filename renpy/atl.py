@@ -846,16 +846,10 @@ class Interpolation(Statement):
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
-
-            # Ensure that we set things, even if they don't actually
-            # change from the old state.
-            for k, v in self.properties:
-                if k not in linear:
-                    setattr(trans.state, k, v)
             
             revolution = None
             splines = [ ]
-            
+
             # Clockwise revolution.
             if self.revolution is not None:
 
@@ -906,9 +900,15 @@ class Interpolation(Statement):
                     
             state = (linear, revolution, splines)
 
+            # Ensure that we set things, even if they don't actually
+            # change from the old state.
+            for k, v in self.properties:
+                if k not in linear:
+                    setattr(trans.state, k, v)
+
         else:
             linear, revolution, splines = state
-            
+
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new, PROPERTIES[k])
@@ -921,6 +921,7 @@ class Interpolation(Statement):
             trans.state.angle = interpolate(complete, startangle, endangle, float)
             trans.state.radius = interpolate(complete, startradius, endradius, float)
 
+            
         # Handle any splines we might have.
         for name, values in splines:
             value = interpolate_spline(complete, values)
