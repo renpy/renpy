@@ -332,6 +332,13 @@ class Say(Node):
         else:
             who = None
 
+        if not (
+            (who is None) or
+            callable(who) or
+            isinstance(who, basestring) ):
+
+            raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
+            
         what = self.what
         if renpy.config.say_menu_text_filter:
             what = renpy.config.say_menu_text_filter(what) # E1102
