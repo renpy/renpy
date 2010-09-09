@@ -287,6 +287,9 @@ init python:
 
                 fn = os.path.join(self.local, name)
 
+                if os.path.exists(fn + ".old"):
+                    os.unlink(fn + ".old")
+                
                 if os.path.exists(fn):
                     os.rename(fn, fn + ".old")
 

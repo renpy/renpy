@@ -122,7 +122,7 @@ def main():
 
     # Update the update-version.txt file.
     p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
-    revno = p.stdout.read().strip() + "-" + str(time.time)
+    revno = p.stdout.read().strip() + "-" + str(time.time())
     p.wait()
 
     f = file("lib/update-version.txt", "w")

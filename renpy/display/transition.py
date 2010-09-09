@@ -788,10 +788,10 @@ def MoveFactory(pos1, pos2, delay, d, **kwargs):
 
     return renpy.display.motion.Move(pos1, pos2, delay, d, **kwargs)
 
-def default_enter_factory(pos, delay, d):
+def default_enter_factory(pos, delay, d, **kwargs):
     return d
 
-def default_leave_factory(pos, delay, d):
+def default_leave_factory(pos, delay, d, **kwargs):
     return None
 
 # These can be used to move things in and out of the screen.
