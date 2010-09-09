@@ -295,6 +295,9 @@ init python:
 
                 os.rename(fn + ".new", fn)
 
+                if fn.endswith(".py") and os.path.exists(fn + 'o'):
+                    os.unlink(fn + 'o')
+                
             for i, name in enumerate(self.xbit):
                 yield (u"Fixing permissions", i, len(self.xbit))
 

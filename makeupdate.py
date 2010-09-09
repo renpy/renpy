@@ -53,6 +53,13 @@ def make_update(root, version):
 
             elif relpath.endswith(".rpyc.bz2"):
                 continue            
+            elif relpath.endswith(".rpymc.bz2"):
+                continue            
+            elif relpath.endswith(".rpyb.bz2"):
+                continue            
+
+            elif relpath.endswith(".pyo.bz2"):
+                continue            
                 
             elif relpath.endswith(".bz2"):
 
@@ -84,6 +91,6 @@ def make_update(root, version):
     f = file(os.path.join(root, "version"), "w")
     f.write(version)
     f.write("\n")
-    f.write("Ren'Py")
+    f.write("the latest Ren'Py pre-release")
     f.close()
 

@@ -13,15 +13,17 @@ label update:
     
     python hide:
         
-        old_version = file(version_fn, "rb").read()                 
-        updater = Updater(config.basedir, 'http://update.renpy.org/renpy/updates/prerelease', [ 'base' ])
-
         try:
+            info("Checking for update...", "")
+            
+            old_version = file(version_fn, "rb").read()                 
+            updater = Updater(config.basedir, 'http://update.renpy.org/renpy/updates/prerelease', [ 'base' ])
+
             # Check the version.
             version, verbose_version = updater.check_version(old_version)
             
             if version is None:
-                pauseinfo("Up to date.", "Your version of Ren'Py is up to date.")
+                pauseinfo("Up To Date", "Your version of Ren'Py is up to date.")
                 renpy.jump("top")
 
 
