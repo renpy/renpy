@@ -85,7 +85,7 @@ class Context(renpy.object.Object):
             self.interacting = False
 
         if version < 5:
-            self.modes = [ ]
+            self.modes = renpy.python.RevertableList([ "start" ])
             self.use_modes = True
             
     def __init__(self, rollback, context=None, clear=False):
