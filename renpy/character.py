@@ -327,9 +327,7 @@ def display_say(
     type,
     checkpoint=True,
     ctc_timedpause=None,
-    ctc_force=False,
-    mode='say'):
-
+    ctc_force=False):
     
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
@@ -339,9 +337,6 @@ def display_say(
         renpy.exports.with_statement(None)
         return
 
-    if interact:
-        renpy.exports.mode(mode)
-    
     # Figure out the callback(s) we want to use.
     if callback is None:
         if renpy.config.character_callback:
@@ -545,6 +540,7 @@ class ADVCharacter(object):
         self.condition = v('condition')
         self.dynamic = v('dynamic')
         self.screen = v('screen')
+        self.mode = v('mode')
         
         self.display_args = dict(
             interact = d('interact'),
@@ -558,7 +554,6 @@ class ADVCharacter(object):
             with_none = d('with_none'),
             callback = d('callback'),
             type = d('type'),
-            mode = d('mode'),
             )
 
         if kind:
@@ -650,13 +645,16 @@ class ADVCharacter(object):
             window_args=self.window_args,
             **self.show_args)
     
-    def __call__(self, what, **kwargs):
+    def __call__(self, what, interact=True, **kwargs):
 
         # Check self.condition to see if we should show this line at all.
 
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
+        if interact:
+            renpy.exports.mode(self.mode)
+    
         # Figure out the arguments to display.
         display_args = self.display_args.copy()
         display_args.update(kwargs)

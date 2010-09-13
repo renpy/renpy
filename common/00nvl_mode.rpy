@@ -245,6 +245,7 @@ init -1100 python:
                 nvl_clear()
 
         def do_extend(self):
+            renpy.mode(self.mode)
             store.nvl_list = store.nvl_list[:-1]
                 
     # The default NVLCharacter.

@@ -1443,7 +1443,8 @@ def mode(mode):
     """
     :doc: modes
 
-    Causes Ren'Py to enter the named mode.
+    Causes Ren'Py to enter the named mode, or stay in that mode if it's
+    already in it.
     """
 
     ctx = renpy.game.context()
@@ -1455,9 +1456,10 @@ def mode(mode):
 
     try:
         ctx.use_modes = False
-    
-        for c in renpy.config.mode_callbacks:
-            c(mode, modes)
+
+        if mode != modes[0]:        
+            for c in renpy.config.mode_callbacks:
+                c(mode, modes)
 
     finally:
         ctx.use_modes = True            
