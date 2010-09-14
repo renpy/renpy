@@ -141,8 +141,14 @@ init python:
 
                 while True:
                     data = f.read(1024 * 1024)
+
                     if not data:
                         break
+                    
+                    if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith(".py") or fn.endswith(".txt"):
+                        data = data.replace("\n", "\r\n")
+                        data = data.replace("\r\r\n", "\r\n")
+
                     hash.update(data)
 
                 f.close()
