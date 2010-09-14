@@ -143,6 +143,10 @@ class TextStyle(object):
         return self.get_width(text), height
 
     def render(self, text, antialias, color, black_color, use_colors, time, at, expand, use_cache):
+
+        if not text:
+            height = max(self.f.get_ascent() - self.f.get_descent(), self.f.get_height())
+            return None, (0, height)
         
         if use_colors:
             color = self.color or color
@@ -160,7 +164,7 @@ class TextStyle(object):
             
         if isinstance(font, ImageFont):
             rv = font.render(text, antialias, color, black_color)
-            
+
             if self.strikethrough:
                 sw, sh = rv.get_size()
                 soh = max(sh / 10, 1) 
@@ -172,7 +176,7 @@ class TextStyle(object):
 
             surf = font.render(text, antialias, color)
             rv = renpy.display.pgrender.copy_surface(surf)
-            
+
             if self.strikethrough:
                 sw, sh = surf.get_size()
                 soh = max(sh / 10, 1) 
