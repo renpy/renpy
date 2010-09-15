@@ -144,10 +144,11 @@ init python:
 
                     if not data:
                         break
-                    
-                    if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith(".py") or fn.endswith(".txt"):
-                        data = data.replace("\n", "\r\n")
-                        data = data.replace("\r\r\n", "\r\n")
+
+                    if not "renpy.app" in fn:                    
+                        if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith(".py") or fn.endswith(".txt"):
+                            data = data.replace("\n", "\r\n")
+                            data = data.replace("\r\r\n", "\r\n")
 
                     hash.update(data)
 

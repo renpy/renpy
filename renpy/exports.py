@@ -743,8 +743,7 @@ def with_statement(trans, paired=None, always=False, clear=True):
     if not (renpy.game.preferences.transitions or always):
         trans = None
 
-    if trans is not None:
-        renpy.exports.mode('with')
+    renpy.exports.mode('with')
         
     return renpy.game.interface.do_with(trans, paired, clear=clear)
 

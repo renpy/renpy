@@ -7,12 +7,9 @@ Modes
 In Ren'Py, a mode is a concise way of describing the type of an
 interaction. When a mode is reported to Ren'Py, user-defined callbacks
 can be run. These calbacks can be used to react to a change in mode,
-perhaps by reconfiguring the user interface. For example, one can:
-
-* Automatically hide the dialogue window before transitions, and show
-  it again once the transition is complete.
-* Cause a transition to occur when switching from ADV-mode to
-  NVL-mode, or vice-versa.
+perhaps by reconfiguring the user interface. For example, one can
+cause a transition to occur when switching from ADV-mode to NVL-mode,
+or when going to a menu, etc.
 
 The goal of the mode systems is to provide a powerful and flexible
 way of detecting and responding to these changes.
@@ -44,11 +41,15 @@ pause
     The mode Ren'Py enters when :func:`renpy.pause` is run. This is
     also the mode Ren'Py is in when a ``pause`` statement of indefinite
     duration occurs.
-
+    
 with
     The mode Ren'Py enters when a transition introduced by the ``with``
     statement occurs. This is also used for ``pause`` statement with
     a duration specified.
+
+    Note that the with mode is entered at the start of the with
+    statement, which is after any preceding scene, show, or hide
+    statements have been run.
 
 screen
     The mode Ren'Py enters when a screen is invoked using the ``call
@@ -97,18 +98,14 @@ no need to actually use it. ::
 
             old = old_modes[0]
 
-            print mode, old
-
             if config.adv_nvl_transition:
                 if mode == "nvl" or mode == "nvl_menu":
                     if old == "say" or old == "menu":
                         nvl_show(config.adv_nvl_transition)
-                        print "Ran show."
 
             if config.nvl_adv_transition:
                 if mode == "say" or mode == "menu":
                     if old == "nvl" or old == "nvl_menu":
                         nvl_hide(config.nvl_adv_transition)
-                        print "Ran hide."
-
+ 
         config.mode_callbacks.append(_nvl_adv_callback)
