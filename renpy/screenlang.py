@@ -567,6 +567,7 @@ ui_properties = [
     Keyword("style"),
     Keyword("style_group"),
     Keyword("focus"),
+    Keyword("default"),
     ]
 
 

@@ -151,7 +151,12 @@ All user interface statements take the following common properties:
     to the screen, then events are delivered to that transform. But if
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
-        
+
+`default`
+
+    If given and true, the displayable is focused by default. Only one
+    displayable should have this.
+    
 `id`
     An identifier for the user-interface statement. When a screen is
     shown, property values can be supplied for the displayables with a
