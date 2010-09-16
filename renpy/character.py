@@ -658,7 +658,8 @@ class ADVCharacter(object):
         # Figure out the arguments to display.
         display_args = self.display_args.copy()
         display_args.update(kwargs)
-                
+        display_args["interact"] = display_args["interact"] and interact
+        
         who = self.name
 
         # If dynamic is set, evaluate the name expression.
