@@ -405,7 +405,6 @@ init -1105 python hide:
              An action that is run when the user chooses no.
          """
 
-
         if renpy.has_screen("yesno_prompt"):
 
             yes_action = [ Hide("yesno_prompt") ]

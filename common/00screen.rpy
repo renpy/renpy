@@ -335,6 +335,7 @@ init -1140 python:
         def __call__(self):
 
             if self.confirm:
+                renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
             else:            
                 renpy.quit()
@@ -1411,7 +1412,7 @@ init -1140 python:
 
 
     # What we do on a quit, by default.
-    config.quit_action = ShowMenu("_confirm_quit")
+    config.quit_action = ui.gamemenus("_confirm_quit")
 
     
 # This is used to ensure a fixed click-to-continue indicator is shown on
