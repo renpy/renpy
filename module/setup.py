@@ -150,7 +150,6 @@ add_library("libz")
 has_libglew = add_library("libGLEW", True)
 has_libglew32 = add_library("libglew32", True)
 
-
 cython("_renpy")
 cython("_renpybidi")
 cython("_renpy_pysdlgl")
@@ -239,7 +238,6 @@ if has_libglew:
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
-
 extensions.append(distutils.core.Extension(
     "_renpy_tegl",
     ["_renpy_tegl.c"],
@@ -256,9 +254,30 @@ extensions.append(distutils.core.Extension(
     library_dirs=library_dirs,
     libraries=glew_libs))
 
+
+def display(name, libs=[]):
+    """
+    Adds code to compile a module that's defined by a cython file in
+    the display directory, and turned into a cython file in this
+    directory by the run.sh script.
+    """
+
+    extensions.append(distutils.core.Extension(
+        "renpy.display." + name,
+        [name + ".c"],
+        extra_compile_args=extra_compile_args,
+        include_dirs=include_dirs,
+        library_dirs=library_dirs,
+        libraries=libs))
+
+display("render")
+
+sys.path.append('..')
+import renpy
+
 distutils.core.setup(
     name = "renpy_module",
-    version = "6.11.0",
+    version = renpy.version[7:],
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },

@@ -360,12 +360,16 @@ def render_screen(root, width, height):
     
     return rv
 
-def compute_subrect((sx, sy), (sw, sh), (cx, cy, cw, ch)):
+def compute_subrect(pos, size, child):
     """
     Computes a sub-rectangle. Takes the source x and y, the source width
     and height, and the clipping rectangle. Returns status, offset, crop.
     """
-    
+
+    (sx, sy) = pos
+    (sw, sh) = size
+    (cx, cy, cw, ch) = child
+        
     # The coordinates of the upper-left corner of the source
     # rectangle inside the clipping rectange.
     ulx = sx - cx
@@ -518,7 +522,7 @@ class Render(object):
         return "<Render %x %s of %r>" % (id(self), dead, self.render_of)
 
         
-    def blit(self, source, (xo, yo), focus=True, main=True, index=None):
+    def blit(self, source, pos, focus=True, main=True, index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -529,6 +533,8 @@ class Render(object):
         This will only blit on integer pixel boundaries.
         """
 
+        (xo, yo) = pos
+        
         if source is self:
             raise Exception("Blitting to self.")
         
@@ -548,7 +554,7 @@ class Render(object):
         new_parentless.discard(source)
 
         
-    def subpixel_blit(self, source, (xo, yo), focus=True, main=True, index=None):
+    def subpixel_blit(self, source, pos, focus=True, main=True, index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -559,6 +565,8 @@ class Render(object):
         This blits at fractional pixel boundaries.
         """
 
+        (xo, yo) = pos
+        
         xo = float(xo)
         yo = float(yo)
         

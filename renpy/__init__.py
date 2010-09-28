@@ -22,6 +22,8 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
+import os
+
 # Some version numbers and things.
 
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
@@ -64,6 +66,13 @@ def import_all():
     import renpy.display.pgrender
     import renpy.display.scale # Must be before module.
     import renpy.display.module
+
+    # Now that render is pre-compiled, we want to use the
+    # location of renpy.display.module to find it.
+    import _renpy
+    libexec = os.path.dirname(_renpy.__file__)
+    renpy.display.__path__.insert(0, os.path.join(libexec, "renpy", "display"))
+    
     import renpy.display.render # Most display stuff depends on this.
 
     import renpy.display.core # object
