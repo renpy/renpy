@@ -67,3 +67,9 @@ lib/windows-x86
 sphinx/source/inc/*
 doc/*
 updates/prerelease
+module/render.c
+module/_renpy.c
+module/_renpy_pysdlgl.c
+module/_renpybidi.c
+module/sound.c
+module/winmixer.c

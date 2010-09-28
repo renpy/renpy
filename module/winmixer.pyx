@@ -45,7 +45,7 @@ cdef uint_to_vol(unsigned int u):
     v1 = u & 0xffff
     v2 = u >> 16
     
-    return (v1 + v2) / 2.0 / 0xffff
+    return (v1 + v2) / 2.0 / 65535
 
 midi_dev = None
 wave_dev = None
