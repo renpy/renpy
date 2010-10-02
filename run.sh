@@ -13,13 +13,15 @@ display () {
 
     if [ renpy/display/$1.pyx -nt module/$1.c ]; then
         echo renpy.display.$1 is out of date.
-        try cython renpy/display/$1.pyx -o module/$1.c
+        try cython -a renpy/display/$1.pyx -o module/$1.c
     fi
 }
 
 # Build the modules. To build a new module, it must be listed here
 # and in module/setup.py
 display render
+
+echo Compiling...
 
 # Build the module, then come back here and run Ren'Py.
 try cd module

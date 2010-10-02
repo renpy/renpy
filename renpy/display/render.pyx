@@ -24,15 +24,12 @@ import pygame
 import threading
 import renpy
 
+cdef class Render
 
 # We grab the blit lock each time it is necessary to blit
 # something. This allows call to the pygame.transform functions to
 # disable blitting, should it prove necessary.
 blit_lock = threading.Condition()
-
-# The number of living renders. (That is, the number that have been
-# constructed, but not had kill() called.
-render_count = 0
 
 # This is a dictionary containing all the renders that we know of. It's a
 # map from displayable to dictionaries containing the render of that
@@ -45,39 +42,17 @@ redraw_queue = [ ]
 # The render returned from render_screen.
 screen_render = None
 
-# The previous render returned from render_screen. We keep this around
-# so that we can kill it when we render the next screen.
-old_screen_render = None
-
-# Two sets of renders that have no parents, for the new and old frames.
-# Renders get added to these sets, and then removed when added to something.
-# If they're in old_parentless at the end of a render, they get killed. 
-new_parentless = set()
-old_parentless = set()
+# A list of renders the system knows about, and thinks are still alive.
+cdef list live_renders
+live_renders = [ ]
 
 def free_memory():
     """
     Frees memory used by the render system.
     """
 
-    global screen_render
-    global old_parentless
-    global new_parentless
-
-    if screen_render:
-        screen_render.refcount -= 1
-        screen_render.kill()
-        screen_render = None
-
-    for i in new_parentless:
-        i.kill()
-
-    for i in old_parentless:
-        i.kill()
-
-    old_parentless = set()
-    new_parentless = set()
-        
+    # TODO: Rewrite me.
+    
     render_cache.clear()
 
 
@@ -90,11 +65,7 @@ def check_at_shutdown():
     if not renpy.config.developer:
         return
 
-    free_memory()
-
-    if render_count != 0:
-        raise Exception("Render count is %d at shutdown. This probably indicates a memory leak bug in Ren'Py." % render_count)
-
+    # TODO: Rewrite or remove me.
     
 def render(d, width, height, st, at):
     """
@@ -151,9 +122,6 @@ def render(d, width, height, st, at):
 
     render_cache[d][wh] = rv
     render_cache[d][orig_wh] = rv
-
-    old_parentless.discard(rv)
-    new_parentless.add(rv)
 
     return rv
 
@@ -273,33 +241,6 @@ class Matrix2D(object):
     
 IDENTITY = Matrix2D(1, 0, 0, 1)
 
-def kill_old_screen():
-    """
-    Kills the old screen if it's different from the current screen.
-    """
-
-    global old_parentless
-    global new_parentless
-    global old_screen_render
-    
-    if old_screen_render is None:
-        return
-
-    old_screen_render.refcount -= 1
-    
-    if old_screen_render is screen_render:
-        return
-        
-    old_screen_render.kill()
-    old_screen_render = None
-
-    for i in old_parentless:
-        i.kill()
-
-    old_parentless = new_parentless
-    new_parentless = set()
-
-    
 def take_focuses(focuses):
     """
     Adds a list of rectangular focus regions to the focuses list.
@@ -348,17 +289,48 @@ def render_screen(root, width, height):
     global screen_render
     global invalidated
     
-    old_screen_render = screen_render
-    
     rv = render(root, width, height, 0, 0)
     screen_render = rv
-    screen_render.refcount += 1
     
     invalidated = False
 
     rv.is_opaque()
     
     return rv
+
+def mark_sweep():
+    """
+    This performs mark-and-sweep garbage collection on the live_renders
+    list.
+    """
+
+    global live_renders
+
+    cdef list worklist
+    cdef int i
+    cdef Render r, j
+    
+    worklist = [ screen_render ]
+    i = 0
+
+    while i < len(worklist):
+        r = worklist[i]
+
+        for j in r.depends_on_list:
+            if not j.mark:
+                j.mark = True
+                worklist.append(j)
+
+        i += 1
+
+    for r in live_renders:
+        if not r.mark:
+            r.kill_cache()
+        else:
+            r.mark = None
+
+    live_renders = worklist
+
 
 def compute_subrect(pos, size, child):
     """
@@ -406,9 +378,40 @@ DISSOLVE = 1
 IMAGEDISSOLVE = 2
 PIXELLATE = 3
 
-class Render(object):
+cdef class Render:
+
+    cdef public bint mark, cache_killed
+
+    cdef public int width, height
+    cdef public object layer_name
+
+    cdef public list children
+    cdef public set parents
+    cdef public list depends_on_list
+
+    cdef public int operation
+    cdef public float operation_complete
+    cdef public bint operation_alpha
+    cdef public object operation_parameter
+
+    cdef public object forward, reverse
+    cdef public float alpha
     
-    def __init__(self, width, height, draw_func=None, layer_name=None, opaque=None):
+    cdef public list focuses
+    cdef public list pass_focuses
+    cdef public object draw_func
+    cdef public object render_of
+    
+    cdef public bint opaque
+    cdef public list visible_children
+
+    cdef public bint clipping
+
+    cdef public object surface, alpha_surface, half_cache
+
+    cdef public bint modal
+    
+    def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None):
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -417,9 +420,14 @@ class Render(object):
         layer.
         """
 
-        global render_count
-        render_count += 1
+        # The mark bit, used for mark/sweep-style garbage collection of
+        # renders.
+        self.mark = False
 
+        # Is has this render been removed from the cache?
+        self.cache_killed = False
+        
+        
         self.width = width
         self.height = height
 
@@ -429,19 +437,13 @@ class Render(object):
         # back to front.
         self.children = [ ]
 
-        # A list of Renders that are the parents of this Render. (We need
-        # to kill these when this Render is redrawn.)
+        # The set of renders that either have us as children, or depend on
+        # us.
         self.parents = set()
 
-        # A list of additional surfaces that we depend on. (Like children)
-        self.depends_on_set = set()
+        # The renders we depend on, including our children.
+        self.depends_on_list = [ ]
         
-        # A list of surfaces that depend on us.
-        self.depends_on_us = set()
-
-        # len(self.parents) + len(self.depends_on_us)
-        self.refcount = 0
-
         # The operation we're performing. (BLIT, DISSOLVE, OR IMAGE_DISSOLVE)
         self.operation = BLIT
 
@@ -477,12 +479,6 @@ class Render(object):
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
 
-        # Is has this render been removed from the cache?
-        self.cache_killed = False
-        
-        # Is this render dead?
-        self.dead = False
-
         # If set, this is a function that's called to draw this render
         # instead of the default.
         self.draw_func = draw_func
@@ -511,6 +507,7 @@ class Render(object):
         # Are we modal?
         self.modal = False
         
+        live_renders.append(self)
         
     def __repr__(self):
 
@@ -545,13 +542,10 @@ class Render(object):
             self.children.append((source, xo, yo, focus, main))
         else:
             self.children.insert(index, (source, xo, yo, focus, main))
-            
-            
+                    
         if isinstance(source, Render):
+            self.depends_on_list.append(source)
             source.parents.add(self)
-            source.refcount += 1
-
-        new_parentless.discard(source)
 
         
     def subpixel_blit(self, source, pos, focus=True, main=True, index=None):
@@ -576,11 +570,8 @@ class Render(object):
             self.children.insert(index, (source, xo, yo, focus, main))
                         
         if isinstance(source, Render):
+            self.depends_on_list.append(source)
             source.parents.add(self)
-            source.refcount += 1
-
-        new_parentless.discard(source)
-
         
     def get_size(self):
         """
@@ -631,8 +622,7 @@ class Render(object):
             self.is_opaque()
 
             rv = renpy.display.draw.render_to_texture(self, alpha)
-
-
+            
         # Stash and return the surface.
         if alpha:
             self.alpha_surface = rv
@@ -725,16 +715,12 @@ class Render(object):
 
         if source is self:
             raise Exception("Render depends on itself.")
-        
-        if source not in self.depends_on_set:
-            self.depends_on_set.add(source)
-            source.depends_on_us.add(self)
-            source.refcount += 1
 
+        self.depends_on_list.append(source)
+        source.parents.add(self)
+        
         if focus:
             self.pass_focuses.append(source)
-
-        new_parentless.discard(source)
 
         
     def kill_cache(self):
@@ -749,9 +735,12 @@ class Render(object):
 
         for i in self.parents:
             i.kill_cache()
+
+        self.parents = None
                 
-        for i in self.depends_on_us:
-            i.kill_cache()
+        for i in self.depends_on_list:
+            if not i.cache_killed:
+                i.parents.discard(self)
 
         for ro in self.render_of:
             cache = render_cache[ro]
@@ -761,45 +750,11 @@ class Render(object):
                     
             if not cache:
                 del render_cache[ro]
-            
+
     def kill(self):
         """
-        Removes this Render from its children, and kills those children if
-        doing so causes their refcount to fall to 0.
+        Retained for compatibility.
         """
-
-        if self.dead:
-            return
-
-        if self.refcount > 0:
-            return
-        
-        self.dead = True
-            
-        global render_count
-        render_count -= 1
-
-        for c, xo, yo, focus, main in self.children:
-
-            if not isinstance(c, Render):
-                continue
-            
-            # We could be added to c.parents twice, but we'll only show
-            # up once. (But twice in the refcount.) 
-            c.parents.discard(self)
-            c.refcount -= 1
-            
-            if c.refcount == 0:
-                c.kill()
-                
-        for c in self.depends_on_set:
-            c.depends_on_us.remove(self)
-            c.refcount -= 1
-
-            if c.refcount == 0:
-                c.kill()
-
-        self.kill_cache()
                 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """

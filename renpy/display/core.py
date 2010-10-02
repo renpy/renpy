@@ -1310,7 +1310,7 @@ class Interface(object):
 
         renpy.display.draw.draw_screen(surftree, fullscreen_video)
         
-        renpy.display.render.kill_old_screen()
+        renpy.display.render.mark_sweep()
         renpy.display.focus.take_focuses()
 
         self.surftree = surftree
