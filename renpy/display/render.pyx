@@ -1,3 +1,5 @@
+#cython: profile=True
+
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -46,6 +48,10 @@ screen_render = None
 cdef list live_renders
 live_renders = [ ]
 
+# A copy of renpy.display.interface.frame_time, for speed reasons.
+cdef float frame_time
+frame_time = 0
+
 def free_memory():
     """
     Frees memory used by the render system.
@@ -67,7 +73,7 @@ def check_at_shutdown():
 
     # TODO: Rewrite or remove me.
     
-def render(d, width, height, st, at):
+cpdef render(d, object widtho, object heighto, float st, float at):
     """
     Causes the displayable `d` to be rendered in an area of size
     width, height.  st and at are the times of this render, but once
@@ -75,13 +81,23 @@ def render(d, width, height, st, at):
     to be redrawn.
     """
 
-    ft = renpy.game.interface.frame_time 
+    cdef int width, height
+    cdef int orig_width, orig_height
+    cdef tuple orig_wh, wh
+    cdef dict render_cache_d
+    cdef Render rv
     
-    orig_wh = (width, height, ft-st, ft-at)
-    rv = render_cache[d].get(orig_wh, None)
+    orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
+
+    render_cache_d = render_cache[d]
+    rv = render_cache_d.get(orig_wh, None)
+
     if rv is not None:
         return rv
 
+    orig_width = width = widtho
+    orig_height = height = heighto
+    
     style = d.style
     xmaximum = style.xmaximum
     ymaximum = style.ymaximum
@@ -102,17 +118,20 @@ def render(d, width, height, st, at):
         width = 0
     if height < 0:
         height = 0
-            
-    wh = (width, height, ft-st, ft-at)
-            
-    rv = render_cache[d].get(wh, None)
-    if rv is not None:
-        return rv
 
-    rv = d.render(width, height, st, at)
+    if orig_width != width or orig_height != height:        
+        widtho = width
+        heighto = height
+        wh = (widtho, heighto, frame_time-st, frame_time-at)
+        rv = render_cache_d.get(wh, None)
 
-    if rv is None:
-        print d.style.parent, d.style, d.style.box_layout, d.style.name
+        if rv is not None:
+            return rv
+
+    else:
+        wh = orig_wh
+            
+    rv = d.render(widtho, heighto, st, at)
 
     rv.render_of.append(d)
 
@@ -120,8 +139,10 @@ def render(d, width, height, st, at):
         rv = rv.subsurface((0, 0, rv.width, rv.height), focus=True)
         rv.render_of.append(d)
 
-    render_cache[d][wh] = rv
-    render_cache[d][orig_wh] = rv
+    render_cache_d[wh] = rv
+
+    if wh is not orig_wh:
+        render_cache_d[orig_wh] = rv
 
     return rv
 
@@ -285,9 +306,14 @@ def render_screen(root, width, height):
     `width` and `height`.
     """
 
+
+    
     global old_screen_render
     global screen_render
     global invalidated
+    global frame_time
+
+    frame_time = renpy.display.interface.frame_time
     
     rv = render(root, width, height, 0, 0)
     screen_render = rv
@@ -471,10 +497,10 @@ cdef class Render:
         self.alpha = 1
         
         # A list of focus regions in this displayable.
-        self.focuses = [ ]
+        self.focuses = None
 
         # Other renders that we should pass focus onto.
-        self.pass_focuses = [ ]
+        self.pass_focuses = None
         
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
@@ -668,7 +694,7 @@ cdef class Render:
                 
             rv.blit(child, offset, focus=cfocus, main=cmain)
 
-        if focus:
+        if focus and self.focuses:
 
             for (d, arg, xo, yo, fw, fh, mx, my, mask) in self.focuses:
 
@@ -720,7 +746,10 @@ cdef class Render:
         source.parents.add(self)
         
         if focus:
-            self.pass_focuses.append(source)
+            if self.pass_focuses is None:
+                self.pass_focuses = [ source ]
+            else:            
+                self.pass_focuses.append(source)
 
         
     def kill_cache(self):
@@ -771,8 +800,13 @@ cdef class Render:
 
         if mask is not None and mask is not self:
             self.depends_on(mask)
+
+        t = (d, arg, x, y, w, h, mx, my, mask)
             
-        self.focuses.append((d, arg, x, y, w, h, mx, my, mask))
+        if self.focuses is None:
+            self.focuses = [ t ]
+        else:
+            self.focuses.append(t)
 
     def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
         """
@@ -792,29 +826,31 @@ cdef class Render:
         if self.reverse:
             reverse = reverse * self.reverse
 
-        for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
+        if self.focuses:
 
-            if xo is None:
-                focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None)) 
-                continue
-                
-            x1, y1 = reverse.transform(xo, yo)
-            x2, y2 = reverse.transform(xo + w, yo + h)
+            for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
-            minx = min(x1, x2) + x
-            miny = min(y1, y2) + y
-            maxx = max(x1, x2) + x
-            maxy = max(y1, y2) + y
+                if xo is None:
+                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None)) 
+                    continue
 
-            minx = max(minx, cminx)
-            miny = max(miny, cminy)
-            maxx = min(maxx, cmaxx)
-            maxy = min(maxy, cmaxy)
+                x1, y1 = reverse.transform(xo, yo)
+                x2, y2 = reverse.transform(xo + w, yo + h)
 
-            if minx >= maxx or miny >= maxy:
-                continue
-            
-            focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny)) 
+                minx = min(x1, x2) + x
+                miny = min(y1, y2) + y
+                maxx = max(x1, x2) + x
+                maxy = max(y1, y2) + y
+
+                minx = max(minx, cminx)
+                miny = max(miny, cminy)
+                maxx = min(maxx, cmaxx)
+                maxy = min(maxy, cmaxy)
+
+                if minx >= maxx or miny >= maxy:
+                    continue
+
+                focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny)) 
 
         if self.clipping:
             cminx = max(cminx, x)
@@ -829,8 +865,9 @@ cdef class Render:
             xo, yo = reverse.transform(xo, yo)
             child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x + xo, y + yo, focuses)
 
-        for child in self.pass_focuses:
-            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
+        if self.pass_focuses:
+            for child in self.pass_focuses:
+                child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
         
     def focus_at_point(self, x, y):
         """
@@ -842,24 +879,25 @@ cdef class Render:
                 return None
         
         rv = None
-        
-        for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
-            if xo is None:
-                continue
-            
-            elif mx is not None:
-                cx = x - mx
-                cy = y - my
+        if self.focuses:
+            for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
-                if self.forward:
-                    cx, cy = self.forward.transform(cx, cy)
+                if xo is None:
+                    continue
 
-                if mask.is_pixel_opaque(cx, cy):
+                elif mx is not None:
+                    cx = x - mx
+                    cy = y - my
+
+                    if self.forward:
+                        cx, cy = self.forward.transform(cx, cy)
+
+                    if mask.is_pixel_opaque(cx, cy):
+                        rv = d, arg
+
+                elif xo <= x < xo + w and yo <= y < yo + h:
                     rv = d, arg
-                    
-            elif xo <= x < xo + w and yo <= y < yo + h:
-                rv = d, arg
             
         for child, xo, yo, focus, main in self.children:
 
@@ -876,10 +914,11 @@ cdef class Render:
             if cf is not None:
                 rv = cf
 
-        for child in self.pass_focuses:
-            cf = child.focus_at_point(x, y)
-            if cf is not None:
-                rv = cf
+        if self.pass_focuses:
+            for child in self.pass_focuses:
+                cf = child.focus_at_point(x, y)
+                if cf is not None:
+                    rv = cf
 
         if rv is None and self.modal:
             rv = Modal
