@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from gl cimport *
+
 import collections
 import pygame; pygame # other modules might depend on pygame.
 
@@ -400,12 +402,14 @@ class TextureGrid(object):
         return self.width, self.height
 
     
-    def subsurface(self, (x, y, w, h)):
+    def subsurface(self, rect):
         """
         This produces a texture grid containing a rectangle "cut out"
         of this texture grid.
         """
 
+        (x, y, w, h) = rect
+        
         rv = TextureGrid(w, h)
 
         rv.rows, rowtiles = compute_subrow(self.rows, y, h)
@@ -509,20 +513,6 @@ def compute_tiling(width, max_size=MAX_SIZE):
     return row, tiles
 
 
-def first_last(l):
-    """
-    Iterates over list l. Yields (first, last, item) triples, where first
-    and last are true if the item is the first or last element in l,
-    respectively.
-    """
-
-    n = len(l)
-    
-    for i in range(n):
-        first = (i == 0)
-        last = (i == n - 1)
-        yield first, last, l[i]
-
 def texture_grid_from_surface(surf):    
     """
     This takes a Surface and turns it into a TextureGrid.
@@ -535,11 +525,26 @@ def texture_grid_from_surface(surf):
     rv.columns, texcolumns = compute_tiling(width)
     rv.rows, texrows = compute_tiling(height)
 
-    for border_top, border_bottom, (y, height, texheight) in first_last(texrows):
+    rownum = 0
+    lastrow = len(texrows) - 1
+    lastcol = len(texcolumns) - 1
+    
+    for y, height, texheight in texrows:
+
+        border_top = (rownum == 0)
+        border_bottom = (rownum == lastrow)
+        rownum += 1
+        
         row = [ ]
-            
-        for border_left, border_right, (x, width, texwidth) in first_last(texcolumns):
-            
+
+        colnum = 0
+        
+        for x, width, texwidth in texcolumns:
+
+            border_left = (colnum == 0)
+            border_right = (colnum == lastcol)
+            colnum += 1
+
             tex = alloc_texture(texwidth, texheight)
             tex.load_surface(surf, x, y, width, height,
                              border_left, border_top, border_right, border_bottom)
@@ -561,7 +566,8 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
     
     rv = TextureGrid(width, height)
 
-    pwidth, pheight = renpy.display.draw.physical_size
+    gldraw = renpy.display.draw    
+    pwidth, pheight = gldraw.physical_size
     
     rv.columns, texcolumns = compute_tiling(width, pwidth)
     rv.rows, texrows = compute_tiling(height, pheight)
@@ -792,17 +798,18 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
         y += t0h
 
 
-def draw_rectangle(
-    sx,
-    sy,
-    x,
-    y,
-    w,
-    h,
+cdef draw_rectangle(
+    double sx,
+    double sy,
+    double x,
+    double y,
+    double w,
+    double h,
     transform,
-    tex0, tex0x, tex0y,
-    tex1, tex1x, tex1y,
-    tex2, tex2x, tex2y):
+    tex0, int tex0x, int tex0y,
+    tex1, int tex1x, int tex1y,
+    tex2, int tex2x, int tex2y,
+    ):
 
     """
     This draws a rectangle (textured with up to four textures) to the
@@ -831,35 +838,42 @@ def draw_rectangle(
         Texture offset to apply to the given side of the texture.
     """
 
-    gl.Disable(gl.POLYGON_SMOOTH)
+    # Do we have the given texture?
+    cdef int has_tex0, has_tex1, has_tex2
+
+    # Texture coordinates.
+    cdef double t0u0, t0v0, t0u1, t0v1
+    cdef double t1u0, t1v0, t1u1, t1v1
+    cdef double t2u0, t2v0, t2u1, t2v1    
     
     # Pull apart the transform.
-    xdx = transform.xdx
-    xdy = transform.xdy
-    ydx = transform.ydx
-    ydy = transform.ydy
+    cdef double xdx = transform.xdx
+    cdef double xdy = transform.xdy
+    cdef double ydx = transform.ydx
+    cdef double ydy = transform.ydy
 
     # Transform the vertex coordinates to screen-space.
-    x0 = (x + 0) * xdx + (y + 0) * xdy + sx
-    y0 = (x + 0) * ydx + (y + 0) * ydy + sy
+    cdef double x0 = (x + 0) * xdx + (y + 0) * xdy + sx
+    cdef double y0 = (x + 0) * ydx + (y + 0) * ydy + sy
 
-    x1 = (x + w) * xdx + (y + 0) * xdy + sx
-    y1 = (x + w) * ydx + (y + 0) * ydy + sy
+    cdef double x1 = (x + w) * xdx + (y + 0) * xdy + sx
+    cdef double y1 = (x + w) * ydx + (y + 0) * ydy + sy
 
-    x2 = (x + 0) * xdx + (y + h) * xdy + sx
-    y2 = (x + 0) * ydx + (y + h) * ydy + sy
+    cdef double x2 = (x + 0) * xdx + (y + h) * xdy + sx
+    cdef double y2 = (x + 0) * ydx + (y + h) * ydy + sy
 
-    x3 = (x + w) * xdx + (y + h) * xdy + sx
-    y3 = (x + w) * ydx + (y + h) * ydy + sy
+    cdef double x3 = (x + w) * xdx + (y + h) * xdy + sx
+    cdef double y3 = (x + w) * ydx + (y + h) * ydy + sy
 
     # Compute the texture coordinates, and set up the textures.
+    cdef double xadd, yadd, xmul, ymul
 
     if tex0 is not None:
 
         has_tex0 = 1
 
-        gl.ActiveTextureARB(gl.TEXTURE0_ARB)
-        gl.BindTexture(gl.TEXTURE_2D, tex0.number)
+        glActiveTextureARB(GL_TEXTURE0_ARB)
+        glBindTexture(GL_TEXTURE_2D, tex0.number)
         
         xadd = tex0.xadd
         yadd = tex0.yadd
@@ -878,8 +892,8 @@ def draw_rectangle(
 
         has_tex1 = 1
 
-        gl.ActiveTextureARB(gl.TEXTURE1_ARB)
-        gl.BindTexture(gl.TEXTURE_2D, tex1.number)
+        glActiveTextureARB(GL_TEXTURE1_ARB)
+        glBindTexture(GL_TEXTURE_2D, tex1.number)
         
         xadd = tex1.xadd
         yadd = tex1.yadd
@@ -898,8 +912,8 @@ def draw_rectangle(
 
         has_tex2 = 1
 
-        gl.ActiveTextureARB(gl.TEXTURE2_ARB)
-        gl.BindTexture(gl.TEXTURE_2D, tex2.number)
+        glActiveTextureARB(GL_TEXTURE2_ARB)
+        glBindTexture(GL_TEXTURE_2D, tex2.number)
         
         xadd = tex2.xadd
         yadd = tex2.yadd
@@ -914,49 +928,41 @@ def draw_rectangle(
     else:
         has_tex2 = 0
 
+
     # Now, actually draw the textured rectangle.
 
-    gl.Begin(gl.TRIANGLE_STRIP)
+    glBegin(GL_TRIANGLE_STRIP)
 
     if has_tex0:
-        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u0, t0v0)
+        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u0, t0v0)
     if has_tex1:
-        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u0, t1v0)
+        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u0, t1v0)
     if has_tex2:
-        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u0, t2v0)
-    gl.Vertex2f(x0, y0)
+        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u0, t2v0)
+    glVertex2f(x0, y0)
 
     if has_tex0:
-        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u1, t0v0)
+        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u1, t0v0)
     if has_tex1:
-        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u1, t1v0)
+        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u1, t1v0)
     if has_tex2:
-        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u1, t2v0)
-    gl.Vertex2f(x1, y1)
+        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u1, t2v0)
+    glVertex2f(x1, y1)
 
     if has_tex0:
-        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u0, t0v1)
+        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u0, t0v1)
     if has_tex1:
-        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u0, t1v1)
+        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u0, t1v1)
     if has_tex2:
-        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u0, t2v1)
-    gl.Vertex2f(x2, y2)
+        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u0, t2v1)
+    glVertex2f(x2, y2)
 
     if has_tex0:
-        gl.MultiTexCoord2fARB(gl.TEXTURE0_ARB, t0u1, t0v1)
+        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u1, t0v1)
     if has_tex1:
-        gl.MultiTexCoord2fARB(gl.TEXTURE1_ARB, t1u1, t1v1)
+        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u1, t1v1)
     if has_tex2:
-        gl.MultiTexCoord2fARB(gl.TEXTURE2_ARB, t2u1, t2v1)
-    gl.Vertex2f(x3, y3)
-
-    gl.End()
-
+        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u1, t2v1)
+    glVertex2f(x3, y3)
     
-C_DRAW = True
-    
-if C_DRAW:
-    if pysdlgl:
-        draw_rectangle = pysdlgl.draw_rectangle
-else:
-    print "Warning: Draw not using C code."
+    glEnd()

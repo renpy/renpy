@@ -49,7 +49,7 @@ cdef list live_renders
 live_renders = [ ]
 
 # A copy of renpy.display.interface.frame_time, for speed reasons.
-cdef float frame_time
+cdef double frame_time
 frame_time = 0
 
 def free_memory():
@@ -73,7 +73,7 @@ def check_at_shutdown():
 
     # TODO: Rewrite or remove me.
     
-cpdef render(d, object widtho, object heighto, float st, float at):
+cpdef render(d, object widtho, object heighto, double st, double at):
     """
     Causes the displayable `d` to be rendered in an area of size
     width, height.  st and at are the times of this render, but once
@@ -406,37 +406,6 @@ PIXELLATE = 3
 
 cdef class Render:
 
-    cdef public bint mark, cache_killed
-
-    cdef public int width, height
-    cdef public object layer_name
-
-    cdef public list children
-    cdef public set parents
-    cdef public list depends_on_list
-
-    cdef public int operation
-    cdef public float operation_complete
-    cdef public bint operation_alpha
-    cdef public object operation_parameter
-
-    cdef public object forward, reverse
-    cdef public float alpha
-    
-    cdef public list focuses
-    cdef public list pass_focuses
-    cdef public object draw_func
-    cdef public object render_of
-    
-    cdef public bint opaque
-    cdef public list visible_children
-
-    cdef public bint clipping
-
-    cdef public object surface, alpha_surface, half_cache
-
-    cdef public bint modal
-    
     def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None):
         """
         Creates a new render corresponding to the given widget with

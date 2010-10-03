@@ -1,3 +1,4 @@
+#cython: profile=True
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -19,8 +20,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+from renpy.display.render cimport Render
+from gl cimport *
+
 import renpy
-from renpy.display.render import IDENTITY, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
+
+cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
+DISSOLVE = renpy.display.render.DISSOLVE
+IMAGEDISSOLVE = renpy.display.render.IMAGEDISSOLVE
+PIXELLATE = renpy.display.render.PIXELLATE
+
+from renpy.display.render import IDENTITY
 
 import pygame
 import os
@@ -45,6 +56,20 @@ except ImportError:
     gl = None
     pysdlgl = None
     
+
+cdef gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
+    """
+    Utility function that takes care of setting up an OpenGL clip plane.
+    """
+
+    cdef GLdouble equation[4]
+
+    equation[0] = a
+    equation[1] = b
+    equation[2] = c
+    equation[3] = d
+    glClipPlane(plane, equation)
+        
 
 # A list of cards that cause system/software crashes. There's no
 # reason to put merely slow or incapable cards here, only ones for
@@ -76,7 +101,7 @@ def open_log_file():
             log_file = None
             
 
-class GLDraw(object):
+cdef class GLDraw:
 
     def __init__(self):
 
@@ -499,22 +524,20 @@ class GLDraw(object):
     
 
     # private
-    def set_clip(self, clip):
+    cpdef set_clip(self, clip):
 
         if self.clip_cache == clip:
             return
 
         self.clip_cache = clip
 
+        cdef double minx, miny, maxx, maxy
         minx, miny, maxx, maxy = clip
-        
-        # OpenGL clipping works by only allowing coordinates where:
-        # a*x + b*y + c*z + d >= 0. 
-        
-        gl.ClipPlane(gl.CLIP_PLANE0, [1.0, 0.0, 0.0, -minx])
-        gl.ClipPlane(gl.CLIP_PLANE1, [0.0, 1.0, 0.0, -miny])
-        gl.ClipPlane(gl.CLIP_PLANE2, [-1.0, 0.0, 0.0, maxx])
-        gl.ClipPlane(gl.CLIP_PLANE3, [0.0, -1.0, 0.0, maxy])
+
+        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
+        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
+        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
+        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
         
         
     def draw_screen(self, surftree, fullscreen_video):
@@ -609,8 +632,10 @@ class GLDraw(object):
         if render_what:
             what.render_to_texture(True)
 
-    def draw_transformed(self, what, clip, xo, yo, alpha, forward, reverse):
+    cpdef draw_transformed(self, object what, tuple clip, double xo, double yo, double alpha, forward, reverse):
 
+        cdef Render rend
+        
         if isinstance(what, gltexture.TextureGrid):
 
             self.set_clip(clip)
@@ -625,61 +650,62 @@ class GLDraw(object):
 
             return
 
-        if not isinstance(what, renpy.display.render.Render):
-            raise Exception("Unknown drawing type. " + repr(what))
-
         if isinstance(what, renpy.display.pgrender.Surface):
             tex = self.load_texture(what)
             self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
             return
 
+        if not isinstance(what, renpy.display.render.Render):
+            raise Exception("Unknown drawing type. " + repr(what))
+
+        rend = what
+        
         # Other draw modes.
         
-        if what.operation == DISSOLVE:
+        if rend.operation == DISSOLVE:
 
             self.set_clip(clip)
             
             gltexture.blend(
-                what.children[0][0].render_to_texture(what.operation_alpha),
-                what.children[1][0].render_to_texture(what.operation_alpha),
+                rend.children[0][0].render_to_texture(what.operation_alpha),
+                rend.children[1][0].render_to_texture(what.operation_alpha),
                 xo,
                 yo,
                 reverse,
                 alpha,
-                what.operation_complete,
+                rend.operation_complete,
                 self.environ)
 
             return
 
-        elif what.operation == IMAGEDISSOLVE:
+        elif rend.operation == IMAGEDISSOLVE:
 
             self.set_clip(clip)
 
             gltexture.imageblend(
-                what.children[0][0].render_to_texture(True),
-                what.children[1][0].render_to_texture(what.operation_alpha),
-                what.children[2][0].render_to_texture(what.operation_alpha),
+                rend.children[0][0].render_to_texture(True),
+                rend.children[1][0].render_to_texture(what.operation_alpha),
+                rend.children[2][0].render_to_texture(what.operation_alpha),
                 xo,
                 yo,
                 reverse,
                 alpha,
-                what.operation_complete,
-                what.operation_parameter,
+                rend.operation_complete,
+                rend.operation_parameter,
                 self.environ)
 
             return
 
 
-        if what.operation == PIXELLATE:
+        if rend.operation == PIXELLATE:
             self.set_clip(clip)
 
-            p = what.operation_parameter
-            pc = what.children[0][0]
+            p = rend.operation_parameter
+            pc = rend.children[0][0]
             
             while p > 1:
                 p /= 2
                 pc = self.get_half(pc)
-
 
             reverse *= renpy.display.render.Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
                 
@@ -694,6 +720,7 @@ class GLDraw(object):
 
             return
                 
+
         # Compute clipping.
         if what.clipping:
 
@@ -717,27 +744,28 @@ class GLDraw(object):
             clip = (minx, miny, maxx, maxy)
             
         
-        if what.forward and what.forward is not IDENTITY:
-            child_forward = forward * what.forward
-            child_reverse = what.reverse * reverse
-        else:
-            child_forward = forward
-            child_reverse = reverse
-
-        alpha = alpha * what.alpha
+        alpha = alpha * rend.alpha
             
         # If our alpha has hit 0, don't do anything.
         if alpha <= 0.003: # (1 / 256)
             return
 
-        for child, cxo, cyo, focus, main in what.visible_children:
+        if rend.forward and rend.forward is not IDENTITY:
+            child_forward = forward * rend.forward
+            child_reverse = rend.reverse * reverse
+        else:
+            child_forward = forward
+            child_reverse = reverse
 
+        for child, cxo, cyo, focus, main in rend.visible_children:
             cxo, cyo = reverse.transform(cxo, cyo)
             self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha, child_forward, child_reverse)
 
 
-    def render_to_texture(self, what, alpha):
+    def render_to_texture(self_, what, alpha):
 
+        cdef GLDraw self = self_
+        
         forward = reverse = IDENTITY
 
         def draw_func():

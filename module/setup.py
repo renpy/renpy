@@ -13,8 +13,8 @@ except:
 
 
 # These control the level of optimization versus debugging.
-extra_compile_args = [ "-O3", "-funroll-loops" ]
-# extra_compile_args = [ "-O0", "-ggdb" ]
+# extra_compile_args = [ "-O3", "-funroll-loops" ]
+extra_compile_args = [ "-O0", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
 
 # This environment variable should have the full path to the installed
@@ -271,6 +271,9 @@ def display(name, libs=[]):
         libraries=libs))
 
 display("render")
+display("gldraw", glew_libs )
+display("gltexture", glew_libs)
+display("glenviron", glew_libs)
 
 sys.path.append('..')
 import renpy
