@@ -19,5 +19,17 @@ cdef class GLDraw:
     cdef double upscale_factor
     cdef tuple clip_cache
 
-    cpdef set_clip(self, clip)
-    cpdef draw_transformed(self, object what, tuple clip, double xo, double yo, double alpha, forward, reverse)
+    cpdef set_clip(GLDraw self, tuple clip)
+
+    cpdef int draw_transformed(
+        GLDraw self,
+        object what,
+        tuple clip,
+        double xo,
+        double yo,
+        double alpha,
+        forward,
+        reverse)
+
+    cpdef int draw_render_textures(GLDraw self, what, forward, reverse)
+    

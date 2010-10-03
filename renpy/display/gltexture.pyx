@@ -654,7 +654,7 @@ def align_axes(*args):
     return rv
             
 
-cpdef blit(TextureGrid tg, int sx, int sy, transform, float alpha, environ, bint nearest):
+cpdef blit(TextureGrid tg, double sx, double sy, transform, double alpha, environ, bint nearest):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -697,7 +697,7 @@ cpdef blit(TextureGrid tg, int sx, int sy, transform, float alpha, environ, bint
         y += texh
 
  
-cpdef blend(TextureGrid tg0, TextureGrid tg1, int sx, int sy, transform, float alpha, float fraction, environ):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, transform, double alpha, double fraction, environ):
     """
     Blends two textures to the screen.
 
@@ -751,7 +751,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, int sx, int sy, transform, float a
         y += t0h
 
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, int sx, int sy, transform, float alpha, float fraction, int ramp, environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, transform, double alpha, double fraction, int ramp, environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
