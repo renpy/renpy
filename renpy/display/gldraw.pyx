@@ -58,7 +58,7 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
-cdef gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
+cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
     """
     Utility function that takes care of setting up an OpenGL clip plane.
     """
@@ -598,8 +598,8 @@ cdef class GLDraw:
         if not isinstance(what, render.Render):
             return 0
 
-        rend = what
-        
+        rend = <render.Render> what        
+
         render_what = False
 
         if rend.clipping:

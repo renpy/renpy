@@ -440,6 +440,10 @@ mode_callbacks = [ ]
 # Should MoveTransition take offsets into account?
 movetransition_respects_offsets = True
 
+# Do we care about the pos and anchor attributes of an ImageReference's
+# style?
+imagereference_respects_position = False
+
 del renpy
 del os
 

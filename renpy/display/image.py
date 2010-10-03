@@ -140,6 +140,9 @@ class ImageReference(renpy.display.core.Displayable):
         if not self.target:
             self.find_target()
 
+        if not renpy.config.imagereference_respects_position:
+            return self.target.get_placement()
+            
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.target.get_placement()
 
         if xpos is None:
