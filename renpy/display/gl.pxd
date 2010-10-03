@@ -90,3 +90,6 @@ cdef extern from "GL/glew.h":
         GLenum,
         GLenum,
         void *)
+
+    cdef void glColor4f(GLfloat, GLfloat, GLfloat, GLfloat)
+    

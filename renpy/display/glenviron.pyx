@@ -1,3 +1,4 @@
+#cython: draw=True
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person

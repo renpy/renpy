@@ -646,7 +646,8 @@ cdef class GLDraw:
                 yo,
                 reverse,
                 alpha,
-                self.environ)
+                self.environ,
+                False)
 
             return
 
@@ -716,7 +717,7 @@ cdef class GLDraw:
                 reverse,
                 alpha,
                 self.environ,
-                nearest=True)
+                True)
 
             return
                 
@@ -939,7 +940,8 @@ cdef class GLDraw:
             y,
             IDENTITY,
             1.0,
-            self.environ)
+            self.environ,
+            False)
 
     def screenshot(self):
         fb = renpy.display.pgrender.surface_unscaled(self.physical_size, False)

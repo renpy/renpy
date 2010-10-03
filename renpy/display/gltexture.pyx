@@ -1,3 +1,4 @@
+#cython: profile=True
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -52,14 +53,13 @@ def check_error():
 
 # A list of texture number allocated.
 texture_numbers = [ ]
-    
-class Texture(object):
+
+cdef class TextureCore:
     """
     This object stores information about an OpenGL texture.
     """
-
-    def __init__(self, width, height):
-
+    
+    def __init__(TextureCore self, int width, int height):
 
         # The width and height of this texture.
         self.width = width
@@ -68,7 +68,7 @@ class Texture(object):
         # The number of the OpenGL texture this texture object
         # represents.
         self.generation = 0
-        self.number = None
+        self.number = -1
 
         # True if the texture has been created inside the GPU.
         self.created = False
@@ -85,10 +85,10 @@ class Texture(object):
 
         self.premult = None
         self.premult_size = None
-        self.premult_left = None
-        self.premult_right = None
-        self.premult_top = None
-        self.premult_bottom = None
+        self.premult_left = 0
+        self.premult_right = 0
+        self.premult_top = 0
+        self.premult_bottom = 0
         
         # True if we're in NEAREST mode. False if we're in LINEAR mode.
         self.nearest = False
@@ -103,10 +103,10 @@ class Texture(object):
         # Release the surface.
         self.premult = None
         self.premult_size = None
-        self.premult_left = None
-        self.premult_right = None
-        self.premult_top = None
-        self.premult_bottom = None
+        self.premult_left = 0
+        self.premult_right = 0
+        self.premult_top = 0
+        self.premult_bottom = 0
 
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
@@ -136,7 +136,7 @@ class Texture(object):
         self.premult_size = (w, h)
 
         
-    def make_nearest(self):
+    cdef void make_nearest(TextureCore self):
         """
         Causes this texture to be rendered in nearest-neighbor mode.
         """
@@ -151,7 +151,7 @@ class Texture(object):
         self.nearest = True
 
         
-    def make_linear(self):
+    cdef void make_linear(TextureCore self):
         """
         Causes this texture to be rendered in linear interpolation mode.
         """
@@ -166,7 +166,7 @@ class Texture(object):
         self.nearest = False
         
 
-    def make_ready(self):
+    cdef void make_ready(TextureCore self):
         """
         Makes the texture ready for use.
         """
@@ -253,7 +253,7 @@ class Texture(object):
         This allocates a texture number, if necessary.
         """
 
-        if self.number is not None:
+        if self.number != -1:
             return
         
         texnums = [ 0 ]
@@ -264,6 +264,14 @@ class Texture(object):
         
         texture_numbers.append(texnums[0])
 
+class Texture(TextureCore):
+    """
+    We need to be a real python class, not a C extension, to ensure that
+    the __del__ method is called.
+    """
+
+    pass
+        
         
 # This is a map from texture sizes to a list of free textures of that
 # size.
@@ -282,7 +290,6 @@ def alloc_texture(width, height):
     """
 
     global total_texture_size
-
     
     l = free_textures[width, height]
 
@@ -364,7 +371,7 @@ def compute_subrow(row, offset, width):
     return outrow, tiles
 
 
-class TextureGrid(object):
+cdef class TextureGrid(object):
     """
     This represents one or more textures that cover a rectangular
     area.   
@@ -425,11 +432,14 @@ class TextureGrid(object):
         return rv
 
 
-    def make_ready(self, nearest=False):
+    cdef void make_ready(self, bint nearest):
         """
         Makes ready all the tile-textures in this texture grid.
         """
 
+        cdef list row
+        cdef TextureCore t
+        
         for row in self.tiles:
             for t in row:
                 t.make_ready()
@@ -644,7 +654,7 @@ def align_axes(*args):
     return rv
             
 
-def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
+cpdef blit(TextureGrid tg, int sx, int sy, transform, float alpha, environ, bint nearest):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -655,11 +665,14 @@ def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
     """
 
+    cdef int x, y
+    cdef int texx, texy, texw, texh
+    
     tg.make_ready(nearest)
     
     environ.blit()
-    gl.Color4f(alpha, alpha, alpha, alpha)
-
+    glColor4f(alpha, alpha, alpha, alpha)
+    
     y = 0
 
     for texy, texh, rowindex in tg.rows:
@@ -683,8 +696,8 @@ def blit(tg, sx, sy, transform, alpha, environ, nearest=False):
 
         y += texh
 
-
-def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
+ 
+cpdef blend(TextureGrid tg0, TextureGrid tg1, int sx, int sy, transform, float alpha, float fraction, environ):
     """
     Blends two textures to the screen.
 
@@ -700,11 +713,11 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
     `fraction` is the fraction of the second texture to show.
     """
 
-    tg0.make_ready()
-    tg1.make_ready()
+    tg0.make_ready(False)
+    tg1.make_ready(False)
     
     environ.blend(fraction)
-    gl.Color4f(alpha, alpha, alpha, alpha)
+    glColor4f(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -738,7 +751,7 @@ def blend(tg0, tg1, sx, sy, transform, alpha, fraction, environ):
         y += t0h
 
 
-def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, int sx, int sy, transform, float alpha, float fraction, int ramp, environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -758,12 +771,12 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
 
     """
 
-    tg0.make_ready()
-    tg1.make_ready()
-    tg2.make_ready()
+    tg0.make_ready(False)
+    tg1.make_ready(False)
+    tg2.make_ready(False)
     
     environ.imageblend(fraction, ramp)
-    gl.Color4f(alpha, alpha, alpha, alpha)
+    glColor4f(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -798,7 +811,7 @@ def imageblend(tg0, tg1, tg2, sx, sy, transform, alpha, fraction, ramp, environ)
         y += t0h
 
 
-cdef draw_rectangle(
+cdef void draw_rectangle(
     double sx,
     double sy,
     double x,
@@ -806,9 +819,9 @@ cdef draw_rectangle(
     double w,
     double h,
     transform,
-    tex0, int tex0x, int tex0y,
-    tex1, int tex1x, int tex1y,
-    tex2, int tex2x, int tex2y,
+    TextureCore tex0, float tex0x, float tex0y,
+    TextureCore tex1, float tex1x, float tex1y,
+    TextureCore tex2, float tex2x, float tex2y,
     ):
 
     """
