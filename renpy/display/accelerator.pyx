@@ -21,17 +21,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-from renpy.display.render cimport Render, Matrix2D
-from renpy.display.render import render, IDENTITY
-
 import renpy
 import math
+
+from renpy.display.render cimport Render, Matrix2D, render
+
+cdef Matrix2D IDENTITY
+IDENTITY = renpy.display.render.IDENTITY
 
 # This file contains implementations of methods of classes that
 # are found in other files, for performance reasons.
 
-def transform_render(self, double width, double height, st, at):
+def transform_render(self, widtho, heighto, st, at):
 
     cdef double rxdx, rxdy, rydx, rydy
     cdef double nxdx, nxdy, nydx, nydy
@@ -40,10 +41,12 @@ def transform_render(self, double width, double height, st, at):
     cdef double yo, y1, y2, y3
     cdef float zoom, xzoom, yzoom
     cdef double cw, ch, nw, nh
-    cdef Render rv
+    cdef Render rv, cr
     cdef double angle
     cdef double alpha
-        
+    cdef double width = widtho
+    cdef double height = heighto
+    
     # Should we perform clipping?
     clipping = False
 
@@ -65,7 +68,7 @@ def transform_render(self, double width, double height, st, at):
     if child is None:
         raise Exception("Transform does not have a child.")
 
-    cr = render(child, width, height, st - self.child_st_base, at)
+    cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
     width = cr.width
     height = cr.height
@@ -210,7 +213,6 @@ def transform_render(self, double width, double height, st, at):
 
     rv = Render(width, height)
 
-
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 0:
         self.forward = IDENTITY
@@ -232,12 +234,14 @@ def transform_render(self, double width, double height, st, at):
     rv.alpha = alpha
     rv.clipping = clipping
 
+    pos = (xo, yo)
+    
     if state.subpixel:
-        rv.subpixel_blit(cr, (xo, yo), main=True)
+        rv.subpixel_blit(cr, pos)
     else:
-        rv.blit(cr, (xo, yo), main=True)
+        rv.blit(cr, pos)
 
-    self.offsets = [ (xo, yo) ]
+    self.offsets = [ pos ]
 
     return rv
 

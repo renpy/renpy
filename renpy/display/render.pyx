@@ -1,6 +1,4 @@
-
 #cython: profile=True
-
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -515,7 +513,7 @@ cdef class Render:
         return "<Render %x %s of %r>" % (id(self), dead, self.render_of)
 
         
-    def blit(self, source, pos, focus=True, main=True, index=None):
+    cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -543,8 +541,9 @@ cdef class Render:
             self.depends_on_list.append(source)
             source.parents.add(self)
 
+        return 0
         
-    def subpixel_blit(self, source, pos, focus=True, main=True, index=None):
+    cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
         xo and yo.
@@ -568,7 +567,9 @@ cdef class Render:
         if isinstance(source, Render):
             self.depends_on_list.append(source)
             source.parents.add(self)
-        
+
+        return 0
+            
     def get_size(self):
         """
         Returns the size of this Render, a mostly ficticious value

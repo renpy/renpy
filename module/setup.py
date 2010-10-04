@@ -13,9 +13,12 @@ except:
 
 
 # These control the level of optimization versus debugging.
-# extra_compile_args = [ "-O3", "-funroll-loops" ]
-extra_compile_args = [ "-O0", "-ggdb" ]
+# extra_compile_args = [ "-O3", "-funroll-loops", "-pg" ]
+extra_compile_args = [ "-O3", "-funroll-loops", "-ggdb" ]
+# extra_compile_args = [ "-O0", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
+extra_link_args = [ ]
+
 
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
@@ -155,8 +158,6 @@ cython("_renpybidi")
 cython("_renpy_pysdlgl")
 cython("sound")
 cython("winmixer")
-
-extra_link_args = [ ]
 
 sdl_libraries = [ 'SDL' ]
 png_libraries = [ 'png', "z" ]

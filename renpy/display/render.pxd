@@ -39,3 +39,8 @@ cdef class Render:
 
     cdef public bint modal
 
+    cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
+    cpdef int subpixel_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
+
+    
+cpdef render(object d, object widtho, object heighto, double st, double at)

@@ -643,155 +643,8 @@ class Transform(Container):
 
             self.state.subpixel |= csubpixel                
         
-    # def render(self, width, height, st, at):
-
-    #     # Should we perform clipping?
-    #     clipping = False
-        
-    #     # Preserve the illusion of linear time.
-    #     if st == 0:
-    #         self.st_offset = self.st
-    #     if at == 0:
-    #         self.at_offset = self.at
-
-    #     self.st = st = st + self.st_offset
-    #     self.at = at = at + self.at_offset
-
-    #     # Update the state.
-    #     self.update_state()
-        
-    #     # Render the child.
-    #     if self.child is None:
-    #         raise Exception("Transform does not have a child.")
+    # The render method is now defined in accelerator.pyx.
             
-    #     cr = render(self.child, width, height, st - self.child_st_base, at)
-    #     width, height = cr.get_size()
-        
-    #     forward = IDENTITY
-    #     reverse = IDENTITY
-    #     xo = yo = 0
-
-    #     state = self.state
-        
-    #     # Cropping.
-    #     crop = state.crop
-    #     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
-    #         x1, y1 = state.corner1
-    #         x2, y2 = state.corner2
-
-    #         minx = min(x1, x2)
-    #         maxx = max(x1, x2)
-    #         miny = min(y1, y2)
-    #         maxy = max(y1, y2)
-
-    #         crop = (minx, miny, maxx - minx, maxy - miny)
-
-    #     if crop is not None:
-
-    #         negative_xo, negative_yo, width, height = crop
-    #         xo = -negative_xo
-    #         yo = -negative_yo
-            
-    #         clipping = True
-
-    #         if state.rotate:
-    #             clipcr = Render(width, height)
-    #             clipcr.subpixel_blit(cr, (xo, yo))
-    #             clipcr.clipping = clipping
-    #             xo = yo = 0
-    #             cr = clipcr
-    #             clipping = False
-                
-    #     # Size.
-    #     if state.size is not None and state.size != (width, height):
-    #         nw, nh = state.size
-    #         xzoom = 1.0 * nw / width
-    #         yzoom = 1.0 * nh / height
-    #         forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
-    #         reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
-
-    #         xo = xo * xzoom
-    #         yo = yo * yzoom
-            
-    #         width, height = state.size
-        
-    #     # Rotation.
-    #     if state.rotate is not None:
-            
-    #         cw = width
-    #         ch = height
-            
-    #         angle = -state.rotate * math.pi / 180
-        
-    #         xdx = math.cos(angle)
-    #         xdy = -math.sin(angle)
-    #         ydx = -xdy 
-    #         ydy = xdx 
-
-    #         forward = forward * Matrix2D(xdx, xdy, ydx, ydy)
-
-    #         xdx = math.cos(-angle)
-    #         xdy = -math.sin(-angle)
-    #         ydx = -xdy 
-    #         ydy = xdx 
-
-    #         reverse = Matrix2D(xdx, xdy, ydx, ydy) * reverse
-
-    #         if state.rotate_pad:
-    #             width = height = math.hypot(cw, ch)
-    #             xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
-
-    #         else:
-
-    #             xo, yo = reverse.transform(-cw / 2.0, -ch / 2.0)
-    #             x2, y2 = reverse.transform(-cw / 2.0, ch / 2.0)
-    #             x3, y3 = reverse.transform(cw / 2.0, ch / 2.0)
-    #             x4, y4 = reverse.transform(cw / 2.0, -ch / 2.0)
-
-    #             width = max(xo, x2, x3, x4) - min(xo, x2, x3, x4) 
-    #             height = max(yo, y2, y3, y4) - min(yo, y2, y3, y4) 
-
-    #         xo += width / 2.0
-    #         yo += height / 2.0
-            
-    #     xzoom = state.zoom * state.xzoom
-    #     yzoom = state.zoom * state.yzoom
-    #     alpha = state.alpha
-        
-    #     if xzoom != 1 or yzoom != 1:
-
-    #         if xzoom and yzoom:
-    #             forward = forward * Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
-    #         else:
-    #             forward = Matrix2D(0, 0, 0, 0)
-                
-    #         reverse = Matrix2D(xzoom, 0, 0, yzoom) * reverse
-
-    #         width *= xzoom
-    #         height *= yzoom
-    #         xo *= xzoom
-    #         yo *= yzoom
-
-    #     rv = Render(width, height)
-
-    #     if forward is not IDENTITY:
-    #         rv.forward = forward
-    #         rv.reverse = reverse
-
-    #     self.forward = forward
-
-    #     rv.alpha = alpha
-    #     rv.clipping = clipping
-        
-    #     if self.state.subpixel:
-    #         rv.subpixel_blit(cr, (xo, yo), main=True)
-    #     else:
-    #         rv.blit(cr, (xo, yo), main=True)
-            
-    #     self.offsets = [ (xo, yo) ]
-        
-    #     return rv
-
     def event(self, ev, x, y, st):
 
         if self.hide_request:
@@ -866,9 +719,7 @@ class Transform(Container):
         
 Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
 
-print Transform.render
-    
-    
+
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
     def __init__(self, atl, child=None, context={}, parameters=None, **properties):
