@@ -1,3 +1,4 @@
+
 #cython: profile=True
 
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
@@ -235,22 +236,22 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
     
 
-class Matrix2D(object):
+cdef class Matrix2D:
     """
     This represents a 2d matrix that can be used to transform
     points and things like that.
     """
 
-    def __init__(self, xdx, xdy, ydx, ydy):
+    def __init__(Matrix2D self, double xdx, double xdy, double ydx, double ydy):
         self.xdx = xdx
         self.xdy = xdy
         self.ydx = ydx
         self.ydy = ydy
 
-    def transform(self, x, y):
+    cpdef tuple transform(Matrix2D self, double x, double y):
         return (x * self.xdx + y * self.xdy), (x * self.ydx + y * self.ydy)
 
-    def __mul__(self, other):
+    def __mul__(Matrix2D self, Matrix2D other):
         return Matrix2D(
             other.xdx * self.xdx + other.xdy * self.ydx,
             other.xdx * self.xdy + other.xdy * self.ydy,

@@ -274,6 +274,7 @@ display("render")
 display("gldraw", glew_libs )
 display("gltexture", glew_libs)
 display("glenviron", glew_libs)
+display("accelerator")
 
 sys.path.append('..')
 import renpy

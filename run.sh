@@ -35,6 +35,7 @@ display render
 display gldraw
 display gltexture
 display glenviron
+display accelerator
 
 echo Compiling...
 

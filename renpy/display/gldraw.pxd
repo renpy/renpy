@@ -1,3 +1,5 @@
+cimport render
+
 cdef class GLDraw:
 
     cdef bint did_init
@@ -21,6 +23,11 @@ cdef class GLDraw:
 
     cpdef set_clip(GLDraw self, tuple clip)
 
+    cpdef int draw_render_textures(
+        GLDraw self,
+        object what,
+        bint non_aligned)
+
     cpdef int draw_transformed(
         GLDraw self,
         object what,
@@ -28,8 +35,6 @@ cdef class GLDraw:
         double xo,
         double yo,
         double alpha,
-        forward,
-        reverse)
+        render.Matrix2D reverse)
 
-    cpdef int draw_render_textures(GLDraw self, what, forward, reverse)
     

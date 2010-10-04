@@ -44,7 +44,10 @@ init -1210 python:
         if version <= (6, 11, 0):
             config.movetransition_respects_offsets = False
 
+        if version <= (6, 11, 2):
+            config.imagereference_respects_position = True
             
+          
 init 1210 python hide::
 
     # This returns true if the script_version is <= the

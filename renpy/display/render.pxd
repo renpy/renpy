@@ -1,3 +1,11 @@
+cdef class Matrix2D:
+    cdef public double xdx
+    cdef public double xdy
+    cdef public double ydx
+    cdef public double ydy
+
+    cpdef tuple transform(Matrix2D self, double x, double y)
+
 cdef class Render:
 
     cdef public bint mark, cache_killed
@@ -14,7 +22,7 @@ cdef class Render:
     cdef public bint operation_alpha
     cdef public object operation_parameter
 
-    cdef public object forward, reverse
+    cdef public Matrix2D forward, reverse
     cdef public double alpha
     
     cdef public list focuses
@@ -30,3 +38,4 @@ cdef class Render:
     cdef public object surface, alpha_surface, half_cache
 
     cdef public bint modal
+

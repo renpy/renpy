@@ -550,7 +550,7 @@ cdef class GLDraw:
 
         surftree.is_opaque()
 
-        self.draw_render_textures(surftree, forward, reverse)
+        self.draw_render_textures(surftree, 0)
 
         gl.Viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
         
@@ -573,9 +573,9 @@ cdef class GLDraw:
             tex = renpy.display.video.get_movie_texture(self.virtual_size)
 
             # self.load_texture(self.fullscreen_surface, transient=True)
-            self.draw_transformed(tex, clip, 0, 0, 1.0, forward, reverse)           
+            self.draw_transformed(tex, clip, 0, 0, 1.0, reverse)           
         else:
-            self.draw_transformed(surftree, clip, 0, 0, 1.0, forward, reverse)
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, reverse)
 
         self.draw_mouse()
 
@@ -586,7 +586,7 @@ cdef class GLDraw:
         renpy.display.core.cpu_idle.clear()
             
 
-    cpdef int draw_render_textures(GLDraw self, what, forward, reverse):
+    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
         """
         This is responsible for rendering things to textures,
         as necessary.
@@ -602,23 +602,20 @@ cdef class GLDraw:
 
         render_what = False
 
-        if rend.clipping:
-            if forward.xdy != 0 or forward.ydx != 0:
+        if rend.clipping and non_aligned:
+            if rend.forward.xdy != 0 or rend.forward.ydx != 0:
                 render_what = True
-                forward = reverse = IDENTITY
+                non_aligned = False
 
         first = True
                 
         if rend.forward:
-            child_forward = forward * rend.forward
-            child_reverse = rend.reverse * reverse
-        else:
-            child_forward = forward
-            child_reverse = reverse
+            non_aligned |= (rend.forward.xdy != 0)
+            non_aligned |= (rend.forward.ydy != 0)
 
         for child, cxo, cyo, focus, main in rend.visible_children:
 
-            self.draw_render_textures(child, child_forward, child_reverse)
+            self.draw_render_textures(child, non_aligned)
 
             if rend.operation == DISSOLVE: 
                 child.render_to_texture(what.operation_alpha)
@@ -638,10 +635,18 @@ cdef class GLDraw:
         if render_what:
             what.render_to_texture(True)
 
-    cpdef int draw_transformed(GLDraw self, object what, tuple clip, double xo, double yo, double alpha, forward, reverse):
+    cpdef int draw_transformed(
+        GLDraw self,
+        object what,
+        tuple clip,
+        double xo,
+        double yo,
+        double alpha,
+        render.Matrix2D reverse):
 
         cdef render.Render rend
-        cdef double cxo, cyo
+        cdef double cxo, cyo, tcxo, tcyo
+        cdef render.Matrix2D child_reverse
         
         if not isinstance(what, render.Render):
 
@@ -663,7 +668,7 @@ cdef class GLDraw:
             if isinstance(what, renpy.display.pgrender.Surface):
 
                 tex = self.load_texture(what)
-                self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
+                self.draw_transformed(tex, clip, xo, yo, alpha, reverse)
                 return 0
 
             raise Exception("Unknown drawing type. " + repr(what))
@@ -735,9 +740,9 @@ cdef class GLDraw:
         if rend.clipping:
 
             # Non-aligned clipping uses RTT.
-            if forward.ydx != 0 or forward.xdy != 0:
+            if reverse.ydx != 0 or reverse.xdy != 0:
                 tex = what.render_to_texture(True)
-                self.draw_transformed(tex, clip, xo, yo, alpha, forward, reverse)
+                self.draw_transformed(tex, clip, xo, yo, alpha, reverse)
                 return 0
                 
             minx, miny, maxx, maxy = clip
@@ -752,7 +757,6 @@ cdef class GLDraw:
             maxy = min(maxy, max(yo, yo + th))
 
             clip = (minx, miny, maxx, maxy)
-            
         
         alpha = alpha * rend.alpha
             
@@ -760,16 +764,16 @@ cdef class GLDraw:
         if alpha <= 0.003: # (1 / 256)
             return 0
 
-        if rend.forward is not None and rend.forward is not IDENTITY:
-            child_forward = forward * rend.forward
+        if rend.reverse is not None and rend.reverse is not IDENTITY:
             child_reverse = rend.reverse * reverse
         else:
-            child_forward = forward
             child_reverse = reverse
 
         for child, cxo, cyo, focus, main in rend.visible_children:
-            cxo, cyo = reverse.transform(cxo, cyo)
-            self.draw_transformed(child, clip, xo + cxo, yo + cyo, alpha, child_forward, child_reverse)
+            tcxo = reverse.xdx * cxo + reverse.xdy * cyo
+            tcyo = reverse.ydx * cxo + reverse.ydy * cyo
+
+            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, child_reverse)
 
         return 0
 
@@ -791,7 +795,7 @@ cdef class GLDraw:
         
             clip = (0, 0, what.width, what.height)
         
-            self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+            self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
         what.is_opaque()
 
@@ -828,7 +832,7 @@ cdef class GLDraw:
         
         clip = (0, 0, 1, 1)
         
-        self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+        self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
         a = array.array('b', (0,))
 
@@ -862,7 +866,7 @@ cdef class GLDraw:
 
             clip = (0, 0, width, height)
             
-            self.draw_transformed(what, clip, 0, 0, 1.0, forward, reverse)
+            self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
         if isinstance(what, renpy.display.render.Render):
             what.is_opaque()
