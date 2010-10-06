@@ -1,4 +1,4 @@
-#cython: profile=False
+#cython: profile=True
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -85,7 +85,7 @@ def check_at_shutdown():
     count = 0
     objects = gc.get_objects()
     
-    for i in :
+    for i in objects:
         if isinstance(i, Render):
             count += 1
 
