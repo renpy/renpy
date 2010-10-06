@@ -13,8 +13,8 @@ except:
 
 
 # These control the level of optimization versus debugging.
-# extra_compile_args = [ "-O3", "-funroll-loops", "-pg" ]
-extra_compile_args = [ "-O3", "-funroll-loops", "-ggdb" ]
+extra_compile_args = [ "-O3", "-funroll-loops", "-Wno-unused-function" ]
+# extra_compile_args = [ "-O3", "-funroll-loops", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
 extra_link_args = [ ]

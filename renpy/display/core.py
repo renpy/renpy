@@ -295,7 +295,6 @@ class Displayable(renpy.object.Object):
         """
         
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.get_placement()
-
         
         if xpos is None:
             xpos = 0
@@ -316,6 +315,7 @@ class Displayable(renpy.object.Object):
         if xoff is None:
             xoff = xpos
 
+        # We need to use type, since isinstance(absolute(0), float).
         if type(xoff) is float:
             xoff_mul = width
         else:

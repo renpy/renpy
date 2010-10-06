@@ -1,4 +1,4 @@
-#cython: profile=True
+#cython: profile=False
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -24,6 +24,7 @@ import collections
 import pygame
 import threading
 import renpy
+import gc
 
 cdef class Render
 
@@ -56,21 +57,42 @@ def free_memory():
     Frees memory used by the render system.
     """
 
-    # TODO: Rewrite me.
-    
+    global screen_render    
+    screen_render = None
+
+    mark_sweep()
+
     render_cache.clear()
 
+    # This can hang onto a render.
+    renpy.display.interface.surftree = None
+    
 
 def check_at_shutdown():
     """
     This is called at shutdown time to check that everything went okay.
     The big thing it checks for is memory leaks.
     """
-    
+
     if not renpy.config.developer:
         return
 
-    # TODO: Rewrite or remove me.
+    free_memory()
+
+    gc.collect()    
+    l = gc.get_objects()
+
+    count = 0
+    objects = gc.get_objects()
+    
+    for i in :
+        if isinstance(i, Render):
+            count += 1
+
+    if count:
+        raise Exception("%d Renders are alive at shutdown. This is probably a memory leak bug in Ren'Py." % count)
+
+    
     
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
@@ -335,7 +357,11 @@ def mark_sweep():
     cdef int i
     cdef Render r, j
     
-    worklist = [ screen_render ]
+    worklist = [ ]
+
+    if screen_render is not None:
+        worklist.append(screen_render)
+
     i = 0
 
     while i < len(worklist):
@@ -352,10 +378,9 @@ def mark_sweep():
         if not r.mark:
             r.kill_cache()
         else:
-            r.mark = None
+            r.mark = False
 
     live_renders = worklist
-
 
 def compute_subrect(pos, size, child):
     """
@@ -505,12 +530,7 @@ cdef class Render:
         
     def __repr__(self):
 
-        if self.dead:
-            dead = "dead"
-        else:
-            dead = "live"
-        
-        return "<Render %x %s of %r>" % (id(self), dead, self.render_of)
+        return "<Render %x of %r>" % (id(self), self.render_of)
 
         
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
