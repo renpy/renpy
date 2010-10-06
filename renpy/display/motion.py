@@ -622,26 +622,29 @@ class Transform(Container):
         if fr is not None:
             renpy.display.render.redraw(self, fr)
 
-        if self.state.size:
-            width, height = self.state.size
+        state = self.state
+        
+        if state.size:
+            width, height = state.size
 
         self.active = True
 
         # Use non-None elements of the child placement as defaults.
-        if self.child is not None and renpy.config.transform_uses_child_position:
+        child = self.child
+        if child and renpy.config.transform_uses_child_position:
 
-            cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+            pos = child.get_placement()
+            
+            if pos[0] is not None:
+                state.default_xpos = pos[0]
+            if pos[2] is not None:
+                state.default_xanchor = pos[2]
+            if pos[1] is not None:
+                state.default_ypos = pos[1]
+            if pos[3] is not None:
+                state.default_yanchor = pos[3]
 
-            if cxpos is not None:
-                self.state.default_xpos = cxpos
-            if cxanchor is not None:
-                self.state.default_xanchor = cxanchor
-            if cypos is not None:
-                self.state.default_ypos = cypos
-            if cyanchor is not None:
-                self.state.default_yanchor = cyanchor
-
-            self.state.subpixel |= csubpixel                
+            state.subpixel |= pos[6]   
         
     # The render method is now defined in accelerator.pyx.
             

@@ -269,7 +269,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def place(self, dest, x, y, width, height, surf, xoff=None, yoff=None, main=True):
+    def place(self, dest, x, y, width, height, surf, main=True):
         """
         This draws this Displayable onto a destination surface, using
         the placement style information returned by this object's
@@ -309,54 +309,31 @@ class Displayable(renpy.object.Object):
         if yoffset is None:
             yoffset = 0
             
-        sw, sh = surf.get_size()
-
-        # x
-        if xoff is None:
-            xoff = xpos
-
         # We need to use type, since isinstance(absolute(0), float).
-        if type(xoff) is float:
-            xoff_mul = width
-        else:
-            xoff_mul = 1
+        if xpos.__class__ is float:
+            xpos *= width
 
-        if type(xanchor) is float:
-            xanchor_mul = sw
-        else:
-            xanchor_mul = 1
+        if xanchor.__class__ is float:
+            xanchor *= surf.width
 
-        xoff = xoff * xoff_mul - xanchor * xanchor_mul
-        xoff += x
-
-        # y
-        if yoff is None:
-            yoff = ypos
-
-        if type(yoff) is float:
-            yoff_mul = height
-        else:
-            yoff_mul = 1
-
-        if type(yanchor) is float:
-            yanchor_mul = sh
-        else:
-            yanchor_mul = 1
-
-        yoff = yoff * yoff_mul - yanchor * yanchor_mul            
-        yoff += y
-
-        # Add in offsets.
-        xoff += xoffset
-        yoff += yoffset
-
-        if subpixel:
-            dest.subpixel_blit(surf, (xoff, yoff), main=main)
-        else:
-            dest.blit(surf, (xoff, yoff), main=main)
+        xpos += x + xoffset - xanchor
             
+        # y
 
-        return xoff, yoff
+        if ypos.__class__ is float:
+            ypos *= height
+            
+        if yanchor.__class__ is float:
+            yanchor *= surf.height
+
+        ypos += y + yoffset - yanchor
+            
+        if subpixel:
+            dest.subpixel_blit(surf, (xpos, ypos), True, True, None)
+        else:
+            dest.blit(surf, (xpos, ypos), True, True, None)
+            
+        return xpos, ypos
 
     def set_transform_event(self, event):
         """
