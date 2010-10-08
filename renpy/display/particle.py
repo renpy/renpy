@@ -58,6 +58,7 @@ class Sprite(renpy.object.Object):
     # yoffset - float or int - The offset of the top side of the sprite.
     # zorder - the zorder of the displayable. The bigger the number, the
     # closer to the viewer.
+    # events - To pass events through to the child of this sprite.
     
     # child - the displayable that is the child of this sprite.
     # cache - the SpriteCache of child.
@@ -87,7 +88,8 @@ class Sprite(renpy.object.Object):
     def destroy(self):
         self.manager.dead_child = True
         self.live = False
-
+        self.events = False
+        
     
 
 class SpriteManager(renpy.display.core.Displayable):
@@ -98,17 +100,25 @@ class SpriteManager(renpy.display.core.Displayable):
     them at the fastest speed possible.
     """
     
-    def __init__(self, function=None, ignore_time=False, **kwargs):
+    def __init__(self, update=None, event=None, ignore_time=False, **kwargs):
         """
-        `function`
-            If not None,        
-            a function that is called each time a sprite is rendered by
-            this sprite manager. It is called with two arguments. The first
-            is the sprite manager, and the second is the time since the
-            sprite manager was first displayed. It is expected to return
-            the number of seconds until the function is called again, and
-            the SpriteManager is rendered again.
+        `update`
+            If not None, a function that is called each time a sprite
+            is rendered by this sprite manager. It is called with one
+            argument, the time in seconds since this sprite manager
+            was first displayed.  It is expected to return the number
+            of seconds until the function is called again, and the
+            SpriteManager is rendered again.
 
+         `event`
+            If not None, a function that is called when an event occurs.
+            It takes as arguments:
+            * An event object.
+            * The x coordinate of the event.
+            * The y coordinate of the event.
+            * The time since the sprite manager was first shown.
+            If it returns a non-None value, the interaction ends, and
+            that value is returned.
 
          `ignore_time`
             If True, then time is ignored when rendering displayables. This
@@ -122,7 +132,8 @@ class SpriteManager(renpy.display.core.Displayable):
 
         super(SpriteManager, self).__init__(self)
 
-        self.function = function
+        self.update_function = update
+        self.event_function = event
         self.ignore_time = ignore_time
         
         # A map from a displayable to the SpriteDisplayable object
@@ -136,6 +147,8 @@ class SpriteManager(renpy.display.core.Displayable):
         # True if at least one child has been killed.
         self.dead_child = False
 
+        # True if at least one child responds to events.
+        self.events = False
         
     def create(self, d):
         """
@@ -162,6 +175,7 @@ class SpriteManager(renpy.display.core.Displayable):
         s.cache = sc
         s.live = True
         s.manager = self
+        s.events = False
         
         self.children.append(s)
 
@@ -178,8 +192,8 @@ class SpriteManager(renpy.display.core.Displayable):
     
     def render(self, width, height, st, at):
 
-        if self.function is not None:
-            redraw = self.function(st)
+        if self.update_function is not None:
+            redraw = self.update_function(st)
 
             if redraw is not None:
                 renpy.display.render.redraw(self, redraw)
@@ -195,9 +209,13 @@ class SpriteManager(renpy.display.core.Displayable):
         caches = [ ]
 
         rv = renpy.display.render.Render(width, height)
+
+        events = False
         
         for i in self.children:
 
+            events |= i.events
+            
             cache = i.cache
             r = i.cache.render
             if cache.render is None:
@@ -229,7 +247,19 @@ class SpriteManager(renpy.display.core.Displayable):
                 
         return rv
                 
-                
+    def event(self, ev, x, y, st):
+        for i in xrange(len(self.children) -1, -1, -1): 
+            s = self.children[i]
+            
+            if s.events:
+                rv = s.cache.child(ev, x - s.xoffset, y - s.xoffset, st - s.cache.stoffset)
+                if rv is not None:
+                    return rv
+
+        if self.event_function is not None:
+            return self.event_function(ev, x, y, st)
+        else:
+            return None
 
 
 

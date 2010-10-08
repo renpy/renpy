@@ -94,9 +94,10 @@ style = None
 config = _Config()
 library = config
 
-_list = list
-_dict = dict
-_object = object
+python_list = _list = list
+python_dict = _dict = dict
+python_object = _object = object
+python_set = _set = set
 
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__
