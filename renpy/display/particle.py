@@ -19,10 +19,219 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This code supports particle animation.
+# This code supports sprite and particle animation.
+
+from renpy.display.render import render, BLIT
 
 import renpy
 import random
+
+
+class SpriteCache(renpy.object.Object):
+    """
+    This stores information about a displayble, including the identity
+    of the displayable, and when it was first displayed. It is also
+    responsible for caching the displayable surface, so it doesn't
+    need to be re-rendered.
+    """
+
+    # Private Fields:
+    #
+    # child - The child displayable.
+    # 
+    # st - The shown time when this was first displayed, or None if it hasn't
+    # been rendered.
+    #
+    # render - The render of child.
+    #
+    # If true, then the render is simple enough it can just be appended to
+    # the manager's render's children list.
+    
+class Sprite(renpy.object.Object):
+    """
+    This represents a sprite that is managed by a sprite manager.
+    """
+
+    # Public fields:
+    #
+    # xoffset - float or int - The offset of the left side of the sprite
+    # yoffset - float or int - The offset of the top side of the sprite.
+    # zorder - the zorder of the displayable. The bigger the number, the
+    # closer to the viewer.
+    
+    # child - the displayable that is the child of this sprite.
+    # cache - the SpriteCache of child.
+    # live - True if this sprite is still alive.
+    # manager - A reference to the SpriteManager.
+
+    def set_child(self, d):
+        """
+        Changes the child of this sprite to be `d`.
+        """
+
+        id_d = id(d)
+
+                
+        sc = self.manager.displayable_map.get(id_d, None)
+        if sc is None:
+            d = renpy.easy.displayable(d)
+
+            sc = SpriteCache()
+            sc.render = None
+            sc.child = d
+            sc.st = None
+            self.manager.displayable_map[id_d] = sc
+
+        self.cache = sc
+            
+    def destroy(self):
+        self.manager.dead_child = True
+        self.live = False
+
+    
+
+class SpriteManager(renpy.display.core.Displayable):
+    """
+    :doc: sprites
+    
+    This displayable manages a collection of sprites, and displays
+    them at the fastest speed possible.
+    """
+    
+    def __init__(self, function=None, ignore_time=False, **kwargs):
+        """
+        `function`
+            If not None,        
+            a function that is called each time a sprite is rendered by
+            this sprite manager. It is called with two arguments. The first
+            is the sprite manager, and the second is the time since the
+            sprite manager was first displayed. It is expected to return
+            the number of seconds until the function is called again, and
+            the SpriteManager is rendered again.
+
+
+         `ignore_time`
+            If True, then time is ignored when rendering displayables. This
+            should be used when the sprite manager is used with a relatively
+            small pool of images, and those images do not change over time.
+            This should only be used with a small number of displayables, as
+            it will keep all displayable in memory for the life of the
+            SpriteManager.
+         """
+            
+
+        super(SpriteManager, self).__init__(self)
+
+        self.function = function
+        self.ignore_time = ignore_time
+        
+        # A map from a displayable to the SpriteDisplayable object
+        # representing that displayable.
+        self.displayable_map = { }
+
+        # A list of children of this displayable, in zorder. (When sorted.)
+        # This is a list of Sprites.
+        self.children = [ ]
+
+        # True if at least one child has been killed.
+        self.dead_child = False
+
+        
+    def create(self, d):
+        """
+        Creates a new sprite for the displayable `d`, and adds it to the
+        list of children of this sprite.
+        """
+
+        id_d = id(d)
+        
+        sc = self.displayable_map.get(id_d, None)
+        if sc is None:
+            d = renpy.easy.displayable(d)
+
+            sc = SpriteCache()
+            sc.render = None
+            sc.child = d
+            sc.st = None
+            self.displayable_map[id_d] = sc
+
+        s = Sprite()
+        s.xoffset = 0
+        s.yoffset = 0
+        s.zorder = 0
+        s.cache = sc
+        s.live = True
+        s.manager = self
+        
+        self.children.append(s)
+
+        return s
+
+    
+    def redraw(self):
+        """
+        Causes this SpriteManager to be redrawn immediately.
+        """
+
+        renpy.display.render.redraw(self, 0)
+        
+    
+    def render(self, width, height, st, at):
+
+        if self.function is not None:
+            redraw = self.function(st)
+
+            if redraw is not None:
+                renpy.display.render.redraw(self, redraw)
+            
+        if not self.ignore_time:
+            self.displayable_map.clear()
+        
+        if self.dead_child:
+            self.children = [ i for i in self.children if i.live ]
+
+        self.children.sort()
+
+        caches = [ ]
+
+        rv = renpy.display.render.Render(width, height)
+        
+        for i in self.children:
+
+            cache = i.cache
+            r = i.cache.render
+            if cache.render is None:
+                if cache.st is None:
+                    cache.st = st
+
+                cst = st - cache.st
+
+                cache.render = r = render(cache.child, width, height, cst, cst)
+                cache.fast = (r.operation == BLIT) and (r.forward is None) and (r.alpha == 1.0)
+                rv.depends_on(r)
+                
+                caches.append(cache)
+                
+
+            if cache.fast:
+                for child, xo, yo, focus, main in r.children:
+                    rv.children.append((child,
+                                        xo + i.xoffset,
+                                        yo + i.yoffset,
+                                        False,
+                                        False))
+
+            else:
+                rv.subpixel_blit(r, (i.xoffset, i.yoffset))
+
+        for i in caches:
+            i.render = None
+                
+        return rv
+                
+                
+
+
 
 # TODO: Random start of particles, all at once.
 
