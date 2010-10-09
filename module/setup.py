@@ -6,19 +6,12 @@ import platform
 import sys
 import subprocess
 
-try:
-    import bdist_mpkg
-except:
-    pass
-
-
 # These control the level of optimization versus debugging.
 extra_compile_args = [ "-O3", "-Wno-unused-function" ]
 # extra_compile_args = [ "-O3", "-funroll-loops", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-ggdb" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
 extra_link_args = [ ]
-
 
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
@@ -260,7 +253,10 @@ display("accelerator")
 display("gldraw", glew_libs )
 display("gltexture", glew_libs)
 display("glenviron", glew_libs)
+display("glenviron_fixed", glew_libs)
+display("glenviron_shader", glew_libs)
 display("glshader", glew_libs)
+display("glrtt_copy", glew_libs)
 
 sys.path.append('..')
 import renpy

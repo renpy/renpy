@@ -20,54 +20,24 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains the code required to set up (and change) OpenGL texture
-# environments to implement various effects.
-
 from gl cimport *
+from renpy.display.glenviron import *
 
-# Constants, that are used to store the last kind of blend a class was
-# used for. (So we can avoid changing the GL state unnecessarily.)
-NONE = 0
-BLIT = 1
-BLEND = 2
-IMAGEBLEND = 3
-
-class Environ(object):
-
-    def blit(self):
-        """
-        Set up a normal blit environment. The texture to be blitted should
-        be TEXTURE0.
-        """
-
-        raise Exception("Not implemented.")
-
-    def blend(self, fraction):
-        """
-        Set up an environment that blends from TEXTURE0 to TEXTURE1.
-
-        `fraction` is the fraction of the blend complete.
-        """
-
-        raise Exception("Not implemented.")
-
-
-    def imageblend(self, fraction, ramp):
-        """
-        Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
-        The controlling image is TEXTURE0.
-
-        `fraction` is the fraction of the blend complete.
-        `ramp` is the length of the ramp.
-        """
-
-        raise Exception("Not implemented.")
-        
-
-class Rtt(object):
+class CopyRtt(Rtt):
     """
-    Subclasses of this class handle rendering to a texture.
+    This class uses texture copying to implement Render-to-texture.
     """
+
+    def init(self):
+        pass
+    
+    
+    def deinit(self):
+        """
+        Called before changing the GL context.
+        """
+
+        return
 
     def begin(self):
         """
@@ -75,8 +45,6 @@ class Rtt(object):
         session begins. It's responsible for setting the GPU to
         RTT mode.
         """
-
-        raise Exception("Not implemented.")
 
     def render(self, texture, x, y, w, h, draw_func):
         """
@@ -86,11 +54,30 @@ class Rtt(object):
         to render the texture.
         """
 
-        raise Exception("Not implemented.")
+        glViewport(0, 0, w, h)
+        
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(x, x + w, y, y + h, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
+
+        draw_func()
+        
+        glBindTexture(GL_TEXTURE_2D, texture)
+
+        glCopyTexSubImage2D(
+            GL_TEXTURE_2D,
+            0,
+            0,
+            0,
+            0,
+            0,
+            w,
+            h)        
+            
 
     def end(self):
         """
         This is called when a Render-to-texture session ends.
         """
 
-        raise Exception("Not implemented.")

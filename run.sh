@@ -37,7 +37,11 @@ display accelerator
 display gldraw
 display gltexture
 display glenviron
+display glenviron_fixed
+display glenviron_shader
 display glshader
+display glrtt_copy
+
 
 echo Compiling...
 

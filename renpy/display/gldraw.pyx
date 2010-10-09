@@ -33,9 +33,21 @@ import time
 
 cimport renpy.display.gltexture as gltexture
 cimport renpy.display.render as render
+
 import renpy.display.gltexture as gltexture
 import renpy.display.glenviron as glenviron
-import renpy.display.glshader as glshader
+import renpy.display.glrtt_copy as glrtt_copy
+
+try:
+    import renpy.display.glenviron_fixed as glenviron_fixed
+except ImportError:
+    glenviron_fixed = None
+
+try:
+    import renpy.display.glenviron_shader as glenviron_shader
+except ImportError:
+    glenviron_shader = None
+
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -366,7 +378,7 @@ cdef class GLDraw:
         for i in sorted(extensions):
             self.log("    %s", i)
         
-        def use_subsystem(envvar, envval, *req_ext):
+        def use_subsystem(module, envvar, envval, *req_ext):
             """
             Decides if we should used a particular subsystem, based on
             environment variables and/or extensions. If the `envvar`
@@ -375,6 +387,9 @@ cdef class GLDraw:
             all of the required extensions are present, and false
             otherwise.
             """
+
+            if module is None:
+                return False
             
             value = os.environ.get(envvar, "")
             if value:
@@ -410,6 +425,7 @@ cdef class GLDraw:
         # Pick a texture environment subsystem.
         
         if use_subsystem(
+            glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
             "GL_ARB_vertex_shader",
@@ -417,7 +433,7 @@ cdef class GLDraw:
 
             try:
                 self.log("Using shader environment.")
-                self.environ = glenviron.ShaderEnviron()
+                self.environ = glenviron_shader.ShaderEnviron()
                 self.info["environ"] = "shader"
             except Exception, e:
                 self.log("Initializing shader environment failed:")
@@ -426,22 +442,24 @@ cdef class GLDraw:
         if self.environ is None:
             
             if use_subsystem(
+                glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
                 "GL_ARB_texture_env_crossbar",
                 "GL_ARB_texture_env_combine"):
 
                 self.log("Using fixed-function environment (clause 1).")
-                self.environ = glenviron.FixedFunctionEnviron()
+                self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
 
             elif use_subsystem(
+                glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
                 "GL_NV_texture_env_combine4"):
 
                 self.log("Using fixed-function environment (clause 2).")
-                self.environ = glenviron.FixedFunctionEnviron()
+                self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
 
             else:
@@ -450,21 +468,9 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture subsystem.
         
-        if use_subsystem(
-            "RENPY_GL_RTT",
-            "fbo",
-            "GL_EXT_framebuffer_object",
-            "RENPY_nonexistent_extension"):
-
-            self.log("Using framebuffer_object RTT.")
-            self.rtt = glenviron.FramebufferRtt()
-            self.info["rtt"] = "fbo"
-            
-        else:
-
-            self.log("Using copy RTT.")
-            self.rtt = glenviron.CopyRtt()
-            self.info["rtt"] = "copy"
+        self.log("Using copy RTT.")
+        self.rtt = glrtt_copy.CopyRtt()
+        self.info["rtt"] = "copy"
 
         # Do additional setup needed.
         renpy.display.pgrender.set_bgra_masks()
