@@ -880,9 +880,6 @@ class SWDraw(object):
         else:
             self.full_redraw = True
 
-        renpy.display.render.kill_old_screen()
-        renpy.display.focus.take_focuses()
-        
         self.suppressed_blit = fullscreen_video
 
         
