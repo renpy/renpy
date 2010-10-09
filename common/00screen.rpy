@@ -13,13 +13,17 @@ init -1140 python:
          When in a menu, this returns from the menu.
          """
 
-        def __init__(self, value=True):
+        def __init__(self, value=None):
             self.value = value
 
         def __call__(self):
 
-            if renpy.context()._main_menu:
-                ShowMenu("main_menu")()
+            if self.value is None:
+                if renpy.context()._main_menu:
+                    ShowMenu("main_menu")()
+                else:
+                    return True
+
             else:
                 return self.value
 
