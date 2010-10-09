@@ -100,7 +100,7 @@ class SpriteManager(renpy.display.core.Displayable):
     them at the fastest speed possible.
     """
     
-    def __init__(self, update=None, event=None, ignore_time=False, **kwargs):
+    def __init__(self, update=None, event=None, predict=None, ignore_time=False, **properties):
         """
         `update`
             If not None, a function that is called each time a sprite
@@ -120,6 +120,11 @@ class SpriteManager(renpy.display.core.Displayable):
             If it returns a non-None value, the interaction ends, and
             that value is returned.
 
+         `predict`
+            If not None, a function that returns a list of
+            displayables. These displayables are predicted when the
+            sprite manager is.
+            
          `ignore_time`
             If True, then time is ignored when rendering displayables. This
             should be used when the sprite manager is used with a relatively
@@ -130,10 +135,11 @@ class SpriteManager(renpy.display.core.Displayable):
          """
             
 
-        super(SpriteManager, self).__init__(self)
+        super(SpriteManager, self).__init__(self, **properties)
 
         self.update_function = update
         self.event_function = event
+        self.predict_function = predict
         self.ignore_time = ignore_time
         
         # A map from a displayable to the SpriteDisplayable object
@@ -180,7 +186,6 @@ class SpriteManager(renpy.display.core.Displayable):
         self.children.append(s)
 
         return s
-
     
     def redraw(self):
         """
@@ -188,11 +193,14 @@ class SpriteManager(renpy.display.core.Displayable):
         """
 
         renpy.display.render.redraw(self, 0)
-        
     
     def render(self, width, height, st, at):
 
         if self.update_function is not None:
+
+            if st == 0:
+                self.children = [ ]
+
             redraw = self.update_function(st)
 
             if redraw is not None:
@@ -261,86 +269,101 @@ class SpriteManager(renpy.display.core.Displayable):
         else:
             return None
 
-
-
-# TODO: Random start of particles, all at once.
-
-class Particles(renpy.display.core.Displayable):
-    """
-    Supports particle motion.
-    """
-
-    nosave = [ 'particles' ]
-
-    def after_setstate(self):
-        self.particles = None
-
-    def __init__(self, factory, style='default', **properties):
-        """
-        @param factory: A factory object.
-        """
-
-        super(Particles, self).__init__(style=style, **properties)
-
-        self.factory = factory
-        self.particles = None
-        self.old_st = -1
-        
-    def render(self, w, h, st, at):
-
-        rv = renpy.display.render.Render(w, h)
-
-        if renpy.game.less_updates:
-            return rv
-                
-        if st < self.old_st:
-            self.particles = [ ]
-
-        self.old_st = st
-
-        particles = self.particles
-        if particles is None:
-            particles = [ ]
-
-
-        newparts = self.factory.create(self.particles, at)
-
-        if newparts is not None:
-            particles.extend(newparts)
-
-
-        liveparts = [ ]
-
-        for p in particles:
-
-            new = p.update(at)
-            if new is None:
-                continue
-
-            liveparts.append(p)
-
-            xpos, ypos, t, widget = new            
-            widget = renpy.display.im.image(widget, loose=True)
-            rend = renpy.display.render.render(widget, w, h, t, t)
-            widget.place(rv, 0, 0, w, h, rend, xoff=xpos, yoff=ypos)
-
-        self.particles = liveparts
-        renpy.display.render.redraw(self, 0)
-
-        return rv
-
     def visit(self):
         rv = [ ]
 
         try:
-            pl = self.factory.predict()
-            for i in pl:
-                i = renpy.display.im.image(i, loose=True)
-                rv.append(i)
+            if self.predict_function:
+                pl = self.predict_function()
+                for i in pl:
+                    i = renpy.easy.displayable(i)
+                    rv.append(i)
         except:
             pass
 
         return rv
+
+
+class Particles(renpy.display.core.Displayable):
+    """
+    Supports particle motion, using the old API.
+    """
+
+    __version__ = 1
+    
+    nosave = [ 'particles' ]
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
+        
+    
+    def after_setstate(self):
+        self.particles = None
+
+    def __init__(self, factory, **properties):
+        """
+        @param factory: A factory object.
+        """
+
+        super(Particles, self).__init__(**properties)
+
+        self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
+
+        self.factory = factory
+        self.particles = None
+
+    def update_callback(self, st):
+
+        particles = self.particles
+        if st == 0 or particles is None:
+            particles = [ ]
+
+        add_parts = self.factory.create(particles, st)
+            
+        new_particles = [ ]
+            
+        for sprite, p in particles:
+            update = p.update(st)
+
+            if update is None:
+                sprite.destroy()
+                continue
+            
+            x, y, t, d = update
+            
+            if d is not sprite.cache.child:
+                sprite.set_child(d)
+
+            sprite.xoffset = x
+            sprite.yoffset = y
+            
+            new_particles.append((sprite, p))
+
+        if add_parts:
+            for p in add_parts:
+                x, y, t, d = p.update(st)
+
+                if d is None:
+                    continue
+
+                sprite = self.sm.create(d)
+                sprite.xoffset = x
+                sprite.yoffset = y
+
+                new_particles.append((sprite, p))
+            
+        self.particles = new_particles
+        
+        return 0
+            
+    def predict_callback(self):
+        return self.factory.predict()            
+        
+    def render(self, w, h, st, at):
+        return renpy.display.render.render(self.sm, w, h, st, at)
+
+
     
 class SnowBlossomFactory(object):
 
