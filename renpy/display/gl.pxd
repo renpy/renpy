@@ -19,6 +19,7 @@ cdef extern from "GL/glew.h":
     ctypedef unsigned int    GLhandleARB
     ctypedef unsigned int    GLhandle
     ctypedef char            GLchar
+    ctypedef char            GLcharARB
     void glClearIndex(GLfloat)
     void glClearColor(GLclampf, GLclampf, GLclampf, GLclampf)
     void glClear(GLbitfield)
@@ -400,6 +401,7 @@ cdef extern from "GL/glew.h":
     GLhandleARB glGetHandleARB(GLenum)
     void glDetachObjectARB(GLhandleARB, GLhandleARB)
     GLhandleARB glCreateShaderObjectARB(GLenum)
+    void glShaderSourceARB(GLhandleARB, GLsizei, GLchar * *, GLint *)
     void glCompileShaderARB(GLhandleARB)
     GLhandleARB glCreateProgramObjectARB()
     void glAttachObjectARB(GLhandleARB, GLhandleARB)

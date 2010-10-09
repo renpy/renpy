@@ -272,10 +272,12 @@ def display(name, libs=[]):
         libraries=libs))
 
 display("render")
+display("accelerator")
+
 display("gldraw", glew_libs )
 display("gltexture", glew_libs)
 display("glenviron", glew_libs)
-display("accelerator")
+display("glshader", glew_libs)
 
 sys.path.append('..')
 import renpy

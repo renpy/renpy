@@ -930,8 +930,9 @@ def generate_tegl():
         declare(GLhandleARB,"GetHandleARB",GLenum)
         declare("DetachObjectARB",GLhandleARB,GLhandleARB)
         declare(GLhandleARB,"CreateShaderObjectARB",GLenum)
-        #declare("ShaderSourceARB",GLhandleARB,GLsizei, const GLcharARB**,GLint[])
+        # declare("ShaderSourceARB",GLhandleARB,GLsizei, const GLcharARB**,GLint[])
         #handcoded("ShaderSourceARB",4)
+        declare("ShaderSourceARB",GLhandleARB,GLsizei,GLcharARB[1][1],GLint[1])
         declare("CompileShaderARB",GLhandleARB)
         declare(GLhandleARB,"CreateProgramObjectARB")
         declare("AttachObjectARB",GLhandleARB,GLhandleARB)
@@ -2557,7 +2558,7 @@ GLintptrARB = gltype("GLintptrARB")
 GLpointer = gltype("GLvoid *")
 GLhandleARB = gltype("GLhandleARB")
 GLstring = gltype("GLchar *")
-
+GLcharARB = gltype("GLchar")
 
 def declare(*args):
     global is_enum
@@ -2604,6 +2605,7 @@ cdef extern from "GL/glew.h":
     ctypedef unsigned int    GLhandleARB
     ctypedef unsigned int    GLhandle
     ctypedef char            GLchar
+    ctypedef char            GLcharARB
 """
 
 FOOTER = """\

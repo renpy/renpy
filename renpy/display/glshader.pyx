@@ -22,13 +22,7 @@
 # This file contains GLSL shader code, and code to load shaders.
 
 import array
-
-try:
-    import _renpy_tegl as gl; gl
-    import _renpy_pysdlgl as pysdlgl; pysdlgl
-except ImportError:
-    gl = None
-    pysdlgl = None
+from gl cimport *
 
 VERTEX_SHADER = """
 void main() {
@@ -91,34 +85,36 @@ def check_status(handle, type):
     Checks the status of a shader or program. If it fails, then an
     exception is raised.
     """
+
+    cdef GLint status = 0
+    cdef GLint log_length = 0
     
-    status = [ 0 ]    
-    gl.GetObjectParameterivARB(handle, type, status)
+    glGetObjectParameterivARB(handle, type, &status)
 
-    if status[0] == 0:
-
-        log_length_list = [ 0 ]
-        gl.GetObjectParameterivARB(handle, gl.OBJECT_INFO_LOG_LENGTH_ARB, log_length_list)
-        log_length = log_length_list[0]
-
-        log = array.array('c', ' ' * log_length)
+    if status == 1: # 0 for problems.
+        return
         
-        gl.GetInfoLogARB(handle, log_length, [ 0 ], log)
+    glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &log_length)
 
-        raise Exception("Shader error: %s" % log.tostring())
-        
+    log = ' ' * log_length
+    glGetInfoLogARB(handle, log_length, &log_length, <char *> log)
+
+    raise Exception("Shader error: %s" % log)
+
 
 def compile_shader(kind, source):
     """
     Allocates and compiles a shader.
     """
 
+    cdef char *sourceptr = <char *> source
+    cdef int lensource = len(source)
     
-    handle = gl.CreateShaderObjectARB(kind)
-    gl.ShaderSourceARB(handle, 1, [ source ], [ len(source) ])
-    gl.CompileShaderARB(handle)
+    handle = glCreateShaderObjectARB(kind)
+    glShaderSourceARB(handle, 1, <GLcharARB **> &sourceptr, &lensource)
+    glCompileShaderARB(handle)
 
-    check_status(handle, gl.OBJECT_COMPILE_STATUS_ARB)
+    check_status(handle, GL_OBJECT_COMPILE_STATUS_ARB)
 
     return handle
 
@@ -127,24 +123,23 @@ def compile_program(vertex, fragment):
     """
     Compiles a pair of shaders into a program.
     """
-
     
-    vertex_shader = compile_shader(gl.VERTEX_SHADER_ARB, vertex)
-    fragment_shader = compile_shader(gl.FRAGMENT_SHADER_ARB, fragment)
+    vertex_shader = compile_shader(GL_VERTEX_SHADER_ARB, vertex)
+    fragment_shader = compile_shader(GL_FRAGMENT_SHADER_ARB, fragment)
     
-    program = gl.CreateProgramObjectARB()
+    program = glCreateProgramObjectARB()
 
-    gl.AttachObjectARB(program, vertex_shader)
-    gl.AttachObjectARB(program, fragment_shader)
+    glAttachObjectARB(program, vertex_shader)
+    glAttachObjectARB(program, fragment_shader)
 
-    gl.LinkProgramARB(program)
+    glLinkProgramARB(program)
 
-    check_status(program, gl.OBJECT_LINK_STATUS_ARB)
+    check_status(program, GL_OBJECT_LINK_STATUS_ARB)
 
-    gl.UseProgramObjectARB(program)
+    glUseProgramObjectARB(program)
     
-    gl.DeleteObjectARB(vertex_shader)
-    gl.DeleteObjectARB(fragment_shader)
+    glDeleteObjectARB(vertex_shader)
+    glDeleteObjectARB(fragment_shader)
     
     return program
 
@@ -159,10 +154,3 @@ def blend_program():
 
 def imageblend_program():
     return compile_program(VERTEX_SHADER, IMAGEBLEND_SHADER)
-
-
-    
-    
-    
-    
-    

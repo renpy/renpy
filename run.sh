@@ -32,10 +32,12 @@ display () {
 # Build the modules. To build a new module, it must be listed here
 # and in module/setup.py
 display render
+display accelerator
+
 display gldraw
 display gltexture
 display glenviron
-display accelerator
+display glshader
 
 echo Compiling...
 
