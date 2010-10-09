@@ -2606,20 +2606,30 @@ cdef extern from "GL/glew.h":
     ctypedef char            GLchar
 """
 
-
+FOOTER = """\
+cdef inline gl_error_check():
+    cdef GLenum error
+    error = glGetError()
+    if error:
+        import renpy
+        raise renpy.display.gldraw.GLError("Error code 0x%x (%d)." % (error, error)) 
+"""
+        
 def main():
     out = sys.stdout
     out.write(HEADER)
 
     generate_tegl()
-
+    constant("BGRA")
+    
     constants.sort()
     print 
     print "    enum:"
     for i in constants:
         print "        %s" % i
-    
 
-
+    print
+    print FOOTER
+        
 if __name__ == '__main__':
     main()

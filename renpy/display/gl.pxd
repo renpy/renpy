@@ -504,6 +504,7 @@ cdef extern from "GL/glew.h":
         GL_BACK
         GL_BACK_LEFT
         GL_BACK_RIGHT
+        GL_BGRA
         GL_BITMAP
         GL_BITMAP_TOKEN
         GL_BLEND
@@ -1167,3 +1168,11 @@ cdef extern from "GL/glew.h":
         GL_ZERO
         GL_ZOOM_X
         GL_ZOOM_Y
+
+cdef inline gl_error_check():
+    cdef GLenum error
+    error = glGetError()
+    if error:
+        import renpy
+        raise renpy.display.gldraw.GLError("Error code 0x%x (%d)." % (error, error)) 
+

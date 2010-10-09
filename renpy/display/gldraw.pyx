@@ -44,11 +44,18 @@ try:
     import gltexture
     import glenviron
     
-    gl.BGRA = 0x80E1 
 except ImportError:
     gl = None
     pysdlgl = None
 
+# This is used by gl_error_check in gl.pxd.
+class GLError(Exception):
+    """
+    This is used to report OpenGL errors.
+    """
+
+    pass
+    
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 DISSOLVE = renpy.display.render.DISSOLVE
@@ -81,7 +88,6 @@ cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
 BLACKLIST = [
     ("S3 Graphics DeltaChrome", "1.4 20.00"),
     ]
-
 
 # The logfile we use.
 log_file = None
@@ -286,13 +292,14 @@ cdef class GLDraw:
         self.did_init = True
 
         # Set some default settings.
-        gl.Enable(gl.BLEND)
-        gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
-        gl.Enable(gl.CLIP_PLANE0)
-        gl.Enable(gl.CLIP_PLANE1)
-        gl.Enable(gl.CLIP_PLANE2)
-        gl.Enable(gl.CLIP_PLANE3)
-
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_CLIP_PLANE0)
+        glEnable(GL_CLIP_PLANE1)
+        glEnable(GL_CLIP_PLANE2)
+        glEnable(GL_CLIP_PLANE3)
+        gl_error_check()
+        
         self.environ.init()
         self.rtt.init()
 
@@ -344,11 +351,11 @@ cdef class GLDraw:
         # Init glew.
         pysdlgl.init_glew()
 
-        renderer = pysdlgl.get_string(gl.RENDERER)
-        version = pysdlgl.get_string(gl.VERSION)
+        renderer = <char *> glGetString(GL_RENDERER)
+        version = <char *>glGetString(GL_VERSION)
 
         # Log the GL version.
-        self.log("Vendor: %r", pysdlgl.get_string(gl.VENDOR))
+        self.log("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
         self.log("Renderer: %r", renderer)
         self.log("Version: %r", version)
         self.log("Display Info: %s", self.display_info)
@@ -388,20 +395,23 @@ cdef class GLDraw:
 
             return True
 
-        v = [ 0 ]
-        
-        gl.GetIntegerv(gl.MAX_TEXTURE_UNITS_ARB, v)
+        # Count the number of texture units.
+        cdef GLint texture_units = 0
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &texture_units)
 
-        self.log("Number of texture units: %d", v[0])
+        self.log("Number of texture units: %d", texture_units)
 
-        if v[0] < 4:
+        if texture_units < 4:
             self.log("Not enough texture units.")
             return False
-            
-        gl.GetIntegerv(gl.MAX_CLIP_PLANES, v)
 
-        self.log("Number of clipping planes: %d", v[0])
+
+        # Count the number of clip planes.
+        cdef GLint clip_planes = 0
         
+        glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
+        self.log("Number of clipping planes: %d", clip_planes)
+
         
         # Pick a texture environment subsystem.
         
@@ -552,16 +562,16 @@ cdef class GLDraw:
 
         self.draw_render_textures(surftree, 0)
 
-        gl.Viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
+        glViewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
         
-        gl.MatrixMode(gl.PROJECTION)
-        gl.LoadIdentity()
-        gl.Ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
-        gl.MatrixMode(gl.MODELVIEW)
+        glMatrixMode(GL_MODELVIEW)
         
-        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
-        gl.Clear(gl.COLOR_BUFFER_BIT)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         self.undefine_clip()
 
@@ -786,11 +796,11 @@ cdef class GLDraw:
         def draw_func():
 
             if alpha:
-                gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+                glClearColor(0.0, 0.0, 0.0, 0.0)
             else:
-                gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+                glClearColor(0.0, 0.0, 0.0, 1.0)
                 
-            gl.Clear(gl.COLOR_BUFFER_BIT)
+            glClear(GL_COLOR_BUFFER_BIT)
             self.undefine_clip()
         
             clip = (0, 0, what.width, what.height)
@@ -818,15 +828,15 @@ cdef class GLDraw:
         
         forward = reverse = IDENTITY
 
-        gl.Viewport(0, 0, 1, 1)
-        gl.ClearColor(0.0, 0.0, 0.0, 0.0)
+        glViewport(0, 0, 1, 1)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
         
-        gl.Clear(gl.COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT)
 
-        gl.MatrixMode(gl.PROJECTION)
-        gl.LoadIdentity()
-        gl.Ortho(0, 1, 0, 1, -1, 1)
-        gl.MatrixMode(gl.MODELVIEW)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, 1, 0, 1, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
 
         self.undefine_clip()
         
@@ -848,6 +858,10 @@ cdef class GLDraw:
         Gets a texture grid that's half the size of what..
         """
 
+        # Used to work around a bug in cython where self was not getting
+        # the right type when being assigned to the closure.
+        cdef GLDraw draw = self
+        
         if what.half_cache:
             return what.half_cache
 
@@ -859,17 +873,16 @@ cdef class GLDraw:
 
         def draw_func():
             
-            gl.ClearColor(0.0, 0.0, 0.0, 1.0)
-                
-            gl.Clear(gl.COLOR_BUFFER_BIT)
-            self.undefine_clip()
+            glClearColor(0.0, 0.0, 0.0, 1.0)                
+            glClear(GL_COLOR_BUFFER_BIT)
+            
+            draw.undefine_clip()
 
             clip = (0, 0, width, height)
             
-            self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
+            draw.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
-        if isinstance(what, renpy.display.render.Render):
-            what.is_opaque()
+        what.is_opaque()
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt)
 
@@ -938,12 +951,12 @@ cdef class GLDraw:
         
         pw, ph = self.physical_size
         
-        gl.Viewport(0, 0, pw, ph)
+        glViewport(0, 0, pw, ph)
 
-        gl.MatrixMode(gl.PROJECTION)
-        gl.LoadIdentity()
-        gl.Ortho(0, pw, ph, 0, -1.0, 1.0)
-        gl.MatrixMode(gl.MODELVIEW)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, pw, ph, 0, -1.0, 1.0)
+        glMatrixMode(GL_MODELVIEW)
 
         self.undefine_clip()
         self.set_clip((0, 0, pw, ph))
@@ -959,7 +972,7 @@ cdef class GLDraw:
 
     def screenshot(self):
         fb = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
-        pysdlgl.store_framebuffer(fb, gl.BGRA)
+        pysdlgl.store_framebuffer(fb, GL_BGRA)
         rv = fb.subsurface(self.physical_box)
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
         return rv

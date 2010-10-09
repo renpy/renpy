@@ -40,17 +40,6 @@ MAX_SIZE = 512
 # Possible sizes for a texture.
 SIZES = [ 512, 256, 128, 64 ]
 
-def check_error():
-    """
-    This checks for an opengl error, and throws an exception if it occurs.
-    """
-
-    err = gl.GetError()
-    
-    if err:
-        raise Exception("GL Error: 0x%x" % err)
-    
-
 # A list of texture number allocated.
 texture_numbers = [ ]
 
@@ -144,9 +133,9 @@ cdef class TextureCore:
         if self.nearest:
             return
 
-        gl.BindTexture(gl.TEXTURE_2D, self.number)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+        glBindTexture(GL_TEXTURE_2D, self.number)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         
         self.nearest = True
 
@@ -159,9 +148,9 @@ cdef class TextureCore:
         if not self.nearest:
             return
 
-        gl.BindTexture(gl.TEXTURE_2D, self.number)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-        gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        glBindTexture(GL_TEXTURE_2D, self.number)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         
         self.nearest = False
         
@@ -177,9 +166,9 @@ cdef class TextureCore:
             
             w, h = self.premult_size
 
-            gl.BindTexture(gl.TEXTURE_2D, self.number)
-            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            glBindTexture(GL_TEXTURE_2D, self.number)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
             self.nearest = False
             
@@ -193,7 +182,7 @@ cdef class TextureCore:
                         self.width,
                         self.height,
                         0,
-                        gl.BGRA)
+                        GL_BGRA)
 
                 self.created = True
 
@@ -203,7 +192,7 @@ cdef class TextureCore:
                 w,
                 h,
                 self.created,
-                gl.BGRA)
+                GL_BGRA)
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
@@ -225,9 +214,9 @@ cdef class TextureCore:
         
         if not self.created:
             
-            gl.BindTexture(gl.TEXTURE_2D, self.number)
-            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-            gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            glBindTexture(GL_TEXTURE_2D, self.number)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
             self.nearest = False
             
@@ -236,7 +225,7 @@ cdef class TextureCore:
                 self.width,
                 self.height,
                 0,
-                gl.BGRA)
+                GL_BGRA)
 
             self.created = True
          
@@ -253,11 +242,12 @@ cdef class TextureCore:
         This allocates a texture number, if necessary.
         """
 
+        cdef GLuint texnums[1]        
+
         if self.number != -1:
             return
         
-        texnums = [ 0 ]
-        gl.GenTextures(1, texnums)
+        glGenTextures(1, texnums)
         
         self.number = texnums[0]
         self.created = False
@@ -306,9 +296,13 @@ def alloc_texture(width, height):
 
 def dealloc_textures():
     global texture_numbers
+
+    cdef GLuint texnums[1]
     
     for t in texture_numbers:
-        gl.DeleteTextures(1, [ t ])
+        texnums[0] = t
+
+        glDeleteTextures(1, texnums)
 
     texture_numbers = [ ]
     free_textures.clear()
