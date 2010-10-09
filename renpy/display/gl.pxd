@@ -1,4 +1,4 @@
-cdef extern from "GL/glew.h":
+cdef extern from "glcompat.h":
     ctypedef unsigned int    GLenum
     ctypedef unsigned char   GLboolean
     ctypedef unsigned int    GLbitfield

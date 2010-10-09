@@ -239,23 +239,6 @@ if has_libglew:
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
-extensions.append(distutils.core.Extension(
-    "_renpy_tegl",
-    ["_renpy_tegl.c"],
-    extra_compile_args=extra_compile_args,
-    include_dirs=include_dirs,
-    library_dirs=library_dirs,
-    libraries=glew_libs))
-
-extensions.append(distutils.core.Extension(
-    "_renpy_pysdlgl",
-    ["_renpy_pysdlgl.c"],
-    extra_compile_args=extra_compile_args,
-    include_dirs=include_dirs,
-    library_dirs=library_dirs,
-    libraries=glew_libs))
-
-
 def display(name, libs=[]):
     """
     Adds code to compile a module that's defined by a cython file in

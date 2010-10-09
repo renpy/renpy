@@ -21,17 +21,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
+from pygame cimport *
 
 import collections
-import pygame; pygame # other modules might depend on pygame.
-
-try:
-    import _renpy_tegl as gl; gl
-    import _renpy_pysdlgl as pysdlgl; pysdlgl
-except ImportError:
-    gl = None
-    pysdlgl = None
-
 import renpy
     
 # The maximum size of a texture.
@@ -118,7 +110,7 @@ cdef class TextureCore:
         # occurs when the texture is first needed. This ensures that the
         # texture loading only occurs in the GL thread.
         
-        self.premult = pysdlgl.premultiply(
+        self.premult = premultiply(
             surf, x, y, w, h,
             border_left, border_top, border_right, border_bottom)
             
@@ -177,7 +169,7 @@ cdef class TextureCore:
             if w < self.width or h < self.height:
 
                 if not self.created:
-                    pysdlgl.load_premultiplied(
+                    load_premultiplied(
                         None,
                         self.width,
                         self.height,
@@ -187,7 +179,7 @@ cdef class TextureCore:
                 self.created = True
 
             # Otherwise, either load or replace the texture.
-            pysdlgl.load_premultiplied(
+            load_premultiplied(
                 self.premult,
                 w,
                 h,
@@ -220,7 +212,7 @@ cdef class TextureCore:
 
             self.nearest = False
             
-            pysdlgl.load_premultiplied(
+            load_premultiplied(
                 None,
                 self.width,
                 self.height,
@@ -804,6 +796,149 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
             
         y += t0h
 
+    
+def premultiply(
+    object pysurf,
+    int x,
+    int y,
+    int w,
+    int h,
+    border_left, border_top, border_right, border_bottom):
+    
+    """
+    Creates a string containing the premultiplied image data for
+    for the (x, y, w, h) box inside pysurf. The various border_
+    parameters control the addition of a border on the sides.
+    """
+
+    # Adjust the alpha if we have an alpha-free image.
+    cdef unsigned char alpha_and
+    cdef unsigned char alpha_or
+    
+    if pysurf.get_masks()[3]:
+        alpha_and = 255
+        alpha_or = 0
+    else:
+        alpha_and = 0
+        alpha_or = 255
+
+    # Allocate an uninitialized string.
+    cdef unsigned char *null = NULL
+    rv = null[:w*h*4]
+    
+    # Out is where we put the output.
+    cdef unsigned char *out = rv
+    
+    # The pixels in the source image.
+    cdef unsigned char *pixels = NULL
+    cdef SDL_Surface *surf
+
+    # Pointer to the current pixel.
+    cdef unsigned char *p
+
+    # Pointer to the current output pixel.
+    cdef unsigned char *op
+    
+    # Pointer to the row end.
+    cdef unsigned char *pend
+
+    # alpha value.
+    cdef unsigned int a
+
+    # pixel pointer.
+    cdef unsigned int *pp
+
+    surf = PySurface_AsSurface(pysurf)
+    pixels = <unsigned char *> surf.pixels
+
+    pixels += y * surf.pitch
+    pixels += x * 4
+
+    op = out
+    
+    for y from 0 <= y < h:
+        p = pixels + y * surf.pitch
+        pend = p + w * 4
+
+        while p < pend:
+            a = (p[3] & alpha_and) | alpha_or
+
+            op[0] = p[0] * a / 255
+            op[1] = p[1] * a / 255
+            op[2] = p[2] * a / 255
+            op[3] = a
+            
+            p += 4
+            op += 4
+
+    if border_left:
+        pp = <unsigned int *> (out)
+
+        for y from 0 <= y < h:
+            pp[0] = pp[1]
+            pp += w
+
+    if border_right:
+        pp = <unsigned int *> (out)
+        pp += w - 2
+        
+        for y from 0 <= y < h:
+            pp[1] = pp[0]
+            pp += w
+
+    if border_top:
+        pp = <unsigned int *> (out)
+
+        for x from 0 <= x < w:
+            pp[0] = pp[w]
+            pp += 1
+
+    if border_top:
+        pp = <unsigned int *> (out)
+        pp += (y - 2) * w
+
+        for x from 0 <= x < w:
+            pp[w] = pp[0]
+            pp += 1
+            
+    return rv
+
+
+def load_premultiplied(
+    data, width, height, update, format,
+    ):
+
+    cdef char *pixels
+
+    if data:
+        pixels = data
+    else:
+        pixels = NULL
+    
+    if update:
+        glTexSubImage2D(
+            GL_TEXTURE_2D,
+            0,
+            0,
+            0,
+            width,
+            height,
+            format,
+            GL_UNSIGNED_BYTE,
+            <GLubyte *> pixels)
+        
+    else:
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGBA,
+            width,
+            height,
+            0,
+            format,
+            GL_UNSIGNED_BYTE,
+            <GLubyte *> pixels)
+
 
 cdef void draw_rectangle(
     double sx,
@@ -973,3 +1108,6 @@ cdef void draw_rectangle(
     glVertex2f(x3, y3)
     
     glEnd()
+
+
+    

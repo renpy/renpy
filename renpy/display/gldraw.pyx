@@ -20,10 +20,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+from pygame cimport *
 from gl cimport *
-cimport renpy.display.gltexture as gltexture
-cimport renpy.display.render as render
 
 import renpy
 import pygame
@@ -33,20 +31,18 @@ import weakref
 import array
 import time
 
-try:
-    import _renpy_tegl as gl; gl
-    import _renpy_pysdlgl as pysdlgl; pysdlgl
+cimport renpy.display.gltexture as gltexture
+cimport renpy.display.render as render
+import renpy.display.gltexture as gltexture
+import renpy.display.glenviron as glenviron
+import renpy.display.glshader as glshader
 
-    import renpy.display.gltexture
-    import renpy.display.glenviron
-    import renpy.display.glshader
+cdef extern from "glcompat.h":
+    GLenum glewInit()
+    GLubyte *glewGetErrorString(GLenum)
 
-    import gltexture
-    import glenviron
-    
-except ImportError:
-    gl = None
-    pysdlgl = None
+    enum:
+        GLEW_OK
 
 # This is used by gl_error_check in gl.pxd.
 class GLError(Exception):
@@ -55,7 +51,7 @@ class GLError(Exception):
     """
 
     pass
-    
+
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 DISSOLVE = renpy.display.render.DISSOLVE
@@ -177,10 +173,6 @@ cdef class GLDraw:
         can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
-
-        # If GL can't be loaded, give up.
-        if not gl:
-            return False
 
         if not renpy.config.gl_enable:
             self.log("GL Disabled.")
@@ -339,8 +331,6 @@ cdef class GLDraw:
         self.log("About to quit GL.")
         pygame.display.quit()
         self.log("Finished quit GL.")
-
-        
         
     def init(self):
         """
@@ -349,12 +339,15 @@ cdef class GLDraw:
         """
 
         # Init glew.
-        pysdlgl.init_glew()
+        err = glewInit()
 
-        renderer = <char *> glGetString(GL_RENDERER)
-        version = <char *>glGetString(GL_VERSION)
-
+        if err != GLEW_OK:
+            raise Exception("Glew init failed: %s" % <char *> glewGetErrorString(err))
+        
         # Log the GL version.
+        renderer = <char *> glGetString(GL_RENDERER)
+        version = <char *> glGetString(GL_VERSION)
+
         self.log("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
         self.log("Renderer: %r", renderer)
         self.log("Version: %r", version)
@@ -364,8 +357,9 @@ cdef class GLDraw:
             if renderer == r and version.startswith(v):
                 self.log("Blacklisted renderer/version.")
                 return False
-                
-        extensions = set(pysdlgl.get_string(gl.EXTENSIONS).split(" "))
+
+        extensions_string = <char *> glGetString(GL_EXTENSIONS)            
+        extensions = set(extensions_string.split(" "))
         
         self.log("Extensions:")
 
@@ -844,13 +838,13 @@ cdef class GLDraw:
         
         self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
-        a = array.array('b', (0,))
-
-        gl.ReadPixels(0, 0, 1, 1, gl.ALPHA, gl.BYTE, a)
+        cdef unsigned char a = 0
+        
+        glReadPixels(0, 0, 1, 1, GL_ALPHA, GL_BYTE, &a)
 
         what.kill()
         
-        return a[0]
+        return a
         
 
     def get_half(self, what):
@@ -971,9 +965,29 @@ cdef class GLDraw:
             False)
 
     def screenshot(self):
-        fb = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
-        pysdlgl.store_framebuffer(fb, GL_BGRA)
-        rv = fb.subsurface(self.physical_box)
+        cdef unsigned char *pixels = NULL
+        cdef SDL_Surface *surf
+
+        # A surface the size of the framebuffer
+        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+
+        # Use GL to read the full framebuffer in.
+        surf = PySurface_AsSurface(full)
+        pixels = <unsigned char *> surf.pixels
+
+        glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
+
+        glReadPixels(
+            0,
+            0,
+            surf.w,
+            surf.h,
+            GL_BGRA,
+            GL_UNSIGNED_BYTE,
+            pixels)
+
+        # Crop and flip it, since it's upside down.
+        rv = full.subsurface(self.physical_box)
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
         return rv
         
