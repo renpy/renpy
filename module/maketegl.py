@@ -30,58 +30,13 @@
 
 VERSION = "0.1"
 
+import sys
 
 #-----------------------------------------------------------------------
 # Options
 
 # Module names (you can specify the same name to put gl and glu
 # functions in the same module).
-
-GL_MODULE_NAME = "_renpy_tegl"
-GLU_MODULE_NAME = None # "_renpy_tegl"
-
-
-# Whether to export names of constants with the GL_ (or GLU_)
-# prefix or not.
-
-EXPORT_CONSTANTS_WITH_PREFIX = False
-
-
-# Whether to export names of functions with the gl (or glu)
-# prefix or not.
-
-EXPORT_FUNCTIONS_WITH_PREFIX = False
-
-
-# Specify maximum number of textures to be handled in a single array.
-# This is the maximum array size for the following functions:
-#   glGenTextures, glDeleteTextures, glPrioritizeTextures, and
-#   glAreTexturesResident
-# Default 96 = number of printable ASCII characters.
-
-MAX_TEXTURE_ARRAY_SIZE = 96
-
-
-# Specify maximum number of queries to be handled in a single array.
-# This is the maximum array size for the following functions:
-#   glGenQueries, glDeleteQueries, glGenQueriesARB, glDeleteQueries
-
-MAX_QUERY_ARRAY_SIZE = 1
-
-
-# Specify maximum number of queries to be handled in a single array.
-# This is the maximum array size for the following functions:
-#   glGenBuffers, glDeleteBuffers, glGenBuffersARB, glDeleteBuffersARB
-
-MAX_BUFFER_ARRAY_SIZE = 1
-
-
-# Specify maximum number of programs to be handled in a single array.
-# This is the maximum array size for the following functions:
-#   glGenProgramsARB, glDeleteProgramsARB
-
-MAX_PROGRAM_ARRAY_SIZE = 1
-
 
 # Enable or disable extensions
 
@@ -126,25 +81,11 @@ GL_ARB_PIXEL_BUFFER_OBJECT = False
 
 GL_EXT_FRAMEBUFFER_OBJECT = True
 
-# Specify names of functions to release GIL for
-
-RELEASE_GIL = set()
-
-# How to specify names:
-#RELEASE_GIL = set([ 'CallList', 'DrawArrays', 'DrawElements' ])
-
 
 #-----------------------------------------------------------------------
 # generate tegl.c
 
 def generate_tegl():
-    prefix = "gl"
-    headers = "#include <GL/glew.h>\n"
-
-    g = Builder(prefix,headers)
-    declare = g.declare
-    constant = g.constant
-    handcoded = g.handcoded
 
     # -------- GL Function Prototypes --------
 
@@ -188,7 +129,7 @@ def generate_tegl():
     declare("PopClientAttrib")
     declare(GLint,"RenderMode",GLenum);
     declare(GLenum,"GetError");
-    #GLAPI const GLubyte * GLAPIENTRY glGetString(GLenum);
+    declare(GLstring, "GetString", GLenum)
     declare("Finish")
     declare("Flush")
     declare("Hint",GLenum,GLenum)
@@ -467,12 +408,12 @@ def generate_tegl():
     declare("CopyTexImage2D",GLenum,GLint,GLenum,GLint,GLint,GLsizei,GLsizei,GLint)
     declare("CopyTexSubImage1D",GLenum,GLint,GLint,GLint,GLint,GLsizei)
     declare("CopyTexSubImage2D",GLenum,GLint,GLint,GLint,GLint,GLint,GLsizei,GLsizei)
-    declare("GenTextures",GLsizei,GLuint[MAX_TEXTURE_ARRAY_SIZE].asreturn())  ### not a dynamic size
-    declare("DeleteTextures",GLsizei,GLuint[MAX_TEXTURE_ARRAY_SIZE])  ### not a dynamic size
-    declare("PrioritizeTextures",GLsizei,GLuint[MAX_TEXTURE_ARRAY_SIZE],
-            GLclampf[MAX_TEXTURE_ARRAY_SIZE])  ### not a dynamic size
-    declare(GLboolean,"AreTexturesResident",GLsizei,GLuint[MAX_TEXTURE_ARRAY_SIZE],
-            GLboolean[MAX_TEXTURE_ARRAY_SIZE].asreturn());  ### not a dynamic size
+    declare("GenTextures",GLsizei,GLuint[1].asreturn())  ### not a dynamic size
+    declare("DeleteTextures",GLsizei,GLuint[1])  ### not a dynamic size
+    declare("PrioritizeTextures",GLsizei,GLuint[1],
+            GLclampf[1])  ### not a dynamic size
+    declare(GLboolean,"AreTexturesResident",GLsizei,GLuint[1],
+            GLboolean[1].asreturn());  ### not a dynamic size
 
     # Evaluators
     declare("Map1d",GLenum,GLdouble,GLdouble,GLint,GLint,GLbuffer)
@@ -696,8 +637,8 @@ def generate_tegl():
         declare("WindowPos3sv",GLshort[3])
 
     if OPENGL_1_5:
-        declare("GenQueries",GLsizei,GLuint[MAX_QUERY_ARRAY_SIZE].asreturn())  ### not a dynamic size
-        declare("DeleteQueries",GLsizei,GLuint[MAX_QUERY_ARRAY_SIZE])  ### not a dynamic size
+        # declare("GenQueries",GLsizei,GLuint[MAX_QUERY_ARRAY_SIZE].asreturn())  ### not a dynamic size
+        # declare("DeleteQueries",GLsizei,GLuint[MAX_QUERY_ARRAY_SIZE])  ### not a dynamic size
         declare(GLboolean,"IsQuery",GLuint)
         declare("BeginQuery",GLenum,GLuint)
         declare("EndQuery",GLenum)
@@ -705,12 +646,12 @@ def generate_tegl():
         declare("GetQueryObjectiv",GLuint,GLenum,GLint[1].asreturn())
         declare("GetQueryObjectuiv",GLuint,GLenum,GLuint[1].asreturn())
         declare("BindBuffer",GLenum,GLuint)
-        declare("DeleteBuffers",GLsizei,GLuint[MAX_BUFFER_ARRAY_SIZE])  ### not a dynamic size
-        declare("GenBuffers",GLsizei,GLuint[MAX_BUFFER_ARRAY_SIZE].asreturn())  ### not a dynamic size
+        # declare("DeleteBuffers",GLsizei,GLuint[MAX_BUFFER_ARRAY_SIZE])  ### not a dynamic size
+        # declare("GenBuffers",GLsizei,GLuint[MAX_BUFFER_ARRAY_SIZE].asreturn())  ### not a dynamic size
         declare(GLboolean,"IsBuffer",GLuint)
-        declare("BufferData",GLenum,GLsizeiptr,GLbuffer,GLenum)
-        declare("BufferSubData",GLenum,GLintptr,GLsizeiptr,GLbuffer)
-        declare("GetBufferSubData",GLenum,GLintptr,GLsizeiptr,GLbuffer.asreturn())
+        #declare("BufferData",GLenum,GLsizeiptr,GLbuffer,GLenum)
+        #declare("BufferSubData",GLenum,GLintptr,GLsizeiptr,GLbuffer)
+        #declare("GetBufferSubData",GLenum,GLintptr,GLsizeiptr,GLbuffer.asreturn())
         declare(GLpointer,"MapBuffer",GLenum,GLenum)
         declare(GLboolean,"UnmapBuffer",GLenum)
         declare("GetBufferParameteriv",GLenum,GLenum,GLint[1].asreturn())
@@ -758,7 +699,7 @@ def generate_tegl():
         declare(GLboolean,"IsShader",GLuint)
         declare("LinkProgram",GLuint)
         #declare("ShaderSource",GLuint,GLsizei,GLvoid**,GLint[])
-        handcoded("ShaderSource",4)
+        #handcoded("ShaderSource",4)
         declare("UseProgram",GLuint)
         declare("Uniform1f",GLint,GLfloat)
         declare("Uniform2f",GLint,GLfloat,GLfloat)
@@ -934,9 +875,9 @@ def generate_tegl():
         declare("ProgramStringARB",GLenum,GLenum,GLsizei,GLbuffer)
         declare("BindProgramARB",GLenum,GLuint)
         declare("DeleteProgramsARB",GLsizei,
-                GLuint[MAX_PROGRAM_ARRAY_SIZE])  ### not a dynamic size
+                 GLuint[1])  ### not a dynamic size
         declare("GenProgramsARB",GLsizei,
-                GLuint[MAX_PROGRAM_ARRAY_SIZE].asreturn())  ### not a dynamic size
+                 GLuint[1].asreturn())  ### not a dynamic size
         declare("ProgramEnvParameter4dARB",GLenum,GLuint,GLdouble,GLdouble,GLdouble,GLdouble)
         declare("ProgramEnvParameter4dvARB",GLenum,GLuint,GLdouble[4])
         declare("ProgramEnvParameter4fARB",GLenum,GLuint,GLfloat,GLfloat,GLfloat,GLfloat)
@@ -959,10 +900,10 @@ def generate_tegl():
 
     if GL_ARB_VERTEX_BUFFER_OBJECT:
         declare("BindBufferARB",GLenum,GLuint)
-        declare("DeleteBuffersARB",GLsizei,
-                GLuint[MAX_BUFFER_ARRAY_SIZE])  ### not a dynamic size
-        declare("GenBuffersARB",GLsizei,
-                GLuint[MAX_BUFFER_ARRAY_SIZE].asreturn())  ### not a dynamic size
+        # declare("DeleteBuffersARB",GLsizei,
+        #         GLuint[MAX_BUFFER_ARRAY_SIZE])  ### not a dynamic size
+        # declare("GenBuffersARB",GLsizei,
+        #         GLuint[MAX_BUFFER_ARRAY_SIZE].asreturn())  ### not a dynamic size
         declare(GLboolean,"IsBufferARB",GLuint)
         declare("BufferDataARB",GLenum,GLsizeiptrARB,GLbuffer,GLenum)
         declare("BufferSubDataARB",GLenum,GLintptrARB,GLsizeiptrARB,GLbuffer)
@@ -973,10 +914,10 @@ def generate_tegl():
         #declare("GetBufferPointervARB",GLenum,GLenum,GLvoid**)
 
     if GL_ARB_OCCLUSION_QUERY:
-        declare("GenQueriesARB",GLsizei,
-                GLuint[MAX_QUERY_ARRAY_SIZE].asreturn())  ### not a dynamic size
-        declare("DeleteQueriesARB",GLsizei,
-                GLuint[MAX_QUERY_ARRAY_SIZE])  ### not a dynamic size
+        # declare("GenQueriesARB",GLsizei,
+        #         GLuint[MAX_QUERY_ARRAY_SIZE].asreturn())  ### not a dynamic size
+        # declare("DeleteQueriesARB",GLsizei,
+        #         GLuint[MAX_QUERY_ARRAY_SIZE])  ### not a dynamic size
         declare(GLboolean,"IsQueryARB",GLuint)
         declare("BeginQueryARB",GLenum,GLuint)
         declare("EndQueryARB",GLenum)
@@ -990,7 +931,7 @@ def generate_tegl():
         declare("DetachObjectARB",GLhandleARB,GLhandleARB)
         declare(GLhandleARB,"CreateShaderObjectARB",GLenum)
         #declare("ShaderSourceARB",GLhandleARB,GLsizei, const GLcharARB**,GLint[])
-        handcoded("ShaderSourceARB",4)
+        #handcoded("ShaderSourceARB",4)
         declare("CompileShaderARB",GLhandleARB)
         declare(GLhandleARB,"CreateProgramObjectARB")
         declare("AttachObjectARB",GLhandleARB,GLhandleARB)
@@ -2581,934 +2522,103 @@ def generate_tegl():
         constant("MAX_COLOR_ATTACHMENTS_EXT")
         constant("MAX_RENDERBUFFER_SIZE_EXT")
 
+class gltype(object):
 
-        
-        
-    # -------- Return the builder --------
-
-    return g
-
-
-#-----------------------------------------------------------------------
-# generate teglu.c
-
-def generate_teglu():
-    prefix = "glu"
-    headers = "#include <GL/glu.h>\n"
-
-    g = Builder(prefix,headers)
-    declare = g.declare
-    constant = g.constant
-    handcoded = g.handcoded
-
-    # -------- Constants ---------
-
-    declare("Build1DMipmapLevels",GLenum,GLint,GLsizei,GLenum,GLenum,
-            GLint,GLint,GLint,GLbuffer)
-    declare("Build1DMipmaps",GLenum,GLint,GLsizei,GLenum,GLenum,GLbuffer)
-    declare("Build2DMipmapLevels",GLenum,GLint,GLsizei,GLsizei,GLenum,
-            GLenum,GLint,GLint,GLint,GLbuffer)
-    declare("Build2DMipmaps",GLenum,GLint,GLsizei,GLsizei,GLenum,GLenum,GLbuffer)
-    declare("Build3DMipmapLevels",GLenum,GLint,GLsizei,GLsizei,GLsizei,
-            GLenum,GLenum,GLint,GLint,GLint,GLbuffer)
-    declare("Build3DMipmaps",GLenum,GLint,GLsizei,GLsizei,GLsizei,GLenum,
-            GLenum,GLbuffer)
-    declare(GLboolean,"CheckExtension",GLbuffer,GLbuffer)
-    declare("LookAt",GLdouble,GLdouble,GLdouble,GLdouble,GLdouble,
-            GLdouble,GLdouble,GLdouble,GLdouble)
-    declare("Ortho2D",GLdouble,GLdouble,GLdouble,GLdouble)
-    declare("Perspective",GLdouble,GLdouble,GLdouble,GLdouble)
-    declare("PickMatrix",GLdouble,GLdouble,GLdouble,GLdouble,GLint[4])
-    declare(GLint,"Project",GLdouble,GLdouble,GLdouble,GLdouble[16],
-            GLdouble[16],GLint[4],GLdouble[1].asreturn(),
-            GLdouble[1].asreturn(),GLdouble[1].asreturn())
-    declare("ScaleImage",GLenum,GLsizei,GLsizei,GLenum,GLbuffer,GLsizei,
-            GLsizei,GLenum,GLbuffer.asreturn())
-    declare(GLint,"UnProject",GLdouble,GLdouble,GLdouble,GLdouble[16],
-            GLdouble[16],GLint[4],GLdouble[1].asreturn(),
-            GLdouble[1].asreturn(),GLdouble[1].asreturn())
-    declare(GLint,"UnProject4",GLdouble,GLdouble,GLdouble,GLdouble,
-            GLdouble[16],GLdouble[16],GLint[4],GLdouble,GLdouble,
-            GLdouble[1].asreturn(),GLdouble[1].asreturn(),
-            GLdouble[1].asreturn(),GLdouble[1].asreturn())
-
-    #declare("BeginCurve",GLpointer)
-    #declare("BeginPolygon",GLpointer)
-    #declare("BeginSurface",GLpointer)
-    #declare("BeginTrim",GLpointer)
-    #declare("Cylinder",GLpointer,GLdouble,GLdouble,GLdouble,GLint,GLint)
-    #declare("DeleteNurbsRenderer",GLpointer)
-    #declare("DeleteQuadric",GLpointer)
-    #declare("DeleteTess",GLpointer)
-    #declare("Disk",GLpointer,GLdouble,GLdouble,GLint,GLint)
-    #declare("EndCurve",GLpointer)
-    #declare("EndPolygon",GLpointer)
-    #declare("EndSurface",GLpointer)
-    #declare("EndTrim",GLpointer)
-    #GLAPI const GLubyte * GLAPIENTRY gluErrorString (GLenum)
-    #declare("GetNurbsProperty",GLpointer,GLenum,GLfloat[1].asreturn())
-    #GLAPI const GLubyte * GLAPIENTRY gluGetString (GLenum)
-    #declare("GetTessProperty",GLpointer,GLenum,GLdouble[1].asreturn())
-    #declare("LoadSamplingMatrices",GLpointer,GLfloat[16],GLfloat[16],GLint[4])
-    #declare(GLpointer,"gluNewNurbsRenderer")
-    #declare(GLpointer,"gluNewQuadric")
-    #declare(GLpointer,"gluNewTess")
-    #declare("NextContour",GLpointer,GLenum)
-    #declare("NurbsCallback",GLpointer,GLenum,_GLUfuncptr CallBackFunc)
-    #declare("NurbsCallbackData",GLpointer,GLvoid* userData)
-    #declare("NurbsCallbackDataEXT",GLpointer,GLvoid* userData)
-    #declare("NurbsCurve",GLpointer,GLint,GLbuffer,GLint,
-    #        GLbuffer,GLint,GLenum)
-    #declare("NurbsProperty",GLpointer,GLenum,GLfloat)
-    #declare("NurbsSurface",GLpointer,GLint,GLbuffer,GLint,GLbuffer,
-    #        GLint,GLint,GLbuffer,GLint,GLint,GLenum)
-    #declare("PartialDisk",GLpointer,GLdouble,GLdouble,
-    #        GLint,GLint,GLdouble,GLdouble)
-    #declare("PwlCurve",GLpointer,GLint,GLbuffer,GLint,GLenum)
-    #declare("QuadricCallback",GLpointer,GLenum,_GLUfuncptr CallBackFunc)
-    #declare("QuadricDrawStyle",GLpointer,GLenum)
-    #declare("QuadricNormals",GLpointer,GLenum)
-    #declare("QuadricOrientation",GLpointer,GLenum)
-    #declare("QuadricTexture",GLpointer,GLboolean)
-    #declare("Sphere",GLpointer,GLdouble,GLint,GLint)
-    #declare("TessBeginContour",GLpointer)
-    #declare("TessBeginPolygon",GLpointer,GLbuffer)
-    #declare("TessCallback",GLpointer,GLenum,_GLUfuncptr CallBackFunc)
-    #declare("TessEndContour",GLpointer)
-    #declare("TessEndPolygon",GLpointer)
-    #declare("TessNormal",GLpointer,GLdouble,GLdouble,GLdouble)
-    #declare("TessProperty",GLpointer,GLenum,GLdouble)
-    #declare("TessVertex",GLpointer,GLbuffer,GLbuffer)
-
-
-    # -------- Constants ---------
-
-    constant("TRUE")
-    constant("FALSE")
-    constant("INVALID_ENUM")
-    constant("INVALID_VALUE")
-    constant("OUT_OF_MEMORY")
-    constant("INCOMPATIBLE_GL_VERSION")
-    constant("INVALID_OPERATION")
-    constant("VERSION")
-    constant("EXTENSIONS")
-    constant("INVALID_ENUM")
-    constant("INVALID_VALUE")
-    constant("OUT_OF_MEMORY")
-    constant("INCOMPATIBLE_GL_VERSION")
-    constant("INVALID_OPERATION")
-
-    #constant("OUTLINE_POLYGON")
-    #constant("OUTLINE_PATCH")
-    #constant("NURBS_ERROR")
-    #constant("ERROR")
-    #constant("NURBS_BEGIN")
-    #constant("NURBS_BEGIN_EXT")
-    #constant("NURBS_VERTEX")
-    #constant("NURBS_VERTEX_EXT")
-    #constant("NURBS_NORMAL")
-    #constant("NURBS_NORMAL_EXT")
-    #constant("NURBS_COLOR")
-    #constant("NURBS_COLOR_EXT")
-    #constant("NURBS_TEXTURE_COORD")
-    #constant("NURBS_TEX_COORD_EXT")
-    #constant("NURBS_END")
-    #constant("NURBS_END_EXT")
-    #constant("NURBS_BEGIN_DATA")
-    #constant("NURBS_BEGIN_DATA_EXT")
-    #constant("NURBS_VERTEX_DATA")
-    #constant("NURBS_VERTEX_DATA_EXT")
-    #constant("NURBS_NORMAL_DATA")
-    #constant("NURBS_NORMAL_DATA_EXT")
-    #constant("NURBS_COLOR_DATA")
-    #constant("NURBS_COLOR_DATA_EXT")
-    #constant("NURBS_TEXTURE_COORD_DATA")
-    #constant("NURBS_TEX_COORD_DATA_EXT")
-    #constant("NURBS_END_DATA")
-    #constant("NURBS_END_DATA_EXT")
-    #constant("NURBS_ERROR1")
-    #constant("NURBS_ERROR2")
-    #constant("NURBS_ERROR3")
-    #constant("NURBS_ERROR4")
-    #constant("NURBS_ERROR5")
-    #constant("NURBS_ERROR6")
-    #constant("NURBS_ERROR7")
-    #constant("NURBS_ERROR8")
-    #constant("NURBS_ERROR9")
-    #constant("NURBS_ERROR10")
-    #constant("NURBS_ERROR11")
-    #constant("NURBS_ERROR12")
-    #constant("NURBS_ERROR13")
-    #constant("NURBS_ERROR14")
-    #constant("NURBS_ERROR15")
-    #constant("NURBS_ERROR16")
-    #constant("NURBS_ERROR17")
-    #constant("NURBS_ERROR18")
-    #constant("NURBS_ERROR19")
-    #constant("NURBS_ERROR20")
-    #constant("NURBS_ERROR21")
-    #constant("NURBS_ERROR22")
-    #constant("NURBS_ERROR23")
-    #constant("NURBS_ERROR24")
-    #constant("NURBS_ERROR25")
-    #constant("NURBS_ERROR26")
-    #constant("NURBS_ERROR27")
-    #constant("NURBS_ERROR28")
-    #constant("NURBS_ERROR29")
-    #constant("NURBS_ERROR30")
-    #constant("NURBS_ERROR31")
-    #constant("NURBS_ERROR32")
-    #constant("NURBS_ERROR33")
-    #constant("NURBS_ERROR34")
-    #constant("NURBS_ERROR35")
-    #constant("NURBS_ERROR36")
-    #constant("NURBS_ERROR37")
-    #constant("AUTO_LOAD_MATRIX")
-    #constant("CULLING")
-    #constant("SAMPLING_TOLERANCE")
-    #constant("DISPLAY_MODE")
-    #constant("PARAMETRIC_TOLERANCE")
-    #constant("SAMPLING_METHOD")
-    #constant("U_STEP")
-    #constant("V_STEP")
-    #constant("NURBS_MODE")
-    #constant("NURBS_MODE_EXT")
-    #constant("NURBS_TESSELLATOR")
-    #constant("NURBS_TESSELLATOR_EXT")
-    #constant("NURBS_RENDERER")
-    #constant("NURBS_RENDERER_EXT")
-    #constant("OBJECT_PARAMETRIC_ERROR")
-    #constant("OBJECT_PARAMETRIC_ERROR_EXT")
-    #constant("OBJECT_PATH_LENGTH")
-    #constant("OBJECT_PATH_LENGTH_EXT")
-    #constant("PATH_LENGTH")
-    #constant("PARAMETRIC_ERROR")
-    #constant("DOMAIN_DISTANCE")
-    #constant("MAP1_TRIM_2")
-    #constant("MAP1_TRIM_3")
-    #constant("POINT")
-    #constant("LINE")
-    #constant("FILL")
-    #constant("SILHOUETTE")
-    #constant("SMOOTH")
-    #constant("FLAT")
-    #constant("NONE")
-    #constant("OUTSIDE")
-    #constant("INSIDE")
-    #constant("TESS_BEGIN")
-    #constant("BEGIN")
-    #constant("TESS_VERTEX")
-    #constant("VERTEX")
-    #constant("TESS_END")
-    #constant("END")
-    #constant("TESS_ERROR")
-    #constant("TESS_EDGE_FLAG")
-    #constant("EDGE_FLAG")
-    #constant("TESS_COMBINE")
-    #constant("TESS_BEGIN_DATA")
-    #constant("TESS_VERTEX_DATA")
-    #constant("TESS_END_DATA")
-    #constant("TESS_ERROR_DATA")
-    #constant("TESS_EDGE_FLAG_DATA")
-    #constant("TESS_COMBINE_DATA")
-    #constant("CW")
-    #constant("CCW")
-    #constant("INTERIOR")
-    #constant("EXTERIOR")
-    #constant("UNKNOWN")
-    #constant("TESS_WINDING_RULE")
-    #constant("TESS_BOUNDARY_ONLY")
-    #constant("TESS_TOLERANCE")
-    #constant("TESS_ERROR1")
-    #constant("TESS_ERROR2")
-    #constant("TESS_ERROR3")
-    #constant("TESS_ERROR4")
-    #constant("TESS_ERROR5")
-    #constant("TESS_ERROR6")
-    #constant("TESS_ERROR7")
-    #constant("TESS_ERROR8")
-    #constant("TESS_MISSING_BEGIN_POLYGON")
-    #constant("TESS_MISSING_BEGIN_CONTOUR")
-    #constant("TESS_MISSING_END_POLYGON")
-    #constant("TESS_MISSING_END_CONTOUR")
-    #constant("TESS_COORD_TOO_LARGE")
-    #constant("TESS_NEED_COMBINE_CALLBACK")
-    #constant("TESS_WINDING_ODD")
-    #constant("TESS_WINDING_NONZERO")
-    #constant("TESS_WINDING_POSITIVE")
-    #constant("TESS_WINDING_NEGATIVE")
-    #constant("TESS_WINDING_ABS_GEQ_TWO")
-
-    # -------- Return Builder ---------
+    def __init__(self, s):
+        self.type = s
     
-    return g
+    def __getitem__(self, n):
+        return gltype(self.type + " *")
 
-
-#-----------------------------------------------------------------------
-# Builder class
-
-class Builder(object):
-
-    def __init__(self,prefix,headers):
-        self.prefix = prefix
-        self.headers = headers
-        self.functions = []
-        self.methoddefs = []
-        self.constants = []
-        if EXPORT_FUNCTIONS_WITH_PREFIX:
-            self.fprefix = self.prefix
-        else:
-            self.fprefix = ''
-        if EXPORT_CONSTANTS_WITH_PREFIX:
-            self.cprefix = "%s_" % self.prefix.upper()
-        else:
-            self.cprefix = ''
-
-    def declare(self,*proto):
-        if isinstance(proto[0],str):
-            ret = None
-            name = proto[0]
-            args = proto[1:]
-        else:
-            ret = proto[0]
-            name = proto[1]
-            args = proto[2:]
-        if len(args) == 0:
-            self._declare_no_args(ret,name)
-        elif len(args) == 1:
-            self._declare_single_arg(ret,name,args[0])
-        else:
-            self._declare_multi_arg(ret,name,args)
-
-    def _declare_no_args(self,ret,name):
-        if ret is not None:
-            declarations = '    %s r;\n' % ret.itype
-            retcap = 'r = '
-            retstmt = _return_stmt[ret.etype]
-        else:
-            declarations = ''
-            retcap = ''
-            retstmt = '    Py_RETURN_NONE;\n'
-        if name in RELEASE_GIL:
-            releasegil = "    Py_BEGIN_ALLOW_THREADS\n"
-            acquiregil = "    Py_END_ALLOW_THREADS\n"
-        else:
-            releasegil = ''
-            acquiregil = ''
-        s = { 'name': name,
-              'declarations': declarations,
-              'retcap': retcap,
-              'retstmt': retstmt,
-              'prefix': self.prefix,
-              'fprefix': self.fprefix,
-              'releasegil': releasegil,
-              'acquiregil': acquiregil }
-        self.methoddefs.append(_argless_def % s)
-        self.functions.append(_argless_func % s)
-
-    def _declare_single_arg(self,ret,name,arg):
-        declarations = []
-        if arg.isbuffer:
-            if arg.returned:
-                flag = 'Write'
-                qual = ''
-            else:
-                flag = 'Read'
-                qual = 'const '
-            declarations.append('    %svoid* val;\n' % qual)
-            declarations.append('    Py_ssize_t buflen;\n')
-            s = { 'flag': flag,
-                  'obj': 'obj',
-                  'var': 'val',
-                  'buflen': 'buflen' }
-            extractions = _buffer_setup % s
-        elif arg.isarray:
-            declarations.append('    %s val[%d];\n' % (arg.gtype,arg.size))
-            declarations.append('    Py_ssize_t j,n;\n')
-            if arg.returned:
-                s = { 'var': 'val' }
-                subinfuser = _multi_infuser[arg.etype] % s
-                s = { 'n': arg.size,
-                      'seq': 'obj',
-                      'var': 'val',
-                      'itype': arg.itype,
-                      'subinfuser': subinfuser }
-                infusions.append(_multi_infuser_loop % s)
-            else:
-                s = { 'n': arg.size,
-                      'seq': 'obj',
-                      'var': 'val',
-                      'itype': arg.itype,
-                      'subextractor': _multi_extractor[arg.etype] }
-                extractions = _multi_extractor_loop % s
-        else:
-            declarations.append('    %s val;\n' % arg.itype)
-            s = { 'var': 'val', 'obj': 'obj' }
-            extractions = _single_extractor[arg.etype] % s
-        if ret is not None:
-            declarations.append('    %s r;\n' % ret.itype)
-            retcap = 'r = '
-            retstmt = _return_stmt[ret.etype]
-        else:
-            retcap = ''
-            retstmt = '    Py_RETURN_NONE;\n'
-        if name in RELEASE_GIL:
-            releasegil = "    Py_BEGIN_ALLOW_THREADS\n"
-            acquiregil = "    Py_END_ALLOW_THREADS\n"
-        else:
-            releasegil = ''
-            acquiregil = ''
-        s = { 'name': name,
-              'arg': 'obj',
-              'argcheck': '',
-              'declarations': ''.join(declarations),
-              'extractions': extractions,
-              'infusions': '',
-              'varlist': 'val',
-              'retcap': retcap,
-              'retstmt': retstmt,
-              'prefix': self.prefix,
-              'fprefix': self.fprefix,
-              'releasegil': releasegil,
-              'acquiregil': acquiregil }
-        self.methoddefs.append(_1_arg_def % s)
-        self.functions.append(_arg_func % s)
-
-    def _declare_multi_arg(self,ret,name,args):
-        n = len(args)
-        declarations = []
-        extractions = []
-        infusions = []
-        argcheck = _args_size_check % { 'n': n }
-        varlist = ','.join(('val%d' % i) for i in xrange(n))
-        hasarrays = False
-        for i,arg in enumerate(args):
-            if arg.isbuffer:
-                if arg.returned:
-                    flag = 'Write'
-                    qual = ''
-                else:
-                    flag = 'Read'
-                    qual = 'const '
-                declarations.append('    %svoid* val%d;\n' % (qual,i))
-                declarations.append('    Py_ssize_t buflen%d;\n' % i)
-                s = { 'flag': flag,
-                      'obj': 'PyTuple_GET_ITEM(args,%d)' % i,
-                      'var': 'val%d' % i,
-                      'buflen': 'buflen%d' % i }
-                extractions.append(_buffer_setup % s)
-            elif arg.isarray:
-                declarations.append(
-                    '    %s val%d[%d];\n' % (arg.gtype,i,arg.size))
-                ptup = '    p = PyTuple_GET_ITEM(args,%d);\n' % i
-                if arg.returned:
-                    infusions.append(ptup)
-                    s = { 'var': 'val%d[j]' % i }
-                    subinfuser = _multi_infuser[arg.etype] % s
-                    s = { 'n': arg.size,
-                          'seq': 'p',
-                          'var': 'val%d' % i,
-                          'itype': arg.itype,
-                          'subinfuser': subinfuser }
-                    infusions.append(_multi_infuser_loop % s)
-                else:
-                    extractions.append(ptup)
-                    s = { 'n': arg.size,
-                          'seq': 'p',
-                          'var': 'val%d' % i,
-                          'itype': arg.itype,
-                          'subextractor': _multi_extractor[arg.etype] }
-                    extractions.append(_multi_extractor_loop % s)
-                hasarrays = True
-            else:
-                var = 'val%d' % i
-                obj = 'PyTuple_GET_ITEM(args,%d)' %i
-                declarations.append('    %s %s;\n' % (arg.itype,var))
-                s = { 'var': var, 'obj': obj }
-                extractions.append(_single_extractor[arg.etype] % s)
-        if hasarrays:
-            declarations.append('    PyObject* p;\n')
-            declarations.append('    Py_ssize_t j,n;\n')
-        if ret is not None:
-            declarations.append('    %s r;\n' % ret.itype)
-            retcap = 'r = '
-            retstmt = _return_stmt[ret.etype]
-        else:
-            retcap = ''
-            retstmt = '    Py_RETURN_NONE;\n'
-        if name in RELEASE_GIL:
-            releasegil = "    Py_BEGIN_ALLOW_THREADS\n"
-            acquiregil = "    Py_END_ALLOW_THREADS\n"
-        else:
-            releasegil = ''
-            acquiregil = ''
-        s = { 'name': name,
-              'arg': 'args',
-              'argcheck': argcheck,
-              'declarations': ''.join(declarations),
-              'extractions': ''.join(extractions),
-              'infusions': ''.join(infusions),
-              'varlist': varlist,
-              'retcap': retcap,
-              'retstmt': retstmt,
-              'prefix': self.prefix,
-              'fprefix': self.fprefix,
-              'releasegil': releasegil,
-              'acquiregil': acquiregil }
-        self.methoddefs.append(_multi_arg_def % s)
-        self.functions.append(_arg_func % s)
-
-    def handcoded(self,name,nargs):
-        if nargs == 0:
-            arg_def = _argless_def
-        elif nargs == 1:
-            arg_def = _1_arg_def
-        else:
-            arg_def = _multi_arg_def            
-        s = { 'name': name,
-              'prefix': self.prefix,
-              'fprefix': self.fprefix }
-        self.methoddefs.append(arg_def % s)
-        self.functions.append(_handcoded[name])
-
-    def constant(self,name):
-        if self.cprefix == '' and name[0] in '0123456789':
-            pname = '_' + name
-        else:
-            pname = name
-        s = { 'cname': name,
-              'pname': pname,
-              'uprefix': self.prefix.upper(),
-              'cprefix': self.cprefix }
-        self.constants.append(_constant % s)
-
-
-#-----------------------------------------------------------------------
-# Builder templates
-
-_argless_def = '{ "%(fprefix)s%(name)s", (PyCFunction)te%(prefix)s%(name)s, METH_NOARGS }'
-_1_arg_def = '{ "%(fprefix)s%(name)s", (PyCFunction)te%(prefix)s%(name)s, METH_O }'
-_multi_arg_def = '{ "%(fprefix)s%(name)s", (PyCFunction)te%(prefix)s%(name)s, METH_VARARGS }'
-
-
-_argless_func = '''\
-static PyObject* te%(prefix)s%(name)s(PyObject* self) {
-%(declarations)s\
-%(releasegil)s\
-    %(retcap)s%(prefix)s%(name)s();
-%(acquiregil)s\
-%(retstmt)s\
-}
-'''
-
-_arg_func = '''\
-static PyObject* te%(prefix)s%(name)s(PyObject* self, PyObject* %(arg)s) {
-%(declarations)s\
-%(argcheck)s\
-%(extractions)s\
-%(releasegil)s\
-    %(retcap)s%(prefix)s%(name)s(%(varlist)s);
-%(acquiregil)s\
-%(infusions)s\
-%(retstmt)s\
-}
-'''
-
-_args_size_check = '''\
-    if (PyTuple_GET_SIZE(args) != %(n)d) {
-        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
-        return 0;
-    }
-'''
-
-_boolean_single_extractor = '''\
-    %(var)s = PyObject_IsTrue(%(obj)s);
-    if (%(var)s == -1) return 0;
-'''
-
-_long_single_extractor = '''\
-    %(var)s = PyInt_AsLong(%(obj)s);
-    if (%(var)s == -1 && PyErr_Occurred()) return 0;
-'''
-
-_unsigned_long_single_extractor = '''\
-    %(var)s = PyInt_AsUnsignedLongMask(%(obj)s);
-    if (%(var)s == (unsigned long)(-1) && PyErr_Occurred()) return 0;
-'''
-
-_double_single_extractor = '''\
-    %(var)s = PyFloat_AsDouble(%(obj)s);
-    if (%(var)s == -1 && PyErr_Occurred()) return 0;
-'''
-
-_pointer_single_extractor = '''\
-    %(var)s = PyCObject_AsVoidPtr(%(obj)s);
-    if (!%(var)s && PyErr_Occurred()) return 0;
-'''
-
-_single_extractor = {
-    'boolean': _boolean_single_extractor,
-    'long': _long_single_extractor,
-    'unsigned long': _unsigned_long_single_extractor,
-    'double': _double_single_extractor,
-    'pointer': _pointer_single_extractor,
-    }
-
-
-
-_boolean_multi_extractor = '''\
-        t = PyObject_IsTrue(q);
-        fail = (t == -1);
-'''
-
-_long_multi_extractor = '''\
-        t = PyInt_AsLong(q);
-        fail = (t == -1 && PyErr_Occurred());
-'''
-
-_unsigned_long_multi_extractor = '''\
-        t = PyInt_AsUnsignedLongMask(q);
-        fail = (t == (unsigned long)(-1) && PyErr_Occurred());
-'''
-
-_double_multi_extractor = '''\
-        t = PyFloat_AsDouble(q);
-        fail = (t == -1 && PyErr_Occurred());
-'''
-
-_pointer_multi_extractor = '''\
-        t = PyCObject_AsVoidPtr(q);
-        fail = (!t && PyErr_Occurred());
-'''
-
-_multi_extractor = {
-    'boolean': _boolean_multi_extractor,
-    'long': _long_multi_extractor,
-    'unsigned long': _unsigned_long_multi_extractor,
-    'double': _double_multi_extractor,
-    'pointer': _pointer_multi_extractor,
-    }
-
-
-_multi_extractor_loop = '''\
-    n = PySequence_Size(%(seq)s);
-    if (n == -1) return 0;
-    if (n > %(n)d) n = %(n)d;
-    for (j = 0; j < n; j++) {
-        PyObject* q;
-        %(itype)s t;
-        int fail;
-        q = PySequence_GetItem(%(seq)s,j);
-        if (!q) return 0;
-%(subextractor)s\
-        Py_DECREF(q);
-        if (fail) return 0;
-        %(var)s[j] = t;
-    }
-'''
-
-_boolean_multi_infuser = '''\
-        q = PyBool_FromLong(%(var)s);
-'''
-
-_long_multi_infuser = '''\
-        q = PyInt_FromLong(%(var)s);
-'''
-
-_unsigned_long_multi_infuser = '''\
-        q = PyLong_FromUnsignedLong(%(var)s);
-'''
-
-_double_multi_infuser = '''\
-        q = PyFloat_FromDouble(%(var)s);
-'''
-
-_pointer_multi_infuser = '''\
-        q = PyCObject_FromVoidPtr(%(var)s,0);
-'''
-
-_multi_infuser = {
-    'boolean': _boolean_multi_infuser,
-    'long': _long_multi_infuser,
-    'unsigned long': _unsigned_long_multi_infuser,
-    'double': _double_multi_infuser,
-    'pointer': _pointer_multi_infuser,
-    }
-
-_multi_infuser_loop = '''\
-    n = PySequence_Size(%(seq)s);
-    if (n == -1) return 0;
-    if (n > %(n)d) n = %(n)d;
-    for (j = 0; j < n; j++) {
-        PyObject* q;
-        int status;
-%(subinfuser)s\
-        if (!q) return 0;
-        status = PySequence_SetItem(%(seq)s,j,q);
-        Py_DECREF(q);
-        if (status == -1) return 0;
-    }
-'''
-
-_boolean_return = '''\
-    return PyBool_FromLong(r);
-'''
-
-_long_return = '''
-    return PyInt_FromLong(r);
-'''
-
-_unsigned_long_return = '''\
-    return PyLong_FromUnsignedLong(r);
-'''
-
-_double_return = '''\
-    return PyFloat_FromDouble(r);
-'''
-
-_pointer_return = '''\
-    return PyCObject_FromVoidPtr(r,0);
-'''
-
-_return_stmt = {
-    'boolean': _boolean_return,
-    'long': _long_return,
-    'unsigned long': _unsigned_long_return,
-    'double': _double_return,
-    'pointer': _pointer_return,
-    }
-
-_buffer_setup = '''\
-    if(PyObject_As%(flag)sBuffer(%(obj)s,&%(var)s,&%(buflen)s) == -1)
-        return 0;
-'''
-
-_constant = '    PyModule_AddIntConstant(mod,"%(cprefix)s%(pname)s",%(uprefix)s_%(cname)s);'
-
-_filetemplate = '''\
-/* %(modname)s.c */
-
-#define GL_GLEXT_PROTOTYPES
-
-#include <Python.h>
-#include <structmember.h>
-%(headers)s\
-
-static char ARGCOUNT[] = "wrong number of arguments";
-
-%(functions)s
-
-PyMethodDef module_methods[] = {
-    %(methoddefs)s,
-    { 0 }   /* Sentinel */
-};
-
-PyMODINIT_FUNC init%(modname)s(void) {
-    PyObject* mod = Py_InitModule("%(modname)s", module_methods);
-
-%(constants)s
-}
-'''
-
-
-#-----------------------------------------------------------------------
-# Handcoded functions, yippee
-
-_shadersource = '''\
-static PyObject* teglShaderSource(PyObject* self, PyObject* args) {
-    unsigned long val0;
-    long val1;
-    const void* val2[1];
-    Py_ssize_t buflen2;
-    long val3[1];
-    PyObject* p;
-    Py_ssize_t n;
-    if (PyTuple_GET_SIZE(args) != 4) {
-        PyErr_SetString(PyExc_ValueError,ARGCOUNT);
-        return 0;
-    }
-    val0 = PyInt_AsUnsignedLongMask(PyTuple_GET_ITEM(args,0));
-    if (val0 == (unsigned long)(-1) && PyErr_Occurred()) return 0;
-    val1 = PyInt_AsLong(PyTuple_GET_ITEM(args,1));
-    if (val1 == -1 && PyErr_Occurred()) return 0;
-    p = PyTuple_GET_ITEM(args,2);
-    n = PySequence_Size(p);
-    if (n == -1) return 0;
-    if (n != 1) {
-        PyErr_SetString(
-            PyExc_ValueError,
-            "glShaderSource currently supports only one string");
-        return 0;
-    }
-
-    {
-        PyObject* q;
-        int fail;
-        q = PySequence_GetItem(p,0);
-        if (!q) return 0;
-        fail = PyObject_AsReadBuffer(q,&val2[0],&buflen2) == -1;
-        Py_DECREF(q);
-        if (fail) return 0;
-    }    
-
-
-    p = PyTuple_GET_ITEM(args,3);
-    n = PySequence_Size(p);
-    if (n == -1) return 0;
-    if (n != 1) {
-        PyErr_SetString(
-            PyExc_ValueError,
-            "glShaderSource currently supports only one string");
-        return 0;
-    }
-    {
-        PyObject* q;
-        int fail;
-        q = PySequence_GetItem(p,0);
-        if (!q) return 0;
-        val3[0] = PyInt_AsLong(q); /* Tom - needed to change from p to q. */
-        fail = (val3[0] == -1 && PyErr_Occurred());
-        Py_DECREF(q);
-        if (fail) return 0;
-    }    
-
-    glShaderSource(val0,val1,(const char**)val2,(const int*)val3);
-    Py_RETURN_NONE;
-}
-'''
-
-_shadersourcearb = _shadersource.replace("ShaderSource","ShaderSourceARB")
-
-_handcoded = {
-    'ShaderSource': _shadersource,
-    'ShaderSourceARB': _shadersourcearb,
-    }
-
-
-#-----------------------------------------------------------------------
-# Special classes representing data
-
-class typedef(object):
-    isarray = False
-    isbuffer = False
-    def __init__(self,gtype,ctype,itype,etype):
-        self.gtype = gtype
-        self.ctype = ctype
-        self.itype = itype
-        self.etype = etype
-    def __getitem__(self,index):
-        return array(self,index)
-
-
-class array(object):
-    isarray = True
-    isbuffer = False
-    def __init__(self,td,size):
-        self.gtype = td.gtype
-        self.ctype = td.ctype
-        self.itype = td.itype
-        self.etype = td.etype
-        self.returned = False
-        self.size = size
     def asreturn(self):
-        self.returned = True
         return self
 
-
-class buffer(object):
-    isarray = False
-    isbuffer = True
-    def __init__(self,returned=False):
-        self.returned = returned
-    def asreturn(self):
-        return buffer(True)
+    def __str__(self):
+        return self.type
     
-
-#-------------------------------------------------------------------
-# Typedefs
-
-# Types
-
-# Note: In the following table, the meanings of the columns
-# 1 - OpenGL typedef
-# 2 - C type that the opengl type was typedefed to
-# 3 - C type used to store the data in tegl.c
-# 4 - Type conversion used from Python
-
-GLenum =        typedef('GLenum',       'unsigned int',  'unsigned long','unsigned long')
-GLboolean =     typedef('GLboolean',    'unsigned char', 'int',          'boolean'      )
-GLbitfield =    typedef('GLbitfield',   'unsigned int',  'unsigned long','unsigned long')
-GLvoid =        typedef('GLvoid',       'void',          'void',         'void'         )
-GLbyte =        typedef('GLbyte',       'signed char',   'long',         'long'         )
-GLshort =       typedef('GLshort',      'short',         'long',         'long'         )
-GLint =         typedef('GLint',        'int',           'long',         'long'         )
-GLubyte =       typedef('GLubyte',      'unsigned char', 'unsigned long','unsigned long')
-GLushort =      typedef('GLushort',     'unsigned short','unsigned long','unsigned long')
-GLuint =        typedef('GLuint',       'unsigned',      'unsigned long','unsigned long')
-GLsizei =       typedef('GLsizei',      'int',           'long',         'long'         )
-GLfloat =       typedef('GLfloat',      'float',         'double',       'double'       )
-GLclampf =      typedef('GLclampf',     'float',         'double',       'double'       )
-GLdouble =      typedef('GLdouble',     'double',        'double',       'double'       )
-GLclampd =      typedef('GLclampd',     'double',        'double',       'double'       )
-GLhandleARB =   typedef('GLhandleARB',  'int',           'long',         'long'         )
-GLintptrARB =   typedef('GLintptrARB',  'ptrdiff_t',     'long',         'long'         )
-GLsizeiptrARB = typedef('GLsizeiptrARB','ptrdiff_t',     'long',         'long'         )
-GLintptr =      typedef('GLintptr',     'ptrdiff_t',     'long',         'long'         )
-GLsizeiptr =    typedef('GLsizeiptr',   'ptrdiff_t',     'long',         'long'         )
-GLpointer =     typedef('GLvoid*',      'void*',         'void*',        'pointer'      )
+GLenum = gltype("GLenum")
+GLboolean = gltype("GLboolean")
+GLbitfield = gltype("GLbitfield")
+GLvoid = gltype("GLvoid")
+GLbyte = gltype("GLbyte")
+GLshort = gltype("GLshort")
+GLint = gltype("GLint")
+GLubyte = gltype("GLubyte")
+GLushort = gltype("GLushort")
+GLuint = gltype("GLuint")
+GLsizei = gltype("GLsizei")
+GLfloat = gltype("GLfloat")
+GLclampf = gltype("GLclampf")
+GLdouble = gltype("GLdouble")
+GLclampd = gltype("GLclampd")
+GLbuffer = gltype("GLubyte *")
+GLsizeiptrARB = gltype("GLsizeiptrARB")
+GLintptrARB = gltype("GLintptrARB")
+GLpointer = gltype("GLvoid *")
+GLhandleARB = gltype("GLhandleARB")
+GLstring = gltype("GLchar *")
 
 
-# For byte buffers
+def declare(*args):
+    global is_enum
+    is_enum = False
+    
+    args = list(args)
 
-GLbuffer = buffer()
-GLstring = GLbuffer # alias for when it uses GLchar*
+    if isinstance(args[0], gltype):
+        type = args.pop(0)
+    else:
+        type = "void"
 
-#-----------------------------------------------------------------------
-# Main function
+    name = args.pop(0)
+
+    print "    %s gl%s(%s)" % (
+        type,
+        name,
+        ", ".join(str(i) for i in args))
+        
+constants = [ ]
+
+def constant(name):
+    constants.append("GL_" + name)
+
+HEADER = """\
+cdef extern from "GL/glew.h":
+    ctypedef unsigned int    GLenum
+    ctypedef unsigned char   GLboolean
+    ctypedef unsigned int    GLbitfield
+    ctypedef void            GLvoid
+    ctypedef signed char     GLbyte
+    ctypedef short           GLshort
+    ctypedef int             GLint
+    ctypedef unsigned char   GLubyte
+    ctypedef unsigned short  GLushort
+    ctypedef unsigned int    GLuint
+    ctypedef int             GLsizei
+    ctypedef float           GLfloat
+    ctypedef float           GLclampf
+    ctypedef double          GLdouble
+    ctypedef double          GLclampd
+    ctypedef long int        GLsizeiptrARB
+    ctypedef long int        GLintptrARB
+    ctypedef unsigned int    GLhandleARB
+    ctypedef unsigned int    GLhandle
+    ctypedef char            GLchar
+"""
+
 
 def main():
-    tegl = generate_tegl()
-    teglu = generate_teglu()
+    out = sys.stdout
+    out.write(HEADER)
 
+    generate_tegl()
 
-    if GL_MODULE_NAME == GLU_MODULE_NAME:
-        s = { 'functions': '\n'.join(tegl.functions+teglu.functions),
-              'methoddefs': ',\n    '.join(tegl.methoddefs+teglu.methoddefs),
-              'constants': '\n'.join(tegl.constants+teglu.constants),
-              'headers': tegl.headers+teglu.headers,
-              'modname': GL_MODULE_NAME }
-        filename = "%s.c" % GL_MODULE_NAME
-        flo = open(filename,"w")
-        try:
-            flo.write(_filetemplate % s)
-        finally:
-            flo.close()
-    else:
-        s = { 'functions': '\n'.join(tegl.functions),
-              'methoddefs': ',\n    '.join(tegl.methoddefs),
-              'constants': '\n'.join(tegl.constants),
-              'headers': tegl.headers,
-              'modname': GL_MODULE_NAME }
-        filename = "%s.c" % GL_MODULE_NAME
-        flo = open(filename,"w")
-        try:
-            flo.write(_filetemplate % s)
-        finally:
-            flo.close()
-
-        if GLU_MODULE_NAME:
-
-            s = { 'functions': '\n'.join(teglu.functions),
-                  'methoddefs': ',\n    '.join(teglu.methoddefs),
-                  'constants': '\n'.join(teglu.constants),
-                  'headers': teglu.headers,
-                  'modname': GLU_MODULE_NAME }
-            filename = "%s.c" % GLU_MODULE_NAME
-            flo = open(filename,"w")
-            try:
-                flo.write(_filetemplate % s)
-            finally:
-                flo.close()
+    constants.sort()
+    print 
+    print "    enum:"
+    for i in constants:
+        print "        %s" % i
+    
 
 
 if __name__ == '__main__':
