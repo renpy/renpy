@@ -466,8 +466,7 @@ cdef class GLDraw:
                 self.log("Can't find a workable environment.")
                 return False
 
-        # Pick a Render-to-texture subsystem.
-        
+        # Pick a Render-to-texture subsystem.        
         self.log("Using copy RTT.")
         self.rtt = glrtt_copy.CopyRtt()
         self.info["rtt"] = "copy"

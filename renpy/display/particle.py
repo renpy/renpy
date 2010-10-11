@@ -193,13 +193,10 @@ class SpriteManager(renpy.display.core.Displayable):
         """
 
         renpy.display.render.redraw(self, 0)
-    
+        
     def render(self, width, height, st, at):
 
         if self.update_function is not None:
-
-            if st == 0:
-                self.children = [ ]
 
             redraw = self.update_function(st)
 
@@ -283,6 +280,9 @@ class SpriteManager(renpy.display.core.Displayable):
 
         return rv
 
+    def destroy_all(self):
+        self.children = [ ]
+    
 
 class Particles(renpy.display.core.Displayable):
     """
@@ -316,7 +316,9 @@ class Particles(renpy.display.core.Displayable):
     def update_callback(self, st):
 
         particles = self.particles
+
         if st == 0 or particles is None:
+            self.sm.destroy_all()
             particles = [ ]
 
         add_parts = self.factory.create(particles, st)
