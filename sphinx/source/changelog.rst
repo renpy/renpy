@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+Ren'Py 6.11.2
+=============
+
+Bug fixes
+---------
+
+* Fixed :lpbug:`647686`, a regression that prevented sounds from looping
+  properly.
+
 Ren'Py 6.11.1
 =============
 
