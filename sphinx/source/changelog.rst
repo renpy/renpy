@@ -18,7 +18,10 @@ Bug fixes
 
 * Fixed :lpbug:`647686`, a regression that prevented sounds from looping
   properly.
-
+* Fixed :lpbug:`661983`, which caused insensitive hotspots to default to
+  the idle, rather than ground, image when no insensitive image was
+  supplied.
+  
 Ren'Py 6.11.1
 =============
 
