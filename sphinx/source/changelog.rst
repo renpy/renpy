@@ -5,6 +5,14 @@ Full Changelog
 Ren'Py 6.11.2
 =============
 
+Behavior Changes
+----------------
+
+The maximum default physical size of the Ren'Py window is now 102
+pixels smaller than the height of the screen. This should prevent
+Ren'Py from creating windows that can't be resized since they are much
+bigger than the screen.
+
 Bug fixes
 ---------
 
