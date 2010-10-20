@@ -16,11 +16,16 @@ bigger than the screen.
 Bug fixes
 ---------
 
-* Fixed :lpbug:`647686`, a regression that prevented sounds from looping
-  properly.
-* Fixed :lpbug:`661983`, which caused insensitive hotspots to default to
-  the idle, rather than ground, image when no insensitive image was
-  supplied.
+Fixed :lpbug:`647686`, a regression that prevented sounds from looping
+properly.
+
+Fixed :lpbug:`661983`, which caused insensitive hotspots to default to
+the idle, rather than ground, image when no insensitive image was
+supplied.
+
+Fixed a problem that prevented AnimatedValue from functioning properly
+when delay was not 1.0. Thanks to Scout for the fix.
+
   
 Ren'Py 6.11.1
 =============

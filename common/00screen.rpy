@@ -706,7 +706,7 @@ init -1140 python:
             if self.value == self.old_value:
                 return
 
-            fraction = st - (self.start_time) / self.delay
+            fraction = (st - self.start_time) / self.delay
             fraction = min(1.0, fraction)
 
             value = self.old_value + fraction * (self.value - self.old_value)
