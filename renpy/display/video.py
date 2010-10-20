@@ -86,7 +86,15 @@ def interact():
     the movie should be displayed fullscreen or not.
     """
 
-    if fullscreen and renpy.audio.music.get_playing("movie"):
+    global surface
+    global surface_file
+    
+    if not renpy.audio.music.get_playing("movie"):
+        surface = None
+        surface_file = None
+        return False
+        
+    if fullscreen: 
         return True
     else:
         return False
