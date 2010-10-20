@@ -878,6 +878,7 @@ class SWDraw(object):
             pygame.display.update(updates)
             
         else:
+            pygame.display.flip()
             self.full_redraw = True
 
         renpy.display.render.kill_old_screen()
