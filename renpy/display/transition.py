@@ -831,23 +831,53 @@ def ZoomInOut(start, end, pos, delay, d, **kwargs):
 def RevolveInOut(start, end, pos, delay, d, **kwargs):
     return renpy.display.motion.Revolve(start, end, delay, d, pos=pos, **kwargs)
     
-# TODO: Move isn't properly respecting positions when x < 0.
-def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):
+
+def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):
     """
+    :doc: other
+    :args: (delay, factory=None, enter_factory=None, leave_factory=None, old=False, layers=['master'])
+    
     This transition attempts to find images that have changed
     position, and moves them from the old position to the new
     transition, taking delay seconds to complete the move.
 
+    If `factory` is given, it is expected to be a function that takes as
+    arguments: an old position, a new position, the delay, and a
+    displayable, and to return a displayable as an argument. If not
+    given, the default behavior is to move the displayable from the
+    starting to the ending positions. Positions are always given as
+    (xpos, ypos, xanchor, yanchor) tuples.
+
+    If `enter_factory` or `leave_factory` are given, they are expected
+    to be functions that take as arguments a position, a delay, and a
+    displayable, and return a displayable. They are applied to
+    displayables that are entering or leaving the scene,
+    respectively. The default is to show in place displayables that
+    are entering, and not to show those that are leaving.
+
+    If `old` is True, then factory moves the old displayable with the
+    given tag. Otherwise, it moves the new displayable with that
+    tag.
+
+    `layers` is a list of layers that the transition will be applied
+    to.
+
     Images are considered to be the same if they have the same tag, in
     the same way that the tag is used to determine which image to
-    replace or to hide.
+    replace or to hide. They are also considered to be the same if
+    they have no tag, but use the same displayable.
 
+    Computing the order in which images are displayed is a three-step
+    process. The first step is to create a list of images that
+    preserves the relative ordering of entering and moving images. The
+    second step is to insert the leaving images such that each leaving
+    image is at the lowest position that is still above all images
+    that were below it in the original scene. Finally, the list of
+    is sorted by zorder, to ensure no zorder violations occur.
+    
     If you use this transition to slide an image off the side of the
-    screen, remember to hide it when you are done.
-
-    factory is a function that takes the old position, the new position, the
-    delay time, and the displayable, and returns a new displayable that
-    performs the move.
+    screen, remember to hide it when you are done. (Or just use
+    a leave_factory.)
     """
 
     if factory is None:
@@ -929,84 +959,99 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
             rv.show_time = 0
             rv.displayable = d
             return rv
-        
-        # A list of tags on the new layer.
-        new_tags = set()
 
-        # The scene list we're creating.
-        rv_sl = [ ]
-
-        # The new scene list we're copying from.
-        new_scene_list = new.scene_list[:]
-
-        for new_sle in new.scene_list:
-            new_tag = tag(new_sle)
-            
-            if new_tag is not None:
-                new_tags.add(new_tag)
-
-        for old_sle in old.scene_list:
-            old_tag = tag(old_sle)
-            old_d = wrap(old_sle)
-            
-            # In old, not in new.
-            if old_tag not in new_tags:
-
-                move = leave_factory(position(old_d), delay, old_d, **offsets(old_d))
-                if move is None:
-                    continue
-                
-                move = renpy.display.layout.IgnoresEvents(move)
-                
-                rv_sl.append(merge(old_sle, move))
-                continue
-
-            # In new, not in old.
-            while new_scene_list:
-                new_sle = (new_scene_list.pop(0))                
-                new_tag = tag(new_sle)
-                new_d = wrap(new_sle)
-                
-                new_tags.discard(new_tag)
-                
-                if new_tag == old_tag:
-                    break
-
-                move = enter_factory(position(new_d), delay, new_d, **offsets(old_d))
-                if move is None:
-                    continue
-
-                rv_sl.append(merge(new_sle, move))
-                continue
-
-            # In both.
-            if new_tag == old_tag:
-
-                if use_old:
-                    child = old_d
-                else:
-                    child = new_d
-                
-                move = factory(position(old_d), position(new_d), delay, child, **offsets(child))
-                if move is None:
-                    continue
-
-                rv_sl.append(merge(new_sle, move))
-                
-        # In new scene list after we're done processing the stuff in the old
-        # scene list.
-        while new_scene_list:
-            new_sle = (new_scene_list.pop(0))                
-            new_tag = tag(new_sle)
+        def entering(sle):
             new_d = wrap(new_sle)
-
             move = enter_factory(position(new_d), delay, new_d, **offsets(new_d))
+
             if move is None:
-                continue
+                return
 
             rv_sl.append(merge(new_sle, move))
-            continue
 
+        def leaving(sle):
+            old_d = wrap(sle)
+            move = leave_factory(position(old_d), delay, old_d, **offsets(old_d))
+
+            if move is None:
+                return
+
+            move = renpy.display.layout.IgnoresEvents(move)
+            rv_sl.append(merge(old_sle, move))
+
+
+        def moving(old_sle, new_sle):
+            old_d = wrap(old_sle)
+            new_d = wrap(new_sle)
+
+            if use_old:
+                child = old_d
+            else:
+                child = new_d
+                
+            move = factory(position(old_d), position(new_d), delay, child, **offsets(child))
+            if move is None:
+                return
+
+            rv_sl.append(merge(new_sle, move))
+
+
+        # The old, new, and merged scene_lists.
+        old_sl = old.scene_list[:]
+        new_sl = new.scene_list[:]
+        rv_sl = [ ]
+        
+
+        # A list of tags in old_sl, new_sl, and rv_sl.
+        old_map = dict((tag(i), i) for i in old_sl if i is not None)
+        new_tags = set(tag(i) for i in new_sl if i is not None)
+        rv_tags = set()
+        
+        while old_sl or new_sl:
+
+            # If we have something in old_sl, then 
+            if old_sl:
+
+                old_sle = old_sl[0]
+                old_tag = tag(old_sle)
+
+                # If the old thing has already moved, then remove it.
+                if old_tag in rv_tags:
+                    old_sl.pop(0)
+                    continue
+
+                # If the old thing does not match anything in new_tags,
+                # have it enter.
+                if old_tag not in new_tags:
+                    leaving(old_sle)
+                    rv_tags.add(old_tag)
+                    old_sl.pop(0)
+                    continue
+
+
+            # Otherwise, we must have something in new_sl. We want to
+            # either move it or have it enter.
+
+            new_sle = new_sl.pop(0)
+            new_tag = tag(new_sle)
+
+            # If it exists in both, move.
+            if new_tag in old_map:
+                old_sle = old_map[new_tag]
+
+                moving(old_sle, new_sle)
+                rv_tags.add(new_tag)
+                continue
+
+            else:
+                entering(new_sle)
+                rv_tags.add(new_tag)
+                continue
+
+        # Sort everything by zorder, to ensure that there are no zorder
+        # violations in the result.
+        rv_sl.sort(key=lambda a : a.zorder)
+            
         layer = new.layer_name
         rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **renpy.game.interface.layer_properties[layer])
         rv.append_scene_list(rv_sl)
@@ -1022,6 +1067,7 @@ def MoveTransition(delay, old_widget=None,  new_widget=None, factory=None, enter
 
     return rv
 
+
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
     if before is not None:
         old = before(new_widget=new_widget, old_widget=old_widget)
@@ -1034,6 +1080,7 @@ def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widge
         new = new_widget
 
     return trans(new_widget=new, old_widget=old)
+
 
 def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     x, y, w, h = rect
