@@ -5,6 +5,8 @@ Full Changelog
 Ren'Py 6.11.2
 =============
 
+New themes
+
 Behavior Changes
 ----------------
 
@@ -12,6 +14,11 @@ The maximum default physical size of the Ren'Py window is now 102
 pixels smaller than the height of the screen. This should prevent
 Ren'Py from creating windows that can't be resized since they are much
 bigger than the screen.
+
+Buttons now only pass key events to their children when they are
+focused. This allows a screen language key statement to be used as the
+child of a button, and only activate when the button is focused.
+
 
 Bug fixes
 ---------
@@ -26,6 +33,8 @@ supplied.
 Fixed a problem that prevented AnimatedValue from functioning properly
 when delay was not 1.0. Thanks to Scout for the fix.
 
+Fixed a problem that caused movies to display incorrectly when the
+screen was scaled using OpenGL scaling.
   
 Ren'Py 6.11.1
 =============
