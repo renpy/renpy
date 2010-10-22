@@ -31,3 +31,8 @@ disable OpenGL support. To disable OpenGL support:
 2. From the "Graphics Acceleration" menu that appears, choose "Prefer Software Renderer".
 3. Choose "Continue".
 
+This method does not work on Mac OS X. To disable OpenGL support
+there, download this `environment.txt <_static/environment.txt>`_
+file, and place it in the directory with the .app file used to
+start Ren'Py.
+
