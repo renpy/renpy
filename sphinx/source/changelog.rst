@@ -30,6 +30,12 @@ Fixed :lpbug:`661983`, which caused insensitive hotspots to default to
 the idle, rather than ground, image when no insensitive image was
 supplied.
 
+Fixed :lpbug:`647324`, where ImageDissolves are rendered as if
+specified with alpha=True whether or not alpha=True was set.
+
+Fixed a problem that caused the game to start when picking "No" after
+clicking the (window-level) quit button. 
+
 Fixed a problem that prevented AnimatedValue from functioning properly
 when delay was not 1.0. Thanks to Scout for the fix.
 
