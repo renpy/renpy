@@ -108,7 +108,7 @@ init python:
         return rv
 
 
-    def switch_theme(name):
+    def switch_theme(theme_function, name):
         """
          Switches the theme of the current project to the named theme.
          """
@@ -130,7 +130,7 @@ init python:
             m = re.match(r'    theme.(\w+)\(', l)
             if m:
                 if m.group(1) in theme_functions:
-                    l = theme_templates[td["theme"]] % td
+                    l = theme_templates[theme_function] % td
                     changed = True
                     
             out.write(l + "\n")
@@ -160,29 +160,26 @@ init python:
 
     ##########################################################################
     # Code that handles display.
-    
+
+    current_theme_function = None
     current_theme = None
 
-    def show_theme(name, target):
+    def show_theme(function, name, target):
         """
-         Changes from the current theme to the roundrect theme named
-         `name`.
+         Changes from the current theme to the theme named `name`.
          """
 
-        if current_theme == name:
+        if current_theme_function == function and current_theme == name:
             return
 
+        store.current_theme_function = function
         store.current_theme = name
         
         td = theme_data[name].copy()
-        kind = td["theme"]
-        del td["theme"]
-
-        if kind == "roundrect":
-            td["rounded_window"] = False
+        td["rounded_window"] = False
         
         renpy.style.restore(style_backup)
-        getattr(theme, kind)(**td)
+        getattr(theme, function)(**td)
         customize_styles()
         renpy.style.rebuild()
         
@@ -264,7 +261,7 @@ label repeat_choose_theme:
              button(name,
                     ui.returns(function),
                     "",
-                    hovered=curried_show_theme(exemplar, "repeat_choose_theme"),
+                    hovered=curried_show_theme(function, exemplar, "repeat_choose_theme"),
                     unhovered=does_nothing)
 
         ui.close() # vbox
@@ -292,7 +289,8 @@ label repeat_choose_color_scheme:
 
         tip = _(u"Please choose a color scheme for your project.")
 
-        themes = [ k for k,v in theme_data.iteritems() if v["theme"] == theme_function ]
+
+        themes = theme_data.keys()
         themes.sort()
 
         screen()
@@ -307,9 +305,9 @@ label repeat_choose_color_scheme:
         
         for i in themes:
              button(i,
-                    curried_switch_theme(i),
+                    curried_switch_theme(theme_function, i),
                     "",
-                    hovered=curried_show_theme(i, "repeat_choose_color_scheme"),
+                    hovered=curried_show_theme(theme_function, i, "repeat_choose_color_scheme"),
                     unhovered=does_nothing)
 
         ui.close() # vbox

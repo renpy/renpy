@@ -3,6 +3,10 @@ init 1 python:
     # This is a list of (theme name, theme function, theme exemplar) tuples.
     themes = [
         ("Roundrect", "roundrect", "Basic Blue"),
+        ("Bordered", "bordered", "Dramatic Flesh"),
+        ("Diamond", "diamond", "Colorblind"),
+        ("TV", "tv", "Fine China"),
+        ("Glow", "glow", "Really Red"),
         ]
 
     # This is a map from theme function to template text that sensibly calls
@@ -57,6 +61,11 @@ init 1 python:
         ## do so below.            
         )"""
 
+    theme_templates["bordered"] = theme_templates["roundrect"].replace("roundrect", "bordered")
+    theme_templates["diamond"] = theme_templates["roundrect"].replace("roundrect", "diamond")
+    theme_templates["tv"] = theme_templates["roundrect"].replace("roundrect", "tv")
+    theme_templates["glow"] = theme_templates["roundrect"].replace("roundrect", "glow")
+    
     # This is a map from theme name to the code needed to implement that
     # theme.
     theme_data = {
@@ -66,7 +75,6 @@ init 1 python:
                        'gm_root': '#dcebff',
                        'label': '#ffffff',
                        'mm_root': '#dcebff',
-                       'theme': 'roundrect',
                        'widget': '#003c78',
                        'widget_hover': '#0050a0',
                        'widget_selected': '#ffffc8',
@@ -77,7 +85,6 @@ init 1 python:
                         'gm_root': '#000000',
                         'label': '#ffffff',
                         'mm_root': '#000000',
-                        'theme': 'roundrect',
                         'widget': '#000000',
                         'widget_hover': '#830000',
                         'widget_selected': '#ffffff',
@@ -88,7 +95,6 @@ init 1 python:
                        'gm_root': '#393939',
                        'label': '#c2c2c2',
                        'mm_root': '#393939',
-                       'theme': 'roundrect',
                        'widget': '#898989',
                        'widget_hover': '#464646',
                        'widget_selected': '#F2F2F2',
@@ -99,7 +105,6 @@ init 1 python:
                          'gm_root': '#D0B4BA',
                          'label': '#805C40',
                          'mm_root': '#D0B4BA',
-                         'theme': 'roundrect',
                          'widget': '#ECC7D0',
                          'widget_hover': '#E1D4C9',
                          'widget_selected': '#805C40',
@@ -110,7 +115,6 @@ init 1 python:
                        'gm_root': '#FDF5E3',
                        'label': '#502F13',
                        'mm_root': '#FDF5E3',
-                       'theme': 'roundrect',
                        'widget': '#D96B00',
                        'widget_hover': '#FD9B1C',
                        'widget_selected': '#ffffff',
@@ -121,7 +125,6 @@ init 1 python:
                            'gm_root': '#2a201f',
                            'label': '#ffffff',
                            'mm_root': '#2a201f',
-                           'theme': 'roundrect',
                            'widget': '#BF7C51',
                            'widget_hover': '#dda570',
                            'widget_selected': '#ffffff',
@@ -132,7 +135,6 @@ init 1 python:
                         'gm_root': '#FBF9DF',
                         'label': '#698071',
                         'mm_root': '#FBF9DF',
-                        'theme': 'roundrect',
                         'widget': '#F5D4EE',
                         'widget_hover': '#F0DDFF',
                         'widget_selected': '#000000',
@@ -143,7 +145,6 @@ init 1 python:
                            'gm_root': '#b0b8ba',
                            'label': '#ffffff',
                            'mm_root': '#b0b8ba',
-                           'theme': 'roundrect',
                            'widget': '#8699a7',
                            'widget_hover': '#9eb1ad',
                            'widget_selected': '#ffffff',
@@ -154,7 +155,6 @@ init 1 python:
                        'gm_root': '#F7F7FA',
                        'label': '#39435E',
                        'mm_root': '#F7F7FA',
-                       'theme': 'roundrect',
                        'widget': '#6A7183',
                        'widget_hover': '#1A2B47',
                        'widget_selected': '#E3E3E4',
@@ -165,7 +165,6 @@ init 1 python:
                              'gm_root': '#D98989',
                              'label': '#5D1010',
                              'mm_root': '#D98989',
-                             'theme': 'roundrect',
                              'widget': '#F09898',
                              'widget_hover': '#D6C5BB',
                              'widget_selected': '#B31E1E',
@@ -176,7 +175,6 @@ init 1 python:
                       'gm_root': '#E6E6E6',
                       'label': '#D9D9D9',
                       'mm_root': '#E6E6E6',
-                      'theme': 'roundrect',
                       'widget': '#D9D9D9',
                       'widget_hover': '#F0F2F2',
                       'widget_selected': '#737373',
@@ -187,7 +185,6 @@ init 1 python:
                         'gm_root': '#1A140E',
                         'label': '#F1EBE5',
                         'mm_root': '#1A140E',
-                        'theme': 'roundrect',
                         'widget': '#4D3B29',
                         'widget_hover': '#996E45',
                         'widget_selected': '#ffffff',
@@ -198,7 +195,6 @@ init 1 python:
                          'gm_root': '#1A0001',
                          'label': '#1A0001',
                          'mm_root': '#1A0001',
-                         'theme': 'roundrect',
                          'widget': '#777777',
                          'widget_hover': '#73735C',
                          'widget_selected': '#000000',
@@ -209,7 +205,6 @@ init 1 python:
                          'gm_root': '#A84A3E',
                          'label': '#ffffff',
                          'mm_root': '#A84A3E',
-                         'theme': 'roundrect',
                          'widget': '#A89E7D',
                          'widget_hover': '#8DB6B9',
                          'widget_selected': '#ffffff',
@@ -220,7 +215,6 @@ init 1 python:
                        'gm_root': '#ffd0d0',
                        'label': '#ffffff',
                        'mm_root': '#ffd0d0',
-                       'theme': 'roundrect',
                        'widget': '#963232',
                        'widget_hover': '#c83232',
                        'widget_selected': '#ffffc8',
@@ -231,7 +225,6 @@ init 1 python:
                        'gm_root': '#B4CDD4',
                        'label': '#94C7D4',
                        'mm_root': '#B4CDD4',
-                       'theme': 'roundrect',
                        'widget': '#F2E6AA',
                        'widget_hover': '#FCFCA4',
                        'widget_selected': '#1A5766',
@@ -242,7 +235,6 @@ init 1 python:
                           'gm_root': '#B09D5A',
                           'label': '#ffffff',
                           'mm_root': '#B09B4F',
-                          'theme': 'roundrect',
                           'widget': '#753D00',
                           'widget_hover': '#B19A48',
                           'widget_selected': '#ffffff',
@@ -253,7 +245,6 @@ init 1 python:
                          'gm_root': '#000000',
                          'label': '#ffffff',
                          'mm_root': '#000000',
-                         'theme': 'roundrect',
                          'widget': '#333333',
                          'widget_hover': '#000000',
                          'widget_selected': '#ffffff',
@@ -264,7 +255,6 @@ init 1 python:
                                   'gm_root': '#695640',
                                   'label': '#F2EDC4',
                                   'mm_root': '#695640',
-                                  'theme': 'roundrect',
                                   'widget': '#7A674F',
                                   'widget_hover': '#BDA77D',
                                   'widget_selected': '#FDFBEE',
@@ -275,7 +265,6 @@ init 1 python:
                            'gm_root': '#F7F7C5',
                            'label': '#FCFCD7',
                            'mm_root': '#F7F7C5',
-                           'theme': 'roundrect',
                            'widget': '#FFE06D',
                            'widget_hover': '#E38A4F',
                            'widget_selected': '#996600',
@@ -286,7 +275,6 @@ init 1 python:
                             'gm_root': '#FBF9EA',
                             'label': '#F1EBE5',
                             'mm_root': '#FBF9EA',
-                            'theme': 'roundrect',
                             'widget': '#33271C',
                             'widget_hover': '#ECE7C4',
                             'widget_selected': '#ffffff',
@@ -297,7 +285,6 @@ init 1 python:
                         'gm_root': '#e5f1e5',
                         'label': '#ffffff',
                         'mm_root': '#e5f1e5',
-                        'theme': 'roundrect',
                         'widget': '#7AA27B',
                         'widget_hover': '#A3C7A3',
                         'widget_selected': '#ffffff',
