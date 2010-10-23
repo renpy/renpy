@@ -872,7 +872,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
     preserves the relative ordering of entering and moving images. The
     second step is to insert the leaving images such that each leaving
     image is at the lowest position that is still above all images
-    that were below it in the original scene. Finally, the list of
+    that were below it in the original scene. Finally, the list 
     is sorted by zorder, to ensure no zorder violations occur.
     
     If you use this transition to slide an image off the side of the

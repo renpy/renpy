@@ -19,6 +19,9 @@ Buttons now only pass key events to their children when they are
 focused. This allows a screen language key statement to be used as the
 child of a button, and only activate when the button is focused.
 
+MoveTransition was rewritten to correctly deal with cases in which
+images changed their order. This may lead to differences in behavior
+from the old version, where the ordering was undefined.
 
 Bug fixes
 ---------
