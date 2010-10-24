@@ -735,19 +735,34 @@ class FrameImage(ImageBase):
 
 
         # Top row.
-        draw(0, xb, 0, yb)
-        draw(xb, -xb, 0, yb)
-        draw(-xb, 0, 0, yb)
+        if yb:
+
+            if xb:
+                draw(0, xb, 0, yb)
+
+            draw(xb, -xb, 0, yb)
+
+            if xb:
+                draw(-xb, 0, 0, yb)
 
         # Middle row.
-        draw(0, xb, yb, -yb)
+        if xb:
+            draw(0, xb, yb, -yb)
+
         draw(xb, -xb, yb, -yb)
-        draw(-xb, 0, yb, -yb)
+
+        if xb:
+            draw(-xb, 0, yb, -yb)
 
         # Bottom row.
-        draw(0, xb, -yb, 0)
-        draw(xb, -xb, -yb, 0)
-        draw(-xb, 0, -yb, 0)
+        if yb:
+            if xb:
+                draw(0, xb, -yb, 0)
+
+            draw(xb, -xb, -yb, 0)
+
+            if xb:
+                draw(-xb, 0, -yb, 0)
 
         # And, finish up.
         return rv
