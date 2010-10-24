@@ -5,7 +5,18 @@ Full Changelog
 Ren'Py 6.11.2
 =============
 
-New themes
+New Features
+------------
+
+This release includes four new themes, generously contributed by
+Aleema. You can see and change to these new themes by clicking the
+"Choose Theme" button in the launcher.
+
+Software Update
+---------------
+
+The jEdit text editor included with Ren'Py has been updated to version
+4.3.2, a supported version that should be able to run most plugins.
 
 Behavior Changes
 ----------------
