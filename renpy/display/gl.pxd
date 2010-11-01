@@ -355,6 +355,56 @@ cdef extern from "glcompat.h":
     void glLoadName(GLuint)
     void glPushName(GLuint)
     void glPopName()
+    void glDrawRangeElements(GLenum, GLuint, GLuint, GLsizei, GLenum, GLubyte *)
+    void glTexImage3D(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, GLubyte *)
+    void glTexSubImage3D(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, GLubyte *)
+    void glCopyTexSubImage3D(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei)
+    void glActiveTexture(GLenum)
+    void glClientActiveTexture(GLenum)
+    void glCompressedTexImage1D(GLenum, GLint, GLenum, GLsizei, GLint, GLsizei, GLubyte *)
+    void glCompressedTexImage2D(GLenum, GLint, GLenum, GLsizei, GLsizei, GLint, GLsizei, GLubyte *)
+    void glCompressedTexImage3D(GLenum, GLint, GLenum, GLsizei, GLsizei, GLsizei, GLint, GLsizei, GLubyte *)
+    void glCompressedTexSubImage1D(GLenum, GLint, GLint, GLsizei, GLenum, GLsizei, GLubyte *)
+    void glCompressedTexSubImage2D(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLsizei, GLubyte *)
+    void glCompressedTexSubImage3D(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLsizei, GLubyte *)
+    void glGetCompressedTexImage(GLenum, GLint, GLubyte *)
+    void glMultiTexCoord1d(GLenum, GLdouble)
+    void glMultiTexCoord1dv(GLenum, GLdouble *)
+    void glMultiTexCoord1f(GLenum, GLfloat)
+    void glMultiTexCoord1fv(GLenum, GLfloat *)
+    void glMultiTexCoord1i(GLenum, GLint)
+    void glMultiTexCoord1iv(GLenum, GLint *)
+    void glMultiTexCoord1s(GLenum, GLshort)
+    void glMultiTexCoord1sv(GLenum, GLshort *)
+    void glMultiTexCoord2d(GLenum, GLdouble, GLdouble)
+    void glMultiTexCoord2dv(GLenum, GLdouble *)
+    void glMultiTexCoord2f(GLenum, GLfloat, GLfloat)
+    void glMultiTexCoord2fv(GLenum, GLfloat *)
+    void glMultiTexCoord2i(GLenum, GLint, GLint)
+    void glMultiTexCoord2iv(GLenum, GLint *)
+    void glMultiTexCoord2s(GLenum, GLshort, GLshort)
+    void glMultiTexCoord2sv(GLenum, GLshort *)
+    void glMultiTexCoord3d(GLenum, GLdouble, GLdouble, GLdouble)
+    void glMultiTexCoord3dv(GLenum, GLdouble *)
+    void glMultiTexCoord3f(GLenum, GLfloat, GLfloat, GLfloat)
+    void glMultiTexCoord3fv(GLenum, GLfloat *)
+    void glMultiTexCoord3i(GLenum, GLint, GLint, GLint)
+    void glMultiTexCoord3iv(GLenum, GLint *)
+    void glMultiTexCoord3s(GLenum, GLshort, GLshort, GLshort)
+    void glMultiTexCoord3sv(GLenum, GLshort *)
+    void glMultiTexCoord4d(GLenum, GLdouble, GLdouble, GLdouble, GLdouble)
+    void glMultiTexCoord4dv(GLenum, GLdouble *)
+    void glMultiTexCoord4f(GLenum, GLfloat, GLfloat, GLfloat, GLfloat)
+    void glMultiTexCoord4fv(GLenum, GLfloat *)
+    void glMultiTexCoord4i(GLenum, GLint, GLint, GLint, GLint)
+    void glMultiTexCoord4iv(GLenum, GLint *)
+    void glMultiTexCoord4s(GLenum, GLshort, GLshort, GLshort, GLshort)
+    void glMultiTexCoord4sv(GLenum, GLshort *)
+    void glLoadTransposeMatrixd(GLdouble *)
+    void glLoadTransposeMatrixf(GLfloat *)
+    void glMultTransposeMatrixd(GLdouble *)
+    void glMultTransposeMatrixf(GLfloat *)
+    void glSampleCoverage(GLclampf, GLboolean)
     void glActiveTextureARB(GLenum)
     void glClientActiveTextureARB(GLenum)
     void glMultiTexCoord1dARB(GLenum, GLdouble)
@@ -473,9 +523,13 @@ cdef extern from "glcompat.h":
         GL_ACCUM_CLEAR_VALUE
         GL_ACCUM_GREEN_BITS
         GL_ACCUM_RED_BITS
+        GL_ACTIVE_TEXTURE
         GL_ACTIVE_TEXTURE_ARB
         GL_ADD
+        GL_ADD_SIGNED
         GL_ADD_SIGNED_ARB
+        GL_ALIASED_LINE_WIDTH_RANGE
+        GL_ALIASED_POINT_SIZE_RANGE
         GL_ALL_ATTRIB_BITS
         GL_ALPHA
         GL_ALPHA12
@@ -506,6 +560,8 @@ cdef extern from "glcompat.h":
         GL_BACK
         GL_BACK_LEFT
         GL_BACK_RIGHT
+        GL_BGR
+        GL_BGRA
         GL_BGRA
         GL_BITMAP
         GL_BITMAP_TOKEN
@@ -532,7 +588,10 @@ cdef extern from "glcompat.h":
         GL_C4UB_V3F
         GL_CCW
         GL_CLAMP
+        GL_CLAMP_TO_BORDER
+        GL_CLAMP_TO_EDGE
         GL_CLEAR
+        GL_CLIENT_ACTIVE_TEXTURE
         GL_CLIENT_ACTIVE_TEXTURE_ARB
         GL_CLIENT_ALL_ATTRIB_BITS
         GL_CLIENT_ATTRIB_STACK_DEPTH
@@ -577,11 +636,22 @@ cdef extern from "glcompat.h":
         GL_COLOR_MATERIAL_FACE
         GL_COLOR_MATERIAL_PARAMETER
         GL_COLOR_WRITEMASK
+        GL_COMBINE
+        GL_COMBINE_ALPHA
         GL_COMBINE_ALPHA_ARB
         GL_COMBINE_ARB
+        GL_COMBINE_RGB
         GL_COMBINE_RGB_ARB
         GL_COMPILE
         GL_COMPILE_AND_EXECUTE
+        GL_COMPRESSED_ALPHA
+        GL_COMPRESSED_INTENSITY
+        GL_COMPRESSED_LUMINANCE
+        GL_COMPRESSED_LUMINANCE_ALPHA
+        GL_COMPRESSED_RGB
+        GL_COMPRESSED_RGBA
+        GL_COMPRESSED_TEXTURE_FORMATS
+        GL_CONSTANT
         GL_CONSTANT_ARB
         GL_CONSTANT_ATTENUATION
         GL_COPY
@@ -619,6 +689,8 @@ cdef extern from "glcompat.h":
         GL_DITHER
         GL_DOMAIN
         GL_DONT_CARE
+        GL_DOT3_RGB
+        GL_DOT3_RGBA
         GL_DOUBLE
         GL_DOUBLEBUFFER
         GL_DRAW_BUFFER
@@ -718,6 +790,7 @@ cdef extern from "glcompat.h":
         GL_INTENSITY16
         GL_INTENSITY4
         GL_INTENSITY8
+        GL_INTERPOLATE
         GL_INTERPOLATE_ARB
         GL_INT_VEC2_ARB
         GL_INT_VEC3_ARB
@@ -741,6 +814,7 @@ cdef extern from "glcompat.h":
         GL_LIGHTING
         GL_LIGHTING_BIT
         GL_LIGHT_MODEL_AMBIENT
+        GL_LIGHT_MODEL_COLOR_CONTROL
         GL_LIGHT_MODEL_LOCAL_VIEWER
         GL_LIGHT_MODEL_TWO_SIDE
         GL_LINE
@@ -806,11 +880,15 @@ cdef extern from "glcompat.h":
         GL_MAP_COLOR
         GL_MAP_STENCIL
         GL_MATRIX_MODE
+        GL_MAX_3D_TEXTURE_SIZE
         GL_MAX_ATTRIB_STACK_DEPTH
         GL_MAX_CLIENT_ATTRIB_STACK_DEPTH
         GL_MAX_CLIP_PLANES
         GL_MAX_COLOR_ATTACHMENTS_EXT
         GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB
+        GL_MAX_CUBE_MAP_TEXTURE_SIZE
+        GL_MAX_ELEMENTS_INDICES
+        GL_MAX_ELEMENTS_VERTICES
         GL_MAX_EVAL_ORDER
         GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB
         GL_MAX_LIGHTS
@@ -822,6 +900,7 @@ cdef extern from "glcompat.h":
         GL_MAX_RENDERBUFFER_SIZE_EXT
         GL_MAX_TEXTURE_SIZE
         GL_MAX_TEXTURE_STACK_DEPTH
+        GL_MAX_TEXTURE_UNITS
         GL_MAX_TEXTURE_UNITS_ARB
         GL_MAX_VARYING_FLOATS_ARB
         GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB
@@ -832,6 +911,8 @@ cdef extern from "glcompat.h":
         GL_MODELVIEW_STACK_DEPTH
         GL_MODULATE
         GL_MULT
+        GL_MULTISAMPLE
+        GL_MULTISAMPLE_BIT
         GL_N3F_V3F
         GL_NAME_STACK_DEPTH
         GL_NAND
@@ -849,8 +930,10 @@ cdef extern from "glcompat.h":
         GL_NORMAL_ARRAY_POINTER
         GL_NORMAL_ARRAY_STRIDE
         GL_NORMAL_ARRAY_TYPE
+        GL_NORMAL_MAP
         GL_NOTEQUAL
         GL_NO_ERROR
+        GL_NUM_COMPRESSED_TEXTURE_FORMATS
         GL_OBJECT_ACTIVE_ATTRIBUTES_ARB
         GL_OBJECT_ACTIVE_ATTRIBUTE_MAX_LENGTH_ARB
         GL_OBJECT_ACTIVE_UNIFORMS_ARB
@@ -871,11 +954,17 @@ cdef extern from "glcompat.h":
         GL_ONE_MINUS_DST_COLOR
         GL_ONE_MINUS_SRC_ALPHA
         GL_ONE_MINUS_SRC_COLOR
+        GL_OPERAND0_ALPHA
         GL_OPERAND0_ALPHA_ARB
+        GL_OPERAND0_RGB
         GL_OPERAND0_RGB_ARB
+        GL_OPERAND1_ALPHA
         GL_OPERAND1_ALPHA_ARB
+        GL_OPERAND1_RGB
         GL_OPERAND1_RGB_ARB
+        GL_OPERAND2_ALPHA
         GL_OPERAND2_ALPHA_ARB
+        GL_OPERAND2_RGB
         GL_OPERAND2_RGB_ARB
         GL_OR
         GL_ORDER
@@ -883,8 +972,10 @@ cdef extern from "glcompat.h":
         GL_OR_REVERSE
         GL_OUT_OF_MEMORY
         GL_PACK_ALIGNMENT
+        GL_PACK_IMAGE_HEIGHT
         GL_PACK_LSB_FIRST
         GL_PACK_ROW_LENGTH
+        GL_PACK_SKIP_IMAGES
         GL_PACK_SKIP_PIXELS
         GL_PACK_SKIP_ROWS
         GL_PACK_SWAP_BYTES
@@ -934,7 +1025,9 @@ cdef extern from "glcompat.h":
         GL_POLYGON_STIPPLE_BIT
         GL_POLYGON_TOKEN
         GL_POSITION
+        GL_PREVIOUS
         GL_PREVIOUS_ARB
+        GL_PRIMARY_COLOR
         GL_PRIMARY_COLOR_ARB
         GL_PROGRAM_OBJECT_ARB
         GL_PROJECTION
@@ -942,6 +1035,8 @@ cdef extern from "glcompat.h":
         GL_PROJECTION_STACK_DEPTH
         GL_PROXY_TEXTURE_1D
         GL_PROXY_TEXTURE_2D
+        GL_PROXY_TEXTURE_3D
+        GL_PROXY_TEXTURE_CUBE_MAP
         GL_Q
         GL_QUADRATIC_ATTENUATION
         GL_QUADS
@@ -955,6 +1050,7 @@ cdef extern from "glcompat.h":
         GL_RED_BIAS
         GL_RED_BITS
         GL_RED_SCALE
+        GL_REFLECTION_MAP
         GL_RENDER
         GL_RENDERBUFFER_ALPHA_SIZE_EXT
         GL_RENDERBUFFER_BINDING_EXT
@@ -971,6 +1067,7 @@ cdef extern from "glcompat.h":
         GL_RENDER_MODE
         GL_REPEAT
         GL_REPLACE
+        GL_RESCALE_NORMAL
         GL_RETURN
         GL_RGB
         GL_RGB10
@@ -988,6 +1085,7 @@ cdef extern from "glcompat.h":
         GL_RGBA4
         GL_RGBA8
         GL_RGBA_MODE
+        GL_RGB_SCALE
         GL_RGB_SCALE_ARB
         GL_RIGHT
         GL_S
@@ -999,6 +1097,13 @@ cdef extern from "glcompat.h":
         GL_SAMPLER_2D_SHADOW_ARB
         GL_SAMPLER_3D_ARB
         GL_SAMPLER_CUBE_ARB
+        GL_SAMPLES
+        GL_SAMPLE_ALPHA_TO_COVERAGE
+        GL_SAMPLE_ALPHA_TO_ONE
+        GL_SAMPLE_BUFFERS
+        GL_SAMPLE_COVERAGE
+        GL_SAMPLE_COVERAGE_INVERT
+        GL_SAMPLE_COVERAGE_VALUE
         GL_SCISSOR_BIT
         GL_SCISSOR_BOX
         GL_SCISSOR_TEST
@@ -1006,18 +1111,30 @@ cdef extern from "glcompat.h":
         GL_SELECT
         GL_SELECTION_BUFFER_POINTER
         GL_SELECTION_BUFFER_SIZE
+        GL_SEPARATE_SPECULAR_COLOR
         GL_SET
         GL_SHADER_OBJECT_ARB
         GL_SHADE_MODEL
         GL_SHADING_LANGUAGE_VERSION_ARB
         GL_SHININESS
         GL_SHORT
+        GL_SINGLE_COLOR
         GL_SMOOTH
+        GL_SMOOTH_LINE_WIDTH_GRANULARITY
+        GL_SMOOTH_LINE_WIDTH_RANGE
+        GL_SMOOTH_POINT_SIZE_GRANULARITY
+        GL_SMOOTH_POINT_SIZE_RANGE
+        GL_SOURCE0_ALPHA
         GL_SOURCE0_ALPHA_ARB
+        GL_SOURCE0_RGB
         GL_SOURCE0_RGB_ARB
+        GL_SOURCE1_ALPHA
         GL_SOURCE1_ALPHA_ARB
+        GL_SOURCE1_RGB
         GL_SOURCE1_RGB_ARB
+        GL_SOURCE2_ALPHA
         GL_SOURCE2_ALPHA_ARB
+        GL_SOURCE2_RGB
         GL_SOURCE2_RGB_ARB
         GL_SPECULAR
         GL_SPHERE_MAP
@@ -1055,6 +1172,7 @@ cdef extern from "glcompat.h":
         GL_STREAM_DRAW_ARB
         GL_STREAM_READ_ARB
         GL_SUBPIXEL_BITS
+        GL_SUBTRACT
         GL_SUBTRACT_ARB
         GL_T
         GL_T2F_C3F_V3F
@@ -1065,54 +1183,101 @@ cdef extern from "glcompat.h":
         GL_T4F_C4F_N3F_V4F
         GL_T4F_V4F
         GL_TEXTURE
+        GL_TEXTURE0
         GL_TEXTURE0_ARB
+        GL_TEXTURE1
+        GL_TEXTURE10
         GL_TEXTURE10_ARB
+        GL_TEXTURE11
         GL_TEXTURE11_ARB
+        GL_TEXTURE12
         GL_TEXTURE12_ARB
+        GL_TEXTURE13
         GL_TEXTURE13_ARB
+        GL_TEXTURE14
         GL_TEXTURE14_ARB
+        GL_TEXTURE15
         GL_TEXTURE15_ARB
+        GL_TEXTURE16
         GL_TEXTURE16_ARB
+        GL_TEXTURE17
         GL_TEXTURE17_ARB
+        GL_TEXTURE18
         GL_TEXTURE18_ARB
+        GL_TEXTURE19
         GL_TEXTURE19_ARB
         GL_TEXTURE1_ARB
+        GL_TEXTURE2
+        GL_TEXTURE20
         GL_TEXTURE20_ARB
+        GL_TEXTURE21
         GL_TEXTURE21_ARB
+        GL_TEXTURE22
         GL_TEXTURE22_ARB
+        GL_TEXTURE23
         GL_TEXTURE23_ARB
+        GL_TEXTURE24
         GL_TEXTURE24_ARB
+        GL_TEXTURE25
         GL_TEXTURE25_ARB
+        GL_TEXTURE26
         GL_TEXTURE26_ARB
+        GL_TEXTURE27
         GL_TEXTURE27_ARB
+        GL_TEXTURE28
         GL_TEXTURE28_ARB
+        GL_TEXTURE29
         GL_TEXTURE29_ARB
         GL_TEXTURE2_ARB
+        GL_TEXTURE3
+        GL_TEXTURE30
         GL_TEXTURE30_ARB
+        GL_TEXTURE31
         GL_TEXTURE31_ARB
         GL_TEXTURE3_ARB
+        GL_TEXTURE4
         GL_TEXTURE4_ARB
+        GL_TEXTURE5
         GL_TEXTURE5_ARB
+        GL_TEXTURE6
         GL_TEXTURE6_ARB
+        GL_TEXTURE7
         GL_TEXTURE7_ARB
+        GL_TEXTURE8
         GL_TEXTURE8_ARB
+        GL_TEXTURE9
         GL_TEXTURE9_ARB
         GL_TEXTURE_1D
         GL_TEXTURE_2D
+        GL_TEXTURE_3D
         GL_TEXTURE_ALPHA_SIZE
+        GL_TEXTURE_BASE_LEVEL
         GL_TEXTURE_BINDING_1D
         GL_TEXTURE_BINDING_2D
+        GL_TEXTURE_BINDING_3D
+        GL_TEXTURE_BINDING_CUBE_MAP
         GL_TEXTURE_BIT
         GL_TEXTURE_BLUE_SIZE
         GL_TEXTURE_BORDER
         GL_TEXTURE_BORDER_COLOR
         GL_TEXTURE_COMPONENTS
+        GL_TEXTURE_COMPRESSED
+        GL_TEXTURE_COMPRESSED_IMAGE_SIZE
+        GL_TEXTURE_COMPRESSION_HINT
         GL_TEXTURE_COORD_ARRAY
         GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB
         GL_TEXTURE_COORD_ARRAY_POINTER
         GL_TEXTURE_COORD_ARRAY_SIZE
         GL_TEXTURE_COORD_ARRAY_STRIDE
         GL_TEXTURE_COORD_ARRAY_TYPE
+        GL_TEXTURE_CUBE_MAP
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+        GL_TEXTURE_DEPTH
         GL_TEXTURE_ENV
         GL_TEXTURE_ENV_COLOR
         GL_TEXTURE_ENV_MODE
@@ -1128,28 +1293,50 @@ cdef extern from "glcompat.h":
         GL_TEXTURE_LUMINANCE_SIZE
         GL_TEXTURE_MAG_FILTER
         GL_TEXTURE_MATRIX
+        GL_TEXTURE_MAX_LEVEL
+        GL_TEXTURE_MAX_LOD
         GL_TEXTURE_MIN_FILTER
+        GL_TEXTURE_MIN_LOD
         GL_TEXTURE_PRIORITY
         GL_TEXTURE_RED_SIZE
         GL_TEXTURE_RESIDENT
         GL_TEXTURE_STACK_DEPTH
         GL_TEXTURE_WIDTH
+        GL_TEXTURE_WRAP_R
         GL_TEXTURE_WRAP_S
         GL_TEXTURE_WRAP_T
         GL_TRANSFORM_BIT
+        GL_TRANSPOSE_COLOR_MATRIX
+        GL_TRANSPOSE_MODELVIEW_MATRIX
+        GL_TRANSPOSE_PROJECTION_MATRIX
+        GL_TRANSPOSE_TEXTURE_MATRIX
         GL_TRIANGLES
         GL_TRIANGLE_FAN
         GL_TRIANGLE_STRIP
         GL_TRUE
         GL_UNPACK_ALIGNMENT
+        GL_UNPACK_IMAGE_HEIGHT
         GL_UNPACK_LSB_FIRST
         GL_UNPACK_ROW_LENGTH
+        GL_UNPACK_SKIP_IMAGES
         GL_UNPACK_SKIP_PIXELS
         GL_UNPACK_SKIP_ROWS
         GL_UNPACK_SWAP_BYTES
         GL_UNSIGNED_BYTE
+        GL_UNSIGNED_BYTE_2_3_3_REV
+        GL_UNSIGNED_BYTE_3_3_2
         GL_UNSIGNED_INT
+        GL_UNSIGNED_INT_10_10_10_2
+        GL_UNSIGNED_INT_2_10_10_10_REV
+        GL_UNSIGNED_INT_8_8_8_8
+        GL_UNSIGNED_INT_8_8_8_8_REV
         GL_UNSIGNED_SHORT
+        GL_UNSIGNED_SHORT_1_5_5_5_REV
+        GL_UNSIGNED_SHORT_4_4_4_4
+        GL_UNSIGNED_SHORT_4_4_4_4_REV
+        GL_UNSIGNED_SHORT_5_5_5_1
+        GL_UNSIGNED_SHORT_5_6_5
+        GL_UNSIGNED_SHORT_5_6_5_REV
         GL_V2F
         GL_V3F
         GL_VENDOR

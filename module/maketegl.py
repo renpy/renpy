@@ -40,8 +40,8 @@ import sys
 
 # Enable or disable extensions
 
-OPENGL_1_2 = False
-OPENGL_1_3 = False
+OPENGL_1_2 = True
+OPENGL_1_3 = True
 OPENGL_1_4 = False
 OPENGL_1_5 = False
 OPENGL_2_0 = False

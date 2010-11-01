@@ -1014,7 +1014,7 @@ cdef void draw_rectangle(
 
         has_tex0 = 1
 
-        glActiveTextureARB(GL_TEXTURE0_ARB)
+        glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex0.number)
         
         xadd = tex0.xadd
@@ -1034,7 +1034,7 @@ cdef void draw_rectangle(
 
         has_tex1 = 1
 
-        glActiveTextureARB(GL_TEXTURE1_ARB)
+        glActiveTexture(GL_TEXTURE1)
         glBindTexture(GL_TEXTURE_2D, tex1.number)
         
         xadd = tex1.xadd
@@ -1054,7 +1054,7 @@ cdef void draw_rectangle(
 
         has_tex2 = 1
 
-        glActiveTextureARB(GL_TEXTURE2_ARB)
+        glActiveTexture(GL_TEXTURE2)
         glBindTexture(GL_TEXTURE_2D, tex2.number)
         
         xadd = tex2.xadd
@@ -1073,41 +1073,73 @@ cdef void draw_rectangle(
 
     # Now, actually draw the textured rectangle.
 
-    glBegin(GL_TRIANGLE_STRIP)
+    cdef GLfloat tex0coords[8]
+    cdef GLfloat tex1coords[8]
+    cdef GLfloat tex2coords[8]
+    cdef GLfloat vcoords[8]
 
     if has_tex0:
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u0, t0v0)
+        tex0coords[0] = t0u0
+        tex0coords[1] = t0v0
+        tex0coords[2] = t0u1
+        tex0coords[3] = t0v0
+        tex0coords[4] = t0u0
+        tex0coords[5] = t0v1
+        tex0coords[6] = t0u1
+        tex0coords[7] = t0v1
+
+        glClientActiveTexture(GL_TEXTURE0)
+        glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex0coords)
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+    else:
+        glClientActiveTexture(GL_TEXTURE0)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+
+       
     if has_tex1:
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u0, t1v0)
+        tex1coords[0] = t1u0
+        tex1coords[1] = t1v0
+        tex1coords[2] = t1u1
+        tex1coords[3] = t1v0
+        tex1coords[4] = t1u0
+        tex1coords[5] = t1v1
+        tex1coords[6] = t1u1
+        tex1coords[7] = t1v1
+
+        glClientActiveTexture(GL_TEXTURE1)
+        glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex1coords)
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+    else:
+        glClientActiveTexture(GL_TEXTURE1)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+
+
     if has_tex2:
-        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u0, t2v0)
-    glVertex2f(x0, y0)
+        tex2coords[0] = t2u0
+        tex2coords[1] = t2v0
+        tex2coords[2] = t2u1
+        tex2coords[3] = t2v0
+        tex2coords[4] = t2u0
+        tex2coords[5] = t2v1
+        tex2coords[6] = t2u1
+        tex2coords[7] = t2v1
 
-    if has_tex0:
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u1, t0v0)
-    if has_tex1:
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u1, t1v0)
-    if has_tex2:
-        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u1, t2v0)
-    glVertex2f(x1, y1)
+        glClientActiveTexture(GL_TEXTURE2)
+        glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex2coords)
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+    else:
+        glClientActiveTexture(GL_TEXTURE2)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
 
-    if has_tex0:
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u0, t0v1)
-    if has_tex1:
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u0, t1v1)
-    if has_tex2:
-        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u0, t2v1)
-    glVertex2f(x2, y2)
+    vcoords[0] = x0
+    vcoords[1] = y0
+    vcoords[2] = x1
+    vcoords[3] = y1
+    vcoords[4] = x2
+    vcoords[5] = y2
+    vcoords[6] = x3
+    vcoords[7] = y3
 
-    if has_tex0:
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, t0u1, t0v1)
-    if has_tex1:
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, t1u1, t1v1)
-    if has_tex2:
-        glMultiTexCoord2fARB(GL_TEXTURE2_ARB, t2u1, t2v1)
-    glVertex2f(x3, y3)
-    
-    glEnd()
-
-
-    
+    glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vcoords)
+    glEnableClientState(GL_VERTEX_ARRAY)    
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
