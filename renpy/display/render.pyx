@@ -756,7 +756,7 @@ cdef class Render:
         for i in self.parents:
             i.kill_cache()
 
-        self.parents = None
+        self.parents.clear()
                 
         for i in self.depends_on_list:
             if not i.cache_killed:

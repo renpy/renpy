@@ -394,6 +394,13 @@ cdef class TextureGrid(object):
     def get_size(self):
         return self.width, self.height
 
+    def is_opaque(self):
+        """
+        This is just for compatibility that call is_opaque as prep for
+        rendering the screen.
+        """
+
+        return
     
     def subsurface(self, rect):
         """
