@@ -806,7 +806,8 @@ cdef class GLDraw:
         
             self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
-        what.is_opaque()
+        if isinstance(what, render.Render):
+            what.is_opaque()
 
         self.upscale_factor = 1.0
 
@@ -881,7 +882,8 @@ cdef class GLDraw:
             
             draw.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
-        what.is_opaque()
+        if isinstance(what, render.Render):
+            what.is_opaque()
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt)
 
