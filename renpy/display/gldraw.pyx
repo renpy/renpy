@@ -406,7 +406,7 @@ cdef class GLDraw:
 
         # Count the number of texture units.
         cdef GLint texture_units = 0
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &texture_units)
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS, &texture_units)
 
         self.log("Number of texture units: %d", texture_units)
 

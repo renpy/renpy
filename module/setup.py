@@ -13,20 +13,23 @@ extra_compile_args = [ "-O3", "-Wno-unused-function" ]
 # extra_compile_args = [ "-O0", "-gstabs" ]
 extra_link_args = [ ]
 
+android = "RENPY_ANDROID" in os.environ
+
 # This environment variable should have the full path to the installed
 # Ren'Py dependencies.
 install = os.environ.get("RENPY_DEPS_INSTALL", None)
 
-if install is None:
-    print """
-The RENPY_DEPS_INSTALL environment variable has not been set. This
-should be set to a double-colon-delimited list of places where the
-Ren'Py dependencies can be found. (To use system libraries, this can
-be set to a system directory, like /usr.)
-"""
-    sys.exit(-1)
+if not android:
+    if install is None:
+        print """
+    The RENPY_DEPS_INSTALL environment variable has not been set. This
+    should be set to a double-colon-delimited list of places where the
+    Ren'Py dependencies can be found. (To use system libraries, this can
+    be set to a system directory, like /usr.)
+    """
+        sys.exit(-1)
 
-install = install.split("::")
+    install = install.split("::")
 
 include_dirs = [ ]
 library_dirs = [ ]
@@ -38,6 +41,9 @@ def add_include(prefix, file):
     in into include_dirs.
     """
 
+    if android:
+        return False
+    
     checked = [ ]
     for i in install:
 
@@ -77,6 +83,9 @@ def add_library(name, optional=False):
     <i> in install. When found, it adds it to library_dirs.
     """
 
+    if android:
+        return False
+    
     checked = [ ]
     
     for i in install:
@@ -152,7 +161,11 @@ cython("_renpy_pysdlgl")
 cython("sound")
 cython("winmixer")
 
-sdl_libraries = [ 'SDL' ]
+if android:
+    sdl_libraries = [ 'sdl' ]
+else:
+    sdl_libraries = [ 'SDL' ]
+
 png_libraries = [ 'png', "z" ]
 
 sound_libraries = [ "avformat", "avcodec", "avutil", "z" ]
@@ -198,37 +211,43 @@ extensions.append(distutils.core.Extension(
     libraries=sdl_libraries + [ 'freetype', 'z' ],
     ))
 
-extensions.append(distutils.core.Extension(
-    "pysdlsound.sound",
-    [ "pss.c", "rwobject.c", "sound.c", "ffdecode.c" ],
-    include_dirs=include_dirs,
-    library_dirs=library_dirs,
-    extra_compile_args=extra_compile_args,
-    extra_link_args=extra_link_args,
-    libraries=sound_libraries + sdl_libraries,
-    ))
+if not android:
 
-
-if winmixer:
     extensions.append(distutils.core.Extension(
-        "pysdlsound.winmixer",
-        [ 'winmixer.c' ],
-        libraries=['winmm'],
+        "pysdlsound.sound",
+        [ "pss.c", "rwobject.c", "sound.c", "ffdecode.c" ],
+        include_dirs=include_dirs,
+        library_dirs=library_dirs,
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
+        libraries=sound_libraries + sdl_libraries,
         ))
 
-if linmixer:
-    py_modules.append('pysdlsound.linmixer')
 
-extensions.append(distutils.core.Extension(
-    "_renpybidi",
-    ["_renpybidi.c", "renpybidicore.c"],
-    include_dirs=include_dirs,
-    library_dirs=library_dirs,
-    libraries=['fribidi'],
-    ))
+    if winmixer:
+        extensions.append(distutils.core.Extension(
+            "pysdlsound.winmixer",
+            [ 'winmixer.c' ],
+            libraries=['winmm'],
+            ))
+
+    if linmixer:
+        py_modules.append('pysdlsound.linmixer')
+
+if not android:
+        
+    extensions.append(distutils.core.Extension(
+        "_renpybidi",
+        ["_renpybidi.c", "renpybidicore.c"],
+        include_dirs=include_dirs,
+        library_dirs=library_dirs,
+        libraries=['fribidi'],
+        ))
 
 if has_libglew:
     glew_libs = [ 'GLEW' ]
+elif android:
+    glew_libs = [ 'GLESv1_CM' ]
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
@@ -253,9 +272,12 @@ display("accelerator")
 display("gldraw", glew_libs )
 display("gltexture", glew_libs)
 display("glenviron", glew_libs)
-display("glenviron_fixed", glew_libs)
-display("glenviron_shader", glew_libs)
-display("glshader", glew_libs)
+
+if not android:
+    display("glenviron_fixed", glew_libs)
+    display("glenviron_shader", glew_libs)
+    display("glshader", glew_libs)
+
 display("glrtt_copy", glew_libs)
 
 sys.path.append('..')
