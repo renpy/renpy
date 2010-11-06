@@ -61,7 +61,7 @@ def set_mode(resolution, flags=0, depth=0):
 
 set_mode_unscaled = set_mode
 
-def set_bgra_masks():
+def set_rgba_masks():
     """
     This rebuilds the sample surfaces, to ones that use the given
     masks.
@@ -82,10 +82,10 @@ def set_bgra_masks():
     masks.sort(key=lambda a : abs(a))
 
     # Choose the masks.
-    if sys.byteorder == 'little':
-        masks = ( masks[2], masks[1], masks[0], masks[3] )
+    if sys.byteorder == 'big':
+        masks = ( masks[3], masks[2], masks[1], masks[0] )
     else:
-        masks = ( masks[1], masks[2], masks[3], masks[0] )
+        masks = ( masks[0], masks[1], masks[2], masks[3] )
 
     # Create the sample surface.
     sample_alpha = opygame.Surface((10, 10), 0, 32, masks)

@@ -174,7 +174,7 @@ cdef class TextureCore:
                         self.width,
                         self.height,
                         0,
-                        GL_BGRA)
+                        GL_RGBA)
 
                 self.created = True
 
@@ -184,7 +184,7 @@ cdef class TextureCore:
                 w,
                 h,
                 self.created,
-                GL_BGRA)
+                GL_RGBA)
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
@@ -217,7 +217,7 @@ cdef class TextureCore:
                 self.width,
                 self.height,
                 0,
-                GL_BGRA)
+                GL_RGBA)
 
             self.created = True
          

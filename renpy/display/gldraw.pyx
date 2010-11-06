@@ -472,7 +472,7 @@ cdef class GLDraw:
         self.info["rtt"] = "copy"
 
         # Do additional setup needed.
-        renpy.display.pgrender.set_bgra_masks()
+        renpy.display.pgrender.set_rgba_masks()
             
         return True
 
