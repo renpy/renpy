@@ -48,6 +48,11 @@ try:
 except ImportError:
     glenviron_shader = None
 
+try:
+    import renpy.display.glenviron_limited as glenviron_limited
+except ImportError:
+    glenviron_limited = None
+
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -461,6 +466,16 @@ cdef class GLDraw:
                 self.log("Using fixed-function environment (clause 2).")
                 self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
+                
+            elif use_subsystem(
+                glenviron_limited,
+                "RENPY_GL_ENVIRON",
+                "limited",
+                "RENPY_bogus_extension"):
+
+                self.log("Using limited environment.")
+                self.environ = glenviron_limited.LimitedEnviron()
+                self.info["environ"] = "limited"
 
             else:
                 self.log("Can't find a workable environment.")

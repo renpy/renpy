@@ -278,6 +278,8 @@ if not android:
     display("glenviron_shader", glew_libs)
     display("glshader", glew_libs)
 
+display("glenviron_limited", glew_libs)
+
 display("glrtt_copy", glew_libs)
 
 sys.path.append('..')

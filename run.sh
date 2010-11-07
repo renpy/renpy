@@ -39,6 +39,7 @@ display gltexture
 display glenviron
 display glenviron_fixed
 display glenviron_shader
+display glenviron_limited
 display glshader
 display glrtt_copy
 

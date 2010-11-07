@@ -37,3 +37,6 @@ gl_giveup = None
 
 # The renderers we prefer to use.
 prefer_renderers = "gl,sw"
+
+# Should we disable imagedissolve-type transitions?
+less_imagedissolve = False

@@ -403,7 +403,7 @@ class ImageDissolve(Transition):
     
     def render(self, width, height, st, at):
 
-        if renpy.game.less_updates:
+        if renpy.game.less_updates or renpy.game.less_imagedissolve:
             return null_render(self, width, height, st, at)
 
         if st >= self.delay:
@@ -486,6 +486,9 @@ class AlphaDissolve(Transition):
         return super(AlphaDissolve, self).visit() + [ self.control ]
     
     def render(self, width, height, st, at):
+
+        if renpy.game.less_updates or renpy.game.less_imagedissolve:
+            return null_render(self, width, height, st, at)
 
         if st >= self.delay:
             self.events = True
