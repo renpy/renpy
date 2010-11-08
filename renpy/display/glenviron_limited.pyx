@@ -22,6 +22,7 @@
 
 from gl cimport *
 from renpy.display.glenviron import *
+import renpy
 
 class LimitedEnviron(Environ):
     """
@@ -88,18 +89,18 @@ class LimitedEnviron(Environ):
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, color_function)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, alpha_function)
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, color_arg0)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, color_arg0)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, color_source0)
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, color_arg1)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, color_arg1)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, color_source1)
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, color_arg2)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB, color_arg2)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, color_source2)
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, alpha_arg0)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, alpha_arg0)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, alpha_source0)
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, alpha_arg1)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, alpha_arg1)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, alpha_source1)
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_ALPHA, alpha_arg2)
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_ALPHA, alpha_arg2)
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_ALPHA, alpha_source2)
 
         glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE, color_scale)

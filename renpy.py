@@ -94,8 +94,19 @@ except:
     raise
     print "Ren'Py requires at least python 2.6."
     sys.exit(0)
+
+android = ("ANDROID_PRIVATE" in os.environ)
+
+# Android.
+if android:
+    __main__ = sys.modules["__main__"]
+    __main__.path_to_renpy_base = path_to_renpy_base
+    __main__.path_to_common = path_to_common
+    __main__.path_to_saves = path_to_saves
+    os.environ["RENPY_RENDERER"] = "gl"
+    os.environ["RENPY_GL_ENVIRON"] = "limited"
     
-if __name__ == "__main__":
+if __name__ == "__main__" or android:
 
     if not 'RENPY_NO_VERSION_CHECK' in os.environ:
 

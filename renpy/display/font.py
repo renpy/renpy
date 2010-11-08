@@ -21,8 +21,11 @@
 
 import pygame
 
-import xml.etree.ElementTree as etree
-
+try:
+    import xml.etree.ElementTree as etree
+except:
+    pass
+    
 import _renpy_font
 pygame.font = _renpy_font
     

@@ -162,7 +162,7 @@ cython("sound")
 cython("winmixer")
 
 if android:
-    sdl_libraries = [ 'sdl' ]
+    sdl_libraries = [ 'sdl', 'GLESv1_CM', 'log' ]
 else:
     sdl_libraries = [ 'SDL' ]
 
@@ -198,7 +198,7 @@ extensions.append(distutils.core.Extension(
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries + png_libraries,
+    libraries=sdl_libraries + png_libraries + [ 'm' ],
     ))
 
 extensions.append(distutils.core.Extension(
@@ -208,7 +208,7 @@ extensions.append(distutils.core.Extension(
     library_dirs=library_dirs,
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
-    libraries=sdl_libraries + [ 'freetype', 'z' ],
+    libraries=sdl_libraries + [ 'freetype', 'z', 'm' ],
     ))
 
 if not android:
@@ -247,7 +247,7 @@ if not android:
 if has_libglew:
     glew_libs = [ 'GLEW' ]
 elif android:
-    glew_libs = [ 'GLESv1_CM' ]
+    glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
@@ -266,8 +266,8 @@ def display(name, libs=[]):
         library_dirs=library_dirs,
         libraries=libs))
 
-display("render")
-display("accelerator")
+display("render", [ 'z', 'm' ])
+display("accelerator", [ 'z', 'm' ])
 
 display("gldraw", glew_libs )
 display("gltexture", glew_libs)

@@ -23,7 +23,10 @@ import re
 import renpy
 import sys
 
-from _renpybidi import log2vis, WRTL, RTL, ON
+try:
+    from _renpybidi import log2vis, WRTL, RTL, ON
+except:
+    pass
     
 get_font = renpy.display.font.get_font
 ImageFont = renpy.display.font.ImageFont

@@ -1099,7 +1099,7 @@ class Interface(object):
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
-        
+
         try:
             pygame.macosx.init()
         except:
@@ -1109,7 +1109,7 @@ class Interface(object):
         renpy.audio.audio.init()
         renpy.display.joystick.init()
         pygame.display.init()
-       
+        
         # Init timing.
         init_time()
         self.profile_time = get_time()
@@ -1128,7 +1128,7 @@ class Interface(object):
 
         # Setup the video mode.
         self.set_mode()
-
+        
         # Double check, since at least on Linux, we can't set safe_mode until
         # the window maps.
         if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
@@ -1219,7 +1219,7 @@ class Interface(object):
         """
         This sets the video mode. It also picks the draw object.
         """
-
+        
         if self.display_reset:
             renpy.display.draw.deinit()
             renpy.display.draw.quit()
@@ -1237,7 +1237,7 @@ class Interface(object):
         
         # Setup screen.
         fullscreen = renpy.game.preferences.fullscreen
-
+        
         # If we're in fullscreen mode, and changing to another mode, go to
         # windowed mode first.
         s = pygame.display.get_surface()

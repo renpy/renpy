@@ -197,18 +197,19 @@ cdef class GLDraw:
         
         if self.did_init:
             self.deinit()
-
+            
         if fullscreen != self.old_fullscreen:
 
-            pygame.display.quit()
-            pygame.display.init()
-
+            if self.old_fullscreen is not None:
+                pygame.display.quit()
+                pygame.display.init()
+            
             self.display_info = pygame.display.Info()
             
             renpy.display.interface.post_init()
             
             self.old_fullscreen = fullscreen
-            
+
         self.log("")
         self.log(renpy.version)
         
@@ -220,7 +221,7 @@ cdef class GLDraw:
         # On a restart, restore the size.
         if renpy.display.gl_size is not None and not fullscreen:
             pwidth, pheight = renpy.display.gl_size
-
+            
         renpy.display.gl_size = None
 
         # Ensure we're always at least 256x256, so we have a shot at rendering
@@ -235,7 +236,7 @@ cdef class GLDraw:
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
         pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
-
+        
         try:
             if fullscreen:
                 self.log("fullscreen mode.")
@@ -248,7 +249,7 @@ cdef class GLDraw:
             self.log("Could not get pygame screen: %r", e)
 
             return False
-
+        
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
 
@@ -261,7 +262,7 @@ cdef class GLDraw:
         # the borders.
         physical_ar = 1.0 * pwidth / pheight
         virtual_ar = 1.0 * vwidth / vheight
-
+        
         if physical_ar >= virtual_ar:
             x_padding = physical_ar * vheight - vwidth
             y_padding = 0
@@ -1004,7 +1005,7 @@ cdef class GLDraw:
             0,
             surf.w,
             surf.h,
-            GL_BGRA,
+            GL_RGBA,
             GL_UNSIGNED_BYTE,
             pixels)
 

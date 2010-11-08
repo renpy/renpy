@@ -11,14 +11,22 @@
 typedef GLfloat GLdouble;
 #define glewInit() (1)
 #define GLEW_OK (1)
+#define glewGetErrorString(x) ("Unknown Error")
 #define glOrtho glOrthof
+#define glClipPlane glClipPlanef
+
+#define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
+#define GL_SOURCE1_ALPHA GL_SRC1_ALPHA
+#define GL_SOURCE2_ALPHA GL_SRC2_ALPHA
+
+#define GL_SOURCE0_RGB GL_SRC0_RGB
+#define GL_SOURCE1_RGB GL_SRC1_RGB
+#define GL_SOURCE2_RGB GL_SRC2_RGB
 
 // This isn't defined on GL ES, but that's okay, since we'll disable
 // screenshots on Android.
 #define GL_PACK_ROW_LENGTH 0
 
-// TODO: Rid ourselves of this.
-#define GL_BGRA GL_RGBA
 
 #else
 #include <GL/glew.h>
