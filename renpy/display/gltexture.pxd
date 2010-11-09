@@ -4,7 +4,7 @@ cdef class TextureCore:
     cdef public int width
     cdef public int height
     cdef public int generation
-    cdef public int number
+    cdef public unsigned int number
     cdef bint created
     cdef double xmul
     cdef double xadd
@@ -22,7 +22,7 @@ cdef class TextureCore:
     cdef void make_ready(TextureCore)
     cdef void make_nearest(TextureCore)
     cdef void make_linear(TextureCore)
-    
+    cpdef int allocate(TextureCore)
 
 cdef class TextureGrid:
 

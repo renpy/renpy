@@ -62,7 +62,7 @@ class CopyRtt(Rtt):
         glMatrixMode(GL_MODELVIEW)
 
         draw_func()
-        
+
         glBindTexture(GL_TEXTURE_2D, texture)
 
         glCopyTexSubImage2D(

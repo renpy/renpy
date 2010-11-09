@@ -619,7 +619,7 @@ cdef class GLDraw:
 
         cdef render.Render rend
         cdef bint render_what
-        
+
         if not isinstance(what, render.Render):
             return 0
 
@@ -633,7 +633,7 @@ cdef class GLDraw:
                 non_aligned = False
 
         first = True
-                
+
         if rend.forward:
             non_aligned |= (rend.forward.xdy != 0)
             non_aligned |= (rend.forward.ydy != 0)
@@ -648,15 +648,15 @@ cdef class GLDraw:
             elif rend.operation == IMAGEDISSOLVE:
                 child.render_to_texture(first or what.operation_alpha)
                 first = False
-                
+
             elif rend.operation == PIXELLATE:
                 p = rend.operation_parameter
                 pc = child
-                
+
                 while p > 1:
                     p /= 2
                     pc = self.get_half(pc)
-                
+
         if render_what:
             what.render_to_texture(True)
 

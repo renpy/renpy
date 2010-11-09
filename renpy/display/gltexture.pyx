@@ -229,23 +229,26 @@ cdef class TextureCore:
         self.ymul = 1.0 / self.height
 
         
-    def allocate(self):
+    cpdef int allocate(self):
         """
         This allocates a texture number, if necessary.
         """
 
-        cdef GLuint texnums[1]        
-
+        cdef unsigned int texnums[1]        
+        
+        
         if self.number != -1:
-            return
+            return 0
         
         glGenTextures(1, texnums)
         
         self.number = texnums[0]
         self.created = False
-        
+
         texture_numbers.append(texnums[0])
 
+        return 0
+        
 class Texture(TextureCore):
     """
     We need to be a real python class, not a C extension, to ensure that
