@@ -35,6 +35,17 @@ SIZES = [ 512, 256, 128, 64 ]
 # A list of texture number allocated.
 texture_numbers = [ ]
 
+cdef int rtt_format = GL_RGBA
+
+def use_gles():
+    """
+    Called to trigger gles mode.
+    """
+    global rtt_format
+    
+    rtt_format = GL_RGB
+
+
 cdef class TextureCore:
     """
     This object stores information about an OpenGL texture.
@@ -51,8 +62,8 @@ cdef class TextureCore:
         self.generation = 0
         self.number = -1
 
-        # True if the texture has been created inside the GPU.
-        self.created = False
+        # The format of this texture in the GPU (or 0 if not known).
+        self.format = 0
 
         # These are used to map an index into texture coordinates.
         self.xmul = 0
@@ -168,7 +179,7 @@ cdef class TextureCore:
             # smaller than it, load in the empty texture.
             if w < self.width or h < self.height:
 
-                if not self.created:
+                if self.format != GL_RGBA:
                     load_premultiplied(
                         None,
                         self.width,
@@ -176,19 +187,19 @@ cdef class TextureCore:
                         0,
                         GL_RGBA)
 
-                self.created = True
+                self.format = GL_RGBA
 
             # Otherwise, either load or replace the texture.
             load_premultiplied(
                 self.premult,
                 w,
                 h,
-                self.created,
+                (self.format != 0),
                 GL_RGBA)
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
-            self.created = True
+            self.created = GL_RGBA
 
             # Finally, load in the default math.
             self.xadd = self.yadd = 0
@@ -204,7 +215,7 @@ cdef class TextureCore:
 
         self.allocate()
         
-        if not self.created:
+        if self.format != rtt_format:
             
             glBindTexture(GL_TEXTURE_2D, self.number)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
@@ -217,9 +228,9 @@ cdef class TextureCore:
                 self.width,
                 self.height,
                 0,
-                GL_RGBA)
+                rtt_format)
 
-            self.created = True
+            self.format = rtt_format
          
         rtt.render(self.number, x, y, self.width, self.height, draw_func)
 
@@ -243,7 +254,7 @@ cdef class TextureCore:
         glGenTextures(1, texnums)
         
         self.number = texnums[0]
-        self.created = False
+        self.format = 0
 
         texture_numbers.append(texnums[0])
 
@@ -934,7 +945,7 @@ def load_premultiplied(
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RGBA,
+            format,
             width,
             height,
             0,

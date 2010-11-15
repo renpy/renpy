@@ -5,7 +5,7 @@ cdef class TextureCore:
     cdef public int height
     cdef public int generation
     cdef public unsigned int number
-    cdef bint created
+    cdef int format
     cdef double xmul
     cdef double xadd
     cdef double ymul

@@ -155,6 +155,9 @@ cdef class GLDraw:
         # The time of the last redraw.
         self.last_redraw_time = 0
 
+        # The time between redraws.
+        self.redraw_period = .2
+        
         # Info.
         self.info = { "renderer" : "gl" }
 
@@ -313,7 +316,7 @@ cdef class GLDraw:
         self.environ.init()
         self.rtt.init()
 
-        # Prepare a mouse call.
+        # Prepare a mouse display.
         self.mouse_old_visible = None
         
         return True
@@ -376,6 +379,10 @@ cdef class GLDraw:
                 self.log("Blacklisted renderer/version.")
                 return False
 
+        if version.startswith("OpenGL ES"):
+            self.redraw_period = 1.0
+            gltexture.use_gles()
+        
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))
         
@@ -506,7 +513,7 @@ cdef class GLDraw:
             rv = True
         elif first_pass:
             rv = True
-        elif time.time() > self.last_redraw_time + .20:
+        elif time.time() > self.last_redraw_time + self.redraw_period:
             rv = True
 
         else:

@@ -14,6 +14,7 @@ cdef class GLDraw:
     cdef object mouse_info
     cdef object texture_cache
     cdef double last_redraw_time
+    cdef double redraw_period
     cdef public dict info
     cdef object old_fullscreen
     cdef object fullscreen_surface
