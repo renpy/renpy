@@ -38,6 +38,11 @@ try:
 except:
     pass
 
+try:
+    import android
+except:
+    android = None
+
 # Is the cpu idle enough to do other things?
 cpu_idle = threading.Event()
 cpu_idle.clear()
@@ -1902,8 +1907,21 @@ class Interface(object):
                     self.set_mode()
                     needs_redraw = True
 
-                # Redraw the screen.
+                # Check for suspend.
+                if android:
+                    if android.check_pause():
+                        pygame.time.set_timer(PERIODIC, 0)
+                        pygame.time.set_timer(REDRAW, 0)
+                        pygame.time.set_timer(TIMEEVENT, 0)
 
+                        # TODO: Save
+                        android.wait_for_resume()
+                        
+                        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+
+                        
+                # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
                      renpy.display.draw.should_redraw(needs_redraw, first_pass))):
