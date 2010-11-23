@@ -144,7 +144,12 @@ class SubFile(object):
         self.offset = 0
         self.length = length
         self.start = start
-        
+
+        if start is None:
+            self.name = self.f.name
+        else:
+            self.name = None
+            
         self.f.seek(self.base)
 
     def read(self, length=None):

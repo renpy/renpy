@@ -44,8 +44,16 @@ if 'pss' not in disable:
         pss.check_version(4)
         atexit.register(pss.quit)
     except:
-        pss = None
+        pass
 
+    if pss is None:
+        try:
+            import android_sound as pss
+            print "Imported android_sound."
+        except:
+            pass
+
+        
 if 'mix' not in disable:
     try:
         import winmixer as mix; mix

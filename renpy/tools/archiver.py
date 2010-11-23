@@ -94,8 +94,8 @@ def archive(prefix, files):
                 break
 
             dlen = len(data)
-            start = data[:16]
-            rest = data[16:]
+            start = ""
+            rest = data
             
             archivef.write(rest)
 

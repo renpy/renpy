@@ -26,7 +26,7 @@ import os.path
 import sys
 import platform
 import warnings
-
+    
 # Functions to be customized by distributors. ################################
 
 # Given the Ren'Py base directory (usually the directory containing
@@ -97,7 +97,8 @@ except:
 
 android = ("ANDROID_PRIVATE" in os.environ)
 
-# Android.
+# Android requires us to add code to the main module, and to command some
+# renderers.
 if android:
     __main__ = sys.modules["__main__"]
     __main__.path_to_renpy_base = path_to_renpy_base

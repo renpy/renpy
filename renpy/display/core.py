@@ -1651,6 +1651,30 @@ class Interface(object):
 
         return (get_time() - self.frame_time) <= seconds_ago
         
+
+    def android_check_suspend(self):
+        
+        if android.check_pause():
+            import android_sound
+            android_sound.pause_all()
+
+            pygame.time.set_timer(PERIODIC, 0)
+            pygame.time.set_timer(REDRAW, 0)
+            pygame.time.set_timer(TIMEEVENT, 0)
+
+            # The game has to be saved.
+            renpy.loadsave.save("_reload")
+
+            android.wait_for_resume()
+
+            # Since we came back to life, we can get rid of the
+            # auto-reload.
+            renpy.loadsave.unlink_save("_reload")
+
+            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+            android_sound.unpause_all()
+                        
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -1909,18 +1933,8 @@ class Interface(object):
 
                 # Check for suspend.
                 if android:
-                    if android.check_pause():
-                        pygame.time.set_timer(PERIODIC, 0)
-                        pygame.time.set_timer(REDRAW, 0)
-                        pygame.time.set_timer(TIMEEVENT, 0)
+                    self.android_check_suspend()
 
-                        # TODO: Save
-                        android.wait_for_resume()
-                        
-                        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
-
-                        
                 # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
