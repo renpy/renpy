@@ -382,7 +382,7 @@ cdef class GLDraw:
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
             gltexture.use_gles()
-        
+            
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))
         
@@ -515,14 +515,13 @@ cdef class GLDraw:
             rv = True
         elif time.time() > self.last_redraw_time + self.redraw_period:
             rv = True
-
         else:
             # Redraw if the mouse moves.
             mx, my, tex = self.mouse_info
             if tex and (mx, my) != pygame.mouse.get_pos():
                 rv = True
             
-        # Log the redraw time.
+        # Store the redraw time.
         if rv:
             self.last_redraw_time = time.time()
             return True

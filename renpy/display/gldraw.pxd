@@ -21,7 +21,7 @@ cdef class GLDraw:
     cdef object display_info
     cdef double upscale_factor
     cdef tuple clip_cache
-
+    
     cpdef set_clip(GLDraw self, tuple clip)
 
     cpdef int draw_render_textures(

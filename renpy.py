@@ -26,7 +26,7 @@ import os.path
 import sys
 import platform
 import warnings
-    
+
 # Functions to be customized by distributors. ################################
 
 # Given the Ren'Py base directory (usually the directory containing
@@ -106,8 +106,8 @@ if android:
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
     os.environ["RENPY_GL_ENVIRON"] = "limited"
-    
-if __name__ == "__main__" or android:
+
+def main():
 
     if not 'RENPY_NO_VERSION_CHECK' in os.environ:
 
@@ -140,8 +140,7 @@ if __name__ == "__main__" or android:
 
     # Ignore warnings that happen.
     warnings.simplefilter("ignore", DeprecationWarning)
-        
-        
+                
     # Start Ren'Py proper.
     try:
         import renpy.bootstrap
@@ -151,3 +150,8 @@ if __name__ == "__main__" or android:
         raise
 
     renpy.bootstrap.bootstrap(renpy_base)
+
+if __name__ == "__main__":
+    main()
+
+    
