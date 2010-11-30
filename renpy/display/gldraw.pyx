@@ -1,4 +1,4 @@
-#cython: profile=True
+#cython: profile=False
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -173,6 +173,9 @@ cdef class GLDraw:
         # The amount we're upscaling by.
         self.upscale_factor = 1.0
 
+        # Should we use the fast (but incorrect) dissolve mode?
+        self.fast_dissolve = renpy.config.simulate_android
+        
         open_log_file()
         
         
@@ -381,6 +384,7 @@ cdef class GLDraw:
 
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
+            self.fast_dissolve = True
             gltexture.use_gles()
             
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
@@ -649,7 +653,8 @@ cdef class GLDraw:
             self.draw_render_textures(child, non_aligned)
 
             if rend.operation == DISSOLVE: 
-                child.render_to_texture(what.operation_alpha)
+                if not self.fast_dissolve:
+                    child.render_to_texture(what.operation_alpha)
 
             elif rend.operation == IMAGEDISSOLVE:
                 child.render_to_texture(first or what.operation_alpha)
@@ -709,18 +714,32 @@ cdef class GLDraw:
         # Other draw modes.
         
         if rend.operation == DISSOLVE:
-
-            self.set_clip(clip)
             
-            gltexture.blend(
-                rend.children[0][0].render_to_texture(what.operation_alpha),
-                rend.children[1][0].render_to_texture(what.operation_alpha),
-                xo,
-                yo,
-                reverse,
-                alpha,
-                rend.operation_complete,
-                self.environ)
+            if self.fast_dissolve:
+
+                # This is a fast version of dissolve that's used on
+                # GLES systems. The semantics are different than that
+                # of dissolve on Ren'Py proper.
+                
+                self.draw_transformed(rend.children[0][0],
+                                      clip, xo, yo, alpha, reverse)
+
+                self.draw_transformed(rend.children[1][0],
+                                      clip, xo, yo, alpha * what.operation_complete, reverse)
+
+            else:
+                
+                self.set_clip(clip)
+                
+                gltexture.blend(
+                    rend.children[0][0].render_to_texture(what.operation_alpha),
+                    rend.children[1][0].render_to_texture(what.operation_alpha),
+                    xo,
+                    yo,
+                    reverse,
+                    alpha,
+                    rend.operation_complete,
+                    self.environ)
 
             return 0
 

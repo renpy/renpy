@@ -21,6 +21,7 @@ cdef class GLDraw:
     cdef object display_info
     cdef double upscale_factor
     cdef tuple clip_cache
+    cdef bint fast_dissolve
     
     cpdef set_clip(GLDraw self, tuple clip)
 
