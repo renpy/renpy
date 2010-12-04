@@ -337,7 +337,7 @@ class FunctionStatementParser(Parser):
             expr = self.parse_simple_expression(l)
 
             call_node.keywords.append(
-                ast.keyword(arg=name, value=expr),
+                ast.keyword(arg=str(name), value=expr),
                 )
                 
         # We assume that the initial keyword has been parsed already,

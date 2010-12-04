@@ -1655,6 +1655,7 @@ class Interface(object):
     def android_check_suspend(self):
         
         if android.check_pause():
+
             import android_sound
             android_sound.pause_all()
 
@@ -1663,7 +1664,7 @@ class Interface(object):
             pygame.time.set_timer(TIMEEVENT, 0)
 
             # The game has to be saved.
-            renpy.loadsave.save("_reload")
+            renpy.loadsave.save("_reload-1")
 
             android.wait_for_resume()
 
@@ -1674,7 +1675,7 @@ class Interface(object):
             pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
             android_sound.unpause_all()
-                        
+            
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,

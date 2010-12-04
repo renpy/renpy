@@ -29,6 +29,8 @@ import warnings
 
 # Functions to be customized by distributors. ################################
 
+android = ("ANDROID_PRIVATE" in os.environ)
+
 # Given the Ren'Py base directory (usually the directory containing
 # this file), this is expected to return the path to the common directory.
 def path_to_common(renpy_base):
@@ -56,15 +58,20 @@ def path_to_saves(gamedir):
         path = newpath
 
     # Otherwise, put the saves in a standard place.
-    if platform.mac_ver()[0]:
+    if android:
+        return gamedir + "/saves"
+
+    elif platform.mac_ver()[0]:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
+
     elif sys.platform == "win32":
         if 'APPDATA' in os.environ:
             return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
         else:
             rv = "~/RenPy/" + renpy.config.save_directory
             return os.path.expanduser(rv)
+
     else:
         rv = "~/.renpy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
@@ -95,8 +102,6 @@ except:
     print "Ren'Py requires at least python 2.6."
     sys.exit(0)
 
-android = ("ANDROID_PRIVATE" in os.environ)
-
 # Android requires us to add code to the main module, and to command some
 # renderers.
 if android:
@@ -108,7 +113,7 @@ if android:
     os.environ["RENPY_GL_ENVIRON"] = "limited"
 
 def main():
-
+    
     if not 'RENPY_NO_VERSION_CHECK' in os.environ:
 
         # Check for mac compatibility.
