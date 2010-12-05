@@ -841,7 +841,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     selected_idle = pick(selected_idle, "selected_idle", idle)
     hover = pick(hover, "hover", ground)
     selected_hover = pick(selected_hover, "selected_hover", hover)
-    insensitive = pick(insensitive, "insensitive", idle)
+    insensitive = pick(insensitive, "insensitive", ground)
 
     imagemap_stack.append(
         Imagemap(

@@ -239,7 +239,7 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         pwidth = min(self.display_info.current_w, pwidth)
-        pheight = min(self.display_info.current_h, pheight)
+        pheight = min(self.display_info.current_h - 102, pheight)
         
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")

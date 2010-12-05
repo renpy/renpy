@@ -1,3 +1,3 @@
 #!/bin/sh
 
-rsync -a build/html tom@onegeek.org:/home/tom/WWW.renpyorg/doc
+rsync -a /home/tom/ab/renpy/doc/ tom@onegeek.org:/home/tom/WWW.renpyorg/doc/html/

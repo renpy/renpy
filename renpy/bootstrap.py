@@ -96,7 +96,7 @@ def popen_del(self, *args, **kwargs):
 def bootstrap(renpy_base):
 
     global renpy # W0602
-
+    
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
     
     # If environment.txt exists, load it into the os.environ dictionary.
@@ -106,7 +106,23 @@ def bootstrap(renpy_base):
         for k, v in evars.iteritems():
             if k not in os.environ:
                 os.environ[k] = str(v)
-    
+
+    # Also look for it in an alternate path (the path that contains the
+    # .app file.), if on a mac.
+    alt_path = os.path.abspath("renpy_base")
+    if ".app" in alt_path:
+        alt_path = alt_path[:alt_path.find(".app")+4]
+        
+        if os.path.exists(alt_path + "/environment.txt"):
+            evars = { }
+            execfile(alt_path + "/environment.txt", evars)
+            for k, v in evars.iteritems():
+                if k not in os.environ:
+                    os.environ[k] = str(v)
+        
+        
+
+                
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 

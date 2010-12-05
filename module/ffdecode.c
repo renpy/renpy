@@ -85,7 +85,9 @@ typedef struct PacketQueue {
 
 typedef struct VideoPicture {
     double pts;                                  ///<presentation time stamp for this picture
-    SDL_Overlay *bmp;
+    SDL_Surface *surf;
+    AVFrame *frame;
+    int fmt;
     int width, height; /* source height & width */
     int allocated;
 } VideoPicture;
@@ -684,15 +686,19 @@ static void free_subpicture(SubPicture *sp)
 static void video_image_display(VideoState *is)
 {
     VideoPicture *vp;
+#if 0    
     SubPicture *sp;
+#endif
+
     AVPicture pict;
     float aspect_ratio;
     int width, height, x, y;
     SDL_Rect rect;
-    int i;
 
+    static struct SwsContext *img_convert_ctx;
+    
     vp = &is->pictq[is->pictq_rindex];
-    if (vp->bmp) {
+    if (vp->surf) {
         /* XXX: use variable in the frame */
         if (is->video_st->sample_aspect_ratio.num)
             aspect_ratio = av_q2d(is->video_st->sample_aspect_ratio);
@@ -738,6 +744,7 @@ static void video_image_display(VideoState *is)
         }
 #endif
 
+#if 0        
         if (is->subtitle_st)
         {
             if (is->subpq_size > 0)
@@ -764,35 +771,60 @@ static void video_image_display(VideoState *is)
                 }
             }
         }
-
+#endif
+        
 
         /* XXX: we suppose the screen has a 1.0 pixel ratio */
         height = is->height;
         width = ((int)rint(height * aspect_ratio)) & ~1;
+
         if (width > is->width) {
             width = is->width;
             height = ((int)rint(width / aspect_ratio)) & ~1;
         }
+
         x = (is->width - width) / 2;
         y = (is->height - height) / 2;
+
         if (!is->no_background) {
             /* fill the background */
             //            fill_border(is, x, y, width, height, QERGB(0x00, 0x00, 0x00));
         } else {
             is->no_background = 0;
         }
+        
         rect.x = is->xleft + x;
         rect.y = is->ytop  + y;
         rect.w = width;
         rect.h = height;
 
-        SDL_DisplayYUVOverlay(vp->bmp, &rect);
+        img_convert_ctx = sws_getCachedContext(
+            img_convert_ctx,
+            is->video_st->codec->width,
+            is->video_st->codec->height,
+            is->video_st->codec->pix_fmt,
+            rect.w,
+            rect.h,
+            vp->fmt, //dst_pix_fmt,
+            sws_flags,
+            NULL, NULL, NULL);
+
+        if (img_convert_ctx != NULL) {
+
+            pict.data[0] = &((uint8_t *)vp->surf->pixels)[rect.y * vp->surf->pitch + rect.x * 4];
+            pict.linesize[0] = vp->surf->pitch;
+            
+            sws_scale(
+                img_convert_ctx,
+                (const uint8_t * const *) vp->frame->data,
+                vp->frame->linesize,
+                0,
+                is->video_st->codec->height,
+                pict.data,
+                pict.linesize); 
+        }
+            
     } else {
-#if 0
-        fill_rectangle(screen,
-                       is->xleft, is->ytop, is->width, is->height,
-                       QERGB(0x00, 0x00, 0x00));
-#endif
     }
 }
 
@@ -970,8 +1002,10 @@ static void video_refresh_timer(void *opaque)
     VideoState *is = opaque;
     VideoPicture *vp;
 
+#if 0
     SubPicture *sp, *sp2;
-
+#endif
+    
     double delay;
     
     if (is->video_st) {
@@ -1039,7 +1073,10 @@ static void video_refresh_timer(void *opaque)
             if (delay > 0.010) {
                 video_display(is);
             }
-                
+
+            av_free(vp->frame);
+            vp->frame = NULL;
+            
             /* update queue size and signal for next picture */
             if (++is->pictq_rindex == VIDEO_PICTURE_QUEUE_SIZE)
                 is->pictq_rindex = 0;
@@ -1085,9 +1122,11 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
 {
     VideoState *is = opaque;
     VideoPicture *vp;
-
     SDL_Surface *surf;
 
+    uint32_t pixel;
+    uint8_t *bytes = (uint8_t *) &pixel;
+    
     if (!is->needs_alloc) {
         return;
     }
@@ -1097,39 +1136,26 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
     surf = PySurface_AsSurface(pysurf);
     is->width = surf->w;
     is->height = surf->h;
-    
+
     vp = &is->pictq[is->pictq_windex];
-
-    if (vp->bmp)
-        SDL_FreeYUVOverlay(vp->bmp);
-
-#if 0
-    /* XXX: use generic function */
-    /* XXX: disable overlay if no hardware acceleration or if RGB format */
-    switch(is->video_st->codec->pix_fmt) {
-    case PIX_FMT_YUV420P:
-    case PIX_FMT_YUV422P:
-    case PIX_FMT_YUV444P:
-    case PIX_FMT_YUYV422:
-    case PIX_FMT_YUV410P:
-    case PIX_FMT_YUV411P:
-        is_yuv = 1;
-        break;
-    default:
-        is_yuv = 0;
-        break;
-    }
-#endif
-
-    vp->bmp = SDL_CreateYUVOverlay(
-        is->video_st->codec->width,
-        is->video_st->codec->height,
-        SDL_YV12_OVERLAY,
-        surf);
-
+    vp->surf = surf;    
     vp->width = is->video_st->codec->width;
     vp->height = is->video_st->codec->height;
 
+    pixel = SDL_MapRGBA(surf->format, 1, 2, 3, 4);
+    if (bytes[0] == 4 && bytes[1] == 1) {
+        vp->fmt = PIX_FMT_ARGB;
+    } else if (bytes[0] == 4 && bytes[1] == 3) {
+        vp->fmt = PIX_FMT_ABGR;
+    } else if (bytes[0] == 1) {
+        vp->fmt = PIX_FMT_RGBA;
+    } else {
+        vp->fmt = PIX_FMT_BGRA;
+    }
+
+    pixel = SDL_MapRGBA(surf->format, 0, 0, 0, 255);
+    SDL_FillRect(surf, NULL, pixel);
+    
     SDL_LockMutex(is->pictq_mutex);
     vp->allocated = 1;
     SDL_CondSignal(is->pictq_cond);
@@ -1143,10 +1169,13 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
 static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
 {
     VideoPicture *vp;
+
+#if 0
     int dst_pix_fmt;
     AVPicture pict;
     static struct SwsContext *img_convert_ctx;
-
+#endif
+    
     /* wait until we have space to put a new picture */
     SDL_LockMutex(is->pictq_mutex);
     while (is->pictq_size >= VIDEO_PICTURE_QUEUE_SIZE &&
@@ -1161,13 +1190,12 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
     vp = &is->pictq[is->pictq_windex];
 
     /* alloc or resize hardware picture buffer */
-    if (!vp->bmp ||
+    if (!vp->surf ||
         vp->width != is->video_st->codec->width ||
         vp->height != is->video_st->codec->height) {
         SDL_Event event;
 
         vp->allocated = 0;
-
         is->needs_alloc = 1;
 
         /* the allocation must be done in the main thread to avoid
@@ -1175,7 +1203,6 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
         event.type = FF_ALLOC_EVENT;
         event.user.data1 = is;
         SDL_PushEvent(&event);
-
         
         /* wait until the picture is allocated */
         SDL_LockMutex(is->pictq_mutex);
@@ -1188,42 +1215,47 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
             return -1;
     }
 
-    /* if the frame is not skipped, then display it */
-    if (vp->bmp) {
-        /* get a pointer on the bitmap */
-        SDL_LockYUVOverlay (vp->bmp);
+    vp->frame = src_frame;
+    vp->pts = pts;
 
-        dst_pix_fmt = PIX_FMT_YUV420P;
-        pict.data[0] = vp->bmp->pixels[0];
-        pict.data[1] = vp->bmp->pixels[2];
-        pict.data[2] = vp->bmp->pixels[1];
 
-        pict.linesize[0] = vp->bmp->pitches[0];
-        pict.linesize[1] = vp->bmp->pitches[2];
-        pict.linesize[2] = vp->bmp->pitches[1];
-        // sws_flags = av_get_int(sws_opts, "sws_flags", NULL);
-        img_convert_ctx = sws_getCachedContext(img_convert_ctx,
-            is->video_st->codec->width, is->video_st->codec->height,
-            is->video_st->codec->pix_fmt,
-            is->video_st->codec->width, is->video_st->codec->height,
-            dst_pix_fmt, sws_flags, NULL, NULL, NULL);
-        if (img_convert_ctx == NULL) {
-            fprintf(stderr, "Cannot initialize the conversion context\n");
-        }
-        sws_scale(img_convert_ctx, src_frame->data, src_frame->linesize,
-                  0, is->video_st->codec->height, pict.data, pict.linesize);
-        /* update the bitmap content */
-        SDL_UnlockYUVOverlay(vp->bmp);
+    /* now we can update the picture count */
+    if (++is->pictq_windex == VIDEO_PICTURE_QUEUE_SIZE)
+        is->pictq_windex = 0;
+    SDL_LockMutex(is->pictq_mutex);
+    is->pictq_size++;
+    SDL_UnlockMutex(is->pictq_mutex);
+    
+   /* /\* if the frame is not skipped, then display it *\/ */
+   /*  if (vp->bmp) { */
+   /*      /\* get a pointer on the bitmap *\/ */
+   /*      SDL_LockYUVOverlay (vp->bmp); */
 
-        vp->pts = pts;
+   /*      dst_pix_fmt = PIX_FMT_YUV420P; */
+   /*      pict.data[0] = vp->bmp->pixels[0]; */
+   /*      pict.data[1] = vp->bmp->pixels[2]; */
+   /*      pict.data[2] = vp->bmp->pixels[1]; */
 
-        /* now we can update the picture count */
-        if (++is->pictq_windex == VIDEO_PICTURE_QUEUE_SIZE)
-            is->pictq_windex = 0;
-        SDL_LockMutex(is->pictq_mutex);
-        is->pictq_size++;
-        SDL_UnlockMutex(is->pictq_mutex);
-    }
+   /*      pict.linesize[0] = vp->bmp->pitches[0]; */
+   /*      pict.linesize[1] = vp->bmp->pitches[2]; */
+   /*      pict.linesize[2] = vp->bmp->pitches[1]; */
+   /*      // sws_flags = av_get_int(sws_opts, "sws_flags", NULL); */
+   /*      img_convert_ctx = sws_getCachedContext(img_convert_ctx, */
+   /*          is->video_st->codec->width, is->video_st->codec->height, */
+   /*          is->video_st->codec->pix_fmt, */
+   /*          is->video_st->codec->width, is->video_st->codec->height, */
+   /*          dst_pix_fmt, sws_flags, NULL, NULL, NULL); */
+   /*      if (img_convert_ctx == NULL) { */
+   /*          fprintf(stderr, "Cannot initialize the conversion context\n"); */
+   /*      } */
+   /*      sws_scale(img_convert_ctx, src_frame->data, src_frame->linesize, */
+   /*                0, is->video_st->codec->height, pict.data, pict.linesize); */
+   /*      /\* update the bitmap content *\/ */
+   /*      SDL_UnlockYUVOverlay(vp->bmp); */
+
+   /*      vp->pts = pts; */
+
+   /*  } */
     return 0;
 }
 
@@ -1271,10 +1303,12 @@ static int video_thread(void *arg)
     VideoState *is = arg;
     AVPacket pkt1, *pkt = &pkt1;
     int len1, got_picture;
-    AVFrame *frame= avcodec_alloc_frame();
+    AVFrame *frame;
     double pts;
 
     for(;;) {
+        frame = avcodec_alloc_frame();
+
         while (is->paused && !is->videoq.abort_request) {
             SDL_Delay(10);
         }
@@ -1311,7 +1345,6 @@ static int video_thread(void *arg)
         av_free_packet(pkt);
     }
  the_end:
-    av_free(frame);
     return 0;
 }
 
@@ -2268,11 +2301,10 @@ void ffpy_stream_close(VideoState *is)
     SDL_WaitThread(is->parse_tid, NULL);
 
     /* free all pictures */
-    for(i=0;i<VIDEO_PICTURE_QUEUE_SIZE; i++) {
+    for(i=0; i<VIDEO_PICTURE_QUEUE_SIZE; i++) {
         vp = &is->pictq[i];
-        if (vp->bmp) {
-            SDL_FreeYUVOverlay(vp->bmp);
-            vp->bmp = NULL;
+        if (vp->frame) {
+            av_free(vp->frame);
         }
     }
     

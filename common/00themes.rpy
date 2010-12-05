@@ -71,9 +71,7 @@ init -1110 python hide:
         style.vscrollbar.bar_vertical = True
         style.vscrollbar.bar_invert = True
 
-        
-        
-        
+
     # This recolors the given image using one or two colors.
     @theme
     def OneOrTwoColor(image, color):
@@ -82,246 +80,68 @@ init -1110 python hide:
         else:
             return im.Twocolor(image, color, color)
 
-    @theme
-    def roundrect_frames(
-        less_rounded,
-        frame):
+    def roundrect_based_theme(name, file_prefix, Box=None, frame_png=None):
 
-        theme.clear_frames()
-        
-        style.frame.background = RoundRect(frame, less_rounded)
+        if Box is None:
+            def Box(color, ignored):
+                return Frame(theme.OneOrTwoColor(file_prefix + "_box.png", color), 12, 12)
 
-        style.frame.xpadding = 6
-        style.frame.ypadding = 6
-        
+        if frame_png is not None:
+            def FrameBox(color, ignored):
+                return Frame(theme.OneOrTwoColor(file_prefix + frame_png, color), 12, 12)
+        else:
+            FrameBox = Box
             
-    @theme
-    def roundrect_buttons(text_size,
-                          less_rounded,
-                          widget,
-                          widget_hover,
-                          widget_text,
-                          widget_selected,
-                          disabled,
-                          disabled_text):
-
-        theme.clear_buttons()
-        
-        style.button.background = RoundRect(widget, less_rounded)
-        style.button.hover_background = RoundRect(widget_hover, less_rounded)
-        style.button.insensitive_background = RoundRect(disabled, less_rounded)
-
-        style.button_text.size = text_size
-        style.button_text.color = widget_text
-        style.button_text.selected_color = widget_selected
-        style.button_text.insensitive_color = disabled_text
-
-        if less_rounded:
-            style.button.xpadding = 6
-        else:
-            style.button.xpadding = 12
-
-        style.button.ypadding = 1
-        style.button.xmargin = 1
-        style.button.ymargin = 1
-
-        style.button_text.xalign = 0.5
-        style.button_text.yalign = 0.5
-        style.button_text.text_align = 0.5
-
-    @theme
-    def roundrect_large_buttons(
-        text_size,
-        less_rounded,
-        widget,
-        widget_hover,
-        widget_text,
-        widget_selected,
-        disabled,
-        disabled_text):
-
-        theme.clear_large_buttons()
-
-        if less_rounded:
-            style.large_button.xpadding = 6
-        else:
-            style.large_button.xpadding = 12
-
-        style.large_button.ypadding = 1
-        style.large_button.xmargin = 1
-        style.large_button.ymargin = 1
-        
-        style.large_button.background = RoundRect(widget, less_rounded)
-        style.large_button.hover_background = RoundRect(widget_hover, less_rounded)
-        style.large_button.insensitive_background = RoundRect(disabled, less_rounded)
-
-        style.large_button_text.size = text_size
-        style.large_button_text.color = widget_text
-        style.large_button_text.selected_color = widget_selected
-        style.large_button_text.insensitive_color = disabled_text
-
-        style.large_button_text.xalign = 0
-        style.large_button_text.yalign = 0
-
-    @theme
-    def roundrect_labels(
-        text_size,
-        label):
-
-        theme.clear_labels()
-        
-        style.label_text.size = text_size
-        style.label_text.color = label
-
-    @theme
-    def roundrect_prompts(
-        text_size,
-        label):
-
-        theme.clear_prompts()
-
-        style.prompt_text.size = text_size
-        style.prompt_text.color = label
-        
-        style.prompt.xalign = 0.5
-        style.prompt_text.text_align = 0.5
-        style.prompt_text.layout = "subtitle"
-        
-    @theme
-    def roundrect_bars(
-        widget,
-        widget_hover):
-
-        theme.clear_bars()
-        
-        def img(name, color, x, y):
-            rv = theme.OneOrTwoColor("_roundrect/" + name + ".png", color)
-            if x is not None:
-                rv = Frame(rv, x, y)
-            return rv
-
-        # Bars.
-        style.bar.ymaximum = 24
-        style.bar.left_gutter = 6
-        style.bar.right_gutter = 6
-        style.bar.thumb_offset = 6
-
-        style.bar.left_bar = img("rrslider_full", widget, 12, 0)
-        style.bar.right_bar = img("rrslider_empty", widget, 12, 0)
-        style.bar.thumb = img("rrslider_thumb", widget, None, None)
-        style.bar.hover_left_bar = img("rrslider_full", widget_hover, 12, 0)
-        style.bar.hover_right_bar = img("rrslider_empty", widget_hover, 12, 0)
-        style.bar.hover_thumb = img("rrslider_thumb", widget_hover, None, None)
-
-        style.vbar.xmaximum = 24
-        style.vbar.top_gutter = 6
-        style.vbar.bottom_gutter = 6
-        style.vbar.thumb_offset = 6
-
-        style.vbar.bottom_bar = img("rrvslider_full", widget, 0, 12)
-        style.vbar.top_bar = img("rrvslider_empty", widget, 0, 12)
-        style.vbar.thumb = img("rrvslider_thumb", widget, None, None)
-        style.vbar.hover_bottom_bar = img("rrvslider_full", widget_hover, 0, 12)
-        style.vbar.hover_top_bar = img("rrvslider_empty", widget_hover, 0, 12)
-        style.vbar.hover_thumb = img("rrvslider_thumb", widget_hover, None, None)
-
-        # Sliders.
-        style.slider.ymaximum = 24
-        style.slider.left_gutter = 6
-        style.slider.right_gutter = 6
-        style.slider.thumb_offset = 6
-
-        style.slider.left_bar = img("rrslider_full", widget, 12, 0)
-        style.slider.right_bar = img("rrslider_empty", widget, 12, 0)
-        style.slider.thumb = img("rrslider_thumb", widget, None, None)
-        style.slider.hover_left_bar = img("rrslider_full", widget_hover, 12, 0)
-        style.slider.hover_right_bar = img("rrslider_empty", widget_hover, 12, 0)
-        style.slider.hover_thumb = img("rrslider_thumb", widget_hover, None, None)
-
-        style.vslider.xmaximum = 24
-        style.vslider.top_gutter = 6
-        style.vslider.bottom_gutter = 6
-        style.vslider.thumb_offset = 6
-
-        style.vslider.bottom_bar = img("rrvslider_full", widget, 0, 12)
-        style.vslider.top_bar = img("rrvslider_empty", widget, 0, 12)
-        style.vslider.thumb = img("rrvslider_thumb", widget, None, None)
-        style.vslider.hover_bottom_bar = img("rrvslider_full", widget_hover, 0, 12)
-        style.vslider.hover_top_bar = img("rrvslider_empty", widget_hover, 0, 12)
-        style.vslider.hover_thumb = img("rrvslider_thumb", widget_hover, None, None)
-
-        
-        # Scrollbars.
-        style.scrollbar.left_gutter = 6
-        style.scrollbar.right_gutter = 6
-        style.scrollbar.thumb_offset = 6
-        style.scrollbar.ymaximum = 12
-
-        style.scrollbar.left_bar = img("rrscrollbar", widget, 12, 0)
-        style.scrollbar.right_bar = img("rrscrollbar", widget, 12, 0)
-        style.scrollbar.thumb = img("rrscrollbar_thumb", widget, None, None)
-        style.scrollbar.hover_left_bar = img("rrscrollbar", widget_hover, 12, 0)
-        style.scrollbar.hover_right_bar = img("rrscrollbar", widget_hover, 12, 0)
-        style.scrollbar.hover_thumb = img("rrscrollbar_thumb", widget_hover, None, None)
-        
-        style.vscrollbar.top_gutter = 6
-        style.vscrollbar.bottom_gutter = 6
-        style.vscrollbar.thumb_offset = 6
-        style.vscrollbar.xmaximum = 12
-
-        style.vscrollbar.left_bar = img("rrvscrollbar", widget, 0, 12)
-        style.vscrollbar.right_bar = img("rrvscrollbar", widget, 0, 12)
-        style.vscrollbar.thumb = img("rrvscrollbar_thumb", widget, None, None)
-        style.vscrollbar.hover_left_bar = img("rrvscrollbar", widget_hover, 0, 12)
-        style.vscrollbar.hover_right_bar = img("rrvscrollbar", widget_hover, 0, 12)
-        style.vscrollbar.hover_thumb = img("rrvscrollbar_thumb", widget_hover, None, None)
-        
-    @theme
-    def roundrect(
-        widget = (0, 60, 120, 255),
-        widget_hover = (0, 80, 160, 255),
-        widget_text = (200, 225, 255, 255),
-        widget_selected = (255, 255, 200, 255),
-        disabled = (64, 64, 64, 255),
-        disabled_text = (200, 200, 200, 255),
-        label = (255, 255, 255, 255),
-        frame = (100, 150, 200, 255),
-
-        text_size=None,
-        small_text_size=None,
-        less_rounded = False,        
-        
-        # Compat for the old roundrect theme.
-        window = None,
-        button_menu = None,
-        rounded_window = True,
-        outline_bars = False,
-        mm_root = None,
-        gm_root = None):
-
-        if button_menu is None:
-            if (config.script_version is not None) and (config.script_version < (6, 9, 0)):
-                button_menu = True
-            else:
-                button_menu = False
-        
-        layout.defaults()
-        
-        if config.screen_width <= 640:
-            text_size = text_size or 18
-            small_text_size = small_text_size or 12
-            less_rounded = True
-            
-        else:
-            text_size = text_size or 22
-            small_text_size = small_text_size or 16
-            radius = 12
-
-        theme.roundrect_frames(
+        def frames(
             less_rounded,
-            frame)
+            frame):
 
-        theme.roundrect_buttons(
+            theme.clear_frames()
+
+            style.frame.background = Box(frame, less_rounded)
+
+            style.frame.xpadding = 6
+            style.frame.ypadding = 6
+        
+        setattr(theme, name + "_frames", frames)
+
+            
+        def buttons(text_size,
+                    less_rounded,
+                    widget,
+                    widget_hover,
+                    widget_text,
+                    widget_selected,
+                    disabled,
+                    disabled_text):
+
+            theme.clear_buttons()
+
+            style.button.background = Box(widget, less_rounded)
+            style.button.hover_background = Box(widget_hover, less_rounded)
+            style.button.insensitive_background = Box(disabled, less_rounded)
+
+            style.button_text.size = text_size
+            style.button_text.color = widget_text
+            style.button_text.selected_color = widget_selected
+            style.button_text.insensitive_color = disabled_text
+
+            if less_rounded:
+                style.button.xpadding = 6
+            else:
+                style.button.xpadding = 12
+
+            style.button.ypadding = 1
+            style.button.xmargin = 1
+            style.button.ymargin = 1
+
+            style.button_text.xalign = 0.5
+            style.button_text.yalign = 0.5
+            style.button_text.text_align = 0.5
+
+        setattr(theme, name + "_buttons", buttons)
+            
+        def large_buttons(
             text_size,
             less_rounded,
             widget,
@@ -329,55 +149,260 @@ init -1110 python hide:
             widget_text,
             widget_selected,
             disabled,
-            disabled_text)
+            disabled_text):
 
-        theme.roundrect_large_buttons(
-            small_text_size,
-            less_rounded,
-            widget,
-            widget_hover,
-            widget_text,
-            widget_selected,
-            disabled,
-            disabled_text)
+            theme.clear_large_buttons()
 
-        theme.roundrect_labels(
-            text_size,
-            label)
-
-        theme.roundrect_prompts(
-            text_size,
-            label)
-
-        theme.roundrect_bars(
-            widget,
-            widget_hover)
-            
-        if mm_root is not None:
-            style.mm_root.background = mm_root
-
-        if gm_root is not None:
-            style.gm_root.background = gm_root
-            
-        if window is not None:
-
-            if rounded_window:
-                style.window.background = RoundRect(window, less_rounded)
-                style.window.xpadding = 6
-                style.window.xmargin = 6
-                style.window.ypadding = 6
-                style.window.ymargin = 6
+            if less_rounded:
+                style.large_button.xpadding = 6
             else:
-                style.window.background = Solid(window)
-                style.window.xpadding = 6
-                style.window.xmargin = 0
-                style.window.ypadding = 6
-                style.window.ymargin = 0
+                style.large_button.xpadding = 12
+
+            style.large_button.ypadding = 1
+            style.large_button.xmargin = 1
+            style.large_button.ymargin = 1
+
+            style.large_button.background = Box(widget, less_rounded)
+            style.large_button.hover_background = Box(widget_hover, less_rounded)
+            style.large_button.insensitive_background = Box(disabled, less_rounded)
+
+            style.large_button_text.size = text_size
+            style.large_button_text.color = widget_text
+            style.large_button_text.selected_color = widget_selected
+            style.large_button_text.insensitive_color = disabled_text
+
+            style.large_button_text.xalign = 0
+            style.large_button_text.yalign = 0
+
+        setattr(theme, name + "_large_buttons", large_buttons)
+            
+        def labels(
+            text_size,
+            label):
+
+            theme.clear_labels()
+
+            style.label_text.size = text_size
+            style.label_text.color = label
+
+        setattr(theme, name + "_labels", labels)
+            
+        def prompts(
+            text_size,
+            label):
+
+            theme.clear_prompts()
+
+            style.prompt_text.size = text_size
+            style.prompt_text.color = label
+
+            style.prompt.xalign = 0.5
+            style.prompt_text.text_align = 0.5
+            style.prompt_text.layout = "subtitle"
+ 
+        setattr(theme, name + "_prompts", prompts)
+       
+            
+        def bars(
+            widget,
+            widget_hover):
+
+            theme.clear_bars()
+
+            def img(name, color, x, y):
+                rv = theme.OneOrTwoColor(file_prefix + name + ".png", color)
+                if x is not None:
+                    rv = Frame(rv, x, y, tile=True)
+                return rv
+
+            # Bars.
+            style.bar.ymaximum = 24
+            style.bar.left_gutter = 6
+            style.bar.right_gutter = 6
+            style.bar.thumb_offset = 6
+
+            style.bar.left_bar = img("slider_full", widget, 12, 0)
+            style.bar.right_bar = img("slider_empty", widget, 12, 0)
+            style.bar.thumb = img("slider_thumb", widget, None, None)
+            style.bar.hover_left_bar = img("slider_full", widget_hover, 12, 0)
+            style.bar.hover_right_bar = img("slider_empty", widget_hover, 12, 0)
+            style.bar.hover_thumb = img("slider_thumb", widget_hover, None, None)
+
+            style.vbar.xmaximum = 24
+            style.vbar.top_gutter = 6
+            style.vbar.bottom_gutter = 6
+            style.vbar.thumb_offset = 6
+
+            style.vbar.bottom_bar = img("vslider_full", widget, 0, 12)
+            style.vbar.top_bar = img("vslider_empty", widget, 0, 12)
+            style.vbar.thumb = img("vslider_thumb", widget, None, None)
+            style.vbar.hover_bottom_bar = img("vslider_full", widget_hover, 0, 12)
+            style.vbar.hover_top_bar = img("vslider_empty", widget_hover, 0, 12)
+            style.vbar.hover_thumb = img("vslider_thumb", widget_hover, None, None)
+
+            # Sliders.
+            style.slider.ymaximum = 24
+            style.slider.left_gutter = 6
+            style.slider.right_gutter = 6
+            style.slider.thumb_offset = 6
+
+            style.slider.left_bar = img("slider_full", widget, 12, 0)
+            style.slider.right_bar = img("slider_empty", widget, 12, 0)
+            style.slider.thumb = img("slider_thumb", widget, None, None)
+            style.slider.hover_left_bar = img("slider_full", widget_hover, 12, 0)
+            style.slider.hover_right_bar = img("slider_empty", widget_hover, 12, 0)
+            style.slider.hover_thumb = img("slider_thumb", widget_hover, None, None)
+
+            style.vslider.xmaximum = 24
+            style.vslider.top_gutter = 6
+            style.vslider.bottom_gutter = 6
+            style.vslider.thumb_offset = 6
+
+            style.vslider.bottom_bar = img("vslider_full", widget, 0, 12)
+            style.vslider.top_bar = img("vslider_empty", widget, 0, 12)
+            style.vslider.thumb = img("vslider_thumb", widget, None, None)
+            style.vslider.hover_bottom_bar = img("vslider_full", widget_hover, 0, 12)
+            style.vslider.hover_top_bar = img("vslider_empty", widget_hover, 0, 12)
+            style.vslider.hover_thumb = img("vslider_thumb", widget_hover, None, None)
 
 
-        if button_menu:
-            layout.button_menu()
+            # Scrollbars.
+            style.scrollbar.left_gutter = 6
+            style.scrollbar.right_gutter = 6
+            style.scrollbar.thumb_offset = 6
+            style.scrollbar.ymaximum = 12
 
+            style.scrollbar.left_bar = img("scrollbar", widget, 12, 0)
+            style.scrollbar.right_bar = img("scrollbar", widget, 12, 0)
+            style.scrollbar.thumb = img("scrollbar_thumb", widget, None, None)
+            style.scrollbar.hover_left_bar = img("scrollbar", widget_hover, 12, 0)
+            style.scrollbar.hover_right_bar = img("scrollbar", widget_hover, 12, 0)
+            style.scrollbar.hover_thumb = img("scrollbar_thumb", widget_hover, None, None)
+
+            style.vscrollbar.top_gutter = 6
+            style.vscrollbar.bottom_gutter = 6
+            style.vscrollbar.thumb_offset = 6
+            style.vscrollbar.xmaximum = 12
+
+            style.vscrollbar.left_bar = img("vscrollbar", widget, 0, 12)
+            style.vscrollbar.right_bar = img("vscrollbar", widget, 0, 12)
+            style.vscrollbar.thumb = img("vscrollbar_thumb", widget, None, None)
+            style.vscrollbar.hover_left_bar = img("vscrollbar", widget_hover, 0, 12)
+            style.vscrollbar.hover_right_bar = img("vscrollbar", widget_hover, 0, 12)
+            style.vscrollbar.hover_thumb = img("vscrollbar_thumb", widget_hover, None, None)
+
+        setattr(theme, name + "_bars", bars)
+        
+        def main(
+            widget = (0, 60, 120, 255),
+            widget_hover = (0, 80, 160, 255),
+            widget_text = (200, 225, 255, 255),
+            widget_selected = (255, 255, 200, 255),
+            disabled = (64, 64, 64, 255),
+            disabled_text = (200, 200, 200, 255),
+            label = (255, 255, 255, 255),
+            frame = (100, 150, 200, 255),
+
+            text_size=None,
+            small_text_size=None,
+            less_rounded = False,        
+
+            # Compat for the old roundrect theme.
+            window = None,
+            button_menu = None,
+            rounded_window = True,
+            outline_bars = False,
+            mm_root = None,
+            gm_root = None):
+
+            if button_menu is None:
+                if (config.script_version is not None) and (config.script_version < (6, 9, 0)):
+                    button_menu = True
+                else:
+                    button_menu = False
+
+            layout.defaults()
+
+            if config.screen_width <= 640:
+                text_size = text_size or 18
+                small_text_size = small_text_size or 12
+                less_rounded = True
+
+            else:
+                text_size = text_size or 22
+                small_text_size = small_text_size or 16
+                radius = 12
+
+            frames(
+                less_rounded,
+                frame)
+
+            buttons(
+                text_size,
+                less_rounded,
+                widget,
+                widget_hover,
+                widget_text,
+                widget_selected,
+                disabled,
+                disabled_text)
+
+            large_buttons(
+                small_text_size,
+                less_rounded,
+                widget,
+                widget_hover,
+                widget_text,
+                widget_selected,
+                disabled,
+                disabled_text)
+
+            labels(
+                text_size,
+                label)
+
+            prompts(
+                text_size,
+                label)
+
+            bars(
+                widget,
+                widget_hover)
+
+            if mm_root is not None:
+                style.mm_root.background = mm_root
+
+            if gm_root is not None:
+                style.gm_root.background = gm_root
+
+            if window is not None:
+
+                if rounded_window:
+                    style.window.background = RoundRect(window, less_rounded)
+                    style.window.xpadding = 6
+                    style.window.xmargin = 6
+                    style.window.ypadding = 6
+                    style.window.ymargin = 6
+                else:
+                    style.window.background = Solid(window)
+                    style.window.xpadding = 6
+                    style.window.xmargin = 0
+                    style.window.ypadding = 6
+                    style.window.ymargin = 0
+
+
+            if button_menu:
+                layout.button_menu()
+
+        setattr(theme, name, main)
+
+    roundrect_based_theme("roundrect", "_roundrect/rr", RoundRect)
+    roundrect_based_theme("bordered", "_theme_bordered/br")
+    roundrect_based_theme("diamond", "_theme_diamond/d")
+    roundrect_based_theme("tv", "_theme_tv/t")
+    roundrect_based_theme("glow", "_theme_glow/g", None, "_outline.png")
+
+        
     @theme
     def ancient():
 

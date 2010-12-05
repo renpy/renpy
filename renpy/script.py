@@ -55,9 +55,8 @@ def collapse_stmts(stmts):
     all_stmts = [ ]
 
     def extend_all(block_list):
-        all_stmts.extend(block_list)
-
         for i in block_list:
+            all_stmts.append(i)
             extend_all(i.get_children())
 
     extend_all(stmts)

@@ -2,6 +2,60 @@
 Full Changelog
 ==============
 
+Ren'Py 6.11.2
+=============
+
+New Features
+------------
+
+This release includes four new themes, generously contributed by
+Aleema. You can see and change to these new themes by clicking the
+"Choose Theme" button in the launcher.
+
+Software Update
+---------------
+
+The jEdit text editor included with Ren'Py has been updated to version
+4.3.2, a supported version that should be able to run most plugins.
+
+Behavior Changes
+----------------
+
+The maximum default physical size of the Ren'Py window is now 102
+pixels smaller than the height of the screen. This should prevent
+Ren'Py from creating windows that can't be resized since they are much
+bigger than the screen.
+
+Buttons now only pass key events to their children when they are
+focused. This allows a screen language key statement to be used as the
+child of a button, and only activate when the button is focused.
+
+MoveTransition was rewritten to correctly deal with cases in which
+images changed their order. This may lead to differences in behavior
+from the old version, where the ordering was undefined.
+
+Bug fixes
+---------
+
+Fixed :lpbug:`647686`, a regression that prevented sounds from looping
+properly.
+
+Fixed :lpbug:`661983`, which caused insensitive hotspots to default to
+the idle, rather than ground, image when no insensitive image was
+supplied.
+
+Fixed :lpbug:`647324`, where ImageDissolves are rendered as if
+specified with alpha=True whether or not alpha=True was set.
+
+Fixed a problem that caused the game to start when picking "No" after
+clicking the (window-level) quit button. 
+
+Fixed a problem that prevented AnimatedValue from functioning properly
+when delay was not 1.0. Thanks to Scout for the fix.
+
+Fixed a problem that caused movies to display incorrectly when the
+screen was scaled using OpenGL scaling.
+  
 Ren'Py 6.11.1
 =============
 

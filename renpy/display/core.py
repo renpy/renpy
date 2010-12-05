@@ -1357,7 +1357,7 @@ class Interface(object):
         rv = self.screenshot
 
         if not rv:
-            self.take_screenshot()
+            self.take_screenshot((renpy.config.thumbnail_width, renpy.config.thumbnail_height))
             rv = self.screenshot()
             self.lose_screenshot()
         
@@ -1766,7 +1766,10 @@ class Interface(object):
                             REDRAW))
 
         # Add a single TIMEEVENT to the queue.
-        pygame.event.post(self.time_event)
+        try:
+            pygame.event.post(self.time_event)
+        except:
+            pass
         
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
@@ -2178,8 +2181,11 @@ class Interface(object):
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is
                     # set correctly.
-                    pygame.event.post(self.time_event)
-                    
+                    try:
+                        pygame.event.post(self.time_event)
+                    except:
+                        pass
+                        
 
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.process_redraws()

@@ -878,6 +878,7 @@ class SWDraw(object):
             pygame.display.update(updates)
             
         else:
+            pygame.display.flip()
             self.full_redraw = True
 
         self.suppressed_blit = fullscreen_video
