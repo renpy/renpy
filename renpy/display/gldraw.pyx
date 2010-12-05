@@ -427,7 +427,7 @@ cdef class GLDraw:
 
         self.log("Number of texture units: %d", texture_units)
 
-        if texture_units < 4:
+        if texture_units < 4 and not self.fast_dissolve:
             self.log("Not enough texture units.")
             return False
 

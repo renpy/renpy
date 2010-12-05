@@ -8,7 +8,6 @@ CFLAGS="$CFLAGS -I$A/android-sdl/jni/png"
 CFLAGS="$CFLAGS -I$A/android-sdl/jni/freetype/include"
 
 LDFLAGS="$LDFLAGS -L$A/android-sdl/libs/armeabi -L$A/android-sdl/obj/local/armeabi"
-LDFLAGS="$LDFLAGS -Wl,--no-allow-shlib-undefined"
 
 export CFLAGS
 export LDFLAGS
