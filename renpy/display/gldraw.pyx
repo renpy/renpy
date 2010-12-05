@@ -175,6 +175,9 @@ cdef class GLDraw:
 
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = renpy.config.simulate_android
+
+        # Should we use clipping planes or stencils?
+        self.use_clipping_planes = True
         
         open_log_file()
         
@@ -310,11 +313,12 @@ cdef class GLDraw:
         # Set some default settings.
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_CLIP_PLANE0)
-        glEnable(GL_CLIP_PLANE1)
-        glEnable(GL_CLIP_PLANE2)
-        glEnable(GL_CLIP_PLANE3)
-        gl_error_check()
+
+        if self.use_clipping_planes:
+            glEnable(GL_CLIP_PLANE0)
+            glEnable(GL_CLIP_PLANE1)
+            glEnable(GL_CLIP_PLANE2)
+            glEnable(GL_CLIP_PLANE3)
         
         self.environ.init()
         self.rtt.init()
@@ -385,11 +389,12 @@ cdef class GLDraw:
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
             self.fast_dissolve = True
+            self.use_clipping_planes = False
             gltexture.use_gles()
             
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))
-        
+
         self.log("Extensions:")
 
         for i in sorted(extensions):
@@ -438,7 +443,7 @@ cdef class GLDraw:
         glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
         self.log("Number of clipping planes: %d", clip_planes)
 
-        
+
         # Pick a texture environment subsystem.
         
         if use_subsystem(
@@ -562,20 +567,49 @@ cdef class GLDraw:
     # private
     cpdef set_clip(GLDraw self, tuple clip):
 
+        cdef double minx, miny, maxx, maxy
+        cdef double vwidth, vheight
+        cdef double px, py, pw, ph
+
         if self.clip_cache == clip:
             return
 
         self.clip_cache = clip
 
-        cdef double minx, miny, maxx, maxy
         minx, miny, maxx, maxy = clip
 
-        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
-        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
-        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
-        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+        if self.use_clipping_planes:
         
-        
+            gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
+            gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
+            gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
+            gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+
+        else:
+
+            
+            # First, project the coordinates to be a fraction of
+            # the virtual screen.
+            vwidth, vheight = self.virtual_size
+
+            minx /= vwidth
+            maxx /= vwidth
+            miny /= vheight
+            maxy /= vheight
+
+            # Next, project them onto the physical box. But note that
+            # the box is opengl-style, so px and py are actually the
+            # bottom-left corner of the box.
+            px, py, pw, ph = self.physical_box
+            
+            minx = px + pw * minx
+            maxx = px + pw * maxx
+
+            miny = py + ph * (1.0 - miny)
+            maxy = py + ph * (1.0 - maxy)
+
+            glViewport(<int> minx, <int> maxy, <int> maxx - <int> maxy, <int> miny - <int> maxy)
+            
     def draw_screen(self, surftree, fullscreen_video):
         """
         Draws the screen.

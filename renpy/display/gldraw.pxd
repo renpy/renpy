@@ -22,6 +22,7 @@ cdef class GLDraw:
     cdef double upscale_factor
     cdef tuple clip_cache
     cdef bint fast_dissolve
+    cdef bint use_clipping_planes
     
     cpdef set_clip(GLDraw self, tuple clip)
 
