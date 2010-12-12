@@ -174,7 +174,7 @@ cdef class GLDraw:
         self.upscale_factor = 1.0
 
         # Should we use the fast (but incorrect) dissolve mode?
-        self.fast_dissolve = renpy.config.simulate_android
+        self.fast_dissolve = renpy.android
 
         # Should we use clipping planes or stencils?
         self.use_clipping_planes = True
@@ -239,7 +239,13 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         pwidth = min(self.display_info.current_w, pwidth)
-        pheight = min(self.display_info.current_h - 102, pheight)
+
+        if renpy.android:
+            pheight = min(self.display_info.current_h, pheight)
+        else:
+            pheight = min(self.display_info.current_h - 102, pheight)
+
+
         
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
@@ -388,8 +394,7 @@ cdef class GLDraw:
 
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
-            self.fast_dissolve = True
-            self.use_clipping_planes = False
+            self.use_clipping_planes = True
             gltexture.use_gles()
             
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
@@ -629,7 +634,7 @@ cdef class GLDraw:
 
         glMatrixMode(GL_MODELVIEW)
         
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClearColor(1.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         self.undefine_clip()
@@ -977,16 +982,16 @@ cdef class GLDraw:
         # Screen sizes.
         pw, ph = self.physical_size
         vw, vh = self.virtual_size
-        vx, vy, vw, vh = self.virtual_box
+        vx, vy, vbw, vbh = self.virtual_box
         
         # Translate to fractional screen.
         x = 1.0 * x / pw
         y = 1.0 * y / ph
-
+        
         # Translate to virtual size.
-        x = vx + vw * x
-        y = vy + vh * y
-
+        x = vx + vbw * x
+        y = vy + vbh * y
+        
         x = int(x)
         y = int(y)
 
@@ -994,7 +999,7 @@ cdef class GLDraw:
         x = min(vw, x)
         y = max(0, y)
         y = min(vh, y)
-
+        
         return x, y
 
     def mouse_event(self, ev):

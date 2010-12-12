@@ -111,7 +111,7 @@ if android:
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
     os.environ["RENPY_GL_ENVIRON"] = "limited"
-
+    
 def main():
     
     if not 'RENPY_NO_VERSION_CHECK' in os.environ:
@@ -154,6 +154,8 @@ def main():
         print >>sys.stderr, "correctly, preserving the directory structure."
         raise
 
+    renpy.android = android
+    
     renpy.bootstrap.bootstrap(renpy_base)
 
 if __name__ == "__main__":

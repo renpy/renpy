@@ -260,10 +260,13 @@ def main():
     # Save the bytecode in a cache.
     renpy.game.script.save_bytecode()
 
+    # Check if we should simulate android.
+    renpy.android = renpy.android or renpy.config.simulate_android
+    
     # Run the post init code, if any.
     for i in renpy.game.post_init:
         i()
-    
+        
     # Rebuild the various style caches.
     renpy.style.build_styles()
 
