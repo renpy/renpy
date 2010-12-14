@@ -1133,7 +1133,12 @@ class Interface(object):
 
         # Setup the video mode.
         self.set_mode()
-        
+
+        # Setup the android keymap.
+        if android is not None:
+            android.map_key(android.KEYCODE_BACK, pygame.K_PAGEUP)
+            android.map_key(android.KEYCODE_MENU, pygame.K_ESCAPE)
+
         # Double check, since at least on Linux, we can't set safe_mode until
         # the window maps.
         if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
