@@ -862,6 +862,8 @@ init -1140 python:
     ##########################################################################
     # File functions
 
+    config.linear_saves_page_size = None
+        
     if persistent._file_page is None:
         persistent._file_page = "1"
 
@@ -869,8 +871,15 @@ init -1140 python:
 
         if page is None:
             page = persistent._file_page
-            
 
+        if config.linear_saves_page_size is not None:
+            try:
+                page = int(page)
+                name = int(name)
+                return str(page * config.linear_saves_page_size + name)
+            except ValueError:
+                pass
+            
         return str(page) + "-" + str(name)
 
     def FileLoadable(name, page=None):

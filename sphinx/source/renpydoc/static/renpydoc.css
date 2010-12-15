@@ -67,11 +67,9 @@ div.related ul li a {
     margin: 0;
     padding: 0 5px 0 5px;
     line-height: 1.75em;
-    color: #c08000 ;
 }
 
 div.related ul li a:hover {
-    color: #3CA8E7;
 }
 
 div.sphinxsidebarwrapper {
@@ -118,12 +116,12 @@ p {
 }
 
 a {
-    color: #c08000;
+    color: #3183A3;
     text-decoration: none;
 }
 
 a:hover {
-    color: #2491CF;
+    color: #F16838;
 }
 
 div.body a {
@@ -132,14 +130,14 @@ div.body a {
 
 h1 {
     margin-top: .5em;
-    font-size: 1.6em;
-    color: #11557C;
+    font-size: 1.85em;
+    border-bottom: 1px solid #ACD;
 }
 
 h2 {
     margin-top: 1.5em;
-    font-size: 1.4em;
-    color: #11557c;
+    font-size: 1.5em;
+    border-bottom: 1px solid #ACD;
 }
 
 h3 {
