@@ -876,7 +876,7 @@ init -1140 python:
             try:
                 page = int(page)
                 name = int(name)
-                return str(page * config.linear_saves_page_size + name)
+                return str((page - 1) * config.linear_saves_page_size + name)
             except ValueError:
                 pass
             
