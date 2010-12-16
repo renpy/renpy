@@ -652,7 +652,7 @@ cdef class GLDraw:
 
         self.clip_mode_screen()
 
-        glClearColor(1.0, 0.0, 0.0, 1.0)
+        glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
