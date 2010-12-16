@@ -177,7 +177,7 @@ cdef class GLDraw:
         self.fast_dissolve = renpy.android
 
         # Should we use clipping planes or stencils?
-        self.use_clipping_planes = True
+        self.use_clipping_planes = False # TODO: True
         
         open_log_file()
         
@@ -394,7 +394,7 @@ cdef class GLDraw:
 
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
-            self.use_clipping_planes = True
+            self.use_clipping_planes = False
             gltexture.use_gles()
             
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
@@ -558,16 +558,28 @@ cdef class GLDraw:
         return rv
 
     # private
-    def undefine_clip(self):
+    
+    def clip_mode_screen(self):
         """
-        This makes the clipping undefined. It needs to be called when the
-        various matrices change, to ensure that the next call to set_clip
-        will re-set-up the clipping. Note that it does not remove the
-        clipping, but rather merely causes set_clip to change it.
+        This does two things. First, it shuts down clipping, and clears
+        the cache so it will be reset by the next call to set_clip. Then
+        it flags that we are in the screen clip mode, which control how
+        coordinates are mapped to the scissor box.
+        """
+        
+        self.clip_cache = None
+        self.clip_rtt_box = None
+        glDisable(GL_SCISSOR_TEST)
+
+    def clip_mode_rtt(self, x, y, w, h):
+        """
+        The same thing, except the screen is projected in RTT mode.
         """
 
         self.clip_cache = None
-    
+        self.clip_rtt_box = (x, y, w, h)
+        glDisable(GL_SCISSOR_TEST)
+        
 
     # private
     cpdef set_clip(GLDraw self, tuple clip):
@@ -575,7 +587,8 @@ cdef class GLDraw:
         cdef double minx, miny, maxx, maxy
         cdef double vwidth, vheight
         cdef double px, py, pw, ph
-
+        cdef int cx, cy, cw, ch
+        
         if self.clip_cache == clip:
             return
 
@@ -592,28 +605,31 @@ cdef class GLDraw:
 
         else:
 
-            
-            # First, project the coordinates to be a fraction of
-            # the virtual screen.
-            vwidth, vheight = self.virtual_size
+            if self.clip_rtt_box is None:
 
-            minx /= vwidth
-            maxx /= vwidth
-            miny /= vheight
-            maxy /= vheight
 
-            # Next, project them onto the physical box. But note that
-            # the box is opengl-style, so px and py are actually the
-            # bottom-left corner of the box.
-            px, py, pw, ph = self.physical_box
-            
-            minx = px + pw * minx
-            maxx = px + pw * maxx
+                vwidth, vheight = self.virtual_size
+                px, py, pw, ph = self.physical_box
 
-            miny = py + ph * (1.0 - miny)
-            maxy = py + ph * (1.0 - maxy)
+                minx = px + (minx / vwidth) * pw
+                maxx = px + (maxx / vwidth) * pw
 
-            glViewport(<int> minx, <int> maxy, <int> maxx - <int> maxy, <int> miny - <int> maxy)
+                miny = py + (miny / vheight) * ph
+                maxy = py + (maxy / vheight) * ph
+
+                miny = ph - miny
+                maxy = ph - maxy
+
+                glEnable(GL_SCISSOR_TEST)
+                glScissor(<GLint> minx, <GLint> maxy, <GLint> (maxx - minx), <GLsizei> (miny - maxy))
+
+            else:
+
+                cx, cy, cw, ch = self.clip_rtt_box
+
+                glEnable(GL_SCISSOR_TEST)
+                glScissor(<GLint> (minx - cx), <GLint> (miny - cy), <GLint> (maxx - minx), <GLint> (maxy - miny))
+                
             
     def draw_screen(self, surftree, fullscreen_video):
         """
@@ -633,11 +649,11 @@ cdef class GLDraw:
         glOrtho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         glMatrixMode(GL_MODELVIEW)
-        
+
+        self.clip_mode_screen()
+
         glClearColor(1.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
-
-        self.undefine_clip()
 
         clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
 
@@ -872,7 +888,9 @@ cdef class GLDraw:
         
         forward = reverse = IDENTITY
 
-        def draw_func():
+        def draw_func(x, y, w, h):
+
+            self.clip_mode_rtt(x, y, w, h)
 
             if alpha:
                 glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -880,7 +898,6 @@ cdef class GLDraw:
                 glClearColor(0.0, 0.0, 0.0, 1.0)
                 
             glClear(GL_COLOR_BUFFER_BIT)
-            self.undefine_clip()
         
             clip = (0, 0, what.width, what.height)
         
@@ -918,7 +935,7 @@ cdef class GLDraw:
         glOrtho(0, 1, 0, 1, -1, 1)
         glMatrixMode(GL_MODELVIEW)
 
-        self.undefine_clip()
+        self.clip_mode_screen()
         
         clip = (0, 0, 1, 1)
         
@@ -951,12 +968,12 @@ cdef class GLDraw:
         width = max(what.width / 2, 1)
         height = max(what.height / 2, 1)
 
-        def draw_func():
+        def draw_func(x, y, w, h):
             
             glClearColor(0.0, 0.0, 0.0, 1.0)                
             glClear(GL_COLOR_BUFFER_BIT)
             
-            draw.undefine_clip()
+            draw.clip_mode_rtt(x, y, w, h)
 
             clip = (0, 0, width, height)
             
@@ -1039,7 +1056,7 @@ cdef class GLDraw:
         glOrtho(0, pw, ph, 0, -1.0, 1.0)
         glMatrixMode(GL_MODELVIEW)
 
-        self.undefine_clip()
+        self.clip_mode_screen()
         self.set_clip((0, 0, pw, ph))
         
         gltexture.blit(

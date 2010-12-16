@@ -61,7 +61,7 @@ class CopyRtt(Rtt):
         glOrtho(x, x + w, y, y + h, -1, 1)
         glMatrixMode(GL_MODELVIEW)
 
-        draw_func()
+        draw_func(x, y, w, h)
 
         glBindTexture(GL_TEXTURE_2D, texture)
 
