@@ -1675,7 +1675,7 @@ class Interface(object):
 
             # Since we came back to life, we can get rid of the
             # auto-reload.
-            renpy.loadsave.unlink_save("_reload")
+            renpy.loadsave.unlink_save("_reload-1")
 
             pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
