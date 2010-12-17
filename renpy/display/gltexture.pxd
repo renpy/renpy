@@ -17,7 +17,7 @@ cdef class TextureCore:
     cdef int premult_top
     cdef int premult_bottom
     cdef bint nearest
-    cdef list free_list
+    cdef public list free_list
 
     cdef void make_ready(TextureCore)
     cdef void make_nearest(TextureCore)
