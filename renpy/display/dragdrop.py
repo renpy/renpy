@@ -26,7 +26,7 @@ from renpy.display.behavior import map_event
 
 import pygame
 
-class Draggable(renpy.display.core.Displayable):
+class Drag(renpy.display.core.Displayable):
     """
     :doc: dragdrop
 
@@ -100,9 +100,10 @@ class Draggable(renpy.display.core.Displayable):
                  dragged=None,
                  dropped=None,
                  drag_handle=(0.0, 0.0, 1.0, 1.0),
+                 replaces=None,
                  **properties):
 
-        super(Draggable, self).__init__(self, **properties)
+        super(Drag, self).__init__(self, **properties)
 
 
         self.drag_name = drag_name
@@ -137,6 +138,10 @@ class Draggable(renpy.display.core.Displayable):
         # The relative position we were grabbed at.
         self.grab_x = None
         self.grab_y = None
+
+        # x and y from the last time we rendered.
+        self.last_x = None
+        self.last_y = None
         
         # The last time we were shown, using the animation timebases.
         self.at = 0
@@ -145,6 +150,14 @@ class Draggable(renpy.display.core.Displayable):
         # the target coordinates.
         self.target_at = 0
 
+        if replaces is not None:
+            self.x = replaces.x
+            self.y = replaces.y
+            self.target_x = replaces.target_x
+            self.target_y = replaces.target_y
+            self.at = replaces.at
+            self.target_at = replaces.target_at
+        
         if child is not None:
             self.add(child)
 
@@ -156,6 +169,9 @@ class Draggable(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
+        self.parent_width = width
+        self.parent_height = height
+        
         cr = render(self.child, width, height, st, at)
         cw, ch = cr.get_size()
         
@@ -165,9 +181,6 @@ class Draggable(renpy.display.core.Displayable):
         self.w = cw
         self.h = ch
 
-        self.parent_width = None
-        self.parent_height = None
-        
         # If we don't have a position, run the placement code and use
         # that to compute our placement.
         if self.x is None:
@@ -205,6 +218,8 @@ class Draggable(renpy.display.core.Displayable):
 
         rv.add_focus(self, None, fx, fy, fw, fh, fx, fy, cr.subsurface((fx, fy, fw, fh)))
 
+        self.last_x = self.x
+        self.last_y = self.y
         self.at = at
         
         return rv
@@ -238,23 +253,32 @@ class Draggable(renpy.display.core.Displayable):
         if dx or dy:
             redraw(self, 0)
             
+        new_x = int(self.last_x + dx)
+        new_y = int(self.last_y + dy)
+
+        new_x = max(new_x, 0)
+        new_x = min(new_x, self.parent_width - self.w)
+
+        new_y = max(new_y, 0)
+        new_y = min(new_y, self.parent_height - self.h)            
+            
+        self.target_x = self.x = new_x
+        self.target_y = self.y = new_y
+        self.target_at = self.at
+
         if map_event(ev, 'drag_deactivate'):
             renpy.display.focus.set_grab(None)
             self.grab_x = None
             self.grab_y = None
 
-            # TODO: Handle drop.
-            
-        self.target_x = self.x = int(self.x + dx)
-        self.target_y = self.y = int(self.y + dy)
-        self.target_at = self.at
+            # TODO: Handle dragged.
+            # TODO: Handle dropped.
+
 
     def get_placement(self):
 
         if self.x is not None:
             return self.x, self.y, 0, 0, 0, 0, True
         else:
-            return super(Draggable, self).get_placement()
-        
-        
-        
+            return super(Drag, self).get_placement()
+

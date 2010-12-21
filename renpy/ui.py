@@ -800,6 +800,7 @@ viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
 
+drag = Wrapper(renpy.display.dragdrop.Drag, replaces=True, one=True)
 
 ##############################################################################
 # New-style imagemap related functions.
