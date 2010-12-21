@@ -1,4 +1,3 @@
-
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -225,6 +224,11 @@ keymap = dict(
 
     # Delete a save.
     save_delete = [ 'K_DELETE' ],
+
+    # Draggable.
+    drag_activate = [ 'mousedown_1' ],
+    drag_deactivate = [ 'mouseup_1' ],
+
     )
 
 # Should we try to support joysticks?

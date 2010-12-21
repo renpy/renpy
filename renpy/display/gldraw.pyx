@@ -935,7 +935,7 @@ cdef class GLDraw:
         glOrtho(0, 1, 0, 1, -1, 1)
         glMatrixMode(GL_MODELVIEW)
 
-        self.clip_mode_screen()
+        self.clip_mode_rtt(0, 0, 1, 1)
         
         clip = (0, 0, 1, 1)
         

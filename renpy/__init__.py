@@ -91,6 +91,8 @@ def import_all():
     import renpy.display.joystick
     import renpy.display.minigame
     import renpy.display.screen
+    import renpy.display.dragdrop
+
     import renpy.display.error
     
     import renpy.display.swdraw

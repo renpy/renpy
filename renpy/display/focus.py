@@ -230,7 +230,7 @@ def mouse_handler(ev, x, y, default=False):
 
     if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
         return
-
+    
     new_focus = renpy.display.render.focus_at_point(x, y)
     
     if new_focus is None:

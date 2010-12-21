@@ -332,11 +332,12 @@ class Displayable(renpy.object.Object):
             yanchor *= surf.height
 
         ypos += y + yoffset - yanchor
-            
-        if subpixel:
-            dest.subpixel_blit(surf, (xpos, ypos), True, True, None)
-        else:
-            dest.blit(surf, (xpos, ypos), True, True, None)
+
+        if dest is not None:
+            if subpixel:
+                dest.subpixel_blit(surf, (xpos, ypos), main, main, None)
+            else:
+                dest.blit(surf, (xpos, ypos), main, main, None)
             
         return xpos, ypos
 
