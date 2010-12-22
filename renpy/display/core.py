@@ -474,7 +474,7 @@ class SceneLists(renpy.object.Object):
     things to the user. 
     """
 
-    __version__ = 4
+    __version__ = 5
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -502,7 +502,10 @@ class SceneLists(renpy.object.Object):
                 self.layers[k] = [ SceneListEntry(*(i + (None,)) ) for i in self.layers[k] ]
 
             self.additional_transient = [ ]
-                
+
+        if version < 5:
+            self.drag_group = None
+            
     def __init__(self, oldsl, ipi):
 
         super(SceneLists, self).__init__()
@@ -526,6 +529,11 @@ class SceneLists(renpy.object.Object):
         # A list of (layer, tag) pairs that are considered to be
         # transient.
         self.additional_transient = [ ]
+
+        # Either None, or a DragGroup that's used as the default for
+        # drags with names.
+        self.drag_group = None
+
         
         if oldsl:
 
@@ -545,6 +553,8 @@ class SceneLists(renpy.object.Object):
             self.replace_transient()
 
             self.focused = None
+
+            self.drag_group = oldsl.drag_group
             
         else:
             for i in renpy.config.layers + renpy.config.top_layers:

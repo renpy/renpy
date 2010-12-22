@@ -26,6 +26,21 @@ from renpy.display.behavior import map_event
 
 import pygame
 
+def default_drag_group():
+    """
+    Gets the default drag group. If it doesn't exist yet, creates it.
+    """
+
+    sls = renpy.game.context().scene_lists
+
+    rv = sls.drag_group
+
+    if rv is None:
+        rv = DragGroup()
+        sls.drag_group = rv
+
+    return rv
+
 class Drag(renpy.display.core.Displayable):
     """
     :doc: dragdrop
@@ -105,7 +120,6 @@ class Drag(renpy.display.core.Displayable):
 
         super(Drag, self).__init__(self, **properties)
 
-
         self.drag_name = drag_name
         self.draggable = draggable
         self.droppable = droppable
@@ -115,9 +129,10 @@ class Drag(renpy.display.core.Displayable):
         self.drag_handle = drag_handle
         self.child = None
 
-        # TODO: Add us to a draggroup upon creation.
-        # TODO: handle replaces.
-        
+        # Add us to a drag group on creation.
+        if drag_name:
+            self.drag_group = default_drag_group()
+            
         # The current x and y coordinates of this displayable.
         self.x = None
         self.y = None
@@ -181,6 +196,11 @@ class Drag(renpy.display.core.Displayable):
         self.w = cw
         self.h = ch
 
+        # If we don't have a position, then look for it in a drag group.
+        if (self.x is None) and (self.drag_group is not None) and (self.drag_name is not None):
+            if self.drag_name in self.drag_group.positions:                
+                self.x, self.y = self.drag_group.positions[self.drag_name]
+        
         # If we don't have a position, run the placement code and use
         # that to compute our placement.
         if self.x is None:
@@ -188,6 +208,7 @@ class Drag(renpy.display.core.Displayable):
             self.x = int(self.x)
             self.y = int(self.y)
 
+        if self.target_x is None:
             self.target_x = self.x
             self.target_y = self.y
             self.target_at = at
@@ -271,6 +292,9 @@ class Drag(renpy.display.core.Displayable):
             self.grab_x = None
             self.grab_y = None
 
+            if self.drag_group is not None and self.drag_name is not None:
+                self.drag_group.positions[self.drag_name] = [ new_x, new_y ]
+        
             # TODO: Handle dragged.
             # TODO: Handle dropped.
 
@@ -282,3 +306,18 @@ class Drag(renpy.display.core.Displayable):
         else:
             return super(Drag, self).get_placement()
 
+class DragGroup(renpy.display.core.Displayable):
+    """
+    This represents a group containing one or more drags. While it's
+    not necessary to stick a drag into a drag group, dropping and
+    raising only work between drags in the same group.
+    """
+
+    def __init__(self, replaces=None, **properties):
+        super(DragGroup, self).__init__(**properties)
+
+        if replaces is not None:
+            self.positions = replaces.positions.copy()
+        else:
+            self.positions = { }
+    
