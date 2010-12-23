@@ -41,7 +41,7 @@ def default_drag_group():
 
     return rv
 
-class Drag(renpy.display.core.Displayable):
+class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
     :doc: dragdrop
 
@@ -110,7 +110,7 @@ class Drag(renpy.display.core.Displayable):
                  child=None,
                  drag_name=None,
                  draggable=True,
-                 droppable=False,
+                 droppable=True,
                  drag_raise=True,
                  dragged=None,
                  dropped=None,
@@ -244,6 +244,9 @@ class Drag(renpy.display.core.Displayable):
         self.at = at
         
         return rv
+
+    def get_joined(self):
+        return set([self])
     
     def event(self, ev, x, y, st):
 
@@ -259,6 +262,10 @@ class Drag(renpy.display.core.Displayable):
             self.grab_x = x
             self.grab_y = y
 
+            if self.drag_raise and self.drag_group is not None:
+                self.drag_group.raise_children(self.get_joined())
+            
+            
             raise renpy.display.core.IgnoreEvent()
 
         if not grabbed:
@@ -298,6 +305,8 @@ class Drag(renpy.display.core.Displayable):
             # TODO: Handle dragged.
             # TODO: Handle dropped.
 
+        raise renpy.display.core.IgnoreEvent()
+
 
     def get_placement(self):
 
@@ -306,14 +315,19 @@ class Drag(renpy.display.core.Displayable):
         else:
             return super(Drag, self).get_placement()
 
-class DragGroup(renpy.display.core.Displayable):
+class DragGroup(renpy.display.layout.MultiBox):
     """
     This represents a group containing one or more drags. While it's
     not necessary to stick a drag into a drag group, dropping and
     raising only work between drags in the same group.
     """
 
+    _list_type = renpy.python.RevertableList
+    
     def __init__(self, replaces=None, **properties):
+        properties.setdefault("style", "fixed")
+        properties.setdefault("layout", "fixed")
+        
         super(DragGroup, self).__init__(**properties)
 
         if replaces is not None:
@@ -321,3 +335,39 @@ class DragGroup(renpy.display.core.Displayable):
         else:
             self.positions = { }
     
+
+    def add(self, child):
+
+        if not isinstance(child, Drag):
+            raise Exception("Only drags can be added to a drag group.")
+
+        child.drag_group = self
+
+        super(DragGroup, self).add(child)
+
+
+    def raise_children(self, s):
+        """
+        Raises the children in `s` to the top of this drag_group.
+        """
+
+        old_children = self._list_type()
+        old_offsets = self._list_type()            
+        new_children = self._list_type()
+        new_offsets = self._list_type()
+
+        for c, o in zip(self.children, self.offsets):
+            if c in s:
+                new_children.append(c)
+                new_offsets.append(o)
+            else:
+                old_children.append(c)
+                old_offsets.append(o)
+
+        self.children = old_children + new_children
+        self.offsets = old_offsets + new_offsets
+                    
+            
+            
+            
+            

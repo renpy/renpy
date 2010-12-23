@@ -777,11 +777,16 @@ Keyword("action")
 
 FunctionStatementParser("drag", "ui.drag", 1)
 Keyword("drag_name")
-Keyword("drag_mode")
+Keyword("draggable")
+Keyword("droppable")
 Keyword("drag_raise")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drag_handle")
+add(ui_properties)
+add(position_properties)
+
+FunctionStatementParser("drag_group", "ui.drag_group", many)
 add(ui_properties)
 add(position_properties)
 
