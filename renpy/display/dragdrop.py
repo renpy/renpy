@@ -294,6 +294,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.target_y = self.y = new_y
         self.target_at = self.at
 
+        if self.drag_group is not None:
+            drop = self.drag_group.get_droppable_at_point(new_x + self.grab_x, new_y + self.grab_y, self.get_joined())
+        else:
+            drop = None
+
         if map_event(ev, 'drag_deactivate'):
             renpy.display.focus.set_grab(None)
             self.grab_x = None
@@ -301,9 +306,16 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             if self.drag_group is not None and self.drag_name is not None:
                 self.drag_group.positions[self.drag_name] = [ new_x, new_y ]
-        
-            # TODO: Handle dragged.
-            # TODO: Handle dropped.
+                
+            if self.dragged is not None:
+                rv = self.dragged(self, drop)
+                if rv is not None:
+                    return rv
+                
+            if drop is not None and drop.dropped is not None:
+                rv = drop.dropped(drop, self)
+                if rv is not None:
+                    return rv
 
         raise renpy.display.core.IgnoreEvent()
 
@@ -367,6 +379,27 @@ class DragGroup(renpy.display.layout.MultiBox):
         self.children = old_children + new_children
         self.offsets = old_offsets + new_offsets
                     
+    def get_droppable_at_point(self, x, y, avoid):
+        """
+        Gets the top droppable at `x`, `y` that isn't in `avoid`. This ignores
+        the shape of the droppables, assuming they're rectangles.
+        """
+
+        rv = None
+        
+        for i in self.children:
+
+            if not i.droppable:
+                continue
+
+            if i in avoid:
+                continue
+
+            if x >= i.last_x and y >= i.last_y and x < i.last_x + i.w and y < i.last_y + i.h:
+                rv = i
+
+        return rv
+    
             
             
             
