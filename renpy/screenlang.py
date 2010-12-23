@@ -783,6 +783,7 @@ Keyword("drag_raise")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drag_handle")
+Style("child")
 add(ui_properties)
 add(position_properties)
 

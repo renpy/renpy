@@ -107,7 +107,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
 
     def __init__(self,
-                 child=None,
+                 d=None,
                  drag_name=None,
                  draggable=True,
                  droppable=True,
@@ -165,6 +165,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # the target coordinates.
         self.target_at = 0
 
+        # The displayable we were last dropping on.
+        self.last_drop = None
+        
         if replaces is not None:
             self.x = replaces.x
             self.y = replaces.y
@@ -173,10 +176,19 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.at = replaces.at
             self.target_at = replaces.target_at
         
-        if child is not None:
-            self.add(child)
+        if d is not None:
+            self.add(d)
 
+    def set_style_prefix(self, prefix, root):
+        super(Drag, self).set_style_prefix(prefix, root)
+
+        if self.child is not None:
+            self.child.set_style_prefix(prefix, False)
+            
     def add(self, d):
+        if self.child is not None:
+            raise Exception("Drag expects either zero or one children.")
+
         self.child = renpy.easy.displayable(d)
 
     def visit(self):
@@ -184,10 +196,14 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     def render(self, width, height, st, at):
 
+        child = self.style.child
+        if child is None:
+            child = self.child            
+        
         self.parent_width = width
         self.parent_height = height
         
-        cr = render(self.child, width, height, st, at)
+        cr = render(child, width, height, st, at)
         cw, ch = cr.get_size()
         
         rv = Render(cw, ch)
@@ -257,6 +273,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if not grabbed and map_event(ev, "drag_activate"):
             renpy.display.focus.set_grab(self)
+            self.set_style_prefix("selected_hover_", True)
             grabbed = True
 
             self.grab_x = x
@@ -299,11 +316,27 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         else:
             drop = None
 
+        if drop is not self.last_drop:
+
+            if self.last_drop is not None:
+                self.last_drop.set_style_prefix("idle_", True)
+            
+            if drop is not None:
+                drop.set_style_prefix("selected_idle_", True)
+
+            self.last_drop = drop
+            
         if map_event(ev, 'drag_deactivate'):
             renpy.display.focus.set_grab(None)
+            self.set_style_prefix("hover_", True)
+
+            if drop is not None:
+                drop.set_style_prefix("idle_", True)
+            
             self.grab_x = None
             self.grab_y = None
-
+            self.last_drop = None
+            
             if self.drag_group is not None and self.drag_name is not None:
                 self.drag_group.positions[self.drag_name] = [ new_x, new_y ]
                 
@@ -327,6 +360,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         else:
             return super(Drag, self).get_placement()
 
+    def per_interact(self):
+        self.set_style_prefix("idle_", True)
+        super(Drag, self).per_interact()
+                              
+        
 class DragGroup(renpy.display.layout.MultiBox):
     """
     This represents a group containing one or more drags. While it's
