@@ -19,10 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# TODO: Use overlap (rather than simple pointer location) to determine
+# drag and drop.
+
 import renpy
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
-from renpy.display.behavior import map_event
+from renpy.display.behavior import map_event, run
 
 import pygame
 
@@ -40,6 +43,9 @@ def default_drag_group():
         sls.drag_group = rv
 
     return rv
+
+def default_drag_joined(drag):
+    return [ (drag, 0, 0) ]
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
@@ -99,12 +105,30 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         a value othe than None, that value is returned as the result of
         the interaction.
 
+    `clicked`
+        A callback this is called, with no arguments, when the drag is
+        clicked without being moved. A droppable can also be focused
+        and clicked.  If the callback returns a value othe than None,
+        that value is returned as the result of the interaction.
+        
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
         handle within the child. In this tuple, integers are considered
         to be a literal number of pixels, while floats are relative to
         the size of the child. 
-    """
+
+    `drag_joined`
+        This is called with the current draggable as an argument. It's
+        expected to return a list of [ (drag, x, y) ] tuples, giving
+        the draggables to drag as a unit.
+        
+     TODO: Callback that controls what is dragged as a unit, and which
+     is the master. (Separated out the displayable that initiates dragging
+     from the one that controls dragging?)
+
+     TODO: All draggables highlight, all draggables used to compute overlap
+     for drop.
+        """
 
     def __init__(self,
                  d=None,
@@ -115,6 +139,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  dragged=None,
                  dropped=None,
                  drag_handle=(0.0, 0.0, 1.0, 1.0),
+                 drag_joined=default_drag_joined,
+                 clicked=None,
+                 hovered=None,
+                 unhovered=None,
                  replaces=None,
                  **properties):
 
@@ -127,8 +155,13 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.dragged = dragged 
         self.dropped = dropped
         self.drag_handle = drag_handle
-        self.child = None
+        self.drag_joined = drag_joined
+        self.clicked = clicked
+        self.hovered = hovered
+        self.unhovered = unhovered
 
+        self.child = None
+        
         # Add us to a drag group on creation.
         if drag_name:
             self.drag_group = default_drag_group()
@@ -150,7 +183,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.target_x = None
         self.target_y = None
 
-        # The relative position we were grabbed at.
+        # The offset from the location of the mouse to the "grab point",
+        # which is where the things that are being moved are offset from.
         self.grab_x = None
         self.grab_y = None
 
@@ -168,71 +202,25 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # The displayable we were last dropping on.
         self.last_drop = None
 
-        # A list of (drag, x, y) tuples that represent drags that are
-        # joined to this one. A joined drag tries to be x, y away from
-        # this drag when this drag is moved.
-        #
-        # Don't mutate this list, replace it, so we work w/ rollback.
-        self.joined = [ ]
+        # Did we move over the course of this drag?
+        self.drag_moved = False
         
         if replaces is not None:
             self.x = replaces.x
             self.y = replaces.y
+            self.at = replaces.at
             self.target_x = replaces.target_x
             self.target_y = replaces.target_y
-            self.at = replaces.at
             self.target_at = replaces.target_at
         
         if d is not None:
             self.add(d)
-
-    def unjoin(self, what):
-        self.joined = [ i for i in self.joined if i is not what ]
-
-    def join(self, what, x, y, delay=0):
-        self.unjoin(what)
-        self.joined += [ (what, x, y) ]
-        what.target_x = self.target_x + x
-        what.target_y = self.target_y + y
-        what.target_at = self.at + delay
-
-    def get_joined_with_offsets(self):
-        """
-        Returns a list of displayables joined to this one, and the
-        offsets they're at.
-        """
-
-        seen = set([self])
-        rv = [ (self, 0, 0) ]        
-        worklist = [ (self, 0, 0) ]
-
-        while worklist:
-            drag, x, y = worklist.pop(0)
-
-            for c, xo, yo in drag.joined:
-                
-                if c in seen:
-                    continue
-
-                seen.add(c)
-
-                t = (c, x + xo, y + yo)
-                rv.append(t)
-                worklist.append(t)
-
-        return rv
-
-    
-    def get_joined(self):
-        return set(i[0] for i in self.get_joined_with_offsets() )
-                
+            
     def snap(self, x, y, delay):
-        for drag, xo, yo in self.get_joined_with_offsets():
-            drag.target_x = x + xo
-            drag.target_y = y + yo
-            drag.target_at = self.at + delay
-
-            redraw(drag, 0)
+        self.target_x = x
+        self.target_y = y
+        self.target_at = self.at + delay
+        redraw(self, 0)
         
     def set_style_prefix(self, prefix, root):
         super(Drag, self).set_style_prefix(prefix, root)
@@ -246,9 +234,29 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         self.child = renpy.easy.displayable(d)
 
+    def set_child(self, d):
+        d.per_interact()
+        self.child = d
+        
     def visit(self):
         return [ self.child ]
 
+    def focus(self, default=False):
+        super(Drag, self).focus(default)
+
+        rv = None
+
+        if not default:
+            rv = run(self.hovered)
+        
+        return rv
+
+    def unfocus(self, default=False):
+        super(Drag, self).unfocus(default)
+
+        if not default:
+            run(self.unhovered)
+    
     def render(self, width, height, st, at):
 
         child = self.style.child
@@ -294,21 +302,23 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.y = absolute(self.y + done * (self.target_y - self.y))
             redraw(self, 0)
 
-        fx, fy, fw, fh = self.drag_handle
+        if self.draggable or self.clicked is not None:
+            
+            fx, fy, fw, fh = self.drag_handle
 
-        if isinstance(fx, float):
-            fx = int(fx * cw)
+            if isinstance(fx, float):
+                fx = int(fx * cw)
 
-        if isinstance(fy, float):
-            fy = int(fy * ch)
+            if isinstance(fy, float):
+                fy = int(fy * ch)
 
-        if isinstance(fw, float):
-            fw = int(fw * cw)
+            if isinstance(fw, float):
+                fw = int(fw * cw)
 
-        if isinstance(fh, float):
-            fh = int(fh * ch)
+            if isinstance(fh, float):
+                fh = int(fh * ch)
 
-        rv.add_focus(self, None, fx, fy, fw, fh, fx, fy, cr.subsurface((fx, fy, fw, fh)))
+            rv.add_focus(self, None, fx, fy, fw, fh, fx, fy, cr.subsurface((fx, fy, fw, fh)))
 
         self.last_x = self.x
         self.last_y = self.y
@@ -318,51 +328,98 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     def event(self, ev, x, y, st):
 
-        if not self.draggable or not self.is_focused():
+        if not self.is_focused():
             return self.child.event(ev, x, y, st)
 
+        # if not self.draggable:
+        #    return self.child.event(ev, x, y, st)
+                
+        # Mouse, in parent-relative coordinates.
+        par_x = self.last_x + x
+        par_y = self.last_y + y
+        
         grabbed = (renpy.display.focus.get_grab() is self)
 
-        if not grabbed and map_event(ev, "drag_activate"):
+        if grabbed:
+            joined_offsets = self.drag_joined(self)
+            joined = [ i[0] for i in joined_offsets ]
+
+        elif self.draggable and map_event(ev, "drag_activate"):
+
+            joined_offsets = self.drag_joined(self)
+            joined = [ i[0] for i in joined_offsets ]
+            
+            if not joined:
+                raise renpy.display.core.IgnoreEvent()
+
+            # We may not be in the drag_joined group.
+            self.set_style_prefix("idle_", True)
+
             renpy.display.focus.set_grab(self)
-            self.set_style_prefix("selected_hover_", True)
-            grabbed = True
 
             self.grab_x = x
             self.grab_y = y
 
+            # If we're not the only thing we're joined with, we
+            # might need to adjust our grab point.
+            for i, xo, yo in joined_offsets:
+                if i is self:
+                    self.grab_x += xo
+                    self.grab_y += yo
+                    break
+                
+            # Set the style.
+            for i in joined:
+                i.set_style_prefix("selected_hover_", True)
+
             if self.drag_raise and self.drag_group is not None:
-                self.drag_group.raise_children(self.get_joined())
-            
-            
-            raise renpy.display.core.IgnoreEvent()
+                self.drag_group.raise_children(joined)
 
+            self.drag_moved = False
+                
+            grabbed = True
+
+        # Handle clicking on droppables.
         if not grabbed:
+            if self.clicked is not None and map_event(ev, "drag_deactivate"):
+                rv = run(self.clicked)
+                if rv is not None:
+                    return rv
+
+                raise renpy.display.core.IgnoreEvent()
+
             return self.child.event(ev, x, y, st)
-            
-        dx = 0
-        dy = 0
 
+        # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
-            dx = x - self.grab_x 
-            dy = y - self.grab_y
 
-        new_x = int(self.last_x + dx)
-        new_y = int(self.last_y + dy)
+            if ev.type == pygame.MOUSEMOTION:
+                self.drag_moved = True
 
-        new_x = max(new_x, 0)
-        new_x = min(new_x, self.parent_width - self.w)
+            for i, xo, yo in joined_offsets:
 
-        new_y = max(new_y, 0)
-        new_y = min(new_y, self.parent_height - self.h)            
+                new_x = par_x - self.grab_x + xo
+                new_y = par_y - self.grab_y + yo
+                new_x = max(new_x, 0)
+                new_x = min(new_x, i.parent_width - i.w)
+                new_y = max(new_y, 0)
+                new_y = min(new_y, i.parent_height - i.h)            
 
-        self.snap(new_x, new_y, 0)
+                if i.drag_group is not None and i.drag_name is not None:
+                    i.drag_group.positions[i.drag_name] = (new_x, new_y)
+                
+                i.x = new_x
+                i.y = new_y
+                i.target_x = new_x
+                i.target_y = new_y
+                i.target_at = self.at
+                redraw(i, 0)
 
         if self.drag_group is not None:
-            drop = self.drag_group.get_droppable_at_point(new_x + self.grab_x, new_y + self.grab_y, self.get_joined())
+            drop = self.drag_group.get_best_drop(joined)
         else:
             drop = None
-
+            
         if drop is not self.last_drop:
 
             if self.last_drop is not None:
@@ -375,25 +432,35 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             
         if map_event(ev, 'drag_deactivate'):
             renpy.display.focus.set_grab(None)
-            self.set_style_prefix("hover_", True)
-
+            
             if drop is not None:
                 drop.set_style_prefix("idle_", True)
-            
+
+            for i in joined:
+                i.set_style_prefix("idle_", True)
+                
+            self.set_style_prefix("hover_", True)
+
             self.grab_x = None
             self.grab_y = None
             self.last_drop = None
-            
-            if self.drag_group is not None and self.drag_name is not None:
-                self.drag_group.positions[self.drag_name] = [ new_x, new_y ]
-                
-            if self.dragged is not None:
-                rv = self.dragged(self, drop)
+
+            # Call the drag callback.
+            drag = joined[0]            
+            if drag.dragged is not None:
+                rv = run(drag.dragged, joined, drop)
                 if rv is not None:
                     return rv
-                
+
+            # Call the drop callback.
             if drop is not None and drop.dropped is not None:
-                rv = drop.dropped(drop, self)
+                rv = run(drop.dropped, drop, joined)
+                if rv is not None:
+                    return rv
+
+            # Call the clicked callback.
+            if self.clicked and not self.drag_moved:
+                rv = run(self.clicked)
                 if rv is not None:
                     return rv
 
@@ -430,10 +497,12 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).__init__(**properties)
 
         if replaces is not None:
-            self.positions = replaces.positions.copy()
+            self.positions = renpy.python.RevertableDict(replaces.positions)
+            self.sensitive = replaces.sensitive
         else:
-            self.positions = { }
-
+            self.positions = renpy.python.RevertableDict()
+            self.sensitive = True
+            
         for i in children:
             self.add(i)
             
@@ -447,50 +516,95 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         super(DragGroup, self).add(child)
 
+    def event(self, ev, x, y, st):
+        if not self.sensitive:
+            return None
 
-    def raise_children(self, s):
-        """
-        Raises the children in `s` to the top of this drag_group.
-        """
-
-        old_children = self._list_type()
-        old_offsets = self._list_type()            
-        new_children = self._list_type()
-        new_offsets = self._list_type()
-
-        for c, o in zip(self.children, self.offsets):
-            if c in s:
-                new_children.append(c)
-                new_offsets.append(o)
-            else:
-                old_children.append(c)
-                old_offsets.append(o)
-
-        self.children = old_children + new_children
-        self.offsets = old_offsets + new_offsets
-                    
-    def get_droppable_at_point(self, x, y, avoid):
-        """
-        Gets the top droppable at `x`, `y` that isn't in `avoid`. This ignores
-        the shape of the droppables, assuming they're rectangles.
-        """
-
-        rv = None
+        return super(DragGroup, self).event(ev, x, y, st)
         
-        for i in self.children:
+    def raise_children(self, l):
+        """
+        Raises the children in `l` to the top of this drag_group, using the
+        order given in l for those children.
+        """
 
-            if not i.droppable:
-                continue
+        s = set(l)
 
-            if i in avoid:
-                continue
+        offset_map = { }
 
-            if x >= i.last_x and y >= i.last_y and x < i.last_x + i.w and y < i.last_y + i.h:
-                rv = i
+        children = [ ]
+        offsets = [ ]
+        
+        for c, o in zip(self.children, self.offsets):            
+            if c not in s:
+                children.append(c)
+                offsets.append(o)
+            else:
+                offset_map[c] = o
 
-        return rv
+        for c in l:
+            if c in offset_map:            
+                children.append(c)
+                offsets.append(offset_map[c])
+
+        self.children = self._list_type(children)
+        self.offsets = self._list_type(offsets)
+
+                    
+    def get_best_drop(self, joined):
+        """
+        Returns the droppable that the members of joined overlap the most.
+        """
+
+        max_overlap = 0
+        rv = 0
+        
+        joined_set = set(joined)
+
+        for d in joined:
+
+            r1 = (d.x, d.y, d.w, d.h)
+
+            for c in self.children:
+                if c in joined_set:
+                    continue
+
+                if not c.droppable:
+                    continue
+                
+                r2 = (c.x, c.y, c.w, c.h)
+
+                overlap = rect_overlap_area(r1, r2)
+                
+                if overlap >= max_overlap:
+                    rv = c
+                    max_overlap = overlap
+
+        if max_overlap <= 0:
+            return None
+        else:
+            return rv
+            
+            
+def rect_overlap_area(r1, r2):
+    """
+    Returns the number of pixels by which rectangles r1 and r2 overlap.
+    """
     
-            
-            
-            
+    x1, y1, w1, h1 = r1
+    x2, y2, w2, h2 = r2
+    
+    maxleft = max(x1, x2)
+    minright = min(x1 + w1, x2 + w2)
+    maxtop = max(y1, y2)
+    minbottom = min(y1 + h1, y2 + h2)
+    
+    if minright < maxleft:
+        return 0
+
+    if minbottom < maxtop:
+        return 0
+
+    return (minright - maxleft) * (minbottom - maxtop)
+   
             

@@ -513,7 +513,7 @@ class Button(renpy.display.layout.Window):
         
 
     def unfocus(self, default=False):
-        super(Button, self).unfocus()
+        super(Button, self).unfocus(default)
 
         if self.activated:
             return None
