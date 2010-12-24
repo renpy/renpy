@@ -167,6 +167,13 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         # The displayable we were last dropping on.
         self.last_drop = None
+
+        # A list of (drag, x, y) tuples that represent drags that are
+        # joined to this one. A joined drag tries to be x, y away from
+        # this drag when this drag is moved.
+        #
+        # Don't mutate this list, replace it, so we work w/ rollback.
+        self.joined = [ ]
         
         if replaces is not None:
             self.x = replaces.x
@@ -179,6 +186,54 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if d is not None:
             self.add(d)
 
+    def unjoin(self, what):
+        self.joined = [ i for i in self.joined if i is not what ]
+
+    def join(self, what, x, y, delay=0):
+        self.unjoin(what)
+        self.joined += [ (what, x, y) ]
+        what.target_x = self.target_x + x
+        what.target_y = self.target_y + y
+        what.target_at = self.at + delay
+
+    def get_joined_with_offsets(self):
+        """
+        Returns a list of displayables joined to this one, and the
+        offsets they're at.
+        """
+
+        seen = set([self])
+        rv = [ (self, 0, 0) ]        
+        worklist = [ (self, 0, 0) ]
+
+        while worklist:
+            drag, x, y = worklist.pop(0)
+
+            for c, xo, yo in drag.joined:
+                
+                if c in seen:
+                    continue
+
+                seen.add(c)
+
+                t = (c, x + xo, y + yo)
+                rv.append(t)
+                worklist.append(t)
+
+        return rv
+
+    
+    def get_joined(self):
+        return set(i[0] for i in self.get_joined_with_offsets() )
+                
+    def snap(self, x, y, delay):
+        for drag, xo, yo in self.get_joined_with_offsets():
+            drag.target_x = x + xo
+            drag.target_y = y + yo
+            drag.target_at = self.at + delay
+
+            redraw(drag, 0)
+        
     def set_style_prefix(self, prefix, root):
         super(Drag, self).set_style_prefix(prefix, root)
 
@@ -261,9 +316,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         
         return rv
 
-    def get_joined(self):
-        return set([self])
-    
     def event(self, ev, x, y, st):
 
         if not self.draggable or not self.is_focused():
@@ -295,9 +347,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             dx = x - self.grab_x 
             dy = y - self.grab_y
 
-        if dx or dy:
-            redraw(self, 0)
-            
         new_x = int(self.last_x + dx)
         new_y = int(self.last_y + dy)
 
@@ -306,10 +355,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         new_y = max(new_y, 0)
         new_y = min(new_y, self.parent_height - self.h)            
-            
-        self.target_x = self.x = new_x
-        self.target_y = self.y = new_y
-        self.target_at = self.at
+
+        self.snap(new_x, new_y, 0)
 
         if self.drag_group is not None:
             drop = self.drag_group.get_droppable_at_point(new_x + self.grab_x, new_y + self.grab_y, self.get_joined())
@@ -374,9 +421,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     _list_type = renpy.python.RevertableList
     
-    def __init__(self, replaces=None, **properties):
+    def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
         properties.setdefault("layout", "fixed")
+
+        replaces = properties.pop("replaces", None)
         
         super(DragGroup, self).__init__(**properties)
 
@@ -384,7 +433,10 @@ class DragGroup(renpy.display.layout.MultiBox):
             self.positions = replaces.positions.copy()
         else:
             self.positions = { }
-    
+
+        for i in children:
+            self.add(i)
+            
 
     def add(self, child):
 
