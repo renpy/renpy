@@ -458,6 +458,7 @@ class Transform(Container):
 
         self.function = function
 
+        child = renpy.easy.displayable_or_none(child)
         if child is not None:
             self.add(child)
 
@@ -604,9 +605,15 @@ class Transform(Container):
         return None
         
     def set_child(self, child):
+        child = renpy.easy.displayable(child)
+        
         self.child = child
         self.child_st_base = self.st
 
+        child.per_interact()
+        
+        renpy.display.render.redraw(self, 0)
+        
     def update_state(self):
         """
         This updates the state to that at self.st, self.at.
@@ -634,7 +641,7 @@ class Transform(Container):
         if child and renpy.config.transform_uses_child_position:
 
             pos = child.get_placement()
-            
+
             if pos[0] is not None:
                 state.default_xpos = pos[0]
             if pos[2] is not None:
@@ -792,7 +799,7 @@ class Motion(Container):
 
         if child is None:
             child = new_widget
-
+            
         if delay is None and not repeat:
             delay = period
 

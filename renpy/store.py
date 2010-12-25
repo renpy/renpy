@@ -147,6 +147,9 @@ SnowBlossom = renpy.display.particle.SnowBlossom
 Text = renpy.display.text.Text
 ParameterizedText = renpy.display.text.ParameterizedText
 
+Drag = renpy.display.dragdrop.Drag
+DragGroup = renpy.display.dragdrop.DragGroup
+
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
