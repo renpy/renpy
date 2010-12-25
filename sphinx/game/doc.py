@@ -111,11 +111,10 @@ def write_keywords():
 line_buffer = collections.defaultdict(list)
 
 
-def scan(name, o):
+def scan(name, o, prefix=""):
 
-    # The type of object we're dealing with.
     doc_type = "function"
-
+    
     # The section it's going into.
     section = None
 
@@ -169,7 +168,6 @@ def scan(name, o):
             if init_doc:
                 doc += "\n\n"
                 doc += init_doc
-                
             
             try:
                 args = inspect.getargspec(init)
@@ -179,6 +177,9 @@ def scan(name, o):
         elif inspect.isfunction(o):
             args = inspect.getargspec(o)
 
+        elif inspect.ismethod(o):
+            args = inspect.getargspec(o)
+            
         else:
             print "Warning: %s has section but not args." % name
 
@@ -196,13 +197,16 @@ def scan(name, o):
     # Put it into the line buffer.
     lb = line_buffer[section]
 
-    lb.append(".. %s:: %s%s" % (doc_type, name, args))
+    lb.append(prefix + ".. %s:: %s%s" % (doc_type, name, args))
 
     for l in lines:
-        lb.append("    " + l)
+        lb.append(prefix + "    " + l)
 
-    lb.append("")
+    lb.append(prefix + "")
 
+    if inspect.isclass(o):
+        for i in dir(o):
+            scan(i, getattr(o, i), prefix + "    ")
 
 
 def scan_section(name, o):

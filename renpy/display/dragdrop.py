@@ -49,7 +49,7 @@ def default_drag_joined(drag):
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
-    :doc: dragdrop
+    :doc: drag_drop class
 
     A displayable that represents an object that can be dragged around
     its enclosing area. A draggable can also represent an area that
@@ -121,13 +121,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         This is called with the current draggable as an argument. It's
         expected to return a list of [ (drag, x, y) ] tuples, giving
         the draggables to drag as a unit.
-        
-     TODO: Callback that controls what is dragged as a unit, and which
-     is the master. (Separated out the displayable that initiates dragging
-     from the one that controls dragging?)
-
-     TODO: All draggables highlight, all draggables used to compute overlap
-     for drop.
         """
 
     def __init__(self,
@@ -224,7 +217,16 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             raise Exception()
 
             
-    def snap(self, x, y, delay):
+    def snap(self, x, y, delay=0):
+        """
+        :doc: drag_drop method
+
+        Changes the position of the drag. If the drag is not showing,
+        then the position change is instantaneous. Otherwise, the
+        position change takes `delay` seconds, and is animated as a
+        linear move.
+        """
+
         self.target_x = x
         self.target_y = y
 
@@ -232,6 +234,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.target_at = self.at + delay
         else:
             self.target_at = self.at
+            self.x = x
+            self.y = y
             
         redraw(self, 0)
         
@@ -248,10 +252,23 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.child = renpy.easy.displayable(d)
 
     def set_child(self, d):
+        """
+        :doc: drag_drop method
+
+        Changes the child of this drag to `d`.
+        """
+
         d.per_interact()
         self.child = renpy.easy.displayable(d)
 
     def top(self):
+        """
+        :doc: drag_drop method
+
+        Raises this displayable to the top of its drag_group, if it is
+        a member of one.
+        """
+        
         if self.drag_group is not None:
             self.drag_group.raise_children([ self ])
         
