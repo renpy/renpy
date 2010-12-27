@@ -52,10 +52,13 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     :doc: drag_drop class
 
     A displayable that represents an object that can be dragged around
-    its enclosing area. A draggable can also represent an area that
-    other draggables can be dropped on.
+    its enclosing area. A Drag can also represent an area that
+    other Drags can be dropped on.
+
+    A Drag can be moved around inside is parent. Generally, its parent
+    should be either a :func:`Fixed` or :class:`DragGroup`.
     
-    A draggable has one child. The child's state reflects the status
+    A Drag has one child. The child's state reflects the status
     of the drag and drop operation:
 
     * ``selected_hover`` - when it is being dragged.
@@ -64,49 +67,61 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
       clicked.
     * ``idle`` - otherwise. 
 
-    The drag handle is a rectangle inside the child. Dragging moves the
-    entire child, but only the handle is considered when deciding if
-    dragging or dropping has occured.
+    The drag handle is a rectangle inside the child. The mouse must be over
+    a non-transparent pixel inside the drag handle for dragging or clicking
+    to occur. 
     
     A newly-created draggable is added to the default DragGroup. A draggable
     can only be in a single DragGroup - if it's added to a second group,
     it's removed from the first.
+
+    When a Drag is first rendered, if it's position cannot be determined
+    from the DragGroup it is in, the position of its upper-left corner
+    is computed using the standard layout algorithm. Once that position
+    
+    
+    `d`
+        If present, the child of this Drag. Drags use the child style
+        in preference to this, if it's not None.
     
     `drag_name`
         If not None, the name of this draggable. This is available
-        as the `name` property of draggable objects. If a Draggable
+        as the `name` property of draggable objects. If a Drag
         with the same name is or was in the DragGroup, the starting
-        position of this Draggable is taken from that Draggable.
+        position of this Drag is taken from that Draggable.
 
     `draggable`
-        If true, the Draggable can be dragged around the screen with
+        If true, the Drag can be dragged around the screen with
         the mouse.
 
     `droppable`
-        If true, other Draggables can be dropped on this Draggable.
+        If true, other Drags can be dropped on this Drag.
 
     `drag_raise`
-        If true, this Draggable is raised on Drag and Drop. If it has
-        been joint to another Draggable, that Draggable is raised as
-        well.         
+        If true, this Drag is raised to the top when it is dragged. If
+        it is joined to other Drags, all joined drags are raised. 
 
     `dragged`
-        A callback that is called when this Draggable has been dragged.
-        It is called with two arguments. The first is this Draggable.
-        The second is a Draggable that this Draggable has been dropped
-        onto, or None no such Draggable exists. If the callback returns
-        a value othe than None, that value is returned as the result of
-        the interaction.
+        A callback (or list of callbacks) that is called when the Drag
+        has been dragged. It is called with two arguments. The first is
+        a list of Drags that are being dragged. The second is either
+        a Drag that is being dropped onto, or None of a drop did not
+        occur. If the callback returns a value other than None, that
+        value is returned as the result of the interaction.
 
     `dropped`
-        A callback that is called when another Draggable has been dropped
-        onto this Draggable. It is called with two arguments, this
-        Draggable and the other Draggable. If the callback returns
-        a value othe than None, that value is returned as the result of
-        the interaction.
+        A callback (or list of callbacks) that is called when this Drag
+        is dropped onto. It is called with two arguments. The first
+        is the Drag being dropped onto. The second is a list of Drags that
+        are being dragged.  If the callback returns a value other than None,
+        that value is returned as the result of the interaction.
 
-    `clicked`
-        A callback this is called, with no arguments, when the drag is
+        When a dragged and dropped callback are triggered for the same
+        event, the dropped callback is only called if dragged returns
+        None.
+        
+    `clicked`       
+        A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
         and clicked.  If the callback returns a value othe than None,
         that value is returned as the result of the interaction.
@@ -118,9 +133,21 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         the size of the child. 
 
     `drag_joined`
-        This is called with the current draggable as an argument. It's
+        This is called with the current Drag as an argument. It's
         expected to return a list of [ (drag, x, y) ] tuples, giving
-        the draggables to drag as a unit.
+        the draggables to drag as a unit. `x` and `y` are the offsets
+        of the drags relative to each other, they are not relative
+        to the corner of this drag.
+
+    Except for `d`, all of the parameters are available as fields (with
+    the same name) on the Drag object. In addition, after the drag has
+    been rendered, the following fields become available:
+
+    `x`, `y`
+         The position of the Drag relative to its parent, in pixels.
+
+    `w`, `h`
+         The width and height of the Drag's child, in pixels.
         """
 
     def __init__(self,
@@ -213,9 +240,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if d is not None:
             self.add(d)
 
-        if d is None:
-            raise Exception()
-
             
     def snap(self, x, y, delay=0):
         """
@@ -265,8 +289,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         """
         :doc: drag_drop method
 
-        Raises this displayable to the top of its drag_group, if it is
-        a member of one.
+        Raises this displayable to the top of its drag_group.
         """
         
         if self.drag_group is not None:
@@ -523,9 +546,17 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         
 class DragGroup(renpy.display.layout.MultiBox):
     """
-    This represents a group containing one or more drags. While it's
-    not necessary to stick a drag into a drag group, dropping and
-    raising only work between drags in the same group.
+    :doc: drag_drop class
+
+    Represents a group of Drags. A Drag is limited to the boundary of
+    its DragGroup. Dropping only works between Drags that are in the
+    same DragGroup. Drags may only be raised when they are inside a
+    DragGroup.
+
+    A DragGroup is laid out like a :func:`Fixed`.
+    
+    All positional parameters to the DragGroup constructor should be
+    Drags, that are added to the DragGroup.
     """
 
     _list_type = renpy.python.RevertableList
@@ -550,7 +581,12 @@ class DragGroup(renpy.display.layout.MultiBox):
             
 
     def add(self, child):
+        """
+        :doc: drag_drop method
 
+        Adds `child`, which must be a Drag, to this DragGroup.
+        """
+                
         if not isinstance(child, Drag):
             raise Exception("Only drags can be added to a drag group.")
 
@@ -558,7 +594,13 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).add(child)
         
     def remove(self, child):
+        """
+        :doc: drag_drop method
 
+        Removes `child` from this DragGroup.
+        """
+
+        
         if not isinstance(child, Drag):
             raise Exception("Only drags can be removed from a drag group.")
         
@@ -640,7 +682,29 @@ class DragGroup(renpy.display.layout.MultiBox):
             return None
         else:
             return rv
-            
+
+    def get_children(self):
+        """
+        Returns a list of Drags that are the children of
+        this DragGroup.
+        """
+        
+        return renpy.python.RevertableList(self.children)
+
+    def get_child_by_name(self, name):
+        """
+        :doc: drag_drop method
+        
+        Returns the first child of this DragGroup that has a drag_name
+        of name.
+        """
+
+        for i in self.children:
+            if i.drag_name == name:
+                return i
+
+        return None
+        
             
 def rect_overlap_area(r1, r2):
     """

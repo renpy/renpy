@@ -980,6 +980,28 @@ function takes:
 
 This does not take children.
 
+Advanced Displayables
+=====================
+
+In addition to the commonly-used statements, the screen language has
+statements that correspond to advanced displayables. The mapping from
+displayable to statement is simple. Positional parameters of the
+displayables become positional parameters of the statement. Keyword
+arguments and the relevant style properties become screen language
+properties.
+
+The advanced displayable statements are:
+
+``drag``
+    Creates a :class:`Drag`. A drag can be given an optional child,
+    or the :propref:`child` style property can be used to supply the child,
+    and its focused variants.
+
+``drag_group``
+    Creates a :class:`DragGroup`. A drag group may have zero or more
+    drags as its children.
+    
+
 Has Statement
 =============
 

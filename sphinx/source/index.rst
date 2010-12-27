@@ -38,6 +38,13 @@ Customizing Ren'Py
    screen_special
    config
 
+Advanced Displayables
+---------------------
+.. toctree::
+   :maxdepth: 1
+   
+   drag_drop
+
 Python and Ren'Py
 -----------------
    
