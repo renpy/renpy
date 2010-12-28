@@ -11,7 +11,7 @@ Files
 =====
 
 The script of a Ren'Py game is made up of all the files found under
-the Ren'Py directory ending with the .rpy extension. Ren'Py will
+the game directory ending with the .rpy extension. Ren'Py will
 consider each of these files (in unicode order), and will use the
 contents of the files as the script.
 
@@ -218,3 +218,149 @@ If the statement takes a block, the line ends with a colon
 (:). Otherwise, the line just ends.
 
 
+Python Expression Syntax
+========================
+
+.. note::
+
+  It may not be necessary to read this section thoroughly right
+  now. Instead, skip ahead, and if you find yourself unable to figure
+  out an example, or want to figure out how things actually work, you
+  can go back and review this.
+
+
+Many portions of Ren'Py take python expressions. For example, defining
+a new Character involves a call to the Character function. While
+Python expressions are very powerful, only a fraction of that power is
+necessary to write a basic Ren'Py game.
+
+Here's a synopsis of python expressions. 
+
+:dfn:`Integer`
+
+    An integer is a number without a decimal point. ``3`` and ``42``
+    are integers.
+
+:dfn:`Float`
+
+    A float (short for floating-point number) is a number with a
+    decimal point. ``.5``, ``7.``, and ``9.0`` are all floats.
+
+:dfn:`String`
+
+    Python strings begin with " or ', and end with the same
+    character. \\ is used to escape the end character, and to
+    introduce special characters like newlines (\\n). Unlike Ren'Py
+    strings, python strings can't span lines.
+
+:dfn:`True, False, None`
+
+    There are three special values. ``True`` is a true value, ``False`` is
+    a false value. ``None`` represents the absence of a value. For
+    example, 
+    
+:dfn:`Tuple`
+
+    Tuples are used to represent containers where the number of items
+    is important. For example, one might use a 2-tuple (also called a
+    pair) to represent width and height, or a 4-tuple (x, y, width,
+    height) to represent a rectangle.
+
+    Tuples begin with a left-parenthesis ``(``, consist of zero or
+    more comma-separated python expressions, and end with a
+    right-parenthesis ``)``. As a special case, the one-item tuple
+    must have a parenthesis following the item. For example::
+
+        ()
+        (1,)
+        (1, "#555")
+        (32, 24, 200, 100)
+
+:dfn:`List`
+
+    Lists are used to represent containers where the number of items
+    may vary. A list begins with a ``[``, contains a comma-separated
+    list of expressions, and ends with ``]``. For example::
+
+        [ ]
+        [ 1 ]
+        [ 1, 2 ]
+        [ 1, 2, 3 ]
+
+:dfn:`Variable`
+
+    Python expressions can use variables, that store values defined
+    using the define statement or python statements. A variable begins
+    with a letter or underscore, and then has zero or more letters,
+    numbers, or underscores. For example::
+
+       name
+       love_love_points
+       trebuchet2_range
+
+    Variables beginning with _ are reserved for Ren'Py's use, and
+    shouldn't be used by user code.
+
+:dfn:`Field Access`
+
+    Python modules and objects have fields, which can be accessed
+    with by following an expression (usually a variable) with a
+    dot and the field name. For example::
+
+       config.screen_width
+
+    Consists of a variable (config) followed by a field access
+    (screen_width). 
+    
+:dfn:`Call`
+
+    Python expressions can call a function which returns a value. They
+    begin with an expression (usually a variable), followed by a
+    left-parenthesis, a comma-separated list of arguments, and a
+    right-parenthesis. The argument list begins with the position
+    arguments, which are python expressions. These are followed by
+    keyword arguments, which consist of the argument name, and equals
+    sign, and an expression. In the example example::
+
+        Character("Eileen", type=adv, color="#0f0")
+
+    we call the Character function. It's given one positional
+    argument, the string "Eileen". It's given two keyword argument:
+    ``type`` with the value of the ``adv`` variable, and ``color``
+    with a string value of "#0f0".
+
+    Constructors are a type of function which returns a new object,
+    and are called the same way.
+
+When reading this documentation, you might see a function signature
+like:
+
+.. function:: Sample(name, delay, position=(0, 0), **properties)
+
+    A sample function that doesn't actually exist in Ren'Py, but
+    is used only in documentation.
+
+This function:
+
+* Has the name "Sample"
+* Has two positional parameters, a name and a delay. In a real
+  function, the types of these parameters would be made clear
+  from the documentation.
+* Has one keyword argument, position, which has a default value
+  of (0, 0).
+
+Since the functions ends with \*\*properties, it means that it can
+take :ref:`style properties <style-properties>` as additional keyword
+arguments. Other special entries are \*args, which means that it takes
+an arbitrary number of postional parameters, and \*\*kwargs, which means
+that the keyword arguments are described in the documentation.
+
+Python is a lot more powerful than we have space for in this manual.
+To learn Python in more detail, we recommend starting with the Python
+tutorial, which is available from
+`python.org <http://docs.python.org/release/2.6.6/tutorial/index.html>`_.
+While we don't think a deep knowledge of Python is necessary to work
+with Ren'Py, learning about python expressions is helpful.
+
+
+     

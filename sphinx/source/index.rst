@@ -24,6 +24,7 @@ The Ren'Py Language
    :maxdepth: 2
 
    language_basics
+   dialogue
    atl
 
 Customizing Ren'Py
@@ -73,3 +74,6 @@ Changes and License
    incompatible
    distributor
    license
+
+:ref:`genindex`
+
