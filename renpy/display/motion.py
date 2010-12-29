@@ -673,7 +673,7 @@ class Transform(Container):
 
             # Transform screen coordinates to child coordinates.
             cx, cy = self.forward.transform(cx, cy)
-            
+
             rv = d.event(ev, cx, cy, st)    
             if rv is not None:
                 return rv

@@ -1016,7 +1016,7 @@ cdef class GLDraw:
         x = min(vw, x)
         y = max(0, y)
         y = min(vh, y)
-        
+
         return x, y
 
     def mouse_event(self, ev):

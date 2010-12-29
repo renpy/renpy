@@ -58,12 +58,6 @@ closing the string. For example::
    ###
        "I walked past a sign saying, \"Let's give it 100\%!\""
 
-As it's possible to begin a string with either ``"`` or ``'``, it
-might make sense to write that string as::
-
-   ###
-       'I walked past a sign saying, "Let's give it 100\%!"'
-    
 
 Defining Character Objects
 --------------------------
@@ -91,8 +85,13 @@ character.
 Example Characters
 ------------------
 
-* Character that uses prefix and suffix.
-* DynamicCharacter
+Here are a few example characters::
+
+    # A character that has its dialogue enclosed in parenthesis.
+    define e = Character("Eileen", what_prefix='"', what_suffix='"')
+
+    # A character that pulls its name from a variable.
+    define p = Character("player_name", dynamic=True)
 
 
 Special Characters

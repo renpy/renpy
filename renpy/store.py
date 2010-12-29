@@ -150,6 +150,10 @@ ParameterizedText = renpy.display.text.ParameterizedText
 Drag = renpy.display.dragdrop.Drag
 DragGroup = renpy.display.dragdrop.DragGroup
 
+Sprite = renpy.display.particle.Sprite
+SpriteManager = renpy.display.particle.SpriteManager
+
+
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)

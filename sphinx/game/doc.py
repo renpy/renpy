@@ -152,7 +152,7 @@ def scan(name, o, prefix=""):
             continue
         
         lines.append(l)
-
+        
     if section is None:
         return
 
@@ -165,9 +165,10 @@ def scan(name, o, prefix=""):
                 return
 
             init_doc = inspect.getdoc(init)
-            if init_doc:
-                doc += "\n\n"
-                doc += init_doc
+            
+            if init_doc and not init_doc.startswith("x.__init__("):
+                lines.append("")
+                lines.extend(init_doc.split("\n"))
             
             try:
                 args = inspect.getargspec(init)

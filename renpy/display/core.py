@@ -2172,7 +2172,7 @@ class Interface(object):
                     # This returns the event location. It also updates the
                     # mouse state as necessary.
                     x, y = renpy.display.draw.mouse_event(ev)
-                            
+
                     self.event_time = end_time = get_time()
 
                     # Handle the event normally.

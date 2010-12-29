@@ -45,7 +45,8 @@ Advanced Displayables
    :maxdepth: 1
    
    drag_drop
-
+   sprites
+   
 Python and Ren'Py
 -----------------
    

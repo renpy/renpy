@@ -49,17 +49,34 @@ class SpriteCache(renpy.object.Object):
     
 class Sprite(renpy.object.Object):
     """
-    This represents a sprite that is managed by a sprite manager.
-    """
-
-    # Public fields:
-    #
-    # xoffset - float or int - The offset of the left side of the sprite
-    # yoffset - float or int - The offset of the top side of the sprite.
-    # zorder - the zorder of the displayable. The bigger the number, the
-    # closer to the viewer.
-    # events - To pass events through to the child of this sprite.
+    :doc: sprites class
     
+    This represents a sprite that is managed by the SpriteManager. It contains
+    fields that control the placement of the sprite on the screen. Sprites
+    should not be created directly. Instead, they should be created by
+    calling :meth:`SpriteManager.create`.
+
+    The fields of a sprite object are:
+
+    `x`, `y`
+        The x and y coordinates of the upper-left corner of the sprite,
+        relative to the SpriteManager.
+
+    `zorder`
+        An integer that's used to control the order of this sprite in the
+        relative to the other sprites in the SpriteManager. The larger the
+        number is, the closer to the viewer the sprite is.
+
+    `events`
+        If True, then events are passed to child. If False, the default, 
+        the children igore events (and hence don't spend time processing
+        them).     
+
+    The methods of a Sprite object are:
+        """
+
+    # Fields:
+    #
     # child - the displayable that is the child of this sprite.
     # cache - the SpriteCache of child.
     # live - True if this sprite is still alive.
@@ -67,11 +84,12 @@ class Sprite(renpy.object.Object):
 
     def set_child(self, d):
         """
-        Changes the child of this sprite to be `d`.
+        :doc: sprites method
+
+        Changes the Displayable associated with this sprite to `d`.
         """
 
         id_d = id(d)
-
                 
         sc = self.manager.displayable_map.get(id_d, None)
         if sc is None:
@@ -86,6 +104,13 @@ class Sprite(renpy.object.Object):
         self.cache = sc
             
     def destroy(self):
+        """
+        :doc: sprites method
+
+        Destroys this sprite, preventing it from being displayed and
+        removing it from the SpriteManager.
+        """
+
         self.manager.dead_child = True
         self.live = False
         self.events = False
@@ -94,7 +119,7 @@ class Sprite(renpy.object.Object):
 
 class SpriteManager(renpy.display.core.Displayable):
     """
-    :doc: sprites
+    :doc: sprites class
     
     This displayable manages a collection of sprites, and displays
     them at the fastest speed possible.
@@ -110,30 +135,39 @@ class SpriteManager(renpy.display.core.Displayable):
             of seconds until the function is called again, and the
             SpriteManager is rendered again.
 
-         `event`
+        `event`
             If not None, a function that is called when an event occurs.
             It takes as arguments:
-            * An event object.
+            * A pygame event object.
             * The x coordinate of the event.
             * The y coordinate of the event.
             * The time since the sprite manager was first shown.
             If it returns a non-None value, the interaction ends, and
             that value is returned.
 
-         `predict`
+        `predict`
             If not None, a function that returns a list of
             displayables. These displayables are predicted when the
             sprite manager is.
             
-         `ignore_time`
+        `ignore_time`
             If True, then time is ignored when rendering displayables. This
             should be used when the sprite manager is used with a relatively
             small pool of images, and those images do not change over time.
             This should only be used with a small number of displayables, as
-            it will keep all displayable in memory for the life of the
+            it will keep all displayables used in memory for the life of the
             SpriteManager.
-         """
+
+        After being rendered once (before the `update` function is called),
+        SpriteManagers have the following fields:
+
+        `width`, `height`
+        
+             The width and height of this SpriteManager, in pixels.
             
+            
+        SpriteManagers have the following methods:
+        """
 
         super(SpriteManager, self).__init__(self, **properties)
 
@@ -155,11 +189,17 @@ class SpriteManager(renpy.display.core.Displayable):
 
         # True if at least one child responds to events.
         self.events = False
+
+        # The width and height.
+        self.width = None
+        self.height = None
         
     def create(self, d):
         """
-        Creates a new sprite for the displayable `d`, and adds it to the
-        list of children of this sprite.
+        :doc: sprites method
+
+        Creates a new Sprite for the displayable `d`, and adds it to this
+        SpriteManager.
         """
 
         id_d = id(d)
@@ -175,8 +215,8 @@ class SpriteManager(renpy.display.core.Displayable):
             self.displayable_map[id_d] = sc
 
         s = Sprite()
-        s.xoffset = 0
-        s.yoffset = 0
+        s.x = 0
+        s.y = 0
         s.zorder = 0
         s.cache = sc
         s.live = True
@@ -189,6 +229,8 @@ class SpriteManager(renpy.display.core.Displayable):
     
     def redraw(self):
         """
+        :doc: sprite method
+
         Causes this SpriteManager to be redrawn immediately.
         """
 
@@ -196,6 +238,9 @@ class SpriteManager(renpy.display.core.Displayable):
         
     def render(self, width, height, st, at):
 
+        self.width = width
+        self.height = height
+        
         if self.update_function is not None:
 
             redraw = self.update_function(st)
@@ -239,13 +284,13 @@ class SpriteManager(renpy.display.core.Displayable):
             if cache.fast:
                 for child, xo, yo, focus, main in r.children:
                     rv.children.append((child,
-                                        xo + i.xoffset,
-                                        yo + i.yoffset,
+                                        xo + i.x,
+                                        yo + i.y,
                                         False,
                                         False))
 
             else:
-                rv.subpixel_blit(r, (i.xoffset, i.yoffset))
+                rv.subpixel_blit(r, (i.x, i.y))
 
         for i in caches:
             i.render = None
@@ -257,7 +302,7 @@ class SpriteManager(renpy.display.core.Displayable):
             s = self.children[i]
             
             if s.events:
-                rv = s.cache.child(ev, x - s.xoffset, y - s.xoffset, st - s.cache.stoffset)
+                rv = s.cache.child.event(ev, x - s.x, y - s.y, st - s.cache.st)
                 if rv is not None:
                     return rv
 
@@ -279,7 +324,7 @@ class SpriteManager(renpy.display.core.Displayable):
             pass
 
         return rv
-
+    
     def destroy_all(self):
         self.children = [ ]
     
