@@ -217,7 +217,7 @@ def transform_render(self, widtho, heighto, st, at):
         self.forward = IDENTITY
 
     else:
-        inv_det = rxdx * rydx - rxdy * rydx
+        inv_det = rxdx * rydy - rxdy * rydx
 
         rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
