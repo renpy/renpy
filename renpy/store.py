@@ -211,15 +211,6 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
 
         return rv
 
-    f.__doc__ = doc + """
-
-    This function takes both positional and keyword
-    arguments. Positional arguments should be displayables or images
-    to be laid out. Keyword arguments are interpreted as style properties,
-    except for the style keyword argument, which is the name of the parent
-    style of this layout.
-    """
-
     return f
 
 Fixed = layout(renpy.display.layout.MultiBox, """
