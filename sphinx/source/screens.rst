@@ -56,7 +56,7 @@ statements.
 Here's an example of a screen. ::
 
     screen say:
-        window id "window"
+        window id "window":
             vbox:
                 spacing 10
              

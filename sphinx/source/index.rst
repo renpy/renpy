@@ -8,6 +8,11 @@ home page:
 
     http://www.renpy.org/
 
+Much of Ren'Py is only documented in the older documentation, which is
+stored in the Ren'Py Wiki:
+
+    http://www.renpy.org/wiki/
+    
 
 Getting Started
 ---------------
