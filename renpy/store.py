@@ -223,17 +223,26 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
     return f
 
 Fixed = layout(renpy.display.layout.MultiBox, """
-A layout that expands to take the size allotted to it.  Each
-displayable is allocated the entire size of the layout, with the first
-displayable further from the user than the second, and so on. Within
+:doc: disp_box
+:args: (*args, **properties)
+
+A box that fills the screen. Its members are laid out
+from back to front, with their position properties
+controlling their position.
 """, layout="fixed")
 
 HBox = layout(renpy.display.layout.MultiBox, """
-A layout that lays out displayables from left to right.
+:doc: disp_box
+:args: (*args, **properties)
+
+A box that lays out its members from left to right.
 """, layout='horizontal')
 
 VBox = layout(renpy.display.layout.MultiBox, """
-A layout that lays out displayables from top to bottom.
+:doc: disp_box
+:args: (*args, **properties)
+
+A layout that lays out its members from top to bottom.
 """, layout='vertical')
 
 Grid = layout(renpy.display.layout.Grid, """
@@ -243,7 +252,7 @@ A layout that lays out displayables in a grid.
 
 def AlphaBlend(control, old, new, alpha=False):
     """
-    :doc: other
+    :doc: disp_effects
     
     This transition uses a `control` displayable (almost always some sort of
     animated transform) to transition from one displayable to another. The

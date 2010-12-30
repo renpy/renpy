@@ -39,13 +39,21 @@ def scale(num, base):
 
 class Null(renpy.display.core.Displayable):
     """
-    This is a displayable that doesn't actually display anything. It's
-    useful, I guess, when you need to wrap something with a behavior,
-    but don't want to actually have anything there.
+    :doc: disp_imagelike
+        
+    A displayable that creates an empty box on the screen. The size
+    of the box is controlled by `width` and `height`. This can be used
+    when a displayable requires a child, but no child is suitable, or
+    as a spacer inside a box.
+
+    ::
+
+        image logo spaced = HBox("logo.png", Null(width=100), "logo.png")
+
     """
 
-    def __init__(self, width=0, height=0, style='default', **properties):
-        super(Null, self).__init__(style=style, **properties)
+    def __init__(self, width=0, height=0, **properties):
+        super(Null, self).__init__(**properties)
         self.width = width
         self.height = height
 
@@ -190,28 +198,26 @@ class Container(renpy.display.core.Displayable):
 
 def LiveComposite(size, *args, **properties):
     """
-    This is similar to im.Composite, but can be used with displayables
-    instead of images. This allows it to be used to composite, for
-    example, an animation on top of the image.
-
-    This is less efficient then im.Composite, as it needs to draw all
-    of the displayables on the screen. On the other hand, it allows
-    displayables to change while they are on the screen, which is
-    necessary for animation.
+    :args: disp_imagelike
     
-    This takes a variable number of arguments. The first argument is
-    size, which must be a tuple giving the width and height of the
-    composited widgets, for layout purposes.
+    This creates a new displayable of `size`, by compositing other
+    displayables. `size` is a (width, height) tuple.
 
-    It then takes an even number of further arguments. (For an odd
-    number of total arguments.) The second and other even numbered
-    arguments contain position tuples, while the third and further
-    odd-numbered arguments give displayables. A position argument
-    gives the position of the displayable immediately following it,
-    with the position expressed as a tuple giving an offset from the
-    upper-left corner of the LiveComposite.  The displayables are
-    drawn in bottom-to-top order, with the last being closest to the
-    user.
+    The remaining positional arguments are used to place images inside
+    the LiveComposite. The remaining positional arguments should come
+    in groups of two, with the first member of each group an (x, y)
+    tuple, and the second member of a group is a displayable that
+    is composited at that position.
+
+    Displayables are composited from back to front.
+    
+    ::
+
+       image eileen composite = LiveComposite(
+           (300, 600),
+           (0, 0), "body.png",
+           (0, 0), "clothes.png",
+           (50, 50), "expression.png")
     """
 
     properties.setdefault('style', 'image_placement')
@@ -714,18 +720,10 @@ size_groups = dict()
     
 class Window(Container):
     """
-    A window is a container that holds a single Displayable in it. A window
-    is responsable for displaying the displayable on top of a background.
-
-    Margin is space that is left empty by the window, and does not
-    have the background displayed in it. Padding is space that is
-    filled with the background, but does not contain the widget in it.
-
-    If fill in a dimension is True, then the window expands to the
-    maximum size possible in that dimension, and the child is place at
-    the left or top of the space. Otherwise, the window will shrink to
-    fit the child, but on no account will the size of child area +
-    2*padding shrink below the minimum.    
+    A window that has padding and margins, and can place a background
+    behind its child. `child` is the child added to this
+    displayable. All other properties are as for the :ref:`Window`
+    screen language statement.
     """
     
     def __init__(self, child, style='window', **properties):
@@ -841,7 +839,47 @@ def dynamic_displayable_compat(st, at, expr):
     return child, None
 
 class DynamicDisplayable(renpy.display.core.Displayable):
+    """
+    :doc: disp_dynamic
 
+    A displayable that can change its child based on a Python
+    function, over the course of an interaction.
+
+    `function`
+        A function that is called with the arguments:
+
+        * The amount of time the displayable has been shown for.
+        * The amount of time any displayable with the same tag has been shown for.
+        * Any positional or keyword arguments supplied to DynamicDisplayable.
+
+        and should return a (d, redraw) tuple, where:
+
+        * `d` is a displayable to show.
+        * `redraw` is the amount of time to wait before calling the
+          function again, or None to not call the function again
+          before the start of the next interaction.
+
+        `function` is called at the start of every interaction.
+
+    As a special case, `function` may also be a python string that evaluates
+    to a displayable. In that case, function is run once per interaction.
+
+    ::
+
+        # If tooltip is not empty, shows it in a text. Otherwise,
+        # show Null. Checks every tenth of a second to see if the
+        # tooltip has been updated.
+        init python:
+             def show_tooltip(st, at):
+                 if tooltip:
+                     return tooltip, .1
+                 else:
+                     return Null()
+
+        image tooltipper = DynamicDisplayable(show_tooltip)
+
+    """
+    
     nosave = [ 'child' ]
 
     def after_setstate(self):
@@ -921,7 +959,26 @@ def condition_switch_predict(switch):
     return [ condition_switch_pick(switch) ]
 
 def ConditionSwitch(*args, **kwargs):
+    """
+    :doc: disp_dynamic
 
+    This is a displayable that changes what it is showing based on
+    python conditions. The positional argument should be given in
+    groups of two, where each group consists of:
+
+    * A string containing a python condition.
+    * A displayable to use if the condition is true.
+
+    The first true condition has its displayable shown, at least
+    one condition should always be true.
+
+    ::
+
+        image jill = ConditionSwitch(
+            "jill_beers > 4", "jill_drunk.png",
+            "True", "jill_sober.png")
+    """
+        
     kwargs.setdefault('style', 'default')
     
     switch = [ ]
@@ -942,12 +999,34 @@ def ConditionSwitch(*args, **kwargs):
 
     
 def ShowingSwitch(*args, **kwargs):
+    """
+    :doc: disp_dynamic
 
+    This is a displayable that changes what it is showing based on the
+    images are showing on the screen. The positional argument should
+    be given in groups of two, where each group consists of:
+
+    * A string giving an image name, or None to indicate the default.
+    * A displayable to use if the condition is true.
+
+    A default image should be specified.
+
+    One use of ShowingSwitch is to have side images change depending on
+    the current emotion of a character. For example::
+
+       define e = Character("Eileen",
+           show_side_image=ShowingSwitch(
+               "eileen happy", Image("eileen_happy_side.png", xalign=1.0, yalign=1.0),
+               "eileen vhappy", Image("eileen_vhappy_side.png", xalign=1.0, yalign=1.0),
+               None, Image("eileen_happy_default.png", xalign=1.0, yalign=1.0),
+               )
+           )
+    """
+    
     layer = kwargs.pop('layer', 'master')
-
     
     if len(args) % 2 != 0:
-        raise Exception('ConditionSwitch takes an even number of arguments')
+        raise Exception('ShowingSwitch takes an even number of positional arguments')
 
     condargs = [ ]
 
@@ -987,7 +1066,6 @@ class IgnoresEvents(Container):
     # Ignores events.
     def event(self, ev, x, y, st):
         return None
-        
 
 class Viewport(Container):
 
@@ -1161,6 +1239,13 @@ class Viewport(Container):
         renpy.display.render.redraw(self, 0)
         
 def LiveCrop(rect, child, **properties):
+    """
+    :doc: disp_imagelike
+
+    This created a displayable by cropping `child` to `rect`, where
+    `rect` is an (x, y, width, height) tuple.
+    """
+    
     x, y, w, h = rect
 
     return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
@@ -1394,13 +1479,14 @@ class AdjustTimes(Container):
 
 class LiveTile(Container):
     """
-    :doc: other
+    :doc: disp_imagelike
     
-    Tiles the `child` displayable until it fills the area allocated to
-    this displayable.
+    Tiles `child` until it fills the area allocated to this displayable.
 
-    The size of the displayable can be set with the :propref:`xmaximum` and
-    :propref:`ymaximum` style properties.
+    ::
+
+        image bg tile = LiveTile("bg.png")
+
     """
     
     def __init__(self, child, style='tile', **properties):

@@ -168,16 +168,18 @@ class ImageReference(renpy.display.core.Displayable):
     
 class Solid(renpy.display.core.Displayable):
     """
-    Returns a Displayable that is solid, and filled with a single
-    color. A Solid expands to fill all the space allocated to it,
-    making it suitable for use as a background.
+    :doc: disp_imagelike
+
+    A displayable that fills the area its assigned with `color`.
+
+    ::
+    
+        image white = Solid("#fff")
+    
     """
+
     def __init__(self, color, **properties):
-        """
-        @param color: An RGBA tuple, giving the color that the display
-        will be filled with.
-        """
-        
+
         super(Solid, self).__init__(**properties)
 
         if color is not None:
@@ -197,16 +199,39 @@ class Solid(renpy.display.core.Displayable):
         
 class Frame(renpy.display.core.Displayable):
     """
-    Returns a Displayable that is a frame, based on the supplied image
-    filename. A frame is an image that is automatically rescaled to
-    the size allocated to it. The image has borders that are only
-    scaled in one axis. The region within xborder pixels of the left
-    and right borders is only scaled in the y direction, while the
-    region within yborder pixels of the top and bottom axis is scaled
-    only in the x direction. The corners are not scaled at all, while
-    the center of the image is scaled in both x and y directions.
-    """
+    :doc: disp_imagelike
+    :args: (image, xborder, yborder, tile=False, **properties)
+    
+    A displayable that resizes an image to fill the available area,
+    while preserving the width and height of its borders.  is often
+    used as the background of a window or button.
 
+    .. figure:: frame_example.png
+
+        Using a frame to resize an image to double its size.
+
+    `image`
+        An image manipulator that will be resized by this frame.
+
+    `xborder`
+        The width of the border on the left and right sides of the 
+        image.
+
+    `yborder`
+        The height of the border on the top and bottom sides of the
+        image.
+
+    `tile`
+        If true, tiling is used to resize sections of the image,
+        rather than scaling.
+
+    ::
+
+         # Resize the background of the text window if it's too small.         
+         init python:
+             style.window.background = Frame("frame.png", 10, 10)
+        """
+        
     __version__ = 1
 
     def after_upgrade(self, version):
@@ -214,24 +239,6 @@ class Frame(renpy.display.core.Displayable):
             self.bilinear = False
     
     def __init__(self, image, xborder, yborder, bilinear=False, tile=False, **properties):
-        """
-        @param image: The image (which may be a filename or image
-        object) that will be scaled.
-
-        @param xborder: The number of pixels in the x direction to use as
-        a border.
-
-        @param yborder: The number of pixels in the y direction to use as
-        a border.
-
-        @param tile: If true, instead of scaling a region, we tile that
-        region.
-
-        For better performance, have the image share a dimension
-        length in common with the size the frame will be rendered
-        at. We detect this and avoid scaling if possible.
-        """
-
         super(Frame, self).__init__(**properties)
 
         self.image = Image(image)

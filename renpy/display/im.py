@@ -700,7 +700,7 @@ class FrameImage(ImageBase):
             # Quick exit.
             if sx0 == sx1 or sy0 == sy1:
                 return
-
+            
             # Compute sizes.
             srcsize = (sx1 - sx0, sy1 - sy0)
             dstsize = (int(dx1 - dx0), int(dy1 - dy0))
