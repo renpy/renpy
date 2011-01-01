@@ -211,6 +211,8 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
 
         return rv
 
+    f.__doc__ = doc 
+
     return f
 
 Fixed = layout(renpy.display.layout.MultiBox, """
@@ -260,10 +262,26 @@ def AlphaBlend(control, old, new, alpha=False):
     
 del layout
         
-def At(disp, *at_list):
-    rv = renpy.easy.displayable(disp)
+def At(d, *args):
+    """
+    :doc: disp_at
 
-    for i in at_list:
+    Given a displayable `d`, applies each of the transforms in `args`
+    to it. The transforms are applied in left-to-right order, so that
+    the outermost transform is the rightmost argument. ::
+
+        transform birds_transform:
+             xpos -200
+             linear 10 xpos 800
+             pause 20
+             repeat
+
+        image birds = At("birds.png", birds_transform)
+        """
+    
+    rv = renpy.easy.displayable(d)
+
+    for i in args:
         rv = i(rv)
 
     return rv

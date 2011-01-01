@@ -32,6 +32,15 @@ The Ren'Py Language
    dialogue
    atl
 
+Displayables, Transforms, and Transitions
+-----------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+    
+   displayables
+
+   
 Customizing Ren'Py
 ------------------
 

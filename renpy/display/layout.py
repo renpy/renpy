@@ -1243,7 +1243,9 @@ def LiveCrop(rect, child, **properties):
     :doc: disp_imagelike
 
     This created a displayable by cropping `child` to `rect`, where
-    `rect` is an (x, y, width, height) tuple.
+    `rect` is an (x, y, width, height) tuple. ::
+
+        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")    
     """
     
     x, y, w, h = rect
