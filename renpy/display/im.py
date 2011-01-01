@@ -535,26 +535,32 @@ class ZipFileImage(ImageBase):
         
 class Composite(ImageBase):
     """
-    This image manipulator composites one or more images together.
+    :doc: im_im
+    
+    This image manipulator composites multiple images together to
+    form a single image.
+
+    The `size` should be a (width, height) tuple giving the size
+    of the composed image.
+
+    The remaining positional arguments are interpreted as groups of
+    two. The first argument in a group should be an (x, y) tuple,
+    while the second should be an image manipulator. The image
+    produced by the image manipulator is composited at the location
+    given by the tuple.
+
+    ::
+    
+        image girl clothed happy = im.Composite(
+            (300, 600)
+            (0, 0), "girl_body.png",
+            (0, 0), "girl_clothes.png",
+            (100, 100), "girl_happy.png"
+            )
+
     """
 
     def __init__(self, size, *args, **properties):
-        """
-        This takes a variable number of arguments. The first argument
-        is size, which is either the desired size of the image (in
-        pixels), or None to indicate that the size should be the size of
-        the first image.
-
-        It then takes an even number of further arguments. (For an odd
-        number of total arguments.) The second and other even numbered
-        arguments contain position tuples, while the third and further
-        odd-numbered arguments give images (or image
-        manipulators). A position argument gives the position of the
-        image immediately following it, with the position expressed as
-        a tuple giving an offset from the upper-left corner of the
-        image.  The images are composited in bottom-to-top order, with
-        the last image being closest to the user.
-        """
 
         super(Composite, self).__init__(size, *args, **properties)
 
@@ -788,8 +794,17 @@ class SolidImage(ImageBase):
 
 class Scale(ImageBase):
     """
-    This is an image manipulator that scales another image manipulator
-    to the specified width and height.
+    :doc: im_im
+
+    An image manipulator that scales `im` (an image manipulator) to
+    `width` and `height`.
+
+    If `bilinear` is true, then bilinear interpolation is used for
+    the scaling. Otherwise, nearest neighbor interpolation is used.
+
+    ::
+
+        image logo scale = im.Scale("logo.png", 100, 150) 
     """
 
     def __init__(self, im, width, height, bilinear=True, **properties):
@@ -826,9 +841,20 @@ class Scale(ImageBase):
 
 class FactorScale(ImageBase):
     """
-    This is the same, but it takes a factor rather than an absolute scale
-    size.
+    :doc: im_im
+
+    An image manipulator that scales `im` (a second image manipulator)
+    to `width` times its original `width`, and `height` times its
+    original height. If `height` is ommitted, it defaults to `width`.
+
+    If `bilinear` is true, then bilinear interpolation is used for
+    the scaling. Otherwise, nearest neighbor interpolation is used.
+
+    ::
+
+        image logo doubled = im.FactorScale("logo.png", 1.5)
     """
+
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
 
@@ -873,17 +899,18 @@ class FactorScale(ImageBase):
 
 class Flip(ImageBase):
     """
-    This is an image manipulator that can flip the image horizontally or vertically.
+    :doc: im_im
+
+    An image manipulator that flips `im` (an image manipulator)
+    vertically or horizontally.  `vertical` and `horizontal` control
+    the directions in which the image is flipped.
+
+    ::
+    
+        image eileen flip = im.Flip("eileen_happy.png", vertical=True)
     """
 
     def __init__(self, im, horizontal=False, vertical=False, **properties):
-        """
-        @param im: The image to be rotozoomed.
-
-        @param horizontal: True to flip the image horizontally.
-
-        @param vertical: True to flip the image vertically.
-        """
 
         if not (horizontal or vertical):
             raise Exception("im.Flip must be called with a true value for horizontal or vertical.")
@@ -956,13 +983,24 @@ class Rotozoom(ImageBase):
         
 class Crop(ImageBase):
     """
-    This crops the image that is its child.
+    :doc: im_im 
+    :args: (im, rect)
+    
+    An image manipulator that crops `rect`, a (x, y, width, height) tuple,
+    out of `im`, an image manipulator.
+
+    ::
+    
+        image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
     """
 
-    def __init__(self, im, x, y, w, h, **properties):
+    def __init__(self, im, x, y=None, w=None, h=None, **properties):
 
         im = image(im)
 
+        if y is None:
+            (x, y, w, h) = x
+        
         super(Crop, self).__init__(im, x, y, w, h, **properties)
 
         self.image = im
@@ -1120,8 +1158,34 @@ class Recolor(ImageBase):
 
 class MatrixColor(ImageBase):
     """
-    This applies a 20 element matrix, that turns the color vector:
-    [ r, g, b, a, 1 ] into [ r, g, b, a ].
+    :doc: im_matrixcolor
+    
+    An image operator that uses `matrix` to linearly transform the
+    image manipulator `im`.
+
+    `Matrix` should be a list, tuple, or :func:`im.matrix` that is 20
+    or 25 elements long. If the object has 25 elements, then elements
+    past the 20th are ignored.
+
+    When the four components of the source color are R, G, B, and A,
+    which range from 0.0 to 1.0; the four components of the transformed
+    color are R', G', B', and A', with the same range; and the elements
+    of the matrix are named::
+    
+        [ a, b, c, d, e,
+          f, g, h, i, j,
+          k, l, m, n, o,
+          p, q, r, s, t ]
+
+    the transformed colors can be computed with the formula::
+
+        R' = (a * R) + (b * G) + (c * B) + (d * A) + e
+        G' = (f * R) + (g * G) + (h * B) + (i * A) + j
+        B' = (k * R) + (l * G) + (m * B) + (n * A) + o
+        A' = (p * R) + (q * G) + (r * B) + (s * A) + t
+
+    The components of the transformed color are clamped to the
+    range [0.0, 1.0].
     """
 
     def __init__(self, im, matrix, **properties):
@@ -1152,7 +1216,19 @@ class MatrixColor(ImageBase):
 
 class matrix(tuple):
     """
-    This class represents a 5x5 mathematical matrix.
+    :doc: im_matrixcolor
+    
+    Constructs an im.matrix object from `matrix`. im.matrix objects
+    support The operations supported are matrix multiplication, scalar
+    multiplication, element-wise addition, and element-wise
+    subtraction. These operations are invoked using the standard
+    mathematical operators (\\*, \\*, +, and -, respectively). If two
+    im.matrix objects are multiplied, matrix multiplication is
+    performed, otherwise scalar multiplication is used.
+
+    `matrix` is a 20 or 25 element list or tuple. If it is 20 elements
+    long, it is padded with (0, 0, 0, 0, 1) to make a 5x5 matrix,
+    suitable for multiplication.    
     """
 
     def __new__(cls, *args):
@@ -1235,6 +1311,14 @@ im.matrix(%f, %f, %f, %f, %f.
 
     
     def identity():
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.identity
+        
+        Returns an identity matrix, one that does not change color or
+        alpha.
+        """        
+        
         return matrix(1, 0, 0, 0, 0,
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
@@ -1243,7 +1327,27 @@ im.matrix(%f, %f, %f, %f, %f.
     identity = staticmethod(identity)
 
     def saturation(level, desat=(0.2126, 0.7152, 0.0722)):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.saturation
+        
+        Returns an im.matrix that alters the saturation of an
+        image. The alpha channel is untouched.
 
+        `level`        
+            The amount of saturation in the resulting image. 1.0 is
+            the unaltered image, while 0.0 is grayscale.
+        
+        `desat`        
+            This is a 3-element tuple that controls how much of the
+            red, green, and blue channels will be placed into all
+            three channels of a fully desaturated image. The default
+            is based on the constants used for the luminance channel
+            of an NTSC television signal. Since the human eye is
+            mostly sensitive to green, more of the green channel is
+            kept then the other two channels.
+        """
+        
         r, g, b = desat
         
         def I(a, b):
@@ -1257,12 +1361,32 @@ im.matrix(%f, %f, %f, %f, %f.
     saturation = staticmethod(saturation)
     
     def desaturate():
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.desaturate
+
+        Returns an im.matrix that desaturates the image (make it
+        grayscale). This is equivalent to calling
+        im.matrix.saturation(0).
+        """
+
         return matrix.saturation(0.0)
     
     desaturate = staticmethod(desaturate)
-
     
     def tint(r, g, b):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.tint
+
+        Returns an im.matrix that tints an image, without changing
+        the alpha channel. `r`, `g`, and `b` should be numbers between
+        0 and 1, and control what fraction of the given channel is
+        placed into the final image. (For example, if `r` is .5, and
+        the value of the red channel is 100, the transformed color
+        will have a red value of 50.)
+        """
+
         return matrix(r, 0, 0, 0, 0,
                       0, g, 0, 0, 0,
                       0, 0, b, 0, 0,
@@ -1271,6 +1395,14 @@ im.matrix(%f, %f, %f, %f, %f.
     tint = staticmethod(tint)
 
     def invert():
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.invert
+
+        Returns an im.matrix that inverts the red, green, and blue
+        channels of the image without changing the alpha channel.
+        """
+
         return matrix(-1, 0, 0, 0, 1,
                       0, -1, 0, 0, 1,
                       0, 0, -1, 0, 1,
@@ -1279,6 +1411,18 @@ im.matrix(%f, %f, %f, %f, %f.
     invert = staticmethod(invert)
 
     def brightness(b):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.brightness
+
+        Returns an im.matrix that alters the brightness of an image.
+
+        `b`
+            The amount of change in image brightness. This should be
+            a number between -1 and 1, with -1 the darkest possible
+            image and 1 the brightest.
+        """
+
         return matrix(1, 0, 0, 0, b,
                       0, 1, 0, 0, b,
                       0, 0, 1, 0, b,
@@ -1287,14 +1431,31 @@ im.matrix(%f, %f, %f, %f, %f.
     brightness = staticmethod(brightness)
 
     def opacity(o):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.opacity
+
+        Returns an im.matrix that alters the opacity of an image. An
+        `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
+        """
+        
         return matrix(1, 0, 0, 0, 0,
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
                       0, 0, 0, o, 0)
 
     opacity = staticmethod(opacity)
-
+    
     def contrast(c):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.contrast
+
+        Returns an im.matrix that alters the contrast of an image. `c` should
+        be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and
+        values greater than 1.0 increasing contrast.
+        """
+
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5) 
 
     contrast = staticmethod(contrast)
@@ -1302,6 +1463,14 @@ im.matrix(%f, %f, %f, %f, %f.
 
     # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
     def hue(h):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.hue
+        
+        Returns an im.matrix that rotates the hue by `h` degrees, while
+        preserving luminosity.
+        """
+
         h = h * math.pi / 180
         cosVal = math.cos(h)
         sinVal = math.sin(h)
@@ -1317,13 +1486,61 @@ im.matrix(%f, %f, %f, %f, %f.
             )
 
     hue = staticmethod(hue)
-    
+
+    def colorize(black_color, white_color):
+        """
+        :doc: im_matrixcolor
+        :name: im.matrix.colorize
+        
+        Returns an im.matrix that colorizes a black and white image.
+        `black_color` and `white_color` are Ren'Py style colors, so
+        they may be specfied as strings or tuples of (0-255) color
+        values. ::
+
+            # This makes black colors red, and white colors blue.
+            image logo colored = im.MatrixColor(
+                "bwlogo.png",
+                im.matrix.colorize("#f00", "#00f"))
+
+        """
+
+        (r0, g0, b0, a0) = renpy.easy.color(black_color)
+        (r1, g1, b1, a1) = renpy.easy.color(white_color)
+
+        r0 /= 255.0
+        g0 /= 255.0
+        b0 /= 255.0
+        r1 /= 255.0
+        g1 /= 255.0
+        b1 /= 255.0
+        
+        return matrix((r1-r0), 0, 0, 0, r0,
+                      0, (g1-g0), 0, 0, g0,
+                      0, 0, 1, (b1-b0), b0,
+                      0, 0, 0, 1, 0)
+
 
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
+    """
+    :doc: im_im
+    :args: (im, **properties)
+
+    An image manipulator that creats a desaturated version of the image
+    manipulator `im`.
+    """
+
     return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
 
 
 def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties):
+    """
+    :doc: im_im
+    :args: (im, **properties)
+
+    An image manipulator that creates a sepia-toned version of the image
+    manipulator `im`.
+    """
+    
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
     
 
@@ -1352,9 +1569,14 @@ def Alpha(image, alpha, **properties):
 
 class Tile(ImageBase):
     """
-    This tiles the image, repeating it vertically and horizontally
-    until it is as large as the specified size. If no size is given,
-    then the size defaults to the size of the screen.
+    :doc: im_im
+
+    An image manipulator that tiles the image manipulator `im`, until
+    it is `size`.
+
+    `size`
+        If not None, a (width, height) tuple. If None, this defaults to
+        (:var:`config.screen_width`, :var:`config.screen_height`).
     """
 
     def __init__(self, im, size=None, **properties):
@@ -1389,7 +1611,19 @@ class Tile(ImageBase):
         return self.image.predict_files()
 
 class AlphaMask(ImageBase):
+    """
+    :doc: im_im
+    
+    An image manipulator that takes two image manipulators, `base` and
+    `mask`, as arguments. It replaces the alpha channel of `base` with
+    the red channel of `mask`.
 
+    This is used to provide an image's alpha channel in a second
+    image, like having one jpeg for color data, and a second one
+    for alpha. In some cases, two jpegs can be smaller than a
+    single png file.
+    """
+    
     def __init__(self, base, mask, **properties):
         super(AlphaMask, self).__init__(base, mask, **properties)
 
@@ -1415,19 +1649,21 @@ class AlphaMask(ImageBase):
         
 def image(arg, loose=False, **properties):
     """
-    This takes as input one of a number of ways of specifying an
-    image, and returns the Displayable image object that has been so
-    specified. Specifically, this can take as input:
+    :doc: im_image
+    :name: Image
+    :args: (filename, **properties)
 
-    <ul>
-    <li> An image object. In that case, it's returned unchanged.</li>
-    <li> A string. If a string is given, then the string is interpreted
-    as a filename, and what is returned is an im.Image object, which
-    loads the image from disk.</li>
-    <li> A tuple. If this is the case, then what is returned is an
-    im.Composite object, which aligns the upper-left corner of all
-    of the images supplied as arguments. </li>
-    </ul>
+    Loads an image from a file. `filename` is a
+    string giving the name of the file.
+
+    `filename` should be a JPEG or PNG file with an appropriate
+    extension.
+    """
+
+    """
+    (Actually, the user documentation is a bit misleading, as
+     this tries for compatibility with several older forms of
+     image specification.)
 
     If the loose argument is False, then this will report an error if an
     arbitrary argument is given. If it's True, then the argument is passed
@@ -1437,13 +1673,13 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
-    if isinstance(arg, renpy.display.image.ImageReference):
-        arg.find_target()
-        return image(arg.target, loose=loose, **properties)
-            
     elif isinstance(arg, basestring):
         return Image(arg, **properties)
 
+    elif isinstance(arg, renpy.display.image.ImageReference):
+        arg.find_target()
+        return image(arg.target, loose=loose, **properties)
+            
     elif isinstance(arg, tuple):
         params = [ ]
 
@@ -1453,7 +1689,7 @@ def image(arg, loose=False, **properties):
 
         return Composite(None, *params)
 
-    if loose:
+    elif loose:
         return arg
 
     if isinstance(arg, renpy.display.core.Displayable):

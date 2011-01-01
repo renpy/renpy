@@ -33,7 +33,7 @@ Image is automatically created. The only time it's necessary to use
 Image directly is when you want to create an image with style
 properties.
 
-.. include:: im_image
+.. include:: inc/im_image
 
 ::
 
