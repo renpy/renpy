@@ -815,7 +815,7 @@ class Imagemap(object):
 
     alpha = True
     
-    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, alpha):
+    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, alpha, cache):
         self.insensitive = renpy.easy.displayable(insensitive)
         self.idle = renpy.easy.displayable(idle)
         self.selected_idle = renpy.easy.displayable(selected_idle)
@@ -824,9 +824,9 @@ class Imagemap(object):
 
         self.alpha = alpha
 
-        self.cache = renpy.display.imagemap.ImageMapCache()
+        self.cache = renpy.display.imagemap.ImageMapCache(cache)
         
-def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, alpha=True, style='imagemap', **properties):
+def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, alpha=True, cache=True, style='imagemap', **properties):
 
     def pick(variable, name, other):
         if variable:
@@ -857,7 +857,8 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
             selected_idle,
             hover,
             selected_hover,
-            alpha))
+            alpha,
+            cache))
 
     properties.setdefault('fit_first', True)
     

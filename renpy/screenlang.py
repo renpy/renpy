@@ -734,6 +734,7 @@ Keyword("selected_hover")
 Keyword("selected_idle")
 Keyword("auto")
 Keyword("alpha")
+Keyword("cache")
 add(ui_properties)
 add(position_properties)
 

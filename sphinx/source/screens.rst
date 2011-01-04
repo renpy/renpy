@@ -917,6 +917,10 @@ parameters, and the following properties:
     If true, the default, a hotspot only gains focus when the mouse is
     in an area of the hover image that is opaque. If false, the hotspot
     gains focus whenever the mouse is within its rectangular boundary.
+
+`cache`
+    If true, the default, hotspot data is cached in to improve performance
+    at the cost of some additional disk space. 
     
 It takes the following groups of properties:
 
