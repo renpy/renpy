@@ -105,7 +105,7 @@ class Many(Addable):
 
     def __init__(self, displayable, imagemap, style_group):
         self.displayable = displayable
-        self.imagemap = False
+        self.imagemap = imagemap
         self.style_group = style_group
         
     def add(self, d, key):
@@ -115,8 +115,10 @@ class Many(Addable):
         stack.pop()
 
         if self.imagemap:
-            imagemap_stack.pop()
-        
+            imagemap = imagemap_stack.pop()
+            imagemap.cache.finish()
+            
+            
         if d and d != self.displayable:
             raise Exception("ui.close closed %r, not the expected %r." % (self.displayable, d))
 
@@ -814,13 +816,16 @@ class Imagemap(object):
     alpha = True
     
     def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, alpha):
-        self.insensitive = insensitive
-        self.idle = idle
-        self.selected_idle = selected_idle
-        self.hover = hover
-        self.selected_hover = selected_hover
+        self.insensitive = renpy.easy.displayable(insensitive)
+        self.idle = renpy.easy.displayable(idle)
+        self.selected_idle = renpy.easy.displayable(selected_idle)
+        self.hover = renpy.easy.displayable(hover)
+        self.selected_hover = renpy.easy.displayable(selected_hover)
+
         self.alpha = alpha
 
+        self.cache = renpy.display.imagemap.ImageMapCache()
+        
 def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, alpha=True, style='imagemap', **properties):
 
     def pick(variable, name, other):
@@ -880,11 +885,11 @@ def _hotspot(spot, style='imagemap_button', **properties):
     selected_hover = imagemap.selected_hover
     insensitive = imagemap.insensitive
     
-    idle = renpy.display.layout.LiveCrop(spot, idle)
-    hover = renpy.display.layout.LiveCrop(spot, hover)
-    selected_idle = renpy.display.layout.LiveCrop(spot, selected_idle)
-    selected_hover = renpy.display.layout.LiveCrop(spot, selected_hover)
-    insensitive = renpy.display.layout.LiveCrop(spot, insensitive)
+    idle = imagemap.cache.crop(idle, spot)
+    hover = imagemap.cache.crop(hover, spot)
+    selected_idle = imagemap.cache.crop(selected_idle, spot)
+    selected_hover = imagemap.cache.crop(selected_hover, spot) 
+    insensitive = imagemap.cache.crop(insensitive, spot)
             
     properties.setdefault("xpos", x)
     properties.setdefault("xanchor", 0)
@@ -935,12 +940,11 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
     properties.setdefault("xanchor", 0)
     properties.setdefault("yanchor", 0)
 
-    fore_bar=renpy.display.layout.LiveCrop(spot, imagemap.selected_idle)
-    aft_bar=renpy.display.layout.LiveCrop(spot, imagemap.idle)
-    hover_fore_bar=renpy.display.layout.LiveCrop(spot, imagemap.selected_hover)
-    hover_aft_bar=renpy.display.layout.LiveCrop(spot, imagemap.hover)
+    fore_bar=imagemap.cache.crop(imagemap.selected_idle, spot)
+    aft_bar=imagemap.cache.crop(imagemap.idle, spot)
+    hover_fore_bar=imagemap.cache.crop(imagemap.selected_hover, spot)
+    hover_aft_bar=imagemap.cache.crop(imagemap.hover, spot)
 
-    
     if h > w:
         properties.setdefault("bar_vertical", True)
         properties.setdefault("bar_invert", True)

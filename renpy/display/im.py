@@ -479,6 +479,9 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
+    def get_mtime(self):
+        return renpy.loader.get_mtime(self.filename)
+        
     def load(self, unscaled=False): # W0221
         try:
 
@@ -571,6 +574,9 @@ class Composite(ImageBase):
         self.positions = args[0::2]
         self.images = [ image(i) for i in args[1::2] ]
 
+    def get_mtime(self):
+        return min(i.get_mtime() for i in self.images)
+        
     def load(self):
 
         if self.size:
@@ -638,7 +644,9 @@ class FrameImage(ImageBase):
         if self.height < self.yborder * 2:
             # raise Exception("Frame height is too small for its border.")
             self.yborder = self.height / 2
-            
+
+    def get_mtime(self):
+        return self.image.get_mtime()
 
     def load(self):
 
@@ -785,6 +793,9 @@ class SolidImage(ImageBase):
         self.width = int(width)
         self.height = int(height)
 
+    def get_mtime(self):
+        return 0
+       
     def load(self):
 
         rv = renpy.display.pgrender.surface((self.width, self.height), True)
@@ -817,6 +828,9 @@ class Scale(ImageBase):
         self.height = int(height)
         self.bilinear = bilinear
 
+    def get_mtime(self):
+        return self.image.get_mtime()
+        
     def load(self):
 
         child = cache.get(self.image)
@@ -868,6 +882,9 @@ class FactorScale(ImageBase):
         self.width = width
         self.height = height
         self.bilinear = bilinear
+
+    def get_mtime(self):
+        return self.image.get_mtime()
 
     def load(self):
 
@@ -922,6 +939,9 @@ class Flip(ImageBase):
         self.horizontal = horizontal
         self.vertical = vertical
 
+
+    def get_mtime(self):
+        return self.image.get_mtime()
         
     def load(self):
 
@@ -963,6 +983,9 @@ class Rotozoom(ImageBase):
         self.image = im
         self.angle = angle
         self.zoom = zoom
+
+    def get_mtime(self):
+        return self.image.get_mtime()
 
     def load(self):
 
@@ -1008,6 +1031,9 @@ class Crop(ImageBase):
         self.y = y
         self.w = w
         self.h = h
+
+    def get_mtime(self):
+        return self.image.get_mtime()
 
     def load(self):
         return cache.get(self.image).subsurface((self.x, self.y,
@@ -1066,6 +1092,9 @@ class Map(ImageBase):
 
         self.force_alpha = force_alpha
 
+    def get_mtime(self):
+        return self.image.get_mtime()
+
     def load(self):
 
         surf = cache.get(self.image)
@@ -1105,6 +1134,9 @@ class Twocolor(ImageBase):
 
         self.force_alpha = force_alpha
 
+    def get_mtime(self):
+        return self.image.get_mtime()
+
     def load(self):
 
         surf = cache.get(self.image)
@@ -1141,6 +1173,9 @@ class Recolor(ImageBase):
         self.amul = amul + 1
 
         self.force_alpha = force_alpha
+
+    def get_mtime(self):
+        return self.image.get_mtime()
 
     def load(self):
 
@@ -1200,6 +1235,9 @@ class MatrixColor(ImageBase):
         
         self.image = im
         self.matrix = matrix
+
+    def get_mtime(self):
+        return self.image.get_mtime()
         
     def load(self):
 
@@ -1587,6 +1625,9 @@ class Tile(ImageBase):
         self.image = im
         self.size = size
 
+    def get_mtime(self):
+        return self.image.get_mtime()
+
     def load(self):
 
         size = self.size
@@ -1629,6 +1670,9 @@ class AlphaMask(ImageBase):
 
         self.base = image(base)
         self.mask = image(mask)
+
+    def get_mtime(self):
+        return max(self.base.get_mtime(), self.image.get_mtime())
 
     def load(self):
 

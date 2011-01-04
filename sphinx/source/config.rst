@@ -644,6 +644,12 @@ Rarely or Internally Used
     A function that is called when the hide statement is
     executed. This should take the same arguments as renpy.hide.
 
+.. var:: config.imagemap_cache = True
+
+    If true, imagemap hotspots will be cached to PNG files,
+    reducting time and memory usage, but increasing the size of
+    the game on disk. Set this to false to disable this behavior.
+    
 .. var:: config.implicit_with_none = True
 
     If True, then by default the equivalent of a "with None" statement

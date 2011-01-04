@@ -370,6 +370,17 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
+def get_mtime(name):
+    """
+    Returns the time the file m was last modified, or 0 if it
+    doesn't exist or is archived.
+    """
+
+    try:
+        fn = transfn(name)
+        return os.path.getmtime(fn)
+    except:
+        return 0
 
 class RenpyImporter(object):
     """

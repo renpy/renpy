@@ -451,6 +451,9 @@ imagereference_respects_position = False
 # Do we want to try to pretend to be android?
 simulate_android = False
 
+# Do we want to enable imagemap caching?
+imagemap_cache = True
+
 del renpy
 del os
 

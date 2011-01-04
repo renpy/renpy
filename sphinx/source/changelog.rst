@@ -5,6 +5,17 @@ Full Changelog
 Ren'Py 6.12.0
 -------------
 
+Ren'Py now support hotspot caching for screen language imagemaps. When
+:var:`config.developer` is true, Ren'Py will write a PNG file in the
+game/cache/ directory containing image data for each of the hotspots
+in the imagemap. If the cache file exists (regardless of the
+config.developer setting) it will be loaded instead of loading the
+hotspot images. As the cache file is often much smaller than the size
+of the hotspot images, it will load faster and reduce image cache
+pressure, improving game performance. This behavior only applies to
+screen language imagemaps, and can be disabled with
+:var:`config.imagemap_cache`.
+
 
 Ren'Py 6.11.2
 =============

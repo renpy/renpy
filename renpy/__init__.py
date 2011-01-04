@@ -92,7 +92,8 @@ def import_all():
     import renpy.display.minigame
     import renpy.display.screen
     import renpy.display.dragdrop
-
+    import renpy.display.imagemap
+    
     import renpy.display.error
     
     import renpy.display.swdraw
