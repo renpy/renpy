@@ -1,3 +1,4 @@
+
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -46,6 +47,9 @@ class Action(renpy.object.Object):
         return False
 
     def periodic(self, st):
+        return
+
+    def predict(self, callback):
         return
     
     def __call__(self):

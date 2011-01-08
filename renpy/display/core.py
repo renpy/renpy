@@ -274,6 +274,23 @@ class Displayable(renpy.object.Object):
 
         return
 
+    def predict_actions(self, callback):
+        """
+        Called to ask this displayable to predict the images that
+        might be loaded by the actions of it and its children.
+        """
+
+        self.visit_all(lambda i : i.predict_one_action(callback))
+        
+    
+    def predict_one_action(self, callback):
+        """
+        Called to ask this displayable to cause image prediction
+        to occur for images that may be loaded by its actions.
+        """
+
+        return 
+    
     def place(self, dest, x, y, width, height, surf, main=True):
         """
         This draws this Displayable onto a destination surface, using
