@@ -96,6 +96,9 @@ def popen_del(self, *args, **kwargs):
 def bootstrap(renpy_base):
 
     global renpy # W0602
+
+    import renpy.log
+    renpy.log.init(renpy_base)
     
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
     
@@ -119,10 +122,7 @@ def bootstrap(renpy_base):
             for k, v in evars.iteritems():
                 if k not in os.environ:
                     os.environ[k] = str(v)
-        
-        
-
-                
+                    
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 
@@ -175,6 +175,9 @@ def bootstrap(renpy_base):
 
     op.add_option('--presplash', dest='presplash', default=None,
                   help="Used internally to display the presplash screen.")
+
+    op.add_option('--log-startup', dest='log_startup', action='store_true', default=os.environ.get("RENPY_LOG_STARTUP", None),
+                  help="Causes Ren'Py to log startup timings to its log.")
                   
     options, args = op.parse_args()
 
@@ -250,6 +253,10 @@ def bootstrap(renpy_base):
     import renpy
     renpy.import_all()
 
+    renpy.game.options = options
+
+    renpy.log.startup("Loading Ren'Py")
+    
     if options.version:
         print renpy.version
         sys.exit(0)
@@ -260,8 +267,6 @@ def bootstrap(renpy_base):
     try:
         while keep_running:
             try:
-                renpy.game.options = options
-
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir

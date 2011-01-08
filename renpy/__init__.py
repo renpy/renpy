@@ -127,6 +127,7 @@ def import_all():
 def reload_all():
     
     import renpy
+    renpy.log.info("Reloading.")
     
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
@@ -136,6 +137,7 @@ def reload_all():
     sys.meta_path.pop()
 
     blacklist = [ "renpy",
+                  "renpy.log",
                   "renpy.bootstrap",
                   "renpy.display",
                   "renpy.display.iliad",
