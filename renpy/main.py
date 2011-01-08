@@ -168,8 +168,6 @@ def main():
     # Initialize the store.
     renpy.store.store = renpy.python.StoreProxy()
 
-    renpy.log.startup("Pre-script initialization")
-    
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
     renpy.script.load_script() # sets renpy.game.script.
@@ -177,8 +175,6 @@ def main():
     if renpy.parser.report_parse_errors():
         raise renpy.game.ParseErrorException()
 
-    renpy.log.startup("Script loading")
-    
     renpy.game.exception_info = 'After loading the script.'
 
     # Find the save directory.
@@ -311,8 +307,6 @@ def main():
     renpy.game.exception_info = 'While running game code:'
     renpy.first_utter_start = False
 
-    renpy.log.startup("Post-script initialization")
-    
     while True:
         try:
             try:

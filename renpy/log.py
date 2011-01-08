@@ -23,7 +23,7 @@
 
 import sys
 import os
-import time
+import time as _time
 import codecs
 import traceback
 import platform
@@ -32,9 +32,6 @@ import renpy
 
 # The file events are logged to.
 log_file = None
-
-# The time that startup or init was last called.
-last_startup_time = 0
 
 def init(renpy_base):
     global log_file
@@ -51,9 +48,13 @@ def init(renpy_base):
         except:
             log_file = None
 
-    last_startup_time = time.time()
+    info("%s", renpy.version)
 
-    info("%s running on %s", renpy.version, platform.platform())
+    try:
+        # platform.platform fails on android.
+        info("running on %s", platform.platform())
+    except:
+        pass
     
 def info_exception():
     if log_file is None:
@@ -75,15 +76,15 @@ def debug(msg, *args):
     if renpy.config.developer:
         info(msg, *args)
 
-def startup(event):
-    global last_startup_time
+# The time at which time was last called.
+last_time = 0
 
-    if not renpy.game.options.log_startup:
-        return
+def time(event):
+    global last_time
 
-    now = time.time()
-    length = now - last_startup_time
-    last_startup_time = now
+    now = _time.time()
+    length = now - last_time
+    last_time = now
     
     info("%s took %.3f seconds.", event, length)
     

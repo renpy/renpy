@@ -254,8 +254,6 @@ def bootstrap(renpy_base):
     renpy.import_all()
 
     renpy.game.options = options
-
-    renpy.log.startup("Loading Ren'Py")
     
     if options.version:
         print renpy.version
@@ -413,6 +411,8 @@ def report_exception(e):
 
         f.close()
 
+        renpy.log.info_exception()
+        
         try:
             if renpy.config.editor:
                 renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
