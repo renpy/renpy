@@ -555,7 +555,7 @@ before releasing it:
 Script of The Question
 -----------------------
 
-You can view the full script of ''The Question'' `here <thequestion>`_. 
+You can view the full script of ''The Question'' :ref:`here <thequestion>`. 
 
 Where do we go from here?
 -------------------------
