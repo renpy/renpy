@@ -46,6 +46,8 @@ init -1210 python:
 
         if version <= (6, 11, 2):
             config.imagereference_respects_position = True
+            config.predict_screens = False
+        
             
           
 init 1210 python hide::

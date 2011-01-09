@@ -454,6 +454,12 @@ simulate_android = False
 # Do we want to enable imagemap caching?
 imagemap_cache = True
 
+# Callbacks that are called in order to predict images.
+predict_callbacks = [ ]
+
+# Should screens be predicted?
+predict_screens = True
+
 del renpy
 del os
 

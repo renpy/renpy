@@ -33,7 +33,7 @@ class Screen(renpy.object.Object):
                  modal="False",
                  zorder="0",
                  tag=None,
-                 predict_function=None):
+                 predict=None):
     
         # The name of this screen.
         if isinstance(name, basestring):
@@ -46,10 +46,6 @@ class Screen(renpy.object.Object):
         # The function that is called to display this screen.
         self.function = function
 
-        # The function that is called to predict the images that
-        # will be used by the screen.
-        self.predict_function = predict_function
-
         # Expression: Are we modal? (A modal screen ignores screens under it.)
         self.modal = modal
 
@@ -59,6 +55,11 @@ class Screen(renpy.object.Object):
         # The tag associated with the screen.
         self.tag = tag or name[0]
 
+        # Can this screen be predicted?
+        if predict is None:
+            predict = renpy.config.predict_screens
+        self.predict = predict
+        
 
 class ScreenDisplayable(renpy.display.layout.Container):
     """
@@ -101,8 +102,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # A map from name to the widget with that name. 
         self.widgets = { }
 
-        old_screen = get_screen(tag, layer)
-        
+        if tag and layer:
+            old_screen = get_screen(tag, layer)
+        else:
+            old_screen = None
+            
         # A map from name to the transform with that name. (This is
         # taken from the old version of the screen, if it exists.
         if old_screen is not None:
@@ -336,6 +340,10 @@ def define_screen(*args, **kwargs):
         The tag associated with this screen. When the screen is shown,
         it replaces any other screen with the same tag. The tag
         defaults to the name of the screen.
+
+    `predict`
+        If true, this screen can be loaded for image prediction. If false,
+        it can't. Defaults to true.
     """
     
     Screen(*args, **kwargs)
@@ -418,6 +426,40 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
+
+
+def predict_screen(_screen_name, _widget_properties={},  **kwargs):
+    """
+    Predicts the displayables that make up the given screen.
+
+    `_screen_name`
+        The name of the  screen to show.
+    `_widget_properties`
+        A map from the id of a widget to a property name -> property
+        value map. When a widget with that id is shown by the screen,
+        the specified properties are added to it.
+
+    Keyword arguments not beginning with underscore (_) are used to
+    initialize the screen's scope.       
+    """
+
+    name = _screen_name
+    
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    if not name in screens:
+        raise Exception("Screen %s is not known.\n" % (name[0],))
+
+    screen = screens[name]
+
+    if not screen.predict:
+        return
+    
+    d = ScreenDisplayable(screen, None, None, _widget_properties, kwargs)    
+    d.update()
+    renpy.display.predict.displayable(d)
+        
 
 def hide_screen(tag, layer='screens'):
     """

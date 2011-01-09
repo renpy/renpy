@@ -117,7 +117,6 @@ init -1180 python:
 
     _intra_jumps = renpy.curry(_intra_jumps_core)
 
-
     # The function that's used to translate strings in the game menu.
     def _(s):
         """
@@ -132,10 +131,32 @@ init -1180 python:
 
         return s
 
+    config.extend_interjection = "{fast}"
+
+    def extend(what, interact=True):
+        who = _last_say_who
+
+        if who is not None:
+            who = eval(who)
+
+        if who is None:
+            who = narrator 
+            
+        if isinstance(who, basestring):
+            who = unknown.copy(who)
+
+        # This ensures extend works even with NVL mode.
+        who.do_extend()
+            
+        what = _last_say_what + config.extend_interjection + what
+            
+        renpy.exports.say(who, what, interact=interact)
+        store._last_say_what = what
+        
+    extend.record_say = False
+
     # Are the windows currently hidden?
     _windows_hidden = False
-
-init -1180 python:
 
     def toggle_skipping():
 
@@ -315,32 +336,27 @@ init -1180 python hide:
 
     config.hyperlink_styler = hyperlink_styler
     config.hyperlink_callback = hyperlink_function
-        
 
-    config.extend_interjection = "{fast}"
+    # Prediction of screens.    
+    def predict():
+        s = _game_menu_screen
+
+        if s is None:
+            return
+
+        if renpy.has_screen(s):
+            renpy.predict_screen(s)
+            return
+
+        if s.endswith("_screen"):
+            s = s[:-7]
+            if renpy.has_screen(s):
+                renpy.predict_screen(s)
+                return
+
+    config.predict_callbacks.append(predict)
+            
     
-init -1180 python:
-    def extend(what, interact=True):
-        who = _last_say_who
-
-        if who is not None:
-            who = eval(who)
-
-        if who is None:
-            who = narrator 
-            
-        if isinstance(who, basestring):
-            who = unknown.copy(who)
-
-        # This ensures extend works even with NVL mode.
-        who.do_extend()
-            
-        what = _last_say_what + config.extend_interjection + what
-            
-        renpy.exports.say(who, what, interact=interact)
-        store._last_say_what = what
-        
-    extend.record_say = False
 
 
 label _hide_windows:

@@ -28,6 +28,7 @@ import math
 import zipfile
 import cStringIO
 import threading
+import time
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -174,13 +175,20 @@ class Cache(object):
 
         # Otherwise, we keep the lock, and load the image ourselves.
         if ce is None:
+
             
             try:
                 if image in self.pin_cache:
                     surf = self.pin_cache[image]
                 else:
+                    start = time.time()
+                    
                     surf = image.load()
 
+                    if not renpy.display.predict.predicting:
+                        print "Unpredicted load of ", image, "took", time.time() - start, "seconds."
+                    
+                    
             except:
                 self.lock.release()
                 raise

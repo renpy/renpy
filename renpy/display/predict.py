@@ -21,6 +21,8 @@
 
 # This file contains the routines that manage image prediction.
 
+import traceback
+
 import renpy
 
 # Called to indicate an image should be loaded or preloaded. This is
@@ -28,10 +30,21 @@ import renpy
 # and winds up bound to either im.cache.get or im.cache.preload_image
 image = None
 
-# The set of displayables we've predicted
+# The set of displayables we've predicted since reset was last called.
 predicted = set()
 
+# A flag that indicates if we're currently predicting.
+predicting = False
+
+# A list of (screen name, argument dict) tuples, giving the screens we'd
+# like to predict.
+screens = [ ]
+
 def displayable(d):
+    """
+    Called to predict that the displayable `d` will be shown.
+    """
+
     if d is None:
         return
 
@@ -39,11 +52,21 @@ def displayable(d):
         predicted.add(d)
         d.visit_all(lambda i : i.predict_one())
 
+def screen(_screen_name, **kwargs):
+    """
+    Called to predict that the named screen is about to be shown
+    with the given arguments.
+    """
 
+    screens.append((_screen_name, kwargs))
+
+    
 def reset():
     global image
     image = renpy.display.im.cache.get
     predicted.clear()
+    del screens[:]
+
     
 def prediction_coroutine(root_widget):
     """
@@ -52,9 +75,62 @@ def prediction_coroutine(root_widget):
     preload_image method to be queued up for loading.
     """
 
+    global predicting
+    
+    # Set up the image prediction method.
     global image
     image = renpy.display.im.cache.preload_image
 
+    # Predict images that are going to be reached in the next few
+    # clicks.
+    predicting = True
+
     renpy.game.context().predict()
 
+    predicting = False
+    yield True
+
+    # If there's a parent context, predict we'll be returning to it
+    # shortly. Otherwise, call the functions in
+    # config.predict_callbacks.
+    predicting = True
+    
+    if len(renpy.game.contexts) >= 2:
+        sls = renpy.game.contexts[-2].scene_lists
+
+        for l in sls.layers.itervalues():
+            for sle in l:
+                displayable(sle.displayable)
+
+    else:
+        for i in renpy.config.predict_callbacks:
+            i()
+                
+    predicting = False
+                
+    yield True
+
+    # Predict things (especially screens) that are reachable through
+    # an action.
+    predicting = True
+
+    root_widget.visit_all(lambda i : i.predict_one_action())
+
+    predicting = False
+
+    # Predict the screens themselves.
+    for name, kwargs in screens:
+        yield True
+
+        predicting = True
+        
+        try:
+            renpy.display.screen.predict_screen(name, kwargs)
+        except:
+            if renpy.config.debug_image_cache:
+                traceback.print_exc()
+
+        predicting = False
+            
     yield False
+                
