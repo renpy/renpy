@@ -297,6 +297,9 @@ def main():
     # Remove the list of all statements from the script.
     game.script.all_stmts = None
 
+    # Initialize image cache.
+    renpy.display.im.cache.init()
+    
     # (Perhaps) Initialize graphics.
     if not game.interface:
         renpy.display.core.Interface()

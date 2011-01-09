@@ -178,6 +178,9 @@ def bootstrap(renpy_base):
 
     op.add_option('--log-startup', dest='log_startup', action='store_true', default=os.environ.get("RENPY_LOG_STARTUP", None),
                   help="Causes Ren'Py to log startup timings to its log.")
+
+    op.add_option('--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
+                  help="Causes Ren'Py to log startup timings to its log.")
                   
     options, args = op.parse_args()
 

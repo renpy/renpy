@@ -245,13 +245,11 @@ class Node(object):
 
         assert False, "Node subclass forgot to define execute."
 
-    def predict(self, callback):
+    def predict(self):
         """
-        This is called to predictively load images from this node. The
-        callback needs to be passed into the predict method of any
-        images this ast node will probably load, and the method should
-        return a list containing the nodes that this node will
-        probably execute next.
+        This is called to predictively load images from this node.  It
+        should cause renpy.display.predict.image and
+        renpy.display.predict.screen to be called as necessary.
         """
 
         if self.next:
@@ -352,7 +350,7 @@ class Say(Node):
 
         return self.next
 
-    def predict(self, callback):
+    def predict(self):
 
         if self.who is not None:
             if self.who_fast:
@@ -363,7 +361,7 @@ class Say(Node):
             who = None
 
         def predict_with(trans):
-            trans(old_widget=None, new_widget=None).predict(callback)
+            renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
 
         say_menu_with(self.with_, predict_with)
 
@@ -371,9 +369,7 @@ class Say(Node):
         if renpy.config.say_menu_text_filter:
             what = renpy.config.say_menu_text_filter(what)
 
-        for i in renpy.exports.predict_say(who, what):
-            if i is not None:
-                i.predict(callback)
+        renpy.exports.predict_say(who, what)
 
         return [ self.next ]
 
@@ -695,7 +691,7 @@ class Transform(Node):
         return self.next
 
     
-def predict_imspec(imspec, callback, scene=False):
+def predict_imspec(imspec, scene=False):
     """
     Call this to use the given callback to predict the image named
     in imspec.
@@ -732,7 +728,7 @@ def predict_imspec(imspec, callback, scene=False):
         
     renpy.game.context().predict_info.images.predict_show(tag or name, layer)
         
-    img.predict(callback)
+    renpy.display.predict.displayable(img)
 
     
 def show_imspec(imspec, atl=None):
@@ -798,8 +794,8 @@ class Show(Node):
 
         return self.next
 
-    def predict(self, callback):
-        predict_imspec(self.imspec, callback)
+    def predict(self):
+        predict_imspec(self.imspec)
         return [ self.next ]
         
 
@@ -842,10 +838,10 @@ class Scene(Node):
 
         return self.next
         
-    def predict(self, callback):
+    def predict(self):
         
         if self.imspec:
-            predict_imspec(self.imspec, callback, scene=True)
+            predict_imspec(self.imspec, scene=True)
 
         return [ self.next ]
 
@@ -870,7 +866,7 @@ class Hide(Node):
     def diff_info(self): 
         return (Hide, tuple(self.imspec[0]))
 
-    def predict(self, callback):
+    def predict(self):
 
         if len(self.imspec) == 3:
             name, at_list, layer = self.imspec
@@ -943,13 +939,14 @@ class With(Node):
 
         return self.next
 
-    def predict(self, callback):
+    def predict(self):
 
         try:
             trans = renpy.python.py_eval(self.expr)
 
             if trans:
-                trans(old_widget=None, new_widget=None).predict(callback)
+                renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
+
         except:
             pass
 
@@ -1023,7 +1020,7 @@ class Call(Node):
         return rv
         
         
-    def predict(self, callback):
+    def predict(self):
         if self.expression:
             return [ ]
         else:
@@ -1066,7 +1063,7 @@ class Return(Node):
             
         return renpy.game.context().lookup_return(pop=True)
 
-    def predict(self, callback):
+    def predict(self):
         site = renpy.game.context().lookup_return(pop=False)
         if site:
             return [ site ]
@@ -1138,18 +1135,16 @@ class Menu(Node):
             return self.items[choice][2][0]
         
 
-    def predict(self, callback):
+    def predict(self):
         rv = [ ]
 
         def predict_with(trans):
-            trans(old_widget=None, new_widget=None).predict(callback)
+            renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
 
         say_menu_with(self.with_, predict_with)
 
-        for i in renpy.store.predict_menu():
-            if i is not None:
-                i.predict(callback)
-
+        renpy.store.predict_menu()
+        
         for label, condition, block in self.items:
             if block:
                 rv.append(block[0])
@@ -1198,7 +1193,7 @@ class Jump(Node):
         renpy.game.context().abnormal = True
         return rv
 
-    def predict(self, callback):
+    def predict(self):
 
         if self.expression:
             return [ ]
@@ -1257,7 +1252,7 @@ class While(Node):
         else:
             return self.next
 
-    def predict(self, callback):
+    def predict(self):
         return [ self.block[0], self.next ]
         
     def scry(self):
@@ -1303,7 +1298,7 @@ class If(Node):
 
         return self.next
 
-    def predict(self, callback):
+    def predict(self):
 
         return [ block[0] for condition, block in self.entries ] + \
                [ self.next ]
@@ -1334,12 +1329,8 @@ class UserStatement(Node):
         self.call("execute")
         return self.get_next()
 
-    def predict(self, callback):
-        predicted = self.call("predict") or [ ]
-
-        for i in predicted:
-            callback(i)
-            
+    def predict(self):
+        self.call("predict")            
         return [ self.get_next() ]
     
     def call(self, method, *args, **kwargs):

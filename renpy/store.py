@@ -343,9 +343,9 @@ adv = ADVCharacter(None,
 def predict_say(who, what):
     who = Character(who, kind=name_only)
     try:
-        return who.predict(what)
+        who.predict(what)
     except:
-        return [ ]
+        pass
     
 def say(who, what, interact=True):
     who = Character(who, kind=name_only)

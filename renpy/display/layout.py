@@ -919,14 +919,14 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         
         return renpy.display.render.render(self.child, w, h, st, at)
 
-    def predict_one(self, callback):
+    def predict_one(self):
 
         if not self.predict_function:
             return
         
         for i in self.predict_function(*self.args, **self.kwargs):
             if i is not None:
-                i.predict(callback)
+                renpy.display.predict.displayable(i)
         
     def get_placement(self):
         if not self.child:

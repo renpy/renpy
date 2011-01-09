@@ -258,15 +258,7 @@ class Displayable(renpy.object.Object):
 
         return None
 
-    def predict(self, callback):
-        """
-        Called to ask this displayable to call the callback with all
-        the images it, and its children, may want to load.
-        """
-        
-        self.visit_all(lambda i : i.predict_one(callback))
-        
-    def predict_one(self, callback):
+    def predict_one(self):
         """
         Called to ask this displayable to call the callback with all
         the images it may want to load.
@@ -274,16 +266,7 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def predict_actions(self, callback):
-        """
-        Called to ask this displayable to predict the images that
-        might be loaded by the actions of it and its children.
-        """
-
-        self.visit_all(lambda i : i.predict_one_action(callback))
-        
-    
-    def predict_one_action(self, callback):
+    def predict_one_action(self):
         """
         Called to ask this displayable to cause image prediction
         to occur for images that may be loaded by its actions.
@@ -1788,7 +1771,8 @@ class Interface(object):
             
         # Tick time forward.
         renpy.display.im.cache.tick()
-
+        renpy.display.predict.reset()
+        
         # Cleare the size groups.
         renpy.display.layout.size_groups.clear()
         
@@ -1837,9 +1821,8 @@ class Interface(object):
         scene = self.compute_scene(scene_lists)
 
         # If necessary, load all images here.
-        if renpy.config.load_before_transition:
-            for w in scene.itervalues():
-                w.predict(renpy.display.im.cache.get)
+        for w in scene.itervalues():
+            renpy.display.predict.displayable(w)
 
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
@@ -1913,6 +1896,8 @@ class Interface(object):
         for layer in renpy.config.top_layers:
             add_layer(root_widget, layer)
 
+        prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
+            
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
 
@@ -1942,10 +1927,6 @@ class Interface(object):
         # We don't yet know when the interaction began.
         self.interact_time = None
         
-        # We only want to do prediction once, but we will defer it as
-        # long as possible.
-        did_prediction = False
-
         # We only want to do autosave once.
         did_autosave = False
         
@@ -2032,16 +2013,19 @@ class Interface(object):
                 needs_redraw = needs_redraw or renpy.display.render.process_redraws()
 
                 # Predict images, if we haven't done so already.
-                if not did_prediction and not self.event_peek():                    
-                    if not renpy.config.load_before_transition:
-                        root_widget.predict(renpy.display.im.cache.preload_image)
 
-                    for w in preloads:
-                        w.predict(renpy.display.im.cache.preload_image)
+                while (prediction_coroutine is not None) \
+                        and not needs_redraw \
+                        and not self.event_peek():
+                    
+                    result = prediction_coroutine.next()
+                    if not result:
+                        prediction_coroutine = None
+                        break
 
-                    renpy.game.context().predict(renpy.display.im.cache.preload_image)
-                    renpy.display.im.cache.preload()
-                    did_prediction = True
+                # if not did_prediction and not self.event_peek():                    
+                #    renpy.game.context().predict(renpy.display.im.cache.preload_image)
+                #     did_prediction = True
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.

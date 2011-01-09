@@ -83,7 +83,7 @@ savedir = None
 
 # The number of screens worth of images that are allowed to
 # live in the image cache at once.
-image_cache_size = 8
+image_cache_size = 10
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a

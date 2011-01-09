@@ -1386,8 +1386,9 @@ class ParameterizedText(object):
 
         return Text(string, style=self.style, **self.properties)
         
-    def predict(self, callback):
+    def predict(self):
         return
+
     
 # This checks the text tags in a string to be sure they are all matched, and
 # properly nested. It returns an error message, or None if the line is okay.

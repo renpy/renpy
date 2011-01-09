@@ -368,11 +368,9 @@ class ATLTransformBase(renpy.object.Object):
             self.done = True
 
         return pause
-
     
-    def predict(self, callback):
-        self.atl.predict(self.context, callback)
-
+    def predict_one(self):
+        self.atl.predict(self.context)
         
     def visit(self):
         if not self.block:
@@ -394,9 +392,8 @@ class RawStatement(renpy.object.Object):
         raise Exception("Compile not implemented.")
 
     # Predicts the images used by this statement.
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
         return
-    
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
@@ -459,9 +456,9 @@ class RawBlock(RawStatement):
 
         return Block(self.loc, statements)
 
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
         for i in self.statements:
-            i.predict(ctx, callback)
+            i.predict(ctx)
     
     
 # A compiled ATL block. 
@@ -717,7 +714,7 @@ class RawMultipurpose(RawStatement):
 
         return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
             
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
 
         for i, j in self.expressions:
             
@@ -727,17 +724,14 @@ class RawMultipurpose(RawStatement):
                 continue
 
             if isinstance(i, ATLTransformBase):
-                i.atl.predict(ctx, callback)
+                i.atl.predict(ctx)
                 return
 
             try:
-                i = renpy.easy.displayable(i)
+                renpy.easy.predict(i)
             except:
                 continue
-
-            if isinstance(i, renpy.display.core.Displayable):
-                i.predict(callback)
-
+            
 # This lets us have an ATL transform as our child.
 class RawContainsExpr(RawStatement):
 
@@ -980,9 +974,9 @@ class RawParallel(RawStatement):
     def compile(self, ctx):
         return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
         for i in self.blocks:
-            i.predict(ctx, callback)
+            i.predict(ctx)
     
         
 class Parallel(Statement):
@@ -1043,9 +1037,9 @@ class RawChoice(RawStatement):
         compiling(self.loc)
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
         for i, j in self.choices:
-            j.predict(ctx, callback)
+            j.predict(ctx)
 
 class Choice(Statement):
 
@@ -1132,9 +1126,9 @@ class RawOn(RawStatement):
 
         return On(self.loc, handlers)
 
-    def predict(self, ctx, callback):
+    def predict(self, ctx):
         for i in self.handlers.itervalues():
-            i.predict(ctx, callback)
+            i.predict(ctx)
 
 class On(Statement):
 

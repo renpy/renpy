@@ -17,6 +17,10 @@ screen language imagemaps, and can be disabled with
 :var:`config.imagemap_cache`.
 
 
+As the size of the image cache is now tracked more closely, the default
+size of the cache has been increased to 10 screens worth of images.
+
+
 Ren'Py 6.11.2
 =============
 

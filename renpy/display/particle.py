@@ -226,6 +226,12 @@ class SpriteManager(renpy.display.core.Displayable):
         self.children.append(s)
 
         return s
+
+    def predict_one(self):
+        if self.predict_function is not None:
+            for i in self.predict_function():
+                renpy.display.predict.displayable(i)
+                
     
     def redraw(self):
         """
@@ -342,7 +348,6 @@ class Particles(renpy.display.core.Displayable):
         if version < 1:
             self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
         
-    
     def after_setstate(self):
         self.particles = None
 

@@ -49,7 +49,7 @@ class Action(renpy.object.Object):
     def periodic(self, st):
         return
 
-    def predict(self, callback):
+    def predict(self):
         return
     
     def __call__(self):

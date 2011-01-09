@@ -85,11 +85,18 @@ class Cache(object):
         # Images that we tried, and failed, to preload.
         self.preload_blacklist = set()
 
+        # The size of the cache, in pixels.
+        self.cache_limit = 0
+
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
         self.preload_thread.setDaemon(True)
         self.preload_thread.start()
 
+        
+    def init(self):
+        self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
+        renpy.config.debug_image_cache = renpy.config.debug_image_cache or renpy.game.options.debug_image_cache
         
     def quit(self):
         if not self.preload_thread.isAlive():
@@ -103,12 +110,6 @@ class Cache(object):
         self.preload_thread.join()
         
         
-    # Returns the maximum size of the cache, after which we start
-    # tossing things out.
-    def cache_limit(self):
-        return renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
-
-    
     # Clears out the cache.
     def clear(self):
         self.lock.acquire()
@@ -126,36 +127,20 @@ class Cache(object):
     # preloaded.
     def tick(self):
 
-        self.lock.acquire()
-
-        self.time += 1
-        self.preloads = [ ]
-        self.first_preload_in_tick = True
-        self.size_of_current_generation = 0
+        with self.lock:
+            self.time += 1
+            self.preloads = [ ]
+            self.first_preload_in_tick = True
+            self.size_of_current_generation = 0
 
         if renpy.config.debug_image_cache:
             print "IC ----"
-
-        self.lock.release()
 
     # The preload thread can deal with this update, so we don't need
     # to lock things. 
     def end_tick(self):
         self.preloads = [ ]
 
-        
-    # Called to report that a given image would like to be preloaded.
-    def preload_image(self, image):
-        if renpy.config.debug_image_cache:
-            print "IC Request Preload", image
-
-        if not isinstance(image, ImageBase):
-            if renpy.config.debug_image_cache:
-                print "IC Can't preload non image: ", image
-            else:
-                return
-        
-        self.preloads.append(image)
         
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -208,7 +193,7 @@ class Cache(object):
             renpy.display.render.mutated_surface(ce.surf)
 
             if renpy.config.debug_image_cache:
-                print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit())
+                print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit)
 
             renpy.display.draw.load_texture(ce.surf)
 
@@ -241,69 +226,55 @@ class Cache(object):
         if renpy.config.debug_image_cache:
             print "IC Removed", ce.what
 
-    # Calling this cleans out the image cache if it has gotten too large.
     def cleanout(self):
-        cache_limit = self.cache_limit()
+        """
+        Cleans out the cache, if it's gotten too large. Returns True
+        if the cache is smaller than the size limit, or False if it's
+        bigger and we don't want to continue preloading.
+        """
 
         # If we're within the limit, return.
-        if self.total_cache_size <= cache_limit:
-            return
+        if self.total_cache_size <= self.cache_limit:
+            return True
 
         # If we're outside the cache limit, we need to go and start
         # killing off some of the entries until we're back inside it.
         
-        # A list of time, cache_entry pairs.
-        ace = [ (ce.time, ce) for ce in self.cache.itervalues() ]
-        ace.sort()
-
-        while ace and self.total_cache_size > cache_limit:
-
-            time, ce = ace.pop(0)
+        for ce in sorted(self.cache.itervalues(), key=lambda a : a.time):
         
-            if time == self.time:
+            if ce.time == self.time:
                 # If we're bigger than the limit, and there's nothing
                 # to remove, we should stop the preloading right away.
-
-                self.preloads = [ ]
-                break
-
+                return False
 
             # Otherwise, kill off the given cache entry.
             self.kill(ce)
 
-        if renpy.config.debug_image_cache:
-            print "IC is:", self.cache.keys()
-            print "IC size:", self.total_cache_size, "/", cache_limit
+            # If we're in the limit, we're done.
+            if self.total_cache_size <= self.cache_limit:
+                break
 
-
-    # This actually performs preloading.
-    def preload(self):
-
-        self.lock.acquire()
-        
-        if self.first_preload_in_tick:
-            self.first_preload_in_tick = False
-
-            # Triage into stuff that's already in the cache and should
-            # be kept there, and stuff that isn't there already.
-
-            new_preloads = [ ]
-
-            for i in self.preloads:
-                if i in self.cache:
-                    self.get(i)
-                else:
-                    new_preloads.append(i)
-
-            self.preloads = new_preloads
-
-            # Clean out the cache.
-            self.cleanout()
-
-            # Notify the preload thread that it might have some work to do.
-            self.lock.notify()
+        return True
             
-        self.lock.release()
+
+    # Called to report that a given image would like to be preloaded.
+    def preload_image(self, im):
+        if renpy.config.debug_image_cache:
+            print "IC Request Preload", im
+
+        if not isinstance(im, ImageBase):
+            if renpy.config.debug_image_cache:
+                print "IC Can't preload non-image: ", im
+            else:
+                return
+
+        with self.lock:
+            if im in self.cache:
+                self.get(im)
+            else:
+                self.preloads.append(im)
+                self.lock.notify()
+        
 
     def preload_thread_main(self):
 
@@ -315,36 +286,28 @@ class Cache(object):
 
             while self.preloads and self.keep_preloading:
         
-                # Otherwise, new_preloads contains things that aren't in the
-                # cache already. So load one of them into the cache, maybe.
-
-                cache_limit = self.cache_limit()
-
                 # If the size of the current generation is bigger than the
                 # total cache size, stop preloading.
-                if self.size_of_current_generation > cache_limit:
+                if self.size_of_current_generation > self.cache_limit:
                     self.preloads = [ ]
                     break
                 
-                # Otherwise, preload the next image.
-                self.lock.acquire()
+                with self.lock:
 
-                try:
-                    image = self.preloads.pop(0)                    
+                    try:
+                        image = self.preloads.pop(0)                    
 
-                    if image not in self.preload_blacklist:
+                        if image not in self.preload_blacklist:
+                            try:
+                                self.get(image)
+                            except:
+                                self.preload_blacklist.add(image)                        
 
-                        try:
-                            self.get(image)
-                        except:
-                            self.preload_blacklist.add(image)
-                        
-                except:
-                    pass
-                    
-                # And, we're done.
-                self.cleanout()
-                self.lock.release()
+                    except:
+                        pass
+
+                    if not self.cleanout():
+                        self.preloads = [ ]
 
             # If we have time, preload pinned images.
             if self.keep_preloading and not renpy.game.less_memory:
@@ -383,8 +346,7 @@ class Cache(object):
                     try:
                         surf = image.load()
                         self.pin_cache[image] = surf
-                        renpy.display.draw.load_texture(surf)
-                        
+                        renpy.display.draw.load_texture(surf)                        
                     except:
                         self.preload_blacklist.add(image)
 
@@ -455,8 +417,8 @@ class ImageBase(renpy.display.core.Displayable):
         rv.blit(texture, (0, 0))
         return rv
 
-    def predict_one(self, callback):
-        callback(self)
+    def predict_one(self):
+        renpy.display.predict.image(self)
 
     def predict_files(self):
         """

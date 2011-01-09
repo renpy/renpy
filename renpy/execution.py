@@ -332,7 +332,7 @@ class Context(renpy.object.Object):
         
         return rv
 
-    def predict(self, callback):
+    def predict(self):
         """
         Performs image prediction, calling the given callback with each
         images that we predict to be loaded, in the rough order that
@@ -345,7 +345,8 @@ class Context(renpy.object.Object):
         old_predict_info = self.predict_info
         
         nodes = [ (renpy.game.script.lookup(self.current), self.predict_info) ]
-
+        node_set = set()
+        
         for i in range(0, renpy.config.predict_statements):
 
             if i >= len(nodes):
@@ -358,12 +359,13 @@ class Context(renpy.object.Object):
             # prediction is not needed.
 
             try:
-                for n in node.predict(callback):
+                for n in node.predict():
                     if n is None:
                         continue
 
-                    if n not in nodes:
+                    if n not in node_set:
                         nodes.append((n, self.predict_info))
+                        node_set.add(n)
             except:
 
                 if renpy.config.debug_image_cache:

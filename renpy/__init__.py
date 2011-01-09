@@ -93,6 +93,7 @@ def import_all():
     import renpy.display.screen
     import renpy.display.dragdrop
     import renpy.display.imagemap
+    import renpy.display.predict
     
     import renpy.display.error
     

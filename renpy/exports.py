@@ -42,6 +42,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
+from renpy.easy import predict
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
@@ -49,7 +50,6 @@ import renpy.audio.sound as sound
 import renpy.audio.music as music
 
 import time
-
 
 def public_api():
     """
@@ -74,6 +74,7 @@ def public_api():
     define_screen, show_screen, hide_screen, use_screen, has_screen
     current_screen, get_screen, get_widget
     focus_coordinates
+    predict
     
 del public_api
 
@@ -108,16 +109,6 @@ def block_rollback():
     """
 
     renpy.game.log.block()
-
-def predict(img):
-    """
-    Predicts the supplied image or displayable. This will cause it to be
-    loaded during the next (and only the next) interaction, if there's any
-    free time.
-    """
-
-    img = renpy.easy.displayable(img)
-    renpy.game.interface.preloads.append(img)
 
 scene_lists = renpy.display.core.scene_lists
     
@@ -414,10 +405,9 @@ def predict_menu():
     """
     Predicts widgets that are used by the menu.
     """
-    
-    return [ renpy.game.style.menu_window.background,
-             renpy.game.style.menu_choice_button.background ]
 
+    # TODO
+    
 def display_menu(items, window_style='menu_window', interact=True, with_none=None, **kwargs):
     """
     Displays a menu containing the given items, returning the value of
@@ -535,9 +525,7 @@ def predict_say(who, what):
 
     predict = getattr(who, 'predict', None)
     if predict: 
-        return predict(what)
-    else:
-        return [ ]
+        predict(what)
 
 def scry_say(who, scry):
     """

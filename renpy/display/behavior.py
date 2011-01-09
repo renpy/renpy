@@ -187,7 +187,7 @@ def run(var, *args, **kwargs):
     return var(*args)
 
 
-def predict_action(var, callback):
+def predict_action(var):
     """
     Predicts some of the actions that may be caused by a variable.
     """
@@ -196,7 +196,7 @@ def predict_action(var, callback):
         return
 
     if isinstance(var, renpy.ui.Action):
-        return var.predict(callback)
+        var.predict()
     
     if isinstance(var, (list, tuple)):
         for i in var:
@@ -268,9 +268,9 @@ class Keymap(renpy.display.layout.Null):
                 
                 raise renpy.display.core.IgnoreEvent()
 
-    def predict_one_action(self, callback):
+    def predict_one_action(self):
         for i in self.keymap.itervalues():
-            predict_action(i, callback)
+            predict_action(i)
             
 
 class RollForward(renpy.display.layout.Null):
@@ -474,14 +474,14 @@ class Button(renpy.display.layout.Window):
         
         self.time_policy_data = None
 
-    def predict_one_action(self, callback):
-        predict_action(self.clicked, callback)
-        predict_action(self.hovered, callback)
-        predict_action(self.unhovered, callback)
+    def predict_one_action(self):
+        predict_action(self.clicked)
+        predict_action(self.hovered)
+        predict_action(self.unhovered)
 
         if self.keymap:
             for v in self.keymap.itervalues():
-                predict_action(v, callback)
+                predict_action(v)
         
     def render(self, width, height, st, at):
 

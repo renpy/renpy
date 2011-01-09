@@ -85,3 +85,11 @@ def displayable(d):
         return d
     
     raise Exception("Not a displayable: %r" % (d,))
+
+def predict(d):
+    d = renpy.easy.displayable_or_none(d)
+
+    if d is not None:
+        renpy.display.predict.displayable(d)
+        
+    

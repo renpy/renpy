@@ -313,3 +313,4 @@ class ImageButton(renpy.display.behavior.Button):
 
     def get_child(self):
         return self.style.child or self.state_children[self.style.prefix]
+

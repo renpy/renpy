@@ -106,20 +106,12 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
 
     rv = [ ]
 
-    if "background" in window_args:
-        rv.append(window_args["background"])
-    else:        
-        rv.append(getattr(renpy.game.style, window_args["style"]).background)
-
-    if two_window:
-        rv.append(renpy.game.style.say_who_window.background)
-
     if image:
         if image != "<Dynamic>":
-            rv.append(renpy.display.im.image(who, True))
+            renpy.easy.predict(who)
 
     if side_image:
-        rv.append(renpy.display.im.image(side_image, True))
+        renpy.easy.predict(side_image)
 
     return rv
 
