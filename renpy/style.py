@@ -659,14 +659,17 @@ def restore(o):
 
 def style_metaclass(name, bases, attrs):
 
-    for k in expansions.iterkeys():
+    for k in expansions:
         def setter_a(self, v,  k=k):
             self.setattr(k, v)
 
         def deleter_a(self, k=k):
             self.delattr(k)
 
-        attrs[k] = property(None, setter_a, deleter_a)
+        def getter_a(self, k=k):
+            return self.getattr(k)
+                        
+        attrs[k] = property(getter_a, setter_a, deleter_a)
 
 
     for k, number in property_number.iteritems():
@@ -783,7 +786,10 @@ class Style(object):
         for p in self.properties:
             if name in p:
                 del p[name]
-        
+
+    def getattr(self, name):
+        return self.cache[expansions[name][0][1]]
+                    
     def clear(self):
         if styles_built:
             raise Exception("Cannot clear a style after styles have been built.")

@@ -983,13 +983,38 @@ class Bar(renpy.display.core.Displayable):
         self.width = 0
         self.hidden = False
         
-    def visit(self):
-        return [ self.style.fore_bar, self.style.aft_bar, self.style.thumb, self.style.thumb_shadow ]
-
     def per_interact(self):
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
-    
+
+    def predict_one(self):
+        pd = renpy.display.predict.displayable
+        style = self.style
+        
+        pd(style.insensitive_fore_bar)
+        pd(style.idle_fore_bar)
+        pd(style.hover_fore_bar)
+        pd(style.selected_idle_fore_bar)
+        pd(style.selected_hover_fore_bar)
+
+        pd(style.insensitive_aft_bar)
+        pd(style.idle_aft_bar)
+        pd(style.hover_aft_bar)
+        pd(style.selected_idle_aft_bar)
+        pd(style.selected_hover_aft_bar)
+        
+        pd(style.insensitive_thumb)
+        pd(style.idle_thumb)
+        pd(style.hover_thumb)
+        pd(style.selected_idle_thumb)
+        pd(style.selected_hover_thumb)
+
+        pd(style.insensitive_thumb_shadow)
+        pd(style.idle_thumb_shadow)
+        pd(style.hover_thumb_shadow)
+        pd(style.selected_idle_thumb_shadow)
+        pd(style.selected_hover_thumb_shadow)
+        
     def render(self, width, height, st, at):
 
         # Handle redrawing.

@@ -2023,10 +2023,6 @@ class Interface(object):
                         prediction_coroutine = None
                         break
 
-                # if not did_prediction and not self.event_peek():                    
-                #    renpy.game.context().predict(renpy.display.im.cache.preload_image)
-                #     did_prediction = True
-
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
                 if needs_redraw and not self.event_peek():
