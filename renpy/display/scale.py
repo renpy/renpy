@@ -147,7 +147,9 @@ def init():
 
         if factor <= 0:
             factor = 1.0
-        
+
+    factor = max(0.5, factor)
+            
     if factor != 1.0:
         print "Using scale factor of %f." % factor
         load_scaling()

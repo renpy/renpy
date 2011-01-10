@@ -582,9 +582,10 @@ class SolidImage(ImageBase):
        
     def load(self):
 
-        rv = renpy.display.pgrender.surface((self.width, self.height), True)
-        rv.fill(self.color)
-
+        surf = renpy.display.pgrender.surface((self.width + 4, self.height + 4), True)
+        surf.fill(self.color)
+        rv = surf.subsurface((2, 2, self.width, self.height))
+        
         return rv  
 
 class Scale(ImageBase):

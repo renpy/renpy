@@ -132,10 +132,10 @@ def surface((width, height), alpha):
     # We might not have initialized properly yet. This is enough
     # to get us underway.
     if sample is None:
-        sample = opygame.Surface((2, 2), opygame.SRCALPHA, 32)
+        sample = opygame.Surface((4, 4), opygame.SRCALPHA, 32)
         
-    surf = Surface((width + 2, height + 2), 0, sample)
-    return surf.subsurface((1, 1, width, height)) # E1101
+    surf = Surface((width + 4, height + 4), 0, sample)
+    return surf.subsurface((2, 2, width, height)) # E1101
 
 surface_unscaled = surface
 

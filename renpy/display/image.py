@@ -202,11 +202,13 @@ class Solid(renpy.display.core.Displayable):
         if color is None or width <= 0 or height <= 0:
             return rv
 
-        si = renpy.display.im.SolidImage(color, 4, 4)
-        sr = render(si, 4, 4, st, at)
+        SIZE = 10
+        
+        si = renpy.display.im.SolidImage(color, SIZE, SIZE)
+        sr = render(si, SIZE, SIZE, st, at)
 
-        rv.forward = Matrix2D(1.0 * 4 / width, 0, 0, 1.0 * 4 / height)
-        rv.reverse = Matrix2D(1.0 * width / 4, 0, 0, 1.0 * height / 4)
+        rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
+        rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
         rv.blit(sr, (0, 0))
 
         return rv

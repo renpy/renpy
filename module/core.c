@@ -1028,8 +1028,8 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    double maxsx = srcw - 1;
-    double maxsy = srch - 1;
+    double maxsx = srcw;
+    double maxsy = srch;
     
     // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
     // that 1px border that allows us to be precise.
@@ -1059,7 +1059,7 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
         // The source coordinates of the leftmost pixel in the line.
         double leftsx = corner_x + y * xdy;
         double leftsy = corner_y + y * ydy;
-
+        
         // Min and max x-extent to draw on the current line.
         double minx = 0;
         double maxx = dstw - 1;
@@ -1115,7 +1115,7 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
         // Advance start of line by 4.
         d += 4 * (int) minx;
-
+        
         // Starting coordinates and deltas.
         sxi = (int) ((leftsx + minx * xdx) * 65536); 
         syi = (int) ((leftsy + minx * ydx) * 65536);
@@ -1230,8 +1230,8 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     unsigned int amul = (unsigned int) (a * 256);
 
     // Compute the maximum x and y coordinates.
-    double maxsx = srcw - 1;
-    double maxsy = srch - 1;
+    double maxsx = srcw;
+    double maxsy = srch;
     
     // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
     // that 1px border that allows us to be precise.
@@ -1438,11 +1438,13 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
                       float a,
                       int precise
     ) {
-    
+
 #ifdef GCC_MMX
     static int checked_mmx = 0;
     static int has_mmx = 0;
 
+
+    
     if (! checked_mmx) {
         has_mmx = SDL_HasMMX();
         checked_mmx = 1;
