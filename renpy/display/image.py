@@ -24,7 +24,7 @@
 # of the stuff thar uses images remaining.
 
 import renpy
-from renpy.display.render import render, Render
+from renpy.display.render import render, Render, Matrix2D
 
 Image = renpy.display.im.image
 
@@ -186,16 +186,30 @@ class Solid(renpy.display.core.Displayable):
             self.color = renpy.easy.color(color)
         else:
             self.color = None
-            
+
+    def visit(self):
+        if self.color:
+            return [ renpy.display.im.SolidImage(self.color, 4, 4) ]
+        else:
+            return [ ]
+        
     def render(self, width, height, st, at):
 
         color = self.color or self.style.color
         
-        si = renpy.display.im.SolidImage(color,
-                                         width,
-                                         height)
+        rv = Render(width, height)
 
-        return wrap_render(si, width, height, st, at)
+        if color is None or width <= 0 or height <= 0:
+            return rv
+
+        si = renpy.display.im.SolidImage(color, 4, 4)
+        sr = render(si, 4, 4, st, at)
+
+        rv.forward = Matrix2D(1.0 * 4 / width, 0, 0, 1.0 * 4 / height)
+        rv.reverse = Matrix2D(1.0 * width / 4, 0, 0, 1.0 * height / 4)
+        rv.blit(sr, (0, 0))
+
+        return rv
         
 class Frame(renpy.display.core.Displayable):
     """
@@ -234,30 +248,143 @@ class Frame(renpy.display.core.Displayable):
         
     __version__ = 1
 
-    def after_upgrade(self, version):
-        if version < 1:
-            self.bilinear = False
-    
-    def __init__(self, image, xborder, yborder, bilinear=False, tile=False, **properties):
+    def __init__(self, image, xborder, yborder, bilinear=True, tile=False, **properties):
         super(Frame, self).__init__(**properties)
 
-        self.image = Image(image)
+        self.image = renpy.easy.displayable(image)
         self.xborder = xborder
         self.yborder = yborder
         self.tile = tile
-        self.bilinear = bilinear
 
     def render(self, width, height, st, at):
 
-        fi = renpy.display.im.FrameImage(self.image,
-                                         self.xborder,
-                                         self.yborder,
-                                         width,
-                                         height,
-                                         self.tile,
-                                         self.bilinear)
+        def draw(x0, x1, y0, y1):
 
-        return wrap_render(fi, width, height, st, at)
+            # Compute the coordinates of the left, right, top, and
+            # bottom sides of the region, for both the source and
+            # destination surfaces.
+
+            # left side.
+            if x0 >= 0:
+                dx0 = x0
+                sx0 = x0
+            else:
+                dx0 = dw + x0
+                sx0 = sw + x0
+
+            # right side.
+            if x1 > 0:
+                dx1 = x1
+                sx1 = x1
+            else:
+                dx1 = dw + x1
+                sx1 = sw + x1
+
+            # top side.
+            if y0 >= 0:
+                dy0 = y0
+                sy0 = y0
+            else:
+                dy0 = dh + y0
+                sy0 = sh + y0
+        
+            # bottom side
+            if y1 > 0:
+                dy1 = y1
+                sy1 = y1
+            else:
+                dy1 = dh + y1
+                sy1 = sh + y1
+
+            # Quick exit.
+            if sx0 == sx1 or sy0 == sy1:
+                return
+            
+            # Compute sizes.
+            csw = sx1 - sx0
+            csh = sy1 - sy0
+            cdw = dx1 - dx0
+            cdh = dy1 - dy0
+
+            if csw <= 0 or csh <= 0 or cdh <= 0 or cdw <= 0:
+                return
+            
+            # Get a subsurface.
+            cr = crend.subsurface((sx0, sy0, csw, csh))
+
+            # Scale or tile if we have to.
+            if csw != cdw or csh != cdh:
+                if self.tile:
+                    newcr = Render(cdw, cdh)
+                    newcr.clipping = True
+
+                    for x in xrange(0, cdw, csw):
+                        for y in xrange(0, cdh, csh):
+                            newcr.blit(cr, (x, y))
+
+                    cr = newcr
+                    
+                else:
+                    
+                    newcr = Render(cdw, cdh)
+                    newcr.forward = Matrix2D(1.0 * csw / cdw, 0, 0, 1.0 * csh / cdh)
+                    newcr.reverse = Matrix2D(1.0 * cdw / csw, 0, 0, 1.0 * cdh / csh)
+                    newcr.blit(cr, (0, 0))
+
+                    cr = newcr
+                        
+            # Blit.
+            rv.blit(cr, (dx0, dy0))
+            return
+        
+
+        crend = render(self.image, width, height, st, at)
+        sw, sh = crend.get_size()
+        dw = width
+        dh = height
+        
+        xb = self.xborder
+        yb = self.yborder
+
+        if xb * 2 >= sw:
+            xb = sw / 2 - 1
+
+        if yb * 2 >= sh:
+            yb = sh / 2 - 1
+
+        rv = Render(dw, dh)
+            
+        # Top row.
+        if yb:
+
+            if xb:
+                draw(0, xb, 0, yb)
+
+            draw(xb, -xb, 0, yb)
+
+            if xb:
+                draw(-xb, 0, 0, yb)
+
+        # Middle row.
+        if xb:
+            draw(0, xb, yb, -yb)
+
+        draw(xb, -xb, yb, -yb)
+
+        if xb:
+            draw(-xb, 0, yb, -yb)
+
+        # Bottom row.
+        if yb:
+            if xb:
+                draw(0, xb, -yb, 0)
+
+            draw(xb, -xb, -yb, 0)
+
+            if xb:
+                draw(-xb, 0, -yb, 0)
+
+        return rv
 
     def visit(self):
         return [ self.image ]
