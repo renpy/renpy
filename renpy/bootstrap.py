@@ -256,8 +256,6 @@ def bootstrap(renpy_base):
     import renpy
     renpy.import_all()
 
-    renpy.game.options = options
-    
     if options.version:
         print renpy.version
         sys.exit(0)
@@ -268,6 +266,7 @@ def bootstrap(renpy_base):
     try:
         while keep_running:
             try:
+                renpy.game.options = options    
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
