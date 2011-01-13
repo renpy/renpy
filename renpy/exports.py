@@ -409,7 +409,18 @@ def predict_menu():
 
     # TODO
     
-def display_menu(items, window_style='menu_window', interact=True, with_none=None, **kwargs):
+def display_menu(items,
+                 window_style='menu_window',
+                 interact=True,
+                 with_none=None,
+                 scope={ },
+                 widget_properties=None,
+                 caption_style='menu_caption',
+                 choice_style='menu_choice',
+                 choice_chosen_style='menu_choice_chosen',
+                 choice_button_style='menu_choice_button',
+                 choice_chosen_button_style='menu_choice_chosen_button',
+                 **kwargs):
     """
     Displays a menu containing the given items, returning the value of
     the item the user selects.
@@ -449,14 +460,60 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
         renpy.ui.pausebehavior(renpy.config.auto_choice_delay,
                                random.choice(choices))
 
+    # The chosen dictionary.
+    chosen = renpy.game.persistent._chosen
+    if chosen is None:
+        chosen = renpy.game.persistent._chosen = { }
+
+    # The location
+    location=renpy.game.context().current
+     
+        
     # Show the menu.
     if has_screen("choice"):
-        item_actions = [ (label, renpy.ui.returns(val)) for (label, val) in items if label is not None ]
-        show_screen("choice", items=item_actions, _transient=True)
+
+        item_actions = [ ]
+
+        if widget_properties is None:
+            props = { }
+        else:
+            props = widget_properties
+
+        props["window"] = { "style" : window_style }
+            
+        for i, (label, value) in enumerate(items):
+            button_id = "button_%d" % i
+            caption_id = "caption_%d" % i
+
+            if value is None:
+                props[caption_id] = { "style" : caption_style }
+            
+            if (location, label) in chosen:
+                props[button_id] = { "style" : choice_chosen_button_style }
+                props[caption_id] = { "style" : choice_chosen_style }
+            else:
+                props[button_id] = { "style" : choice_button_style }
+                props[caption_id] = { "style" : choice_style }
+
+            if renpy.config.choice_screen_ids:
+                item_actions.append((label, renpy.ui.returns(val), button_id, caption_id))
+            else:
+                item_actions.append((label, renpy.ui.returns(val)))
+
+            show_screen("choice", items=item_actions, _widget_properties=props, _transient=True, **scope)
 
     else:
         renpy.ui.window(style=window_style, focus="menu")
-        renpy.ui.menu(items, location=renpy.game.context().current, focus="choices", default=True, **kwargs)
+        renpy.ui.menu(items,
+                      location=renpy.game.context().current,
+                      focus="choices",
+                      default=True,
+                      caption_style=caption_style,
+                      choice_style=choice_style,
+                      choice_chosen_style=choice_chosen_style,
+                      choice_button_style=choice_button_style,
+                      choice_chosen_button_style=choice_chosen_button_style,
+                      **kwargs)
 
     renpy.exports.shown_window()
 
@@ -473,6 +530,12 @@ def display_menu(items, window_style='menu_window', interact=True, with_none=Non
             
         rv = renpy.ui.interact(mouse='menu', type="menu", roll_forward=roll_forward)
 
+        # Mark this as chosen.
+        for label, val in items:
+            if rv == val:
+                chosen[(location, val)] = True
+
+        
         for label, val in items:
             if rv == val:
                 log("User chose: " + label)

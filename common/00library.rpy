@@ -67,6 +67,10 @@ init -1180 python:
 
     # Should we start the game with scene black or just scene?
     config.start_scene_black = False
+
+    # Voice and Sound samples.
+    config.sample_sound = None
+    config.sample_voice = None
     
     # This is updated to give the user an idea of where a save is
     # taking place.

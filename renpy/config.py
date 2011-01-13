@@ -460,6 +460,10 @@ predict_callbacks = [ ]
 # Should screens be predicted?
 predict_screens = True
 
+# Should we use the new choice screen format?
+choice_screen_ids = True
+
+
 del renpy
 del os
 
