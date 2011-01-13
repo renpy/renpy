@@ -80,9 +80,10 @@ init -1100 python:
         else:
             return s
 
-    def nvl_show_screen(screen_name, **scope):
+    def __nvl_screen_dialogue():
         """
-         Shows an nvl-mode screen. Returns the "who" widget.
+         Returns widget_properties and dialogue for the current NVL
+         mode screen.
          """
 
         widget_properties = { }
@@ -108,8 +109,16 @@ init -1100 python:
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
 
-            dialogue.append((who, what, who_id, what_id, window_id))
+            dialogue.append((who, what, who_id, wIhat_id, window_id))
         
+        return widget_properties, dialogue
+        
+    def __nvl_show_screen(screen_name, **scope):
+        """
+         Shows an nvl-mode screen. Returns the "what" widget.
+         """
+
+        widget_properties, dialogue = __nvl_screen_dialogue()        
         renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
         renpy.shown_window()
 
@@ -119,7 +128,7 @@ init -1100 python:
 
         # Screen version.
         if renpy.has_screen("nvl"):
-            return nvl_show_screen("nvl")
+            return __nvl_show_screen("nvl")
         
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
@@ -264,7 +273,8 @@ init -1100 python:
 
     # Run clear at the start of the game.
     config.start_callbacks.append(nvl_clear)
-
+    
+    
     def nvl_menu(items):
 
         renpy.mode('nvl_menu')
@@ -274,35 +284,44 @@ init -1100 python:
 
         if renpy.has_screen("nvl_choice"):
 
-            # Screen version.
-            nvl_show_screen("nvl_choice", items=items)
+            widget_properties, dialogue = __nvl_screen_dialogue()        
 
-        else:
+            return renpy.display_menu(
+                items,
+                widget_properties=widget_properties,
+                scope={ "dialogue" : dialogue },
+                window_style=__s(style.nvl_menu_window),
+                choice_style=__s(style.nvl_menu_choice),
+                choice_chosen_style=__s(style.nvl_menu_choice_chosen),
+                choice_button_style=__s(style.nvl_menu_choice_button),
+                choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                )
 
-            # Traditional version.
-            ui.layer("transient")
-            ui.clear()
-            ui.close()
 
-            ui.window(style=__s(style.nvl_window))
-            ui.vbox(style=__s(style.nvl_vbox))
+        # Traditional version.
+        ui.layer("transient")
+        ui.clear()
+        ui.close()
 
-            for i in nvl_list:
-                if not i:
-                    continue
+        ui.window(style=__s(style.nvl_window))
+        ui.vbox(style=__s(style.nvl_vbox))
 
-                who, what, kw = i            
-                rv = renpy.show_display_say(who, what, **kw)
+        for i in nvl_list:
+            if not i:
+                continue
 
-            renpy.display_menu(items, interact=False,
-                               window_style=__s(style.nvl_menu_window),
-                               choice_style=__s(style.nvl_menu_choice),
-                               choice_chosen_style=__s(style.nvl_menu_choice_chosen),
-                               choice_button_style=__s(style.nvl_menu_choice_button),
-                               choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
-                               )
+            who, what, kw = i            
+            rv = renpy.show_display_say(who, what, **kw)
 
-            ui.close()
+        renpy.display_menu(items, interact=False,
+                           window_style=__s(style.nvl_menu_window),
+                           choice_style=__s(style.nvl_menu_choice),
+                           choice_chosen_style=__s(style.nvl_menu_choice_chosen),
+                           choice_button_style=__s(style.nvl_menu_choice_button),
+                           choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                           )
+
+        ui.close()
 
         roll_forward = renpy.roll_forward_info()
 

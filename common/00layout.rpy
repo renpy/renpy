@@ -14,17 +14,6 @@ init -1105 python:
     layout.compat_funcs = [ ]
     layout.provided = set()
     
-    # This takes care of actually displaying button menus.
-    def _display_button_menu(menuitems):
-        
-        narration = [ s for s, i in menuitems if i is None and s ]
-        menuitems = [ (s, i) for s, i in menuitems if i is not None or not s ]
-
-        if narration:
-            renpy.say(None, "\n".join(narration), interact=False)
-
-        return renpy.display_menu(menuitems)
-
 init -1105 python hide:
 
     # Called to indicate that the given kind of layout has been
@@ -211,7 +200,7 @@ init -1105 python hide:
     @layout
     def button_menu():
 
-        store.menu = _display_button_menu
+        config.narrator_menu = True
 
         style.menu.box_spacing = 2
         style.menu_window.set_parent(style.default)

@@ -419,7 +419,14 @@ Occasionally Used
 
      The frames are played back at 20hz, and the animation loops after
      all frames have been shown.
-    
+
+.. var:: config.narrator_menu = False
+
+    (This is set to True by the default screens.rpy file.) If true,
+    then narration inside a menu is displayed using the narrator
+    character. Otherwise, narration is displayed as captions
+    within the menu itself.
+     
 .. var:: config.nvl_adv_transition = None
 
     A transition that is used when showing ADV-mode text directly

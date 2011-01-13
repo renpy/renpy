@@ -1115,17 +1115,24 @@ class Menu(Node):
     def execute(self):
 
         choices = [ ]
-            
+        narration = [ ]
+        
         for i, (label, condition, block) in enumerate(self.items):
 
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
 
             if block is None:
-                choices.append((label, condition, None))
+                if renpy.config.narrator_menu and label:
+                    narration.append(label)
+                else:
+                    choices.append((label, condition, None))
             else:
                 choices.append((label, condition, i))
 
+        if narration:
+            renpy.exports.say(None, "\n".join(narration), interact=False)
+                
         say_menu_with(self.with_, renpy.game.interface.set_transition)
         choice = renpy.exports.menu(choices, self.set)
 

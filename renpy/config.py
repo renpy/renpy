@@ -463,6 +463,8 @@ predict_screens = True
 # Should we use the new choice screen format?
 choice_screen_ids = True
 
+# Should the narrator speak menu labels?
+narrator_menu = False
 
 del renpy
 del os

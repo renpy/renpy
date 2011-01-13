@@ -25,10 +25,6 @@ init -1 python hide:
 
     config.window_title = u"The Ren'Py Tutorial Game"
 
-    ## This enables the use of an in-game menu that is made out of
-    ## buttons.
-    layout.button_menu()
-    
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.

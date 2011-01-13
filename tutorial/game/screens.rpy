@@ -85,6 +85,8 @@ screen choice:
                     text caption id caption_id
 
 init python:
+    config.narrator_menu = True
+    
     style.menu.box_spacing = 2
     style.menu_window.set_parent(style.default)
     style.menu_window.xalign = 0.5

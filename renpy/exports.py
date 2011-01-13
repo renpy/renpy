@@ -485,6 +485,14 @@ def display_menu(items,
             button_id = "button_%d" % i
             caption_id = "caption_%d" % i
 
+            if not label:
+                value = None
+
+            if value is not None:
+                action = renpy.ui.returns(value)
+            else:
+                action = None
+                
             if value is None:
                 props[caption_id] = { "style" : caption_style }
             
@@ -496,9 +504,9 @@ def display_menu(items,
                 props[caption_id] = { "style" : choice_style }
 
             if renpy.config.choice_screen_ids:
-                item_actions.append((label, renpy.ui.returns(val), button_id, caption_id))
+                item_actions.append((label, action, button_id, caption_id))
             else:
-                item_actions.append((label, renpy.ui.returns(val)))
+                item_actions.append((label, action))
 
             show_screen("choice", items=item_actions, _widget_properties=props, _transient=True, **scope)
 

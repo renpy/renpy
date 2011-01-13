@@ -26,14 +26,6 @@ init -1 python hide:
     config.window_title = u"A Ren'Py Game"
 
     #########################################
-    # Layouts
-    
-    ## This enables the use of an in-game menu that is made out of
-    ## buttons.
-
-    layout.button_menu()
-
-    #########################################
     # Themes
     
     ## We then want to call a theme function. themes.roundrect is
