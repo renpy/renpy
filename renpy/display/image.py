@@ -316,6 +316,7 @@ class Frame(renpy.display.core.Displayable):
 
             # Scale or tile if we have to.
             if csw != cdw or csh != cdh:
+
                 if self.tile:
                     newcr = Render(cdw, cdh)
                     newcr.clipping = True

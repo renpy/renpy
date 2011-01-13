@@ -92,6 +92,9 @@ cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
     glClipPlane(plane, equation)
         
 
+cdef int round(double d):
+    return <int> (d + .5)
+    
 # A list of cards that cause system/software crashes. There's no
 # reason to put merely slow or incapable cards here, only ones for
 # which GL operation is unsafe.
@@ -158,7 +161,7 @@ cdef class GLDraw:
         self.fast_dissolve = renpy.android
 
         # Should we use clipping planes or stencils?
-        self.use_clipping_planes = False # TODO: True
+        self.use_clipping_planes = True
         
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
@@ -361,7 +364,7 @@ cdef class GLDraw:
             self.redraw_period = 1.0
             self.use_clipping_planes = False
             gltexture.use_gles()
-            
+
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))
 
@@ -531,7 +534,7 @@ cdef class GLDraw:
         it flags that we are in the screen clip mode, which control how
         coordinates are mapped to the scissor box.
         """
-        
+
         self.clip_cache = None
         self.clip_rtt_box = None
         glDisable(GL_SCISSOR_TEST)
@@ -572,7 +575,6 @@ cdef class GLDraw:
 
             if self.clip_rtt_box is None:
 
-
                 vwidth, vheight = self.virtual_size
                 px, py, pw, ph = self.physical_box
 
@@ -586,14 +588,14 @@ cdef class GLDraw:
                 maxy = ph - maxy
 
                 glEnable(GL_SCISSOR_TEST)
-                glScissor(<GLint> minx, <GLint> maxy, <GLint> (maxx - minx), <GLsizei> (miny - maxy))
+                glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
 
             else:
 
                 cx, cy, cw, ch = self.clip_rtt_box
 
                 glEnable(GL_SCISSOR_TEST)
-                glScissor(<GLint> (minx - cx), <GLint> (miny - cy), <GLint> (maxx - minx), <GLint> (maxy - miny))
+                glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
                 
             
     def draw_screen(self, surftree, fullscreen_video):
