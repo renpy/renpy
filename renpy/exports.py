@@ -413,13 +413,15 @@ def display_menu(items,
                  window_style='menu_window',
                  interact=True,
                  with_none=None,
-                 scope={ },
-                 widget_properties=None,
                  caption_style='menu_caption',
                  choice_style='menu_choice',
                  choice_chosen_style='menu_choice_chosen',
                  choice_button_style='menu_choice_button',
                  choice_chosen_button_style='menu_choice_chosen_button',
+                 scope={ },
+                 widget_properties=None,
+                 screen="choice",
+                 type="menu",
                  **kwargs):
     """
     Displays a menu containing the given items, returning the value of
@@ -439,7 +441,7 @@ def display_menu(items,
     """
 
     if interact:
-        renpy.exports.mode('menu')
+        renpy.exports.mode(type)
     
     choice_for_skipping()
 
@@ -470,7 +472,7 @@ def display_menu(items,
      
         
     # Show the menu.
-    if has_screen("choice"):
+    if has_screen(screen):
 
         item_actions = [ ]
 
@@ -508,7 +510,9 @@ def display_menu(items,
             else:
                 item_actions.append((label, action))
 
-            show_screen("choice", items=item_actions, _widget_properties=props, _transient=True, **scope)
+            print "Showing screen", screen
+                
+            show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, **scope)
 
     else:
         renpy.ui.window(style=window_style, focus="menu")
@@ -536,7 +540,7 @@ def display_menu(items,
 
     if interact:
             
-        rv = renpy.ui.interact(mouse='menu', type="menu", roll_forward=roll_forward)
+        rv = renpy.ui.interact(mouse='menu', type=type, roll_forward=roll_forward)
 
         # Mark this as chosen.
         for label, val in items:

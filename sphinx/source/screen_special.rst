@@ -80,25 +80,36 @@ The ``choice`` screen is used to display the in-game choices created
 with the menu statement. It is given the following parameter:
 
 `items`
-    This is a list of (`label`, `action`) tuples, corresponding to
-    menu choices. `Label` is text, and the screen is expected to
-    display that text in a way that causes `action` to be invoked when
-    it is selected.
+    This is a list of (`caption`, `action`, `button_id`, `caption_id`)
+    tuples. For each choice, `caption` is the name of the choice, and
+    `action` is the action to invoke for the choice, or None if this
+    is a choice label. When a button is used to invoke the choice,
+    `button_id` is an id that should be given to that button. When
+    a choice displays text, `caption_id` should be the id of that
+    text.
 
 ::
 
     screen choice:
 
-        vbox:        
-            ypos .25
-            spacing 5
+        window:
+            id "window"
 
-            # Create one textbutton per label, action pair.
-            for label, action in items:
-                textbutton label:
-                    action action
-                    xmargin 50
-                    xfill True
+            vbox:
+                id "menu"
+
+                for caption, action, button_id, caption_id in items:
+
+                    if action:
+                        button:
+                            action action
+                            id button_id
+
+                            text caption id caption_id
+
+                    else:
+                        text caption id caption_id
+
 
 Input
 -----
@@ -141,27 +152,61 @@ the following parameter:
     ids should be assigned to the who and what text displayables, and
     a window containing each unit of dialogue.
 
-
-NVL_Choice
-----------
-
-The ``nvl_choice`` screen is used to display an NVL-mode menu. Its two
-parameters are a combination of those of the ``nvl`` and ``choice``
-screens. It is given the following parameters:
-
-`dialogue`
-    This is a list of ( `who`, `what`, `who_id`, `what_id`,
-    `window_id`) tuples, each of which corresponds to a line of
-    dialogue on the screen. `Who` and `what` are strings containing
-    the speaking character and the line of dialogue, respectively. The
-    ids should be assigned to the who and what text displayables, and
-    a window containing each unit of dialogue.
-
 `items`
-    This is a list of (`label`, `action`) tuples, corresponding to
-    menu choices. `Label` is text, and the screen is expected to
-    display that text in a way that causes `action` to be invoked when
-    it is selected.
+    This is a list of (`caption`, `action`, `button_id`, `caption_id`)
+    tuples. For each choice, `caption` is the name of the choice, and
+    `action` is the action to invoke for the choice, or None if this
+    is a choice label. When a button is used to invoke the choice,
+    `button_id` is an id that should be given to that button. When
+    a choice displays text, `caption_id` should be the id of that
+    text.
+
+    If items is empty, the menu should not be shown.
+
+Ren'Py also supports an ``nvl_choice`` screen, which takes the same
+parameters as ``nvl``, and is used in preference to ``nvl`` when
+an in-game choice is presented to the user, if it exists.
+
+::
+
+    screen nvl:
+
+        window:
+            style "nvl_window"
+
+            has vbox:
+                style "nvl_vbox"
+
+            # Display dialogue.
+            for who, what, who_id, what_id, window_id in dialogue:
+                window:
+                    id window_id
+
+                    has hbox:
+                        spacing 10
+
+                    if who is not None:
+                        text who id who_id
+
+                    text what id what_id
+
+            # Display a menu, if given.
+            if items:
+
+                vbox:
+                    id "menu"
+
+                    for caption, action, button_id, caption_id in items:
+
+                        if action:
+                            button:
+                                action action
+                                id button_id
+
+                                text caption id caption_id
+
+                        else:
+                            text caption id caption_id
 
 
 Notify

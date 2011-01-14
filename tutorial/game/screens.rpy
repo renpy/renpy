@@ -114,6 +114,53 @@ screen input:
 
         
 ##############################################################################
+# Nvl
+#
+# Screen used for nvl-mode dialogue and menus.
+# http://www.renpy.org/doc/html/screen_special.html#nvl
+
+screen nvl:
+
+    window:
+        style "nvl_window"
+
+        has vbox:
+            style "nvl_vbox"
+
+        # Display dialogue.
+        for who, what, who_id, what_id, window_id in dialogue:
+            window:
+                id window_id
+
+                has hbox:
+                    spacing 10
+                
+                if who is not None:
+                    text who id who_id
+
+                text what id what_id
+
+        # Display a menu, if given.
+        if items:
+            
+            vbox:
+                id "menu"
+
+                for caption, action, button_id, caption_id in items:
+
+                    if action:
+                        button:
+                            action action
+                            id button_id
+
+                            text caption id caption_id
+
+                    else:
+                        text caption id caption_id
+
+                
+        
+##############################################################################
 # Main Menu 
 #
 # Screen that's used to display the main menu, when Ren'Py first starts

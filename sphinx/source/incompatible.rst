@@ -9,6 +9,16 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.12.0:
+
+6.12.0
+------
+
+The definition of the `items` parameter of the :ref:`Choice` and
+``nvl_choice`` screens has changed. The ``nvl_choice`` screen is
+deprecated in favor of the :ref:`NVL` screen.
+
+
 .. _incompatible-6.11.1:
 
 6.11.1

@@ -109,7 +109,7 @@ init -1100 python:
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
 
-            dialogue.append((who, what, who_id, wIhat_id, window_id))
+            dialogue.append((who, what, who_id, what_id, window_id))
         
         return widget_properties, dialogue
         
@@ -128,7 +128,7 @@ init -1100 python:
 
         # Screen version.
         if renpy.has_screen("nvl"):
-            return __nvl_show_screen("nvl")
+            return __nvl_show_screen("nvl", items=[ ])
         
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
@@ -282,19 +282,28 @@ init -1100 python:
         if nvl_list is None:
             store.nvl_list = [ ]
 
+        screen = None
+        
         if renpy.has_screen("nvl_choice"):
+            screen = "nvl_choice"
+        elif renpy.has_screen("nvl"):
+            screen = "nvl"
+            
+        if screen is not None:
 
             widget_properties, dialogue = __nvl_screen_dialogue()        
 
             return renpy.display_menu(
                 items,
                 widget_properties=widget_properties,
+                screen=screen,
                 scope={ "dialogue" : dialogue },
                 window_style=__s(style.nvl_menu_window),
                 choice_style=__s(style.nvl_menu_choice),
                 choice_chosen_style=__s(style.nvl_menu_choice_chosen),
                 choice_button_style=__s(style.nvl_menu_choice_button),
                 choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                type="nvl",                      
                 )
 
 
