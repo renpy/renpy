@@ -195,7 +195,8 @@ init -1180 python:
             webbrowser.open_new("file:///" + config.basedir + "/" + help)
         except:
             pass
-            
+
+        
     # Called to make a screenshot happen.
     def _screenshot():
         import os.path
@@ -229,6 +230,14 @@ init -1180 python:
             import traceback
             traceback.print_exc()
 
+        if config.screenshot_callback is not None:
+            config.screenshot_callback(fn)
+
+    def _screenshot_callback(fn):
+        renpy.notify(_("Saved screenshot as %s.") % fn)
+
+    config.screenshot_callback = _screenshot_callback
+        
     
 init -1180 python hide:
 

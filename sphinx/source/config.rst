@@ -821,6 +821,12 @@ Rarely or Internally Used
     config.show is used to show a new image. This should have the same
     signature as renpy.scene.
 
+.. var:: config.screenshot_callback = ...
+
+    A function that is called when a screenshot is taken. The function
+    is called with a single parameter, the full filename the screenshot
+    was saved as.
+    
 .. var:: config.screenshot_crop = None
 
     If not None, this should be a (`x`, `y`, `height`, `width`)
