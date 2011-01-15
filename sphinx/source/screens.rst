@@ -121,6 +121,10 @@ expression. It takes the following properties:
     larger the number, the closer the screen is displayed to the
     user. It defaults to 0.
 
+`variant`
+    If present, this should be a string giving the variant of screen
+    to be defined. See :ref:`Screen Variants`. 
+    
 ::
 
    screen hello_world:
@@ -1235,3 +1239,39 @@ or can jump to a label using the :func:`Jump` action.
    call screen my_imagemap
 
    
+Screen Variants
+===============
+
+Ren'Py runs both on traditional mouse-oriented devices such as Windows,
+Mac, and Linux PCs, and newer touch-oriented devices such as Android-based
+smartphones and tablets.
+
+When multiple variants of a screen exist, will search for variants in
+the following order, and will use the first screen variant that exists. The
+known variants are.
+
+``"touch"``
+
+   Defined on touchscreen-based devices, such as smartphones and
+   tablets. The game creator should ensure thall all buttons should be
+   large enough to be comfortably touched, even on small devices.
+
+``None``
+
+   Always defined. The default variant is used on mouse- and keyboard-based
+   computers, and when no more specific variant is defined.
+
+An example of defining a screen variant is:
+   
+::
+
+   # A variant hello_world screen, used on small touch-based
+   # devices.
+   screen hello_world:
+        tag example
+        zorder 1
+        modal False
+        variant "touch" 
+        
+        text "Hello, World." size 30
+        

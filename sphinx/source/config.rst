@@ -894,6 +894,12 @@ Rarely or Internally Used
 
     If True, transforms will inherit position properties from their
     child. If not, they won't.
+
+.. var:: config.variants = [ ... ]
+
+    A list of screen variants that are searched when choosing a screen to
+    display to the user. This should always end with None, to ensure
+    that the default screens are chosen. See :ref:`Screen Variants`.
     
 .. var:: config.with_callback = None
 

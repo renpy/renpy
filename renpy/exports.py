@@ -1549,3 +1549,16 @@ def notify(message):
     hide_screen('notify')
     show_screen('notify', message=message)
     restart_interaction()
+
+def variant(name):
+    """
+    :doc: screens
+
+    Returns true if a `name` is a screen variant that can be chosen
+    by Ren'Py. See :ref:`Screen Variants` for more details. This function
+    can be used as the condition in a python if statement to set up the
+    appropriate styles for the selected screen variant.
+    """
+
+    return name in renpy.config.variants
+

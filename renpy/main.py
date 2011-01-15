@@ -126,6 +126,10 @@ def main():
     # Init the config after load.
     renpy.config.init()
 
+    # Set up variants.
+    if "RENPY_VARIANT" in os.environ:
+        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split(",")) + [ None ]
+    
     # Note the game directory.
     game.basepath = renpy.config.gamedir
     renpy.config.searchpath = [ renpy.config.gamedir ]

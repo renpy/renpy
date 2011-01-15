@@ -33,7 +33,8 @@ class Screen(renpy.object.Object):
                  modal="False",
                  zorder="0",
                  tag=None,
-                 predict=None):
+                 predict=None,
+                 variant=None):
     
         # The name of this screen.
         if isinstance(name, basestring):
@@ -41,7 +42,7 @@ class Screen(renpy.object.Object):
 
         self.name = name
         
-        screens[name] = self
+        screens[name[0], variant] = self
         
         # The function that is called to display this screen.
         self.function = function
@@ -307,13 +308,25 @@ class ScreenDisplayable(renpy.display.layout.Container):
 # None if no screen is being currently displayed.
 _current_screen = None
         
-# A map from screen name to screen object.
+# A map from (screen_name, variant) tuples to screen.
 screens = { }
+
+def get_screen_variant(name):
+    """
+    Get a variant screen object for `name`.
+    """
+
+    for i in renpy.config.variants:
+        rv = screens.get((name, i), None)
+        if rv is not None:
+            return rv
+
+    return None
 
 def define_screen(*args, **kwargs):
     """
     :doc: screens
-    :args: (name, function, modal="False", zorder="0", tag=None)
+    :args: (name, function, modal="False", zorder="0", tag=None, variant=None)
 
     Defines a screen with `name`, which should be a string.
 
@@ -344,6 +357,10 @@ def define_screen(*args, **kwargs):
     `predict`
         If true, this screen can be loaded for image prediction. If false,
         it can't. Defaults to true.
+
+    `variant`
+        String. Gives the variant of the screen to use. 
+
     """
     
     Screen(*args, **kwargs)
@@ -381,7 +398,10 @@ def has_screen(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return name in screens
+    if get_screen_variant(name[0]):
+        return True
+    else:
+        return False
 
 def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
     """
@@ -416,10 +436,10 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    if not name in screens:
+    screen = get_screen_variant(name[0])
+        
+    if screen is None:
         raise Exception("Screen %s is not known.\n" % (name[0],))
-
-    screen = screens[name]
 
     if _tag is None:
         _tag = screen.tag
@@ -448,10 +468,10 @@ def predict_screen(_screen_name, _widget_properties={},  **kwargs):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    if not name in screens:
+    screen = get_screen_variant(name[0])
+        
+    if screen is None:
         raise Exception("Screen %s is not known.\n" % (name[0],))
-
-    screen = screens[name]
 
     if not screen.predict:
         return
@@ -482,14 +502,14 @@ def use_screen(_screen_name, _name=(), **kwargs):
     if not isinstance(name, tuple):
         name = tuple(name.split())
     
-    if name not in screens:
+    screen = get_screen_variant(name[0])
+
+    if screen is None:
         raise Exception("Screen %r is not known." % name)
 
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True
-    
-    screen = screens[name]
-    
+        
     scope = kwargs["_scope"].copy() or { }
     scope.update(kwargs)
     scope["_scope"] = scope

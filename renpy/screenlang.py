@@ -1078,6 +1078,8 @@ class ScreenLangScreen(renpy.object.Object):
     
     __version__ = 1
 
+    variant = None
+    
     def __init__(self):
 
         # The name of the screen.
@@ -1094,6 +1096,9 @@ class ScreenLangScreen(renpy.object.Object):
         
         # The PyCode object containing the screen's code.
         self.code = None
+
+        # The variant of screen we're defining.
+        self.variant = None
         
     def after_upgrade(self, version):
         if version < 1:
@@ -1110,7 +1115,8 @@ class ScreenLangScreen(renpy.object.Object):
             self,
             modal=self.modal,
             zorder=self.zorder,
-            tag=self.tag)
+            tag=self.tag,
+            variant=self.variant)
 
     def __call__(self, _scope=None, **kwargs):
         renpy.python.py_exec_bytecode(self.code.bytecode, locals=_scope)
@@ -1139,6 +1145,9 @@ class ScreenParser(Parser):
                 screen.tag = l.require(l.word)
                 return True
 
+            if l.match('variant'):
+                screen.variant = l.require(l.simple_expression)
+            
             return False
 
         
