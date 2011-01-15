@@ -246,6 +246,12 @@ data. It takes the following properties:
     If given, this should be a python function. The function is called
     with the value of the adjustment when the adjustment is changed.
 
+`hovered`
+    An action to run when the bar gains focus.
+
+`unhovered`
+    An action to run when the bar loses focus.
+
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
@@ -631,6 +637,12 @@ Usually, a mousearea statement is given the :propref:`area` style
 property, which controls the size and position of the mouse
 area. Without some way of controlling its size, the mouse area would
 take up the entire screen, a less useful behavior.
+
+.. note::
+
+    Since Ren'Py games can be played using the keyboard and joystick, it
+    often makes sense to duplicate mousearea functionality by some other
+    means.
 
 ::
 
@@ -1045,9 +1057,6 @@ arguments and the relevant style properties become screen language
 properties.
 
 The advanced displayable statements are:
-
-``spritemanager``
-    Creates a :class:`SpriteManager`.
 
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,

@@ -938,6 +938,8 @@ class Bar(renpy.display.core.Displayable):
                  style=None,
                  vertical=False,
                  replaces=None,
+                 hovered=None,
+                 unhovered=None,
                  **properties):
 
         self.value = None
@@ -982,7 +984,9 @@ class Bar(renpy.display.core.Displayable):
         self.height = 0
         self.width = 0
         self.hidden = False
-        
+
+        self.hovered = hovered
+        self.unhovered = unhovered        
     def per_interact(self):
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
@@ -1134,12 +1138,13 @@ class Bar(renpy.display.core.Displayable):
     def focus(self, default=False):
         super(Bar, self).focus(default)
         self.set_transform_event("hover")
-
+        run(self.hovered)
+        
         
     def unfocus(self, default=False):
         super(Bar, self).unfocus()
         self.set_transform_event("idle")
-        
+        run(self.unhovered)
     
     def event(self, ev, x, y, st):
 

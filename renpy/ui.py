@@ -810,7 +810,6 @@ drag = Wrapper(renpy.display.dragdrop.Drag, replaces=True, one=True)
 draggroup = Wrapper(renpy.display.dragdrop.DragGroup, replaces=True, many=True)
 
 mousearea = Wrapper(renpy.display.behavior.MouseArea, replaces=True)
-spritemanager = Wrapper(renpy.display.particle.SpriteManager, replaces=True)
 
 
 ##############################################################################
