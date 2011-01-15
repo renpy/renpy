@@ -2170,6 +2170,10 @@ class Interface(object):
                     # mouse state as necessary.
                     x, y = renpy.display.draw.mouse_event(ev)
 
+                    if not self.focused:
+                        x = -1
+                        y = -1
+                    
                     self.event_time = end_time = get_time()
 
                     # Handle the event normally.

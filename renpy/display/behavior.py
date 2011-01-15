@@ -23,7 +23,7 @@
 
 
 import renpy
-from renpy.display.render import render
+from renpy.display.render import render, Render
 
 import pygame
 
@@ -1313,4 +1313,48 @@ class Timer(renpy.display.layout.Null):
         return self.function(*self.args, **self.kwargs)
 
     
+class MouseArea(renpy.display.core.Displayable):
+
+    def __init__(self, hovered=None, unhovered=None, replaces=None, **properties):
+        super(MouseArea, self).__init__(**properties)
+
+        self.hovered = hovered
+        self.unhovered = unhovered
+        
+        # Are we hovered right now?
+        self.is_hovered = False
+
+        if replaces is not None:
+            self.is_hovered = replaces.is_hovered
+
+        # Taken from the render.
+        self.width = 0
+        self.height = 0
+            
+
+    def render(self, width, height, st, at):
+        self.width = width
+        self.height = height
+
+        return Render(width, height)
+
+    def event(self, ev, x, y, st):
+
+        if 0 <= x < self.width and 0 <= y < self.height:
+            is_hovered = True
+        else:
+            is_hovered = False
+
+        if is_hovered and not self.is_hovered:
+            self.is_hovered = True
+
+            return run(self.hovered)
+
+        elif not is_hovered and self.is_hovered:
+            self.is_hovered = False
+
+            run(self.unhovered)
+
+            
+
         

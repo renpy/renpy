@@ -606,6 +606,50 @@ It does not take children.
              null height 20
              text "This body text."
 
+Mousearea
+---------
+
+A mouse area is an area of the screen that can react to the mouse
+entering or leaving it. Unlike a button, a mouse area does not take
+focus, so it's possible to have a mouse area with buttons inside it.
+The mousearea statement takes not parameters, and the following properties:
+
+`hovered`
+    An action to run when the mouse enters the mouse area.
+
+`unhovered`
+    An action to run when the mouse leaves the mouse area.
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+
+It does not take children.
+
+Usually, a mousearea statement is given the :propref:`area` style
+property, which controls the size and position of the mouse
+area. Without some way of controlling its size, the mouse area would
+take up the entire screen, a less useful behavior.
+
+::
+
+    screen button_overlay:
+        mousearea:
+            area (0, 0, 1.0, 100)
+            hovered Show("buttons", transition=dissolve)
+            unhovered Hide("buttons", transition=dissolve)
+
+    screen buttons:
+        hbox:
+            textbutton "Save" action ShowMenu("save")
+            textbutton "Prefs" action ShowMenu("preferences")
+            textbutton "Skip" action Skip()
+            textbutton "Auto" action Preference("auto-forward", "toggle")
+        
+    label start:
+        show screen button_overlay
+             
 
 Side
 ----
@@ -1002,12 +1046,15 @@ properties.
 
 The advanced displayable statements are:
 
+``spritemanager``
+    Creates a :class:`SpriteManager`.
+
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,
     or the :propref:`child` style property can be used to supply the child,
     and its focused variants.
 
-``drag_group``
+``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
     drags as its children.
     

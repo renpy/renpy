@@ -792,7 +792,21 @@ Style("child")
 add(ui_properties)
 add(position_properties)
 
-FunctionStatementParser("drag_group", "ui.drag_group", many)
+FunctionStatementParser("draggroup", "ui.draggroup", many)
+add(ui_properties)
+add(position_properties)
+
+FunctionStatementParser("mousearea", "ui.mousearea", 0)
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+
+FunctionStatementParser("spritemanager", "ui.spritemanager", 0)
+Keyword("update")
+Keyword("event")
+Keyword("predict")
+Keyword("ignore_time")
 add(ui_properties)
 add(position_properties)
 

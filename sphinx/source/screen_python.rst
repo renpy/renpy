@@ -90,6 +90,7 @@ The following UI functions do not take any children.
 * ui.vbar
 * ui.hotspot
 * ui.hotbar
+* ui.spritemanager
 
 The following UI functions take a single child. They must be given
 that child - use ui.null() if the child is missing.
@@ -98,6 +99,7 @@ that child - use ui.null() if the child is missing.
 * ui.frame
 * ui.transform
 * ui.window
+* ui.drag
 
 The following UI functions take multiple children. They continue
 taking children until :func:`ui.close` is called.
@@ -108,6 +110,7 @@ taking children until :func:`ui.close` is called.
 * ui.side
 * ui.vbox
 * ui.imagemap
+* ui.draggroup
 
 There are a few UI functions that do not correspond to screen language
 statments, as they correspond to concepts that are not present in the

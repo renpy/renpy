@@ -807,7 +807,11 @@ conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
 
 drag = Wrapper(renpy.display.dragdrop.Drag, replaces=True, one=True)
-drag_group = Wrapper(renpy.display.dragdrop.DragGroup, replaces=True, many=True)
+draggroup = Wrapper(renpy.display.dragdrop.DragGroup, replaces=True, many=True)
+
+mousearea = Wrapper(renpy.display.behavior.MouseArea, replaces=True)
+spritemanager = Wrapper(renpy.display.particle.SpriteManager, replaces=True)
+
 
 ##############################################################################
 # New-style imagemap related functions.
