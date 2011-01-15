@@ -407,7 +407,15 @@ def predict_menu():
     Predicts widgets that are used by the menu.
     """
 
-    # TODO
+    # This only makes sense for non-NVL menus. But when we have
+    # NVL menus, they're likely to have already been predicted.
+    #
+    # An item lets us load imagebuttons as necessary.
+    predict_screen("choice",
+                   items=[
+            ("Menu Prediction", renpy.ui.returns(True)),
+            ])
+    
     
 def display_menu(items,
                  window_style='menu_window',

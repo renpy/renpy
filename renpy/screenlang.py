@@ -1079,6 +1079,10 @@ class ScreenLangScreen(renpy.object.Object):
     __version__ = 1
 
     variant = None
+
+    # Predict should be false for screens created before
+    # prediction existed.
+    predict = False
     
     def __init__(self):
 
@@ -1099,6 +1103,9 @@ class ScreenLangScreen(renpy.object.Object):
 
         # The variant of screen we're defining.
         self.variant = None
+
+        # Should we predict this screen?
+        self.predict = True
         
     def after_upgrade(self, version):
         if version < 1:
@@ -1116,7 +1123,8 @@ class ScreenLangScreen(renpy.object.Object):
             modal=self.modal,
             zorder=self.zorder,
             tag=self.tag,
-            variant=self.variant)
+            variant=self.variant,
+            predict=self.predict)
 
     def __call__(self, _scope=None, **kwargs):
         renpy.python.py_exec_bytecode(self.code.bytecode, locals=_scope)
@@ -1147,7 +1155,10 @@ class ScreenParser(Parser):
 
             if l.match('variant'):
                 screen.variant = l.require(l.simple_expression)
-            
+
+            if l.match('predict'):
+                screen.predict = l.require(l.simple_expression)
+                
             return False
 
         

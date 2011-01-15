@@ -503,7 +503,11 @@ python early hide:
         l.expect_eol()
 
         return dict(name=name)
-        
+
+    def predict_screen(p):
+        if not p["parameters"]:
+            renpy.predict_screen(p["name"])
+    
     def execute_show_screen(p):
 
         name = p["name"]
@@ -540,11 +544,13 @@ python early hide:
     renpy.statements.register("show screen",
                               parse=parse_show_call_screen,
                               execute=execute_show_screen,
+                              predict=predict_screen,
                               lint=lint_screen)
 
     renpy.statements.register("call screen",
                               parse=parse_show_call_screen,
                               execute=execute_call_screen,
+                              predict=predict_screen,
                               lint=lint_screen)
 
     renpy.statements.register("hide screen",

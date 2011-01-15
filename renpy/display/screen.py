@@ -464,21 +464,33 @@ def predict_screen(_screen_name, _widget_properties={},  **kwargs):
     """
 
     name = _screen_name
+
+    if renpy.config.debug_image_cache:
+        print "IC Predict screen", name
     
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
     screen = get_screen_variant(name[0])
         
-    if screen is None:
-        raise Exception("Screen %s is not known.\n" % (name[0],))
-
-    if not screen.predict:
-        return
+    try:
     
-    d = ScreenDisplayable(screen, None, None, _widget_properties, kwargs)    
-    d.update()
-    renpy.display.predict.displayable(d)
+        if screen is None:
+            raise Exception("Screen %s is not known.\n" % (name[0],))
+
+        if not screen.predict:
+            return
+
+        d = ScreenDisplayable(screen, None, None, _widget_properties, kwargs)    
+        d.update()
+        renpy.display.predict.displayable(d)
+
+    except:
+        if renpy.config.debug_image_cache:
+            import traceback
+
+            print "While predicting screen", screen
+            traceback.print_exc()
         
 
 def hide_screen(tag, layer='screens'):

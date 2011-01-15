@@ -96,7 +96,7 @@ class DialogueTextTags(object):
             self.pause_delay.append(None)
 
 
-def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, **kwargs):
+def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, screen=None, **kwargs):
     """
     This is the default function used by Character to predict images that
     will be used by show_display_say. It's called with more-or-less the
@@ -104,8 +104,21 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
     list of images used by show_display_say.
     """
 
-    rv = [ ]
+    if screen:
+        props = compute_widget_properties(who_args, what_args, window_args)
 
+        renpy.display.screen.predict_screen(
+            screen,
+            _widget_properties=props,
+            who=who,
+            what=what,
+            image=image,
+            two_window=two_window,
+            side_image=side_image,
+            **kwargs)
+        
+        return
+        
     if image:
         if image != "<Dynamic>":
             renpy.easy.predict(who)
@@ -113,7 +126,49 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
     if side_image:
         renpy.easy.predict(side_image)
 
-    return rv
+
+def compute_widget_properties(who_args, what_args, window_args, variant=None):
+    """
+    Computes and returns the widget properties.
+    """
+
+    def style_args(d):
+
+        if not "style" in d:
+            return d
+
+        in_rollback = renpy.exports.in_rollback()
+        
+        if (not in_rollback) and (not variant):
+            return d
+            
+        d = d.copy()
+        
+        style = d["style"]
+
+        if isinstance(style, basestring):
+            style = getattr(renpy.store.style, style)        
+
+            if variant is not None:
+                style = style[variant]
+
+            if in_rollback:
+                style = style["rollback"]
+
+        d["style"] = style
+
+        return d
+    
+    who_args = style_args(who_args)
+    what_args = style_args(what_args)
+    window_args = style_args(window_args)
+
+    return {
+        "window" : window_args,
+        "what" : what_args,
+        "who" : who_args,
+        }
+
 
 def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      image=False, side_image=None, two_window=False,
@@ -157,10 +212,12 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     displaying the what text.
     """
 
+    props = compute_widget_properties(who_args, what_args, window_args, variant=variant)
+        
     def handle_who():
         if who:
             if image:
-                renpy.ui.add(renpy.display.im.image(who, loose=True, **who_args))
+                renpy.ui.add(renpy.display.im.image(who, loose=True, **props["who"]))
             else:
                 renpy.ui.text(who, **who_args)
 
@@ -179,43 +236,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         rv.update(properties)
         return rv
 
-    def style_args(d):
-
-        if not "style" in d:
-            return d
-
-        in_rollback = renpy.exports.in_rollback()
-        
-        if (not in_rollback) and (not variant):
-            return d
-            
-        d = d.copy()
-        
-        style = d["style"]
-
-        if isinstance(style, basestring):
-            style = getattr(renpy.store.style, style)        
-
-            if variant is not None:
-                style = style[variant]
-
-            if in_rollback:
-                style = style["rollback"]
-
-        d["style"] = style
-
-        return d
-    
-    who_args = style_args(who_args)
-    what_args = style_args(what_args)
-    window_args = style_args(window_args)
-
     if screen and renpy.display.screen.has_screen(screen):
-        widget_properties = {
-            "window" : window_args,
-            "what" : what_args,
-            "who" : who_args,
-            }
 
         tag = screen
         index = 0
@@ -226,11 +247,15 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         
         renpy.display.screen.show_screen(
             screen,
-            _widget_properties=widget_properties,
+            _widget_properties=props,
             _transient = True,
             _tag = tag,
+            image=image,
+            side_image=side_image,
+            two_window=two_window,
             who=who,
-            what=what)
+            what=what,
+            **kwargs)
 
         renpy.exports.shown_window()
 
@@ -249,14 +274,14 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.ui.window(**merge_style('say_who_window', who_window_properties))
         handle_who()
 
-    renpy.ui.window(**window_args)
+    renpy.ui.window(**props["window"])
     # Opens the say_vbox.
     renpy.ui.vbox(**merge_style('say_vbox', say_vbox_properties))
 
     if not two_window:
         handle_who()
 
-    rv = renpy.ui.text(what, **what_args)
+    rv = renpy.ui.text(what, **props["what"])
 
     # Closes the say_vbox.
     renpy.ui.close()
@@ -635,6 +660,7 @@ class ADVCharacter(object):
             who_args=self.who_args,
             what_args=self.what_args,
             window_args=self.window_args,
+            screen=self.screen,
             **self.show_args)
     
     def __call__(self, what, interact=True, **kwargs):

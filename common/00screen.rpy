@@ -59,6 +59,9 @@ init -1140 python:
             self.screen = screen
             self.kwargs = kwargs
             self.transition = transition
+
+        def predict(self):
+            renpy.predict_screen(self.scren, **self.kwargs)
             
         def __call__(self):
             renpy.show_screen(self.screen, **self.kwargs)
@@ -150,6 +153,9 @@ init -1140 python:
         def __init__(self, message):
             self.message = message
         
+        def predict(self):
+            renpy.predict_screen("notify")
+        
         def __call__(self):
             renpy.notify(self.message)
             
@@ -177,6 +183,9 @@ init -1140 python:
 
         def periodic(self, st):
             return self.action.periodic(st)
+
+        def predict(self):
+            self.action.predict()
         
     def If(expression, true=None, false=None):
         """
@@ -227,6 +236,10 @@ init -1140 python:
 
         def __init__(self, screen=None):
             self.screen = screen
+
+
+        def predict(self):
+            renpy.predict_screen(self.screen)
 
         def __call__(self):
 
