@@ -1577,7 +1577,7 @@ class Interface(object):
         This is called to handle the user invoking a quit.
         """
 
-        if self.quit_time > (time.time() - 3.0):
+        if self.quit_time > (time.time() - .75):
             raise renpy.game.QuitException()
 
         if renpy.config.quit_action is not None:
