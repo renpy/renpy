@@ -1374,7 +1374,7 @@ class Interface(object):
 
         if not rv:
             self.take_screenshot((renpy.config.thumbnail_width, renpy.config.thumbnail_height))
-            rv = self.screenshot()
+            rv = self.screenshot
             self.lose_screenshot()
         
         return self.screenshot
