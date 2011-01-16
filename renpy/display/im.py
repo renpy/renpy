@@ -1132,7 +1132,8 @@ im.matrix(%f, %f, %f, %f, %f.
           %f, %f, %f, %f, %f,
           %f, %f, %f, %f, %f)""" % self
 
-    
+
+    @staticmethod
     def identity():
         """
         :doc: im_matrixcolor
@@ -1146,9 +1147,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
                       0, 0, 0, 1, 0)
-
-    identity = staticmethod(identity)
-
+    @staticmethod
     def saturation(level, desat=(0.2126, 0.7152, 0.0722)):
         """
         :doc: im_matrixcolor
@@ -1181,8 +1180,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       I(r, 0), I(g, 0), I(b, 1), 0, 0,
                       0, 0, 0, 1, 0)
 
-    saturation = staticmethod(saturation)
-    
+    @staticmethod
     def desaturate():
         """
         :doc: im_matrixcolor
@@ -1194,9 +1192,8 @@ im.matrix(%f, %f, %f, %f, %f.
         """
 
         return matrix.saturation(0.0)
-    
-    desaturate = staticmethod(desaturate)
-    
+
+    @staticmethod
     def tint(r, g, b):
         """
         :doc: im_matrixcolor
@@ -1215,8 +1212,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, b, 0, 0,
                       0, 0, 0, 1, 0)
 
-    tint = staticmethod(tint)
-
+    @staticmethod
     def invert():
         """
         :doc: im_matrixcolor
@@ -1231,8 +1227,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, -1, 0, 1,
                       0, 0, 0, 1, 0)
 
-    invert = staticmethod(invert)
-
+    @staticmethod
     def brightness(b):
         """
         :doc: im_matrixcolor
@@ -1251,8 +1246,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, 1, 0, b,
                       0, 0, 0, 1, 0)
 
-    brightness = staticmethod(brightness)
-
+    @staticmethod
     def opacity(o):
         """
         :doc: im_matrixcolor
@@ -1266,9 +1260,8 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
                       0, 0, 0, o, 0)
-
-    opacity = staticmethod(opacity)
     
+    @staticmethod
     def contrast(c):
         """
         :doc: im_matrixcolor
@@ -1279,12 +1272,10 @@ im.matrix(%f, %f, %f, %f, %f.
         values greater than 1.0 increasing contrast.
         """
 
-        return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5) 
-
-    contrast = staticmethod(contrast)
-    
+        return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)     
 
     # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
+    @staticmethod
     def hue(h):
         """
         :doc: im_matrixcolor
@@ -1308,8 +1299,7 @@ im.matrix(%f, %f, %f, %f, %f.
             0,0,0,0,1
             )
 
-    hue = staticmethod(hue)
-
+    @staticmethod
     def colorize(black_color, white_color):
         """
         :doc: im_matrixcolor
@@ -1342,7 +1332,8 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, 1, (b1-b0), b0,
                       0, 0, 0, 1, 0)
 
-
+    
+    
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     """
     :doc: im_im
