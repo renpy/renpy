@@ -57,7 +57,8 @@ except ImportError:
 cdef extern from "glcompat.h":
     GLenum glewInit()
     GLubyte *glewGetErrorString(GLenum)
-
+    GLboolean glewIsSupported(char *)
+    
     enum:
         GLEW_OK
 
@@ -344,8 +345,9 @@ cdef class GLDraw:
         err = glewInit()
 
         if err != GLEW_OK:
-            raise Exception("Glew init failed: %s" % <char *> glewGetErrorString(err))
-        
+            renpy.log.info("Glew init failed: %s" % <char *> glewGetErrorString(err))
+            return False
+            
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
         version = <char *> glGetString(GL_VERSION)

@@ -52,9 +52,6 @@ screen say:
                 has vbox:
                     style "say_vbox"
 
-                if who:
-                    text who id "who"
-
                 text what id "what"
 
 

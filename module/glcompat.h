@@ -12,6 +12,7 @@ typedef GLfloat GLdouble;
 #define glewInit() (1)
 #define GLEW_OK (1)
 #define glewGetErrorString(x) ("Unknown Error")
+#define glewIsSupported(x) (1)
 #define glOrtho glOrthof
 #define glClipPlane glClipPlanef
 
@@ -30,6 +31,14 @@ typedef GLfloat GLdouble;
 
 #else
 #include <GL/glew.h>
+
+#undef glClientActiveTexture
+#define glClientActiveTexture glClientActiveTextureARB
+
+#undef glActiveTexture
+#define glActiveTexture glActiveTextureARB
+
+
 #endif
 
 #endif
