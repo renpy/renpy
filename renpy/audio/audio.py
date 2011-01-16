@@ -747,7 +747,7 @@ def periodic():
                 if vol != 0:
                     anything_playing = True
 
-            if max_volume == -1.0:
+            if max_volume <= 0:
                 return
 
             if not anything_playing:
