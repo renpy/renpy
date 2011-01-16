@@ -1223,12 +1223,22 @@ class Interface(object):
         """
         Figures out the list of draw constructors to try.
         """
-        
-        draws = {
-                "gl" : renpy.display.gldraw.GLDraw,
-                "sw" : renpy.display.swdraw.SWDraw,
-                }
 
+        draws = { }
+        
+        try:
+            import renpy.display.gldraw as gldraw
+            draws["gl"] = gldraw.GLDraw
+        except:
+            renpy.log.info("Couldn't import gl renderer.")
+
+        try:
+            import renpy.display.swdraw as swdraw
+            draws["sw"] = swdraw.SWDraw
+        except:
+            renpy.log.info("Couldn't import sw renderer.")
+            
+        
         default = renpy.display.prefer_renderers        
         dl = os.environ.get("RENPY_RENDERER", default).split(",")
 
