@@ -77,7 +77,7 @@ def set_rgba_masks():
     s = opygame.Surface((10, 10), 0, 32)
     sample_alpha = s.convert_alpha()
 
-    # Sort the compoents by absolute value.
+    # Sort the components by absolute value.
     masks = list(sample_alpha.get_masks())
     masks.sort(key=lambda a : abs(a))
 

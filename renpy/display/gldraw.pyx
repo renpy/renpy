@@ -183,7 +183,8 @@ cdef class GLDraw:
 
             if self.old_fullscreen is not None:
                 pygame.display.quit()
-                pygame.display.init()
+
+            pygame.display.init()
             
             self.display_info = pygame.display.Info()
             

@@ -1255,6 +1255,11 @@ class Interface(object):
             renpy.display.draw.deinit()
             renpy.display.draw.quit()
             renpy.display.draw = None
+
+            renpy.display.render.free_memory()
+            renpy.display.im.cache.clear()
+
+            renpy.display.module.bo_cache = None
             
         self.display_reset = False
         

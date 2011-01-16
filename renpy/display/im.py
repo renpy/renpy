@@ -115,9 +115,9 @@ class Cache(object):
     def clear(self):
         self.lock.acquire()
 
+        self.preloads = [ ]
         self.pin_cache = { }
         self.cache = { }
-        self.preloads = [ ]
         self.first_preload_in_tick = True
         self.size_of_current_generation = 0
         self.total_cache_size = 0
@@ -166,17 +166,16 @@ class Cache(object):
         # Now, grab the cache and try again. This deals with the case where the image
         # was already in the middle of preloading.            
         if ce is None:
-
+            
             self.lock.acquire()
             ce = self.cache.get(image, None)
 
             if ce is not None:
                 self.lock.release()
-
+                
         # Otherwise, we keep the lock, and load the image ourselves.
         if ce is None:
-
-            
+                        
             try:
                 if image in self.pin_cache:
                     surf = self.pin_cache[image]
