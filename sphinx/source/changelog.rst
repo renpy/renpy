@@ -21,6 +21,18 @@ As the size of the image cache is now tracked more closely, the default
 size of the cache has been increased to 10 screens worth of images.
 
 
+Bug Fixes
+---------
+
+* Fixed a bug that caused Ren'Py to crash when the system volume was
+  lowered to 0, but not muted.
+
+* Fixed a bug that prevented :funcref:`Render.canvas` from working.
+
+
+
+
+
 Ren'Py 6.11.2
 =============
 

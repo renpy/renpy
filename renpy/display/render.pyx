@@ -1018,6 +1018,7 @@ cdef class Render:
         """
 
         surf = renpy.display.pgrender.surface((self.width, self.height), True)
+
         mutated_surface(surf)
 
         self.blit(surf, (0, 0))

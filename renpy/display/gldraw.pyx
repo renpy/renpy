@@ -726,7 +726,7 @@ cdef class GLDraw:
 
                 return 0
 
-            if isinstance(what, renpy.display.pgrender.Surface):
+            if isinstance(what, renpy.display.pgrender.opygame.Surface):
 
                 tex = self.load_texture(what)
                 self.draw_transformed(tex, clip, xo, yo, alpha, reverse)

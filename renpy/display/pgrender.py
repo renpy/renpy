@@ -111,12 +111,17 @@ class Surface(opygame.Surface):
 
     def copy(self):
         return copy_surface(self, self)
+
+    def subsurface(self, rect):
+        rv = opygame.Surface.subsurface(self, rect)
+        return rv
+
     
 
 def surface((width, height), alpha):
     """
     Constructs a new surface. The allocated surface is actually a subsurface
-    of a surface that has a 1 pixel border in all directions.
+    of a surface that has a 2 pixel border in all directions.
 
     `alpha` - True if the new surface should have an alpha channel.
     """
