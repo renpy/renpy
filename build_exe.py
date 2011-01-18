@@ -102,6 +102,4 @@ try:
 except:
     traceback.print_exc()
 
-print
-print "Press return to quit."
-raw_input()
+    

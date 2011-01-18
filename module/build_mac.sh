@@ -1,9 +1,15 @@
 #!/bin/sh 
 
-. ~/newbuild.i386/env.sh
-./build.sh 
-. ~/newbuild.ppc/env.sh
-./build.sh 
+try () {
+    "$@" || exit -1
+}
 
-chmod -R a+rX ~/newbuild.i386/install
-chmod -R a+rX ~/newbuild.ppc/install
+BASE=/Users/tom
+
+. $BASE/newbuild.i386/env.sh
+try ./build.sh 
+. $BASE/newbuild.ppc/env.sh
+try ./build.sh 
+
+try chmod -R a+rX $BASE/newbuild.i386/install
+try chmod -R a+rX $BASE/newbuild.ppc/install
