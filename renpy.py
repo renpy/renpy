@@ -114,23 +114,6 @@ if android:
     
 def main():
     
-    if not 'RENPY_NO_VERSION_CHECK' in os.environ:
-
-        # Check for mac compatibility.
-        if "mac_version" in globals():
-            globals()["mac_version"](macos_version)
-
-        # Check py4renpy compatibility.
-        try:
-            import py4renpy
-            if py4renpy.version < linux_version:
-                print "The version of py4renpy that you are using is too old. Please go to"
-                print "http://www.bishoujo.us/renpy/linux.html, and download the latest"
-                print "version."
-                sys.exit(-1)
-        except ImportError:
-            pass
-
     renpy_base = path_to_renpy_base()
 
     # Add paths.

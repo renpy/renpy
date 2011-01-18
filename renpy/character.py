@@ -829,7 +829,9 @@ def Character(name=NotSet, kind=None, **properties):
     `ctc_timedpause`
     
         A Displayable to use a the click-to-continue indicator when the
-        display of text is paused by the {p=} or {w=} text tags.
+        display of text is paused by the {p=} or {w=} text tags. When
+        None, this takes its default from ctc_pause, use ``Null()``
+        when you want a ctc_pause but no ctc_timedpause.
         
     `ctc_position`
     

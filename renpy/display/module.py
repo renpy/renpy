@@ -22,6 +22,8 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
+VERSION = (6, 12, 0)
+
 import renpy
 import pygame; pygame # prevents pyflakes warning.
 
@@ -31,8 +33,12 @@ try:
     import _renpy
     version = _renpy.version()
 
-    if version < (6, 10, 1):
-        print >>sys.stderr, "The _renpy module was found, but is out of date."
+    if version != VERSION:
+        print "Found Ren'Py module version %s, while expecting %s." % (
+            ".".join(str(i) for i in version),
+            ".".join(str(i) for i in VERSION),
+            )
+
         print >>sys.stderr, "Trying to run anyway, but you should expect errors."
         
 except:

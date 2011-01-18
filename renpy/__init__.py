@@ -28,8 +28,9 @@ import os
 
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in launcher/script_version.rpy, too!
-# Also check to see if we have to update renpy.py.
-version = "Ren'Py 6.11.2b"
+# Be sure to change _renpy.pyx and module.py, if necessary.
+
+version = "Ren'Py 6.12.0a"
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 

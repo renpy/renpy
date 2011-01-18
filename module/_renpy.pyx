@@ -20,6 +20,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+def version():
+    return (6, 12, 0)
+
 cdef extern from "renpy.h":
 
     cdef struct SDL_RWops:
@@ -94,9 +97,6 @@ cdef extern from "renpy.h":
 import pygame
 
 PygameSurface = pygame.Surface
-
-def version():
-    return (6, 10, 1)
 
 def save_png(surf, file, compress=-1):
 
