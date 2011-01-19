@@ -59,6 +59,7 @@ class Screen(renpy.object.Object):
         # Can this screen be predicted?
         if predict is None:
             predict = renpy.config.predict_screens
+
         self.predict = predict
         
 
@@ -374,7 +375,7 @@ def get_screen(name, layer="screens"):
     Returns the ScreenDisplayable with the given `tag`, on
     `layer`. If no displayable with the tag is not found, it is
     interpreted as screen name. If it's still not found, None is returned. 
-    """
+     """
 
     if isinstance(name, basestring):
         name = tuple(name.split())
@@ -448,7 +449,7 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 
-def predict_screen(_screen_name, _widget_properties={},  **kwargs):
+def predict_screen(_screen_name, _widget_properties={}, **kwargs):
     """
     Predicts the displayables that make up the given screen.
 
@@ -482,6 +483,7 @@ def predict_screen(_screen_name, _widget_properties={},  **kwargs):
             return
 
         d = ScreenDisplayable(screen, None, None, _widget_properties, kwargs)    
+
         d.update()
         renpy.display.predict.displayable(d)
 
@@ -491,7 +493,9 @@ def predict_screen(_screen_name, _widget_properties={},  **kwargs):
 
             print "While predicting screen", screen
             traceback.print_exc()
-        
+
+    renpy.ui.reset()
+            
 
 def hide_screen(tag, layer='screens'):
     """

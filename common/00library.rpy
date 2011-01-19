@@ -369,7 +369,16 @@ init -1180 python hide:
 
     config.predict_callbacks.append(predict)
             
-    
+    def imagemap_auto_function(auto_param, variant):
+        rv = auto_param % variant
+
+        if renpy.loadable(rv):
+            return rv
+        else:
+            return None
+        
+        
+    config.imagemap_auto_function = imagemap_auto_function
 
 
 label _hide_windows:

@@ -1,5 +1,14 @@
 # This file contains a demonstration of the user interaction
 # functions.
+        
+screen demo_imagemap:
+    imagemap:
+        auto "imagemap_%s.jpg"
+
+        hotspot (8, 200, 78, 78) action Return("swimming")
+        hotspot (204, 50, 78, 78) action Return("science")
+        hotspot (452, 79, 78, 78) action Return("art")
+        hotspot (602, 316, 78, 78) action Return("go home")
 
 init:
 
@@ -203,45 +212,34 @@ label demo_ui:
     
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"
 
+    # Show an imagemap.
     window hide None
-    
-    # This is an imagemap. It consists of two images, and a list of
-    # hotspots. For each hotspot we give the coordinates of the left,
-    # top, right, and bottom sides, and the value to return if it is
-    # picked.
-
-    $ result = renpy.imagemap("ground.jpg", "hover.jpg", [
-        (8, 200, 86, 278, "swimming"),
-        (204, 50, 282, 128, "science"), 
-        (452, 79, 530, 157, "art"),
-        (602, 316, 680, 394, "go home"),
-        ], focus="imagemap")
-
-    # We've assigned the chosen result from the imagemap to the
-    # result variable. We can use an if statement to vary what
-    # happens based on the user's choice.
-
+    call screen demo_imagemap
     window show None
     
-    if result == "swimming":
+    # We've assigned the chosen result from the imagemap to the
+    # _result variable. We can use an if statement to vary what
+    # happens based on the user's choice.
+
+    if _result == "swimming":
 
         e "You chose swimming."
         
         e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
 
-    elif result == "science":
+    elif _result == "science":
 
         e "You chose science."
         
         e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
         
-    elif result == "art":
+    elif _result == "art":
 
         e "You chose art."
         
         e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
 
-    elif result == "go home":
+    elif _result == "go home":
 
         e "You chose to go home."
 

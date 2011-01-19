@@ -125,7 +125,7 @@ def prediction_coroutine(root_widget):
         predicting = True
         
         try:
-            renpy.display.screen.predict_screen(name, kwargs)
+            renpy.display.screen.predict_screen(name, **kwargs)
         except:
             if renpy.config.debug_image_cache:
                 traceback.print_exc()

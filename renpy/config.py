@@ -469,6 +469,9 @@ narrator_menu = False
 # A list of screen variants to use.
 variants = [ None ]
 
+# A function from (auto_parameter, variant) -> displayable.
+imagemap_auto_function = None
+
 del renpy
 del os
 

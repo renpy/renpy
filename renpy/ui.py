@@ -1,4 +1,3 @@
-
 # Copyright 2004-2010 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -101,6 +100,9 @@ class Layer(Addable):
     def get_layer(self):
         return self.name
 
+    def __repr__(self):
+        return "<Layer: %r>" % self.name
+
         
 class Many(Addable):
     """
@@ -126,6 +128,9 @@ class Many(Addable):
         if d and d != self.displayable:
             raise Exception("ui.close closed %r, not the expected %r." % (self.displayable, d))
 
+    def __repr__(self):
+        return "<Many: %r>" % self.displayable
+        
 class One(Addable):
     """
     A widget that expects exactly one child.
@@ -141,6 +146,9 @@ class One(Addable):
         
     def close(self, d):
         raise Exception("Widget %r expects a child." % self.displayable)
+
+    def __repr__(self):
+        return "<One: %r>" % self.displayable
 
 class Detached(Addable):
     """
@@ -196,12 +204,18 @@ add_tag = None
 imagemap_stack = [ ]
             
 
-# Called at the end of the init phase.
-def _ready():
+# Called at the end of the init phase, and from the screen
+# prediction code.
+def reset():
     global stack
-    stack = [ Layer('transient') ]
+    global at_stack
+    global imagemap_stack
 
-renpy.game.post_init.append(_ready)
+    stack = [ Layer('transient') ]
+    at_stack = [ ]
+    imagemap_stack = [ ]
+    
+renpy.game.post_init.append(reset)
     
 def interact(type='misc', **kwargs):
     # Docs in wiki.
@@ -665,12 +679,14 @@ def _imagebutton(idle_image = None,
     def choice(a, b, name):
         if a:
             return a
+
         if b:
             return b
-        if auto is not None:
-            return auto % name
 
-        return auto
+        if auto is not None:
+            return renpy.config.imagemap_auto_function(auto, name)
+
+        return None
     
     idle = choice(idle, idle_image, "idle")
     hover = choice(hover, hover_image, "hover")
@@ -840,8 +856,8 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
             return variable
 
         if auto:
-            fn = auto % name
-            if renpy.loader.loadable(fn):
+            fn = renpy.config.imagemap_auto_function(auto, name)
+            if fn is not None:
                 return fn
 
         if other is not None:

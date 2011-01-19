@@ -65,7 +65,7 @@ screen choice:
 
     window:
         id "window"
-        
+
         vbox:
             id "menu"
 

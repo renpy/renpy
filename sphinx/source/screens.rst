@@ -432,6 +432,10 @@ properties:
     For example, if `auto` is "button_%s.png", and `idle` is omitted, then
     idle defaults to "button_idle.png".
 
+    The behavior of `auto` can be customized by changing
+    :var:`config.imagemap_auto_function`.
+    
+    
 `insensitive`
     The image used when the button is insensitive.
     
@@ -949,6 +953,9 @@ parameters, and the following properties:
 
     For example, if `auto` is "imagemap_%s.png", and `idle` is omitted, then
     idle defaults to "imagemap_idle.png".
+
+    The behavior of `auto` can be customized by changing
+    :var:`config.imagemap_auto_function`.
 
 `ground`
     The image used for portions of the imagemap that are not part of a

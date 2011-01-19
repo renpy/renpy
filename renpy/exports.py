@@ -411,11 +411,19 @@ def predict_menu():
     # NVL menus, they're likely to have already been predicted.
     #
     # An item lets us load imagebuttons as necessary.
-    predict_screen("choice",
-                   items=[
-            ("Menu Prediction", renpy.ui.returns(True)),
-            ])
+
+    items = [ ("Menu Prediction", True, "button", "caption") ]
+    props = {
+        "button" : { "style" : "menu_choice_button" },
+        "caption" : { "style" : "menu_choice" },
+        }
     
+    predict_screen(
+        "choice",
+        items=items,
+        _widget_properties=props,
+        )
+
     
 def display_menu(items,
                  window_style='menu_window',
@@ -430,6 +438,7 @@ def display_menu(items,
                  widget_properties=None,
                  screen="choice",
                  type="menu",
+                 predict_only=False,
                  **kwargs):
     """
     Displays a menu containing the given items, returning the value of
@@ -449,9 +458,8 @@ def display_menu(items,
     """
 
     if interact:
-        renpy.exports.mode(type)
-    
-    choice_for_skipping()
+        renpy.exports.mode(type)    
+        choice_for_skipping()
 
     # The possible choices in the menu.
     choices = [ val for label, val in items ]
@@ -518,8 +526,6 @@ def display_menu(items,
             else:
                 item_actions.append((label, action))
 
-            print "Showing screen", screen
-                
             show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, **scope)
 
     else:

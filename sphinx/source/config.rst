@@ -651,6 +651,17 @@ Rarely or Internally Used
     A function that is called when the hide statement is
     executed. This should take the same arguments as renpy.hide.
 
+.. var:: config.imagemap_auto_function = ...
+
+    A function that expands the `auto` property of a screen language
+    imagebutton or imagemap statement into displayable. It takes the
+    value of the auto property, and the desired image, one of:
+    "insensitive", "idle", "hover", "selected_idle", "selected_hover",
+    or "ground". It should return a displayable or None.
+
+    The default implementation formats the auto property with
+    the desired image, and then checks if the computed filename exists.
+    
 .. var:: config.imagemap_cache = True
 
     If true, imagemap hotspots will be cached to PNG files,
