@@ -611,11 +611,13 @@ FunctionStatementParser("grid", "ui.grid", many)
 Positional("cols")
 Positional("rows")
 Keyword("transpose")
+Style("spacing")
 add(ui_properties)
 add(position_properties)
 
 FunctionStatementParser("side", "ui.side", many)
 Positional("positions")
+Style("spacing")
 add(ui_properties)
 add(position_properties)
 

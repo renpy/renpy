@@ -373,6 +373,9 @@ following property:
     If False (the default), rows are filled before columns. If True,
     then columns are filled before rows.
 
+`spacing`
+    The spacing between the rows and columns of the grid.
+    
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -678,6 +681,12 @@ one of:
     'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br'
 
 'c' means center, 't' top, 'tl' top left, 'br' bottom right, and so on.
+
+A side taks the following properties:
+
+`spacing`
+    The spacing between the rows and columns of the grid.
+
 
 A side takes the following property groups:
 
