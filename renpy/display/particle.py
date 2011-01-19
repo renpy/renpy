@@ -233,20 +233,20 @@ class SpriteManager(renpy.display.core.Displayable):
                 renpy.display.predict.displayable(i)
                 
     
-    def redraw(self):
+    def redraw(self, delay=0):
         """
         :doc: sprite method
 
-        Causes this SpriteManager to be redrawn immediately.
+        Causes this SpriteManager to be redrawn in `delay` seconds.
         """
 
-        renpy.display.render.redraw(self, 0)
+        renpy.display.render.redraw(self, delay)
         
     def render(self, width, height, st, at):
 
         self.width = width
         self.height = height
-        
+
         if self.update_function is not None:
 
             redraw = self.update_function(st)
@@ -381,27 +381,32 @@ class Particles(renpy.display.core.Displayable):
             if update is None:
                 sprite.destroy()
                 continue
-            
+
             x, y, t, d = update
             
             if d is not sprite.cache.child:
                 sprite.set_child(d)
 
-            sprite.xoffset = x
-            sprite.yoffset = y
+            sprite.x = x
+            sprite.y = y
             
             new_particles.append((sprite, p))
 
         if add_parts:
             for p in add_parts:
-                x, y, t, d = p.update(st)
+                update = p.update(st)
+
+                if update is None:
+                    continue
+                
+                x, y, t, d = update
 
                 if d is None:
                     continue
 
                 sprite = self.sm.create(d)
-                sprite.xoffset = x
-                sprite.yoffset = y
+                sprite.x = x
+                sprite.y = y
 
                 new_particles.append((sprite, p))
             
