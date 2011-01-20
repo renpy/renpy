@@ -102,6 +102,15 @@ class Displayable(renpy.object.Object):
     their fields.
     """
 
+    # Some invariants about method call order:
+    #
+    # per_interact is called before render.
+    # render is called before event.
+    #
+    # get_placement can be called at any time, so can't
+    # assume anything.
+
+    
     activated = False
     focusable = False
     full_focus_name = None
@@ -193,7 +202,7 @@ class Displayable(renpy.object.Object):
         that this drawable can be drawn to without overflowing some
         bounding box. It's also given two times. It returns a Surface
         that is the current image of this drawable. 
-
+ 
         @param st: The time since this widget was first shown, in seconds.
         @param at: The time since a similarly named widget was first shown,
         in seconds.        
@@ -230,18 +239,13 @@ class Displayable(renpy.object.Object):
         displayable.
         """
 
-        worklist = [ self ]
-
-        while worklist:
-            d = worklist.pop(0)
-            
-            if d is None:
+        for d in self.visit():
+            if not d:
                 continue
+            d.visit_all(callback)
 
-            callback(d)
-            worklist.extend(d.visit())
+        callback(self)
         
-
     def visit(self):
         """
         Called to ask the displayable to return a list of its children

@@ -512,7 +512,9 @@ class Transform(Container):
 
         self.child_st_base = 0
 
-
+    def visit(self):
+        return [ self.child ]
+    
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
     def default_function(self, state, st, at):
@@ -611,7 +613,7 @@ class Transform(Container):
         self.child_st_base = self.st
 
         child.per_interact()
-        
+
         renpy.display.render.redraw(self, 0)
         
     def update_state(self):
