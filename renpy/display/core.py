@@ -109,7 +109,6 @@ class Displayable(renpy.object.Object):
     #
     # get_placement can be called at any time, so can't
     # assume anything.
-
     
     activated = False
     focusable = False

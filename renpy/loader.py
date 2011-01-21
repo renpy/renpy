@@ -28,18 +28,29 @@ import sys
 import types
 
 # Files on disk should be checked before archives. Otherwise, among
-# other things, using a new version of bytecode.rpb will break.
+# other things, using a new version of bytecode.rpyb will break.
 archives = [ ]
 
 # The value of renpy.config.archives the last time index_archives was
 # run.
 old_config_archives = None
 
+# A map from lower-case filename to regular-case filename.
+lower_map = { }
+
 def index_archives():
     """
-    Loads in the indexes for the archive files.
+    Loads in the indexes for the archive files. Also updates the lower_map.
     """
 
+    # Update lower_map.
+    lower_map.clear()
+    
+    for dir, fn in listdirfiles():
+        lower_map[fn.lower()] = fn
+
+    # Index the archives.
+    
     global old_config_archives
 
     if old_config_archives == renpy.config.archives:
@@ -74,7 +85,7 @@ def index_archives():
                         index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
                     else:
                         index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
-                        
+
                 archives.append((prefix, index))
                 
                 f.close()
@@ -96,6 +107,7 @@ def index_archives():
             fn = transfn(prefix + ".rpi")
             index = loads(file(fn, "rb").read().decode("zlib")) 
             archives.append((prefix, index))
+
         except:
             if renpy.config.debug:
                 raise
@@ -132,7 +144,7 @@ def listdirfiles():
     for prefix, index in archives:
         for j in index.iterkeys():
             rv.append((None, j))
-
+            
     return rv
     
 
@@ -271,6 +283,8 @@ def load(name):
     """
     Returns an open python file object of the given type.
     """
+
+    name = lower_map.get(name.lower(), name)
     
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
@@ -330,9 +344,11 @@ def loadable(name):
     Returns True if the name is loadable with load, False if it is not.
     """
 
+    name = lower_map.get(name.lower(), name)
+    
     if name in loadable_cache:
         return loadable_cache[name]
-    
+
     try:
         transfn(name)
         loadable_cache[name] = True
@@ -355,6 +371,8 @@ def transfn(name):
     searched directories.
     """
 
+    name = lower_map.get(name.lower(), name)
+    
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 

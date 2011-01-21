@@ -21,6 +21,10 @@ As the size of the image cache is now tracked more closely, the default
 size of the cache has been increased to 10 screens worth of images.
 
 
+Ren'Py now treats filenames as if they were case-insensitive. This
+means that filename mismatches on Linux should no longer be a problem.
+
+
 Bug Fixes
 ---------
 

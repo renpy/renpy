@@ -21,13 +21,10 @@
 
 import renpy
 import codecs
-import os
-import os.path
 import time
 import re
 
 image_prefixes = None
-filenames = None
 
 # Things to check in lint.
 #
@@ -146,21 +143,19 @@ def check_file(what, fn):
     except:
         return
 
-    if renpy.loader.transfn(fn) and \
-           fn.lower() in filenames and \
-           fn != filenames[fn.lower()]:
-        report("Filename case mismatch for %s. '%s' was used in the script, but '%s' was found on disk.", what, fn, filenames[fn.lower()])
-
-        add("Case mismatches can lead to problems on Mac, Linux/Unix, and when archiving images. To fix them, either rename the file on disk, or the filename use in the script.")
+    
 
 def check_displayable(what, d):
 
-    files = [ ]
-
-    def files_callback(img):
+    def predict_image(img):
         files.extend(img.predict_files())
 
-    d.predict(files_callback)
+    renpy.display.predict.image = predict_image
+        
+    files = [ ]
+
+    if isinstance(d, renpy.display.core.Displayable):
+        d.visit_all(lambda a : a.predict_one())
 
     for fn in files:
         check_file(what, fn)
@@ -406,14 +401,6 @@ def lint():
     
     print codecs.BOM_UTF8
     print unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8")
-
-    # This is used to support the check_image.
-    global filenames
-    filenames = { }
-
-    for d in renpy.config.searchpath:
-        for fn in os.listdir(os.path.join(renpy.config.basedir, d)):
-            filenames[fn.lower()] = fn
 
     # This supports check_hide.
     global image_prefixes
