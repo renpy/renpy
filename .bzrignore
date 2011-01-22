@@ -92,3 +92,9 @@ module/glenviron_shader.c
 module/glrtt_copy.c
 module/glshader.c
 module/gltexture.c
+log.txt
+lib/linux-x86
+lib/python
+lib/update-version.txt
+sphinx/game/saves
+tutorial/game/saves

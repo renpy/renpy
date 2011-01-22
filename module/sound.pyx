@@ -52,8 +52,9 @@ cdef extern from "pss.h":
 
 def check_error():
     e = PSS_get_error();
-    if e:
-        raise Exception, e
+
+    if str(e):
+        raise Exception(e)
 
 def play(channel, file, name, paused=False, fadein=0, tight=False):
     cdef SDL_RWops *rw
