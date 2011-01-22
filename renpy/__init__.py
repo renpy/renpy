@@ -29,10 +29,13 @@ import os
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in launcher/script_version.rpy, too!
 # Be sure to change _renpy.pyx and module.py, if necessary.
-
 version = "Ren'Py 6.12.0a"
+
+
+# Other versions.
 script_version = 5003000
 savegame_suffix = "-LT1.save"
+bytecode_version = 1
 
 # True if this is the first time we've started - even including
 # utter restarts.

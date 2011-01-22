@@ -40,6 +40,9 @@ script_version = renpy.script_version
 # The version of the bytecode cache.
 BYTECODE_VERSION = 1
 
+# The python magic code.
+MAGIC = imp.get_magic()
+        
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -402,27 +405,23 @@ class Script(object):
                 self.bytecode_oldcache = cache
         except:
             pass
-
         
     def update_bytecode(self):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
-        
-        magic = imp.get_magic()
-        
+
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
         for i in self.all_pycode:
 
-            codes = self.bytecode_oldcache.get(i.location, { })
+            key = i.get_hash() + MAGIC
 
-            if magic in codes:
-                code = codes[magic]
-                
-            else:
+            code = self.bytecode_oldcache.get(key, None)
 
+            if code is None:
+                                              
                 self.bytecode_dirty = True
                 
                 old_ei = renpy.game.exception_info
@@ -449,12 +448,10 @@ class Script(object):
                     continue
                         
                 renpy.game.exception_info = old_ei
-                codes[magic] = code
 
             i.source = None
+            self.bytecode_newcache[key] = code
             i.bytecode = marshal.loads(code)
-            self.bytecode_newcache[i.location] = codes
-
 
         self.all_pycode = [ ]
 

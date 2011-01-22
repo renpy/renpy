@@ -29,6 +29,7 @@
 import renpy
 import re
 import time
+import md5
 
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):
@@ -94,7 +95,6 @@ class PyExpr(unicode):
     def __getnewargs__(self):
         return (unicode(self), self.filename, self.linenumber) # E1101
     
-    
 class PyCode(object):
 
     __slots__ = [
@@ -102,6 +102,7 @@ class PyCode(object):
         'location',
         'mode',
         'bytecode',
+        'hash',
         ]
 
     def __getstate__(self):
@@ -133,6 +134,23 @@ class PyCode(object):
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
 
+        self.hash = None
+
+    def get_hash(self):
+        try:
+            if self.hash is not None:
+                return self.hash
+        except:
+            pass
+
+        code = self.source
+        if isinstance(code, renpy.python.ast.AST):
+            code = renpy.python.ast.dump(code)
+        
+        self.hash = chr(renpy.bytecode_version) + md5.md5(code).digest()
+        return self.hash
+            
+            
 def chain_block(block, next):
     """
     This is called to chain together all of the nodes in a block. Node
