@@ -157,7 +157,6 @@ has_libglew32 = add_library("libglew32", True)
 
 cython("_renpy")
 cython("_renpybidi")
-cython("_renpy_pysdlgl")
 cython("sound")
 cython("winmixer")
 
