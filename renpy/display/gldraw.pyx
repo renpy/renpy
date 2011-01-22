@@ -149,7 +149,8 @@ cdef class GLDraw:
         # Old value of fullscreen.
         self.old_fullscreen = None
 
-        # We don't use a fullscreen surface.
+        # We don't use a fullscreen surface, so this needs to be set
+        # to None at all times.
         self.fullscreen_surface = None
 
         # The display info, from pygame.
@@ -163,7 +164,7 @@ cdef class GLDraw:
 
         # Should we use clipping planes or stencils?
         self.use_clipping_planes = True
-        
+
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """

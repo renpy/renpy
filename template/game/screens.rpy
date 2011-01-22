@@ -284,9 +284,6 @@ screen file_picker:
                     $ description = "% 2d. %s\n%s" % (i, FileTime(i, empty=_("Empty Slot.")), FileSaveName(i))
                     text description
 
-                    key "save_delete" action FileDelete(i)
-                    
-                    
 screen save:
 
     # This ensures that any other menu screen is replaced.

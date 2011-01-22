@@ -217,29 +217,29 @@ label demo_ui:
     call screen demo_imagemap
     window show None
     
-    # We've assigned the chosen result from the imagemap to the
-    # _result variable. We can use an if statement to vary what
+    # Call screen assignes the chosen result from the imagemap to the
+    # _return variable. We can use an if statement to vary what
     # happens based on the user's choice.
 
-    if _result == "swimming":
+    if _return == "swimming":
 
         e "You chose swimming."
         
         e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
 
-    elif _result == "science":
+    elif _return == "science":
 
         e "You chose science."
         
         e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
         
-    elif _result == "art":
+    elif _return == "art":
 
         e "You chose art."
         
         e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
 
-    elif _result == "go home":
+    elif _return == "go home":
 
         e "You chose to go home."
 

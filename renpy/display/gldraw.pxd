@@ -17,7 +17,7 @@ cdef class GLDraw:
     cdef double redraw_period
     cdef public dict info
     cdef object old_fullscreen
-    cdef object fullscreen_surface
+    cdef public object fullscreen_surface
     cdef object display_info
     cdef double upscale_factor
     cdef tuple clip_cache
