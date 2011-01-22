@@ -466,7 +466,6 @@ class Script(object):
                 f.close()
             except:
                 pass
-
         
 
     def lookup(self, label):
