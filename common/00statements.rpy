@@ -527,7 +527,7 @@ python early hide:
         kwargs = { }
 
         for k, v in parameters.iteritems():
-            kwargs[k] = eval(v)
+            kwargs[str(k)] = eval(v)
 
         store._return = renpy.call_screen(name, **kwargs)
 

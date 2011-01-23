@@ -11,6 +11,7 @@ import compileall
 import shutil
 import subprocess
 import makeupdate
+import glob
 import time
 
 zlib.Z_DEFAULT_COMPRESSION = 9
@@ -159,41 +160,16 @@ def main():
     more_files.extend(tree("lib/linux-x86"))
     
     module_files = [
-        "lib/pysdlsound/linmixer.py",
-        "lib/pysdlsound/__init__.py",
-        "core.c",
-        "ffdecode.c",
-        "IMG_savepng.c",
-        "IMG_savepng.h",
-        "mmx.h",
-        "pss.c",
-        "pss.h",
+        "*.c",
+        "*.h",
+        "*.py",
+        "*.pyx",
         "README.txt",
-        "_renpy.c",
-        "renpy_font.c",
-        "renpy.h",
-        "_renpy.pyx",
-        "renpy_ttf.c",
-        "renpy_ttf.h",
-        "rwobject.c",
-        "setup.py",
-        "sound.c",
-        "sound.pyx",
-        "subpixel.c",
-        "winmixer.c",
-        "winmixer.pyx",
-        "_renpybidi.c",
-        "renpybidicore.c",
-        "_renpybidi.pyx",
-        "_renpy_pysdlgl.c",
-        "_renpy_pysdlgl.pyx",
-        "_renpy_tegl.c",
-        "maketegl.py",
-        "maketegl.txt",
+        "lib/pysdlsound/*.py",
         ]
 
     for i in module_files:
-        files.append('module/' + i)
+        files.extend(glob.glob('module/' + i))
 
     files.extend(tree('renpy'))
     files.append('renpy.py')

@@ -30,8 +30,7 @@ class CopyRtt(Rtt):
 
     def init(self):
         pass
-    
-    
+        
     def deinit(self):
         """
         Called before changing the GL context.
