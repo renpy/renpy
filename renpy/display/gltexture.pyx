@@ -36,14 +36,17 @@ SIZES = [ 512, 256, 128, 64 ]
 texture_numbers = [ ]
 
 cdef int rtt_format = GL_RGBA
+cdef int rtt_internalformat = GL_RGBA
 
 def use_gles():
     """
     Called to trigger gles mode.
     """
     global rtt_format
+    global rtt_internalformat
     
-    rtt_format = GL_RGB
+    rtt_format = GL_RGB 
+    rtt_internalformat = GL_RGB 
 
 
 cdef class TextureCore:
@@ -185,21 +188,23 @@ cdef class TextureCore:
                         self.width,
                         self.height,
                         0,
+                        GL_RGBA,
                         GL_RGBA)
 
-                self.format = GL_RGBA
+                    self.format = GL_RGBA
 
             # Otherwise, either load or replace the texture.
             load_premultiplied(
                 self.premult,
                 w,
                 h,
-                (self.format != 0),
+                (self.format == GL_RGBA),
+                GL_RGBA,
                 GL_RGBA)
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
-            self.created = GL_RGBA
+            self.format = GL_RGBA
 
             # Finally, load in the default math.
             self.xadd = self.yadd = 0
@@ -228,7 +233,8 @@ cdef class TextureCore:
                 self.width,
                 self.height,
                 0,
-                rtt_format)
+                rtt_format,
+                rtt_internalformat)
 
             self.format = rtt_format
          
@@ -238,7 +244,6 @@ cdef class TextureCore:
         self.yadd = 0
         self.xmul = 1.0 / self.width
         self.ymul = 1.0 / self.height
-
         
     cpdef int allocate(self):
         """
@@ -695,7 +700,6 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
             x += texw
 
         y += texh
-
  
 cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, environ):
     """
@@ -749,7 +753,6 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
             x += t0w
 
         y += t0h
-
 
 cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, int ramp, environ):
     """
@@ -919,7 +922,7 @@ def premultiply(
 
 
 def load_premultiplied(
-    data, width, height, update, format,
+    data, width, height, update, format, internalformat,
     ):
 
     cdef char *pixels
@@ -940,19 +943,18 @@ def load_premultiplied(
             format,
             GL_UNSIGNED_BYTE,
             <GLubyte *> pixels)
-        
+
     else:
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            format,
+            internalformat,
             width,
             height,
             0,
             format,
             GL_UNSIGNED_BYTE,
             <GLubyte *> pixels)
-
 
 cdef void draw_rectangle(
     double sx,

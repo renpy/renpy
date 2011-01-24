@@ -313,6 +313,8 @@ class Dissolve(Transition):
             self.events = True
             return render(self.new_widget, width, height, st, at)
 
+        print "Dissolve tick:", st
+        
         complete = min(1.0, st / self.time)
 
         bottom = render(self.old_widget, width, height, st, at)

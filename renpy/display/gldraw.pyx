@@ -53,6 +53,11 @@ try:
 except ImportError:
     glenviron_limited = None
 
+try:
+    import renpy.display.glrtt_fbo as glrtt_fbo
+except ImportError:
+    glrtt_fbo = None
+
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -160,7 +165,7 @@ cdef class GLDraw:
         self.upscale_factor = 1.0
 
         # Should we use the fast (but incorrect) dissolve mode?
-        self.fast_dissolve = renpy.android
+        self.fast_dissolve = False # renpy.android
 
         # Should we use clipping planes or stencils?
         self.use_clipping_planes = True
@@ -475,10 +480,23 @@ cdef class GLDraw:
                 renpy.log.info("Can't find a workable environment.")
                 return False
 
-        # Pick a Render-to-texture subsystem.        
-        renpy.log.info("Using copy RTT.")
-        self.rtt = glrtt_copy.CopyRtt()
-        self.info["rtt"] = "copy"
+
+        if use_subsystem(
+            glrtt_fbo,
+            "RENPY_GL_RTT",
+            "fbo",
+            "GL_OES_framebuffer_object"):
+
+            print "Using FBO RTT."
+            renpy.log.info("Using fbo RTT.")
+            self.rtt = glrtt_fbo.FboRtt()
+            self.info["rtt"] = "fbo"
+
+        else:                        
+            # Pick a Render-to-texture subsystem.        
+            renpy.log.info("Using copy RTT.")
+            self.rtt = glrtt_copy.CopyRtt()
+            self.info["rtt"] = "copy"
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()

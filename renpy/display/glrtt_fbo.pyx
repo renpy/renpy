@@ -23,20 +23,25 @@
 from gl cimport *
 from renpy.display.glenviron import *
 
-class CopyRtt(Rtt):
+# The framebuffer object we use.
+cdef GLuint fbo
+    
+class FboRtt(Rtt):
     """
     This class uses texture copying to implement Render-to-texture.
     """
 
     def init(self):
-        pass
+        glGenFramebuffersEXT(1, &fbo)
+        # print "FBO Error 0:", glGetError()
+
         
     def deinit(self):
         """
         Called before changing the GL context.
         """
 
-        return
+        glDeleteFramebuffersEXT(1, &fbo)
 
     def begin(self):
         """
@@ -53,6 +58,17 @@ class CopyRtt(Rtt):
         to render the texture.
         """
 
+        check("Before the start of fbo render.")
+        
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+
+        glFramebufferTexture2DEXT(
+            GL_FRAMEBUFFER_EXT,
+            GL_COLOR_ATTACHMENT0_EXT,
+            GL_TEXTURE_2D,
+            texture,
+            0)
+
         glViewport(0, 0, w, h)
 
         glMatrixMode(GL_PROJECTION)
@@ -62,20 +78,13 @@ class CopyRtt(Rtt):
 
         draw_func(x, y, w, h)
 
-        glBindTexture(GL_TEXTURE_2D, texture)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
 
-        glCopyTexSubImage2D(
-            GL_TEXTURE_2D,
-            0,
-            0,
-            0,
-            0,
-            0,
-            w,
-            h)        
-
+        check("At the end of fbo render.")
+        
+        
     def end(self):
         """
         This is called when a Render-to-texture session ends.
         """
-
+        

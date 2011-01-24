@@ -7,7 +7,10 @@
 #define GL_COMPAT_H
 
 #ifdef ANDROID
+
 #include <GLES/gl.h>
+#include <GLES/glext.h>
+
 typedef GLfloat GLdouble;
 #define glewInit() (1)
 #define GLEW_OK (1)
@@ -28,6 +31,14 @@ typedef GLfloat GLdouble;
 // screenshots on Android.
 #define GL_PACK_ROW_LENGTH 0
 
+#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER_OES
+#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0_OES
+#define glBindFramebufferEXT glBindFramebufferOES
+#define glFramebufferTexture2DEXT glFramebufferTexture2DOES
+#define glGenFramebuffersEXT glGenFramebuffersOES
+#define glDeleteFramebuffersEXT glDeleteFramebuffersOES
+#define glCheckFramebufferStatusEXT glCheckFramebufferStatusOES
+
 
 #else
 #include <GL/glew.h>
@@ -38,6 +49,7 @@ typedef GLfloat GLdouble;
 #undef glActiveTexture
 #define glActiveTexture glActiveTextureARB
 
+#define GL_RGB565_OES 0
 
 #endif
 

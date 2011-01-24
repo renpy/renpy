@@ -280,6 +280,7 @@ if not android:
 display("glenviron_limited", glew_libs)
 
 display("glrtt_copy", glew_libs)
+display("glrtt_fbo", glew_libs)
 
 sys.path.append('..')
 import renpy

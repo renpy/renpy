@@ -42,7 +42,7 @@ display glenviron_shader
 display glenviron_limited
 display glshader
 display glrtt_copy
-
+display glrtt_fbo
 
 echo Compiling...
 
