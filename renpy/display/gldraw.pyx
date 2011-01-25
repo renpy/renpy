@@ -492,8 +492,7 @@ cdef class GLDraw:
             "fbo",
             "GL_OES_framebuffer_object"):
 
-            print "Using FBO RTT."
-            renpy.log.info("Using fbo RTT.")
+            renpy.log.info("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
 

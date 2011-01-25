@@ -487,12 +487,17 @@ class ZipFileImage(ImageBase):
         self.filename = filename
 
     def load(self):
-        zf = zipfile.ZipFile(self.zipfilename, 'r')
-        sio = cStringIO.StringIO(zf.read(self.filename))
-        rv = renpy.display.pgrender.load_image(sio, self.filename)
-        zf.close()
-
-        return rv
+        try:
+            zf = zipfile.ZipFile(self.zipfilename, 'r')
+            data = zf.read(self.filename)
+            sio = cStringIO.StringIO(data)
+            rv = renpy.display.pgrender.load_image(sio, self.filename)
+            zf.close()
+            return rv
+        except:
+            return renpy.display.pgrender.surface((2, 2), True)        
+    
+        
 
     def predict_files(self):
         return [ ]

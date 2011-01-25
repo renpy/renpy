@@ -440,5 +440,3 @@ def MultiPersistent(name):
 
     rv._filename = fn # W0201
     return rv
-
-

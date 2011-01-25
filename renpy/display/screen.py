@@ -72,7 +72,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     no_save = [ 'screen' ]
 
     def after_setstate(self):
-        self.screen = screens[self.screen_name]
+        self.screen = get_screen_variant(self.screen_name[0])
         
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 

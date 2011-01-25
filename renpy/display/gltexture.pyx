@@ -95,6 +95,8 @@ cdef class TextureCore:
         
     def __del__(self):
 
+        cdef unsigned int num
+
         # Release the surface.
         self.premult = None
         self.premult_size = None
@@ -102,7 +104,7 @@ cdef class TextureCore:
         self.premult_right = 0
         self.premult_top = 0
         self.premult_bottom = 0
-
+        
         # The test needs to be here so we don't try to append during
         # interpreter shutdown.
         if self.free_list is not None:
@@ -583,8 +585,6 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
     
     rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), .5)
     rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), .5)
-
-    print rv.columns, rv.rows
     
     for y, height, texheight in texrows:
         row = [ ]
