@@ -533,6 +533,7 @@ window_properties = [ Style(i) for i in [
 button_properties = [ Style(i) for i in [
         "sound",
         "mouse",
+        "focus_mask",        
         ] ]
 
 bar_properties = [ Style(i) for i in [
