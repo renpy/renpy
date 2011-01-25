@@ -204,25 +204,31 @@ cdef class GLDraw:
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
+        virtual_ar = 1.0 * vwidth / vheight
 
         # On a restart, restore the size.
         if renpy.display.gl_size is not None and not fullscreen:
             pwidth, pheight = renpy.display.gl_size
             
-        renpy.display.gl_size = None
-
-        # Ensure we're always at least 256x256, so we have a shot at rendering
-        # textures.
-        pwidth = max(pwidth, 256)
-        pheight = max(pheight, 256)
-
-        pwidth = min(self.display_info.current_w, pwidth)
+        pwidth = max(vwidth / 2, pwidth)
+        pheight = max(vheight / 2, pheight)
 
         if renpy.android:
             pheight = min(self.display_info.current_h, pheight)
+            pwidth = min(self.display_info.current_w, pwidth)
         else:
             pheight = min(self.display_info.current_h - 102, pheight)
-        
+            pwidth = min(self.display_info.current_w - 102, pwidth)
+
+        # The first time through.
+        if not self.did_init:
+           pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+
+        pwidth = max(pwidth, 256)
+        pheight = max(pheight, 256)
+
+        renpy.display.gl_size = None
+            
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
@@ -252,7 +258,6 @@ cdef class GLDraw:
         # Figure out the virtual box, which includes padding around
         # the borders.
         physical_ar = 1.0 * pwidth / pheight
-        virtual_ar = 1.0 * vwidth / vheight
         
         if physical_ar >= virtual_ar:
             x_padding = physical_ar * vheight - vwidth
