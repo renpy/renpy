@@ -29,21 +29,10 @@ class CopyRtt(Rtt):
     """
 
     def init(self):
-        pass
+        return
         
     def deinit(self):
-        """
-        Called before changing the GL context.
-        """
-
         return
-
-    def begin(self):
-        """
-        This function should be called when a Render-to-texture
-        session begins. It's responsible for setting the GPU to
-        RTT mode.
-        """
 
     def render(self, texture, x, y, w, h, draw_func):
         """
@@ -79,3 +68,6 @@ class CopyRtt(Rtt):
         This is called when a Render-to-texture session ends.
         """
 
+    def get_size_limit(self, dimension):
+        return dimension
+    

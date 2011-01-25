@@ -30,7 +30,7 @@ import renpy
 MAX_SIZE = 512
 
 # Possible sizes for a texture.
-SIZES = [ 512, 256, 128, 64 ]
+SIZES = [ 1024, 512, 256, 128, 64 ]
 
 # A list of texture number allocated.
 texture_numbers = [ ]
@@ -459,7 +459,7 @@ cdef class TextureGrid(object):
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }
         
-def compute_tiling(width, max_size=MAX_SIZE):
+def compute_tiling(width, max_size, min_fill_factor):
     """
     This computes a tiling for an image with the given width (or
     height). It takes a width as an argument, and returns two lists.
@@ -506,9 +506,8 @@ def compute_tiling(width, max_size=MAX_SIZE):
             if size > max_size:
                 continue
 
-            # Ensure each texture is at least 2/3rds full. (Except the
-            # smallest.)
-            if size * .66 <= width + left_border:
+            # Ensure each texture is full enough.
+            if size * min_fill_factor <= width + left_border + right_border:
                 break
             
         # The number of pixels to display to the user from this tile.
@@ -537,8 +536,8 @@ def texture_grid_from_surface(surf):
 
     rv = TextureGrid(width, height)
 
-    rv.columns, texcolumns = compute_tiling(width)
-    rv.rows, texrows = compute_tiling(height)
+    rv.columns, texcolumns = compute_tiling(width, MAX_SIZE, .66)
+    rv.rows, texrows = compute_tiling(height, MAX_SIZE, .66)
 
     rownum = 0
     lastrow = len(texrows) - 1
@@ -577,16 +576,16 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
     draw_func to draw to the screen.
     """
 
-    rtt.begin()
-    
     rv = TextureGrid(width, height)
 
     gldraw = renpy.display.draw    
     pwidth, pheight = gldraw.physical_size
     
-    rv.columns, texcolumns = compute_tiling(width, pwidth)
-    rv.rows, texrows = compute_tiling(height, pheight)
+    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), .5)
+    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), .5)
 
+    print rv.columns, rv.rows
+    
     for y, height, texheight in texrows:
         row = [ ]
             
@@ -598,8 +597,6 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
             row.append(tex)
             
         rv.tiles.append(row)
-
-    rtt.end()
         
     return rv
 

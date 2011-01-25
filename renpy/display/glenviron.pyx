@@ -69,14 +69,11 @@ class Rtt(object):
     Subclasses of this class handle rendering to a texture.
     """
 
-    def begin(self):
-        """
-        This function should be called when a Render-to-texture
-        session begins. It's responsible for setting the GPU to
-        RTT mode.
-        """
+    def init(self):
+        return
 
-        raise Exception("Not implemented.")
+    def deinit(self):
+        return
 
     def render(self, texture, x, y, w, h, draw_func):
         """
@@ -88,9 +85,10 @@ class Rtt(object):
 
         raise Exception("Not implemented.")
 
-    def end(self):
+    def get_size_limit(self, dimension):
         """
-        This is called when a Render-to-texture session ends.
+        Get the maximum size of a texture.
         """
-
+        
         raise Exception("Not implemented.")
+        

@@ -22,6 +22,7 @@
 
 from gl cimport *
 from renpy.display.glenviron import *
+import renpy
 
 # The framebuffer object we use.
 cdef GLuint fbo
@@ -33,8 +34,13 @@ class FboRtt(Rtt):
 
     def init(self):
         glGenFramebuffersEXT(1, &fbo)
-        # print "FBO Error 0:", glGetError()
 
+        cdef int i
+
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &i)
+        self.size_limit = i
+
+        renpy.log.info("FBO Maximum Texture Size: %d", i)
         
     def deinit(self):
         """
@@ -57,8 +63,6 @@ class FboRtt(Rtt):
         the sub-image to render to the texture. `draw_func` is called
         to render the texture.
         """
-
-        check("Before the start of fbo render.")
         
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 
@@ -79,12 +83,7 @@ class FboRtt(Rtt):
         draw_func(x, y, w, h)
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
+        
 
-        check("At the end of fbo render.")
-        
-        
-    def end(self):
-        """
-        This is called when a Render-to-texture session ends.
-        """
-        
+    def get_size_limit(self, dimension):
+        return self.size_limit
