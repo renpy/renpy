@@ -203,11 +203,13 @@ label demo_ui:
 
             e "Well, now you know."
 
-    e "We can also prompt the user to enter some text."
+    if not renpy.variant('touch'):
 
-    $ povname = renpy.input("What is your name?") or "Guy Shy"
+        e "We can also prompt the user to enter some text."
 
-    pov "My name is %(povname)s."
+        $ povname = renpy.input("What is your name?") or "Guy Shy"
+
+        pov "My name is %(povname)s."
 
     
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"

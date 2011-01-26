@@ -222,10 +222,10 @@ label demo_minigame:
     e "For example, one could support loading and saving while a user-defined displayable is shown."
 
     e "Now, why don't we play some pong?"
-
-    window hide None
     
 label demo_minigame_pong:
+
+    window hide None
 
     # Put up the pong background, in the usual fashion.
     scene bg pong field
