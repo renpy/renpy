@@ -36,6 +36,7 @@ init python:
         ("demo_minigame", "Minigames", "6.3.2"),
         ("demo_persistent", "Persistent Data", "6.7.0"),
         ("demo_transform", "Transform", "6.9.0"),
+        ("tutorial_sprite", "Sprites", "6.12.0"),
         ]
 
 screen tutorials:
