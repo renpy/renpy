@@ -320,7 +320,7 @@ class Frame(renpy.display.core.Displayable):
                 if self.tile:
                     newcr = Render(cdw, cdh)
                     newcr.clipping = True
-
+                    
                     for x in xrange(0, cdw, csw):
                         for y in xrange(0, cdh, csh):
                             newcr.blit(cr, (x, y))
