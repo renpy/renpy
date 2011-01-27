@@ -41,8 +41,7 @@ bytecode_version = 1
 # utter restarts.
 first_utter_start = True
 
-def setup_modulefinder():
-    import modulefinder
+def setup_modulefinder(modulefinder):
     import _renpy
     libexec = os.path.dirname(_renpy.__file__)
     displaypath = os.path.join(libexec, "renpy", "display")

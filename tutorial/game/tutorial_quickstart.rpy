@@ -170,7 +170,7 @@ label tutorial_images:
 
     show example images
 
-    e "Here are the some sample image definitions. They should be placed the start of the file, without any indentation."
+    e "Here are some sample image definitions. They should be placed at the start of the file, without any indentation."
 
     e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
 

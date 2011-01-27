@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import modulefinder
 import shutil
 from distutils.core import setup
 import py2exe
@@ -24,7 +25,9 @@ def move_from_dist(fn):
         os.unlink(fn)
 
     os.rename("dist/" + fn, fn)
-    
+
+import renpy
+renpy.setup_modulefinder(modulefinder)
 
 def main():
 
