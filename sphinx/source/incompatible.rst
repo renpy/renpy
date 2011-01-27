@@ -18,6 +18,11 @@ The definition of the `items` parameter of the :ref:`Choice` and
 ``nvl_choice`` screens has changed. The ``nvl_choice`` screen is
 deprecated in favor of the :ref:`NVL` screen.
 
+Screens may be invoked at any time, in order to allow for image
+prediction, unless they have a predict property of False. When the
+predict property is not False, screens should not cause side effects
+to occur upon their initial display.
+
 
 .. _incompatible-6.11.1:
 

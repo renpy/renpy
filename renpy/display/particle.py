@@ -99,6 +99,7 @@ class Sprite(renpy.object.Object):
             sc.render = None
             sc.child = d
             sc.st = None
+            
             self.manager.displayable_map[id_d] = sc
 
         self.cache = sc
@@ -432,7 +433,7 @@ class SnowBlossomFactory(object):
         self.init()
 
     def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False):
-        self.image = image
+        self.image = renpy.easy.displayable(image)
         self.count = count 
         self.xspeed = xspeed
         self.yspeed = yspeed

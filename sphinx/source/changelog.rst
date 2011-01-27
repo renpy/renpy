@@ -3,38 +3,150 @@ Full Changelog
 ==============
 
 Ren'Py 6.12.0
--------------
+=============
 
-Ren'Py now support hotspot caching for screen language imagemaps. When
-:var:`config.developer` is true, Ren'Py will write a PNG file in the
-game/cache/ directory containing image data for each of the hotspots
-in the imagemap. If the cache file exists (regardless of the
-config.developer setting) it will be loaded instead of loading the
-hotspot images. As the cache file is often much smaller than the size
-of the hotspot images, it will load faster and reduce image cache
+Android Support
+---------------
+
+Ren'Py now supports the Android platform. This includes support for a
+large fraction of Ren'Py's functionality, although we were unable to
+add support for imagedissolves and movie playback. It should be
+possible to package a Ren'Py game and distribute it through the
+Android market. 
+
+Android support required several changes in Ren'Py:
+
+* The OpenGL renderer has been extended to support OpenGL ES. 
+
+* For performance reasons, much of the display system has been
+  rewritten in the Cython language. This also should improve
+  performance on other platforms.
+
+* Support was added for the Android lifecycle. Ren'Py automatically
+  saves when the android device suspends, and reloads (if necessary)
+  upon resume.
+
+* We added the concept of :ref:`Screen Variants`. This allows a single
+  game to have multiple interfaces - such a mouse interface for
+  computer platforms, and a touch interface for Android-based
+  smartphones and tablets.
+
+* We built a system that allows one to package a game separately from
+  Ren'Py. This allows one to build packages without having to set up
+  the Android NDK (you'll still need the Android SDK, Java, Python,
+  Ant, and a lot of patience).
+
+
+New Widgets and Displayables
+----------------------------
+
+Added the :ref:`SpriteManager <Sprites>` displayable. This provides a
+high-performance way of drawing many similar sprites to the
+screen. This can scale to hundreds of particles, provided those
+particles are mostly similar to each other.
+
+Added the :ref:`mousearea` widget. A mousearea allows hovered and
+unhovered callbacks to occur when the mouse enters and leaves an area
+of the screen. Since it doesn't participate in the focus system, a
+mousearea can include buttons and bars.
+
+Added :ref:`Drag and Drop` widgets and displayables. The drag and drop
+system can support:
+
+* Windows being repositioned by the user.
+* Card games.
+* Inventory systems.
+* Drag-to-reorder systems.
+
+Image Prediction
+----------------
+
+Ren'Py is now better at predicting image usage. Along with predicting
+images used by normal gameplay, it now attempts to predict images that
+are used by screens one click away from the user. For example, during
+normal gameplay, it will predict images on the first screen of the
+game menu. While at the game menu, it will predict the other screens
+of the game menu, and also the images the user will see when returning
+to the main menu. This prediction is automatic, but only occurs when
+using screens.
+
+Screens may be invoked at any time, in order to allow for image
+prediction, unless they have a predict property of False. This means
+that displaying a screen should not have side effects. (Most screens
+only have side effects when a button is clicked or a bar changed -
+that's still fine.)
+
+Ren'Py now supports hotspot caching for screen language
+imagemaps. When :var:`config.developer` is true, Ren'Py will write a
+PNG file in the game/cache/ directory containing image data for each
+of the hotspots in the imagemap. If the cache file exists (regardless
+of the config.developer setting) it will be loaded instead of loading
+the hotspot images. As the cache file is often much smaller than the
+size of the hotspot images, it will load faster and reduce image cache
 pressure, improving game performance. This behavior only applies to
 screen language imagemaps, and can be disabled with
 :var:`config.imagemap_cache`.
 
+This should remove most of the need for :func:`renpy.cache_pin`. While
+not an error, the use of cache pinning can cause unnecessary memory usage
+when the wrong image is loaded.
 
-As the size of the image cache is now tracked more closely, the default
-size of the cache has been increased to 10 screens worth of images.
+Screens
+-------
 
+Ren'Py now ships with a default set of screens, which are used by the
+demo and installed by default when a new game is created. You can find
+them in template/game/screens.rpy, and they can be used by copying
+that file into your project.
 
-Ren'Py now treats filenames as if they were case-insensitive. This
-means that filename mismatches on Linux should no longer be a problem.
+The definition of the `items` parameter of the :ref:`Choice` and
+:ref:`NVL` screens has changed, and games will need to be updated to work
+with the new version. 
+
+Character arguments beginning with ``show_`` are passed to the
+:ref:`Say` screen. This allows things like show_side_image and
+show_two_window to work with screens. The screens we ship support
+these options.
+
+The new :var:`config.imagemap_auto_function` variable allows the
+game-maker to control the interpretation of the ``auto`` property of
+imagemaps and imagebuttons.
+
+The imagemap caching behavior described above applies only to screens.
+
+Other Improvements
+------------------
+
+Ren'Py 6.12 includes a number of other improvements:
+
+* We've continued writing the new manual. Noably, we have rewritten
+  the documentation for displayables.
+
+* The :func:`Solid` and :func:`Frame` displayables are now tiny and
+  no longer take up (much) space in the image cache.
+
+* We now create a log.txt file, which replaces the old opengl.txt, and
+  can log other subsystems.
+
+* Several missing properties have been added to the screen language.
+
+* Ren'Py now treats filenames as if they were case-insensitive. This
+  means that filename mismatches on Linux should no longer be a problem.
 
 
 Bug Fixes
 ---------
 
+* :lpbug:`680266` - Ensures that dynamic displayables update before
+  Transforms that use them.
+
+* :lpbug:`683412` - Do not crash if a shader fails to compile.
+
 * Fixed a bug that caused Ren'Py to crash when the system volume was
   lowered to 0, but not muted.
 
-* Fixed a bug that prevented :funcref:`Render.canvas` from working.
-
-
-
+* Fixed a bug that prevented :func:`Render.canvas` from working with
+  the OpenGL renderer.
 
 
 Ren'Py 6.11.2

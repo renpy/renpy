@@ -1,6 +1,7 @@
 # Defines a SnowBlossom object, which uses particle motion to show falling
 # cherry blossom petals.
-image snowblossom = SnowBlossom(anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15), fast=True)
+image sakura filmstrip = anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15)
+image snowblossom = SnowBlossom("sakura filmstrip")
 
 init python:
 
@@ -59,11 +60,35 @@ init python:
         
 label tutorial_sprite:
 
-    scene black
+    e "Ren'Py supports a sprite system, which allows many similar objects to be shown on the screen at once."
 
+    scene black
     show expression (StarField().sm) as starfield
-    show eileen happy at center
+    show eileen happy
+    with wipeleft
+
+    e "The background behind me consists of one hundred and seventy-five stars, being moved at several different speeds, to give a starflight effect."
+
+    e "The OpenGL system should be able to animate this smoothly, but you might see a bit of stuttering if your computer is using software."
+
+    e "You'll need to decide which older systems to support."
+
+    scene bg washington
+    show eileen happy
+    with wipeleft
+
+    e "The sprite manager requires you to write a python function to move the sprites around."
     
-    "Space, the final frontier."
+    show snowblossom
+
+    e "In many cases, all you need is something moving around the screen - like cherry blossoms, or snow."
+
+    e "That's what the snowblossom function gives you - a simple way to have things falling from the top of the screen."
+
+    hide snowblossom
+    with dissolve
+    
+    e "And that's it for sprites."
+
 
     return
