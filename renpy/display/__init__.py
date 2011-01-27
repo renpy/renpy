@@ -40,3 +40,5 @@ prefer_renderers = "gl,sw"
 
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False
+
+

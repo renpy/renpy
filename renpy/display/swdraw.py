@@ -539,11 +539,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if reverse.xdy or reverse.ydx:        
             draw_transformed(dest, clip, what.pygame_surface(True), xo, yo, alpha, forward, reverse)
             return
-            
-
-            # raise Exception("Non-axis-aligned clipping is not supported.")
-
-
         
         width = what.width * reverse.xdx
         height = what.height * reverse.ydy

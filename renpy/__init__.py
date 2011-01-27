@@ -41,6 +41,35 @@ bytecode_version = 1
 # utter restarts.
 first_utter_start = True
 
+def setup_modulefinder():
+    import modulefinder
+    import _renpy
+    libexec = os.path.dirname(_renpy.__file__)
+    displaypath = os.path.join(libexec, "renpy", "display")
+    modulefinder.AddPackagePath('renpy.display', displaypath)
+
+def import_cython():
+    """
+    Never called, but necessary to ensure that modulefinder will properly
+    grab the various cython modules.
+    """
+
+    import renpy.display.accelerator
+    import renpy.display.gldraw
+    import renpy.display.glenviron
+    import renpy.display.glenviron_fixed
+    import renpy.display.glenviron_limited
+    import renpy.display.glenviron_shader
+    import renpy.display.glrtt_copy
+    import renpy.display.glrtt_fbo
+    import renpy.display.glshader
+    import renpy.display.gltexture
+    import renpy.display.render
+
+    # Prevent a pyflakes warning.
+    renpy
+    
+    
 def import_all():
 
     # Should probably be early, as we will add it as a base to serialized things.
