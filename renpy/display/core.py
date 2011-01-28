@@ -1395,10 +1395,7 @@ class Interface(object):
             rv = self.screenshot
             self.lose_screenshot()
 
-        if rv is None:
-            rv = ""
-            
-        return self.screenshot
+        return rv
 
     
     def lose_screenshot(self):
