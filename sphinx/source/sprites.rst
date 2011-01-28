@@ -25,9 +25,21 @@ Sprite Classes
 --------------
 
 .. include:: inc/sprites
+.. include:: inc/sprites_extra
 
-Sprite Example
---------------
+Sprite Examples
+---------------
+
+The SnowBlossom class is an easy-to use way of placing falling things
+on the screen.
+
+::
+    image snow = SnowBlossom("snow.png", count=100)
+
+
+This example shows how a SpriteManager can be used to create complex
+behaviors. In this case, it shows 400 particles, and has them avoid
+the mouse.
 
 ::
 

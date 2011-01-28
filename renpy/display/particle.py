@@ -557,7 +557,7 @@ class SnowBlossomParticle(object):
         else:
             return int(ypos), int(xpos), to + self.offset, self.image
         
-def SnowBlossom(image,
+def SnowBlossom(d,
                 count=10,
                 border=50,
                 xspeed=(20, 50),
@@ -566,11 +566,45 @@ def SnowBlossom(image,
                 fast=False,
                 horizontal=False):
 
+    """
+    :doc: sprites_extra
+
+    The snowblossom effect moves multiple instances of a sprite up,
+    down, left or right on the screen. When a sprite leaves the screen, it
+    is returned to the start.
+
+    `d`
+        The displayable to use for the sprites.
+
+    `border`
+        The size of the border of the screen. The sprite is considered to be
+        on the screen until it clears the border, ensuring that sprites do
+        not disappear abruptly.
+
+    `xspeed`, `yspeed`
+        The speed at which the sprites move, in the horizontal and vertical
+        directions, respectively. These can be a single number or a tuple of
+        two numbers. In the latter case, each particle is assigned a random
+        speed between the two numbers. The speeds can be positive or negative,
+        as long as the second number in a tuple is larger than the first.
+
+    `start`
+        The delay, in seconds, to start each particle.
+
+    `fast`
+        If true, particles start in the center of the screen, rather than
+        only at the edges.
+
+    `horizontal`
+        If true, particles appear on the left or right side of the screen,
+        rather than the top or bottom.
+        """
+    
     # If going horizontal, swap the xspeed and the yspeed.
     if horizontal:
         xspeed, yspeed = yspeed, xspeed
 
-    return Particles(SnowBlossomFactory(image=image,
+    return Particles(SnowBlossomFactory(image=d,
                                         count=count,
                                         border=border,
                                         xspeed=xspeed,
