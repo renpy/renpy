@@ -170,6 +170,9 @@ cdef class GLDraw:
         # Should we use clipping planes or stencils?
         self.use_clipping_planes = True
 
+        # Should we always report pixels as being always opaque?
+        self.always_opaque = renpy.android
+        
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
@@ -220,9 +223,9 @@ cdef class GLDraw:
             pheight = min(self.display_info.current_h - 102, pheight)
             pwidth = min(self.display_info.current_w - 102, pwidth)
 
-        # The first time through.
-        if not self.did_init:
-           pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+            # The first time through.
+            if not self.did_init:
+                pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
@@ -377,6 +380,7 @@ cdef class GLDraw:
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
             self.use_clipping_planes = False
+            self.always_opaque = True
             gltexture.use_gles()
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
@@ -914,6 +918,9 @@ cdef class GLDraw:
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
+        if self.always_opaque:
+            return 255
+        
         what = what.subsurface((x, y, 1, 1))
         
         forward = reverse = IDENTITY
@@ -947,7 +954,6 @@ cdef class GLDraw:
         """
         Gets a texture grid that's half the size of what..
         """
-
         # Used to work around a bug in cython where self was not getting
         # the right type when being assigned to the closure.
         cdef GLDraw draw = self

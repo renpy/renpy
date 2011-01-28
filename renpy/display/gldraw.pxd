@@ -23,7 +23,8 @@ cdef class GLDraw:
     cdef tuple clip_cache
     cdef bint fast_dissolve
     cdef bint use_clipping_planes
-
+    cdef bint always_opaque
+    
     cdef tuple clip_rtt_box
     
     cpdef set_clip(GLDraw self, tuple clip)
