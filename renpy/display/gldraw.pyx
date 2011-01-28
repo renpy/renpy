@@ -312,7 +312,7 @@ cdef class GLDraw:
 
         # Prepare a mouse display.
         self.mouse_old_visible = None
-        
+
         return True
 
     def deinit(self):
@@ -548,7 +548,7 @@ cdef class GLDraw:
         if rv is None:
             rv = gltexture.texture_grid_from_surface(surf)
             self.texture_cache[surf] = rv
-
+            
         return rv
 
     # private
@@ -564,7 +564,7 @@ cdef class GLDraw:
         self.clip_cache = None
         self.clip_rtt_box = None
         glDisable(GL_SCISSOR_TEST)
-
+        
     def clip_mode_rtt(self, x, y, w, h):
         """
         The same thing, except the screen is projected in RTT mode.
@@ -573,8 +573,8 @@ cdef class GLDraw:
         self.clip_cache = None
         self.clip_rtt_box = (x, y, w, h)
         glDisable(GL_SCISSOR_TEST)
-        
 
+        
     # private
     cpdef set_clip(GLDraw self, tuple clip):
 
@@ -622,7 +622,7 @@ cdef class GLDraw:
 
                 glEnable(GL_SCISSOR_TEST)
                 glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
-                
+
             
     def draw_screen(self, surftree, fullscreen_video):
         """
@@ -667,7 +667,7 @@ cdef class GLDraw:
         renpy.display.core.cpu_idle.set()
         pygame.display.flip()
         renpy.display.core.cpu_idle.clear()
-            
+
 
     cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
         """
@@ -910,7 +910,7 @@ cdef class GLDraw:
         """
         Returns true if the pixel is not 100% transparent.
         """
-
+        
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
@@ -939,7 +939,7 @@ cdef class GLDraw:
         glReadPixels(0, 0, 1, 1, GL_ALPHA, GL_BYTE, &a)
 
         what.kill()
-        
+
         return a
         
 
@@ -1023,7 +1023,7 @@ cdef class GLDraw:
     
     # Private.
     def draw_mouse(self):
-        
+
         hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
 
         self.mouse_info = (mx, my, tex)
@@ -1072,20 +1072,23 @@ cdef class GLDraw:
         surf = PySurface_AsSurface(full)
         pixels = <unsigned char *> surf.pixels
 
-        glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
+        if GL_PACK_ROW_LENGTH != 0:
 
-        glReadPixels(
-            0,
-            0,
-            surf.w,
-            surf.h,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            pixels)
+            glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
+
+            glReadPixels(
+                0,
+                0,
+                surf.w,
+                surf.h,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                pixels)
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
+        
         return rv
         
     def free_memory(self):
