@@ -591,7 +591,7 @@ label tutorial_atl:
     e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
 
     show logo base at reset
-    show example atl_xyzoom
+    show example atl_size
 
     #begin atl_size
     show logo base:

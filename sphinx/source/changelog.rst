@@ -119,9 +119,13 @@ Other Improvements
 
 Ren'Py 6.12 includes a number of other improvements:
 
-* We've continued writing the new manual. Noably, we have rewritten
+* We've continued writing the new manual. Notably, we have rewritten
   the documentation for displayables.
 
+* When taking a screenshot, :var:`config.screenshot_callback` is
+  called. The default implementation of this function notifies the
+  user of the location of the screenshot.
+  
 * The :func:`Solid` and :func:`Frame` displayables are now tiny and
   no longer take up (much) space in the image cache.
 
