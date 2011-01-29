@@ -451,7 +451,7 @@ screen yesno_prompt:
         style "gm_root"
 
     frame:
-        style_group "yesno_prompt"
+        style_group "yesno"
 
         has vbox
 
@@ -463,16 +463,21 @@ screen yesno_prompt:
 
 
 init python:
-    style.yesno_prompt_frame.xfill = True
-    style.yesno_prompt_frame.xmargin = 50
-    style.yesno_prompt_frame.ypadding = 25
-    style.yesno_prompt_frame.yalign = .25
     
-    style.yesno_prompt_vbox.xfill = True
-    style.yesno_prompt_vbox.box_spacing = 25
+    style.yesno_frame.xfill = True
+    style.yesno_frame.xmargin = .05
+    style.yesno_frame.ypos = .1
+    style.yesno_frame.yanchor = 0
+    style.yesno_frame.ypadding = .05
+    
+    style.yesno_vbox.xalign = 0.5
+    style.yesno_vbox.yalign = 0.5
+    style.yesno_vbox.box_spacing = 30
+    
+    style.yesno_hbox.xalign = 0.5
+    style.yesno_hbox.spacing = 100
+    
+    style.yesno_button.size_group = "yesno"
 
-    style.yesno_prompt_hbox.box_spacing = 100
-    style.yesno_prompt_hbox.xalign = 0.5
-
-    style.yesno_prompt_label.xalign = 0.5
-    style.yesno_prompt_label_text.text_align = 0.5
+    style.yesno_label.xalign = 0.5
+    style.yesno_label_text.text_align = 0.5

@@ -121,6 +121,8 @@ def main():
 
     prefix = sys.argv[1]
 
+    shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
+        
     # Update the update-version.txt file.
     p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
     revno = p.stdout.read().strip() + "-" + str(time.time())
