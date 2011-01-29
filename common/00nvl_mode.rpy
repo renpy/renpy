@@ -1,4 +1,4 @@
-# Copyright 2004-2010 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This is an implementation of NVL-mode, which can be used to show
