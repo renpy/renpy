@@ -39,7 +39,6 @@ Displayables, Transforms, and Transitions
    :maxdepth: 2
     
    displayables
-
    
 Customizing Ren'Py
 ------------------
@@ -55,6 +54,7 @@ Customizing Ren'Py
 
 Advanced Displayables
 ---------------------
+
 .. toctree::
    :maxdepth: 1
    
@@ -71,6 +71,15 @@ Python and Ren'Py
    modes
    other
 
+Other Platforms
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   android
+   
+   
 End-User Documentation
 ----------------------
 
