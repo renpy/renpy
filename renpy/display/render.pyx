@@ -262,6 +262,19 @@ cdef class Matrix2D:
     points and things like that.
     """
 
+    def __getstate__(self):
+        return dict(
+            xdx = self.xdx,
+            xdy = self.xdy,
+            ydx = self.ydx,
+            ydy = self.ydy)
+
+    def __setstate__(self, state):
+        self.xdx = state['xdx']
+        self.xdy = state['xdy']
+        self.ydx = state['ydx']
+        self.ydy = state['ydy']
+        
     def __init__(Matrix2D self, double xdx, double xdy, double ydx, double ydy):
         self.xdx = xdx
         self.xdy = xdy

@@ -1,5 +1,4 @@
-﻿
-# This file is in the public domain. Feel free to modify it as a basis
+﻿# This file is in the public domain. Feel free to modify it as a basis
 # for your own screens.
 
 ##############################################################################
