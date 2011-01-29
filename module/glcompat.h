@@ -6,6 +6,12 @@
 #ifndef GL_COMPAT_H
 #define GL_COMPAT_H
 
+// Environ is defined on windows, but our GL code uses it as an
+// identifier.
+#undef environ
+
+
+
 #ifdef ANDROID
 
 #include <GLES/gl.h>

@@ -73,7 +73,11 @@ def main():
 
     for fn in zfold.namelist():
         if fn.startswith("renpy/"):
-            continue
+
+            # Keep around .pyo files that load pyd files.
+            pydfn = fn.replace("/", ".").replace(".pyo", ".pyd")
+            if not os.path.exists("dist/lib/windows-x86/" + pydfn):
+                continue
 
         if fn in seen:
             continue

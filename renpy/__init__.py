@@ -104,6 +104,11 @@ def import_all():
     import _renpy
     libexec = os.path.dirname(_renpy.__file__)
     renpy.display.__path__.insert(0, os.path.join(libexec, "renpy", "display"))
+
+    # Also find encodings, to deal with the way py2exe lays things out.
+    import encodings
+    libexec = os.path.dirname(encodings.__path__[0])
+    renpy.display.__path__.insert(1, os.path.join(libexec, "renpy", "display"))
     
     import renpy.display.render # Most display stuff depends on this.
 
