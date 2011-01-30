@@ -147,7 +147,7 @@ class PyCode(object):
         if isinstance(code, renpy.python.ast.AST):
             code = renpy.python.ast.dump(code)
         
-        self.hash = chr(renpy.bytecode_version) + md5.md5(code).digest()
+        self.hash = chr(renpy.bytecode_version) + md5.md5(code.encode("utf-8")).digest()
         return self.hash
             
             
