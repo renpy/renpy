@@ -172,6 +172,7 @@ class Context(object):
         self.context = context
 
     def eval(self, expr):
+        expr = renpy.python.escape_unicode(expr)
         return eval(expr, renpy.store.__dict__, self.context)
     
 # This is intended to be subclassed by ATLTransform. It takes care of
