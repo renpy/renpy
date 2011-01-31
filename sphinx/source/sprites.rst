@@ -34,6 +34,7 @@ The SnowBlossom class is an easy-to use way of placing falling things
 on the screen.
 
 ::
+
     image snow = SnowBlossom("snow.png", count=100)
 
 

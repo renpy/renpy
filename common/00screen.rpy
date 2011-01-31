@@ -61,7 +61,7 @@ init -1140 python:
             self.transition = transition
 
         def predict(self):
-            renpy.predict_screen(self.scren, **self.kwargs)
+            renpy.predict_screen(self.screen, **self.kwargs)
             
         def __call__(self):
             renpy.show_screen(self.screen, **self.kwargs)
