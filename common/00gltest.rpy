@@ -61,8 +61,14 @@ init -1024 python:
 
             renpy.redraw(self, 0)
 
+            renpy.renpy.log.info("Frame drawn at %f seconds." % st)
+            
             if len(self.times) >= self.frames:
-                if (self.times[-1] - self.times[-self.frames]) < self.target:
+                frames_timing = self.times[-1] - self.times[-self.frames]
+
+                renpy.renpy.log.info("It took %f seconds to render %d frames.", frames_timing, self.frames)
+
+                if frames_timing <= self.target:
                     self.success = True
                     renpy.timeout(0)
                     
@@ -119,6 +125,8 @@ init -1024 python:
         # Our decision survives a restart.
         if _restart:
             return
+
+        renpy.renpy.log.info("GL test mode: %s", persistent._gl_test)
 
         # If GL is disabled, don't bother.
         if not config.gl_enable:

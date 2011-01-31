@@ -313,9 +313,9 @@ class Frame(renpy.display.core.Displayable):
             
             # Get a subsurface.
             cr = crend.subsurface((sx0, sy0, csw, csh))
-
+                        
             # Scale or tile if we have to.
-            if csw != cdw or csh != cdh:
+            if True or csw != cdw or csh != cdh:
 
                 if self.tile:
                     newcr = Render(cdw, cdh)
@@ -335,7 +335,7 @@ class Frame(renpy.display.core.Displayable):
                     newcr.blit(cr, (0, 0))
 
                     cr = newcr
-                        
+
             # Blit.
             rv.blit(cr, (dx0, dy0))
             return
@@ -343,8 +343,8 @@ class Frame(renpy.display.core.Displayable):
 
         crend = render(self.image, width, height, st, at)
         sw, sh = crend.get_size()
-        dw = width
-        dh = height
+        dw = int(width)
+        dh = int(height)
         
         xb = self.xborder
         yb = self.yborder

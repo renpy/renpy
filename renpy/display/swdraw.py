@@ -497,7 +497,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         miny = math.floor(min(y0, y1, y2, y3) + yo)
         maxy = math.ceil(max(y0, y1, y2, y3) + yo)
 
-        
         if minx < 0:
             minx = 0
         if miny < 0:
@@ -508,9 +507,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if maxy > dh:
             maxy = dh
 
-        if minx > dw or miny > dh:
+        if minx > dw or miny > dh or maxx < 0 or maxy < 0:
             return
-            
+
         cx, cy = forward.transform(minx - xo, miny - yo)
 
         if clip:
@@ -523,6 +522,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
                   alpha)))
 
         else:
+
             dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
             
             renpy.display.module.transform(

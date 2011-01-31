@@ -542,10 +542,17 @@ cdef class Render:
         live_renders.append(self)
         
     def __repr__(self):
-
         return "<Render %x of %r>" % (id(self), self.render_of)
 
+    def __getstate__(self):
+        if renpy.config.developer:
+            raise Exception("Can't pickle a Render.")
+        else:
+            return { }
         
+    def __setstate__(self, state):
+        return
+
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by

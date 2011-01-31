@@ -273,7 +273,14 @@ class Texture(TextureCore):
     the __del__ method is called.
     """
 
-    pass
+    def __getstate__(self):
+        if renpy.config.developer:
+            raise Exception("Can't pickle a texture.")
+        else:
+            return { }
+        
+    def __setstate__(self, state):
+        return
         
         
 # This is a map from texture sizes to a list of free textures of that
@@ -411,10 +418,17 @@ cdef class TextureGrid(object):
         # one.
         self.half_cache = None
 
+    def __getstate__(self):
+        if renpy.config.developer:
+            raise Exception("Can't pickle a texture.")
+        else:
+            return { }
         
+    def __setstate__(self, state):
+        return
+                
     def get_size(self):
         return self.width, self.height
-
     
     def subsurface(self, rect):
         """
