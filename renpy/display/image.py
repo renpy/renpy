@@ -260,6 +260,11 @@ class Frame(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
+        crend = render(self.image, width, height, st, at)
+
+        if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
+            return self.sw_render(crend, width, height)
+
         def draw(x0, x1, y0, y1):
 
             # Compute the coordinates of the left, right, top, and
@@ -341,7 +346,6 @@ class Frame(renpy.display.core.Displayable):
             return
         
 
-        crend = render(self.image, width, height, st, at)
         sw, sh = crend.get_size()
         dw = int(width)
         dh = int(height)
@@ -356,7 +360,12 @@ class Frame(renpy.display.core.Displayable):
             yb = sh / 2 - 1
 
         rv = Render(dw, dh)
-            
+
+        self.draw_pattern(draw, xb, yb)
+        
+        return rv
+
+    def draw_pattern(self, draw, xb, yb):
         # Top row.
         if yb:
 
@@ -387,8 +396,117 @@ class Frame(renpy.display.core.Displayable):
             if xb:
                 draw(-xb, 0, -yb, 0)
 
-        return rv
+        
+    
+    def sw_render(self, crend, width, height):
 
+        source = crend.render_to_texture(True)
+
+        dw = int(width)
+        dh = int(height)
+
+        dest = renpy.display.pgrender.surface((dw, dh), True)
+        rv = dest
+
+        dest = renpy.display.scale.real(dest)
+        source = renpy.display.scale.real(source)
+        
+        xb = renpy.display.scale.scale(self.xborder)
+        yb = renpy.display.scale.scale(self.yborder)
+
+        sw, sh = source.get_size()
+        dw, dh = dest.get_size()
+
+        if xb * 2 >= sw:
+            xb = sw / 2 - 1
+
+        if yb * 2 >= sh:
+            yb = sh / 2 - 1
+        
+        def draw(x0, x1, y0, y1):
+
+            # Compute the coordinates of the left, right, top, and
+            # bottom sides of the region, for both the source and
+            # destination surfaces.
+
+            # left side.
+            if x0 >= 0:
+                dx0 = x0
+                sx0 = x0
+            else:
+                dx0 = dw + x0
+                sx0 = sw + x0
+        
+            # right side.
+            if x1 > 0:
+                dx1 = x1
+                sx1 = x1
+            else:
+                dx1 = dw + x1
+                sx1 = sw + x1
+
+            # top side.
+            if y0 >= 0:
+                dy0 = y0
+                sy0 = y0
+            else:
+                dy0 = dh + y0
+                sy0 = sh + y0
+        
+            # bottom side
+            if y1 > 0:
+                dy1 = y1
+                sy1 = y1
+            else:
+                dy1 = dh + y1
+
+                sy1 = sh + y1
+
+            # Quick exit.
+            if sx0 == sx1 or sy0 == sy1 or dx1 <= dx0 or dy1 <= dy0:
+                return
+
+            # Compute sizes.
+            srcsize = (sx1 - sx0, sy1 - sy0)
+            dstsize = (int(dx1 - dx0), int(dy1 - dy0))
+
+            
+            
+            # Get a subsurface.
+            surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
+
+            # Scale or tile if we have to.
+            if dstsize != srcsize:
+                if self.tile:
+                    tilew, tileh = srcsize
+                    dstw, dsth = dstsize
+
+                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize, surf)
+
+                    for y in range(0, dsth, tileh):
+                        for x in range(0, dstw, tilew):
+                            surf2.blit(surf, (x, y))
+
+                    surf = surf2 
+
+                else:
+                    surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
+                    surf = surf2
+                        
+            # Blit.
+            dest.blit(surf, (dx0, dy0))
+
+        self.draw_pattern(draw, xb, yb)
+
+        rrv = renpy.display.render.Render(width, height)
+        rrv.blit(rv, (0, 0))
+        rrv.depends_on(crend)
+                      
+        # And, finish up.
+        return rrv
+
+
+    
     def visit(self):
         return [ self.image ]
 
