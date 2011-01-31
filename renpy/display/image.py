@@ -320,7 +320,7 @@ class Frame(renpy.display.core.Displayable):
             cr = crend.subsurface((sx0, sy0, csw, csh))
                         
             # Scale or tile if we have to.
-            if True or csw != cdw or csh != cdh:
+            if csw != cdw or csh != cdh:
 
                 if self.tile:
                     newcr = Render(cdw, cdh)
