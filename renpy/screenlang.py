@@ -471,6 +471,7 @@ position_properties = [ Style(i) for i in [
         "yalign",
         "xoffset",
         "yoffset",
+        "maximum",
         "xmaximum",
         "ymaximum",
         "area",
@@ -504,8 +505,7 @@ text_properties = [ Style(i) for i in [
         "text_align",
         "text_y_fudge",
         "underline",
-        "xmaximum",
-        "ymaximum",
+        "minimum",
         "xminimum",
         "yminimum",
         ] ]
@@ -526,6 +526,7 @@ window_properties = [ Style(i) for i in [
         "xpadding",
         "ypadding",
         "size_group",
+        "minimum",
         "xminimum",
         "yminimum",
         ] ]
@@ -560,6 +561,9 @@ box_properties = [ Style(i) for i in [
         "spacing",
         "first_spacing",
         "fit_first",
+        "minimum",
+        "xminimum",
+        "yminimum",
         ] ]
 
 ui_properties = [

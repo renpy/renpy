@@ -395,44 +395,38 @@ def mark_sweep():
 
     live_renders = worklist
 
-def compute_subrect(pos, size, child):
+def compute_subline(sx0, sw, cx0, cw):
     """
-    Computes a sub-rectangle. Takes the source x and y, the source width
-    and height, and the clipping rectangle. Returns status, offset, crop.
+    Given a source line (start sx0, width sw) and a crop line (cx0, cw),
+    return three things:
+
+    * The offset of the portion of the source line that overlaps with
+      the crop line, relative to the crop line.
+    * The offset of the portion of the source line that overlaps with the
+      the crop line, relative to the source line.
+    * The length of the overlap in pixels. (can be <= 0) 
     """
 
-    (sx, sy) = pos
-    (sw, sh) = size
-    (cx, cy, cw, ch) = child
+    sx1 = sx0 + sw
+    cx1 = cx0 + cw
+
+    if sx0 > cx0:
+        start = sx0
+    else:
+        start = cx0
+
+    offset = start - cx0
+    crop = start - sx0
+
+    if sx1 < cx1:
+        width = sx1 - start
+    else:
+        width = cx1 - start
+
         
-    # The coordinates of the upper-left corner of the source
-    # rectangle inside the clipping rectange.
-    ulx = sx - cx
-    uly = sy - cy
+    return offset, crop, width
 
-    if ulx < 0:
-        ox = 0
-        sx = -ulx
-    else:
-        ox = ulx
-        sx = 0
-
-    if uly < 0:
-        oy = 0
-        sy = -uly
-    else:
-        oy = uly
-        sy = 0
-
-    if ox > cw or oy > ch:
-        return False, (0, 0), (0, 0, 0, 0)
-
-    sw = min(sw - sx, cw - ox)
-    sh = min(sh - sy, ch - oy)
-
-    return True, (ox, oy), (sx, sy, sw, sh)
-
-
+    
 
 
 # Possible operations that can be done as part of a render.
@@ -682,9 +676,16 @@ cdef class Render:
         (x, y, w, h) = rect
         rv = Render(w, h)
 
+        reverse = self.reverse
+        
         # This doesn't actually make a subsurface, as we can't easily do
         # so for non-rectangle-aligned renders.
-        if (self.reverse is not None) and (self.reverse is not IDENTITY):
+        if (reverse is not None) and (
+            reverse.xdx != 1.0 or
+            reverse.xdy != 0.0 or
+            reverse.ydx != 0.0 or
+            reverse.ydy != 1.0):
+
             rv.clipping = True
             rv.blit(self, (-x, -y), focus=focus, main=True)            
             return rv
@@ -693,10 +694,16 @@ cdef class Render:
         # making an actual subsurface.
         
         for child, cx, cy, cfocus, cmain in self.children:
-            state, offset, crop = compute_subrect((cx, cy), child.get_size(), rect)
 
-            if not state:
+            cw, ch = child.get_size()            
+            xo, cx, cw = compute_subline(cx, cw, x, w)
+            yo, cy, ch = compute_subline(cy, ch, y, h)
+            
+            if cw <= 0 or ch <= 0:
                 continue
+
+            crop = (cx, cy, cw, ch)
+            offset = (xo, yo)
 
             if isinstance(child, Render):
                 child = child.subsurface(crop, focus=focus)
@@ -713,28 +720,26 @@ cdef class Render:
                 if xo is None:
                     rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
                     continue
-                
-                status, offset, crop = compute_subrect(
-                    (xo, yo), (fw, fh), rect)
 
-                if not status:
+                xo, cx, fw = compute_subline(xo, fw, x, w)
+                yo, cy, fh = compute_subline(yo, fh, y, h)
+
+                if cw <= 0 or ch <= 0:
                     continue
-
-                (xo, yo) = offset
-                (ignored1, ignored2, fw, fh) = crop
-
+                
                 if mx is not None:
 
-                    status, offset, crop = compute_subrect(
-                        (mx, my), mask.get_size(), rect)
+                    mw, mh = mask.get_size()
 
-                    if not status:
+                    mx, mcx, mw = compute_subline(mx, mw, x, w) 
+                    my, mcy, mh = compute_subline(my, mh, y, h)
+                    
+                    if mw <= 0 or mh <= 0:
                         mx = None
                         my = None
                         mask = None
                     else:
-                        mx, my = offset
-                        mask = mask.subsurface(crop)
+                        mask = mask.subsurface((mcx, mcy, mw, mh))
 
                 rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
 

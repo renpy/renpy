@@ -275,6 +275,11 @@ substitutes = dict(
         ('xmaximum', index_0),
         ('ymaximum', index_1),
         ],
+
+    minimum = [
+        ('xminimum', index_0),
+        ('yminimum', index_1),
+        ],
     
     area = [
         ('xpos', index_0),

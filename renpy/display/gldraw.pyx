@@ -741,7 +741,7 @@ cdef class GLDraw:
             if isinstance(what, gltexture.TextureGrid):
 
                 self.set_clip(clip)
-
+                
                 gltexture.blit(
                     <gltexture.TextureGrid> what,
                     xo,
