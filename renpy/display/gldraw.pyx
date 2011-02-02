@@ -187,6 +187,9 @@ cdef class GLDraw:
         
         if self.did_init:
             self.deinit()
+
+        if renpy.android:
+            fullscreen = False
             
         if fullscreen != self.old_fullscreen:
 
