@@ -14,9 +14,9 @@ features.
 6.12.0
 ------
 
-The definition of the `items` parameter of the :ref:`Choice` and
+The definition of the `items` parameter of the :ref:`choice-screen` and
 ``nvl_choice`` screens has changed. The ``nvl_choice`` screen is
-deprecated in favor of the :ref:`NVL` screen.
+deprecated in favor of the :ref:`nvl-screen` screen.
 
 Screens may be invoked at any time, in order to allow for image
 prediction, unless they have a predict property of False. When the

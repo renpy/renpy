@@ -1596,6 +1596,9 @@ class Interface(object):
         keyword arguments are passed off to interact_core.
         """
 
+        # Cancel magic error reporting.
+        renpy.bootstrap.report_error = None
+        
         context = renpy.game.context()
         
         if context.interacting:

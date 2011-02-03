@@ -94,8 +94,12 @@ def mac_start(fn):
 def popen_del(self, *args, **kwargs):
     return
 
+report_error = None
+
 def bootstrap(renpy_base):
 
+    global report_error
+    
     global renpy # W0602
 
     import renpy.log
@@ -262,7 +266,6 @@ def bootstrap(renpy_base):
         sys.exit(0)
 
     keep_running = True
-    report_error = None
 
     try:
         while keep_running:

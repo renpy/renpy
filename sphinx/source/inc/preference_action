@@ -1,0 +1,62 @@
+.. Automatically generated file - do not modify.
+
+.. function:: Preference(name, value=None)
+    
+    This constructs the approprate action or value from a preference.
+    The preference name should be the name given in the standard
+    menus, while the value should be either the name of a choice,
+    "toggle" to cycle through choices, a specific value, or left off
+    in the case of buttons.
+    
+    Actions that can be used with buttons and hotspots are:
+    
+    * Preference("display", "fullscreen") - displays in fullscreen mode.
+    * Preference("display", "window") - displays in windowed mode.
+    * Preference("display", "toggle") - toggle display mode.
+    
+    * Preference("transitions", "all") - show all transitions.
+    * Preference("transitions", "none") - do not show transitions.
+    * Preference("transitions", "toggle") - toggle transitions.
+    
+    * Preference("text speed", 0) - make test appear instantaneously.
+    * Preference("text speed", 142) - set text speed to 142 characters per second.
+    
+    * Preference("joystick") - Show the joystick preferences.
+    
+    * Preference("skip", "seen") - Only skip seen messages.
+    * Preference("skip", "all") - Skip unseen messages.
+    * Preference("skip", "toggle") - Toggle skipping.
+    
+    * Preference("begin skipping") - Starts skipping.
+    
+    * Preference("after choices", "skip") - Skip after choices.
+    * Preference("after choices", "stop") - Stop skipping after choices.
+    * Preference("after choices", "toggle") - Toggle skipping after choices.
+    
+    * Preference("auto-forward time", 0) - Set the auto-forward time to infinite.
+    * Preference("auto-forward time", 10) - Set the auto-forward time (unit is seconds per 250 characters).
+    
+    * Preference("auto-forward", "enable") - Enable auto-forward mode.
+    * Preference("auto-forward", "disable") - Disable auto-forward mode.
+    * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
+    
+    * Preference("music mute", "enable") - Mute the music mixer.
+    * Preference("music mute", "disable") - Un-mute the music mixer.
+    * Preference("music mute", "toggle") - Toggle music mute.
+    
+    * Preference("sound mute", "enable") - Mute the sound mixer.
+    * Preference("sound mute", "disable") - Un-mute the sound mixer.
+    * Preference("sound mute", "toggle") - Toggle sound mute.
+    
+    * Preference("voice mute", "enable") - Mute the voice mixer.
+    * Preference("voice mute", "disable") - Un-mute the voice mixer.
+    * Preference("voice mute", "toggle") - Toggle voice  mute.
+    
+    Values that can be used with bars are:
+    
+    * Preference("text speed")
+    * Preference("auto-forward time")
+    * Preference("music volume")
+    * Preference("sound volume")
+    * Preference("voice volume")                  
+

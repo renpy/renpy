@@ -239,7 +239,8 @@ init -1140 python:
 
 
         def predict(self):
-            renpy.predict_screen(self.screen)
+            if renpy.has_screen(self.screen):
+                renpy.predict_screen(self.screen)
 
         def __call__(self):
 

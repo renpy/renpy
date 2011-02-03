@@ -461,7 +461,7 @@ predict_callbacks = [ ]
 predict_screens = True
 
 # Should we use the new choice screen format?
-choice_screen_ids = True
+choice_screen_chosen = True
 
 # Should the narrator speak menu labels?
 narrator_menu = False

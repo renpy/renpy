@@ -496,12 +496,8 @@ def display_menu(items,
             props = { }
         else:
             props = widget_properties
-
-        props["window"] = { "style" : window_style }
             
         for i, (label, value) in enumerate(items):
-            button_id = "button_%d" % i
-            caption_id = "caption_%d" % i
 
             if not label:
                 value = None
@@ -511,18 +507,10 @@ def display_menu(items,
             else:
                 action = None
                 
-            if value is None:
-                props[caption_id] = { "style" : caption_style }
-            
-            if (location, label) in chosen:
-                props[button_id] = { "style" : choice_chosen_button_style }
-                props[caption_id] = { "style" : choice_chosen_style }
-            else:
-                props[button_id] = { "style" : choice_button_style }
-                props[caption_id] = { "style" : choice_style }
-
-            if renpy.config.choice_screen_ids:
-                item_actions.append((label, action, button_id, caption_id))
+            label_chosen = ((location, label) in chosen)
+                
+            if renpy.config.choice_screen_chosen:
+                item_actions.append((label, action, label_chosen))
             else:
                 item_actions.append((label, action))
 

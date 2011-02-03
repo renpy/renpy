@@ -1,0 +1,35 @@
+.. Automatically generated file - do not modify.
+
+.. function:: Play(channel, file, **kwargs)
+    
+    Causes an audio file to be played on a given channel.
+    
+    `channel`
+        The channel to play the sound on.
+    `file`
+        The file to play.
+    
+    Any keyword arguments are passed to :func:`renpy.music.play`
+
+.. function:: Queue(channel, file, **kwargs)
+    
+    Causes an audio file to be queued on a given channel.
+    
+    `channel`
+        The channel to play the sound on.
+    `file`
+        The file to play.
+    
+    Any keyword arguments are passed to :func:`renpy.music.queue`
+
+.. function:: Stop(channel, **kwargs)
+    
+    Causes an audio channel to be stopped.
+    
+    `channel`
+        The channel to play the sound on.
+    `file`
+        The file to play.
+    
+    Any keyword arguments are passed to :func:`renpy.music.play`
+

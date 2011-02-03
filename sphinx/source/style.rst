@@ -256,6 +256,26 @@ layout.
 
     Specifies the maximum vertical size of the displayable in pixels.
 
+.. style-property:: maximum tuple of (int, int)
+
+    Equivalent to setting xmaximum to the first component of the
+    tuple, and ymaximum to the second.
+
+.. style-property:: xminimum int
+
+    Sets the minimum width of the displayable, in pixels. Only works
+    with displayables that can vary their size.
+
+.. style-property:: yminimum int
+
+    Sets the minimum height of the displayables, in pixels. Only works
+    with displayables that can vary their size.
+
+.. style-property:: minimum tuple of (int, int)
+
+    Equivalent to setting xminimum to the first component of the
+    tuple, and yminimum to the second.
+
 .. style-property:: xfill boolean
 
     If true, the displayable will expand to fill all available
@@ -511,14 +531,6 @@ buttons.
 
     If not None, this should be a string. Ren'Py will render all
     windows with the same size_group value at the same size. 
-
-.. style-property:: xminimum int
-
-    Sets the minimum width of the window, in pixels. 
-
-.. style-property:: yminimum int
-
-    Sets the minimum height of the window, in pixels. 
 
 
 .. _button-style-properties:

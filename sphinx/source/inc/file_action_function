@@ -1,0 +1,28 @@
+.. Automatically generated file - do not modify.
+
+.. function:: FileLoadable(name, page=None)
+    
+    This is a function that returns true
+    if the file is loadable, and false otherwise.
+
+.. function:: FileSaveName(name, empty='', page=None)
+    
+    Return the save_name that was in effect when the file was saved,
+    or `empty` if the file does not exist.
+
+.. function:: FileScreenshot(name, empty=None, page=None)
+             
+    Returns the screenshot associated with the given file. If the
+    file is not loadable, then `empty` is returned, unless it's None,
+    in which case, a Null displayable is created.
+    
+    The return value is a displayable.
+
+.. function:: FileTime(name, format='%b %d, %H:%M', empty='', page=None)
+    
+    Returns the time the file was saved, formatted according
+    to the supplied `format`. If the file is not found, `empty` is
+    returned.
+    
+    The return value is a string.
+

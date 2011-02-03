@@ -1,0 +1,43 @@
+.. Automatically generated file - do not modify.
+
+.. function:: Help(help=None)
+    
+    Displays help.
+    
+    `help`
+         If this is a string giving a label in the programe, then
+         that label is called in a new context when the button is
+         chosen. Otherwise, it should be a string giving a file
+         that is opened in a web browser. If None, the value of
+         config.help is used in the same wayt.
+
+.. function:: If(expression, true=None, false=None)
+    
+    This returns `true` if `expression` is true, and `false`
+    otherwise. Use this to select an action based on an expression.
+    Note that the default, None, can be used as an action that causes
+    a button to be disabled.
+
+.. function:: InvertSelected(action)
+    
+    This inverts the selection state of the provided action, while
+    proxying over all of the other methods.
+
+.. function:: Notify(message)
+    
+    Displays `message` using :func:`renpy.notify`. 
+
+.. function:: Screenshot()
+    
+    Takes a screenshot.
+
+.. function:: Skip()
+    
+    Causes the game to begin skipping. If the game is in a menu
+    context, then this returns to the game. Otherwise, it just
+    enables skipping.
+
+.. function:: With(transition)
+    
+    Causes `transition` to occur.
+

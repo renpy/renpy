@@ -73,6 +73,8 @@ It's expected to declare displayables with the following ids:
             text what id "what"
 
 
+.. _choice-screen:
+            
 Choice
 ------
 
@@ -80,13 +82,12 @@ The ``choice`` screen is used to display the in-game choices created
 with the menu statement. It is given the following parameter:
 
 `items`
-    This is a list of (`caption`, `action`, `button_id`, `caption_id`)
+    This is a list of (`caption`, `action`, `chosen`)
     tuples. For each choice, `caption` is the name of the choice, and
     `action` is the action to invoke for the choice, or None if this
-    is a choice label. When a button is used to invoke the choice,
-    `button_id` is an id that should be given to that button. When
-    a choice displays text, `caption_id` should be the id of that
-    text.
+    is a choice label. `Chosen` if a choice with this label has been
+    chosen by the user before. (It doesn't have to be in the current
+    game.)
 
 ::
 
@@ -137,7 +138,8 @@ It is expected to declare a displayable with the following id:
             input id "input"
 
 
-
+.. _nvl-screen:
+            
 NVL
 ---
 
@@ -153,14 +155,13 @@ the following parameter:
     a window containing each unit of dialogue.
 
 `items`
-    This is a list of (`caption`, `action`, `button_id`, `caption_id`)
+    This is a list of (`caption`, `action`, `chosen`)
     tuples. For each choice, `caption` is the name of the choice, and
     `action` is the action to invoke for the choice, or None if this
-    is a choice label. When a button is used to invoke the choice,
-    `button_id` is an id that should be given to that button. When
-    a choice displays text, `caption_id` should be the id of that
-    text.
-
+    is a choice label. `Chosen` if a choice with this label has been
+    chosen by the user before. (It doesn't have to be in the current
+    game.)
+    
     If items is empty, the menu should not be shown.
 
 Ren'Py also supports an ``nvl_choice`` screen, which takes the same
@@ -196,17 +197,20 @@ an in-game choice is presented to the user, if it exists.
                 vbox:
                     id "menu"
 
-                    for caption, action, button_id, caption_id in items:
+                    for caption, action, chosen in items:
 
                         if action:
-                            button:
-                                action action
-                                id button_id
 
-                                text caption id caption_id
+                            button:
+                                style "nvl_menu_choice_button"
+                                action action
+
+                                text caption style "nvl_menu_choice"
 
                         else:
-                            text caption id caption_id
+
+                            text caption style "nvl_dialogue"
+
 
 
 Notify

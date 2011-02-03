@@ -1,0 +1,68 @@
+.. Automatically generated file - do not modify.
+
+.. function:: Frame(image, xborder, yborder, tile=False, **properties)
+    
+    A displayable that resizes an image to fill the available area,
+    while preserving the width and height of its borders.  is often
+    used as the background of a window or button.
+    
+    .. figure:: frame_example.png
+    
+        Using a frame to resize an image to double its size.
+    
+    `image`
+        An image manipulator that will be resized by this frame.
+    
+    `xborder`
+        The width of the border on the left and right sides of the 
+        image.
+    
+    `yborder`
+        The height of the border on the top and bottom sides of the
+        image.
+    
+    `tile`
+        If true, tiling is used to resize sections of the image,
+        rather than scaling.
+    
+    ::
+    
+         # Resize the background of the text window if it's too small.         
+         init python:
+             style.window.background = Frame("frame.png", 10, 10)
+        
+
+.. function:: LiveCrop(rect, child, **properties)
+    
+    This created a displayable by cropping `child` to `rect`, where
+    `rect` is an (x, y, width, height) tuple. ::
+    
+        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")    
+
+.. function:: LiveTile(child, style='tile', **properties)
+    
+    Tiles `child` until it fills the area allocated to this displayable.
+    
+    ::
+    
+        image bg tile = LiveTile("bg.png")
+
+.. function:: Null(width=0, height=0, **properties)
+        
+    A displayable that creates an empty box on the screen. The size
+    of the box is controlled by `width` and `height`. This can be used
+    when a displayable requires a child, but no child is suitable, or
+    as a spacer inside a box.
+    
+    ::
+    
+        image logo spaced = HBox("logo.png", Null(width=100), "logo.png")
+
+.. function:: Solid(color, **properties)
+    
+    A displayable that fills the area its assigned with `color`.
+    
+    ::
+    
+        image white = Solid("#fff")
+

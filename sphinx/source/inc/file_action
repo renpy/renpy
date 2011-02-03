@@ -1,0 +1,59 @@
+.. Automatically generated file - do not modify.
+
+.. function:: FileAction(name, page=None)
+    
+    "Does the right thing" with the file. This means loading it if the
+    load screen is showing, and saving to it otherwise.
+
+.. function:: FileDelete(name, confirm=True, page=None)
+    
+    Deletes the file.
+    
+    `confirm`
+        If true, prompts before deleting a file.
+
+.. function:: FileLoad(name, confirm=True, page=None)
+    
+    Loads the file.
+    
+    `confirm`
+        If true, prompt if loading the file will end the game.
+
+.. function:: FilePage(page)
+    
+    Sets the file page to `page`, which should be one of "auto", "quick",
+    or an integer.
+
+.. function:: FilePageNext(max=None)
+    
+    Goes to the next file page.
+    
+    `max`
+        If set, this should be an integer that gives the number of
+        the maximum file page we can go to.
+
+.. function:: FilePagePrevious(self)
+    
+    Goes to the previous file page, if possible.
+
+.. function:: FileSave(name, confirm=True, newest=True, page=None)
+    
+    Saves the file.
+    
+    The button with this slot is selected if it's marked as the
+    newest save file.
+    
+    `confirm`
+        If true, then we will prompt before overwriting a file.
+    
+    `newest`
+        If true, then this file will be marked as the newest save
+        file when it's saved. (Set this to false for a quicksave,
+        for example.)
+
+.. function:: FileTakeScreenshot()
+    
+    Take a screenshot to be used when the game is saved. This can
+    be used to ensure that the screenshot is accurate, by taking
+    a pictue of the screen before a file save screen is shown.
+

@@ -1,6 +1,14 @@
 Distributor Notes
 =================
 
+6.12.0
+------
+
+Ren'Py now creates a number of binary modules that live in the
+renpy.display package. As long as they go in the same place as
+_renpy.so, they should be picked up automatically.
+
+
 6.11.0
 ------
 

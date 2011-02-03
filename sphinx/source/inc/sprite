@@ -1,0 +1,6 @@
+.. Automatically generated file - do not modify.
+
+    .. method:: redraw(delay=0)
+        
+        Causes this SpriteManager to be redrawn in `delay` seconds.
+    
