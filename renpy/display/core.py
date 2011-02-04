@@ -2037,7 +2037,8 @@ class Interface(object):
 
                 while (prediction_coroutine is not None) \
                         and not needs_redraw \
-                        and not self.event_peek():
+                        and not self.event_peek() \
+                        and not renpy.audio.music.is_playing("movie"):
                     
                     result = prediction_coroutine.next()
                     if not result:

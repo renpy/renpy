@@ -1358,16 +1358,12 @@ cdef extern from "glcompat.h":
         GL_ZOOM_X
         GL_ZOOM_Y
 
-cdef inline check(where):
+import renpy
+
+cdef inline gl_check(where):
     cdef GLenum error
     error = glGetError()
     if error:
-        print "GL error 0x%X at %s" % (error, where)
-        
-cdef inline gl_error_check():
-    cdef GLenum error
-    error = glGetError()
-    if error:
-        import renpy
-        raise renpy.display.gldraw.GLError("Error code 0x%x (%d)." % (error, error)) 
+        renpy.log.info("GL error 0x%X at %s", error, where)
+
 

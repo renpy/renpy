@@ -2609,12 +2609,14 @@ cdef extern from "glcompat.h":
 """
 
 FOOTER = """\
-cdef inline gl_error_check():
+import renpy
+
+cdef inline gl_check(where):
     cdef GLenum error
     error = glGetError()
     if error:
-        import renpy
-        raise renpy.display.gldraw.GLError("Error code 0x%x (%d)." % (error, error)) 
+        renpy.log.info("GL error 0x%X at %s", error, where)
+
 """
         
 def main():

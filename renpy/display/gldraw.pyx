@@ -319,6 +319,8 @@ cdef class GLDraw:
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
+        gl_check("set_mode")
+        
         return True
 
     def deinit(self):
@@ -675,6 +677,7 @@ cdef class GLDraw:
         pygame.display.flip()
         renpy.display.core.cpu_idle.clear()
 
+        gl_check("draw_screen")
 
     cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
         """

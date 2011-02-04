@@ -94,6 +94,8 @@ class Cache(object):
         self.preload_thread.setDaemon(True)
         self.preload_thread.start()
 
+        # Have we been added this tick?
+        self.added = set()
         
     def init(self):
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
@@ -122,6 +124,8 @@ class Cache(object):
         self.size_of_current_generation = 0
         self.total_cache_size = 0
 
+        self.added.clear()
+        
         self.lock.release()
     
     # Increments time, and clears the list of images to be
@@ -133,10 +137,13 @@ class Cache(object):
             self.preloads = [ ]
             self.first_preload_in_tick = True
             self.size_of_current_generation = 0
-
+            self.added.clear()
+            
         if renpy.config.debug_image_cache:
-            print "IC ----"
-
+            renpy.log.debug("IC ----")
+            filename, line = renpy.exports.get_filename_line()
+            renpy.log.debug("IC %s %d", filename, line)
+            
     # The preload thread can deal with this update, so we don't need
     # to lock things. 
     def end_tick(self):
@@ -194,7 +201,7 @@ class Cache(object):
             renpy.display.render.mutated_surface(ce.surf)
 
             if renpy.config.debug_image_cache:
-                print "IC Added %r (%.02f%%)" % (ce.what, 100.0 * self.total_cache_size / self.cache_limit)
+                renpy.log.debug("IC Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
 
             renpy.display.draw.load_texture(ce.surf)
 
@@ -225,7 +232,7 @@ class Cache(object):
         del self.cache[ce.what]
 
         if renpy.config.debug_image_cache:
-            print "IC Removed", ce.what
+            renpy.log.debug("IC Removed %r", ce.what)
 
     def cleanout(self):
         """
@@ -260,22 +267,27 @@ class Cache(object):
 
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, im):
-        if renpy.config.debug_image_cache:
-            print "IC Request Preload", im
 
         if not isinstance(im, ImageBase):
-            if renpy.config.debug_image_cache:
-                print "IC Can't preload non-image: ", im
-            else:
+            return
+            
+        with self.lock:
+
+            if im in self.added:
                 return
 
-        with self.lock:
+            self.added.add(im)
+
             if im in self.cache:
                 self.get(im)
+                in_cache = True
             else:
                 self.preloads.append(im)
                 self.lock.notify()
-        
+                in_cache = False
+
+        if in_cache and renpy.config.debug_image_cache:
+            renpy.log.debug("IC Kept %r", im)
 
     def preload_thread_main(self):
 
@@ -290,6 +302,11 @@ class Cache(object):
                 # If the size of the current generation is bigger than the
                 # total cache size, stop preloading.
                 if self.size_of_current_generation > self.cache_limit:
+
+                    if renpy.config.debug_image_cache:
+                        for i in self.preloads:
+                            renpy.log.debug("IC Overfull %r", i)
+
                     self.preloads = [ ]
                     break
                 
@@ -322,9 +339,6 @@ class Cache(object):
                     if i in workset:
                         workset.remove(i)
                     else:
-                        if renpy.config.debug_image_cache:
-                            print "IC Pin Clear", image
-
                         surf = self.pin_cache[i]
 
                         del self.pin_cache[i]
@@ -339,10 +353,6 @@ class Cache(object):
                     # If we have normal preloads, break out.
                     if self.preloads:
                         break
-
-                    # Otherwise, pin preload the image.
-                    if renpy.config.debug_image_cache:
-                        print "IC Pin Preload", image
 
                     try:
                         surf = image.load()

@@ -23,6 +23,10 @@ prediction, unless they have a predict property of False. When the
 predict property is not False, screens should not cause side effects
 to occur upon their initial display.
 
+For performance reason, Ren'Py now ignores the position properties of
+ImageReferences. This means that the position properties of
+style.image_placement are now ignored. To revert to the old behavior,
+set :var:`config.imagereference_respects_position` to True.
 
 .. _incompatible-6.11.1:
 
