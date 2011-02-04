@@ -93,23 +93,24 @@ with the menu statement. It is given the following parameter:
 
     screen choice:
 
-        window:
-            id "window"
+        window: 
+            style "menu_window"        
 
             vbox:
-                id "menu"
+                style "menu"
 
-                for caption, action, button_id, caption_id in items:
+                for caption, action, chosen in items:
 
-                    if action:
+                    if action:  
+
                         button:
                             action action
-                            id button_id
+                            style "menu_choice_button"                        
 
-                            text caption id caption_id
+                            text caption style "menu_choice"
 
                     else:
-                        text caption id caption_id
+                        text caption style "menu_caption"
 
 
 Input
