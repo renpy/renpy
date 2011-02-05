@@ -1132,7 +1132,7 @@ init -1140 python:
         def get_sensitive(self):
             if self.page == "auto" and not config.has_autosave:
                 return False
-            elif self.page == "quicksave" and not config.has_quicksave:
+            elif self.page == "quick" and not config.has_quicksave:
                 return False
             else:
                 return True
@@ -1140,7 +1140,24 @@ init -1140 python:
         def get_selected(self):
             return self.page == persistent._file_page
                 
-            
+    def FilePageName(auto="a", quick="q"):
+        """
+         :doc: file_action_function
+
+         Returns the name of the current file page, as a string. If a normal
+         page, this returns the page number. Otherwise, it returns
+         `auto` or `quick`.
+         """
+
+        page = persistent._file_page
+
+        if page == "quick":
+            return quick
+        elif page == "auto":
+            return auto
+        else:
+            return page
+        
     class FilePageNext(Action):
         """
          :doc: file_action
