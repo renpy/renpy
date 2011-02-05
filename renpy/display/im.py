@@ -154,7 +154,7 @@ class Cache(object):
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
     # generation of images.
-    def get(self, image):
+    def get(self, image, predict=False):
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -201,8 +201,12 @@ class Cache(object):
             renpy.display.render.mutated_surface(ce.surf)
 
             if renpy.config.debug_image_cache:
-                renpy.log.debug("IC Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
 
+                if predict:
+                    renpy.log.debug("IC Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
+                else:
+                    renpy.log.debug("IC Total Miss %r", ce.what)
+                    
             renpy.display.draw.load_texture(ce.surf)
 
             self.lock.release()
@@ -317,7 +321,7 @@ class Cache(object):
 
                         if image not in self.preload_blacklist:
                             try:
-                                self.get(image)
+                                self.get(image, True)
                             except:
                                 self.preload_blacklist.add(image)                        
 

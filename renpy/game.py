@@ -162,7 +162,7 @@ class Preferences(renpy.object.Object):
         self.volumes[mixer] = volume
 
     def get_volume(self, mixer):
-        return self.volumes[mixer]
+        return self.volumes.get(mixer, 0)
         
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute

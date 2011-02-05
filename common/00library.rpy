@@ -238,7 +238,8 @@ init -1180 python:
 
     config.screenshot_callback = _screenshot_callback
         
-    
+    _predict_screens = [ ]
+        
 init -1180 python hide:
 
     def dump_styles():
@@ -352,6 +353,11 @@ init -1180 python hide:
 
     # Prediction of screens.    
     def predict():
+
+        for s in _predict_screens:
+            if renpy.has_screen(s):
+                renpy.predict_screen(s)
+
         s = _game_menu_screen
 
         if s is None:
@@ -367,6 +373,7 @@ init -1180 python hide:
                 renpy.predict_screen(s)
                 return
 
+            
     config.predict_callbacks.append(predict)
             
     def imagemap_auto_function(auto_param, variant):
@@ -782,7 +789,9 @@ label _start:
     $ renpy.block_rollback()
 
     $ _old_game_menu_screen = _game_menu_screen
+    $ _old_predict_screens = _predict_screens
     $ _game_menu_screen = None
+    $ _predict_screens = [ 'main_menu' ]
     
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1

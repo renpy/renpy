@@ -404,7 +404,7 @@ class StyleManager(object):
 
             rest = name
             
-            while "_" in name:
+            while "_" in rest:
                 first, rest = rest.split("_", 1)
                 if rest in style_map:
                     s = Style(rest)

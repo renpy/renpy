@@ -589,7 +589,9 @@ def SnowBlossom(d,
         as long as the second number in a tuple is larger than the first.
 
     `start`
-        The delay, in seconds, to start each particle.
+        The delay, in seconds, before each particle is added. This can be
+        allows the particles to start at the top of the screen, while not
+        looking like a "wave" effect.
 
     `fast`
         If true, particles start in the center of the screen, rather than
