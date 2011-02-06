@@ -412,16 +412,14 @@ def predict_menu():
     #
     # An item lets us load imagebuttons as necessary.
 
-    items = [ ("Menu Prediction", True, "button", "caption") ]
-    props = {
-        "button" : { "style" : "menu_choice_button" },
-        "caption" : { "style" : "menu_choice" },
-        }
+    if not renpy.config.choice_screen_chosen:
+        return
+                
+    items = [ ("Menu Prediction", True, False) ]
     
     predict_screen(
         "choice",
         items=items,
-        _widget_properties=props,
         )
 
     

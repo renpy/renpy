@@ -97,7 +97,9 @@ Screens
 Ren'Py now ships with a default set of screens, which are used by the
 demo and installed by default when a new game is created. You can find
 them in template/game/screens.rpy, and they can be used by copying
-that file into your project.
+that file into your project. These screens are not 100% compatible
+with the previous layout system - for example, some styles have
+changed. That's why games must opt-in to them.
 
 The definition of the `items` parameter of the :ref:`Choice` and
 :ref:`NVL` screens has changed, and games will need to be updated to work
@@ -113,6 +115,9 @@ game-maker to control the interpretation of the ``auto`` property of
 imagemaps and imagebuttons.
 
 The imagemap caching behavior described above applies only to screens.
+
+The :func:`FilePageName` and :func:`FileSlotName` functions make it easier
+to name slots 
 
 Other Improvements
 ------------------

@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. class:: Drag(d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=<function default_drag_joined at 0x22fb2a8>, clicked=None, hovered=None, unhovered=None, replaces=None, **properties)
+.. class:: Drag(d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=<function default_drag_joined at 0x1de72a8>, clicked=None, hovered=None, unhovered=None, replaces=None, **properties)
     
     A displayable that represents an object that can be dragged around
     its enclosing area. A Drag can also represent an area that
