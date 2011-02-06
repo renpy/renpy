@@ -428,11 +428,6 @@ cdef class GLDraw:
 
         renpy.log.info("Number of texture units: %d", texture_units)
 
-        if texture_units < 4 and not self.fast_dissolve:
-            renpy.log.info("Not enough texture units.")
-            return False
-
-
         # Count the number of clip planes.
         cdef GLint clip_planes = 0
         
