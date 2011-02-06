@@ -989,6 +989,9 @@ init -1140 python:
              If true, then this file will be marked as the newest save
              file when it's saved. (Set this to false for a quicksave,
              for example.)
+
+         `page`
+             The name of the page that it will be saved to.
          """
 
         def __init__(self, name, confirm=True, newest=True, page=None):
@@ -1006,7 +1009,7 @@ init -1140 python:
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
-                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
+                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page, selected_if_newest=False))
                     return
 
             renpy.save(fn, extra_info=save_name)
@@ -1025,6 +1028,9 @@ init -1140 python:
                 return True
 
         def get_selected(self):
+            if not self.confirm:
+                return False
+            
             return persistent._file_newest == __filename(self.name, self.page)
             
     class FileLoad(Action):
