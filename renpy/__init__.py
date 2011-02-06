@@ -29,7 +29,7 @@ import os
 # ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
 # Be sure to change script_version in launcher/script_version.rpy, too!
 # Be sure to change _renpy.pyx and module.py, if necessary.
-version = "Ren'Py 6.12.0d"
+version = "Ren'Py 6.12.0e"
 
 
 # Other versions.

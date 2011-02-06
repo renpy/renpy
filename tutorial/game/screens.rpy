@@ -262,15 +262,18 @@ screen file_picker:
                     
             textbutton _("Next"):
                 action FilePageNext()
+
+        $ columns = 2
+        $ rows = 5
                 
         # Display a grid of file slots.
-        grid 2 5:
+        grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
             
             # Display ten file slots, numbered 1 - 10.
-            for i in range(1, 11):
+            for i in range(1, columns * rows + 1):
 
                 # Each file slot is a button.
                 button:
@@ -283,9 +286,8 @@ screen file_picker:
                     add FileScreenshot(i)
                     
                     # Format the description, and add it as text.
-                    $ description = "%s-%d. %s\n%s" % (
-                        FilePageName(),
-                        i,
+                    $ description = "% 2s. %s\n%s" % (
+                        FileSlotName(i, columns * rows),
                         FileTime(i, empty=_("Empty Slot.")),
                         FileSaveName(i))
 

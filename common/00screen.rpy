@@ -1166,6 +1166,52 @@ init -1140 python:
             return auto
         else:
             return page
+
+    def FileSlotName(slot, slots_per_page, auto="a", quick="q", format="%s%d"):
+        """
+         :doc: file_action_function
+
+         Returns the name of the numbered slot. This assumes that slots on
+         normal pages are numbered in a linear order starting with 1, and
+         that page numbers start with 1. When slot is 2, and slots_per_page
+         is 10, and the other variables are the defauts:
+
+         * When the first page is slowing, this returns "2".
+         * When the second page is showing, this returns "12".
+         * When the auto page is showing, this returns "a2".
+         * When the quicksave page is showing, this returns "q2".
+
+         `slot`
+             The number of the slot to access.
+
+         `slots_per_page`
+             The number of slots per page.
+
+         `auto`
+             A prefix to use for the auto page.
+
+         `quick`
+             A prefix to use for the quick page.
+
+         `format`
+             The formatting code to use. This is given two arguments: A string
+             giving the page prefix, and an integer giving the slot number.
+         """
+
+        page = persistent._file_page
+
+        if page == "quick":
+            prefix = quick
+            page = 0
+        elif page == "auto":
+            prefix = auto
+            page = 0
+        else:
+            prefix = ""
+            page = int(page) - 1
+
+        return format % (prefix, page * slots_per_page + slot)
+         
         
     class FilePageNext(Action):
         """
