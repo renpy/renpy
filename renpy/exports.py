@@ -547,7 +547,7 @@ def display_menu(items,
         # Mark this as chosen.
         for label, val in items:
             if rv == val:
-                chosen[(location, val)] = True
+                chosen[(location, label)] = True
 
         
         for label, val in items:
