@@ -5,6 +5,12 @@
     This is a function that returns true
     if the file is loadable, and false otherwise.
 
+.. function:: FilePageName(auto='a', quick='q')
+    
+    Returns the name of the current file page, as a string. If a normal
+    page, this returns the page number. Otherwise, it returns
+    `auto` or `quick`.
+
 .. function:: FileSaveName(name, empty='', page=None)
     
     Return the save_name that was in effect when the file was saved,

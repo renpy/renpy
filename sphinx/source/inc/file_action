@@ -50,6 +50,9 @@
         If true, then this file will be marked as the newest save
         file when it's saved. (Set this to false for a quicksave,
         for example.)
+    
+    `page`
+        The name of the page that it will be saved to.
 
 .. function:: FileTakeScreenshot()
     

@@ -1009,7 +1009,7 @@ init -1140 python:
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
-                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page, selected_if_newest=False))
+                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, self.newest, self.page))
                     return
 
             renpy.save(fn, extra_info=save_name)
@@ -1066,6 +1066,9 @@ init -1140 python:
             return renpy.scan_saved_game(__filename(self.name, self.page))
 
         def get_selected(self):
+            if not self.confirm:
+                return False
+
             return persistent._file_newest == __filename(self.name, self.page)
 
     class FileDelete(Action):

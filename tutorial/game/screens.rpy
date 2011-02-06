@@ -65,9 +65,12 @@ screen choice:
 
     window: 
         style "menu_window"        
-
+        xalign 0.5
+        yalign 0.5
+        
         vbox:
             style "menu"
+            spacing 2
             
             for caption, action, chosen in items:
                 
@@ -82,13 +85,10 @@ screen choice:
                 else:
                     text caption style "menu_caption"
 
-init python:
+init -2 python:
     config.narrator_menu = True
     
-    style.menu.box_spacing = 2
     style.menu_window.set_parent(style.default)
-    style.menu_window.xalign = 0.5
-    style.menu_window.yalign = 0.5
     style.menu_choice.set_parent(style.button_text)
     style.menu_choice.clear()
     style.menu_choice_button.set_parent(style.button)
@@ -189,7 +189,7 @@ screen main_menu:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit(confirm=False)
 
-init python:
+init -2 python:
 
     # Make all the main menu buttons be the same size.
     style.mm_button.size_group = "mm"
@@ -210,7 +210,9 @@ screen navigation:
     # The various buttons.
     frame:
         style_group "gm_nav"
-
+        xalign .98
+        yalign .98
+        
         has vbox
 
         textbutton _("Return") action Return()
@@ -221,10 +223,8 @@ screen navigation:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit()
 
-init python:
+init -2 python:
     style.gm_nav_button.size_group = "gm_nav"
-    style.gm_nav_frame.xalign = .98
-    style.gm_nav_frame.yalign = .98
     
 
 ##############################################################################
@@ -283,7 +283,12 @@ screen file_picker:
                     add FileScreenshot(i)
                     
                     # Format the description, and add it as text.
-                    $ description = "% 2d. %s\n%s" % (i, FileTime(i, empty=_("Empty Slot.")), FileSaveName(i))
+                    $ description = "%s-%d. %s\n%s" % (
+                        FilePageName(),
+                        i,
+                        FileTime(i, empty=_("Empty Slot.")),
+                        FileSaveName(i))
+
                     text description
 
                     key "save_delete" action FileDelete(i)
@@ -305,7 +310,7 @@ screen load:
     use navigation
     use file_picker
 
-init python:
+init -2 python:
     style.file_picker_frame = Style(style.menu_frame)
 
     style.file_picker_nav_button = Style(style.small_button)
@@ -427,15 +432,19 @@ screen preferences:
                         action Play("voice", config.sample_voice)
                         style "soundtest_button"
 
-init python:
+init -2 python:
     style.pref_frame.xfill = True
     style.pref_frame.xmargin = 5
     style.pref_frame.top_margin = 5
+
     style.pref_vbox.xfill = True
+
     style.pref_button.size_group = "pref"
     style.pref_button.xalign = 1.0
+
     style.pref_slider.xmaximum = 192
     style.pref_slider.xalign = 1.0
+
     style.soundtest_button.xalign = 1.0
 
 
@@ -455,31 +464,28 @@ screen yesno_prompt:
     frame:
         style_group "yesno"
 
-        has vbox
-
-        label _(message)
+        xfill True
+        xmargin .05
+        ypos .1
+        yanchor 0
+        ypadding .05
+        
+        has vbox:
+            xalign .5
+            yalign .5
+            spacing 30
+            
+        label _(message):
+            xalign 0.5
 
         hbox:
+            xalign 0.5
+            spacing 100
+            
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
 
-init python:
-    
-    style.yesno_frame.xfill = True
-    style.yesno_frame.xmargin = .05
-    style.yesno_frame.ypos = .1
-    style.yesno_frame.yanchor = 0
-    style.yesno_frame.ypadding = .05
-    
-    style.yesno_vbox.xalign = 0.5
-    style.yesno_vbox.yalign = 0.5
-    style.yesno_vbox.box_spacing = 30
-    
-    style.yesno_hbox.xalign = 0.5
-    style.yesno_hbox.spacing = 100
-    
+init -2 python:    
     style.yesno_button.size_group = "yesno"
-
-    style.yesno_label.xalign = 0.5
     style.yesno_label_text.text_align = 0.5
