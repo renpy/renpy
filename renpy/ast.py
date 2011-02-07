@@ -359,12 +359,12 @@ class Say(Node):
         if renpy.config.say_menu_text_filter:
             what = renpy.config.say_menu_text_filter(what) # E1102
             
-        say_menu_with(self.with_, renpy.game.interface.set_transition)
-        renpy.exports.say(who, what, interact=getattr(self, 'interact', True))
-
         if getattr(who, "record_say", True):
             renpy.store._last_say_who = self.who
             renpy.store._last_say_what = what
+
+        say_menu_with(self.with_, renpy.game.interface.set_transition)
+        renpy.exports.say(who, what, interact=getattr(self, 'interact', True))
 
         return self.next
 

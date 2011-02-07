@@ -94,7 +94,7 @@ init -1180 python:
 
 
     def _default_empty_window():
-
+        
         who = _last_say_who
 
         if who is not None:
