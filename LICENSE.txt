@@ -38,7 +38,6 @@ Ren'Py binaries include code from the following projects:
 * SDL (LGPL)
 * SDL_image (LGPL)
 * SDL_ttf (LGPL)
-* SDL_mixer (LGPL)
 * Freetype (LGPL)
 * FFmpeg (LGPL)
 * Fribidi (LGPL)
@@ -49,7 +48,6 @@ Ren'Py binaries include code from the following projects:
 * pyobjc (MIT License)
 * py2exe (MIT License)
 * GLEW (Modified BSD, MIT)
-* tegl (Modified BSD)
 
 For the purpose of LGPL compliance, the source code to all LGPL
 software we depend on is either in the Ren'Py package (available from

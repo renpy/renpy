@@ -350,15 +350,9 @@ class Frame(renpy.display.core.Displayable):
         dw = int(width)
         dh = int(height)
         
-        xb = self.xborder
-        yb = self.yborder
-
-        if xb * 2 >= sw:
-            xb = sw / 2 - 1
-
-        if yb * 2 >= sh:
-            yb = sh / 2 - 1
-
+        xb = min(self.xborder, sw / 2 - 1, width / 2 - 1)
+        yb = min(self.yborder, sh / 2 - 1, height / 2 - 1) 
+        
         rv = Render(dw, dh)
 
         self.draw_pattern(draw, xb, yb)
@@ -417,12 +411,9 @@ class Frame(renpy.display.core.Displayable):
         sw, sh = source.get_size()
         dw, dh = dest.get_size()
 
-        if xb * 2 >= sw:
-            xb = sw / 2 - 1
+        xb = min(xb, sw / 2 - 1, dw / 2 - 1)
+        yb = min(yb, sh / 2 - 1, dh / 2 - 1) 
 
-        if yb * 2 >= sh:
-            yb = sh / 2 - 1
-        
         def draw(x0, x1, y0, y1):
 
             # Compute the coordinates of the left, right, top, and
