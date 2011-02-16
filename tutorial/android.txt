@@ -1,0 +1,4 @@
+title=Ren'Py Demo
+author=PyTom
+orientation=landscape
+api_version=1

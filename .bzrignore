@@ -98,3 +98,9 @@ lib/python
 lib/update-version.txt
 sphinx/game/saves
 tutorial/game/saves
+doc
+unparse.py
+module/glrtt_fbo.c
+module/glrtt_fbo.html
+tutorial/game/cache
+renpy.exe.log
