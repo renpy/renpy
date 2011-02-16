@@ -104,3 +104,4 @@ module/glrtt_fbo.c
 module/glrtt_fbo.html
 tutorial/game/cache
 renpy.exe.log
+renpy/vc_version.py

@@ -115,23 +115,45 @@ def tree(root):
 
 def main():
 
+    # Revision updating is done early, so we can do it even if the rest
+    # of the program fails.
+    
+    # Determine the version. We grab the current revision, and if any
+    # file has changed, bump it by 1.
+    p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
+    revno = p.stdout.read().strip()
+    revno = int(revno)
+    p.wait()
+
+    p = subprocess.Popen(["bzr", "status", "-V"], stdout=subprocess.PIPE)
+    status = p.stdout.read().strip()
+    p.wait()
+    
+    if status:
+        revno += 1
+        
+    # Write the revno to the necessary files.
+    f = file("lib/update-version.txt", "w")
+    f.write("{revno}-{now} base\n".format(revno=revno, now=time.time()))
+    f.close()
+
+    f = file("renpy/vc_version.py", "w")
+    f.write("""\
+# The version of Ren'Py reported by the version control software.
+vc_version = {revno}
+""".format(revno=revno))
+    f.close()
+    
+    # Check to be sure we have the right arguments.
     if len(sys.argv) != 2:
         print "Usage: %s <prefix>" % sys.argv[0]
         return
 
     prefix = sys.argv[1]
 
+    # Copy over the screens, to keep them up to date.
     shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
-        
-    # Update the update-version.txt file.
-    p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
-    revno = p.stdout.read().strip() + "-" + str(time.time())
-    p.wait()
 
-    f = file("lib/update-version.txt", "w")
-    f.write(revno + " base\n")
-    f.close()
-    
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
 
