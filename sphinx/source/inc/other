@@ -1040,6 +1040,11 @@
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.    
 
+.. function:: renpy.vibrate(duration)
+    
+    Causes the device to vibrate for `duration` seconds. Currently, this
+    is only supported on Android.
+
 .. function:: renpy.music.register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix='', file_suffix='', buffer_queue=True)
     
     This registers a new audio channel named `name`. Audio can then be

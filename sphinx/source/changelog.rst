@@ -2,6 +2,13 @@
 Full Changelog
 ==============
 
+Ren'Py 6.12.1
+=============
+
+The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices
+to vibrate.
+
+
 Ren'Py 6.12.0
 =============
 

@@ -1562,3 +1562,18 @@ def variant(name):
 
     return name in renpy.config.variants
 
+def vibrate(duration):
+    """
+    :doc: other
+
+    Causes the device to vibrate for `duration` seconds. Currently, this
+    is only supported on Android.
+    """
+
+    try:
+        import android
+        android.vibrate(duration)
+    except:
+        pass
+    
+    
