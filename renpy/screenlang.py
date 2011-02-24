@@ -478,6 +478,9 @@ position_properties = [ Style(i) for i in [
         "clipping",
         "xfill",
         "yfill",
+        # no center, since it can conflict with the center transform.
+        "xcenter",
+        "ycenter",        
         ] ]
 
 text_properties = [ Style(i) for i in [

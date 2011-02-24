@@ -201,6 +201,8 @@ def always_true(a):
     return True
 def always_0(a):
     return 0
+def always_half(a):
+    return 0.5
 
 substitutes = dict(
     xmargin = [
@@ -292,7 +294,18 @@ substitutes = dict(
         ('ymaximum', index_3),
         ('xminimum', index_2),
         ('yminimum', index_3),
-        ],        
+        ],
+
+    xcenter = [
+        ('xpos', None),
+        ('xanchor', always_half),
+        ],
+
+    ycenter = [
+        ('ypos', None),
+        ('yanchor', always_half),
+        ],
+    
     )
 
 # Map from property to number.

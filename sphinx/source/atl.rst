@@ -672,6 +672,22 @@ positions.
 
     Equivalent to setting ypos and yanchor to this value.
 
+.. transform-property:: xcenter
+
+    :type: float
+    :default: 0.0
+
+    Equivalent to setting xpos to the value of this property, and
+    xanchor to 0.5.
+
+.. transform-property:: ycenter
+
+    :type: float
+    :default: 0.0
+
+    Equivalent to setting ypos to the value of this property, and
+    yanchor to 0.5.
+    
 .. transform-property:: rotate
 
     :type: float or None

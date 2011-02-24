@@ -325,6 +325,22 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
+    def set_xcenter(self, value):
+        self.xpos = value
+        self.xanchor = 0.5
+
+    def get_xcenter(self):
+        return self.xpos
+
+    def set_ycenter(self, value):
+        self.ypos = value
+        self.yanchor = 0.5
+
+    def get_ycenter(self):
+        return self.ypos
+
+    xcenter = property(get_xcenter, set_xcenter)
+    ycenter = property(get_ycenter, set_ycenter)
     
 class Proxy(object):
     """
@@ -388,6 +404,9 @@ class Transform(Container):
     offset = Proxy("offset")
 
     subpixel = Proxy("subpixel")
+
+    xcenter = Proxy("xcenter")
+    ycenter = Proxy("ycenter")
     
     def after_upgrade(self, version):
 

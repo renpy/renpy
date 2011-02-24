@@ -238,6 +238,16 @@ layout.
     Equivalent to setting xalign to the first component of the tuple,
     and yalign to the second.
 
+.. style-property:: xcenter position
+
+    Equivalent to setting xpos to the value of this property, and
+    xanchor to 0.5.
+
+.. style-property:: ycenter position
+
+    Equivalent to setting ypos to the value of tihis property, and
+    yanchor to 0.5.
+
 .. style-property:: xoffset int
 
     Gives a number of pixels that are added to the horizontal position
