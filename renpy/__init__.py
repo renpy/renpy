@@ -130,7 +130,8 @@ def import_all():
     import renpy.display.behavior # layout
     import renpy.display.transition # core, layout
     import renpy.display.im
-    import renpy.display.image # core, behavior, im
+    import renpy.display.imagelike
+    import renpy.display.image # core, behavior, im, imagelike
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim

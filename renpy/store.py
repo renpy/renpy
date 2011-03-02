@@ -121,10 +121,11 @@ Bar = renpy.display.behavior.Bar
 Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
-Frame = renpy.display.image.Frame
-Image = renpy.display.image.Image
 ImageReference = renpy.display.image.ImageReference
-Solid = renpy.display.image.Solid
+Image = renpy.display.im.image
+
+Frame = renpy.display.imagelike.Frame
+Solid = renpy.display.imagelike.Solid
 
 LiveComposite = renpy.display.layout.LiveComposite
 LiveCrop = renpy.display.layout.LiveCrop

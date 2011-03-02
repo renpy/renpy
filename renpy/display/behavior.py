@@ -628,6 +628,57 @@ def TextButton(text, style='button', text_style='button_text',
     text = renpy.display.text.Text(text, style=text_style)
     return Button(text, style=style, clicked=clicked, **properties)
 
+class ImageButton(Button):
+    """
+    Used to implement the guts of an image button.
+    """
+
+    def __init__(self,
+                 idle_image,
+                 hover_image,
+                 insensitive_image = None,
+                 activate_image = None,
+                 selected_idle_image = None,
+                 selected_hover_image = None,
+                 selected_insensitive_image = None,
+                 selected_activate_image = None,                 
+                 style='image_button',
+                 clicked=None,
+                 hovered=None,
+                 **properties):
+
+        insensitive_image = insensitive_image or idle_image
+        activate_image = activate_image or hover_image
+
+        selected_idle_image = selected_idle_image or idle_image
+        selected_hover_image = selected_hover_image or hover_image
+        selected_insensitive_image = selected_insensitive_image or insensitive_image
+        selected_activate_image = selected_activate_image or activate_image
+
+        self.state_children = dict(
+            idle_ = renpy.easy.displayable(idle_image),
+            hover_ = renpy.easy.displayable(hover_image),
+            insensitive_ = renpy.easy.displayable(insensitive_image),
+            activate_ = renpy.easy.displayable(activate_image),
+
+            selected_idle_ = renpy.easy.displayable(selected_idle_image),
+            selected_hover_ = renpy.easy.displayable(selected_hover_image),
+            selected_insensitive_ = renpy.easy.displayable(selected_insensitive_image),
+            selected_activate_ = renpy.easy.displayable(selected_activate_image),
+            )
+
+        super(ImageButton, self).__init__(renpy.display.layout.Null(),
+                                          style=style,
+                                          clicked=clicked,
+                                          hovered=hovered,
+                                          **properties)
+        
+    def visit(self):
+        return self.state_children.values()
+
+    def get_child(self):
+        return self.style.child or self.state_children[self.style.prefix]
+
 
 # This is used for an input that takes its focus from a button. 
 class HoveredProxy(object):
@@ -1360,6 +1411,4 @@ class MouseArea(renpy.display.core.Displayable):
 
             run(self.unhovered)
 
-            
 
-        
