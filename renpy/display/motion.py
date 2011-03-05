@@ -587,14 +587,28 @@ class Transform(Container):
         
         return 
 
+
+    def copy(self):
+        """
+        Makes a copy of this transform.
+        """
+
+        d = self()
+        d.kwargs = { }
+        d.take_state(self)
+        d.take_execution_state(self)
+
+        return d
+
+    def change_transform_child(self, child):
+        rv = self.copy()
+        rv.set_child(self.child.change_transform_child)
+        return rv
     
     def _hide(self, st, at, kind):
 
         if not (self.hide_request or self.replaced_request):
-            d = self()
-            d.kwargs = { }
-            d.take_state(self)
-            d.take_execution_state(self)
+            d = self.copy()
         else:
             d = self
 
