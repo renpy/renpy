@@ -378,7 +378,15 @@ class Displayable(renpy.object.Object):
         """
 
         return self
-        
+
+    def _change_transform_child(self, child):
+        """
+        If this is a transform, makes a copy of the transform and sets
+        the child of the innermost transform to this. Otherwise,
+        simply returns child.
+        """
+
+        return child
 
 class ImagePredictInfo(renpy.object.Object):
     """
@@ -715,25 +723,37 @@ class SceneLists(renpy.object.Object):
             self.additional_transient.append((layer, key))
             
         l = self.layers[layer]
-
+        
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
 
-        if not isinstance(thing, renpy.display.motion.Transform):
-            thing = self.transform_state(default_transform, thing)
-            
         add_index, remove_index = self.find_index(layer, key, zorder, behind)
 
         at = None
         st = None
 
         if remove_index is not None:
-            at = l[remove_index].animation_time            
-            thing = self.transform_state(l[remove_index].displayable, thing)
+            sle = l[remove_index]            
+            at = sle.animation_time            
+            old = sle.displayable
+            
+            if (not atl and
+                not at_list and
+                renpy.config.keep_running_transform and
+                isinstance(old, renpy.display.motion.Transform)):
+
+                thing = sle.displayable._change_transform_child(thing)
+            else:
+                thing = self.transform_state(l[remove_index].displayable, thing)
+
             thing.set_transform_event("replace")
             thing._show()
             
         else:            
+
+            if not isinstance(thing, renpy.display.motion.Transform):
+                thing = self.transform_state(default_transform, thing)
+                
             thing.set_transform_event("show")
             thing._show()
 

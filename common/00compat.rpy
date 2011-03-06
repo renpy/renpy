@@ -48,8 +48,9 @@ init -1210 python:
             config.imagereference_respects_position = True
             config.predict_screens = False
             config.choice_screen_chosen = False
-            
-            
+
+        if version <= (6, 12, 0):
+            config.keep_running_transform = False
           
 init 1210 python hide::
 

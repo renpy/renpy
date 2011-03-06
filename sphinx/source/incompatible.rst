@@ -9,6 +9,17 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.12.1:
+
+6.12.1
+------
+
+Showing an image without providing a transform or ATL block will now
+continue the previous transform that the image was using. This means
+that a moving image may continue moving once it has changed. To revert
+to the old behavior, set :var:`config.keep_running_transform` to False.
+
+
 .. _incompatible-6.12.0:
 
 6.12.0

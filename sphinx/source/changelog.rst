@@ -5,10 +5,13 @@ Full Changelog
 Ren'Py 6.12.1
 =============
 
+Showing an image without providing a transform or ATL block will now
+continue the previous transform that the image was using. Previously,
+it caused those transforms to stop.
+
 Added the :propref:`xcenter` and :propref:`ycenter` position and
 transform properties. These set the position of the center of a
 displayable. [Test]
-
 
 The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices
 to vibrate.
