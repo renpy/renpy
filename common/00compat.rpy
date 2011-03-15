@@ -51,7 +51,8 @@ init -1210 python:
 
         if version <= (6, 12, 0):
             config.keep_running_transform = False
-          
+            config.image_attributes = False
+            
 init 1210 python hide::
 
     # This returns true if the script_version is <= the

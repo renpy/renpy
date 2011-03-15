@@ -388,51 +388,6 @@ class Displayable(renpy.object.Object):
 
         return child
 
-class ImagePredictInfo(renpy.object.Object):
-    """
-    This stores information involved in image prediction.
-    """
-
-    def after_setstate(self):
-        for i in renpy.config.layers + renpy.config.top_layers:
-            self.images.setdefault(i, {})
-    
-    def __init__(self, ipi=None):
-
-        super(ImagePredictInfo, self).__init__()
-        
-        # layer -> (tag -> image name)
-        self.images = { }
-
-        if ipi is None:
-            for i in renpy.config.layers + renpy.config.top_layers:
-                self.images[i] = { }
-        else:
-            for i in renpy.config.layers + renpy.config.top_layers:
-                self.images[i] = ipi.images[i].copy()
-            
-                
-    def showing(self, layer, name):
-
-        shown = self.images[layer].get(name[0], None)
-        
-        if shown is None or len(shown) < len(name):
-            return False
-
-        for a, b in zip(name, shown):
-            if a != b:
-                return False
-
-        return True
-
-    def predict_scene(self, layer):
-        self.images[layer].clear()
-
-    def predict_show(self, name, layer):
-        self.images[layer][name[0]] = name
-        
-    def predict_hide(self, tag, layer):
-        self.images[layer].pop(tag, None)
     
 
 class SceneListEntry(renpy.object.Object):
@@ -485,7 +440,7 @@ class SceneLists(renpy.object.Object):
     things to the user. 
     """
 
-    __version__ = 5
+    __version__ = 6
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -516,8 +471,11 @@ class SceneLists(renpy.object.Object):
 
         if version < 5:
             self.drag_group = None
+
+        if version < 6:
+            self.shown = self.image_predict_info 
             
-    def __init__(self, oldsl, ipi):
+    def __init__(self, oldsl, shown):
 
         super(SceneLists, self).__init__()
         
@@ -534,8 +492,8 @@ class SceneLists(renpy.object.Object):
         # been applied to the layer as a whole.
         self.layer_at_list = { }
 
-        # Represents the current stare of image_prediction.
-        self.image_predict_info = ipi
+        # The current shown images,
+        self.shown = shown
 
         # A list of (layer, tag) pairs that are considered to be
         # transient.
@@ -717,7 +675,7 @@ class SceneLists(renpy.object.Object):
             self.at_list[layer][key] = at_list
 
         if key and name:
-            self.image_predict_info.images[layer][key] = name
+            self.shown.predict_show(layer, name)
 
         if transient:
             self.additional_transient.append((layer, key))
@@ -843,7 +801,7 @@ class SceneLists(renpy.object.Object):
             tag = self.layers[layer][remove_index].tag
 
             if tag:
-                self.image_predict_info.images[layer].pop(tag, None)
+                self.shown.predict_hide(layer, (tag,))
                 self.at_list[layer].pop(tag, None)
             
             self.hide_or_replace(layer, remove_index, "hide")
@@ -867,7 +825,7 @@ class SceneLists(renpy.object.Object):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
-        self.image_predict_info.images[layer].clear()
+        self.shown.predict_scene(layer)
         self.layer_at_list[layer] = (None, [ ])
 
     def set_layer_at_list(self, layer, at_list):
@@ -891,7 +849,7 @@ class SceneLists(renpy.object.Object):
         is found in the scene list.
         """
 
-        return self.image_predict_info.showing(layer, name)
+        return self.shown.showing(layer, name)
 
     def make_layer(self, layer, properties):
         """

@@ -475,6 +475,9 @@ imagemap_auto_function = None
 # Should we keep the running transform when we merely change the image?
 keep_running_transform = True
 
+# Should we use image attributes?
+image_attributes = True
+
 del renpy
 del os
 

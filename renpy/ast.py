@@ -742,9 +742,9 @@ def predict_imspec(imspec, scene=False):
         full_name = (tag,) + full_name[1:]
 
     if scene:
-        renpy.game.context().predict_info.images.predict_scene(layer)
+        renpy.game.context().images.predict_scene(layer)
         
-    renpy.game.context().predict_info.images.predict_show(tag or name, layer)
+    renpy.game.context().images.predict_show(tag or name, layer)
         
     renpy.display.predict.displayable(img)
 
@@ -900,7 +900,7 @@ class Hide(Node):
         if tag is None:
             tag = name[0]
             
-        renpy.game.context().predict_info.images.predict_hide(tag, layer)
+        renpy.game.context().images.predict_hide(tag, layer)
 
         return [ ]
         

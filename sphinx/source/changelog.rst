@@ -6,8 +6,8 @@ Ren'Py 6.12.1
 =============
 
 Showing an image without providing a transform or ATL block will now
-continue the previous transform that the image was using. Previously,
-it caused those transforms to stop.
+continue the previous transform that an image with that tag was
+using. Previously, it caused those transforms to stop.
 
 Added the :propref:`xcenter` and :propref:`ycenter` position and
 transform properties. These set the position of the center of a

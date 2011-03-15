@@ -81,10 +81,6 @@ del public_api
 
 import collections
 
-# This is a map from image name to a Displayable object corresponding
-# to that image name.
-images = { }
-
 def roll_forward_info():
     return renpy.game.log.forward_info()
 
@@ -147,8 +143,7 @@ def image(name, img):
         name = tuple(name.split())
 
     img = renpy.easy.displayable(img)
-
-    images[name] = img
+    renpy.display.image.register_image(name, img)
 
 def copy_images(old, new):
     if not isinstance(old, tuple):
@@ -159,12 +154,12 @@ def copy_images(old, new):
 
     lenold = len(old)
         
-    for k in list(images.keys()):
+    for k, v in renpy.display.image.images.items():
         if len(k) < lenold:
             continue
         
         if k[:lenold] == old:
-            images[new + k[lenold:]] = images[k]
+            renpy.display.image.register_image(new + k[lenold:], v)
     
 def showing(name, layer='master'):
     """
@@ -181,7 +176,7 @@ def showing(name, layer='master'):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return renpy.game.context().predict_info.images.showing(layer, name)
+    return renpy.game.context().images.showing(layer, name)
 
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     "Documented in wiki as renpy.show."
@@ -206,7 +201,15 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
     if isinstance(what, renpy.display.core.Displayable):
         base = img = what
+
     else:
+
+        if renpy.config.image_attributes:
+            new_what = renpy.game.context().images.choose_image(layer, key, name)
+            if new_what is not None:
+                what = new_what
+                name = (key,) + new_what[1:]
+                
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
         
         if not base.find_target() and renpy.config.missing_show:
