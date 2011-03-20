@@ -25,7 +25,7 @@
 import math
 import types
 
-import renpy
+import renpy.display
 from renpy.display.render import render
 from renpy.display.layout import Container
 
@@ -1152,8 +1152,6 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     
     rv.blit(crend, rv.reverse.transform(-x, -y))
 
-    # TODO: Bilinear?
-    
     return rv
 
 

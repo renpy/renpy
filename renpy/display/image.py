@@ -24,6 +24,7 @@
 # of the stuff thar uses images remaining.
 
 import renpy
+import renpy.display
 from renpy.display.render import render, Render
 
 import collections
@@ -285,7 +286,8 @@ class ShownImageInfo(renpy.object.Object):
 
         self.shown.discard((layer, tag))
 
-    def choose_image(self, layer, tag, name):
+
+    def apply_attributes(self, layer, tag, name):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
@@ -298,9 +300,26 @@ class ShownImageInfo(renpy.object.Object):
             return name
         
         nametag = name[0]
+        
+        # The set of attributes a matching image must have.
         required = set(name[1:])
 
+        # The set of attributes a matching image may have.
         optional = set(self.attributes.get((layer, tag), [ ]))
+
+        # Deal with banned attributes..
+        for i in name[1:]:
+            if i[0] == "-":
+                optional.discard(i[1:])
+                required.discard(i)
+
+        return self.choose_image(nametag, required, optional, name)
+
+    def choose_image(self, tag, required, optional, exception_name):
+        """
+        Choose a single unique image for 
+        
+        """
 
         # The longest length of an image that matches.
         max_len = 0
@@ -308,7 +327,7 @@ class ShownImageInfo(renpy.object.Object):
         # The list of matching images.
         matches = None
         
-        for attrs in image_attributes[nametag]:
+        for attrs in image_attributes[tag]:
 
             num_required = 0
 
@@ -337,7 +356,7 @@ class ShownImageInfo(renpy.object.Object):
                     max_len = len_attrs
                     matches = [ ]
 
-                matches.append((nametag, ) + attrs)
+                matches.append((tag, ) + attrs)
 
         if matches is None:
             return None
@@ -345,8 +364,10 @@ class ShownImageInfo(renpy.object.Object):
         if len(matches) == 1:
             return matches[0]
 
-        raise Exception("Showing '" + " ".join(name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
-    
+        if exception_name:
+            raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
+        else:
+            return None
 
 renpy.display.core.ImagePredictInfo = ShownImageInfo
 

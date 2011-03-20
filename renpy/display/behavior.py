@@ -22,7 +22,9 @@
 # This contains various Displayables that handle events.
 
 
-import renpy
+import renpy.display
+import renpy.audio
+
 from renpy.display.render import render, Render
 
 import pygame

@@ -31,7 +31,6 @@ proc = None
 # user. If it decides to show something to the user, uses subprocess
 # to actually handle the showing.
 def start(gamedir):
-    import os
     import os.path
 
     if "RENPY_LESS_UPDATES" in os.environ:

@@ -24,7 +24,7 @@
 
 VERSION = (6, 12, 0)
 
-import renpy
+import renpy.display
 import pygame; pygame # prevents pyflakes warning.
 
 import sys
@@ -93,9 +93,6 @@ def scale(s, size):
 
     Always works, but may not be high quality.
     """
-
-    width, height = s.get_size()
-    dx, dy = size
 
     d = renpy.display.pgrender.surface(size, True)
 

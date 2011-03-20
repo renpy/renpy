@@ -23,7 +23,7 @@
 
 import sys
 import pygame
-import renpy
+import renpy.display
 
 # This class is used to make a copy of a pygame module's functions. We
 # can then access those functions, and be relatively sure that those

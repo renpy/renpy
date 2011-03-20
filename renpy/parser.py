@@ -1777,10 +1777,16 @@ def say_statement(l, loc):
 
     attributes = [ ]
     while True:
+        prefix = l.match(r'-')
+        if not prefix:
+            prefix = ""
+        
         component = l.word()
+        
         if component is None:
             break
-        attributes.append(component)
+
+        attributes.append(prefix + component)
         
     if attributes:
         attributes = tuple(attributes)
@@ -1911,7 +1917,7 @@ def report_parse_errors():
         if renpy.config.editor:
             renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
         else:
-            os.startfile('errors.txt') # E1101
+            os.startfile('errors.txt') # E1101 @UndefinedVariable
     except:
         pass
         

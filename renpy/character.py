@@ -22,6 +22,8 @@
 # The Character object (and friends).
 
 import renpy
+import renpy.display
+
 import re
 
 # This matches the dialogue-relevant text tags.
@@ -695,7 +697,7 @@ class ADVCharacter(object):
         # If image is showing already, resolve it, then show or predict it.
         if images.showing("master", (self.image_tag,)):
 
-            new_image = images.choose_image("master", self.image_tag, tagged_attrs)
+            new_image = images.apply_attributes("master", self.image_tag, tagged_attrs)
             if new_image is None:
                 new_image = tagged_attrs
 

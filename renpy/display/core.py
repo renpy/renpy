@@ -22,7 +22,8 @@
 # This file contains code for initializing and managing the display
 # window.
 
-import renpy
+import renpy.display
+import renpy.audio
 
 import pygame
 import sys
@@ -39,7 +40,7 @@ except:
     pass
 
 try:
-    import android
+    import android #@UnresolvedImport
 except:
     android = None
 
@@ -1208,7 +1209,7 @@ class Interface(object):
         draws = { }
         
         try:
-            import renpy.display.gldraw as gldraw
+            import renpy.display.gldraw as gldraw #@UnresolvedImport
             draws["gl"] = gldraw.GLDraw
         except:
             renpy.log.info("Couldn't import gl renderer.")

@@ -29,6 +29,7 @@ _file = file
 
 import renpy
 import renpy.display
+import renpy.audio
 
 from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
@@ -207,7 +208,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
     else:
 
         if renpy.config.image_attributes:
-            new_what = renpy.game.context().images.choose_image(layer, key, name)
+            new_what = renpy.game.context().images.apply_attributes(layer, key, name)
             if new_what is not None:
                 what = new_what
                 name = (key,) + new_what[1:]
@@ -599,7 +600,7 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator # E1101
+        who = renpy.store.narrator # E1101 @UndefinedVariable
 
     if isinstance(who, (str, unicode)):
         return renpy.store.predict_say(who, what)
@@ -630,7 +631,7 @@ def say(who, what, interact=True):
     what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator # E1101
+        who = renpy.store.narrator # E1101 @UndefinedVariable
 
     if isinstance(who, (str, unicode)):
         renpy.store.say(who, what, interact=interact)
@@ -1136,7 +1137,7 @@ def launch_editor(filenames, line=1, transient=0):
     cmd = cmd.replace('""', '')
 
     try:
-        subprocess.Popen(split_args(cmd)) # E1101
+        subprocess.Popen(split_args(cmd)) # E1101 @UndefinedVariable
         return True
     except:
         if renpy.config.debug:
@@ -1263,7 +1264,7 @@ def free_memory():
     force_full_redraw()
     renpy.display.im.free_memory()
     renpy.display.font.free_memory()
-    renpy.display.render.free_memory()
+    renpy.display.render.free_memory() # @UndefinedVariable
 
 def easy_displayable(d, none=False):
     if none:
@@ -1576,7 +1577,7 @@ def vibrate(duration):
     """
 
     try:
-        import android
+        import android #@UnresolvedImport
         android.vibrate(duration)
     except:
         pass

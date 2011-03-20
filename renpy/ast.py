@@ -27,6 +27,8 @@
 # updating.
 
 import renpy
+import renpy.display
+
 import re
 import time
 import md5
@@ -144,8 +146,8 @@ class PyCode(object):
             pass
 
         code = self.source
-        if isinstance(code, renpy.python.ast.AST):
-            code = renpy.python.ast.dump(code)
+        if isinstance(code, renpy.python.ast.AST): #@UndefinedVariable
+            code = renpy.python.ast.dump(code) #@UndefinedVariable
         
         self.hash = chr(renpy.bytecode_version) + md5.md5(code.encode("utf-8")).digest()
         return self.hash

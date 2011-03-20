@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.display
 from renpy.display.render import render, Render, Matrix2D
 
 # This file contains displayables that are image-like, because they take

@@ -22,7 +22,7 @@
 # This file handles imagemap caching.
 
 import pygame
-import renpy
+import renpy.display
 
 from renpy.display.render import render
 
