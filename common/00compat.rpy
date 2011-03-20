@@ -52,6 +52,7 @@ init -1210 python:
         if version <= (6, 12, 0):
             config.keep_running_transform = False
             config.image_attributes = False
+            config.new_character_image_argument = False
             
 init 1210 python hide::
 

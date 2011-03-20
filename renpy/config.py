@@ -478,6 +478,9 @@ keep_running_transform = True
 # Should we use image attributes?
 image_attributes = True
 
+# Should we use the new version of the character image argument?
+new_character_image_argument = True
+
 del renpy
 del os
 

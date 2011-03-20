@@ -558,6 +558,14 @@ class ADVCharacter(object):
         self.dynamic = v('dynamic')
         self.screen = v('screen')
         self.mode = v('mode')
+
+        if renpy.config.new_character_image_argument:
+            if "image" in properties:
+                self.image_tag = properties.pop("image")
+            else:
+                self.image_tag = kind.image_tag
+        else:
+            self.image_tag = None        
         
         self.display_args = dict(
             interact = d('interact'),
@@ -587,8 +595,9 @@ class ADVCharacter(object):
             self.show_args = { }
             self.cb_args = { }
 
-        if "image" in properties:
-            self.show_args["image"] = properties.pop("image")
+        if not renpy.config.new_character_image_argument:            
+            if "image" in properties:
+                self.show_args["image"] = properties.pop("image")
 
         if "slow_abortable" in properties:
             self.what_args["slow_abortable"] = properties.pop("slow_abortable")
@@ -662,14 +671,51 @@ class ADVCharacter(object):
             window_args=self.window_args,
             screen=self.screen,
             **self.show_args)
-    
+
+    def resolve_say_attributes(self, predict):
+        """
+        Deals with image attributes associated with the current say
+        statement.
+        """
+        
+        attrs = renpy.exports.get_say_attributes()
+        
+        if not attrs:
+            return
+
+        if not self.image_tag:
+            if not predict:
+                raise Exception("Say has image attributes, but there's no image tag associated with the speaking character.")
+            else:
+                return
+
+        tagged_attrs = (self.image_tag,) + attrs            
+        images = renpy.game.context().images
+
+        # If image is showing already, resolve it, then show or predict it.
+        if images.showing("master", (self.image_tag,)):
+
+            new_image = images.choose_image("master", self.image_tag, tagged_attrs)
+            if new_image is None:
+                new_image = tagged_attrs
+
+            if predict:
+                images.predict_show(new_image)
+            else:
+                renpy.exports.show(new_image)                        
+
+        else:
+            # Otherwise, just record the attributes of the image. 
+            images.predict_show("master", tagged_attrs)
+        
     def __call__(self, what, interact=True, **kwargs):
 
         # Check self.condition to see if we should show this line at all.
-
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
+        self.resolve_say_attributes(False)
+        
         if interact:
             renpy.exports.mode(self.mode)
     
@@ -706,6 +752,8 @@ class ADVCharacter(object):
         renpy.exports.log("")
                 
     def predict(self, what):
+
+        self.resolve_say_attributes(True)
 
         if self.dynamic:
             who = "<Dynamic>"
@@ -887,10 +935,6 @@ def Character(name=NotSet, kind=None, **properties):
     can also be set this way, using the `who_style`, `what_style`, and
     `window_style` arguments, respectively.
      """
-
-     
-    
-
 
     if kind is None:
         kind = renpy.store.adv

@@ -28,6 +28,8 @@
 _file = file
 
 import renpy
+import renpy.display
+
 from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
@@ -1579,4 +1581,18 @@ def vibrate(duration):
     except:
         pass
     
+
+# The attributes that are applied to the current say statement.
+say_attributes = None
     
+def get_say_attributes():
+    """
+    :doc: other
+
+    Gets the attributes associated with the current say statement, or
+    None if no attributes are associated with this statement.
+
+    This is only valid when executing or predicting a say statement.
+    """
+
+    return say_attributes

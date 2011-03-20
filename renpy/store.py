@@ -28,6 +28,7 @@
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
 import renpy
+import renpy.display
 
 import renpy.ui as ui
 import renpy.display.im as im
@@ -319,7 +320,7 @@ adv = ADVCharacter(None,
 
                    condition=None,
                    dynamic=False,
-                   image=False,
+                   image=None,
 
                    interact=True,
                    slow=True,

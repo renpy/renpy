@@ -80,6 +80,7 @@ def import_cython():
     
     
 def import_all():
+    import renpy.display
 
     # Should probably be early, as we will add it as a base to serialized things.
     import renpy.object 
@@ -102,7 +103,6 @@ def import_all():
     import renpy.statements
     import renpy.style
 
-    import renpy.display
     import renpy.display.presplash
     import renpy.display.iliad # Must be before scale and pgrender.
     import renpy.display.pgrender
@@ -200,4 +200,3 @@ def reload_all():
     renpy.display.draw = None
     
     import_all()
-
