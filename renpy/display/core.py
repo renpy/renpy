@@ -1672,7 +1672,7 @@ class Interface(object):
         
         if android.check_pause():
 
-            import android_sound
+            import android_sound #@UnresolvedImport
             android_sound.pause_all()
 
             pygame.time.set_timer(PERIODIC, 0)
