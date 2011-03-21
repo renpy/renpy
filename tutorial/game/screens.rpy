@@ -48,11 +48,12 @@ screen say:
                     style "say_vbox"
 
                 text what id "what"
-                
+              
     # If there's a side image, display it above the text.
     if side_image:
         add side_image
-
+    else:
+        add SideImage() xalign 0.0 yalign 1.0
 
 
 ##############################################################################
@@ -158,7 +159,7 @@ screen nvl:
 
                         text caption style "nvl_dialogue"
 
-                
+    add SideImage() xalign 0.0 yalign 1.0
         
 ##############################################################################
 # Main Menu 

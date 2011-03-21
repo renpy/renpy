@@ -25,6 +25,8 @@
 # at least pcm_ok, we have no sound whatsoever.
 
 import renpy
+import renpy.audio
+import renpy.display
 
 import time
 import pygame
@@ -48,7 +50,7 @@ if 'pss' not in disable:
 
     if pss is None:
         try:
-            import android_sound as pss
+            import android_sound as pss #@UnresolvedImport
             print "Imported android_sound."
         except:
             pass
@@ -56,10 +58,10 @@ if 'pss' not in disable:
         
 if 'mix' not in disable:
     try:
-        import winmixer as mix; mix
+        import winmixer as mix; mix #@UnresolvedImport
     except:
         try:
-            import linmixer as mix; mix
+            import linmixer as mix; mix #@UnresolvedImport
         except:
             pass
 

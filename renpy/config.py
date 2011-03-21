@@ -24,7 +24,7 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 # This will be deleted by the end of this file.
-import renpy
+import renpy.display
 import os
 
 # Can we add more config variables?
@@ -434,6 +434,7 @@ screenshot_crop = None
 gamedir = None
 basedir = None
 renpy_base = None
+commondir = None
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -472,10 +473,19 @@ variants = [ None ]
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None
 
+# Should we keep the running transform when we merely change the image?
+keep_running_transform = True
+
+# Should we use image attributes?
+image_attributes = True
+
+# Should we use the new version of the character image argument?
+new_character_image_argument = True
+
 del renpy
 del os
 
 def init():
-    import renpy # W0404
+    import renpy # W0404 @Reimport
     global style_properties
     style_properties = renpy.style.style_properties

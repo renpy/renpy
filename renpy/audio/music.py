@@ -21,7 +21,7 @@
 
 # The public API for music in games.
 
-import renpy
+import renpy.audio
 
 # A list of music channels.
 music_channels = [ ]

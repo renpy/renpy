@@ -190,7 +190,7 @@ code::
 
 first desaturates the image, and then tints it blue. When the
 intermediate image is not needed, multiplying matrices is far
-more efficent, in both time and image cache space, than using
+more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
 .. include:: inc/im_matrixcolor

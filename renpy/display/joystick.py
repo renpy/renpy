@@ -24,7 +24,7 @@
 import os
 import pygame
 
-import renpy
+import renpy.display
 
 # Do we have a joystick enabled?
 enabled = False

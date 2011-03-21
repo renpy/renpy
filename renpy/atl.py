@@ -89,7 +89,6 @@ PROPERTIES = {
         "offset" : (int, int),
         "xcenter" : position,
         "ycenter" : position,
-        "center" : (position, position),
         }
 
 

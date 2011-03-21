@@ -1774,6 +1774,25 @@ def say_statement(l, loc):
 
     # Try for a two-argument say statement.
     who = l.simple_expression()
+
+    attributes = [ ]
+    while True:
+        prefix = l.match(r'-')
+        if not prefix:
+            prefix = ""
+        
+        component = l.word()
+        
+        if component is None:
+            break
+
+        attributes.append(prefix + component)
+        
+    if attributes:
+        attributes = tuple(attributes)
+    else:
+        attributes = None
+        
     what = l.string()
 
     if l.keyword('with'):
@@ -1785,7 +1804,7 @@ def say_statement(l, loc):
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what, with_)
+        return ast.Say(loc, who, what, with_, attributes=attributes)
 
     # This reports a parse error for any bad statement.
     l.error('expected statement.')
@@ -1898,7 +1917,7 @@ def report_parse_errors():
         if renpy.config.editor:
             renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
         else:
-            os.startfile('errors.txt') # E1101
+            os.startfile('errors.txt') # E1101 @UndefinedVariable
     except:
         pass
         

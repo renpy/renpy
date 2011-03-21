@@ -25,7 +25,7 @@
 import math
 import types
 
-import renpy
+import renpy.display
 from renpy.display.render import render
 from renpy.display.layout import Container
 
@@ -587,14 +587,30 @@ class Transform(Container):
         
         return 
 
+
+    def copy(self):
+        """
+        Makes a copy of this transform.
+        """
+
+        d = self()
+        d.kwargs = { }
+        d.take_state(self)
+        d.take_execution_state(self)
+        d.st = self.st
+        d.at = self.at
+
+        return d
+
+    def _change_transform_child(self, child):
+        rv = self.copy()
+        rv.set_child(self.child._change_transform_child(child))
+        return rv
     
     def _hide(self, st, at, kind):
 
         if not (self.hide_request or self.replaced_request):
-            d = self()
-            d.kwargs = { }
-            d.take_state(self)
-            d.take_execution_state(self)
+            d = self.copy()
         else:
             d = self
 
@@ -1136,8 +1152,6 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     
     rv.blit(crend, rv.reverse.transform(-x, -y))
 
-    # TODO: Bilinear?
-    
     return rv
 
 

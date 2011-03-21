@@ -24,7 +24,7 @@
 # are None, at least to the point of making it through __init__. This is
 # so that prediction of images works.
 
-import renpy
+import renpy.display
 from renpy.display.render import render
 
 
@@ -211,7 +211,7 @@ def Fade(out_time,
     
     if color:
         widget = renpy.display.image.Solid(color)
-	
+    
     if not widget:
         widget = renpy.display.image.Solid((0, 0, 0, 255))
 

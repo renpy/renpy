@@ -22,7 +22,7 @@
 # TODO: Use overlap (rather than simple pointer location) to determine
 # drag and drop.
 
-import renpy
+import renpy.display
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run
