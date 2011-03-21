@@ -5,8 +5,8 @@ Full Changelog
 Ren'Py 6.12.1
 =============
 
-Showing Images
---------------
+Image Attributes
+----------------
 
 The process of showing images is now attribute-based. Image names now
 consist of a tag, and zero or more attributes. When showing an image,
@@ -43,6 +43,7 @@ attributes are retained. Now, one can write::
 to display Eileen on the right side of the screen, without changing
 the attributes supplied to an image.
     
+** Say Attributes. **
 Image attributes can be updated as part of a say statement. A
 character can be given an `image` argument, giving the name of an
 image that character is linked to. As part of the say statement, image
@@ -64,7 +65,12 @@ is equivalent to::
 
 whenever an image with the tag eileen is being shown.
 
+** Side Image. **
+This release features a new implementation of :ref:`Side Images`, which 
+allows side images to be defined like other images, and allows side 
+images to be integrated with screens easily.
 
+** Sticky Transforms. **
 Finally, showing an image without providing a transform or ATL block
 will now continue the previous transform that an image with that tag
 was using. Previously, it caused those transforms to stop.
