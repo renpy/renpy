@@ -231,6 +231,15 @@ class ShownImageInfo(renpy.object.Object):
                 for tag in layer:
                     self.attributes[layer, tag] = layer[tag][1:]
                     self.shown.add((layer, tag))
+               
+    def get_attributes(self, layer, tag):
+        """
+        Get the attributes associated the image with tag on the given 
+        layer.
+        """
+        
+        return self.attributes.get((layer, tag), ())
+
                     
     def showing(self, layer, name):
         """

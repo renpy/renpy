@@ -718,51 +718,81 @@ class ADVCharacter(object):
 
         self.resolve_say_attributes(False)
         
-        if interact:
-            renpy.exports.mode(self.mode)
-    
-        # Figure out the arguments to display.
-        display_args = self.display_args.copy()
-        display_args.update(kwargs)
-        display_args["interact"] = display_args["interact"] and interact
+        old_side_image_attributes = renpy.exports.side_image_attributes
+            
+        if self.image_tag:
+            attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
+        else:
+            attrs = None
         
-        who = self.name
+        renpy.exports.side_image_attributes = attrs
+        
+        try:
+            
+            if interact:
+                renpy.exports.mode(self.mode)
+        
+            # Figure out the arguments to display.
+            display_args = self.display_args.copy()
+            display_args.update(kwargs)
+            display_args["interact"] = display_args["interact"] and interact
+            
+            who = self.name
+    
+            # If dynamic is set, evaluate the name expression.
+            if self.dynamic:
+                who = renpy.python.py_eval(who)
+    
+            if who is not None:
+                who = self.who_prefix + who + self.who_suffix
+    
+            what = self.what_prefix + what + self.what_suffix
+    
+            # Run the add_function, to add this character to the
+            # things like NVL-mode.
+            self.do_add(who, what)
+    
+            # Now, display the damned thing.
+            self.do_display(who, what, cb_args=self.cb_args, **display_args)
+    
+            # Indicate that we're done.
+            self.do_done(who, what)
+    
+            # Finally, log this line of dialogue.        
+            if who and isinstance(who, (str, unicode)):
+                renpy.exports.log(who)
+            renpy.exports.log(what)
+            renpy.exports.log("")
 
-        # If dynamic is set, evaluate the name expression.
-        if self.dynamic:
-            who = renpy.python.py_eval(who)
-
-        if who is not None:
-            who = self.who_prefix + who + self.who_suffix
-
-        what = self.what_prefix + what + self.what_suffix
-
-        # Run the add_function, to add this character to the
-        # things like NVL-mode.
-        self.do_add(who, what)
-
-        # Now, display the damned thing.
-        self.do_display(who, what, cb_args=self.cb_args, **display_args)
-
-        # Indicate that we're done.
-        self.do_done(who, what)
-
-        # Finally, log this line of dialogue.        
-        if who and isinstance(who, (str, unicode)):
-            renpy.exports.log(who)
-        renpy.exports.log(what)
-        renpy.exports.log("")
+        finally:
+            
+            renpy.exports.side_image_attributes = old_side_image_attributes
+            
                 
     def predict(self, what):
 
         self.resolve_say_attributes(True)
-
-        if self.dynamic:
-            who = "<Dynamic>"
+        
+        old_side_image_attributes = renpy.exports.side_image_attributes
+            
+        if self.image_tag:
+            attrs = self.image_tag + renpy.game.context().images.get_attributes("master", self.image_tag)
         else:
-            who = self.name
+            attrs = None
+        
+        renpy.exports.side_image_attributes = attrs
 
-        return self.do_predict(who, what)
+        try:
+
+            if self.dynamic:
+                who = "<Dynamic>"
+            else:
+                who = self.name
+    
+            return self.do_predict(who, what)
+
+        finally:            
+            renpy.exports.side_image_attributes = None            
 
     def will_interact(self):
 
@@ -795,6 +825,17 @@ def Character(name=NotSet, kind=None, **properties):
         be used to define a template character, and then copy that
         character with changes.
 
+    **Linked Image**
+    An image tag may be associated with a Character. This allows a
+    say statement involving this character to display an image with
+    the tag, and also allows Ren'Py to automatically select a side
+    image to show when this character speaks.
+
+    `image`
+ 
+         A string giving the image tag that is linked with this 
+         character.
+ 
     **Prefixes and Suffixes.**
     These allow a prefix and suffix to be applied to the name of the
     character, and to the text being shown. This can be used, for
@@ -828,12 +869,6 @@ def Character(name=NotSet, kind=None, **properties):
         If true, then `name` should be a string containing a python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
-
-    `image`
-    
-        If true, then `name` is expected to name an image file. That
-        image is used as the name of the character.
-
 
     **Controlling Interactions.**
     These options control if the dialogue is displayed, if an

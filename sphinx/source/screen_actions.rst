@@ -105,4 +105,9 @@ same default page as the file actions.
 
 .. include:: inc/file_action_function
 
+Side Image Functions
+--------------------
 
+This function returns the side image to use.
+
+.. include:: inc/side_image_function

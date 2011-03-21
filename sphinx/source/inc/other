@@ -1011,6 +1011,13 @@
     be treated as immutable. This should only be called once the display
     has been started (that is, after the init code is finished).
 
+.. function:: renpy.get_say_attributes()
+    
+    Gets the attributes associated with the current say statement, or
+    None if no attributes are associated with this statement.
+    
+    This is only valid when executing or predicting a say statement.
+
 .. function:: renpy.image_size(im)
     
     Given an image manipulator, loads it and returns a (``width``,

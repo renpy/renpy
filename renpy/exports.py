@@ -1597,3 +1597,25 @@ def get_say_attributes():
     """
 
     return say_attributes
+
+side_image_attributes = None
+
+def get_side_image(tag):
+    """
+    This attempts to find an image to show as the side image. It attempts to
+    find an image that begins with tag, and matches side_image_attributes. It
+    returns the name of the image (as a tuple of strings) if possible, or 
+    None if that's not possible.
+    """
+    
+    if side_image_attributes is None:
+        return
+    
+    images = renpy.game.context().images
+    
+    required = set()
+    optional = set(side_image_attributes)
+    
+    return images.choose_image(tag, required, optional, None)
+
+    
