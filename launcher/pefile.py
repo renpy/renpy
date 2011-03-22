@@ -844,9 +844,10 @@ class SectionStructure(Structure):
         """Check whether the section contains the file offset provided."""
         
         if not self.PointerToRawData:
-           # bss and other sections containing only uninitialized data must have 0
-           # and do not take space in the file
-           return False
+            # bss and other sections containing only uninitialized data must have 0
+            # and do not take space in the file
+            return False
+        
         return self.PointerToRawData <= offset < self.PointerToRawData + self.SizeOfRawData
     
     
