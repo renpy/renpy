@@ -314,3 +314,71 @@ init -1090 python:
     style.error_title.color = (255, 128, 128, 255)
     style.error_body.color = (128, 128, 255, 255)
 
+    ######################################################################
+    # Ren'Py-specific styles. These are used for interfaces, error handling,
+    # etc. (Basically, screens that are intended for developers only.)
+    
+    # default
+    style._default = Style(None)
+    style._default.take(style.default)
+    style._default.size = 14
+    style._default.color = "#111"
+
+    # frame
+    style._frame = Style(style._default)
+    style._frame.background = Frame("_theme_amie2/frame.png", 40, 40)
+    style._frame.xmargin = 10
+    style._frame.ymargin = 10
+    style._frame.xpadding = 20
+    style._frame.ypadding = 10
+
+    # text    
+    style._text = Style(style._default)
+ 
+    # boxes/boxlike
+    style._fixed = Style(style._default)
+    style._hbox = Style(style._default)
+    style._vbox = Style(style._default)
+    style._grid = Style(style._default)
+    style._side = Style(style._default)
+    style._viewport = Style(style._default)
+
+    style._hbox.box_layout = 'horizontal'
+    style._vbox.box_layout = 'vertical'
+           
+    # button
+    style._button = Style(style._default)
+    style._button_text = Style(style._default)
+    style._button.xpadding = 8
+    style._button.ypadding = 8
+
+    style._button.background = Frame("_theme_amie2/button.png", 10, 10)
+    style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
+    style._button_text.size = 16
+    style._button_text.color = "#111"
+
+    # label
+    style._label = Style(style._default)
+    style._label_text = Style(style._default)
+    
+    style._label.bottom_margin = 5
+    style._label_text.size = 20
+    style._label_text.color = "#000"
+    
+    # bar
+    style._bar = Style(style._default)
+    style._scrollbar = Style(style._bar)
+    style._vscrollbar = Style(style._bar)
+
+    style._bar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._bar.thumb = Frame("_theme_amie2/button.png", 10, 10)
+    style._bar.thumb_offset = 10
+    style._bar.left_gutter = 5
+    style._bar.right_gutter = 5
+    
+    style._scrollbar.ymaximum = 20
+    style._vscrollbar.xmaximum = 20   
+    style._vscrollbar.bar_vertical = True
+    style._vscrollbar.bar_invert = True
+    

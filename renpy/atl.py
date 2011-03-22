@@ -522,7 +522,7 @@ class Block(Statement):
                     return "next", target - start, None
 
 
-               # Find the statement and try to run it.
+                # Find the statement and try to run it.
                 stmt = self.statements[index]
                 action, arg, pause = stmt.execute(trans, target - start, child_state, event)
 
