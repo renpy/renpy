@@ -97,8 +97,13 @@ class Cache(object):
 
         # Have we been added this tick?
         self.added = set()
-        
+                
     def init(self):
+        """
+        Updates the cache object to make use of settings that might be provided
+        by the game-maker.
+        """
+        
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
         renpy.config.debug_image_cache = renpy.config.debug_image_cache or renpy.game.options.debug_image_cache
         

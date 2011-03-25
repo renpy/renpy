@@ -227,6 +227,19 @@ class ParseErrorException(Exception):
     This is raised when a parse error occurs, after it has been
     reported to the user.
     """
+
+# A tuple of exceptions that should not be caught by the 
+# exception reporting mechanism.
+CONTROL_EXCEPTIONS = (
+    RestartException,
+    UtterRestartException,
+    QuitException,
+    JumpException,
+    JumpOutException,
+    ParseErrorException,
+    KeyboardInterrupt,
+    )
+
     
 def context(index=-1):
     """

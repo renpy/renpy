@@ -23,6 +23,7 @@ import optparse
 import os
 import os.path
 import sys
+import cStringIO
 
 # Extra things used for distribution.
 def extra_imports():
@@ -356,9 +357,18 @@ def report_tb(out, tb):
 
         tb = tb.tb_next
 
-def report_exception(e):
+def report_exception(e, editor=True):
+    """
+    Reports an exception by writing it to standard error and 
+    traceback.txt. If `editor` is True, opens the traceback 
+    up in a text editor.
+    
+    Returns a two-unicode tuple, with the first item being 
+    a simple message, and the second being a full traceback.
+    """
+    
+    
     import renpy
-
     import codecs
     import traceback
 
@@ -383,6 +393,26 @@ def report_exception(e):
     print renpy.game.exception_info
     report_tb(sys.stdout, tb)
     
+    
+    # Return values - which can be displayed to the user.
+    simple = cStringIO.StringIO()
+    full = cStringIO.StringIO()
+    
+    print >>simple, type.__name__ + ":", 
+    print >>simple, safe_utf8(e)
+    print >>simple
+    print >>simple, renpy.game.exception_info
+    report_tb(simple, tb)
+
+    traceback.print_tb(tb, None, full)
+    print >>full, type.__name__ + ":", 
+    print >>full, safe_utf8(e)
+    print >>full
+    print >>full, "Ren'Py Version:", renpy.version
+
+    simple = simple.getvalue()
+    full = full.getvalue()
+ 
     # Inside of the file, which may not be openable.
     try:
 
@@ -393,42 +423,30 @@ def report_exception(e):
         print >>f, "I'm sorry, but an uncaught exception occurred."
         print >>f
 
-        print >>f, type.__name__ + ":", 
-        print >>f, safe_utf8(e)
-        print >>f
-        print >>f, renpy.game.exception_info
-        report_tb(f, tb)
+        f.write(simple)
         
         print >>f
         print >>f, "-- Full Traceback ------------------------------------------------------------"
         print >>f  
 
-        traceback.print_tb(tb, None, f)
-        print >>f, type.__name__ + ":", 
-        print >>f, safe_utf8(e)
-
-        print >>f
-
-        print >>f, renpy.game.exception_info
-        report_tb(f, tb)
-
-        print >>f
-        print >>f, "Ren'Py Version:", renpy.version
-
+        f.write(full)
         f.close()
-
-        renpy.log.info_exception()
         
         try:
-            if renpy.config.editor:
-                renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
-            else:
-                os.startfile('traceback.txt')
+            if editor:
+                if renpy.config.editor:
+                    renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
+                else:
+                    os.startfile('traceback.txt')
         except:
             pass
 
     except:
         pass
+
+    renpy.log.info_exception()
+
+    return simple.decode("utf-8"), full.decode("utf-8")
 
 
 def memory_profile():

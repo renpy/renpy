@@ -933,3 +933,16 @@ label _developer:
     call _enter_menu from _call__enter_menu_4
 
     jump expression "_developer_screen"
+
+    
+# Exception handling.
+screen _exception:
+    frame:
+        style_group ""
+    
+        has vbox 
+        
+        label _("An exception has occured.")
+        text short
+        text full
+        
