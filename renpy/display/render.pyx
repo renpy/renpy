@@ -26,8 +26,6 @@ import threading
 import renpy
 import gc
 
-cdef class Render
-
 # We grab the blit lock each time it is necessary to blit
 # something. This allows call to the pygame.transform functions to
 # disable blitting, should it prove necessary.
