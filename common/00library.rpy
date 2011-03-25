@@ -934,15 +934,3 @@ label _developer:
 
     jump expression "_developer_screen"
 
-    
-# Exception handling.
-screen _exception:
-    frame:
-        style_group ""
-    
-        has vbox 
-        
-        label _("An exception has occured.")
-        text short
-        text full
-        

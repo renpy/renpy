@@ -313,4 +313,3 @@ init -1090 python:
 
     style.error_title.color = (255, 128, 128, 255)
     style.error_body.color = (128, 128, 255, 255)
-

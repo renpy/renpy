@@ -119,15 +119,20 @@ class Script(object):
         self.bytecode_newcache = { }
         self.bytecode_dirty = False
 
-        # Init the bytecode compiler.
         self.init_bytecode()
+        self.scan_script_files()
+
+    def scan_script_files(self):
+        """
+        Scan the directories for script files.
+        """
         
         # A list of all files in the search directories.
         dirlist = renpy.loader.listdirfiles()
 
         # A list of directory, filename w/o extension pairs. This is
         # what we will load immediately.
-        script_files = [ ]
+        self.script_files = [ ]
 
         # Similar, but for modules:
         self.module_files = [ ]
@@ -139,10 +144,10 @@ class Script(object):
                     continue
 
                 fn = fn[:-4]
-                target = script_files
+                target = self.script_files
             elif fn.endswith(".rpyc"):
                 fn = fn[:-5]
-                target = script_files
+                target = self.script_files
             elif fn.endswith(".rpym"):
                 if dir is None:
                     continue
@@ -158,6 +163,9 @@ class Script(object):
             if (fn, dir) not in target:
                 target.append((fn, dir))
 
+    def load_script(self):        
+
+        script_files = self.script_files
                 
         # Sort script files by filename.
         script_files.sort()
@@ -490,7 +498,5 @@ class Script(object):
 
         return label in self.namemap
 
-def load_script():
-    Script()
     
 
