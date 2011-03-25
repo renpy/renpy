@@ -1,0 +1,169 @@
+# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+#
+# This file contains the code for in-game Ren'Py error handling. It's a 
+# module (as opposed to a .rpy file) because that allows us to ensure 
+# that it is fully loaded or run before any other Ren'Py code runs. 
+
+# These styles define the look of the Ren'Py in-game interface (the 
+# amie2 look). Despite being defined here (so they're available for 
+# error handling), they may be used in other code, like the launcher.
+init python:
+    # default
+    style._default = Style(None)
+    style._default.font = "DejaVuSans.ttf"
+    style._default.language = "western"
+    style._default.antialias = True
+    style._default.size = 14
+    style._default.color = "#111"
+    style._default.black_color = (0, 0, 0, 255)
+    style._default.bold = False
+    style._default.italic = False
+    style._default.underline = False
+    style._default.strikethrough = False
+    style._default.drop_shadow = None
+    style._default.drop_shadow_color = (0, 0, 0, 255)
+    style._default.outlines = [ ]
+    style._default.minwidth = 0
+    style._default.text_align = 0
+    style._default.justify = False
+    style._default.text_y_fudge = 0
+    style._default.first_indent = 0
+    style._default.rest_indent = 0
+    style._default.line_spacing = 0
+    style._default.layout = "greedy"
+    style._default.subtitle_width = 0.9
+    style._default.slow_cps = None
+    style._default.slow_cps_multiplier = 1.0
+    style._default.slow_abortable = False
+    
+    # Window properties.
+    style._default.background = None
+    style._default.xpadding = 0
+    style._default.ypadding = 0
+    style._default.xmargin = 0
+    style._default.ymargin = 0
+    style._default.xfill = False
+    style._default.yfill = False
+    style._default.xminimum = 0 # Includes margins and padding.
+    style._default.yminimum = 0 # Includes margins and padding.
+
+    # Placement properties.
+    style._default.xpos = None # 0
+    style._default.ypos = None # 0
+    style._default.xanchor = None # 0
+    style._default.yanchor = None # 0
+    style._default.xmaximum = None
+    style._default.ymaximum = None
+    style._default.xoffset = 0
+    style._default.yoffset = 0
+    style._default.subpixel = False
+    
+    # Sound properties.
+    style._default.sound = None
+
+    # Box properties.
+    style._default.spacing = 0
+    style._default.first_spacing = None
+    style._default.box_layout = None
+
+    # Focus properties.
+    style._default.focus_mask = None
+    style._default.focus_rect = None
+
+    # Bar properties.
+    style._default.fore_bar = Null()
+    style._default.aft_bar = Null()
+    style._default.thumb = None
+    style._default.thumb_shadow = None
+    style._default.left_gutter = 0
+    style._default.right_gutter = 0
+    style._default.thumb_offset = 0
+    style._default.unscrollable = None
+    
+    # Misc.
+    style._default.activate_sound = None
+    style._default.clipping = False
+
+
+    ##########################################################################
+
+    # frame
+    style._frame = Style(style._default)
+    style._frame.background = Frame("_theme_amie2/frame.png", 40, 40)
+    style._frame.xmargin = 10
+    style._frame.ymargin = 10
+    style._frame.xpadding = 20
+    style._frame.ypadding = 10
+
+    # text    
+    style._text = Style(style._default)
+ 
+    # boxes/boxlike
+    style._fixed = Style(style._default)
+    style._hbox = Style(style._default)
+    style._vbox = Style(style._default)
+    style._grid = Style(style._default)
+    style._side = Style(style._default)
+    style._viewport = Style(style._default)
+
+    style._hbox.box_layout = 'horizontal'
+    style._vbox.box_layout = 'vertical'
+           
+    # button
+    style._button = Style(style._default)
+    style._button_text = Style(style._default)
+    style._button.xpadding = 8
+    style._button.ypadding = 8
+
+    style._button.background = Frame("_theme_amie2/button.png", 10, 10)
+    style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
+    style._button_text.size = 16
+    style._button_text.color = "#111"
+
+    # label
+    style._label = Style(style._default)
+    style._label_text = Style(style._default)
+    
+    style._label.bottom_margin = 5
+    style._label_text.size = 20
+    style._label_text.color = "#000"
+    
+    # bar
+    style._bar = Style(style._default)
+    style._scrollbar = Style(style._bar)
+    style._vscrollbar = Style(style._bar)
+
+    style._bar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._bar.thumb = Frame("_theme_amie2/button.png", 10, 10)
+    style._bar.thumb_offset = 10
+    style._bar.left_gutter = 5
+    style._bar.right_gutter = 5
+    
+    style._scrollbar.ymaximum = 20
+    style._vscrollbar.xmaximum = 20   
+    style._vscrollbar.bar_vertical = True
+    style._vscrollbar.bar_invert = True
+
+
+init python:
+
+    # Null translation function. This gets redefined once things start
+    # successfully.
+    def _(s):
+        return s
+      
+# The screen that is used for error handling.
+screen _exception:
+    frame:
+        style_group ""
+    
+        has vbox 
+        
+        label _("An exception has occured.")
+        text short
+        text full
+        
+  
+    

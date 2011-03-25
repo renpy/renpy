@@ -22,8 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-import renpy
-
+import renpy.display
 
 class Delete(object):
     pass
@@ -180,7 +179,6 @@ class Context(renpy.object.Object):
         Pops one level of the dynamic stack. Called when the return
         statement is run.
         """
-
         
         store = vars(renpy.store)
 
@@ -248,10 +246,26 @@ class Context(renpy.object.Object):
             self.seen = False
 
             try:
-                node = node.execute()
+                try:
+                    node = node.execute()
+                
+                except renpy.game.CONTROL_EXCEPTIONS, e:
+                    raise
+
+                except Exception, e:
+                    short, full = renpy.bootstrap.report_exception(e, editor=False)
+
+                    if renpy.display.error.report_exception(short, full):
+                        raise
+                    
+            
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
+            
+            
+            
+                
                 
             if self.seen:
                 renpy.game.seen_ever[self.current] = True

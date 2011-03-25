@@ -172,9 +172,17 @@ def main():
     # Initialize the store.
     renpy.store.store = renpy.python.StoreProxy()
 
+    # Set up styles.
+    renpy.style.reset()
+    game.style = renpy.style.StyleManager()
+    renpy.store.style = game.style
+
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
-    renpy.script.load_script() # sets renpy.game.script.
+    renpy.game.script = renpy.script.Script()
+
+    renpy.exports.load_module("_errorhandling")
+    renpy.game.script.load_script() # sets renpy.game.script.
 
     if renpy.parser.report_parse_errors():
         raise renpy.game.ParseErrorException()
@@ -241,11 +249,6 @@ def main():
     # Initialize persistent variables.
     renpy.store.persistent = game.persistent
     renpy.store._preferences = game.preferences
-
-    # Set up styles.
-    renpy.style.reset()
-    game.style = renpy.style.StyleManager()
-    renpy.store.style = game.style
 
     renpy.game.exception_info = 'While executing init code:'
 

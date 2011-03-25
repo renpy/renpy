@@ -19,13 +19,40 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains code to report an error after the rest of Ren'Py
-# has been de-initialized.
+# This file contains code to handle GUI-based error reporting. There are 
+# two unrelated mechanisms here. 
+#
+# report_exception is used to report an exception that occurs when the GUI
+# system is behaving reasonably.
+#
+# ReportError is used to report an exception that occurs when the GUI is not
+# initialized, such as after a reload.
 
 import pygame
-import renpy
+import renpy.display
 import os
 import os.path
+
+##############################################################################
+# Initialized approach.
+def report_exception(short, full):
+    """
+    Reports an exception to the user. Returns True if the exception should
+    be raised by the normal reporting mechanisms. Otherwise, should raise
+    the appropriate exception.
+    """
+    
+    if renpy.game.init_phase:
+        return True
+    
+    if not renpy.exports.has_screen("_exception"):
+        return True
+    
+    renpy.game.invoke_in_new_context(renpy.exports.call_screen, "_exception", short=short, full=full)
+
+
+##############################################################################
+# Non-initialized approach.
 
 commandfile = "command.%d.txt" % os.getpid()
 
