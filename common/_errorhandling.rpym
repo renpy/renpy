@@ -180,6 +180,8 @@ init python:
       
 # The screen that is used for error handling.
 screen _exception:
+    default show_full = False
+
     frame:
         style_group ""
     
@@ -187,7 +189,10 @@ screen _exception:
         
         label _("An exception has occured.")
         text short
-        text full
         
+        if show_full:    
+            text full
+        else:
+            textbutton _("Show full traceback") action SetScreenVariable("show_full", True)
   
     

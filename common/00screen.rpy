@@ -459,6 +459,19 @@ init -1140 python:
         def get_selected(self):
             return self.dict[self.key] == self.value
 
+    def SetScreenVariable(name, value):
+        """
+        :doc: data_action
+
+        Causes the variable `name` associated with the current screen to 
+        be set to `value`.
+        """
+        
+        cs = renpy.current_screen()
+        if cs is not None:
+            return SetDict(cs.scope, name, value)
+        else:
+            return None
     
     class ToggleField(Action):
         """
@@ -564,6 +577,24 @@ init -1140 python:
 
             return rv
 
+    def ToggleScreenVariable(name, true_value=None, false_value=None):
+        """
+         :doc: data_action
+
+         Toggles the value of the variable `name` in the current screen.
+
+         `true_value`
+             If not None, then this is the true value we use.
+         `false_value`
+             If not None, then this is the false value we use. 
+         """
+    
+        cs = renpy.current_screen()
+
+        if cs is not None:
+            return ToggleDict(cs.scope, name, true_value=true_value, false_value=None)
+        else:
+            return None
 
     ##########################################################################
     # Audio actions.

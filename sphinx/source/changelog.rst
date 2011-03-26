@@ -94,6 +94,9 @@ changed on a per-style basis.
 Indentation errors are now reported on the indented line, and not the line
 preceding the erroneous indentation.
 
+Added the :func:`SetScreenVariable` and :func:`ToggleScreenVariable` actions.
+These allow screen-local variables to be changed.
+
 
 Ren'Py 6.12.0
 =============
