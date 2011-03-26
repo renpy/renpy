@@ -335,6 +335,15 @@ def bootstrap(renpy_base):
         if options.leak:
             memory_profile()
 
+def report_line(out, filename, line, what):
+    out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
+    try:
+        f = renpy.loader.load(filename)
+        lines = f.read().decode("utf-8").replace("\r", "").split("\n")
+        out.write("    " + lines[line - 1].encode("utf-8") + "\n")
+    except:
+        pass
+         
 
 def report_tb(out, tb):
 
@@ -345,11 +354,11 @@ def report_tb(out, tb):
         filename = co.co_filename
         
         if filename.endswith(".rpy") and not filename.startswith("common"):
-            print >>out, " - python at line %d of %s." % (line, filename)
+            report_line(out, filename, line, "python")
 
         elif 'self' in f.f_locals:
             obj = f.f_locals['self']
-
+ 
             import renpy
             
             if isinstance(obj, renpy.execution.Context):

@@ -78,7 +78,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         super(ScreenDisplayable, self).__init__(**properties)
 
-        # Stasgh the properties, so we can re-create the screen.
+        # Stash the properties, so we can re-create the screen.
         self.properties = properties
         
         # The screen, and it's name. (The name is used to look up the

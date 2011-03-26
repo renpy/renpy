@@ -213,13 +213,13 @@ class Context(renpy.object.Object):
         for i in self.call_location_stack:
             try:
                 node = renpy.game.script.lookup(i)
-                print >>out, " - script call at line %d of %s" % (node.linenumber, node.filename)
+                renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script call")
             except:
                 pass
                 
         try:
             node = renpy.game.script.lookup(self.current)
-            print >>out, " - script at line %d of %s" % (node.linenumber, node.filename)
+            renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script")
         except:
             pass
             
