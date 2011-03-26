@@ -106,3 +106,8 @@ init 1210 python hide::
             
     for i in layout.compat_funcs:
         i()
+
+    if config.hyperlink_styler or config.hyperlink_callback or config.hyperlink_focus:
+        style.default.hyperlink_functions = (config.hyperlink_styler, config.hyperlink_callback, config.hyperlink_focus)
+        
+        

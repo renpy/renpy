@@ -493,6 +493,7 @@ text_properties = [ Style(i) for i in [
         "first_indent",
         "font",
         "size",
+        "hyperlink_functions",
         "italic",
         "justify",
         "language",

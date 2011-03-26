@@ -334,7 +334,7 @@ init -1180 python hide:
 
     config.overlay_functions.append(skip_indicator)
 
-
+    # Hyperlink functions. Duplicated in _errorhandling.rpym.
     def hyperlink_styler(target):
         return style.hyperlink_text
 
@@ -348,8 +348,7 @@ init -1180 python hide:
         else:
             renpy.call_in_new_context(target)
 
-    config.hyperlink_styler = hyperlink_styler
-    config.hyperlink_callback = hyperlink_function
+    style.default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
 
     # Prediction of screens.    
     def predict():

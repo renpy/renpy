@@ -154,6 +154,7 @@ init -1090 python:
     style.default.slow_cps = None
     style.default.slow_cps_multiplier = 1.0
     style.default.slow_abortable = False
+    # style.default.hyperlink_functions (set in 00library.rpy)
     
     # Window properties.
     style.default.background = None

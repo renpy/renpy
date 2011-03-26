@@ -315,33 +315,6 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
-.. var:: config.hyperlink_callback = ...
-
-    A function that is called with the argument to a hyperlink (the
-    {a=...}{/a} text tag) when that hyperlink is clicked. The argument
-    is a string.
-
-    This defaults to a function that,
-
-    * If the argument begins with "http:", opens the argument in a web
-      browser.
-    * Otherwise, interprets the argument as a label, and calls that
-      label in a new context.
-      
-.. var:: config.hyperlink_focus = None
-
-    If not None, a function that is called when a hyperlink gains or
-    loses focus. When focus is gained, this function is called with a
-    single argument, the argument of the hyperlink. When focus is
-    lost, the function is called with None as its argument.
-
-.. var:: config.hyperlink_styler = ...
-
-     A function that is called to determine the style of
-     hyperlinks. The function is called with a single argument, the
-     argument of the hyperlink. It should return a style object, not a
-     string.
-
 .. var:: config.image_cache_size = 8
 
     This is used to set the size of the image cache, as a multiple of
@@ -350,7 +323,6 @@ Occasionally Used
 
     If set too large, this can waste memory. If set too small, images
     can be repeatedly loaded, hurting performance.
-
 
 .. var:: config.main_game_transition = None
 

@@ -5,6 +5,9 @@
 # module (as opposed to a .rpy file) because that allows us to ensure 
 # that it is fully loaded or run before any other Ren'Py code runs. 
 
+
+
+
 # These styles define the look of the Ren'Py in-game interface (the 
 # amie2 look). Despite being defined here (so they're available for 
 # error handling), they may be used in other code, like the launcher.
@@ -146,6 +149,26 @@ init python:
     style._vscrollbar.bar_vertical = True
     style._vscrollbar.bar_invert = True
 
+    style._hyperlink = Style(style._default)
+    style._hyperlink.color = "#008"
+    style._hyperlink.hover_underline = True
+
+
+# Early hyperlink support.
+init python hide:
+    def hyperlink_styler(target):
+        return style._hyperlink
+
+    def hyperlink_function(target):
+        if target.startswith("http:"):
+            try:
+                import webbrowser
+                webbrowser.open(target)
+            except:
+                pass
+    
+    style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
+
 
 init python:
 
@@ -153,6 +176,7 @@ init python:
     # successfully.
     def _(s):
         return s
+
       
 # The screen that is used for error handling.
 screen _exception:

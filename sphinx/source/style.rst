@@ -456,6 +456,23 @@ Text Style Properties
 
     If true, an underline will be added to the text.
 
+.. style-property:: hyperlink_functions tuple of (function, function, function)
+
+    This is a tuple of three functions relating to hyperlinks in text. 
+    
+    The first item is the hyperlink style function. When called with a single
+    argument, the argument of the hyperlink, it must return a style object to
+    use for the hyperlink, such as ``style.hyperlink_text``. Note that a 
+    style object is not a string.
+        
+    The second item is the hyperlink clicked function. This function is called
+    when a hyperlink is chosen by the user. If it returns a value other than
+    None, the interaction returns that value.
+    
+    The third item is the hyperlink focus function. This function is called 
+    with the argument of the hyperlink when the hyperlink gains focus, and 
+    with None when it loses focus. If it returns a value other than None,
+    the interaction returns that value
 
 .. _window-style-properties:
 

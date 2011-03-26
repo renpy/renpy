@@ -185,7 +185,8 @@ style_properties = dict(
     ymaximum = None,
     yminimum = None,
     yoffset = None,
-    ypos = None,
+    ypos = None, 
+    hyperlink_functions=None,   
     )
 
 

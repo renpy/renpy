@@ -823,20 +823,23 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
         if (self.is_focused() and
-            renpy.display.behavior.map_event(ev, "button_select") and
-            renpy.config.hyperlink_callback):
+            renpy.display.behavior.map_event(ev, "button_select")):
 
-            self.activated = True
-            self.laidout = None
-            renpy.display.render.redraw(self, 0)
+            clicked = self.style.hyperlink_functions[1]
 
-            rv = renpy.config.hyperlink_callback(self.laidout_hyperlinks[renpy.display.focus.argument])
+            if clicked is not None: 
 
-            self.activated = False
-            self.laidout = None
-            renpy.display.render.redraw(self, 0)
-            
-            return rv
+                self.activated = True
+                self.laidout = None
+                renpy.display.render.redraw(self, 0)
+    
+                rv = self.style.hyperlink_functions[1](self.laidout_hyperlinks[renpy.display.focus.argument])
+    
+                self.activated = False
+                self.laidout = None
+                renpy.display.render.redraw(self, 0)
+                
+                return rv
                         
     def visit(self):
         self.update()
@@ -933,7 +936,13 @@ class Text(renpy.display.core.Displayable):
                     # TODO: check to see if we need to be focused.
 
                     target = i[2:]
-                    hls = renpy.config.hyperlink_styler(target)
+
+                    hyperlink_styler = self.style.hyperlink_functions[0]
+                        
+                    if hyperlink_styler:                                        
+                        hls = hyperlink_styler(target)
+                    else:
+                        hls = self.style
 
                     old_prefix = hls.prefix
 
@@ -1353,15 +1362,19 @@ class Text(renpy.display.core.Displayable):
         self.laidout = None
         renpy.display.render.redraw(self, 0)
 
-        if renpy.config.hyperlink_focus:
-            return renpy.config.hyperlink_focus(self.laidout_hyperlinks[renpy.display.focus.argument])
+        hyperlink_focus = self.style.hyperlink_functions[2]
+
+        if hyperlink_focus:
+            return hyperlink_focus(self.laidout_hyperlinks[renpy.display.focus.argument])
 
     def unfocus(self, default=False):
         self.laidout = None
         renpy.display.render.redraw(self, 0)
 
-        if renpy.config.hyperlink_focus:
-            renpy.config.hyperlink_focus(None)
+        hyperlink_focus = self.style.hyperlink_functions[2]
+
+        if hyperlink_focus:
+            hyperlink_focus(None)
         
 
     
