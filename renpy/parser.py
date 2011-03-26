@@ -518,7 +518,9 @@ class Lexer(object):
         """
         
         if self.subblock:
-            self.error('%s does not expect a block. Please check the indentation of the line after this one.' % stmt)
+            ll = self.subblock_lexer()
+            ll.advance()            
+            ll.error("Line is indented, but the preceding %s statement does not expect a block. Please check this line's indentation." % stmt)
 
     def expect_block(self, stmt):
         """

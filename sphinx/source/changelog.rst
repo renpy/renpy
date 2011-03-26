@@ -87,6 +87,13 @@ displayable. [Test]
 The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices
 to vibrate.
 
+The hyperlink style, callback, and focus functions have now been moved to the
+:propref:`hyperlink_functions` style  property. This allows the functions to be
+changed on a per-style basis.
+
+Indentation errors are now reported on the indented line, and not the line
+preceding the erroneous indentation.
+
 
 Ren'Py 6.12.0
 =============
