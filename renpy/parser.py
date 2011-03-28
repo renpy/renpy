@@ -130,6 +130,30 @@ def munge_filename(fn):
 
     return "_m1_" + rv + "__"
 
+def elide_filename(fn):
+    """
+    Returns a version of fn that is either relative to the base directory,
+    or relative to the Ren'Py directory.
+    """
+    
+    if fn.startswith(renpy.config.basedir):
+        return fn[len(renpy.config.basedir)+1:]
+    elif fn.startswith(renpy.config.renpy_base):
+        return fn[len(renpy.config.renpy_base)+1:]
+    else:
+        return fn
+
+def unelide_filename(fn):
+    fn1 = os.path.join(renpy.config.basedir, fn)
+    if os.path.exists(fn1):
+        return fn1
+
+    fn2 = os.path.join(renpy.config.basedir, fn)
+    if os.path.exists(fn2):
+        return fn2
+    
+    return None
+
 def list_logical_lines(filename):
     """
     This reads the specified filename, and divides it into logical
@@ -143,11 +167,8 @@ def list_logical_lines(filename):
 
     data = data.replace("\r\n", "\n")
     data = data.replace("\r", "\n")
-    
-    if "RENPY_PATH_ELIDE" in os.environ:
-        old, new = os.environ["RENPY_PATH_ELIDE"].split(':')
-        filename = filename.replace(old, new)
 
+    filename = elide_filename(filename)
     prefix = munge_filename(filename)
         
     # Add some newlines, to fix lousy editors.

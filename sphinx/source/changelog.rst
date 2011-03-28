@@ -97,6 +97,10 @@ preceding the erroneous indentation.
 Added the :func:`SetScreenVariable` and :func:`ToggleScreenVariable` actions.
 These allow screen-local variables to be changed.
 
+Ren'Py now attempts to elide personal information from filenames. Where
+possible, filenames are reported relative to the base or Ren'Py base
+directories,  rather than the root of the filesystem.
+
 
 Ren'Py 6.12.0
 =============

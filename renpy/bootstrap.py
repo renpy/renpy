@@ -338,7 +338,8 @@ def bootstrap(renpy_base):
 def report_line(out, filename, line, what):
     out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
     try:
-        f = renpy.loader.load(filename)
+        fn = renpy.parser.unelide_filename(filename)
+        f = file(fn, "rb")            
         lines = f.read().decode("utf-8").replace("\r", "").split("\n")
         out.write("    " + lines[line - 1].encode("utf-8") + "\n")
     except:

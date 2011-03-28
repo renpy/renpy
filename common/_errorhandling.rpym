@@ -33,7 +33,7 @@ init python:
     style._default.text_y_fudge = 0
     style._default.first_indent = 0
     style._default.rest_indent = 0
-    style._default.line_spacing = 0
+    style._default.line_spacing = 4
     style._default.layout = "greedy"
     style._default.subtitle_width = 0.9
     style._default.slow_cps = None
