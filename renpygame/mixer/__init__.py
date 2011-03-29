@@ -130,7 +130,7 @@ class Sound(object):
         return channel
 
     def stop(self):
-        for i in chanobj.values():
+        for i in chanobjs.values():
             if i.get_sound() is self:
                 i.stop()
 
@@ -149,7 +149,7 @@ class Sound(object):
     def get_num_channels(self):
         rv = 0
         
-        for i in chanobj.values():
+        for i in chanobjs.values():
             if i.get_sound() is self:
                 rv += 1
 
@@ -236,7 +236,7 @@ class Channel(object):
 
     def get_endevent(self):
         """
-        RPG: Returns renpygame.NOEVENT
+        RPG: Returns pygame.NOEVENT
         """
 
-        return renpygame.NOEVENT
+        return pygame.NOEVENT

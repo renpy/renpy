@@ -42,7 +42,7 @@ def play(loops=0, start=0.0):
     renpy.audio.music.play(current_filename, loop=loops)
 
 def rewind():
-    renpy.audio.music.play(current_filename, loop=loops)
+    renpy.audio.music.play(current_filename, loop=current_loops)
     
 def stop():
     renpy.audio.music.stop()
@@ -102,6 +102,6 @@ def get_endevent():
     """
     Does nothing, returns renpygame.NOEVENT
     """
-    return renpygame.NOEVENT
+    return pygame.NOEVENT
 
     

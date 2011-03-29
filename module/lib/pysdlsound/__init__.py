@@ -3,13 +3,13 @@ import sys
 from sound import *
 
 try:
-    import winmixer
+    import winmixer #@UnresolvedImport
     sys.modules['winmixer'] = sys.modules['pysdlsound.winmixer']
 except:
     pass
 
 try:
-    import linmixer
+    import linmixer #@UnresolvedImport
     sys.modules['linmixer'] = sys.modules['pysdlsound.linmixer']
 except:
     pass

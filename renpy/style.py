@@ -128,6 +128,7 @@ style_properties = dict(
     bottom_margin = None,
     bottom_padding = None,
     box_layout = None,
+    box_wrap = None,
     child = renpy.easy.displayable_or_none,
     clipping = None,
     color = renpy.easy.color,

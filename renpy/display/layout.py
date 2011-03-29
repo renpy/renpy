@@ -22,8 +22,8 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
-import renpy.display
 from renpy.display.render import render, Render
+import renpy.display
 
 
 def scale(num, base):
@@ -500,10 +500,10 @@ class MultiBox(Container):
         else:
             csts = [ st ] * len(self.children)
             cats = [ at ] * len(self.children)
-            
-        if layout == "fixed":
 
-            self.offsets = [ ]
+        self.offsets = [ ]
+
+        if layout == "fixed":
 
             rv = None
             
@@ -533,127 +533,147 @@ class MultiBox(Container):
                 rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                                        
 
             return rv
+
+        # If we're here, we have a box, either horizontal or vertical. Which is good,
+        # as we can share some code between boxes.
+ 
+            
+        spacing = self.style.spacing
+        first_spacing = self.style.first_spacing
+
+        if first_spacing is None:
+            first_spacing = spacing
+
+        spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
+                    
+        box_wrap = self.style.box_wrap
+                    
+        # The shared height and width of the current line. The line_height must
+        # be 0 for a vertical box, and the line_width must be 0 for a horizontal
+        # box.
+        line_width = 0
+        line_height = 0
+        
+        # a list of (child, x, y, w, h, surf) tuples that are turned into 
+        # calls to child.place().
+        placements = [ ] 
+                
+        # The maximum x and y.
+        maxx = 0
+        maxy = 0
+                
+        def layout_line(line, xfill, yfill):
+            """
+            Lays out a single line. 
+            
+            `line` a list of (child, x, y, surf) tuples. 
+            `xfill` the amount of space to add in the x direction.
+            `yfill` the amount of space to add in the y direction.
+            """
+            
+            xfill = max(0, xfill)
+            yfill = max(0, yfill)
+            
+            xperchild = xfill / len(line)
+            yperchild = yfill / len(line)
+            
+            for i, (child, x, y, surf) in enumerate(line):
+                sw, sh = surf.get_size()
+                sw = max(line_width, sw)
+                sh = max(line_height, sh)
+
+                x += i * xperchild
+                y += i * yperchild
+                
+                placements.append((child, x, y, sw, sh, surf))
+            
+            maxxout = max(maxx, x + sw)
+            maxyout = max(maxy, y + sh)
+                
+            return maxxout, maxyout
+            
+        x = 0
+        y = 0
                     
         if layout == "horizontal":
 
-            spacing = self.style.spacing
-            first_spacing = self.style.first_spacing
-
-            if first_spacing is None:
-                first_spacing = spacing
-
-            spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
-
-            self.offsets = [ ]
-
-            surfaces = [ ]
-            xoffsets = [ ]
-
+            line_height = 0
+            line = [ ]
             remwidth = width
-            xo = 0
 
-            myheight = 0
-
-            padding = 0
-
-            for i, padding, cst, cat in zip(self.children, spacings, csts, cats):
+            for d, padding, cst, cat in zip(self.children, spacings, csts, cats):
                 
-                xoffsets.append(xo)
-                surf = render(i, remwidth, height, cst, cat)
-
+                if box_wrap:                    
+                    rw = width
+                else:
+                    rw = remwidth
+                
+                surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
 
-                remwidth -= sw
-                remwidth -= padding
+                if box_wrap and remwidth - sw - padding <= 0:
+                    maxx, maxy = layout_line(line, remwidth if self.style.xfill else 0, 0)                        
+                        
+                    y += line_height
+                    x = 0
+                    line_height = 0
+                    remwidth = width
+                    line = [ ]
+                    
 
-                xo += sw + padding
-
-                myheight = max(sh, myheight)
-
-                surfaces.append(surf)
-
-
-            if self.style.yfill:
-                myheight = height
-
-            if not self.style.xfill:
-                width = xo - padding
-                bonus = 0
-            else:
-                bonus = (remwidth + padding) / len(xoffsets)
-                xoffsets = [ xo + i * bonus for i, xo in enumerate(xoffsets) ]
+                line.append((d, x, y, surf))
+                line_height = max(line_height, sh)                
+                x += sw + padding
+                remwidth -= (sw + padding)
                 
-                
-            rv = renpy.display.render.Render(width, myheight)
-
-            for surf, child, xo in zip(surfaces, self.children, xoffsets):
-                sw, sh = surf.get_size()
-
-                offset = child.place(rv, xo, 0, sw + bonus, myheight, surf)
-                self.offsets.append(offset)
-
-            return rv
-        
+            maxx, maxy = layout_line(line, remwidth if self.style.xfill else 0, 0)
+            
+                  
         elif layout == "vertical":
 
-            spacing = self.style.spacing
-            first_spacing = self.style.first_spacing
-
-            if first_spacing is None:
-                first_spacing = spacing
-
-            spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
-    
-            self.offsets = [ ]
-
-            surfaces = [ ]
-            yoffsets = [ ]
-
+            line_width = 0
+            line = [ ]
             remheight = height
-            yo = 0
 
-            mywidth = 0
-
-            padding = 0
-
-            for i, padding, cst, cat in zip(self.children, spacings, csts, cats):
-
-                yoffsets.append(yo)
-
-                surf = render(i, width, remheight, cst, cat)
-
-                sw, sh = surf.get_size()
-
-                remheight -= sh
-                remheight -= padding
-
-                yo += sh + padding
-
-                mywidth = max(sw, mywidth)
-
-                surfaces.append(surf)
-
-            if self.style.xfill:
-                mywidth = width
-
-            if not self.style.yfill:
-                height = yo - padding
-                bonus = 0
-            else:
-                bonus = (remheight + padding) / len(yoffsets)
-                yoffsets = [ yo + i * bonus for i, yo in enumerate(yoffsets) ]
+            for d, padding, cst, cat in zip(self.children, spacings, csts, cats):
                 
-            rv = renpy.display.render.Render(mywidth, height)
-
-            for surf, child, yo in zip(surfaces, self.children, yoffsets):
-
+                if box_wrap:                    
+                    rh = height
+                else:
+                    rh = remheight
+                
+                surf = render(d, width - x, rh, cst, cat)
                 sw, sh = surf.get_size()
 
-                offset = child.place(rv, 0, yo, mywidth, sh + bonus, surf)
+                if box_wrap and remheight - sh - padding <= 0:
+                    maxx, maxy = layout_line(line, 0, remheight if self.style.yfill else 0)                        
+                        
+                    x += line_width
+                    y = 0
+                    line_width = 0
+                    remheight = height
+                    line = [ ]
+                    
+                line.append((d, x, y, surf))
+                line_width = max(line_width, sw)                
+                y += sh + padding
+                remheight -= (sh + padding)
+                
+            maxx, maxy = layout_line(line, 0, remheight if self.style.yfill else 0)
+        
+        if not self.style.xfill:
+            width = maxx
+        
+        if not self.style.yfill:
+            height = maxy
+                     
+        rv = renpy.display.render.Render(width, height)
 
-                self.offsets.append(offset)
-
-            return rv
+        for child, x, y, w, h, surf in placements:
+            offset = child.place(rv, x, y, w, h, surf)
+            self.offsets.append(offset)
+            
+        return rv
 
         
     def event(self, ev, x, y, st):
@@ -1540,5 +1560,3 @@ class LiveTile(Container):
                 rv.blit(cr, (x, y), focus=False)
 
         return rv
-
-        

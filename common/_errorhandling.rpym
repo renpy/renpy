@@ -69,6 +69,7 @@ init python:
     style._default.spacing = 0
     style._default.first_spacing = None
     style._default.box_layout = None
+    style._default.box_wrap = False
 
     # Focus properties.
     style._default.focus_mask = None

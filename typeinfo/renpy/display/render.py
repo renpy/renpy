@@ -1,7 +1,10 @@
 # Version of renpy.display.render for use in python-only type inferencing.
 raise NotImplemented()
 
+import threading
 import renpy.display
+
+blit_lock = threading.Condition()
 
 def free_memory():
     """

@@ -562,6 +562,7 @@ bar_properties = [ Style(i) for i in [
 
 box_properties = [ Style(i) for i in [
         "box_layout",
+        "box_wrap",
         "spacing",
         "first_spacing",
         "fit_first",

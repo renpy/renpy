@@ -6,8 +6,8 @@ sys.path.append('/home/tom/ab/keys/')
 import os
 import bz2
 import hashlib
-import public
-import private
+import public #@UnresolvedImport
+import private #@UnresolvedImport
 import shutil
 
 def sha(s):

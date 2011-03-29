@@ -3,7 +3,7 @@
 import modulefinder
 import shutil
 from distutils.core import setup
-import py2exe
+import py2exe #@UnresolvedImport @UnusedImport
 import sys
 import zipfile
 import traceback

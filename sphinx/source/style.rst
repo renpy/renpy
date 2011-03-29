@@ -711,6 +711,11 @@ These are used for the horizontal and vertical box layouts.
     If not None, the spacing between the first and second members of
     this box, in pixels. This overrides the spacing property.
 
+.. style-property:: box_wrap boolean
+
+    If true, then boxes will wrap when they reach the end of a line or column.
+    If false (the default), they will extend past the end of the line.
+    
     
 .. _fixed-style-properties:
     

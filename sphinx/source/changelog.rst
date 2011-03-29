@@ -101,6 +101,9 @@ Ren'Py now attempts to elide personal information from filenames. Where
 possible, filenames are reported relative to the base or Ren'Py base
 directories,  rather than the root of the filesystem.
 
+The new :propref:`box_wrap` style property allows hboxes and vboxes to 
+automatically when they reach the edge of their enclosing area.
+
 
 Ren'Py 6.12.0
 =============
