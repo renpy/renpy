@@ -394,32 +394,31 @@ def report_exception(e, editor=True):
             return m.encode("utf-8")
         else:
             return m
-
-    # Outside of the file.
-    traceback.print_tb(tb, None, sys.stdout)
-    print type.__name__ + ":", 
-    print safe_utf8(e)
-    print
-    print renpy.game.exception_info
-    report_tb(sys.stdout, tb)
-    
     
     # Return values - which can be displayed to the user.
     simple = cStringIO.StringIO()
     full = cStringIO.StringIO()
     
-    print >>simple, type.__name__ + ":", 
-    print >>simple, safe_utf8(e)
-    print >>simple
     print >>simple, renpy.game.exception_info
     report_tb(simple, tb)
+    print >>simple, type.__name__ + ":", 
+    print >>simple, safe_utf8(e)
 
+    print >>full, "Full traceback:"
     traceback.print_tb(tb, None, full)
     print >>full, type.__name__ + ":", 
     print >>full, safe_utf8(e)
+    
+
+    # Write to stdout/stderr.
+    sys.stdout.write(full.getvalue())
+    sys.stdout.write("\n")
+    sys.stdout.write(simple.getvalue())
+
     print >>full
     print >>full, "Ren'Py Version:", renpy.version
 
+    
     simple = simple.getvalue()
     full = full.getvalue()
  

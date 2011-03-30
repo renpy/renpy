@@ -819,21 +819,25 @@ def with_statement(trans, paired=None, always=False, clear=True):
 
 globals()["with"] = with_statement
 
-def rollback():
+def rollback(force=False):
     """
     Rolls the state of the game back to the last checkpoint.
     """
 
-    if not renpy.store._rollback:
-        return
+    if not force:
     
-    if not renpy.game.context().rollback:
-        return
+        if not renpy.store._rollback:
+            return
+        
+        if not renpy.game.context().rollback:
+            return
     
-    if renpy.config.rollback_enabled:
-        renpy.config.skipping = None
-        renpy.game.log.complete()
-        renpy.game.log.rollback(1)
+        if not renpy.config.rollback_enabled:
+            return
+        
+    renpy.config.skipping = None
+    renpy.game.log.complete()
+    renpy.game.log.rollback(1)
 
 def toggle_fullscreen():
     """

@@ -105,6 +105,7 @@ The new :propref:`box_wrap` style property allows hboxes and vboxes to
 automatically when they reach the edge of their enclosing area.
 
 
+
 Ren'Py 6.12.0
 =============
 

@@ -152,7 +152,7 @@ def unelide_filename(fn):
     if os.path.exists(fn2):
         return fn2
     
-    return None
+    return fn
 
 def list_logical_lines(filename):
     """

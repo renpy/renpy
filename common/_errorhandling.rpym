@@ -84,6 +84,8 @@ init python:
     style._default.right_gutter = 0
     style._default.thumb_offset = 0
     style._default.unscrollable = None
+    style._default.bar_invert = False
+    style._default.bar_vertical = False
     
     # Misc.
     style._default.activate_sound = None
@@ -118,12 +120,13 @@ init python:
     style._button = Style(style._default)
     style._button_text = Style(style._default)
     style._button.xpadding = 8
-    style._button.ypadding = 8
+    style._button.ypadding = 6
 
     style._button.background = Frame("_theme_amie2/button.png", 10, 10)
     style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
     style._button_text.size = 16
     style._button_text.color = "#111"
+    style._button_text.yoffset = 2
 
     # label
     style._label = Style(style._default)
@@ -141,7 +144,7 @@ init python:
     style._bar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
     style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
     style._bar.thumb = Frame("_theme_amie2/button.png", 10, 10)
-    style._bar.thumb_offset = 10
+    # style._bar.thumb_offset = 10
     style._bar.left_gutter = 5
     style._bar.right_gutter = 5
     
@@ -167,6 +170,13 @@ init python hide:
                 webbrowser.open(target)
             except:
                 pass
+
+        if target.startswith("edit:"):
+            prefix, line, filename = target.split(":", 2)
+            line = int(line)
+            
+            renpy.launch_editor([ filename ], line)
+            
     
     style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
 
@@ -178,22 +188,101 @@ init python:
     def _(s):
         return s
 
+    # This function is responsible for taking a traceback, and converting 
+    # it to a string that can be shown with text.
+    def __format_traceback(s):
+        import re
+        
+        lines = [ i.replace("{", "{{") for i in s.split("\n") ]
+    
+        rv = [ "{b}" + lines[0] + "{/b}" ]
+        
+        for i in lines[1:]:
+            if config.editor:
+                i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
+            rv.append(i)
+            
+        return "\n".join(rv)
+
+    # Opens the traceback.txt file in an editor.
+    def __open_traceback():
+        try:
+            if config.editor:
+                renpy.launch_editor([ 'traceback.txt' ], 1, transient=1)
+            else:
+                os.startfile('traceback.txt')
+        except:
+            raise
+            pass
+
+    def __can_open_traceback():
+        if config.editor:
+            return True
+            
+        import os
+        
+        if hasattr(os, 'startfile'):
+            return True
+            
+        return False
+    
+    def __force_rollback():
+        return renpy.rollback(force=True)
+
       
 # The screen that is used for error handling.
 screen _exception:
-    default show_full = False
+    
+    default ignore_action = None
 
     frame:
         style_group ""
-    
-        has vbox 
+        xfill True
+
+        has side "t c r b"
+            
+        vbox:   
+            label _("An exception has occured.")
+
+        viewport:
+            id "viewport"
+            child_size (4000, None)
+            
+            has vbox
+
+            text __format_traceback(short)
+            text __format_traceback(full)
+      
+        bar:
+            style "_vscrollbar"
+            value YScrollValue("viewport")
+
+        vbox:
+
+            bar:
+                style "_scrollbar"
+                value XScrollValue("viewport")
+            
+            hbox:
+                box_wrap True
+                
+                textbutton _("Rollback"):
+                    action __force_rollback
         
-        label _("An exception has occured.")
-        text short
-        
-        if show_full:    
-            text full
-        else:
-            textbutton _("Show full traceback") action SetScreenVariable("show_full", True)
-  
-    
+                if ignore_action:            
+                    textbutton _("Ignore"):
+                        action ignore_action
+
+                if config.developer:                    
+                    textbutton _("Reload"):
+                        action renpy.curried_call_in_new_context("_save_reload_game")
+                        
+                if __can_open_traceback():                    
+                    textbutton _("Open Traceback"):
+                        action __open_traceback
+                    
+                null width 30
+                
+                textbutton _("Quit"):
+                    action renpy.quit
+            
