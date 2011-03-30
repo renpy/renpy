@@ -111,10 +111,11 @@ init python:
     style._vbox = Style(style._default)
     style._grid = Style(style._default)
     style._side = Style(style._default)
-    style._viewport = Style(style._default)
+    style._viewport = Style(style._default)    
 
     style._hbox.box_layout = 'horizontal'
     style._vbox.box_layout = 'vertical'
+    style._viewport.clipping = True
            
     # button
     style._button = Style(style._default)
@@ -144,9 +145,10 @@ init python:
     style._bar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
     style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
     style._bar.thumb = Frame("_theme_amie2/button.png", 10, 10)
-    # style._bar.thumb_offset = 10
+    style._bar.thumb_offset = 10
     style._bar.left_gutter = 5
     style._bar.right_gutter = 5
+    style._bar.unscrollable = "hide"
     
     style._scrollbar.ymaximum = 20
     style._vscrollbar.xmaximum = 20   
@@ -232,6 +234,8 @@ init python:
       
 # The screen that is used for error handling.
 screen _exception:
+    modal True
+    zorder 1001
     
     default ignore_action = None
 
@@ -242,11 +246,12 @@ screen _exception:
         has side "t c r b"
             
         vbox:   
-            label _("An exception has occured.")
+            label _("An exception has occurred.")
 
         viewport:
             id "viewport"
             child_size (4000, None)
+            mousewheel True
             
             has vbox
 
