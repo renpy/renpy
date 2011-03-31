@@ -80,6 +80,7 @@ class Context(renpy.object.Object):
             
         if version < 7:
             self.init_phase = False
+            self.next_node = None
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -242,6 +243,7 @@ class Context(renpy.object.Object):
             node = renpy.game.script.lookup(self.current)
 
         while node:
+            
             self.current = node.name
             self.last_abnormal = self.abnormal
             self.abnormal = False
@@ -253,7 +255,8 @@ class Context(renpy.object.Object):
 
             try:
                 try:
-                    node = node.execute()
+                    self.next_node = None                    
+                    node.execute()
                 
                 except renpy.game.CONTROL_EXCEPTIONS, e:
                     raise
@@ -263,16 +266,13 @@ class Context(renpy.object.Object):
 
                     if renpy.display.error.report_exception(short, full):
                         raise
-                    
+                              
+                node = self.next_node
             
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
-            
-            
-            
-                
-                
+                                
             if self.seen:
                 renpy.game.seen_ever[self.current] = True
                 renpy.game.seen_session[self.current] = True

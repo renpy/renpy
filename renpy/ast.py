@@ -33,6 +33,15 @@ import re
 import time
 import md5
 
+def next_node(n):
+    """
+    Indicates the next node that should be executed. When a statement 
+    can crash, this should be set as early as possible, so that ignore
+    can bring us there.
+    """
+
+    renpy.game.context().next_node = n
+
 # Called to set the state of a Node, when necessary.
 def setstate(node, state):
     for k, v in state[1].iteritems():
@@ -349,6 +358,8 @@ class Say(Node):
         self.attributes = attributes
 
     def execute(self):
+        
+        next_node(self.next)
 
         renpy.exports.say_attributes = self.attributes
         
@@ -379,9 +390,7 @@ class Say(Node):
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
         renpy.exports.say(who, what, interact=self.interact)
-
-        return self.next
-
+    
     def predict(self):
 
         old_attributes = renpy.exports.say_attributes
@@ -460,7 +469,7 @@ class Init(Node):
         chain_block(self.block, None)
 
     def execute(self):
-        return self.next
+        next_node(self.next)
     
 
 class Label(Node):
@@ -505,6 +514,8 @@ class Label(Node):
             self.next = next
             
     def execute(self):
+        next_node(self.next)
+
         renpy.game.context().mark_seen()
         
         args = renpy.store._args
@@ -517,7 +528,7 @@ class Label(Node):
                 if renpy.config.label_callback:
                     renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
 
-                return self.next
+                return
         else:
             if args is None:
                 args = ()
@@ -577,8 +588,7 @@ class Label(Node):
 
         if renpy.config.label_callback:
             renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
-        
-        return self.next
+
 
 class Python(Node):
 
@@ -604,8 +614,8 @@ class Python(Node):
         return (Python, self.code.source)
 
     def execute(self):
+        next_node(self.next)
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
-        return self.next
 
     def scry(self):
         rv = Node.scry(self)
@@ -636,7 +646,7 @@ class EarlyPython(Node):
         return (EarlyPython, self.code.source)
 
     def execute(self):
-        return self.next
+        next_node(self.next)
 
     def early_execute(self):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
@@ -676,14 +686,14 @@ class Image(Node):
         # Note: We should always check that self.code is None before
         # accessing self.atl, as self.atl may not always exist.
 
+        next_node(self.next)
+
         if self.code is not None:
             img = renpy.python.py_eval_bytecode(self.code.bytecode)
         else:
             img = renpy.display.motion.ATLTransform(self.atl)
 
         renpy.exports.image(self.imgname, img)
-
-        return self.next
 
 
     
@@ -716,6 +726,8 @@ class Transform(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         parameters = getattr(self, "parameters", None)
 
         if parameters is None:
@@ -724,8 +736,6 @@ class Transform(Node):
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
         renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "transform"))
         setattr(renpy.store, self.varname, trans)
-                
-        return self.next
 
     
 def predict_imspec(imspec, scene=False):
@@ -826,10 +836,9 @@ class Show(Node):
         return (Show, tuple(self.imspec[0]))
 
     def execute(self):
-
+        next_node(self.next)
+        
         show_imspec(self.imspec, atl=getattr(self, "atl", None))
-
-        return self.next
 
     def predict(self):
         predict_imspec(self.imspec)
@@ -868,12 +877,12 @@ class Scene(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         renpy.config.scene(self.layer)
 
         if self.imspec:
             show_imspec(self.imspec, atl=getattr(self, "atl", None))
-
-        return self.next
         
     def predict(self):
         
@@ -925,6 +934,8 @@ class Hide(Node):
         
     def execute(self):
 
+        next_node(self.next)
+
         if len(self.imspec) == 3:
             name, at_list, layer = self.imspec
             expression = None
@@ -936,8 +947,6 @@ class Hide(Node):
             name, expression, tag, at_list, layer, zorder, behind = self.imspec
             
         renpy.config.hide(tag or name, layer)
-
-        return self.next
 
     
 class With(Node):
@@ -965,6 +974,8 @@ class With(Node):
         
     def execute(self):
 
+        next_node(self.next)
+
         trans = renpy.python.py_eval(self.expr)
 
         if self.paired is not None:
@@ -973,8 +984,6 @@ class With(Node):
             paired = None 
 
         renpy.exports.with_statement(trans, paired)
-
-        return self.next
 
     def predict(self):
 
@@ -1020,6 +1029,7 @@ class Call(Node):
             label = renpy.python.py_eval(label)
 
         rv = renpy.game.context().call(label, return_site=self.next.name)
+        next_node(rv)
         renpy.game.context().abnormal = True
 
         if self.arguments:
@@ -1052,11 +1062,7 @@ class Call(Node):
 
             renpy.store._args = tuple(args)
             renpy.store._kwargs = kwargs
-                    
-        
-        return rv
-        
-        
+                            
     def predict(self):
         if self.expression:
             return [ ]
@@ -1098,7 +1104,7 @@ class Return(Node):
 
         renpy.game.context().pop_dynamic()
             
-        return renpy.game.context().lookup_return(pop=True)
+        next_node(renpy.game.context().lookup_return(pop=True))
 
     def predict(self):
         site = renpy.game.context().lookup_return(pop=False)
@@ -1151,8 +1157,10 @@ class Menu(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         choices = [ ]
-        narration = [ ]
+        narration = [ ]        
         
         for i, (label, condition, block) in enumerate(self.items):
 
@@ -1166,6 +1174,7 @@ class Menu(Node):
                     choices.append((label, condition, None))
             else:
                 choices.append((label, condition, i))
+                next_node(block[0])
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
@@ -1173,10 +1182,10 @@ class Menu(Node):
         say_menu_with(self.with_, renpy.game.interface.set_transition)
         choice = renpy.exports.menu(choices, self.set)
 
-        if choice is None:
-            return self.next
+        if choice is not None:
+            next_node(self.items[choice][2][0])
         else:
-            return self.items[choice][2][0]
+            next_node(self.next)
         
 
     def predict(self):
@@ -1235,7 +1244,8 @@ class Jump(Node):
 
         rv = renpy.game.script.lookup(target)
         renpy.game.context().abnormal = True
-        return rv
+
+        next_node(rv)
 
     def predict(self):
 
@@ -1263,7 +1273,7 @@ class Pass(Node):
         return (Pass,)
 
     def execute(self):
-        return self.next
+        next_node(self.next)
 
 
 class While(Node):
@@ -1291,10 +1301,10 @@ class While(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         if renpy.python.py_eval(self.condition):
-            return self.block[0]
-        else:
-            return self.next
+            next_node(self.block[0])
 
     def predict(self):
         return [ self.block[0], self.next ]
@@ -1336,11 +1346,11 @@ class If(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         for condition, block in self.entries:
             if renpy.python.py_eval(condition):
-                return block[0]
-
-        return self.next
+                next_node(block[0])
 
     def predict(self):
 
@@ -1370,8 +1380,9 @@ class UserStatement(Node):
         return (UserStatement, self.line)
 
     def execute(self):
+        next_node(self.get_next())
+        
         self.call("execute")
-        return self.get_next()
 
     def predict(self):
         self.call("predict")            
@@ -1425,11 +1436,11 @@ class Define(Node):
 
     def execute(self):
 
+        next_node(self.next)
+
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "define"))
         setattr(renpy.store, self.varname, value)    
-        
-        return self.next
 
 
 class Screen(Node):
@@ -1454,5 +1465,5 @@ class Screen(Node):
         return (Screen, self.screen.name)
 
     def execute(self):
+        next_node(self.next)
         self.screen.define()
-        return self.next
