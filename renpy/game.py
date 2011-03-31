@@ -57,9 +57,6 @@ contexts = [ ]
 # The interface that the game uses to interact with the user.
 interface = None
 
-# Are we still running init blocks?
-init_phase = True
-
 # Are we inside lint?
 lint = False
 

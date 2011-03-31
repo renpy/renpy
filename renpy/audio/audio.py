@@ -597,7 +597,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
         be True for audio, and False for movie playback.
     """
 
-    if not renpy.game.init_phase:
+    if not renpy.game.context().init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
     c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue)
@@ -607,7 +607,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
 
     
 def alias_channel(name, newname):
-    if not renpy.game.init_phase:
+    if not renpy.game.context().init_phase:
         raise Exception("Can't alias channel outside of init phase.")
 
     c = get_channel(name)

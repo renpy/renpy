@@ -574,8 +574,12 @@ class MultiBox(Container):
             xfill = max(0, xfill)
             yfill = max(0, yfill)
             
-            xperchild = xfill / len(line)
-            yperchild = yfill / len(line)
+            if line:            
+                xperchild = xfill / len(line)
+                yperchild = yfill / len(line)
+            else:
+                xperchild = 0
+                yperchild = 0
             
             for i, (child, x, y, surf) in enumerate(line):
                 sw, sh = surf.get_size()
@@ -611,7 +615,7 @@ class MultiBox(Container):
                 surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
 
-                if box_wrap and remwidth - sw - padding <= 0:
+                if box_wrap and remwidth - sw - padding <= 0 and line:
                     maxx, maxy = layout_line(line, remwidth if self.style.xfill else 0, 0)                        
                         
                     y += line_height

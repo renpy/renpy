@@ -35,21 +35,54 @@ import os.path
 
 ##############################################################################
 # Initialized approach.
+
+def call_exception_screen(**kwargs):
+    renpy.exports.show_screen("_exception", _transient=True, **kwargs)
+    return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
+
+def rollback_action():
+    renpy.exports.rollback(force=True)
+    
+def init_display():
+    """
+    The minimum amount of code required to init the display.
+    """
+
+    if not renpy.game.interface:
+        renpy.display.core.Interface()
+        renpy.style.build_styles()
+        renpy.loader.index_archives()
+        renpy.display.im.cache.init()
+    
+    renpy.ui.reset()
+    
 def report_exception(short, full):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
     the appropriate exception.
     """
-    
-    if renpy.game.init_phase:
+
+    if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
-    
+       
     if not renpy.exports.has_screen("_exception"):
         return True
     
-    renpy.game.invoke_in_new_context(renpy.exports.call_screen, "_exception", short=short, full=full)
-
+    init_display()    
+          
+    if not renpy.game.context().init_phase:
+        rollback_action = renpy.display.error.rollback_action
+        reload_action = renpy.exports.curried_call_in_new_context("_save_reload_game")
+    else:
+        rollback_action = None
+        reload_action = renpy.exports.utter_restart
+     
+    renpy.game.invoke_in_new_context(
+        call_exception_screen, 
+        short=short, full=full, 
+        rollback_action=rollback_action,
+        reload_action=reload_action)
 
 ##############################################################################
 # Non-initialized approach.

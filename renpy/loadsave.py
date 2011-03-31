@@ -403,7 +403,7 @@ class _MultiPersistent(object):
 
 def MultiPersistent(name):
 
-    if not renpy.game.init_phase:
+    if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
     
     if sys.platform == 'win32':

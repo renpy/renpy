@@ -227,11 +227,23 @@ init python:
             return True
             
         return False
-    
-    def __force_rollback():
-        return renpy.rollback(force=True)
 
-      
+    # The transform used for errors. ATL isn't ready yet.    
+    def __transform_function(state, st, at):
+        done = min(st / .1, 1.0) 
+        state.zoom = .5 + .5 * done
+        state.alpha = done
+        state.xalign = 0.5
+        state.yalign = 0.5
+        
+        if done < 1.0:
+            return 0
+        else:
+            return None
+            
+    __transform = Transform(function=__transform_function, style='_default')
+        
+          
 # The screen that is used for error handling.
 screen _exception:
     modal True
@@ -242,6 +254,8 @@ screen _exception:
     frame:
         style_group ""
         xfill True
+
+        at __transform
 
         has side "t c r b"
             
@@ -270,17 +284,18 @@ screen _exception:
             
             hbox:
                 box_wrap True
-                
-                textbutton _("Rollback"):
-                    action __force_rollback
+
+                if rollback_action:
+                    textbutton _("Rollback"):
+                        action rollback_action
         
-                if ignore_action:            
+                if ignore_action:
                     textbutton _("Ignore"):
                         action ignore_action
 
                 if config.developer:                    
                     textbutton _("Reload"):
-                        action renpy.curried_call_in_new_context("_save_reload_game")
+                        action reload_action
                         
                 if __can_open_traceback():                    
                     textbutton _("Open Traceback"):

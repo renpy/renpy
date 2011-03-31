@@ -298,6 +298,9 @@ def bootstrap(renpy_base):
                 renpy.reload_all()
                 continue
 
+            except renpy.game.QuitException:
+                keep_running = False
+
             except renpy.game.ParseErrorException:
 
                 if report_error and report_error.report('a parse error'):
@@ -314,6 +317,8 @@ def bootstrap(renpy_base):
                     keep_running = True
                 else:
                     keep_running = False
+
+
 
         sys.exit(0)
 
@@ -416,7 +421,7 @@ def report_exception(e, editor=True):
     sys.stdout.write(simple.getvalue())
 
     print >>full
-    print >>full, "Ren'Py Version:", renpy.version
+    print >>full, "Using ", renpy.version
 
     
     simple = simple.getvalue()

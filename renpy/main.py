@@ -177,6 +177,10 @@ def main():
     game.style = renpy.style.StyleManager()
     renpy.store.style = game.style
 
+    # Run init code in its own context. (Don't log.)
+    game.contexts = [ renpy.execution.Context(False) ]
+    game.contexts[0].init_phase = True
+
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
@@ -252,16 +256,9 @@ def main():
 
     renpy.game.exception_info = 'While executing init code:'
 
-    # Run init code in its own context. (Don't log.)
-    game.contexts = [ renpy.execution.Context(False) ]
-
-    # Run the init code.
-    game.init_phase = True
-
     for prio, node in game.script.initcode:
         game.context().run(node)
 
-    game.init_phase = False
     renpy.game.exception_info = 'After initialization, but before game start.'
 
     # Save the bytecode in a cache.

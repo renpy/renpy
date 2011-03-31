@@ -513,9 +513,13 @@ class SceneLists(renpy.object.Object):
                     self.layers[i] = oldsl.layers[i][:]
                 except KeyError:
                     self.layers[i] = [ ]
-                    
-                self.at_list[i] = oldsl.at_list[i].copy()
-                self.layer_at_list[i] = oldsl.layer_at_list[i]
+                
+                if i in oldsl.at_list:
+                    self.at_list[i] = oldsl.at_list[i].copy()
+                    self.layer_at_list[i] = oldsl.layer_at_list[i]
+                else:
+                    self.at_list[i] = { }
+                    self.layer_at_list[i] = (None, [ ])
                 
             for i in renpy.config.overlay_layers:
                 self.clear(i)

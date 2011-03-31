@@ -63,7 +63,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
     loop of the music.)
     """
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("Can't play music during init phase.")
     
     if filenames is None:
@@ -131,7 +131,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     If tight is True, then fadeouts will span into the next-queued sound.
     """
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("Can't play music during init phase.")
 
     if filenames is None:
@@ -190,8 +190,8 @@ def stop(channel="music", fadeout=None):
     This sets the last queued file to None.
     """
 
-    if renpy.game.init_phase:
-        raise Exception("Can't play music during init phase.")
+    if renpy.game.context().init_phase:
+        return
 
     try:        
         c = get_channel(channel)

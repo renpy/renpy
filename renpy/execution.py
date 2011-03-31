@@ -55,7 +55,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 6
+    __version__ = 7
 
     def after_upgrade(self, version):
         if version < 1:
@@ -78,11 +78,14 @@ class Context(renpy.object.Object):
         if version < 6:
             self.images = self.predict_info.images
             
+        if version < 7:
+            self.init_phase = False
+            
     def __init__(self, rollback, context=None, clear=False):
         """
         `clear`
             True if we should clear out the context_clear_layers.
-            """
+        """
         
         super(Context, self).__init__()
         
@@ -119,6 +122,9 @@ class Context(renpy.object.Object):
         # will cause Ren'Py to generate an error if we call ui.interact
         # again.
         self.interacting = False
+        
+        # True if we're in the init phase. (Isn't inherited.)
+        self.init_phase = False
         
         if context:
             oldsl = context.scene_lists

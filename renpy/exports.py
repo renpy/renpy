@@ -139,7 +139,7 @@ def image(name, img):
     if img is None:
         raise Exception("Images may not be declared to be None.")
         
-    if not renpy.game.init_phase:
+    if not renpy.game.context().init_phase:
         raise Exception("Images may only be declared inside init blocks.")
 
     if not isinstance(name, tuple):
@@ -184,7 +184,7 @@ def showing(name, layer='master'):
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     "Documented in wiki as renpy.show."
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("Show may not run while in init phase.")
     
     if not isinstance(name, tuple):
@@ -253,7 +253,7 @@ def hide(name, layer='master'):
     @param layer: The layer this operates on.
     """
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("Hide may not run while in init phase.")
 
     if not isinstance(name, tuple):
@@ -274,7 +274,7 @@ def scene(layer='master'):
     to then add something new, call renpy.show after this.
     """
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("Scene may not run while in init phase.")
 
     sls = scene_lists()
@@ -804,7 +804,7 @@ def with_statement(trans, paired=None, always=False, clear=True):
     @param always: Always perform the transition.
     """
 
-    if renpy.game.init_phase:
+    if renpy.game.context().init_phase:
         raise Exception("With statements may not run while in init phase.")
 
     if renpy.config.skipping:
@@ -1321,7 +1321,7 @@ loaded_modules = set()
 
 def load_module(name, **kwargs):
 
-    if not renpy.game.init_phase:
+    if not renpy.game.context().init_phase:
         raise Exception("Module loading is only allowed in init code.")
 
     if name in loaded_modules:
@@ -1335,6 +1335,7 @@ def load_module(name, **kwargs):
     initcode = renpy.game.script.load_module(name)
 
     context = renpy.execution.Context(False)
+    context.init_phase = True
     renpy.game.contexts.append(context)
     
     context.make_dynamic(kwargs)
