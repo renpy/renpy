@@ -384,8 +384,8 @@ class Say(Node):
 
     def predict(self):
 
-        old_attributes = renpy.display.exports.say_attributes
-        renpy.display.exports.say_attributes = self.attributes
+        old_attributes = renpy.exports.say_attributes
+        renpy.exports.say_attributes = self.attributes
         
         if self.who is not None:
             if self.who_fast:
@@ -406,7 +406,7 @@ class Say(Node):
 
         renpy.exports.predict_say(who, what)
 
-        renpy.display.exports.say_attributes = old_attributes
+        renpy.exports.say_attributes = old_attributes
         
         return [ self.next ]
 
