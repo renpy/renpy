@@ -29,7 +29,7 @@ except:
 import _renpy_font
 pygame.font = _renpy_font
     
-import renpy.display
+import renpy
 
 # This contains a map from (fn, size, bold, italics, underline) to the
 # unloaded font object corresponding to that specification. 

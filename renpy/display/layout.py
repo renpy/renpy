@@ -22,7 +22,7 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
-import renpy.display
+import renpy
 from renpy.display.render import render, Render
 
 

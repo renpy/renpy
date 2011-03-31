@@ -1315,25 +1315,7 @@ init -1140 python:
         def __call__(self):
             renpy.take_screenshot()
         
-    
-    ##########################################################################
-    # Side Images
-    
-    def SideImage(tag="side"):
-        """
-        :doc: side_image_function
-    
-        Returns the side image associated with the currently speaking character, 
-        or a Null displayable if no such side image exists.
-        """
-        
-        name = renpy.get_side_image(tag)
-        if name is None:
-            return Null()
-        else:
-            return ImageReference(name)
-
-
+            
     ##########################################################################
     # Preferences Constructor
 

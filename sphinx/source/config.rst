@@ -684,13 +684,6 @@ Rarely or Internally Used
 
     If True, joystic support is enabled.
 
-.. var:: config.keep_running_transform = True
-
-    If true, showing an image without supplying a transform or ATL
-    block will cause the image to continue the previous transform
-    an image with that tag was using, if any. If false, the transform
-    is stopped.
-    
 .. var:: config.keymap = dict(...)
 
     This variable contains a keymap giving the keys and mouse buttons

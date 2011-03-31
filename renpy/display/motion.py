@@ -25,7 +25,7 @@
 import math
 import types
 
-import renpy.display
+import renpy
 from renpy.display.render import render
 from renpy.display.layout import Container
 
@@ -325,22 +325,6 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
-    def set_xcenter(self, value):
-        self.xpos = value
-        self.xanchor = 0.5
-
-    def get_xcenter(self):
-        return self.xpos
-
-    def set_ycenter(self, value):
-        self.ypos = value
-        self.yanchor = 0.5
-
-    def get_ycenter(self):
-        return self.ypos
-
-    xcenter = property(get_xcenter, set_xcenter)
-    ycenter = property(get_ycenter, set_ycenter)
     
 class Proxy(object):
     """
@@ -404,9 +388,6 @@ class Transform(Container):
     offset = Proxy("offset")
 
     subpixel = Proxy("subpixel")
-
-    xcenter = Proxy("xcenter")
-    ycenter = Proxy("ycenter")
     
     def after_upgrade(self, version):
 
@@ -587,30 +568,14 @@ class Transform(Container):
         
         return 
 
-
-    def copy(self):
-        """
-        Makes a copy of this transform.
-        """
-
-        d = self()
-        d.kwargs = { }
-        d.take_state(self)
-        d.take_execution_state(self)
-        d.st = self.st
-        d.at = self.at
-
-        return d
-
-    def _change_transform_child(self, child):
-        rv = self.copy()
-        rv.set_child(self.child._change_transform_child(child))
-        return rv
     
     def _hide(self, st, at, kind):
 
         if not (self.hide_request or self.replaced_request):
-            d = self.copy()
+            d = self()
+            d.kwargs = { }
+            d.take_state(self)
+            d.take_execution_state(self)
         else:
             d = self
 
@@ -1152,6 +1117,8 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     
     rv.blit(crend, rv.reverse.transform(-x, -y))
 
+    # TODO: Bilinear?
+    
     return rv
 
 

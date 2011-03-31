@@ -23,8 +23,7 @@
 # size-based caching and constructing images from operations (like
 # cropping and scaling).
 
-import renpy.display
-
+import renpy
 import math
 import zipfile
 import cStringIO

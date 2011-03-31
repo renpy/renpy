@@ -31,7 +31,6 @@
 # in this module as fields on game.
 
 import renpy
-import renpy.display
 
 # The basepath.
 basepath = None
@@ -96,9 +95,6 @@ less_updates = False
 # Should we never show the mouse?
 less_mouse = False
 
-# Should we not imagedissiolve?
-less_imagedissolve = False
-
 # The class that's used to hold the persistent data.
 class Persistent(object):
 
@@ -113,7 +109,7 @@ class Persistent(object):
         return None
         
 # The persistent data that's kept from session to session
-persistent = Persistent()
+persistent = None
 
 class Preferences(renpy.object.Object):
     """
@@ -175,7 +171,7 @@ class Preferences(renpy.object.Object):
         return self.mute[mixer]
     
 # The current preferences.
-preferences = Preferences()
+preferences = None
 
 class RestartException(Exception):
     """
@@ -316,11 +312,4 @@ def call_in_new_context(label, *args, **kwargs):
         if interface.restart_interaction:
             contexts[-1].scene_lists.focused = None
     
-# Type information.       
-if False:
-    script = renpy.script.Script()
-    interface = renpy.display.core.Interface()
-    log = renpy.python.RollbackLog()
-    
-    
-    
+        

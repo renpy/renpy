@@ -28,7 +28,6 @@
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
 import renpy
-import renpy.display
 
 import renpy.ui as ui
 import renpy.display.im as im
@@ -122,11 +121,10 @@ Bar = renpy.display.behavior.Bar
 Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
+Frame = renpy.display.image.Frame
+Image = renpy.display.image.Image
 ImageReference = renpy.display.image.ImageReference
-Image = renpy.display.im.image
-
-Frame = renpy.display.imagelike.Frame
-Solid = renpy.display.imagelike.Solid
+Solid = renpy.display.image.Solid
 
 LiveComposite = renpy.display.layout.LiveComposite
 LiveCrop = renpy.display.layout.LiveCrop
@@ -320,7 +318,7 @@ adv = ADVCharacter(None,
 
                    condition=None,
                    dynamic=False,
-                   image=None,
+                   image=False,
 
                    interact=True,
                    slow=True,

@@ -22,8 +22,7 @@
 # This file contains code for initializing and managing the display
 # window.
 
-import renpy.display
-import renpy.audio
+import renpy
 
 import pygame
 import sys
@@ -40,7 +39,7 @@ except:
     pass
 
 try:
-    import android #@UnresolvedImport
+    import android
 except:
     android = None
 
@@ -379,16 +378,53 @@ class Displayable(renpy.object.Object):
         """
 
         return self
+        
 
-    def _change_transform_child(self, child):
-        """
-        If this is a transform, makes a copy of the transform and sets
-        the child of the innermost transform to this. Otherwise,
-        simply returns child.
-        """
+class ImagePredictInfo(renpy.object.Object):
+    """
+    This stores information involved in image prediction.
+    """
 
-        return child
+    def after_setstate(self):
+        for i in renpy.config.layers + renpy.config.top_layers:
+            self.images.setdefault(i, {})
+    
+    def __init__(self, ipi=None):
 
+        super(ImagePredictInfo, self).__init__()
+        
+        # layer -> (tag -> image name)
+        self.images = { }
+
+        if ipi is None:
+            for i in renpy.config.layers + renpy.config.top_layers:
+                self.images[i] = { }
+        else:
+            for i in renpy.config.layers + renpy.config.top_layers:
+                self.images[i] = ipi.images[i].copy()
+            
+                
+    def showing(self, layer, name):
+
+        shown = self.images[layer].get(name[0], None)
+        
+        if shown is None or len(shown) < len(name):
+            return False
+
+        for a, b in zip(name, shown):
+            if a != b:
+                return False
+
+        return True
+
+    def predict_scene(self, layer):
+        self.images[layer].clear()
+
+    def predict_show(self, name, layer):
+        self.images[layer][name[0]] = name
+        
+    def predict_hide(self, tag, layer):
+        self.images[layer].pop(tag, None)
     
 
 class SceneListEntry(renpy.object.Object):
@@ -441,7 +477,7 @@ class SceneLists(renpy.object.Object):
     things to the user. 
     """
 
-    __version__ = 6
+    __version__ = 5
     
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -472,11 +508,8 @@ class SceneLists(renpy.object.Object):
 
         if version < 5:
             self.drag_group = None
-
-        if version < 6:
-            self.shown = self.image_predict_info 
             
-    def __init__(self, oldsl, shown):
+    def __init__(self, oldsl, ipi):
 
         super(SceneLists, self).__init__()
         
@@ -493,8 +526,8 @@ class SceneLists(renpy.object.Object):
         # been applied to the layer as a whole.
         self.layer_at_list = { }
 
-        # The current shown images,
-        self.shown = shown
+        # Represents the current stare of image_prediction.
+        self.image_predict_info = ipi
 
         # A list of (layer, tag) pairs that are considered to be
         # transient.
@@ -676,43 +709,31 @@ class SceneLists(renpy.object.Object):
             self.at_list[layer][key] = at_list
 
         if key and name:
-            self.shown.predict_show(layer, name)
+            self.image_predict_info.images[layer][key] = name
 
         if transient:
             self.additional_transient.append((layer, key))
             
         l = self.layers[layer]
-        
+
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
 
+        if not isinstance(thing, renpy.display.motion.Transform):
+            thing = self.transform_state(default_transform, thing)
+            
         add_index, remove_index = self.find_index(layer, key, zorder, behind)
 
         at = None
         st = None
 
         if remove_index is not None:
-            sle = l[remove_index]            
-            at = sle.animation_time            
-            old = sle.displayable
-            
-            if (not atl and
-                not at_list and
-                renpy.config.keep_running_transform and
-                isinstance(old, renpy.display.motion.Transform)):
-
-                thing = sle.displayable._change_transform_child(thing)
-            else:
-                thing = self.transform_state(l[remove_index].displayable, thing)
-
+            at = l[remove_index].animation_time            
+            thing = self.transform_state(l[remove_index].displayable, thing)
             thing.set_transform_event("replace")
             thing._show()
             
         else:            
-
-            if not isinstance(thing, renpy.display.motion.Transform):
-                thing = self.transform_state(default_transform, thing)
-                
             thing.set_transform_event("show")
             thing._show()
 
@@ -802,7 +823,7 @@ class SceneLists(renpy.object.Object):
             tag = self.layers[layer][remove_index].tag
 
             if tag:
-                self.shown.predict_hide(layer, (tag,))
+                self.image_predict_info.images[layer].pop(tag, None)
                 self.at_list[layer].pop(tag, None)
             
             self.hide_or_replace(layer, remove_index, "hide")
@@ -826,7 +847,7 @@ class SceneLists(renpy.object.Object):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
-        self.shown.predict_scene(layer)
+        self.image_predict_info.images[layer].clear()
         self.layer_at_list[layer] = (None, [ ])
 
     def set_layer_at_list(self, layer, at_list):
@@ -850,7 +871,7 @@ class SceneLists(renpy.object.Object):
         is found in the scene list.
         """
 
-        return self.shown.showing(layer, name)
+        return self.image_predict_info.showing(layer, name)
 
     def make_layer(self, layer, properties):
         """
@@ -1209,7 +1230,7 @@ class Interface(object):
         draws = { }
         
         try:
-            import renpy.display.gldraw as gldraw #@UnresolvedImport
+            import renpy.display.gldraw as gldraw
             draws["gl"] = gldraw.GLDraw
         except:
             renpy.log.info("Couldn't import gl renderer.")
@@ -1672,7 +1693,7 @@ class Interface(object):
         
         if android.check_pause():
 
-            import android_sound #@UnresolvedImport
+            import android_sound
             android_sound.pause_all()
 
             pygame.time.set_timer(PERIODIC, 0)

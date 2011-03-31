@@ -24,7 +24,7 @@
 # TODO: Check to see if SFX are enabled before playing sounds with play or
 # queue.
 
-import renpy.audio
+import renpy
 
 # This is basically a thin wrapper around music, with the default
 # channel set to "sound".

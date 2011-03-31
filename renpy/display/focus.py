@@ -22,7 +22,7 @@
 # This file contains code to manage focus on the display.
 
 import pygame
-import renpy.display
+import renpy
 
 class Focus(object):
 

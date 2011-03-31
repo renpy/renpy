@@ -24,7 +24,7 @@
 import os
 import math
 import pygame
-import renpy.display
+import renpy
 import renpy.display.pgrender as pgrender
 
 # These need to be here before we mess with Pygame.

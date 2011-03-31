@@ -695,7 +695,7 @@ def _imagebutton(idle_image = None,
     selected_hover = choice(selected_hover, selected_hover_image, "selected_hover")
     selected_insensitive = choice(selected_insensitive, selected_insensitive_image, "selected_insensitive")
     
-    return renpy.display.behavior.ImageButton(
+    return renpy.display.image.ImageButton(
             idle,
             hover,
             insensitive_image = insensitive,

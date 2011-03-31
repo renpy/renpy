@@ -21,7 +21,7 @@
 
 # Functions that make the user's life easier.
 
-import renpy.display
+import renpy
 
 def color(c):
     if isinstance(c, tuple) and len(c) == 4:

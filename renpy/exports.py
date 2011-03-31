@@ -28,9 +28,6 @@
 _file = file
 
 import renpy
-import renpy.display
-import renpy.audio
-
 from renpy.display.text import ParameterizedText
 from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
@@ -83,6 +80,10 @@ def public_api():
 del public_api
 
 import collections
+
+# This is a map from image name to a Displayable object corresponding
+# to that image name.
+images = { }
 
 def roll_forward_info():
     return renpy.game.log.forward_info()
@@ -146,7 +147,8 @@ def image(name, img):
         name = tuple(name.split())
 
     img = renpy.easy.displayable(img)
-    renpy.display.image.register_image(name, img)
+
+    images[name] = img
 
 def copy_images(old, new):
     if not isinstance(old, tuple):
@@ -157,12 +159,12 @@ def copy_images(old, new):
 
     lenold = len(old)
         
-    for k, v in renpy.display.image.images.items():
+    for k in list(images.keys()):
         if len(k) < lenold:
             continue
         
         if k[:lenold] == old:
-            renpy.display.image.register_image(new + k[lenold:], v)
+            images[new + k[lenold:]] = images[k]
     
 def showing(name, layer='master'):
     """
@@ -179,7 +181,7 @@ def showing(name, layer='master'):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return renpy.game.context().images.showing(layer, name)
+    return renpy.game.context().predict_info.images.showing(layer, name)
 
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     "Documented in wiki as renpy.show."
@@ -204,15 +206,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
     if isinstance(what, renpy.display.core.Displayable):
         base = img = what
-
     else:
-
-        if renpy.config.image_attributes:
-            new_what = renpy.game.context().images.apply_attributes(layer, key, name)
-            if new_what is not None:
-                what = new_what
-                name = (key,) + new_what[1:]
-                
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
         
         if not base.find_target() and renpy.config.missing_show:
@@ -600,7 +594,7 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator # E1101 @UndefinedVariable
+        who = renpy.store.narrator # E1101
 
     if isinstance(who, (str, unicode)):
         return renpy.store.predict_say(who, what)
@@ -631,7 +625,7 @@ def say(who, what, interact=True):
     what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator # E1101 @UndefinedVariable
+        who = renpy.store.narrator # E1101
 
     if isinstance(who, (str, unicode)):
         renpy.store.say(who, what, interact=interact)
@@ -1137,7 +1131,7 @@ def launch_editor(filenames, line=1, transient=0):
     cmd = cmd.replace('""', '')
 
     try:
-        subprocess.Popen(split_args(cmd)) # E1101 @UndefinedVariable
+        subprocess.Popen(split_args(cmd)) # E1101
         return True
     except:
         if renpy.config.debug:
@@ -1264,7 +1258,7 @@ def free_memory():
     force_full_redraw()
     renpy.display.im.free_memory()
     renpy.display.font.free_memory()
-    renpy.display.render.free_memory() # @UndefinedVariable
+    renpy.display.render.free_memory()
 
 def easy_displayable(d, none=False):
     if none:
@@ -1568,54 +1562,3 @@ def variant(name):
 
     return name in renpy.config.variants
 
-def vibrate(duration):
-    """
-    :doc: other
-
-    Causes the device to vibrate for `duration` seconds. Currently, this
-    is only supported on Android.
-    """
-
-    try:
-        import android #@UnresolvedImport
-        android.vibrate(duration)
-    except:
-        pass
-    
-
-# The attributes that are applied to the current say statement.
-say_attributes = None
-    
-def get_say_attributes():
-    """
-    :doc: other
-
-    Gets the attributes associated with the current say statement, or
-    None if no attributes are associated with this statement.
-
-    This is only valid when executing or predicting a say statement.
-    """
-
-    return say_attributes
-
-side_image_attributes = None
-
-def get_side_image(tag):
-    """
-    This attempts to find an image to show as the side image. It attempts to
-    find an image that begins with tag, and matches side_image_attributes. It
-    returns the name of the image (as a tuple of strings) if possible, or 
-    None if that's not possible.
-    """
-    
-    if side_image_attributes is None:
-        return
-    
-    images = renpy.game.context().images
-    
-    required = set()
-    optional = set(side_image_attributes)
-    
-    return images.choose_image(tag, required, optional, None)
-
-    

@@ -267,7 +267,7 @@ def mutator(method):
 
         global mutate_flag
         
-        mutated = renpy.game.log.mutated #@UndefinedVariable
+        mutated = renpy.game.log.mutated
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
@@ -292,7 +292,7 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method): # E0213 @NoSelf
+    def wrapper(method): # E0213
         def newmethod(*args, **kwargs): 
             return RevertableList(method(*args, **kwargs)) # E1102
 
@@ -325,7 +325,7 @@ class RevertableDict(dict):
     popitem = mutator(dict.popitem)
     setdefault = mutator(dict.setdefault)
 
-    def list_wrapper(method): # E0213 @NoSelf
+    def list_wrapper(method): # E0213
         def newmethod(*args, **kwargs):
             return RevertableList(method(*args, **kwargs)) # E1102
 
@@ -368,7 +368,7 @@ class RevertableSet(sets.Set):
     union_update = mutator(sets.Set.union_update)
     update = mutator(sets.Set.update)
 
-    def wrapper(method): # E0213 @NoSelf
+    def wrapper(method): # E0213
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # E1102
             if isinstance(rv, sets.Set):

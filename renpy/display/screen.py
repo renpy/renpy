@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
+import renpy
 
 class Screen(renpy.object.Object):
     """
@@ -553,7 +553,7 @@ def get_widget(screen, id, layer='screens'):
         screen = get_screen(screen, layer)
 
     if not isinstance(screen, ScreenDisplayable):
-        return None
+       return None
 
     if screen.child is None:
         screen.update()

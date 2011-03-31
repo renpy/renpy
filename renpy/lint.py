@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
+import renpy
 import codecs
 import time
 import re
@@ -97,51 +97,9 @@ def try_compile(where, expr, additional=None):
             add(additional)
         
 
-# The sets of names + attributes that 
-imprecise_cache = set()
-
-def image_exists_imprecise(name):
-    if name in imprecise_cache:
-        return True
-    
-    nametag = name[0]
-
-    required = set()
-    banned = set()
-    
-    for i in name[1:]:
-        if i[0] == "-":
-            banned.add(i[1:])
-        else:
-            required.add(i)
-
-    for im in renpy.display.image.images:
-        
-        if im[0] != nametag:
-            continue
-        
-        attrs = set(im[1:])
-        
-        if [ i for i in required if i not in attrs ]:
-            continue
-        
-        if [ i for i in banned if i in attrs ]:
-            continue
-
-        imprecise_cache.add(name)
-        return True
-    
-    return False
-
-
-
 # This reports an error if we're sure that the image with the given name
 # does not exist.
-def image_exists(name, expression, tag, precise=True):
-    """
-    Checks a scene or show statement for image existence. 
-    """
-    
+def image_exists(name, expression, tag):
 
     # Add the tag to the set of known tags.
     tag = tag or name[0]
@@ -150,25 +108,16 @@ def image_exists(name, expression, tag, precise=True):
     if expression:
         return
 
-    namelist = list(name)
-    names = " ".join(namelist)
+    name = list(name)
+    names = " ".join(name)
 
-    # Look for the precise name.
-    while namelist:
-        if tuple(namelist) in renpy.display.image.images:
+    while name:
+        if tuple(name) in renpy.exports.images:
             return
 
-        namelist.pop()
+        name.pop()
 
-    # If we're not precise, then we have to start looking for images
-    # that we can possibly match.
-    if not precise and image_exists_imprecise(name):
-        return
-        
     report("The image named '%s' was not declared.", names)
-
-
-    
 
 # Only check each file once.
 check_file_cache = { }
@@ -217,7 +166,7 @@ def check_image(node):
 
     name = " ".join(node.imgname)
     
-    check_displayable('image %s' % name, renpy.display.image.images[node.imgname])
+    check_displayable('image %s' % name, renpy.exports.images[node.imgname])
 
 def imspec(t):
     if len(t) == 3:
@@ -229,7 +178,7 @@ def imspec(t):
 
 
 # Lints ast.Show and ast.Scene nodets.
-def check_show(node, precise):
+def check_show(node):
 
     # A Scene may have an empty imspec.
     if not node.imspec:
@@ -240,7 +189,7 @@ def check_show(node, precise):
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
 
-    image_exists(name, expression, tag, precise=precise)
+    image_exists(name, expression, tag)
 
     for i in at_list:
         try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
@@ -335,28 +284,6 @@ def check_say(node):
         try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
 
     text_checks(node.what)
-
-    # Code to check image attributes. (If we're lucky.)
-    if node.who is None:
-        return
-
-    char = getattr(renpy.store, node.who, None)
-    
-    if not isinstance(char, renpy.character.ADVCharacter):
-        return 
-    
-    if node.attributes is None:
-        return
-    
-    if char.image_tag is None:
-        return
-    
-    name = (char.image_tag,) + node.attributes
-    
-    if not image_exists_imprecise(name):
-        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
-    
-
         
 def check_menu(node):
 
@@ -479,7 +406,7 @@ def lint():
     global image_prefixes
     image_prefixes = { }
 
-    for k in renpy.display.image.images:
+    for k in renpy.exports.images:
         image_prefixes[k[0]] = True
 
     # Iterate through every statement in the program, processing
@@ -502,10 +429,10 @@ def lint():
             check_image(node)
 
         elif isinstance(node, renpy.ast.Show):
-            check_show(node, True)
+            check_show(node)
     
         elif isinstance(node, renpy.ast.Scene):
-            check_show(node, False)
+            check_show(node)
 
         elif isinstance(node, renpy.ast.Hide):
             check_hide(node)

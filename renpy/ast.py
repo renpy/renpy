@@ -27,8 +27,6 @@
 # updating.
 
 import renpy
-import renpy.display
-
 import re
 import time
 import md5
@@ -146,8 +144,8 @@ class PyCode(object):
             pass
 
         code = self.source
-        if isinstance(code, renpy.python.ast.AST): #@UndefinedVariable
-            code = renpy.python.ast.dump(code) #@UndefinedVariable
+        if isinstance(code, renpy.python.ast.AST):
+            code = renpy.python.ast.dump(code)
         
         self.hash = chr(renpy.bytecode_version) + md5.md5(code.encode("utf-8")).digest()
         return self.hash
@@ -314,18 +312,12 @@ class Say(Node):
         'what',
         'with_',
         'interact',
-        'attributes',
         ]
 
     def diff_info(self):
         return (Say, self.who, self.what)
 
-    def __setstate__(self, state):
-        self.attributes = None
-        self.interact = True
-        setstate(self, state)
-
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None):
+    def __init__(self, loc, who, what, with_, interact=True):
 
         super(Say, self).__init__(loc)
 
@@ -344,14 +336,8 @@ class Say(Node):
         self.with_ = with_
         self.interact = interact
 
-        # A tuple of attributes that are applied to the character that's
-        # speaking, or None to disable this behavior.
-        self.attributes = attributes
-
     def execute(self):
 
-        renpy.exports.say_attributes = self.attributes
-        
         if self.who is not None:
             if self.who_fast:
                 who = getattr(renpy.store, self.who, None)
@@ -378,15 +364,12 @@ class Say(Node):
             renpy.store._last_say_what = what
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        renpy.exports.say(who, what, interact=self.interact)
+        renpy.exports.say(who, what, interact=getattr(self, 'interact', True))
 
         return self.next
 
     def predict(self):
 
-        old_attributes = renpy.exports.say_attributes
-        renpy.exports.say_attributes = self.attributes
-        
         if self.who is not None:
             if self.who_fast:
                 who = getattr(renpy.store, self.who)
@@ -406,8 +389,6 @@ class Say(Node):
 
         renpy.exports.predict_say(who, what)
 
-        renpy.exports.say_attributes = old_attributes
-        
         return [ self.next ]
 
     def scry(self):
@@ -752,7 +733,7 @@ def predict_imspec(imspec, scene=False):
             return
 
     else:
-        img = renpy.display.image.images.get(name, None)
+        img = renpy.exports.images.get(name, None)
         if img is None:
             return
 
@@ -761,9 +742,9 @@ def predict_imspec(imspec, scene=False):
         full_name = (tag,) + full_name[1:]
 
     if scene:
-        renpy.game.context().images.predict_scene(layer)
+        renpy.game.context().predict_info.images.predict_scene(layer)
         
-    renpy.game.context().images.predict_show(tag or name, layer)
+    renpy.game.context().predict_info.images.predict_show(tag or name, layer)
         
     renpy.display.predict.displayable(img)
 
@@ -919,7 +900,7 @@ class Hide(Node):
         if tag is None:
             tag = name[0]
             
-        renpy.game.context().images.predict_hide(tag, layer)
+        renpy.game.context().predict_info.images.predict_hide(tag, layer)
 
         return [ ]
         

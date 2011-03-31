@@ -19,17 +19,6 @@
         be used to define a template character, and then copy that
         character with changes.
     
-    **Linked Image**
-    An image tag may be associated with a Character. This allows a
-    say statement involving this character to display an image with
-    the tag, and also allows Ren'Py to automatically select a side
-    image to show when this character speaks.
-    
-    `image`
-    
-         A string giving the image tag that is linked with this 
-         character.
-    
     **Prefixes and Suffixes.**
     These allow a prefix and suffix to be applied to the name of the
     character, and to the text being shown. This can be used, for
@@ -63,6 +52,12 @@
         If true, then `name` should be a string containing a python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
+    
+    `image`
+    
+        If true, then `name` is expected to name an image file. That
+        image is used as the name of the character.
+    
     
     **Controlling Interactions.**
     These options control if the dialogue is displayed, if an

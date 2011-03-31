@@ -167,8 +167,8 @@ cdef class GLDraw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        # Should we use clipping planes or stencils?
-        self.use_clipping_planes = True
+        # Should we use clipping planes or scissors?
+        self.use_clipping_planes = False
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android

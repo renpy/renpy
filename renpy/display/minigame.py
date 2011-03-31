@@ -21,7 +21,7 @@
 
 # The minigame API.
 
-import renpy.display
+import renpy
 
 # A map from (text, font, size, color, bold, italics, underline) -> surface.
 # This one is for the old frame.
