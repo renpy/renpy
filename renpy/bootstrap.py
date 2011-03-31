@@ -420,7 +420,7 @@ def report_exception(e, editor=True):
     sys.stdout.write(simple.getvalue())
 
     print >>full
-    print >>full, "Using ", renpy.version
+    print >>full, "Using", renpy.version
 
     
     simple = simple.getvalue()

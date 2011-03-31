@@ -166,6 +166,21 @@ def inspector(ev):
 ##############################################################################
 # Utility functions for dealing with actions.
     
+def predict_action(var):
+    """
+    Predicts some of the actions that may be caused by a variable.
+    """
+
+    if var is None:
+        return
+
+    if isinstance(var, renpy.ui.Action):
+        var.predict()
+    
+    if isinstance(var, (list, tuple)):
+        for i in var:
+            predict_action(i)
+    
 def run(var, *args, **kwargs):
     """
     Runs a variable. This is done by calling all the functions, and
@@ -188,22 +203,26 @@ def run(var, *args, **kwargs):
 
     return var(*args)
 
-
-def predict_action(var):
+def run_unhovered(var):
     """
-    Predicts some of the actions that may be caused by a variable.
+    Calls the unhovered method on the variable, if it exists.
     """
-
-    if var is None:
-        return
-
-    if isinstance(var, renpy.ui.Action):
-        var.predict()
     
+    if var is None:
+        return None
+
     if isinstance(var, (list, tuple)):
         for i in var:
-            predict_action(i)
-    
+
+            f = getattr(i, "unhovered", None)
+            if f is not None:
+                f()
+
+        return
+
+    f = getattr(var, "unhovered", None)
+    if f is not None:
+        f()
 
 def run_periodic(var, st):
 
@@ -549,6 +568,7 @@ class Button(renpy.display.layout.Window):
             return None
 
         if not default:
+            run_unhovered(self.hovered)
             run(self.unhovered)
 
         self.set_transform_event(self.role + "idle")
@@ -1191,12 +1211,15 @@ class Bar(renpy.display.core.Displayable):
     def focus(self, default=False):
         super(Bar, self).focus(default)
         self.set_transform_event("hover")
+        
         run(self.hovered)
         
         
     def unfocus(self, default=False):
         super(Bar, self).unfocus()
         self.set_transform_event("idle")
+
+        run_unhovered(self.hovered)
         run(self.unhovered)
     
     def event(self, ev, x, y, st):
@@ -1411,6 +1434,7 @@ class MouseArea(renpy.display.core.Displayable):
         elif not is_hovered and self.is_hovered:
             self.is_hovered = False
 
+            run_unhovered(self.hovered)
             run(self.unhovered)
 
 

@@ -75,7 +75,8 @@ Finally, showing an image without providing a transform or ATL block
 will now continue the previous transform that an image with that tag
 was using. Previously, it caused those transforms to stop.
 
-
+Error Handling
+--------------
 
 Other
 -----
@@ -104,7 +105,8 @@ directories,  rather than the root of the filesystem.
 The new :propref:`box_wrap` style property allows hboxes and vboxes to 
 automatically when they reach the edge of their enclosing area.
 
-
+Actions now can have an :method:`Action.unhovered` method. This method is
+called when an action supplied as a `hovered` parameter loses focus.
 
 Ren'Py 6.12.0
 =============
