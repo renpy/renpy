@@ -267,9 +267,8 @@ class Node(object):
     def execute(self):
         """
         Causes this node to execute, and any action it entails to be
-        performed. The node is then responsible for returning the node
-        that should be executed after this one, or None to end the
-        program or init block.
+        performed. The node should call next_node with the node to 
+        be executed after this one.
         """
 
         assert False, "Node subclass forgot to define execute."
@@ -1351,6 +1350,7 @@ class If(Node):
         for condition, block in self.entries:
             if renpy.python.py_eval(condition):
                 next_node(block[0])
+                return
 
     def predict(self):
 

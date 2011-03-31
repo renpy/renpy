@@ -381,8 +381,7 @@ def report_exception(e, editor=True):
     Returns a two-unicode tuple, with the first item being 
     a simple message, and the second being a full traceback.
     """
-    
-    
+        
     import renpy
     import codecs
     import traceback
@@ -414,8 +413,8 @@ def report_exception(e, editor=True):
     print >>full, type.__name__ + ":", 
     print >>full, safe_utf8(e)
     
-
     # Write to stdout/stderr.
+    sys.stdout.write("\n")
     sys.stdout.write(full.getvalue())
     sys.stdout.write("\n")
     sys.stdout.write(simple.getvalue())

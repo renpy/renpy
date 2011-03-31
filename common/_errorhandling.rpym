@@ -249,8 +249,6 @@ screen _exception:
     modal True
     zorder 1001
     
-    default ignore_action = None
-
     frame:
         style_group ""
         xfill True

@@ -77,12 +77,19 @@ def report_exception(short, full):
     else:
         rollback_action = None
         reload_action = renpy.exports.utter_restart
+
+    if renpy.game.context(-1).next_node is not None:
+        ignore_action = renpy.ui.returns(False)
+    else:
+        ignore_action = None
      
     renpy.game.invoke_in_new_context(
         call_exception_screen, 
         short=short, full=full, 
         rollback_action=rollback_action,
-        reload_action=reload_action)
+        reload_action=reload_action,
+        ignore_action=ignore_action,
+        )
 
 ##############################################################################
 # Non-initialized approach.
