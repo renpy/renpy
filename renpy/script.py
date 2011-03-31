@@ -103,7 +103,7 @@ class Script(object):
         
         # A key that's used to lock the script file, should that
         # prove necessary.
-        self.key = renpy.game.options.lock
+        self.key = renpy.game.options.lock #@UndefinedVariable
 
         if self.key is None:
             if os.path.exists(renpy.config.renpy_base + "/lock.txt"):

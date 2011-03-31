@@ -9,6 +9,27 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.12.1:
+
+6.12.1
+------
+
+Image names have changed from being static names to being
+attribute-based. This can lead to image names that were previously
+distinct becoming ambiguous. To disable attribute-based image names,
+set :var:`config.image_attributes` to False.
+
+Showing an image without providing a transform or ATL block will now
+continue the previous transform that the image was using. This means
+that a moving image may continue moving once it has changed. To revert
+to the old behavior, set :var:`config.keep_running_transform` to False.
+
+The `image` argument to :func:`Character` has changed meaning. While
+the old meaning was unsupported in the screens-based environment, it
+can be restored for compatibility purposes by setting
+:var:`new_character_image_argument` to False.
+
+
 .. _incompatible-6.12.0:
 
 6.12.0

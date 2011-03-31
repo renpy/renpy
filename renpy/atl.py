@@ -87,6 +87,8 @@ PROPERTIES = {
         "xoffset" : int,
         "yoffset" : int,
         "offset" : (int, int),
+        "xcenter" : position,
+        "ycenter" : position,
         }
 
 

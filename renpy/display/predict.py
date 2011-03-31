@@ -21,8 +21,7 @@
 
 # This file contains the routines that manage image prediction.
 
-import traceback
-import renpy
+import renpy.display
 
 # Called to indicate an image should be loaded or preloaded. This is
 # a function that takes an image manipulator, set by reset and predict,

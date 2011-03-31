@@ -50,6 +50,7 @@ Customizing Ren'Py
    screens
    screen_actions
    screen_special
+   side_image
    config
 
 Advanced Displayables

@@ -4,7 +4,6 @@ import os
 import os.path
 import platform
 import sys
-import subprocess
 
 # These control the level of optimization versus debugging.
 extra_compile_args = [ "-O3", "-Wno-unused-function" ]
@@ -128,6 +127,7 @@ def cython(fn):
         print pyx, "is not newer than", c
         return
 
+    import subprocess
     subprocess.call(["cython", pyx])
     
     
@@ -283,6 +283,7 @@ display("glrtt_copy", glew_libs)
 display("glrtt_fbo", glew_libs)
 
 sys.path.append('..')
+
 import renpy
 
 distutils.core.setup(

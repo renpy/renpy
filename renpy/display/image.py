@@ -24,9 +24,31 @@
 # of the stuff thar uses images remaining.
 
 import renpy
-from renpy.display.render import render, Render, Matrix2D
+import renpy.display
+from renpy.display.render import render, Render
 
-Image = renpy.display.im.image
+import collections
+
+# A map from image name to the displayable object corresponding to that
+# image.
+images = { }
+    
+# A map from image tag to lists of possible attributes for images with that
+# tag.
+image_attributes = collections.defaultdict(list)
+
+def register_image(name, d):
+    """
+    Registers the existence of an image with `name`, and that the image
+    used displayable d.
+    """
+
+    tag = name[0]
+    rest = name[1:]
+
+    images[name] = d
+    image_attributes[tag].append(rest)
+
 
 def wrap_render(child, w, h, st, at):
     rend = render(child, w, h, st, at)
@@ -88,8 +110,8 @@ class ImageReference(renpy.display.core.Displayable):
         # Scan through, searching for an image (defined with an
         # input statement) that is a prefix of the given name.
         while name:
-            if name in renpy.exports.images:
-                target = renpy.exports.images[name]
+            if name in images:
+                target = images[name]
 
                 try:
                     self.target = target.parameterize(name, parameters)
@@ -164,392 +186,205 @@ class ImageReference(renpy.display.core.Displayable):
             self.find_target()
 
         return [ self.target ]
+
+
     
-    
-class Solid(renpy.display.core.Displayable):
+class ShownImageInfo(renpy.object.Object):
     """
-    :doc: disp_imagelike
-
-    A displayable that fills the area its assigned with `color`.
-
-    ::
-    
-        image white = Solid("#fff")
-    
+    This class keeps track of which images are being shown right now,
+    and what the attributes of those images are. (It's used for a similar
+    purpose during prediction, regarding the state in the future.)
     """
-
-    def __init__(self, color, **properties):
-
-        super(Solid, self).__init__(**properties)
-
-        if color is not None:
-            self.color = renpy.easy.color(color)
-        else:
-            self.color = None
-
-    def visit(self):
-        if self.color:
-            return [ renpy.display.im.SolidImage(self.color, 4, 4) ]
-        else:
-            return [ ]
-        
-    def render(self, width, height, st, at):
-
-        color = self.color or self.style.color
-        
-        rv = Render(width, height)
-
-        if color is None or width <= 0 or height <= 0:
-            return rv
-
-        SIZE = 10
-        
-        si = renpy.display.im.SolidImage(color, SIZE, SIZE)
-        sr = render(si, SIZE, SIZE, st, at)
-
-        rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
-        rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
-        rv.blit(sr, (0, 0))
-
-        return rv
-        
-class Frame(renpy.display.core.Displayable):
-    """
-    :doc: disp_imagelike
-    :args: (image, xborder, yborder, tile=False, **properties)
     
-    A displayable that resizes an image to fill the available area,
-    while preserving the width and height of its borders.  is often
-    used as the background of a window or button.
+    __version__ = 2
 
-    .. figure:: frame_example.png
-
-        Using a frame to resize an image to double its size.
-
-    `image`
-        An image manipulator that will be resized by this frame.
-
-    `xborder`
-        The width of the border on the left and right sides of the 
-        image.
-
-    `yborder`
-        The height of the border on the top and bottom sides of the
-        image.
-
-    `tile`
-        If true, tiling is used to resize sections of the image,
-        rather than scaling.
-
-    ::
-
-         # Resize the background of the text window if it's too small.         
-         init python:
-             style.window.background = Frame("frame.png", 10, 10)
+    def __init__(self, old=None):
+        """
+        Creates a new object. If `old` is given, copies the default state
+        from old, otherwise initializes the object to a default state.
         """
         
-    __version__ = 1
+        if old is None:
 
-    def __init__(self, image, xborder, yborder, bilinear=True, tile=False, **properties):
-        super(Frame, self).__init__(**properties)
+            # A map from (layer, tag) -> tuple of attributes
+            # This doesn't necessarily correspond to something that is
+            # currently showing, as we can remember the state of a tag
+            # for use in SideImage.
+            self.attributes = { }
 
-        self.image = renpy.easy.displayable(image)
-        self.xborder = xborder
-        self.yborder = yborder
-        self.tile = tile
+            # A set of (layer, tag) pairs that are being shown on the
+            # screen right now.
+            self.shown = set()
 
-    def render(self, width, height, st, at):
-
-        crend = render(self.image, width, height, st, at)
-
-        if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
-            return self.sw_render(crend, width, height)
-
-        def draw(x0, x1, y0, y1):
-
-            # Compute the coordinates of the left, right, top, and
-            # bottom sides of the region, for both the source and
-            # destination surfaces.
-
-            # left side.
-            if x0 >= 0:
-                dx0 = x0
-                sx0 = x0
-            else:
-                dx0 = dw + x0
-                sx0 = sw + x0
-
-            # right side.
-            if x1 > 0:
-                dx1 = x1
-                sx1 = x1
-            else:
-                dx1 = dw + x1
-                sx1 = sw + x1
-
-            # top side.
-            if y0 >= 0:
-                dy0 = y0
-                sy0 = y0
-            else:
-                dy0 = dh + y0
-                sy0 = sh + y0
-        
-            # bottom side
-            if y1 > 0:
-                dy1 = y1
-                sy1 = y1
-            else:
-                dy1 = dh + y1
-                sy1 = sh + y1
-
-            # Quick exit.
-            if sx0 == sx1 or sy0 == sy1:
-                return
-            
-            # Compute sizes.
-            csw = sx1 - sx0
-            csh = sy1 - sy0
-            cdw = dx1 - dx0
-            cdh = dy1 - dy0
-
-            if csw <= 0 or csh <= 0 or cdh <= 0 or cdw <= 0:
-                return
-            
-            # Get a subsurface.
-            cr = crend.subsurface((sx0, sy0, csw, csh))
-                        
-            # Scale or tile if we have to.
-            if csw != cdw or csh != cdh:
-
-                if self.tile:
-                    newcr = Render(cdw, cdh)
-                    newcr.clipping = True
-                    
-                    for x in xrange(0, cdw, csw):
-                        for y in xrange(0, cdh, csh):
-                            newcr.blit(cr, (x, y))
-
-                    cr = newcr
-                    
-                else:
-                    
-                    newcr = Render(cdw, cdh)
-                    newcr.forward = Matrix2D(1.0 * csw / cdw, 0, 0, 1.0 * csh / cdh)
-                    newcr.reverse = Matrix2D(1.0 * cdw / csw, 0, 0, 1.0 * cdh / csh)
-                    newcr.blit(cr, (0, 0))
-
-                    cr = newcr
-
-            # Blit.
-            rv.blit(cr, (dx0, dy0))
-            return
-        
-
-        sw, sh = crend.get_size()
-        dw = int(width)
-        dh = int(height)
-        
-        xb = min(self.xborder, sw / 2 - 1, width / 2 - 1)
-        yb = min(self.yborder, sh / 2 - 1, height / 2 - 1) 
-        
-        rv = Render(dw, dh)
-
-        self.draw_pattern(draw, xb, yb)
-        
-        return rv
-
-    def draw_pattern(self, draw, xb, yb):
-        # Top row.
-        if yb:
-
-            if xb:
-                draw(0, xb, 0, yb)
-
-            draw(xb, -xb, 0, yb)
-
-            if xb:
-                draw(-xb, 0, 0, yb)
-
-        # Middle row.
-        if xb:
-            draw(0, xb, yb, -yb)
-
-        draw(xb, -xb, yb, -yb)
-
-        if xb:
-            draw(-xb, 0, yb, -yb)
-
-        # Bottom row.
-        if yb:
-            if xb:
-                draw(0, xb, -yb, 0)
-
-            draw(xb, -xb, -yb, 0)
-
-            if xb:
-                draw(-xb, 0, -yb, 0)
-
+        else:
+            self.attributes = old.attributes.copy()
+            self.shown = old.shown.copy()
         
     
-    def sw_render(self, crend, width, height):
+    def after_upgrade(self, version):
+        if version < 2:
 
-        source = crend.render_to_texture(True)
-
-        dw = int(width)
-        dh = int(height)
-
-        dest = renpy.display.pgrender.surface((dw, dh), True)
-        rv = dest
-
-        dest = renpy.display.scale.real(dest)
-        source = renpy.display.scale.real(source)
-        
-        xb = renpy.display.scale.scale(self.xborder)
-        yb = renpy.display.scale.scale(self.yborder)
-
-        sw, sh = source.get_size()
-        dw, dh = dest.get_size()
-
-        xb = min(xb, sw / 2 - 1, dw / 2 - 1)
-        yb = min(yb, sh / 2 - 1, dh / 2 - 1) 
-
-        def draw(x0, x1, y0, y1):
-
-            # Compute the coordinates of the left, right, top, and
-            # bottom sides of the region, for both the source and
-            # destination surfaces.
-
-            # left side.
-            if x0 >= 0:
-                dx0 = x0
-                sx0 = x0
-            else:
-                dx0 = dw + x0
-                sx0 = sw + x0
-        
-            # right side.
-            if x1 > 0:
-                dx1 = x1
-                sx1 = x1
-            else:
-                dx1 = dw + x1
-                sx1 = sw + x1
-
-            # top side.
-            if y0 >= 0:
-                dy0 = y0
-                sy0 = y0
-            else:
-                dy0 = dh + y0
-                sy0 = sh + y0
-        
-            # bottom side
-            if y1 > 0:
-                dy1 = y1
-                sy1 = y1
-            else:
-                dy1 = dh + y1
-
-                sy1 = sh + y1
-
-            # Quick exit.
-            if sx0 == sx1 or sy0 == sy1 or dx1 <= dx0 or dy1 <= dy0:
-                return
-
-            # Compute sizes.
-            srcsize = (sx1 - sx0, sy1 - sy0)
-            dstsize = (int(dx1 - dx0), int(dy1 - dy0))
-
+            self.attributes = { }
+            self.shown = { }
             
-            
-            # Get a subsurface.
-            surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
-
-            # Scale or tile if we have to.
-            if dstsize != srcsize:
-                if self.tile:
-                    tilew, tileh = srcsize
-                    dstw, dsth = dstsize
-
-                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize, surf)
-
-                    for y in range(0, dsth, tileh):
-                        for x in range(0, dstw, tilew):
-                            surf2.blit(surf, (x, y))
-
-                    surf = surf2 
-
-                else:
-                    surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
-                    surf = surf2
-                        
-            # Blit.
-            dest.blit(surf, (dx0, dy0))
-
-        self.draw_pattern(draw, xb, yb)
-
-        rrv = renpy.display.render.Render(width, height)
-        rrv.blit(rv, (0, 0))
-        rrv.depends_on(crend)
-                      
-        # And, finish up.
-        return rrv
-
-
-    
-    def visit(self):
-        return [ self.image ]
-
-
-class ImageButton(renpy.display.behavior.Button):
-    """
-    Used to implement the guts of an image button.
-    """
-
-    def __init__(self,
-                 idle_image,
-                 hover_image,
-                 insensitive_image = None,
-                 activate_image = None,
-                 selected_idle_image = None,
-                 selected_hover_image = None,
-                 selected_insensitive_image = None,
-                 selected_activate_image = None,                 
-                 style='image_button',
-                 clicked=None,
-                 hovered=None,
-                 **properties):
-
-        insensitive_image = insensitive_image or idle_image
-        activate_image = activate_image or hover_image
-
-        selected_idle_image = selected_idle_image or idle_image
-        selected_hover_image = selected_hover_image or hover_image
-        selected_insensitive_image = selected_insensitive_image or insensitive_image
-        selected_activate_image = selected_activate_image or activate_image
-
-        self.state_children = dict(
-            idle_ = renpy.easy.displayable(idle_image),
-            hover_ = renpy.easy.displayable(hover_image),
-            insensitive_ = renpy.easy.displayable(insensitive_image),
-            activate_ = renpy.easy.displayable(activate_image),
-
-            selected_idle_ = renpy.easy.displayable(selected_idle_image),
-            selected_hover_ = renpy.easy.displayable(selected_hover_image),
-            selected_insensitive_ = renpy.easy.displayable(selected_insensitive_image),
-            selected_activate_ = renpy.easy.displayable(selected_activate_image),
-            )
-
-        super(ImageButton, self).__init__(renpy.display.layout.Null(),
-                                          style=style,
-                                          clicked=clicked,
-                                          hovered=hovered,
-                                          **properties)
+            for layer in self.images:
+                for tag in layer:
+                    self.attributes[layer, tag] = layer[tag][1:]
+                    self.shown.add((layer, tag))
+               
+    def get_attributes(self, layer, tag):
+        """
+        Get the attributes associated the image with tag on the given 
+        layer.
+        """
         
-    def visit(self):
-        return self.state_children.values()
+        return self.attributes.get((layer, tag), ())
 
-    def get_child(self):
-        return self.style.child or self.state_children[self.style.prefix]
+                    
+    def showing(self, layer, name):
+        """
+        Returns true if name is the prefix of an image that is showing
+        on layer, or false otherwise.
+        """
+
+        
+        tag = name[0]
+        rest = name[1:]
+
+        if (layer, tag) not in self.shown:
+            return None
+        
+        shown = self.attributes[layer, tag]
+        
+        if len(shown) < len(rest):
+            return False
+
+        for a, b in zip(name, rest):
+            if a != b:
+                return False
+
+        return True
+
+    def predict_scene(self, layer):
+        """
+        Predicts the scene statement being called on layer.
+        """
+        
+        for l, t in self.attributes.keys():
+            if l == layer:
+                del self.attributes[l, t]
+
+        self.shown = set((l, t) for l, t in self.shown if l != layer)
+
+    def predict_show(self, layer, name):
+        """
+        Predicts name being shown on layer.
+        """
+
+        tag = name[0]
+        rest = name[1:]
+
+        self.attributes[layer, tag] = rest
+        self.shown.add((layer, tag))
+
+    def predict_hide(self, layer, name):
+        tag = name[0]
+
+        if (layer, tag) in self.attributes:
+            del self.attributes[layer, tag]
+
+        self.shown.discard((layer, tag))
+
+
+    def apply_attributes(self, layer, tag, name):
+        """
+        Given a layer, tag, and an image name (with attributes),
+        returns the canonical name of an image, if one exists. Raises
+        an exception if it's ambiguious, and returns None if an image
+        with that name couldn't be found.
+        """
+
+        # If the name matches one that exactly exists, return it.
+        if name in images:
+            return name
+        
+        nametag = name[0]
+        
+        # The set of attributes a matching image must have.
+        required = set(name[1:])
+
+        # The set of attributes a matching image may have.
+        optional = set(self.attributes.get((layer, tag), [ ]))
+
+        # Deal with banned attributes..
+        for i in name[1:]:
+            if i[0] == "-":
+                optional.discard(i[1:])
+                required.discard(i)
+
+        return self.choose_image(nametag, required, optional, name)
+
+    def choose_image(self, tag, required, optional, exception_name):
+        """
+        Choose a single unique image for 
+        
+        """
+
+        # The longest length of an image that matches.
+        max_len = 0
+
+        # The list of matching images.
+        matches = None
+        
+        for attrs in image_attributes[tag]:
+
+            num_required = 0
+
+            for i in attrs:
+                if i in required:
+                    num_required += 1
+                    continue
+
+                elif i not in optional:
+                    break
+
+            else:
+                
+                # We don't have any not-found attributes. But we might not
+                # have all of the attributes.
+                
+                if num_required != len(required):
+                    continue
+
+                len_attrs = len(attrs)
+                
+                if len_attrs < max_len:
+                    continue
+
+                if len_attrs > max_len:
+                    max_len = len_attrs
+                    matches = [ ]
+
+                matches.append((tag, ) + attrs)
+
+        if matches is None:
+            return None
+
+        if len(matches) == 1:
+            return matches[0]
+
+        if exception_name:
+            raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
+        else:
+            return None
+
+renpy.display.core.ImagePredictInfo = ShownImageInfo
+
+                    
+# Functions that have moved from this module to other modules,
+# that live here for the purpose of backward-compatibility.
+Image = renpy.display.im.image
+Solid = renpy.display.imagelike.Solid
+Frame = renpy.display.imagelike.Frame
+ImageButton = renpy.display.behavior.ImageButton
 

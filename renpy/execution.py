@@ -28,21 +28,10 @@ import renpy
 class Delete(object):
     pass
 
-
 class PredictInfo(renpy.object.Object):
     """
-    This stores information involved in prediction.
+    Not used anymore, but needed for backwards compatibility.
     """
-
-    def __init__(self, pi=None):
-
-        super(PredictInfo, self).__init__()
-        
-        if pi:
-            self.images = renpy.display.core.ImagePredictInfo(pi.images)
-        else:
-            self.images = renpy.display.core.ImagePredictInfo(None)
-    
 
 class Context(renpy.object.Object):
     """
@@ -67,11 +56,10 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 5
+    __version__ = 6
 
     def after_upgrade(self, version):
         if version < 1:
-            self.predict_info = PredictInfo()
             self.scene_lists.image_predict_info = self.predict_info.images
 
         if version < 2:
@@ -87,6 +75,9 @@ class Context(renpy.object.Object):
         if version < 5:
             self.modes = renpy.python.RevertableList([ "start" ])
             self.use_modes = True
+
+        if version < 6:
+            self.images = self.predict_info.images
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -138,13 +129,14 @@ class Context(renpy.object.Object):
 
             for k, v in context.music.iteritems():
                 self.music[k] = v.copy()
-                
-            self.predict_info = PredictInfo(context.predict_info)
+
+            self.images = renpy.display.image.ShownImageInfo(context.images)
+
         else:
             oldsl = None
-            self.predict_info = PredictInfo()
+            self.images = renpy.display.image.ShownImageInfo(None)
 
-        self.scene_lists = renpy.display.core.SceneLists(oldsl, self.predict_info.images)
+        self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
         
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay" ])
         self.dynamic_stack.append({ })
@@ -342,9 +334,9 @@ class Context(renpy.object.Object):
         if not self.current:
             return
 
-        old_predict_info = self.predict_info
+        old_images = self.images
         
-        nodes = [ (renpy.game.script.lookup(self.current), self.predict_info) ]
+        nodes = [ (renpy.game.script.lookup(self.current), self.images) ]
         node_set = set()
         
         for i in range(0, renpy.config.predict_statements):
@@ -352,8 +344,9 @@ class Context(renpy.object.Object):
             if i >= len(nodes):
                 break
 
-            node, predict_info = nodes[i]
-            self.predict_info = PredictInfo(predict_info)
+            node, images = nodes[i]
+
+            self.images = renpy.display.image.ShownImageInfo(images)
             
             # Ignore exceptions in prediction, so long as
             # prediction is not needed.
@@ -364,7 +357,7 @@ class Context(renpy.object.Object):
                         continue
 
                     if n not in node_set:
-                        nodes.append((n, self.predict_info))
+                        nodes.append((n, self.images))
                         node_set.add(n)
             except:
 
@@ -376,8 +369,8 @@ class Context(renpy.object.Object):
                     print "While predicting images."
 
                 # We accept that sometimes prediction won't work.
-                    
-        self.predict_info = old_predict_info
+
+        self.images = old_images
 
             
     def seen_current(self, ever):

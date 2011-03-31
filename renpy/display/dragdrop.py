@@ -22,7 +22,7 @@
 # TODO: Use overlap (rather than simple pointer location) to determine
 # drag and drop.
 
-import renpy
+import renpy.display
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run
@@ -50,7 +50,8 @@ def default_drag_joined(drag):
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
     :doc: drag_drop class
-
+    :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, **properties)
+  
     A displayable that represents an object that can be dragged around
     its enclosing area. A Drag can also represent an area that
     other Drags can be dropped on.

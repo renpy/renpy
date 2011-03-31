@@ -3,11 +3,11 @@
 A="$RENPY_ANDROID"
 
 CFLAGS="$CFLAGS -DANDROID"
-CFLAGS="$CFLAGS -I$A/android-sdl/sdl/sdl-1.2/include"
-CFLAGS="$CFLAGS -I$A/android-sdl/jni/png"
-CFLAGS="$CFLAGS -I$A/android-sdl/jni/freetype/include"
+CFLAGS="$CFLAGS -I$A/sdl/sdl-1.2/include"
+CFLAGS="$CFLAGS -I$A/jni/png"
+CFLAGS="$CFLAGS -I$A/jni/freetype/include"
 
-LDFLAGS="$LDFLAGS -L$A/android-sdl/libs/armeabi -L$A/android-sdl/obj/local/armeabi"
+LDFLAGS="$LDFLAGS -L$A/libs/armeabi -L$A/obj/local/armeabi"
 
 export CFLAGS
 export LDFLAGS

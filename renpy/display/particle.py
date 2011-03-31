@@ -23,7 +23,7 @@
 
 from renpy.display.render import render, BLIT
 
-import renpy
+import renpy.display
 import random
 
 
