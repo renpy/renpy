@@ -247,19 +247,18 @@ class ShownImageInfo(renpy.object.Object):
         on layer, or false otherwise.
         """
 
-        
         tag = name[0]
         rest = name[1:]
 
         if (layer, tag) not in self.shown:
             return None
-        
+       
         shown = self.attributes[layer, tag]
         
         if len(shown) < len(rest):
             return False
 
-        for a, b in zip(name, rest):
+        for a, b in zip(shown, rest):
             if a != b:
                 return False
 
