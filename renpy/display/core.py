@@ -1095,6 +1095,10 @@ class Interface(object):
         # Should we reset the display?
         self.display_reset = False
         
+        # The last size we were resized to. This lets us debounce the 
+        # VIDEORESIZE event.
+        self.last_resize = None
+        
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
 
@@ -1470,6 +1474,7 @@ class Interface(object):
             return None
 
         self.pushed_event = ev
+
         return ev
 
     def event_poll(self):
@@ -1485,6 +1490,7 @@ class Interface(object):
             rv = pygame.event.poll()
 
         self.last_event = rv
+
         return rv
             
 
@@ -1515,6 +1521,7 @@ class Interface(object):
             cpu_idle.clear()
 
         self.last_event = ev
+
         return ev
 
     
@@ -2146,7 +2153,9 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                        self.set_mode((ev.w, ev.h))
+                        if self.last_resize != ev.size:
+                            self.last_resize = ev.size
+                            self.set_mode((ev.w, ev.h))
 
                         continue
 
