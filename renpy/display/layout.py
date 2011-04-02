@@ -581,6 +581,9 @@ class MultiBox(Container):
                 xperchild = 0
                 yperchild = 0
             
+            maxxout = maxx
+            maxyout = maxy
+            
             for i, (child, x, y, surf) in enumerate(line):
                 sw, sh = surf.get_size()
                 sw = max(line_width, sw)
@@ -591,8 +594,8 @@ class MultiBox(Container):
                 
                 placements.append((child, x, y, sw, sh, surf))
             
-            maxxout = max(maxx, x + sw)
-            maxyout = max(maxy, y + sh)
+                maxxout = max(maxxout, x + sw)
+                maxyout = max(maxyout, y + sh)
                 
             return maxxout, maxyout
             
