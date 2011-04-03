@@ -146,9 +146,9 @@ class Cache(object):
             self.added.clear()
             
         if renpy.config.debug_image_cache:
-            renpy.log.debug("IC ----")
+            renpy.display.ic_log.write("----")
             filename, line = renpy.exports.get_filename_line()
-            renpy.log.debug("IC %s %d", filename, line)
+            renpy.display.ic_log.write("%s %d", filename, line)
             
     # The preload thread can deal with this update, so we don't need
     # to lock things. 
@@ -209,9 +209,9 @@ class Cache(object):
             if renpy.config.debug_image_cache:
 
                 if predict:
-                    renpy.log.debug("IC Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
+                    renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
                 else:
-                    renpy.log.debug("IC Total Miss %r", ce.what)
+                    renpy.display.ic_log.write("Total Miss %r", ce.what)
                     
             renpy.display.draw.load_texture(ce.surf)
 
@@ -242,7 +242,7 @@ class Cache(object):
         del self.cache[ce.what]
 
         if renpy.config.debug_image_cache:
-            renpy.log.debug("IC Removed %r", ce.what)
+            renpy.display.ic_log.write("Removed %r", ce.what)
 
     def cleanout(self):
         """
@@ -297,7 +297,7 @@ class Cache(object):
                 in_cache = False
 
         if in_cache and renpy.config.debug_image_cache:
-            renpy.log.debug("IC Kept %r", im)
+            renpy.display.ic_log.write("Kept %r", im)
 
     def preload_thread_main(self):
 
@@ -315,7 +315,7 @@ class Cache(object):
 
                     if renpy.config.debug_image_cache:
                         for i in self.preloads:
-                            renpy.log.debug("IC Overfull %r", i)
+                            renpy.display.ic_log.write("Overfull %r", i)
 
                     self.preloads = [ ]
                     break

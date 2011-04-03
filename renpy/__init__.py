@@ -80,6 +80,8 @@ def import_cython():
     
     
 def import_all():
+    import renpy.log #@UnresolvedImport
+    
     import renpy.display #@UnresolvedImport
 
     # Should probably be early, as we will add it as a base to serialized things.
@@ -173,8 +175,7 @@ def import_all():
 def reload_all():
     
     import renpy #@UnresolvedImport
-    renpy.log.info("Reloading.")
-    
+
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
         

@@ -1220,13 +1220,13 @@ class Interface(object):
             import renpy.display.gldraw as gldraw #@UnresolvedImport
             draws["gl"] = gldraw.GLDraw
         except:
-            renpy.log.info("Couldn't import gl renderer.")
+            renpy.display.log.write("Couldn't import gl renderer.")
 
         try:
             import renpy.display.swdraw as swdraw
             draws["sw"] = swdraw.SWDraw
         except:
-            renpy.log.info("Couldn't import sw renderer.")
+            renpy.display.log.write("Couldn't import sw renderer.")
             
         
         default = renpy.display.prefer_renderers        

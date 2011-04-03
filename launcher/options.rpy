@@ -103,6 +103,9 @@ init -1 python hide:
     # Disable opengl.
     config.gl_enable = False
     
+    # Disable logging.
+    config.log_enable = False
+    
 python early:
     config.save_directory = "launcher-2"
 

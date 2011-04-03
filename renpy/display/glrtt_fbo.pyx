@@ -40,7 +40,7 @@ class FboRtt(Rtt):
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &i)
         self.size_limit = i
 
-        renpy.log.info("FBO Maximum Texture Size: %d", i)
+        renpy.display.log.write("FBO Maximum Texture Size: %d", i)
         
     def deinit(self):
         """

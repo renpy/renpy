@@ -182,7 +182,7 @@ cdef class GLDraw:
         """
 
         if not renpy.config.gl_enable:
-            renpy.log.info("GL Disabled.")
+            renpy.display.log.write("GL Disabled.")
             return False
         
         if self.did_init:
@@ -204,7 +204,7 @@ cdef class GLDraw:
             
             self.old_fullscreen = fullscreen
 
-        renpy.log.info("")
+        renpy.display.log.write("")
         
         self.virtual_size = virtual_size
 
@@ -242,21 +242,21 @@ cdef class GLDraw:
         
         try:
             if fullscreen:
-                renpy.log.info("Fullscreen mode.")
+                renpy.display.log.write("Fullscreen mode.")
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
             else:
-                renpy.log.info("Windowed mode.")
+                renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)
 
         except pygame.error, e:
-            renpy.log.info("Could not get pygame screen: %r", e)
+            renpy.display.log.write("Could not get pygame screen: %r", e)
 
             return False
         
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
 
-        renpy.log.info("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
         pwidth = max(1, pwidth)
         pheight = max(1, pheight)
@@ -347,13 +347,13 @@ cdef class GLDraw:
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
         
-        renpy.log.info("Deallocating textures.")
+        renpy.display.log.write("Deallocating textures.")
         gltexture.dealloc_textures()
-        renpy.log.info("Done deallocating textures.")
+        renpy.display.log.write("Done deallocating textures.")
         
-        renpy.log.info("About to quit GL.")
+        renpy.display.log.write("About to quit GL.")
         pygame.display.quit()
-        renpy.log.info("Finished quit GL.")
+        renpy.display.log.write("Finished quit GL.")
         
     def init(self):
         """
@@ -365,21 +365,21 @@ cdef class GLDraw:
         err = glewInit()
 
         if err != GLEW_OK:
-            renpy.log.info("Glew init failed: %s" % <char *> glewGetErrorString(err))
+            renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
             return False
             
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
         version = <char *> glGetString(GL_VERSION)
 
-        renpy.log.info("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
-        renpy.log.info("Renderer: %r", renderer)
-        renpy.log.info("Version: %r", version)
-        renpy.log.info("Display Info: %s", self.display_info)
+        renpy.display.log.write("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
+        renpy.display.log.write("Renderer: %r", renderer)
+        renpy.display.log.write("Version: %r", version)
+        renpy.display.log.write("Display Info: %s", self.display_info)
 
         for r, v in BLACKLIST:
             if renderer == r and version.startswith(v):
-                renpy.log.info("Blacklisted renderer/version.")
+                renpy.display.log.write("Blacklisted renderer/version.")
                 return False
 
         if version.startswith("OpenGL ES"):
@@ -391,10 +391,10 @@ cdef class GLDraw:
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))
 
-        renpy.log.info("Extensions:")
+        renpy.display.log.write("Extensions:")
 
         for i in sorted(extensions):
-            renpy.log.info("    %s", i)
+            renpy.display.log.write("    %s", i)
         
         def use_subsystem(module, envvar, envval, *req_ext):
             """
@@ -426,13 +426,13 @@ cdef class GLDraw:
         cdef GLint texture_units = 0
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &texture_units)
 
-        renpy.log.info("Number of texture units: %d", texture_units)
+        renpy.display.log.write("Number of texture units: %d", texture_units)
 
         # Count the number of clip planes.
         cdef GLint clip_planes = 0
         
         glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
-        renpy.log.info("Number of clipping planes: %d", clip_planes)
+        renpy.display.log.write("Number of clipping planes: %d", clip_planes)
 
 
         # Pick a texture environment subsystem.
@@ -445,12 +445,12 @@ cdef class GLDraw:
             "GL_ARB_fragment_shader"):
 
             try:
-                renpy.log.info("Using shader environment.")
+                renpy.display.log.write("Using shader environment.")
                 self.environ = glenviron_shader.ShaderEnviron()
                 self.info["environ"] = "shader"
             except Exception, e:
-                renpy.log.info("Initializing shader environment failed:")
-                renpy.log.info(str(e))
+                renpy.display.log.write("Initializing shader environment failed:")
+                renpy.display.log.write(str(e))
                 
         if self.environ is None:
             
@@ -461,7 +461,7 @@ cdef class GLDraw:
                 "GL_ARB_texture_env_crossbar",
                 "GL_ARB_texture_env_combine"):
 
-                renpy.log.info("Using fixed-function environment (clause 1).")
+                renpy.display.log.write("Using fixed-function environment (clause 1).")
                 self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
 
@@ -471,7 +471,7 @@ cdef class GLDraw:
                 "fixed",
                 "GL_NV_texture_env_combine4"):
 
-                renpy.log.info("Using fixed-function environment (clause 2).")
+                renpy.display.log.write("Using fixed-function environment (clause 2).")
                 self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
                 
@@ -481,12 +481,12 @@ cdef class GLDraw:
                 "limited",
                 "RENPY_bogus_extension"):
 
-                renpy.log.info("Using limited environment.")
+                renpy.display.log.write("Using limited environment.")
                 self.environ = glenviron_limited.LimitedEnviron()
                 self.info["environ"] = "limited"
 
             else:
-                renpy.log.info("Can't find a workable environment.")
+                renpy.display.log.write("Can't find a workable environment.")
                 return False
 
 
@@ -496,13 +496,13 @@ cdef class GLDraw:
             "fbo",
             "GL_OES_framebuffer_object"):
 
-            renpy.log.info("Using FBO RTT.")
+            renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
 
         else:                        
             # Pick a Render-to-texture subsystem.        
-            renpy.log.info("Using copy RTT.")
+            renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
 

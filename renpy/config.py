@@ -482,6 +482,13 @@ image_attributes = True
 # Should we use the new version of the character image argument?
 new_character_image_argument = True
 
+# What is the name and version of this game?
+name = ""
+version = ""
+
+# Should we log?
+log_enable = True
+
 del renpy
 del os
 

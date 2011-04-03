@@ -100,12 +100,10 @@ report_error = None
 def bootstrap(renpy_base):
 
     global report_error
-    
     global renpy # W0602
 
     import renpy.log
-    renpy.log.init(renpy_base)
-    
+
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
     
     # If environment.txt exists, load it into the os.environ dictionary.
@@ -420,7 +418,12 @@ def report_exception(e, editor=True):
     sys.stdout.write(simple.getvalue())
 
     print >>full
-    print >>full, "Using", renpy.version
+    try:
+        print >>full, platform.platform()
+        print >>full, renpy.version
+        print >>full, renpy.config.name + renpy.config.version
+    except:
+        pass
 
     
     simple = simple.getvalue()
@@ -457,7 +460,10 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    renpy.log.info_exception()
+    try:
+        renpy.display.log.exception()
+    except:
+        pass
 
     return simple.decode("utf-8"), full.decode("utf-8")
 

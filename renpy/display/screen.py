@@ -467,7 +467,7 @@ def predict_screen(_screen_name, _widget_properties={}, **kwargs):
     name = _screen_name
 
     if renpy.config.debug_image_cache:
-        renpy.log.debug("IC Predict screen %s", name)
+        renpy.display.ic_log.write("Predict screen %s", name)
     
     if not isinstance(name, tuple):
         name = tuple(name.split())

@@ -22,69 +22,100 @@
 # This module handles the logging of messages to a file.
 
 import sys
-import os
-import time as _time
+import os.path
 import codecs
 import traceback
 import platform
+import time
 
 import renpy
 
 # The file events are logged to.
 log_file = None
 
-def init(renpy_base):
-    global log_file
-    global last_startup_time
+class LogFile(object):
+    """
+    This manages one of our logfiles.
+    """
+    
+    def __init__(self, name, append=False, developer=False):
+        """
+        `name`
+            The name of the logfile, without the .txt extension.
+        `append`
+            If true, we will append to the logfile. If false, we will truncate
+            it to an empty file the first time we write to it.
+        `developer`
+            If true, nothing happens if config.developer is not set to True.
+        """
+        
+        self.name = name
+        self.append = append
+        self.developer = developer
+        self.file = None
+        
+    def open(self):
 
+        if self.file:
+            return True
 
-    log_filename = os.environ.get("RENPY_LOG_FILE", os.path.join(renpy_base, "log.txt"))
+        if self.developer and not renpy.config.developer:
+            return False
+        
+        if not renpy.config.log_enable:
+            return False
 
-    if log_filename == "-":
-        log_file = sys.stdout
-    else:
         try:
-            log_file = codecs.open(log_filename, "w", "utf-8")
-        except:
-            log_file = None
+            base = os.environ.get("RENPY_LOG_BASE", renpy.config.renpy_base)
+            fn = os.path.join(base, self.name + ".txt")
+        
+            if self.append:
+                self.file = codecs.open(fn, "a", "utf-8")
+                print >>self.file
+                print >>self.file, "=" * 78
+                print >>self.file
+            else:
+                self.file = codecs.open(fn, "w", "utf-8")
 
-    info("%s", renpy.version)
-
-    try:
-        # platform.platform fails on android.
-        info("running on %s", platform.platform())
-    except:
-        pass
-    
-def info_exception():
-    if log_file is None:
-        return None
-
-    traceback.print_exc(None, log_file)
+            print >>self.file, time.ctime()                
+            print >>self.file, platform.platform()
+            print >>self.file, renpy.version #@UndefinedVariable
+            print >>self.file, renpy.config.name + " " + renpy.config.version
+            print >>self.file
             
-def info(msg, *args):
-    if log_file is None:
-        return
+            return True
 
-    log_file.write(msg % args + "\n")
+        except:
+            return False
+
+    def write(self, msg, *args):
+        """
+        Formats msg with args, and writes it to the logfile.
+        """
+
+        if self.open():
+            s = msg % args
+            self.file.write(s + "\n")
+            
+    def exception(self):
+        """
+        Writes the exception to the logfile.
+        """
+
+        if self.open():
+            traceback.print_exc(None, self.file)
+
+# A map from the log name to a log object.
+log_cache = { }
+
+def open(name, append=False, developer=False):
+    rv = log_cache.get(name, None)
     
-def debug_exception():
-    if renpy.config.developer:
-        info_exception()
+    if rv is None:
+        rv = LogFile(name, append=append, developer=developer)
+        log_cache[name] = rv
+        
+    return rv
 
-def debug(msg, *args):
-    if renpy.config.developer:
-        info(msg, *args)
-
-# The time at which time was last called.
-last_time = 0
-
-def time(event):
-    global last_time
-
-    now = _time.time()
-    length = now - last_time
-    last_time = now
     
-    info("%s took %.3f seconds.", event, length)
     

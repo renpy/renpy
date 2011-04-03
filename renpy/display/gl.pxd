@@ -1364,6 +1364,6 @@ cdef inline gl_check(where):
     cdef GLenum error
     error = glGetError()
     if error:
-        renpy.log.info("GL error 0x%X at %s", error, where)
+        renpy.display.log.write("GL error 0x%X at %s", error, where)
 
 
