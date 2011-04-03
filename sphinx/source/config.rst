@@ -47,6 +47,38 @@ Commonly Used
     filename relative to the base directory, that is opened in a web
     browser.
 
+.. var:: config.name = ""
+
+    This should be a string giving the name of the game. This is included 
+    as part of tracebacks and other log files, helping to identify the 
+    version of the game being used.
+
+.. var:: config.save_directory = "..."
+
+    This is used to generate the directory in which games and
+    persistent information are saved. The name generated depends on
+    the platform:
+
+    Windows
+        %APPDATA%/RenPy/`save_directory`
+    Mac OS X
+        ~/Library/RenPy/`save_directory`
+    Linux/Other:
+        ~/.renpy/`save_directory`
+
+   Setting this to None creates a "saves" directory underneath the
+   game directory. This is not recommended, as it prevents the game
+   from being shared between multiple users on a system. It can also
+   lead to problems when a game is installed as Administrator, but run
+   as a user.
+        
+   This must be set in a python early block, so that persistent
+   information can be loaded before init code is run.
+
+   The user may change the directory. Code that needs to know the save
+   directory should read :var:`config.savedir` instead of this
+   variable. 
+
 .. var:: config.screen_height = 600
 
     The height of the screen.
@@ -83,32 +115,12 @@ Commonly Used
     Ren'Py game. :var:`_window_subtitle` is appended to this to get
     the full title of the window.
 
-.. var:: config.save_directory = "..."
 
-    This is used to generate the directory in which games and
-    persistent information are saved. The name generated depends on
-    the platform:
+.. var:: config.version = ""
 
-    Windows
-        %APPDATA%/RenPy/`save_directory`
-    Mac OS X
-        ~/Library/RenPy/`save_directory`
-    Linux/Other:
-        ~/.renpy/`save_directory`
-
-   Setting this to None creates a "saves" directory underneath the
-   game directory. This is not recommended, as it prevents the game
-   from being shared between multiple users on a system. It can also
-   lead to problems when a game is installed as Administrator, but run
-   as a user.
-        
-   This must be set in a python early block, so that persistent
-   information can be loaded before init code is run.
-
-   The user may change the directory. Code that needs to know the save
-   directory should read :var:`config.savedir` instead of this
-   variable. 
-
+    This should be a string giving the version of the game. This is included 
+    as part of tracebacks and other log files, helping to identify the 
+    version of the game being used.
 
 Occasionally Used
 -----------------

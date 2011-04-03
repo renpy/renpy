@@ -25,6 +25,11 @@ init -1 python hide:
 
     config.window_title = u"The Question"
 
+    # These control the name and version of the game, that are reported
+    # with tracebacks and other debugging logs.
+    config.name = "The Question"
+    config.version = "1.0"
+
     #########################################
     # Layouts
     

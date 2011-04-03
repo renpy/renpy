@@ -25,6 +25,11 @@ init -1 python hide:
 
     config.window_title = u"A Ren'Py Game"
 
+    # These control the name and version of the game, that are reported
+    # with tracebacks and other debugging logs.
+    config.name = "A Ren'Py Game"
+    config.version = "0.0"
+
     #########################################
     # Themes
     

@@ -24,6 +24,7 @@ import os
 import os.path
 import sys
 import cStringIO
+import platform
 
 # Extra things used for distribution.
 def extra_imports():

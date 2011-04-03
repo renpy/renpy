@@ -25,6 +25,11 @@ init -1 python hide:
 
     config.window_title = u"The Ren'Py Tutorial Game"
 
+    # These control the name and version of the game, that are reported
+    # with tracebacks and other debugging logs.
+    config.name = "Ren'Py Tutorial"
+    config.version = "1.0"
+
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
