@@ -634,6 +634,8 @@ class Text(renpy.display.core.Displayable):
     
     __version__ = 3
 
+    reported_overflow = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.activated = None
@@ -1324,6 +1326,18 @@ class Text(renpy.display.core.Displayable):
         # minds{x,y} are negative (or 0), maxds{x,y} are positive (or 0).
             
         self.layout(width + mindsx - maxdsx, st)
+
+        if renpy.config.debug_text_overflow:
+            if self.laidout_width > width or self.laidout_height > height:
+                if not self.reported_overflow:
+                    self.reported_overflow = True
+                    filename, line = renpy.exports.get_filename_line()
+                    
+                    renpy.display.to_log.write("")
+                    renpy.display.to_log.write("File \"%s\", line %d, text overflow:", filename, line)
+                    renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, self.laidout_width, self.laidout_height)
+                    renpy.display.to_log.write("     Text: %r", self.text)\
+                    
             
         if self.slow and speed:
             start = self.laidout_start

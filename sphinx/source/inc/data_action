@@ -10,6 +10,11 @@
     `object` is the object, `field` is a string giving the name of the
     field to set, and `value` is the value to set it to.
 
+.. function:: SetScreenVariable(name, value)
+    
+    Causes the variable `name` associated with the current screen to 
+    be set to `value`.
+
 .. function:: SetVariable(variable, value)
     
     Causes `variable` to be set to `value`.
@@ -28,6 +33,15 @@
     
     Toggles `field` on `object`. Toggling means to invert the boolean
     value of that field when the action is performed.
+    
+    `true_value`
+        If not None, then this is the true value we use.
+    `false_value`
+        If not None, then this is the false value we use. 
+
+.. function:: ToggleScreenVariable(name, true_value=None, false_value=None)
+    
+    Toggles the value of the variable `name` in the current screen.
     
     `true_value`
         If not None, then this is the true value we use.

@@ -96,7 +96,7 @@
     Returns an im.matrix that alters the opacity of an image. An
     `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
 
-.. function:: im.matrix.saturation(level, desat=(0.21260000000000001, 0.71519999999999995, 0.0722))
+.. function:: im.matrix.saturation(level, desat=(0.2126, 0.7152, 0.0722))
     
     Returns an im.matrix that alters the saturation of an
     image. The alpha channel is untouched.

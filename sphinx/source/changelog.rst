@@ -105,8 +105,11 @@ directories,  rather than the root of the filesystem.
 The new :propref:`box_wrap` style property allows hboxes and vboxes to 
 automatically when they reach the edge of their enclosing area.
 
-Actions now can have an :method:`Action.unhovered` method. This method is
+Actions now can have an :func:`Action.unhovered` method. This method is
 called when an action supplied as a `hovered` parameter loses focus.
+
+Added :var:`config.debug_text_overflow`, which controls the logging of cases
+where text exceeds its allocated area.
 
 Ren'Py 6.12.0
 =============

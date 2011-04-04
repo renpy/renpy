@@ -189,6 +189,15 @@ Occasionally Used
     enabling this may prevent Ren'Py from functioning normally. This
     should always be False in a released game.
 
+.. var:: config.debug_text_overflow = False
+
+    When true, Ren'Py will log text overflows to text_overflow.txt. A text
+    overflow occurs when a :class:`Text` displayable renders to a size
+    larger than that allocated to it. By setting this to True and setting
+    the :prop:`xmaximum` and :prop:`ymaximum` style properties of the dialogue
+    window to the window size, this can be used to report cases where the 
+    dialogue is too large for its window.
+        
 .. var:: config.default_afm_time = None
 
     If not None, this sets the default auto-forward-mode timeout. If

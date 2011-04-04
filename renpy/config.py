@@ -489,6 +489,9 @@ version = ""
 # Should we log?
 log_enable = True
 
+# Should we log text overflows?
+debug_text_overflow = False
+
 del renpy
 del os
 

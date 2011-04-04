@@ -230,6 +230,9 @@ cdef class GLDraw:
             if not self.did_init:
                 pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
+        pwidth = int(pwidth)
+        pheight = int(pheight)
+
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
 
