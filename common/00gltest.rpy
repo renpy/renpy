@@ -7,6 +7,8 @@
 init -1024:
     screen _gl_test:
         frame:
+            style_group ""
+            
             xalign .5
             yalign .33
 

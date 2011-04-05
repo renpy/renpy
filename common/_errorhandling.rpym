@@ -128,6 +128,8 @@ init python:
     style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
     style._button_text.size = 16
     style._button_text.color = "#111"
+    style._button_text.selected_color = "#11f"
+    style._button_text.xalign = 0.5
     style._button_text.yoffset = 2
 
     # label
