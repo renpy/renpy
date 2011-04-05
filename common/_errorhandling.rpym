@@ -273,7 +273,7 @@ init python:
 # The screen that is used for error handling.
 screen _exception:
     modal True
-    zorder 1001
+    zorder 1090
 
     default tt = __Tooltip("")
     

@@ -476,47 +476,6 @@ init 1180 python:
         _preferences.using_afm_enable = False
     
 
-    if config.developer:
-
-        def _inspector(l):
-
-            ui.add("#000")
-            ui.window(xmargin=20, ymargin=20, style='default')
-            ui.vbox()
-
-            ui.text("Style Inspector")
-            ui.text("")
-
-            if not l:
-                ui.text("Nothing to inspect.")
-            
-            for depth, width, height, d in l:
-
-                s = d.style
-
-                while s:
-                    if s.name:
-                        break
-                    
-                    if s.parent:
-                        s = style.get(s.parent)
-                    else:
-                        break
-                        
-                name = s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ]) 
-
-                ui.text("  " * depth + u" \u2022 " + d.__class__.__name__ + " : " + name + " (%dx%d)" % (width, height))
-
-            ui.text("")
-            ui.text("(click to continue)")
-                
-            ui.close()
-            ui.saybehavior()
-            ui.interact(suppress_overlay=True, suppress_underlay=True)
-            
-            return
-
-        config.inspector = _inspector
         
 ##############################################################################
 # Code that originated in 00gamemenu.rpy
