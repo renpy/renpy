@@ -80,10 +80,10 @@ to adjust an underlying property.
 
 .. include:: inc/value
 
-Functions
-=========
+Functions and Classes
+=====================
 
-These functions are useful in association with screens.
+These functions and classes are useful in association with screens.
 
 Preferences
 -----------
@@ -111,3 +111,47 @@ Side Image Functions
 This function returns the side image to use.
 
 .. include:: inc/side_image_function
+
+
+Tooltips
+--------
+
+The tooltip class changes the screen when a button is hovered.
+
+.. include:: inc/tooltips
+
+When using a tooltip with a screen, the usual behavior is to create a 
+tooltip object in a default statement. The value of the tooltip and 
+the action method can then be used within the screen. The order of 
+use within a screen doesn't matter - it's possible to use the value
+before an action is used.
+
+Tooltips can take on any value. While in the example below we use the 
+text statement to display a string on the screen, it's also possible 
+to use the add statement to add a displayable. More complex behavior
+is also possible.
+
+::
+
+    screen tooltip_test:
+        
+        default tt = Tooltip("No button selected.")
+        
+        frame:
+            xfill True
+    
+            has vbox
+                
+            textbutton "One.":
+                action Return(1)
+                hovered tt.action("The loneliest number.")
+    
+            textbutton "Two.":
+                action Return(2)
+                hovered tt.action("Is what it takes.")
+                
+            textbutton "Three.":
+                action Return(3)                
+                hovered tt.action("A crowd.")
+                
+            text tt.value

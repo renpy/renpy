@@ -123,7 +123,7 @@ expression. It takes the following properties:
 
 `variant`
     If present, this should be a string giving the variant of screen
-    to be defined. See :ref:`Screen Variants`. 
+    to be defined. See :ref:`screen-variants`. 
     
 ::
 
@@ -255,7 +255,7 @@ data. It takes the following properties:
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
-* :ref:`common-properties`
+* :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 * :ref:`bar-style-properties`
 
@@ -618,6 +618,8 @@ It does not take children.
              text "The title."
              null height 20
              text "This body text."
+
+.. _mousearea:
 
 Mousearea
 ---------
@@ -1310,6 +1312,8 @@ or can jump to a label using the :func:`Jump` action.
 
    call screen my_imagemap
 
+
+.. _screen-variants:
    
 Screen Variants
 ===============

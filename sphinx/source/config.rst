@@ -916,7 +916,7 @@ Rarely or Internally Used
 
     A list of screen variants that are searched when choosing a screen to
     display to the user. This should always end with None, to ensure
-    that the default screens are chosen. See :ref:`Screen Variants`.
+    that the default screens are chosen. See :ref:`screen-variants`.
     
 .. var:: config.with_callback = None
 

@@ -1562,6 +1562,52 @@ init -1140 python:
     # What we do on a quit, by default.
     config.quit_action = ui.gamemenus("_confirm_quit")
 
+    #########################################################################    
+
+    class __TooltipAction(object):
+
+        def __init__(self, tooltip, value):
+            self.tooltip = tooltip
+            self.value = value
+
+        def __call__(self):
+            if self.tooltip.value != self.value:
+                self.tooltip.value = self.value
+                renpy.restart_interaction()            
+
+        def unhovered(self):
+            if self.tooltip.value != self.tooltip.default:
+                self.tooltip.value = self.tooltip.default
+                renpy.restart_interaction()            
+
+    class Tooltip(object):
+        """
+        :doc: tooltips
+        
+        A tooltip object can be used to define a portion of a screen that is 
+        updated when the mouse hovers an area. 
+        
+        A tooltip object has a ``value`` field, which is set to the `default`
+        value passed to the constructor when the tooltip is created. When 
+        a button using an action creadted by the tooltip is hovered, the 
+        value field changes to the value associated with the action. 
+        """
+                   
+        def __init__(self, default):
+            self.value = default
+            self.default = default
+
+        def action(self, value):
+            """
+            :doc: tooltips method
+            
+            Returns an action that is generally used as the hovered property
+            of a button. When the button is hovered, the value field of this 
+            tooltip is set to `value`. When the buttton loses focus, the
+            value field of this tooltip reverts to the default.
+            """
+        
+            return __TooltipAction(self, value)
     
 # This is used to ensure a fixed click-to-continue indicator is shown on
 # its own layer.

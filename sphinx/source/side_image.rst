@@ -1,3 +1,5 @@
+.. _side-images:
+
 Side Images
 ===========
 

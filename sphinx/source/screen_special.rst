@@ -30,6 +30,8 @@ In-Game Screens
 These screens are automatically displayed when certain Ren'Py
 statements execute.
 
+.. _say-screen:
+
 Say
 ---
 
@@ -112,6 +114,8 @@ with the menu statement. It is given the following parameter:
                     else:
                         text caption style "menu_caption"
 
+
+.. _input-screen:
 
 Input
 -----
@@ -213,6 +217,7 @@ an in-game choice is presented to the user, if it exists.
                             text caption style "nvl_dialogue"
 
 
+.. _notify-screen:
 
 Notify
 ------
@@ -248,9 +253,6 @@ The default notify screen, and its associated transform, are::
             linear .5 alpha 0.0
 
 
-
-
-    
 Menu Screens
 ============
 
@@ -260,6 +262,8 @@ named in :data:`_game_menu_screen` will be displayed. (This defaults
 to ``save``.)
 
 Remember, menu screens can be combined and modified fairly freely.
+
+.. _main-menu-screen:
 
 Main Menu
 ---------
@@ -297,6 +301,8 @@ begins.
         # Make all the main menu buttons be the same size.
         style.mm_button.size_group = "mm"
 
+.. _navigation-screen:
+
 Navigation
 ----------
 
@@ -330,6 +336,8 @@ then use that screen from the save, load and preferences screens.
 
     init python:
         style.gm_nav_button.size_group = "gm_nav"
+                
+.. _save-screen:
                 
 Save
 ----
@@ -384,6 +392,8 @@ game.
                                + "\n"
                                + FileSaveName(i)) style "large_button_text"
 
+.. _load-screen:
+
 Load
 ----
 
@@ -436,7 +446,8 @@ game.
                                + FileTime(i, empty=_("Empty Slot."))
                                + "\n"
                                + FileSaveName(i)) style "large_button_text"
-        
+.. _preferences-screen:
+
 Preferences
 -----------
 
@@ -560,6 +571,7 @@ display of the game.
 
         style.soundtest_button.xalign = 1.0
 
+.. _yesno-prompt-screen:
 
 Yesno_Prompt
 ------------

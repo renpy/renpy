@@ -95,7 +95,7 @@ human factors:
   buttons need to be larger than mouse-based ones. 
 
 To help you adapt to these differences, Ren'Py for Android
-automatically selects a screen variant of ``touch``. See :ref:`Screen Variants` 
+automatically selects a screen variant of ``touch``. See :ref:`screen-variants` 
 for more information.
   
 Files

@@ -1,3 +1,5 @@
+.. _drag-and-drop:
+
 Drag and Drop
 =============
 
@@ -21,7 +23,7 @@ Drags - for a drag and drop to occur, both Drags must be part of the
 same drag group.
 
 The drag and drop system can be used either through the :ref:`Screen
-Language <screen>` or directly as displayables. It makes sense to use
+Language <screens>` or directly as displayables. It makes sense to use
 the screen language when you don't need to refer to the Drags that you
 create after they've been created. This might be the case if the
 draggable represents a window that the user places on the scren. If

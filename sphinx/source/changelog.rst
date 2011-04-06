@@ -43,7 +43,7 @@ attributes are retained. Now, one can write::
 to display Eileen on the right side of the screen, without changing
 the attributes supplied to an image.
     
-** Say Attributes. **
+**Say Attributes.**
 Image attributes can be updated as part of a say statement. A
 character can be given an `image` argument, giving the name of an
 image that character is linked to. As part of the say statement, image
@@ -65,12 +65,12 @@ is equivalent to::
 
 whenever an image with the tag eileen is being shown.
 
-** Side Image. **
-This release features a new implementation of :ref:`Side Images`, which 
+**Side Image.**
+This release features a new implementation of :ref:`side-images`, which 
 allows side images to be defined like other images, and allows side 
 images to be integrated with screens easily.
 
-** Sticky Transforms. **
+**Sticky Transforms.**
 Finally, showing an image without providing a transform or ATL block
 will now continue the previous transform that an image with that tag
 was using. Previously, it caused those transforms to stop.
@@ -108,8 +108,12 @@ automatically when they reach the edge of their enclosing area.
 Actions now can have an :func:`Action.unhovered` method. This method is
 called when an action supplied as a `hovered` parameter loses focus.
 
+Added the :class:`Tooltip` class, which makes it easier to define tooltips 
+as part of a screen.
+
 Added :var:`config.debug_text_overflow`, which controls the logging of cases
 where text exceeds its allocated area.
+
 
 Ren'Py 6.12.0
 =============
@@ -135,7 +139,7 @@ Android support required several changes in Ren'Py:
   saves when the android device suspends, and reloads (if necessary)
   upon resume.
 
-* We added the concept of :ref:`Screen Variants`. This allows a single
+* We added the concept of :ref:`screen-variants`. This allows a single
   game to have multiple interfaces - such a mouse interface for
   computer platforms, and a touch interface for Android-based
   smartphones and tablets.
@@ -149,7 +153,7 @@ Android support required several changes in Ren'Py:
 New Widgets and Displayables
 ----------------------------
 
-Added the :ref:`SpriteManager <Sprites>` displayable. This provides a
+Added the :ref:`SpriteManager <sprites>` displayable. This provides a
 high-performance way of drawing many similar sprites to the
 screen. This can scale to hundreds of particles, provided those
 particles are mostly similar to each other.
@@ -159,7 +163,7 @@ unhovered callbacks to occur when the mouse enters and leaves an area
 of the screen. Since it doesn't participate in the focus system, a
 mousearea can include buttons and bars.
 
-Added :ref:`Drag and Drop` widgets and displayables. The drag and drop
+Added :ref:`drag-and-drop` widgets and displayables. The drag and drop
 system can support:
 
 * Windows being repositioned by the user.
@@ -210,12 +214,12 @@ that file into your project. These screens are not 100% compatible
 with the previous layout system - for example, some styles have
 changed. That's why games must opt-in to them.
 
-The definition of the `items` parameter of the :ref:`Choice` and
-:ref:`NVL` screens has changed, and games will need to be updated to work
+The definition of the `items` parameter of the :ref:`choice-screen` and
+:ref:`nvl-screen` screens has changed, and games will need to be updated to work
 with the new version. 
 
 Character arguments beginning with ``show_`` are passed to the
-:ref:`Say` screen. This allows things like show_side_image and
+:ref:`say-screen` screen. This allows things like show_side_image and
 show_two_window to work with screens. The screens we ship support
 these options.
 
