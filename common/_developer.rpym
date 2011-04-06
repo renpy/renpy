@@ -2,30 +2,41 @@
 # games.
 
 screen _developer:
-    window style "gm_root"
 
     frame:
-        style_group "_developer"
+        style_group ""
 
         align (.025, .05)
 
-        has vbox:
-            first_spacing 10
+        has vbox
 
         label "Developer Menu"
 
-        textbutton _(u"Return") action Return()
-        textbutton _(u"Reload Game (Shift + R)") action ui.callsinnewcontext("_save_reload_game")
-        textbutton _(u"Variable Viewer") action Jump("_debugger_screen")
-        textbutton _(u"Theme Test") action Jump("_theme_test")
-        textbutton _(u"Style Hierarchy") action Jump("_style_hierarchy")
-        textbutton _(u"Image Location Picker") action Jump("_image_location_picker")
-        textbutton _(u"Filename List") action Jump("_filename_list")
-        
-init python hide:
-    style._developer_button = Style(style.button)
-    style._developer_button.size_group = "_developer"
-        
+        textbutton _(u"Reload Game (Shift+R)"): 
+            action ui.callsinnewcontext("_save_reload_game")
+            size_group "developer"
+        textbutton _(u"Variable Viewer"):
+            action Jump("_debugger_screen")
+            size_group "developer"
+        textbutton _(u"Theme Test"): 
+            action Jump("_theme_test")
+            size_group "developer"
+        textbutton _(u"Style Hierarchy"): 
+            action Jump("_style_hierarchy")
+            size_group "developer"
+        textbutton _(u"Image Location Picker"): 
+            action Jump("_image_location_picker")
+            size_group "developer"
+        textbutton _(u"Filename List"): 
+            action Jump("_filename_list")
+            size_group "developer"
+
+        null height 15
+
+        textbutton _(u"Return"):
+            action Return()
+            size_group "developer"
+         
 label _developer_screen:
 
     call screen _developer
@@ -444,7 +455,7 @@ label _image_location_picker:
 
             for fn in image_files:
                 ui.button(clicked=ui.returns(fn), size_group="files", xminimum=1.0)
-                ui.text(fn, style="button_text", xalign=0.0)
+                ui.text(fn.replace("{", "{{"), style="button_text", xalign=0.0)
                 
             ui.close()
 
