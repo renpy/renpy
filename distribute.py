@@ -155,9 +155,9 @@ vc_version = {revno}
     shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
 
     # Compile all the python files.
-    compileall.compile_dir("renpy/", ddir=prefix + "/renpy/", force=1)
+    compileall.compile_dir("renpy/", ddir="renpy/", force=1)
 
-    os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
+    # os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
 
     # Chmod the mac app.
     os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)

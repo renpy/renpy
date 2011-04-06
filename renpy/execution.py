@@ -220,13 +220,15 @@ class Context(renpy.object.Object):
         for i in self.call_location_stack:
             try:
                 node = renpy.game.script.lookup(i)
-                renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script call")
+                if not node.filename.replace("\\", "/").startswith("common/"):
+                    renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script call")
             except:
                 pass
                 
         try:
             node = renpy.game.script.lookup(self.current)
-            renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script")
+            if not node.filename.replace("\\", "/").startswith("common/"):
+                renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script")
         except:
             pass
             

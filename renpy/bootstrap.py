@@ -358,7 +358,7 @@ def report_tb(out, tb):
         co = f.f_code
         filename = co.co_filename
         
-        if filename.endswith(".rpy") and not filename.startswith("common"):
+        if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
             report_line(out, filename, line, "python")
 
         elif 'self' in f.f_locals:
@@ -422,7 +422,7 @@ def report_exception(e, editor=True):
     try:
         print >>full, platform.platform()
         print >>full, renpy.version
-        print >>full, renpy.config.name + renpy.config.version
+        print >>full, renpy.config.name + " " + renpy.config.version
     except:
         pass
 
