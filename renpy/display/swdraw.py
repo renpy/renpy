@@ -985,4 +985,9 @@ class SWDraw(object):
         """
 
         time.sleep(.0001)
-        
+
+    def get_physical_size(self):
+        """
+        Return the physical width and height of the screen.
+        """
+        return renpy.config.screen_width, renpy.config.screen_height

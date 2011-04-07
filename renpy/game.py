@@ -116,13 +116,15 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 2
+    __version__ = 3
 
     def after_upgrade(self, version):
         if version < 1:
             self.mute_volumes = 0
         if version < 2:
             self.using_afm_enable = False
+        if version < 3:
+            self.physical_size = None
             
     def __init__(self):
         self.fullscreen = False # W0201
@@ -158,6 +160,9 @@ class Preferences(renpy.object.Object):
             joy_up="Axis 0.1 Negative",
             joy_down="Axis 0.1 Positive",
             joy_dismiss="Button 0.0")
+        
+        # The size of the window, or None if we don't know it yet.
+        self.physical_size = None
         
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume

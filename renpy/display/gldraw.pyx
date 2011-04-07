@@ -212,10 +212,6 @@ cdef class GLDraw:
         pwidth, pheight = physical_size
         virtual_ar = 1.0 * vwidth / vheight
 
-        # On a restart, restore the size.
-        if renpy.display.gl_size is not None and not fullscreen:
-            pwidth, pheight = renpy.display.gl_size
-            
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
@@ -236,8 +232,6 @@ cdef class GLDraw:
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
 
-        renpy.display.gl_size = None
-            
         # Handle swap control.
         vsync = os.environ.get("RENPY_GL_VSYNC", "1")
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
@@ -261,9 +255,6 @@ cdef class GLDraw:
 
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
-        pwidth = max(1, pwidth)
-        pheight = max(1, pheight)
-        
         # Figure out the virtual box, which includes padding around
         # the borders.
         physical_ar = 1.0 * pwidth / pheight
@@ -1108,3 +1099,5 @@ cdef class GLDraw:
     def event_peek_sleep(self):
         pass
         
+    def get_physical_size(self):
+        return self.physical_size

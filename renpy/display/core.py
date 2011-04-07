@@ -1259,8 +1259,11 @@ class Interface(object):
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if physical_size is None:
-            physical_size = (renpy.config.screen_width, renpy.config.screen_height)
-        
+            if renpy.game.preferences.physical_size is None:            
+                physical_size = (renpy.config.screen_width, renpy.config.screen_height)
+            else:
+                physical_size = renpy.game.preferences.physical_size
+                
         # Setup screen.
         fullscreen = renpy.game.preferences.fullscreen
         
@@ -1296,7 +1299,12 @@ class Interface(object):
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
             raise Exception("Could not set video mode.")
-
+        
+        # Save the video size.
+        if renpy.config.save_physical_size and not fullscreen: 
+            renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
+        
+        # We need to redraw the (now blank) screen.
         self.force_redraw = True
 
         # Assume we have focus until told otherwise.

@@ -53,6 +53,7 @@ init -1210 python:
             config.keep_running_transform = False
             config.image_attributes = False
             config.new_character_image_argument = False
+            config.save_physical_size = False
             
 init 1210 python hide::
 
