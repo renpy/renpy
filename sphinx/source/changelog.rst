@@ -75,15 +75,34 @@ Finally, showing an image without providing a transform or ATL block
 will now continue the previous transform that an image with that tag
 was using. Previously, it caused those transforms to stop.
 
-Error Handling
---------------
+Exception Handling
+------------------
+
+Ren'Py now has a new exception handing framework. Instead of always crashing
+when an error occurs, Ren'Py will now display the error message on the screen,
+and give the user the following choices, as appropriate to the situation:
+
+* Rollback
+* Reload
+* Ignore
+* Open Traceback
+* Quit
+
+When an editor is defined, Ren'Py will allow the user to click on a filename
+and line number to open that line in the editor.
 
 Other
 -----
 
+When in OpenGL mode, Ren'Py now remembers the window size between  sessions.
+(This can be disabled using :var:`config.save_physical_size`, and it  may make
+sense to do so if your game is using the pre-screen preferences system.)
+Choosing the "Window" display preference now resizes the window to 100% of
+normal size.
+
 Added the :propref:`xcenter` and :propref:`ycenter` position and
 transform properties. These set the position of the center of a
-displayable. [Test]
+displayable.
 
 The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices
 to vibrate.
