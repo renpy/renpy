@@ -1499,6 +1499,9 @@ def get_renderer_info():
         One of ``"gl"`` or ``"sw"``, corresponding to the OpenGL and
         software renderers, respectively.
 
+    ``"resizable``
+        True if and only if the window is resizable.
+
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display
     has been started (that is, after the init code is finished).
@@ -1608,6 +1611,8 @@ side_image_attributes = None
 
 def get_side_image(tag):
     """
+    :doc: other
+    
     This attempts to find an image to show as the side image. It attempts to
     find an image that begins with tag, and matches side_image_attributes. It
     returns the name of the image (as a tuple of strings) if possible, or 
@@ -1624,4 +1629,25 @@ def get_side_image(tag):
     
     return images.choose_image(tag, required, optional, None)
 
+def get_physical_size():
+    """
+    :doc: other
     
+    Returns the size of the physical window.
+    """
+    
+    return renpy.display.draw.get_physical_size()
+
+def set_physical_size(size):
+    """
+    :doc: other
+    
+    Attempts to set the size of the physical window to size. This has the 
+    side effect of taking the screen out of windowed mode.
+    """
+
+    renpy.game.preferences.fullscreen = False
+    
+    if get_renderer_info()["resizable"]:
+        renpy.display.interface.set_mode(size)
+                

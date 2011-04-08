@@ -29,10 +29,6 @@ draw = None
 # The interface object.
 interface = None
 
-# The old OpenGL physical size. Used to restore things after a reload.
-# (Stashed here since this module doesn't get reloaded.)
-gl_size = None
-
 # Should we give up on opengl? This is controlled by shift on initial
 # start.
 gl_giveup = None

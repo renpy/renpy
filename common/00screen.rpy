@@ -1368,6 +1368,28 @@ init -1140 python:
     ##########################################################################
     # Preferences Constructor
 
+    class __DisplayAction(Action):
+        def __init__(self, factor):
+            self.width = int(factor * config.screen_width)
+            self.height = int(factor * config.screen_height)            
+
+        def __call__(self):
+            renpy.set_physical_size((self.width, self.height))
+            renpy.restart_interaction()
+            
+        def get_sensitive(self):
+            if self.width == config.screen_width and self.height == config.screen_height:
+                return True
+                
+            return renpy.get_renderer_info()["resizable"]
+            
+        def get_selected(self):
+            if _preferences.fullscreen:
+                return False
+
+            return (self.width, self.height) == renpy.get_physical_size()
+                    
+
     def Preference(name, value=None):
         """
          :doc: preference_action
@@ -1381,7 +1403,8 @@ init -1140 python:
          Actions that can be used with buttons and hotspots are:
 
          * Preference("display", "fullscreen") - displays in fullscreen mode.
-         * Preference("display", "window") - displays in windowed mode.
+         * Preference("display", "window") - displays in windowed mode at 1x normal size.
+         * Preference("display", 2.0) - displays in windowed mode at 2.0x normal size.
          * Preference("display", "toggle") - toggle display mode.
 
          * Preference("transitions", "all") - show all transitions.
@@ -1440,9 +1463,11 @@ init -1140 python:
             if value == "fullscreen":
                 return SetField(_preferences, "fullscreen", True)
             elif value == "window":
-                return SetField(_preferences, "fullscreen", False)
+                return __DisplayAction(1.0)
             elif value == "toggle":
                 return ToggleField(_preferences, "fullscreen")
+            elif isinstance(value, (int, float)):
+                return __DisplayAction(value)
 
         elif name == "transitions":
 

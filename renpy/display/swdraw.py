@@ -668,7 +668,7 @@ class SWDraw(object):
         self.fullscreen_surface = None
 
         # Info.
-        self.info = { "renderer" : "sw" }
+        self.info = { "renderer" : "sw", "resizable" : False }
 
         pygame.display.init()
         renpy.display.interface.post_init()

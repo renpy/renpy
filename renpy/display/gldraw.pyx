@@ -149,7 +149,7 @@ cdef class GLDraw:
         self.redraw_period = .2
         
         # Info.
-        self.info = { "renderer" : "gl" }
+        self.info = { "renderer" : "gl", "resizable" : True }
 
         # Old value of fullscreen.
         self.old_fullscreen = None
