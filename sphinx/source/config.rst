@@ -194,7 +194,7 @@ Occasionally Used
     When true, Ren'Py will log text overflows to text_overflow.txt. A text
     overflow occurs when a :class:`Text` displayable renders to a size
     larger than that allocated to it. By setting this to True and setting
-    the :prop:`xmaximum` and :prop:`ymaximum` style properties of the dialogue
+    the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
     window to the window size, this can be used to report cases where the 
     dialogue is too large for its window.
         

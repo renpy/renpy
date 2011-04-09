@@ -998,6 +998,10 @@
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
 
+.. function:: renpy.get_physical_size()
+    
+    Returns the size of the physical window.
+
 .. function:: renpy.get_renderer_info()
     
     Returns a dictionary, giving information about the renderer Ren'Py is
@@ -1006,6 +1010,9 @@
     ``"renderer"``
         One of ``"gl"`` or ``"sw"``, corresponding to the OpenGL and
         software renderers, respectively.
+    
+    ``"resizable``
+        True if and only if the window is resizable.
     
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display
@@ -1017,6 +1024,13 @@
     None if no attributes are associated with this statement.
     
     This is only valid when executing or predicting a say statement.
+
+.. function:: renpy.get_side_image(tag)
+    
+    This attempts to find an image to show as the side image. It attempts to
+    find an image that begins with tag, and matches side_image_attributes. It
+    returns the name of the image (as a tuple of strings) if possible, or 
+    None if that's not possible.
 
 .. function:: renpy.image_size(im)
     
@@ -1046,6 +1060,11 @@
     
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.    
+
+.. function:: renpy.set_physical_size(size)
+    
+    Attempts to set the size of the physical window to size. This has the 
+    side effect of taking the screen out of windowed mode.
 
 .. function:: renpy.vibrate(duration)
     
