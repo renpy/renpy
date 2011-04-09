@@ -242,7 +242,7 @@ vc_version = {revno}
     os.rename("dists/" + prefix, "updates/prerelease")
     os.unlink("updates/prerelease/lib/update-version.txt")
 
-    makeupdate.make_update("updates/prerelease", revno)
+    makeupdate.make_update("updates/prerelease", str(revno))
 
     os.chmod("renpy.py", 0755)
 

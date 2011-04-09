@@ -276,7 +276,7 @@ image main_menu:
         size (800, 509)
 
     contains:
-        Text("Ren'Py 6.12.1 \"No Name Yet\"", size=18)
+        Text("Ren'Py 6.12.1 \"Human Factor\"", size=18)
         yalign .98
         xalign .02
     
