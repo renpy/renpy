@@ -1259,7 +1259,7 @@ class Interface(object):
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if physical_size is None:
-            if renpy.game.preferences.physical_size is None:            
+            if renpy.android or renpy.game.preferences.physical_size is None:            
                 physical_size = (renpy.config.screen_width, renpy.config.screen_height)
             else:
                 physical_size = renpy.game.preferences.physical_size
@@ -1303,6 +1303,9 @@ class Interface(object):
         # Save the video size.
         if renpy.config.save_physical_size and not fullscreen: 
             renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
+       
+        if android:
+            android.init()
         
         # We need to redraw the (now blank) screen.
         self.force_redraw = True

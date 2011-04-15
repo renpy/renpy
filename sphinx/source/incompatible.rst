@@ -27,7 +27,7 @@ to the old behavior, set :var:`config.keep_running_transform` to False.
 The `image` argument to :func:`Character` has changed meaning. While
 the old meaning was unsupported in the screens-based environment, it
 can be restored for compatibility purposes by setting
-:var:`new_character_image_argument` to False.
+:var:`config.new_character_image_argument` to False.
 
 
 .. _incompatible-6.12.0:

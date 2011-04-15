@@ -180,7 +180,7 @@ cdef class GLDraw:
         can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
-
+        
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
@@ -216,8 +216,8 @@ cdef class GLDraw:
         pheight = max(vheight / 2, pheight)
 
         if renpy.android:
-            pheight = min(self.display_info.current_h, pheight)
-            pwidth = min(self.display_info.current_w, pwidth)
+            pheight = self.display_info.current_h
+            pwidth = self.display_info.current_w
         else:
             pheight = min(self.display_info.current_h - 102, pheight)
             pwidth = min(self.display_info.current_w - 102, pwidth)
@@ -270,7 +270,6 @@ cdef class GLDraw:
             px_padding = 0
             py_padding = y_padding * pwidth / vwidth
 
-            
         # The position of the physical screen, in virtual pixels
         # (x, y, w, h). Since the physical screen will always contain
         # the virtual screen, the corners are often off the virtual
