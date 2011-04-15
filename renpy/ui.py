@@ -27,7 +27,7 @@
 # All functions in the is file should be documented in the wiki.
 
 import sys
-import renpy
+import renpy.display
 
 ##############################################################################
 # Special classes that can be subclassed from the outside.

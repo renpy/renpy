@@ -1259,7 +1259,7 @@ class Interface(object):
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if physical_size is None:
-            if renpy.android or renpy.game.preferences.physical_size is None:            
+            if renpy.android or renpy.game.preferences.physical_size is None: #@UndefinedVariable
                 physical_size = (renpy.config.screen_width, renpy.config.screen_height)
             else:
                 physical_size = renpy.game.preferences.physical_size

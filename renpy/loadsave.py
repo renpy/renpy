@@ -35,7 +35,7 @@ import threading
 import sys
 import platform
 
-import renpy
+import renpy.display
 
 # This is used to cache information about saved games.
 cache = { }

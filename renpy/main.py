@@ -119,6 +119,30 @@ def load_rpe(fn):
     sys.path.insert(0, fn)
     exec autorun in dict()
         
+def choose_variants():
+
+    if "RENPY_VARIANT" in os.environ:
+        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split(",")) + [ None ]
+    
+    if renpy.android: #@UndefinedVariable
+        import android #@UnresolvedImport
+        import math
+        import pygame
+        
+        pygame.display.init()
+        
+        info = pygame.display.Info()        
+        diag = math.hypot(info.current_w, info.current_h) / android.get_dpi()
+        
+        print "Screen diagonal is", diag, "inches."
+        
+        if diag >= 6:
+            renpy.config.variants.append('tablet')
+        else:
+            renpy.config.variants.append('phone')
+        
+    
+        
 def main():
 
     renpy.game.exception_info = 'Before loading the script.'
@@ -127,15 +151,14 @@ def main():
     renpy.config.init()
 
     # Set up variants.
-    if "RENPY_VARIANT" in os.environ:
-        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split(",")) + [ None ]
+    choose_variants()
     
     # Note the game directory.
     game.basepath = renpy.config.gamedir
     renpy.config.searchpath = [ renpy.config.gamedir ]
 
     # Find the common directory.
-    commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101
+    commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
 
     if os.path.isdir(commondir):
         renpy.config.searchpath.append(commondir)
@@ -160,7 +183,7 @@ def main():
         renpy.config.archives.append(i)
 
     # Note the profile option.
-    if renpy.game.options.profile:
+    if renpy.game.options.profile: #@UndefinedVariable
         renpy.config.profile = True
 
     # Initialize archives.
@@ -195,7 +218,7 @@ def main():
 
     # Find the save directory.
     if renpy.config.savedir is None:
-        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101
+        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
 
     if renpy.game.options.savedir:
         renpy.config.savedir = renpy.game.options.savedir
@@ -265,7 +288,7 @@ def main():
     renpy.game.script.save_bytecode()
 
     # Check if we should simulate android.
-    renpy.android = renpy.android or renpy.config.simulate_android
+    renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable
     
     # Run the post init code, if any.
     for i in renpy.game.post_init:
@@ -288,10 +311,10 @@ def main():
     renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
     renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
     
-    if renpy.game.options.compile:
+    if renpy.game.options.compile: #@UndefinedVariable
         return
 
-    if renpy.game.options.lint:
+    if renpy.game.options.lint: #@UndefinedVariable
         try:
             renpy.lint.lint()
             return

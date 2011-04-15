@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import collections
-import renpy
+import renpy.display
 
 # A list of roles we know about.
 roles = [ 'selected_', '' ]
