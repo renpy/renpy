@@ -234,6 +234,7 @@ class ParseErrorException(Exception):
 # exception reporting mechanism.
 CONTROL_EXCEPTIONS = (
     RestartException,
+    FullRestartException,
     UtterRestartException,
     QuitException,
     JumpException,
