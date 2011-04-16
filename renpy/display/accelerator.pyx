@@ -67,6 +67,11 @@ def transform_render(self, widtho, heighto, st, at):
     if child is None:
         raise Exception("Transform does not have a child.")
 
+    state = self.state
+
+    if state.size:
+        widtho, heighto = state.size
+
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
     width = cr.width
@@ -80,8 +85,6 @@ def transform_render(self, widtho, heighto, st, at):
 
     xo = 0
     yo = 0
-
-    state = self.state
     
     # Cropping.
     crop = state.crop

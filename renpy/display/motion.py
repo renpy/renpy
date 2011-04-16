@@ -667,9 +667,6 @@ class Transform(Container):
 
         state = self.state
         
-        if state.size:
-            width, height = state.size
-
         self.active = True
 
         # Use non-None elements of the child placement as defaults.

@@ -202,7 +202,7 @@ add_tag = None
 
 # A stack of Imagemap objects.
 imagemap_stack = [ ]
-            
+          
 
 # Called at the end of the init phase, and from the screen
 # prediction code.
