@@ -866,7 +866,7 @@ init 1180 python hide:
                 continue
             
             # Reject if it already exists.
-            if name in renpy.exports.images:
+            if name in renpy.display.image.images:
                 continue
 
             renpy.image(name, fn)
