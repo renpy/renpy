@@ -22,7 +22,7 @@
 import renpy
 import pygame
 
-from pygame.image import *
+from pygame.image import * #@UnusedWildImport
 
 def load(filename, namehint=None):
 

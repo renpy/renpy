@@ -1,4 +1,4 @@
-from ossaudiodev import *
+from ossaudiodev import * #@UnusedWildImport
 mixer = openmixer()
 
 def get_wave():

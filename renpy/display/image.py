@@ -23,7 +23,6 @@
 # Most of the guts of this file have been moved into im.py, with only some
 # of the stuff thar uses images remaining.
 
-import renpy
 import renpy.display
 from renpy.display.render import render, Render
 

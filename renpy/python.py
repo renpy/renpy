@@ -32,7 +32,7 @@ import weakref
 import re
 import sets
 
-import renpy
+import renpy.audio
 
 
 ##### Code that computes reachable objects, which is used to filter
@@ -520,7 +520,7 @@ class Rollback(renpy.object.Object):
             if len(i) != 2:
                 continue
 
-            k, v = i
+            _k, v = i
             reached(v, reachable, wait)
 
 
@@ -644,7 +644,7 @@ class RollbackLog(renpy.object.Object):
         self.log.append(self.current)
 
         self.mutated = { }
-        self.old_store = renpy.store.__dict__.copy()
+        self.old_store = renpy.store.__dict__.copy() #@UndefinedVariable
 
         # Flag a mutation as having happened. This is used by the
         # save code.
@@ -662,7 +662,7 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        new_store = renpy.store.__dict__
+        new_store = renpy.store.__dict__ #@UndefinedVariable
         store = [ ]
         
         # Find store values that have changed since the last call to
@@ -674,7 +674,7 @@ class RollbackLog(renpy.object.Object):
                 store.append((k, v))
                 self.ever_been_changed[k] = True
 
-        for i in range(4):
+        for _ in range(4):
 
             try:
             
@@ -696,7 +696,7 @@ class RollbackLog(renpy.object.Object):
         # Update the list of mutated objects, and what we need to do
         # to restore them.
         
-        for i in range(4):
+        for _i in xrange(4):
 
             self.current.objects = [ ]
 
@@ -928,7 +928,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
         
         # Restore the store.
-        store = renpy.store.__dict__
+        store = renpy.store.__dict__ #@UndefinedVariable
         store.clear()
         store.update(renpy.game.clean_store)
 
@@ -949,7 +949,7 @@ def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None):
         locals = { }
 
     if globals is None:
-        globals = renpy.store.__dict__
+        globals = renpy.store.__dict__ #@UndefinedVariable
 
     if locals is None:
         locals = globals
@@ -973,7 +973,7 @@ def py_exec(source, hide=False, store=None):
 def py_eval_bytecode(bytecode, globals=None, locals=None):
 
     if globals is None:
-        globals = renpy.store.__dict__
+        globals = renpy.store.__dict__ #@UndefinedVariable
 
     if locals is None:
         locals = globals
@@ -986,7 +986,7 @@ def py_eval(source, globals=None, locals=None):
     # source = source.strip()
 
     if globals is None:
-        globals = renpy.store.__dict__
+        globals = renpy.store.__dict__ #@UndefinedVariable
 
     if locals is None:
         locals = globals

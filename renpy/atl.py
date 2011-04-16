@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.display
 import random
 
 def compiling(loc):
@@ -175,7 +175,7 @@ class Context(object):
 
     def eval(self, expr):
         expr = renpy.python.escape_unicode(expr)
-        return eval(expr, renpy.store.__dict__, self.context)
+        return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
     
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
@@ -695,7 +695,7 @@ class RawMultipurpose(RawStatement):
 
             splines.append((name, values))
             
-        for expr, with_ in self.expressions:
+        for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
             except:
@@ -719,7 +719,7 @@ class RawMultipurpose(RawStatement):
             
     def predict(self, ctx):
 
-        for i, j in self.expressions:
+        for i, _j in self.expressions:
             
             try:
                 i = ctx.eval(i)
@@ -1041,7 +1041,7 @@ class RawChoice(RawStatement):
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
     def predict(self, ctx):
-        for i, j in self.choices:
+        for _i, j in self.choices:
             j.predict(ctx)
 
 class Choice(Statement):

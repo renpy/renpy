@@ -30,7 +30,6 @@
 # These modules will then be able to access the various globals defined
 # in this module as fields on game.
 
-import renpy
 import renpy.display
 
 # The basepath.

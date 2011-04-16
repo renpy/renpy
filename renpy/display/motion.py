@@ -21,11 +21,10 @@
 
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
-
 import math
-import types
+import types #@UnresolvedImport
 
-import renpy.display
+import renpy.display #@UnusedImport
 from renpy.display.render import render
 from renpy.display.layout import Container
 
@@ -260,19 +259,19 @@ class TransformState(renpy.object.Object):
     def get_angle(self):
         xpos = first_not_none(self.xpos, self.default_xpos, 0)
         ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return angle
 
     def get_radius(self):
         xpos = first_not_none(self.xpos, self.default_xpos, 0)
         ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return radius
 
     def set_angle(self, value):
         xpos = first_not_none(self.xpos, self.default_xpos, 0)
         ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         angle = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
@@ -282,7 +281,7 @@ class TransformState(renpy.object.Object):
     def set_radius(self, value):
         xpos = first_not_none(self.xpos, self.default_xpos, 0)
         ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         radius = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
@@ -739,7 +738,7 @@ class Transform(Container):
         if not self.active:
             self.update_state()
             
-        cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+        _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
 
         cxoffset = cxoffset or 0
         cyoffset = cyoffset or 0 
@@ -765,7 +764,6 @@ class Transform(Container):
         self.update_state()
         
 Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
-
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     
@@ -1084,7 +1082,7 @@ class Revolver(object):
         else:
             pos = self.pos
             
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = pos
+        xpos, ypos, xanchor, yanchor, _xoffset, _yoffset, _subpixel = pos
 
         xpos = fti(xpos, w)
         ypos = fti(ypos, h)

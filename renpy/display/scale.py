@@ -430,8 +430,8 @@ def load_scaling():
             
             rv = ScaledSurface(surf, wh=rect[2:])
 
-            vx, vy, vw, vh = rect
-            px, py, pw, ph = prect
+            vx, vy, _vw, _vh = rect
+            px, py, _pw, _ph = prect
 
             rv.virtx = vx + self.virtx
             rv.virty = vy + self.virty

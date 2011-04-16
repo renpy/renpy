@@ -919,7 +919,7 @@ class Lexer(object):
 
         def process(block, indent):
 
-            for fn, ln, text, subblock in block:
+            for _fn, ln, text, subblock in block:
 
                 if o.line > ln:
                     assert False

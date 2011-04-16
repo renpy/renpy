@@ -1,4 +1,3 @@
-import os
 import os.path
 import zipfile
 import tarfile
@@ -373,7 +372,7 @@ def distribute(
          extension is allowed by the game.
          """
 
-        for a, b in multi_files:
+        for _a, b in multi_files:
             if b == "/game/" + fn:
                 return
 

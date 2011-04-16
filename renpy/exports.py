@@ -27,7 +27,6 @@
 # Remember the real file.
 _file = file
 
-import renpy
 import renpy.display
 import renpy.audio
 
@@ -501,7 +500,7 @@ def display_menu(items,
         else:
             props = widget_properties
             
-        for i, (label, value) in enumerate(items):
+        for (label, value) in items:
 
             if not label:
                 value = None
@@ -680,7 +679,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
                              style=style, **properties)
 
     roll_forward = renpy.exports.roll_forward_info()
-    if roll_forward not in [ result for x0, y0, x1, y1, result in hotspots]:
+    if roll_forward not in [ result for _x0, _y0, _x1, _y1, result in hotspots]:
         roll_forward = None
     
     rv = renpy.ui.interact(suppress_overlay=(not overlays),
@@ -1339,9 +1338,9 @@ def load_module(name, **kwargs):
     renpy.game.contexts.append(context)
     
     context.make_dynamic(kwargs)
-    renpy.store.__dict__.update(kwargs)
+    renpy.store.__dict__.update(kwargs) #@UndefinedVariable
     
-    for prio, node in initcode:
+    for prio, node in initcode: #@UnusedVariable
         renpy.game.context().run(node)
 
     context.pop_all_dynamic()

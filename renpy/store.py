@@ -27,7 +27,6 @@
 
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
-import renpy
 import renpy.display
 
 import renpy.ui as ui
@@ -293,7 +292,7 @@ def At(d, *args):
 color = renpy.easy.color
 
 # Conveniently get rid of all the packages we had imported before.
-import renpy.exports as renpy
+import renpy.exports as renpy #@Reimport
 
 # The default menu functions.
 menu = renpy.display_menu

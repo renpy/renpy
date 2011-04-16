@@ -42,7 +42,7 @@ class BinFile(object):
         c = self.u16()
 
         rv = u""
-        for i in range(c):
+        for _i in range(c):
             rv += unichr(self.u16())
 
         return rv
@@ -78,7 +78,7 @@ def parse_data(bf, offset):
     l = [ ]
 
     bf.seek(data_offset - resource_virtual)
-    for i in range(data_len):
+    for _i in range(data_len):
         l.append(chr(bf.u8()))
 
     return (code_page, "".join(l))
@@ -87,16 +87,16 @@ def parse_data(bf, offset):
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32()
-    timedate = bf.u32()
-    major = bf.u16()
-    minor = bf.u16()
+    char = bf.u32() #@UnusedVariable
+    timedate = bf.u32() #@UnusedVariable
+    major = bf.u16() #@UnusedVariable
+    minor = bf.u16() #@UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
     entries = [ ]
     
-    for i in range(n_named + n_id):
+    for _i in range(n_named + n_id):
         entries.append((bf.u32(), bf.u32()))
 
     rv = { }

@@ -24,7 +24,6 @@
 # Invariants: The periodic callback assumes pcm_ok. If we don't have
 # at least pcm_ok, we have no sound whatsoever.
 
-import renpy
 import renpy.audio
 import renpy.display
 
@@ -50,7 +49,7 @@ if 'pss' not in disable:
 
     if pss is None:
         try:
-            import android_sound as pss #@UnresolvedImport
+            import android_sound as pss #@UnresolvedImport @Reimport
             print "Imported android_sound."
         except:
             pass
@@ -61,7 +60,7 @@ if 'mix' not in disable:
         import winmixer as mix; mix #@UnresolvedImport
     except:
         try:
-            import linmixer as mix; mix #@UnresolvedImport
+            import linmixer as mix; mix #@UnresolvedImport @Reimport
         except:
             pass
 

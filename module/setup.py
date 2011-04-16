@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import distutils.core
 import os
-import os.path
 import platform
 import sys
 
@@ -182,7 +181,7 @@ if platform.win32_ver()[0]:
 
 # Detect OSS.
 try:
-    import ossaudiodev
+    import ossaudiodev #@UnusedImport
     linmixer = True
 except:
     pass
@@ -288,7 +287,7 @@ import renpy
 
 distutils.core.setup(
     name = "renpy_module",
-    version = renpy.version[7:],
+    version = renpy.version[7:], #@UndefinedVariable
     ext_modules = extensions,
     py_modules = py_modules,
     package_dir = { '' : 'lib' },

@@ -176,7 +176,7 @@ class Channel(object):
 
         renpy.audio.sound.play(sound.filename, channel=self.renpy_channel)
 
-        for i in range(0, loops):
+        for _i in xrange(0, loops):
             renpy.audio.sound.queue(sound.filename, clear_queue=None, channel=self.renpy_channel)
 
     def stop(self):

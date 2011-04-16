@@ -29,7 +29,6 @@ import math
 import zipfile
 import cStringIO
 import threading
-import time
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -1341,8 +1340,8 @@ im.matrix(%f, %f, %f, %f, %f.
 
         """
 
-        (r0, g0, b0, a0) = renpy.easy.color(black_color)
-        (r1, g1, b1, a1) = renpy.easy.color(white_color)
+        (r0, g0, b0, _a0) = renpy.easy.color(black_color)
+        (r1, g1, b1, _a1) = renpy.easy.color(white_color)
 
         r0 /= 255.0
         g0 /= 255.0

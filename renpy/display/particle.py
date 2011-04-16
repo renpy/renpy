@@ -289,7 +289,7 @@ class SpriteManager(renpy.display.core.Displayable):
                 
 
             if cache.fast:
-                for child, xo, yo, focus, main in r.children:
+                for child, xo, yo, _focus, _main in r.children:
                     rv.children.append((child,
                                         xo + i.x,
                                         yo + i.y,
@@ -383,7 +383,7 @@ class Particles(renpy.display.core.Displayable):
                 sprite.destroy()
                 continue
 
-            x, y, t, d = update
+            x, y, _t, d = update
             
             if d is not sprite.cache.child:
                 sprite.set_child(d)
@@ -400,7 +400,7 @@ class Particles(renpy.display.core.Displayable):
                 if update is None:
                     continue
                 
-                x, y, t, d = update
+                x, y, _t, d = update
 
                 if d is None:
                     continue
@@ -444,7 +444,7 @@ class SnowBlossomFactory(object):
         self.init()
 
     def init(self):
-        self.starts = [ random.uniform(0, self.start) for i in range(0, self.count) ] # W0201
+        self.starts = [ random.uniform(0, self.start) for _i in xrange(0, self.count) ] # W0201
         self.starts.append(self.start)
         self.starts.sort()
     
@@ -459,7 +459,7 @@ class SnowBlossomFactory(object):
         if not particles and self.fast:
             rv = [ ]
 
-            for i in range(0, self.count):
+            for _i in xrange(0, self.count):
                 rv.append(SnowBlossomParticle(self.image,
                                               ranged(self.xspeed),
                                               ranged(self.yspeed),

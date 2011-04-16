@@ -21,7 +21,6 @@
 
 # This module handles the logging of messages to a file.
 
-import sys
 import os.path
 import codecs
 import traceback

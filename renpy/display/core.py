@@ -25,7 +25,8 @@
 import renpy.display
 import renpy.audio
 
-import pygame
+import pygame #@UnusedImport
+
 import sys
 import os
 import time
@@ -800,7 +801,7 @@ class SceneLists(renpy.object.Object):
         if layer not in self.layers:
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
-        add_index, remove_index = self.find_index(layer, thing, 0, [ ])
+        _add_index, remove_index = self.find_index(layer, thing, 0, [ ])
 
         if remove_index is not None:
             tag = self.layers[layer][remove_index].tag
@@ -1107,7 +1108,7 @@ class Interface(object):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
 
         try:
-            pygame.macosx.init()
+            pygame.macosx.init() #@UndefinedVariable
         except:
             pass
 

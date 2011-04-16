@@ -41,7 +41,7 @@ def randpadding():
 
     rv = ""
 
-    for i in range(0, plen):
+    for _i in xrange(0, plen):
         rv += chr(random.randint(1, 255))
 
     return rv

@@ -28,10 +28,8 @@
 # ReportError is used to report an exception that occurs when the GUI is not
 # initialized, such as after a reload.
 
-import pygame
 import renpy.display
 import os
-import os.path
 
 ##############################################################################
 # Initialized approach.
@@ -100,7 +98,7 @@ class ReportError(object):
 
     # In the init method, Ren'Py is functioning reasonably normally.
     def __init__(self):
-        self.font = renpy.display.text.get_font(renpy.store.style.default.font, 14, False, False, False)
+        self.font = renpy.display.text.get_font(renpy.store.style.default.font, 14, False, False, False) #@UndefinedVariable
         # self.flags = pygame.display.get_surface().get_flags()
         # self.size = pygame.display.get_surface().get_size()
 

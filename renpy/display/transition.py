@@ -761,7 +761,7 @@ class CropMove(Transition):
 # Utility function used by MoveTransition et al.
 def position(d):
 
-    xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = d.get_placement()
+    xpos, ypos, xanchor, yanchor, _xoffset, _yoffset, _subpixel = d.get_placement()
 
     if xpos is None:
         xpos = 0
@@ -776,7 +776,7 @@ def position(d):
 
 def offsets(d):
     
-    xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = d.get_placement()
+    _xpos, _ypos, _xanchor, _yanchor, xoffset, yoffset, _subpixel = d.get_placement()
 
     if renpy.config.movetransition_respects_offsets:
         return { 'xoffset' : xoffset, 'yoffset' : yoffset }
@@ -1086,7 +1086,7 @@ def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widge
 
 
 def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
-    x, y, w, h = rect
+    x, y, _w, _h = rect
 
     old = renpy.display.layout.LiveCrop(rect, old_widget)
     new = renpy.display.layout.LiveCrop(rect, new_widget)

@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 from pygments.lexers.agile import PythonLexer
 from pygments.token import Token, Name
 

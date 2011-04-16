@@ -343,7 +343,7 @@ class FunctionStatementParser(Parser):
         # We assume that the initial keyword has been parsed already,
         # so we start with the positional arguments.
 
-        for i in self.positional:
+        for _i in self.positional:
             call_node.args.append(self.parse_simple_expression(l))
 
         # Next, we allow keyword arguments on the starting line.

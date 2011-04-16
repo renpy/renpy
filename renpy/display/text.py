@@ -442,7 +442,7 @@ def greedy_text_layout(triples, width, style):
     
     for triple in triples:
 
-        type, ts, i = triple
+        type, _ts, _i = triple
 
         if type == "newline":
             lines.append(line)
@@ -497,7 +497,7 @@ def subtitle_text_layout_core(triples, width, style, soft, n, justify):
 
     for triple in triples:
 
-        type, ts, i = triple
+        type, _ts, _i = triple
 
         if type == "space":
             if not line:

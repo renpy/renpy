@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import optparse
-import os
 import os.path
 import sys
 import cStringIO
@@ -29,36 +28,35 @@ import platform
 # Extra things used for distribution.
 def extra_imports():
     import datetime; datetime
-    import encodings.ascii
-    import encodings.utf_8
-    import encodings.zlib_codec
-    import encodings.unicode_escape
-    import encodings.string_escape
-    import encodings.raw_unicode_escape
-    import encodings.mbcs
-    import encodings.utf_16
-    import encodings.utf_16_be
+    import encodings.ascii; encodings.ascii
+    import encodings.utf_8; encodings.utf_8
+    import encodings.zlib_codec; encodings.zlib_codec
+    import encodings.unicode_escape; encodings.unicode_escape
+    import encodings.string_escape; encodings.string_escape
+    import encodings.raw_unicode_escape; encodings.raw_unicode_escape
+    import encodings.mbcs; encodings.mbcs
+    import encodings.utf_16; encodings.utf_16
+    import encodings.utf_16_be; encodings.utf_16_be
     import encodings.utf_16_le; encodings.utf_16_le
     import math; math
     import glob; glob
     import pickle; pickle
-    import platform; platform
-    import pysdlsound
-    import pysdlsound.sound
-    import pysdlsound.winmixer
+    import pysdlsound; pysdlsound
+    import pysdlsound.sound; pysdlsound.sound
+    import pysdlsound.winmixer; pysdlsound.winmixer
     import pysdlsound.linmixer; pysdlsound.linmixer
     import difflib; difflib
     import shutil; shutil
-    import renpy.tools.archiver
+    import renpy.tools.archiver; renpy.tools.archiver
     import renpy.tools.add_from; renpy.tools.add_from
     import tarfile; tarfile
     import bz2; bz2
     import webbrowser; webbrowser
-    import pygame.locals
-    import pygame.color
+    import pygame.locals; pygame.locals
+    import pygame.color; pygame.color
     import pygame.colordict; pygame.colordict
     import posixpath; posixpath # W0403
-    import ctypes
+    import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
     import EasyDialogs; EasyDialogs #@UnresolvedImport
     import argparse; argparse
@@ -103,7 +101,7 @@ def bootstrap(renpy_base):
     global report_error
     global renpy # W0602
 
-    import renpy.log
+    import renpy.log #@UnusedImport
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
     
@@ -250,7 +248,7 @@ def bootstrap(renpy_base):
 
     # Show the presplash.
     if not options.lint and not options.compile and not options.version and not options.rmpersistent:
-        import renpy.display.presplash # W0404
+        import renpy.display.presplash #@Reimport
         renpy.display.presplash.start(gamedir)
 
     # If we're on a mac, install our own os.start.
@@ -258,7 +256,7 @@ def bootstrap(renpy_base):
         os.startfile = mac_start
         
     # Load up all of Ren'Py, in the right order.
-    import renpy
+    import renpy #@Reimport
     renpy.import_all()
 
     if options.version:
@@ -380,12 +378,11 @@ def report_exception(e, editor=True):
     Returns a two-unicode tuple, with the first item being 
     a simple message, and the second being a full traceback.
     """
-        
-    import renpy
+    
     import codecs
     import traceback
 
-    type, value, tb = sys.exc_info()
+    type, _value, tb = sys.exc_info()
 
     def safe_utf8(e):
         try:
@@ -454,7 +451,7 @@ def report_exception(e, editor=True):
                 if renpy.config.editor:
                     renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
                 else:
-                    os.startfile('traceback.txt')
+                    os.startfile('traceback.txt') #@UndefinedVariable
         except:
             pass
 
@@ -462,7 +459,7 @@ def report_exception(e, editor=True):
         pass
 
     try:
-        renpy.display.log.exception()
+        renpy.display.log.exception() #@UndefinedVariable
     except:
         pass
 

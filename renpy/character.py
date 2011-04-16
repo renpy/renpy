@@ -21,7 +21,6 @@
 
 # The Character object (and friends).
 
-import renpy
 import renpy.display
 
 import re
@@ -792,7 +791,7 @@ class ADVCharacter(object):
             return self.do_predict(who, what)
 
         finally:            
-            renpy.exports.side_image_attributes = None            
+            renpy.exports.side_image_attributes = old_side_image_attributes            
 
     def will_interact(self):
 

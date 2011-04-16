@@ -235,7 +235,7 @@ def check_show(node, precise):
     if not node.imspec:
         return
 
-    name, expression, tag, at_list, layer, zorder, behind = imspec(node.imspec)
+    name, expression, tag, at_list, layer, _zorder, _behind = imspec(node.imspec)
 
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
@@ -250,7 +250,7 @@ def check_show(node, precise):
 
 def check_hide(node):
 
-    name, expression, tag, at_list, layer, zorder, behind = imspec(node.imspec)
+    name, _expression, tag, _at_list, layer, _zorder, _behind = imspec(node.imspec)
 
     tag = tag or name[0]
 
@@ -398,7 +398,7 @@ def check_while(node):
 
 def check_if(node):
 
-    for condition, block in node.entries:
+    for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
 
 def check_style(name, s):
@@ -419,7 +419,7 @@ def check_style(name, s):
             e = renpy.style.expansions[k]
 
             # We only need to check the first function.
-            for prio, propn, func in e:
+            for _prio, _propn, func in e:
                 if func:
                     v = func(v)
                 break
@@ -494,7 +494,7 @@ def lint():
 
     global report_node
     
-    for fn, ln, node in all_stmts:
+    for _fn, _ln, node in all_stmts:
 
         report_node = node
         

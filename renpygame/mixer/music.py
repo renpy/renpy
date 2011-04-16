@@ -73,7 +73,7 @@ def get_volume():
     return 1.0
 
 def get_busy():
-    return renpy.sound.is_playing(7)
+    return renpy.audio.sound.is_playing(7)
 
 def get_pos():
     """

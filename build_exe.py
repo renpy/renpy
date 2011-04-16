@@ -27,7 +27,7 @@ def move_from_dist(fn):
     os.rename("dist/" + fn, fn)
 
 import renpy
-renpy.setup_modulefinder(modulefinder)
+renpy.setup_modulefinder(modulefinder) #@UndefinedVariable
 
 def main():
 

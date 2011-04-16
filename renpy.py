@@ -22,7 +22,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-import os.path
 import sys
 import platform
 import warnings
@@ -39,7 +38,7 @@ def path_to_common(renpy_base):
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
-    import renpy
+    import renpy #@UnresolvedImport
     
     if not renpy.config.save_directory:
         return gamedir + "/saves"

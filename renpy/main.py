@@ -46,7 +46,7 @@ def run(restart):
     """
 
     # Reset the store to a clean version of itself.
-    store = renpy.store.__dict__
+    store = renpy.store.__dict__ #@UndefinedVariable
     store.clear()
     store.update(renpy.game.clean_store)
 
@@ -65,8 +65,8 @@ def run(restart):
     game.context().goto_label(start_label)
 
     # Perhaps warp.
-    if renpy.game.options.warp:
-        label = renpy.warp.warp(renpy.game.options.warp)
+    if renpy.game.options.warp: #@UndefinedVariable
+        label = renpy.warp.warp(renpy.game.options.warp) #@UndefinedVariable
 
         renpy.game.options.warp = None
 
@@ -220,8 +220,8 @@ def main():
     if renpy.config.savedir is None:
         renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
 
-    if renpy.game.options.savedir:
-        renpy.config.savedir = renpy.game.options.savedir
+    if renpy.game.options.savedir: #@UndefinedVariable
+        renpy.config.savedir = renpy.game.options.savedir #@UndefinedVariable
     
     # Make the save directory.
     try:
@@ -230,7 +230,7 @@ def main():
         pass
 
     # Perhaps delete the persistent data and exit.
-    if renpy.game.options.rmpersistent:
+    if renpy.game.options.rmpersistent: #@UndefinedVariable
         try:
             os.unlink(renpy.config.savedir + "/persistent")
         except:
@@ -279,7 +279,7 @@ def main():
 
     renpy.game.exception_info = 'While executing init code:'
 
-    for prio, node in game.script.initcode:
+    for _prio, node in game.script.initcode:
         game.context().run(node)
 
     renpy.game.exception_info = 'After initialization, but before game start.'
@@ -304,7 +304,7 @@ def main():
     renpy.loader.index_archives()
 
     # Make a clean copy of the store.
-    game.clean_store = renpy.store.__dict__.copy()
+    game.clean_store = renpy.store.__dict__.copy() #@UndefinedVariable
 
     # Check some environment variables.
     renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ

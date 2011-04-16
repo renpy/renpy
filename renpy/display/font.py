@@ -404,8 +404,8 @@ def load_ttf(fn, size, bold, italics, underline, expand):
 
         rv = None
 
-        for k, v in pygame.sysfont.Sysfonts.iteritems():
-            for flags, ffn in v.iteritems():
+        for v in pygame.sysfont.Sysfonts.itervalues():
+            for _flags, ffn in v.iteritems():
                 for i in fonts:
                     if ffn.lower().endswith(i):
                         rv = _renpy_font.Font(ffn, size, index)

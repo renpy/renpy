@@ -26,7 +26,6 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
-import renpy
 import renpy.display
 
 import re
@@ -748,13 +747,13 @@ def predict_imspec(imspec, scene=False):
     """
 
     if len(imspec) == 7:
-        name, expression, tag, at_list, layer, zorder, behind = imspec
+        name, expression, tag, _at_list, layer, _zorder, _behind = imspec
 
     elif len(imspec) == 6:
-        name, expression, tag, at_list, layer, zorder = imspec
+        name, expression, tag, _at_list, layer, _zorder = imspec
 
     elif len(imspec) == 3:
-        name, at_list, layer = imspec
+        name, _at_list, layer = imspec
         
         
     if expression:
@@ -918,14 +917,16 @@ class Hide(Node):
     def predict(self):
 
         if len(self.imspec) == 3:
-            name, at_list, layer = self.imspec
-            expression = None
+            name, _at_list, layer = self.imspec
             tag = None
-            zorder = 0
+            _expression = None
+            _zorder = None
+            _behind = None
         elif len(self.imspec) == 6:
-            name, expression, tag, at_list, layer, zorder = self.imspec
+            name, _expression, tag, _at_list, layer, _zorder = self.imspec
+            _behind = None
         elif len(self.imspec) == 7:
-            name, expression, tag, at_list, layer, zorder, behind = self.imspec
+            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
 
 
         if tag is None:
@@ -940,14 +941,14 @@ class Hide(Node):
         next_node(self.next)
 
         if len(self.imspec) == 3:
-            name, at_list, layer = self.imspec
-            expression = None
+            name, _at_list, layer = self.imspec
+            _expression = None
             tag = None
-            zorder = 0
+            _zorder = 0
         elif len(self.imspec) == 6:
-            name, expression, tag, at_list, layer, zorder = self.imspec
+            name, _expression, tag, _at_list, layer, _zorder = self.imspec
         elif len(self.imspec) == 7:
-            name, expression, tag, at_list, layer, zorder, behind = self.imspec
+            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
             
         renpy.config.hide(tag or name, layer)
 
@@ -1143,7 +1144,7 @@ class Menu(Node):
     def get_children(self):
         rv = [ ]
 
-        for label, condition, block in self.items:
+        for _label, _condition, block in self.items:
             if block:
                 rv.extend(block)
 
@@ -1154,7 +1155,7 @@ class Menu(Node):
 
         self.next = next
 
-        for (label, condition, block) in self.items:
+        for (_label, _condition, block) in self.items:
             if block:
                 chain_block(block, next)
 
@@ -1201,7 +1202,7 @@ class Menu(Node):
 
         renpy.store.predict_menu()
         
-        for label, condition, block in self.items:
+        for _label, _condition, block in self.items:
             if block:
                 rv.append(block[0])
 
@@ -1336,7 +1337,7 @@ class If(Node):
     def get_children(self):
         rv = [ ]
 
-        for condition, block in self.entries:
+        for _condition, block in self.entries:
             rv.extend(block)
 
         return rv
@@ -1344,7 +1345,7 @@ class If(Node):
     def chain(self, next):
         self.next = next
 
-        for condition, block in self.entries:
+        for _condition, block in self.entries:
             chain_block(block, next)
 
     def execute(self):
@@ -1358,7 +1359,7 @@ class If(Node):
 
     def predict(self):
 
-        return [ block[0] for condition, block in self.entries ] + \
+        return [ block[0] for _condition, block in self.entries ] + \
                [ self.next ]
 
     def scry(self):

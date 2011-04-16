@@ -420,7 +420,7 @@ class StyleManager(object):
             rest = name
             
             while "_" in rest:
-                first, rest = rest.split("_", 1)
+                _first, rest = rest.split("_", 1)
                 if rest in style_map:
                     s = Style(rest)
                     self.__setattr__(name, s)                    
@@ -615,9 +615,9 @@ def build_style(style):
 
     if updates or my_updates:
         cache = cache[:]
-        for prio, propn, val in updates:
+        for _prio, propn, val in updates:
             cache[propn] = val
-        for prio, propn, val in my_updates:
+        for _prio, propn, val in my_updates:
             cache[propn] = val
 
     style.cache = cache
@@ -884,7 +884,7 @@ def write_text(filename):
     styles = style_map.items()
     styles.sort()
 
-    for name, sty in styles:
+    for _name, sty in styles:
 
         if not isinstance(sty, Style):
             continue
@@ -902,7 +902,7 @@ def write_text(filename):
         inherited = [ True ] * property_numbers
             
         for p in sty.properties:
-            for prio, propn, newval in expand_properties(p):
+            for _prio, propn, _newval in expand_properties(p):
                 inherited[propn] = False
             
         props = [ (prefix + prop, sty.cache[prefixn + propn], inherited[prefixn + propn])

@@ -19,11 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
 import pygame
 import renpygame
 
-from pygame.time import *
+from pygame.time import * #@UnusedWildImport
 
 # This doesn't work right if the wait is too long. Well, probably other
 # things will break as well, so no biggie.

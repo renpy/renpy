@@ -3,8 +3,6 @@
 import collections
 import glob
 import re
-import sys
-import time
 import os
 
 # A map from string to filename, line number where the string is found.

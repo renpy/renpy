@@ -20,9 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.audio
+import renpy.display
+
 import pygame
 
-from pygame.event import *
+from pygame.event import * #@UnusedWildImport
 
 def periodic():
     renpy.audio.audio.periodic()

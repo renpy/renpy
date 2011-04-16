@@ -193,7 +193,7 @@ class ImageMapCache(renpy.object.Object):
         cache = pygame.Surface((self.cache_width, self.cache_height), pygame.SRCALPHA, 32)
                     
         for i, (d, rect) in enumerate(self.imagerect):
-            x, y, w, h = self.cache_rect[i]
+            x, y, _w, _h = self.cache_rect[i]
 
             surf = renpy.display.im.cache.get(d).subsurface(rect)
             cache.blit(surf, (x, y))

@@ -175,7 +175,7 @@ class Clipper(object):
             i = 0
 
             while i < len(sized):
-                iarea, ix0, iy0, ix1, iy1 = sized[i] 
+                _iarea, ix0, iy0, ix1, iy1 = sized[i] 
 
                 if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and \
                    (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
@@ -455,12 +455,12 @@ def draw(dest, clip, what, xo, yo, screen):
         
     # Deal with alpha and transforms by passing them off to draw_transformed.
     if what.alpha != 1 or what.forward:
-        for child, cxo, cyo, focus, main in what.visible_children:
+        for child, cxo, cyo, _focus, _main in what.visible_children:
             draw_transformed(dest, clip, child, xo + cxo, yo + cyo,
                              what.alpha, what.forward, what.reverse)
         return
         
-    for child, cxo, cyo, focus, main in what.visible_children:
+    for child, cxo, cyo, _focus, _main in what.visible_children:
         draw(dest, clip, child, xo + cxo, yo + cyo, screen)
 
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
@@ -596,7 +596,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         
         # raise Exception("Using a draw_func on a transformed surface is not supported.")
 
-    for child, cxo, cyo, focus, main in what.visible_children:
+    for child, cxo, cyo, _focus, _main in what.visible_children:
 
         cxo, cyo = reverse.transform(cxo, cyo)
 
@@ -630,7 +630,7 @@ def do_draw_screen(screen_render, full_redraw):
     if cliprect is None:
         return [ ]
 
-    x, y, w, h = cliprect
+    x, y, _w, _h = cliprect
 
     dest = pygame.display.get_surface().subsurface(cliprect)
     draw(dest, None, screen_render, -x, -y, True)
@@ -896,7 +896,7 @@ class SWDraw(object):
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
-        for (child, xo, yo, focus, main) in what.visible_children:
+        for (child, xo, yo, _focus, _main) in what.visible_children:
             cx = x - xo
             cy = y - yo
 

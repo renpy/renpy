@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 """Easy to use dialogs.
 
 Message(msg) -- display a message and an OK button.

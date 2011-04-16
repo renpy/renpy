@@ -260,7 +260,6 @@ class Position(Container):
     def render(self, width, height, st, at):
 
         surf = render(self.child, width, height, st, at)
-        cw, ch = surf.get_size()
 
         self.offsets = [ (0, 0) ]
 
@@ -506,9 +505,7 @@ class MultiBox(Container):
         if layout == "fixed":
 
             rv = None
-            
-            surfaces = [ ]
-            
+                        
             for child, cst, cat in zip(self.children, csts, cats):
                 
                 surf = render(child, width, height, cst, cat)
@@ -1014,7 +1011,7 @@ def condition_switch_show(st, at, switch):
 def condition_switch_predict(switch):
 
     if renpy.game.lint:
-        return [ d for cond, d in switch ]
+        return [ d for _cond, d in switch ]
 
     return [ condition_switch_pick(switch) ]
 

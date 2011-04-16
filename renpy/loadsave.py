@@ -29,7 +29,6 @@ import cStringIO
 
 import zipfile
 import os
-import os.path
 import re
 import threading
 import sys

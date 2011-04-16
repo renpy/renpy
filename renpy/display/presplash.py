@@ -84,7 +84,7 @@ def show(fn):
         
     try:
         import pygame.macosx
-        pygame.macosx.init()
+        pygame.macosx.init() #@UndefinedVariable
     except:
         pass
 

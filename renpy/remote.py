@@ -37,7 +37,6 @@
 
 import renpy
 import os
-import os.path
 
 commandfile = "command.%d.txt" % os.getpid()
 

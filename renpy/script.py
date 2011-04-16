@@ -24,7 +24,6 @@
 
 import renpy
 
-import os.path
 import os
 import imp
 import difflib

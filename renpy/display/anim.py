@@ -117,7 +117,7 @@ class Edge(object):
         self.prob = prob
 
     def add(self, sma):
-        for i in range(0, self.prob):
+        for _i in xrange(0, self.prob):
             sma.edges.setdefault(self.old, []).append(self)
 
 

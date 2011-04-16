@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
-import os
 import os.path
 from pickle import loads
 from cStringIO import StringIO
@@ -141,7 +140,7 @@ def listdirfiles():
         for j in walkdir(i):
             rv.append((i, j))
 
-    for prefix, index in archives:
+    for _prefix, index in archives:
         for j in index.iterkeys():
             rv.append((None, j))
             
@@ -356,7 +355,7 @@ def loadable(name):
     except:
         pass
 
-    for prefix, index in archives:
+    for _prefix, index in archives:
         if name in index:
             loadable_cache[name] = True
             return True

@@ -34,7 +34,7 @@ def Font(filename, size):
     """
 
     if filename is None:
-        filename = renpy.store.style.default.font
+        filename = renpy.store.style.default.font #@UndefinedVariable
 
     return pygame.font.Font(renpy.loader.transfn(filename), size)
 

@@ -5,7 +5,6 @@ import sys
 import os
 import zipfile
 import tarfile
-import time
 import zlib
 import compileall
 import shutil

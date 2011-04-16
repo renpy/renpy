@@ -1,3 +1,5 @@
+#@PydevCodeAnalysisIgnore
+
 """pefile, Portable Executable reader module
 
 
@@ -25,11 +27,9 @@ __version__ = '1.2.10-%d' % int( __revision__[21:-2] )
 __contact__ = 'ero@dkbza.org'
 
 
-import os
 import struct
 import time
 import math
-import re
 import exceptions
 import string
 import array
@@ -3184,7 +3184,7 @@ class PE:
         try:
             # If the RVA is invalid all would blow up. Some EXEs seem to be
             # specially nasty and have an invalid RVA.
-            data = self.get_data(rva, 2)
+            self.get_data(rva, 2)
         except PEFormatError, e:
             return None
         
