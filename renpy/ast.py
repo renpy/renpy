@@ -42,11 +42,6 @@ def next_node(n):
 
     renpy.game.context().next_node = n
 
-# Called to set the state of a Node, when necessary.
-def setstate(node, state):
-    for k, v in state[1].iteritems():
-        setattr(node, k, v)
-
 class ParameterInfo(object):
     """
     This class is used to store information about parameters to a
@@ -212,6 +207,15 @@ class Node(object):
         'next',
         ]
 
+    # Called to set the state of a Node, when necessary.
+    def __setstate__(self, state):
+        for k, v in state[1].iteritems():
+            try:           
+                setattr(self, k, v)
+            except AttributeError:
+                pass
+            
+            
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -331,7 +335,7 @@ class Say(Node):
     def __setstate__(self, state):
         self.attributes = None
         self.interact = True
-        setstate(self, state)
+        Node.__setstate__(self, state)
 
     def __init__(self, loc, who, what, with_, interact=True, attributes=None):
 
@@ -481,7 +485,7 @@ class Label(Node):
 
     def __setstate__(self, state):
         self.parameters = None
-        setstate(self, state)
+        Node.__setstate__(self, state)
     
     def __init__(self, loc, name, block, parameters):
         """
@@ -957,7 +961,7 @@ class With(Node):
 
     def __setstate__(self, state):
         self.paired = None
-        setstate(self, state)
+        Node.__setstate__(self, state)
     
     def __init__(self, loc, expr, paired=None):
         """
@@ -1009,7 +1013,7 @@ class Call(Node):
 
     def __setstate__(self, state):
         self.arguments = None
-        setstate(self, state)
+        Node.__setstate__(self, state)
     
     def __init__(self, loc, label, expression, arguments):
 
@@ -1080,7 +1084,7 @@ class Return(Node):
 
     def __setstate__(self, state):
         self.expression = None
-        setstate(self, state)
+        Node.__setstate__(self, state)
     
     def __init__(self, loc, expression):
         super(Return, self).__init__(loc)
