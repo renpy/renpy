@@ -1335,9 +1335,27 @@ class Conditional(renpy.display.layout.Container):
             return self.child.event(ev, x, y, st)
         
             
+class TimerState(renpy.python.RevertableObject):
+    """
+    Stores the state of the timer, which may need to be rolled back.
+    """
+    
+    # Prevents us from having to worry about our initialization being
+    # rolled back.
+    started = False
+    next_event = None
+            
 class Timer(renpy.display.layout.Null):
 
+    __version__ = 1
+
     started = False
+    
+    def after_upgrade(self, version):
+        if version < 1:        
+            self.state = TimerState()
+            self.state.started = self.started
+            self.state.next_event = self.next_event
     
     def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, **properties):
         super(Timer, self).__init__(**properties)
@@ -1366,30 +1384,34 @@ class Timer(renpy.display.layout.Null):
         self.started = False
 
         if replaces is not None:
-            self.started = replaces.started
-            self.next_event = replaces.next_event
+            self.state = replaces.state
+        else:
+            self.state = TimerState()
 
     
     def event(self, ev, x, y, st):
 
-        if not self.started:
-            self.started = True
-            self.next_event = st + self.delay
+        state = self.state
+
+        if not state.started:
+            state.started = True
+            state.next_event = st + self.delay
         
-        if self.next_event is None:
+        if state.next_event is None:
             return
         
-        if st < self.next_event:
-            renpy.game.interface.timeout(self.next_event - st)
+        if st < state.next_event:
+            renpy.game.interface.timeout(state.next_event - st)
             return
 
         if not self.repeat:
-            self.next_event = None
+            state.next_event = None
         else:
-            while self.next_event < st:
-                self.next_event += self.delay
+            state.next_event = state.next_event + st
+            if state.next_event < st:
+                state.next_event = st + self.delay
 
-            renpy.game.interface.timeout(self.next_event - st)
+            renpy.game.interface.timeout(state.next_event - st)
 
         return self.function(*self.args, **self.kwargs)
 

@@ -529,6 +529,9 @@ class Rollback(renpy.object.Object):
         for d in self.context.dynamic_stack:
             for v in d.itervalues():
                 reached(v, reachable, wait)
+
+        # Add in objects reachable through displayables.
+        reached(self.context.scene_lists.get_all_displayables(), reachable, wait)
             
         # Purge object update information for unreachable objects.
         new_objects = [ ]

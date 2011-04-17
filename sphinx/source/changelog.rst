@@ -133,6 +133,10 @@ as part of a screen.
 Added :var:`config.debug_text_overflow`, which controls the logging of cases
 where text exceeds its allocated area.
 
+Bug fixes:
+
+* :lpbug:`734137` - Timers do not participate in rollback.
+
 
 Ren'Py 6.12.0
 =============

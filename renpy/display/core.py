@@ -768,6 +768,18 @@ class SceneLists(renpy.object.Object):
 
         l.pop(index)
 
+    def get_all_displayables(self):
+        """
+        Gets all displayables reachable from this scene list.
+        """
+        
+        rv = [ ]
+        for l in self.layers.itervalues():
+            for sle in l:
+                rv.append(sle.displayable)
+                
+        return rv
+
     def remove_above(self, layer, thing):
         """
         Removes everything on the layer that is closer to the user
