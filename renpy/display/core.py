@@ -2129,13 +2129,7 @@ class Interface(object):
                     # Try to merge an TIMEEVENT with the next event.
                     if ev.type == TIMEEVENT:
                         old_timeout_time = None
-
                         pygame.event.clear([TIMEEVENT])
-
-                        ev2 = self.event_peek()
-
-                        if ev2 and ev2.type not in (pygame.NOEVENT, PERIODIC, REDRAW, pygame.QUIT):
-                            ev = self.event_poll()
                             
                     # Handle redraw timeouts.
                     if ev.type == REDRAW:
