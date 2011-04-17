@@ -136,7 +136,8 @@ where text exceeds its allocated area.
 Bug fixes:
 
 * :lpbug:`734137` - Timers do not participate in rollback.
-
+* :lpbug:`735187` - Ren'Py get stuck when using {nw}. (Thanks to Franck_v
+  for tracking this down.)
 
 Ren'Py 6.12.0
 =============
