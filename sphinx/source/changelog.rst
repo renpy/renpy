@@ -133,11 +133,18 @@ as part of a screen.
 Added :var:`config.debug_text_overflow`, which controls the logging of cases
 where text exceeds its allocated area.
 
+Ren'Py no longer attempts to adjust the system level mixer controls, which
+means that it's no longer possible to raise the volume from within Ren'Py. 
+Controlling the system volume exhibited bugs on all three platforms, including
+hard-to-predict volume changes that affect other applications.
+
+
 Bug fixes:
 
 * :lpbug:`734137` - Timers do not participate in rollback.
 * :lpbug:`735187` - Ren'Py get stuck when using {nw}. (Thanks to Franck_v
   for tracking this down.)
+
 
 Ren'Py 6.12.0
 =============

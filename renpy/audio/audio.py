@@ -37,7 +37,6 @@ import atexit
 disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
 pss = None
-mix = None
 
 if 'pss' not in disable:
     try:
@@ -55,57 +54,13 @@ if 'pss' not in disable:
             pass
 
         
-if 'mix' not in disable:
-    try:
-        import winmixer as mix; mix #@UnresolvedImport
-    except:
-        try:
-            import linmixer as mix; mix #@UnresolvedImport @Reimport
-        except:
-            pass
-
 # Save the mixer, and restore it at exit.
 
 old_wave = None
 old_midi = None
         
-if mix:
-
-    mixer_enabled = False
-    
-    def enable_mixer():
-
-        global old_wave
-        global old_midi
-        global mixer_enabled
-
-        if mix_ok and not mixer_enabled:
-        
-            old_wave = mix.get_wave()
-            old_midi = mix.get_midi()
-            mixer_enabled = True
-            
-    def disable_mixer():
-        global mixer_enabled
-        
-        if not mix_ok or not mixer_enabled:
-            return
-
-        if old_wave is not None:
-            mix.set_wave(old_wave)
-
-        if old_midi is not None:
-            mix.set_midi(old_midi)
-
-        mixer_enabled = False
-
-    atexit.register(disable_mixer)
-
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
-
-# True if we are managing the mixers ourselves.
-mix_ok = None
 
 unique = time.time()
 serial = 0
@@ -519,10 +474,7 @@ class Channel(object):
             rv = self.loop[0]
             
         return rv
-
-    
-        
-        
+                
     def set_volume(self, volume):
         self.chan_volume = volume
             
@@ -656,10 +608,6 @@ def init():
             mixers.append(c.mixer)
 
     default_volume = 1.0
-
-    if mix and not 'RENPY_NOMIXER' in os.environ and mix.get_wave() is not None:
-        default_volume = mix.get_wave()
-        mix_ok = True
     
     for m in mixers:
         renpy.game.preferences.volumes.setdefault(m, default_volume)
@@ -734,53 +682,15 @@ def periodic():
 
         # Now, consider adjusting the volume of the channel. 
 
-        max_volume = -1.0
         volumes = renpy.game.preferences.volumes
 
-        if mix_ok:
+        for c in all_channels:
 
-            anything_playing = False
-            
-            for c in all_channels:
-                vol = c.chan_volume * volumes[c.mixer]
-                max_volume = max(max_volume, vol)
+            vol = c.chan_volume * volumes[c.mixer]
 
-                if vol != 0:
-                    anything_playing = True
-
-            if max_volume <= 0:
-                return
-
-            if not anything_playing:
-                disable_mixer()
-                pcm_volume = -1.0
-            else:
-                enable_mixer()
-                
-                if max_volume != pcm_volume:    
-                    mix.set_wave(max_volume)
-                    pcm_volume = max_volume
-
-
-            for c in all_channels:
-
-                vol = c.chan_volume * volumes[c.mixer]
-
-                vol /= max_volume
-                
-                if c.actual_volume != vol:
-                    pss.set_volume(c.number, vol)
-                    c.actual_volume = vol
-
-        else:
-
-            for c in all_channels:
-
-                vol = c.chan_volume * volumes[c.mixer]
-
-                if vol != c.actual_volume:
-                    pss.set_volume(c.number, vol)
-                    c.actual_volume = vol
+            if vol != c.actual_volume:
+                pss.set_volume(c.number, vol)
+                c.actual_volume = vol
                     
     except:
         if renpy.config.debug_sound:
