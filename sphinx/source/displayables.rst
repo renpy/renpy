@@ -1,3 +1,5 @@
+.. _displayables:
+
 Displayables
 ============
 

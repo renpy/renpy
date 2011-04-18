@@ -30,6 +30,7 @@ The Ren'Py Language
 
    language_basics
    dialogue
+   displaying_images
    atl
 
 Displayables, Transforms, and Transitions

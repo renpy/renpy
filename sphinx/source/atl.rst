@@ -17,6 +17,8 @@ Ren'Py Script Statements
 
 ATL Code can be included as part of three Ren'Py script statements.
 
+.. _transform-statement:
+
 Transform Statement
 -------------------
 
@@ -40,6 +42,7 @@ block is bound to this name. ::
        linear 2.0 yalign 1.0
        repeat
 
+.. _atl-image-statement:
     
 Image Statement With ATL Block 
 ------------------------------

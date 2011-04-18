@@ -150,9 +150,14 @@ Ren'Py statements are made of a few basic parts.
     spaces. The name ends at the end of the statement, or when a
     keyword is encountered.
 
-    The first component of an image name is known as the :dfn:`image
-    tag`. For example, ``eileen happy`` is an image name, and
-    ``eileen`` is its image tag.
+    An :dfn:`image name` consists of one or more names, separated by
+    spaces. The first component of the image name is called the
+    :dfn:`image tag`. The second and later components of the name are
+    the :dfn:`image attributes`.
+
+    For example, take the image name ``mary beach night happy``. The
+    image tag is ``mary``, while the image attributes are ``mary``,
+    ``beach``, and ``night``.
     
 :dfn:`String`
 
