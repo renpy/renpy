@@ -36,6 +36,7 @@ typedef GLfloat GLdouble;
 // This isn't defined on GL ES, but that's okay, since we'll disable
 // screenshots on Android.
 #define GL_PACK_ROW_LENGTH 0
+#define glReadBuffer(x)
 
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER_OES
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0_OES
