@@ -1074,6 +1074,8 @@ cdef class GLDraw:
 
         if GL_PACK_ROW_LENGTH != 0:
 
+            glReadBuffer(GL_FRONT)
+
             glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
 
             glReadPixels(
@@ -1084,6 +1086,8 @@ cdef class GLDraw:
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 pixels)
+
+            glReadBuffer(GL_BACK)
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
