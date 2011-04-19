@@ -69,6 +69,7 @@ Python and Ren'Py
 .. toctree::
    :maxdepth: 2
 
+   statement_equivalents
    screen_python
    modes
    other

@@ -120,22 +120,24 @@ def count_displayables_in_layer(layer):
 
     return len(sls.layers[layer])
 
-def image(name, img):
+def image(name, d):
     """
-    This is used to execute the image statment. It takes as arguments
-    an image name and an image object, and associates the image name
-    with the image object.
-
-    Like the image statment, this function should only be executed
-    in init blocks.
-
-    @param name: The image name, a tuple of strings.
+    :doc: se_images
     
-    @param img: The displayable that is associated with that name. If this
-    is a string or tuple, it is interpreted as an argument to Image.
+    Defines an image. This function is the python equivalent of the 
+    image statement.
+    
+    `name`
+        The name of the image to display, a string.
+        
+    `d`
+        The displayable to associate with that image name.
+        
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started.
     """
 
-    if img is None:
+    if d is None:
         raise Exception("Images may not be declared to be None.")
         
     if not renpy.game.context().init_phase:
@@ -144,8 +146,8 @@ def image(name, img):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    img = renpy.easy.displayable(img)
-    renpy.display.image.register_image(name, img)
+    d = renpy.easy.displayable(d)
+    renpy.display.image.register_image(name, d)
 
 def copy_images(old, new):
     if not isinstance(old, tuple):
@@ -181,7 +183,41 @@ def showing(name, layer='master'):
     return renpy.game.context().images.showing(layer, name)
 
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
-    "Documented in wiki as renpy.show."
+    """
+    :doc: se_images
+    :args: (name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ])
+    
+    Shows an image on a layer. This is the programmatic equivalent of the show
+    statement.
+    
+    `name`
+        The name of the image to show, a string.
+        
+    `at_list`
+        A list of transforms that are applied to the image.
+        The equivalent of the ``at`` property.
+        
+    `layer`
+        A string, giving the name of the layer on which the image will be shown.
+        The equivalent of the ``onlayer`` property.
+    
+    `what`
+        If not None, this is a displayable that will be shown in lieu of 
+        looking on the image. (This is the equivalent of the show expression
+        statement.) When a `what` parameter is given, `name` can be used to
+        associate a tag with the image.
+        
+    `zorder`
+        An integer, the equivalent of the ``zorder`` property.
+        
+    `tag`
+        A string, used to specify the the image tag of the shown image. The
+        equivalent of the ``as`` property.
+        
+    `behind`
+        A list of strings, giving image tags that this image is shown behind.
+        The equivalent of the ``behind`` property.
+    """
 
     if renpy.game.context().init_phase:
         raise Exception("Show may not run while in init phase.")
@@ -239,17 +275,16 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
 def hide(name, layer='master'):
     """
-    This finds items in the master layer that have the same name
-    as the first component of the given name, and removes them
-    from the master layer. This is used to execute the hide
-    statement.
+    :doc: se_images
     
-    @param name: The name of the image to hide from the screen. This
-    may be a tuple of strings, or a single string. In the latter case,
-    it is split on whitespace to make a tuple. Only the first element
-    of the tuple is used.
-
-    @param layer: The layer this operates on.
+    Hides an image from a layer. The python equivalent of the hide statement.
+    
+    `name`
+         The name of the image to hide. Only the image tag is used, and 
+         any image with the tag is hidden (the precise name does not matter).
+         
+    `layer`
+         The layer on which this function operates.
     """
 
     if renpy.game.context().init_phase:
@@ -268,9 +303,20 @@ def hide(name, layer='master'):
 
 def scene(layer='master'):
     """
-    This clears out the master layer. This is used in the execution of
-    the scene statment, but only to clear out the layer. If you want
-    to then add something new, call renpy.show after this.
+    :doc: se_images
+
+    Removes all displayables from `layer`. This is equivalent to the scene
+    statement, when the scene statement is not given an image to show.
+
+    A full scene statement is equivalent to a call to renpy.scene followed by a
+    call to :func:`renpy.show`. For example::
+    
+        scene bg beach 
+        
+    is equivalent to::
+    
+        $ renpy.scene()
+        $ renpy.show("bg beach")        
     """
 
     if renpy.game.context().init_phase:
@@ -790,17 +836,24 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     return rv
         
 
-def with_statement(trans, paired=None, always=False, clear=True):
+def with_statement(trans, always=False, paired=None, clear=True):
     """
-    Implements the with statement. One reason to use this over a
-    Ren'Py with statement is to get at the return code, which is True
-    if the transition was interrupted, or False otherwise.
-
-    @param trans: The transition.
-
-    @param paired: The transition paired with this with one.
-
-    @param always: Always perform the transition.
+    :doc: se_with
+    :name: renpy.with_statement
+    :args: (trans, always=False)
+    
+    Causes a transition to occur. This is the python equivalent of the
+    with statement.
+    
+    `trans`
+        The transition.
+        
+    `always`
+        If True, the transition will always occur, even if the user has
+        disabled transitions.
+        
+    This function returns true if the user chose to interrupt the transition,
+    and false otherwise. 
     """
 
     if renpy.game.context().init_phase:
