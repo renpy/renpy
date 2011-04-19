@@ -224,11 +224,11 @@ class ShownImageInfo(renpy.object.Object):
         if version < 2:
 
             self.attributes = { }
-            self.shown = { }
+            self.shown = set()
             
             for layer in self.images:
-                for tag in layer:
-                    self.attributes[layer, tag] = layer[tag][1:]
+                for tag in self.images[layer]:
+                    self.attributes[layer, tag] = self.images[layer][tag][1:]
                     self.shown.add((layer, tag))
                
     def get_attributes(self, layer, tag):
