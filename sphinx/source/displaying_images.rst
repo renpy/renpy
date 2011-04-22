@@ -17,6 +17,11 @@ The four statements that work with images are:
 * ``scene`` - clears a layer, and optionally shows an image on that layer.
 * ``hide`` - removes an image from a layer.
 
+As abrupt changes of image can be disconcerting to the user, Ren'Py
+has the ``with`` statement, which allows effects to be applied
+when the scene is changed.
+
+
 Concepts
 ========
 
@@ -269,8 +274,77 @@ Instead, just write::
     show eileen happy
 
 
-With Clause
-===========
+.. _with-statement:
+    
+With Statement
+==============
+
+The with statement is used to apply a transition effect when the scene
+is changed, making showing and hiding images less abrupt. The with
+statement consists of the keyword ``with``, followed by a simple
+expression that evaluates either to a transition object or the special
+value ``None``.
+
+The transition effect is applied between the contents of the screen at
+the end of the previous interaction (with transient screens and
+displayables hiddden), and the current contents of the scene, after the
+show and hide statements have executed.
+
+The with statement causes an interaction to occur. The duration of
+this interaction is controlled by the user, and the user can cause it
+to terminate early.
+
+For a full list of transitions that can be used, see the chapter on
+:ref:`transitions <transitions>`.
+
+An example of the with statement is::
+
+    show bg washington
+    with dissolve
+
+    show eileen happy at left
+    show lucy mad at right
+    with dissolve
+
+This causes two transitions to occur. The first with statement uses
+the ``dissolve`` transition to change the screen from what was
+previously shown to the washington background. (The ``dissolve``
+transition is, by default, defined as a .5 second dissolve.)
+
+The second transition occurs after the Eileen and Lucy images are
+shown. It causes a dissolve from the scene consisting solely of the
+background to the scene consisting of all three images - the result is
+that the two new images appear to dissolve in simultaneously. 
+
+With None
+---------
+
+In the above example, there are two dissolves. But what if we wanted
+the background to appear instantly, followed by a dissolve of the two
+characters? Simply omitting the first with statement would cause all
+three images to dissolve in - we need a way to say that the first
+should be show instantly.
+
+The with statement changes behavior when given the special value
+``None``. The ``with None`` statement causes an abbreviated
+interaction to occur, without changing what the user sees. When the
+next transition occurs, it will start from the scene as it appears at
+the end of this abbreviated interaction.
+
+For example, in the code::
+
+    show bg washington
+    with None
+
+    show eileen happy at left
+    show lucy mad at right
+    with dissolve
+
+Only a single transition occurs, from the washington background to the
+scene consisting of all three images.
+    
+With Clause of Scene, Show, and Hide Statements
+-----------------------------------------------
 
 The show, scene, and hide statements can take an optional with clause,
 which allows a transition to be combined with showing or hiding an
@@ -282,11 +356,15 @@ The with clause is equivalent to preceding the line with a ``with
 None`` statement, and following it by a :ref:`with statement <with-statement>` containing the
 text of the with clause. For example::
 
-    show eileen happy with dissolve
-
+    show eileen happy at left with dissolve
+    show lucy mad at right with dissolve
+    
 is equivalent to::
 
     with None
-    show eileen happy
+    show eileen happy at left
     with dissolve
 
+    with None
+    show lucy mad at right
+    with dissolve
