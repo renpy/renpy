@@ -1123,8 +1123,12 @@ def get_filename_line():
     statement.
     """
 
-    n = renpy.game.script.namemap[renpy.game.context().current]
-    return n.filename, n.linenumber
+    n = renpy.game.script.namemap.get(renpy.game.context().current, None)
+    
+    if n is None:
+        return "unknown", 0
+    else:
+        return n.filename, n.linenumber
 
 def shell_escape(s):
     s = s.replace("\\", "\\\\")
