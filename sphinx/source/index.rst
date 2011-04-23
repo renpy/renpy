@@ -40,6 +40,7 @@ Displayables, Transforms, and Transitions
    :maxdepth: 2
     
    displayables
+   transitions
    
 Customizing Ren'Py
 ------------------

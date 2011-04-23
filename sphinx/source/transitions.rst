@@ -15,7 +15,7 @@ Pre-Defined Transitions
 =======================
 
 Pre-defined transitions can be given directly to the with
-statement. For example:
+statement. For example::
 
     show bg washington
     with dissolve
@@ -140,7 +140,7 @@ statement. For example::
 
 If we find ourselves calling the same transition class repeatedly, we
 can use the :ref:`define statement <define-statement>` to assign the
-transition to a variable:
+transition to a variable::
 
     define annoytheuser = Dissolve(1.0)
 
@@ -149,3 +149,12 @@ transition to a variable:
          with annoytheuser
 
          
+.. include:: inc/transition
+
+Transition Families
+===================
+
+Transition families are functions that define a large family of
+related transitions.
+
+.. include:: inc/transition_family

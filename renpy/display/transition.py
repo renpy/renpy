@@ -69,10 +69,11 @@ def null_render(d, width, height, st, at):
     
 class NoTransition(Transition):
     """
-    This is a transition that doesn't do anything, and simply displays
-    the new_widget for a specified amount of time. It's almost
-    certainly not interesting by itself, but it may come in quite
-    handy as part of a MultipleTransition.
+    :doc: transition function
+    :args: (delay)
+    
+    Returns a transition that only displays the new screen for `delay` seconds.
+    It can be useful as part of a MultipleTransition.
     """
 
     def __init__(self, delay, old_widget=None, new_widget=None, **properties):
@@ -88,19 +89,35 @@ class NoTransition(Transition):
 
 class MultipleTransition(Transition):
     """
-    This is a transition that can sequence between multiple screens,
-    showing a different transition between each.
+    :doc: transition function
+    :args: (args)
+    
+    Returns a transition that allows multiple transitions to be displayed, one
+    after the other.
+    
+    `args`
+        A list containing an odd number of items. The first, third, and 
+        other odd-numbered items must be scenes, and the even items
+        must be transitions. A scene can be one of:
+        
+        * A displayable.
+        * False, to use the old scene.
+        * True, to use the new scene. 
 
-    This must be supplied with a tuple containing an odd number of
-    components. The first, third, and so on components are interpreted
-    as screens that can be shown to the user, while the even components
-    are transitions between those screens.
-
-    A screen can be any displayable, but normally an Image or Solid is
-    most appropriate. An screen can also be False to represent the screen
-    we are transitioning from, or True to represent the screen we are
-    transitioning to. Almost always, the first argument will be False
-    and the last will be True.
+        Almost always, the first argument will be False and the last True.
+        
+    The transitions in `args` are applied in order. For each transition, 
+    the old scene is the screen preceding it, and the new scene is the 
+    scene following it. For example::
+    
+        define logodissolve = MultipleTransition(
+            False, Dissolve(0.5)
+            "logo.jpg", NoTransition(1.0),
+            "logo.jpg", dissolve,
+            True)
+            
+    This example will dissolve to logo.jpg, wait 1 second, and then 
+    dissolve to the new scene.
     """
     
     def __init__(self, args, old_widget=None, new_widget=None, **properties):
@@ -178,30 +195,24 @@ def Fade(out_time,
          ):
 
     """
-    This returns an object that can be used as an argument to a with
-    statement to fade the old scene into a solid color, waits for a
-    given amount of time, and then fades from the solid color into
-    the new scene.
+    :doc: transition function
+    :args: (out_time, hold_time, old_time, color="#000")
+    :name: Fade
     
-    @param out_time:  The amount of time that will be spent
-    fading from the old scene to the solid color. A float, given as
-    seconds.
+    Returns a transition that takes `out_time` seconds to fade to 
+    a screen filled with `color`, holds at that screen for `hold_time`
+    seconds, and then takes `in_time` to fade to then new screen.
     
-    @param hold_time:  The amount of time that will be spent
-    displaying the solid color. A float, given as seconds.
-
-    @param in_time:  The amount of time that will be spent
-    fading from the solid color to the new scene. A float, given as
-    seconds.
+    ::
     
-    @param color:  The solid color that will be fade to. A tuple containing
-    three components, each between 0 or 255. This can also be None.
-
-    @param widget: This is a widget that will be faded to, if color
-    is None. This allows a fade to be to an image rather than just
-    a solid color.
-
-    If both color and widget are None, then the fade is to black.
+        # Fade to black and back.
+        define fade = Fade(0.5, 0.0, 0.5)
+        
+        # Hold at black for a bit.
+        define fadehold = Fade(0.5, 1.0, 0.5)
+        
+        # Camera flash - quickly fades to white, then back to the scene.
+        define flash = Fade(0.1, 0.0, 0.5, color="#fff")
     """
 
     dissolve = renpy.curry.curry(Dissolve)
@@ -227,9 +238,20 @@ def Fade(out_time,
 
 class Pixellate(Transition):
     """
-    This pixellates out the old scene, and then pixellates in the new
-    scene, taking the given amount of time and the given number of pixellate
-    steps in each direction.
+    :doc: transition function
+    :args: (time, steps)
+    :name: Pixellate
+    
+    Returns a transition that pixellates out the old screen, and then
+    pixellates in the new screen.
+    
+    `time`
+        The total time the transition will take, in seconds.
+
+    `steps`
+        The number of steps that will occur, in each direction. Each step
+        creates pixels about twice the size of those in the previous step,
+        so a 5-step pixellation will create 32x32 pixels.
     """
 
     def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
@@ -246,7 +268,7 @@ class Pixellate(Transition):
 
         self.events = False
 
-        self.quantum = time / ( 2 * steps )
+        self.quantum = time / (2 * steps)
 
     def render(self, width, height, st, at):
 
@@ -272,7 +294,7 @@ class Pixellate(Transition):
         rv.blit(rdr, (0, 0))
 
         rv.operation = renpy.display.render.PIXELLATE
-        rv.operation_parameter =  2 ** step
+        rv.operation_parameter = 2 ** step
         
         renpy.display.render.redraw(self, 0)
 
@@ -281,11 +303,19 @@ class Pixellate(Transition):
         
 class Dissolve(Transition):
     """
-    This dissolves from the old scene to the new scene, by
-    overlaying the new scene on top of the old scene and varying its
-    alpha from 0 to 255.
-
-    @param time: The amount of time the dissolve will take.
+    :doc: transition function
+    :args: (time, alpha=False)
+    :name: Dissolve
+    
+    Returns a transition that dissolves from the old scene to the new scene.
+    
+    `time`
+        The time the dissolve will take.
+        
+    `alpha`
+        If true, the dissolve will alpha-composite the the result of the 
+        transition with the screen. If false, the result of the transition
+        will replace the screen, which is more efficient.
     """
 
     __version__ = 1
@@ -308,7 +338,7 @@ class Dissolve(Transition):
 
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
-        
+                                            
         if st >= self.time:
             self.events = True
             return render(self.new_widget, width, height, st, at)
@@ -337,8 +367,40 @@ class Dissolve(Transition):
 
 class ImageDissolve(Transition):
     """
-    This dissolves the old scene into the new scene, using an image
-    to control the dissolve process.
+    :doc: transition function
+    :args: (image, time, ramplen=8, reverse=False, alpha=True)
+    :name: ImageDissolve
+
+    Returns a transition that dissolves the old scene into the new scene, using
+    an image to control the dissolve process. This means that white pixels will
+    dissolve in first, and black pixels will dissolve in last.
+    
+    `image`
+        A control image to use. This must be either an image file or 
+        image manipulator. The control image should be the size of
+        the scenes being dissolved.
+        
+    `time`
+        The time the dissolve will take.
+        
+    `ramplen`
+        The length of the ramp to use. This must be an integer power 
+        of 2. When this is the default value of 8, when a white pixel
+        is fully dissolved, a pixel 8 shades of gray darker will be
+        
+    `reverse`
+        If true, black pixels will dissolve in before white pixels.
+        
+    `alpha`
+        If true, the dissolve will alpha-composite the the result of the 
+        transition with the screen. If false, the result of the transition
+        will replace the screen, which is more efficient.
+        
+    ::
+    
+        define circirisout = ImageDissolve("circiris.png", 1.0)
+        define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
+        define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
     """
 
     __version__ = 1
@@ -386,7 +448,7 @@ class ImageDissolve(Transition):
                 0, 0, 0, 0, 1,
                 0, 0, 0, 0, 1,
                 0, 0, 0, 0, 1,
-                -1, 0, 0, 0, 1)
+                - 1, 0, 0, 0, 1)
 
         self.image = renpy.display.im.MatrixColor(image, matrix)
 
@@ -435,14 +497,13 @@ class ImageDissolve(Transition):
 
 class AlphaDissolve(Transition):
     """
-    :doc: other
+    :doc: transition function
     :args: (control, delay=0.0, alpha=False, reverse=False)
     
-    This transition uses a control displayable (almost always some
-    sort of animated transform) to transition from one screen to
-    another. The transform is evaluated. The new screen is used where
-    the transform is opaque, and the old image is used when it is
-    transparent.
+    Returns a transition that uses a control displayable (almost always some
+    sort of animated transform) to transition from one screen to another. The
+    transform is evaluated. The new screen is used where the transform is
+    opaque, and the old image is used when it is transparent.
 
     `control`
         The control transform.
@@ -522,41 +583,88 @@ class AlphaDissolve(Transition):
 
 class CropMove(Transition):
     """
-    The CropMove transition works by placing the old and the new image
-    on two layers, called the top and the bottom. (Normally the new
-    image is on the top, but that can be changed in some modes.) The
-    bottom layer is always drawn in full. The top image is first
-    cropped to a rectangle, and then that rectangle drawn onto
-    the screen at a specified position. Start and end crop rectangles
-    and positions can be selected by the supplied mode, or
-    specified manually. The result is a surprisingly flexible
-    transition.
+    :doc: transition function
+    :args: (time, mode="slideright", startcrop=(0.0, 0.0, 0.0, 1.0), startpos=(0.0, 0.0), endcrop=(0.0, 0.0, 1.0, 1.0), endpos=(0.0, 0.0), topnew=True)
+    :name: CropMove
 
-    This transition has many modes, simplifying its use. We can group
-    these modes into three groups: wipes, slides, and other.
+    Returns a transition that works by cropping a scene and positioning it on the
+    screen. This can be used to implement a variety of effects, all of which 
+    involved changing rectangular slices of scenes. 
 
-    In a wipe, the image stays fixed, and more of it is revealed as
-    the transition progresses. For example, in "wiperight", a wipe from left to right, first the left edge of the image is
-    revealed at the left edge of the screen, then the center of the image,
-    and finally the right side of the image at the right of the screen.
-    Other supported wipes are "wipeleft", "wipedown", and "wipeup".
+    `time`
+        The time the transition takes.
+        
+    `mode`
+        The name of the mode of the transition. There are three groups
+        of modes: wipes, slides, and other. This can also be "custom", 
+        to allow a custom mode to be defined.
+    
+        In a wipe, the image stays fixed, and more of it is revealed as
+        the transition progresses. For example, in "wiperight", a wipe from left to right, first the left edge of the image is
+        revealed at the left edge of the screen, then the center of the image,
+        and finally the right side of the image at the right of the screen.
+        Other supported wipes are "wipeleft", "wipedown", and "wipeup".
+    
+        In a slide, the image moves. So in a "slideright", the right edge of the
+        image starts at the left edge of the screen, and moves to the right
+        as the transition progresses. Other slides are "slideleft", "slidedown",
+        and "slideup".
+    
+        There are also slideaways, in which the old image moves on top of
+        the new image. Slideaways include "slideawayright", "slideawayleft",
+        "slideawayup", and "slideawaydown".
+    
+        We also support a rectangular iris in with "irisin" and a
+        rectangular iris out with "irisout".
 
-    In a slide, the image moves. So in a "slideright", the right edge of the
-    image starts at the left edge of the screen, and moves to the right
-    as the transition progresses. Other slides are "slideleft", "slidedown",
-    and "slideup".
+    The following parameters are only respected if the mode is "custom". Positions 
+    are relative to the size of the screen, while the crops are relative to the 
+    size of the image. So a crop of (0.25, 0.0, 0.5, 1.0) takes the middle 
+    half of an image.
 
-    There are also slideaways, in which the old image moves on top of
-    the new image. Slideaways include "slideawayright", "slideawayleft",
-    "slideawayup", and "slideawaydown".
+    `startcrop`    
+        The starting rectangle that is cropped out of the
+        top image. A 4-element tuple containing x, y, width, and height. 
+        
+    `startpos`
+        The starting place that the top image is drawn
+        to the screen at, a 2-element tuple containing x and y.
 
-    We also support a rectangular iris in with "irisin" and a
-    rectangular iris out with "irisout". Finally, "custom" lets the
-    user define new transitions, if these ones are not enough.
+    `endcrop`
+        The ending rectangle that is cropped out of the
+        top image. A 4-element tuple containing x, y, width, and height. 
+        
+    `endpos`
+        The ending place that the top image is drawn
+        to the screen at, a 2-element tuple containing x and y.
+
+    `topnew`
+        If true, the scene that is cropped and moved (and is on top of 
+        the other scene) is the new scene. If false, it is the old scene.
+
+    ::
+    
+        define wiperight = CropMove(1.0, "wiperight")
+        define wipeleft = CropMove(1.0, "wipeleft")
+        define wipeup = CropMove(1.0, "wipeup")
+        define wipedown = CropMove(1.0, "wipedown")
+    
+        define slideright = CropMove(1.0, "slideright")
+        define slideleft = CropMove(1.0, "slideleft")
+        define slideup = CropMove(1.0, "slideup")
+        define slidedown = CropMove(1.0, "slidedown")
+    
+        define slideawayright = CropMove(1.0, "slideawayright")
+        define slideawayleft = CropMove(1.0, "slideawayleft")
+        define slideawayup = CropMove(1.0, "slideawayup")
+        define slideawaydown = CropMove(1.0, "slideawaydown")
+    
+        define irisout = CropMove(1.0, "irisout")
+        define irisin = CropMove(1.0, "irisin")
     """
 
     def __init__(self, time,
-                 mode="fromleft",
+                 mode="slideright",
                  startcrop=(0.0, 0.0, 0.0, 1.0),
                  startpos=(0.0, 0.0),
                  endcrop=(0.0, 0.0, 1.0, 1.0),
@@ -565,29 +673,6 @@ class CropMove(Transition):
                  old_widget=None,
                  new_widget=None,
                  **properties):
-
-        """
-        @param time: The time that this transition will last for, in seconds.
- 
-        @param mode: One of the modes given above.
-
-        The following parameters are only respected if the mode is "custom". 
-
-        @param startcrop: The starting rectangle that is cropped out of the
-        top image. A 4-element tuple containing x, y, width, and height. 
-        
-        @param startpos: The starting place that the top image is drawn
-        to the screen at, a 2-element tuple containing x and y.
-
-        @param endcrop: The ending rectangle that is cropped out of the
-        top image. A 4-element tuple containing x, y, width, and height. 
-        
-        @param endpos: The ending place that the top image is drawn
-        to the screen at, a 2-element tuple containing x and y.
-
-        @param topnew: If True, the top layer contains the new
-        image. Otherwise, the top layer contains the old image.
-        """
         
         super(CropMove, self).__init__(time, **properties)
         self.time = time
@@ -694,7 +779,7 @@ class CropMove(Transition):
         elif mode == "custom":
             pass
         else:
-            raise Exception("Invalid mode %s passed into boxwipe." % mode)
+            raise Exception("Invalid mode %s passed into CropMove." % mode)
 
         self.delay = time
         self.time = time
@@ -837,12 +922,13 @@ def RevolveInOut(start, end, pos, delay, d, **kwargs):
 
 def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):
     """
-    :doc: other
+    :doc: transition function
     :args: (delay, factory=None, enter_factory=None, leave_factory=None, old=False, layers=['master'])
+    :name: MoveTransition
     
-    This transition attempts to find images that have changed
-    position, and moves them from the old position to the new
-    transition, taking delay seconds to complete the move.
+    Returns a transition that attempts to find images that have changed
+    position, and moves them from the old position to the new transition, taking
+    delay seconds to complete the move.
 
     If `factory` is given, it is expected to be a function that takes as
     arguments: an old position, a new position, the delay, and a
@@ -1072,6 +1158,21 @@ def MoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_
 
 
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
+    """
+    :doc: transition function
+    :args: (trans, before, after)
+    
+    Returns a transition that composes up to three transitions. If not None,
+    the `before` and `after` transitions are applied to the old and new 
+    scenes, respectively. These updated old and new scenes are then supplied
+    to the `trans` transition.
+
+    ::
+
+        # Move the images in and out while dissolving. (This is a fairly expensive transition.)
+        define moveinoutdissolve = ComposeTransition(dissolve, before=moveoutleft, after=moveinright)
+    """
+    
     if before is not None:
         old = before(new_widget=new_widget, old_widget=old_widget)
     else:
@@ -1086,6 +1187,10 @@ def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widge
 
 
 def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
+    """
+    Applies a transition to a subset of the screen. Not documented.
+    """
+    
     x, y, _w, _h = rect
 
     old = renpy.display.layout.LiveCrop(rect, old_widget)
