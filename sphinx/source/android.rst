@@ -83,7 +83,7 @@ due to the Android software and hardware are:
   not supported.
 
 * Ren'Py cannot change the device volume. However, the android volume
-  buttons work 
+  buttons work normally.
 
 In addition, there are a few changes that may be necessary due to
 human factors:
@@ -95,8 +95,9 @@ human factors:
   buttons need to be larger than mouse-based ones. 
 
 To help you adapt to these differences, Ren'Py for Android
-automatically selects a screen variant of ``touch``. See :ref:`screen-variants` 
-for more information.
+automatically selects a screen variant of ``touch``. It also
+selects screen variants of ``phone`` or ``tablet`` based on the
+device's screen size. See :ref:`screen-variants` for more information. 
   
 Files
 =====
@@ -218,15 +219,16 @@ Packaging
     number of external tools to build an APK and place it in the
     Android market.
 
-Ren'Py games can be converted to .apk packages, for use in the Android
-market. This can be done using the tools developed for the Pygame for
-Android package, using a ``--engine`` argument of ``renpy``.
+Ren'Py games can be converted to .apk packages for use in the Android
+market. This is done using the renpy-apk tool, downloadable from the
+`Ren'Py download page <http://www.renpy.org/latest.html>`_. 
 
 Please see the `Pygame Subset for Android documentation <http://www.renpy.org/pygame/releasing.html>`_
 for instructions on how to use this tool. Packaging a Ren'Py game will
 involve a command that looks like::
 
     ./build.py --dir mygame --package com.domain.mygame \
-        --name "My Game" --version 1.0 --engine renpy \
-        debug
+        --name "My Game" --version 1.0 debug
 
+Note that although the build command is identical, you must user the
+Ren'Py renpy-apk tool to package a Ren'Py game.
