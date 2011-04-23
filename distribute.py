@@ -171,7 +171,7 @@ vc_version = {revno}
     files = [ ]
     more_files = [ ]
 
-    files.append("CHANGELOG.txt")
+    # files.append("CHANGELOG.txt")
     files.append("LICENSE.txt")
     files.extend(tree("common"))
     files.extend(tree("launcher"))
