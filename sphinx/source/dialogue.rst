@@ -82,6 +82,42 @@ character.
 
 .. include:: inc/character
 
+Say with Image Attributes
+-------------------------
+
+When a character is defined with an associated image tag, say
+statement involving that character may have image attributes
+placed between the character name and the second string.
+
+In this form, if an image with the given tag is showing, Ren'Py will
+issue a show command involving the character tag and the
+attributes. If the image is not shown, Ren'Py will store the
+attributes for use by side images, but will not show an image.
+
+
+For example, the code::
+
+    define e = Character("Eileen", image="eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        e happy "But it's just a passing thing."
+    
+is equivalent to::
+
+    define e = Character("Eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        show eileen happy        
+        e "But it's just a passing thing."
+
 Example Characters
 ------------------
 
@@ -92,7 +128,6 @@ Here are a few example characters::
 
     # A character that pulls its name from a variable.
     define p = Character("player_name", dynamic=True)
-
 
 Special Characters
 ------------------
