@@ -20,7 +20,6 @@ Getting Started
    :maxdepth: 2
 
    quickstart
-
     
 The Ren'Py Language
 -------------------
@@ -71,6 +70,7 @@ Python and Ren'Py
    :maxdepth: 2
 
    statement_equivalents
+   trans_trans_python
    screen_python
    modes
    other
