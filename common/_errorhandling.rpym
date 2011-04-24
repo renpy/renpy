@@ -367,6 +367,8 @@ screen _exception:
     default fmt_short = __format_traceback(short)
     default fmt_full = __format_traceback(full)
     
+    add Solid("#000")
+    
     frame:
         style_group ""
         xfill True
@@ -439,6 +441,8 @@ screen _parse_errors:
     default tt = __Tooltip("")
     default fmt_errors = __format_parse_errors(errors)
     
+    add Solid("#000")
+
     frame:
         style_group ""
         xfill True

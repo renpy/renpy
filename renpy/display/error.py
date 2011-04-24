@@ -47,6 +47,9 @@ def init_display():
     
     renpy.ui.reset()
     
+    for i in renpy.config.layers:
+        renpy.exports.scene(layer=i)
+        
 def report_exception(short, full):
     """
     Reports an exception to the user. Returns True if the exception should
