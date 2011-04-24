@@ -560,27 +560,14 @@ init -1180 python:
 
         ui.interact()
 
-        
-# Run at the end of init, to set up autosaving based on the user's
-# choices.
-init 1180 python:
-
-    if config.has_autosave:
-        config.autosave_slots = 10
-    else:
-        config.autosave_frequency = None
-            
-label _enter_menu:
-    python hide:
+    def _enter_menu():
         renpy.movie_stop(only_fullscreen=True)
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
         for i in config.menu_clear_layers:
             renpy.scene(layer=i)
         
-        renpy.context()._menu = True
-        
-        # This may be changed, if we are already in the main menu.
+        renpy.context()._menu = True        
         renpy.context()._main_menu = False
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
@@ -597,11 +584,18 @@ label _enter_menu:
         for i in config.clear_layers:
             renpy.scene(layer=i)
         
-    return
+# Run at the end of init, to set up autosaving based on the user's
+# choices.
+init 1180 python:
+
+    if config.has_autosave:
+        config.autosave_slots = 10
+    else:
+        config.autosave_frequency = None
     
 # Factored this all into one place, to make our lives a bit easier.
 label _enter_game_menu:
-    call _enter_menu from _call__enter_menu_2
+    $ _enter_menu()
 
     $ renpy.transition(config.enter_transition)
 
@@ -797,7 +791,7 @@ label _invoke_main_menu:
 # initialize it.
 label _main_menu(_main_menu_screen="_main_menu_screen"):
 
-    call _enter_menu from _call__enter_menu_1
+    $ _enter_menu()
 
     python:
         renpy.dynamic("_load_prompt")
@@ -888,7 +882,7 @@ label _developer:
     if not config.developer:
         return
 
-    call _enter_menu from _call__enter_menu_4
+    $ _enter_menu()
 
     jump expression "_developer_screen"
 

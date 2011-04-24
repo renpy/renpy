@@ -376,6 +376,11 @@ init -1105 python hide:
     layout.MAIN_MENU = u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
 
     @layout
+    def invoke_yesno_prompt(*args):
+        _enter_menu()
+        return layout.yesno_prompt(*args)
+
+    @layout
     def yesno_screen(message, yes=None, no=None):
         """
          :doc: other
@@ -414,7 +419,7 @@ init -1105 python hide:
             
             return
             
-        if renpy.invoke_in_new_context(layout.yesno_prompt, None, message):
+        if renpy.invoke_in_new_context(layout.invoke_yesno_prompt, None, message):
             if yes is not None:
                 yes()
         else:
