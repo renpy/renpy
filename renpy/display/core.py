@@ -1428,7 +1428,6 @@ class Interface(object):
         if renpy.config.empty_window:
             renpy.config.empty_window()
             
-            
     def do_with(self, trans, paired, clear=False):
         
         if renpy.config.with_callback:
@@ -2253,6 +2252,8 @@ class Interface(object):
             return False, rv
 
         finally:
+
+            renpy.exports.say_attributes = None
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:

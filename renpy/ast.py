@@ -363,35 +363,41 @@ class Say(Node):
         
         next_node(self.next)
 
-        renpy.exports.say_attributes = self.attributes
-        
-        if self.who is not None:
-            if self.who_fast:
-                who = getattr(renpy.store, self.who, None)
-                if who is None:
-                    raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
+        try:
+
+            renpy.exports.say_attributes = self.attributes
+            
+            if self.who is not None:
+                if self.who_fast:
+                    who = getattr(renpy.store, self.who, None)
+                    if who is None:
+                        raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
+                else:
+                    who = renpy.python.py_eval(self.who)
             else:
-                who = renpy.python.py_eval(self.who)
-        else:
-            who = None
+                who = None
+    
+            if not (
+                (who is None) or
+                callable(who) or
+                isinstance(who, basestring) ):
+    
+                raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
+                
+            what = self.what
+            if renpy.config.say_menu_text_filter:
+                what = renpy.config.say_menu_text_filter(what) # E1102
+                
+            if getattr(who, "record_say", True):
+                renpy.store._last_say_who = self.who
+                renpy.store._last_say_what = what
+    
+            say_menu_with(self.with_, renpy.game.interface.set_transition)
+            renpy.exports.say(who, what, interact=self.interact)
 
-        if not (
-            (who is None) or
-            callable(who) or
-            isinstance(who, basestring) ):
-
-            raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
+        finally:
+            renpy.exports.say_attributes = None
             
-        what = self.what
-        if renpy.config.say_menu_text_filter:
-            what = renpy.config.say_menu_text_filter(what) # E1102
-            
-        if getattr(who, "record_say", True):
-            renpy.store._last_say_who = self.who
-            renpy.store._last_say_what = what
-
-        say_menu_with(self.with_, renpy.game.interface.set_transition)
-        renpy.exports.say(who, what, interact=self.interact)
     
     def predict(self):
 
