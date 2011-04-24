@@ -446,6 +446,7 @@ game.
                                + FileTime(i, empty=_("Empty Slot."))
                                + "\n"
                                + FileSaveName(i)) style "large_button_text"
+
 .. _preferences-screen:
 
 Preferences
