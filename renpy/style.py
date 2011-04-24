@@ -767,7 +767,7 @@ class Style(object):
         
         
     def __init__(self, parent, properties=None, heavy=True, name=None, help=None):
-        
+
         self.prefix = 'insensitive_'
         self.offset = prefix_offset['insensitive_']
 

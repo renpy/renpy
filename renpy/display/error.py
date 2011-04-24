@@ -34,8 +34,8 @@ import os
 ##############################################################################
 # Initialized approach.
 
-def call_exception_screen(**kwargs):
-    renpy.exports.show_screen("_exception", _transient=True, **kwargs)
+def call_exception_screen(screen_name, **kwargs):
+    renpy.exports.show_screen(screen_name, _transient=True, **kwargs)
     return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
 def rollback_action():
@@ -82,11 +82,38 @@ def report_exception(short, full):
         ignore_action = None
      
     renpy.game.invoke_in_new_context(
-        call_exception_screen, 
+        call_exception_screen,
+        "_exception", 
         short=short, full=full, 
         rollback_action=rollback_action,
         reload_action=reload_action,
         ignore_action=ignore_action,
+        )
+
+
+
+def report_parse_errors(errors):
+    """
+    Reports an exception to the user. Returns True if the exception should
+    be raised by the normal reporting mechanisms. Otherwise, should raise
+    the appropriate exception.
+    """
+
+    if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
+        return True
+       
+    if not renpy.exports.has_screen("_parse_errors"):
+        return True
+    
+    init_display()    
+          
+    reload_action = renpy.exports.utter_restart
+     
+    renpy.game.invoke_in_new_context(
+        call_exception_screen,
+        "_parse_errors",
+        reload_action=reload_action,
+        errors=errors,
         )
 
 ##############################################################################

@@ -5,15 +5,18 @@
 # module (as opposed to a .rpy file) because that allows us to ensure 
 # that it is fully loaded or run before any other Ren'Py code runs. 
 
-
-
-
 # These styles define the look of the Ren'Py in-game interface (the 
 # amie2 look). Despite being defined here (so they're available for 
 # error handling), they may be used in other code, like the launcher.
 init python:
     # default
     style._default = Style(None)
+
+    # Temporarily, until the real styles can be defined.
+    style.default = style._default
+    style.image = style._default
+    style.fixed = style._default
+    
     style._default.font = "DejaVuSans.ttf"
     style._default.language = "western"
     style._default.antialias = True
@@ -92,6 +95,7 @@ init python:
     style._default.clipping = False
 
 
+
     ##########################################################################
 
     # frame
@@ -162,7 +166,6 @@ init python:
     style._hyperlink.color = "#008"
     style._hyperlink.hover_underline = True
 
-
 # Early hyperlink support.
 init python hide:
     def hyperlink_styler(target):
@@ -209,6 +212,53 @@ init python:
             
         return "\n".join(rv)
 
+
+    def __format_parse_errors(s):
+        import re
+
+        rv = ""
+
+        lines = s.split("\n")
+        len_lines = len(lines)
+        
+        ln = 0
+                
+        while ln < len_lines:
+            line = lines[ln]
+            ln += 1
+             
+            if ln < len_lines and lines[ln].endswith("^"):
+                highlight = len(lines[ln]) - 1
+                ln += 1
+            else:
+                highlight = -1
+                
+            pos = 0
+            
+            for c in line:
+                if pos == highlight:
+                    rv += u"{color=#c00}\u2192{/color}"
+                    highlight = -1
+
+                pos += 1
+                    
+                if c == "{":
+                    rv += "{{"
+                else:
+                    rv += c
+                    
+            if highlight > 0:
+                rv += u"{color=#c00}\u2190{/color}"
+            
+            rv += "\n"
+
+             
+        if config.editor:
+            rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
+             
+        return rv
+            
+
     # Opens the traceback.txt file in an editor.
     def __open_traceback():
         try:
@@ -217,7 +267,16 @@ init python:
             else:
                 os.startfile('traceback.txt')
         except:
-            raise
+            pass
+
+    # Opens the errors.txt file in an editor.
+    def __open_parse_errors():
+        try:
+            if config.editor:
+                renpy.launch_editor([ 'errors.txt' ], 1, transient=1)
+            else:
+                os.startfile('errors.txt')
+        except:
             pass
 
     def __can_open_traceback():
@@ -269,6 +328,35 @@ init python:
 
         def action(self, value):
             return __TooltipAction(self, value)
+
+    class __XScrollValue(BarValue):
+        def __init__(self, viewport):
+            self.viewport = viewport
+
+        def get_adjustment(self):
+            w = renpy.get_widget(None, self.viewport)
+            if not isinstance(w, Viewport):
+                raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
+
+            return w.xadjustment
+
+        def get_style(self):
+            return "scrollbar", "vscrollbar"
+
+    class __YScrollValue(BarValue):
+        def __init__(self, viewport):
+            self.viewport = viewport
+
+        def get_adjustment(self):
+            w = renpy.get_widget(None, self.viewport)
+            if not isinstance(w, Viewport):
+                raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
+
+            return w.yadjustment
+
+        def get_style(self):
+            return "scrollbar", "vscrollbar"
+
           
 # The screen that is used for error handling.
 screen _exception:
@@ -276,6 +364,8 @@ screen _exception:
     zorder 1090
 
     default tt = __Tooltip("")
+    default fmt_short = __format_traceback(short)
+    default fmt_full = __format_traceback(full)
     
     frame:
         style_group ""
@@ -295,18 +385,18 @@ screen _exception:
             
             has vbox
 
-            text __format_traceback(short)
-            text __format_traceback(full)
+            text fmt_short
+            text fmt_full
       
         bar:
             style "_vscrollbar"
-            value YScrollValue("viewport")
+            value __YScrollValue("viewport")
 
         vbox:
 
             bar:
                 style "_scrollbar"
-                value XScrollValue("viewport")
+                value __XScrollValue("viewport")
 
             hbox:
                 box_wrap True
@@ -330,6 +420,65 @@ screen _exception:
                     textbutton _("Open Traceback"):
                         action __open_traceback
                         hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+                    
+                null width 30
+                
+                textbutton _("Quit"):
+                    action renpy.quit
+                    hovered tt.action(_("Quits the game."))
+
+            # Tooltip.
+            text tt.value size 12
+            
+            
+# The screen that is used for error handling.
+screen _parse_errors:
+    modal True
+    zorder 1090
+
+    default tt = __Tooltip("")
+    default fmt_errors = __format_parse_errors(errors)
+    
+    frame:
+        style_group ""
+        xfill True
+
+        at __transform
+
+        has side "t c r b"
+            
+        vbox:   
+            label _("Parsing the script failed.")
+
+        viewport:
+            id "viewport"
+            child_size (4000, None)
+            mousewheel True
+            
+            has vbox
+            text fmt_errors
+      
+        bar:
+            style "_vscrollbar"
+            value __YScrollValue("viewport")
+
+        vbox:
+
+            bar:
+                style "_scrollbar"
+                value __XScrollValue("viewport")
+
+            hbox:
+                box_wrap True
+
+                textbutton _("Reload"):
+                    action reload_action
+                    hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
+                        
+                if __can_open_traceback():                    
+                    textbutton _("Open Parse Errors"):
+                        action __open_parse_errors
+                        hovered tt.action(_("Opens the errors.txt file in a text editor."))
                     
                 null width 30
                 

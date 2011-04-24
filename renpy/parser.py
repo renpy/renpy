@@ -26,7 +26,7 @@ import codecs
 import re
 import os
 
-import renpy
+import renpy.display
 import renpy.ast as ast
 
 # A list of parse error messages.
@@ -35,7 +35,7 @@ parse_errors = [ ]
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None, first=False):
-        message = u"On line %d of %s: %s" % (number, unicode_filename(filename), msg)
+        message = u"File \"%s\", line %d: %s" % (unicode_filename(filename), number, msg)
 
         if line:
             lines = line.split('\n')
@@ -62,11 +62,11 @@ class ParseError(Exception):
                     message += "\n(Perhaps you left out a %s at the end of the first line.)" % open_string
                     
             for l in lines:
-                message += "\n" + l
+                message += "\n    " + l
 
                 if pos is not None:
                     if pos <= len(l):
-                        message += "\n" + " " * pos + "^"
+                        message += "\n    " + " " * pos + "^"
                         pos = None
                     else:
                         pos -= len(l)
@@ -1912,6 +1912,8 @@ def report_parse_errors():
     if not parse_errors:
         return False
     
+    full_text = ""
+    
     f = file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
@@ -1920,6 +1922,9 @@ def report_parse_errors():
     print >>f
     
     for i in parse_errors:
+
+        full_text += i
+        full_text += "\n\n"
 
         try:
             i = i.encode("utf-8")
@@ -1931,10 +1936,13 @@ def report_parse_errors():
         print i
         print >>f, i
 
+
     print >>f
     print >>f, "Ren'Py Version:", renpy.version
 
     f.close()
+
+    renpy.display.error.report_parse_errors(full_text)
 
     try:
         if renpy.config.editor:

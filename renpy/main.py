@@ -211,9 +211,6 @@ def main():
     renpy.exports.load_module("_errorhandling")
     renpy.game.script.load_script() # sets renpy.game.script.
 
-    if renpy.parser.report_parse_errors():
-        raise renpy.game.ParseErrorException()
-
     renpy.game.exception_info = 'After loading the script.'
 
     # Find the save directory.
@@ -247,7 +244,7 @@ def main():
     except:
         game.persistent = game.Persistent()
 
-        # Initialize the set of statements seen ever.
+    # Initialize the set of statements seen ever.
     if not game.persistent._seen_ever:
         game.persistent._seen_ever = { }
 
@@ -276,6 +273,9 @@ def main():
     # Initialize persistent variables.
     renpy.store.persistent = game.persistent
     renpy.store._preferences = game.preferences
+
+    if renpy.parser.report_parse_errors():
+        raise renpy.game.ParseErrorException()
 
     renpy.game.exception_info = 'While executing init code:'
 
