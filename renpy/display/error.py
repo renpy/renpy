@@ -19,14 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains code to handle GUI-based error reporting. There are 
-# two unrelated mechanisms here. 
-#
-# report_exception is used to report an exception that occurs when the GUI
-# system is behaving reasonably.
-#
-# ReportError is used to report an exception that occurs when the GUI is not
-# initialized, such as after a reload.
+# This file contains code to handle GUI-based error reporting.
 
 import renpy.display
 import os
@@ -116,66 +109,3 @@ def report_parse_errors(errors):
         errors=errors,
         )
 
-##############################################################################
-# Non-initialized approach.
-
-commandfile = "command.%d.txt" % os.getpid()
-
-class ReportError(object):
-
-    # In the init method, Ren'Py is functioning reasonably normally.
-    def __init__(self):
-        self.font = renpy.display.text.get_font(renpy.store.style.default.font, 14, False, False, False) #@UndefinedVariable
-        # self.flags = pygame.display.get_surface().get_flags()
-        # self.size = pygame.display.get_surface().get_size()
-
-        self.size = (renpy.config.screen_width, renpy.config.screen_height)
-        
-    # In the report method, Ren'Py may be in an ill-defined state.
-    def report(self, error_type):
-        import os.path
-        import pygame # W0404
-
-        pygame.display.init()
-        pygame.display.set_caption("Ren'Py Error - left-click reloads, right-click quits")
-        
-        msg = "Ren'Py has experienced " + error_type + ".\n"
-        msg += "Left-click or space reloads, right-click or escape exits."
-
-        screen = pygame.display.set_mode(self.size, 0, 32)
-            
-        pygame.time.set_timer(pygame.USEREVENT + 1, 50)
-
-        while True:
-
-            if commandfile and os.path.exists(commandfile):
-                return True
-
-            screen.fill((0, 0, 0, 255))
-            
-            y = 2
-            for l in msg.split('\n'):        
-                surf = self.font.render(l, True, (255, 255, 255, 255), (0, 0, 0, 255))
-                screen.blit(surf, (2, y))
-
-                y += self.font.get_linesize()
-                        
-            pygame.display.flip() # E1120
-
-            ev = pygame.event.wait()
-            
-            if ev.type == pygame.MOUSEBUTTONUP:
-
-                if ev.button == 1:
-                    return True
-                else:
-                    return False
-
-            if ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_SPACE:
-                    return True
-                elif ev.key == pygame.K_ESCAPE:
-                    return False
-
-            if ev.type == pygame.QUIT:
-                return False

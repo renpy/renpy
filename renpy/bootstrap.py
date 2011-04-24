@@ -94,11 +94,8 @@ def mac_start(fn):
 def popen_del(self, *args, **kwargs):
     return
 
-report_error = None
-
 def bootstrap(renpy_base):
 
-    global report_error
     global renpy # W0602
 
     import renpy.log #@UnusedImport
@@ -288,9 +285,6 @@ def bootstrap(renpy_base):
                     renpy.display.draw.deinit()
                     renpy.display.draw.quit()
                     
-                # Only works after a full restart.
-                report_error = renpy.display.error.ReportError()
-
                 # On an UtterRestart, reload Ren'Py.
                 renpy.reload_all()
                 continue
@@ -299,23 +293,11 @@ def bootstrap(renpy_base):
                 keep_running = False
 
             except renpy.game.ParseErrorException:
-
-                if report_error and report_error.report('a parse error'):
-                    renpy.reload_all()
-                    keep_running = True
-                else:
-                    keep_running = False
+                keep_running = False
 
             except Exception, e:
                 report_exception(e)
-
-                if report_error and report_error.report('an exception'):
-                    renpy.reload_all()
-                    keep_running = True
-                else:
-                    keep_running = False
-
-
+                keep_running = False
 
         sys.exit(0)
 

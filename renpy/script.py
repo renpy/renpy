@@ -64,8 +64,6 @@ def collapse_stmts(stmts):
     extend_all(stmts)
 
     return all_stmts
-
-
     
 
 class Script(object):
