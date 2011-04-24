@@ -686,7 +686,7 @@ class ADVCharacter(object):
 
         if not self.image_tag:
             if not predict:
-                raise Exception("Say has image attributes, but there's no image tag associated with the speaking character.")
+                raise Exception("Say has image attributes %r, but there's no image tag associated with the speaking character." % (attrs,))
             else:
                 return
 

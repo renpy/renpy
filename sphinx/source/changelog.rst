@@ -124,7 +124,7 @@ possible, filenames are reported relative to the base or Ren'Py base
 directories,  rather than the root of the filesystem.
 
 The new :propref:`box_wrap` style property allows hboxes and vboxes to 
-automatically when they reach the edge of their enclosing area.
+automatically wrap when they reach the edge of their enclosing area.
 
 Actions now can have an :func:`Action.unhovered` method. This method is
 called when an action supplied as a `hovered` parameter loses focus.

@@ -396,28 +396,32 @@ class Say(Node):
     def predict(self):
 
         old_attributes = renpy.exports.say_attributes
-        renpy.exports.say_attributes = self.attributes
-        
-        if self.who is not None:
-            if self.who_fast:
-                who = getattr(renpy.store, self.who)
+
+        try:
+            
+            renpy.exports.say_attributes = self.attributes
+            
+            if self.who is not None:
+                if self.who_fast:
+                    who = getattr(renpy.store, self.who)
+                else:
+                    who = renpy.python.py_eval(self.who)
             else:
-                who = renpy.python.py_eval(self.who)
-        else:
-            who = None
+                who = None
+    
+            def predict_with(trans):
+                renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
+    
+            say_menu_with(self.with_, predict_with)
+    
+            what = self.what
+            if renpy.config.say_menu_text_filter:
+                what = renpy.config.say_menu_text_filter(what)
+    
+            renpy.exports.predict_say(who, what)
 
-        def predict_with(trans):
-            renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
-
-        say_menu_with(self.with_, predict_with)
-
-        what = self.what
-        if renpy.config.say_menu_text_filter:
-            what = renpy.config.say_menu_text_filter(what)
-
-        renpy.exports.predict_say(who, what)
-
-        renpy.exports.say_attributes = old_attributes
+        finally:
+            renpy.exports.say_attributes = old_attributes
         
         return [ self.next ]
 

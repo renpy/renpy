@@ -9,6 +9,7 @@ import hashlib
 import public #@UnresolvedImport
 import private #@UnresolvedImport
 import shutil
+import time
 
 def sha(s):
     """
@@ -89,7 +90,7 @@ def make_update(root, version):
     out.close()
 
     f = file(os.path.join(root, "version"), "w")
-    f.write(version)
+    f.write(version + "-" + str(time.time()))
     f.write("\n")
     f.write("the latest Ren'Py pre-release")
     f.close()
