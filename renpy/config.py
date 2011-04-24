@@ -482,6 +482,10 @@ image_attributes = True
 # Should we use the new version of the character image argument?
 new_character_image_argument = True
 
+# A transition that is performed when a say statement has an image attribute
+# corresponding to a shown image.
+say_attribute_transition = None
+
 # What is the name and version of this game?
 name = ""
 version = ""

@@ -436,6 +436,11 @@ Occasionally Used
     a window. The default action prompts the user to see if he wants
     to quit the game.
     
+.. var:: config.say_attribute_transition = None
+
+    If not None, a transition to use when the image is changed by a 
+    say statement with image attributes.
+    
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is

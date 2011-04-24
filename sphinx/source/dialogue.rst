@@ -118,6 +118,9 @@ is equivalent to::
         show eileen happy        
         e "But it's just a passing thing."
 
+To cause a transition to occur whenever the images are changed in this way, set
+:var:`config.say_attribute_transition` to a transition.
+
 Example Characters
 ------------------
 

@@ -1449,6 +1449,8 @@ class Interface(object):
         be transitioning from.
         """
 
+        renpy.exports.say_attributes = None
+
         # Show the window, if that's necessary.
         self.show_window()
 

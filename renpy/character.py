@@ -697,13 +697,22 @@ class ADVCharacter(object):
         if images.showing("master", (self.image_tag,)):
 
             new_image = images.apply_attributes("master", self.image_tag, tagged_attrs)
+            
             if new_image is None:
                 new_image = tagged_attrs
 
             if predict:
                 images.predict_show(new_image)
             else:
+                trans = renpy.config.say_attribute_transition
+
+                if trans is not None:
+                    renpy.exports.with_statement(None)
+                        
                 renpy.exports.show(new_image)                        
+
+                if trans is not None:
+                    renpy.exports.with_statement(trans)
 
         else:
             # Otherwise, just record the attributes of the image. 
