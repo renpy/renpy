@@ -452,7 +452,7 @@ screen _parse_errors:
 
         viewport:
             id "viewport"
-            child_size (4000, None)
+            child_size (None, None)
             mousewheel True
             
             has vbox

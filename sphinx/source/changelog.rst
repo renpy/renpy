@@ -75,8 +75,8 @@ Finally, showing an image without providing a transform or ATL block
 will now continue the previous transform that an image with that tag
 was using. Previously, it caused those transforms to stop.
 
-Exception Handling
-------------------
+Error Handling
+--------------
 
 Ren'Py now has a new exception handing framework. Instead of always crashing
 when an error occurs, Ren'Py will now display the error message on the screen,
@@ -90,6 +90,8 @@ and give the user the following choices, as appropriate to the situation:
 
 When an editor is defined, Ren'Py will allow the user to click on a filename
 and line number to open that line in the editor.
+
+The framework is used to handle exceptions and parse errors.
 
 Other
 -----
@@ -138,6 +140,7 @@ means that it's no longer possible to raise the volume from within Ren'Py.
 Controlling the system volume exhibited bugs on all three platforms, including
 hard-to-predict volume changes that affect other applications.
 
+Along with the new features, transitions have been documented in the new manual.
 
 Bug fixes:
 
