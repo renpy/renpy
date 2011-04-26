@@ -28,6 +28,9 @@ import os
 # Initialized approach.
 
 def call_exception_screen(screen_name, **kwargs):
+    for i in renpy.config.layers:
+        renpy.game.context().scene_lists.clear(i)
+
     renpy.exports.show_screen(screen_name, _transient=True, **kwargs)
     return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
@@ -44,11 +47,8 @@ def init_display():
         renpy.style.build_styles()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
-    
+
     renpy.ui.reset()
-    
-    for i in renpy.config.layers:
-        renpy.exports.scene(layer=i)
         
 def report_exception(short, full):
     """
