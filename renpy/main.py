@@ -174,13 +174,16 @@ def main():
 
         
     # The basename is the final component of the path to the gamedir.
-    for i in os.listdir(renpy.config.gamedir):
+    for i in sorted(os.listdir(renpy.config.gamedir)):
 
         if not i.endswith(".rpa"):
             continue
 
         i = i[:-4]
         renpy.config.archives.append(i)
+        
+    renpy.config.archives.reverse()
+
 
     # Note the profile option.
     if renpy.game.options.profile: #@UndefinedVariable

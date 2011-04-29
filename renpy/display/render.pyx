@@ -704,7 +704,7 @@ cdef class Render:
 
             if isinstance(child, Render):
                 newchild = child.subsurface(crop, focus=focus)
-                newchild.render_of = child.render_of
+                newchild.render_of = child.render_of[:]
             else:
                 newchild = child.subsurface(crop)
                 renpy.display.draw.mutated_surface(newchild)
