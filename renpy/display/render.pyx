@@ -663,7 +663,6 @@ cdef class Render:
 
     
     pygame_surface = render_to_texture
-
     
     def subsurface(self, rect, focus=False):
         """
@@ -690,7 +689,7 @@ cdef class Render:
 
         # This is the path that executes for rectangle-aligned surfaces,
         # making an actual subsurface.
-        
+
         for child, cx, cy, cfocus, cmain in self.children:
 
             cw, ch = child.get_size()            
@@ -704,12 +703,13 @@ cdef class Render:
             offset = (xo, yo)
 
             if isinstance(child, Render):
-                child = child.subsurface(crop, focus=focus)
+                newchild = child.subsurface(crop, focus=focus)
+                newchild.render_of = child.render_of
             else:
-                child = child.subsurface(crop)
-                renpy.display.draw.mutated_surface(child)
+                newchild = child.subsurface(crop)
+                renpy.display.draw.mutated_surface(newchild)
                 
-            rv.blit(child, offset, focus=cfocus, main=cmain)
+            rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
         if focus and self.focuses:
 
