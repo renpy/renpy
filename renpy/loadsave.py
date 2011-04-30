@@ -168,6 +168,9 @@ def save(filename, extra_info='',
     # Extra info.
     zf.writestr("extra_info", extra_info.encode("utf-8"))
 
+    # Version.
+    zf.writestr("renpy_version", renpy.version)
+
     # The actual game.
     zf.writestr("log", logf.getvalue())
 

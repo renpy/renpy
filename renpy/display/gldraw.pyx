@@ -1065,7 +1065,7 @@ cdef class GLDraw:
         cdef unsigned char *pixels = NULL
         cdef SDL_Surface *surf
 
-        # A surface the size of the framebuffer
+        # A surface the size of the framebuffer.
         full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
 
         # Use GL to read the full framebuffer in.
@@ -1074,8 +1074,9 @@ cdef class GLDraw:
 
         if GL_PACK_ROW_LENGTH != 0:
 
-            glReadBuffer(GL_FRONT)
+            glFinish()
 
+            glReadBuffer(GL_FRONT)
             glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
 
             glReadPixels(
@@ -1088,6 +1089,11 @@ cdef class GLDraw:
                 pixels)
 
             glReadBuffer(GL_BACK)
+
+        else:
+
+            renpy.display.log.write("Could not take screenshot - GL_PACK_ROW_LENGTH is 0.")
+            
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
