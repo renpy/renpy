@@ -135,14 +135,19 @@ def listdirfiles():
 
     rv = [ ]
 
+    seen = set()
+
     for i in renpy.config.searchpath:
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
             rv.append((i, j))
+            seen.add(j)
 
     for _prefix, index in archives:
-        for j in index.iterkeys():
-            rv.append((None, j))
+        for j in index.iterkeys():            
+            if j not in seen:            
+                rv.append((None, j))
+                seen.add(j)
             
     return rv
     
@@ -295,7 +300,6 @@ def load(name):
     
     # Look for the file directly.
     if not renpy.config.force_archives:
-
         try:
             fn = transfn(name)
             return file(fn, "rb")

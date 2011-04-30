@@ -142,6 +142,9 @@ hard-to-predict volume changes that affect other applications.
 
 Along with the new features, transitions have been documented in the new manual.
 
+Archives are now automatically detected in asciiabetical order. See the
+documentation for :var:`config.archives` for more details.
+
 Bug fixes:
 
 * :lpbug:`734137` - Timers do not participate in rollback.

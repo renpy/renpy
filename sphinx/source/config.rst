@@ -514,9 +514,14 @@ Rarely or Internally Used
     data. The entries in this should consist of strings giving the
     base names of archive files, without the .rpa extension.
 
-    This is automatically populated with all archive files in the game
-    directory, so it is now rarely necessary to fill it out by hand.
-
+    The archives are searched in the order they are found in this list.
+    A file is taken from the first archive it is found in.
+    
+    At startup, Ren'Py will automatically populate this variable with
+    the names of all archives found in the game directory, sorted in
+    reverse ascii order. For example, if Ren'Py finds the files
+    data.rpa, patch01.rpa, and patch02.rpa, this variable will be
+    populated with ``['patch02', 'patch01', 'data']``. 
 
 .. var:: config.auto_choice_delay = None
 
@@ -525,7 +530,6 @@ Rarely or Internally Used
     that menu. We'd expect this variable to always be set to None in
     released games, but setting it to a number will allow for
     automated demonstrations of games without much human interaction.
-
 
 .. var:: config.autosave_frequency = 200
 
