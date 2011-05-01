@@ -813,7 +813,7 @@ class SWDraw(object):
     def get_mouse_pos(self):
         return pygame.mouse.get_pos()
     
-    def screenshot(self):
+    def screenshot(self, surftree, fullscreen_video):
         """
         Returns a pygame surface containing a screenshot.
         """

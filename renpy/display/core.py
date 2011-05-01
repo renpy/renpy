@@ -1341,6 +1341,7 @@ class Interface(object):
         renpy.display.focus.take_focuses()
 
         self.surftree = surftree
+        self.fullscreen_video = fullscreen_video
 
 
     def take_screenshot(self, scale, background=False):
@@ -1363,7 +1364,7 @@ class Interface(object):
 
         else:
 
-            window = renpy.display.draw.screenshot()
+            window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
         
         surf = renpy.display.pgrender.copy_surface(window, True)
         surf = renpy.display.scale.smoothscale(surf, scale)
@@ -1380,7 +1381,7 @@ class Interface(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        window = renpy.display.draw.screenshot()
+        window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
 
         if renpy.config.screenshot_crop:
             window = window.subsurface(renpy.config.screenshot_crop)
@@ -1534,9 +1535,7 @@ class Interface(object):
         # Handle a request for a background screenshot.
         if self.bgscreenshot_needed:
             self.bgscreenshot_needed = False
-
-            self.bgscreenshot_surface = renpy.display.draw.screenshot()
-
+            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
             self.bgscreenshot_event.set()
             
         try:

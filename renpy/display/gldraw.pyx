@@ -621,7 +621,7 @@ cdef class GLDraw:
                 glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
 
             
-    def draw_screen(self, surftree, fullscreen_video):
+    def draw_screen(self, surftree, fullscreen_video, flip=True):
         """
         Draws the screen.
         """
@@ -657,13 +657,15 @@ cdef class GLDraw:
         else:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, reverse)
 
-        self.draw_mouse()
+        if flip:
 
-        # Release the CPU while we're waiting for things to actually
-        # draw to the screen.
-        renpy.display.core.cpu_idle.set()
-        pygame.display.flip()
-        renpy.display.core.cpu_idle.clear()
+            self.draw_mouse()
+        
+            # Release the CPU while we're waiting for things to actually
+            # draw to the screen.        
+            renpy.display.core.cpu_idle.set()
+            pygame.display.flip()
+            renpy.display.core.cpu_idle.clear()
 
         gl_check("draw_screen")
 
@@ -1061,22 +1063,24 @@ cdef class GLDraw:
             self.environ,
             False)
 
-    def screenshot(self):
+    def screenshot(self, surftree, fullscreen_video):
         cdef unsigned char *pixels = NULL
         cdef SDL_Surface *surf
 
         # A surface the size of the framebuffer.
         full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
 
-        # Use GL to read the full framebuffer in.
-        surf = PySurface_AsSurface(full)
-        pixels = <unsigned char *> surf.pixels
-
         if GL_PACK_ROW_LENGTH != 0:
+            
+            # Use GL to read the full framebuffer in.
+            surf = PySurface_AsSurface(full)
+            pixels = <unsigned char *> surf.pixels
 
-            glFinish()
+            # Draw the last screen to the back buffer.
+            if surftree is not None:
+                self.draw_screen(surftree, fullscreen_video, flip=False)
+                glFinish()
 
-            glReadBuffer(GL_FRONT)
             glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
 
             glReadPixels(
@@ -1087,8 +1091,6 @@ cdef class GLDraw:
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 pixels)
-
-            glReadBuffer(GL_BACK)
 
         else:
 
