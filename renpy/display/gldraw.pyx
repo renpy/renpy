@@ -247,7 +247,6 @@ cdef class GLDraw:
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
-
             return False
         
         pwidth, pheight = self.window.get_size()
@@ -306,9 +305,6 @@ cdef class GLDraw:
             glEnable(GL_CLIP_PLANE2)
             glEnable(GL_CLIP_PLANE3)
         
-        self.environ.init()
-        self.rtt.init()
-
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
@@ -441,9 +437,12 @@ cdef class GLDraw:
                 renpy.display.log.write("Using shader environment.")
                 self.environ = glenviron_shader.ShaderEnviron()
                 self.info["environ"] = "shader"
+                self.environ.init()
+                
             except Exception, e:
                 renpy.display.log.write("Initializing shader environment failed:")
-                renpy.display.log.write(str(e))
+                renpy.display.log.exception()
+                self.environ = None
                 
         if self.environ is None:
             
@@ -457,6 +456,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Using fixed-function environment (clause 1).")
                 self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
+                self.environ.init()
 
             elif use_subsystem(
                 glenviron_fixed,
@@ -467,6 +467,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Using fixed-function environment (clause 2).")
                 self.environ = glenviron_fixed.FixedFunctionEnviron()
                 self.info["environ"] = "fixed"
+                self.environ.init()
                 
             elif use_subsystem(
                 glenviron_limited,
@@ -477,6 +478,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Using limited environment.")
                 self.environ = glenviron_limited.LimitedEnviron()
                 self.info["environ"] = "limited"
+                self.environ.init()
 
             else:
                 renpy.display.log.write("Can't find a workable environment.")
@@ -492,12 +494,14 @@ cdef class GLDraw:
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
+            self.rtt.init()
 
         else:                        
             # Pick a Render-to-texture subsystem.        
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
+            self.rtt.init()
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
