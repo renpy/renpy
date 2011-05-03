@@ -24,20 +24,18 @@
 
 import os
 
-# Some version numbers and things.
-
-# ***** ***** ***** ***** ***** ***** **** ***** ***** ***** *****
-# Be sure to change script_version in launcher/script_version.rpy, too!
-# Be sure to change _renpy.pyx and module.py, if necessary.
-
+# Version numbers.
 try:
     from renpy.vc_version import vc_version; vc_version
 except ImportError:
     vc_version = 0
 
 # The tuple giving the version. This needs to be updated when
-# we bump the version.
-version_tuple = (6, 12, 1, vc_version)
+# we bump the version. 
+#
+# Be sure to change script_version in launcher/script_version.rpy.
+# Be sure to change config.version in tutorial/options.rpy.
+version_tuple = (6, 12, 2, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)

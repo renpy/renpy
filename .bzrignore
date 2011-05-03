@@ -106,3 +106,4 @@ renpy.exe.log
 renpy/vc_version.py
 .pydevproject
 .project
+.settings

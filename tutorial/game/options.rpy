@@ -28,7 +28,7 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Tutorial"
-    config.version = "1.0"
+    config.version = "6.12.2 \"Meat and Potatoes\""
 
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
@@ -276,7 +276,7 @@ image main_menu:
         size (800, 509)
 
     contains:
-        Text("Ren'Py 6.12.1 \"Human Factor\"", size=18)
+        Text("Ren'Py " + config.version, size=18)
         yalign .98
         xalign .02
     
