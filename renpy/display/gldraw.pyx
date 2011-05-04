@@ -308,6 +308,9 @@ cdef class GLDraw:
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
+        self.environ.init()
+        self.rtt.init()
+
         gl_check("set_mode")
         
         return True
@@ -502,6 +505,9 @@ cdef class GLDraw:
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
             self.rtt.init()
+
+        self.rtt.deinit()
+        self.environ.deinit()
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
