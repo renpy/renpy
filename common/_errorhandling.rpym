@@ -432,6 +432,8 @@ screen _exception:
             # Tooltip.
             text tt.value size 12
             
+    if config.developer:
+        key "R" action reload_action
             
 # The screen that is used for error handling.
 screen _parse_errors:
@@ -492,4 +494,7 @@ screen _parse_errors:
 
             # Tooltip.
             text tt.value size 12
+
+    if config.developer:
+        key "R" action reload_action
             
