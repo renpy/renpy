@@ -399,6 +399,9 @@ def has_screen(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
+    if not name:
+        return False
+
     if get_screen_variant(name[0]):
         return True
     else:
