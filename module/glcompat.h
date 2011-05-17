@@ -46,6 +46,8 @@ typedef GLfloat GLdouble;
 #define glDeleteFramebuffersEXT glDeleteFramebuffersOES
 #define glCheckFramebufferStatusEXT glCheckFramebufferStatusOES
 
+#define RENPY_THIRD_TEXTURE 0
+
 
 #else
 #include <GL/glew.h>
@@ -57,6 +59,7 @@ typedef GLfloat GLdouble;
 #define glActiveTexture glActiveTextureARB
 
 #define GL_RGB565_OES 0
+#define RENPY_THIRD_TEXTURE 1
 
 #endif
 
