@@ -136,11 +136,7 @@ class LimitedEnviron(Environ):
             # controlled by the constant of texture unit 1.
             self.combine_mode(GL_TEXTURE1,
                               color_function=GL_INTERPOLATE,
-                              color_arg0=GL_TEXTURE1,
-                              color_arg1=GL_TEXTURE0,
-                              alpha_function=GL_INTERPOLATE,
-                              alpha_arg0=GL_TEXTURE1,
-                              alpha_arg1=GL_TEXTURE0)
+                              alpha_function=GL_INTERPOLATE)
 
             self.last = BLEND
 
