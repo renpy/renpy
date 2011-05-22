@@ -23,10 +23,10 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     Seeks to offset, and then reads count bytes from the stream into buffer.
     """
     
-    cdef Font font
+    cdef FTFont font
     cdef char *cbuf
     
-    font = <Font> stream.descriptor.pointer
+    font = <FTFont> stream.descriptor.pointer
     f = font.f 
     
     if font.offset != offset:
@@ -64,7 +64,7 @@ cdef void close_func(FT_Stream stream):
     
     return            
     
-cdef class Font(object):
+cdef class FTFont(object):
     
     cdef:
         FT_StreamRec stream
@@ -101,6 +101,15 @@ cdef class Font(object):
         error = FT_Open_Face(library, &self.open_args, index, &self.face)
         if error:
             raise FreetypeError(error)
+
+        error = FT_Select_Charmap(self.face, FT_ENCODING_UNICODE)
+        if error:
+            raise FreetypeError(error)
+
+    def setup(self, size, bold, italic, outline):
+        
+        return
+    
 
 
 # Ideas for how text rendering will work:
