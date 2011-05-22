@@ -8,12 +8,22 @@ except ImportError:
     pass
 
 
-ext_modules = [Extension("ftfont", [ "ftfont.pyx", "ftsupport.c" ],
-    include_dirs=[ '/usr/include/freetype2' ],
-    libraries=[ 'freetype' ],    
-    extra_compile_args=['-O0', '-ggdb'],
-    extra_link_args=['-O0', '-ggdb'],
-    )]
+ext_modules = [
+    
+    
+    Extension("ftfont", [ "ftfont.pyx", "ftsupport.c" ],
+        include_dirs=[ '/usr/include/freetype2', '/usr/include/SDL' ],
+        libraries=[ 'freetype' ],    
+        extra_compile_args=['-O0', '-ggdb'],
+        extra_link_args=['-O0', '-ggdb'],
+        ),
+                
+    Extension("newtextsupport", [ "newtextsupport.pyx" ],
+        extra_compile_args=['-O0', '-ggdb'],
+        extra_link_args=['-O0', '-ggdb'],
+        ),
+                
+        ]
 
 setup(
     name = 'font',

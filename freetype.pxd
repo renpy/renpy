@@ -576,3 +576,10 @@ cdef extern from "pyfreetype.h":
         FT_Long face_index,
         FT_Face *aface)
 
+    cdef struct FT_Stroker_Rec_
+    ctypedef FT_Stroker_Rec_ *FT_Stroker
+    
+    cdef FT_Long FT_MulFix(FT_Long, FT_Long)
+    cdef FT_Long FT_CEIL(FT_Long)
+    cdef FT_Long FT_FLOOR(FT_Long)
+    cdef FT_Long FT_ROUND(FT_Long)
