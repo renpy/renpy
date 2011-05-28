@@ -25,7 +25,7 @@ display () {
 
     if [ $build != 0 ]; then    
         echo renpy.display.$1 is out of date.
-        try cython -a renpy/display/$1.pyx -o module/$1.c
+        try cython -Imodule -a renpy/display/$1.pyx -o module/$1.c
     fi
 }
 
@@ -43,6 +43,10 @@ display glenviron_limited
 display glshader
 display glrtt_copy
 display glrtt_fbo
+
+display ftfont
+display textsupport
+
 
 echo Compiling...
 

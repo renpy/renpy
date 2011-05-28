@@ -281,6 +281,18 @@ display("glenviron_limited", glew_libs)
 display("glrtt_copy", glew_libs)
 display("glrtt_fbo", glew_libs)
 
+display("textsupport")
+
+extensions.append(distutils.core.Extension(
+    "renpy.display.ftfont",
+    [ "ftfont.c", "ftsupport.c"],
+    include_dirs=include_dirs,
+    library_dirs=library_dirs,
+    extra_compile_args=extra_compile_args,
+    extra_link_args=extra_link_args,
+    libraries=sdl_libraries + [ 'freetype', 'z', 'm' ],
+    ))
+
 sys.path.append('..')
 
 import renpy

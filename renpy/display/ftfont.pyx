@@ -1,8 +1,7 @@
 from pygame cimport *
 from freetype cimport *
-from newtextsupport cimport Glyph
+from textsupport cimport Glyph
 import traceback
-
 
 cdef extern char *freetype_error_to_string(int error)
 
@@ -262,7 +261,7 @@ cdef class FTFont(object):
         
         return rv
     
-    def draw(self, pysurf, float x, int y, glyphs):
+    def draw(self, pysurf, float x, int y, list glyphs):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -272,6 +271,8 @@ cdef class FTFont(object):
         cdef unsigned int rshift, gshift, bshift, ashift
         cdef unsigned int fixed
         cdef unsigned int alpha
+        cdef Glyph glyph
+        
         cdef FT_Face face
         cdef FT_GlyphSlot g
         cdef FT_UInt index
@@ -282,8 +283,7 @@ cdef class FTFont(object):
         cdef unsigned int *line
         cdef unsigned char *gline 
         cdef int pitch
-        
-        
+                
         if a == 0:
             return
 
