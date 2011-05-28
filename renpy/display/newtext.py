@@ -3,6 +3,12 @@ import renpy.display
 from renpy.display.textsupport import \
     tokenize, TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
+import renpy.display.ftfont as ftfont
+ftfont.init()
+
+# TODO: Remove.
+font_cache = { }
+
 
 class TextSegment(object):
     """
@@ -17,6 +23,9 @@ class TextSegment(object):
         creates it to initialize it with defaults.
         """
         
+        # The cached font object to use.
+        self.fo = None
+        
         if source is not None:
             self.font = source.font
             self.size = source.size
@@ -30,7 +39,6 @@ class TextSegment(object):
             
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
-    
             
     def take_style(self, style):
         """
@@ -45,6 +53,36 @@ class TextSegment(object):
         self.color = style.color
         self.black_color = style.black_color
         self.hyperlink = None
+
+    def get_font(self):
+        """
+        Returns the font object associated with this TextSegment.
+        """
+        
+        if self.fo is not None:
+            return self.fo
+        
+        key = self.font
+
+        if key in font_cache:
+            self.fo = font_cache[key]
+            return self.fo
+        
+        fo = ftfont.FTFont(renpy.loader.load(self.font), 0)
+        font_cache[key] = fo
+                
+        self.fo = fo
+        return fo
+
+    def glyphs(self, s):
+        """
+        Return ther list of glyphs corresponding to unicode string s.
+        """
+        
+        fo = self.get_font()        
+        fo.setup(self.size, self.bold, self.italic, 0)
+        
+        return fo.glyphs(s)
 
         
 class DisplayableSegment(object):
@@ -70,22 +108,37 @@ class Layout(object):
         # instantaneously.
         self.start_segment = None
         
-        # Turn the text into a list of tokens.
+        # 1. Turn the text into a list of tokens.
         tokens = self.tokenize(text)
         
-        # Breaks the text into a list of paragraphs, where each paragraph is 
+        # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
         paragraphs = self.segment(tokens)
 
         for p in paragraphs:
 
-            print p
-            
             # TODO: RTL - apply RTL to the text of each segment, then 
             # reverse the order of the segments in each paragraph.
                     
-            # Convert each paragraph into a Segment, glyph list. (Store this
+            # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
+            
+            # A list of (segment, list of glyph) pairs.
+            seg_glyphs = [ ]
+
+            # A list of all glyphs in the line.
+            all_glyphs = [ ]
+            
+            for ts, s in p:
+                glyphs = ts.glyphs(s)
+                
+                seg_glyphs.append((ts, glyphs))
+                all_glyphs.extend(glyphs)
+
+                
+            print all_glyphs
+
+
                         
             # TODO: RTL - Reverse the segments and the glyphs within each
             # segment, so that we can use LTR linebreaking algorithms.
