@@ -1,9 +1,11 @@
 import renpy.display
 
 from renpy.display.textsupport import \
-    tokenize, TAG, TEXT, PARAGRAPH, DISPLAYABLE
+    TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
+import renpy.display.textsupport as textsupport
 import renpy.display.ftfont as ftfont
+
 ftfont.init()
 
 # TODO: Remove.
@@ -134,21 +136,20 @@ class Layout(object):
                 
                 seg_glyphs.append((ts, glyphs))
                 all_glyphs.extend(glyphs)
-
-                
-            print all_glyphs
-
-
                         
             # TODO: RTL - Reverse the segments and the glyphs within each
             # segment, so that we can use LTR linebreaking algorithms.
                         
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
-            # Also tag the glyphs that are eligable to have space added by
-            # the justification code.
             
+            # TODO: Pick between western and eastasian.
+            textsupport.annotate_western(all_glyphs)
+                        
             # Break the paragraph up into lines.
+            # TODO: subtitle linebreak.
+            textsupport.linebreak_greedy(all_glyphs, width, width)
+            print textsupport.linebreak_debug(all_glyphs)
 
             # Figure out the time each glyph will be drawn. 
               
@@ -181,10 +182,10 @@ class Layout(object):
         for i in text:
 
             if isinstance(i, unicode):
-                tokens.extend(tokenize(i))
+                tokens.extend(textsupport.tokenize(i))
 
             elif isinstance(i, str):
-                tokens.extend(tokenize(unicode(i)))
+                tokens.extend(textsupport.tokenize(unicode(i)))
                 
             elif isinstance(i, renpy.display.core.Displayable):
                 tokens.append((DISPLAYABLE, i))
