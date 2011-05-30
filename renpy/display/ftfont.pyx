@@ -1,6 +1,6 @@
 from pygame cimport *
 from freetype cimport *
-from textsupport cimport Glyph
+from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
 
 cdef extern char *freetype_error_to_string(int error)
@@ -236,7 +236,7 @@ cdef class FTFont(object):
             gl = Glyph()
             gl.character = c
             gl.ascent = self.ascent
-            gl.descent = self.descent            
+            gl.line_spacing = self.lineskip            
             gl.width = FT_CEIL(g.metrics.width)
             advance = FT_ROUND(g.metrics.horiAdvance)
                         
@@ -261,7 +261,7 @@ cdef class FTFont(object):
         
         return rv
     
-    def draw(self, pysurf, float x, int y, list glyphs):
+    def draw(self, pysurf, float xo, int yo, color, list glyphs):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -284,10 +284,12 @@ cdef class FTFont(object):
         cdef unsigned char *gline 
         cdef int pitch
                 
+        print "XXX", color
+
+        red, green, blue, a = color
+
         if a == 0:
             return
-
-        red, green, blue, a = (255, 255, 255, 255)
 
         # TODO: Grab these from SDL directly.
         rshift, gshift, bshift, ashift = pysurf.get_shifts()
@@ -300,8 +302,17 @@ cdef class FTFont(object):
 
         face = self.face
         g = face.glyph
-        
+                
         for glyph in glyphs:
+
+            if glyph.split == SPLIT_INSTEAD:
+                continue
+                        
+            x = glyph.x 
+            y = glyph.y
+            
+            print x, y
+            
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             error = FT_Load_Glyph(face, index, 0)
             if error:
@@ -324,15 +335,21 @@ cdef class FTFont(object):
                     for px from 0 <= px < g.bitmap.width:
                         
                         alpha = gline[0]
+                        
+                        print "%02x" % alpha,
+                        
                         alpha = ((alpha * a + alpha)) >> 8 << ashift
                         line[0] = (alpha | fixed)
                         gline += 1
                         line += 1
                         
+                    print
+                        
                     bmy += 1
-                    
-            x += glyph.advance
 
+        print "SHIFTS", rshift, gshift, bshift, ashift
+            
+ 
 # Ideas for how text rendering will work:
 #
 # 1) Break things up into style/text pairs. Break into paragraphs

@@ -78,7 +78,7 @@ class TextSegment(object):
 
     def glyphs(self, s):
         """
-        Return ther list of glyphs corresponding to unicode string s.
+        Return the list of glyphs corresponding to unicode string s.
         """
         
         fo = self.get_font()        
@@ -86,7 +86,19 @@ class TextSegment(object):
         
         return fo.glyphs(s)
 
+    def draw(self, surf, glyphs):
+        """
+        Draws the glyphs to surf.
+        """
         
+        # TODO: Deal with non-antialised fonts.
+        # TODO: Deal with outlines, offsets, and override colors.
+        
+        fo = self.get_font()
+        fo.setup(self.size, self.bold, self.italic, 0)
+        fo.draw(surf, 0, 0, self.color, glyphs)
+
+                
 class DisplayableSegment(object):
     """
     This is a segment that contains a displayable.
@@ -117,6 +129,16 @@ class Layout(object):
         # represented as a list of (Segment, text string) tuples. 
         paragraphs = self.segment(tokens)
 
+        # The greatest x coordinate of the text.       
+        maxx = 0
+        
+        # The current y, which becomes the maximum height once all paragraphs
+        # have been rendered.
+        y = 0
+
+        # A list of (segment, glyph_list) pairs for all paragraphs.
+        par_seg_glyphs = [ ]
+
         for p in paragraphs:
 
             # TODO: RTL - apply RTL to the text of each segment, then 
@@ -125,17 +147,22 @@ class Layout(object):
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
             
-            # A list of (segment, list of glyph) pairs.
-            seg_glyphs = [ ]
-
             # A list of all glyphs in the line.
             all_glyphs = [ ]
             
+            # A list of (segment, list of glyph) pairs.
+            seg_glyphs = [ ]
+
             for ts, s in p:
                 glyphs = ts.glyphs(s)
+
+                t = (ts, glyphs)                
+                seg_glyphs.append(t)
+                par_seg_glyphs.append(t)
                 
-                seg_glyphs.append((ts, glyphs))
                 all_glyphs.extend(glyphs)
+                       
+            # TODO: Apply kerning here.
                         
             # TODO: RTL - Reverse the segments and the glyphs within each
             # segment, so that we can use LTR linebreaking algorithms.
@@ -159,16 +186,33 @@ class Layout(object):
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
             
+            w = textsupport.place_horizontal(glyphs, 0, 0, 0)
+            if w > maxx:
+                maxx = w
+            
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph. 
+            lines = textsupport.place_vertical(glyphs, y, 0, 0)
+            y = lines[-1]
+
+            # TODO: Place the RUBY_TOP glyphs.
 
             # Combine continguous hyperlinks ont a line into a single focus block.
             
             # Done with layout! Now drawing each segment and glyph in order will be enough
             # to render the text to a displayable.
 
-            pass
-            
+        surf = renpy.display.pgrender.surface((maxx, y), True)
+        surf.fill((0, 0, 0, 255))
+        
+        for ts, glyphs in par_seg_glyphs:
+            ts.draw(surf, glyphs)
+
+        print maxx, y
+
+        import pygame
+        pygame.image.save(surf, "/tmp/newtext.png")
+                        
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
             

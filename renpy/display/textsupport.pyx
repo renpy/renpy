@@ -1,8 +1,3 @@
-# Constants that control glyph splitting.
-SPLIT_NONE=0 # Can't split at this glyph.
-SPLIT_BEFORE=1 # Can split before this glyph. 
-SPLIT_INSTEAD=2 # Can split at this glyph - and it gets removed if we do.
-
 cdef class Glyph:
     
     def __repr__(self):
@@ -78,6 +73,11 @@ def annotate_western(list glyphs):
     cdef Glyph g
     
     for g in glyphs:
+
+        # Don't split ruby.
+        if g.ruby != RUBY_NONE:
+            continue
+        
         if g.character == 0x20 or g.character == 0x200b:
             g.split = SPLIT_INSTEAD
         else:
@@ -108,14 +108,16 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     splitwidth = 0
     
     for g in glyphs:
-                
-        linewidth += g.advance
+               
         splitwidth += g.advance
         
-        if linewidth > width and split_g is not None:
+        if linewidth + g.width > width and split_g is not None:
             linewidth = splitwidth
             split_g = None
+            width = rest_width
             
+        linewidth += g.advance
+ 
         if g.split == SPLIT_INSTEAD:
             if split_g is not None:
                 split_g.split = SPLIT_NONE
@@ -130,6 +132,9 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
             
             split_g = g
             splitwidth = g.advance
+
+    if split_g is not None:
+        split_g.split = SPLIT_NONE
 
             
 def linebreak_debug(list glyphs):
@@ -152,7 +157,113 @@ def linebreak_debug(list glyphs):
             
     return rv
             
-                
+
+def place_horizontal(list glyphs, float start_x, float first_indent, float rest_indent):
+    """
+    Place the glyphs horizontally, without taking into account the indentation
+    at the start of the line. Returns the width of the laid-out line.
+    """
     
-           
+    if not glyphs:
+        return 0
+    
+    cdef Glyph g
+    cdef float x, maxx
+    
+    x = start_x + first_indent
+    maxx = 0
+        
+    for g in glyphs:
+
+        if g.ruby == RUBY_TOP:
+            continue
+        
+        if g.split == SPLIT_INSTEAD:
+            x = start_x + rest_indent
+            continue
+
+        elif g.split == SPLIT_BEFORE:
+            x = start_x + rest_indent
+
+        g.x = <short> (x + .5)
+
+        if maxx < x + g.width:
+            maxx = x + g.width
+            
+        x += g.advance
+            
+    return maxx
+    
+def place_vertical(list glyphs, int y, int spacing, int leading):
+    """
+    Vertically places the non-ruby glyphs. Returns a list of line end heights,
+    and the y-value for the top of the next line.
+    """
+
+    cdef Glyph g, gg
+    
+    cdef int pos, sol, len_glyphs, i
+    cdef int ascent, line_spacing
+    cdef bint end_line
+    
+    len_glyphs = len(glyphs)
+
+    pos = 0
+    sol = 0
+    
+    ascent = 0
+    line_spacing = 0
+        
+    rv = [ ]
+        
+    y += leading
+        
+    while True:
+        
+        if pos == len_glyphs:
+            end_line = True
+        else:
+            g = glyphs[pos]
+            end_line = (g.split != SPLIT_NONE)
+                
+        if end_line:
+            
+            for i from sol <= i < pos:
+                gg = glyphs[i]
+                
+                if gg.ruby == RUBY_TOP:
+                    continue
+                
+                if gg.ascent:
+                    gg.y = y + ascent
+                else:
+
+                    # Glyphs without ascents are displayables, which get 
+                    # aligned to the top of the line. (Or they're image-font
+                    # glyphs, which are the same.)                   
+                    gg.y = y
+            
+            y += line_spacing
+            y += spacing
+            rv.append(y)
+            y += leading
+
+            sol = pos
+            ascent = 0
+            line_spacing = 0
+            
+        if pos == len_glyphs:
+            break
+                    
+        if g.ascent > ascent:
+            ascent = g.ascent
+            
+        if g.line_spacing > line_spacing:
+            line_spacing = g.line_spacing        
+    
+        pos += 1
+    
+    return rv
+    
+        
     

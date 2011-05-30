@@ -1,3 +1,13 @@
+cdef enum split_t:
+    SPLIT_NONE
+    SPLIT_BEFORE
+    SPLIT_INSTEAD
+    
+cdef enum ruby_t:
+    RUBY_NONE
+    RUBY_BOTTOM
+    RUBY_TOP
+
 cdef class Glyph:
 
     # The character this glyph represents.
@@ -11,11 +21,14 @@ cdef class Glyph:
         
         # Controls splitting of this glyph, based on where we are in the
         # the line.
-        char split
+        split_t split
+        
+        # Is this ruby or not?
+        ruby_t ruby
                 
-        # The ascent and descent of the font.
+        # The ascent and spacing of the font.
         public short ascent
-        public short descent
+        public short line_spacing
         
         # The width and advance of the font.
         public float width
