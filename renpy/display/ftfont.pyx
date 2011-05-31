@@ -267,7 +267,8 @@ cdef class FTFont(object):
         """
                 
         cdef SDL_Surface *surf
-        cdef unsigned int red, green, blue, a
+        cdef unsigned int Sr, Sb, Sg, Sa
+        cdef unsigned int Dr, Db, Dg, Da
         cdef unsigned int rshift, gshift, bshift, ashift
         cdef unsigned int fixed
         cdef unsigned int alpha
@@ -279,26 +280,19 @@ cdef class FTFont(object):
         cdef int error
         cdef int bmx, bmy, px, py
                 
-        cdef unsigned int *pixels
-        cdef unsigned int *line
+        cdef unsigned char *pixels
+        cdef unsigned char *line
         cdef unsigned char *gline 
         cdef int pitch
                 
-        print "XXX", color
+        Sr, Sg, Sb, Sa = color
 
-        red, green, blue, a = color
-
-        if a == 0:
+        if Sa == 0:
             return
-
-        # TODO: Grab these from SDL directly.
-        rshift, gshift, bshift, ashift = pysurf.get_shifts()
-        
-        fixed = (red << rshift) | (green << gshift) | (blue << bshift)
         
         surf = PySurface_AsSurface(pysurf)
-        pixels = <unsigned int *> surf.pixels
-        pitch = surf.pitch / 4
+        pixels = <unsigned char *> surf.pixels
+        pitch = surf.pitch
 
         face = self.face
         g = face.glyph
@@ -310,8 +304,6 @@ cdef class FTFont(object):
                         
             x = glyph.x 
             y = glyph.y
-            
-            print x, y
             
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             error = FT_Load_Glyph(face, index, 0)
@@ -329,32 +321,37 @@ cdef class FTFont(object):
                 
                 for py from 0 <= py < g.bitmap.rows:                    
 
-                    line = pixels + bmy * pitch + bmx
+                    line = pixels + bmy * pitch + bmx * 4
                     gline = g.bitmap.buffer + py * g.bitmap.pitch
                     
                     for px from 0 <= px < g.bitmap.width:
                         
                         alpha = gline[0]
                         
-                        print "%02x" % alpha,
+                        # Modulate Sa by the glyph's alpha.
+                        alpha = (alpha * Sa + Sa) >> 8
+
+                        # This code is the ALPHA_BLEND macro, from the surface.h
+                        # file in pygame-1.8          
+                        Da = line[3]
+                                               
+                        if Da:
+                            Dr = line[0]
+                            Dg = line[1]
+                            Db = line[2]
+                            
+                            line[0] = (((Sr - Dr) * alpha) >> 8) + Dr
+                            line[1] = (((Sg - Dg) * alpha) >> 8) + Dg
+                            line[2] = (((Sb - Db) * alpha) >> 8) + Db
+                            line[3] = alpha + Da - ((alpha * Da) / 255)
+                            
+                        else:
+                            line[0] = Sr
+                            line[1] = Sg
+                            line[2] = Sb
+                            line[3] = alpha
                         
-                        alpha = ((alpha * a + alpha)) >> 8 << ashift
-                        line[0] = (alpha | fixed)
                         gline += 1
-                        line += 1
-                        
-                    print
+                        line += 4
                         
                     bmy += 1
-
-        print "SHIFTS", rshift, gshift, bshift, ashift
-            
- 
-# Ideas for how text rendering will work:
-#
-# 1) Break things up into style/text pairs. Break into paragraphs
-# at this point, process each paragraph separately.
-# 2) Style objects lay out text into lists of glyph objects.
-# 3) The glyph objects are combined into one list (per paragraph).
-# 4) The paragraph lists are broken into lines, justified, and offset.
-# 5) The style objects then draw the glyph objects.
