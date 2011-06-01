@@ -8,6 +8,21 @@ cdef extern char *freetype_error_to_string(int error)
 # The freetype library object we use.
 cdef FT_Library library
 
+# Represents a cached glyph.
+cdef struct glyph_cache:
+    
+    # The character we're caching. -1 if we're not representing a valid
+    # character.
+    int index
+    
+    int width
+    float advance
+        
+    FT_Bitmap bitmap
+    int bitmap_left
+    int bitmap_top
+
+
 class FreetypeError(Exception):
     def __init__(self, code):
         Exception.__init__(self, "%d: %s" % (code, freetype_error_to_string(code)))
@@ -25,17 +40,17 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     Seeks to offset, and then reads count bytes from the stream into buffer.
     """
     
-    cdef FTFont font
+    cdef FTFace face
     cdef char *cbuf
     
-    font = <FTFont> stream.descriptor.pointer
-    f = font.f 
+    face = <FTFace> stream.descriptor.pointer
+    f = face.f 
     
-    if font.offset != offset:
+    if face.offset != offset:
 
         try:
             f.seek(offset)
-            font.offset = offset
+            face.offset = offset
         except:
             traceback.print_exc()
             return -1
@@ -52,7 +67,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
             traceback.print_exc()
             return -1
 
-    font.offset += count
+    face.offset += count
             
     return count
 
@@ -66,52 +81,25 @@ cdef void close_func(FT_Stream stream):
     
     return            
     
-cdef class FTFont(object):
+    
+cdef class FTFace:
+    """
+    Represents a freetype face.
+    """
     
     cdef:
         FT_StreamRec stream
         FT_Open_Args open_args
         FT_Face face
 
+        float size
+
         # The file the font is read from.    
         object f
         
         # The offset in that file.
         unsigned long offset
-
-        # A cache of various properties.
-        float size
-        bint bold
-        bint italic
-        float outline
-        bint underline
-
-        # Information used to modify the font.
-
-        # Overhang - used for bold.
-        int glyph_overhang
-        
-        # The amount to skew an italic face by.
-        float glyph_italics
-        
-        # The offset and height of the underline.        
-        int underline_offset
-        int underline_height
-
-        # How much we expand the font by, to leave space
-        # for strokes.
-        int expand
-        
-        # The stroker object.
-        FT_Stroker stroker
-
-        # Basic Y-direction metrics for this font.
-        public int ascent
-        public int descent
-        public int height
-        public int lineskip
-
-        
+    
     def __init__(self, f, index):
         
         cdef int error
@@ -143,27 +131,89 @@ cdef class FTFont(object):
         error = FT_Select_Charmap(self.face, FT_ENCODING_UNICODE)
         if error:
             raise FreetypeError(error)
+    
+        # The size the face is at.
+        self.size = -1
+    
+cdef class FTFont:
+    
+    cdef:
 
+        FTFace face_object
+        FT_Face face
+
+        # A cache of various properties.
+        float size
+        float bold
+        bint italic
+        float outline
+        bint antialias
+
+        # Information used to modify the font.
+
+        # Overhang - used for bold.
+        int glyph_overhang
+        
+        # The amount to skew an italic face by.
+        float glyph_italics
+        
+        # The offset and height of the underline.        
+        public int underline_offset
+        public int underline_height
+        
+        # The stroker object.
+        FT_Stroker stroker
+
+        # Basic Y-direction metrics for this font.
+        public int ascent
+        public int descent
+        public int height
+        public int lineskip
+
+        glyph_cache cache[256]
+        
+
+    def __cinit__(self):
+        for i from 0 <= i < 256:
+            self.cache[i].index = -1
+            FT_Bitmap_New(&(self.cache[i].bitmap))
+
+    def __dealloc__(self):
+        for i from 0 <= i < 256:
+            FT_Bitmap_Done(library, &(self.cache[i].bitmap))
+        
+        
+    def __init__(self, face, float size, float bold, bint italic, float outline, bint antialias):
+        
+        self.face_object = face
+        self.face = self.face_object.face
+        
+        self.size = size
+        self.bold = bold
+        self.italic = italic
+        self.outline = outline
+        self.antialias = antialias
+        
         self.stroker = NULL;
 
-    def setup(self, float size, bint bold, bint italic, float outline):
+
+    cdef setup(self):
         """
-        Changes the parameters of this font.
+        Changes the parameters of the face to match this font.
         """
         
         cdef int error
         cdef FT_Face face
         cdef FT_Fixed scale
+                
+        if self.face_object.size != self.size:
+            self.face_object.size = self.size
         
+            face = self.face
 
-        if self.size != size:
-            self.size = size
-        
-            error = FT_Set_Char_Size(self.face, 0, <int> size * 64, 0, 0)
+            error = FT_Set_Char_Size(face, 0, <int> (self.size * 64), 0, 0)
             if error:
                 raise FreetypeError(error)
-
-            face = self.face
 
             scale = face.size.metrics.y_scale
 
@@ -175,8 +225,8 @@ cdef class FTFont(object):
             if self.height > self.lineskip:
                 self.lineskip = self.height                
 
-            self.glyph_overhang = face.size.metrics.y_ppem / 10
-            self.glyph_italics = 0.207 * self.height
+            # self.glyph_overhang = face.size.metrics.y_ppem / 10
+            # self.glyph_italics = 0.207 * self.height
 
             self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
             self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
@@ -184,12 +234,51 @@ cdef class FTFont(object):
             if self.underline_height < 1:
                 self.underline_height = 1
 
-        self.bold = bold
-        self.italic = italic
-        
         # TODO: Set up expand and stroker.
                 
         return
+
+    cdef glyph_cache *get_glyph(self, int index):
+        """
+        Returns the glyph_cache object for a given glyph.
+        """
+
+        cdef FT_Face face
+        cdef FT_GlyphSlot g
+        cdef int error
+        cdef glyph_cache *rv
+
+        rv = &(self.cache[index & 255])        
+        if rv.index == index:
+            return rv
+
+        rv.index = index
+
+        face = self.face
+        
+        error = FT_Load_Glyph(face, index, 0)
+        if error:
+            raise FreetypeError(error)
+         
+        if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
+                
+            error = FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
+            if error:
+                raise FreetypeError(error)
+        
+        if face.glyph.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
+            FT_Bitmap_Convert(library, &(face.glyph.bitmap), &(rv.bitmap), 4)
+        else:
+            FT_Bitmap_Copy(library, &(face.glyph.bitmap), &(rv.bitmap))
+            
+        rv.width = FT_CEIL(face.glyph.metrics.width)
+        rv.advance = face.glyph.metrics.horiAdvance / 64.0
+
+        rv.bitmap_left = face.glyph.bitmap_left
+        rv.bitmap_top = face.glyph.bitmap_top
+
+        return rv
+    
 
     def glyphs(self, unicode s):
         """
@@ -197,7 +286,6 @@ cdef class FTFont(object):
         """
         
         cdef FT_Face face
-        cdef FT_GlyphSlot g
         cdef list rv
         cdef int len_s 
         cdef Py_UNICODE c, next_c
@@ -206,10 +294,14 @@ cdef class FTFont(object):
         cdef Glyph gl
         cdef FT_Vector kerning
         cdef int kern
-        cdef int advance
+        cdef float advance
+        cdef int i
+        cdef glyph_cache *cache
 
         cdef float min_advance, next_min_advance
-                
+
+        self.setup()
+                        
         len_s = len(s)
         
         face = self.face
@@ -219,7 +311,7 @@ cdef class FTFont(object):
     
         if len_s:
     
-            min_advance_next = 0        
+            next_min_advance = 0        
             next_c = s[0]
             next_index = FT_Get_Char_Index(face, next_c)
     
@@ -228,17 +320,15 @@ cdef class FTFont(object):
             c = next_c 
             index = next_index
             min_advance = next_min_advance
-            
-            error = FT_Load_Glyph(face, index, 0)
-            if error:
-                raise FreetypeError(error)
-            
+
+            cache = self.get_glyph(index)
+                        
             gl = Glyph()
+
             gl.character = c
             gl.ascent = self.ascent
             gl.line_spacing = self.lineskip            
-            gl.width = FT_CEIL(g.metrics.width)
-            advance = FT_ROUND(g.metrics.horiAdvance)
+            gl.width = cache.width
                         
             if i < len_s - 1:
                 next_c = s[i + 1]
@@ -250,16 +340,16 @@ cdef class FTFont(object):
                 
                 kern = FT_ROUND(kerning.x)                
                 
-                if advance + kern > min_advance:
-                    gl.advance = advance + kern
+                if cache.advance + kern > min_advance:
+                    gl.advance = cache.advance + kern
                 else:
                     gl.advance = min_advance
                     
-                next_min_advance = advance - gl.advance
+                next_min_advance = cache.advance - gl.advance
                         
             else:
-                gl.advance = advance
-                        
+                gl.advance = cache.advance
+        
             rv.append(gl)
         
         return rv
@@ -287,11 +377,15 @@ cdef class FTFont(object):
         cdef unsigned char *line
         cdef unsigned char *gline 
         cdef int pitch
+        cdef glyph_cache *cache
+                
                 
         Sr, Sg, Sb, Sa = color
 
         if Sa == 0:
             return
+        
+        self.setup()
         
         surf = PySurface_AsSurface(pysurf)
         pixels = <unsigned char *> surf.pixels
@@ -309,52 +403,46 @@ cdef class FTFont(object):
             y = glyph.y + yo
             
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
-            error = FT_Load_Glyph(face, index, 0)
-            if error:
-                raise FreetypeError(error)
+
+            cache = self.get_glyph(index)
             
-            if g.format != FT_GLYPH_FORMAT_BITMAP:
                 
-                error = FT_Render_Glyph(g, FT_RENDER_MODE_NORMAL)
-                if error:
-                    raise FreetypeError(error)
+            bmx = <int> (x + .5) + cache.bitmap_left
+            bmy = y - cache.bitmap_top
+
+            for py from 0 <= py < cache.bitmap.rows:                    
+
+                line = pixels + bmy * pitch + bmx * 4
+                gline = cache.bitmap.buffer + py * cache.bitmap.pitch
                 
-                bmx = <int> (x + .5) + g.bitmap_left
-                bmy = y - g.bitmap_top
-
-                for py from 0 <= py < g.bitmap.rows:                    
-
-                    line = pixels + bmy * pitch + bmx * 4
-                    gline = g.bitmap.buffer + py * g.bitmap.pitch
+                for px from 0 <= px < cache.bitmap.width:
                     
-                    for px from 0 <= px < g.bitmap.width:
-                        
-                        alpha = gline[0]
-                        
-                        # Modulate Sa by the glyph's alpha.
-                        alpha = (alpha * Sa + Sa) >> 8
+                    alpha = gline[0]
+                    
+                    # Modulate Sa by the glyph's alpha.
+                    alpha = (alpha * Sa + Sa) >> 8
 
-                        # This code is the ALPHA_BLEND macro, from the surface.h
-                        # file in pygame-1.8          
-                        Da = line[3]
-                                               
-                        if Da:
-                            Dr = line[0]
-                            Dg = line[1]
-                            Db = line[2]
-                            
-                            line[0] = (((Sr - Dr) * alpha) >> 8) + Dr
-                            line[1] = (((Sg - Dg) * alpha) >> 8) + Dg
-                            line[2] = (((Sb - Db) * alpha) >> 8) + Db
-                            line[3] = alpha + Da - ((alpha * Da) / 255)
-                            
-                        else:
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = alpha
+                    # This code is the ALPHA_BLEND macro, from the surface.h
+                    # file in pygame-1.8          
+                    Da = line[3]
+                                           
+                    if Da:
+                        Dr = line[0]
+                        Dg = line[1]
+                        Db = line[2]
                         
-                        gline += 1
-                        line += 4
+                        line[0] = (((Sr - Dr) * alpha) >> 8) + Dr
+                        line[1] = (((Sg - Dg) * alpha) >> 8) + Dg
+                        line[2] = (((Sb - Db) * alpha) >> 8) + Db
+                        line[3] = alpha + Da - ((alpha * Da) / 255)
                         
-                    bmy += 1
+                    else:
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = alpha
+                    
+                    gline += 1
+                    line += 4
+                    
+                bmy += 1
