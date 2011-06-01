@@ -96,34 +96,36 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     """
 
     cdef Glyph g, split_g
-    cdef float width, linewidth, splitwidth
+    cdef float width, x, splitx, gwidth
     
     width = first_width
     split_g = None
     
-    # The width of the line.
-    linewidth = 0
+    # The x position of the current character. Invariant: x can never be more
+    # that one character-width greater than width.
+    x = 0
     
-    # The width of the line after being split at the last split point.
-    splitwidth = 0
+    # The x position after splitting the line.
+    splitx = 0
     
     for g in glyphs:
-               
-        splitwidth += g.advance
-        
-        if linewidth + g.width > width and split_g is not None:
-            linewidth = splitwidth
+                       
+        # If the x coordinate is greater than the width of the screen, 
+        # split at the last split point, if any.
+        if x > width and split_g is not None:
+            x = splitx
             split_g = None
             width = rest_width
             
-        linewidth += g.advance
+        x += g.advance
+        splitx += g.advance
  
         if g.split == SPLIT_INSTEAD:
             if split_g is not None:
                 split_g.split = SPLIT_NONE
                 
             split_g = g
-            splitwidth = 0
+            splitx = 0
 
         elif g.split == SPLIT_BEFORE:
             
@@ -131,7 +133,11 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
                 split_g.split = SPLIT_NONE
             
             split_g = g
-            splitwidth = g.advance
+            splitx = g.advance
+
+    # Split at the last character, if necessary.
+    if x > width:
+        split_g = None
 
     if split_g is not None:
         split_g.split = SPLIT_NONE
@@ -189,6 +195,8 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
 
         if maxx < x + g.width:
             maxx = x + g.width
+        if maxx < x + g.advance:
+            maxx = x + g.advance
             
         x += g.advance
             
@@ -265,5 +273,11 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     
     return rv
     
+def kerning(list glyphs, float amount):
+    cdef Glyph g
+    
+    for g in glyphs:
+        g.advance += amount
         
+
     

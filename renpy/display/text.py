@@ -1281,6 +1281,9 @@ class Text(renpy.display.core.Displayable):
             
     def render(self, width, height, st, at):
 
+        import time
+        start = time.time()
+
         if self.slow:
 
             speed = self.style.slow_cps
@@ -1349,6 +1352,8 @@ class Text(renpy.display.core.Displayable):
         final_width = self.laidout_width - mindsx + maxdsx + max(self.style.first_indent, self.style.rest_indent)
         final_height = self.laidout_height - mindsy + maxdsy
 
+        print "OLDSIZE", final_width, final_height
+
         rv = renpy.display.render.Render(final_width, final_height)
         surf = renpy.display.pgrender.surface((final_width, final_height), True)
         
@@ -1369,6 +1374,8 @@ class Text(renpy.display.core.Displayable):
                 
         if self.slow:
             renpy.display.render.redraw(self, 0)
+
+        print "OLD", time.time() - start
 
         return rv
 

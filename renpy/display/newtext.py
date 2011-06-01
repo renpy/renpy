@@ -1,4 +1,5 @@
 import renpy.display
+import time
 
 from renpy.display.textsupport import \
     TAG, TEXT, PARAGRAPH, DISPLAYABLE
@@ -10,6 +11,26 @@ ftfont.init()
 
 # TODO: Remove.
 font_cache = { }
+font_face_cache = { }
+
+
+def get_font(font, size, bold, italic, outline, antialias):
+    key = (size, bold, italic, outline, antialias)
+
+    rv = font_cache.get(key, None)    
+    if rv is not None:
+        return rv
+    
+    face = font_face_cache.get(font, None)
+    if face is None:
+        face = ftfont.FTFace(renpy.loader.load(font), 0)
+        font_face_cache[font] = face
+        
+        
+    rv = ftfont.FTFont(face, size, bold, italic, outline, antialias)
+    font_cache[key] = rv
+    
+    return rv
 
 
 class TextSegment(object):
@@ -25,9 +46,8 @@ class TextSegment(object):
         creates it to initialize it with defaults.
         """
         
-        # The cached font object to use.
-        self.fo = None
-        
+        self.antialias = True
+            
         if source is not None:
             self.font = source.font
             self.size = source.size
@@ -56,35 +76,25 @@ class TextSegment(object):
         self.black_color = style.black_color
         self.hyperlink = None
 
-    def get_font(self):
-        """
-        Returns the font object associated with this TextSegment.
-        """
-        
-        if self.fo is not None:
-            return self.fo
-        
-        key = self.font
-
-        if key in font_cache:
-            self.fo = font_cache[key]
-            return self.fo
-        
-        fo = ftfont.FTFont(renpy.loader.load(self.font), 0)
-        font_cache[key] = fo
-                
-        self.fo = fo
-        return fo
-
     def glyphs(self, s):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
         
-        fo = self.get_font()        
-        fo.setup(self.size, self.bold, self.italic, 0)
+        start = time.time()
         
-        return fo.glyphs(s)
+        fo = get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
+        
+        print " Get", time.time() - start
+        start = time.time()
+        
+        rv = fo.glyphs(s)
+        
+        print " Fon", time.time() - start
+        start = time.time()
+        
+        return rv
+
 
     def draw(self, surf, glyphs, xo, yo, override_color, outline):
         """
@@ -96,10 +106,7 @@ class TextSegment(object):
         else:
             color = self.color
         
-        # TODO: Deal with non-antialised fonts.
- 
-        fo = self.get_font()
-        fo.setup(self.size, self.bold, self.italic, outline)
+        fo = get_font(self.font, self.size, self.bold, self.italic, outline, self.antialias)
         fo.draw(surf, xo, yo, color, glyphs)
 
                 
@@ -142,12 +149,20 @@ class Layout(object):
         width -= xborder
         height -= yborder
         
+        start = time.time()
+         
         # 1. Turn the text into a list of tokens.
         tokens = self.tokenize(text.text)
+        
+        print "Tok", time.time() - start
+        start = time.time()
         
         # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
         paragraphs = self.segment(tokens)
+
+        print "Seg", time.time() - start
+        start = time.time()
 
         # The greatest x coordinate of the text.       
         maxx = 0
@@ -181,7 +196,10 @@ class Layout(object):
                 par_seg_glyphs.append(t)
                 
                 all_glyphs.extend(glyphs)
-            
+
+            print "Gly", time.time() - start
+            start = time.time()
+
             # TODO: Apply kerning here.
                         
             # TODO: RTL - Reverse the segments and the glyphs within each
@@ -193,9 +211,17 @@ class Layout(object):
             # TODO: Pick between western and eastasian.
             textsupport.annotate_western(all_glyphs)
                      
+            print "Ann", time.time() - start
+            start = time.time()
+                     
+                     
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
             textsupport.linebreak_greedy(all_glyphs, width, width)
+            
+            print "Lbr", time.time() - start
+            start = time.time()
+
             
             # Figure out the time each glyph will be drawn. 
               
@@ -209,10 +235,18 @@ class Layout(object):
             if w > maxx:
                 maxx = w
             
+            print "Hor", time.time() - start
+            start = time.time()
+
+            
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph. 
             lines = textsupport.place_vertical(all_glyphs, y, 0, 0)
             y = lines[-1]
+
+            print "Ver", time.time() - start
+            start = time.time()
+
 
             # TODO: Place the RUBY_TOP glyphs.
 
@@ -221,11 +255,18 @@ class Layout(object):
             # Done with layout! Now drawing each segment and glyph in order will be enough
             # to render the text to a displayable.
 
-        surf = renpy.display.pgrender.surface((maxx + xborder, y + yborder), True)
+        size = (maxx + xborder, y + yborder)
+        print "SIZE", size
+
+        surf = renpy.display.pgrender.surface(size, True)
         
         for o, color, xo, yo in outlines:
             for ts, glyphs in par_seg_glyphs:
                 ts.draw(surf, glyphs, xoffset + xo - o, yoffset + yo, color, o)
+
+        print "Dra", time.time() - start
+        start = time.time()
+
 
         renpy.display.draw.mutated_surface(surf)
         self.texture = renpy.display.draw.load_texture(surf)
@@ -484,6 +525,9 @@ class NewText(renpy.display.core.Displayable):
         
     def render(self, width, height, st, at):
         
+        import time
+        start = time.time()
+        
         if self.layout is None or self.layout.width != width or self.layout.height != height:
             self.layout = Layout(self, width, height)
         
@@ -492,6 +536,9 @@ class NewText(renpy.display.core.Displayable):
            
         rv = renpy.display.render.Render(w, h)
         rv.blit(tex, (0, 0))
+
+        print "NEW", time.time() - start
+        
         return rv
         
         
