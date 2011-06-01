@@ -257,6 +257,9 @@ cdef class FTFont(object):
                     
                 next_min_advance = advance - gl.advance
                         
+            else:
+                gl.advance = advance
+                        
             rv.append(gl)
         
         return rv
@@ -302,8 +305,8 @@ cdef class FTFont(object):
             if glyph.split == SPLIT_INSTEAD:
                 continue
                         
-            x = glyph.x 
-            y = glyph.y
+            x = glyph.x + xo
+            y = glyph.y + yo
             
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             error = FT_Load_Glyph(face, index, 0)
@@ -318,7 +321,7 @@ cdef class FTFont(object):
                 
                 bmx = <int> (x + .5) + g.bitmap_left
                 bmy = y - g.bitmap_top
-                
+
                 for py from 0 <= py < g.bitmap.rows:                    
 
                     line = pixels + bmy * pitch + bmx * 4

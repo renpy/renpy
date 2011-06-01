@@ -86,17 +86,21 @@ class TextSegment(object):
         
         return fo.glyphs(s)
 
-    def draw(self, surf, glyphs):
+    def draw(self, surf, glyphs, xo, yo, override_color, outline):
         """
         Draws the glyphs to surf.
         """
         
-        # TODO: Deal with non-antialised fonts.
-        # TODO: Deal with outlines, offsets, and override colors.
+        if override_color:
+            color = override_color
+        else:
+            color = self.color
         
+        # TODO: Deal with non-antialised fonts.
+ 
         fo = self.get_font()
-        fo.setup(self.size, self.bold, self.italic, 0)
-        fo.draw(surf, 0, 0, self.color, glyphs)
+        fo.setup(self.size, self.bold, self.italic, outline)
+        fo.draw(surf, xo, yo, color, glyphs)
 
                 
 class DisplayableSegment(object):
@@ -117,13 +121,29 @@ class Layout(object):
     """
 
     def __init__(self, text, width, height):
+        """
+        `text` 
+            The text object this layout is associated with.
+        `width`, `height` 
+            The height of the laid-out text.
+        """
         
+        self.width = width
+        self.height = height
+                
+        style = text.style
+                
         # Slow text that is not before the start segment is displayed
         # instantaneously.
         self.start_segment = None
+
+        # Figure out outlines and other info.
+        outlines, xborder, yborder, xoffset, yoffset = self.figure_outlines(style)        
+        width -= xborder
+        height -= yborder
         
         # 1. Turn the text into a list of tokens.
-        tokens = self.tokenize(text)
+        tokens = self.tokenize(text.text)
         
         # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
@@ -161,7 +181,7 @@ class Layout(object):
                 par_seg_glyphs.append(t)
                 
                 all_glyphs.extend(glyphs)
-                       
+            
             # TODO: Apply kerning here.
                         
             # TODO: RTL - Reverse the segments and the glyphs within each
@@ -172,12 +192,11 @@ class Layout(object):
             
             # TODO: Pick between western and eastasian.
             textsupport.annotate_western(all_glyphs)
-                        
+                     
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
             textsupport.linebreak_greedy(all_glyphs, width, width)
-            print textsupport.linebreak_debug(all_glyphs)
-
+            
             # Figure out the time each glyph will be drawn. 
               
             # TODO: RTL - Reverse the glyphs in each line, back to RTL order,
@@ -186,13 +205,13 @@ class Layout(object):
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
             
-            w = textsupport.place_horizontal(glyphs, 0, 0, 0)
+            w = textsupport.place_horizontal(all_glyphs, 0, 0, 0)
             if w > maxx:
                 maxx = w
             
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph. 
-            lines = textsupport.place_vertical(glyphs, y, 0, 0)
+            lines = textsupport.place_vertical(all_glyphs, y, 0, 0)
             y = lines[-1]
 
             # TODO: Place the RUBY_TOP glyphs.
@@ -202,17 +221,15 @@ class Layout(object):
             # Done with layout! Now drawing each segment and glyph in order will be enough
             # to render the text to a displayable.
 
-        surf = renpy.display.pgrender.surface((maxx, y), True)
-        surf.fill((0, 0, 0, 255))
+        surf = renpy.display.pgrender.surface((maxx + xborder, y + yborder), True)
         
-        for ts, glyphs in par_seg_glyphs:
-            ts.draw(surf, glyphs)
+        for o, color, xo, yo in outlines:
+            for ts, glyphs in par_seg_glyphs:
+                ts.draw(surf, glyphs, xoffset + xo - o, yoffset + yo, color, o)
 
-        print maxx, y
-
-        import pygame
-        pygame.image.save(surf, "/tmp/newtext.png")
-                        
+        renpy.display.draw.mutated_surface(surf)
+        self.texture = renpy.display.draw.load_texture(surf)
+        
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
             
@@ -252,7 +269,6 @@ class Layout(object):
         
         paragraphs = [ ]
         line = [ ]
-
 
         ts = TextSegment(None) 
         ts.take_style(renpy.store.style.default)
@@ -396,11 +412,90 @@ class Layout(object):
 
         return paragraphs
 
-
-class NewText(object):
-    
-    def __init__(self, text):
+    def figure_outlines(self, style):
+        """
+        Return a list containing the outlines, including an outline
+        representing the drop shadow, if we have one, also including
+        an entry for the main text, with color None. Also returns the 
+        space reserved for outlines - to be deducted from the width
+        and the height.
+        """
         
-        self.text = text        
-        self.layout = Layout([ self.text ], 800, 600)
+        style_outlines = style.outlines
+        dslist = style.drop_shadow
+
+        if not style_outlines and not dslist:
+            return [ (0, None, 0, 0) ], 0, 0, 0, 0
+                
+        outlines = [ ]
+                
+        if dslist:
+            if not isinstance(dslist, list):                
+                dslist = [ dslist ]
+                        
+            for dsx, dsy in dslist:
+                outlines.append((0, style.drop_shadow_color, dsx, dsy))
+                
+        outlines.extend(style_outlines)
+        
+        # The outline borders we reserve.
+        left = 0
+        right = 0
+        top = 0
+        bottom = 0
+                
+        for o, c, x, y in outlines:
+            
+            l = x - o 
+            r = x + o
+            t = y - o
+            b = y + o
+            
+            if l < left:
+                left = l
+                
+            if r > right:
+                right = r
+                
+            if t < top:
+                top = t
+                
+            if b > bottom:
+                bottom = b
+                
+        outlines.append((0, None, 0, 0))
+        
+        return outlines, right - left, bottom - top, -left, -top
+        
+
+class NewText(renpy.display.core.Displayable):
+    
+    def __init__(self, text, style='default', replaces=None, **properties):
+                
+        super(NewText, self).__init__(style=style, **properties)
+           
+        if not isinstance(text, list):
+            text = [ text ]
+        
+        self.text = text
+                           
+        self.layout = None
+
+        
+    def render(self, width, height, st, at):
+        
+        if self.layout is None or self.layout.width != width or self.layout.height != height:
+            self.layout = Layout(self, width, height)
+        
+        tex = self.layout.texture
+        w, h = tex.get_size()
+           
+        rv = renpy.display.render.Render(w, h)
+        rv.blit(tex, (0, 0))
+        return rv
+        
+        
+
+        
+            
         
