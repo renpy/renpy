@@ -579,6 +579,26 @@ cdef extern from "pyfreetype.h":
     cdef struct FT_Stroker_Rec_
     ctypedef FT_Stroker_Rec_ *FT_Stroker
     
+    FT_Glyph_StrokeBorder( 
+        FT_Glyph    *pglyph,
+        FT_Stroker   stroker,
+        FT_Bool      inside,
+        FT_Bool      destroy )
+        
+    FT_Error FT_Stroker_New( FT_Library   library,
+                    FT_Stroker  *astroker )
+                    
+    cdef enum FT_Stroker_LineCap:
+        FT_STROKER_LINECAP_ROUND
+    cdef enum FT_Stroker_LineJoin:
+        FT_STROKER_LINEJOIN_ROUND
+
+    void FT_Stroker_Set( FT_Stroker           stroker,
+                  FT_Fixed             radius,
+                  FT_Stroker_LineCap   line_cap,
+                  FT_Stroker_LineJoin  line_join,
+                  FT_Fixed             miter_limit )
+    
     cdef FT_Long FT_MulFix(FT_Long, FT_Long)
     cdef FT_Long FT_CEIL(FT_Long)
     cdef FT_Long FT_FLOOR(FT_Long)

@@ -1,5 +1,4 @@
 import renpy.display
-import time
 
 from renpy.display.textsupport import \
     TAG, TEXT, PARAGRAPH, DISPLAYABLE
@@ -94,7 +93,7 @@ def outline_blits(blits, outline):
     for b in blits:
 
         x0 = b.x
-        x1 = b.x + outline * 2
+        x1 = b.x + b.w + outline * 2
         
         y0 = b.y
         y1 = b.y + b.h + outline * 2
@@ -181,18 +180,10 @@ class TextSegment(object):
         Return the list of glyphs corresponding to unicode string s.
         """
         
-        start = time.time()
-        
         fo = get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
-        
-        print " Get", time.time() - start
-        start = time.time()
         
         rv = fo.glyphs(s)
         
-        print " Fon", time.time() - start
-        start = time.time()
-
         # Apply kerning to the glyphs.
         if self.kerning:
             textsupport.kerning(rv, self.kerning)
@@ -367,7 +358,7 @@ class Layout(object):
         # A map from (outline, color) to a texture.
         self.textures = { }
 
-        for o, color, xo, yo in outlines:
+        for o, color, _xo, _yo in outlines:
             key = (o, color)
             
             if key in self.textures:
@@ -607,7 +598,7 @@ class Layout(object):
         top = 0
         bottom = 0
                 
-        for o, c, x, y in outlines:
+        for o, _c, x, y in outlines:
             
             l = x - o 
             r = x + o
@@ -637,7 +628,7 @@ class Layout(object):
         can be used to blit those objects.
         """
         
-        width, height = self.size
+        width, _height = self.size
         
         rv = [ ]
         
@@ -695,14 +686,10 @@ class NewText(renpy.display.core.Displayable):
         self.text = text
                            
         self.layout = None
-
-        
-    def render(self, width, height, st, at):
-        
         self.slow = True
         
-        import time
-        start = time.time()
+        
+    def render(self, width, height, st, at):
         
         if self.layout is None or self.layout.width != width or self.layout.height != height:
             layout = self.layout = Layout(self, width, height)
@@ -717,14 +704,14 @@ class NewText(renpy.display.core.Displayable):
             blits = layout.blits_typewriter(st)
             
         else:
-            blits = (0, 0, w - layout.xborder, h - layout.yborder)
+            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder) ]
         
         # Draw everything.                            
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]
             
             if o:
-                oblits = outline_blits(blits, o)
+                oblits = outline_blits(blits, o)            
             else:
                 oblits = blits            
         
@@ -732,7 +719,7 @@ class NewText(renpy.display.core.Displayable):
             
                 rv.blit(
                     tex.subsurface((b.x, b.y, b.w, b.h)),
-                    (b.x + layout.xoffset + xo, b.y + layout.yoffset + yo))
+                    (b.x + xo + layout.xoffset - o, b.y + yo + layout.yoffset - o))
 
         
         # TODO: Deal with really slow text drawing, by pausing > 0.
