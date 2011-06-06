@@ -146,7 +146,7 @@ cdef class FTFont:
         float size
         float bold
         bint italic
-        float outline
+        int outline
         bint antialias
 
         # Information used to modify the font.
@@ -163,6 +163,9 @@ cdef class FTFont:
         
         # The stroker object.
         FT_Stroker stroker
+
+        # The number of pixels the outlines are expanded by.
+        public int expand
 
         # Basic Y-direction metrics for this font.
         public int ascent
@@ -182,8 +185,11 @@ cdef class FTFont:
         for i from 0 <= i < 256:
             FT_Bitmap_Done(library, &(self.cache[i].bitmap))
         
+        if self.stroker != NULL:
+            FT_Stroker_Done(self.stroker)
         
-    def __init__(self, face, float size, float bold, bint italic, float outline, bint antialias):
+        
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias):
         
         self.face_object = face
         self.face = self.face_object.face
@@ -194,8 +200,17 @@ cdef class FTFont:
         self.outline = outline
         self.antialias = antialias
         
-        self.stroker = NULL;
-
+        print "XXX", self.outline
+        
+        if outline == 0:        
+            self.stroker = NULL;
+            self.expand = 0            
+            
+        else:
+            FT_Stroker_New(library, &self.stroker)
+            FT_Stroker_Set(self.stroker, outline * 64, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0)
+            self.expand = outline * 2
+            print "Creating stroker with", self.outline
 
     cdef setup(self):
         """
@@ -217,11 +232,11 @@ cdef class FTFont:
 
             scale = face.size.metrics.y_scale
 
-            self.ascent = FT_CEIL(face.size.metrics.ascender)
-            self.descent = FT_FLOOR(face.size.metrics.descender)
+            self.ascent = FT_CEIL(face.size.metrics.ascender) + self.expand
+            self.descent = FT_FLOOR(face.size.metrics.descender) - self.expand
             self.height = self.ascent - self.descent
             
-            self.lineskip = FT_CEIL(face.size.metrics.height)
+            self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
             if self.height > self.lineskip:
                 self.lineskip = self.height                
 
@@ -244,41 +259,55 @@ cdef class FTFont:
         """
 
         cdef FT_Face face
-        cdef FT_GlyphSlot g
+        cdef FT_Glyph g
+        cdef FT_BitmapGlyph bg
+
         cdef int error
         cdef glyph_cache *rv
 
         rv = &(self.cache[index & 255])        
-        if rv.index == index:
+        if rv.index == index:            
             return rv
-
+    
         rv.index = index
-
+    
         face = self.face
         
         error = FT_Load_Glyph(face, index, 0)
         if error:
             raise FreetypeError(error)
-         
-        if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
-                
-            error = FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
-            if error:
-                raise FreetypeError(error)
         
-        if face.glyph.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
-            FT_Bitmap_Convert(library, &(face.glyph.bitmap), &(rv.bitmap), 4)
-        else:
-            FT_Bitmap_Copy(library, &(face.glyph.bitmap), &(rv.bitmap))
-            
-        rv.width = FT_CEIL(face.glyph.metrics.width)
-        rv.advance = face.glyph.metrics.horiAdvance / 64.0
+        error = FT_Get_Glyph(face.glyph, &g)
 
-        rv.bitmap_left = face.glyph.bitmap_left
-        rv.bitmap_top = face.glyph.bitmap_top
-
-        return rv
+        if error:
+            raise FreetypeError(error)
     
+        if g.format != FT_GLYPH_FORMAT_BITMAP:
+    
+            if self.stroker != NULL:
+                FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+
+            if self.antialias:
+                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
+            else:
+                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
+
+        bg = <FT_BitmapGlyph> g 
+         
+        if face.glyph.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
+            FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
+        else:
+            FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
+            
+        rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
+        rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand
+    
+        rv.bitmap_left = bg.left + self.expand / 2
+        rv.bitmap_top = bg.top - self.expand / 2
+    
+        FT_Done_Glyph(g)
+    
+        return rv
 
     def glyphs(self, unicode s):
         """

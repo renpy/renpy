@@ -93,7 +93,7 @@ def outline_blits(blits, outline):
     for b in blits:
 
         x0 = b.x
-        x1 = b.x + b.w + outline * 2
+        x1 = b.x + b.w
         
         y0 = b.y
         y1 = b.y + b.h + outline * 2
