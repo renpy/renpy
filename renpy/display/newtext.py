@@ -672,7 +672,23 @@ class Layout(object):
             
         return rv
         
+    def redraw_typewriter(self, st):
+        """
+        Return the time of the first glyph that should be shown after st.
+        """
         
+        for l in self.lines:
+            if not l.glyphs:
+                continue
+            
+            if l.max_time > st:
+                break
+
+        else:
+            return None
+        
+        return min(i.time for i in l.glyphs if i.time > st) - st
+
 
 class NewText(renpy.display.core.Displayable):
     
@@ -699,12 +715,15 @@ class NewText(renpy.display.core.Displayable):
         w, h = layout.size            
         rv = renpy.display.render.Render(w, h)
             
-        if self.slow:            
+        if not self.slow:
+            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder) ]
+            redraw = None
+
+        else:
             # TODO: Make this changable.
             blits = layout.blits_typewriter(st)
-            
-        else:
-            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder) ]
+            redraw = layout.redraw_typewriter(st)
+                        
         
         # Draw everything.                            
         for o, color, xo, yo in layout.outlines:
@@ -723,8 +742,8 @@ class NewText(renpy.display.core.Displayable):
 
         
         # TODO: Deal with really slow text drawing, by pausing > 0.
-        if self.slow:
-            renpy.display.render.redraw(self, 0)
+        if self.slow and redraw is not None:
+            renpy.display.render.redraw(self, redraw)
 
         # TODO: Deal with displayables.
         
