@@ -496,6 +496,7 @@ text_properties = [ Style(i) for i in [
         "hyperlink_functions",
         "italic",
         "justify",
+        "kerning",
         "language",
         "layout",
         "line_spacing",

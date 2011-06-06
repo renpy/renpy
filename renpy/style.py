@@ -146,6 +146,7 @@ style_properties = dict(
     sound = None,
     italic = None,
     justify = None,
+    kerning = None,
     language = None,
     layout = None,
     left_margin = None,

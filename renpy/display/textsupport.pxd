@@ -34,3 +34,23 @@ cdef class Glyph:
         public float width
         public float advance
         
+        # The time when this glyph should be shown.
+        public float time
+        
+cdef class Line:
+    
+    cdef:
+        
+        # The y coordinate of this line.
+        public int y
+        
+        # The height of this line.
+        public int height
+        
+        # The list of glyphs on this line.
+        public list glyphs
+        
+        # The maximum time of any glyph in this line.
+        public float max_time
+        
+        

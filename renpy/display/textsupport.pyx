@@ -3,11 +3,21 @@ cdef class Glyph:
     def __repr__(self):
         return "<Glyph {!r}, width={}, advance={}>".format(self.character, self.width, self.advance)
 
+cdef class Line:
+
+    def __init__(self, int y, int height, list glyphs):
+        self.y = y
+        self.height = height
+        self.glyphs = glyphs
+
+    def __repr__(self):
+        return "<Line y={}, height={}>".format(self.y, self.height)
+    
+
 TEXT=1
 TAG=2
 PARAGRAPH=3
 DISPLAYABLE=4
-
 
 def tokenize(unicode s):
     """
@@ -250,15 +260,22 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                     # aligned to the top of the line. (Or they're image-font
                     # glyphs, which are the same.)                   
                     gg.y = y
+                        
+            l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])
+            rv.append(l)
             
             y += line_spacing
             y += spacing
-            rv.append(y)
             y += leading
 
             sol = pos
+
             ascent = 0
             line_spacing = 0
+
+            if g.split == SPLIT_INSTEAD:                
+                sol += 1
+                continue
             
         if pos == len_glyphs:
             break
@@ -271,7 +288,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     
         pos += 1
     
-    return rv
+    return rv, y - leading
     
 def kerning(list glyphs, float amount):
     cdef Glyph g
@@ -280,4 +297,61 @@ def kerning(list glyphs, float amount):
         g.advance += amount
         
 
+def assign_times(float t, float gps, list glyphs):
+    """
+    Assign a display time to each glyph. 
     
+    `t`
+        The start time of the first glyph.
+        
+    `gps`
+        The number of glyphs per second to show.
+        
+    `glyphs`
+        A list of glyphs to apply this to.
+        
+    Returns the time of the first glyph in the next block.    
+    """
+    
+    cdef float tpg # time per glyph    
+    cdef Glyph g
+    
+    if gps == 0:
+        tpg = 0.0
+    else:
+        tpg = 1.0 / gps
+    
+    for g in glyphs:
+        
+        g.time = t
+        
+        if g.ruby == RUBY_TOP:
+            continue
+        
+        t += tpg
+        
+    return t
+
+
+def max_times(list l):
+    """
+    Set the max_time filed on each line.
+    """
+    
+    cdef Line line
+    cdef Glyph g
+    cdef float max_time
+
+    max_time = 0
+    
+    for line in l:
+        for g in line.glyphs:
+            if g.time > max_time:
+                max_time = g.time
+                
+        line.max_time = max_time
+        
+    return max_time
+        
+        
+            
