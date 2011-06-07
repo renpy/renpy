@@ -151,12 +151,6 @@ cdef class FTFont:
 
         # Information used to modify the font.
 
-        # Overhang - used for bold.
-        int glyph_overhang
-        
-        # The amount to skew an italic face by.
-        float glyph_italics
-        
         # The offset and height of the underline.        
         public int underline_offset
         public int underline_height
@@ -200,8 +194,6 @@ cdef class FTFont:
         self.outline = outline
         self.antialias = antialias
         
-        print "XXX", self.outline
-        
         if outline == 0:        
             self.stroker = NULL;
             self.expand = 0            
@@ -210,7 +202,6 @@ cdef class FTFont:
             FT_Stroker_New(library, &self.stroker)
             FT_Stroker_Set(self.stroker, outline * 64, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0)
             self.expand = outline * 2
-            print "Creating stroker with", self.outline
 
     cdef setup(self):
         """
@@ -248,9 +239,6 @@ cdef class FTFont:
 
             if self.underline_height < 1:
                 self.underline_height = 1
-
-            # This is taken from 
-            self.glyph_italics = 0.207 * self.height
                 
         return
 
@@ -266,6 +254,8 @@ cdef class FTFont:
 
         cdef int error
         cdef glyph_cache *rv
+
+        cdef int overhang
 
         rv = &(self.cache[index & 255])        
         if rv.index == index:            
@@ -293,8 +283,6 @@ cdef class FTFont:
                 shear.yy = 1 << 16
                 
                 FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                
-                
     
             if self.stroker != NULL:
                 FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
@@ -305,15 +293,28 @@ cdef class FTFont:
                 FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
 
         bg = <FT_BitmapGlyph> g 
-         
+
         if bg.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
             FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
         else:
             FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
-            
+
+        if self.bold:            
+            overhang = face.size.metrics.y_ppem / 10            
+
+            FT_Bitmap_Embolden(
+                library,
+                &(rv.bitmap),
+                overhang << 6,
+                0)
+
+        else:
+            overhang = 0
+
+         
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        rv.width = bg.bitmap.width
-        rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand
+        rv.width = rv.bitmap.width
+        rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
     
         rv.bitmap_left = bg.left + self.expand / 2
         rv.bitmap_top = bg.top - self.expand / 2
