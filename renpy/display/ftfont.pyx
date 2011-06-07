@@ -249,7 +249,8 @@ cdef class FTFont:
             if self.underline_height < 1:
                 self.underline_height = 1
 
-        # TODO: Set up expand and stroker.
+            # This is taken from 
+            self.glyph_italics = 0.207 * self.height
                 
         return
 
@@ -261,6 +262,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef FT_Glyph g
         cdef FT_BitmapGlyph bg
+        cdef FT_Matrix shear
 
         cdef int error
         cdef glyph_cache *rv
@@ -284,6 +286,16 @@ cdef class FTFont:
     
         if g.format != FT_GLYPH_FORMAT_BITMAP:
     
+            if self.italic:
+                shear.xx = 1 << 16
+                shear.xy = (207 << 16) / 1000 # taken from SDL_ttf.
+                shear.yx = 0
+                shear.yy = 1 << 16
+                
+                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+                
+                
+    
             if self.stroker != NULL:
                 FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
 
@@ -294,12 +306,13 @@ cdef class FTFont:
 
         bg = <FT_BitmapGlyph> g 
          
-        if face.glyph.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
+        if bg.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
             FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
         else:
             FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
             
-        rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
+        # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
+        rv.width = bg.bitmap.width
         rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand
     
         rv.bitmap_left = bg.left + self.expand / 2
