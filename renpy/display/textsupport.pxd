@@ -37,6 +37,9 @@ cdef class Glyph:
         # The time when this glyph should be shown.
         public float time
         
+        # The hyperlink this is part of.
+        public short hyperlink
+        
 cdef class Line:
     
     cdef:

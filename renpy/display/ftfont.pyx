@@ -169,6 +169,8 @@ cdef class FTFont:
 
         glyph_cache cache[256]
         
+        # Have we been setup at least once?
+        bint has_setup
 
     def __cinit__(self):
         for i from 0 <= i < 256:
@@ -184,6 +186,9 @@ cdef class FTFont:
         
         
     def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias):
+        
+        if size < 1:
+            size = 1
         
         self.face_object = face
         self.face = self.face_object.face
@@ -203,6 +208,8 @@ cdef class FTFont:
             FT_Stroker_Set(self.stroker, outline * 64, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0)
             self.expand = outline * 2
 
+        self.has_setup = False
+
     cdef setup(self):
         """
         Changes the parameters of the face to match this font.
@@ -212,14 +219,18 @@ cdef class FTFont:
         cdef FT_Face face
         cdef FT_Fixed scale
                 
+        face = self.face
+
         if self.face_object.size != self.size:
             self.face_object.size = self.size
         
-            face = self.face
-
             error = FT_Set_Char_Size(face, 0, <int> (self.size * 64), 0, 0)
             if error:
                 raise FreetypeError(error)
+
+        if not self.has_setup:
+
+            self.has_setup = True
 
             scale = face.size.metrics.y_scale
 
@@ -230,9 +241,6 @@ cdef class FTFont:
             self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
             if self.height > self.lineskip:
                 self.lineskip = self.height                
-
-            # self.glyph_overhang = face.size.metrics.y_ppem / 10
-            # self.glyph_italics = 0.207 * self.height
 
             self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
             self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
@@ -446,9 +454,7 @@ cdef class FTFont:
             y = glyph.y + yo
             
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
-
-            cache = self.get_glyph(index)
-            
+            cache = self.get_glyph(index)            
                 
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top

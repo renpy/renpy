@@ -144,7 +144,8 @@ class TextSegment(object):
             self.hyperlink = source.hyperlink
             self.kerning = source.kerning
             self.cps = source.cps
-            
+        else:
+            self.hyperlink = 0
             
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
@@ -173,20 +174,21 @@ class TextSegment(object):
         # TODO:
         self.cps = 5.0
 
-        
-
     def glyphs(self, s):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
-        
+
         fo = get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
-        
         rv = fo.glyphs(s)
         
         # Apply kerning to the glyphs.
         if self.kerning:
             textsupport.kerning(rv, self.kerning)
+        
+        if self.hyperlink:
+            for g in rv:
+                g.hyperlink = self.hyperlink
         
         return rv
 
@@ -235,7 +237,7 @@ class Layout(object):
     Represents the layout of text.
     """
 
-    def __init__(self, text, width, height):
+    def __init__(self, text):
         """
         `text` 
             The text object this layout is associated with.
@@ -243,10 +245,10 @@ class Layout(object):
             The height of the laid-out text.
         """
         
-        self.width = width
-        self.height = height
-                
         style = text.style
+                
+        # Do we have any hyperlinks in this text? Set by segment.
+        self.has_hyperlinks = False
                 
         # Slow text that is not before the start segment is displayed
         # instantaneously.
@@ -254,17 +256,11 @@ class Layout(object):
 
         # Figure out outlines and other info.
         outlines, xborder, yborder, xoffset, yoffset = self.figure_outlines(style)        
-        width -= xborder
-        height -= yborder
         
         # The list of outlines.
         self.outlines = outlines
-        
-        # The borders.
         self.xborder = xborder
         self.yborder = yborder
-        
-        # The offset of (0, 0) relative to the render.
         self.xoffset = xoffset
         self.yoffset = yoffset
         
@@ -273,7 +269,20 @@ class Layout(object):
         
         # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
-        paragraphs = self.segment(tokens, style)
+        self.paragraphs = self.segment(tokens, style)
+
+    def update(self, text, width, height):
+        """
+        Updates the layout when the text object has been changed. 
+        """
+
+        style = text.style
+
+        self.width = width
+        self.height = height
+                
+        width -= self.xborder
+        height -= self.yborder
 
         # The greatest x coordinate of the text.       
         maxx = 0
@@ -285,13 +294,13 @@ class Layout(object):
         # A list of (segment, glyph_list) pairs for all paragraphs.
         par_seg_glyphs = [ ]
 
-        # The lines.
+        # A list of Line objects.
         lines = [ ]
 
         # The time at which the next glyph will be displayed.
         gt = 0.0
 
-        for p in paragraphs:
+        for p in self.paragraphs:
 
             # TODO: RTL - apply RTL to the text of each segment, then 
             # reverse the order of the segments in each paragraph.
@@ -346,19 +355,17 @@ class Layout(object):
             lines.extend(l)
 
             # TODO: Place the RUBY_TOP glyphs.
-
-            # Combine continguous hyperlinks ont a line into a single focus block.
             
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a 
         # per-outline basis.)
-        size = (maxx + xborder, y + yborder)
+        size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
         # A map from (outline, color) to a texture.
         self.textures = { }
 
-        for o, color, _xo, _yo in outlines:
+        for o, color, _xo, _yo in self.outlines:
             key = (o, color)
             
             if key in self.textures:
@@ -493,17 +500,19 @@ class Layout(object):
                 pass
             
             elif tag == "a":
-                hyperlink_styler = self.style.hyperlink_functions[0]
+                self.has_hyperlinks = True
+                
+                hyperlink_styler = style.hyperlink_functions[0]
                     
                 if hyperlink_styler:                                        
                     hls = hyperlink_styler(value)
                 else:
-                    hls = self.style
+                    hls = style
 
                 old_prefix = hls.prefix
 
                 link = len(self.hyperlink_targets) + 1
-                self.hyperlink_targers[link] = value
+                self.hyperlink_targets[link] = value
 
                 if renpy.display.focus.argument == link:
                     hls.set_prefix("hover_")
@@ -515,8 +524,6 @@ class Layout(object):
                 ts.hyperlink = link
 
                 hls.set_prefix(old_prefix)
-
-                continue
  
             elif tag == "b":
                 push().bold = True
@@ -706,7 +713,16 @@ class NewText(renpy.display.core.Displayable):
         
         
     def render(self, width, height, st, at):
+
+        layout = self.layout
+
+        if layout is None:
+            layout = self.layout = Layout(self)
+            layout.update(self, width, height)
         
+        elif layout.width != width or layout.height != height:
+            layout.update(self, width, height)
+                
         if self.layout is None or self.layout.width != width or self.layout.height != height:
             layout = self.layout = Layout(self, width, height)
         else:
@@ -748,9 +764,4 @@ class NewText(renpy.display.core.Displayable):
         # TODO: Deal with displayables.
         
         return rv
-        
-        
-
-        
-            
         
