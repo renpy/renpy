@@ -265,11 +265,9 @@ class Layout(object):
         self.yoffset = yoffset
         
         # 1. Turn the text into a list of tokens.
-        tokens = self.tokenize(text.text)
+        self.tokens = self.tokenize(text.text)
+
         
-        # 2. Breaks the text into a list of paragraphs, where each paragraph is 
-        # represented as a list of (Segment, text string) tuples. 
-        self.paragraphs = self.segment(tokens, style)
 
     def update(self, text, width, height):
         """
@@ -300,6 +298,13 @@ class Layout(object):
         # The time at which the next glyph will be displayed.
         gt = 0.0
 
+        # 2. Breaks the text into a list of paragraphs, where each paragraph is 
+        # represented as a list of (Segment, text string) tuples. 
+        #
+        # This takes information from the various styles that apply to thr text,
+        # and so needs to be redone when the style of the text changes.
+        self.paragraphs = self.segment(self.tokens, style)
+        
         for p in self.paragraphs:
 
             # TODO: RTL - apply RTL to the text of each segment, then 
@@ -719,37 +724,66 @@ class NewText(renpy.display.core.Displayable):
         self.layout = None
         self.slow = True
         
+        # True if the layout needs to be updated.
+        self.update_layout = True
+        
+    def focus(self, default=False):
+        """
+        Called when a hyperlink gains focus.
+        """
+
+        hyperlink_focus = self.style.hyperlink_functions[2]
+        target = self.layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+
+        if hyperlink_focus:
+            return hyperlink_focus(target)
+
+        if not self.update_layout:
+            self.update_layout = True
+            renpy.display.render.redraw(self, 0)
+
+    def unfocus(self, default=False):
+        """
+        Called when a hyperlink loses focus, or isn't focused to begin with.
+        """
+
+        hyperlink_focus = self.style.hyperlink_functions[2]
+
+        if hyperlink_focus:
+            return hyperlink_focus(None)
+
+        if not self.update_layout:
+            self.update_layout = True
+            renpy.display.render.redraw(self, 0)            
         
     def render(self, width, height, st, at):
 
+        # Find the layout, and update to the new size and width if necessary.
         layout = self.layout
 
         if layout is None:
             layout = self.layout = Layout(self)
-            layout.update(self, width, height)
+            self.update_layout = True
         
-        elif layout.width != width or layout.height != height:
+        if self.update_layout or layout.width != width or layout.height != height:
             layout.update(self, width, height)
-                
-        if self.layout is None or self.layout.width != width or self.layout.height != height:
-            layout = self.layout = Layout(self, width, height)
-        else:
-            layout = self.layout
+            self.update_layout = False
             
+        # The laid-out size of the layout.
         w, h = layout.size            
-        rv = renpy.display.render.Render(w, h)
             
+        # Get the list of blits we want to undertake.
         if not self.slow:
             blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder) ]
             redraw = None
-
         else:
-            # TODO: Make this changable.
+            # TODO: Make this changeable.
             blits = layout.blits_typewriter(st)
             redraw = layout.redraw_typewriter(st)
                         
-        
-        # Draw everything.                            
+        # Render everything.
+        rv = renpy.display.render.Render(w, h)
+
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]
             
@@ -764,12 +798,13 @@ class NewText(renpy.display.core.Displayable):
                     tex.subsurface((b.x, b.y, b.w, b.h)),
                     (b.x + xo + layout.xoffset - o, b.y + yo + layout.yoffset - o))
 
+        # Add in the focus areas.
+        for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
+            rv.add_focus(self, hyperlink, hx + layout.xoffset, hy + layout.yoffset, hw, hh)
         
-        # TODO: Deal with really slow text drawing, by pausing > 0.
+        # TODO: Deal with displayables.
         if self.slow and redraw is not None:
             renpy.display.render.redraw(self, redraw)
-
-        # TODO: Deal with displayables.
         
         return rv
         
