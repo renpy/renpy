@@ -183,16 +183,23 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
     if not glyphs:
         return 0
     
-    cdef Glyph g
+    cdef Glyph g, old_g
     cdef float x, maxx
     
     x = start_x + first_indent
     maxx = 0
+    old_g = None
         
     for g in glyphs:
 
         if g.ruby == RUBY_TOP:
             continue
+        
+        if g.split != SPLIT_NONE and old_g:
+            # When a glyph is at the end of the line, set its advance to 
+            # be its width. (This makes things like strikeout and underline
+            # easier, since we only need consider advance.)
+            old_g.advance = old_g.width
         
         if g.split == SPLIT_INSTEAD:
             x = start_x + rest_indent
@@ -209,6 +216,8 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
             maxx = x + g.advance
             
         x += g.advance
+        
+        old_g = g
             
     return maxx
     
@@ -260,7 +269,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                     # aligned to the top of the line. (Or they're image-font
                     # glyphs, which are the same.)                   
                     gg.y = y
-                        
+              
             l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)
             
@@ -275,6 +284,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
 
             if g.split == SPLIT_INSTEAD:                
                 sol += 1
+                pos += 1
                 continue
             
         if pos == len_glyphs:
@@ -323,12 +333,12 @@ def assign_times(float t, float gps, list glyphs):
     
     for g in glyphs:
         
-        g.time = t
-        
         if g.ruby == RUBY_TOP:
+            g.time = t
             continue
-        
+
         t += tpg
+        g.time = t                
         
     return t
 
@@ -381,6 +391,7 @@ def hyperlink_areas(list l):
         hyperlink = 0    
         max_x = 0
         min_x = 1000000
+        pos = 0
         
         while pos < len_gl:
             
@@ -391,7 +402,6 @@ def hyperlink_areas(list l):
                 hyperlink = 0
                 max_x = 0
                 min_x = 1000000
-               
                 
             hyperlink = g.hyperlink
             
@@ -406,6 +416,5 @@ def hyperlink_areas(list l):
             
         if hyperlink:
             rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))                
-
-                
-        return rv
+    
+    return rv

@@ -405,7 +405,7 @@ cdef class FTFont:
         
         return rv
     
-    def draw(self, pysurf, float xo, int yo, color, list glyphs):
+    def draw(self, pysurf, float xo, int yo, color, list glyphs, bint underline, bint strikethrough):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -422,15 +422,15 @@ cdef class FTFont:
         cdef FT_GlyphSlot g
         cdef FT_UInt index
         cdef int error
-        cdef int bmx, bmy, px, py
+        cdef int bmx, bmy, px, py,         
+        cdef int ly, lh
                 
         cdef unsigned char *pixels
         cdef unsigned char *line
         cdef unsigned char *gline 
         cdef int pitch
         cdef glyph_cache *cache
-                
-                
+                                
         Sr, Sg, Sb, Sa = color
 
         if Sa == 0:
@@ -471,27 +471,44 @@ cdef class FTFont:
                     # Modulate Sa by the glyph's alpha.
                     alpha = (alpha * Sa + Sa) >> 8
 
-                    # This code is the ALPHA_BLEND macro, from the surface.h
-                    # file in pygame-1.8          
-                    Da = line[3]
-                                           
-                    if Da:
-                        Dr = line[0]
-                        Dg = line[1]
-                        Db = line[2]
-                        
-                        line[0] = (((Sr - Dr) * alpha) >> 8) + Dr
-                        line[1] = (((Sg - Dg) * alpha) >> 8) + Dg
-                        line[2] = (((Sb - Db) * alpha) >> 8) + Db
-                        line[3] = alpha + Da - ((alpha * Da) / 255)
-                        
-                    else:
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
-                        line[3] = alpha
+                    line[0] = Sr
+                    line[1] = Sg
+                    line[2] = Sb
+                    line[3] = alpha
                     
                     gline += 1
                     line += 4
                     
                 bmy += 1
+
+
+            # Underlining.
+            if underline:
+                ly = y - self.underline_offset - 1
+                lh = self.underline_height
+    
+                for py from ly <= py < (ly + lh):
+                    for px from x <= px < (x + glyph.advance):
+                        line = pixels + py * pitch + px * 4
+                        
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = Sa
+                    
+            # Strikethrough.
+            if strikethrough:
+                ly = y - self.ascent + self.height / 2
+                lh = self.height / 10
+                if lh < 1:
+                    lh = 1
+    
+                for py from ly <= py < (ly + lh):
+                    for px from x <= px < (x + glyph.advance):
+                        line = pixels + py * pitch + px * 4
+                        
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = Sa
+            

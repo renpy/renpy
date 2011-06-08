@@ -139,13 +139,16 @@ class TextSegment(object):
             self.bold = source.bold
             self.italic = source.italic
             self.underline = source.underline
+            self.strikethrough = source.strikethrough
             self.color = source.color
             self.black_color = source.black_color
             self.hyperlink = source.hyperlink
             self.kerning = source.kerning
             self.cps = source.cps
+
         else:
             self.hyperlink = 0
+            self.cps = 0
             
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
@@ -160,19 +163,16 @@ class TextSegment(object):
         self.bold = style.bold
         self.italic = style.italic
         self.underline = style.underline
+        self.strikethrough = style.strikethrough
         self.color = style.color
         self.black_color = style.black_color
         self.hyperlink = None
         self.kerning = style.kerning
         
-        cps = style.slow_cps
-        if cps is None:
-            cps = renpy.game.preferences.text_cps
-        
-        self.cps = cps * style.slow_cps_multiplier
-
-        # TODO:
-        self.cps = 5.0
+        if style.slow_cps is True:
+            self.cps = renpy.game.preferences.text_cps
+            
+        self.cps = self.cps * style.slow_cps_multiplier
 
     def glyphs(self, s):
         """
@@ -203,7 +203,7 @@ class TextSegment(object):
             color = self.color
         
         fo = get_font(self.font, self.size, self.bold, self.italic, outline, self.antialias)
-        fo.draw(surf, xo, yo, color, glyphs)
+        fo.draw(surf, xo, yo, color, glyphs, self.underline, self.strikethrough)
 
     def assign_times(self, gt, glyphs):
         """
@@ -399,8 +399,6 @@ class Layout(object):
         else:
             self.hyperlinks = [ ]
         
-        print self.hyperlinks
-        
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
             
@@ -442,7 +440,13 @@ class Layout(object):
         line = [ ]
 
         ts = TextSegment(None) 
+
+        ts.cps = style.slow_cps
+        if ts.cps is None or ts.cps is True:
+            ts.cps = renpy.game.preferences.text_cps
+        
         ts.take_style(style)
+                
                 
         # The text segement stack.
         tss = [ ts ]
@@ -712,18 +716,29 @@ class Layout(object):
 
 class NewText(renpy.display.core.Displayable):
     
-    def __init__(self, text, style='default', replaces=None, **properties):
+    def __init__(self, text, slow=None, style='default', replaces=None, **properties):
                 
+        # TODO: Handle less_updates.
         super(NewText, self).__init__(style=style, **properties)
-           
+        
+        # We need text to be a list, so if it's not, wrap it.   
         if not isinstance(text, list):
             text = [ text ]
-        
+
+        # A list of text and displayables we're showing.                
         self.text = text
                            
-        self.layout = None
-        self.slow = True
+        # If slow is None, the style decides if we're in slow text mode.
+        if slow is None and self.style.slow_cps:
+            slow = True
         
+        # True if we're using slow text mode.
+        self.slow = slow
+
+        # The layout object we use. This stores all information about what this
+        # text looks like at a given size.        
+        self.layout = None
+
         # True if the layout needs to be updated.
         self.update_layout = True
         
@@ -756,6 +771,32 @@ class NewText(renpy.display.core.Displayable):
             self.update_layout = True
             renpy.display.render.redraw(self, 0)            
         
+    def event(self, ev, x, y, st):
+        """
+        Space, Enter, or Click ends slow, if it's enabled.
+        """
+        
+        if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
+            # self.call_slow_done(st)
+            self.slow = False
+            raise renpy.display.core.IgnoreEvent()
+        
+#        for child, xo, yo in self.child_pos:
+#            rv = child.event(ev, x - xo, y - yo, st)
+#            if rv is not None:
+#                return rv
+
+        if (self.is_focused() and
+            renpy.display.behavior.map_event(ev, "button_select")):
+
+            clicked = self.style.hyperlink_functions[1]
+
+            if clicked is not None: 
+                target = self.layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+                
+                rv = self.style.hyperlink_functions[1](target)
+                return rv
+
     def render(self, width, height, st, at):
 
         # Find the layout, and update to the new size and width if necessary.
@@ -807,4 +848,6 @@ class NewText(renpy.display.core.Displayable):
             renpy.display.render.redraw(self, redraw)
         
         return rv
-        
+       
+       
+    
