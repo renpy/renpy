@@ -388,6 +388,14 @@ class Layout(object):
         # Store the lines, so we have them for typeout.
         self.lines = lines
         
+        # Store the hyperlinks, if any.
+        if self.has_hyperlinks:
+            self.hyperlinks = textsupport.hyperlink_areas(lines)
+        else:
+            self.hyperlinks = [ ]
+        
+        print self.hyperlinks
+        
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
             

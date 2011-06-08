@@ -353,5 +353,59 @@ def max_times(list l):
         
     return max_time
         
+
+def hyperlink_areas(list l):
+    """
+    Returns a list of (hyperlink, x, y, w, h) tuples, where each entry in
+    the rectangle represents a contiguous portion of a hyperlink on the 
+    given line.
+    """
         
+    cdef Line line
+    cdef Glyph g
+    cdef list gl
+    cdef int len_gl
+    
+    cdef int pos
+    
+    cdef int max_x
+    cdef int min_x
+    cdef int hyperlink
+    
+    rv = [ ]
+    
+    for line in l:
+        gl = line.glyphs
+        len_gl = len(gl)
+    
+        hyperlink = 0    
+        max_x = 0
+        min_x = 1000000
+        
+        while pos < len_gl:
             
+            g = gl[pos]
+
+            if (hyperlink and g.hyperlink != hyperlink):                
+                rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))                
+                hyperlink = 0
+                max_x = 0
+                min_x = 1000000
+               
+                
+            hyperlink = g.hyperlink
+            
+            if hyperlink:
+                if g.x < min_x:
+                    min_x = g.x
+                    
+                if g.x + g.width > max_x:
+                    max_x = g.x + <int> g.width
+
+            pos += 1
+            
+        if hyperlink:
+            rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))                
+
+                
+        return rv
