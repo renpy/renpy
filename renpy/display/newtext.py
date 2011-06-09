@@ -118,6 +118,25 @@ def outline_blits(blits, outline):
     return rv
     
 
+class DrawInfo(object):
+    """
+    This object is supplied as a parameter to the draw method of the various
+    segments. It has the following fields:
+    
+    `surface`
+        The surface to draw to.
+        
+    `override_color`
+        If not None, a color that's used for this outline/shadow. 
+        
+    `outline`
+        The amount to outline the text by.
+        
+    """
+    
+    # No implementation, this is set up in the layout object.
+
+
 class TextSegment(object):
     """
     This represents a segment of text that has a single set of properties
@@ -131,9 +150,9 @@ class TextSegment(object):
         creates it to initialize it with defaults.
         """
         
-        self.antialias = True
             
         if source is not None:
+            self.antialias = source.antialias
             self.font = source.font
             self.size = source.size
             self.bold = source.bold
@@ -158,6 +177,7 @@ class TextSegment(object):
         Takes the style of this text segement from the named style object.
         """
         
+        self.antialias = style.antialias
         self.font = style.font
         self.size = style.size
         self.bold = style.bold
@@ -173,6 +193,8 @@ class TextSegment(object):
             self.cps = renpy.game.preferences.text_cps
             
         self.cps = self.cps * style.slow_cps_multiplier
+
+    # From here down is the public glyph API.
 
     def glyphs(self, s):
         """
@@ -192,18 +214,18 @@ class TextSegment(object):
         
         return rv
 
-    def draw(self, surf, glyphs, xo, yo, override_color, outline):
+    def draw(self, glyphs, di):
         """
         Draws the glyphs to surf.
         """
         
-        if override_color:
-            color = override_color
+        if di.override_color:
+            color = di.override_color
         else:
             color = self.color
         
-        fo = get_font(self.font, self.size, self.bold, self.italic, outline, self.antialias)
-        fo.draw(surf, xo, yo, color, glyphs, self.underline, self.strikethrough)
+        fo = get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
+        fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough)
 
     def assign_times(self, gt, glyphs):
         """
@@ -213,6 +235,46 @@ class TextSegment(object):
         """
         
         return textsupport.assign_times(gt, self.cps, glyphs)
+
+
+
+class SpaceSegment(object):
+    """
+    A segment that's used to render horizontal or vertical whitespace.
+    """
+    
+    def __init__(self, ts, width=0, height=0):
+        """
+        `ts`
+            The text segment that this SpaceSegment follows.
+        """
+        
+        self.glyph = glyph = textsupport.Glyph()
+
+        glyph.character = 0
+        glyph.ascent = 0
+        glyph.line_spacing = height
+        glyph.advance = width
+        glyph.width = width
+        
+        if ts.hyperlink:
+            glyph.hyperlink = ts.hyperlink
+        
+        self.cps = ts.cps
+        
+    def glyphs(self, s):
+        return [ self.glyph ]
+    
+    def draw(self, glyphs, di):
+        # Does nothing - since there's nothing to draw.        
+        return
+        
+    def assign_times(self, gt, glyphs):
+        if self.cps != 0:
+            gt += 1.0 / self.cps
+        
+        self.glyph.time = gt
+        return gt
 
                 
 class DisplayableSegment(object):
@@ -370,6 +432,8 @@ class Layout(object):
         # A map from (outline, color) to a texture.
         self.textures = { }
 
+        di = DrawInfo()
+
         for o, color, _xo, _yo in self.outlines:
             key = (o, color)
             
@@ -379,8 +443,12 @@ class Layout(object):
             # Create the texture.
             surf = renpy.display.pgrender.surface(size, True)
             
+            di.surface = surf
+            di.override_color = color
+            di.outline = o
+            
             for ts, glyphs in par_seg_glyphs:
-                ts.draw(surf, glyphs, 0, 0, color, o)
+                ts.draw(glyphs, di)
     
             renpy.display.draw.mutated_surface(surf)
             tex = renpy.display.draw.load_texture(surf)
@@ -505,6 +573,23 @@ class Layout(object):
                     line.append((ts[-1], " "))
                 
                 paragraphs.append(line)
+                line = [ ]
+
+            elif tag == "space":
+                width = int(value)                
+                line.append((SpaceSegment(tss[-1], width=width), ""))
+
+            elif tag == "vspace":
+                # Duplicates from the newline tag.
+                
+                height = int(value)                
+
+                if line:
+                    paragraphs.append(line)
+
+                line = [ (SpaceSegment(tss[-1], height=height), "") ]
+                paragraphs.append(line)
+                
                 line = [ ]
 
             elif tag == "w":
