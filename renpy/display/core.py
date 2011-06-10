@@ -1261,6 +1261,7 @@ class Interface(object):
 
             renpy.display.render.free_memory()
             renpy.display.im.cache.clear()
+            renpy.display.newtext.layout_cache_clear()
 
             renpy.display.module.bo_cache = None
             
@@ -1806,6 +1807,7 @@ class Interface(object):
             
         # Tick time forward.
         renpy.display.im.cache.tick()
+        renpy.display.newtext.layout_cache_tick()
         renpy.display.predict.reset()
         
         # Cleare the size groups.

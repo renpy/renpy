@@ -131,7 +131,10 @@ class DrawInfo(object):
         
     `outline`
         The amount to outline the text by.
-        
+    
+    `displayable_blits`
+        If not none, this is a list of (displayable, xo, yo) tuples. The draw
+        method adds displayable blits to this list when this is not None.
     """
     
     # No implementation, this is set up in the layout object.
@@ -149,7 +152,6 @@ class TextSegment(object):
         a copy of that source segment. Otherwise, it's up to the code that 
         creates it to initialize it with defaults.
         """
-        
             
         if source is not None:
             self.antialias = source.antialias
@@ -276,30 +278,57 @@ class SpaceSegment(object):
         self.glyph.time = gt
         return gt
 
-                
+
 class DisplayableSegment(object):
     """
-    This is a segment that contains a displayable.
+    A segment that's used to render horizontal or vertical whitespace.
     """
-
-    def __init__(self, d):        
-        self.displayable = d
-        
-    def __repr__(self):
-        return "<DisplayableSegment {!r}>".format(self.displayable)
     
+    def __init__(self, ts, d, renders):
+        """
+        `ts`
+            The text segment that this SpaceSegment follows.
+        """
+        
+        self.d = d
+        rend = renders[d]
+        
+        w, h = rend.get_size()
+        
+        self.glyph = glyph = textsupport.Glyph()
+
+        glyph.character = 0
+        glyph.ascent = 0
+        glyph.line_spacing = h
+        glyph.advance = w
+        glyph.width = w
+        
+        if ts.hyperlink:
+            glyph.hyperlink = ts.hyperlink
+        
+        self.cps = ts.cps
+        
+    def glyphs(self, s):
+        return [ self.glyph ]
+    
+    def draw(self, glyphs, di):
+        if di.displayable_blits is not None:
+            di.displayable_blits.append((self.d, self.glyph.x, self.glyph.y, self.glyph.time))
+        
     def assign_times(self, gt, glyphs):
-        for i in glyphs:
-            i.time = gt
-            
+        if self.cps != 0:
+            gt += 1.0 / self.cps
+        
+        self.glyph.time = gt
         return gt
+
     
 class Layout(object):
     """
     Represents the layout of text.
     """
 
-    def __init__(self, text):
+    def __init__(self, text, width, height, renders):
         """
         `text` 
             The text object this layout is associated with.
@@ -316,31 +345,18 @@ class Layout(object):
         # instantaneously.
         self.start_segment = None
 
+        self.width = width
+        self.height = height
+
         # Figure out outlines and other info.
         outlines, xborder, yborder, xoffset, yoffset = self.figure_outlines(style)        
-        
-        # The list of outlines.
         self.outlines = outlines
         self.xborder = xborder
         self.yborder = yborder
         self.xoffset = xoffset
         self.yoffset = yoffset
         
-        # 1. Turn the text into a list of tokens.
-        self.tokens = self.tokenize(text.text)
-
-        
-
-    def update(self, text, width, height):
-        """
-        Updates the layout when the text object has been changed. 
-        """
-
-        style = text.style
-
-        self.width = width
-        self.height = height
-                
+        # Adjust the borders by the outlines.                
         width -= self.xborder
         height -= self.yborder
 
@@ -365,7 +381,7 @@ class Layout(object):
         #
         # This takes information from the various styles that apply to thr text,
         # and so needs to be redone when the style of the text changes.
-        self.paragraphs = self.segment(self.tokens, style)
+        self.paragraphs = self.segment(text.tokens, style, renders)
         
         for p in self.paragraphs:
 
@@ -446,6 +462,12 @@ class Layout(object):
             di.surface = surf
             di.override_color = color
             di.outline = o
+                
+            if color == None:
+                self.displayable_blits = [ ]
+                di.displayable_blits = self.displayable_blits
+            else:
+                di.displayable_blits = None
             
             for ts, glyphs in par_seg_glyphs:
                 ts.draw(glyphs, di)
@@ -470,30 +492,10 @@ class Layout(object):
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
             
-    def tokenize(self, text):
-        """
-        Convert the text into a list of tokens.
-        """
+            
+                
         
-        tokens = [ ]
-        
-        for i in text:
-
-            if isinstance(i, unicode):
-                tokens.extend(textsupport.tokenize(i))
-
-            elif isinstance(i, str):
-                tokens.extend(textsupport.tokenize(unicode(i)))
-                
-            elif isinstance(i, renpy.display.core.Displayable):
-                tokens.append((DISPLAYABLE, i))
-                
-            else:
-                raise Exception("Can't display {!r} as Text.".format(i))
-                
-        return tokens    
-    
-    def segment(self, tokens, style):
+    def segment(self, tokens, style, renders):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
         which each paragraph being represented as a list of TextSegment, glyph
@@ -548,7 +550,7 @@ class Layout(object):
                 continue
             
             elif type == DISPLAYABLE:
-                line.append((DisplayableSegment(text), u""))
+                line.append((DisplayableSegment(tss[-1], text, renders), u""))
                 continue
             
             # Otherwise, we have a text tag.
@@ -798,12 +800,33 @@ class Layout(object):
         
         return min(i.time for i in l.glyphs if i.time > st) - st
 
+layout_cache_old = { }
+layout_cache_new = { }
 
+def layout_cache_clear():
+    """
+    Clears the old and new layout caches.
+    """
+    
+    global layout_cache_old, layout_cache_new
+    layout_cache_old = { }
+    layout_cache_new = { }
+    
+def layout_cache_tick():
+    """
+    Called once per interaction, to merge the old and new layout caches.
+    """
+    
+    global layout_cache_old, layout_cache_new
+    layout_cache_old = layout_cache_new
+    layout_cache_new = { }
+    
 class NewText(renpy.display.core.Displayable):
     
     def __init__(self, text, slow=None, style='default', replaces=None, **properties):
                 
         # TODO: Handle less_updates.
+        
         super(NewText, self).__init__(style=style, **properties)
         
         # We need text to be a list, so if it's not, wrap it.   
@@ -820,17 +843,63 @@ class NewText(renpy.display.core.Displayable):
         # True if we're using slow text mode.
         self.slow = slow
 
-        # The layout object we use. This stores all information about what this
-        # text looks like at a given size.        
-        self.layout = None
+        # Call update to retokenize.
+        self.update()
 
-        # True if the layout needs to be updated.
-        self.update_layout = True
+    def update(self):
+        """
+        This needs to be called after text has been updated, but before
+        any layout objects are created.
+        """
+        
+        # TODO: Expand text with scope substitutions, if necessary.
+        
+        tokens = self.tokenize(self.text)
+        
+        # self.tokens is a list of pairs, where the first component of 
+        # each pair is TEXT, NEWLINE, TAG, or DISPLAYABLE, and the second 
+        # is text or a displayable.
+        # 
+        # self.displayables is the set of displayables used by this 
+        # Text.        
+        self.tokens, self.displayables = self.get_displayables(tokens)
+
+        for i in self.displayables:
+            i.per_interact()
+
+
+    def kill_layout(self):
+        """
+        Kills the layout of this Text. Used when the text or style
+        changes.
+        """
+
+        key = id(self)        
+        layout_cache_old.pop(self.id, None)
+        layout_cache_new.pop(self.id, None)
+    
+    def get_layout(self):
+        """
+        Gets the layout of this Text, creating a new layout object if
+        none exists.
+        """
+
+        key = id(self)
+        
+        rv = layout_cache_new.get(key, None)
+        
+        if rv is None:
+            rv = layout_cache_old.get(key, None)
+            
+        return rv
         
     def focus(self, default=False):
         """
         Called when a hyperlink gains focus.
         """
+
+        self.kill_layout()
+        renpy.display.render.redraw(self, 0)
 
         hyperlink_focus = self.style.hyperlink_functions[2]
         target = self.layout.hyperlink_targets.get(renpy.display.focus.argument, None)
@@ -838,23 +907,18 @@ class NewText(renpy.display.core.Displayable):
         if hyperlink_focus:
             return hyperlink_focus(target)
 
-        if not self.update_layout:
-            self.update_layout = True
-            renpy.display.render.redraw(self, 0)
-
     def unfocus(self, default=False):
         """
         Called when a hyperlink loses focus, or isn't focused to begin with.
         """
 
+        self.kill_layout()
+        renpy.display.render.redraw(self, 0)            
+
         hyperlink_focus = self.style.hyperlink_functions[2]
 
         if hyperlink_focus:
             return hyperlink_focus(None)
-
-        if not self.update_layout:
-            self.update_layout = True
-            renpy.display.render.redraw(self, 0)            
         
     def event(self, ev, x, y, st):
         """
@@ -866,10 +930,14 @@ class NewText(renpy.display.core.Displayable):
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
         
-#        for child, xo, yo in self.child_pos:
-#            rv = child.event(ev, x - xo, y - yo, st)
-#            if rv is not None:
-#                return rv
+        layout = self.get_layout()
+        if layout is None:
+            return
+        
+        for d, xo, yo, _ in layout.displayable_blits:
+            rv = d.event(ev, x - xo - layout.xoffset, y - yo - layout.yoffset, st)
+            if rv is not None:
+                return rv
 
         if (self.is_focused() and
             renpy.display.behavior.map_event(ev, "button_select")):
@@ -877,25 +945,27 @@ class NewText(renpy.display.core.Displayable):
             clicked = self.style.hyperlink_functions[1]
 
             if clicked is not None: 
-                target = self.layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+                target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
                 
                 rv = self.style.hyperlink_functions[1](target)
                 return rv
 
     def render(self, width, height, st, at):
 
-        # Find the layout, and update to the new size and width if necessary.
-        layout = self.layout
+        # Render all of the child displayables.
+        renders = { }
 
-        if layout is None:
-            layout = self.layout = Layout(self)
-            self.update_layout = True
+        for i in self.displayables:
+            renders[i] = renpy.display.render.render(i, width, height, st, at)
         
-        if self.update_layout or layout.width != width or layout.height != height:
-            layout.update(self, width, height)
-            self.update_layout = False
-            
-        # The laid-out size of the layout.
+        # Find the layout, and update to the new size and width if necessary.
+        layout = self.get_layout()
+
+        if layout is None or layout.width != width or layout.height != height:
+            layout = Layout(self, width, height, renders)
+            layout_cache_new[id(self)] = layout
+        
+        # The laid-out size of this Text.
         w, h = layout.size            
             
         # Get the list of blits we want to undertake.
@@ -907,7 +977,7 @@ class NewText(renpy.display.core.Displayable):
             blits = layout.blits_typewriter(st)
             redraw = layout.redraw_typewriter(st)
                         
-        # Render everything.
+        # Blit text layers.
         rv = renpy.display.render.Render(w, h)
 
         for o, color, xo, yo in layout.outlines:
@@ -924,15 +994,80 @@ class NewText(renpy.display.core.Displayable):
                     tex.subsurface((b.x, b.y, b.w, b.h)),
                     (b.x + xo + layout.xoffset - o, b.y + yo + layout.yoffset - o))
 
+        # Blit displayables.
+        for d, xo, yo, t in layout.displayable_blits:
+
+            if self.slow and t > st:
+                continue
+            
+            rv.blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
+
         # Add in the focus areas.
         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
             rv.add_focus(self, hyperlink, hx + layout.xoffset, hy + layout.yoffset, hw, hh)
         
-        # TODO: Deal with displayables.
+        # Figure out if we need to redraw.
         if self.slow and redraw is not None:
             renpy.display.render.redraw(self, redraw)
         
         return rv
        
        
+    def tokenize(self, text):
+        """
+        Convert the text into a list of tokens.
+        """
+        
+        tokens = [ ]
+        
+        for i in text:
+
+            if isinstance(i, unicode):
+                tokens.extend(textsupport.tokenize(i))
+
+            elif isinstance(i, str):
+                tokens.extend(textsupport.tokenize(unicode(i)))
+                
+            elif isinstance(i, renpy.display.core.Displayable):
+                tokens.append((DISPLAYABLE, i))
+                
+            else:
+                raise Exception("Can't display {!r} as Text.".format(i))
+                
+        return tokens    
+    
+
+    def get_displayables(self, tokens):
+        """
+        Goes through the list of tokens. Returns the set of displayables that 
+        we know about, and an updated list of tokens with all image tags turned
+        into displayables.
+        """
+        
+        
+        displayables = set()        
+        new_tokens = [ ]
+        
+        for t in tokens:
+            
+            kind, text = t
+            
+            if kind == DISPLAYABLE:
+                displayables.add(text)
+                new_tokens.append(t)
+                continue
+            
+            if kind == TAG:
+                tag, _, value = text.partition("=")
+                
+                if tag == "img":
+                    d = renpy.easy.displayable(value)
+                    displayables.add(d)                    
+                    new_tokens.append((DISPLAYABLE, d))
+
+                    continue
+                    
+            new_tokens.append(t)
+
+        return new_tokens, displayables
     

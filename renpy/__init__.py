@@ -125,6 +125,7 @@ def import_all():
     import renpy.display.core # object @UnresolvedImport
     import renpy.display.font #@UnresolvedImport
     import renpy.display.text # core, font @UnresolvedImport
+    import renpy.display.newtext # core, font @UnresolvedImport
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
