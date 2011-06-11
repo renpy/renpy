@@ -151,6 +151,7 @@ init -1090 python:
     style.default.first_indent = 0
     style.default.rest_indent = 0
     style.default.line_spacing = 0
+    style.default.line_leading = 0
     style.default.layout = "greedy"
     style.default.subtitle_width = 0.9
     style.default.slow_cps = None

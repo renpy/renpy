@@ -449,7 +449,7 @@ class Layout(object):
            
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph. 
-            l, y = textsupport.place_vertical(line_glyphs, y, style.spacing, style.leading)
+            l, y = textsupport.place_vertical(line_glyphs, y, style.line_spacing, style.line_leading)
             lines.extend(l)
 
         if style.min_width > maxx + self.xborder:

@@ -469,12 +469,17 @@ cdef class FTFont:
                     alpha = gline[0]
                     
                     # Modulate Sa by the glyph's alpha.
+
                     alpha = (alpha * Sa + Sa) >> 8
 
-                    line[0] = Sr
-                    line[1] = Sg
-                    line[2] = Sb
-                    line[3] = alpha
+                    # Only draw if we increase the alpha - a cheap way to
+                    # allow overlapping characters.
+                    if line[3] < alpha:
+    
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = alpha
                     
                     gline += 1
                     line += 4
