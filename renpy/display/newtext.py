@@ -165,10 +165,15 @@ class TextSegment(object):
             self.hyperlink = source.hyperlink
             self.kerning = source.kerning
             self.cps = source.cps
+            self.ruby_top = source.ruby_top
+            self.ruby_bottom = source.ruby_bottom
 
         else:
             self.hyperlink = 0
             self.cps = 0
+            self.ruby_top = False
+            self.ruby_bottom = False
+            
             
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
@@ -212,6 +217,11 @@ class TextSegment(object):
         if self.hyperlink:
             for g in rv:
                 g.hyperlink = self.hyperlink
+        
+        if self.ruby_bottom:
+            textsupport.mark_ruby_bottom(rv)
+        elif self.ruby_top:
+            textsupport.mark_ruby_top(rv)
         
         return rv
 
@@ -339,6 +349,9 @@ class Layout(object):
                 
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
+
+        # Do we have any ruby in the text?
+        self.has_ruby = False
                 
         # Slow text that is not before the start segment is displayed
         # instantaneously.
@@ -366,6 +379,9 @@ class Layout(object):
         # have been rendered.
         y = 0
 
+        # A list of glyphs - all the glyphs we know of.
+        all_glyphs = [ ]
+
         # A list of (segment, glyph_list) pairs for all paragraphs.
         par_seg_glyphs = [ ]
 
@@ -381,7 +397,7 @@ class Layout(object):
         # This takes information from the various styles that apply to thr text,
         # and so needs to be redone when the style of the text changes.
         self.paragraphs = self.segment(text.tokens, style, renders)
-        
+      
         for p in self.paragraphs:
 
             # TODO: RTL - apply RTL to the text of each segment, then 
@@ -390,8 +406,8 @@ class Layout(object):
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
             
-            # A list of all glyphs in the line.
-            all_glyphs = [ ]
+            # A list of glyphs in the line.
+            line_glyphs = [ ]
             
             # A list of (segment, list of glyph) pairs.
             seg_glyphs = [ ]
@@ -402,7 +418,7 @@ class Layout(object):
                 t = (ts, glyphs)                
                 seg_glyphs.append(t)
                 par_seg_glyphs.append(t)
-                
+                line_glyphs.extend(glyphs)
                 all_glyphs.extend(glyphs)
 
             # TODO: RTL - Reverse the segments and the glyphs within each
@@ -411,11 +427,11 @@ class Layout(object):
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
             # TODO: Pick between western and eastasian.
-            textsupport.annotate_western(all_glyphs)
+            textsupport.annotate_western(line_glyphs)
                      
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
-            textsupport.linebreak_greedy(all_glyphs, width, width)
+            textsupport.linebreak_greedy(line_glyphs, width, width)
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
@@ -427,23 +443,25 @@ class Layout(object):
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
             
-            w = textsupport.place_horizontal(all_glyphs, 0, 0, 0)
+            w = textsupport.place_horizontal(line_glyphs, 0, style.first_indent, style.rest_indent)
             if w > maxx:
                 maxx = w
            
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph. 
-            l, y = textsupport.place_vertical(all_glyphs, y, 0, 0)
+            l, y = textsupport.place_vertical(line_glyphs, y, style.spacing, style.leading)
             lines.extend(l)
 
-            # TODO: Place the RUBY_TOP glyphs.
             
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a 
         # per-outline basis.)
-        size = (maxx + self.xborder, y + self.yborder)
+        sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
+        if self.has_ruby:
+            textsupport.place_ruby(all_glyphs, text.style.ruby_style.xoffset, sw, sh)
+        
         # A map from (outline, color) to a texture.
         self.textures = { }
 
@@ -490,8 +508,6 @@ class Layout(object):
         
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
-            
-            
                 
         
     def segment(self, tokens, style, renders):
@@ -665,6 +681,16 @@ class Layout(object):
                 
             elif tag == "k":
                 push().kerning = float(value)
+            
+            elif tag == "rt":
+                ts = push()
+                ts.take_style(style.ruby_style)
+                ts.ruby_top = True
+                self.has_ruby = True
+                
+            elif tag == "rb":
+                push().ruby_bottom = True
+                # We only care about ruby if we have a top.
                 
             else:
                 raise Exception("Unknown text tag %r" % text)

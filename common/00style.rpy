@@ -72,6 +72,7 @@ init -1200 python hide:
 
     style.hyperlink = Style(style.default, help=None) # ignored
     style.hyperlink_text = Style(style.default, help='hyperlinked text')
+    style.ruby_text = Style(style.default, help='ruby text')
 
     style.viewport = Style(style.default, help='default style of viewports')
     style.transform = Style(style.motion, help='default style of transforms')
@@ -261,6 +262,11 @@ init -1090 python:
     style.hyperlink_text.underline = True
     style.hyperlink_text.hover_color = "#0ff"
     style.hyperlink_text.idle_color = "#08f"
+    
+    # Ruby.
+    style.ruby_text.size = 22
+    style.ruby_text.xoffset = 0
+    style.default.ruby_style = style.ruby_text
     
     # Bars.
     style.default.bar_invert = False

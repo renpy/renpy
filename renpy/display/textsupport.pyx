@@ -418,3 +418,109 @@ def hyperlink_areas(list l):
             rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))                
     
     return rv
+
+
+def mark_ruby_top(list l):
+    
+    cdef Glyph g
+    
+    for g in l:
+        g.ruby = RUBY_TOP
+    
+def mark_ruby_bottom(list l):
+
+    cdef Glyph g
+    
+    for g in l:
+        g.ruby = RUBY_BOTTOM
+
+
+def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
+    
+    cdef Glyph g
+    cdef ruby_t last_ruby = RUBY_NONE
+    cdef int len_glyphs = len(glyphs)
+    cdef float x, width, min_x, max_x
+    cdef int y
+    cdef int start_top
+    cdef int pos = 0
+    cdef int i
+    
+    while pos < len_glyphs:
+        
+        g = glyphs[pos]
+        
+        if g.ruby == RUBY_NONE:
+            
+            min_x = g.x
+            max_x = g.x + g.width 
+            y = g.y
+
+            last_ruby = RUBY_NONE
+
+            pos += 1
+            continue
+            
+        elif g.ruby == RUBY_BOTTOM:
+            
+            if last_ruby != RUBY_BOTTOM:
+                min_x = g.x
+            
+            max_x = g.x + g.width
+            y = g.y 
+            
+            last_ruby = RUBY_BOTTOM
+            
+            pos += 1
+            continue
+            
+        # Otherwise, we have RUBY_TOP.
+
+        # Find the run of RUBY_TOP. When this is done, the run will be in 
+        # glyphs[start_top:pos].             
+        start_top = pos
+        
+        while pos < len_glyphs:
+
+            g = glyphs[pos]
+            if g.ruby != RUBY_TOP:
+                break
+
+            pos += 1
+                    
+        # Compute the width of the run.
+        
+        width = 0
+        for i from start_top <= i < pos:
+            g = glyphs[i]
+            width += g.advance
+            
+        width -= glyphs[pos - 1].advance
+        width += glyphs[pos - 1].width
+
+        # Place the glyphs.
+        x = (max_x + min_x) / 2 - width / 2
+        
+        for i from start_top <= i < pos:
+            g = glyphs[i]
+            g.x = <int> (x + .5)
+            g.y = y + ruby_offset
+
+            # Try to ensure the glyph stays contained within the surface.
+            if g.x < 0:
+                raise Exception("Ruby glyph out of bounds.")
+                
+            if g.x + g.width > surf_width:
+                raise Exception("Ruby glyph out of bounds.")
+                
+            if g.y - g.ascent < 0:
+                raise Exception("Ruby glyph out of bounds.")
+                
+            if g.y - g.ascent + g.line_spacing > surf_height:
+                raise Exception("Ruby glyph out of bounds.")
+            
+            x += g.advance
+            
+        last_ruby = RUBY_TOP
+        
+            
