@@ -8,10 +8,9 @@ import renpy.display.ftfont as ftfont
 
 ftfont.init()
 
-# TODO: Remove.
+# TODO: Move fonts over to their own file.
 font_cache = { }
 font_face_cache = { }
-
 
 def get_font(font, size, bold, italic, outline, antialias):
     key = (size, bold, italic, outline, antialias)
@@ -67,7 +66,7 @@ def outline_blits(blits, outline):
      |              |_____________________|
      |______________|_____________________|
      
-    is forbidden. That's a variant that the blit_<method> functions are
+    is forbidden. That's an invariant that the blit_<method> functions are
     required to enforce.    
     """
     
@@ -825,8 +824,6 @@ class NewText(renpy.display.core.Displayable):
     
     def __init__(self, text, slow=None, style='default', replaces=None, **properties):
                 
-        # TODO: Handle less_updates.
-        
         super(NewText, self).__init__(style=style, **properties)
         
         # We need text to be a list, so if it's not, wrap it.   
@@ -839,6 +836,9 @@ class NewText(renpy.display.core.Displayable):
         # If slow is None, the style decides if we're in slow text mode.
         if slow is None and self.style.slow_cps:
             slow = True
+
+        if renpy.game.less_updates:
+            slow = False
         
         # True if we're using slow text mode.
         self.slow = slow
