@@ -452,6 +452,8 @@ class Layout(object):
             l, y = textsupport.place_vertical(line_glyphs, y, style.spacing, style.leading)
             lines.extend(l)
 
+        if style.min_width > maxx + self.xborder:
+            maxx = style.min_width - self.xborder
             
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a 
@@ -459,8 +461,10 @@ class Layout(object):
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
+        textsupport.align_and_justify(lines, sw, style.text_align, style.justify)
+        
         if self.has_ruby:
-            textsupport.place_ruby(all_glyphs, text.style.ruby_style.xoffset, sw, sh)
+            textsupport.place_ruby(all_glyphs, style.ruby_style.xoffset, sw, sh)
         
         # A map from (outline, color) to a texture.
         self.textures = { }

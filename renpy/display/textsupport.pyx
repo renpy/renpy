@@ -9,6 +9,7 @@ cdef class Line:
         self.y = y
         self.height = height
         self.glyphs = glyphs
+        self.eop = False
 
     def __repr__(self):
         return "<Line y={}, height={}>".format(self.y, self.height)
@@ -119,6 +120,9 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     splitx = 0
     
     for g in glyphs:
+                
+        if g.ruby == RUBY_TOP:
+            continue
                        
         # If the x coordinate is greater than the width of the screen, 
         # split at the last split point, if any.
@@ -298,6 +302,8 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     
         pos += 1
     
+    
+    rv[-1].eop = True
     return rv, y - leading
     
 def kerning(list glyphs, float amount):
@@ -523,4 +529,62 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
             
         last_ruby = RUBY_TOP
         
+def align_and_justify(list lines, short width, float text_align, bint justify):
+    """
+    Handle text alignment and justification. 
+    """
+    
+    cdef Line l
+    cdef Glyph g
+    
+    cdef int max_x
+    cdef int spaces
+    
+    cdef float justify_offset
+    cdef float justify_per_space
+    
+    cdef int offset
+    
+    # See if we have to do anything at all.
+    if not justify and text_align == 0.0:
+        return
+    
+    for l in lines:
+        
+        spaces = 0
+        max_x = 0
+        
+        for g in l.glyphs:            
             
+            if g.ruby == RUBY_TOP:
+                continue
+            
+            if g.character == 0x20:
+                spaces += 1
+                
+            max_x = <int> (g.x + g.advance)
+            
+        if justify and spaces and not l.eop:
+            
+            justify_per_space = 1.0 * (width - max_x) / spaces
+            justify_offset = 0.5 # for rounding.
+            
+            for g in l.glyphs:
+
+                if g.ruby == RUBY_TOP:
+                    continue
+                
+                if g.character == 0x20:
+                    justify_offset += justify_per_space
+                    
+                g.x += <int> justify_offset
+                
+        else:
+            offset = <int> ((width - max_x) * text_align)
+            
+            for g in l.glyphs:
+                
+                if g.ruby == RUBY_TOP:
+                    continue
+
+                g.x += offset

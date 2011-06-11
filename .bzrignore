@@ -107,3 +107,8 @@ renpy/vc_version.py
 .pydevproject
 .project
 .settings
+trace.txt
+module/ftfont.c
+module/ftfont.html
+module/textsupport.c
+module/textsupport.html
