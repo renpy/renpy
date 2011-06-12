@@ -304,6 +304,13 @@ cdef class FTFont:
 
         if bg.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
             FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
+
+            # Freetype gives us a bitmap where values range from 0 to 1.
+            for y from 0 <= y < rv.bitmap.rows:
+                for x from 0 <= x < rv.bitmap.width:
+                    if rv.bitmap.buffer[ y * rv.bitmap.pitch + x ]:
+                        rv.bitmap.buffer[ y * rv.bitmap.pitch + x ] = 255
+        
         else:
             FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
 
@@ -321,11 +328,13 @@ cdef class FTFont:
 
          
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        rv.width = rv.bitmap.width
         rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
     
         rv.bitmap_left = bg.left + self.expand / 2
         rv.bitmap_top = bg.top - self.expand / 2
+
+        rv.width = rv.bitmap.width + rv.bitmap_left
+
     
         FT_Done_Glyph(g)
     

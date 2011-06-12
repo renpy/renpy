@@ -562,12 +562,12 @@ def align_and_justify(list lines, short width, float text_align, bint justify):
             if g.character == 0x20:
                 spaces += 1
                 
-            max_x = <int> (g.x + g.advance)
+            max_x = <int> (g.x + g.width)
             
         if justify and spaces and not l.eop:
             
             justify_per_space = 1.0 * (width - max_x) / spaces
-            justify_offset = 0.5 # for rounding.
+            justify_offset = 0.5 # Makes numbers round better.
             
             for g in l.glyphs:
 
@@ -578,7 +578,7 @@ def align_and_justify(list lines, short width, float text_align, bint justify):
                     justify_offset += justify_per_space
                     
                 g.x += <int> justify_offset
-                
+                                            
         else:
             offset = <int> ((width - max_x) * text_align)
             

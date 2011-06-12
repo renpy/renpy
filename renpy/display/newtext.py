@@ -44,6 +44,9 @@ class Blit(object):
         self.h = h
         self.alpha = alpha
 
+    def __repr__(self):
+        return "<Blit ({}, {}, {}, {}) {}>".format(self.x, self.y, self.w, self.h, self.alpha)
+
         
 def outline_blits(blits, outline):
     """
@@ -92,7 +95,7 @@ def outline_blits(blits, outline):
     for b in blits:
 
         x0 = b.x
-        x1 = b.x + b.w
+        x1 = b.x + b.w + outline * 2
         
         y0 = b.y
         y1 = b.y + b.h + outline * 2
@@ -461,8 +464,9 @@ class Layout(object):
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
-        textsupport.align_and_justify(lines, sw, style.text_align, style.justify)
-        
+
+        textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
+
         if self.has_ruby:
             textsupport.place_ruby(all_glyphs, style.ruby_style.xoffset, sw, sh)
         
@@ -1006,7 +1010,7 @@ class NewText(renpy.display.core.Displayable):
             # TODO: Make this changeable.
             blits = layout.blits_typewriter(st)
             redraw = layout.redraw_typewriter(st)
-                        
+
         # Blit text layers.
         rv = renpy.display.render.Render(w, h)
 

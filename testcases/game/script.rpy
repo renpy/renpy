@@ -1,12 +1,14 @@
 ﻿screen text_test:
     
-    window:    
-        has vbox
-  
-        add renpy.display.newtext.NewText(s, **kwargs)
+    add renpy.display.newtext.NewText(s, xmaximum=749, **kwargs)
 
-        if old:
-            add Text(s, **kwargs)
+    # window:    
+    #    has vbox
+  
+    #    add renpy.display.newtext.NewText(s, **kwargs)
+
+    #    if old:
+    #        add Text(s, **kwargs)
 
 init python:
     _preferences.text_cps = 20
@@ -19,11 +21,14 @@ init python:
         ui.saybehavior()
         renpy.call_screen("text_test", s=s + test, old=old, kwargs=kwargs)
         
-    
+label main_menu:
+    return
 
 label start:
 
     python:
+        text_test("Justify", justify=True)        
+        text_test("Justify w/ Outline", justify=True, outlines=[(2, "#00f", 0, 0)])        
         text_test("Normal")
         text_test("Aliased", antialias=False)
         text_test("Bold", bold=True)
@@ -34,7 +39,7 @@ label start:
         text_test("Italic", italic=True)
         text_test("Justify", justify=True)        
         text_test("Min_width, should be right-aligned.", test="", min_width=780, text_align=1.0)
-        text_test("Outlines", outlines=[ (1, "#f00"), (1, "#0000", 2, 2) ])
+        text_test("Outlines", outlines=[ (1, "#f00"), (1, "#00f", 2, 2) ])
         text_test("Rest Indent", rest_indent=50)
         text_test("Slow CPS", slow_cps=10)
         text_test("Slow CPS Mul", slow_cps_multiplier=2.0)
