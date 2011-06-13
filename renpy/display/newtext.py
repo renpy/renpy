@@ -13,7 +13,7 @@ font_cache = { }
 font_face_cache = { }
 
 def get_font(font, size, bold, italic, outline, antialias):
-    key = (size, bold, italic, outline, antialias)
+    key = (font, size, bold, italic, outline, antialias)
 
     rv = font_cache.get(key, None)    
     if rv is not None:
@@ -434,7 +434,7 @@ class Layout(object):
                      
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
-            textsupport.linebreak_greedy(line_glyphs, width, width)
+            textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
@@ -580,7 +580,7 @@ class Layout(object):
             
             tag, _, value = text.partition("=")
             
-            if tag[0] == "/":
+            if tag and tag[0] == "/":
                 tss.pop()
                 
                 if not tss:                
@@ -1094,7 +1094,7 @@ class NewText(renpy.display.core.Displayable):
             if kind == TAG:
                 tag, _, value = text.partition("=")
                 
-                if tag == "img":
+                if tag == "image":
                     d = renpy.easy.displayable(value)
                     displayables.add(d)                    
                     new_tokens.append((DISPLAYABLE, d))
