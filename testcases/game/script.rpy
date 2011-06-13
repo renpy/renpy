@@ -30,6 +30,10 @@ label main_menu:
 label start:
 
     $ text_extra = dict()
+
+    $ text_test("CPS Tag", test=": Adjusts cps, {cps=5}absolutely{/cps} or {cps=*.1}relatively{/cps}.", old=False)
+
+    $ text_test("_Start", test=": Testing out the use of the _start tag, {_start}which controls where slow text starts from.")
     
     $ text_test("Tags", test=": {b}Bold {plain}Plain{/plain} Bold{/b} {i}Italics{/i} {color=#f00}color{/color} {font=mikachan.ttf}Font{/font} {image=arrow.png} {s}strikeout{/s} {u}underline{/u} {=red}red style{/=red}")
     $ text_test("Size Tag", test=": {size=30}absolute{/size} {size=+10}relative bigger{/size} {size=-10}relative smaller{/size}")

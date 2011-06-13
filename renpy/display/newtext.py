@@ -438,6 +438,16 @@ class Layout(object):
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
+                
+                # Only assign a time if we're past the start segment.
+                if self.start_segment is not None:
+                    print id(self.start_segment), id(ts)
+                    
+                    if self.start_segment is ts:
+                        self.start_segment = None
+                    else:
+                        continue
+                
                 gt = ts.assign_times(gt, glyphs)
                                       
             # TODO: RTL - Reverse the glyphs in each line, back to RTL order,
@@ -587,9 +597,9 @@ class Layout(object):
                     raise Exception("%r closes a text tag that isn't open." % text)
             
             elif tag == "_start":
-                push()
+                ts = push()
                 tss.pop(-2)
-                self.start_segment = tss 
+                self.start_segment = ts
                 
             elif tag == "p":
                 # Duplicated from the newline tag.
@@ -700,6 +710,14 @@ class Layout(object):
                 push().ruby_bottom = True
                 # We only care about ruby if we have a top.
                 
+            elif tag == "cps":
+                ts = push()
+                
+                if value[0] == "*":
+                    ts.cps *= float(value[1:])
+                else:
+                    ts.cps = float(value)
+            
             else:
                 raise Exception("Unknown text tag %r" % text)
             
