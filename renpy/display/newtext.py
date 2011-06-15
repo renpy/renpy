@@ -429,8 +429,10 @@ class Layout(object):
             
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
-            # TODO: Pick between western and eastasian.
-            textsupport.annotate_western(line_glyphs)
+            if style.language == "eastasian":
+                textsupport.annotate_asian(line_glyphs)
+            else:            
+                textsupport.annotate_western(line_glyphs)
                      
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
